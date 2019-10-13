@@ -1,0 +1,245 @@
+package camzup.core;
+
+/**
+ * Holds mathematical constants used by the rest of the
+ * library. Provides convenience functions for printing a
+ * hash code and identity hash code as hexadecimal strings.
+ */
+public interface IUtils {
+
+   /**
+    * The smallest positive non-zero value, \u03b5. Useful for
+    * testing approximation between two floats. Set to 0.000001
+    * .
+    *
+    * @see Utils#approxFast(float, float)
+    */
+   public static final float DEFAULT_EPSILON = 0.000001f;
+
+   /**
+    * An angle in degrees is multiplied by this constant to
+    * convert it to radians. \u03c0 / 180.0 , approximately
+    * 0.017453292 .
+    */
+   public static final float DEG_TO_RAD = 0.017453293f;
+
+   /**
+    * An angle in degrees is multiplied by this constant to
+    * convert it to radians. \u03c0 / 180.0 , approximately
+    * 0.017453292519943295 .
+    */
+   public static final double DEG_TO_RAD_D = 0.017453292519943295d;
+
+   /**
+    * Four-thirds, 4.0 / 3.0 . Approximately 1.3333333 . Useful
+    * when creating a circular shape with a series of Bezier
+    * curves.
+    */
+   public static final float FOUR_THIRDS = 1.3333333f;
+
+   /**
+    * Four-thirds, 4.0 / 3.0 . Approximately 1.3333333333333333
+    * . Useful when creating a circular shape with a series of
+    * Bezier curves.
+    */
+   public static final double FOUR_THIRDS_D = 1.3333333333333333d;
+
+   /**
+    * \u03c0 divided by two. Approximately 1.570796327 .
+    */
+   public static final float HALF_PI = 1.570796327f;
+
+   /**
+    * \u03c0 divided by two. Approximately 1.5707963267948966 .
+    */
+   public static final double HALF_PI_D = 1.5707963267948966d;
+
+   /**
+    * One divided by 2.2 , 1.0 / 2.2 . Gamma-adjustments to
+    * color commonly raise the color's RGB channels to the
+    * power 2.2 or ( 1.0 / 2.0 ). Approximately 0.45454545 .
+    */
+   public static final float ONE_2_2 = 0.45454545f;
+
+   /**
+    * One divided by 2.2 , 1.0 / 2.2 . Gamma-adjustments to
+    * color commonly raise the color's RGB channels to the
+    * power 2.2 or ( 1.0 / 2.0 ). Approximately
+    * 0.45454545454545454 .
+    */
+   public static final double ONE_2_2_D = 0.45454545454545454d;
+
+   /**
+    * One-255th, 1.0 / 255.0 . Useful when converting a color
+    * with channels in the range [0, 255] to a color in the
+    * range [0, 1]. Approximately 0.003921569 .
+    */
+   public static final float ONE_255 = 0.003921569f;
+
+   /**
+    * One-255th, 1.0 / 255.0 . Useful when converting a color
+    * with channels in the range [0, 255] to a color in the
+    * range [0, 1]. Approximately 0.00392156862745098 .
+    */
+   public static final double ONE_255_D = 0.00392156862745098d;
+
+   /**
+    * One divided by 360 degrees, 1.0 / 360 ; approximately
+    * 0.0027777778 . Useful for converting an index in a
+    * for-loop to an angle in degrees.
+    */
+   public static final float ONE_360 = 0.0027777778f;
+
+   /**
+    * One divided by 360 degrees, 1.0 / 360 ; approximately
+    * 0.002777777777777778 . Useful for converting an index in
+    * a for-loop to an angle in degrees.
+    */
+   public static final double ONE_360_D = 0.002777777777777778d;
+
+   /**
+    * One-sixth, 1.0 / 6.0 . Useful when converting a color in
+    * RGB color space to one in HSB, given the six sectors
+    * formed by primary and secondary colors . Approximately
+    * 0.16666667 .
+    */
+   public static final float ONE_SIX = 0.16666667f;
+
+   /**
+    * One-sixth, 1.0 / 6.0 . Useful when converting a color in
+    * RGB color space to one in HSB, given the six sectors
+    * formed by primary and secondary colors . Approximately
+    * 0.16666666666666667 .
+    */
+   public static final double ONE_SIX_D = 0.16666666666666667d;
+
+   /**
+    * One divided by \u03c4. Approximately 0.15915494 . Useful
+    * for converting an index in a for-loop to an angle and for
+    * applying mod to an angle.
+    */
+   public static final float ONE_TAU = 0.15915494f;
+
+   /**
+    * One divided by \u03c4. Approximately 0.15915494309189535
+    * . Useful for converting an index in a for-loop to an
+    * angle and for applying mod to an angle.
+    */
+   public static final double ONE_TAU_D = 0.15915494309189535d;
+
+   /**
+    * One-third, 1.0 / 3.0 . Approximately 0.33333333 . Useful
+    * for setting handles on the knot of a Bezier curve.
+    */
+   public static final float ONE_THIRD = 0.33333333f;
+
+   /**
+    * One-third, 1.0 / 3.0 . Approximately 0.3333333333333333 .
+    * Useful for setting handles on the knot of a Bezier curve.
+    */
+   public static final double ONE_THIRD_D = 0.3333333333333333d;
+
+   /**
+    * An approximation of \u03c6, or ( 1.0 + ( \u221a 5.0 ) /
+    * 2.0 ), 1.61803399 .
+    */
+   public static final float PHI = 1.61803399f;
+
+   /**
+    * An approximation of \u03c6, or ( 1.0 + ( \u221a 5.0 ) /
+    * 2.0 ), 1.618033988749895 .
+    */
+   public static final double PHI_D = 1.618033988749895d;
+
+   /**
+    * An approximation of \u03c0, 3.141592654 .
+    */
+   public static final float PI = 3.141592654f;
+
+   /**
+    * An approximation of \u03c0, 3.141592653589793 .
+    *
+    * @see Math#PI
+    */
+   public static final double PI_D = 3.141592653589793d;
+
+   /**
+    * An angle in radians is multiplied by this constant to
+    * convert it to degrees. 180.0 / \u03c0, approximately
+    * 57.29578 .
+    */
+   public static final float RAD_TO_DEG = 57.29578f;
+
+   /**
+    * An angle in radians is multiplied by this constant to
+    * convert it to degrees. 180.0 / \u03c0, approximately
+    * 57.29577951308232 .
+    */
+   public static final double RAD_TO_DEG_D = 57.29577951308232d;
+
+   /**
+    * An approximation of ( \u221a 3.0 ) / 2.0 , 0.8660254 .
+    */
+   public static final float SQRT_3_2 = 0.8660254f;
+
+   /**
+    * An approximation of ( \u221a 3.0 ) / 2.0 ,
+    * 0.8660254037844386 .
+    */
+   public static final double SQRT_3_2_D = 0.8660254037844386d;
+
+   /**
+    * An approximation of \u03c4. Equal to 2.0 * \u03c0, or
+    * 6.2831853 .
+    */
+   public static final float TAU = 6.2831853f;
+
+   /**
+    * An approximation of \u03c4. Equal to 2.0 * \u03c0, or
+    * 6.283185307179586 .
+    */
+   public static final double TAU_D = 6.283185307179586d;
+
+   /**
+    * An approximation of \u03c0 / 3.0 , 1.0471976 . Useful for
+    * describing the field of view in a perspective camera.
+    */
+   public static final float THIRD_PI = 1.0471976f;
+
+   /**
+    * An approximation of \u03c0 / 3.0 , 1.0471975511965976 .
+    * Useful for describing the field of view in a perspective
+    * camera.
+    */
+   public static final double THIRD_PI_D = 1.0471975511965976d;
+
+   /**
+    * Returns an object's identity hash code.
+    *
+    * @return the identity hash
+    */
+   public default int hashIdentity () {
+
+      return System.identityHashCode(this);
+   }
+
+   /**
+    * Returns an object's identity hash code as a String.
+    *
+    * @return the identity hash string
+    */
+   public default String hashIdentityString () {
+
+      return Integer.toHexString(this.hashIdentity());
+   }
+
+   /**
+    * Returns an object's hash code as a String.
+    *
+    * @return the hash string
+    */
+   public default String hashString () {
+
+      return Integer.toHexString(this.hashCode());
+   }
+}

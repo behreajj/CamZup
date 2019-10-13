@@ -1,0 +1,681 @@
+package camzup.pfriendly;
+
+import camzup.core.Color;
+import camzup.core.CurveEntity2;
+import camzup.core.IUtils;
+import camzup.core.MeshEntity2;
+import camzup.core.Utils;
+import camzup.core.Vec2;
+import processing.core.PApplet;
+
+/**
+ * Maintains consistent behavior across 2D renderers that
+ * extend different branches of PGraphics, such as
+ * PGraphics2D and PGraphicsJava2D.
+ */
+public interface IYup2 extends IUp {
+
+   /**
+    * Factor by which a grid's count is scaled when dimensions
+    * are not supplied.
+    */
+   public final float GRID_FAC = 32.0f;
+
+   /**
+    * Finds the mouse's location in world coordinates relative
+    * to the renderer's camera.
+    *
+    * @param parent
+    *           the PApplet
+    * @param renderer
+    *           the renderer
+    * @param target
+    *           the output vector
+    * @return the mouse coordinate
+    */
+   public static Vec2 mouse (
+         final PApplet parent,
+         final IYup2 renderer,
+         final Vec2 target ) {
+
+      // Normalize to [0.0, 1.0], then shift to [-0.5, 0.5].
+      float mx = parent.mouseX / (float) parent.width - 0.5f;
+      float my = 0.5f - parent.mouseY / (float) parent.height;
+
+      // Scale.
+      mx *= Utils.div(renderer.getWidth(), renderer.getZoomX());
+      my *= Utils.div(renderer.getHeight(), renderer.getZoomY());
+
+      // Rotate.
+      final float angle = renderer.getRot();
+
+      // final float cosa = (float) Math.cos(angle);
+      // final float sina = (float) Math.sin(angle);
+
+      final float cosa = PApplet.cos(angle);
+      final float sina = PApplet.sin(angle);
+
+      final float temp = mx;
+      mx = cosa * mx - sina * my;
+      my = cosa * my + sina * temp;
+
+      // Translate.
+      mx += renderer.getLocX();
+      my += renderer.getLocY();
+
+      return target.set(mx, my);
+   }
+
+   /**
+    * Gets a mouse within a unit square, where either component
+    * may be in the range [-1.0, 1.0]. The mouse's y coordinate
+    * is flipped. (This is not a normalized vector.)
+    * 
+    * @param parent
+    *           the parent applet
+    * @param renderer
+    *           the renderer
+    * @param target
+    *           the output vector
+    * @return the mouse
+    */
+   public static Vec2 mouse1 (
+         final PApplet parent,
+         final IYup2 renderer,
+         final Vec2 target ) {
+
+      final float mx = Utils.clamp01(
+            parent.mouseX / (float) parent.width);
+      final float my = Utils.clamp01(
+            parent.mouseY / (float) parent.height);
+
+      // return target.set(
+      //       2.0f * mx - 1.0f,
+      //       -2.0f * my + 1.0f);
+
+      return target.set(
+            (mx + mx) - 1.0f,
+            1.0f - (my + my));
+   }
+
+   /**
+    * Generates an SVG rect element to replicate the renderer's
+    * background. Assumes that the background is opaque, i.e.,
+    * has an alpha channel of 1.0 . Returns a String.
+    *
+    * @param renderer
+    *           the renderer
+    * @return the string
+    */
+   public static String svgBackground ( final IYup2 renderer ) {
+
+      final StringBuilder result = new StringBuilder();
+      result.append("<rect id=\"background\" ")
+            .append("x=\"0\" y=\"0\" ")
+            .append("width=\"")
+            .append(renderer.getWidth())
+            .append("\" height=\"")
+            .append(renderer.getHeight())
+            .append("\" stroke=\"none\" ")
+            .append("fill=\"")
+            .append(Color.toHexWeb(renderer.getBackground()))
+            .append("\"></rect>");
+      return result.toString();
+   }
+
+   /**
+    * Generates an SVG transform as a string from the
+    * renderer's dimensions, camera zoom, camera rotation and
+    * camera location.
+    *
+    * @param renderer
+    *           the renderer
+    * @return the string
+    */
+   public static String svgCamera ( final IYup2 renderer ) {
+
+      final StringBuilder result = new StringBuilder();
+      result.append("transform=\"translate(")
+            .append(renderer.getWidth() * 0.5f)
+            .append(", ")
+            .append(renderer.getHeight() * 0.5f)
+            .append(") scale(")
+            .append(renderer.getZoomX())
+            .append(", ")
+            .append(-renderer.getZoomY())
+            .append(") rotate(")
+            .append(-renderer.getRot() * IUtils.RAD_TO_DEG)
+            .append(") translate(")
+            .append(-renderer.getLocX())
+            .append(", ")
+            .append(-renderer.getLocY())
+            .append(")\"");
+      return result.toString();
+   }
+
+   /**
+    * Generates the boilerplate at the top of an SVG as a
+    * String based on the renderer's information. Includes the
+    * SVG's viewbox.
+    *
+    * @param renderer
+    *           the renderer
+    * @return the String
+    */
+   public static String svgHeader ( final IYup2 renderer ) {
+
+      final StringBuilder result = new StringBuilder();
+      result.append("<svg ")
+            .append("xmlns=\"http://www.w3.org/2000/svg\" ")
+            .append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ")
+            .append("viewBox=\"0 0 ")
+            .append((int) renderer.getWidth())
+            .append(" ")
+            .append((int) renderer.getHeight())
+            .append("\">");
+      return result.toString();
+   }
+
+   /**
+    * Generates an SVG string from several 2D curve entities.
+    *
+    * @param renderer
+    *           the renderer
+    * @param ces
+    *           the curve entities
+    * @return the string
+    */
+   public static String toSvgString ( final IYup2 renderer,
+         final CurveEntity2... ces ) {
+
+      final StringBuilder result = new StringBuilder();
+
+      result.append(IYup2.svgHeader(renderer))
+            .append("\n");
+
+      result.append(IYup2.svgBackground(renderer))
+            .append("\n");
+
+      result.append("<g ")
+            .append(IYup2.svgCamera(renderer))
+            .append(">\n");
+
+      for (final CurveEntity2 ce : ces) {
+         result.append(ce.toSvgString());
+         result.append("\n");
+      }
+
+      result.append("</g>\n")
+            .append("</svg>");
+      return result.toString();
+   }
+
+   /**
+    * Generates an SVG string from several 2D mesh entities.
+    *
+    * @param renderer
+    *           the renderer
+    * @param mes
+    *           the mesh entities
+    * @return the string
+    */
+   public static String toSvgString ( final IYup2 renderer,
+         final MeshEntity2... mes ) {
+
+      final StringBuilder result = new StringBuilder();
+
+      result.append(IYup2.svgHeader(renderer))
+            .append("\n");
+
+      result.append(IYup2.svgBackground(renderer))
+            .append("\n");
+
+      result.append("<g ")
+            .append(IYup2.svgCamera(renderer))
+            .append(">\n");
+
+      for (final MeshEntity2 me : mes) {
+         result.append(me.toSvgString());
+         result.append("\n");
+      }
+
+      result.append("</g>\n")
+            .append("</svg>");
+      return result.toString();
+   }
+
+   /**
+    * Draws an arc at a location from a start angle to a stop
+    * angle.
+    *
+    * @param v
+    *           the location
+    * @param sz
+    *           the arc size
+    * @param start
+    *           the start angle
+    * @param stop
+    *           the stop angle
+    * @param mode
+    *           the arc mode
+    */
+   public void arc (
+         final Vec2 v,
+         final float sz,
+         final float start, final float stop,
+         final int mode );
+
+   /**
+    * Draws a cubic Bezier curve between two anchor points,
+    * where the control points shape the curve.
+    *
+    * @param ap0
+    *           the first anchor point
+    * @param cp0
+    *           the first control point
+    * @param cp1
+    *           the second control point
+    * @param ap1
+    *           the second anchor point
+    */
+   public void bezier (
+         final Vec2 ap0, final Vec2 cp0,
+         final Vec2 cp1, final Vec2 ap1 );
+
+   /**
+    * Draws a cubic Bezier curve segment to the next anchor
+    * point; the first and second control point shape the curve
+    * segment.
+    *
+    * @param cp0
+    *           the first control point
+    * @param cp1
+    *           the second control point
+    * @param ap1
+    *           the next anchor point
+    */
+   public void bezierVertex (
+         final Vec2 cp0,
+         final Vec2 cp1,
+         final Vec2 ap1 );
+
+   /**
+    * Draws a circle at a location
+    *
+    * @param a
+    *           the coordinate
+    * @param b
+    *           the size
+    */
+   public void circle ( final Vec2 a, final float b );
+
+   /**
+    * Draws a curve between four points.
+    *
+    * @param a
+    *           the first point
+    * @param b
+    *           the second point
+    * @param c
+    *           the third point
+    * @param d
+    *           the fourth point
+    */
+   public void curve (
+         final Vec2 a,
+         final Vec2 b,
+         final Vec2 c,
+         final Vec2 d );
+
+   /**
+    * Draws a curve segment.
+    *
+    * @param a
+    *           the coordinate
+    */
+   public void curveVertex ( final Vec2 a );
+
+   /**
+    * Draws an ellipse; the meaning of the two parameters
+    * depends on the renderer's ellipseMode.
+    *
+    * @param a
+    *           the first parameter
+    * @param b
+    *           the second parameter
+    */
+   public void ellipse ( final Vec2 a, final Vec2 b );
+
+   /**
+    * Gets the renderer's background color as an integer.
+    *
+    * @return the color
+    */
+   public int getBackground ();
+
+   /**
+    * Gets the renderer's background color.
+    *
+    * @param target
+    *           the output color
+    * @return the background
+    */
+   public Color getBackground ( Color target );
+
+   /**
+    * Gets the renderer's camera location.
+    *
+    * @param target
+    *           the output vector
+    * @return the location
+    */
+   public Vec2 getLoc ( Vec2 target );
+
+   /**
+    * Gets the renderer's camera location on the x axis.
+    *
+    * @return the camera x
+    */
+   public float getLocX ();
+
+   /**
+    * Gets the renderer's camera location on the y axis.
+    *
+    * @return the camera y
+    */
+   public float getLocY ();
+
+   /**
+    * Gets the renderer's camera rotation in radians.
+    *
+    * @return the rotation
+    */
+   public float getRot ();
+
+   /**
+    * Gets the renderer's camera zoom.
+    *
+    * @param target
+    *           the output vector
+    * @return the zoom
+    */
+   public Vec2 getZoom ( Vec2 target );
+
+   /**
+    * Gets the renderer's camera horizontal zoom.
+    *
+    * @return the zoom factor
+    */
+   public float getZoomX ();
+
+   /**
+    * Gets the renderer's camera vertical zoom.
+    *
+    * @return the zoom factor
+    */
+   public float getZoomY ();
+
+   /**
+    * Draws a diagnostic grid out of points.
+    *
+    * @param count
+    *           number of points
+    * @param strokeWeight
+    *           stroke weight
+    */
+   public default void grid (
+         final int count,
+         final float strokeWeight ) {
+
+      this.grid(
+            count,
+            strokeWeight,
+            count * IYup2.GRID_FAC);
+   }
+
+   /**
+    * Draws a diagnostic grid out of points.
+    *
+    * @param count
+    *           number of points
+    * @param strokeWeight
+    *           stroke weight
+    * @param dim
+    *           the grid dimensions
+    */
+   public default void grid (
+         final int count,
+         final float strokeWeight,
+         final float dim ) {
+
+      this.pushStyle();
+      this.strokeWeight(strokeWeight);
+
+      final float right = dim * 0.5f;
+      final float left = -right;
+
+      final float top = dim * 0.5f;
+      final float bottom = -top;
+
+      final float toPercent = 1.0f / count;
+      final int last = count + 1;
+
+      final int ab = 0xff000080;
+
+      /**
+       * Precalculate values for inner loop.
+       */
+      final float[] xs = new float[last];
+      final int[] reds = new int[last];
+      for (int j = 0; j < last; ++j) {
+         final float jPercent = j * toPercent;
+         xs[j] = Utils.lerpUnclamped(left, right, jPercent);
+         reds[j] = (int) (jPercent * 255.0f + 0.5f) << 16;
+      }
+
+      for (int i = 0; i < last; ++i) {
+         final float iPercent = i * toPercent;
+         final float y = Utils.lerpUnclamped(bottom, top, iPercent);
+         final int green = (int) (iPercent * 255.0f + 0.5f) << 8;
+         final int agb = ab | green;
+
+         for (int j = 0; j < last; ++j) {
+            this.stroke(agb | reds[j]);
+            this.point(xs[j], y);
+         }
+      }
+
+      this.popStyle();
+   }
+
+   /**
+    * Sets the renderer's image mode.
+    *
+    * @param mode
+    *           the mode
+    */
+   public void imageMode ( final int mode );
+
+   /**
+    * Draws a line between two coordinates.
+    *
+    * @param a
+    *           the origin coordinate
+    * @param b
+    *           the destination coordinate
+    */
+   public void line ( final Vec2 a, final Vec2 b );
+
+   /**
+    * Finds the mouse's location in world coordinates relative
+    * to the renderer's camera.
+    *
+    * @param target
+    *           the output vector
+    * @return the mouse coordinate
+    */
+   public default Vec2 mouse ( final Vec2 target ) {
+
+      return IYup2.mouse(this.getParent(), this, target);
+   }
+
+   /**
+    * Gets a mouse within a unit square, where either component
+    * may be in the range [-1.0, 1.0]. (This is not a
+    * normalized vector.)
+    * 
+    * @param target
+    *           the output vector
+    * @return the mouse
+    */
+   public default Vec2 mouse1 ( final Vec2 target ) {
+
+      return IYup2.mouse1(this.getParent(), this, target);
+   }
+
+   /**
+    * Draws a 2D point.
+    *
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    */
+   public void point ( final float x, final float y );
+
+   /**
+    * Draws a point at a given coordinate
+    *
+    * @param v
+    *           the coordinate
+    */
+   public default void point ( final Vec2 v ) {
+
+      this.point(v.x, v.y);
+   }
+
+   /**
+    * Pop the last style off the end of the stack.
+    */
+   public void popStyle ();
+
+   /**
+    * Push a style onto the end of the stack.
+    */
+   public void pushStyle ();
+
+   /**
+    * Draws a quadrilateral between four points.
+    *
+    * @param a
+    *           the first point
+    * @param b
+    *           the second point
+    * @param c
+    *           the third point
+    * @param d
+    *           the fourth point
+    */
+   public void quad (
+         final Vec2 a, final Vec2 b,
+         final Vec2 c, final Vec2 d );
+
+   /**
+    * Draws a quadratic Bezier curve segment to the next anchor
+    * point; the control point shapes the curve segment.
+    *
+    * @param cp
+    *           the control point
+    * @param ap1
+    *           the next anchor point
+    */
+   public void quadraticVertex (
+         final Vec2 cp,
+         final Vec2 ap1 );
+
+   /**
+    * Draws a rectangle; the meaning of the two parameters
+    * depends on the renderer's rectMode.
+    *
+    * @param a
+    *           the first parameter
+    * @param b
+    *           the second parameter
+    */
+   public void rect ( final Vec2 a, final Vec2 b );
+
+   /**
+    * Draws a square at a location.
+    *
+    * @param a
+    *           the location
+    * @param b
+    *           the size
+    */
+   public void square ( final Vec2 a, final float b );
+
+   /**
+    * Sets the renderer's stroke color.
+    *
+    * @param c
+    *           the hexadecimal color
+    */
+   @Override
+   public void stroke ( final int c );
+
+   /**
+    * Sets the renderer's stroke weight.
+    *
+    * @param sw
+    *           the stroke weight
+    */
+   public void strokeWeight ( final float sw );
+
+   /**
+    * Generates an SVG string from several 2D curve entities.
+    *
+    * @param ces
+    *           the curve entities
+    * @return the string
+    */
+   public default String toSvgString ( final CurveEntity2... ces ) {
+
+      return IYup2.toSvgString(this, ces);
+   }
+
+   /**
+    * Generates an SVG string from several 2D mesh entities.
+    *
+    * @param mes
+    *           the mesh entities
+    * @return the string
+    */
+   public default String toSvgString ( final MeshEntity2... mes ) {
+
+      return IYup2.toSvgString(this, mes);
+   }
+
+   /**
+    * Draws a triangle between three points.
+    *
+    * @param a
+    *           the first point
+    * @param b
+    *           the second point
+    * @param c
+    *           the third point
+    */
+   public void triangle (
+         final Vec2 a,
+         final Vec2 b,
+         final Vec2 c );
+
+   /**
+    * Adds another vertex to a shape between the beginShape and
+    * endShape commands.
+    *
+    * @param v
+    *           the coordinate
+    */
+   public void vertex ( final Vec2 v );
+}
