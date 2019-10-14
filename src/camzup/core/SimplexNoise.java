@@ -13,7 +13,7 @@ public class SimplexNoise {
     * Gradients for 2D. They approximate the directions to the
     * vertices of an octagon from the center.
     */
-   protected static final byte[] gradients2D = new byte[] {
+   protected static final byte[] gradients2 = new byte[] {
          5, 2, 2, 5,
          -5, 2, -2, 5,
          5, -2, 2, -5,
@@ -26,7 +26,7 @@ public class SimplexNoise {
     * so that the triangular and square facets can be inscribed
     * inside circles of the same radius.
     */
-   protected static final byte[] gradients3D = new byte[] {
+   protected static final byte[] gradients3 = new byte[] {
          -11, 4, 4, -4, 11, 4, -4, 4, 11,
          11, 4, 4, 4, 11, 4, 4, 4, 11,
          -11, -4, 4, -4, -11, 4, -4, -4, 11,
@@ -44,7 +44,7 @@ public class SimplexNoise {
     * facets can be inscribed inside spheres of the same
     * radius.
     */
-   protected static final byte[] gradients4D = new byte[] {
+   protected static final byte[] gradients4 = new byte[] {
          3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3,
          -3, 1, 1, 1, -1, 3, 1, 1, -1, 1, 3, 1, -1, 1, 1, 3,
          3, -1, 1, 1, 1, -3, 1, 1, 1, -1, 3, 1, 1, -1, 1, 3,
@@ -64,43 +64,43 @@ public class SimplexNoise {
    };
 
    /* 1.0d / 47.0d; */
-   public static final float INV_NORM_CONST_2 = 0.021276596f;
+   protected static final float INV_NORM_CONST_2 = 0.021276596f;
 
    /* 1.0d / 103.0d; */
-   public static final float INV_NORM_CONST_3 = 0.009708738f;
+   protected static final float INV_NORM_CONST_3 = 0.009708738f;
 
    /* 1.0d / 30.0d; */
-   public static final float INV_NORM_CONST_4 = 0.033333333f;
+   protected static final float INV_NORM_CONST_4 = 0.033333333f;
 
    /* (Math.sqrt(3.0d) - 1.0d) / 2.0d; */
-   public static final float SQUISH_CONSTANT_2 = 0.3660254037844386f;
+   protected static final float SQUISH_CONST_2 = 0.3660254037844386f;
 
-   public static final float SQUISH_CONSTANT_2_2 = 0.7320508075688773f;
+   protected static final float SQUISH_CONST_2_2 = 0.7320508075688773f;
 
    /* (Math.sqrt(4.0d) - 1.0d) / 3.0d; */
-   public static final float SQUISH_CONSTANT_3 = 0.3333333333333333f;
+   protected static final float SQUISH_CONST_3 = 0.3333333333333333f;
 
-   public static final float SQUISH_CONSTANT_3_2 = 0.6666666666666667f;
+   protected static final float SQUISH_CONST_3_2 = 0.6666666666666667f;
 
-   public static final float SQUISH_CONSTANT_3_3 = 1.0f;
+   protected static final float SQUISH_CONSTANT_3_3 = 1.0f;
 
    /* (Math.sqrt(5.0d) - 1.0d) / 4.0d; */
-   public static final float SQUISH_CONSTANT_4 = 0.30901699437494745f;
+   protected static final float SQUISH_CONST_4 = 0.30901699437494745f;
 
-   public static final float SQUISH_CONSTANT_4_2 = 0.61803398874989485f;
+   protected static final float SQUISH_CONST_4_2 = 0.61803398874989485f;
 
-   public static final float SQUISH_CONSTANT_4_3 = 0.92705098312484227f;
+   protected static final float SQUISH_CONST_4_3 = 0.92705098312484227f;
 
-   public static final float SQUISH_CONSTANT_4_4 = 1.23606797749978970f;
+   protected static final float SQUISH_CONST_4_4 = 1.23606797749978970f;
 
    /* (1.0d / Math.sqrt(3.0d) - 1.0d) / 2.0d */
-   public static final float STRETCH_CONSTANT_2 = -0.21132486540518708f;
+   protected static final float STRETCH_CONST_2 = -0.21132486540518708f;
 
    /* (1.0d / Math.sqrt(4.0d) - 1.0d) / 3.0d */
-   public static final float STRETCH_CONSTANT_3 = -0.16666666666666667f;
+   protected static final float STRETCH_CONST_3 = -0.16666666666666667f;
 
    /* (1.0d / Math.sqrt(5.0d) - 1.0d) / 4.0d */
-   public static final float STRETCH_CONSTANT_4 = -0.13819660112501053f;
+   protected static final float STRETCH_CONST_4 = -0.13819660112501053f;
 
    protected final short[] perm;
 
@@ -129,7 +129,7 @@ public class SimplexNoise {
       seed = seed * 6364136223846793005l + 1442695040888963407l;
       seed = seed * 6364136223846793005l + 1442695040888963407l;
       seed = seed * 6364136223846793005l + 1442695040888963407l;
-      final int modulator = SimplexNoise.gradients3D.length / 3;
+      final int modulator = SimplexNoise.gradients3.length / 3;
       for (int i = 255; i >= 0; i--) {
          seed = seed * 6364136223846793005l + 1442695040888963407l;
          int r = (int) ((seed + 31) % (i + 1));
@@ -147,7 +147,7 @@ public class SimplexNoise {
       this.perm = perm;
       this.permGradIndex3D = new short[256];
 
-      final int modulator = SimplexNoise.gradients3D.length / 3;
+      final int modulator = SimplexNoise.gradients3.length / 3;
       for (int i = 0; i < 256; ++i) {
 
          /*
@@ -163,7 +163,7 @@ public class SimplexNoise {
          final float y ) {
 
       /* Place input coordinates onto grid. */
-      final float stretchOffset = (x + y) * SimplexNoise.STRETCH_CONSTANT_2;
+      final float stretchOffset = (x + y) * SimplexNoise.STRETCH_CONST_2;
       final float xs = x + stretchOffset;
       final float ys = y + stretchOffset;
 
@@ -178,7 +178,7 @@ public class SimplexNoise {
        * Skew out to get actual coordinates of rhombus origin.
        * We'll need these later.
        */
-      final float squishOffset = (xsb + ysb) * SimplexNoise.SQUISH_CONSTANT_2;
+      final float squishOffset = (xsb + ysb) * SimplexNoise.SQUISH_CONST_2;
       final float xb = xsb + squishOffset;
       final float yb = ysb + squishOffset;
 
@@ -200,33 +200,33 @@ public class SimplexNoise {
        * We'll be defining these inside the next block and using
        * them afterwards.
        */
-      float dx_ext;
-      float dy_ext;
-      int xsv_ext;
-      int ysv_ext;
+      float dxExt;
+      float dyExt;
+      int xsvExt;
+      int ysvExt;
 
       float value = 0;
 
       /* Contribution (1, 0) */
-      final float dx1 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_2;
-      final float dy1 = dy0 - SimplexNoise.SQUISH_CONSTANT_2;
+      final float dx1 = dx0 - 1 - SimplexNoise.SQUISH_CONST_2;
+      final float dy1 = dy0 - SimplexNoise.SQUISH_CONST_2;
       float attn1 = 2 - dx1 * dx1 - dy1 * dy1;
       if (attn1 > 0) {
          attn1 *= attn1;
          value += attn1 * attn1 * this.extrapolate(
-            xsb + 1, ysb,
-            dx1, dy1);
+               xsb + 1, ysb,
+               dx1, dy1);
       }
 
       /* Contribution (0, 1) */
-      final float dx2 = dx0 - SimplexNoise.SQUISH_CONSTANT_2;
-      final float dy2 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_2;
+      final float dx2 = dx0 - SimplexNoise.SQUISH_CONST_2;
+      final float dy2 = dy0 - 1 - SimplexNoise.SQUISH_CONST_2;
       float attn2 = 2 - dx2 * dx2 - dy2 * dy2;
       if (attn2 > 0) {
          attn2 *= attn2;
          value += attn2 * attn2 * this.extrapolate(
-            xsb, ysb + 1,
-            dx2, dy2);
+               xsb, ysb + 1,
+               dx2, dy2);
       }
 
       if (inSum <= 1) {
@@ -235,73 +235,70 @@ public class SimplexNoise {
          final float zins = 1 - inSum;
          if (zins > xins || zins > yins) {
 
-            /*
-             * (0, 0) is one of the closest two triangular vertices
-             */
+            /* (0, 0) is one of the closest two triangular vertices */
             if (xins > yins) {
-               xsv_ext = xsb + 1;
-               ysv_ext = ysb - 1;
-               dx_ext = dx0 - 1;
-               dy_ext = dy0 + 1;
+               xsvExt = xsb + 1;
+               ysvExt = ysb - 1;
+               dxExt = dx0 - 1;
+               dyExt = dy0 + 1;
             } else {
-               xsv_ext = xsb - 1;
-               ysv_ext = ysb + 1;
-               dx_ext = dx0 + 1;
-               dy_ext = dy0 - 1;
+               xsvExt = xsb - 1;
+               ysvExt = ysb + 1;
+               dxExt = dx0 + 1;
+               dyExt = dy0 - 1;
             }
          } else {
             /* (1, 0) and (0, 1) are the closest two vertices. */
-            xsv_ext = xsb + 1;
-            ysv_ext = ysb + 1;
-            dx_ext = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_2_2;
-            dy_ext = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_2_2;
+            xsvExt = xsb + 1;
+            ysvExt = ysb + 1;
+            dxExt = dx0 - 1 - SimplexNoise.SQUISH_CONST_2_2;
+            dyExt = dy0 - 1 - SimplexNoise.SQUISH_CONST_2_2;
          }
       } else {
          /* We're inside the triangle (2-Simplex) at (1, 1) */
          final float zins = 2 - inSum;
-         if (zins < xins || zins < yins) { 
-            // (0,0) is one of the closest two
-                                           // triangular vertices
+         if (zins < xins || zins < yins) {
+            /* (0, 0) is one of the closest two triangular vertices */
             if (xins > yins) {
-               xsv_ext = xsb + 2;
-               ysv_ext = ysb;
-               dx_ext = dx0 - 2 - SimplexNoise.SQUISH_CONSTANT_2_2;
-               dy_ext = dy0 - SimplexNoise.SQUISH_CONSTANT_2_2;
+               xsvExt = xsb + 2;
+               ysvExt = ysb;
+               dxExt = dx0 - 2 - SimplexNoise.SQUISH_CONST_2_2;
+               dyExt = dy0 - SimplexNoise.SQUISH_CONST_2_2;
             } else {
-               xsv_ext = xsb;
-               ysv_ext = ysb + 2;
-               dx_ext = dx0 - SimplexNoise.SQUISH_CONSTANT_2_2;
-               dy_ext = dy0 - 2 - SimplexNoise.SQUISH_CONSTANT_2_2;
+               xsvExt = xsb;
+               ysvExt = ysb + 2;
+               dxExt = dx0 - SimplexNoise.SQUISH_CONST_2_2;
+               dyExt = dy0 - 2 - SimplexNoise.SQUISH_CONST_2_2;
             }
-         } else { 
-            // (1,0) and (0,1) are the closest two vertices.
-            dx_ext = dx0;
-            dy_ext = dy0;
-            xsv_ext = xsb;
-            ysv_ext = ysb;
+         } else {
+            /* (1, 0) and (0, 1) are the closest two vertices. */
+            dxExt = dx0;
+            dyExt = dy0;
+            xsvExt = xsb;
+            ysvExt = ysb;
          }
          xsb += 1;
          ysb += 1;
-         dx0 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_2_2;
-         dy0 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_2_2;
+         dx0 = dx0 - 1 - SimplexNoise.SQUISH_CONST_2_2;
+         dy0 = dy0 - 1 - SimplexNoise.SQUISH_CONST_2_2;
       }
 
-      // Contribution (0,0) or (1,1)
+      /* Contribution (0, 0) or (1, 1) */
       float attn0 = 2 - dx0 * dx0 - dy0 * dy0;
       if (attn0 > 0) {
          attn0 *= attn0;
          value += attn0 * attn0 * this.extrapolate(
-            xsb, ysb,
-            dx0, dy0);
+               xsb, ysb,
+               dx0, dy0);
       }
 
-      // Extra Vertex
-      float attn_ext = 2 - dx_ext * dx_ext - dy_ext * dy_ext;
+      /* Extra Vertex */
+      float attn_ext = 2 - dxExt * dxExt - dyExt * dyExt;
       if (attn_ext > 0) {
          attn_ext *= attn_ext;
          value += attn_ext * attn_ext * this.extrapolate(
-            xsv_ext, ysv_ext,
-            dx_ext, dy_ext);
+               xsvExt, ysvExt,
+               dxExt, dyExt);
       }
 
       return value * SimplexNoise.INV_NORM_CONST_2;
@@ -312,21 +309,26 @@ public class SimplexNoise {
          final float y,
          final float z ) {
 
-      // Place input coordinates on simplectic honeycomb.
-      final float stretchOffset = (x + y + z) * SimplexNoise.STRETCH_CONSTANT_3;
+      /* Place input coordinates on simplectic honeycomb. */
+      final float stretchOffset = (x + y + z) * SimplexNoise.STRETCH_CONST_3;
       final float xs = x + stretchOffset;
       final float ys = y + stretchOffset;
       final float zs = z + stretchOffset;
 
-      // Floor to get simplectic honeycomb coordinates of
-      // rhombohedron (stretched cube) super-cell origin.
+      /*
+       * Floor to get simplectic honeycomb coordinates of
+       * rhombohedron (stretched cube) super-cell origin.
+       */
       final int xsb = Utils.floorToInt(xs);
       final int ysb = Utils.floorToInt(ys);
       final int zsb = Utils.floorToInt(zs);
 
-      // Skew out to get actual coordinates of rhombohedron
-      // origin. We'll need these later.
-      final float squishOffset = (xsb + ysb + zsb) * SimplexNoise.SQUISH_CONSTANT_3;
+      /*
+       * Skew out to get actual coordinates of rhombohedron
+       * origin. We'll need these later.
+       */
+      final float squishOffset = (xsb + ysb + zsb)
+            * SimplexNoise.SQUISH_CONST_3;
       final float xb = xsb + squishOffset;
       final float yb = ysb + squishOffset;
       final float zb = zsb + squishOffset;
@@ -339,8 +341,10 @@ public class SimplexNoise {
       final float yins = ys - ysb;
       final float zins = zs - zsb;
 
-      // Sum those together to get a value that determines which
-      // region we're in.
+      /*
+       * Sum those together to get a value that determines which
+       * region we're in.
+       */
       final float inSum = xins + yins + zins;
 
       // Positions relative to origin point.
@@ -348,19 +352,31 @@ public class SimplexNoise {
       float dy0 = y - yb;
       float dz0 = z - zb;
 
-      // We'll be defining these inside the next block and using
-      // them afterwards.
-      float dx_ext0, dy_ext0, dz_ext0;
-      float dx_ext1, dy_ext1, dz_ext1;
-      int xsv_ext0, ysv_ext0, zsv_ext0;
-      int xsv_ext1, ysv_ext1, zsv_ext1;
+      /*
+       * We'll be defining these inside the next block and using
+       * them afterwards.
+       */
+      float dx_ext0;
+      float dy_ext0;
+      float dz_ext0;
+      float dx_ext1;
+      float dy_ext1;
+      float dz_ext1;
+
+      int xsv_ext0;
+      int ysv_ext0;
+      int zsv_ext0;
+      int xsv_ext1;
+      int ysv_ext1;
+      int zsv_ext1;
 
       float value = 0;
-      if (inSum <= 1) { 
-         // We're inside the tetrahedron (3-Simplex) at (0, 0, 0)
-
-         // Determine which two of (0, 0, 1), (0, 1, 0), (1, 0, 0) are
-         // closest.
+      if (inSum <= 1) {
+         /*
+          * We're inside the tetrahedron (3-Simplex) at (0, 0, 0).
+          * Determine which two of (0, 0, 1), (0, 1, 0), (1, 0, 0)
+          * are closest.
+          */
          byte aPoint = 0x01;
          float aScore = xins;
          byte bPoint = 0x02;
@@ -378,16 +394,14 @@ public class SimplexNoise {
          // This depends on the closest two tetrahedral vertices,
          // including (0,0,0)
          final float wins = 1 - inSum;
-         if (wins > aScore || wins > bScore) { 
+         if (wins > aScore || wins > bScore) {
             // (0,0,0) is one of the closest
             // two tetrahedral vertices.
-            final byte c = bScore > aScore ? bPoint : aPoint; 
-            // Our other
-            // closest
-            // vertex is the
-            // closest out of a
-            // and b.
-
+            final byte c = bScore > aScore ? bPoint : aPoint;
+            
+            /*
+             * Our other closest vertex is the closest out of a and b.
+             */
             if ((c & 0x01) == 0) {
                xsv_ext0 = xsb - 1;
                xsv_ext1 = xsb;
@@ -422,12 +436,12 @@ public class SimplexNoise {
                zsv_ext0 = zsv_ext1 = zsb + 1;
                dz_ext0 = dz_ext1 = dz0 - 1;
             }
-         } else { 
+         } else {
             // (0,0,0) is not one of the closest two tetrahedral
             // vertices.
-            
-            final byte c = (byte) (aPoint | bPoint); 
-            
+
+            final byte c = (byte) (aPoint | bPoint);
+
             // Our two extra vertices
             // are
             // determined by the closest two.
@@ -435,34 +449,34 @@ public class SimplexNoise {
             if ((c & 0x01) == 0) {
                xsv_ext0 = xsb;
                xsv_ext1 = xsb - 1;
-               dx_ext0 = dx0 - SimplexNoise.SQUISH_CONSTANT_3_2;
-               dx_ext1 = dx0 + 1 - SimplexNoise.SQUISH_CONSTANT_3;
+               dx_ext0 = dx0 - SimplexNoise.SQUISH_CONST_3_2;
+               dx_ext1 = dx0 + 1 - SimplexNoise.SQUISH_CONST_3;
             } else {
                xsv_ext0 = xsv_ext1 = xsb + 1;
-               dx_ext0 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_3_2;
-               dx_ext1 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
+               dx_ext0 = dx0 - 1 - SimplexNoise.SQUISH_CONST_3_2;
+               dx_ext1 = dx0 - 1 - SimplexNoise.SQUISH_CONST_3;
             }
 
             if ((c & 0x02) == 0) {
                ysv_ext0 = ysb;
                ysv_ext1 = ysb - 1;
-               dy_ext0 = dy0 - SimplexNoise.SQUISH_CONSTANT_3_2;
-               dy_ext1 = dy0 + 1 - SimplexNoise.SQUISH_CONSTANT_3;
+               dy_ext0 = dy0 - SimplexNoise.SQUISH_CONST_3_2;
+               dy_ext1 = dy0 + 1 - SimplexNoise.SQUISH_CONST_3;
             } else {
                ysv_ext0 = ysv_ext1 = ysb + 1;
-               dy_ext0 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_3_2;
-               dy_ext1 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
+               dy_ext0 = dy0 - 1 - SimplexNoise.SQUISH_CONST_3_2;
+               dy_ext1 = dy0 - 1 - SimplexNoise.SQUISH_CONST_3;
             }
 
             if ((c & 0x04) == 0) {
                zsv_ext0 = zsb;
                zsv_ext1 = zsb - 1;
-               dz_ext0 = dz0 - SimplexNoise.SQUISH_CONSTANT_3_2;
-               dz_ext1 = dz0 + 1 - SimplexNoise.SQUISH_CONSTANT_3;
+               dz_ext0 = dz0 - SimplexNoise.SQUISH_CONST_3_2;
+               dz_ext1 = dz0 + 1 - SimplexNoise.SQUISH_CONST_3;
             } else {
                zsv_ext0 = zsv_ext1 = zsb + 1;
-               dz_ext0 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_3_2;
-               dz_ext1 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
+               dz_ext0 = dz0 - 1 - SimplexNoise.SQUISH_CONST_3_2;
+               dz_ext1 = dz0 - 1 - SimplexNoise.SQUISH_CONST_3;
             }
          }
 
@@ -471,48 +485,48 @@ public class SimplexNoise {
          if (attn0 > 0) {
             attn0 *= attn0;
             value += attn0 * attn0 * this.extrapolate(
-               xsb, ysb, zsb,
-               dx0, dy0, dz0);
+                  xsb, ysb, zsb,
+                  dx0, dy0, dz0);
          }
 
          // Contribution (1, 0, 0)
-         final float dx1 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
-         final float dy1 = dy0 - SimplexNoise.SQUISH_CONSTANT_3;
-         final float dz1 = dz0 - SimplexNoise.SQUISH_CONSTANT_3;
+         final float dx1 = dx0 - 1 - SimplexNoise.SQUISH_CONST_3;
+         final float dy1 = dy0 - SimplexNoise.SQUISH_CONST_3;
+         final float dz1 = dz0 - SimplexNoise.SQUISH_CONST_3;
          float attn1 = 2 - dx1 * dx1 - dy1 * dy1 - dz1 * dz1;
          if (attn1 > 0) {
             attn1 *= attn1;
             value += attn1 * attn1 * this.extrapolate(
-                     xsb + 1, ysb, zsb,
-                     dx1, dy1, dz1);
+                  xsb + 1, ysb, zsb,
+                  dx1, dy1, dz1);
          }
 
          // Contribution (0, 1, 0)
-         final float dx2 = dx0 - SimplexNoise.SQUISH_CONSTANT_3;
-         final float dy2 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
+         final float dx2 = dx0 - SimplexNoise.SQUISH_CONST_3;
+         final float dy2 = dy0 - 1 - SimplexNoise.SQUISH_CONST_3;
          final float dz2 = dz1;
          float attn2 = 2 - dx2 * dx2 - dy2 * dy2 - dz2 * dz2;
          if (attn2 > 0) {
             attn2 *= attn2;
             value += attn2 * attn2 * this.extrapolate(
-               xsb, ysb + 1, zsb,
-               dx2, dy2, dz2);
+                  xsb, ysb + 1, zsb,
+                  dx2, dy2, dz2);
          }
 
          // Contribution (0, 0, 1)
          final float dx3 = dx2;
          final float dy3 = dy1;
-         final float dz3 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
+         final float dz3 = dz0 - 1 - SimplexNoise.SQUISH_CONST_3;
          float attn3 = 2 - dx3 * dx3 - dy3 * dy3 - dz3 * dz3;
          if (attn3 > 0) {
             attn3 *= attn3;
             value += attn3 * attn3 * this.extrapolate(
-               xsb, ysb, zsb + 1,
-               dx3, dy3, dz3);
+                  xsb, ysb, zsb + 1,
+                  dx3, dy3, dz3);
          }
       } else if (inSum >= 2) {
-          // We're inside the tetrahedron (3-Simplex) at
-          // (1, 1, 1)
+         // We're inside the tetrahedron (3-Simplex) at
+         // (1, 1, 1)
 
          // Determine which two tetrahedral vertices are the closest,
          // out of (1, 1, 0), (1, 0, 1), (0, 1, 1) but not (1, 1, 1).
@@ -529,16 +543,15 @@ public class SimplexNoise {
          }
 
          /**
-         * Now we determine the two lattice points not part of the
-         * tetrahedron that may contribute.
-         * This depends on the closest two tetrahedral vertices,
-         * including (1, 1, 1)
-         */
+          * Now we determine the two lattice points not part of the
+          * tetrahedron that may contribute. This depends on the
+          * closest two tetrahedral vertices, including (1, 1, 1)
+          */
          final float wins = 3 - inSum;
          if (wins < aScore || wins < bScore) {
-             // (1,1,1) is one of the closest
-             // two tetrahedral vertices.
-            final byte c = bScore < aScore ? bPoint : aPoint; 
+            // (1,1,1) is one of the closest
+            // two tetrahedral vertices.
+            final byte c = bScore < aScore ? bPoint : aPoint;
             // Our other
             // closest
             // vertex is the
@@ -579,10 +592,10 @@ public class SimplexNoise {
                zsv_ext0 = zsv_ext1 = zsb;
                dz_ext0 = dz_ext1 = dz0 - SimplexNoise.SQUISH_CONSTANT_3_3;
             }
-         } else { 
+         } else {
             // (1,1,1) is not one of the closest two tetrahedral
-                  // vertices.
-            final byte c = (byte) (aPoint & bPoint); 
+            // vertices.
+            final byte c = (byte) (aPoint & bPoint);
             // Our two extra vertices
             // are
             // determined by the closest two.
@@ -590,71 +603,71 @@ public class SimplexNoise {
             if ((c & 0x01) != 0) {
                xsv_ext0 = xsb + 1;
                xsv_ext1 = xsb + 2;
-               dx_ext0 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
-               dx_ext1 = dx0 - 2 - SimplexNoise.SQUISH_CONSTANT_3_2;
+               dx_ext0 = dx0 - 1 - SimplexNoise.SQUISH_CONST_3;
+               dx_ext1 = dx0 - 2 - SimplexNoise.SQUISH_CONST_3_2;
             } else {
                xsv_ext0 = xsv_ext1 = xsb;
-               dx_ext0 = dx0 - SimplexNoise.SQUISH_CONSTANT_3;
-               dx_ext1 = dx0 - SimplexNoise.SQUISH_CONSTANT_3_2;
+               dx_ext0 = dx0 - SimplexNoise.SQUISH_CONST_3;
+               dx_ext1 = dx0 - SimplexNoise.SQUISH_CONST_3_2;
             }
 
             if ((c & 0x02) != 0) {
                ysv_ext0 = ysb + 1;
                ysv_ext1 = ysb + 2;
-               dy_ext0 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
-               dy_ext1 = dy0 - 2 - SimplexNoise.SQUISH_CONSTANT_3_2;
+               dy_ext0 = dy0 - 1 - SimplexNoise.SQUISH_CONST_3;
+               dy_ext1 = dy0 - 2 - SimplexNoise.SQUISH_CONST_3_2;
             } else {
                ysv_ext0 = ysv_ext1 = ysb;
-               dy_ext0 = dy0 - SimplexNoise.SQUISH_CONSTANT_3;
-               dy_ext1 = dy0 - SimplexNoise.SQUISH_CONSTANT_3_2;
+               dy_ext0 = dy0 - SimplexNoise.SQUISH_CONST_3;
+               dy_ext1 = dy0 - SimplexNoise.SQUISH_CONST_3_2;
             }
 
             if ((c & 0x04) != 0) {
                zsv_ext0 = zsb + 1;
                zsv_ext1 = zsb + 2;
-               dz_ext0 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
-               dz_ext1 = dz0 - 2 - SimplexNoise.SQUISH_CONSTANT_3_2;
+               dz_ext0 = dz0 - 1 - SimplexNoise.SQUISH_CONST_3;
+               dz_ext1 = dz0 - 2 - SimplexNoise.SQUISH_CONST_3_2;
             } else {
                zsv_ext0 = zsv_ext1 = zsb;
-               dz_ext0 = dz0 - SimplexNoise.SQUISH_CONSTANT_3;
-               dz_ext1 = dz0 - SimplexNoise.SQUISH_CONSTANT_3_2;
+               dz_ext0 = dz0 - SimplexNoise.SQUISH_CONST_3;
+               dz_ext1 = dz0 - SimplexNoise.SQUISH_CONST_3_2;
             }
          }
 
          // Contribution (1,1,0)
-         final float dx3 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_3_2;
-         final float dy3 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_3_2;
-         final float dz3 = dz0 - SimplexNoise.SQUISH_CONSTANT_3_2;
+         final float dx3 = dx0 - 1 - SimplexNoise.SQUISH_CONST_3_2;
+         final float dy3 = dy0 - 1 - SimplexNoise.SQUISH_CONST_3_2;
+         final float dz3 = dz0 - SimplexNoise.SQUISH_CONST_3_2;
          float attn3 = 2 - dx3 * dx3 - dy3 * dy3 - dz3 * dz3;
          if (attn3 > 0) {
             attn3 *= attn3;
             value += attn3 * attn3 * this.extrapolate(
-               xsb + 1, ysb + 1, zsb,
-               dx3, dy3, dz3);
+                  xsb + 1, ysb + 1, zsb,
+                  dx3, dy3, dz3);
          }
 
          // Contribution (1,0,1)
          final float dx2 = dx3;
-         final float dy2 = dy0 - SimplexNoise.SQUISH_CONSTANT_3_2;
-         final float dz2 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_3_2;
+         final float dy2 = dy0 - SimplexNoise.SQUISH_CONST_3_2;
+         final float dz2 = dz0 - 1 - SimplexNoise.SQUISH_CONST_3_2;
          float attn2 = 2 - dx2 * dx2 - dy2 * dy2 - dz2 * dz2;
          if (attn2 > 0) {
             attn2 *= attn2;
             value += attn2 * attn2 * this.extrapolate(
-               xsb + 1, ysb, zsb + 1,
-               dx2, dy2, dz2);
+                  xsb + 1, ysb, zsb + 1,
+                  dx2, dy2, dz2);
          }
 
          // Contribution (0,1,1)
-         final float dx1 = dx0 - SimplexNoise.SQUISH_CONSTANT_3_2;
+         final float dx1 = dx0 - SimplexNoise.SQUISH_CONST_3_2;
          final float dy1 = dy3;
          final float dz1 = dz2;
          float attn1 = 2 - dx1 * dx1 - dy1 * dy1 - dz1 * dz1;
          if (attn1 > 0) {
             attn1 *= attn1;
             value += attn1 * attn1 * this.extrapolate(
-               xsb, ysb + 1, zsb + 1,
-               dx1, dy1, dz1);
+                  xsb, ysb + 1, zsb + 1,
+                  dx1, dy1, dz1);
          }
 
          // Contribution (1,1,1)
@@ -665,10 +678,10 @@ public class SimplexNoise {
          if (attn0 > 0) {
             attn0 *= attn0;
             value += attn0 * attn0 * this.extrapolate(
-               xsb + 1, ysb + 1, zsb + 1,
-               dx0, dy0, dz0);
+                  xsb + 1, ysb + 1, zsb + 1,
+                  dx0, dy0, dz0);
          }
-      } else { 
+      } else {
          // We're inside the octahedron (Rectified 3-Simplex) in
          // between.
          float aScore;
@@ -733,7 +746,7 @@ public class SimplexNoise {
          // Where each of the two closest points are determines how
          // the extra two vertices are calculated.
          if (aIsFurtherSide == bIsFurtherSide) {
-            if (aIsFurtherSide) { 
+            if (aIsFurtherSide) {
                // Both closest points on (1,1,1) side
 
                // One of the two extra points is (1,1,1)
@@ -747,23 +760,23 @@ public class SimplexNoise {
                // Other extra point is based on the shared axis.
                final byte c = (byte) (aPoint & bPoint);
                if ((c & 0x01) != 0) {
-                  dx_ext1 = dx0 - 2 - SimplexNoise.SQUISH_CONSTANT_3_2;
-                  dy_ext1 = dy0 - SimplexNoise.SQUISH_CONSTANT_3_2;
-                  dz_ext1 = dz0 - SimplexNoise.SQUISH_CONSTANT_3_2;
+                  dx_ext1 = dx0 - 2 - SimplexNoise.SQUISH_CONST_3_2;
+                  dy_ext1 = dy0 - SimplexNoise.SQUISH_CONST_3_2;
+                  dz_ext1 = dz0 - SimplexNoise.SQUISH_CONST_3_2;
                   xsv_ext1 = xsb + 2;
                   ysv_ext1 = ysb;
                   zsv_ext1 = zsb;
                } else if ((c & 0x02) != 0) {
-                  dx_ext1 = dx0 - SimplexNoise.SQUISH_CONSTANT_3_2;
-                  dy_ext1 = dy0 - 2 - SimplexNoise.SQUISH_CONSTANT_3_2;
-                  dz_ext1 = dz0 - SimplexNoise.SQUISH_CONSTANT_3_2;
+                  dx_ext1 = dx0 - SimplexNoise.SQUISH_CONST_3_2;
+                  dy_ext1 = dy0 - 2 - SimplexNoise.SQUISH_CONST_3_2;
+                  dz_ext1 = dz0 - SimplexNoise.SQUISH_CONST_3_2;
                   xsv_ext1 = xsb;
                   ysv_ext1 = ysb + 2;
                   zsv_ext1 = zsb;
                } else {
-                  dx_ext1 = dx0 - SimplexNoise.SQUISH_CONSTANT_3_2;
-                  dy_ext1 = dy0 - SimplexNoise.SQUISH_CONSTANT_3_2;
-                  dz_ext1 = dz0 - 2 - SimplexNoise.SQUISH_CONSTANT_3_2;
+                  dx_ext1 = dx0 - SimplexNoise.SQUISH_CONST_3_2;
+                  dy_ext1 = dy0 - SimplexNoise.SQUISH_CONST_3_2;
+                  dz_ext1 = dz0 - 2 - SimplexNoise.SQUISH_CONST_3_2;
                   xsv_ext1 = xsb;
                   ysv_ext1 = ysb;
                   zsv_ext1 = zsb + 2;
@@ -781,30 +794,30 @@ public class SimplexNoise {
                // Other extra point is based on the omitted axis.
                final byte c = (byte) (aPoint | bPoint);
                if ((c & 0x01) == 0) {
-                  dx_ext1 = dx0 + 1 - SimplexNoise.SQUISH_CONSTANT_3;
-                  dy_ext1 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
-                  dz_ext1 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
+                  dx_ext1 = dx0 + 1 - SimplexNoise.SQUISH_CONST_3;
+                  dy_ext1 = dy0 - 1 - SimplexNoise.SQUISH_CONST_3;
+                  dz_ext1 = dz0 - 1 - SimplexNoise.SQUISH_CONST_3;
                   xsv_ext1 = xsb - 1;
                   ysv_ext1 = ysb + 1;
                   zsv_ext1 = zsb + 1;
                } else if ((c & 0x02) == 0) {
-                  dx_ext1 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
-                  dy_ext1 = dy0 + 1 - SimplexNoise.SQUISH_CONSTANT_3;
-                  dz_ext1 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
+                  dx_ext1 = dx0 - 1 - SimplexNoise.SQUISH_CONST_3;
+                  dy_ext1 = dy0 + 1 - SimplexNoise.SQUISH_CONST_3;
+                  dz_ext1 = dz0 - 1 - SimplexNoise.SQUISH_CONST_3;
                   xsv_ext1 = xsb + 1;
                   ysv_ext1 = ysb - 1;
                   zsv_ext1 = zsb + 1;
                } else {
-                  dx_ext1 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
-                  dy_ext1 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
-                  dz_ext1 = dz0 + 1 - SimplexNoise.SQUISH_CONSTANT_3;
+                  dx_ext1 = dx0 - 1 - SimplexNoise.SQUISH_CONST_3;
+                  dy_ext1 = dy0 - 1 - SimplexNoise.SQUISH_CONST_3;
+                  dz_ext1 = dz0 + 1 - SimplexNoise.SQUISH_CONST_3;
                   xsv_ext1 = xsb + 1;
                   ysv_ext1 = ysb + 1;
                   zsv_ext1 = zsb - 1;
                }
             }
          } else {
-             // One point on (0,0,0) side, one point on (1,1,1) side
+            // One point on (0,0,0) side, one point on (1,1,1) side
             byte c1;
             byte c2;
             if (aIsFurtherSide) {
@@ -817,44 +830,44 @@ public class SimplexNoise {
 
             // One contribution is a permutation of (1,1,-1)
             if ((c1 & 0x01) == 0) {
-               dx_ext0 = dx0 + 1 - SimplexNoise.SQUISH_CONSTANT_3;
-               dy_ext0 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
-               dz_ext0 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
-               
+               dx_ext0 = dx0 + 1 - SimplexNoise.SQUISH_CONST_3;
+               dy_ext0 = dy0 - 1 - SimplexNoise.SQUISH_CONST_3;
+               dz_ext0 = dz0 - 1 - SimplexNoise.SQUISH_CONST_3;
+
                xsv_ext0 = xsb - 1;
                ysv_ext0 = ysb + 1;
                zsv_ext0 = zsb + 1;
-            
+
             } else if ((c1 & 0x02) == 0) {
-            
-               dx_ext0 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
-               dy_ext0 = dy0 + 1 - SimplexNoise.SQUISH_CONSTANT_3;
-               dz_ext0 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
-               
+
+               dx_ext0 = dx0 - 1 - SimplexNoise.SQUISH_CONST_3;
+               dy_ext0 = dy0 + 1 - SimplexNoise.SQUISH_CONST_3;
+               dz_ext0 = dz0 - 1 - SimplexNoise.SQUISH_CONST_3;
+
                xsv_ext0 = xsb + 1;
                ysv_ext0 = ysb - 1;
                zsv_ext0 = zsb + 1;
-            
+
             } else {
-            
-               dx_ext0 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
-               dy_ext0 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
-               dz_ext0 = dz0 + 1 - SimplexNoise.SQUISH_CONSTANT_3;
-               
+
+               dx_ext0 = dx0 - 1 - SimplexNoise.SQUISH_CONST_3;
+               dy_ext0 = dy0 - 1 - SimplexNoise.SQUISH_CONST_3;
+               dz_ext0 = dz0 + 1 - SimplexNoise.SQUISH_CONST_3;
+
                xsv_ext0 = xsb + 1;
                ysv_ext0 = ysb + 1;
                zsv_ext0 = zsb - 1;
             }
 
             // One contribution is a permutation of (0,0,2)
-            dx_ext1 = dx0 - SimplexNoise.SQUISH_CONSTANT_3_2;
-            dy_ext1 = dy0 - SimplexNoise.SQUISH_CONSTANT_3_2;
-            dz_ext1 = dz0 - SimplexNoise.SQUISH_CONSTANT_3_2;
-            
+            dx_ext1 = dx0 - SimplexNoise.SQUISH_CONST_3_2;
+            dy_ext1 = dy0 - SimplexNoise.SQUISH_CONST_3_2;
+            dz_ext1 = dz0 - SimplexNoise.SQUISH_CONST_3_2;
+
             xsv_ext1 = xsb;
             ysv_ext1 = ysb;
             zsv_ext1 = zsb;
-            
+
             if ((c2 & 0x01) != 0) {
                dx_ext1 -= 2;
                xsv_ext1 += 2;
@@ -868,75 +881,75 @@ public class SimplexNoise {
          }
 
          /* Contribution (1, 0, 0) */
-         final float dx1 = dx0 - 1.0f - SimplexNoise.SQUISH_CONSTANT_3;
-         final float dy1 = dy0 - SimplexNoise.SQUISH_CONSTANT_3;
-         final float dz1 = dz0 - SimplexNoise.SQUISH_CONSTANT_3;
+         final float dx1 = dx0 - 1.0f - SimplexNoise.SQUISH_CONST_3;
+         final float dy1 = dy0 - SimplexNoise.SQUISH_CONST_3;
+         final float dz1 = dz0 - SimplexNoise.SQUISH_CONST_3;
          float attn1 = 2 - dx1 * dx1 - dy1 * dy1 - dz1 * dz1;
          if (attn1 > 0) {
             attn1 *= attn1;
             value += attn1 * attn1 * this.extrapolate(
-               xsb + 1, ysb, zsb,
-               dx1, dy1, dz1);
+                  xsb + 1, ysb, zsb,
+                  dx1, dy1, dz1);
          }
 
          // Contribution (0,1,0)
-         final float dx2 = dx0 - SimplexNoise.SQUISH_CONSTANT_3;
-         final float dy2 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
+         final float dx2 = dx0 - SimplexNoise.SQUISH_CONST_3;
+         final float dy2 = dy0 - 1 - SimplexNoise.SQUISH_CONST_3;
          final float dz2 = dz1;
          float attn2 = 2 - dx2 * dx2 - dy2 * dy2 - dz2 * dz2;
          if (attn2 > 0) {
             attn2 *= attn2;
             value += attn2 * attn2 * this.extrapolate(
-               xsb, ysb + 1, zsb,
-               dx2, dy2, dz2);
+                  xsb, ysb + 1, zsb,
+                  dx2, dy2, dz2);
          }
 
          // Contribution (0,0,1)
          final float dx3 = dx2;
          final float dy3 = dy1;
-         final float dz3 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_3;
+         final float dz3 = dz0 - 1 - SimplexNoise.SQUISH_CONST_3;
          float attn3 = 2 - dx3 * dx3 - dy3 * dy3 - dz3 * dz3;
          if (attn3 > 0) {
             attn3 *= attn3;
             value += attn3 * attn3 * this.extrapolate(
-               xsb, ysb, zsb + 1,
-               dx3, dy3, dz3);
+                  xsb, ysb, zsb + 1,
+                  dx3, dy3, dz3);
          }
 
          // Contribution (1,1,0)
-         final float dx4 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_3_2;
-         final float dy4 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_3_2;
-         final float dz4 = dz0 - SimplexNoise.SQUISH_CONSTANT_3_2;
+         final float dx4 = dx0 - 1 - SimplexNoise.SQUISH_CONST_3_2;
+         final float dy4 = dy0 - 1 - SimplexNoise.SQUISH_CONST_3_2;
+         final float dz4 = dz0 - SimplexNoise.SQUISH_CONST_3_2;
          float attn4 = 2 - dx4 * dx4 - dy4 * dy4 - dz4 * dz4;
          if (attn4 > 0) {
             attn4 *= attn4;
             value += attn4 * attn4 * this.extrapolate(
-               xsb + 1, ysb + 1, zsb,
-               dx4, dy4, dz4);
+                  xsb + 1, ysb + 1, zsb,
+                  dx4, dy4, dz4);
          }
 
          // Contribution (1,0,1)
          final float dx5 = dx4;
-         final float dy5 = dy0 - SimplexNoise.SQUISH_CONSTANT_3_2;
-         final float dz5 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_3_2;
+         final float dy5 = dy0 - SimplexNoise.SQUISH_CONST_3_2;
+         final float dz5 = dz0 - 1 - SimplexNoise.SQUISH_CONST_3_2;
          float attn5 = 2 - dx5 * dx5 - dy5 * dy5 - dz5 * dz5;
          if (attn5 > 0) {
             attn5 *= attn5;
             value += attn5 * attn5 * this.extrapolate(
-               xsb + 1, ysb, zsb + 1,
-               dx5, dy5, dz5);
+                  xsb + 1, ysb, zsb + 1,
+                  dx5, dy5, dz5);
          }
 
          // Contribution (0,1,1)
-         final float dx6 = dx0 - SimplexNoise.SQUISH_CONSTANT_3_2;
+         final float dx6 = dx0 - SimplexNoise.SQUISH_CONST_3_2;
          final float dy6 = dy4;
          final float dz6 = dz5;
          float attn6 = 2 - dx6 * dx6 - dy6 * dy6 - dz6 * dz6;
          if (attn6 > 0) {
             attn6 *= attn6;
             value += attn6 * attn6 * this.extrapolate(
-               xsb, ysb + 1, zsb + 1,
-               dx6, dy6, dz6);
+                  xsb, ysb + 1, zsb + 1,
+                  dx6, dy6, dz6);
          }
       }
 
@@ -946,8 +959,8 @@ public class SimplexNoise {
       if (attn_ext0 > 0) {
          attn_ext0 *= attn_ext0;
          value += attn_ext0 * attn_ext0 * this.extrapolate(
-            xsv_ext0, ysv_ext0, zsv_ext0,
-            dx_ext0, dy_ext0, dz_ext0);
+               xsv_ext0, ysv_ext0, zsv_ext0,
+               dx_ext0, dy_ext0, dz_ext0);
       }
 
       // Second extra vertex
@@ -956,8 +969,8 @@ public class SimplexNoise {
       if (attn_ext1 > 0) {
          attn_ext1 *= attn_ext1;
          value += attn_ext1 * attn_ext1 * this.extrapolate(
-            xsv_ext1, ysv_ext1, zsv_ext1,
-            dx_ext1, dy_ext1, dz_ext1);
+               xsv_ext1, ysv_ext1, zsv_ext1,
+               dx_ext1, dy_ext1, dz_ext1);
       }
 
       return value * SimplexNoise.INV_NORM_CONST_3;
@@ -970,7 +983,8 @@ public class SimplexNoise {
          final float w ) {
 
       // Place input coordinates on simplectic honeycomb.
-      final float stretchOffset = (x + y + z + w) * SimplexNoise.STRETCH_CONSTANT_4;
+      final float stretchOffset = (x + y + z + w)
+            * SimplexNoise.STRETCH_CONST_4;
       final float xs = x + stretchOffset;
       final float ys = y + stretchOffset;
       final float zs = z + stretchOffset;
@@ -985,7 +999,8 @@ public class SimplexNoise {
 
       // Skew out to get actual coordinates of stretched
       // rhombo-hypercube origin. We'll need these later.
-      final float squishOffset = (xsb + ysb + zsb + wsb) * SimplexNoise.SQUISH_CONSTANT_4;
+      final float squishOffset = (xsb + ysb + zsb + wsb)
+            * SimplexNoise.SQUISH_CONST_4;
       final float xb = xsb + squishOffset;
       final float yb = ysb + squishOffset;
       final float zb = zsb + squishOffset;
@@ -1019,29 +1034,29 @@ public class SimplexNoise {
       float dy_ext1;
       float dz_ext1;
       float dw_ext1;
-      
+
       float dx_ext2;
       float dy_ext2;
       float dz_ext2;
       float dw_ext2;
-      
+
       int xsv_ext0;
       int ysv_ext0;
       int zsv_ext0;
       int wsv_ext0;
-      
+
       int xsv_ext1;
       int ysv_ext1;
       int zsv_ext1;
       int wsv_ext1;
-      
+
       int xsv_ext2;
       int ysv_ext2;
       int zsv_ext2;
       int wsv_ext2;
 
       float value = 0;
-      if (inSum <= 1) { 
+      if (inSum <= 1) {
          // We're inside the pentachoron (4-Simplex) at (0,0,0,0)
 
          // Determine which two of (0,0,0,1), (0,0,1,0), (0,1,0,0),
@@ -1065,10 +1080,11 @@ public class SimplexNoise {
             aPoint = 0x08;
          }
 
-         /* Now we determine the three lattice points not part of the
-          * pentachoron that may contribute.
-          * This depends on the closest two pentachoron vertices,
-          * including (0, 0, 0, 0) */
+         /*
+          * Now we determine the three lattice points not part of the
+          * pentachoron that may contribute. This depends on the
+          * closest two pentachoron vertices, including (0, 0, 0, 0)
+          */
          final float uins = 1 - inSum;
          if (uins > aScore || uins > bScore) { // (0,0,0,0) is one of the
                                                // closest two pentachoron
@@ -1141,20 +1157,20 @@ public class SimplexNoise {
             if ((c & 0x01) == 0) {
                xsv_ext0 = xsv_ext2 = xsb;
                xsv_ext1 = xsb - 1;
-               dx_ext0 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dx_ext1 = dx0 + 1 - SimplexNoise.SQUISH_CONSTANT_4;
-               dx_ext2 = dx0 - SimplexNoise.SQUISH_CONSTANT_4;
+               dx_ext0 = dx0 - SimplexNoise.SQUISH_CONST_4_2;
+               dx_ext1 = dx0 + 1 - SimplexNoise.SQUISH_CONST_4;
+               dx_ext2 = dx0 - SimplexNoise.SQUISH_CONST_4;
             } else {
                xsv_ext0 = xsv_ext1 = xsv_ext2 = xsb + 1;
-               dx_ext0 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+               dx_ext0 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
                dx_ext1 = dx_ext2 = dx0 - 1
-                     - SimplexNoise.SQUISH_CONSTANT_4;
+                     - SimplexNoise.SQUISH_CONST_4;
             }
 
             if ((c & 0x02) == 0) {
                ysv_ext0 = ysv_ext1 = ysv_ext2 = ysb;
-               dy_ext0 = dy0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dy_ext1 = dy_ext2 = dy0 - SimplexNoise.SQUISH_CONSTANT_4;
+               dy_ext0 = dy0 - SimplexNoise.SQUISH_CONST_4_2;
+               dy_ext1 = dy_ext2 = dy0 - SimplexNoise.SQUISH_CONST_4;
                if ((c & 0x01) == 0x01) {
                   ysv_ext1 -= 1;
                   dy_ext1 += 1;
@@ -1164,14 +1180,14 @@ public class SimplexNoise {
                }
             } else {
                ysv_ext0 = ysv_ext1 = ysv_ext2 = ysb + 1;
-               dy_ext0 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dy_ext1 = dy_ext2 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4;
+               dy_ext0 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+               dy_ext1 = dy_ext2 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4;
             }
 
             if ((c & 0x04) == 0) {
                zsv_ext0 = zsv_ext1 = zsv_ext2 = zsb;
-               dz_ext0 = dz0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dz_ext1 = dz_ext2 = dz0 - SimplexNoise.SQUISH_CONSTANT_4;
+               dz_ext0 = dz0 - SimplexNoise.SQUISH_CONST_4_2;
+               dz_ext1 = dz_ext2 = dz0 - SimplexNoise.SQUISH_CONST_4;
                if ((c & 0x03) == 0x03) {
                   zsv_ext1 -= 1;
                   dz_ext1 += 1;
@@ -1181,22 +1197,22 @@ public class SimplexNoise {
                }
             } else {
                zsv_ext0 = zsv_ext1 = zsv_ext2 = zsb + 1;
-               dz_ext0 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+               dz_ext0 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
                dz_ext1 = dz_ext2 = dz0 - 1
-                     - SimplexNoise.SQUISH_CONSTANT_4;
+                     - SimplexNoise.SQUISH_CONST_4;
             }
 
             if ((c & 0x08) == 0) {
                wsv_ext0 = wsv_ext1 = wsb;
                wsv_ext2 = wsb - 1;
-               dw_ext0 = dw0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dw_ext1 = dw0 - SimplexNoise.SQUISH_CONSTANT_4;
-               dw_ext2 = dw0 + 1 - SimplexNoise.SQUISH_CONSTANT_4;
+               dw_ext0 = dw0 - SimplexNoise.SQUISH_CONST_4_2;
+               dw_ext1 = dw0 - SimplexNoise.SQUISH_CONST_4;
+               dw_ext2 = dw0 + 1 - SimplexNoise.SQUISH_CONST_4;
             } else {
                wsv_ext0 = wsv_ext1 = wsv_ext2 = wsb + 1;
-               dw_ext0 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+               dw_ext0 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
                dw_ext1 = dw_ext2 = dw0 - 1
-                     - SimplexNoise.SQUISH_CONSTANT_4;
+                     - SimplexNoise.SQUISH_CONST_4;
             }
          }
 
@@ -1205,60 +1221,60 @@ public class SimplexNoise {
          if (attn0 > 0) {
             attn0 *= attn0;
             value += attn0 * attn0 * this.extrapolate(
-               xsb, ysb, zsb, wsb,
-               dx0, dy0, dz0, dw0);
+                  xsb, ysb, zsb, wsb,
+                  dx0, dy0, dz0, dw0);
          }
 
          // Contribution (1,0,0,0)
-         final float dx1 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4;
-         final float dy1 = dy0 - SimplexNoise.SQUISH_CONSTANT_4;
-         final float dz1 = dz0 - SimplexNoise.SQUISH_CONSTANT_4;
-         final float dw1 = dw0 - SimplexNoise.SQUISH_CONSTANT_4;
+         final float dx1 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4;
+         final float dy1 = dy0 - SimplexNoise.SQUISH_CONST_4;
+         final float dz1 = dz0 - SimplexNoise.SQUISH_CONST_4;
+         final float dw1 = dw0 - SimplexNoise.SQUISH_CONST_4;
          float attn1 = 2 - dx1 * dx1 - dy1 * dy1 - dz1 * dz1 - dw1 * dw1;
          if (attn1 > 0) {
             attn1 *= attn1;
             value += attn1 * attn1 * this.extrapolate(
-               xsb + 1, ysb, zsb, wsb,
-               dx1, dy1, dz1, dw1);
+                  xsb + 1, ysb, zsb, wsb,
+                  dx1, dy1, dz1, dw1);
          }
 
          // Contribution (0, 1, 0, 0)
-         final float dx2 = dx0 - 0 - SimplexNoise.SQUISH_CONSTANT_4;
-         final float dy2 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4;
+         final float dx2 = dx0 - 0 - SimplexNoise.SQUISH_CONST_4;
+         final float dy2 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4;
          final float dz2 = dz1;
          final float dw2 = dw1;
          float attn2 = 2 - dx2 * dx2 - dy2 * dy2 - dz2 * dz2 - dw2 * dw2;
          if (attn2 > 0) {
             attn2 *= attn2;
             value += attn2 * attn2 * this.extrapolate(
-               xsb, ysb + 1, zsb, wsb,
-               dx2, dy2, dz2, dw2);
+                  xsb, ysb + 1, zsb, wsb,
+                  dx2, dy2, dz2, dw2);
          }
 
          // Contribution (0,0,1,0)
          final float dx3 = dx2;
          final float dy3 = dy1;
-         final float dz3 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4;
+         final float dz3 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4;
          final float dw3 = dw1;
          float attn3 = 2 - dx3 * dx3 - dy3 * dy3 - dz3 * dz3 - dw3 * dw3;
          if (attn3 > 0) {
             attn3 *= attn3;
             value += attn3 * attn3 * this.extrapolate(
-               xsb, ysb, zsb + 1, wsb,
-               dx3, dy3, dz3, dw3);
+                  xsb, ysb, zsb + 1, wsb,
+                  dx3, dy3, dz3, dw3);
          }
 
          // Contribution (0,0,0,1)
          final float dx4 = dx2;
          final float dy4 = dy1;
          final float dz4 = dz1;
-         final float dw4 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4;
+         final float dw4 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4;
          float attn4 = 2 - dx4 * dx4 - dy4 * dy4 - dz4 * dz4 - dw4 * dw4;
          if (attn4 > 0) {
             attn4 *= attn4;
             value += attn4 * attn4 * this.extrapolate(
-               xsb, ysb, zsb, wsb + 1,
-               dx4, dy4, dz4, dw4);
+                  xsb, ysb, zsb, wsb + 1,
+                  dx4, dy4, dz4, dw4);
          }
       } else if (inSum >= 3) {
          // We're inside the pentachoron (4-Simplex) at
@@ -1284,11 +1300,10 @@ public class SimplexNoise {
             aPoint = 0x07;
          }
 
-         /**  
+         /**
           * Now we determine the three lattice points not part of the
-          * pentachoron that may contribute.
-          * This depends on the closest two pentachoron vertices,
-          * including (0,0,0,0) 
+          * pentachoron that may contribute. This depends on the
+          * closest two pentachoron vertices, including (0,0,0,0)
           */
          final float uins = 4 - inSum;
          if (uins < aScore || uins < bScore) {
@@ -1304,19 +1319,19 @@ public class SimplexNoise {
             if ((c & 0x01) != 0) {
                xsv_ext0 = xsb + 2;
                xsv_ext1 = xsv_ext2 = xsb + 1;
-               dx_ext0 = dx0 - 2 - SimplexNoise.SQUISH_CONSTANT_4_4;
+               dx_ext0 = dx0 - 2 - SimplexNoise.SQUISH_CONST_4_4;
                dx_ext1 = dx_ext2 = dx0 - 1
-                     - SimplexNoise.SQUISH_CONSTANT_4_4;
+                     - SimplexNoise.SQUISH_CONST_4_4;
             } else {
                xsv_ext0 = xsv_ext1 = xsv_ext2 = xsb;
                dx_ext0 = dx_ext1 = dx_ext2 = dx0
-                     - SimplexNoise.SQUISH_CONSTANT_4_4;
+                     - SimplexNoise.SQUISH_CONST_4_4;
             }
 
             if ((c & 0x02) != 0) {
                ysv_ext0 = ysv_ext1 = ysv_ext2 = ysb + 1;
                dy_ext0 = dy_ext1 = dy_ext2 = dy0 - 1
-                     - SimplexNoise.SQUISH_CONSTANT_4_4;
+                     - SimplexNoise.SQUISH_CONST_4_4;
                if ((c & 0x01) != 0) {
                   ysv_ext1 += 1;
                   dy_ext1 -= 1;
@@ -1327,13 +1342,13 @@ public class SimplexNoise {
             } else {
                ysv_ext0 = ysv_ext1 = ysv_ext2 = ysb;
                dy_ext0 = dy_ext1 = dy_ext2 = dy0
-                     - SimplexNoise.SQUISH_CONSTANT_4_4;
+                     - SimplexNoise.SQUISH_CONST_4_4;
             }
 
             if ((c & 0x04) != 0) {
                zsv_ext0 = zsv_ext1 = zsv_ext2 = zsb + 1;
                dz_ext0 = dz_ext1 = dz_ext2 = dz0 - 1
-                     - SimplexNoise.SQUISH_CONSTANT_4_4;
+                     - SimplexNoise.SQUISH_CONST_4_4;
                if ((c & 0x03) != 0x03) {
                   if ((c & 0x03) == 0) {
                      zsv_ext0 += 1;
@@ -1349,24 +1364,24 @@ public class SimplexNoise {
             } else {
                zsv_ext0 = zsv_ext1 = zsv_ext2 = zsb;
                dz_ext0 = dz_ext1 = dz_ext2 = dz0
-                     - SimplexNoise.SQUISH_CONSTANT_4_4;
+                     - SimplexNoise.SQUISH_CONST_4_4;
             }
 
             if ((c & 0x08) != 0) {
                wsv_ext0 = wsv_ext1 = wsb + 1;
                wsv_ext2 = wsb + 2;
                dw_ext0 = dw_ext1 = dw0 - 1
-                     - SimplexNoise.SQUISH_CONSTANT_4_4;
-               dw_ext2 = dw0 - 2 - SimplexNoise.SQUISH_CONSTANT_4_4;
+                     - SimplexNoise.SQUISH_CONST_4_4;
+               dw_ext2 = dw0 - 2 - SimplexNoise.SQUISH_CONST_4_4;
             } else {
                wsv_ext0 = wsv_ext1 = wsv_ext2 = wsb;
                dw_ext0 = dw_ext1 = dw_ext2 = dw0
-                     - SimplexNoise.SQUISH_CONSTANT_4_4;
+                     - SimplexNoise.SQUISH_CONST_4_4;
             }
-         } else { 
+         } else {
             // (1,1,1,1) is not one of the closest two pentachoron
-                  // vertices.
-            final byte c = (byte) (aPoint & bPoint); 
+            // vertices.
+            final byte c = (byte) (aPoint & bPoint);
             // Our three extra vertices
             // are
             // determined by the closest two.
@@ -1374,20 +1389,20 @@ public class SimplexNoise {
             if ((c & 0x01) != 0) {
                xsv_ext0 = xsv_ext2 = xsb + 1;
                xsv_ext1 = xsb + 2;
-               dx_ext0 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dx_ext1 = dx0 - 2 - SimplexNoise.SQUISH_CONSTANT_4_3;
-               dx_ext2 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
+               dx_ext0 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+               dx_ext1 = dx0 - 2 - SimplexNoise.SQUISH_CONST_4_3;
+               dx_ext2 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
             } else {
                xsv_ext0 = xsv_ext1 = xsv_ext2 = xsb;
-               dx_ext0 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dx_ext1 = dx_ext2 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_3;
+               dx_ext0 = dx0 - SimplexNoise.SQUISH_CONST_4_2;
+               dx_ext1 = dx_ext2 = dx0 - SimplexNoise.SQUISH_CONST_4_3;
             }
 
             if ((c & 0x02) != 0) {
                ysv_ext0 = ysv_ext1 = ysv_ext2 = ysb + 1;
-               dy_ext0 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+               dy_ext0 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
                dy_ext1 = dy_ext2 = dy0 - 1
-                     - SimplexNoise.SQUISH_CONSTANT_4_3;
+                     - SimplexNoise.SQUISH_CONST_4_3;
                if ((c & 0x01) != 0) {
                   ysv_ext2 += 1;
                   dy_ext2 -= 1;
@@ -1397,16 +1412,16 @@ public class SimplexNoise {
                }
             } else {
                ysv_ext0 = ysv_ext1 = ysv_ext2 = ysb;
-               dy_ext0 = dy0 - SimplexNoise.SQUISH_CONSTANT_4_2;
+               dy_ext0 = dy0 - SimplexNoise.SQUISH_CONST_4_2;
                dy_ext1 = dy_ext2 = dy0
-                     - SimplexNoise.SQUISH_CONSTANT_4_3;
+                     - SimplexNoise.SQUISH_CONST_4_3;
             }
 
             if ((c & 0x04) != 0) {
                zsv_ext0 = zsv_ext1 = zsv_ext2 = zsb + 1;
-               dz_ext0 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+               dz_ext0 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
                dz_ext1 = dz_ext2 = dz0 - 1
-                     - SimplexNoise.SQUISH_CONSTANT_4_3;
+                     - SimplexNoise.SQUISH_CONST_4_3;
                if ((c & 0x03) != 0) {
                   zsv_ext2 += 1;
                   dz_ext2 -= 1;
@@ -1416,66 +1431,66 @@ public class SimplexNoise {
                }
             } else {
                zsv_ext0 = zsv_ext1 = zsv_ext2 = zsb;
-               dz_ext0 = dz0 - SimplexNoise.SQUISH_CONSTANT_4_2;
+               dz_ext0 = dz0 - SimplexNoise.SQUISH_CONST_4_2;
                dz_ext1 = dz_ext2 = dz0
-                     - SimplexNoise.SQUISH_CONSTANT_4_3;
+                     - SimplexNoise.SQUISH_CONST_4_3;
             }
 
             if ((c & 0x08) != 0) {
                wsv_ext0 = wsv_ext1 = wsb + 1;
                wsv_ext2 = wsb + 2;
-               dw_ext0 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dw_ext1 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
-               dw_ext2 = dw0 - 2 - SimplexNoise.SQUISH_CONSTANT_4_3;
+               dw_ext0 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+               dw_ext1 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
+               dw_ext2 = dw0 - 2 - SimplexNoise.SQUISH_CONST_4_3;
             } else {
                wsv_ext0 = wsv_ext1 = wsv_ext2 = wsb;
-               dw_ext0 = dw0 - SimplexNoise.SQUISH_CONSTANT_4_2;
+               dw_ext0 = dw0 - SimplexNoise.SQUISH_CONST_4_2;
                dw_ext1 = dw_ext2 = dw0
-                     - SimplexNoise.SQUISH_CONSTANT_4_3;
+                     - SimplexNoise.SQUISH_CONST_4_3;
             }
          }
 
          // Contribution (1,1,1,0)
-         final float dx4 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
-         final float dy4 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
-         final float dz4 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
-         final float dw4 = dw0 - SimplexNoise.SQUISH_CONSTANT_4_3;
+         final float dx4 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
+         final float dy4 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
+         final float dz4 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
+         final float dw4 = dw0 - SimplexNoise.SQUISH_CONST_4_3;
          float attn4 = 2 - dx4 * dx4 - dy4 * dy4 - dz4 * dz4 - dw4 * dw4;
          if (attn4 > 0) {
             attn4 *= attn4;
             value += attn4 * attn4 * this.extrapolate(
-               xsb + 1, ysb + 1, zsb + 1, wsb,
-               dx4, dy4, dz4, dw4);
+                  xsb + 1, ysb + 1, zsb + 1, wsb,
+                  dx4, dy4, dz4, dw4);
          }
 
          // Contribution (1,1,0,1)
          final float dx3 = dx4;
          final float dy3 = dy4;
-         final float dz3 = dz0 - SimplexNoise.SQUISH_CONSTANT_4_3;
-         final float dw3 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
+         final float dz3 = dz0 - SimplexNoise.SQUISH_CONST_4_3;
+         final float dw3 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
          float attn3 = 2 - dx3 * dx3 - dy3 * dy3 - dz3 * dz3 - dw3 * dw3;
          if (attn3 > 0) {
             attn3 *= attn3;
             value += attn3 * attn3 * this.extrapolate(
-               xsb + 1, ysb + 1, zsb, wsb + 1,
-               dx3, dy3, dz3, dw3);
+                  xsb + 1, ysb + 1, zsb, wsb + 1,
+                  dx3, dy3, dz3, dw3);
          }
 
          // Contribution (1,0,1,1)
          final float dx2 = dx4;
-         final float dy2 = dy0 - SimplexNoise.SQUISH_CONSTANT_4_3;
+         final float dy2 = dy0 - SimplexNoise.SQUISH_CONST_4_3;
          final float dz2 = dz4;
          final float dw2 = dw3;
          float attn2 = 2 - dx2 * dx2 - dy2 * dy2 - dz2 * dz2 - dw2 * dw2;
          if (attn2 > 0) {
             attn2 *= attn2;
             value += attn2 * attn2 * this.extrapolate(
-               xsb + 1, ysb, zsb + 1, wsb + 1,
-               dx2, dy2, dz2, dw2);
+                  xsb + 1, ysb, zsb + 1, wsb + 1,
+                  dx2, dy2, dz2, dw2);
          }
 
          // Contribution (0,1,1,1)
-         final float dx1 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_3;
+         final float dx1 = dx0 - SimplexNoise.SQUISH_CONST_4_3;
          final float dz1 = dz4;
          final float dy1 = dy4;
          final float dw1 = dw3;
@@ -1483,21 +1498,21 @@ public class SimplexNoise {
          if (attn1 > 0) {
             attn1 *= attn1;
             value += attn1 * attn1 * this.extrapolate(
-               xsb, ysb + 1, zsb + 1, wsb + 1,
-               dx1, dy1, dz1, dw1);
+                  xsb, ysb + 1, zsb + 1, wsb + 1,
+                  dx1, dy1, dz1, dw1);
          }
 
          // Contribution (1,1,1,1)
-         dx0 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_4;
-         dy0 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_4;
-         dz0 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_4;
-         dw0 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_4;
+         dx0 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_4;
+         dy0 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_4;
+         dz0 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_4;
+         dw0 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_4;
          float attn0 = 2 - dx0 * dx0 - dy0 * dy0 - dz0 * dz0 - dw0 * dw0;
          if (attn0 > 0) {
             attn0 *= attn0;
             value += attn0 * attn0 * this.extrapolate(
-               xsb + 1, ysb + 1, zsb + 1, wsb + 1,
-               dx0, dy0, dz0, dw0);
+                  xsb + 1, ysb + 1, zsb + 1, wsb + 1,
+                  dx0, dy0, dz0, dw0);
          }
       } else if (inSum <= 2) { // We're inside the first dispentachoron
                                // (Rectified 4-Simplex)
@@ -1605,45 +1620,45 @@ public class SimplexNoise {
                if ((c1 & 0x01) == 0) {
                   xsv_ext0 = xsb;
                   xsv_ext1 = xsb - 1;
-                  dx_ext0 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_3;
-                  dx_ext1 = dx0 + 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+                  dx_ext0 = dx0 - SimplexNoise.SQUISH_CONST_4_3;
+                  dx_ext1 = dx0 + 1 - SimplexNoise.SQUISH_CONST_4_2;
                } else {
                   xsv_ext0 = xsv_ext1 = xsb + 1;
-                  dx_ext0 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
-                  dx_ext1 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+                  dx_ext0 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
+                  dx_ext1 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
                }
 
                if ((c1 & 0x02) == 0) {
                   ysv_ext0 = ysb;
                   ysv_ext1 = ysb - 1;
-                  dy_ext0 = dy0 - SimplexNoise.SQUISH_CONSTANT_4_3;
-                  dy_ext1 = dy0 + 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+                  dy_ext0 = dy0 - SimplexNoise.SQUISH_CONST_4_3;
+                  dy_ext1 = dy0 + 1 - SimplexNoise.SQUISH_CONST_4_2;
                } else {
                   ysv_ext0 = ysv_ext1 = ysb + 1;
-                  dy_ext0 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
-                  dy_ext1 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+                  dy_ext0 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
+                  dy_ext1 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
                }
 
                if ((c1 & 0x04) == 0) {
                   zsv_ext0 = zsb;
                   zsv_ext1 = zsb - 1;
-                  dz_ext0 = dz0 - SimplexNoise.SQUISH_CONSTANT_4_3;
-                  dz_ext1 = dz0 + 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+                  dz_ext0 = dz0 - SimplexNoise.SQUISH_CONST_4_3;
+                  dz_ext1 = dz0 + 1 - SimplexNoise.SQUISH_CONST_4_2;
                } else {
                   zsv_ext0 = zsv_ext1 = zsb + 1;
-                  dz_ext0 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
-                  dz_ext1 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+                  dz_ext0 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
+                  dz_ext1 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
                }
 
                if ((c1 & 0x08) == 0) {
                   wsv_ext0 = wsb;
                   wsv_ext1 = wsb - 1;
-                  dw_ext0 = dw0 - SimplexNoise.SQUISH_CONSTANT_4_3;
-                  dw_ext1 = dw0 + 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+                  dw_ext0 = dw0 - SimplexNoise.SQUISH_CONST_4_3;
+                  dw_ext1 = dw0 + 1 - SimplexNoise.SQUISH_CONST_4_2;
                } else {
                   wsv_ext0 = wsv_ext1 = wsb + 1;
-                  dw_ext0 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
-                  dw_ext1 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+                  dw_ext0 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
+                  dw_ext1 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
                }
 
                // One combination is a permutation of (0,0,0,2) based on c2
@@ -1651,10 +1666,10 @@ public class SimplexNoise {
                ysv_ext2 = ysb;
                zsv_ext2 = zsb;
                wsv_ext2 = wsb;
-               dx_ext2 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dy_ext2 = dy0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dz_ext2 = dz0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dw_ext2 = dw0 - SimplexNoise.SQUISH_CONSTANT_4_2;
+               dx_ext2 = dx0 - SimplexNoise.SQUISH_CONST_4_2;
+               dy_ext2 = dy0 - SimplexNoise.SQUISH_CONST_4_2;
+               dz_ext2 = dz0 - SimplexNoise.SQUISH_CONST_4_2;
+               dw_ext2 = dw0 - SimplexNoise.SQUISH_CONST_4_2;
                if ((c2 & 0x01) != 0) {
                   xsv_ext2 += 2;
                   dx_ext2 -= 2;
@@ -1686,17 +1701,17 @@ public class SimplexNoise {
                if ((c & 0x01) == 0) {
                   xsv_ext0 = xsb - 1;
                   xsv_ext1 = xsb;
-                  dx_ext0 = dx0 + 1 - SimplexNoise.SQUISH_CONSTANT_4;
-                  dx_ext1 = dx0 - SimplexNoise.SQUISH_CONSTANT_4;
+                  dx_ext0 = dx0 + 1 - SimplexNoise.SQUISH_CONST_4;
+                  dx_ext1 = dx0 - SimplexNoise.SQUISH_CONST_4;
                } else {
                   xsv_ext0 = xsv_ext1 = xsb + 1;
                   dx_ext0 = dx_ext1 = dx0 - 1
-                        - SimplexNoise.SQUISH_CONSTANT_4;
+                        - SimplexNoise.SQUISH_CONST_4;
                }
 
                if ((c & 0x02) == 0) {
                   ysv_ext0 = ysv_ext1 = ysb;
-                  dy_ext0 = dy_ext1 = dy0 - SimplexNoise.SQUISH_CONSTANT_4;
+                  dy_ext0 = dy_ext1 = dy0 - SimplexNoise.SQUISH_CONST_4;
                   if ((c & 0x01) == 0x01) {
                      ysv_ext0 -= 1;
                      dy_ext0 += 1;
@@ -1707,12 +1722,12 @@ public class SimplexNoise {
                } else {
                   ysv_ext0 = ysv_ext1 = ysb + 1;
                   dy_ext0 = dy_ext1 = dy0 - 1
-                        - SimplexNoise.SQUISH_CONSTANT_4;
+                        - SimplexNoise.SQUISH_CONST_4;
                }
 
                if ((c & 0x04) == 0) {
                   zsv_ext0 = zsv_ext1 = zsb;
-                  dz_ext0 = dz_ext1 = dz0 - SimplexNoise.SQUISH_CONSTANT_4;
+                  dz_ext0 = dz_ext1 = dz0 - SimplexNoise.SQUISH_CONST_4;
                   if ((c & 0x03) == 0x03) {
                      zsv_ext0 -= 1;
                      dz_ext0 += 1;
@@ -1723,21 +1738,21 @@ public class SimplexNoise {
                } else {
                   zsv_ext0 = zsv_ext1 = zsb + 1;
                   dz_ext0 = dz_ext1 = dz0 - 1
-                        - SimplexNoise.SQUISH_CONSTANT_4;
+                        - SimplexNoise.SQUISH_CONST_4;
                }
 
                if ((c & 0x08) == 0) {
                   wsv_ext0 = wsb;
                   wsv_ext1 = wsb - 1;
-                  dw_ext0 = dw0 - SimplexNoise.SQUISH_CONSTANT_4;
-                  dw_ext1 = dw0 + 1 - SimplexNoise.SQUISH_CONSTANT_4;
+                  dw_ext0 = dw0 - SimplexNoise.SQUISH_CONST_4;
+                  dw_ext1 = dw0 + 1 - SimplexNoise.SQUISH_CONST_4;
                } else {
                   wsv_ext0 = wsv_ext1 = wsb + 1;
-                  dw_ext0 = dw_ext1 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4;
+                  dw_ext0 = dw_ext1 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4;
                }
 
             }
-         } else { 
+         } else {
             // One point on each "side"
             byte c1;
             byte c2;
@@ -1754,17 +1769,17 @@ public class SimplexNoise {
             if ((c1 & 0x01) == 0) {
                xsv_ext0 = xsb - 1;
                xsv_ext1 = xsb;
-               dx_ext0 = dx0 + 1 - SimplexNoise.SQUISH_CONSTANT_4;
-               dx_ext1 = dx0 - SimplexNoise.SQUISH_CONSTANT_4;
+               dx_ext0 = dx0 + 1 - SimplexNoise.SQUISH_CONST_4;
+               dx_ext1 = dx0 - SimplexNoise.SQUISH_CONST_4;
             } else {
                xsv_ext0 = xsv_ext1 = xsb + 1;
                dx_ext0 = dx_ext1 = dx0 - 1
-                     - SimplexNoise.SQUISH_CONSTANT_4;
+                     - SimplexNoise.SQUISH_CONST_4;
             }
 
             if ((c1 & 0x02) == 0) {
                ysv_ext0 = ysv_ext1 = ysb;
-               dy_ext0 = dy_ext1 = dy0 - SimplexNoise.SQUISH_CONSTANT_4;
+               dy_ext0 = dy_ext1 = dy0 - SimplexNoise.SQUISH_CONST_4;
                if ((c1 & 0x01) == 0x01) {
                   ysv_ext0 -= 1;
                   dy_ext0 += 1;
@@ -1775,12 +1790,12 @@ public class SimplexNoise {
             } else {
                ysv_ext0 = ysv_ext1 = ysb + 1;
                dy_ext0 = dy_ext1 = dy0 - 1
-                     - SimplexNoise.SQUISH_CONSTANT_4;
+                     - SimplexNoise.SQUISH_CONST_4;
             }
 
             if ((c1 & 0x04) == 0) {
                zsv_ext0 = zsv_ext1 = zsb;
-               dz_ext0 = dz_ext1 = dz0 - SimplexNoise.SQUISH_CONSTANT_4;
+               dz_ext0 = dz_ext1 = dz0 - SimplexNoise.SQUISH_CONST_4;
                if ((c1 & 0x03) == 0x03) {
                   zsv_ext0 -= 1;
                   dz_ext0 += 1;
@@ -1791,18 +1806,18 @@ public class SimplexNoise {
             } else {
                zsv_ext0 = zsv_ext1 = zsb + 1;
                dz_ext0 = dz_ext1 = dz0 - 1
-                     - SimplexNoise.SQUISH_CONSTANT_4;
+                     - SimplexNoise.SQUISH_CONST_4;
             }
 
             if ((c1 & 0x08) == 0) {
                wsv_ext0 = wsb;
                wsv_ext1 = wsb - 1;
-               dw_ext0 = dw0 - SimplexNoise.SQUISH_CONSTANT_4;
-               dw_ext1 = dw0 + 1 - SimplexNoise.SQUISH_CONSTANT_4;
+               dw_ext0 = dw0 - SimplexNoise.SQUISH_CONST_4;
+               dw_ext1 = dw0 + 1 - SimplexNoise.SQUISH_CONST_4;
             } else {
                wsv_ext0 = wsv_ext1 = wsb + 1;
                dw_ext0 = dw_ext1 = dw0 - 1
-                     - SimplexNoise.SQUISH_CONSTANT_4;
+                     - SimplexNoise.SQUISH_CONST_4;
             }
 
             // One contribution is a permutation of (0,0,0,2) based on
@@ -1811,10 +1826,10 @@ public class SimplexNoise {
             ysv_ext2 = ysb;
             zsv_ext2 = zsb;
             wsv_ext2 = wsb;
-            dx_ext2 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-            dy_ext2 = dy0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-            dz_ext2 = dz0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-            dw_ext2 = dw0 - SimplexNoise.SQUISH_CONSTANT_4_2;
+            dx_ext2 = dx0 - SimplexNoise.SQUISH_CONST_4_2;
+            dy_ext2 = dy0 - SimplexNoise.SQUISH_CONST_4_2;
+            dz_ext2 = dz0 - SimplexNoise.SQUISH_CONST_4_2;
+            dw_ext2 = dw0 - SimplexNoise.SQUISH_CONST_4_2;
             if ((c2 & 0x01) != 0) {
                xsv_ext2 += 2;
                dx_ext2 -= 2;
@@ -1831,137 +1846,137 @@ public class SimplexNoise {
          }
 
          // Contribution (1,0,0,0)
-         final float dx1 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4;
-         final float dy1 = dy0 - SimplexNoise.SQUISH_CONSTANT_4;
-         final float dz1 = dz0 - SimplexNoise.SQUISH_CONSTANT_4;
-         final float dw1 = dw0 - SimplexNoise.SQUISH_CONSTANT_4;
+         final float dx1 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4;
+         final float dy1 = dy0 - SimplexNoise.SQUISH_CONST_4;
+         final float dz1 = dz0 - SimplexNoise.SQUISH_CONST_4;
+         final float dw1 = dw0 - SimplexNoise.SQUISH_CONST_4;
          float attn1 = 2 - dx1 * dx1 - dy1 * dy1 - dz1 * dz1 - dw1 * dw1;
          if (attn1 > 0) {
             attn1 *= attn1;
             value += attn1 * attn1 * this.extrapolate(
-               xsb + 1, ysb, zsb, wsb, dx1, dy1, dz1, dw1);
+                  xsb + 1, ysb, zsb, wsb, dx1, dy1, dz1, dw1);
          }
 
          // Contribution (0,1,0,0)
-         final float dx2 = dx0 - SimplexNoise.SQUISH_CONSTANT_4;
-         final float dy2 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4;
+         final float dx2 = dx0 - SimplexNoise.SQUISH_CONST_4;
+         final float dy2 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4;
          final float dz2 = dz1;
          final float dw2 = dw1;
          float attn2 = 2 - dx2 * dx2 - dy2 * dy2 - dz2 * dz2 - dw2 * dw2;
          if (attn2 > 0) {
             attn2 *= attn2;
             value += attn2 * attn2 * this.extrapolate(
-               xsb, ysb + 1, zsb, wsb,
-               dx2, dy2, dz2, dw2);
+                  xsb, ysb + 1, zsb, wsb,
+                  dx2, dy2, dz2, dw2);
          }
 
          // Contribution (0,0,1,0)
          final float dx3 = dx2;
          final float dy3 = dy1;
-         final float dz3 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4;
+         final float dz3 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4;
          final float dw3 = dw1;
          float attn3 = 2 - dx3 * dx3 - dy3 * dy3 - dz3 * dz3 - dw3 * dw3;
          if (attn3 > 0) {
             attn3 *= attn3;
             value += attn3 * attn3 * this.extrapolate(
-               xsb, ysb, zsb + 1, wsb,
-               dx3, dy3, dz3, dw3);
+                  xsb, ysb, zsb + 1, wsb,
+                  dx3, dy3, dz3, dw3);
          }
 
          // Contribution (0,0,0,1)
          final float dx4 = dx2;
          final float dy4 = dy1;
          final float dz4 = dz1;
-         final float dw4 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4;
+         final float dw4 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4;
          float attn4 = 2 - dx4 * dx4 - dy4 * dy4 - dz4 * dz4 - dw4 * dw4;
          if (attn4 > 0) {
             attn4 *= attn4;
             value += attn4 * attn4 * this.extrapolate(
-               xsb, ysb, zsb, wsb,
-               dx4, dy4, dz4, dw4);
+                  xsb, ysb, zsb, wsb,
+                  dx4, dy4, dz4, dw4);
          }
 
          // Contribution (1,1,0,0)
-         final float dx5 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dy5 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dz5 = dz0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dw5 = dw0 - SimplexNoise.SQUISH_CONSTANT_4_2;
+         final float dx5 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dy5 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dz5 = dz0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dw5 = dw0 - SimplexNoise.SQUISH_CONST_4_2;
          float attn5 = 2 - dx5 * dx5 - dy5 * dy5 - dz5 * dz5 - dw5 * dw5;
          if (attn5 > 0) {
             attn5 *= attn5;
             value += attn5 * attn5 * this.extrapolate(
-               xsb + 1, ysb + 1, zsb, wsb,
-               dx5, dy5, dz5, dw5);
+                  xsb + 1, ysb + 1, zsb, wsb,
+                  dx5, dy5, dz5, dw5);
          }
 
          // Contribution (1,0,1,0)
-         final float dx6 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dy6 = dy0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dz6 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dw6 = dw0 - SimplexNoise.SQUISH_CONSTANT_4_2;
+         final float dx6 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dy6 = dy0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dz6 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dw6 = dw0 - SimplexNoise.SQUISH_CONST_4_2;
          float attn6 = 2 - dx6 * dx6 - dy6 * dy6 - dz6 * dz6 - dw6 * dw6;
          if (attn6 > 0) {
             attn6 *= attn6;
             value += attn6 * attn6 * this.extrapolate(
-               xsb + 1, ysb, zsb + 1, wsb, 
-               dx6, dy6, dz6, dw6);
+                  xsb + 1, ysb, zsb + 1, wsb,
+                  dx6, dy6, dz6, dw6);
          }
 
          // Contribution (1,0,0,1)
-         final float dx7 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dy7 = dy0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dz7 = dz0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dw7 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+         final float dx7 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dy7 = dy0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dz7 = dz0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dw7 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
          float attn7 = 2 - dx7 * dx7 - dy7 * dy7 - dz7 * dz7 - dw7 * dw7;
          if (attn7 > 0) {
             attn7 *= attn7;
             value += attn7 * attn7 * this.extrapolate(
-               xsb + 1, ysb, zsb, wsb + 1, 
-               dx7, dy7, dz7, dw7);
+                  xsb + 1, ysb, zsb, wsb + 1,
+                  dx7, dy7, dz7, dw7);
          }
 
          // Contribution (0,1,1,0)
-         final float dx8 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dy8 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dz8 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dw8 = dw0 - SimplexNoise.SQUISH_CONSTANT_4_2;
+         final float dx8 = dx0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dy8 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dz8 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dw8 = dw0 - SimplexNoise.SQUISH_CONST_4_2;
          float attn8 = 2 - dx8 * dx8 - dy8 * dy8 - dz8 * dz8 - dw8 * dw8;
          if (attn8 > 0) {
             attn8 *= attn8;
             value += attn8 * attn8 * this.extrapolate(
-               xsb, ysb + 1, zsb + 1, wsb,
-               dx8, dy8, dz8, dw8);
+                  xsb, ysb + 1, zsb + 1, wsb,
+                  dx8, dy8, dz8, dw8);
          }
 
-         // Contribution (0,1,0,1)
-         final float dx9 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dy9 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dz9 = dz0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dw9 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+         // Contribution (0, 1, 0, 1)
+         final float dx9 = dx0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dy9 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dz9 = dz0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dw9 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
          float attn9 = 2 - dx9 * dx9 - dy9 * dy9 - dz9 * dz9 - dw9 * dw9;
          if (attn9 > 0) {
             attn9 *= attn9;
             value += attn9 * attn9 * this.extrapolate(
-               xsb, ysb + 1, zsb, wsb + 1,
-               dx9, dy9, dz9, dw9);
+                  xsb, ysb + 1, zsb, wsb + 1,
+                  dx9, dy9, dz9, dw9);
          }
 
          // Contribution (0,0,1,1)
-         final float dx10 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dy10 = dy0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dz10 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dw10 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+         final float dx10 = dx0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dy10 = dy0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dz10 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dw10 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
          float attn10 = 2 - dx10 * dx10 - dy10 * dy10 - dz10 * dz10
                - dw10 * dw10;
          if (attn10 > 0) {
             attn10 *= attn10;
             value += attn10 * attn10 * this.extrapolate(
-                     xsb, ysb, zsb + 1, wsb + 1,
-                     dx10, dy10, dz10, dw10);
+                  xsb, ysb, zsb + 1, wsb + 1,
+                  dx10, dy10, dz10, dw10);
          }
-      } else { 
+      } else {
          // We're inside the second dispentachoron (Rectified
-               // 4-Simplex)
+         // 4-Simplex)
          float aScore;
          byte aPoint;
          boolean aIsBiggerSide = true;
@@ -2060,7 +2075,7 @@ public class SimplexNoise {
          // Where each of the two closest points are determines how
          // the extra three vertices are calculated.
          if (aIsBiggerSide == bIsBiggerSide) {
-            if (aIsBiggerSide) { 
+            if (aIsBiggerSide) {
                // Both closest points on the bigger side
                final byte c1 = (byte) (aPoint & bPoint);
                final byte c2 = (byte) (aPoint | bPoint);
@@ -2071,17 +2086,17 @@ public class SimplexNoise {
                ysv_ext0 = ysv_ext1 = ysb;
                zsv_ext0 = zsv_ext1 = zsb;
                wsv_ext0 = wsv_ext1 = wsb;
-               
-               dx_ext0 = dx0 - SimplexNoise.SQUISH_CONSTANT_4;
-               dy_ext0 = dy0 - SimplexNoise.SQUISH_CONSTANT_4;
-               dz_ext0 = dz0 - SimplexNoise.SQUISH_CONSTANT_4;
-               dw_ext0 = dw0 - SimplexNoise.SQUISH_CONSTANT_4;
-               
-               dx_ext1 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dy_ext1 = dy0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dz_ext1 = dz0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dw_ext1 = dw0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               
+
+               dx_ext0 = dx0 - SimplexNoise.SQUISH_CONST_4;
+               dy_ext0 = dy0 - SimplexNoise.SQUISH_CONST_4;
+               dz_ext0 = dz0 - SimplexNoise.SQUISH_CONST_4;
+               dw_ext0 = dw0 - SimplexNoise.SQUISH_CONST_4;
+
+               dx_ext1 = dx0 - SimplexNoise.SQUISH_CONST_4_2;
+               dy_ext1 = dy0 - SimplexNoise.SQUISH_CONST_4_2;
+               dz_ext1 = dz0 - SimplexNoise.SQUISH_CONST_4_2;
+               dw_ext1 = dw0 - SimplexNoise.SQUISH_CONST_4_2;
+
                if ((c1 & 0x01) != 0) {
                   xsv_ext0 += 1;
                   dx_ext0 -= 1;
@@ -2110,10 +2125,10 @@ public class SimplexNoise {
                ysv_ext2 = ysb + 1;
                zsv_ext2 = zsb + 1;
                wsv_ext2 = wsb + 1;
-               dx_ext2 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dy_ext2 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dz_ext2 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-               dw_ext2 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+               dx_ext2 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+               dy_ext2 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+               dz_ext2 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+               dw_ext2 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
                if ((c2 & 0x01) == 0) {
                   xsv_ext2 -= 2;
                   dx_ext2 += 2;
@@ -2127,19 +2142,19 @@ public class SimplexNoise {
                   wsv_ext2 -= 2;
                   dw_ext2 += 2;
                }
-            } else { 
+            } else {
                // Both closest points on the smaller side
                // One of the two extra points is (1,1,1,1)
-               
+
                xsv_ext2 = xsb + 1;
                ysv_ext2 = ysb + 1;
                zsv_ext2 = zsb + 1;
                wsv_ext2 = wsb + 1;
-               
-               dx_ext2 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_4;
-               dy_ext2 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_4;
-               dz_ext2 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_4;
-               dw_ext2 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_4;
+
+               dx_ext2 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_4;
+               dy_ext2 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_4;
+               dz_ext2 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_4;
+               dw_ext2 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_4;
 
                // Other two points are based on the shared axes.
                final byte c = (byte) (aPoint & bPoint);
@@ -2147,16 +2162,17 @@ public class SimplexNoise {
                if ((c & 0x01) != 0) {
                   xsv_ext0 = xsb + 2;
                   xsv_ext1 = xsb + 1;
-                  dx_ext0 = dx0 - 2 - SimplexNoise.SQUISH_CONSTANT_4_3;
-                  dx_ext1 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
+                  dx_ext0 = dx0 - 2 - SimplexNoise.SQUISH_CONST_4_3;
+                  dx_ext1 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
                } else {
                   xsv_ext0 = xsv_ext1 = xsb;
-                  dx_ext0 = dx_ext1 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_3;
+                  dx_ext0 = dx_ext1 = dx0 - SimplexNoise.SQUISH_CONST_4_3;
                }
 
                if ((c & 0x02) != 0) {
                   ysv_ext0 = ysv_ext1 = ysb + 1;
-                  dy_ext0 = dy_ext1 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
+                  dy_ext0 = dy_ext1 = dy0 - 1
+                        - SimplexNoise.SQUISH_CONST_4_3;
                   if ((c & 0x01) == 0) {
                      ysv_ext0 += 1;
                      dy_ext0 -= 1;
@@ -2167,13 +2183,13 @@ public class SimplexNoise {
                } else {
                   ysv_ext0 = ysv_ext1 = ysb;
                   dy_ext0 = dy_ext1 = dy0
-                        - SimplexNoise.SQUISH_CONSTANT_4_3;
+                        - SimplexNoise.SQUISH_CONST_4_3;
                }
 
                if ((c & 0x04) != 0) {
                   zsv_ext0 = zsv_ext1 = zsb + 1;
                   dz_ext0 = dz_ext1 = dz0 - 1
-                        - SimplexNoise.SQUISH_CONSTANT_4_3;
+                        - SimplexNoise.SQUISH_CONST_4_3;
                   if ((c & 0x03) == 0) {
                      zsv_ext0 += 1;
                      dz_ext0 -= 1;
@@ -2184,26 +2200,26 @@ public class SimplexNoise {
                } else {
                   zsv_ext0 = zsv_ext1 = zsb;
                   dz_ext0 = dz_ext1 = dz0
-                        - SimplexNoise.SQUISH_CONSTANT_4_3;
+                        - SimplexNoise.SQUISH_CONST_4_3;
                }
 
                if ((c & 0x08) != 0) {
                   wsv_ext0 = wsb + 1;
                   wsv_ext1 = wsb + 2;
-                  dw_ext0 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
-                  dw_ext1 = dw0 - 2 - SimplexNoise.SQUISH_CONSTANT_4_3;
+                  dw_ext0 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
+                  dw_ext1 = dw0 - 2 - SimplexNoise.SQUISH_CONST_4_3;
                } else {
                   wsv_ext0 = wsv_ext1 = wsb;
                   dw_ext0 = dw_ext1 = dw0
-                        - SimplexNoise.SQUISH_CONSTANT_4_3;
+                        - SimplexNoise.SQUISH_CONST_4_3;
                }
             }
-         } else { 
+         } else {
             // One point on each "side"
-            
+
             byte c1;
             byte c2;
-            
+
             if (aIsBiggerSide) {
                c1 = aPoint;
                c2 = bPoint;
@@ -2217,18 +2233,18 @@ public class SimplexNoise {
             if ((c1 & 0x01) != 0) {
                xsv_ext0 = xsb + 2;
                xsv_ext1 = xsb + 1;
-               dx_ext0 = dx0 - 2 - SimplexNoise.SQUISH_CONSTANT_4_3;
-               dx_ext1 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
+               dx_ext0 = dx0 - 2 - SimplexNoise.SQUISH_CONST_4_3;
+               dx_ext1 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
             } else {
                xsv_ext0 = xsv_ext1 = xsb;
                dx_ext0 = dx_ext1 = dx0
-                     - SimplexNoise.SQUISH_CONSTANT_4_3;
+                     - SimplexNoise.SQUISH_CONST_4_3;
             }
 
             if ((c1 & 0x02) != 0) {
                ysv_ext0 = ysv_ext1 = ysb + 1;
                dy_ext0 = dy_ext1 = dy0 - 1
-                     - SimplexNoise.SQUISH_CONSTANT_4_3;
+                     - SimplexNoise.SQUISH_CONST_4_3;
                if ((c1 & 0x01) == 0) {
                   ysv_ext0 += 1;
                   dy_ext0 -= 1;
@@ -2239,13 +2255,13 @@ public class SimplexNoise {
             } else {
                ysv_ext0 = ysv_ext1 = ysb;
                dy_ext0 = dy_ext1 = dy0
-                     - SimplexNoise.SQUISH_CONSTANT_4_3;
+                     - SimplexNoise.SQUISH_CONST_4_3;
             }
 
             if ((c1 & 0x04) != 0) {
                zsv_ext0 = zsv_ext1 = zsb + 1;
                dz_ext0 = dz_ext1 = dz0 - 1
-                     - SimplexNoise.SQUISH_CONSTANT_4_3;
+                     - SimplexNoise.SQUISH_CONST_4_3;
                if ((c1 & 0x03) == 0) {
                   zsv_ext0 += 1;
                   dz_ext0 -= 1;
@@ -2256,18 +2272,18 @@ public class SimplexNoise {
             } else {
                zsv_ext0 = zsv_ext1 = zsb;
                dz_ext0 = dz_ext1 = dz0
-                     - SimplexNoise.SQUISH_CONSTANT_4_3;
+                     - SimplexNoise.SQUISH_CONST_4_3;
             }
 
             if ((c1 & 0x08) != 0) {
                wsv_ext0 = wsb + 1;
                wsv_ext1 = wsb + 2;
-               dw_ext0 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
-               dw_ext1 = dw0 - 2 - SimplexNoise.SQUISH_CONSTANT_4_3;
+               dw_ext0 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
+               dw_ext1 = dw0 - 2 - SimplexNoise.SQUISH_CONST_4_3;
             } else {
                wsv_ext0 = wsv_ext1 = wsb;
                dw_ext0 = dw_ext1 = dw0
-                     - SimplexNoise.SQUISH_CONSTANT_4_3;
+                     - SimplexNoise.SQUISH_CONST_4_3;
             }
 
             // One contribution is a permutation of (1,1,1,-1) based on
@@ -2276,12 +2292,12 @@ public class SimplexNoise {
             ysv_ext2 = ysb + 1;
             zsv_ext2 = zsb + 1;
             wsv_ext2 = wsb + 1;
-            
-            dx_ext2 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-            dy_ext2 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-            dz_ext2 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-            dw_ext2 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-            
+
+            dx_ext2 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+            dy_ext2 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+            dz_ext2 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+            dw_ext2 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+
             if ((c2 & 0x01) == 0) {
                xsv_ext2 -= 2;
                dx_ext2 += 2;
@@ -2298,46 +2314,46 @@ public class SimplexNoise {
          }
 
          // Contribution (1,1,1,0)
-         final float dx4 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
-         final float dy4 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
-         final float dz4 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
-         final float dw4 = dw0 - SimplexNoise.SQUISH_CONSTANT_4_3;
+         final float dx4 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
+         final float dy4 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
+         final float dz4 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
+         final float dw4 = dw0 - SimplexNoise.SQUISH_CONST_4_3;
          float attn4 = 2 - dx4 * dx4 - dy4 * dy4 - dz4 * dz4 - dw4 * dw4;
          if (attn4 > 0) {
             attn4 *= attn4;
             value += attn4 * attn4 * this.extrapolate(
-               xsb + 1, ysb + 1, zsb + 1, wsb,
-               dx4, dy4, dz4, dw4);
+                  xsb + 1, ysb + 1, zsb + 1, wsb,
+                  dx4, dy4, dz4, dw4);
          }
 
          // Contribution (1,1,0,1)
          final float dx3 = dx4;
          final float dy3 = dy4;
-         final float dz3 = dz0 - SimplexNoise.SQUISH_CONSTANT_4_3;
-         final float dw3 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_3;
+         final float dz3 = dz0 - SimplexNoise.SQUISH_CONST_4_3;
+         final float dw3 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_3;
          float attn3 = 2 - dx3 * dx3 - dy3 * dy3 - dz3 * dz3 - dw3 * dw3;
          if (attn3 > 0) {
             attn3 *= attn3;
             value += attn3 * attn3 * this.extrapolate(
-               xsb + 1, ysb + 1, zsb, wsb + 1,
-               dx3, dy3, dz3, dw3);
+                  xsb + 1, ysb + 1, zsb, wsb + 1,
+                  dx3, dy3, dz3, dw3);
          }
 
          // Contribution (1,0,1,1)
          final float dx2 = dx4;
-         final float dy2 = dy0 - SimplexNoise.SQUISH_CONSTANT_4_3;
+         final float dy2 = dy0 - SimplexNoise.SQUISH_CONST_4_3;
          final float dz2 = dz4;
          final float dw2 = dw3;
          float attn2 = 2 - dx2 * dx2 - dy2 * dy2 - dz2 * dz2 - dw2 * dw2;
          if (attn2 > 0) {
             attn2 *= attn2;
             value += attn2 * attn2 * this.extrapolate(
-               xsb + 1, ysb, zsb + 1, wsb + 1,
-               dx2, dy2, dz2, dw2);
+                  xsb + 1, ysb, zsb + 1, wsb + 1,
+                  dx2, dy2, dz2, dw2);
          }
 
          // Contribution (0,1,1,1)
-         final float dx1 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_3;
+         final float dx1 = dx0 - SimplexNoise.SQUISH_CONST_4_3;
          final float dz1 = dz4;
          final float dy1 = dy4;
          final float dw1 = dw3;
@@ -2345,87 +2361,87 @@ public class SimplexNoise {
          if (attn1 > 0) {
             attn1 *= attn1;
             value += attn1 * attn1 * this.extrapolate(
-               xsb, ysb + 1, zsb + 1, wsb + 1,
-               dx1, dy1, dz1, dw1);
+                  xsb, ysb + 1, zsb + 1, wsb + 1,
+                  dx1, dy1, dz1, dw1);
          }
 
          // Contribution (1,1,0,0)
-         final float dx5 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dy5 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dz5 = dz0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dw5 = dw0 - SimplexNoise.SQUISH_CONSTANT_4_2;
+         final float dx5 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dy5 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dz5 = dz0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dw5 = dw0 - SimplexNoise.SQUISH_CONST_4_2;
          float attn5 = 2 - dx5 * dx5 - dy5 * dy5 - dz5 * dz5 - dw5 * dw5;
          if (attn5 > 0) {
             attn5 *= attn5;
             value += attn5 * attn5 * this.extrapolate(
-               xsb + 1, ysb + 1, zsb, wsb,
-               dx5, dy5, dz5, dw5);
+                  xsb + 1, ysb + 1, zsb, wsb,
+                  dx5, dy5, dz5, dw5);
          }
 
          // Contribution (1,0,1,0)
-         final float dx6 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dy6 = dy0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dz6 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dw6 = dw0 - SimplexNoise.SQUISH_CONSTANT_4_2;
+         final float dx6 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dy6 = dy0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dz6 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dw6 = dw0 - SimplexNoise.SQUISH_CONST_4_2;
          float attn6 = 2 - dx6 * dx6 - dy6 * dy6 - dz6 * dz6 - dw6 * dw6;
          if (attn6 > 0) {
             attn6 *= attn6;
             value += attn6 * attn6 * this.extrapolate(
-               xsb + 1, ysb, zsb + 1, wsb,
-               dx6, dy6, dz6, dw6);
+                  xsb + 1, ysb, zsb + 1, wsb,
+                  dx6, dy6, dz6, dw6);
          }
 
          // Contribution (1,0,0,1)
-         final float dx7 = dx0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dy7 = dy0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dz7 = dz0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dw7 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+         final float dx7 = dx0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dy7 = dy0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dz7 = dz0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dw7 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
          float attn7 = 2 - dx7 * dx7 - dy7 * dy7 - dz7 * dz7 - dw7 * dw7;
          if (attn7 > 0) {
             attn7 *= attn7;
             value += attn7 * attn7 * this.extrapolate(
-               xsb + 1, ysb, zsb, wsb + 1,
-               dx7, dy7, dz7, dw7);
+                  xsb + 1, ysb, zsb, wsb + 1,
+                  dx7, dy7, dz7, dw7);
          }
 
          // Contribution (0,1,1,0)
-         final float dx8 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dy8 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dz8 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dw8 = dw0 - SimplexNoise.SQUISH_CONSTANT_4_2;
+         final float dx8 = dx0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dy8 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dz8 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dw8 = dw0 - SimplexNoise.SQUISH_CONST_4_2;
          float attn8 = 2 - dx8 * dx8 - dy8 * dy8 - dz8 * dz8 - dw8 * dw8;
          if (attn8 > 0) {
             attn8 *= attn8;
             value += attn8 * attn8 * this.extrapolate(
-               xsb, ysb + 1, zsb + 1, wsb,
-               dx8, dy8, dz8, dw8);
+                  xsb, ysb + 1, zsb + 1, wsb,
+                  dx8, dy8, dz8, dw8);
          }
 
-         // Contribution (0,1,0,1)
-         final float dx9 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dy9 = dy0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dz9 = dz0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dw9 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+         /* Contribution (0, 1, 0, 1) */
+         final float dx9 = dx0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dy9 = dy0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dz9 = dz0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dw9 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
          float attn9 = 2 - dx9 * dx9 - dy9 * dy9 - dz9 * dz9 - dw9 * dw9;
          if (attn9 > 0) {
             attn9 *= attn9;
             value += attn9 * attn9 * this.extrapolate(
-               xsb, ysb + 1, zsb, wsb + 1,
-               dx9, dy9, dz9, dw9);
+                  xsb, ysb + 1, zsb, wsb + 1,
+                  dx9, dy9, dz9, dw9);
          }
 
-         // Contribution (0,0,1,1)
-         final float dx10 = dx0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dy10 = dy0 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dz10 = dz0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
-         final float dw10 = dw0 - 1 - SimplexNoise.SQUISH_CONSTANT_4_2;
+         /* Contribution (0, 0, 1, 1) */
+         final float dx10 = dx0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dy10 = dy0 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dz10 = dz0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
+         final float dw10 = dw0 - 1 - SimplexNoise.SQUISH_CONST_4_2;
          float attn10 = 2 - dx10 * dx10 - dy10 * dy10 - dz10 * dz10
                - dw10 * dw10;
          if (attn10 > 0) {
             attn10 *= attn10;
             value += attn10 * attn10 * this.extrapolate(
-                     xsb, ysb, zsb + 1, wsb + 1,
-                     dx10, dy10, dz10, dw10);
+                  xsb, ysb, zsb + 1, wsb + 1,
+                  dx10, dy10, dz10, dw10);
          }
       }
 
@@ -2435,8 +2451,8 @@ public class SimplexNoise {
       if (attn_ext0 > 0) {
          attn_ext0 *= attn_ext0;
          value += attn_ext0 * attn_ext0 * this.extrapolate(
-            xsv_ext0, ysv_ext0, zsv_ext0, wsv_ext0,
-            dx_ext0, dy_ext0, dz_ext0, dw_ext0);
+               xsv_ext0, ysv_ext0, zsv_ext0, wsv_ext0,
+               dx_ext0, dy_ext0, dz_ext0, dw_ext0);
       }
 
       // Second extra vertex
@@ -2481,8 +2497,8 @@ public class SimplexNoise {
 
       final int index = this.perm[this.perm[xsb & 0xff] + ysb & 0xff] & 0x0e;
 
-      return SimplexNoise.gradients2D[index] * dx
-            + SimplexNoise.gradients2D[index + 1] * dy;
+      return SimplexNoise.gradients2[index] * dx
+            + SimplexNoise.gradients2[index + 1] * dy;
    }
 
    protected float extrapolate (
@@ -2492,9 +2508,9 @@ public class SimplexNoise {
       final int index = this.permGradIndex3D[this.perm[this.perm[xsb & 0xff]
             + ysb & 0xff] + zsb & 0xff];
 
-      return SimplexNoise.gradients3D[index] * dx
-            + SimplexNoise.gradients3D[index + 1] * dy
-            + SimplexNoise.gradients3D[index + 2] * dz;
+      return SimplexNoise.gradients3[index] * dx
+            + SimplexNoise.gradients3[index + 1] * dy
+            + SimplexNoise.gradients3[index + 2] * dz;
    }
 
    protected float extrapolate (
@@ -2504,9 +2520,9 @@ public class SimplexNoise {
       final int index = this.perm[this.perm[this.perm[this.perm[xsb & 0xff]
             + ysb & 0xff] + zsb & 0xff] + wsb & 0xff] & 0xfc;
 
-      return SimplexNoise.gradients4D[index] * dx
-            + SimplexNoise.gradients4D[index + 1] * dy
-            + SimplexNoise.gradients4D[index + 2] * dz
-            + SimplexNoise.gradients4D[index + 3] * dw;
+      return SimplexNoise.gradients4[index] * dx
+            + SimplexNoise.gradients4[index + 1] * dy
+            + SimplexNoise.gradients4[index + 2] * dz
+            + SimplexNoise.gradients4[index + 3] * dw;
    }
 }

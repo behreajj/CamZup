@@ -7,6 +7,7 @@ import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
+import camzup.core.SimplexNoise;
 import processing.core.PApplet;
 
 public class CamZup {
@@ -14,33 +15,6 @@ public class CamZup {
    public final static String VERSION = "##library.prettyVersion##";
 
    public static void main ( final String[] args ) {
-
-      int tests = 100;
-      float[] samples = new float[tests];
-      int places = 5;
-      DecimalFormat df = new DecimalFormat("#.########");
-      Random rng = new Random();
-      df.setMaximumFractionDigits(places);
-      df.setGroupingUsed(false);
-      long start0, stop0, start1, stop1;
-      for (int i = 0; i < tests; ++i) {
-         samples[i] = rng.uniform(-50000, 50000);
-      }
-      start0 = System.nanoTime();
-      for (int i = 0; i < tests; ++i) {
-         Utils.toFixed(samples[i], places);
-      }
-      stop0 = System.nanoTime();
-      System.out.println("Utils.toFixed:\t" + (stop0 - start0));
-
-      start1 = System.nanoTime();
-      for (int i = 0; i < tests; ++i) {
-         df.format(samples[i]);
-      }
-      stop1 = System.nanoTime();
-      System.out.println("Decimal.format:\t" + (stop1 - start1));
-
-      System.out.println((stop1 - start1) / (double) (stop0 - start0));
    }
 
    public static String version () {

@@ -40,9 +40,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * last resort, when a and b are equal or uncomparable.
        *
        * @param a
-       *             the left comparisand
+       *           the left comparisand
        * @param b
-       *             the right comparisand
+       *           the right comparisand
        * @return the comparison
        *
        */
@@ -83,13 +83,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * which is to be defined by sub-classes of this class.
        *
        * @param origin
-       *                  the origin vector
+       *           the origin vector
        * @param dest
-       *                  the destination vector
+       *           the destination vector
        * @param step
-       *                  a factor in [0.0, 1.0]
+       *           a factor in [0.0, 1.0]
        * @param target
-       *                  the output quaternion
+       *           the output quaternion
        * @return the eased quaternion
        */
       @Override
@@ -109,13 +109,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * The interpolation to be defined by subclasses.
        *
        * @param origin
-       *                  the origin quaternion
+       *           the origin quaternion
        * @param dest
-       *                  the destination quaternion
+       *           the destination quaternion
        * @param step
-       *                  a factor in [0.0, 1.0]
+       *           a factor in [0.0, 1.0]
        * @param target
-       *                  the output quaternion
+       *           the output quaternion
        * @return the eased quaternion
        */
       public abstract Quaternion applyUnclamped ( final Quaternion origin,
@@ -151,7 +151,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * vector comparator.
        *
        * @param imagComparator
-       *                          the vector comparator
+       *           the vector comparator
        */
       public ComparatorRealImag (
             final Comparator < Vec3 > imagComparator ) {
@@ -164,9 +164,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * Compares two quaternions by component.
        *
        * @param a
-       *             the left comparisand
+       *           the left comparisand
        * @param b
-       *             the right comparisand
+       *           the right comparisand
        * @return the evaluation
        */
       @Override
@@ -190,7 +190,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * The default constructor.
        *
        * @param quat
-       *                the quaternion to iterate
+       *           the quaternion to iterate
        */
       public IteratorWFirst ( final Quaternion quat ) {
 
@@ -221,7 +221,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * The default constructor.
        *
        * @param quat
-       *                the quaternion to iterate
+       *           the quaternion to iterate
        */
       public IteratorWLast ( final Quaternion quat ) {
 
@@ -259,13 +259,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * step. Normalizes the result.
        *
        * @param origin
-       *                  the origin quaternion
+       *           the origin quaternion
        * @param dest
-       *                  the destination quaternion
+       *           the destination quaternion
        * @param step
-       *                  a factor in [0.0, 1.0]
+       *           a factor in [0.0, 1.0]
        * @param target
-       *                  the output quaternion
+       *           the output quaternion
        * @return the eased quaternion
        */
       @Override
@@ -334,7 +334,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * The default constructor.
        *
        * @param quat
-       *                the quaternion to iterate
+       *           the quaternion to iterate
        */
       public QIterator ( final Quaternion quat ) {
 
@@ -390,13 +390,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * Slerps between two quaternions by a step.
        *
        * @param origin
-       *                  the origin quaternion
+       *           the origin quaternion
        * @param dest
-       *                  the destination quaternion
+       *           the destination quaternion
        * @param step
-       *                  a factor in [0.0, 1.0]
+       *           a factor in [0.0, 1.0]
        * @param target
-       *                  the output quaternion
+       *           the output quaternion
        * @return the eased quaternion
        */
       @Override
@@ -522,11 +522,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Adds two quaternions.
     *
     * @param a
-    *                  the left operand
+    *           the left operand
     * @param b
-    *                  the right operand
+    *           the right operand
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the sum
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
@@ -544,11 +544,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Adds two quaternions and normalizes the result.
     *
     * @param a
-    *                  the left operand
+    *           the left operand
     * @param b
-    *                  the right operand
+    *           the right operand
     * @param target
-    *                  the target quaternion
+    *           the target quaternion
     * @return the normalized sum
     * @see Vec3#add(Vec3, Vec3, Vec3)
     * @see Quaternion#dot(Quaternion, Quaternion)
@@ -579,13 +579,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Adds two quaternions and normalizes the result.
     *
     * @param a
-    *                  the left operand
+    *           the left operand
     * @param b
-    *                  the right operand
+    *           the right operand
     * @param target
-    *                  the target quaternion
+    *           the target quaternion
     * @param sum
-    *                  the sum
+    *           the sum
     * @return the normalized sum
     * @see Quaternion#add(Quaternion, Quaternion, Quaternion)
     * @see Quaternion#normalize(Quaternion, Quaternion)
@@ -606,9 +606,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * other.
     *
     * @param a
-    *             the left comparisand
+    *           the left comparisand
     * @param b
-    *             the right comparisand
+    *           the right comparisand
     * @return the evaluation
     * @see Utils#approxFast(float, float)
     * @see Vec3#approx(Vec3, Vec3)
@@ -626,11 +626,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * other according to a tolerance.
     *
     * @param a
-    *                     the left comparisand
+    *           the left comparisand
     * @param b
-    *                     the right comparisand
+    *           the right comparisand
     * @param tolerance
-    *                     the tolerance
+    *           the tolerance
     * @return the evaluation
     * @see Utils#approxFast(float, float)
     * @see Vec3#approx(Vec3, Vec3)
@@ -652,9 +652,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * -<em>a<sub>imag</sub></em> )
     *
     * @param quat
-    *                  the input quaternion
+    *           the input quaternion
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the conjugate
     * @see Vec3#negate(Vec3, Vec3)
     */
@@ -671,13 +671,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Divides a scalar by a quaternion.
     *
     * @param a
-    *                    the numerator
+    *           the numerator
     * @param b
-    *                    the denominator
+    *           the denominator
     * @param target
-    *                    the output quaternion
+    *           the output quaternion
     * @param inverted
-    *                    the inverse
+    *           the inverse
     * @return the quotient
     */
    public static Quaternion div (
@@ -724,15 +724,15 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Divides a scalar by a quaternion.
     *
     * @param a
-    *                     the numerator
+    *           the numerator
     * @param b
-    *                     the denominator
+    *           the denominator
     * @param target
-    *                     the output quaternion
+    *           the output quaternion
     * @param inverted
-    *                     the inverse
+    *           the inverse
     * @param conjugate
-    *                     the conjugate
+    *           the conjugate
     * @return the quotient
     * @see Quaternion#inverse(Quaternion, Quaternion,
     *      Quaternion)
@@ -754,11 +754,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Divides a quaternion by a scalar.
     *
     * @param a
-    *                  the numerator
+    *           the numerator
     * @param b
-    *                  the denominator
+    *           the denominator
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the quotient
     * @see Vec3#mult(Vec3, float, Vec3)
     */
@@ -782,11 +782,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Divides one quaternion by another.
     *
     * @param a
-    *                  the numerator
+    *           the numerator
     * @param b
-    *                  the denominator
+    *           the denominator
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the quotient
     */
    public static Quaternion div (
@@ -837,15 +837,15 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * denominator.
     *
     * @param a
-    *                     the numerator
+    *           the numerator
     * @param b
-    *                     the denominator
+    *           the denominator
     * @param target
-    *                     the output quaternion
+    *           the output quaternion
     * @param inverted
-    *                     the inverse
+    *           the inverse
     * @param conjugate
-    *                     the conjugate
+    *           the conjugate
     * @return the quotient
     * @see Quaternion#inverse(Quaternion, Quaternion,
     *      Quaternion)
@@ -875,9 +875,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * its magnitude squared.
     *
     * @param a
-    *             left operand
+    *           left operand
     * @param b
-    *             right operand
+    *           right operand
     * @return the dot product
     * @see Vec3#dot(Vec3, Vec3)
     */
@@ -892,13 +892,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Creates a quaternion from three axes.
     *
     * @param right
-    *                   the right axis
+    *           the right axis
     * @param forward
-    *                   the forward axis
+    *           the forward axis
     * @param up
-    *                   the up axis
+    *           the up axis
     * @param target
-    *                   the output quaternion
+    *           the output quaternion
     * @return the quaternion
     */
    public static Quaternion fromAxes (
@@ -933,11 +933,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * the axis prior to calculating the quaternion.
     *
     * @param radians
-    *                   the angle in radians
+    *           the angle in radians
     * @param axis
-    *                   the axis
+    *           the axis
     * @param target
-    *                   the output quaternion
+    *           the output quaternion
     * @return the quaternion
     */
    public static Quaternion fromAxisAngle (
@@ -975,11 +975,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * assumes that the two vectors are normalized.
     *
     * @param origin
-    *                  the origin vector, normalized
+    *           the origin vector, normalized
     * @param dest
-    *                  the destination vector, normalized
+    *           the destination vector, normalized
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the quaternion
     */
    public static Quaternion fromTo (
@@ -1056,9 +1056,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Gets the forward axis of the rotation.
     *
     * @param quat
-    *                  the quaternion
+    *           the quaternion
     * @param target
-    *                  the output vector
+    *           the output vector
     * @return the forward axis
     */
    public static Vec3 getForward (
@@ -1081,9 +1081,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Gets the right axis of the rotation.
     *
     * @param quat
-    *                  the quaternion
+    *           the quaternion
     * @param target
-    *                  the output vector
+    *           the output vector
     * @return the right axis
     */
    public static Vec3 getRight (
@@ -1107,9 +1107,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Gets the up axis of the rotation.
     *
     * @param quat
-    *                  the quaternion
+    *           the quaternion
     * @param target
-    *                  the output vector
+    *           the output vector
     * @return the up axis
     */
    public static Vec3 getUp (
@@ -1135,7 +1135,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * 0.0, 0.0 ).
     *
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the identity
     */
    public static Quaternion identity ( final Quaternion target ) {
@@ -1150,13 +1150,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * <em>a</em><sup>-1</sup> = <em>a</em>* /
     * |<em>a</em>|<sup>2</sup><br>
     * <br>
-    * If a quaternion is of unit length, its inverse is
-    * equal to its conjugate.
+    * If a quaternion is of unit length, its inverse is equal
+    * to its conjugate.
     *
     * @param quat
-    *                  the input quaternion
+    *           the input quaternion
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the inverse
     */
    public static Quaternion inverse (
@@ -1164,18 +1164,18 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion target ) {
 
       final float mSq = Quaternion.magSq(quat);
-      
+
       if (mSq == 0.0f) {
          return target.reset();
       }
 
       final Vec3 i = quat.imag;
-      if(mSq == 1.0f) {
+      if (mSq == 1.0f) {
          return target.set(quat.real, -i.x, -i.y, -i.z);
       }
 
       final float mSqInv = 1.0f / mSq;
-      
+
       return target.set(
             quat.real * mSqInv,
             -i.x * mSqInv,
@@ -1191,11 +1191,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * |<em>a</em>|<sup>2</sup>
     *
     * @param quat
-    *                     the input quaternion
+    *           the input quaternion
     * @param target
-    *                     the output quaternion
+    *           the output quaternion
     * @param conjugate
-    *                     the conjugate
+    *           the conjugate
     * @return the inverse
     * @see Quaternion#conj(Quaternion, Quaternion)
     * @see Quaternion#dot(Quaternion, Quaternion)
@@ -1217,7 +1217,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * zero.
     *
     * @param quat
-    *                the quaternion to test
+    *           the quaternion to test
     * @return the evaluation
     * @see Vec3#isZero(Vec3)
     */
@@ -1231,7 +1231,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * non-zero.
     *
     * @param quat
-    *                the input quaternion
+    *           the input quaternion
     * @return the evaluation
     */
    public static boolean isNonZero ( final Quaternion quat ) {
@@ -1243,7 +1243,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Tests if the quaternion is of unit magnitude.
     *
     * @param quat
-    *                the quaternion
+    *           the quaternion
     * @return the evaluation
     * @see Quaternion#dot(Quaternion, Quaternion)
     * @see Utils#approxFast(float, float)
@@ -1257,7 +1257,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Tests if all components of the quaternion are zero.
     *
     * @param quat
-    *                the quaternion
+    *           the quaternion
     * @return the evaluation
     * @see Vec3#isZero(Vec3)
     */
@@ -1300,7 +1300,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * |<em>a</em>| = \u221a <em>a</em> \u00b7 <em>a</em>
     *
     * @param quat
-    *                the input quaternion
+    *           the input quaternion
     * @return the magnitude
     * @see Math#sqrt(double)
     * @see Quaternion#dot(Quaternion, Quaternion)
@@ -1317,7 +1317,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * |<em>a</em>|<sup>2</sup> = <em>a</em> \u00b7 <em>a</em>
     *
     * @param quat
-    *                the quaternion
+    *           the quaternion
     * @return the magnitude squared
     * @see Quaternion#dot(Quaternion, Quaternion)
     */
@@ -1332,13 +1332,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * the Quaternion class.
     *
     * @param origin
-    *                  the original quaternion
+    *           the original quaternion
     * @param dest
-    *                  the destination quaternion
+    *           the destination quaternion
     * @param step
-    *                  the step
+    *           the step
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the mix
     * @see Quaternion#EASING
     */
@@ -1357,15 +1357,15 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * with the help of an easing function.
     *
     * @param origin
-    *                      the original quaternion
+    *           the original quaternion
     * @param dest
-    *                      the destination quaternion
+    *           the destination quaternion
     * @param step
-    *                      the step
+    *           the step
     * @param target
-    *                      the output quaternion
+    *           the output quaternion
     * @param easingFunc
-    *                      the easing function
+    *           the easing function
     * @return the mix
     */
    public static Quaternion mix (
@@ -1383,11 +1383,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Multiplies a scalar and quaternion.
     *
     * @param a
-    *                  the scalar
+    *           the scalar
     * @param b
-    *                  the quaternion
+    *           the quaternion
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the scaled quaternion
     */
    public static Quaternion mult (
@@ -1408,11 +1408,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Multiplies a scalar and quaternion.
     *
     * @param a
-    *                  the quaternion
+    *           the quaternion
     * @param b
-    *                  the scalar
+    *           the scalar
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the scaled quaternion
     */
    public static Quaternion mult (
@@ -1442,11 +1442,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Quaternion multiplication is not commutative.
     *
     * @param a
-    *                  left operand
+    *           left operand
     * @param b
-    *                  right operand
+    *           right operand
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the product
     */
    public static Quaternion mult (
@@ -1471,11 +1471,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * the vector by the quaternion.
     *
     * @param quat
-    *                  the quaternion
+    *           the quaternion
     * @param source
-    *                  the vector
+    *           the vector
     * @param target
-    *                  the output vector
+    *           the output vector
     * @return the rotated vector
     */
    public static Vec3 mult (
@@ -1504,11 +1504,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Multiplies two quaternions, then normalizes the product.
     *
     * @param a
-    *                  the left operand
+    *           the left operand
     * @param b
-    *                  the right operand
+    *           the right operand
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the normalized product
     */
    public static Quaternion multNorm (
@@ -1542,13 +1542,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Multiplies two quaternions, then normalizes the product.
     *
     * @param a
-    *                   the left operand
+    *           the left operand
     * @param b
-    *                   the right operand
+    *           the right operand
     * @param target
-    *                   the output quaternion
+    *           the output quaternion
     * @param product
-    *                   the product
+    *           the product
     * @return the normalized product
     */
    public static Quaternion multNorm (
@@ -1569,9 +1569,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * <em>\u00e2</em> = <em>a</em> / |<em>a</em>|
     *
     * @param quat
-    *                  the input quaternion
+    *           the input quaternion
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the normalized quaternion
     * @see Quaternion#div(Quaternion, float, Quaternion)
     * @see Quaternion#mag(Quaternion)
@@ -1586,9 +1586,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Creates a random unit quaternion.
     *
     * @param rng
-    *                  the random number generator
+    *           the random number generator
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the random quaternion
     */
    public static Quaternion random ( final Random rng,
@@ -1617,13 +1617,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * angle.
     *
     * @param quat
-    *                   the quaternion
+    *           the quaternion
     * @param radians
-    *                   the angle in radians
+    *           the angle in radians
     * @param axis
-    *                   the axis
+    *           the axis
     * @param target
-    *                   the output quaternion
+    *           the output quaternion
     * @return the rotated quaternion
     */
    public static Quaternion rotate (
@@ -1732,11 +1732,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * purpose behind a quaternion.
     *
     * @param quat
-    *                   the input quaternion
+    *           the input quaternion
     * @param radians
-    *                   the angle in radians
+    *           the angle in radians
     * @param target
-    *                   the output quaternion
+    *           the output quaternion
     * @return the rotated quaternion
     * @see Math#cos(double)
     * @see Math#sin(double)
@@ -1767,11 +1767,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * purpose behind a quaternion.
     *
     * @param quat
-    *                   the input quaternion
+    *           the input quaternion
     * @param radians
-    *                   the angle in radians
+    *           the angle in radians
     * @param target
-    *                   the output quaternion
+    *           the output quaternion
     * @return the rotated quaternion
     * @see Math#cos(double)
     * @see Math#sin(double)
@@ -1802,11 +1802,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * purpose behind a quaternion.
     *
     * @param quat
-    *                   the input quaternion
+    *           the input quaternion
     * @param radians
-    *                   the angle in radians
+    *           the angle in radians
     * @param target
-    *                   the output quaternion
+    *           the output quaternion
     * @return the rotated quaternion
     * @see Math#cos(double)
     * @see Math#sin(double)
@@ -1834,7 +1834,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * quaternions are compared.
     *
     * @param comparator
-    *                      the comparator
+    *           the comparator
     */
    public static void setComparator (
          final Comparator < Quaternion > comparator ) {
@@ -1849,7 +1849,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * interpolated.
     *
     * @param easing
-    *                  the easing function
+    *           the easing function
     */
    public static void setEasing ( final AbstrEasing easing ) {
 
@@ -1862,11 +1862,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Subtracts the right quaternion from the left.
     *
     * @param a
-    *                  the left operand
+    *           the left operand
     * @param b
-    *                  the right operand
+    *           the right operand
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the difference
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
@@ -1885,11 +1885,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * normalizes the result.
     *
     * @param a
-    *                  the left operand
+    *           the left operand
     * @param b
-    *                  the right operand
+    *           the right operand
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @return the normalized difference
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     * @see Quaternion#dot(Quaternion, Quaternion)
@@ -1921,13 +1921,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * normalizes the result.
     *
     * @param a
-    *                  the left operand
+    *           the left operand
     * @param b
-    *                  the right operand
+    *           the right operand
     * @param target
-    *                  the output quaternion
+    *           the output quaternion
     * @param diff
-    *                  the difference
+    *           the difference
     * @return the normalized difference
     * @see Quaternion#sub(Quaternion, Quaternion, Quaternion)
     * @see Quaternion#normalize(Quaternion, Quaternion)
@@ -1944,7 +1944,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
-    * The coefficients of the imaginary components i, j and k.
+    * The coefficients of the imaginary components <em>i</em>,
+    * <em>j</em> and <em>k</em>.
     */
    public final Vec3 imag = new Vec3(0.0f, 0.0f, 0.0f);
 
@@ -1985,13 +1986,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Constructs a quaternion by float component.
     *
     * @param real
-    *                 the real (w) component
+    *           the real (w) component
     * @param xImag
-    *                 the x component
+    *           the x component
     * @param yImag
-    *                 the y component
+    *           the y component
     * @param zImag
-    *                 the z component
+    *           the z component
     */
    public Quaternion (
          final float real,
@@ -2008,9 +2009,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * vector.
     *
     * @param real
-    *                the real component
+    *           the real component
     * @param imag
-    *                the imaginary component
+    *           the imaginary component
     */
    public Quaternion (
          final float real,
@@ -2024,7 +2025,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * A copy constructor.
     *
     * @param source
-    *                  the source quaternion
+    *           the source quaternion
     */
    public Quaternion ( final Quaternion source ) {
 
@@ -2056,7 +2057,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * can be changed.
     *
     * @param quat
-    *                the comparisand
+    *           the comparisand
     * @return the numeric code
     * @see Quaternion#COMPARATOR
     */
@@ -2071,7 +2072,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * object.
     *
     * @param obj
-    *               the object
+    *           the object
     * @return the equivalence
     * @see Quaternion#equals(Quaternion)
     */
@@ -2096,7 +2097,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * element.
     *
     * @param index
-    *                 the index
+    *           the index
     * @return the component at that index
     * @see Quaternion#getWFirst(int)
     */
@@ -2110,7 +2111,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Gets an element by index, assuming that w is the first.
     *
     * @param index
-    *                 the index
+    *           the index
     * @return the component at that index
     */
    public float getWFirst ( final int index ) {
@@ -2137,7 +2138,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Gets an element by index, assuming that w is the last.
     *
     * @param index
-    *                 the index
+    *           the index
     * @return the component at that index
     */
    public float getWLast ( final int index ) {
@@ -2204,13 +2205,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Sets the components of this vector.
     *
     * @param real
-    *                 the real (w) component
+    *           the real (w) component
     * @param xImag
-    *                 the imag x component
+    *           the imag x component
     * @param yImag
-    *                 the imag y component
+    *           the imag y component
     * @param zImag
-    *                 the imag z component
+    *           the imag z component
     * @return this quaternion
     */
    @Chainable
@@ -2232,17 +2233,17 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final boolean yImag,
          final boolean zImag ) {
 
-      this.real = Utils.bool(real);
+      this.real = Utils.toFloat(real);
       this.imag.set(xImag, yImag, zImag);
       return this;
    }
 
    @Chainable
-   public Quaternion set(
-      final String wstr,
-      final String xstr,
-      final String ystr,
-      final String zstr) {
+   public Quaternion set (
+         final String wstr,
+         final String xstr,
+         final String ystr,
+         final String zstr ) {
 
       float real = 0.0f;
 
@@ -2261,9 +2262,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Sets the components of this quaternion.
     *
     * @param real
-    *                the real component
+    *           the real component
     * @param imag
-    *                the imaginary component
+    *           the imaginary component
     * @return this quaternion
     */
    @Chainable
@@ -2281,7 +2282,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * quaternion.
     *
     * @param source
-    *                  the input quaternion
+    *           the input quaternion
     * @return this quaternion
     */
    @Chainable
@@ -2311,7 +2312,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * true, w is returned as the first element, not the last.
     *
     * @param wFirst
-    *                  issue w as the first element
+    *           issue w as the first element
     * @return the array
     */
    public float[] toArray ( final boolean wFirst ) {
@@ -2366,7 +2367,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * calling it 'w'.
     *
     * @param w
-    *             the real value
+    *           the real value
     */
    public void w ( final float w ) {
 
@@ -2387,7 +2388,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Sets the imaginary coefficient x.
     *
     * @param x
-    *             the x value
+    *           the x value
     */
    public void x ( final float x ) {
 
@@ -2408,7 +2409,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Sets the imaginary coefficient y.
     *
     * @param y
-    *             the y value
+    *           the y value
     */
    public void y ( final float y ) {
 
@@ -2429,7 +2430,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Sets the imaginary coefficient z.
     *
     * @param z
-    *             the z value
+    *           the z value
     */
    public void z ( final float z ) {
 
@@ -2442,7 +2443,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * the static approx function instead.
     *
     * @param quat
-    *                the quaternion
+    *           the quaternion
     * @return the evaluation
     * @see Quaternion#approx(Quaternion, Quaternion)
     * @see Quaternion#approx(Quaternion, Quaternion, float)

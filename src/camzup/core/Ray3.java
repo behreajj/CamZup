@@ -40,12 +40,12 @@ public class Ray3 extends Ray {
    /**
     * The ray's direction.
     */
-   final Vec3 dir = Vec3.forward(new Vec3());
+   public final Vec3 dir = Vec3.forward(new Vec3());
 
    /**
     * The ray's origin point.
     */
-   final Vec3 origin = new Vec3();
+   public final Vec3 origin = new Vec3();
 
    public Ray3 () {
 
@@ -123,12 +123,12 @@ public class Ray3 extends Ray {
    public String toString () {
 
       return new StringBuilder(196)
-         .append("{ origin: ")
-         .append(origin.toString())
-         .append(", dir: ")
-         .append(dir.toString())
-         .append(" }")
-         .toString();
+            .append("{ origin: ")
+            .append(origin.toString())
+            .append(", dir: ")
+            .append(dir.toString())
+            .append(" }")
+            .toString();
    }
 
    protected boolean equals ( final Ray3 ray ) {

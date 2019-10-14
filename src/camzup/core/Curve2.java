@@ -25,25 +25,6 @@ public class Curve2 extends Curve
    public static class Knot2 implements Comparable < Knot2 > {
 
       /**
-       * The knot's default string format.
-       */
-      // public static String DEFAULT_STRING_FORMAT = new
-      // StringBuilder()
-      // .append("{ coord: %s, %n")
-      // .append(" foreHandle: %s, %n")
-      // .append(" rearHandle: %s }")
-      // .toString();
-
-      /**
-       * The knot's string format.
-       */
-      // private static String STRING_FORMAT = "";
-
-      // static {
-      // Knot2.STRING_FORMAT = Knot2.DEFAULT_STRING_FORMAT;
-      // }
-
-      /**
        * Creates a knot from polar coordinates, where the knot's
        * forehandle is tangent to the radius.
        *
@@ -94,32 +75,6 @@ public class Curve2 extends Curve
 
          return target;
       }
-
-      /**
-       * Gets the format for the string representation of this
-       * knot.
-       *
-       * @return the format
-       */
-      // public static String getStringFormat () {
-      //
-      // return Knot2.STRING_FORMAT;
-      // }
-
-      /**
-       * Sets the format for the string representation of the
-       * knot.
-       *
-       * @param stringFormat
-       *           the format
-       */
-      // public static void setStringFormat ( final String
-      // stringFormat ) {
-      //
-      // if (stringFormat != null) {
-      // Knot2.STRING_FORMAT = stringFormat;
-      // }
-      // }
 
       /**
        * The spatial coordinate of the knot.
@@ -916,12 +871,6 @@ public class Curve2 extends Curve
       @Override
       public String toString () {
 
-         // return String.format(
-         // Knot2.STRING_FORMAT,
-         // this.coord.toString(),
-         // this.foreHandle.toString(),
-         // this.rearHandle.toString());
-
          return this.toString(4);
       }
 
@@ -1214,7 +1163,8 @@ public class Curve2 extends Curve
     */
    public static Curve2 circle (
          final Curve2 target,
-         final Vec2 temp0, final Vec2 temp1 ) {
+         final Vec2 temp0,
+         final Vec2 temp1 ) {
 
       return Curve2.circle(
             0.0f, 0.5f, 4,
@@ -2029,6 +1979,7 @@ public class Curve2 extends Curve
       sb.append(this.closedLoop);
       sb.append(", \n  knots: [ \n");
 
+      //TODO: Switch to while itr has next
       for (final Iterator < Curve2.Knot2 > itr = this.knots.iterator(); itr
             .hasNext();) {
          sb.append(itr.next());

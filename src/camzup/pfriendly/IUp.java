@@ -595,7 +595,8 @@ public interface IUp {
     * @return the array of glyphs
     * @see Toolkit#getDefaultToolkit()
     */
-   public static CurveEntity2[] getGlyph ( final PFont pfont,
+   public static CurveEntity2[] getGlyph ( 
+         final PFont pfont,
          final float detail,
          final char... characters ) {
 
@@ -857,7 +858,8 @@ public interface IUp {
     * @see PMatrix3D#preApply(PMatrix3D)
     */
    public static PMatrix3D mult (
-         final PMatrix3D a, final PMatrix3D b ) {
+         final PMatrix3D a,
+         final PMatrix3D b ) {
 
       return IUp.mult(a, b, (PMatrix3D) null);
    }
@@ -878,7 +880,8 @@ public interface IUp {
     * @see PMatrix3D#preApply(PMatrix3D)
     */
    public static PMatrix3D mult (
-         final PMatrix3D a, final PMatrix3D b,
+         final PMatrix3D a, 
+         final PMatrix3D b,
          PMatrix3D target ) {
 
       if (target == null) {
@@ -1066,11 +1069,6 @@ public interface IUp {
 
       final float tanfov = (float) Math.tan(fov * 0.5d);
       final float d = Utils.div(1.0f, far - near);
-      // target.set(
-      //       Utils.div(1.0f, tanfov * aspect), 0.0f, 0.0f, 0.0f,
-      //       0.0f, Utils.div(1.0f, tanfov), 0.0f, 0.0f,
-      //       0.0f, 0.0f, (far + near) * -d, 2.0f * near * far * -d,
-      //       0.0f, 0.0f, -1.0f, 0.0f);
       target.set(
             Utils.div(1.0f, tanfov * aspect), 0.0f, 0.0f, 0.0f,
             0.0f, Utils.div(1.0f, tanfov), 0.0f, 0.0f,
@@ -1087,30 +1085,48 @@ public interface IUp {
     *           the matrix
     * @return the string
     */
-   public static String printMatrix ( final PMatrix3D m ) {
-
-      return printMatrix(m, IUp.DEFAULT_M4_FMT);
-   }
-
-   /**
-    * Prints a matrix with a given format. The format should
-    * contain 16 slots.
-    * 
-    * @param m
-    *           the matrix
-    * @param format
-    *           the string format
-    * @return the string
-    */
-   public static String printMatrix (
-         final PMatrix3D m,
-         String format ) {
-
-      return String.format(format,
-            m.m00, m.m10, m.m20, m.m30,
-            m.m01, m.m11, m.m21, m.m31,
-            m.m02, m.m12, m.m22, m.m32,
-            m.m03, m.m13, m.m23, m.m33);
+   public static String toString ( final PMatrix3D m ) {
+      
+      return new StringBuilder(320)
+            .append("{ elms: [\n ")
+            
+            .append(Utils.toFixed(m.m00, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m01, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m02, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m03, 4))
+            .append(", \n ")
+            
+            .append(Utils.toFixed(m.m10, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m11, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m12, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m13, 4))
+            .append(", \n ")
+            
+            .append(Utils.toFixed(m.m20, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m21, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m22, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m23, 4))
+            .append(", \n ")
+            
+            .append(Utils.toFixed(m.m30, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m31, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m32, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m33, 4))
+            
+            .append(" ] }")
+            .toString();
    }
 
    public static PMatrix3D rotate (

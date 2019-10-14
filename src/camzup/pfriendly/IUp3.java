@@ -41,9 +41,9 @@ public interface IUp3 extends IUp {
             parent.mouseY / (float) parent.height);
 
       // return target.set(
-      //       2.0f * mx - 1.0f,
-      //       -2.0f * my + 1.0f,
-      //       0.0f);
+      // 2.0f * mx - 1.0f,
+      // -2.0f * my + 1.0f,
+      // 0.0f);
 
       return target.set(
             (mx + mx) - 1.0f,

@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"camzup"},{"l":"camzup.core"},{"l":"camzup.pfriendly"}]

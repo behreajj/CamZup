@@ -220,7 +220,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     *           the zoom y
     * @see Utils#min(float, float)
     * @see Utils#modRadians(float)
-    * @see IUpOgl#rotateZ(float, processing.core.PMatrix3D)
     */
    public void camera (
          final float x, final float y,
@@ -262,7 +261,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
 
       this.camera(loc.x, loc.y,
             YupJ2.DEFAULT_ROT,
-            YupJ2.DEFAULT_ZOOM_X, YupJ2.DEFAULT_ZOOM_Y);
+            YupJ2.DEFAULT_ZOOM_X,
+            YupJ2.DEFAULT_ZOOM_Y);
    }
 
    /**
@@ -279,7 +279,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
 
       this.camera(loc.x, loc.y,
             radians,
-            YupJ2.DEFAULT_ZOOM_X, YupJ2.DEFAULT_ZOOM_Y);
+            YupJ2.DEFAULT_ZOOM_X,
+            YupJ2.DEFAULT_ZOOM_Y);
    }
 
    /**
@@ -808,8 +809,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     */
    public void shape ( final CurveEntity2 entity ) {
 
-      // TODO: Try this without push matrix and transform
-      // function.
       this.pushMatrix();
       this.transform(entity.transform, entity.transformOrder);
 
@@ -919,7 +918,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             this.normal(0.0f, 0.0f, 1.0f);
             for (int j = 0; j < flen1; ++j) {
                final Vec2 v = vs[f[j][0]];
-               this.vertexImpl(v.x, v.y, 0.0f,
+               this.vertexImpl(
+                     v.x, v.y, 0.0f,
                      this.textureU, this.textureV);
             }
             this.endShape(PConstants.CLOSE);
@@ -990,7 +990,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    @Override
    public void vertex ( final Vec2 v ) {
 
-      this.vertexImpl(v.x, v.y, 0.0f, this.textureU, this.textureV);
+      this.vertexImpl(v.x, v.y, 0.0f,
+            this.textureU, this.textureV);
    }
 
    /**

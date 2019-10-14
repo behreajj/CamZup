@@ -217,10 +217,10 @@ public class Yup3 extends Up3 {
 
       /* Create three axes. Handedness will change by renderer. */
       Vec3.normalize(this.lookDir, this.k);
-      // Vec3.crossNorm(this.k, this.refUp, this.i);
-      // Vec3.crossNorm(this.i, this.k, this.j);
-      Vec3.crossNorm(this.refUp, this.k, this.i);
-      Vec3.crossNOrm(this.k, this.i, this.j);
+      Vec3.crossNorm(this.k, this.refUp, this.i);
+      Vec3.crossNorm(this.i, this.k, this.j);
+      // Vec3.crossNorm(this.refUp, this.k, this.i);
+      // Vec3.crossNorm(this.k, this.i, this.j);
 
       /* Set matrix to axes by row. */
       this.modelview.set(

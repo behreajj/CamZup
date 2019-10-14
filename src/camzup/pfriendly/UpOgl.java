@@ -177,8 +177,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          case RADIUS:
 
-            w = Utils.abs(x1 * 2.0f);
-            h = Utils.abs(y1 * 2.0f);
+            w = Utils.abs(x1 + x1);
+            h = Utils.abs(y1 + y1);
 
             break;
 
@@ -1162,77 +1162,78 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void printCamera () {
 
-      System.out.println(IUp.printMatrix(this.camera));
+      System.out.println(IUp.toString(this.camera));
    }
 
    @Override
    public void printMatrix () {
 
-      System.out.println(IUp.printMatrix(this.modelview));
+      System.out.println(IUp.toString(this.modelview));
    }
 
    @Override
    public void printProjection () {
 
-      System.out.println(IUp.printMatrix(this.projection));
+      System.out.println(IUp.toString(this.projection));
    }
 
-   public Vec3 project ( final Vec3 point, final Vec3 target ) {
-
-      final float aw = this.modelviewInv.m30 * point.x +
-            this.modelviewInv.m31 * point.y +
-            this.modelviewInv.m32 * point.z +
-            this.modelviewInv.m33;
-
-      final float ax = this.modelviewInv.m00 * point.x +
-            this.modelviewInv.m01 * point.y +
-            this.modelviewInv.m02 * point.z +
-            this.modelviewInv.m03;
-
-      final float ay = this.modelviewInv.m10 * point.x +
-            this.modelviewInv.m11 * point.y +
-            this.modelviewInv.m12 * point.z +
-            this.modelviewInv.m13;
-
-      final float az = this.modelviewInv.m20 * point.x +
-            this.modelviewInv.m21 * point.y +
-            this.modelviewInv.m22 * point.z +
-            this.modelviewInv.m23;
-
-      final float bw = this.projection.m30 * ax +
-            this.projection.m31 * ay +
-            this.projection.m32 * az +
-            this.projection.m33 * aw;
-
-      if (bw == 0.0f) {
-         return target.reset();
-      }
-
-      final float bx = this.projection.m00 * ax +
-            this.projection.m01 * ay +
-            this.projection.m02 * az +
-            this.projection.m03 * aw;
-
-      final float by = this.projection.m10 * ax +
-            this.projection.m11 * ay +
-            this.projection.m12 * az +
-            this.projection.m13 * aw;
-
-      final float bz = this.projection.m20 * ax +
-            this.projection.m21 * ay +
-            this.projection.m22 * az +
-            this.projection.m23 * aw;
-
-      if (bw == 1.0f) {
-         return target.set(bx, by, bz);
-      }
-
-      final float wInv = 1.0f / bw;
-      return target.set(
-            bx * wInv,
-            by * wInv,
-            bz * wInv);
-   }
+   // public Vec3 project ( final Vec3 point, final Vec3 target
+   // ) {
+   //
+   // final float aw = this.modelviewInv.m30 * point.x +
+   // this.modelviewInv.m31 * point.y +
+   // this.modelviewInv.m32 * point.z +
+   // this.modelviewInv.m33;
+   //
+   // final float ax = this.modelviewInv.m00 * point.x +
+   // this.modelviewInv.m01 * point.y +
+   // this.modelviewInv.m02 * point.z +
+   // this.modelviewInv.m03;
+   //
+   // final float ay = this.modelviewInv.m10 * point.x +
+   // this.modelviewInv.m11 * point.y +
+   // this.modelviewInv.m12 * point.z +
+   // this.modelviewInv.m13;
+   //
+   // final float az = this.modelviewInv.m20 * point.x +
+   // this.modelviewInv.m21 * point.y +
+   // this.modelviewInv.m22 * point.z +
+   // this.modelviewInv.m23;
+   //
+   // final float bw = this.projection.m30 * ax +
+   // this.projection.m31 * ay +
+   // this.projection.m32 * az +
+   // this.projection.m33 * aw;
+   //
+   // if (bw == 0.0f) {
+   // return target.reset();
+   // }
+   //
+   // final float bx = this.projection.m00 * ax +
+   // this.projection.m01 * ay +
+   // this.projection.m02 * az +
+   // this.projection.m03 * aw;
+   //
+   // final float by = this.projection.m10 * ax +
+   // this.projection.m11 * ay +
+   // this.projection.m12 * az +
+   // this.projection.m13 * aw;
+   //
+   // final float bz = this.projection.m20 * ax +
+   // this.projection.m21 * ay +
+   // this.projection.m22 * az +
+   // this.projection.m23 * aw;
+   //
+   // if (bw == 1.0f) {
+   // return target.set(bx, by, bz);
+   // }
+   //
+   // final float wInv = 1.0f / bw;
+   // return target.set(
+   // bx * wInv,
+   // by * wInv,
+   // bz * wInv);
+   // }
 
    @Override
    public void pushProjection () {
@@ -1872,14 +1873,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void text (
          final char c,
-         final float x, final float y, final float z ) {
+         final float x,
+         final float y,
+         final float z ) {
 
       this.text(c, x, y);
    }
 
    public void text (
          final char[] arr,
-         final float x, final float y ) {
+         final float x,
+         final float y ) {
 
       this.text(arr, 0, arr.length, x, y);
    }

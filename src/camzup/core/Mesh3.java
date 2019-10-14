@@ -3,15 +3,15 @@ package camzup.core;
 import java.util.ArrayList;
 
 /**
- * Organizes data needed to draw a three dimensional shape using vertices and
- * faces.
+ * Organizes data needed to draw a three dimensional shape
+ * using vertices and faces.
  */
 public class Mesh3 extends Mesh {
 
    /**
     * Packages 3D mesh vertices into an object.
     */
-   public static class Face3 implements Comparable<Face3> {
+   public static class Face3 implements Comparable < Face3 > {
 
       /**
        * The array of vertices in a face.
@@ -21,16 +21,17 @@ public class Mesh3 extends Mesh {
       /**
        * The default constructor.
        */
-      public Face3() {
+      public Face3 () {
 
       }
 
       /**
        * Creates a face from an array of vertices.
        *
-       * @param vertices the vertices
+       * @param vertices
+       *           the vertices
        */
-      public Face3(final Vert3[] vertices) {
+      public Face3 ( final Vert3[] vertices ) {
 
          this.set(vertices);
       }
@@ -38,11 +39,12 @@ public class Mesh3 extends Mesh {
       /**
        * Compares this face to another by hash code.
        *
-       * @param face the comparisand
+       * @param face
+       *           the comparisand
        * @return the comparison
        */
       @Override
-      public int compareTo(final Face3 face) {
+      public int compareTo ( final Face3 face ) {
 
          final int a = this.hashCode();
          final int b = face.hashCode();
@@ -55,7 +57,7 @@ public class Mesh3 extends Mesh {
        * @return the hash code
        */
       @Override
-      public int hashCode() {
+      public int hashCode () {
 
          return System.identityHashCode(this);
       }
@@ -63,11 +65,12 @@ public class Mesh3 extends Mesh {
       /**
        * Sets this face's vertices to refer to a an array.
        *
-       * @param vertices the array of vertices
+       * @param vertices
+       *           the array of vertices
        * @return this face
        */
       @Chainable
-      public Face3 set(final Vert3[] vertices) {
+      public Face3 set ( final Vert3[] vertices ) {
 
          this.vertices = vertices;
          return this;
@@ -75,10 +78,10 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Packages 3D mesh coordinates, texture coordinates and normals into a single
-    * object.
+    * Packages 3D mesh coordinates, texture coordinates and
+    * normals into a single object.
     */
-   public static class Vert3 implements Comparable<Vert3> {
+   public static class Vert3 implements Comparable < Vert3 > {
 
       /**
        * The coordinate of the vertex in world space.
@@ -86,31 +89,37 @@ public class Mesh3 extends Mesh {
       public Vec3 coord;
 
       /**
-       * The direction in which light will bounce from the surface of the mesh at the
-       * vertex.
+       * The direction in which light will bounce from the surface
+       * of the mesh at the vertex.
        */
       public Vec3 normal;
 
       /**
-       * The texture (UV) coordinate for an image mapped onto the mesh.
+       * The texture (UV) coordinate for an image mapped onto the
+       * mesh.
        */
       public Vec2 texCoord;
 
       /**
        * The default constructor.
        */
-      public Vert3() {
+      public Vert3 () {
 
       }
 
       /**
-       * Constructs a vertex from a coordinate, texture coordinate and normal.
+       * Constructs a vertex from a coordinate, texture coordinate
+       * and normal.
        *
-       * @param coord    the coordinate
-       * @param texCoord the texture coordinate
-       * @param normal   the normal
+       * @param coord
+       *           the coordinate
+       * @param texCoord
+       *           the texture coordinate
+       * @param normal
+       *           the normal
        */
-      public Vert3(final Vec3 coord, final Vec2 texCoord, final Vec3 normal) {
+      public Vert3 ( final Vec3 coord, final Vec2 texCoord,
+            final Vec3 normal ) {
 
          this.set(coord, texCoord, normal);
       }
@@ -118,11 +127,12 @@ public class Mesh3 extends Mesh {
       /**
        * Compares this vertex to another by hash code.
        *
-       * @param vert the comparisand
+       * @param vert
+       *           the comparisand
        * @return the comparison
        */
       @Override
-      public int compareTo(final Vert3 vert) {
+      public int compareTo ( final Vert3 vert ) {
 
          final int a = this.hashCode();
          final int b = vert.hashCode();
@@ -135,22 +145,26 @@ public class Mesh3 extends Mesh {
        * @return the hash code
        */
       @Override
-      public int hashCode() {
+      public int hashCode () {
 
          return System.identityHashCode(this);
       }
 
       /**
-       * Sets the coordinate, texture coordinate and normal of the vertex by
-       * reference.
+       * Sets the coordinate, texture coordinate and normal of the
+       * vertex by reference.
        *
-       * @param coord    the coordinate
-       * @param texCoord the texture coordinate
-       * @param normal   the normal
+       * @param coord
+       *           the coordinate
+       * @param texCoord
+       *           the texture coordinate
+       * @param normal
+       *           the normal
        * @return this vertex
        */
       @Chainable
-      public Vert3 set(final Vec3 coord, final Vec2 texCoord, final Vec3 normal) {
+      public Vert3 set ( final Vec3 coord, final Vec2 texCoord,
+            final Vec3 normal ) {
 
          this.coord = coord;
          this.texCoord = texCoord;
@@ -160,14 +174,16 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Calculates the dimensions of an Axis-Aligned Bounding Box (AABB) encompassing
-    * the mesh.
+    * Calculates the dimensions of an Axis-Aligned Bounding Box
+    * (AABB) encompassing the mesh.
     *
-    * @param mesh the mesh
-    * @param dim  the output vector
+    * @param mesh
+    *           the mesh
+    * @param dim
+    *           the output vector
     * @return the dimensions
     */
-   public static Vec3 calcDimensions(final Mesh3 mesh, final Vec3 dim) {
+   public static Vec3 calcDimensions ( final Mesh3 mesh, final Vec3 dim ) {
 
       float xMin = Float.MAX_VALUE;
       float xMax = Float.MIN_VALUE;
@@ -212,10 +228,11 @@ public class Mesh3 extends Mesh {
    /**
     * Generates a cube mesh.
     *
-    * @param target the output mesh
+    * @param target
+    *           the output mesh
     * @return the cube
     */
-   public static Mesh3 cube(final Mesh3 target) {
+   public static Mesh3 cube ( final Mesh3 target ) {
 
       final Vec3[] coords = new Vec3[] { new Vec3(-0.5f, -0.5f, -0.5f), /* 00 */
             new Vec3(-0.5f, -0.5f, +0.5f), /* 01 */
@@ -241,7 +258,8 @@ public class Mesh3 extends Mesh {
             new Vec2(0.0f, 1.0f) /* 03 */
       };
 
-      final int[][][] faces = new int[][][] { { { 1, 1, 0 }, { 2, 3, 0 }, { 0, 2, 0 } }, /* 00 */
+      final int[][][] faces = new int[][][] {
+            { { 1, 1, 0 }, { 2, 3, 0 }, { 0, 2, 0 } }, /* 00 */
             { { 3, 1, 1 }, { 6, 3, 1 }, { 2, 2, 1 } }, /* 01 */
             { { 7, 1, 2 }, { 4, 3, 2 }, { 6, 2, 2 } }, /* 02 */
             { { 5, 1, 3 }, { 0, 3, 3 }, { 4, 2, 3 } }, /* 03 */
@@ -264,19 +282,21 @@ public class Mesh3 extends Mesh {
    /**
     * Creates a mesh from an array of strings.
     *
-    * @param lines  the String tokens
-    * @param target the output mesh
+    * @param lines
+    *           the String tokens
+    * @param target
+    *           the output mesh
     * @return the mesh
     */
-   public static Mesh3 fromObj(final String[] lines, final Mesh3 target) {
+   public static Mesh3 fromObj ( final String[] lines, final Mesh3 target ) {
 
       String[] tokens;
       String[] facetokens;
 
-      final ArrayList<Vec3> coordList = new ArrayList<>();
-      final ArrayList<Vec2> texCoordList = new ArrayList<>();
-      final ArrayList<Vec3> normalList = new ArrayList<>();
-      final ArrayList<int[][]> faceList = new ArrayList<>();
+      final ArrayList < Vec3 > coordList = new ArrayList <>();
+      final ArrayList < Vec2 > texCoordList = new ArrayList <>();
+      final ArrayList < Vec3 > normalList = new ArrayList <>();
+      final ArrayList < int[][] > faceList = new ArrayList <>();
       String name = target.hashIdentityString();
 
       final int len = lines.length;
@@ -341,19 +361,23 @@ public class Mesh3 extends Mesh {
 
       // Convert to fixed-sized array.
       target.name = name;
-      target.set(faceList.toArray(new int[faceList.size()][][]), coordList.toArray(new Vec3[coordList.size()]),
-            texCoordList.toArray(new Vec2[texCoordList.size()]), normalList.toArray(new Vec3[normalList.size()]));
+      target.set(faceList.toArray(new int[faceList.size()][][]),
+            coordList.toArray(new Vec3[coordList.size()]),
+            texCoordList.toArray(new Vec2[texCoordList.size()]),
+            normalList.toArray(new Vec3[normalList.size()]));
       return target;
    }
 
    /**
     * Generates a regular convex polygon.
     *
-    * @param target  the output mesh
-    * @param sectors the number of sides
+    * @param target
+    *           the output mesh
+    * @param sectors
+    *           the number of sides
     * @return the polygon
     */
-   public static Mesh3 polygon(final Mesh3 target, final int sectors) {
+   public static Mesh3 polygon ( final Mesh3 target, final int sectors ) {
 
       target.name = "Polygon";
 
@@ -384,7 +408,8 @@ public class Mesh3 extends Mesh {
          coords[j] = new Vec3(pureCoord.x, pureCoord.y, 0.0f);
 
          final int k = 1 + j % seg;
-         final int[][] face = new int[][] { { 0, 0, 0 }, { j, j, 0 }, { k, k, 0 } };
+         final int[][] face = new int[][] { { 0, 0, 0 }, { j, j, 0 },
+               { k, k, 0 } };
          faces[i] = face;
       }
 
@@ -394,20 +419,24 @@ public class Mesh3 extends Mesh {
    /**
     * Creates a rectangle.
     *
-    * @param target the output mesh
+    * @param target
+    *           the output mesh
     * @return the rectangle
     */
-   public static final Mesh3 rectangle(final Mesh3 target) {
+   public static final Mesh3 rectangle ( final Mesh3 target ) {
 
       target.name = "Rectangle";
 
-      final Vec3[] coords = new Vec3[] { new Vec3(+0.5f, +0.5f, 0.0f), new Vec3(-0.5f, +0.5f, 0.0f),
+      final Vec3[] coords = new Vec3[] { new Vec3(+0.5f, +0.5f, 0.0f),
+            new Vec3(-0.5f, +0.5f, 0.0f),
             new Vec3(-0.5f, -0.5f, 0.0f), new Vec3(+0.5f, -0.5f, 0.0f) };
 
-      final Vec2[] texCoords = new Vec2[] { new Vec2(1.0f, 1.0f), new Vec2(0.0f, 1.0f), new Vec2(0.0f, 0.0f),
+      final Vec2[] texCoords = new Vec2[] { new Vec2(1.0f, 1.0f),
+            new Vec2(0.0f, 1.0f), new Vec2(0.0f, 0.0f),
             new Vec2(1.0f, 0.0f) };
 
-      final int[][][] faces = new int[][][] { { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 } },
+      final int[][][] faces = new int[][][] {
+            { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 } },
             { { 2, 2, 0 }, { 3, 3, 0 }, { 0, 0, 0 } } };
 
       final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
@@ -418,27 +447,32 @@ public class Mesh3 extends Mesh {
    /**
     * Creates a triangle.
     *
-    * @param target the output mesh
+    * @param target
+    *           the output mesh
     * @return the triangle
     */
-   public static final Mesh3 triangle(final Mesh3 target) {
+   public static final Mesh3 triangle ( final Mesh3 target ) {
 
       target.name = "Triangle";
 
-      final Vec3[] coords = new Vec3[] { new Vec3(+0.0f, +0.5f, 0.0f), new Vec3(-0.4330127f, -0.25f, 0.0f),
+      final Vec3[] coords = new Vec3[] { new Vec3(+0.0f, +0.5f, 0.0f),
+            new Vec3(-0.4330127f, -0.25f, 0.0f),
             new Vec3(+0.4330127f, -0.25f, 0.0f) };
 
-      final Vec2[] texCoords = new Vec2[] { new Vec2(0.5f, 1.0f), new Vec2(0.0669873f, 0.25f),
+      final Vec2[] texCoords = new Vec2[] { new Vec2(0.5f, 1.0f),
+            new Vec2(0.0669873f, 0.25f),
             new Vec2(0.9330127f, 0.25f) };
 
       final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
 
-      final int[][][] faces = new int[][][] { { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 } } };
+      final int[][][] faces = new int[][][] {
+            { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 } } };
 
       return target.set(faces, coords, texCoords, normals);
    }
 
-   public static Mesh3 uvSphere(final int longitudes, final int latitudes, final float radius, final Mesh3 target) {
+   public static Mesh3 uvSphere ( final int longitudes, final int latitudes,
+         final float radius, final Mesh3 target ) {
 
       // Validate latitudes and longitudes.
       final int lats = latitudes < 3 ? 3 : latitudes;
@@ -481,9 +515,11 @@ public class Mesh3 extends Mesh {
 
             final int index = lon + preIndex;
 
-            normals[index] = new Vec3(sinPhi * cosTheta, sinPhi * sinTheta, cosPhi);
+            normals[index] = new Vec3(sinPhi * cosTheta, sinPhi * sinTheta,
+                  cosPhi);
 
-            coords[index] = new Vec3(rhoSinPhi * cosTheta, rhoSinPhi * sinTheta, rhoCosPhi);
+            coords[index] = new Vec3(rhoSinPhi * cosTheta, rhoSinPhi * sinTheta,
+                  rhoCosPhi);
 
             texCoords[index] = new Vec2(u, 1.0f - v);
          }
@@ -546,13 +582,14 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * A helper function for parsing an OBJ file. Attempts to convert a string to an
-    * integer.
+    * A helper function for parsing an OBJ file. Attempts to
+    * convert a string to an integer.
     *
-    * @param i the string
+    * @param i
+    *           the string
     * @return the integer
     */
-   protected static int intFromStr(final String i) {
+   protected static int intFromStr ( final String i ) {
 
       int target = 0;
       try {
@@ -569,16 +606,17 @@ public class Mesh3 extends Mesh {
    public Vec3[] coords;
 
    /**
-    * The faces array does not include information about the faces themselves, but
-    * rather indices to other arrays which contain vertex data. It is a
-    * three-dimensional array organized by
+    * The faces array does not include information about the
+    * faces themselves, but rather indices to other arrays
+    * which contain vertex data. It is a three-dimensional
+    * array organized by
     * <ol>
     * <li>the number of faces;</li>
     * <li>the number of vetices per faces;</li>
     * <li>the information per face;</li>
     * </ol>
-    * 2D meshes contain two pieces of information per vertex: spatial coordinates
-    * and texture coordinates.
+    * 2D meshes contain two pieces of information per vertex:
+    * spatial coordinates and texture coordinates.
     */
    public int[][][] faces;
 
@@ -588,34 +626,42 @@ public class Mesh3 extends Mesh {
    public int materialIndex = 0;
 
    /**
-    * An array of normals to indicate how light will bounce off the mesh's surface.
+    * An array of normals to indicate how light will bounce off
+    * the mesh's surface.
     */
    public Vec3[] normals;
 
    /**
-    * The texture (UV) coordinates that describe how an image is mapped onto the
-    * geometry of the mesh. Typically in the range [0.0, 1.0].
+    * The texture (UV) coordinates that describe how an image
+    * is mapped onto the geometry of the mesh. Typically in the
+    * range [0.0, 1.0].
     */
    public Vec2[] texCoords;
 
    /**
     * The default constructor.
     */
-   public Mesh3() {
+   public Mesh3 () {
 
       super();
    }
 
    /**
-    * Creates a mesh from arrays of faces, coordinates, texture coordinates and
-    * normals. The mesh's arrays are set by reference, not by value.
+    * Creates a mesh from arrays of faces, coordinates, texture
+    * coordinates and normals. The mesh's arrays are set by
+    * reference, not by value.
     *
-    * @param faces     the faces array
-    * @param coords    the coordinates array
-    * @param texCoords the texture coordinates array
-    * @param normals   the normals array
+    * @param faces
+    *           the faces array
+    * @param coords
+    *           the coordinates array
+    * @param texCoords
+    *           the texture coordinates array
+    * @param normals
+    *           the normals array
     */
-   public Mesh3(final int[][][] faces, final Vec3[] coords, final Vec2[] texCoords, final Vec3[] normals) {
+   public Mesh3 ( final int[][][] faces, final Vec3[] coords,
+         final Vec2[] texCoords, final Vec3[] normals ) {
 
       super();
       this.set(faces, coords, texCoords, normals);
@@ -624,25 +670,33 @@ public class Mesh3 extends Mesh {
    /**
     * Creates a named mesh.
     *
-    * @param name the mesh name
+    * @param name
+    *           the mesh name
     */
-   public Mesh3(final String name) {
+   public Mesh3 ( final String name ) {
 
       super(name);
    }
 
    /**
-    * Creates a named mesh from arrays of faces, coordinates, texture coordinates
-    * and normals. The mesh's arrays are set by reference, not by value.
+    * Creates a named mesh from arrays of faces, coordinates,
+    * texture coordinates and normals. The mesh's arrays are
+    * set by reference, not by value.
     *
-    * @param name      the mesh name
-    * @param faces     the faces array
-    * @param coords    the coordinates array
-    * @param texCoords the texture coordinates array
-    * @param normals   the normals array
+    * @param name
+    *           the mesh name
+    * @param faces
+    *           the faces array
+    * @param coords
+    *           the coordinates array
+    * @param texCoords
+    *           the texture coordinates array
+    * @param normals
+    *           the normals array
     */
-   public Mesh3(final String name, final int[][][] faces, final Vec3[] coords, final Vec2[] texCoords,
-         final Vec3[] normals) {
+   public Mesh3 ( final String name, final int[][][] faces, final Vec3[] coords,
+         final Vec2[] texCoords,
+         final Vec3[] normals ) {
 
       super(name);
       this.set(faces, coords, texCoords, normals);
@@ -651,11 +705,13 @@ public class Mesh3 extends Mesh {
    /**
     * Gets a face from the mesh.
     *
-    * @param i      the index
-    * @param target the output face
+    * @param i
+    *           the index
+    * @param target
+    *           the output face
     * @return the face
     */
-   public Face3 getFace(final int i, final Face3 target) {
+   public Face3 getFace ( final int i, final Face3 target ) {
 
       final int len = this.faces[i].length;
       final Vert3[] vertices = new Vert3[len];
@@ -670,7 +726,7 @@ public class Mesh3 extends Mesh {
     *
     * @return the faces array
     */
-   public Face3[] getFaces() {
+   public Face3[] getFaces () {
 
       final int len0 = this.faces.length;
       final Face3[] result = new Face3[len0];
@@ -688,15 +744,19 @@ public class Mesh3 extends Mesh {
    /**
     * Get a vertex from the mesh.
     *
-    * @param i      primary index
-    * @param j      secondary index
-    * @param target the output vertex
+    * @param i
+    *           primary index
+    * @param j
+    *           secondary index
+    * @param target
+    *           the output vertex
     * @return the vertex
     */
-   public Vert3 getVertex(final int i, final int j, final Vert3 target) {
+   public Vert3 getVertex ( final int i, final int j, final Vert3 target ) {
 
       final int[] vert = this.faces[i][j];
-      return target.set(this.coords[vert[0]], this.texCoords[vert[1]], this.normals[vert[2]]);
+      return target.set(this.coords[vert[0]], this.texCoords[vert[1]],
+            this.normals[vert[2]]);
    }
 
    /**
@@ -704,9 +764,9 @@ public class Mesh3 extends Mesh {
     *
     * @return the vertices
     */
-   public Vert3[] getVertices() {
+   public Vert3[] getVertices () {
 
-      final ArrayList<Vert3> result = new ArrayList<>();
+      final ArrayList < Vert3 > result = new ArrayList <>();
       Vert3 trial;
 
       final int len0 = this.faces.length;
@@ -726,15 +786,18 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Rotates all coordinates in the mesh by an angle around an arbitrary axis.
+    * Rotates all coordinates in the mesh by an angle around an
+    * arbitrary axis.
     *
-    * @param radians the angle in radians
-    * @param axis    the axis of rotation
+    * @param radians
+    *           the angle in radians
+    * @param axis
+    *           the axis of rotation
     * @return this mesh
     * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
     */
    @Chainable
-   public Mesh3 rotate(final float radians, final Vec3 axis) {
+   public Mesh3 rotate ( final float radians, final Vec3 axis ) {
 
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
@@ -745,14 +808,16 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Rotates all coordinates in the mesh by an angle around the x axis.
+    * Rotates all coordinates in the mesh by an angle around
+    * the x axis.
     *
-    * @param radians the angle in radians
+    * @param radians
+    *           the angle in radians
     * @return this mesh
     * @see Vec3#rotateX(Vec3, float, Vec3)
     */
    @Chainable
-   public Mesh3 rotateX(final float radians) {
+   public Mesh3 rotateX ( final float radians ) {
 
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
@@ -763,14 +828,16 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Rotates all coordinates in the mesh by an angle around the y axis.
+    * Rotates all coordinates in the mesh by an angle around
+    * the y axis.
     *
-    * @param radians the angle in radians
+    * @param radians
+    *           the angle in radians
     * @return this mesh
     * @see Vec3#rotateY(Vec3, float, Vec3)
     */
    @Chainable
-   public Mesh3 rotateY(final float radians) {
+   public Mesh3 rotateY ( final float radians ) {
 
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
@@ -781,14 +848,16 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Rotates all coordinates in the mesh by an angle around the z axis.
+    * Rotates all coordinates in the mesh by an angle around
+    * the z axis.
     *
-    * @param radians the angle in radians
+    * @param radians
+    *           the angle in radians
     * @return this mesh
     * @see Vec3#rotateZ(Vec3, float, Vec3)
     */
    @Chainable
-   public Mesh3 rotateZ(final float radians) {
+   public Mesh3 rotateZ ( final float radians ) {
 
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
@@ -801,12 +870,13 @@ public class Mesh3 extends Mesh {
    /**
     * Scales all coordinates in the mesh by a scalar.
     *
-    * @param scale the scalar
+    * @param scale
+    *           the scalar
     * @return this mesh
     * @see Vec3#mult(Vec3, float, Vec3)
     */
    @Chainable
-   public Mesh3 scale(final float scale) {
+   public Mesh3 scale ( final float scale ) {
 
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
@@ -818,11 +888,12 @@ public class Mesh3 extends Mesh {
    /**
     * Scales all coordinates in the mesh by a vector.
     *
-    * @param scale the vector
+    * @param scale
+    *           the vector
     * @return this mesh
     */
    @Chainable
-   public Mesh3 scale(final Vec3 scale) {
+   public Mesh3 scale ( final Vec3 scale ) {
 
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
@@ -834,14 +905,19 @@ public class Mesh3 extends Mesh {
    /**
     * Sets the mesh's data by reference, not by value.
     *
-    * @param faces     the faces array
-    * @param coords    the coordinates array
-    * @param texCoords the texture coordinates array
-    * @param normals   the normals array
+    * @param faces
+    *           the faces array
+    * @param coords
+    *           the coordinates array
+    * @param texCoords
+    *           the texture coordinates array
+    * @param normals
+    *           the normals array
     * @return this mesh
     */
    @Chainable
-   public Mesh3 set(final int[][][] faces, final Vec3[] coords, final Vec2[] texCoords, final Vec3[] normals) {
+   public Mesh3 set ( final int[][][] faces, final Vec3[] coords,
+         final Vec2[] texCoords, final Vec3[] normals ) {
 
       this.faces = faces;
       this.coords = coords;
@@ -851,11 +927,12 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Renders the mesh as a string following the Wavefront OBJ file format.
+    * Renders the mesh as a string following the Wavefront OBJ
+    * file format.
     *
     * @return the string
     */
-   public String toObjString() {
+   public String toObjString () {
 
       final int coordsLen = this.coords.length;
       final int texCoordsLen = this.texCoords.length;
@@ -864,10 +941,11 @@ public class Mesh3 extends Mesh {
       final StringBuilder result = new StringBuilder();
 
       /**
-       * Append a comment listing the number of coordinates, texture coordinates,
-       * normals and faces.
+       * Append a comment listing the number of coordinates,
+       * texture coordinates, normals and faces.
        */
-      result.append("# v: ").append(coordsLen).append(", vt: ").append(texCoordsLen).append(", vn: ").append(normalsLen)
+      result.append("# v: ").append(coordsLen).append(", vt: ")
+            .append(texCoordsLen).append(", vn: ").append(normalsLen)
             .append(", f: ").append(facesLen).append("\n \n");
 
       result.append("o ").append(this.name).append("\n \n");
@@ -895,7 +973,8 @@ public class Mesh3 extends Mesh {
 
             // Indices in an .obj file start at 1, not 0.
             final int[] vert = face[j];
-            result.append(vert[0] + 1).append("/").append(vert[1] + 1).append("/").append(vert[2] + 1).append(" ");
+            result.append(vert[0] + 1).append("/").append(vert[1] + 1)
+                  .append("/").append(vert[2] + 1).append(" ");
          }
          result.append("\n");
       }
@@ -906,12 +985,13 @@ public class Mesh3 extends Mesh {
    /**
     * Translates all coordinates in the mesh by a vector.
     *
-    * @param v the vector
+    * @param v
+    *           the vector
     * @return this mesh
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    @Chainable
-   public Mesh3 translate(final Vec3 v) {
+   public Mesh3 translate ( final Vec3 v ) {
 
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {

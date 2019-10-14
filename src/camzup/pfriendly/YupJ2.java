@@ -1119,16 +1119,16 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       switch (this.colorMode) {
 
          case HSB:
-         
-         return IUp.MIXER_HSB.apply(
+
+            return IUp.MIXER_HSB.apply(
                   origin, dest,
                   step,
                   target);
-         
+
          case RGB:
-         
+
          default:
-         
+
             return IUp.MIXER_RGB.apply(
                   origin, dest,
                   step,

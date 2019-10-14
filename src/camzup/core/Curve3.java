@@ -25,24 +25,6 @@ public class Curve3 extends Curve
    public static class Knot3 implements Comparable < Knot3 > {
 
       /**
-       * The knot's default string format.
-       */
-      public static String DEFAULT_STRING_FORMAT = new StringBuilder()
-            .append("{ coord:      %s, %n")
-            .append("  foreHandle: %s, %n")
-            .append("  rearHandle: %s }")
-            .toString();
-
-      /**
-       * The knot's string format.
-       */
-      private static String STRING_FORMAT = "";
-
-      static {
-         Knot3.STRING_FORMAT = Knot3.DEFAULT_STRING_FORMAT;
-      }
-
-      /**
        * Creates a knot from polar coordinates, where the knot's
        * forehandle is tangent to the radius.
        *
@@ -82,31 +64,6 @@ public class Curve3 extends Curve
          Vec3.add(temp1, target.coord, target.rearHandle);
 
          return target;
-      }
-
-      /**
-       * Gets the format for the string representation of this
-       * knot.
-       *
-       * @return the format
-       */
-      public static String getStringFormat () {
-
-         return Knot3.STRING_FORMAT;
-      }
-
-      /**
-       * Sets the format for the string representation of the
-       * knot.
-       *
-       * @param stringFormat
-       *           the format
-       */
-      public static void setStringFormat ( final String stringFormat ) {
-
-         if (stringFormat != null) {
-            Knot3.STRING_FORMAT = stringFormat;
-         }
       }
 
       /**
@@ -970,12 +927,6 @@ public class Curve3 extends Curve
        */
       @Override
       public String toString () {
-
-         // return String.format(
-         // Knot3.STRING_FORMAT,
-         // this.coord.toString(),
-         // this.foreHandle.toString(),
-         // this.rearHandle.toString());
 
          return this.toString(4);
       }
@@ -1927,6 +1878,7 @@ public class Curve3 extends Curve
       sb.append(this.closedLoop);
       sb.append(", \n  knots: [ \n");
 
+      //TODO: Switch to while itr has next
       for (final Iterator < Curve3.Knot3 > itr = this.knots.iterator(); itr
             .hasNext();) {
          sb.append(itr.next());

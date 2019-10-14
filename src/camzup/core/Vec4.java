@@ -174,8 +174,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#abs(float)
     */
    public static Vec4 abs (
-      final Vec4 v,
-      final Vec4 target ) {
+         final Vec4 v,
+         final Vec4 target ) {
 
       return target.set(
             Utils.abs(v.x),
@@ -196,9 +196,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @return the sum
     */
    public static Vec4 add (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+         final Vec4 a,
+         final Vec4 b,
+         final Vec4 target ) {
 
       return target.set(
             a.x + b.x,
@@ -218,8 +218,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#approxFast(float, float)
     */
    public static boolean approx (
-      final Vec4 a,
-      final Vec4 b ) {
+         final Vec4 a,
+         final Vec4 b ) {
 
       return Utils.approxFast(a.w, b.w)
             && Utils.approxFast(a.z, b.z)
@@ -240,9 +240,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#approxFast(float, float, float)
     */
    public static boolean approx (
-      final Vec4 a,
-      final Vec4 b,
-      final float tolerance ) {
+         final Vec4 a,
+         final Vec4 b,
+         final float tolerance ) {
 
       return Utils.approxFast(a.w, b.w, tolerance)
             && Utils.approxFast(a.z, b.z, tolerance)
@@ -263,8 +263,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Vec4#dot(Vec4, Vec4)
     */
    public static boolean approxMag (
-      final Vec4 a,
-      final float b ) {
+         final Vec4 a,
+         final float b ) {
 
       return Utils.approxFast(Vec4.magSq(a), b * b);
    }
@@ -284,9 +284,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Vec4#dot(Vec4, Vec4)
     */
    public static boolean approxMag (
-      final Vec4 a,
-      final float b,
-      final float tolerance ) {
+         final Vec4 a,
+         final float b,
+         final float tolerance ) {
 
       return Utils.approxFast(Vec4.magSq(a), b * b, tolerance);
    }
@@ -303,8 +303,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#ceil(float)
     */
    public static Vec4 ceil (
-      final Vec4 v,
-      final Vec4 target ) {
+         final Vec4 v,
+         final Vec4 target ) {
 
       return target.set(
             Utils.ceil(v.x),
@@ -329,10 +329,10 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#clamp(float, float, float)
     */
    public static Vec4 clamp (
-      final Vec4 v,
-      final Vec4 lowerBound,
-      final Vec4 upperBound,
-      final Vec4 target ) {
+         final Vec4 v,
+         final Vec4 lowerBound,
+         final Vec4 upperBound,
+         final Vec4 target ) {
 
       return target.set(
             Utils.clamp(v.x, lowerBound.x, upperBound.x),
@@ -353,8 +353,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#clamp01(float)
     */
    public static Vec4 clamp01 (
-      final Vec4 v,
-      final Vec4 target ) {
+         final Vec4 v,
+         final Vec4 target ) {
 
       return target.set(
             Utils.clamp01(v.x),
@@ -377,9 +377,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#diff(float, float)
     */
    public static Vec4 diff (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+         final Vec4 a,
+         final Vec4 b,
+         final Vec4 target ) {
 
       return target.set(
             Utils.diff(a.x, b.x),
@@ -401,9 +401,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#div(float, float)
     */
    public static Vec4 div (
-      final float a,
-      final Vec4 b,
-      final Vec4 target ) {
+         final float a,
+         final Vec4 b,
+         final Vec4 target ) {
 
       return target.set(
             Utils.div(a, b.x),
@@ -453,9 +453,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#div(float, float)
     */
    public static Vec4 div (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+         final Vec4 a,
+         final Vec4 b,
+         final Vec4 target ) {
 
       return target.set(
             Utils.div(a.x, b.x),
@@ -482,13 +482,13 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @return the dot product
     */
    public static float dot (
-      final Vec4 a,
-      final Vec4 b ) {
+         final Vec4 a,
+         final Vec4 b ) {
 
       return a.x * b.x +
-         a.y * b.y +
-         a.z * b.z +
-         a.w * b.w;
+            a.y * b.y +
+            a.z * b.z +
+            a.w * b.w;
    }
 
    /**
@@ -502,8 +502,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#floor(float)
     */
    public static Vec4 floor (
-      final Vec4 v,
-      final Vec4 target ) {
+         final Vec4 v,
+         final Vec4 target ) {
 
       return target.set(
             Utils.floor(v.x),
@@ -526,9 +526,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#fmod(float, float)
     */
    public static Vec4 fmod (
-      final float a,
-      final Vec4 b,
-      final Vec4 target ) {
+         final float a,
+         final Vec4 b,
+         final Vec4 target ) {
 
       return target.set(
             Utils.fmod(a, b.x),
@@ -550,9 +550,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @return the result
     */
    public static Vec4 fmod (
-      final Vec4 a,
-      final float b,
-      final Vec4 target ) {
+         final Vec4 a,
+         final float b,
+         final Vec4 target ) {
 
       if (b == 0.0f) {
          return target.set(a);
@@ -579,9 +579,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#fmod(float, float)
     */
    public static Vec4 fmod (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+         final Vec4 a,
+         final Vec4 b,
+         final Vec4 target ) {
 
       return target.set(
             Utils.fmod(a.x, b.x),
@@ -602,8 +602,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#fract(float)
     */
    public static Vec4 fract (
-      final Vec4 v,
-      final Vec4 target ) {
+         final Vec4 v,
+         final Vec4 target ) {
 
       return target.set(
             Utils.fract(v.x),
@@ -656,7 +656,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     */
    public static float magSq ( final Vec4 v ) {
 
-      // return Vec4.dot(v, v);
       return v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
    }
 
@@ -707,9 +706,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#mod(float, float)
     */
    public static Vec4 mod (
-      final float a,
-      final Vec4 b,
-      final Vec4 target ) {
+         final float a,
+         final Vec4 b,
+         final Vec4 target ) {
 
       return target.set(
             Utils.mod(a, b.x),
@@ -731,9 +730,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#modUnchecked(float, float)
     */
    public static Vec4 mod (
-      final Vec4 a,
-      final float b,
-      final Vec4 target ) {
+         final Vec4 a,
+         final float b,
+         final Vec4 target ) {
 
       if (b == 0.0f) {
          return target.set(a);
@@ -760,9 +759,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#mod(float, float)
     */
    public static Vec4 mod (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+         final Vec4 a,
+         final Vec4 b,
+         final Vec4 target ) {
 
       return target.set(
             Utils.mod(a.x, b.x),
@@ -783,8 +782,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Utils#mod1(float)
     */
    public static Vec4 mod1 (
-      final Vec4 v,
-      final Vec4 target ) {
+         final Vec4 v,
+         final Vec4 target ) {
 
       return target.set(
             Utils.mod1(v.x),
@@ -828,8 +827,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @return the product
     */
    public static Vec4 mult (
-      final Vec4 a,
-      final float b,
+         final Vec4 a,
+         final float b,
          final Vec4 target ) {
 
       return target.set(
@@ -851,8 +850,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @return the product
     */
    public static Vec4 mult (
-      final Vec4 a,
-      final Vec4 b,
+         final Vec4 a,
+         final Vec4 b,
          final Vec4 target ) {
 
       return target.set(
@@ -863,31 +862,31 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    public static Vec4 normalize (
-      final Vec4 a,
-      final Vec4 target) {
+         final Vec4 a,
+         final Vec4 target ) {
 
       // return Vec4.div(a, Vec4.mag(a), target);
 
       final float mSq = a.x * a.x +
-         a.y * a.y +
-         a.z * a.z +
-         a.w * a.w;
-      
-      if(mSq == 0.0f) {
+            a.y * a.y +
+            a.z * a.z +
+            a.w * a.w;
+
+      if (mSq == 0.0f) {
          return target.reset();
       }
 
-      if(mSq == 1.0f) {
+      if (mSq == 1.0f) {
          return target.set(a);
       }
 
-      final float mInv = (float)(1.0d / Math.sqrt(mSq));
+      final float mInv = (float) (1.0d / Math.sqrt(mSq));
       return target.set(
-         a.x * mInv,
-         a.y * mInv,
-         a.z * mInv,
-         a.w * mInv);
-      }
+            a.x * mInv,
+            a.y * mInv,
+            a.z * mInv,
+            a.w * mInv);
+   }
 
    /**
     * Negates the input vector.
@@ -899,8 +898,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @return the negation
     */
    public static Vec4 negate (
-      final Vec4 v,
-      final Vec4 target ) {
+         final Vec4 v,
+         final Vec4 target ) {
 
       return target.set(-v.x, -v.y, -v.z, -v.w);
    }
@@ -930,9 +929,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Math#pow(double, double)
     */
    public static Vec4 pow (
-      final float a,
-      final Vec4 b,
-      final Vec4 target ) {
+         final float a,
+         final Vec4 b,
+         final Vec4 target ) {
 
       return target.set(
             (float) Math.pow(a, b.x),
@@ -954,9 +953,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Math#pow(double, double)
     */
    public static Vec4 pow (
-      final Vec4 a,
-      final float b,
-      final Vec4 target ) {
+         final Vec4 a,
+         final float b,
+         final Vec4 target ) {
 
       return target.set(
             (float) Math.pow(a.x, b),
@@ -978,9 +977,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Math#pow(double, double)
     */
    public static Vec4 pow (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+         final Vec4 a,
+         final Vec4 b,
+         final Vec4 target ) {
 
       return target.set(
             (float) Math.pow(a.x, b.x),
@@ -1001,8 +1000,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Math#round(float)
     */
    public static Vec4 round (
-      final Vec4 v,
-      final Vec4 target ) {
+         final Vec4 v,
+         final Vec4 target ) {
 
       return target.set(
             Math.round(v.x),
@@ -1035,9 +1034,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @return the result
     */
    public static Vec4 sub (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+         final Vec4 a,
+         final Vec4 b,
+         final Vec4 target ) {
 
       return target.set(
             a.x - b.x,
@@ -1056,8 +1055,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @return the truncation
     */
    public static Vec4 trunc (
-      final Vec4 v,
-      final Vec4 target ) {
+         final Vec4 v,
+         final Vec4 target ) {
 
       return target.set(
             (int) v.x,

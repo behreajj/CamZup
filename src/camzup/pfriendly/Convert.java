@@ -26,7 +26,8 @@ public abstract class Convert {
     *           the transform order
     * @return the matrix
     */
-   public static PMatrix2D toPMatrix2D ( final Transform2 tr2,
+   public static PMatrix2D toPMatrix2D ( 
+         final Transform2 tr2,
          final Transform.Order order ) {
 
       return Convert.toPMatrix2D(tr2, order, (PMatrix2D) null);
@@ -43,8 +44,10 @@ public abstract class Convert {
     *           the output matrix
     * @return the matrix
     */
-   public static PMatrix2D toPMatrix2D ( final Transform2 tr2,
-         final Transform.Order order, PMatrix2D target ) {
+   public static PMatrix2D toPMatrix2D ( 
+         final Transform2 tr2,
+         final Transform.Order order, 
+         PMatrix2D target ) {
 
       if (target == null) {
          target = new PMatrix2D();
@@ -129,7 +132,8 @@ public abstract class Convert {
     *           the matrix
     * @return the matrix
     */
-   public static PMatrix3D toPMatrix3D ( final Quaternion source,
+   public static PMatrix3D toPMatrix3D ( 
+         final Quaternion source,
          PMatrix3D target ) {
 
       if (target == null) {
@@ -192,7 +196,7 @@ public abstract class Convert {
    public static PMatrix3D toPMatrix3D (
          final Transform3 tr3,
          final Transform.Order order,
-         
+
          PMatrix3D target ) {
 
       if (target == null) {
@@ -282,8 +286,8 @@ public abstract class Convert {
     * @return the vector
     */
    public static PVector toPVector (
-      final Vec2 source,
-      PVector target ) {
+         final Vec2 source,
+         PVector target ) {
 
       if (target == null) {
          target = new PVector();
@@ -313,8 +317,8 @@ public abstract class Convert {
     * @return the vector
     */
    public static PVector toPVector (
-      final Vec3 source,
-      PVector target ) {
+         final Vec3 source,
+         PVector target ) {
 
       if (target == null) {
          target = new PVector();
@@ -368,7 +372,9 @@ public abstract class Convert {
     *           the target vector
     * @return the vector
     */
-   public static Vec2 toVec2 ( final PVector source, final Vec2 target ) {
+   public static Vec2 toVec2 ( 
+         final PVector source, 
+         final Vec2 target ) {
 
       // if(source.z != 0.0f) {
       // }
@@ -384,7 +390,9 @@ public abstract class Convert {
     *           the target vector
     * @return the vector
     */
-   public static Vec3 toVec3 ( final PVector source, final Vec3 target ) {
+   public static Vec3 toVec3 ( 
+         final PVector source, 
+         final Vec3 target ) {
 
       return target.set(source.x, source.y, source.z);
    }

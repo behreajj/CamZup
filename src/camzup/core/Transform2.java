@@ -13,7 +13,8 @@ public class Transform2 extends Transform {
    /**
     * The easing function to mix transform rotations.
     */
-   private static Utils.PeriodicEasing ROT_EASING = new Utils.LerpNear(Utils.TAU);
+   private static Utils.PeriodicEasing ROT_EASING = new Utils.LerpNear(
+         Utils.TAU);
 
    /**
     * The easing function to mix transform scales.
@@ -28,14 +29,19 @@ public class Transform2 extends Transform {
    /**
     * Creates a transform from two axes and a translation.
     *
-    * @param right       the right axis
-    * @param forward     the forward axis
-    * @param translation the translation
-    * @param target      the output transform
+    * @param right
+    *           the right axis
+    * @param forward
+    *           the forward axis
+    * @param translation
+    *           the translation
+    * @param target
+    *           the output transform
     * @return the transform
     */
-   public static Transform2 fromAxes(final Vec2 right, final Vec2 forward, final Vec2 translation,
-         final Transform2 target) {
+   public static Transform2 fromAxes ( final Vec2 right, final Vec2 forward,
+         final Vec2 translation,
+         final Transform2 target ) {
 
       target.moveTo(translation);
 
@@ -56,31 +62,34 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Gets the name of the transform's location easing function as a string.
+    * Gets the name of the transform's location easing function
+    * as a string.
     *
     * @return the string
     */
-   public static String getLocEasingString() {
+   public static String getLocEasingString () {
 
       return Transform2.LOC_EASING.toString();
    }
 
    /**
-    * Gets the name of the transform's rotation easing function as a string.
+    * Gets the name of the transform's rotation easing function
+    * as a string.
     *
     * @return the string
     */
-   public static String getRotEasingString() {
+   public static String getRotEasingString () {
 
       return Transform2.ROT_EASING.toString();
    }
 
    /**
-    * Gets the name of the transform's scale easing function as a string.
+    * Gets the name of the transform's scale easing function as
+    * a string.
     *
     * @return the string
     */
-   public static String getScaleEasingString() {
+   public static String getScaleEasingString () {
 
       return Transform2.SCALE_EASING.toString();
    }
@@ -88,24 +97,27 @@ public class Transform2 extends Transform {
    /**
     * Sets the transform to an identity configuration.
     *
-    * @param target the output transform
+    * @param target
+    *           the output transform
     * @return the identity
     */
-   public static Transform2 identity(final Transform2 target) {
+   public static Transform2 identity ( final Transform2 target ) {
 
       return target.set(0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
    }
 
    /**
-    * Finds the difference between the current and previous location of a
-    * transform.
+    * Finds the difference between the current and previous
+    * location of a transform.
     *
-    * @param t      the transform
-    * @param target the output vector
+    * @param t
+    *           the transform
+    * @param target
+    *           the output vector
     * @return the location delta
     * @see Vec2#sub(Vec2, Vec2, Vec2)
     */
-   public static Vec2 locDelta(final Transform2 t, final Vec2 target) {
+   public static Vec2 locDelta ( final Transform2 t, final Vec2 target ) {
 
       return Vec2.sub(t.location, t.locPrev, target);
    }
@@ -113,11 +125,12 @@ public class Transform2 extends Transform {
    /**
     * Returns the maximum dimension occupied by a transform.
     *
-    * @param t the transform
+    * @param t
+    *           the transform
     * @return the maximum dimension
     * @see Utils#max(float, float)
     */
-   public static float maxDimension(final Transform2 t) {
+   public static float maxDimension ( final Transform2 t ) {
 
       return Utils.max(t.scale.x, t.scale.y);
    }
@@ -125,42 +138,52 @@ public class Transform2 extends Transform {
    /**
     * Returns the minimum dimension occupied by a transform.
     *
-    * @param t the transform
+    * @param t
+    *           the transform
     * @return the minimum dimension
     * @see Utils#min(float, float)
     */
-   public static float minDimension(final Transform2 t) {
+   public static float minDimension ( final Transform2 t ) {
 
       return Utils.min(t.scale.x, t.scale.y);
    }
 
    /**
-    * Multiplies a direction by a transform. This rotates the direction by the
-    * transform's rotation.
+    * Multiplies a direction by a transform. This rotates the
+    * direction by the transform's rotation.
     *
-    * @param t      the transform
-    * @param source the input direction
-    * @param target the output direction
+    * @param t
+    *           the transform
+    * @param source
+    *           the input direction
+    * @param target
+    *           the output direction
     * @return the direction
     * @see Vec2#rotateZ(Vec2, float, Vec2)
     */
-   public static Vec2 multDir(final Transform2 t, final Vec2 source, final Vec2 target) {
+   public static Vec2 multDir ( final Transform2 t, final Vec2 source,
+         final Vec2 target ) {
 
       Vec2.rotateZ(source, t.rotation, target);
       return target;
    }
 
    /**
-    * Multiplies a point by a transform. This rotates the point, multiplies the
-    * point by the scale, then adds the translation.
+    * Multiplies a point by a transform. This rotates the
+    * point, multiplies the point by the scale, then adds the
+    * translation.
     *
-    * @param t      the transform
-    * @param source the input point
-    * @param target the output point
+    * @param t
+    *           the transform
+    * @param source
+    *           the input point
+    * @param target
+    *           the output point
     * @return the point
     * @see Vec2#rotateZ(Vec2, float, Vec2)
     */
-   public static Vec2 multPoint(final Transform2 t, final Vec2 source, final Vec2 target) {
+   public static Vec2 multPoint ( final Transform2 t, final Vec2 source,
+         final Vec2 target ) {
 
       Vec2.rotateZ(source, t.rotation, target);
 
@@ -174,16 +197,21 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Multiplies a vector by a transform. This rotates the vector by the
-    * transform's rotation and then multiplies it by the transform's scale.
+    * Multiplies a vector by a transform. This rotates the
+    * vector by the transform's rotation and then multiplies it
+    * by the transform's scale.
     *
-    * @param t      the transform
-    * @param source the input vector
-    * @param target the output vector
+    * @param t
+    *           the transform
+    * @param source
+    *           the input vector
+    * @param target
+    *           the output vector
     * @return the vector
     * @see Vec2#rotateZ(Vec2, float, Vec2)
     */
-   public static Vec2 multVector(final Transform2 t, final Vec2 source, final Vec2 target) {
+   public static Vec2 multVector ( final Transform2 t, final Vec2 source,
+         final Vec2 target ) {
 
       Vec2.rotateZ(source, t.rotation, target);
 
@@ -194,36 +222,42 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Finds the difference between the current and previous rotation of a
-    * transform.
+    * Finds the difference between the current and previous
+    * rotation of a transform.
     *
-    * @param t the transform
+    * @param t
+    *           the transform
     * @return the rotation delta
     */
-   public static float rotDelta(final Transform2 t) {
+   public static float rotDelta ( final Transform2 t ) {
 
       return t.rotation - t.rotPrev;
    }
 
    /**
-    * Finds the difference between the current and previous scale of a transform.
+    * Finds the difference between the current and previous
+    * scale of a transform.
     *
-    * @param t      the transform
-    * @param target the output vector
+    * @param t
+    *           the transform
+    * @param target
+    *           the output vector
     * @return the scale delta
     * @see Vec2#sub(Vec2, Vec2, Vec2)
     */
-   public static Vec2 scaleDelta(final Transform2 t, final Vec2 target) {
+   public static Vec2 scaleDelta ( final Transform2 t, final Vec2 target ) {
 
       return Vec2.sub(t.scale, t.scalePrev, target);
    }
 
    /**
-    * Sets the easing function used to mix the transform's location.
+    * Sets the easing function used to mix the transform's
+    * location.
     *
-    * @param locEasing the easing function
+    * @param locEasing
+    *           the easing function
     */
-   public static void setLocEasing(final Vec2.AbstrEasing locEasing) {
+   public static void setLocEasing ( final Vec2.AbstrEasing locEasing ) {
 
       if (locEasing != null) {
          Transform2.LOC_EASING = locEasing;
@@ -231,11 +265,13 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Sets the easing function used to mix the transform's rotation.
+    * Sets the easing function used to mix the transform's
+    * rotation.
     *
-    * @param rotEasing the easing function
+    * @param rotEasing
+    *           the easing function
     */
-   public static void setRotEasing(final Utils.PeriodicEasing rotEasing) {
+   public static void setRotEasing ( final Utils.PeriodicEasing rotEasing ) {
 
       if (rotEasing != null) {
          Transform2.ROT_EASING = rotEasing;
@@ -243,11 +279,13 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Sets the easing function used to mix the transform's scale.
+    * Sets the easing function used to mix the transform's
+    * scale.
     *
-    * @param scaleEasing the easing function
+    * @param scaleEasing
+    *           the easing function
     */
-   public static void setScaleEasing(final Vec2.AbstrEasing scaleEasing) {
+   public static void setScaleEasing ( final Vec2.AbstrEasing scaleEasing ) {
 
       if (scaleEasing != null) {
          Transform2.SCALE_EASING = scaleEasing;
@@ -255,8 +293,8 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Stores the result of cos ( rotation ) when calculating the transform's right
-    * and forward axes.
+    * Stores the result of cos ( rotation ) when calculating
+    * the transform's right and forward axes.
     */
    protected float cosa = 0.0f;
 
@@ -271,8 +309,8 @@ public class Transform2 extends Transform {
    protected final Vec2 location = Vec2.zero(new Vec2());
 
    /**
-    * The previous location. Subtract from the current location to find the delta,
-    * or change, in location.
+    * The previous location. Subtract from the current location
+    * to find the delta, or change, in location.
     */
    protected final Vec2 locPrev = Vec2.zero(new Vec2());
 
@@ -287,8 +325,8 @@ public class Transform2 extends Transform {
    protected float rotation = 0.0f;
 
    /**
-    * The previous rotation. Subtract from the current rotation to find the delta,
-    * or change, in rotation.
+    * The previous rotation. Subtract from the current rotation
+    * to find the delta, or change, in rotation.
     */
    protected float rotPrev = 0.0f;
 
@@ -298,21 +336,21 @@ public class Transform2 extends Transform {
    protected final Vec2 scale = Vec2.one(new Vec2());
 
    /**
-    * The previous scale. Subtract from the current scale to find the delta, or
-    * change, in scale.
+    * The previous scale. Subtract from the current scale to
+    * find the delta, or change, in scale.
     */
    protected final Vec2 scalePrev = Vec2.one(new Vec2());
 
    /**
-    * Stores the result of sin ( rotation ) when calculating the transform's right
-    * and forward axes.
+    * Stores the result of sin ( rotation ) when calculating
+    * the transform's right and forward axes.
     */
    protected float sina = 0.0f;
 
    /**
     * The default constructor.
     */
-   public Transform2() {
+   public Transform2 () {
 
       super();
    }
@@ -320,13 +358,19 @@ public class Transform2 extends Transform {
    /**
     * Creates a transform from loose real numbers.
     *
-    * @param xLoc    the x location
-    * @param yLoc    the y location
-    * @param radians the rotation
-    * @param xScale  the scale x
-    * @param yScale  the scale y
+    * @param xLoc
+    *           the x location
+    * @param yLoc
+    *           the y location
+    * @param radians
+    *           the rotation
+    * @param xScale
+    *           the scale x
+    * @param yScale
+    *           the scale y
     */
-   public Transform2(final float xLoc, final float yLoc, final float radians, final float xScale, final float yScale) {
+   public Transform2 ( final float xLoc, final float yLoc, final float radians,
+         final float xScale, final float yScale ) {
 
       super();
       this.set(xLoc, yLoc, radians, xScale, yScale);
@@ -335,9 +379,10 @@ public class Transform2 extends Transform {
    /**
     * Creates a new transform from a source.
     *
-    * @param source the source transform
+    * @param source
+    *           the source transform
     */
-   public Transform2(final Transform2 source) {
+   public Transform2 ( final Transform2 source ) {
 
       super();
       this.set(source);
@@ -346,23 +391,28 @@ public class Transform2 extends Transform {
    /**
     * Creates a transform from a location, rotation and scale.
     *
-    * @param location the location
-    * @param rotation the rotation
-    * @param scale    the scale
+    * @param location
+    *           the location
+    * @param rotation
+    *           the rotation
+    * @param scale
+    *           the scale
     */
-   public Transform2(final Vec2 location, final float rotation, final Vec2 scale) {
+   public Transform2 ( final Vec2 location, final float rotation,
+         final Vec2 scale ) {
 
       super();
       this.set(location, rotation, scale);
    }
 
    /**
-    * Creates a new transform with the components of this transform.
+    * Creates a new transform with the components of this
+    * transform.
     *
     * @return the cloned transform
     */
    @Override
-   public Transform2 clone() {
+   public Transform2 clone () {
 
       return new Transform2(this.location, this.rotation, this.scale);
    }
@@ -370,11 +420,12 @@ public class Transform2 extends Transform {
    /**
     * Tests this transform for equivalence with an object.
     *
-    * @param obj the object
+    * @param obj
+    *           the object
     * @return the evaluation
     */
    @Override
-   public boolean equals(final Object obj) {
+   public boolean equals ( final Object obj ) {
 
       if (this == obj) {
          return true;
@@ -391,10 +442,11 @@ public class Transform2 extends Transform {
    /**
     * Gets the transform's forward axis.
     *
-    * @param target the output vector
+    * @param target
+    *           the output vector
     * @return the forward axis
     */
-   public Vec2 getForward(final Vec2 target) {
+   public Vec2 getForward ( final Vec2 target ) {
 
       return target.set(this.forward);
    }
@@ -402,10 +454,11 @@ public class Transform2 extends Transform {
    /**
     * Gets the transform's location
     *
-    * @param target the output vector
+    * @param target
+    *           the output vector
     * @return the location
     */
-   public Vec2 getLocation(final Vec2 target) {
+   public Vec2 getLocation ( final Vec2 target ) {
 
       return target.set(this.location);
    }
@@ -413,10 +466,11 @@ public class Transform2 extends Transform {
    /**
     * Gets the transform's previous location
     *
-    * @param target the output vector
+    * @param target
+    *           the output vector
     * @return the previous location
     */
-   public Vec2 getLocPrev(final Vec2 target) {
+   public Vec2 getLocPrev ( final Vec2 target ) {
 
       return target.set(this.locPrev);
    }
@@ -424,10 +478,11 @@ public class Transform2 extends Transform {
    /**
     * Gets the transform's right axis.
     *
-    * @param target the output vector
+    * @param target
+    *           the output vector
     * @return the right axis
     */
-   public Vec2 getRight(final Vec2 target) {
+   public Vec2 getRight ( final Vec2 target ) {
 
       return target.set(this.right);
    }
@@ -437,7 +492,7 @@ public class Transform2 extends Transform {
     *
     * @return the rotation
     */
-   public float getRotation() {
+   public float getRotation () {
 
       return this.rotation;
    }
@@ -447,7 +502,7 @@ public class Transform2 extends Transform {
     *
     * @return the previous rotation
     */
-   public float getRotPrev() {
+   public float getRotPrev () {
 
       return this.rotPrev;
    }
@@ -455,10 +510,11 @@ public class Transform2 extends Transform {
    /**
     * Gets the transform's scale.
     *
-    * @param target the output vector
+    * @param target
+    *           the output vector
     * @return the scale
     */
-   public Vec2 getScale(final Vec2 target) {
+   public Vec2 getScale ( final Vec2 target ) {
 
       return target.set(this.scale);
    }
@@ -466,29 +522,32 @@ public class Transform2 extends Transform {
    /**
     * Gets the transform's previous scale.
     *
-    * @param target the output vector
+    * @param target
+    *           the output vector
     * @return the previous scale
     */
-   public Vec2 getScalePrev(final Vec2 target) {
+   public Vec2 getScalePrev ( final Vec2 target ) {
 
       return target.set(this.scalePrev);
    }
 
    /**
-    * Returns a hash code for this transform based on its location, rotation and
-    * scale.
+    * Returns a hash code for this transform based on its
+    * location, rotation and scale.
     *
     * @return the hash code
     * @see Float#floatToIntBits(float)
     * @see Vec2#hashCode()
     */
    @Override
-   public int hashCode() {
+   public int hashCode () {
 
       final int prime = 31;
       int result = 1;
-      result = prime * result + (this.scale == null ? 0 : this.scale.hashCode());
-      result = prime * result + (this.location == null ? 0 : this.location.hashCode());
+      result = prime * result
+            + (this.scale == null ? 0 : this.scale.hashCode());
+      result = prime * result
+            + (this.location == null ? 0 : this.location.hashCode());
       result = prime * result + Float.floatToIntBits(this.rotation);
       return result;
    }
@@ -522,12 +581,13 @@ public class Transform2 extends Transform {
    /**
     * Moves the transform by a direction to a new location.
     *
-    * @param dir the direction
+    * @param dir
+    *           the direction
     * @return this transform
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
    @Chainable
-   public Transform2 moveBy(final Vec2 dir) {
+   public Transform2 moveBy ( final Vec2 dir ) {
 
       this.locPrev.set(this.location);
       Vec2.add(this.locPrev, dir, this.location);
@@ -537,12 +597,14 @@ public class Transform2 extends Transform {
    /**
     * Sets the transform's location.
     *
-    * @param x the x location
-    * @param y the y location
+    * @param x
+    *           the x location
+    * @param y
+    *           the y location
     * @return this transform
     */
    @Chainable
-   public Transform2 moveTo(final float x, final float y) {
+   public Transform2 moveTo ( final float x, final float y ) {
 
       this.locPrev.set(this.location);
       this.location.set(x, y);
@@ -552,11 +614,12 @@ public class Transform2 extends Transform {
    /**
     * Sets the transforms' location.
     *
-    * @param locNew the new location
+    * @param locNew
+    *           the new location
     * @return this transform
     */
    @Chainable
-   public Transform2 moveTo(final Vec2 locNew) {
+   public Transform2 moveTo ( final Vec2 locNew ) {
 
       this.locPrev.set(this.location);
       this.location.set(locNew);
@@ -564,32 +627,38 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Eases the transform to a location by a step. The static easing function is
-    * used.
+    * Eases the transform to a location by a step. The static
+    * easing function is used.
     *
-    * @param locNew the new location
-    * @param step   the step in [0.0, 1.0]
+    * @param locNew
+    *           the new location
+    * @param step
+    *           the step in [0.0, 1.0]
     * @return this transform
     * @see Transform2#LOC_EASING
     */
    @Chainable
-   public Transform2 moveTo(final Vec2 locNew, final float step) {
+   public Transform2 moveTo ( final Vec2 locNew, final float step ) {
 
       return this.moveTo(locNew, step, Transform2.LOC_EASING);
    }
 
    /**
-    * Eases the transform to a location by a step. The kind of easing is specified
-    * by a Vec2 easing function.
+    * Eases the transform to a location by a step. The kind of
+    * easing is specified by a Vec2 easing function.
     *
-    * @param locNew     the new location
-    * @param step       the step in [0.0, 1.0]
-    * @param easingFunc the easing function
+    * @param locNew
+    *           the new location
+    * @param step
+    *           the step in [0.0, 1.0]
+    * @param easingFunc
+    *           the easing function
     * @return this transform
     * @see Vec2.AbstrEasing#apply(Vec2, Vec2, Float, Vec2)
     */
    @Chainable
-   public Transform2 moveTo(final Vec2 locNew, final float step, final Vec2.AbstrEasing easingFunc) {
+   public Transform2 moveTo ( final Vec2 locNew, final float step,
+         final Vec2.AbstrEasing easingFunc ) {
 
       this.locPrev.set(this.location);
       easingFunc.apply(this.locPrev, locNew, step, this.location);
@@ -602,7 +671,7 @@ public class Transform2 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform2 reset() {
+   public Transform2 reset () {
 
       return Transform2.identity(this);
    }
@@ -610,11 +679,12 @@ public class Transform2 extends Transform {
    /**
     * Rotates the transform to an angle in radians.
     *
-    * @param rotNew the new angle
+    * @param rotNew
+    *           the new angle
     * @return this transform
     */
    @Chainable
-   public Transform2 rotateTo(final float rotNew) {
+   public Transform2 rotateTo ( final float rotNew ) {
 
       this.rotPrev = this.rotation;
       this.rotation = rotNew;
@@ -623,29 +693,36 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Rotates the transform to a new orientation by a step in [0.0, 1.0].
+    * Rotates the transform to a new orientation by a step in
+    * [0.0, 1.0].
     *
-    * @param radians the angle
-    * @param step    the step
+    * @param radians
+    *           the angle
+    * @param step
+    *           the step
     * @return this transform
     */
    @Chainable
-   public Transform2 rotateTo(final float radians, final float step) {
+   public Transform2 rotateTo ( final float radians, final float step ) {
 
       return this.rotateTo(radians, step, Transform2.ROT_EASING);
    }
 
    /**
-    * Rotates the transform to a new orientation by a step in [0.0, 1.0] using the
-    * specified easing function.
+    * Rotates the transform to a new orientation by a step in
+    * [0.0, 1.0] using the specified easing function.
     *
-    * @param radians    the angle
-    * @param step       the step
-    * @param easingFunc the easing function
+    * @param radians
+    *           the angle
+    * @param step
+    *           the step
+    * @param easingFunc
+    *           the easing function
     * @return this transform
     */
    @Chainable
-   public Transform2 rotateTo(final float radians, final float step, final Utils.PeriodicEasing easingFunc) {
+   public Transform2 rotateTo ( final float radians, final float step,
+         final Utils.PeriodicEasing easingFunc ) {
 
       this.rotPrev = this.rotation;
       this.rotation = easingFunc.apply(this.rotPrev, radians, step);
@@ -654,13 +731,15 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Rotates this transform around the z axis by an angle in radians.
+    * Rotates this transform around the z axis by an angle in
+    * radians.
     *
-    * @param radians the angle
+    * @param radians
+    *           the angle
     * @return this transform
     */
    @Chainable
-   public Transform2 rotateZ(final float radians) {
+   public Transform2 rotateZ ( final float radians ) {
 
       this.rotPrev = this.rotation;
       this.rotation += radians;
@@ -671,12 +750,13 @@ public class Transform2 extends Transform {
    /**
     * Scales the transform by a scalar.
     *
-    * @param scalar the scalar
+    * @param scalar
+    *           the scalar
     * @return this transform
     * @see Vec2#mult(Vec2, float, Vec2)
     */
    @Chainable
-   public Transform2 scaleBy(final float scalar) {
+   public Transform2 scaleBy ( final float scalar ) {
 
       if (scalar == 0.0f) {
          return this;
@@ -689,13 +769,14 @@ public class Transform2 extends Transform {
    /**
     * Scales the transform by a non-uniform scalar.
     *
-    * @param nonUniformScale the scale
+    * @param nonUniformScale
+    *           the scale
     * @return this transform
     * @see Vec2#isNonZero(Vec2)
     * @see Vec2#mult(Vec2, Vec2, Vec2)
     */
    @Chainable
-   public Transform2 scaleBy(final Vec2 nonUniformScale) {
+   public Transform2 scaleBy ( final Vec2 nonUniformScale ) {
 
       if (Vec2.isNonZero(nonUniformScale)) {
          this.scalePrev.set(this.scale);
@@ -707,11 +788,12 @@ public class Transform2 extends Transform {
    /**
     * Scales the transform to a uniform size.
     *
-    * @param scalar the size
+    * @param scalar
+    *           the size
     * @return this transform
     */
    @Chainable
-   public Transform2 scaleTo(final float scalar) {
+   public Transform2 scaleTo ( final float scalar ) {
 
       if (scalar != 0.0f) {
          this.scalePrev.set(this.scale);
@@ -723,12 +805,14 @@ public class Transform2 extends Transform {
    /**
     * Scales the transform to a non-uniform size.
     *
-    * @param x the size on the x axis
-    * @param y the size on the y axis
+    * @param x
+    *           the size on the x axis
+    * @param y
+    *           the size on the y axis
     * @return this transform
     */
    @Chainable
-   public Transform2 scaleTo(final float x, final float y) {
+   public Transform2 scaleTo ( final float x, final float y ) {
 
       if (x != 0.0f && y != 0.0f) {
          this.scalePrev.set(this.scale);
@@ -740,12 +824,13 @@ public class Transform2 extends Transform {
    /**
     * Scales the transform to a non-uniform size.
     *
-    * @param scaleNew the new scale
+    * @param scaleNew
+    *           the new scale
     * @return this transform
     * @see Vec2#isNonZero(Vec2)
     */
    @Chainable
-   public Transform2 scaleTo(final Vec2 scaleNew) {
+   public Transform2 scaleTo ( final Vec2 scaleNew ) {
 
       if (Vec2.isNonZero(scaleNew)) {
          this.scalePrev.set(this.scale);
@@ -755,16 +840,19 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Eases the transform to a scale by a step. The static easing function is used.
+    * Eases the transform to a scale by a step. The static
+    * easing function is used.
     *
-    * @param scaleNew the new scale
-    * @param step     the step in [0.0, 1.0]
+    * @param scaleNew
+    *           the new scale
+    * @param step
+    *           the step in [0.0, 1.0]
     * @return this transform
     * @see Vec2#isNonZero(Vec2)
     * @see Transform2#SCALE_EASING
     */
    @Chainable
-   public Transform2 scaleTo(final Vec2 scaleNew, final float step) {
+   public Transform2 scaleTo ( final Vec2 scaleNew, final float step ) {
 
       if (Vec2.isNonZero(scaleNew)) {
          return this.scaleTo(scaleNew, step, Transform2.SCALE_EASING);
@@ -774,18 +862,22 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Eases the transform to a scale by a step. The kind of easing is specified by
-    * a Vec2 easing function.
+    * Eases the transform to a scale by a step. The kind of
+    * easing is specified by a Vec2 easing function.
     *
-    * @param scaleNew   the new scale
-    * @param step       the step in [0.0, 1.0]
-    * @param easingFunc the easing function
+    * @param scaleNew
+    *           the new scale
+    * @param step
+    *           the step in [0.0, 1.0]
+    * @param easingFunc
+    *           the easing function
     * @return this transform
     * @see Vec2#isNonZero(Vec2)
     * @see Vec2.AbstrEasing#apply(Vec2, Vec2, Float, Vec2)
     */
    @Chainable
-   public Transform2 scaleTo(final Vec2 scaleNew, final float step, final Vec2.AbstrEasing easingFunc) {
+   public Transform2 scaleTo ( final Vec2 scaleNew, final float step,
+         final Vec2.AbstrEasing easingFunc ) {
 
       if (Vec2.isNonZero(scaleNew)) {
          this.scalePrev.set(this.scale);
@@ -797,16 +889,22 @@ public class Transform2 extends Transform {
    /**
     * Sets this transform from loose real numbers.
     *
-    * @param xLoc    the x location
-    * @param yLoc    the y location
-    * @param radians the angle in radians
-    * @param xScale  the scale x
-    * @param yScale  the scale y
+    * @param xLoc
+    *           the x location
+    * @param yLoc
+    *           the y location
+    * @param radians
+    *           the angle in radians
+    * @param xScale
+    *           the scale x
+    * @param yScale
+    *           the scale y
     * @return this transform
     */
    @Chainable
-   public Transform2 set(final float xLoc, final float yLoc, final float radians, final float xScale,
-         final float yScale) {
+   public Transform2 set ( final float xLoc, final float yLoc,
+         final float radians, final float xScale,
+         final float yScale ) {
 
       this.moveTo(xLoc, yLoc);
       this.rotateTo(radians);
@@ -818,11 +916,12 @@ public class Transform2 extends Transform {
    /**
     * Sets this transform to the components of another.
     *
-    * @param source the source transform
+    * @param source
+    *           the source transform
     * @return this transform
     */
    @Chainable
-   public Transform2 set(final Transform2 source) {
+   public Transform2 set ( final Transform2 source ) {
 
       return this.set(source.location, source.rotation, source.scale);
    }
@@ -830,13 +929,17 @@ public class Transform2 extends Transform {
    /**
     * Sets the components of the transform.
     *
-    * @param locNew   the new location
-    * @param rotNew   the new rotation
-    * @param scaleNew the new scale
+    * @param locNew
+    *           the new location
+    * @param rotNew
+    *           the new rotation
+    * @param scaleNew
+    *           the new scale
     * @return this transform
     */
    @Chainable
-   public Transform2 set(final Vec2 locNew, final float rotNew, final Vec2 scaleNew) {
+   public Transform2 set ( final Vec2 locNew, final float rotNew,
+         final Vec2 scaleNew ) {
 
       this.moveTo(locNew);
       this.rotateTo(rotNew);
@@ -846,34 +949,41 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Returns a string representation of this transform according to its string
-    * format.
+    * Returns a string representation of this transform
+    * according to its string format.
     *
-    * For display purposes, the angle is converted from radians to degrees.
+    * For display purposes, the angle is converted from radians
+    * to degrees.
     *
     * @return the string
-    * @see Transform2#STRING_FORMAT
     * @see IUtils#RAD_TO_DEG
     */
    @Override
-   public String toString() {
+   public String toString () {
 
-      return new StringBuilder().append("{ location: ").append(location.toString()).append(", \nrotation: ")
-            .append(Utils.toFixed(IUtils.RAD_TO_DEG * rotation), 1).append(", \nscale: ").append(scale.toString())
+      return new StringBuilder()
+            .append("{ location: ")
+            .append(location.toString())
+            .append(", \nrotation: ")
+            .append(Utils.toFixed(IUtils.RAD_TO_DEG * rotation, 1))
+            .append(", \nscale: ")
+            .append(scale.toString())
             .append(" }").toString();
    }
 
    /**
-    * Returns a string representation of this transform in SVG syntax.
+    * Returns a string representation of this transform in SVG
+    * syntax.
     *
     * The angle is converted from radians to degrees.
     *
     * @return the SVG string
     * @see IUtils#RAD_TO_DEG
     */
-   public String toSvgString() {
+   public String toSvgString () {
 
-      // public static final String SVG_FORMAT = new StringBuilder()
+      // public static final String SVG_FORMAT = new
+      // StringBuilder()
       // .append("transform=\"translate(%.0f, %.0f) ")
       // .append("rotate(%.0f) ")
       // .append("scale(%.0f, %.0f)\"")
@@ -886,19 +996,23 @@ public class Transform2 extends Transform {
       // this.rotation * IUtils.RAD_TO_DEG,
       // this.scale.x, this.scale.y);
 
-      return new StringBuilder().append("transform=\"translate(").append(Utils.toFixed(location.x, 1)).append(", ")
+      return new StringBuilder().append("transform=\"translate(")
+            .append(Utils.toFixed(location.x, 1)).append(", ")
             .append(Utils.toFixed(location.y, 1)).append(") rotate(")
-            .append(Utils.toFixed(rotation * IUtils.RAD_TO_DEG, 0)).append(") scale(").append(Utils.toFixed(scale.x, 1))
-            .append(", ").append(Utils.toFixed(scale.y, 1)).append(")\"").toString();
+            .append(Utils.toFixed(rotation * IUtils.RAD_TO_DEG, 0))
+            .append(") scale(").append(Utils.toFixed(scale.x, 1))
+            .append(", ").append(Utils.toFixed(scale.y, 1)).append(")\"")
+            .toString();
    }
 
    /**
     * Tests the equivalence between this and another transform.
     *
-    * @param t the transform
+    * @param t
+    *           the transform
     * @return the evaluation
     */
-   protected boolean equals(final Transform2 t) {
+   protected boolean equals ( final Transform2 t ) {
 
       if (this.scale == null) {
          if (t.scale != null) {
@@ -914,20 +1028,22 @@ public class Transform2 extends Transform {
       } else if (!this.location.equals(t.location)) {
          return false;
       }
-      if (Float.floatToIntBits(this.rotation) != Float.floatToIntBits(t.rotation)) {
+      if (Float.floatToIntBits(this.rotation) != Float
+            .floatToIntBits(t.rotation)) {
          return false;
       }
       return true;
    }
 
    /**
-    * Updates the local axes of the transform based on its rotation.
+    * Updates the local axes of the transform based on its
+    * rotation.
     *
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
    @Override
-   protected void updateAxes() {
+   protected void updateAxes () {
 
       this.cosa = (float) Math.cos(this.rotation);
       this.sina = (float) Math.sin(this.rotation);

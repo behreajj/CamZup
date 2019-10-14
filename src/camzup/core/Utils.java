@@ -340,9 +340,8 @@ public abstract class Utils implements IUtils {
    /**
     * Unclamped linear interpolation for a value.
     *
-    * Note that there is an added cost to boxing
-    * and unboxing a primitive float to and from
-    * a Float object.
+    * Note that there is an added cost to boxing and unboxing a
+    * primitive float to and from a Float object.
     */
    public static class LerpUnclamped implements EasingFuncPrimitive < Float > {
 
@@ -1603,13 +1602,13 @@ public abstract class Utils implements IUtils {
        */
       // final int[] digits = new int[vetPlaces + 1];
       // for (int i = 0; i <= vetPlaces; ++i) {
-      //    frac *= 10.0f;
-      //    frac -= digits[i] = (int) frac;
+      // frac *= 10.0f;
+      // frac -= digits[i] = (int) frac;
       // }
 
       /* Append to StringBuilder. */
       // for (int i = 0; i < vetPlaces; ++i) {
-      //    sb.append(digits[i]);
+      // sb.append(digits[i]);
       // }
 
       return sb.toString();
