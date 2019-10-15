@@ -3,6 +3,9 @@ package camzup.core;
 import java.util.Comparator;
 import java.util.Iterator;
 
+/**
+ * A two-dimensional complex number.
+ */
 public class Complex extends Imaginary implements Comparable < Complex > {
 
    public static abstract class AbstrComparator
@@ -69,14 +72,20 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       }
    }
 
+   /**
+    * The default complex comparator.
+    */
    private static Comparator < Complex > COMPARATOR = new ComparatorRealImag();
 
+   /**
+    * The unique identification for serialized classes.
+    */
    private static final long serialVersionUID = 1389157472482304159L;
 
    /**
     * Finds the absolute of a complex number. Similar to a
     * vector's magnitude.
-    * 
+    *
     * @param z
     *           the complex number
     * @return the absolute
@@ -89,7 +98,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Finds the absolute squared of a complex number. Similar
     * to a vector's magnitude squared.
-    * 
+    *
     * @param z
     *           the complex number
     * @return the absolute squared
@@ -99,14 +108,38 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return z.real * z.real + z.imag * z.imag;
    }
 
+   /**
+    * Adds two complex numbers.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output complex quaternion
+    * @return the sum
+    */
    public static Complex add (
          final Complex a,
          final Complex b,
          final Complex target ) {
 
-      return target.set(a.real + b.real, a.imag + b.imag);
+      return target.set(
+            a.real + b.real, 
+            a.imag + b.imag);
    }
 
+   /**
+    * Adds a complex and real number.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output complex quaternion
+    * @return the sum
+    */
    public static Complex add (
          final Complex a,
          final float b,
@@ -115,6 +148,17 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return target.set(a.real + b, a.imag);
    }
 
+   /**
+    * Adds a real and complex number.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output complex quaternion
+    * @return the sum
+    */
    public static Complex add (
          final float a,
          final Complex b,
@@ -123,6 +167,52 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return target.set(a + b.real, b.imag);
    }
 
+   /**
+    * Evaluates whether or not two complex numbers approximate
+    * each other.
+    * 
+    * @param a the left comparisand
+    * @param b the right comparisand
+    * @return the evaluation
+    * @see Utils#approxFast(float, float)
+    */
+   public static boolean approx (
+         final Complex a,
+         final Complex b ) {
+
+      return Utils.approxFast(a.imag, b.imag)
+            && Utils.approxFast(a.real, b.real);
+   }
+
+   /**
+    * Evaluates whether or not two complex numbers approximate
+    * each other according to a tolerance.
+    * 
+    * @param a the left comparisand
+    * @param b the right comparisand
+    * @param tolerance the tolerance
+    * @return the evaluation
+    * @see Utils#approxFast(float, float, float)
+    */
+   public static boolean approx (
+         final Complex a,
+         final Complex b,
+         final float tolerance ) {
+
+      return Utils.approxFast(a.imag, b.imag, tolerance)
+            && Utils.approxFast(a.real, b.real, tolerance);
+   }
+
+   /**
+    * Tests to see if a complex number has, approximately, the
+    * specified absolute.
+    * 
+    * @param z
+    *           the complex number
+    * @param abs
+    *           the absolute
+    * @return the evaluation
+    */
    public static boolean approxAbs (
          final Complex z,
          final float abs ) {
@@ -130,6 +220,16 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return Utils.approxFast(Complex.absSq(z), abs * abs);
    }
 
+   /**
+    * Finds the conjugate of the complex number, where the
+    * imaginary component is negates.
+    * 
+    * @param z
+    *           the input complex number
+    * @param target
+    *           the output complex number
+    * @return the conjugate
+    */
    public static Complex conj (
          final Complex z,
          final Complex target ) {
@@ -137,7 +237,21 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return target.set(z.real, -z.imag);
    }
 
-   public static Complex div ( final Complex a, final Complex b,
+   /**
+    * Divides one complex number by another.
+    * 
+    * @param a
+    *           the numerator
+    * @param b
+    *           the denominator
+    * @param target
+    *           the output complex number
+    * @return the quotient
+    * @see Complex#absSq(Complex)
+    */
+   public static Complex div (
+         final Complex a,
+         final Complex b,
          final Complex target ) {
 
       final float bAbsSq = Complex.absSq(b);
@@ -153,6 +267,25 @@ public class Complex extends Imaginary implements Comparable < Complex > {
             a.real * cImag + a.imag * cReal);
    }
 
+   /**
+    * Divides one complex number by another. Equivalent to
+    * multiplying the numerator and the inverse of the
+    * denominator.
+    * 
+    * @param a
+    *           the numerator
+    * @param b
+    *           the denominator
+    * @param target
+    *           the output complex number
+    * @param inverse
+    *           the inverse
+    * @param conj
+    *           the conjugate
+    * @return the quotient
+    * @see Complex#inverse(Complex, Complex, Complex)
+    * @see Complex#mult(Complex, Complex, Complex)
+    */
    public static Complex div (
          final Complex a,
          final Complex b,
@@ -161,9 +294,20 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex conj ) {
 
       Complex.inverse(b, inverse, conj);
-      return Complex.div(a, inverse, target);
+      return Complex.mult(a, inverse, target);
    }
 
+   /**
+    * Divides a complex number by a real number.
+    * 
+    * @param a
+    *           the numerator
+    * @param b
+    *           the denominator
+    * @param target
+    *           the output complex number
+    * @return the quotient
+    */
    public static Complex div (
          final Complex a,
          final float b,
@@ -177,6 +321,18 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return target.set(a.real * bInv, a.imag * bInv);
    }
 
+   /**
+    * Divides a real number by a complex number.
+    * 
+    * @param a
+    *           the numerator
+    * @param b
+    *           the denominator
+    * @param target
+    *           the output complex number
+    * @return the quotient
+    * @see Complex#absSq(Complex)
+    */
    public static Complex div (
          final float a,
          final Complex b,
@@ -188,9 +344,24 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       }
 
       final float abInvAbsSq = a / bAbsSq;
-      return target.set(b.real * abInvAbsSq, -b.imag * abInvAbsSq);
+      return target.set(
+            b.real * abInvAbsSq,
+            -b.imag * abInvAbsSq);
    }
 
+   /**
+    * Returns Euler's number, <em>e</em>, raised to a complex
+    * number.
+    * 
+    * @param z
+    *           the complex number
+    * @param target
+    *           the output complex number
+    * @return the result
+    * @see Math#exp(double)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    */
    public static Complex exp (
          final Complex z,
          final Complex target ) {
@@ -199,21 +370,32 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       // target);
 
       final double r = Math.exp(z.real);
-      return target.set((float) (r * Math.cos(z.imag)),
+      return target.set(
+            (float) (r * Math.cos(z.imag)),
             (float) (r * Math.sin(z.imag)));
    }
 
+   /**
+    * Gets the string representation of the default Complex
+    * comparator.
+    *
+    * @return the string
+    */
    public static String getComparatorString () {
 
       return Complex.COMPARATOR.toString();
    }
 
    /**
-    * Returns the inverse, or reciprocal, of the complex number.
-    * 
-    * @param z the input complex number
-    * @param target the output complex number
+    * Returns the inverse, or reciprocal, of the complex
+    * number.
+    *
+    * @param z
+    *           the input complex number
+    * @param target
+    *           the output complex number
     * @return the inverse
+    * @see Complex#absSq(Complex)
     */
    public static Complex inverse (
          final Complex z,
@@ -224,16 +406,24 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          return target.reset();
       }
       final float invAbsSq = 1.0f / absSq;
-      return target.set(z.real * invAbsSq, -z.imag * invAbsSq);
+      return target.set(
+            z.real * invAbsSq, 
+            -z.imag * invAbsSq);
    }
 
    /**
-    * Returns the inverse, or reciprocal, of the complex number.
-    * 
-    * @param z the input complex number
-    * @param target the output complex number
-    * @param conj the conjugate
+    * Returns the inverse, or reciprocal, of the complex
+    * number.
+    *
+    * @param z
+    *           the input complex number
+    * @param target
+    *           the output complex number
+    * @param conj
+    *           the conjugate
     * @return the inverse
+    * @see Complex#absSq(Complex)
+    * @see Complex#conj(Complex, Complex)
     */
    public static Complex inverse (
          final Complex z,
@@ -246,40 +436,81 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       }
       Complex.conj(z, conj);
       final float invAbsSq = 1.0f / absSq;
-      return target.set(conj.real * invAbsSq, conj.imag * invAbsSq);
+      return target.set(
+            conj.real * invAbsSq, 
+            conj.imag * invAbsSq);
    }
 
+   /**
+    * Tests to see if all the complex number's components are
+    * non-zero.
+    * 
+    * @param z
+    *           the complex number
+    * @return the evaluation
+    */
    public static boolean isNonZero ( final Complex z ) {
 
       return z.real != 0.0f && z.imag != 0.0f;
    }
 
+   /**
+    * Tests to see if the complex number's absolute is
+    * approximately 1.0.
+    * 
+    * @param z
+    *           the complex number
+    * @return the evaluation
+    * @see Utils#approxFast(float, float)
+    * @see Complex#absSq(Complex)
+    */
    public static boolean isUnit ( final Complex z ) {
 
       return Utils.approxFast(Complex.absSq(z), 1.0f);
    }
 
+   /**
+    * Tests to see if all the complex number's components are
+    * zero.
+    * 
+    * @param z
+    *           the complex number
+    * @return the evaluation
+    */
    public static boolean isZero ( final Complex z ) {
 
       return z.real == 0.0f && z.imag == 0.0f;
    }
 
+   /**
+    * Finds the complex logarithm.
+    * 
+    * @param z
+    *           the complex number
+    * @param target
+    *           the output complex number
+    * @return the logarithm
+    * @see Math#log(double)
+    * @see Complex#abs(Complex)
+    * @see Math#atan2(double, double)
+    */
    public static Complex log (
          final Complex z,
          final Complex target ) {
 
-      return target.set((float) Math.log(Complex.abs(z)),
+      return target.set(
+            (float) Math.log(Complex.abs(z)),
             (float) Math.atan2(z.imag, z.real));
    }
 
    /**
     * Performs a Mobius transformation on the variable
     * <em>z</em>. Uses the formula <em>a</em> <em>z</em> +
-    * <em>b</em> / <em>c</em <em>z</em> + <em>d</em> <br>
+    * <em>b</em> / <em>c</em> <em>z</em> + <em>d</em> <br>
     * where constants <em>a</em>, <em>b</em>, <em>c</em>, and
     * <em>d</em> satisfy <em>a</em> <em>d</em> - <em>b</em>
-    * <em>c</em> \u2260 0 .
-    * 
+    * <em>c</em> \u2260 0.0 .
+    *
     * @param a
     *           the a constant
     * @param b
@@ -290,7 +521,9 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     *           the d constant
     * @param z
     *           the input complex number
-    * @return target the output complex number
+    * @param target
+    *           the output complex number
+    * @return the mobius transformation
     */
    public static Complex mobius (
          final Complex a,
@@ -328,6 +561,18 @@ public class Complex extends Imaginary implements Comparable < Complex > {
             azbr * czdiInv + azbi * czdrInv);
    }
 
+   /**
+    * Multiplies two complex numbers. Complex multiplication is
+    * not commutative.
+    * 
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output complex number
+    * @return the product
+    */
    public static Complex mult (
          final Complex a,
          final Complex b,
@@ -338,6 +583,17 @@ public class Complex extends Imaginary implements Comparable < Complex > {
             a.real * b.imag + a.imag * b.real);
    }
 
+   /**
+    * Multiplies a complex and real number.
+    * 
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output complex number
+    * @return the product
+    */
    public static Complex mult (
          final Complex a,
          final float b,
@@ -346,6 +602,17 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return target.set(a.real * b, a.imag * b);
    }
 
+   /**
+    * Multiplies a real and complex number.
+    * 
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output complex number
+    * @return the product
+    */
    public static Complex mult (
          final float a,
          final Complex b,
@@ -354,6 +621,17 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return target.set(a * b.real, a * b.imag);
    }
 
+   /**
+    * Divides a complex number by its absolute, such that the
+    * new magnitude is 1.0.
+    * 
+    * @param z
+    *           the complex number
+    * @param target
+    *           the output complex number
+    * @return the complex number
+    * @see Math#sqrt(double)
+    */
    public static Complex normalize (
          final Complex z,
          final Complex target ) {
@@ -377,7 +655,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Finds the signed phase of a complex number. Similar to a
     * vector's heading.
-    * 
+    *
     * @param z
     *           the complex number
     * @return the phase
@@ -387,6 +665,23 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return Utils.atan2(z.imag, z.real);
    }
 
+   /**
+    * Raises a complex number to the power of another.
+    * 
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output complex number
+    * @return the result
+    * @see Math#log(double)
+    * @see Math#sqrt(double)
+    * @see Math#atan2(double, double)
+    * @see Math#exp(double)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    */
    public static Complex pow (
          final Complex a,
          final Complex b,
@@ -398,10 +693,30 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final double phi = b.real * logImag + b.imag * logReal;
       final double r = Math.exp(b.real * logReal - b.imag * logImag);
 
-      return target.set((float) (r * Math.cos(phi)),
+      return target.set(
+            (float) (r * Math.cos(phi)),
             (float) (r * Math.sin(phi)));
    }
 
+   /**
+    * Raises a complex number to the power of another.
+    * Discloses the product and log.
+    * 
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output complex number
+    * @param prod
+    *           the product
+    * @param log
+    *           the log
+    * @return the result
+    * @see Complex#exp(Complex, Complex)
+    * @see Complex#mult(Complex, Complex, Complex)
+    * @see Complex#log(Complex, Complex)
+    */
    public static Complex pow (
          final Complex a,
          final Complex b,
@@ -412,6 +727,23 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return Complex.exp(Complex.mult(b, Complex.log(a, log), prod), target);
    }
 
+   /**
+    * Raises a complex number to the power of a real number.
+    * 
+    * @param a
+    *           the complex number
+    * @param b
+    *           the real exponent
+    * @param target
+    *           the output complex number
+    * @return the result
+    * @see Math#log(double)
+    * @see Math#sqrt(double)
+    * @see Math#atan2(double, double)
+    * @see Math#exp(double)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    */
    public static Complex pow (
          final Complex a,
          final float b,
@@ -423,24 +755,53 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final double phi = b * logImag;
       final double r = Math.exp(b * logReal);
 
-      return target.set((float) (r * Math.cos(phi)),
+      return target.set(
+            (float) (r * Math.cos(phi)),
             (float) (r * Math.sin(phi)));
    }
 
+   /**
+    * Raises a float to the power of a complex number.
+    * 
+    * @param a
+    *           the real number
+    * @param b
+    *           the complex exponent
+    * @param target
+    *           the output complex number
+    * @return the result
+    * @see Math#log(double)
+    * @see Math#sqrt(double)
+    * @see Math#exp(double)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    */
    public static Complex pow (
          final float a,
          final Complex b,
          final Complex target ) {
 
       final double logReal = Math.log(Math.sqrt(a * a));
-      final double logImag = a < 0.0D ? IUtils.PI_D : 0.0D;
+      final double logImag = a < 0.0d ? IUtils.PI_D : 0.0d;
       final double phi = b.real * logImag + b.imag * logReal;
       final double r = Math.exp(b.real * logReal - b.imag * logImag);
 
-      return target.set((float) (r * Math.cos(phi)),
+      return target.set(
+            (float) (r * Math.cos(phi)),
             (float) (r * Math.sin(phi)));
    }
 
+   /**
+    * Creates a complex number with an absolute of 1.0.
+    * 
+    * @param rng
+    *           the random number generator
+    * @param target
+    *           the output complex number
+    * @return the random complex number
+    * @see Random#uniform(float, float)
+    * @see Math#sqrt(double)
+    */
    public static Complex random (
          final Random rng,
          final Complex target ) {
@@ -455,6 +816,19 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return target.set(real * mInv, imag * mInv);
    }
 
+   /**
+    * Converts from polar to rectilinear coordinates.
+    * 
+    * @param r
+    *           the radius
+    * @param phi
+    *           the angle in radians
+    * @param target
+    *           the output complex number
+    * @return the complex number
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    */
    public static Complex rect (
          final float r,
          final float phi,
@@ -465,6 +839,19 @@ public class Complex extends Imaginary implements Comparable < Complex > {
             r * (float) Math.sin(phi));
    }
 
+   /**
+    * Rotates a complex number by an angle in radians.
+    * 
+    * @param z
+    *           the input complex number
+    * @param radians
+    *           the angle in radians
+    * @param target
+    *           the output complex number
+    * @return the rotated complex number
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    */
    public static Complex rotate (
          final Complex z,
          final float radians,
@@ -473,10 +860,18 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
 
-      return target.set(cosa * z.real - sina * z.imag,
+      return target.set(
+            cosa * z.real - sina * z.imag,
             cosa * z.imag + sina * z.real);
    }
 
+   /**
+    * Sets the comparator function by which collections of
+    * complex numbers are compared.
+    *
+    * @param comparator
+    *           the comparator
+    */
    public static void setComparator (
          final Comparator < Complex > comparator ) {
 
@@ -485,6 +880,17 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       }
    }
 
+   /**
+    * Subtracts two complex numbers.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output complex number
+    * @return the difference
+    */
    public static Complex sub (
          final Complex a,
          final Complex b,
@@ -493,6 +899,17 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return target.set(a.real - b.real, a.imag - b.imag);
    }
 
+   /**
+    * Subtracts a real number from a complex number.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output complex number
+    * @return the difference
+    */
    public static Complex sub (
          final Complex a,
          final float b,
@@ -501,6 +918,17 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return target.set(a.real - b, a.imag);
    }
 
+   /**
+    * Subtracts a complex number from a real number.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output complex number
+    * @return the difference
+    */
    public static Complex sub (
          final float a,
          final Complex b,
@@ -509,6 +937,13 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return target.set(a - b.real, -b.imag);
    }
 
+   /**
+    * Returns a complex number with all components set to zero.
+    *
+    * @param target
+    *           the output number
+    * @return zero
+    */
    public static Complex zero ( final Complex target ) {
 
       return target.set(0.0f, 0.0f);
@@ -520,7 +955,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    public float imag = 0.0f;
 
    /**
-    * The rreal component.
+    * The real component.
     */
    public float real = 0.0f;
 
@@ -532,36 +967,82 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       super(2);
    }
 
-   public Complex ( 
-         final boolean real, 
+   /**
+    * Constructs a complex number from boolean values.
+    * 
+    * @param real
+    *           the real component
+    * @param imag
+    *           the imaginary component
+    */
+   public Complex (
+         final boolean real,
          final boolean imag ) {
 
       super(2);
       this.set(real, imag);
    }
 
+   /**
+    * Constructs a complex number from the source's components.
+    * 
+    * @param source
+    *           the source complex number
+    */
    public Complex ( final Complex source ) {
 
       super(2);
       this.set(source);
    }
 
-   public Complex ( 
-         final float real, 
+   /**
+    * Constructs a complex number from float values.
+    * 
+    * @param real
+    *           the real component
+    * @param imag
+    *           the imaginary component
+    */
+   public Complex (
+         final float real,
          final float imag ) {
 
       super(2);
       this.set(real, imag);
    }
 
-   public Complex ( 
-         final String realstr, 
+   /**
+    * Attempts to construct a complex numbers from Strings
+    * using {@link Float#parseFloat(String)} . If a
+    * NumberFormatException is thrown, the component is set to
+    * zero.
+    * 
+    * @param realstr
+    *           the real string
+    * @param imagstr
+    *           the imaginary string
+    * @see Float#parseFloat(String)
+    */
+   public Complex (
+         final String realstr,
          final String imagstr ) {
 
       super(2);
       this.set(realstr, imagstr);
    }
 
+   /**
+    * Tests equivalence between this and another complex
+    * number. For rough equivalence of floating point
+    * components, use the static approx function instead.
+    *
+    * @param z
+    *           the complex number
+    * @return the evaluation
+    * @see Float#floatToIntBits(float)
+    * @see Complex#approx(Complex, Complex)
+    * @see Complex#approx(Complex, Complex, float)
+    */
    protected boolean equals ( final Complex z ) {
 
       if (Float.floatToIntBits(this.imag) != Float.floatToIntBits(z.imag)) {
@@ -575,18 +1056,47 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return true;
    }
 
+   /**
+    * Returns a new complex number with this complex number's
+    * components. Java's cloneable interface is problematic;
+    * use set or a copy constructor instead.
+    * 
+    * @return a new complex number
+    */
    @Override
    public Complex clone () {
 
       return new Complex(this.real, this.imag);
    }
 
+   /**
+    * Returns -1 when this complex number is less than the
+    * comparisand; 1 when it is greater than; 0 when the two
+    * are 'equal'. The implementation of this method allows
+    * collections of complex number to be sorted. This depends
+    * upon the static comparator of the Complex class, which
+    * can be changed.
+    * 
+    * @param z
+    *           the comparisand
+    * @return the numeric code
+    * @see Complex#COMPARATOR
+    */
    @Override
    public int compareTo ( final Complex z ) {
 
       return Complex.COMPARATOR.compare(this, z);
    }
 
+   /**
+    * Tests this complex number for equivalence with another
+    * object.
+    * 
+    * @param obj
+    *           the object
+    * @return the equivalence
+    * @see Complex#equals(Complex)
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
@@ -602,6 +1112,13 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return this.equals((Complex) obj);
    }
 
+   /**
+    * Simulates bracket subscript access in an array..
+    *
+    * @param index
+    *           the index
+    * @return the component at that index
+    */
    @Override
    public float get ( final int index ) {
 
@@ -617,6 +1134,13 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       }
    }
 
+   /**
+    * Returns a hash code for this complex number based on its
+    * real and imaginary components.
+    *
+    * @return the hash code
+    * @see Float#floatToIntBits(float)
+    */
    @Override
    public int hashCode () {
 
@@ -627,17 +1151,42 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return result;
    }
 
+   /**
+    * Returns an iterator for this complex number, which allows
+    * its components to be accessed in an enhanced for-loop.
+    *
+    * @return the iterator
+    */
    @Override
    public CIterator iterator () {
 
       return new CIterator(this);
    }
 
+   /**
+    * Resets this complex number to an inital state ( 0.0, 0.0
+    * ) .
+    * 
+    * @return this complex number
+    */
+   @Chainable
    public Complex reset () {
 
       return Complex.zero(this);
    }
 
+   /**
+    * Sets the components of this complex number from booleans,
+    * where false is 0.0 and true is 1.0 .
+    * 
+    * @param real
+    *           the real component
+    * @param imag
+    *           the imaginary component
+    * @return this complex number
+    * @see Utils#toFloat(boolean)
+    */
+   @Chainable
    public Complex set (
          final boolean real,
          final boolean imag ) {
@@ -647,11 +1196,30 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return this;
    }
 
+   /**
+    * Copies the components of the input complex numnber to
+    * this complex number.
+    *
+    * @param source
+    *           the input complex number
+    * @return this complex number
+    */
+   @Chainable
    public Complex set ( final Complex source ) {
 
       return this.set(source.real, source.imag);
    }
 
+   /**
+    * Sets the components of this complex number.
+    * 
+    * @param real
+    *           the real component
+    * @param imag
+    *           the imaginary component
+    * @return this complex number
+    */
+   @Chainable
    public Complex set (
          final float real,
          final float imag ) {
@@ -661,6 +1229,20 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return this;
    }
 
+   /**
+    * Attempts to set the components of this complex number
+    * from Strings using {@link Float#parseFloat(String)} . If
+    * a NumberFormatException is thrown, the component is set
+    * to zero.
+    * 
+    * @param realstr
+    *           the real string
+    * @param imagstr
+    *           the imaginary string
+    * @return this complex number
+    * @see Float#parseFloat(String)
+    */
+   @Chainable
    public Complex set (
          final String realstr,
          final String imagstr ) {
@@ -686,18 +1268,37 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return this;
    }
 
+   /**
+    * Returns a float array of length 2 containing this complex
+    * number's components.
+    *
+    * @return the array
+    */
    @Override
    public float[] toArray () {
 
       return new float[] { this.real, this.imag };
    }
 
+   /**
+    * Returns a string representation of this complex number.
+    *
+    * @return the string
+    */
    @Override
    public String toString () {
 
       return this.toString(4);
    }
 
+   /**
+    * Returns a string representation of this complex number.
+    * 
+    * @param places
+    *           the number of places
+    * @return the string
+    * @see Utils#toFixed(float, int)
+    */
    public String toString ( final int places ) {
 
       return new StringBuilder(64)

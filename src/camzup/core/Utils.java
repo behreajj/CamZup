@@ -1,7 +1,5 @@
 package camzup.core;
 
-import java.text.DecimalFormat;
-
 /**
  * Implements basic math utilities for single- and
  * double-precision numbers which may serve as alternatives
@@ -36,7 +34,11 @@ public abstract class Utils implements IUtils {
        * @return the eased object
        */
       @Override
-      T apply ( final T origin, final T dest, final Float step, T target );
+      T apply (
+            final T origin, 
+            final T dest, 
+            final Float step, 
+            T target );
    }
 
    /**
@@ -63,7 +65,10 @@ public abstract class Utils implements IUtils {
        * @return the eased object
        */
       @Override
-      T apply ( final T origin, final T dest, final Float step );
+      T apply ( 
+            final T origin, 
+            final T dest, 
+            final Float step );
    }
 
    /**
@@ -90,7 +95,9 @@ public abstract class Utils implements IUtils {
        *           the step
        */
       @Override
-      public Float apply ( final Float origin, final Float dest,
+      public Float apply (
+            final Float origin,
+            final Float dest,
             final Float step ) {
 
          if (step <= 0.0f) {
@@ -144,8 +151,10 @@ public abstract class Utils implements IUtils {
        * @see Utils#mod(float, float)
        */
       @Override
-      public Float applyUnclamped ( final Float origin, final Float dest,
-            final Float step ) {
+      public float applyUnclamped (
+            final float origin,
+            final float dest,
+            final float step ) {
 
          if (this.aGtb) {
             this.b = this.b + this.range;
@@ -201,8 +210,10 @@ public abstract class Utils implements IUtils {
        * @see Utils#mod(float, float)
        */
       @Override
-      public Float applyUnclamped ( final Float origin, final Float dest,
-            final Float step ) {
+      public float applyUnclamped (
+            final float origin,
+            final float dest,
+            final float step ) {
 
          if (this.aLtb) {
             this.a = this.a + this.range;
@@ -258,8 +269,10 @@ public abstract class Utils implements IUtils {
        * @see Utils#mod(float, float)
        */
       @Override
-      public Float applyUnclamped ( final Float origin, final Float dest,
-            final Float step ) {
+      public float applyUnclamped (
+            final float origin,
+            final float dest,
+            final float step ) {
 
          if (this.aLtb && this.diff < this.halfRange) {
             this.a = this.a + this.range;
@@ -318,8 +331,10 @@ public abstract class Utils implements IUtils {
        * @see Utils#mod(float, float)
        */
       @Override
-      public Float applyUnclamped ( final Float origin, final Float dest,
-            final Float step ) {
+      public float applyUnclamped (
+            final float origin,
+            final float dest,
+            final float step ) {
 
          if (this.aLtb && this.diff > this.halfRange) {
             this.a = this.a + this.range;
@@ -353,7 +368,9 @@ public abstract class Utils implements IUtils {
       }
 
       @Override
-      public Float apply ( final Float origin, final Float dest,
+      public Float apply (
+            final Float origin,
+            final Float dest,
             final Float step ) {
 
          final double td = step;
@@ -448,10 +465,11 @@ public abstract class Utils implements IUtils {
        * than 1.0.
        *
        * @see PeriodicEasing#eval(float, float)
-       * @see PeriodicEasing#applyUnclamped(Float, Float, Float)
        */
       @Override
-      public Float apply ( final Float origin, final Float dest,
+      public Float apply (
+            final Float origin,
+            final Float dest,
             final Float step ) {
 
          this.eval(origin, dest);
@@ -477,8 +495,10 @@ public abstract class Utils implements IUtils {
        *           the step
        * @return the interpolated value
        */
-      public abstract Float applyUnclamped ( final Float origin,
-            final Float dest, final Float step );
+      public abstract float applyUnclamped (
+            final float origin,
+            final float dest,
+            final float step );
 
       /**
        * Gets the range of the easing function.
@@ -634,11 +654,8 @@ public abstract class Utils implements IUtils {
     */
    public static float EPSILON = 0.0f;
 
-   // private static DecimalFormat nf = new DecimalFormat();
-
    static {
       Utils.EPSILON = IUtils.DEFAULT_EPSILON;
-      // Utils.nf.setGroupingUsed(false);
    }
 
    /**
@@ -678,8 +695,8 @@ public abstract class Utils implements IUtils {
     *
     * Based on the algorithm at <a href=
     * "https://developer.download.nvidia.com/cg/acos.html">https://developer.download.nvidia.com/cg/acos.html</a>
-    * , which in turn cites M. Abramowitz and I.A. Stegun, Ed.,
-    * <em>Handbook of Mathematical Functions</em> .
+    * , which in turn cites M. Abramowitz and I.A. Stegun,
+    * Eds., <em>Handbook of Mathematical Functions</em> .
     *
     * @param value
     *           the input value
@@ -787,10 +804,10 @@ public abstract class Utils implements IUtils {
     * 2.0]: -\u03c0 / 2.0, when the input is -1.0; 0.0, when
     * the input is 0.0; \u03c0 / 2.0, when the input is 1.0.
     *
-    * Based on the algorithm at
-    * https://developer.download.nvidia.com/cg/asin.html ,
-    * which in turn cites M. Abramowitz and I.A. Stegun, Ed.,
-    * <em>Handbook of Mathematical Functions</em> .
+    * Based on the algorithm at <a href=
+    * "https://developer.download.nvidia.com/cg/asin.html">https://developer.download.nvidia.com/cg/asin.html</a>
+    * , which in turn cites M. Abramowitz and I.A. Stegun,
+    * Eds., <em>Handbook of Mathematical Functions</em> .
     *
     * @param value
     *           the input value
@@ -823,8 +840,9 @@ public abstract class Utils implements IUtils {
 
    /**
     * An alternative to {@link Math#atan2(double, double)} .
-    * Based on the algorithm at
-    * https://developer.download.nvidia.com/cg/atan2.html .
+    * Based on the algorithm at <a href=
+    * "https://developer.download.nvidia.com/cg/atan2.html">https://developer.download.nvidia.com/cg/atan2.html</a>
+    * .
     *
     * @param y
     *           the y coordinate
@@ -938,7 +956,9 @@ public abstract class Utils implements IUtils {
     *           the lower bound
     * @return the clamped value
     */
-   public static float clamp ( final float value, final float lowerBound,
+   public static float clamp (
+         final float value,
+         final float lowerBound,
          final float upperBound ) {
 
       return value < lowerBound ? lowerBound
@@ -1151,7 +1171,9 @@ public abstract class Utils implements IUtils {
     * @return the interpolated value
     * @see Utils#lerpUnclamped(float, float, float)
     */
-   public static float lerp ( final float origin, final float dest,
+   public static float lerp (
+         final float origin,
+         final float dest,
          final float step ) {
 
       if (step <= 0.0f) {
@@ -1176,7 +1198,9 @@ public abstract class Utils implements IUtils {
     *           the step
     * @return the interpolated value
     */
-   public static float lerpUnclamped ( final float origin, final float dest,
+   public static float lerpUnclamped (
+         final float origin,
+         final float dest,
          final float step ) {
 
       // final double td = step;
@@ -1203,8 +1227,11 @@ public abstract class Utils implements IUtils {
     *           upper bound of destination range
     * @return the mapped value
     */
-   public static float map ( final float value, final float lbOrigin,
-         final float ubOrigin, final float lbDest,
+   public static float map ( 
+         final float value, 
+         final float lbOrigin,
+         final float ubOrigin, 
+         final float lbDest,
          final float ubDest ) {
 
       final float denom = ubOrigin - lbOrigin;
@@ -1242,7 +1269,10 @@ public abstract class Utils implements IUtils {
     * @return the minimum value
     * @see Utils#max(float, float)
     */
-   public static float max ( final float a, final float b, final float c ) {
+   public static float max ( 
+         final float a, 
+         final float b, 
+         final float c ) {
 
       return Utils.max(Utils.max(a, b), c);
    }
@@ -1275,7 +1305,10 @@ public abstract class Utils implements IUtils {
     * @return the minimum value
     * @see Utils#min(float, float)
     */
-   public static float min ( final float a, final float b, final float c ) {
+   public static float min ( 
+         final float a, 
+         final float b, 
+         final float c ) {
 
       return Utils.min(Utils.min(a, b), c);
    }
@@ -1474,6 +1507,7 @@ public abstract class Utils implements IUtils {
    public static int sign ( final float value ) {
 
       return value < 0.0f ? -1 : value > 0.0f ? 1 : 0;
+
       // return
       // Float.intBitsToFloat((Float.floatToRawIntBits(value) &
       // -2147483648) | 1065353216);
@@ -1524,7 +1558,8 @@ public abstract class Utils implements IUtils {
     * 
     * Intended to serve as an alternative to
     * {@link String#format(String, Object...)}, which is very
-    * slow, and {@link DecimalFormat}, which appends
+    * slow, and DecimalFormat which extrapolates values beyond
+    * the last decimal place.
     * 
     * @param value
     *           the real number
@@ -1533,9 +1568,6 @@ public abstract class Utils implements IUtils {
     * @return the string
     */
    public static String toFixed ( final float value, final int places ) {
-
-      // nf.setMaximumFractionDigits(places);
-      // return nf.format(value);
 
       if (places < 0) {
          return Integer.toString(Math.round(value));

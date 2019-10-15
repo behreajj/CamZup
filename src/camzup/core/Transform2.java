@@ -996,12 +996,18 @@ public class Transform2 extends Transform {
       // this.rotation * IUtils.RAD_TO_DEG,
       // this.scale.x, this.scale.y);
 
-      return new StringBuilder().append("transform=\"translate(")
-            .append(Utils.toFixed(location.x, 1)).append(", ")
-            .append(Utils.toFixed(location.y, 1)).append(") rotate(")
+      return new StringBuilder()
+            .append("transform=\"translate(")
+            .append(Utils.toFixed(location.x, 1))
+            .append(", ")
+            .append(Utils.toFixed(location.y, 1))
+            .append(") rotate(")
             .append(Utils.toFixed(rotation * IUtils.RAD_TO_DEG, 0))
-            .append(") scale(").append(Utils.toFixed(scale.x, 1))
-            .append(", ").append(Utils.toFixed(scale.y, 1)).append(")\"")
+            .append(") scale(")
+            .append(Utils.toFixed(scale.x, 1))
+            .append(", ")
+            .append(Utils.toFixed(scale.y, 1))
+            .append(")\"")
             .toString();
    }
 

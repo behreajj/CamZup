@@ -398,7 +398,7 @@ public class SimplexNoise {
             // (0,0,0) is one of the closest
             // two tetrahedral vertices.
             final byte c = bScore > aScore ? bPoint : aPoint;
-            
+
             /*
              * Our other closest vertex is the closest out of a and b.
              */
@@ -1611,12 +1611,18 @@ public class SimplexNoise {
             aIsBiggerSide = false;
          }
 
-         // Where each of the two closest points are determines how
-         // the extra three vertices are calculated.
+         /*
+          * Where each of the two closest points are determines how
+          * the extra three vertices are calculated.
+          */
          if (aIsBiggerSide == bIsBiggerSide) {
-            if (aIsBiggerSide) { // Both closest points on the bigger side
+            if (aIsBiggerSide) {
+               
+               /* Both closest points on the bigger side */
+               
                final byte c1 = (byte) (aPoint | bPoint);
                final byte c2 = (byte) (aPoint & bPoint);
+               
                if ((c1 & 0x01) == 0) {
                   xsv_ext0 = xsb;
                   xsv_ext1 = xsb - 1;
@@ -1820,8 +1826,8 @@ public class SimplexNoise {
                      - SimplexNoise.SQUISH_CONST_4;
             }
 
-            // One contribution is a permutation of (0,0,0,2) based on
-            // the smaller-sided point
+            /* One contribution is a permutation of (0,0,0,2) based on
+            the smaller-sided point */
             xsv_ext2 = xsb;
             ysv_ext2 = ysb;
             zsv_ext2 = zsb;

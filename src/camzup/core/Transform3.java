@@ -101,8 +101,10 @@ public class Transform3 extends Transform {
     */
    public static Transform3 identity ( final Transform3 target ) {
 
-      return target.set(0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-            1.0f);
+      return target.set(
+            0.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f, 0.0f,
+            1.0f, 1.0f, 1.0f);
    }
 
    /**
@@ -376,16 +378,18 @@ public class Transform3 extends Transform {
     * @param zScale
     *           the scale z
     */
-   public Transform3 ( final float xLoc, final float yLoc, final float zLoc,
-
-         final float real, final float xImag, final float yImag,
-         final float zImag,
-
+   public Transform3 ( 
+         final float xLoc, final float yLoc, final float zLoc,
+         final float real,
+         final float xImag, final float yImag, final float zImag,
          final float xScale, final float yScale, final float zScale ) {
 
       super();
-      this.set(xLoc, yLoc, zLoc, real, xImag, yImag, zImag, xScale, yScale,
-            zScale);
+      this.set(
+            xLoc, yLoc, zLoc,
+            real,
+            xImag, yImag, zImag,
+            xScale, yScale, zScale);
    }
 
    /**
@@ -410,7 +414,9 @@ public class Transform3 extends Transform {
     * @param scale
     *           the scale
     */
-   public Transform3 ( final Vec3 location, final Quaternion rotation,
+   public Transform3 ( 
+         final Vec3 location, 
+         final Quaternion rotation,
          final Vec3 scale ) {
 
       super();
@@ -706,7 +712,9 @@ public class Transform3 extends Transform {
     * @see Vec3.AbstrEasing#apply(Vec3, Vec3, Float, Vec3)
     */
    @Chainable
-   public Transform3 moveTo ( final Vec3 locNew, final float step,
+   public Transform3 moveTo ( 
+         final Vec3 locNew, 
+         final float step,
          final Vec3.AbstrEasing easingFunc ) {
 
       this.locPrev.set(this.location);
@@ -1057,11 +1065,10 @@ public class Transform3 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform3 set ( final float xLoc, final float yLoc, final float zLoc,
-
-         final float real, final float xImag, final float yImag,
-         final float zImag,
-
+   public Transform3 set ( 
+         final float xLoc, final float yLoc, final float zLoc,
+         final float real,
+         final float xImag, final float yImag, final float zImag,
          final float xScale, final float yScale, final float zScale ) {
 
       this.moveTo(xLoc, yLoc, zLoc);

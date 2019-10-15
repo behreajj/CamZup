@@ -10,6 +10,17 @@ public class Ray2 extends Ray {
     */
    private static final long serialVersionUID = -2117690919294339509L;
 
+   /**
+    * Finds the point at a given time on a ray.
+    * 
+    * @param ray
+    *           the ray
+    * @param time
+    *           the time step
+    * @param target
+    *           the output vector
+    * @return the point
+    */
    public static Vec2 eval (
          final Ray2 ray,
          final float time,

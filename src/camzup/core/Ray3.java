@@ -10,6 +10,17 @@ public class Ray3 extends Ray {
     */
    private static final long serialVersionUID = -8386381837024621749L;
 
+   /**
+    * Finds the point at a given time on a ray.
+    * 
+    * @param ray
+    *           the ray
+    * @param time
+    *           the time step
+    * @param target
+    *           the output vector
+    * @return the point
+    */
    public static Vec3 eval (
          final Ray3 ray,
          final float time,
@@ -47,6 +58,9 @@ public class Ray3 extends Ray {
     */
    public final Vec3 origin = new Vec3();
 
+   /**
+    * The default constructor.
+    */
    public Ray3 () {
 
       super();

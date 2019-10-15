@@ -191,10 +191,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          Vec2.sub(a, this.locus, this.aDiff);
          Vec2.sub(b, this.locus, this.bDiff);
 
-         // return Float.compare(
-         // Vec2.magSq(this.aDiff),
-         // Vec2.magSq(this.bDiff));
-
          final float aDist = Vec2.magSq(aDiff);
          final float bDist = Vec2.magSq(bDiff);
 
@@ -262,20 +258,18 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          /**
           * TODO: Is there a more efficient way than atan2? See
           * https://gamedev.stackexchange.com/questions/13229/
-          * sorting-array-of-points-in-clockwise-order
+          * sorting-array-of-points-in-clockwise-order , such as
+          * using the sign of the cross product a.x * b.y - a.y * bx
+          * ?
           */
 
          Vec2.sub(a, this.locus, this.aDiff);
          Vec2.sub(b, this.locus, this.bDiff);
 
-         // TODO: Are these comparisons inefficient because they
-         // autobox
-         // float primitives into Float objects?
-         return Float.compare(
-               Vec2.headingSigned(this.aDiff),
-               Vec2.headingSigned(this.bDiff));
+         final float aHead = Vec2.headingSigned(this.aDiff);
+         final float bHead = Vec2.headingSigned(this.bDiff);
 
-         // return Utils.sign(aDiff.x * bDiff.y - aDiff.y * bDiff.x);
+         return aHead > bHead ? 1 : aHead < bHead ? -1 : 0;
       }
    }
 
@@ -746,8 +740,15 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       tcb *= step;
 
       return target.set(
-            ap0.x * ucb + cp0.x * usq3t + cp1.x * tsq3u + ap1.x * tcb,
-            ap0.y * ucb + cp0.y * usq3t + cp1.y * tsq3u + ap1.y * tcb);
+            ap0.x * ucb +
+                  cp0.x * usq3t +
+                  cp1.x * tsq3u +
+                  ap1.x * tcb,
+
+            ap0.y * ucb +
+                  cp0.y * usq3t +
+                  cp1.y * tsq3u +
+                  ap1.y * tcb);
    }
 
    /**
@@ -796,10 +797,13 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final float ut6 = u * (t3 + t3);
 
       return target.set(
-            (cp0.x - ap0.x) * usq3 + (cp1.x - cp0.x) * ut6
-                  + (ap1.x - cp1.x) * tsq3,
-            (cp0.y - ap0.y) * usq3 + (cp1.y - cp0.y) * ut6
-                  + (ap1.y - cp1.y) * tsq3);
+            (cp0.x - ap0.x) * usq3 +
+                  (cp1.x - cp0.x) * ut6 +
+                  (ap1.x - cp1.x) * tsq3,
+
+            (cp0.y - ap0.y) * usq3 +
+                  (cp1.y - cp0.y) * ut6 +
+                  (ap1.y - cp1.y) * tsq3);
    }
 
    /**
@@ -837,9 +841,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       }
 
       final float mInv = 1.0f / (float) Math.sqrt(mSq);
-      target.set(target.x * mInv, target.y * mInv);
-
-      return target;
+      return target.set(
+            target.x * mInv,
+            target.y * mInv);
    }
 
    /**
@@ -861,8 +865,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Clamps a vector to a range within the lower- and
-    * upper-bound.
+    * Clamps a vector to a range within the lower and upper
+    * bound.
     *
     * @param v
     *           the input vector
@@ -1029,7 +1033,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    /**
     * Finds the Euclidean distance squared between two vectors.
     * Equivalent to subtracting one vector from the other, then
-    * finding the dot product of the difference.
+    * finding the dot product of the difference with itself.
     *
     * @param a
     *           left operand
@@ -1391,13 +1395,13 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * Tests to see if all the vector's components are zero.
     * Useful when safeguarding against invalid directions.
     *
-    * @param a
+    * @param v
     *           the input vector
     * @return the evaluation
     */
-   public static boolean isZero ( final Vec2 a ) {
+   public static boolean isZero ( final Vec2 v ) {
 
-      return a.x == 0.0f && a.y == 0.0f;
+      return v.x == 0.0f && v.y == 0.0f;
    }
 
    /**
@@ -1801,7 +1805,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    /**
     * Divides a vector by its magnitude, such that the new
     * magnitude is 1.0. <em>\u00e2</em> = <em>a</em> /
-    * |<em>a</em>|. The result is a unit vector, as it lies on
+    * |<em>a</em>| . The result is a unit vector, as it lies on
     * the circumference of a unit circle.
     *
     * @param a
@@ -2067,7 +2071,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final float upperBound,
          final Vec2 target ) {
 
-      return target.set(rng.uniform(lowerBound, upperBound),
+      return target.set(
+            rng.uniform(lowerBound, upperBound),
             rng.uniform(lowerBound, upperBound));
    }
 
@@ -2119,13 +2124,13 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final float x = rng.uniform(-1.0f, 1.0f);
       final float y = rng.uniform(-1.0f, 1.0f);
 
-      final float mag = x * x + y * y;
-      if (mag == 0.0f) {
+      final float mSq = x * x + y * y;
+      if (mSq == 0.0f) {
          return target.reset();
       }
 
       final float rho = rng.uniform(rhoMin, rhoMax);
-      final float rhoNorm = (float) (rho / Math.sqrt(mag));
+      final float rhoNorm = (float) (rho / Math.sqrt(mSq));
 
       return target.set(
             x * rhoNorm,
@@ -2222,8 +2227,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Subtracts the projection of vector a onto vector b from a
-    * . Implicitly creates a new vector.
+    * Subtracts from vector a the projection of a onto vector
+    * b.
     *
     * @param a
     *           left operand
@@ -2252,8 +2257,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Subtracts the projection of vector a onto vector b from a
-    * .
+    * Subtracts from vector a the projection of a onto vector
+    * b.
     *
     * @param a
     *           left operand
@@ -2278,9 +2283,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
    /**
     * Normalizes a vector, then multiplies it by a scalar, in
-    * effect setting its magnitude to that scalar. If the
-    * scalar is zero, the output vector is reset. Implicitly
-    * creates a new vector.
+    * effect setting its magnitude to that scalar.
     *
     * @param v
     *           the vector
@@ -2315,8 +2318,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
    /**
     * Normalizes a vector, then multiplies it by a scalar, in
-    * effect setting its magnitude to that scalar. If the
-    * scalar is zero, the output vector is reset.
+    * effect setting its magnitude to that scalar.
     *
     * @param v
     *           the vector
@@ -2588,7 +2590,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Returns a vector with all components set to 0.0 .
+    * Returns a vector with all components set to zero.
     *
     * @param target
     *           the output vector
@@ -2914,18 +2916,25 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
       // return String.format("%.6f %.6f", this.x, this.y);
 
-      final float xr = (float) (Math.round(this.x * 1000000) * 0.000001d);
-      final float yr = (float) (Math.round(this.y * 1000000) * 0.000001d);
-      return new StringBuilder()
-            .append(xr)
-            .append(" ")
-            .append(yr)
+      // final float xr = (float) (Math.round(this.x * 1000000) *
+      // 0.000001d);
+      // final float yr = (float) (Math.round(this.y * 1000000) *
+      // 0.000001d);
+      // return new StringBuilder()
+      // .append(xr)
+      // .append(" ")
+      // .append(yr)
+      // .toString();
+
+      return new StringBuilder(16)
+            .append(Utils.toFixed(this.x, 6))
+            .append(' ')
+            .append(Utils.toFixed(this.y, 6))
             .toString();
    }
 
    /**
-    * Returns a string representation of this vector according
-    * to the string format.
+    * Returns a string representation of this vector.
     *
     * @return the string
     */
@@ -2959,12 +2968,20 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
       // return String.format("%.4f,%.4f", this.x, this.y);
 
-      final float xr = (float) (Math.round(this.x * 10000) * 0.0001d);
-      final float yr = (float) (Math.round(this.y * 10000) * 0.0001d);
-      return new StringBuilder()
-            .append(xr)
-            .append(" ")
-            .append(yr)
+      // final float xr = (float) (Math.round(this.x * 10000) *
+      // 0.0001d);
+      // final float yr = (float) (Math.round(this.y * 10000) *
+      // 0.0001d);
+      // return new StringBuilder()
+      // .append(xr)
+      // .append(" ")
+      // .append(yr)
+      // .toString();
+
+      return new StringBuilder(16)
+            .append(Utils.toFixed(this.x, 4))
+            .append(' ')
+            .append(Utils.toFixed(this.y, 4))
             .toString();
    }
 

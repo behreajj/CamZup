@@ -756,9 +756,20 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       tcb *= step;
 
       return target.set(
-            ap0.x * ucb + cp0.x * usq3t + cp1.x * tsq3u + ap1.x * tcb,
-            ap0.y * ucb + cp0.y * usq3t + cp1.y * tsq3u + ap1.y * tcb,
-            ap0.z * ucb + cp0.z * usq3t + cp1.z * tsq3u + ap1.z * tcb);
+            ap0.x * ucb +
+                  cp0.x * usq3t +
+                  cp1.x * tsq3u +
+                  ap1.x * tcb,
+
+            ap0.y * ucb +
+                  cp0.y * usq3t +
+                  cp1.y * tsq3u +
+                  ap1.y * tcb,
+
+            ap0.z * ucb +
+                  cp0.z * usq3t +
+                  cp1.z * tsq3u +
+                  ap1.z * tcb);
    }
 
    /**
@@ -807,12 +818,17 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float ut6 = u * (t3 + t3);
 
       return target.set(
-            (cp0.x - ap0.x) * usq3 + (cp1.x - cp0.x) * ut6
-                  + (ap1.x - cp1.x) * tsq3,
-            (cp0.y - ap0.y) * usq3 + (cp1.y - cp0.y) * ut6
-                  + (ap1.y - cp1.y) * tsq3,
-            (cp0.z - ap0.z) * usq3 + (cp1.z - cp0.z) * ut6
-                  + (ap1.z - cp1.z) * tsq3);
+            (cp0.x - ap0.x) * usq3 +
+                  (cp1.x - cp0.x) * ut6 +
+                  (ap1.x - cp1.x) * tsq3,
+
+            (cp0.y - ap0.y) * usq3 +
+                  (cp1.y - cp0.y) * ut6 +
+                  (ap1.y - cp1.y) * tsq3,
+
+            (cp0.z - ap0.z) * usq3 +
+                  (cp1.z - cp0.z) * ut6 +
+                  (ap1.z - cp1.z) * tsq3);
    }
 
    /**
@@ -850,12 +866,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       }
 
       final float mInv = 1.0f / (float) Math.sqrt(mSq);
-      target.set(
+      return target.set(
             target.x * mInv,
             target.y * mInv,
             target.z * mInv);
-
-      return target;
    }
 
    /**
@@ -1180,7 +1194,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    /**
     * Finds the Euclidean distance squared between two vectors.
     * Equivalent to subtracting one vector from the other, then
-    * finding the dot product of the difference.
+    * finding the dot product of the difference with itself.
     *
     * @param a
     *           left operand
@@ -2158,6 +2172,75 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
+    * Raises a scalar to a vector.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output vector
+    * @return the result
+    * @see Math#pow(double, double)
+    */
+   public static Vec3 pow (
+         final float a,
+         final Vec3 b,
+         final Vec3 target ) {
+
+      return target.set(
+            (float) Math.pow(a, b.x),
+            (float) Math.pow(a, b.y),
+            (float) Math.pow(a, b.z));
+   }
+
+   /**
+    * Raises a vector to the power of a scalar.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output vector
+    * @return the result
+    * @see Math#pow(double, double)
+    */
+   public static Vec3 pow (
+         final Vec3 a,
+         final float b,
+         final Vec3 target ) {
+
+      return target.set(
+            (float) Math.pow(a.x, b),
+            (float) Math.pow(a.y, b),
+            (float) Math.pow(a.z, b));
+   }
+
+   /**
+    * Raises a vector to the power of another vector.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output vector
+    * @return the result
+    * @see Math#pow(double, double)
+    */
+   public static Vec3 pow (
+         final Vec3 a,
+         final Vec3 b,
+         final Vec3 target ) {
+
+      return target.set(
+            (float) Math.pow(a.x, b.x),
+            (float) Math.pow(a.y, b.y),
+            (float) Math.pow(a.z, b.z));
+   }
+
+   /**
     * Projects one vector onto another. Defined as<br>
     * <br>
     * proj ( <em>a</em>, <em>b</em> ) := <em>b</em> (
@@ -2400,8 +2483,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Subtracts the projection of vector a onto vector b from a
-    * . Implicitly creates a new vector.
+    * Subtracts from vector a the projection of a onto vector
+    * b.
     *
     * @param a
     *           left operand
@@ -2433,8 +2516,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Subtracts the projection of vector a onto vector b from a
-    * .
+    * Subtracts from vector a the projection of a onto vector
+    * b.
     *
     * @param a
     *           left operand
@@ -2461,9 +2544,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
    /**
     * Normalizes a vector, then multiplies it by a scalar, in
-    * effect setting its magnitude to that scalar. If the
-    * scalar is zero, the output vector is reset. Implicitly
-    * creates a new vector.
+    * effect setting its magnitude to that scalar.
     *
     * @param v
     *           the vector
@@ -2500,8 +2581,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
    /**
     * Normalizes a vector, then multiplies it by a scalar, in
-    * effect setting its magnitude to that scalar. If the
-    * scalar is zero, the output vector is reset.
+    * effect setting its magnitude to that scalar.
     *
     * @param v
     *           the vector
@@ -2852,7 +2932,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Returns a vector with all components set to 0.0 .
+    * Returns a vector with all components set to zero.
     *
     * @param target
     *           the output vector
@@ -3222,21 +3302,31 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       // return String.format("%.6f %.6f %.6f", this.x, this.y,
       // this.z);
 
-      final float xr = (float) (Math.round(this.x * 1000000) * 0.000001d);
-      final float yr = (float) (Math.round(this.y * 1000000) * 0.000001d);
-      final float zr = (float) (Math.round(this.z * 1000000) * 0.000001d);
-      return new StringBuilder()
-            .append(xr)
-            .append(" ")
-            .append(yr)
-            .append(" ")
-            .append(zr)
+      // final float xr = (float) (Math.round(this.x * 1000000) *
+      // 0.000001d);
+      // final float yr = (float) (Math.round(this.y * 1000000) *
+      // 0.000001d);
+      // final float zr = (float) (Math.round(this.z * 1000000) *
+      // 0.000001d);
+      // return new StringBuilder()
+      // .append(xr)
+      // .append(" ")
+      // .append(yr)
+      // .append(" ")
+      // .append(zr)
+      // .toString();
+
+      return new StringBuilder(32)
+            .append(Utils.toFixed(this.x, 6))
+            .append(' ')
+            .append(Utils.toFixed(this.y, 6))
+            .append(' ')
+            .append(Utils.toFixed(this.z, 6))
             .toString();
    }
 
    /**
-    * Returns a string representation of this vector according
-    * to the string format.
+    * Returns a string representation of this vector.
     *
     * @return the string
     */
