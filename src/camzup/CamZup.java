@@ -3,11 +3,9 @@ package camzup;
 import java.text.DecimalFormat;
 
 import camzup.core.Mesh3;
-import camzup.core.Random;
-import camzup.core.Utils;
+import camzup.core.Simplex;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
-import camzup.core.SimplexNoise;
 import processing.core.PApplet;
 
 public class CamZup {

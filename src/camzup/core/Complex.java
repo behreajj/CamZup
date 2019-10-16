@@ -8,16 +8,43 @@ import java.util.Iterator;
  */
 public class Complex extends Imaginary implements Comparable < Complex > {
 
+   /**
+    * An abstract class that may serve as an umbrella for any
+    * custom comparators of complex numbers.
+    */
    public static abstract class AbstrComparator
          implements Comparator < Complex > {
 
+      /**
+       * The default constructor.
+       */
       public AbstrComparator () {
 
       }
 
+      /**
+       * The compare function which must be implemented by sub-
+       * (child) classes of this class. Negative one should be
+       * returned when the left comparisand, a, is less than the
+       * right comparisand, b, by a measure. One should be
+       * returned when it is greater. Zero should be returned as a
+       * last resort, when a and b are equal or uncomparable.
+       *
+       * @param a
+       *           the left comparisand
+       * @param b
+       *           the right comparisand
+       * @return the comparison
+       *
+       */
       @Override
       public abstract int compare ( final Complex a, final Complex b );
 
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
       @Override
       public String toString () {
 
@@ -25,29 +52,61 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       }
    }
 
+   /**
+    * An iterator, which allows a complex number's components
+    * to be accessed in an enhanced for loop.
+    */
    public final class CIterator implements Iterator < Float > {
 
+      /**
+       * The current index.
+       */
       private int index = 0;
 
+      /**
+       * The complex number being iterated over.
+       */
       private final Complex z;
 
+      /**
+       * The default constructor.
+       * 
+       * @param z
+       *           the complex number to iterator
+       */
       public CIterator ( final Complex z ) {
 
          this.z = z;
       }
 
+      /**
+       * Tests to see if the iterator has another value.
+       *
+       * @return the evaluation
+       */
       @Override
       public boolean hasNext () {
 
          return this.index < this.z.size();
       }
 
+      /**
+       * Gets the next value in the iterator
+       * 
+       * @return the value
+       * @see Complex#get(int)
+       */
       @Override
       public Float next () {
 
          return this.z.get(this.index++);
       }
 
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
       @Override
       public String toString () {
 
@@ -55,13 +114,30 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       }
    }
 
+   /**
+    * Compares two complex numbers by their imaginary and real
+    * components.
+    */
    public static class ComparatorRealImag extends AbstrComparator {
 
+      /**
+       * The default constructor.
+       */
       public ComparatorRealImag () {
 
          super();
       }
 
+      /**
+       * Compares two complex numbers by imaginary, then by real
+       * components.
+       * 
+       * @param a
+       *           the left comparisand
+       * @param b
+       *           the right comparisand
+       * @return the evaluation
+       */
       @Override
       public int compare ( final Complex a, final Complex b ) {
 
@@ -125,7 +201,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex target ) {
 
       return target.set(
-            a.real + b.real, 
+            a.real + b.real,
             a.imag + b.imag);
    }
 
@@ -171,8 +247,10 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     * Evaluates whether or not two complex numbers approximate
     * each other.
     * 
-    * @param a the left comparisand
-    * @param b the right comparisand
+    * @param a
+    *           the left comparisand
+    * @param b
+    *           the right comparisand
     * @return the evaluation
     * @see Utils#approxFast(float, float)
     */
@@ -188,9 +266,12 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     * Evaluates whether or not two complex numbers approximate
     * each other according to a tolerance.
     * 
-    * @param a the left comparisand
-    * @param b the right comparisand
-    * @param tolerance the tolerance
+    * @param a
+    *           the left comparisand
+    * @param b
+    *           the right comparisand
+    * @param tolerance
+    *           the tolerance
     * @return the evaluation
     * @see Utils#approxFast(float, float, float)
     */
@@ -407,7 +488,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       }
       final float invAbsSq = 1.0f / absSq;
       return target.set(
-            z.real * invAbsSq, 
+            z.real * invAbsSq,
             -z.imag * invAbsSq);
    }
 
@@ -437,7 +518,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       Complex.conj(z, conj);
       final float invAbsSq = 1.0f / absSq;
       return target.set(
-            conj.real * invAbsSq, 
+            conj.real * invAbsSq,
             conj.imag * invAbsSq);
    }
 

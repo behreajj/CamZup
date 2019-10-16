@@ -1931,6 +1931,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Vec3 up ) {
 
       // TODO: Needs testing.
+      // Does this deliver the same results as
+      // getUp, getRight, getForward? Is it
+      // necessary to have this function in addition?
 
       final float w = quat.real;
       final Vec3 i = quat.imag;

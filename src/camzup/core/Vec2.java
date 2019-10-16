@@ -409,7 +409,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       private final Vec2 vec;
 
       /**
-       * The default constructor.w
+       * The default constructor.
        *
        * @param vec
        *           the vector to iterate
@@ -433,8 +433,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       /**
        * Gets the next value in the iterator.
        *
-       * @see Vec2#get(int)
        * @return the value
+       * @see Vec2#get(int)
        */
       @Override
       public Float next () {
