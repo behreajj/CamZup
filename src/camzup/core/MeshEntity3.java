@@ -48,7 +48,7 @@ public class MeshEntity3 extends Entity {
          Mesh3 mesh,
          final MeshEntity3 meshEntity ) {
 
-      /**
+      /*
        * If a missing flag has been thrown, make sure that there
        * is at least one datum in each list.
        */
@@ -146,7 +146,7 @@ public class MeshEntity3 extends Entity {
                   missingCoords = false;
                }
 
-               /**
+               /*
                 * Name the current mesh under consideration, increase the
                 * mesh count.
                 */
@@ -294,12 +294,12 @@ public class MeshEntity3 extends Entity {
    /**
     * The list of materials held by the entity.
     */
-   public final List < MaterialSolid > materials = new LinkedList <>();
+   public final LinkedList < MaterialSolid > materials = new LinkedList <>();
 
    /**
     * The list of meshes held by the entity.
     */
-   public final List < Mesh3 > meshes = new LinkedList <>();
+   public final LinkedList < Mesh3 > meshes = new LinkedList <>();
 
    /**
     * The entity's transform.

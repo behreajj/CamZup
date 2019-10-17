@@ -187,11 +187,14 @@ public class Transform2 extends Transform {
 
       Vec2.rotateZ(source, t.rotation, target);
 
-      final Vec2 scale = t.scale;
-      target.set(target.x * scale.x, target.y * scale.y);
+      // final Vec2 scale = t.scale;
+      // target.set(target.x * scale.x, target.y * scale.y);
 
-      final Vec2 loc = t.location;
-      target.set(target.x + loc.x, target.y + loc.y);
+      // final Vec2 loc = t.location;
+      // target.set(target.x + loc.x, target.y + loc.y);
+
+      Vec2.mult(target, t.scale, target);
+      Vec2.add(target, t.location, target);
 
       return target;
    }
@@ -215,8 +218,10 @@ public class Transform2 extends Transform {
 
       Vec2.rotateZ(source, t.rotation, target);
 
-      final Vec2 scale = t.scale;
-      target.set(target.x * scale.x, target.y * scale.y);
+      // final Vec2 scale = t.scale;
+      // target.set(target.x * scale.x, target.y * scale.y);
+
+      Vec2.mult(target, t.scale, target);
 
       return target;
    }
@@ -406,6 +411,52 @@ public class Transform2 extends Transform {
    }
 
    /**
+    * Tests the equivalence between this and another transform.
+    *
+    * @param t
+    *           the transform
+    * @return the evaluation
+    */
+   protected boolean equals ( final Transform2 t ) {
+
+      if (this.scale == null) {
+         if (t.scale != null) {
+            return false;
+         }
+      } else if (!this.scale.equals(t.scale)) {
+         return false;
+      }
+      if (this.location == null) {
+         if (t.location != null) {
+            return false;
+         }
+      } else if (!this.location.equals(t.location)) {
+         return false;
+      }
+      if (Float.floatToIntBits(this.rotation) != Float
+            .floatToIntBits(t.rotation)) {
+         return false;
+      }
+      return true;
+   }
+
+   /**
+    * Updates the local axes of the transform based on its
+    * rotation.
+    *
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    */
+   @Override
+   protected void updateAxes () {
+
+      this.cosa = (float) Math.cos(this.rotation);
+      this.sina = (float) Math.sin(this.rotation);
+      this.right.set(this.cosa, this.sina);
+      this.forward.set(-this.sina, this.cosa);
+   }
+
+   /**
     * Creates a new transform with the components of this
     * transform.
     *
@@ -519,6 +570,32 @@ public class Transform2 extends Transform {
       return target.set(this.scale);
    }
 
+   // public Transform2 lookAt ( final Vec2 dest, final Vec2
+   // dir ) {
+   //
+   // Vec2.lookAt(this.location, dest,
+   // this.right, this.forward, dir);
+   // this.rotPrev = this.rotation;
+   // this.rotation = Vec2.headingSigned(this.right);
+   // return this;
+   // }
+   //
+   // public Transform2 lookForward ( final Vec2 dir ) {
+   //
+   // Vec2.lookForward(dir, this.right, this.forward);
+   // this.rotPrev = this.rotation;
+   // this.rotation = Vec2.headingSigned(this.right);
+   // return this;
+   // }
+   //
+   // public Transform2 lookRight ( final Vec2 dir ) {
+   //
+   // Vec2.lookRight(dir, this.right, this.forward);
+   // this.rotPrev = this.rotation;
+   // this.rotation = Vec2.headingSigned(this.right);
+   // return this;
+   // }
+
    /**
     * Gets the transform's previous scale.
     *
@@ -551,32 +628,6 @@ public class Transform2 extends Transform {
       result = prime * result + Float.floatToIntBits(this.rotation);
       return result;
    }
-
-   // public Transform2 lookAt ( final Vec2 dest, final Vec2
-   // dir ) {
-   //
-   // Vec2.lookAt(this.location, dest,
-   // this.right, this.forward, dir);
-   // this.rotPrev = this.rotation;
-   // this.rotation = Vec2.headingSigned(this.right);
-   // return this;
-   // }
-   //
-   // public Transform2 lookForward ( final Vec2 dir ) {
-   //
-   // Vec2.lookForward(dir, this.right, this.forward);
-   // this.rotPrev = this.rotation;
-   // this.rotation = Vec2.headingSigned(this.right);
-   // return this;
-   // }
-   //
-   // public Transform2 lookRight ( final Vec2 dir ) {
-   //
-   // Vec2.lookRight(dir, this.right, this.forward);
-   // this.rotPrev = this.rotation;
-   // this.rotation = Vec2.headingSigned(this.right);
-   // return this;
-   // }
 
    /**
     * Moves the transform by a direction to a new location.
@@ -963,11 +1014,11 @@ public class Transform2 extends Transform {
 
       return new StringBuilder()
             .append("{ location: ")
-            .append(location.toString())
+            .append(this.location.toString())
             .append(", \nrotation: ")
-            .append(Utils.toFixed(IUtils.RAD_TO_DEG * rotation, 1))
+            .append(Utils.toFixed(IUtils.RAD_TO_DEG * this.rotation, 1))
             .append(", \nscale: ")
-            .append(scale.toString())
+            .append(this.scale.toString())
             .append(" }").toString();
    }
 
@@ -998,62 +1049,16 @@ public class Transform2 extends Transform {
 
       return new StringBuilder()
             .append("transform=\"translate(")
-            .append(Utils.toFixed(location.x, 1))
+            .append(Utils.toFixed(this.location.x, 1))
             .append(", ")
-            .append(Utils.toFixed(location.y, 1))
+            .append(Utils.toFixed(this.location.y, 1))
             .append(") rotate(")
-            .append(Utils.toFixed(rotation * IUtils.RAD_TO_DEG, 0))
+            .append(Utils.toFixed(this.rotation * IUtils.RAD_TO_DEG, 0))
             .append(") scale(")
-            .append(Utils.toFixed(scale.x, 1))
+            .append(Utils.toFixed(this.scale.x, 1))
             .append(", ")
-            .append(Utils.toFixed(scale.y, 1))
+            .append(Utils.toFixed(this.scale.y, 1))
             .append(")\"")
             .toString();
-   }
-
-   /**
-    * Tests the equivalence between this and another transform.
-    *
-    * @param t
-    *           the transform
-    * @return the evaluation
-    */
-   protected boolean equals ( final Transform2 t ) {
-
-      if (this.scale == null) {
-         if (t.scale != null) {
-            return false;
-         }
-      } else if (!this.scale.equals(t.scale)) {
-         return false;
-      }
-      if (this.location == null) {
-         if (t.location != null) {
-            return false;
-         }
-      } else if (!this.location.equals(t.location)) {
-         return false;
-      }
-      if (Float.floatToIntBits(this.rotation) != Float
-            .floatToIntBits(t.rotation)) {
-         return false;
-      }
-      return true;
-   }
-
-   /**
-    * Updates the local axes of the transform based on its
-    * rotation.
-    *
-    * @see Math#cos(double)
-    * @see Math#sin(double)
-    */
-   @Override
-   protected void updateAxes () {
-
-      this.cosa = (float) Math.cos(this.rotation);
-      this.sina = (float) Math.sin(this.rotation);
-      this.right.set(this.cosa, this.sina);
-      this.forward.set(-this.sina, this.cosa);
    }
 }

@@ -154,14 +154,14 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
-    * The default Vec4 comparator, ComparatorWZYX .
-    */
-   public static Comparator < Vec4 > COMPARATOR = new ComparatorWZYX();
-
-   /**
     * The unique identification for serialized classes.
     */
    private static final long serialVersionUID = -7601802836396728054L;
+
+   /**
+    * The default Vec4 comparator, ComparatorWZYX .
+    */
+   public static Comparator < Vec4 > COMPARATOR = new ComparatorWZYX();
 
    /**
     * Finds the absolute value of each vector component.
@@ -861,6 +861,36 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
             a.w * b.w);
    }
 
+   /**
+    * Negates the input vector.
+    *
+    * @param v
+    *           the input vector
+    * @param target
+    *           the output vector
+    * @return the negation
+    */
+   public static Vec4 negate (
+         final Vec4 v,
+         final Vec4 target ) {
+
+      return target.set(-v.x, -v.y, -v.z, -v.w);
+   }
+
+   /**
+    * Divides a vector by its magnitude, such that the new
+    * magnitude is 1.0. <em>\u00e2</em> = <em>a</em> /
+    * |<em>a</em>|. The result is a unit vector, as it lies on
+    * the unit hypersphere.
+    *
+    * @param a
+    *           the input vector
+    * @param target
+    *           the output vector
+    * @return the unit vector
+    * @see Vec4#div(Vec4, float, Vec4)
+    * @see Vec4#mag(Vec4)
+    */
    public static Vec4 normalize (
          final Vec4 a,
          final Vec4 target ) {
@@ -886,22 +916,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
             a.y * mInv,
             a.z * mInv,
             a.w * mInv);
-   }
-
-   /**
-    * Negates the input vector.
-    *
-    * @param v
-    *           the input vector
-    * @param target
-    *           the output vector
-    * @return the negation
-    */
-   public static Vec4 negate (
-         final Vec4 v,
-         final Vec4 target ) {
-
-      return target.set(-v.x, -v.y, -v.z, -v.w);
    }
 
    /**
@@ -1176,6 +1190,35 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
 
       super(4);
       this.set(source);
+   }
+
+   /**
+    * Tests equivalence between this and another vector.
+    *
+    * @param v
+    *           the vector
+    * @return the evaluation
+    * @see Float#floatToIntBits(float)
+    */
+   protected boolean equals ( final Vec4 v ) {
+
+      if (Float.floatToIntBits(this.w) != Float.floatToIntBits(v.w)) {
+         return false;
+      }
+
+      if (Float.floatToIntBits(this.z) != Float.floatToIntBits(v.z)) {
+         return false;
+      }
+
+      if (Float.floatToIntBits(this.y) != Float.floatToIntBits(v.y)) {
+         return false;
+      }
+
+      if (Float.floatToIntBits(this.x) != Float.floatToIntBits(v.x)) {
+         return false;
+      }
+
+      return true;
    }
 
    /**
@@ -1487,34 +1530,5 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
             .append(Utils.toFixed(this.w, places))
             .append(" }")
             .toString();
-   }
-
-   /**
-    * Tests equivalence between this and another vector.
-    *
-    * @param v
-    *           the vector
-    * @return the evaluation
-    * @see Float#floatToIntBits(float)
-    */
-   protected boolean equals ( final Vec4 v ) {
-
-      if (Float.floatToIntBits(this.w) != Float.floatToIntBits(v.w)) {
-         return false;
-      }
-
-      if (Float.floatToIntBits(this.z) != Float.floatToIntBits(v.z)) {
-         return false;
-      }
-
-      if (Float.floatToIntBits(this.y) != Float.floatToIntBits(v.y)) {
-         return false;
-      }
-
-      if (Float.floatToIntBits(this.x) != Float.floatToIntBits(v.x)) {
-         return false;
-      }
-
-      return true;
    }
 }

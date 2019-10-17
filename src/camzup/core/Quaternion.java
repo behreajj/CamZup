@@ -93,8 +93,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * @return the eased quaternion
        */
       @Override
-      public Quaternion apply ( final Quaternion origin, final Quaternion dest,
-            final Float step, final Quaternion target ) {
+      public Quaternion apply (
+            final Quaternion origin,
+            final Quaternion dest,
+            final Float step,
+            final Quaternion target ) {
 
          if (step <= 0.0f) {
             return Quaternion.normalize(origin, target);
@@ -286,7 +289,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final double cy = u * a.y + v * b.y;
          final double cz = u * a.z + v * b.z;
 
-         /**
+         /*
           * Normalize.
           */
          final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
@@ -406,7 +409,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             final float step,
             final Quaternion target ) {
 
-         /**
+         /*
           * Decompose origin vector.
           */
          final Vec3 ai = origin.imag;
@@ -415,7 +418,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final float ay = ai.y;
          final float az = ai.z;
 
-         /**
+         /*
           * Decompose destination vector.
           */
          final Vec3 bi = dest.imag;
@@ -424,14 +427,19 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          float by = bi.y;
          float bz = bi.z;
 
-         /**
+         /*
           * Prevent passage of invalid value to acos, i.e. out of the
           * bounds [-1, 1] and mitigate against quaternions that are
           * not unit size by clamping the dot product.
           */
-         float dotp = Utils.clamp01(aw * bw + ax * bx + ay * by + az * bz);
+         float dotp = Utils.clamp(
+               aw * bw +
+                     ax * bx +
+                     ay * by +
+                     az * bz,
+               -1.0f, 1.0f);
 
-         /**
+         /*
           * Flip values if the orientation is negative.
           */
          if (dotp < 0.0f) {
@@ -442,7 +450,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             dotp = -dotp;
          }
 
-         /**
+         /*
           * Java Math functions will promote values into doubles, so
           * for precision, they'll be used until function close.
           */
@@ -468,7 +476,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             v = step;
          }
 
-         /**
+         /*
           * Unclamped linear interpolation.
           */
          final double cw = u * aw + v * bw;
@@ -476,7 +484,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final double cy = u * ay + v * by;
          final double cz = u * az + v * bz;
 
-         /**
+         /*
           * Normalize.
           */
          final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
@@ -987,9 +995,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       float z = (float) (Math.sqrt(
             Utils.max(0.0f, 1.0f - rx - uy + fz)) * 0.5d);
 
-      x *= Utils.sign(up.z - forward.y);
-      y *= Utils.sign(forward.x - right.z);
-      z *= Utils.sign(right.y - up.x);
+      x = Math.copySign(x, up.z - forward.y);
+      y = Math.copySign(x, forward.x - right.z);
+      z = Math.copySign(x, right.y - up.x);
+
+      // x *= Utils.sign(up.z - forward.y);
+      // y *= Utils.sign(forward.x - right.z);
+      // z *= Utils.sign(right.y - up.x);
 
       return target.set(w, x, y, z);
    }
@@ -1059,7 +1071,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final float dot1 = Vec3.dot(origin, dest) + 1.0f;
       if (dot1 < Utils.EPSILON) {
 
-         /**
+         /*
           * Instead of crossing the vectors, which would result in
           * (0.0, 0.0, 0.0), try to crossing with orthonormal
           * vectors.
@@ -1074,7 +1086,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          target.real = dot1;
       }
 
-      /**
+      /*
        * Normalize quaternion.
        */
       final float mSq = Quaternion.magSq(target);
@@ -1082,7 +1094,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          return target.reset();
       }
 
-      /* target's real and imag have already been set. */
+      /* 
+       * target's real and imag have already been set.
+       */
       if (mSq == 1.0f) {
          return target;
       }
@@ -1693,6 +1707,37 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
+    * Rotates a vector around the x axis. Accepts
+    * pre-calculated sine and cosine of half the angle so that
+    * collections of quaternions can be efficiently rotated
+    * without repeatedly calling cos and sin.
+    *
+    * @param quat
+    *           the input quaternion
+    * @param cosah
+    *           cosine of the angle
+    * @param sinah
+    *           sine of the angle
+    * @param target
+    *           the output quaternion
+    * @return the rotated quaternion
+    */
+   public static Quaternion rotateX (
+         final Quaternion quat,
+         final float cosah,
+         final float sinah,
+         final Quaternion target ) {
+
+      final Vec3 i = quat.imag;
+
+      return target.set(
+            cosah * quat.real - sinah * i.x,
+            cosah * i.x + sinah * quat.real,
+            cosah * i.y + sinah * i.z,
+            cosah * i.z - sinah * i.y);
+   }
+
+   /**
     * Rotates a quaternion about the x axis by an angle.
     *
     * Do not use sequences of ortho-normal rotations by Euler
@@ -1718,13 +1763,38 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final float cosa = (float) Math.cos(halfAngle);
       final float sina = (float) Math.sin(halfAngle);
 
+      return Quaternion.rotateX(quat, cosa, sina, target);
+   }
+
+   /**
+    * Rotates a vector around the y axis. Accepts
+    * pre-calculated sine and cosine of half the angle so that
+    * collections of quaternions can be efficiently rotated
+    * without repeatedly calling cos and sin.
+    *
+    * @param quat
+    *           the input quaternion
+    * @param cosah
+    *           cosine of the angle
+    * @param sinah
+    *           sine of the angle
+    * @param target
+    *           the output quaternion
+    * @return the rotated quaternion
+    */
+   public static Quaternion rotateY (
+         final Quaternion quat,
+         final float cosah,
+         final float sinah,
+         final Quaternion target ) {
+
       final Vec3 i = quat.imag;
 
       return target.set(
-            cosa * quat.real - sina * i.x,
-            cosa * i.x + sina * quat.real,
-            cosa * i.y + sina * i.z,
-            cosa * i.z - sina * i.y);
+            cosah * quat.real - sinah * i.y,
+            cosah * i.x - sinah * i.z,
+            cosah * i.y + sinah * quat.real,
+            cosah * i.z + sinah * i.x);
    }
 
    /**
@@ -1753,13 +1823,38 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final float cosa = (float) Math.cos(halfAngle);
       final float sina = (float) Math.sin(halfAngle);
 
+      return Quaternion.rotateY(quat, cosa, sina, target);
+   }
+
+   /**
+    * Rotates a vector around the z axis. Accepts
+    * pre-calculated sine and cosine of half the angle so that
+    * collections of quaternions can be efficiently rotated
+    * without repeatedly calling cos and sin.
+    *
+    * @param quat
+    *           the input quaternion
+    * @param cosah
+    *           cosine of the angle
+    * @param sinah
+    *           sine of the angle
+    * @param target
+    *           the output quaternion
+    * @return the rotated quaternion
+    */
+   public static Quaternion rotateZ (
+         final Quaternion quat,
+         final float cosah,
+         final float sinah,
+         final Quaternion target ) {
+
       final Vec3 i = quat.imag;
 
       return target.set(
-            cosa * quat.real - sina * i.y,
-            cosa * i.x - sina * i.z,
-            cosa * i.y + sina * quat.real,
-            cosa * i.z + sina * i.x);
+            cosah * quat.real - sinah * i.z,
+            cosah * i.x + sinah * i.y,
+            cosah * i.y - sinah * i.x,
+            cosah * i.z + sinah * quat.real);
    }
 
    /**
@@ -1788,13 +1883,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final float cosa = (float) Math.cos(halfAngle);
       final float sina = (float) Math.sin(halfAngle);
 
-      final Vec3 i = quat.imag;
-
-      return target.set(
-            cosa * quat.real - sina * i.z,
-            cosa * i.x + sina * i.y,
-            cosa * i.y - sina * i.x,
-            cosa * i.z + sina * quat.real);
+      return Quaternion.rotateZ(quat, cosa, sina, target);
    }
 
    /**
@@ -2001,6 +2090,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       // float zNorm;
       final Vec3 i = quat.imag;
 
+      //TODO: Use doubles instead for intermediary steps?
+      
       /*
        * Arguably, the test should be approximately equal, not
        * exactly equal, to one, due to float imprecision. However,
@@ -2414,6 +2505,23 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       return this;
    }
 
+   /**
+    * Attempts to set the components of this quaternion from
+    * Strings using {@link Float#parseFloat(String)} . If a
+    * NumberFormatException is thrown, the component is set to
+    * zero.
+    * 
+    * @param wstr
+    *           the w string
+    * @param xstr
+    *           the x string
+    * @param ystr
+    *           the y string
+    * @param zstr
+    *           the z string
+    * @return this quaternion
+    * @see Float#parseFloat(String)
+    */
    @Chainable
    public Quaternion set (
          final String wstr,

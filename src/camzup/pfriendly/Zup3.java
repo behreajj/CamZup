@@ -88,6 +88,24 @@ public class Zup3 extends Up3 {
    }
 
    /**
+    * Sets default camera location and calls the camera
+    * function.
+    *
+    * @see PGraphicsOpenGL#defCameraX
+    * @see PGraphicsOpenGL#defCameraY
+    * @see PGraphicsOpenGL#defCameraZ
+    */
+   @Override
+   protected void defaultCamera () {
+
+      this.defCameraX = Zup3.DEFAULT_LOC_X;
+      this.defCameraY = Zup3.DEFAULT_LOC_Y;
+      this.defCameraZ = Zup3.DEFAULT_LOC_Z;
+
+      this.camera();
+   }
+
+   /**
     * Creates a camera that looks at a default location and a
     * vantage point based on the renderer's height.
     */
@@ -303,25 +321,6 @@ public class Zup3 extends Up3 {
       this.colorMode = colorModeSaved;
    }
 
-   /**
-    * Set size is the last function called by size,
-    * createGraphics, makeGraphics, etc. when initializing the
-    * graphics renderer. Therefore, any additional values that
-    * need initialization can be attempted here.
-    *
-    * @param iwidth
-    *           the width in pixels
-    * @param iheight
-    *           the height in pixels
-    */
-   @Override
-   public void setSize ( final int iwidth, final int iheight ) {
-
-      super.setSize(iwidth, iheight);
-      this.ortho();
-      this.camera();
-   }
-
    // @Override
    // public void updateGLNormal (
    // final float m00, final float m01, final float m02,
@@ -347,20 +346,21 @@ public class Zup3 extends Up3 {
    // }
 
    /**
-    * Sets default camera location and calls the camera
-    * function.
+    * Set size is the last function called by size,
+    * createGraphics, makeGraphics, etc. when initializing the
+    * graphics renderer. Therefore, any additional values that
+    * need initialization can be attempted here.
     *
-    * @see PGraphicsOpenGL#defCameraX
-    * @see PGraphicsOpenGL#defCameraY
-    * @see PGraphicsOpenGL#defCameraZ
+    * @param iwidth
+    *           the width in pixels
+    * @param iheight
+    *           the height in pixels
     */
    @Override
-   protected void defaultCamera () {
+   public void setSize ( final int iwidth, final int iheight ) {
 
-      this.defCameraX = Zup3.DEFAULT_LOC_X;
-      this.defCameraY = Zup3.DEFAULT_LOC_Y;
-      this.defCameraZ = Zup3.DEFAULT_LOC_Z;
-
+      super.setSize(iwidth, iheight);
+      this.ortho();
       this.camera();
    }
 }

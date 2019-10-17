@@ -1,59 +1,104 @@
 package camzup.core;
 
+/**
+ * A simplex noise class created with reference to Stefan
+ * Gustavson's paper, "Simplex noise demystified," and
+ * source code <a href=
+ * "http://staffwww.itn.liu.se/~stegu/aqsis/aqsis-newnoise/sdnoise1234.c">http://staffwww.itn.liu.se/~stegu/aqsis/aqsis-newnoise/sdnoise1234.c</a>
+ * .
+ *
+ * Gustavson's original license is as follows:
+ *
+ * sdnoise1234, Simplex noise with true analytic derivative
+ * in 1D to 4D.
+ *
+ * Copyright © 2003-2011, Stefan Gustavson
+ *
+ * Contact: stefan.gustavson@gmail.com
+ *
+ * This library is public domain software, released by the
+ * author into the public domain in February 2011. You may
+ * do anything you like with it. You may even remove all
+ * attributions, but of course I'd appreciate it if you kept
+ * my name somewhere.
+ *
+ * This library is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
+ */
 public abstract class Simplex {
-
-   // private static final Vec4 curl0 = new Vec4(
-   // 123.456f, 789.012f, 345.678f, 0.0f);
-   //
-   // private static final Vec4 curl1 = new Vec4(
-   // 901.234f, 567.891f, 234.567f, 0.0f);
 
    /**
     * Squish constant 2D (Math.sqrt(3.0d) - 1.0d) / 2.0d;
+    * approximately 0.36602542 .
     */
    private static final float F2 = 0.3660254037844386f;
 
    /**
     * Squish constant 3D (Math.sqrt(4.0d) - 1.0d) / 3.0d;
+    * approximately 0.33333334 .
     */
    private static final float F3 = 0.3333333333333333f;
 
    /**
     * Squish constant 4D (Math.sqrt(5.0d) - 1.0d) / 4.0d;
+    * approximately 0.309017 .
     */
    private static final float F4 = 0.30901699437494745f;
 
    /**
     * Stretch constant 2D (1.0d / Math.sqrt(3.0d) - 1.0d) /
-    * 2.0d
+    * 2.0d; approximately 0.21132487 .
     */
    private static final float G2 = 0.21132486540518708f;
 
+   /**
+    * 2x stretch constant 2D. Approximately 0.42264974 .
+    */
    private static final float G2_2 = 0.42264973081037416f;
 
    /**
-    * Stretch constant 3D (1.0d / Math.sqrt(4.0d) - 1.0d) /
-    * 3.0d
+    * Stretch constant 3D.
     */
    private static final float G3 = 0.16666666666666667f;
 
+   /**
+    * 2x stretch constant 3D.
+    */
    private static final float G3_2 = 0.33333333333333333f;
 
+   /**
+    * 3x stretch constant 3D. 0.5 .
+    */
    private static final float G3_3 = 0.5f;
 
    /**
     * Stretch constant 4D (1.0d / Math.sqrt(5.0d) - 1.0d) /
-    * 4.0d
+    * 4.0d; approximately 0.1381966 .
     */
    private static final float G4 = 0.13819660112501053f;
 
+   /**
+    * 2x stretch constant 4D. Approximately 0.2763932 .
+    */
    private static final float G4_2 = 0.27639320225002106f;
 
+   /**
+    * 3x stretch constant 4D. Approximately 0.4145898 .
+    */
    private static final float G4_3 = 0.41458980337503159f;
 
+   /**
+    * 4x stretch constant 4D. Approximately 0.5527864 .
+    */
    private static final float G4_4 = 0.55278640450004212f;
 
-   private static final Vec2[] grad2lut = {
+   /**
+    * 2D simplex gradient look-up table.
+    */
+   private static final Vec2[] GRAD_2_LUT = {
          new Vec2(-1.0f, -1.0f),
          new Vec2(1.0f, 0.0f),
          new Vec2(-1.0f, 0.0f),
@@ -64,7 +109,10 @@ public abstract class Simplex {
          new Vec2(1.0f, -1.0f)
    };
 
-   private static final Vec3[] grad3lut = {
+   /**
+    * 3D simplex gradient look-up table.
+    */
+   private static final Vec3[] GRAD_3_LUT = {
          new Vec3(1.0f, 0.0f, 1.0f),
          new Vec3(0.0f, 1.0f, 1.0f),
          new Vec3(-1.0f, 0.0f, 1.0f),
@@ -83,7 +131,10 @@ public abstract class Simplex {
          new Vec3(0.0f, -1.0f, -1.0f)
    };
 
-   private static final Vec4[] grad4lut = {
+   /**
+    * 4D simplex gradient look-up table.
+    */
+   private static final Vec4[] GRAD_4_LUT = {
          new Vec4(0.0f, 1.0f, 1.0f, 1.0f),
          new Vec4(0.0f, 1.0f, 1.0f, -1.0f),
          new Vec4(0.0f, 1.0f, -1.0f, 1.0f),
@@ -118,7 +169,10 @@ public abstract class Simplex {
          new Vec4(-1.0f, -1.0f, -1.0f, 0.0f)
    };
 
-   private static final int[][] permute = {
+   /**
+    * Permutation table for 4D noise.
+    */
+   private static final int[][] PERMUTE = {
          { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 }, { 0, 2, 3, 1 },
          { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 2, 3, 0 },
          { 0, 2, 1, 3 }, { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2, 1 },
@@ -136,34 +190,59 @@ public abstract class Simplex {
          { 2, 1, 0, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
          { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 }, { 3, 2, 1, 0 } };
 
-   // private static final Vec4 promoted = new Vec4();
-
-   /** Factor by which 2D noise is scaled prior to return. */
+   /**
+    * Factor by which 2D noise is scaled prior to return.
+    */
    private static final float SCALE_2 = 64.0f;
 
-   /** Factor by which 3D noise is scaled prior to return. */
+   /**
+    * Factor by which 3D noise is scaled prior to return.
+    */
    private static final float SCALE_3 = 68.0f;
 
-   /** Factor by which 4D noise is scaled prior to return. */
+   /**
+    * Factor by which 4D noise is scaled prior to return.
+    */
    private static final float SCALE_4 = 54.0f;
 
-   private final static float STEP = 1.0f;
+   /**
+    * Factor added to 2D noise when returning a Vec2. 1.0d /
+    * Math.sqrt(2.0d); approximately 0.70710677 .
+    */
+   private final static float STEP_2 = 0.70710678118654752440084436210485f;
 
-   // private static final Vec4 sum0 = new Vec4();
+   /**
+    * Factor added to 3D noise when returning a Vec3. 1.0d /
+    * Math.sqrt(3.0d); approximately 0.57735026 .
+    */
+   private final static float STEP_3 = 0.57735026918962576450914878050196f;
 
-   // private static final Vec4 sum1 = new Vec4();
+   /**
+    * Factor added to 4D noise when returning a Vec4. 1.0d /
+    * Math.sqrt(4.0d); 0.5 .
+    */
+   private final static float STEP_4 = 0.5f;
 
-   // private static final Vec4 xDeriv = new Vec4();
+   /**
+    * Initial state to which a 2D noise contribution is set.
+    * Prevents compiler complaint that variables may not have
+    * been initialized.
+    */
+   private static final Vec2 ZERO_2 = new Vec2(0.0f, 0.0f);
 
-   // private static final Vec4 yDeriv = new Vec4();
+   /**
+    * Initial state to which a 3D noise contribution is set.
+    * Prevents compiler complaint that variables may not have
+    * been initialized.
+    */
+   private static final Vec3 ZERO_3 = new Vec3(0.0f, 0.0f, 0.0f);
 
-   // private static final Vec4 zDeriv = new Vec4();
-
-   private static final Vec2 ZERO_2 = new Vec2();
-
-   private static final Vec3 ZERO_3 = new Vec3();
-
-   private static final Vec4 ZERO_4 = new Vec4();
+   /**
+    * Initial state to which a 4D noise contribution is set.
+    * Prevents compiler complaint that variables may not have
+    * been initialized.
+    */
+   private static final Vec4 ZERO_4 = new Vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
    /**
     * A default seed set to the system current time in
@@ -171,15 +250,45 @@ public abstract class Simplex {
     */
    public static final int DEFAULT_SEED = (int) System.currentTimeMillis();
 
+   /**
+    * Hashes the indices i and j with the seed, then returns a
+    * vector from the look up table.
+    * 
+    * @param i
+    *           the first index
+    * @param j
+    *           the second index
+    * @param seed
+    *           the seed
+    * @return the vector
+    * @see Simplex#hash(int, int, int)
+    * @see Simplex#GRAD_2_LUT
+    */
    private static Vec2 gradient2 (
          final int i,
          final int j,
          final int seed ) {
 
       final int h = Simplex.hash(i, j, seed);
-      return Simplex.grad2lut[h & 7];
+      return Simplex.GRAD_2_LUT[h & 0x7];
    }
 
+   /**
+    * Hashes the indices i, j and k with the seed, then returns
+    * a vector from the look up table.
+    * 
+    * @param i
+    *           the first index
+    * @param j
+    *           the second index
+    * @param k
+    *           the third index
+    * @param seed
+    *           the seed
+    * @return the vector'
+    * @see Simplex#hash(int, int, int)
+    * @see Simplex#GRAD_3_LUT
+    */
    private static Vec3 gradient3 (
          final int i,
          final int j,
@@ -187,9 +296,27 @@ public abstract class Simplex {
          final int seed ) {
 
       final int h = Simplex.hash(i, j, Simplex.hash(k, seed, 0));
-      return Simplex.grad3lut[h & 15];
+      return Simplex.GRAD_3_LUT[h & 0xf];
    }
 
+   /**
+    * Hashes the indices i, j, k and l with the seed, then
+    * returns a vector from the look up table.
+    * 
+    * @param i
+    *           the first index
+    * @param j
+    *           the second index
+    * @param k
+    *           the third index
+    * @param l
+    *           the fourth index
+    * @param seed
+    *           the seed
+    * @return the vector
+    * @see Simplex#hash(int, int, int)
+    * @see Simplex#GRAD_4_LUT
+    */
    private static Vec4 gradient4 (
          final int i,
          final int j,
@@ -198,93 +325,73 @@ public abstract class Simplex {
          final int seed ) {
 
       final int h = Simplex.hash(i, j, Simplex.hash(k, l, seed));
-      return Simplex.grad4lut[h & 31];
+      return Simplex.GRAD_4_LUT[h & 0x1f];
    }
 
+   /**
+    * A helper function to the gradient functions. Performs a
+    * series of bit-shifting operations to create a hash.
+    * 
+    * @param a
+    *           first input
+    * @param b
+    *           second input
+    * @param c
+    *           third input
+    * @return the hash
+    */
    private static int hash ( int a, int b, int c ) {
 
-      // c ^= b;
-      // c -= Simplex.rotate(b, 14);
-      // a ^= c;
-      // a -= Simplex.rotate(c, 11);
-      // b ^= a;
-      // b -= Simplex.rotate(a, 25);
-      // c ^= b;
-      // c -= Simplex.rotate(b, 16);
-      // a ^= c;
-      // a -= Simplex.rotate(c, 4);
-      // b ^= a;
-      // b -= Simplex.rotate(a, 14);
-      // c ^= b;
-      // c -= Simplex.rotate(b, 24);
-      // return c;
-
       c ^= b;
-      c -= b << 14 | b >> 32 - 14;
+      c -= b << 0xe | b >> 0x20 - 0xe;
       a ^= c;
-      a -= c << 11 | c >> 32 - 11;
+      a -= c << 0xb | c >> 0x20 - 0xb;
       b ^= a;
-      b -= a << 25 | a >> 32 - 25;
+      b -= a << 0x19 | a >> 0x20 - 0x19;
       c ^= b;
-      c -= b << 16 | b >> 32 - 16;
+      c -= b << 0x10 | b >> 0x20 - 0x10;
       a ^= c;
-      a -= c << 4 | c >> 32 - 4;
+      a -= c << 0x4 | c >> 0x20 - 0x4;
       b ^= a;
-      b -= a << 14 | a >> 32 - 14;
+      b -= a << 0xe | a >> 0x20 - 0xe;
       c ^= b;
-      c -= b << 24 | b >> 32 - 24;
+      c -= b << 0x18 | b >> 0x20 - 0x18;
       return c;
    }
 
-   // private static int rotate (
-   // final int value,
-   // final int rotation ) {
-   //
-   // return value << rotation | value >> 32 - rotation;
-   // }
+   public static Vec3 curl (
+         final Vec3 v,
+         final int seed,
+         final Vec3 target,
+         final Vec3 xDeriv,
+         final Vec3 yDeriv,
+         final Vec3 zDeriv ) {
+      
+      //TODO: 2D curl noise?
 
-   // public static Vec3 curl (
-   // final float vx,
-   // final float vy,
-   // final float vz,
-   // final float vw,
-   // final int seed,
-   // final Vec3 target ) {
-   //
-   // Simplex.promoted.set(vx, vy, vz, vw);
-   // Vec4.add(Simplex.promoted, Simplex.curl0, Simplex.sum0);
-   // Vec4.add(Simplex.promoted, Simplex.curl1, Simplex.sum1);
-   // Simplex.eval(Simplex.promoted, seed, Simplex.xDeriv);
-   // Simplex.eval(Simplex.sum0, seed, Simplex.yDeriv);
-   // Simplex.eval(Simplex.sum1, seed, Simplex.zDeriv);
-   // return target.set(
-   // Simplex.zDeriv.z - Simplex.yDeriv.w,
-   // Simplex.xDeriv.w - Simplex.zDeriv.y,
-   // Simplex.yDeriv.y - Simplex.xDeriv.z);
-   // }
-   //
-   // public static Vec3 curl (
-   // final float vx,
-   // final float vy,
-   // final float vz,
-   // final int seed,
-   // final Vec3 target ) {
-   //
-   // return Simplex.curl(vx, vy, vz, 0.0f, seed, target);
-   // }
-   //
-   // public static Vec3 curl ( final Vec3 v, final int seed,
-   // final Vec3 target ) {
-   //
-   // return Simplex.curl(v.x, v.y, v.z, 0.0f, seed, target);
-   // }
-   //
-   // public static Vec3 curl ( final Vec4 v, final int seed,
-   // final Vec3 target ) {
-   //
-   // return Simplex.curl(v.x, v.y, v.z, v.w, seed, target);
-   // }
+      Simplex.noise(v, seed, target, xDeriv, yDeriv, zDeriv);
 
+      return target.set(
+            zDeriv.x - yDeriv.y,
+            xDeriv.x - zDeriv.y,
+            yDeriv.x - xDeriv.y);
+   }
+
+   /**
+    * Evaluates 4D simplex noise for a given seed.
+    * 
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param z
+    *           the z coordinate
+    * @param w
+    *           the w coordinate
+    * @param seed
+    *           the seed
+    * @return the noise value
+    */
    public static float eval (
          final float x,
          final float y,
@@ -295,6 +402,30 @@ public abstract class Simplex {
       return Simplex.eval(x, y, z, w, seed, null);
    }
 
+   /**
+    * Evaluates 4D simplex noise for a given seed. Calculates
+    * the derivative if the output variable is not null.
+    * 
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param z
+    *           the z coordinate
+    * @param w
+    *           the w coordinate
+    * @param seed
+    *           the seed
+    * @param deriv
+    *           the derivative
+    * @return the noise value
+    * @see Utils#floorToInt(float)
+    * @see Simplex#F4
+    * @see Simplex#G4
+    * @see Simplex#PERMUTE
+    * @see Simplex#SCALE_4
+    * @see Simplex#gradient4(int, int, int, int, int)
+    */
    public static float eval (
          final float x,
          final float y,
@@ -315,12 +446,12 @@ public abstract class Simplex {
       final float z0 = z - (k - t);
       final float w0 = w - (l - t);
 
-      final int[] sc = Simplex.permute[(x0 > y0 ? 32 : 0) |
-            (x0 > z0 ? 16 : 0) |
-            (y0 > z0 ? 8 : 0) |
-            (x0 > w0 ? 4 : 0) |
-            (y0 > w0 ? 2 : 0) |
-            (z0 > w0 ? 1 : 0)];
+      final int[] sc = Simplex.PERMUTE[(x0 > y0 ? 0x20 : 0) |
+            (x0 > z0 ? 0x10 : 0) |
+            (y0 > z0 ? 0x8 : 0) |
+            (x0 > w0 ? 0x4 : 0) |
+            (y0 > w0 ? 0x2 : 0) |
+            (z0 > w0 ? 0x1 : 0)];
       final int sc0 = sc[0];
       final int sc1 = sc[1];
       final int sc2 = sc[2];
@@ -497,6 +628,19 @@ public abstract class Simplex {
       return Simplex.SCALE_4 * (n0 + n1 + n2 + n3 + n4);
    }
 
+   /**
+    * Evaluates 3D simplex noise for a given seed.
+    * 
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param z
+    *           the z coordinate
+    * @param seed
+    *           the seed
+    * @return the noise value
+    */
    public static float eval (
          final float x,
          final float y,
@@ -506,6 +650,27 @@ public abstract class Simplex {
       return Simplex.eval(x, y, z, seed, null);
    }
 
+   /**
+    * Evaluates 3D simplex noise for a given seed. Calculates
+    * the derivative if the output variable is not null.
+    * 
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param z
+    *           the z coordinate
+    * @param seed
+    *           the seed
+    * @param deriv
+    *           the derivative
+    * @return the noise value
+    * @see Utils#floorToInt(float)
+    * @see Simplex#F3
+    * @see Simplex#G3
+    * @see Simplex#SCALE_3
+    * @see Simplex#gradient3(int, int, int, int)
+    */
    public static float eval (
          final float x,
          final float y,
@@ -667,6 +832,17 @@ public abstract class Simplex {
       return Simplex.SCALE_3 * (n0 + n1 + n2 + n3);
    }
 
+   /**
+    * Evaluates 2D simplex noise for a given seed.
+    * 
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param seed
+    *           the seed
+    * @return the noise value
+    */
    public static float eval (
          final float x,
          final float y,
@@ -675,6 +851,25 @@ public abstract class Simplex {
       return Simplex.eval(x, y, seed, null);
    }
 
+   /**
+    * Evaluates 2D simplex noise for a given seed. Calculates
+    * the derivative if the output variable is not null.
+    * 
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param seed
+    *           the seed
+    * @param deriv
+    *           the derivative
+    * @return the noise value
+    * @see Utils#floorToInt(float)
+    * @see Simplex#F2
+    * @see Simplex#G2
+    * @see Simplex#SCALE_2
+    * @see Simplex#gradient2(int, int, int)
+    */
    public static float eval (
          final float x, final float y,
          final int seed,
@@ -769,6 +964,15 @@ public abstract class Simplex {
       return Simplex.SCALE_2 * (n0 + n1 + n2);
    }
 
+   /**
+    * Evaluates 2D simplex noise for a given seed.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @return the noise value
+    */
    public static float eval (
          final Vec2 v,
          final int seed ) {
@@ -776,6 +980,18 @@ public abstract class Simplex {
       return Simplex.eval(v.x, v.y, seed, null);
    }
 
+   /**
+    * Evaluates 2D simplex noise for a given seed. Calculates
+    * the derivative if the output variable is not null.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param deriv
+    *           the derivative
+    * @return the noise value
+    */
    public static float eval (
          final Vec2 v,
          final int seed,
@@ -784,6 +1000,15 @@ public abstract class Simplex {
       return Simplex.eval(v.x, v.y, seed, deriv);
    }
 
+   /**
+    * Evaluates 3D simplex noise for a given seed.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @return the noise value
+    */
    public static float eval (
          final Vec3 v,
          final int seed ) {
@@ -791,6 +1016,18 @@ public abstract class Simplex {
       return Simplex.eval(v.x, v.y, v.z, seed, null);
    }
 
+   /**
+    * Evaluates 3D simplex noise for a given seed. Calculates
+    * the derivative if the output variable is not null.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param deriv
+    *           the derivative
+    * @return the noise value
+    */
    public static float eval (
          final Vec3 v,
          final int seed,
@@ -799,6 +1036,15 @@ public abstract class Simplex {
       return Simplex.eval(v.x, v.y, v.z, seed, deriv);
    }
 
+   /**
+    * Evaluates 4D simplex noise for a given seed.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @return the noise value
+    */
    public static float eval (
          final Vec4 v,
          final int seed ) {
@@ -806,6 +1052,18 @@ public abstract class Simplex {
       return Simplex.eval(v.x, v.y, v.z, v.w, seed, null);
    }
 
+   /**
+    * Evaluates 4D simplex noise for a given seed. Calculates
+    * the derivative if the output variable is not null.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param deriv
+    *           the derivative
+    * @return the noise value
+    */
    public static float eval (
          final Vec4 v,
          final int seed,
@@ -814,6 +1072,47 @@ public abstract class Simplex {
       return Simplex.eval(v.x, v.y, v.z, v.w, seed, deriv);
    }
 
+   /**
+    * Fractal Brownian motion. Uses the default values 1.0
+    * amplitude, 2.0 lacunarity, 0.5 persistence.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param octaves
+    *           number of iterations
+    * @return the noise value
+    */
+   public static float fbm (
+         final Vec2 v,
+         final int seed,
+         final int octaves ) {
+
+      return Simplex.fbm(v, seed, octaves, 1.0f, 2.0f, 0.5f);
+   }
+
+   /**
+    * Fractal Brownian motion. Sums a series of noise
+    * evaluations multiplied by the amplitude. The number of
+    * octaves dicates the iterations. At each iteration, the
+    * amplitude is multiplied by persistence; the noise inputs
+    * are multiplied by the lacunarity.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param octaves
+    *           the number of iterations
+    * @param amplitude
+    *           the amplitude
+    * @param lacunarity
+    *           the lacunarity
+    * @param persistence
+    *           the persistence
+    * @return the noise value
+    */
    public static float fbm (
          final Vec2 v,
          final int seed,
@@ -822,8 +1121,8 @@ public abstract class Simplex {
          final float lacunarity,
          final float persistence ) {
 
-      final int valoc = octaves < 1 ? 1 : octaves;
-      final float valpers = Utils.max(persistence, Utils.EPSILON);
+      final int oct = octaves < 1 ? 1 : octaves;
+      final float pers = Utils.max(persistence, Utils.EPSILON);
       float amp = amplitude != 0.0f ? amplitude : 1.0f;
 
       float out = 0.0f;
@@ -832,10 +1131,10 @@ public abstract class Simplex {
       float vx = v.x;
       float vy = v.y;
 
-      for (int i = 0; i < valoc; ++i) {
+      for (int i = 0; i < oct; ++i) {
          out += amp * Simplex.eval(vx, vy, seed, null);
          maxAmp += amp;
-         amp *= valpers;
+         amp *= pers;
          vx *= lacunarity;
          vy *= lacunarity;
       }
@@ -843,6 +1142,47 @@ public abstract class Simplex {
       return out / maxAmp;
    }
 
+   /**
+    * Fractal Brownian motion. Uses the default values 1.0
+    * amplitude, 2.0 lacunarity, 0.5 persistence.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param octaves
+    *           number of iterations
+    * @return the noise value
+    */
+   public static float fbm (
+         final Vec3 v,
+         final int seed,
+         final int octaves ) {
+
+      return Simplex.fbm(v, seed, octaves, 1.0f, 2.0f, 0.5f);
+   }
+
+   /**
+    * Fractal Brownian motion. Sums a series of noise
+    * evaluations multiplied by the amplitude. The number of
+    * octaves dicates the iterations. At each iteration, the
+    * amplitude is multiplied by persistence; the noise inputs
+    * are multiplied by the lacunarity.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param octaves
+    *           the number of iterations
+    * @param amplitude
+    *           the amplitude
+    * @param lacunarity
+    *           the lacunarity
+    * @param persistence
+    *           the persistence
+    * @return the noise value
+    */
    public static float fbm (
          final Vec3 v,
          final int seed,
@@ -851,8 +1191,8 @@ public abstract class Simplex {
          final float lacunarity,
          final float persistence ) {
 
-      final int valoc = octaves < 1 ? 1 : octaves;
-      final float valpers = Utils.max(persistence, Utils.EPSILON);
+      final int oct = octaves < 1 ? 1 : octaves;
+      final float pers = Utils.max(persistence, Utils.EPSILON);
       float amp = amplitude != 0.0f ? amplitude : 1.0f;
 
       float out = 0.0f;
@@ -862,10 +1202,10 @@ public abstract class Simplex {
       float vy = v.y;
       float vz = v.z;
 
-      for (int i = 0; i < valoc; ++i) {
+      for (int i = 0; i < oct; ++i) {
          out += amp * Simplex.eval(vx, vy, vz, seed, null);
          maxAmp += amp;
-         amp *= valpers;
+         amp *= pers;
          vx *= lacunarity;
          vy *= lacunarity;
          vz *= lacunarity;
@@ -874,6 +1214,47 @@ public abstract class Simplex {
       return out / maxAmp;
    }
 
+   /**
+    * Fractal Brownian motion. Uses the default values 1.0
+    * amplitude, 2.0 lacunarity, 0.5 persistence.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param octaves
+    *           number of iterations
+    * @return the noise value
+    */
+   public static float fbm (
+         final Vec4 v,
+         final int seed,
+         final int octaves ) {
+
+      return Simplex.fbm(v, seed, octaves, 1.0f, 2.0f, 0.5f);
+   }
+
+   /**
+    * Fractal Brownian motion. Sums a series of noise
+    * evaluations multiplied by the amplitude. The number of
+    * octaves dicates the iterations. At each iteration, the
+    * amplitude is multiplied by persistence; the noise inputs
+    * are multiplied by the lacunarity.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param octaves
+    *           the number of iterations
+    * @param amplitude
+    *           the amplitude
+    * @param lacunarity
+    *           the lacunarity
+    * @param persistence
+    *           the persistence
+    * @return the noise value
+    */
    public static float fbm (
          final Vec4 v,
          final int seed,
@@ -882,8 +1263,9 @@ public abstract class Simplex {
          final float lacunarity,
          final float persistence ) {
 
-      final int valoc = octaves < 1 ? 1 : octaves;
-      final float valpers = Utils.max(persistence, Utils.EPSILON);
+      final int oct = octaves < 1 ? 1 : octaves;
+      final float pers = Utils.max(persistence,
+            Utils.EPSILON);
       float amp = amplitude != 0.0f ? amplitude : 1.0f;
 
       float out = 0.0f;
@@ -894,10 +1276,10 @@ public abstract class Simplex {
       float vz = v.z;
       float vw = v.w;
 
-      for (int i = 0; i < valoc; ++i) {
+      for (int i = 0; i < oct; ++i) {
          out += amp * Simplex.eval(vx, vy, vz, vw, seed, null);
          maxAmp += amp;
-         amp *= valpers;
+         amp *= pers;
          vx *= lacunarity;
          vy *= lacunarity;
          vz *= lacunarity;
@@ -908,10 +1290,10 @@ public abstract class Simplex {
    }
 
    /**
-    * Wraps eval so that the output matches the input in number
-    * of dimensions. This calls eval for one dimension higher
-    * than the input, where the extra argument is an offset
-    * step.
+    * Returns a value with the same number of dimensions as the
+    * input, 2. This is done by calling
+    * {@link Simplex#eval(float, float, int, Vec2)} twice, with
+    * offset steps added to each component of the input vector.
     * 
     * @param v
     *           the input vector
@@ -920,27 +1302,60 @@ public abstract class Simplex {
     * @param target
     *           the output vector
     * @return the noise value
-    * @see Simplex#STEP
     */
    public static Vec2 noise (
          final Vec2 v,
          final int seed,
          final Vec2 target ) {
 
-      return target.set(
-            Simplex.eval(
-                  v.x, v.y,
-                  0.0f, seed, null),
-            Simplex.eval(
-                  v.x, v.y,
-                  Simplex.STEP, seed, null));
+      return Simplex.noise(v, seed, target,
+            null, null);
    }
 
    /**
-    * Wraps eval so that the output matches the input in number
-    * of dimensions. This calls eval for one dimension higher
-    * than the input, where the extra argument is an offset
-    * step.
+    * Returns a value with the same number of dimensions as the
+    * input, 2. This is done by calling
+    * {@link Simplex#eval(float, float, int, Vec2)} twice, with
+    * offset steps added to each component of the input vector.
+    * The derivatives are calculated for the output vectors.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param target
+    *           the output vector
+    * @param xDeriv
+    *           the derivative for the x evaluation
+    * @param yDeriv
+    *           the derivative for the y evaluation
+    * @return the noise value
+    * @see Vec2#mag(Vec2)
+    * @see Simplex#STEP_2
+    * @see Simplex#eval(float, float, int, Vec2)
+    */
+   public static Vec2 noise (
+         final Vec2 v,
+         final int seed,
+         final Vec2 target,
+         final Vec2 xDeriv,
+         final Vec2 yDeriv ) {
+
+      final float st = Simplex.STEP_2 * Vec2.mag(v);
+
+      return target.set(
+            Simplex.eval(
+                  v.x + st, v.y, seed, xDeriv),
+            Simplex.eval(
+                  v.x, v.y + st, seed, yDeriv));
+   }
+
+   /**
+    * Returns a value with the same number of dimensions as the
+    * input, 3. This is done by calling
+    * {@link Simplex#eval(float, float, float, int, Vec3)}
+    * thrice, with offset steps added to each component of the
+    * input vector.
     * 
     * @param v
     *           the input vector
@@ -949,22 +1364,201 @@ public abstract class Simplex {
     * @param target
     *           the output vector
     * @return the noise value
-    * @see Simplex#STEP
     */
    public static Vec3 noise (
          final Vec3 v,
          final int seed,
          final Vec3 target ) {
 
+      return Simplex.noise(v, seed, target,
+            null, null, null);
+   }
+
+   /**
+    * Returns a value with the same number of dimensions as the
+    * input, 3. This is done by calling
+    * {@link Simplex#eval(float, float, float, int, Vec3)}
+    * thrice, with offset steps added to each component of the
+    * input vector. The derivatives are calculated for the
+    * output vectors.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param target
+    *           the output vector
+    * @param xDeriv
+    *           the derivative for the x evaluation
+    * @param yDeriv
+    *           the derivative for the y evaluation
+    * @param zDeriv
+    *           the derivative for the z evaluation
+    * @return the noise value
+    * @see Vec3#mag(Vec3)
+    * @see Simplex#STEP_3
+    */
+   public static Vec3 noise (
+         final Vec3 v,
+         final int seed,
+         final Vec3 target,
+         final Vec3 xDeriv,
+         final Vec3 yDeriv,
+         final Vec3 zDeriv ) {
+
+      final float st = Vec3.mag(v) * Simplex.STEP_3;
+
       return target.set(
             Simplex.eval(
-                  v.x, v.y, v.z,
-                  0.0f, seed, null),
+                  v.x + st, v.y, v.z, seed, xDeriv),
             Simplex.eval(
-                  v.x, v.y, v.z,
-                  Simplex.STEP, seed, null),
+                  v.x, v.y + st, v.z, seed, yDeriv),
             Simplex.eval(
-                  v.x, v.y, v.z,
-                  Simplex.STEP + Simplex.STEP, seed, null));
+                  v.x, v.y, v.z + st, seed, zDeriv));
    }
+
+   /**
+    * Returns a value with the same number of dimensions as the
+    * input, 4. This is done by calling
+    * {@link Simplex#eval(float, float, float, float, int)}
+    * four times, with offset steps added to each component of
+    * the input vector.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param target
+    *           the output vector
+    * @return the noise value
+    */
+   public static Vec4 noise (
+         final Vec4 v,
+         final int seed,
+         final Vec4 target ) {
+
+      return Simplex.noise(v, seed, target,
+            null, null, null, null);
+   }
+
+   /**
+    * Returns a value with the same number of dimensions as the
+    * input, 4. This is done by calling
+    * {@link Simplex#eval(float, float, float, float, int, Vec4)}
+    * four times, with offset steps added to each component of
+    * the input vector. The derivatives are calculated for the
+    * output vectors.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param target
+    *           the output vector
+    * @param xDeriv
+    *           the derivative for the x evaluation
+    * @param yDeriv
+    *           the derivative for the y evaluation
+    * @param zDeriv
+    *           the derivative for the z evaluation
+    * @param wDeriv
+    *           the derivative for the w evaluation
+    * @return the noise value
+    * @see Vec4#mag(Vec4)
+    * @see Simplex#STEP_4
+    * @see Simplex#eval(float, float, float, float, int, Vec4)
+    */
+   public static Vec4 noise (
+         final Vec4 v,
+         final int seed,
+         final Vec4 target,
+         final Vec4 xDeriv,
+         final Vec4 yDeriv,
+         final Vec4 zDeriv,
+         final Vec4 wDeriv ) {
+
+      final float st = Vec4.mag(v) * Simplex.STEP_4;
+
+      return target.set(
+            Simplex.eval(
+                  v.x + st, v.y, v.z, v.w, seed, xDeriv),
+            Simplex.eval(
+                  v.x, v.y + st, v.z, v.w, seed, yDeriv),
+            Simplex.eval(
+                  v.x, v.y, v.z + st, v.w, seed, zDeriv),
+            Simplex.eval(
+                  v.x, v.y, v.z, v.w + st, seed, wDeriv));
+   }
+
+//   private static float[] identity3 () {
+//
+//      return new float[] {
+//            1.0f, 0.0f, 0.0f,
+//            0.0f, 1.0f, 0.0f,
+//            0.0f, 0.0f, 1.0f };
+//   }
+
+//   private static void mult ( float[] mat3, float scalar ) {
+//
+//      mat3[0] *= scalar; /* 0, 0 */
+//      mat3[1] *= scalar; /* 0, 1 */
+//      mat3[2] *= scalar; /* 0, 2 */
+//
+//      mat3[3] *= scalar; /* 1, 0 */
+//      mat3[4] *= scalar; /* 1, 1 */
+//      mat3[5] *= scalar; /* 1, 2 */
+//
+//      mat3[6] *= scalar; /* 2, 0 */
+//      mat3[7] *= scalar; /* 2, 1 */
+//      mat3[8] *= scalar; /* 2, 2 */
+//   }
+
+//   private static Vec3 mult(float[] mat3, Vec3 v, Vec3 target) {
+//      return target.set(
+//            mat3[0] * v.x + mat3[3] * v.y + mat3[6] * v.z,
+//            mat3[1] * v.x + mat3[4] * v.y + mat3[7] * v.z,
+//            mat3[2] * v.x + mat3[5] * v.y + mat3[8] * v.z);
+//   }
+
+//   public static float fbm (
+//         final Vec3 v,
+//         final int seed,
+//         final int octaves,
+//         final float amplitude,
+//         final float lacunarity,
+//         final float persistence,
+//         final Vec3 deriv) {
+//
+//      final int oct = octaves < 1 ? 1 : octaves;
+//      final float pers = Utils.max(persistence, Utils.EPSILON);
+//      float amp = amplitude != 0.0f ? amplitude : 1.0f;
+//
+//      float out = 0.0f;
+//      float maxAmp = 0.0f;
+//
+//      float vx = v.x;
+//      float vy = v.y;
+//      float vz = v.z;
+//
+//      Vec3 derivStep = new Vec3();
+//      float[] mat3 = identity3();
+//      deriv.reset();
+//      
+//      for (int i = 0; i < oct; ++i) {
+//         out += amp * Simplex.eval(vx, vy, vz, seed, derivStep);
+//         
+//         mult(mat3, amp);
+//         mult(mat3, derivStep, derivStep);
+//         Vec3.add(deriv, derivStep, deriv);
+//
+//         maxAmp += amp;
+//         amp *= pers;
+//         vx *= lacunarity;
+//         vy *= lacunarity;
+//         vz *= lacunarity;
+//         // TODO: Research with Inigo Quilez
+//      }
+//
+//      return out / maxAmp;
+//   }
 }

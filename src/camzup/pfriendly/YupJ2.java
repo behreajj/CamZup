@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.GeneralPath;
+import java.util.LinkedList;
 import java.util.List;
 
 import camzup.core.Color;
@@ -50,31 +51,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * The default camera vertical zoom.
     */
    public static final float DEFAULT_ZOOM_Y = 1.0f;
-
-   /**
-    * The camera rotation in radians.
-    */
-   public float cameraRot = 0.0f;
-
-   /**
-    * The camera's location on the x axis.
-    */
-   public float cameraX = 0.0f;
-
-   /**
-    * The camera's location on the y axis.
-    */
-   public float cameraY = 0.0f;
-
-   /**
-    * The camera horizontal zoom.
-    */
-   public float cameraZoomX = 1.0f;
-
-   /**
-    * The camera vertical zoom.
-    */
-   public float cameraZoomY = 1.0f;
 
    /**
     * A Java AWT affine transform object. This is cached so a
@@ -149,6 +125,31 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    protected final Transform2 transform = new Transform2();
 
    /**
+    * The camera rotation in radians.
+    */
+   public float cameraRot = 0.0f;
+
+   /**
+    * The camera's location on the x axis.
+    */
+   public float cameraX = 0.0f;
+
+   /**
+    * The camera's location on the y axis.
+    */
+   public float cameraY = 0.0f;
+
+   /**
+    * The camera horizontal zoom.
+    */
+   public float cameraZoomX = 1.0f;
+
+   /**
+    * The camera vertical zoom.
+    */
+   public float cameraZoomY = 1.0f;
+
+   /**
     * The default constructor.
     */
    public YupJ2 () {
@@ -180,6 +181,489 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.setPrimary(isPrimary);
       this.setPath(path);
       this.setSize(width, height);
+   }
+
+   /**
+    * The arc implementation. The underlying Java AWT arc asks
+    * for a start angle and an arc length, not a stop angle, in
+    * degrees, not radians.
+    *
+    * @param x
+    *           the arc location x
+    * @param y
+    *           the arc location y
+    * @param w
+    *           the arc width
+    * @param h
+    *           the arc height
+    * @param start
+    *           the start angle
+    * @param stop
+    *           the stop angle
+    * @param mode
+    *           the arc mode
+    */
+   @Override
+   protected void arcImpl (
+         final float x, final float y,
+         final float w, final float h,
+         final float start, final float stop,
+         final int mode ) {
+
+      final float a = IUtils.TAU - Utils.modRadians(start);
+      final float b = IUtils.TAU - Utils.modRadians(stop);
+
+      final float c = IUtils.RAD_TO_DEG * a;
+      final float d = IUtils.RAD_TO_DEG * Utils.modRadians(b - a);
+
+      int fillMode = Arc2D.PIE;
+      int strokeMode = Arc2D.OPEN;
+
+      if (mode == PConstants.OPEN) {
+         fillMode = Arc2D.OPEN;
+      } else if (mode == PConstants.PIE) {
+         strokeMode = Arc2D.PIE;
+
+      } else if (mode == PConstants.CHORD) {
+         fillMode = Arc2D.CHORD;
+         strokeMode = Arc2D.CHORD;
+      }
+
+      if (this.fill) {
+         this.arc.setArc(x, y, w, h, c, d, fillMode);
+         this.fillShape(this.arc);
+      }
+      if (this.stroke) {
+         this.arc.setArc(x, y, w, h, c, d, strokeMode);
+         this.strokeShape(this.arc);
+      }
+   }
+
+   /**
+    * Calculates the color channels from four input channels.
+    * The manner in which the first three are interpreted
+    * depends on color mode.
+    *
+    * @param x
+    *           the first color channel, hue or red
+    * @param y
+    *           the second color channel, saturation or green
+    * @param z
+    *           the third color channel, brightness or blue
+    * @param a
+    *           the alpha channel
+    */
+   @Override
+   protected void colorCalc (
+         final float x,
+         final float y,
+         final float z,
+         final float a ) {
+
+      this.calcG = Utils.clamp01(
+            y * this.invColorModeY);
+      this.calcB = Utils.clamp01(
+            z * this.invColorModeZ);
+      this.calcA = Utils.clamp01(
+            a * this.invColorModeA);
+
+      switch (this.colorMode) {
+
+         case HSB:
+
+            this.calcR = x * this.invColorModeX;
+
+            Color.hsbaToRgba(
+                  this.calcR,
+                  this.calcG,
+                  this.calcB,
+                  this.calcA,
+                  this.aTemp);
+
+            this.calcR = this.aTemp.x;
+            this.calcG = this.aTemp.y;
+            this.calcB = this.aTemp.z;
+
+            break;
+
+         case RGB:
+
+         default:
+
+            this.calcR = Utils.clamp01(
+                  x * this.invColorModeX);
+
+      }
+
+      this.calcRi = (int) (this.calcR * 0xff + 0.5f);
+      this.calcGi = (int) (this.calcG * 0xff + 0.5f);
+      this.calcBi = (int) (this.calcB * 0xff + 0.5f);
+      this.calcAi = (int) (this.calcA * 0xff + 0.5f);
+
+      this.calcColor = this.calcAi << 0x18
+            | this.calcRi << 0x10
+            | this.calcGi << 0x8
+            | this.calcBi;
+      this.calcAlpha = this.calcAi != 0xff;
+   }
+
+   /**
+    * Calculates a color and
+    *
+    * @param argb
+    *           the color in hexadecimal
+    * @param alpha
+    *           the alpha channel
+    */
+   @Override
+   protected void colorCalcARGB (
+         final int argb,
+         final float alpha ) {
+
+      if (alpha == this.colorModeA) {
+         this.calcAi = argb >> 0x18 & 0xff;
+         this.calcColor = argb;
+      } else {
+         this.calcAi = (int) ((argb >> 0x18 & 0xff)
+               * Utils.clamp01(alpha * this.invColorModeA));
+         this.calcColor = this.calcAi << 0x18 | argb & 0xffffff;
+      }
+
+      this.calcRi = argb >> 0x10 & 0xff;
+      this.calcGi = argb >> 0x8 & 0xff;
+      this.calcBi = argb & 0xff;
+
+      this.calcA = this.calcAi * IUtils.ONE_255;
+      this.calcR = this.calcRi * IUtils.ONE_255;
+      this.calcG = this.calcGi * IUtils.ONE_255;
+      this.calcB = this.calcBi * IUtils.ONE_255;
+
+      this.calcAlpha = this.calcAi != 0xff;
+   }
+
+   /**
+    * Initializes the curve basis matrix.
+    */
+   @Override
+   protected void curveInit () {
+
+      if (this.curveDrawMatrix == null) {
+         this.curveBasisMatrix = new PMatrix3D();
+         this.curveDrawMatrix = new PMatrix3D();
+         this.curveInited = true;
+      }
+
+      final float s = this.curveTightness;
+      final float t = (s - 1.0f) * 0.5f;
+      final float u = 1.0f - s;
+      final float v = u * 0.5f;
+      this.curveBasisMatrix.set(
+            t, (s + 3.0f) * 0.5f, (-3.0f - s) * 0.5f, v,
+            u, (-5.0f - s) * 0.5f, s + 2.0f, t,
+            t, 0.0f, v, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f);
+
+      this.splineForward(this.curveDetail, this.curveDrawMatrix);
+
+      if (this.bezierBasisInverse == null) {
+         this.bezierBasisInverse = new PMatrix3D(this.bezierBasisMatrix);
+         this.bezierBasisInverse.invert();
+
+         this.curveToBezierMatrix = new PMatrix3D();
+      }
+
+      this.curveToBezierMatrix.set(this.curveBasisMatrix);
+      this.curveToBezierMatrix.preApply(this.bezierBasisInverse);
+      this.curveDrawMatrix.apply(this.curveBasisMatrix);
+   }
+
+   /**
+    * Sets the renderer's default styling.
+    */
+   @Override
+   protected void defaultSettings () {
+
+      super.defaultSettings();
+      this.colorMode(PConstants.RGB, IUp.DEFAULT_COLOR_MAX);
+      this.fill(IUp.DEFAULT_FILL_COLOR);
+      this.stroke(IUp.DEFAULT_STROKE_COLOR);
+
+      this.strokeWeight(IUp.DEFAULT_STROKE_WEIGHT);
+      this.strokeJoin(PConstants.ROUND);
+      this.strokeCap(PConstants.ROUND);
+      this.stroke = false;
+
+      this.shape = 0;
+
+      this.rectMode(PConstants.CENTER);
+      this.ellipseMode(PConstants.CENTER);
+      this.imageMode(PConstants.CENTER);
+      this.shapeMode(PConstants.CENTER);
+
+      this.autoNormal = true;
+      this.textFont = null;
+      this.textSize = IUp.DEFAULT_TEXT_SIZE;
+      this.textLeading = IUp.DEFAULT_TEXT_LEADING;
+      this.textAlign = PConstants.CENTER;
+      this.textAlignY = PConstants.CENTER;
+      this.textMode = PConstants.MODEL;
+
+      if (this.primaryGraphics) {
+         this.background(IUp.DEFAULT_BKG_COLOR);
+      }
+
+      this.blendMode(PConstants.BLEND);
+
+      this.settingsInited = true;
+      this.reapplySettings = false;
+   }
+
+   /**
+    * The rounded corner rectangle implementation. The meaning
+    * of the first four parameters depends on rectMode.
+    *
+    * @param a
+    *           the first x parameter
+    * @param b
+    *           the first y parameter
+    * @param c
+    *           the second x parameter
+    * @param d
+    *           the second y parameter
+    * @param tl
+    *           the top-left corner rounding
+    * @param tr
+    *           the top-right corner rounding
+    * @param br
+    *           the bottom-right corner rounding
+    * @param bl
+    *           the bottom-left corner rounding
+    */
+   @Override
+   protected void rectImpl (
+         final float a, final float b,
+         final float c, final float d,
+
+         float tl, float tr,
+         float br, float bl ) {
+
+      float x1 = 0.0f;
+      float y1 = 0.0f;
+      float x2 = 0.0f;
+      float y2 = 0.0f;
+
+      float w = 0.0f;
+      float h = 0.0f;
+
+      switch (this.rectMode) {
+
+         case CORNER:
+
+            w = Utils.abs(c);
+            h = Utils.abs(d);
+
+            x1 = a;
+            y2 = b - h;
+            x2 = a + w;
+            y1 = b;
+
+            break;
+
+         case CORNERS:
+
+            w = Utils.abs(c - a);
+            h = Utils.abs(b - d);
+
+            x1 = Utils.min(a, c);
+            x2 = Utils.max(a, c);
+
+            y2 = Utils.min(b, d);
+            y1 = Utils.max(b, d);
+
+            break;
+
+         case RADIUS:
+
+            w = Utils.abs(c);
+            h = Utils.abs(d);
+
+            x1 = a - w;
+            x2 = a + w;
+            y1 = b + h;
+            y2 = b - h;
+
+            break;
+
+         case CENTER:
+
+         default:
+
+            w = Utils.abs(c);
+            h = Utils.abs(d);
+
+            x1 = a - w * 0.5f;
+            x2 = a + w * 0.5f;
+            y1 = b + h * 0.5f;
+            y2 = b - h * 0.5f;
+      }
+
+      final float limit = Utils.min(w, h) * 0.5f;
+      tl = Utils.clamp(tl, PConstants.EPSILON, limit);
+      tr = Utils.clamp(tr, PConstants.EPSILON, limit);
+      br = Utils.clamp(br, PConstants.EPSILON, limit);
+      bl = Utils.clamp(bl, PConstants.EPSILON, limit);
+
+      this.gp.reset();
+      this.gp.moveTo(x2 - tr, y1);
+      this.gp.quadTo(x2, y1, x2, y1 - tr);
+      this.gp.lineTo(x2, y2 + br);
+      this.gp.quadTo(x2, y2, x2 - br, y2);
+      this.gp.lineTo(x1 + bl, y2);
+      this.gp.quadTo(x1, y2, x1, y2 + bl);
+      this.gp.lineTo(x1, y1 - tl);
+      this.gp.quadTo(x1, y1, x1 + tl, y1);
+      this.gp.closePath();
+      this.drawShape(this.gp);
+   }
+
+   /**
+    * Displays a character in the sketch.
+    *
+    * @param ch
+    *           the character
+    * @param x
+    *           the location x
+    * @param y
+    *           the location y
+    */
+   @Override
+   protected void textCharImpl (
+         final char ch,
+         final float x,
+         final float y ) {
+
+      final PFont.Glyph glyph = this.textFont.getGlyph(ch);
+      if (glyph != null) {
+         final float szInv = 1.0f / this.textFont.getSize();
+         final float wGlyph = glyph.width * szInv;
+         final float hGlyph = glyph.height * szInv;
+         final float lextent = glyph.leftExtent * szInv;
+         final float textent = glyph.topExtent * szInv;
+
+         final float x0 = x + lextent * this.textSize;
+         final float x1 = x0 + wGlyph * this.textSize;
+
+         final float y0 = y + textent * this.textSize;
+         final float y1 = y0 - hGlyph * this.textSize;
+
+         this.textCharModelImpl(
+               glyph.image,
+               x0, y0, x1, y1,
+               glyph.width, glyph.height);
+
+      }
+   }
+
+   /**
+    * Draws an image representing a glyph from a font.
+    *
+    * @param glyph
+    *           the glyph image
+    * @param x1
+    *           the first x coordinate
+    * @param y1
+    *           the first y coordinate
+    * @param x2
+    *           the second x coordinate
+    * @param y2
+    *           the second y coordinate
+    * @param u
+    *           the u coordinate
+    * @param v
+    *           the v coordinate
+    */
+   @Override
+   protected void textCharModelImpl (
+         final PImage glyph,
+         final float x1, final float y1,
+         final float x2, final float y2,
+         final int u, final int v ) {
+
+      final boolean savedTint = this.tint;
+      final int savedTintColor = this.tintColor;
+      final float savedTintR = this.tintR;
+      final float savedTintG = this.tintG;
+      final float savedTintB = this.tintB;
+      final float savedTintA = this.tintA;
+      final boolean savedTintAlpha = this.tintAlpha;
+
+      this.tint = true;
+      this.tintColor = this.fillColor;
+      this.tintR = this.fillR;
+      this.tintG = this.fillG;
+      this.tintB = this.fillB;
+      this.tintA = this.fillA;
+      this.tintAlpha = this.fillAlpha;
+
+      final int oldImgMd = this.imageMode;
+      this.imageMode = PConstants.CORNERS;
+      this.image(glyph,
+            x1, y1, x2, y2,
+            0, 0, u, v);
+      this.imageMode = oldImgMd;
+
+      // final int rgb = this.fillColor & 0x00ffffff;
+      // glim.loadPixels();
+      // final int[] px = glim.pixels;
+      // final int len = px.length;
+      // for (int i = 0; i < len; ++i) {
+      // px[i] = ((px[i] << 0x18) &
+      // this.fillAi) | rgb;
+      // }
+      // glim.updatePixels();
+      // glim.format = ARGB;
+      // this.g2.drawImage(
+      // (Image) glim.getNative(),
+      // (int) x1, (int) y1, (int) x2, (int) y2,
+      // 0, 0, glim.width, glim.height, null);
+
+      this.tint = savedTint;
+      this.tintColor = savedTintColor;
+      this.tintR = savedTintR;
+      this.tintG = savedTintG;
+      this.tintB = savedTintB;
+      this.tintA = savedTintA;
+      this.tintAlpha = savedTintAlpha;
+   }
+
+   /**
+    * Helper function for text with multiple lines. Handles the
+    * horizontal display of a character along a line.
+    *
+    * @param buffer
+    *           the array of characters
+    * @param start
+    *           the start index, inclusive
+    * @param stop
+    *           the stop index, exclusive
+    * @param x
+    *           the horizontal location
+    * @param y
+    *           the vertical location
+    */
+   @Override
+   protected void textLineImpl (
+         final char[] buffer,
+         final int start,
+         final int stop,
+         final float x, final float y ) {
+
+      float cursor = x;
+      for (int index = start; index < stop; ++index) {
+         final char c = buffer[index];
+         this.textCharImpl(c, cursor, y);
+         cursor += this.textWidth(c);
+      }
    }
 
    /**
@@ -256,8 +740,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             break;
 
          case RADIUS:
-            w = Utils.abs(x1) * 2.0f;
-            h = Utils.abs(y1) * 2.0f;
+            w = Utils.abs(x1);
+            h = Utils.abs(y1);
+            w += w;
+            h += h;
             x = x0 - w * 0.5f;
             y = y0 - h * 0.5f;
 
@@ -391,6 +877,69 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             cp1.x, cp1.y,
             ap1.x, ap1.y);
    }
+
+   /**
+    * Draws a transform's axes.
+    *
+    * @param transform
+    *           the transform
+    * @param lineLength
+    *           the line length
+    * @param strokeWeight
+    *           the stroke weight
+    */
+   // public void drawTransform2 (
+   // final Transform2 transform,
+   // final float lineLength,
+   // final float strokeWeight ) {
+   //
+   // this.drawTransform2(
+   // transform,
+   // lineLength,
+   // strokeWeight);
+   // }
+
+   /**
+    * Draws a transform's axes.
+    *
+    * @param transform
+    *           the transform
+    * @param lineLength
+    *           the line length
+    * @param strokeWeight
+    *           the stroke weight
+    * @param xColor
+    *           the color of the x axis
+    * @param yColor
+    *           the color of the y axis
+    */
+   // public void drawTransform2 (
+   // final Transform2 transform,
+   // final float lineLength,
+   // final float strokeWeight,
+   // final int xColor, final int yColor ) {
+   //
+   // final Vec2 right = transform.getRight(new Vec2());
+   // final Vec2 forward = transform.getForward(new Vec2());
+   // final Vec2 loc = transform.getLocation(new Vec2());
+   //
+   // this.pushStyle();
+   //
+   // this.strokeWeight(strokeWeight);
+   // this.stroke(xColor);
+   // this.line(
+   // loc.x, loc.y,
+   // loc.x + right.x * lineLength,
+   // loc.y + right.y * lineLength);
+   //
+   // this.stroke(yColor);
+   // this.line(
+   // loc.x, loc.y,
+   // loc.x + forward.x * lineLength,
+   // loc.y + forward.y * lineLength);
+   //
+   // this.popStyle();
+   // }
 
    /**
     * Sets the camera to the renderer defaults.
@@ -572,69 +1121,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.invColorModeZ = 1.0f / this.colorModeZ;
       this.invColorModeA = 1.0f / this.colorModeA;
    }
-
-   /**
-    * Draws a transform's axes.
-    *
-    * @param transform
-    *           the transform
-    * @param lineLength
-    *           the line length
-    * @param strokeWeight
-    *           the stroke weight
-    */
-   // public void drawTransform2 (
-   // final Transform2 transform,
-   // final float lineLength,
-   // final float strokeWeight ) {
-   //
-   // this.drawTransform2(
-   // transform,
-   // lineLength,
-   // strokeWeight);
-   // }
-
-   /**
-    * Draws a transform's axes.
-    *
-    * @param transform
-    *           the transform
-    * @param lineLength
-    *           the line length
-    * @param strokeWeight
-    *           the stroke weight
-    * @param xColor
-    *           the color of the x axis
-    * @param yColor
-    *           the color of the y axis
-    */
-   // public void drawTransform2 (
-   // final Transform2 transform,
-   // final float lineLength,
-   // final float strokeWeight,
-   // final int xColor, final int yColor ) {
-   //
-   // final Vec2 right = transform.getRight(new Vec2());
-   // final Vec2 forward = transform.getForward(new Vec2());
-   // final Vec2 loc = transform.getLocation(new Vec2());
-   //
-   // this.pushStyle();
-   //
-   // this.strokeWeight(strokeWeight);
-   // this.stroke(xColor);
-   // this.line(
-   // loc.x, loc.y,
-   // loc.x + right.x * lineLength,
-   // loc.y + right.y * lineLength);
-   //
-   // this.stroke(yColor);
-   // this.line(
-   // loc.x, loc.y,
-   // loc.x + forward.x * lineLength,
-   // loc.y + forward.y * lineLength);
-   //
-   // this.popStyle();
-   // }
 
    /**
     * Draws a curve between four points.
@@ -902,7 +1388,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       final float swFore = swRear * 1.25f;
       final float swCoord = swFore * 1.25f;
 
-      final List < Curve2 > curves = ce.curves;
+      final LinkedList < Curve2 > curves = ce.curves;
       for (final Curve2 curve : curves) {
          for (final Knot2 knot : curve) {
             final Vec2 coord = knot.coord;
@@ -1711,8 +2197,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       Vec2 foreHandle;
       Vec2 rearHandle;
 
-      final List < Curve2 > curves = entity.curves;
-      final List < MaterialSolid > materials = entity.materials;
+      final LinkedList < Curve2 > curves = entity.curves;
+      final LinkedList < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
 
       curveLoop: for (final Curve2 curve : curves) {
@@ -1780,8 +2266,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.pushMatrix();
       this.transform(entity.transform, entity.transformOrder);
 
-      final List < Mesh2 > meshes = entity.meshes;
-      final List < MaterialSolid > materials = entity.materials;
+      final LinkedList < Mesh2 > meshes = entity.meshes;
+      final LinkedList < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
 
       for (final Mesh2 mesh : meshes) {
@@ -2084,7 +2570,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float num,
          final float x, final float y ) {
 
-      this.text(String.format("%.4f", num), x, y);
+      this.text(Utils.toFixed(num, 4), x, y);
    }
 
    /**
@@ -2160,6 +2646,26 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       PGraphics.showDepthWarningXYZ("text");
       this.text(str, x, y);
    }
+
+   // @Override
+   // protected void colorCalc ( final int argb ) {
+   // this.calcColor = argb;
+   // this.calcAi = argb >> 0x18 & 0xff;
+   // this.calcRi = argb >> 0x10 & 0xff;
+   // this.calcGi = argb >> 0x8 & 0xff;
+   // this.calcBi = argb & 0xff;
+   // this.calcA = this.calcAi * IUtils.ONE_255;
+   // this.calcR = this.calcRi * IUtils.ONE_255;
+   // this.calcG = this.calcGi * IUtils.ONE_255;
+   // this.calcB = this.calcBi * IUtils.ONE_255;
+   // this.calcAlpha = this.calcAi != 255;
+   // }
+
+   // @Override
+   // protected void colorCalc ( final int rgb, final float
+   // alpha ) {
+   // this.colorCalcARGB(rgb, alpha);
+   // }
 
    /**
     * Displaying a string of text in a box is not supported by
@@ -2349,508 +2855,5 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    public void vertex ( final Vec2 v ) {
 
       this.vertex(v.x, v.y);
-   }
-
-   // @Override
-   // protected void colorCalc ( final int argb ) {
-   // this.calcColor = argb;
-   // this.calcAi = argb >> 0x18 & 0xff;
-   // this.calcRi = argb >> 0x10 & 0xff;
-   // this.calcGi = argb >> 0x8 & 0xff;
-   // this.calcBi = argb & 0xff;
-   // this.calcA = this.calcAi * IUtils.ONE_255;
-   // this.calcR = this.calcRi * IUtils.ONE_255;
-   // this.calcG = this.calcGi * IUtils.ONE_255;
-   // this.calcB = this.calcBi * IUtils.ONE_255;
-   // this.calcAlpha = this.calcAi != 255;
-   // }
-
-   // @Override
-   // protected void colorCalc ( final int rgb, final float
-   // alpha ) {
-   // this.colorCalcARGB(rgb, alpha);
-   // }
-
-   /**
-    * The arc implementation. The underlying Java AWT arc asks
-    * for a start angle and an arc length, not a stop angle, in
-    * degrees, not radians.
-    *
-    * @param x
-    *           the arc location x
-    * @param y
-    *           the arc location y
-    * @param w
-    *           the arc width
-    * @param h
-    *           the arc height
-    * @param start
-    *           the start angle
-    * @param stop
-    *           the stop angle
-    * @param mode
-    *           the arc mode
-    */
-   @Override
-   protected void arcImpl (
-         final float x, final float y,
-         final float w, final float h,
-         final float start, final float stop,
-         final int mode ) {
-
-      final float a = IUtils.TAU - Utils.modRadians(start);
-      final float b = IUtils.TAU - Utils.modRadians(stop);
-
-      final float c = IUtils.RAD_TO_DEG * a;
-      final float d = IUtils.RAD_TO_DEG * Utils.modRadians(b - a);
-
-      int fillMode = Arc2D.PIE;
-      int strokeMode = Arc2D.OPEN;
-
-      if (mode == PConstants.OPEN) {
-         fillMode = Arc2D.OPEN;
-      } else if (mode == PConstants.PIE) {
-         strokeMode = Arc2D.PIE;
-
-      } else if (mode == PConstants.CHORD) {
-         fillMode = Arc2D.CHORD;
-         strokeMode = Arc2D.CHORD;
-      }
-
-      if (this.fill) {
-         this.arc.setArc(x, y, w, h, c, d, fillMode);
-         this.fillShape(this.arc);
-      }
-      if (this.stroke) {
-         this.arc.setArc(x, y, w, h, c, d, strokeMode);
-         this.strokeShape(this.arc);
-      }
-   }
-
-   /**
-    * Calculates the color channels from four input channels.
-    * The manner in which the first three are interpreted
-    * depends on color mode.
-    *
-    * @param x
-    *           the first color channel, hue or red
-    * @param y
-    *           the second color channel, saturation or green
-    * @param z
-    *           the third color channel, brightness or blue
-    * @param a
-    *           the alpha channel
-    */
-   @Override
-   protected void colorCalc (
-         final float x,
-         final float y,
-         final float z,
-         final float a ) {
-
-      this.calcG = Utils.clamp01(
-            y * this.invColorModeY);
-      this.calcB = Utils.clamp01(
-            z * this.invColorModeZ);
-      this.calcA = Utils.clamp01(
-            a * this.invColorModeA);
-
-      switch (this.colorMode) {
-
-         case HSB:
-
-            this.calcR = x * this.invColorModeX;
-
-            Color.hsbaToRgba(
-                  this.calcR,
-                  this.calcG,
-                  this.calcB,
-                  this.calcA,
-                  this.aTemp);
-
-            this.calcR = this.aTemp.x;
-            this.calcG = this.aTemp.y;
-            this.calcB = this.aTemp.z;
-
-            break;
-
-         case RGB:
-
-         default:
-
-            this.calcR = Utils.clamp01(
-                  x * this.invColorModeX);
-
-      }
-
-      this.calcRi = (int) (this.calcR * 255.0f + 0.5f);
-      this.calcGi = (int) (this.calcG * 255.0f + 0.5f);
-      this.calcBi = (int) (this.calcB * 255.0f + 0.5f);
-      this.calcAi = (int) (this.calcA * 255.0f + 0.5f);
-
-      this.calcColor = this.calcAi << 0x18
-            | this.calcRi << 0x10
-            | this.calcGi << 0x8
-            | this.calcBi;
-      this.calcAlpha = this.calcAi != 255;
-   }
-
-   /**
-    * Calculates a color and
-    *
-    * @param argb
-    *           the color in hexadecimal
-    * @param alpha
-    *           the alpha channel
-    */
-   @Override
-   protected void colorCalcARGB (
-         final int argb,
-         final float alpha ) {
-
-      if (alpha == this.colorModeA) {
-         this.calcAi = argb >> 24 & 0xff;
-         this.calcColor = argb;
-      } else {
-         this.calcAi = (int) ((argb >> 24 & 0xff)
-               * Utils.clamp01(alpha * this.invColorModeA));
-         this.calcColor = this.calcAi << 24 | argb & 0xffffff;
-      }
-
-      this.calcRi = argb >> 0x10 & 0xff;
-      this.calcGi = argb >> 0x8 & 0xff;
-      this.calcBi = argb & 0xff;
-
-      this.calcA = this.calcAi * IUtils.ONE_255;
-      this.calcR = this.calcRi * IUtils.ONE_255;
-      this.calcG = this.calcGi * IUtils.ONE_255;
-      this.calcB = this.calcBi * IUtils.ONE_255;
-
-      this.calcAlpha = this.calcAi != 255;
-   }
-
-   /**
-    * Initializes the curve basis matrix.
-    */
-   @Override
-   protected void curveInit () {
-
-      if (this.curveDrawMatrix == null) {
-         this.curveBasisMatrix = new PMatrix3D();
-         this.curveDrawMatrix = new PMatrix3D();
-         this.curveInited = true;
-      }
-
-      final float s = this.curveTightness;
-      final float t = (s - 1.0f) * 0.5f;
-      final float u = 1.0f - s;
-      final float v = u * 0.5f;
-      this.curveBasisMatrix.set(
-            t, (s + 3.0f) * 0.5f, (-3.0f - s) * 0.5f, v,
-            u, (-5.0f - s) * 0.5f, s + 2.0f, t,
-            t, 0.0f, v, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f);
-
-      this.splineForward(this.curveDetail, this.curveDrawMatrix);
-
-      if (this.bezierBasisInverse == null) {
-         this.bezierBasisInverse = new PMatrix3D(this.bezierBasisMatrix);
-         this.bezierBasisInverse.invert();
-
-         this.curveToBezierMatrix = new PMatrix3D();
-      }
-
-      this.curveToBezierMatrix.set(this.curveBasisMatrix);
-      this.curveToBezierMatrix.preApply(this.bezierBasisInverse);
-      this.curveDrawMatrix.apply(this.curveBasisMatrix);
-   }
-
-   /**
-    * Sets the renderer's default styling.
-    */
-   @Override
-   protected void defaultSettings () {
-
-      super.defaultSettings();
-      this.colorMode(PConstants.RGB, IUp.DEFAULT_COLOR_MAX);
-      this.fill(IUp.DEFAULT_FILL_COLOR);
-      this.stroke(IUp.DEFAULT_STROKE_COLOR);
-
-      this.strokeWeight(IUp.DEFAULT_STROKE_WEIGHT);
-      this.strokeJoin(PConstants.ROUND);
-      this.strokeCap(PConstants.ROUND);
-      this.stroke = false;
-
-      this.shape = 0;
-
-      this.rectMode(PConstants.CENTER);
-      this.ellipseMode(PConstants.CENTER);
-      this.imageMode(PConstants.CENTER);
-      this.shapeMode(PConstants.CENTER);
-
-      this.autoNormal = true;
-      this.textFont = null;
-      this.textSize = IUp.DEFAULT_TEXT_SIZE;
-      this.textLeading = IUp.DEFAULT_TEXT_LEADING;
-      this.textAlign = PConstants.CENTER;
-      this.textAlignY = PConstants.CENTER;
-      this.textMode = PConstants.MODEL;
-
-      if (this.primaryGraphics) {
-         this.background(IUp.DEFAULT_BKG_COLOR);
-      }
-
-      this.blendMode(PConstants.BLEND);
-
-      this.settingsInited = true;
-      this.reapplySettings = false;
-   }
-
-   /**
-    * The rounded corner rectangle implementation. The meaning
-    * of the first four parameters depends on rectMode.
-    *
-    * @param a
-    *           the first x parameter
-    * @param b
-    *           the first y parameter
-    * @param c
-    *           the second x parameter
-    * @param d
-    *           the second y parameter
-    * @param tl
-    *           the top-left corner rounding
-    * @param tr
-    *           the top-right corner rounding
-    * @param br
-    *           the bottom-right corner rounding
-    * @param bl
-    *           the bottom-left corner rounding
-    */
-   @Override
-   protected void rectImpl (
-         final float a, final float b,
-         final float c, final float d,
-
-         float tl, float tr,
-         float br, float bl ) {
-
-      float x1 = 0.0f;
-      float y1 = 0.0f;
-      float x2 = 0.0f;
-      float y2 = 0.0f;
-
-      float w = 0.0f;
-      float h = 0.0f;
-
-      switch (this.rectMode) {
-
-         case CORNER:
-
-            w = Utils.abs(c);
-            h = Utils.abs(d);
-
-            x1 = a;
-            y2 = b - h;
-            x2 = a + w;
-            y1 = b;
-
-            break;
-
-         case CORNERS:
-
-            w = Utils.abs(c - a);
-            h = Utils.abs(b - d);
-
-            x1 = Utils.min(a, c);
-            x2 = Utils.max(a, c);
-
-            y2 = Utils.min(b, d);
-            y1 = Utils.max(b, d);
-
-            break;
-
-         case RADIUS:
-
-            w = Utils.abs(c);
-            h = Utils.abs(d);
-
-            x1 = a - w;
-            x2 = a + w;
-            y1 = b + h;
-            y2 = b - h;
-
-            break;
-
-         case CENTER:
-
-         default:
-
-            w = Utils.abs(c);
-            h = Utils.abs(d);
-
-            x1 = a - w * 0.5f;
-            x2 = a + w * 0.5f;
-            y1 = b + h * 0.5f;
-            y2 = b - h * 0.5f;
-      }
-
-      final float limit = Utils.min(w, h) * 0.5f;
-      tl = Utils.clamp(tl, PConstants.EPSILON, limit);
-      tr = Utils.clamp(tr, PConstants.EPSILON, limit);
-      br = Utils.clamp(br, PConstants.EPSILON, limit);
-      bl = Utils.clamp(bl, PConstants.EPSILON, limit);
-
-      this.gp.reset();
-      this.gp.moveTo(x2 - tr, y1);
-      this.gp.quadTo(x2, y1, x2, y1 - tr);
-      this.gp.lineTo(x2, y2 + br);
-      this.gp.quadTo(x2, y2, x2 - br, y2);
-      this.gp.lineTo(x1 + bl, y2);
-      this.gp.quadTo(x1, y2, x1, y2 + bl);
-      this.gp.lineTo(x1, y1 - tl);
-      this.gp.quadTo(x1, y1, x1 + tl, y1);
-      this.gp.closePath();
-      this.drawShape(this.gp);
-   }
-
-   /**
-    * Displays a character in the sketch.
-    *
-    * @param ch
-    *           the character
-    * @param x
-    *           the location x
-    * @param y
-    *           the location y
-    */
-   @Override
-   protected void textCharImpl (
-         final char ch,
-         final float x,
-         final float y ) {
-
-      final PFont.Glyph glyph = this.textFont.getGlyph(ch);
-      if (glyph != null) {
-         final float szInv = 1.0f / this.textFont.getSize();
-         final float wGlyph = glyph.width * szInv;
-         final float hGlyph = glyph.height * szInv;
-         final float lextent = glyph.leftExtent * szInv;
-         final float textent = glyph.topExtent * szInv;
-
-         final float x0 = x + lextent * this.textSize;
-         final float x1 = x0 + wGlyph * this.textSize;
-
-         final float y0 = y + textent * this.textSize;
-         final float y1 = y0 - hGlyph * this.textSize;
-
-         this.textCharModelImpl(
-               glyph.image,
-               x0, y0, x1, y1,
-               glyph.width, glyph.height);
-
-      }
-   }
-
-   /**
-    * Draws an image representing a glyph from a font.
-    *
-    * @param glyph
-    *           the glyph image
-    * @param x1
-    *           the first x coordinate
-    * @param y1
-    *           the first y coordinate
-    * @param x2
-    *           the second x coordinate
-    * @param y2
-    *           the second y coordinate
-    * @param u
-    *           the u coordinate
-    * @param v
-    *           the v coordinate
-    */
-   @Override
-   protected void textCharModelImpl (
-         final PImage glyph,
-         final float x1, final float y1,
-         final float x2, final float y2,
-         final int u, final int v ) {
-
-      final boolean savedTint = this.tint;
-      final int savedTintColor = this.tintColor;
-      final float savedTintR = this.tintR;
-      final float savedTintG = this.tintG;
-      final float savedTintB = this.tintB;
-      final float savedTintA = this.tintA;
-      final boolean savedTintAlpha = this.tintAlpha;
-
-      this.tint = true;
-      this.tintColor = this.fillColor;
-      this.tintR = this.fillR;
-      this.tintG = this.fillG;
-      this.tintB = this.fillB;
-      this.tintA = this.fillA;
-      this.tintAlpha = this.fillAlpha;
-
-      final int oldImgMd = this.imageMode;
-      this.imageMode = PConstants.CORNERS;
-      this.image(glyph,
-            x1, y1, x2, y2,
-            0, 0, u, v);
-      this.imageMode = oldImgMd;
-
-      // final int rgb = this.fillColor & 0x00ffffff;
-      // glim.loadPixels();
-      // final int[] px = glim.pixels;
-      // final int len = px.length;
-      // for (int i = 0; i < len; ++i) {
-      // px[i] = ((px[i] << 0x18) &
-      // this.fillAi) | rgb;
-      // }
-      // glim.updatePixels();
-      // glim.format = ARGB;
-      // this.g2.drawImage(
-      // (Image) glim.getNative(),
-      // (int) x1, (int) y1, (int) x2, (int) y2,
-      // 0, 0, glim.width, glim.height, null);
-
-      this.tint = savedTint;
-      this.tintColor = savedTintColor;
-      this.tintR = savedTintR;
-      this.tintG = savedTintG;
-      this.tintB = savedTintB;
-      this.tintA = savedTintA;
-      this.tintAlpha = savedTintAlpha;
-   }
-
-   /**
-    * Helper function for text with multiple lines. Handles the
-    * horizontal display of a character along a line.
-    *
-    * @param buffer
-    *           the array of characters
-    * @param start
-    *           the start index, inclusive
-    * @param stop
-    *           the stop index, exclusive
-    * @param x
-    *           the horizontal location
-    * @param y
-    *           the vertical location
-    */
-   @Override
-   protected void textLineImpl (
-         final char[] buffer,
-         final int start,
-         final int stop,
-         final float x, final float y ) {
-
-      float cursor = x;
-      for (int index = start; index < stop; ++index) {
-         final char c = buffer[index];
-         this.textCharImpl(c, cursor, y);
-         cursor += this.textWidth(c);
-      }
    }
 }

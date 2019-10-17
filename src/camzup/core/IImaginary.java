@@ -29,7 +29,7 @@ public interface IImaginary
 
    /**
     * Gets the number of components held by the complex number.
-    * 
+    *
     * @return the size
     */
    public abstract int size ();

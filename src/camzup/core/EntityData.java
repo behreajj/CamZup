@@ -21,7 +21,7 @@ public abstract class EntityData implements IEntityData {
 
    /**
     * Constructs an entity data with a name.
-    * 
+    *
     * @param name
     *           the name
     */
@@ -33,7 +33,7 @@ public abstract class EntityData implements IEntityData {
    /**
     * Returns the entity data as a class simple name followed
     * by its name.
-    * 
+    *
     * @return the string
     */
    @Override

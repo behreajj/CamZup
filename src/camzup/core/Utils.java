@@ -35,9 +35,9 @@ public abstract class Utils implements IUtils {
        */
       @Override
       T apply (
-            final T origin, 
-            final T dest, 
-            final Float step, 
+            final T origin,
+            final T dest,
+            final Float step,
             T target );
    }
 
@@ -65,9 +65,9 @@ public abstract class Utils implements IUtils {
        * @return the eased object
        */
       @Override
-      T apply ( 
-            final T origin, 
-            final T dest, 
+      T apply (
+            final T origin,
+            final T dest,
             final Float step );
    }
 
@@ -457,6 +457,29 @@ public abstract class Utils implements IUtils {
       }
 
       /**
+       * A helper function which mutates protected fields a, b,
+       * diff, aLtb and aGtb. This mods the origin (a) and
+       * destination (b) by the range. It then finds the signed
+       * distance between the mod origin and destination (diff).
+       * Lastly, it evaluates which of the two is greater than the
+       * other, (aLtb) and (aGtb).
+       *
+       * @param origin
+       *           origin value
+       * @param dest
+       *           destination value
+       * @see Utils#mod(float, float)
+       */
+      protected void eval ( final float origin, final float dest ) {
+
+         this.a = Utils.mod(origin, this.range);
+         this.b = Utils.mod(dest, this.range);
+         this.diff = this.b - this.a;
+         this.aLtb = this.a < this.b;
+         this.aGtb = this.a > this.b;
+      }
+
+      /**
        * Applies the easing function. The abstract class's
        * implementation check to see if the step is out of bounds,
        * [0.0, 1.0] and if mod(origin, range) is equal to
@@ -532,29 +555,6 @@ public abstract class Utils implements IUtils {
       public String toString () {
 
          return this.getClass().getSimpleName();
-      }
-
-      /**
-       * A helper function which mutates protected fields a, b,
-       * diff, aLtb and aGtb. This mods the origin (a) and
-       * destination (b) by the range. It then finds the signed
-       * distance between the mod origin and destination (diff).
-       * Lastly, it evaluates which of the two is greater than the
-       * other, (aLtb) and (aGtb).
-       *
-       * @param origin
-       *           origin value
-       * @param dest
-       *           destination value
-       * @see Utils#mod(float, float)
-       */
-      protected void eval ( final float origin, final float dest ) {
-
-         this.a = Utils.mod(origin, this.range);
-         this.b = Utils.mod(dest, this.range);
-         this.diff = this.b - this.a;
-         this.aLtb = this.a < this.b;
-         this.aGtb = this.a > this.b;
       }
    }
 
@@ -1227,10 +1227,10 @@ public abstract class Utils implements IUtils {
     *           upper bound of destination range
     * @return the mapped value
     */
-   public static float map ( 
-         final float value, 
+   public static float map (
+         final float value,
          final float lbOrigin,
-         final float ubOrigin, 
+         final float ubOrigin,
          final float lbDest,
          final float ubDest ) {
 
@@ -1269,9 +1269,9 @@ public abstract class Utils implements IUtils {
     * @return the minimum value
     * @see Utils#max(float, float)
     */
-   public static float max ( 
-         final float a, 
-         final float b, 
+   public static float max (
+         final float a,
+         final float b,
          final float c ) {
 
       return Utils.max(Utils.max(a, b), c);
@@ -1305,9 +1305,9 @@ public abstract class Utils implements IUtils {
     * @return the minimum value
     * @see Utils#min(float, float)
     */
-   public static float min ( 
-         final float a, 
-         final float b, 
+   public static float min (
+         final float a,
+         final float b,
          final float c ) {
 
       return Utils.min(Utils.min(a, b), c);
@@ -1514,6 +1514,55 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * Eases between an origin and destination by a step in [0.0, 1.0].
+    * 
+    * @param origin the origin
+    * @param dest the destination
+    * @param step the step
+    * @return the eased value
+    */
+   public static float smootherStep (
+         final float origin,
+         final float dest,
+         final float step ) {
+
+      if (step <= 0.0f) {
+         return origin;
+      }
+      if (step >= 1.0f) {
+         return dest;
+      }
+
+      // TODO: Needs testing.
+      final float t = step * step * (step * (step * 6.0f - 15.0f) + 10.0f);
+      return (1.0f - t) * origin + t * dest;
+   }
+
+   /**
+    * Eases between an origin and destination by a step in [0.0, 1.0].
+    * 
+    * @param origin the origin
+    * @param dest the destination
+    * @param step the step
+    * @return the eased value
+    */
+   public static float smoothStep (
+         final float origin,
+         final float dest,
+         final float step ) {
+
+      if (step <= 0.0f) {
+         return origin;
+      }
+      if (step >= 1.0f) {
+         return dest;
+      }
+
+      final float t = step * step * (3.0f - (step + step));
+      return (1.0f - t) * origin + t * dest;
+   }
+
+   /**
     * Converts a float to a boolean, where 0.0 and NaN are
     * false; all other values are true.
     *
@@ -1555,12 +1604,12 @@ public abstract class Utils implements IUtils {
     * scientific notation, defers to
     * {@link Float#toString(float)} .</li>
     * </ul>
-    * 
+    *
     * Intended to serve as an alternative to
     * {@link String#format(String, Object...)}, which is very
     * slow, and DecimalFormat which extrapolates values beyond
     * the last decimal place.
-    * 
+    *
     * @param value
     *           the real number
     * @param places
@@ -1593,12 +1642,12 @@ public abstract class Utils implements IUtils {
       final float sign = Float.intBitsToFloat(raw & -2147483648 | 1065353216);
       final float abs = Float.intBitsToFloat(raw & 2147483647);
       final int trunc = (int) abs;
-      int len = 0;
       final StringBuilder sb = new StringBuilder(16);
 
       /**
        * Append integral to StringBuilder.
        */
+      int len = 0;
       if (sign < 0.0f) {
          sb.append('-').append(trunc);
          len = sb.length() - 1;

@@ -12,7 +12,7 @@ public class Ray3 extends Ray {
 
    /**
     * Finds the point at a given time on a ray.
-    * 
+    *
     * @param ray
     *           the ray
     * @param time
@@ -80,6 +80,27 @@ public class Ray3 extends Ray {
       this.set(origin, dir);
    }
 
+   protected boolean equals ( final Ray3 ray ) {
+
+      if (this.dir == null) {
+         if (ray.dir != null) {
+            return false;
+         }
+      } else if (!this.dir.equals(ray.dir)) {
+         return false;
+      }
+
+      if (this.origin == null) {
+         if (ray.origin != null) {
+            return false;
+         }
+      } else if (!this.origin.equals(ray.origin)) {
+         return false;
+      }
+
+      return true;
+   }
+
    @Override
    public Ray3 clone () {
 
@@ -136,33 +157,17 @@ public class Ray3 extends Ray {
    @Override
    public String toString () {
 
-      return new StringBuilder(196)
-            .append("{ origin: ")
-            .append(origin.toString())
-            .append(", dir: ")
-            .append(dir.toString())
-            .append(" }")
-            .toString();
+      return toString(4);
    }
 
-   protected boolean equals ( final Ray3 ray ) {
+   public String toString ( int places ) {
 
-      if (this.dir == null) {
-         if (ray.dir != null) {
-            return false;
-         }
-      } else if (!this.dir.equals(ray.dir)) {
-         return false;
-      }
-
-      if (this.origin == null) {
-         if (ray.origin != null) {
-            return false;
-         }
-      } else if (!this.origin.equals(ray.origin)) {
-         return false;
-      }
-
-      return true;
+      return new StringBuilder(196)
+            .append("{ origin: ")
+            .append(this.origin.toString(places))
+            .append(", dir: ")
+            .append(this.dir.toString(places))
+            .append(" }")
+            .toString();
    }
 }

@@ -27,7 +27,7 @@ public class Mesh2 extends Mesh {
 
       /**
        * Creates a face from an array of vertices.
-       * 
+       *
        * @param vertices
        *           the vertices
        */
@@ -38,7 +38,7 @@ public class Mesh2 extends Mesh {
 
       /**
        * Compares this face to another by hash code.
-       * 
+       *
        * @param face
        *           the comparisand
        * @return the comparison
@@ -53,7 +53,7 @@ public class Mesh2 extends Mesh {
 
       /**
        * Gets the system identity hash code.
-       * 
+       *
        * @return the hash code
        */
       @Override
@@ -128,7 +128,7 @@ public class Mesh2 extends Mesh {
       /**
        * Constructs a vertex from a coordinate and texture
        * coordinate.
-       * 
+       *
        * @param coord
        *           the coordinate
        * @param texCoord
@@ -141,7 +141,7 @@ public class Mesh2 extends Mesh {
 
       /**
        * Compares this vertex to another by hash code.
-       * 
+       *
        * @param vert
        *           the comparisand
        * @return the comparison
@@ -156,7 +156,7 @@ public class Mesh2 extends Mesh {
 
       /**
        * Gets the system identity hash code.
-       * 
+       *
        * @return the hash code
        */
       @Override
@@ -168,7 +168,7 @@ public class Mesh2 extends Mesh {
       /**
        * Sets the coordinate and texture coordinate of the vertex
        * by reference.
-       * 
+       *
        * @param coord
        *           the coordinate
        * @param texCoord
@@ -210,9 +210,9 @@ public class Mesh2 extends Mesh {
 
       final Vec2[] coords = mesh.coords;
 
-      int len = coords.length;
+      final int len = coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec2 coord = coords[i];
+         final Vec2 coord = coords[i];
          final float x = coord.x;
          final float y = coord.y;
 
@@ -381,11 +381,13 @@ public class Mesh2 extends Mesh {
 
       target.name = "Triangle";
 
-      final Vec2[] coords = new Vec2[] { new Vec2(0.0f, 0.5f),
+      final Vec2[] coords = new Vec2[] {
+            new Vec2(0.0f, 0.5f),
             new Vec2(-0.4330127f, -0.25f),
             new Vec2(0.4330127f, -0.25f) };
 
-      final Vec2[] texCoords = new Vec2[] { new Vec2(0.5f, 1.0f),
+      final Vec2[] texCoords = new Vec2[] {
+            new Vec2(0.5f, 1.0f),
             new Vec2(0.0669873f, 0.25f),
             new Vec2(0.9330127f, 0.25f) };
 
@@ -447,7 +449,9 @@ public class Mesh2 extends Mesh {
     * @param texCoords
     *           the texture coordinates array
     */
-   public Mesh2 ( final int[][][] faces, final Vec2[] coords,
+   public Mesh2 (
+         final int[][][] faces,
+         final Vec2[] coords,
          final Vec2[] texCoords ) {
 
       super();
@@ -479,7 +483,10 @@ public class Mesh2 extends Mesh {
     * @param texCoords
     *           the texture coordinates array
     */
-   public Mesh2 ( final String name, final int[][][] faces, final Vec2[] coords,
+   public Mesh2 (
+         final String name,
+         final int[][][] faces,
+         final Vec2[] coords,
          final Vec2[] texCoords ) {
 
       super(name);
@@ -514,10 +521,10 @@ public class Mesh2 extends Mesh {
 
       final int len0 = this.faces.length;
       final Face2[] result = new Face2[len0];
-      for (int i = 0, j; i < len0; ++i) {
+      for (int i = 0; i < len0; ++i) {
          final int len1 = this.faces[i].length;
          final Vert2[] verts = new Vert2[len1];
-         for (j = 0; j < len1; ++j) {
+         for (int j = 0; j < len1; ++j) {
             verts[j] = this.getVertex(i, j, new Vert2());
          }
          result[i] = new Face2(verts);
@@ -580,9 +587,11 @@ public class Mesh2 extends Mesh {
    @Chainable
    public Mesh2 rotateZ ( final float radians ) {
 
+      final float cosa = (float) Math.cos(radians);
+      final float sina = (float) Math.sin(radians);
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec2.rotateZ(this.coords[i], radians, this.coords[i]);
+         Vec2.rotateZ(this.coords[i], cosa, sina, this.coords[i]);
       }
       return this;
    }
@@ -635,13 +644,83 @@ public class Mesh2 extends Mesh {
     * @return this mesh
     */
    @Chainable
-   public Mesh2 set ( final int[][][] faces, final Vec2[] coords,
+   public Mesh2 set ( 
+         final int[][][] faces, 
+         final Vec2[] coords,
          final Vec2[] texCoords ) {
 
       this.faces = faces;
       this.coords = coords;
       this.texCoords = texCoords;
       return this;
+   }
+
+   /**
+    * Renders the mesh as a string following the Wavefront OBJ
+    * file format.
+    *
+    * @return the string
+    */
+   public String toObjString () {
+
+      // TODO: Needs testing.
+      final int coordsLen = this.coords.length;
+      final int texCoordsLen = this.texCoords.length;
+      final int facesLen = this.faces.length;
+      final StringBuilder result = new StringBuilder();
+
+      /**
+       * Append a comment listing the number of coordinates,
+       * texture coordinates, normals and faces.
+       */
+      result.append("# v: ")
+            .append(coordsLen)
+            .append(", vt: ")
+            .append(texCoordsLen)
+            .append(", vn: ")
+            .append(1)
+            .append(", f: ")
+            .append(facesLen).append("\n \n");
+
+      result.append("o ")
+            .append(this.name)
+            .append("\n \n");
+
+      for (final Vec2 coord : this.coords) {
+         result.append("v ")
+               .append(coord.toObjString())
+               .append(" 0.0 ")
+               .append('\n');
+      }
+      result.append(" \n");
+
+      for (final Vec2 texCoord : this.texCoords) {
+         result.append("vt ")
+               .append(texCoord.toObjString())
+               .append('\n');
+      }
+      result.append('\n');
+
+      result.append("vn 0.0 0.0 1.0 \n");
+
+      for (int i = 0; i < facesLen; ++i) {
+         final int[][] face = this.faces[i];
+         final int vLen = face.length;
+         result.append("f ");
+         for (int j = 0; j < vLen; ++j) {
+
+            // Indices in an .obj file start at 1, not 0.
+            final int[] vert = face[j];
+            result.append(vert[0] + 1)
+                  .append('/').append(vert[1] + 1)
+                  .append('/')
+                  .append(vert[2] + 1)
+                  .append(' ');
+         }
+         result.append('\n');
+      }
+      result.append('\n');
+      return result.toString();
    }
 
    /**
@@ -662,12 +741,16 @@ public class Mesh2 extends Mesh {
          final int flen1 = f.length;
 
          Vec2 v = vs[f[0][0]];
-         result.append("<path d=\"M ").append(v.toSvgString()).append(" ");
+         result.append("<path d=\"M ")
+               .append(v.toSvgString())
+               .append(' ');
 
          for (int j = 1; j < flen1; ++j) {
             v = vs[f[j][0]];
 
-            result.append("L ").append(v.toSvgString()).append(" ");
+            result.append("L ")
+                  .append(v.toSvgString())
+                  .append(' ');
          }
          result.append("Z\"></path>\n");
       }
@@ -691,59 +774,5 @@ public class Mesh2 extends Mesh {
          Vec2.add(this.coords[i], v, this.coords[i]);
       }
       return this;
-   }
-
-   /**
-    * Renders the mesh as a string following the Wavefront OBJ
-    * file format.
-    *
-    * @return the string
-    */
-   public String toObjString () {
-
-      // TODO: Needs testing.
-      final int coordsLen = this.coords.length;
-      final int texCoordsLen = this.texCoords.length;
-      final int facesLen = this.faces.length;
-      final StringBuilder result = new StringBuilder();
-
-      /**
-       * Append a comment listing the number of coordinates,
-       * texture coordinates, normals and faces.
-       */
-      result.append("# v: ").append(coordsLen).append(", vt: ")
-            .append(texCoordsLen).append(", vn: ").append(1)
-            .append(", f: ").append(facesLen).append("\n \n");
-
-      result.append("o ").append(this.name).append("\n \n");
-
-      for (final Vec2 coord : this.coords) {
-         result.append("v ").append(coord.toObjString()).append(" 0.0 ")
-               .append("\n");
-      }
-      result.append(" \n");
-
-      for (final Vec2 texCoord : this.texCoords) {
-         result.append("vt ").append(texCoord.toObjString()).append("\n");
-      }
-      result.append(" \n");
-
-      result.append("vn 0.0 0.0 1.0 \n");
-
-      for (int i = 0; i < facesLen; ++i) {
-         final int[][] face = this.faces[i];
-         final int vLen = face.length;
-         result.append("f ");
-         for (int j = 0; j < vLen; ++j) {
-
-            // Indices in an .obj file start at 1, not 0.
-            final int[] vert = face[j];
-            result.append(vert[0] + 1).append("/").append(vert[1] + 1)
-                  .append("/").append(vert[2] + 1).append(" ");
-         }
-         result.append("\n");
-      }
-      result.append(" \n");
-      return result.toString();
    }
 }

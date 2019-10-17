@@ -16,7 +16,7 @@ public abstract class Material extends EntityData implements IMaterial {
 
    /**
     * Creates a material with a name.
-    * 
+    *
     * @param name
     *           the name
     */

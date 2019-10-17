@@ -8,11 +8,11 @@ public class Ray2 extends Ray {
    /**
     * The unique identification for serialized classes.
     */
-   private static final long serialVersionUID = -2117690919294339509L;
+   private static final long serialVersionUID = -2117690919294339509l;
 
    /**
     * Finds the point at a given time on a ray.
-    * 
+    *
     * @param ray
     *           the ray
     * @param time
@@ -45,7 +45,7 @@ public class Ray2 extends Ray {
             origin.x + dir.x * scalar,
             origin.y + dir.y * scalar);
    }
-
+   
    /**
     * The ray's direction.
     */
@@ -73,6 +73,27 @@ public class Ray2 extends Ray {
 
       super();
       this.set(origin, dir);
+   }
+
+   protected boolean equals ( final Ray2 ray ) {
+
+      if (this.dir == null) {
+         if (ray.dir != null) {
+            return false;
+         }
+      } else if (!this.dir.equals(ray.dir)) {
+         return false;
+      }
+
+      if (this.origin == null) {
+         if (ray.origin != null) {
+            return false;
+         }
+      } else if (!this.origin.equals(ray.origin)) {
+         return false;
+      }
+
+      return true;
    }
 
    @Override
@@ -131,33 +152,17 @@ public class Ray2 extends Ray {
    @Override
    public String toString () {
 
-      return new StringBuilder(132)
-            .append("{ origin: ")
-            .append(origin.toString())
-            .append(", dir: ")
-            .append(dir.toString())
-            .append(" }")
-            .toString();
+      return toString(4);
    }
 
-   protected boolean equals ( final Ray2 ray ) {
+   public String toString ( int places ) {
 
-      if (this.dir == null) {
-         if (ray.dir != null) {
-            return false;
-         }
-      } else if (!this.dir.equals(ray.dir)) {
-         return false;
-      }
-
-      if (this.origin == null) {
-         if (ray.origin != null) {
-            return false;
-         }
-      } else if (!this.origin.equals(ray.origin)) {
-         return false;
-      }
-
-      return true;
+      return new StringBuilder(132)
+            .append("{ origin: ")
+            .append(this.origin.toString(places))
+            .append(", dir: ")
+            .append(this.dir.toString(places))
+            .append(" }")
+            .toString();
    }
 }

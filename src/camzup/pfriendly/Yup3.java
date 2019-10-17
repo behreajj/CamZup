@@ -88,6 +88,24 @@ public class Yup3 extends Up3 {
    }
 
    /**
+    * Sets default camera location and calls the camera
+    * function.
+    *
+    * @see PGraphicsOpenGL#defCameraX
+    * @see PGraphicsOpenGL#defCameraY
+    * @see PGraphicsOpenGL#defCameraZ
+    */
+   @Override
+   protected void defaultCamera () {
+
+      this.defCameraX = Yup3.DEFAULT_LOC_X;
+      this.defCameraY = Yup3.DEFAULT_LOC_Y;
+      this.defCameraZ = Yup3.DEFAULT_LOC_Z;
+
+      this.camera();
+   }
+
+   /**
     * Creates a camera that looks at a default location and a
     * vantage point based on the renderer's height.
     */
@@ -316,24 +334,6 @@ public class Yup3 extends Up3 {
 
       super.setSize(iwidth, iheight);
       this.ortho();
-      this.camera();
-   }
-
-   /**
-    * Sets default camera location and calls the camera
-    * function.
-    *
-    * @see PGraphicsOpenGL#defCameraX
-    * @see PGraphicsOpenGL#defCameraY
-    * @see PGraphicsOpenGL#defCameraZ
-    */
-   @Override
-   protected void defaultCamera () {
-
-      this.defCameraX = Yup3.DEFAULT_LOC_X;
-      this.defCameraY = Yup3.DEFAULT_LOC_Y;
-      this.defCameraZ = Yup3.DEFAULT_LOC_Z;
-
       this.camera();
    }
 }

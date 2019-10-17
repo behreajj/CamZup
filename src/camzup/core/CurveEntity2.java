@@ -1,7 +1,6 @@
 package camzup.core;
 
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * An entity which contains a transform that is applied to a
@@ -13,12 +12,12 @@ public class CurveEntity2 extends Entity {
    /**
     * The list of curves held by the entity.
     */
-   public final List < Curve2 > curves = new LinkedList <>();
+   public final LinkedList < Curve2 > curves = new LinkedList <>();
 
    /**
     * The list of materials held by the entity.
     */
-   public final List < MaterialSolid > materials = new LinkedList <>();
+   public final LinkedList < MaterialSolid > materials = new LinkedList <>();
 
    /**
     * The entity's transform.
@@ -55,7 +54,7 @@ public class CurveEntity2 extends Entity {
    /**
     * Creates a curve entity from a name, transform and list of
     * curves.
-    * 
+    *
     * @param name
     *           the name
     * @param transform
@@ -78,7 +77,7 @@ public class CurveEntity2 extends Entity {
    /**
     * Creates a curve entity from a transform and list of
     * curve.
-    * 
+    *
     * @param transform
     *           the transform
     * @param curves
@@ -97,7 +96,7 @@ public class CurveEntity2 extends Entity {
 
    /**
     * Appends a curve to this curve entity.
-    * 
+    *
     * @param curve
     *           the curve
     * @return this curve entity
@@ -113,7 +112,7 @@ public class CurveEntity2 extends Entity {
 
    /**
     * Appends a list of curves to this curve entity.
-    * 
+    *
     * @param curves
     *           the curves
     * @return this curve entity
@@ -130,7 +129,7 @@ public class CurveEntity2 extends Entity {
 
    /**
     * Appends a material to this curve entity.
-    * 
+    *
     * @param material
     *           the material
     * @return this curve entity
@@ -146,7 +145,7 @@ public class CurveEntity2 extends Entity {
 
    /**
     * Appends a list of materials to this curve entity.
-    * 
+    *
     * @param materials
     *           the list of materials
     * @return this curve entity
@@ -166,7 +165,7 @@ public class CurveEntity2 extends Entity {
     * Evaluates a step in the range [0.0, 1.0] for curve,
     * returning a coordinate on the curve and a tangent. The
     * tangent will be normalized, to be of unit length.
-    * 
+    *
     * @param curveIndex
     *           the curve index
     * @param step
@@ -194,7 +193,7 @@ public class CurveEntity2 extends Entity {
     * Evaluates a step in the range [0.0, 1.0] for curve,
     * returning a coordinate on the curve and a tangent. The
     * tangent will be normalized, to be of unit length.
-    * 
+    *
     * @param curveIndex
     *           the curve index
     * @param step
@@ -229,7 +228,7 @@ public class CurveEntity2 extends Entity {
    /**
     * Creates a string representing a group node in the SVG
     * format.
-    * 
+    *
     * @return the string
     */
    public String toSvgString () {

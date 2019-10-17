@@ -163,7 +163,9 @@ public class Mesh3 extends Mesh {
        * @return this vertex
        */
       @Chainable
-      public Vert3 set ( final Vec3 coord, final Vec2 texCoord,
+      public Vert3 set ( 
+            final Vec3 coord, 
+            final Vec2 texCoord,
             final Vec3 normal ) {
 
          this.coord = coord;
@@ -171,6 +173,25 @@ public class Mesh3 extends Mesh {
          this.normal = normal;
          return this;
       }
+   }
+
+   /**
+    * A helper function for parsing an OBJ file. Attempts to
+    * convert a string to an integer.
+    *
+    * @param i
+    *           the string
+    * @return the integer
+    */
+   protected static int intFromStr ( final String i ) {
+
+      int target = 0;
+      try {
+         target = Integer.parseInt(i);
+      } catch (final NumberFormatException e) {
+         target = 0;
+      }
+      return target;
    }
 
    /**
@@ -196,9 +217,9 @@ public class Mesh3 extends Mesh {
 
       final Vec3[] coords = mesh.coords;
 
-      int len = coords.length;
+      final int len = coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec3 coord = coords[i];
+         final Vec3 coord = coords[i];
          final float x = coord.x;
          final float y = coord.y;
          final float z = coord.z;
@@ -427,12 +448,16 @@ public class Mesh3 extends Mesh {
 
       target.name = "Rectangle";
 
-      final Vec3[] coords = new Vec3[] { new Vec3(+0.5f, +0.5f, 0.0f),
+      final Vec3[] coords = new Vec3[] {
+            new Vec3(+0.5f, +0.5f, 0.0f),
             new Vec3(-0.5f, +0.5f, 0.0f),
-            new Vec3(-0.5f, -0.5f, 0.0f), new Vec3(+0.5f, -0.5f, 0.0f) };
+            new Vec3(-0.5f, -0.5f, 0.0f),
+            new Vec3(+0.5f, -0.5f, 0.0f) };
 
-      final Vec2[] texCoords = new Vec2[] { new Vec2(1.0f, 1.0f),
-            new Vec2(0.0f, 1.0f), new Vec2(0.0f, 0.0f),
+      final Vec2[] texCoords = new Vec2[] {
+            new Vec2(1.0f, 1.0f),
+            new Vec2(0.0f, 1.0f),
+            new Vec2(0.0f, 0.0f),
             new Vec2(1.0f, 0.0f) };
 
       final int[][][] faces = new int[][][] {
@@ -455,11 +480,13 @@ public class Mesh3 extends Mesh {
 
       target.name = "Triangle";
 
-      final Vec3[] coords = new Vec3[] { new Vec3(+0.0f, +0.5f, 0.0f),
+      final Vec3[] coords = new Vec3[] {
+            new Vec3(+0.0f, +0.5f, 0.0f),
             new Vec3(-0.4330127f, -0.25f, 0.0f),
             new Vec3(+0.4330127f, -0.25f, 0.0f) };
 
-      final Vec2[] texCoords = new Vec2[] { new Vec2(0.5f, 1.0f),
+      final Vec2[] texCoords = new Vec2[] {
+            new Vec2(0.5f, 1.0f),
             new Vec2(0.0669873f, 0.25f),
             new Vec2(0.9330127f, 0.25f) };
 
@@ -510,6 +537,8 @@ public class Mesh3 extends Mesh {
          for (int lon = 0; lon <= lons; lon++) {
             final float u = lon * toU;
             final float theta = (lon == lons ? 0.0f : lon) * toTheta;
+            
+            //TODO: Precalculate in a separate loop?
             final float cosTheta = (float) Math.cos(theta);
             final float sinTheta = (float) Math.sin(theta);
 
@@ -525,7 +554,7 @@ public class Mesh3 extends Mesh {
          }
       }
 
-      final int[][][] faces = new int[coordsLen * 2][3][3];
+      final int[][][] faces = new int[coordsLen + coordsLen][3][3];
       int i = 0;
 
       // Top Cap
@@ -578,25 +607,6 @@ public class Mesh3 extends Mesh {
 
       target.name = "UV Sphere";
       target.set(faces, coords, texCoords, normals);
-      return target;
-   }
-
-   /**
-    * A helper function for parsing an OBJ file. Attempts to
-    * convert a string to an integer.
-    *
-    * @param i
-    *           the string
-    * @return the integer
-    */
-   protected static int intFromStr ( final String i ) {
-
-      int target = 0;
-      try {
-         target = Integer.parseInt(i);
-      } catch (final NumberFormatException e) {
-         target = 0;
-      }
       return target;
    }
 
@@ -694,7 +704,10 @@ public class Mesh3 extends Mesh {
     * @param normals
     *           the normals array
     */
-   public Mesh3 ( final String name, final int[][][] faces, final Vec3[] coords,
+   public Mesh3 ( 
+         final String name, 
+         final int[][][] faces, 
+         final Vec3[] coords,
          final Vec2[] texCoords,
          final Vec3[] normals ) {
 
@@ -730,10 +743,10 @@ public class Mesh3 extends Mesh {
 
       final int len0 = this.faces.length;
       final Face3[] result = new Face3[len0];
-      for (int i = 0, j; i < len0; ++i) {
+      for (int i = 0; i < len0; ++i) {
          final int len1 = this.faces[i].length;
          final Vert3[] verts = new Vert3[len1];
-         for (j = 0; j < len1; ++j) {
+         for (int j = 0; j < len1; ++j) {
             verts[j] = this.getVertex(i, j, new Vert3());
          }
          result[i] = new Face3(verts);
@@ -752,7 +765,10 @@ public class Mesh3 extends Mesh {
     *           the output vertex
     * @return the vertex
     */
-   public Vert3 getVertex ( final int i, final int j, final Vert3 target ) {
+   public Vert3 getVertex ( 
+         final int i, 
+         final int j, 
+         final Vert3 target ) {
 
       final int[] vert = this.faces[i][j];
       return target.set(this.coords[vert[0]], this.texCoords[vert[1]],
@@ -800,9 +816,11 @@ public class Mesh3 extends Mesh {
    public Mesh3 rotate ( final float radians, final Vec3 axis ) {
 
       final int len = this.coords.length;
+      final float cosa = (float) Math.cos(radians);
+      final float sina = (float) Math.sin(radians);
       for (int i = 0; i < len; ++i) {
-         Vec3.rotate(this.coords[i], radians, axis, this.coords[i]);
-         Vec3.rotate(this.normals[i], radians, axis, this.normals[i]);
+         Vec3.rotate(this.coords[i], cosa, sina, axis, this.coords[i]);
+         Vec3.rotate(this.normals[i], cosa, sina, axis, this.normals[i]);
       }
       return this;
    }
@@ -820,9 +838,11 @@ public class Mesh3 extends Mesh {
    public Mesh3 rotateX ( final float radians ) {
 
       final int len = this.coords.length;
+      final float cosa = (float) Math.cos(radians);
+      final float sina = (float) Math.sin(radians);
       for (int i = 0; i < len; ++i) {
-         Vec3.rotateX(this.coords[i], radians, this.coords[i]);
-         Vec3.rotateX(this.normals[i], radians, this.normals[i]);
+         Vec3.rotateX(this.coords[i], cosa, sina, this.coords[i]);
+         Vec3.rotateX(this.normals[i], cosa, sina, this.normals[i]);
       }
       return this;
    }
@@ -840,9 +860,11 @@ public class Mesh3 extends Mesh {
    public Mesh3 rotateY ( final float radians ) {
 
       final int len = this.coords.length;
+      final float cosa = (float) Math.cos(radians);
+      final float sina = (float) Math.sin(radians);
       for (int i = 0; i < len; ++i) {
-         Vec3.rotateY(this.coords[i], radians, this.coords[i]);
-         Vec3.rotateY(this.normals[i], radians, this.normals[i]);
+         Vec3.rotateY(this.coords[i], cosa, sina, this.coords[i]);
+         Vec3.rotateY(this.normals[i], cosa, sina, this.normals[i]);
       }
       return this;
    }
@@ -860,9 +882,11 @@ public class Mesh3 extends Mesh {
    public Mesh3 rotateZ ( final float radians ) {
 
       final int len = this.coords.length;
+      final float cosa = (float) Math.cos(radians);
+      final float sina = (float) Math.sin(radians);
       for (int i = 0; i < len; ++i) {
-         Vec3.rotateZ(this.coords[i], radians, this.coords[i]);
-         Vec3.rotateZ(this.normals[i], radians, this.normals[i]);
+         Vec3.rotateZ(this.coords[i], cosa, sina, this.coords[i]);
+         Vec3.rotateZ(this.normals[i], cosa, sina, this.normals[i]);
       }
       return this;
    }
@@ -916,8 +940,11 @@ public class Mesh3 extends Mesh {
     * @return this mesh
     */
    @Chainable
-   public Mesh3 set ( final int[][][] faces, final Vec3[] coords,
-         final Vec2[] texCoords, final Vec3[] normals ) {
+   public Mesh3 set ( 
+         final int[][][] faces, 
+         final Vec3[] coords,
+         final Vec2[] texCoords, 
+         final Vec3[] normals ) {
 
       this.faces = faces;
       this.coords = coords;
@@ -944,26 +971,40 @@ public class Mesh3 extends Mesh {
        * Append a comment listing the number of coordinates,
        * texture coordinates, normals and faces.
        */
-      result.append("# v: ").append(coordsLen).append(", vt: ")
-            .append(texCoordsLen).append(", vn: ").append(normalsLen)
-            .append(", f: ").append(facesLen).append("\n \n");
+      result.append("# v: ")
+            .append(coordsLen)
+            .append(", vt: ")
+            .append(texCoordsLen)
+            .append(", vn: ")
+            .append(normalsLen)
+            .append(", f: ")
+            .append(facesLen)
+            .append("\n \n");
 
-      result.append("o ").append(this.name).append("\n \n");
+      result.append("o ")
+            .append(this.name)
+            .append("\n \n");
 
       for (final Vec3 coord : this.coords) {
-         result.append("v ").append(coord.toObjString()).append("\n");
+         result.append("v ")
+               .append(coord.toObjString())
+               .append('\n');
       }
-      result.append(" \n");
+      result.append('\n');
 
       for (final Vec2 texCoord : this.texCoords) {
-         result.append("vt ").append(texCoord.toObjString()).append("\n");
+         result.append("vt ")
+               .append(texCoord.toObjString())
+               .append('\n');
       }
-      result.append(" \n");
+      result.append('\n');
 
       for (final Vec3 normal : this.normals) {
-         result.append("vn ").append(normal.toObjString()).append("\n");
+         result.append("vn ")
+               .append(normal.toObjString())
+               .append('\n');
       }
-      result.append(" \n");
+      result.append('\n');
 
       for (int i = 0; i < facesLen; ++i) {
          final int[][] face = this.faces[i];
@@ -973,12 +1014,16 @@ public class Mesh3 extends Mesh {
 
             // Indices in an .obj file start at 1, not 0.
             final int[] vert = face[j];
-            result.append(vert[0] + 1).append("/").append(vert[1] + 1)
-                  .append("/").append(vert[2] + 1).append(" ");
+            result.append(vert[0] + 1)
+                  .append('/')
+                  .append(vert[1] + 1)
+                  .append('/')
+                  .append(vert[2] + 1)
+                  .append(' ');
          }
-         result.append("\n");
+         result.append('\n');
       }
-      result.append(" \n");
+      result.append('\n');
       return result.toString();
    }
 

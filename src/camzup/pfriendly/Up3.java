@@ -1,5 +1,6 @@
 package camzup.pfriendly;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import camzup.core.Color;
@@ -133,6 +134,25 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
       super(width, height, parent, path, isPrimary);
 
+   }
+
+   /**
+    * Establishes the default perspective arguments.
+    *
+    * @see PGraphicsOpenGL#defCameraAspect
+    * @see PGraphicsOpenGL#defCameraFOV
+    * @see PGraphicsOpenGL#defCameraNear
+    * @see PGraphicsOpenGL#defCameraFar
+    */
+   @Override
+   protected void defaultPerspective () {
+
+      this.defCameraAspect = IUp.DEFAULT_ASPECT;
+      this.defCameraFOV = IUp.DEFAULT_FOV;
+      this.defCameraNear = PConstants.EPSILON;
+      this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
+
+      this.ortho();
    }
 
    @Override
@@ -583,6 +603,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final float swCoord = swFore * 1.25f;
 
       final List < Curve3 > curves = ce.curves;
+
+      // TODO: Replace enhanced for loops with iterators.
       for (final Curve3 curve : curves) {
          for (final Knot3 knot : curve) {
             final Vec3 coord = knot.coord;
@@ -854,8 +876,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       Vec3 foreHandle;
       Vec3 rearHandle;
 
-      final List < Curve3 > curves = entity.curves;
-      final List < MaterialSolid > materials = entity.materials;
+      final LinkedList < Curve3 > curves = entity.curves;
+      final LinkedList < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
 
       curveLoop: for (final Curve3 curve : curves) {
@@ -926,24 +948,18 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       this.popMatrix();
    }
 
-   /**
-    * Draws a mesh entity.
-    *
-    * @param entity
-    *           the mesh entity
-    */
    public void shape ( final MeshEntity3 entity ) {
 
-      final List < Mesh3 > meshes = entity.meshes;
-      final List < MaterialSolid > materials = entity.materials;
+      this.pushMatrix();
+      this.transform(entity.transform, entity.transformOrder);
+
+      final LinkedList < Mesh3 > meshes = entity.meshes;
+      final LinkedList < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
 
+      //TODO: Use iterator w/ while loop?
       for (final Mesh3 mesh : meshes) {
          if (useMaterial) {
-            /*
-             * TODO: Flickering issue with strokes. Maybe don't allow 3D
-             * meshes to have solid materials.
-             */
             final int index = mesh.materialIndex;
             final MaterialSolid material = materials.get(index);
             this.pushStyle();
@@ -953,33 +969,19 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
          final int[][][] fs = mesh.faces;
          final Vec3[] vs = mesh.coords;
          final Vec3[] vns = mesh.normals;
-         final Vec2[] vts = mesh.texCoords;
-
-         final Vec3 v = new Vec3();
-         final Vec3 vn = new Vec3();
-         final Transform3 tr = entity.transform;
-
          final int flen0 = fs.length;
+
          for (int i = 0; i < flen0; ++i) {
             final int[][] f = fs[i];
             final int flen1 = f.length;
-
             this.beginShape(PConstants.POLYGON);
+            this.normal(0.0f, 0.0f, 1.0f);
             for (int j = 0; j < flen1; ++j) {
-               final int[] data = f[j];
-
-               final int vIndex = data[0];
-               Transform3.multPoint(tr, vs[vIndex], v);
-
-               final int vtIndex = data[1];
-               final Vec2 vt = vts[vtIndex];
-
-               final int vnIndex = data[2];
-               Transform3.multDir(tr, vns[vnIndex], vn);
-
+               final Vec3 vn = vns[f[j][2]];
                this.normal(vn.x, vn.y, vn.z);
+               final Vec3 v = vs[f[j][0]];
                this.vertexImpl(v.x, v.y, v.z,
-                     vt.x, vt.y);
+                     this.textureU, this.textureV);
             }
             this.endShape(PConstants.CLOSE);
          }
@@ -988,20 +990,33 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             this.popStyle();
          }
       }
+
+      this.popMatrix();
    }
 
+   /**
+    * Draws a mesh entity.
+    *
+    * @param entity
+    *           the mesh entity
+    */
    // public void shape ( final MeshEntity3 entity ) {
-   //
-   // this.pushMatrix();
-   // this.transform(entity.transform, entity.transformOrder);
    //
    // final List < Mesh3 > meshes = entity.meshes;
    // final List < MaterialSolid > materials =
    // entity.materials;
    // final boolean useMaterial = !materials.isEmpty();
    //
+   // final Vec3 v = new Vec3();
+   // final Vec3 vn = new Vec3();
+   //
    // for (final Mesh3 mesh : meshes) {
    // if (useMaterial) {
+   // /*
+   // * TODO: Flickering issue with strokes. Maybe don't allow
+   // 3D
+   // * meshes to have solid materials.
+   // */
    // final int index = mesh.materialIndex;
    // final MaterialSolid material = materials.get(index);
    // this.pushStyle();
@@ -1011,19 +1026,31 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    // final int[][][] fs = mesh.faces;
    // final Vec3[] vs = mesh.coords;
    // final Vec3[] vns = mesh.normals;
-   // final int flen0 = fs.length;
+   // final Vec2[] vts = mesh.texCoords;
    //
+   // final Transform3 tr = entity.transform;
+   //
+   // final int flen0 = fs.length;
    // for (int i = 0; i < flen0; ++i) {
    // final int[][] f = fs[i];
    // final int flen1 = f.length;
+   //
    // this.beginShape(PConstants.POLYGON);
-   // this.normal(0.0f, 0.0f, 1.0f);
    // for (int j = 0; j < flen1; ++j) {
-   // final Vec3 vn = vns[f[j][2]];
+   // final int[] data = f[j];
+   //
+   // final int vIndex = data[0];
+   // Transform3.multPoint(tr, vs[vIndex], v);
+   //
+   // final int vtIndex = data[1];
+   // final Vec2 vt = vts[vtIndex];
+   //
+   // final int vnIndex = data[2];
+   // Transform3.multDir(tr, vns[vnIndex], vn);
+   //
    // this.normal(vn.x, vn.y, vn.z);
-   // final Vec3 v = vs[f[j][0]];
    // this.vertexImpl(v.x, v.y, v.z,
-   // this.textureU, this.textureV);
+   // vt.x, vt.y);
    // }
    // this.endShape(PConstants.CLOSE);
    // }
@@ -1032,8 +1059,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    // this.popStyle();
    // }
    // }
-   //
-   // this.popMatrix();
    // }
 
    /**
@@ -1180,24 +1205,5 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    public void vertex ( final Vec3 v, final Vec2 vt ) {
 
       this.vertexImpl(v.x, v.y, v.z, vt.x, vt.y);
-   }
-
-   /**
-    * Establishes the default perspective arguments.
-    *
-    * @see PGraphicsOpenGL#defCameraAspect
-    * @see PGraphicsOpenGL#defCameraFOV
-    * @see PGraphicsOpenGL#defCameraNear
-    * @see PGraphicsOpenGL#defCameraFar
-    */
-   @Override
-   protected void defaultPerspective () {
-
-      this.defCameraAspect = IUp.DEFAULT_ASPECT;
-      this.defCameraFOV = IUp.DEFAULT_FOV;
-      this.defCameraNear = PConstants.EPSILON;
-      this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
-
-      this.ortho();
    }
 }

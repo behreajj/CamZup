@@ -1,9 +1,7 @@
 package camzup;
 
-import java.text.DecimalFormat;
-
 import camzup.core.Mesh3;
-import camzup.core.Simplex;
+import camzup.core.Random;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
 import processing.core.PApplet;
@@ -12,12 +10,20 @@ public class CamZup {
 
    public final static String VERSION = "##library.prettyVersion##";
 
-   public static void main ( final String[] args ) {
+   static float fastersqrt ( final float f ) {
+
+      return f * Float.intBitsToFloat(0x5f375a86
+            - (Float.floatToIntBits(f) >> 1));
    }
 
-   public static String version () {
+   static float fastsqrt ( final float f ) {
 
-      return CamZup.VERSION;
+      float y = Float.intBitsToFloat(0x5f375a86
+            - (Float.floatToIntBits(f) >> 1));
+      final float xhalf = f * 0.5f;
+      y = y * (1.5f - xhalf * y * y);
+      y = y * (1.5f - xhalf * y * y);
+      return f * y;
    }
 
    static String toHardCode ( final Mesh3 mesh ) {
@@ -85,6 +91,41 @@ public class CamZup {
          sb.append("this.endShape(PConstants.CLOSE);\n\n");
       }
       return sb.toString();
+   }
+
+   public static void main ( final String[] args ) {
+
+      // final int count = 1500;
+      // final float[] vals = new float[count];
+      // for (int i = 0; i < count; ++i) {
+      // vals[i] = (float) (10.0d + Math.random() * 150.0d);
+      // }
+      //
+      // float out = 0.0f;
+      // long start = 0l;
+      // long stop = 0l;
+      //
+      // start = System.nanoTime();
+      // for (int i = 0; i < count; ++i) {
+      // out = (float) Math.sqrt(vals[i]);
+      // }
+      // stop = System.nanoTime();
+      // System.out.println(out);
+      // System.out.println(stop - start);
+      //
+      // start = System.nanoTime();
+      // for (int i = 0; i < count; ++i) {
+      // out = CamZup.fastersqrt(vals[i]);
+      // }
+      // stop = System.nanoTime();
+      // System.out.println(out);
+      // System.out.println(stop - start);
+
+   }
+
+   public static String version () {
+
+      return CamZup.VERSION;
    }
 
    public final PApplet parent;

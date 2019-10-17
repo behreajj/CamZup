@@ -233,6 +233,39 @@ public class Curve3 extends Curve
       }
 
       /**
+       * Tests to see if this knot equals another.
+       *
+       * @param other
+       *           the other knot
+       * @return the evaluation
+       */
+      protected boolean equals ( final Knot3 other ) {
+
+         if (this.coord == null) {
+            if (other.coord != null) {
+               return false;
+            }
+         } else if (!this.coord.equals(other.coord)) {
+            return false;
+         }
+         if (this.foreHandle == null) {
+            if (other.foreHandle != null) {
+               return false;
+            }
+         } else if (!this.foreHandle.equals(other.foreHandle)) {
+            return false;
+         }
+         if (this.rearHandle == null) {
+            if (other.rearHandle != null) {
+               return false;
+            }
+         } else if (!this.rearHandle.equals(other.rearHandle)) {
+            return false;
+         }
+         return true;
+      }
+
+      /**
        * Aligns this knot's handles in the same direction while
        * preserving their magnitude.
        *
@@ -490,22 +523,47 @@ public class Curve3 extends Curve
       }
 
       /**
+       * Rotates this knot around an axis by an angle in radians.
+       * The axis is assumed to be of unit length. Accepts
+       * pre-calculated sine and cosine of an angle, so that
+       * collections of knots can be efficiently rotated without
+       * repeatedly calling cos and sin.
+       *
+       * @param cosa
+       *           cosine of the angle
+       * @param sina
+       *           sine of the angle
+       * @param axis
+       *           the axis of rotation
+       * @return this knot
+       */
+      @Chainable
+      public Knot3 rotate ( final float cosa, final float sina,
+            final Vec3 axis ) {
+
+         Vec3.rotate(this.coord, cosa, sina, axis, this.coord);
+         Vec3.rotate(this.foreHandle, cosa, sina, axis, this.foreHandle);
+         Vec3.rotate(this.rearHandle, cosa, sina, axis, this.rearHandle);
+         return this;
+      }
+
+      /**
        * Rotates this knot around an arbitrary axis by an angle in
        * radians.
        *
        * @param radians
        *           the angle
        * @param axis
-       *           the axis
+       *           the axis of rotation
        * @return this knot
        */
       @Chainable
       public Knot3 rotate ( final float radians, final Vec3 axis ) {
 
-         Vec3.rotate(this.coord, radians, axis, this.coord);
-         Vec3.rotate(this.foreHandle, radians, axis, this.foreHandle);
-         Vec3.rotate(this.rearHandle, radians, axis, this.rearHandle);
-         return this;
+         final float cosa = (float) Math.cos(radians);
+         final float sina = (float) Math.sin(radians);
+
+         return this.rotate(cosa, sina, axis);
       }
 
       /**
@@ -519,9 +577,30 @@ public class Curve3 extends Curve
       @Chainable
       public Knot3 rotateX ( final float radians ) {
 
-         Vec3.rotateX(this.coord, radians, this.coord);
-         Vec3.rotateX(this.foreHandle, radians, this.foreHandle);
-         Vec3.rotateX(this.rearHandle, radians, this.rearHandle);
+         final float cosa = (float) Math.cos(radians);
+         final float sina = (float) Math.sin(radians);
+
+         return this.rotateX(cosa, sina);
+      }
+
+      /**
+       * Rotates a knot around the x axis. Accepts pre-calculated
+       * sine and cosine of an angle, so that collections of knots
+       * can be efficiently rotated without repeatedly calling cos
+       * and sin.
+       *
+       * @param cosa
+       *           cosine of the angle
+       * @param sina
+       *           sine of the angle
+       * @return this knot
+       */
+      @Chainable
+      public Knot3 rotateX ( final float cosa, final float sina ) {
+
+         Vec3.rotateX(this.coord, cosa, sina, this.coord);
+         Vec3.rotateX(this.foreHandle, cosa, sina, this.foreHandle);
+         Vec3.rotateX(this.rearHandle, cosa, sina, this.rearHandle);
          return this;
       }
 
@@ -536,9 +615,30 @@ public class Curve3 extends Curve
       @Chainable
       public Knot3 rotateY ( final float radians ) {
 
-         Vec3.rotateY(this.coord, radians, this.coord);
-         Vec3.rotateY(this.foreHandle, radians, this.foreHandle);
-         Vec3.rotateY(this.rearHandle, radians, this.rearHandle);
+         final float cosa = (float) Math.cos(radians);
+         final float sina = (float) Math.sin(radians);
+
+         return this.rotateY(cosa, sina);
+      }
+
+      /**
+       * Rotates a knot around the y axis. Accepts pre-calculated
+       * sine and cosine of an angle, so that collections of knots
+       * can be efficiently rotated without repeatedly calling cos
+       * and sin.
+       *
+       * @param cosa
+       *           cosine of the angle
+       * @param sina
+       *           sine of the angle
+       * @return this knot
+       */
+      @Chainable
+      public Knot3 rotateY ( final float cosa, final float sina ) {
+
+         Vec3.rotateY(this.coord, cosa, sina, this.coord);
+         Vec3.rotateY(this.foreHandle, cosa, sina, this.foreHandle);
+         Vec3.rotateY(this.rearHandle, cosa, sina, this.rearHandle);
          return this;
       }
 
@@ -553,9 +653,30 @@ public class Curve3 extends Curve
       @Chainable
       public Knot3 rotateZ ( final float radians ) {
 
-         Vec3.rotateZ(this.coord, radians, this.coord);
-         Vec3.rotateZ(this.foreHandle, radians, this.foreHandle);
-         Vec3.rotateZ(this.rearHandle, radians, this.rearHandle);
+         final float cosa = (float) Math.cos(radians);
+         final float sina = (float) Math.sin(radians);
+
+         return this.rotateZ(cosa, sina);
+      }
+
+      /**
+       * Rotates a knot around the z axis. Accepts pre-calculated
+       * sine and cosine of an angle, so that collections of knots
+       * can be efficiently rotated without repeatedly calling cos
+       * and sin.
+       *
+       * @param cosa
+       *           cosine of the angle
+       * @param sina
+       *           sine of the angle
+       * @return this knot
+       */
+      @Chainable
+      public Knot3 rotateZ ( final float cosa, final float sina ) {
+
+         Vec3.rotateZ(this.coord, cosa, sina, this.coord);
+         Vec3.rotateZ(this.foreHandle, cosa, sina, this.foreHandle);
+         Vec3.rotateZ(this.rearHandle, cosa, sina, this.rearHandle);
          return this;
       }
 
@@ -959,39 +1080,6 @@ public class Curve3 extends Curve
          Vec3.add(this.rearHandle, v, this.rearHandle);
          return this;
       }
-
-      /**
-       * Tests to see if this knot equals another.
-       *
-       * @param other
-       *           the other knot
-       * @return the evaluation
-       */
-      protected boolean equals ( final Knot3 other ) {
-
-         if (this.coord == null) {
-            if (other.coord != null) {
-               return false;
-            }
-         } else if (!this.coord.equals(other.coord)) {
-            return false;
-         }
-         if (this.foreHandle == null) {
-            if (other.foreHandle != null) {
-               return false;
-            }
-         } else if (!this.foreHandle.equals(other.foreHandle)) {
-            return false;
-         }
-         if (this.rearHandle == null) {
-            if (other.rearHandle != null) {
-               return false;
-            }
-         } else if (!this.rearHandle.equals(other.rearHandle)) {
-            return false;
-         }
-         return true;
-      }
    }
 
    /**
@@ -1237,7 +1325,7 @@ public class Curve3 extends Curve
     */
    public static Curve3 smoothHandles ( final Curve3 target ) {
 
-      final List < Knot3 > knots = target.knots;
+      final LinkedList < Knot3 > knots = target.knots;
       final int knotLength = knots.size();
       if (knotLength < 3) {
          return target;
@@ -1330,6 +1418,11 @@ public class Curve3 extends Curve
    }
 
    /**
+    * The list of knots contained by the curve.
+    */
+   private final LinkedList < Knot3 > knots = new LinkedList <>();
+
+   /**
     * Whether or not the curve is a closed loop.
     */
    public boolean closedLoop = false;
@@ -1339,11 +1432,6 @@ public class Curve3 extends Curve
     * entity.
     */
    public int materialIndex = 0;
-
-   /**
-    * The list of knots contained by the curve.
-    */
-   private final LinkedList < Knot3 > knots = new LinkedList <>();
 
    /**
     * Creates a curve with two default knots.
@@ -1434,6 +1522,158 @@ public class Curve3 extends Curve
          final Knot3... knots ) {
 
       this(name, closedLoop, Arrays.asList(knots));
+   }
+
+   /**
+    * A helper function. Returns a knot given two knots and a
+    * step. Assumes the step has already been vetted, and that
+    * the knots are in sequence along the curve. The knot's
+    * rear handle is a mirror of the fore handle.
+    *
+    * @param a
+    *           the origin knot
+    * @param b
+    *           the destination knot
+    * @param step
+    *           the step
+    * @param target
+    *           the output knot
+    * @return the knot
+    */
+   protected Knot3 bezierKnot (
+         final Knot3 a,
+         final Knot3 b,
+         final float step,
+         final Knot3 target ) {
+
+      Vec3.bezierPoint(
+            a.coord, a.foreHandle,
+            b.rearHandle, b.coord,
+            step, target.coord);
+
+      Vec3.bezierTangent(
+            a.coord, a.foreHandle,
+            b.rearHandle, b.coord,
+            step, target.foreHandle);
+
+      Vec3.negate(
+            target.foreHandle,
+            target.rearHandle);
+
+      Vec3.add(
+            target.coord,
+            target.foreHandle,
+            target.foreHandle);
+
+      Vec3.add(
+            target.coord,
+            target.rearHandle,
+            target.rearHandle);
+
+      return target;
+   }
+
+   /**
+    * A helper function for eval. Returns a coordinate given
+    * two knots and a step. Assumes the step has already been
+    * vetted, and that the knots are in sequence along the
+    * curve.
+    *
+    * @param a
+    *           the origin knot
+    * @param b
+    *           the destination knot
+    * @param step
+    *           the step
+    * @param target
+    *           the output coordinate
+    * @return the coordinate
+    * @see Vec3#bezierPoint(Vec3, Vec3, Vec3, Vec3, float,
+    *      Vec3)
+    */
+   protected Vec3 bezierPoint (
+         final Knot3 a,
+         final Knot3 b,
+         final float step,
+         final Vec3 target ) {
+
+      return Vec3.bezierPoint(
+            a.coord, a.foreHandle,
+            b.rearHandle, b.coord,
+            step, target);
+   }
+
+   /**
+    * A helper function for eval. Returns a tangent given two
+    * knots and a step. Assumes the step has already been
+    * vetted, and that the knots are in sequence along the
+    * curve.
+    *
+    * @param a
+    *           the origin knot
+    * @param b
+    *           the destination knot
+    * @param step
+    *           the step
+    * @param target
+    *           the output tangent
+    * @return the tangent
+    * @see Vec3#bezierTangent(Vec3, Vec3, Vec3, Vec3, float,
+    *      Vec3)
+    */
+   protected Vec3 bezierTangent (
+         final Knot3 a,
+         final Knot3 b,
+         final float step,
+         final Vec3 target ) {
+
+      return Vec3.bezierTangent(
+            a.coord, a.foreHandle,
+            b.rearHandle, b.coord,
+            step, target);
+   }
+
+   /**
+    * A helper function for eval. Returns a normalized tangent
+    * given two knots and a step. Assumes the step has already
+    * been vetted, and that the knots are in sequence along the
+    * curve.
+    *
+    * @param a
+    *           the origin knot
+    * @param b
+    *           the destination knot
+    * @param step
+    *           the step
+    * @param target
+    *           the output tangent
+    * @return the normalized tangent
+    * @see Vec3#bezierTanUnit(Vec3, Vec3, Vec3, Vec3, float,
+    *      Vec3)
+    */
+   protected Vec3 bezierTanUnit (
+         final Knot3 a,
+         final Knot3 b,
+         final float step,
+         final Vec3 target ) {
+
+      return Vec3.bezierTanUnit(
+            a.coord, a.foreHandle,
+            b.rearHandle, b.coord,
+            step, target);
+   }
+
+   /**
+    * Clears the list of knots and sets the closedLoop flag to
+    * false. Unlike the public reset, this does not add two
+    * default knots to the list.
+    *
+    * @see List#clear()
+    */
+   protected void clear () {
+
+      this.closedLoop = false;
+      this.knots.clear();
    }
 
    /**
@@ -1721,9 +1961,15 @@ public class Curve3 extends Curve
    public Curve3 reverse ( final Vec3 temp ) {
 
       Collections.reverse(this.knots);
-      for (final Knot3 knot : this.knots) {
-         knot.reverse(temp);
+      // for (final Knot3 knot : this.knots) {
+      // knot.reverse(temp);
+      // }
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while (itr.hasNext()) {
+         itr.next().reverse(temp);
       }
+
       return this;
    }
 
@@ -1741,8 +1987,16 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 rotate ( final float radians, final Vec3 axis ) {
 
-      for (final Knot3 knot : this.knots) {
-         knot.rotate(radians, axis);
+      final float cosa = (float) Math.cos(radians);
+      final float sina = (float) Math.sin(radians);
+
+      // for (final Knot3 knot : this.knots) {
+      // knot.rotate(cosa, sina, axis);
+      // }
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while (itr.hasNext()) {
+         itr.next().rotate(cosa, sina, axis);
       }
       return this;
    }
@@ -1759,8 +2013,16 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 rotateX ( final float radians ) {
 
-      for (final Knot3 knot : this.knots) {
-         knot.rotateX(radians);
+      final float cosa = (float) Math.cos(radians);
+      final float sina = (float) Math.sin(radians);
+
+      // for (final Knot3 knot : this.knots) {
+      // knot.rotateX(cosa, sina);
+      // }
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while (itr.hasNext()) {
+         itr.next().rotateX(cosa, sina);
       }
       return this;
    }
@@ -1777,8 +2039,16 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 rotateY ( final float radians ) {
 
-      for (final Knot3 knot : this.knots) {
-         knot.rotateY(radians);
+      final float cosa = (float) Math.cos(radians);
+      final float sina = (float) Math.sin(radians);
+
+      // for (final Knot3 knot : this.knots) {
+      // knot.rotateY(cosa, sina);
+      // }
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while (itr.hasNext()) {
+         itr.next().rotateY(cosa, sina);
       }
       return this;
    }
@@ -1795,8 +2065,16 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 rotateZ ( final float radians ) {
 
-      for (final Knot3 knot : this.knots) {
-         knot.rotateZ(radians);
+      final float cosa = (float) Math.cos(radians);
+      final float sina = (float) Math.sin(radians);
+
+      // for (final Knot3 knot : this.knots) {
+      // knot.rotateZ(cosa, sina);
+      // }
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while (itr.hasNext()) {
+         itr.next().rotateZ(cosa, sina);
       }
       return this;
    }
@@ -1812,9 +2090,15 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 scale ( final float scale ) {
 
-      for (final Knot3 knot : this.knots) {
-         knot.scale(scale);
+      // for (final Knot3 knot : this.knots) {
+      // knot.scale(scale);
+      // }
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while (itr.hasNext()) {
+         itr.next().scale(scale);
       }
+
       return this;
    }
 
@@ -1829,9 +2113,15 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 scale ( final Vec3 scale ) {
 
-      for (final Knot3 knot : this.knots) {
-         knot.scale(scale);
+      // for (final Knot3 knot : this.knots) {
+      // knot.scale(scale);
+      // }
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while (itr.hasNext()) {
+         itr.next().scale(scale);
       }
+
       return this;
    }
 
@@ -1873,14 +2163,22 @@ public class Curve3 extends Curve
    @Override
    public String toString () {
 
-      final StringBuilder sb = new StringBuilder();
-      sb.append("{ closedLoop: ");
-      sb.append(this.closedLoop);
-      sb.append(", \n  knots: [ \n");
+      final StringBuilder sb = new StringBuilder()
+            .append("{ closedLoop: ")
+            .append(this.closedLoop)
+            .append(", \n  knots: [ \n");
 
-      //TODO: Switch to while itr has next
-      for (final Iterator < Curve3.Knot3 > itr = this.knots.iterator(); itr
-            .hasNext();) {
+      // for (final Iterator < Curve3.Knot3 > itr =
+      // this.knots.iterator(); itr
+      // .hasNext();) {
+      // sb.append(itr.next());
+      // if (itr.hasNext()) {
+      // sb.append(", \n");
+      // }
+      // }
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while (itr.hasNext()) {
          sb.append(itr.next());
          if (itr.hasNext()) {
             sb.append(", \n");
@@ -1902,161 +2200,15 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 translate ( final Vec3 v ) {
 
-      for (final Knot3 knot : this.knots) {
-         knot.translate(v);
+      // for (final Knot3 knot : this.knots) {
+      // knot.translate(v);
+      // }
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while (itr.hasNext()) {
+         itr.next().translate(v);
       }
+
       return this;
-   }
-
-   /**
-    * A helper function. Returns a knot given two knots and a
-    * step. Assumes the step has already been vetted, and that
-    * the knots are in sequence along the curve. The knot's
-    * rear handle is a mirror of the fore handle.
-    *
-    * @param a
-    *           the origin knot
-    * @param b
-    *           the destination knot
-    * @param step
-    *           the step
-    * @param target
-    *           the output knot
-    * @return the knot
-    */
-   protected Knot3 bezierKnot (
-         final Knot3 a,
-         final Knot3 b,
-         final float step,
-         final Knot3 target ) {
-
-      Vec3.bezierPoint(
-            a.coord, a.foreHandle,
-            b.rearHandle, b.coord,
-            step, target.coord);
-
-      Vec3.bezierTangent(
-            a.coord, a.foreHandle,
-            b.rearHandle, b.coord,
-            step, target.foreHandle);
-
-      Vec3.negate(
-            target.foreHandle,
-            target.rearHandle);
-
-      Vec3.add(
-            target.coord,
-            target.foreHandle,
-            target.foreHandle);
-
-      Vec3.add(
-            target.coord,
-            target.rearHandle,
-            target.rearHandle);
-
-      return target;
-   }
-
-   /**
-    * A helper function for eval. Returns a coordinate given
-    * two knots and a step. Assumes the step has already been
-    * vetted, and that the knots are in sequence along the
-    * curve.
-    *
-    * @param a
-    *           the origin knot
-    * @param b
-    *           the destination knot
-    * @param step
-    *           the step
-    * @param target
-    *           the output coordinate
-    * @return the coordinate
-    * @see Vec3#bezierPoint(Vec3, Vec3, Vec3, Vec3, float,
-    *      Vec3)
-    */
-   protected Vec3 bezierPoint (
-         final Knot3 a,
-         final Knot3 b,
-         final float step,
-         final Vec3 target ) {
-
-      return Vec3.bezierPoint(
-            a.coord, a.foreHandle,
-            b.rearHandle, b.coord,
-            step, target);
-   }
-
-   /**
-    * A helper function for eval. Returns a tangent given two
-    * knots and a step. Assumes the step has already been
-    * vetted, and that the knots are in sequence along the
-    * curve.
-    *
-    * @param a
-    *           the origin knot
-    * @param b
-    *           the destination knot
-    * @param step
-    *           the step
-    * @param target
-    *           the output tangent
-    * @return the tangent
-    * @see Vec3#bezierTangent(Vec3, Vec3, Vec3, Vec3, float,
-    *      Vec3)
-    */
-   protected Vec3 bezierTangent (
-         final Knot3 a,
-         final Knot3 b,
-         final float step,
-         final Vec3 target ) {
-
-      return Vec3.bezierTangent(
-            a.coord, a.foreHandle,
-            b.rearHandle, b.coord,
-            step, target);
-   }
-
-   /**
-    * A helper function for eval. Returns a normalized tangent
-    * given two knots and a step. Assumes the step has already
-    * been vetted, and that the knots are in sequence along the
-    * curve.
-    *
-    * @param a
-    *           the origin knot
-    * @param b
-    *           the destination knot
-    * @param step
-    *           the step
-    * @param target
-    *           the output tangent
-    * @return the normalized tangent
-    * @see Vec3#bezierTanUnit(Vec3, Vec3, Vec3, Vec3, float,
-    *      Vec3)
-    */
-   protected Vec3 bezierTanUnit (
-         final Knot3 a,
-         final Knot3 b,
-         final float step,
-         final Vec3 target ) {
-
-      return Vec3.bezierTanUnit(
-            a.coord, a.foreHandle,
-            b.rearHandle, b.coord,
-            step, target);
-   }
-
-   /**
-    * Clears the list of knots and sets the closedLoop flag to
-    * false. Unlike the public reset, this does not add two
-    * default knots to the list.
-    *
-    * @see List#clear()
-    */
-   protected void clear () {
-
-      this.closedLoop = false;
-      this.knots.clear();
    }
 }

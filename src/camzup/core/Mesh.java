@@ -15,7 +15,7 @@ public abstract class Mesh extends EntityData {
 
    /**
     * Construct a mesh and give it a name.
-    * 
+    *
     * @param name
     *           the name
     */

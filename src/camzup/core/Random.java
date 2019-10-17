@@ -20,7 +20,7 @@ public class Random extends java.util.Random implements IUtils {
    /**
     * The default constructor. Sets the seed to the system's
     * current time in milliseconds.
-    * 
+    *
     * @see System#currentTimeMillis()
     */
    public Random () {
@@ -30,7 +30,7 @@ public class Random extends java.util.Random implements IUtils {
 
    /**
     * Creates a new generator with a seed value.
-    * 
+    *
     * @param seed
     *           the seed
     */
@@ -42,7 +42,7 @@ public class Random extends java.util.Random implements IUtils {
 
    /**
     * Get the generator's seed.
-    * 
+    *
     * @return the seed
     */
    public long getSeed () {
@@ -52,7 +52,7 @@ public class Random extends java.util.Random implements IUtils {
 
    /**
     * Set the generator's seed.
-    * 
+    *
     * @param seed
     *           the seed
     */
@@ -70,13 +70,13 @@ public class Random extends java.util.Random implements IUtils {
    @Override
    public String toString () {
 
-      return Long.toHexString(seed);
+      return Long.toHexString(this.seed);
    }
 
    /**
     * Returns a double precision real number between 0.0 and
     * the upper bound.
-    * 
+    *
     * @param upper
     *           the upper bound
     * @return the random number
@@ -89,7 +89,7 @@ public class Random extends java.util.Random implements IUtils {
    /**
     * Returns a double precision real number between the lower
     * and upper bound.
-    * 
+    *
     * @param lower
     *           the lower bound
     * @param upper
@@ -105,7 +105,7 @@ public class Random extends java.util.Random implements IUtils {
    /**
     * Returns a single precision real number between 0.0 and
     * the upper bound.
-    * 
+    *
     * @param upper
     *           the upper bound
     * @return the random number
@@ -118,7 +118,7 @@ public class Random extends java.util.Random implements IUtils {
    /**
     * Returns a single precision real number within the lower
     * and upper bound.
-    * 
+    *
     * @param lower
     *           the lower bound
     * @param upper

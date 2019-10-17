@@ -19,7 +19,6 @@ import camzup.core.IUtils;
 import camzup.core.Transform;
 import camzup.core.Utils;
 import camzup.core.Vec2;
-
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PMatrix3D;
@@ -595,7 +594,7 @@ public interface IUp {
     * @return the array of glyphs
     * @see Toolkit#getDefaultToolkit()
     */
-   public static CurveEntity2[] getGlyph ( 
+   public static CurveEntity2[] getGlyph (
          final PFont pfont,
          final float detail,
          final char... characters ) {
@@ -628,7 +627,7 @@ public interface IUp {
    /**
     * Inverts the input matrix. This is an expensive operation,
     * and so matrix inverses should be cached when needed.
-    * 
+    *
     * @param m
     *           the matrix
     * @param target
@@ -880,7 +879,7 @@ public interface IUp {
     * @see PMatrix3D#preApply(PMatrix3D)
     */
    public static PMatrix3D mult (
-         final PMatrix3D a, 
+         final PMatrix3D a,
          final PMatrix3D b,
          PMatrix3D target ) {
 
@@ -1076,57 +1075,6 @@ public interface IUp {
             0.0f, 0.0f, -1.0f, 0.0f);
 
       return target;
-   }
-
-   /**
-    * Prints a matrix with a default format.
-    * 
-    * @param m
-    *           the matrix
-    * @return the string
-    */
-   public static String toString ( final PMatrix3D m ) {
-      
-      return new StringBuilder(320)
-            .append("{ elms: [\n ")
-            
-            .append(Utils.toFixed(m.m00, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m01, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m02, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m03, 4))
-            .append(", \n ")
-            
-            .append(Utils.toFixed(m.m10, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m11, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m12, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m13, 4))
-            .append(", \n ")
-            
-            .append(Utils.toFixed(m.m20, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m21, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m22, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m23, 4))
-            .append(", \n ")
-            
-            .append(Utils.toFixed(m.m30, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m31, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m32, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m33, 4))
-            
-            .append(" ] }")
-            .toString();
    }
 
    public static PMatrix3D rotate (
@@ -1402,6 +1350,57 @@ public interface IUp {
    }
 
    /**
+    * Prints a matrix with a default format.
+    *
+    * @param m
+    *           the matrix
+    * @return the string
+    */
+   public static String toString ( final PMatrix3D m ) {
+
+      return new StringBuilder(320)
+            .append("{ elms: [\n ")
+
+            .append(Utils.toFixed(m.m00, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m01, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m02, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m03, 4))
+            .append(", \n ")
+
+            .append(Utils.toFixed(m.m10, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m11, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m12, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m13, 4))
+            .append(", \n ")
+
+            .append(Utils.toFixed(m.m20, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m21, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m22, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m23, 4))
+            .append(", \n ")
+
+            .append(Utils.toFixed(m.m30, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m31, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m32, 4))
+            .append(", ")
+            .append(Utils.toFixed(m.m33, 4))
+
+            .append(" ] }")
+            .toString();
+   }
+
+   /**
     * Set the renderer's background color.
     *
     * @param c
@@ -1415,7 +1414,7 @@ public interface IUp {
    /**
     * Sets the renderer's background color to the hexadecimal
     * value.
-    * 
+    *
     * @param c
     *           the color hexadecimal
     */
@@ -1440,7 +1439,7 @@ public interface IUp {
    /**
     * Sets the renderer's current fill to the hexadecimal
     * value.
-    * 
+    *
     * @param c
     *           the color in hexadecimal
     */
@@ -1577,7 +1576,7 @@ public interface IUp {
    /**
     * Sets the renderer's current stroke to the hexadecimal
     * value.
-    * 
+    *
     * @param c
     *           the color in hexadecimal
     */

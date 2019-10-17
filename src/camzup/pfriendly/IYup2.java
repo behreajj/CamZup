@@ -70,7 +70,7 @@ public interface IYup2 extends IUp {
     * Gets a mouse within a unit square, where either component
     * may be in the range [-1.0, 1.0]. The mouse's y coordinate
     * is flipped. (This is not a normalized vector.)
-    * 
+    *
     * @param parent
     *           the parent applet
     * @param renderer
@@ -94,7 +94,7 @@ public interface IYup2 extends IUp {
       // -2.0f * my + 1.0f);
 
       return target.set(
-            (mx + mx) - 1.0f,
+            mx + mx - 1.0f,
             1.0f - (my + my));
    }
 
@@ -462,7 +462,7 @@ public interface IYup2 extends IUp {
 
       final int ab = 0xff000080;
 
-      /**
+      /*
        * Precalculate values for inner loop.
        */
       final float[] xs = new float[last];
@@ -470,13 +470,13 @@ public interface IYup2 extends IUp {
       for (int j = 0; j < last; ++j) {
          final float jPercent = j * toPercent;
          xs[j] = Utils.lerpUnclamped(left, right, jPercent);
-         reds[j] = (int) (jPercent * 255.0f + 0.5f) << 16;
+         reds[j] = (int) (jPercent * 0xff + 0.5f) << 16;
       }
 
       for (int i = 0; i < last; ++i) {
          final float iPercent = i * toPercent;
          final float y = Utils.lerpUnclamped(bottom, top, iPercent);
-         final int green = (int) (iPercent * 255.0f + 0.5f) << 8;
+         final int green = (int) (iPercent * 0xff + 0.5f) << 8;
          final int agb = ab | green;
 
          for (int j = 0; j < last; ++j) {
@@ -523,7 +523,7 @@ public interface IYup2 extends IUp {
     * Gets a mouse within a unit square, where either component
     * may be in the range [-1.0, 1.0]. (This is not a
     * normalized vector.)
-    * 
+    *
     * @param target
     *           the output vector
     * @return the mouse

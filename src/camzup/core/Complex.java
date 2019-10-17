@@ -70,7 +70,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
       /**
        * The default constructor.
-       * 
+       *
        * @param z
        *           the complex number to iterator
        */
@@ -92,7 +92,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
       /**
        * Gets the next value in the iterator
-       * 
+       *
        * @return the value
        * @see Complex#get(int)
        */
@@ -131,7 +131,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       /**
        * Compares two complex numbers by imaginary, then by real
        * components.
-       * 
+       *
        * @param a
        *           the left comparisand
        * @param b
@@ -246,7 +246,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Evaluates whether or not two complex numbers approximate
     * each other.
-    * 
+    *
     * @param a
     *           the left comparisand
     * @param b
@@ -265,7 +265,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Evaluates whether or not two complex numbers approximate
     * each other according to a tolerance.
-    * 
+    *
     * @param a
     *           the left comparisand
     * @param b
@@ -287,7 +287,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Tests to see if a complex number has, approximately, the
     * specified absolute.
-    * 
+    *
     * @param z
     *           the complex number
     * @param abs
@@ -304,7 +304,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Finds the conjugate of the complex number, where the
     * imaginary component is negates.
-    * 
+    *
     * @param z
     *           the input complex number
     * @param target
@@ -320,7 +320,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Divides one complex number by another.
-    * 
+    *
     * @param a
     *           the numerator
     * @param b
@@ -352,7 +352,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     * Divides one complex number by another. Equivalent to
     * multiplying the numerator and the inverse of the
     * denominator.
-    * 
+    *
     * @param a
     *           the numerator
     * @param b
@@ -380,7 +380,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Divides a complex number by a real number.
-    * 
+    *
     * @param a
     *           the numerator
     * @param b
@@ -404,7 +404,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Divides a real number by a complex number.
-    * 
+    *
     * @param a
     *           the numerator
     * @param b
@@ -433,7 +433,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Returns Euler's number, <em>e</em>, raised to a complex
     * number.
-    * 
+    *
     * @param z
     *           the complex number
     * @param target
@@ -525,7 +525,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Tests to see if all the complex number's components are
     * non-zero.
-    * 
+    *
     * @param z
     *           the complex number
     * @return the evaluation
@@ -538,7 +538,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Tests to see if the complex number's absolute is
     * approximately 1.0.
-    * 
+    *
     * @param z
     *           the complex number
     * @return the evaluation
@@ -553,7 +553,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Tests to see if all the complex number's components are
     * zero.
-    * 
+    *
     * @param z
     *           the complex number
     * @return the evaluation
@@ -565,7 +565,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Finds the complex logarithm.
-    * 
+    *
     * @param z
     *           the complex number
     * @param target
@@ -645,7 +645,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Multiplies two complex numbers. Complex multiplication is
     * not commutative.
-    * 
+    *
     * @param a
     *           the left operand
     * @param b
@@ -666,7 +666,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Multiplies a complex and real number.
-    * 
+    *
     * @param a
     *           the left operand
     * @param b
@@ -685,7 +685,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Multiplies a real and complex number.
-    * 
+    *
     * @param a
     *           the left operand
     * @param b
@@ -705,7 +705,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Divides a complex number by its absolute, such that the
     * new magnitude is 1.0.
-    * 
+    *
     * @param z
     *           the complex number
     * @param target
@@ -748,7 +748,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Raises a complex number to the power of another.
-    * 
+    *
     * @param a
     *           the left operand
     * @param b
@@ -782,7 +782,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Raises a complex number to the power of another.
     * Discloses the product and log.
-    * 
+    *
     * @param a
     *           the left operand
     * @param b
@@ -810,7 +810,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Raises a complex number to the power of a real number.
-    * 
+    *
     * @param a
     *           the complex number
     * @param b
@@ -843,7 +843,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Raises a float to the power of a complex number.
-    * 
+    *
     * @param a
     *           the real number
     * @param b
@@ -874,7 +874,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Creates a complex number with an absolute of 1.0.
-    * 
+    *
     * @param rng
     *           the random number generator
     * @param target
@@ -899,7 +899,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Converts from polar to rectilinear coordinates.
-    * 
+    *
     * @param r
     *           the radius
     * @param phi
@@ -922,7 +922,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Rotates a complex number by an angle in radians.
-    * 
+    *
     * @param z
     *           the input complex number
     * @param radians
@@ -1050,7 +1050,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Constructs a complex number from boolean values.
-    * 
+    *
     * @param real
     *           the real component
     * @param imag
@@ -1066,7 +1066,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Constructs a complex number from the source's components.
-    * 
+    *
     * @param source
     *           the source complex number
     */
@@ -1078,7 +1078,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Constructs a complex number from float values.
-    * 
+    *
     * @param real
     *           the real component
     * @param imag
@@ -1097,7 +1097,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     * using {@link Float#parseFloat(String)} . If a
     * NumberFormatException is thrown, the component is set to
     * zero.
-    * 
+    *
     * @param realstr
     *           the real string
     * @param imagstr
@@ -1141,7 +1141,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     * Returns a new complex number with this complex number's
     * components. Java's cloneable interface is problematic;
     * use set or a copy constructor instead.
-    * 
+    *
     * @return a new complex number
     */
    @Override
@@ -1157,7 +1157,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     * collections of complex number to be sorted. This depends
     * upon the static comparator of the Complex class, which
     * can be changed.
-    * 
+    *
     * @param z
     *           the comparisand
     * @return the numeric code
@@ -1172,7 +1172,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Tests this complex number for equivalence with another
     * object.
-    * 
+    *
     * @param obj
     *           the object
     * @return the equivalence
@@ -1247,7 +1247,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Resets this complex number to an inital state ( 0.0, 0.0
     * ) .
-    * 
+    *
     * @return this complex number
     */
    @Chainable
@@ -1259,7 +1259,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    /**
     * Sets the components of this complex number from booleans,
     * where false is 0.0 and true is 1.0 .
-    * 
+    *
     * @param real
     *           the real component
     * @param imag
@@ -1293,7 +1293,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Sets the components of this complex number.
-    * 
+    *
     * @param real
     *           the real component
     * @param imag
@@ -1315,7 +1315,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     * from Strings using {@link Float#parseFloat(String)} . If
     * a NumberFormatException is thrown, the component is set
     * to zero.
-    * 
+    *
     * @param realstr
     *           the real string
     * @param imagstr
@@ -1374,7 +1374,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
    /**
     * Returns a string representation of this complex number.
-    * 
+    *
     * @param places
     *           the number of places
     * @return the string

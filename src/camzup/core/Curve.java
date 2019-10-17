@@ -45,7 +45,7 @@ public abstract class Curve extends EntityData {
 
    /**
     * Construct a curve and give it a name.
-    * 
+    *
     * @param name
     *           the name
     */

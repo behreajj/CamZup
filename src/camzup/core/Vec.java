@@ -29,7 +29,7 @@ public abstract class Vec implements IVec {
 
    /**
     * Gets the number of components held by the vector.
-    * 
+    *
     * @return the size
     */
    @Override

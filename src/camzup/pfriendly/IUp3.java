@@ -46,7 +46,7 @@ public interface IUp3 extends IUp {
       // 0.0f);
 
       return target.set(
-            (mx + mx) - 1.0f,
+            mx + mx - 1.0f,
             1.0f - (my + my),
             0.0f);
    }

@@ -18,7 +18,7 @@ public abstract class Imaginary implements IImaginary {
 
    /**
     * The default constructor
-    * 
+    *
     * @param size
     *           the number of components
     */
@@ -29,7 +29,7 @@ public abstract class Imaginary implements IImaginary {
 
    /**
     * Gets the number of components held by the complex number.
-    * 
+    *
     * @return the size
     */
    @Override

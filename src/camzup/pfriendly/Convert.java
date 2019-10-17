@@ -19,14 +19,14 @@ public abstract class Convert {
 
    /**
     * Converts a 2D transform to a PMatrix2D.
-    * 
+    *
     * @param tr2
     *           the transform
     * @param order
     *           the transform order
     * @return the matrix
     */
-   public static PMatrix2D toPMatrix2D ( 
+   public static PMatrix2D toPMatrix2D (
          final Transform2 tr2,
          final Transform.Order order ) {
 
@@ -35,7 +35,7 @@ public abstract class Convert {
 
    /**
     * Converts a 2D transform to a PMatrix2D.
-    * 
+    *
     * @param tr2
     *           the transform
     * @param order
@@ -44,9 +44,9 @@ public abstract class Convert {
     *           the output matrix
     * @return the matrix
     */
-   public static PMatrix2D toPMatrix2D ( 
+   public static PMatrix2D toPMatrix2D (
          final Transform2 tr2,
-         final Transform.Order order, 
+         final Transform.Order order,
          PMatrix2D target ) {
 
       if (target == null) {
@@ -132,7 +132,7 @@ public abstract class Convert {
     *           the matrix
     * @return the matrix
     */
-   public static PMatrix3D toPMatrix3D ( 
+   public static PMatrix3D toPMatrix3D (
          final Quaternion source,
          PMatrix3D target ) {
 
@@ -372,8 +372,8 @@ public abstract class Convert {
     *           the target vector
     * @return the vector
     */
-   public static Vec2 toVec2 ( 
-         final PVector source, 
+   public static Vec2 toVec2 (
+         final PVector source,
          final Vec2 target ) {
 
       // if(source.z != 0.0f) {
@@ -390,8 +390,8 @@ public abstract class Convert {
     *           the target vector
     * @return the vector
     */
-   public static Vec3 toVec3 ( 
-         final PVector source, 
+   public static Vec3 toVec3 (
+         final PVector source,
          final Vec3 target ) {
 
       return target.set(source.x, source.y, source.z);

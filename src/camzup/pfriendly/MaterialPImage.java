@@ -17,7 +17,7 @@ public class MaterialPImage extends MaterialUV {
 
    /**
     * The default constructor.
-    * 
+    *
     * @param texture
     *           the texture
     */
@@ -29,7 +29,7 @@ public class MaterialPImage extends MaterialUV {
 
    /**
     * Constructs a name material with a fill and texture.
-    * 
+    *
     * @param name
     *           the name
     * @param transform

@@ -45,11 +45,12 @@ public interface ITransform extends IUtils, Cloneable, Serializable {
 
       private final String name;
 
-      private Order ( String name ) {
+      private Order ( final String name ) {
 
          this.name = name;
       }
 
+      @Override
       public String toString () {
 
          return this.name;

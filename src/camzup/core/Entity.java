@@ -14,7 +14,7 @@ public abstract class Entity implements IEntity {
    /**
     * The default constructor. Assigns the entity's name with
     * the hash identity string.
-    * 
+    *
     * @see IUtils#hashIdentityString()
     */
    public Entity () {
@@ -24,7 +24,7 @@ public abstract class Entity implements IEntity {
 
    /**
     * Creates an entity with a given name.
-    * 
+    *
     * @param name
     *           the name
     */
@@ -36,7 +36,7 @@ public abstract class Entity implements IEntity {
    /**
     * Represents an entity as a class simple name followed by
     * the entity's name.
-    * 
+    *
     * @return the string
     */
    @Override

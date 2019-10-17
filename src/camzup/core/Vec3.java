@@ -197,8 +197,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          // Vec3.magSq(this.aDiff),
          // Vec3.magSq(this.bDiff));
 
-         final float aDist = Vec3.magSq(aDiff);
-         final float bDist = Vec3.magSq(bDiff);
+         final float aDist = Vec3.magSq(this.aDiff);
+         final float bDist = Vec3.magSq(this.bDiff);
 
          return aDist > bDist ? 1 : aDist < bDist ? -1 : 0;
       }
@@ -2623,28 +2623,29 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
    /**
     * Rotates a vector around an axis by an angle in radians.
-    * The angle is assumed to be of unit length.
+    * The axis is assumed to be of unit length. Accepts
+    * pre-calculated sine and cosine of an angle, so that
+    * collections of vectors can be efficiently rotated without
+    * repeatedly calling cos and sin.
     *
     * @param v
     *           the vector to rotate
-    * @param radians
-    *           the angle in radians
+    * @param cosa
+    *           cosine of the angle
+    * @param sina
+    *           sine of the angle
     * @param axis
     *           the axis of rotation
     * @param target
     *           the output vector
     * @return the rotated vector
-    * @see Math#cos(double)
-    * @see Math#sin(double)
     */
    public static Vec3 rotate (
          final Vec3 v,
-         final float radians,
+         final float cosa,
+         final float sina,
          final Vec3 axis,
          final Vec3 target ) {
-
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
 
       final float complcos = 1.0f - cosa;
       final float complxy = complcos * axis.x * axis.y;
@@ -2667,6 +2668,62 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
             (complxz - siny) * v.x +
                   (complyz + sinx) * v.y +
                   (complcos * axis.z * axis.z + cosa) * v.z);
+   }
+
+   /**
+    * Rotates a vector around an axis by an angle in radians.
+    * The axis is assumed to be of unit length.
+    *
+    * @param v
+    *           the vector to rotate
+    * @param radians
+    *           the angle in radians
+    * @param axis
+    *           the axis of rotation
+    * @param target
+    *           the output vector
+    * @return the rotated vector
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    */
+   public static Vec3 rotate (
+         final Vec3 v,
+         final float radians,
+         final Vec3 axis,
+         final Vec3 target ) {
+
+      final float cosa = (float) Math.cos(radians);
+      final float sina = (float) Math.sin(radians);
+
+      return Vec3.rotate(v, cosa, sina, axis, target);
+   }
+
+   /**
+    * Rotates a vector around the x axis. Accepts
+    * pre-calculated sine and cosine of an angle, so that
+    * collections of vectors can be efficiently rotated without
+    * repeatedly calling cos and sin.
+    *
+    * @param v
+    *           the input vector
+    * @param cosa
+    *           cosine of the angle
+    * @param sina
+    *           sine of the angle
+    * @param target
+    *           the output vector
+    * @return the rotated vector
+    */
+   public static Vec3 rotateX (
+         final Vec3 v,
+         final float cosa,
+         final float sina,
+         final Vec3 target ) {
+
+      return target.set(
+            v.x,
+            cosa * v.y - sina * v.z,
+            cosa * v.z + sina * v.y);
    }
 
    /**
@@ -2696,10 +2753,35 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
 
+      return Vec3.rotateX(v, cosa, sina, target);
+   }
+
+   /**
+    * Rotates a vector around the y axis. Accepts
+    * pre-calculated sine and cosine of an angle, so that
+    * collections of vectors can be efficiently rotated without
+    * repeatedly calling cos and sin.
+    *
+    * @param v
+    *           the input vector
+    * @param cosa
+    *           cosine of the angle
+    * @param sina
+    *           sine of the angle
+    * @param target
+    *           the output vector
+    * @return the rotated vector
+    */
+   public static Vec3 rotateY (
+         final Vec3 v,
+         final float cosa,
+         final float sina,
+         final Vec3 target ) {
+
       return target.set(
-            v.x,
-            cosa * v.y - sina * v.z,
-            cosa * v.z + sina * v.y);
+            cosa * v.x + sina * v.z,
+            v.y,
+            cosa * v.z - sina * v.x);
    }
 
    /**
@@ -2729,10 +2811,35 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
 
+      return Vec3.rotateY(v, cosa, sina, target);
+   }
+
+   /**
+    * Rotates a vector around the z axis. Accepts
+    * pre-calculated sine and cosine of an angle, so that
+    * collections of vectors can be efficiently rotated without
+    * repeatedly calling cos and sin.
+    *
+    * @param v
+    *           the input vector
+    * @param cosa
+    *           cosine of the angle
+    * @param sina
+    *           sine of the angle
+    * @param target
+    *           the output vector
+    * @return the rotated vector
+    */
+   public static Vec3 rotateZ (
+         final Vec3 v,
+         final float cosa,
+         final float sina,
+         final Vec3 target ) {
+
       return target.set(
-            cosa * v.x + sina * v.z,
-            v.y,
-            cosa * v.z - sina * v.x);
+            cosa * v.x - sina * v.y,
+            cosa * v.y + sina * v.x,
+            v.z);
    }
 
    /**
@@ -2762,10 +2869,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
 
-      return target.set(
-            cosa * v.x - sina * v.y,
-            cosa * v.y + sina * v.x,
-            v.z);
+      return Vec3.rotateZ(v, cosa, sina, target);
    }
 
    /**
@@ -3040,6 +3144,35 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
       super(3);
       this.set(source);
+   }
+
+   /**
+    * Tests equivalence between this and another vector. For
+    * rough equivalence of floating point components, use the
+    * static approx function instead.
+    *
+    * @param v
+    *           the vector
+    * @return the evaluation
+    * @see Float#floatToIntBits(float)
+    * @see Vec3#approx(Vec3, Vec3)
+    * @see Vec3#approx(Vec3, Vec3, float)
+    */
+   protected boolean equals ( final Vec3 v ) {
+
+      if (Float.floatToIntBits(this.z) != Float.floatToIntBits(v.z)) {
+         return false;
+      }
+
+      if (Float.floatToIntBits(this.y) != Float.floatToIntBits(v.y)) {
+         return false;
+      }
+
+      if (Float.floatToIntBits(this.x) != Float.floatToIntBits(v.x)) {
+         return false;
+      }
+
+      return true;
    }
 
    /**
@@ -3336,7 +3469,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       // return String.format("{ x: %+.4f, y: %+.4f, z: %+.4f }",
       // this.x, this.y, this.z);
 
-      return toString(4);
+      return this.toString(4);
    }
 
    public String toString ( final int places ) {
@@ -3350,34 +3483,5 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
             .append(Utils.toFixed(this.z, places))
             .append(" }")
             .toString();
-   }
-
-   /**
-    * Tests equivalence between this and another vector. For
-    * rough equivalence of floating point components, use the
-    * static approx function instead.
-    *
-    * @param v
-    *           the vector
-    * @return the evaluation
-    * @see Float#floatToIntBits(float)
-    * @see Vec3#approx(Vec3, Vec3)
-    * @see Vec3#approx(Vec3, Vec3, float)
-    */
-   protected boolean equals ( final Vec3 v ) {
-
-      if (Float.floatToIntBits(this.z) != Float.floatToIntBits(v.z)) {
-         return false;
-      }
-
-      if (Float.floatToIntBits(this.y) != Float.floatToIntBits(v.y)) {
-         return false;
-      }
-
-      if (Float.floatToIntBits(this.x) != Float.floatToIntBits(v.x)) {
-         return false;
-      }
-
-      return true;
    }
 }

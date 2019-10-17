@@ -10,7 +10,7 @@ public class MaterialUV extends Material {
    /**
     * The texture tint.
     */
-   public final Color tint = DEFAULT_FILL;
+   public final Color tint = IMaterial.DEFAULT_FILL;
 
    /**
     * The UV coordinate transform.
@@ -27,18 +27,18 @@ public class MaterialUV extends Material {
 
    /**
     * Creates a named texture material.
-    * 
+    *
     * @param name
     *           the name
     */
-   public MaterialUV ( String name ) {
+   public MaterialUV ( final String name ) {
 
       super(name);
    }
 
    /**
     * Creates a named texture with a tint and transform.
-    * 
+    *
     * @param name
     *           the name
     * @param transform

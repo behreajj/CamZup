@@ -1,7 +1,6 @@
 package camzup.core;
 
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * An entity which contains a transform that is applied to a
@@ -13,12 +12,12 @@ public class MeshEntity2 extends Entity {
    /**
     * The list of materials held by the entity.
     */
-   public final List < MaterialSolid > materials = new LinkedList <>();
+   public final LinkedList < MaterialSolid > materials = new LinkedList <>();
 
    /**
     * The list of meshes held by the entity.
     */
-   public final List < Mesh2 > meshes = new LinkedList <>();
+   public final LinkedList < Mesh2 > meshes = new LinkedList <>();
 
    /**
     * The entity's transform.
@@ -55,7 +54,7 @@ public class MeshEntity2 extends Entity {
    /**
     * Creates a mesh entity from a name, transform and list of
     * meshes.
-    * 
+    *
     * @param name
     *           the name
     * @param transform
@@ -78,7 +77,7 @@ public class MeshEntity2 extends Entity {
    /**
     * Creates a mesh entity from a transform and list of
     * meshes.
-    * 
+    *
     * @param transform
     *           the transform
     * @param meshes
@@ -98,7 +97,7 @@ public class MeshEntity2 extends Entity {
 
    /**
     * Appends a material to this mesh entity.
-    * 
+    *
     * @param material
     *           the material
     * @return this mesh entity
@@ -114,7 +113,7 @@ public class MeshEntity2 extends Entity {
 
    /**
     * Appends a list of materials to this mesh entity.
-    * 
+    *
     * @param materials
     *           the list of materials
     * @return this mesh entity
@@ -132,7 +131,7 @@ public class MeshEntity2 extends Entity {
 
    /**
     * Appends a mesh to this mesh entity.
-    * 
+    *
     * @param mesh
     *           the mesh
     * @return this mesh entity
@@ -148,7 +147,7 @@ public class MeshEntity2 extends Entity {
 
    /**
     * Appends a list of meshes to this mesh entity.
-    * 
+    *
     * @param meshes
     *           the list of meshes
     * @return this mesh entity
@@ -167,7 +166,7 @@ public class MeshEntity2 extends Entity {
    /**
     * Creates a string representing a group node in the SVG
     * format.
-    * 
+    *
     * @return the string
     */
    public String toSvgString () {

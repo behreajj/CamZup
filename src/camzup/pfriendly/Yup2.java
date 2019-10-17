@@ -1,6 +1,6 @@
 package camzup.pfriendly;
 
-import java.util.List;
+import java.util.LinkedList;
 
 import camzup.core.Curve2;
 import camzup.core.Curve2.Knot2;
@@ -80,6 +80,48 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
          final boolean isPrimary ) {
 
       super(width, height, parent, path, isPrimary);
+   }
+
+   /**
+    * Sets the renderer's default camera.
+    */
+   @Override
+   protected void defaultCamera () {
+
+      this.defCameraX = IUp.DEFAULT_LOC_X;
+      this.defCameraY = IUp.DEFAULT_LOC_Y;
+      this.defCameraZ = IUp.DEFAULT_LOC_Z;
+      this.camera();
+   }
+
+   /**
+    * Sets the renderer's default perspective.
+    */
+   @Override
+   protected void defaultPerspective () {
+
+      this.defCameraAspect = IUp.DEFAULT_ASPECT;
+      this.defCameraFOV = IUp.DEFAULT_FOV;
+      this.defCameraNear = PConstants.EPSILON;
+      this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
+      this.ortho();
+   }
+
+   @Override
+   protected void defaultSettings () {
+
+      super.defaultSettings();
+      this.noLights();
+
+      /*
+       * Ensure depth-related features are turned off. These
+       * summarize the hint system.
+       *
+       */
+      this.flush();
+      this.pgl.disable(PGL.DEPTH_TEST);
+      this.pgl.depthMask(false);
+      this.isDepthSortingEnabled = false;
    }
 
    /**
@@ -496,7 +538,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       final float swFore = swRear * 1.25f;
       final float swCoord = swFore * 1.25f;
 
-      final List < Curve2 > curves = ce.curves;
+      final LinkedList < Curve2 > curves = ce.curves;
       for (final Curve2 curve : curves) {
          for (final Knot2 knot : curve) {
             final Vec2 coord = knot.coord;
@@ -818,8 +860,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       Vec2 foreHandle;
       Vec2 rearHandle;
 
-      final List < Curve2 > curves = entity.curves;
-      final List < MaterialSolid > materials = entity.materials;
+      final LinkedList < Curve2 > curves = entity.curves;
+      final LinkedList < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
 
       curveLoop: for (final Curve2 curve : curves) {
@@ -895,8 +937,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       this.pushMatrix();
       this.transform(entity.transform, entity.transformOrder);
 
-      final List < Mesh2 > meshes = entity.meshes;
-      final List < MaterialSolid > materials = entity.materials;
+      final LinkedList < Mesh2 > meshes = entity.meshes;
+      final LinkedList < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
 
       for (final Mesh2 mesh : meshes) {
@@ -1006,47 +1048,5 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    public void vertex ( final Vec2 v, final Vec2 vt ) {
 
       this.vertexImpl(v.x, v.y, 0.0f, vt.x, vt.y);
-   }
-
-   /**
-    * Sets the renderer's default camera.
-    */
-   @Override
-   protected void defaultCamera () {
-
-      this.defCameraX = IUp.DEFAULT_LOC_X;
-      this.defCameraY = IUp.DEFAULT_LOC_Y;
-      this.defCameraZ = IUp.DEFAULT_LOC_Z;
-      this.camera();
-   }
-
-   /**
-    * Sets the renderer's default perspective.
-    */
-   @Override
-   protected void defaultPerspective () {
-
-      this.defCameraAspect = IUp.DEFAULT_ASPECT;
-      this.defCameraFOV = IUp.DEFAULT_FOV;
-      this.defCameraNear = PConstants.EPSILON;
-      this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
-      this.ortho();
-   }
-
-   @Override
-   protected void defaultSettings () {
-
-      super.defaultSettings();
-      this.noLights();
-
-      /*
-       * Ensure depth-related features are turned off. These
-       * summarize the hint system.
-       *
-       */
-      this.flush();
-      this.pgl.disable(PGL.DEPTH_TEST);
-      this.pgl.depthMask(false);
-      this.isDepthSortingEnabled = false;
    }
 }

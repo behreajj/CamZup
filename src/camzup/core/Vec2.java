@@ -191,8 +191,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          Vec2.sub(a, this.locus, this.aDiff);
          Vec2.sub(b, this.locus, this.bDiff);
 
-         final float aDist = Vec2.magSq(aDiff);
-         final float bDist = Vec2.magSq(bDiff);
+         final float aDist = Vec2.magSq(this.aDiff);
+         final float bDist = Vec2.magSq(this.bDiff);
 
          return aDist > bDist ? 1 : aDist < bDist ? -1 : 0;
       }
@@ -2303,7 +2303,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          return target.reset();
       }
 
-      float mSq = Vec2.magSq(v);
+      final float mSq = Vec2.magSq(v);
 
       if (mSq == 0.0f) {
          return target.reset();
@@ -2408,6 +2408,33 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
+    * Rotates a vector around the z axis. Accepts
+    * pre-calculated sine and cosine of an angle, so that
+    * collections of vectors can be efficiently rotated without
+    * repeatedly calling cos and sin.
+    *
+    * @param v
+    *           the input vector
+    * @param cosa
+    *           cosine of the angle
+    * @param sina
+    *           sine of the angle
+    * @param target
+    *           the output vector
+    * @return the rotated vector
+    */
+   public static Vec2 rotateZ (
+         final Vec2 v,
+         final float cosa,
+         final float sina,
+         final Vec2 target ) {
+
+      return target.set(
+            cosa * v.x - sina * v.y,
+            cosa * v.y + sina * v.x);
+   }
+
+   /**
     * Rotates a vector around the z axis by an angle in
     * radians.
     *
@@ -2429,9 +2456,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
 
-      return target.set(
-            cosa * v.x - sina * v.y,
-            cosa * v.y + sina * v.x);
+      return Vec2.rotateZ(v, cosa, sina, target);
    }
 
    /**
@@ -2683,6 +2708,31 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
       super(2);
       this.set(v);
+   }
+
+   /**
+    * Tests equivalence between this and another vector. For
+    * rough equivalence of floating point components, use the
+    * static approx function instead.
+    *
+    * @param v
+    *           the vector
+    * @return the evaluation
+    * @see Float#floatToIntBits(float)
+    * @see Vec2#approx(Vec2, Vec2)
+    * @see Vec2#approx(Vec2, Vec2, float)
+    */
+   protected boolean equals ( final Vec2 v ) {
+
+      if (Float.floatToIntBits(this.y) != Float.floatToIntBits(v.y)) {
+         return false;
+      }
+
+      if (Float.floatToIntBits(this.x) != Float.floatToIntBits(v.x)) {
+         return false;
+      }
+
+      return true;
    }
 
    /**
@@ -2944,7 +2994,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       // return String.format("{ x: %+.4f, y: %+.4f }", this.x,
       // this.y);
 
-      return toString(4);
+      return this.toString(4);
    }
 
    public String toString ( final int places ) {
@@ -2983,30 +3033,5 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
             .append(' ')
             .append(Utils.toFixed(this.y, 4))
             .toString();
-   }
-
-   /**
-    * Tests equivalence between this and another vector. For
-    * rough equivalence of floating point components, use the
-    * static approx function instead.
-    *
-    * @param v
-    *           the vector
-    * @return the evaluation
-    * @see Float#floatToIntBits(float)
-    * @see Vec2#approx(Vec2, Vec2)
-    * @see Vec2#approx(Vec2, Vec2, float)
-    */
-   protected boolean equals ( final Vec2 v ) {
-
-      if (Float.floatToIntBits(this.y) != Float.floatToIntBits(v.y)) {
-         return false;
-      }
-
-      if (Float.floatToIntBits(this.x) != Float.floatToIntBits(v.x)) {
-         return false;
-      }
-
-      return true;
    }
 }
