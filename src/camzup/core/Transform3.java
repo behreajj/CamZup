@@ -232,6 +232,7 @@ public class Transform3 extends Transform {
       // final Vec3 scale = t.scale;
       // target.set(target.x * scale.x, target.y * scale.y,
       // target.z * scale.z);
+      
       Vec3.mult(target, t.scale, target);
 
       return target;

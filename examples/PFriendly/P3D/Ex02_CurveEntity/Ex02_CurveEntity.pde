@@ -35,13 +35,12 @@ void mouseReleased() {
 }
 
 void draw() {
-  surface.setTitle(String.format("%.1f", frameRate));
+  surface.setTitle(Utils.toFixed(frameRate, 1));
   background(#fff7d5);
   perspective();
   camera();
   graphics3.origin();
   graphics3.shape(entity);
-
   float t = mouseX / (float)width;
 
   Vec3 pt = new Vec3();
@@ -57,4 +56,5 @@ void draw() {
   stroke(#ff0048);
 
   graphics3.point(tnpt);
+  
 }

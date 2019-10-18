@@ -11,21 +11,7 @@ void setup() {
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  background(#fff7d5);
-
-
-  float camDist = height;  
-  float az = -PI + TAU * mouseX / (width - 1.0);
-  float incl = -HALF_PI + PI * mouseY / (height - 1.0);
-  float rhoCosPhi = camDist * cos(incl);
-  camera(
-    rhoCosPhi * cos(az), 
-    rhoCosPhi * sin(az), 
-    camDist * -sin(incl), 
-
-    0.0, 0.0, 0.0, 
-    0.0, 0.0, 1.0);
-    
+  background(#fff7d5);    
   lights();
   graphics.origin(75.0, 1.0);
   translate(150.0, 100.0, 25.0);

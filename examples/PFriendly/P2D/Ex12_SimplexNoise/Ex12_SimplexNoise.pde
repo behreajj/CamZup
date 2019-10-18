@@ -1,11 +1,13 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-SimplexNoise osn = new SimplexNoise();
 float rough = 5.0;
+int octaves = 4;
+int seed = (int)System.currentTimeMillis();
+Vec3 noise = new Vec3();
 
 void setup() {
-  size(512, 512, "camzup.pfriendly.Yup2");
+  size(512, 512, "camzup.pfriendly.YupJ2");
   frameRate(1000);
   colorMode(RGB, 1.0);
 }
@@ -15,9 +17,11 @@ void draw() {
 
   float hNorm = 1.0 / (height - 1.0);
   float wNorm = 1.0 / (width - 1.0);
-  rough = Utils.lerp(0.25, 10.0, mouseX * wNorm);
+  rough = Utils.lerp(0.25, 5.0, mouseX * wNorm);
+  octaves = (int)Utils.lerp(1, 16, mouseY * hNorm);
+  println(octaves);
   float nz = frameCount * 0.05;
-  
+
   loadPixels();
   for (int idx = 0, y = 0; y < height; ++y) {
     float yNorm = y * hNorm;
@@ -27,7 +31,10 @@ void draw() {
       float xNorm = x * wNorm;
       float nx = (xNorm + xNorm - 1.0) * rough;
 
-      float fac = 0.5 + 0.5 * osn.eval(nx, ny, nz);
+      noise.set(nx, ny, nz);
+
+      //float fac = 0.5 + 0.5 * Simplex.eval(nx, ny, nz, seed);
+      float fac = 0.5 + 0.5 * Simplex.fbm(noise, seed, octaves);
       pixels[idx] = color(fac);
     }
   }
