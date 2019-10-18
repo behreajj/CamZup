@@ -863,7 +863,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex target ) {
 
       final double logReal = Math.log(Math.sqrt(a * a));
-      final double logImag = a < 0.0d ? IUtils.PI_D : 0.0d;
+      final double logImag = a < 0.0d ? Math.PI : 0.0d;
       final double phi = b.real * logImag + b.imag * logReal;
       final double r = Math.exp(b.real * logReal - b.imag * logImag);
 

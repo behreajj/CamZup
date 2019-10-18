@@ -460,12 +460,12 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          /*
           * The complementary step, i.e., 1.0 - step.
           */
-         double u = 0.0f;
+         double u = 1.0d;
 
          /*
           * The step.
           */
-         double v = 0.0f;
+         double v = 0.0d;
 
          if (sinTheta > Utils.EPSILON) {
             final double sInv = 1.0d / sinTheta;
@@ -542,7 +542,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *           the output quaternion
     * @return the rotated quaternion
     */
-   protected static Quaternion rotateX (
+   private static Quaternion rotateX (
          final Quaternion quat,
          final float cosah,
          final float sinah,
@@ -573,7 +573,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *           the output quaternion
     * @return the rotated quaternion
     */
-   protected static Quaternion rotateY (
+   private static Quaternion rotateY (
          final Quaternion quat,
          final float cosah,
          final float sinah,
@@ -604,7 +604,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *           the output quaternion
     * @return the rotated quaternion
     */
-   protected static Quaternion rotateZ (
+   private static Quaternion rotateZ (
          final Quaternion quat,
          final float cosah,
          final float sinah,
@@ -911,7 +911,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          return target.reset();
       }
 
-      final float bInv = (float) (1.0d / b);
+      final float bInv = 1.0f / b;
       Vec3.mult(a.imag, bInv, target.imag);
       target.real = a.real * bInv;
 
@@ -1035,10 +1035,10 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * |<em>i</em>| ), <em>\u00ee</em> sin ( |<em>i</em>| ) }
     * )<br>
     * <br>
-    * 
+    *
     * where <em>r</em> is <em>q<sub>real</sub></em> and
     * <em>i</em> is <em>q<sub>imag</sub></em>.
-    * 
+    *
     * @param quat
     *           the input quaternion
     * @param target
@@ -1060,8 +1060,14 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       }
 
       final double im = Math.sqrt(imSq);
+
       target.real = (float) (ea * Math.cos(im));
-      Vec3.mult(quat.imag, (float) ((ea * Math.sin(im)) / im), target.imag);
+
+      Vec3.mult(
+            quat.imag,
+            (float) (ea * Math.sin(im) / im),
+            target.imag);
+
       return target;
    }
 
@@ -1457,7 +1463,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * }<br>
     * <br>
     * where <em>i</em> is <em>q<sub>imag</sub></em>.
-    * 
+    *
     * @param quat
     *           the quaternion
     * @param target
@@ -1469,6 +1475,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion target ) {
 
       // TODO: Needs testing.
+      // LOOKUP:
+      // https://math.stackexchange.com/questions/2552/the-logarithm-of-quaternion/2554#2554
 
       final float imSq = Vec3.magSq(quat.imag);
       final float qmSq = quat.real * quat.real + imSq;
@@ -1783,7 +1791,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion quat,
          final Quaternion target ) {
 
-      return Quaternion.div(quat, Quaternion.mag(quat), target);
+      return Quaternion.div(quat, Quaternion.mag(quat),
+            target);
    }
 
    /**
@@ -1796,7 +1805,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * <br>
     * where \u03b8 and <em>n</em> are the angle and axis
     * representation of the quaternion <em>a</em>.
-    * 
+    *
     * @param a
     *           the input quaternion
     * @param b
@@ -1884,34 +1893,35 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
-    * Creates a random unit quaternion.
+    * Creates a random unit quaternion. Uses an algorithm by
+    * Ken Shoemake reproduced at the Math Stack Exchange
+    * discussion "<a href=
+    * "https://math.stackexchange.com/questions/131336/uniform-random-quaternion-in-a-restricted-angle-range">Uniform
+    * Random Quaternion In a restricted angle range</a>".
     *
     * @param rng
     *           the random number generator
     * @param target
     *           the output quaternion
     * @return the random quaternion
+    * @author Ken Shoemake
     */
    public static Quaternion random (
          final Random rng,
          final Quaternion target ) {
 
-      final float w = rng.uniform(-1.0f, 1.0f);
-      final float x = rng.uniform(-1.0f, 1.0f);
-      final float y = rng.uniform(-1.0f, 1.0f);
-      final float z = rng.uniform(-1.0f, 1.0f);
+      final double t0 = IUtils.TAU_D * rng.nextDouble();
+      final double t1 = IUtils.TAU_D * rng.nextDouble();
 
-      final float mSq = w * w + x * x + y * y + z * z;
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
+      final double r1 = rng.nextDouble();
+      final double x0 = Math.sqrt(1.0d - r1);
+      final double x1 = Math.sqrt(r1);
 
-      final float mInv = (float) (1.0d / Math.sqrt(mSq));
       return target.set(
-            w * mInv,
-            x * mInv,
-            y * mInv,
-            z * mInv);
+            (float) (x0 * Math.sin(t0)),
+            (float) (x0 * Math.cos(t0)),
+            (float) (x1 * Math.sin(t1)),
+            (float) (x1 * Math.cos(t1)));
    }
 
    /**
@@ -1934,13 +1944,10 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Vec3 axis,
          final Quaternion target ) {
 
-      // TODO: Needs testing...
       final float mSq = Quaternion.magSq(quat);
       if (mSq == 0.0f) {
          return Quaternion.fromAxisAngle(
-               radians,
-               axis,
-               target);
+               radians, axis, target);
       }
 
       final float wNorm = mSq == 1.0f ? quat.real
@@ -2265,7 +2272,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          // zNorm = i.z;
       }
 
-      final double angle = Math.acos(wNorm);
+      final double angle = 2.0d * Math.acos(wNorm);
       final double wAsin = IUtils.TAU_D - angle;
       if (wAsin == 0.0d) {
          Vec3.forward(axis);
@@ -2324,7 +2331,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
 
    /**
     * Constructs a quaternion from boolean values.
-    * 
+    *
     * @param real
     *           the w component
     * @param xImag
@@ -2400,7 +2407,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * {@link Float#parseFloat(String)} . If a
     * NumberFormatException is thrown, the component is set to
     * zero.
-    * 
+    *
     * @param real
     *           the w string
     * @param xImag

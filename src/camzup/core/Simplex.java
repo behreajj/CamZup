@@ -192,13 +192,13 @@ public abstract class Simplex {
     * Factor added to 2D noise when returning a Vec2. 1.0d /
     * Math.sqrt(2.0d); approximately 0.70710677 .
     */
-   private final static float STEP_2 = 0.70710678118654752440084436210485f;
+   private final static float STEP_2 = 0.7071067811865475f;
 
    /**
     * Factor added to 3D noise when returning a Vec3. 1.0d /
     * Math.sqrt(3.0d); approximately 0.57735026 .
     */
-   private final static float STEP_3 = 0.57735026918962576450914878050196f;
+   private final static float STEP_3 = 0.5773502691896258f;
 
    /**
     * Factor added to 4D noise when returning a Vec4. 1.0d /
@@ -315,7 +315,7 @@ public abstract class Simplex {
     * A helper function to the gradient functions. Performs a
     * series of bit-shifting operations to create a hash.
     * 
-    * @author Bob Jenkins 
+    * @author Bob Jenkins
     * @param a
     *           first input
     * @param b
@@ -1075,203 +1075,160 @@ public abstract class Simplex {
       return Simplex.eval(v.x, v.y, v.z, v.w, seed, deriv);
    }
 
-//   /**
-//    * Fractal Brownian motion. Sums a series of noise
-//    * evaluations multiplied by the amplitude. The number of
-//    * octaves dicates the iterations. At each iteration, the
-//    * amplitude is multiplied by persistence; the noise inputs
-//    * are multiplied by the lacunarity.
-//    * 
-//    * @param v
-//    *           the input vector
-//    * @param seed
-//    *           the seed
-//    * @param octaves
-//    *           the number of iterations
-//    * @param amplitude
-//    *           the amplitude
-//    * @param lacunarity
-//    *           the lacunarity
-//    * @param persistence
-//    *           the persistence
-//    * @return the noise value
-//    */
-//   public static float fbm (
-//         final Vec2 v,
-//         final int seed,
-//         final int octaves,
-//         final float amplitude,
-//         final float lacunarity,
-//         final float persistence ) {
-//
-//      final int oct = octaves < 1 ? 1 : octaves;
-//      final float pers = Utils.max(persistence, Utils.EPSILON);
-//      float amp = amplitude != 0.0f ? amplitude : 1.0f;
-//
-//      float out = 0.0f;
-//      float maxAmp = 0.0f;
-//
-//      float vx = v.x;
-//      float vy = v.y;
-//
-//      for (int i = 0; i < oct; ++i) {
-//         out += amp * Simplex.eval(vx, vy, seed, null);
-//         maxAmp += amp;
-//         amp *= pers;
-//         vx *= lacunarity;
-//         vy *= lacunarity;
-//      }
-//
-//      return out / maxAmp;
-//   }
+   /**
+    * Fractal Brownian motion. Sums a series of noise
+    * evaluations multiplied by the amplitude. The number of
+    * octaves dicates the iterations. At each iteration, the
+    * amplitude is multiplied by persistence; the noise inputs
+    * are multiplied by the lacunarity.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param octaves
+    *           the number of iterations
+    * @param lacunarity
+    *           the lacunarity
+    * @param persistence
+    *           the persistence
+    * @return the noise value
+    */
+   public static float fbm (
+         final Vec2 v,
+         final int seed,
+         final int octaves,
+         // final float amplitude,
+         final float lacunarity,
+         final float persistence ) {
 
-//   /**
-//    * Fractal Brownian motion. Sums a series of noise
-//    * evaluations multiplied by the amplitude. The number of
-//    * octaves dicates the iterations. At each iteration, the
-//    * amplitude is multiplied by persistence; the noise inputs
-//    * are multiplied by the lacunarity.
-//    * 
-//    * @param v
-//    *           the input vector
-//    * @param seed
-//    *           the seed
-//    * @param octaves
-//    *           the number of iterations
-//    * @param amplitude
-//    *           the amplitude
-//    * @param lacunarity
-//    *           the lacunarity
-//    * @param persistence
-//    *           the persistence
-//    * @return the noise value
-//    */
-//   public static float fbm (
-//         final Vec3 v,
-//         final int seed,
-//         final int octaves,
-//         final float amplitude,
-//         final float lacunarity,
-//         final float persistence) {
+      final int oct = octaves < 1 ? 1 : octaves;
+      final float pers = Utils.max(persistence, Utils.EPSILON);
+      // float amp = amplitude != 0.0f ? amplitude : 1.0f;
+      float amp = 1.0f;
 
-//      final int oct = octaves < 1 ? 1 : octaves;
-//      final float pers = Utils.max(persistence, Utils.EPSILON);
-//      float amp = amplitude != 0.0f ? amplitude : 1.0f;
-//
-//      float out = 0.0f;
-//      float maxAmp = 0.0f;
-//
-//      float vx = v.x;
-//      float vy = v.y;
-//      float vz = v.z;
-//
-//      for (int i = 0; i < oct; ++i) {
-//         out += amp * Simplex.eval(vx, vy, vz, seed, deriv);
-//         maxAmp += amp;
-//         amp *= pers;
-//         vx *= lacunarity;
-//         vy *= lacunarity;
-//         vz *= lacunarity;
-//      }
-//
-//      return out / maxAmp;
-//   }
-   
-//   /**
-//    * Fractal Brownian motion. Sums a series of noise
-//    * evaluations multiplied by the amplitude. The number of
-//    * octaves dicates the iterations. At each iteration, the
-//    * amplitude is multiplied by persistence; the noise inputs
-//    * are multiplied by the lacunarity.
-//    * 
-//    * @param v
-//    *           the input vector
-//    * @param seed
-//    *           the seed
-//    * @param octaves
-//    *           the number of iterations
-//    * @param amplitude
-//    *           the amplitude
-//    * @param lacunarity
-//    *           the lacunarity
-//    * @param persistence
-//    *           the persistence
-//    * @return the noise value
-//    */
-//   public static float fbm (
-//         final Vec4 v,
-//         final int seed,
-//         final int octaves,
-//         final float amplitude,
-//         final float lacunarity,
-//         final float persistence ) {
-//
-//      final int oct = octaves < 1 ? 1 : octaves;
-//      final float pers = Utils.max(persistence,
-//            Utils.EPSILON);
-//      float amp = amplitude != 0.0f ? amplitude : 1.0f;
-//
-//      float out = 0.0f;
-//      float maxAmp = 0.0f;
-//
-//      float vx = v.x;
-//      float vy = v.y;
-//      float vz = v.z;
-//      float vw = v.w;
-//
-//      for (int i = 0; i < oct; ++i) {
-//         out += amp * Simplex.eval(vx, vy, vz, vw, seed, null);
-//         maxAmp += amp;
-//         amp *= pers;
-//         vx *= lacunarity;
-//         vy *= lacunarity;
-//         vz *= lacunarity;
-//         vw *= lacunarity;
-//      }
-//
-//      return out / maxAmp;
-//   }
+      float out = 0.0f;
+      float maxAmp = 0.0f;
 
-//   public float fbm(
-//         Vec3 v, 
-//         int seed,
-//         int octaves, 
-//         float lacunarity, 
-//         float gain, 
-//         Vec3 deriv) {
-//      
-//      float freq = 1.0f;
-//      float amp = 0.5f;
-//      float maxAmp = 0.0f;
-//      
-//      float sum0 = 0.0f;
-//      deriv.reset();
-//      
-//      float x = v.x;
-//      float y = v.y;
-//      float z = v.z;
-//      
-//      Vec3 dStep = new Vec3();
-//      for(int i = 0; i < octaves; ++i) {
-//         float n0 = Simplex.eval(
-//               x * freq, 
-//               y * freq, 
-//               z * freq,
-//               seed, dStep);
-//         
-//         sum0 += n0 * amp;
-//         Vec3.mult(dStep, amp, dStep);
-//         Vec3.add(deriv, dStep, deriv);
-//
-//         maxAmp += amp;
-//         freq *= lacunarity;
-//         amp *= gain;
-//      }
-//      
-//      Vec3.div(deriv, maxAmp, deriv);
-//      return sum0 / maxAmp;
-//   }
-   
+      float vx = v.x;
+      float vy = v.y;
+
+      for (int i = 0; i < oct; ++i) {
+         out += amp * Simplex.eval(vx, vy, seed, null);
+         maxAmp += amp;
+         amp *= pers;
+         vx *= lacunarity;
+         vy *= lacunarity;
+      }
+
+      return out / maxAmp;
+   }
+
+   /**
+    * Fractal Brownian motion. Sums a series of noise
+    * evaluations multiplied by the amplitude. The number of
+    * octaves dicates the iterations. At each iteration, the
+    * amplitude is multiplied by persistence; the noise inputs
+    * are multiplied by the lacunarity.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param octaves
+    *           the number of iterations
+    * @param lacunarity
+    *           the lacunarity
+    * @param persistence
+    *           the persistence
+    * @return the noise value
+    */
+   public static float fbm (
+         final Vec3 v,
+         final int seed,
+         final int octaves,
+         // final float amplitude,
+         final float lacunarity,
+         final float persistence ) {
+
+      final int oct = octaves < 1 ? 1 : octaves;
+      final float pers = Utils.max(persistence, Utils.EPSILON);
+      // float amp = amplitude != 0.0f ? amplitude : 1.0f;
+      float amp = 1.0f;
+
+      float out = 0.0f;
+      float maxAmp = 0.0f;
+
+      float vx = v.x;
+      float vy = v.y;
+      float vz = v.z;
+
+      for (int i = 0; i < oct; ++i) {
+         out += amp * Simplex.eval(vx, vy, vz, seed, null);
+         maxAmp += amp;
+         amp *= pers;
+         vx *= lacunarity;
+         vy *= lacunarity;
+         vz *= lacunarity;
+      }
+
+      return out / maxAmp;
+   }
+
+   /**
+    * Fractal Brownian motion. Sums a series of noise
+    * evaluations multiplied by the amplitude. The number of
+    * octaves dicates the iterations. At each iteration, the
+    * amplitude is multiplied by persistence; the noise inputs
+    * are multiplied by the lacunarity.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @param octaves
+    *           the number of iterations
+    * @param lacunarity
+    *           the lacunarity
+    * @param persistence
+    *           the persistence
+    * @return the noise value
+    */
+   public static float fbm (
+         final Vec4 v,
+         final int seed,
+         final int octaves,
+         // final float amplitude,
+         final float lacunarity,
+         final float persistence ) {
+
+      final int oct = octaves < 1 ? 1 : octaves;
+      final float pers = Utils.max(persistence,
+            Utils.EPSILON);
+      // float amp = amplitude != 0.0f ? amplitude : 1.0f;
+      float amp = 1.0f;
+
+      float out = 0.0f;
+      float maxAmp = 0.0f;
+
+      float vx = v.x;
+      float vy = v.y;
+      float vz = v.z;
+      float vw = v.w;
+
+      for (int i = 0; i < oct; ++i) {
+         out += amp * Simplex.eval(vx, vy, vz, vw, seed, null);
+         maxAmp += amp;
+         amp *= pers;
+         vx *= lacunarity;
+         vy *= lacunarity;
+         vz *= lacunarity;
+         vw *= lacunarity;
+      }
+
+      return out / maxAmp;
+   }
+
    /**
     * Returns a value with the same number of dimensions as the
     * input, 2. This is done by calling

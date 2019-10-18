@@ -157,13 +157,6 @@ public interface IUtils {
    public static final float PI = 3.141592654f;
 
    /**
-    * An approximation of \u03c0, 3.141592653589793 .
-    *
-    * @see Math#PI
-    */
-   public static final double PI_D = 3.141592653589793d;
-
-   /**
     * An angle in radians is multiplied by this constant to
     * convert it to degrees. 180.0 / \u03c0, approximately
     * 57.29578 .

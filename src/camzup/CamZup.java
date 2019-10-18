@@ -95,25 +95,39 @@ public class CamZup {
    }
 
    public static void main ( final String[] args ) {
+      System.out.println(1.0d / Math.sqrt(2.0d));
+      System.out.println(1.0d / Math.sqrt(3.0d));
+      // Quaternion target = new Quaternion();
+      // Quaternion norm = new Quaternion();
+      // Random rng = new Random();
+      // for(int i = 0; i < 100; ++i) {
+      // Quaternion.random(rng, target);
+      // Quaternion.normalize(target, norm);
+      // System.out.println(norm);
+      // System.out.println(Quaternion.mag(norm));
+      //
+      // }
 
-//      Quaternion q = Quaternion.random(new Random(), new Quaternion());
-//      Quaternion.mult(q, 5.0f, q);
-//      Quaternion b = Quaternion.mult(q, q, new Quaternion());
-//      Quaternion c = Quaternion.mult(b, q, new Quaternion());
-//      Quaternion d = Quaternion.pow(q, 2.0f, new Quaternion());
-//      Quaternion e = Quaternion.pow(q, 3.0f, new Quaternion());
-//      
-//      System.out.println(b.toString(8));
-//      System.out.println(d.toString(8));
-//      System.out.println(" ");
-//      System.out.println(c.toString(8));
-//      System.out.println(e.toString(8));
-//      System.out.println(" ");
-//      Quaternion f = Quaternion.pow(q, -1.0f, new Quaternion());
-//      Quaternion g = Quaternion.inverse(q, new Quaternion());
-//      System.out.println(f);
-//      System.out.println(g);
-      
+      // Quaternion q = Quaternion.random(new Random(), new
+      // Quaternion());
+      // Quaternion.mult(q, 5.0f, q);
+      // Quaternion b = Quaternion.mult(q, q, new Quaternion());
+      // Quaternion c = Quaternion.mult(b, q, new Quaternion());
+      // Quaternion d = Quaternion.pow(q, 2.0f, new Quaternion());
+      // Quaternion e = Quaternion.pow(q, 3.0f, new Quaternion());
+      //
+      // System.out.println(b.toString(8));
+      // System.out.println(d.toString(8));
+      // System.out.println(" ");
+      // System.out.println(c.toString(8));
+      // System.out.println(e.toString(8));
+      // System.out.println(" ");
+      // Quaternion f = Quaternion.pow(q, -1.0f, new
+      // Quaternion());
+      // Quaternion g = Quaternion.inverse(q, new Quaternion());
+      // System.out.println(f);
+      // System.out.println(g);
+
       // final int count = 1500;
       // final float[] vals = new float[count];
       // for (int i = 0; i < count; ++i) {
