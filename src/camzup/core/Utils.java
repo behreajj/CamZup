@@ -7,6 +7,12 @@ package camzup.core;
  */
 public abstract class Utils implements IUtils {
 
+   @FunctionalInterface
+   public static interface EasingFuncArr < T > {
+
+      T apply ( final T[] arr, Float step, T target );
+   }
+
    /**
     * A functional interface for an easing function which
     * interpolates an object from an origin to a destination by
@@ -1514,11 +1520,15 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Eases between an origin and destination by a step in [0.0, 1.0].
-    * 
-    * @param origin the origin
-    * @param dest the destination
-    * @param step the step
+    * Eases between an origin and destination by a step in
+    * [0.0, 1.0].
+    *
+    * @param origin
+    *           the origin
+    * @param dest
+    *           the destination
+    * @param step
+    *           the step
     * @return the eased value
     */
    public static float smootherStep (
@@ -1539,11 +1549,15 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Eases between an origin and destination by a step in [0.0, 1.0].
-    * 
-    * @param origin the origin
-    * @param dest the destination
-    * @param step the step
+    * Eases between an origin and destination by a step in
+    * [0.0, 1.0].
+    *
+    * @param origin
+    *           the origin
+    * @param dest
+    *           the destination
+    * @param step
+    *           the step
     * @return the eased value
     */
    public static float smoothStep (
@@ -1607,7 +1621,7 @@ public abstract class Utils implements IUtils {
     *
     * Intended to serve as an alternative to
     * {@link String#format(String, Object...)}, which is very
-    * slow, and DecimalFormat which extrapolates values beyond
+    * slow, and DecimalFormat, which extrapolates values beyond
     * the last decimal place.
     *
     * @param value
@@ -1618,23 +1632,27 @@ public abstract class Utils implements IUtils {
     */
    public static String toFixed ( final float value, final int places ) {
 
+      /* Value is Not a number (NaN). */
+      if (value != value) {
+         return "0.0";
+      }
+      
       if (places < 0) {
-         return Integer.toString(Math.round(value));
+         // return Integer.toString(Math.round(value));
+         return Integer.toString((int) value);
       }
 
       if (places < 1) {
-         return Float.toString(Math.round(value));
+         // return Float.toString(Math.round(value));
+         return Float.toString((int) value);
       }
 
-      if (value == 0.0f || value != value) {
-         return "0.0";
-      }
-
+      /* Value is too big. */
       if (value <= -3.4028235E38f || value >= 3.4028235E38f) {
          return Float.toString(value);
       }
 
-      /**
+      /*
        * Hard-coded values from FloatConsts class for fast
        * absolute value and sign.
        */
@@ -1644,7 +1662,7 @@ public abstract class Utils implements IUtils {
       final int trunc = (int) abs;
       final StringBuilder sb = new StringBuilder(16);
 
-      /**
+      /*
        * Append integral to StringBuilder.
        */
       int len = 0;
@@ -1657,15 +1675,21 @@ public abstract class Utils implements IUtils {
       }
       sb.append('.');
 
-      /**
+      /*
        * Hard-coded limit on the number of worthwhile decimal
        * places beyond which single precision is no longer worth
        * representing accurately.
        */
       final int maxPlaces = 9 - len;
+
+      /*
+       * The integral has so many decimal places that it has
+       * consumed the allotment. (Might be scientific notation?)
+       */
       if (maxPlaces < 1) {
          return Float.toString(value);
       }
+
       final int vetPlaces = places < maxPlaces ? places : maxPlaces;
       float frac = abs - trunc;
 
@@ -1681,6 +1705,7 @@ public abstract class Utils implements IUtils {
        * Cache digits up to one beyond the number of requested
        * places for rounding purposes.
        */
+
       // final int[] digits = new int[vetPlaces + 1];
       // for (int i = 0; i <= vetPlaces; ++i) {
       // frac *= 10.0f;
@@ -1729,7 +1754,6 @@ public abstract class Utils implements IUtils {
     * @param value
     *           the input value
     * @return the integral
-    * @see Float#isNaN(float)
     */
    public static float trunc ( final float value ) {
 

@@ -7,7 +7,7 @@ package camzup.core;
  * functions are based on Bob Jenkins lookup3 script,
  * <a href=
  * "http://burtleburtle.net/bob/c/lookup3.c">http://burtleburtle.net/bob/c/lookup3.c</a>.
- * 
+ *
  * @author Stefan Gustavson
  * @author Bob Jenkins
  */
@@ -236,7 +236,7 @@ public abstract class Simplex {
    /**
     * Hashes the indices i and j with the seed, then returns a
     * vector from the look up table.
-    * 
+    *
     * @param i
     *           the first index
     * @param j
@@ -259,7 +259,7 @@ public abstract class Simplex {
    /**
     * Hashes the indices i, j and k with the seed, then returns
     * a vector from the look up table.
-    * 
+    *
     * @param i
     *           the first index
     * @param j
@@ -285,7 +285,7 @@ public abstract class Simplex {
    /**
     * Hashes the indices i, j, k and l with the seed, then
     * returns a vector from the look up table.
-    * 
+    *
     * @param i
     *           the first index
     * @param j
@@ -314,7 +314,7 @@ public abstract class Simplex {
    /**
     * A helper function to the gradient functions. Performs a
     * series of bit-shifting operations to create a hash.
-    * 
+    *
     * @author Bob Jenkins
     * @param a
     *           first input
@@ -343,46 +343,49 @@ public abstract class Simplex {
       return c;
    }
 
-   /**
-    * A 3D curl noise implementation based on Jasper Flick's
-    * tutorial <a href=
-    * "https://catlikecoding.com/unity/tutorials/noise-derivatives/">Noise
-    * Derivatives.</a> The original paper on curl is from
-    * Robert Bridson, et al., "<a href=
-    * "https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph2007-curlnoise.pdf">Curl-Noise
-    * for Procedural Fluid Flow</a>".
-    * 
-    * @author Jasper Flick
-    * @author Robert Bridson, et al.
-    * @param v
-    * @param seed
-    * @param target
-    * @param xDeriv
-    * @param yDeriv
-    * @param zDeriv
-    * @return the curl noise
-    */
-   public static Vec3 curl (
-         final Vec3 v,
-         final int seed,
-         final Vec3 target,
-         final Vec3 xDeriv,
-         final Vec3 yDeriv,
-         final Vec3 zDeriv ) {
-
-      // TODO: 2D curl noise?
-
-      Simplex.noise(v, seed, target, xDeriv, yDeriv, zDeriv);
-
-      return target.set(
-            zDeriv.x - yDeriv.y,
-            xDeriv.x - zDeriv.y,
-            yDeriv.x - xDeriv.y);
-   }
+   // /**
+   // * A 3D curl noise implementation based on Jasper Flick's
+   // * tutorial <a href=
+   // *
+   // "https://catlikecoding.com/unity/tutorials/noise-derivatives/">Noise
+   // * Derivatives.</a> The original paper on curl is from
+   // * Robert Bridson, et al., "<a href=
+   // *
+   // "https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph2007-curlnoise.pdf">Curl-Noise
+   // * for Procedural Fluid Flow</a>".
+   // *
+   // * @author Jasper Flick
+   // * @author Robert Bridson, et al.
+   // * @param v
+   // * the input vector
+   // * @param seed
+   // * @param target
+   // * @param xDeriv
+   // * @param yDeriv
+   // * @param zDeriv
+   // * @return the curl noise
+   // */
+   // public static Vec3 curl (
+   // final Vec3 v,
+   // final int seed,
+   // final Vec3 target,
+   // final Vec3 xDeriv,
+   // final Vec3 yDeriv,
+   // final Vec3 zDeriv ) {
+   //
+   // // TODO: 2D curl noise?
+   //
+   // Simplex.noise(v, seed, target, xDeriv, yDeriv, zDeriv);
+   //
+   // return target.set(
+   // zDeriv.x - yDeriv.y,
+   // xDeriv.x - zDeriv.y,
+   // yDeriv.x - xDeriv.y);
+   // }
 
    /**
     * Evaluates 4D simplex noise for a given seed.
-    * 
+    *
     * @param x
     *           the x coordinate
     * @param y
@@ -408,7 +411,7 @@ public abstract class Simplex {
    /**
     * Evaluates 4D simplex noise for a given seed. Calculates
     * the derivative if the output variable is not null.
-    * 
+    *
     * @param x
     *           the x coordinate
     * @param y
@@ -633,7 +636,7 @@ public abstract class Simplex {
 
    /**
     * Evaluates 3D simplex noise for a given seed.
-    * 
+    *
     * @param x
     *           the x coordinate
     * @param y
@@ -656,7 +659,7 @@ public abstract class Simplex {
    /**
     * Evaluates 3D simplex noise for a given seed. Calculates
     * the derivative if the output variable is not null.
-    * 
+    *
     * @param x
     *           the x coordinate
     * @param y
@@ -837,7 +840,7 @@ public abstract class Simplex {
 
    /**
     * Evaluates 2D simplex noise for a given seed.
-    * 
+    *
     * @param x
     *           the x coordinate
     * @param y
@@ -857,7 +860,7 @@ public abstract class Simplex {
    /**
     * Evaluates 2D simplex noise for a given seed. Calculates
     * the derivative if the output variable is not null.
-    * 
+    *
     * @param x
     *           the x coordinate
     * @param y
@@ -969,7 +972,7 @@ public abstract class Simplex {
 
    /**
     * Evaluates 2D simplex noise for a given seed.
-    * 
+    *
     * @param v
     *           the input vector
     * @param seed
@@ -986,7 +989,7 @@ public abstract class Simplex {
    /**
     * Evaluates 2D simplex noise for a given seed. Calculates
     * the derivative if the output variable is not null.
-    * 
+    *
     * @param v
     *           the input vector
     * @param seed
@@ -1005,7 +1008,7 @@ public abstract class Simplex {
 
    /**
     * Evaluates 3D simplex noise for a given seed.
-    * 
+    *
     * @param v
     *           the input vector
     * @param seed
@@ -1022,7 +1025,7 @@ public abstract class Simplex {
    /**
     * Evaluates 3D simplex noise for a given seed. Calculates
     * the derivative if the output variable is not null.
-    * 
+    *
     * @param v
     *           the input vector
     * @param seed
@@ -1041,7 +1044,7 @@ public abstract class Simplex {
 
    /**
     * Evaluates 4D simplex noise for a given seed.
-    * 
+    *
     * @param v
     *           the input vector
     * @param seed
@@ -1058,7 +1061,7 @@ public abstract class Simplex {
    /**
     * Evaluates 4D simplex noise for a given seed. Calculates
     * the derivative if the output variable is not null.
-    * 
+    *
     * @param v
     *           the input vector
     * @param seed
@@ -1081,7 +1084,7 @@ public abstract class Simplex {
     * octaves dicates the iterations. At each iteration, the
     * amplitude is multiplied by persistence; the noise inputs
     * are multiplied by the lacunarity.
-    * 
+    *
     * @param v
     *           the input vector
     * @param seed
@@ -1130,7 +1133,7 @@ public abstract class Simplex {
     * octaves dicates the iterations. At each iteration, the
     * amplitude is multiplied by persistence; the noise inputs
     * are multiplied by the lacunarity.
-    * 
+    *
     * @param v
     *           the input vector
     * @param seed
@@ -1181,7 +1184,7 @@ public abstract class Simplex {
     * octaves dicates the iterations. At each iteration, the
     * amplitude is multiplied by persistence; the noise inputs
     * are multiplied by the lacunarity.
-    * 
+    *
     * @param v
     *           the input vector
     * @param seed
@@ -1234,7 +1237,7 @@ public abstract class Simplex {
     * input, 2. This is done by calling
     * {@link Simplex#eval(float, float, int, Vec2)} twice, with
     * offset steps added to each component of the input vector.
-    * 
+    *
     * @param v
     *           the input vector
     * @param seed
@@ -1258,7 +1261,7 @@ public abstract class Simplex {
     * {@link Simplex#eval(float, float, int, Vec2)} twice, with
     * offset steps added to each component of the input vector.
     * The derivatives are calculated for the output vectors.
-    * 
+    *
     * @param v
     *           the input vector
     * @param seed
@@ -1296,7 +1299,7 @@ public abstract class Simplex {
     * {@link Simplex#eval(float, float, float, int, Vec3)}
     * thrice, with offset steps added to each component of the
     * input vector.
-    * 
+    *
     * @param v
     *           the input vector
     * @param seed
@@ -1321,7 +1324,7 @@ public abstract class Simplex {
     * thrice, with offset steps added to each component of the
     * input vector. The derivatives are calculated for the
     * output vectors.
-    * 
+    *
     * @param v
     *           the input vector
     * @param seed
@@ -1363,7 +1366,7 @@ public abstract class Simplex {
     * {@link Simplex#eval(float, float, float, float, int)}
     * four times, with offset steps added to each component of
     * the input vector.
-    * 
+    *
     * @param v
     *           the input vector
     * @param seed
@@ -1388,7 +1391,7 @@ public abstract class Simplex {
     * four times, with offset steps added to each component of
     * the input vector. The derivatives are calculated for the
     * output vectors.
-    * 
+    *
     * @param v
     *           the input vector
     * @param seed

@@ -644,8 +644,8 @@ public class Mesh2 extends Mesh {
     * @return this mesh
     */
    @Chainable
-   public Mesh2 set ( 
-         final int[][][] faces, 
+   public Mesh2 set (
+         final int[][][] faces,
          final Vec2[] coords,
          final Vec2[] texCoords ) {
 

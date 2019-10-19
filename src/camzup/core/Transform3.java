@@ -1,24 +1,114 @@
 package camzup.core;
 
+import camzup.core.Utils.EasingFuncArr;
+
 /**
  * Facilitates 3D affine transformations for entities.
  */
 public class Transform3 extends Transform {
 
-   /**
-    * The easing function to mix transform locations.
-    */
-   private static Vec3.AbstrEasing LOC_EASING = new Vec3.Lerp();
+   public static class Easing implements EasingFuncArr < Transform3 > {
 
-   /**
-    * The easing function to mix transform rotations.
-    */
-   private static Quaternion.AbstrEasing ROT_EASING = new Quaternion.Slerp();
+      public Vec3.AbstrEasing loc;
 
-   /**
-    * The easing function to mix transform scales.
-    */
-   private static Vec3.AbstrEasing SCALE_EASING = new Vec3.Lerp();
+      public Quaternion.AbstrEasing rot;
+
+      public Vec3.AbstrEasing scale;
+
+      public Easing () {
+
+         this.loc = new Vec3.Lerp();
+         this.rot = new Quaternion.Slerp();
+         this.scale = new Vec3.Lerp();
+      }
+
+      public Easing (
+            final Vec3.AbstrEasing locEasing,
+            final Quaternion.AbstrEasing rotEasing,
+            final Vec3.AbstrEasing scaleEasing ) {
+
+         this.loc = locEasing;
+         this.rot = rotEasing;
+         this.scale = scaleEasing;
+      }
+
+      public Transform3 apply (
+            final Transform3 origin,
+            final Transform3 dest,
+            final Float step,
+            final Transform3 target ) {
+
+         if (step <= 0.0f) {
+            return target.set(origin);
+         }
+
+         if (step >= 1.0f) {
+            return target.set(dest);
+         }
+
+         return this.applyUnclamped(origin, dest, step, target);
+      }
+
+      @Override
+      public Transform3 apply (
+            final Transform3[] arr,
+            final Float step,
+            final Transform3 target ) {
+
+         final int len = arr.length;
+         if (len == 1 || step <= 0.0f) {
+            return target.set(arr[0]);
+         }
+
+         if (step >= 1.0f) {
+            return target.set(arr[len - 1]);
+         }
+
+         final float scaledStep = step * (len - 1);
+         final int i = (int) scaledStep;
+         final float nextStep = scaledStep - i;
+         return this.applyUnclamped(
+               arr[i], arr[i + 1],
+               nextStep, target);
+      }
+
+      public Transform3 applyUnclamped (
+            final Transform3 origin,
+            final Transform3 dest,
+            final float step,
+            final Transform3 target ) {
+
+         target.locPrev.set(target.location);
+         this.loc.applyUnclamped(
+               origin.location,
+               dest.location,
+               step,
+               target.location);
+
+         target.rotPrev.set(target.rotation);
+         this.rot.applyUnclamped(
+               origin.rotation,
+               dest.rotation,
+               step,
+               target.rotation);
+
+         target.scalePrev.set(target.scale);
+         this.loc.applyUnclamped(
+               origin.scale,
+               dest.scale,
+               step,
+               target.scale);
+
+         return target;
+      }
+
+      public String toString () {
+
+         return this.getClass().getSimpleName();
+      }
+   }
+
+   private static Easing EASING = new Easing();
 
    /**
     * The unique identification for serialized classes.
@@ -62,37 +152,9 @@ public class Transform3 extends Transform {
       return target;
    }
 
-   /**
-    * Gets the name of the transform's location easing function
-    * as a string.
-    *
-    * @return the string
-    */
-   public static String getLocEasingString () {
+   public static String getEasingString () {
 
-      return Transform3.LOC_EASING.toString();
-   }
-
-   /**
-    * Gets the name of the transform's rotation easing function
-    * as a string.
-    *
-    * @return the string
-    */
-   public static String getRotEasingString () {
-
-      return Transform3.ROT_EASING.toString();
-   }
-
-   /**
-    * Gets the name of the transform's scale easing function as
-    * a string.
-    *
-    * @return the string
-    */
-   public static String getScaleEasingString () {
-
-      return Transform3.SCALE_EASING.toString();
+      return Transform3.EASING.toString();
    }
 
    /**
@@ -121,7 +183,9 @@ public class Transform3 extends Transform {
     * @return the location delta
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
-   public static Vec3 locDelta ( final Transform3 t, final Vec3 target ) {
+   public static Vec3 locDelta (
+         final Transform3 t,
+         final Vec3 target ) {
 
       return Vec3.sub(t.location, t.locPrev, target);
    }
@@ -193,17 +257,7 @@ public class Transform3 extends Transform {
          final Vec3 source,
          final Vec3 target ) {
 
-      // TODO: Add a transform order?
       Quaternion.mult(t.rotation, source, target);
-
-      // final Vec3 scale = t.scale;
-      // target.set(target.x * scale.x, target.y * scale.y,
-      // target.z * scale.z);
-
-      // final Vec3 loc = t.location;
-      // target.set(target.x + loc.x, target.y + loc.y, target.z +
-      // loc.z);
-
       Vec3.mult(target, t.scale, target);
       Vec3.add(target, t.location, target);
 
@@ -224,15 +278,12 @@ public class Transform3 extends Transform {
     * @return the vector
     * @see Quaternion#mult(Quaternion, Vec3, Vec3)
     */
-   public static Vec3 multVector ( final Transform3 t, final Vec3 source,
+   public static Vec3 multVector (
+         final Transform3 t,
+         final Vec3 source,
          final Vec3 target ) {
 
       Quaternion.mult(t.rotation, source, target);
-
-      // final Vec3 scale = t.scale;
-      // target.set(target.x * scale.x, target.y * scale.y,
-      // target.z * scale.z);
-      
       Vec3.mult(target, t.scale, target);
 
       return target;
@@ -250,7 +301,8 @@ public class Transform3 extends Transform {
     * @see Quaternion#subNorm(Quaternion, Quaternion,
     *      Quaternion)
     */
-   public static Quaternion rotDelta ( final Transform3 t,
+   public static Quaternion rotDelta (
+         final Transform3 t,
          final Quaternion target ) {
 
       return Quaternion.subNorm(t.rotation, t.rotPrev, target);
@@ -267,50 +319,17 @@ public class Transform3 extends Transform {
     * @return the scale delta
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
-   public static Vec3 scaleDelta ( final Transform3 t, final Vec3 target ) {
+   public static Vec3 scaleDelta (
+         final Transform3 t,
+         final Vec3 target ) {
 
       return Vec3.sub(t.scale, t.scalePrev, target);
    }
 
-   /**
-    * Sets the easing function used to mix the transform's
-    * location.
-    *
-    * @param locEasing
-    *           the easing function
-    */
-   public static void setLocEasing ( final Vec3.AbstrEasing locEasing ) {
+   public static void setEasing ( final Easing easing ) {
 
-      if (locEasing != null) {
-         Transform3.LOC_EASING = locEasing;
-      }
-   }
-
-   /**
-    * Sets the easing function used to mix the transform's
-    * rotation.
-    *
-    * @param rotEasing
-    *           the easing function
-    */
-   public static void setRotEasing ( final Quaternion.AbstrEasing rotEasing ) {
-
-      if (rotEasing != null) {
-         Transform3.ROT_EASING = rotEasing;
-      }
-   }
-
-   /**
-    * Sets the easing function used to mix the transform's
-    * scale.
-    *
-    * @param scaleEasing
-    *           the easing function
-    */
-   public static void setScaleEasing ( final Vec3.AbstrEasing scaleEasing ) {
-
-      if (scaleEasing != null) {
-         Transform3.SCALE_EASING = scaleEasing;
+      if (easing != null) {
+         Transform3.EASING = easing;
       }
    }
 
@@ -395,10 +414,18 @@ public class Transform3 extends Transform {
     *           the scale z
     */
    public Transform3 (
-         final float xLoc, final float yLoc, final float zLoc,
+         final float xLoc,
+         final float yLoc,
+         final float zLoc,
+
          final float real,
-         final float xImag, final float yImag, final float zImag,
-         final float xScale, final float yScale, final float zScale ) {
+         final float xImag,
+         final float yImag,
+         final float zImag,
+
+         final float xScale,
+         final float yScale,
+         final float zScale ) {
 
       super();
       this.set(
@@ -483,9 +510,10 @@ public class Transform3 extends Transform {
    @Override
    protected void updateAxes () {
 
-      Quaternion.getRight(this.rotation, this.right);
-      Quaternion.getForward(this.rotation, this.forward);
-      Quaternion.getUp(this.rotation, this.up);
+      // Quaternion.getRight(this.rotation, this.right);
+      // Quaternion.getForward(this.rotation, this.forward);
+      // Quaternion.getUp(this.rotation, this.up);
+      Quaternion.toAxes(rotation, right, forward, up);
    }
 
    /**
@@ -696,6 +724,16 @@ public class Transform3 extends Transform {
       return result;
    }
 
+   public static Transform3 mix (
+         final Transform3 origin,
+         final Transform3 dest,
+         final float step,
+         final Transform3 target ) {
+
+      return Transform3.EASING.apply(
+            origin, dest, step, target);
+   }
+
    /**
     * Moves the transform by a direction to a new location.
     *
@@ -724,7 +762,10 @@ public class Transform3 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform3 moveTo ( final float x, final float y, final float z ) {
+   public Transform3 moveTo (
+         final float x,
+         final float y,
+         final float z ) {
 
       this.locPrev.set(this.location);
       this.location.set(x, y, z);
@@ -755,12 +796,13 @@ public class Transform3 extends Transform {
     * @param step
     *           the step in [0.0, 1.0]
     * @return this transform
-    * @see Transform3#LOC_EASING
     */
    @Chainable
-   public Transform3 moveTo ( final Vec3 locNew, final float step ) {
+   public Transform3 moveTo (
+         final Vec3 locNew,
+         final float step ) {
 
-      return this.moveTo(locNew, step, Transform3.LOC_EASING);
+      return this.moveTo(locNew, step, Transform3.EASING.loc);
    }
 
    /**
@@ -806,9 +848,14 @@ public class Transform3 extends Transform {
     * @param axis
     *           the axis
     * @return this transform
+    * @see Quaternion#rotate(Quaternion, float, Vec3,
+    *      Quaternion)
+    * @see Transform3#updateAxes()
     */
    @Chainable
-   public Transform rotate ( final float radians, final Vec3 axis ) {
+   public Transform rotateBy (
+         final float radians,
+         final Vec3 axis ) {
 
       this.rotPrev.set(this.rotation);
       Quaternion.rotate(this.rotPrev, radians, axis, this.rotation);
@@ -830,10 +877,16 @@ public class Transform3 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform3 rotateTo ( final float real, final float xImag,
-         final float yImag, final float zImag ) {
+   public Transform3 rotateTo (
+         final float real,
+         final float xImag,
+         final float yImag,
+         final float zImag ) {
 
-      if (!(real == 0.0f && xImag == 0.0f && yImag == 0.0f && zImag == 0.0f)) {
+      if (!(real == 0.0f &&
+            xImag == 0.0f &&
+            yImag == 0.0f &&
+            zImag == 0.0f)) {
          this.rotPrev.set(this.rotation);
          this.rotation.set(real, xImag, yImag, zImag);
          this.updateAxes();
@@ -874,9 +927,11 @@ public class Transform3 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform3 rotateTo ( final Quaternion rotNew, final float step ) {
+   public Transform3 rotateTo (
+         final Quaternion rotNew,
+         final float step ) {
 
-      return this.rotateTo(rotNew, step, Transform3.ROT_EASING);
+      return this.rotateTo(rotNew, step, Transform3.EASING.rot);
    }
 
    /**
@@ -892,7 +947,9 @@ public class Transform3 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform3 rotateTo ( final Quaternion rotNew, final float step,
+   public Transform3 rotateTo (
+         final Quaternion rotNew,
+         final float step,
          final Quaternion.AbstrEasing easingFunc ) {
 
       if (Quaternion.isZero(rotNew)) {
@@ -914,6 +971,8 @@ public class Transform3 extends Transform {
     * @param radians
     *           the angle
     * @return this transform
+    * @see Quaternion#rotateX(Quaternion, float, Quaternion)
+    * @see Transform3#updateAxes()
     */
    @Chainable
    public Transform3 rotateX ( final float radians ) {
@@ -934,6 +993,8 @@ public class Transform3 extends Transform {
     * @param radians
     *           the angle
     * @return this transform
+    * @see Quaternion#rotateY(Quaternion, float, Quaternion)
+    * @see Transform3#updateAxes()
     */
    @Chainable
    public Transform3 rotateY ( final float radians ) {
@@ -954,6 +1015,8 @@ public class Transform3 extends Transform {
     * @param radians
     *           the angle
     * @return this transform
+    * @see Quaternion#rotateZ(Quaternion, float, Quaternion)
+    * @see Transform3#updateAxes()
     */
    @Chainable
    public Transform3 rotateZ ( final float radians ) {
@@ -1031,7 +1094,10 @@ public class Transform3 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform3 scaleTo ( final float x, final float y, final float z ) {
+   public Transform3 scaleTo (
+         final float x,
+         final float y,
+         final float z ) {
 
       if (x != 0.0f && y != 0.0f && z != 0.0f) {
          this.scalePrev.set(this.scale);
@@ -1068,13 +1134,15 @@ public class Transform3 extends Transform {
     *           the step in [0.0, 1.0]
     * @return this transform
     * @see Vec3#isNonZero(Vec3)
-    * @see Transform3#SCALE_EASING
     */
    @Chainable
    public Transform3 scaleTo ( final Vec3 scaleNew, final float step ) {
 
       if (Vec3.isNonZero(scaleNew)) {
-         return this.scaleTo(scaleNew, step, Transform3.SCALE_EASING);
+         return this.scaleTo(
+               scaleNew,
+               step,
+               Transform3.EASING.scale);
       }
       return this;
    }
@@ -1094,7 +1162,9 @@ public class Transform3 extends Transform {
     * @see Vec3.AbstrEasing#apply(Vec3, Vec3, Float, Vec3)
     */
    @Chainable
-   public Transform3 scaleTo ( final Vec3 scaleNew, final float step,
+   public Transform3 scaleTo (
+         final Vec3 scaleNew,
+         final float step,
          final Vec3.AbstrEasing easingFunc ) {
 
       if (Vec3.isNonZero(scaleNew)) {
@@ -1131,10 +1201,18 @@ public class Transform3 extends Transform {
     */
    @Chainable
    public Transform3 set (
-         final float xLoc, final float yLoc, final float zLoc,
+         final float xLoc,
+         final float yLoc,
+         final float zLoc,
+
          final float real,
-         final float xImag, final float yImag, final float zImag,
-         final float xScale, final float yScale, final float zScale ) {
+         final float xImag,
+         final float yImag,
+         final float zImag,
+
+         final float xScale,
+         final float yScale,
+         final float zScale ) {
 
       this.moveTo(xLoc, yLoc, zLoc);
       this.rotateTo(real, xImag, yImag, zImag);
@@ -1168,8 +1246,8 @@ public class Transform3 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform3 set ( 
-         final Vec3 locNew, 
+   public Transform3 set (
+         final Vec3 locNew,
          final Quaternion rotNew,
          final Vec3 scaleNew ) {
 

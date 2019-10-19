@@ -2128,7 +2128,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * |<em>a</em>|. The result is a unit vector, as it lies on
     * the unit sphere.
     *
-    * @param a
+    * @param v
     *           the input vector
     * @param target
     *           the output vector
@@ -2137,26 +2137,24 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Vec3#mag(Vec3)
     */
    public static Vec3 normalize (
-         final Vec3 a,
+         final Vec3 v,
          final Vec3 target ) {
 
-      // return Vec3.div(a, Vec3.mag(a), target);
-
-      final float mSq = a.x * a.x + a.y * a.y + a.z * a.z;
+      final float mSq = v.x * v.x + v.y * v.y + v.z * v.z;
 
       if (mSq == 0.0f) {
          return target.reset();
       }
 
-      if (mSq == 1.0f) {
-         return target.set(a);
+      if (Utils.approxFast(mSq, 1.0f)) {
+         return target.set(v);
       }
 
       final float mInv = (float) (1.0d / Math.sqrt(mSq));
       return target.set(
-            a.x * mInv,
-            a.y * mInv,
-            a.z * mInv);
+            v.x * mInv,
+            v.y * mInv,
+            v.z * mInv);
    }
 
    /**
@@ -2500,8 +2498,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final Vec3 b,
          final Vec3 target ) {
 
-      // return Vec3.reject(a, b, target, new Vec3());
-
       final float bSq = Vec3.magSq(b);
       if (bSq != 0.0f) {
          final float dAbBb = Vec3.dot(a, b) / bSq;
@@ -2560,8 +2556,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final float scalar,
          final Vec3 target ) {
 
-      // return Vec3.rescale(v, scalar, target, new Vec3());
-
       if (scalar == 0.0f) {
          return target.reset();
       }
@@ -2572,7 +2566,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          return target.reset();
       }
 
-      if (mSq == 1.0f) {
+      if (Utils.approxFast(mSq, 1.0f)) {
          return Vec3.mult(v, scalar, target);
       }
 
@@ -3134,6 +3128,12 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       this.set(xstr, ystr, zstr);
    }
 
+   public Vec3 ( final Vec2 v2, final float z ) {
+
+      super(3);
+      this.set(v2, z);
+   }
+
    /**
     * Constructs a vector from a source vector's components.
     *
@@ -3398,6 +3398,11 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       return this;
    }
 
+   public Vec3 set ( final Vec2 v2, final float z ) {
+
+      return this.set(v2.x, v2.y, z);
+   }
+
    /**
     * Copies the components of the input vector to this vector.
     *
@@ -3408,8 +3413,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    @Chainable
    public Vec3 set ( final Vec3 source ) {
 
-      this.set(source.x, source.y, source.z);
-      return this;
+      return this.set(source.x, source.y, source.z);
    }
 
    /**
@@ -3432,23 +3436,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     */
    public String toObjString () {
 
-      // return String.format("%.6f %.6f %.6f", this.x, this.y,
-      // this.z);
-
-      // final float xr = (float) (Math.round(this.x * 1000000) *
-      // 0.000001d);
-      // final float yr = (float) (Math.round(this.y * 1000000) *
-      // 0.000001d);
-      // final float zr = (float) (Math.round(this.z * 1000000) *
-      // 0.000001d);
-      // return new StringBuilder()
-      // .append(xr)
-      // .append(" ")
-      // .append(yr)
-      // .append(" ")
-      // .append(zr)
-      // .toString();
-
       return new StringBuilder(32)
             .append(Utils.toFixed(this.x, 6))
             .append(' ')
@@ -3465,9 +3452,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     */
    @Override
    public String toString () {
-
-      // return String.format("{ x: %+.4f, y: %+.4f, z: %+.4f }",
-      // this.x, this.y, this.z);
 
       return this.toString(4);
    }

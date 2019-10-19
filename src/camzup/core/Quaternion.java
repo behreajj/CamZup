@@ -255,7 +255,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       public Lerp () {
 
          super();
-      };
+      }
 
       /**
        * Lerps between the origin and destination quaternion by a
@@ -834,9 +834,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final float by = bi.y;
       final float bz = bi.z;
 
-      final float bMSq = bw * bw + bx * bx + by * by + bz * bz;
+      final float bmSq = bw * bw + bx * bx + by * by + bz * bz;
 
-      if (bMSq == 0.0f) {
+      if (bmSq == 0.0f) {
          return target.reset();
       }
 
@@ -845,12 +845,12 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       float byInv = -by;
       float bzInv = -bz;
 
-      if (bMSq != 1.0f) {
-         final float bMSqInv = 1.0f / bMSq;
-         bwInv *= bMSqInv;
-         bxInv *= bMSqInv;
-         byInv *= bMSqInv;
-         bzInv *= bMSqInv;
+      if (!Utils.approxFast(bmSq, 1.0f)) {
+         final float bmSqInv = 1.0f / bmSq;
+         bwInv *= bmSqInv;
+         bxInv *= bmSqInv;
+         byInv *= bmSqInv;
+         bzInv *= bmSqInv;
       }
 
       return target.set(
@@ -942,9 +942,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final float by = bi.y;
       final float bz = bi.z;
 
-      final float bMSq = bw * bw + bx * bx + by * by + bz * bz;
+      final float bmSq = bw * bw + bx * bx + by * by + bz * bz;
 
-      if (bMSq == 0.0f) {
+      if (bmSq == 0.0f) {
          return target.reset();
       }
 
@@ -953,12 +953,12 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       float byInv = -by;
       float bzInv = -bz;
 
-      if (bMSq != 1.0f) {
-         final float bMSqInv = 1.0f / bMSq;
-         bwInv *= bMSqInv;
-         bxInv *= bMSqInv;
-         byInv *= bMSqInv;
-         bzInv *= bMSqInv;
+      if (!Utils.approxFast(bmSq, 1.0f)) {
+         final float bmSqInv = 1.0f / bmSq;
+         bwInv *= bmSqInv;
+         bxInv *= bmSqInv;
+         byInv *= bmSqInv;
+         bzInv *= bmSqInv;
       }
 
       final Vec3 ai = a.imag;
@@ -1060,9 +1060,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       }
 
       final double im = Math.sqrt(imSq);
-
       target.real = (float) (ea * Math.cos(im));
-
       Vec3.mult(
             quat.imag,
             (float) (ea * Math.sin(im) / im),
@@ -1076,9 +1074,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *
     * @param right
     *           the right axis
-    * @param forward
-    *           the forward axis
     * @param up
+    *           the forward axis
+    * @param forward
     *           the up axis
     * @param target
     *           the output quaternion
@@ -1091,8 +1089,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion target ) {
 
       final float rx = right.x;
-      final float uy = up.y;
-      final float fz = forward.z;
+      final float uy = forward.y;
+      final float fz = up.z;
 
       final float w = (float) (Math.sqrt(
             Utils.max(0.0f, 1.0f + rx + uy + fz)) * 0.5d);
@@ -1104,13 +1102,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       float z = (float) (Math.sqrt(
             Utils.max(0.0f, 1.0f - rx - uy + fz)) * 0.5d);
 
-      x = Math.copySign(x, up.z - forward.y);
-      y = Math.copySign(y, forward.x - right.z);
-      z = Math.copySign(z, right.y - up.x);
-
-      // x *= Utils.sign(up.z - forward.y);
-      // y *= Utils.sign(forward.x - right.z);
-      // z *= Utils.sign(right.y - up.x);
+      x = Math.copySign(x, forward.z - up.y);
+      y = Math.copySign(y, up.x - right.z);
+      z = Math.copySign(z, right.y - forward.x);
 
       return target.set(w, x, y, z);
    }
@@ -1141,7 +1135,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       float ny = axis.y;
       float nz = axis.z;
 
-      if (amSq != 1.0f) {
+      if (!Utils.approxFast(amSq, 1.0f)) {
          final float amInv = (float) (1.0d / Math.sqrt(amSq));
          nx *= amInv;
          ny *= amInv;
@@ -1205,7 +1199,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       /*
        * target's real and imag have already been set.
        */
-      if (mSq == 1.0f) {
+      if (Utils.approxFast(mSq, 1.0f)) {
          return target;
       }
 
@@ -1241,13 +1235,16 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
-    * Gets the forward axis of the rotation.
+    * Gets the forward axis of the rotation. Equivalent to
+    * multiplying (0.0, 1.0, 0.0) by the quaternion. If all
+    * three axes need to be retrieved, use toAxes.
     *
     * @param quat
     *           the quaternion
     * @param target
     *           the output vector
     * @return the forward axis
+    * @see Quaternion#toAxes(Quaternion, Vec3, Vec3, Vec3)
     */
    public static Vec3 getForward (
          final Quaternion quat,
@@ -1266,13 +1263,16 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
-    * Gets the right axis of the rotation.
+    * Gets the right axis of the rotation. Equivalent to
+    * multiplying (1.0, 0.0, 0.0) by the quaternion. If all
+    * three axes need to be retrieved, use toAxes.
     *
     * @param quat
     *           the quaternion
     * @param target
     *           the output vector
     * @return the right axis
+    * @see Quaternion#toAxes(Quaternion, Vec3, Vec3, Vec3)
     */
    public static Vec3 getRight (
          final Quaternion quat,
@@ -1292,19 +1292,21 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
-    * Gets the up axis of the rotation.
+    * Gets the up axis of the rotation. Equivalent to
+    * multiplying (0.0, 0.0, 1.0) by the quaternion. If all
+    * three axes need to be retrieved, use toAxes.
     *
     * @param quat
     *           the quaternion
     * @param target
     *           the output vector
     * @return the up axis
+    * @see Quaternion#toAxes(Quaternion, Vec3, Vec3, Vec3)
     */
    public static Vec3 getUp (
          final Quaternion quat,
          final Vec3 target ) {
 
-      // TODO: Test that forward and up are not transposed...
       final Vec3 imag = quat.imag;
 
       final float w = quat.real;
@@ -1837,7 +1839,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
 
       double m = mSq;
       double wNorm;
-      if (mSq != 1.0f) {
+      if (!Utils.approxFast(mSq, 1.0f)) {
          m = Math.sqrt(mSq);
          wNorm = a.real / m;
       } else {
@@ -1894,7 +1896,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
 
    /**
     * Creates a random unit quaternion. Uses an algorithm by
-    * Ken Shoemake reproduced at the Math Stack Exchange
+    * Ken Shoemake, reproduced at this Math Stack Exchange
     * discussion "<a href=
     * "https://math.stackexchange.com/questions/131336/uniform-random-quaternion-in-a-restricted-angle-range">Uniform
     * Random Quaternion In a restricted angle range</a>".
@@ -2165,6 +2167,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    /**
     * Converts a quaternion to three axes, which in turn may
     * constitute a rotation matrix.
+    * 
+    * Use this instead of getRight, getForward and getUp if you
+    * need all three axes.
     *
     * @param quat
     *           the quaternion
@@ -2174,17 +2179,15 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *           the forward axis
     * @param up
     *           the up axis
+    * @see Quaternion#getForward(Quaternion, Vec3)
+    * @see Quaternion#getRight(Quaternion, Vec3)
+    * @see Quaternion#getUp(Quaternion, Vec3)
     */
    public static void toAxes (
          final Quaternion quat,
          final Vec3 right,
          final Vec3 forward,
          final Vec3 up ) {
-
-      // TODO: Needs testing.
-      // Does this deliver the same results as
-      // getUp, getRight, getForward? Is it
-      // necessary to have this function in addition?
 
       final float w = quat.real;
       final Vec3 i = quat.imag;
@@ -2287,14 +2290,14 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final double ay = i.y * sInv;
       final double az = i.z * sInv;
 
-      final double aMSq = ax * ax + ay * ay + az * az;
+      final double amSq = ax * ax + ay * ay + az * az;
 
-      if (aMSq == 0.0d) {
+      if (amSq == 0.0d) {
          Vec3.forward(axis);
          return (float) angle;
       }
 
-      if (aMSq == 1.0d) {
+      if (amSq == 1.0d) {
          axis.set(
                (float) ax,
                (float) ay,
@@ -2302,7 +2305,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          return (float) angle;
       }
 
-      final double mInv = 1.0d / Math.sqrt(aMSq);
+      final double mInv = 1.0d / Math.sqrt(amSq);
       axis.set(
             (float) (ax * mInv),
             (float) (ay * mInv),

@@ -883,7 +883,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * |<em>a</em>|. The result is a unit vector, as it lies on
     * the unit hypersphere.
     *
-    * @param a
+    * @param v
     *           the input vector
     * @param target
     *           the output vector
@@ -892,30 +892,28 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @see Vec4#mag(Vec4)
     */
    public static Vec4 normalize (
-         final Vec4 a,
+         final Vec4 v,
          final Vec4 target ) {
 
-      // return Vec4.div(a, Vec4.mag(a), target);
-
-      final float mSq = a.x * a.x +
-            a.y * a.y +
-            a.z * a.z +
-            a.w * a.w;
+      final float mSq = v.x * v.x +
+            v.y * v.y +
+            v.z * v.z +
+            v.w * v.w;
 
       if (mSq == 0.0f) {
          return target.reset();
       }
 
-      if (mSq == 1.0f) {
-         return target.set(a);
+      if (Utils.approxFast(mSq, 1.0f)) {
+         return target.set(v);
       }
 
       final float mInv = (float) (1.0d / Math.sqrt(mSq));
       return target.set(
-            a.x * mInv,
-            a.y * mInv,
-            a.z * mInv,
-            a.w * mInv);
+            v.x * mInv,
+            v.y * mInv,
+            v.z * mInv,
+            v.w * mInv);
    }
 
    /**
@@ -1178,6 +1176,12 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
 
       super(4);
       this.set(xstr, ystr, zstr, wstr);
+   }
+
+   public Vec4 ( final Vec3 v3, final float w ) {
+
+      super(4);
+      this.set(v3, w);
    }
 
    /**
@@ -1471,6 +1475,11 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
 
       return this;
    }
+   
+   public Vec4 set ( final Vec3 v3, final float w ) {
+
+      return this.set(v3.x, v3.y, v3.z, w);
+   }
 
    /**
     * Copies the components of the input vector to this vector.
@@ -1510,13 +1519,16 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    @Override
    public String toString () {
 
-      // return String.format("{ x: %+.4f, y: %+.4f, z: %+.4f, w:
-      // %+.4f }",
-      // this.x, this.y, this.z, this.w);
-
       return this.toString(4);
    }
 
+   /**
+    * Returns a string representation of this vector according
+    * to the string format.
+    * 
+    * @param places number of decimal places
+    * @return the string
+    */
    public String toString ( final int places ) {
 
       return new StringBuilder(96)

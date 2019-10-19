@@ -1,5 +1,6 @@
 package camzup.core;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -7,7 +8,7 @@ import java.util.LinkedList;
  * list of curves. The curves may references a list of
  * materials by index.
  */
-public class CurveEntity2 extends Entity {
+public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
 
    /**
     * The list of curves held by the entity.
@@ -223,6 +224,12 @@ public class CurveEntity2 extends Entity {
       Transform2.multPoint(this.transform, coordLocal, coordWorld);
       Transform2.multDir(this.transform, tanLocal, tanWorld);
       return coordWorld;
+   }
+
+   @Override
+   public Iterator < Curve2 > iterator () {
+
+      return this.curves.iterator();
    }
 
    /**

@@ -233,25 +233,25 @@ public class Zup3 extends Up3 {
 
       this.eyeDist = PApplet.sqrt(lookDist);
 
-      // Create three axes.
+      /* Create three axes. */
       Vec3.normalize(this.lookDir, this.k);
       Vec3.crossNorm(this.refUp, this.k, this.i);
       Vec3.crossNorm(this.k, this.i, this.j);
 
-      // Set matrix to axes by row.
+      /* Set matrix to axes by row. */
       this.modelview.set(
             this.i.x, this.i.y, this.i.z, 0.0f,
             this.j.x, this.j.y, this.j.z, 0.0f,
             this.k.x, this.k.y, this.k.z, 0.0f,
             0.0f, 0.0f, 0.0f, 1.0f);
 
-      // Translate by negative location.
+      /* Translate by negative location. */
       this.modelview.translate(
             -this.cameraX,
             -this.cameraY,
             -this.cameraZ);
 
-      // Update renderer matrices.
+      /* Update renderer matrices. */
       IUp.invert(this.modelview, this.modelviewInv);
       this.camera.set(this.modelview);
       this.cameraInv.set(this.modelviewInv);

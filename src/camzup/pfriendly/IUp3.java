@@ -1,5 +1,6 @@
 package camzup.pfriendly;
 
+import camzup.core.Ray3;
 import camzup.core.Utils;
 import camzup.core.Vec3;
 import processing.core.PApplet;
@@ -39,12 +40,6 @@ public interface IUp3 extends IUp {
             parent.mouseX / (float) parent.width);
       final float my = Utils.clamp01(
             parent.mouseY / (float) parent.height);
-
-      // return target.set(
-      // 2.0f * mx - 1.0f,
-      // -2.0f * my + 1.0f,
-      // 0.0f);
-
       return target.set(
             mx + mx - 1.0f,
             1.0f - (my + my),
@@ -128,6 +123,30 @@ public interface IUp3 extends IUp {
    /**
     * Draws a line between two coordinates.
     *
+    * @param ax
+    *           the origin x coordinate
+    * @param ay
+    *           the origin y coordinate
+    * @param az
+    *           the origin z coordinate
+    * @param bx
+    *           the destination x coordinate
+    * @param by
+    *           the destination y coordinate
+    * @param bz
+    *           the destination z coordinate
+    */
+   public void line (
+         final float ax,
+         final float ay,
+         final float az,
+         final float bx,
+         final float by,
+         final float bz );
+
+   /**
+    * Draws a line between two coordinates.
+    *
     * @param a
     *           the origin coordinate
     * @param b
@@ -199,6 +218,98 @@ public interface IUp3 extends IUp {
    public void quadraticVertex (
          final Vec3 cp,
          final Vec3 ap1 );
+
+   public default void ray (
+         final float xOrigin,
+         final float yOrigin,
+         final float zOrigin,
+
+         final float xDir,
+         final float yDir,
+         final float zDir,
+
+         final float dLen ) {
+
+      this.ray(
+            xOrigin, yOrigin, zOrigin,
+            xDir, yDir, zDir,
+            dLen, 1.0f, 4.0f, 2.0f);
+   }
+
+   public default void ray (
+         final float xOrigin,
+         final float yOrigin,
+         final float zOrigin,
+
+         final float xDir,
+         final float yDir,
+         final float zDir,
+
+         final float dLen,
+         final float lnwgt,
+         final float oWeight,
+         final float dWeight ) {
+
+      final float mSq = xDir * xDir + yDir * yDir + zDir * zDir;
+
+      this.pushStyle();
+      this.strokeWeight(oWeight);
+      this.point(xOrigin, yOrigin, zOrigin);
+      if (mSq != 0.0f) {
+         this.strokeWeight(lnwgt);
+
+         float dx = 0.0f;
+         float dy = 0.0f;
+         float dz = 0.0f;
+
+         if (Utils.approxFast(mSq, 1.0f)) {
+            dx = xOrigin + xDir * dLen;
+            dy = yOrigin + yDir * dLen;
+            dz = zOrigin + zDir * dLen;
+            this.line(
+                  xOrigin, yOrigin, zOrigin,
+                  dx, dy, dz);
+         } else {
+            final float mInv = dLen / (float) Math.sqrt(mSq);
+            dx = xOrigin + xDir * mInv;
+            dy = yOrigin + yDir * mInv;
+            dz = zOrigin + zDir * mInv;
+            this.line(
+                  xOrigin, yOrigin, zOrigin,
+                  dx, dy, dz);
+         }
+         this.strokeWeight(dWeight);
+         this.point(dx, dy, dz);
+      }
+      this.popStyle();
+   }
+
+   public default void ray (
+         final Ray3 ray,
+         final float dLen ) {
+
+      final Vec3 origin = ray.origin;
+      final Vec3 dir = ray.dir;
+      this.ray(
+            origin.x, origin.y, origin.z,
+            dir.x, dir.y, dir.z,
+            dLen);
+   }
+
+   public default void ray (
+         final Ray3 ray,
+         final float dLen,
+         final float lnwgt,
+         final float oWeight,
+         final float dWeight ) {
+
+      final Vec3 origin = ray.origin;
+      final Vec3 dir = ray.dir;
+      this.ray(
+            origin.x, origin.y, origin.z,
+            dir.x, dir.y, dir.z,
+            dLen, lnwgt, oWeight, dWeight);
+   }
 
    /**
     * Sets the renderer's stroke color.

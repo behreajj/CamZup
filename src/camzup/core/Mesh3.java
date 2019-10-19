@@ -163,8 +163,8 @@ public class Mesh3 extends Mesh {
        * @return this vertex
        */
       @Chainable
-      public Vert3 set ( 
-            final Vec3 coord, 
+      public Vert3 set (
+            final Vec3 coord,
             final Vec2 texCoord,
             final Vec3 normal ) {
 
@@ -537,8 +537,8 @@ public class Mesh3 extends Mesh {
          for (int lon = 0; lon <= lons; lon++) {
             final float u = lon * toU;
             final float theta = (lon == lons ? 0.0f : lon) * toTheta;
-            
-            //TODO: Precalculate in a separate loop?
+
+            // TODO: Precalculate in a separate loop?
             final float cosTheta = (float) Math.cos(theta);
             final float sinTheta = (float) Math.sin(theta);
 
@@ -704,9 +704,9 @@ public class Mesh3 extends Mesh {
     * @param normals
     *           the normals array
     */
-   public Mesh3 ( 
-         final String name, 
-         final int[][][] faces, 
+   public Mesh3 (
+         final String name,
+         final int[][][] faces,
          final Vec3[] coords,
          final Vec2[] texCoords,
          final Vec3[] normals ) {
@@ -765,9 +765,9 @@ public class Mesh3 extends Mesh {
     *           the output vertex
     * @return the vertex
     */
-   public Vert3 getVertex ( 
-         final int i, 
-         final int j, 
+   public Vert3 getVertex (
+         final int i,
+         final int j,
          final Vert3 target ) {
 
       final int[] vert = this.faces[i][j];
@@ -940,10 +940,10 @@ public class Mesh3 extends Mesh {
     * @return this mesh
     */
    @Chainable
-   public Mesh3 set ( 
-         final int[][][] faces, 
+   public Mesh3 set (
+         final int[][][] faces,
          final Vec3[] coords,
-         final Vec2[] texCoords, 
+         final Vec2[] texCoords,
          final Vec3[] normals ) {
 
       this.faces = faces;

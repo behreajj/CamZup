@@ -34,7 +34,7 @@ public class Ray2 extends Ray {
          return target.set(origin);
       }
 
-      if (dmSq == 1.0f) {
+      if (Utils.approxFast(dmSq, 1.0f)) {
          return target.set(
                origin.x + dir.x * time,
                origin.y + dir.y * time);
@@ -45,7 +45,7 @@ public class Ray2 extends Ray {
             origin.x + dir.x * scalar,
             origin.y + dir.y * scalar);
    }
-   
+
    /**
     * The ray's direction.
     */
@@ -152,10 +152,10 @@ public class Ray2 extends Ray {
    @Override
    public String toString () {
 
-      return toString(4);
+      return this.toString(4);
    }
 
-   public String toString ( int places ) {
+   public String toString ( final int places ) {
 
       return new StringBuilder(132)
             .append("{ origin: ")

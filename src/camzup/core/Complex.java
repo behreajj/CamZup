@@ -336,7 +336,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex target ) {
 
       final float bAbsSq = Complex.absSq(b);
-      if (bAbsSq <= 0.0f) {
+      if (bAbsSq == 0.0f) {
          return target.reset();
       }
 
@@ -717,15 +717,13 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex z,
          final Complex target ) {
 
-      // return div(z, abs(z), target);
-
       final float mSq = z.real * z.real + z.imag * z.imag;
 
       if (mSq == 0.0f) {
          return target.reset();
       }
 
-      if (mSq == 1.0f) {
+      if (Utils.approxFast(mSq, 1.0f)) {
          return target.set(z);
       }
 

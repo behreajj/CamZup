@@ -4,6 +4,7 @@ import camzup.core.Color;
 import camzup.core.CurveEntity2;
 import camzup.core.IUtils;
 import camzup.core.MeshEntity2;
+import camzup.core.Ray2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import processing.core.PApplet;
@@ -38,15 +39,15 @@ public interface IYup2 extends IUp {
          final IYup2 renderer,
          final Vec2 target ) {
 
-      // Normalize to [0.0, 1.0], then shift to [-0.5, 0.5].
+      /* Normalize to [0.0, 1.0], then shift to [-0.5, 0.5]. */
       float mx = parent.mouseX / (float) parent.width - 0.5f;
       float my = 0.5f - parent.mouseY / (float) parent.height;
 
-      // Scale.
+      /* Scale. */
       mx *= Utils.div(renderer.getWidth(), renderer.getZoomX());
       my *= Utils.div(renderer.getHeight(), renderer.getZoomY());
 
-      // Rotate.
+      /* Rotate. */
       final float angle = renderer.getRot();
 
       // final float cosa = (float) Math.cos(angle);
@@ -59,7 +60,7 @@ public interface IYup2 extends IUp {
       mx = cosa * mx - sina * my;
       my = cosa * my + sina * temp;
 
-      // Translate.
+      /* Translate. */
       mx += renderer.getLocX();
       my += renderer.getLocY();
 
@@ -88,10 +89,6 @@ public interface IYup2 extends IUp {
             parent.mouseX / (float) parent.width);
       final float my = Utils.clamp01(
             parent.mouseY / (float) parent.height);
-
-      // return target.set(
-      // 2.0f * mx - 1.0f,
-      // -2.0f * my + 1.0f);
 
       return target.set(
             mx + mx - 1.0f,
@@ -191,23 +188,22 @@ public interface IYup2 extends IUp {
       final StringBuilder result = new StringBuilder();
 
       result.append(IYup2.svgHeader(renderer))
-            .append("\n");
+            .append('\n');
 
       result.append(IYup2.svgBackground(renderer))
-            .append("\n");
+            .append('\n');
 
       result.append("<g ")
             .append(IYup2.svgCamera(renderer))
-            .append(">\n");
+            .append('>')
+            .append('\n');
 
       for (final CurveEntity2 ce : ces) {
-         result.append(ce.toSvgString());
-         result.append("\n");
+         result.append(ce.toSvgString())
+               .append('\n');
       }
 
-      result.append("</g>\n")
-            .append("</svg>");
-      return result.toString();
+      return result.append("</g>\n</svg>").toString();
    }
 
    /**
@@ -225,23 +221,22 @@ public interface IYup2 extends IUp {
       final StringBuilder result = new StringBuilder();
 
       result.append(IYup2.svgHeader(renderer))
-            .append("\n");
+            .append('\n');
 
       result.append(IYup2.svgBackground(renderer))
-            .append("\n");
+            .append('\n');
 
       result.append("<g ")
             .append(IYup2.svgCamera(renderer))
-            .append(">\n");
+            .append('>')
+            .append('\n');
 
       for (final MeshEntity2 me : mes) {
          result.append(me.toSvgString());
-         result.append("\n");
+         result.append('\n');
       }
 
-      result.append("</g>\n")
-            .append("</svg>");
-      return result.toString();
+      return result.append("</g>\n</svg>").toString();
    }
 
    /**
@@ -470,13 +465,13 @@ public interface IYup2 extends IUp {
       for (int j = 0; j < last; ++j) {
          final float jPercent = j * toPercent;
          xs[j] = Utils.lerpUnclamped(left, right, jPercent);
-         reds[j] = (int) (jPercent * 0xff + 0.5f) << 16;
+         reds[j] = (int) (jPercent * 0xff + 0.5f) << 0x10;
       }
 
       for (int i = 0; i < last; ++i) {
          final float iPercent = i * toPercent;
          final float y = Utils.lerpUnclamped(bottom, top, iPercent);
-         final int green = (int) (iPercent * 0xff + 0.5f) << 8;
+         final int green = (int) (iPercent * 0xff + 0.5f) << 0x8;
          final int agb = ab | green;
 
          for (int j = 0; j < last; ++j) {
@@ -495,6 +490,24 @@ public interface IYup2 extends IUp {
     *           the mode
     */
    public void imageMode ( final int mode );
+
+   /**
+    * Draws a line between two coordinates.
+    *
+    * @param ax
+    *           the origin x coordinate
+    * @param ay
+    *           the origin y coordinate
+    * @param bx
+    *           the destination x coordinate
+    * @param by
+    *           the destination y coordinate
+    */
+   public void line (
+         final float ax,
+         final float ay,
+         final float bx,
+         final float by );
 
    /**
     * Draws a line between two coordinates.
@@ -592,6 +605,87 @@ public interface IYup2 extends IUp {
    public void quadraticVertex (
          final Vec2 cp,
          final Vec2 ap1 );
+
+   public default void ray (
+         final float xOrigin,
+         final float yOrigin,
+
+         final float xDir,
+         final float yDir,
+
+         final float dLen ) {
+
+      this.ray(xOrigin, yOrigin,
+            xDir, yDir,
+            dLen, 1.0f, 4.0f, 2.0f);
+   }
+
+   public default void ray (
+         final float xOrigin,
+         final float yOrigin,
+
+         final float xDir,
+         final float yDir,
+
+         final float dLen,
+         final float lnwgt,
+         final float oWeight,
+         final float dWeight ) {
+
+      final float mSq = xDir * xDir + yDir * yDir;
+
+      this.pushStyle();
+      this.strokeWeight(oWeight);
+      this.point(xOrigin, yOrigin);
+
+      if (mSq != 0.0f) {
+         this.strokeWeight(lnwgt);
+
+         float dx = 0.0f;
+         float dy = 0.0f;
+
+         if (Utils.approxFast(mSq, 1.0f)) {
+            dx = xOrigin + xDir * dLen;
+            dy = yOrigin + yDir * dLen;
+            this.line(
+                  xOrigin, yOrigin,
+                  dx, dy);
+         } else {
+            final float mInv = dLen / (float) Math.sqrt(mSq);
+            dx = xOrigin + xDir * mInv;
+            dy = yOrigin + yDir * mInv;
+            this.line(
+                  xOrigin, yOrigin,
+                  dx, dy);
+         }
+
+         this.strokeWeight(dWeight);
+         this.point(dx, dy);
+      }
+      this.popStyle();
+   }
+
+   public default void ray (
+         final Ray2 ray,
+         final float dLen ) {
+
+      this.ray(
+            ray.origin.x, ray.origin.y,
+            ray.dir.x, ray.dir.y, dLen);
+   }
+
+   public default void ray (
+         final Ray2 ray,
+         final float dLen,
+         final float lnwgt,
+         final float oWeight,
+         final float dWeight ) {
+
+      this.ray(
+            ray.origin.x, ray.origin.y,
+            ray.dir.x, ray.dir.y,
+            dLen, lnwgt, oWeight, dWeight);
+   }
 
    /**
     * Draws a rectangle; the meaning of the two parameters

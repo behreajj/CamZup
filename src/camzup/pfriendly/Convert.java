@@ -57,6 +57,8 @@ public abstract class Convert {
       final Vec2 loc = tr2.getLocation(new Vec2());
       final float angle = tr2.getRotation();
 
+      target.reset();
+
       switch (order) {
 
          case RST:
@@ -210,6 +212,8 @@ public abstract class Convert {
       final Vec3 dim = tr3.getScale(new Vec3());
       final Vec3 loc = tr3.getLocation(new Vec3());
 
+      target.reset();
+
       switch (order) {
 
          case RST:
@@ -356,9 +360,9 @@ public abstract class Convert {
       float z = (float) (Math.sqrt(Utils.max(0.0f, 1.0f - ix - jy + kz))
             * 0.5d);
 
-      x *= Utils.sign(source.m21 - source.m12);
-      y *= Utils.sign(source.m02 - source.m20);
-      z *= Utils.sign(source.m10 - source.m01);
+      x = Math.copySign(x, source.m21 - source.m12);
+      y = Math.copySign(y, source.m02 - source.m20);
+      z = Math.copySign(z, source.m10 - source.m01);
 
       return target.set(w, x, y, z);
    }

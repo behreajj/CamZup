@@ -1,5 +1,6 @@
 package camzup.core;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -7,7 +8,7 @@ import java.util.LinkedList;
  * list of meshes. The meshes may references a list of
  * materials by index.
  */
-public class MeshEntity2 extends Entity {
+public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
 
    /**
     * The list of materials held by the entity.
@@ -161,6 +162,12 @@ public class MeshEntity2 extends Entity {
          }
       }
       return this;
+   }
+
+   @Override
+   public Iterator < Mesh2 > iterator () {
+
+      return this.meshes.iterator();
    }
 
    /**

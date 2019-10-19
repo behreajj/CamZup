@@ -5,7 +5,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.GeneralPath;
 import java.util.LinkedList;
-import java.util.List;
 
 import camzup.core.Color;
 import camzup.core.Curve2;
@@ -2548,7 +2547,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    public void text (
          final char[] chars,
          final int start, final int stop,
-         final float x, final float y, final float z ) {
+         final float x,
+         final float y, 
+         final float z ) {
 
       PApplet.showDepthWarningXYZ("text");
       this.text(chars, start, stop, x, y);
@@ -2568,7 +2569,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void text (
          final float num,
-         final float x, final float y ) {
+         final float x,
+         final float y ) {
 
       this.text(Utils.toFixed(num, 4), x, y);
    }
@@ -2589,7 +2591,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void text (
          final float num,
-         final float x, final float y, final float z ) {
+         final float x,
+         final float y,
+         final float z ) {
 
       PGraphics.showDepthWarningXYZ("text");
       this.text(num, x, y);
@@ -2611,7 +2615,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void text (
          final int num,
-         final float x, final float y, final float z ) {
+         final float x, 
+         final float y, 
+         final float z ) {
 
       PGraphics.showDepthWarningXYZ("text");
       this.text(num, x, y);
@@ -2620,7 +2626,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void text (
          final String str,
-         final float x, final float y ) {
+         final float x,
+         final float y ) {
 
       this.text(str.toCharArray(), x, y);
    }
@@ -2641,7 +2648,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void text (
          final String str,
-         final float x, final float y, final float z ) {
+         final float x,
+         final float y, 
+         final float z ) {
 
       PGraphics.showDepthWarningXYZ("text");
       this.text(str, x, y);

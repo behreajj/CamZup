@@ -343,7 +343,7 @@ public interface IUp {
          final char character,
          final List < Curve2 > curves ) {
 
-      /**
+      /*
        * A GlyphVector can handle multiple characters at a time,
        * but individual characters are supplied instead, so that
        * glyphs with multiple curves (i, j, p, etc.) can be
@@ -353,7 +353,7 @@ public interface IUp {
             new char[] { character });
       final Shape shp = gv.getOutline();
 
-      /**
+      /*
        * Acquire a special iterator, run through it in a while
        * loop, and deal with 5 possible cases: the 'pen' moves to
        * a point; the 'pen' draws a straight line to the next
@@ -365,7 +365,7 @@ public interface IUp {
       final PathIterator iter = detail == 0 ? shp.getPathIterator(transform)
             : shp.getPathIterator(transform, detail);
 
-      /**
+      /*
        * A float array is filled with values by the iterator when
        * currentSegment is called.
        */
@@ -379,7 +379,7 @@ public interface IUp {
 
       while (!iter.isDone()) {
 
-         /**
+         /*
           * y-axis is flipped in all cases, for y-up.
           */
 
@@ -387,7 +387,7 @@ public interface IUp {
          switch (segType) {
             case PathIterator.SEG_MOVETO:
 
-               /**
+               /*
                 * Create a new curve, then move to a point. The first three
                 * or so points from this PathIterator seem to be garbage
                 * (i.e., they linger at the origin). The only reason the
@@ -407,7 +407,7 @@ public interface IUp {
 
             case PathIterator.SEG_LINETO:
 
-               /**
+               /*
                 * For straight lines, create a new knot from just a point.
                 * The handles will have no influence, so the previous
                 * knot's forehandle and the current knot's rear handle
@@ -440,7 +440,7 @@ public interface IUp {
 
             case PathIterator.SEG_QUADTO:
 
-               /**
+               /*
                 * The ordering of the points is (1) a shared handle, or
                 * control point, between the previous and next coordinate;
                 * (2) the next coordinate.
@@ -465,7 +465,7 @@ public interface IUp {
 
             case PathIterator.SEG_CUBICTO:
 
-               /**
+               /*
                 * The order of a continuing curve is (1) prev knot fore
                 * handle; (2) curr knot rear handle; (3) curr knot point.
                 * This is different from a knot constructor's parameter
@@ -495,7 +495,7 @@ public interface IUp {
             case PathIterator.SEG_CLOSE:
                prevKnot = currKnot;
 
-               /**
+               /*
                 * The first two knots don't seem to be useful.
                 */
                currCurve.removeFirst();
@@ -1356,45 +1356,45 @@ public interface IUp {
     *           the matrix
     * @return the string
     */
-   public static String toString ( final PMatrix3D m ) {
+   public static String toString ( final PMatrix3D m , final int places) {
 
       return new StringBuilder(320)
             .append("{ elms: [\n ")
 
-            .append(Utils.toFixed(m.m00, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m01, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m02, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m03, 4))
-            .append(", \n ")
+            .append(Utils.toFixed(m.m00, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m01, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m02, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m03, places))
+            .append(',').append(' ').append('\n')
 
-            .append(Utils.toFixed(m.m10, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m11, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m12, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m13, 4))
-            .append(", \n ")
+            .append(Utils.toFixed(m.m10, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m11, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m12, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m13, places))
+            .append(',').append(' ').append('\n')
 
-            .append(Utils.toFixed(m.m20, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m21, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m22, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m23, 4))
-            .append(", \n ")
+            .append(Utils.toFixed(m.m20, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m21, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m22, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m23, places))
+            .append(',').append(' ').append('\n')
 
-            .append(Utils.toFixed(m.m30, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m31, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m32, 4))
-            .append(", ")
-            .append(Utils.toFixed(m.m33, 4))
+            .append(Utils.toFixed(m.m30, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m31, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m32, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m33, places))
 
             .append(" ] }")
             .toString();

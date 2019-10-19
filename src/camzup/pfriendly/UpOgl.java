@@ -25,6 +25,7 @@ import processing.opengl.PGraphicsOpenGL;
 public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
    // public final PMatrix3D projInv = new PMatrix3D();
+   // TODO: Cos and sine LUTs not initialized????
 
    /**
     * A curve to hold the arc data.
@@ -143,7 +144,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param trOrder
     *           the transform order
     */
-   protected void arcImpl ( final Curve2 curve, final Transform2 transform,
+   protected void arcImpl ( 
+         final Curve2 curve, 
+         final Transform2 transform,
          final Transform.Order trOrder ) {
 
       final int knotLength = curve.knotCount();
@@ -202,7 +205,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       }
 
       this.endShape(
-            curve.closedLoop ? PConstants.CLOSE : PConstants.OPEN);
+            curve.closedLoop ?
+                  PConstants.CLOSE : 
+                     PConstants.OPEN);
 
       this.strokeWeight = oldSw;
       this.popMatrix();
@@ -235,14 +240,14 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    protected void colorCalcARGB ( final int argb, final float alpha ) {
 
       if (alpha == this.colorModeA) {
-         this.calcAi = argb >> 24 & 0xff;
+         this.calcAi = argb >> 0x18 & 0xff;
          this.calcColor = argb;
       } else {
-         this.calcAi = (int) ((argb >> 24 & 0xff)
+         this.calcAi = (int) ((argb >> 0x18 & 0xff)
                * PApplet.constrain(
                      alpha * this.invColorModeA,
                      0.0f, 1.0f));
-         this.calcColor = this.calcAi << 24 | argb & 0xffffff;
+         this.calcColor = this.calcAi << 0x18 | argb & 0xffffff;
       }
 
       this.calcRi = argb >> 0x10 & 0xff;
@@ -498,7 +503,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float mSq = nx * nx + ny * ny + nz * nz;
       final int num3 = num + num + num;
       if (0.0f < mSq) {
-         // final float mInv = (float) (1.0d / Math.sqrt(mSq));
          final float mInv = 1.0f / PApplet.sqrt(mSq);
          this.lightNormal[num3] = mInv * nx;
          this.lightNormal[num3 + 1] = mInv * ny;
@@ -1594,64 +1598,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       // IUp.invert(this.projection, this.projInv);
    }
 
-   // public Vec3 project ( final Vec3 point, final Vec3 target
-   // ) {
-   //
-   // final float aw = this.modelviewInv.m30 * point.x +
-   // this.modelviewInv.m31 * point.y +
-   // this.modelviewInv.m32 * point.z +
-   // this.modelviewInv.m33;
-   //
-   // final float ax = this.modelviewInv.m00 * point.x +
-   // this.modelviewInv.m01 * point.y +
-   // this.modelviewInv.m02 * point.z +
-   // this.modelviewInv.m03;
-   //
-   // final float ay = this.modelviewInv.m10 * point.x +
-   // this.modelviewInv.m11 * point.y +
-   // this.modelviewInv.m12 * point.z +
-   // this.modelviewInv.m13;
-   //
-   // final float az = this.modelviewInv.m20 * point.x +
-   // this.modelviewInv.m21 * point.y +
-   // this.modelviewInv.m22 * point.z +
-   // this.modelviewInv.m23;
-   //
-   // final float bw = this.projection.m30 * ax +
-   // this.projection.m31 * ay +
-   // this.projection.m32 * az +
-   // this.projection.m33 * aw;
-   //
-   // if (bw == 0.0f) {
-   // return target.reset();
-   // }
-   //
-   // final float bx = this.projection.m00 * ax +
-   // this.projection.m01 * ay +
-   // this.projection.m02 * az +
-   // this.projection.m03 * aw;
-   //
-   // final float by = this.projection.m10 * ax +
-   // this.projection.m11 * ay +
-   // this.projection.m12 * az +
-   // this.projection.m13 * aw;
-   //
-   // final float bz = this.projection.m20 * ax +
-   // this.projection.m21 * ay +
-   // this.projection.m22 * az +
-   // this.projection.m23 * aw;
-   //
-   // if (bw == 1.0f) {
-   // return target.set(bx, by, bz);
-   // }
-   //
-   // final float wInv = 1.0f / bw;
-   // return target.set(
-   // bx * wInv,
-   // by * wInv,
-   // bz * wInv);
-   // }
-
    /**
     * Gets this renderer's background color.
     *
@@ -1828,64 +1774,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             vtx, vty);
    }
 
-   // public Vec3 unproject ( final Vec3 point, final Vec3
-   // target ) {
-   //
-   // final float aw = this.projInv.m30 * point.x +
-   // this.projInv.m31 * point.y +
-   // this.projInv.m32 * point.z +
-   // this.projInv.m33;
-   //
-   // final float ax = this.projInv.m00 * point.x +
-   // this.projInv.m01 * point.y +
-   // this.projInv.m02 * point.z +
-   // this.projInv.m03;
-   //
-   // final float ay = this.projInv.m10 * point.x +
-   // this.projInv.m11 * point.y +
-   // this.projInv.m12 * point.z +
-   // this.projInv.m13;
-   //
-   // final float az = this.projInv.m20 * point.x +
-   // this.projInv.m21 * point.y +
-   // this.projInv.m22 * point.z +
-   // this.projInv.m23;
-   //
-   // final float bw = this.modelview.m30 * ax +
-   // this.modelview.m31 * ay +
-   // this.modelview.m32 * az +
-   // this.modelview.m33 * aw;
-   //
-   // if (bw == 0.0f) {
-   // return target.reset();
-   // }
-   //
-   // final float bx = this.modelview.m00 * ax +
-   // this.modelview.m01 * ay +
-   // this.modelview.m02 * az +
-   // this.modelview.m03 * aw;
-   //
-   // final float by = this.modelview.m10 * ax +
-   // this.modelview.m11 * ay +
-   // this.modelview.m12 * az +
-   // this.modelview.m13 * aw;
-   //
-   // final float bz = this.modelview.m20 * ax +
-   // this.modelview.m21 * ay +
-   // this.modelview.m22 * az +
-   // this.modelview.m23 * aw;
-   //
-   // if (bw == 1.0f) {
-   // return target.set(bx, by, bz);
-   // }
-   //
-   // final float wInv = 1.0f / bw;
-   // return target.set(
-   // bx * wInv,
-   // by * wInv,
-   // bz * wInv);
-   // }
-
    @Override
    public void image ( final PImage img,
          final float x, final float y,
@@ -1997,8 +1885,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @return the color
     */
    @Override
-   public Color lerpColor ( final Color origin, final Color dest,
-         final float step, final Color target ) {
+   public Color lerpColor ( 
+         final Color origin, 
+         final Color dest,
+         final float step, 
+         final Color target ) {
 
       switch (this.colorMode) {
 
@@ -2008,6 +1899,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
                   origin, dest,
                   step,
                   target);
+            
          case RGB:
 
          default:
@@ -2057,7 +1949,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public Vec3 model ( final Vec3 point, final Vec3 target ) {
 
-      /**
+      /*
        * Multiply point by model-view matrix.
        */
       final float aw = this.modelview.m30 * point.x +
@@ -2080,7 +1972,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.modelview.m22 * point.z +
             this.modelview.m23;
 
-      /**
+      /*
        * Multiply point by inverse of camera matrix.
        */
       final float bw = this.cameraInv.m30 * ax +
@@ -2111,7 +2003,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          return target.set(bx, by, bz);
       }
 
-      /**
+      /*
        * Convert from homogenous coordinate to point by dividing
        * by fourth component, w.
        */
@@ -2264,19 +2156,19 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void printCamera () {
 
-      System.out.println(IUp.toString(this.camera));
+      System.out.println(IUp.toString(this.camera, 4));
    }
 
    @Override
    public void printMatrix () {
 
-      System.out.println(IUp.toString(this.modelview));
+      System.out.println(IUp.toString(this.modelview, 4));
    }
 
    @Override
    public void printProjection () {
 
-      System.out.println(IUp.toString(this.projection));
+      System.out.println(IUp.toString(this.projection, 4));
    }
 
    @Override
@@ -2570,7 +2462,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
    public Vec3 screen ( final Vec3 v, final Vec3 target ) {
 
-      /**
+      /*
        * Multiply point by model-view matrix.
        */
       final float ax = this.modelview.m00 * v.x +
@@ -2593,7 +2485,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.modelview.m32 * v.z +
             this.modelview.m33;
 
-      /**
+      /*
        * Multiply new point by projection.
        */
       final float bw = this.projection.m30 * ax +
@@ -3509,5 +3401,5 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void vertexTexture ( final Vec2 vt ) {
 
       this.vertexTexture(vt.x, vt.y);
-   }
+   }   
 }

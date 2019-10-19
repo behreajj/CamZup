@@ -1,12 +1,11 @@
 package camzup;
 
-import camzup.core.Mesh3;
-import camzup.core.Quaternion;
-import camzup.core.Random;
-import camzup.core.Vec2;
-import camzup.core.Vec3;
+import camzup.core.*;
+import camzup.pfriendly.*;
 import processing.core.PApplet;
+import processing.core.PMatrix3D;
 
+@SuppressWarnings("unused")
 public class CamZup {
 
    public final static String VERSION = "##library.prettyVersion##";
@@ -53,40 +52,40 @@ public class CamZup {
             final Vec3 vn = vns[vnIndex];
 
             sb.append("this.normal(");
-            sb.append(vn.x);
+            sb.append(Utils.toFixed(vn.x, 5));
             sb.append("f, ");
-            sb.append(vn.y);
+            sb.append(Utils.toFixed(vn.y, 5));
             sb.append("f, ");
-            sb.append(vn.z);
+            sb.append(Utils.toFixed(vn.z, 5));
             sb.append("f);\n");
 
             sb.append("this.vertexImpl(\n");
 
-            sb.append(String.format("%.5f", v.x));
+            sb.append(Utils.toFixed(v.x, 5));
             if (v.x == 0.0f) {
                sb.append("f, ");
             } else {
                sb.append("f * radius, ");
             }
 
-            sb.append(String.format("%.5f", v.y));
+            sb.append(Utils.toFixed(v.y, 5));
             if (v.y == 0.0f) {
                sb.append("f, ");
             } else {
                sb.append("f * radius, ");
             }
 
-            sb.append(String.format("%.5f", v.z));
+            sb.append(Utils.toFixed(v.z, 5));
             if (v.z == 0.0f) {
                sb.append("f,\n");
             } else {
                sb.append("f * radius,\n");
             }
 
-            sb.append(vt.x);
+            sb.append(Utils.toFixed(vt.x, 5));
             sb.append("f, ");
 
-            sb.append(vt.y);
+            sb.append(Utils.toFixed(vt.y, 5));
             sb.append("f);\n");
          }
          sb.append("this.endShape(PConstants.CLOSE);\n\n");
@@ -95,38 +94,42 @@ public class CamZup {
    }
 
    public static void main ( final String[] args ) {
-      System.out.println(1.0d / Math.sqrt(2.0d));
-      System.out.println(1.0d / Math.sqrt(3.0d));
-      // Quaternion target = new Quaternion();
-      // Quaternion norm = new Quaternion();
-      // Random rng = new Random();
-      // for(int i = 0; i < 100; ++i) {
-      // Quaternion.random(rng, target);
-      // Quaternion.normalize(target, norm);
-      // System.out.println(norm);
-      // System.out.println(Quaternion.mag(norm));
+
+      Random rng = new Random();
+      // Vec3 v = Vec3.random(rng, new Vec3());
+      // Color c = Color.fromDir3(v, new Color());
+      // System.out.println(v);
+      // System.out.println(c);
+
+      // Quaternion q = Quaternion.random(rng, new Quaternion());
+      // Quaternion r = new Quaternion();
+      //
+      // Vec3 i = new Vec3();
+      // Vec3 j = new Vec3();
+      // Vec3 k = new Vec3();
+      //
+      // Vec3 i1 = new Vec3();
+      // Vec3 j1 = new Vec3();
+      // Vec3 k1 = new Vec3();
+      //
+      // PMatrix3D m = new PMatrix3D();
+      // PMatrix3D o = new PMatrix3D();
+      //
+      // for (int n = 0; n < 32; ++n) {
+      // Quaternion.random(rng, q);
+      // Quaternion.toAxes(q, i, j, k);
+      //
+      // System.out.println(q);
+      // System.out.println("");
+      // Convert.toPMatrix3D(q, m);
+      // m.print();
+      // Convert.toQuaternion(m, r);
+      // System.out.println(r);
+      //
+      // Convert.toPMatrix3D(r, o);
+      // o.print();
       //
       // }
-
-      // Quaternion q = Quaternion.random(new Random(), new
-      // Quaternion());
-      // Quaternion.mult(q, 5.0f, q);
-      // Quaternion b = Quaternion.mult(q, q, new Quaternion());
-      // Quaternion c = Quaternion.mult(b, q, new Quaternion());
-      // Quaternion d = Quaternion.pow(q, 2.0f, new Quaternion());
-      // Quaternion e = Quaternion.pow(q, 3.0f, new Quaternion());
-      //
-      // System.out.println(b.toString(8));
-      // System.out.println(d.toString(8));
-      // System.out.println(" ");
-      // System.out.println(c.toString(8));
-      // System.out.println(e.toString(8));
-      // System.out.println(" ");
-      // Quaternion f = Quaternion.pow(q, -1.0f, new
-      // Quaternion());
-      // Quaternion g = Quaternion.inverse(q, new Quaternion());
-      // System.out.println(f);
-      // System.out.println(g);
 
       // final int count = 1500;
       // final float[] vals = new float[count];

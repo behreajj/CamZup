@@ -116,7 +116,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       /*
        * Ensure depth-related features are turned off. These
        * summarize the hint system.
-       *
        */
       this.flush();
       this.pgl.disable(PGL.DEPTH_TEST);
@@ -854,11 +853,11 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       this.pushMatrix();
       this.transform(entity.transform, entity.transformOrder);
 
-      Knot2 currKnot;
-      Knot2 prevKnot;
-      Vec2 coord;
-      Vec2 foreHandle;
-      Vec2 rearHandle;
+      Knot2 currKnot = null;
+      Knot2 prevKnot = null;
+      Vec2 coord = null;
+      Vec2 foreHandle = null;
+      Vec2 rearHandle = null;
 
       final LinkedList < Curve2 > curves = entity.curves;
       final LinkedList < MaterialSolid > materials = entity.materials;

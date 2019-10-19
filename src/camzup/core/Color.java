@@ -1039,6 +1039,73 @@ public class Color extends Vec4 {
    }
 
    /**
+    * Converts a direction to a color.
+    *
+    * @param v
+    *           the direction
+    * @param target
+    *           the output color
+    * @return the color
+    */
+   public static Color fromDir2 ( final Vec2 v, final Color target ) {
+
+      float r = 0.0f;
+      float g = 0.0f;
+
+      final float mSq = Vec2.magSq(v);
+
+      if (mSq == 0.0f) {
+         return Color.clearBlack(target);
+      }
+
+      if (Utils.approxFast(mSq, 1.0f)) {
+         r = v.x * 0.5f + 0.5f;
+         g = v.y * 0.5f + 0.5f;
+      } else {
+         final float mInv = (float) (0.5d / Math.sqrt(mSq));
+         r = v.x * mInv + 0.5f;
+         g = v.y * mInv + 0.5f;
+      }
+
+      return target.set(r, g, 0.5f, 1.0f);
+   }
+
+   /**
+    * Converts a direction to a color.
+    *
+    * @param v
+    *           the direction
+    * @param target
+    *           the output color
+    * @return the color
+    */
+   public static Color fromDir3 ( final Vec3 v, final Color target ) {
+
+      float r = 0.0f;
+      float g = 0.0f;
+      float b = 0.0f;
+
+      final float mSq = Vec3.magSq(v);
+
+      if (mSq == 0.0f) {
+         return Color.clearBlack(target);
+      }
+
+      if (Utils.approxFast(mSq, 1.0f)) {
+         r = v.x * 0.5f + 0.5f;
+         g = v.y * 0.5f + 0.5f;
+         b = v.z * 0.5f + 0.5f;
+      } else {
+         final float mInv = (float) (0.5d / Math.sqrt(mSq));
+         r = v.x * mInv + 0.5f;
+         g = v.y * mInv + 0.5f;
+         b = v.z * mInv + 0.5f;
+      }
+
+      return target.set(r, g, b, 1.0f);
+   }
+
+   /**
     * Convert a hexadecimal representation of a color stored as
     * ARGB into a color.
     *
@@ -1270,7 +1337,7 @@ public class Color extends Vec4 {
       return target.set(
             (float) Math.pow(a.x, b),
             (float) Math.pow(a.y, b),
-            (float) Math.pow(a.z, b), 
+            (float) Math.pow(a.z, b),
             a.w);
    }
 
@@ -1313,15 +1380,15 @@ public class Color extends Vec4 {
     * @see Random#nextFloat()
     * @see Color#hsbaToRgba(Vec4, Color)
     */
-   public static Color randomHsb ( 
-         final Random rng, 
+   public static Color randomHsb (
+         final Random rng,
          final Color target,
          final Vec4 hsba ) {
 
       hsba.set(
-            rng.nextFloat(), 
-            rng.nextFloat(), 
-            rng.nextFloat(), 
+            rng.nextFloat(),
+            rng.nextFloat(),
+            rng.nextFloat(),
             1.0f);
       Color.hsbaToRgba(hsba, target);
       return target;
@@ -1356,7 +1423,7 @@ public class Color extends Vec4 {
       hsba.set(
             rng.uniform(lowerBound.x, upperBound.x),
             rng.uniform(lowerBound.y, upperBound.y),
-            rng.uniform(lowerBound.z, upperBound.z), 
+            rng.uniform(lowerBound.z, upperBound.z),
             1.0f);
 
       Color.hsbaToRgba(hsba, target);
@@ -1377,14 +1444,14 @@ public class Color extends Vec4 {
     * @see Random#nextFloat()
     * @see Color#hsbaToRgba(Vec4, Color)
     */
-   public static Color randomHsba ( 
-         final Random rng, 
+   public static Color randomHsba (
+         final Random rng,
          final Color target,
          final Vec4 hsba ) {
 
       hsba.set(
-            rng.nextFloat(), 
-            rng.nextFloat(), 
+            rng.nextFloat(),
+            rng.nextFloat(),
             rng.nextFloat(),
             rng.nextFloat());
       Color.hsbaToRgba(hsba, target);
@@ -1410,10 +1477,10 @@ public class Color extends Vec4 {
     * @see Random#uniform(float, float)
     * @see Color#hsbaToRgba(Vec4, Color)
     */
-   public static Color randomHsba ( 
-         final Random rng, 
+   public static Color randomHsba (
+         final Random rng,
          final Vec4 lowerBound,
-         final Vec4 upperBound, 
+         final Vec4 upperBound,
          final Color target,
          final Vec4 hsba ) {
 
@@ -1438,13 +1505,13 @@ public class Color extends Vec4 {
     * @return the color
     * @see Random#nextFloat()
     */
-   public static Color randomRgb ( 
-         final Random rng, 
+   public static Color randomRgb (
+         final Random rng,
          final Color target ) {
 
       return target.set(
-            rng.nextFloat(), 
-            rng.nextFloat(), 
+            rng.nextFloat(),
+            rng.nextFloat(),
             rng.nextFloat(),
             1.0f);
    }
@@ -1464,16 +1531,16 @@ public class Color extends Vec4 {
     * @return the color
     * @see Random#uniform(float, float)
     */
-   public static Color randomRgb ( 
-         final Random rng, 
+   public static Color randomRgb (
+         final Random rng,
          final Color lowerBound,
-         final Color upperBound, 
+         final Color upperBound,
          final Color target ) {
 
       return target.set(
             rng.uniform(lowerBound.x, upperBound.x),
             rng.uniform(lowerBound.y, upperBound.y),
-            rng.uniform(lowerBound.z, upperBound.z), 
+            rng.uniform(lowerBound.z, upperBound.z),
             1.0f);
    }
 
@@ -1490,8 +1557,8 @@ public class Color extends Vec4 {
    public static Color randomRgba ( final Random rng, final Color target ) {
 
       return target.set(
-            rng.nextFloat(), 
-            rng.nextFloat(), 
+            rng.nextFloat(),
+            rng.nextFloat(),
             rng.nextFloat(),
             rng.nextFloat());
    }
@@ -1511,8 +1578,8 @@ public class Color extends Vec4 {
     * @return the color
     * @see Random#uniform(float, float)
     */
-   public static Color randomRgba ( 
-         final Random rng, 
+   public static Color randomRgba (
+         final Random rng,
          final Color lowerBound,
          final Color upperBound,
          final Color target ) {
@@ -1570,10 +1637,10 @@ public class Color extends Vec4 {
     * @see Utils#min
     * @see IUtils#ONE_SIX
     */
-   public static Vec4 rgbaToHsba ( 
-         final float red, 
+   public static Vec4 rgbaToHsba (
+         final float red,
          final float green,
-         final float blue, 
+         final float blue,
          final float alpha,
          final Vec4 target ) {
 
@@ -1685,7 +1752,7 @@ public class Color extends Vec4 {
     */
    public static String toHexWeb ( final int c ) {
 
-      return "#" + Integer.toHexString(c).substring(2).toUpperCase();
+      return "#" + Integer.toHexString(c).substring(2);
    }
 
    /**
@@ -2067,9 +2134,9 @@ public class Color extends Vec4 {
     * @return this color
     */
    @Chainable
-   public Color set ( 
-         final float red, 
-         final float green, 
+   public Color set (
+         final float red,
+         final float green,
          final float blue ) {
 
       return this.set(red, green, blue, 1.0f);
@@ -2091,13 +2158,33 @@ public class Color extends Vec4 {
     */
    @Override
    @Chainable
-   public Color set ( 
-         final float red, 
-         final float green, 
+   public Color set (
+         final float red,
+         final float green,
          final float blue,
          final float alpha ) {
 
       super.set(red, green, blue, alpha);
       return this;
+   }
+   
+   public String toString () {
+
+      return this.toString(4);
+   }
+
+   public String toString ( final int places ) {
+
+      return new StringBuilder(96)
+            .append("{ r: ")
+            .append(Utils.toFixed(this.x, places))
+            .append(", g: ")
+            .append(Utils.toFixed(this.y, places))
+            .append(", b: ")
+            .append(Utils.toFixed(this.z, places))
+            .append(", a: ")
+            .append(Utils.toFixed(this.w, places))
+            .append(" }")
+            .toString();
    }
 }

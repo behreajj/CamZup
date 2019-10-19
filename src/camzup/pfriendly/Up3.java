@@ -887,9 +887,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             continue curveLoop;
          }
 
+         // TODO: Bug with multiple materials.
          if (useMaterial) {
-            final int index = curve.materialIndex;
-            final MaterialSolid material = materials.get(index);
+            final MaterialSolid material = materials.get(
+                  curve.materialIndex);
+            // System.out.println(curve.materialIndex);
             this.pushStyle();
             this.material(material);
          }
@@ -957,7 +959,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final LinkedList < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
 
-      //TODO: Use iterator w/ while loop?
+      // TODO: Use iterator w/ while loop?
       for (final Mesh3 mesh : meshes) {
          if (useMaterial) {
             final int index = mesh.materialIndex;

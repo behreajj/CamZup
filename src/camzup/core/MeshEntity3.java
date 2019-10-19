@@ -1,15 +1,15 @@
 package camzup.core;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * An entity which contains a transform that is applied to a
  * list of meshes. The meshes may references a list of
  * materials by index.
  */
-public class MeshEntity3 extends Entity {
+public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
 
    /**
     * A helper function for parsing an OBJ file. Expunges loose
@@ -443,6 +443,12 @@ public class MeshEntity3 extends Entity {
          }
       }
       return this;
+   }
+
+   @Override
+   public Iterator < Mesh3 > iterator () {
+
+      return this.meshes.iterator();
    }
 
    /**
