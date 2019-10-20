@@ -3,6 +3,7 @@ package camzup.pfriendly;
 import camzup.core.Vec3;
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PGraphics;
 import processing.opengl.PGraphicsOpenGL;
 
 /**
@@ -14,7 +15,7 @@ public class Zup3 extends Up3 {
    /**
     * Default lighting directional light axis x component.
     */
-   public static final float DEFAULT_LIGHT_X = 0.18490006f;
+   public static final float DEFAULT_LIGHT_X = -0.18490006f;
 
    /**
     * Default lighting directional light axis y component.
@@ -319,6 +320,28 @@ public class Zup3 extends Up3 {
             Zup3.DEFAULT_LIGHT_Z);
 
       this.colorMode = colorModeSaved;
+   }
+
+   @Override
+   public void normal ( final float nx, final float ny, final float nz ) {
+
+      this.normalX = nx;
+      this.normalY = ny;
+      this.normalZ = nz;
+
+      // this.normalX = nx;
+      // this.normalY = -nz;
+      // this.normalZ = -ny;
+
+      if (this.shape != 0) {
+         if (this.normalMode == PGraphics.NORMAL_MODE_AUTO) {
+            /* One normal per begin/end shape */
+            this.normalMode = PGraphics.NORMAL_MODE_SHAPE;
+         } else if (this.normalMode == PGraphics.NORMAL_MODE_SHAPE) {
+            /* a separate normal for each vertex */
+            this.normalMode = PGraphics.NORMAL_MODE_VERTEX;
+         }
+      }
    }
 
    // @Override

@@ -231,4 +231,68 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
 
       return this.curves.iterator();
    }
+
+   /**
+    * Creates a string representing a Wavefront OBJ file.
+    *
+    * @return the string
+    */
+   public String toObjString ( final int precision ) {
+
+      final StringBuilder result = new StringBuilder();
+
+      result.append('o')
+            .append(' ')
+            .append(this.name)
+            .append('\n')
+            .append('\n');
+
+      int offset = 0;
+
+      final Iterator < Curve3 > itr = this.curves.iterator();
+      while (itr.hasNext()) {
+         final Curve3 curve = itr.next();
+         final Vec3[][] segments = curve.evalRange(precision);
+         final int len = segments.length;
+
+         result.append('g')
+               .append(' ')
+               .append(curve.name)
+               .append('\n')
+               .append('\n');
+
+         for (int i = 0; i < len; ++i) {
+            final Vec3 coord = segments[i][0];
+            result.append('v')
+                  .append(' ')
+                  .append(coord.toObjString())
+                  .append('\n');
+         }
+
+         result.append('\n');
+
+         for (int i = 1, j = 2; i < len; ++i, ++j) {
+            result.append('l')
+                  .append(' ')
+                  .append(offset + i)
+                  .append(' ')
+                  .append(offset + j)
+                  .append('\n');
+         }
+
+         if (curve.closedLoop) {
+            result.append('l')
+                  .append(' ')
+                  .append(offset + len)
+                  .append(' ')
+                  .append(offset + 1)
+                  .append('\n');
+         }
+
+         offset += len;
+         result.append('\n');
+      }
+
+      return result.toString();
+   }
 }

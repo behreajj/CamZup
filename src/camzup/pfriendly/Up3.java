@@ -1,7 +1,6 @@
 package camzup.pfriendly;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import camzup.core.Color;
 import camzup.core.Curve3;
@@ -602,7 +601,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final float swFore = swRear * 1.25f;
       final float swCoord = swFore * 1.25f;
 
-      final List < Curve3 > curves = ce.curves;
+      final LinkedList < Curve3 > curves = ce.curves;
 
       // TODO: Replace enhanced for loops with iterators.
       for (final Curve3 curve : curves) {
@@ -977,7 +976,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             final int[][] f = fs[i];
             final int flen1 = f.length;
             this.beginShape(PConstants.POLYGON);
-            this.normal(0.0f, 0.0f, 1.0f);
             for (int j = 0; j < flen1; ++j) {
                final Vec3 vn = vns[f[j][2]];
                this.normal(vn.x, vn.y, vn.z);
@@ -1004,8 +1002,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     */
    // public void shape ( final MeshEntity3 entity ) {
    //
-   // final List < Mesh3 > meshes = entity.meshes;
-   // final List < MaterialSolid > materials =
+   // final LinkedList < Mesh3 > meshes = entity.meshes;
+   // final LinkedList < MaterialSolid > materials =
    // entity.materials;
    // final boolean useMaterial = !materials.isEmpty();
    //

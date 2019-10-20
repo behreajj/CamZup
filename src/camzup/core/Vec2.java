@@ -41,7 +41,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
        *
        */
       @Override
-      public abstract int compare ( Vec2 a, Vec2 b );
+      public abstract int compare ( final Vec2 a, final Vec2 b );
 
       /**
        * Returns the simple name of this class.
@@ -1951,8 +1951,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           the output vector
     * @return the perpendicular
     */
-   public static Vec2 perpendicularCCW ( 
-         final Vec2 a, 
+   public static Vec2 perpendicularCCW (
+         final Vec2 a,
          final Vec2 target ) {
 
       return target.set(-a.y, a.x);
@@ -1984,8 +1984,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           the output vector
     * @return the perpendicular
     */
-   public static Vec2 perpendicularCW ( 
-         final Vec2 a, 
+   public static Vec2 perpendicularCW (
+         final Vec2 a,
          final Vec2 target ) {
 
       return target.set(a.y, -a.x);
@@ -2301,7 +2301,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     */
    public static float reject ( final Vec2 a, final Vec2 b,
          final Vec2 target ) {
-
 
       final float bSq = Vec2.magSq(b);
       if (bSq != 0.0f) {

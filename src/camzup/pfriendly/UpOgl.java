@@ -24,9 +24,6 @@ import processing.opengl.PGraphicsOpenGL;
  */
 public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
-   // public final PMatrix3D projInv = new PMatrix3D();
-   // TODO: Cos and sine LUTs not initialized????
-
    /**
     * A curve to hold the arc data.
     */
@@ -144,8 +141,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param trOrder
     *           the transform order
     */
-   protected void arcImpl ( 
-         final Curve2 curve, 
+   protected void arcImpl (
+         final Curve2 curve,
          final Transform2 transform,
          final Transform.Order trOrder ) {
 
@@ -205,9 +202,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       }
 
       this.endShape(
-            curve.closedLoop ?
-                  PConstants.CLOSE : 
-                     PConstants.OPEN);
+            curve.closedLoop ? PConstants.CLOSE : PConstants.OPEN);
 
       this.strokeWeight = oldSw;
       this.popMatrix();
@@ -1885,10 +1880,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @return the color
     */
    @Override
-   public Color lerpColor ( 
-         final Color origin, 
+   public Color lerpColor (
+         final Color origin,
          final Color dest,
-         final float step, 
+         final float step,
          final Color target ) {
 
       switch (this.colorMode) {
@@ -1899,7 +1894,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
                   origin, dest,
                   step,
                   target);
-            
+
          case RGB:
 
          default:
@@ -3401,5 +3396,5 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void vertexTexture ( final Vec2 vt ) {
 
       this.vertexTexture(vt.x, vt.y);
-   }   
+   }
 }

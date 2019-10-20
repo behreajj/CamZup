@@ -1636,7 +1636,7 @@ public abstract class Utils implements IUtils {
       if (value != value) {
          return "0.0";
       }
-      
+
       if (places < 0) {
          // return Integer.toString(Math.round(value));
          return Integer.toString((int) value);

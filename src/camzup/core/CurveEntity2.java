@@ -233,6 +233,70 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
    }
 
    /**
+    * Creates a string representing a Wavefront OBJ file.
+    *
+    * @return the string
+    */
+   public String toObjString ( final int precision ) {
+
+      final StringBuilder result = new StringBuilder();
+
+      result.append('o')
+            .append(' ')
+            .append(this.name)
+            .append('\n')
+            .append('\n');
+
+      int offset = 0;
+
+      final Iterator < Curve2 > itr = this.curves.iterator();
+      while (itr.hasNext()) {
+         final Curve2 curve = itr.next();
+         final Vec2[][] segments = curve.evalRange(precision);
+         final int len = segments.length;
+
+         result.append('g')
+               .append(' ')
+               .append(curve.name)
+               .append('\n')
+               .append('\n');
+
+         for (int i = 0; i < len; ++i) {
+            final Vec2 coord = segments[i][0];
+            result.append('v')
+                  .append(' ')
+                  .append(coord.toObjString())
+                  .append('\n');
+         }
+
+         result.append('\n');
+
+         for (int i = 1, j = 2; i < len; ++i, ++j) {
+            result.append('l')
+                  .append(' ')
+                  .append(offset + i)
+                  .append(' ')
+                  .append(offset + j)
+                  .append('\n');
+         }
+
+         if (curve.closedLoop) {
+            result.append('l')
+                  .append(' ')
+                  .append(offset + len)
+                  .append(' ')
+                  .append(offset + 1)
+                  .append('\n');
+         }
+
+         offset += len;
+         result.append('\n');
+      }
+
+      return result.toString();
+   }
+
+   /**
     * Creates a string representing a group node in the SVG
     * format.
     *

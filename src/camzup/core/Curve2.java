@@ -53,21 +53,24 @@ public class Curve2 extends Curve
             final Vec2 temp0,
             final Vec2 temp1 ) {
 
-         // temp0 will hold the ideal radian.
+         /* temp0 will hold the ideal radian. */
          Vec2.fromPolar(angle, 1.0f, temp0);
 
-         // temp1 will hold the forehandle.
+         /* temp1 will hold the forehandle. */
          Vec2.perpendicularCCW(temp0, temp1);
 
-         // target.coord has reached its final state;
-         // temp0 will be freed.
+         /*
+          * target.coord has reached its final state; temp0 will be
+          * freed.
+          */
          Vec2.mult(temp0, radius, target.coord);
 
-         // temp0 will hold scaled forehandle.
-         // temp1 will be freed.
+         /*
+          * temp0 will hold scaled forehandle. temp1 will be freed.
+          */
          Vec2.mult(temp1, handleMag, temp0);
 
-         // temp1 will hold the mirrored rearhandle.
+         /* temp1 will hold the mirrored rearhandle. */
          Vec2.negate(temp0, temp1);
 
          Vec2.add(temp0, target.coord, target.foreHandle);
@@ -324,7 +327,7 @@ public class Curve2 extends Curve
             final Vec2 foreDir,
             final Vec2 rearScaled ) {
 
-         /**
+         /*
           * The rear handle is a point in space. Subtract the coord
           * from the rear handle to create a rear handle direction
           * relative to the coordinate, which now serves as an
@@ -332,18 +335,18 @@ public class Curve2 extends Curve
           */
          Vec2.sub(this.rearHandle, this.coord, rearDir);
 
-         /**
+         /*
           * Subtract the coord from the foreHandle to get the
           * foreHandle direction.
           */
          Vec2.sub(this.foreHandle, this.coord, foreDir);
 
-         /**
+         /*
           * Find the magnitude of the rear direction.
           */
          final float rearMag = Vec2.mag(rearDir);
 
-         /**
+         /*
           * Align the rear handle with the fore by changing its
           * direction while preserving its magnitude. The negative
           * sign indicates that the rear handle is 180 degrees
@@ -351,7 +354,7 @@ public class Curve2 extends Curve
           */
          Vec2.rescale(foreDir, -rearMag, rearScaled);
 
-         /**
+         /*
           * Add the coord back to the new rear direction to convert
           * it from a direction to a point.
           */
@@ -571,7 +574,9 @@ public class Curve2 extends Curve
        * @return this knot
        */
       @Chainable
-      public Knot2 rotateZ ( final float cosa, final float sina ) {
+      public Knot2 rotateZ (
+            final float cosa,
+            final float sina ) {
 
          Vec2.rotateZ(this.coord, cosa, sina, this.coord);
          Vec2.rotateZ(this.foreHandle, cosa, sina, this.foreHandle);
@@ -1799,6 +1804,31 @@ public class Curve2 extends Curve
       return this;
    }
 
+   /**
+    * Calculates the approximate length of a curve to a given
+    * level of precision.
+    *
+    * @param precision
+    *           the precision
+    * @return the length
+    * @see Curve2#evalRange(int)
+    */
+   public float calcLength ( final int precision ) {
+
+      // TODO: Is there a way to use distSq instead of dist when
+      // summing the distances and then scale sum?
+      float sum = 0.0f;
+      final Vec2[][] segments = this.evalRange(precision + 1);
+      final int len = segments.length;
+      for (int i = 1, j = 0; i < len; ++i, ++j) {
+         sum += Vec2.dist(
+               segments[j][0],
+               segments[i][0]);
+      }
+
+      return sum;
+   }
+
    public Knot2 eval (
          final float step,
          final Knot2 target ) {
@@ -1930,6 +1960,32 @@ public class Curve2 extends Curve
    }
 
    /**
+    * Evaluates an array of vectors given a supplied length.
+    * The array is two-dimensional, where the first element of
+    * the minor dimension is the coordinate and the second is
+    * the tangent.
+    *
+    * @param count
+    *           the count
+    * @return the array
+    */
+   public Vec2[][] evalRange ( final int count ) {
+
+      final int vcount = count < 3 ? 3 : count;
+      final Vec2[][] result = new Vec2[vcount][2];
+      final int last = this.closedLoop ? vcount : vcount - 1;
+      final float toPercent = 1.0f / last;
+      Vec2 coord = null;
+      Vec2 tangent = null;
+      for (int i = 0; i < vcount; ++i) {
+         coord = result[i][0] = new Vec2();
+         tangent = result[i][1] = new Vec2();
+         this.eval(i * toPercent, coord, tangent);
+      }
+      return result;
+   }
+
+   /**
     * Gets a knot from the curve by an index. When the curve is
     * a closed loop, the index wraps around.
     *
@@ -1972,7 +2028,7 @@ public class Curve2 extends Curve
     * access the knots in a curve.
     *
     * @return the iterator
-    * @see List#iterator()
+    * @see LinkedList#iterator()
     */
    @Override
    public Iterator < Curve2.Knot2 > iterator () {
@@ -2056,9 +2112,6 @@ public class Curve2 extends Curve
    public Curve2 reverse ( final Vec2 temp ) {
 
       Collections.reverse(this.knots);
-      // for (final Knot2 knot : this.knots) {
-      // knot.reverse(temp);
-      // }
 
       final Iterator < Knot2 > itr = this.knots.iterator();
       while (itr.hasNext()) {
@@ -2083,9 +2136,6 @@ public class Curve2 extends Curve
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
 
-      // for (final Knot2 knot : this.knots) {
-      // knot.rotateZ(cosa, sina);
-      // }
       final Iterator < Knot2 > itr = this.knots.iterator();
       while (itr.hasNext()) {
          itr.next().rotateZ(cosa, sina);
@@ -2105,10 +2155,6 @@ public class Curve2 extends Curve
    @Chainable
    public Curve2 scale ( final float scale ) {
 
-      // for (final Knot2 knot : this.knots) {
-      // knot.scale(scale);
-      // }
-
       final Iterator < Knot2 > itr = this.knots.iterator();
       while (itr.hasNext()) {
          itr.next().scale(scale);
@@ -2126,10 +2172,6 @@ public class Curve2 extends Curve
     */
    @Chainable
    public Curve2 scale ( final Vec2 scale ) {
-
-      // for (final Knot2 knot : this.knots) {
-      // knot.scale(scale);
-      // }
 
       final Iterator < Knot2 > itr = this.knots.iterator();
       while (itr.hasNext()) {
@@ -2170,6 +2212,65 @@ public class Curve2 extends Curve
    }
 
    /**
+    * Writes a Wavefront OBJ file format string by converting
+    * this curve to line segments. The points will not be
+    * evenly distributed along the curve.
+    *
+    * @param precision
+    *           the precision
+    * @return the string
+    */
+   public String toObjString ( final int precision ) {
+
+      final StringBuilder result = new StringBuilder();
+      final Vec2[][] segments = this.evalRange(precision);
+      final int len = segments.length;
+
+      result.append("# v: ")
+            .append(len)
+            .append('\n')
+            .append('\n');
+
+      result.append('o')
+            .append(' ')
+            .append(this.name)
+            .append('\n')
+            .append('\n');
+
+      for (int i = 0; i < len; ++i) {
+         final Vec2 coord = segments[i][0];
+         result.append('v')
+               .append(' ')
+               .append(coord.toObjString())
+               .append(" 0.0\n");
+      }
+
+      /*
+       * Create a line linking the prior segment to the next.
+       * Indices in an .obj file start at 1, not 0.
+       */
+      for (int i = 1, j = 2; i < len; ++i, ++j) {
+         result.append('l')
+               .append(' ')
+               .append(i)
+               .append(' ')
+               .append(j)
+               .append('\n');
+      }
+
+      if (this.closedLoop) {
+         result.append('l')
+               .append(' ')
+               .append(len)
+               .append(' ')
+               .append(1)
+               .append('\n');
+      }
+
+      return result.toString();
+   }
+
+   /**
     * Returns a string representation of the curve.
     *
     * @return the string
@@ -2182,20 +2283,11 @@ public class Curve2 extends Curve
             .append(this.closedLoop)
             .append(", \n  knots: [ \n");
 
-      // for (final Iterator < Curve2.Knot2 > itr =
-      // this.knots.iterator(); itr
-      // .hasNext();) {
-      // sb.append(itr.next());
-      // if (itr.hasNext()) {
-      // sb.append(", \n");
-      // }
-      // }
-
       final Iterator < Knot2 > itr = this.knots.iterator();
       while (itr.hasNext()) {
          sb.append(itr.next());
          if (itr.hasNext()) {
-            sb.append(", \n");
+            sb.append(',').append('\n');
          }
       }
 
@@ -2227,18 +2319,20 @@ public class Curve2 extends Curve
       for (int i = 1; i < end; ++i) {
          currKnot = this.knots.get(i % knotLength);
 
-         result.append(" C ")
+         result.append(' ')
+               .append('C')
+               .append(' ')
                .append(prevKnot.foreHandle.toSvgString())
-               .append(",")
+               .append(',')
                .append(currKnot.rearHandle.toSvgString())
-               .append(",")
+               .append(',')
                .append(currKnot.coord.toSvgString());
 
          prevKnot = currKnot;
       }
 
       if (this.closedLoop) {
-         result.append(" Z");
+         result.append(' ').append('Z');
       }
       result.append("\"></path>");
       return result.toString();
@@ -2254,10 +2348,6 @@ public class Curve2 extends Curve
     */
    @Chainable
    public Curve2 translate ( final Vec2 v ) {
-
-      // for (final Knot2 knot : this.knots) {
-      // knot.translate(v);
-      // }
 
       final Iterator < Knot2 > itr = this.knots.iterator();
       while (itr.hasNext()) {

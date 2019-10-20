@@ -18,12 +18,10 @@ Curve2 curve = Curve2.circle(0.0, 0.5, 4,
   new Curve2(), 
   new Vec2(), new Vec2());
 
-Curve2 resampled = Curve2.resample(curve, new Curve2());
-
 CurveEntity2 entity = new CurveEntity2(
   "Example", 
   transform, 
-  resampled)
+  curve)
   .appendMaterial(material);
 
 void setup() {
@@ -43,7 +41,6 @@ void mouseReleased() {
   if (mouseButton == LEFT) {
     Curve2.random(rng, 5, 
       -0.75, 0.75, true, curve);
-    Curve2.resample(7, curve, resampled);
   } else if (mouseButton == RIGHT) {
     String result = graphics.toSvgString(entity);
     saveStrings("data/mesh.svg", new String[] { result });

@@ -2548,7 +2548,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final char[] chars,
          final int start, final int stop,
          final float x,
-         final float y, 
+         final float y,
          final float z ) {
 
       PApplet.showDepthWarningXYZ("text");
@@ -2615,8 +2615,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void text (
          final int num,
-         final float x, 
-         final float y, 
+         final float x,
+         final float y,
          final float z ) {
 
       PGraphics.showDepthWarningXYZ("text");
@@ -2649,7 +2649,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    public void text (
          final String str,
          final float x,
-         final float y, 
+         final float y,
          final float z ) {
 
       PGraphics.showDepthWarningXYZ("text");

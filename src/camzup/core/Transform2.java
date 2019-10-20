@@ -3,25 +3,51 @@ package camzup.core;
 import camzup.core.Utils.EasingFuncArr;
 
 /**
- * Facilitates 3D affine transformations for entities.
+ * Facilitates 2D affine transformations for entities.
  */
 public class Transform2 extends Transform {
 
+   /**
+    * An easing function to facilitate animating multiple
+    * transforms.
+    */
    public static class Easing implements EasingFuncArr < Transform2 > {
 
+      /**
+       * The location easing function.
+       */
       public Vec2.AbstrEasing loc;
 
+      /**
+       * The rotation easing function.
+       */
       public Utils.PeriodicEasing rot;
 
+      /**
+       * The scale easing function.
+       */
       public Vec2.AbstrEasing scale;
 
+      /**
+       * The default constructor.
+       */
       public Easing () {
 
          this.loc = new Vec2.Lerp();
          this.rot = new Utils.LerpNear(IUtils.TAU);
-         this.scale = new Vec2.Lerp();
+         this.scale = new Vec2.SmoothStep();
       }
 
+      /**
+       * The easing constructor.
+       *
+       * @param locEasing
+       *           the location easing function
+       * @param rotEasing
+       *           the rotation easing function
+       * @param scaleEasing
+       *           the scale easing function
+       */
       public Easing (
             final Vec2.AbstrEasing locEasing,
             final Utils.PeriodicEasing rotEasing,
@@ -32,6 +58,20 @@ public class Transform2 extends Transform {
          this.scale = scaleEasing;
       }
 
+      /**
+       * Eases between an origin and destination transform by a
+       * step in [0.0, 1.0].
+       * 
+       * @param origin
+       *           the origin
+       * @param dest
+       *           the destination
+       * @param step
+       *           the step
+       * @param target
+       *           the output transform
+       * @return the eased transform
+       */
       public Transform2 apply (
             final Transform2 origin,
             final Transform2 dest,
@@ -101,7 +141,8 @@ public class Transform2 extends Transform {
 
          return target;
       }
-      
+
+      @Override
       public String toString () {
 
          return this.getClass().getSimpleName();
@@ -220,7 +261,7 @@ public class Transform2 extends Transform {
       return Transform2.EASING.apply(
             origin, dest, step, target);
    }
-   
+
    /**
     * Multiplies a direction by a transform. This rotates the
     * direction by the transform's rotation.
@@ -1093,13 +1134,15 @@ public class Transform2 extends Transform {
       return new StringBuilder()
             .append("transform=\"translate(")
             .append(Utils.toFixed(this.location.x, 1))
-            .append(", ")
+            .append(',')
+            .append(' ')
             .append(Utils.toFixed(this.location.y, 1))
             .append(") rotate(")
             .append(Utils.toFixed(this.rotation * IUtils.RAD_TO_DEG, 0))
             .append(") scale(")
             .append(Utils.toFixed(this.scale.x, 1))
-            .append(", ")
+            .append(',')
+            .append(' ')
             .append(Utils.toFixed(this.scale.y, 1))
             .append(")\"")
             .toString();

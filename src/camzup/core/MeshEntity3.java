@@ -458,6 +458,8 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
     */
    public String toObjString () {
 
+      // TODO: Needs testing. Like CurveEntity3, indices
+      // may need to be offset for multiple objects.
       final StringBuilder result = new StringBuilder();
       for (final Mesh3 m : this.meshes) {
          result.append(m.toObjString());

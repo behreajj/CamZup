@@ -380,7 +380,9 @@ public class Color extends Vec4 {
        *           the destination hue
        * @see Utils#mod1(float)
        */
-      protected void eval ( final float origin, final float dest ) {
+      protected void eval (
+            final float origin,
+            final float dest ) {
 
          this.a = Utils.mod1(origin);
          this.b = Utils.mod1(dest);
@@ -1047,7 +1049,9 @@ public class Color extends Vec4 {
     *           the output color
     * @return the color
     */
-   public static Color fromDir2 ( final Vec2 v, final Color target ) {
+   public static Color fromDir2 (
+         final Vec2 v,
+         final Color target ) {
 
       float r = 0.0f;
       float g = 0.0f;
@@ -1079,7 +1083,9 @@ public class Color extends Vec4 {
     *           the output color
     * @return the color
     */
-   public static Color fromDir3 ( final Vec3 v, final Color target ) {
+   public static Color fromDir3 (
+         final Vec3 v,
+         final Color target ) {
 
       float r = 0.0f;
       float g = 0.0f;
@@ -2167,12 +2173,14 @@ public class Color extends Vec4 {
       super.set(red, green, blue, alpha);
       return this;
    }
-   
+
+   @Override
    public String toString () {
 
       return this.toString(4);
    }
 
+   @Override
    public String toString ( final int places ) {
 
       return new StringBuilder(96)

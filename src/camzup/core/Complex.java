@@ -38,7 +38,9 @@ public class Complex extends Imaginary implements Comparable < Complex > {
        *
        */
       @Override
-      public abstract int compare ( final Complex a, final Complex b );
+      public abstract int compare (
+            final Complex a,
+            final Complex b );
 
       /**
        * Returns the simple name of this class.
@@ -399,7 +401,9 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       }
 
       final float bInv = 1.0f / b;
-      return target.set(a.real * bInv, a.imag * bInv);
+      return target.set(
+            a.real * bInv,
+            a.imag * bInv);
    }
 
    /**
@@ -446,9 +450,6 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    public static Complex exp (
          final Complex z,
          final Complex target ) {
-
-      // return Complex.rect((float) Math.exp(z.real), z.imag,
-      // target);
 
       final double r = Math.exp(z.real);
       return target.set(
@@ -728,7 +729,9 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       }
 
       final float mInv = (float) (1.0d / Math.sqrt(mSq));
-      return target.set(z.real * mInv, z.imag * mInv);
+      return target.set(
+            z.real * mInv,
+            z.imag * mInv);
    }
 
    /**
@@ -975,7 +978,9 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex b,
          final Complex target ) {
 
-      return target.set(a.real - b.real, a.imag - b.imag);
+      return target.set(
+            a.real - b.real,
+            a.imag - b.imag);
    }
 
    /**

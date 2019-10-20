@@ -41,7 +41,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
        *
        */
       @Override
-      public abstract int compare ( Vec3 a, Vec3 b );
+      public abstract int compare ( final Vec3 a, final Vec3 b );
 
       /**
        * Returns the simple name of this class.
@@ -2368,6 +2368,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final float rhoMax,
          final Vec3 target ) {
 
+      // TODO: Is random distribution an issue, as it
+      // was with Quaternion random?
       final float x = rng.uniform(-1.0f, 1.0f);
       final float y = rng.uniform(-1.0f, 1.0f);
       final float z = rng.uniform(-1.0f, 1.0f);

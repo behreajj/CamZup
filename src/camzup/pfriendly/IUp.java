@@ -1356,7 +1356,7 @@ public interface IUp {
     *           the matrix
     * @return the string
     */
-   public static String toString ( final PMatrix3D m , final int places) {
+   public static String toString ( final PMatrix3D m, final int places ) {
 
       return new StringBuilder(320)
             .append("{ elms: [\n ")

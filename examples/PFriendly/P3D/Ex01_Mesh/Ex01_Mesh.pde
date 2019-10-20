@@ -4,7 +4,7 @@ import camzup.core.*;
 Zup3 graphics3;
 
 MaterialSolid mat = new MaterialSolid()
-  .setStroke(true)
+  .setStroke(false)
   .setStroke(#07a0c3)
   .setFill(true)
   .setFill(#086788)
@@ -34,7 +34,7 @@ void setup() {
 }
 
 void draw() {
-  transform.rotate(0.01, new Vec3(0.0, 0.0, 1.0));
+  transform.rotateBy(0.01, new Vec3(0.0, 0.0, 1.0));
 
   surface.setTitle(String.format("%.1f", frameRate));
   background(#fff7d5);

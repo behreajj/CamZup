@@ -1,9 +1,12 @@
 package camzup;
 
-import camzup.core.*;
-import camzup.pfriendly.*;
+import camzup.core.Mesh3;
+import camzup.core.Quaternion;
+import camzup.core.Random;
+import camzup.core.Utils;
+import camzup.core.Vec2;
+import camzup.core.Vec3;
 import processing.core.PApplet;
-import processing.core.PMatrix3D;
 
 @SuppressWarnings("unused")
 public class CamZup {
@@ -95,7 +98,33 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-      Random rng = new Random();
+      final Random rng = new Random();
+
+      // Vec3 from = Vec3.forward(new Vec3());
+      // Vec3 to = Vec3.up(new Vec3());
+      // Quaternion q = Quaternion.fromTo(from, to, new
+      // Quaternion());
+      // Vec3 axis = new Vec3();
+      // float angle = Quaternion.toAxisAngle(q, axis);
+      // System.out.println(q);
+      // System.out.println(IUtils.RAD_TO_DEG * angle);
+      // System.out.println(axis);
+
+      final Quaternion a = new Quaternion(-0.70495f, 0.45353f, -0.54178f,
+            -0.06192f);
+      final Quaternion b = new Quaternion(0.1099f, 0.43388f, 0.89415f,
+            -0.01317f);
+      System.out.println(Quaternion.mult(a, b, new Quaternion()));
+
+      // Curve3 curve1 = Curve3.random(rng, 10, -1, 1, true, new
+      // Curve3());
+      // Curve3 curve2 = Curve3.circle(
+      // 0, 1, 4,
+      // new Curve3(), new Vec3(), new Vec3());
+      // CurveEntity3 ce = new CurveEntity3();
+      // ce.appendCurve(curve1, curve2);
+      // System.out.println(ce.toObjString(20));
+
       // Vec3 v = Vec3.random(rng, new Vec3());
       // Color c = Color.fromDir3(v, new Color());
       // System.out.println(v);

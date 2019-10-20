@@ -7,21 +7,47 @@ import camzup.core.Utils.EasingFuncArr;
  */
 public class Transform3 extends Transform {
 
+   /**
+    * An easing function to facilitate animating multiple
+    * transforms.
+    */
    public static class Easing implements EasingFuncArr < Transform3 > {
 
+      /**
+       * The location easing function.
+       */
       public Vec3.AbstrEasing loc;
 
+      /**
+       * The rotation easing function.
+       */
       public Quaternion.AbstrEasing rot;
 
+      /**
+       * The scale easing function.
+       */
       public Vec3.AbstrEasing scale;
 
+      /**
+       * The default constructor.
+       */
       public Easing () {
 
          this.loc = new Vec3.Lerp();
          this.rot = new Quaternion.Slerp();
-         this.scale = new Vec3.Lerp();
+         this.scale = new Vec3.SmoothStep();
       }
 
+      /**
+       * The easing constructor.
+       *
+       * @param locEasing
+       *           the location easing function
+       * @param rotEasing
+       *           the rotation easing function
+       * @param scaleEasing
+       *           the scale easing function
+       */
       public Easing (
             final Vec3.AbstrEasing locEasing,
             final Quaternion.AbstrEasing rotEasing,
@@ -32,6 +58,20 @@ public class Transform3 extends Transform {
          this.scale = scaleEasing;
       }
 
+      /**
+       * Eases between an origin and destination transform by a
+       * step in [0.0, 1.0].
+       * 
+       * @param origin
+       *           the origin
+       * @param dest
+       *           the destination
+       * @param step
+       *           the step
+       * @param target
+       *           the output transform
+       * @return the eased transform
+       */
       public Transform3 apply (
             final Transform3 origin,
             final Transform3 dest,
@@ -102,6 +142,7 @@ public class Transform3 extends Transform {
          return target;
       }
 
+      @Override
       public String toString () {
 
          return this.getClass().getSimpleName();
@@ -214,6 +255,16 @@ public class Transform3 extends Transform {
    public static float minDimension ( final Transform3 t ) {
 
       return Utils.min(t.scale.x, t.scale.y, t.scale.z);
+   }
+
+   public static Transform3 mix (
+         final Transform3 origin,
+         final Transform3 dest,
+         final float step,
+         final Transform3 target ) {
+
+      return Transform3.EASING.apply(
+            origin, dest, step, target);
    }
 
    /**
@@ -513,7 +564,7 @@ public class Transform3 extends Transform {
       // Quaternion.getRight(this.rotation, this.right);
       // Quaternion.getForward(this.rotation, this.forward);
       // Quaternion.getUp(this.rotation, this.up);
-      Quaternion.toAxes(rotation, right, forward, up);
+      Quaternion.toAxes(this.rotation, this.right, this.forward, this.up);
    }
 
    /**
@@ -647,18 +698,6 @@ public class Transform3 extends Transform {
       return target.set(this.scale);
    }
 
-   /**
-    * Gets the transform's previous scale.
-    *
-    * @param target
-    *           the output vector
-    * @return the previous scale
-    */
-   public Vec3 getScalePrev ( final Vec3 target ) {
-
-      return target.set(this.scalePrev);
-   }
-
    // public Transform3 look ( final Vec3 dir, final Vec3 ref )
    // {
    //
@@ -689,6 +728,18 @@ public class Transform3 extends Transform {
    // return this.look(Vec3.sub(point, this.location, dir),
    // ref);
    // }
+
+   /**
+    * Gets the transform's previous scale.
+    *
+    * @param target
+    *           the output vector
+    * @return the previous scale
+    */
+   public Vec3 getScalePrev ( final Vec3 target ) {
+
+      return target.set(this.scalePrev);
+   }
 
    /**
     * Gets the transform's up axis.
@@ -722,16 +773,6 @@ public class Transform3 extends Transform {
       result = prime * result
             + (this.rotation == null ? 0 : this.rotation.hashCode());
       return result;
-   }
-
-   public static Transform3 mix (
-         final Transform3 origin,
-         final Transform3 dest,
-         final float step,
-         final Transform3 target ) {
-
-      return Transform3.EASING.apply(
-            origin, dest, step, target);
    }
 
    /**

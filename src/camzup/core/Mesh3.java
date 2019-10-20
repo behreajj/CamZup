@@ -967,7 +967,7 @@ public class Mesh3 extends Mesh {
       final int facesLen = this.faces.length;
       final StringBuilder result = new StringBuilder();
 
-      /**
+      /*
        * Append a comment listing the number of coordinates,
        * texture coordinates, normals and faces.
        */
@@ -979,14 +979,17 @@ public class Mesh3 extends Mesh {
             .append(normalsLen)
             .append(", f: ")
             .append(facesLen)
-            .append("\n \n");
+            .append('\n')
+            .append('\n');
 
-      result.append("o ")
+      result.append('o')
+            .append(' ')
             .append(this.name)
-            .append("\n \n");
+            .append('\n')
+            .append('\n');
 
       for (final Vec3 coord : this.coords) {
-         result.append("v ")
+         result.append('v').append(' ')
                .append(coord.toObjString())
                .append('\n');
       }
@@ -1009,10 +1012,10 @@ public class Mesh3 extends Mesh {
       for (int i = 0; i < facesLen; ++i) {
          final int[][] face = this.faces[i];
          final int vLen = face.length;
-         result.append("f ");
+         result.append('f').append(' ');
          for (int j = 0; j < vLen; ++j) {
 
-            // Indices in an .obj file start at 1, not 0.
+            /* Indices in an .obj file start at 1, not 0. */
             final int[] vert = face[j];
             result.append(vert[0] + 1)
                   .append('/')

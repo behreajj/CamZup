@@ -40,7 +40,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
        *
        */
       @Override
-      public abstract int compare ( Vec4 a, Vec4 b );
+      public abstract int compare ( final Vec4 a, final Vec4 b );
 
       /**
        * Returns the simple name of this class.
@@ -621,6 +621,51 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    public static String getComparatorString () {
 
       return Vec4.COMPARATOR.toString();
+   }
+
+   /**
+    * Tests to see if all the vector's components are non-zero.
+    * 
+    * @param v
+    *           the input vector
+    * @return the evaluation
+    */
+   public static boolean isNonZero ( final Vec4 v ) {
+
+      return v.x != 0.0f &&
+            v.y != 0.0f &&
+            v.z != 0.0f &&
+            v.w != 0.0f;
+   }
+   
+   /**
+    * Tests to see if the vector is on the unit hypersphere, i.e.,
+    * has a magnitude of approximately 1.0.
+    *
+    * @param v
+    *           the input vector
+    * @return the evaluation
+    * @see Utils#approxFast(float, float)
+    * @see Vec4#dot(Vec4, Vec4)
+    */
+   public static boolean isUnit ( final Vec4 v ) {
+
+      return Utils.approxFast(Vec4.magSq(v), 1.0f);
+   }
+   
+   /**
+    * Tests to see if all the vector's components are zero.
+    *
+    * @param v
+    *           the input vector
+    * @return the evaluation
+    */
+   public static boolean isZero ( final Vec4 v ) {
+
+      return v.x == 0.0f &&
+            v.y == 0.0f &&
+            v.z == 0.0f &&
+            v.w == 0.0f;
    }
 
    /**
@@ -1475,7 +1520,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
 
       return this;
    }
-   
+
    public Vec4 set ( final Vec3 v3, final float w ) {
 
       return this.set(v3.x, v3.y, v3.z, w);
@@ -1525,8 +1570,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    /**
     * Returns a string representation of this vector according
     * to the string format.
-    * 
-    * @param places number of decimal places
+    *
+    * @param places
+    *           number of decimal places
     * @return the string
     */
    public String toString ( final int places ) {

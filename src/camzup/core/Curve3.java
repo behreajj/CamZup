@@ -538,7 +538,9 @@ public class Curve3 extends Curve
        * @return this knot
        */
       @Chainable
-      public Knot3 rotate ( final float cosa, final float sina,
+      public Knot3 rotate (
+            final float cosa,
+            final float sina,
             final Vec3 axis ) {
 
          Vec3.rotate(this.coord, cosa, sina, axis, this.coord);
@@ -1705,6 +1707,31 @@ public class Curve3 extends Curve
       return this;
    }
 
+   /**
+    * Calculates the approximate length of a curve to a given
+    * level of precision.
+    *
+    * @param precision
+    *           the precision
+    * @return the length
+    * @see Curve3#evalRange(int)
+    */
+   public float calcLength ( final int precision ) {
+
+      // TODO: Is there a way to use distSq instead of dist when
+      // summing the distances and then scale sum?
+      float sum = 0.0f;
+      final Vec3[][] segments = this.evalRange(precision + 1);
+      final int len = segments.length;
+      for (int i = 1, j = 0; i < len; ++i, ++j) {
+         sum += Vec3.dist(
+               segments[j][0],
+               segments[i][0]);
+      }
+
+      return sum;
+   }
+
    public Knot3 eval (
          final float step,
          final Knot3 target ) {
@@ -1836,6 +1863,32 @@ public class Curve3 extends Curve
    }
 
    /**
+    * Evaluates an array of vectors given a supplied length.
+    * The array is two-dimensional, where the first element of
+    * the minor dimension is the coordinate and the second is
+    * the tangent.
+    *
+    * @param count
+    *           the count
+    * @return the array
+    */
+   public Vec3[][] evalRange ( final int count ) {
+
+      final int vcount = count < 3 ? 3 : count;
+      final Vec3[][] result = new Vec3[vcount][2];
+      final int last = this.closedLoop ? vcount : vcount - 1;
+      final float toPercent = 1.0f / last;
+      Vec3 coord = null;
+      Vec3 tangent = null;
+      for (int i = 0; i < vcount; ++i) {
+         coord = result[i][0] = new Vec3();
+         tangent = result[i][1] = new Vec3();
+         this.eval(i * toPercent, coord, tangent);
+      }
+      return result;
+   }
+
+   /**
     * Gets a knot from the curve by an index. When the curve is
     * a closed loop, the index wraps around.
     *
@@ -1961,9 +2014,6 @@ public class Curve3 extends Curve
    public Curve3 reverse ( final Vec3 temp ) {
 
       Collections.reverse(this.knots);
-      // for (final Knot3 knot : this.knots) {
-      // knot.reverse(temp);
-      // }
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
@@ -1990,10 +2040,6 @@ public class Curve3 extends Curve
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
 
-      // for (final Knot3 knot : this.knots) {
-      // knot.rotate(cosa, sina, axis);
-      // }
-
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
          itr.next().rotate(cosa, sina, axis);
@@ -2015,10 +2061,6 @@ public class Curve3 extends Curve
 
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
-
-      // for (final Knot3 knot : this.knots) {
-      // knot.rotateX(cosa, sina);
-      // }
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
@@ -2042,10 +2084,6 @@ public class Curve3 extends Curve
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
 
-      // for (final Knot3 knot : this.knots) {
-      // knot.rotateY(cosa, sina);
-      // }
-
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
          itr.next().rotateY(cosa, sina);
@@ -2068,10 +2106,6 @@ public class Curve3 extends Curve
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
 
-      // for (final Knot3 knot : this.knots) {
-      // knot.rotateZ(cosa, sina);
-      // }
-
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
          itr.next().rotateZ(cosa, sina);
@@ -2089,10 +2123,6 @@ public class Curve3 extends Curve
     */
    @Chainable
    public Curve3 scale ( final float scale ) {
-
-      // for (final Knot3 knot : this.knots) {
-      // knot.scale(scale);
-      // }
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
@@ -2112,10 +2142,6 @@ public class Curve3 extends Curve
     */
    @Chainable
    public Curve3 scale ( final Vec3 scale ) {
-
-      // for (final Knot3 knot : this.knots) {
-      // knot.scale(scale);
-      // }
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
@@ -2156,6 +2182,65 @@ public class Curve3 extends Curve
    }
 
    /**
+    * Writes a Wavefront OBJ file format string by converting
+    * this curve to line segments. The points will not be
+    * evenly distributed along the curve.
+    *
+    * @param precision
+    *           the precision
+    * @return the string
+    */
+   public String toObjString ( final int precision ) {
+
+      final StringBuilder result = new StringBuilder();
+      final Vec3[][] segments = this.evalRange(precision);
+      final int len = segments.length;
+
+      result.append("# v: ")
+            .append(len)
+            .append('\n')
+            .append('\n');
+
+      result.append('o')
+            .append(' ')
+            .append(this.name)
+            .append('\n')
+            .append('\n');
+
+      for (int i = 0; i < len; ++i) {
+         final Vec3 coord = segments[i][0];
+         result.append('v')
+               .append(' ')
+               .append(coord.toObjString())
+               .append('\n');
+      }
+
+      /*
+       * Create a line linking the prior segment to the next.
+       * Indices in an .obj file start at 1, not 0.
+       */
+      for (int i = 1, j = 2; i < len; ++i, ++j) {
+         result.append('l')
+               .append(' ')
+               .append(i)
+               .append(' ')
+               .append(j)
+               .append('\n');
+      }
+
+      if (this.closedLoop) {
+         result.append('l')
+               .append(' ')
+               .append(len)
+               .append(' ')
+               .append(1)
+               .append('\n');
+      }
+
+      return result.toString();
+   }
+
+   /**
     * Returns a string representation of the curve.
     *
     * @return the string
@@ -2168,20 +2253,11 @@ public class Curve3 extends Curve
             .append(this.closedLoop)
             .append(", \n  knots: [ \n");
 
-      // for (final Iterator < Curve3.Knot3 > itr =
-      // this.knots.iterator(); itr
-      // .hasNext();) {
-      // sb.append(itr.next());
-      // if (itr.hasNext()) {
-      // sb.append(", \n");
-      // }
-      // }
-
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
          sb.append(itr.next());
          if (itr.hasNext()) {
-            sb.append(", \n");
+            sb.append(',').append('\n');
          }
       }
 
@@ -2199,10 +2275,6 @@ public class Curve3 extends Curve
     */
    @Chainable
    public Curve3 translate ( final Vec3 v ) {
-
-      // for (final Knot3 knot : this.knots) {
-      // knot.translate(v);
-      // }
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {

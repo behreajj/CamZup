@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 720 405">
-<rect id="background" x="0" y="0" width="720.0" height="405.0" stroke="none" fill="#FFF7D5"></rect>
+<rect id="background" x="0" y="0" width="720.0" height="405.0" stroke="none" fill="#fff7d5"></rect>
 <g transform="translate(360.0, 202.5) scale(1.0, -1.0) rotate(-0.0) translate(-0.0, -0.0)">
-<g id="example" transform="translate(100, 50) rotate(-441) scale(100, 100)">
-<g stroke-width="0.01" stroke-opacity="1.0" stroke="#254441" fill-opacity="1.0" fill="#43AA8B" >
-<path d="M 0.0000,0.0000 L 0.5000,0.0000 L 0.2500,0.4330 Z"></path>
-<path d="M 0.0000,0.0000 L 0.2500,0.4330 L -0.2500,0.4330 Z"></path>
-<path d="M 0.0000,0.0000 L -0.2500,0.4330 L -0.5000,-0.0000 Z"></path>
-<path d="M 0.0000,0.0000 L -0.5000,-0.0000 L -0.2500,-0.4330 Z"></path>
-<path d="M 0.0000,0.0000 L -0.2500,-0.4330 L 0.2500,-0.4330 Z"></path>
-<path d="M 0.0000,0.0000 L 0.2500,-0.4330 L 0.5000,0.0000 Z"></path>
+<g id="example" transform="translate(100.0, 50.0) rotate(-191.0) scale(100.0, 100.0)">
+<g stroke-width="0.01" stroke-opacity="1.00" stroke="#254441" fill-opacity="1.00" fill="#43aa8b" >
+<path d="M 0.0000 0.0000 L 0.5000 0.0000 L 0.2499 0.4330 Z"></path>
+<path d="M 0.0000 0.0000 L 0.2499 0.4330 L -0.2500 0.4330 Z"></path>
+<path d="M 0.0000 0.0000 L -0.2500 0.4330 L -0.5000 -0.0000 Z"></path>
+<path d="M 0.0000 0.0000 L -0.5000 -0.0000 L -0.2499 -0.4330 Z"></path>
+<path d="M 0.0000 0.0000 L -0.2499 -0.4330 L 0.2499 -0.4330 Z"></path>
+<path d="M 0.0000 0.0000 L 0.2499 -0.4330 L 0.5000 0.0000 Z"></path>
 </g>
 </g>
 </g>
