@@ -528,8 +528,8 @@ public class Curve2 extends Curve
       }
 
       /**
-       * Reverses the knot's direction by swapping the fore- and
-       * rear-handles.
+       * Reverses the knot's direction by swapping the fore and
+       * rear handles.
        *
        * @param temp
        *           a temporary vector
@@ -640,7 +640,7 @@ public class Curve2 extends Curve
       }
 
       /**
-       * Scales the fore handle to a magnitude
+       * Scales the fore handle to a magnitude.
        *
        * @param magnitude
        *           the magnitude

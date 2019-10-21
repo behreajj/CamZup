@@ -252,8 +252,8 @@ public abstract class Simplex {
          final int j,
          final int seed ) {
 
-      final int h = Simplex.hash(i, j, seed);
-      return Simplex.GRAD_2_LUT[h & 0x7];
+      return Simplex.GRAD_2_LUT[Simplex.hash(
+            i, j, seed) & 0x7];
    }
 
    /**
@@ -278,8 +278,8 @@ public abstract class Simplex {
          final int k,
          final int seed ) {
 
-      final int h = Simplex.hash(i, j, Simplex.hash(k, seed, 0));
-      return Simplex.GRAD_3_LUT[h & 0xf];
+      return Simplex.GRAD_3_LUT[Simplex.hash(
+            i, j, Simplex.hash(k, seed, 0)) & 0xf];
    }
 
    /**
@@ -307,8 +307,8 @@ public abstract class Simplex {
          final int l,
          final int seed ) {
 
-      final int h = Simplex.hash(i, j, Simplex.hash(k, l, seed));
-      return Simplex.GRAD_4_LUT[h & 0x1f];
+      return Simplex.GRAD_4_LUT[Simplex.hash(
+            i, j, Simplex.hash(k, l, seed)) & 0x1f];
    }
 
    /**
@@ -1432,77 +1432,4 @@ public abstract class Simplex {
             Simplex.eval(
                   v.x, v.y, v.z, v.w + st, seed, wDeriv));
    }
-
-   // private static float[] identity3 () {
-   //
-   // return new float[] {
-   // 1.0f, 0.0f, 0.0f,
-   // 0.0f, 1.0f, 0.0f,
-   // 0.0f, 0.0f, 1.0f };
-   // }
-
-   // private static void mult ( float[] mat3, float scalar ) {
-   //
-   // mat3[0] *= scalar; /* 0, 0 */
-   // mat3[1] *= scalar; /* 0, 1 */
-   // mat3[2] *= scalar; /* 0, 2 */
-   //
-   // mat3[3] *= scalar; /* 1, 0 */
-   // mat3[4] *= scalar; /* 1, 1 */
-   // mat3[5] *= scalar; /* 1, 2 */
-   //
-   // mat3[6] *= scalar; /* 2, 0 */
-   // mat3[7] *= scalar; /* 2, 1 */
-   // mat3[8] *= scalar; /* 2, 2 */
-   // }
-
-   // private static Vec3 mult(float[] mat3, Vec3 v, Vec3
-   // target) {
-   // return target.set(
-   // mat3[0] * v.x + mat3[3] * v.y + mat3[6] * v.z,
-   // mat3[1] * v.x + mat3[4] * v.y + mat3[7] * v.z,
-   // mat3[2] * v.x + mat3[5] * v.y + mat3[8] * v.z);
-   // }
-
-   // public static float fbm (
-   // final Vec3 v,
-   // final int seed,
-   // final int octaves,
-   // final float amplitude,
-   // final float lacunarity,
-   // final float persistence,
-   // final Vec3 deriv) {
-   //
-   // final int oct = octaves < 1 ? 1 : octaves;
-   // final float pers = Utils.max(persistence, Utils.EPSILON);
-   // float amp = amplitude != 0.0f ? amplitude : 1.0f;
-   //
-   // float out = 0.0f;
-   // float maxAmp = 0.0f;
-   //
-   // float vx = v.x;
-   // float vy = v.y;
-   // float vz = v.z;
-   //
-   // Vec3 derivStep = new Vec3();
-   // float[] mat3 = identity3();
-   // deriv.reset();
-   //
-   // for (int i = 0; i < oct; ++i) {
-   // out += amp * Simplex.eval(vx, vy, vz, seed, derivStep);
-   //
-   // mult(mat3, amp);
-   // mult(mat3, derivStep, derivStep);
-   // Vec3.add(deriv, derivStep, deriv);
-   //
-   // maxAmp += amp;
-   // amp *= pers;
-   // vx *= lacunarity;
-   // vy *= lacunarity;
-   // vz *= lacunarity;
-   // // TODO: Research with Inigo Quilez
-   // }
-   //
-   // return out / maxAmp;
-   // }
 }

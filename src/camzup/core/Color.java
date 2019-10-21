@@ -1049,7 +1049,7 @@ public class Color extends Vec4 {
     *           the output color
     * @return the color
     */
-   public static Color fromDir2 (
+   public static Color fromDir (
          final Vec2 v,
          final Color target ) {
 
@@ -1059,7 +1059,7 @@ public class Color extends Vec4 {
       final float mSq = Vec2.magSq(v);
 
       if (mSq == 0.0f) {
-         return Color.clearBlack(target);
+         return target.set(0.5f, 0.5f, 0.5f, 1.0f);
       }
 
       if (Utils.approxFast(mSq, 1.0f)) {
@@ -1083,7 +1083,7 @@ public class Color extends Vec4 {
     *           the output color
     * @return the color
     */
-   public static Color fromDir3 (
+   public static Color fromDir (
          final Vec3 v,
          final Color target ) {
 
@@ -1094,7 +1094,7 @@ public class Color extends Vec4 {
       final float mSq = Vec3.magSq(v);
 
       if (mSq == 0.0f) {
-         return Color.clearBlack(target);
+         return target.set(0.5f, 0.5f, 0.5f, 1.0f);
       }
 
       if (Utils.approxFast(mSq, 1.0f)) {
@@ -1125,10 +1125,10 @@ public class Color extends Vec4 {
    public static Color fromHex ( final int c, final Color target ) {
 
       return target.set(
-            (c >> 16 & 0xff) * IUtils.ONE_255,
-            (c >> 8 & 0xff) * IUtils.ONE_255,
+            (c >> 0x10 & 0xff) * IUtils.ONE_255,
+            (c >> 0x8 & 0xff) * IUtils.ONE_255,
             (c & 0xff) * IUtils.ONE_255,
-            (c >> 24 & 0xff) * IUtils.ONE_255);
+            (c >> 0x18 & 0xff) * IUtils.ONE_255);
    }
 
    /**
@@ -1188,7 +1188,7 @@ public class Color extends Vec4 {
          final float alpha,
          final Color target ) {
 
-      if (sat == 0.0) {
+      if (sat <= 0.0) {
          return target.set(bri, bri, bri, alpha);
       }
 
@@ -1704,9 +1704,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Returns a Java-friendly representation of the color as a
-    * hexadecimal code, preceded by a '0x', in the format
-    * AARRGGBB.
+    * Returns a representation of the color as a hexadecimal
+    * code, preceded by a '0x', in the format AARRGGBB.
     *
     * @param c
     *           the color

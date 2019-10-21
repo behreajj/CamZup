@@ -625,7 +625,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
 
    /**
     * Tests to see if all the vector's components are non-zero.
-    * 
+    *
     * @param v
     *           the input vector
     * @return the evaluation
@@ -637,10 +637,10 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
             v.z != 0.0f &&
             v.w != 0.0f;
    }
-   
+
    /**
-    * Tests to see if the vector is on the unit hypersphere, i.e.,
-    * has a magnitude of approximately 1.0.
+    * Tests to see if the vector is on the unit hypersphere,
+    * i.e., has a magnitude of approximately 1.0.
     *
     * @param v
     *           the input vector
@@ -652,7 +652,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
 
       return Utils.approxFast(Vec4.magSq(v), 1.0f);
    }
-   
+
    /**
     * Tests to see if all the vector's components are zero.
     *
@@ -1123,6 +1123,18 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
+    * Returns a vector with all components set to zero.
+    *
+    * @param target
+    *           the output vector
+    * @return the zero vector
+    */
+   public static Vec4 zero ( final Vec4 target ) {
+
+      return target.set(0.0f, 0.0f, 0.0f, 0.0f);
+   }
+
+   /**
     * Component on the w axis. Commonly used to store 1.0 for
     * points and 0.0 for vectors when multiplying with a 4 x 4
     * matrix. Also used to store alpha (transparency) for
@@ -1223,6 +1235,12 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       this.set(xstr, ystr, zstr, wstr);
    }
 
+   /**
+    * Promotes a Vec3 to a Vec4 with an extra component.
+    * 
+    * @param v3 the vector
+    * @param w the w component
+    */
    public Vec4 ( final Vec3 v3, final float w ) {
 
       super(4);
@@ -1521,6 +1539,13 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       return this;
    }
 
+   /**
+    * Promotes a Vec3 to a Vec4 with an extra component.
+    * 
+    * @param v3 the vector
+    * @param w the w component
+    * @return this vector
+    */
    public Vec4 set ( final Vec3 v3, final float w ) {
 
       return this.set(v3.x, v3.y, v3.z, w);
@@ -1568,11 +1593,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
-    * Returns a string representation of this vector according
-    * to the string format.
+    * Returns a string representation of this vector.
     *
-    * @param places
-    *           number of decimal places
+    * @param places number of decimal places
     * @return the string
     */
    public String toString ( final int places ) {

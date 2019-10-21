@@ -3049,12 +3049,15 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    @Override
    public String toString () {
 
-      // return String.format("{ x: %+.4f, y: %+.4f }", this.x,
-      // this.y);
-
       return this.toString(4);
    }
 
+   /**
+    * Returns a string representation of this vector.
+    *
+    * @param places number of decimal places
+    * @return the string
+    */
    public String toString ( final int places ) {
 
       return new StringBuilder(48)

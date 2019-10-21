@@ -61,7 +61,7 @@ public class Transform2 extends Transform {
       /**
        * Eases between an origin and destination transform by a
        * step in [0.0, 1.0].
-       * 
+       *
        * @param origin
        *           the origin
        * @param dest

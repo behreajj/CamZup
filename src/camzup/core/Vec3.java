@@ -3130,6 +3130,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       this.set(xstr, ystr, zstr);
    }
 
+   /**
+    * Promotes a Vec2 to a Vec3 with an extra component.
+    * 
+    * @param v2
+    *           the vector
+    * @param z
+    *           the z component
+    */
    public Vec3 ( final Vec2 v2, final float z ) {
 
       super(3);
@@ -3400,6 +3408,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       return this;
    }
 
+   /**
+    * Promotes a Vec2 to a Vec3 with an extra component.
+    * 
+    * @param v2
+    *           the vector
+    * @param z
+    *           the w component
+    */
    public Vec3 set ( final Vec2 v2, final float z ) {
 
       return this.set(v2.x, v2.y, z);
@@ -3458,6 +3474,12 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       return this.toString(4);
    }
 
+   /**
+    * Returns a string representation of this vector.
+    *
+    * @param places number of decimal places
+    * @return the string
+    */
    public String toString ( final int places ) {
 
       return new StringBuilder(80)

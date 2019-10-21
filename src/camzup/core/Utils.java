@@ -7,9 +7,24 @@ package camzup.core;
  */
 public abstract class Utils implements IUtils {
 
+   /**
+    * A functional interface for an easing function which
+    * interpolates an an array.
+    *
+    * @param <T>
+    *           the parameter type
+    */
    @FunctionalInterface
    public static interface EasingFuncArr < T > {
 
+      /**
+       * Apply the function.
+       * 
+       * @param arr the array
+       * @param step the step
+       * @param target the target object
+       * @return the eased object
+       */
       T apply ( final T[] arr, Float step, T target );
    }
 
@@ -17,7 +32,6 @@ public abstract class Utils implements IUtils {
     * A functional interface for an easing function which
     * interpolates an object from an origin to a destination by
     * a float, with a final output parameter.
-    *
     *
     * @param <T>
     *           the parameter type
