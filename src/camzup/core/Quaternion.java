@@ -381,7 +381,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
 
    /**
     * A functional class to ease between two quaternions by
-    * spherical linear interpolation (slerp).
+    * spherical linear interpolation (slerp). Slerp chooses the
+    * shortest path between two orientations and maintains
+    * constant speed for any step given in [0.0, 1.0].
     */
    public static class Slerp extends AbstrEasing {
 

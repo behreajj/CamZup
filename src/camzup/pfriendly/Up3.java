@@ -913,6 +913,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
                this.textureU,
                this.textureV);
 
+         // TODO: Could this be sped up by not changing the length
+         // to one beyond the array and modulating, but rather
+         // adding one more bezierVertex call in the subsequent
+         // if clause before you close the loop?
          for (int i = 1; i < end; ++i) {
             currKnot = curve.get(i % knotLength);
 

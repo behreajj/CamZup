@@ -1237,9 +1237,11 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
 
    /**
     * Promotes a Vec3 to a Vec4 with an extra component.
-    * 
-    * @param v3 the vector
-    * @param w the w component
+    *
+    * @param v3
+    *           the vector
+    * @param w
+    *           the w component
     */
    public Vec4 ( final Vec3 v3, final float w ) {
 
@@ -1541,9 +1543,11 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
 
    /**
     * Promotes a Vec3 to a Vec4 with an extra component.
-    * 
-    * @param v3 the vector
-    * @param w the w component
+    *
+    * @param v3
+    *           the vector
+    * @param w
+    *           the w component
     * @return this vector
     */
    public Vec4 set ( final Vec3 v3, final float w ) {
@@ -1595,7 +1599,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    /**
     * Returns a string representation of this vector.
     *
-    * @param places number of decimal places
+    * @param places
+    *           number of decimal places
     * @return the string
     */
    public String toString ( final int places ) {

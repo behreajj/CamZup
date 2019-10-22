@@ -153,6 +153,50 @@ public abstract class Simplex {
    };
 
    /**
+    * Table for 3D rotations, u.
+    */
+   private static final Vec3[] GRAD3_U = {
+         new Vec3(1.0f, 0.0f, 1.0f),
+         new Vec3(0.0f, 1.0f, 1.0f),
+         new Vec3(-1.0f, 0.0f, 1.0f),
+         new Vec3(0.0f, -1.0f, 1.0f),
+         new Vec3(1.0f, 0.0f, -1.0f),
+         new Vec3(0.0f, 1.0f, -1.0f),
+         new Vec3(-1.0f, 0.0f, -1.0f),
+         new Vec3(0.0f, -1.0f, -1.0f),
+         new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3)
+   };
+
+   /**
+    * Table for 3D rotations, v.
+    */
+   private static final Vec3[] GRAD3_V = {
+         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(1.0f, -1.0f, 0.0f),
+         new Vec3(1.0f, 1.0f, 0.0f),
+         new Vec3(-1.0f, 1.0f, 0.0f),
+         new Vec3(-1.0f, -1.0f, 0.0f),
+         new Vec3(1.0f, 0.0f, 1.0f),
+         new Vec3(-1.0f, 0.0f, 1.0f),
+         new Vec3(0.0f, 1.0f, -1.0f),
+         new Vec3(0.0f, -1.0f, -1.0f)
+   };
+
+   /**
     * Permutation table for 4D noise.
     */
    private static final int[][] PERMUTE = {
@@ -172,6 +216,22 @@ public abstract class Simplex {
          { 3, 0, 1, 2 }, { 3, 0, 2, 1 }, { 0, 0, 0, 0 }, { 3, 1, 2, 0 },
          { 2, 1, 0, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
          { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 }, { 3, 2, 1, 0 } };
+
+   /**
+    * Temporary vector used by gradRot2.
+    */
+   private static final Vec2 ROT2 = new Vec2();
+
+   /**
+    * Temproary vector used by gradRot3.
+    */
+   private static final Vec3 ROT3 = new Vec3();
+
+   /**
+    * sqrt(2.0d) / Math.sqrt(3.0d) Used by rotation look up
+    * tables.
+    */
+   private static final float RT2_RT3 = 0.816496580927726f;
 
    /**
     * Factor by which 2D noise is scaled prior to return.
@@ -311,6 +371,39 @@ public abstract class Simplex {
             i, j, Simplex.hash(k, l, seed)) & 0x1f];
    }
 
+   private static Vec2 gradRot2 (
+         final int i,
+         final int j,
+         final int seed,
+         final float cosa,
+         final float sina,
+         final Vec2 target ) {
+
+      final int h = Simplex.hash(i, j, seed) & 0x7;
+      final Vec2 v = Simplex.GRAD_2_LUT[h];
+      return Vec2.rotateZ(v, cosa, sina, target);
+   }
+
+   private static Vec3 gradRot3 (
+         final int i,
+         final int j,
+         final int k,
+         final int seed,
+         final float cosa,
+         final float sina,
+         final Vec3 target ) {
+
+      final int h = Simplex.hash(
+            i, j, Simplex.hash(k, seed, 0)) & 0xf;
+
+      final Vec3 gu = Simplex.GRAD3_U[h];
+      final Vec3 gv = Simplex.GRAD3_V[h];
+      return target.set(
+            cosa * gu.x + sina * gv.x,
+            cosa * gu.y + sina * gv.y,
+            cosa * gu.z + sina * gv.z);
+   }
+
    /**
     * A helper function to the gradient functions. Performs a
     * series of bit-shifting operations to create a hash.
@@ -342,46 +435,6 @@ public abstract class Simplex {
       c -= b << 0x18 | b >> 0x20 - 0x18;
       return c;
    }
-
-   // /**
-   // * A 3D curl noise implementation based on Jasper Flick's
-   // * tutorial <a href=
-   // *
-   // "https://catlikecoding.com/unity/tutorials/noise-derivatives/">Noise
-   // * Derivatives.</a> The original paper on curl is from
-   // * Robert Bridson, et al., "<a href=
-   // *
-   // "https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph2007-curlnoise.pdf">Curl-Noise
-   // * for Procedural Fluid Flow</a>".
-   // *
-   // * @author Jasper Flick
-   // * @author Robert Bridson, et al.
-   // * @param v
-   // * the input vector
-   // * @param seed
-   // * @param target
-   // * @param xDeriv
-   // * @param yDeriv
-   // * @param zDeriv
-   // * @return the curl noise
-   // */
-   // public static Vec3 curl (
-   // final Vec3 v,
-   // final int seed,
-   // final Vec3 target,
-   // final Vec3 xDeriv,
-   // final Vec3 yDeriv,
-   // final Vec3 zDeriv ) {
-   //
-   // // TODO: 2D curl noise?
-   //
-   // Simplex.noise(v, seed, target, xDeriv, yDeriv, zDeriv);
-   //
-   // return target.set(
-   // zDeriv.x - yDeriv.y,
-   // xDeriv.x - zDeriv.y,
-   // yDeriv.x - xDeriv.y);
-   // }
 
    /**
     * Evaluates 4D simplex noise for a given seed.
@@ -1078,158 +1131,413 @@ public abstract class Simplex {
       return Simplex.eval(v.x, v.y, v.z, v.w, seed, deriv);
    }
 
-   /**
-    * Fractal Brownian motion. Sums a series of noise
-    * evaluations multiplied by the amplitude. The number of
-    * octaves dicates the iterations. At each iteration, the
-    * amplitude is multiplied by persistence; the noise inputs
-    * are multiplied by the lacunarity.
-    *
-    * @param v
-    *           the input vector
-    * @param seed
-    *           the seed
-    * @param octaves
-    *           the number of iterations
-    * @param lacunarity
-    *           the lacunarity
-    * @param persistence
-    *           the persistence
-    * @return the noise value
-    */
    public static float fbm (
          final Vec2 v,
          final int seed,
          final int octaves,
-         // final float amplitude,
          final float lacunarity,
-         final float persistence ) {
+         final float gain,
+         final Vec2 deriv ) {
 
-      final int oct = octaves < 1 ? 1 : octaves;
-      final float pers = Utils.max(persistence, Utils.EPSILON);
-      // float amp = amplitude != 0.0f ? amplitude : 1.0f;
-      float amp = 1.0f;
+      float freq = 1.0f;
+      float amp = 0.5f;
 
-      float out = 0.0f;
-      float maxAmp = 0.0f;
+      final Vec2 vin = new Vec2();
+      final Vec2 nxy = new Vec2();
 
-      float vx = v.x;
-      float vy = v.y;
+      float sum = 0.0f;
+      deriv.reset();
 
-      for (int i = 0; i < oct; ++i) {
-         out += amp * Simplex.eval(vx, vy, seed, null);
-         maxAmp += amp;
-         amp *= pers;
-         vx *= lacunarity;
-         vy *= lacunarity;
+      for (int i = 0; i < octaves; ++i) {
+         Vec2.mult(v, freq, vin);
+         final float nz = Simplex.eval(vin, seed, nxy);
+         sum += nz * amp;
+         Vec2.mult(nxy, amp, nxy);
+         Vec2.add(deriv, nxy, deriv);
+         freq *= lacunarity;
+         amp *= gain;
       }
 
-      return out / maxAmp;
+      return sum;
    }
 
-   /**
-    * Fractal Brownian motion. Sums a series of noise
-    * evaluations multiplied by the amplitude. The number of
-    * octaves dicates the iterations. At each iteration, the
-    * amplitude is multiplied by persistence; the noise inputs
-    * are multiplied by the lacunarity.
-    *
-    * @param v
-    *           the input vector
-    * @param seed
-    *           the seed
-    * @param octaves
-    *           the number of iterations
-    * @param lacunarity
-    *           the lacunarity
-    * @param persistence
-    *           the persistence
-    * @return the noise value
-    */
    public static float fbm (
          final Vec3 v,
          final int seed,
          final int octaves,
-         // final float amplitude,
          final float lacunarity,
-         final float persistence ) {
+         final float gain,
+         final Vec3 deriv ) {
 
-      final int oct = octaves < 1 ? 1 : octaves;
-      final float pers = Utils.max(persistence, Utils.EPSILON);
-      // float amp = amplitude != 0.0f ? amplitude : 1.0f;
-      float amp = 1.0f;
+      float freq = 1.0f;
+      float amp = 0.5f;
 
-      float out = 0.0f;
-      float maxAmp = 0.0f;
+      final Vec3 vin = new Vec3();
+      final Vec3 nxyz = new Vec3();
 
-      float vx = v.x;
-      float vy = v.y;
-      float vz = v.z;
+      float sum = 0.0f;
+      deriv.reset();
 
-      for (int i = 0; i < oct; ++i) {
-         out += amp * Simplex.eval(vx, vy, vz, seed, null);
-         maxAmp += amp;
-         amp *= pers;
-         vx *= lacunarity;
-         vy *= lacunarity;
-         vz *= lacunarity;
+      for (int i = 0; i < octaves; ++i) {
+         Vec3.mult(v, freq, vin);
+         final float nw = Simplex.eval(vin, seed, nxyz);
+         sum += nw * amp;
+         Vec3.mult(nxyz, amp, nxyz);
+         Vec3.add(deriv, nxyz, deriv);
+         freq *= lacunarity;
+         amp *= gain;
       }
 
-      return out / maxAmp;
+      return sum;
    }
 
-   /**
-    * Fractal Brownian motion. Sums a series of noise
-    * evaluations multiplied by the amplitude. The number of
-    * octaves dicates the iterations. At each iteration, the
-    * amplitude is multiplied by persistence; the noise inputs
-    * are multiplied by the lacunarity.
-    *
-    * @param v
-    *           the input vector
-    * @param seed
-    *           the seed
-    * @param octaves
-    *           the number of iterations
-    * @param lacunarity
-    *           the lacunarity
-    * @param persistence
-    *           the persistence
-    * @return the noise value
-    */
    public static float fbm (
          final Vec4 v,
          final int seed,
          final int octaves,
-         // final float amplitude,
          final float lacunarity,
-         final float persistence ) {
+         final float gain,
+         final Vec4 deriv ) {
 
-      final int oct = octaves < 1 ? 1 : octaves;
-      final float pers = Utils.max(persistence,
-            Utils.EPSILON);
-      // float amp = amplitude != 0.0f ? amplitude : 1.0f;
-      float amp = 1.0f;
+      float freq = 1.0f;
+      float amp = 0.5f;
 
-      float out = 0.0f;
-      float maxAmp = 0.0f;
+      final Vec4 vin = new Vec4();
+      final Vec4 nxyzw = new Vec4();
 
-      float vx = v.x;
-      float vy = v.y;
-      float vz = v.z;
-      float vw = v.w;
+      float sum = 0.0f;
+      deriv.reset();
 
-      for (int i = 0; i < oct; ++i) {
-         out += amp * Simplex.eval(vx, vy, vz, vw, seed, null);
-         maxAmp += amp;
-         amp *= pers;
-         vx *= lacunarity;
-         vy *= lacunarity;
-         vz *= lacunarity;
-         vw *= lacunarity;
+      for (int i = 0; i < octaves; ++i) {
+         Vec4.mult(v, freq, vin);
+         final float nv = Simplex.eval(vin, seed, nxyzw);
+         sum += nv * amp;
+         Vec4.mult(nxyzw, amp, nxyzw);
+         Vec4.add(deriv, nxyzw, deriv);
+         freq *= lacunarity;
+         amp *= gain;
       }
 
-      return out / maxAmp;
+      return sum;
+   }
+
+   public static float flow (
+         final float x,
+         final float y,
+         final float z,
+         final float cosa,
+         final float sina,
+         final int seed,
+         final Vec3 deriv ) {
+
+      final float s = (x + y + z) * Simplex.F3;
+      final int i = Utils.floorToInt(x + s);
+      final int j = Utils.floorToInt(y + s);
+      final int k = Utils.floorToInt(z + s);
+
+      final float t = (i + j + k) * Simplex.G3;
+      final float x0 = x - (i - t);
+      final float y0 = y - (j - t);
+      final float z0 = z - (k - t);
+
+      int i1 = 0;
+      int j1 = 0;
+      int k1 = 0;
+
+      int i2 = 0;
+      int j2 = 0;
+      int k2 = 0;
+
+      if (x0 >= y0) {
+         if (y0 >= z0) {
+            i1 = 1;
+            i2 = 1;
+            j2 = 1;
+         } else if (x0 >= z0) {
+            i1 = 1;
+            i2 = 1;
+            k2 = 1;
+         } else {
+            k1 = 1;
+            i2 = 1;
+            k2 = 1;
+         }
+      } else {
+         if (y0 < z0) {
+            k1 = 1;
+            j2 = 1;
+            k2 = 1;
+         } else if (x0 < z0) {
+            j1 = 1;
+            j2 = 1;
+            k2 = 1;
+         } else {
+            j1 = 1;
+            i2 = 1;
+            j2 = 1;
+         }
+      }
+
+      final float x1 = x0 - i1 + Simplex.G3;
+      final float y1 = y0 - j1 + Simplex.G3;
+      final float z1 = z0 - k1 + Simplex.G3;
+
+      final float x2 = x0 - i2 + Simplex.G3_2;
+      final float y2 = y0 - j2 + Simplex.G3_2;
+      final float z2 = z0 - k2 + Simplex.G3_2;
+
+      final float x3 = x0 - 1.0f + Simplex.G3_3;
+      final float y3 = y0 - 1.0f + Simplex.G3_3;
+      final float z3 = z0 - 1.0f + Simplex.G3_3;
+
+      float t20 = 0.0f;
+      float t21 = 0.0f;
+      float t22 = 0.0f;
+      float t23 = 0.0f;
+
+      float t40 = 0.0f;
+      float t41 = 0.0f;
+      float t42 = 0.0f;
+      float t43 = 0.0f;
+
+      float n0 = 0.0f;
+      float n1 = 0.0f;
+      float n2 = 0.0f;
+      float n3 = 0.0f;
+
+      Vec3 g0 = Simplex.ZERO_3;
+      Vec3 g1 = Simplex.ZERO_3;
+      Vec3 g2 = Simplex.ZERO_3;
+      Vec3 g3 = Simplex.ZERO_3;
+
+      final float t0 = 0.5f - x0 * x0 - y0 * y0 - z0 * z0;
+      if (t0 >= 0.0f) {
+         g0 = Simplex.gradRot3(
+               i, j, k, 
+               seed, cosa, sina, 
+               Simplex.ROT3);
+         t20 = t0 * t0;
+         t40 = t20 * t20;
+         n0 = t40 * (g0.x * x0 + g0.y * y0 + g0.z * z0);
+      }
+
+      final float t1 = 0.5f - x1 * x1 - y1 * y1 - z1 * z1;
+      if (t1 >= 0.0f) {
+         g1 = Simplex.gradRot3(
+               i + i1, j + j1, k + k1, 
+               seed, cosa, sina,
+               Simplex.ROT3);
+         t21 = t1 * t1;
+         t41 = t21 * t21;
+         n1 = t41 * (g1.x * x1 + g1.y * y1 + g1.z * z1);
+      }
+
+      final float t2 = 0.5f - x2 * x2 - y2 * y2 - z2 * z2;
+      if (t2 >= 0.0f) {
+         g2 = Simplex.gradRot3(
+               i + i2, j + j2, k + k2, 
+               seed, cosa, sina,
+               Simplex.ROT3);
+         t22 = t2 * t2;
+         t42 = t22 * t22;
+         n2 = t42 * (g2.x * x2 + g2.y * y2 + g2.z * z2);
+      }
+
+      final float t3 = 0.5f - x3 * x3 - y3 * y3 - z3 * z3;
+      if (t3 >= 0.0f) {
+         g3 = Simplex.gradRot3(
+               i + 1, j + 1, k + 1, 
+               seed, cosa, sina,
+               Simplex.ROT3);
+         t23 = t3 * t3;
+         t43 = t23 * t23;
+         n3 = t43 * (g3.x * x3 + g3.y * y3 + g3.z * z3);
+      }
+
+      if (deriv != null) {
+
+         final float tmp0 = t20 * t0 *
+               (g0.x * x0 + g0.y * y0 + g0.z * z0);
+         deriv.x = tmp0 * x0;
+         deriv.y = tmp0 * y0;
+         deriv.z = tmp0 * z0;
+
+         final float tmp1 = t21 * t1 *
+               (g1.x * x1 + g1.y * y1 + g1.z * z1);
+         deriv.x += tmp1 * x1;
+         deriv.y += tmp1 * y1;
+         deriv.z += tmp1 * z1;
+
+         final float tmp2 = t22 * t2 *
+               (g2.x * x2 + g2.y * y2 + g2.z * z2);
+         deriv.x += tmp2 * x2;
+         deriv.y += tmp2 * y2;
+         deriv.z += tmp2 * z2;
+
+         final float tmp3 = t23 * t3 *
+               (g3.x * x3 + g3.y * y3 + g3.z * z3);
+         deriv.x += tmp3 * x3;
+         deriv.y += tmp3 * y3;
+         deriv.z += tmp3 * z3;
+
+         deriv.x *= -8.0f;
+         deriv.y *= -8.0f;
+         deriv.z *= -8.0f;
+
+         deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x;
+         deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y;
+         deriv.z += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z;
+
+         deriv.x *= Simplex.SCALE_3;
+         deriv.y *= Simplex.SCALE_3;
+         deriv.z *= Simplex.SCALE_3;
+      }
+
+      return Simplex.SCALE_3 * (n0 + n1 + n2 + n3);
+   }
+
+   public static float flow (
+         final float x,
+         final float y,
+         final float cosa,
+         final float sina,
+         final int seed,
+         final Vec2 deriv ) {
+
+      final float s = (x + y) * Simplex.F2;
+      final int i = Utils.floorToInt(x + s);
+      final int j = Utils.floorToInt(y + s);
+
+      final float t = (i + j) * Simplex.G2;
+      final float x0 = x - (i - t);
+      final float y0 = y - (j - t);
+
+      int i1 = 0;
+      int j1 = 0;
+      if (x0 > y0) {
+         i1 = 1;
+      } else {
+         j1 = 1;
+      }
+
+      final float x1 = x0 - i1 + Simplex.G2;
+      final float y1 = y0 - j1 + Simplex.G2;
+
+      final float x2 = x0 - 1.0f + Simplex.G2_2;
+      final float y2 = y0 - 1.0f + Simplex.G2_2;
+
+      float t20 = 0.0f;
+      float t21 = 0.0f;
+      float t22 = 0.0f;
+
+      float t40 = 0.0f;
+      float t41 = 0.0f;
+      float t42 = 0.0f;
+
+      float n0 = 0.0f;
+      float n1 = 0.0f;
+      float n2 = 0.0f;
+
+      Vec2 g0 = Simplex.ZERO_2;
+      Vec2 g1 = Simplex.ZERO_2;
+      Vec2 g2 = Simplex.ZERO_2;
+
+      final float t0 = 0.5f - x0 * x0 - y0 * y0;
+      if (t0 >= 0.0f) {
+         g0 = Simplex.gradRot2(i, j, seed, cosa, sina, Simplex.ROT2);
+         t20 = t0 * t0;
+         t40 = t20 * t20;
+         n0 = t40 * (g0.x * x0 + g0.y * y0);
+      }
+
+      final float t1 = 0.5f - x1 * x1 - y1 * y1;
+      if (t1 >= 0.0f) {
+         g1 = Simplex.gradRot2(i + i1, j + j1, seed, cosa, sina, Simplex.ROT2);
+         t21 = t1 * t1;
+         t41 = t21 * t21;
+         n1 = t41 * (g1.x * x1 + g1.y * y1);
+      }
+
+      final float t2 = 0.5f - x2 * x2 - y2 * y2;
+      if (t2 >= 0.0f) {
+         g2 = Simplex.gradRot2(i + 1, j + 1, seed, cosa, sina, Simplex.ROT2);
+         t22 = t2 * t2;
+         t42 = t22 * t22;
+         n2 = t42 * (g2.x * x2 + g2.y * y2);
+      }
+
+      if (deriv != null) {
+
+         final float tmp0 = t20 * t0 * (g0.x * x0 + g0.y * y0);
+         deriv.x = tmp0 * x0;
+         deriv.y = tmp0 * y0;
+
+         final float tmp1 = t21 * t1 * (g1.x * x1 + g1.y * y1);
+         deriv.x += tmp1 * x1;
+         deriv.y += tmp1 * y1;
+
+         final float tmp2 = t22 * t2 * (g2.x * x2 + g2.y * y2);
+         deriv.x += tmp2 * x2;
+         deriv.y += tmp2 * y2;
+
+         deriv.x *= -8.0f;
+         deriv.y *= -8.0f;
+
+         deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x;
+         deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y;
+
+         deriv.x *= Simplex.SCALE_2;
+         deriv.y *= Simplex.SCALE_2;
+      }
+
+      return Simplex.SCALE_2 * (n0 + n1 + n2);
+   }
+
+   public static float flow (
+         final float x,
+         final float y,
+         final float z,
+         final float radians,
+         final int seed,
+         final Vec3 deriv ) {
+
+      return Simplex.flow(x, y, z,
+            (float) Math.cos(radians),
+            (float) Math.sin(radians),
+            seed, deriv);
+   }
+
+   public static float flow (
+         final float x,
+         final float y,
+         final float radians,
+         final int seed,
+         final Vec2 deriv ) {
+
+      return Simplex.flow(x, y,
+            (float) Math.cos(radians),
+            (float) Math.sin(radians),
+            seed, deriv);
+   }
+
+   public static float flow (
+         final Vec2 v,
+         final float radians,
+         final int seed,
+         final Vec2 deriv ) {
+
+      return Simplex.flow(v.x, v.y, 
+            radians, seed, deriv);
+   }
+
+   public static float flow (
+         final Vec3 v,
+         final float radians,
+         final int seed,
+         final Vec3 deriv ) {
+
+      return Simplex.flow(v.x, v.y, v.z,
+            radians, seed, deriv);
    }
 
    /**
@@ -1431,5 +1739,40 @@ public abstract class Simplex {
                   v.x, v.y, v.z + st, v.w, seed, zDeriv),
             Simplex.eval(
                   v.x, v.y, v.z, v.w + st, seed, wDeriv));
+   }
+
+   @SuppressWarnings("unused")
+   private void deriv2 (
+         final float x0, final float y0,
+         final float x1, final float y1,
+         final float x2, final float y2,
+
+         final float t0, final float t1, final float t2,
+         final float t20, final float t21, final float t22,
+         final float t40, final float t41, final float t42,
+
+         final Vec2 g0, final Vec2 g1, final Vec2 g2,
+         final Vec2 deriv ) {
+
+      final float tmp0 = t20 * t0 * (g0.x * x0 + g0.y * y0);
+      deriv.x = tmp0 * x0;
+      deriv.y = tmp0 * y0;
+
+      final float tmp1 = t21 * t1 * (g1.x * x1 + g1.y * y1);
+      deriv.x += tmp1 * x1;
+      deriv.y += tmp1 * y1;
+
+      final float tmp2 = t22 * t2 * (g2.x * x2 + g2.y * y2);
+      deriv.x += tmp2 * x2;
+      deriv.y += tmp2 * y2;
+
+      deriv.x *= -8.0f;
+      deriv.y *= -8.0f;
+
+      deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x;
+      deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y;
+
+      deriv.x *= Simplex.SCALE_2;
+      deriv.y *= Simplex.SCALE_2;
    }
 }

@@ -19,10 +19,13 @@ public abstract class Utils implements IUtils {
 
       /**
        * Apply the function.
-       * 
-       * @param arr the array
-       * @param step the step
-       * @param target the target object
+       *
+       * @param arr
+       *           the array
+       * @param step
+       *           the step
+       * @param target
+       *           the target object
        * @return the eased object
        */
       T apply ( final T[] arr, Float step, T target );

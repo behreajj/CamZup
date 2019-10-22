@@ -99,6 +99,7 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       final Random rng = new Random();
+      System.out.println(0.81649658092772603273242802490196d);
 
       // Vec3 from = Vec3.forward(new Vec3());
       // Vec3 to = Vec3.up(new Vec3());

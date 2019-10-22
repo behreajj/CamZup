@@ -2221,8 +2221,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * <em>n</em><br>
     * <br>
     *
-    * Ensures that the normal is of unit length.
-    *
     * @param incident
     *           the incident vector
     * @param normal
@@ -2241,15 +2239,26 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       // TODO: Needs testing.
 
       final float nMSq = Vec2.magSq(normal);
-      if (nMSq == 0.0f) {
+      if (Utils.abs(nMSq) < Utils.EPSILON) {
          return target.reset();
       }
 
-      final float scalar = 2.0f * Vec2.dot(normal, incident)
-            / (float) Math.sqrt(nMSq);
+      if (Utils.approxFast(nMSq, 1.0f)) {
+         final float scalar = 2.0f * Vec2.dot(normal, incident);
+         return target.set(
+               incident.x - scalar * normal.x,
+               incident.y - scalar * normal.y);
+      }
+
+      final float mInv = (float) (1.0d / Math.sqrt(nMSq));
+      final float nx = normal.x * mInv;
+      final float ny = normal.y * mInv;
+      final float scalar = 2.0f *
+            (nx * incident.x +
+                  ny * incident.y);
       return target.set(
-            incident.x - scalar * normal.x,
-            incident.y - scalar * normal.y);
+            incident.x - scalar * nx,
+            incident.y - scalar * ny);
    }
 
    /**
@@ -3022,18 +3031,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     */
    public String toObjString () {
 
-      // return String.format("%.6f %.6f", this.x, this.y);
-
-      // final float xr = (float) (Math.round(this.x * 1000000) *
-      // 0.000001d);
-      // final float yr = (float) (Math.round(this.y * 1000000) *
-      // 0.000001d);
-      // return new StringBuilder()
-      // .append(xr)
-      // .append(" ")
-      // .append(yr)
-      // .toString();
-
       return new StringBuilder(16)
             .append(Utils.toFixed(this.x, 6))
             .append(' ')
@@ -3055,7 +3052,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    /**
     * Returns a string representation of this vector.
     *
-    * @param places number of decimal places
+    * @param places
+    *           number of decimal places
     * @return the string
     */
    public String toString ( final int places ) {
@@ -3076,18 +3074,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @return the string
     */
    public String toSvgString () {
-
-      // return String.format("%.4f,%.4f", this.x, this.y);
-
-      // final float xr = (float) (Math.round(this.x * 10000) *
-      // 0.0001d);
-      // final float yr = (float) (Math.round(this.y * 10000) *
-      // 0.0001d);
-      // return new StringBuilder()
-      // .append(xr)
-      // .append(" ")
-      // .append(yr)
-      // .toString();
 
       return new StringBuilder(16)
             .append(Utils.toFixed(this.x, 4))

@@ -2415,8 +2415,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * <em>n</em><br>
     * <br>
     *
-    * Ensures that the normal is of unit length.
-    *
     * @param incident
     *           the incident vector
     * @param normal
@@ -2435,16 +2433,30 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       // TODO: Needs testing.
 
       final float nMSq = Vec3.magSq(normal);
-      if (nMSq == 0.0f) {
+      if (Utils.abs(nMSq) < Utils.EPSILON) {
          return target.reset();
       }
 
-      final float scalar = 2.0f * Vec3.dot(normal, incident)
-            / (float) Math.sqrt(nMSq);
+      if (Utils.approxFast(nMSq, 1.0f)) {
+         final float scalar = 2.0f * Vec3.dot(normal, incident);
+         return target.set(
+               incident.x - scalar * normal.x,
+               incident.y - scalar * normal.y,
+               incident.z - scalar * normal.z);
+      }
+
+      final float mInv = (float) (1.0d / Math.sqrt(nMSq));
+      final float nx = normal.x * mInv;
+      final float ny = normal.y * mInv;
+      final float nz = normal.z * mInv;
+      final float scalar = 2.0f *
+            (nx * incident.x +
+                  ny * incident.y +
+                  nz * incident.z);
       return target.set(
-            incident.x - scalar * normal.x,
-            incident.y - scalar * normal.y,
-            incident.z - scalar * normal.z);
+            incident.x - scalar * nx,
+            incident.y - scalar * ny,
+            incident.z - scalar * nz);
    }
 
    /**
@@ -3132,7 +3144,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
    /**
     * Promotes a Vec2 to a Vec3 with an extra component.
-    * 
+    *
     * @param v2
     *           the vector
     * @param z
@@ -3410,7 +3422,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
    /**
     * Promotes a Vec2 to a Vec3 with an extra component.
-    * 
+    *
     * @param v2
     *           the vector
     * @param z
@@ -3477,7 +3489,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    /**
     * Returns a string representation of this vector.
     *
-    * @param places number of decimal places
+    * @param places
+    *           number of decimal places
     * @return the string
     */
    public String toString ( final int places ) {

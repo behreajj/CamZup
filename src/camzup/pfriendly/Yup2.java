@@ -892,6 +892,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
          this.vertexImpl(coord.x, coord.y, 0.0f,
                this.textureU, this.textureV);
 
+         // TODO: Simplify by adding an extra bezier vertex call
+         // in the subsequent if loop and NOT using the modulo
+         // in the for loop.
          for (int i = 1; i < end; ++i) {
             currKnot = curve.get(i % knotLength);
 

@@ -2223,7 +2223,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
          prevKnot = curve.get(0);
          coord = prevKnot.coord;
-
+         // TODO: Simplify by adding an extra bezier vertex call
+         // in the subsequent if loop and NOT using the modulo
+         // in the for loop.
          this.gp.reset();
          this.gp.moveTo(coord.x, coord.y);
 
