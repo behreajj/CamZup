@@ -36,7 +36,7 @@ void setup() {
 void draw() {
   transform.rotateBy(0.01, new Vec3(0.0, 0.0, 1.0));
 
-  surface.setTitle(String.format("%.1f", frameRate));
+  surface.setTitle(Utils.toFixed(frameRate, 1));
   background(#fff7d5);
   lights();
 

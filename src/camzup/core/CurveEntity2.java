@@ -235,6 +235,8 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
    /**
     * Creates a string representing a Wavefront OBJ file.
     *
+    * @param precision
+    *           the decimal place precision
     * @return the string
     */
    public String toObjString ( final int precision ) {

@@ -1,4 +1,5 @@
 import camzup.pfriendly.*;
+import camzup.core.*;
 
 YupJ2 graphics;
 PImage img;
@@ -17,7 +18,7 @@ void setup() {
 }
 
 void draw() {
-  surface.setTitle(String.format("%.1f", frameRate));
+  surface.setTitle(Utils.toFixed(frameRate, 1));
   background(#202020);
   graphics.grid(16, 4.0);
   graphics.origin(32);

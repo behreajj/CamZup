@@ -21,7 +21,7 @@ void setup() {
 }
 
 void draw() {
-  surface.setTitle(String.format("%.1f", frameRate));
+  surface.setTitle(Utils.toFixed(frameRate, 1));
   
   float right = width * 0.5;
   float left = -right;

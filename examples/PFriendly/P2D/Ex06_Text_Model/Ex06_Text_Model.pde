@@ -1,4 +1,5 @@
 import camzup.pfriendly.*;
+import camzup.core.*;
 
 YupJ2 graphics;
 PFont font;
@@ -18,11 +19,11 @@ void setup() {
 
 
 void draw() {
-  surface.setTitle(String.format("%.1f", frameRate));
+  surface.setTitle(Utils.toFixed(frameRate, 1));
   background(#fff7d5);
 
   textSize(52);
   noStroke();
-  fill(0x7f202020);
+  fill(0xff202020);
   text("The quick brown fox\njumps over\nthe lazy dog", 0.0, 0.0);
 }

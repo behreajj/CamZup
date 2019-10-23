@@ -1,4 +1,5 @@
 import camzup.pfriendly.*;
+import camzup.core.*;
 
 Yup2 graphics;
 
@@ -14,7 +15,7 @@ void setup() {
 
 
 void draw() {
-  surface.setTitle(String.format("%.1f", frameRate));
+  surface.setTitle(Utils.toFixed(frameRate, 1));
 
   angle = TAU * mouseX / (float)width;
   float oscillation = sin(angle) * 0.5 + 0.5;

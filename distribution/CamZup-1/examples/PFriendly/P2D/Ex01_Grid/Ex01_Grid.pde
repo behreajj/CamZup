@@ -1,4 +1,5 @@
 import camzup.pfriendly.*;
+import camzup.core.*;
 
 Yup2 graphics;
 
@@ -10,7 +11,7 @@ void setup() {
 
 
 void draw() {
-  surface.setTitle(String.format("%.1f", frameRate));
+  surface.setTitle(Utils.toFixed(frameRate, 1));
   background(#202020);
   camera();
   graphics.grid(16, 3.0);

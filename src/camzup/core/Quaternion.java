@@ -1943,8 +1943,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Creates a random unit quaternion. Uses an algorithm by
     * Ken Shoemake, reproduced at this Math Stack Exchange
     * discussion "<a href=
-    * "https://math.stackexchange.com/questions/131336/
-    * uniform-random-quaternion-in-a-restricted-angle-range">Uniform
+    * "https://math.stackexchange.com/questions/131336/uniform-random-quaternion-in-a-restricted-angle-range">Uniform
     * Random Quaternion In a restricted angle range</a>".
     *
     * @param rng
@@ -2318,7 +2317,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * unit quaternion, and normalization should be attempted
        * regardless of floating point error.
        */
-      if (mSq != 1.0f) {
+      if (Math.abs(1.0d - mSq) < Utils.EPSILON) {
          final double mInv = 1.0d / Math.sqrt(mSq);
          wNorm = quat.real * mInv;
          // xNorm = i.x * mInv;
@@ -2354,7 +2353,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          return (float) angle;
       }
 
-      if (amSq == 1.0d) {
+      if (Math.abs(1.0d - amSq) < Utils.EPSILON) {
          axis.set(
                (float) ax,
                (float) ay,

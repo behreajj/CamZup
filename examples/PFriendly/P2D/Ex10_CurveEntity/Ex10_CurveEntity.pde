@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-YupJ2 graphics;
+Yup2 graphics;
 
 Random rng = new Random();
 
@@ -25,12 +25,12 @@ CurveEntity2 entity = new CurveEntity2(
   .appendMaterial(material);
 
 void setup() {
-  size(720, 405, "camzup.pfriendly.YupJ2");
-  graphics = (YupJ2)getGraphics();
+  size(720, 405, "camzup.pfriendly.Yup2");
+  graphics = (Yup2)getGraphics();
 }
 
 void draw() {
-  surface.setTitle(String.format("%.1f", frameRate));
+  surface.setTitle(Utils.toFixed(frameRate, 1));
   background(#fff7d5);
   graphics.origin();
   graphics.shape(entity);

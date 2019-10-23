@@ -25,6 +25,7 @@ CurveEntity3 entity = new CurveEntity3("Example", transform, curve)
 void setup() {
   size(720, 405, "camzup.pfriendly.Zup3");
   smooth(8);
+  frameRate(1000);
   graphics3 = (Zup3)getGraphics();
 }
 
@@ -40,6 +41,7 @@ void draw() {
   perspective();
   camera();
   graphics3.origin();
+  graphics3.handles(entity, 0.005);
   graphics3.shape(entity);
   float t = mouseX / (float)width;
 

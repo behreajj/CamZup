@@ -3427,7 +3427,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the vector
     * @param z
     *           the w component
+    * @return this vector
     */
+   @Chainable
    public Vec3 set ( final Vec2 v2, final float z ) {
 
       return this.set(v2.x, v2.y, z);

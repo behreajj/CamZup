@@ -3,7 +3,6 @@ package camzup.core;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -1044,6 +1043,21 @@ public class Curve3 extends Curve
       }
 
       /**
+       * Returns a 2D array representation of this knot. The
+       * coordinate is the first element; fore handle, the second;
+       * rear handle, the third.
+       *
+       * @return the array
+       */
+      public float[][] toArray () {
+
+         return new float[][] {
+               this.coord.toArray(),
+               this.foreHandle.toArray(),
+               this.rearHandle.toArray() };
+      }
+
+      /**
        * Returns a string representation of this knot.
        *
        * @return the string
@@ -1082,6 +1096,134 @@ public class Curve3 extends Curve
          Vec3.add(this.rearHandle, v, this.rearHandle);
          return this;
       }
+   }
+
+   /**
+    * Creates an arc from a start and stop angle. The arc can
+    * be open, transversed by a chord, or pie-shaped.
+    *
+    * @param startAngle
+    *           the start angle
+    * @param stopAngle
+    *           the stop angle
+    * @param radius
+    *           the arc radius
+    * @param arcMode
+    *           the arc mode
+    * @param target
+    *           the output curve
+    * @param temp0
+    *           a temporary vector
+    * @param temp1
+    *           a temporary vector
+    * @return the arc
+    */
+   public static Curve3 arc (
+         final float startAngle,
+         final float stopAngle,
+         final float radius,
+         final ArcMode arcMode,
+         final Curve3 target,
+         final Vec3 temp0,
+         final Vec3 temp1 ) {
+
+      /* Case where arc is used as a progress bar. */
+      if (Utils.approxFast(stopAngle - startAngle, IUtils.TAU)) {
+         return Curve3.circle(startAngle, target, temp0, temp1);
+      }
+
+      final float a = Utils.modRadians(startAngle);
+      final float b = Utils.modRadians(stopAngle);
+      final float arcLength = Utils.modRadians(b - a);
+      final float destAngle = a + arcLength;
+
+      /* Arc represented as a value in [0.0, 1.0]. */
+      final float arcFac = arcLength * IUtils.ONE_TAU;
+
+      /*
+       * Finds minimal amount of knots to represent an arc.
+       * Assumes that at least 1 knot is needed and that 4 knots
+       * accurately represent a complete circle.
+       */
+      final int knotCount = Utils.ceilToInt(1 + 4 * arcFac);
+
+      /* Find the step for each knot to progress. */
+      final float toStep = 1.0f / (knotCount - 1.0f);
+      final float handleMag = (float) (radius * IUtils.FOUR_THIRDS_D
+            * Math.tan(IUtils.HALF_PI_D * toStep * arcFac));
+
+      target.clear();
+      for (int i = 0; i < knotCount; ++i) {
+         final float step = i * toStep;
+         final float angle = Utils.lerpUnclamped(a, destAngle, step);
+         final Knot3 knot = Knot3.fromPolar(
+               angle, radius, handleMag,
+               new Knot3(),
+               temp0, temp1);
+         target.append(knot);
+      }
+
+      target.closedLoop = arcMode != ArcMode.OPEN;
+      if (target.closedLoop) {
+         if (arcMode == ArcMode.CHORD) {
+
+            final Knot3 first = target.getFirst();
+            final Knot3 last = target.getLast();
+
+            /* Flatten the first to last handles. */
+            Vec3.mix(
+                  last.coord,
+                  first.coord,
+                  IUtils.ONE_THIRD,
+                  last.foreHandle);
+
+            Vec3.mix(
+                  first.coord,
+                  last.coord,
+                  IUtils.ONE_THIRD,
+                  first.rearHandle);
+
+         } else if (arcMode == ArcMode.PIE) {
+
+            final Knot3 first = target.getFirst();
+            final Knot3 last = target.getLast();
+
+            /* Add a center knot. */
+            final Knot3 center = new Knot3();
+            target.append(center);
+            final Vec3 coCenter = center.coord;
+
+            /* Flatten center handles. */
+            Vec3.mix(
+                  coCenter,
+                  last.coord,
+                  IUtils.ONE_THIRD,
+                  center.rearHandle);
+
+            Vec3.mix(
+                  coCenter,
+                  first.coord,
+                  IUtils.ONE_THIRD,
+                  center.foreHandle);
+
+            /* Flatten handle from first to center. */
+            Vec3.mix(
+                  first.coord,
+                  coCenter,
+                  IUtils.ONE_THIRD,
+                  first.rearHandle);
+
+            /* Flatten handle from last to center. */
+            Vec3.mix(
+                  last.coord,
+                  coCenter,
+                  IUtils.ONE_THIRD,
+                  last.foreHandle);
+         }
+      }
+
+      target.name = "Arc";
+      return target;
    }
 
    /**
@@ -1718,7 +1860,7 @@ public class Curve3 extends Curve
     */
    public float calcLength ( final int precision ) {
 
-      // TODO: Is there a way to use distSq instead of dist when
+      // Is there a way to use distSq instead of dist when
       // summing the distances and then scale sum?
       float sum = 0.0f;
       final Vec3[][] segments = this.evalRange(precision + 1);
@@ -2152,33 +2294,20 @@ public class Curve3 extends Curve
    }
 
    /**
-    * Sorts the curve's list of knots according to the default
-    * knot comparator.
+    * Returns a 3D array representation of this curve.
     *
-    * @return this curve
-    * @see Collections#sort(List)
+    * @return the array
     */
-   @Chainable
-   public Curve3 sort () {
+   public float[][][] toArray () {
 
-      Collections.sort(this.knots);
-      return this;
-   }
-
-   /**
-    * Sorts the curve's list of knots according to a
-    * comparator.
-    *
-    * @param comparator
-    *           the comparator
-    * @return this curve
-    * @see List#sort(Comparator)
-    */
-   @Chainable
-   public Curve3 sort ( final Comparator < Knot3 > comparator ) {
-
-      this.knots.sort(comparator);
-      return this;
+      final float[][][] result = new float[this.knots.size()][][];
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      int index = 0;
+      while (itr.hasNext()) {
+         result[index] = itr.next().toArray();
+         index++;
+      }
+      return result;
    }
 
    /**

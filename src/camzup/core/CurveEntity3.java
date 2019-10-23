@@ -3,6 +3,8 @@ package camzup.core;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import camzup.core.Curve3.Knot3;
+
 /**
  * An entity which contains a transform that is applied to a
  * list of curves. The curves may references a list of
@@ -232,9 +234,102 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
       return this.curves.iterator();
    }
 
+   public String toBlenderCode () {
+
+      final StringBuilder result = new StringBuilder()
+            .append("from bpy import data as D\n\n")
+            .append("curve_raw = (");
+
+      int curveIndex = 0;
+      final int curveLast = this.curves.size() - 1;
+      final Iterator < Curve3 > curveItr = this.curves.iterator();
+      while (curveItr.hasNext()) {
+
+         final Curve3 curve = curveItr.next();
+         final int addCount = curve.knotCount() - 1;
+         final Iterator < Knot3 > knotItr = curve.iterator();
+
+         result.append('(');
+
+         int knotIndex = 0;
+         while (knotItr.hasNext()) {
+
+            final Knot3 knot = knotItr.next();
+            final Vec3 co = knot.coord;
+            final Vec3 handleLeft = knot.rearHandle;
+            final Vec3 handleRight = knot.foreHandle;
+
+            result.append('(');
+
+            result.append('(')
+                  .append(Utils.toFixed(co.x, 6))
+                  .append(',').append(' ')
+                  .append(Utils.toFixed(co.y, 6))
+                  .append(',').append(' ')
+                  .append(Utils.toFixed(co.z, 6))
+                  .append("),\n");
+
+            result.append('(')
+                  .append(Utils.toFixed(handleRight.x, 6))
+                  .append(',').append(' ')
+                  .append(Utils.toFixed(handleRight.y, 6))
+                  .append(',').append(' ')
+                  .append(Utils.toFixed(handleRight.z, 6))
+                  .append("),\n");
+
+            result.append('(')
+                  .append(Utils.toFixed(handleLeft.x, 6))
+                  .append(", ")
+                  .append(Utils.toFixed(handleLeft.y, 6))
+                  .append(", ")
+                  .append(Utils.toFixed(handleLeft.z, 6))
+                  .append(')');
+
+            result.append(')');
+
+            if (knotIndex < addCount) {
+               result.append(",\n");
+            }
+
+            knotIndex++;
+         }
+
+         result.append(')');
+         if (curveIndex < curveLast) {
+            result.append(",\n");
+         }
+
+         curveIndex++;
+      }
+      result.append(")\n\n");
+
+      result.append("crv_data = D.curves.new(\"")
+            .append(this.name)
+            .append("\", \"CURVE\")\n")
+            .append("crv_splines = crv_data.splines\n")
+            .append("crv_index = 0\n")
+            .append("for spline_raw in curve_raw:\n")
+            .append("\tspline = crv_splines.new(\"BEZIER\")\n")
+            .append("\tknt_index = 0\n")
+            .append("\tbz_pts = spline.bezier_points\n")
+            .append("\tbz_pts.add(len(spline_raw) - 1)\n")
+            .append("\tfor knot in bz_pts:\n")
+            .append("\t\tknot_raw = spline_raw[knt_index]\n")
+            .append("\t\tknot.handle_left_type = \"FREE\"\n")
+            .append("\t\tknot.handle_right_type = \"FREE\"\n")
+            .append("\t\tknot.co = knot_raw[0]\n")
+            .append("\t\tknot.handle_right = knot_raw[1]\n")
+            .append("\t\tknot.handle_left = knot_raw[2]\n")
+            .append("\t\tknt_index = knt_index + 1\n")
+            .append("\tcrv_index = crv_index + 1");
+      return result.toString();
+   }
+
    /**
     * Creates a string representing a Wavefront OBJ file.
     *
+    * @param precision
+    *           the decimal place precision
     * @return the string
     */
    public String toObjString ( final int precision ) {

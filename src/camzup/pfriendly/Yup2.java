@@ -1,5 +1,6 @@
 package camzup.pfriendly;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import camzup.core.Curve2;
@@ -877,13 +878,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             this.material(material);
          }
 
-         int end = 0;
-         if (curve.closedLoop) {
-            end = knotLength + 1;
-         } else {
-            end = knotLength;
-         }
-
          prevKnot = curve.get(0);
          coord = prevKnot.coord;
 
@@ -892,12 +886,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
          this.vertexImpl(coord.x, coord.y, 0.0f,
                this.textureU, this.textureV);
 
-         // TODO: Simplify by adding an extra bezier vertex call
-         // in the subsequent if loop and NOT using the modulo
-         // in the for loop.
-         for (int i = 1; i < end; ++i) {
-            currKnot = curve.get(i % knotLength);
-
+         final Iterator < Knot2 > itr = curve.iterator();
+         while (itr.hasNext()) {
+            currKnot = itr.next();
             foreHandle = prevKnot.foreHandle;
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
@@ -918,8 +909,27 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             prevKnot = currKnot;
          }
 
-         this.endShape(
-               curve.closedLoop ? PConstants.CLOSE : PConstants.OPEN);
+         if (curve.closedLoop) {
+            currKnot = curve.getFirst();
+            foreHandle = prevKnot.foreHandle;
+            rearHandle = currKnot.rearHandle;
+            coord = currKnot.coord;
+
+            this.bezierVertexImpl(
+                  foreHandle.x,
+                  foreHandle.y,
+                  0.0f,
+
+                  rearHandle.x,
+                  rearHandle.y,
+                  0.0f,
+
+                  coord.x,
+                  coord.y,
+                  0.0f);
+         } else {
+            this.endShape(PConstants.OPEN);
+         }
 
          if (useMaterial) {
             this.popStyle();

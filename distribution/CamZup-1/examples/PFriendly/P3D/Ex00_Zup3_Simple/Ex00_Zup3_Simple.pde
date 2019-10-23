@@ -1,11 +1,11 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-Zup3 graphics; /* OPENGL - P3D */
+Yup3 graphics; /* OPENGL - P3D */
 
 void setup() {
-  size(720, 405, "camzup.pfriendly.Zup3");
-  graphics = (Zup3)getGraphics();
+  size(720, 405, "camzup.pfriendly.Yup3");
+  graphics = (Yup3)getGraphics();
 }
 
 

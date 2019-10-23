@@ -39,7 +39,7 @@ void setup() {
 
 
 void draw() {
-  surface.setTitle(String.format("%.1f", frameRate));
+  surface.setTitle(Utils.toFixed(frameRate, 1));
   background(#fff7d5);
   camera();
 

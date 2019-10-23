@@ -1354,6 +1354,8 @@ public interface IUp {
     *
     * @param m
     *           the matrix
+    * @param places
+    *           number of decimal places
     * @return the string
     */
    public static String toString ( final PMatrix3D m, final int places ) {

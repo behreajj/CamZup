@@ -14,7 +14,7 @@ void setup() {
 
 
 void draw() {
-  surface.setTitle(String.format("%.1f", frameRate));
+  surface.setTitle(Utils.toFixed(frameRate, 1));
 
   // Jitter the camera.
   float angle = frameCount * 0.01;

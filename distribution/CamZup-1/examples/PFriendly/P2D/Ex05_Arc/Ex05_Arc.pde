@@ -12,7 +12,7 @@ void setup() {
 }
 
 void draw() {
-  surface.setTitle(String.format("%.1f", frameRate));
+  surface.setTitle(Utils.toFixed(frameRate, 1));
   background(#fff7d5);
 
   graphics.camera();
@@ -27,7 +27,7 @@ void draw() {
   arc(0.0, 0.0, 
     175.0, 175.0, 
     start, stop,
-   CHORD);
+   PIE);
 
   stroke(#1475b3);
   strokeWeight(12.0);

@@ -1,5 +1,6 @@
 package camzup.pfriendly;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import camzup.core.Color;
@@ -895,13 +896,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             this.material(material);
          }
 
-         int end = 0;
-         if (curve.closedLoop) {
-            end = knotLength + 1;
-         } else {
-            end = knotLength;
-         }
-
          prevKnot = curve.get(0);
          coord = prevKnot.coord;
 
@@ -913,13 +907,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
                this.textureU,
                this.textureV);
 
-         // TODO: Could this be sped up by not changing the length
-         // to one beyond the array and modulating, but rather
-         // adding one more bezierVertex call in the subsequent
-         // if clause before you close the loop?
-         for (int i = 1; i < end; ++i) {
-            currKnot = curve.get(i % knotLength);
-
+         final Iterator < Knot3 > itr = curve.iterator();
+         while (itr.hasNext()) {
+            currKnot = itr.next();
             foreHandle = prevKnot.foreHandle;
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
@@ -927,23 +917,39 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             this.bezierVertexImpl(
                   foreHandle.x,
                   foreHandle.y,
-                  foreHandle.z,
+                  0.0f,
 
                   rearHandle.x,
                   rearHandle.y,
-                  rearHandle.z,
+                  0.0f,
 
                   coord.x,
                   coord.y,
-                  coord.z);
+                  0.0f);
 
             prevKnot = currKnot;
          }
 
          if (curve.closedLoop) {
-            this.endShape(PConstants.CLOSE);
+            currKnot = curve.getFirst();
+            foreHandle = prevKnot.foreHandle;
+            rearHandle = currKnot.rearHandle;
+            coord = currKnot.coord;
+
+            this.bezierVertexImpl(
+                  foreHandle.x,
+                  foreHandle.y,
+                  0.0f,
+
+                  rearHandle.x,
+                  rearHandle.y,
+                  0.0f,
+
+                  coord.x,
+                  coord.y,
+                  0.0f);
          } else {
-            this.endShape();
+            this.endShape(PConstants.OPEN);
          }
 
          if (useMaterial) {
@@ -955,6 +961,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
    public void shape ( final MeshEntity3 entity ) {
 
+      // TODO: Did anything change with this that would break the sphere rotate example?
       this.pushMatrix();
       this.transform(entity.transform, entity.transformOrder);
 

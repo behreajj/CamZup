@@ -1136,6 +1136,16 @@ public abstract class Simplex {
          final int seed,
          final int octaves,
          final float lacunarity,
+         final float gain ) {
+
+      return Simplex.fbm(v, seed, octaves, lacunarity, gain, null);
+   }
+
+   public static float fbm (
+         final Vec2 v,
+         final int seed,
+         final int octaves,
+         final float lacunarity,
          final float gain,
          final Vec2 deriv ) {
 
@@ -1159,6 +1169,16 @@ public abstract class Simplex {
       }
 
       return sum;
+   }
+
+   public static float fbm (
+         final Vec3 v,
+         final int seed,
+         final int octaves,
+         final float lacunarity,
+         final float gain ) {
+
+      return Simplex.fbm(v, seed, octaves, lacunarity, gain, null);
    }
 
    public static float fbm (
@@ -1196,6 +1216,16 @@ public abstract class Simplex {
          final int seed,
          final int octaves,
          final float lacunarity,
+         final float gain ) {
+
+      return Simplex.fbm(v, seed, octaves, lacunarity, gain, null);
+   }
+
+   public static float fbm (
+         final Vec4 v,
+         final int seed,
+         final int octaves,
+         final float lacunarity,
          final float gain,
          final Vec4 deriv ) {
 
@@ -1219,6 +1249,17 @@ public abstract class Simplex {
       }
 
       return sum;
+   }
+
+   public static float flow (
+         final float x,
+         final float y,
+         final float z,
+         final float cosa,
+         final float sina,
+         final int seed ) {
+
+      return Simplex.flow(x, y, z, cosa, sina, seed, null);
    }
 
    public static float flow (
@@ -1313,8 +1354,8 @@ public abstract class Simplex {
       final float t0 = 0.5f - x0 * x0 - y0 * y0 - z0 * z0;
       if (t0 >= 0.0f) {
          g0 = Simplex.gradRot3(
-               i, j, k, 
-               seed, cosa, sina, 
+               i, j, k,
+               seed, cosa, sina,
                Simplex.ROT3);
          t20 = t0 * t0;
          t40 = t20 * t20;
@@ -1324,7 +1365,7 @@ public abstract class Simplex {
       final float t1 = 0.5f - x1 * x1 - y1 * y1 - z1 * z1;
       if (t1 >= 0.0f) {
          g1 = Simplex.gradRot3(
-               i + i1, j + j1, k + k1, 
+               i + i1, j + j1, k + k1,
                seed, cosa, sina,
                Simplex.ROT3);
          t21 = t1 * t1;
@@ -1335,7 +1376,7 @@ public abstract class Simplex {
       final float t2 = 0.5f - x2 * x2 - y2 * y2 - z2 * z2;
       if (t2 >= 0.0f) {
          g2 = Simplex.gradRot3(
-               i + i2, j + j2, k + k2, 
+               i + i2, j + j2, k + k2,
                seed, cosa, sina,
                Simplex.ROT3);
          t22 = t2 * t2;
@@ -1346,7 +1387,7 @@ public abstract class Simplex {
       final float t3 = 0.5f - x3 * x3 - y3 * y3 - z3 * z3;
       if (t3 >= 0.0f) {
          g3 = Simplex.gradRot3(
-               i + 1, j + 1, k + 1, 
+               i + 1, j + 1, k + 1,
                seed, cosa, sina,
                Simplex.ROT3);
          t23 = t3 * t3;
@@ -1394,6 +1435,19 @@ public abstract class Simplex {
       }
 
       return Simplex.SCALE_3 * (n0 + n1 + n2 + n3);
+   }
+
+   public static float flow (
+         final float x,
+         final float y,
+         final float z,
+         final float radians,
+         final int seed ) {
+
+      return Simplex.flow(x, y, z,
+            (float) Math.cos(radians),
+            (float) Math.sin(radians),
+            seed, (Vec3) null);
    }
 
    public static float flow (
@@ -1511,6 +1565,18 @@ public abstract class Simplex {
          final float x,
          final float y,
          final float radians,
+         final int seed ) {
+
+      return Simplex.flow(x, y,
+            (float) Math.cos(radians),
+            (float) Math.sin(radians),
+            seed, (Vec2) null);
+   }
+
+   public static float flow (
+         final float x,
+         final float y,
+         final float radians,
          final int seed,
          final Vec2 deriv ) {
 
@@ -1523,11 +1589,27 @@ public abstract class Simplex {
    public static float flow (
          final Vec2 v,
          final float radians,
+         final int seed ) {
+
+      return Simplex.flow(v, radians, seed, null);
+   }
+
+   public static float flow (
+         final Vec2 v,
+         final float radians,
          final int seed,
          final Vec2 deriv ) {
 
-      return Simplex.flow(v.x, v.y, 
+      return Simplex.flow(v.x, v.y,
             radians, seed, deriv);
+   }
+
+   public static float flow (
+         final Vec3 v,
+         final float radians,
+         final int seed ) {
+
+      return Simplex.flow(v, radians, seed, null);
    }
 
    public static float flow (
@@ -1774,5 +1856,55 @@ public abstract class Simplex {
 
       deriv.x *= Simplex.SCALE_2;
       deriv.y *= Simplex.SCALE_2;
+   }
+
+   @SuppressWarnings("unused")
+   private void deriv3 (
+         final float x0, final float y0, final float z0,
+         final float x1, final float y1, final float z1,
+         final float x2, final float y2, final float z2,
+         final float x3, final float y3, final float z3,
+
+         final float t0, final float t1, final float t2, final float t3,
+         final float t20, final float t21, final float t22, final float t23,
+         final float t40, final float t41, final float t42, final float t43,
+         final Vec3 g0, final Vec3 g1, final Vec3 g2, final Vec3 g3,
+         final Vec3 deriv ) {
+
+      final float tmp0 = t20 * t0 *
+            (g0.x * x0 + g0.y * y0 + g0.z * z0);
+      deriv.x = tmp0 * x0;
+      deriv.y = tmp0 * y0;
+      deriv.z = tmp0 * z0;
+
+      final float tmp1 = t21 * t1 *
+            (g1.x * x1 + g1.y * y1 + g1.z * z1);
+      deriv.x += tmp1 * x1;
+      deriv.y += tmp1 * y1;
+      deriv.z += tmp1 * z1;
+
+      final float tmp2 = t22 * t2 *
+            (g2.x * x2 + g2.y * y2 + g2.z * z2);
+      deriv.x += tmp2 * x2;
+      deriv.y += tmp2 * y2;
+      deriv.z += tmp2 * z2;
+
+      final float tmp3 = t23 * t3 *
+            (g3.x * x3 + g3.y * y3 + g3.z * z3);
+      deriv.x += tmp3 * x3;
+      deriv.y += tmp3 * y3;
+      deriv.z += tmp3 * z3;
+
+      deriv.x *= -8.0f;
+      deriv.y *= -8.0f;
+      deriv.z *= -8.0f;
+
+      deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x;
+      deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y;
+      deriv.z += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z;
+
+      deriv.x *= Simplex.SCALE_3;
+      deriv.y *= Simplex.SCALE_3;
+      deriv.z *= Simplex.SCALE_3;
    }
 }

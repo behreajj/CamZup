@@ -923,6 +923,21 @@ public class Curve2 extends Curve
       }
 
       /**
+       * Returns a 2D array representation of this knot. The
+       * coordinate is the first element; fore handle, the second;
+       * rear handle, the third.
+       *
+       * @return the array
+       */
+      public float[][] toArray () {
+
+         return new float[][] {
+               this.coord.toArray(),
+               this.foreHandle.toArray(),
+               this.rearHandle.toArray() };
+      }
+
+      /**
        * Returns a string representation of this knot.
        *
        * @return the string
@@ -1016,7 +1031,7 @@ public class Curve2 extends Curve
 
    /**
     * Creates an arc from a start and stop angle. The arc can
-    * be open, a transversed by a chord, or pie-shaped.
+    * be open, transversed by a chord, or pie-shaped.
     *
     * @param startAngle
     *           the start angle
@@ -2182,20 +2197,6 @@ public class Curve2 extends Curve
    }
 
    /**
-    * Sorts the curve's list of knots according to the default
-    * knot comparator.
-    *
-    * @return this curve
-    * @see Collections#sort(List)
-    */
-   @Chainable
-   public Curve2 sort () {
-
-      Collections.sort(this.knots);
-      return this;
-   }
-
-   /**
     * Sorts the curve's list of knots according to a
     * comparator.
     *
@@ -2209,6 +2210,23 @@ public class Curve2 extends Curve
 
       this.knots.sort(comparator);
       return this;
+   }
+
+   /**
+    * Returns a 3D array representation of this curve.
+    *
+    * @return the array
+    */
+   public float[][][] toArray () {
+
+      final float[][][] result = new float[this.knots.size()][][];
+      final Iterator < Knot2 > itr = this.knots.iterator();
+      int index = 0;
+      while (itr.hasNext()) {
+         result[index] = itr.next().toArray();
+         index++;
+      }
+      return result;
    }
 
    /**
