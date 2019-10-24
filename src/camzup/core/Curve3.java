@@ -54,7 +54,7 @@ public class Curve3 extends Curve
 
          Vec3.fromPolar(angle, 1.0f, temp0);
 
-         // Use perpendicular CCW.
+         /* Use perpendicular CCW. */
          temp1.set(-temp0.y, temp0.x, 0.0f);
          Vec3.mult(temp0, radius, target.coord);
          Vec3.mult(temp1, handleMag, temp0);
@@ -1068,6 +1068,13 @@ public class Curve3 extends Curve
          return this.toString(4);
       }
 
+      /**
+       * Returns a string representation of this knot.
+       *
+       * @param places
+       *           the number of places
+       * @return the string
+       */
       public String toString ( final int places ) {
 
          return new StringBuilder()
@@ -1874,6 +1881,17 @@ public class Curve3 extends Curve
       return sum;
    }
 
+   /**
+    * Evaluates a step in the range [0.0, 1.0], returning a
+    * knot on the curve. The knot's fore handle and rear handle
+    * are mirrored.
+    *
+    * @param step
+    *           the step
+    * @param target
+    *           the output knot
+    * @return the knot
+    */
    public Knot3 eval (
          final float step,
          final Knot3 target ) {

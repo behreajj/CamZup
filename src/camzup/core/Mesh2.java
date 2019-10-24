@@ -306,7 +306,9 @@ public class Mesh2 extends Mesh {
                coords[j] = new Vec2(pureCoord);
 
                final int k = 1 + j % seg;
-               final int[][] face = new int[][] { { 0, 0 }, { j, j },
+               final int[][] face = new int[][] {
+                     { 0, 0 },
+                     { j, j },
                      { k, k } };
                faces[i] = face;
             }
@@ -341,12 +343,16 @@ public class Mesh2 extends Mesh {
 
       target.name = "Rectangle";
 
-      final Vec2[] coords = new Vec2[] { new Vec2(0.5f, 0.5f),
-            new Vec2(-0.5f, 0.5f), new Vec2(-0.5f, -0.5f),
+      final Vec2[] coords = new Vec2[] {
+            new Vec2(0.5f, 0.5f),
+            new Vec2(-0.5f, 0.5f),
+            new Vec2(-0.5f, -0.5f),
             new Vec2(0.5f, -0.5f) };
 
-      final Vec2[] texCoords = new Vec2[] { new Vec2(1.0f, 1.0f),
-            new Vec2(0.0f, 1.0f), new Vec2(0.0f, 0.0f),
+      final Vec2[] texCoords = new Vec2[] {
+            new Vec2(1.0f, 1.0f),
+            new Vec2(0.0f, 1.0f),
+            new Vec2(0.0f, 0.0f),
             new Vec2(1.0f, 0.0f) };
 
       int[][][] faces;
@@ -354,7 +360,8 @@ public class Mesh2 extends Mesh {
 
          case TRI:
 
-            faces = new int[][][] { { { 0, 0 }, { 1, 1 }, { 2, 2 } },
+            faces = new int[][][] {
+                  { { 0, 0 }, { 1, 1 }, { 2, 2 } },
                   { { 2, 2 }, { 3, 3 }, { 0, 0 } } };
 
             break;
@@ -543,7 +550,10 @@ public class Mesh2 extends Mesh {
     *           the output vertex
     * @return the vertex
     */
-   public Vert2 getVertex ( final int i, final int j, final Vert2 target ) {
+   public Vert2 getVertex (
+         final int i,
+         final int j,
+         final Vert2 target ) {
 
       return target.set(this.coords[this.faces[i][j][0]],
             this.texCoords[this.faces[i][j][1]]);
@@ -712,7 +722,8 @@ public class Mesh2 extends Mesh {
             // Indices in an .obj file start at 1, not 0.
             final int[] vert = face[j];
             result.append(vert[0] + 1)
-                  .append('/').append(vert[1] + 1)
+                  .append('/')
+                  .append(vert[1] + 1)
                   .append('/')
                   .append(vert[2] + 1)
                   .append(' ');

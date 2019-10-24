@@ -9,6 +9,7 @@ import camzup.core.CurveEntity2;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
 import camzup.core.MeshEntity2;
+import camzup.core.Transform2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import processing.core.PApplet;
@@ -851,60 +852,53 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     */
    public void shape ( final CurveEntity2 entity ) {
 
-      this.pushMatrix();
-      this.transform(entity.transform, entity.transformOrder);
-
-      Knot2 currKnot = null;
-      Knot2 prevKnot = null;
-      Vec2 coord = null;
-      Vec2 foreHandle = null;
-      Vec2 rearHandle = null;
-
       final LinkedList < Curve2 > curves = entity.curves;
       final LinkedList < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
 
-      curveLoop: for (final Curve2 curve : curves) {
+      final Transform2 tr = entity.transform;
+      final Vec2 v0 = new Vec2();
+      final Vec2 v1 = new Vec2();
+      final Vec2 v2 = new Vec2();
 
-         final int knotLength = curve.knotCount();
-         if (knotLength < 2) {
-            continue curveLoop;
-         }
+      Knot2 currKnot;
+      Knot2 prevKnot;
+      Vec2 coord;
+      Vec2 foreHandle;
+      Vec2 rearHandle;
+
+      for (final Curve2 curve : curves) {
 
          if (useMaterial) {
-            final int index = curve.materialIndex;
-            final MaterialSolid material = materials.get(index);
             this.pushStyle();
-            this.material(material);
+            this.material(materials.get(
+                  curve.materialIndex));
          }
 
-         prevKnot = curve.get(0);
-         coord = prevKnot.coord;
-
-         this.beginShape(PConstants.POLYGON);
-         this.normal(0.0f, 0.0f, 1.0f);
-         this.vertexImpl(coord.x, coord.y, 0.0f,
-               this.textureU, this.textureV);
-
          final Iterator < Knot2 > itr = curve.iterator();
+         prevKnot = itr.next();
+         coord = prevKnot.coord;
+         Transform2.multPoint(tr, coord, v2);
+         this.beginShape();
+         this.vertexImpl(
+               v2.x, v2.y, 0.0f,
+               this.textureU,
+               this.textureV);
+
          while (itr.hasNext()) {
             currKnot = itr.next();
             foreHandle = prevKnot.foreHandle;
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
+            Transform2.multPoint(tr, foreHandle, v0);
+            Transform2.multPoint(tr, rearHandle, v1);
+            Transform2.multPoint(tr, coord, v2);
+
             this.bezierVertexImpl(
-                  foreHandle.x,
-                  foreHandle.y,
-                  0.0f,
-
-                  rearHandle.x,
-                  rearHandle.y,
-                  0.0f,
-
-                  coord.x,
-                  coord.y,
-                  0.0f);
+                  v0.x, v0.y, 0.0f,
+                  v1.x, v1.y, 0.0f,
+                  v2.x, v2.y, 0.0f);
 
             prevKnot = currKnot;
          }
@@ -915,18 +909,15 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
+            Transform2.multPoint(tr, foreHandle, v0);
+            Transform2.multPoint(tr, rearHandle, v1);
+            Transform2.multPoint(tr, coord, v2);
+
             this.bezierVertexImpl(
-                  foreHandle.x,
-                  foreHandle.y,
-                  0.0f,
-
-                  rearHandle.x,
-                  rearHandle.y,
-                  0.0f,
-
-                  coord.x,
-                  coord.y,
-                  0.0f);
+                  v0.x, v0.y, 0.0f,
+                  v1.x, v1.y, 0.0f,
+                  v2.x, v2.y, 0.0f);
+            this.endShape(PConstants.CLOSE);
          } else {
             this.endShape(PConstants.OPEN);
          }
@@ -935,7 +926,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             this.popStyle();
          }
       }
-      this.popMatrix();
    }
 
    /**

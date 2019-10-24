@@ -89,6 +89,17 @@ public class Transform2 extends Transform {
          return this.applyUnclamped(origin, dest, step, target);
       }
 
+      /**
+       * Eases between transforms in an array by a step in the
+       * range [0.0, 1.0].
+       *
+       * @param arr
+       *           the transform array
+       * @param step
+       *           the step
+       * @param target
+       *           the output transform
+       */
       @Override
       public Transform2 apply (
             final Transform2[] arr,
@@ -113,6 +124,20 @@ public class Transform2 extends Transform {
                target);
       }
 
+      /**
+       * Eases between an origin and destination transform by a
+       * step in [0.0, 1.0].
+       *
+       * @param origin
+       *           the origin
+       * @param dest
+       *           the destination
+       * @param step
+       *           the step
+       * @param target
+       *           the output transform
+       * @return the eased transform
+       */
       public Transform2 applyUnclamped (
             final Transform2 origin,
             final Transform2 dest,
@@ -142,6 +167,11 @@ public class Transform2 extends Transform {
          return target;
       }
 
+      /**
+       * Returns a string representation of this easing function.
+       *
+       * @return the string
+       */
       @Override
       public String toString () {
 
@@ -149,6 +179,9 @@ public class Transform2 extends Transform {
       }
    }
 
+   /**
+    * The default easing function.
+    */
    private static Easing EASING = new Easing();
 
    /**
@@ -193,6 +226,12 @@ public class Transform2 extends Transform {
       return target;
    }
 
+   /**
+    * Gets the string representation of the default easing
+    * function.
+    *
+    * @return the string
+    */
    public static String getEasingString () {
 
       return Transform2.EASING.toString();
@@ -280,7 +319,8 @@ public class Transform2 extends Transform {
          final Vec2 source,
          final Vec2 target ) {
 
-      Vec2.rotateZ(source, t.rotation, target);
+      // Vec2.rotateZ(source, t.rotation, target);
+      Vec2.rotateZ(source, t.cosa, t.sina, target);
       return target;
    }
 
@@ -303,7 +343,8 @@ public class Transform2 extends Transform {
          final Vec2 source,
          final Vec2 target ) {
 
-      Vec2.rotateZ(source, t.rotation, target);
+      // Vec2.rotateZ(source, t.rotation, target);
+      Vec2.rotateZ(source, t.cosa, t.sina, target);
       Vec2.mult(target, t.scale, target);
       Vec2.add(target, t.location, target);
 
@@ -329,7 +370,8 @@ public class Transform2 extends Transform {
          final Vec2 source,
          final Vec2 target ) {
 
-      Vec2.rotateZ(source, t.rotation, target);
+      // Vec2.rotateZ(source, t.rotation, target);
+      Vec2.rotateZ(source, t.cosa, t.sina, target);
       Vec2.mult(target, t.scale, target);
 
       return target;
@@ -366,18 +408,32 @@ public class Transform2 extends Transform {
       return Vec2.sub(t.scale, t.scalePrev, target);
    }
 
-   public static void setEasing ( final Easing easing ) {
+   /**
+    * Sets the default easing function used by the transform.
+    *
+    * @param easing
+    *           the easing function.
+    */
+   public static void setEasing ( final Transform2.Easing easing ) {
 
       if (easing != null) {
          Transform2.EASING = easing;
       }
    }
 
+   /*
+    * cosa needs to be initialized to 1, not 0, because cos(0)
+    * is 1 and because multPoint uses cosa and sina for
+    * efficiency; if the transform is not rotated before it is
+    * applied to a point, these may not have been updated by
+    * update axes.
+    */
+
    /**
     * Stores the result of cos ( rotation ) when calculating
     * the transform's right and forward axes.
     */
-   protected float cosa = 0.0f;
+   protected float cosa = 1.0f;
 
    /**
     * The transform's forward axis.
@@ -1110,14 +1166,32 @@ public class Transform2 extends Transform {
    @Override
    public String toString () {
 
-      return new StringBuilder()
+      return this.toString(4);
+   }
+
+   /**
+    * Returns a string representation of this transform
+    * according to its string format.
+    *
+    * For display purposes, the angle is converted from radians
+    * to degrees.
+    *
+    * @param places
+    *           the number of places
+    * @return the string
+    * @see IUtils#RAD_TO_DEG
+    */
+   public String toString ( final int places ) {
+
+      return new StringBuilder(160)
             .append("{ location: ")
-            .append(this.location.toString())
+            .append(this.location.toString(places))
             .append(", \nrotation: ")
             .append(Utils.toFixed(IUtils.RAD_TO_DEG * this.rotation, 1))
             .append(", \nscale: ")
-            .append(this.scale.toString())
-            .append(" }").toString();
+            .append(this.scale.toString(places))
+            .append(" }")
+            .toString();
    }
 
    /**

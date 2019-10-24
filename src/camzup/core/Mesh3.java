@@ -118,7 +118,9 @@ public class Mesh3 extends Mesh {
        * @param normal
        *           the normal
        */
-      public Vert3 ( final Vec3 coord, final Vec2 texCoord,
+      public Vert3 (
+            final Vec3 coord,
+            final Vec2 texCoord,
             final Vec3 normal ) {
 
          this.set(coord, texCoord, normal);
@@ -255,7 +257,8 @@ public class Mesh3 extends Mesh {
     */
    public static Mesh3 cube ( final Mesh3 target ) {
 
-      final Vec3[] coords = new Vec3[] { new Vec3(-0.5f, -0.5f, -0.5f), /* 00 */
+      final Vec3[] coords = new Vec3[] {
+            new Vec3(-0.5f, -0.5f, -0.5f), /* 00 */
             new Vec3(-0.5f, -0.5f, +0.5f), /* 01 */
             new Vec3(-0.5f, +0.5f, -0.5f), /* 02 */
             new Vec3(-0.5f, +0.5f, +0.5f), /* 03 */
@@ -265,7 +268,8 @@ public class Mesh3 extends Mesh {
             new Vec3(+0.5f, +0.5f, +0.5f) /* 07 */
       };
 
-      final Vec3[] normals = new Vec3[] { new Vec3(-1.0f, 0.0f, 0.0f), /* 00 */
+      final Vec3[] normals = new Vec3[] {
+            new Vec3(-1.0f, 0.0f, 0.0f), /* 00 */
             new Vec3(0.0f, +1.0f, 0.0f), /* 01 */
             new Vec3(+1.0f, 0.0f, 0.0f), /* 02 */
             new Vec3(0.0f, -1.0f, 0.0f), /* 03 */
@@ -273,7 +277,8 @@ public class Mesh3 extends Mesh {
             new Vec3(0.0f, 0.0f, +1.0f) /* 05 */
       };
 
-      final Vec2[] texCoords = new Vec2[] { new Vec2(0.0f, 0.0f), /* 00 */
+      final Vec2[] texCoords = new Vec2[] {
+            new Vec2(0.0f, 0.0f), /* 00 */
             new Vec2(1.0f, 0.0f), /* 01 */
             new Vec2(1.0f, 1.0f), /* 02 */
             new Vec2(0.0f, 1.0f) /* 03 */
@@ -301,7 +306,11 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Creates a mesh from an array of strings.
+    * Creates a mesh from an array of strings. This is a simple
+    * obj file reader. It assumes that the faces data of the
+    * mesh includes texture coordinates and normals. Material
+    * information is not parsed from the file, as Processing
+    * would not accurately recreate it.
     *
     * @param lines
     *           the String tokens
@@ -309,7 +318,9 @@ public class Mesh3 extends Mesh {
     *           the output mesh
     * @return the mesh
     */
-   public static Mesh3 fromObj ( final String[] lines, final Mesh3 target ) {
+   public static Mesh3 fromObj (
+         final String[] lines,
+         final Mesh3 target ) {
 
       String[] tokens;
       String[] facetokens;
@@ -323,53 +334,53 @@ public class Mesh3 extends Mesh {
       final int len = lines.length;
       for (int i = 0; i < len; ++i) {
 
-         // Split line by spaces.
+         /* Split line by spaces. */
          tokens = lines[i].split("\\s+");
 
-         // Skip empty lines.
+         /* Skip empty lines. */
          if (tokens.length > 0) {
             final String initialToken = tokens[0].toLowerCase();
             if (initialToken.equals("o")) {
 
-               // Assign name.
+               /* Assign name. */
                name = tokens[1];
+
             } else if (initialToken.equals("v")) {
 
-               // Coordinate.
+               /* Coordinate. */
                final Vec3 read = new Vec3(tokens[1], tokens[2], tokens[3]);
-
                coordList.add(read);
 
             } else if (initialToken.equals("vt")) {
 
-               // Texture coordinate.
+               /* Texture coordinate. */
                final Vec2 read = new Vec2(tokens[1], tokens[2]);
-
                texCoordList.add(read);
 
             } else if (initialToken.equals("vn")) {
 
-               // Normal.
+               /* Normal. */
                final Vec3 read = new Vec3(tokens[1], tokens[2], tokens[3]);
-
                normalList.add(read);
 
             } else if (initialToken.equals("f")) {
 
-               // Face.
+               /* Face. */
                final int count = tokens.length;
 
-               // tokens length includes "f", and so is 1 longer.
+               /* tokens length includes "f", and so is 1 longer. */
                final int[][] indices = new int[count - 1][3];
 
-               // Simplified version. Assumes (incorrectly) that face
-               // will always be formatted as "v/vt/vn".
+               /*
+                * Simplified. Assumes (incorrectly) that face will always
+                * be formatted as "v/vt/vn".
+                */
                for (int j = 1; j < count; ++j) {
                   facetokens = tokens[j].split("/");
 
                   final int k = j - 1;
 
-                  // Indices in .obj file start at 1, not 0.
+                  /* Indices in .obj file start at 1, not 0. */
                   indices[k][0] = Mesh3.intFromStr(facetokens[0]) - 1;
                   indices[k][1] = Mesh3.intFromStr(facetokens[1]) - 1;
                   indices[k][2] = Mesh3.intFromStr(facetokens[2]) - 1;
@@ -380,7 +391,7 @@ public class Mesh3 extends Mesh {
          }
       }
 
-      // Convert to fixed-sized array.
+      /* Convert to fixed-sized array. */
       target.name = name;
       target.set(faceList.toArray(new int[faceList.size()][][]),
             coordList.toArray(new Vec3[coordList.size()]),
@@ -398,7 +409,9 @@ public class Mesh3 extends Mesh {
     *           the number of sides
     * @return the polygon
     */
-   public static Mesh3 polygon ( final Mesh3 target, final int sectors ) {
+   public static Mesh3 polygon (
+         final Mesh3 target,
+         final int sectors ) {
 
       target.name = "Polygon";
 
@@ -501,7 +514,7 @@ public class Mesh3 extends Mesh {
    public static Mesh3 uvSphere ( final int longitudes, final int latitudes,
          final float radius, final Mesh3 target ) {
 
-      // Validate latitudes and longitudes.
+      /* Validate latitudes and longitudes. */
       final int lats = latitudes < 3 ? 3 : latitudes;
       final int lons = longitudes < 3 ? 3 : longitudes;
       final int coordsLen = (lons + 1) * lats + 2;
@@ -557,7 +570,7 @@ public class Mesh3 extends Mesh {
       final int[][][] faces = new int[coordsLen + coordsLen][3][3];
       int i = 0;
 
-      // Top Cap
+      /* Top Cap */
       for (int lon = 0; lon < lons; lon++) {
          final int index0 = lon + 2;
          final int index1 = lon + 1;
@@ -569,7 +582,7 @@ public class Mesh3 extends Mesh {
          i++;
       }
 
-      // Middle
+      /* Middle */
       for (int lat = 0; lat < lats - 1; lat++) {
          for (int lon = 0; lon < lons; lon++) {
             final int current = lon + lat * (lons + 1) + 1;
@@ -592,7 +605,7 @@ public class Mesh3 extends Mesh {
          }
       }
 
-      // Bottom Cap
+      /* Bottom Cap */
       for (int lon = 0; lon < lons; lon++) {
          final int index0 = coordsLen - 1;
          final int index1 = coordsLen - (lon + 2) - 1;

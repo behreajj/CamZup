@@ -89,6 +89,17 @@ public class Transform3 extends Transform {
          return this.applyUnclamped(origin, dest, step, target);
       }
 
+      /**
+       * Eases between transforms in an array by a step in the
+       * range [0.0, 1.0].
+       *
+       * @param arr
+       *           the transform array
+       * @param step
+       *           the step
+       * @param target
+       *           the output transform
+       */
       @Override
       public Transform3 apply (
             final Transform3[] arr,
@@ -112,6 +123,20 @@ public class Transform3 extends Transform {
                nextStep, target);
       }
 
+      /**
+       * Eases between an origin and destination transform by a
+       * step in [0.0, 1.0].
+       *
+       * @param origin
+       *           the origin
+       * @param dest
+       *           the destination
+       * @param step
+       *           the step
+       * @param target
+       *           the output transform
+       * @return the eased transform
+       */
       public Transform3 applyUnclamped (
             final Transform3 origin,
             final Transform3 dest,
@@ -142,6 +167,11 @@ public class Transform3 extends Transform {
          return target;
       }
 
+      /**
+       * Returns a string representation of this easing function.
+       *
+       * @return the string
+       */
       @Override
       public String toString () {
 
@@ -149,6 +179,9 @@ public class Transform3 extends Transform {
       }
    }
 
+   /**
+    * The default easing function.
+    */
    private static Easing EASING = new Easing();
 
    /**
@@ -193,6 +226,12 @@ public class Transform3 extends Transform {
       return target;
    }
 
+   /**
+    * Gets the string representation of the default easing
+    * function.
+    *
+    * @return the string
+    */
    public static String getEasingString () {
 
       return Transform3.EASING.toString();
@@ -564,7 +603,11 @@ public class Transform3 extends Transform {
       // Quaternion.getRight(this.rotation, this.right);
       // Quaternion.getForward(this.rotation, this.forward);
       // Quaternion.getUp(this.rotation, this.up);
-      Quaternion.toAxes(this.rotation, this.right, this.forward, this.up);
+      Quaternion.toAxes(
+            this.rotation,
+            this.right,
+            this.forward,
+            this.up);
    }
 
    /**
@@ -576,7 +619,10 @@ public class Transform3 extends Transform {
    @Override
    public Transform3 clone () {
 
-      return new Transform3(this.location, this.rotation, this.scale);
+      return new Transform3(
+            this.location,
+            this.rotation,
+            this.scale);
    }
 
    /**
@@ -1308,13 +1354,26 @@ public class Transform3 extends Transform {
    @Override
    public String toString () {
 
-      return new StringBuilder()
+      return this.toString(4);
+   }
+
+   /**
+    * Returns a string representation of this transform
+    * according to its string format.
+    *
+    * @param places
+    *           the number of places
+    * @return the string
+    */
+   public String toString ( final int places ) {
+
+      return new StringBuilder(354)
             .append("{ location: ")
-            .append(this.location.toString())
+            .append(this.location.toString(places))
             .append(", \nrotation: ")
-            .append(this.rotation.toString())
+            .append(this.rotation.toString(places))
             .append(", \nscale: ")
-            .append(this.scale.toString())
+            .append(this.scale.toString(places))
             .append(" }")
             .toString();
    }

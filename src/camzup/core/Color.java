@@ -1041,7 +1041,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Converts a direction to a color.
+    * Converts a direction to a color. Normalizes the
+    * direction, multiplies it by 0.5, then adds 0.5 .
     *
     * @param v
     *           the direction
@@ -1075,7 +1076,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Converts a direction to a color.
+    * Converts a direction to a color. Normalizes the
+    * direction, multiplies it by 0.5, then adds 0.5 .
     *
     * @param v
     *           the direction
@@ -1228,7 +1230,9 @@ public class Color extends Vec4 {
     *           the output color
     * @return the color
     */
-   public static Color hsbaToRgba ( final Vec4 hbsa, final Color target ) {
+   public static Color hsbaToRgba (
+         final Vec4 hbsa,
+         final Color target ) {
 
       return Color.hsbaToRgba(hbsa.x, hbsa.y, hbsa.z, hbsa.w, target);
    }
@@ -1357,7 +1361,9 @@ public class Color extends Vec4 {
     *           the output color
     * @return the premultiplied color
     */
-   public static Color preMultiply ( final Color c, final Color target ) {
+   public static Color preMultiply (
+         final Color c,
+         final Color target ) {
 
       if (c.w <= 0.0f) {
          return target.set(0.0f, 0.0f, 0.0f, 0.0f);
@@ -1560,7 +1566,9 @@ public class Color extends Vec4 {
     * @return the color
     * @see Random#nextFloat()
     */
-   public static Color randomRgba ( final Random rng, final Color target ) {
+   public static Color randomRgba (
+         final Random rng,
+         final Color target ) {
 
       return target.set(
             rng.nextFloat(),
@@ -1619,7 +1627,9 @@ public class Color extends Vec4 {
     *           the output vector
     * @return the HSBA vector
     */
-   public static Vec4 rgbaToHsba ( final Color c, final Vec4 target ) {
+   public static Vec4 rgbaToHsba (
+         final Color c,
+         final Vec4 target ) {
 
       return Color.rgbaToHsba(c.x, c.y, c.z, c.w, target);
    }
@@ -2173,12 +2183,24 @@ public class Color extends Vec4 {
       return this;
    }
 
+   /**
+    * Returns a string representation of this color.
+    *
+    * @return the string
+    */
    @Override
    public String toString () {
 
       return this.toString(4);
    }
 
+   /**
+    * Returns a string representation of this color.
+    *
+    * @param places
+    *           number of decimal places
+    * @return the string
+    */
    @Override
    public String toString ( final int places ) {
 

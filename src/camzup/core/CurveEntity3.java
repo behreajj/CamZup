@@ -2,6 +2,7 @@ package camzup.core;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import camzup.core.Curve3.Knot3;
 
@@ -86,7 +87,9 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
     * @param curves
     *           the list of curves
     */
-   public CurveEntity3 ( final Transform3 transform, final Curve3... curves ) {
+   public CurveEntity3 (
+         final Transform3 transform,
+         final Curve3... curves ) {
 
       super();
       this.transform = transform;
@@ -228,6 +231,13 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
       return coordWorld;
    }
 
+   /**
+    * Returns an iterator, which allows an enhanced for-loop to
+    * access the curves in the entity.
+    *
+    * @return the iterator
+    * @see List#iterator()
+    */
    @Override
    public Iterator < Curve3 > iterator () {
 
@@ -327,6 +337,7 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
 
    /**
     * Creates a string representing a Wavefront OBJ file.
+    * Renders the curve as a series of line segments.
     *
     * @param precision
     *           the decimal place precision

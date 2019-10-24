@@ -8,7 +8,7 @@ name = Camera Z up
 authors = [Jeremy Behreandt](https://behreandt.bitbucket.io)
 
 # A web page for your Library, NOT a direct link to where to download it.
-url = http://yourlibraryname.com
+url = https://github.com/behreajj/CamZup
 
 # The category (or categories) of your Library, must be from the following list:
 #   "3D"            "Animation"     "Compilations"      "Data"          

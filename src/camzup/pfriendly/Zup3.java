@@ -386,4 +386,13 @@ public class Zup3 extends Up3 {
       this.ortho();
       this.camera();
    }
+
+   // public Vec3 mouse1 (
+   // final Vec3 target ) {
+   //
+   // IUp3.mouse1(this.getParent(), this, target);
+   // target.z = target.y;
+   // target.y = 0.0f;
+   // return target;
+   // }
 }

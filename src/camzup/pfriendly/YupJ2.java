@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.GeneralPath;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import camzup.core.Color;
@@ -2185,10 +2186,89 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * @param entity
     *           the curve entity
     */
+   // public void shape ( final CurveEntity2 entity ) {
+   //
+   // this.pushMatrix();
+   // this.transform(entity.transform, entity.transformOrder);
+   //
+   // Knot2 currKnot;
+   // Knot2 prevKnot;
+   // Vec2 coord;
+   // Vec2 foreHandle;
+   // Vec2 rearHandle;
+   //
+   // final LinkedList < Curve2 > curves = entity.curves;
+   // final LinkedList < MaterialSolid > materials =
+   // entity.materials;
+   // final boolean useMaterial = !materials.isEmpty();
+   //
+   // curveLoop: for (final Curve2 curve : curves) {
+   //
+   // final int knotLength = curve.knotCount();
+   // if (knotLength < 2) {
+   // continue curveLoop;
+   // }
+   //
+   // if (useMaterial) {
+   // final int index = curve.materialIndex;
+   // final MaterialSolid material = materials.get(index);
+   // this.pushStyle();
+   // this.material(material);
+   // }
+   //
+   // int end = 0;
+   // if (curve.closedLoop) {
+   // end = knotLength + 1;
+   // } else {
+   // end = knotLength;
+   // }
+   //
+   // prevKnot = curve.get(0);
+   // coord = prevKnot.coord;
+   // // TODO: Simplify by adding an extra bezier vertex call
+   // // in the subsequent if loop and NOT using the modulo
+   // // in the for loop.
+   // this.gp.reset();
+   // this.gp.moveTo(coord.x, coord.y);
+   //
+   // for (int i = 1; i < end; ++i) {
+   // currKnot = curve.get(i % knotLength);
+   //
+   // foreHandle = prevKnot.foreHandle;
+   // rearHandle = currKnot.rearHandle;
+   // coord = currKnot.coord;
+   //
+   // this.gp.curveTo(
+   // foreHandle.x, foreHandle.y,
+   // rearHandle.x, rearHandle.y,
+   // coord.x, coord.y);
+   //
+   // prevKnot = currKnot;
+   // }
+   //
+   // if (curve.closedLoop) {
+   // this.gp.closePath();
+   // }
+   // this.drawShape(this.gp);
+   //
+   // if (useMaterial) {
+   // this.popStyle();
+   // }
+   // }
+   // this.popMatrix();
+   // }
+
    public void shape ( final CurveEntity2 entity ) {
 
-      this.pushMatrix();
-      this.transform(entity.transform, entity.transformOrder);
+      // TODO: Needs fixing...
+      final LinkedList < Curve2 > curves = entity.curves;
+      final LinkedList < MaterialSolid > materials = entity.materials;
+      final boolean useMaterial = !materials.isEmpty();
+
+      final Transform2 tr = entity.transform;
+      final Vec2 v0 = new Vec2();
+      final Vec2 v1 = new Vec2();
+      final Vec2 v2 = new Vec2();
 
       Knot2 currKnot;
       Knot2 prevKnot;
@@ -2196,64 +2276,61 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       Vec2 foreHandle;
       Vec2 rearHandle;
 
-      final LinkedList < Curve2 > curves = entity.curves;
-      final LinkedList < MaterialSolid > materials = entity.materials;
-      final boolean useMaterial = !materials.isEmpty();
-
-      curveLoop: for (final Curve2 curve : curves) {
-
-         final int knotLength = curve.knotCount();
-         if (knotLength < 2) {
-            continue curveLoop;
-         }
+      for (final Curve2 curve : curves) {
 
          if (useMaterial) {
-            final int index = curve.materialIndex;
-            final MaterialSolid material = materials.get(index);
             this.pushStyle();
-            this.material(material);
+            this.material(materials.get(
+                  curve.materialIndex));
          }
-
-         int end = 0;
-         if (curve.closedLoop) {
-            end = knotLength + 1;
-         } else {
-            end = knotLength;
-         }
-
-         prevKnot = curve.get(0);
+         final Iterator < Knot2 > itr = curve.iterator();
+         prevKnot = itr.next();
          coord = prevKnot.coord;
-         // TODO: Simplify by adding an extra bezier vertex call
-         // in the subsequent if loop and NOT using the modulo
-         // in the for loop.
+         Transform2.multPoint(tr, coord, v2);
          this.gp.reset();
-         this.gp.moveTo(coord.x, coord.y);
+         this.gp.moveTo(v2.x, v2.y);
 
-         for (int i = 1; i < end; ++i) {
-            currKnot = curve.get(i % knotLength);
-
+         while (itr.hasNext()) {
+            currKnot = itr.next();
             foreHandle = prevKnot.foreHandle;
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
+            Transform2.multPoint(tr, foreHandle, v0);
+            Transform2.multPoint(tr, rearHandle, v1);
+            Transform2.multPoint(tr, coord, v2);
+
             this.gp.curveTo(
-                  foreHandle.x, foreHandle.y,
-                  rearHandle.x, rearHandle.y,
-                  coord.x, coord.y);
+                  v0.x, v0.y,
+                  v1.x, v1.y,
+                  v2.x, v2.y);
 
             prevKnot = currKnot;
          }
 
          if (curve.closedLoop) {
+            currKnot = curve.getFirst();
+            foreHandle = prevKnot.foreHandle;
+            rearHandle = currKnot.rearHandle;
+            coord = currKnot.coord;
+
+            Transform2.multPoint(tr, foreHandle, v0);
+            Transform2.multPoint(tr, rearHandle, v1);
+            Transform2.multPoint(tr, coord, v2);
+
+            this.gp.curveTo(
+                  v0.x, v0.y,
+                  v1.x, v1.y,
+                  v2.x, v2.y);
             this.gp.closePath();
          }
+
          this.drawShape(this.gp);
 
          if (useMaterial) {
             this.popStyle();
          }
       }
-      this.popMatrix();
    }
 
    /**

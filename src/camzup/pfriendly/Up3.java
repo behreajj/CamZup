@@ -859,16 +859,16 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       this.scale(dim.x, dim.y, dim.z);
    }
 
-   /**
-    * Draws a curve entity.
-    *
-    * @param entity
-    *           the curve entity
-    */
    public void shape ( final CurveEntity3 entity ) {
 
-      this.pushMatrix();
-      this.transform(entity.transform, entity.transformOrder);
+      final LinkedList < Curve3 > curves = entity.curves;
+      final LinkedList < MaterialSolid > materials = entity.materials;
+      final boolean useMaterial = !materials.isEmpty();
+
+      final Transform3 tr = entity.transform;
+      final Vec3 v0 = new Vec3();
+      final Vec3 v1 = new Vec3();
+      final Vec3 v2 = new Vec3();
 
       Knot3 currKnot;
       Knot3 prevKnot;
@@ -876,56 +876,38 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       Vec3 foreHandle;
       Vec3 rearHandle;
 
-      final LinkedList < Curve3 > curves = entity.curves;
-      final LinkedList < MaterialSolid > materials = entity.materials;
-      final boolean useMaterial = !materials.isEmpty();
+      for (final Curve3 curve : curves) {
 
-      curveLoop: for (final Curve3 curve : curves) {
-
-         final int knotLength = curve.knotCount();
-         if (knotLength < 2) {
-            continue curveLoop;
-         }
-
-         // TODO: Bug with multiple materials.
          if (useMaterial) {
-            final MaterialSolid material = materials.get(
-                  curve.materialIndex);
-            // System.out.println(curve.materialIndex);
             this.pushStyle();
-            this.material(material);
+            this.material(materials.get(
+                  curve.materialIndex));
          }
 
-         prevKnot = curve.get(0);
+         final Iterator < Knot3 > itr = curve.iterator();
+         prevKnot = itr.next();
          coord = prevKnot.coord;
-
+         Transform3.multPoint(tr, coord, v2);
          this.beginShape();
          this.vertexImpl(
-               coord.x,
-               coord.y,
-               coord.z,
+               v2.x, v2.y, v2.z,
                this.textureU,
                this.textureV);
 
-         final Iterator < Knot3 > itr = curve.iterator();
          while (itr.hasNext()) {
             currKnot = itr.next();
             foreHandle = prevKnot.foreHandle;
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
+            Transform3.multPoint(tr, foreHandle, v0);
+            Transform3.multPoint(tr, rearHandle, v1);
+            Transform3.multPoint(tr, coord, v2);
+
             this.bezierVertexImpl(
-                  foreHandle.x,
-                  foreHandle.y,
-                  0.0f,
-
-                  rearHandle.x,
-                  rearHandle.y,
-                  0.0f,
-
-                  coord.x,
-                  coord.y,
-                  0.0f);
+                  v0.x, v0.y, v0.z,
+                  v1.x, v1.y, v1.z,
+                  v2.x, v2.y, v2.z);
 
             prevKnot = currKnot;
          }
@@ -936,18 +918,15 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
+            Transform3.multPoint(tr, foreHandle, v0);
+            Transform3.multPoint(tr, rearHandle, v1);
+            Transform3.multPoint(tr, coord, v2);
+
             this.bezierVertexImpl(
-                  foreHandle.x,
-                  foreHandle.y,
-                  0.0f,
-
-                  rearHandle.x,
-                  rearHandle.y,
-                  0.0f,
-
-                  coord.x,
-                  coord.y,
-                  0.0f);
+                  v0.x, v0.y, v0.z,
+                  v1.x, v1.y, v1.z,
+                  v2.x, v2.y, v2.z);
+            this.endShape(PConstants.CLOSE);
          } else {
             this.endShape(PConstants.OPEN);
          }
@@ -956,22 +935,30 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             this.popStyle();
          }
       }
-      this.popMatrix();
    }
 
+   /**
+    * Draws a mesh entity.
+    *
+    * @param entity
+    *           the mesh entity
+    */
    public void shape ( final MeshEntity3 entity ) {
-
-      // TODO: Did anything change with this that would break the sphere rotate example?
-      this.pushMatrix();
-      this.transform(entity.transform, entity.transformOrder);
 
       final LinkedList < Mesh3 > meshes = entity.meshes;
       final LinkedList < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
 
-      // TODO: Use iterator w/ while loop?
+      final Vec3 v = new Vec3();
+      final Vec3 vn = new Vec3();
+      final Transform3 tr = entity.transform;
+
       for (final Mesh3 mesh : meshes) {
          if (useMaterial) {
+            /*
+             * TODO: Flickering issue with strokes. Maybe don't allow 3D
+             * meshes to have solid materials.
+             */
             final int index = mesh.materialIndex;
             final MaterialSolid material = materials.get(index);
             this.pushStyle();
@@ -981,18 +968,29 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
          final int[][][] fs = mesh.faces;
          final Vec3[] vs = mesh.coords;
          final Vec3[] vns = mesh.normals;
-         final int flen0 = fs.length;
+         final Vec2[] vts = mesh.texCoords;
 
+         final int flen0 = fs.length;
          for (int i = 0; i < flen0; ++i) {
             final int[][] f = fs[i];
             final int flen1 = f.length;
+
             this.beginShape(PConstants.POLYGON);
             for (int j = 0; j < flen1; ++j) {
-               final Vec3 vn = vns[f[j][2]];
+               final int[] data = f[j];
+
+               final int vIndex = data[0];
+               Transform3.multPoint(tr, vs[vIndex], v);
+
+               final int vtIndex = data[1];
+               final Vec2 vt = vts[vtIndex];
+
+               final int vnIndex = data[2];
+               Transform3.multDir(tr, vns[vnIndex], vn);
+
                this.normal(vn.x, vn.y, vn.z);
-               final Vec3 v = vs[f[j][0]];
                this.vertexImpl(v.x, v.y, v.z,
-                     this.textureU, this.textureV);
+                     vt.x, vt.y);
             }
             this.endShape(PConstants.CLOSE);
          }
@@ -1001,76 +999,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             this.popStyle();
          }
       }
-
-      this.popMatrix();
    }
-
-   /**
-    * Draws a mesh entity.
-    *
-    * @param entity
-    *           the mesh entity
-    */
-   // public void shape ( final MeshEntity3 entity ) {
-   //
-   // final LinkedList < Mesh3 > meshes = entity.meshes;
-   // final LinkedList < MaterialSolid > materials =
-   // entity.materials;
-   // final boolean useMaterial = !materials.isEmpty();
-   //
-   // final Vec3 v = new Vec3();
-   // final Vec3 vn = new Vec3();
-   //
-   // for (final Mesh3 mesh : meshes) {
-   // if (useMaterial) {
-   // /*
-   // * TODO: Flickering issue with strokes. Maybe don't allow
-   // 3D
-   // * meshes to have solid materials.
-   // */
-   // final int index = mesh.materialIndex;
-   // final MaterialSolid material = materials.get(index);
-   // this.pushStyle();
-   // this.material(material);
-   // }
-   //
-   // final int[][][] fs = mesh.faces;
-   // final Vec3[] vs = mesh.coords;
-   // final Vec3[] vns = mesh.normals;
-   // final Vec2[] vts = mesh.texCoords;
-   //
-   // final Transform3 tr = entity.transform;
-   //
-   // final int flen0 = fs.length;
-   // for (int i = 0; i < flen0; ++i) {
-   // final int[][] f = fs[i];
-   // final int flen1 = f.length;
-   //
-   // this.beginShape(PConstants.POLYGON);
-   // for (int j = 0; j < flen1; ++j) {
-   // final int[] data = f[j];
-   //
-   // final int vIndex = data[0];
-   // Transform3.multPoint(tr, vs[vIndex], v);
-   //
-   // final int vtIndex = data[1];
-   // final Vec2 vt = vts[vtIndex];
-   //
-   // final int vnIndex = data[2];
-   // Transform3.multDir(tr, vns[vnIndex], vn);
-   //
-   // this.normal(vn.x, vn.y, vn.z);
-   // this.vertexImpl(v.x, v.y, v.z,
-   // vt.x, vt.y);
-   // }
-   // this.endShape(PConstants.CLOSE);
-   // }
-   //
-   // if (useMaterial) {
-   // this.popStyle();
-   // }
-   // }
-   // }
 
    /**
     * This parent function attempts to translate the text and

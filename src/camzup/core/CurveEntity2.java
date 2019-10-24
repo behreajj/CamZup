@@ -2,6 +2,7 @@ package camzup.core;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * An entity which contains a transform that is applied to a
@@ -63,7 +64,9 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
     * @param curves
     *           the list of curves
     */
-   public CurveEntity2 ( final String name, final Transform2 transform,
+   public CurveEntity2 (
+         final String name,
+         final Transform2 transform,
          final Curve2... curves ) {
 
       super(name);
@@ -84,7 +87,9 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
     * @param curves
     *           the list of curves
     */
-   public CurveEntity2 ( final Transform2 transform, final Curve2... curves ) {
+   public CurveEntity2 (
+         final Transform2 transform,
+         final Curve2... curves ) {
 
       super();
       this.transform = transform;
@@ -226,6 +231,13 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
       return coordWorld;
    }
 
+   /**
+    * Returns an iterator, which allows an enhanced for-loop to
+    * access the curves in the entity.
+    *
+    * @return the iterator
+    * @see List#iterator()
+    */
    @Override
    public Iterator < Curve2 > iterator () {
 
@@ -234,6 +246,7 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
 
    /**
     * Creates a string representing a Wavefront OBJ file.
+    * Renders the curve as a series of line segments.
     *
     * @param precision
     *           the decimal place precision
@@ -313,10 +326,11 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
             .append(this.transform.toSvgString())
             .append(">\n");
 
+      final float scale = Transform2.minDimension(this.transform);
       for (final Curve2 curve : this.curves) {
          final MaterialSolid material = this.materials.get(curve.materialIndex);
          result.append("<g ")
-               .append(material.toSvgString())
+               .append(material.toSvgString(scale))
                .append(">\n")
                .append(curve.toSvgString())
                .append("</g>\n");

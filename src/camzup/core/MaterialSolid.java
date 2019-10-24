@@ -244,11 +244,25 @@ public class MaterialSolid extends Material {
     */
    public String toSvgString () {
 
+      return this.toSvgString(1.0f);
+   }
+
+   /**
+    * Returns an SVG snippet as a string.
+    *
+    * @param transformScale
+    *           the transform scale.
+    * @return the string
+    * @see Utils#clamp01(float)
+    * @see Color#toHexWeb(Color)
+    */
+   public String toSvgString ( final float transformScale ) {
+
       final StringBuilder result = new StringBuilder();
 
       if (this.useStroke) {
          result.append("stroke-width=\"")
-               .append(this.strokeWeight)
+               .append(this.strokeWeight / transformScale)
                .append("\" ")
                .append("stroke-opacity=\"")
                .append(Utils.toFixed(Utils.clamp01(this.stroke.w), 2))

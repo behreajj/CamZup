@@ -3,7 +3,6 @@ package camzup.core;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -948,6 +947,13 @@ public class Curve2 extends Curve
          return this.toString(4);
       }
 
+      /**
+       * Returns a string representation of this knot.
+       *
+       * @param places
+       *           the number of decimal places
+       * @return the string
+       */
       public String toString ( final int places ) {
 
          return new StringBuilder()
@@ -1844,6 +1850,17 @@ public class Curve2 extends Curve
       return sum;
    }
 
+   /**
+    * Evaluates a step in the range [0.0, 1.0], returning a
+    * knot on the curve. The knot's fore handle and rear handle
+    * are mirrored.
+    *
+    * @param step
+    *           the step
+    * @param target
+    *           the output knot
+    * @return the knot
+    */
    public Knot2 eval (
          final float step,
          final Knot2 target ) {
@@ -2197,22 +2214,6 @@ public class Curve2 extends Curve
    }
 
    /**
-    * Sorts the curve's list of knots according to a
-    * comparator.
-    *
-    * @param comparator
-    *           the comparator
-    * @return this curve
-    * @see List#sort(Comparator)
-    */
-   @Chainable
-   public Curve2 sort ( final Comparator < Knot2 > comparator ) {
-
-      this.knots.sort(comparator);
-      return this;
-   }
-
-   /**
     * Returns a 3D array representation of this curve.
     *
     * @return the array
@@ -2335,6 +2336,7 @@ public class Curve2 extends Curve
             .append(prevKnot.coord.toSvgString());
 
       for (int i = 1; i < end; ++i) {
+         // TODO: Could be updated to match the drawing of the curve
          currKnot = this.knots.get(i % knotLength);
 
          result.append(' ')

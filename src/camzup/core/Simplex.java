@@ -7,9 +7,13 @@ package camzup.core;
  * functions are based on Bob Jenkins lookup3 script,
  * <a href=
  * "http://burtleburtle.net/bob/c/lookup3.c">http://burtleburtle.net/bob/c/lookup3.c</a>.
+ * Flow implementations written with reference to Simon
+ * Geilfus's <a href=
+ * "https://github.com/simongeilfus/SimplexNoise">implementation</a>.
  *
  * @author Stefan Gustavson
  * @author Bob Jenkins
+ * @author Simon Geilfus
  */
 public abstract class Simplex {
 
@@ -81,151 +85,44 @@ public abstract class Simplex {
    /**
     * 2D simplex gradient look-up table.
     */
-   private static final Vec2[] GRAD_2_LUT = {
-         new Vec2(-1.0f, -1.0f),
-         new Vec2(1.0f, 0.0f),
-         new Vec2(-1.0f, 0.0f),
-         new Vec2(1.0f, 1.0f),
-         new Vec2(-1.0f, 1.0f),
-         new Vec2(0.0f, -1.0f),
-         new Vec2(0.0f, 1.0f),
-         new Vec2(1.0f, -1.0f)
-   };
+   private static final Vec2[] GRAD_2_LUT;
 
    /**
     * 3D simplex gradient look-up table.
     */
-   private static final Vec3[] GRAD_3_LUT = {
-         new Vec3(1.0f, 0.0f, 1.0f),
-         new Vec3(0.0f, 1.0f, 1.0f),
-         new Vec3(-1.0f, 0.0f, 1.0f),
-         new Vec3(0.0f, -1.0f, 1.0f),
-         new Vec3(1.0f, 0.0f, -1.0f),
-         new Vec3(0.0f, 1.0f, -1.0f),
-         new Vec3(-1.0f, 0.0f, -1.0f),
-         new Vec3(0.0f, -1.0f, -1.0f),
-         new Vec3(1.0f, -1.0f, 0.0f),
-         new Vec3(1.0f, 1.0f, 0.0f),
-         new Vec3(-1.0f, 1.0f, 0.0f),
-         new Vec3(-1.0f, -1.0f, 0.0f),
-         new Vec3(1.0f, 0.0f, 1.0f),
-         new Vec3(-1.0f, 0.0f, 1.0f),
-         new Vec3(0.0f, 1.0f, -1.0f),
-         new Vec3(0.0f, -1.0f, -1.0f)
-   };
+   private static final Vec3[] GRAD_3_LUT;
 
    /**
     * 4D simplex gradient look-up table.
     */
-   private static final Vec4[] GRAD_4_LUT = {
-         new Vec4(0.0f, 1.0f, 1.0f, 1.0f),
-         new Vec4(0.0f, 1.0f, 1.0f, -1.0f),
-         new Vec4(0.0f, 1.0f, -1.0f, 1.0f),
-         new Vec4(0.0f, 1.0f, -1.0f, -1.0f),
-         new Vec4(0.0f, -1.0f, 1.0f, 1.0f),
-         new Vec4(0.0f, -1.0f, 1.0f, -1.0f),
-         new Vec4(0.0f, -1.0f, -1.0f, 1.0f),
-         new Vec4(0.0f, -1.0f, -1.0f, -1.0f),
-         new Vec4(1.0f, 0.0f, 1.0f, 1.0f),
-         new Vec4(1.0f, 0.0f, 1.0f, -1.0f),
-         new Vec4(1.0f, 0.0f, -1.0f, 1.0f),
-         new Vec4(1.0f, 0.0f, -1.0f, -1.0f),
-         new Vec4(-1.0f, 0.0f, 1.0f, 1.0f),
-         new Vec4(-1.0f, 0.0f, 1.0f, -1.0f),
-         new Vec4(-1.0f, 0.0f, -1.0f, 1.0f),
-         new Vec4(-1.0f, 0.0f, -1.0f, -1.0f),
-         new Vec4(1.0f, 1.0f, 0.0f, 1.0f),
-         new Vec4(1.0f, 1.0f, 0.0f, -1.0f),
-         new Vec4(1.0f, -1.0f, 0.0f, 1.0f),
-         new Vec4(1.0f, -1.0f, 0.0f, -1.0f),
-         new Vec4(-1.0f, 1.0f, 0.0f, 1.0f),
-         new Vec4(-1.0f, 1.0f, 0.0f, -1.0f),
-         new Vec4(-1.0f, -1.0f, 0.0f, 1.0f),
-         new Vec4(-1.0f, -1.0f, 0.0f, -1.0f),
-         new Vec4(1.0f, 1.0f, 1.0f, 0.0f),
-         new Vec4(1.0f, 1.0f, -1.0f, 0.0f),
-         new Vec4(1.0f, -1.0f, 1.0f, 0.0f),
-         new Vec4(1.0f, -1.0f, -1.0f, 0.0f),
-         new Vec4(-1.0f, 1.0f, 1.0f, 0.0f),
-         new Vec4(-1.0f, 1.0f, -1.0f, 0.0f),
-         new Vec4(-1.0f, -1.0f, 1.0f, 0.0f),
-         new Vec4(-1.0f, -1.0f, -1.0f, 0.0f)
-   };
+   private static final Vec4[] GRAD_4_LUT;
 
    /**
-    * Table for 3D rotations, u.
+    * Table for 3D rotations, u. Multiplied by the cosine of an
+    * angle in 3D gradient rotations.
     */
-   private static final Vec3[] GRAD3_U = {
-         new Vec3(1.0f, 0.0f, 1.0f),
-         new Vec3(0.0f, 1.0f, 1.0f),
-         new Vec3(-1.0f, 0.0f, 1.0f),
-         new Vec3(0.0f, -1.0f, 1.0f),
-         new Vec3(1.0f, 0.0f, -1.0f),
-         new Vec3(0.0f, 1.0f, -1.0f),
-         new Vec3(-1.0f, 0.0f, -1.0f),
-         new Vec3(0.0f, -1.0f, -1.0f),
-         new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
-         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
-         new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
-         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
-         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
-         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
-         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
-         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3)
-   };
+   private static final Vec3[] GRAD3_U;
 
    /**
-    * Table for 3D rotations, v.
+    * Table for 3D rotations, v. Multiplied by the sine of an
+    * angle in 3D gradient rotations.
     */
-   private static final Vec3[] GRAD3_V = {
-         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
-         new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
-         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
-         new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
-         new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
-         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
-         new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
-         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
-         new Vec3(1.0f, -1.0f, 0.0f),
-         new Vec3(1.0f, 1.0f, 0.0f),
-         new Vec3(-1.0f, 1.0f, 0.0f),
-         new Vec3(-1.0f, -1.0f, 0.0f),
-         new Vec3(1.0f, 0.0f, 1.0f),
-         new Vec3(-1.0f, 0.0f, 1.0f),
-         new Vec3(0.0f, 1.0f, -1.0f),
-         new Vec3(0.0f, -1.0f, -1.0f)
-   };
+   private static final Vec3[] GRAD3_V;
 
    /**
     * Permutation table for 4D noise.
     */
-   private static final int[][] PERMUTE = {
-         { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 }, { 0, 2, 3, 1 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 2, 3, 0 },
-         { 0, 2, 1, 3 }, { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2, 1 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 3, 2, 0 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 1, 2, 0, 3 }, { 0, 0, 0, 0 }, { 1, 3, 0, 2 }, { 0, 0, 0, 0 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 2, 3, 0, 1 }, { 2, 3, 1, 0 },
-         { 1, 0, 2, 3 }, { 1, 0, 3, 2 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 0, 0, 0, 0 }, { 2, 0, 3, 1 }, { 0, 0, 0, 0 }, { 2, 1, 3, 0 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 2, 0, 1, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 3, 0, 1, 2 }, { 3, 0, 2, 1 }, { 0, 0, 0, 0 }, { 3, 1, 2, 0 },
-         { 2, 1, 0, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 }, { 3, 2, 1, 0 } };
+   private static final int[][] PERMUTE;
 
    /**
     * Temporary vector used by gradRot2.
     */
-   private static final Vec2 ROT2 = new Vec2();
+   private static final Vec2 ROT_2;
 
    /**
     * Temproary vector used by gradRot3.
     */
-   private static final Vec3 ROT3 = new Vec3();
+   private static final Vec3 ROT_3;
 
    /**
     * sqrt(2.0d) / Math.sqrt(3.0d) Used by rotation look up
@@ -271,27 +168,159 @@ public abstract class Simplex {
     * Prevents compiler complaint that variables may not have
     * been initialized.
     */
-   private static final Vec2 ZERO_2 = new Vec2(0.0f, 0.0f);
+   private static final Vec2 ZERO_2;
 
    /**
     * Initial state to which a 3D noise contribution is set.
     * Prevents compiler complaint that variables may not have
     * been initialized.
     */
-   private static final Vec3 ZERO_3 = new Vec3(0.0f, 0.0f, 0.0f);
+   private static final Vec3 ZERO_3;
 
    /**
     * Initial state to which a 4D noise contribution is set.
     * Prevents compiler complaint that variables may not have
     * been initialized.
     */
-   private static final Vec4 ZERO_4 = new Vec4(0.0f, 0.0f, 0.0f, 0.0f);
+   private static final Vec4 ZERO_4;
 
    /**
     * A default seed set to the system current time in
     * milliseconds.
     */
-   public static final int DEFAULT_SEED = (int) System.currentTimeMillis();
+   public static final int DEFAULT_SEED;
+
+   static {
+      DEFAULT_SEED = (int) System.currentTimeMillis();
+
+      GRAD_2_LUT = new Vec2[] {
+            new Vec2(-1.0f, -1.0f),
+            new Vec2(1.0f, 0.0f),
+            new Vec2(-1.0f, 0.0f),
+            new Vec2(1.0f, 1.0f),
+            new Vec2(-1.0f, 1.0f),
+            new Vec2(0.0f, -1.0f),
+            new Vec2(0.0f, 1.0f),
+            new Vec2(1.0f, -1.0f)
+      };
+
+      GRAD_3_LUT = new Vec3[] {
+            new Vec3(1.0f, 0.0f, 1.0f),
+            new Vec3(0.0f, 1.0f, 1.0f),
+            new Vec3(-1.0f, 0.0f, 1.0f),
+            new Vec3(0.0f, -1.0f, 1.0f),
+            new Vec3(1.0f, 0.0f, -1.0f),
+            new Vec3(0.0f, 1.0f, -1.0f),
+            new Vec3(-1.0f, 0.0f, -1.0f),
+            new Vec3(0.0f, -1.0f, -1.0f),
+            new Vec3(1.0f, -1.0f, 0.0f),
+            new Vec3(1.0f, 1.0f, 0.0f),
+            new Vec3(-1.0f, 1.0f, 0.0f),
+            new Vec3(-1.0f, -1.0f, 0.0f),
+            new Vec3(1.0f, 0.0f, 1.0f),
+            new Vec3(-1.0f, 0.0f, 1.0f),
+            new Vec3(0.0f, 1.0f, -1.0f),
+            new Vec3(0.0f, -1.0f, -1.0f)
+      };
+
+      GRAD_4_LUT = new Vec4[] {
+            new Vec4(0.0f, 1.0f, 1.0f, 1.0f),
+            new Vec4(0.0f, 1.0f, 1.0f, -1.0f),
+            new Vec4(0.0f, 1.0f, -1.0f, 1.0f),
+            new Vec4(0.0f, 1.0f, -1.0f, -1.0f),
+            new Vec4(0.0f, -1.0f, 1.0f, 1.0f),
+            new Vec4(0.0f, -1.0f, 1.0f, -1.0f),
+            new Vec4(0.0f, -1.0f, -1.0f, 1.0f),
+            new Vec4(0.0f, -1.0f, -1.0f, -1.0f),
+            new Vec4(1.0f, 0.0f, 1.0f, 1.0f),
+            new Vec4(1.0f, 0.0f, 1.0f, -1.0f),
+            new Vec4(1.0f, 0.0f, -1.0f, 1.0f),
+            new Vec4(1.0f, 0.0f, -1.0f, -1.0f),
+            new Vec4(-1.0f, 0.0f, 1.0f, 1.0f),
+            new Vec4(-1.0f, 0.0f, 1.0f, -1.0f),
+            new Vec4(-1.0f, 0.0f, -1.0f, 1.0f),
+            new Vec4(-1.0f, 0.0f, -1.0f, -1.0f),
+            new Vec4(1.0f, 1.0f, 0.0f, 1.0f),
+            new Vec4(1.0f, 1.0f, 0.0f, -1.0f),
+            new Vec4(1.0f, -1.0f, 0.0f, 1.0f),
+            new Vec4(1.0f, -1.0f, 0.0f, -1.0f),
+            new Vec4(-1.0f, 1.0f, 0.0f, 1.0f),
+            new Vec4(-1.0f, 1.0f, 0.0f, -1.0f),
+            new Vec4(-1.0f, -1.0f, 0.0f, 1.0f),
+            new Vec4(-1.0f, -1.0f, 0.0f, -1.0f),
+            new Vec4(1.0f, 1.0f, 1.0f, 0.0f),
+            new Vec4(1.0f, 1.0f, -1.0f, 0.0f),
+            new Vec4(1.0f, -1.0f, 1.0f, 0.0f),
+            new Vec4(1.0f, -1.0f, -1.0f, 0.0f),
+            new Vec4(-1.0f, 1.0f, 1.0f, 0.0f),
+            new Vec4(-1.0f, 1.0f, -1.0f, 0.0f),
+            new Vec4(-1.0f, -1.0f, 1.0f, 0.0f),
+            new Vec4(-1.0f, -1.0f, -1.0f, 0.0f)
+      };
+
+      GRAD3_U = new Vec3[] {
+            new Vec3(1.0f, 0.0f, 1.0f),
+            new Vec3(0.0f, 1.0f, 1.0f),
+            new Vec3(-1.0f, 0.0f, 1.0f),
+            new Vec3(0.0f, -1.0f, 1.0f),
+            new Vec3(1.0f, 0.0f, -1.0f),
+            new Vec3(0.0f, 1.0f, -1.0f),
+            new Vec3(-1.0f, 0.0f, -1.0f),
+            new Vec3(0.0f, -1.0f, -1.0f),
+            new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
+            new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
+            new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
+            new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
+            new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
+            new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
+            new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
+            new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3)
+      };
+      
+      GRAD3_V = new Vec3[] {
+            new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
+            new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
+            new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
+            new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
+            new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
+            new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
+            new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
+            new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
+            new Vec3(1.0f, -1.0f, 0.0f),
+            new Vec3(1.0f, 1.0f, 0.0f),
+            new Vec3(-1.0f, 1.0f, 0.0f),
+            new Vec3(-1.0f, -1.0f, 0.0f),
+            new Vec3(1.0f, 0.0f, 1.0f),
+            new Vec3(-1.0f, 0.0f, 1.0f),
+            new Vec3(0.0f, 1.0f, -1.0f),
+            new Vec3(0.0f, -1.0f, -1.0f)
+      };
+
+      PERMUTE = new int[][] {
+            { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 }, { 0, 2, 3, 1 },
+            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 2, 3, 0 },
+            { 0, 2, 1, 3 }, { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2, 1 },
+            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 3, 2, 0 },
+            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+            { 1, 2, 0, 3 }, { 0, 0, 0, 0 }, { 1, 3, 0, 2 }, { 0, 0, 0, 0 },
+            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 2, 3, 0, 1 }, { 2, 3, 1, 0 },
+            { 1, 0, 2, 3 }, { 1, 0, 3, 2 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+            { 0, 0, 0, 0 }, { 2, 0, 3, 1 }, { 0, 0, 0, 0 }, { 2, 1, 3, 0 },
+            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+            { 2, 0, 1, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+            { 3, 0, 1, 2 }, { 3, 0, 2, 1 }, { 0, 0, 0, 0 }, { 3, 1, 2, 0 },
+            { 2, 1, 0, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+            { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 }, { 3, 2, 1, 0 } };
+
+      ROT_2 = new Vec2();
+      ROT_3 = new Vec3();
+
+      ZERO_2 = Vec2.zero(new Vec2());
+      ZERO_3 = Vec3.zero(new Vec3());
+      ZERO_4 = Vec4.zero(new Vec4());
+   }
 
    /**
     * Hashes the indices i and j with the seed, then returns a
@@ -371,6 +400,28 @@ public abstract class Simplex {
             i, j, Simplex.hash(k, l, seed)) & 0x1f];
    }
 
+   /**
+    * Hashes the indices i and j with the seed, retrieves a
+    * vector from the look-up table, then rotates it by the
+    * sine and cosine of an angle.
+    *
+    * @param i
+    *           the first index
+    * @param j
+    *           the second index
+    * @param seed
+    *           the seed
+    * @param cosa
+    *           the cosine of the angle
+    * @param sina
+    *           the sine of the angle
+    * @param target
+    *           the output vector
+    * @return the vector
+    * @see Vec2#rotateZ(Vec2, float, float, Vec2)
+    * @see Simplex#GRAD_2_LUT
+    * @see Simplex#hash(int, int, int)
+    */
    private static Vec2 gradRot2 (
          final int i,
          final int j,
@@ -379,11 +430,36 @@ public abstract class Simplex {
          final float sina,
          final Vec2 target ) {
 
-      final int h = Simplex.hash(i, j, seed) & 0x7;
-      final Vec2 v = Simplex.GRAD_2_LUT[h];
-      return Vec2.rotateZ(v, cosa, sina, target);
+      return Vec2.rotateZ(
+            Simplex.GRAD_2_LUT[Simplex.hash(i, j, seed) & 0x7],
+            cosa, sina,
+            target);
    }
 
+   /**
+    * Hashes the indices i, j and k with the seed. Retrieves
+    * two vectors from rotation look-up tables, then multiplies
+    * them against the sine and cosine of the angle.
+    *
+    * @param i
+    *           the first index
+    * @param j
+    *           the second index
+    * @param k
+    *           the third index
+    * @param seed
+    *           the seed
+    * @param cosa
+    *           the cosine of the angle
+    * @param sina
+    *           the sine of the angle
+    * @param target
+    *           the output vector
+    * @return the vector
+    * @see Simplex#hash(int, int, int)
+    * @see Simplex#GRAD3_U
+    * @see Simplex#GRAD3_V
+    */
    private static Vec3 gradRot3 (
          final int i,
          final int j,
@@ -1251,6 +1327,24 @@ public abstract class Simplex {
       return sum;
    }
 
+   /**
+    * Generates 3D flow noise with three coordinates and the
+    * sine and cosine of an angle.
+    *
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param z
+    *           the z coordinate
+    * @param cosa
+    *           the cosine of the angle
+    * @param sina
+    *           the sine of the angle
+    * @param seed
+    *           the seed
+    * @return the flow noise value
+    */
    public static float flow (
          final float x,
          final float y,
@@ -1262,6 +1356,27 @@ public abstract class Simplex {
       return Simplex.flow(x, y, z, cosa, sina, seed, null);
    }
 
+   /**
+    * Generates 3D flow noise with three coordinates and the
+    * sine and cosine of an angle. Calculates the derivative if
+    * it is not null.
+    *
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param z
+    *           the z coordinate
+    * @param cosa
+    *           the cosine of the angle
+    * @param sina
+    *           the sine of the angle
+    * @param seed
+    *           the seed
+    * @param deriv
+    *           the derivative
+    * @return the flow noise value
+    */
    public static float flow (
          final float x,
          final float y,
@@ -1356,7 +1471,7 @@ public abstract class Simplex {
          g0 = Simplex.gradRot3(
                i, j, k,
                seed, cosa, sina,
-               Simplex.ROT3);
+               Simplex.ROT_3);
          t20 = t0 * t0;
          t40 = t20 * t20;
          n0 = t40 * (g0.x * x0 + g0.y * y0 + g0.z * z0);
@@ -1367,7 +1482,7 @@ public abstract class Simplex {
          g1 = Simplex.gradRot3(
                i + i1, j + j1, k + k1,
                seed, cosa, sina,
-               Simplex.ROT3);
+               Simplex.ROT_3);
          t21 = t1 * t1;
          t41 = t21 * t21;
          n1 = t41 * (g1.x * x1 + g1.y * y1 + g1.z * z1);
@@ -1378,7 +1493,7 @@ public abstract class Simplex {
          g2 = Simplex.gradRot3(
                i + i2, j + j2, k + k2,
                seed, cosa, sina,
-               Simplex.ROT3);
+               Simplex.ROT_3);
          t22 = t2 * t2;
          t42 = t22 * t22;
          n2 = t42 * (g2.x * x2 + g2.y * y2 + g2.z * z2);
@@ -1389,7 +1504,7 @@ public abstract class Simplex {
          g3 = Simplex.gradRot3(
                i + 1, j + 1, k + 1,
                seed, cosa, sina,
-               Simplex.ROT3);
+               Simplex.ROT_3);
          t23 = t3 * t3;
          t43 = t23 * t23;
          n3 = t43 * (g3.x * x3 + g3.y * y3 + g3.z * z3);
@@ -1437,6 +1552,22 @@ public abstract class Simplex {
       return Simplex.SCALE_3 * (n0 + n1 + n2 + n3);
    }
 
+   /**
+    * Generates 3D flow noise with three coordinates and an
+    * angle.
+    *
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param z
+    *           the z coordinate
+    * @param radians
+    *           the angle
+    * @param seed
+    *           the seed
+    * @return the flow noise value
+    */
    public static float flow (
          final float x,
          final float y,
@@ -1450,6 +1581,25 @@ public abstract class Simplex {
             seed, (Vec3) null);
    }
 
+   /**
+    * Generates 2D flow noise with two coordinates and the sine
+    * and cosine of an angle. Calculates the derivative if it
+    * is not null.
+    *
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param cosa
+    *           the cosine of the angle
+    * @param sina
+    *           the sine of the angle
+    * @param seed
+    *           the seed
+    * @param deriv
+    *           the derivative
+    * @return the flow noise value
+    */
    public static float flow (
          final float x,
          final float y,
@@ -1498,7 +1648,7 @@ public abstract class Simplex {
 
       final float t0 = 0.5f - x0 * x0 - y0 * y0;
       if (t0 >= 0.0f) {
-         g0 = Simplex.gradRot2(i, j, seed, cosa, sina, Simplex.ROT2);
+         g0 = Simplex.gradRot2(i, j, seed, cosa, sina, Simplex.ROT_2);
          t20 = t0 * t0;
          t40 = t20 * t20;
          n0 = t40 * (g0.x * x0 + g0.y * y0);
@@ -1506,7 +1656,7 @@ public abstract class Simplex {
 
       final float t1 = 0.5f - x1 * x1 - y1 * y1;
       if (t1 >= 0.0f) {
-         g1 = Simplex.gradRot2(i + i1, j + j1, seed, cosa, sina, Simplex.ROT2);
+         g1 = Simplex.gradRot2(i + i1, j + j1, seed, cosa, sina, Simplex.ROT_2);
          t21 = t1 * t1;
          t41 = t21 * t21;
          n1 = t41 * (g1.x * x1 + g1.y * y1);
@@ -1514,7 +1664,7 @@ public abstract class Simplex {
 
       final float t2 = 0.5f - x2 * x2 - y2 * y2;
       if (t2 >= 0.0f) {
-         g2 = Simplex.gradRot2(i + 1, j + 1, seed, cosa, sina, Simplex.ROT2);
+         g2 = Simplex.gradRot2(i + 1, j + 1, seed, cosa, sina, Simplex.ROT_2);
          t22 = t2 * t2;
          t42 = t22 * t22;
          n2 = t42 * (g2.x * x2 + g2.y * y2);
@@ -1547,6 +1697,25 @@ public abstract class Simplex {
       return Simplex.SCALE_2 * (n0 + n1 + n2);
    }
 
+   /**
+    * Generates 3D flow noise with three coordinates and the
+    * sine and cosine of an angle. Calculates the derivative if
+    * it is not null.
+    *
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param z
+    *           the z coordinate
+    * @param radians
+    *           the angle in radians
+    * @param seed
+    *           the seed
+    * @param deriv
+    *           the derivative
+    * @return the flow noise value
+    */
    public static float flow (
          final float x,
          final float y,
@@ -1561,6 +1730,20 @@ public abstract class Simplex {
             seed, deriv);
    }
 
+   /**
+    * Generates 3D flow noise with three coordinates and an
+    * angle.
+    *
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param radians
+    *           the angle in radians
+    * @param seed
+    *           the seed
+    * @return the flow noise value
+    */
    public static float flow (
          final float x,
          final float y,
@@ -1573,6 +1756,22 @@ public abstract class Simplex {
             seed, (Vec2) null);
    }
 
+   /**
+    * Generates 3D flow noise with three coordinates and an
+    * angle. Calculates the derivative if it is not null.
+    *
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param radians
+    *           the angle in radians
+    * @param seed
+    *           the seed
+    * @param deriv
+    *           the derivative
+    * @return the flow noise value
+    */
    public static float flow (
          final float x,
          final float y,
@@ -1586,6 +1785,17 @@ public abstract class Simplex {
             seed, deriv);
    }
 
+   /**
+    * Generates 2D flow noise with a coordinate and an angle.
+    *
+    * @param v
+    *           the coordinate
+    * @param radians
+    *           the angle in radians
+    * @param seed
+    *           the seed
+    * @return the flow noise value
+    */
    public static float flow (
          final Vec2 v,
          final float radians,
@@ -1594,6 +1804,20 @@ public abstract class Simplex {
       return Simplex.flow(v, radians, seed, null);
    }
 
+   /**
+    * Generates 2D flow noise with a coordinate and an angle.
+    * Calculates the derivative if it is not null.
+    *
+    * @param v
+    *           the coordinate
+    * @param radians
+    *           the angle in radians
+    * @param seed
+    *           the seed
+    * @param deriv
+    *           the derivative
+    * @return the flow noise value
+    */
    public static float flow (
          final Vec2 v,
          final float radians,
@@ -1604,6 +1828,17 @@ public abstract class Simplex {
             radians, seed, deriv);
    }
 
+   /**
+    * Generates 3D flow noise with a coordinate and an angle.
+    *
+    * @param v
+    *           the coordinate
+    * @param radians
+    *           the angle in radians
+    * @param seed
+    *           the seed
+    * @return the flow noise value
+    */
    public static float flow (
          final Vec3 v,
          final float radians,
@@ -1612,6 +1847,20 @@ public abstract class Simplex {
       return Simplex.flow(v, radians, seed, null);
    }
 
+   /**
+    * Generates 3D flow noise with a coordinate and an angle.
+    * Calculates the derivative if it is not null.
+    *
+    * @param v
+    *           the coordinate
+    * @param radians
+    *           the angle in radians
+    * @param seed
+    *           the seed
+    * @param deriv
+    *           the derivative
+    * @return the flow noise value
+    */
    public static float flow (
          final Vec3 v,
          final float radians,

@@ -9,7 +9,7 @@ MaterialSolid material = new MaterialSolid()
   .setStroke(true)
   .setStroke(#808080)
   .setFill(false)
-  .setStrokeWeight(0.01);
+  .setStrokeWeight(1.0);
 
 Transform3 transform = new Transform3()
   .moveTo(new Vec3(0.0, 0.0, 0.0))
@@ -41,7 +41,7 @@ void draw() {
   perspective();
   camera();
   graphics3.origin();
-  graphics3.handles(entity, 0.005);
+  //graphics3.handles(entity, 0.005);
   graphics3.shape(entity);
   float t = mouseX / (float)width;
 
@@ -58,5 +58,4 @@ void draw() {
   stroke(#ff0048);
 
   graphics3.point(tnpt);
-  
 }

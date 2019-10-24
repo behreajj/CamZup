@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Yup3 graphics;
+Zup3 graphics;
 
 float rotSpeed = 1.75;
 float smoothing = 0.075;
@@ -18,11 +18,11 @@ Quaternion identity = new Quaternion();
 MeshEntity3 entity = new MeshEntity3();
 
 void setup() {
-  size(512, 512, "camzup.pfriendly.Yup3");
+  size(512, 512, "camzup.pfriendly.Zup3");
 
-  graphics = (Yup3)getGraphics();
+  graphics = (Zup3)getGraphics();
   graphics.camera(
-    0.0, 0.0, -height * sqrt(3.0) * 0.5, 
+    0.0, -height * sqrt(3.0) * 0.5, 0.0, 
     0.0, 0.0, 0.0, 
     0.0, 0.0, 1.0);
 
@@ -55,7 +55,7 @@ void draw() {
     float mag = Vec3.mag(mouse);
     if (mag > 0.0) {
       float ang = rotSpeed * mag;
-      Vec3.crossNorm(ref, mouse, mouseNorm);
+      Vec3.crossNorm(mouse, ref, mouseNorm);
       Quaternion.fromAxisAngle(ang, mouseNorm, rotMouse);
     }
   } else {
@@ -68,8 +68,11 @@ void draw() {
     rotSphere, rotWorld, smoothing, rotSphere);
 
   entity.transform.rotateTo(rotSphere);
-
+  
   background(0xfffff7d5);
   graphics.origin();
+  
+  strokeWeight(1.5);
+  stroke(0xffff0000);
   graphics.shape(entity);
 }

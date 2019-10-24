@@ -61,12 +61,26 @@ public class Ray2 extends Ray {
       super();
    }
 
+   /**
+    * Creates a new ray from a source.
+    *
+    * @param source
+    *           the source
+    */
    public Ray2 ( final Ray2 source ) {
 
       super();
       this.set(source);
    }
 
+   /**
+    * Creates a new ray from an origin and direction.
+    *
+    * @param origin
+    *           the origin
+    * @param dir
+    *           the direction.
+    */
    public Ray2 (
          final Vec2 origin,
          final Vec2 dir ) {
@@ -75,6 +89,13 @@ public class Ray2 extends Ray {
       this.set(origin, dir);
    }
 
+   /**
+    * Tests equivalence between this and another ray.
+    *
+    * @param ray
+    *           the other ray
+    * @return the evaluation
+    */
    protected boolean equals ( final Ray2 ray ) {
 
       if (this.dir == null) {
@@ -96,12 +117,29 @@ public class Ray2 extends Ray {
       return true;
    }
 
+   /**
+    * Returns a new ray with this ray's components. Java's
+    * cloneable interface is problematic; use set or a copy
+    * constructor instead.
+    *
+    * @return a new ray
+    * @see Ray2#set(Ray2)
+    * @see Ray2#Ray2(Ray2)
+    */
    @Override
    public Ray2 clone () {
 
       return new Ray2(this.origin, this.dir);
    }
 
+   /**
+    * Tests this ray for equivalence with another object.
+    *
+    * @param obj
+    *           the object
+    * @return the equivalence
+    * @see Ray2#equals(Ray2)
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
@@ -117,6 +155,12 @@ public class Ray2 extends Ray {
       return this.equals((Ray2) obj);
    }
 
+   /**
+    * Returns a hash code for this ray based on its origin and
+    * direction.
+    *
+    * @return the hash code
+    */
    @Override
    public int hashCode () {
 
@@ -128,6 +172,11 @@ public class Ray2 extends Ray {
       return result;
    }
 
+   /**
+    * Resets this ray to a default.
+    *
+    * @return this ray
+    */
    public Ray2 reset () {
 
       Vec2.zero(this.origin);
@@ -135,11 +184,27 @@ public class Ray2 extends Ray {
       return this;
    }
 
+   /**
+    * Sets this ray from a source.
+    *
+    * @param source
+    *           the source ray
+    * @return this ray
+    */
    public Ray2 set ( final Ray2 source ) {
 
       return this.set(source.origin, source.dir);
    }
 
+   /**
+    * Sets the origin and direction of this ray.
+    *
+    * @param origin
+    *           the origin
+    * @param dir
+    *           the direction
+    * @return this ray
+    */
    public Ray2 set (
          final Vec2 origin,
          final Vec2 dir ) {
@@ -149,12 +214,24 @@ public class Ray2 extends Ray {
       return this;
    }
 
+   /**
+    * Returns a string representation of this ray.
+    *
+    * @return the string
+    */
    @Override
    public String toString () {
 
       return this.toString(4);
    }
 
+   /**
+    * Returns a string representation of this ray.
+    *
+    * @param places
+    *           number of decimal places
+    * @return the string
+    */
    public String toString ( final int places ) {
 
       return new StringBuilder(132)

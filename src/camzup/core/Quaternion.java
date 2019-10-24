@@ -456,6 +456,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
           * Flip values if the orientation is negative.
           */
          if (dotp < 0.0f) {
+            // TODO Doublecheck other slerp implementations,
+            // this seems to be based on the idea that dotp has had
+            // one added to it.
             bw = -bw;
             bx = -bx;
             by = -by;
@@ -630,101 +633,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             cosah * i.x + sinah * i.y,
             cosah * i.y - sinah * i.x,
             cosah * i.z + sinah * quat.real);
-   }
-
-   /**
-    * Finds the value of Euler's number <em>e</em> raised to
-    * the power of the quaternion. Uses the formula:<br>
-    * <br>
-    * exp ( <em>q</em> ) := <em>e<sup>r</sup></em> ( { cos (
-    * |<em>i</em>| ), <em>\u00ee</em> sin ( |<em>i</em>| ) }
-    * )<br>
-    * <br>
-    *
-    * where <em>r</em> is <em>q<sub>real</sub></em> and
-    * <em>i</em> is <em>q<sub>imag</sub></em>.
-    *
-    * @param quat
-    *           the input quaternion
-    * @param target
-    *           the output quaternion
-    * @return the result
-    */
-   protected static Quaternion exp (
-         final Quaternion quat,
-         final Quaternion target ) {
-
-      // TODO: Needs testing.
-
-      final double ea = Math.exp(quat.real);
-      final float imSq = Vec3.mag(quat.imag);
-      if (imSq == 0.0f) {
-         Vec3.zero(target.imag);
-         target.real = (float) ea;
-         return target;
-      }
-
-      final double im = Math.sqrt(imSq);
-      target.real = (float) (ea * Math.cos(im));
-      Vec3.mult(
-            quat.imag,
-            (float) (ea * Math.sin(im) / im),
-            target.imag);
-
-      return target;
-   }
-
-   /**
-    * Finds the natural logarithm of the quaternion. Uses the
-    * formula:<br>
-    * <br>
-    * ln ( <em>q</em> ) := { ln ( |<em>q</em>| ),
-    * <em>\u00ee</em> acos ( a<sub>real</sub> / |<em>q</em>| )
-    * }<br>
-    * <br>
-    * where <em>i</em> is <em>q<sub>imag</sub></em>.
-    *
-    * @param quat
-    *           the quaternion
-    * @param target
-    *           the output quaternion
-    * @return the result
-    */
-   protected static Quaternion log (
-         final Quaternion quat,
-         final Quaternion target ) {
-
-      // TODO: Needs testing.
-      // LOOKUP:
-      // https://math.stackexchange.com/questions/2552/the-logarithm-of-quaternion/2554#2554
-
-      final float imSq = Vec3.magSq(quat.imag);
-      final float qmSq = quat.real * quat.real + imSq;
-
-      if (qmSq == 0.0f) {
-         return target.reset();
-      }
-
-      final double qm = Math.sqrt(qmSq);
-      target.real = (float) Math.log(qm);
-
-      if (Utils.approxFast(imSq, 0.0f)) {
-         Vec3.zero(target.imag);
-         return target;
-      }
-
-      final double wNorm = quat.real / qm;
-      final double wAcos = wNorm <= -1.0d ? Math.PI
-            : wNorm >= 1.0d ? 0.0d : Math.acos(wNorm);
-
-      if (Utils.approxFast(imSq, 1.0f)) {
-         Vec3.mult(quat.imag, (float) wAcos, target.imag);
-         return target;
-      }
-
-      final double scalarNorm = wAcos / Math.sqrt(imSq);
-      Vec3.mult(quat.imag, (float) scalarNorm, target.imag);
-      return target;
    }
 
    /**
@@ -1203,7 +1111,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion inverted,
          final Quaternion conjugate ) {
 
-      // TODO: Create a divNorm function?
       Quaternion.inverse(b, inverted, conjugate);
       return Quaternion.mult(a, inverted, target);
    }
@@ -1231,6 +1138,46 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion b ) {
 
       return a.real * b.real + Vec3.dot(a.imag, b.imag);
+   }
+
+   /**
+    * Finds the value of Euler's number <em>e</em> raised to
+    * the power of the quaternion. Uses the formula:<br>
+    * <br>
+    * exp ( <em>q</em> ) := <em>e<sup>r</sup></em> ( { cos (
+    * |<em>i</em>| ), <em>\u00ee</em> sin ( |<em>i</em>| ) }
+    * )<br>
+    * <br>
+    *
+    * where <em>r</em> is <em>q<sub>real</sub></em> and
+    * <em>i</em> is <em>q<sub>imag</sub></em>.
+    *
+    * @param quat
+    *           the input quaternion
+    * @param target
+    *           the output quaternion
+    * @return the result
+    */
+   public static Quaternion exp (
+         final Quaternion quat,
+         final Quaternion target ) {
+
+      final double ea = Math.exp(quat.real);
+      final float imSq = Vec3.mag(quat.imag);
+      if (imSq == 0.0f) {
+         Vec3.zero(target.imag);
+         target.real = (float) ea;
+         return target;
+      }
+
+      final double im = Math.sqrt(imSq);
+      target.real = (float) (ea * Math.cos(im));
+      Vec3.mult(
+            quat.imag,
+            (float) (ea * Math.sin(im) / im),
+            target.imag);
+
+      return target;
    }
 
    /**
@@ -1635,6 +1582,55 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
+    * Finds the natural logarithm of the quaternion. Uses the
+    * formula:<br>
+    * <br>
+    * ln ( <em>q</em> ) := { ln ( |<em>q</em>| ),
+    * <em>\u00ee</em> acos ( a<sub>real</sub> / |<em>q</em>| )
+    * }<br>
+    * <br>
+    * where <em>i</em> is <em>q<sub>imag</sub></em>.
+    *
+    * @param quat
+    *           the quaternion
+    * @param target
+    *           the output quaternion
+    * @return the result
+    */
+   public static Quaternion log (
+         final Quaternion quat,
+         final Quaternion target ) {
+
+      final float imSq = Vec3.magSq(quat.imag);
+      final float qmSq = quat.real * quat.real + imSq;
+
+      if (qmSq == 0.0f) {
+         return target.reset();
+      }
+
+      final double qm = Math.sqrt(qmSq);
+      target.real = (float) Math.log(qm);
+
+      if (Utils.approxFast(imSq, 0.0f)) {
+         Vec3.zero(target.imag);
+         return target;
+      }
+
+      final double wNorm = quat.real / qm;
+      final double wAcos = wNorm <= -1.0d ? Math.PI
+            : wNorm >= 1.0d ? 0.0d : Math.acos(wNorm);
+
+      if (Utils.approxFast(imSq, 1.0f)) {
+         Vec3.mult(quat.imag, (float) wAcos, target.imag);
+         return target;
+      }
+
+      final double scalarNorm = wAcos / Math.sqrt(imSq);
+      Vec3.mult(quat.imag, (float) scalarNorm, target.imag);
+      return target;
+   }
+
+   /**
     * Finds the length, or magnitude, of a quaternion.<br>
     * <br>
     * |<em>a</em>| := \u221a <em>a</em> \u00b7 <em>a</em><br>
@@ -1811,12 +1807,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             ai.x * bw + aw * bi.x + ai.y * bi.z - ai.z * bi.y,
             ai.y * bw + aw * bi.y + ai.z * bi.x - ai.x * bi.z,
             ai.z * bw + aw * bi.z + ai.x * bi.y - ai.y * bi.x);
-
-      // return target.set(
-      // aw * bw - Vec3.dot(ai, bi),
-      // ai.x * bw + aw * bi.x + ai.y * bi.z - ai.z * bi.y,
-      // ai.y * bw + aw * bi.y + ai.z * bi.x - ai.x * bi.z,
-      // ai.z * bw + aw * bi.z + ai.x * bi.y - ai.y * bi.x);
    }
 
    /**
@@ -2680,6 +2670,20 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       return Quaternion.identity(this);
    }
 
+   /**
+    * Sets the components of this quaternion from booleans,
+    * where false is 0.0 and true is 1.0 .
+    *
+    * @param real
+    *           the real (w) component
+    * @param xImag
+    *           the imag x component
+    * @param yImag
+    *           the imag y component
+    * @param zImag
+    *           the imag z component
+    * @return this quaternion
+    */
    @Chainable
    public Quaternion set (
          final boolean real,
@@ -2836,6 +2840,14 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       return this.toString(4);
    }
 
+   /**
+    * Returns a string representation of this quaternion
+    * according to the string format.
+    *
+    * @param places
+    *           the number of places
+    * @return the string
+    */
    public String toString ( final int places ) {
 
       return new StringBuilder(128)

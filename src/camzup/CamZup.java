@@ -1,9 +1,6 @@
 package camzup;
 
-import camzup.core.Curve3;
-import camzup.core.CurveEntity3;
 import camzup.core.Mesh3;
-import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -13,22 +10,6 @@ import processing.core.PApplet;
 public class CamZup {
 
    public final static String VERSION = "##library.prettyVersion##";
-
-   static float fastersqrt ( final float f ) {
-
-      return f * Float.intBitsToFloat(0x5f375a86
-            - (Float.floatToIntBits(f) >> 1));
-   }
-
-   static float fastsqrt ( final float f ) {
-
-      float y = Float.intBitsToFloat(0x5f375a86
-            - (Float.floatToIntBits(f) >> 1));
-      final float xhalf = f * 0.5f;
-      y = y * (1.5f - xhalf * y * y);
-      y = y * (1.5f - xhalf * y * y);
-      return f * y;
-   }
 
    static String toHardCode ( final Mesh3 mesh ) {
 
@@ -99,13 +80,15 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-//      final Random rng = new Random();
-//
-//      final Curve3 curve1 = Curve3.random(rng, 10, -1, 1, false, new Curve3());
-//      final CurveEntity3 ce = new CurveEntity3();
-//      ce.appendCurve(curve1);
-//      ce.appendCurve(Curve3.circle(new Curve3(), new Vec3(), new Vec3()));
-//      System.out.println(ce.toBlenderCode());
+      // final Random rng = new Random();
+      //
+      // final Curve3 curve1 = Curve3.random(rng, 10, -1, 1,
+      // false, new Curve3());
+      // final CurveEntity3 ce = new CurveEntity3();
+      // ce.appendCurve(curve1);
+      // ce.appendCurve(Curve3.circle(new Curve3(), new Vec3(),
+      // new Vec3()));
+      // System.out.println(ce.toBlenderCode());
    }
 
    public static String version () {

@@ -2,6 +2,7 @@ package camzup.core;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * An entity which contains a transform that is applied to a
@@ -63,7 +64,9 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
     * @param meshes
     *           the list of meshes
     */
-   public MeshEntity2 ( final String name, final Transform2 transform,
+   public MeshEntity2 (
+         final String name,
+         final Transform2 transform,
          final Mesh2... meshes ) {
 
       super(name);
@@ -84,7 +87,8 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
     * @param meshes
     *           the list of meshes
     */
-   public MeshEntity2 ( final Transform2 transform,
+   public MeshEntity2 (
+         final Transform2 transform,
          final Mesh2... meshes ) {
 
       super();
@@ -164,6 +168,13 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
       return this;
    }
 
+   /**
+    * Returns an iterator, which allows an enhanced for-loop to
+    * access the meshes in the mesh entity.
+    *
+    * @return the iterator
+    * @see List#iterator()
+    */
    @Override
    public Iterator < Mesh2 > iterator () {
 
@@ -187,7 +198,7 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
 
       for (final Mesh2 mesh : this.meshes) {
 
-         /**
+         /*
           * It would be more efficient to create a defs block that
           * contains the data for each material, which is then used
           * by a mesh element with xlink, but such tags are ignored
