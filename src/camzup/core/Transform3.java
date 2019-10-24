@@ -1346,6 +1346,50 @@ public class Transform3 extends Transform {
    }
 
    /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how
+    * transforms look in Blender (the control) vs. in the
+    * library (the test).
+    * 
+    * @return the string
+    */
+   public String toBlenderCode ( final String objVarName ) {
+
+      final StringBuilder result = new StringBuilder();
+      final Vec3 i = this.rotation.imag;
+      result.append(objVarName)
+            .append(".rotation_mode = \"QUATERNION\"\n")
+            .append(objVarName)
+            .append(".location = (")
+            .append(Utils.toFixed(this.location.x, 6))
+            .append(',').append(' ')
+            .append(Utils.toFixed(this.location.y, 6))
+            .append(',').append(' ')
+            .append(Utils.toFixed(this.location.z, 6))
+            .append(')').append('\n')
+            .append(objVarName)
+            .append(".rotation_quaternion = (")
+            .append(Utils.toFixed(this.rotation.real, 6))
+            .append(',').append(' ')
+            .append(Utils.toFixed(i.x, 6))
+            .append(',').append(' ')
+            .append(Utils.toFixed(i.y, 6))
+            .append(',').append(' ')
+            .append(Utils.toFixed(i.z, 6))
+            .append(')').append('\n')
+            .append(objVarName)
+            .append(".scale = (")
+            .append(Utils.toFixed(this.scale.x, 6))
+            .append(',').append(' ')
+            .append(Utils.toFixed(this.scale.y, 6))
+            .append(',').append(' ')
+            .append(Utils.toFixed(this.scale.z, 6))
+            .append(')');
+      return result.toString();
+   }
+
+   /**
     * Returns a string representation of this transform
     * according to its string format.
     *

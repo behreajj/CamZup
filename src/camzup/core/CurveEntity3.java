@@ -244,10 +244,23 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
       return this.curves.iterator();
    }
 
+   /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how curve
+    * geometry looks in Blender (the control) vs. in the
+    * library (the test).
+    * 
+    * @return the string
+    */
    public String toBlenderCode () {
 
+      // TODO: Store separately whether or not a curve is closed,
+      // then set
+      // use_cyclic_u.
+
       final StringBuilder result = new StringBuilder()
-            .append("from bpy import data as D\n\n")
+            .append("from bpy import data as D, context as C\n\n")
             .append("curve_raw = (");
 
       int curveIndex = 0;
@@ -316,6 +329,7 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
       result.append("crv_data = D.curves.new(\"")
             .append(this.name)
             .append("\", \"CURVE\")\n")
+            .append("crv_data.dimensions = \"3D\"\n")
             .append("crv_splines = crv_data.splines\n")
             .append("crv_index = 0\n")
             .append("for spline_raw in curve_raw:\n")
@@ -331,7 +345,13 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
             .append("\t\tknot.handle_right = knot_raw[1]\n")
             .append("\t\tknot.handle_left = knot_raw[2]\n")
             .append("\t\tknt_index = knt_index + 1\n")
-            .append("\tcrv_index = crv_index + 1");
+            .append("\tcrv_index = crv_index + 1\n\n")
+            .append("crv_obj = D.objects.new(\"")
+            .append(this.name)
+            .append("\", crv_data)\n")
+            .append(this.transform.toBlenderCode("crv_obj"))
+            .append("\n\nC.scene.collection.objects.link(crv_obj)");
+
       return result.toString();
    }
 

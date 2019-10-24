@@ -21,7 +21,8 @@ void draw() {
   float wNorm = 1.0 / (width - 1.0);
   float nz = mouseX * wNorm;
   float ang = frameCount * 0.05;
-  float ang0 = -PI + TAU * mouseY * hNorm;
+  float cosa = cos(ang);
+  float sina = sin(ang);
 
   //persist = Utils.lerp(0.1, 0.85, mouseX * wNorm);
   //octaves = (int)Utils.lerp(3, 16, mouseY * hNorm);
@@ -44,11 +45,12 @@ void draw() {
     for (int x = 0; x < width; ++x, ++idx) {
       float xNorm = x * wNorm;
       float nx = (xNorm + xNorm - 1.0) * scale;
-
-      noise.set(nx, ny, nz);
-      //Vec3.rotateY(noise, ang0, noise);
       
-      float fac = 0.5 + 0.5 * Simplex.flow(noise, ang, seed, deriv);
+      float fac = 0.5 + 0.5 * Simplex.flow(
+        nx, ny, nz,
+        cosa, sina,
+        seed,
+        deriv);
       Vec3.normalize(deriv, deriv);
       //pixels[idx] = color(
       //  deriv.x * 0.5 + 0.5, 
