@@ -353,7 +353,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final int u1, final int v1,
          final int u2, final int v2 ) {
 
-      /**
+      /*
        * This is backwards due to Processing's insistence on using
        * integers to specify UV coordinates (maybe as a result
        * from working with AWT?). All image functions should flow
@@ -364,7 +364,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final int savedTextureMode = this.textureMode;
       this.textureMode = PConstants.IMAGE;
 
-      /**
+      /*
        * This will have to go untested... as this code is being
        * written on a low density monitor.
        */
@@ -1061,22 +1061,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.textureWrap);
    }
 
-   // @Override
-   // public void popProjection () {
-   //
-   // this.flush();
-   //
-   // if (this.projectionStackDepth == 0) {
-   // throw new
-   // RuntimeException(PGraphics.ERROR_PUSHMATRIX_UNDERFLOW);
-   // }
-   // this.projectionStackDepth--;
-   // this.projection.set(this.projectionStack[this.projectionStackDepth]);
-   //
-   // IUp.invert(this.projection, this.projInv);
-   // this.updateProjmodelview();
-   // }
-
    /**
     * Updates the texture coordinates of the renderer. If the
     * texture mode is IMAGE, divides the uv coordinates by the
@@ -1351,15 +1335,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             (bna + bna + bna);
    }
 
-   // @Override
-   // public void resetProjection () {
-   //
-   // this.flush();
-   // this.projection.reset();
-   // this.projInv.reset();
-   // this.updateProjmodelview();
-   // }
-
    /**
     * Exposes the color calculation to the public. Includes the
     * option to premultiply alpha. Refers to the helper
@@ -1462,15 +1437,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.invColorModeZ = 1.0f / this.colorModeZ;
       this.invColorModeA = 1.0f / this.colorModeA;
    }
-
-   // @Override
-   // public void setProjection ( final PMatrix3D mat ) {
-   //
-   // this.flush();
-   // this.projection.set(mat);
-   // IUp.invert(this.projection, this.projInv);
-   // this.updateProjmodelview();
-   // }
 
    /**
     * A helper function to color calculation, exposed to the
@@ -1589,8 +1555,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             bottom, top,
             near, far,
             this.projection);
-
-      // IUp.invert(this.projection, this.projInv);
    }
 
    /**

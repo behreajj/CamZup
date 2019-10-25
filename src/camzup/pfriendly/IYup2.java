@@ -106,18 +106,15 @@ public interface IYup2 extends IUp {
     */
    public static String svgBackground ( final IYup2 renderer ) {
 
-      final StringBuilder result = new StringBuilder();
-      result.append("<rect id=\"background\" ")
-            .append("x=\"0\" y=\"0\" ")
-            .append("width=\"")
+      return new StringBuilder(128)
+            .append("<rect x=\"0\" y=\"0\" width=\"")
             .append(renderer.getWidth())
             .append("\" height=\"")
             .append(renderer.getHeight())
-            .append("\" stroke=\"none\" ")
-            .append("fill=\"")
+            .append("\" stroke=\"none\" fill=\"")
             .append(Color.toHexWeb(renderer.getBackground()))
-            .append("\"></rect>");
-      return result.toString();
+            .append("\"></rect>")
+            .toString();
    }
 
    /**
@@ -131,23 +128,23 @@ public interface IYup2 extends IUp {
     */
    public static String svgCamera ( final IYup2 renderer ) {
 
-      final StringBuilder result = new StringBuilder();
-      result.append("transform=\"translate(")
-            .append(renderer.getWidth() * 0.5f)
-            .append(", ")
-            .append(renderer.getHeight() * 0.5f)
+      return new StringBuilder(128)
+            .append("transform=\"translate(")
+            .append(Utils.toFixed(renderer.getWidth() * 0.5f, 4))
+            .append(',').append(' ')
+            .append(Utils.toFixed(renderer.getHeight() * 0.5f, 4))
             .append(") scale(")
-            .append(renderer.getZoomX())
-            .append(", ")
-            .append(-renderer.getZoomY())
+            .append(Utils.toFixed(renderer.getZoomX(), 4))
+            .append(',').append(' ')
+            .append(Utils.toFixed(-renderer.getZoomY(), 4))
             .append(") rotate(")
-            .append(-renderer.getRot() * IUtils.RAD_TO_DEG)
+            .append(Utils.toFixed(-renderer.getRot() * IUtils.RAD_TO_DEG, 1))
             .append(") translate(")
-            .append(-renderer.getLocX())
-            .append(", ")
-            .append(-renderer.getLocY())
-            .append(")\"");
-      return result.toString();
+            .append(Utils.toFixed(-renderer.getLocX(), 4))
+            .append(',').append(' ')
+            .append(Utils.toFixed(-renderer.getLocY(), 4))
+            .append(')').append('\"')
+            .toString();
    }
 
    /**
@@ -161,16 +158,16 @@ public interface IYup2 extends IUp {
     */
    public static String svgHeader ( final IYup2 renderer ) {
 
-      final StringBuilder result = new StringBuilder();
-      result.append("<svg ")
+      return new StringBuilder(128)
+            .append("<svg ")
             .append("xmlns=\"http://www.w3.org/2000/svg\" ")
             .append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ")
             .append("viewBox=\"0 0 ")
             .append((int) renderer.getWidth())
-            .append(" ")
+            .append(' ')
             .append((int) renderer.getHeight())
-            .append("\">");
-      return result.toString();
+            .append("\">")
+            .toString();
    }
 
    /**
@@ -606,6 +603,25 @@ public interface IYup2 extends IUp {
          final Vec2 cp,
          final Vec2 ap1 );
 
+   /**
+    * Displays a ray, i.e., an origin point and a direction.
+    * The display length of the direction is dictated by an
+    * input.
+    * 
+    * For improved performance, ensure that the direction is of
+    * unit length (normalized).
+    * 
+    * @param xOrigin
+    *           the x origin
+    * @param yOrigin
+    *           the y origin
+    * @param xDir
+    *           the x direction
+    * @param yDir
+    *           the y direction
+    * @param dLen
+    *           the display length
+    */
    public default void ray (
          final float xOrigin,
          final float yOrigin,
@@ -620,6 +636,31 @@ public interface IYup2 extends IUp {
             dLen, 1.0f, 4.0f, 2.0f);
    }
 
+   /**
+    * Displays a ray, i.e., an origin point and a direction.
+    * The display length of the direction is dictated by an
+    * input.
+    * 
+    * For improved performance, ensure that the direction is of
+    * unit length (normalized).
+    * 
+    * @param xOrigin
+    *           the x origin
+    * @param yOrigin
+    *           the y origin
+    * @param xDir
+    *           the x direction
+    * @param yDir
+    *           the y direction
+    * @param dLen
+    *           the display length
+    * @param lnwgt
+    *           the line weight
+    * @param oWeight
+    *           the origin stroke weight
+    * @param dWeight
+    *           the direction stroke weight
+    */
    public default void ray (
          final float xOrigin,
          final float yOrigin,
@@ -644,7 +685,7 @@ public interface IYup2 extends IUp {
          float dx = 0.0f;
          float dy = 0.0f;
 
-         if (Utils.approxFast(mSq, 1.0f)) {
+         if (Utils.approxFast(mSq, 1.0f, 0.0001f)) {
             dx = xOrigin + xDir * dLen;
             dy = yOrigin + yDir * dLen;
             this.line(
@@ -665,6 +706,19 @@ public interface IYup2 extends IUp {
       this.popStyle();
    }
 
+   /**
+    * Displays a ray, i.e., an origin point and a direction.
+    * The display length of the direction is dictated by an
+    * input.
+    * 
+    * For improved performance, ensure that the direction is of
+    * unit length (normalized).
+    * 
+    * @param ray
+    *           the ray
+    * @param dLen
+    *           the display length
+    */
    public default void ray (
          final Ray2 ray,
          final float dLen ) {
@@ -674,6 +728,25 @@ public interface IYup2 extends IUp {
             ray.dir.x, ray.dir.y, dLen);
    }
 
+   /**
+    * Displays a ray, i.e., an origin point and a direction.
+    * The display length of the direction is dictated by an
+    * input.
+    * 
+    * For improved performance, ensure that the direction is of
+    * unit length (normalized).
+    * 
+    * @param ray
+    *           the ray
+    * @param dLen
+    *           the display length
+    * @param lnwgt
+    *           the line weight
+    * @param oWeight
+    *           the origin stroke weight
+    * @param dWeight
+    *           the direction stroke weight
+    */
    public default void ray (
          final Ray2 ray,
          final float dLen,

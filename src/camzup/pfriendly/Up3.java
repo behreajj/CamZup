@@ -155,6 +155,14 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       this.ortho();
    }
 
+   /**
+    * Draws a single Bezier curve.
+    * 
+    * @param ap0 the first anchor point
+    * @param cp0 the first control point
+    * @param cp1 the second control point
+    * @param ap1 the second anchor point
+    */
    @Override
    public void bezier (
          final Vec3 ap0,
@@ -169,6 +177,15 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             ap1.x, ap1.y, ap1.z);
    }
 
+   /**
+    * Draws a bezier vertex with three vectors: the following
+    * control point, the rear control point of the ensuing
+    * point, and the ensuing anchor point.
+    * 
+    * @param cp0 the first control point
+    * @param cp1 the second control point
+    * @param ap1 the next anchor point
+    */
    @Override
    public void bezierVertex (
          final Vec3 cp0,
@@ -181,12 +198,28 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             ap1.x, ap1.y, ap1.z);
    }
 
+   /**
+    * Draws a 3D cube of a given size.
+    * 
+    * @param size
+    *           the size
+    */
    @Override
    public void box ( final float size ) {
 
       this.box(size, size, size);
    }
 
+   /**
+    * Draws a 3D box with the given width, height and depth.
+    * 
+    * @param w
+    *           the width
+    * @param h
+    *           the height
+    * @param d
+    *           the depth
+    */
    @Override
    public void box ( final float w, final float h, final float d ) {
 
@@ -357,6 +390,17 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       this.endShape(PConstants.CLOSE);
    }
 
+   /**
+    * Sets the camera to a location, looking at a center, with
+    * a reference up direction.
+    * 
+    * @param eye
+    *           the eye location
+    * @param center
+    *           the center of the gaze
+    * @param up
+    *           the reference up direction
+    */
    public void camera (
          final Vec3 eye,
          final Vec3 center,
@@ -368,6 +412,18 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             up.x, up.y, up.z);
    }
 
+   /**
+    * Draws a curve between four vectors.
+    * 
+    * @param a
+    *           the first vector
+    * @param b
+    *           the second vector
+    * @param c
+    *           the third vector
+    * @param d
+    *           the fourth vector
+    */
    public void curve (
          final Vec3 a, final Vec3 b,
          final Vec3 c, final Vec3 d ) {
@@ -379,11 +435,30 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             d.x, d.y, d.z);
    }
 
+   /**
+    * Draws a curve vertex to a vector.
+    * 
+    * @param a
+    *           the vector.
+    */
    public void curveVertex ( final Vec3 a ) {
 
       this.curveVertex(a.x, a.y, a.z);
    }
 
+   /**
+    * Initialize a directional light with a color and a
+    * direction.
+    * 
+    * @param color
+    *           the color
+    * @param xDir
+    *           the x direction
+    * @param yDir
+    *           the y direction
+    * @param zDir
+    *           the z direction
+    */
    public void directionalLight (
          final int color,
          final float xDir,
@@ -398,6 +473,15 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             xDir, yDir, zDir);
    }
 
+   /**
+    * Initialize a directional light with a color and a
+    * direction.
+    * 
+    * @param color
+    *           the color
+    * @param dir
+    *           the direction
+    */
    public void directionalLight (
          final int color,
          final Vec3 dir ) {
@@ -411,6 +495,19 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             dir.x, dir.y, dir.z);
    }
 
+   /**
+    * Initialize a directional light with a color and a
+    * direction.
+    * 
+    * @param color
+    *           the color
+    * @param xDir
+    *           the x direction
+    * @param yDir
+    *           the y direction
+    * @param zDir
+    *           the z direction
+    */
    public void directionalLight (
          final Vec4 color,
          final float xDir,
@@ -425,6 +522,15 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             xDir, yDir, zDir);
    }
 
+   /**
+    * Initialize a directional light with a color and a
+    * direction.
+    * 
+    * @param color
+    *           the color
+    * @param dir
+    *           the direction
+    */
    public void directionalLight (
          final Vec4 color,
          final Vec3 dir ) {

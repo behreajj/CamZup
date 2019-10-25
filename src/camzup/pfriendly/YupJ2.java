@@ -172,7 +172,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           is the renderer primary
     */
    public YupJ2 (
-         final int width, final int height,
+         final int width, 
+         final int height,
          final PApplet parent,
          final String path,
          final boolean isPrimary ) {

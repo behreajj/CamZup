@@ -1352,13 +1352,16 @@ public class Transform3 extends Transform {
     * transforms look in Blender (the control) vs. in the
     * library (the test).
     * 
+    * @param objVarName
+    *           name of the object variable
     * @return the string
     */
    public String toBlenderCode ( final String objVarName ) {
 
-      final StringBuilder result = new StringBuilder();
       final Vec3 i = this.rotation.imag;
-      result.append(objVarName)
+
+      return new StringBuilder()
+            .append(objVarName)
             .append(".rotation_mode = \"QUATERNION\"\n")
             .append(objVarName)
             .append(".location = (")
@@ -1385,8 +1388,8 @@ public class Transform3 extends Transform {
             .append(Utils.toFixed(this.scale.y, 6))
             .append(',').append(' ')
             .append(Utils.toFixed(this.scale.z, 6))
-            .append(')');
-      return result.toString();
+            .append(')')
+            .toString();
    }
 
    /**

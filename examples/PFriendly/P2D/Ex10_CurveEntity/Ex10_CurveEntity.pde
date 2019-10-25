@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-YupJ2 graphics;
+Yup2 graphics;
 
 Random rng = new Random();
 
@@ -25,8 +25,8 @@ CurveEntity2 entity = new CurveEntity2(
   .appendMaterial(material);
 
 void setup() {
-  size(720, 405, "camzup.pfriendly.YupJ2");
-  graphics = (YupJ2)getGraphics();
+  size(720, 405, "camzup.pfriendly.Yup2");
+  graphics = (Yup2)getGraphics();
 }
 
 void draw() {
@@ -40,7 +40,7 @@ void draw() {
 void mouseReleased() {
   if (mouseButton == LEFT) {
     Curve2.random(rng, 5, 
-      -0.75, 0.75, true, curve);
+      -1.0, 1.0, true, curve);
   } else if (mouseButton == RIGHT) {
     String result = graphics.toSvgString(entity);
     saveStrings("data/mesh.svg", new String[] { result });

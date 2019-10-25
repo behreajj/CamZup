@@ -250,7 +250,9 @@ public interface IUp3 extends IUp {
          final float oWeight,
          final float dWeight ) {
 
-      final float mSq = xDir * xDir + yDir * yDir + zDir * zDir;
+      final float mSq = xDir * xDir +
+            yDir * yDir +
+            zDir * zDir;
 
       this.pushStyle();
       this.strokeWeight(oWeight);
@@ -262,7 +264,7 @@ public interface IUp3 extends IUp {
          float dy = 0.0f;
          float dz = 0.0f;
 
-         if (Utils.approxFast(mSq, 1.0f)) {
+         if (Utils.approxFast(mSq, 1.0f, 0.0001f)) {
             dx = xOrigin + xDir * dLen;
             dy = yOrigin + yDir * dLen;
             dz = zOrigin + zDir * dLen;
