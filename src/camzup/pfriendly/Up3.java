@@ -1113,8 +1113,13 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     * that text is 2D, not 3D, in nature.
     */
    @Override
-   public void text ( final char[] chars, final int start, final int stop,
-         final float x, final float y, final float z ) {
+   public void text ( 
+         final char[] chars, 
+         final int start, 
+         final int stop,
+         final float x, 
+         final float y, 
+         final float z ) {
 
       this.text(chars, start, stop, x, y);
    }
@@ -1125,7 +1130,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     * that text is 2D, not 3D, in nature.
     */
    @Override
-   public void text ( final String str, final float x, final float y,
+   public void text ( 
+         final String str, 
+         final float x, 
+         final float y,
          final float z ) {
 
       this.text(str, x, y);
@@ -1150,7 +1158,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     * @param order
     *           the transform order
     */
-   public void transform ( final Transform3 tr3,
+   public void transform ( 
+         final Transform3 tr3,
          final Transform.Order order ) {
 
       tr3.getRotation(this.tr3Rot);

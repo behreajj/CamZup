@@ -1614,7 +1614,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
             .append(Utils.toFixed(this.z, places))
             .append(", z: ")
             .append(Utils.toFixed(this.w, places))
-            .append(" }")
+            .append(' ').append('}')
             .toString();
    }
 }

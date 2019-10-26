@@ -480,7 +480,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @return the absolute vector
     * @see Utils#abs(float)
     */
-   public static Vec2 abs ( final Vec2 v, final Vec2 target ) {
+   public static Vec2 abs (
+         final Vec2 v,
+         final Vec2 target ) {
 
       return target.set(
             Utils.abs(v.x),
@@ -499,7 +501,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @return the sum
     */
    public static Vec2 add (
-         final Vec2 a, final Vec2 b, final Vec2 target ) {
+         final Vec2 a,
+         final Vec2 b,
+         final Vec2 target ) {
 
       return target.set(
             a.x + b.x,
@@ -1323,7 +1327,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           the output vector
     * @return the vector
     */
-   public static Vec2 fromPolar ( final float heading, final Vec2 target ) {
+   public static Vec2 fromPolar (
+         final float heading,
+         final Vec2 target ) {
 
       return target.set(
             (float) Math.cos(heading),
@@ -1679,7 +1685,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final Vec2 origin,
          final Vec2 dest,
          final float step,
-         final Vec2 target, final AbstrEasing easingFunc ) {
+         final Vec2 target,
+         final AbstrEasing easingFunc ) {
 
       return easingFunc.apply(origin, dest, step, target);
    }
@@ -1766,7 +1773,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @return the result
     * @see Utils#mod1(float)
     */
-   public static Vec2 mod1 ( final Vec2 v, final Vec2 target ) {
+   public static Vec2 mod1 (
+         final Vec2 v,
+         final Vec2 target ) {
 
       return target.set(
             Utils.mod1(v.x),
@@ -1784,7 +1793,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           the output vector
     * @return the product
     */
-   public static Vec2 mult ( final float a, final Vec2 b,
+   public static Vec2 mult (
+         final float a,
+         final Vec2 b,
          final Vec2 target ) {
 
       return target.set(
@@ -1803,7 +1814,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           the output vector
     * @return the product
     */
-   public static Vec2 mult ( final Vec2 a, final float b,
+   public static Vec2 mult (
+         final Vec2 a,
+         final float b,
          final Vec2 target ) {
 
       return target.set(
@@ -1843,7 +1856,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           the output vector
     * @return the negation
     */
-   public static Vec2 negate ( final Vec2 v, final Vec2 target ) {
+   public static Vec2 negate (
+         final Vec2 v,
+         final Vec2 target ) {
 
       return target.set(-v.x, -v.y);
    }
@@ -1866,7 +1881,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * |<em>a</em>| . The result is a unit vector, as it lies on
     * the circumference of a unit circle.
     *
-    * @param a
+    * @param v
     *           the input vector
     * @param target
     *           the output vector
@@ -1875,23 +1890,23 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @see Vec2#mag(Vec2)
     */
    public static Vec2 normalize (
-         final Vec2 a,
+         final Vec2 v,
          final Vec2 target ) {
 
-      final float mSq = a.x * a.x + a.y * a.y;
+      final float mSq = v.x * v.x + v.y * v.y;
 
       if (mSq == 0.0f) {
          return target.reset();
       }
 
       if (Utils.approxFast(mSq, 1.0f)) {
-         return target.set(a);
+         return target.set(v);
       }
 
       final float mInv = (float) (1.0d / Math.sqrt(mSq));
       return target.set(
-            a.x * mInv,
-            a.y * mInv);
+            v.x * mInv,
+            v.y * mInv);
    }
 
    /**
@@ -1912,7 +1927,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * of ( 1.0, 0.0 ) is ( 0.0, 1.0 ) . The 2D counterpart to
     * the 3D vector's cross product.
     *
-    * @param a
+    * @param v
     *           the input vector
     * @param target
     *           the output vector
@@ -1920,9 +1935,11 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @see Vec2#perpendicularCCW(Vec2, Vec2)
     * @see Vec3#cross(Vec3, Vec3, Vec3)
     */
-   public static Vec2 perpendicular ( final Vec2 a, final Vec2 target ) {
+   public static Vec2 perpendicular (
+         final Vec2 v,
+         final Vec2 target ) {
 
-      return Vec2.perpendicularCCW(a, target);
+      return Vec2.perpendicularCCW(v, target);
    }
 
    /**
@@ -2177,8 +2194,10 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @see Random#uniform(float, float)
     * @see Math#sqrt(double)
     */
-   public static Vec2 randomPolar ( final Random rng,
-         final float rhoMin, final float rhoMax,
+   public static Vec2 randomPolar (
+         final Random rng,
+         final float rhoMin,
+         final float rhoMax,
          final Vec2 target ) {
 
       final float x = rng.uniform(-1.0f, 1.0f);
@@ -2208,7 +2227,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @return the random vector
     * @see Vec2#randomPolar(Random, float, float, Vec2)
     */
-   public static Vec2 randomPolar ( final Random rng, final Vec2 target ) {
+   public static Vec2 randomPolar (
+         final Random rng,
+         final Vec2 target ) {
 
       return Vec2.randomPolar(rng, 1.0f, 1.0f, target);
    }
@@ -2308,7 +2329,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @return the rejection
     * @see Vec2#reject(Vec2, Vec2, Vec2, Vec2)
     */
-   public static float reject ( final Vec2 a, final Vec2 b,
+   public static float reject (
+         final Vec2 a,
+         final Vec2 b,
          final Vec2 target ) {
 
       final float bSq = Vec2.magSq(b);
@@ -2339,7 +2362,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @see Vec2#project(Vec2, Vec2, Vec2)
     * @see Vec2#sub(Vec2, Vec2, Vec2)
     */
-   public static float reject ( final Vec2 a, final Vec2 b,
+   public static float reject (
+         final Vec2 a,
+         final Vec2 b,
          final Vec2 target,
          final Vec2 projected ) {
 
@@ -2361,7 +2386,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @return the rescaled vector
     * @see Vec2#rescale(Vec2, float, Vec2, Vec2)
     */
-   public static Vec2 rescale ( final Vec2 v, final float scalar,
+   public static Vec2 rescale (
+         final Vec2 v,
+         final float scalar,
          final Vec2 target ) {
 
       // return Vec2.rescale(v, scalar, target, new Vec2());
@@ -2399,7 +2426,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @see Vec2#normalize(Vec2, Vec2)
     * @see Vec2#mult(Vec2, float, Vec2)
     */
-   public static Vec2 rescale ( final Vec2 v, final float scalar,
+   public static Vec2 rescale (
+         final Vec2 v,
+         final float scalar,
          final Vec2 target, final Vec2 normalized ) {
 
       if (scalar == 0.0f) {
@@ -2537,7 +2566,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @return the rounded vector
     * @see Math#round(float)
     */
-   public static Vec2 round ( final Vec2 v, final Vec2 target ) {
+   public static Vec2 round (
+         final Vec2 v,
+         final Vec2 target ) {
 
       return target.set(
             Math.round(v.x),
@@ -2661,7 +2692,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           the target vector
     * @return the truncation
     */
-   public static Vec2 trunc ( final Vec2 v, final Vec2 target ) {
+   public static Vec2 trunc (
+         final Vec2 v,
+         final Vec2 target ) {
 
       return target.set(
             (int) v.x,
@@ -2934,7 +2967,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @see Utils#toFloat(boolean)
     */
    @Chainable
-   public Vec2 set ( final boolean x, final boolean y ) {
+   public Vec2 set (
+         final boolean x,
+         final boolean y ) {
 
       this.x = Utils.toFloat(x);
       this.y = Utils.toFloat(y);
@@ -2951,7 +2986,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @return this vector
     */
    @Chainable
-   public Vec2 set ( final float x, final float y ) {
+   public Vec2 set (
+         final float x,
+         final float y ) {
 
       this.x = x;
       this.y = y;
@@ -3063,7 +3100,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
             .append(Utils.toFixed(this.x, places))
             .append(", y: ")
             .append(Utils.toFixed(this.y, places))
-            .append(" }")
+            .append(' ').append('}')
             .toString();
    }
 

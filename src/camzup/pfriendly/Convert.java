@@ -1,12 +1,13 @@
 package camzup.pfriendly;
 
+import camzup.core.ITransform;
 import camzup.core.Quaternion;
-import camzup.core.Transform;
 import camzup.core.Transform2;
 import camzup.core.Transform3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
+
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PVector;
@@ -28,7 +29,7 @@ public abstract class Convert {
     */
    public static PMatrix2D toPMatrix2D (
          final Transform2 tr2,
-         final Transform.Order order ) {
+         final ITransform.Order order ) {
 
       return Convert.toPMatrix2D(tr2, order, (PMatrix2D) null);
    }
@@ -46,7 +47,7 @@ public abstract class Convert {
     */
    public static PMatrix2D toPMatrix2D (
          final Transform2 tr2,
-         final Transform.Order order,
+         final ITransform.Order order,
          PMatrix2D target ) {
 
       if (target == null) {
@@ -179,7 +180,7 @@ public abstract class Convert {
     * @return the transform
     */
    public static PMatrix3D toPMatrix3D ( final Transform3 tr3,
-         final Transform.Order order ) {
+         final ITransform.Order order ) {
 
       return Convert.toPMatrix3D(tr3, order, (PMatrix3D) null);
    }
@@ -197,7 +198,7 @@ public abstract class Convert {
     */
    public static PMatrix3D toPMatrix3D (
          final Transform3 tr3,
-         final Transform.Order order,
+         final ITransform.Order order,
 
          PMatrix3D target ) {
 

@@ -8,6 +8,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import camzup.core.IUtils;
 import camzup.core.Transform;
 import camzup.core.Utils;
 import camzup.core.Vec2;
+
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PMatrix3D;
@@ -82,12 +84,12 @@ public interface IUp {
    /**
     * Assumes height of 1080 . 1080 / 2 = 540 .
     */
-   public static final float DEFAULT_HALF_HEIGHT = 540;
+   public static final float DEFAULT_HALF_HEIGHT = 540.0f;
 
    /**
     * Assumes width of 1920 . 1920 / 2 = 960 .
     */
-   public static final float DEFAULT_HALF_WIDTH = 960;
+   public static final float DEFAULT_HALF_WIDTH = 960.0f;
 
    /**
     * Color for the lines connected the forehandle, coord and
@@ -354,10 +356,10 @@ public interface IUp {
       final Shape shp = gv.getOutline();
 
       /*
-       * Acquire a special iterator, run through it in a while
-       * loop, and deal with 5 possible cases: the 'pen' moves to
-       * a point; the 'pen' draws a straight line to the next
-       * point; the 'pen' draws a curved line where the fore- and
+       * Acquire an iterator, run through it in a while loop, and
+       * deal with 5 possible cases: the 'pen' moves to a point;
+       * the 'pen' draws a straight line to the next point; the
+       * 'pen' draws a curved line where the fore- and
        * rear-handles are the same; the 'pen' draws a curved line
        * with different fore- and rear-handles; the pen lifts and
        * stops drawing.
@@ -412,7 +414,6 @@ public interface IUp {
                 * The handles will have no influence, so the previous
                 * knot's forehandle and the current knot's rear handle
                 * should lie on the straight line between them.
-                *
                 */
 
                final float linex = itrpts[0] * invScalar;
@@ -887,38 +888,73 @@ public interface IUp {
          target = new PMatrix3D();
       }
 
-      final float n00 = a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20
-            + a.m03 * b.m30;
-      final float n01 = a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21
-            + a.m03 * b.m31;
-      final float n02 = a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22
-            + a.m03 * b.m32;
-      final float n03 = a.m00 * b.m03 + a.m01 * b.m13 + a.m02 * b.m23
-            + a.m03 * b.m33;
-      final float n10 = a.m10 * b.m00 + a.m11 * b.m10 + a.m12 * b.m20
-            + a.m13 * b.m30;
-      final float n11 = a.m10 * b.m01 + a.m11 * b.m11 + a.m12 * b.m21
-            + a.m13 * b.m31;
-      final float n12 = a.m10 * b.m02 + a.m11 * b.m12 + a.m12 * b.m22
-            + a.m13 * b.m32;
-      final float n13 = a.m10 * b.m03 + a.m11 * b.m13 + a.m12 * b.m23
-            + a.m13 * b.m33;
-      final float n20 = a.m20 * b.m00 + a.m21 * b.m10 + a.m22 * b.m20
-            + a.m23 * b.m30;
-      final float n21 = a.m20 * b.m01 + a.m21 * b.m11 + a.m22 * b.m21
-            + a.m23 * b.m31;
-      final float n22 = a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22
-            + a.m23 * b.m32;
-      final float n23 = a.m20 * b.m03 + a.m21 * b.m13 + a.m22 * b.m23
-            + a.m23 * b.m33;
-      final float n30 = a.m30 * b.m00 + a.m31 * b.m10 + a.m32 * b.m20
-            + a.m33 * b.m30;
-      final float n31 = a.m30 * b.m01 + a.m31 * b.m11 + a.m32 * b.m21
-            + a.m33 * b.m31;
-      final float n32 = a.m30 * b.m02 + a.m31 * b.m12 + a.m32 * b.m22
-            + a.m33 * b.m32;
-      final float n33 = a.m30 * b.m03 + a.m31 * b.m13 + a.m32 * b.m23
-            + a.m33 * b.m33;
+      final float n00 = a.m00 * b.m00 +
+            a.m01 * b.m10 +
+            a.m02 * b.m20 +
+            a.m03 * b.m30;
+      final float n01 = a.m00 * b.m01 +
+            a.m01 * b.m11 +
+            a.m02 * b.m21 +
+            a.m03 * b.m31;
+      final float n02 = a.m00 * b.m02 +
+            a.m01 * b.m12 +
+            a.m02 * b.m22 +
+            a.m03 * b.m32;
+      final float n03 = a.m00 * b.m03 +
+            a.m01 * b.m13 +
+            a.m02 * b.m23 +
+            a.m03 * b.m33;
+
+      final float n10 = a.m10 * b.m00 +
+            a.m11 * b.m10 +
+            a.m12 * b.m20 +
+            a.m13 * b.m30;
+      final float n11 = a.m10 * b.m01 +
+            a.m11 * b.m11 +
+            a.m12 * b.m21 +
+            a.m13 * b.m31;
+      final float n12 = a.m10 * b.m02 +
+            a.m11 * b.m12 +
+            a.m12 * b.m22 +
+            a.m13 * b.m32;
+      final float n13 = a.m10 * b.m03 +
+            a.m11 * b.m13 +
+            a.m12 * b.m23 +
+            a.m13 * b.m33;
+
+      final float n20 = a.m20 * b.m00 +
+            a.m21 * b.m10 +
+            a.m22 * b.m20 +
+            a.m23 * b.m30;
+      final float n21 = a.m20 * b.m01 +
+            a.m21 * b.m11 +
+            a.m22 * b.m21 +
+            a.m23 * b.m31;
+      final float n22 = a.m20 * b.m02 +
+            a.m21 * b.m12 +
+            a.m22 * b.m22 +
+            a.m23 * b.m32;
+      final float n23 = a.m20 * b.m03 +
+            a.m21 * b.m13 +
+            a.m22 * b.m23 +
+            a.m23 * b.m33;
+
+      final float n30 = a.m30 * b.m00 +
+            a.m31 * b.m10 +
+            a.m32 * b.m20 +
+            a.m33 * b.m30;
+      final float n31 = a.m30 * b.m01 +
+            a.m31 * b.m11 +
+            a.m32 * b.m21 +
+            a.m33 * b.m31;
+      final float n32 = a.m30 * b.m02 +
+            a.m31 * b.m12 +
+            a.m32 * b.m22 +
+            a.m33 * b.m32;
+      final float n33 = a.m30 * b.m03 +
+            a.m31 * b.m13 +
+            a.m32 * b.m23 +
+            a.m33 * b.m33;
 
       target.m00 = n00;
       target.m01 = n01;
@@ -1057,9 +1093,10 @@ public interface IUp {
     * @return the perspective projection
     */
    public static PMatrix3D perspective (
-         final float fov, final float aspect,
-         final float near, final float far,
-
+         final float fov, 
+         final float aspect,
+         final float near, 
+         final float far,
          PMatrix3D target ) {
 
       if (target == null) {
@@ -1171,7 +1208,8 @@ public interface IUp {
     *           the matrix
     * @return the mutated matrix
     */
-   public static PMatrix3D rotateX ( final float radians,
+   public static PMatrix3D rotateX ( 
+         final float radians,
          PMatrix3D target ) {
 
       if (target == null) {
@@ -1358,7 +1396,9 @@ public interface IUp {
     *           number of decimal places
     * @return the string
     */
-   public static String toString ( final PMatrix3D m, final int places ) {
+   public static String toString ( 
+         final PMatrix3D m, 
+         final int places ) {
 
       return new StringBuilder(320)
             .append("{ elms: [\n ")

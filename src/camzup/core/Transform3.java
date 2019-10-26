@@ -198,8 +198,6 @@ public class Transform3 extends Transform {
     *           the forward axis
     * @param up
     *           the up axis
-    * @param translation
-    *           the translation
     * @param target
     *           the output transform
     * @return the transform
@@ -208,19 +206,13 @@ public class Transform3 extends Transform {
          final Vec3 right,
          final Vec3 forward,
          final Vec3 up,
-         final Vec3 translation,
          final Transform3 target ) {
-
-      // TODO: Needs testing.
-
-      target.moveTo(translation);
 
       target.rotPrev.set(target.rotation);
       Quaternion.fromAxes(right, forward, up, target.rotation);
-
-      // Input axes may not be normalized, so use this instead.
       target.updateAxes();
 
+      target.moveTo(0.0f, 0.0f, 0.0f);
       target.scaleTo(1.0f);
 
       return target;
@@ -246,10 +238,46 @@ public class Transform3 extends Transform {
     */
    public static Transform3 identity ( final Transform3 target ) {
 
-      return target.set(
-            0.0f, 0.0f, 0.0f,
-            1.0f, 0.0f, 0.0f, 0.0f,
-            1.0f, 1.0f, 1.0f);
+      target.location.reset();
+      target.locPrev.reset();
+
+      Vec3.one(target.scale);
+      Vec3.one(target.scalePrev);
+
+      target.rotation.reset();
+      target.rotPrev.reset();
+
+      Vec3.right(target.right);
+      Vec3.forward(target.forward);
+      Vec3.up(target.up);
+
+      return target;
+   }
+
+   /**
+    * Finds the inverse of the transform. When converting to a
+    * matrix, use the reverse transform order.
+    *
+    * @param source
+    *           the source transform
+    * @param target
+    *           the target transform
+    * @return the inverse
+    * @see Vec3#negate(Vec3, Vec3)
+    * @see Quaternion#inverse(Quaternion, Quaternion,
+    *      Quaternion)
+    * @see Vec3#div(float, Vec3, Vec3)
+    * @see Transform3#updateAxes()
+    */
+   public static Transform3 inverse (
+         final Transform3 source,
+         final Transform3 target ) {
+
+      Vec3.negate(source.location, target.location);
+      Quaternion.inverse(source.rotation, target.rotation);
+      Vec3.div(1.0f, source.scale, target.scale);
+      target.updateAxes();
+      return target;
    }
 
    /**
@@ -1223,7 +1251,9 @@ public class Transform3 extends Transform {
     * @see Vec3#isNonZero(Vec3)
     */
    @Chainable
-   public Transform3 scaleTo ( final Vec3 scaleNew, final float step ) {
+   public Transform3 scaleTo (
+         final Vec3 scaleNew,
+         final float step ) {
 
       if (Vec3.isNonZero(scaleNew)) {
          return this.scaleTo(
@@ -1318,7 +1348,10 @@ public class Transform3 extends Transform {
    @Chainable
    public Transform3 set ( final Transform3 source ) {
 
-      return this.set(source.location, source.rotation, source.scale);
+      return this.set(
+            source.location,
+            source.rotation,
+            source.scale);
    }
 
    /**
@@ -1351,7 +1384,7 @@ public class Transform3 extends Transform {
     * internal testing purposes, i.e., to compare how
     * transforms look in Blender (the control) vs. in the
     * library (the test).
-    * 
+    *
     * @param objVarName
     *           name of the object variable
     * @return the string

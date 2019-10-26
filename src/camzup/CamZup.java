@@ -1,10 +1,19 @@
 package camzup;
 
 import camzup.core.Mesh3;
+import camzup.core.Quaternion;
+import camzup.core.Random;
+import camzup.core.Transform2;
+import camzup.core.Transform3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
+import camzup.pfriendly.Convert;
 import processing.core.PApplet;
+import processing.core.PMatrix2D;
+import processing.core.PMatrix3D;
+import processing.core.PVector;
+import camzup.core.ITransform;
 
 @SuppressWarnings("unused")
 public class CamZup {
@@ -80,15 +89,32 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-      // final Random rng = new Random();
-      //
-      // final Curve3 curve1 = Curve3.random(rng, 10, -1, 1,
-      // false, new Curve3());
-      // final CurveEntity3 ce = new CurveEntity3();
-      // ce.appendCurve(curve1);
-      // ce.appendCurve(Curve3.circle(new Curve3(), new Vec3(),
-      // new Vec3()));
-      // System.out.println(ce.toBlenderCode());
+      Random rng = new Random();
+      Transform3 tr = new Transform3(
+            Vec3.randomCartesian(rng, 0.0f, 1.0f, new Vec3()),
+            Quaternion.random(rng, new Quaternion()),
+            Vec3.randomCartesian(rng, 0.1f, 1.0f, new Vec3()));
+      System.out.println(tr);
+      
+      Transform3 trInv = Transform3.inverse(tr, new Transform3());
+      
+      
+      Vec3 pt = Vec3.randomCartesian(rng, -1.0f, 1.0f, new Vec3());
+      System.out.println(pt);
+      Vec3 pttr = Transform3.multPoint(tr, pt, new Vec3());
+      System.out.println(pttr);
+      Vec3 pttrinv = Transform3.multPoint(trInv, pt, new Vec3());
+      System.out.println(pttrinv);
+      
+      System.out.print("\n");
+      PMatrix3D m = Convert.toPMatrix3D(tr, ITransform.Order.TSR);
+      PVector pv = Convert.toPVector(pt);
+      System.out.println(pv);
+      PVector pvtr = m.mult(pv, new PVector());
+      System.out.println(pvtr);
+      m.invert();
+      PVector pvtrinv = m.mult(pv, new PVector());
+      System.out.println(pvtrinv);
    }
 
    public static String version () {

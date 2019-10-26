@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 720 405">
-<rect id="background" x="0" y="0" width="720.0" height="405.0" stroke="none" fill="#fff7d5"></rect>
-<g transform="translate(360.0, 202.5) scale(1.0, -1.0) rotate(-0.0) translate(-0.0, -0.0)">
+<rect x="0" y="0" width="720.0" height="405.0" stroke="none" fill="#fff7d5"></rect>
+<g transform="translate(360.0000, 202.5000) scale(1.0000, -1.0000) rotate(-0.0) translate(-0.0000, -0.0000)">
 <g id="example" transform="translate(0.0, 0.0) rotate(0.0) scale(100.0, 100.0)">
-<g stroke-width="1.2" stroke-opacity="1.00" stroke="#808080" fill="none">
-<path d="M 0.6887 -0.6312 C 0.7013 -0.6679,0.6551 -0.7161,0.6168 -0.7229 C 0.2252 -0.7924,0.8959 0.5227,0.5024 0.4647 C 0.2851 0.4326,0.6425 -0.0258,0.5014 -0.1942 C 0.3731 -0.3473,-0.0091 -0.2522,-0.0408 -0.4494 C -0.0807 -0.6969,0.6072 -0.3941,0.6887 -0.6312 Z"></path></g>
+<g stroke-width="0.012" stroke-opacity="1.00" stroke="#808080" fill="none">
+<path d="M -0.3551 -0.1726 C -0.4226 -0.2671,-0.4848 -0.4155,-0.4236 -0.5141 C -0.3383 -0.6518,-0.0621 -0.4539,0.0187 -0.3136 C 0.2478 0.0835,-0.9437 0.4773,-0.6947 0.8624 C -0.3922 1.3304,0.6101 1.0293,0.9550 0.5915 C 1.2678 0.1944,-0.0611 0.2386,-0.3551 -0.1726 Z"></path></g>
 </g>
 </g>
 </svg>

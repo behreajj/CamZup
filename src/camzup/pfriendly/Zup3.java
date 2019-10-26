@@ -285,7 +285,9 @@ public class Zup3 extends Up3 {
     * @see Zup3#DEFAULT_REF_Y
     * @see Zup3#DEFAULT_REF_Z
     */
-   public void camera ( final Vec3 eye, final Vec3 center ) {
+   public void camera ( 
+         final Vec3 eye, 
+         final Vec3 center ) {
 
       this.camera(
             eye.x, eye.y, eye.z,
@@ -337,7 +339,10 @@ public class Zup3 extends Up3 {
    }
 
    @Override
-   public void normal ( final float nx, final float ny, final float nz ) {
+   public void normal ( 
+         final float nx, 
+         final float ny, 
+         final float nz ) {
 
       this.normalX = nx;
       this.normalY = ny;
@@ -394,7 +399,9 @@ public class Zup3 extends Up3 {
     *           the height in pixels
     */
    @Override
-   public void setSize ( final int iwidth, final int iheight ) {
+   public void setSize ( 
+         final int iwidth, 
+         final int iheight ) {
 
       super.setSize(iwidth, iheight);
       this.ortho();

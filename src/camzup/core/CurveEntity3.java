@@ -250,7 +250,7 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
     * internal testing purposes, i.e., to compare how curve
     * geometry looks in Blender (the control) vs. in the
     * library (the test).
-    * 
+    *
     * @return the string
     */
    public String toBlenderCode () {

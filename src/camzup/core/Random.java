@@ -96,7 +96,9 @@ public class Random extends java.util.Random implements IUtils {
     *           the upper bound
     * @return the random number
     */
-   public double uniform ( final double lower, final double upper ) {
+   public double uniform (
+         final double lower,
+         final double upper ) {
 
       final double r = this.nextDouble();
       return (1.0d - r) * lower + r * upper;
@@ -125,7 +127,9 @@ public class Random extends java.util.Random implements IUtils {
     *           the upper bound
     * @return the random number
     */
-   public float uniform ( final float lower, final float upper ) {
+   public float uniform (
+         final float lower,
+         final float upper ) {
 
       final float r = this.nextFloat();
       return (1.0f - r) * lower + r * upper;

@@ -254,7 +254,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.calcG = this.calcGi * IUtils.ONE_255;
       this.calcB = this.calcBi * IUtils.ONE_255;
 
-      this.calcAlpha = this.calcAi != 255;
+      this.calcAlpha = this.calcAi != 0xff;
    }
 
    @Override
@@ -1304,33 +1304,63 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.endShape(PConstants.OPEN);
    }
 
+   /**
+    * Finds a point on a curve according to a step in the range
+    * [0.0, 1.0].
+    * 
+    * @param ap0
+    *           the first anchor point
+    * @param cp0
+    *           the first control point
+    * @param cp1
+    *           the second control point
+    * @param ap1
+    *           the second anchor point
+    * @param step
+    *           the step
+    */
    @Override
    public float bezierPoint (
-         final float a,
-         final float b,
-         final float c,
-         final float d,
-         final float t ) {
+         final float ap0,
+         final float cp0,
+         final float cp1,
+         final float ap1,
+         final float step ) {
 
-      final float u = 1.0f - t;
-      return (a * u + b * (t + t + t)) * u * u
-            + (c * (u + u + u) + d * t) * t * t;
+      final float u = 1.0f - step;
+      return (ap0 * u + cp0 * (step + step + step)) * u * u
+            + (cp1 * (u + u + u) + ap1 * step) * step * step;
    }
 
+   /**
+    * Finds a tangent on a curve according to a step in the
+    * range [0.0, 1.0].
+    * 
+    * @param ap0
+    *           the first anchor point
+    * @param cp0
+    *           the first control point
+    * @param cp1
+    *           the second control point
+    * @param ap1
+    *           the second anchor point
+    * @param step
+    *           the step
+    */
    @Override
    public float bezierTangent (
-         final float a,
-         final float b,
-         final float c,
-         final float d,
-         final float t ) {
+         final float ap0,
+         final float cp0,
+         final float cp1,
+         final float ap1,
+         final float step ) {
 
-      final float t3 = t + t + t;
-      final float b2 = b + b;
-      final float ac = a + c;
-      final float bna = b - a;
+      final float t3 = step + step + step;
+      final float b2 = cp0 + cp0;
+      final float ac = ap0 + cp1;
+      final float bna = cp0 - ap0;
 
-      return t3 * t * (b2 + b + d - (ac + c + c)) +
+      return t3 * step * (b2 + cp0 + ap1 - (ac + cp1 + cp1)) +
             (t3 + t3) * (ac - b2) +
             (bna + bna + bna);
    }
@@ -2334,6 +2364,19 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.rotateZ(angle);
    }
 
+   /**
+    * Rotates the modelview matrix around an arbitrary axis by
+    * an angle in radians.
+    * 
+    * @param angle
+    *           the angle in radians
+    * @param xAxis
+    *           the axis x coordinate
+    * @param yAxis
+    *           the axis y coordinate
+    * @param zAxis
+    *           the axis z coordinate
+    */
    @Override
    public void rotate (
          final float angle,
@@ -2696,7 +2739,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void text (
          final char c,
-         final float x, float y ) {
+         final float x,
+         float y ) {
 
       if (this.textFont == null) {
          this.defaultFontOrDeath("text");
@@ -2727,6 +2771,18 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.textLineAlignImpl(this.textBuffer, 0, 1, x, y);
    }
 
+   /**
+    * Displays a character as text at a given coordinate.
+    * 
+    * @param c
+    *           the character
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param z
+    *           the z coordinate
+    */
    @Override
    public void text (
          final char c,
@@ -2737,18 +2793,47 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.text(c, x, y);
    }
 
+   /**
+    * Displays an array of characters as text at a given
+    * coordinate.
+    * 
+    * @param chars
+    *           the character array
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    */
    public void text (
-         final char[] arr,
+         final char[] chars,
          final float x,
          final float y ) {
 
-      this.text(arr, 0, arr.length, x, y);
+      this.text(chars, 0, chars.length, x, y);
    }
 
+   /**
+    * Displays an array of characters as text at a given
+    * coordinate.
+    * 
+    * @param chars
+    *           the character array
+    * @param start
+    *           the start index, inclusive
+    * @param stop
+    *           the stop index, exclusive
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    */
    @Override
-   public void text ( final char[] chars,
-         int start, final int stop,
-         final float x, float y ) {
+   public void text (
+         final char[] chars,
+         int start,
+         final int stop,
+         final float x,
+         float y ) {
 
       float high = 0;
       for (int i = start; i < stop; ++i) {
@@ -2794,54 +2879,158 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       }
    }
 
+   /**
+    * Displays an array of characters as text at a given
+    * coordinate.
+    * 
+    * @param chars
+    *           the character array
+    * @param start
+    *           the start index, inclusive
+    * @param stop
+    *           the stop index, exclusive
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param z
+    *           the z coordinate
+    */
    @Override
-   public void text ( final char[] chars,
-         final int start, final int stop,
-         final float x, final float y, final float z ) {
+   public void text (
+         final char[] chars,
+         final int start,
+         final int stop,
+         final float x,
+         final float y,
+         final float z ) {
 
       this.text(chars, start, stop, x, y);
    }
 
+   /**
+    * Displays a number as text. Registers up to four decimal
+    * places.
+    * 
+    * @param num
+    *           the number
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @see Utils#toFixed(float, int)
+    */
    @Override
    public void text (
          final float num,
-         final float x, final float y ) {
+         final float x,
+         final float y ) {
 
       this.text(Utils.toFixed(num, 4), x, y);
    }
 
+   /**
+    * Displays a real number as text. Registers up to four
+    * decimal places.
+    * 
+    * @param num
+    *           the number
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param z
+    *           the z coordinate
+    * @see Utils#toFixed(float, int)
+    */
    @Override
    public void text (
          final float num,
-         final float x, final float y, final float z ) {
+         final float x,
+         final float y,
+         final float z ) {
 
       this.text(num, x, y);
    }
 
+   /**
+    * Displays a number as text.
+    * 
+    * @param num
+    *           the number
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param z
+    *           the z coordinate
+    */
    @Override
    public void text (
          final int num,
-         final float x, final float y, final float z ) {
+         final float x,
+         final float y,
+         final float z ) {
 
       this.text(num, x, y);
    }
 
+   /**
+    * Displays a string at a coordinate.
+    * 
+    * @param str
+    *           the string
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    */
    @Override
    public void text (
          final String str,
-         final float x, final float y ) {
+         final float x,
+         final float y ) {
 
       this.text(str.toCharArray(), x, y);
    }
 
+   /**
+    * Displays a string at a coordinate.
+    * 
+    * @param str
+    *           the string
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param z
+    *           the z coordinate
+    */
    @Override
    public void text (
          final String str,
-         final float x, final float y, final float z ) {
+         final float x,
+         final float y,
+         final float z ) {
 
       this.text(str, x, y);
    }
 
+   /**
+    * Displays a string at a coordinate. This version of text
+    * is not supported, so only x1 and y1 are used.
+    * 
+    * @param str
+    *           the string
+    * @param x1
+    *           the x coordinate
+    * @param y1
+    *           the y coordinate
+    * @param x2
+    *           the second x coordinate
+    * @param y2
+    *           the second y coordinate
+    */
    @Override
    public void text (
          final String str,
@@ -2852,6 +3041,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.text(str, x1, y1);
    }
 
+   /**
+    * Sets the text mode to either shape or model.
+    * 
+    * @param mode
+    *           the text mode
+    */
    @Override
    public void textMode ( final int mode ) {
 
@@ -3300,6 +3495,14 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             m.m30, m.m31, m.m32, m.m33);
    }
 
+   /**
+    * Draws a vertex.
+    * 
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    */
    @Override
    public void vertex (
          final float x,
@@ -3310,6 +3513,16 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.textureU, this.textureV);
    }
 
+   /**
+    * Draws a vertex.
+    * 
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param z
+    *           the z coordinate
+    */
    @Override
    public void vertex (
          final float x,
@@ -3321,6 +3534,18 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.textureU, this.textureV);
    }
 
+   /**
+    * Draws a vertex.
+    * 
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param u
+    *           the u texture coordinate
+    * @param v
+    *           the v texture coordinate
+    */
    @Override
    public void vertex (
          final float x,
@@ -3335,6 +3560,20 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.vertexImpl(x, y, 0.0f, u, v);
    }
 
+   /**
+    * Draws a vertex.
+    * 
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param z
+    *           the z coordinate
+    * @param u
+    *           the u texture coordinate
+    * @param v
+    *           the v texture coordinate
+    */
    @Override
    public void vertex (
          final float x,

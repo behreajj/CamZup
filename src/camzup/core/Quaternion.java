@@ -395,16 +395,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          super();
       }
 
-      // @Override
-      // public Quaternion apply (
-      // final Quaternion origin,
-      // final Quaternion dest,
-      // final Float step,
-      // final Quaternion target ) {
-      //
-      // return applyUnclamped(origin, dest, step, target);
-      // }
-
       /**
        * Slerps between two quaternions by a step.
        *
@@ -2855,7 +2845,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             .append(Utils.toFixed(this.real, places))
             .append(", imag: ")
             .append(this.imag.toString(places))
-            .append(" }")
+            .append(' ').append('}')
             .toString();
    }
 
@@ -2877,9 +2867,10 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param w
     *           the real value
     */
-   public void w ( final float w ) {
+   public Quaternion w ( final float w ) {
 
       this.real = w;
+      return this;
    }
 
    /**
@@ -2897,10 +2888,12 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *
     * @param x
     *           the x value
+    * @return this quaternion
     */
-   public void x ( final float x ) {
+   public Quaternion x ( final float x ) {
 
       this.imag.x = x;
+      return this;
    }
 
    /**
@@ -2918,10 +2911,12 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *
     * @param y
     *           the y value
+    * @return this quaternion
     */
-   public void y ( final float y ) {
+   public Quaternion y ( final float y ) {
 
       this.imag.y = y;
+      return this;
    }
 
    /**
@@ -2939,9 +2934,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *
     * @param z
     *           the z value
+    * @return this quaternion
     */
-   public void z ( final float z ) {
+   public Quaternion z ( final float z ) {
 
       this.imag.z = z;
+      return this;
    }
 }

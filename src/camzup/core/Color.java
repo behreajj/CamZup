@@ -113,7 +113,9 @@ public class Color extends Vec4 {
        * @see Float#compare(float, float)
        */
       @Override
-      public int compare ( final Color a, final Color b ) {
+      public int compare ( 
+            final Color a, 
+            final Color b ) {
 
          Color.rgbaToHsba(a, this.aHsb);
          Color.rgbaToHsba(b, this.bHsb);
@@ -194,7 +196,9 @@ public class Color extends Vec4 {
        * @see Float#compare(float, float)
        */
       @Override
-      public int compare ( final Color a, final Color b ) {
+      public int compare ( 
+            final Color a, 
+            final Color b ) {
 
          Color.rgbaToHsba(a, this.aHsb);
          Color.rgbaToHsba(b, this.bHsb);
@@ -227,7 +231,9 @@ public class Color extends Vec4 {
        * @see Float#compare(float, float)
        */
       @Override
-      public int compare ( final Color a, final Color b ) {
+      public int compare ( 
+            final Color a, 
+            final Color b ) {
 
          Color.rgbaToHsba(a, this.aHsb);
          Color.rgbaToHsba(b, this.bHsb);
@@ -1124,7 +1130,9 @@ public class Color extends Vec4 {
     * @return the color
     * @see IUtils#ONE_255
     */
-   public static Color fromHex ( final int c, final Color target ) {
+   public static Color fromHex ( 
+         final int c, 
+         final Color target ) {
 
       return target.set(
             (c >> 0x10 & 0xff) * IUtils.ONE_255,

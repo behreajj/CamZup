@@ -188,7 +188,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
        * @see Vec3#dot(Vec3, Vec3)
        */
       @Override
-      public int compare ( final Vec3 a, final Vec3 b ) {
+      public int compare (
+            final Vec3 a,
+            final Vec3 b ) {
 
          Vec3.sub(a, this.locus, this.aDiff);
          Vec3.sub(b, this.locus, this.bDiff);
@@ -228,7 +230,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
        * @return the comparison
        */
       @Override
-      public int compare ( final Vec3 a, final Vec3 b ) {
+      public int compare (
+            final Vec3 a,
+            final Vec3 b ) {
 
          return a.z > b.z ? 1
                : a.z < b.z ? -1
@@ -3150,7 +3154,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param z
     *           the z component
     */
-   public Vec3 ( final Vec2 v2, final float z ) {
+   public Vec3 (
+         final Vec2 v2,
+         final float z ) {
 
       super(3);
       this.set(v2, z);
@@ -3430,7 +3436,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return this vector
     */
    @Chainable
-   public Vec3 set ( final Vec2 v2, final float z ) {
+   public Vec3 set (
+         final Vec2 v2,
+         final float z ) {
 
       return this.set(v2.x, v2.y, z);
    }
@@ -3504,7 +3512,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
             .append(Utils.toFixed(this.y, places))
             .append(", z: ")
             .append(Utils.toFixed(this.z, places))
-            .append(" }")
+            .append(' ').append('}')
             .toString();
    }
 }

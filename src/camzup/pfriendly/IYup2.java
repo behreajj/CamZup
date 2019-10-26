@@ -179,7 +179,8 @@ public interface IYup2 extends IUp {
     *           the curve entities
     * @return the string
     */
-   public static String toSvgString ( final IYup2 renderer,
+   public static String toSvgString ( 
+         final IYup2 renderer,
          final CurveEntity2... ces ) {
 
       final StringBuilder result = new StringBuilder();
@@ -254,7 +255,8 @@ public interface IYup2 extends IUp {
    public void arc (
          final Vec2 v,
          final float sz,
-         final float start, final float stop,
+         final float start, 
+         final float stop,
          final int mode );
 
    /**

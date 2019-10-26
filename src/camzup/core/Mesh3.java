@@ -302,7 +302,6 @@ public class Mesh3 extends Mesh {
 
       target.name = "Cube";
       return target.set(faces, coords, texCoords, normals);
-
    }
 
    /**
@@ -400,6 +399,41 @@ public class Mesh3 extends Mesh {
       return target;
    }
 
+   public static final Mesh3 plane ( final int rows, final int cols,
+         final Mesh3 target ) {
+
+      final float[] vs = new float[rows];
+      final float rowsToPrc = 1.0f / (rows - 1.0f);
+      for (int i = 0; i < rows; ++i) {
+         vs[i] = i * rowsToPrc;
+      }
+
+      final float[] us = new float[cols];
+      final float colsToPrc = 1.0f / (cols - 1.0f);
+      for (int j = 0; j < cols; ++j) {
+         us[j] = j * colsToPrc;
+      }
+
+      final int len = rows * cols;
+      final Vec3[] coords = new Vec3[len];
+      final Vec2[] texCoords = new Vec2[len];
+      final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
+      final int[][][] faces = new int[len * 2][3][2];
+
+      for (int k = 0, i = 0; i < rows; ++i) {
+         for (int j = 0; j < cols; ++j, ++k) {
+            texCoords[k] = new Vec2(us[j], us[i]);
+            final Vec2 uv = texCoords[k];
+            coords[k] = new Vec3(
+                  uv.x - 0.5f,
+                  uv.y - 0.5f,
+                  0.0f);
+         }
+      }
+
+      return target.set(faces, coords, texCoords, normals);
+   }
+
    /**
     * Generates a regular convex polygon.
     *
@@ -418,17 +452,13 @@ public class Mesh3 extends Mesh {
       final int seg = sectors < 3 ? 3 : sectors;
       final float toTheta = IUtils.TAU / seg;
 
-      Vec3[] coords;
-      Vec2[] texCoords;
-      Vec3[] normals;
-      int[][][] faces;
       final Vec2 uvCenter = Vec2.uvCenter(new Vec2());
       final Vec2 pureCoord = new Vec2();
 
-      coords = new Vec3[seg + 1];
-      texCoords = new Vec2[seg + 1];
-      faces = new int[seg][3][2];
-      normals = new Vec3[] { Vec3.up(new Vec3()) };
+      final Vec3[] coords = new Vec3[seg + 1];
+      final Vec2[] texCoords = new Vec2[seg + 1];
+      final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
+      final int[][][] faces = new int[seg][3][3];
 
       coords[0] = new Vec3();
       texCoords[0] = uvCenter;
@@ -509,118 +539,6 @@ public class Mesh3 extends Mesh {
             { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 } } };
 
       return target.set(faces, coords, texCoords, normals);
-   }
-
-   public static Mesh3 uvSphere ( final int longitudes, final int latitudes,
-         final float radius, final Mesh3 target ) {
-
-      /* Validate latitudes and longitudes. */
-      final int lats = latitudes < 3 ? 3 : latitudes;
-      final int lons = longitudes < 3 ? 3 : longitudes;
-      final int coordsLen = (lons + 1) * lats + 2;
-      final int coordsLast = coordsLen - 1;
-
-      final Vec3[] normals = new Vec3[coordsLen];
-      normals[0] = Vec3.up(new Vec3());
-      normals[coordsLast] = Vec3.down(new Vec3());
-
-      final Vec3[] coords = new Vec3[coordsLen];
-      coords[0] = Vec3.mult(radius, normals[0], new Vec3());
-      coords[coordsLast] = Vec3.mult(radius, normals[coordsLast], new Vec3());
-
-      final Vec2[] texCoords = new Vec2[coordsLen];
-      texCoords[0] = Vec2.forward(new Vec2());
-      texCoords[coordsLast] = new Vec2();
-
-      final float toU = 1.0f / lons;
-      final float toV = 1.0f / (lats + 1);
-      final float toTheta = IUtils.TAU / lons;
-
-      for (int lat = 0; lat < lats; lat++) {
-         final float v = (lat + 1) * toV;
-         final float phi = IUtils.PI * v;
-         final float cosPhi = (float) Math.cos(phi);
-         final float sinPhi = (float) Math.sin(phi);
-
-         final float rhoCosPhi = radius * cosPhi;
-         final float rhoSinPhi = radius * sinPhi;
-
-         final int preIndex = lat * (lons + 1) + 1;
-
-         for (int lon = 0; lon <= lons; lon++) {
-            final float u = lon * toU;
-            final float theta = (lon == lons ? 0.0f : lon) * toTheta;
-
-            // TODO: Precalculate in a separate loop?
-            final float cosTheta = (float) Math.cos(theta);
-            final float sinTheta = (float) Math.sin(theta);
-
-            final int index = lon + preIndex;
-
-            normals[index] = new Vec3(sinPhi * cosTheta, sinPhi * sinTheta,
-                  cosPhi);
-
-            coords[index] = new Vec3(rhoSinPhi * cosTheta, rhoSinPhi * sinTheta,
-                  rhoCosPhi);
-
-            texCoords[index] = new Vec2(u, 1.0f - v);
-         }
-      }
-
-      final int[][][] faces = new int[coordsLen + coordsLen][3][3];
-      int i = 0;
-
-      /* Top Cap */
-      for (int lon = 0; lon < lons; lon++) {
-         final int index0 = lon + 2;
-         final int index1 = lon + 1;
-
-         faces[i][0] = new int[] { index0, index0, index0 };
-         faces[i][1] = new int[] { index1, index1, index1 };
-         faces[i][2] = new int[] { 0, 0, 0 };
-
-         i++;
-      }
-
-      /* Middle */
-      for (int lat = 0; lat < lats - 1; lat++) {
-         for (int lon = 0; lon < lons; lon++) {
-            final int current = lon + lat * (lons + 1) + 1;
-            final int next = current + lons + 1;
-
-            final int index1 = current + 1;
-            final int index2 = next + 1;
-
-            faces[i][0] = new int[] { current, current, current };
-            faces[i][1] = new int[] { index1, index1, index1 };
-            faces[i][2] = new int[] { index2, index2, index2 };
-
-            i++;
-
-            faces[i][0] = new int[] { current, current, current };
-            faces[i][1] = new int[] { index2, index2, index2 };
-            faces[i][2] = new int[] { next, next, next };
-
-            i++;
-         }
-      }
-
-      /* Bottom Cap */
-      for (int lon = 0; lon < lons; lon++) {
-         final int index0 = coordsLen - 1;
-         final int index1 = coordsLen - (lon + 2) - 1;
-         final int index2 = coordsLen - (lon + 1) - 1;
-
-         faces[i][0] = new int[] { index0, index0, index0 };
-         faces[i][1] = new int[] { index1, index1, index1 };
-         faces[i][2] = new int[] { index2, index2, index2 };
-
-         i++;
-      }
-
-      target.name = "UV Sphere";
-      target.set(faces, coords, texCoords, normals);
-      return target;
    }
 
    /**
@@ -759,7 +677,10 @@ public class Mesh3 extends Mesh {
       for (int i = 0; i < len0; ++i) {
          final int len1 = this.faces[i].length;
          final Vert3[] verts = new Vert3[len1];
+         
          for (int j = 0; j < len1; ++j) {
+            
+            // TODO: Can this be replaced?
             verts[j] = this.getVertex(i, j, new Vert3());
          }
          result[i] = new Face3(verts);
@@ -796,15 +717,22 @@ public class Mesh3 extends Mesh {
    public Vert3[] getVertices () {
 
       final ArrayList < Vert3 > result = new ArrayList <>();
-      Vert3 trial;
+      Vert3 trial = new Vert3();
 
       final int len0 = this.faces.length;
       for (int i = 0; i < len0; ++i) {
 
-         final int len1 = this.faces[i].length;
+         final int[][] fs = this.faces[i];
+         final int len1 = fs.length;
          for (int j = 0; j < len1; ++j) {
 
-            trial = this.getVertex(i, j, new Vert3());
+            // trial = this.getVertex(i, j, new Vert3());
+            final int[] f = fs[j];
+            trial.set(
+                  this.coords[f[0]],
+                  this.texCoords[f[1]],
+                  this.normals[f[2]]);
+
             if (!result.contains(trial)) {
                result.add(trial);
                trial = new Vert3();

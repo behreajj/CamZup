@@ -196,8 +196,6 @@ public class Transform2 extends Transform {
     *           the right axis
     * @param forward
     *           the forward axis
-    * @param translation
-    *           the translation
     * @param target
     *           the output transform
     * @return the transform
@@ -205,10 +203,7 @@ public class Transform2 extends Transform {
    public static Transform2 fromAxes (
          final Vec2 right,
          final Vec2 forward,
-         final Vec2 translation,
          final Transform2 target ) {
-
-      target.moveTo(translation);
 
       Vec2.normalize(right, target.right);
       Vec2.normalize(forward, target.forward);
@@ -221,6 +216,7 @@ public class Transform2 extends Transform {
       target.cosa = a;
       target.sina = c;
 
+      target.moveTo(0.0f, 0.0f);
       target.scaleTo(1.0f);
 
       return target;
@@ -246,7 +242,45 @@ public class Transform2 extends Transform {
     */
    public static Transform2 identity ( final Transform2 target ) {
 
-      return target.set(0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+      target.location.reset();
+      target.locPrev.reset();
+
+      Vec2.one(target.scale);
+      Vec2.one(target.scalePrev);
+
+      target.cosa = 1.0f;
+      target.sina = 0.0f;
+      target.rotation = 0.0f;
+      target.rotPrev = 0.0f;
+
+      Vec2.right(target.right);
+      Vec2.forward(target.forward);
+
+      return target;
+   }
+
+   /**
+    * Finds the inverse of the transform. When converting to a
+    * matrix, use the reverse transform order.
+    *
+    * @param source
+    *           the source transform
+    * @param target
+    *           the target transform
+    * @return the inverse
+    * @see Vec2#negate(Vec2, Vec2)
+    * @see Vec2#div(float, Vec2, Vec2)
+    * @see Transform2#updateAxes()
+    */
+   public static Transform2 inverse (
+         final Transform2 source,
+         final Transform2 target ) {
+
+      Vec2.negate(source.location, target.location);
+      target.rotation = -source.rotation;
+      Vec2.div(1.0f, source.scale, target.scale);
+      target.updateAxes();
+      return target;
    }
 
    /**
@@ -319,7 +353,6 @@ public class Transform2 extends Transform {
          final Vec2 source,
          final Vec2 target ) {
 
-      // Vec2.rotateZ(source, t.rotation, target);
       Vec2.rotateZ(source, t.cosa, t.sina, target);
       return target;
    }
@@ -343,7 +376,6 @@ public class Transform2 extends Transform {
          final Vec2 source,
          final Vec2 target ) {
 
-      // Vec2.rotateZ(source, t.rotation, target);
       Vec2.rotateZ(source, t.cosa, t.sina, target);
       Vec2.mult(target, t.scale, target);
       Vec2.add(target, t.location, target);
@@ -370,7 +402,6 @@ public class Transform2 extends Transform {
          final Vec2 source,
          final Vec2 target ) {
 
-      // Vec2.rotateZ(source, t.rotation, target);
       Vec2.rotateZ(source, t.cosa, t.sina, target);
       Vec2.mult(target, t.scale, target);
 
@@ -408,6 +439,14 @@ public class Transform2 extends Transform {
       return Vec2.sub(t.scale, t.scalePrev, target);
    }
 
+   /*
+    * cosa needs to be initialized to 1, not 0, because cos(0)
+    * is 1 and because multPoint uses cosa and sina for
+    * efficiency; if the transform is not rotated before it is
+    * applied to a point, these may not have been updated by
+    * update axes.
+    */
+
    /**
     * Sets the default easing function used by the transform.
     *
@@ -420,14 +459,6 @@ public class Transform2 extends Transform {
          Transform2.EASING = easing;
       }
    }
-
-   /*
-    * cosa needs to be initialized to 1, not 0, because cos(0)
-    * is 1 and because multPoint uses cosa and sina for
-    * efficiency; if the transform is not rotated before it is
-    * applied to a point, these may not have been updated by
-    * update axes.
-    */
 
    /**
     * Stores the result of cos ( rotation ) when calculating
@@ -608,7 +639,10 @@ public class Transform2 extends Transform {
    @Override
    public Transform2 clone () {
 
-      return new Transform2(this.location, this.rotation, this.scale);
+      return new Transform2(
+            this.location,
+            this.rotation,
+            this.scale);
    }
 
    /**
@@ -701,18 +735,6 @@ public class Transform2 extends Transform {
       return this.rotPrev;
    }
 
-   /**
-    * Gets the transform's scale.
-    *
-    * @param target
-    *           the output vector
-    * @return the scale
-    */
-   public Vec2 getScale ( final Vec2 target ) {
-
-      return target.set(this.scale);
-   }
-
    // public Transform2 lookAt ( final Vec2 dest, final Vec2
    // dir ) {
    //
@@ -738,6 +760,18 @@ public class Transform2 extends Transform {
    // this.rotation = Vec2.headingSigned(this.right);
    // return this;
    // }
+
+   /**
+    * Gets the transform's scale.
+    *
+    * @param target
+    *           the output vector
+    * @return the scale
+    */
+   public Vec2 getScale ( final Vec2 target ) {
+
+      return target.set(this.scale);
+   }
 
    /**
     * Gets the transform's previous scale.
@@ -1048,7 +1082,9 @@ public class Transform2 extends Transform {
     * @see Vec2#isNonZero(Vec2)
     */
    @Chainable
-   public Transform2 scaleTo ( final Vec2 scaleNew, final float step ) {
+   public Transform2 scaleTo (
+         final Vec2 scaleNew,
+         final float step ) {
 
       if (Vec2.isNonZero(scaleNew)) {
          return this.scaleTo(scaleNew, step, Transform2.EASING.scale);
@@ -1126,7 +1162,10 @@ public class Transform2 extends Transform {
    @Chainable
    public Transform2 set ( final Transform2 source ) {
 
-      return this.set(source.location, source.rotation, source.scale);
+      return this.set(
+            source.location,
+            source.rotation,
+            source.scale);
    }
 
    /**

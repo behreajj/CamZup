@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Zup3 graphics3;
+Yup3 graphics3;
 
 Random rng = new Random();
 
@@ -19,14 +19,17 @@ Curve3 curve = Curve3.circle(0.0, 0.5, 4,
   new Curve3(), 
   new Vec3(), new Vec3());
 
+//Curve3 curve = Curve3.arc(0.0, HALF_PI, 0.75, Curve3.ArcMode.PIE, 
+//new Curve3(), new Vec3(), new Vec3());
+
 CurveEntity3 entity = new CurveEntity3("Example", transform, curve)
   .appendMaterial(material);
 
 void setup() {
-  size(720, 405, "camzup.pfriendly.Zup3");
+  size(720, 405, "camzup.pfriendly.Yup3");
   smooth(8);
   frameRate(1000);
-  graphics3 = (Zup3)getGraphics();
+  graphics3 = (Yup3)getGraphics();
 }
 
 void mouseReleased() {
@@ -41,7 +44,7 @@ void draw() {
   perspective();
   camera();
   graphics3.origin();
-  //graphics3.handles(entity, 0.005);
+  graphics3.handles(entity, 0.005);
   graphics3.shape(entity);
   float t = mouseX / (float)width;
 
@@ -52,10 +55,10 @@ void draw() {
   Vec3 tnpt = Vec3.add(pt, 
     Vec3.mult(tn, 50.0, new Vec3()), new Vec3());
   strokeWeight(10.0);
-  stroke(#0048ff);
+  stroke(#4800ff);
   graphics3.point(pt);
   strokeWeight(5.0);
-  stroke(#ff0048);
+  stroke(#00ff48);
 
   graphics3.point(tnpt);
 }

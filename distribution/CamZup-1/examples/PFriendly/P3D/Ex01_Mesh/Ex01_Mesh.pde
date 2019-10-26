@@ -1,7 +1,7 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-Zup3 graphics3;
+Yup3 graphics3;
 
 MaterialSolid mat = new MaterialSolid()
   .setStroke(false)
@@ -19,8 +19,8 @@ Mesh3 poly;
 MeshEntity3 entity;
 
 void setup() {
-  size(720, 405, "camzup.pfriendly.Zup3");
-  graphics3 = (Zup3)getGraphics();
+  size(720, 405, "camzup.pfriendly.Yup3");
+  graphics3 = (Yup3)getGraphics();
 
   poly = Mesh3.uvSphere(32, 16, 0.5, new Mesh3());
   //poly = Mesh3.cube(new Mesh3());
@@ -34,7 +34,7 @@ void setup() {
 }
 
 void draw() {
-  transform.rotateBy(0.01, new Vec3(0.0, 0.0, 1.0));
+  transform.rotateBy(0.01, new Vec3(0.0, 1.0, 1.0));
 
   surface.setTitle(Utils.toFixed(frameRate, 1));
   background(#fff7d5);

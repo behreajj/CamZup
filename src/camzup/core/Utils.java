@@ -1647,7 +1647,9 @@ public abstract class Utils implements IUtils {
     *           the desired number of decimal places
     * @return the string
     */
-   public static String toFixed ( final float value, final int places ) {
+   public static String toFixed (
+         final float value,
+         final int places ) {
 
       /* Value is Not a number (NaN). */
       if (value != value) {
@@ -1655,12 +1657,10 @@ public abstract class Utils implements IUtils {
       }
 
       if (places < 0) {
-         // return Integer.toString(Math.round(value));
          return Integer.toString((int) value);
       }
 
       if (places < 1) {
-         // return Float.toString(Math.round(value));
          return Float.toString((int) value);
       }
 

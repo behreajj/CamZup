@@ -43,7 +43,7 @@ void mouseReleased() {
       -1.0, 1.0, true, curve);
   } else if (mouseButton == RIGHT) {
     String result = graphics.toSvgString(entity);
-    saveStrings("data/mesh.svg", new String[] { result });
+    saveStrings("data/curve.svg", new String[] { result });
     println("Saved to svg.");
   }
 }

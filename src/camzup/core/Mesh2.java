@@ -338,7 +338,8 @@ public class Mesh2 extends Mesh {
     *           the polygon type
     * @return the rectangle
     */
-   public static final Mesh2 rectangle ( final Mesh2 target,
+   public static final Mesh2 rectangle (
+         final Mesh2 target,
          final PolyType poly ) {
 
       target.name = "Rectangle";
@@ -531,7 +532,10 @@ public class Mesh2 extends Mesh {
       for (int i = 0; i < len0; ++i) {
          final int len1 = this.faces[i].length;
          final Vert2[] verts = new Vert2[len1];
+         
          for (int j = 0; j < len1; ++j) {
+            
+            // TODO: Can this be replaced?
             verts[j] = this.getVertex(i, j, new Vert2());
          }
          result[i] = new Face2(verts);
@@ -555,8 +559,10 @@ public class Mesh2 extends Mesh {
          final int j,
          final Vert2 target ) {
 
-      return target.set(this.coords[this.faces[i][j][0]],
-            this.texCoords[this.faces[i][j][1]]);
+      final int[] f = this.faces[i][j];
+      return target.set(
+            this.coords[f[0]],
+            this.texCoords[f[1]]);
    }
 
    /**
@@ -567,15 +573,21 @@ public class Mesh2 extends Mesh {
    public Vert2[] getVertices () {
 
       final ArrayList < Vert2 > result = new ArrayList <>();
-      Vert2 trial;
+      Vert2 trial = new Vert2();
 
       final int len0 = this.faces.length;
       for (int i = 0; i < len0; ++i) {
 
-         final int len1 = this.faces[i].length;
+         final int[][] fs = this.faces[i];
+         final int len1 = fs.length;
          for (int j = 0; j < len1; ++j) {
 
-            trial = this.getVertex(i, j, new Vert2());
+            // trial = this.getVertex(i, j, new Vert2());
+            final int[] f = fs[j];
+            trial.set(
+                  this.coords[f[0]],
+                  this.texCoords[f[1]]);
+
             if (!result.contains(trial)) {
                result.add(trial);
                trial = new Vert2();
@@ -679,7 +691,7 @@ public class Mesh2 extends Mesh {
       final int facesLen = this.faces.length;
       final StringBuilder result = new StringBuilder();
 
-      /**
+      /*
        * Append a comment listing the number of coordinates,
        * texture coordinates, normals and faces.
        */
