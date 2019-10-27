@@ -651,8 +651,6 @@ public abstract class Simplex {
       Vec4 g3 = Simplex.ZERO_4;
       Vec4 g4 = Simplex.ZERO_4;
 
-      // final float t0 = 0.5f - x0 * x0 - y0 * y0 - z0 * z0 - w0
-      // * w0;
       final float t0 = 0.5f - (x0 * x0 + y0 * y0 + z0 * z0 + w0 * w0);
       if (t0 >= 0.0f) {
          t20 = t0 * t0;
@@ -661,8 +659,6 @@ public abstract class Simplex {
          n0 = t40 * (g0.x * x0 + g0.y * y0 + g0.z * z0 + g0.w * w0);
       }
 
-      // final float t1 = 0.5f - x1 * x1 - y1 * y1 - z1 * z1 - w1
-      // * w1;
       final float t1 = 0.5f - (x1 * x1 + y1 * y1 + z1 * z1 + w1 * w1);
       if (t1 >= 0.0f) {
          t21 = t1 * t1;
@@ -671,8 +667,6 @@ public abstract class Simplex {
          n1 = t41 * (g1.x * x1 + g1.y * y1 + g1.z * z1 + g1.w * w1);
       }
 
-      // final float t2 = 0.5f - x2 * x2 - y2 * y2 - z2 * z2 - w2
-      // * w2;
       final float t2 = 0.5f - (x2 * x2 + y2 * y2 + z2 * z2 + w2 * w2);
       if (t2 >= 0.0f) {
          t22 = t2 * t2;
@@ -681,8 +675,6 @@ public abstract class Simplex {
          n2 = t42 * (g2.x * x2 + g2.y * y2 + g2.z * z2 + g2.w * w2);
       }
 
-      // final float t3 = 0.5f - x3 * x3 - y3 * y3 - z3 * z3 - w3
-      // * w3;
       final float t3 = 0.5f - (x3 * x3 + y3 * y3 + z3 * z3 + w3 * w3);
       if (t3 >= 0.0f) {
          t23 = t3 * t3;
@@ -691,8 +683,6 @@ public abstract class Simplex {
          n3 = t43 * (g3.x * x3 + g3.y * y3 + g3.z * z3 + g3.w * w3);
       }
 
-      // final float t4 = 0.5f - x4 * x4 - y4 * y4 - z4 * z4 - w4
-      // * w4;
       final float t4 = 0.5f - (x4 * x4 + y4 * y4 + z4 * z4 + w4 * w4);
       if (t4 >= 0.0f) {
          t24 = t4 * t4;
@@ -903,7 +893,6 @@ public abstract class Simplex {
       Vec3 g2 = Simplex.ZERO_3;
       Vec3 g3 = Simplex.ZERO_3;
 
-      // final float t0 = 0.5f - x0 * x0 - y0 * y0 - z0 * z0;
       final float t0 = 0.5f - (x0 * x0 + y0 * y0 + z0 * z0);
       if (t0 >= 0.0f) {
          g0 = Simplex.gradient3(i, j, k, seed);
@@ -912,7 +901,6 @@ public abstract class Simplex {
          n0 = t40 * (g0.x * x0 + g0.y * y0 + g0.z * z0);
       }
 
-      // final float t1 = 0.5f - x1 * x1 - y1 * y1 - z1 * z1;
       final float t1 = 0.5f - (x1 * x1 + y1 * y1 + z1 * z1);
       if (t1 >= 0.0f) {
          g1 = Simplex.gradient3(i + i1, j + j1, k + k1, seed);
@@ -921,7 +909,6 @@ public abstract class Simplex {
          n1 = t41 * (g1.x * x1 + g1.y * y1 + g1.z * z1);
       }
 
-      // final float t2 = 0.5f - x2 * x2 - y2 * y2 - z2 * z2;
       final float t2 = 0.5f - (x2 * x2 + y2 * y2 + z2 * z2);
       if (t2 >= 0.0f) {
          g2 = Simplex.gradient3(i + i2, j + j2, k + k2, seed);
@@ -930,7 +917,6 @@ public abstract class Simplex {
          n2 = t42 * (g2.x * x2 + g2.y * y2 + g2.z * z2);
       }
 
-      // final float t3 = 0.5f - x3 * x3 - y3 * y3 - z3 * z3;
       final float t3 = 0.5f - (x3 * x3 + y3 * y3 + z3 * z3);
       if (t3 >= 0.0f) {
          g3 = Simplex.gradient3(i + 1, j + 1, k + 1, seed);
@@ -1062,7 +1048,6 @@ public abstract class Simplex {
       Vec2 g1 = Simplex.ZERO_2;
       Vec2 g2 = Simplex.ZERO_2;
 
-      // final float t0 = 0.5f - x0 * x0 - y0 * y0;
       final float t0 = 0.5f - (x0 * x0 + y0 * y0);
       if (t0 >= 0.0f) {
          g0 = Simplex.gradient2(i, j, seed);
@@ -1071,7 +1056,6 @@ public abstract class Simplex {
          n0 = t40 * (g0.x * x0 + g0.y * y0);
       }
 
-      // final float t1 = 0.5f - x1 * x1 - y1 * y1;
       final float t1 = 0.5f - (x1 * x1 + y1 * y1);
       if (t1 >= 0.0f) {
          g1 = Simplex.gradient2(i + i1, j + j1, seed);
@@ -1080,7 +1064,6 @@ public abstract class Simplex {
          n1 = t41 * (g1.x * x1 + g1.y * y1);
       }
 
-      // final float t2 = 0.5f - x2 * x2 - y2 * y2;
       final float t2 = 0.5f - (x2 * x2 + y2 * y2);
       if (t2 >= 0.0f) {
          g2 = Simplex.gradient2(i + 1, j + 1, seed);
@@ -1224,6 +1207,25 @@ public abstract class Simplex {
       return Simplex.eval(v.x, v.y, v.z, v.w, seed, deriv);
    }
 
+   /**
+    * Fractal Brownian Motion. For a given number of octaves,
+    * sums the output value of a noise function. Per each
+    * iteration, the output is multiplied by the amplitude;
+    * amplitude is multiplied by gain; frequency is multiplied
+    * by lacunarity.
+    * 
+    * @param v
+    *           the input coordinate
+    * @param seed
+    *           the seed
+    * @param octaves
+    *           the number of iterations
+    * @param lacunarity
+    *           the lacunarity
+    * @param gain
+    *           the gain
+    * @return the result
+    */
    public static float fbm (
          final Vec2 v,
          final int seed,
@@ -1234,6 +1236,27 @@ public abstract class Simplex {
       return Simplex.fbm(v, seed, octaves, lacunarity, gain, null);
    }
 
+   /**
+    * Fractal Brownian Motion. For a given number of octaves,
+    * sums the output value of a noise function. Per each
+    * iteration, the output is multiplied by the amplitude;
+    * amplitude is multiplied by gain; frequency is multiplied
+    * by lacunarity.
+    * 
+    * @param v
+    *           the input coordinate
+    * @param seed
+    *           the seed
+    * @param octaves
+    *           the number of iterations
+    * @param lacunarity
+    *           the lacunarity
+    * @param gain
+    *           the gain
+    * @param deriv
+    *           the derivative
+    * @return the result
+    */
    public static float fbm (
          final Vec2 v,
          final int seed,
@@ -1253,8 +1276,7 @@ public abstract class Simplex {
 
       for (int i = 0; i < octaves; ++i) {
          Vec2.mult(v, freq, vin);
-         final float nz = Simplex.eval(vin, seed, nxy);
-         sum += nz * amp;
+         sum += Simplex.eval(vin, seed, nxy) * amp;
          Vec2.mult(nxy, amp, nxy);
          Vec2.add(deriv, nxy, deriv);
          freq *= lacunarity;
@@ -1264,6 +1286,25 @@ public abstract class Simplex {
       return sum;
    }
 
+   /**
+    * Fractal Brownian Motion. For a given number of octaves,
+    * sums the output value of a noise function. Per each
+    * iteration, the output is multiplied by the amplitude;
+    * amplitude is multiplied by gain; frequency is multiplied
+    * by lacunarity.
+    * 
+    * @param v
+    *           the input coordinate
+    * @param seed
+    *           the seed
+    * @param octaves
+    *           the number of iterations
+    * @param lacunarity
+    *           the lacunarity
+    * @param gain
+    *           the gain
+    * @return the result
+    */
    public static float fbm (
          final Vec3 v,
          final int seed,
@@ -1274,6 +1315,27 @@ public abstract class Simplex {
       return Simplex.fbm(v, seed, octaves, lacunarity, gain, null);
    }
 
+   /**
+    * Fractal Brownian Motion. For a given number of octaves,
+    * sums the output value of a noise function. Per each
+    * iteration, the output is multiplied by the amplitude;
+    * amplitude is multiplied by gain; frequency is multiplied
+    * by lacunarity.
+    * 
+    * @param v
+    *           the input coordinate
+    * @param seed
+    *           the seed
+    * @param octaves
+    *           the number of iterations
+    * @param lacunarity
+    *           the lacunarity
+    * @param gain
+    *           the gain
+    * @param deriv
+    *           the derivative
+    * @return the result
+    */
    public static float fbm (
          final Vec3 v,
          final int seed,
@@ -1293,8 +1355,7 @@ public abstract class Simplex {
 
       for (int i = 0; i < octaves; ++i) {
          Vec3.mult(v, freq, vin);
-         final float nw = Simplex.eval(vin, seed, nxyz);
-         sum += nw * amp;
+         sum += Simplex.eval(vin, seed, nxyz) * amp;
          Vec3.mult(nxyz, amp, nxyz);
          Vec3.add(deriv, nxyz, deriv);
          freq *= lacunarity;
@@ -1304,6 +1365,25 @@ public abstract class Simplex {
       return sum;
    }
 
+   /**
+    * Fractal Brownian Motion. For a given number of octaves,
+    * sums the output value of a noise function. Per each
+    * iteration, the output is multiplied by the amplitude;
+    * amplitude is multiplied by gain; frequency is multiplied
+    * by lacunarity.
+    * 
+    * @param v
+    *           the input coordinate
+    * @param seed
+    *           the seed
+    * @param octaves
+    *           the number of iterations
+    * @param lacunarity
+    *           the lacunarity
+    * @param gain
+    *           the gain
+    * @return the result
+    */
    public static float fbm (
          final Vec4 v,
          final int seed,
@@ -1314,6 +1394,27 @@ public abstract class Simplex {
       return Simplex.fbm(v, seed, octaves, lacunarity, gain, null);
    }
 
+   /**
+    * Fractal Brownian Motion. For a given number of octaves,
+    * sums the output value of a noise function. Per each
+    * iteration, the output is multiplied by the amplitude;
+    * amplitude is multiplied by gain; frequency is multiplied
+    * by lacunarity.
+    * 
+    * @param v
+    *           the input coordinate
+    * @param seed
+    *           the seed
+    * @param octaves
+    *           the number of iterations
+    * @param lacunarity
+    *           the lacunarity
+    * @param gain
+    *           the gain
+    * @param deriv
+    *           the derivative
+    * @return the result
+    */
    public static float fbm (
          final Vec4 v,
          final int seed,
@@ -1333,8 +1434,7 @@ public abstract class Simplex {
 
       for (int i = 0; i < octaves; ++i) {
          Vec4.mult(v, freq, vin);
-         final float nv = Simplex.eval(vin, seed, nxyzw);
-         sum += nv * amp;
+         sum += Simplex.eval(vin, seed, nxyzw) * amp;
          Vec4.mult(nxyzw, amp, nxyzw);
          Vec4.add(deriv, nxyzw, deriv);
          freq *= lacunarity;
@@ -1483,7 +1583,6 @@ public abstract class Simplex {
       Vec3 g2 = Simplex.ZERO_3;
       Vec3 g3 = Simplex.ZERO_3;
 
-      // final float t0 = 0.5f - x0 * x0 - y0 * y0 - z0 * z0;
       final float t0 = 0.5f - (x0 * x0 + y0 * y0 + z0 * z0);
       if (t0 >= 0.0f) {
          g0 = Simplex.gradRot3(
@@ -1495,7 +1594,6 @@ public abstract class Simplex {
          n0 = t40 * (g0.x * x0 + g0.y * y0 + g0.z * z0);
       }
 
-      // final float t1 = 0.5f - x1 * x1 - y1 * y1 - z1 * z1;
       final float t1 = 0.5f - (x1 * x1 + y1 * y1 + z1 * z1);
       if (t1 >= 0.0f) {
          g1 = Simplex.gradRot3(
@@ -1507,7 +1605,6 @@ public abstract class Simplex {
          n1 = t41 * (g1.x * x1 + g1.y * y1 + g1.z * z1);
       }
 
-      // final float t2 = 0.5f - x2 * x2 - y2 * y2 - z2 * z2;
       final float t2 = 0.5f - (x2 * x2 + y2 * y2 + z2 * z2);
       if (t2 >= 0.0f) {
          g2 = Simplex.gradRot3(
@@ -1519,7 +1616,6 @@ public abstract class Simplex {
          n2 = t42 * (g2.x * x2 + g2.y * y2 + g2.z * z2);
       }
 
-      // final float t3 = 0.5f - x3 * x3 - y3 * y3 - z3 * z3;
       final float t3 = 0.5f - (x3 * x3 + y3 * y3 + z3 * z3);
       if (t3 >= 0.0f) {
          g3 = Simplex.gradRot3(
@@ -1667,7 +1763,6 @@ public abstract class Simplex {
       Vec2 g1 = Simplex.ZERO_2;
       Vec2 g2 = Simplex.ZERO_2;
 
-      // final float t0 = 0.5f - x0 * x0 - y0 * y0;
       final float t0 = 0.5f - (x0 * x0 + y0 * y0);
       if (t0 >= 0.0f) {
          g0 = Simplex.gradRot2(i, j, seed, cosa, sina, Simplex.ROT_2);
@@ -1676,7 +1771,6 @@ public abstract class Simplex {
          n0 = t40 * (g0.x * x0 + g0.y * y0);
       }
 
-      // final float t1 = 0.5f - x1 * x1 - y1 * y1;
       final float t1 = 0.5f - (x1 * x1 + y1 * y1);
       if (t1 >= 0.0f) {
          g1 = Simplex.gradRot2(i + i1, j + j1, seed, cosa, sina, Simplex.ROT_2);
@@ -1685,7 +1779,6 @@ public abstract class Simplex {
          n1 = t41 * (g1.x * x1 + g1.y * y1);
       }
 
-      // final float t2 = 0.5f - x2 * x2 - y2 * y2;
       final float t2 = 0.5f - (x2 * x2 + y2 * y2);
       if (t2 >= 0.0f) {
          g2 = Simplex.gradRot2(i + 1, j + 1, seed, cosa, sina, Simplex.ROT_2);

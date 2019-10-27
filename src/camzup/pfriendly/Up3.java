@@ -157,11 +157,15 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
    /**
     * Draws a single Bezier curve.
-    * 
-    * @param ap0 the first anchor point
-    * @param cp0 the first control point
-    * @param cp1 the second control point
-    * @param ap1 the second anchor point
+    *
+    * @param ap0
+    *           the first anchor point
+    * @param cp0
+    *           the first control point
+    * @param cp1
+    *           the second control point
+    * @param ap1
+    *           the second anchor point
     */
    @Override
    public void bezier (
@@ -181,10 +185,13 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     * Draws a bezier vertex with three vectors: the following
     * control point, the rear control point of the ensuing
     * point, and the ensuing anchor point.
-    * 
-    * @param cp0 the first control point
-    * @param cp1 the second control point
-    * @param ap1 the next anchor point
+    *
+    * @param cp0
+    *           the first control point
+    * @param cp1
+    *           the second control point
+    * @param ap1
+    *           the next anchor point
     */
    @Override
    public void bezierVertex (
@@ -200,7 +207,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
    /**
     * Draws a 3D cube of a given size.
-    * 
+    *
     * @param size
     *           the size
     */
@@ -212,7 +219,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
    /**
     * Draws a 3D box with the given width, height and depth.
-    * 
+    *
     * @param w
     *           the width
     * @param h
@@ -393,7 +400,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    /**
     * Sets the camera to a location, looking at a center, with
     * a reference up direction.
-    * 
+    *
     * @param eye
     *           the eye location
     * @param center
@@ -414,7 +421,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
    /**
     * Draws a curve between four vectors.
-    * 
+    *
     * @param a
     *           the first vector
     * @param b
@@ -437,7 +444,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
    /**
     * Draws a curve vertex to a vector.
-    * 
+    *
     * @param a
     *           the vector.
     */
@@ -449,7 +456,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    /**
     * Initialize a directional light with a color and a
     * direction.
-    * 
+    *
     * @param color
     *           the color
     * @param xDir
@@ -476,7 +483,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    /**
     * Initialize a directional light with a color and a
     * direction.
-    * 
+    *
     * @param color
     *           the color
     * @param dir
@@ -498,7 +505,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    /**
     * Initialize a directional light with a color and a
     * direction.
-    * 
+    *
     * @param color
     *           the color
     * @param xDir
@@ -525,7 +532,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    /**
     * Initialize a directional light with a color and a
     * direction.
-    * 
+    *
     * @param color
     *           the color
     * @param dir
@@ -965,6 +972,19 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       this.scale(dim.x, dim.y, dim.z);
    }
 
+   /**
+    * Sets the renderer camera's 3D location.
+    *
+    * @param v
+    *           the vector
+    */
+   public void setLoc ( final Vec3 v ) {
+
+      this.cameraX = v.x;
+      this.cameraY = v.y;
+      this.cameraZ = v.z;
+   }
+
    public void shape ( final CurveEntity3 entity ) {
 
       final LinkedList < Curve3 > curves = entity.curves;
@@ -1113,12 +1133,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     * that text is 2D, not 3D, in nature.
     */
    @Override
-   public void text ( 
-         final char[] chars, 
-         final int start, 
+   public void text (
+         final char[] chars,
+         final int start,
          final int stop,
-         final float x, 
-         final float y, 
+         final float x,
+         final float y,
          final float z ) {
 
       this.text(chars, start, stop, x, y);
@@ -1130,9 +1150,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     * that text is 2D, not 3D, in nature.
     */
    @Override
-   public void text ( 
-         final String str, 
-         final float x, 
+   public void text (
+         final String str,
+         final float x,
          final float y,
          final float z ) {
 
@@ -1158,7 +1178,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     * @param order
     *           the transform order
     */
-   public void transform ( 
+   public void transform (
          final Transform3 tr3,
          final Transform.Order order ) {
 

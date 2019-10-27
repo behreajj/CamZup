@@ -172,7 +172,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           is the renderer primary
     */
    public YupJ2 (
-         final int width, 
+         final int width,
          final int height,
          final PApplet parent,
          final String path,
@@ -2115,6 +2115,18 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    }
 
    /**
+    * Sets the renderer camera's location.
+    *
+    * @param v
+    *           the vector
+    */
+   public void setLoc ( final Vec2 v ) {
+
+      this.cameraX = v.x;
+      this.cameraY = v.y;
+   }
+
+   /**
     * Sets the renderer's affine transform matrix to the
     * supplied arguments.
     *
@@ -2712,6 +2724,26 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.text(str.toCharArray(), x, y);
    }
 
+   // @Override
+   // protected void colorCalc ( final int argb ) {
+   // this.calcColor = argb;
+   // this.calcAi = argb >> 0x18 & 0xff;
+   // this.calcRi = argb >> 0x10 & 0xff;
+   // this.calcGi = argb >> 0x8 & 0xff;
+   // this.calcBi = argb & 0xff;
+   // this.calcA = this.calcAi * IUtils.ONE_255;
+   // this.calcR = this.calcRi * IUtils.ONE_255;
+   // this.calcG = this.calcGi * IUtils.ONE_255;
+   // this.calcB = this.calcBi * IUtils.ONE_255;
+   // this.calcAlpha = this.calcAi != 255;
+   // }
+
+   // @Override
+   // protected void colorCalc ( final int rgb, final float
+   // alpha ) {
+   // this.colorCalcARGB(rgb, alpha);
+   // }
+
    /**
     * Displays a string of text at a 2D location, ignoring the
     * z coordinate.
@@ -2735,26 +2767,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       PGraphics.showDepthWarningXYZ("text");
       this.text(str, x, y);
    }
-
-   // @Override
-   // protected void colorCalc ( final int argb ) {
-   // this.calcColor = argb;
-   // this.calcAi = argb >> 0x18 & 0xff;
-   // this.calcRi = argb >> 0x10 & 0xff;
-   // this.calcGi = argb >> 0x8 & 0xff;
-   // this.calcBi = argb & 0xff;
-   // this.calcA = this.calcAi * IUtils.ONE_255;
-   // this.calcR = this.calcRi * IUtils.ONE_255;
-   // this.calcG = this.calcGi * IUtils.ONE_255;
-   // this.calcB = this.calcBi * IUtils.ONE_255;
-   // this.calcAlpha = this.calcAi != 255;
-   // }
-
-   // @Override
-   // protected void colorCalc ( final int rgb, final float
-   // alpha ) {
-   // this.colorCalcARGB(rgb, alpha);
-   // }
 
    /**
     * Displaying a string of text in a box is not supported by

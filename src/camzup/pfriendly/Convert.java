@@ -179,7 +179,8 @@ public abstract class Convert {
     *           the transform order
     * @return the transform
     */
-   public static PMatrix3D toPMatrix3D ( final Transform3 tr3,
+   public static PMatrix3D toPMatrix3D (
+         final Transform3 tr3,
          final ITransform.Order order ) {
 
       return Convert.toPMatrix3D(tr3, order, (PMatrix3D) null);
@@ -352,14 +353,14 @@ public abstract class Convert {
       final float jy = source.m11;
       final float kz = source.m22;
 
-      final float w = (float) (Math.sqrt(Utils.max(0.0f, 1.0f + ix + jy + kz))
-            * 0.5d);
-      float x = (float) (Math.sqrt(Utils.max(0.0f, 1.0f + ix - jy - kz))
-            * 0.5d);
-      float y = (float) (Math.sqrt(Utils.max(0.0f, 1.0f - ix + jy - kz))
-            * 0.5d);
-      float z = (float) (Math.sqrt(Utils.max(0.0f, 1.0f - ix - jy + kz))
-            * 0.5d);
+      final float w = (float) (Math.sqrt(
+            Utils.max(0.0f, 1.0f + ix + jy + kz)) * 0.5d);
+      float x = (float) (Math.sqrt(
+            Utils.max(0.0f, 1.0f + ix - jy - kz)) * 0.5d);
+      float y = (float) (Math.sqrt(
+            Utils.max(0.0f, 1.0f - ix + jy - kz)) * 0.5d);
+      float z = (float) (Math.sqrt(
+            Utils.max(0.0f, 1.0f - ix - jy + kz)) * 0.5d);
 
       x = Math.copySign(x, source.m21 - source.m12);
       y = Math.copySign(y, source.m02 - source.m20);

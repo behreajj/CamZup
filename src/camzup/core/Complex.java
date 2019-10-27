@@ -320,6 +320,18 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return target.set(z.real, -z.imag);
    }
 
+   public static Complex cosh ( final float radians, final Complex target ) {
+      // TODO: Implement
+      // cosh(a) := mult(add(pow(e, r), pow(e, mult(r, -1.0))), 0.5)
+      return target;
+   }
+
+   public static Complex sinh ( final float radians, final Complex target ) {
+      // TODO: Implement
+      // sinh(a) := mult(sub(pow(e, r), pow(e, mult(r, -1.0))), 0.5)
+      return target;
+   }
+
    /**
     * Divides one complex number by another.
     *

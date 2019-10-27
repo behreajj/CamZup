@@ -831,6 +831,18 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    }
 
    /**
+    * Sets the renderer camera's location.
+    *
+    * @param v
+    *           the vector
+    */
+   public void setLoc ( final Vec2 v ) {
+
+      this.cameraX = v.x;
+      this.cameraY = v.y;
+   }
+
+   /**
     * Set size is the last function called by size,
     * createGraphics, makeGraphics, etc. when initializing the
     * graphics renderer. Therefore, any additional values that

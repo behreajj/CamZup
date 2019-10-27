@@ -2290,13 +2290,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       // float zNorm;
       final Vec3 i = quat.imag;
 
-      /*
-       * Arguably, the test should be approximately equal, not
-       * exactly equal, to one, due to float imprecision. However,
-       * if the mag is not exactly one, the quaternion is not a
-       * unit quaternion, and normalization should be attempted
-       * regardless of floating point error.
-       */
       if (Math.abs(1.0d - mSq) < Utils.EPSILON) {
          final double mInv = 1.0d / Math.sqrt(mSq);
          wNorm = quat.real * mInv;

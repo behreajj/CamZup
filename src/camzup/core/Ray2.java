@@ -239,7 +239,7 @@ public class Ray2 extends Ray {
             .append(this.origin.toString(places))
             .append(", dir: ")
             .append(this.dir.toString(places))
-            .append(" }")
+            .append(' ').append('}')
             .toString();
    }
 }

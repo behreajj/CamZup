@@ -103,8 +103,10 @@ public class CamZup {
       System.out.println(pt);
       Vec3 pttr = Transform3.multPoint(tr, pt, new Vec3());
       System.out.println(pttr);
-      Vec3 pttrinv = Transform3.multPoint(trInv, pt, new Vec3());
-      System.out.println(pttrinv);
+      
+      // Do you need a multPoint inv?
+//      Vec3 pttrinv = Transform3.invMultPoint(tr, pt, new Vec3());
+//      System.out.println(pttrinv);
       
       System.out.print("\n");
       PMatrix3D m = Convert.toPMatrix3D(tr, ITransform.Order.TSR);
