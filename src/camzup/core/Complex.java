@@ -320,16 +320,22 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return target.set(z.real, -z.imag);
    }
 
-   public static Complex cosh ( final float radians, final Complex target ) {
-      // TODO: Implement
-      // cosh(a) := mult(add(pow(e, r), pow(e, mult(r, -1.0))), 0.5)
-      return target;
-   }
+   /**
+    * Finds the cosine of a complex number.
+    *
+    * @param z
+    *           the complex number
+    * @param target
+    *           the output complex number
+    * @return the cosine
+    */
+   public static Complex cos (
+         final Complex z,
+         final Complex target ) {
 
-   public static Complex sinh ( final float radians, final Complex target ) {
-      // TODO: Implement
-      // sinh(a) := mult(sub(pow(e, r), pow(e, mult(r, -1.0))), 0.5)
-      return target;
+      return target.set(
+            (float) (Math.cos(z.real) * Math.cosh(z.imag)),
+            (float) (-Math.sin(z.real) * Math.sinh(z.imag)));
    }
 
    /**
@@ -934,32 +940,6 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    }
 
    /**
-    * Rotates a complex number by an angle in radians.
-    *
-    * @param z
-    *           the input complex number
-    * @param radians
-    *           the angle in radians
-    * @param target
-    *           the output complex number
-    * @return the rotated complex number
-    * @see Math#cos(double)
-    * @see Math#sin(double)
-    */
-   public static Complex rotate (
-         final Complex z,
-         final float radians,
-         final Complex target ) {
-
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
-
-      return target.set(
-            cosa * z.real - sina * z.imag,
-            cosa * z.imag + sina * z.real);
-   }
-
-   /**
     * Sets the comparator function by which collections of
     * complex numbers are compared.
     *
@@ -972,6 +952,24 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       if (comparator != null) {
          Complex.COMPARATOR = comparator;
       }
+   }
+
+   /**
+    * Finds the sine of a complex number.
+    *
+    * @param z
+    *           the complex number
+    * @param target
+    *           the output complex number
+    * @return the sine
+    */
+   public static Complex sin (
+         final Complex z,
+         final Complex target ) {
+
+      return target.set(
+            (float) (Math.sin(z.real) * Math.cosh(z.imag)),
+            (float) (Math.cos(z.real) * Math.sinh(z.imag)));
    }
 
    /**

@@ -13,6 +13,7 @@ import processing.core.PApplet;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PVector;
+import camzup.core.Complex;
 import camzup.core.ITransform;
 
 @SuppressWarnings("unused")
@@ -90,33 +91,10 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       Random rng = new Random();
-      Transform3 tr = new Transform3(
-            Vec3.randomCartesian(rng, 0.0f, 1.0f, new Vec3()),
-            Quaternion.random(rng, new Quaternion()),
-            Vec3.randomCartesian(rng, 0.1f, 1.0f, new Vec3()));
-      System.out.println(tr);
       
-      Transform3 trInv = Transform3.inverse(tr, new Transform3());
-      
-      
-      Vec3 pt = Vec3.randomCartesian(rng, -1.0f, 1.0f, new Vec3());
-      System.out.println(pt);
-      Vec3 pttr = Transform3.multPoint(tr, pt, new Vec3());
-      System.out.println(pttr);
-      
-      // Do you need a multPoint inv?
-//      Vec3 pttrinv = Transform3.invMultPoint(tr, pt, new Vec3());
-//      System.out.println(pttrinv);
-      
-      System.out.print("\n");
-      PMatrix3D m = Convert.toPMatrix3D(tr, ITransform.Order.TSR);
-      PVector pv = Convert.toPVector(pt);
-      System.out.println(pv);
-      PVector pvtr = m.mult(pv, new PVector());
-      System.out.println(pvtr);
-      m.invert();
-      PVector pvtrinv = m.mult(pv, new PVector());
-      System.out.println(pvtrinv);
+      Complex z = new Complex(3, 4);
+      System.out.println(Complex.cos(z, new Complex()));
+      System.out.println(Complex.sin(z, new Complex()));
    }
 
    public static String version () {
