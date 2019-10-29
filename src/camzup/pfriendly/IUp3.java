@@ -15,7 +15,7 @@ public interface IUp3 extends IUp {
     * Factor by which a grid's count is scaled when dimensions
     * are not supplied.
     */
-   public final float GRID_FAC = 32.0f;
+   float GRID_FAC = 32.0f;
 
    /**
     * Gets a mouse within a unit square, where either component
@@ -31,7 +31,7 @@ public interface IUp3 extends IUp {
     *           the output vector
     * @return the mouse
     */
-   public static Vec3 mouse1 (
+   static Vec3 mouse1 (
          final PApplet parent,
          final IUp3 renderer,
          final Vec3 target ) {
@@ -59,7 +59,7 @@ public interface IUp3 extends IUp {
     * @param ap1
     *           the second anchor point
     */
-   public void bezier (
+   void bezier (
          final Vec3 ap0,
          final Vec3 cp0,
          final Vec3 cp1,
@@ -77,7 +77,7 @@ public interface IUp3 extends IUp {
     * @param ap1
     *           the next anchor point
     */
-   public void bezierVertex (
+   void bezierVertex (
          final Vec3 cp0,
          final Vec3 cp1,
          final Vec3 ap1 );
@@ -89,28 +89,28 @@ public interface IUp3 extends IUp {
     *           the output vector
     * @return the location
     */
-   public Vec3 getLoc ( Vec3 target );
+   Vec3 getLoc ( Vec3 target );
 
    /**
     * Gets the renderer's camera location on the x axis.
     *
     * @return the camera x
     */
-   public float getLocX ();
+   float getLocX ();
 
    /**
     * Gets the renderer's camera location on the y axis.
     *
     * @return the camera y
     */
-   public float getLocY ();
+   float getLocY ();
 
    /**
     * Gets the renderer's camera location on the z axis.
     *
     * @return the camera z
     */
-   public float getLocZ ();
+   float getLocZ ();
 
    /**
     * Sets a rendering hint in the OpenGL renderer.
@@ -118,7 +118,7 @@ public interface IUp3 extends IUp {
     * @param code
     *           the hint code
     */
-   public void hint ( final int code );
+   void hint ( final int code );
 
    /**
     * Draws a line between two coordinates.
@@ -136,7 +136,7 @@ public interface IUp3 extends IUp {
     * @param bz
     *           the destination z coordinate
     */
-   public void line (
+   void line (
          final float ax,
          final float ay,
          final float az,
@@ -152,7 +152,7 @@ public interface IUp3 extends IUp {
     * @param b
     *           the destination coordinate
     */
-   public void line ( final Vec3 a, final Vec3 b );
+   void line ( final Vec3 a, final Vec3 b );
 
    /**
     * Gets a mouse within a unit square, where either component
@@ -164,7 +164,7 @@ public interface IUp3 extends IUp {
     *           the output vector
     * @return the mouse
     */
-   public default Vec3 mouse1 (
+   default Vec3 mouse1 (
          final Vec3 target ) {
 
       return IUp3.mouse1(this.getParent(), this, target);
@@ -180,7 +180,7 @@ public interface IUp3 extends IUp {
     * @param z
     *           the z coordinate
     */
-   public void point (
+   void point (
          final float x,
          final float y,
          final float z );
@@ -191,7 +191,7 @@ public interface IUp3 extends IUp {
     * @param v
     *           the coordinate
     */
-   public default void point ( final Vec3 v ) {
+   default void point ( final Vec3 v ) {
 
       this.point(v.x, v.y, v.z);
    }
@@ -199,12 +199,12 @@ public interface IUp3 extends IUp {
    /**
     * Pop the last style off the end of the stack.
     */
-   public void popStyle ();
+   void popStyle ();
 
    /**
     * Push a style onto the end of the stack.
     */
-   public void pushStyle ();
+   void pushStyle ();
 
    /**
     * Draws a quadratic Bezier curve segment to the next anchor
@@ -215,11 +215,11 @@ public interface IUp3 extends IUp {
     * @param ap1
     *           the next anchor point
     */
-   public void quadraticVertex (
+   void quadraticVertex (
          final Vec3 cp,
          final Vec3 ap1 );
 
-   public default void ray (
+   default void ray (
          final float xOrigin,
          final float yOrigin,
          final float zOrigin,
@@ -236,7 +236,7 @@ public interface IUp3 extends IUp {
             dLen, 1.0f, 4.0f, 2.0f);
    }
 
-   public default void ray (
+   default void ray (
          final float xOrigin,
          final float yOrigin,
          final float zOrigin,
@@ -286,7 +286,7 @@ public interface IUp3 extends IUp {
       this.popStyle();
    }
 
-   public default void ray (
+   default void ray (
          final Ray3 ray,
          final float dLen ) {
 
@@ -298,7 +298,7 @@ public interface IUp3 extends IUp {
             dLen);
    }
 
-   public default void ray (
+   default void ray (
          final Ray3 ray,
          final float dLen,
          final float lnwgt,
@@ -320,7 +320,7 @@ public interface IUp3 extends IUp {
     *           the hexadecimal color
     */
    @Override
-   public void stroke ( final int c );
+   void stroke ( final int c );
 
    /**
     * Sets the renderer's stroke weight.
@@ -328,7 +328,7 @@ public interface IUp3 extends IUp {
     * @param sw
     *           the stroke weight
     */
-   public void strokeWeight ( final float sw );
+   void strokeWeight ( final float sw );
 
    /**
     * Adds another vertex to a shape between the beginShape and
@@ -337,5 +337,5 @@ public interface IUp3 extends IUp {
     * @param v
     *           the coordinate
     */
-   public void vertex ( final Vec3 v );
+   void vertex ( final Vec3 v );
 }

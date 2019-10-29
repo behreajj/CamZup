@@ -7,7 +7,6 @@ import camzup.core.Transform3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
-
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PVector;

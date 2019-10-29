@@ -532,9 +532,9 @@ public class Mesh2 extends Mesh {
       for (int i = 0; i < len0; ++i) {
          final int len1 = this.faces[i].length;
          final Vert2[] verts = new Vert2[len1];
-         
+
          for (int j = 0; j < len1; ++j) {
-            
+
             // TODO: Can this be replaced?
             verts[j] = this.getVertex(i, j, new Vert2());
          }

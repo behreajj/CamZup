@@ -80,7 +80,7 @@ public class Zup3 extends Up3 {
     *           is the renderer primary
     */
    public Zup3 (
-         final int width, 
+         final int width,
          final int height,
          final PApplet parent,
          final String path,
@@ -157,12 +157,12 @@ public class Zup3 extends Up3 {
     * @see Zup3#DEFAULT_REF_Z
     */
    public void camera (
-         final float eyeX, 
-         final float eyeY, 
+         final float eyeX,
+         final float eyeY,
          final float eyeZ,
-         
-         final float centerX, 
-         final float centerY, 
+
+         final float centerX,
+         final float centerY,
          final float centerZ ) {
 
       /*
@@ -204,16 +204,16 @@ public class Zup3 extends Up3 {
     */
    @Override
    public void camera (
-         final float eyeX, 
-         final float eyeY, 
+         final float eyeX,
+         final float eyeY,
          final float eyeZ,
-         
-         final float centerX, 
-         final float centerY, 
+
+         final float centerX,
+         final float centerY,
          final float centerZ,
-         
-         final float upX, 
-         final float upY, 
+
+         final float upX,
+         final float upY,
          final float upZ ) {
 
       // TODO: Is it problematic when the camera's look direction
@@ -285,8 +285,8 @@ public class Zup3 extends Up3 {
     * @see Zup3#DEFAULT_REF_Y
     * @see Zup3#DEFAULT_REF_Z
     */
-   public void camera ( 
-         final Vec3 eye, 
+   public void camera (
+         final Vec3 eye,
          final Vec3 center ) {
 
       this.camera(
@@ -339,9 +339,9 @@ public class Zup3 extends Up3 {
    }
 
    @Override
-   public void normal ( 
-         final float nx, 
-         final float ny, 
+   public void normal (
+         final float nx,
+         final float ny,
          final float nz ) {
 
       this.normalX = nx;
@@ -399,8 +399,8 @@ public class Zup3 extends Up3 {
     *           the height in pixels
     */
    @Override
-   public void setSize ( 
-         final int iwidth, 
+   public void setSize (
+         final int iwidth,
          final int iheight ) {
 
       super.setSize(iwidth, iheight);

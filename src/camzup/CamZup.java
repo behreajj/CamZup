@@ -1,20 +1,12 @@
 package camzup;
 
+import camzup.core.Complex;
 import camzup.core.Mesh3;
-import camzup.core.Quaternion;
 import camzup.core.Random;
-import camzup.core.Transform2;
-import camzup.core.Transform3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
-import camzup.pfriendly.Convert;
 import processing.core.PApplet;
-import processing.core.PMatrix2D;
-import processing.core.PMatrix3D;
-import processing.core.PVector;
-import camzup.core.Complex;
-import camzup.core.ITransform;
 
 @SuppressWarnings("unused")
 public class CamZup {
@@ -90,9 +82,9 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-      Random rng = new Random();
-      
-      Complex z = new Complex(3, 4);
+      final Random rng = new Random();
+
+      final Complex z = new Complex(3, 4);
       System.out.println(Complex.cos(z, new Complex()));
       System.out.println(Complex.sin(z, new Complex()));
    }

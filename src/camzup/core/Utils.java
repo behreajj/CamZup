@@ -15,7 +15,7 @@ public abstract class Utils implements IUtils {
     *           the parameter type
     */
    @FunctionalInterface
-   public static interface EasingFuncArr < T > {
+   public interface EasingFuncArr < T > {
 
       /**
        * Apply the function.
@@ -40,7 +40,7 @@ public abstract class Utils implements IUtils {
     *           the parameter type
     */
    @FunctionalInterface
-   public static interface EasingFuncObject < T >
+   public interface EasingFuncObject < T >
          extends QuadFunction < T, T, Float, T, T > {
 
       /**
@@ -73,7 +73,7 @@ public abstract class Utils implements IUtils {
     *           the parameter type
     */
    @FunctionalInterface
-   public static interface EasingFuncPrimitive < T >
+   public interface EasingFuncPrimitive < T >
          extends TriFunction < T, T, Float, T > {
 
       /**
@@ -597,7 +597,7 @@ public abstract class Utils implements IUtils {
     *           return type
     */
    @FunctionalInterface
-   public static interface QuadFunction < T, U, V, W, R > {
+   public interface QuadFunction < T, U, V, W, R > {
 
       /**
        * Apply the function.
@@ -655,7 +655,7 @@ public abstract class Utils implements IUtils {
     *           return type
     */
    @FunctionalInterface
-   public static interface TriFunction < T, U, V, R > {
+   public interface TriFunction < T, U, V, R > {
 
       /**
        * Apply the function.

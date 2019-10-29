@@ -1,59 +1,65 @@
 package camzup.pfriendly;
 
 import camzup.core.Entity;
-import camzup.pfriendly.Convert;
+import camzup.core.ITransform;
 import camzup.core.Transform3;
 import camzup.core.Vec3;
-import camzup.core.ITransform;
 
 public class Cam3 extends Entity {
-   
+
+   public final Up3 renderer;
+
    /**
     * The entity's transform.
     */
    public final Transform3 transform;
-   
-   public final Up3 renderer;
 
-   public Cam3(Up3 renderer) {
-      this("Cam3", new Transform3(), renderer);
-   }
-   
-   public Cam3(Transform3 transform, Up3 renderer) {
-      this("Cam3", transform, renderer);
-   }
-   
-   public Cam3(String name, Up3 renderer) {
-      this(name, new Transform3(), renderer);
-   }
-   
-   public Cam3(String name, Transform3 transform, Up3 renderer) {
+   public Cam3 ( final String name, final Transform3 transform,
+         final Up3 renderer ) {
+
       super(name);
       this.transform = transform;
       this.renderer = renderer;
    }
-   
-   public void look(final Vec3 dir, final Vec3 refUp) {
-      renderer.refUp.set(refUp);
-      
-      Vec3.normalize(dir, renderer.k);
-      Vec3.crossNorm(renderer.k, refUp, renderer.i);
-      Vec3.crossNorm(renderer.i, renderer.k, renderer.j);
+
+   public Cam3 ( final String name, final Up3 renderer ) {
+
+      this(name, new Transform3(), renderer);
+   }
+
+   public Cam3 ( final Transform3 transform, final Up3 renderer ) {
+
+      this("Cam3", transform, renderer);
+   }
+
+   public Cam3 ( final Up3 renderer ) {
+
+      this("Cam3", new Transform3(), renderer);
+   }
+
+   public void look ( final Vec3 dir, final Vec3 refUp ) {
+
+      this.renderer.refUp.set(refUp);
+
+      Vec3.normalize(dir, this.renderer.k);
+      Vec3.crossNorm(this.renderer.k, refUp, this.renderer.i);
+      Vec3.crossNorm(this.renderer.i, this.renderer.k, this.renderer.j);
       Transform3.fromAxes(
-            renderer.i, 
-            renderer.k,
-            renderer.j, 
-            transform);
-      
-      transform.moveTo(
-            renderer.cameraX, 
-            renderer.cameraY, 
-            renderer.cameraZ);
-      
-      Convert.toPMatrix3D(transform, ITransform.Order.RST, renderer.modelviewInv);
-      IUp.invert(renderer.modelviewInv, renderer.modelview);
-      renderer.camera.set(renderer.modelview);
-      renderer.cameraInv.set(renderer.modelviewInv);
-      renderer.updateProjmodelview();
+            this.renderer.i,
+            this.renderer.k,
+            this.renderer.j,
+            this.transform);
+
+      this.transform.moveTo(
+            this.renderer.cameraX,
+            this.renderer.cameraY,
+            this.renderer.cameraZ);
+
+      Convert.toPMatrix3D(this.transform, ITransform.Order.RST,
+            this.renderer.modelviewInv);
+      IUp.invert(this.renderer.modelviewInv, this.renderer.modelview);
+      this.renderer.camera.set(this.renderer.modelview);
+      this.renderer.cameraInv.set(this.renderer.modelviewInv);
+      this.renderer.updateProjmodelview();
    }
 }

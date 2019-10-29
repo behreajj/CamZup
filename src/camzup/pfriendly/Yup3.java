@@ -197,16 +197,16 @@ public class Yup3 extends Up3 {
     */
    @Override
    public void camera (
-         final float eyeX, 
-         final float eyeY, 
+         final float eyeX,
+         final float eyeY,
          final float eyeZ,
-         
-         final float centerX, 
-         final float centerY, 
+
+         final float centerX,
+         final float centerY,
          final float centerZ,
-         
-         final float upX, 
-         final float upY, 
+
+         final float upX,
+         final float upY,
          final float upZ ) {
 
       // TODO: Is it problematic when the camera's look direction

@@ -113,8 +113,8 @@ public class Color extends Vec4 {
        * @see Float#compare(float, float)
        */
       @Override
-      public int compare ( 
-            final Color a, 
+      public int compare (
+            final Color a,
             final Color b ) {
 
          Color.rgbaToHsba(a, this.aHsb);
@@ -157,7 +157,7 @@ public class Color extends Vec4 {
        * @return the comparison
        */
       @Override
-      public abstract int compare ( Color a, Color b );
+      public abstract int compare ( final Color a, final Color b );
 
       /**
        * Returns this class's simple name as a string
@@ -196,8 +196,8 @@ public class Color extends Vec4 {
        * @see Float#compare(float, float)
        */
       @Override
-      public int compare ( 
-            final Color a, 
+      public int compare (
+            final Color a,
             final Color b ) {
 
          Color.rgbaToHsba(a, this.aHsb);
@@ -231,8 +231,8 @@ public class Color extends Vec4 {
        * @see Float#compare(float, float)
        */
       @Override
-      public int compare ( 
-            final Color a, 
+      public int compare (
+            final Color a,
             final Color b ) {
 
          Color.rgbaToHsba(a, this.aHsb);
@@ -1060,8 +1060,8 @@ public class Color extends Vec4 {
          final Vec2 v,
          final Color target ) {
 
-      float r = 0.0f;
-      float g = 0.0f;
+      float r = 0.5f;
+      float g = 0.5f;
 
       final float mSq = Vec2.magSq(v);
 
@@ -1095,9 +1095,9 @@ public class Color extends Vec4 {
          final Vec3 v,
          final Color target ) {
 
-      float r = 0.0f;
-      float g = 0.0f;
-      float b = 0.0f;
+      float r = 0.5f;
+      float g = 0.5f;
+      float b = 0.5f;
 
       final float mSq = Vec3.magSq(v);
 
@@ -1130,8 +1130,8 @@ public class Color extends Vec4 {
     * @return the color
     * @see IUtils#ONE_255
     */
-   public static Color fromHex ( 
-         final int c, 
+   public static Color fromHex (
+         final int c,
          final Color target ) {
 
       return target.set(

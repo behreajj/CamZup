@@ -64,7 +64,7 @@ public interface IUpOgl extends IUp {
       /**
        * The integer code of the constant.
        */
-      private final int val;
+      private int val;
 
       /**
        * The enum constructor.
@@ -91,74 +91,74 @@ public interface IUpOgl extends IUp {
    /**
     * Default ambient light blue channel.
     */
-   public static final float DEFAULT_AMB_B = 0.2f;
+   float DEFAULT_AMB_B = 0.2f;
 
    /**
     * Default ambient light green channel.
     */
-   public static final float DEFAULT_AMB_G = 0.15f;
+   float DEFAULT_AMB_G = 0.15f;
 
    /**
     * Default ambient light red channel.
     */
-   public static final float DEFAULT_AMB_R = 0.125f;
+   float DEFAULT_AMB_R = 0.125f;
 
    /**
     * Default directional light blue channel.
     */
-   public static final float DEFAULT_LIGHT_B = 0.843137f;
+   float DEFAULT_LIGHT_B = 0.843137f;
 
    /**
     * Default directional light green channel.
     */
-   public static final float DEFAULT_LIGHT_G = 0.960784f;
+   float DEFAULT_LIGHT_G = 0.960784f;
 
    /**
     * Default directional light red channel.
     */
-   public static final float DEFAULT_LIGHT_R = 1.0f;
+   float DEFAULT_LIGHT_R = 1.0f;
 
    /**
     * Default specular light blue channel.
     */
-   public static final float DEFAULT_SPEC_B = 0.375f;
+   float DEFAULT_SPEC_B = 0.375f;
 
    /**
     * Default specular light green channel.
     */
-   public static final float DEFAULT_SPEC_G = 0.375f;
+   float DEFAULT_SPEC_G = 0.375f;
 
    /**
     * Default specular light red channel.
     */
-   public static final float DEFAULT_SPEC_R = 0.375f;
+   float DEFAULT_SPEC_R = 0.375f;
 
    /**
     * Gets the renderer's texture sampling.
     *
     * @return the texture sampling
     */
-   public Sampling getTextureSampling ();
+   Sampling getTextureSampling ();
 
    /**
     * Returns whether or not the renderer is 2D.
     *
     * @return the evaluation
     */
-   public abstract boolean is2D ();
+   boolean is2D ();
 
    /**
     * Returns whether or not the renderer is 3D.
     *
     * @return the evaluation
     */
-   public abstract boolean is3D ();
+   boolean is3D ();
 
    /**
     * Draws the world origin.
     */
    @Override
-   public void origin ();
+   void origin ();
 
    /**
     * Sets the renderer's texture sampling.
@@ -166,5 +166,5 @@ public interface IUpOgl extends IUp {
     * @param sampleType
     *           the sampling type
     */
-   public void setTextureSampling ( Sampling sampleType );
+   void setTextureSampling ( Sampling sampleType );
 }

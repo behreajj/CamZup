@@ -1213,7 +1213,7 @@ public abstract class Simplex {
     * iteration, the output is multiplied by the amplitude;
     * amplitude is multiplied by gain; frequency is multiplied
     * by lacunarity.
-    * 
+    *
     * @param v
     *           the input coordinate
     * @param seed
@@ -1242,7 +1242,7 @@ public abstract class Simplex {
     * iteration, the output is multiplied by the amplitude;
     * amplitude is multiplied by gain; frequency is multiplied
     * by lacunarity.
-    * 
+    *
     * @param v
     *           the input coordinate
     * @param seed
@@ -1292,7 +1292,7 @@ public abstract class Simplex {
     * iteration, the output is multiplied by the amplitude;
     * amplitude is multiplied by gain; frequency is multiplied
     * by lacunarity.
-    * 
+    *
     * @param v
     *           the input coordinate
     * @param seed
@@ -1321,7 +1321,7 @@ public abstract class Simplex {
     * iteration, the output is multiplied by the amplitude;
     * amplitude is multiplied by gain; frequency is multiplied
     * by lacunarity.
-    * 
+    *
     * @param v
     *           the input coordinate
     * @param seed
@@ -1371,7 +1371,7 @@ public abstract class Simplex {
     * iteration, the output is multiplied by the amplitude;
     * amplitude is multiplied by gain; frequency is multiplied
     * by lacunarity.
-    * 
+    *
     * @param v
     *           the input coordinate
     * @param seed
@@ -1400,7 +1400,7 @@ public abstract class Simplex {
     * iteration, the output is multiplied by the amplitude;
     * amplitude is multiplied by gain; frequency is multiplied
     * by lacunarity.
-    * 
+    *
     * @param v
     *           the input coordinate
     * @param seed

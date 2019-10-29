@@ -8,7 +8,6 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +19,6 @@ import camzup.core.IUtils;
 import camzup.core.Transform;
 import camzup.core.Utils;
 import camzup.core.Vec2;
-
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PMatrix3D;
@@ -38,170 +36,170 @@ public interface IUp {
    /**
     * Assumes 1920 / 1080, 1.7778 .
     */
-   public static final float DEFAULT_ASPECT = 1.7777778f;
+   float DEFAULT_ASPECT = 1.7777778f;
 
    /**
     * An off-white background color, 255, 245, 215 in RGB.
     */
-   public static final int DEFAULT_BKG_COLOR = 0xfffff7d5;
+   int DEFAULT_BKG_COLOR = 0xfffff7d5;
 
    /**
     * Default scalar by which the height of the sketch is
     * multiplied when the default camera function is called.
     * sqrt ( 3.0 ) / 2.0 .
     */
-   public static final float DEFAULT_CAM_DIST_FAC = IUtils.SQRT_3_2;
+   float DEFAULT_CAM_DIST_FAC = IUtils.SQRT_3_2;
 
    /**
     * The Processing default color max.
     */
-   public static final float DEFAULT_COLOR_MAX = 255.0f;
+   float DEFAULT_COLOR_MAX = 255.0f;
 
    /**
     * Default far-clip when orthographic or perspective
     * functions are called without the near and far arguments.
     * 1000.0 .
     */
-   public static final float DEFAULT_FAR_CLIP = 1000.0f;
+   float DEFAULT_FAR_CLIP = 1000.0f;
 
    /**
     * Default fill color, a light blue.
     */
-   public static final int DEFAULT_FILL_COLOR = 0xff9ad8e2;
+   int DEFAULT_FILL_COLOR = 0xff9ad8e2;
 
    /**
     * Default field of view for a perspective camera
     * projection. PI / 3.0 .
     */
-   public static final float DEFAULT_FOV = IUtils.THIRD_PI;
+   float DEFAULT_FOV = IUtils.THIRD_PI;
 
    /**
     * When a non-zero value is supplied, a font glyph is
     * flattened to line segments.
     */
-   public static float DEFAULT_GLYPH_DETAIL = 0.01f;
+   float DEFAULT_GLYPH_DETAIL = 0.01f;
 
    /**
     * Assumes height of 1080 . 1080 / 2 = 540 .
     */
-   public static final float DEFAULT_HALF_HEIGHT = 540.0f;
+   float DEFAULT_HALF_HEIGHT = 540.0f;
 
    /**
     * Assumes width of 1920 . 1920 / 2 = 960 .
     */
-   public static final float DEFAULT_HALF_WIDTH = 960.0f;
+   float DEFAULT_HALF_WIDTH = 960.0f;
 
    /**
     * Color for the lines connected the forehandle, coord and
     * rearhandle of a curve knot. Currently diagnostic only,
     * and so not adjustable.
     */
-   public static final int DEFAULT_HANDLE_COLOR = 0xff080708;
+   int DEFAULT_HANDLE_COLOR = 0xff080708;
 
    /**
     * Color for the curve knot coordinate. Currently diagnostic
     * only, and so not adjustable.
     */
-   public static final int DEFAULT_HANDLE_COORD_COLOR = 0xffff2828;
+   int DEFAULT_HANDLE_COORD_COLOR = 0xffff2828;
 
    /**
     * Color for the curve knot forehandle. Currently diagnostic
     * only, and so not adjustable.
     */
-   public static final int DEFAULT_HANDLE_FORE_COLOR = 0xff3772ff;
+   int DEFAULT_HANDLE_FORE_COLOR = 0xff3772ff;
 
    /**
     * Color for the curve knot rearhandle. Currently diagnostic
     * only, and so not adjustable.
     */
-   public static final int DEFAULT_HANDLE_REAR_COLOR = 0xfffdca40;
+   int DEFAULT_HANDLE_REAR_COLOR = 0xfffdca40;
 
    /**
     * Default color of the x axis when displayed by a camera's
     * origin function.
     */
-   public static final int DEFAULT_I_COLOR = 0xffff2929;
+   int DEFAULT_I_COLOR = 0xffff2929;
 
    /**
     * The scalar by which a sketch's dimensions are multiplied
     * to find an appropriate line length.
     */
-   public static final float DEFAULT_IJK_LINE_FAC = 0.35f;
+   float DEFAULT_IJK_LINE_FAC = 0.35f;
 
    /**
     * Default stroke-weight of an origin's lines.
     */
-   public static final float DEFAULT_IJK_SWEIGHT = 1.25f;
+   float DEFAULT_IJK_SWEIGHT = 1.25f;
 
    /**
     * Default color of the y axis when displayed by a camera's
     * origin function.
     */
-   public static final int DEFAULT_J_COLOR = 0xff00b333;
+   int DEFAULT_J_COLOR = 0xff00b333;
 
    /**
     * Default color of the z axis when displayed by a camera's
     * origin function.
     */
-   public static final int DEFAULT_K_COLOR = 0xff1475b3;
+   int DEFAULT_K_COLOR = 0xff1475b3;
 
    /**
     * Default camera location on the horizontal axis.
     */
-   public static final float DEFAULT_LOC_X = 0.0f;
+   float DEFAULT_LOC_X = 0.0f;
 
    /**
     * Default camera location on the vertical axis.
     */
-   public static final float DEFAULT_LOC_Y = 0.0f;
+   float DEFAULT_LOC_Y = 0.0f;
 
    /**
     * Default camera location on the depth axis.
     */
-   public static final float DEFAULT_LOC_Z = -623.53829072f;
+   float DEFAULT_LOC_Z = -623.53829072f;
 
    /**
     * Default near-clip when orthographic or perspective
     * functions are called without the near and far arguments.
     * 0.01 .
     */
-   public static final float DEFAULT_NEAR_CLIP = 0.01f;
+   float DEFAULT_NEAR_CLIP = 0.01f;
 
    /**
     * Default transform order when converting a transform to a
     * matrix. TRS is short for Translation-Rotation-Scale.
     */
-   public static final Transform.Order DEFAULT_ORDER = Transform.Order.TRS;
+   Transform.Order DEFAULT_ORDER = Transform.Order.TRS;
 
    /**
     * Default stroke color.
     */
-   public static final int DEFAULT_STROKE_COLOR = 0xff202020;
+   int DEFAULT_STROKE_COLOR = 0xff202020;
 
    /**
     * Default stroke weight.
     */
-   public static final float DEFAULT_STROKE_WEIGHT = 1.0f;
+   float DEFAULT_STROKE_WEIGHT = 1.0f;
 
    /**
     * Default text leading.
     */
-   public static float DEFAULT_TEXT_LEADING = 14.0f;
+   float DEFAULT_TEXT_LEADING = 14.0f;
 
    /**
     * Default text size.
     */
-   public static float DEFAULT_TEXT_SIZE = 12.0f;
+   float DEFAULT_TEXT_SIZE = 12.0f;
 
    /**
     * A cached interpolator for HSB colors.
     */
-   public static Color.MixHsba MIXER_HSB = new Color.MixHsba();
+   Color.MixHsba MIXER_HSB = new Color.MixHsba();
 
    /**
     * A cached interpolator for RGB colors.
     */
-   public static Color.SmoothStepRgba MIXER_RGB = new Color.SmoothStepRgba();
+   Color.SmoothStepRgba MIXER_RGB = new Color.SmoothStepRgba();
 
    /**
     * Helper function for inverting a PMatrix3D. Finds the
@@ -227,7 +225,7 @@ public interface IUp {
     *           row 2, column 2
     * @return the determinant
     */
-   public static float det3x3 (
+   static float det3x3 (
          final float t00, final float t01, final float t02,
          final float t10, final float t11, final float t12,
          final float t20, final float t21, final float t22 ) {
@@ -254,7 +252,7 @@ public interface IUp {
     *           the far clip plane
     * @return the view frustum
     */
-   public static PMatrix3D frustum (
+   static PMatrix3D frustum (
          final float left, final float right,
          final float bottom, final float top,
          final float near, final float far ) {
@@ -285,7 +283,7 @@ public interface IUp {
     *           the output matrix
     * @return the view frustum
     */
-   public static PMatrix3D frustum (
+   static PMatrix3D frustum (
          final float left, final float right,
          final float bottom, final float top,
          final float near, final float far,
@@ -337,7 +335,7 @@ public interface IUp {
     * @see PathIterator#currentSegment(float[])
     * @see Vec2#mix(Vec2, Vec2, float, Vec2)
     */
-   public static List < Curve2 > getGlyph (
+   static List < Curve2 > getGlyph (
          final Font font,
          final FontRenderContext frc,
          final AffineTransform transform,
@@ -556,7 +554,7 @@ public interface IUp {
     *           the characteres
     * @return the array of Curve2s
     */
-   public static CurveEntity2[] getGlyph (
+   static CurveEntity2[] getGlyph (
          final Graphics2D graphics,
          final AffineTransform transform,
          final PFont pfont, final float detail,
@@ -595,7 +593,7 @@ public interface IUp {
     * @return the array of glyphs
     * @see Toolkit#getDefaultToolkit()
     */
-   public static CurveEntity2[] getGlyph (
+   static CurveEntity2[] getGlyph (
          final PFont pfont,
          final float detail,
          final char... characters ) {
@@ -638,7 +636,7 @@ public interface IUp {
     *      float, float, float)
     * @see PMatrix3D#determinant()
     */
-   public static PMatrix3D invert (
+   static PMatrix3D invert (
          final PMatrix3D m,
          final PMatrix3D target ) {
 
@@ -721,7 +719,7 @@ public interface IUp {
       return target;
    }
 
-   public static PMatrix3D invRotate (
+   static PMatrix3D invRotate (
          final float radians,
          final float xAxis,
          final float yAxis,
@@ -733,7 +731,7 @@ public interface IUp {
             (PMatrix3D) null);
    }
 
-   public static PMatrix3D invRotate (
+   static PMatrix3D invRotate (
          final float radians,
          final float xAxis,
          final float yAxis,
@@ -776,12 +774,12 @@ public interface IUp {
       return target;
    }
 
-   public static PMatrix3D invRotateX ( final float radians ) {
+   static PMatrix3D invRotateX ( final float radians ) {
 
       return IUp.invRotateX(radians, (PMatrix3D) null);
    }
 
-   public static PMatrix3D invRotateX (
+   static PMatrix3D invRotateX (
          final float radians,
          PMatrix3D target ) {
 
@@ -799,12 +797,12 @@ public interface IUp {
       return target;
    }
 
-   public static PMatrix3D invRotateY ( final float radians ) {
+   static PMatrix3D invRotateY ( final float radians ) {
 
       return IUp.invRotateY(radians, (PMatrix3D) null);
    }
 
-   public static PMatrix3D invRotateY (
+   static PMatrix3D invRotateY (
          final float radians,
          PMatrix3D target ) {
 
@@ -822,12 +820,12 @@ public interface IUp {
       return target;
    }
 
-   public static PMatrix3D invRotateZ ( final float radians ) {
+   static PMatrix3D invRotateZ ( final float radians ) {
 
       return IUp.invRotateZ(radians, (PMatrix3D) null);
    }
 
-   public static PMatrix3D invRotateZ ( final float radians,
+   static PMatrix3D invRotateZ ( final float radians,
          PMatrix3D target ) {
 
       if (target == null) {
@@ -857,7 +855,7 @@ public interface IUp {
     * @see PMatrix3D#apply(PMatrix3D)
     * @see PMatrix3D#preApply(PMatrix3D)
     */
-   public static PMatrix3D mult (
+   static PMatrix3D mult (
          final PMatrix3D a,
          final PMatrix3D b ) {
 
@@ -879,7 +877,7 @@ public interface IUp {
     * @see PMatrix3D#apply(PMatrix3D)
     * @see PMatrix3D#preApply(PMatrix3D)
     */
-   public static PMatrix3D mult (
+   static PMatrix3D mult (
          final PMatrix3D a,
          final PMatrix3D b,
          PMatrix3D target ) {
@@ -995,7 +993,7 @@ public interface IUp {
     *           the far clip plane
     * @return the orthographic projection
     */
-   public static PMatrix3D orthographic (
+   static PMatrix3D orthographic (
          final float left, final float right,
          final float bottom, final float top,
          final float near, final float far ) {
@@ -1028,7 +1026,7 @@ public interface IUp {
     *           the output matrix
     * @return the orthographic projection
     */
-   public static PMatrix3D orthographic (
+   static PMatrix3D orthographic (
          final float left, final float right,
          final float bottom, final float top,
          final float near, final float far,
@@ -1066,7 +1064,7 @@ public interface IUp {
     *           the far clip plane
     * @return the perspective projection
     */
-   public static PMatrix3D perspective (
+   static PMatrix3D perspective (
          final float fov, final float aspect,
          final float near, final float far ) {
 
@@ -1092,10 +1090,10 @@ public interface IUp {
     *           the output matrix
     * @return the perspective projection
     */
-   public static PMatrix3D perspective (
-         final float fov, 
+   static PMatrix3D perspective (
+         final float fov,
          final float aspect,
-         final float near, 
+         final float near,
          final float far,
          PMatrix3D target ) {
 
@@ -1114,7 +1112,7 @@ public interface IUp {
       return target;
    }
 
-   public static PMatrix3D rotate (
+   static PMatrix3D rotate (
          final float radians,
          final float xAxis,
          final float yAxis,
@@ -1125,7 +1123,7 @@ public interface IUp {
             (PMatrix3D) null);
    }
 
-   public static PMatrix3D rotate (
+   static PMatrix3D rotate (
          final float radians,
          float xAxis,
          float yAxis,
@@ -1192,7 +1190,7 @@ public interface IUp {
     *           the angle in radians
     * @return the rotation matrix
     */
-   public static PMatrix3D rotateX ( final float radians ) {
+   static PMatrix3D rotateX ( final float radians ) {
 
       return IUp.rotateX(radians, (PMatrix3D) null);
    }
@@ -1208,7 +1206,7 @@ public interface IUp {
     *           the matrix
     * @return the mutated matrix
     */
-   public static PMatrix3D rotateX ( 
+   static PMatrix3D rotateX (
          final float radians,
          PMatrix3D target ) {
 
@@ -1260,7 +1258,7 @@ public interface IUp {
     *           the angle in radians
     * @return the rotation matrix
     */
-   public static PMatrix3D rotateY ( final float radians ) {
+   static PMatrix3D rotateY ( final float radians ) {
 
       return IUp.rotateY(radians, (PMatrix3D) null);
    }
@@ -1276,7 +1274,7 @@ public interface IUp {
     *           the matrix
     * @return the mutated matrix
     */
-   public static PMatrix3D rotateY (
+   static PMatrix3D rotateY (
          final float radians,
          PMatrix3D target ) {
 
@@ -1328,7 +1326,7 @@ public interface IUp {
     *           the angle in radians
     * @return the rotation matrix
     */
-   public static PMatrix3D rotateZ ( final float radians ) {
+   static PMatrix3D rotateZ ( final float radians ) {
 
       return IUp.rotateZ(radians, (PMatrix3D) null);
    }
@@ -1344,7 +1342,7 @@ public interface IUp {
     *           the matrix
     * @return the mutated matrix
     */
-   public static PMatrix3D rotateZ (
+   static PMatrix3D rotateZ (
          final float radians,
          PMatrix3D target ) {
 
@@ -1396,8 +1394,8 @@ public interface IUp {
     *           number of decimal places
     * @return the string
     */
-   public static String toString ( 
-         final PMatrix3D m, 
+   static String toString (
+         final PMatrix3D m,
          final int places ) {
 
       return new StringBuilder(320)
@@ -1448,7 +1446,7 @@ public interface IUp {
     * @param c
     *           the color
     */
-   public default void background ( final Color c ) {
+   default void background ( final Color c ) {
 
       this.background(Color.toHexInt(c));
    }
@@ -1460,12 +1458,12 @@ public interface IUp {
     * @param c
     *           the color hexadecimal
     */
-   public void background ( final int c );
+   void background ( final int c );
 
    /**
     * Sets the renderer's camera with default parameters.
     */
-   public void camera ();
+   void camera ();
 
    /**
     * Sets the renderer's current fill to the color.
@@ -1473,7 +1471,7 @@ public interface IUp {
     * @param c
     *           the color
     */
-   public default void fill ( final Color c ) {
+   default void fill ( final Color c ) {
 
       this.fill(Color.toHexInt(c));
    }
@@ -1485,21 +1483,21 @@ public interface IUp {
     * @param c
     *           the color in hexadecimal
     */
-   public void fill ( final int c );
+   void fill ( final int c );
 
    /**
     * Gets the renderer's height.
     *
     * @return the height
     */
-   public float getHeight ();
+   float getHeight ();
 
    /**
     * Gets the renderer's parent applet.
     *
     * @return the applet
     */
-   public PApplet getParent ();
+   PApplet getParent ();
 
    /**
     * Gets the renderer's size.
@@ -1508,14 +1506,14 @@ public interface IUp {
     *           the output vector
     * @return the size
     */
-   public Vec2 getSize ( final Vec2 target );
+   Vec2 getSize ( final Vec2 target );
 
    /**
     * Gets the renderer's width.
     *
     * @return the width
     */
-   public float getWidth ();
+   float getWidth ();
 
    /**
     * Converts a an array of characters to a an array of curve
@@ -1532,7 +1530,7 @@ public interface IUp {
     *           the characters
     * @return the array
     */
-   public default CurveEntity2[] glyph (
+   default CurveEntity2[] glyph (
          final PFont pfont,
          final float detail,
          final char... characters ) {
@@ -1555,7 +1553,7 @@ public interface IUp {
     *           the string
     * @return the array
     */
-   public default CurveEntity2[] glyph (
+   default CurveEntity2[] glyph (
          final PFont pfont,
          final float detail,
          final String str ) {
@@ -1576,7 +1574,7 @@ public interface IUp {
     *           the output color
     * @return the color
     */
-   public Color lerpColor (
+   Color lerpColor (
          final Color origin,
          final Color dest,
          final float step,
@@ -1594,7 +1592,7 @@ public interface IUp {
     *           the factor in [0, 1]
     * @return the color
     */
-   public int lerpColor (
+   int lerpColor (
          final int origin,
          final int dest,
          final float step );
@@ -1602,7 +1600,7 @@ public interface IUp {
    /**
     * Draws the world origin.
     */
-   public void origin ();
+   void origin ();
 
    /**
     * Sets the renderer's current stroke to the color.
@@ -1610,7 +1608,7 @@ public interface IUp {
     * @param c
     *           the color
     */
-   public default void stroke ( final Color c ) {
+   default void stroke ( final Color c ) {
 
       this.stroke(Color.toHexInt(c));
    }
@@ -1622,5 +1620,5 @@ public interface IUp {
     * @param c
     *           the color in hexadecimal
     */
-   public void stroke ( final int c );
+   void stroke ( final int c );
 }

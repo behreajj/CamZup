@@ -1307,7 +1307,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Finds a point on a curve according to a step in the range
     * [0.0, 1.0].
-    * 
+    *
     * @param ap0
     *           the first anchor point
     * @param cp0
@@ -1335,7 +1335,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Finds a tangent on a curve according to a step in the
     * range [0.0, 1.0].
-    * 
+    *
     * @param ap0
     *           the first anchor point
     * @param cp0
@@ -2367,7 +2367,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Rotates the modelview matrix around an arbitrary axis by
     * an angle in radians.
-    * 
+    *
     * @param angle
     *           the angle in radians
     * @param xAxis
@@ -2773,7 +2773,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
    /**
     * Displays a character as text at a given coordinate.
-    * 
+    *
     * @param c
     *           the character
     * @param x
@@ -2796,7 +2796,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Displays an array of characters as text at a given
     * coordinate.
-    * 
+    *
     * @param chars
     *           the character array
     * @param x
@@ -2815,7 +2815,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Displays an array of characters as text at a given
     * coordinate.
-    * 
+    *
     * @param chars
     *           the character array
     * @param start
@@ -2882,7 +2882,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Displays an array of characters as text at a given
     * coordinate.
-    * 
+    *
     * @param chars
     *           the character array
     * @param start
@@ -2911,7 +2911,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Displays a number as text. Registers up to four decimal
     * places.
-    * 
+    *
     * @param num
     *           the number
     * @param x
@@ -2932,7 +2932,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Displays a real number as text. Registers up to four
     * decimal places.
-    * 
+    *
     * @param num
     *           the number
     * @param x
@@ -2955,7 +2955,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
    /**
     * Displays a number as text.
-    * 
+    *
     * @param num
     *           the number
     * @param x
@@ -2977,7 +2977,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
    /**
     * Displays a string at a coordinate.
-    * 
+    *
     * @param str
     *           the string
     * @param x
@@ -2996,7 +2996,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
    /**
     * Displays a string at a coordinate.
-    * 
+    *
     * @param str
     *           the string
     * @param x
@@ -3019,7 +3019,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Displays a string at a coordinate. This version of text
     * is not supported, so only x1 and y1 are used.
-    * 
+    *
     * @param str
     *           the string
     * @param x1
@@ -3043,7 +3043,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
    /**
     * Sets the text mode to either shape or model.
-    * 
+    *
     * @param mode
     *           the text mode
     */
@@ -3497,7 +3497,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
    /**
     * Draws a vertex.
-    * 
+    *
     * @param x
     *           the x coordinate
     * @param y
@@ -3515,7 +3515,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
    /**
     * Draws a vertex.
-    * 
+    *
     * @param x
     *           the x coordinate
     * @param y
@@ -3536,7 +3536,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
    /**
     * Draws a vertex.
-    * 
+    *
     * @param x
     *           the x coordinate
     * @param y
@@ -3562,7 +3562,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
    /**
     * Draws a vertex.
-    * 
+    *
     * @param x
     *           the x coordinate
     * @param y

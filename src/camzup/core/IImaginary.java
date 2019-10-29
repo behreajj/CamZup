@@ -16,7 +16,7 @@ public interface IImaginary
     *           the index
     * @return the component at that index
     */
-   public abstract float get ( final int index );
+   float get ( final int index );
 
    /**
     * Returns an iterator for the complex number, which allows
@@ -25,14 +25,14 @@ public interface IImaginary
     * @return the iterator
     */
    @Override
-   public abstract Iterator < Float > iterator ();
+   Iterator < Float > iterator ();
 
    /**
     * Gets the number of components held by the complex number.
     *
     * @return the size
     */
-   public abstract int size ();
+   int size ();
 
    /**
     * Returns a float array containing the complex number's
@@ -40,5 +40,5 @@ public interface IImaginary
     *
     * @return the array
     */
-   public abstract float[] toArray ();
+   float[] toArray ();
 }

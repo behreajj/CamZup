@@ -399,62 +399,63 @@ public class Mesh3 extends Mesh {
       return target;
    }
 
-//   public static final Mesh3 plane (
-//         final int rows,
-//         final int cols,
-//         final Mesh3 target ) {
-//
-//      // TODO: Needs testing.
-//
-//      final float rowsToPrc = 1.0f / (rows - 1.0f);
-//
-//      final float colsToPrc = 1.0f / (cols - 1.0f);
-//      final float[] us = new float[cols];
-//      for (int j = 0; j < cols; ++j) {
-//         us[j] = j * colsToPrc;
-//      }
-//
-//      final int len = rows * cols;
-//      final Vec3[] coords = new Vec3[len];
-//      final Vec2[] texCoords = new Vec2[len];
-//      final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
-//
-//      for (int k = 0, i = 0; i < rows; ++i) {
-//         final float v = i * rowsToPrc;
-//         for (int j = 0; j < cols; ++j, ++k) {
-//            texCoords[k] = new Vec2(us[j], v);
-//            final Vec2 uv = texCoords[k];
-//            coords[k] = new Vec3(
-//                  uv.x - 0.5f,
-//                  uv.y - 0.5f,
-//                  0.0f);
-//         }
-//      }
-//      
-//      final int faceCount = (cols - 1) * (rows - 1);
-//      final int[][][] faces = new int[2 * faceCount][][];
-//      int t = 0;
-//      for(int face = 0; face < faceCount; face++) {
-//         
-//         int i = face % (cols - 1) + (face / (rows - 1) * cols);
-//         int j = i + cols;
-//         int k = i + 1;
-//         int h = i + cols + 1;
-//         faces[t] = new int[][] {
-//            { j, j, 0 },
-//            { k, k, 0 },
-//            { i, i, 0 } };
-//         t++;
-//         
-//         faces[t] = new int[][] {
-//            { j, j, 0 },
-//            { h, h, 0 },
-//            { k, k, 0 } };
-//         t++;
-//      }
-//      
-//      return target.set(faces, coords, texCoords, normals);
-//   }
+   // public static final Mesh3 plane (
+   // final int rows,
+   // final int cols,
+   // final Mesh3 target ) {
+   //
+   // // TODO: Needs testing.
+   //
+   // final float rowsToPrc = 1.0f / (rows - 1.0f);
+   //
+   // final float colsToPrc = 1.0f / (cols - 1.0f);
+   // final float[] us = new float[cols];
+   // for (int j = 0; j < cols; ++j) {
+   // us[j] = j * colsToPrc;
+   // }
+   //
+   // final int len = rows * cols;
+   // final Vec3[] coords = new Vec3[len];
+   // final Vec2[] texCoords = new Vec2[len];
+   // final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3())
+   // };
+   //
+   // for (int k = 0, i = 0; i < rows; ++i) {
+   // final float v = i * rowsToPrc;
+   // for (int j = 0; j < cols; ++j, ++k) {
+   // texCoords[k] = new Vec2(us[j], v);
+   // final Vec2 uv = texCoords[k];
+   // coords[k] = new Vec3(
+   // uv.x - 0.5f,
+   // uv.y - 0.5f,
+   // 0.0f);
+   // }
+   // }
+   //
+   // final int faceCount = (cols - 1) * (rows - 1);
+   // final int[][][] faces = new int[2 * faceCount][][];
+   // int t = 0;
+   // for(int face = 0; face < faceCount; face++) {
+   //
+   // int i = face % (cols - 1) + (face / (rows - 1) * cols);
+   // int j = i + cols;
+   // int k = i + 1;
+   // int h = i + cols + 1;
+   // faces[t] = new int[][] {
+   // { j, j, 0 },
+   // { k, k, 0 },
+   // { i, i, 0 } };
+   // t++;
+   //
+   // faces[t] = new int[][] {
+   // { j, j, 0 },
+   // { h, h, 0 },
+   // { k, k, 0 } };
+   // t++;
+   // }
+   //
+   // return target.set(faces, coords, texCoords, normals);
+   // }
 
    /**
     * Generates a regular convex polygon.

@@ -17,7 +17,7 @@ public interface IVec
     *           the index
     * @return the component at that index
     */
-   public abstract float get ( final int index );
+   float get ( final int index );
 
    /**
     * Returns an iterator for this vector, which allows its
@@ -26,14 +26,14 @@ public interface IVec
     * @return the iterator
     */
    @Override
-   public abstract Iterator < Float > iterator ();
+   Iterator < Float > iterator ();
 
    /**
     * Gets the number of components held by the vector.
     *
     * @return the size
     */
-   public abstract int size ();
+   int size ();
 
    /**
     * Returns a float array containing this vector's
@@ -41,5 +41,5 @@ public interface IVec
     *
     * @return the array
     */
-   public abstract float[] toArray ();
+   float[] toArray ();
 }
