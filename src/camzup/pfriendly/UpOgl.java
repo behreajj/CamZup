@@ -35,16 +35,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    protected Curve2.ArcMode arcMode = Curve2.ArcMode.OPEN;
 
    /**
-    * A placeholder vector used during arc.
-    */
-   protected final Vec2 arcTemp0 = new Vec2();
-
-   /**
-    * A placeholder vector used during arc.
-    */
-   protected final Vec2 arcTemp1 = new Vec2();
-
-   /**
     * A placeholder color used during lerpColor.
     */
    protected Color aTemp = new Color();
@@ -1211,8 +1201,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.transform.scaleTo(w, h);
 
       Curve2.arc(start, stop,
-            0.5f, this.arcMode, this.arc,
-            this.arcTemp0, this.arcTemp1);
+            0.5f, this.arcMode, this.arc);
       this.arcImpl(this.arc, this.transform, IUp.DEFAULT_ORDER);
 
       this.fill = oldFill;

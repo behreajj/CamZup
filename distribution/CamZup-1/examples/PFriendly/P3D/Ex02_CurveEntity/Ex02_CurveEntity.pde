@@ -15,19 +15,14 @@ Transform3 transform = new Transform3()
   .moveTo(new Vec3(0.0, 0.0, 0.0))
   .scaleTo(256.0);
 
-Curve3 curve = Curve3.circle(0.0, 0.5, 4, 
-  new Curve3(), 
-  new Vec3(), new Vec3());
-
-//Curve3 curve = Curve3.arc(0.0, HALF_PI, 0.75, Curve3.ArcMode.PIE, 
-//new Curve3(), new Vec3(), new Vec3());
-
+Curve3 curve = Curve3.circle(0.0, 0.5, 4, new Curve3());
 CurveEntity3 entity = new CurveEntity3("Example", transform, curve)
   .appendMaterial(material);
 
 void setup() {
   size(720, 405, "camzup.pfriendly.Yup3");
   smooth(8);
+  ortho();
   frameRate(1000);
   graphics3 = (Yup3)getGraphics();
 }

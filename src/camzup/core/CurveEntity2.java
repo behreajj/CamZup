@@ -4,6 +4,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import camzup.core.Curve2.Knot2;
+import camzup.core.Curve3.Knot3;
+
 /**
  * An entity which contains a transform that is applied to a
  * list of curves. The curves may references a list of
@@ -244,6 +247,104 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
       return this.curves.iterator();
    }
 
+   /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how curve
+    * geometry looks in Blender (the control) vs. in the
+    * library (the test).
+    *
+    * @return the string
+    */
+   public String toBlenderCode() {
+      final StringBuilder result = new StringBuilder();
+      result.append("from bpy import data as D, context as C\n\n")
+            .append("curve_entity = {\n    \"curves\": [\n");
+
+      int curveIndex = 0;
+      final int curveLast = this.curves.size() - 1;
+      final Iterator < Curve2 > curveItr = this.curves.iterator();
+      while (curveItr.hasNext()) {
+
+         int knotIndex = 0;
+         final Curve2 curve = curveItr.next();
+         final int knotLast = curve.knotCount() - 1;
+         final Iterator < Knot2 > knotItr = curve.iterator();
+
+         result.append("        {\"closed_loop\": ")
+               .append(curve.closedLoop ? "True" : "False")
+               .append(",\n         \"knots\": [\n");
+
+         while (knotItr.hasNext()) {
+
+            final Knot2 knot = knotItr.next();
+            final Vec2 co = knot.coord;
+            final Vec2 rear = knot.rearHandle;
+            final Vec2 fore = knot.foreHandle;
+
+            /* Append coordinate (co in Blender). */
+            result.append("             {\"co\": (")
+                  .append(Utils.toFixed(co.x, 6))
+                  .append(',').append(' ')
+                  .append(Utils.toFixed(co.y, 6))
+                  .append(", 0.0), \n              \"handle_right\": (")
+                  .append(Utils.toFixed(fore.x, 6))
+                  .append(',').append(' ')
+                  .append(Utils.toFixed(fore.y, 6))
+                  .append(", 0.0), \n              \"handle_left\": (")
+                  .append(Utils.toFixed(rear.x, 6))
+                  .append(',').append(' ')
+                  .append(Utils.toFixed(rear.y, 6))
+                  .append(", 0.0)}");
+
+            if (knotIndex < knotLast) {
+               result.append(',').append('\n');
+            }
+
+            knotIndex++;
+         }
+
+         result.append(']').append('}');
+
+         if (curveIndex < curveLast) {
+            result.append(',').append('\n');
+         }
+
+         curveIndex++;
+      }
+
+      result.append("]}\n\ncrv_data = D.curves.new(\"")
+            .append(this.name)
+            .append("\", \"CURVE\")\n")
+            .append("crv_data.dimensions = \"2D\"\n")
+            .append("crv_splines = crv_data.splines\n")
+            .append("crv_index = 0\n")
+            .append("splines_raw = curve_entity[\"curves\"]\n")
+            .append("for spline_raw in splines_raw:\n")
+            .append("\tspline = crv_splines.new(\"BEZIER\")\n")
+            .append("\tspline.use_cyclic_u = spline_raw[\"closed_loop\"]\n")
+            .append("\tknots_raw = spline_raw[\"knots\"]\n")
+            .append("\tknt_index = 0\n")
+            .append("\tbz_pts = spline.bezier_points\n")
+            .append("\tbz_pts.add(len(knots_raw) - 1)\n")
+            .append("\tfor knot in bz_pts:\n")
+            .append("\t\tknot_raw = knots_raw[knt_index]\n")
+            .append("\t\tknot.handle_left_type = \"FREE\"\n")
+            .append("\t\tknot.handle_right_type = \"FREE\"\n")
+            .append("\t\tknot.co = knot_raw[\"co\"]\n")
+            .append("\t\tknot.handle_right = knot_raw[\"handle_right\"]\n")
+            .append("\t\tknot.handle_left = knot_raw[\"handle_left\"]\n")
+            .append("\t\tknt_index = knt_index + 1\n")
+            .append("\tcrv_index = crv_index + 1\n\n")
+            .append("crv_obj = D.objects.new(\"")
+            .append(this.name)
+            .append("\", crv_data)\n")
+            .append(this.transform.toBlenderCode("crv_obj"))
+            .append("\n\nC.scene.collection.objects.link(crv_obj)");
+
+      return result.toString();
+   }
+   
    /**
     * Creates a string representing a Wavefront OBJ file.
     * Renders the curve as a series of line segments.

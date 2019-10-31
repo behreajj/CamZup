@@ -12,7 +12,7 @@ MaterialSolid material = new MaterialSolid()
   .setStrokeWeight(1.2);
 
 Transform2 transform = new Transform2()
-  .scaleTo(100.0);
+  .scaleTo(200.0);
 
 Curve2 curve = Curve2.circle(0.0, 0.5, 4, 
   new Curve2(), 
@@ -39,8 +39,8 @@ void draw() {
 
 void mouseReleased() {
   if (mouseButton == LEFT) {
-    Curve2.random(rng, 5, 
-      -1.0, 1.0, true, curve);
+    Curve2.random(rng, 7, 
+      -0.5, 0.5, false, curve);
   } else if (mouseButton == RIGHT) {
     String result = graphics.toSvgString(entity);
     saveStrings("data/curve.svg", new String[] { result });

@@ -1388,7 +1388,7 @@ public class Color extends Vec4 {
 
    /**
     * Creates a random HSBA vector, then converts it to an RGBA
-    * color. The alpha channel is not included.
+    * color. The alpha channel is not randomized.
     *
     * @param rng
     *           the random number generator
@@ -1892,10 +1892,12 @@ public class Color extends Vec4 {
     *
     * @param alpha
     *           the alpha channel
+    * @return this color
     */
-   public void a ( final float alpha ) {
+   public Color a ( final float alpha ) {
 
       this.w = alpha;
+      return this;
    }
 
    /**
@@ -1913,10 +1915,12 @@ public class Color extends Vec4 {
     *
     * @param blue
     *           the blue channel
+    * @return this color
     */
-   public void b ( final float blue ) {
+   public Color b ( final float blue ) {
 
       this.z = blue;
+      return this;
    }
 
    /**
@@ -1985,7 +1989,7 @@ public class Color extends Vec4 {
       if (this.getClass() != obj.getClass()) {
          return false;
       }
-      return this.equals((Color) obj);
+      return Color.toHexInt(this) == Color.toHexInt((Color) obj);
    }
 
    /**
@@ -2003,10 +2007,12 @@ public class Color extends Vec4 {
     *
     * @param green
     *           the green channel
+    * @return this color
     */
-   public void g ( final float green ) {
+   public Color g ( final float green ) {
 
       this.y = green;
+      return this;
    }
 
    /**
@@ -2112,10 +2118,12 @@ public class Color extends Vec4 {
     *
     * @param red
     *           the red channel
+    * @return this color
     */
-   public void r ( final float red ) {
+   public Color r ( final float red ) {
 
       this.x = red;
+      return this;
    }
 
    /**

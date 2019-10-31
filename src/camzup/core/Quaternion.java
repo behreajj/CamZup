@@ -2859,6 +2859,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *
     * @param w
     *           the real value
+    * @return this quaternion
     */
    public Quaternion w ( final float w ) {
 

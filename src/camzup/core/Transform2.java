@@ -1193,6 +1193,43 @@ public class Transform2 extends Transform {
    }
 
    /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how
+    * transforms look in Blender (the control) vs. in the
+    * library (the test).
+    *
+    * @param objVarName
+    *           name of the object variable
+    * @return the string
+    */
+   public String toBlenderCode ( final String objVarName ) {
+
+      return new StringBuilder()
+            .append(objVarName)
+            .append(".rotation_mode = \"AXIS_ANGLE\"\n")
+            .append(objVarName)
+            .append(".location = (")
+            .append(Utils.toFixed(this.location.x, 6))
+            .append(',')
+            .append(' ')
+            .append(Utils.toFixed(this.location.y, 6))
+            .append(", 0.0)\n")
+            .append(objVarName)
+            .append(".rotation_axis_angle = (")
+            .append(Utils.toFixed(this.rotation, 6))
+            .append(", 0.0, 0.0, 1.0)\n")
+            .append(objVarName)
+            .append(".scale = (")
+            .append(Utils.toFixed(this.scale.x, 6))
+            .append(',')
+            .append(' ')
+            .append(Utils.toFixed(this.scale.y, 6))
+            .append(", 1.0)")
+            .toString();
+   }
+
+   /**
     * Returns a string representation of this transform
     * according to its string format.
     *

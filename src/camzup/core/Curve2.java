@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Organizes a Bezier curve into a list of knots. Provides a
@@ -25,7 +24,7 @@ public class Curve2 extends Curve
 
       /**
        * Creates a knot from polar coordinates, where the knot's
-       * forehandle is tangent to the radius.
+       * fore handle is tangent to the radius.
        *
        * @param angle
        *           the angle in radians
@@ -35,45 +34,31 @@ public class Curve2 extends Curve
        *           the magnitude of the handles
        * @param target
        *           the output knot
-       * @param temp0
-       *           temporary vector 1
-       * @param temp1
-       *           temporary vector 2
        * @return the knot
-       * @see Vec2#mult(Vec2, float, Vec2)
-       * @see Vec2#negate(Vec2, Vec2)
-       * @see Vec2#add(Vec2, Vec2, Vec2)
        */
       public static Knot2 fromPolar (
             final float angle,
             final float radius,
             final float handleMag,
-            final Knot2 target,
-            final Vec2 temp0,
-            final Vec2 temp1 ) {
+            final Knot2 target ) {
 
-         /* temp0 will hold the ideal radian. */
-         Vec2.fromPolar(angle, 1.0f, temp0);
+         final float cosa = (float) Math.cos(angle);
+         final float sina = (float) Math.sin(angle);
 
-         /* temp1 will hold the forehandle. */
-         Vec2.perpendicularCCW(temp0, temp1);
+         final Vec2 coord = target.coord;
+         coord.set(
+               cosa * radius,
+               sina * radius);
 
-         /*
-          * target.coord has reached its final state; temp0 will be
-          * freed.
-          */
-         Vec2.mult(temp0, radius, target.coord);
+         final float hmsina = sina * handleMag;
+         final float hmcosa = cosa * handleMag;
 
-         /*
-          * temp0 will hold scaled forehandle. temp1 will be freed.
-          */
-         Vec2.mult(temp1, handleMag, temp0);
-
-         /* temp1 will hold the mirrored rearhandle. */
-         Vec2.negate(temp0, temp1);
-
-         Vec2.add(temp0, target.coord, target.foreHandle);
-         Vec2.add(temp1, target.coord, target.rearHandle);
+         target.foreHandle.set(
+               coord.x - hmsina,
+               coord.y + hmcosa);
+         target.rearHandle.set(
+               coord.x + hmsina,
+               coord.y - hmcosa);
 
          return target;
       }
@@ -527,19 +512,18 @@ public class Curve2 extends Curve
       }
 
       /**
-       * Reverses the knot's direction by swapping the fore and
-       * rear handles.
+       * Reverses the knot's direction by swapping the fore- and
+       * rear-handles.
        *
-       * @param temp
-       *           a temporary vector
        * @return this knot
        */
       @Chainable
-      public Knot2 reverse ( final Vec2 temp ) {
+      public Knot2 reverse () {
 
-         temp.set(this.foreHandle);
+         final float tx = this.foreHandle.x;
+         final float ty = this.foreHandle.y;
          this.foreHandle.set(this.rearHandle);
-         this.rearHandle.set(temp);
+         this.rearHandle.set(tx, ty);
          return this;
       }
 
@@ -956,7 +940,7 @@ public class Curve2 extends Curve
        */
       public String toString ( final int places ) {
 
-         return new StringBuilder()
+         return new StringBuilder(256)
                .append("{ coord: ")
                .append(this.coord.toString(places))
                .append("{, foreHandle: ")
@@ -992,20 +976,13 @@ public class Curve2 extends Curve
     *           the stop angle
     * @param target
     *           the output curve
-    * @param temp0
-    *           a temporary vector
-    * @param temp1
-    *           a temporary vector
     * @return the arc
     */
    public static Curve2 arc (
          final float stopAngle,
-         final Curve2 target,
-         final Vec2 temp0,
-         final Vec2 temp1 ) {
+         final Curve2 target ) {
 
-      return Curve2.arc(0.0f, stopAngle,
-            target, temp0, temp1);
+      return Curve2.arc(0.0f, stopAngle, target);
    }
 
    /**
@@ -1017,22 +994,15 @@ public class Curve2 extends Curve
     *           the stop angle
     * @param target
     *           the output curve
-    * @param temp0
-    *           a temporary vector
-    * @param temp1
-    *           a temporary vector
     * @return the arc
     */
    public static Curve2 arc (
          final float startAngle,
          final float stopAngle,
-         final Curve2 target,
-         final Vec2 temp0,
-         final Vec2 temp1 ) {
+         final Curve2 target ) {
 
       return Curve2.arc(
-            startAngle, stopAngle, 0.5f,
-            target, temp0, temp1);
+            startAngle, stopAngle, 0.5f, target);
    }
 
    /**
@@ -1049,10 +1019,6 @@ public class Curve2 extends Curve
     *           the arc mode
     * @param target
     *           the output curve
-    * @param temp0
-    *           a temporary vector
-    * @param temp1
-    *           a temporary vector
     * @return the arc
     */
    public static Curve2 arc (
@@ -1060,13 +1026,11 @@ public class Curve2 extends Curve
          final float stopAngle,
          final float radius,
          final ArcMode arcMode,
-         final Curve2 target,
-         final Vec2 temp0,
-         final Vec2 temp1 ) {
+         final Curve2 target ) {
 
       /* Case where arc is used as a progress bar. */
       if (Utils.approxFast(stopAngle - startAngle, IUtils.TAU)) {
-         return Curve2.circle(startAngle, target, temp0, temp1);
+         return Curve2.circle(startAngle, target);
       }
 
       final float a = Utils.modRadians(startAngle);
@@ -1094,9 +1058,7 @@ public class Curve2 extends Curve
          final float step = i * toStep;
          final float angle = Utils.lerpUnclamped(a, destAngle, step);
          final Knot2 knot = Knot2.fromPolar(
-               angle, radius, handleMag,
-               new Knot2(),
-               temp0, temp1);
+               angle, radius, handleMag, new Knot2());
          target.append(knot);
       }
 
@@ -1175,25 +1137,17 @@ public class Curve2 extends Curve
     *           the arc radius
     * @param target
     *           the output curve
-    * @param temp0
-    *           a temporary vector
-    * @param temp1
-    *           a temporary vector
     * @return the arc
     */
    public static Curve2 arc (
          final float startAngle,
          final float stopAngle,
          final float radius,
-         final Curve2 target,
-         final Vec2 temp0,
-         final Vec2 temp1 ) {
+         final Curve2 target ) {
 
       return Curve2.arc(
             startAngle, stopAngle,
-            radius, ArcMode.OPEN,
-            target,
-            temp0, temp1);
+            radius, ArcMode.OPEN, target);
    }
 
    /**
@@ -1202,21 +1156,13 @@ public class Curve2 extends Curve
     *
     * @param target
     *           the output curve
-    * @param temp0
-    *           a temporary vector
-    * @param temp1
-    *           a temporary vector
     * @return the circle
     */
    public static Curve2 circle (
-         final Curve2 target,
-         final Vec2 temp0,
-         final Vec2 temp1 ) {
+         final Curve2 target ) {
 
       return Curve2.circle(
-            0.0f, 0.5f, 4,
-            target,
-            temp0, temp1);
+            0.0f, 0.5f, 4, target);
    }
 
    /**
@@ -1227,22 +1173,14 @@ public class Curve2 extends Curve
     *           the angular offset
     * @param target
     *           the output curve
-    * @param temp0
-    *           a temporary vector
-    * @param temp1
-    *           a temporary vector
     * @return the circle
     */
    public static Curve2 circle (
          final float offsetAngle,
-         final Curve2 target,
-         final Vec2 temp0,
-         final Vec2 temp1 ) {
+         final Curve2 target ) {
 
       return Curve2.circle(
-            offsetAngle, 0.5f, 4,
-            target,
-            temp0, temp1);
+            offsetAngle, 0.5f, 4, target);
    }
 
    /**
@@ -1255,23 +1193,15 @@ public class Curve2 extends Curve
     *           the radius
     * @param target
     *           the output curve
-    * @param temp0
-    *           a temporary vector
-    * @param temp1
-    *           a temporary vector
     * @return the circle
     */
    public static Curve2 circle (
          final float offsetAngle,
          final float radius,
-         final Curve2 target,
-         final Vec2 temp0,
-         final Vec2 temp1 ) {
+         final Curve2 target ) {
 
       return Curve2.circle(
-            offsetAngle, radius, 4,
-            target,
-            temp0, temp1);
+            offsetAngle, radius, 4, target);
    }
 
    /**
@@ -1285,19 +1215,13 @@ public class Curve2 extends Curve
     *           the knot count
     * @param target
     *           the output curve
-    * @param temp0
-    *           a temporary vector
-    * @param temp1
-    *           a temporary vector
     * @return the circle
     */
    public static Curve2 circle (
          final float offsetAngle,
          final float radius,
          final int knotCount,
-         final Curve2 target,
-         final Vec2 temp0,
-         final Vec2 temp1 ) {
+         final Curve2 target ) {
 
       target.clear();
       target.closedLoop = true;
@@ -1307,12 +1231,10 @@ public class Curve2 extends Curve
       final float handleMag = radius * (float) (IUtils.FOUR_THIRDS_D
             * Math.tan(IUtils.HALF_PI_D * invKnCt));
 
-      for (int i = 0; i < knotCount; ++i) {
+      for (int i = 0; i < vknct; ++i) {
          final float angle = offsetAngle + i * toAngle;
          final Knot2 knot = Knot2.fromPolar(
-               angle, radius, handleMag,
-               new Knot2(),
-               temp0, temp1);
+               angle, radius, handleMag, new Knot2());
          target.append(knot);
       }
 
@@ -1346,6 +1268,41 @@ public class Curve2 extends Curve
          target.append(knot);
       }
       return Curve2.smoothHandles(target);
+   }
+
+   /**
+    * Creates a regular convex polygon.
+    *
+    * @param offsetAngle
+    *           the offset angle
+    * @param radius
+    *           the radius
+    * @param knotCount
+    *           the number of knots
+    * @param target
+    *           the output curve
+    * @return the polygon
+    */
+   public static Curve2 polygon (
+         final float offsetAngle,
+         final float radius,
+         final int knotCount,
+         final Curve2 target ) {
+
+      target.clear();
+      target.closedLoop = true;
+      final int vknct = knotCount < 3 ? 3 : knotCount;
+      final float invKnCt = 1.0f / vknct;
+      final float toAngle = IUtils.TAU * invKnCt;
+      for (int i = 0; i < vknct; ++i) {
+         final float angle = offsetAngle + i * toAngle;
+         final Knot2 knot = new Knot2();
+         Vec2.fromPolar(angle, radius, knot.coord);
+         target.append(knot);
+      }
+
+      target.name = "Polygon";
+      return Curve2.straightenHandles(target);
    }
 
    /**
@@ -1416,8 +1373,7 @@ public class Curve2 extends Curve
       final Vec2[] points = new Vec2[valCount];
       for (int i = 0; i < valCount; ++i) {
          points[i] = Vec2.randomCartesian(rng,
-               lowerBound, upperBound,
-               new Vec2());
+               lowerBound, upperBound, new Vec2());
       }
       target.closedLoop = closedLoop;
 
@@ -1526,6 +1482,86 @@ public class Curve2 extends Curve
          first.mirrorHandlesForward();
          final Knot2 last = target.knots.getLast();
          last.mirrorHandlesBackward();
+      }
+
+      return target;
+   }
+
+   /**
+    * Adjusts knot handles so as to create straight line
+    * segments.
+    *
+    * @param target
+    *           the output curve
+    * @return the curve
+    */
+   public static Curve2 straightenHandles ( final Curve2 target ) {
+
+      final LinkedList < Knot2 > knots = target.knots;
+      final int knotLength = knots.size();
+      if (knotLength < 2) {
+         return target;
+      }
+
+      if (knotLength == 2) {
+         final Knot2 first = knots.getFirst();
+         final Knot2 last = knots.getLast();
+
+         Vec2.mix(
+               first.coord,
+               last.coord,
+               IUtils.ONE_THIRD,
+               first.foreHandle);
+         first.mirrorHandlesForward();
+
+         Vec2.mix(
+               last.coord,
+               first.coord,
+               IUtils.ONE_THIRD,
+               last.rearHandle);
+         last.mirrorHandlesBackward();
+
+         return target;
+      }
+
+      final Iterator < Knot2 > itr = knots.iterator();
+      Knot2 prev = null;
+      Knot2 curr = itr.next();
+      while (itr.hasNext()) {
+         prev = curr;
+         curr = itr.next();
+
+         Vec2.mix(
+               prev.coord,
+               curr.coord,
+               IUtils.ONE_THIRD,
+               prev.foreHandle);
+
+         Vec2.mix(
+               curr.coord,
+               prev.coord,
+               IUtils.ONE_THIRD,
+               curr.rearHandle);
+      }
+
+      if (target.closedLoop) {
+         final Knot2 first = knots.getFirst();
+         final Knot2 last = knots.getLast();
+
+         Vec2.mix(
+               first.coord,
+               last.coord,
+               IUtils.ONE_THIRD,
+               first.rearHandle);
+
+         Vec2.mix(
+               last.coord,
+               first.coord,
+               IUtils.ONE_THIRD,
+               last.foreHandle);
+      } else {
+         knots.getFirst().mirrorHandlesForward();
+         knots.getLast().mirrorHandlesBackward();
       }
 
       return target;
@@ -1803,7 +1839,7 @@ public class Curve2 extends Curve
     * @param knots
     *           the collection of knots
     * @return success
-    * @see List#addAll(Collection)
+    * @see LinkedList#addAll(Collection)
     */
    public boolean append ( final Collection < ? extends Knot2 > knots ) {
 
@@ -1816,7 +1852,7 @@ public class Curve2 extends Curve
     * @param knot
     *           the knot
     * @return the curve
-    * @see List#add(Object)
+    * @see LinkedList#add(Object)
     */
    @Chainable
    public Curve2 append ( final Knot2 knot ) {
@@ -1926,6 +1962,7 @@ public class Curve2 extends Curve
          i = (int) tScaled;
          a = this.knots.get(i);
          b = this.knots.get((i + 1) % knotLength);
+         // b = this.knots.get(Utils.mod(i + 1, knotLength));
       } else {
          if (knotLength == 1 || step <= 0.0f) {
             return this.evalFirst(coord, tangent);
@@ -2024,7 +2061,7 @@ public class Curve2 extends Curve
     * @param i
     *           the index
     * @return the knot
-    * @see List#get(int)
+    * @see LinkedList#get(int)
     * @see Utils#mod(int, int)
     */
    public Knot2 get ( final int i ) {
@@ -2072,7 +2109,7 @@ public class Curve2 extends Curve
     * The number of knots in the curve.
     *
     * @return the size
-    * @see List#size()
+    * @see LinkedList#size()
     */
    public int knotCount () {
 
@@ -2134,20 +2171,16 @@ public class Curve2 extends Curve
     * knots and swapping the fore- and rear-handle of each
     * knot.
     *
-    * @param temp
-    *           a temporary vector
     * @return this curve
-    * @see Collections#reverse(List)
-    * @see Knot2#reverse(Vec2)
     */
    @Chainable
-   public Curve2 reverse ( final Vec2 temp ) {
+   public Curve2 reverse () {
 
       Collections.reverse(this.knots);
 
       final Iterator < Knot2 > itr = this.knots.iterator();
       while (itr.hasNext()) {
-         itr.next().reverse(temp);
+         itr.next().reverse();
       }
 
       return this;

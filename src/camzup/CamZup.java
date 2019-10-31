@@ -1,6 +1,10 @@
 package camzup;
 
 import camzup.core.Complex;
+import camzup.core.Curve2;
+import camzup.core.Curve3;
+import camzup.core.CurveEntity2;
+import camzup.core.CurveEntity3;
 import camzup.core.Mesh3;
 import camzup.core.Random;
 import camzup.core.Utils;
@@ -12,6 +16,12 @@ import processing.core.PApplet;
 public class CamZup {
 
    public final static String VERSION = "##library.prettyVersion##";
+
+   static float round ( float value, int places ) {
+
+      double n = Math.pow(10, places);
+      return (float) (Math.round(value * n) / n);
+   }
 
    static String toHardCode ( final Mesh3 mesh ) {
 
@@ -84,9 +94,9 @@ public class CamZup {
 
       final Random rng = new Random();
 
-      final Complex z = new Complex(3, 4);
-      System.out.println(Complex.cos(z, new Complex()));
-      System.out.println(Complex.sin(z, new Complex()));
+      float f = rng.nextFloat();
+      System.out.println(f);
+      System.out.println(round(f, 3));
    }
 
    public static String version () {
