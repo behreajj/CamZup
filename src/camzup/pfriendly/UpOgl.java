@@ -2627,57 +2627,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       super.shape(shape, x1, y1, x2, y2);
    }
 
-   @Override
-   public void sphereDetail ( int longitudes, int latitudes ) {
-
-      if (longitudes < 3) {
-         longitudes = 3;
-      }
-
-      if (latitudes < 2) {
-         latitudes = 2;
-      }
-
-      if (longitudes == this.sphereDetailU &&
-            latitudes == this.sphereDetailV) {
-         return;
-      }
-
-      final float delta = (float) PGraphics.SINCOS_LENGTH / longitudes;
-      final float[] cx = new float[longitudes];
-      final float[] cz = new float[longitudes];
-      for (int i = 0; i < longitudes; ++i) {
-         final int index = (int) (i * delta) % PGraphics.SINCOS_LENGTH;
-         cx[i] = PGraphics.cosLUT[index];
-         cz[i] = PGraphics.sinLUT[index];
-      }
-
-      final int vertCount = longitudes * (latitudes - 1) + 2;
-      int currVert = 0;
-
-      this.sphereX = new float[vertCount];
-      this.sphereY = new float[vertCount];
-      this.sphereZ = new float[vertCount];
-
-      final float angleStep = PGraphics.SINCOS_LENGTH * 0.5f / latitudes;
-      float angle = angleStep;
-
-      for (int i = 1; i < latitudes; ++i) {
-         final int index = (int) angle % PGraphics.SINCOS_LENGTH;
-         final float curradius = PGraphics.sinLUT[index];
-         final float currY = PGraphics.cosLUT[index];
-         for (int j = 0; j < longitudes; ++j) {
-            this.sphereX[currVert] = cx[j] * curradius;
-            this.sphereY[currVert] = currY;
-            this.sphereZ[currVert++] = cz[j] * curradius;
-         }
-         angle += angleStep;
-      }
-
-      this.sphereDetailU = longitudes;
-      this.sphereDetailV = latitudes;
-   }
-
    // @Override
    // protected void colorCalc ( final int argb ) {
    // this.calcColor = argb;

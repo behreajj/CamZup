@@ -3,6 +3,7 @@ package camzup.pfriendly;
 import camzup.core.Vec3;
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PGraphics;
 import processing.opengl.PGraphicsOpenGL;
 
 /**
@@ -103,6 +104,198 @@ public class Yup3 extends Up3 {
       this.defCameraZ = Yup3.DEFAULT_LOC_Z;
 
       this.camera();
+   }
+
+   /**
+    * Draws a 3D cube of a given size.
+    *
+    * @param size
+    *           the size
+    */
+   @Override
+   public void box ( final float size ) {
+
+      this.box(size, size, size);
+   }
+
+   /**
+    * Draws a 3D box with the given width, height and depth.
+    *
+    * @param w
+    *           the width
+    * @param h
+    *           the height
+    * @param d
+    *           the depth
+    */
+   @Override
+   public void box ( final float w, final float h, final float d ) {
+
+      final float wHalf = w * 0.5f;
+      final float hHalf = h * 0.5f;
+      final float dHalf = d * 0.5f;
+
+      /* Right */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(1.0f, 0.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.vertexImpl(
+            wHalf, hHalf, -dHalf,
+            1.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      this.beginShape(PConstants.POLYGON);
+      this.normal(1.0f, 0.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, dHalf,
+            0.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      /* Left */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(-1.0f, 0.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, -dHalf,
+            1.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      this.beginShape(PConstants.POLYGON);
+      this.normal(-1.0f, 0.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, dHalf,
+            0.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      /* Forward */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, -dHalf,
+            1.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, hHalf, dHalf,
+            0.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      /* Back */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, -1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, -dHalf,
+            1.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, -1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, dHalf,
+            0.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      /* Up */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 0.0f, 1.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, dHalf,
+            0.0f, 1.0f);
+      this.vertexImpl(
+            wHalf, hHalf, dHalf,
+            1.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 0.0f, 1.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, dHalf,
+            0.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, dHalf,
+            0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      /* Down */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 0.0f, -1.0f);
+      this.vertexImpl(
+            wHalf, hHalf, -dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, -dHalf,
+            1.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 0.0f, -1.0f);
+      this.vertexImpl(
+            wHalf, hHalf, -dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, -dHalf,
+            0.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
    }
 
    /**
@@ -343,5 +536,193 @@ public class Yup3 extends Up3 {
       super.setSize(iwidth, iheight);
       this.ortho();
       this.camera();
+   }
+
+   @Override
+   public void sphere ( final float r ) {
+
+      if (this.sphereDetailU < 3 || this.sphereDetailV < 2) {
+         this.sphereDetail(30);
+      }
+
+      this.edge(false);
+
+      this.beginShape(PConstants.TRIANGLE_STRIP);
+      for (int i = 0; i < this.sphereDetailU; i++) {
+         this.normal(0.0f, -1.0f, 0.0f);
+         this.vertexImpl(
+               0.0f, -r, 0.0f,
+               0.0f, 0.0f);
+         this.normal(
+               this.sphereX[i],
+               this.sphereY[i],
+               this.sphereZ[i]);
+         this.vertexImpl(
+               r * this.sphereX[i],
+               r * this.sphereY[i],
+               r * this.sphereZ[i],
+               0.0f, 0.0f);
+      }
+      this.normal(0.0f, -1.0f, 0.0f);
+      this.vertexImpl(
+            0.0f, -r, 0.0f,
+            0.0f, 0.0f);
+      this.normal(
+            this.sphereX[0],
+            this.sphereY[0],
+            this.sphereZ[0]);
+      this.vertexImpl(
+            r * this.sphereX[0],
+            r * this.sphereY[0],
+            r * this.sphereZ[0],
+            0.0f, 0.0f);
+      this.endShape();
+
+      int v1 = 0;
+      int v11 = 0;
+      int v2 = 0;
+      int voff = 0;
+      for (int i = 2; i < this.sphereDetailV; i++) {
+         v1 = v11 = voff;
+         voff += this.sphereDetailU;
+         v2 = voff;
+         this.beginShape(PConstants.TRIANGLE_STRIP);
+         for (int j = 0; j < this.sphereDetailU; j++) {
+            this.normal(
+                  this.sphereX[v1],
+                  this.sphereY[v1],
+                  this.sphereZ[v1]);
+            this.vertexImpl(
+                  r * this.sphereX[v1],
+                  r * this.sphereY[v1],
+                  r * this.sphereZ[v1],
+                  0.0f, 0.0f);
+
+            this.normal(
+                  this.sphereX[v2],
+                  this.sphereY[v2],
+                  this.sphereZ[v2]);
+            this.vertexImpl(
+                  r * this.sphereX[v2],
+                  r * this.sphereY[v2],
+                  r * this.sphereZ[v2],
+                  0.0f, 0.0f);
+            
+            v1++;
+            v2++;
+         }
+
+         v1 = v11;
+         v2 = voff;
+         this.normal(
+               this.sphereX[v1],
+               this.sphereY[v1],
+               this.sphereZ[v1]);
+         this.vertexImpl(
+               r * this.sphereX[v1],
+               r * this.sphereY[v1],
+               r * this.sphereZ[v1],
+               0.0f, 0.0f);
+
+         this.normal(
+               this.sphereX[v2],
+               this.sphereY[v2],
+               this.sphereZ[v2]);
+         this.vertexImpl(
+               r * this.sphereX[v2],
+               r * this.sphereY[v2],
+               r * this.sphereZ[v2],
+               0.0f, 0.0f);
+         this.endShape();
+      }
+
+      this.beginShape(PConstants.TRIANGLE_STRIP);
+      for (int i = 0; i < this.sphereDetailU; i++) {
+         v2 = voff + i;
+         
+         this.normal(
+               this.sphereX[v2],
+               this.sphereY[v2],
+               this.sphereZ[v2]);
+         this.vertexImpl(
+               r * this.sphereX[v2],
+               r * this.sphereY[v2],
+               r * this.sphereZ[v2],
+               0.0f, 0.0f);
+
+         this.normal(0.0f, 1.0f, 0.0f);
+         this.vertexImpl(
+               0.0f, r, 0.0f,
+               0.0f, 0.0f);
+      }
+
+      this.normal(
+            this.sphereX[voff],
+            this.sphereY[voff],
+            this.sphereZ[voff]);
+      this.vertexImpl(
+            r * this.sphereX[voff],
+            r * this.sphereY[voff],
+            r * this.sphereZ[voff],
+            0.0f, 0.0f);
+
+      this.normal(0.0f, 1.0f, 0.0f);
+      this.vertexImpl(0.0f, r, 0.0f,
+            0.0f, 0.0f);
+
+      this.endShape();
+
+      this.edge(true);
+   }
+
+   @Override
+   public void sphereDetail ( int longitudes, int latitudes ) {
+
+      if (longitudes < 3) {
+         longitudes = 3;
+      }
+
+      if (latitudes < 2) {
+         latitudes = 2;
+      }
+
+      if (longitudes == this.sphereDetailU &&
+            latitudes == this.sphereDetailV) {
+         return;
+      }
+
+      final float delta = (float) PGraphics.SINCOS_LENGTH / longitudes;
+      final float[] cx = new float[longitudes];
+      final float[] cz = new float[longitudes];
+      for (int i = 0; i < longitudes; ++i) {
+         final int index = (int) (i * delta) % PGraphics.SINCOS_LENGTH;
+         cx[i] = PGraphics.cosLUT[index];
+         cz[i] = PGraphics.sinLUT[index];
+      }
+
+      final int vertCount = longitudes * (latitudes - 1) + 2;
+      int currVert = 0;
+
+      this.sphereX = new float[vertCount];
+      this.sphereY = new float[vertCount];
+      this.sphereZ = new float[vertCount];
+
+      final float angleStep = PGraphics.SINCOS_LENGTH * 0.5f / latitudes;
+      float angle = angleStep;
+
+      for (int i = 1; i < latitudes; ++i) {
+         final int index = (int) angle % PGraphics.SINCOS_LENGTH;
+         final float curradius = PGraphics.sinLUT[index];
+         final float currY = PGraphics.cosLUT[index];
+         for (int j = 0; j < longitudes; ++j) {
+            this.sphereX[currVert] = cx[j] * curradius;
+            this.sphereY[currVert] = -currY;
+            this.sphereZ[currVert++] = cz[j] * curradius;
+         }
+         angle += angleStep;
+      }
+
+      this.sphereDetailU = longitudes;
+      this.sphereDetailV = latitudes;
    }
 }

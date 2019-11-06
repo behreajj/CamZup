@@ -15,9 +15,10 @@ void draw() {
   lights();
   graphics.origin(75.0, 1.0);
   translate(150.0, 100.0, 25.0);
-  rotate(frameCount * 0.01, 1.0, -1.0, 1.0);
+  rotate(frameCount * 0.02, 1.0, 0.0, 0.0);
   fill(0.0, 127.0, 255.0, 255.0);
   strokeWeight(1.25);
   stroke(#202020);
-  sphere(100.0);
+  //sphere(150.0);
+  box(50.0, 50.0, 150.0);
 }

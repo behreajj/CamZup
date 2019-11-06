@@ -167,6 +167,33 @@ public class Curve2 extends Curve
       }
 
       /**
+       * Attempts to create a knot from Strings.
+       *
+       * @param xCoord
+       *           the x coordinate string
+       * @param yCoord
+       *           the y coordinate string
+       * @param xFore
+       *           the x fore handle string
+       * @param yFore
+       *           the y fore handle string
+       * @param xRear
+       *           the x rear handle string
+       * @param yRear
+       *           the y rear handle string
+       */
+      public Knot2 (
+            final String xCoord,
+            final String yCoord,
+            final String xFore,
+            final String yFore,
+            final String xRear,
+            final String yRear ) {
+
+         this.set(xCoord, yCoord, xFore, yFore, xRear, yRear);
+      }
+
+      /**
        * Creates a knot from a coordinate.
        *
        * @param coord
@@ -758,14 +785,19 @@ public class Curve2 extends Curve
             final float xCoord,
             final float yCoord ) {
 
+         final float xOff = Math.copySign(Utils.EPSILON,
+               xCoord);
+         final float yOff = Math.copySign(Utils.EPSILON,
+               yCoord);
+         
          return this.set(
                xCoord, yCoord,
 
-               xCoord + Utils.EPSILON,
-               yCoord + Utils.EPSILON,
+               xCoord + xOff,
+               yCoord + yOff,
 
-               xCoord - Utils.EPSILON,
-               yCoord - Utils.EPSILON);
+               xCoord - xOff,
+               yCoord - yOff);
       }
 
       /**
@@ -848,6 +880,42 @@ public class Curve2 extends Curve
       }
 
       /**
+       * Attempts to set the components of this knot from Strings
+       * using {@link Float#parseFloat(String)} . If a
+       * NumberFormatException is thrown, the component is set to
+       * zero.
+       *
+       * @param xCoord
+       *           the x coordinate string
+       * @param yCoord
+       *           the y coordinate string
+       * @param xFore
+       *           the x fore handle string
+       * @param yFore
+       *           the y fore handle string
+       * @param xRear
+       *           the x rear handle string
+       * @param yRear
+       *           the y rear handle string
+       * @return this knot
+       */
+      @Chainable
+      public Knot2 set (
+            final String xCoord,
+            final String yCoord,
+            final String xFore,
+            final String yFore,
+            final String xRear,
+            final String yRear ) {
+
+         this.coord.set(xCoord, yCoord);
+         this.foreHandle.set(xFore, yFore);
+         this.rearHandle.set(xRear, yRear);
+
+         return this;
+      }
+
+      /**
        * Sets the coordinate, fore- and rear-handles to the input
        * coordinate.
        *
@@ -917,7 +985,8 @@ public class Curve2 extends Curve
          return new float[][] {
                this.coord.toArray(),
                this.foreHandle.toArray(),
-               this.rearHandle.toArray() };
+               this.rearHandle.toArray()
+         };
       }
 
       /**
@@ -943,9 +1012,9 @@ public class Curve2 extends Curve
          return new StringBuilder(256)
                .append("{ coord: ")
                .append(this.coord.toString(places))
-               .append("{, foreHandle: ")
+               .append(", foreHandle: ")
                .append(this.foreHandle.toString(places))
-               .append("{, rearHandle: ")
+               .append(", rearHandle: ")
                .append(this.rearHandle.toString(places))
                .append(" }")
                .toString();

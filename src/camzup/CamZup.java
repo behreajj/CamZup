@@ -1,12 +1,16 @@
 package camzup;
 
+import camzup.core.Color;
 import camzup.core.Complex;
 import camzup.core.Curve2;
+import camzup.core.Curve2.Knot2;
 import camzup.core.Curve3;
 import camzup.core.CurveEntity2;
 import camzup.core.CurveEntity3;
+import camzup.core.MaterialSolid;
 import camzup.core.Mesh3;
 import camzup.core.Random;
+import camzup.core.SVGParser;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -91,12 +95,7 @@ public class CamZup {
    }
 
    public static void main ( final String[] args ) {
-
-      final Random rng = new Random();
-
-      float f = rng.nextFloat();
-      System.out.println(f);
-      System.out.println(round(f, 3));
+      SVGParser.parse("data/v2.svg");
    }
 
    public static String version () {

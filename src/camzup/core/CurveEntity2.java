@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import camzup.core.Curve2.Knot2;
-import camzup.core.Curve3.Knot3;
 
 /**
  * An entity which contains a transform that is applied to a
@@ -256,7 +255,8 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
     *
     * @return the string
     */
-   public String toBlenderCode() {
+   public String toBlenderCode () {
+
       final StringBuilder result = new StringBuilder();
       result.append("from bpy import data as D, context as C\n\n")
             .append("curve_entity = {\n    \"curves\": [\n");
@@ -344,7 +344,7 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
 
       return result.toString();
    }
-   
+
    /**
     * Creates a string representing a Wavefront OBJ file.
     * Renders the curve as a series of line segments.
@@ -429,12 +429,20 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
 
       final float scale = Transform2.minDimension(this.transform);
       for (final Curve2 curve : this.curves) {
-         final MaterialSolid material = this.materials.get(curve.materialIndex);
-         result.append("<g ")
-               .append(material.toSvgString(scale))
-               .append(">\n")
-               .append(curve.toSvgString())
-               .append("</g>\n");
+
+         boolean includesMats = this.materials.size() > 0;
+         if (includesMats) {
+            final MaterialSolid material = this.materials
+                  .get(curve.materialIndex);
+            result.append("<g ")
+                  .append(material.toSvgString(scale))
+                  .append(">\n");
+         }
+         result.append(curve.toSvgString());
+
+         if (includesMats) {
+            result.append("</g>\n");
+         }
       }
 
       result.append("</g>");

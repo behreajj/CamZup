@@ -1369,7 +1369,7 @@ public class Color extends Vec4 {
     *           the output color
     * @return the premultiplied color
     */
-   public static Color preMultiply (
+   public static Color preMult (
          final Color c,
          final Color target ) {
 
@@ -1692,6 +1692,25 @@ public class Color extends Vec4 {
       return target.set(hue, sat, bri, alpha);
    }
 
+//   public static Vec4 rgbaToXyza ( final Color c, final Vec4 target ) {
+
+//      return Color.rgbaToXyza(c.x, c.y, c.z, c.w, target);
+//   }
+
+//   public static Vec4 rgbaToXyza (
+//         final float r,
+//         final float g,
+//         final float b,
+//         final float a,
+//         final Vec4 target ) {
+
+//      return target.set(
+//            0.412453f * r + 0.357580f * g + 0.180423f * b,
+//            0.212671f * r + 0.715160f * g + 0.072169f * b,
+//            0.019334f * r + 0.119193f * g + 0.950227f * b,
+//            a);
+//   }
+
    /**
     * Sets the easing function used to mix color.
     *
@@ -1789,6 +1808,25 @@ public class Color extends Vec4 {
 
       return target.set(1.0f, 1.0f, 1.0f, 1.0f);
    }
+
+//   public static Color xyzaToRgba (
+//         final float x,
+//         final float y,
+//         final float z,
+//         final float a,
+//         final Color target ) {
+
+//      return target.set(
+//            3.240479f * x - 1.537150f * y - 0.498535f * z,
+//            -0.969256f * x + 1.875991f * y + 0.041556f * z,
+//            0.055648f * x - 0.204043f * y + 1.057311f * z,
+//            a);
+//   }
+
+//   public static Color xyzaToRgba ( final Vec4 v, final Color target ) {
+
+//      return Color.xyzaToRgba(v.x, v.y, v.z, v.w, target);
+//   }
 
    /**
     * Returns the color yellow, ( 1.0, 1.0, 0.0, 1.0 ) .

@@ -530,13 +530,17 @@ public class Mesh2 extends Mesh {
       final int len0 = this.faces.length;
       final Face2[] result = new Face2[len0];
       for (int i = 0; i < len0; ++i) {
-         final int len1 = this.faces[i].length;
+         final int[][] fs0 = this.faces[i];
+         final int len1 = fs0.length;
          final Vert2[] verts = new Vert2[len1];
 
          for (int j = 0; j < len1; ++j) {
 
-            // TODO: Can this be replaced?
-            verts[j] = this.getVertex(i, j, new Vert2());
+            // verts[j] = this.getVertex(i, j, new Vert2());
+            final int[] fs1 = fs0[j];
+            verts[j] = new Vert2(
+                  this.coords[fs1[0]],
+                  this.texCoords[fs1[1]]);
          }
          result[i] = new Face2(verts);
       }
