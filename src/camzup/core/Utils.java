@@ -1624,15 +1624,14 @@ public abstract class Utils implements IUtils {
     * number as a String to a number of places. Edge cases:
     * <ul>
     * <li>When the number of places is less than one, returns
-    * the String of the rounded value.</li>
+    * the String of the truncated value.</li>
     * <li>When the value is not a number ( {@link Float#NaN} ),
-    * returns "0.0" with the desired number of decimal
-    * places.</li>
+    * returns "0.0".</li>
     * <li>When the value exceeds {@link Float#MAX_VALUE},
     * defers to {@link Float#toString(float)} .</li>
     * <li>When the length of the integral exceeds a limit
     * beyond which accurate representation is unlikely, such as
-    * scientific notation, defers to
+    * with scientific notation, defers to
     * {@link Float#toString(float)} .</li>
     * </ul>
     *

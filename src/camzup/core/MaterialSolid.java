@@ -262,12 +262,10 @@ public class MaterialSolid extends Material {
 
       if (this.useStroke) {
          result.append("stroke-width=\"")
-               .append(this.strokeWeight / transformScale)
-               .append("\" ")
-               .append("stroke-opacity=\"")
+               .append(Utils.toFixed(this.strokeWeight / transformScale, 4))
+               .append("\" stroke-opacity=\"")
                .append(Utils.toFixed(Utils.clamp01(this.stroke.w), 2))
-               .append("\" ")
-               .append("stroke=\"")
+               .append("\" stroke=\"")
                .append(Color.toHexWeb(this.stroke))
                .append("\" ");
       } else {
@@ -277,10 +275,9 @@ public class MaterialSolid extends Material {
       if (this.useFill) {
          result.append("fill-opacity=\"")
                .append(Utils.toFixed(Utils.clamp01(this.fill.w), 2))
-               .append("\" ")
-               .append("fill=\"")
+               .append("\" fill=\"")
                .append(Color.toHexWeb(this.fill))
-               .append("\" ");
+               .append('\"');
       } else {
          result.append("fill=\"none\"");
       }

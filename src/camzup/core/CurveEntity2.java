@@ -282,7 +282,10 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
             final Vec2 rear = knot.rearHandle;
             final Vec2 fore = knot.foreHandle;
 
-            /* Append coordinate (co in Blender). */
+            /*
+             * Append coordinate, fore handle and rear handle (co,
+             * handle_right and handle_left in Blender's lexicon).
+             */
             result.append("             {\"co\": (")
                   .append(Utils.toFixed(co.x, 6))
                   .append(',').append(' ')
@@ -428,21 +431,44 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
             .append(">\n");
 
       final float scale = Transform2.minDimension(this.transform);
+      boolean includesMats = this.materials.size() > 0;
+
+      /*
+       * If no materials are present, use a default one instead.
+       */
+      if (!includesMats) {
+         result.append("<g stroke-width=\"")
+               .append(Utils.toFixed(1.125f / scale, 4))
+               .append("\" stroke-opacity=\"1.0\" stroke=\"#202020\"")
+               .append(" fill-opacity=\"1.0\" fill=\"#9ad8e2\">\n");
+      }
+
       for (final Curve2 curve : this.curves) {
 
-         boolean includesMats = this.materials.size() > 0;
          if (includesMats) {
+
+            /*
+             * This is inefficient, as it invites the repetitive
+             * inclusion of the same material; however, Processing does
+             * not support definitions and references to them.
+             */
             final MaterialSolid material = this.materials
                   .get(curve.materialIndex);
             result.append("<g ")
                   .append(material.toSvgString(scale))
                   .append(">\n");
          }
-         result.append(curve.toSvgString());
+
+         result.append(curve.toSvgString())
+               .append('\n');
 
          if (includesMats) {
             result.append("</g>\n");
          }
+      }
+
+      if (!includesMats) {
+         result.append("</g>\n");
       }
 
       result.append("</g>");

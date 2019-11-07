@@ -789,7 +789,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             x1, y2, 0.0f,
             x1, y2 - bl, 0.0f);
 
-      this.vertex(
+      this.vertexImpl(
             x1, y1 + tl, 0.0f,
             this.textureU, this.textureV);
       this.quadraticVertexImpl(

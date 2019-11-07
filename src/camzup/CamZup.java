@@ -1,19 +1,6 @@
 package camzup;
 
-import camzup.core.Color;
-import camzup.core.Complex;
-import camzup.core.Curve2;
-import camzup.core.Curve2.Knot2;
-import camzup.core.Curve3;
-import camzup.core.CurveEntity2;
-import camzup.core.CurveEntity3;
-import camzup.core.MaterialSolid;
-import camzup.core.Mesh3;
-import camzup.core.Random;
-import camzup.core.SVGParser;
-import camzup.core.Utils;
-import camzup.core.Vec2;
-import camzup.core.Vec3;
+import camzup.core.*;
 import processing.core.PApplet;
 
 @SuppressWarnings("unused")
@@ -95,7 +82,24 @@ public class CamZup {
    }
 
    public static void main ( final String[] args ) {
-      SVGParser.parse("data/v2.svg");
+      // SVGParser.parse("data/v2.svg");
+
+      CurveEntity2 ce = new CurveEntity2();
+      ce.transform.moveTo(256, 256);
+      ce.transform.scaleTo(256, 256);
+      // ce.appendMaterial(new MaterialSolid());
+      Curve2 curve = Curve2.polygon(Utils.HALF_PI, 0.5f, 6,
+            0.1f, new Curve2());
+      ce.appendCurve(curve);
+      String str = ce.toBlenderCode();
+      System.out.println(str);
+
+      // for (int i = 0; i < 7; ++i) {
+      // Curve2 curve = Curve2.polygon(
+      // Utils.HALF_PI, 0.5f, 9 - i, 0.1f, new Curve2());
+      // ce.appendCurve(curve);
+      // }
+      // System.out.println(ce.toSvgString());
    }
 
    public static String version () {

@@ -18,9 +18,8 @@ public abstract class SVGParser {
 
    public enum PathCommand {
 
-      // TODO: How many data are with arc?
-      ArcToAbs ( 'A', false, 0 ),
-      ArcToRel ( 'a', true, 0 ),
+      ArcToAbs ( 'A', false, 7 ),
+      ArcToRel ( 'a', true, 7 ),
       ClosePath ( 'Z', false, 0 ),
       CubicToAbs ( 'C', false, 6 ),
       CubicToRel ( 'c', true, 6 ),
@@ -32,12 +31,10 @@ public abstract class SVGParser {
       MoveToRel ( 'm', true, 2 ),
       QuadraticToAbs ( 'Q', false, 4 ),
       QuadraticToRel ( 'q', true, 4 ),
-
-      // TODO: How many data are with s and t?
-      ReflectCubicAbs ( 'S', false, 0 ),
-      ReflectCubicRel ( 's', true, 0 ),
-      ReflectQuadraticAbs ( 'T', false, 0 ),
-      ReflectQuadraticRel ( 't', true, 0 ),
+      ReflectCubicAbs ( 'S', false, 4 ),
+      ReflectCubicRel ( 's', true, 4 ),
+      ReflectQuadraticAbs ( 'T', false, 2 ),
+      ReflectQuadraticRel ( 't', true, 2 ),
       VertAbs ( 'V', false, 1 ),
       VertRel ( 'v', true, 1 ),;
 
@@ -133,6 +130,100 @@ public abstract class SVGParser {
       return list.toArray(new String[list.size()]);
    }
 
+   private static float parseFloat ( String v ) {
+
+      float x = 0.0f;
+      try {
+         x = Float.parseFloat(v);
+      } catch (final NumberFormatException e) {
+         x = 0.0f;
+      }
+      return x;
+   }
+
+   @SuppressWarnings("unused")
+   private static Curve2 parseRect ( final Node rectNode ) {
+
+      // TODO: It's also possible to have rounded rectangles.
+      // TODO: Refactor to have curve create a rounded rect, then
+      // just have this defer to that function. Reference the PApplet rounded rect impl.
+      final NamedNodeMap attributes = rectNode.getAttributes();
+      final String xstr = attributes.getNamedItem("x").getTextContent();
+      final String ystr = attributes.getNamedItem("y").getTextContent();
+      final String wstr = attributes.getNamedItem("width").getTextContent();
+      final String hstr = attributes.getNamedItem("height").getTextContent();
+
+      float x = parseFloat(xstr);
+      float y = parseFloat(ystr);
+      float w = parseFloat(wstr);
+      float h = parseFloat(hstr);
+
+      /* Create knots, set coordinates. */
+      Knot2 tl = new Knot2(x, y);
+      Knot2 tr = new Knot2(x + w, y);
+      Knot2 br = new Knot2(x + w, y + h);
+      Knot2 bl = new Knot2(x, y + h);
+
+      /* Lerp fore handles. */
+      Vec2.mix(
+            tl.coord,
+            tr.coord,
+            IUtils.ONE_THIRD,
+            tl.foreHandle);
+
+      Vec2.mix(
+            tr.coord,
+            br.coord,
+            IUtils.ONE_THIRD,
+            tr.foreHandle);
+
+      Vec2.mix(
+            br.coord,
+            bl.coord,
+            IUtils.ONE_THIRD,
+            br.foreHandle);
+
+      Vec2.mix(
+            bl.coord,
+            tl.coord,
+            IUtils.ONE_THIRD,
+            tl.foreHandle);
+
+      /* Lerp rear handles. */
+      Vec2.mix(
+            tr.coord,
+            tl.coord,
+            IUtils.ONE_THIRD,
+            tr.rearHandle);
+
+      Vec2.mix(
+            br.coord,
+            tr.coord,
+            IUtils.ONE_THIRD,
+            br.rearHandle);
+
+      Vec2.mix(
+            bl.coord,
+            br.coord,
+            IUtils.ONE_THIRD,
+            bl.rearHandle);
+
+      Vec2.mix(
+            tl.coord,
+            bl.coord,
+            IUtils.ONE_THIRD,
+            tl.rearHandle);
+
+      /* Add knots to a list. */
+      LinkedList < Knot2 > knots = new LinkedList <>();
+      knots.add(tl);
+      knots.add(tr);
+      knots.add(br);
+      knots.add(bl);
+
+      return new Curve2(true, knots);
+   }
+
    public static CurveEntity2 parse ( final String fileName ) {
 
       final CurveEntity2 result = new CurveEntity2();
@@ -142,6 +233,7 @@ public abstract class SVGParser {
          final Document doc = db.parse(file);
          doc.normalizeDocument();
 
+         // TODO: What about rect, ellipse, etc.
          final NodeList paths = doc.getElementsByTagName("path");
          final int nodeLen = paths.getLength();
          LinkedList < Curve2 > curves = result.curves;

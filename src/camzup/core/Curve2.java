@@ -1,5 +1,6 @@
 package camzup.core;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -789,7 +790,7 @@ public class Curve2 extends Curve
                xCoord);
          final float yOff = Math.copySign(Utils.EPSILON,
                yCoord);
-         
+
          return this.set(
                xCoord, yCoord,
 
@@ -1037,6 +1038,69 @@ public class Curve2 extends Curve
       }
    }
 
+   private static void roundCorner (
+         final Vec2 corner,
+         final float radius,
+         final Knot2 prevKnot,
+         final Knot2 nextKnot,
+         final Knot2 target0,
+         final Knot2 target1 ) {
+
+      final Vec2 prevCoord = prevKnot.coord;
+      final Vec2 nextCoord = nextKnot.coord;
+
+      /*
+       * The corner is the coord of a knot; the knot will be split
+       * into two knots; it is expected that the old corner knot
+       * will be replaced by the two new corners.
+       */
+      final Vec2 corner0 = target0.coord;
+      final Vec2 corner1 = target1.coord;
+
+      /*
+       * These vectors do not have to be set until the end of the
+       * function, with lerp 1 / 3. For that reason, they are used
+       * as temp placeholders so as to not have to create new
+       * vectors.
+       */
+      final Vec2 fh0 = target0.foreHandle;
+      final Vec2 rh0 = target0.rearHandle;
+      final Vec2 fh1 = target1.foreHandle;
+      final Vec2 rh1 = target1.rearHandle;
+
+      /*
+       * Find the vectors from previous point to corner, and from
+       * corner to next point.
+       */
+      final Vec2 diff0 = Vec2.subNorm(corner, prevCoord, fh0);
+      final Vec2 diff1 = Vec2.subNorm(corner, nextCoord, rh0);
+
+      /*
+       * Find angle between vectors - simplified because they are
+       * already normalized - then divide radius by tangent.
+       */
+      final float halfAng = 0.5f * Utils.acos(Vec2.dot(diff0, diff1));
+      final float rtanHalf = (float) (radius / Math.tan(halfAng));
+
+      /*
+       * Multiply the differences (legs of the angle formed at the
+       * corner) by the radius-tangent. Then, subtract the product
+       * from the corner.
+       */
+      Vec2.sub(corner, Vec2.mult(diff0, rtanHalf, fh1), corner0);
+      Vec2.sub(corner, Vec2.mult(diff1, rtanHalf, rh1), corner1);
+
+      /* Flatten edge handles */
+      Curve2.lerp13(corner0, prevCoord, rh0);
+      Curve2.lerp13(corner1, nextCoord, fh1);
+      Curve2.lerp13(prevCoord, corner0, prevKnot.foreHandle);
+      Curve2.lerp13(nextCoord, corner1, nextKnot.rearHandle);
+
+      /* Set rounded-corner handles. */
+      Curve2.lerp13(corner, corner0, fh0);
+      Curve2.lerp13(corner, corner1, rh1);
+   }
+
    /**
     * Creates an arc from a stop angle. The start angle is
     * presumed to be 0.0 degrees.
@@ -1139,17 +1203,8 @@ public class Curve2 extends Curve
             final Knot2 last = target.getLast();
 
             /* Flatten the first to last handles. */
-            Vec2.mix(
-                  last.coord,
-                  first.coord,
-                  IUtils.ONE_THIRD,
-                  last.foreHandle);
-
-            Vec2.mix(
-                  first.coord,
-                  last.coord,
-                  IUtils.ONE_THIRD,
-                  first.rearHandle);
+            Curve2.lerp13(last.coord, first.coord, last.foreHandle);
+            Curve2.lerp13(first.coord, last.coord, first.rearHandle);
 
          } else if (arcMode == ArcMode.PIE) {
 
@@ -1162,31 +1217,14 @@ public class Curve2 extends Curve
             final Vec2 coCenter = center.coord;
 
             /* Flatten center handles. */
-            Vec2.mix(
-                  coCenter,
-                  last.coord,
-                  IUtils.ONE_THIRD,
-                  center.rearHandle);
-
-            Vec2.mix(
-                  coCenter,
-                  first.coord,
-                  IUtils.ONE_THIRD,
-                  center.foreHandle);
+            Curve2.lerp13(coCenter, last.coord, center.rearHandle);
+            Curve2.lerp13(coCenter, first.coord, center.foreHandle);
 
             /* Flatten handle from first to center. */
-            Vec2.mix(
-                  first.coord,
-                  coCenter,
-                  IUtils.ONE_THIRD,
-                  first.rearHandle);
+            Curve2.lerp13(first.coord, coCenter, first.rearHandle);
 
             /* Flatten handle from last to center. */
-            Vec2.mix(
-                  last.coord,
-                  coCenter,
-                  IUtils.ONE_THIRD,
-                  last.foreHandle);
+            Curve2.lerp13(last.coord, coCenter, last.foreHandle);
          }
       }
 
@@ -1340,6 +1378,30 @@ public class Curve2 extends Curve
    }
 
    /**
+    * A utility function for setting the handles of knots on
+    * straight curve segments. Finds unclamped linear
+    * interpolation from origin to destination by a step of 1.0
+    * / 3.0 .
+    *
+    * @param a
+    *           the origin
+    * @param b
+    *           the destination
+    * @param target
+    *           the target
+    * @return the result
+    */
+   public static Vec2 lerp13 (
+         final Vec2 a,
+         final Vec2 b,
+         final Vec2 target ) {
+
+      return target.set(
+            0.6666667f * a.x + IUtils.ONE_THIRD * b.x,
+            0.6666667f * a.y + IUtils.ONE_THIRD * b.y);
+   }
+
+   /**
     * Creates a regular convex polygon.
     *
     * @param offsetAngle
@@ -1363,15 +1425,79 @@ public class Curve2 extends Curve
       final int vknct = knotCount < 3 ? 3 : knotCount;
       final float invKnCt = 1.0f / vknct;
       final float toAngle = IUtils.TAU * invKnCt;
+      final LinkedList < Knot2 > knots = target.knots;
       for (int i = 0; i < vknct; ++i) {
          final float angle = offsetAngle + i * toAngle;
          final Knot2 knot = new Knot2();
          Vec2.fromPolar(angle, radius, knot.coord);
-         target.append(knot);
+         knots.add(knot);
       }
 
       target.name = "Polygon";
       return Curve2.straightenHandles(target);
+   }
+
+   /**
+    * Creates a regular convex polygon with rounded corners. The rounding factor is limited to half the radius.
+    *
+    * @param offsetAngle
+    *           the offset angle
+    * @param radius
+    *           the radius
+    * @param knotCount
+    *           the number of knots
+    * @param rounding
+    *           corner rounding factor
+    * @param target
+    *           the output curve
+    * @return the polygon
+    */
+   public static Curve2 polygon (
+         final float offsetAngle,
+         final float radius,
+         final int knotCount,
+         final float rounding,
+         final Curve2 target ) {
+
+      Curve2.polygon(offsetAngle, radius, knotCount, target);
+
+      /* Limit scope of rounding factor. */
+      final float valRound = Utils.clamp(
+            rounding, Utils.EPSILON, radius * 0.5f);
+
+      /*
+       * Old knots will be replaced by new knots, which will be
+       * twice the length of the old.
+       */
+      final LinkedList < Knot2 > oldKn = target.knots;
+      final LinkedList < Knot2 > newKn = new LinkedList <>();
+      final int len = oldKn.size();
+      for (int i = 0; i < len; ++i) {
+
+         /* Acquire corner and surrounding knots. */
+         final Knot2 prevKnot = oldKn.get(Utils.mod(i - 1, len));
+         final Knot2 cornerKnot = oldKn.get(i);
+         final Knot2 nextKnot = oldKn.get((i + 1) % len);
+
+         /* Create outputs for roundCorner. */
+         final Knot2 new0 = new Knot2();
+         final Knot2 new1 = new Knot2();
+
+         /* Round corners */
+         Curve2.roundCorner(
+               cornerKnot.coord, valRound,
+               prevKnot, nextKnot,
+               new0, new1);
+
+         /* Add new knots to the new list. */
+         newKn.add(new0);
+         newKn.add(new1);
+      }
+
+      /* Replace old knots with new. */
+      oldKn.clear();
+      oldKn.addAll(newKn);
+      return target;
    }
 
    /**
@@ -1447,6 +1573,240 @@ public class Curve2 extends Curve
       target.closedLoop = closedLoop;
 
       return Curve2.fromPoints(closedLoop, points, target);
+   }
+
+   public static Curve2 rect (
+         final float x0,
+         final float y0,
+         final float x1,
+         final float y1,
+         final Curve2 target ) {
+
+      target.clear();
+      target.closedLoop = true;
+      target.name = "Rect";
+
+      final LinkedList < Knot2 > knots = target.knots;
+      knots.add(new Knot2(x0, y0));
+      knots.add(new Knot2(x1, y0));
+      knots.add(new Knot2(x1, y1));
+      knots.add(new Knot2(x0, y1));
+
+      return Curve2.straightenHandles(target);
+   }
+
+   public static Curve2 rect (
+         final float x0,
+         final float y0,
+         final float x1,
+         final float y1,
+         final float corner,
+         final Curve2 target ) {
+
+      return Curve2.rect(
+            x0, y0, x1, y1,
+            corner, corner,
+            corner, corner,
+            target);
+   }
+
+   public static Curve2 rect (
+         final float x0,
+         final float y0,
+         final float x1,
+         final float y1,
+         final float tl,
+         final float tr,
+         final float br,
+         final float bl,
+         final Curve2 target ) {
+
+      /* Validate corner values. */
+      final float vtl = Utils.clamp(Utils.abs(tl),
+            Utils.EPSILON, IUtils.ONE_THIRD);
+      final float vtr = Utils.clamp(Utils.abs(tr),
+            Utils.EPSILON, IUtils.ONE_THIRD);
+      final float vbr = Utils.clamp(Utils.abs(br),
+            Utils.EPSILON, IUtils.ONE_THIRD);
+      final float vbl = Utils.clamp(Utils.abs(bl),
+            Utils.EPSILON, IUtils.ONE_THIRD);
+
+      /* Top edge. */
+      final Knot2 k0 = new Knot2(x0 + vtl, y0, 0.0f, 0.0f, 0.0f, 0.0f); /* 0 */
+      final Knot2 k1 = new Knot2(x1 - vtr, y0, 0.0f, 0.0f, 0.0f, 0.0f); /* 1 */
+
+      /* Right edge. */
+      final Knot2 k2 = new Knot2(x1, y0 - vtr, 0.0f, 0.0f, 0.0f, 0.0f); /* 2 */
+      final Knot2 k3 = new Knot2(x1, y1 + vbr, 0.0f, 0.0f, 0.0f, 0.0f); /* 3 */
+
+      /* Bottom edge. */
+      final Knot2 k4 = new Knot2(x1 - vbr, y1, 0.0f, 0.0f, 0.0f, 0.0f); /* 4 */
+      final Knot2 k5 = new Knot2(x0 + vbl, y1, 0.0f, 0.0f, 0.0f, 0.0f); /* 5 */
+
+      /* Left edge. */
+      final Knot2 k6 = new Knot2(x0, y1 + vbl, 0.0f, 0.0f, 0.0f, 0.0f); /* 6 */
+      final Knot2 k7 = new Knot2(x0, y0 - vtl, 0.0f, 0.0f, 0.0f, 0.0f); /* 7 */
+
+      /* Cache knot coord shortcuts . */
+      final Vec2 k7co = k7.coord;
+      final Vec2 k0co = k0.coord;
+      final Vec2 k1co = k1.coord;
+      final Vec2 k2co = k2.coord;
+      final Vec2 k3co = k3.coord;
+      final Vec2 k4co = k4.coord;
+      final Vec2 k5co = k5.coord;
+      final Vec2 k6co = k6.coord;
+
+      /* Cache even knot rear handle shortcuts. */
+      final Vec2 k0rh = k0.rearHandle;
+      final Vec2 k2rh = k2.rearHandle;
+      final Vec2 k4rh = k4.rearHandle;
+      final Vec2 k6rh = k6.rearHandle;
+
+      /* Cache odd knot fore handle shortcuts. */
+      final Vec2 k1fh = k1.foreHandle;
+      final Vec2 k3fh = k3.foreHandle;
+      final Vec2 k5fh = k5.foreHandle;
+      final Vec2 k7fh = k7.foreHandle;
+
+      /* Straighten fore handles of each edge. */
+      Curve2.lerp13(k0co, k1co, k0.foreHandle);
+      Curve2.lerp13(k2co, k3co, k2.foreHandle);
+      Curve2.lerp13(k4co, k5co, k4.foreHandle);
+      Curve2.lerp13(k6co, k7co, k6.foreHandle);
+
+      /* Straighten rear handles of each edge. */
+      Curve2.lerp13(k1co, k0co, k1.rearHandle);
+      Curve2.lerp13(k3co, k2co, k3.rearHandle);
+      Curve2.lerp13(k5co, k4co, k5.rearHandle);
+      Curve2.lerp13(k7co, k6co, k7.rearHandle);
+
+      /* Top Right Corner. */
+      if (tr < 0.0f) {
+         final float ix1 = x1 - vtr;
+         final float iy0 = y0 - vtr;
+
+         k1fh.x = (k1co.x + ix1) * 0.5f;
+         k1fh.y = (k1co.y + iy0) * 0.5f;
+
+         k2rh.x = (k2co.x + ix1) * 0.5f;
+         k2rh.y = (k2co.y + iy0) * 0.5f;
+      } else {
+         k1fh.x = (k1co.x + x1) * 0.5f;
+         k1fh.y = (k1co.y + y0) * 0.5f;
+
+         k2rh.x = (k2co.x + x1) * 0.5f;
+         k2rh.y = (k2co.y + y0) * 0.5f;
+      }
+
+      /* Bottom Right Corner. */
+      if (br < 0.0f) {
+         final float ix1 = x1 - vbr;
+         final float iy1 = y1 + vbr;
+
+         k3fh.x = (k3co.x + ix1) * 0.5f;
+         k3fh.y = (k3co.y + iy1) * 0.5f;
+
+         k4rh.x = (k4co.x + ix1) * 0.5f;
+         k4rh.y = (k4co.y + iy1) * 0.5f;
+      } else {
+         k3fh.x = (k3co.x + x1) * 0.5f;
+         k3fh.y = (k3co.y + y1) * 0.5f;
+
+         k4rh.x = (k4co.x + x1) * 0.5f;
+         k4rh.y = (k4co.y + y1) * 0.5f;
+      }
+
+      /* Bottom Left Corner. */
+      if (bl < 0.0f) {
+         final float ix0 = x0 + vbl;
+         final float iy1 = y1 + vbl;
+
+         k5fh.x = (k5co.x + ix0) * 0.5f;
+         k5fh.y = (k5co.y + iy1) * 0.5f;
+
+         k6rh.x = (k6co.x + ix0) * 0.5f;
+         k6rh.y = (k6co.y + iy1) * 0.5f;
+      } else {
+         k5fh.x = (k5co.x + x0) * 0.5f;
+         k5fh.y = (k5co.y + y1) * 0.5f;
+
+         k6rh.x = (k6co.x + x0) * 0.5f;
+         k6rh.y = (k6co.y + y1) * 0.5f;
+      }
+
+      /* Top Left Corner. */
+      if (tl < 0.0f) {
+         final float ix0 = x0 + vtl;
+         final float iy0 = y0 - vtl;
+
+         k7fh.x = (k7co.x + ix0) * 0.5f;
+         k7fh.y = (k7co.y + iy0) * 0.5f;
+
+         k0rh.x = (k0co.x + ix0) * 0.5f;
+         k0rh.y = (k0co.y + iy0) * 0.5f;
+      } else {
+         k7fh.x = (k7co.x + x0) * 0.5f;
+         k7fh.y = (k7co.y + y0) * 0.5f;
+
+         k0rh.x = (k0co.x + x0) * 0.5f;
+         k0rh.y = (k0co.y + y0) * 0.5f;
+      }
+
+      /* Clear old data from target. */
+      target.clear();
+      target.closedLoop = true;
+      target.name = "Rect";
+
+      /* Add knots to the target. */
+      final LinkedList < Knot2 > knots = target.knots;
+      knots.add(k0);
+      knots.add(k1);
+      knots.add(k2);
+      knots.add(k3);
+      knots.add(k4);
+      knots.add(k5);
+      knots.add(k6);
+      knots.add(k7);
+
+      return target;
+   }
+
+   public static Curve2 rect (
+         final Vec2 tl,
+         final Vec2 br,
+         final Curve2 target ) {
+
+      return Curve2.rect(
+            tl.x, tl.y,
+            br.x, br.y, target);
+   }
+
+   public static Curve2 rect (
+         final Vec2 tl,
+         final Vec2 br,
+         final float corner,
+         final Curve2 target ) {
+
+      return Curve2.rect(
+            tl.x, tl.y,
+            br.x, br.y,
+            corner, target);
+   }
+
+   public static Curve2 rect (
+         final Vec2 tl,
+         final Vec2 br,
+         final float tlCorner,
+         final float trCorner,
+         final float brCorner,
+         final float blCorner,
+         final Curve2 target ) {
+
+      return Curve2.rect(
+            tl.x, tl.y, br.x, br.y,
+            tlCorner, trCorner,
+            brCorner, blCorner, target);
    }
 
    /**
@@ -1576,18 +1936,10 @@ public class Curve2 extends Curve
          final Knot2 first = knots.getFirst();
          final Knot2 last = knots.getLast();
 
-         Vec2.mix(
-               first.coord,
-               last.coord,
-               IUtils.ONE_THIRD,
-               first.foreHandle);
+         Curve2.lerp13(first.coord, last.coord, first.foreHandle);
          first.mirrorHandlesForward();
 
-         Vec2.mix(
-               last.coord,
-               first.coord,
-               IUtils.ONE_THIRD,
-               last.rearHandle);
+         Curve2.lerp13(last.coord, first.coord, last.rearHandle);
          last.mirrorHandlesBackward();
 
          return target;
@@ -1599,35 +1951,15 @@ public class Curve2 extends Curve
       while (itr.hasNext()) {
          prev = curr;
          curr = itr.next();
-
-         Vec2.mix(
-               prev.coord,
-               curr.coord,
-               IUtils.ONE_THIRD,
-               prev.foreHandle);
-
-         Vec2.mix(
-               curr.coord,
-               prev.coord,
-               IUtils.ONE_THIRD,
-               curr.rearHandle);
+         Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
+         Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
       }
 
       if (target.closedLoop) {
          final Knot2 first = knots.getFirst();
          final Knot2 last = knots.getLast();
-
-         Vec2.mix(
-               first.coord,
-               last.coord,
-               IUtils.ONE_THIRD,
-               first.rearHandle);
-
-         Vec2.mix(
-               last.coord,
-               first.coord,
-               IUtils.ONE_THIRD,
-               last.foreHandle);
+         Curve2.lerp13(first.coord, last.coord, first.rearHandle);
+         Curve2.lerp13(last.coord, first.coord, last.foreHandle);
       } else {
          knots.getFirst().mirrorHandlesForward();
          knots.getLast().mirrorHandlesBackward();
@@ -1898,6 +2230,7 @@ public class Curve2 extends Curve
    protected void clear () {
 
       this.closedLoop = false;
+      this.name = this.hashIdentityString();
       this.knots.clear();
    }
 
@@ -2031,7 +2364,6 @@ public class Curve2 extends Curve
          i = (int) tScaled;
          a = this.knots.get(i);
          b = this.knots.get((i + 1) % knotLength);
-         // b = this.knots.get(Utils.mod(i + 1, knotLength));
       } else {
          if (knotLength == 1 || step <= 0.0f) {
             return this.evalFirst(coord, tangent);
@@ -2231,7 +2563,7 @@ public class Curve2 extends Curve
       this.knots.add(knot1);
 
       this.closedLoop = false;
-
+      this.name = this.hashIdentityString();
       return this;
    }
 
@@ -2274,7 +2606,6 @@ public class Curve2 extends Curve
       while (itr.hasNext()) {
          itr.next().rotateZ(cosa, sina);
       }
-
       return this;
    }
 
@@ -2438,7 +2769,8 @@ public class Curve2 extends Curve
             .append(prevKnot.coord.toSvgString());
 
       for (int i = 1; i < end; ++i) {
-         // TODO: Could be updated to match the drawing of the curve
+         // TODO: Could be updated to match the drawing of the curve,
+         // i.e., to avoid using the modulo operation.
          currKnot = this.knots.get(i % knotLength);
 
          result.append(' ')

@@ -922,7 +922,7 @@ public class Curve3 extends Curve
                yCoord);
          final float zOff = Math.copySign(Utils.EPSILON,
                yCoord);
-         
+
          return this.set(
                xCoord, yCoord, zCoord,
 
@@ -1265,17 +1265,8 @@ public class Curve3 extends Curve
             final Knot3 last = target.getLast();
 
             /* Flatten the first to last handles. */
-            Vec3.mix(
-                  last.coord,
-                  first.coord,
-                  IUtils.ONE_THIRD,
-                  last.foreHandle);
-
-            Vec3.mix(
-                  first.coord,
-                  last.coord,
-                  IUtils.ONE_THIRD,
-                  first.rearHandle);
+            lerp13(last.coord, first.coord, last.foreHandle);
+            lerp13(first.coord, last.coord, first.rearHandle);
 
          } else if (arcMode == ArcMode.PIE) {
 
@@ -1288,31 +1279,14 @@ public class Curve3 extends Curve
             final Vec3 coCenter = center.coord;
 
             /* Flatten center handles. */
-            Vec3.mix(
-                  coCenter,
-                  last.coord,
-                  IUtils.ONE_THIRD,
-                  center.rearHandle);
-
-            Vec3.mix(
-                  coCenter,
-                  first.coord,
-                  IUtils.ONE_THIRD,
-                  center.foreHandle);
+            lerp13(coCenter, last.coord, center.rearHandle);
+            lerp13(coCenter, first.coord, center.foreHandle);
 
             /* Flatten handle from first to center. */
-            Vec3.mix(
-                  first.coord,
-                  coCenter,
-                  IUtils.ONE_THIRD,
-                  first.rearHandle);
+            lerp13(first.coord, coCenter, first.rearHandle);
 
             /* Flatten handle from last to center. */
-            Vec3.mix(
-                  last.coord,
-                  coCenter,
-                  IUtils.ONE_THIRD,
-                  last.foreHandle);
+            lerp13(last.coord, coCenter, last.foreHandle);
          }
       }
 
@@ -1438,6 +1412,31 @@ public class Curve3 extends Curve
          target.append(knot);
       }
       return Curve3.smoothHandles(target);
+   }
+
+   /**
+    * A utility function for setting the handles of knots on
+    * straight curve segments. Finds unclamped linear
+    * interpolation from origin to destination by a step of 1.0
+    * / 3.0 .
+    * 
+    * @param a
+    *           the origin
+    * @param b
+    *           the destination
+    * @param target
+    *           the target
+    * @return the result
+    */
+   public static Vec3 lerp13 (
+         final Vec3 a,
+         final Vec3 b,
+         final Vec3 target ) {
+
+      return target.set(
+            0.6666667f * a.x + IUtils.ONE_THIRD * b.x,
+            0.6666667f * a.y + IUtils.ONE_THIRD * b.y,
+            0.6666667f * a.z + IUtils.ONE_THIRD * b.z);
    }
 
    /**
@@ -1678,18 +1677,10 @@ public class Curve3 extends Curve
          final Knot3 first = knots.getFirst();
          final Knot3 last = knots.getLast();
 
-         Vec3.mix(
-               first.coord,
-               last.coord,
-               IUtils.ONE_THIRD,
-               first.foreHandle);
+         lerp13(first.coord, last.coord, first.foreHandle);
          first.mirrorHandlesForward();
 
-         Vec3.mix(
-               last.coord,
-               first.coord,
-               IUtils.ONE_THIRD,
-               last.rearHandle);
+         lerp13(last.coord, first.coord, last.rearHandle);
          last.mirrorHandlesBackward();
 
          return target;
@@ -1701,35 +1692,15 @@ public class Curve3 extends Curve
       while (itr.hasNext()) {
          prev = curr;
          curr = itr.next();
-
-         Vec3.mix(
-               prev.coord,
-               curr.coord,
-               IUtils.ONE_THIRD,
-               prev.foreHandle);
-
-         Vec3.mix(
-               curr.coord,
-               prev.coord,
-               IUtils.ONE_THIRD,
-               curr.rearHandle);
+         lerp13(prev.coord, curr.coord, prev.foreHandle);
+         lerp13(curr.coord, prev.coord, curr.rearHandle);
       }
 
       if (target.closedLoop) {
          final Knot3 first = knots.getFirst();
          final Knot3 last = knots.getLast();
-
-         Vec3.mix(
-               first.coord,
-               last.coord,
-               IUtils.ONE_THIRD,
-               first.rearHandle);
-
-         Vec3.mix(
-               last.coord,
-               first.coord,
-               IUtils.ONE_THIRD,
-               last.foreHandle);
+         lerp13(first.coord, last.coord, first.rearHandle);
+         lerp13(last.coord, first.coord, last.foreHandle);
       } else {
          knots.getFirst().mirrorHandlesForward();
          knots.getLast().mirrorHandlesBackward();
@@ -1994,6 +1965,7 @@ public class Curve3 extends Curve
    protected void clear () {
 
       this.closedLoop = false;
+      this.name = this.hashIdentityString();
       this.knots.clear();
    }
 
@@ -2077,7 +2049,6 @@ public class Curve3 extends Curve
          i = (int) tScaled;
          a = this.knots.get(i);
          b = this.knots.get((i + 1) % knotLength);
-         // b = this.knots.get(Utils.mod(i + 1, knotLength));
       } else {
          if (knotLength == 1 || step <= 0.0f) {
             return target.set(this.getFirst());
@@ -2326,7 +2297,7 @@ public class Curve3 extends Curve
       this.knots.add(knot1);
 
       this.closedLoop = false;
-
+      this.name = this.hashIdentityString();
       return this;
    }
 
