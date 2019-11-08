@@ -1,6 +1,5 @@
 package camzup.core;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -206,7 +205,7 @@ public class Curve2 extends Curve
       }
 
       /**
-       * Creates a knot from a coordinate and fore-handle. The
+       * Creates a knot from a coordinate and fore handle. The
        * rear handle is a mirror of the fore.
        *
        * @param coord
@@ -1017,7 +1016,7 @@ public class Curve2 extends Curve
                .append(this.foreHandle.toString(places))
                .append(", rearHandle: ")
                .append(this.rearHandle.toString(places))
-               .append(" }")
+               .append(' ').append('}')
                .toString();
       }
 
@@ -1038,6 +1037,27 @@ public class Curve2 extends Curve
       }
    }
 
+   /**
+    * A utility function which defines two target knots as a
+    * rounded corner given a corner. This function mutates the
+    * handles of the previous and next knot to form a straight
+    * line between the input and target knots. It is assumed
+    * here that another function will replace an old knot at
+    * the corner with the two generated knots.
+    *
+    * @param corner
+    *           the corner
+    * @param radius
+    *           the rounding radius
+    * @param prevKnot
+    *           the knot preceding the corner
+    * @param nextKnot
+    *           the knot following the corner
+    * @param target0
+    *           the new knot preceding the corner
+    * @param target1
+    *           the new knot following the corner
+    */
    private static void roundCorner (
          final Vec2 corner,
          final float radius,
@@ -1046,6 +1066,7 @@ public class Curve2 extends Curve
          final Knot2 target0,
          final Knot2 target1 ) {
 
+      /* Cache knot coordinates. */
       final Vec2 prevCoord = prevKnot.coord;
       final Vec2 nextCoord = nextKnot.coord;
 
@@ -1090,15 +1111,51 @@ public class Curve2 extends Curve
       Vec2.sub(corner, Vec2.mult(diff0, rtanHalf, fh1), corner0);
       Vec2.sub(corner, Vec2.mult(diff1, rtanHalf, rh1), corner1);
 
+      /* Set rounded-corner handles. */
+      Curve2.lerp13(corner, corner0, fh0);
+      Curve2.lerp13(corner, corner1, rh1);
+
+      // if (radius < 0.0f) {
+      // // c = v2 - rounding / sin(halfang) * norm((a + b) / 2)
+      // Vec2 sum = Vec2.add(diff0, diff1, new Vec2());
+      // Vec2 halfSum = Vec2.mult(sum, 0.5f, new Vec2());
+      // Vec2 normSum = Vec2.normalize(halfSum, new Vec2());
+      // float radSin = (float) (radius / Math.sin(halfAng));
+      // Vec2 scaleSum = Vec2.mult(radSin, normSum, new Vec2());
+      // Vec2 C = Vec2.sub(corner, scaleSum, new Vec2());
+      // target0.scaleForeHandleBy(-1.0f, rh0, fh1);
+      // target1.scaleRearHandleBy(-1.0f, rh0, fh1);
+      // }
+
       /* Flatten edge handles */
       Curve2.lerp13(corner0, prevCoord, rh0);
       Curve2.lerp13(corner1, nextCoord, fh1);
       Curve2.lerp13(prevCoord, corner0, prevKnot.foreHandle);
       Curve2.lerp13(nextCoord, corner1, nextKnot.rearHandle);
+   }
 
-      /* Set rounded-corner handles. */
-      Curve2.lerp13(corner, corner0, fh0);
-      Curve2.lerp13(corner, corner1, rh1);
+   /**
+    * A utility function for setting the handles of knots on
+    * straight curve segments. Finds unclamped linear
+    * interpolation from origin to destination by a step of 1.0
+    * / 3.0 .
+    *
+    * @param a
+    *           the origin
+    * @param b
+    *           the destination
+    * @param target
+    *           the target
+    * @return the result
+    */
+   static Vec2 lerp13 (
+         final Vec2 a,
+         final Vec2 b,
+         final Vec2 target ) {
+
+      return target.set(
+            0.6666667f * a.x + IUtils.ONE_THIRD * b.x,
+            0.6666667f * a.y + IUtils.ONE_THIRD * b.y);
    }
 
    /**
@@ -1186,6 +1243,7 @@ public class Curve2 extends Curve
       final float handleMag = (float) (radius * IUtils.FOUR_THIRDS_D
             * Math.tan(IUtils.HALF_PI_D * toStep * arcFac));
 
+      /* Calculate knots along arc. */
       target.clear();
       for (int i = 0; i < knotCount; ++i) {
          final float step = i * toStep;
@@ -1195,6 +1253,7 @@ public class Curve2 extends Curve
          target.append(knot);
       }
 
+      /* Depending on arc mode, calculate chord or legs. */
       target.closedLoop = arcMode != ArcMode.OPEN;
       if (target.closedLoop) {
          if (arcMode == ArcMode.CHORD) {
@@ -1337,12 +1396,12 @@ public class Curve2 extends Curve
       final float toAngle = IUtils.TAU * invKnCt;
       final float handleMag = radius * (float) (IUtils.FOUR_THIRDS_D
             * Math.tan(IUtils.HALF_PI_D * invKnCt));
-
+      LinkedList < Knot2 > knots = target.knots;
       for (int i = 0; i < vknct; ++i) {
          final float angle = offsetAngle + i * toAngle;
          final Knot2 knot = Knot2.fromPolar(
                angle, radius, handleMag, new Knot2());
-         target.append(knot);
+         knots.add(knot);
       }
 
       target.name = "Circle";
@@ -1369,36 +1428,13 @@ public class Curve2 extends Curve
       final int knotCount = points.length;
       target.clear();
       target.closedLoop = closedLoop;
+      LinkedList < Knot2 > knots = target.knots;
       for (int i = 0; i < knotCount; ++i) {
          final Vec2 point = points[i];
          final Knot2 knot = new Knot2(point, point, point);
-         target.append(knot);
+         knots.add(knot);
       }
       return Curve2.smoothHandles(target);
-   }
-
-   /**
-    * A utility function for setting the handles of knots on
-    * straight curve segments. Finds unclamped linear
-    * interpolation from origin to destination by a step of 1.0
-    * / 3.0 .
-    *
-    * @param a
-    *           the origin
-    * @param b
-    *           the destination
-    * @param target
-    *           the target
-    * @return the result
-    */
-   public static Vec2 lerp13 (
-         final Vec2 a,
-         final Vec2 b,
-         final Vec2 target ) {
-
-      return target.set(
-            0.6666667f * a.x + IUtils.ONE_THIRD * b.x,
-            0.6666667f * a.y + IUtils.ONE_THIRD * b.y);
    }
 
    /**
@@ -1438,7 +1474,8 @@ public class Curve2 extends Curve
    }
 
    /**
-    * Creates a regular convex polygon with rounded corners. The rounding factor is limited to half the radius.
+    * Creates a regular convex polygon with rounded corners.
+    * The rounding factor is limited to half the radius.
     *
     * @param offsetAngle
     *           the offset angle
@@ -1462,17 +1499,20 @@ public class Curve2 extends Curve
       Curve2.polygon(offsetAngle, radius, knotCount, target);
 
       /* Limit scope of rounding factor. */
-      final float valRound = Utils.clamp(
-            rounding, Utils.EPSILON, radius * 0.5f);
+      final float valRound = Utils.clamp(rounding, Utils.EPSILON,
+            radius * 0.5f);
 
       /*
        * Old knots will be replaced by new knots, which will be
        * twice the length of the old.
        */
       final LinkedList < Knot2 > oldKn = target.knots;
-      final LinkedList < Knot2 > newKn = new LinkedList <>();
+      // final LinkedList < Knot2 > newKn = new LinkedList <>();
       final int len = oldKn.size();
-      for (int i = 0; i < len; ++i) {
+      Knot2[] newKn = new Knot2[len * 2];
+
+      // for (int i = 0; i < len; ++i) {
+      for (int i = 0, j = 0; i < len; ++i, j += 2) {
 
          /* Acquire corner and surrounding knots. */
          final Knot2 prevKnot = oldKn.get(Utils.mod(i - 1, len));
@@ -1490,13 +1530,16 @@ public class Curve2 extends Curve
                new0, new1);
 
          /* Add new knots to the new list. */
-         newKn.add(new0);
-         newKn.add(new1);
+         // newKn.add(new0);
+         // newKn.add(new1);
+         newKn[j] = new0;
+         newKn[j + 1] = new1;
       }
 
       /* Replace old knots with new. */
       oldKn.clear();
-      oldKn.addAll(newKn);
+      // oldKn.addAll(newKn);
+      target.append(newKn);
       return target;
    }
 
@@ -1571,10 +1614,26 @@ public class Curve2 extends Curve
                lowerBound, upperBound, new Vec2());
       }
       target.closedLoop = closedLoop;
-
       return Curve2.fromPoints(closedLoop, points, target);
    }
 
+   /**
+    * Creates a rectangle. The first coordinate, x0 and y0,
+    * specifies the top left corner; the second coordinate, x1
+    * and y1, specifies the bottom right corner.
+    *
+    * @param x0
+    *           top left corner x
+    * @param y0
+    *           top left corner y
+    * @param x1
+    *           bottom right corner x
+    * @param y1
+    *           bottom right corner y
+    * @param target
+    *           the output curve
+    * @return the rectangle
+    */
    public static Curve2 rect (
          final float x0,
          final float y0,
@@ -1595,6 +1654,26 @@ public class Curve2 extends Curve
       return Curve2.straightenHandles(target);
    }
 
+   /**
+    * Creates a rounded rectangle. The first coordinate, x0 and
+    * y0, specifies the top left corner; the second coordinate,
+    * x1 and y1, specifies the bottom right corner. The fifth
+    * parameter specifies the corner rounding factor.
+    *
+    * @param x0
+    *           top left corner x
+    * @param y0
+    *           top left corner y
+    * @param x1
+    *           bottom right corner x
+    * @param y1
+    *           bottom right corner y
+    * @param corner
+    *           the rounding factor
+    * @param target
+    *           the output curve
+    * @return the rounded rectangle
+    */
    public static Curve2 rect (
          final float x0,
          final float y0,
@@ -1610,6 +1689,33 @@ public class Curve2 extends Curve
             target);
    }
 
+   /**
+    * Creates a rounded rectangle. The first coordinate, x0 and
+    * y0, specifies the top left corner; the second coordinate,
+    * x1 and y1, specifies the bottom right corner. The next
+    * four parameters specify the rounding factor for the top
+    * left, top right, bottom right and bottom left corners.
+    *
+    * @param x0
+    *           top left corner x
+    * @param y0
+    *           top left corner y
+    * @param x1
+    *           bottom right corner x
+    * @param y1
+    *           bottom right corner y
+    * @param tl
+    *           rounding top left corner
+    * @param tr
+    *           rounding top right corner
+    * @param br
+    *           rounding bottom right corner
+    * @param bl
+    *           rounding bottom left corner
+    * @param target
+    *           the output curve
+    * @return the rounded rectangle
+    */
    public static Curve2 rect (
          final float x0,
          final float y0,
@@ -1632,20 +1738,20 @@ public class Curve2 extends Curve
             Utils.EPSILON, IUtils.ONE_THIRD);
 
       /* Top edge. */
-      final Knot2 k0 = new Knot2(x0 + vtl, y0, 0.0f, 0.0f, 0.0f, 0.0f); /* 0 */
-      final Knot2 k1 = new Knot2(x1 - vtr, y0, 0.0f, 0.0f, 0.0f, 0.0f); /* 1 */
+      final Knot2 k0 = new Knot2(x0 + vtl, y0, 0.0f, 0.0f, 0.0f, 0.0f);
+      final Knot2 k1 = new Knot2(x1 - vtr, y0, 0.0f, 0.0f, 0.0f, 0.0f);
 
       /* Right edge. */
-      final Knot2 k2 = new Knot2(x1, y0 - vtr, 0.0f, 0.0f, 0.0f, 0.0f); /* 2 */
-      final Knot2 k3 = new Knot2(x1, y1 + vbr, 0.0f, 0.0f, 0.0f, 0.0f); /* 3 */
+      final Knot2 k2 = new Knot2(x1, y0 - vtr, 0.0f, 0.0f, 0.0f, 0.0f);
+      final Knot2 k3 = new Knot2(x1, y1 + vbr, 0.0f, 0.0f, 0.0f, 0.0f);
 
       /* Bottom edge. */
-      final Knot2 k4 = new Knot2(x1 - vbr, y1, 0.0f, 0.0f, 0.0f, 0.0f); /* 4 */
-      final Knot2 k5 = new Knot2(x0 + vbl, y1, 0.0f, 0.0f, 0.0f, 0.0f); /* 5 */
+      final Knot2 k4 = new Knot2(x1 - vbr, y1, 0.0f, 0.0f, 0.0f, 0.0f);
+      final Knot2 k5 = new Knot2(x0 + vbl, y1, 0.0f, 0.0f, 0.0f, 0.0f);
 
       /* Left edge. */
-      final Knot2 k6 = new Knot2(x0, y1 + vbl, 0.0f, 0.0f, 0.0f, 0.0f); /* 6 */
-      final Knot2 k7 = new Knot2(x0, y0 - vtl, 0.0f, 0.0f, 0.0f, 0.0f); /* 7 */
+      final Knot2 k6 = new Knot2(x0, y1 + vbl, 0.0f, 0.0f, 0.0f, 0.0f);
+      final Knot2 k7 = new Knot2(x0, y0 - vtl, 0.0f, 0.0f, 0.0f, 0.0f);
 
       /* Cache knot coord shortcuts . */
       final Vec2 k7co = k7.coord;
@@ -1772,6 +1878,19 @@ public class Curve2 extends Curve
       return target;
    }
 
+   /**
+    * Creates a rectangle. The first coordinate specifies the
+    * top left corner; the second coordinate specifies the
+    * bottom right corner.
+    *
+    * @param tl
+    *           the top left corner
+    * @param br
+    *           the bottom right corner
+    * @param target
+    *           the output curve
+    * @return the rectangle
+    */
    public static Curve2 rect (
          final Vec2 tl,
          final Vec2 br,
@@ -1782,6 +1901,22 @@ public class Curve2 extends Curve
             br.x, br.y, target);
    }
 
+   /**
+    * Creates a rounded rectangle. The first coordinate
+    * specifies the top left corner; the second coordinate
+    * specifies the bottom right corner. The third parameter
+    * specifies the corner rounding factor.
+    *
+    * @param tl
+    *           the top left corner
+    * @param br
+    *           the bottom right corner
+    * @param corner
+    *           the rounding factor
+    * @param target
+    *           the output curve
+    * @return the rounded rectangle
+    */
    public static Curve2 rect (
          final Vec2 tl,
          final Vec2 br,
@@ -1794,6 +1929,29 @@ public class Curve2 extends Curve
             corner, target);
    }
 
+   /**
+    * Creates a rounded rectangle. The first coordinate
+    * specifies the top left corner; the second coordinate,
+    * specifies the bottom right corner. The next four
+    * parameters specify the rounding factor for the top left,
+    * top right, bottom right and bottom left corners.
+    *
+    * @param tl
+    *           the top left corner
+    * @param br
+    *           the bottom right corner
+    * @param tlCorner
+    *           rounding top left corner
+    * @param trCorner
+    *           rounding top right corner
+    * @param brCorner
+    *           rounding bottom right corner
+    * @param blCorner
+    *           rounding bottom left corner
+    * @param target
+    *           the output curve
+    * @return the rounded rectangle
+    */
    public static Curve2 rect (
          final Vec2 tl,
          final Vec2 br,
@@ -2249,6 +2407,26 @@ public class Curve2 extends Curve
    }
 
    /**
+    * Append an array of knots to the curve's list of knots.
+    *
+    * @param knots
+    *           the array of knots
+    * @return this curve.
+    */
+   @Chainable
+   public Curve2 append ( final Knot2... knots ) {
+
+      final int len = knots.length;
+      for (int i = 0; i < len; ++i) {
+         final Knot2 knot = knots[i];
+         if (knot != null) {
+            this.knots.add(knot);
+         }
+      }
+      return this;
+   }
+
+   /**
     * Append a knot to the curve's list of knots.
     *
     * @param knot
@@ -2642,7 +2820,6 @@ public class Curve2 extends Curve
       while (itr.hasNext()) {
          itr.next().scale(scale);
       }
-
       return this;
    }
 
@@ -2657,8 +2834,7 @@ public class Curve2 extends Curve
       final Iterator < Knot2 > itr = this.knots.iterator();
       int index = 0;
       while (itr.hasNext()) {
-         result[index] = itr.next().toArray();
-         index++;
+         result[index++] = itr.next().toArray();
       }
       return result;
    }

@@ -426,9 +426,11 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
       final StringBuilder result = new StringBuilder()
             .append("<g id=\"")
             .append(this.name.toLowerCase())
-            .append("\" ")
+            .append('\"')
+            .append(' ')
             .append(this.transform.toSvgString())
-            .append(">\n");
+            .append('>')
+            .append('\n');
 
       final float scale = Transform2.minDimension(this.transform);
       boolean includesMats = this.materials.size() > 0;
@@ -456,18 +458,23 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
                   .get(curve.materialIndex);
             result.append("<g ")
                   .append(material.toSvgString(scale))
-                  .append(">\n");
+                  .append('>')
+                  .append('\n');
          }
 
          result.append(curve.toSvgString())
                .append('\n');
 
          if (includesMats) {
+            
+            /* Close out material group. */
             result.append("</g>\n");
          }
       }
 
       if (!includesMats) {
+         
+         /* Close out default material group. */
          result.append("</g>\n");
       }
 

@@ -1178,7 +1178,7 @@ public class Curve3 extends Curve
                .append(this.foreHandle.toString(places))
                .append(", rearHandle: ")
                .append(this.rearHandle.toString(places))
-               .append(" }")
+               .append(' ').append('}')
                .toString();
       }
 
@@ -1197,6 +1197,31 @@ public class Curve3 extends Curve
          Vec3.add(this.rearHandle, v, this.rearHandle);
          return this;
       }
+   }
+
+   /**
+    * A utility function for setting the handles of knots on
+    * straight curve segments. Finds unclamped linear
+    * interpolation from origin to destination by a step of 1.0
+    * / 3.0 .
+    *
+    * @param a
+    *           the origin
+    * @param b
+    *           the destination
+    * @param target
+    *           the target
+    * @return the result
+    */
+   static Vec3 lerp13 (
+         final Vec3 a,
+         final Vec3 b,
+         final Vec3 target ) {
+
+      return target.set(
+            0.6666667f * a.x + IUtils.ONE_THIRD * b.x,
+            0.6666667f * a.y + IUtils.ONE_THIRD * b.y,
+            0.6666667f * a.z + IUtils.ONE_THIRD * b.z);
    }
 
    /**
@@ -1265,8 +1290,8 @@ public class Curve3 extends Curve
             final Knot3 last = target.getLast();
 
             /* Flatten the first to last handles. */
-            lerp13(last.coord, first.coord, last.foreHandle);
-            lerp13(first.coord, last.coord, first.rearHandle);
+            Curve3.lerp13(last.coord, first.coord, last.foreHandle);
+            Curve3.lerp13(first.coord, last.coord, first.rearHandle);
 
          } else if (arcMode == ArcMode.PIE) {
 
@@ -1279,14 +1304,14 @@ public class Curve3 extends Curve
             final Vec3 coCenter = center.coord;
 
             /* Flatten center handles. */
-            lerp13(coCenter, last.coord, center.rearHandle);
-            lerp13(coCenter, first.coord, center.foreHandle);
+            Curve3.lerp13(coCenter, last.coord, center.rearHandle);
+            Curve3.lerp13(coCenter, first.coord, center.foreHandle);
 
             /* Flatten handle from first to center. */
-            lerp13(first.coord, coCenter, first.rearHandle);
+            Curve3.lerp13(first.coord, coCenter, first.rearHandle);
 
             /* Flatten handle from last to center. */
-            lerp13(last.coord, coCenter, last.foreHandle);
+            Curve3.lerp13(last.coord, coCenter, last.foreHandle);
          }
       }
 
@@ -1412,31 +1437,6 @@ public class Curve3 extends Curve
          target.append(knot);
       }
       return Curve3.smoothHandles(target);
-   }
-
-   /**
-    * A utility function for setting the handles of knots on
-    * straight curve segments. Finds unclamped linear
-    * interpolation from origin to destination by a step of 1.0
-    * / 3.0 .
-    * 
-    * @param a
-    *           the origin
-    * @param b
-    *           the destination
-    * @param target
-    *           the target
-    * @return the result
-    */
-   public static Vec3 lerp13 (
-         final Vec3 a,
-         final Vec3 b,
-         final Vec3 target ) {
-
-      return target.set(
-            0.6666667f * a.x + IUtils.ONE_THIRD * b.x,
-            0.6666667f * a.y + IUtils.ONE_THIRD * b.y,
-            0.6666667f * a.z + IUtils.ONE_THIRD * b.z);
    }
 
    /**
@@ -1677,10 +1677,10 @@ public class Curve3 extends Curve
          final Knot3 first = knots.getFirst();
          final Knot3 last = knots.getLast();
 
-         lerp13(first.coord, last.coord, first.foreHandle);
+         Curve3.lerp13(first.coord, last.coord, first.foreHandle);
          first.mirrorHandlesForward();
 
-         lerp13(last.coord, first.coord, last.rearHandle);
+         Curve3.lerp13(last.coord, first.coord, last.rearHandle);
          last.mirrorHandlesBackward();
 
          return target;
@@ -1692,15 +1692,15 @@ public class Curve3 extends Curve
       while (itr.hasNext()) {
          prev = curr;
          curr = itr.next();
-         lerp13(prev.coord, curr.coord, prev.foreHandle);
-         lerp13(curr.coord, prev.coord, curr.rearHandle);
+         Curve3.lerp13(prev.coord, curr.coord, prev.foreHandle);
+         Curve3.lerp13(curr.coord, prev.coord, curr.rearHandle);
       }
 
       if (target.closedLoop) {
          final Knot3 first = knots.getFirst();
          final Knot3 last = knots.getLast();
-         lerp13(first.coord, last.coord, first.rearHandle);
-         lerp13(last.coord, first.coord, last.foreHandle);
+         Curve3.lerp13(first.coord, last.coord, first.rearHandle);
+         Curve3.lerp13(last.coord, first.coord, last.foreHandle);
       } else {
          knots.getFirst().mirrorHandlesForward();
          knots.getLast().mirrorHandlesBackward();
@@ -1995,6 +1995,26 @@ public class Curve3 extends Curve
    public Curve3 append ( final Knot3 knot ) {
 
       this.knots.add(knot);
+      return this;
+   }
+
+   /**
+    * Append an array of knots to the curve's list of knots.
+    *
+    * @param knots
+    *           the array of knots
+    * @return this curve.
+    */
+   @Chainable
+   public Curve3 append ( final Knot3... knots ) {
+
+      final int len = knots.length;
+      for (int i = 0; i < len; ++i) {
+         final Knot3 knot = knots[i];
+         if (knot != null) {
+            this.knots.add(knot);
+         }
+      }
       return this;
    }
 
@@ -2317,7 +2337,6 @@ public class Curve3 extends Curve
       while (itr.hasNext()) {
          itr.next().reverse();
       }
-
       return this;
    }
 
@@ -2426,7 +2445,6 @@ public class Curve3 extends Curve
       while (itr.hasNext()) {
          itr.next().scale(scale);
       }
-
       return this;
    }
 
@@ -2445,7 +2463,6 @@ public class Curve3 extends Curve
       while (itr.hasNext()) {
          itr.next().scale(scale);
       }
-
       return this;
    }
 
@@ -2460,8 +2477,7 @@ public class Curve3 extends Curve
       final Iterator < Knot3 > itr = this.knots.iterator();
       int index = 0;
       while (itr.hasNext()) {
-         result[index] = itr.next().toArray();
-         index++;
+         result[index++] = itr.next().toArray();
       }
       return result;
    }

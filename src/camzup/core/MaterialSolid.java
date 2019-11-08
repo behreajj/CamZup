@@ -258,8 +258,9 @@ public class MaterialSolid extends Material {
     */
    public String toSvgString ( final float transformScale ) {
 
-      final StringBuilder result = new StringBuilder();
+      final StringBuilder result = new StringBuilder(32);
 
+      /* Stroke style. */
       if (this.useStroke) {
          result.append("stroke-width=\"")
                .append(Utils.toFixed(this.strokeWeight / transformScale, 4))
@@ -267,11 +268,13 @@ public class MaterialSolid extends Material {
                .append(Utils.toFixed(Utils.clamp01(this.stroke.w), 2))
                .append("\" stroke=\"")
                .append(Color.toHexWeb(this.stroke))
-               .append("\" ");
+               .append('\"')
+               .append(' ');
       } else {
          result.append("stroke=\"none\" ");
       }
 
+      /* Fill style. */
       if (this.useFill) {
          result.append("fill-opacity=\"")
                .append(Utils.toFixed(Utils.clamp01(this.fill.w), 2))

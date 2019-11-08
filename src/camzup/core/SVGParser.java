@@ -117,6 +117,387 @@ public abstract class SVGParser {
    private static final DocumentBuilderFactory dbf = DocumentBuilderFactory
          .newDefaultInstance();
 
+   private static float parseFloat ( final String v, final float def ) {
+
+      // TODO: Does this need to handle different SVG units, such
+      // as "%" for percentages, etc.
+      float x = def;
+      try {
+         x = Float.parseFloat(v);
+      } catch (final NumberFormatException e) {
+         x = def;
+      }
+      return x;
+   }
+
+   @SuppressWarnings("unused")
+   private static Curve2 parsePolygon ( final Node polygonNode ) {
+
+      final NamedNodeMap attributes = polygonNode.getAttributes();
+      final Node ptsnode = attributes.getNamedItem("points");
+      final String ptsstr = ptsnode != null ? ptsnode.getTextContent() : "0,0";
+      final String[] coords = ptsstr.split("\\s*");
+      int clen = coords.length;
+      Knot2[] knots = new Knot2[clen];
+      for(int i = 0; i < clen; ++i) {
+         String coord = coords[i];
+         String[] xystr = coord.split(",");
+         float x = parseFloat(xystr[0], 0.0f);
+         float y = parseFloat(xystr[1], 0.0f);
+         Knot2 knot = new Knot2(x, y);
+         knots[i] = knot;
+      }
+      
+      Curve2 result = new Curve2(true, knots);
+      return Curve2.straightenHandles(result);
+   }
+   
+   private static Curve2 parsePath ( final Node path ) {
+
+      final NamedNodeMap attributes = path.getAttributes();
+      final Node pathData = attributes.getNamedItem("d");
+      Curve2 result = new Curve2();
+      if (pathData != null) {
+         
+         final String pdStr = pathData.getTextContent();
+
+         String[] cmdTokens = pdStr.split(SVGParser.cmdPattern);
+         cmdTokens = SVGParser.stripEmptyTokens(cmdTokens);
+         final int cmdLen = cmdTokens.length;
+         final PathCommand[] commands = new PathCommand[cmdLen];
+         for (int j = 0; j < cmdLen; ++j) {
+            final String cmdToken = cmdTokens[j];
+            final char cmdCode = cmdToken.charAt(0);
+            final PathCommand cmd = PathCommand.fromChar(cmdCode);
+            commands[j] = cmd;
+            // System.out.println(cmd);
+         }
+
+         String[] dataTokens = pdStr.split(SVGParser.dataPattern);
+         dataTokens = SVGParser.stripEmptyTokens(dataTokens);
+         // final int dataLen = dataTokens.length;
+         // for (int k = 0; k < dataLen; ++k) {
+         // System.out.println(dataTokens[k]);
+         // }
+
+         String cox = "0.0";
+         String coy = "0.0";
+         String rhx = "0.0";
+         String rhy = "0.0";
+         String fhx = "0.0";
+         String fhy = "0.0";
+         String mhx = "0.0";
+         String mhy = "0.0";
+
+         Knot2 curr = null;
+         Knot2 prev = null;
+         
+         Vec2 relative = new Vec2();
+         Vec2 mh = new Vec2();
+         Vec2 coord = relative;
+         float xOff = 0.0f;
+         float yOff = 0.0f;
+
+         boolean closedLoop = false;
+         final LinkedList < Knot2 > knots = new LinkedList <>();
+         for (int l = 0, cursor = 0; l < cmdLen; ++l) {
+            final PathCommand command = commands[l];
+            System.out.println(command);
+
+            switch (command) {
+               case ArcToAbs:
+                  break;
+               case ArcToRel:
+                  break;
+
+               case CubicToAbs:
+
+                  fhx = dataTokens[cursor++]; /* 1 */
+                  fhy = dataTokens[cursor++]; /* 2 */
+                  rhx = dataTokens[cursor++]; /* 3 */
+                  rhy = dataTokens[cursor++]; /* 4 */
+                  cox = dataTokens[cursor++]; /* 5 */
+                  coy = dataTokens[cursor++]; /* 6 */
+
+                  prev = curr;
+                  curr = new Knot2();
+                  knots.add(curr);
+
+                  prev.foreHandle.set(fhx, fhy);
+                  curr.rearHandle.set(rhx, rhy);
+                  curr.coord.set(cox, coy);
+
+                  relative.set(curr.coord);
+
+                  break;
+
+               case CubicToRel:
+
+                  fhx = dataTokens[cursor++]; /* 1 */
+                  fhy = dataTokens[cursor++]; /* 2 */
+                  rhx = dataTokens[cursor++]; /* 3 */
+                  rhy = dataTokens[cursor++]; /* 4 */
+                  cox = dataTokens[cursor++]; /* 5 */
+                  coy = dataTokens[cursor++]; /* 6 */
+
+                  prev = curr;
+                  curr = new Knot2();
+                  knots.add(curr);
+
+                  prev.foreHandle.set(fhx, fhy);
+                  curr.rearHandle.set(rhx, rhy);
+                  curr.coord.set(cox, coy);
+
+                  Vec2.add(relative, prev.foreHandle, prev.foreHandle);
+                  Vec2.add(relative, curr.rearHandle, curr.rearHandle);
+                  Vec2.add(relative, curr.coord, curr.coord);
+
+                  relative.set(curr.coord);
+
+                  break;
+
+               case HorizAbs:
+                  
+                  cox = dataTokens[cursor++]; /* 1 */
+                  
+                  prev = curr;
+                  curr = new Knot2();
+                  knots.add(curr);
+
+                  curr.coord.x = parseFloat(cox, 0.0f);
+                  curr.coord.y = prev.coord.y;
+                  Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
+                  Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+
+                  relative.set(curr.coord);
+                  
+                  break;
+               
+               case HorizRel:
+                  
+                  cox = dataTokens[cursor++]; /* 1 */
+                  
+                  prev = curr;
+                  curr = new Knot2();
+                  knots.add(curr);
+
+                  curr.coord.x = parseFloat(cox, 0.0f);
+                  curr.coord.y = prev.coord.y;
+                  Vec2.add(relative, coord, coord);
+                  Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
+                  Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+
+                  relative.set(curr.coord);
+                  
+                  break;
+
+               case LineToAbs:
+
+                  cox = dataTokens[cursor++]; /* 1 */
+                  coy = dataTokens[cursor++]; /* 2 */
+
+                  prev = curr;
+                  curr = new Knot2();
+                  knots.add(curr);
+
+                  curr.coord.set(cox, coy);
+                  Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
+                  Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+
+                  relative.set(curr.coord);
+
+                  break;
+
+               case LineToRel:
+
+                  cox = dataTokens[cursor++]; /* 1 */
+                  coy = dataTokens[cursor++]; /* 2 */
+
+                  prev = curr;
+                  curr = new Knot2();
+                  knots.add(curr);
+
+                  curr.coord.set(cox, coy);
+                  Vec2.add(relative, coord, coord);
+                  Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
+                  Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+
+                  relative.set(curr.coord);
+
+                  break;
+
+               case MoveToAbs:
+
+                  cox = dataTokens[cursor++]; /* 1 */
+                  coy = dataTokens[cursor++]; /* 2 */
+
+                  curr = new Knot2();
+                  knots.add(curr);
+                  coord.set(cox, coy);
+
+                  xOff = Math.copySign(Utils.EPSILON, coord.x);
+                  yOff = Math.copySign(Utils.EPSILON, coord.y);
+
+                  curr.foreHandle.set(
+                        coord.x + xOff,
+                        coord.y + yOff);
+                  curr.rearHandle.set(
+                        coord.x - xOff,
+                        coord.y - yOff);
+
+                  relative.set(curr.coord);
+
+                  break;
+
+               case MoveToRel:
+
+                  cox = dataTokens[cursor++]; /* 1 */
+                  coy = dataTokens[cursor++]; /* 2 */
+
+                  curr = new Knot2();
+                  knots.add(curr);
+                  coord = curr.coord;
+                  coord.set(cox, coy);
+                  Vec2.add(relative, coord, coord);
+
+                  xOff = Math.copySign(Utils.EPSILON, coord.x);
+                  yOff = Math.copySign(Utils.EPSILON, coord.y);
+
+                  curr.foreHandle.set(
+                        coord.x + xOff,
+                        coord.y + yOff);
+                  curr.rearHandle.set(
+                        coord.x - xOff,
+                        coord.y - yOff);
+
+                  relative.set(curr.coord);
+
+                  break;
+
+               case QuadraticToAbs:
+
+                  mhx = dataTokens[cursor++]; /* 1 */
+                  mhy = dataTokens[cursor++]; /* 2 */
+                  cox = dataTokens[cursor++]; /* 3 */
+                  coy = dataTokens[cursor++]; /* 4 */
+
+                  prev = curr;
+                  curr = new Knot2();
+                  knots.add(curr);
+
+                  mh.set(mhx, mhy);
+                  curr.coord.set(cox, coy);
+                  Curve2.lerp13(mh, prev.coord, prev.foreHandle);
+                  Curve2.lerp13(mh, curr.coord, curr.rearHandle);
+
+                  relative.set(curr.coord);
+
+                  break;
+
+               case QuadraticToRel:
+
+                  mhx = dataTokens[cursor++]; /* 1 */
+                  mhy = dataTokens[cursor++]; /* 2 */
+                  cox = dataTokens[cursor++]; /* 3 */
+                  coy = dataTokens[cursor++]; /* 4 */
+
+                  prev = curr;
+                  curr = new Knot2();
+                  knots.add(curr);
+
+                  mh.set(mhx, mhy);
+                  curr.coord.set(cox, coy);
+
+                  Vec2.add(relative, mh, mh);
+                  Vec2.add(relative, coord, coord);
+
+                  Curve2.lerp13(mh, prev.coord, prev.foreHandle);
+                  Curve2.lerp13(mh, curr.coord, curr.rearHandle);
+
+                  relative.set(curr.coord);
+
+                  break;
+
+               case ReflectCubicAbs:
+                  break;
+               case ReflectCubicRel:
+                  break;
+               case ReflectQuadraticAbs:
+                  break;
+               case ReflectQuadraticRel:
+                  break;
+               case VertAbs:
+                  
+                  coy = dataTokens[cursor++]; /* 1 */
+                  
+                  prev = curr;
+                  curr = new Knot2();
+                  knots.add(curr);
+
+                  curr.coord.x = prev.coord.x;
+                  curr.coord.y = parseFloat(coy, 0.0f);
+                  Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
+                  Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+
+                  relative.set(curr.coord);
+                  
+                  break;
+               
+               case VertRel:
+                  
+                  coy = dataTokens[cursor++]; /* 1 */
+               
+                  break;
+               
+               case ClosePath:
+               default:
+                  closedLoop = true;
+            }
+         }
+
+         if (closedLoop) {
+            knots.getFirst().rearHandle.set(knots.getLast().rearHandle);
+            knots.removeLast();
+         } else {
+            knots.getFirst().mirrorHandlesForward();
+            knots.getLast().mirrorHandlesBackward();
+         }
+         
+         result.append(knots);
+      }
+      return result;
+   }
+
+   @SuppressWarnings("unused")
+   private static Curve2 parseRect ( final Node rectNode ) {
+
+      // TODO: It's also possible to have rounded rectangles.
+      final NamedNodeMap attributes = rectNode.getAttributes();
+
+      final Node xnode = attributes.getNamedItem("x");
+      final Node ynode = attributes.getNamedItem("y");
+      final Node wnode = attributes.getNamedItem("width");
+      final Node hnode = attributes.getNamedItem("height");
+      final Node rxnode = attributes.getNamedItem("rx");
+      final Node rynode = attributes.getNamedItem("ry");
+
+      final String xstr = xnode != null ? xnode.getTextContent() : "0.0";
+      final String ystr = ynode != null ? ynode.getTextContent() : "0.0";
+      final String wstr = wnode != null ? wnode.getTextContent() : "1.0";
+      final String hstr = hnode != null ? hnode.getTextContent() : "1.0";
+      final String rxstr = rxnode != null ? rxnode.getTextContent() : "0.0";
+      final String rystr = rynode != null ? rynode.getTextContent() : "0.0";
+
+      final float x = SVGParser.parseFloat(xstr, 0.0f);
+      final float y = SVGParser.parseFloat(ystr, 0.0f);
+      final float w = SVGParser.parseFloat(wstr, 1.0f);
+      final float h = SVGParser.parseFloat(hstr, 1.0f);
+      final float rx = SVGParser.parseFloat(rxstr, 0.0f);
+      final float ry = SVGParser.parseFloat(rystr, 0.0f);
+
+      return Curve2.rect(x, y, x + w, y + h, (rx + ry) * 0.5f, new Curve2());
+   }
+
    private static String[] stripEmptyTokens ( final String[] tokens ) {
 
       final int len = tokens.length;
@@ -130,100 +511,6 @@ public abstract class SVGParser {
       return list.toArray(new String[list.size()]);
    }
 
-   private static float parseFloat ( String v ) {
-
-      float x = 0.0f;
-      try {
-         x = Float.parseFloat(v);
-      } catch (final NumberFormatException e) {
-         x = 0.0f;
-      }
-      return x;
-   }
-
-   @SuppressWarnings("unused")
-   private static Curve2 parseRect ( final Node rectNode ) {
-
-      // TODO: It's also possible to have rounded rectangles.
-      // TODO: Refactor to have curve create a rounded rect, then
-      // just have this defer to that function. Reference the PApplet rounded rect impl.
-      final NamedNodeMap attributes = rectNode.getAttributes();
-      final String xstr = attributes.getNamedItem("x").getTextContent();
-      final String ystr = attributes.getNamedItem("y").getTextContent();
-      final String wstr = attributes.getNamedItem("width").getTextContent();
-      final String hstr = attributes.getNamedItem("height").getTextContent();
-
-      float x = parseFloat(xstr);
-      float y = parseFloat(ystr);
-      float w = parseFloat(wstr);
-      float h = parseFloat(hstr);
-
-      /* Create knots, set coordinates. */
-      Knot2 tl = new Knot2(x, y);
-      Knot2 tr = new Knot2(x + w, y);
-      Knot2 br = new Knot2(x + w, y + h);
-      Knot2 bl = new Knot2(x, y + h);
-
-      /* Lerp fore handles. */
-      Vec2.mix(
-            tl.coord,
-            tr.coord,
-            IUtils.ONE_THIRD,
-            tl.foreHandle);
-
-      Vec2.mix(
-            tr.coord,
-            br.coord,
-            IUtils.ONE_THIRD,
-            tr.foreHandle);
-
-      Vec2.mix(
-            br.coord,
-            bl.coord,
-            IUtils.ONE_THIRD,
-            br.foreHandle);
-
-      Vec2.mix(
-            bl.coord,
-            tl.coord,
-            IUtils.ONE_THIRD,
-            tl.foreHandle);
-
-      /* Lerp rear handles. */
-      Vec2.mix(
-            tr.coord,
-            tl.coord,
-            IUtils.ONE_THIRD,
-            tr.rearHandle);
-
-      Vec2.mix(
-            br.coord,
-            tr.coord,
-            IUtils.ONE_THIRD,
-            br.rearHandle);
-
-      Vec2.mix(
-            bl.coord,
-            br.coord,
-            IUtils.ONE_THIRD,
-            bl.rearHandle);
-
-      Vec2.mix(
-            tl.coord,
-            bl.coord,
-            IUtils.ONE_THIRD,
-            tl.rearHandle);
-
-      /* Add knots to a list. */
-      LinkedList < Knot2 > knots = new LinkedList <>();
-      knots.add(tl);
-      knots.add(tr);
-      knots.add(br);
-      knots.add(bl);
-
-      return new Curve2(true, knots);
-   }
-
    public static CurveEntity2 parse ( final String fileName ) {
 
       final CurveEntity2 result = new CurveEntity2();
@@ -233,192 +520,24 @@ public abstract class SVGParser {
          final Document doc = db.parse(file);
          doc.normalizeDocument();
 
+         final LinkedList < Curve2 > curves = result.curves;
+
          // TODO: What about rect, ellipse, etc.
+         
          final NodeList paths = doc.getElementsByTagName("path");
          final int nodeLen = paths.getLength();
-         LinkedList < Curve2 > curves = result.curves;
          for (int i = 0; i < nodeLen; ++i) {
             final Node path = paths.item(i);
-            final NamedNodeMap attributes = path.getAttributes();
-            final Node pathData = attributes.getNamedItem("d");
-            if (pathData != null) {
-               final String pdStr = pathData.getTextContent();
-
-               String[] cmdTokens = pdStr.split(SVGParser.cmdPattern);
-               cmdTokens = SVGParser.stripEmptyTokens(cmdTokens);
-               final int cmdLen = cmdTokens.length;
-               final PathCommand[] commands = new PathCommand[cmdLen];
-               for (int j = 0; j < cmdLen; ++j) {
-                  final String cmdToken = cmdTokens[j];
-                  final char cmdCode = cmdToken.charAt(0);
-                  final PathCommand cmd = PathCommand.fromChar(cmdCode);
-                  commands[j] = cmd;
-                  // System.out.println(cmd);
-               }
-
-               String[] dataTokens = pdStr.split(SVGParser.dataPattern);
-               dataTokens = SVGParser.stripEmptyTokens(dataTokens);
-               // final int dataLen = dataTokens.length;
-               // for (int k = 0; k < dataLen; ++k) {
-               // System.out.println(dataTokens[k]);
-               // }
-
-               String cox, coy, rhx, rhy, fhx, fhy;
-               Knot2 curr = null;
-               Knot2 prev = null;
-               boolean closedLoop = false;
-               LinkedList < Knot2 > knots = new LinkedList <>();
-               for (int l = 0, cursor = 0; l < cmdLen; ++l) {
-                  final PathCommand command = commands[l];
-                  System.out.println(command);
-
-                  switch (command) {
-                     case ArcToAbs:
-                        break;
-                     case ArcToRel:
-                        break;
-
-                     case ClosePath:
-
-                        closedLoop = true;
-
-                        break;
-
-                     case CubicToAbs:
-
-                        fhx = dataTokens[cursor++];
-                        fhy = dataTokens[cursor++];
-                        rhx = dataTokens[cursor++];
-                        rhy = dataTokens[cursor++];
-                        cox = dataTokens[cursor++];
-                        coy = dataTokens[cursor++];
-
-                        // System.out.println(fhx);
-                        // System.out.println(fhy);
-                        // System.out.println(rhx);
-                        // System.out.println(rhy);
-                        // System.out.println(cox);
-                        // System.out.println(coy);
-
-                        prev = curr;
-                        curr = new Knot2();
-                        knots.add(curr);
-
-                        prev.foreHandle.set(fhx, fhy);
-                        curr.rearHandle.set(rhx, rhy);
-                        curr.coord.set(cox, coy);
-
-                        // System.out.println(prev);
-                        // System.out.println(curr);
-
-                        break;
-
-                     case CubicToRel:
-                        break;
-                     case HorizAbs:
-                        break;
-                     case HorizRel:
-                        break;
-
-                     case LineToAbs:
-
-                        cox = dataTokens[cursor++];
-                        coy = dataTokens[cursor++];
-
-                        // System.out.println(cox);
-                        // System.out.println(coy);
-
-                        prev = curr;
-                        curr = new Knot2();
-                        knots.add(curr);
-
-                        curr.coord.set(cox, coy);
-                        Vec2.mix(
-                              prev.coord,
-                              curr.coord,
-                              IUtils.ONE_THIRD,
-                              prev.foreHandle);
-                        Vec2.mix(
-                              curr.coord,
-                              prev.coord,
-                              IUtils.ONE_THIRD,
-                              curr.rearHandle);
-
-                        break;
-
-                     case LineToRel:
-                        break;
-
-                     case MoveToAbs:
-
-                        cox = dataTokens[cursor++];
-                        coy = dataTokens[cursor++];
-
-                        // System.out.println(cox);
-                        // System.out.println(coy);
-
-                        curr = new Knot2();
-                        knots.add(curr);
-                        Vec2 coord = curr.coord;
-                        coord.set(cox, coy);
-
-                        final float xOff = Math.copySign(Utils.EPSILON,
-                              coord.x);
-                        final float yOff = Math.copySign(Utils.EPSILON,
-                              coord.y);
-
-                        curr.foreHandle.set(
-                              coord.x + xOff,
-                              coord.y + yOff);
-                        curr.rearHandle.set(
-                              coord.x - xOff,
-                              coord.y - yOff);
-
-                        // System.out.println(curr);
-
-                        break;
-
-                     case MoveToRel:
-                        break;
-                     case QuadraticToAbs:
-                        break;
-                     case QuadraticToRel:
-                        break;
-                     case ReflectCubicAbs:
-                        break;
-                     case ReflectCubicRel:
-                        break;
-                     case ReflectQuadraticAbs:
-                        break;
-                     case ReflectQuadraticRel:
-                        break;
-                     case VertAbs:
-                        break;
-                     case VertRel:
-                        break;
-                     default:
-                        break;
-                  }
-               }
-
-               if (closedLoop) {
-                  knots.getFirst().rearHandle.set(knots.getLast().rearHandle);
-                  knots.removeLast();
-               } else {
-                  knots.getFirst().mirrorHandlesForward();
-                  knots.getLast().mirrorHandlesBackward();
-               }
-
-               Curve2 curve = new Curve2(closedLoop, knots);
-               System.out.println(curve);
-               curves.add(curve);
-            }
+            Curve2 curve = parsePath(path);
+            curves.add(curve);
          }
-      } catch (final Exception e) {
+      }catch(
+
+   final Exception e)
+   {
          System.err.print(e);
          e.printStackTrace();
       }
 
-      return result;
-   }
-}
+   return result;
+}}
