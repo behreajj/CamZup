@@ -945,6 +945,28 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
+    * Finds first vector argument with the sign of the second
+    * vector argument.
+    * 
+    * @param magnitude
+    *           the magnitude
+    * @param sign
+    *           the sign
+    * @param target
+    *           the output vector
+    * @return the signed vector
+    */
+   public static Vec3 copySign(
+         final Vec3 magnitude, 
+         final Vec3 sign, 
+         final Vec3 target) {
+      return target.set(
+            Math.copySign(magnitude.x, sign.x),
+            Math.copySign(magnitude.y, sign.y),
+            Math.copySign(magnitude.z, sign.z));
+   }
+   
+   /**
     * The cross product returns a vector perpendicular to both
     * <em>a</em> and <em>b</em>, and therefore normal to the
     * plane on which <em>a</em> and <em>b</em> rest.<br>

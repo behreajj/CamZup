@@ -1121,7 +1121,7 @@ public class Color extends Vec4 {
 
    /**
     * Convert a hexadecimal representation of a color stored as
-    * ARGB into a color.
+    * AARRGGBB into a color.
     *
     * @param c
     *           the color in hexadecimal
@@ -1139,6 +1139,35 @@ public class Color extends Vec4 {
             (c >> 0x8 & 0xff) * IUtils.ONE_255,
             (c & 0xff) * IUtils.ONE_255,
             (c >> 0x18 & 0xff) * IUtils.ONE_255);
+   }
+
+   public static Color fromHex ( final String c, final Color target ) {
+
+      // TODO: Optimize where possible. Would a switch case be
+      // easier to read?
+      try {
+         final int len = c.length();
+         if (len == 3) {
+            final String longform = c.replaceAll("^(.)(.)(.)$", "$1$1$2$2$3$3");
+            final int cint = Integer.parseInt(longform, 16);
+            return Color.fromHex(0xff000000 | cint, target);
+         } else if (len == 4) {
+            final String longform = c.replaceAll("^#(.)(.)(.)$",
+                  "#$1$1$2$2$3$3");
+            final int cint = Integer.parseInt(longform.substring(1), 16);
+            return Color.fromHex(0xff000000 | cint, target);
+         } else if (len == 6) {
+            final int cint = Integer.parseInt(c, 16);
+            return Color.fromHex(0xff000000 | cint, target);
+         } else if (len == 7) {
+            final int cint = Integer.parseInt(c.substring(1), 16);
+            return Color.fromHex(0xff000000 | cint, target);
+         }
+      } catch (NumberFormatException e) {
+         System.out.println(e);
+      }
+
+      return target.reset();
    }
 
    /**
@@ -1691,6 +1720,15 @@ public class Color extends Vec4 {
       return target.set(hue, sat, bri, alpha);
    }
 
+   /**
+    * Converts a color from RGB to CIE XYZ.
+    * 
+    * @param c
+    *           the color
+    * @param target
+    *           the output vector
+    * @return the XYZ color
+    */
    public static Vec4 rgbaToXyza ( final Color c, final Vec4 target ) {
 
       return Color.rgbaToXyza(c.x, c.y, c.z, c.w, target);
@@ -1701,7 +1739,7 @@ public class Color extends Vec4 {
     * Jakob, and Humphreys' <a href=
     * "http://www.pbr-book.org/3ed-2018/Color_and_Radiometry/The_SampledSpectrum_Class.html#fragment-SpectrumUtilityDeclarations-2">Physically
     * Based Rendering</a>.
-    * 
+    *
     * @param r
     *           the red component
     * @param g
@@ -1831,7 +1869,7 @@ public class Color extends Vec4 {
     * Jakob, and Humphreys' <a href=
     * "http://www.pbr-book.org/3ed-2018/Color_and_Radiometry/The_SampledSpectrum_Class.html#fragment-SpectrumUtilityDeclarations-1">Physically
     * Based Rendering</a>.
-    * 
+    *
     * @param x
     *           the x coordinate
     * @param y
@@ -1858,6 +1896,15 @@ public class Color extends Vec4 {
             a);
    }
 
+   /**
+    * Converts a color from CIE XYZ to RGB.
+    * 
+    * @param v
+    *           the XYZ vector
+    * @param target
+    *           the output color
+    * @return the color
+    */
    public static Color xyzaToRgba ( final Vec4 v, final Color target ) {
 
       return Color.xyzaToRgba(v.x, v.y, v.z, v.w, target);

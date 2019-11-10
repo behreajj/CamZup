@@ -84,17 +84,10 @@ public class CamZup {
    public static void main ( final String[] args ) {
       // SVGParser.parse("data/v2.svg");
 
-//       CurveEntity2 ce = new CurveEntity2();
-//       ce.transform.moveTo(256, 256);
-//       ce.transform.scaleTo(256, 256);
-//       Curve2 curve = Curve2.polygon(Utils.HALF_PI, 0.5f, 6,
-//       0.15f, new Curve2());
-//       ce.appendCurve(curve);
-//       System.out.println(ce.toSvgString());
-//       System.out.println("");
-//       System.out.println(ce.toBlenderCode());
-      
-      System.out.println(0.5d * (64.0d / IUtils.PHI_D));
+       CurveEntity3 ce = new CurveEntity3();
+       Curve3 curve = Curve3.polygon(Utils.HALF_PI, 0.5f, 6, new Curve3());
+       ce.appendCurve(curve);
+       System.out.println(ce.toBlenderCode());
 
    }
 

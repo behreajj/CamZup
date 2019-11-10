@@ -918,6 +918,27 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
             Utils.clamp01(v.x),
             Utils.clamp01(v.y));
    }
+   
+   /**
+    * Finds first vector argument with the sign of the second
+    * vector argument.
+    * 
+    * @param magnitude
+    *           the magnitude
+    * @param sign
+    *           the sign
+    * @param target
+    *           the output vector
+    * @return the signed vector
+    */
+   public static Vec2 copySign(
+         final Vec2 magnitude, 
+         final Vec2 sign, 
+         final Vec2 target) {
+      return target.set(
+            Math.copySign(magnitude.x, sign.x),
+            Math.copySign(magnitude.y, sign.y));
+   }
 
    /**
     * Finds the absolute value of the difference between two

@@ -364,6 +364,30 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
+    * Finds first vector argument with the sign of the second
+    * vector argument.
+    * 
+    * @param magnitude
+    *           the magnitude
+    * @param sign
+    *           the sign
+    * @param target
+    *           the output vector
+    * @return the signed vector
+    */
+   public static Vec4 copySign (
+         final Vec4 magnitude,
+         final Vec4 sign,
+         final Vec4 target ) {
+
+      return target.set(
+            Math.copySign(magnitude.x, sign.x),
+            Math.copySign(magnitude.y, sign.y),
+            Math.copySign(magnitude.z, sign.z),
+            Math.copySign(magnitude.w, sign.w));
+   }
+
+   /**
     * Finds the absolute value of the difference between two
     * vectors.
     *
@@ -1581,7 +1605,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    @Override
    public float[] toArray () {
 
-      return new float[] { this.x, this.y, this.z, this.w };
+      return new float[] {
+            this.x, this.y, this.z, this.w
+      };
    }
 
    /**

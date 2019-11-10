@@ -446,6 +446,18 @@ public abstract class SVGParser {
                case VertRel:
                   
                   coy = dataTokens[cursor++]; /* 1 */
+                                    
+                  prev = curr;
+                  curr = new Knot2();
+                  knots.add(curr);
+
+                  curr.coord.x = prev.coord.x;
+                  curr.coord.y = parseFloat(coy, 0.0f);
+                  Vec2.add(relative, coord, coord);
+                  Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
+                  Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+
+                  relative.set(curr.coord);
                
                   break;
                
@@ -471,7 +483,6 @@ public abstract class SVGParser {
    @SuppressWarnings("unused")
    private static Curve2 parseRect ( final Node rectNode ) {
 
-      // TODO: It's also possible to have rounded rectangles.
       final NamedNodeMap attributes = rectNode.getAttributes();
 
       final Node xnode = attributes.getNamedItem("x");

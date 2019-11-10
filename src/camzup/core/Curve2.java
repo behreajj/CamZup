@@ -1039,9 +1039,7 @@ public class Curve2 extends Curve
 
    /**
     * A utility function which defines two target knots as a
-    * rounded corner given a corner. This function mutates the
-    * handles of the previous and next knot to form a straight
-    * line between the input and target knots. It is assumed
+    * rounded corner given a point as input. It is assumed
     * here that another function will replace an old knot at
     * the corner with the two generated knots.
     *
@@ -1115,23 +1113,11 @@ public class Curve2 extends Curve
       Curve2.lerp13(corner, corner0, fh0);
       Curve2.lerp13(corner, corner1, rh1);
 
-      // if (radius < 0.0f) {
-      // // c = v2 - rounding / sin(halfang) * norm((a + b) / 2)
-      // Vec2 sum = Vec2.add(diff0, diff1, new Vec2());
-      // Vec2 halfSum = Vec2.mult(sum, 0.5f, new Vec2());
-      // Vec2 normSum = Vec2.normalize(halfSum, new Vec2());
-      // float radSin = (float) (radius / Math.sin(halfAng));
-      // Vec2 scaleSum = Vec2.mult(radSin, normSum, new Vec2());
-      // Vec2 C = Vec2.sub(corner, scaleSum, new Vec2());
-      // target0.scaleForeHandleBy(-1.0f, rh0, fh1);
-      // target1.scaleRearHandleBy(-1.0f, rh0, fh1);
-      // }
-
       /* Flatten edge handles */
-      Curve2.lerp13(corner0, prevCoord, rh0);
-      Curve2.lerp13(corner1, nextCoord, fh1);
-      Curve2.lerp13(prevCoord, corner0, prevKnot.foreHandle);
-      Curve2.lerp13(nextCoord, corner1, nextKnot.rearHandle);
+
+      // TODO: These are incorrect.
+//      Curve2.lerp13(corner0, prevCoord, rh0);
+//      Curve2.lerp13(corner1, nextCoord, fh1);
    }
 
    /**
@@ -1459,8 +1445,7 @@ public class Curve2 extends Curve
       target.clear();
       target.closedLoop = true;
       final int vknct = knotCount < 3 ? 3 : knotCount;
-      final float invKnCt = 1.0f / vknct;
-      final float toAngle = IUtils.TAU * invKnCt;
+      final float toAngle = IUtils.TAU / vknct;
       final LinkedList < Knot2 > knots = target.knots;
       for (int i = 0; i < vknct; ++i) {
          final float angle = offsetAngle + i * toAngle;

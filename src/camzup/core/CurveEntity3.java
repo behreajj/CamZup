@@ -257,7 +257,12 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
 
       final StringBuilder result = new StringBuilder();
       result.append("from bpy import data as D, context as C\n\n")
-            .append("curve_entity = {\n    \"curves\": [\n");
+            .append("curve_entity = {")
+            .append("\n    \"name\": \"")
+            .append(name)
+            .append("\",\n    \"transform\": ")
+            .append(transform.toBlenderCode())
+            .append(",\n    \"curves\": [\n");
 
       int curveIndex = 0;
       final int curveLast = this.curves.size() - 1;
@@ -345,7 +350,7 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
             .append("crv_obj = D.objects.new(\"")
             .append(this.name)
             .append("\", crv_data)\n")
-            .append(this.transform.toBlenderCode("crv_obj"))
+            // .append(this.transform.toBlenderCode("crv_obj"))
             .append("\n\nC.scene.collection.objects.link(crv_obj)");
 
       return result.toString();
