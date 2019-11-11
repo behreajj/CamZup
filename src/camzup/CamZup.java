@@ -3,7 +3,6 @@ package camzup;
 import camzup.core.*;
 import processing.core.PApplet;
 
-@SuppressWarnings("unused")
 public class CamZup {
 
    public final static String VERSION = "##library.prettyVersion##";
@@ -84,8 +83,8 @@ public class CamZup {
    public static void main ( final String[] args ) {
       // SVGParser.parse("data/v2.svg");
 
-       CurveEntity3 ce = new CurveEntity3();
-       Curve3 curve = Curve3.polygon(Utils.HALF_PI, 0.5f, 6, new Curve3());
+       CurveEntity2 ce = new CurveEntity2();
+       Curve2 curve = Curve2.polygon(Utils.HALF_PI, 0.5f, 6, new Curve2());
        ce.appendCurve(curve);
        System.out.println(ce.toBlenderCode());
 

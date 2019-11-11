@@ -325,7 +325,7 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
       }
 
       result.append("]}\n\ncrv_data = D.curves.new(\"")
-            .append(this.name)
+            .append("curve_entity[\"name\"]")
             .append("\", \"CURVE\")\n")
             .append("crv_data.dimensions = \"3D\"\n")
             .append("crv_splines = crv_data.splines\n")
@@ -343,15 +343,18 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
             .append("\t\tknot.handle_left_type = \"FREE\"\n")
             .append("\t\tknot.handle_right_type = \"FREE\"\n")
             .append("\t\tknot.co = knot_raw[\"co\"]\n")
-            .append("\t\tknot.handle_right = knot_raw[\"handle_right\"]\n")
             .append("\t\tknot.handle_left = knot_raw[\"handle_left\"]\n")
+            .append("\t\tknot.handle_right = knot_raw[\"handle_right\"]\n")
             .append("\t\tknt_index = knt_index + 1\n")
             .append("\tcrv_index = crv_index + 1\n\n")
-            .append("crv_obj = D.objects.new(\"")
-            .append(this.name)
-            .append("\", crv_data)\n")
-            // .append(this.transform.toBlenderCode("crv_obj"))
-            .append("\n\nC.scene.collection.objects.link(crv_obj)");
+            .append("crv_obj = D.objects.new(crv_data.name, crv_data)\n")
+            .append("tr = curve_entity[\"transform\"]\n")
+            .append("crv_obj.location = tr[\"location\"]\n")
+            .append("crv_obj.rotation_mode = tr[\"rotation_mode\"]\n")
+            .append("crv_obj.rotation_quaternion = ")
+            .append("tr[\"rotation_quaternion\"]\n")
+            .append("crv_obj.scale = tr[\"scale\"]\n")
+            .append("C.scene.collection.objects.link(crv_obj)");
 
       return result.toString();
    }

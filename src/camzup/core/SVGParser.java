@@ -16,28 +16,78 @@ import camzup.core.Curve2.Knot2;
 
 public abstract class SVGParser {
 
+   /**
+    * Command found in the "d" attribute of an SVG's path
+    * element.
+    */
    public enum PathCommand {
 
+      /** Arc absolute. */
       ArcToAbs ( 'A', false, 7 ),
-      ArcToRel ( 'a', true, 7 ),
-      ClosePath ( 'Z', false, 0 ),
-      CubicToAbs ( 'C', false, 6 ),
-      CubicToRel ( 'c', true, 6 ),
-      HorizAbs ( 'H', false, 1 ),
-      HorizRel ( 'h', true, 1 ),
-      LineToAbs ( 'L', false, 2 ),
-      LineToRel ( 'l', true, 2 ),
-      MoveToAbs ( 'M', false, 2 ),
-      MoveToRel ( 'm', true, 2 ),
-      QuadraticToAbs ( 'Q', false, 4 ),
-      QuadraticToRel ( 'q', true, 4 ),
-      ReflectCubicAbs ( 'S', false, 4 ),
-      ReflectCubicRel ( 's', true, 4 ),
-      ReflectQuadraticAbs ( 'T', false, 2 ),
-      ReflectQuadraticRel ( 't', true, 2 ),
-      VertAbs ( 'V', false, 1 ),
-      VertRel ( 'v', true, 1 ),;
 
+      /** Arc relative. */
+      ArcToRel ( 'a', true, 7 ),
+
+      /** Close path. */
+      ClosePath ( 'Z', false, 0 ),
+
+      /** Cubic Bezier Curve absolute. */
+      CubicToAbs ( 'C', false, 6 ),
+
+      /** Cubic Bezier Curve relative. */
+      CubicToRel ( 'c', true, 6 ),
+
+      /** Horizontal line absolute. */
+      HorizAbs ( 'H', false, 1 ),
+
+      /** Horizontal line relative. */
+      HorizRel ( 'h', true, 1 ),
+
+      /** Line to absolute. */
+      LineToAbs ( 'L', false, 2 ),
+
+      /** Line to relative. */
+      LineToRel ( 'l', true, 2 ),
+
+      /** Move to absolute. */
+      MoveToAbs ( 'M', false, 2 ),
+
+      /** Move to relative. */
+      MoveToRel ( 'm', true, 2 ),
+
+      /** Quadratic Bezier curve absolute. */
+      QuadraticToAbs ( 'Q', false, 4 ),
+
+      /** Quadratic Bezier curve relative. */
+      QuadraticToRel ( 'q', true, 4 ),
+
+      /** Reflect cubic Bezier curve absolute. */
+      ReflectCubicAbs ( 'S', false, 4 ),
+
+      /** Reflect cubic Bezier curve relative. */
+      ReflectCubicRel ( 's', true, 4 ),
+
+      /** Reflect quadratic Bezier curve absolute. */
+      ReflectQuadraticAbs ( 'T', false, 2 ),
+
+      /** Reflect quadratic Bezier curve relative. */
+      ReflectQuadraticRel ( 't', true, 2 ),
+
+      /** Vertical line absolute. */
+      VertAbs ( 'V', false, 1 ),
+
+      /** Vertical line to relative. */
+      VertRel ( 'v', true, 1 );
+
+      /**
+       * Returns a path command given a character. In cases where
+       * the character is not a command, returns close path by
+       * default.
+       *
+       * @param c
+       *           the character
+       * @return the path command
+       */
       public static PathCommand fromChar ( final char c ) {
 
          switch (c) {
@@ -80,13 +130,35 @@ public abstract class SVGParser {
          }
       }
 
+      /**
+       * The single character code.
+       */
       private final char code;
 
+      /**
+       * Number of parameters for a given code.
+       */
       private final int dataCount;
 
+      /**
+       * Is the command in absolute coordinates, or relative to
+       * previously specified coordinates.
+       */
       private final boolean isRelative;
 
-      private PathCommand ( final char code, final boolean isRelative,
+      /**
+       * The enumeration constant constructor.
+       *
+       * @param code
+       *           the character code
+       * @param isRelative
+       *           is the command relative
+       * @param dataCount
+       *           the paramater count
+       */
+      private PathCommand (
+            final char code,
+            final boolean isRelative,
             final int dataCount ) {
 
          this.code = code;
@@ -94,16 +166,31 @@ public abstract class SVGParser {
          this.dataCount = dataCount;
       }
 
+      /**
+       * Gets the command's character code.
+       *
+       * @return the character
+       */
       public char getCode () {
 
          return this.code;
       }
 
+      /**
+       * Gets the number of parameters.
+       *
+       * @return the parameter number.
+       */
       public int getDataCount () {
 
          return this.dataCount;
       }
 
+      /**
+       * Is the command relative (true) or absolute (false).
+       *
+       * @return the boolean
+       */
       public boolean isRelative () {
 
          return this.isRelative;
@@ -130,35 +217,13 @@ public abstract class SVGParser {
       return x;
    }
 
-   @SuppressWarnings("unused")
-   private static Curve2 parsePolygon ( final Node polygonNode ) {
-
-      final NamedNodeMap attributes = polygonNode.getAttributes();
-      final Node ptsnode = attributes.getNamedItem("points");
-      final String ptsstr = ptsnode != null ? ptsnode.getTextContent() : "0,0";
-      final String[] coords = ptsstr.split("\\s*");
-      int clen = coords.length;
-      Knot2[] knots = new Knot2[clen];
-      for(int i = 0; i < clen; ++i) {
-         String coord = coords[i];
-         String[] xystr = coord.split(",");
-         float x = parseFloat(xystr[0], 0.0f);
-         float y = parseFloat(xystr[1], 0.0f);
-         Knot2 knot = new Knot2(x, y);
-         knots[i] = knot;
-      }
-      
-      Curve2 result = new Curve2(true, knots);
-      return Curve2.straightenHandles(result);
-   }
-   
    private static Curve2 parsePath ( final Node path ) {
 
       final NamedNodeMap attributes = path.getAttributes();
       final Node pathData = attributes.getNamedItem("d");
-      Curve2 result = new Curve2();
+      final Curve2 result = new Curve2();
       if (pathData != null) {
-         
+
          final String pdStr = pathData.getTextContent();
 
          String[] cmdTokens = pdStr.split(SVGParser.cmdPattern);
@@ -191,9 +256,9 @@ public abstract class SVGParser {
 
          Knot2 curr = null;
          Knot2 prev = null;
-         
-         Vec2 relative = new Vec2();
-         Vec2 mh = new Vec2();
+
+         final Vec2 relative = new Vec2();
+         final Vec2 mh = new Vec2();
          Vec2 coord = relative;
          float xOff = 0.0f;
          float yOff = 0.0f;
@@ -257,38 +322,38 @@ public abstract class SVGParser {
                   break;
 
                case HorizAbs:
-                  
+
                   cox = dataTokens[cursor++]; /* 1 */
-                  
+
                   prev = curr;
                   curr = new Knot2();
                   knots.add(curr);
 
-                  curr.coord.x = parseFloat(cox, 0.0f);
+                  curr.coord.x = SVGParser.parseFloat(cox, 0.0f);
                   curr.coord.y = prev.coord.y;
                   Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
                   Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
 
                   relative.set(curr.coord);
-                  
+
                   break;
-               
+
                case HorizRel:
-                  
+
                   cox = dataTokens[cursor++]; /* 1 */
-                  
+
                   prev = curr;
                   curr = new Knot2();
                   knots.add(curr);
 
-                  curr.coord.x = parseFloat(cox, 0.0f);
+                  curr.coord.x = SVGParser.parseFloat(cox, 0.0f);
                   curr.coord.y = prev.coord.y;
                   Vec2.add(relative, coord, coord);
                   Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
                   Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
 
                   relative.set(curr.coord);
-                  
+
                   break;
 
                case LineToAbs:
@@ -427,40 +492,40 @@ public abstract class SVGParser {
                case ReflectQuadraticRel:
                   break;
                case VertAbs:
-                  
+
                   coy = dataTokens[cursor++]; /* 1 */
-                  
+
                   prev = curr;
                   curr = new Knot2();
                   knots.add(curr);
 
                   curr.coord.x = prev.coord.x;
-                  curr.coord.y = parseFloat(coy, 0.0f);
+                  curr.coord.y = SVGParser.parseFloat(coy, 0.0f);
                   Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
                   Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
 
                   relative.set(curr.coord);
-                  
+
                   break;
-               
+
                case VertRel:
-                  
+
                   coy = dataTokens[cursor++]; /* 1 */
-                                    
+
                   prev = curr;
                   curr = new Knot2();
                   knots.add(curr);
 
                   curr.coord.x = prev.coord.x;
-                  curr.coord.y = parseFloat(coy, 0.0f);
+                  curr.coord.y = SVGParser.parseFloat(coy, 0.0f);
                   Vec2.add(relative, coord, coord);
                   Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
                   Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
 
                   relative.set(curr.coord);
-               
+
                   break;
-               
+
                case ClosePath:
                default:
                   closedLoop = true;
@@ -474,10 +539,32 @@ public abstract class SVGParser {
             knots.getFirst().mirrorHandlesForward();
             knots.getLast().mirrorHandlesBackward();
          }
-         
+
          result.append(knots);
       }
       return result;
+   }
+
+   @SuppressWarnings("unused")
+   private static Curve2 parsePolygon ( final Node polygonNode ) {
+
+      final NamedNodeMap attributes = polygonNode.getAttributes();
+      final Node ptsnode = attributes.getNamedItem("points");
+      final String ptsstr = ptsnode != null ? ptsnode.getTextContent() : "0,0";
+      final String[] coords = ptsstr.split("\\s*");
+      final int clen = coords.length;
+      final Knot2[] knots = new Knot2[clen];
+      for (int i = 0; i < clen; ++i) {
+         final String coord = coords[i];
+         final String[] xystr = coord.split(",");
+         final float x = SVGParser.parseFloat(xystr[0], 0.0f);
+         final float y = SVGParser.parseFloat(xystr[1], 0.0f);
+         final Knot2 knot = new Knot2(x, y);
+         knots[i] = knot;
+      }
+
+      final Curve2 result = new Curve2(true, knots);
+      return Curve2.straightenHandles(result);
    }
 
    @SuppressWarnings("unused")
@@ -485,6 +572,7 @@ public abstract class SVGParser {
 
       final NamedNodeMap attributes = rectNode.getAttributes();
 
+      /* Search for property nodes. May return null. */
       final Node xnode = attributes.getNamedItem("x");
       final Node ynode = attributes.getNamedItem("y");
       final Node wnode = attributes.getNamedItem("width");
@@ -492,6 +580,7 @@ public abstract class SVGParser {
       final Node rxnode = attributes.getNamedItem("rx");
       final Node rynode = attributes.getNamedItem("ry");
 
+      /* Acquire text content from the node if it exists. */
       final String xstr = xnode != null ? xnode.getTextContent() : "0.0";
       final String ystr = ynode != null ? ynode.getTextContent() : "0.0";
       final String wstr = wnode != null ? wnode.getTextContent() : "1.0";
@@ -499,6 +588,7 @@ public abstract class SVGParser {
       final String rxstr = rxnode != null ? rxnode.getTextContent() : "0.0";
       final String rystr = rynode != null ? rynode.getTextContent() : "0.0";
 
+      /* Parse string or default. */
       final float x = SVGParser.parseFloat(xstr, 0.0f);
       final float y = SVGParser.parseFloat(ystr, 0.0f);
       final float w = SVGParser.parseFloat(wstr, 1.0f);
@@ -506,6 +596,10 @@ public abstract class SVGParser {
       final float rx = SVGParser.parseFloat(rxstr, 0.0f);
       final float ry = SVGParser.parseFloat(rystr, 0.0f);
 
+      /*
+       * Corner rounding differs between APIs, so average
+       * horizontal and vertical rounding.
+       */
       return Curve2.rect(x, y, x + w, y + h, (rx + ry) * 0.5f, new Curve2());
    }
 
@@ -534,21 +628,21 @@ public abstract class SVGParser {
          final LinkedList < Curve2 > curves = result.curves;
 
          // TODO: What about rect, ellipse, etc.
-         
+
          final NodeList paths = doc.getElementsByTagName("path");
          final int nodeLen = paths.getLength();
          for (int i = 0; i < nodeLen; ++i) {
             final Node path = paths.item(i);
-            Curve2 curve = parsePath(path);
+            final Curve2 curve = SVGParser.parsePath(path);
             curves.add(curve);
          }
-      }catch(
+      } catch (
 
-   final Exception e)
-   {
+      final Exception e) {
          System.err.print(e);
          e.printStackTrace();
       }
 
-   return result;
-}}
+      return result;
+   }
+}

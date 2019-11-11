@@ -1344,48 +1344,9 @@ public class Transform3 extends Transform {
             .append(Utils.toFixed(this.scale.y, 6))
             .append(',').append(' ')
             .append(Utils.toFixed(this.scale.z, 6))
-            .append(")}")
+            .append(')')
+            .append('}')
             .toString();
-
-//      return new StringBuilder()
-//            .append(objVarName)
-//            .append(".rotation_mode = \"QUATERNION\"\n")
-//            .append(objVarName)
-//            .append(".location = (")
-//            .append(Utils.toFixed(this.location.x, 6))
-//            .append(',')
-//            .append(' ')
-//            .append(Utils.toFixed(this.location.y, 6))
-//            .append(',')
-//            .append(' ')
-//            .append(Utils.toFixed(this.location.z, 6))
-//            .append(')')
-//            .append('\n')
-//            .append(objVarName)
-//            .append(".rotation_quaternion = (")
-//            .append(Utils.toFixed(this.rotation.real, 6))
-//            .append(',')
-//            .append(' ')
-//            .append(Utils.toFixed(i.x, 6))
-//            .append(',')
-//            .append(' ')
-//            .append(Utils.toFixed(i.y, 6))
-//            .append(',')
-//            .append(' ')
-//            .append(Utils.toFixed(i.z, 6))
-//            .append(')')
-//            .append('\n')
-//            .append(objVarName)
-//            .append(".scale = (")
-//            .append(Utils.toFixed(this.scale.x, 6))
-//            .append(',')
-//            .append(' ')
-//            .append(Utils.toFixed(this.scale.y, 6))
-//            .append(',')
-//            .append(' ')
-//            .append(Utils.toFixed(this.scale.z, 6))
-//            .append(')')
-//            .toString();
    }
 
    /**
@@ -1410,10 +1371,15 @@ public class Transform3 extends Transform {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(354).append("{ location: ")
+      return new StringBuilder(354)
+            .append("{ location: ")
             .append(this.location.toString(places))
-            .append(", \nrotation: ").append(this.rotation.toString(places))
+            .append(", \nrotation: ")
+            .append(this.rotation.toString(places))
             .append(", \nscale: ")
-            .append(this.scale.toString(places)).append(" }").toString();
+            .append(this.scale.toString(places))
+            .append(' ')
+            .append('}')
+            .toString();
    }
 }

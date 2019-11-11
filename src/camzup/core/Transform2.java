@@ -1203,46 +1203,33 @@ public class Transform2 extends Transform {
     */
    public String toBlenderCode () {
 
-      final String rotationMode = "AXIS_ANGLE";
-      
+      final String rotationMode = "QUATERNION";
+
+      /*
+       * Quaternion from angle: (cos(a * 0.5), 0.0, 0.0, sin(a *
+       * 0.5))
+       */
+      final double ha = 0.5d * this.rotation;
+      final float qw = (float) Math.cos(ha);
+      final float qz = (float) Math.sin(ha);
+
       return new StringBuilder()
             .append("{\n        \"location\": (")
             .append(Utils.toFixed(this.location.x, 6))
             .append(',').append(' ')
             .append(Utils.toFixed(this.location.y, 6))
-            .append(", 0.0),\n        \"rotation_axis_angle\": (")
-            .append(Utils.toFixed(this.rotation, 6))
-            .append(", 0.0, 0.0, 1.0),\n        \"rotation_mode\": \"")
+            .append(", 0.0),\n        \"rotation_mode\": \"")
             .append(rotationMode)
-            .append("\",\n        \"scale\": (")
+            .append("\",\n        \"rotation_quaternion\": (")
+            .append(Utils.toFixed(qw, 6))
+            .append(", 0.0, 0.0, ")
+            .append(Utils.toFixed(qz, 6))
+            .append("),\n        \"scale\": (")
             .append(Utils.toFixed(this.scale.x, 6))
             .append(',').append(' ')
             .append(Utils.toFixed(this.scale.y, 6))
             .append(", 1.0)}")
             .toString();
-      
-//      return new StringBuilder()
-//            .append(objVarName)
-//            .append(".rotation_mode = \"AXIS_ANGLE\"\n")
-//            .append(objVarName)
-//            .append(".location = (")
-//            .append(Utils.toFixed(this.location.x, 6))
-//            .append(',')
-//            .append(' ')
-//            .append(Utils.toFixed(this.location.y, 6))
-//            .append(", 0.0)\n")
-//            .append(objVarName)
-//            .append(".rotation_axis_angle = (")
-//            .append(Utils.toFixed(this.rotation, 6))
-//            .append(", 0.0, 0.0, 1.0)\n")
-//            .append(objVarName)
-//            .append(".scale = (")
-//            .append(Utils.toFixed(this.scale.x, 6))
-//            .append(',')
-//            .append(' ')
-//            .append(Utils.toFixed(this.scale.y, 6))
-//            .append(", 1.0)")
-//            .toString();
    }
 
    /**
