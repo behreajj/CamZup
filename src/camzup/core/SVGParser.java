@@ -22,61 +22,99 @@ public abstract class SVGParser {
     */
    public enum PathCommand {
 
-      /** Arc absolute. */
+      /**
+       * Arc absolute.
+       */
       ArcToAbs ( 'A', false, 7 ),
 
-      /** Arc relative. */
+      /**
+       * Arc relative.
+       */
       ArcToRel ( 'a', true, 7 ),
 
-      /** Close path. */
+      /**
+       * Close path.
+       */
       ClosePath ( 'Z', false, 0 ),
 
-      /** Cubic Bezier Curve absolute. */
+      /**
+       * Cubic Bezier Curve absolute.
+       */
       CubicToAbs ( 'C', false, 6 ),
 
-      /** Cubic Bezier Curve relative. */
+      /**
+       * Cubic Bezier Curve relative.
+       */
       CubicToRel ( 'c', true, 6 ),
 
-      /** Horizontal line absolute. */
+      /**
+       * Horizontal line absolute.
+       */
       HorizAbs ( 'H', false, 1 ),
 
-      /** Horizontal line relative. */
+      /**
+       * Horizontal line relative.
+       */
       HorizRel ( 'h', true, 1 ),
 
-      /** Line to absolute. */
+      /**
+       * Line to absolute.
+       */
       LineToAbs ( 'L', false, 2 ),
 
-      /** Line to relative. */
+      /**
+       * Line to relative.
+       */
       LineToRel ( 'l', true, 2 ),
 
-      /** Move to absolute. */
+      /**
+       * Move to absolute.
+       */
       MoveToAbs ( 'M', false, 2 ),
 
-      /** Move to relative. */
+      /**
+       * Move to relative.
+       */
       MoveToRel ( 'm', true, 2 ),
 
-      /** Quadratic Bezier curve absolute. */
+      /**
+       * Quadratic Bezier curve absolute.
+       */
       QuadraticToAbs ( 'Q', false, 4 ),
 
-      /** Quadratic Bezier curve relative. */
+      /**
+       * Quadratic Bezier curve relative.
+       */
       QuadraticToRel ( 'q', true, 4 ),
 
-      /** Reflect cubic Bezier curve absolute. */
+      /**
+       * Reflect cubic Bezier curve absolute.
+       */
       ReflectCubicAbs ( 'S', false, 4 ),
 
-      /** Reflect cubic Bezier curve relative. */
+      /**
+       * Reflect cubic Bezier curve relative.
+       */
       ReflectCubicRel ( 's', true, 4 ),
 
-      /** Reflect quadratic Bezier curve absolute. */
+      /**
+       * Reflect quadratic Bezier curve absolute.
+       */
       ReflectQuadraticAbs ( 'T', false, 2 ),
 
-      /** Reflect quadratic Bezier curve relative. */
+      /**
+       * Reflect quadratic Bezier curve relative.
+       */
       ReflectQuadraticRel ( 't', true, 2 ),
 
-      /** Vertical line absolute. */
+      /**
+       * Vertical line absolute.
+       */
       VertAbs ( 'V', false, 1 ),
 
-      /** Vertical line to relative. */
+      /**
+       * Vertical line to relative.
+       */
       VertRel ( 'v', true, 1 );
 
       /**
@@ -204,7 +242,7 @@ public abstract class SVGParser {
    private static final DocumentBuilderFactory dbf = DocumentBuilderFactory
          .newDefaultInstance();
 
-   private static float parseFloat ( final String v, final float def ) {
+   static float parseFloat ( final String v, final float def ) {
 
       // TODO: Does this need to handle different SVG units, such
       // as "%" for percentages, etc.
@@ -217,7 +255,7 @@ public abstract class SVGParser {
       return x;
    }
 
-   private static Curve2 parsePath ( final Node path ) {
+   static Curve2 parsePath ( final Node path ) {
 
       final NamedNodeMap attributes = path.getAttributes();
       final Node pathData = attributes.getNamedItem("d");
@@ -270,9 +308,13 @@ public abstract class SVGParser {
             System.out.println(command);
 
             switch (command) {
+
                case ArcToAbs:
+
                   break;
+
                case ArcToRel:
+
                   break;
 
                case CubicToAbs:
@@ -484,13 +526,21 @@ public abstract class SVGParser {
                   break;
 
                case ReflectCubicAbs:
+
                   break;
+
                case ReflectCubicRel:
+
                   break;
+
                case ReflectQuadraticAbs:
+
                   break;
+
                case ReflectQuadraticRel:
+
                   break;
+
                case VertAbs:
 
                   coy = dataTokens[cursor++]; /* 1 */
@@ -527,7 +577,9 @@ public abstract class SVGParser {
                   break;
 
                case ClosePath:
+
                default:
+
                   closedLoop = true;
             }
          }
@@ -545,8 +597,7 @@ public abstract class SVGParser {
       return result;
    }
 
-   @SuppressWarnings("unused")
-   private static Curve2 parsePolygon ( final Node polygonNode ) {
+   static Curve2 parsePolygon ( final Node polygonNode ) {
 
       final NamedNodeMap attributes = polygonNode.getAttributes();
       final Node ptsnode = attributes.getNamedItem("points");
@@ -567,8 +618,7 @@ public abstract class SVGParser {
       return Curve2.straightenHandles(result);
    }
 
-   @SuppressWarnings("unused")
-   private static Curve2 parseRect ( final Node rectNode ) {
+   static Curve2 parseRect ( final Node rectNode ) {
 
       final NamedNodeMap attributes = rectNode.getAttributes();
 
@@ -603,7 +653,7 @@ public abstract class SVGParser {
       return Curve2.rect(x, y, x + w, y + h, (rx + ry) * 0.5f, new Curve2());
    }
 
-   private static String[] stripEmptyTokens ( final String[] tokens ) {
+   static String[] stripEmptyTokens ( final String[] tokens ) {
 
       final int len = tokens.length;
       final ArrayList < String > list = new ArrayList <>(len);
@@ -636,9 +686,7 @@ public abstract class SVGParser {
             final Curve2 curve = SVGParser.parsePath(path);
             curves.add(curve);
          }
-      } catch (
-
-      final Exception e) {
+      } catch (final Exception e) {
          System.err.print(e);
          e.printStackTrace();
       }

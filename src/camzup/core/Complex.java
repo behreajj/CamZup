@@ -633,7 +633,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex z,
          final Complex target ) {
 
-      /**
+      /*
        * cz + d -- the denominator -- first. Minimize the number
        * of calculations needed before the function can determine
        * whether or not to return early.
@@ -646,7 +646,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          return target.reset();
       }
 
-      /**
+      /*
        * az + b -- the numerator -- second.
        */
       final float azbr = a.real * z.real - a.imag * z.imag + b.real;
@@ -719,37 +719,6 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex target ) {
 
       return target.set(a * b.real, a * b.imag);
-   }
-
-   /**
-    * Divides a complex number by its absolute, such that the
-    * new magnitude is 1.0.
-    *
-    * @param z
-    *           the complex number
-    * @param target
-    *           the output complex number
-    * @return the complex number
-    * @see Math#sqrt(double)
-    */
-   public static Complex normalize (
-         final Complex z,
-         final Complex target ) {
-
-      final float mSq = z.real * z.real + z.imag * z.imag;
-
-      if (Utils.abs(mSq) < Utils.EPSILON) {
-         return target.reset();
-      }
-
-      if (Utils.approxFast(mSq, 1.0f)) {
-         return target.set(z);
-      }
-
-      final float mInv = (float) (1.0d / Math.sqrt(mSq));
-      return target.set(
-            z.real * mInv,
-            z.imag * mInv);
    }
 
    /**
@@ -1371,7 +1340,9 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    @Override
    public float[] toArray () {
 
-      return new float[] { this.real, this.imag };
+      return new float[] {
+            this.real, this.imag
+      };
    }
 
    /**
@@ -1400,7 +1371,8 @@ public class Complex extends Imaginary implements Comparable < Complex > {
             .append(Utils.toFixed(this.real, places))
             .append(", imag: ")
             .append(Utils.toFixed(this.imag, places))
-            .append(" }")
+            .append(' ')
+            .append('}')
             .toString();
    }
 }

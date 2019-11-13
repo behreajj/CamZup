@@ -1739,7 +1739,6 @@ public class Curve2 extends Curve
       final Knot2 k7 = new Knot2(x0, y0 - vtl, 0.0f, 0.0f, 0.0f, 0.0f);
 
       /* Cache knot coord shortcuts . */
-      final Vec2 k7co = k7.coord;
       final Vec2 k0co = k0.coord;
       final Vec2 k1co = k1.coord;
       final Vec2 k2co = k2.coord;
@@ -1747,6 +1746,7 @@ public class Curve2 extends Curve
       final Vec2 k4co = k4.coord;
       final Vec2 k5co = k5.coord;
       final Vec2 k6co = k6.coord;
+      final Vec2 k7co = k7.coord;
 
       /* Cache even knot rear handle shortcuts. */
       final Vec2 k0rh = k0.rearHandle;

@@ -1716,7 +1716,8 @@ public class Color extends Vec4 {
          }
       }
 
-      final float sat = bri == 0.0f ? 0.0f : (bri - mn) / bri;
+      // final float sat = bri == 0.0f ? 0.0f : (bri - mn) / bri;
+      final float sat = bri == 0.0f ? 0.0f : delta / bri;
       return target.set(hue, sat, bri, alpha);
    }
 
@@ -2349,7 +2350,7 @@ public class Color extends Vec4 {
             .append(Utils.toFixed(this.z, places))
             .append(", a: ")
             .append(Utils.toFixed(this.w, places))
-            .append(" }")
+            .append(' ').append('}')
             .toString();
    }
 }
