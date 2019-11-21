@@ -1,13 +1,15 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-float scale = 5.0;
+float scale = 1.0;
 int octaves = 4;
 float lacunarity = 2.5;
 float persist = 0.5;
 int seed = (int)System.currentTimeMillis();
+
 Vec3 noise = new Vec3();
 Vec3 deriv = new Vec3();
+
 void setup() {
   size(512, 512, "camzup.pfriendly.Yup2");
   frameRate(1000);
@@ -16,16 +18,12 @@ void setup() {
 
 void draw() {
 
-
   float hNorm = 1.0 / (height - 1.0);
   float wNorm = 1.0 / (width - 1.0);
-  float nz = mouseX * wNorm;
-  float ang = frameCount * 0.05;
-  float cosa = cos(ang);
-  float sina = sin(ang);
+  noise.z = frameCount * 0.05;
 
-  //persist = Utils.lerp(0.1, 0.85, mouseX * wNorm);
-  //octaves = (int)Utils.lerp(3, 16, mouseY * hNorm);
+  persist = Utils.lerp(0.1, 0.85, mouseX * wNorm);
+  octaves = (int)Utils.lerp(1, 16, mouseY * hNorm);
 
   String diagnostic = new StringBuilder()
     .append("FPS: ")
@@ -40,24 +38,25 @@ void draw() {
   loadPixels();
   for (int idx = 0, y = 0; y < height; ++y) {
     float yNorm = y * hNorm;
-    float ny = (yNorm + yNorm - 1.0) * scale;
+    noise.y = (yNorm + yNorm - 1.0) * scale;
 
     for (int x = 0; x < width; ++x, ++idx) {
       float xNorm = x * wNorm;
-      float nx = (xNorm + xNorm - 1.0) * scale;
-      
-      float fac = 0.5 + 0.5 * Simplex.flow(
-        nx, ny, nz,
-        cosa, sina,
-        seed,
+      noise.x = (xNorm + xNorm - 1.0) * scale;
+
+      Simplex.fbm(
+        noise, seed, 
+        octaves, 
+        lacunarity, 
+        persist, 
         deriv);
+
       Vec3.normalize(deriv, deriv);
-      //pixels[idx] = color(
-      //  deriv.x * 0.5 + 0.5, 
-      //  deriv.y * 0.5 + 0.5, 
-      //  deriv.z * 0.5 + 0.5);
+
       pixels[idx] = color(
-        fac);
+        deriv.x * 0.5 + 0.5, 
+        deriv.y * 0.5 + 0.5, 
+        deriv.z * 0.5 + 0.5);
     }
   }
   updatePixels();

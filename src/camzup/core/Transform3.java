@@ -113,8 +113,8 @@ public class Transform3 extends Transform {
          final float scaledStep = step * (len - 1);
          final int i = (int) scaledStep;
          return this.applyUnclamped(
-            arr[i], arr[i + 1], 
-            scaledStep - i, target);
+               arr[i], arr[i + 1],
+               scaledStep - i, target);
       }
 
       /**
@@ -1320,7 +1320,7 @@ public class Transform3 extends Transform {
 
       final Vec3 i = this.rotation.imag;
       final String rotationMode = "QUATERNION";
-      
+
       return new StringBuilder()
             .append("{\n        \"location\": (")
             .append(Utils.toFixed(this.location.x, 6))

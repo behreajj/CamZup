@@ -256,14 +256,14 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
     * @return the string
     */
    public String toBlenderCode () {
-      
+
       final StringBuilder result = new StringBuilder();
       result.append("from bpy import data as D, context as C\n\n")
             .append("curve_entity = {")
             .append("\n    \"name\": \"")
-            .append(name)
+            .append(this.name)
             .append("\",\n    \"transform\": ")
-            .append(transform.toBlenderCode())
+            .append(this.transform.toBlenderCode())
             .append(",\n    \"curves\": [\n");
 
       int curveIndex = 0;
@@ -441,7 +441,7 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
             .append('\n');
 
       final float scale = Transform2.minDimension(this.transform);
-      boolean includesMats = this.materials.size() > 0;
+      final boolean includesMats = this.materials.size() > 0;
 
       /*
        * If no materials are present, use a default one instead.

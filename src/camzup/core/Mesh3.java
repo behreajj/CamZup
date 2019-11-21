@@ -285,19 +285,115 @@ public class Mesh3 extends Mesh {
       };
 
       final int[][][] faces = new int[][][] {
-            { { 1, 1, 0 }, { 2, 3, 0 }, { 0, 2, 0 } }, /* 00 */
-            { { 3, 1, 1 }, { 6, 3, 1 }, { 2, 2, 1 } }, /* 01 */
-            { { 7, 1, 2 }, { 4, 3, 2 }, { 6, 2, 2 } }, /* 02 */
-            { { 5, 1, 3 }, { 0, 3, 3 }, { 4, 2, 3 } }, /* 03 */
-            { { 6, 1, 4 }, { 0, 3, 4 }, { 2, 2, 4 } }, /* 04 */
-            { { 3, 1, 5 }, { 5, 3, 5 }, { 7, 2, 5 } }, /* 05 */
+            {
+                  {
+                        1, 1, 0
+                  }, {
+                        2, 3, 0
+                  }, {
+                        0, 2, 0
+                  }
+            }, /* 00 */
+            {
+                  {
+                        3, 1, 1
+                  }, {
+                        6, 3, 1
+                  }, {
+                        2, 2, 1
+                  }
+            }, /* 01 */
+            {
+                  {
+                        7, 1, 2
+                  }, {
+                        4, 3, 2
+                  }, {
+                        6, 2, 2
+                  }
+            }, /* 02 */
+            {
+                  {
+                        5, 1, 3
+                  }, {
+                        0, 3, 3
+                  }, {
+                        4, 2, 3
+                  }
+            }, /* 03 */
+            {
+                  {
+                        6, 1, 4
+                  }, {
+                        0, 3, 4
+                  }, {
+                        2, 2, 4
+                  }
+            }, /* 04 */
+            {
+                  {
+                        3, 1, 5
+                  }, {
+                        5, 3, 5
+                  }, {
+                        7, 2, 5
+                  }
+            }, /* 05 */
 
-            { { 1, 1, 0 }, { 3, 0, 0 }, { 2, 3, 0 } }, /* 06 */
-            { { 3, 1, 1 }, { 7, 0, 1 }, { 6, 3, 1 } }, /* 07 */
-            { { 7, 1, 2 }, { 5, 0, 2 }, { 4, 3, 2 } }, /* 08 */
-            { { 5, 1, 3 }, { 1, 0, 3 }, { 0, 3, 3 } }, /* 09 */
-            { { 6, 1, 4 }, { 4, 0, 4 }, { 0, 3, 4 } }, /* 10 */
-            { { 3, 1, 5 }, { 1, 0, 5 }, { 5, 3, 5 } } /* 11 */
+            {
+                  {
+                        1, 1, 0
+                  }, {
+                        3, 0, 0
+                  }, {
+                        2, 3, 0
+                  }
+            }, /* 06 */
+            {
+                  {
+                        3, 1, 1
+                  }, {
+                        7, 0, 1
+                  }, {
+                        6, 3, 1
+                  }
+            }, /* 07 */
+            {
+                  {
+                        7, 1, 2
+                  }, {
+                        5, 0, 2
+                  }, {
+                        4, 3, 2
+                  }
+            }, /* 08 */
+            {
+                  {
+                        5, 1, 3
+                  }, {
+                        1, 0, 3
+                  }, {
+                        0, 3, 3
+                  }
+            }, /* 09 */
+            {
+                  {
+                        6, 1, 4
+                  }, {
+                        4, 0, 4
+                  }, {
+                        0, 3, 4
+                  }
+            }, /* 10 */
+            {
+                  {
+                        3, 1, 5
+                  }, {
+                        1, 0, 5
+                  }, {
+                        5, 3, 5
+                  }
+            } /* 11 */
       };
 
       target.name = "Cube";
@@ -399,6 +495,157 @@ public class Mesh3 extends Mesh {
       return target;
    }
 
+   /**
+    * Generates a regular convex polygon.
+    *
+    * @param target
+    *           the output mesh
+    * @param sectors
+    *           the number of sides
+    * @return the polygon
+    */
+   public static Mesh3 polygon (
+         final Mesh3 target,
+         final int sectors ) {
+
+      target.name = "Polygon";
+
+      final int seg = sectors < 3 ? 3 : sectors;
+      final float toTheta = IUtils.TAU / seg;
+
+      final Vec2 uvCenter = Vec2.uvCenter(new Vec2());
+      final Vec2 pureCoord = new Vec2();
+
+      final Vec3[] coords = new Vec3[seg + 1];
+      final Vec2[] texCoords = new Vec2[seg + 1];
+      final Vec3[] normals = new Vec3[] {
+            Vec3.up(new Vec3())
+      };
+      final int[][][] faces = new int[seg][3][3];
+
+      coords[0] = new Vec3();
+      texCoords[0] = uvCenter;
+
+      for (int i = 0, j = 1; i < seg; ++i, ++j) {
+         final float theta = i * toTheta;
+
+         Vec2.fromPolar(theta, 0.5f, pureCoord);
+         texCoords[j] = Vec2.add(pureCoord, uvCenter, new Vec2());
+
+         coords[j] = new Vec3(pureCoord.x, pureCoord.y, 0.0f);
+
+         final int k = 1 + j % seg;
+         final int[][] face = new int[][] {
+               {
+                     0, 0, 0
+               }, {
+                     j, j, 0
+               },
+               {
+                     k, k, 0
+               }
+         };
+         faces[i] = face;
+      }
+
+      return target.set(faces, coords, texCoords, normals);
+   }
+
+   /**
+    * Creates a rectangle.
+    *
+    * @param target
+    *           the output mesh
+    * @return the rectangle
+    */
+   public static final Mesh3 rectangle ( final Mesh3 target ) {
+
+      target.name = "Rectangle";
+
+      final Vec3[] coords = new Vec3[] {
+            new Vec3(+0.5f, +0.5f, 0.0f),
+            new Vec3(-0.5f, +0.5f, 0.0f),
+            new Vec3(-0.5f, -0.5f, 0.0f),
+            new Vec3(+0.5f, -0.5f, 0.0f)
+      };
+
+      final Vec2[] texCoords = new Vec2[] {
+            new Vec2(1.0f, 1.0f),
+            new Vec2(0.0f, 1.0f),
+            new Vec2(0.0f, 0.0f),
+            new Vec2(1.0f, 0.0f)
+      };
+
+      final int[][][] faces = new int[][][] {
+            {
+                  {
+                        0, 0, 0
+                  }, {
+                        1, 1, 0
+                  }, {
+                        2, 2, 0
+                  }
+            },
+            {
+                  {
+                        2, 2, 0
+                  }, {
+                        3, 3, 0
+                  }, {
+                        0, 0, 0
+                  }
+            }
+      };
+
+      final Vec3[] normals = new Vec3[] {
+            Vec3.up(new Vec3())
+      };
+
+      return target.set(faces, coords, texCoords, normals);
+   }
+
+   /**
+    * Creates a triangle.
+    *
+    * @param target
+    *           the output mesh
+    * @return the triangle
+    */
+   public static final Mesh3 triangle ( final Mesh3 target ) {
+
+      target.name = "Triangle";
+
+      final Vec3[] coords = new Vec3[] {
+            new Vec3(+0.0f, +0.5f, 0.0f),
+            new Vec3(-0.4330127f, -0.25f, 0.0f),
+            new Vec3(+0.4330127f, -0.25f, 0.0f)
+      };
+
+      final Vec2[] texCoords = new Vec2[] {
+            new Vec2(0.5f, 1.0f),
+            new Vec2(0.0669873f, 0.25f),
+            new Vec2(0.9330127f, 0.25f)
+      };
+
+      final Vec3[] normals = new Vec3[] {
+            Vec3.up(new Vec3())
+      };
+
+      final int[][][] faces = new int[][][] {
+            {
+                  {
+                        0, 0, 0
+                  }, {
+                        1, 1, 0
+                  }, {
+                        2, 2, 0
+                  }
+            }
+      };
+
+      return target.set(faces, coords, texCoords, normals);
+   }
+
    public static Mesh3 uvSphere (
          final float r,
          final int detailU,
@@ -423,11 +670,11 @@ public class Mesh3 extends Mesh {
 
       final float[] cosTheta = new float[detailU];
       final float[] sinTheta = new float[detailU];
-      final float uToPrc = 1.0f / (float) detailU;
+      final float uToPrc = 1.0f / detailU;
       for (int i = 0; i < detailU; ++i) {
          final float phi = Utils.lerpUnclamped(
-               -Utils.PI,
-               Utils.PI, i * uToPrc);
+               -IUtils.PI,
+               IUtils.PI, i * uToPrc);
          cosTheta[i] = (float) Math.cos(phi);
          sinTheta[i] = (float) Math.sin(phi);
       }
@@ -437,120 +684,13 @@ public class Mesh3 extends Mesh {
       final float vToPrc = 1.0f / (detailV - 1.0f);
       for (int i = 0; i < detailV; ++i) {
          final float phi = Utils.lerpUnclamped(
-               -Utils.HALF_PI,
-               Utils.HALF_PI, i * vToPrc);
+               -IUtils.HALF_PI,
+               IUtils.HALF_PI, i * vToPrc);
          cosPhi[i] = (float) Math.cos(phi);
          sinPhi[i] = (float) Math.sin(phi);
       }
 
       return target;
-   }
-
-   /**
-    * Generates a regular convex polygon.
-    *
-    * @param target
-    *           the output mesh
-    * @param sectors
-    *           the number of sides
-    * @return the polygon
-    */
-   public static Mesh3 polygon (
-         final Mesh3 target,
-         final int sectors ) {
-
-      target.name = "Polygon";
-
-      final int seg = sectors < 3 ? 3 : sectors;
-      final float toTheta = IUtils.TAU / seg;
-
-      final Vec2 uvCenter = Vec2.uvCenter(new Vec2());
-      final Vec2 pureCoord = new Vec2();
-
-      final Vec3[] coords = new Vec3[seg + 1];
-      final Vec2[] texCoords = new Vec2[seg + 1];
-      final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
-      final int[][][] faces = new int[seg][3][3];
-
-      coords[0] = new Vec3();
-      texCoords[0] = uvCenter;
-
-      for (int i = 0, j = 1; i < seg; ++i, ++j) {
-         final float theta = i * toTheta;
-
-         Vec2.fromPolar(theta, 0.5f, pureCoord);
-         texCoords[j] = Vec2.add(pureCoord, uvCenter, new Vec2());
-
-         coords[j] = new Vec3(pureCoord.x, pureCoord.y, 0.0f);
-
-         final int k = 1 + j % seg;
-         final int[][] face = new int[][] { { 0, 0, 0 }, { j, j, 0 },
-               { k, k, 0 } };
-         faces[i] = face;
-      }
-
-      return target.set(faces, coords, texCoords, normals);
-   }
-
-   /**
-    * Creates a rectangle.
-    *
-    * @param target
-    *           the output mesh
-    * @return the rectangle
-    */
-   public static final Mesh3 rectangle ( final Mesh3 target ) {
-
-      target.name = "Rectangle";
-
-      final Vec3[] coords = new Vec3[] {
-            new Vec3(+0.5f, +0.5f, 0.0f),
-            new Vec3(-0.5f, +0.5f, 0.0f),
-            new Vec3(-0.5f, -0.5f, 0.0f),
-            new Vec3(+0.5f, -0.5f, 0.0f) };
-
-      final Vec2[] texCoords = new Vec2[] {
-            new Vec2(1.0f, 1.0f),
-            new Vec2(0.0f, 1.0f),
-            new Vec2(0.0f, 0.0f),
-            new Vec2(1.0f, 0.0f) };
-
-      final int[][][] faces = new int[][][] {
-            { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 } },
-            { { 2, 2, 0 }, { 3, 3, 0 }, { 0, 0, 0 } } };
-
-      final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
-
-      return target.set(faces, coords, texCoords, normals);
-   }
-
-   /**
-    * Creates a triangle.
-    *
-    * @param target
-    *           the output mesh
-    * @return the triangle
-    */
-   public static final Mesh3 triangle ( final Mesh3 target ) {
-
-      target.name = "Triangle";
-
-      final Vec3[] coords = new Vec3[] {
-            new Vec3(+0.0f, +0.5f, 0.0f),
-            new Vec3(-0.4330127f, -0.25f, 0.0f),
-            new Vec3(+0.4330127f, -0.25f, 0.0f) };
-
-      final Vec2[] texCoords = new Vec2[] {
-            new Vec2(0.5f, 1.0f),
-            new Vec2(0.0669873f, 0.25f),
-            new Vec2(0.9330127f, 0.25f) };
-
-      final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
-
-      final int[][][] faces = new int[][][] {
-            { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 } } };
-
-      return target.set(faces, coords, texCoords, normals);
    }
 
    /**

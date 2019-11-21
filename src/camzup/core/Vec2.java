@@ -918,11 +918,11 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
             Utils.clamp01(v.x),
             Utils.clamp01(v.y));
    }
-   
+
    /**
     * Finds first vector argument with the sign of the second
     * vector argument.
-    * 
+    *
     * @param magnitude
     *           the magnitude
     * @param sign
@@ -931,10 +931,11 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           the output vector
     * @return the signed vector
     */
-   public static Vec2 copySign(
-         final Vec2 magnitude, 
-         final Vec2 sign, 
-         final Vec2 target) {
+   public static Vec2 copySign (
+         final Vec2 magnitude,
+         final Vec2 sign,
+         final Vec2 target ) {
+
       return target.set(
             Math.copySign(magnitude.x, sign.x),
             Math.copySign(magnitude.y, sign.y));
@@ -3078,7 +3079,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    @Override
    public float[] toArray () {
 
-      return new float[] { this.x, this.y };
+      return new float[] {
+            this.x, this.y
+      };
    }
 
    /**

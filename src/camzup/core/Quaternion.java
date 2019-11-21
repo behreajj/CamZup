@@ -1813,7 +1813,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * The result is then demoted to a vector, as the real
     * component should be 0.0 . This is often denoted as <em>P'
     * = RPR'</em>.
-    * 
+    *
     * @param quat
     *           the quaternion
     * @param source

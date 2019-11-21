@@ -284,7 +284,9 @@ public class Mesh2 extends Mesh {
                Vec2.fromPolar(theta, 0.5f, pureCoord);
                texCoords[i] = Vec2.add(pureCoord, uvCenter, new Vec2());
                coords[i] = new Vec2(pureCoord);
-               ngon[i] = new int[] { i, i };
+               ngon[i] = new int[] {
+                     i, i
+               };
             }
 
             return target.set(faces, coords, texCoords);
@@ -307,9 +309,16 @@ public class Mesh2 extends Mesh {
 
                final int k = 1 + j % seg;
                final int[][] face = new int[][] {
-                     { 0, 0 },
-                     { j, j },
-                     { k, k } };
+                     {
+                           0, 0
+                     },
+                     {
+                           j, j
+                     },
+                     {
+                           k, k
+                     }
+               };
                faces[i] = face;
             }
 
@@ -348,13 +357,15 @@ public class Mesh2 extends Mesh {
             new Vec2(0.5f, 0.5f),
             new Vec2(-0.5f, 0.5f),
             new Vec2(-0.5f, -0.5f),
-            new Vec2(0.5f, -0.5f) };
+            new Vec2(0.5f, -0.5f)
+      };
 
       final Vec2[] texCoords = new Vec2[] {
             new Vec2(1.0f, 1.0f),
             new Vec2(0.0f, 1.0f),
             new Vec2(0.0f, 0.0f),
-            new Vec2(1.0f, 0.0f) };
+            new Vec2(1.0f, 0.0f)
+      };
 
       int[][][] faces;
       switch (poly) {
@@ -362,8 +373,25 @@ public class Mesh2 extends Mesh {
          case TRI:
 
             faces = new int[][][] {
-                  { { 0, 0 }, { 1, 1 }, { 2, 2 } },
-                  { { 2, 2 }, { 3, 3 }, { 0, 0 } } };
+                  {
+                        {
+                              0, 0
+                        }, {
+                              1, 1
+                        }, {
+                              2, 2
+                        }
+                  },
+                  {
+                        {
+                              2, 2
+                        }, {
+                              3, 3
+                        }, {
+                              0, 0
+                        }
+                  }
+            };
 
             break;
 
@@ -372,7 +400,18 @@ public class Mesh2 extends Mesh {
          default:
 
             faces = new int[][][] {
-                  { { 0, 0 }, { 1, 1 }, { 2, 2 }, { 3, 3 } } };
+                  {
+                        {
+                              0, 0
+                        }, {
+                              1, 1
+                        }, {
+                              2, 2
+                        }, {
+                              3, 3
+                        }
+                  }
+            };
       }
 
       return target.set(faces, coords, texCoords);
@@ -392,15 +431,26 @@ public class Mesh2 extends Mesh {
       final Vec2[] coords = new Vec2[] {
             new Vec2(0.0f, 0.5f),
             new Vec2(-0.4330127f, -0.25f),
-            new Vec2(0.4330127f, -0.25f) };
+            new Vec2(0.4330127f, -0.25f)
+      };
 
       final Vec2[] texCoords = new Vec2[] {
             new Vec2(0.5f, 1.0f),
             new Vec2(0.0669873f, 0.25f),
-            new Vec2(0.9330127f, 0.25f) };
+            new Vec2(0.9330127f, 0.25f)
+      };
 
       final int[][][] faces = new int[][][] {
-            { { 0, 0 }, { 1, 1 }, { 2, 2 } } };
+            {
+                  {
+                        0, 0
+                  }, {
+                        1, 1
+                  }, {
+                        2, 2
+                  }
+            }
+      };
 
       return target.set(faces, coords, texCoords);
    }

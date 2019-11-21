@@ -366,7 +366,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    /**
     * Finds first vector argument with the sign of the second
     * vector argument.
-    * 
+    *
     * @param magnitude
     *           the magnitude
     * @param sign

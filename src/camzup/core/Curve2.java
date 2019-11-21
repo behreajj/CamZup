@@ -1039,9 +1039,9 @@ public class Curve2 extends Curve
 
    /**
     * A utility function which defines two target knots as a
-    * rounded corner given a point as input. It is assumed
-    * here that another function will replace an old knot at
-    * the corner with the two generated knots.
+    * rounded corner given a point as input. It is assumed here
+    * that another function will replace an old knot at the
+    * corner with the two generated knots.
     *
     * @param corner
     *           the corner
@@ -1116,8 +1116,8 @@ public class Curve2 extends Curve
       /* Flatten edge handles */
 
       // TODO: These are incorrect.
-//      Curve2.lerp13(corner0, prevCoord, rh0);
-//      Curve2.lerp13(corner1, nextCoord, fh1);
+      // Curve2.lerp13(corner0, prevCoord, rh0);
+      // Curve2.lerp13(corner1, nextCoord, fh1);
    }
 
    /**
@@ -1382,7 +1382,7 @@ public class Curve2 extends Curve
       final float toAngle = IUtils.TAU * invKnCt;
       final float handleMag = radius * (float) (IUtils.FOUR_THIRDS_D
             * Math.tan(IUtils.HALF_PI_D * invKnCt));
-      LinkedList < Knot2 > knots = target.knots;
+      final LinkedList < Knot2 > knots = target.knots;
       for (int i = 0; i < vknct; ++i) {
          final float angle = offsetAngle + i * toAngle;
          final Knot2 knot = Knot2.fromPolar(
@@ -1414,7 +1414,7 @@ public class Curve2 extends Curve
       final int knotCount = points.length;
       target.clear();
       target.closedLoop = closedLoop;
-      LinkedList < Knot2 > knots = target.knots;
+      final LinkedList < Knot2 > knots = target.knots;
       for (int i = 0; i < knotCount; ++i) {
          final Vec2 point = points[i];
          final Knot2 knot = new Knot2(point, point, point);
@@ -1494,7 +1494,7 @@ public class Curve2 extends Curve
       final LinkedList < Knot2 > oldKn = target.knots;
       // final LinkedList < Knot2 > newKn = new LinkedList <>();
       final int len = oldKn.size();
-      Knot2[] newKn = new Knot2[len * 2];
+      final Knot2[] newKn = new Knot2[len * 2];
 
       // for (int i = 0; i < len; ++i) {
       for (int i = 0, j = 0; i < len; ++i, j += 2) {

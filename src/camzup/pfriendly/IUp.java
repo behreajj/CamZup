@@ -350,7 +350,9 @@ public interface IUp {
        * grouped together.
        */
       final GlyphVector gv = font.createGlyphVector(frc,
-            new char[] { character });
+            new char[] {
+                  character
+            });
       final Shape shp = gv.getOutline();
 
       /*

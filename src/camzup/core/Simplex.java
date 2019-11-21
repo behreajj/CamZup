@@ -297,22 +297,151 @@ public abstract class Simplex {
       };
 
       PERMUTE = new int[][] {
-            { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 }, { 0, 2, 3, 1 },
-            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 2, 3, 0 },
-            { 0, 2, 1, 3 }, { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2, 1 },
-            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 3, 2, 0 },
-            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-            { 1, 2, 0, 3 }, { 0, 0, 0, 0 }, { 1, 3, 0, 2 }, { 0, 0, 0, 0 },
-            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 2, 3, 0, 1 }, { 2, 3, 1, 0 },
-            { 1, 0, 2, 3 }, { 1, 0, 3, 2 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-            { 0, 0, 0, 0 }, { 2, 0, 3, 1 }, { 0, 0, 0, 0 }, { 2, 1, 3, 0 },
-            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-            { 2, 0, 1, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-            { 3, 0, 1, 2 }, { 3, 0, 2, 1 }, { 0, 0, 0, 0 }, { 3, 1, 2, 0 },
-            { 2, 1, 0, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-            { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 }, { 3, 2, 1, 0 } };
+            {
+                  0, 1, 2, 3
+            }, {
+                  0, 1, 3, 2
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 2, 3, 1
+            },
+            {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  1, 2, 3, 0
+            },
+            {
+                  0, 2, 1, 3
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 3, 1, 2
+            }, {
+                  0, 3, 2, 1
+            },
+            {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  1, 3, 2, 0
+            },
+            {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            },
+            {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            },
+            {
+                  1, 2, 0, 3
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  1, 3, 0, 2
+            }, {
+                  0, 0, 0, 0
+            },
+            {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  2, 3, 0, 1
+            }, {
+                  2, 3, 1, 0
+            },
+            {
+                  1, 0, 2, 3
+            }, {
+                  1, 0, 3, 2
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            },
+            {
+                  0, 0, 0, 0
+            }, {
+                  2, 0, 3, 1
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  2, 1, 3, 0
+            },
+            {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            },
+            {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            },
+            {
+                  2, 0, 1, 3
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            },
+            {
+                  3, 0, 1, 2
+            }, {
+                  3, 0, 2, 1
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  3, 1, 2, 0
+            },
+            {
+                  2, 1, 0, 3
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  0, 0, 0, 0
+            },
+            {
+                  3, 1, 0, 2
+            }, {
+                  0, 0, 0, 0
+            }, {
+                  3, 2, 0, 1
+            }, {
+                  3, 2, 1, 0
+            }
+      };
 
       ROT_2 = new Vec2();
       ROT_3 = new Vec3();
@@ -656,7 +785,7 @@ public abstract class Simplex {
          t20 = t0 * t0;
          t40 = t20 * t20;
          g0 = Simplex.gradient4(i, j, k, l, seed);
-         n0 = t40 * (g0.x * x0 + g0.y * y0 + g0.z * z0 + g0.w * w0);
+         n0 = g0.x * x0 + g0.y * y0 + g0.z * z0 + g0.w * w0;
       }
 
       final float t1 = 0.5f - (x1 * x1 + y1 * y1 + z1 * z1 + w1 * w1);
@@ -664,7 +793,7 @@ public abstract class Simplex {
          t21 = t1 * t1;
          t41 = t21 * t21;
          g1 = Simplex.gradient4(i + i1, j + j1, k + k1, l + l1, seed);
-         n1 = t41 * (g1.x * x1 + g1.y * y1 + g1.z * z1 + g1.w * w1);
+         n1 = g1.x * x1 + g1.y * y1 + g1.z * z1 + g1.w * w1;
       }
 
       final float t2 = 0.5f - (x2 * x2 + y2 * y2 + z2 * z2 + w2 * w2);
@@ -672,7 +801,7 @@ public abstract class Simplex {
          t22 = t2 * t2;
          t42 = t22 * t22;
          g2 = Simplex.gradient4(i + i2, j + j2, k + k2, l + l2, seed);
-         n2 = t42 * (g2.x * x2 + g2.y * y2 + g2.z * z2 + g2.w * w2);
+         n2 = g2.x * x2 + g2.y * y2 + g2.z * z2 + g2.w * w2;
       }
 
       final float t3 = 0.5f - (x3 * x3 + y3 * y3 + z3 * z3 + w3 * w3);
@@ -680,7 +809,7 @@ public abstract class Simplex {
          t23 = t3 * t3;
          t43 = t23 * t23;
          g3 = Simplex.gradient4(i + i3, j + j3, k + k3, l + l3, seed);
-         n3 = t43 * (g3.x * x3 + g3.y * y3 + g3.z * z3 + g3.w * w3);
+         n3 = g3.x * x3 + g3.y * y3 + g3.z * z3 + g3.w * w3;
       }
 
       final float t4 = 0.5f - (x4 * x4 + y4 * y4 + z4 * z4 + w4 * w4);
@@ -688,41 +817,36 @@ public abstract class Simplex {
          t24 = t4 * t4;
          t44 = t24 * t24;
          g4 = Simplex.gradient4(i + 1, j + 1, k + 1, l + 1, seed);
-         n4 = t44 * (g4.x * x4 + g4.y * y4 + g4.z * z4 + g4.w * w4);
+         n4 = g4.x * x4 + g4.y * y4 + g4.z * z4 + g4.w * w4;
       }
 
       if (deriv != null) {
 
-         final float tmp0 = t20 * t0
-               * (g0.x * x0 + g0.y * y0 + g0.z * z0 + g0.w * w0);
+         final float tmp0 = t20 * t0 * n0;
          deriv.x = tmp0 * x0;
          deriv.y = tmp0 * y0;
          deriv.z = tmp0 * z0;
          deriv.w = tmp0 * w0;
 
-         final float tmp1 = t21 * t1
-               * (g1.x * x1 + g1.y * y1 + g1.z * z1 + g1.w * w1);
+         final float tmp1 = t21 * t1 * n1;
          deriv.x += tmp1 * x1;
          deriv.y += tmp1 * y1;
          deriv.z += tmp1 * z1;
          deriv.w += tmp1 * w1;
 
-         final float tmp2 = t22 * t2
-               * (g2.x * x2 + g2.y * y2 + g2.z * z2 + g2.w * w2);
+         final float tmp2 = t22 * t2 * n2;
          deriv.x += tmp2 * x2;
          deriv.y += tmp2 * y2;
          deriv.z += tmp2 * z2;
          deriv.w += tmp2 * w2;
 
-         final float tmp3 = t23 * t3
-               * (g3.x * x3 + g3.y * y3 + g3.z * z3 + g3.w * w3);
+         final float tmp3 = t23 * t3 * n3;
          deriv.x += tmp3 * x3;
          deriv.y += tmp3 * y3;
          deriv.z += tmp3 * z3;
          deriv.w += tmp3 * w3;
 
-         final float tmp4 = t24 * t4
-               * (g4.x * x4 + g4.y * y4 + g4.z * z4 + g4.w * w4);
+         final float tmp4 = t24 * t4 * n4;
          deriv.x += tmp4 * x4;
          deriv.y += tmp4 * y4;
          deriv.z += tmp4 * z4;
@@ -760,7 +884,8 @@ public abstract class Simplex {
          deriv.w *= Simplex.SCALE_4;
       }
 
-      return Simplex.SCALE_4 * (n0 + n1 + n2 + n3 + n4);
+      return Simplex.SCALE_4
+            * (t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3 + t44 * n4);
    }
 
    /**
@@ -898,7 +1023,7 @@ public abstract class Simplex {
          g0 = Simplex.gradient3(i, j, k, seed);
          t20 = t0 * t0;
          t40 = t20 * t20;
-         n0 = t40 * (g0.x * x0 + g0.y * y0 + g0.z * z0);
+         n0 = g0.x * x0 + g0.y * y0 + g0.z * z0;
       }
 
       final float t1 = 0.5f - (x1 * x1 + y1 * y1 + z1 * z1);
@@ -906,7 +1031,7 @@ public abstract class Simplex {
          g1 = Simplex.gradient3(i + i1, j + j1, k + k1, seed);
          t21 = t1 * t1;
          t41 = t21 * t21;
-         n1 = t41 * (g1.x * x1 + g1.y * y1 + g1.z * z1);
+         n1 = g1.x * x1 + g1.y * y1 + g1.z * z1;
       }
 
       final float t2 = 0.5f - (x2 * x2 + y2 * y2 + z2 * z2);
@@ -914,7 +1039,7 @@ public abstract class Simplex {
          g2 = Simplex.gradient3(i + i2, j + j2, k + k2, seed);
          t22 = t2 * t2;
          t42 = t22 * t22;
-         n2 = t42 * (g2.x * x2 + g2.y * y2 + g2.z * z2);
+         n2 = g2.x * x2 + g2.y * y2 + g2.z * z2;
       }
 
       final float t3 = 0.5f - (x3 * x3 + y3 * y3 + z3 * z3);
@@ -922,31 +1047,27 @@ public abstract class Simplex {
          g3 = Simplex.gradient3(i + 1, j + 1, k + 1, seed);
          t23 = t3 * t3;
          t43 = t23 * t23;
-         n3 = t43 * (g3.x * x3 + g3.y * y3 + g3.z * z3);
+         n3 = g3.x * x3 + g3.y * y3 + g3.z * z3;
       }
 
       if (deriv != null) {
 
-         final float tmp0 = t20 * t0 *
-               (g0.x * x0 + g0.y * y0 + g0.z * z0);
+         final float tmp0 = t20 * t0 * n0;
          deriv.x = tmp0 * x0;
          deriv.y = tmp0 * y0;
          deriv.z = tmp0 * z0;
 
-         final float tmp1 = t21 * t1 *
-               (g1.x * x1 + g1.y * y1 + g1.z * z1);
+         final float tmp1 = t21 * t1 * n1;
          deriv.x += tmp1 * x1;
          deriv.y += tmp1 * y1;
          deriv.z += tmp1 * z1;
 
-         final float tmp2 = t22 * t2 *
-               (g2.x * x2 + g2.y * y2 + g2.z * z2);
+         final float tmp2 = t22 * t2 * n2;
          deriv.x += tmp2 * x2;
          deriv.y += tmp2 * y2;
          deriv.z += tmp2 * z2;
 
-         final float tmp3 = t23 * t3 *
-               (g3.x * x3 + g3.y * y3 + g3.z * z3);
+         final float tmp3 = t23 * t3 * n3;
          deriv.x += tmp3 * x3;
          deriv.y += tmp3 * y3;
          deriv.z += tmp3 * z3;
@@ -964,7 +1085,7 @@ public abstract class Simplex {
          deriv.z *= Simplex.SCALE_3;
       }
 
-      return Simplex.SCALE_3 * (n0 + n1 + n2 + n3);
+      return Simplex.SCALE_3 * (t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3);
    }
 
    /**
@@ -1053,7 +1174,7 @@ public abstract class Simplex {
          g0 = Simplex.gradient2(i, j, seed);
          t20 = t0 * t0;
          t40 = t20 * t20;
-         n0 = t40 * (g0.x * x0 + g0.y * y0);
+         n0 = g0.x * x0 + g0.y * y0;
       }
 
       final float t1 = 0.5f - (x1 * x1 + y1 * y1);
@@ -1061,7 +1182,7 @@ public abstract class Simplex {
          g1 = Simplex.gradient2(i + i1, j + j1, seed);
          t21 = t1 * t1;
          t41 = t21 * t21;
-         n1 = t41 * (g1.x * x1 + g1.y * y1);
+         n1 = g1.x * x1 + g1.y * y1;
       }
 
       final float t2 = 0.5f - (x2 * x2 + y2 * y2);
@@ -1069,20 +1190,20 @@ public abstract class Simplex {
          g2 = Simplex.gradient2(i + 1, j + 1, seed);
          t22 = t2 * t2;
          t42 = t22 * t22;
-         n2 = t42 * (g2.x * x2 + g2.y * y2);
+         n2 = g2.x * x2 + g2.y * y2;
       }
 
       if (deriv != null) {
 
-         final float tmp0 = t20 * t0 * (g0.x * x0 + g0.y * y0);
+         final float tmp0 = t20 * t0 * n0;
          deriv.x = tmp0 * x0;
          deriv.y = tmp0 * y0;
 
-         final float tmp1 = t21 * t1 * (g1.x * x1 + g1.y * y1);
+         final float tmp1 = t21 * t1 * n1;
          deriv.x += tmp1 * x1;
          deriv.y += tmp1 * y1;
 
-         final float tmp2 = t22 * t2 * (g2.x * x2 + g2.y * y2);
+         final float tmp2 = t22 * t2 * n2;
          deriv.x += tmp2 * x2;
          deriv.y += tmp2 * y2;
 
@@ -1096,7 +1217,7 @@ public abstract class Simplex {
          deriv.y *= Simplex.SCALE_2;
       }
 
-      return Simplex.SCALE_2 * (n0 + n1 + n2);
+      return Simplex.SCALE_2 * (t40 * n0 + t41 * n1 + t42 * n2);
    }
 
    /**
@@ -1591,7 +1712,7 @@ public abstract class Simplex {
                Simplex.ROT_3);
          t20 = t0 * t0;
          t40 = t20 * t20;
-         n0 = t40 * (g0.x * x0 + g0.y * y0 + g0.z * z0);
+         n0 = g0.x * x0 + g0.y * y0 + g0.z * z0;
       }
 
       final float t1 = 0.5f - (x1 * x1 + y1 * y1 + z1 * z1);
@@ -1602,7 +1723,7 @@ public abstract class Simplex {
                Simplex.ROT_3);
          t21 = t1 * t1;
          t41 = t21 * t21;
-         n1 = t41 * (g1.x * x1 + g1.y * y1 + g1.z * z1);
+         n1 = g1.x * x1 + g1.y * y1 + g1.z * z1;
       }
 
       final float t2 = 0.5f - (x2 * x2 + y2 * y2 + z2 * z2);
@@ -1613,7 +1734,7 @@ public abstract class Simplex {
                Simplex.ROT_3);
          t22 = t2 * t2;
          t42 = t22 * t22;
-         n2 = t42 * (g2.x * x2 + g2.y * y2 + g2.z * z2);
+         n2 = g2.x * x2 + g2.y * y2 + g2.z * z2;
       }
 
       final float t3 = 0.5f - (x3 * x3 + y3 * y3 + z3 * z3);
@@ -1624,31 +1745,27 @@ public abstract class Simplex {
                Simplex.ROT_3);
          t23 = t3 * t3;
          t43 = t23 * t23;
-         n3 = t43 * (g3.x * x3 + g3.y * y3 + g3.z * z3);
+         n3 = g3.x * x3 + g3.y * y3 + g3.z * z3;
       }
 
       if (deriv != null) {
 
-         final float tmp0 = t20 * t0 *
-               (g0.x * x0 + g0.y * y0 + g0.z * z0);
+         final float tmp0 = t20 * t0 * n0;
          deriv.x = tmp0 * x0;
          deriv.y = tmp0 * y0;
          deriv.z = tmp0 * z0;
 
-         final float tmp1 = t21 * t1 *
-               (g1.x * x1 + g1.y * y1 + g1.z * z1);
+         final float tmp1 = t21 * t1 * n1;
          deriv.x += tmp1 * x1;
          deriv.y += tmp1 * y1;
          deriv.z += tmp1 * z1;
 
-         final float tmp2 = t22 * t2 *
-               (g2.x * x2 + g2.y * y2 + g2.z * z2);
+         final float tmp2 = t22 * t2 * n2;
          deriv.x += tmp2 * x2;
          deriv.y += tmp2 * y2;
          deriv.z += tmp2 * z2;
 
-         final float tmp3 = t23 * t3 *
-               (g3.x * x3 + g3.y * y3 + g3.z * z3);
+         final float tmp3 = t23 * t3 * n3;
          deriv.x += tmp3 * x3;
          deriv.y += tmp3 * y3;
          deriv.z += tmp3 * z3;
@@ -1666,7 +1783,7 @@ public abstract class Simplex {
          deriv.z *= Simplex.SCALE_3;
       }
 
-      return Simplex.SCALE_3 * (n0 + n1 + n2 + n3);
+      return Simplex.SCALE_3 * (t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3);
    }
 
    /**
@@ -1768,7 +1885,7 @@ public abstract class Simplex {
          g0 = Simplex.gradRot2(i, j, seed, cosa, sina, Simplex.ROT_2);
          t20 = t0 * t0;
          t40 = t20 * t20;
-         n0 = t40 * (g0.x * x0 + g0.y * y0);
+         n0 = g0.x * x0 + g0.y * y0;
       }
 
       final float t1 = 0.5f - (x1 * x1 + y1 * y1);
@@ -1776,7 +1893,7 @@ public abstract class Simplex {
          g1 = Simplex.gradRot2(i + i1, j + j1, seed, cosa, sina, Simplex.ROT_2);
          t21 = t1 * t1;
          t41 = t21 * t21;
-         n1 = t41 * (g1.x * x1 + g1.y * y1);
+         n1 = g1.x * x1 + g1.y * y1;
       }
 
       final float t2 = 0.5f - (x2 * x2 + y2 * y2);
@@ -1784,20 +1901,20 @@ public abstract class Simplex {
          g2 = Simplex.gradRot2(i + 1, j + 1, seed, cosa, sina, Simplex.ROT_2);
          t22 = t2 * t2;
          t42 = t22 * t22;
-         n2 = t42 * (g2.x * x2 + g2.y * y2);
+         n2 = g2.x * x2 + g2.y * y2;
       }
 
       if (deriv != null) {
 
-         final float tmp0 = t20 * t0 * (g0.x * x0 + g0.y * y0);
+         final float tmp0 = t20 * t0 * n0;
          deriv.x = tmp0 * x0;
          deriv.y = tmp0 * y0;
 
-         final float tmp1 = t21 * t1 * (g1.x * x1 + g1.y * y1);
+         final float tmp1 = t21 * t1 * n1;
          deriv.x += tmp1 * x1;
          deriv.y += tmp1 * y1;
 
-         final float tmp2 = t22 * t2 * (g2.x * x2 + g2.y * y2);
+         final float tmp2 = t22 * t2 * n2;
          deriv.x += tmp2 * x2;
          deriv.y += tmp2 * y2;
 
@@ -1811,7 +1928,7 @@ public abstract class Simplex {
          deriv.y *= Simplex.SCALE_2;
       }
 
-      return Simplex.SCALE_2 * (n0 + n1 + n2);
+      return Simplex.SCALE_2 * (t40 * n0 + t41 * n1 + t42 * n2);
    }
 
    /**
@@ -2187,90 +2304,5 @@ public abstract class Simplex {
                   v.x, v.y, v.z + st, v.w, seed, zDeriv),
             Simplex.eval(
                   v.x, v.y, v.z, v.w + st, seed, wDeriv));
-   }
-
-   @SuppressWarnings("unused")
-   private void deriv2 (
-         final float x0, final float y0,
-         final float x1, final float y1,
-         final float x2, final float y2,
-
-         final float t0, final float t1, final float t2,
-         final float t20, final float t21, final float t22,
-         final float t40, final float t41, final float t42,
-
-         final Vec2 g0, final Vec2 g1, final Vec2 g2,
-         final Vec2 deriv ) {
-
-      final float tmp0 = t20 * t0 * (g0.x * x0 + g0.y * y0);
-      deriv.x = tmp0 * x0;
-      deriv.y = tmp0 * y0;
-
-      final float tmp1 = t21 * t1 * (g1.x * x1 + g1.y * y1);
-      deriv.x += tmp1 * x1;
-      deriv.y += tmp1 * y1;
-
-      final float tmp2 = t22 * t2 * (g2.x * x2 + g2.y * y2);
-      deriv.x += tmp2 * x2;
-      deriv.y += tmp2 * y2;
-
-      deriv.x *= -8.0f;
-      deriv.y *= -8.0f;
-
-      deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x;
-      deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y;
-
-      deriv.x *= Simplex.SCALE_2;
-      deriv.y *= Simplex.SCALE_2;
-   }
-
-   @SuppressWarnings("unused")
-   private void deriv3 (
-         final float x0, final float y0, final float z0,
-         final float x1, final float y1, final float z1,
-         final float x2, final float y2, final float z2,
-         final float x3, final float y3, final float z3,
-
-         final float t0, final float t1, final float t2, final float t3,
-         final float t20, final float t21, final float t22, final float t23,
-         final float t40, final float t41, final float t42, final float t43,
-         final Vec3 g0, final Vec3 g1, final Vec3 g2, final Vec3 g3,
-         final Vec3 deriv ) {
-
-      final float tmp0 = t20 * t0 *
-            (g0.x * x0 + g0.y * y0 + g0.z * z0);
-      deriv.x = tmp0 * x0;
-      deriv.y = tmp0 * y0;
-      deriv.z = tmp0 * z0;
-
-      final float tmp1 = t21 * t1 *
-            (g1.x * x1 + g1.y * y1 + g1.z * z1);
-      deriv.x += tmp1 * x1;
-      deriv.y += tmp1 * y1;
-      deriv.z += tmp1 * z1;
-
-      final float tmp2 = t22 * t2 *
-            (g2.x * x2 + g2.y * y2 + g2.z * z2);
-      deriv.x += tmp2 * x2;
-      deriv.y += tmp2 * y2;
-      deriv.z += tmp2 * z2;
-
-      final float tmp3 = t23 * t3 *
-            (g3.x * x3 + g3.y * y3 + g3.z * z3);
-      deriv.x += tmp3 * x3;
-      deriv.y += tmp3 * y3;
-      deriv.z += tmp3 * z3;
-
-      deriv.x *= -8.0f;
-      deriv.y *= -8.0f;
-      deriv.z *= -8.0f;
-
-      deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x;
-      deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y;
-      deriv.z += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z;
-
-      deriv.x *= Simplex.SCALE_3;
-      deriv.y *= Simplex.SCALE_3;
-      deriv.z *= Simplex.SCALE_3;
    }
 }

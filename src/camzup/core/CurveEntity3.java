@@ -259,9 +259,9 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
       result.append("from bpy import data as D, context as C\n\n")
             .append("curve_entity = {")
             .append("\n    \"name\": \"")
-            .append(name)
+            .append(this.name)
             .append("\",\n    \"transform\": ")
-            .append(transform.toBlenderCode())
+            .append(this.transform.toBlenderCode())
             .append(",\n    \"curves\": [\n");
 
       int curveIndex = 0;

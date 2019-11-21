@@ -1163,7 +1163,7 @@ public class Color extends Vec4 {
             final int cint = Integer.parseInt(c.substring(1), 16);
             return Color.fromHex(0xff000000 | cint, target);
          }
-      } catch (NumberFormatException e) {
+      } catch (final NumberFormatException e) {
          System.out.println(e);
       }
 
@@ -1723,7 +1723,7 @@ public class Color extends Vec4 {
 
    /**
     * Converts a color from RGB to CIE XYZ.
-    * 
+    *
     * @param c
     *           the color
     * @param target
@@ -1899,7 +1899,7 @@ public class Color extends Vec4 {
 
    /**
     * Converts a color from CIE XYZ to RGB.
-    * 
+    *
     * @param v
     *           the XYZ vector
     * @param target

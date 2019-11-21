@@ -1,15 +1,21 @@
 package camzup;
 
-import camzup.core.*;
+import camzup.core.Curve2;
+import camzup.core.CurveEntity2;
+import camzup.core.IUtils;
+import camzup.core.Mesh3;
+import camzup.core.Utils;
+import camzup.core.Vec2;
+import camzup.core.Vec3;
 import processing.core.PApplet;
 
 public class CamZup {
 
    public final static String VERSION = "##library.prettyVersion##";
 
-   static float round ( float value, int places ) {
+   static float round ( final float value, final int places ) {
 
-      double n = Math.pow(10, places);
+      final double n = Math.pow(10, places);
       return (float) (Math.round(value * n) / n);
    }
 
@@ -83,10 +89,12 @@ public class CamZup {
    public static void main ( final String[] args ) {
       // SVGParser.parse("data/v2.svg");
 
-       CurveEntity2 ce = new CurveEntity2();
-       Curve2 curve = Curve2.polygon(Utils.HALF_PI, 0.5f, 6, new Curve2());
-       ce.appendCurve(curve);
-       System.out.println(ce.toBlenderCode());
+      // final CurveEntity2 ce = new CurveEntity2();
+      // final Curve2 curve = Curve2.polygon(IUtils.HALF_PI, 0.5f,
+      // 6,
+      // new Curve2());
+      // ce.appendCurve(curve);
+      // System.out.println(ce.toBlenderCode());
 
    }
 

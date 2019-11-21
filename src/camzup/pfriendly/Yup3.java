@@ -607,7 +607,7 @@ public class Yup3 extends Up3 {
                   r * this.sphereY[v2],
                   r * this.sphereZ[v2],
                   0.0f, 0.0f);
-            
+
             v1++;
             v2++;
          }
@@ -639,7 +639,7 @@ public class Yup3 extends Up3 {
       this.beginShape(PConstants.TRIANGLE_STRIP);
       for (int i = 0; i < this.sphereDetailU; i++) {
          v2 = voff + i;
-         
+
          this.normal(
                this.sphereX[v2],
                this.sphereY[v2],

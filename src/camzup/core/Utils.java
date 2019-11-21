@@ -1211,7 +1211,7 @@ public abstract class Utils implements IUtils {
    /**
     * Linear interpolation from the origin to the destination
     * value by a step. Does not check to see if the step is
-    * beyond the range [0, 1].
+    * beyond the range [0.0, 1.0].
     *
     * @param origin
     *           the origin value
