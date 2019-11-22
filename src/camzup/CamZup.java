@@ -95,7 +95,6 @@ public class CamZup {
       // new Curve2());
       // ce.appendCurve(curve);
       // System.out.println(ce.toBlenderCode());
-
    }
 
    public static String version () {

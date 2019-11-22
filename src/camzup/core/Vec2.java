@@ -1381,6 +1381,50 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
+    * Generates a 2D array of vectors.
+    * 
+    * @param rows number of rows
+    * @param cols number of columns
+    * @param lowerBound the lower bound
+    * @param upperBound the upper bound
+    * @return the array
+    */
+   public static Vec2[][] grid (
+         final int rows,
+         final int cols,
+         final Vec2 lowerBound,
+         final Vec2 upperBound ) {
+
+      final int rval = rows < 3 ? 3 : rows;
+      final int cval = cols < 3 ? 3 : cols;
+
+      final float iToStep = 1.0f / (rval - 1.0f);
+      final float jToStep = 1.0f / (cval - 1.0f);
+
+      /* Calculate x values in separate loop. */
+      final float[] xs = new float[cval];
+      for (int j = 0; j < cval; ++j) {
+         xs[j] = Utils.lerpUnclamped(
+               lowerBound.x, 
+               upperBound.x,
+               j * jToStep);
+      }
+
+      final Vec2[][] result = new Vec2[rval][cval];
+      for (int i = 0; i < rval; ++i) {
+         final Vec2[] row = result[i];
+         final float y = Utils.lerpUnclamped(
+               lowerBound.y, 
+               upperBound.y,
+               i * iToStep);
+         for (int j = 0; j < cval; ++j) {
+            row[j] = new Vec2(xs[j], y);
+         }
+      }
+      return result;
+   }
+
+   /**
     * Finds the vector's heading. Defaults to headingSigned.
     *
     * @param v

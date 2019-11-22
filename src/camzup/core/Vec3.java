@@ -1611,6 +1611,72 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
+    * Generates a 3D array of vectors.
+    * 
+    * @param rows
+    *           number of rows
+    * @param cols
+    *           number of columns
+    * @param layers
+    *           number of layers
+    * @param lowerBound
+    *           the lower bound
+    * @param upperBound
+    *           the upper bound
+    * @return the array
+    */
+   public static Vec3[][][] grid (
+         final int rows,
+         final int cols,
+         final int layers,
+         final Vec3 lowerBound,
+         final Vec3 upperBound ) {
+
+      final int rval = rows < 3 ? 3 : rows;
+      final int cval = cols < 3 ? 3 : cols;
+      final int lval = layers < 3 ? 3 : layers;
+
+      final float hToStep = 1.0f / (lval - 1.0f);
+      final float iToStep = 1.0f / (rval - 1.0f);
+      final float jToStep = 1.0f / (cval - 1.0f);
+
+      /* Calculate x values in separate loop. */
+      final float[] xs = new float[cval];
+      for (int j = 0; j < cval; ++j) {
+         xs[j] = Utils.lerpUnclamped(
+               lowerBound.x, 
+               upperBound.x, 
+               j * jToStep);
+      }
+
+      /* Calculate y values in separate loop. */
+      final float[] ys = new float[rval];
+      for (int i = 0; i < rval; ++i) {
+         ys[i] = Utils.lerpUnclamped(
+               lowerBound.y, 
+               upperBound.y,
+               i * iToStep);
+      }
+
+      final Vec3[][][] result = new Vec3[lval][rval][cval];
+      for (int h = 0; h < lval; ++h) {
+         final Vec3[][] layer = result[h];
+         final float z = Utils.lerpUnclamped(
+               lowerBound.z, 
+               upperBound.z,
+               h * hToStep);
+         for (int i = 0; i < rval; ++i) {
+            final Vec3[] row = layer[i];
+            final float y = ys[i];
+            for (int j = 0; j < cval; ++j) {
+               row[j] = new Vec3(xs[j], y, z);
+            }
+         }
+      }
+      return result;
+   }
+
+   /**
     * Finds the vector's inclination. Defaults to inclination
     * signed.
     *

@@ -324,9 +324,9 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
          curveIndex++;
       }
 
-      result.append("]}\n\ncrv_data = D.curves.new(\"")
+      result.append("]}\n\ncrv_data = D.curves.new(")
             .append("curve_entity[\"name\"]")
-            .append("\", \"CURVE\")\n")
+            .append(", \"CURVE\")\n")
             .append("crv_data.dimensions = \"3D\"\n")
             .append("crv_splines = crv_data.splines\n")
             .append("crv_index = 0\n")
