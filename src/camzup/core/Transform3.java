@@ -71,7 +71,9 @@ public class Transform3 extends Transform {
        *           the output transform
        * @return the eased transform
        */
-      public Transform3 apply ( final Transform3 origin, final Transform3 dest,
+      public Transform3 apply (
+            final Transform3 origin,
+            final Transform3 dest,
             final Float step,
             final Transform3 target ) {
 
@@ -184,8 +186,11 @@ public class Transform3 extends Transform {
     *           the output transform
     * @return the transform
     */
-   public static Transform3 fromAxes ( final Vec3 right, final Vec3 forward,
-         final Vec3 up, final Transform3 target ) {
+   public static Transform3 fromAxes ( 
+         final Vec3 right, 
+         final Vec3 forward,
+         final Vec3 up, 
+         final Transform3 target ) {
 
       target.rotPrev.set(target.rotation);
       Quaternion.fromAxes(right, forward, up, target.rotation);
@@ -248,7 +253,8 @@ public class Transform3 extends Transform {
     * @see Vec3#div(float, Vec3, Vec3)
     * @see Transform3#updateAxes()
     */
-   public static Transform3 inverse ( final Transform3 source,
+   public static Transform3 inverse ( 
+         final Transform3 source,
          final Transform3 target ) {
 
       Vec3.negate(source.location, target.location);
@@ -495,7 +501,8 @@ public class Transform3 extends Transform {
     * @param zScale
     *           the scale z
     */
-   public Transform3 ( final float xLoc, final float yLoc, final float zLoc,
+   public Transform3 (
+         final float xLoc, final float yLoc, final float zLoc,
 
          final float real, final float xImag, final float yImag,
          final float zImag,
@@ -529,7 +536,9 @@ public class Transform3 extends Transform {
     * @param scale
     *           the scale
     */
-   public Transform3 ( final Vec3 location, final Quaternion rotation,
+   public Transform3 (
+         final Vec3 location,
+         final Quaternion rotation,
          final Vec3 scale ) {
 
       super();
@@ -1260,7 +1269,8 @@ public class Transform3 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform3 set ( final float xLoc, final float yLoc, final float zLoc,
+   public Transform3 set (
+         final float xLoc, final float yLoc, final float zLoc,
          final float real, final float xImag, final float yImag,
          final float zImag, final float xScale, final float yScale,
          final float zScale ) {
@@ -1297,7 +1307,9 @@ public class Transform3 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform3 set ( final Vec3 locNew, final Quaternion rotNew,
+   public Transform3 set (
+         final Vec3 locNew,
+         final Quaternion rotNew,
          final Vec3 scaleNew ) {
 
       this.moveTo(locNew);

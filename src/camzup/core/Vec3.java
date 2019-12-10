@@ -85,9 +85,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
        * @return the eased vector
        */
       @Override
-      public Vec3 apply (
-            final Vec3 origin,
-            final Vec3 dest,
+      public Vec3 apply ( 
+            final Vec3 origin, 
+            final Vec3 dest, 
             final Float step,
             final Vec3 target ) {
 
@@ -115,10 +115,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
        *           the output vector
        * @return the eased vector
        */
-      public abstract Vec3 applyUnclamped (
-            final Vec3 origin,
+      public abstract Vec3 applyUnclamped ( 
+            final Vec3 origin, 
             final Vec3 dest,
-            final float step,
+            final float step, 
             Vec3 target );
 
       /**
@@ -188,9 +188,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
        * @see Vec3#dot(Vec3, Vec3)
        */
       @Override
-      public int compare (
-            final Vec3 a,
-            final Vec3 b ) {
+      public int compare ( final Vec3 a, final Vec3 b ) {
 
          Vec3.sub(a, this.locus, this.aDiff);
          Vec3.sub(b, this.locus, this.bDiff);
@@ -230,9 +228,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
        * @return the comparison
        */
       @Override
-      public int compare (
-            final Vec3 a,
-            final Vec3 b ) {
+      public int compare ( final Vec3 a, final Vec3 b ) {
 
          return a.z > b.z ? 1
                : a.z < b.z ? -1
@@ -271,10 +267,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
        * @return the result
        */
       @Override
-      public Vec3 applyUnclamped (
-            final Vec3 origin,
+      public Vec3 applyUnclamped ( 
+            final Vec3 origin, 
             final Vec3 dest,
-            final float step,
+            final float step, 
             final Vec3 target ) {
 
          final double td = step;
@@ -314,10 +310,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
        * @return the smoothed vector
        */
       @Override
-      public Vec3 applyUnclamped (
-            final Vec3 origin,
+      public Vec3 applyUnclamped ( 
+            final Vec3 origin, 
             final Vec3 dest,
-            final float step,
+            final float step, 
             final Vec3 target ) {
 
          final double td = step;
@@ -417,9 +413,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the absolute vector
     * @see Utils#abs(float)
     */
-   public static Vec3 abs (
-         final Vec3 v,
-         final Vec3 target ) {
+   public static Vec3 abs ( final Vec3 v, final Vec3 target ) {
 
       return target.set(
             Utils.abs(v.x),
@@ -438,14 +432,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the sum
     */
-   public static Vec3 add (
-         final Vec3 a,
-         final Vec3 b,
+   public static Vec3 add ( 
+         final Vec3 a, 
+         final Vec3 b, 
          final Vec3 target ) {
 
       return target.set(
-            a.x + b.x,
-            a.y + b.y,
+            a.x + b.x, 
+            a.y + b.y, 
             a.z + b.z);
    }
 
@@ -460,8 +454,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the normalized sum
     */
-   public static Vec3 addNorm (
-         final Vec3 a,
+   public static Vec3 addNorm ( 
+         final Vec3 a, 
          final Vec3 b,
          final Vec3 target ) {
 
@@ -476,8 +470,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
       final float mInv = (float) (1.0d / Math.sqrt(mSq));
       return target.set(
-            dx * mInv,
-            dy * mInv,
+            dx * mInv, 
+            dy * mInv, 
             dz * mInv);
    }
 
@@ -498,9 +492,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Vec3#add(Vec3, Vec3, Vec3)
     * @see Vec3#normalize(Vec3, Vec3)
     */
-   public static Vec3 addNorm (
-         final Vec3 a,
-         final Vec3 b,
+   public static Vec3 addNorm ( 
+         final Vec3 a, 
+         final Vec3 b, 
          final Vec3 target,
          final Vec3 sum ) {
 
@@ -522,9 +516,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Vec3#mag(Vec3)
     * @see Utils#acos(float)
     */
-   public static float angleBetween (
-         final Vec3 a,
-         final Vec3 b ) {
+   public static float angleBetween ( final Vec3 a, final Vec3 b ) {
 
       if (Vec3.isZero(a) || Vec3.isZero(b)) {
          return 0.0f;
@@ -543,13 +535,11 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the evaluation
     * @see Utils#approxFast(float, float)
     */
-   public static boolean approx (
-         final Vec3 a,
-         final Vec3 b ) {
+   public static boolean approx ( final Vec3 a, final Vec3 b ) {
 
-      return Utils.approxFast(a.z, b.z)
-            && Utils.approxFast(a.y, b.y)
-            && Utils.approxFast(a.x, b.x);
+      return Utils.approxFast(a.z, b.z) &&
+            Utils.approxFast(a.y, b.y) &&
+            Utils.approxFast(a.x, b.x);
    }
 
    /**
@@ -564,9 +554,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the evaluation
     * @see Utils#approxFast(float, float, float)
     */
-   public static boolean approx (
-         final Vec3 a,
-         final Vec3 b,
+   public static boolean approx ( final Vec3 a, final Vec3 b,
          final float tolerance ) {
 
       return Utils.approxFast(a.z, b.z, tolerance)
@@ -586,9 +574,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Utils#approxFast(float, float)
     * @see Vec3#dot(Vec3, Vec3)
     */
-   public static boolean approxMag (
-         final Vec3 a,
-         final float b ) {
+   public static boolean approxMag ( final Vec3 a, final float b ) {
 
       return Utils.approxFast(Vec3.magSq(a), b * b);
    }
@@ -607,8 +593,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Utils#approxFast(float, float, float)
     * @see Vec3#dot(Vec3, Vec3)
     */
-   public static boolean approxMag (
-         final Vec3 a,
+   public static boolean approxMag ( 
+         final Vec3 a, 
          final float b,
          final float tolerance ) {
 
@@ -626,8 +612,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the right comparisand
     * @return the evaluation
     */
-   public static boolean areParallel (
-         final Vec3 a,
+   public static boolean areParallel ( 
+         final Vec3 a, 
          final Vec3 b ) {
 
       return a.y * b.z - a.z * b.y == 0.0f &&
@@ -650,8 +636,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Vec3#cross(Vec3, Vec3, Vec3)
     * @see Vec3#isZero(Vec3)
     */
-   public static boolean areParallel (
-         final Vec3 a,
+   public static boolean areParallel ( 
+         final Vec3 a, 
          final Vec3 b,
          final Vec3 cross ) {
 
@@ -738,9 +724,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the point along the curve
     */
    public static Vec3 bezierPoint (
-         final Vec3 ap0,
+         final Vec3 ap0, 
          final Vec3 cp0,
-         final Vec3 cp1,
+         final Vec3 cp1, 
          final Vec3 ap1,
          final float step,
          final Vec3 target ) {
@@ -760,20 +746,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       tcb *= step;
 
       return target.set(
-            ap0.x * ucb +
-                  cp0.x * usq3t +
-                  cp1.x * tsq3u +
-                  ap1.x * tcb,
-
-            ap0.y * ucb +
-                  cp0.y * usq3t +
-                  cp1.y * tsq3u +
-                  ap1.y * tcb,
-
-            ap0.z * ucb +
-                  cp0.z * usq3t +
-                  cp1.z * tsq3u +
-                  ap1.z * tcb);
+            ap0.x * ucb + cp0.x * usq3t + cp1.x * tsq3u + ap1.x * tcb,
+            ap0.y * ucb + cp0.y * usq3t + cp1.y * tsq3u + ap1.y * tcb,
+            ap0.z * ucb + cp0.z * usq3t + cp1.z * tsq3u + ap1.z * tcb);
    }
 
    /**
@@ -801,11 +776,11 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the tangent along the curve
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
-   public static Vec3 bezierTangent (
-         final Vec3 ap0,
+   public static Vec3 bezierTangent ( 
+         final Vec3 ap0, 
          final Vec3 cp0,
-         final Vec3 cp1,
-         final Vec3 ap1,
+         final Vec3 cp1, 
+         final Vec3 ap1, 
          final float step,
          final Vec3 target ) {
 
@@ -822,17 +797,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float ut6 = u * (t3 + t3);
 
       return target.set(
-            (cp0.x - ap0.x) * usq3 +
-                  (cp1.x - cp0.x) * ut6 +
-                  (ap1.x - cp1.x) * tsq3,
+            (cp0.x - ap0.x) * usq3 + (cp1.x - cp0.x) * ut6
+                  + (ap1.x - cp1.x) * tsq3,
 
-            (cp0.y - ap0.y) * usq3 +
-                  (cp1.y - cp0.y) * ut6 +
-                  (ap1.y - cp1.y) * tsq3,
+            (cp0.y - ap0.y) * usq3 + (cp1.y - cp0.y) * ut6
+                  + (ap1.y - cp1.y) * tsq3,
 
-            (cp0.z - ap0.z) * usq3 +
-                  (cp1.z - cp0.z) * ut6 +
-                  (ap1.z - cp1.z) * tsq3);
+            (cp0.z - ap0.z) * usq3 + (cp1.z - cp0.z) * ut6
+                  + (ap1.z - cp1.z) * tsq3);
    }
 
    /**
@@ -854,11 +826,11 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Vec3#bezierTangent(Vec3, Vec3, Vec3, Vec3, float,
     *      Vec3)
     */
-   public static Vec3 bezierTanUnit (
-         final Vec3 ap0,
+   public static Vec3 bezierTanUnit ( 
+         final Vec3 ap0, 
          final Vec3 cp0,
-         final Vec3 cp1,
-         final Vec3 ap1,
+         final Vec3 cp1, 
+         final Vec3 ap1, 
          final float step,
          final Vec3 target ) {
 
@@ -870,10 +842,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       }
 
       final float mInv = 1.0f / (float) Math.sqrt(mSq);
-      return target.set(
-            target.x * mInv,
-            target.y * mInv,
-            target.z * mInv);
+      return target.set(target.x * mInv, target.y * mInv, target.z * mInv);
    }
 
    /**
@@ -887,9 +856,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the output
     * @see Utils#ceil(float)
     */
-   public static Vec3 ceil (
-         final Vec3 a,
-         final Vec3 target ) {
+   public static Vec3 ceil ( final Vec3 a, final Vec3 target ) {
 
       return target.set(
             Utils.ceil(a.x),
@@ -912,10 +879,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the clamped vector
     * @see Utils#clamp(float, float, float)
     */
-   public static Vec3 clamp (
-         final Vec3 a,
+   public static Vec3 clamp ( 
+         final Vec3 a, 
          final Vec3 lowerBound,
-         final Vec3 upperBound,
+         final Vec3 upperBound, 
          final Vec3 target ) {
 
       return target.set(
@@ -934,9 +901,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the clamped vector
     * @see Utils#clamp01(float)
     */
-   public static Vec3 clamp01 (
-         final Vec3 a,
-         final Vec3 target ) {
+   public static Vec3 clamp01 ( final Vec3 a, final Vec3 target ) {
 
       return target.set(
             Utils.clamp01(a.x),
@@ -956,8 +921,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the signed vector
     */
-   public static Vec3 copySign (
-         final Vec3 magnitude,
+   public static Vec3 copySign ( 
+         final Vec3 magnitude, 
          final Vec3 sign,
          final Vec3 target ) {
 
@@ -1009,9 +974,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the cross product
     * @see Vec2#perpendicular(Vec2, Vec2)
     */
-   public static Vec3 cross (
-         final Vec3 a,
-         final Vec3 b,
+   public static Vec3 cross ( 
+         final Vec3 a, 
+         final Vec3 b, 
          final Vec3 target ) {
 
       return target.set(
@@ -1034,8 +999,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the normalized cross product
     * @see Vec3#cross(Vec3, Vec3, Vec3)
     */
-   public static Vec3 crossNorm (
-         final Vec3 a,
+   public static Vec3 crossNorm ( 
+         final Vec3 a, 
          final Vec3 b,
          final Vec3 target ) {
 
@@ -1050,8 +1015,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
       final float mInv = 1.0f / (float) Math.sqrt(mSq);
       return target.set(
-            x * mInv,
-            y * mInv,
+            x * mInv, 
+            y * mInv, 
             z * mInv);
    }
 
@@ -1072,9 +1037,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Vec3#cross(Vec3, Vec3, Vec3)
     * @see Vec3#normalize(Vec3, Vec3)
     */
-   public static Vec3 crossNorm (
-         final Vec3 a,
-         final Vec3 b,
+   public static Vec3 crossNorm ( 
+         final Vec3 a, 
+         final Vec3 b, 
          final Vec3 target,
          final Vec3 crossed ) {
 
@@ -1096,9 +1061,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the absolute difference
     * @see Utils#diff(float, float)
     */
-   public static Vec3 diff (
-         final Vec3 a,
-         final Vec3 b,
+   public static Vec3 diff ( 
+         final Vec3 a, 
+         final Vec3 b, 
          final Vec3 target ) {
 
       return target.set(
@@ -1117,9 +1082,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the distance
     * @see Vec3#distEuclidean(Vec3, Vec3)
     */
-   public static float dist (
-         final Vec3 a,
-         final Vec3 b ) {
+   public static float dist ( final Vec3 a, final Vec3 b ) {
 
       return Vec3.distEuclidean(a, b);
    }
@@ -1136,8 +1099,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Utils#max(float, float)
     * @see Utils#diff(float, float)
     */
-   public static float distChebyshev (
-         final Vec3 a,
+   public static float distChebyshev ( 
+         final Vec3 a, 
          final Vec3 b ) {
 
       return Utils.max(
@@ -1158,8 +1121,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the Euclidean distance
     * @see Vec3#distSq(Vec3, Vec3)
     */
-   public static float distEuclidean (
-         final Vec3 a,
+   public static float distEuclidean ( 
+         final Vec3 a, 
          final Vec3 b ) {
 
       return (float) Math.sqrt(Vec3.distSq(a, b));
@@ -1176,13 +1139,13 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the Manhattan distance
     * @see Utils#diff(float, float)
     */
-   public static float distManhattan (
-         final Vec3 a,
+   public static float distManhattan ( 
+         final Vec3 a, 
          final Vec3 b ) {
 
-      return Utils.diff(a.x, b.x)
-            + Utils.diff(a.y, b.y)
-            + Utils.diff(a.z, b.z);
+      return Utils.diff(a.x, b.x) +
+            Utils.diff(a.y, b.y) +
+            Utils.diff(a.z, b.z);
    }
 
    /**
@@ -1202,8 +1165,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Vec3#distEuclidean(Vec3, Vec3)
     * @see Vec3#distManhattan(Vec3, Vec3)
     */
-   public static float distMinkowski (
-         final Vec3 a,
+   public static float distMinkowski ( 
+         final Vec3 a, 
          final Vec3 b,
          final float c ) {
 
@@ -1231,9 +1194,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Vec3#distEuclidean(Vec3, Vec3)
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
-   public static float distSq (
-         final Vec3 a,
-         final Vec3 b ) {
+   public static float distSq ( final Vec3 a, final Vec3 b ) {
 
       final float xDist = b.x - a.x;
       final float yDist = b.y - a.y;
@@ -1253,9 +1214,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the quotient
     * @see Utils#div(float, float)
     */
-   public static Vec3 div (
-         final float a,
-         final Vec3 b,
+   public static Vec3 div ( 
+         final float a, 
+         final Vec3 b, 
          final Vec3 target ) {
 
       return target.set(
@@ -1275,9 +1236,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the quotient
     */
-   public static Vec3 div (
-         final Vec3 a,
-         final float b,
+   public static Vec3 div ( 
+         final Vec3 a, 
+         final float b, 
          final Vec3 target ) {
 
       if (b == 0.0f) {
@@ -1285,8 +1246,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       }
       final float denom = 1.0f / b;
       return target.set(
-            a.x * denom,
-            a.y * denom,
+            a.x * denom, 
+            a.y * denom, 
             a.z * denom);
    }
 
@@ -1305,9 +1266,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the quotient
     * @see Utils#div(float, float)
     */
-   public static Vec3 div (
-         final Vec3 a,
-         final Vec3 b,
+   public static Vec3 div ( 
+         final Vec3 a, 
+         final Vec3 b, 
          final Vec3 target ) {
 
       return target.set(
@@ -1333,9 +1294,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           right operand
     * @return the dot product
     */
-   public static float dot (
-         final Vec3 a,
-         final Vec3 b ) {
+   public static float dot ( final Vec3 a, final Vec3 b ) {
 
       return a.x * b.x + a.y * b.y + a.z * b.z;
    }
@@ -1363,9 +1322,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the output
     * @see Utils#floor(float)
     */
-   public static Vec3 floor (
-         final Vec3 v,
-         final Vec3 target ) {
+   public static Vec3 floor ( final Vec3 v, final Vec3 target ) {
 
       return target.set(
             Utils.floor(v.x),
@@ -1386,9 +1343,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the result
     * @see Utils#fmod(float, float)
     */
-   public static Vec3 fmod (
-         final float a,
-         final Vec3 b,
+   public static Vec3 fmod ( 
+         final float a, 
+         final Vec3 b, 
          final Vec3 target ) {
 
       return target.set(
@@ -1409,18 +1366,15 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the result
     */
-   public static Vec3 fmod (
-         final Vec3 a,
-         final float b,
+   public static Vec3 fmod ( 
+         final Vec3 a, 
+         final float b, 
          final Vec3 target ) {
 
       if (b == 0.0f) {
          return target.set(a);
       }
-      return target.set(
-            a.x % b,
-            a.y % b,
-            a.z % b);
+      return target.set(a.x % b, a.y % b, a.z % b);
    }
 
    /**
@@ -1436,9 +1390,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the result
     * @see Utils#fmod(float, float)
     */
-   public static Vec3 fmod (
-         final Vec3 a,
-         final Vec3 b,
+   public static Vec3 fmod ( 
+         final Vec3 a, 
+         final Vec3 b, 
          final Vec3 target ) {
 
       return target.set(
@@ -1471,9 +1425,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the fractional portion
     * @see Utils#fract(float)
     */
-   public static Vec3 fract (
-         final Vec3 v,
-         final Vec3 target ) {
+   public static Vec3 fract ( final Vec3 v, final Vec3 target ) {
 
       return target.set(
             Utils.fract(v.x),
@@ -1500,14 +1452,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   public static Vec3 fromPolar (
-         final float azimuth,
+   public static Vec3 fromPolar ( 
+         final float azimuth, 
          final float radius,
          final Vec3 target ) {
 
       return target.set(
             (float) (radius * Math.cos(azimuth)),
-            (float) (radius * Math.sin(azimuth)),
+            (float) (radius * Math.sin(azimuth)), 
             0.0f);
    }
 
@@ -1522,13 +1474,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the vector
     */
-   public static Vec3 fromPolar (
-         final float azimuth,
+   public static Vec3 fromPolar ( 
+         final float azimuth, 
          final Vec3 target ) {
 
       return target.set(
-            (float) Math.cos(azimuth),
-            (float) Math.sin(azimuth), 0.0f);
+            (float) Math.cos(azimuth), 
+            (float) Math.sin(azimuth),
+            0.0f);
    }
 
    /**
@@ -1554,9 +1507,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the vector
     */
-   public static Vec3 fromSpherical (
+   public static Vec3 fromSpherical ( 
          final float azimuth,
-         final float inclination,
+         final float inclination, 
          final float radius,
          final Vec3 target ) {
 
@@ -1580,9 +1533,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the vector
     */
-   public static Vec3 fromSpherical (
+   public static Vec3 fromSpherical ( 
          final float azimuth,
-         final float inclination,
+         final float inclination, 
          final Vec3 target ) {
 
       return Vec3.fromSpherical(azimuth, inclination, 1.0f, target);
@@ -1612,7 +1565,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
    /**
     * Generates a 3D array of vectors.
-    * 
+    *
     * @param rows
     *           number of rows
     * @param cols
@@ -1643,31 +1596,29 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       /* Calculate x values in separate loop. */
       final float[] xs = new float[cval];
       for (int j = 0; j < cval; ++j) {
-         xs[j] = Utils.lerpUnclamped(
-               lowerBound.x, 
-               upperBound.x, 
-               j * jToStep);
+         xs[j] = Utils.lerpUnclamped(lowerBound.x, upperBound.x, j * jToStep);
       }
 
       /* Calculate y values in separate loop. */
       final float[] ys = new float[rval];
       for (int i = 0; i < rval; ++i) {
-         ys[i] = Utils.lerpUnclamped(
-               lowerBound.y, 
-               upperBound.y,
-               i * iToStep);
+         ys[i] = Utils.lerpUnclamped(lowerBound.y, upperBound.y, i * iToStep);
       }
 
       final Vec3[][][] result = new Vec3[lval][rval][cval];
       for (int h = 0; h < lval; ++h) {
+
          final Vec3[][] layer = result[h];
          final float z = Utils.lerpUnclamped(
-               lowerBound.z, 
+               lowerBound.z,
                upperBound.z,
                h * hToStep);
+
          for (int i = 0; i < rval; ++i) {
+
             final Vec3[] row = layer[i];
             final float y = ys[i];
+
             for (int j = 0; j < cval; ++j) {
                row[j] = new Vec3(xs[j], y, z);
             }
@@ -1994,8 +1945,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final float step,
          final Vec3 target ) {
 
-      return Vec3.EASING.apply(
-            origin, dest, step, target);
+      return Vec3.EASING.apply(origin, dest, step, target);
    }
 
    /**
@@ -2014,15 +1964,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the easing function
     * @return the mix
     */
-   public static Vec3 mix (
-         final Vec3 origin,
+   public static Vec3 mix ( 
+         final Vec3 origin, 
          final Vec3 dest,
-         final float step,
+         final float step, 
          final Vec3 target,
          final AbstrEasing easingFunc ) {
 
-      return easingFunc.apply(
-            origin, dest, step, target);
+      return easingFunc.apply(origin, dest, step, target);
    }
 
    /**
@@ -2037,9 +1986,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the modulated vector
     * @see Utils#mod(float, float)
     */
-   public static Vec3 mod (
-         final float a,
-         final Vec3 b,
+   public static Vec3 mod ( 
+         final float a, 
+         final Vec3 b, 
          final Vec3 target ) {
 
       return target.set(
@@ -2060,14 +2009,15 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the modulated vector
     * @see Utils#modUnchecked(float, float)
     */
-   public static Vec3 mod (
-         final Vec3 a,
-         final float b,
+   public static Vec3 mod ( 
+         final Vec3 a, 
+         final float b, 
          final Vec3 target ) {
 
       if (b == 0.0f) {
          return target.set(a);
       }
+
       return target.set(
             Utils.modUnchecked(a.x, b),
             Utils.modUnchecked(a.y, b),
@@ -2087,9 +2037,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the modulated vector
     * @see Utils#mod(float, float)
     */
-   public static Vec3 mod (
-         final Vec3 a,
-         final Vec3 b,
+   public static Vec3 mod ( 
+         final Vec3 a, 
+         final Vec3 b, 
          final Vec3 target ) {
 
       return target.set(
@@ -2109,9 +2059,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the result
     * @see Utils#mod1(float)
     */
-   public static Vec3 mod1 (
-         final Vec3 v,
-         final Vec3 target ) {
+   public static Vec3 mod1 ( final Vec3 v, final Vec3 target ) {
 
       return target.set(
             Utils.mod1(v.x),
@@ -2130,15 +2078,12 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the product
     */
-   public static Vec3 mult (
-         final float a,
-         final Vec3 b,
+   public static Vec3 mult ( 
+         final float a, 
+         final Vec3 b, 
          final Vec3 target ) {
 
-      return target.set(
-            a * b.x,
-            a * b.y,
-            a * b.z);
+      return target.set(a * b.x, a * b.y, a * b.z);
    }
 
    /**
@@ -2152,14 +2097,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the product
     */
-   public static Vec3 mult (
-         final Vec3 a,
-         final float b,
+   public static Vec3 mult ( 
+         final Vec3 a, 
+         final float b, 
          final Vec3 target ) {
 
       return target.set(
-            a.x * b,
-            a.y * b,
+            a.x * b, 
+            a.y * b, 
             a.z * b);
    }
 
@@ -2176,14 +2121,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the product
     */
-   public static Vec3 mult (
-         final Vec3 a,
-         final Vec3 b,
+   public static Vec3 mult ( 
+         final Vec3 a, 
+         final Vec3 b, 
          final Vec3 target ) {
 
       return target.set(
-            a.x * b.x,
-            a.y * b.y,
+            a.x * b.x, 
+            a.y * b.y, 
             a.z * b.z);
    }
 
@@ -2196,9 +2141,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the negation
     */
-   public static Vec3 negate (
-         final Vec3 v,
-         final Vec3 target ) {
+   public static Vec3 negate ( final Vec3 v, final Vec3 target ) {
 
       return target.set(-v.x, -v.y, -v.z);
    }
@@ -2229,9 +2172,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Vec3#div(Vec3, float, Vec3)
     * @see Vec3#mag(Vec3)
     */
-   public static Vec3 normalize (
-         final Vec3 v,
-         final Vec3 target ) {
+   public static Vec3 normalize ( final Vec3 v, final Vec3 target ) {
 
       final float mSq = v.x * v.x + v.y * v.y + v.z * v.z;
 
@@ -2245,8 +2186,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
       final float mInv = (float) (1.0d / Math.sqrt(mSq));
       return target.set(
-            v.x * mInv,
-            v.y * mInv,
+            v.x * mInv, 
+            v.y * mInv, 
             v.z * mInv);
    }
 
@@ -2274,9 +2215,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the result
     * @see Math#pow(double, double)
     */
-   public static Vec3 pow (
-         final float a,
-         final Vec3 b,
+   public static Vec3 pow ( 
+         final float a, 
+         final Vec3 b, 
          final Vec3 target ) {
 
       return target.set(
@@ -2297,9 +2238,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the result
     * @see Math#pow(double, double)
     */
-   public static Vec3 pow (
-         final Vec3 a,
-         final float b,
+   public static Vec3 pow ( 
+         final Vec3 a, 
+         final float b, 
          final Vec3 target ) {
 
       return target.set(
@@ -2320,9 +2261,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the result
     * @see Math#pow(double, double)
     */
-   public static Vec3 pow (
-         final Vec3 a,
-         final Vec3 b,
+   public static Vec3 pow ( 
+         final Vec3 a, 
+         final Vec3 b, 
          final Vec3 target ) {
 
       return target.set(
@@ -2351,8 +2292,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Vec3#mult(Vec3, float, Vec3)
     * @see Utils#clamp01(float)
     */
-   public static float project (
-         final Vec3 a,
+   public static float project ( 
+         final Vec3 a, 
          final Vec3 b,
          final Vec3 target ) {
 
@@ -2378,9 +2319,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the random vector
     * @see Vec3#randomSpherical(Random, float, float, Vec3)
     */
-   public static Vec3 random (
-         final Random rng,
-         final Vec3 target ) {
+   public static Vec3 random ( final Random rng, final Vec3 target ) {
 
       return Vec3.randomSpherical(rng, 1.0f, 1.0f, target);
    }
@@ -2400,9 +2339,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the random vector
     * @see Random#uniform(float, float)
     */
-   public static Vec3 randomCartesian (
+   public static Vec3 randomCartesian ( 
          final Random rng,
-         final float lowerBound,
+         final float lowerBound, 
          final float upperBound,
          final Vec3 target ) {
 
@@ -2475,10 +2414,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float rho = rng.uniform(rhoMin, rhoMax);
       final float rhoNorm = (float) (rho / Math.sqrt(mSq));
 
-      return target.set(
-            x * rhoNorm,
-            y * rhoNorm,
-            z * rhoNorm);
+      return target.set(x * rhoNorm, y * rhoNorm, z * rhoNorm);
    }
 
    /**
@@ -2493,9 +2429,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the random vector
     * @see Vec3#randomSpherical(Random, float, float, Vec3)
     */
-   public static Vec3 randomSpherical (
-         final Random rng,
-         final Vec3 target ) {
+   public static Vec3 randomSpherical ( final Random rng, final Vec3 target ) {
 
       return Vec3.randomSpherical(rng, 1.0f, 1.0f, target);
    }
@@ -2542,10 +2476,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float nx = normal.x * mInv;
       final float ny = normal.y * mInv;
       final float nz = normal.z * mInv;
-      final float scalar = 2.0f *
-            (nx * incident.x +
-                  ny * incident.y +
-                  nz * incident.z);
+      final float scalar = 2.0f
+            * (nx * incident.x + ny * incident.y + nz * incident.z);
       return target.set(
             incident.x - scalar * nx,
             incident.y - scalar * ny,
@@ -2567,10 +2499,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Vec3#dot(Vec3, Vec3)
     * @see Math#sqrt(double)
     */
-   public static Vec3 refract (
-         final Vec3 incident,
+   public static Vec3 refract ( 
+         final Vec3 incident, 
          final Vec3 normal,
-         final float eta,
+         final float eta, 
          final Vec3 target ) {
 
       // TODO: Needs testing.
@@ -2608,10 +2540,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float bSq = Vec3.magSq(b);
       if (bSq != 0.0f) {
          final float dAbBb = Vec3.dot(a, b) / bSq;
-         target.set(
-               a.x - b.x * dAbBb,
-               a.y - b.y * dAbBb,
-               a.z - b.z * dAbBb);
+         target.set(a.x - b.x * dAbBb, a.y - b.y * dAbBb, a.z - b.z * dAbBb);
          return Utils.clamp01(dAbBb);
       }
       target.set(a);
@@ -2658,9 +2587,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the rescaled vector
     * @see Vec3#rescale(Vec3, float, Vec3, Vec3)
     */
-   public static Vec3 rescale (
-         final Vec3 v,
-         final float scalar,
+   public static Vec3 rescale ( final Vec3 v, final float scalar,
          final Vec3 target ) {
 
       if (scalar == 0.0f) {
@@ -2696,11 +2623,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Vec3#normalize(Vec3, Vec3)
     * @see Vec3#mult(Vec3, float, Vec3)
     */
-   public static Vec3 rescale (
-         final Vec3 v,
-         final float scalar,
-         final Vec3 target,
-         final Vec3 normalized ) {
+   public static Vec3 rescale ( final Vec3 v, final float scalar,
+         final Vec3 target, final Vec3 normalized ) {
 
       if (scalar == 0.0f) {
          return target.reset();
@@ -2741,11 +2665,11 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the rotated vector
     */
-   public static Vec3 rotate (
-         final Vec3 v,
+   public static Vec3 rotate ( 
+         final Vec3 v, 
          final float cosa,
          final float sina,
-         final Vec3 axis,
+         final Vec3 axis, 
          final Vec3 target ) {
 
       final float complcos = 1.0f - cosa;
@@ -2758,17 +2682,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float sinz = sina * axis.z;
 
       return target.set(
-            (complcos * axis.x * axis.x + cosa) * v.x +
-                  (complxy - sinz) * v.y +
-                  (complxz + siny) * v.z,
+            (complcos * axis.x * axis.x + cosa) * v.x + (complxy - sinz) * v.y
+                  + (complxz + siny) * v.z,
 
-            (complxy + sinz) * v.x +
-                  (complcos * axis.y * axis.y + cosa) * v.y +
-                  (complyz - sinx) * v.z,
+            (complxy + sinz) * v.x + (complcos * axis.y * axis.y + cosa) * v.y
+                  + (complyz - sinx) * v.z,
 
-            (complxz - siny) * v.x +
-                  (complyz + sinx) * v.y +
-                  (complcos * axis.z * axis.z + cosa) * v.z);
+            (complxz - siny) * v.x + (complyz + sinx) * v.y
+                  + (complcos * axis.z * axis.z + cosa) * v.z);
    }
 
    /**
@@ -2787,16 +2708,15 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   public static Vec3 rotate (
-         final Vec3 v,
-         final float radians,
-         final Vec3 axis,
-         final Vec3 target ) {
+   public static Vec3 rotate ( final Vec3 v, final float radians,
+         final Vec3 axis, final Vec3 target ) {
 
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
+      // final float cosa = (float) Math.cos(radians);
+      // final float sina = (float) Math.sin(radians);
+      // return Vec3.rotate(v, cosa, sina, axis, target);
 
-      return Vec3.rotate(v, cosa, sina, axis, target);
+      return Vec3.rotate(v, (float) Math.cos(radians),
+            (float) Math.sin(radians), axis, target);
    }
 
    /**
@@ -2815,16 +2735,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the rotated vector
     */
-   public static Vec3 rotateX (
-         final Vec3 v,
-         final float cosa,
-         final float sina,
-         final Vec3 target ) {
+   public static Vec3 rotateX ( final Vec3 v, final float cosa,
+         final float sina, final Vec3 target ) {
 
-      return target.set(
-            v.x,
-            cosa * v.y - sina * v.z,
-            cosa * v.z + sina * v.y);
+      return target.set(v.x, cosa * v.y - sina * v.z, cosa * v.z + sina * v.y);
    }
 
    /**
@@ -2846,15 +2760,15 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Math#sin(double)
     * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
     */
-   public static Vec3 rotateX (
-         final Vec3 v,
-         final float radians,
+   public static Vec3 rotateX ( final Vec3 v, final float radians,
          final Vec3 target ) {
 
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
+      // final float cosa = (float) Math.cos(radians);
+      // final float sina = (float) Math.sin(radians);
+      // return Vec3.rotateX(v, cosa, sina, target);
 
-      return Vec3.rotateX(v, cosa, sina, target);
+      return Vec3.rotateX(v, (float) Math.cos(radians),
+            (float) Math.sin(radians), target);
    }
 
    /**
@@ -2873,16 +2787,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the rotated vector
     */
-   public static Vec3 rotateY (
-         final Vec3 v,
-         final float cosa,
-         final float sina,
-         final Vec3 target ) {
+   public static Vec3 rotateY ( final Vec3 v, final float cosa,
+         final float sina, final Vec3 target ) {
 
-      return target.set(
-            cosa * v.x + sina * v.z,
-            v.y,
-            cosa * v.z - sina * v.x);
+      return target.set(cosa * v.x + sina * v.z, v.y, cosa * v.z - sina * v.x);
    }
 
    /**
@@ -2904,15 +2812,15 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Math#sin(double)
     * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
     */
-   public static Vec3 rotateY (
-         final Vec3 v,
-         final float radians,
+   public static Vec3 rotateY ( final Vec3 v, final float radians,
          final Vec3 target ) {
 
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
+      // final float cosa = (float) Math.cos(radians);
+      // final float sina = (float) Math.sin(radians);
+      // return Vec3.rotateY(v, cosa, sina, target);
 
-      return Vec3.rotateY(v, cosa, sina, target);
+      return Vec3.rotateY(v, (float) Math.cos(radians),
+            (float) Math.sin(radians), target);
    }
 
    /**
@@ -2931,16 +2839,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the rotated vector
     */
-   public static Vec3 rotateZ (
-         final Vec3 v,
-         final float cosa,
-         final float sina,
-         final Vec3 target ) {
+   public static Vec3 rotateZ ( final Vec3 v, final float cosa,
+         final float sina, final Vec3 target ) {
 
-      return target.set(
-            cosa * v.x - sina * v.y,
-            cosa * v.y + sina * v.x,
-            v.z);
+      return target.set(cosa * v.x - sina * v.y, cosa * v.y + sina * v.x, v.z);
    }
 
    /**
@@ -2962,15 +2864,15 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Math#sin(double)
     * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
     */
-   public static Vec3 rotateZ (
-         final Vec3 v,
-         final float radians,
+   public static Vec3 rotateZ ( final Vec3 v, final float radians,
          final Vec3 target ) {
 
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
+      // final float cosa = (float) Math.cos(radians);
+      // final float sina = (float) Math.sin(radians);
+      // return Vec3.rotateZ(v, cosa, sina, target);
 
-      return Vec3.rotateZ(v, cosa, sina, target);
+      return Vec3.rotateZ(v, (float) Math.cos(radians),
+            (float) Math.sin(radians), target);
    }
 
    /**
@@ -2984,9 +2886,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the rounded vector
     * @see Math#round(float)
     */
-   public static Vec3 round (
-         final Vec3 v,
-         final Vec3 target ) {
+   public static Vec3 round ( final Vec3 v, final Vec3 target ) {
 
       return target.set(
             Math.round(v.x),
@@ -3033,14 +2933,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the output vector
     * @return the result
     */
-   public static Vec3 sub (
-         final Vec3 a,
-         final Vec3 b,
+   public static Vec3 sub ( 
+         final Vec3 a, 
+         final Vec3 b, 
          final Vec3 target ) {
 
       return target.set(
-            a.x - b.x,
-            a.y - b.y,
+            a.x - b.x, 
+            a.y - b.y, 
             a.z - b.z);
    }
 
@@ -3072,8 +2972,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
       final float mInv = (float) (1.0d / Math.sqrt(mSq));
       return target.set(
-            dx * mInv,
-            dy * mInv,
+            dx * mInv, 
+            dy * mInv, 
             dz * mInv);
    }
 
@@ -3113,13 +3013,13 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the target vector
     * @return the truncation
     */
-   public static Vec3 trunc (
-         final Vec3 v,
+   public static Vec3 trunc ( 
+         final Vec3 v, 
          final Vec3 target ) {
 
       return target.set(
-            (int) v.x,
-            (int) v.y,
+            (int) v.x, 
+            (int) v.y, 
             (int) v.z);
    }
 
@@ -3439,6 +3339,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       this.x = Utils.toFloat(x);
       this.y = Utils.toFloat(y);
       this.z = Utils.toFloat(z);
+
       return this;
    }
 
@@ -3462,6 +3363,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       this.x = x;
       this.y = y;
       this.z = z;
+
       return this;
    }
 
@@ -3525,9 +3427,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return this vector
     */
    @Chainable
-   public Vec3 set (
-         final Vec2 v2,
-         final float z ) {
+   public Vec3 set ( final Vec2 v2, final float z ) {
 
       return this.set(v2.x, v2.y, z);
    }
@@ -3603,7 +3503,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
             .append(Utils.toFixed(this.y, places))
             .append(", z: ")
             .append(Utils.toFixed(this.z, places))
-            .append(' ').append('}')
+            .append(' ')
+            .append('}')
             .toString();
    }
 }

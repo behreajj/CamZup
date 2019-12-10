@@ -292,6 +292,19 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
+    * Returns to a vector with a negative value on the y axis,
+    * (0.0, -1.0, 0.0, 0.0) .
+    *
+    * @param target
+    *           the output vector
+    * @return the back vector
+    */
+   public static Vec4 back ( final Vec4 target ) {
+
+      return target.set(0.0f, -1.0f, 0.0f, 0.0f);
+   }
+
+   /**
     * Raises each component of the vector to the nearest
     * greater integer.
     *
@@ -516,6 +529,19 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
+    * Returns to a vector with a negative value on the z axis,
+    * (0.0, 0.0, -1.0, 0.0) .
+    *
+    * @param target
+    *           the output vector
+    * @return the down vector
+    */
+   public static Vec4 down ( final Vec4 target ) {
+
+      return target.set(0.0f, 0.0f, -1.0f, 0.0f);
+   }
+
+   /**
     * Floors each component of the vector.
     *
     * @param v
@@ -615,6 +641,19 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
+    * Returns to a vector with a positive value on the y axis,
+    * (0.0, 1.0, 0.0, 0.0) .
+    *
+    * @param target
+    *           the output vector
+    * @return the forward vector
+    */
+   public static Vec4 forward ( final Vec4 target ) {
+
+      return target.set(0.0f, 1.0f, 0.0f, 0.0f);
+   }
+
+   /**
     * Returns the fractional portion of the vector's
     * components.
     *
@@ -690,6 +729,19 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
             v.y == 0.0f &&
             v.z == 0.0f &&
             v.w == 0.0f;
+   }
+
+   /**
+    * Returns a vector with a negative value on the x axis,
+    * (-1.0, 0.0, 0.0, 0.0).
+    *
+    * @param target
+    *           the output vector
+    * @return the left vector
+    */
+   public static Vec4 left ( final Vec4 target ) {
+
+      return target.set(-1.0f, 0.0f, 0.0f, 0.0f);
    }
 
    /**
@@ -1070,6 +1122,19 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
+    * Returns to a vector with a positive value on the x axis,
+    * (1.0, 0.0, 0.0, 0.0) .
+    *
+    * @param target
+    *           the output vector
+    * @return the right vector
+    */
+   public static Vec4 right ( final Vec4 target ) {
+
+      return target.set(1.0f, 0.0f, 0.0f, 0.0f);
+   }
+
+   /**
     * Rounds each component of the vector to the nearest whole
     * number.
     *
@@ -1144,6 +1209,19 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
             (int) v.y,
             (int) v.z,
             (int) v.w);
+   }
+
+   /**
+    * Returns to a vector with a positive value on the z-axis,
+    * (0.0, 0.0, 1.0, 0.0) .
+    *
+    * @param target
+    *           the output vector
+    * @return the up vector
+    */
+   public static Vec4 up ( final Vec4 target ) {
+
+      return target.set(0.0f, 0.0f, 1.0f, 0.0f);
    }
 
    /**
@@ -1605,9 +1683,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    @Override
    public float[] toArray () {
 
-      return new float[] {
-            this.x, this.y, this.z, this.w
-      };
+      return new float[] { this.x, this.y, this.z, this.w };
    }
 
    /**

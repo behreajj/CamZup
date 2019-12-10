@@ -1412,11 +1412,13 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
       final Vec2[][] result = new Vec2[rval][cval];
       for (int i = 0; i < rval; ++i) {
+         
          final Vec2[] row = result[i];
          final float y = Utils.lerpUnclamped(
                lowerBound.y, 
                upperBound.y,
                i * iToStep);
+         
          for (int j = 0; j < cval; ++j) {
             row[j] = new Vec2(xs[j], y);
          }
@@ -3017,8 +3019,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    @Chainable
    public Vec2 reset () {
 
-      this.set(0.0f, 0.0f);
-      return this;
+      return this.set(0.0f, 0.0f);
    }
 
    /**
@@ -3039,6 +3040,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
       this.x = Utils.toFloat(x);
       this.y = Utils.toFloat(y);
+      
       return this;
    }
 
@@ -3058,6 +3060,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
       this.x = x;
       this.y = y;
+      
       return this;
    }
 
@@ -3110,8 +3113,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    @Chainable
    public Vec2 set ( final Vec2 source ) {
 
-      this.set(source.x, source.y);
-      return this;
+      return this.set(source.x, source.y);
    }
 
    /**
@@ -3168,7 +3170,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
             .append(Utils.toFixed(this.x, places))
             .append(", y: ")
             .append(Utils.toFixed(this.y, places))
-            .append(' ').append('}')
+            .append(' ')
+            .append('}')
             .toString();
    }
 

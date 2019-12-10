@@ -3,11 +3,15 @@ package camzup;
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
 import camzup.core.IUtils;
+import camzup.core.Mat3;
+import camzup.core.Mat4;
 import camzup.core.Mesh3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
 import processing.core.PApplet;
+import processing.core.PMatrix2D;
+import processing.core.PMatrix3D;
 
 public class CamZup {
 
@@ -95,6 +99,22 @@ public class CamZup {
       // new Curve2());
       // ce.appendCurve(curve);
       // System.out.println(ce.toBlenderCode());
+
+//      float ang = Utils.TAU * (float)Math.random();
+//      
+//      PMatrix3D m = new PMatrix3D();
+//      m.scale(4);
+//      m.rotateZ(ang);
+//      m.translate(1,  2, 3);
+//      
+//      m.print();
+//      
+//      Mat4 t = Mat4.fromTranslation(new Vec3(1, 2, 3), new Mat4());
+//      Mat4 r = Mat4.fromRotZ(ang, new Mat4());
+//      Mat4 s = Mat4.fromScale(4, new Mat4());
+//      
+//      Mat4 n = Mat4.mult(s, r, t, new Mat4());
+//      System.out.println(n.toStringTab());
    }
 
    public static String version () {
