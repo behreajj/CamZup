@@ -4,29 +4,61 @@ import java.util.Iterator;
 
 public class Mat4 extends Matrix {
 
+   /**
+    * An iterator, which allows a matrix's components to be
+    * accessed in an enhanced for loop.
+    */
    public static final class M4Iterator implements Iterator < Float > {
 
+      /**
+       * The current index.
+       */
       private int index = 0;
 
+      /**
+       * The matrix being iterated over.
+       */
       private final Mat4 mtx;
 
+      /**
+       * The default constructor.
+       *
+       * @param mtx
+       *           the matrix to iterate
+       */
       public M4Iterator ( final Mat4 mtx ) {
 
          this.mtx = mtx;
       }
 
+      /**
+       * Tests to see if the iterator has another value.
+       *
+       * @return the evaluation
+       */
       @Override
       public boolean hasNext () {
 
          return this.index < this.mtx.size();
       }
 
+      /**
+       * Gets the next value in the iterator.
+       *
+       * @return the value
+       * @see Mat4#get(int)
+       */
       @Override
       public Float next () {
 
          return this.mtx.get(this.index++);
       }
 
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
       @Override
       public String toString () {
 
@@ -35,8 +67,22 @@ public class Mat4 extends Matrix {
 
    }
 
+   /**
+    * The unique identification for serialized classes.
+    */
    private static final long serialVersionUID = 4394235117465746059L;
 
+   /**
+    * Adds two matrices together.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output matrix
+    * @return the sum
+    */
    public static Mat4 add (
          final Mat4 a,
          final Mat4 b,
@@ -47,6 +93,69 @@ public class Mat4 extends Matrix {
             a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12, a.m13 + b.m13,
             a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22, a.m23 + b.m23,
             a.m30 + b.m30, a.m31 + b.m31, a.m32 + b.m32, a.m33 + b.m33);
+   }
+
+   /**
+    * Finds the determinant of the matrix.
+    *
+    * @param m
+    *           the matrix
+    * @return the determinant
+    */
+   public static float determinant ( final Mat4 m ) {
+
+      return m.m00 * (m.m11 * m.m22 * m.m33 +
+            m.m12 * m.m23 * m.m31 +
+            m.m13 * m.m21 * m.m32 -
+            m.m13 * m.m22 * m.m31 -
+            m.m11 * m.m23 * m.m32 -
+            m.m12 * m.m21 * m.m33)
+
+            - m.m01 * (m.m10 * m.m22 * m.m33 +
+                  m.m12 * m.m23 * m.m30 +
+                  m.m13 * m.m20 * m.m32 -
+                  m.m13 * m.m22 * m.m30 -
+                  m.m10 * m.m23 * m.m32 -
+                  m.m12 * m.m20 * m.m33)
+
+            + m.m02 * (m.m10 * m.m21 * m.m33 +
+                  m.m11 * m.m23 * m.m30 +
+                  m.m13 * m.m20 * m.m31 -
+                  m.m13 * m.m21 * m.m30 -
+                  m.m10 * m.m23 * m.m31 -
+                  m.m11 * m.m20 * m.m33)
+
+            - m.m03 * (m.m10 * m.m21 * m.m32 +
+                  m.m11 * m.m22 * m.m30 +
+                  m.m12 * m.m20 * m.m31 -
+                  m.m12 * m.m21 * m.m30 -
+                  m.m10 * m.m22 * m.m31 -
+                  m.m11 * m.m20 * m.m32);
+   }
+
+   /**
+    * Divides a scalar by a matrix. Equivalent to multiplying
+    * the numerator and the inverse of the denominator.
+    * 
+    * @param a
+    *           scalar, numerator
+    * @param b
+    *           matrix, denominator
+    * @param target
+    *           the output matrix
+    * @param inverse
+    *           the inverse matrix
+    * @return the quotient
+    * @see Mat4#mult(float, Mat4, Mat4)
+    * @see Mat4#inverse
+    */
+   public static Mat4 div (
+         final float a,
+         final Mat4 b,
+         final Mat4 target,
+         final Mat4 inverse ) {
+
+      return Mat4.mult(a, Mat4.inverse(b, inverse), target);
    }
 
    public static Mat4 div (
@@ -64,6 +173,31 @@ public class Mat4 extends Matrix {
             a.m10 * bInv, a.m11 * bInv, a.m12 * bInv, a.m13 * bInv,
             a.m20 * bInv, a.m21 * bInv, a.m22 * bInv, a.m23 * bInv,
             a.m30 * bInv, a.m31 * bInv, a.m32 * bInv, a.m33 * bInv);
+   }
+
+   /**
+    * Divides one matrix by another. Equivalent to multiplying
+    * the numerator and the inverse of the denominator.
+    * 
+    * @param a
+    *           numerator
+    * @param b
+    *           denominator
+    * @param target
+    *           the output matrix
+    * @param inverse
+    *           the inverse matrix
+    * @return the quotient
+    * @see Mat4#mult(Mat4, Mat4, Mat4)
+    * @see Mat4#inverse
+    */
+   public static Mat4 div (
+         final Mat4 a,
+         final Mat4 b,
+         final Mat4 target,
+         final Mat4 inverse ) {
+
+      return Mat4.mult(a, Mat4.inverse(b, inverse), target);
    }
 
    public static Mat4 fromAxes (
@@ -143,6 +277,50 @@ public class Mat4 extends Matrix {
             right.y, forward.y, up.y, translation.y,
             right.z, forward.z, up.z, translation.z,
             right.w, forward.w, up.w, translation.w);
+   }
+
+   public static Mat4 fromRotation (
+         final float cosa,
+         final float sina,
+         final Vec3 axis,
+         final Mat4 target ) {
+
+      final float mSq = Vec3.magSq(axis);
+      if (mSq == 0.0f) {
+         return Mat4.identity(target);
+      }
+
+      final float mInv = (float) (1.0d / Math.sqrt(mSq));
+      final float ax = axis.x * mInv;
+      final float ay = axis.y * mInv;
+      final float az = axis.z * mInv;
+
+      final float d = 1.0f - cosa;
+      final float x = ax * d;
+      final float y = ay * d;
+      final float z = az * d;
+
+      final float axay = x * ay;
+      final float axaz = x * az;
+      final float ayaz = y * az;
+
+      return target.set(
+            cosa + x * ax, axay - sina * az, axaz + sina * ay, 0.0f,
+            axay + sina * az, cosa + y * ay, ayaz - sina * ax, 0.0f,
+            axaz - sina * ay, ayaz + sina * ax, cosa + z * az, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
+   }
+
+   public static Mat4 fromRotation (
+         final float radians,
+         final Vec3 axis,
+         final Mat4 target ) {
+
+      return Mat4.fromRotation(
+            (float) Math.cos(radians),
+            (float) Math.sin(radians),
+            axis,
+            target);
    }
 
    public static Mat4 fromRotX (
@@ -266,6 +444,25 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a view frustum given the edges of the view port.
+    *
+    * @param left
+    *           the left edge of the window
+    * @param right
+    *           the right edge of the window
+    * @param bottom
+    *           the bottom edge of the window
+    * @param top
+    *           the top edge of the window
+    * @param near
+    *           the near clip plane
+    * @param far
+    *           the far clip plane
+    * @param target
+    *           the output matrix
+    * @return the view frustum
+    */
    public static Mat4 frustum (
          final float left, final float right,
          final float bottom, final float top,
@@ -294,6 +491,52 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   public static Mat4 inverse ( final Mat4 m, final Mat4 target ) {
+
+      final float b00 = m.m00 * m.m11 - m.m01 * m.m10;
+      final float b01 = m.m00 * m.m12 - m.m02 * m.m10;
+      final float b02 = m.m00 * m.m13 - m.m03 * m.m10;
+      final float b03 = m.m01 * m.m12 - m.m02 * m.m11;
+      final float b04 = m.m01 * m.m13 - m.m03 * m.m11;
+      final float b05 = m.m02 * m.m13 - m.m03 * m.m12;
+      final float b06 = m.m20 * m.m31 - m.m21 * m.m30;
+      final float b07 = m.m20 * m.m32 - m.m22 * m.m30;
+      final float b08 = m.m20 * m.m33 - m.m23 * m.m30;
+      final float b09 = m.m21 * m.m32 - m.m22 * m.m31;
+      final float b10 = m.m21 * m.m33 - m.m23 * m.m31;
+      final float b11 = m.m22 * m.m33 - m.m23 * m.m32;
+
+      final float det = b00 * b11 -
+            b01 * b10 +
+            b02 * b09 +
+            b03 * b08 -
+            b04 * b07 +
+            b05 * b06;
+
+      if (det == 0.0f) {
+         return target.reset();
+      }
+      final float detInv = 1.0f / det;
+
+      return target.set(
+            (m.m11 * b11 - m.m12 * b10 + m.m13 * b09) * detInv,
+            (m.m02 * b10 - m.m01 * b11 - m.m03 * b09) * detInv,
+            (m.m31 * b05 - m.m32 * b04 + m.m33 * b03) * detInv,
+            (m.m22 * b04 - m.m21 * b05 - m.m23 * b03) * detInv,
+            (m.m12 * b08 - m.m10 * b11 - m.m13 * b07) * detInv,
+            (m.m00 * b11 - m.m02 * b08 + m.m03 * b07) * detInv,
+            (m.m32 * b02 - m.m30 * b05 - m.m33 * b01) * detInv,
+            (m.m20 * b05 - m.m22 * b02 + m.m23 * b01) * detInv,
+            (m.m10 * b10 - m.m11 * b08 + m.m13 * b06) * detInv,
+            (m.m01 * b08 - m.m00 * b10 - m.m03 * b06) * detInv,
+            (m.m30 * b04 - m.m31 * b02 + m.m33 * b00) * detInv,
+            (m.m21 * b02 - m.m20 * b04 - m.m23 * b00) * detInv,
+            (m.m11 * b07 - m.m10 * b09 - m.m12 * b06) * detInv,
+            (m.m00 * b09 - m.m01 * b07 + m.m02 * b06) * detInv,
+            (m.m31 * b01 - m.m30 * b03 - m.m32 * b00) * detInv,
+            (m.m20 * b03 - m.m21 * b01 + m.m22 * b00) * detInv);
+   }
+
    public static boolean isIdentity ( final Mat4 m ) {
 
       return m.m33 == 1.0f && m.m22 == 1.0f && m.m11 == 1.0f && m.m00 == 1.0f &&
@@ -307,6 +550,10 @@ public class Mat4 extends Matrix {
          final Mat4 b,
          final Mat4 target ) {
 
+      if (a == 0.0f) {
+         return Mat4.identity(target);
+      }
+
       return target.set(
             a * b.m00, a * b.m01, a * b.m02, a * b.m03,
             a * b.m10, a * b.m11, a * b.m12, a * b.m13,
@@ -318,6 +565,10 @@ public class Mat4 extends Matrix {
          final Mat4 a,
          final float b,
          final Mat4 target ) {
+
+      if (b == 0.0f) {
+         return Mat4.identity(target);
+      }
 
       return target.set(
             a.m00 * b, a.m01 * b, a.m02 * b, a.m03 * b,
@@ -353,47 +604,94 @@ public class Mat4 extends Matrix {
             a.m30 * b.m03 + a.m31 * b.m13 + a.m32 * b.m23 + a.m33 * b.m33);
    }
 
+   /**
+    * Multiplies three matrices by component. Useful for
+    * composing an affine transform from translation, rotation
+    * and scale matrices.
+    *
+    * @param a
+    *           the first matrix
+    * @param b
+    *           the second matrix
+    * @param c
+    *           the third matrix
+    * @param target
+    *           the output matrix
+    * @return the product
+    */
    public static Mat4 mult (
          final Mat4 a,
          final Mat4 b,
          final Mat4 c,
          final Mat4 target ) {
 
-      final float n00 = a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20
-            + a.m03 * b.m30;
-      final float n01 = a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21
-            + a.m03 * b.m31;
-      final float n02 = a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22
-            + a.m03 * b.m32;
-      final float n03 = a.m00 * b.m03 + a.m01 * b.m13 + a.m02 * b.m23
-            + a.m03 * b.m33;
+      final float n00 = a.m00 * b.m00 +
+            a.m01 * b.m10 +
+            a.m02 * b.m20 +
+            a.m03 * b.m30;
+      final float n01 = a.m00 * b.m01 +
+            a.m01 * b.m11 +
+            a.m02 * b.m21 +
+            a.m03 * b.m31;
+      final float n02 = a.m00 * b.m02 +
+            a.m01 * b.m12 +
+            a.m02 * b.m22 +
+            a.m03 * b.m32;
+      final float n03 = a.m00 * b.m03 +
+            a.m01 * b.m13 +
+            a.m02 * b.m23 +
+            a.m03 * b.m33;
 
-      final float n10 = a.m10 * b.m00 + a.m11 * b.m10 + a.m12 * b.m20
-            + a.m13 * b.m30;
-      final float n11 = a.m10 * b.m01 + a.m11 * b.m11 + a.m12 * b.m21
-            + a.m13 * b.m31;
-      final float n12 = a.m10 * b.m02 + a.m11 * b.m12 + a.m12 * b.m22
-            + a.m13 * b.m32;
-      final float n13 = a.m10 * b.m03 + a.m11 * b.m13 + a.m12 * b.m23
-            + a.m13 * b.m33;
+      final float n10 = a.m10 * b.m00 +
+            a.m11 * b.m10 +
+            a.m12 * b.m20 +
+            a.m13 * b.m30;
+      final float n11 = a.m10 * b.m01 +
+            a.m11 * b.m11 +
+            a.m12 * b.m21 +
+            a.m13 * b.m31;
+      final float n12 = a.m10 * b.m02 +
+            a.m11 * b.m12 +
+            a.m12 * b.m22 +
+            a.m13 * b.m32;
+      final float n13 = a.m10 * b.m03 +
+            a.m11 * b.m13 +
+            a.m12 * b.m23 +
+            a.m13 * b.m33;
 
-      final float n20 = a.m20 * b.m00 + a.m21 * b.m10 + a.m22 * b.m20
-            + a.m23 * b.m30;
-      final float n21 = a.m20 * b.m01 + a.m21 * b.m11 + a.m22 * b.m21
-            + a.m23 * b.m31;
-      final float n22 = a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22
-            + a.m23 * b.m32;
-      final float n23 = a.m20 * b.m03 + a.m21 * b.m13 + a.m22 * b.m23
-            + a.m23 * b.m33;
+      final float n20 = a.m20 * b.m00 +
+            a.m21 * b.m10 +
+            a.m22 * b.m20 +
+            a.m23 * b.m30;
+      final float n21 = a.m20 * b.m01 +
+            a.m21 * b.m11 +
+            a.m22 * b.m21 +
+            a.m23 * b.m31;
+      final float n22 = a.m20 * b.m02 +
+            a.m21 * b.m12 +
+            a.m22 * b.m22 +
+            a.m23 * b.m32;
+      final float n23 = a.m20 * b.m03 +
+            a.m21 * b.m13 +
+            a.m22 * b.m23 +
+            a.m23 * b.m33;
 
-      final float n30 = a.m30 * b.m00 + a.m31 * b.m10 + a.m32 * b.m20
-            + a.m33 * b.m30;
-      final float n31 = a.m30 * b.m01 + a.m31 * b.m11 + a.m32 * b.m21
-            + a.m33 * b.m31;
-      final float n32 = a.m30 * b.m02 + a.m31 * b.m12 + a.m32 * b.m22
-            + a.m33 * b.m32;
-      final float n33 = a.m30 * b.m03 + a.m31 * b.m13 + a.m32 * b.m23
-            + a.m33 * b.m33;
+      final float n30 = a.m30 * b.m00 +
+            a.m31 * b.m10 +
+            a.m32 * b.m20 +
+            a.m33 * b.m30;
+      final float n31 = a.m30 * b.m01 +
+            a.m31 * b.m11 +
+            a.m32 * b.m21 +
+            a.m33 * b.m31;
+      final float n32 = a.m30 * b.m02 +
+            a.m31 * b.m12 +
+            a.m32 * b.m22 +
+            a.m33 * b.m32;
+      final float n33 = a.m30 * b.m03 +
+            a.m31 * b.m13 +
+            a.m32 * b.m23 +
+            a.m33 * b.m33;
 
       return target.set(
             n00 * c.m00 + n01 * c.m10 + n02 * c.m20 + n03 * c.m30,
@@ -423,16 +721,97 @@ public class Mat4 extends Matrix {
          final Vec4 target ) {
 
       return target.set(
-            m.m00 * source.x + m.m01 * source.y + m.m02 * source.z
-                  + m.m03 * source.w,
-            m.m10 * source.x + m.m11 * source.y + m.m12 * source.z
-                  + m.m13 * source.w,
-            m.m20 * source.x + m.m21 * source.y + m.m22 * source.z
-                  + m.m23 * source.w,
-            m.m30 * source.x + m.m31 * source.y + m.m32 * source.z
-                  + m.m33 * source.w);
+            m.m00 * source.x +
+                  m.m01 * source.y +
+                  m.m02 * source.z +
+                  m.m03 * source.w,
+
+            m.m10 * source.x +
+                  m.m11 * source.y +
+                  m.m12 * source.z +
+                  m.m13 * source.w,
+
+            m.m20 * source.x +
+                  m.m21 * source.y +
+                  m.m22 * source.z +
+                  m.m23 * source.w,
+
+            m.m30 * source.x +
+                  m.m31 * source.y +
+                  m.m32 * source.z +
+                  m.m33 * source.w);
    }
 
+   public static Vec3 multPoint (
+         final Mat4 m,
+         final Vec3 source,
+         final Vec3 target ) {
+
+      // TODO: Divide by w ?
+
+      target.set(
+            m.m00 * source.x +
+                  m.m01 * source.y +
+                  m.m02 * source.z +
+                  m.m03,
+
+            m.m10 * source.x +
+                  m.m11 * source.y +
+                  m.m12 * source.z +
+                  m.m13,
+
+            m.m20 * source.x +
+                  m.m21 * source.y +
+                  m.m22 * source.z +
+                  m.m23);
+
+      return target;
+   }
+
+   public static Vec3 multVector (
+         final Mat4 m,
+         final Vec3 source,
+         final Vec3 target ) {
+
+      // TODO: Divide by w ?
+
+      target.set(
+            m.m00 * source.x +
+                  m.m01 * source.y +
+                  m.m02 * source.z,
+
+            m.m10 * source.x +
+                  m.m11 * source.y +
+                  m.m12 * source.z,
+
+            m.m20 * source.x +
+                  m.m21 * source.y +
+                  m.m22 * source.z);
+
+      return target;
+   }
+
+   /**
+    * Creates an orthographic projection matrix, where objects
+    * maintain their size regardless of distance from the
+    * camera.
+    *
+    * @param left
+    *           the left edge of the window
+    * @param right
+    *           the right edge of the window
+    * @param bottom
+    *           the bottom edge of the window
+    * @param top
+    *           the top edge of the window
+    * @param near
+    *           the near clip plane
+    * @param far
+    *           the far clip plane
+    * @param target
+    *           the output matrix
+    * @return the orthographic projection
+    */
    public static Mat4 orthographic (
          final float left, final float right,
          final float bottom, final float top,
@@ -450,6 +829,23 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a perspective projection matrix, where objects
+    * nearer to the camera appear larger than objects distant
+    * from the camera.
+    *
+    * @param fov
+    *           the field of view
+    * @param aspect
+    *           the aspect ratio, width over height
+    * @param near
+    *           the near clip plane
+    * @param far
+    *           the far clip plane
+    * @param target
+    *           the output matrix
+    * @return the perspective projection
+    */
    public static Mat4 perspective (
          final float fov,
          final float aspect,
@@ -466,6 +862,17 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, -1.0f, 0.0f);
    }
 
+   /**
+    * Subtracts the right matrix from the left matrix.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output matrix
+    * @return the result
+    */
    public static Mat4 sub (
          final Mat4 a,
          final Mat4 b,
@@ -478,6 +885,16 @@ public class Mat4 extends Matrix {
             a.m30 - b.m30, a.m31 - b.m31, a.m32 - b.m32, a.m33 - b.m33);
    }
 
+   /**
+    * Transposes a matrix, switching its row and column
+    * indices.
+    *
+    * @param m
+    *           the matrix
+    * @param target
+    *           the output matrix
+    * @return the tranposed matrix
+    */
    public static Mat4 transpose (
          final Mat4 m,
          final Mat4 target ) {
@@ -489,31 +906,124 @@ public class Mat4 extends Matrix {
             m.m03, m.m13, m.m23, m.m33);
    }
 
+   /**
+    * Component in row 0, column 0. The right axis x component.
+    */
    public float m00 = 1.0f;
+
+   /**
+    * Component in row 0, column 1. The foward axis x
+    * component.
+    */
    public float m01 = 0.0f;
+
+   /**
+    * Component in row 0, column 2. The up axis x component.
+    */
    public float m02 = 0.0f;
+
+   /**
+    * Component in row 0, column 3. The translation x
+    * component.
+    */
    public float m03 = 0.0f;
 
+   /**
+    * Component in row 1, column 0. The right axis y component.
+    */
    public float m10 = 0.0f;
+
+   /**
+    * Component in row 1, column 1. The forward axis y
+    * component.
+    */
    public float m11 = 1.0f;
+
+   /**
+    * Component in row 1, column 2. The up axis y component.
+    */
    public float m12 = 0.0f;
+
+   /**
+    * Component in row 1, column 3. The translation y
+    * component.
+    */
    public float m13 = 0.0f;
 
+   /**
+    * Component in row 2, column 0. The right axis z component.
+    */
    public float m20 = 0.0f;
+
+   /**
+    * Component in row 2, column 1. The forward axis z
+    * component.
+    */
    public float m21 = 0.0f;
+
+   /**
+    * Component in row 2, column 2. The up axis z component.
+    */
    public float m22 = 1.0f;
+
+   /**
+    * Component in row 2, column 3. The translation z
+    * component.
+    */
    public float m23 = 0.0f;
 
+   /**
+    * Component in row 3, column 0. The right axis w component.
+    */
    public float m30 = 0.0f;
+
+   /**
+    * Component in row 3, column 1. The forward axis w
+    * component.
+    */
    public float m31 = 0.0f;
+
+   /**
+    * Component in row 3, column 2. The up axis w component.
+    */
    public float m32 = 0.0f;
+
+   /**
+    * Component in row 3, column 3. The translation w
+    * component.
+    */
    public float m33 = 1.0f;
 
+   /**
+    * The default constructor. Creates an identity matrix.
+    */
    public Mat4 () {
 
       super(16);
    }
 
+   /**
+    * Constructs a matrix from float values.
+    *
+    * @param m00
+    *           row 0, column 0
+    * @param m01
+    *           row 0, column 1
+    * @param m02
+    *           row 0, column 2
+    * @param m10
+    *           row 1, column 0
+    * @param m11
+    *           row 1, column 1
+    * @param m12
+    *           row 1, column 2
+    * @param m20
+    *           row 2, column 0
+    * @param m21
+    *           row 2, column 1
+    * @param m22
+    *           row 2, column 2
+    */
    public Mat4 (
          final float m00, final float m01, final float m02,
          final float m10, final float m11, final float m12,
@@ -526,6 +1036,34 @@ public class Mat4 extends Matrix {
             m20, m21, m22);
    }
 
+   /**
+    * Constructs a matrix from float values.
+    *
+    * @param m00
+    *           row 0, column 0
+    * @param m01
+    *           row 0, column 1
+    * @param m02
+    *           row 0, column 2
+    * @param m03
+    *           row 0, column 3
+    * @param m10
+    *           row 1, column 0
+    * @param m11
+    *           row 1, column 1
+    * @param m12
+    *           row 1, column 2
+    * @param m13
+    *           row 1, column 3
+    * @param m20
+    *           row 2, column 0
+    * @param m21
+    *           row 2, column 1
+    * @param m22
+    *           row 2, column 2
+    * @param m23
+    *           row 2, column 3
+    */
    public Mat4 (
          final float m00, final float m01, final float m02, final float m03,
          final float m10, final float m11, final float m12, final float m13,
@@ -538,6 +1076,42 @@ public class Mat4 extends Matrix {
             m20, m21, m22, m23);
    }
 
+   /**
+    * Constructs a matrix from float values.
+    *
+    * @param m00
+    *           row 0, column 0
+    * @param m01
+    *           row 0, column 1
+    * @param m02
+    *           row 0, column 2
+    * @param m03
+    *           row 0, column 3
+    * @param m10
+    *           row 1, column 0
+    * @param m11
+    *           row 1, column 1
+    * @param m12
+    *           row 1, column 2
+    * @param m13
+    *           row 1, column 3
+    * @param m20
+    *           row 2, column 0
+    * @param m21
+    *           row 2, column 1
+    * @param m22
+    *           row 2, column 2
+    * @param m23
+    *           row 2, column 3
+    * @param m30
+    *           row 3, column 0
+    * @param m31
+    *           row 3, column 1
+    * @param m32
+    *           row 3, column 2
+    * @param m33
+    *           row 3, column 3
+    */
    public Mat4 (
          final float m00, final float m01, final float m02, final float m03,
          final float m10, final float m11, final float m12, final float m13,
@@ -552,68 +1126,91 @@ public class Mat4 extends Matrix {
             m30, m31, m32, m33);
    }
 
+   /**
+    * Constructs a matrix from a source matrix's components.
+    *
+    * @param source
+    *           the source matrix
+    */
    public Mat4 ( final Mat4 source ) {
 
       super(16);
       this.set(source);
    }
 
-   protected boolean equals ( final Mat4 other ) {
+   /**
+    * Tests for equivalence between this and another matrix.
+    *
+    * @param n
+    *           the matrix
+    * @return the evaluation
+    * @see Float#floatToIntBits(float)
+    */
+   protected boolean equals ( final Mat4 n ) {
 
-      if (Float.floatToIntBits(this.m00) != Float.floatToIntBits(other.m00)) {
+      if (Float.floatToIntBits(this.m00) != Float.floatToIntBits(n.m00)) {
          return false;
       }
-      if (Float.floatToIntBits(this.m01) != Float.floatToIntBits(other.m01)) {
+      if (Float.floatToIntBits(this.m01) != Float.floatToIntBits(n.m01)) {
          return false;
       }
-      if (Float.floatToIntBits(this.m02) != Float.floatToIntBits(other.m02)) {
+      if (Float.floatToIntBits(this.m02) != Float.floatToIntBits(n.m02)) {
          return false;
       }
-      if (Float.floatToIntBits(this.m03) != Float.floatToIntBits(other.m03)) {
-         return false;
-      }
-
-      if (Float.floatToIntBits(this.m10) != Float.floatToIntBits(other.m10)) {
-         return false;
-      }
-      if (Float.floatToIntBits(this.m11) != Float.floatToIntBits(other.m11)) {
-         return false;
-      }
-      if (Float.floatToIntBits(this.m12) != Float.floatToIntBits(other.m12)) {
-         return false;
-      }
-      if (Float.floatToIntBits(this.m13) != Float.floatToIntBits(other.m13)) {
+      if (Float.floatToIntBits(this.m03) != Float.floatToIntBits(n.m03)) {
          return false;
       }
 
-      if (Float.floatToIntBits(this.m20) != Float.floatToIntBits(other.m20)) {
+      if (Float.floatToIntBits(this.m10) != Float.floatToIntBits(n.m10)) {
          return false;
       }
-      if (Float.floatToIntBits(this.m21) != Float.floatToIntBits(other.m21)) {
+      if (Float.floatToIntBits(this.m11) != Float.floatToIntBits(n.m11)) {
          return false;
       }
-      if (Float.floatToIntBits(this.m22) != Float.floatToIntBits(other.m22)) {
+      if (Float.floatToIntBits(this.m12) != Float.floatToIntBits(n.m12)) {
          return false;
       }
-      if (Float.floatToIntBits(this.m23) != Float.floatToIntBits(other.m23)) {
+      if (Float.floatToIntBits(this.m13) != Float.floatToIntBits(n.m13)) {
          return false;
       }
 
-      if (Float.floatToIntBits(this.m30) != Float.floatToIntBits(other.m30)) {
+      if (Float.floatToIntBits(this.m20) != Float.floatToIntBits(n.m20)) {
          return false;
       }
-      if (Float.floatToIntBits(this.m31) != Float.floatToIntBits(other.m31)) {
+      if (Float.floatToIntBits(this.m21) != Float.floatToIntBits(n.m21)) {
          return false;
       }
-      if (Float.floatToIntBits(this.m32) != Float.floatToIntBits(other.m32)) {
+      if (Float.floatToIntBits(this.m22) != Float.floatToIntBits(n.m22)) {
          return false;
       }
-      if (Float.floatToIntBits(this.m33) != Float.floatToIntBits(other.m33)) {
+      if (Float.floatToIntBits(this.m23) != Float.floatToIntBits(n.m23)) {
+         return false;
+      }
+
+      if (Float.floatToIntBits(this.m30) != Float.floatToIntBits(n.m30)) {
+         return false;
+      }
+      if (Float.floatToIntBits(this.m31) != Float.floatToIntBits(n.m31)) {
+         return false;
+      }
+      if (Float.floatToIntBits(this.m32) != Float.floatToIntBits(n.m32)) {
+         return false;
+      }
+      if (Float.floatToIntBits(this.m33) != Float.floatToIntBits(n.m33)) {
          return false;
       }
       return true;
    }
 
+   /**
+    * Returns a new matrix with this matrix's components.
+    * Java's cloneable interface is problematic; use set or a
+    * copy constructor instead.
+    *
+    * @return a new vector
+    * @see Vec3#set(Vec3)
+    * @see Vec3#Vec3(Vec3)
+    */
    @Override
    public Mat4 clone () {
 
@@ -624,6 +1221,14 @@ public class Mat4 extends Matrix {
             this.m30, this.m31, this.m32, this.m33);
    }
 
+   /**
+    * Tests this matrix for equivalence with another object.
+    *
+    * @param obj
+    *           the object
+    * @return the equivalence
+    * @see Mat4#equals(Mat4)
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
@@ -642,6 +1247,15 @@ public class Mat4 extends Matrix {
       return this.equals((Mat4) obj);
    }
 
+   /**
+    * Simulates bracket subscript access in a one-dimensional,
+    * row-major matrix array. Works with positive integers in
+    * [0, 15] or negative integers in [-16, -1].
+    *
+    * @param index
+    *           the index
+    * @return the component at that index
+    */
    @Override
    public float get ( final int index ) {
 
@@ -712,6 +1326,17 @@ public class Mat4 extends Matrix {
       }
    }
 
+   /**
+    * Simulates bracket subscript access in a two-dimensional,
+    * row-major matrix array. Works with positive integers in
+    * [0, 3][0, 3] or negative integers in [-4, -1][-4, -1].
+    *
+    * @param i
+    *           the row index
+    * @param j
+    *           the column index
+    * @return the component at that index
+    */
    @Override
    public float get ( final int i, final int j ) {
 
@@ -801,6 +1426,73 @@ public class Mat4 extends Matrix {
       }
    }
 
+   /**
+    * Gets a column of this matrix with an index and vector.
+    * The last row of the matrix is assumed to be 0.0, 0.0,
+    * 0.0, 1.0 .
+    *
+    * @param j
+    *           the index
+    * @param target
+    *           the vector
+    * @return the column
+    */
+   public Vec3 getCol ( final int j, final Vec3 target ) {
+
+      switch (j) {
+         case 0:
+         case -4:
+            return target.set(this.m00, this.m10, this.m20);
+         case 1:
+         case -3:
+            return target.set(this.m01, this.m11, this.m21);
+         case 2:
+         case -2:
+            return target.set(this.m02, this.m12, this.m22);
+         case 3:
+         case -1:
+            return target.set(this.m03, this.m13, this.m23);
+         default:
+            return target.reset();
+      }
+   }
+
+   /**
+    * Gets a column of this matrix with an index and vector.
+    *
+    * @param j
+    *           the index
+    * @param target
+    *           the vector
+    * @return the column
+    */
+   public Vec4 getCol ( final int j, final Vec4 target ) {
+
+      switch (j) {
+         case 0:
+         case -4:
+            return target.set(this.m00, this.m10, this.m20, this.m30);
+         case 1:
+         case -3:
+            return target.set(this.m01, this.m11, this.m21, this.m31);
+         case 2:
+         case -2:
+            return target.set(this.m02, this.m12, this.m22, this.m32);
+         case 3:
+         case -1:
+            return target.set(this.m03, this.m13, this.m23, this.m33);
+         default:
+            return target.reset();
+      }
+   }
+
+   /**
+    * Returns a hash code for this matrix based on its 16
+    * components.
+    *
+    * @return the hash code
+    * @see Float#floatToIntBits(float)
+    */
    @Override
    public int hashCode () {
 
@@ -830,12 +1522,30 @@ public class Mat4 extends Matrix {
       return result;
    }
 
+   /**
+    * Returns an iterator for this matrix, which allows its
+    * components to be accessed in an enhanced for-loop.
+    *
+    * @return the iterator
+    */
    @Override
-   public Iterator < Float > iterator () {
+   public M4Iterator iterator () {
 
       return new M4Iterator(this);
    }
 
+   /**
+    * Resets this matrix to an initial state,<br>
+    * <br>
+    * 1.0, 0.0, 0.0, 0.0,<br>
+    * 0.0, 1.0, 0.0, 0.0,<br>
+    * 0.0, 0.0, 1.0, 0.0,<br>
+    * 0.0, 0.0, 0.0, 1.0
+    *
+    * @return this matrix
+    * @see Mat4#identity(Mat4)
+    */
+   @Chainable
    public Mat4 reset () {
 
       return this.set(
@@ -845,6 +1555,30 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Sets the three axis columns of this matrix.
+    *
+    * @param m00
+    *           row 0, column 0
+    * @param m01
+    *           row 0, column 1
+    * @param m02
+    *           row 0, column 2
+    * @param m10
+    *           row 1, column 0
+    * @param m11
+    *           row 1, column 1
+    * @param m12
+    *           row 1, column 2
+    * @param m20
+    *           row 2, column 0
+    * @param m21
+    *           row 2, column 1
+    * @param m22
+    *           row 2, column 2
+    * @return this matrix
+    */
+   @Chainable
    public Mat4 set (
          final float m00, final float m01, final float m02,
          final float m10, final float m11, final float m12,
@@ -857,6 +1591,36 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Sets the upper three rows of this matrix.
+    *
+    * @param m00
+    *           row 0, column 0
+    * @param m01
+    *           row 0, column 1
+    * @param m02
+    *           row 0, column 2
+    * @param m03
+    *           row 0, column 3
+    * @param m10
+    *           row 1, column 0
+    * @param m11
+    *           row 1, column 1
+    * @param m12
+    *           row 1, column 2
+    * @param m13
+    *           row 1, column 3
+    * @param m20
+    *           row 2, column 0
+    * @param m21
+    *           row 2, column 1
+    * @param m22
+    *           row 2, column 2
+    * @param m23
+    *           row 2, column 3
+    * @return this matrix
+    */
+   @Chainable
    public Mat4 set (
          final float m00, final float m01, final float m02, final float m03,
          final float m10, final float m11, final float m12, final float m13,
@@ -869,6 +1633,44 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Sets the components of this matrix.
+    *
+    * @param m00
+    *           row 0, column 0
+    * @param m01
+    *           row 0, column 1
+    * @param m02
+    *           row 0, column 2
+    * @param m03
+    *           row 0, column 3
+    * @param m10
+    *           row 1, column 0
+    * @param m11
+    *           row 1, column 1
+    * @param m12
+    *           row 1, column 2
+    * @param m13
+    *           row 1, column 3
+    * @param m20
+    *           row 2, column 0
+    * @param m21
+    *           row 2, column 1
+    * @param m22
+    *           row 2, column 2
+    * @param m23
+    *           row 2, column 3
+    * @param m30
+    *           row 3, column 0
+    * @param m31
+    *           row 3, column 1
+    * @param m32
+    *           row 3, column 2
+    * @param m33
+    *           row 3, column 3
+    * @return this matrix
+    */
+   @Chainable
    public Mat4 set (
          final float m00, final float m01, final float m02, final float m03,
          final float m10, final float m11, final float m12, final float m13,
@@ -898,6 +1700,14 @@ public class Mat4 extends Matrix {
       return this;
    }
 
+   /**
+    * Copies the components of the input matrix to this matrix.
+    *
+    * @param source
+    *           the input matrix
+    * @return this matrix
+    */
+   @Chainable
    public Mat4 set ( final Mat4 source ) {
 
       return this.set(
@@ -905,6 +1715,101 @@ public class Mat4 extends Matrix {
             source.m10, source.m11, source.m12, source.m13,
             source.m20, source.m21, source.m22, source.m23,
             source.m30, source.m31, source.m32, source.m33);
+   }
+
+   /**
+    * Sets a column of this matrix with an index and vector. If
+    * the column is an axis vector, the w component is set to
+    * 0.0; if it is a translation, the w component is set to
+    * 1.0.
+    *
+    * @param j
+    *           the column index
+    * @param source
+    *           the column
+    * @return this matrix
+    */
+   @Chainable
+   public Mat4 setCol ( final int j, final Vec3 source ) {
+
+      switch (j) {
+         case 0:
+         case -4:
+            this.m00 = source.x;
+            this.m10 = source.y;
+            this.m20 = source.z;
+            this.m30 = 0.0f;
+            return this;
+         case 1:
+         case -3:
+            this.m01 = source.x;
+            this.m11 = source.y;
+            this.m21 = source.z;
+            this.m31 = 0.0f;
+            return this;
+         case 2:
+         case -2:
+            this.m02 = source.x;
+            this.m12 = source.y;
+            this.m22 = source.z;
+            this.m32 = 0.0f;
+            return this;
+         case 3:
+         case -1:
+            this.m03 = source.x;
+            this.m13 = source.y;
+            this.m23 = source.z;
+            this.m33 = 1.0f;
+            return this;
+         default:
+            return this.reset();
+      }
+   }
+
+   /**
+    * Sets a column of this matrix with an index and vector.
+    *
+    * @param j
+    *           the column index
+    * @param source
+    *           the column
+    * @return this matrix
+    */
+   @Chainable
+   public Mat4 setCol ( final int j, final Vec4 source ) {
+
+      switch (j) {
+         case 0:
+         case -4:
+            this.m00 = source.x;
+            this.m10 = source.y;
+            this.m20 = source.z;
+            this.m30 = source.w;
+            return this;
+         case 1:
+         case -3:
+            this.m01 = source.x;
+            this.m11 = source.y;
+            this.m21 = source.z;
+            this.m31 = source.w;
+            return this;
+         case 2:
+         case -2:
+            this.m02 = source.x;
+            this.m12 = source.y;
+            this.m22 = source.z;
+            this.m32 = source.w;
+            return this;
+         case 3:
+         case -1:
+            this.m03 = source.x;
+            this.m13 = source.y;
+            this.m23 = source.z;
+            this.m33 = source.w;
+            return this;
+         default:
+            return this.reset();
+      }
    }
 
    /**
@@ -985,49 +1890,65 @@ public class Mat4 extends Matrix {
             .toString();
    }
 
+   /**
+    * Returns a string representation of this matrix, where
+    * columns are separated by tabs and rows are separated by
+    * new lines.
+    *
+    * @return the string
+    */
    public String toStringTab () {
 
       return this.toStringTab(4);
    }
 
+   /**
+    * Returns a string representation of this matrix, where
+    * columns are separated by tabs and rows are separated by
+    * new lines.
+    *
+    * @param places
+    *           number of decimal places
+    * @return the string
+    */
    public String toStringTab ( final int places ) {
 
       return new StringBuilder()
             // .append(this.hashIdentityString())
             .append('\n')
             .append(Utils.toFixed(this.m00, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m01, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m02, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m03, places))
 
-            .append('\n')
+            .append(',').append('\n')
             .append(Utils.toFixed(this.m10, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m11, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m12, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m13, places))
 
-            .append('\n')
+            .append(',').append('\n')
             .append(Utils.toFixed(this.m20, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m21, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m22, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m23, places))
 
-            .append('\n')
+            .append(',').append('\n')
             .append(Utils.toFixed(this.m30, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m31, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m32, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m33, places))
 
             .append('\n')

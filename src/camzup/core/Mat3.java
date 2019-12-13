@@ -4,29 +4,61 @@ import java.util.Iterator;
 
 public class Mat3 extends Matrix {
 
+   /**
+    * An iterator, which allows a matrix's components to be
+    * accessed in an enhanced for loop.
+    */
    public static final class M3Iterator implements Iterator < Float > {
 
+      /**
+       * The current index.
+       */
       private int index = 0;
 
+      /**
+       * The matrix being iterated over.
+       */
       private final Mat3 mtx;
 
+      /**
+       * The default constructor.
+       *
+       * @param mtx
+       *           the matrix to iterate
+       */
       public M3Iterator ( final Mat3 mtx ) {
 
          this.mtx = mtx;
       }
 
+      /**
+       * Tests to see if the iterator has another value.
+       *
+       * @return the evaluation
+       */
       @Override
       public boolean hasNext () {
 
          return this.index < this.mtx.size();
       }
 
+      /**
+       * Gets the next value in the iterator.
+       *
+       * @return the value
+       * @see Mat3#get(int)
+       */
       @Override
       public Float next () {
 
          return this.mtx.get(this.index++);
       }
 
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
       @Override
       public String toString () {
 
@@ -35,8 +67,22 @@ public class Mat3 extends Matrix {
 
    }
 
+   /**
+    * The unique identification for serialized classes.
+    */
    private static final long serialVersionUID = -1737245169747444488L;
 
+   /**
+    * Adds two matrices together.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output matrix
+    * @return the sum
+    */
    public static Mat3 add (
          final Mat3 a,
          final Mat3 b,
@@ -48,12 +94,27 @@ public class Mat3 extends Matrix {
             a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22);
    }
 
+   /**
+    * Finds the determinant of the matrix.
+    *
+    * @param m
+    *           the matrix
+    * @return the determinant
+    */
    public static float determinant ( final Mat3 m ) {
 
-      // TODO: Double check that this is not transposed...
       return m.m00 * (m.m22 * m.m11 - m.m12 * m.m21) +
-            m.m01 * (-m.m22 * m.m10 + m.m12 * m.m20) +
+            m.m01 * (m.m12 * m.m20 - m.m22 * m.m10) +
             m.m02 * (m.m21 * m.m10 - m.m11 * m.m20);
+   }
+
+   public static Mat3 div (
+         final float a,
+         final Mat3 b,
+         final Mat3 target,
+         final Mat3 inverse ) {
+
+      return Mat3.mult(a, Mat3.inverse(b, inverse), target);
    }
 
    public static Mat3 div (
@@ -72,19 +133,13 @@ public class Mat3 extends Matrix {
             a.m20 * bInv, a.m21 * bInv, a.m22 * bInv);
    }
 
-   public static float frobenius ( final Mat3 m ) {
+   public static Mat3 div (
+         final Mat3 a,
+         final Mat3 b,
+         final Mat3 target,
+         final Mat3 inverse ) {
 
-      return (float) Math.sqrt(m.m00 * m.m00 +
-            m.m01 * m.m01 +
-            m.m02 * m.m02 +
-
-            m.m10 * m.m10 +
-            m.m11 * m.m11 +
-            m.m12 * m.m12 +
-
-            m.m20 * m.m20 +
-            m.m21 * m.m21 +
-            m.m22 * m.m22);
+      return Mat3.mult(a, Mat3.inverse(b, inverse), target);
    }
 
    public static Mat3 fromAxes (
@@ -192,6 +247,31 @@ public class Mat3 extends Matrix {
             0.0f, 0.0f, 1.0f);
    }
 
+   public static Mat3 inverse ( final Mat3 m, final Mat3 target ) {
+
+      final float b01 = m.m22 * m.m11 - m.m12 * m.m21;
+      final float b11 = m.m12 * m.m20 - m.m22 * m.m10;
+      final float b21 = m.m21 * m.m10 - m.m11 * m.m20;
+
+      final float det = m.m00 * b01 + m.m01 * b11 + m.m02 * b21;
+
+      if (det == 0.0f) {
+         return target.reset();
+      }
+      final float detInv = 1.0f / det;
+
+      return target.set(
+            b01 * detInv,
+            (m.m02 * m.m21 - m.m22 * m.m01) * detInv,
+            (m.m12 * m.m01 - m.m02 * m.m11) * detInv,
+            b11 * detInv,
+            (m.m22 * m.m00 - m.m02 * m.m20) * detInv,
+            (m.m02 * m.m10 - m.m12 * m.m00) * detInv,
+            b21 * detInv,
+            (m.m01 * m.m20 - m.m21 * m.m00) * detInv,
+            (m.m11 * m.m00 - m.m01 * m.m10) * detInv);
+   }
+
    public static boolean isIdentity ( final Mat3 m ) {
 
       return m.m22 == 1.0f && m.m11 == 1.0f && m.m00 == 1.0f &&
@@ -204,6 +284,10 @@ public class Mat3 extends Matrix {
          final Mat3 b,
          final Mat3 target ) {
 
+      if (a == 0.0f) {
+         return Mat3.identity(target);
+      }
+      
       return target.set(
             a * b.m00, a * b.m01, a * b.m02,
             a * b.m10, a * b.m11, a * b.m12,
@@ -215,6 +299,10 @@ public class Mat3 extends Matrix {
          final float b,
          final Mat3 target ) {
 
+      if (b == 0.0f) {
+         return Mat3.identity(target);
+      }
+      
       return target.set(
             a.m00 * b, a.m01 * b, a.m02 * b,
             a.m10 * b, a.m11 * b, a.m12 * b,
@@ -278,9 +366,53 @@ public class Mat3 extends Matrix {
          final Vec3 target ) {
 
       return target.set(
-            m.m00 * source.x + m.m01 * source.y + m.m02 * source.z,
-            m.m10 * source.x + m.m11 * source.y + m.m12 * source.z,
-            m.m20 * source.x + m.m21 * source.y + m.m22 * source.z);
+            m.m00 * source.x +
+                  m.m01 * source.y +
+                  m.m02 * source.z,
+
+            m.m10 * source.x +
+                  m.m11 * source.y +
+                  m.m12 * source.z,
+
+            m.m20 * source.x +
+                  m.m21 * source.y +
+                  m.m22 * source.z);
+   }
+
+   public static Vec2 multPoint (
+         final Mat3 m,
+         final Vec2 source,
+         final Vec2 target ) {
+
+      // TODO: Divide by w ?
+
+      target.set(
+            m.m00 * source.x +
+                  m.m01 * source.y +
+                  m.m02,
+
+            m.m10 * source.x +
+                  m.m11 * source.y +
+                  m.m12);
+
+      return target;
+   }
+
+   public static Vec2 multVector (
+         final Mat3 m,
+         final Vec2 source,
+         final Vec2 target ) {
+
+      // TODO: Divide by w ?
+
+      target.set(
+            m.m00 * source.x +
+                  m.m01 * source.y,
+
+            m.m10 * source.x +
+                  m.m11 * source.y);
+
+      return target;
    }
 
    public static Mat3 sub (
@@ -304,16 +436,55 @@ public class Mat3 extends Matrix {
             m.m02, m.m12, m.m22);
    }
 
+   /**
+    * Component in row 0, column 0. The right axis x component.
+    */
    public float m00 = 1.0f;
+
+   /**
+    * Component in row 0, column 1. The forward axis x
+    * component.
+    */
    public float m01 = 0.0f;
+
+   /**
+    * Component in row 0, column 2. The translation x
+    * component.
+    */
    public float m02 = 0.0f;
 
+   /**
+    * Component in row 1, column 0. The right axis y component.
+    */
    public float m10 = 0.0f;
+
+   /**
+    * Component in row 1, column 1. The forward axis y
+    * component.
+    */
    public float m11 = 1.0f;
+
+   /**
+    * Component in row 1, column 2. The translation y
+    * component.
+    */
    public float m12 = 0.0f;
 
+   /**
+    * Component in row 2, column 0. The right axis z component.
+    */
    public float m20 = 0.0f;
+
+   /**
+    * Component in row 2, column 1. The forward axis z
+    * component.
+    */
    public float m21 = 0.0f;
+
+   /**
+    * Component in row 2, column 2. The translation z
+    * component.
+    */
    public float m22 = 1.0f;
 
    public Mat3 () {
@@ -525,6 +696,40 @@ public class Mat3 extends Matrix {
       }
    }
 
+   public Vec2 getCol ( final int j, final Vec2 target ) {
+
+      switch (j) {
+         case 0:
+         case -3:
+            return target.set(this.m00, this.m10);
+         case 1:
+         case -2:
+            return target.set(this.m01, this.m11);
+         case 2:
+         case -1:
+            return target.set(this.m02, this.m12);
+         default:
+            return target.reset();
+      }
+   }
+
+   public Vec3 getCol ( final int j, final Vec3 target ) {
+
+      switch (j) {
+         case 0:
+         case -3:
+            return target.set(this.m00, this.m10, this.m20);
+         case 1:
+         case -2:
+            return target.set(this.m01, this.m11, this.m21);
+         case 2:
+         case -1:
+            return target.set(this.m02, this.m12, this.m22);
+         default:
+            return target.reset();
+      }
+   }
+
    @Override
    public int hashCode () {
 
@@ -547,11 +752,22 @@ public class Mat3 extends Matrix {
    }
 
    @Override
-   public Iterator < Float > iterator () {
+   public M3Iterator iterator () {
 
       return new M3Iterator(this);
    }
 
+   /**
+    * Resets this matrix to an initial state,<br>
+    * <br>
+    * 1.0, 0.0, 0.0,<br>
+    * 0.0, 1.0, 0.0,<br>
+    * 0.0, 0.0, 1.0
+    *
+    * @return this matrix
+    * @see Mat3#identity(Mat3)
+    */
+   @Chainable
    public Mat3 reset () {
 
       return this.set(
@@ -560,6 +776,7 @@ public class Mat3 extends Matrix {
             0.0f, 0.0f, 1.0f);
    }
 
+   @Chainable
    public Mat3 set (
          final float m00, final float m01,
          final float m10, final float m11 ) {
@@ -570,6 +787,7 @@ public class Mat3 extends Matrix {
             0.0f, 0.0f, 1.0f);
    }
 
+   @Chainable
    public Mat3 set (
          final float m00, final float m01, final float m02,
          final float m10, final float m11, final float m12 ) {
@@ -580,6 +798,7 @@ public class Mat3 extends Matrix {
             0.0f, 0.0f, 1.0f);
    }
 
+   @Chainable
    public Mat3 set (
          final float m00, final float m01, final float m02,
          final float m10, final float m11, final float m12,
@@ -600,12 +819,65 @@ public class Mat3 extends Matrix {
       return this;
    }
 
+   @Chainable
    public Mat3 set ( final Mat3 source ) {
 
       return this.set(
             source.m00, source.m01, source.m02,
             source.m10, source.m11, source.m12,
             source.m20, source.m21, source.m22);
+   }
+
+   public Mat3 setCol ( final int j, final Vec2 source ) {
+
+      switch (j) {
+         case 0:
+         case -3:
+            this.m00 = source.x;
+            this.m10 = source.y;
+            this.m20 = 0.0f;
+            return this;
+         case 1:
+         case -2:
+            this.m01 = source.x;
+            this.m11 = source.y;
+            this.m21 = 0.0f;
+            return this;
+         case 2:
+         case -1:
+            this.m02 = source.x;
+            this.m12 = source.y;
+            this.m22 = 1.0f;
+            return this;
+         default:
+            return this.reset();
+      }
+   }
+
+   public Mat3 setCol ( final int j, final Vec3 source ) {
+
+      switch (j) {
+         case 0:
+         case -3:
+            this.m00 = source.x;
+            this.m10 = source.y;
+            this.m20 = source.z;
+            return this;
+         case 1:
+         case -2:
+            this.m01 = source.x;
+            this.m11 = source.y;
+            this.m21 = source.z;
+            return this;
+         case 2:
+         case -1:
+            this.m02 = source.x;
+            this.m12 = source.y;
+            this.m22 = source.z;
+            return this;
+         default:
+            return this.reset();
+      }
    }
 
    @Override
@@ -663,23 +935,23 @@ public class Mat3 extends Matrix {
             // .append(this.hashIdentityString())
             .append('\n')
             .append(Utils.toFixed(this.m00, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m01, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m02, places))
 
-            .append('\n')
+            .append(',').append('\n')
             .append(Utils.toFixed(this.m10, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m11, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m12, places))
 
-            .append('\n')
+            .append(',').append('\n')
             .append(Utils.toFixed(this.m20, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m21, places))
-            .append('\t')
+            .append(',').append(' ')
             .append(Utils.toFixed(this.m22, places))
 
             .append('\n')

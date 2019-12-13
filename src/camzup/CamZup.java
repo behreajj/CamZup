@@ -1,5 +1,6 @@
 package camzup;
 
+import camzup.core.Random;
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
 import camzup.core.IUtils;
@@ -9,6 +10,7 @@ import camzup.core.Mesh3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
+import camzup.core.Vec4;
 import processing.core.PApplet;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
@@ -100,21 +102,33 @@ public class CamZup {
       // ce.appendCurve(curve);
       // System.out.println(ce.toBlenderCode());
 
-//      float ang = Utils.TAU * (float)Math.random();
-//      
-//      PMatrix3D m = new PMatrix3D();
-//      m.scale(4);
-//      m.rotateZ(ang);
-//      m.translate(1,  2, 3);
-//      
-//      m.print();
-//      
-//      Mat4 t = Mat4.fromTranslation(new Vec3(1, 2, 3), new Mat4());
-//      Mat4 r = Mat4.fromRotZ(ang, new Mat4());
-//      Mat4 s = Mat4.fromScale(4, new Mat4());
-//      
-//      Mat4 n = Mat4.mult(s, r, t, new Mat4());
-//      System.out.println(n.toStringTab());
+      // float ang = Utils.TAU * (float)Math.random();
+
+      Random rng = new Random();
+      PMatrix3D m = new PMatrix3D(
+            rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
+            rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
+            rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
+            rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), rng.nextFloat());
+
+      Mat4 n = new Mat4(
+            m.m00, m.m01, m.m02, m.m03,
+            m.m10, m.m11, m.m12, m.m13,
+            m.m20, m.m21, m.m22, m.m23,
+            m.m30, m.m31, m.m32, m.m33);
+      
+      Vec4 v = new Vec4(4, 2, 3, 1);
+      Vec4 w = new Vec4();
+      
+      float[] s = new float[] {4, 2, 3};
+      float[] t = new float[] {0, 0, 0};
+      
+      m.mult(s, t);
+      
+      Mat4.mult(n, v, w);
+      System.out.println(w);
+      PApplet.printArray(t);
+      
    }
 
    public static String version () {
