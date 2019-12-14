@@ -678,14 +678,14 @@ public class Mesh2 extends Mesh {
     * @param scale
     *           the scalar
     * @return this mesh
-    * @see Vec2#mult(Vec2, float, Vec2)
+    * @see Vec2#mul(Vec2, float, Vec2)
     */
    @Chainable
    public Mesh2 scale ( final float scale ) {
 
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec2.mult(this.coords[i], scale, this.coords[i]);
+         Vec2.mul(this.coords[i], scale, this.coords[i]);
       }
       return this;
    }
@@ -696,14 +696,14 @@ public class Mesh2 extends Mesh {
     * @param scale
     *           the vector
     * @return this mesh
-    * @see Vec2#mult(Vec2, Vec2, Vec2)
+    * @see Vec2#mul(Vec2, Vec2, Vec2)
     */
    @Chainable
    public Mesh2 scale ( final Vec2 scale ) {
 
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec2.mult(this.coords[i], scale, this.coords[i]);
+         Vec2.mul(this.coords[i], scale, this.coords[i]);
       }
       return this;
    }

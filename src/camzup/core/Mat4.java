@@ -136,7 +136,7 @@ public class Mat4 extends Matrix {
    /**
     * Divides a scalar by a matrix. Equivalent to multiplying
     * the numerator and the inverse of the denominator.
-    * 
+    *
     * @param a
     *           scalar, numerator
     * @param b
@@ -146,7 +146,7 @@ public class Mat4 extends Matrix {
     * @param inverse
     *           the inverse matrix
     * @return the quotient
-    * @see Mat4#mult(float, Mat4, Mat4)
+    * @see Mat4#mul(float, Mat4, Mat4)
     * @see Mat4#inverse
     */
    public static Mat4 div (
@@ -155,9 +155,20 @@ public class Mat4 extends Matrix {
          final Mat4 target,
          final Mat4 inverse ) {
 
-      return Mat4.mult(a, Mat4.inverse(b, inverse), target);
+      return Mat4.mul(a, Mat4.inverse(b, inverse), target);
    }
 
+   /**
+    * Divides a matrix by a scalar.
+    *
+    * @param a
+    *           matrix, numerator
+    * @param b
+    *           scalar, denominator
+    * @param target
+    *           the output matrix
+    * @return the quotient
+    */
    public static Mat4 div (
          final Mat4 a,
          final float b,
@@ -178,7 +189,7 @@ public class Mat4 extends Matrix {
    /**
     * Divides one matrix by another. Equivalent to multiplying
     * the numerator and the inverse of the denominator.
-    * 
+    *
     * @param a
     *           numerator
     * @param b
@@ -188,7 +199,7 @@ public class Mat4 extends Matrix {
     * @param inverse
     *           the inverse matrix
     * @return the quotient
-    * @see Mat4#mult(Mat4, Mat4, Mat4)
+    * @see Mat4#mul(Mat4, Mat4, Mat4)
     * @see Mat4#inverse
     */
    public static Mat4 div (
@@ -197,9 +208,22 @@ public class Mat4 extends Matrix {
          final Mat4 target,
          final Mat4 inverse ) {
 
-      return Mat4.mult(a, Mat4.inverse(b, inverse), target);
+      return Mat4.mul(a, Mat4.inverse(b, inverse), target);
    }
 
+   /**
+    * Creates a matrix from two axes. The third axis, up, is
+    * assumed to be (0.0, 0.0, 1.0, 0.0). The fourth row and
+    * column are assumed to be (0.0, 0.0, 0.0, 1.0).
+    *
+    * @param right
+    *           the right axis
+    * @param forward
+    *           the forward axis
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromAxes (
          final Vec2 right,
          final Vec2 forward,
@@ -212,6 +236,21 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a matrix from two axes and a translation. The
+    * third axis, up, is assumed to be (0.0, 0.0, 1.0, 0.0).
+    * The fourth row, w, is assumed to be (0.0, 0.0, 0.0, 1.0).
+    *
+    * @param right
+    *           the right axis
+    * @param forward
+    *           the forward axis
+    * @param translation
+    *           the translation
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromAxes (
          final Vec2 right,
          final Vec2 forward,
@@ -225,6 +264,20 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a matrix from three axes. The fourth row and
+    * column are assumed to be (0.0, 0.0, 0.0, 1.0).
+    *
+    * @param right
+    *           the right axis
+    * @param forward
+    *           the forward axis
+    * @param up
+    *           the up axis
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromAxes (
          final Vec3 right,
          final Vec3 forward,
@@ -238,6 +291,22 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a matrix from three axes and a translation. The
+    * fourth row, w, is assumed to be (0.0, 0.0, 0.0, 1.0).
+    *
+    * @param right
+    *           the right axis
+    * @param forward
+    *           the forward axis
+    * @param up
+    *           the up axis
+    * @param translation
+    *           the translation
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromAxes (
          final Vec3 right,
          final Vec3 forward,
@@ -252,6 +321,20 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a matrix from three axes. The fourth column,
+    * translation, is assumed to be (0.0, 0.0, 0.0, 1.0).
+    *
+    * @param right
+    *           the right axis
+    * @param forward
+    *           the forward axis
+    * @param up
+    *           the up axis
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromAxes (
          final Vec4 right,
          final Vec4 forward,
@@ -265,6 +348,21 @@ public class Mat4 extends Matrix {
             right.w, forward.w, up.w, 1.0f);
    }
 
+   /**
+    * Creates a matrix from three axes and a translation.
+    *
+    * @param right
+    *           the right axis
+    * @param forward
+    *           the forward axis
+    * @param up
+    *           the up axis
+    * @param translation
+    *           the translation
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromAxes (
          final Vec4 right,
          final Vec4 forward,
@@ -279,6 +377,21 @@ public class Mat4 extends Matrix {
             right.w, forward.w, up.w, translation.w);
    }
 
+   /**
+    * Creates a rotation matrix from the cosine and sine of an
+    * angle around an axis. The axis will be normalized by the
+    * function.
+    *
+    * @param cosa
+    *           the cosine of an angle
+    * @param sina
+    *           the sine of an angle
+    * @param axis
+    *           the axis
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromRotation (
          final float cosa,
          final float sina,
@@ -311,6 +424,18 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a rotation matrix from an angle in radians around
+    * an axis. The axis will be normalized by the function.
+    *
+    * @param radians
+    *           the angle
+    * @param axis
+    *           the axis
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromRotation (
          final float radians,
          final Vec3 axis,
@@ -323,6 +448,57 @@ public class Mat4 extends Matrix {
             target);
    }
 
+   /**
+    * Creates a rotation matrix from a quaternion.
+    *
+    * @param source
+    *           the quaternion
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
+   public static Mat4 fromRotation (
+         final Quaternion source,
+         final Mat4 target ) {
+
+      final float w = source.real;
+      final Vec3 i = source.imag;
+      final float x = i.x;
+      final float y = i.y;
+      final float z = i.z;
+
+      final float x2 = x + x;
+      final float y2 = y + y;
+      final float z2 = z + z;
+      final float xsq2 = x * x2;
+      final float ysq2 = y * y2;
+      final float zsq2 = z * z2;
+      final float xy2 = x * y2;
+      final float xz2 = x * z2;
+      final float yz2 = y * z2;
+      final float wx2 = w * x2;
+      final float wy2 = w * y2;
+      final float wz2 = w * z2;
+
+      return target.set(
+            1.0f - ysq2 - zsq2, xy2 - wz2, xz2 + wy2, 0.0f,
+            xy2 + wz2, 1.0f - xsq2 - zsq2, yz2 - wx2, 0.0f,
+            xz2 - wy2, yz2 + wx2, 1.0f - xsq2 - ysq2, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
+   }
+
+   /**
+    * Creates a rotation matrix from a cosine and sine around
+    * the x axis.
+    *
+    * @param cosa
+    *           the cosine of an angle
+    * @param sina
+    *           the sine of an angle
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromRotX (
          final float cosa,
          final float sina,
@@ -335,6 +511,16 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a rotation matrix from an angle in radians around
+    * the x axis.
+    *
+    * @param radians
+    *           the angle
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromRotX (
          final float radians,
          final Mat4 target ) {
@@ -345,6 +531,18 @@ public class Mat4 extends Matrix {
             target);
    }
 
+   /**
+    * Creates a rotation matrix from a cosine and sine around
+    * the y axis.
+    *
+    * @param cosa
+    *           the cosine of an angle
+    * @param sina
+    *           the sine of an angle
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromRotY (
          final float cosa,
          final float sina,
@@ -357,6 +555,16 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a rotation matrix from an angle in radians around
+    * the y axis.
+    *
+    * @param radians
+    *           the angle
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromRotY (
          final float radians,
          final Mat4 target ) {
@@ -367,6 +575,18 @@ public class Mat4 extends Matrix {
             target);
    }
 
+   /**
+    * Creates a rotation matrix from a cosine and sine around
+    * the z axis.
+    *
+    * @param cosa
+    *           the cosine of an angle
+    * @param sina
+    *           the sine of an angle
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromRotZ (
          final float cosa,
          final float sina,
@@ -379,6 +599,16 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a rotation matrix from an angle in radians around
+    * the z axis.
+    *
+    * @param radians
+    *           the angle
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromRotZ (
          final float radians,
          final Mat4 target ) {
@@ -389,6 +619,16 @@ public class Mat4 extends Matrix {
             target);
    }
 
+   /**
+    * Creates a scale matrix from a scalar. The bottom right
+    * corner, m33, is set to 1.0 .
+    *
+    * @param scalar
+    *           the scalar
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromScale (
          final float scalar,
          final Mat4 target ) {
@@ -400,6 +640,17 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a scale matrix from a nonuniform scalar, stored
+    * in a vector. The scale on the z axis is assumed to be 1.0
+    * .
+    *
+    * @param scalar
+    *           the nonuniform scalar
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromScale (
          final Vec2 scalar,
          final Mat4 target ) {
@@ -411,6 +662,16 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a scale matrix from a nonuniform scalar, stored
+    * in a vector.
+    *
+    * @param scalar
+    *           the nonuniform scalar
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromScale (
          final Vec3 scalar,
          final Mat4 target ) {
@@ -422,6 +683,15 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a translation matrix from a vector.
+    *
+    * @param translation
+    *           the translation
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromTranslation (
          final Vec2 translation,
          final Mat4 target ) {
@@ -433,6 +703,15 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a translation matrix from a vector.
+    *
+    * @param translation
+    *           the translation
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat4 fromTranslation (
          final Vec3 translation,
          final Mat4 target ) {
@@ -482,6 +761,18 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, -1.0f, 0.0f);
    }
 
+   /**
+    * Returns the identity matrix,<br>
+    * <br>
+    * 1.0, 0.0, 0.0, 0.0,<br>
+    * 0.0, 1.0, 0.0, 0.0,<br>
+    * 0.0, 0.0, 1.0, 0.0,<br>
+    * 0.0, 0.0, 0.0, 1.0
+    *
+    * @param target
+    *           the output matrix
+    * @return the identity matrix
+    */
    public static Mat4 identity ( final Mat4 target ) {
 
       return target.set(
@@ -491,6 +782,15 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Inverts the input matrix.
+    *
+    * @param m
+    *           the matrix
+    * @param target
+    *           the output matrix
+    * @return the inverse
+    */
    public static Mat4 inverse ( final Mat4 m, final Mat4 target ) {
 
       final float b00 = m.m00 * m.m11 - m.m01 * m.m10;
@@ -537,6 +837,13 @@ public class Mat4 extends Matrix {
             (m.m20 * b03 - m.m21 * b01 + m.m22 * b00) * detInv);
    }
 
+   /**
+    * Tests to see if a matrix is the identity matrix.
+    *
+    * @param m
+    *           the matrix
+    * @return the evaluation
+    */
    public static boolean isIdentity ( final Mat4 m ) {
 
       return m.m33 == 1.0f && m.m22 == 1.0f && m.m11 == 1.0f && m.m00 == 1.0f &&
@@ -545,7 +852,18 @@ public class Mat4 extends Matrix {
             m.m23 == 0.0f && m.m30 == 0.0f && m.m31 == 0.0f && m.m32 == 0.0f;
    }
 
-   public static Mat4 mult (
+   /**
+    * Multiplies all components of a matrix by a scalar.
+    *
+    * @param a
+    *           the scalar
+    * @param b
+    *           the matrix
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
+   public static Mat4 mul (
          final float a,
          final Mat4 b,
          final Mat4 target ) {
@@ -561,7 +879,18 @@ public class Mat4 extends Matrix {
             a * b.m30, a * b.m31, a * b.m32, a * b.m33);
    }
 
-   public static Mat4 mult (
+   /**
+    * Multiplies all components of a matrix by a scalar.
+    *
+    * @param a
+    *           the matrix
+    * @param b
+    *           the scalar
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
+   public static Mat4 mul (
          final Mat4 a,
          final float b,
          final Mat4 target ) {
@@ -577,7 +906,18 @@ public class Mat4 extends Matrix {
             a.m30 * b, a.m31 * b, a.m32 * b, a.m33 * b);
    }
 
-   public static Mat4 mult (
+   /**
+    * Multiplies two matrices by component.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output matrix
+    * @return the product
+    */
+   public static Mat4 mul (
          final Mat4 a,
          final Mat4 b,
          final Mat4 target ) {
@@ -619,7 +959,7 @@ public class Mat4 extends Matrix {
     *           the output matrix
     * @return the product
     */
-   public static Mat4 mult (
+   public static Mat4 mul (
          final Mat4 a,
          final Mat4 b,
          final Mat4 c,
@@ -715,80 +1055,42 @@ public class Mat4 extends Matrix {
             n30 * c.m03 + n31 * c.m13 + n32 * c.m23 + n33 * c.m33);
    }
 
-   public static Vec4 mult (
-         final Mat4 m,
-         final Vec4 source,
+   /**
+    * Multiplies a matrix and a vector.
+    * 
+    * @param a
+    *           the matrix
+    * @param b
+    *           the vector
+    * @param target
+    *           the output vector
+    * @return the product
+    */
+   public static Vec4 mul (
+         final Mat4 a,
+         final Vec4 b,
          final Vec4 target ) {
 
       return target.set(
-            m.m00 * source.x +
-                  m.m01 * source.y +
-                  m.m02 * source.z +
-                  m.m03 * source.w,
+            a.m00 * b.x +
+                  a.m01 * b.y +
+                  a.m02 * b.z +
+                  a.m03 * b.w,
 
-            m.m10 * source.x +
-                  m.m11 * source.y +
-                  m.m12 * source.z +
-                  m.m13 * source.w,
+            a.m10 * b.x +
+                  a.m11 * b.y +
+                  a.m12 * b.z +
+                  a.m13 * b.w,
 
-            m.m20 * source.x +
-                  m.m21 * source.y +
-                  m.m22 * source.z +
-                  m.m23 * source.w,
+            a.m20 * b.x +
+                  a.m21 * b.y +
+                  a.m22 * b.z +
+                  a.m23 * b.w,
 
-            m.m30 * source.x +
-                  m.m31 * source.y +
-                  m.m32 * source.z +
-                  m.m33 * source.w);
-   }
-
-   public static Vec3 multPoint (
-         final Mat4 m,
-         final Vec3 source,
-         final Vec3 target ) {
-
-      // TODO: Divide by w ?
-
-      target.set(
-            m.m00 * source.x +
-                  m.m01 * source.y +
-                  m.m02 * source.z +
-                  m.m03,
-
-            m.m10 * source.x +
-                  m.m11 * source.y +
-                  m.m12 * source.z +
-                  m.m13,
-
-            m.m20 * source.x +
-                  m.m21 * source.y +
-                  m.m22 * source.z +
-                  m.m23);
-
-      return target;
-   }
-
-   public static Vec3 multVector (
-         final Mat4 m,
-         final Vec3 source,
-         final Vec3 target ) {
-
-      // TODO: Divide by w ?
-
-      target.set(
-            m.m00 * source.x +
-                  m.m01 * source.y +
-                  m.m02 * source.z,
-
-            m.m10 * source.x +
-                  m.m11 * source.y +
-                  m.m12 * source.z,
-
-            m.m20 * source.x +
-                  m.m21 * source.y +
-                  m.m22 * source.z);
-
-      return target;
+            a.m30 * b.x +
+                  a.m31 * b.y +
+                  a.m32 * b.z +
+                  a.m33 * b.w);
    }
 
    /**
@@ -1556,7 +1858,8 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Sets the three axis columns of this matrix.
+    * Sets the three axis columns of this matrix. The last row
+    * and column are set to (0.0, 0.0, 0.0, 1.0).
     *
     * @param m00
     *           row 0, column 0
@@ -1592,7 +1895,8 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Sets the upper three rows of this matrix.
+    * Sets the upper three rows of this matrix. The last row is
+    * set to (0.0, 0.0, 0.0, 1.0).
     *
     * @param m00
     *           row 0, column 0
@@ -1903,9 +2207,8 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Returns a string representation of this matrix, where
-    * columns are separated by tabs and rows are separated by
-    * new lines.
+    * Returns a string representation of this matrix intended
+    * for display in the console.
     *
     * @param places
     *           number of decimal places

@@ -1382,11 +1382,15 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
    /**
     * Generates a 2D array of vectors.
-    * 
-    * @param rows number of rows
-    * @param cols number of columns
-    * @param lowerBound the lower bound
-    * @param upperBound the upper bound
+    *
+    * @param rows
+    *           number of rows
+    * @param cols
+    *           number of columns
+    * @param lowerBound
+    *           the lower bound
+    * @param upperBound
+    *           the upper bound
     * @return the array
     */
    public static Vec2[][] grid (
@@ -1405,20 +1409,20 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final float[] xs = new float[cval];
       for (int j = 0; j < cval; ++j) {
          xs[j] = Utils.lerpUnclamped(
-               lowerBound.x, 
+               lowerBound.x,
                upperBound.x,
                j * jToStep);
       }
 
       final Vec2[][] result = new Vec2[rval][cval];
       for (int i = 0; i < rval; ++i) {
-         
+
          final Vec2[] row = result[i];
          final float y = Utils.lerpUnclamped(
-               lowerBound.y, 
+               lowerBound.y,
                upperBound.y,
                i * iToStep);
-         
+
          for (int j = 0; j < cval; ++j) {
             row[j] = new Vec2(xs[j], y);
          }
@@ -1861,7 +1865,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           the output vector
     * @return the product
     */
-   public static Vec2 mult (
+   public static Vec2 mul (
          final float a,
          final Vec2 b,
          final Vec2 target ) {
@@ -1882,7 +1886,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           the output vector
     * @return the product
     */
-   public static Vec2 mult (
+   public static Vec2 mul (
          final Vec2 a,
          final float b,
          final Vec2 target ) {
@@ -1905,7 +1909,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           the output vector
     * @return the product
     */
-   public static Vec2 mult (
+   public static Vec2 mul (
          final Vec2 a,
          final Vec2 b,
          final Vec2 target ) {
@@ -2143,38 +2147,71 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Projects one vector onto another. Defined as<br>
-    * <br>
-    * proj ( <em>a</em>, <em>b</em> ) := <em>b</em> (
-    * <em>a</em> \u00b7 <em>b</em> / <em>b</em> \u00b7
-    * <em>b</em> )<br>
-    * <br>
-    * Returns the scalar projection, clamped to [0.0, 1.0].
+    * Projects one vector onto another.
     *
     * @param a
     *           the left operand
     * @param b
     *           the right operand
     * @param target
-    *           the vector projection
-    * @return the scalar projection
-    * @see Vec2#dot(Vec2, Vec2)
-    * @see Vec2#mult(Vec2, float, Vec2)
-    * @see Utils#clamp01(float)
+    *           the output vector
+    * @return the projection
+    * @see Vec2#projectVector(Vec2, Vec2, Vec2)
     */
-   public static float project (
+   public static Vec2 project (
          final Vec2 a,
          final Vec2 b,
          final Vec2 target ) {
 
+      return Vec2.projectVector(a, b, target);
+   }
+
+   /**
+    * Returns the scalar projection of <em>a</em> onto
+    * <em>b</em>.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @return the scalar projection
+    * @see Vec2#magSq(Vec2)
+    * @see Vec2#dot(Vec2, Vec2)
+    */
+   public static float projectScalar (
+         final Vec2 a,
+         final Vec2 b ) {
+
       final float bSq = Vec2.magSq(b);
       if (bSq != 0.0f) {
-         final float dAbBb = Vec2.dot(a, b) / bSq;
-         Vec2.mult(b, dAbBb, target);
-         return Utils.clamp01(dAbBb);
+         return Vec2.dot(a, b) / bSq;
       }
-      target.reset();
       return 0.0f;
+   }
+
+   /**
+    * Projects one vector onto another. Defined as<br>
+    * <br>
+    * proj ( <em>a</em>, <em>b</em> ) := <em>b</em> (
+    * <em>a</em> \u00b7 <em>b</em> / <em>b</em> \u00b7
+    * <em>b</em> )
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output vector
+    * @return the projection
+    * @see Vec2#projectScalar(Vec2, Vec2)
+    * @see Vec2#mul(Vec2, float, Vec2)
+    */
+   public static Vec2 projectVector (
+         final Vec2 a,
+         final Vec2 b,
+         final Vec2 target ) {
+
+      return Vec2.mul(b, Vec2.projectScalar(a, b), target);
    }
 
    /**
@@ -2385,63 +2422,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Subtracts from vector a the projection of a onto vector
-    * b.
-    *
-    * @param a
-    *           left operand
-    * @param b
-    *           right operand
-    * @param target
-    *           the output vector
-    * @return the rejection
-    * @see Vec2#reject(Vec2, Vec2, Vec2, Vec2)
-    */
-   public static float reject (
-         final Vec2 a,
-         final Vec2 b,
-         final Vec2 target ) {
-
-      final float bSq = Vec2.magSq(b);
-      if (bSq != 0.0f) {
-         final float dAbBb = Vec2.dot(a, b) / bSq;
-         target.set(
-               a.x - b.x * dAbBb,
-               a.y - b.y * dAbBb);
-         return Utils.clamp01(dAbBb);
-      }
-      target.set(a);
-      return 0.0f;
-   }
-
-   /**
-    * Subtracts from vector a the projection of a onto vector
-    * b.
-    *
-    * @param a
-    *           left operand
-    * @param b
-    *           right operand
-    * @param target
-    *           the output vector
-    * @param projected
-    *           the projection
-    * @return the rejection
-    * @see Vec2#project(Vec2, Vec2, Vec2)
-    * @see Vec2#sub(Vec2, Vec2, Vec2)
-    */
-   public static float reject (
-         final Vec2 a,
-         final Vec2 b,
-         final Vec2 target,
-         final Vec2 projected ) {
-
-      final float fac = Vec2.project(a, b, target);
-      Vec2.sub(a, projected, target);
-      return fac;
-   }
-
-   /**
     * Normalizes a vector, then multiplies it by a scalar, in
     * effect setting its magnitude to that scalar.
     *
@@ -2472,10 +2452,10 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       }
 
       if (Utils.approxFast(mSq, 1.0f)) {
-         return Vec2.mult(v, scalar, target);
+         return Vec2.mul(v, scalar, target);
       }
 
-      return Vec2.mult(v, (float) (scalar / Math.sqrt(mSq)), target);
+      return Vec2.mul(v, (float) (scalar / Math.sqrt(mSq)), target);
    }
 
    /**
@@ -2492,7 +2472,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           the normalized vector
     * @return the rescaled vector
     * @see Vec2#normalize(Vec2, Vec2)
-    * @see Vec2#mult(Vec2, float, Vec2)
+    * @see Vec2#mul(Vec2, float, Vec2)
     */
    public static Vec2 rescale (
          final Vec2 v,
@@ -2503,7 +2483,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          return target.reset();
       }
       Vec2.normalize(v, normalized);
-      return Vec2.mult(normalized, scalar, target);
+      return Vec2.mul(normalized, scalar, target);
    }
 
    /**
@@ -2681,7 +2661,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           the right operand
     * @param target
     *           the output vector
-    * @return the result
+    * @return the difference
     */
    public static Vec2 sub (
          final Vec2 a,
@@ -2698,9 +2678,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * normalizes the difference.
     *
     * @param a
-    *           the left vector
+    *           the left operand
     * @param b
-    *           the right vector
+    *           the right operand
     * @param target
     *           the output vector
     * @return the normalized difference
@@ -2729,9 +2709,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * normalizes the difference.
     *
     * @param a
-    *           the left vector
+    *           the left operand
     * @param b
-    *           the right vector
+    *           the right operand
     * @param target
     *           the output vector
     * @param dir
@@ -2757,7 +2737,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param v
     *           the input vector
     * @param target
-    *           the target vector
+    *           the output vector
     * @return the truncation
     */
    public static Vec2 trunc (
@@ -3040,7 +3020,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
       this.x = Utils.toFloat(x);
       this.y = Utils.toFloat(y);
-      
+
       return this;
    }
 
@@ -3060,7 +3040,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
       this.x = x;
       this.y = y;
-      
+
       return this;
    }
 

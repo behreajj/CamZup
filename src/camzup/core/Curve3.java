@@ -732,9 +732,9 @@ public class Curve3 extends Curve
       @Chainable
       public Knot3 scale ( final float scale ) {
 
-         Vec3.mult(this.coord, scale, this.coord);
-         Vec3.mult(this.foreHandle, scale, this.foreHandle);
-         Vec3.mult(this.rearHandle, scale, this.rearHandle);
+         Vec3.mul(this.coord, scale, this.coord);
+         Vec3.mul(this.foreHandle, scale, this.foreHandle);
+         Vec3.mul(this.rearHandle, scale, this.rearHandle);
          return this;
       }
 
@@ -748,9 +748,9 @@ public class Curve3 extends Curve
       @Chainable
       public Knot3 scale ( final Vec3 scale ) {
 
-         Vec3.mult(this.coord, scale, this.coord);
-         Vec3.mult(this.foreHandle, scale, this.foreHandle);
-         Vec3.mult(this.rearHandle, scale, this.rearHandle);
+         Vec3.mul(this.coord, scale, this.coord);
+         Vec3.mul(this.foreHandle, scale, this.foreHandle);
+         Vec3.mul(this.rearHandle, scale, this.rearHandle);
          return this;
       }
 
@@ -772,7 +772,7 @@ public class Curve3 extends Curve
             final Vec3 temp1 ) {
 
          Vec3.sub(this.foreHandle, this.coord, temp0);
-         Vec3.mult(temp0, scalar, temp1);
+         Vec3.mul(temp0, scalar, temp1);
          Vec3.add(temp1, this.coord, this.foreHandle);
          return this;
       }
@@ -795,7 +795,7 @@ public class Curve3 extends Curve
             final Vec3 temp1 ) {
 
          Vec3.subNorm(this.foreHandle, this.coord, temp0);
-         Vec3.mult(temp0, magnitude, temp1);
+         Vec3.mul(temp0, magnitude, temp1);
          Vec3.add(temp1, this.coord, this.foreHandle);
          return this;
       }
@@ -870,7 +870,7 @@ public class Curve3 extends Curve
             final Vec3 temp1 ) {
 
          Vec3.sub(this.rearHandle, this.coord, temp0);
-         Vec3.mult(temp0, scalar, temp1);
+         Vec3.mul(temp0, scalar, temp1);
          Vec3.add(temp1, this.coord, this.rearHandle);
          return this;
       }
@@ -893,7 +893,7 @@ public class Curve3 extends Curve
             final Vec3 temp1 ) {
 
          Vec3.subNorm(this.rearHandle, this.coord, temp0);
-         Vec3.mult(temp0, magnitude, temp1);
+         Vec3.mul(temp0, magnitude, temp1);
          Vec3.add(temp1, this.coord, this.rearHandle);
          return this;
       }
@@ -1560,7 +1560,7 @@ public class Curve3 extends Curve
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     * @see Vec3#normalize(Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
-    * @see Vec3#mult(Vec3, float, Vec3)
+    * @see Vec3#mul(Vec3, float, Vec3)
     * @see Vec3#rescale(Vec3, float, Vec3)
     */
    public static Curve3 smoothHandles ( final Curve3 target ) {
@@ -1636,10 +1636,10 @@ public class Curve3 extends Curve
 
          Vec3.rescale(dir2, IUtils.ONE_THIRD, dir0);
 
-         Vec3.mult(dir0, backDist, backRescale);
+         Vec3.mul(dir0, backDist, backRescale);
          Vec3.add(backRescale, currCoord, knot.rearHandle);
 
-         Vec3.mult(dir0, foreDist, forRescale);
+         Vec3.mul(dir0, foreDist, forRescale);
          Vec3.add(forRescale, currCoord, knot.foreHandle);
       }
 

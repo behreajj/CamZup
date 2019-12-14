@@ -324,12 +324,12 @@ public class Transform3 extends Transform {
     * @param target
     *           the output direction
     * @return the direction
-    * @see Quaternion#mult(Quaternion, Vec3, Vec3)
+    * @see Quaternion#mul(Quaternion, Vec3, Vec3)
     */
-   public static Vec3 multDir ( final Transform3 t, final Vec3 source,
+   public static Vec3 mulDir ( final Transform3 t, final Vec3 source,
          final Vec3 target ) {
 
-      Quaternion.mult(t.rotation, source, target);
+      Quaternion.mul(t.rotation, source, target);
       return target;
    }
 
@@ -345,13 +345,13 @@ public class Transform3 extends Transform {
     * @param target
     *           the output point
     * @return the point
-    * @see Quaternion#mult(Quaternion, Vec3, Vec3)
+    * @see Quaternion#mul(Quaternion, Vec3, Vec3)
     */
-   public static Vec3 multPoint ( final Transform3 t, final Vec3 source,
+   public static Vec3 multoint ( final Transform3 t, final Vec3 source,
          final Vec3 target ) {
 
-      Quaternion.mult(t.rotation, source, target);
-      Vec3.mult(target, t.scale, target);
+      Quaternion.mul(t.rotation, source, target);
+      Vec3.mul(target, t.scale, target);
       Vec3.add(target, t.location, target);
 
       return target;
@@ -369,13 +369,13 @@ public class Transform3 extends Transform {
     * @param target
     *           the output vector
     * @return the vector
-    * @see Quaternion#mult(Quaternion, Vec3, Vec3)
+    * @see Quaternion#mul(Quaternion, Vec3, Vec3)
     */
-   public static Vec3 multVector ( final Transform3 t, final Vec3 source,
+   public static Vec3 mulVector ( final Transform3 t, final Vec3 source,
          final Vec3 target ) {
 
-      Quaternion.mult(t.rotation, source, target);
-      Vec3.mult(target, t.scale, target);
+      Quaternion.mul(t.rotation, source, target);
+      Vec3.mul(target, t.scale, target);
 
       return target;
    }
@@ -1110,7 +1110,7 @@ public class Transform3 extends Transform {
     * @param scalar
     *           the scalar
     * @return this transform
-    * @see Vec3#mult(Vec3, float, Vec3)
+    * @see Vec3#mul(Vec3, float, Vec3)
     */
    @Chainable
    public Transform3 scaleBy ( final float scalar ) {
@@ -1119,7 +1119,7 @@ public class Transform3 extends Transform {
          return this;
       }
       this.scalePrev.set(this.scale);
-      Vec3.mult(this.scalePrev, scalar, this.scale);
+      Vec3.mul(this.scalePrev, scalar, this.scale);
       return this;
    }
 
@@ -1130,14 +1130,14 @@ public class Transform3 extends Transform {
     *           the scale
     * @return this transform
     * @see Vec3#isNonZero(Vec3)
-    * @see Vec3#mult(Vec3, Vec3, Vec3)
+    * @see Vec3#mul(Vec3, Vec3, Vec3)
     */
    @Chainable
    public Transform3 scaleBy ( final Vec3 nonUniformScale ) {
 
       if (Vec3.isNonZero(nonUniformScale)) {
          this.scalePrev.set(this.scale);
-         Vec3.mult(this.scalePrev, nonUniformScale, this.scale);
+         Vec3.mul(this.scalePrev, nonUniformScale, this.scale);
       }
       return this;
    }

@@ -997,14 +997,14 @@ public class Mesh3 extends Mesh {
     * @param scale
     *           the scalar
     * @return this mesh
-    * @see Vec3#mult(Vec3, float, Vec3)
+    * @see Vec3#mul(Vec3, float, Vec3)
     */
    @Chainable
    public Mesh3 scale ( final float scale ) {
 
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec3.mult(this.coords[i], scale, this.coords[i]);
+         Vec3.mul(this.coords[i], scale, this.coords[i]);
       }
       return this;
    }
@@ -1021,7 +1021,7 @@ public class Mesh3 extends Mesh {
 
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec3.mult(this.coords[i], scale, this.coords[i]);
+         Vec3.mul(this.coords[i], scale, this.coords[i]);
       }
       return this;
    }

@@ -924,7 +924,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     *           the output vector
     * @return the product
     */
-   public static Vec4 mult (
+   public static Vec4 mul (
          final float a,
          final Vec4 b,
          final Vec4 target ) {
@@ -947,7 +947,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     *           the output vector
     * @return the product
     */
-   public static Vec4 mult (
+   public static Vec4 mul (
          final Vec4 a,
          final float b,
          final Vec4 target ) {
@@ -970,7 +970,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     *           the output vector
     * @return the product
     */
-   public static Vec4 mult (
+   public static Vec4 mul (
          final Vec4 a,
          final Vec4 b,
          final Vec4 target ) {
@@ -1177,7 +1177,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     *           the right operand
     * @param target
     *           the output vector
-    * @return the result
+    * @return the difference
     */
    public static Vec4 sub (
          final Vec4 a,
@@ -1212,7 +1212,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
-    * Returns to a vector with a positive value on the z-axis,
+    * Returns to a vector with a positive value on the z axis,
     * (0.0, 0.0, 1.0, 0.0) .
     *
     * @param target

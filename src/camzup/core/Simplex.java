@@ -1250,9 +1250,9 @@ public abstract class Simplex {
       deriv.reset();
 
       for (int i = 0; i < octaves; ++i) {
-         Vec2.mult(v, freq, vin);
+         Vec2.mul(v, freq, vin);
          sum += Simplex.eval(vin, seed, nxy) * amp;
-         Vec2.mult(nxy, amp, nxy);
+         Vec2.mul(nxy, amp, nxy);
          Vec2.add(deriv, nxy, deriv);
          freq *= lacunarity;
          amp *= gain;
@@ -1329,9 +1329,9 @@ public abstract class Simplex {
       deriv.reset();
 
       for (int i = 0; i < octaves; ++i) {
-         Vec3.mult(v, freq, vin);
+         Vec3.mul(v, freq, vin);
          sum += Simplex.eval(vin, seed, nxyz) * amp;
-         Vec3.mult(nxyz, amp, nxyz);
+         Vec3.mul(nxyz, amp, nxyz);
          Vec3.add(deriv, nxyz, deriv);
          freq *= lacunarity;
          amp *= gain;
@@ -1408,9 +1408,9 @@ public abstract class Simplex {
       deriv.reset();
 
       for (int i = 0; i < octaves; ++i) {
-         Vec4.mult(v, freq, vin);
+         Vec4.mul(v, freq, vin);
          sum += Simplex.eval(vin, seed, nxyzw) * amp;
-         Vec4.mult(nxyzw, amp, nxyzw);
+         Vec4.mul(nxyzw, amp, nxyzw);
          Vec4.add(deriv, nxyzw, deriv);
          freq *= lacunarity;
          amp *= gain;

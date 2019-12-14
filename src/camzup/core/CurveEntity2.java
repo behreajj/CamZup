@@ -216,8 +216,8 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
     *           the output local tangent
     * @return the world coordinate
     * @see Curve2#eval(float, Vec2, Vec2)
-    * @see Transform2#multPoint(Transform2, Vec2, Vec2)
-    * @see Transform2#multDir(Transform2, Vec2, Vec2)
+    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
+    * @see Transform2#mulDir(Transform2, Vec2, Vec2)
     */
    public Vec2 eval (
          final int curveIndex,
@@ -228,8 +228,8 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
          final Vec2 tanLocal ) {
 
       this.curves.get(curveIndex).eval(step, coordLocal, tanLocal);
-      Transform2.multPoint(this.transform, coordLocal, coordWorld);
-      Transform2.multDir(this.transform, tanLocal, tanWorld);
+      Transform2.mulPoint(this.transform, coordLocal, coordWorld);
+      Transform2.mulDir(this.transform, tanLocal, tanWorld);
       return coordWorld;
    }
 

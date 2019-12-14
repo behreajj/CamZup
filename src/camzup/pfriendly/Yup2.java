@@ -890,7 +890,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
          final Iterator < Knot2 > itr = curve.iterator();
          prevKnot = itr.next();
          coord = prevKnot.coord;
-         Transform2.multPoint(tr, coord, v2);
+         Transform2.mulPoint(tr, coord, v2);
          this.beginShape();
          this.vertexImpl(
                v2.x, v2.y, 0.0f,
@@ -903,9 +903,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
-            Transform2.multPoint(tr, foreHandle, v0);
-            Transform2.multPoint(tr, rearHandle, v1);
-            Transform2.multPoint(tr, coord, v2);
+            Transform2.mulPoint(tr, foreHandle, v0);
+            Transform2.mulPoint(tr, rearHandle, v1);
+            Transform2.mulPoint(tr, coord, v2);
 
             this.bezierVertexImpl(
                   v0.x, v0.y, 0.0f,
@@ -921,9 +921,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
-            Transform2.multPoint(tr, foreHandle, v0);
-            Transform2.multPoint(tr, rearHandle, v1);
-            Transform2.multPoint(tr, coord, v2);
+            Transform2.mulPoint(tr, foreHandle, v0);
+            Transform2.mulPoint(tr, rearHandle, v1);
+            Transform2.mulPoint(tr, coord, v2);
 
             this.bezierVertexImpl(
                   v0.x, v0.y, 0.0f,

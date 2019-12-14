@@ -821,7 +821,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
          final Iterator < Knot3 > itr = curve.iterator();
          prevKnot = itr.next();
          coord = prevKnot.coord;
-         Transform3.multPoint(tr, coord, v2);
+         Transform3.multoint(tr, coord, v2);
          this.beginShape();
          this.vertexImpl(
                v2.x, v2.y, v2.z,
@@ -834,9 +834,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
-            Transform3.multPoint(tr, foreHandle, v0);
-            Transform3.multPoint(tr, rearHandle, v1);
-            Transform3.multPoint(tr, coord, v2);
+            Transform3.multoint(tr, foreHandle, v0);
+            Transform3.multoint(tr, rearHandle, v1);
+            Transform3.multoint(tr, coord, v2);
 
             this.bezierVertexImpl(
                   v0.x, v0.y, v0.z,
@@ -852,9 +852,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
-            Transform3.multPoint(tr, foreHandle, v0);
-            Transform3.multPoint(tr, rearHandle, v1);
-            Transform3.multPoint(tr, coord, v2);
+            Transform3.multoint(tr, foreHandle, v0);
+            Transform3.multoint(tr, rearHandle, v1);
+            Transform3.multoint(tr, coord, v2);
 
             this.bezierVertexImpl(
                   v0.x, v0.y, v0.z,
@@ -914,13 +914,13 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
                final int[] data = f[j];
 
                final int vIndex = data[0];
-               Transform3.multPoint(tr, vs[vIndex], v);
+               Transform3.multoint(tr, vs[vIndex], v);
 
                final int vtIndex = data[1];
                final Vec2 vt = vts[vtIndex];
 
                final int vnIndex = data[2];
-               Transform3.multDir(tr, vns[vnIndex], vn);
+               Transform3.mulDir(tr, vns[vnIndex], vn);
 
                this.normal(vn.x, vn.y, vn.z);
                this.vertexImpl(v.x, v.y, v.z,

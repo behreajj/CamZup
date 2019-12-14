@@ -112,7 +112,7 @@ Vec2 sum = new Vec2();
 Vec2 prod = new Vec2();
 
 for(int i = 0; i < 15; ++i) {
-    println(Vec2.mult(3.0, Vec2.add(a, b, sum), prod));
+    println(Vec2.mul(3.0, Vec2.add(a, b, sum), prod));
 }
 ```
 

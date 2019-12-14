@@ -348,7 +348,7 @@ public class Transform2 extends Transform {
     * @return the direction
     * @see Vec2#rotateZ(Vec2, float, Vec2)
     */
-   public static Vec2 multDir (
+   public static Vec2 mulDir (
          final Transform2 t,
          final Vec2 source,
          final Vec2 target ) {
@@ -371,13 +371,13 @@ public class Transform2 extends Transform {
     * @return the point
     * @see Vec2#rotateZ(Vec2, float, Vec2)
     */
-   public static Vec2 multPoint (
+   public static Vec2 mulPoint (
          final Transform2 t,
          final Vec2 source,
          final Vec2 target ) {
 
       Vec2.rotateZ(source, t.cosa, t.sina, target);
-      Vec2.mult(target, t.scale, target);
+      Vec2.mul(target, t.scale, target);
       Vec2.add(target, t.location, target);
 
       return target;
@@ -397,13 +397,13 @@ public class Transform2 extends Transform {
     * @return the vector
     * @see Vec2#rotateZ(Vec2, float, Vec2)
     */
-   public static Vec2 multVector (
+   public static Vec2 mulVector (
          final Transform2 t,
          final Vec2 source,
          final Vec2 target ) {
 
       Vec2.rotateZ(source, t.cosa, t.sina, target);
-      Vec2.mult(target, t.scale, target);
+      Vec2.mul(target, t.scale, target);
 
       return target;
    }
@@ -984,7 +984,7 @@ public class Transform2 extends Transform {
     * @param scalar
     *           the scalar
     * @return this transform
-    * @see Vec2#mult(Vec2, float, Vec2)
+    * @see Vec2#mul(Vec2, float, Vec2)
     */
    @Chainable
    public Transform2 scaleBy ( final float scalar ) {
@@ -993,7 +993,7 @@ public class Transform2 extends Transform {
          return this;
       }
       this.scalePrev.set(this.scale);
-      Vec2.mult(this.scalePrev, scalar, this.scale);
+      Vec2.mul(this.scalePrev, scalar, this.scale);
       return this;
    }
 
@@ -1004,14 +1004,14 @@ public class Transform2 extends Transform {
     *           the scale
     * @return this transform
     * @see Vec2#isNonZero(Vec2)
-    * @see Vec2#mult(Vec2, Vec2, Vec2)
+    * @see Vec2#mul(Vec2, Vec2, Vec2)
     */
    @Chainable
    public Transform2 scaleBy ( final Vec2 nonUniformScale ) {
 
       if (Vec2.isNonZero(nonUniformScale)) {
          this.scalePrev.set(this.scale);
-         Vec2.mult(this.scalePrev, nonUniformScale, this.scale);
+         Vec2.mul(this.scalePrev, nonUniformScale, this.scale);
       }
       return this;
    }

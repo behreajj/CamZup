@@ -979,7 +979,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @return the quotient
     * @see Quaternion#inverse(Quaternion, Quaternion,
     *      Quaternion)
-    * @see Quaternion#mult(float, Quaternion, Quaternion)
+    * @see Quaternion#mul(float, Quaternion, Quaternion)
     */
    public static Quaternion div (
          final float a,
@@ -989,7 +989,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion conjugate ) {
 
       Quaternion.inverse(b, inverted, conjugate);
-      Quaternion.mult(a, inverted, target);
+      Quaternion.mul(a, inverted, target);
       return target;
    }
 
@@ -1003,7 +1003,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the quotient
-    * @see Vec3#mult(Vec3, float, Vec3)
+    * @see Vec3#mul(Vec3, float, Vec3)
     */
    public static Quaternion div (
          final Quaternion a,
@@ -1015,7 +1015,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       }
 
       final float bInv = 1.0f / b;
-      Vec3.mult(a.imag, bInv, target.imag);
+      Vec3.mul(a.imag, bInv, target.imag);
       target.real = a.real * bInv;
 
       return target;
@@ -1092,7 +1092,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @return the quotient
     * @see Quaternion#inverse(Quaternion, Quaternion,
     *      Quaternion)
-    * @see Quaternion#mult(Quaternion, Quaternion, Quaternion)
+    * @see Quaternion#mul(Quaternion, Quaternion, Quaternion)
     */
    public static Quaternion div (
          final Quaternion a,
@@ -1102,7 +1102,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion conjugate ) {
 
       Quaternion.inverse(b, inverted, conjugate);
-      return Quaternion.mult(a, inverted, target);
+      return Quaternion.mul(a, inverted, target);
    }
 
    /**
@@ -1162,7 +1162,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
 
       final double im = Math.sqrt(imSq);
       target.real = (float) (ea * Math.cos(im));
-      Vec3.mult(
+      Vec3.mul(
             quat.imag,
             (float) (ea * Math.sin(im) / im),
             target.imag);
@@ -1611,12 +1611,12 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             : wNorm >= 1.0d ? 0.0d : Math.acos(wNorm);
 
       if (Utils.approxFast(imSq, 1.0f)) {
-         Vec3.mult(quat.imag, (float) wAcos, target.imag);
+         Vec3.mul(quat.imag, (float) wAcos, target.imag);
          return target;
       }
 
       final double scalarNorm = wAcos / Math.sqrt(imSq);
-      Vec3.mult(quat.imag, (float) scalarNorm, target.imag);
+      Vec3.mul(quat.imag, (float) scalarNorm, target.imag);
       return target;
    }
 
@@ -1722,7 +1722,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *           the output quaternion
     * @return the scaled quaternion
     */
-   public static Quaternion mult (
+   public static Quaternion mul (
          final float a,
          final Quaternion b,
          final Quaternion target ) {
@@ -1731,7 +1731,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          return target.reset();
       }
 
-      Vec3.mult(a, b.imag, target.imag);
+      Vec3.mul(a, b.imag, target.imag);
       target.real = a * b.real;
       return target;
    }
@@ -1747,7 +1747,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *           the output quaternion
     * @return the scaled quaternion
     */
-   public static Quaternion mult (
+   public static Quaternion mul (
          final Quaternion a,
          final float b,
          final Quaternion target ) {
@@ -1756,7 +1756,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          return target.reset();
       }
 
-      Vec3.mult(a.imag, b, target.imag);
+      Vec3.mul(a.imag, b, target.imag);
       target.real = a.real * b;
       return target;
    }
@@ -1783,7 +1783,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *           the output quaternion
     * @return the product
     */
-   public static Quaternion mult (
+   public static Quaternion mul (
          final Quaternion a,
          final Quaternion b,
          final Quaternion target ) {
@@ -1822,7 +1822,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *           the output vector
     * @return the rotated vector
     */
-   public static Vec3 mult (
+   public static Vec3 mul (
          final Quaternion quat,
          final Vec3 source,
          final Vec3 target ) {
@@ -1855,7 +1855,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *           the output quaternion
     * @return the normalized product
     */
-   public static Quaternion multNorm (
+   public static Quaternion mulNorm (
          final Quaternion a,
          final Quaternion b,
          final Quaternion target ) {
@@ -1896,13 +1896,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *           the product
     * @return the normalized product
     */
-   public static Quaternion multNorm (
+   public static Quaternion mulNorm (
          final Quaternion a,
          final Quaternion b,
          final Quaternion target,
          final Quaternion product ) {
 
-      Quaternion.mult(a, b, product);
+      Quaternion.mul(a, b, product);
       Quaternion.normalize(product, target);
       return target;
    }

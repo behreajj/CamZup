@@ -2299,7 +2299,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final Iterator < Knot2 > itr = curve.iterator();
          prevKnot = itr.next();
          coord = prevKnot.coord;
-         Transform2.multPoint(tr, coord, v2);
+         Transform2.mulPoint(tr, coord, v2);
          this.gp.reset();
          this.gp.moveTo(v2.x, v2.y);
 
@@ -2309,9 +2309,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
-            Transform2.multPoint(tr, foreHandle, v0);
-            Transform2.multPoint(tr, rearHandle, v1);
-            Transform2.multPoint(tr, coord, v2);
+            Transform2.mulPoint(tr, foreHandle, v0);
+            Transform2.mulPoint(tr, rearHandle, v1);
+            Transform2.mulPoint(tr, coord, v2);
 
             this.gp.curveTo(
                   v0.x, v0.y,
@@ -2327,9 +2327,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
-            Transform2.multPoint(tr, foreHandle, v0);
-            Transform2.multPoint(tr, rearHandle, v1);
-            Transform2.multPoint(tr, coord, v2);
+            Transform2.mulPoint(tr, foreHandle, v0);
+            Transform2.mulPoint(tr, rearHandle, v1);
+            Transform2.mulPoint(tr, coord, v2);
 
             this.gp.curveTo(
                   v0.x, v0.y,

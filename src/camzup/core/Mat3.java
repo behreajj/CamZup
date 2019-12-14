@@ -108,15 +108,42 @@ public class Mat3 extends Matrix {
             m.m02 * (m.m21 * m.m10 - m.m11 * m.m20);
    }
 
+   /**
+    * Divides a scalar by a matrix. Equivalent to multiplying
+    * the numerator and the inverse of the denominator.
+    * 
+    * @param a
+    *           scalar, numerator
+    * @param b
+    *           matrix, denominator
+    * @param target
+    *           the output matrix
+    * @param inverse
+    *           the inverse matrix
+    * @return the quotient
+    * @see Mat3#mul(float, Mat3, Mat3)
+    * @see Mat3#inverse
+    */
    public static Mat3 div (
          final float a,
          final Mat3 b,
          final Mat3 target,
          final Mat3 inverse ) {
 
-      return Mat3.mult(a, Mat3.inverse(b, inverse), target);
+      return Mat3.mul(a, Mat3.inverse(b, inverse), target);
    }
 
+   /**
+    * Divides a matrix by a scalar.
+    * 
+    * @param a
+    *           matrix, numerator
+    * @param b
+    *           scalar, denominator
+    * @param target
+    *           the output matrix
+    * @return the quotient
+    */
    public static Mat3 div (
          final Mat3 a,
          final float b,
@@ -133,15 +160,43 @@ public class Mat3 extends Matrix {
             a.m20 * bInv, a.m21 * bInv, a.m22 * bInv);
    }
 
+   /**
+    * Divides one matrix by another. Equivalent to multiplying
+    * the numerator and the inverse of the denominator.
+    * 
+    * @param a
+    *           numerator
+    * @param b
+    *           denominator
+    * @param target
+    *           the output matrix
+    * @param inverse
+    *           the inverse matrix
+    * @return the quotient
+    * @see Mat3#mul(Mat3, Mat3, Mat3)
+    * @see Mat3#inverse
+    */
    public static Mat3 div (
          final Mat3 a,
          final Mat3 b,
          final Mat3 target,
          final Mat3 inverse ) {
 
-      return Mat3.mult(a, Mat3.inverse(b, inverse), target);
+      return Mat3.mul(a, Mat3.inverse(b, inverse), target);
    }
 
+   /**
+    * Creates a matrix from two axes. The third row and column
+    * are assumed to be (0.0, 0.0, 1.0).
+    * 
+    * @param right
+    *           the right axis
+    * @param forward
+    *           the forward axis
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat3 fromAxes (
          final Vec2 right,
          final Vec2 forward,
@@ -153,6 +208,20 @@ public class Mat3 extends Matrix {
             0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a matrix from two axes and a translation. The
+    * third row, z or w, is assumed to be (0.0, 0.0, 1.0).
+    * 
+    * @param right
+    *           the right axis
+    * @param forward
+    *           the forward axis
+    * @param translation
+    *           the translation
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat3 fromAxes (
          final Vec2 right,
          final Vec2 forward,
@@ -165,6 +234,18 @@ public class Mat3 extends Matrix {
             0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a matrix from two axes. The third column,
+    * translation, is assumed to be (0.0, 0.0, 1.0).
+    * 
+    * @param right
+    *           the right axis
+    * @param forward
+    *           the forward axis
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat3 fromAxes (
          final Vec3 right,
          final Vec3 forward,
@@ -176,6 +257,19 @@ public class Mat3 extends Matrix {
             right.z, forward.z, 1.0f);
    }
 
+   /**
+    * Creates a matrix from two axes and a translation.
+    * 
+    * @param right
+    *           the right axis
+    * @param forward
+    *           the forward axis
+    * @param translation
+    *           the translation
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat3 fromAxes (
          final Vec3 right,
          final Vec3 forward,
@@ -188,6 +282,18 @@ public class Mat3 extends Matrix {
             right.z, forward.z, translation.z);
    }
 
+   /**
+    * Creates a rotation matrix from a cosine and sine around
+    * the z axis.
+    * 
+    * @param cosa
+    *           the cosine of an angle
+    * @param sina
+    *           the sine of an angle
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat3 fromRotZ (
          final float cosa,
          final float sina,
@@ -199,6 +305,16 @@ public class Mat3 extends Matrix {
             0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a rotation matrix from an angle in radians around
+    * the z axis.
+    * 
+    * @param radians
+    *           the angle
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat3 fromRotZ (
          final float radians,
          final Mat3 target ) {
@@ -209,6 +325,16 @@ public class Mat3 extends Matrix {
             target);
    }
 
+   /**
+    * Creates a scale matrix from a scalar. The bottom right
+    * corner, m22, is set to 1.0 .
+    * 
+    * @param scalar
+    *           the scalar
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat3 fromScale (
          final float scalar,
          final Mat3 target ) {
@@ -219,6 +345,16 @@ public class Mat3 extends Matrix {
             0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a scale matrix from a nonuniform scalar, stored
+    * in a vector.
+    * 
+    * @param scalar
+    *           the nonuniform scalar
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat3 fromScale (
          final Vec2 scalar,
          final Mat3 target ) {
@@ -229,6 +365,15 @@ public class Mat3 extends Matrix {
             0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Creates a translation matrix from a vector.
+    * 
+    * @param translation
+    *           the translation
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat3 fromTranslation (
          final Vec2 translation,
          final Mat3 target ) {
@@ -239,6 +384,17 @@ public class Mat3 extends Matrix {
             0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Returns the identity matrix,<br>
+    * <br>
+    * 1.0, 0.0, 0.0,<br>
+    * 0.0, 1.0, 0.0,<br>
+    * 0.0, 0.0, 1.0
+    *
+    * @param target
+    *           the output matrix
+    * @return the identity matrix
+    */
    public static Mat3 identity ( final Mat3 target ) {
 
       return target.set(
@@ -247,6 +403,15 @@ public class Mat3 extends Matrix {
             0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Inverts the input matrix.
+    * 
+    * @param m
+    *           the matrix
+    * @param target
+    *           the output matrix
+    * @return the inverse
+    */
    public static Mat3 inverse ( final Mat3 m, final Mat3 target ) {
 
       final float b01 = m.m22 * m.m11 - m.m12 * m.m21;
@@ -272,6 +437,13 @@ public class Mat3 extends Matrix {
             (m.m11 * m.m00 - m.m01 * m.m10) * detInv);
    }
 
+   /**
+    * Tests to see if a matrix is the identity matrix.
+    * 
+    * @param m
+    *           the matrix
+    * @return the evaluation
+    */
    public static boolean isIdentity ( final Mat3 m ) {
 
       return m.m22 == 1.0f && m.m11 == 1.0f && m.m00 == 1.0f &&
@@ -279,7 +451,18 @@ public class Mat3 extends Matrix {
             m.m12 == 0.0f && m.m20 == 0.0f && m.m21 == 0.0f;
    }
 
-   public static Mat3 mult (
+   /**
+    * Multiplies all components of a matrix by a scalar.
+    * 
+    * @param a
+    *           the scalar
+    * @param b
+    *           the matrix
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
+   public static Mat3 mul (
          final float a,
          final Mat3 b,
          final Mat3 target ) {
@@ -287,14 +470,25 @@ public class Mat3 extends Matrix {
       if (a == 0.0f) {
          return Mat3.identity(target);
       }
-      
+
       return target.set(
             a * b.m00, a * b.m01, a * b.m02,
             a * b.m10, a * b.m11, a * b.m12,
             a * b.m20, a * b.m21, a * b.m22);
    }
 
-   public static Mat3 mult (
+   /**
+    * Multiplies all components of a matrix by a scalar.
+    * 
+    * @param a
+    *           the matrix
+    * @param b
+    *           the scalar
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
+   public static Mat3 mul (
          final Mat3 a,
          final float b,
          final Mat3 target ) {
@@ -302,14 +496,25 @@ public class Mat3 extends Matrix {
       if (b == 0.0f) {
          return Mat3.identity(target);
       }
-      
+
       return target.set(
             a.m00 * b, a.m01 * b, a.m02 * b,
             a.m10 * b, a.m11 * b, a.m12 * b,
             a.m20 * b, a.m21 * b, a.m22 * b);
    }
 
-   public static Mat3 mult (
+   /**
+    * Multiplies two matrices by component.
+    * 
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output matrix
+    * @return the product
+    */
+   public static Mat3 mul (
          final Mat3 a,
          final Mat3 b,
          final Mat3 target ) {
@@ -328,7 +533,22 @@ public class Mat3 extends Matrix {
             a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22);
    }
 
-   public static Mat3 mult (
+   /**
+    * Multiplies three matrices by component. Useful for
+    * composing an affine transform from translation, rotation
+    * and scale matrices.
+    *
+    * @param a
+    *           the first matrix
+    * @param b
+    *           the second matrix
+    * @param c
+    *           the third matrix
+    * @param target
+    *           the output matrix
+    * @return the product
+    */
+   public static Mat3 mul (
          final Mat3 a,
          final Mat3 b,
          final Mat3 c,
@@ -360,61 +580,47 @@ public class Mat3 extends Matrix {
             n20 * c.m02 + n21 * c.m12 + n22 * c.m22);
    }
 
-   public static Vec3 mult (
-         final Mat3 m,
-         final Vec3 source,
+   /**
+    * Multiplies a matrix and a vector.
+    * 
+    * @param a
+    *           the matrix
+    * @param b
+    *           the vector
+    * @param target
+    *           the output vector
+    * @return the product
+    */
+   public static Vec3 mul (
+         final Mat3 a,
+         final Vec3 b,
          final Vec3 target ) {
 
       return target.set(
-            m.m00 * source.x +
-                  m.m01 * source.y +
-                  m.m02 * source.z,
+            a.m00 * b.x +
+                  a.m01 * b.y +
+                  a.m02 * b.z,
 
-            m.m10 * source.x +
-                  m.m11 * source.y +
-                  m.m12 * source.z,
+            a.m10 * b.x +
+                  a.m11 * b.y +
+                  a.m12 * b.z,
 
-            m.m20 * source.x +
-                  m.m21 * source.y +
-                  m.m22 * source.z);
+            a.m20 * b.x +
+                  a.m21 * b.y +
+                  a.m22 * b.z);
    }
 
-   public static Vec2 multPoint (
-         final Mat3 m,
-         final Vec2 source,
-         final Vec2 target ) {
-
-      // TODO: Divide by w ?
-
-      target.set(
-            m.m00 * source.x +
-                  m.m01 * source.y +
-                  m.m02,
-
-            m.m10 * source.x +
-                  m.m11 * source.y +
-                  m.m12);
-
-      return target;
-   }
-
-   public static Vec2 multVector (
-         final Mat3 m,
-         final Vec2 source,
-         final Vec2 target ) {
-
-      // TODO: Divide by w ?
-
-      target.set(
-            m.m00 * source.x +
-                  m.m01 * source.y,
-
-            m.m10 * source.x +
-                  m.m11 * source.y);
-
-      return target;
-   }
-
+   /**
+    * Subtracts the right matrix from the left matrix.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output matrix
+    * @return the result
+    */
    public static Mat3 sub (
          final Mat3 a,
          final Mat3 b,
@@ -426,6 +632,16 @@ public class Mat3 extends Matrix {
             a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22);
    }
 
+   /**
+    * Transposes a matrix, switching its row and column
+    * indices.
+    *
+    * @param m
+    *           the matrix
+    * @param target
+    *           the output matrix
+    * @return the tranposed matrix
+    */
    public static Mat3 transpose (
          final Mat3 m,
          final Mat3 target ) {
@@ -776,6 +992,20 @@ public class Mat3 extends Matrix {
             0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Sets the two axis columns of this matrix. The last row
+    * and column are set to (0.0, 0.0, 1.0).
+    *
+    * @param m00
+    *           row 0, column 0
+    * @param m01
+    *           row 0, column 1
+    * @param m10
+    *           row 1, column 0
+    * @param m11
+    *           row 1, column 1
+    * @return this matrix
+    */
    @Chainable
    public Mat3 set (
          final float m00, final float m01,
@@ -787,6 +1017,24 @@ public class Mat3 extends Matrix {
             0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Sets the upper two rows of this matrix. The last row is
+    * set to (0.0, 0.0, 1.0).
+    *
+    * @param m00
+    *           row 0, column 0
+    * @param m01
+    *           row 0, column 1
+    * @param m02
+    *           row 0, column 2
+    * @param m10
+    *           row 1, column 0
+    * @param m11
+    *           row 1, column 1
+    * @param m12
+    *           row 1, column 2
+    * @return this matrix
+    */
    @Chainable
    public Mat3 set (
          final float m00, final float m01, final float m02,
@@ -798,6 +1046,29 @@ public class Mat3 extends Matrix {
             0.0f, 0.0f, 1.0f);
    }
 
+   /**
+    * Sets the components of this matrix.
+    *
+    * @param m00
+    *           row 0, column 0
+    * @param m01
+    *           row 0, column 1
+    * @param m02
+    *           row 0, column 2
+    * @param m10
+    *           row 1, column 0
+    * @param m11
+    *           row 1, column 1
+    * @param m12
+    *           row 1, column 2
+    * @param m20
+    *           row 2, column 0
+    * @param m21
+    *           row 2, column 1
+    * @param m22
+    *           row 2, column 2
+    * @return this matrix
+    */
    @Chainable
    public Mat3 set (
          final float m00, final float m01, final float m02,
@@ -819,6 +1090,13 @@ public class Mat3 extends Matrix {
       return this;
    }
 
+   /**
+    * Copies the components of the input matrix to this matrix.
+    *
+    * @param source
+    *           the input matrix
+    * @return this matrix
+    */
    @Chainable
    public Mat3 set ( final Mat3 source ) {
 
@@ -828,6 +1106,18 @@ public class Mat3 extends Matrix {
             source.m20, source.m21, source.m22);
    }
 
+   /**
+    * Sets a column of this matrix with an index and vector. If
+    * the column is an axis vector, the w or z component is set
+    * to 0.0; if it is a translation, the w or z component is
+    * set to 1.0.
+    *
+    * @param j
+    *           the column index
+    * @param source
+    *           the column
+    * @return this matrix
+    */
    public Mat3 setCol ( final int j, final Vec2 source ) {
 
       switch (j) {
@@ -854,6 +1144,15 @@ public class Mat3 extends Matrix {
       }
    }
 
+   /**
+    * Sets a column of this matrix with an index and vector.
+    *
+    * @param j
+    *           the column index
+    * @param source
+    *           the column
+    * @return this matrix
+    */
    public Mat3 setCol ( final int j, final Vec3 source ) {
 
       switch (j) {
@@ -880,6 +1179,12 @@ public class Mat3 extends Matrix {
       }
    }
 
+   /**
+    * Returns a float array of length 9 containing this
+    * matrix's components.
+    *
+    * @return the array
+    */
    @Override
    public float[] toArray () {
 
@@ -889,12 +1194,24 @@ public class Mat3 extends Matrix {
             this.m20, this.m21, this.m22 };
    }
 
+   /**
+    * Returns a string representation of this matrix.
+    *
+    * @return the string
+    */
    @Override
    public String toString () {
 
       return this.toString(4);
    }
 
+   /**
+    * Returns a string representation of this matrix.
+    *
+    * @param places
+    *           number of decimal places
+    * @return the string
+    */
    public String toString ( final int places ) {
 
       return new StringBuilder()
@@ -924,11 +1241,26 @@ public class Mat3 extends Matrix {
             .toString();
    }
 
+   /**
+    * Returns a string representation of this matrix, where
+    * columns are separated by tabs and rows are separated by
+    * new lines.
+    *
+    * @return the string
+    */
    public String toStringTab () {
 
       return this.toStringTab(4);
    }
 
+   /**
+    * Returns a string representation of this matrix intended
+    * for display in the console.
+    *
+    * @param places
+    *           number of decimal places
+    * @return the string
+    */
    public String toStringTab ( final int places ) {
 
       return new StringBuilder()

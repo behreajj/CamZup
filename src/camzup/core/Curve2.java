@@ -604,9 +604,9 @@ public class Curve2 extends Curve
       @Chainable
       public Knot2 scale ( final float scale ) {
 
-         Vec2.mult(this.coord, scale, this.coord);
-         Vec2.mult(this.foreHandle, scale, this.foreHandle);
-         Vec2.mult(this.rearHandle, scale, this.rearHandle);
+         Vec2.mul(this.coord, scale, this.coord);
+         Vec2.mul(this.foreHandle, scale, this.foreHandle);
+         Vec2.mul(this.rearHandle, scale, this.rearHandle);
          return this;
       }
 
@@ -620,9 +620,9 @@ public class Curve2 extends Curve
       @Chainable
       public Knot2 scale ( final Vec2 scale ) {
 
-         Vec2.mult(this.coord, scale, this.coord);
-         Vec2.mult(this.foreHandle, scale, this.foreHandle);
-         Vec2.mult(this.rearHandle, scale, this.rearHandle);
+         Vec2.mul(this.coord, scale, this.coord);
+         Vec2.mul(this.foreHandle, scale, this.foreHandle);
+         Vec2.mul(this.rearHandle, scale, this.rearHandle);
          return this;
       }
 
@@ -644,7 +644,7 @@ public class Curve2 extends Curve
             final Vec2 temp1 ) {
 
          Vec2.sub(this.foreHandle, this.coord, temp0);
-         Vec2.mult(temp0, scalar, temp1);
+         Vec2.mul(temp0, scalar, temp1);
          Vec2.add(temp1, this.coord, this.foreHandle);
          return this;
       }
@@ -667,7 +667,7 @@ public class Curve2 extends Curve
             final Vec2 temp1 ) {
 
          Vec2.subNorm(this.foreHandle, this.coord, temp0);
-         Vec2.mult(temp0, magnitude, temp1);
+         Vec2.mul(temp0, magnitude, temp1);
          Vec2.add(temp1, this.coord, this.foreHandle);
          return this;
       }
@@ -742,7 +742,7 @@ public class Curve2 extends Curve
             final Vec2 temp1 ) {
 
          Vec2.sub(this.rearHandle, this.coord, temp0);
-         Vec2.mult(temp0, scalar, temp1);
+         Vec2.mul(temp0, scalar, temp1);
          Vec2.add(temp1, this.coord, this.rearHandle);
          return this;
       }
@@ -765,7 +765,7 @@ public class Curve2 extends Curve
             final Vec2 temp1 ) {
 
          Vec2.subNorm(this.rearHandle, this.coord, temp0);
-         Vec2.mult(temp0, magnitude, temp1);
+         Vec2.mul(temp0, magnitude, temp1);
          Vec2.add(temp1, this.coord, this.rearHandle);
          return this;
       }
@@ -1106,8 +1106,8 @@ public class Curve2 extends Curve
        * corner) by the radius-tangent. Then, subtract the product
        * from the corner.
        */
-      Vec2.sub(corner, Vec2.mult(diff0, rtanHalf, fh1), corner0);
-      Vec2.sub(corner, Vec2.mult(diff1, rtanHalf, rh1), corner1);
+      Vec2.sub(corner, Vec2.mul(diff0, rtanHalf, fh1), corner0);
+      Vec2.sub(corner, Vec2.mul(diff1, rtanHalf, rh1), corner1);
 
       /* Set rounded-corner handles. */
       Curve2.lerp13(corner, corner0, fh0);
@@ -1962,7 +1962,7 @@ public class Curve2 extends Curve
     * @see Vec2#sub(Vec2, Vec2, Vec2)
     * @see Vec2#normalize(Vec2, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
-    * @see Vec2#mult(Vec2, float, Vec2)
+    * @see Vec2#mul(Vec2, float, Vec2)
     * @see Vec2#rescale(Vec2, float, Vec2)
     */
    public static Curve2 smoothHandles ( final Curve2 target ) {
@@ -2038,10 +2038,10 @@ public class Curve2 extends Curve
 
          Vec2.rescale(dir2, IUtils.ONE_THIRD, dir0);
 
-         Vec2.mult(dir0, backDist, backRescale);
+         Vec2.mul(dir0, backDist, backRescale);
          Vec2.add(backRescale, currCoord, knot.rearHandle);
 
-         Vec2.mult(dir0, foreDist, forRescale);
+         Vec2.mul(dir0, foreDist, forRescale);
          Vec2.add(forRescale, currCoord, knot.foreHandle);
       }
 

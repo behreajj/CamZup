@@ -385,7 +385,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     *           the conjugate
     * @return the quotient
     * @see Complex#inverse(Complex, Complex, Complex)
-    * @see Complex#mult(Complex, Complex, Complex)
+    * @see Complex#mul(Complex, Complex, Complex)
     */
    public static Complex div (
          final Complex a,
@@ -395,7 +395,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex conj ) {
 
       Complex.inverse(b, inverse, conj);
-      return Complex.mult(a, inverse, target);
+      return Complex.mul(a, inverse, target);
    }
 
    /**
@@ -673,7 +673,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     *           the output complex number
     * @return the product
     */
-   public static Complex mult (
+   public static Complex mul (
          final Complex a,
          final Complex b,
          final Complex target ) {
@@ -694,7 +694,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     *           the output complex number
     * @return the product
     */
-   public static Complex mult (
+   public static Complex mul (
          final Complex a,
          final float b,
          final Complex target ) {
@@ -713,7 +713,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     *           the output complex number
     * @return the product
     */
-   public static Complex mult (
+   public static Complex mul (
          final float a,
          final Complex b,
          final Complex target ) {
@@ -783,7 +783,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     *           the log
     * @return the result
     * @see Complex#exp(Complex, Complex)
-    * @see Complex#mult(Complex, Complex, Complex)
+    * @see Complex#mul(Complex, Complex, Complex)
     * @see Complex#log(Complex, Complex)
     */
    public static Complex pow (
@@ -793,7 +793,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex prod,
          final Complex log ) {
 
-      return Complex.exp(Complex.mult(b, Complex.log(a, log), prod), target);
+      return Complex.exp(Complex.mul(b, Complex.log(a, log), prod), target);
    }
 
    /**
