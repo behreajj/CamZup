@@ -170,6 +170,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     */
    public static float abs ( final Complex z ) {
 
+      // return (float) Math.hypot(z.real, z.imag);
       return (float) Math.sqrt(Complex.absSq(z));
    }
 

@@ -11,6 +11,7 @@ public abstract class Matrix implements IMatrix {
       this.size = size;
    }
 
+   @Override
    public int size () {
 
       return this.size;

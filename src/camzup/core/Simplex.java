@@ -125,8 +125,8 @@ public abstract class Simplex {
    private static final Vec3 ROT_3;
 
    /**
-    * sqrt(2.0d) / Math.sqrt(3.0d) Used by rotation look up
-    * tables.
+    * sqrt(2.0) / Math.sqrt(3.0) Used by rotation look up
+    * tables. Approximately 0.8164966 .
     */
    private static final float RT2_RT3 = 0.816496580927726f;
 
@@ -1654,8 +1654,10 @@ public abstract class Simplex {
          final float radians,
          final int seed ) {
 
-      return Simplex.flow(x, y, z, (float) Math.cos(radians),
-            (float) Math.sin(radians), seed, (Vec3) null);
+      return Simplex.flow(x, y, z,
+            (float) Math.cos(radians),
+            (float) Math.sin(radians),
+            seed, (Vec3) null);
    }
 
    /**
@@ -1802,9 +1804,9 @@ public abstract class Simplex {
          final Vec3 deriv ) {
 
       return Simplex.flow(
-            x, y, z, 
+            x, y, z,
             (float) Math.cos(radians),
-            (float) Math.sin(radians), 
+            (float) Math.sin(radians),
             seed, deriv);
    }
 
@@ -1829,9 +1831,9 @@ public abstract class Simplex {
          final int seed ) {
 
       return Simplex.flow(
-            x, y, 
+            x, y,
             (float) Math.cos(radians),
-            (float) Math.sin(radians), 
+            (float) Math.sin(radians),
             seed, (Vec2) null);
    }
 
@@ -1859,9 +1861,9 @@ public abstract class Simplex {
          final Vec2 deriv ) {
 
       return Simplex.flow(
-            x, y, 
+            x, y,
             (float) Math.cos(radians),
-            (float) Math.sin(radians), 
+            (float) Math.sin(radians),
             seed, deriv);
    }
 
@@ -1968,7 +1970,7 @@ public abstract class Simplex {
          final int seed,
          final Vec2 target ) {
 
-      return Simplex.noise(v, seed, target, 
+      return Simplex.noise(v, seed, target,
             null, null);
    }
 
@@ -2028,7 +2030,7 @@ public abstract class Simplex {
          final int seed,
          final Vec3 target ) {
 
-      return Simplex.noise(v, seed, target, 
+      return Simplex.noise(v, seed, target,
             null, null, null);
    }
 

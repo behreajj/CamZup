@@ -2,6 +2,14 @@ package camzup.core;
 
 import java.util.Iterator;
 
+/**
+ * A mutable, extensible class influenced by GLSL, OSL and
+ * Processing's PMatrix3D. ALthough this is a 3 x 3 matrix,
+ * it is generally assumed to be a 2D affine transform
+ * matrix, where the last row is (0.0, 0.0, 1.0) . Instance
+ * methods are limited, while most static methods require an
+ * explicit output variable to be provided.
+ */
 public class Mat3 extends Matrix {
 
    /**
@@ -109,61 +117,9 @@ public class Mat3 extends Matrix {
    }
 
    /**
-    * Divides a scalar by a matrix. Equivalent to multiplying
-    * the numerator and the inverse of the denominator.
-    * 
-    * @param a
-    *           scalar, numerator
-    * @param b
-    *           matrix, denominator
-    * @param target
-    *           the output matrix
-    * @param inverse
-    *           the inverse matrix
-    * @return the quotient
-    * @see Mat3#mul(float, Mat3, Mat3)
-    * @see Mat3#inverse
-    */
-   public static Mat3 div (
-         final float a,
-         final Mat3 b,
-         final Mat3 target,
-         final Mat3 inverse ) {
-
-      return Mat3.mul(a, Mat3.inverse(b, inverse), target);
-   }
-
-   /**
-    * Divides a matrix by a scalar.
-    * 
-    * @param a
-    *           matrix, numerator
-    * @param b
-    *           scalar, denominator
-    * @param target
-    *           the output matrix
-    * @return the quotient
-    */
-   public static Mat3 div (
-         final Mat3 a,
-         final float b,
-         final Mat3 target ) {
-
-      if (b == 0.0f) {
-         return Mat3.identity(target);
-      }
-
-      final float bInv = 1.0f / b;
-      return target.set(
-            a.m00 * bInv, a.m01 * bInv, a.m02 * bInv,
-            a.m10 * bInv, a.m11 * bInv, a.m12 * bInv,
-            a.m20 * bInv, a.m21 * bInv, a.m22 * bInv);
-   }
-
-   /**
     * Divides one matrix by another. Equivalent to multiplying
     * the numerator and the inverse of the denominator.
-    * 
+    *
     * @param a
     *           numerator
     * @param b
@@ -188,7 +144,7 @@ public class Mat3 extends Matrix {
    /**
     * Creates a matrix from two axes. The third row and column
     * are assumed to be (0.0, 0.0, 1.0).
-    * 
+    *
     * @param right
     *           the right axis
     * @param forward
@@ -211,7 +167,7 @@ public class Mat3 extends Matrix {
    /**
     * Creates a matrix from two axes and a translation. The
     * third row, z or w, is assumed to be (0.0, 0.0, 1.0).
-    * 
+    *
     * @param right
     *           the right axis
     * @param forward
@@ -237,7 +193,7 @@ public class Mat3 extends Matrix {
    /**
     * Creates a matrix from two axes. The third column,
     * translation, is assumed to be (0.0, 0.0, 1.0).
-    * 
+    *
     * @param right
     *           the right axis
     * @param forward
@@ -259,7 +215,7 @@ public class Mat3 extends Matrix {
 
    /**
     * Creates a matrix from two axes and a translation.
-    * 
+    *
     * @param right
     *           the right axis
     * @param forward
@@ -285,7 +241,7 @@ public class Mat3 extends Matrix {
    /**
     * Creates a rotation matrix from a cosine and sine around
     * the z axis.
-    * 
+    *
     * @param cosa
     *           the cosine of an angle
     * @param sina
@@ -308,7 +264,7 @@ public class Mat3 extends Matrix {
    /**
     * Creates a rotation matrix from an angle in radians around
     * the z axis.
-    * 
+    *
     * @param radians
     *           the angle
     * @param target
@@ -328,7 +284,7 @@ public class Mat3 extends Matrix {
    /**
     * Creates a scale matrix from a scalar. The bottom right
     * corner, m22, is set to 1.0 .
-    * 
+    *
     * @param scalar
     *           the scalar
     * @param target
@@ -348,7 +304,7 @@ public class Mat3 extends Matrix {
    /**
     * Creates a scale matrix from a nonuniform scalar, stored
     * in a vector.
-    * 
+    *
     * @param scalar
     *           the nonuniform scalar
     * @param target
@@ -367,7 +323,7 @@ public class Mat3 extends Matrix {
 
    /**
     * Creates a translation matrix from a vector.
-    * 
+    *
     * @param translation
     *           the translation
     * @param target
@@ -405,7 +361,7 @@ public class Mat3 extends Matrix {
 
    /**
     * Inverts the input matrix.
-    * 
+    *
     * @param m
     *           the matrix
     * @param target
@@ -439,7 +395,7 @@ public class Mat3 extends Matrix {
 
    /**
     * Tests to see if a matrix is the identity matrix.
-    * 
+    *
     * @param m
     *           the matrix
     * @return the evaluation
@@ -452,60 +408,8 @@ public class Mat3 extends Matrix {
    }
 
    /**
-    * Multiplies all components of a matrix by a scalar.
-    * 
-    * @param a
-    *           the scalar
-    * @param b
-    *           the matrix
-    * @param target
-    *           the output matrix
-    * @return the matrix
-    */
-   public static Mat3 mul (
-         final float a,
-         final Mat3 b,
-         final Mat3 target ) {
-
-      if (a == 0.0f) {
-         return Mat3.identity(target);
-      }
-
-      return target.set(
-            a * b.m00, a * b.m01, a * b.m02,
-            a * b.m10, a * b.m11, a * b.m12,
-            a * b.m20, a * b.m21, a * b.m22);
-   }
-
-   /**
-    * Multiplies all components of a matrix by a scalar.
-    * 
-    * @param a
-    *           the matrix
-    * @param b
-    *           the scalar
-    * @param target
-    *           the output matrix
-    * @return the matrix
-    */
-   public static Mat3 mul (
-         final Mat3 a,
-         final float b,
-         final Mat3 target ) {
-
-      if (b == 0.0f) {
-         return Mat3.identity(target);
-      }
-
-      return target.set(
-            a.m00 * b, a.m01 * b, a.m02 * b,
-            a.m10 * b, a.m11 * b, a.m12 * b,
-            a.m20 * b, a.m21 * b, a.m22 * b);
-   }
-
-   /**
     * Multiplies two matrices by component.
-    * 
+    *
     * @param a
     *           the left operand
     * @param b
@@ -582,7 +486,7 @@ public class Mat3 extends Matrix {
 
    /**
     * Multiplies a matrix and a vector.
-    * 
+    *
     * @param a
     *           the matrix
     * @param b
@@ -610,6 +514,58 @@ public class Mat3 extends Matrix {
                   a.m22 * b.z);
    }
 
+//   public static Mat3 rotateZ (
+//         final Mat3 m,
+//         final float cosa,
+//         final float sina,
+//         final Mat3 target ) {
+//
+//      final float n00 = cosa * m.m00 + sina * m.m01;
+//      final float n01 = -sina * m.m00 + cosa * m.m01;
+//
+//      final float n10 = cosa * m.m10 + sina * m.m11;
+//      final float n11 = -sina * m.m10 + cosa * m.m11;
+//
+//      return target.set(
+//            n00, n01, m.m02,
+//            n10, n11, m.m12,
+//            m.m20, m.m12, m.m22);
+//   }
+
+//   public static Mat3 rotateZ (
+//         final Mat3 m,
+//         final float radians,
+//         final Mat3 target ) {
+//
+//      return Mat3.rotateZ(
+//            m,
+//            (float) Math.cos(radians),
+//            (float) Math.sin(radians),
+//            target);
+//   }
+
+//   public static Mat3 scale (
+//         final Mat3 a,
+//         final float b,
+//         final Mat3 target ) {
+//
+//      return target.set(
+//            a.m00 * b, a.m01 * b, a.m02,
+//            a.m10 * b, a.m11 * b, a.m12,
+//            a.m20 * b, a.m21 * b, a.m22);
+//   }
+
+//   public static Mat3 scale (
+//         final Mat3 a,
+//         final Vec2 b,
+//         final Mat3 target ) {
+//
+//      return target.set(
+//            a.m00 * b.x, a.m01 * b.y, a.m02,
+//            a.m10 * b.x, a.m11 * b.y, a.m12,
+//            a.m20 * b.x, a.m21 * b.y, a.m22);
+//   }
+
    /**
     * Subtracts the right matrix from the left matrix.
     *
@@ -631,6 +587,20 @@ public class Mat3 extends Matrix {
             a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12,
             a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22);
    }
+
+//   public static Mat3 translate (
+//         final Mat3 a,
+//         final Vec2 b,
+//         final Mat3 target ) {
+//
+//      final float n02 = a.m02 + b.x * a.m00 + b.y * a.m01;
+//      final float n12 = a.m12 + b.x * a.m10 + b.y * a.m11;
+//
+//      return target.set(
+//            a.m00, a.m01, n02,
+//            a.m10, a.m11, n12,
+//            a.m20, a.m21, a.m22);
+//   }
 
    /**
     * Transposes a matrix, switching its row and column
@@ -703,11 +673,26 @@ public class Mat3 extends Matrix {
     */
    public float m22 = 1.0f;
 
+   /**
+    * The default constructor. Creates an identity matrix.
+    */
    public Mat3 () {
 
       super(9);
    }
 
+   /**
+    * Constructs a matrix from float values.
+    *
+    * @param m00
+    *           row 0, column 0
+    * @param m01
+    *           row 0, column 1
+    * @param m10
+    *           row 1, column 0
+    * @param m11
+    *           row 1, column 1
+    */
    public Mat3 (
          final float m00, final float m01,
          final float m10, final float m11 ) {
@@ -716,6 +701,22 @@ public class Mat3 extends Matrix {
       this.set(m00, m01, m10, m11);
    }
 
+   /**
+    * Constructs a matrix from float values.
+    *
+    * @param m00
+    *           row 0, column 0
+    * @param m01
+    *           row 0, column 1
+    * @param m02
+    *           row 0, column 2
+    * @param m10
+    *           row 1, column 0
+    * @param m11
+    *           row 1, column 1
+    * @param m12
+    *           row 1, column 2
+    */
    public Mat3 (
          final float m00, final float m01, final float m02,
          final float m10, final float m11, final float m12 ) {
@@ -726,6 +727,28 @@ public class Mat3 extends Matrix {
             m10, m11, m12);
    }
 
+   /**
+    * Constructs a matrix from float values.
+    *
+    * @param m00
+    *           row 0, column 0
+    * @param m01
+    *           row 0, column 1
+    * @param m02
+    *           row 0, column 2
+    * @param m10
+    *           row 1, column 0
+    * @param m11
+    *           row 1, column 1
+    * @param m12
+    *           row 1, column 2
+    * @param m20
+    *           row 2, column 0
+    * @param m21
+    *           row 2, column 1
+    * @param m22
+    *           row 2, column 2
+    */
    public Mat3 (
          final float m00, final float m01, final float m02,
          final float m10, final float m11, final float m12,
@@ -738,47 +761,68 @@ public class Mat3 extends Matrix {
             m20, m21, m22);
    }
 
+   /**
+    * Constructs a matrix from a source matrix's components.
+    *
+    * @param source
+    *           the source matrix
+    */
    public Mat3 ( final Mat3 source ) {
 
       super(9);
       this.set(source);
    }
 
-   protected boolean equals ( final Mat3 m ) {
+   /**
+    * Tests for equivalence between this and another matrix.
+    *
+    * @param n
+    *           the matrix
+    * @return the evaluation
+    * @see Float#floatToIntBits(float)
+    */
+   protected boolean equals ( final Mat3 n ) {
 
-      if (Float.floatToIntBits(this.m00) != Float.floatToIntBits(m.m00)) {
+      if (Float.floatToIntBits(this.m00) != Float.floatToIntBits(n.m00)) {
          return false;
       }
-      if (Float.floatToIntBits(this.m01) != Float.floatToIntBits(m.m01)) {
+      if (Float.floatToIntBits(this.m01) != Float.floatToIntBits(n.m01)) {
          return false;
       }
-      if (Float.floatToIntBits(this.m02) != Float.floatToIntBits(m.m02)) {
-         return false;
-      }
-
-      if (Float.floatToIntBits(this.m10) != Float.floatToIntBits(m.m10)) {
-         return false;
-      }
-      if (Float.floatToIntBits(this.m11) != Float.floatToIntBits(m.m11)) {
-         return false;
-      }
-      if (Float.floatToIntBits(this.m12) != Float.floatToIntBits(m.m12)) {
+      if (Float.floatToIntBits(this.m02) != Float.floatToIntBits(n.m02)) {
          return false;
       }
 
-      if (Float.floatToIntBits(this.m20) != Float.floatToIntBits(m.m20)) {
+      if (Float.floatToIntBits(this.m10) != Float.floatToIntBits(n.m10)) {
          return false;
       }
-      if (Float.floatToIntBits(this.m21) != Float.floatToIntBits(m.m21)) {
+      if (Float.floatToIntBits(this.m11) != Float.floatToIntBits(n.m11)) {
          return false;
       }
-      if (Float.floatToIntBits(this.m22) != Float.floatToIntBits(m.m22)) {
+      if (Float.floatToIntBits(this.m12) != Float.floatToIntBits(n.m12)) {
+         return false;
+      }
+
+      if (Float.floatToIntBits(this.m20) != Float.floatToIntBits(n.m20)) {
+         return false;
+      }
+      if (Float.floatToIntBits(this.m21) != Float.floatToIntBits(n.m21)) {
+         return false;
+      }
+      if (Float.floatToIntBits(this.m22) != Float.floatToIntBits(n.m22)) {
          return false;
       }
 
       return true;
    }
 
+   /**
+    * Returns a new matrix with this matrix's components.
+    * Java's cloneable interface is problematic; use set or a
+    * copy constructor instead.
+    *
+    * @return a new matrix
+    */
    @Override
    public Mat3 clone () {
 
@@ -788,6 +832,14 @@ public class Mat3 extends Matrix {
             this.m20, this.m21, this.m22);
    }
 
+   /**
+    * Tests this matrix for equivalence with another object.
+    *
+    * @param obj
+    *           the object
+    * @return the equivalence
+    * @see Mat3#equals(Mat3)
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
@@ -806,6 +858,15 @@ public class Mat3 extends Matrix {
       return this.equals((Mat3) obj);
    }
 
+   /**
+    * Simulates bracket subscript access in a one-dimensional,
+    * row-major matrix array. Works with positive integers in
+    * [0, 8] or negative integers in [-9, -1].
+    *
+    * @param index
+    *           the index
+    * @return the component at that index
+    */
    @Override
    public float get ( final int index ) {
 
@@ -852,6 +913,17 @@ public class Mat3 extends Matrix {
       }
    }
 
+   /**
+    * Simulates bracket subscript access in a two-dimensional,
+    * row-major matrix array. Works with positive integers in
+    * [0, 2][0, 2] or negative integers in [-3, -1][-3, -1].
+    *
+    * @param i
+    *           the row index
+    * @param j
+    *           the column index
+    * @return the component at that index
+    */
    @Override
    public float get ( final int i, final int j ) {
 
@@ -912,6 +984,17 @@ public class Mat3 extends Matrix {
       }
    }
 
+   /**
+    * Gets a column of this matrix with an index and vector.
+    * The last row of the matrix is assumed to be 0.0, 0.0, 1.0
+    * .
+    *
+    * @param j
+    *           the index
+    * @param target
+    *           the vector
+    * @return the column
+    */
    public Vec2 getCol ( final int j, final Vec2 target ) {
 
       switch (j) {
@@ -929,6 +1012,15 @@ public class Mat3 extends Matrix {
       }
    }
 
+   /**
+    * Gets a column of this matrix with an index and vector.
+    *
+    * @param j
+    *           the index
+    * @param target
+    *           the vector
+    * @return the column
+    */
    public Vec3 getCol ( final int j, final Vec3 target ) {
 
       switch (j) {
@@ -946,6 +1038,13 @@ public class Mat3 extends Matrix {
       }
    }
 
+   /**
+    * Returns a hash code for this matrix based on its 16
+    * components.
+    *
+    * @return the hash code
+    * @see Float#floatToIntBits(float)
+    */
    @Override
    public int hashCode () {
 
@@ -967,6 +1066,12 @@ public class Mat3 extends Matrix {
       return result;
    }
 
+   /**
+    * Returns an iterator for this matrix, which allows its
+    * components to be accessed in an enhanced for-loop.
+    *
+    * @return the iterator
+    */
    @Override
    public M3Iterator iterator () {
 
@@ -1140,7 +1245,7 @@ public class Mat3 extends Matrix {
             this.m22 = 1.0f;
             return this;
          default:
-            return this.reset();
+            return this;
       }
    }
 
@@ -1175,7 +1280,7 @@ public class Mat3 extends Matrix {
             this.m22 = source.z;
             return this;
          default:
-            return this.reset();
+            return this;
       }
    }
 

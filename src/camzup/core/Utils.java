@@ -815,7 +815,9 @@ public abstract class Utils implements IUtils {
     * @return the evaluation
     * @see Utils#diff(float, float)
     */
-   public static boolean approxFast ( final float a, final float b,
+   public static boolean approxFast (
+         final float a,
+         final float b,
          final float tolerance ) {
 
       final float diff = b - a;
@@ -969,7 +971,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Clamps a value to a lower and an upper bound.
+    * Clamps a value between a lower and an upper bound.
     *
     * @param value
     *           the input value
@@ -999,6 +1001,18 @@ public abstract class Utils implements IUtils {
    public static float clamp01 ( final float value ) {
 
       return value < 0.0f ? 0.0f : value > 1.0f ? 1.0f : value;
+   }
+
+   /**
+    * Converts an angle in radians to an angle in degrees.
+    *
+    * @param radians
+    *           the angle in radians
+    * @return the angle in degrees
+    */
+   public static float degrees ( final float radians ) {
+
+      return IUtils.RAD_TO_DEG * radians;
    }
 
    /**
@@ -1107,8 +1121,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Applies the modulo operator (%) to the operands, which
-    * implicitly uses the formula fmod ( a, b ) := a - b *
-    * trunc ( a / b ) .
+    * implicitly uses the formula fmod ( a, b ) := a - b trunc
+    * ( a / b ) .
     *
     * When the left operand is negative and the right operand
     * is positive, the result will be negative. For periodic
@@ -1211,7 +1225,7 @@ public abstract class Utils implements IUtils {
    /**
     * Linear interpolation from the origin to the destination
     * value by a step. Does not check to see if the step is
-    * beyond the range [0.0, 1.0].
+    * beyond the range [0.0, 1.0] .
     *
     * @param origin
     *           the origin value
@@ -1415,7 +1429,7 @@ public abstract class Utils implements IUtils {
 
    /**
     * A specialized version of mod which shifts an angle in
-    * radians to the range [0, \u03c4].
+    * radians to the range [0, \u03c4] .
     *
     * @param radians
     *           the angle in radians
@@ -1519,6 +1533,18 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * Converts an angle in degrees to an angle in radians.
+    *
+    * @param degrees
+    *           the angle in degrees
+    * @return the angle in radians
+    */
+   public static float radians ( final float degrees ) {
+
+      return IUtils.DEG_TO_RAD * degrees;
+   }
+
+   /**
     * An alternative to the {@link Math#signum(float)}
     * function.
     *
@@ -1538,7 +1564,7 @@ public abstract class Utils implements IUtils {
 
    /**
     * Eases between an origin and destination by a step in
-    * [0.0, 1.0].
+    * [0.0, 1.0] .
     *
     * @param origin
     *           the origin
@@ -1567,7 +1593,7 @@ public abstract class Utils implements IUtils {
 
    /**
     * Eases between an origin and destination by a step in
-    * [0.0, 1.0].
+    * [0.0, 1.0] .
     *
     * @param origin
     *           the origin

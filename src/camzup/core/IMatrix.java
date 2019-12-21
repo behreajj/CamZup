@@ -10,6 +10,7 @@ public interface IMatrix
 
    float get ( final int i, final int j );
 
+   @Override
    Iterator < Float > iterator ();
 
    int size ();

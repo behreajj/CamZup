@@ -221,7 +221,7 @@ public class Transform2 extends Transform {
 
       return target;
    }
-
+   
    /**
     * Gets the string representation of the default easing
     * function.
@@ -294,7 +294,9 @@ public class Transform2 extends Transform {
     * @return the location delta
     * @see Vec2#sub(Vec2, Vec2, Vec2)
     */
-   public static Vec2 locDelta ( final Transform2 t, final Vec2 target ) {
+   public static Vec2 locDelta ( 
+         final Transform2 t, 
+         final Vec2 target ) {
 
       return Vec2.sub(t.location, t.locPrev, target);
    }
@@ -325,6 +327,20 @@ public class Transform2 extends Transform {
       return Utils.min(t.scale.x, t.scale.y);
    }
 
+   /**
+    * Mixes two transforms together by a step in [0.0, 1.0] .
+    * 
+    * @param origin
+    *           the original transform
+    * @param dest
+    *           the destination transform
+    * @param step
+    *           the step
+    * @param target
+    *           the output transform
+    * @return the mix
+    * @see Transform3#EASING
+    */
    public static Transform2 mix (
          final Transform2 origin,
          final Transform2 dest,
@@ -439,14 +455,6 @@ public class Transform2 extends Transform {
       return Vec2.sub(t.scale, t.scalePrev, target);
    }
 
-   /*
-    * cosa needs to be initialized to 1, not 0, because cos(0)
-    * is 1 and because multPoint uses cosa and sina for
-    * efficiency; if the transform is not rotated before it is
-    * applied to a point, these may not have been updated by
-    * update axes.
-    */
-
    /**
     * Sets the default easing function used by the transform.
     *
@@ -540,9 +548,7 @@ public class Transform2 extends Transform {
    public Transform2 (
          final float xLoc,
          final float yLoc,
-
          final float radians,
-
          final float xScale,
          final float yScale ) {
 
@@ -832,7 +838,9 @@ public class Transform2 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform2 moveTo ( final float x, final float y ) {
+   public Transform2 moveTo ( 
+         final float x, 
+         final float y ) {
 
       this.locPrev.set(this.location);
       this.location.set(x, y);
@@ -865,7 +873,9 @@ public class Transform2 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform2 moveTo ( final Vec2 locNew, final float step ) {
+   public Transform2 moveTo ( 
+         final Vec2 locNew, 
+         final float step ) {
 
       return this.moveTo(locNew, step, Transform2.EASING.loc);
    }
@@ -932,7 +942,9 @@ public class Transform2 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform2 rotateTo ( final float radians, final float step ) {
+   public Transform2 rotateTo ( 
+         final float radians, 
+         final float step ) {
 
       return this.rotateTo(radians, step, Transform2.EASING.rot);
    }
@@ -1043,7 +1055,9 @@ public class Transform2 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform2 scaleTo ( final float x, final float y ) {
+   public Transform2 scaleTo ( 
+         final float x, 
+         final float y ) {
 
       if (x != 0.0f && y != 0.0f) {
          this.scalePrev.set(this.scale);
@@ -1139,9 +1153,7 @@ public class Transform2 extends Transform {
    public Transform2 set (
          final float xLoc,
          final float yLoc,
-
          final float radians,
-
          final float xScale,
          final float yScale ) {
 

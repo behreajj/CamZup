@@ -348,24 +348,12 @@ public abstract class Convert {
          final PMatrix3D source,
          final Quaternion target ) {
 
-      final float ix = source.m00;
-      final float jy = source.m11;
-      final float kz = source.m22;
-
-      final float w = (float) (Math.sqrt(
-            Utils.max(0.0f, 1.0f + ix + jy + kz)) * 0.5d);
-      float x = (float) (Math.sqrt(
-            Utils.max(0.0f, 1.0f + ix - jy - kz)) * 0.5d);
-      float y = (float) (Math.sqrt(
-            Utils.max(0.0f, 1.0f - ix + jy - kz)) * 0.5d);
-      float z = (float) (Math.sqrt(
-            Utils.max(0.0f, 1.0f - ix - jy + kz)) * 0.5d);
-
-      x = Math.copySign(x, source.m21 - source.m12);
-      y = Math.copySign(y, source.m02 - source.m20);
-      z = Math.copySign(z, source.m10 - source.m01);
-
-      return target.set(w, x, y, z);
+      return Quaternion.fromAxes(
+            source.m00, source.m11, source.m22,
+            source.m21, source.m12,
+            source.m02, source.m20,
+            source.m10, source.m01,
+            target);
    }
 
    /**

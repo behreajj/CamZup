@@ -783,7 +783,7 @@ public class Color extends Vec4 {
 
    /**
     * Converts two colors to integers, performs the bitwise AND
-    * operation on them, then converts them back to colors.
+    * operation on them, then converts the result to a color.
     *
     * @param a
     *           the left operand
@@ -805,10 +805,10 @@ public class Color extends Vec4 {
 
    /**
     * Converts a color to an integer, performs the bitwise NOT
-    * operation on it, then converts them back to colors.
+    * operation on it, then converts the result to a color.
     *
     * @param a
-    *           the color
+    *           the input color
     * @param target
     *           the output color
     * @return the negation
@@ -824,8 +824,8 @@ public class Color extends Vec4 {
 
    /**
     * Converts two colors to integers, performs the bitwise OR
-    * operation (inclusive or) on them, then converts them back
-    * to colors.
+    * operation (inclusive or) on them, then converts the
+    * result to a color.
     *
     * @param a
     *           the left operand
@@ -847,7 +847,7 @@ public class Color extends Vec4 {
 
    /**
     * Converts a color to an integer, performs a bitwise left
-    * shift operation, then converts it back to a color. The
+    * shift operation, then converts the result to a color. The
     * number of places is multiplied by 0x08.
     *
     * @param a
@@ -870,7 +870,7 @@ public class Color extends Vec4 {
 
    /**
     * Converts a color to an integer, performs a bitwise right
-    * shift operation, then converts it back to a color. The
+    * shift operation, then converts the result to a color. The
     * number of places is multiplied by 0x08.
     *
     * @param a
@@ -893,8 +893,8 @@ public class Color extends Vec4 {
 
    /**
     * Converts a color to an integer, performs an unsigned
-    * bitwise right shift operation, then converts it back to a
-    * color. The number of places is multiplied by 0x08.
+    * bitwise right shift operation, then converts the result
+    * to a color. The number of places is multiplied by 0x08.
     *
     * @param a
     *           the color
@@ -916,8 +916,8 @@ public class Color extends Vec4 {
 
    /**
     * Converts two colors to integers, performs the bitwise XOR
-    * operation (exclusive or) on them, then converts them back
-    * to colors.
+    * operation (exclusive or) on them, then converts the
+    * result to a color.
     *
     * @param a
     *           the left operand
@@ -1141,7 +1141,9 @@ public class Color extends Vec4 {
             (c >> 0x18 & 0xff) * IUtils.ONE_255);
    }
 
-   public static Color fromHex ( final String c, final Color target ) {
+   public static Color fromHex (
+         final String c,
+         final Color target ) {
 
       // TODO: Optimize where possible. Would a switch case be
       // easier to read?
@@ -1274,6 +1276,19 @@ public class Color extends Vec4 {
    }
 
    /**
+    * Returns the relative luminance of the color, based on
+    * https://en.wikipedia.org/wiki/Relative_luminance .
+    *
+    * @param c
+    *           the input color
+    * @return the luminance
+    */
+   public static float luminance ( final Color c ) {
+
+      return 0.2126f * c.x + 0.7152f * c.y + 0.0722f * c.z;
+   }
+
+   /**
     * Returns the color magenta, ( 1.0, 0.0, 1.0, 1.0 ) .
     *
     * @param target
@@ -1360,6 +1375,56 @@ public class Color extends Vec4 {
          final AbstrEasing easingFunc ) {
 
       return easingFunc.apply(origin, dest, step, target);
+   }
+
+   public static Color[] paletteMagma () {
+
+      return new Color[] {
+            new Color(0.988235f, 1.000000f, 0.698039f, 1.0f), // 0xFFFCFFB2
+            new Color(0.987190f, 0.843137f, 0.562092f, 1.0f), // 0xFFFCD78F
+            new Color(0.984314f, 0.694118f, 0.446275f, 1.0f), // 0xFFFBB172
+            new Color(0.981176f, 0.548235f, 0.354510f, 1.0f), // 0xFFFA8C5A
+
+            new Color(0.962353f, 0.412549f, 0.301176f, 1.0f), // 0xFFF5694D
+            new Color(0.912418f, 0.286275f, 0.298039f, 1.0f), // 0xFFE9494C
+            new Color(0.824314f, 0.198431f, 0.334902f, 1.0f), // 0xFFD23355
+            new Color(0.703268f, 0.142484f, 0.383007f, 1.0f), // 0xFFB32462
+
+            new Color(0.584052f, 0.110588f, 0.413856f, 1.0f), // 0xFF951C6A
+            new Color(0.471373f, 0.080784f, 0.430588f, 1.0f), // 0xFF78156E
+            new Color(0.367320f, 0.045752f, 0.432680f, 1.0f), // 0xFF5E0C6E
+            new Color(0.267974f, 0.002353f, 0.416732f, 1.0f), // 0xFF44016A
+
+            new Color(0.174118f, 0.006275f, 0.357647f, 1.0f), // 0xFF2C025B
+            new Color(0.093856f, 0.036863f, 0.232941f, 1.0f), // 0xFF18093B
+            new Color(0.040784f, 0.028758f, 0.110327f, 1.0f), // 0xFF0A071C
+            new Color(0.000000f, 0.000000f, 0.019608f, 1.0f) // 0xFF000005
+      };
+   }
+
+   public static Color[] paletteViridis () {
+
+      return new Color[] {
+            new Color(0.266667f, 0.003922f, 0.329412f, 1.0f), // 0xFF440154
+            new Color(0.282353f, 0.100131f, 0.420654f, 1.0f), // 0xFF481A6B
+            new Color(0.276078f, 0.184575f, 0.487582f, 1.0f), // 0xFF462F7C
+            new Color(0.254902f, 0.265882f, 0.527843f, 1.0f), // 0xFF414487
+
+            new Color(0.221961f, 0.340654f, 0.549281f, 1.0f), // 0xFF39578C
+            new Color(0.192157f, 0.405229f, 0.554248f, 1.0f), // 0xFF31678D
+            new Color(0.164706f, 0.469804f, 0.556863f, 1.0f), // 0xFF2A788E
+            new Color(0.139869f, 0.534379f, 0.553464f, 1.0f), // 0xFF24888D
+
+            new Color(0.122092f, 0.595033f, 0.543007f, 1.0f), // 0xFF1F988A
+            new Color(0.139608f, 0.658039f, 0.516863f, 1.0f), // 0xFF24A884
+            new Color(0.210458f, 0.717647f, 0.471895f, 1.0f), // 0xFF36B778
+            new Color(0.326797f, 0.773595f, 0.407582f, 1.0f), // 0xFF53C568
+
+            new Color(0.477647f, 0.821961f, 0.316863f, 1.0f), // 0xFF7AD251
+            new Color(0.648366f, 0.858039f, 0.208889f, 1.0f), // 0xFFA5DB35
+            new Color(0.825098f, 0.884967f, 0.114771f, 1.0f), // 0xFFD2E21D
+            new Color(0.992157f, 0.905882f, 0.145098f, 1.0f) // 0xFFFDE725
+      };
    }
 
    /**
@@ -1654,6 +1719,23 @@ public class Color extends Vec4 {
    }
 
    /**
+    * Convert a color to grayscale based on its perceived
+    * luminance.
+    * 
+    * @param c
+    *           the input color
+    * @param target
+    *           the output color
+    * @return the grayscale color
+    * @see Color#luminance(Color)
+    */
+   public static Color rgbaToGray ( final Color c, final Color target ) {
+
+      final float lum = Color.luminance(c);
+      return target.set(lum, lum, lum, c.w);
+   }
+
+   /**
     * Converts rgba channels to a vector which holds hue,
     * saturation, brightness and alpha.
     *
@@ -1671,7 +1753,7 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Converts rgba channels to a vector which holds hue,
+    * Converts RGBA channels to a vector which holds hue,
     * saturation, brightness and alpha.
     *
     * @param red

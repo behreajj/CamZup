@@ -1569,6 +1569,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     */
    public static float mag ( final Vec2 v ) {
 
+      // return (float) Math.hypot(v.x, v.y);
       return (float) Math.sqrt(Vec2.magSq(v));
    }
 
@@ -1713,7 +1714,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Mixes two vectors together by a step in [0.0, 1.0]. Uses
+    * Mixes two vectors together by a step in [0.0, 1.0] . Uses
     * the easing function that is a static field belonging to
     * the Vec2 class.
     *
@@ -2439,8 +2440,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final float scalar,
          final Vec2 target ) {
 
-      // return Vec2.rescale(v, scalar, target, new Vec2());
-
       if (scalar == 0.0f) {
          return target.reset();
       }
@@ -2477,7 +2476,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    public static Vec2 rescale (
          final Vec2 v,
          final float scalar,
-         final Vec2 target, final Vec2 normalized ) {
+         final Vec2 target,
+         final Vec2 normalized ) {
 
       if (scalar == 0.0f) {
          return target.reset();
@@ -2597,10 +2597,11 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final float radians,
          final Vec2 target ) {
 
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
-
-      return Vec2.rotateZ(v, cosa, sina, target);
+      return Vec2.rotateZ(
+            v,
+            (float) Math.cos(radians),
+            (float) Math.sin(radians),
+            target);
    }
 
    /**

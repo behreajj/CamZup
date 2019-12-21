@@ -72,7 +72,7 @@ public interface IUtils {
    /**
     * One-255th, 1.0 / 255.0 . Useful when converting a color
     * with channels in the range [0, 255] to a color in the
-    * range [0, 1]. Approximately 0.003921569 .
+    * range [0, 1] . Approximately 0.003921569 .
     */
    float ONE_255 = 0.003921569f;
 
@@ -140,14 +140,14 @@ public interface IUtils {
    double ONE_THIRD_D = 0.3333333333333333d;
 
    /**
-    * An approximation of \u03c6, or ( 1.0 + ( \u221a 5.0 ) /
-    * 2.0 ), 1.61803399 .
+    * An approximation of \u03c6, or ( 1.0 + \u221a 5.0 ) / 2.0
+    * , 1.61803399 .
     */
    float PHI = 1.61803399f;
 
    /**
-    * An approximation of \u03c6, or ( 1.0 + ( \u221a 5.0 ) /
-    * 2.0 ), 1.618033988749895 .
+    * An approximation of \u03c6, or ( 1.0 + \u221a 5.0 ) / 2.0
+    * , 1.618033988749895 .
     */
    double PHI_D = 1.618033988749895d;
 
@@ -182,13 +182,13 @@ public interface IUtils {
    double SQRT_3_2_D = 0.8660254037844386d;
 
    /**
-    * An approximation of \u03c4. Equal to 2.0 * \u03c0, or
+    * An approximation of \u03c4 . Equal to 2.0 \u03c0, or
     * 6.2831853 .
     */
    float TAU = 6.2831853f;
 
    /**
-    * An approximation of \u03c4. Equal to 2.0 * \u03c0, or
+    * An approximation of \u03c4 . Equal to 2.0 \u03c0, or
     * 6.283185307179586 .
     */
    double TAU_D = 6.283185307179586d;

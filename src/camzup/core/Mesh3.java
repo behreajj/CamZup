@@ -206,7 +206,9 @@ public class Mesh3 extends Mesh {
     *           the output vector
     * @return the dimensions
     */
-   public static Vec3 calcDimensions ( final Mesh3 mesh, final Vec3 dim ) {
+   public static Vec3 calcDimensions (
+         final Mesh3 mesh,
+         final Vec3 dim ) {
 
       float xMin = Float.MAX_VALUE;
       float xMax = Float.MIN_VALUE;
@@ -285,115 +287,18 @@ public class Mesh3 extends Mesh {
       };
 
       final int[][][] faces = new int[][][] {
-            {
-                  {
-                        1, 1, 0
-                  }, {
-                        2, 3, 0
-                  }, {
-                        0, 2, 0
-                  }
-            }, /* 00 */
-            {
-                  {
-                        3, 1, 1
-                  }, {
-                        6, 3, 1
-                  }, {
-                        2, 2, 1
-                  }
-            }, /* 01 */
-            {
-                  {
-                        7, 1, 2
-                  }, {
-                        4, 3, 2
-                  }, {
-                        6, 2, 2
-                  }
-            }, /* 02 */
-            {
-                  {
-                        5, 1, 3
-                  }, {
-                        0, 3, 3
-                  }, {
-                        4, 2, 3
-                  }
-            }, /* 03 */
-            {
-                  {
-                        6, 1, 4
-                  }, {
-                        0, 3, 4
-                  }, {
-                        2, 2, 4
-                  }
-            }, /* 04 */
-            {
-                  {
-                        3, 1, 5
-                  }, {
-                        5, 3, 5
-                  }, {
-                        7, 2, 5
-                  }
-            }, /* 05 */
-
-            {
-                  {
-                        1, 1, 0
-                  }, {
-                        3, 0, 0
-                  }, {
-                        2, 3, 0
-                  }
-            }, /* 06 */
-            {
-                  {
-                        3, 1, 1
-                  }, {
-                        7, 0, 1
-                  }, {
-                        6, 3, 1
-                  }
-            }, /* 07 */
-            {
-                  {
-                        7, 1, 2
-                  }, {
-                        5, 0, 2
-                  }, {
-                        4, 3, 2
-                  }
-            }, /* 08 */
-            {
-                  {
-                        5, 1, 3
-                  }, {
-                        1, 0, 3
-                  }, {
-                        0, 3, 3
-                  }
-            }, /* 09 */
-            {
-                  {
-                        6, 1, 4
-                  }, {
-                        4, 0, 4
-                  }, {
-                        0, 3, 4
-                  }
-            }, /* 10 */
-            {
-                  {
-                        3, 1, 5
-                  }, {
-                        1, 0, 5
-                  }, {
-                        5, 3, 5
-                  }
-            } /* 11 */
+            { { 1, 1, 0 }, { 2, 3, 0 }, { 0, 2, 0 } }, /* 00 */
+            { { 3, 1, 1 }, { 6, 3, 1 }, { 2, 2, 1 } }, /* 01 */
+            { { 7, 1, 2 }, { 4, 3, 2 }, { 6, 2, 2 } }, /* 02 */
+            { { 5, 1, 3 }, { 0, 3, 3 }, { 4, 2, 3 } }, /* 03 */
+            { { 6, 1, 4 }, { 0, 3, 4 }, { 2, 2, 4 } }, /* 04 */
+            { { 3, 1, 5 }, { 5, 3, 5 }, { 7, 2, 5 } }, /* 05 */
+            { { 1, 1, 0 }, { 3, 0, 0 }, { 2, 3, 0 } }, /* 06 */
+            { { 3, 1, 1 }, { 7, 0, 1 }, { 6, 3, 1 } }, /* 07 */
+            { { 7, 1, 2 }, { 5, 0, 2 }, { 4, 3, 2 } }, /* 08 */
+            { { 5, 1, 3 }, { 1, 0, 3 }, { 0, 3, 3 } }, /* 09 */
+            { { 6, 1, 4 }, { 4, 0, 4 }, { 0, 3, 4 } }, /* 10 */
+            { { 3, 1, 5 }, { 1, 0, 5 }, { 5, 3, 5 } } /* 11 */
       };
 
       target.name = "Cube";
@@ -536,15 +441,9 @@ public class Mesh3 extends Mesh {
 
          final int k = 1 + j % seg;
          final int[][] face = new int[][] {
-               {
-                     0, 0, 0
-               }, {
-                     j, j, 0
-               },
-               {
-                     k, k, 0
-               }
-         };
+               { 0, 0, 0 },
+               { j, j, 0 },
+               { k, k, 0 } };
          faces[i] = face;
       }
 
@@ -577,25 +476,8 @@ public class Mesh3 extends Mesh {
       };
 
       final int[][][] faces = new int[][][] {
-            {
-                  {
-                        0, 0, 0
-                  }, {
-                        1, 1, 0
-                  }, {
-                        2, 2, 0
-                  }
-            },
-            {
-                  {
-                        2, 2, 0
-                  }, {
-                        3, 3, 0
-                  }, {
-                        0, 0, 0
-                  }
-            }
-      };
+            { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 } },
+            { { 2, 2, 0 }, { 3, 3, 0 }, { 0, 0, 0 } } };
 
       final Vec3[] normals = new Vec3[] {
             Vec3.up(new Vec3())
@@ -632,16 +514,9 @@ public class Mesh3 extends Mesh {
       };
 
       final int[][][] faces = new int[][][] {
-            {
-                  {
-                        0, 0, 0
-                  }, {
-                        1, 1, 0
-                  }, {
-                        2, 2, 0
-                  }
-            }
-      };
+            { { 0, 0, 0 },
+                  { 1, 1, 0 },
+                  { 2, 2, 0 } } };
 
       return target.set(faces, coords, texCoords, normals);
    }
@@ -753,8 +628,11 @@ public class Mesh3 extends Mesh {
     * @param normals
     *           the normals array
     */
-   public Mesh3 ( final int[][][] faces, final Vec3[] coords,
-         final Vec2[] texCoords, final Vec3[] normals ) {
+   public Mesh3 ( 
+         final int[][][] faces, 
+         final Vec3[] coords,
+         final Vec2[] texCoords, 
+         final Vec3[] normals ) {
 
       super();
       this.set(faces, coords, texCoords, normals);
@@ -807,7 +685,9 @@ public class Mesh3 extends Mesh {
     *           the output face
     * @return the face
     */
-   public Face3 getFace ( final int i, final Face3 target ) {
+   public Face3 getFace ( 
+         final int i, 
+         final Face3 target ) {
 
       final int len = this.faces[i].length;
       final Vert3[] vertices = new Vert3[len];
@@ -913,7 +793,9 @@ public class Mesh3 extends Mesh {
     * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
     */
    @Chainable
-   public Mesh3 rotate ( final float radians, final Vec3 axis ) {
+   public Mesh3 rotate ( 
+         final float radians, 
+         final Vec3 axis ) {
 
       final int len = this.coords.length;
       final float cosa = (float) Math.cos(radians);

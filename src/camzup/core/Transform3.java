@@ -48,7 +48,8 @@ public class Transform3 extends Transform {
        * @param scaleEasing
        *           the scale easing function
        */
-      public Easing ( final Vec3.AbstrEasing locEasing,
+      public Easing (
+            final Vec3.AbstrEasing locEasing,
             final Quaternion.AbstrEasing rotEasing,
             final Vec3.AbstrEasing scaleEasing ) {
 
@@ -100,7 +101,9 @@ public class Transform3 extends Transform {
        *           the output transform
        */
       @Override
-      public Transform3 apply ( final Transform3[] arr, final Float step,
+      public Transform3 apply (
+            final Transform3[] arr,
+            final Float step,
             final Transform3 target ) {
 
          final int len = arr.length;
@@ -133,8 +136,10 @@ public class Transform3 extends Transform {
        *           the output transform
        * @return the eased transform
        */
-      public Transform3 applyUnclamped ( final Transform3 origin,
-            final Transform3 dest, final float step,
+      public Transform3 applyUnclamped (
+            final Transform3 origin,
+            final Transform3 dest,
+            final float step,
             final Transform3 target ) {
 
          target.locPrev.set(target.location);
@@ -186,10 +191,10 @@ public class Transform3 extends Transform {
     *           the output transform
     * @return the transform
     */
-   public static Transform3 fromAxes ( 
-         final Vec3 right, 
+   public static Transform3 fromAxes (
+         final Vec3 right,
          final Vec3 forward,
-         final Vec3 up, 
+         final Vec3 up,
          final Transform3 target ) {
 
       target.rotPrev.set(target.rotation);
@@ -253,7 +258,7 @@ public class Transform3 extends Transform {
     * @see Vec3#div(float, Vec3, Vec3)
     * @see Transform3#updateAxes()
     */
-   public static Transform3 inverse ( 
+   public static Transform3 inverse (
          final Transform3 source,
          final Transform3 target ) {
 
@@ -275,7 +280,9 @@ public class Transform3 extends Transform {
     * @return the location delta
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
-   public static Vec3 locDelta ( final Transform3 t, final Vec3 target ) {
+   public static Vec3 locDelta (
+         final Transform3 t,
+         final Vec3 target ) {
 
       return Vec3.sub(t.location, t.locPrev, target);
    }
@@ -306,8 +313,24 @@ public class Transform3 extends Transform {
       return Utils.min(t.scale.x, t.scale.y, t.scale.z);
    }
 
-   public static Transform3 mix ( final Transform3 origin,
-         final Transform3 dest, final float step,
+   /**
+    * Mixes two transforms together by a step in [0.0, 1.0] .
+    * 
+    * @param origin
+    *           the original transform
+    * @param dest
+    *           the destination transform
+    * @param step
+    *           the step
+    * @param target
+    *           the output transform
+    * @return the mix
+    * @see Transform3#EASING
+    */
+   public static Transform3 mix (
+         final Transform3 origin,
+         final Transform3 dest,
+         final float step,
          final Transform3 target ) {
 
       return Transform3.EASING.apply(origin, dest, step, target);
@@ -326,7 +349,9 @@ public class Transform3 extends Transform {
     * @return the direction
     * @see Quaternion#mul(Quaternion, Vec3, Vec3)
     */
-   public static Vec3 mulDir ( final Transform3 t, final Vec3 source,
+   public static Vec3 mulDir ( 
+         final Transform3 t, 
+         final Vec3 source,
          final Vec3 target ) {
 
       Quaternion.mul(t.rotation, source, target);
@@ -347,7 +372,9 @@ public class Transform3 extends Transform {
     * @return the point
     * @see Quaternion#mul(Quaternion, Vec3, Vec3)
     */
-   public static Vec3 multoint ( final Transform3 t, final Vec3 source,
+   public static Vec3 mulPoint ( 
+         final Transform3 t, 
+         final Vec3 source,
          final Vec3 target ) {
 
       Quaternion.mul(t.rotation, source, target);
@@ -371,7 +398,9 @@ public class Transform3 extends Transform {
     * @return the vector
     * @see Quaternion#mul(Quaternion, Vec3, Vec3)
     */
-   public static Vec3 mulVector ( final Transform3 t, final Vec3 source,
+   public static Vec3 mulVector ( 
+         final Transform3 t, 
+         final Vec3 source,
          final Vec3 target ) {
 
       Quaternion.mul(t.rotation, source, target);
@@ -392,7 +421,8 @@ public class Transform3 extends Transform {
     * @see Quaternion#subNorm(Quaternion, Quaternion,
     *      Quaternion)
     */
-   public static Quaternion rotDelta ( final Transform3 t,
+   public static Quaternion rotDelta ( 
+         final Transform3 t,
          final Quaternion target ) {
 
       return Quaternion.subNorm(t.rotation, t.rotPrev, target);
@@ -409,7 +439,9 @@ public class Transform3 extends Transform {
     * @return the scale delta
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
-   public static Vec3 scaleDelta ( final Transform3 t, final Vec3 target ) {
+   public static Vec3 scaleDelta ( 
+         final Transform3 t, 
+         final Vec3 target ) {
 
       return Vec3.sub(t.scale, t.scalePrev, target);
    }
