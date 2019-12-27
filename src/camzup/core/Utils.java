@@ -735,8 +735,6 @@ public abstract class Utils implements IUtils {
          return 0.0f;
       }
 
-      // return (float) Math.acos(value);
-
       final float negate = value < 0.0f ? 1.0f : 0.0f;
       value = Utils.abs(value);
       float ret = -0.0187293f;
@@ -847,8 +845,6 @@ public abstract class Utils implements IUtils {
       if (value >= 1.0f) {
          return IUtils.HALF_PI;
       }
-
-      // return (float) Math.asin(value);
 
       final float negate = value < 0.0f ? 1.0f : 0.0f;
       value = Utils.abs(value);

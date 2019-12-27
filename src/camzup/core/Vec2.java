@@ -860,8 +860,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param v
     *           the input vector
     * @param target
-    *           the target vector
-    * @return the output
+    *           the output vector
+    * @return the result
     * @see Utils#ceil(float)
     */
    public static Vec2 ceil (
@@ -880,9 +880,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param v
     *           the input vector
     * @param lowerBound
-    *           the lower bound of the range
+    *           the range lower bound
     * @param upperBound
-    *           the upper bound of the range
+    *           the range upper bound
     * @param target
     *           the output vector
     * @return the clamped vector
@@ -917,6 +917,50 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       return target.set(
             Utils.clamp01(v.x),
             Utils.clamp01(v.y));
+   }
+
+   /**
+    * Finds first vector argument with the sign of the second
+    * vector argument.
+    *
+    * @param magnitude
+    *           the magnitude
+    * @param sign
+    *           the sign
+    * @param target
+    *           the output vector
+    * @return the signed vector
+    */
+   public static Vec2 copySign (
+         final float magnitude,
+         final Vec2 sign,
+         final Vec2 target ) {
+
+      return target.set(
+            Math.copySign(magnitude, sign.x),
+            Math.copySign(magnitude, sign.y));
+   }
+
+   /**
+    * Finds first vector argument with the sign of the second
+    * vector argument.
+    *
+    * @param magnitude
+    *           the magnitude
+    * @param sign
+    *           the sign
+    * @param target
+    *           the output vector
+    * @return the signed vector
+    */
+   public static Vec2 copySign (
+         final Vec2 magnitude,
+         final float sign,
+         final Vec2 target ) {
+
+      return target.set(
+            Math.copySign(magnitude.x, sign),
+            Math.copySign(magnitude.y, sign));
    }
 
    /**
@@ -1193,8 +1237,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param v
     *           the input vector
     * @param target
-    *           the target vector
-    * @return the output
+    *           the output vector
+    * @return the floor
     * @see Utils#floor(float)
     */
    public static Vec2 floor (

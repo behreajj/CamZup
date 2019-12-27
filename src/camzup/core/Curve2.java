@@ -275,24 +275,25 @@ public class Curve2 extends Curve
        * Aligns this knot's handles in the same direction while
        * preserving their magnitude.
        *
-       * @param foreDir
-       *           a temporary vector
        * @param rearDir
        *           a temporary vector
-       * @param foreScaled
+       * @param foreDir
+       *           a temporary vector
+       * @param rearScaled
        *           a temporary vector
        * @return this knot
+       * @see Knot2#alignHandlesForward(Vec2, Vec2, Vec2)
        */
       @Chainable
       public Knot2 alignHandles (
-            final Vec2 foreDir,
             final Vec2 rearDir,
-            final Vec2 foreScaled ) {
+            final Vec2 foreDir,
+            final Vec2 rearScaled ) {
 
          return this.alignHandlesForward(
-               foreDir,
                rearDir,
-               foreScaled);
+               foreDir,
+               rearScaled);
       }
 
       /**
@@ -306,6 +307,10 @@ public class Curve2 extends Curve
        * @param foreScaled
        *           a temporary vector
        * @return this knot
+       * @see Vec2#sub(Vec2, Vec2, Vec2)
+       * @see Vec2#mag(Vec2)
+       * @see Vec2#rescale(Vec2, float, Vec2)
+       * @see Vec2#add(Vec2, Vec2, Vec2)
        */
       @Chainable
       public Knot2 alignHandlesBackward (
@@ -331,6 +336,10 @@ public class Curve2 extends Curve
        * @param rearScaled
        *           a temporary vector
        * @return this knot
+       * @see Vec2#sub(Vec2, Vec2, Vec2)
+       * @see Vec2#mag(Vec2)
+       * @see Vec2#rescale(Vec2, float, Vec2)
+       * @see Vec2#add(Vec2, Vec2, Vec2)
        */
       @Chainable
       public Knot2 alignHandlesForward (
@@ -450,6 +459,7 @@ public class Curve2 extends Curve
        * forward direction.
        *
        * @return this knot
+       * @see Knot2#mirrorHandlesForward()
        */
       @Chainable
       public Knot2 mirrorHandles () {
@@ -464,6 +474,7 @@ public class Curve2 extends Curve
        * @param temp
        *           a temporary vector
        * @return this knot
+       * @see Knot2#mirrorHandlesForward(Vec2)
        */
       @Chainable
       public Knot2 mirrorHandles ( final Vec2 temp ) {
@@ -496,6 +507,7 @@ public class Curve2 extends Curve
        * @param rearDir
        *           a temp vector
        * @return the knot
+       * @see Vec2#sub(Vec2, Vec2, Vec2)
        */
       @Chainable
       public Knot2 mirrorHandlesBackward ( final Vec2 rearDir ) {
@@ -529,6 +541,7 @@ public class Curve2 extends Curve
        * @param foreDir
        *           a temp vector
        * @return this knot
+       * @see Vec2#sub(Vec2, Vec2, Vec2)
        */
       @Chainable
       public Knot2 mirrorHandlesForward ( final Vec2 foreDir ) {
@@ -708,6 +721,8 @@ public class Curve2 extends Curve
        * @param temp1
        *           a temporary vector
        * @return this knot
+       * @see Knot2#scaleForeHandleTo(float, Vec2, Vec2)
+       * @see Knot2#scaleRearHandleTo(float, Vec2, Vec2)
        */
       @Chainable
       public Knot2 scaleHandlesTo (
@@ -734,6 +749,9 @@ public class Curve2 extends Curve
        * @param temp1
        *           a temporary vector
        * @return this knot
+       * @see Vec2#sub(Vec2, Vec2, Vec2)
+       * @see Vec2#mul(Vec2, float, Vec2)
+       * @see Vec2#add(Vec2, Vec2, Vec2)
        */
       @Chainable
       public Knot2 scaleRearHandleBy (
@@ -757,6 +775,9 @@ public class Curve2 extends Curve
        * @param temp1
        *           a temporary vector
        * @return this knot
+       * @see Vec2#subNorm(Vec2, Vec2, Vec2)
+       * @see Vec2#mul(Vec2, float, Vec2)
+       * @see Vec2#add(Vec2, Vec2, Vec2)
        */
       @Chainable
       public Knot2 scaleRearHandleTo (
@@ -779,6 +800,7 @@ public class Curve2 extends Curve
        * @param yCoord
        *           the y coordinate
        * @return this knot
+       * @see Math#copySign(float, float)
        */
       @Chainable
       public Knot2 set (
@@ -979,6 +1001,7 @@ public class Curve2 extends Curve
        * rear handle, the third.
        *
        * @return the array
+       * @see Vec2#toArray()
        */
       public float[][] toArray () {
 
@@ -1026,6 +1049,7 @@ public class Curve2 extends Curve
        * @param v
        *           the vector
        * @return this knot
+       * @see Vec2#add(Vec2, Vec2, Vec2)
        */
       @Chainable
       public Knot2 translate ( final Vec2 v ) {

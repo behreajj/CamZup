@@ -75,6 +75,16 @@ public class Mesh2 extends Mesh {
          this.vertices = vertices;
          return this;
       }
+
+      /**
+       * Returns the number of vertices in this face.
+       * 
+       * @return the vertex count
+       */
+      public int vertCount () {
+
+         return this.vertices.length;
+      }
    }
 
    /**
@@ -134,8 +144,8 @@ public class Mesh2 extends Mesh {
        * @param texCoord
        *           the texture coordinate
        */
-      public Vert2 ( 
-            final Vec2 coord, 
+      public Vert2 (
+            final Vec2 coord,
             final Vec2 texCoord ) {
 
          this.set(coord, texCoord);
@@ -178,8 +188,8 @@ public class Mesh2 extends Mesh {
        * @return this vertex
        */
       @Chainable
-      public Vert2 set ( 
-            final Vec2 coord, 
+      public Vert2 set (
+            final Vec2 coord,
             final Vec2 texCoord ) {
 
          this.coord = coord;
@@ -204,8 +214,8 @@ public class Mesh2 extends Mesh {
     *           the output vector
     * @return the dimensions
     */
-   public static Vec2 calcDimensions ( 
-         final Mesh2 mesh, 
+   public static Vec2 calcDimensions (
+         final Mesh2 mesh,
          final Vec2 dim ) {
 
       float xMin = Float.MAX_VALUE;
@@ -215,9 +225,10 @@ public class Mesh2 extends Mesh {
       float yMax = Float.MIN_VALUE;
 
       final Vec2[] coords = mesh.coords;
-
       final int len = coords.length;
+      
       for (int i = 0; i < len; ++i) {
+         
          final Vec2 coord = coords[i];
          final float x = coord.x;
          final float y = coord.y;
@@ -235,7 +246,9 @@ public class Mesh2 extends Mesh {
          }
       }
 
-      return dim.set(xMax - xMin, yMax - yMin);
+      return dim.set(
+            xMax - xMin, 
+            yMax - yMin);
    }
 
    /**
@@ -247,8 +260,8 @@ public class Mesh2 extends Mesh {
     *           the number of sides
     * @return the polygon
     */
-   public static Mesh2 polygon ( 
-         final Mesh2 target, 
+   public static Mesh2 polygon (
+         final Mesh2 target,
          final int sectors ) {
 
       return Mesh2.polygon(target, sectors, Mesh2.DEFAULT_POLY_TYPE);
@@ -265,8 +278,8 @@ public class Mesh2 extends Mesh {
     *           the polygon type
     * @return the polygon
     */
-   public static Mesh2 polygon ( 
-         final Mesh2 target, 
+   public static Mesh2 polygon (
+         final Mesh2 target,
          final int sectors,
          final PolyType poly ) {
 
@@ -312,6 +325,7 @@ public class Mesh2 extends Mesh {
             texCoords[0] = uvCenter;
 
             for (int i = 0, j = 1; i < seg; ++i, ++j) {
+               
                final float theta = i * toTheta;
                Vec2.fromPolar(theta, 0.5f, pureCoord);
                texCoords[j] = Vec2.add(pureCoord, uvCenter, new Vec2());
@@ -528,11 +542,17 @@ public class Mesh2 extends Mesh {
          final int i,
          final Face2 target ) {
 
-      final int len = this.faces[i].length;
+      final int[][] face = this.faces[i];
+      final int len = face.length;
       final Vert2[] vertices = new Vert2[len];
+      
       for (int j = 0; j < len; ++j) {
-         vertices[j] = this.getVertex(i, j, new Vert2());
+         final int[] vert = face[j];
+         vertices[j] = new Vert2(
+               this.coords[vert[0]],
+               this.texCoords[vert[1]]);
       }
+      
       return target.set(vertices);
    }
 
@@ -545,21 +565,24 @@ public class Mesh2 extends Mesh {
 
       final int len0 = this.faces.length;
       final Face2[] result = new Face2[len0];
+      
       for (int i = 0; i < len0; ++i) {
+         
          final int[][] fs0 = this.faces[i];
          final int len1 = fs0.length;
          final Vert2[] verts = new Vert2[len1];
 
          for (int j = 0; j < len1; ++j) {
 
-            // verts[j] = this.getVertex(i, j, new Vert2());
             final int[] fs1 = fs0[j];
             verts[j] = new Vert2(
                   this.coords[fs1[0]],
                   this.texCoords[fs1[1]]);
          }
+         
          result[i] = new Face2(verts);
       }
+      
       return result;
    }
 
@@ -594,15 +617,15 @@ public class Mesh2 extends Mesh {
 
       final ArrayList < Vert2 > result = new ArrayList <>();
       Vert2 trial = new Vert2();
-
       final int len0 = this.faces.length;
+      
       for (int i = 0; i < len0; ++i) {
 
          final int[][] fs = this.faces[i];
          final int len1 = fs.length;
+         
          for (int j = 0; j < len1; ++j) {
 
-            // trial = this.getVertex(i, j, new Vert2());
             final int[] f = fs[j];
             trial.set(
                   this.coords[f[0]],
@@ -614,6 +637,7 @@ public class Mesh2 extends Mesh {
             }
          }
       }
+      
       return result.toArray(new Vert2[result.size()]);
    }
 
@@ -746,9 +770,11 @@ public class Mesh2 extends Mesh {
       result.append("vn 0.0 0.0 1.0 \n");
 
       for (int i = 0; i < facesLen; ++i) {
+         
          final int[][] face = this.faces[i];
          final int vLen = face.length;
          result.append("f ");
+         
          for (int j = 0; j < vLen; ++j) {
 
             /* Indices in an .obj file start at 1, not 0. */
@@ -760,8 +786,10 @@ public class Mesh2 extends Mesh {
                   .append(vert[2] + 1)
                   .append(' ');
          }
+         
          result.append('\n');
       }
+      
       result.append('\n');
       return result.toString();
    }

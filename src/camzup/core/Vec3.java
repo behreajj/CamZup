@@ -865,7 +865,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param a
     *           the input vector
     * @param target
-    *           the target vector
+    *           the output vector
     * @return the output
     * @see Utils#ceil(float)
     */
@@ -922,6 +922,52 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
             Utils.clamp01(a.x),
             Utils.clamp01(a.y),
             Utils.clamp01(a.z));
+   }
+
+   /**
+    * Finds first vector argument with the sign of the second
+    * vector argument.
+    *
+    * @param magnitude
+    *           the magnitude
+    * @param sign
+    *           the sign
+    * @param target
+    *           the output vector
+    * @return the signed vector
+    */
+   public static Vec3 copySign (
+         final float magnitude,
+         final Vec3 sign,
+         final Vec3 target ) {
+
+      return target.set(
+            Math.copySign(magnitude, sign.x),
+            Math.copySign(magnitude, sign.y),
+            Math.copySign(magnitude, sign.z));
+   }
+
+   /**
+    * Finds first vector argument with the sign of the second
+    * vector argument.
+    *
+    * @param magnitude
+    *           the magnitude
+    * @param sign
+    *           the sign
+    * @param target
+    *           the output vector
+    * @return the signed vector
+    */
+   public static Vec3 copySign (
+         final Vec3 magnitude,
+         final float sign,
+         final Vec3 target ) {
+
+      return target.set(
+            Math.copySign(magnitude.x, sign),
+            Math.copySign(magnitude.y, sign),
+            Math.copySign(magnitude.z, sign));
    }
 
    /**
@@ -1333,7 +1379,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param v
     *           the input vector
     * @param target
-    *           the target vector
+    *           the output vector
     * @return the output
     * @see Utils#floor(float)
     */
@@ -1488,6 +1534,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param target
     *           the output vector
     * @return the vector
+    * @see Math#cos(double)
+    * @see Math#sin(double)
     */
    public static Vec3 fromPolar (
          final float azimuth,
@@ -1528,11 +1576,11 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final float radius,
          final Vec3 target ) {
 
-      final float rhoCosPhi = radius * (float) Math.cos(inclination);
+      final double rhoCosPhi = radius * Math.cos(inclination);
       return target.set(
-            rhoCosPhi * (float) Math.cos(azimuth),
-            rhoCosPhi * (float) Math.sin(azimuth),
-            radius * -(float) Math.sin(inclination));
+            (float) (rhoCosPhi * Math.cos(azimuth)),
+            (float) (rhoCosPhi * Math.sin(azimuth)),
+            (float) (radius * -Math.sin(inclination)));
    }
 
    /**
@@ -1611,13 +1659,19 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       /* Calculate x values in separate loop. */
       final float[] xs = new float[cval];
       for (int j = 0; j < cval; ++j) {
-         xs[j] = Utils.lerpUnclamped(lowerBound.x, upperBound.x, j * jToStep);
+         xs[j] = Utils.lerpUnclamped(
+               lowerBound.x,
+               upperBound.x,
+               j * jToStep);
       }
 
       /* Calculate y values in separate loop. */
       final float[] ys = new float[rval];
       for (int i = 0; i < rval; ++i) {
-         ys[i] = Utils.lerpUnclamped(lowerBound.y, upperBound.y, i * iToStep);
+         ys[i] = Utils.lerpUnclamped(
+               lowerBound.y,
+               upperBound.y,
+               i * iToStep);
       }
 
       final Vec3[][][] result = new Vec3[lval][rval][cval];
@@ -1845,7 +1899,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Sets the target vector to the maximum of the input vector
+    * Sets the output vector to the maximum of the input vector
     * and an upper bound.
     *
     * @param a
@@ -1868,7 +1922,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Sets the target vector to the maximum components of the
+    * Sets the output vector to the maximum components of the
     * input vector and a upper bound.
     *
     * @param a
@@ -1892,7 +1946,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Sets the target vector to the minimum components of the
+    * Sets the output vector to the minimum components of the
     * input vector and a lower bound.
     *
     * @param a
@@ -1915,7 +1969,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Sets the target vector to the minimum components of the
+    * Sets the output vector to the minimum components of the
     * input vector and a lower bound.
     *
     * @param a
@@ -2694,14 +2748,17 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float sinz = sina * axis.z;
 
       return target.set(
-            (complcos * axis.x * axis.x + cosa) * v.x + (complxy - sinz) * v.y
-                  + (complxz + siny) * v.z,
+            (complcos * axis.x * axis.x + cosa) * v.x +
+                  (complxy - sinz) * v.y +
+                  (complxz + siny) * v.z,
 
-            (complxy + sinz) * v.x + (complcos * axis.y * axis.y + cosa) * v.y
-                  + (complyz - sinx) * v.z,
+            (complxy + sinz) * v.x +
+                  (complcos * axis.y * axis.y + cosa) * v.y +
+                  (complyz - sinx) * v.z,
 
-            (complxz - siny) * v.x + (complyz + sinx) * v.y
-                  + (complcos * axis.z * axis.z + cosa) * v.z);
+            (complxz - siny) * v.x +
+                  (complyz + sinx) * v.y +
+                  (complcos * axis.z * axis.z + cosa) * v.z);
    }
 
    /**
@@ -3048,7 +3105,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param v
     *           the input vector
     * @param target
-    *           the target vector
+    *           the output vector
     * @return the truncation
     */
    public static Vec3 trunc (

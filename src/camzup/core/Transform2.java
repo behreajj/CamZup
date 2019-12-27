@@ -221,7 +221,7 @@ public class Transform2 extends Transform {
 
       return target;
    }
-   
+
    /**
     * Gets the string representation of the default easing
     * function.
@@ -294,8 +294,8 @@ public class Transform2 extends Transform {
     * @return the location delta
     * @see Vec2#sub(Vec2, Vec2, Vec2)
     */
-   public static Vec2 locDelta ( 
-         final Transform2 t, 
+   public static Vec2 locDelta (
+         final Transform2 t,
          final Vec2 target ) {
 
       return Vec2.sub(t.location, t.locPrev, target);
@@ -329,7 +329,7 @@ public class Transform2 extends Transform {
 
    /**
     * Mixes two transforms together by a step in [0.0, 1.0] .
-    * 
+    *
     * @param origin
     *           the original transform
     * @param dest
@@ -838,8 +838,8 @@ public class Transform2 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform2 moveTo ( 
-         final float x, 
+   public Transform2 moveTo (
+         final float x,
          final float y ) {
 
       this.locPrev.set(this.location);
@@ -873,8 +873,8 @@ public class Transform2 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform2 moveTo ( 
-         final Vec2 locNew, 
+   public Transform2 moveTo (
+         final Vec2 locNew,
          final float step ) {
 
       return this.moveTo(locNew, step, Transform2.EASING.loc);
@@ -942,8 +942,8 @@ public class Transform2 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform2 rotateTo ( 
-         final float radians, 
+   public Transform2 rotateTo (
+         final float radians,
          final float step ) {
 
       return this.rotateTo(radians, step, Transform2.EASING.rot);
@@ -1055,8 +1055,8 @@ public class Transform2 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform2 scaleTo ( 
-         final float x, 
+   public Transform2 scaleTo (
+         final float x,
          final float y ) {
 
       if (x != 0.0f && y != 0.0f) {

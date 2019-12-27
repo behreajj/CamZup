@@ -274,6 +274,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * @param target
        *           the output quaternion
        * @return the eased quaternion
+       * @see Math#abs(double)
+       * @see Math#sqrt(double)
        */
       @Override
       public Quaternion applyUnclamped (
@@ -407,6 +409,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * @param target
        *           the output quaternion
        * @return the eased quaternion
+       * @see Utils#clamp(float, float, float)
+       * @see Math#acos(double)
+       * @see Math#sqrt(double)
+       * @see Math#sin(double)
+       * @see Math#abs(double)
        */
       @Override
       public Quaternion applyUnclamped (
@@ -764,6 +771,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param b
     *           the magnitude
     * @return the evaluation
+    * @see Utils#approxFast(float, float)
+    * @see Quaternion#magSq(Quaternion)
     */
    public static boolean approxMag (
          final Quaternion a,
@@ -784,6 +793,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param tolerance
     *           the tolerance
     * @return the evaluation
+    * @see Utils#approxFast(float, float, float)
+    * @see Quaternion#magSq(Quaternion)
     */
    public static boolean approxMag (
          final Quaternion a,
@@ -829,6 +840,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param inverted
     *           the inverse
     * @return the quotient
+    * @see Utils#approxFast(float, float)
     */
    public static Quaternion div (
          final float a,
@@ -938,6 +950,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the quotient
+    * @see Utils#approxFast(float, float)
     */
    public static Quaternion div (
          final Quaternion a,
@@ -1054,6 +1067,12 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the result
+    * @see Math#exp(double)
+    * @see Vec3#mag(Vec3)
+    * @see Vec3#zero(Vec3)
+    * @see Math#sqrt(double)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
     */
    public static Quaternion exp (
          final Quaternion q,
@@ -1103,6 +1122,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the quaternion
+    * @see Math#copySign(float, float)
+    * @see Math#sqrt(double)
     */
    public static Quaternion fromAxes (
          final float rightx,
@@ -1144,6 +1165,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the quaternion
+    * @see Quaternion#fromAxes(float, float, float, float,
+    *      float, float, float, float, float, Quaternion)
     */
    public static Quaternion fromAxes (
          final Vec3 right,
@@ -1169,6 +1192,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the quaternion
+    * @see Vec3#magSq(Vec3)
+    * @see Utils#approxFast(float, float)
+    * @see Math#sqrt(double)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
     */
    public static Quaternion fromAxisAngle (
          final float radians,
@@ -1208,6 +1236,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the quaternion
+    * @see Quaternion#fromAxes(float, float, float, float,
+    *      float, float, float, float, float, Quaternion)
     */
    public static Quaternion fromMat4 (
          final Mat4 source,
@@ -1235,6 +1265,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the quaternion
+    * @see Utils#approxFast(float, float)
+    * @see Math#sqrt(double)
     */
    public static Quaternion fromTo (
          final Vec3 origin,
@@ -1304,14 +1336,14 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    /**
     * Gets the forward axis of the rotation. Equivalent to
     * multiplying (0.0, 1.0, 0.0) by the quaternion. If all
-    * three axes need to be retrieved, use toAxes.
+    * three axes need to be retrieved, use
+    * {@link Quaternion#toAxes(Quaternion, Vec3, Vec3, Vec3)} .
     *
     * @param q
     *           the quaternion
     * @param target
     *           the output vector
     * @return the forward axis
-    * @see Quaternion#toAxes(Quaternion, Vec3, Vec3, Vec3)
     */
    public static Vec3 getForward (
          final Quaternion q,
@@ -1332,14 +1364,14 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    /**
     * Gets the right axis of the rotation. Equivalent to
     * multiplying (1.0, 0.0, 0.0) by the quaternion. If all
-    * three axes need to be retrieved, use toAxes.
+    * three axes need to be retrieved, use
+    * {@link Quaternion#toAxes(Quaternion, Vec3, Vec3, Vec3)} .
     *
     * @param q
     *           the quaternion
     * @param target
     *           the output vector
     * @return the right axis
-    * @see Quaternion#toAxes(Quaternion, Vec3, Vec3, Vec3)
     */
    public static Vec3 getRight (
          final Quaternion q,
@@ -1361,14 +1393,14 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    /**
     * Gets the up axis of the rotation. Equivalent to
     * multiplying (0.0, 0.0, 1.0) by the quaternion. If all
-    * three axes need to be retrieved, use toAxes.
+    * three axes need to be retrieved, use
+    * {@link Quaternion#toAxes(Quaternion, Vec3, Vec3, Vec3)} .
     *
     * @param q
     *           the quaternion
     * @param target
     *           the output vector
     * @return the up axis
-    * @see Quaternion#toAxes(Quaternion, Vec3, Vec3, Vec3)
     */
    public static Vec3 getUp (
          final Quaternion q,
@@ -1415,6 +1447,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the inverse
+    * @see Quaternion#magSq(Quaternion)
     */
    public static Quaternion inverse (
          final Quaternion q,
@@ -1492,6 +1525,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param q
     *           the input quaternion
     * @return the evaluation
+    * @see Vec3#isNonZero(Vec3)
     */
    public static boolean isNonZero ( final Quaternion q ) {
 
@@ -1553,6 +1587,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the result
+    * @see Vec3#magSq(Vec3)
+    * @see Math#sqrt(double)
+    * @see Math#log(double)
+    * @see Utils#approxFast(float, float)
+    * @see Vec3#zero(Vec3)
+    * @see Math#acos(double)
+    * @see Vec3#mul(Vec3, float, Vec3)
     */
    public static Quaternion log (
          final Quaternion q,
@@ -2028,8 +2069,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion target ) {
 
       final double halfAngle = radians * 0.5d;
-      return Quaternion.rotateX(q, (float) Math.cos(halfAngle),
-            (float) Math.sin(halfAngle), target);
+      return Quaternion.rotateX(
+            q,
+            (float) Math.cos(halfAngle),
+            (float) Math.sin(halfAngle),
+            target);
    }
 
    /**
@@ -2086,8 +2130,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion target ) {
 
       final double halfAngle = radians * 0.5d;
-      return Quaternion.rotateY(q, (float) Math.cos(halfAngle),
-            (float) Math.sin(halfAngle), target);
+      return Quaternion.rotateY(
+            q,
+            (float) Math.cos(halfAngle),
+            (float) Math.sin(halfAngle),
+            target);
    }
 
    /**
@@ -2144,8 +2191,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion target ) {
 
       final double halfAngle = radians * 0.5d;
-      return Quaternion.rotateZ(q, (float) Math.cos(halfAngle),
-            (float) Math.sin(halfAngle), target);
+      return Quaternion.rotateZ(
+            q,
+            (float) Math.cos(halfAngle),
+            (float) Math.sin(halfAngle),
+            target);
    }
 
    /**
@@ -2211,7 +2261,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *           the output quaternion
     * @return the normalized difference
     * @see Vec3#sub(Vec3, Vec3, Vec3)
-    * @see Quaternion#dot(Quaternion, Quaternion)
+    * @see Quaternion#magSq(Quaternion)
+    * @see Math#sqrt(double)
     */
    public static Quaternion subNorm (
          final Quaternion a,
@@ -2336,6 +2387,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param axis
     *           the output axis
     * @return the angle
+    * @see Quaternion#magSq(Quaternion)
+    * @see Vec3#forward(Vec3)
+    * @see Math#abs(float)
+    * @see Math#sqrt(double)
+    * @see Math#acos(double)
     */
    public static float toAxisAngle (
          final Quaternion q,

@@ -315,7 +315,7 @@ public class Transform3 extends Transform {
 
    /**
     * Mixes two transforms together by a step in [0.0, 1.0] .
-    * 
+    *
     * @param origin
     *           the original transform
     * @param dest
@@ -349,8 +349,8 @@ public class Transform3 extends Transform {
     * @return the direction
     * @see Quaternion#mul(Quaternion, Vec3, Vec3)
     */
-   public static Vec3 mulDir ( 
-         final Transform3 t, 
+   public static Vec3 mulDir (
+         final Transform3 t,
          final Vec3 source,
          final Vec3 target ) {
 
@@ -372,8 +372,8 @@ public class Transform3 extends Transform {
     * @return the point
     * @see Quaternion#mul(Quaternion, Vec3, Vec3)
     */
-   public static Vec3 mulPoint ( 
-         final Transform3 t, 
+   public static Vec3 mulPoint (
+         final Transform3 t,
          final Vec3 source,
          final Vec3 target ) {
 
@@ -398,8 +398,8 @@ public class Transform3 extends Transform {
     * @return the vector
     * @see Quaternion#mul(Quaternion, Vec3, Vec3)
     */
-   public static Vec3 mulVector ( 
-         final Transform3 t, 
+   public static Vec3 mulVector (
+         final Transform3 t,
          final Vec3 source,
          final Vec3 target ) {
 
@@ -421,7 +421,7 @@ public class Transform3 extends Transform {
     * @see Quaternion#subNorm(Quaternion, Quaternion,
     *      Quaternion)
     */
-   public static Quaternion rotDelta ( 
+   public static Quaternion rotDelta (
          final Transform3 t,
          final Quaternion target ) {
 
@@ -439,8 +439,8 @@ public class Transform3 extends Transform {
     * @return the scale delta
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
-   public static Vec3 scaleDelta ( 
-         final Transform3 t, 
+   public static Vec3 scaleDelta (
+         final Transform3 t,
          final Vec3 target ) {
 
       return Vec3.sub(t.scale, t.scalePrev, target);

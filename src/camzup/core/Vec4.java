@@ -311,8 +311,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @param v
     *           the input vector
     * @param target
-    *           the target vector
-    * @return the output
+    *           the output vector
+    * @return the ceil
     * @see Utils#ceil(float)
     */
    public static Vec4 ceil (
@@ -374,6 +374,54 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
             Utils.clamp01(v.y),
             Utils.clamp01(v.z),
             Utils.clamp01(v.w));
+   }
+
+   /**
+    * Finds first vector argument with the sign of the second
+    * vector argument.
+    *
+    * @param magnitude
+    *           the magnitude
+    * @param sign
+    *           the sign
+    * @param target
+    *           the output vector
+    * @return the signed vector
+    */
+   public static Vec4 copySign (
+         final float magnitude,
+         final Vec4 sign,
+         final Vec4 target ) {
+
+      return target.set(
+            Math.copySign(magnitude, sign.x),
+            Math.copySign(magnitude, sign.y),
+            Math.copySign(magnitude, sign.z),
+            Math.copySign(magnitude, sign.w));
+   }
+
+   /**
+    * Finds first vector argument with the sign of the second
+    * vector argument.
+    *
+    * @param magnitude
+    *           the magnitude
+    * @param sign
+    *           the sign
+    * @param target
+    *           the output vector
+    * @return the signed vector
+    */
+   public static Vec4 copySign (
+         final Vec4 magnitude,
+         final float sign,
+         final Vec4 target ) {
+
+      return target.set(
+            Math.copySign(magnitude.x, sign),
+            Math.copySign(magnitude.y, sign),
+            Math.copySign(magnitude.z, sign),
+            Math.copySign(magnitude.w, sign));
    }
 
    /**
@@ -547,8 +595,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @param v
     *           the input vector
     * @param target
-    *           the target vector
-    * @return the output
+    *           the output vector
+    * @return the floor
     * @see Utils#floor(float)
     */
    public static Vec4 floor (
@@ -1197,7 +1245,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @param v
     *           the input vector
     * @param target
-    *           the target vector
+    *           the output vector
     * @return the truncation
     */
    public static Vec4 trunc (

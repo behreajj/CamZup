@@ -75,6 +75,16 @@ public class Mesh3 extends Mesh {
          this.vertices = vertices;
          return this;
       }
+
+      /**
+       * Returns the number of vertices in this face.
+       * 
+       * @return the vertex count
+       */
+      public int vertCount () {
+
+         return this.vertices.length;
+      }
    }
 
    /**
@@ -220,9 +230,10 @@ public class Mesh3 extends Mesh {
       float zMax = Float.MIN_VALUE;
 
       final Vec3[] coords = mesh.coords;
-
       final int len = coords.length;
+      
       for (int i = 0; i < len; ++i) {
+         
          final Vec3 coord = coords[i];
          final float x = coord.x;
          final float y = coord.y;
@@ -247,7 +258,10 @@ public class Mesh3 extends Mesh {
          }
       }
 
-      return dim.set(xMax - xMin, yMax - yMin, zMax - zMin);
+      return dim.set(
+            xMax - xMin, 
+            yMax - yMin, 
+            zMax - zMin);
    }
 
    /**
@@ -549,7 +563,8 @@ public class Mesh3 extends Mesh {
       for (int i = 0; i < detailU; ++i) {
          final float phi = Utils.lerpUnclamped(
                -IUtils.PI,
-               IUtils.PI, i * uToPrc);
+               IUtils.PI,
+               i * uToPrc);
          cosTheta[i] = (float) Math.cos(phi);
          sinTheta[i] = (float) Math.sin(phi);
       }
@@ -560,7 +575,8 @@ public class Mesh3 extends Mesh {
       for (int i = 0; i < detailV; ++i) {
          final float phi = Utils.lerpUnclamped(
                -IUtils.HALF_PI,
-               IUtils.HALF_PI, i * vToPrc);
+               IUtils.HALF_PI,
+               i * vToPrc);
          cosPhi[i] = (float) Math.cos(phi);
          sinPhi[i] = (float) Math.sin(phi);
       }
@@ -628,10 +644,10 @@ public class Mesh3 extends Mesh {
     * @param normals
     *           the normals array
     */
-   public Mesh3 ( 
-         final int[][][] faces, 
+   public Mesh3 (
+         final int[][][] faces,
          final Vec3[] coords,
-         final Vec2[] texCoords, 
+         final Vec2[] texCoords,
          final Vec3[] normals ) {
 
       super();
@@ -685,15 +701,22 @@ public class Mesh3 extends Mesh {
     *           the output face
     * @return the face
     */
-   public Face3 getFace ( 
-         final int i, 
+   public Face3 getFace (
+         final int i,
          final Face3 target ) {
 
-      final int len = this.faces[i].length;
+      final int[][] face = this.faces[i];
+      final int len = face.length;
       final Vert3[] vertices = new Vert3[len];
+      
       for (int j = 0; j < len; ++j) {
-         vertices[j] = this.getVertex(i, j, new Vert3());
+         final int[] vert = face[j];
+         vertices[j] = new Vert3(
+               this.coords[vert[0]],
+               this.texCoords[vert[1]],
+               this.normals[vert[2]]);
       }
+      
       return target.set(vertices);
    }
 
@@ -706,22 +729,25 @@ public class Mesh3 extends Mesh {
 
       final int len0 = this.faces.length;
       final Face3[] result = new Face3[len0];
+
       for (int i = 0; i < len0; ++i) {
+      
          final int[][] fs0 = this.faces[i];
          final int len1 = fs0.length;
          final Vert3[] verts = new Vert3[len1];
 
          for (int j = 0; j < len1; ++j) {
 
-            // verts[j] = this.getVertex(i, j, new Vert3());
             final int[] fs1 = fs0[j];
             verts[j] = new Vert3(
                   this.coords[fs1[0]],
                   this.texCoords[fs1[1]],
                   this.normals[fs1[2]]);
          }
+         
          result[i] = new Face3(verts);
       }
+      
       return result;
    }
 
@@ -757,15 +783,15 @@ public class Mesh3 extends Mesh {
 
       final ArrayList < Vert3 > result = new ArrayList <>();
       Vert3 trial = new Vert3();
-
       final int len0 = this.faces.length;
+
       for (int i = 0; i < len0; ++i) {
 
          final int[][] fs = this.faces[i];
          final int len1 = fs.length;
+         
          for (int j = 0; j < len1; ++j) {
 
-            // trial = this.getVertex(i, j, new Vert3());
             final int[] f = fs[j];
             trial.set(
                   this.coords[f[0]],
@@ -778,6 +804,7 @@ public class Mesh3 extends Mesh {
             }
          }
       }
+      
       return result.toArray(new Vert3[result.size()]);
    }
 
@@ -793,8 +820,8 @@ public class Mesh3 extends Mesh {
     * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
     */
    @Chainable
-   public Mesh3 rotate ( 
-         final float radians, 
+   public Mesh3 rotate (
+         final float radians,
          final Vec3 axis ) {
 
       final int len = this.coords.length;

@@ -1377,6 +1377,12 @@ public class Color extends Vec4 {
       return easingFunc.apply(origin, dest, step, target);
    }
 
+   /**
+    * Returns a one-dimensional array of 16 colors representing
+    * the Magma color palette.
+    *
+    * @return the palette array
+    */
    public static Color[] paletteMagma () {
 
       return new Color[] {
@@ -1402,6 +1408,12 @@ public class Color extends Vec4 {
       };
    }
 
+   /**
+    * Returns a one-dimensional array of 16 colors representing
+    * the Viridis color palette.
+    *
+    * @return the palette array
+    */
    public static Color[] paletteViridis () {
 
       return new Color[] {
@@ -1721,7 +1733,7 @@ public class Color extends Vec4 {
    /**
     * Convert a color to grayscale based on its perceived
     * luminance.
-    * 
+    *
     * @param c
     *           the input color
     * @param target
@@ -1798,7 +1810,6 @@ public class Color extends Vec4 {
          }
       }
 
-      // final float sat = bri == 0.0f ? 0.0f : (bri - mn) / bri;
       final float sat = bri == 0.0f ? 0.0f : delta / bri;
       return target.set(hue, sat, bri, alpha);
    }
