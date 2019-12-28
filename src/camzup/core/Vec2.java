@@ -1614,6 +1614,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    public static float mag ( final Vec2 v ) {
 
       // return (float) Math.hypot(v.x, v.y);
+      // return Utils.hypot(v.x, v.y);
+
       return (float) Math.sqrt(Vec2.magSq(v));
    }
 

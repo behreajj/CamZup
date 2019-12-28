@@ -1172,6 +1172,36 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * Finds the hypotenuse between two values.
+    * 
+    * @param a the first value
+    * @param b the second value
+    * @return the hypotenuse
+    * @see Math#sqrt(double)
+    */
+   public static float hypot ( final float a, final float b ) {
+
+      return (float) Math.sqrt(a * a + b * b);
+   }
+
+   /**
+    * Finds the hypotenuse between three values.
+    * 
+    * @param a the first value
+    * @param b the second value
+    * @param c the third value
+    * @return the hypotenuse
+    * @see Math#sqrt(double)
+    */
+   public static float hypot ( 
+         final float a, 
+         final float b, 
+         final float c ) {
+
+      return (float) Math.sqrt(a * a + b * b + c * c);
+   }
+
+   /**
     * Finds 1.0 divided by the square-root of a value. This is
     * <em>not</em> a fast inverse square root function; it
     * depends on {@link Math#sqrt(double)} . Returns zero when
