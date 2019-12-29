@@ -3,6 +3,7 @@ package camzup;
 import camzup.core.Mat4;
 import camzup.core.Mesh3;
 import camzup.core.Random;
+import camzup.core.SDF;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -100,37 +101,36 @@ public class CamZup {
 
       // float ang = Utils.TAU * (float)Math.random();
 
-      final Random rng = new Random();
-      final PMatrix3D m = new PMatrix3D(
-            rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
-            rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
-            rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
-            rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), rng.nextFloat());
-
-      m.print();
-
-      final Mat4 n = new Mat4(
-            m.m00, m.m01, m.m02, m.m03,
-            m.m10, m.m11, m.m12, m.m13,
-            m.m20, m.m21, m.m22, m.m23,
-            m.m30, m.m31, m.m32, m.m33);
-
-      System.out.println(n.toStringTab());
-
-      final Vec4 v = new Vec4(4, 2, 3, 1);
-      final Vec4 w = new Vec4();
-
-      // float[] s = new float[] {4, 2, 3};
-      // float[] t = new float[] {0, 0, 0};
-      final PVector s = new PVector(4, 2, 3);
-      final PVector t = new PVector();
-
-      m.mult(s, t);
-
-      Mat4.mul(n, v, w);
-      System.out.println(w);
-      PApplet.printArray(t);
-
+//      final Random rng = new Random();
+//      final PMatrix3D m = new PMatrix3D(
+//            rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
+//            rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
+//            rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
+//            rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), rng.nextFloat());
+//
+//      m.print();
+//
+//      final Mat4 n = new Mat4(
+//            m.m00, m.m01, m.m02, m.m03,
+//            m.m10, m.m11, m.m12, m.m13,
+//            m.m20, m.m21, m.m22, m.m23,
+//            m.m30, m.m31, m.m32, m.m33);
+//
+//      System.out.println(n.toStringTab());
+//
+//      final Vec4 v = new Vec4(4, 2, 3, 1);
+//      final Vec4 w = new Vec4();
+//
+//      // float[] s = new float[] {4, 2, 3};
+//      // float[] t = new float[] {0, 0, 0};
+//      final PVector s = new PVector(4, 2, 3);
+//      final PVector t = new PVector();
+//
+//      m.mult(s, t);
+//
+//      Mat4.mul(n, v, w);
+//      System.out.println(w);
+//      PApplet.printArray(t);
    }
 
    public static String version () {
