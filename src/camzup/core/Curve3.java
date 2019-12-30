@@ -2574,6 +2574,16 @@ public class Curve3 extends Curve
    @Override
    public String toString () {
 
+      return this.toString(4);
+   }
+
+   /**
+    * Returns a string representation of the curve.
+    *
+    * @return the string
+    */
+   public String toString ( final int places ) {
+
       final StringBuilder sb = new StringBuilder()
             .append("{ closedLoop: ")
             .append(this.closedLoop)
@@ -2581,7 +2591,7 @@ public class Curve3 extends Curve
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
-         sb.append(itr.next());
+         sb.append(itr.next().toString(places));
          if (itr.hasNext()) {
             sb.append(',').append('\n');
          }

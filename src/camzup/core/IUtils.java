@@ -114,6 +114,28 @@ public interface IUtils {
    double ONE_SIX_D = 0.16666666666666667d;
 
    /**
+    * An approximation of 1.0 / ( \u221a 2.0 ), 0.70710678 .
+    */
+   float ONE_SQRT_2 = 0.70710678f;
+
+   /**
+    * An approximation of 1.0 / ( \u221a 2.0 ),
+    * 0.7071067811865475 .
+    */
+   double ONE_SQRT_2_D = 0.7071067811865475d;
+
+   /**
+    * An approximation of 1.0 / ( \u221a 3.0 ), 0.57735027 .
+    */
+   float ONE_SQRT_3 = 0.57735027f;
+
+   /**
+    * An approximation of 1.0 / ( \u221a 3.0 ),
+    * 0.5773502691896258 .
+    */
+   double ONE_SQRT_3_D = 0.5773502691896258d;
+
+   /**
     * One divided by \u03c4. Approximately 0.15915494 . Useful
     * for converting an index in a for-loop to an angle and for
     * applying mod to an angle.
@@ -171,6 +193,21 @@ public interface IUtils {
    double RAD_TO_DEG_D = 57.29577951308232d;
 
    /**
+    * An approximation of \u221a 2.0, 1.4142136 .
+    */
+   float SQRT_2 = 1.4142136f;
+
+   /**
+    * An approximation of \u221a 2.0, 1.4142135623730951 .
+    */
+   double SQRT_2_D = 1.4142135623730951d;
+
+   /**
+    * An approximation of \u221a 3.0, 1.7320508 .
+    */
+   float SQRT_3 = 1.7320508f;
+
+   /**
     * An approximation of ( \u221a 3.0 ) / 2.0 , 0.8660254 .
     */
    float SQRT_3_2 = 0.8660254f;
@@ -180,6 +217,11 @@ public interface IUtils {
     * 0.8660254037844386 .
     */
    double SQRT_3_2_D = 0.8660254037844386d;
+
+   /**
+    * An approximation of \u221a 3.0, 1.7320508075688772 .
+    */
+   double SQRT_3_D = 1.7320508075688772d;
 
    /**
     * An approximation of \u03c4 . Equal to 2.0 \u03c0, or

@@ -27,7 +27,7 @@ public abstract class Simplex {
     * Squish constant 3D (Math.sqrt(4.0d) - 1.0d) / 3.0d;
     * approximately 0.33333334 .
     */
-   private static final float F3 = 0.3333333333333333f;
+   private static final float F3 = IUtils.ONE_THIRD;
 
    /**
     * Squish constant 4D (Math.sqrt(5.0d) - 1.0d) / 4.0d;
@@ -49,12 +49,12 @@ public abstract class Simplex {
    /**
     * Stretch constant 3D.
     */
-   private static final float G3 = 0.16666666666666667f;
+   private static final float G3 = IUtils.ONE_SIX;
 
    /**
     * 2x stretch constant 3D.
     */
-   private static final float G3_2 = 0.33333333333333333f;
+   private static final float G3_2 = IUtils.ONE_THIRD;
 
    /**
     * 3x stretch constant 3D. 0.5 .
@@ -128,7 +128,7 @@ public abstract class Simplex {
     * sqrt(2.0) / Math.sqrt(3.0) Used by rotation look up
     * tables. Approximately 0.8164966 .
     */
-   private static final float RT2_RT3 = 0.816496580927726f;
+   private static final float RT2_RT3 = 0.8164966f;
 
    /**
     * Factor by which 2D noise is scaled prior to return.
@@ -149,13 +149,13 @@ public abstract class Simplex {
     * Factor added to 2D noise when returning a Vec2. 1.0d /
     * Math.sqrt(2.0d); approximately 0.70710677 .
     */
-   private final static float STEP_2 = 0.7071067811865475f;
+   private final static float STEP_2 = IUtils.ONE_SQRT_2;
 
    /**
     * Factor added to 3D noise when returning a Vec3. 1.0d /
     * Math.sqrt(3.0d); approximately 0.57735026 .
     */
-   private final static float STEP_3 = 0.5773502691896258f;
+   private final static float STEP_3 = IUtils.ONE_SQRT_3;
 
    /**
     * Factor added to 4D noise when returning a Vec4. 1.0d /
