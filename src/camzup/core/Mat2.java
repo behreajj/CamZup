@@ -122,7 +122,7 @@ public class Mat2 extends Matrix {
       return m.m11 == 1.0f && m.m00 == 1.0f &&
             m.m01 == 0.0f && m.m10 == 0.0f;
    }
-   
+
    /**
     * Multiplies two matrices by component.
     *
@@ -134,11 +134,11 @@ public class Mat2 extends Matrix {
     *           the output matrix
     * @return the product
     */
-   public static Mat2 mul(
+   public static Mat2 mul (
          final Mat2 a,
          final Mat2 b,
-         final Mat2 target) {
-      
+         final Mat2 target ) {
+
       return target.set(
             a.m00 * b.m00 + a.m01 * b.m10,
             a.m00 * b.m01 + a.m01 * b.m11,
@@ -167,7 +167,7 @@ public class Mat2 extends Matrix {
             a.m00 * b.x + a.m01 * b.y,
             a.m10 * b.x + a.m11 * b.y);
    }
-   
+
    /**
     * Subtracts the right matrix from the left matrix.
     *
@@ -219,7 +219,7 @@ public class Mat2 extends Matrix {
    public float m01 = 0.0f;
 
    /**
-    * Component in row 1, column 0. 
+    * Component in row 1, column 0.
     */
    public float m10 = 0.0f;
 
@@ -367,7 +367,7 @@ public class Mat2 extends Matrix {
             return 0.0f;
       }
    }
-   
+
    /**
     * Simulates bracket subscript access in a two-dimensional,
     * row-major matrix array. Works with positive integers in

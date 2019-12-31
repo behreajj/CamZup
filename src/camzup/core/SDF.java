@@ -1,15 +1,20 @@
 package camzup.core;
 
 /**
- *
- * https://www.iquilezles.org/www/articles/distfunctions2d/distfunctions2d.htm
- * https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm
+ * Facilitates implicit shapes created with signed distance
+ * fields. Primary references are from Inigo Quilez:
+ * <a href=
+ * "https://www.iquilezles.org/www/articles/distfunctions2d/distfunctions2d.htm">2D
+ * Distance Functions</a>, <a href=
+ * "https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm">Distance
+ * Functions</a>.
  *
  * @author Inigo Quilez
  */
 public abstract class SDF {
 
    private static final Vec3 HEXAGON;
+
    private static final Vec3 OCTAGON;
 
    static {
@@ -358,6 +363,43 @@ public abstract class SDF {
       return (float) (s * Math.sqrt(d));
    }
 
+   public static float rhombus (
+         final Vec2 point,
+         final Vec2 bounds ) {
+
+      /*
+       * float ndot(vec2 a, vec2 b ) { return a.x * b.x - a.y *
+       * b.y; } vec2 q = abs(p); float h = clamp((-2.0 * ndot(q,
+       * b) + ndot(b, b)) / dot(b, b), -1.0, 1.0); float d =
+       * length(q - 0.5 * b * vec2(1.0 - h, 1.0 + h)); return d *
+       * sign(q.x * b.y + q.y * b.x - b.x * b.y );
+       */
+
+      final float qx = Utils.abs(point.x);
+      final float qy = Utils.abs(point.y);
+      final float bxsq = bounds.x * bounds.x;
+      final float bysq = bounds.y * bounds.y;
+      final float ndotqb = qx * bounds.x - qy * bounds.y;
+      final float h = Utils.clamp(Utils.div(
+            (bxsq - bysq) - ndotqb - ndotqb,
+            bxsq + bysq),
+            -1.0f, 1.0f);
+
+      return Math.copySign(
+            Utils.hypot(
+                  qx - 0.5f * bounds.x * (1.0f - h),
+                  qy - 0.5f * bounds.y * (1.0f + h)),
+            qx * bounds.y + qy * bounds.x - bounds.x * bounds.y);
+   }
+
+   public static float rhombus (
+         final Vec2 point,
+         final Vec2 bounds,
+         final float rounding ) {
+
+      return SDF.rhombus(point, bounds) - rounding;
+   }
+
    public static float sphere (
          final Vec3 point,
          final float bounds ) {
@@ -384,7 +426,7 @@ public abstract class SDF {
       return Math.copySign(-Utils.hypot(px2, py1), py1);
    }
 
-   public static float triangle (
+   static float triangle (
          final Vec2 point,
          final Vec2 corner0,
          final Vec2 corner1,
@@ -393,13 +435,13 @@ public abstract class SDF {
       // TODO: Needs testing...
 
       /*
-       * vec2 e0 = p1-p0, e1 = p2-p1, e2 = p0-p2; vec2 v0 = p -p0,
-       * v1 = p -p1, v2 = p -p2; vec2 pq0 = v0 - e0*clamp(
-       * dot(v0,e0)/dot(e0,e0), 0.0, 1.0 ); vec2 pq1 = v1 -
-       * e1*clamp( dot(v1,e1)/dot(e1,e1), 0.0, 1.0 ); vec2 pq2 =
-       * v2 - e2 * clamp( dot(v2, e2)/dot(e2, de2), 0.0, 1.0 );
-       * float s = sign( e0.x * e2.y - e0.y * e2.x ); vec2 d =
-       * min(min(vec2(dot(pq0, pq0), s * (v0.x * e0.y - v0.y *
+       * vec2 e0 = p1 - p0; vec2 e1 = p2 - p1; vec2 e2 = p0 - p2;
+       * vec2 v0 = p - p0; vec2 v1 = p - p1; vec2 v2 = p - p2;
+       * vec2 pq0 = v0 - e0 * clamp(dot(v0, e0) / dot(e0, e0), 0.0, 1.0);
+       * vec2 pq1 = v1 - e1 * clamp(dot(v1, e1) / dot(e1, e1), 0.0, 1.0);
+       * vec2 pq2 = v2 - e2 * clamp(dot(v2, e2) / dot(e2, e2), 0.0, 1.0);
+       * float s = sign(e0.x * e2.y - e0.y * e2.x);
+       * vec2 d = min(min(vec2(dot(pq0, pq0), s * (v0.x * e0.y - v0.y *
        * e0.x)), vec2(dot(pq1, pq1), s * (v1.x * e1.y - v1.y *
        * e1.x))), vec2(dot(pq2, pq2), s * (v2.x * e2.y - v2.y *
        * e2.x))); return -sqrt(d.x) * sign(d.y);
@@ -432,22 +474,23 @@ public abstract class SDF {
       final float dot0 = Utils.clamp01(Utils.div(
             v0x * e0x + v0y * e0y,
             e0x * e0x + e0y * e0y));
-      final float pq0x = e0x * dot0;
-      final float pq0y = e0y * dot0;
+      final float pq0x = v0x - e0x * dot0;
+      final float pq0y = v0y - e0y * dot0;
 
       final float dot1 = Utils.clamp01(Utils.div(
             v1x * e1x + v1y * e1y,
             e1x * e1x + e1y * e1y));
-      final float pq1x = e1x * dot1;
-      final float pq1y = e1y * dot1;
+      final float pq1x = v1x - e1x * dot1;
+      final float pq1y = v1y - e1y * dot1;
 
       final float dot2 = Utils.clamp01(Utils.div(
             v2x * e2x + v2y * e2y,
             e2x * e2x + e2y * e2y));
-      final float pq2x = e2x * dot2;
-      final float pq2y = e2y * dot2;
+      final float pq2x = v2x - e2x * dot2;
+      final float pq2y = v2y - e2y * dot2;
 
       final float s = e0x * e2y - e0y * e2x;
+      
       final float ax = pq0x * pq0x + pq0y * pq0y;
       final float ay = Math.copySign(v0x * e0y - v0y * e0x, s);
 

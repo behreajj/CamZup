@@ -2,17 +2,11 @@ package camzup;
 
 import camzup.core.Color;
 import camzup.core.Gradient;
-import camzup.core.Mat4;
 import camzup.core.Mesh3;
-import camzup.core.Random;
-import camzup.core.SDF;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
-import camzup.core.Vec4;
 import processing.core.PApplet;
-import processing.core.PMatrix3D;
-import processing.core.PVector;
 
 public class CamZup {
 
@@ -93,6 +87,9 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
+      // final int x = 12345;
+      // final Integer y = x;
+      // System.out.println(y.hashCode());
       // SVGParser.parse("data/v2.svg");
 
       // final CurveEntity2 ce = new CurveEntity2();
@@ -101,16 +98,18 @@ public class CamZup {
       // new Curve2());
       // ce.appendCurve(curve);
       // System.out.println(ce.toBlenderCode());
+
+//      final Gradient gr = Gradient.paletteViridis(new Gradient());
+//      gr.removeDuplicates();
+//      System.out.println(gr.toString(4));
+//      final int count = 32;
+//      final float toPrc = 1.0f / (count - 1.0f);
+//      final Color target = new Color();
+//      for (int i = 0; i < count; ++i) {
+//         final float prc = i * toPrc;
+//         System.out.println(Color.toHexWeb(gr.eval(prc, target)));
+//      }
       
-      Gradient gr = Gradient.paletteHue();
-      int count = 16;
-      float toPrc = 1.0f / (count - 1.0f);
-      Color target = new Color();
-      Color.AbstrEasing easingFunc = new Color.SmoothStepRgba();
-      for(int i = 0; i < count; ++i) {
-         float prc = i * toPrc;
-         System.out.println(gr.eval(prc, easingFunc, target));
-      }
    }
 
    public static String version () {

@@ -190,7 +190,10 @@ public class Curve2 extends Curve
             final String xRear,
             final String yRear ) {
 
-         this.set(xCoord, yCoord, xFore, yFore, xRear, yRear);
+         this.set(
+               xCoord, yCoord,
+               xFore, yFore,
+               xRear, yRear);
       }
 
       /**
@@ -254,6 +257,7 @@ public class Curve2 extends Curve
          } else if (!this.coord.equals(other.coord)) {
             return false;
          }
+
          if (this.foreHandle == null) {
             if (other.foreHandle != null) {
                return false;
@@ -261,6 +265,7 @@ public class Curve2 extends Curve
          } else if (!this.foreHandle.equals(other.foreHandle)) {
             return false;
          }
+
          if (this.rearHandle == null) {
             if (other.rearHandle != null) {
                return false;
@@ -322,6 +327,7 @@ public class Curve2 extends Curve
          Vec2.sub(this.foreHandle, this.coord, foreDir);
          Vec2.rescale(rearDir, -Vec2.mag(foreDir), foreScaled);
          Vec2.add(foreScaled, this.coord, this.foreHandle);
+
          return this;
       }
 
@@ -425,12 +431,15 @@ public class Curve2 extends Curve
          if (this == obj) {
             return true;
          }
+
          if (obj == null) {
             return false;
          }
+
          if (this.getClass() != obj.getClass()) {
             return false;
          }
+
          return this.equals((Knot2) obj);
       }
 
@@ -495,6 +504,7 @@ public class Curve2 extends Curve
          this.foreHandle.set(
                this.coord.x - (this.rearHandle.x - this.coord.x),
                this.coord.y - (this.rearHandle.y - this.coord.y));
+
          return this;
       }
 
@@ -514,6 +524,7 @@ public class Curve2 extends Curve
 
          Vec2.sub(this.rearHandle, this.coord, rearDir);
          Vec2.sub(this.coord, rearDir, this.foreHandle);
+
          return this;
       }
 
@@ -529,6 +540,7 @@ public class Curve2 extends Curve
          this.rearHandle.set(
                this.coord.x - (this.foreHandle.x - this.coord.x),
                this.coord.y - (this.foreHandle.y - this.coord.y));
+
          return this;
       }
 
@@ -548,6 +560,7 @@ public class Curve2 extends Curve
 
          Vec2.sub(this.foreHandle, this.coord, foreDir);
          Vec2.sub(this.coord, foreDir, this.rearHandle);
+
          return this;
       }
 
@@ -564,6 +577,7 @@ public class Curve2 extends Curve
          final float ty = this.foreHandle.y;
          this.foreHandle.set(this.rearHandle);
          this.rearHandle.set(tx, ty);
+
          return this;
       }
 
@@ -604,6 +618,7 @@ public class Curve2 extends Curve
          Vec2.rotateZ(this.coord, cosa, sina, this.coord);
          Vec2.rotateZ(this.foreHandle, cosa, sina, this.foreHandle);
          Vec2.rotateZ(this.rearHandle, cosa, sina, this.rearHandle);
+
          return this;
       }
 
@@ -620,6 +635,7 @@ public class Curve2 extends Curve
          Vec2.mul(this.coord, scale, this.coord);
          Vec2.mul(this.foreHandle, scale, this.foreHandle);
          Vec2.mul(this.rearHandle, scale, this.rearHandle);
+
          return this;
       }
 
@@ -636,6 +652,7 @@ public class Curve2 extends Curve
          Vec2.mul(this.coord, scale, this.coord);
          Vec2.mul(this.foreHandle, scale, this.foreHandle);
          Vec2.mul(this.rearHandle, scale, this.rearHandle);
+
          return this;
       }
 
@@ -659,6 +676,7 @@ public class Curve2 extends Curve
          Vec2.sub(this.foreHandle, this.coord, temp0);
          Vec2.mul(temp0, scalar, temp1);
          Vec2.add(temp1, this.coord, this.foreHandle);
+
          return this;
       }
 
@@ -682,6 +700,7 @@ public class Curve2 extends Curve
          Vec2.subNorm(this.foreHandle, this.coord, temp0);
          Vec2.mul(temp0, magnitude, temp1);
          Vec2.add(temp1, this.coord, this.foreHandle);
+
          return this;
       }
 
@@ -708,6 +727,7 @@ public class Curve2 extends Curve
          this.scaleRearHandleBy(
                scalar,
                temp0, temp1);
+
          return this;
       }
 
@@ -736,6 +756,7 @@ public class Curve2 extends Curve
          this.scaleRearHandleTo(
                magnitude,
                temp0, temp1);
+
          return this;
       }
 
@@ -762,6 +783,7 @@ public class Curve2 extends Curve
          Vec2.sub(this.rearHandle, this.coord, temp0);
          Vec2.mul(temp0, scalar, temp1);
          Vec2.add(temp1, this.coord, this.rearHandle);
+
          return this;
       }
 
@@ -788,6 +810,7 @@ public class Curve2 extends Curve
          Vec2.subNorm(this.rearHandle, this.coord, temp0);
          Vec2.mul(temp0, magnitude, temp1);
          Vec2.add(temp1, this.coord, this.rearHandle);
+
          return this;
       }
 
@@ -807,10 +830,8 @@ public class Curve2 extends Curve
             final float xCoord,
             final float yCoord ) {
 
-         final float xOff = Math.copySign(Utils.EPSILON,
-               xCoord);
-         final float yOff = Math.copySign(Utils.EPSILON,
-               yCoord);
+         final float xOff = Math.copySign(Utils.EPSILON, xCoord);
+         final float yOff = Math.copySign(Utils.EPSILON, yCoord);
 
          return this.set(
                xCoord, yCoord,
@@ -848,6 +869,7 @@ public class Curve2 extends Curve
          this.rearHandle.set(
                xCoord - (xFore - xCoord),
                yCoord - (yFore - yCoord));
+
          return this;
       }
 
@@ -992,6 +1014,7 @@ public class Curve2 extends Curve
          this.coord.set(coord);
          this.foreHandle.set(foreHandle);
          this.rearHandle.set(rearHandle);
+
          return this;
       }
 
@@ -1057,6 +1080,7 @@ public class Curve2 extends Curve
          Vec2.add(this.coord, v, this.coord);
          Vec2.add(this.foreHandle, v, this.foreHandle);
          Vec2.add(this.rearHandle, v, this.rearHandle);
+
          return this;
       }
    }
@@ -2617,10 +2641,10 @@ public class Curve2 extends Curve
    }
 
    /**
-    * Evaluates an array of vectors given a supplied length.
-    * The array is two-dimensional, where the first element of
-    * the minor dimension is the coordinate and the second is
-    * the tangent.
+    * Evaluates an array of vectors given a supplied count. The
+    * array is two-dimensional, where the first element of the
+    * minor dimension is the coordinate and the second is the
+    * tangent.
     *
     * @param count
     *           the count
@@ -2921,6 +2945,8 @@ public class Curve2 extends Curve
    /**
     * Returns a string representation of the curve.
     *
+    * @param places
+    *           the number of places
     * @return the string
     */
    public String toString ( final int places ) {

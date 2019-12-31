@@ -1173,9 +1173,11 @@ public abstract class Utils implements IUtils {
 
    /**
     * Finds the hypotenuse between two values.
-    * 
-    * @param a the first value
-    * @param b the second value
+    *
+    * @param a
+    *           the first value
+    * @param b
+    *           the second value
     * @return the hypotenuse
     * @see Math#sqrt(double)
     */
@@ -1186,16 +1188,19 @@ public abstract class Utils implements IUtils {
 
    /**
     * Finds the hypotenuse between three values.
-    * 
-    * @param a the first value
-    * @param b the second value
-    * @param c the third value
+    *
+    * @param a
+    *           the first value
+    * @param b
+    *           the second value
+    * @param c
+    *           the third value
     * @return the hypotenuse
     * @see Math#sqrt(double)
     */
-   public static float hypot ( 
-         final float a, 
-         final float b, 
+   public static float hypot (
+         final float a,
+         final float b,
          final float c ) {
 
       return (float) Math.sqrt(a * a + b * b + c * c);

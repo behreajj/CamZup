@@ -551,6 +551,49 @@ public class Color extends Vec4 {
    }
 
    /**
+    * Eases between two colors.
+    */
+   public static class LerpRgba extends AbstrEasing {
+
+      /**
+       * The default constructor.
+       */
+      public LerpRgba () {
+
+         super();
+      }
+
+      /**
+       * Applies the function.
+       *
+       * @param origin
+       *           the origin color
+       * @param dest
+       *           the destination color
+       * @param step
+       *           the step in a range 0 to 1
+       * @param target
+       *           the output color
+       * @return the eased color
+       */
+      @Override
+      public Color applyUnclamped (
+            final Color origin,
+            final Color dest,
+            final float step,
+            final Color target ) {
+
+         final double td = step;
+         final double ud = 1.0d - td;
+         return target.set(
+               (float) (ud * origin.x + td * dest.x),
+               (float) (ud * origin.y + td * dest.y),
+               (float) (ud * origin.z + td * dest.z),
+               (float) (ud * origin.w + td * dest.w));
+      }
+   }
+
+   /**
     * Eases between colors by hue, saturation and brightness.
     */
    public static class MixHsba extends AbstrEasing {
@@ -759,7 +802,8 @@ public class Color extends Vec4 {
          final double td = step;
          final double ts = td * td * (3.0d - (td + td));
          final double us = 1.0d - ts;
-         return target.set((float) (us * origin.x + ts * dest.x),
+         return target.set(
+               (float) (us * origin.x + ts * dest.x),
                (float) (us * origin.y + ts * dest.y),
                (float) (us * origin.z + ts * dest.z),
                (float) (us * origin.w + ts * dest.w));
@@ -1378,68 +1422,6 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Returns a one-dimensional array of 16 colors representing
-    * the Magma color palette.
-    *
-    * @return the palette array
-    */
-   public static Color[] paletteMagma () {
-
-      return new Color[] {
-            new Color(0.988235f, 1.000000f, 0.698039f, 1.0f), // 0xFFFCFFB2
-            new Color(0.987190f, 0.843137f, 0.562092f, 1.0f), // 0xFFFCD78F
-            new Color(0.984314f, 0.694118f, 0.446275f, 1.0f), // 0xFFFBB172
-            new Color(0.981176f, 0.548235f, 0.354510f, 1.0f), // 0xFFFA8C5A
-
-            new Color(0.962353f, 0.412549f, 0.301176f, 1.0f), // 0xFFF5694D
-            new Color(0.912418f, 0.286275f, 0.298039f, 1.0f), // 0xFFE9494C
-            new Color(0.824314f, 0.198431f, 0.334902f, 1.0f), // 0xFFD23355
-            new Color(0.703268f, 0.142484f, 0.383007f, 1.0f), // 0xFFB32462
-
-            new Color(0.584052f, 0.110588f, 0.413856f, 1.0f), // 0xFF951C6A
-            new Color(0.471373f, 0.080784f, 0.430588f, 1.0f), // 0xFF78156E
-            new Color(0.367320f, 0.045752f, 0.432680f, 1.0f), // 0xFF5E0C6E
-            new Color(0.267974f, 0.002353f, 0.416732f, 1.0f), // 0xFF44016A
-
-            new Color(0.174118f, 0.006275f, 0.357647f, 1.0f), // 0xFF2C025B
-            new Color(0.093856f, 0.036863f, 0.232941f, 1.0f), // 0xFF18093B
-            new Color(0.040784f, 0.028758f, 0.110327f, 1.0f), // 0xFF0A071C
-            new Color(0.000000f, 0.000000f, 0.019608f, 1.0f) // 0xFF000005
-      };
-   }
-
-   /**
-    * Returns a one-dimensional array of 16 colors representing
-    * the Viridis color palette.
-    *
-    * @return the palette array
-    */
-   public static Color[] paletteViridis () {
-
-      return new Color[] {
-            new Color(0.266667f, 0.003922f, 0.329412f, 1.0f), // 0xFF440154
-            new Color(0.282353f, 0.100131f, 0.420654f, 1.0f), // 0xFF481A6B
-            new Color(0.276078f, 0.184575f, 0.487582f, 1.0f), // 0xFF462F7C
-            new Color(0.254902f, 0.265882f, 0.527843f, 1.0f), // 0xFF414487
-
-            new Color(0.221961f, 0.340654f, 0.549281f, 1.0f), // 0xFF39578C
-            new Color(0.192157f, 0.405229f, 0.554248f, 1.0f), // 0xFF31678D
-            new Color(0.164706f, 0.469804f, 0.556863f, 1.0f), // 0xFF2A788E
-            new Color(0.139869f, 0.534379f, 0.553464f, 1.0f), // 0xFF24888D
-
-            new Color(0.122092f, 0.595033f, 0.543007f, 1.0f), // 0xFF1F988A
-            new Color(0.139608f, 0.658039f, 0.516863f, 1.0f), // 0xFF24A884
-            new Color(0.210458f, 0.717647f, 0.471895f, 1.0f), // 0xFF36B778
-            new Color(0.326797f, 0.773595f, 0.407582f, 1.0f), // 0xFF53C568
-
-            new Color(0.477647f, 0.821961f, 0.316863f, 1.0f), // 0xFF7AD251
-            new Color(0.648366f, 0.858039f, 0.208889f, 1.0f), // 0xFFA5DB35
-            new Color(0.825098f, 0.884967f, 0.114771f, 1.0f), // 0xFFD2E21D
-            new Color(0.992157f, 0.905882f, 0.145098f, 1.0f) // 0xFFFDE725
-      };
-   }
-
-   /**
     * Raises each component of the color to a power. Useful for
     * gamma adjustment.
     *
@@ -1943,7 +1925,10 @@ public class Color extends Vec4 {
     */
    public static String toHexWeb ( final int c ) {
 
-      return "#" + Integer.toHexString(c).substring(2);
+      return "#" + Integer
+            .toHexString(c)
+            .substring(2)
+            .toUpperCase();
    }
 
    /**
@@ -2170,8 +2155,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Compares this color to a color stored in an integer as a
-    * hexadecimal value.
+    * Tests this color for equivalence to another based on its
+    * hexadecimal representation.
     *
     * @param other
     *           the color integer
@@ -2197,12 +2182,15 @@ public class Color extends Vec4 {
       if (this == obj) {
          return true;
       }
+
       if (obj == null) {
          return false;
       }
+
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+
       return Color.toHexInt(this) == Color.toHexInt((Color) obj);
    }
 
@@ -2299,8 +2287,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Returns a hash code for this color based on its red,
-    * green, blue and alpha channels.
+    * Returns a hash code for this color based on its
+    * hexadecmal value.
     *
     * @return the hash code
     * @see Float#floatToIntBits(float)
@@ -2308,13 +2296,15 @@ public class Color extends Vec4 {
    @Override
    public int hashCode () {
 
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + Float.floatToIntBits(this.w);
-      result = prime * result + Float.floatToIntBits(this.z);
-      result = prime * result + Float.floatToIntBits(this.y);
-      result = prime * result + Float.floatToIntBits(this.x);
-      return result;
+      // final int prime = 31;
+      // int result = 1;
+      // result = prime * result + Float.floatToIntBits(this.w);
+      // result = prime * result + Float.floatToIntBits(this.z);
+      // result = prime * result + Float.floatToIntBits(this.y);
+      // result = prime * result + Float.floatToIntBits(this.x);
+      // return result;
+
+      return Color.toHexInt(this);
    }
 
    /**

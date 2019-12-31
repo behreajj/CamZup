@@ -555,6 +555,7 @@ public class Curve3 extends Curve
 
          Vec3.sub(this.foreHandle, this.coord, foreDir);
          Vec3.sub(this.coord, foreDir, this.rearHandle);
+
          return this;
       }
 
@@ -572,6 +573,7 @@ public class Curve3 extends Curve
          final float tz = this.foreHandle.z;
          this.foreHandle.set(this.rearHandle);
          this.rearHandle.set(tx, ty, tz);
+
          return this;
       }
 
@@ -600,6 +602,7 @@ public class Curve3 extends Curve
          Vec3.rotate(this.coord, cosa, sina, axis, this.coord);
          Vec3.rotate(this.foreHandle, cosa, sina, axis, this.foreHandle);
          Vec3.rotate(this.rearHandle, cosa, sina, axis, this.rearHandle);
+
          return this;
       }
 
@@ -657,6 +660,7 @@ public class Curve3 extends Curve
          Vec3.rotateX(this.coord, cosa, sina, this.coord);
          Vec3.rotateX(this.foreHandle, cosa, sina, this.foreHandle);
          Vec3.rotateX(this.rearHandle, cosa, sina, this.rearHandle);
+
          return this;
       }
 
@@ -695,6 +699,7 @@ public class Curve3 extends Curve
          Vec3.rotateY(this.coord, cosa, sina, this.coord);
          Vec3.rotateY(this.foreHandle, cosa, sina, this.foreHandle);
          Vec3.rotateY(this.rearHandle, cosa, sina, this.rearHandle);
+
          return this;
       }
 
@@ -733,6 +738,7 @@ public class Curve3 extends Curve
          Vec3.rotateZ(this.coord, cosa, sina, this.coord);
          Vec3.rotateZ(this.foreHandle, cosa, sina, this.foreHandle);
          Vec3.rotateZ(this.rearHandle, cosa, sina, this.rearHandle);
+
          return this;
       }
 
@@ -749,6 +755,7 @@ public class Curve3 extends Curve
          Vec3.mul(this.coord, scale, this.coord);
          Vec3.mul(this.foreHandle, scale, this.foreHandle);
          Vec3.mul(this.rearHandle, scale, this.rearHandle);
+
          return this;
       }
 
@@ -765,6 +772,7 @@ public class Curve3 extends Curve
          Vec3.mul(this.coord, scale, this.coord);
          Vec3.mul(this.foreHandle, scale, this.foreHandle);
          Vec3.mul(this.rearHandle, scale, this.rearHandle);
+
          return this;
       }
 
@@ -788,6 +796,7 @@ public class Curve3 extends Curve
          Vec3.sub(this.foreHandle, this.coord, temp0);
          Vec3.mul(temp0, scalar, temp1);
          Vec3.add(temp1, this.coord, this.foreHandle);
+
          return this;
       }
 
@@ -811,6 +820,7 @@ public class Curve3 extends Curve
          Vec3.subNorm(this.foreHandle, this.coord, temp0);
          Vec3.mul(temp0, magnitude, temp1);
          Vec3.add(temp1, this.coord, this.foreHandle);
+
          return this;
       }
 
@@ -837,6 +847,7 @@ public class Curve3 extends Curve
          this.scaleRearHandleBy(
                scalar,
                temp0, temp1);
+
          return this;
       }
 
@@ -865,6 +876,7 @@ public class Curve3 extends Curve
          this.scaleRearHandleTo(
                magnitude,
                temp0, temp1);
+
          return this;
       }
 
@@ -891,6 +903,7 @@ public class Curve3 extends Curve
          Vec3.sub(this.rearHandle, this.coord, temp0);
          Vec3.mul(temp0, scalar, temp1);
          Vec3.add(temp1, this.coord, this.rearHandle);
+
          return this;
       }
 
@@ -917,6 +930,7 @@ public class Curve3 extends Curve
          Vec3.subNorm(this.rearHandle, this.coord, temp0);
          Vec3.mul(temp0, magnitude, temp1);
          Vec3.add(temp1, this.coord, this.rearHandle);
+
          return this;
       }
 
@@ -939,12 +953,9 @@ public class Curve3 extends Curve
             final float yCoord,
             final float zCoord ) {
 
-         final float xOff = Math.copySign(Utils.EPSILON,
-               xCoord);
-         final float yOff = Math.copySign(Utils.EPSILON,
-               yCoord);
-         final float zOff = Math.copySign(Utils.EPSILON,
-               yCoord);
+         final float xOff = Math.copySign(Utils.EPSILON, xCoord);
+         final float yOff = Math.copySign(Utils.EPSILON, yCoord);
+         final float zOff = Math.copySign(Utils.EPSILON, zCoord);
 
          return this.set(
                xCoord, yCoord, zCoord,
@@ -2580,6 +2591,8 @@ public class Curve3 extends Curve
    /**
     * Returns a string representation of the curve.
     *
+    * @param places
+    *           the number of places
     * @return the string
     */
    public String toString ( final int places ) {

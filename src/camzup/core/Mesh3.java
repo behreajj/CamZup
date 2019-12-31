@@ -78,7 +78,7 @@ public class Mesh3 extends Mesh {
 
       /**
        * Returns the number of vertices in this face.
-       * 
+       *
        * @return the vertex count
        */
       public int vertCount () {
@@ -231,9 +231,9 @@ public class Mesh3 extends Mesh {
 
       final Vec3[] coords = mesh.coords;
       final int len = coords.length;
-      
+
       for (int i = 0; i < len; ++i) {
-         
+
          final Vec3 coord = coords[i];
          final float x = coord.x;
          final float y = coord.y;
@@ -259,8 +259,8 @@ public class Mesh3 extends Mesh {
       }
 
       return dim.set(
-            xMax - xMin, 
-            yMax - yMin, 
+            xMax - xMin,
+            yMax - yMin,
             zMax - zMin);
    }
 
@@ -708,7 +708,7 @@ public class Mesh3 extends Mesh {
       final int[][] face = this.faces[i];
       final int len = face.length;
       final Vert3[] vertices = new Vert3[len];
-      
+
       for (int j = 0; j < len; ++j) {
          final int[] vert = face[j];
          vertices[j] = new Vert3(
@@ -716,7 +716,7 @@ public class Mesh3 extends Mesh {
                this.texCoords[vert[1]],
                this.normals[vert[2]]);
       }
-      
+
       return target.set(vertices);
    }
 
@@ -731,7 +731,7 @@ public class Mesh3 extends Mesh {
       final Face3[] result = new Face3[len0];
 
       for (int i = 0; i < len0; ++i) {
-      
+
          final int[][] fs0 = this.faces[i];
          final int len1 = fs0.length;
          final Vert3[] verts = new Vert3[len1];
@@ -744,10 +744,10 @@ public class Mesh3 extends Mesh {
                   this.texCoords[fs1[1]],
                   this.normals[fs1[2]]);
          }
-         
+
          result[i] = new Face3(verts);
       }
-      
+
       return result;
    }
 
@@ -789,7 +789,7 @@ public class Mesh3 extends Mesh {
 
          final int[][] fs = this.faces[i];
          final int len1 = fs.length;
-         
+
          for (int j = 0; j < len1; ++j) {
 
             final int[] f = fs[j];
@@ -804,7 +804,7 @@ public class Mesh3 extends Mesh {
             }
          }
       }
-      
+
       return result.toArray(new Vert3[result.size()]);
    }
 

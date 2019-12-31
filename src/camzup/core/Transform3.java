@@ -896,8 +896,8 @@ public class Transform3 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform3 moveTo ( 
-         final Vec3 locNew, 
+   public Transform3 moveTo (
+         final Vec3 locNew,
          final float step ) {
 
       return this.moveTo(locNew, step, Transform3.EASING.loc);
@@ -917,8 +917,8 @@ public class Transform3 extends Transform {
     * @see Vec3.AbstrEasing#apply(Vec3, Vec3, Float, Vec3)
     */
    @Chainable
-   public Transform3 moveTo ( 
-         final Vec3 locNew, 
+   public Transform3 moveTo (
+         final Vec3 locNew,
          final float step,
          final Vec3.AbstrEasing easingFunc ) {
 
@@ -951,8 +951,8 @@ public class Transform3 extends Transform {
     * @see Transform3#updateAxes()
     */
    @Chainable
-   public Transform3 rotateBy ( 
-         final float radians, 
+   public Transform3 rotateBy (
+         final float radians,
          final Vec3 axis ) {
 
       this.rotPrev.set(this.rotation);

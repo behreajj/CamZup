@@ -3101,6 +3101,62 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
+    * A rough emulation of GLSL's 'swizzle' feature. Creates a
+    * new vector based on the indices supplied to the function.
+    * 
+    * @param v
+    *           the input vector
+    * @param i
+    *           the first index
+    * @param j
+    *           the second index
+    * @param k
+    *           the third index
+    * @param target
+    *           the output vector
+    * @return the swizzled vector
+    * @see Vec3#get(int)
+    */
+   public static Vec3 swizzle (
+         final Vec3 v,
+         final int i,
+         final int j,
+         final int k,
+         final Vec3 target ) {
+
+      return target.set(
+            v.get(i),
+            v.get(j),
+            v.get(k));
+   }
+
+   /**
+    * A rough emulation of GLSL's 'swizzle' feature. Creates a
+    * new vector based on the indices supplied to the function.
+    * 
+    * @param v
+    *           the input vector
+    * @param i
+    *           the first index
+    * @param j
+    *           the second index
+    * @param target
+    *           the output vector
+    * @return the swizzled vector
+    * @see Vec3#get(int)
+    */
+   public static Vec2 swizzle (
+         final Vec3 v,
+         final int i,
+         final int j,
+         final Vec2 target ) {
+
+      return target.set(
+            v.get(i),
+            v.get(j));
+   }
+
+   /**
     * Truncates each component of the vector.
     *
     * @param v
