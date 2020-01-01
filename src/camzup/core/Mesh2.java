@@ -656,9 +656,11 @@ public class Mesh2 extends Mesh {
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
       final int len = this.coords.length;
+      
       for (int i = 0; i < len; ++i) {
          Vec2.rotateZ(this.coords[i], cosa, sina, this.coords[i]);
       }
+      
       return this;
    }
 
@@ -677,6 +679,7 @@ public class Mesh2 extends Mesh {
       for (int i = 0; i < len; ++i) {
          Vec2.mul(this.coords[i], scale, this.coords[i]);
       }
+      
       return this;
    }
 
@@ -695,6 +698,7 @@ public class Mesh2 extends Mesh {
       for (int i = 0; i < len; ++i) {
          Vec2.mul(this.coords[i], scale, this.coords[i]);
       }
+      
       return this;
    }
 
@@ -844,6 +848,7 @@ public class Mesh2 extends Mesh {
       for (int i = 0; i < len; ++i) {
          Vec2.add(this.coords[i], v, this.coords[i]);
       }
+      
       return this;
    }
 }

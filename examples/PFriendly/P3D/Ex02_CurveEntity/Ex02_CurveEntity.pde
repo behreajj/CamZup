@@ -48,12 +48,12 @@ void draw() {
   entity.eval(0, t, pt, tn);
 
   Vec3 tnpt = Vec3.add(pt, 
-    Vec3.mult(tn, 50.0, new Vec3()), new Vec3());
+    Vec3.mul(tn, 50.0, new Vec3()), new Vec3());
   strokeWeight(10.0);
-  stroke(#4800ff);
+  stroke(#202020);
   graphics3.point(pt);
   strokeWeight(5.0);
-  stroke(#00ff48);
+  stroke(#101010);
 
   graphics3.point(tnpt);
 }

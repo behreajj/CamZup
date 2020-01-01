@@ -14,6 +14,7 @@ import camzup.core.Utils;
 import camzup.core.Vec2;
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PImage;
 import processing.opengl.PGL;
 
 /**
@@ -593,6 +594,53 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    }
 
    /**
+    * Draws an image at the origin.
+    *
+    * @param img
+    *           the image
+    */
+   @Override
+   public void image ( final PImage img ) {
+
+      this.image(img, 0.0f, 0.0f);
+   }
+
+   /**
+    * Draws an image at a given coordinate.
+    *
+    * @param img
+    *           the image
+    * @param coord
+    *           the coordinate
+    */
+   @Override
+   public void image (
+         final PImage img,
+         final Vec2 coord ) {
+
+      this.image(img, coord.x, coord.y);
+   }
+
+   /**
+    * Draws an image at a given coordinate and dimension.
+    *
+    * @param img
+    *           the image
+    * @param coord
+    *           the coordinate
+    * @param dim
+    *           the dimension
+    */
+   @Override
+   public void image (
+         final PImage img,
+         final Vec2 coord,
+         final Vec2 dim ) {
+
+      this.image(img, coord.x, coord.y, dim.x, dim.y);
+   }
+
+   /**
     * Returns whether or not the renderer is 2D.
     */
    @Override
@@ -739,7 +787,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    @Override
    public void point ( final Vec2 v ) {
 
-      this.pointImpl(v.x, v.y, 0.0f);
+      this.point(v.x, v.y, 0.0f);
    }
 
    /**

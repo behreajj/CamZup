@@ -1,6 +1,6 @@
-# Welcome to Cam Z up
+# Welcome to Cam Z-Up
 
-The main feature of the Cam Z up library is that it flips Processing's default projection so that the positive z axis, (0.0, 0.0, 1.0), is the world up axis, and the positive y axis, (0.0, 1.0, 0.0), is forward. This library supports 2D, 2.5D and 3D. It is split into two packages: `pfriendly` and `core`. The `pfriendly` package contains code (mostly) compatible with Processing's API. Inside it, you'll find
+Cam Z-Up is a Java-based library for the creative coding environment [Processing](https://processing.org/). The main feature of the Cam Z-Up library is that it flips Processing's default projection so that the positive z axis, (0.0, 0.0, 1.0), is the world up axis; the positive y axis, (0.0, 1.0, 0.0), is forward. This library supports two- and three-dimensional graphics. It also supports "2.5D" graphics, where a 3D renderer is configured to appear 2D. It is split into two packages: `pfriendly` and `core`. The `pfriendly` package contains code (mostly) compatible with Processing's API. Inside it, you'll find
 
 - `Zup3`, which extends `PGraphics3D`, a.k.a. `P3D`;
 - `Yup3`, which also extends `PGraphics3D`.
@@ -9,27 +9,76 @@ The main feature of the Cam Z up library is that it flips Processing's default p
 
 The `FX2D` renderer, based on Java FX, is not supported.
 
-This library's `core` package includes basic math utilities that were used to modify the Processing renderer. In this package, you'll find classes like `Vec2`, `Vec3`, `Quaternion` and so on.
+This library's `core` package includes basic math utilities that were used to modify the Processing renderer. In this package, you'll find classes such as `Vec2`, `Vec3`, `Quaternion`.
+
+## Getting Started
+
+To get started with this library you can set up your Processing sketch like so:
+
+```java
+// Import the library
+import camzup.pfriendly.*;
+
+void setup() {
+  // Supply the renderer's path to size as the
+  // third argument.
+  size(128, 128, "camzup.pfriendly.YupJ2");
+}
+```
+
+Experienced coders may wish to use [createGraphics](https://processing.org/reference/createGraphics_.html) and/or `getGraphics` to access the renderers directly.
+
+```java
+import camzup.pfriendly.*;
+import camzup.core.*;
+
+String rpath = "camzup.pfriendly.YupJ2";
+YupJ2 primary;
+YupJ2 secondary;
+
+void setup() {
+  size(128, 128, rpath);
+  secondary = (YupJ2)createGraphics(256, 256, rpath);
+  primary = (YupJ2)getGraphics();
+}
+```
+
+Both `createGraphics` and `getGraphics` return `PGraphics`, an `interface`; the result of these function calls needs to be cast to the specific renderer. The benefit of accessing these renderers directly, rather than through `PApplet` functions, is that more convenience functions are available. For example, in the following snippet,
+
+```java
+secondary.beginDraw();
+secondary.background();
+secondary.stroke();
+secondary.ellipse(new Vec2(), new Vec2(25.0, 25.0));
+secondary.endDraw();
+
+primary.background(0xff202020);
+primary.image(secondary, new Vec2(), new Vec2(50.0, 50.0));
+```
+
+`background` and `stroke` use default colors, while `ellipse` and `image` support `Vec2` arguments.
+
+Please see the examples folder for more possibilities.
 
 ## Differences, Issues
 
 Here is a brief list of differences and issues with this library.
 
+- For `YupJ2`, `camera` should be called in the `draw` loop to set the origin to the sketch's center.
 - Flipping the axes changes the default rotational direction of a positive angle from clockwise to counter-clockwise.
-- The [arc](https://processing.org/reference/arc_.html) implmentation has been changed to `mod` the start and stop angles. It will not have rounded corners in OpenGL renderers, no matter which [strokeJoin](https://processing.org/reference/strokeJoin_.html) and [strokeCap](https://processing.org/reference/strokeCap_.html) methods you specify.
+- The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles. It will not have rounded corners in OpenGL renderers, no matter which [strokeJoin](https://processing.org/reference/strokeJoin_.html) and [strokeCap](https://processing.org/reference/strokeCap_.html) methods you specify.
 - A z-up axis changes the relationship between a 2D vector's polar coordinates and a 3D vector's spherical coordinates.
 - As a consequence of the above, `P3D`'s UV [sphere](https://processing.org/reference/sphere_.html) is tipped on its side with a z-up renderer.
 - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), [ellipseMode](https://processing.org/reference/ellipseMode_.html) and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with these renderers. For that reason, `CENTER` is the default alignment.
 - [textureMode](https://processing.org/reference/textureMode_.html) `IMAGE` is not supported; `NORMAL` is the default. This is because many redundant operations on UV coordinates interfered with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT`. In making this conversion, support for high density pixel displays may be lost; I cannot test this at the moment, so please report issues with `image`.
 - [textMode](https://processing.org/reference/textMode_.html) `SHAPE` is not supported. However you can retrieve glyph outlines from a [PFont](https://processing.org/reference/PFont.html) with the `CurveEntity2` class from the `core` package. (The `PFont` needs to be loaded with [createFont](https://processing.org/reference/createFont_.html)).
-- The [PShape](https://processing.org/reference/PShape.html) interface has many problems (among them: attempting to represent both 2D and 3D shapes, a longstanding `rotateZ` bug, difficulty accessing vertices and UV coordinates). This library uses `Curve` and `Mesh` objects instead.
-- When you create a new sketch, you extend a `PApplet` class; when run, this creates a primary renderer, [PGraphics](https://processing.org/reference/PGraphics.html). When use a function like `line` or `point` in the sketch's `draw` function, the `PApplet` calls the renderer's `line` or `point`. If you use one of the renderers above, and you want to make a line, you can just type `line`, because both the applet and renderer have that function. However, if you want to use a function that the renderer has but the applet doesn't have, you have to first get a reference to the renderer with [createGraphics](https://processing.org/reference/createGraphics_.html) or `getGraphics`, then call `renderer.specialLine`.
+- The [PShape](https://processing.org/reference/PShape.html) interface has many problems (among them: attempting to represent both 2D and 3D shapes, a `rotateZ` bug as of version 3.5.x, difficulty accessing vertices and UV coordinates). This library uses `Curve` and `Mesh` objects instead.
 
 Many core Processing functions are marked `final`, meaning they cannot be extended and modified by libraries; similarly, many fields are marked `private` meaning they cannot be changed. This is the primary reason for differences noted above.
 
 ## Coding Style
 
-The following explains some decisions behind the library's code base.
+The following explains some decisions behind how the library's code base is written.
 
 ### Mutable vs. Immutable
 
@@ -48,7 +97,7 @@ public class PVector {
     return this;
   }
 
-  // Overload static method with a version that requires no target.
+  // Overload static method to supply a null to target.
   public static PVector add(PVector a, PVector b) {
     return PVector.add(a, b, (PVector)null);
   }
@@ -106,6 +155,8 @@ public class Vec2 {
 Public fields are mutable, but changing a vector in-place is discouraged through the absence of instance methods. `static` methods, with some exceptions, require an output argument and will not instantiate one for you. The usage pattern for classes in the `core` package generally look like
 
 ```java
+import camzup.core.*;
+
 Vec2 a = new Vec2(3.0, 4.0);
 Vec2 b = new Vec2(4.0, 5.0);
 Vec2 sum = new Vec2();
@@ -116,11 +167,17 @@ for(int i = 0; i < 15; ++i) {
 }
 ```
 
-where the assignee of an operation's result is declared in advance. You could argue that this is the worst of both worlds, but you're welcome to write your own library.
+where the assignee of an operation's result is declared in advance. You could argue that this is the worst of both worlds, but in that case you're welcome to write your own library.
 
-I have tried to make these classes as extensible as possible. In detail, this means that methods are not marked `private` or `final`. Primitive fields are not `final`; fields that are `Object`s are. Sensitive fields are `protected`, not `private`, so they can be accessed by child classes. So, for example, from within the Processing IDE, you can create
+I have tried to make these classes as extensible as possible. This means that methods are not marked `private` or `final`. Primitive fields are not `final`; fields that are `Object`s are `final`. Sensitive fields are `protected`, not `private`, so they can be accessed by child classes. From within the Processing IDE, you can extend a Cam Z-Up class
 
 ```java
+import camzup.core.*;
+
+// setup is needed when making your own classes.
+void setup() {
+}
+
 // Classes made in the PDE should be marked static,
 // as they are actually inner classes.
 static class MyVec2 extends Vec2 {

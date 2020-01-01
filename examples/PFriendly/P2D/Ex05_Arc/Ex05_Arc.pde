@@ -29,7 +29,7 @@ void draw() {
     start, stop,
    PIE);
 
-  stroke(#1475b3);
+  stroke(#ff2020);
   strokeWeight(12.0);
   point(mouse.x, mouse.y);
 }

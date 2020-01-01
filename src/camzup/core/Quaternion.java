@@ -177,7 +177,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * @return the evaluation
        */
       @Override
-      public int compare ( final Quaternion a, final Quaternion b ) {
+      public int compare ( 
+            final Quaternion a, 
+            final Quaternion b ) {
 
          return a.real > b.real ? 1
                : a.real < b.real ? -1

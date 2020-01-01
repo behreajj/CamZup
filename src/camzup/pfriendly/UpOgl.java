@@ -141,12 +141,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          return;
       }
 
-      int end = 0;
-      if (curve.closedLoop) {
-         end = knotLength + 1;
-      } else {
-         end = knotLength;
-      }
+      final int end = curve.closedLoop ? knotLength + 1 : knotLength;
 
       Knot2 currKnot = null;
       Knot2 prevKnot = curve.get(0);
@@ -158,8 +153,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.transform(transform, trOrder);
 
       final float oldSw = this.strokeWeight;
-      final float swLine = oldSw
-            / Transform2.minDimension(transform);
+      final float swLine = oldSw / Transform2.minDimension(transform);
       this.strokeWeight = swLine;
 
       this.beginShape(PConstants.POLYGON);
@@ -1077,7 +1071,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.textureMode = desiredTextureMode;
       this.textureWrap = desiredTextureWrap;
 
-      // This operation is also performed by vertexImpl.
+      /* This operation is also performed by vertexImpl. */
       if (this.textureMode == PConstants.IMAGE
             && this.textureImage != null) {
          u = Utils.div(u, this.textureImage.width);
@@ -1712,8 +1706,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *           the first y coordinate
     */
    @Override
-   public void image ( final PImage img,
-         final float x, final float y ) {
+   public void image (
+         final PImage img,
+         final float x,
+         final float y ) {
 
       this.image(img, x, y, img.width, img.height);
    }
@@ -1734,7 +1730,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *           the second y coordinate
     */
    @Override
-   public void image ( final PImage img,
+   public void image (
+         final PImage img,
          final float x, final float y,
          final float u, final float v ) {
 
@@ -1753,7 +1750,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    @Override
-   public void image ( final PImage img,
+   public void image (
+         final PImage img,
          final float x, final float y,
          final float u, final float v,
 
@@ -1788,7 +1786,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param v2
     *           the image bottom-right cornver v
     */
-   public void imageImpl ( final PImage img,
+   public void imageImpl (
+         final PImage img,
          final float x1, final float y1,
          final float x2, final float y2,
 
@@ -1925,7 +1924,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *           the output point
     * @return the model space point
     */
-   public Vec3 model ( final Vec3 point, final Vec3 target ) {
+   public Vec3 model (
+         final Vec3 point,
+         final Vec3 target ) {
 
       /*
        * Multiply point by model-view matrix.
@@ -2385,7 +2386,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param axis
     *           the axis
     */
-   public void rotate ( final float angle, final Vec3 axis ) {
+   public void rotate (
+         final float angle,
+         final Vec3 axis ) {
 
       this.rotateImpl(angle,
             axis.x, axis.y, axis.z);

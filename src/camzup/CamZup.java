@@ -1,22 +1,23 @@
 package camzup;
 
-import camzup.core.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.TreeMap;
+
+import camzup.core.Gradient;
 import camzup.core.Gradient;
 import camzup.core.Mesh3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
+import camzup.core.Vec4;
+import camzup.core.Color;
 import processing.core.PApplet;
 
 public class CamZup {
 
    public final static String VERSION = "##library.prettyVersion##";
-
-   static float round ( final float value, final int places ) {
-
-      final double n = Math.pow(10, places);
-      return (float) (Math.round(value * n) / n);
-   }
 
    static String toHardCode ( final Mesh3 mesh ) {
 
@@ -99,17 +100,18 @@ public class CamZup {
       // ce.appendCurve(curve);
       // System.out.println(ce.toBlenderCode());
 
-//      final Gradient gr = Gradient.paletteViridis(new Gradient());
-//      gr.removeDuplicates();
-//      System.out.println(gr.toString(4));
-//      final int count = 32;
-//      final float toPrc = 1.0f / (count - 1.0f);
-//      final Color target = new Color();
-//      for (int i = 0; i < count; ++i) {
-//         final float prc = i * toPrc;
-//         System.out.println(Color.toHexWeb(gr.eval(prc, target)));
-//      }
-      
+      // final Gradient gr = Gradient.paletteViridis(new
+      // Gradient());
+      // gr.removeDuplicates();
+      // System.out.println(gr.toString(4));
+      // final int count = 32;
+      // final float toPrc = 1.0f / (count - 1.0f);
+      // final Color target = new Color();
+      // for (int i = 0; i < count; ++i) {
+      // final float prc = i * toPrc;
+      // System.out.println(Color.toHexWeb(gr.eval(prc, target)));
+      // }
+
    }
 
    public static String version () {
@@ -123,5 +125,12 @@ public class CamZup {
 
       this.parent = parent;
 
+   }
+
+   public static < T > T[] sort ( T[] arr,
+         Comparator < ? super T > comparator ) {
+
+      Arrays.sort(arr, comparator);
+      return arr;
    }
 }

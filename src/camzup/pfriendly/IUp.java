@@ -1443,6 +1443,14 @@ public interface IUp {
    }
 
    /**
+    * Uses the renderer's default background color.
+    */
+   default void background () {
+
+      this.background(IUp.DEFAULT_BKG_COLOR);
+   }
+
+   /**
     * Set the renderer's background color.
     *
     * @param c
@@ -1466,6 +1474,14 @@ public interface IUp {
     * Sets the renderer's camera with default parameters.
     */
    void camera ();
+
+   /**
+    * Uses the renderer's default fill color.
+    */
+   default void fill () {
+
+      this.fill(IUp.DEFAULT_FILL_COLOR);
+   }
 
    /**
     * Sets the renderer's current fill to the color.
@@ -1605,6 +1621,14 @@ public interface IUp {
    void origin ();
 
    /**
+    * Uses the renderer's default stroke color.
+    */
+   default void stroke () {
+
+      this.stroke(IUp.DEFAULT_STROKE_COLOR);
+   }
+
+   /**
     * Sets the renderer's current stroke to the color.
     *
     * @param c
@@ -1623,4 +1647,20 @@ public interface IUp {
     *           the color in hexadecimal
     */
    void stroke ( final int c );
+
+   /**
+    * Uses the renderer's default stroke weight.
+    */
+   default void strokeWeight () {
+
+      this.strokeWeight(IUp.DEFAULT_STROKE_WEIGHT);
+   }
+
+   /**
+    * Sets the renderer's stroke weight.
+    *
+    * @param sw
+    *           the weight
+    */
+   void strokeWeight ( float sw );
 }

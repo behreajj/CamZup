@@ -534,16 +534,22 @@ public class Transform3 extends Transform {
     *           the scale z
     */
    public Transform3 (
-         final float xLoc, final float yLoc, final float zLoc,
-
-         final float real, final float xImag, final float yImag,
+         final float xLoc,
+         final float yLoc,
+         final float zLoc,
+         final float real,
+         final float xImag,
+         final float yImag,
          final float zImag,
-
-         final float xScale, final float yScale, final float zScale ) {
+         final float xScale,
+         final float yScale,
+         final float zScale ) {
 
       super();
-      this.set(xLoc, yLoc, zLoc, real, xImag, yImag, zImag, xScale, yScale,
-            zScale);
+      this.set(
+            xLoc, yLoc, zLoc,
+            real, xImag, yImag, zImag,
+            xScale, yScale, zScale);
    }
 
    /**
@@ -863,7 +869,10 @@ public class Transform3 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform3 moveTo ( final float x, final float y, final float z ) {
+   public Transform3 moveTo ( 
+         final float x, 
+         final float y, 
+         final float z ) {
 
       this.locPrev.set(this.location);
       this.location.set(x, y, z);
@@ -1209,7 +1218,10 @@ public class Transform3 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform3 scaleTo ( final float x, final float y, final float z ) {
+   public Transform3 scaleTo ( 
+         final float x, 
+         final float y, 
+         final float z ) {
 
       if (x != 0.0f && y != 0.0f && z != 0.0f) {
          this.scalePrev.set(this.scale);
@@ -1248,7 +1260,9 @@ public class Transform3 extends Transform {
     * @see Vec3#isNonZero(Vec3)
     */
    @Chainable
-   public Transform3 scaleTo ( final Vec3 scaleNew, final float step ) {
+   public Transform3 scaleTo ( 
+         final Vec3 scaleNew, 
+         final float step ) {
 
       if (Vec3.isNonZero(scaleNew)) {
          return this.scaleTo(scaleNew, step, Transform3.EASING.scale);
@@ -1271,7 +1285,9 @@ public class Transform3 extends Transform {
     * @see Vec3.AbstrEasing#apply(Vec3, Vec3, Float, Vec3)
     */
    @Chainable
-   public Transform3 scaleTo ( final Vec3 scaleNew, final float step,
+   public Transform3 scaleTo ( 
+         final Vec3 scaleNew, 
+         final float step,
          final Vec3.AbstrEasing easingFunc ) {
 
       if (Vec3.isNonZero(scaleNew)) {

@@ -2473,7 +2473,7 @@ public class Curve2 extends Curve
       this.knots.add(knot);
       return this;
    }
-
+   
    /**
     * Calculates the approximate length of a curve to a given
     * level of precision.

@@ -512,9 +512,9 @@ public class Mesh3 extends Mesh {
       target.name = "Triangle";
 
       final Vec3[] coords = new Vec3[] {
-            new Vec3(+0.0f, +0.5f, 0.0f),
+            new Vec3(0.0f, 0.5f, 0.0f),
             new Vec3(-0.4330127f, -0.25f, 0.0f),
-            new Vec3(+0.4330127f, -0.25f, 0.0f)
+            new Vec3(0.4330127f, -0.25f, 0.0f)
       };
 
       final Vec2[] texCoords = new Vec2[] {
@@ -827,10 +827,12 @@ public class Mesh3 extends Mesh {
       final int len = this.coords.length;
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
+      
       for (int i = 0; i < len; ++i) {
          Vec3.rotate(this.coords[i], cosa, sina, axis, this.coords[i]);
          Vec3.rotate(this.normals[i], cosa, sina, axis, this.normals[i]);
       }
+      
       return this;
    }
 
@@ -849,10 +851,12 @@ public class Mesh3 extends Mesh {
       final int len = this.coords.length;
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
+      
       for (int i = 0; i < len; ++i) {
          Vec3.rotateX(this.coords[i], cosa, sina, this.coords[i]);
          Vec3.rotateX(this.normals[i], cosa, sina, this.normals[i]);
       }
+      
       return this;
    }
 
@@ -871,10 +875,12 @@ public class Mesh3 extends Mesh {
       final int len = this.coords.length;
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
+      
       for (int i = 0; i < len; ++i) {
          Vec3.rotateY(this.coords[i], cosa, sina, this.coords[i]);
          Vec3.rotateY(this.normals[i], cosa, sina, this.normals[i]);
       }
+      
       return this;
    }
 
@@ -893,10 +899,12 @@ public class Mesh3 extends Mesh {
       final int len = this.coords.length;
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
+      
       for (int i = 0; i < len; ++i) {
          Vec3.rotateZ(this.coords[i], cosa, sina, this.coords[i]);
          Vec3.rotateZ(this.normals[i], cosa, sina, this.normals[i]);
       }
+      
       return this;
    }
 

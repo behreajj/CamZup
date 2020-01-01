@@ -387,7 +387,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     *
     * @param target
     *           the output vector
-    * @return the y axis
+    * @return the z axis
     */
    public Vec3 getK ( final Vec3 target ) {
 

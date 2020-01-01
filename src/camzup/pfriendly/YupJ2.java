@@ -206,9 +206,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    @Override
    protected void arcImpl (
-         final float x, final float y,
-         final float w, final float h,
-         final float start, final float stop,
+         final float x,
+         final float y,
+
+         final float w,
+         final float h,
+
+         final float start,
+         final float stop,
+
          final int mode ) {
 
       final float a = IUtils.TAU - Utils.modRadians(start);
@@ -245,6 +251,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * The manner in which the first three are interpreted
     * depends on color mode.
     *
+    * For HSB color mode, the first channel, x, is interpreted
+    * as a periodic, not a linear, value.
+    *
     * @param x
     *           the first color channel, hue or red
     * @param y
@@ -261,12 +270,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float z,
          final float a ) {
 
-      this.calcG = Utils.clamp01(
-            y * this.invColorModeY);
-      this.calcB = Utils.clamp01(
-            z * this.invColorModeZ);
-      this.calcA = Utils.clamp01(
-            a * this.invColorModeA);
+      this.calcG = Utils.clamp01(y * this.invColorModeY);
+      this.calcB = Utils.clamp01(z * this.invColorModeZ);
+      this.calcA = Utils.clamp01(a * this.invColorModeA);
 
       switch (this.colorMode) {
 
@@ -291,8 +297,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
          default:
 
-            this.calcR = Utils.clamp01(
-                  x * this.invColorModeX);
+            this.calcR = Utils.clamp01(x * this.invColorModeX);
 
       }
 
@@ -309,7 +314,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    }
 
    /**
-    * Calculates a color and
+    * Decomposes a hexadecimal color into RGBA channels. Two
+    * versions of these channels are stored: the unsigned byte
+    * values in the range [0, 255] and the decimal values in
+    * [0.0, 1.0].
     *
     * @param argb
     *           the color in hexadecimal
@@ -442,11 +450,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    @Override
    protected void rectImpl (
-         final float a, final float b,
-         final float c, final float d,
-
-         float tl, float tr,
-         float br, float bl ) {
+         final float a,
+         final float b,
+         final float c,
+         final float d,
+         float tl,
+         float tr,
+         float br,
+         float bl ) {
 
       float x1 = 0.0f;
       float y1 = 0.0f;
@@ -733,6 +744,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       switch (this.ellipseMode) {
 
          case CORNERS:
+
             w = Utils.diff(x1, x0);
             h = Utils.diff(y1, y0);
             x = x0;
@@ -741,6 +753,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             break;
 
          case RADIUS:
+
             w = Utils.abs(x1);
             h = Utils.abs(y1);
             w += w;
@@ -751,6 +764,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             break;
 
          case CENTER:
+
             w = Utils.abs(x1);
             h = Utils.abs(y1);
             x = x0 - w * 0.5f;
@@ -761,6 +775,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          case CORNER:
 
          default:
+
             w = Utils.abs(x1);
             h = Utils.abs(y1);
             x = x0;
@@ -856,30 +871,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    }
 
    /**
-    * Draws a cubic Bezier curve segment to the next anchor
-    * point; the first and second control point shape the curve
-    * segment.
-    *
-    * @param cp0
-    *           the first control point
-    * @param cp1
-    *           the second control point
-    * @param ap1
-    *           the next anchor point
-    */
-   @Override
-   public void bezierVertex (
-         final Vec2 cp0,
-         final Vec2 cp1,
-         final Vec2 ap1 ) {
-
-      this.bezierVertex(
-            cp0.x, cp0.y,
-            cp1.x, cp1.y,
-            ap1.x, ap1.y);
-   }
-
-   /**
     * Draws a transform's axes.
     *
     * @param transform
@@ -943,6 +934,30 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    // }
 
    /**
+    * Draws a cubic Bezier curve segment to the next anchor
+    * point; the first and second control point shape the curve
+    * segment.
+    *
+    * @param cp0
+    *           the first control point
+    * @param cp1
+    *           the second control point
+    * @param ap1
+    *           the next anchor point
+    */
+   @Override
+   public void bezierVertex (
+         final Vec2 cp0,
+         final Vec2 cp1,
+         final Vec2 ap1 ) {
+
+      this.bezierVertex(
+            cp0.x, cp0.y,
+            cp1.x, cp1.y,
+            ap1.x, ap1.y);
+   }
+
+   /**
     * Sets the camera to the renderer defaults.
     */
    @Override
@@ -962,11 +977,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * @param y
     *           the location y component
     */
-   public void camera ( final float x, final float y ) {
+   public void camera (
+         final float x,
+         final float y ) {
 
-      this.camera(x, y,
+      this.camera(
+            x, y,
             YupJ2.DEFAULT_ROT,
-            YupJ2.DEFAULT_ZOOM_X, YupJ2.DEFAULT_ZOOM_Y);
+            YupJ2.DEFAULT_ZOOM_X,
+            YupJ2.DEFAULT_ZOOM_Y);
    }
 
    /**
@@ -980,12 +999,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the rotation
     */
    public void camera (
-         final float x, final float y,
+         final float x,
+         final float y,
          final float radians ) {
 
-      this.camera(x, y,
+      this.camera(
+            x, y,
             radians,
-            YupJ2.DEFAULT_ZOOM_X, YupJ2.DEFAULT_ZOOM_Y);
+            YupJ2.DEFAULT_ZOOM_X,
+            YupJ2.DEFAULT_ZOOM_Y);
    }
 
    /**
@@ -1031,9 +1053,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    public void camera ( final Vec2 loc ) {
 
-      this.camera(loc.x, loc.y,
+      this.camera(
+            loc.x, loc.y,
             YupJ2.DEFAULT_ROT,
-            YupJ2.DEFAULT_ZOOM_X, YupJ2.DEFAULT_ZOOM_Y);
+            YupJ2.DEFAULT_ZOOM_X,
+            YupJ2.DEFAULT_ZOOM_Y);
    }
 
    /**
@@ -1048,9 +1072,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final Vec2 loc,
          final float radians ) {
 
-      this.camera(loc.x, loc.y,
+      this.camera(
+            loc.x, loc.y,
             radians,
-            YupJ2.DEFAULT_ZOOM_X, YupJ2.DEFAULT_ZOOM_Y);
+            YupJ2.DEFAULT_ZOOM_X,
+            YupJ2.DEFAULT_ZOOM_Y);
    }
 
    /**
@@ -1083,7 +1109,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the size
     */
    @Override
-   public void circle ( final Vec2 a, final float b ) {
+   public void circle (
+         final Vec2 a,
+         final float b ) {
 
       this.circle(a.x, a.y, b);
    }
@@ -1423,6 +1451,18 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    }
 
    /**
+    * Draws an image at the origin.
+    *
+    * @param img
+    *           the image
+    */
+   @Override
+   public void image ( final PImage img ) {
+
+      this.image(img, 0.0f, 0.0f);
+   }
+
+   /**
     * Displays a PImage at a location. Uses the image's width
     * and height as the second parameters.
     *
@@ -1434,8 +1474,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the first y coordinate
     */
    @Override
-   public void image ( final PImage img,
-         final float x, final float y ) {
+   public void image (
+         final PImage img,
+         final float x,
+         final float y ) {
 
       this.image(img,
             x, y,
@@ -1458,7 +1500,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the second y coordinate
     */
    @Override
-   public void image ( final PImage img,
+   public void image (
+         final PImage img,
          final float x, final float y,
          final float u, final float v ) {
 
@@ -1500,7 +1543,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the imag bottom-right cornver v
     */
    @Override
-   public void image ( final PImage img,
+   public void image (
+         final PImage img,
          final float a, final float b,
          final float c, final float d,
 
@@ -1565,6 +1609,41 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             xTopLeft, yTopLeft,
             xBottomRight, yBottomRight,
             u1, v1, u2, v2);
+   }
+
+   /**
+    * Draws an image at a given coordinate.
+    *
+    * @param img
+    *           the image
+    * @param coord
+    *           the coordinate
+    */
+   @Override
+   public void image (
+         final PImage img,
+         final Vec2 coord ) {
+
+      this.image(img, coord.x, coord.y);
+   }
+
+   /**
+    * Draws an image at a given coordinate and dimension.
+    *
+    * @param img
+    *           the image
+    * @param coord
+    *           the coordinate
+    * @param dim
+    *           the dimension
+    */
+   @Override
+   public void image (
+         final PImage img,
+         final Vec2 coord,
+         final Vec2 dim ) {
+
+      this.image(img, coord.x, coord.y, dim.x, dim.y);
    }
 
    /**
@@ -1764,6 +1843,69 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             0.0f, lineLength);
 
       this.popStyle();
+   }
+
+   /**
+    * Draws a point at the coordinate x, y. This is done by
+    * drawing a line from (x, y) to ((x, y) + (epsilon,
+    * epsilon)). SQUARE strokeCap is supported by setting the
+    * cap to PROJECT, then back to SQUARE.
+    */
+   @Override
+   public void point ( final float x, final float y ) {
+
+      /*
+       * Setting the stroke cap calls strokeImpl, which creates a
+       * new BasicStroke object. Given that, testing would be
+       * needed to see if drawing a rectangle is faster.
+       */
+
+      switch (this.strokeCap) {
+
+         // case PROJECT:
+         // case SQUARE:
+         // final boolean oldStroke = this.stroke;
+         // final int oldFill = this.fillColor;
+         // this.stroke = false;
+         // this.fillColor = this.strokeColor;
+         //
+         // final float halfDim = this.strokeWeight * 0.5f;
+         // final float x0 = x - halfDim;
+         // final float y0 = y + halfDim;
+         // final float x1 = x + halfDim;
+         // final float y1 = y - halfDim;
+         //
+         // this.gp.reset();
+         // this.gp.moveTo(x0, y0);
+         // this.gp.lineTo(x1, y0);
+         // this.gp.lineTo(x1, y1);
+         // this.gp.lineTo(x0, y1);
+         // this.gp.closePath();
+         // this.drawShape(this.gp);
+         //
+         // this.stroke = oldStroke;
+         // this.fillColor = oldFill;
+         //
+         // break;
+
+         case SQUARE:
+
+            this.strokeCap(PConstants.PROJECT);
+            this.line(
+                  x, y,
+                  x + PConstants.EPSILON,
+                  y + PConstants.EPSILON);
+            this.strokeCap(PConstants.SQUARE);
+
+            break;
+
+         default:
+
+            this.line(
+                  x, y,
+                  x + PConstants.EPSILON,
+                  y + PConstants.EPSILON);
+      }
    }
 
    /**
@@ -2296,14 +2438,18 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             this.material(materials.get(
                   curve.materialIndex));
          }
+
          final Iterator < Knot2 > itr = curve.iterator();
          prevKnot = itr.next();
          coord = prevKnot.coord;
+
          Transform2.mulPoint(tr, coord, v2);
+
          this.gp.reset();
          this.gp.moveTo(v2.x, v2.y);
 
          while (itr.hasNext()) {
+
             currKnot = itr.next();
             foreHandle = prevKnot.foreHandle;
             rearHandle = currKnot.rearHandle;
@@ -2647,6 +2793,26 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.text(chars, start, stop, x, y);
    }
 
+   // @Override
+   // protected void colorCalc ( final int argb ) {
+   // this.calcColor = argb;
+   // this.calcAi = argb >> 0x18 & 0xff;
+   // this.calcRi = argb >> 0x10 & 0xff;
+   // this.calcGi = argb >> 0x8 & 0xff;
+   // this.calcBi = argb & 0xff;
+   // this.calcA = this.calcAi * IUtils.ONE_255;
+   // this.calcR = this.calcRi * IUtils.ONE_255;
+   // this.calcG = this.calcGi * IUtils.ONE_255;
+   // this.calcB = this.calcBi * IUtils.ONE_255;
+   // this.calcAlpha = this.calcAi != 255;
+   // }
+
+   // @Override
+   // protected void colorCalc ( final int rgb, final float
+   // alpha ) {
+   // this.colorCalcARGB(rgb, alpha);
+   // }
+
    /**
     * Displays a real number at a 2D location. Fixes the number
     * display to four decimal places.
@@ -2723,26 +2889,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
       this.text(str.toCharArray(), x, y);
    }
-
-   // @Override
-   // protected void colorCalc ( final int argb ) {
-   // this.calcColor = argb;
-   // this.calcAi = argb >> 0x18 & 0xff;
-   // this.calcRi = argb >> 0x10 & 0xff;
-   // this.calcGi = argb >> 0x8 & 0xff;
-   // this.calcBi = argb & 0xff;
-   // this.calcA = this.calcAi * IUtils.ONE_255;
-   // this.calcR = this.calcRi * IUtils.ONE_255;
-   // this.calcG = this.calcGi * IUtils.ONE_255;
-   // this.calcB = this.calcBi * IUtils.ONE_255;
-   // this.calcAlpha = this.calcAi != 255;
-   // }
-
-   // @Override
-   // protected void colorCalc ( final int rgb, final float
-   // alpha ) {
-   // this.colorCalcARGB(rgb, alpha);
-   // }
 
    /**
     * Displays a string of text at a 2D location, ignoring the

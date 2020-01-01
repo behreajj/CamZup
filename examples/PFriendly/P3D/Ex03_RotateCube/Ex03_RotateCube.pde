@@ -46,7 +46,7 @@ void draw() {
   surface.setTitle(
     new StringBuilder()
     .append(Utils.toFixed(frameRate, 1))
-    .append(" ")
+    .append(' ')
     .append(mouse)
     .toString());
 
@@ -63,7 +63,7 @@ void draw() {
       rotMouse, identity, smoothing, rotMouse);
   }
 
-  Quaternion.mult(rotMouse, rotSphere, rotWorld);
+  Quaternion.mul(rotMouse, rotSphere, rotWorld);
   Quaternion.mix(
     rotSphere, rotWorld, smoothing, rotSphere);
 

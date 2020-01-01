@@ -8,6 +8,7 @@ import camzup.core.Ray2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import processing.core.PApplet;
+import processing.core.PImage;
 
 /**
  * Maintains consistent behavior across 2D renderers that
@@ -483,6 +484,36 @@ public interface IYup2 extends IUp {
    }
 
    /**
+    * Draws an image at the origin.
+    * 
+    * @param img
+    *           the image
+    */
+   void image ( final PImage img );
+
+   /**
+    * Draws an image at a given coordinate.
+    *
+    * @param img
+    *           the image
+    * @param coord
+    *           the coordinate
+    */
+   void image ( final PImage img, final Vec2 coord );
+
+   /**
+    * Draws an image at a given coordinate and dimension.
+    *
+    * @param img
+    *           the image
+    * @param coord
+    *           the coordinate
+    * @param dim
+    *           the dimension
+    */
+   void image ( final PImage img, final Vec2 coord, final Vec2 dim );
+
+   /**
     * Sets the renderer's image mode.
     *
     * @param mode
@@ -798,6 +829,7 @@ public interface IYup2 extends IUp {
     * @param sw
     *           the stroke weight
     */
+   @Override
    void strokeWeight ( final float sw );
 
    /**

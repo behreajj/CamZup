@@ -1,9 +1,9 @@
 package camzup.core;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.TreeSet;
 
 /**
  * A mutable, extensible class that contains a list of keys
@@ -11,7 +11,7 @@ import java.util.Iterator;
  * Allows smooth color transitions to be evaluated for a
  * factor.
  */
-public class Gradient implements Iterable < Gradient.Key >, Serializable {
+public class Gradient implements Iterable < Gradient.Key > {
 
    /**
     * A color key which stores a color at a given step (or
@@ -139,7 +139,7 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
       @Chainable
       Key set ( final float step, final Color color ) {
 
-         this.step = Utils.clamp01(step);
+         this.step = step;
          this.clr.set(color);
          return this;
       }
@@ -319,17 +319,6 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
    private static Color.AbstrEasing EASING = new Color.LerpRgba();
 
    /**
-    * The unique identification for serialized classes.
-    */
-   private static final long serialVersionUID = 5072459252926038883L;
-
-   /**
-    * The tolerance used when determining whether the gradient
-    * contains duplicate keys.
-    */
-   public static float TOLERANCE = 0.009f;
-
-   /**
     * Gets the string representation of the default gradient
     * easing function.
     *
@@ -349,9 +338,8 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
     */
    public static Gradient paletteMagma ( final Gradient target ) {
 
-      final ArrayList < Key > keys = target.keys;
+      final TreeSet < Key > keys = target.keys;
       keys.clear();
-      keys.ensureCapacity(16);
 
       keys.add(new Key(0.0f,
             new Color(0.988235f, 1.0f, 0.698039f, 1.0f)));
@@ -409,9 +397,8 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
     */
    public static Gradient paletteRgb ( final Gradient target ) {
 
-      final ArrayList < Key > keys = target.keys;
+      final TreeSet < Key > keys = target.keys;
       keys.clear();
-      keys.ensureCapacity(7);
 
       keys.add(new Key(0.0f, Color.red(new Color())));
       keys.add(new Key(0.16666667f, Color.yellow(new Color())));
@@ -433,9 +420,8 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
     */
    public static Gradient paletteViridis ( final Gradient target ) {
 
-      final ArrayList < Key > keys = target.keys;
+      final TreeSet < Key > keys = target.keys;
       keys.clear();
-      keys.ensureCapacity(16);
 
       keys.add(new Key(0.0f,
             new Color(0.266667f, 0.003922f, 0.329412f, 1.0f)));
@@ -491,9 +477,15 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
    }
 
    /**
-    * The list of color keys. Initialized with a capacity of 8.
+    * A temporary variable to hold queries in evaluation
+    * functions.
     */
-   public final ArrayList < Key > keys = new ArrayList <>(8);
+   protected transient final Gradient.Key query = new Key();
+
+   /**
+    * The set of keys.
+    */
+   public final TreeSet < Gradient.Key > keys = new TreeSet <>();
 
    /**
     * Creates a gradient with two default color keys, clear
@@ -531,12 +523,7 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
     */
    public Gradient ( final Color... colors ) {
 
-      final int len = colors.length;
-      this.keys.ensureCapacity(len);
-      final float denom = 1.0f / (len - 1.0f);
-      for (int i = 0; i < len; ++i) {
-         this.keys.add(new Key(i * denom, colors[i]));
-      }
+      this.append(colors);
    }
 
    /**
@@ -563,12 +550,7 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
     */
    public Gradient ( final int... colors ) {
 
-      final int len = colors.length;
-      this.keys.ensureCapacity(len);
-      final float denom = 1.0f / (len - 1.0f);
-      for (int i = 0; i < len; ++i) {
-         this.keys.add(new Key(i * denom, colors[i]));
-      }
+      this.append(colors);
    }
 
    /**
@@ -576,16 +558,10 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
     *
     * @param keys
     *           the color keys
-    * @see Gradient#removeDuplicates()
     */
    public Gradient ( final Key... keys ) {
 
-      final int len = keys.length;
-      this.keys.ensureCapacity(len);
-      for (int i = 0; i < len; ++i) {
-         this.keys.add(keys[i]);
-      }
-      this.removeDuplicates();
+      this.append(keys);
    }
 
    /**
@@ -612,12 +588,7 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
     */
    public Gradient ( final String... colors ) {
 
-      final int len = colors.length;
-      this.keys.ensureCapacity(len);
-      final float denom = 1.0f / (len - 1.0f);
-      for (int i = 0; i < len; ++i) {
-         this.keys.add(new Key(i * denom, colors[i]));
-      }
+      this.append(colors);
    }
 
    /**
@@ -627,37 +598,219 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
     *           the other gradient
     * @return the evaluation
     */
-   protected boolean equals ( final Gradient gradient ) {
+   protected boolean equals ( final Gradient other ) {
 
       if (this.keys == null) {
-         if (gradient.keys != null) {
+         if (other.keys != null) {
             return false;
          }
-      } else if (!this.keys.equals(gradient.keys)) {
+      } else if (!this.keys.equals(other.keys)) {
          return false;
       }
       return true;
    }
 
    /**
-    * Distributes this gradient's color key's evenly through
-    * the range [0.0, 1.0] .
+    * Helper function. Shifts existing keys to the left when a
+    * new color without a key is added to the gradient.
     *
+    * @param added
+    *           number of new items
+    */
+   protected void shiftKeysLeft ( final int added ) {
+
+      final Iterator < Gradient.Key > itr = this.keys.iterator();
+      int i = 0;
+      final float scalar = 1.0f / (this.keys.size() + added - 1.0f);
+      while (itr.hasNext()) {
+         final Gradient.Key key = itr.next();
+         key.step = key.step * i++ * scalar;
+      }
+   }
+
+   /**
+    * Appends a color at step 1.0 . Shifts existing keys to the
+    * left.
+    *
+    * @param color
+    *           the color
     * @return this gradient
     */
    @Chainable
-   public Gradient distributeKeys () {
+   public Gradient append ( final Color color ) {
 
-      final int len = this.keys.size();
-      if (len < 2) {
-         return this;
-      }
+      this.shiftKeysLeft(1);
+      this.keys.add(new Key(1.0f, color));
+      return this;
+   }
 
-      final float denom = 1.0f / (len - 1.0f);
+   /**
+    * Appends a list of colors to this gradient. Shifts
+    * existing keys to the left.
+    *
+    * @param colors
+    * @return this gradient
+    * @see Gradient#shiftKeysLeft(int)
+    * @see TreeSet#size()
+    * @see TreeSet#add(Object)
+    */
+   @Chainable
+   public Gradient append ( final Color... colors ) {
+
+      final int len = colors.length;
+      this.shiftKeysLeft(len);
+      final int oldLen = this.keys.size();
+      final float denom = 1.0f / (oldLen + len - 1.0f);
       for (int i = 0; i < len; ++i) {
-         this.keys.get(i).step = i * denom;
+         this.keys.add(new Key((oldLen + i) * denom, colors[i]));
+      }
+      return this;
+   }
+
+   /**
+    * Appends a color at step 1.0 . Shifts existing keys to the
+    * left.
+    *
+    * @param color
+    *           the color
+    * @return this gradient
+    * @see Gradient#shiftKeysLeft(int)
+    * @see TreeSet#add(Object)
+    */
+   @Chainable
+   public Gradient append ( final int color ) {
+
+      this.shiftKeysLeft(1);
+      this.keys.add(new Key(1.0f, color));
+      return this;
+   }
+
+   /**
+    * Appends a list of color integers to this gradient. Shifts
+    * existing keys to the left.
+    *
+    * @param colors
+    * @return this gradient
+    * @see Gradient#shiftKeysLeft(int)
+    * @see TreeSet#size()
+    * @see TreeSet#add(Object)
+    */
+   @Chainable
+   public Gradient append ( final int... colors ) {
+
+      final int len = colors.length;
+      this.shiftKeysLeft(len);
+      final int oldLen = this.keys.size();
+      final float denom = 1.0f / (oldLen + len - 1.0f);
+      for (int i = 0; i < len; ++i) {
+         this.keys.add(new Key((oldLen + i) * denom, colors[i]));
+      }
+      return this;
+   }
+
+   /**
+    * Appends color keys to this gradient. If a color key
+    * already exists at a given step, it will not be added.
+    *
+    * @param keys
+    *           the keys
+    * @return this gradient
+    * @see TreeSet#add(Object)
+    */
+   @Chainable
+   public Gradient append ( final Key... keys ) {
+
+      final int len = keys.length;
+      for (int i = 0; i < len; ++i) {
+         final Key key = keys[i];
+         this.keys.add(key);
+      }
+      return this;
+   }
+
+   /**
+    * Appends a color at step 1.0 . Shifts existing keys to the
+    * left.
+    *
+    * @param color
+    *           the color
+    * @return this gradient
+    */
+   @Chainable
+   public Gradient append ( final String color ) {
+
+      this.shiftKeysLeft(1);
+      this.keys.add(new Key(1.0f, color));
+      return this;
+   }
+
+   /**
+    * Appends a list of color strings to this gradient. Shifts
+    * existing keys to the left.
+    *
+    * @param colors
+    * @return this gradient
+    * @see Gradient#shiftKeysLeft(int)
+    * @see TreeSet#size()
+    * @see TreeSet#add(Object)
+    */
+   @Chainable
+   public Gradient append ( final String... colors ) {
+
+      final int len = colors.length;
+      this.shiftKeysLeft(len);
+      final int oldLen = this.keys.size();
+      final float denom = 1.0f / (oldLen + len - 1.0f);
+      for (int i = 0; i < len; ++i) {
+         this.keys.add(new Key((oldLen + i) * denom, colors[i]));
+      }
+      return this;
+   }
+
+   /**
+    * Returns the least key in this gradient greater than or
+    * equal to the given step. If there is no key, returns the
+    * last key instead of null.
+    *
+    * @param step
+    *           the step
+    * @return the key
+    * @see TreeSet#ceiling(Object)
+    * @see TreeSet#last()
+    */
+   public Key ceil ( final float step ) {
+
+      this.query.step = step;
+      final Key result = this.keys.ceiling(this.query);
+      return result == null ? this.keys.last() : result;
+   }
+
+   /**
+    * Distributes this gradient's color key's evenly through
+    * the range [0.0, 1.0] .
+    *
+    * @param keyArr
+    *           a temporary list
+    * @return this gradient
+    * @see List#clear()
+    * @see List#addAll(java.util.Collection)
+    */
+   public Gradient distribute ( final List < Key > keyArr ) {
+
+      keyArr.clear();
+      keyArr.addAll(this.keys);
+
+      this.keys.clear();
+
+      final Iterator < Key > itr = keyArr.iterator();
+      int i = 0;
+      final float denom = 1.0f / (keyArr.size() - 1.0f);
+      while (itr.hasNext()) {
+         final Key key = itr.next();
+         key.step = i++ * denom;
       }
 
+      this.keys.addAll(keyArr);
       return this;
    }
 
@@ -687,14 +840,19 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
    }
 
    /**
-    * Evaluates a color from the provided step. The step's
-    * range is expected to be [0.0, 1.0].
+    * Evaluates a step without checking to see if it is greater
+    * than 1.0 or less than 0.0. Uses the static easing
+    * function belonging to the class.
     *
     * @param step
     *           the step
     * @param target
     *           the output color
     * @return the color
+    * @see TreeSet#floor(Object)
+    * @see TreeSet#ceiling(Object)
+    * @see TreeSet#first()
+    * @see TreeSet#last()
     */
    public Color eval (
          final float step,
@@ -704,8 +862,8 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
    }
 
    /**
-    * Evaluates a color from the provided step. The step's
-    * range is expected to be [0.0, 1.0].
+    * Evaluates a step without checking to see if it is greater
+    * than 1.0 or less than 0.0.
     *
     * @param step
     *           the step
@@ -714,37 +872,35 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
     * @param target
     *           the output color
     * @return the color
-    * @see Utils#div(float, float)
-    * @see Color#white(Color)
+    * @see TreeSet#floor(Object)
+    * @see TreeSet#ceiling(Object)
+    * @see TreeSet#first()
+    * @see TreeSet#last()
     */
    public Color eval (
          final float step,
          final Color.AbstrEasing easing,
          final Color target ) {
 
-      final int len = this.keys.size();
-      if (len == 0) {
-         return Color.white(target);
-      } else if (len == 1 || step <= 0.0f) {
-         return target.set(this.keys.get(0).clr);
-      } else if (step >= 1.0f) {
-         return target.set(this.keys.get(len - 1).clr);
+      this.query.step = step;
+
+      final Key prev = this.keys.floor(this.query);
+      if (prev == null) {
+         return target.set(this.keys.first().clr);
       }
 
-      for (int i = 0; i < len; ++i) {
-         final Key curr = this.keys.get(i);
-         final float currStep = curr.step;
-
-         if (step < currStep) {
-            final Key prev = this.keys.get(i - 1 < 0 ? 0 : i - 1);
-            final float sclstp = Utils.div(
-                  step - currStep,
-                  prev.step - currStep);
-            return easing.apply(curr.clr, prev.clr, sclstp, target);
-         }
+      final Key next = this.keys.ceiling(this.query);
+      if (next == null) {
+         return target.set(this.keys.last().clr);
       }
 
-      return target;
+      /* It's not necessary to guard for divide by zero,
+       * since there should be no keys with the same step. */
+      return easing.applyUnclamped(
+            next.clr, prev.clr,
+            (step - next.step) /
+                  (prev.step - next.step),
+            target);
    }
 
    /**
@@ -776,71 +932,39 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
       final Color[] result = new Color[vcount];
       final float toPercent = 1.0f / (vcount - 1.0f);
       for (int i = 0; i < vcount; ++i) {
-         result[i] = this.eval(i * toPercent, easing, new Color());
+         result[i] = this.eval(
+               i * toPercent, easing, new Color());
       }
       return result;
+
    }
 
    /**
-    * Gets a color from the gradient by index.
+    * Retrieves the first key in this gradient.
     *
-    * @param i
-    *           the index
-    * @param target
-    *           the output color
-    * @return the color
+    * @return the first key
     */
-   public Color get ( final int i, final Color target ) {
+   public Key first () {
 
-      return target.set(this.keys.get(i).clr);
+      return this.keys.first();
    }
 
    /**
-    * Sets the color of a key at a provided index.
-    * 
-    * @param i
-    *           the index
-    * @param source
-    *           the source
-    * @return this gradient
+    * Returns the greatest key in this gradient less than or
+    * equal to the given step. If there is no key, returns the
+    * first key instead of null.
+    *
+    * @param step
+    *           the step
+    * @return the key
+    * @see TreeSet#floor(Object)
+    * @see TreeSet#first()
     */
-   @Chainable
-   public Gradient set ( final int i, final Color source ) {
+   public Key floor ( final float step ) {
 
-      this.keys.get(i).clr.set(source);
-      return this;
-   }
-
-   /**
-    * Sets the color of a key at a provided index.
-    * 
-    * @param i
-    *           the index
-    * @param source
-    *           the source
-    * @return this gradient
-    */
-   @Chainable
-   public Gradient set ( final int i, final int source ) {
-
-      Color.fromHex(source, this.keys.get(i).clr);
-      return this;
-   }
-
-   /**
-    * Sets the color of a key at a provided index.
-    * 
-    * @param i
-    *           the index
-    * @param source
-    *           the source
-    * @return this gradient
-    */
-   @Chainable
-   public Gradient set ( final int i, final String source ) {
-
-      Color.fromHex(source, this.keys.get(i).clr);
-      return this;
+      this.query.step = step;
+      final Key result = this.keys.floor(this.query);
+      return result == null ? this.keys.first() : result;
    }
 
    /**
@@ -860,13 +984,32 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
    }
 
    /**
+    * Returns the least key in this gradient greater than the
+    * given step. If there is no key, returns the last key
+    * instead of null.
+    *
+    * @param step
+    *           the step
+    * @return the key
+    * @see TreeSet#higher(Object)
+    * @see TreeSet#last()
+    */
+   public Key higher ( final float step ) {
+
+      this.query.step = step;
+      final Key result = this.keys.higher(this.query);
+      return result == null ? this.keys.last() : result;
+   }
+
+   /**
     * Returns an iterator for this gradient, which allows its
     * components to be accessed in an enhanced for-loop.
     *
     * @return the iterator
+    * @see TreeSet#iterator()
     */
    @Override
-   public Iterator < Key > iterator () {
+   public Iterator < Gradient.Key > iterator () {
 
       return this.keys.iterator();
    }
@@ -875,6 +1018,7 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
     * Returns the number of keys in this gradient.
     *
     * @return the key count
+    * @see TreeSet#size()
     */
    public int keyCount () {
 
@@ -882,47 +1026,31 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
    }
 
    /**
-    * Sorts this gradient's keys, then checks the list for
-    * duplicates and removes them if found.
+    * Retrieves the last key in this gradient.
     *
-    * @return this gradient
+    * @return the last key
     */
-   @Chainable
-   public Gradient removeDuplicates () {
+   public Key last () {
 
-      return this.removeDuplicates(Gradient.TOLERANCE);
+      return this.keys.last();
    }
 
    /**
-    * Sorts this gradient's keys, then checks the list for
-    * duplicates and removes them if found.
+    * Returns the greatest key in this gradient less the given
+    * step. If there is no key, returns the first key instead
+    * of null.
     *
-    * @param tolerance
-    *           the tolerance
-    * @return this gradient
-    * @see Collections#sort(java.util.List)
-    * @see Key#approx(Key, Key, float)
+    * @param step
+    *           the step
+    * @return the key
+    * @see TreeSet#lower(Object)
+    * @see TreeSet#first()
     */
-   @Chainable
-   public Gradient removeDuplicates ( final float tolerance ) {
+   public Key lower ( final float step ) {
 
-      /*
-       * LinkedHashSet<Key> set = new LinkedHashSet<>();
-       * set.addAll(keys); keys.clear(); keys.addAll(set); return
-       * this;
-       */
-
-      Collections.sort(this.keys);
-      final int len = this.keys.size();
-      for (int i = len - 1; i > 0; --i) {
-         final Key current = this.keys.get(i);
-         final Key prev = this.keys.get(i - 1);
-         if (Key.approx(prev, current, tolerance)) {
-            this.keys.remove(current);
-         }
-      }
-
-      return this;
+      this.query.step = step;
+      final Key result = this.keys.lower(this.query);
+      return result == null ? this.keys.first() : result;
    }
 
    /**
@@ -932,8 +1060,9 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
     * @return this gradient
     * @see Color#clearBlack(Color)
     * @see Color#white(Color)
+    * @see TreeSet#clear()
+    * @see TreeSet#add(Object)
     */
-   @Chainable
    public Gradient reset () {
 
       this.keys.clear();
@@ -944,39 +1073,50 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
    }
 
    /**
-    * Reverses this gradient's order. Each key's step is
-    * subtracted from 1.0 .
+    * Reverses the gradient. Does so with a temporary
+    * ArrayList.
     *
-    * @return this gradient
+    * @param keyArr
+    *           a temp list
+    * @return the gradient
+    * @see List#clear()
+    * @see List#addAll(java.util.Collection)
+    * @see TreeSet#addAll(java.util.Collection)
+    * @see TreeSet#clear()
+    * @see Collections#reverse(java.util.List)
     */
-   @Chainable
-   public Gradient reverse () {
+   public Gradient reverse ( final List < Key > keyArr ) {
 
-      Collections.reverse(this.keys);
-      final Iterator < Key > itr = this.keys.iterator();
+      keyArr.clear();
+      keyArr.addAll(this.keys);
+
+      this.keys.clear();
+
+      Collections.reverse(keyArr);
+      final Iterator < Key > itr = keyArr.iterator();
       while (itr.hasNext()) {
          final Key key = itr.next();
-         key.step = Utils.max(1.0f - key.step, 0.0f);
+         key.step = 1.0f - key.step;
       }
 
+      this.keys.addAll(keyArr);
       return this;
    }
 
    /**
-    * Sorts this gradient's keys by step, or percent.
+    * Returns an array of keys.
     *
-    * @return this gradient.
-    * @see Collections#sort(java.util.List)
+    * @param target
+    *           the target array
+    * @return the array
     */
-   @Chainable
-   public Gradient sort () {
+   public Key[] toArray ( final Key[] target ) {
 
-      Collections.sort(this.keys);
-      return this;
+      return this.keys.toArray(target);
    }
 
    /**
-    * Returns a string representation of this color.
+    * Returns a string representation of this gradient.
     *
     * @return the string
     */
@@ -987,7 +1127,7 @@ public class Gradient implements Iterable < Gradient.Key >, Serializable {
    }
 
    /**
-    * Returns a string representation of this color.
+    * Returns a string representation of this gradient.
     *
     * @param places
     *           number of decimal places
