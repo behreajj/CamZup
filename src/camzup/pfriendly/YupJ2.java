@@ -1992,29 +1992,29 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void point ( final float x, final float y ) {
 
-      final boolean needSwap = this.capNative == BasicStroke.CAP_BUTT;
+      /*
+       * PGraphicsJava2D contains an AWT line object which is
+       * private, and therefore cannot be inherited by its
+       * children. This is why line is not overridden.
+       */
 
+      final boolean needSwap = this.capNative == BasicStroke.CAP_BUTT;
       if (needSwap) {
          this.strokeObject = new BasicStroke(
                this.strokeWeight,
                BasicStroke.CAP_SQUARE,
                this.joinNative);
          this.g2.setStroke(this.strokeObject);
-      }
 
-      /*
-       * PGraphicsJava2D contains an AWT line object which is
-       * private, and therefore cannot be inherited by its
-       * children. This is why line is not overridden.
-       */
-      this.line(x, y, x + PConstants.EPSILON, y + PConstants.EPSILON);
+         this.line(x, y, x + PConstants.EPSILON, y + PConstants.EPSILON);
 
-      if (needSwap) {
          this.strokeObject = new BasicStroke(
                this.strokeWeight,
                this.capNative,
                this.joinNative);
          this.g2.setStroke(this.strokeObject);
+      } else {
+         this.line(x, y, x + PConstants.EPSILON, y + PConstants.EPSILON);
       }
    }
 
