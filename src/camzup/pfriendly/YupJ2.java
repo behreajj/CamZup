@@ -2006,7 +2006,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
                this.joinNative);
          this.g2.setStroke(this.strokeObject);
 
-         this.line(x, y, x + PConstants.EPSILON, y + PConstants.EPSILON);
+         this.line(x, y, x + PConstants.EPSILON, y);
 
          this.strokeObject = new BasicStroke(
                this.strokeWeight,
@@ -2014,7 +2014,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
                this.joinNative);
          this.g2.setStroke(this.strokeObject);
       } else {
-         this.line(x, y, x + PConstants.EPSILON, y + PConstants.EPSILON);
+         this.line(x, y, x + PConstants.EPSILON, y);
       }
    }
 
