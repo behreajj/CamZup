@@ -284,7 +284,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.strokeWeight(IUp.DEFAULT_STROKE_WEIGHT);
       this.strokeJoin(PConstants.ROUND);
       this.strokeCap(PConstants.ROUND);
-      this.stroke = false;
+      this.stroke = true;
 
       this.shape = 0;
       this.rectMode(PConstants.CENTER);

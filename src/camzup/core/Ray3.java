@@ -1,9 +1,107 @@
 package camzup.core;
 
+import java.util.Comparator;
+
 /**
  * A direction that extends from an originating point.
  */
-public class Ray3 extends Ray {
+public class Ray3 extends Ray implements Comparable < Ray3 > {
+
+   /**
+    * An abstract class that may serve as an umbrella for any
+    * custom comparators of Ray2 s.
+    */
+   public static abstract class AbstrComparator implements Comparator < Ray3 > {
+
+      /**
+       * The default constructor.
+       */
+      public AbstrComparator () {
+
+      }
+
+      /**
+       * The compare function which must be implemented by sub-
+       * (child) classes of this class. Negative one should be
+       * returned when the left comparisand, a, is less than the
+       * right comparisand, b, by a measure. One should be
+       * returned when it is greater. Zero should be returned as a
+       * last resort, when a and b are equal or uncomparable.
+       *
+       * @param a
+       *           the left comparisand
+       * @param b
+       *           the right comparisand
+       * @return the comparison
+       *
+       */
+      @Override
+      public abstract int compare ( final Ray3 a, final Ray3 b );
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString () {
+
+         return this.getClass().getSimpleName();
+      }
+   }
+
+   /**
+    * Compares two rays by their origin.
+    */
+   public static class ComparatorOrigin extends AbstrComparator {
+
+      /**
+       * The location comparator.
+       */
+      public final Comparator < Vec3 > locCmp;
+
+      /**
+       * The default constructor.
+       */
+      public ComparatorOrigin () {
+
+         super();
+         this.locCmp = new Vec3.ComparatorZYX();
+      }
+
+      /**
+       * A constructor which sets the comparator by which each
+       * ray's origins will be compared.
+       *
+       * @param comparator
+       */
+      public ComparatorOrigin ( final Comparator < Vec3 > comparator ) {
+
+         super();
+         this.locCmp = comparator;
+      }
+
+      /**
+       * Compares two rays by their origin.
+       *
+       * @param a
+       *           the left comparisand
+       * @param b
+       *           the right comparisand
+       * @returns the comparison
+       */
+      @Override
+      public int compare ( final Ray3 a, final Ray3 b ) {
+
+         return this.locCmp.compare(a.origin, b.origin);
+      }
+
+   }
+
+   /**
+    * The default Ray2 comparator.
+    */
+   private static Comparator < Ray3 > COMPARATOR = new ComparatorOrigin();
 
    /**
     * The unique identification for serialized classes.
@@ -46,6 +144,32 @@ public class Ray3 extends Ray {
             origin.x + dir.x * scalar,
             origin.y + dir.y * scalar,
             origin.z + dir.z * scalar);
+   }
+
+   /**
+    * Gets the string representation of the default Ray2
+    * comparator.
+    *
+    * @return the string
+    */
+   public static String getComparatorString () {
+
+      return Ray3.COMPARATOR.toString();
+   }
+
+   /**
+    * Sets the comparator function by which collections of rays
+    * are compared.
+    *
+    * @param comparator
+    *           the comparator
+    */
+   public static void setComparator (
+         final Comparator < Ray3 > comparator ) {
+
+      if (comparator != null) {
+         Ray3.COMPARATOR = comparator;
+      }
    }
 
    /**
@@ -103,13 +227,13 @@ public class Ray3 extends Ray {
     */
    protected boolean equals ( final Ray3 ray ) {
 
-      if (this.dir == null) {
-         if (ray.dir != null) {
-            return false;
-         }
-      } else if (!this.dir.equals(ray.dir)) {
-         return false;
-      }
+      // if (this.dir == null) {
+      // if (ray.dir != null) {
+      // return false;
+      // }
+      // } else if (!this.dir.equals(ray.dir)) {
+      // return false;
+      // }
 
       if (this.origin == null) {
          if (ray.origin != null) {
@@ -137,6 +261,12 @@ public class Ray3 extends Ray {
       return new Ray3(this.origin, this.dir);
    }
 
+   @Override
+   public int compareTo ( final Ray3 o ) {
+
+      return Ray3.COMPARATOR.compare(this, o);
+   }
+
    /**
     * Tests this ray for equivalence with another object.
     *
@@ -151,12 +281,15 @@ public class Ray3 extends Ray {
       if (this == obj) {
          return true;
       }
+
       if (obj == null) {
          return false;
       }
+
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+
       return this.equals((Ray3) obj);
    }
 
@@ -171,7 +304,8 @@ public class Ray3 extends Ray {
 
       final int prime = 31;
       int result = 1;
-      result = prime * result + (this.dir == null ? 0 : this.dir.hashCode());
+      // result = prime * result + (this.dir == null ? 0 :
+      // this.dir.hashCode());
       result = prime * result
             + (this.origin == null ? 0 : this.origin.hashCode());
       return result;

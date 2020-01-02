@@ -4,7 +4,7 @@ import camzup.core.*;
 Yup3 graphics3;
 
 MaterialSolid mat = new MaterialSolid()
-  .setStroke(true)
+  .setStroke(false)
   .setStroke(#07a0c3)
   .setFill(true)
   .setFill(#086788)

@@ -1,18 +1,16 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-Yup2 graphics2;
+YupJ2 graphics2;
 
 void setup() {
-  size(720, 405, "camzup.pfriendly.Yup2");
-  graphics2 = (Yup2)getGraphics();
+  size(720, 405, "camzup.pfriendly.YupJ2");
+  graphics2 = (YupJ2)getGraphics();
 }
-
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
   background(#fff7d5);
-
   camera();
   graphics2.origin();
   

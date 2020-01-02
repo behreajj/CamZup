@@ -850,6 +850,23 @@ public class Transform3 extends Transform {
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    @Chainable
+   public Transform3 moveBy ( final Vec2 dir ) {
+
+      this.locPrev.set(this.location);
+      this.location.set(dir, 0.0f);
+      Vec3.add(this.locPrev, this.location, this.location);
+      return this;
+   }
+
+   /**
+    * Moves the transform by a direction to a new location.
+    *
+    * @param dir
+    *           the direction
+    * @return this transform
+    * @see Vec3#add(Vec3, Vec3, Vec3)
+    */
+   @Chainable
    public Transform3 moveBy ( final Vec3 dir ) {
 
       this.locPrev.set(this.location);
@@ -869,13 +886,53 @@ public class Transform3 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform3 moveTo ( 
-         final float x, 
-         final float y, 
+   public Transform3 moveTo (
+         final float x,
+         final float y,
          final float z ) {
 
       this.locPrev.set(this.location);
       this.location.set(x, y, z);
+      return this;
+   }
+
+   /**
+    * Sets the transforms' location.
+    *
+    * @param locNew
+    *           the new location
+    * @return this transform
+    */
+   @Chainable
+   public Transform3 moveTo ( final Vec2 locNew ) {
+
+      this.locPrev.set(this.location);
+      this.location.set(locNew, 0.0f);
+      return this;
+   }
+
+   /**
+    * Eases the transform to a location by a step. The kind of
+    * easing is specified by a Vec3 easing function.
+    *
+    * @param locNew
+    *           the new location
+    * @param step
+    *           the step in [0.0, 1.0]
+    * @param easingFunc
+    *           the easing function
+    * @return this transform
+    * @see Vec3.AbstrEasing#apply(Vec3, Vec3, Float, Vec3)
+    */
+   @Chainable
+   public Transform3 moveTo (
+         final Vec2 locNew,
+         final float step,
+         final Vec3.AbstrEasing easingFunc ) {
+
+      this.locPrev.set(this.location);
+      this.location.set(locNew, 0.0f);
+      easingFunc.apply(this.locPrev, this.location, step, this.location);
       return this;
    }
 
@@ -1176,6 +1233,26 @@ public class Transform3 extends Transform {
     * @param nonUniformScale
     *           the scale
     * @return this transform
+    * @see Vec2#isNonZero(Vec2)
+    * @see Vec3#mul(Vec3, Vec3, Vec3)
+    */
+   @Chainable
+   public Transform3 scaleBy ( final Vec2 nonUniformScale ) {
+
+      if (Vec2.isNonZero(nonUniformScale)) {
+         this.scalePrev.set(this.scale);
+         this.scale.set(nonUniformScale, 1.0f);
+         Vec3.mul(this.scalePrev, this.scale, this.scale);
+      }
+      return this;
+   }
+
+   /**
+    * Scales the transform by a non-uniform scalar.
+    *
+    * @param nonUniformScale
+    *           the scale
+    * @return this transform
     * @see Vec3#isNonZero(Vec3)
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     */
@@ -1218,9 +1295,9 @@ public class Transform3 extends Transform {
     * @return this transform
     */
    @Chainable
-   public Transform3 scaleTo ( 
-         final float x, 
-         final float y, 
+   public Transform3 scaleTo (
+         final float x,
+         final float y,
          final float z ) {
 
       if (x != 0.0f && y != 0.0f && z != 0.0f) {
@@ -1260,8 +1337,8 @@ public class Transform3 extends Transform {
     * @see Vec3#isNonZero(Vec3)
     */
    @Chainable
-   public Transform3 scaleTo ( 
-         final Vec3 scaleNew, 
+   public Transform3 scaleTo (
+         final Vec3 scaleNew,
          final float step ) {
 
       if (Vec3.isNonZero(scaleNew)) {
@@ -1285,8 +1362,8 @@ public class Transform3 extends Transform {
     * @see Vec3.AbstrEasing#apply(Vec3, Vec3, Float, Vec3)
     */
    @Chainable
-   public Transform3 scaleTo ( 
-         final Vec3 scaleNew, 
+   public Transform3 scaleTo (
+         final Vec3 scaleNew,
          final float step,
          final Vec3.AbstrEasing easingFunc ) {
 

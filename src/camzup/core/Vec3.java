@@ -396,7 +396,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    /**
     * The default easing function, lerp.
     */
-   private static AbstrEasing EASING = new Lerp();
+   private static transient AbstrEasing EASING = new Lerp();
 
    /**
     * The unique identification for serialized classes.

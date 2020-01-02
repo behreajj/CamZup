@@ -42,6 +42,7 @@ void draw() {
 
       // Create shapes.
       float fac0 = SDF.polygon(st, corners);
+      //float fac1 = SDF.conic(st, frameCount * 0.01);
       float fac1 = SDF.line(st, lnAnchor, mouse, lineWgt);
 
       // Composite together separate factors.

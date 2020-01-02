@@ -85,6 +85,27 @@ public class Mesh3 extends Mesh {
 
          return this.vertices.length;
       }
+
+      public String toString () {
+
+         return this.toString(4);
+      }
+
+      public String toString ( final int places ) {
+
+         int len = this.vertices.length;
+         int last = len - 1;
+         final StringBuilder sb = new StringBuilder()
+               .append("{ vertices: [ \n");
+         for (int i = 0; i < len; ++i) {
+            sb.append(this.vertices[i].toString());
+            if (i < last) {
+               sb.append(',').append('\n');
+            }
+         }
+         sb.append(" ] }");
+         return sb.toString();
+      }
    }
 
    /**
@@ -185,6 +206,25 @@ public class Mesh3 extends Mesh {
          this.normal = normal;
          return this;
       }
+
+      @Override
+      public String toString () {
+
+         return this.toString(4);
+      }
+
+      public String toString ( final int places ) {
+
+         return new StringBuilder()
+               .append("{ coord: ")
+               .append(this.coord.toString(places))
+               .append(", texCoord: ")
+               .append(this.texCoord.toString(places))
+               .append(", normal: ")
+               .append(this.normal.toString(places))
+               .append(' ').append('}')
+               .toString();
+      }
    }
 
    /**
@@ -203,6 +243,55 @@ public class Mesh3 extends Mesh {
       } catch (final NumberFormatException e) {
          target = 0;
       }
+      return target;
+   }
+
+   static Mesh3 uvSphere (
+         final float r,
+         final int detailU,
+         final int detailV,
+         final Mesh3 target ) {
+
+      // TODO: Needs testing...
+
+      // int nind = 3 * detailU + (6 * detailU + 3) * (detailV -
+      // 2) + 3 * detailU;
+      // int[] indices = new int[nind];
+
+      // final float xs[][] = new float[detailU][detailV];
+      // final float ys[][] = new float[detailU][detailV];
+      // final float zs[][] = new float[detailU][detailV];
+      //
+      // for(int i = 0; i < detailU; ++i) {
+      // for(int j = 0; j < detailV; ++j) {
+      //
+      // }
+      // }
+
+      final float[] cosTheta = new float[detailU];
+      final float[] sinTheta = new float[detailU];
+      final float uToPrc = 1.0f / detailU;
+      for (int i = 0; i < detailU; ++i) {
+         final float phi = Utils.lerpUnclamped(
+               -IUtils.PI,
+               IUtils.PI,
+               i * uToPrc);
+         cosTheta[i] = (float) Math.cos(phi);
+         sinTheta[i] = (float) Math.sin(phi);
+      }
+
+      final float[] cosPhi = new float[detailV];
+      final float[] sinPhi = new float[detailV];
+      final float vToPrc = 1.0f / (detailV - 1.0f);
+      for (int i = 0; i < detailV; ++i) {
+         final float phi = Utils.lerpUnclamped(
+               -IUtils.HALF_PI,
+               IUtils.HALF_PI,
+               i * vToPrc);
+         cosPhi[i] = (float) Math.cos(phi);
+         sinPhi[i] = (float) Math.sin(phi);
+      }
+
       return target;
    }
 
@@ -535,55 +624,6 @@ public class Mesh3 extends Mesh {
       return target.set(faces, coords, texCoords, normals);
    }
 
-   public static Mesh3 uvSphere (
-         final float r,
-         final int detailU,
-         final int detailV,
-         final Mesh3 target ) {
-
-      // TODO: Needs testing...
-
-      // int nind = 3 * detailU + (6 * detailU + 3) * (detailV -
-      // 2) + 3 * detailU;
-      // int[] indices = new int[nind];
-
-      // final float xs[][] = new float[detailU][detailV];
-      // final float ys[][] = new float[detailU][detailV];
-      // final float zs[][] = new float[detailU][detailV];
-      //
-      // for(int i = 0; i < detailU; ++i) {
-      // for(int j = 0; j < detailV; ++j) {
-      //
-      // }
-      // }
-
-      final float[] cosTheta = new float[detailU];
-      final float[] sinTheta = new float[detailU];
-      final float uToPrc = 1.0f / detailU;
-      for (int i = 0; i < detailU; ++i) {
-         final float phi = Utils.lerpUnclamped(
-               -IUtils.PI,
-               IUtils.PI,
-               i * uToPrc);
-         cosTheta[i] = (float) Math.cos(phi);
-         sinTheta[i] = (float) Math.sin(phi);
-      }
-
-      final float[] cosPhi = new float[detailV];
-      final float[] sinPhi = new float[detailV];
-      final float vToPrc = 1.0f / (detailV - 1.0f);
-      for (int i = 0; i < detailV; ++i) {
-         final float phi = Utils.lerpUnclamped(
-               -IUtils.HALF_PI,
-               IUtils.HALF_PI,
-               i * vToPrc);
-         cosPhi[i] = (float) Math.cos(phi);
-         sinPhi[i] = (float) Math.sin(phi);
-      }
-
-      return target;
-   }
-
    /**
     * An array of coordinates in the mesh.
     */
@@ -827,12 +867,12 @@ public class Mesh3 extends Mesh {
       final int len = this.coords.length;
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
-      
+
       for (int i = 0; i < len; ++i) {
          Vec3.rotate(this.coords[i], cosa, sina, axis, this.coords[i]);
          Vec3.rotate(this.normals[i], cosa, sina, axis, this.normals[i]);
       }
-      
+
       return this;
    }
 
@@ -851,12 +891,12 @@ public class Mesh3 extends Mesh {
       final int len = this.coords.length;
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
-      
+
       for (int i = 0; i < len; ++i) {
          Vec3.rotateX(this.coords[i], cosa, sina, this.coords[i]);
          Vec3.rotateX(this.normals[i], cosa, sina, this.normals[i]);
       }
-      
+
       return this;
    }
 
@@ -875,12 +915,12 @@ public class Mesh3 extends Mesh {
       final int len = this.coords.length;
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
-      
+
       for (int i = 0; i < len; ++i) {
          Vec3.rotateY(this.coords[i], cosa, sina, this.coords[i]);
          Vec3.rotateY(this.normals[i], cosa, sina, this.normals[i]);
       }
-      
+
       return this;
    }
 
@@ -899,12 +939,12 @@ public class Mesh3 extends Mesh {
       final int len = this.coords.length;
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
-      
+
       for (int i = 0; i < len; ++i) {
          Vec3.rotateZ(this.coords[i], cosa, sina, this.coords[i]);
          Vec3.rotateZ(this.normals[i], cosa, sina, this.normals[i]);
       }
-      
+
       return this;
    }
 

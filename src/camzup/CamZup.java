@@ -1,18 +1,14 @@
 package camzup;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.TreeMap;
 
 import camzup.core.Gradient;
-import camzup.core.Gradient;
 import camzup.core.Mesh3;
+import camzup.core.Simplex;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
-import camzup.core.Vec4;
-import camzup.core.Color;
 import processing.core.PApplet;
 
 public class CamZup {
@@ -88,6 +84,10 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
+      // float f = Simplex.fbm(new Vec2(), Simplex.DEFAULT_SEED,
+      // 4, 2.0f, 0.5f);
+      // System.out.println(f);
+
       // final int x = 12345;
       // final Integer y = x;
       // System.out.println(y.hashCode());
@@ -100,8 +100,9 @@ public class CamZup {
       // ce.appendCurve(curve);
       // System.out.println(ce.toBlenderCode());
 
-      // final Gradient gr = Gradient.paletteViridis(new
-      // Gradient());
+      // final Gradient gr = Gradient.paletteRgb(new Gradient());
+      // System.out.println(gr);
+
       // gr.removeDuplicates();
       // System.out.println(gr.toString(4));
       // final int count = 32;

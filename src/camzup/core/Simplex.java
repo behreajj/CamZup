@@ -117,12 +117,12 @@ public abstract class Simplex {
    /**
     * Temporary vector used by gradRot2.
     */
-   private static final Vec2 ROT_2;
+   private static final transient Vec2 ROT_2;
 
    /**
     * Temproary vector used by gradRot3.
     */
-   private static final Vec3 ROT_3;
+   private static final transient Vec3 ROT_3;
 
    /**
     * sqrt(2.0) / Math.sqrt(3.0) Used by rotation look up
@@ -421,6 +421,7 @@ public abstract class Simplex {
     * @see Vec2#rotateZ(Vec2, float, float, Vec2)
     * @see Simplex#GRAD_2_LUT
     * @see Simplex#hash(int, int, int)
+    * @author Simon Geilfus
     */
    private static Vec2 gradRot2 (
          final int i,
@@ -457,6 +458,7 @@ public abstract class Simplex {
     * @see Simplex#hash(int, int, int)
     * @see Simplex#GRAD3_U
     * @see Simplex#GRAD3_V
+    * @author Simon Geilfus
     */
    private static Vec3 gradRot3 (
          final int i,
@@ -1247,15 +1249,19 @@ public abstract class Simplex {
       final Vec2 nxy = new Vec2();
 
       float sum = 0.0f;
-      deriv.reset();
+      final boolean calcDeriv = deriv != null;
+      if (calcDeriv) {
+         deriv.reset();
+      }
 
       for (int i = 0; i < octaves; ++i) {
          Vec2.mul(v, freq, vin);
          sum += Simplex.eval(vin, seed, nxy) * amp;
          Vec2.mul(nxy, amp, nxy);
 
-         // TODO: Should this be guarded by a null check?
-         Vec2.add(deriv, nxy, deriv);
+         if (calcDeriv) {
+            Vec2.add(deriv, nxy, deriv);
+         }
          freq *= lacunarity;
          amp *= gain;
       }
@@ -1328,15 +1334,19 @@ public abstract class Simplex {
       final Vec3 nxyz = new Vec3();
 
       float sum = 0.0f;
-      deriv.reset();
+      final boolean calcDeriv = deriv != null;
+      if (calcDeriv) {
+         deriv.reset();
+      }
 
       for (int i = 0; i < octaves; ++i) {
          Vec3.mul(v, freq, vin);
          sum += Simplex.eval(vin, seed, nxyz) * amp;
          Vec3.mul(nxyz, amp, nxyz);
 
-         // TODO: Should this be guarded by a null check?
-         Vec3.add(deriv, nxyz, deriv);
+         if (calcDeriv) {
+            Vec3.add(deriv, nxyz, deriv);
+         }
          freq *= lacunarity;
          amp *= gain;
       }
@@ -1409,15 +1419,19 @@ public abstract class Simplex {
       final Vec4 nxyzw = new Vec4();
 
       float sum = 0.0f;
-      deriv.reset();
+      final boolean calcDeriv = deriv != null;
+      if (calcDeriv) {
+         deriv.reset();
+      }
 
       for (int i = 0; i < octaves; ++i) {
          Vec4.mul(v, freq, vin);
          sum += Simplex.eval(vin, seed, nxyzw) * amp;
          Vec4.mul(nxyzw, amp, nxyzw);
 
-         // TODO: Should this be guarded by a null check?
-         Vec4.add(deriv, nxyzw, deriv);
+         if (calcDeriv) {
+            Vec4.add(deriv, nxyzw, deriv);
+         }
          freq *= lacunarity;
          amp *= gain;
       }
@@ -1474,6 +1488,7 @@ public abstract class Simplex {
     * @param deriv
     *           the derivative
     * @return the flow noise value
+    * @author Simon Geilfus
     */
    public static float flow (
          final float x,
@@ -1684,6 +1699,7 @@ public abstract class Simplex {
     * @param deriv
     *           the derivative
     * @return the flow noise value
+    * @author Simon Geilfus
     */
    public static float flow (
          final float x,

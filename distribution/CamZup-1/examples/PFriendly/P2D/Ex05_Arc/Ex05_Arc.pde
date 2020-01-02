@@ -1,14 +1,14 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-Yup2 graphics;
+YupJ2 graphics;
 
 Vec2 mouse = new Vec2();
 
 void setup() {
-  size(720, 405, "camzup.pfriendly.Yup2");
+  size(720, 405, "camzup.pfriendly.YupJ2");
   ellipseMode(CENTER);
-  graphics = (Yup2)getGraphics();
+  graphics = (YupJ2)getGraphics();
 }
 
 void draw() {
@@ -29,7 +29,7 @@ void draw() {
     start, stop,
    PIE);
 
-  stroke(#1475b3);
+  stroke(#ff2020);
   strokeWeight(12.0);
   point(mouse.x, mouse.y);
 }

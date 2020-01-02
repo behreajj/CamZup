@@ -418,40 +418,40 @@ public abstract class Utils implements IUtils {
       /**
        * The start angle, modulated by the range.
        */
-      protected float a = 0.0f;
+      protected transient float a = 0.0f;
 
       /**
        * Whether or not the start angle is greater than the stop
        * angle.
        */
-      protected boolean aGtb = false;
+      protected transient boolean aGtb = false;
 
       /**
        * Whether or not the start angle is less than the stop
        * angle.
        */
-      protected boolean aLtb = false;
+      protected transient boolean aLtb = false;
 
       /**
        * The stop angle, modulated by the range.
        */
-      protected float b = 0.0f;
+      protected transient float b = 0.0f;
 
       /**
        * The difference between the stop and start angle.
        */
-      protected float diff = 0.0f;
+      protected transient float diff = 0.0f;
 
       /**
        * One-half of the range of the period.
        */
-      protected float halfRange = 0.5f;
+      protected transient float halfRange = 0.5f;
 
       /**
        * Whether or not to floor mod the result of the easing
        * function.
        */
-      protected boolean modResult = false;
+      protected transient boolean modResult = false;
 
       /**
        * The range of the period.
@@ -1041,7 +1041,7 @@ public abstract class Utils implements IUtils {
     */
    public static double div ( final double a, final double b ) {
 
-      return b == 0.0d || Double.isNaN(b) ? 0.0d : a / b;
+      return b == 0.0d || b != b ? 0.0d : a / b;
    }
 
    /**
@@ -1756,8 +1756,8 @@ public abstract class Utils implements IUtils {
       final int maxPlaces = 9 - len;
 
       /*
-       * The integral has so many decimal places that it has
-       * consumed the allotment. (Might be scientific notation?)
+       * The integral has so many digits that it has consumed the
+       * allotment. (Might be scientific notation?)
        */
       if (maxPlaces < 1) {
          return Float.toString(value);

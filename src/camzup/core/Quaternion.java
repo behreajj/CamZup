@@ -177,8 +177,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * @return the evaluation
        */
       @Override
-      public int compare ( 
-            final Quaternion a, 
+      public int compare (
+            final Quaternion a,
             final Quaternion b ) {
 
          return a.real > b.real ? 1
@@ -1128,15 +1128,10 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @see Math#sqrt(double)
     */
    public static Quaternion fromAxes (
-         final float rightx,
-         final float forwardy,
-         final float upz,
-         final float forwardz,
-         final float upy,
-         final float upx,
-         final float rightz,
-         final float righty,
-         final float forwardx,
+         final float rightx, final float forwardy, final float upz,
+         final float forwardz, final float upy,
+         final float upx, final float rightz,
+         final float righty, final float forwardx,
          final Quaternion target ) {
 
       final float w = (float) (0.5d * Math.sqrt(
@@ -1153,6 +1148,35 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             Math.copySign(x, forwardz - upy),
             Math.copySign(y, upx - rightz),
             Math.copySign(z, righty - forwardx));
+   }
+
+   /**
+    * Creates a quaternion from three axes. Assumes that the up
+    * axis is (0.0, 0.0, 1.0). Assumes that the zero components
+    * of the other axes are zero.
+    *
+    * @param right
+    *           the right axis
+    * @param forward
+    *           the up axis
+    * @param target
+    *           the output quaternion
+    * @return the quaternion
+    * @see Quaternion#fromAxes(float, float, float, float,
+    *      float, float, float, float, float, Quaternion)
+    */
+   public static Quaternion fromAxes (
+         final Vec2 right,
+         final Vec2 forward,
+         final Quaternion target ) {
+
+      // TODO: Needs testing...
+      return Quaternion.fromAxes(
+            right.x, forward.y, 1.0f,
+            0.0f, 0.0f,
+            0.0f, 0.0f,
+            right.y, forward.x,
+            target);
    }
 
    /**
@@ -1181,6 +1205,53 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             forward.z, up.y,
             up.x, right.z,
             right.y, forward.x, target);
+   }
+
+   /**
+    * Creates a quaternion from an axis and angle. Normalizes
+    * the axis prior to calculating the quaternion.
+    *
+    * @param radians
+    *           the angle in radians
+    * @param axis
+    *           the axis
+    * @param target
+    *           the output quaternion
+    * @return the quaternion
+    * @see Vec2#magSq(Vec2)
+    * @see Utils#approxFast(float, float)
+    * @see Math#sqrt(double)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    */
+   public static Quaternion fromAxisAngle (
+         final float radians,
+         final Vec2 axis,
+         final Quaternion target ) {
+
+      // TODO: Needs testing...
+
+      final float amSq = Vec2.magSq(axis);
+      if (amSq == 0.0f) {
+         return target.reset();
+      }
+
+      float nx = axis.x;
+      float ny = axis.y;
+
+      if (!Utils.approxFast(amSq, 1.0f)) {
+         final float amInv = (float) (1.0d / Math.sqrt(amSq));
+         nx *= amInv;
+         ny *= amInv;
+      }
+
+      final double halfAngle = 0.5d * radians;
+      final float sinHalf = (float) Math.sin(halfAngle);
+      return target.set(
+            (float) Math.cos(halfAngle),
+            nx * sinHalf,
+            ny * sinHalf,
+            0.0f);
    }
 
    /**
@@ -1251,6 +1322,62 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             source.m02, source.m20,
             source.m10, source.m01,
             target);
+   }
+
+   /**
+    * Creates a quaternion with reference to two vectors. This
+    * function creates normalized copies of the vectors. Uses
+    * the formula:<br>
+    * <br>
+    * fromTo (a, b) := { a \u00b7 b, a \u00d7 b }<br>
+    * <br>
+    *
+    * Assumes that the z coordinate of each vector is zero.
+    *
+    * @param origin
+    *           the origin vector, normalized
+    * @param dest
+    *           the destination vector, normalized
+    * @param target
+    *           the output quaternion
+    * @return the quaternion
+    * @see Utils#approxFast(float, float)
+    * @see Math#sqrt(double)
+    */
+   public static Quaternion fromTo (
+         final Vec2 origin,
+         final Vec2 dest,
+         final Quaternion target ) {
+
+      float anx = origin.x;
+      float any = origin.y;
+      final float amsq = anx * anx + any * any;
+      if (amsq == 0.0f) {
+         return target.reset();
+      }
+
+      float bnx = dest.x;
+      float bny = dest.y;
+      final float bmsq = bnx * bnx + bny * bny;
+      if (bmsq == 0.0f) {
+         return target.reset();
+      }
+
+      if (!Utils.approxFast(amsq, 1.0f)) {
+         final float aminv = (float) (1.0d / Math.sqrt(amsq));
+         anx *= aminv;
+         any *= aminv;
+      }
+
+      if (!Utils.approxFast(bmsq, 1.0f)) {
+         final float bminv = (float) (1.0d / Math.sqrt(bmsq));
+         bnx *= bminv;
+         bny *= bminv;
+      }
+
+      target.real = anx * bnx + any * bny;
+      target.imag.set(0.0f, 0.0f, anx * bny - any * bnx);
+      return target;
    }
 
    /**
@@ -1853,6 +1980,52 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             iy * w + ix * qz - iw * qy - iz * qx,
             iz * w + iy * qx - iw * qz - ix * qy);
    }
+   
+   /**
+    * Multiplies a vector by a quaternion, in effect rotating
+    * the vector by the quaternion. Equivalent to promoting the
+    * vector to a pure quaternion, multiplying the rotation
+    * quaternion and promoted vector, then multiplying the
+    * product by the rotation's inverse.<br>
+    * <br>
+    * <em>a</em> <em>b</em> := ( <em>a</em> { 0.0, <em>b</em> }
+    * ) <em>a</em><sup>-1</sup><br>
+    * <br>
+    * The result is then demoted to a vector, as the real
+    * component should be 0.0 . This is often denoted as <em>P'
+    * = RPR'</em>.
+    *
+    * @param q
+    *           the quaternion
+    * @param source
+    *           the vector
+    * @param target
+    *           the output vector
+    * @return the rotated vector
+    */
+   public static Vec3 mul (
+         final Quaternion q,
+         final Vec2 source,
+         final Vec3 target ) {
+
+      // TODO: Needs testing...
+      
+      final float w = q.real;
+      final Vec3 i = q.imag;
+      final float qx = i.x;
+      final float qy = i.y;
+      final float qz = i.z;
+
+      final float iw = -qx * source.x - qy * source.y;
+      final float ix = w * source.x - qz * source.y;
+      final float iy = w * source.y + qz * source.x;
+      final float iz = qx * source.y - qy * source.x;
+
+      return target.set(
+            ix * w + iz * qy - iw * qx - iy * qz,
+            iy * w + ix * qz - iw * qy - iz * qx,
+            iz * w + iy * qx - iw * qz - ix * qy);
+   }
 
    /**
     * Multiplies two quaternions, then normalizes the product.
@@ -1952,7 +2125,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *           the output quaternion
     * @return the random quaternion
     * @author Ken Shoemake
-    * @see IUtils#TAU_D
     * @see Random#nextDouble()
     * @see Math#sqrt(double)
     * @see Math#sin(double)

@@ -85,6 +85,27 @@ public class Mesh2 extends Mesh {
 
          return this.vertices.length;
       }
+
+      public String toString () {
+
+         return this.toString(4);
+      }
+
+      public String toString ( final int places ) {
+
+         int len = this.vertices.length;
+         int last = len - 1;
+         final StringBuilder sb = new StringBuilder()
+               .append("{ vertices: [ \n");
+         for (int i = 0; i < len; ++i) {
+            sb.append(this.vertices[i].toString());
+            if (i < last) {
+               sb.append(',').append('\n');
+            }
+         }
+         sb.append(" ] }");
+         return sb.toString();
+      }
    }
 
    /**
@@ -195,6 +216,23 @@ public class Mesh2 extends Mesh {
          this.coord = coord;
          this.texCoord = texCoord;
          return this;
+      }
+
+      @Override
+      public String toString () {
+
+         return this.toString(4);
+      }
+
+      public String toString ( final int places ) {
+
+         return new StringBuilder()
+               .append("{ coord: ")
+               .append(this.coord.toString(places))
+               .append(", texCoord: ")
+               .append(this.texCoord.toString(places))
+               .append(' ').append('}')
+               .toString();
       }
    }
 
@@ -656,11 +694,11 @@ public class Mesh2 extends Mesh {
       final float cosa = (float) Math.cos(radians);
       final float sina = (float) Math.sin(radians);
       final int len = this.coords.length;
-      
+
       for (int i = 0; i < len; ++i) {
          Vec2.rotateZ(this.coords[i], cosa, sina, this.coords[i]);
       }
-      
+
       return this;
    }
 
@@ -679,7 +717,7 @@ public class Mesh2 extends Mesh {
       for (int i = 0; i < len; ++i) {
          Vec2.mul(this.coords[i], scale, this.coords[i]);
       }
-      
+
       return this;
    }
 
@@ -698,7 +736,7 @@ public class Mesh2 extends Mesh {
       for (int i = 0; i < len; ++i) {
          Vec2.mul(this.coords[i], scale, this.coords[i]);
       }
-      
+
       return this;
    }
 
@@ -848,7 +886,7 @@ public class Mesh2 extends Mesh {
       for (int i = 0; i < len; ++i) {
          Vec2.add(this.coords[i], v, this.coords[i]);
       }
-      
+
       return this;
    }
 }
