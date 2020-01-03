@@ -21,6 +21,7 @@ import camzup.core.Utils;
 import camzup.core.Vec2;
 import processing.core.PApplet;
 import processing.core.PFont;
+import processing.core.PImage;
 import processing.core.PMatrix3D;
 
 /**
@@ -1440,6 +1441,121 @@ public interface IUp {
 
             .append(" ] }")
             .toString();
+   }
+
+   static int[] wrap (
+         final int[] target, final int wTarget, final int hTarget,
+         final int[] source, final int wSource, final int hSource,
+         final int dx, final int dy ) {
+
+      // TODO: Should hTarget, wTarget and hSource, wSource be
+      // swapped in the for loop and mod arguments?
+      for (int i = 0, y = 0; y < hTarget; ++y) {
+         final int ny = wSource * Utils.mod(y - dy, hSource);
+         for (int x = 0; x < wTarget; ++x, ++i) {
+            final int nx = Utils.mod(x + dx, wSource);
+            target[i] = source[nx + ny];
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Shifts an image by an increment using integer mod such
+    * that it wraps around its left, right, top and bottom
+    * edges.
+    *
+    * @param img
+    *           the image
+    * @param dx
+    *           the horizontal offset
+    * @param dy
+    *           the vertical offset
+    * @return the target image
+    * @see System#arraycopy(Object, int, Object, int, int)
+    */
+   static PImage wrap (
+         final PImage img,
+         final int dx, final int dy ) {
+
+      img.loadPixels();
+      final int len = img.pixels.length;
+      final int[] source = new int[len];
+      System.arraycopy(img.pixels, 0, source, 0, len);
+      return IUp.wrap(img, source, img.width, img.height, dx, dy);
+   }
+
+   /**
+    * Shifts an image by an increment using integer mod such
+    * that it wraps around its left, right, top and bottom
+    * edges.
+    *
+    * @param target
+    *           target image
+    * @param source
+    *           source pixels
+    * @param wSource
+    *           width of source
+    * @param hSource
+    *           height of source
+    * @param dx
+    *           the horizontal offset
+    * @param dy
+    *           the vertical offset
+    * @return the target image
+    */
+   static PImage wrap (
+         final PImage target, final int[] source,
+         final int wSource, final int hSource,
+         final int dx, final int dy ) {
+
+      target.loadPixels();
+
+      // final int wTarget = target.width;
+      // final int hTarget = target.height;
+      // final int[] tpx = target.pixels;
+      //
+      // for (int i = 0, y = 0; y < hTarget; ++y) {
+      // final int ny = wSource * Utils.mod(y - dy, hSource);
+      // for (int x = 0; x < wTarget; ++x, ++i) {
+      // final int nx = Utils.mod(x + dx, wSource);
+      // final int ni = nx + ny;
+      // tpx[i] = source[ni];
+      // }
+      // }
+
+      IUp.wrap(
+            target.pixels, target.width, target.height,
+            source, wSource, hSource, dx, dy);
+
+      target.updatePixels();
+      return target;
+   }
+
+   /**
+    * Shifts an image by an increment using integer mod such
+    * that it wraps around its left, right, top and bottom
+    * edges.
+    *
+    * @param target
+    *           target image
+    * @param source
+    *           source image
+    * @param dx
+    *           the horizontal offset
+    * @param dy
+    *           the vertical offset
+    * @return the target image
+    */
+   static PImage wrap (
+         final PImage target, final PImage source,
+         final int dx, final int dy ) {
+
+      source.loadPixels();
+      return IUp.wrap(target,
+            source.pixels, source.width, source.height,
+            dx, dy);
    }
 
    /**

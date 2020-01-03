@@ -569,6 +569,43 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
+    * Tests to see if all the vector's components are non-zero.
+    * Useful when testing valid dimensions (width and depth)
+    * stored in vectors.
+    *
+    * @param v
+    *           the input vector
+    * @return the evaluation
+    */
+   public static boolean all ( final Vec2 v ) {
+
+      return v.x != 0.0f && v.y != 0.0f;
+   }
+
+   /**
+    * Evaluates two vectors like booleans, using the analytic
+    * definition of the AND logic gate.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output vector
+    * @return the evaluation
+    * @see Utils#and(float, float)
+    */
+   public static Vec2 and (
+         final Vec2 a,
+         final Vec2 b,
+         final Vec2 target ) {
+
+      return target.set(
+            Utils.and(a.x, b.x),
+            Utils.and(a.y, b.y));
+   }
+
+   /**
     * Finds the angle between two vectors.
     *
     * @param a
@@ -590,6 +627,19 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       }
 
       return Utils.acos(Vec2.dot(a, b) / (Vec2.mag(a) * Vec2.mag(b)));
+   }
+
+   /**
+    * Tests to see if any of the vector's components are
+    * non-zero.
+    *
+    * @param v
+    *           the input vector
+    * @return the evaluation
+    */
+   public static boolean any ( final Vec2 v ) {
+
+      return v.x != 0.0f || v.y != 0.0f;
    }
 
    /**
@@ -1518,20 +1568,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Tests to see if all the vector's components are non-zero.
-    * Useful when testing valid dimensions (width and depth)
-    * stored in vectors.
-    *
-    * @param v
-    *           the input vector
-    * @return the evaluation
-    */
-   public static boolean isNonZero ( final Vec2 v ) {
-
-      return v.x != 0.0f && v.y != 0.0f;
-   }
-
-   /**
     * Tests to see if the vector is on the unit circle, i.e.,
     * has a magnitude of approximately 1.0.
     *
@@ -2029,6 +2065,25 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
+    * Evaluates a vector like a boolean, where n != 0.0 is
+    * true.
+    *
+    * @param v
+    *           the vector
+    * @param target
+    *           the output vector
+    * @return the truth table opposite
+    */
+   public static Vec2 not (
+         final Vec2 v,
+         final Vec2 target ) {
+
+      return target.set(
+            v.x != 0.0f ? 0.0f : 1.0f,
+            v.y != 0.0f ? 0.0f : 1.0f);
+   }
+
+   /**
     * Returns a vector with both components set to one.
     *
     * @param target
@@ -2038,6 +2093,29 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    public static Vec2 one ( final Vec2 target ) {
 
       return target.set(1.0f, 1.0f);
+   }
+
+   /**
+    * Evaluates two vectors like booleans, using the analytic
+    * definition of the OR logic gate.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output vector
+    * @return the evaluation
+    * @see Utils#or(float, float)
+    */
+   public static Vec2 or (
+         final Vec2 a,
+         final Vec2 b,
+         final Vec2 target ) {
+
+      return target.set(
+            Utils.or(a.x, b.x),
+            Utils.or(a.y, b.y));
    }
 
    /**
@@ -2779,32 +2857,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * A rough emulation of GLSL's 'swizzle' feature. Creates a
-    * new vector based on the indices supplied to the function.
-    * 
-    * @param v
-    *           the input vector
-    * @param i
-    *           the first index
-    * @param j
-    *           the second index
-    * @param target
-    *           the output vector
-    * @return the swizzled vector
-    * @see Vec2#get(int)
-    */
-   public static Vec2 swizzle (
-         final Vec2 v,
-         final int i,
-         final int j,
-         final Vec2 target ) {
-
-      return target.set(
-            v.get(i),
-            v.get(j));
-   }
-
-   /**
     * Truncates each component of the vector.
     *
     * @param v
@@ -2833,6 +2885,29 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    public static Vec2 uvCenter ( final Vec2 target ) {
 
       return target.set(0.5f, 0.5f);
+   }
+
+   /**
+    * Evaluates two vectors like booleans, using the analytic
+    * definition of the exclusive or (XOR) logic gate.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output vector
+    * @return the evaluation
+    * @see Utils#xor(float, float)
+    */
+   public static Vec2 xor (
+         final Vec2 a,
+         final Vec2 b,
+         final Vec2 target ) {
+
+      return target.set(
+            Utils.xor(a.x, b.x),
+            Utils.xor(a.y, b.y));
    }
 
    /**

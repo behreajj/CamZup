@@ -247,6 +247,32 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    }
 
    /**
+    * Tests to see if all the complex number's components are
+    * non-zero.
+    *
+    * @param z
+    *           the complex number
+    * @return the evaluation
+    */
+   public static boolean all ( final Complex z ) {
+
+      return z.real != 0.0f && z.imag != 0.0f;
+   }
+
+   /**
+    * Tests to see if all the complex number's components are
+    * non-zero.
+    *
+    * @param z
+    *           the complex number
+    * @return the evaluation
+    */
+   public static boolean any ( final Complex z ) {
+
+      return z.real != 0.0f || z.imag != 0.0f;
+   }
+
+   /**
     * Evaluates whether or not two complex numbers approximate
     * each other.
     *
@@ -540,19 +566,6 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       return target.set(
             conj.real * invAbsSq,
             conj.imag * invAbsSq);
-   }
-
-   /**
-    * Tests to see if all the complex number's components are
-    * non-zero.
-    *
-    * @param z
-    *           the complex number
-    * @return the evaluation
-    */
-   public static boolean isNonZero ( final Complex z ) {
-
-      return z.real != 0.0f && z.imag != 0.0f;
    }
 
    /**

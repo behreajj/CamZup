@@ -3,13 +3,12 @@ package camzup;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import camzup.core.Gradient;
 import camzup.core.Mesh3;
-import camzup.core.Simplex;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
 import processing.core.PApplet;
+import camzup.core.Color;
 
 public class CamZup {
 
@@ -83,37 +82,17 @@ public class CamZup {
    }
 
    public static void main ( final String[] args ) {
-
-      // float f = Simplex.fbm(new Vec2(), Simplex.DEFAULT_SEED,
-      // 4, 2.0f, 0.5f);
-      // System.out.println(f);
-
-      // final int x = 12345;
-      // final Integer y = x;
-      // System.out.println(y.hashCode());
-      // SVGParser.parse("data/v2.svg");
-
-      // final CurveEntity2 ce = new CurveEntity2();
-      // final Curve2 curve = Curve2.polygon(IUtils.HALF_PI, 0.5f,
-      // 6,
-      // new Curve2());
-      // ce.appendCurve(curve);
-      // System.out.println(ce.toBlenderCode());
-
-      // final Gradient gr = Gradient.paletteRgb(new Gradient());
-      // System.out.println(gr);
-
-      // gr.removeDuplicates();
-      // System.out.println(gr.toString(4));
-      // final int count = 32;
-      // final float toPrc = 1.0f / (count - 1.0f);
-      // final Color target = new Color();
-      // for (int i = 0; i < count; ++i) {
-      // final float prc = i * toPrc;
-      // System.out.println(Color.toHexWeb(gr.eval(prc, target)));
-      // }
-
+      byte a = (byte) 0xff;
+      byte b = (byte) 0x19;
+      byte c = (byte) 0x20;
+      byte d = (byte) 0xdd;
+      
+      Color x = new Color(a, b, c, d);
+      System.out.println(x.toString());
+      System.out.println(Color.toHexInt(x));
+      System.out.println(Color.toHexString(x));
    }
+
 
    public static String version () {
 

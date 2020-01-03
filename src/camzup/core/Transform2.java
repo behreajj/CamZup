@@ -1015,13 +1015,13 @@ public class Transform2 extends Transform {
     * @param nonUniformScale
     *           the scale
     * @return this transform
-    * @see Vec2#isNonZero(Vec2)
+    * @see Vec2#all(Vec2)
     * @see Vec2#mul(Vec2, Vec2, Vec2)
     */
    @Chainable
    public Transform2 scaleBy ( final Vec2 nonUniformScale ) {
 
-      if (Vec2.isNonZero(nonUniformScale)) {
+      if (Vec2.all(nonUniformScale)) {
          this.scalePrev.set(this.scale);
          Vec2.mul(this.scalePrev, nonUniformScale, this.scale);
       }
@@ -1072,12 +1072,12 @@ public class Transform2 extends Transform {
     * @param scaleNew
     *           the new scale
     * @return this transform
-    * @see Vec2#isNonZero(Vec2)
+    * @see Vec2#all(Vec2)
     */
    @Chainable
    public Transform2 scaleTo ( final Vec2 scaleNew ) {
 
-      if (Vec2.isNonZero(scaleNew)) {
+      if (Vec2.all(scaleNew)) {
          this.scalePrev.set(this.scale);
          this.scale.set(scaleNew);
       }
@@ -1093,14 +1093,14 @@ public class Transform2 extends Transform {
     * @param step
     *           the step in [0.0, 1.0]
     * @return this transform
-    * @see Vec2#isNonZero(Vec2)
+    * @see Vec2#all(Vec2)
     */
    @Chainable
    public Transform2 scaleTo (
          final Vec2 scaleNew,
          final float step ) {
 
-      if (Vec2.isNonZero(scaleNew)) {
+      if (Vec2.all(scaleNew)) {
          return this.scaleTo(scaleNew, step, Transform2.EASING.scale);
       }
       return this;
@@ -1118,7 +1118,7 @@ public class Transform2 extends Transform {
     * @param easingFunc
     *           the easing function
     * @return this transform
-    * @see Vec2#isNonZero(Vec2)
+    * @see Vec2#all(Vec2)
     * @see Vec2.AbstrEasing#apply(Vec2, Vec2, Float, Vec2)
     */
    @Chainable
@@ -1127,7 +1127,7 @@ public class Transform2 extends Transform {
          final float step,
          final Vec2.AbstrEasing easingFunc ) {
 
-      if (Vec2.isNonZero(scaleNew)) {
+      if (Vec2.all(scaleNew)) {
          this.scalePrev.set(this.scale);
          easingFunc.apply(this.scalePrev, scaleNew, step, this.scale);
       }

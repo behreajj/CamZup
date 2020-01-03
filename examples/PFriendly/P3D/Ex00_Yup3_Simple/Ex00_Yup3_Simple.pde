@@ -20,5 +20,4 @@ void draw() {
   strokeWeight(1.25);
   stroke(#202020);
   sphere(75.0);
-  //box(50.0, 50.0, 150.0);
 }

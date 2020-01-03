@@ -58,64 +58,64 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * new object is not created when accessing or mutating the
     * renderer matrix.
     */
-   protected transient AffineTransform affineNative = new AffineTransform(
+   protected AffineTransform affineNative = new AffineTransform(
          1.0d, 0.0d, 0.0d,
          0.0d, 1.0d, 0.0d);
 
    /**
     * A Java AWT arc object.
     */
-   protected final transient Arc2D.Float arc = new Arc2D.Float();
+   protected final Arc2D.Float arc = new Arc2D.Float();
 
    /**
     * A placeholder color used during lerpColor.
     */
-   protected final transient Color aTemp = new Color();
+   protected final Color aTemp = new Color();
 
    /**
     * A placeholder color used during lerpColor.
     */
-   protected final transient Color bTemp = new Color();
+   protected final Color bTemp = new Color();
 
    /**
     * Representation of a stroke cap in the native AWT library.
     *
     * @see BasicStroke
     */
-   protected transient int capNative = BasicStroke.CAP_ROUND;
+   protected int capNative = BasicStroke.CAP_ROUND;
 
    /**
     * A placeholder color used during lerpColor.
     */
-   protected final transient Color cTemp = new Color();
+   protected final Color cTemp = new Color();
 
    /**
     * A Java AWT general path object. This is reset when a new
     * shape needs to be displayed in draw.
     */
-   protected final transient GeneralPath gp = new GeneralPath();
+   protected final GeneralPath gp = new GeneralPath();
 
    /**
     * One divided by the maximum for the alpha channel.
     */
-   protected transient float invColorModeA = 1.0f;
+   protected float invColorModeA = 1.0f;
 
    /**
     * One divided by the maximum for the hue or red channel.
     */
-   protected transient float invColorModeX = 1.0f;
+   protected float invColorModeX = 1.0f;
 
    /**
     * One divided by the maximum for the saturation or green
     * channel.
     */
-   protected transient float invColorModeY = 1.0f;
+   protected float invColorModeY = 1.0f;
 
    /**
     * One divided by the maximum for the brightness or blue
     * channel.
     */
-   protected transient float invColorModeZ = 1.0f;
+   protected float invColorModeZ = 1.0f;
 
    /**
     * Representation of a stroke join in the native AWT
@@ -123,22 +123,22 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *
     * @see BasicStroke
     */
-   protected transient int joinNative = BasicStroke.JOIN_ROUND;
+   protected int joinNative = BasicStroke.JOIN_ROUND;
 
    /**
     * A placeholder vector used during transform.
     */
-   protected final transient Vec2 tr2Loc = new Vec2();
+   protected final Vec2 tr2Loc = new Vec2();
 
    /**
     * A placeholder vector used during transform.
     */
-   protected final transient Vec2 tr2Scale = new Vec2();
+   protected final Vec2 tr2Scale = new Vec2();
 
    /**
     * A placeholder transform used during transform.
     */
-   protected final transient Transform2 transform = new Transform2();
+   protected final Transform2 transform = new Transform2();
 
    /**
     * The camera rotation in radians.
@@ -659,7 +659,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float strokeWeight ) {
 
       this.strokeWeight = Utils.max(strokeWeight, Utils.EPSILON);
-
       this.chooseStrokeCap(strokeCap);
       this.chooseStrokeJoin(strokeJoin);
       this.strokeImpl();
@@ -1011,7 +1010,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           coordinate of second point on the curve
     * @param t
     *           value between 0 and 1
-    * @returns the evaluation
+    * @return the evaluation
     */
    @Override
    public float bezierPoint (
@@ -1039,7 +1038,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           coordinate of second point on the curve
     * @param t
     *           value between 0 and 1
-    * @returns the evaluation
+    * @return the evaluation
     */
    @Override
    public float bezierTangent (
@@ -2431,29 +2430,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             source.m10, source.m11, source.m12);
    }
 
-   /**
-    * Set size is the last function called by size,
-    * createGraphics, makeGraphics, etc. when initializing the
-    * graphics renderer. Therefore, any additional values that
-    * need initialization can be attempted here.
-    *
-    * @param width
-    *           the applet width
-    * @param height
-    *           the applet height
-    */
-   @Override
-   public void setSize ( final int width, final int height ) {
-
-      this.width = width;
-      this.height = height;
-
-      this.pixelWidth = this.width * this.pixelDensity;
-      this.pixelHeight = this.height * this.pixelDensity;
-
-      this.reapplySettings = true;
-   }
-
    // public void shape ( final CurveEntity2 entity ) {
    //
    // this.pushMatrix();
@@ -2525,6 +2501,29 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    // }
    // this.popMatrix();
    // }
+
+   /**
+    * Set size is the last function called by size,
+    * createGraphics, makeGraphics, etc. when initializing the
+    * graphics renderer. Therefore, any additional values that
+    * need initialization can be attempted here.
+    *
+    * @param width
+    *           the applet width
+    * @param height
+    *           the applet height
+    */
+   @Override
+   public void setSize ( final int width, final int height ) {
+
+      this.width = width;
+      this.height = height;
+
+      this.pixelWidth = this.width * this.pixelDensity;
+      this.pixelHeight = this.height * this.pixelDensity;
+
+      this.reapplySettings = true;
+   }
 
    /**
     * Displays a curve entity.

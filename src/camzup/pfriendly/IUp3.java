@@ -12,6 +12,12 @@ import processing.core.PApplet;
 public interface IUp3 extends IUp {
 
    /**
+    * Default sphere detail called by sphere when cached
+    * coordinates have not been properly initialized.
+    */
+   int DEFAULT_SPHERE_DETAIL = 30;
+
+   /**
     * Factor by which a grid's count is scaled when dimensions
     * are not supplied.
     */
@@ -328,6 +334,7 @@ public interface IUp3 extends IUp {
     * @param sw
     *           the stroke weight
     */
+   @Override
    void strokeWeight ( final float sw );
 
    /**

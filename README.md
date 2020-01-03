@@ -205,3 +205,4 @@ With the exception of creating `new` objects mentioned above, the goal of this l
 - As with shader languages, I try to protect against divide-by-zero errors whenever possible. Though mathematically incorrect, `div(x, 0.0) = 0.0` ; in consequence `fmod(x, 0.0)` and `mod(x, 0.0)` return `x`.
 - Component-wise multiplication between two vectors -- again, mathematically incorrect -- is assumed to be a shorthand for the multiplication of a vector with a non-uniform scalar, which would more appropriately be stored in a matrix.
 - `Utils.acos` and `Utils.asin` clamp the input value to the range `-1.0` to `1.0` so as to avoid exceptions.
+- As with Python, JavaScript and OSL, `x != 0` is `true`, `true` is `1` and `false` is `0`.

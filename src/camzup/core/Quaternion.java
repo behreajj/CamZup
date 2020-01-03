@@ -722,6 +722,34 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
+    * Tests to see if all the quaternions components are
+    * non-zero.
+    *
+    * @param q
+    *           the input quaternion
+    * @return the evaluation
+    * @see Vec3#all(Vec3)
+    */
+   public static boolean all ( final Quaternion q ) {
+
+      return q.real != 0.0f && Vec3.all(q.imag);
+   }
+
+   /**
+    * Tests to see if all the quaternions components are
+    * non-zero.
+    *
+    * @param q
+    *           the input quaternion
+    * @return the evaluation
+    * @see Vec3#any(Vec3)
+    */
+   public static boolean any ( final Quaternion q ) {
+
+      return q.real != 0.0f || Vec3.any(q.imag);
+   }
+
+   /**
     * Evaluates whether or not two quaternions approximate each
     * other.
     *
@@ -1648,20 +1676,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
-    * Tests to see if all the quaternions components are
-    * non-zero.
-    *
-    * @param q
-    *           the input quaternion
-    * @return the evaluation
-    * @see Vec3#isNonZero(Vec3)
-    */
-   public static boolean isNonZero ( final Quaternion q ) {
-
-      return q.real != 0.0f && Vec3.isNonZero(q.imag);
-   }
-
-   /**
     * Tests to see if a quaternion is a pure, i.e. if its real
     * component is zero.
     *
@@ -1961,8 +1975,10 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     */
    public static Vec3 mul (
          final Quaternion q,
-         final Vec3 source,
+         final Vec2 source,
          final Vec3 target ) {
+
+      // TODO: Needs testing...
 
       final float w = q.real;
       final Vec3 i = q.imag;
@@ -1970,17 +1986,17 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final float qy = i.y;
       final float qz = i.z;
 
-      final float iw = -qx * source.x - qy * source.y - qz * source.z;
-      final float ix = w * source.x + qy * source.z - qz * source.y;
-      final float iy = w * source.y + qz * source.x - qx * source.z;
-      final float iz = w * source.z + qx * source.y - qy * source.x;
+      final float iw = -qx * source.x - qy * source.y;
+      final float ix = w * source.x - qz * source.y;
+      final float iy = w * source.y + qz * source.x;
+      final float iz = qx * source.y - qy * source.x;
 
       return target.set(
             ix * w + iz * qy - iw * qx - iy * qz,
             iy * w + ix * qz - iw * qy - iz * qx,
             iz * w + iy * qx - iw * qz - ix * qy);
    }
-   
+
    /**
     * Multiplies a vector by a quaternion, in effect rotating
     * the vector by the quaternion. Equivalent to promoting the
@@ -2005,21 +2021,19 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     */
    public static Vec3 mul (
          final Quaternion q,
-         final Vec2 source,
+         final Vec3 source,
          final Vec3 target ) {
 
-      // TODO: Needs testing...
-      
       final float w = q.real;
       final Vec3 i = q.imag;
       final float qx = i.x;
       final float qy = i.y;
       final float qz = i.z;
 
-      final float iw = -qx * source.x - qy * source.y;
-      final float ix = w * source.x - qz * source.y;
-      final float iy = w * source.y + qz * source.x;
-      final float iz = qx * source.y - qy * source.x;
+      final float iw = -qx * source.x - qy * source.y - qz * source.z;
+      final float ix = w * source.x + qy * source.z - qz * source.y;
+      final float iy = w * source.y + qz * source.x - qx * source.z;
+      final float iz = w * source.z + qx * source.y - qy * source.x;
 
       return target.set(
             ix * w + iz * qy - iw * qx - iy * qz,

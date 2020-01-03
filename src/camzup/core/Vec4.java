@@ -208,6 +208,58 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
+    * Tests to see if all the vector's components are non-zero.
+    * Useful when testing valid dimensions (width and depth)
+    * stored in vectors.
+    *
+    * @param v
+    *           the input vector
+    * @return the evaluation
+    */
+   public static boolean all ( final Vec4 v ) {
+
+      return v.x != 0.0f && v.y != 0.0f && v.z != 0.0f && v.w != 0.0f;
+   }
+
+   /**
+    * Evaluates two vectors like booleans, using the analytic
+    * definition of the AND logic gate.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output vector
+    * @return the evaluation
+    * @see Utils#and(float, float)
+    */
+   public static Vec4 and (
+         final Vec4 a,
+         final Vec4 b,
+         final Vec4 target ) {
+
+      return target.set(
+            Utils.and(a.x, b.x),
+            Utils.and(a.y, b.y),
+            Utils.and(a.z, b.z),
+            Utils.and(a.w, b.w));
+   }
+
+   /**
+    * Tests to see if any of the vector's components are
+    * non-zero.
+    *
+    * @param v
+    *           the input vector
+    * @return the evaluation
+    */
+   public static boolean any ( final Vec4 v ) {
+
+      return v.x != 0.0f || v.y != 0.0f || v.z != 0.0f || v.w != 0.0f;
+   }
+
+   /**
     * Tests to see if two vectors approximate each other.
     *
     * @param a
@@ -735,21 +787,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
-    * Tests to see if all the vector's components are non-zero.
-    *
-    * @param v
-    *           the input vector
-    * @return the evaluation
-    */
-   public static boolean isNonZero ( final Vec4 v ) {
-
-      return v.x != 0.0f &&
-            v.y != 0.0f &&
-            v.z != 0.0f &&
-            v.w != 0.0f;
-   }
-
-   /**
     * Tests to see if the vector is on the unit hypersphere,
     * i.e., has a magnitude of approximately 1.0.
     *
@@ -1086,6 +1123,27 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
+    * Evaluates a vector like a boolean, where n != 0.0 is
+    * true.
+    *
+    * @param v
+    *           the vector
+    * @param target
+    *           the output vector
+    * @return the truth table opposite
+    */
+   public static Vec4 not (
+         final Vec4 v,
+         final Vec4 target ) {
+
+      return target.set(
+            v.x != 0.0f ? 0.0f : 1.0f,
+            v.y != 0.0f ? 0.0f : 1.0f,
+            v.z != 0.0f ? 0.0f : 1.0f,
+            v.w != 0.0f ? 0.0f : 1.0f);
+   }
+
+   /**
     * Returns a vector with both components set to one.
     *
     * @param target
@@ -1095,6 +1153,31 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    public static Vec4 one ( final Vec4 target ) {
 
       return target.set(1.0f, 1.0f, 1.0f, 1.0f);
+   }
+
+   /**
+    * Evaluates two vectors like booleans, using the analytic
+    * definition of the OR logic gate.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output vector
+    * @return the evaluation
+    * @see Utils#or(float, float)
+    */
+   public static Vec4 or (
+         final Vec4 a,
+         final Vec4 b,
+         final Vec4 target ) {
+
+      return target.set(
+            Utils.or(a.x, b.x),
+            Utils.or(a.y, b.y),
+            Utils.or(a.z, b.z),
+            Utils.or(a.w, b.w));
    }
 
    /**
@@ -1240,96 +1323,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
-    * A rough emulation of GLSL's 'swizzle' feature. Creates a
-    * new vector based on the indices supplied to the function.
-    * 
-    * @param v
-    *           the input vector
-    * @param i
-    *           the first index
-    * @param j
-    *           the second index
-    * @param k
-    *           the third index
-    * @param l
-    *           the fourth index
-    * @param target
-    *           the output vector
-    * @return the swizzled vector
-    * @see Vec4#get(int)
-    */
-   public static Vec4 swizzle (
-         final Vec4 v,
-         final int i,
-         final int j,
-         final int k,
-         final int l,
-         final Vec4 target ) {
-
-      return target.set(
-            v.get(i),
-            v.get(j),
-            v.get(k),
-            v.get(l));
-   }
-
-   /**
-    * A rough emulation of GLSL's 'swizzle' feature. Creates a
-    * new vector based on the indices supplied to the function.
-    * 
-    * @param v
-    *           the input vector
-    * @param i
-    *           the first index
-    * @param j
-    *           the second index
-    * @param k
-    *           the third index
-    * @param target
-    *           the output vector
-    * @return the swizzled vector
-    * @see Vec4#get(int)
-    */
-   public static Vec3 swizzle (
-         final Vec4 v,
-         final int i,
-         final int j,
-         final int k,
-         final Vec3 target ) {
-
-      return target.set(
-            v.get(i),
-            v.get(j),
-            v.get(k));
-   }
-
-   /**
-    * A rough emulation of GLSL's 'swizzle' feature. Creates a
-    * new vector based on the indices supplied to the function.
-    * 
-    * @param v
-    *           the input vector
-    * @param i
-    *           the first index
-    * @param j
-    *           the second index
-    * @param target
-    *           the output vector
-    * @return the swizzled vector
-    * @see Vec4#get(int)
-    */
-   public static Vec2 swizzle (
-         final Vec4 v,
-         final int i,
-         final int j,
-         final Vec2 target ) {
-
-      return target.set(
-            v.get(i),
-            v.get(j));
-   }
-
-   /**
     * Truncates each component of the vector.
     *
     * @param v
@@ -1360,6 +1353,31 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    public static Vec4 up ( final Vec4 target ) {
 
       return target.set(0.0f, 0.0f, 1.0f, 0.0f);
+   }
+
+   /**
+    * Evaluates two vectors like booleans, using the analytic
+    * definition of the exclusive or (XOR) logic gate.
+    *
+    * @param a
+    *           the left operand
+    * @param b
+    *           the right operand
+    * @param target
+    *           the output vector
+    * @return the evaluation
+    * @see Utils#xor(float, float)
+    */
+   public static Vec4 xor (
+         final Vec4 a,
+         final Vec4 b,
+         final Vec4 target ) {
+
+      return target.set(
+            Utils.xor(a.x, b.x),
+            Utils.xor(a.y, b.y),
+            Utils.xor(a.z, b.z),
+            Utils.xor(a.w, b.w));
    }
 
    /**

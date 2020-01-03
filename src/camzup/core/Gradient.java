@@ -688,6 +688,30 @@ public class Gradient implements Iterable < Gradient.Key > {
          key.step = key.step * i++ * scalar;
       }
    }
+   
+//   @Chainable
+//   public Gradient prepend ( final int... colors ) {
+//
+//      final int len = colors.length;
+//      this.shiftKeysRight(len);
+//      final int oldLen = this.keys.size();
+//      final float denom = 1.0f / (oldLen + len - 1.0f);
+//      for (int i = 0; i < len; ++i) {
+//         this.keys.add(new Key((oldLen + i) * denom, colors[i]));
+//      }
+//      return this;
+//   }
+
+//   public void shiftKeysRight ( final int added ) {
+//
+//      final Iterator < Gradient.Key > itr = this.keys.iterator();
+//      int i = added + 1;
+//      final float scalar = 1.0f / (this.keys.size() + 1);
+//      while (itr.hasNext()) {
+//         final Gradient.Key key = itr.next();
+//         key.step = key.step * i++ * scalar;
+//      }
+//   }
 
    /**
     * Appends a color at step 1.0 . Shifts existing keys to the

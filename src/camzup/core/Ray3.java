@@ -74,6 +74,7 @@ public class Ray3 extends Ray implements Comparable < Ray3 > {
        * ray's origins will be compared.
        *
        * @param comparator
+       *           the vector comparator
        */
       public ComparatorOrigin ( final Comparator < Vec3 > comparator ) {
 
@@ -88,7 +89,7 @@ public class Ray3 extends Ray implements Comparable < Ray3 > {
        *           the left comparisand
        * @param b
        *           the right comparisand
-       * @returns the comparison
+       * @return the comparison
        */
       @Override
       public int compare ( final Ray3 a, final Ray3 b ) {

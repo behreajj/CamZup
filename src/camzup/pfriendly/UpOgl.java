@@ -223,9 +223,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          this.calcColor = argb;
       } else {
          this.calcAi = (int) ((argb >> 0x18 & 0xff)
-               * PApplet.constrain(
-                     alpha * this.invColorModeA,
-                     0.0f, 1.0f));
+               * Utils.clamp01(alpha * this.invColorModeA));
          this.calcColor = this.calcAi << 0x18 | argb & 0xffffff;
       }
 
@@ -265,7 +263,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       if (this.bezierBasisInverse == null) {
          this.bezierBasisInverse = new PMatrix3D(this.bezierBasisMatrix);
          this.bezierBasisInverse.invert();
-
          this.curveToBezierMatrix = new PMatrix3D();
       }
 
@@ -2630,26 +2627,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       super.shape(shape, x1, y1, x2, y2);
    }
 
-   // @Override
-   // protected void colorCalc ( final int argb ) {
-   // this.calcColor = argb;
-   // this.calcAi = argb >> 0x18 & 0xff;
-   // this.calcRi = argb >> 0x10 & 0xff;
-   // this.calcGi = argb >> 0x8 & 0xff;
-   // this.calcBi = argb & 0xff;
-   // this.calcA = this.calcAi * IUtils.ONE_255;
-   // this.calcR = this.calcRi * IUtils.ONE_255;
-   // this.calcG = this.calcGi * IUtils.ONE_255;
-   // this.calcB = this.calcBi * IUtils.ONE_255;
-   // this.calcAlpha = this.calcAi != 255;
-   // }
-
-   // @Override
-   // protected void colorCalc ( final int rgb, final float
-   // alpha ) {
-   // this.colorCalcARGB(rgb, alpha);
-   // }
-
    /**
     * Displays a boolean as text at a location.
     *
@@ -3167,33 +3144,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.glModelview[15] = m33;
    }
 
-   // @Override
-   // protected float screenYImpl (
-   // final float x,
-   // final float y,
-   // final float z,
-   // final float w ) {
-   //
-   // final float oy = this.projection.m10 * x +
-   // this.projection.m11 * y +
-   // this.projection.m12 * z +
-   // this.projection.m13 * w;
-   //
-   // final float ow = this.projection.m30 * x +
-   // this.projection.m31 * y +
-   // this.projection.m32 * z +
-   // this.projection.m33 * w;
-   //
-   // // if (ow == 0.0f) {
-   // // return 0.0f;
-   // // }
-   //
-   // if (ow != 0.0f && ow != 1.0f) {
-   // return this.height * (1.0f + oy / ow) * 0.5f;
-   // }
-   // return this.height * (1.0f + oy) * 0.5f;
-   // }
-
    /**
     * Exposes the OpenGL model view array to more direct
     * access.
@@ -3267,6 +3217,33 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             m.m10, m.m11, m.m12,
             m.m20, m.m21, m.m22);
    }
+
+   // @Override
+   // protected float screenYImpl (
+   // final float x,
+   // final float y,
+   // final float z,
+   // final float w ) {
+   //
+   // final float oy = this.projection.m10 * x +
+   // this.projection.m11 * y +
+   // this.projection.m12 * z +
+   // this.projection.m13 * w;
+   //
+   // final float ow = this.projection.m30 * x +
+   // this.projection.m31 * y +
+   // this.projection.m32 * z +
+   // this.projection.m33 * w;
+   //
+   // // if (ow == 0.0f) {
+   // // return 0.0f;
+   // // }
+   //
+   // if (ow != 0.0f && ow != 1.0f) {
+   // return this.height * (1.0f + oy / ow) * 0.5f;
+   // }
+   // return this.height * (1.0f + oy) * 0.5f;
+   // }
 
    /**
     * Exposes the OpenGL projection array to more direct

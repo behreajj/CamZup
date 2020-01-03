@@ -2010,6 +2010,53 @@ public class Color extends Vec4 {
    }
 
    /**
+    * Creates a color from bytes. In Jave, bytes are signed,
+    * within the range [-128, 127] .
+    *
+    * @param red
+    *           the red channel
+    * @param green
+    *           the green channel
+    * @param blue
+    *           the blue channel
+    */
+   public Color (
+         final byte red,
+         final byte green,
+         final byte blue ) {
+
+      super(IUtils.ONE_255 * (red & 0xff),
+            IUtils.ONE_255 * (green & 0xff),
+            IUtils.ONE_255 * (blue & 0xff),
+            1.0f);
+   }
+
+   /**
+    * Creates a color from bytes. In Jave, bytes are signed,
+    * within the range [-128, 127] .
+    *
+    * @param red
+    *           the red channel
+    * @param green
+    *           the green channel
+    * @param blue
+    *           the blue channel
+    * @param alpha
+    *           the alpha channel
+    */
+   public Color (
+         final byte red,
+         final byte green,
+         final byte blue,
+         final byte alpha ) {
+
+      super(IUtils.ONE_255 * (red & 0xff),
+            IUtils.ONE_255 * (green & 0xff),
+            IUtils.ONE_255 * (blue & 0xff),
+            IUtils.ONE_255 * (alpha & 0xff));
+   }
+
+   /**
     * Creates a color from a source.
     *
     * @param c
@@ -2093,6 +2140,19 @@ public class Color extends Vec4 {
     *           the alpha channel
     * @return this color
     */
+   public Color a ( final byte alpha ) {
+
+      this.w = (alpha & 0xff) * IUtils.ONE_255;
+      return this;
+   }
+
+   /**
+    * Sets the alpha channel.
+    *
+    * @param alpha
+    *           the alpha channel
+    * @return this color
+    */
    public Color a ( final float alpha ) {
 
       this.w = alpha;
@@ -2119,6 +2179,19 @@ public class Color extends Vec4 {
    public Color b ( final float blue ) {
 
       this.z = blue;
+      return this;
+   }
+   
+   /**
+    * Sets the blue channel.
+    *
+    * @param blue
+    *           the blue channel
+    * @return this color
+    */
+   public Color b ( final byte blue ) {
+
+      this.z = (blue & 0xff) * IUtils.ONE_255;
       return this;
    }
 
@@ -2214,6 +2287,19 @@ public class Color extends Vec4 {
    public Color g ( final float green ) {
 
       this.y = green;
+      return this;
+   }
+   
+   /**
+    * Sets the green channel.
+    *
+    * @param green
+    *           the green channel
+    * @return this color
+    */
+   public Color g ( final byte green ) {
+
+      this.y = (green & 0xff) * IUtils.ONE_255;
       return this;
    }
 
@@ -2329,6 +2415,19 @@ public class Color extends Vec4 {
       this.x = red;
       return this;
    }
+   
+   /**
+    * Sets the red channel.
+    *
+    * @param red
+    *           the red channel
+    * @return this color
+    */
+   public Color r ( final byte red ) {
+
+      this.x = (red & 0xff) * IUtils.ONE_255;
+      return this;
+   }
 
    /**
     * Resets this color to the color white.
@@ -2341,6 +2440,59 @@ public class Color extends Vec4 {
    public Color reset () {
 
       return Color.white(this);
+   }
+
+   /**
+    * Sets a color with bytes. In Jave, bytes are signed,
+    * within the range [-128, 127] .
+    *
+    * @param red
+    *           the red channel
+    * @param green
+    *           the green channel
+    * @param blue
+    *           the blue channel
+    * @return this color
+    */
+   public Color set (
+         final byte red,
+         final byte green,
+         final byte blue ) {
+
+      super.set(
+            IUtils.ONE_255 * (red & 0xff),
+            IUtils.ONE_255 * (green & 0xff),
+            IUtils.ONE_255 * (blue & 0xff),
+            1.0f);
+      return this;
+   }
+
+   /**
+    * Sets a color with bytes. In Jave, bytes are signed,
+    * within the range [-128, 127] .
+    *
+    * @param red
+    *           the red channel
+    * @param green
+    *           the green channel
+    * @param blue
+    *           the blue channel
+    * @param alpha
+    *           the alpha channel
+    * @return this color
+    */
+   public Color set (
+         final byte red,
+         final byte green,
+         final byte blue,
+         final byte alpha ) {
+
+      super.set(
+            IUtils.ONE_255 * (red & 0xff),
+            IUtils.ONE_255 * (green & 0xff),
+            IUtils.ONE_255 * (blue & 0xff),
+            IUtils.ONE_255 * (alpha & 0xff));
+      return this;
    }
 
    /**

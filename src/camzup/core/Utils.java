@@ -760,7 +760,7 @@ public abstract class Utils implements IUtils {
     * @return the evaluation
     * @see Utils#bool(float)
     */
-   public static float and ( final float a, final float b ) {
+   public static int and ( final float a, final float b ) {
 
       return Utils.bool(a) * Utils.bool(b);
    }
@@ -895,8 +895,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Converts a float to a boolean, then back to a float. In
-    * effect, this asks if the value is true, or is the case.
+    * Converts a float to a boolean, then to an int. In effect,
+    * this asks if the value is true, or is the case.
     *
     * Used in conjunction with float-based boolean operators:
     * or, and, etc.
@@ -909,9 +909,9 @@ public abstract class Utils implements IUtils {
     * @see Utils#or(float, float)
     * @see Utils#and(float, float)
     */
-   public static float bool ( final float value ) {
+   public static int bool ( final float value ) {
 
-      return Utils.toFloat(Utils.toBool(value));
+      return Utils.toInt(Utils.toBool(value));
    }
 
    /**
@@ -1501,16 +1501,16 @@ public abstract class Utils implements IUtils {
 
    /**
     * The negation of a float holding a boolean value. Given a
-    * == 1.0, !a == 0.0 . Given a == 0.0, !a == 1.0 .
+    * == 1.0, !a == 0 . Given a == 0.0, !a == 1 .
     *
     * @param value
     *           the input value
     * @return the negation
     * @see Utils#bool(float)
     */
-   public static float not ( final float value ) {
+   public static int not ( final float value ) {
 
-      return 1.0f - Utils.bool(value);
+      return 1 - Utils.bool(value);
    }
 
    /**
@@ -1538,10 +1538,10 @@ public abstract class Utils implements IUtils {
     * @return the evaluation
     * @see Utils#bool(float)
     */
-   public static float or ( final float a, final float b ) {
+   public static int or ( final float a, final float b ) {
 
-      final float aBool = Utils.bool(a);
-      final float bBool = Utils.bool(b);
+      final int aBool = Utils.bool(a);
+      final int bBool = Utils.bool(b);
       return aBool + bBool - aBool * bBool;
    }
 
@@ -1834,6 +1834,21 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * Converts a signed byte in the range [-127, 128] to an
+    * unsigned byte in the range [0, 255]. Useful when working
+    * with colors.
+    *
+    * @param a
+    *           the signed byte
+    * @return the unsigned byte
+    * @see Byte#toUnsignedInt(byte)
+    */
+   public static int ubyte ( final byte a ) {
+
+      return a & 0xff;
+   }
+
+   /**
     * Evaluates two floats like booleans, using the analytic
     * definition of the exclusive or (XOR) logic gate.
     *
@@ -1844,11 +1859,11 @@ public abstract class Utils implements IUtils {
     * @return the evaluation
     * @see Utils#toBool(float)
     */
-   public static float xor ( final float a, final float b ) {
+   public static int xor ( final float a, final float b ) {
 
-      final float aBool = Utils.bool(a);
-      final float bBool = Utils.bool(b);
-      return aBool + bBool - 2.0f * aBool * bBool;
+      final int aBool = Utils.bool(a);
+      final int bBool = Utils.bool(b);
+      return aBool + bBool - 2 * aBool * bBool;
    }
 
    /**

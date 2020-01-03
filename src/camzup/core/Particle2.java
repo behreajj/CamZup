@@ -77,7 +77,7 @@ public class Particle2 implements Comparable < Particle2 > {
        * A constructor which sets the comparator by which each
        * ray's origins will be compared.
        *
-       * @param comparator
+       * @param comparator the vector comparator
        */
       public ComparatorLoc ( final Comparator < Vec2 > comparator ) {
 
@@ -92,7 +92,7 @@ public class Particle2 implements Comparable < Particle2 > {
        *           the left comparisand
        * @param b
        *           the right comparisand
-       * @returns the comparison
+       * @return the comparison
        */
       @Override
       public int compare ( final Particle2 a, final Particle2 b ) {

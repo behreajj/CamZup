@@ -1233,13 +1233,13 @@ public class Transform3 extends Transform {
     * @param nonUniformScale
     *           the scale
     * @return this transform
-    * @see Vec2#isNonZero(Vec2)
+    * @see Vec2#all(Vec2)
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     */
    @Chainable
    public Transform3 scaleBy ( final Vec2 nonUniformScale ) {
 
-      if (Vec2.isNonZero(nonUniformScale)) {
+      if (Vec2.all(nonUniformScale)) {
          this.scalePrev.set(this.scale);
          this.scale.set(nonUniformScale, 1.0f);
          Vec3.mul(this.scalePrev, this.scale, this.scale);
@@ -1253,13 +1253,13 @@ public class Transform3 extends Transform {
     * @param nonUniformScale
     *           the scale
     * @return this transform
-    * @see Vec3#isNonZero(Vec3)
+    * @see Vec3#all(Vec3)
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     */
    @Chainable
    public Transform3 scaleBy ( final Vec3 nonUniformScale ) {
 
-      if (Vec3.isNonZero(nonUniformScale)) {
+      if (Vec3.all(nonUniformScale)) {
          this.scalePrev.set(this.scale);
          Vec3.mul(this.scalePrev, nonUniformScale, this.scale);
       }
@@ -1313,12 +1313,12 @@ public class Transform3 extends Transform {
     * @param scaleNew
     *           the new scale
     * @return this transform
-    * @see Vec2#isNonZero(Vec2)
+    * @see Vec2#all(Vec2)
     */
    @Chainable
    public Transform3 scaleTo ( final Vec3 scaleNew ) {
 
-      if (Vec3.isNonZero(scaleNew)) {
+      if (Vec3.all(scaleNew)) {
          this.scalePrev.set(this.scale);
          this.scale.set(scaleNew);
       }
@@ -1334,14 +1334,14 @@ public class Transform3 extends Transform {
     * @param step
     *           the step in [0.0, 1.0]
     * @return this transform
-    * @see Vec3#isNonZero(Vec3)
+    * @see Vec3#all(Vec3)
     */
    @Chainable
    public Transform3 scaleTo (
          final Vec3 scaleNew,
          final float step ) {
 
-      if (Vec3.isNonZero(scaleNew)) {
+      if (Vec3.all(scaleNew)) {
          return this.scaleTo(scaleNew, step, Transform3.EASING.scale);
       }
       return this;
@@ -1358,7 +1358,7 @@ public class Transform3 extends Transform {
     * @param easingFunc
     *           the easing function
     * @return this transform
-    * @see Vec3#isNonZero(Vec3)
+    * @see Vec3#all(Vec3)
     * @see Vec3.AbstrEasing#apply(Vec3, Vec3, Float, Vec3)
     */
    @Chainable
@@ -1367,7 +1367,7 @@ public class Transform3 extends Transform {
          final float step,
          final Vec3.AbstrEasing easingFunc ) {
 
-      if (Vec3.isNonZero(scaleNew)) {
+      if (Vec3.all(scaleNew)) {
          this.scalePrev.set(this.scale);
          easingFunc.apply(this.scalePrev, scaleNew, step, this.scale);
       }
