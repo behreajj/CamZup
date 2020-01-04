@@ -613,7 +613,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param b
     *           the second vector
     * @return the angle
-    * @see Vec2#isZero(Vec2)
+    * @see Vec2#none(Vec2)
     * @see Vec2#dot(Vec2, Vec2)
     * @see Vec2#mag(Vec2)
     * @see Utils#acos(float)
@@ -622,7 +622,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final Vec2 a,
          final Vec2 b ) {
 
-      if (Vec2.isZero(a) || Vec2.isZero(b)) {
+      if (Vec2.none(a) || Vec2.none(b)) {
          return 0.0f;
       }
 
@@ -1583,19 +1583,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Tests to see if all the vector's components are zero.
-    * Useful when safeguarding against invalid directions.
-    *
-    * @param v
-    *           the input vector
-    * @return the evaluation
-    */
-   public static boolean isZero ( final Vec2 v ) {
-
-      return v.x == 0.0f && v.y == 0.0f;
-   }
-
-   /**
     * Returns a vector with a negative value on the x axis,
     * (-1.0, 0.0).
     *
@@ -2028,6 +2015,19 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    public static Vec2 negOne ( final Vec2 target ) {
 
       return target.set(-1.0f, -1.0f);
+   }
+
+   /**
+    * Tests to see if all the vector's components are zero.
+    * Useful when safeguarding against invalid directions.
+    *
+    * @param v
+    *           the input vector
+    * @return the evaluation
+    */
+   public static boolean none ( final Vec2 v ) {
+
+      return v.x == 0.0f && v.y == 0.0f;
    }
 
    /**
@@ -3020,6 +3020,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     */
    protected boolean equals ( final Vec2 v ) {
 
+      // return Vec2.approx(this, v);
+
       if (Float.floatToIntBits(this.y) != Float.floatToIntBits(v.y)) {
          return false;
       }
@@ -3081,9 +3083,11 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       if (obj == null) {
          return false;
       }
+
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+
       return this.equals((Vec2) obj);
    }
 
@@ -3120,11 +3124,18 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    @Override
    public int hashCode () {
 
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + Float.floatToIntBits(this.x);
-      result = prime * result + Float.floatToIntBits(this.y);
-      return result;
+      // final int prime = 31;
+      // int result = 1;
+      // result = prime * result + Float.floatToIntBits(this.x);
+      // result = prime * result + Float.floatToIntBits(this.y);
+      // return result;
+
+      final int hashBase = -2128831035;
+      final int hashMul = 16777619;
+      int hash = hashBase;
+      hash = hash * hashMul ^ Float.floatToIntBits(this.x);
+      hash = hash * hashMul ^ Float.floatToIntBits(this.y);
+      return hash;
    }
 
    /**

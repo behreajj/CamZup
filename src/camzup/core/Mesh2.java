@@ -76,16 +76,7 @@ public class Mesh2 extends Mesh {
          return this;
       }
 
-      /**
-       * Returns the number of vertices in this face.
-       *
-       * @return the vertex count
-       */
-      public int vertCount () {
-
-         return this.vertices.length;
-      }
-
+      @Override
       public String toString () {
 
          return this.toString(4);
@@ -93,8 +84,8 @@ public class Mesh2 extends Mesh {
 
       public String toString ( final int places ) {
 
-         int len = this.vertices.length;
-         int last = len - 1;
+         final int len = this.vertices.length;
+         final int last = len - 1;
          final StringBuilder sb = new StringBuilder()
                .append("{ vertices: [ \n");
          for (int i = 0; i < len; ++i) {
@@ -105,6 +96,16 @@ public class Mesh2 extends Mesh {
          }
          sb.append(" ] }");
          return sb.toString();
+      }
+
+      /**
+       * Returns the number of vertices in this face.
+       *
+       * @return the vertex count
+       */
+      public int vertCount () {
+
+         return this.vertices.length;
       }
    }
 

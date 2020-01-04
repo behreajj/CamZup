@@ -741,32 +741,6 @@ public class Transform2 extends Transform {
       return this.rotPrev;
    }
 
-   // public Transform2 lookAt ( final Vec2 dest, final Vec2
-   // dir ) {
-   //
-   // Vec2.lookAt(this.location, dest,
-   // this.right, this.forward, dir);
-   // this.rotPrev = this.rotation;
-   // this.rotation = Vec2.headingSigned(this.right);
-   // return this;
-   // }
-   //
-   // public Transform2 lookForward ( final Vec2 dir ) {
-   //
-   // Vec2.lookForward(dir, this.right, this.forward);
-   // this.rotPrev = this.rotation;
-   // this.rotation = Vec2.headingSigned(this.right);
-   // return this;
-   // }
-   //
-   // public Transform2 lookRight ( final Vec2 dir ) {
-   //
-   // Vec2.lookRight(dir, this.right, this.forward);
-   // this.rotPrev = this.rotation;
-   // this.rotation = Vec2.headingSigned(this.right);
-   // return this;
-   // }
-
    /**
     * Gets the transform's scale.
     *
@@ -802,14 +776,25 @@ public class Transform2 extends Transform {
    @Override
    public int hashCode () {
 
-      final int prime = 31;
-      int result = 1;
-      result = prime * result
-            + (this.scale == null ? 0 : this.scale.hashCode());
-      result = prime * result
-            + (this.location == null ? 0 : this.location.hashCode());
-      result = prime * result + Float.floatToIntBits(this.rotation);
-      return result;
+      // final int prime = 31;
+      // int result = 1;
+      // result = prime * result
+      // + (this.scale == null ? 0 : this.scale.hashCode());
+      // result = prime * result
+      // + (this.location == null ? 0 : this.location.hashCode());
+      // result = prime * result +
+      // Float.floatToIntBits(this.rotation);
+      // return result;
+
+      final int hashBase = -2128831035;
+      final int hashMul = 16777619;
+      int hash = hashBase;
+      hash = hash * hashMul
+            ^ (this.location == null ? 0 : this.location.hashCode());
+      hash = hash * hashMul ^ Float.floatToIntBits(this.rotation);
+      hash = hash * hashMul
+            ^ (this.scale == null ? 0 : this.scale.hashCode());
+      return hash;
    }
 
    /**

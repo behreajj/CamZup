@@ -255,10 +255,17 @@ public class Gradient implements Iterable < Gradient.Key > {
       @Override
       public int hashCode () {
 
-         final int prime = 31;
-         int result = 1;
-         result = prime * result + Float.floatToIntBits(this.step);
-         return result;
+         // final int prime = 31;
+         // int result = 1;
+         // result = prime * result +
+         // Float.floatToIntBits(this.step);
+         // return result;
+
+         final int hashBase = -2128831035;
+         final int hashMul = 16777619;
+         int hash = hashBase;
+         hash = hash * hashMul ^ Float.floatToIntBits(this.step);
+         return hash;
       }
 
       /**
@@ -688,30 +695,31 @@ public class Gradient implements Iterable < Gradient.Key > {
          key.step = key.step * i++ * scalar;
       }
    }
-   
-//   @Chainable
-//   public Gradient prepend ( final int... colors ) {
-//
-//      final int len = colors.length;
-//      this.shiftKeysRight(len);
-//      final int oldLen = this.keys.size();
-//      final float denom = 1.0f / (oldLen + len - 1.0f);
-//      for (int i = 0; i < len; ++i) {
-//         this.keys.add(new Key((oldLen + i) * denom, colors[i]));
-//      }
-//      return this;
-//   }
 
-//   public void shiftKeysRight ( final int added ) {
-//
-//      final Iterator < Gradient.Key > itr = this.keys.iterator();
-//      int i = added + 1;
-//      final float scalar = 1.0f / (this.keys.size() + 1);
-//      while (itr.hasNext()) {
-//         final Gradient.Key key = itr.next();
-//         key.step = key.step * i++ * scalar;
-//      }
-//   }
+   // @Chainable
+   // public Gradient prepend ( final int... colors ) {
+   //
+   // final int len = colors.length;
+   // this.shiftKeysRight(len);
+   // final int oldLen = this.keys.size();
+   // final float denom = 1.0f / (oldLen + len - 1.0f);
+   // for (int i = 0; i < len; ++i) {
+   // this.keys.add(new Key((oldLen + i) * denom, colors[i]));
+   // }
+   // return this;
+   // }
+
+   // public void shiftKeysRight ( final int added ) {
+   //
+   // final Iterator < Gradient.Key > itr =
+   // this.keys.iterator();
+   // int i = added + 1;
+   // final float scalar = 1.0f / (this.keys.size() + 1);
+   // while (itr.hasNext()) {
+   // final Gradient.Key key = itr.next();
+   // key.step = key.step * i++ * scalar;
+   // }
+   // }
 
    /**
     * Appends a color at step 1.0 . Shifts existing keys to the
@@ -733,7 +741,8 @@ public class Gradient implements Iterable < Gradient.Key > {
     * Appends a list of colors to this gradient. Shifts
     * existing keys to the left.
     *
-    * @param colors the colors
+    * @param colors
+    *           the colors
     * @return this gradient
     * @see Gradient#shiftKeysLeft(int)
     * @see TreeSet#size()
@@ -774,7 +783,8 @@ public class Gradient implements Iterable < Gradient.Key > {
     * Appends a list of color integers to this gradient. Shifts
     * existing keys to the left.
     *
-    * @param colors the colors
+    * @param colors
+    *           the colors
     * @return this gradient
     * @see Gradient#shiftKeysLeft(int)
     * @see TreeSet#size()
@@ -833,7 +843,8 @@ public class Gradient implements Iterable < Gradient.Key > {
     * Appends a list of color strings to this gradient. Shifts
     * existing keys to the left.
     *
-    * @param colors the colors
+    * @param colors
+    *           the colors
     * @return this gradient
     * @see Gradient#shiftKeysLeft(int)
     * @see TreeSet#size()
@@ -980,8 +991,8 @@ public class Gradient implements Iterable < Gradient.Key > {
       }
 
       /*
-       * It shouldn't be necessary to guard against divide by zero,
-       * since no two keys would have the same step.
+       * It shouldn't be necessary to guard against divide by
+       * zero, since no two keys would have the same step.
        */
       return easing.applyUnclamped(
             next.clr, prev.clr,
@@ -1063,11 +1074,18 @@ public class Gradient implements Iterable < Gradient.Key > {
    @Override
    public int hashCode () {
 
-      final int prime = 31;
-      int result = 1;
-      result = prime * result
-            + (this.keys == null ? 0 : this.keys.hashCode());
-      return result;
+      // final int prime = 31;
+      // int result = 1;
+      // result = prime * result
+      // + (this.keys == null ? 0 : this.keys.hashCode());
+      // return result;
+
+      final int base = -2128831035;
+      final int hashMul = 16777619;
+      int hash = base;
+      hash = hash * hashMul
+            ^ (this.keys == null ? 0 : this.keys.hashCode());
+      return hash;
    }
 
    /**

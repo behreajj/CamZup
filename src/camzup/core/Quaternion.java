@@ -722,7 +722,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
-    * Tests to see if all the quaternions components are
+    * Tests to see if all the quaternion's components are
     * non-zero.
     *
     * @param q
@@ -736,7 +736,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
-    * Tests to see if all the quaternions components are
+    * Tests to see if any of the quaternion's components are
     * non-zero.
     *
     * @param q
@@ -747,6 +747,50 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    public static boolean any ( final Quaternion q ) {
 
       return q.real != 0.0f || Vec3.any(q.imag);
+   }
+
+   /**
+    * Multiplies a vector by a quaternion, in effect rotating
+    * the vector by the quaternion. Equivalent to promoting the
+    * vector to a pure quaternion, multiplying the rotation
+    * quaternion and promoted vector, then multiplying the
+    * product by the rotation's inverse.<br>
+    * <br>
+    * <em>a</em> <em>b</em> := ( <em>a</em> { 0.0, <em>b</em> }
+    * ) <em>a</em><sup>-1</sup><br>
+    * <br>
+    * The result is then demoted to a vector, as the real
+    * component should be 0.0 . This is often denoted as <em>P'
+    * = RPR'</em>.
+    *
+    * @param q
+    *           the quaternion
+    * @param source
+    *           the vector
+    * @param target
+    *           the output vector
+    * @return the rotated vector
+    */
+   public static Vec3 applyTo (
+         final Quaternion q,
+         final Vec3 source,
+         final Vec3 target ) {
+
+      final float w = q.real;
+      final Vec3 i = q.imag;
+      final float qx = i.x;
+      final float qy = i.y;
+      final float qz = i.z;
+
+      final float iw = -qx * source.x - qy * source.y - qz * source.z;
+      final float ix = w * source.x + qy * source.z - qz * source.y;
+      final float iy = w * source.y + qz * source.x - qx * source.z;
+      final float iz = w * source.z + qx * source.y - qy * source.x;
+
+      return target.set(
+            ix * w + iz * qy - iw * qx - iy * qz,
+            iy * w + ix * qz - iw * qy - iz * qx,
+            iz * w + iy * qx - iw * qz - ix * qy);
    }
 
    /**
@@ -1179,35 +1223,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
-    * Creates a quaternion from three axes. Assumes that the up
-    * axis is (0.0, 0.0, 1.0). Assumes that the zero components
-    * of the other axes are zero.
-    *
-    * @param right
-    *           the right axis
-    * @param forward
-    *           the up axis
-    * @param target
-    *           the output quaternion
-    * @return the quaternion
-    * @see Quaternion#fromAxes(float, float, float, float,
-    *      float, float, float, float, float, Quaternion)
-    */
-   public static Quaternion fromAxes (
-         final Vec2 right,
-         final Vec2 forward,
-         final Quaternion target ) {
-
-      // TODO: Needs testing...
-      return Quaternion.fromAxes(
-            right.x, forward.y, 1.0f,
-            0.0f, 0.0f,
-            0.0f, 0.0f,
-            right.y, forward.x,
-            target);
-   }
-
-   /**
     * Creates a quaternion from three axes.
     *
     * @param right
@@ -1233,53 +1248,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             forward.z, up.y,
             up.x, right.z,
             right.y, forward.x, target);
-   }
-
-   /**
-    * Creates a quaternion from an axis and angle. Normalizes
-    * the axis prior to calculating the quaternion.
-    *
-    * @param radians
-    *           the angle in radians
-    * @param axis
-    *           the axis
-    * @param target
-    *           the output quaternion
-    * @return the quaternion
-    * @see Vec2#magSq(Vec2)
-    * @see Utils#approxFast(float, float)
-    * @see Math#sqrt(double)
-    * @see Math#cos(double)
-    * @see Math#sin(double)
-    */
-   public static Quaternion fromAxisAngle (
-         final float radians,
-         final Vec2 axis,
-         final Quaternion target ) {
-
-      // TODO: Needs testing...
-
-      final float amSq = Vec2.magSq(axis);
-      if (amSq == 0.0f) {
-         return target.reset();
-      }
-
-      float nx = axis.x;
-      float ny = axis.y;
-
-      if (!Utils.approxFast(amSq, 1.0f)) {
-         final float amInv = (float) (1.0d / Math.sqrt(amSq));
-         nx *= amInv;
-         ny *= amInv;
-      }
-
-      final double halfAngle = 0.5d * radians;
-      final float sinHalf = (float) Math.sin(halfAngle);
-      return target.set(
-            (float) Math.cos(halfAngle),
-            nx * sinHalf,
-            ny * sinHalf,
-            0.0f);
    }
 
    /**
@@ -1668,11 +1636,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param q
     *           the quaternion to test
     * @return the evaluation
-    * @see Vec3#isZero(Vec3)
+    * @see Vec3#none(Vec3)
     */
    public static boolean isIdentity ( final Quaternion q ) {
 
-      return q.real == 1.0f && Vec3.isZero(q.imag);
+      return q.real == 1.0f && Vec3.none(q.imag);
    }
 
    /**
@@ -1700,19 +1668,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    public static boolean isUnit ( final Quaternion q ) {
 
       return Utils.approxFast(Quaternion.magSq(q), 1.0f);
-   }
-
-   /**
-    * Tests if all components of the quaternion are zero.
-    *
-    * @param q
-    *           the quaternion
-    * @return the evaluation
-    * @see Vec3#isZero(Vec3)
-    */
-   public static boolean isZero ( final Quaternion q ) {
-
-      return q.real == 0.0f && Vec3.isZero(q.imag);
    }
 
    /**
@@ -1952,96 +1907,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
-    * Multiplies a vector by a quaternion, in effect rotating
-    * the vector by the quaternion. Equivalent to promoting the
-    * vector to a pure quaternion, multiplying the rotation
-    * quaternion and promoted vector, then multiplying the
-    * product by the rotation's inverse.<br>
-    * <br>
-    * <em>a</em> <em>b</em> := ( <em>a</em> { 0.0, <em>b</em> }
-    * ) <em>a</em><sup>-1</sup><br>
-    * <br>
-    * The result is then demoted to a vector, as the real
-    * component should be 0.0 . This is often denoted as <em>P'
-    * = RPR'</em>.
-    *
-    * @param q
-    *           the quaternion
-    * @param source
-    *           the vector
-    * @param target
-    *           the output vector
-    * @return the rotated vector
-    */
-   public static Vec3 mul (
-         final Quaternion q,
-         final Vec2 source,
-         final Vec3 target ) {
-
-      // TODO: Needs testing...
-
-      final float w = q.real;
-      final Vec3 i = q.imag;
-      final float qx = i.x;
-      final float qy = i.y;
-      final float qz = i.z;
-
-      final float iw = -qx * source.x - qy * source.y;
-      final float ix = w * source.x - qz * source.y;
-      final float iy = w * source.y + qz * source.x;
-      final float iz = qx * source.y - qy * source.x;
-
-      return target.set(
-            ix * w + iz * qy - iw * qx - iy * qz,
-            iy * w + ix * qz - iw * qy - iz * qx,
-            iz * w + iy * qx - iw * qz - ix * qy);
-   }
-
-   /**
-    * Multiplies a vector by a quaternion, in effect rotating
-    * the vector by the quaternion. Equivalent to promoting the
-    * vector to a pure quaternion, multiplying the rotation
-    * quaternion and promoted vector, then multiplying the
-    * product by the rotation's inverse.<br>
-    * <br>
-    * <em>a</em> <em>b</em> := ( <em>a</em> { 0.0, <em>b</em> }
-    * ) <em>a</em><sup>-1</sup><br>
-    * <br>
-    * The result is then demoted to a vector, as the real
-    * component should be 0.0 . This is often denoted as <em>P'
-    * = RPR'</em>.
-    *
-    * @param q
-    *           the quaternion
-    * @param source
-    *           the vector
-    * @param target
-    *           the output vector
-    * @return the rotated vector
-    */
-   public static Vec3 mul (
-         final Quaternion q,
-         final Vec3 source,
-         final Vec3 target ) {
-
-      final float w = q.real;
-      final Vec3 i = q.imag;
-      final float qx = i.x;
-      final float qy = i.y;
-      final float qz = i.z;
-
-      final float iw = -qx * source.x - qy * source.y - qz * source.z;
-      final float ix = w * source.x + qy * source.z - qz * source.y;
-      final float iy = w * source.y + qz * source.x - qx * source.z;
-      final float iz = w * source.z + qx * source.y - qy * source.x;
-
-      return target.set(
-            ix * w + iz * qy - iw * qx - iy * qz,
-            iy * w + ix * qz - iw * qy - iz * qx,
-            iz * w + iy * qx - iw * qz - ix * qy);
-   }
-
-   /**
     * Multiplies two quaternions, then normalizes the product.
     *
     * @param a
@@ -2102,6 +1967,19 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       Quaternion.mul(a, b, product);
       Quaternion.normalize(product, target);
       return target;
+   }
+
+   /**
+    * Tests if all components of the quaternion are zero.
+    *
+    * @param q
+    *           the quaternion
+    * @return the evaluation
+    * @see Vec3#none(Vec3)
+    */
+   public static boolean none ( final Quaternion q ) {
+
+      return q.real == 0.0f && Vec3.none(q.imag);
    }
 
    /**
@@ -2787,6 +2665,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       } else if (!this.imag.equals(q.imag)) {
          return false;
       }
+
+      // return Utils.approxFast(this.real, q.real);
+
       if (Float.floatToIntBits(this.real) != Float.floatToIntBits(q.real)) {
          return false;
       }
@@ -2931,12 +2812,20 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    @Override
    public int hashCode () {
 
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + Float.floatToIntBits(this.real);
-      result = prime * result
-            + (this.imag == null ? 0 : this.imag.hashCode());
-      return result;
+      // final int prime = 31;
+      // int result = 1;
+      // result = prime * result +
+      // Float.floatToIntBits(this.real);
+      // result = prime * result
+      // + (this.imag == null ? 0 : this.imag.hashCode());
+      // return result;
+
+      final int hashBase = -2128831035;
+      final int hashMul = 16777619;
+      int hash = hashBase;
+      hash = hash * hashMul ^ Float.floatToIntBits(this.real);
+      hash = hash * hashMul ^ (this.imag == null ? 0 : this.imag.hashCode());
+      return hash;
    }
 
    /**

@@ -8,7 +8,6 @@ import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
 import processing.core.PApplet;
-import camzup.core.Color;
 
 public class CamZup {
 
@@ -82,17 +81,14 @@ public class CamZup {
    }
 
    public static void main ( final String[] args ) {
-      byte a = (byte) 0xff;
-      byte b = (byte) 0x19;
-      byte c = (byte) 0x20;
-      byte d = (byte) 0xdd;
-      
-      Color x = new Color(a, b, c, d);
-      System.out.println(x.toString());
-      System.out.println(Color.toHexInt(x));
-      System.out.println(Color.toHexString(x));
    }
 
+   public static < T > T[] sort ( final T[] arr,
+         final Comparator < ? super T > comparator ) {
+
+      Arrays.sort(arr, comparator);
+      return arr;
+   }
 
    public static String version () {
 
@@ -105,12 +101,5 @@ public class CamZup {
 
       this.parent = parent;
 
-   }
-
-   public static < T > T[] sort ( T[] arr,
-         Comparator < ? super T > comparator ) {
-
-      Arrays.sort(arr, comparator);
-      return arr;
    }
 }

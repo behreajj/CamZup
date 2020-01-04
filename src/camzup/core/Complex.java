@@ -584,19 +584,6 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    }
 
    /**
-    * Tests to see if all the complex number's components are
-    * zero.
-    *
-    * @param z
-    *           the complex number
-    * @return the evaluation
-    */
-   public static boolean isZero ( final Complex z ) {
-
-      return z.real == 0.0f && z.imag == 0.0f;
-   }
-
-   /**
     * Finds the complex logarithm.
     *
     * @param z
@@ -733,6 +720,19 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex target ) {
 
       return target.set(a * b.real, a * b.imag);
+   }
+
+   /**
+    * Tests to see if all the complex number's components are
+    * zero.
+    *
+    * @param z
+    *           the complex number
+    * @return the evaluation
+    */
+   public static boolean none ( final Complex z ) {
+
+      return z.real == 0.0f && z.imag == 0.0f;
    }
 
    /**
@@ -1122,6 +1122,8 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     */
    protected boolean equals ( final Complex z ) {
 
+      // return Complex.approx(this, z);
+
       if (Float.floatToIntBits(this.imag) != Float.floatToIntBits(z.imag)) {
          return false;
       }
@@ -1221,11 +1223,20 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    @Override
    public int hashCode () {
 
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + Float.floatToIntBits(this.real);
-      result = prime * result + Float.floatToIntBits(this.imag);
-      return result;
+      // final int prime = 31;
+      // int result = 1;
+      // result = prime * result +
+      // Float.floatToIntBits(this.real);
+      // result = prime * result +
+      // Float.floatToIntBits(this.imag);
+      // return result;
+
+      final int hashBase = -2128831035;
+      final int hashMul = 16777619;
+      int hash = hashBase;
+      hash = hash * hashMul ^ Float.floatToIntBits(this.real);
+      hash = hash * hashMul ^ Float.floatToIntBits(this.imag);
+      return hash;
    }
 
    /**

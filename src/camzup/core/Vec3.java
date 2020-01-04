@@ -551,7 +551,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param b
     *           the second vector
     * @return the angle
-    * @see Vec3#isZero(Vec3)
+    * @see Vec3#none(Vec3)
     * @see Vec3#dot(Vec3, Vec3)
     * @see Vec3#mag(Vec3)
     * @see Utils#acos(float)
@@ -560,7 +560,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final Vec3 a,
          final Vec3 b ) {
 
-      if (Vec3.isZero(a) || Vec3.isZero(b)) {
+      if (Vec3.none(a) || Vec3.none(b)) {
          return 0.0f;
       }
 
@@ -695,14 +695,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     *           the cross product
     * @return the evaluation
     * @see Vec3#cross(Vec3, Vec3, Vec3)
-    * @see Vec3#isZero(Vec3)
+    * @see Vec3#none(Vec3)
     */
    public static boolean areParallel (
          final Vec3 a,
          final Vec3 b,
          final Vec3 cross ) {
 
-      return Vec3.isZero(Vec3.cross(a, b, cross));
+      return Vec3.none(Vec3.cross(a, b, cross));
    }
 
    /**
@@ -1815,19 +1815,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Tests to see if all the vector's components are zero.
-    * Useful when safeguarding against invalid directions.
-    *
-    * @param a
-    *           the input vector
-    * @return the evaluation
-    */
-   public static boolean isZero ( final Vec3 a ) {
-
-      return a.x == 0.0f && a.y == 0.0f && a.z == 0.0f;
-   }
-
-   /**
     * Returns a vector with a negative value on the x axis,
     * (-1.0, 0.0, 0.0).
     *
@@ -2267,6 +2254,19 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    public static Vec3 negOne ( final Vec3 target ) {
 
       return target.set(-1.0f, -1.0f, -1.0f);
+   }
+
+   /**
+    * Tests to see if all the vector's components are zero.
+    * Useful when safeguarding against invalid directions.
+    *
+    * @param a
+    *           the input vector
+    * @return the evaluation
+    */
+   public static boolean none ( final Vec3 a ) {
+
+      return a.x == 0.0f && a.y == 0.0f && a.z == 0.0f;
    }
 
    /**
@@ -3378,6 +3378,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     */
    protected boolean equals ( final Vec3 v ) {
 
+      // return Vec3.approx(this, v);
+      
       if (Float.floatToIntBits(this.z) != Float.floatToIntBits(v.z)) {
          return false;
       }
@@ -3486,12 +3488,20 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    @Override
    public int hashCode () {
 
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + Float.floatToIntBits(this.x);
-      result = prime * result + Float.floatToIntBits(this.y);
-      result = prime * result + Float.floatToIntBits(this.z);
-      return result;
+      // final int prime = 31;
+      // int result = 1;
+      // result = prime * result + Float.floatToIntBits(this.x);
+      // result = prime * result + Float.floatToIntBits(this.y);
+      // result = prime * result + Float.floatToIntBits(this.z);
+      // return result;
+
+      final int hashBase = -2128831035;
+      final int hashMul = 16777619;
+      int hash = hashBase;
+      hash = hash * hashMul ^ Float.floatToIntBits(this.x);
+      hash = hash * hashMul ^ Float.floatToIntBits(this.y);
+      hash = hash * hashMul ^ Float.floatToIntBits(this.z);
+      return hash;
    }
 
    /**

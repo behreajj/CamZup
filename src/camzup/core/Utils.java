@@ -1835,17 +1835,39 @@ public abstract class Utils implements IUtils {
 
    /**
     * Converts a signed byte in the range [-127, 128] to an
-    * unsigned byte in the range [0, 255]. Useful when working
-    * with colors.
+    * unsigned byte in the range [0, 255], promoted to an int.
+    * Useful when working with colors.
+    *
+    * Defined for cross-language support with C#, which uses
+    * signed and unsigned versions of primitive data types.
     *
     * @param a
     *           the signed byte
-    * @return the unsigned byte
+    * @return the unsigned byte, promoted
     * @see Byte#toUnsignedInt(byte)
     */
    public static int ubyte ( final byte a ) {
 
       return a & 0xff;
+   }
+
+   /**
+    * Converts a signed int in the range [-2147483648 ,
+    * 2147483647] to an unsigned int in the range [0,
+    * 4294967295], promoted to a long. Useful when working with
+    * colors.
+    *
+    * Defined for cross-language support with C#, which uses
+    * signed and unsigned versions of primitive data types.
+    *
+    * @param a
+    *           the signed int
+    * @return the unsigned int, promoted
+    * @see Integer#toUnsignedLong(int)
+    */
+   public static long uint ( final int a ) {
+
+      return a & 0xffffffffL;
    }
 
    /**

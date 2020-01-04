@@ -485,7 +485,7 @@ public interface IYup2 extends IUp {
 
    /**
     * Draws an image at the origin.
-    * 
+    *
     * @param img
     *           the image
     */

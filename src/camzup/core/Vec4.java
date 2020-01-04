@@ -802,21 +802,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
-    * Tests to see if all the vector's components are zero.
-    *
-    * @param v
-    *           the input vector
-    * @return the evaluation
-    */
-   public static boolean isZero ( final Vec4 v ) {
-
-      return v.x == 0.0f &&
-            v.y == 0.0f &&
-            v.z == 0.0f &&
-            v.w == 0.0f;
-   }
-
-   /**
     * Returns a vector with a negative value on the x axis,
     * (-1.0, 0.0, 0.0, 0.0).
     *
@@ -1081,6 +1066,21 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
          final Vec4 target ) {
 
       return target.set(-v.x, -v.y, -v.z, -v.w);
+   }
+
+   /**
+    * Tests to see if all the vector's components are zero.
+    *
+    * @param v
+    *           the input vector
+    * @return the evaluation
+    */
+   public static boolean none ( final Vec4 v ) {
+
+      return v.x == 0.0f &&
+            v.y == 0.0f &&
+            v.z == 0.0f &&
+            v.w == 0.0f;
    }
 
    /**
@@ -1529,6 +1529,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     */
    protected boolean equals ( final Vec4 v ) {
 
+      // return Vec4.approx(this, v);
+      
       if (Float.floatToIntBits(this.w) != Float.floatToIntBits(v.w)) {
          return false;
       }
@@ -1649,13 +1651,22 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    @Override
    public int hashCode () {
 
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + Float.floatToIntBits(this.w);
-      result = prime * result + Float.floatToIntBits(this.x);
-      result = prime * result + Float.floatToIntBits(this.y);
-      result = prime * result + Float.floatToIntBits(this.z);
-      return result;
+      // final int prime = 31;
+      // int result = 1;
+      // result = prime * result + Float.floatToIntBits(this.w);
+      // result = prime * result + Float.floatToIntBits(this.x);
+      // result = prime * result + Float.floatToIntBits(this.y);
+      // result = prime * result + Float.floatToIntBits(this.z);
+      // return result;
+
+      final int hashBase = -2128831035;
+      final int hashMul = 16777619;
+      int hash = hashBase;
+      hash = hash * hashMul ^ Float.floatToIntBits(this.x);
+      hash = hash * hashMul ^ Float.floatToIntBits(this.y);
+      hash = hash * hashMul ^ Float.floatToIntBits(this.z);
+      hash = hash * hashMul ^ Float.floatToIntBits(this.w);
+      return hash;
    }
 
    /**

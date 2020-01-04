@@ -77,7 +77,8 @@ public class Particle2 implements Comparable < Particle2 > {
        * A constructor which sets the comparator by which each
        * ray's origins will be compared.
        *
-       * @param comparator the vector comparator
+       * @param comparator
+       *           the vector comparator
        */
       public ComparatorLoc ( final Comparator < Vec2 > comparator ) {
 
@@ -103,8 +104,6 @@ public class Particle2 implements Comparable < Particle2 > {
    }
 
    private static Comparator < Particle2 > COMPARATOR = new ComparatorLoc();
-
-   private static final transient Utils.LerpNear LERP_ANGLE = new Utils.LerpNear();
 
    /**
     * Gets the string representation of the default Ray2
@@ -197,8 +196,8 @@ public class Particle2 implements Comparable < Particle2 > {
       final boolean flNonNull = fl != null;
       final boolean ceNonNull = ce != null;
       if (flNonNull && ceNonNull) {
-         Vec2.mix(fl.dir, ce.dir, 0.5f, desired);
-         
+         Vec2.mix(fl.dir, ce.dir, 0.5f, this.desired);
+
          // final float a = Vec2.headingSigned(fl.dir);
          // final float b = Vec2.headingSigned(ce.dir);
          // final float c = Particle2.LERP_ANGLE.apply(a, b, 0.5f);

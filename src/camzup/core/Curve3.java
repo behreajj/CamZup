@@ -448,15 +448,28 @@ public class Curve3 extends Curve
       @Override
       public int hashCode () {
 
-         final int prime = 31;
-         int result = 1;
-         result = prime * result
-               + (this.coord == null ? 0 : this.coord.hashCode());
-         result = prime * result
-               + (this.foreHandle == null ? 0 : this.foreHandle.hashCode());
-         result = prime * result
-               + (this.rearHandle == null ? 0 : this.rearHandle.hashCode());
-         return result;
+         // final int prime = 31;
+         // int result = 1;
+         // result = prime * result
+         // + (this.coord == null ? 0 : this.coord.hashCode());
+         // result = prime * result
+         // + (this.foreHandle == null ? 0 :
+         // this.foreHandle.hashCode());
+         // result = prime * result
+         // + (this.rearHandle == null ? 0 :
+         // this.rearHandle.hashCode());
+         // return result;
+
+         final int hashBase = -2128831035;
+         final int hashMul = 16777619;
+         int hash = hashBase;
+         hash = hash * hashMul
+               ^ (this.coord == null ? 0 : this.coord.hashCode());
+         hash = hash * hashMul
+               ^ (this.foreHandle == null ? 0 : this.foreHandle.hashCode());
+         hash = hash * hashMul
+               ^ (this.rearHandle == null ? 0 : this.rearHandle.hashCode());
+         return hash;
       }
 
       /**
@@ -2079,6 +2092,32 @@ public class Curve3 extends Curve
       return sum;
    }
 
+   @Override
+   public boolean equals ( final Object obj ) {
+
+      if (this == obj) {
+         return true;
+      }
+      if (obj == null) {
+         return false;
+      }
+      if (this.getClass() != obj.getClass()) {
+         return false;
+      }
+      final Curve3 other = (Curve3) obj;
+      if (this.closedLoop != other.closedLoop) {
+         return false;
+      }
+      if (this.knots == null) {
+         if (other.knots != null) {
+            return false;
+         }
+      } else if (!this.knots.equals(other.knots)) {
+         return false;
+      }
+      return true;
+   }
+
    /**
     * Evaluates a step in the range [0.0, 1.0], returning a
     * knot on the curve. The knot's fore handle and rear handle
@@ -2282,6 +2321,17 @@ public class Curve3 extends Curve
    public Knot3 getLast () {
 
       return this.knots.getLast();
+   }
+
+   @Override
+   public int hashCode () {
+
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + (this.closedLoop ? 1231 : 1237);
+      result = prime * result
+            + (this.knots == null ? 0 : this.knots.hashCode());
+      return result;
    }
 
    /**

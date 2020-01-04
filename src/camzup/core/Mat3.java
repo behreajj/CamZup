@@ -1050,22 +1050,39 @@ public class Mat3 extends Matrix {
    @Override
    public int hashCode () {
 
-      final int prime = 31;
-      int result = 1;
+      // final int prime = 31;
+      // int result = 1;
+      //
+      // result = prime * result + Float.floatToIntBits(this.m00);
+      // result = prime * result + Float.floatToIntBits(this.m01);
+      // result = prime * result + Float.floatToIntBits(this.m02);
+      //
+      // result = prime * result + Float.floatToIntBits(this.m10);
+      // result = prime * result + Float.floatToIntBits(this.m11);
+      // result = prime * result + Float.floatToIntBits(this.m12);
+      //
+      // result = prime * result + Float.floatToIntBits(this.m20);
+      // result = prime * result + Float.floatToIntBits(this.m21);
+      // result = prime * result + Float.floatToIntBits(this.m22);
+      //
+      // return result;
 
-      result = prime * result + Float.floatToIntBits(this.m00);
-      result = prime * result + Float.floatToIntBits(this.m01);
-      result = prime * result + Float.floatToIntBits(this.m02);
+      final int hashBase = -2128831035;
+      final int hashMul = 16777619;
+      int hash = hashBase;
+      hash = hash * hashMul ^ Float.floatToIntBits(this.m00);
+      hash = hash * hashMul ^ Float.floatToIntBits(this.m01);
+      hash = hash * hashMul ^ Float.floatToIntBits(this.m02);
 
-      result = prime * result + Float.floatToIntBits(this.m10);
-      result = prime * result + Float.floatToIntBits(this.m11);
-      result = prime * result + Float.floatToIntBits(this.m12);
+      hash = hash * hashMul ^ Float.floatToIntBits(this.m10);
+      hash = hash * hashMul ^ Float.floatToIntBits(this.m11);
+      hash = hash * hashMul ^ Float.floatToIntBits(this.m12);
 
-      result = prime * result + Float.floatToIntBits(this.m20);
-      result = prime * result + Float.floatToIntBits(this.m21);
-      result = prime * result + Float.floatToIntBits(this.m22);
+      hash = hash * hashMul ^ Float.floatToIntBits(this.m20);
+      hash = hash * hashMul ^ Float.floatToIntBits(this.m21);
+      hash = hash * hashMul ^ Float.floatToIntBits(this.m22);
 
-      return result;
+      return hash;
    }
 
    /**

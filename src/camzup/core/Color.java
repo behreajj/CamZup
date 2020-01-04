@@ -1165,7 +1165,7 @@ public class Color extends Vec4 {
 
    /**
     * Convert a hexadecimal representation of a color stored as
-    * AARRGGBB into a color.
+    * 0xAARRGGBB into a color.
     *
     * @param c
     *           the color in hexadecimal
@@ -1176,6 +1176,28 @@ public class Color extends Vec4 {
     */
    public static Color fromHex (
          final int c,
+         final Color target ) {
+
+      return target.set(
+            (c >> 0x10 & 0xff) * IUtils.ONE_255,
+            (c >> 0x8 & 0xff) * IUtils.ONE_255,
+            (c & 0xff) * IUtils.ONE_255,
+            (c >> 0x18 & 0xff) * IUtils.ONE_255);
+   }
+
+   /**
+    * Convert a hexadecimal representation of a color stored as
+    * 0xAARRGGBB into a color.
+    *
+    * @param c
+    *           the color in hexadecimal
+    * @param target
+    *           the output color
+    * @return the color
+    * @see IUtils#ONE_255
+    */
+   public static Color fromHex (
+         final long c,
          final Color target ) {
 
       return target.set(
@@ -1273,7 +1295,7 @@ public class Color extends Vec4 {
          final float alpha,
          final Color target ) {
 
-      if (sat <= 0.0) {
+      if (sat <= 0.0f) {
          return target.set(bri, bri, bri, alpha);
       }
 
@@ -1872,6 +1894,19 @@ public class Color extends Vec4 {
    }
 
    /**
+    * Converts a color to an integer where hexadecimal
+    * represents the ARGB color channels: 0xAARRGGB .
+    *
+    * @param c
+    *           the input color
+    * @return the color in hexadecimal
+    */
+   public static long toHexLong ( final Color c ) {
+
+      return Color.toHexInt(c) & 0xffffffffL;
+   }
+
+   /**
     * Returns a representation of the color as a hexadecimal
     * code, preceded by a '0x', in the format AARRGGBB.
     *
@@ -2025,10 +2060,12 @@ public class Color extends Vec4 {
          final byte green,
          final byte blue ) {
 
-      super(IUtils.ONE_255 * (red & 0xff),
-            IUtils.ONE_255 * (green & 0xff),
-            IUtils.ONE_255 * (blue & 0xff),
-            1.0f);
+      super();
+      this.set(red, green, blue);
+      // super(IUtils.ONE_255 * (red & 0xff),
+      // IUtils.ONE_255 * (green & 0xff),
+      // IUtils.ONE_255 * (blue & 0xff),
+      // 1.0f);
    }
 
    /**
@@ -2050,10 +2087,12 @@ public class Color extends Vec4 {
          final byte blue,
          final byte alpha ) {
 
-      super(IUtils.ONE_255 * (red & 0xff),
-            IUtils.ONE_255 * (green & 0xff),
-            IUtils.ONE_255 * (blue & 0xff),
-            IUtils.ONE_255 * (alpha & 0xff));
+      super();
+      this.set(red, green, blue, alpha);
+      // super(IUtils.ONE_255 * (red & 0xff),
+      // IUtils.ONE_255 * (green & 0xff),
+      // IUtils.ONE_255 * (blue & 0xff),
+      // IUtils.ONE_255 * (alpha & 0xff));
    }
 
    /**
@@ -2176,12 +2215,12 @@ public class Color extends Vec4 {
     *           the blue channel
     * @return this color
     */
-   public Color b ( final float blue ) {
+   public Color b ( final byte blue ) {
 
-      this.z = blue;
+      this.z = (blue & 0xff) * IUtils.ONE_255;
       return this;
    }
-   
+
    /**
     * Sets the blue channel.
     *
@@ -2189,9 +2228,9 @@ public class Color extends Vec4 {
     *           the blue channel
     * @return this color
     */
-   public Color b ( final byte blue ) {
+   public Color b ( final float blue ) {
 
-      this.z = (blue & 0xff) * IUtils.ONE_255;
+      this.z = blue;
       return this;
    }
 
@@ -2284,12 +2323,12 @@ public class Color extends Vec4 {
     *           the green channel
     * @return this color
     */
-   public Color g ( final float green ) {
+   public Color g ( final byte green ) {
 
-      this.y = green;
+      this.y = (green & 0xff) * IUtils.ONE_255;
       return this;
    }
-   
+
    /**
     * Sets the green channel.
     *
@@ -2297,9 +2336,9 @@ public class Color extends Vec4 {
     *           the green channel
     * @return this color
     */
-   public Color g ( final byte green ) {
+   public Color g ( final float green ) {
 
-      this.y = (green & 0xff) * IUtils.ONE_255;
+      this.y = green;
       return this;
    }
 
@@ -2382,14 +2421,6 @@ public class Color extends Vec4 {
    @Override
    public int hashCode () {
 
-      // final int prime = 31;
-      // int result = 1;
-      // result = prime * result + Float.floatToIntBits(this.w);
-      // result = prime * result + Float.floatToIntBits(this.z);
-      // result = prime * result + Float.floatToIntBits(this.y);
-      // result = prime * result + Float.floatToIntBits(this.x);
-      // return result;
-
       return Color.toHexInt(this);
    }
 
@@ -2410,12 +2441,12 @@ public class Color extends Vec4 {
     *           the red channel
     * @return this color
     */
-   public Color r ( final float red ) {
+   public Color r ( final byte red ) {
 
-      this.x = red;
+      this.x = (red & 0xff) * IUtils.ONE_255;
       return this;
    }
-   
+
    /**
     * Sets the red channel.
     *
@@ -2423,9 +2454,9 @@ public class Color extends Vec4 {
     *           the red channel
     * @return this color
     */
-   public Color r ( final byte red ) {
+   public Color r ( final float red ) {
 
-      this.x = (red & 0xff) * IUtils.ONE_255;
+      this.x = red;
       return this;
    }
 

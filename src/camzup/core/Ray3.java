@@ -303,13 +303,22 @@ public class Ray3 extends Ray implements Comparable < Ray3 > {
    @Override
    public int hashCode () {
 
-      final int prime = 31;
-      int result = 1;
+      // final int prime = 31;
+      // int result = 1;
       // result = prime * result + (this.dir == null ? 0 :
       // this.dir.hashCode());
-      result = prime * result
-            + (this.origin == null ? 0 : this.origin.hashCode());
-      return result;
+      // result = prime * result
+      // + (this.origin == null ? 0 : this.origin.hashCode());
+      // return result;
+
+      final int hashBase = -2128831035;
+      final int hashMul = 16777619;
+      int hash = hashBase;
+      hash = hash * hashMul
+            ^ (this.origin == null ? 0 : this.origin.hashCode());
+      // hash = (hash * hashMul)
+      // ^ (this.dir == null ? 0 : this.dir.hashCode());
+      return hash;
    }
 
    /**
