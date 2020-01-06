@@ -448,26 +448,12 @@ public class Curve3 extends Curve
       @Override
       public int hashCode () {
 
-         // final int prime = 31;
-         // int result = 1;
-         // result = prime * result
-         // + (this.coord == null ? 0 : this.coord.hashCode());
-         // result = prime * result
-         // + (this.foreHandle == null ? 0 :
-         // this.foreHandle.hashCode());
-         // result = prime * result
-         // + (this.rearHandle == null ? 0 :
-         // this.rearHandle.hashCode());
-         // return result;
-
-         final int hashBase = -2128831035;
-         final int hashMul = 16777619;
-         int hash = hashBase;
-         hash = hash * hashMul
+         int hash = IUtils.HASH_BASE;
+         hash = hash * IUtils.HASH_MUL
                ^ (this.coord == null ? 0 : this.coord.hashCode());
-         hash = hash * hashMul
+         hash = hash * IUtils.HASH_MUL
                ^ (this.foreHandle == null ? 0 : this.foreHandle.hashCode());
-         hash = hash * hashMul
+         hash = hash * IUtils.HASH_MUL
                ^ (this.rearHandle == null ? 0 : this.rearHandle.hashCode());
          return hash;
       }

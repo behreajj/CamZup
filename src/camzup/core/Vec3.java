@@ -516,7 +516,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     */
    public static boolean all ( final Vec3 v ) {
 
-      return v.x != 0.0f && v.y != 0.0f && v.z != 0.0f;
+      return v.z != 0.0f &&
+            v.y != 0.0f &&
+            v.x != 0.0f;
    }
 
    /**
@@ -577,7 +579,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     */
    public static boolean any ( final Vec3 v ) {
 
-      return v.x != 0.0f || v.y != 0.0f || v.z != 0.0f;
+      return v.z != 0.0f ||
+            v.y != 0.0f ||
+            v.x != 0.0f;
    }
 
    /**
@@ -708,15 +712,15 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    /**
     * Finds the vector's azimuth. Defaults to azimuthSigned.
     *
-    * @param a
+    * @param v
     *           the input vector
     * @return the angle in radians
     * @see Vec3#azimuthSigned(Vec3)
     * @see Vec3#azimuthUnsigned(Vec3)
     */
-   public static float azimuth ( final Vec3 a ) {
+   public static float azimuth ( final Vec3 v ) {
 
-      return Vec3.azimuthSigned(a);
+      return Vec3.azimuthSigned(v);
    }
 
    /**
@@ -2260,13 +2264,15 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * Tests to see if all the vector's components are zero.
     * Useful when safeguarding against invalid directions.
     *
-    * @param a
+    * @param v
     *           the input vector
     * @return the evaluation
     */
-   public static boolean none ( final Vec3 a ) {
+   public static boolean none ( final Vec3 v ) {
 
-      return a.x == 0.0f && a.y == 0.0f && a.z == 0.0f;
+      return v.z == 0.0f &&
+            v.y == 0.0f &&
+            v.x == 0.0f;
    }
 
    /**
@@ -2592,24 +2598,24 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final float rhoMax,
          final Vec3 target ) {
 
-      // TODO: Is random distribution an issue, as it
-      // was with Quaternion random?
-      final float x = rng.uniform(-1.0f, 1.0f);
-      final float y = rng.uniform(-1.0f, 1.0f);
-      final float z = rng.uniform(-1.0f, 1.0f);
-
-      final float mSq = x * x + y * y + z * z;
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
-
-      final float rho = rng.uniform(rhoMin, rhoMax);
-      final float rhoNorm = (float) (rho / Math.sqrt(mSq));
-
-      return target.set(
-            x * rhoNorm,
-            y * rhoNorm,
-            z * rhoNorm);
+      // final float x = rng.uniform(-1.0f, 1.0f);
+      // final float y = rng.uniform(-1.0f, 1.0f);
+      // final float z = rng.uniform(-1.0f, 1.0f);
+      // final float mSq = x * x + y * y + z * z;
+      // if (mSq == 0.0f) {
+      // return target.reset();
+      // }
+      // final float rho = rng.uniform(rhoMin, rhoMax);
+      // final float rhoNorm = (float) (rho / Math.sqrt(mSq));
+      // return target.set(
+      // x * rhoNorm,
+      // y * rhoNorm,
+      // z * rhoNorm);
+      
+      return Vec3.fromSpherical(
+            rng.uniform(-IUtils.PI, IUtils.PI),
+            rng.uniform(-IUtils.HALF_PI, IUtils.HALF_PI),
+            1.0f, target);
    }
 
    /**
@@ -3337,6 +3343,18 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
+    * Promotes a Vec2 to a Vec3.
+    *
+    * @param v2
+    *           the vector
+    */
+   public Vec3 ( final Vec2 v2 ) {
+
+      super(3);
+      this.set(v2);
+   }
+
+   /**
     * Promotes a Vec2 to a Vec3 with an extra component.
     *
     * @param v2
@@ -3379,7 +3397,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    protected boolean equals ( final Vec3 v ) {
 
       // return Vec3.approx(this, v);
-      
+
       if (Float.floatToIntBits(this.z) != Float.floatToIntBits(v.z)) {
          return false;
       }
@@ -3488,19 +3506,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    @Override
    public int hashCode () {
 
-      // final int prime = 31;
-      // int result = 1;
-      // result = prime * result + Float.floatToIntBits(this.x);
-      // result = prime * result + Float.floatToIntBits(this.y);
-      // result = prime * result + Float.floatToIntBits(this.z);
-      // return result;
-
-      final int hashBase = -2128831035;
-      final int hashMul = 16777619;
-      int hash = hashBase;
-      hash = hash * hashMul ^ Float.floatToIntBits(this.x);
-      hash = hash * hashMul ^ Float.floatToIntBits(this.y);
-      hash = hash * hashMul ^ Float.floatToIntBits(this.z);
+      int hash = IUtils.HASH_BASE;
+      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.x);
+      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y);
+      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.z);
       return hash;
    }
 
@@ -3626,6 +3635,19 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       this.z = z;
 
       return this;
+   }
+
+   /**
+    * Promotes a Vec2 to a Vec3.
+    *
+    * @param v2
+    *           the vector
+    * @return this vector
+    */
+   @Chainable
+   public Vec3 set ( final Vec2 v2 ) {
+
+      return this.set(v2.x, v2.y, 0.0f);
    }
 
    /**

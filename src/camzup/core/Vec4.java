@@ -218,7 +218,10 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     */
    public static boolean all ( final Vec4 v ) {
 
-      return v.x != 0.0f && v.y != 0.0f && v.z != 0.0f && v.w != 0.0f;
+      return v.w != 0.0f &&
+            v.z != 0.0f &&
+            v.y != 0.0f &&
+            v.x != 0.0f;
    }
 
    /**
@@ -256,7 +259,10 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     */
    public static boolean any ( final Vec4 v ) {
 
-      return v.x != 0.0f || v.y != 0.0f || v.z != 0.0f || v.w != 0.0f;
+      return v.w != 0.0f ||
+            v.z != 0.0f ||
+            v.y != 0.0f ||
+            v.x != 0.0f;
    }
 
    /**
@@ -1077,10 +1083,10 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     */
    public static boolean none ( final Vec4 v ) {
 
-      return v.x == 0.0f &&
-            v.y == 0.0f &&
+      return v.w == 0.0f &&
             v.z == 0.0f &&
-            v.w == 0.0f;
+            v.y == 0.0f &&
+            v.x == 0.0f;
    }
 
    /**
@@ -1494,6 +1500,30 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
+    * Promotes a Vec2 to a Vec4.
+    *
+    * @param v2
+    *           the vector
+    */
+   public Vec4 ( final Vec2 v2 ) {
+
+      super(4);
+      this.set(v2);
+   }
+
+   /**
+    * Promotes a Vec3 to a Vec4.
+    *
+    * @param v3
+    *           the vector
+    */
+   public Vec4 ( final Vec3 v3 ) {
+
+      super(4);
+      this.set(v3);
+   }
+
+   /**
     * Promotes a Vec3 to a Vec4 with an extra component.
     *
     * @param v3
@@ -1530,7 +1560,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    protected boolean equals ( final Vec4 v ) {
 
       // return Vec4.approx(this, v);
-      
+
       if (Float.floatToIntBits(this.w) != Float.floatToIntBits(v.w)) {
          return false;
       }
@@ -1811,6 +1841,32 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
+    * Promotes a Vec2 to a Vec4.
+    *
+    * @param v2
+    *           the vector
+    * @return this vector
+    */
+   @Chainable
+   public Vec4 set ( final Vec2 v2 ) {
+
+      return this.set(v2.x, v2.y, 0.0f, 0.0f);
+   }
+
+   /**
+    * Promotes a Vec3 to a Vec4.
+    *
+    * @param v3
+    *           the vector
+    * @return this vector
+    */
+   @Chainable
+   public Vec4 set ( final Vec3 v3 ) {
+
+      return this.set(v3.x, v3.y, v3.z, 0.0f);
+   }
+
+   /**
     * Promotes a Vec3 to a Vec4 with an extra component.
     *
     * @param v3
@@ -1819,6 +1875,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     *           the w component
     * @return this vector
     */
+   @Chainable
    public Vec4 set ( final Vec3 v3, final float w ) {
 
       return this.set(v3.x, v3.y, v3.z, w);

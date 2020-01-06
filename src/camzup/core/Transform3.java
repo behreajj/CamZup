@@ -799,24 +799,12 @@ public class Transform3 extends Transform {
    @Override
    public int hashCode () {
 
-      // final int prime = 31;
-      // int result = 1;
-      // result = prime * result
-      // + (this.scale == null ? 0 : this.scale.hashCode());
-      // result = prime * result
-      // + (this.location == null ? 0 : this.location.hashCode());
-      // result = prime * result
-      // + (this.rotation == null ? 0 : this.rotation.hashCode());
-      // return result;
-
-      final int hashBase = -2128831035;
-      final int hashMul = 16777619;
-      int hash = hashBase;
-      hash = hash * hashMul
+      int hash = IUtils.HASH_BASE;
+      hash = hash * IUtils.HASH_MUL
             ^ (this.location == null ? 0 : this.location.hashCode());
-      hash = hash * hashMul
+      hash = hash * IUtils.HASH_MUL
             ^ (this.rotation == null ? 0 : this.rotation.hashCode());
-      hash = hash * hashMul
+      hash = hash * IUtils.HASH_MUL
             ^ (this.scale == null ? 0 : this.scale.hashCode());
       return hash;
    }

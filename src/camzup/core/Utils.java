@@ -762,7 +762,8 @@ public abstract class Utils implements IUtils {
     */
    public static int and ( final float a, final float b ) {
 
-      return Utils.bool(a) * Utils.bool(b);
+      // return Utils.bool(a) * Utils.bool(b);
+      return Utils.toInt(Utils.toBool(a) & Utils.toBool(b));
    }
 
    /**
@@ -778,7 +779,8 @@ public abstract class Utils implements IUtils {
     */
    public static int and ( final int a, final int b ) {
 
-      return Utils.bool(a) * Utils.bool(b);
+      // return Utils.bool(a) * Utils.bool(b);
+      return Utils.toInt(Utils.toBool(a) & Utils.toBool(b));
    }
 
    /**
@@ -1510,7 +1512,8 @@ public abstract class Utils implements IUtils {
     */
    public static int not ( final float value ) {
 
-      return 1 - Utils.bool(value);
+      // return 1 - Utils.bool(value);
+      return Utils.toInt(!Utils.toBool(value));
    }
 
    /**
@@ -1524,7 +1527,8 @@ public abstract class Utils implements IUtils {
     */
    public static int not ( final int value ) {
 
-      return 1 - Utils.bool(value);
+      // return 1 - Utils.bool(value);
+      return Utils.toInt(!Utils.toBool(value));
    }
 
    /**
@@ -1540,9 +1544,11 @@ public abstract class Utils implements IUtils {
     */
    public static int or ( final float a, final float b ) {
 
-      final int aBool = Utils.bool(a);
-      final int bBool = Utils.bool(b);
-      return aBool + bBool - aBool * bBool;
+      // final int aBool = Utils.bool(a);
+      // final int bBool = Utils.bool(b);
+      // return aBool + bBool - aBool * bBool;
+
+      return Utils.toInt(Utils.toBool(a) | Utils.toBool(b));
    }
 
    /**
@@ -1558,9 +1564,11 @@ public abstract class Utils implements IUtils {
     */
    public static int or ( final int a, final int b ) {
 
-      final int aBool = Utils.bool(a);
-      final int bBool = Utils.bool(b);
-      return aBool + bBool - aBool * bBool;
+      // final int aBool = Utils.bool(a);
+      // final int bBool = Utils.bool(b);
+      // return aBool + bBool - aBool * bBool;
+
+      return Utils.toInt(Utils.toBool(a) | Utils.toBool(b));
    }
 
    /**
@@ -1883,9 +1891,11 @@ public abstract class Utils implements IUtils {
     */
    public static int xor ( final float a, final float b ) {
 
-      final int aBool = Utils.bool(a);
-      final int bBool = Utils.bool(b);
-      return aBool + bBool - 2 * aBool * bBool;
+      // final int aBool = Utils.bool(a);
+      // final int bBool = Utils.bool(b);
+      // return aBool + bBool - 2 * aBool * bBool;
+
+      return Utils.toInt(Utils.toBool(a) ^ Utils.toBool(b));
    }
 
    /**
@@ -1901,8 +1911,10 @@ public abstract class Utils implements IUtils {
     */
    public static int xor ( final int a, final int b ) {
 
-      final int aBool = Utils.bool(a);
-      final int bBool = Utils.bool(b);
-      return aBool + bBool - 2 * aBool * bBool;
+      // final int aBool = Utils.bool(a);
+      // final int bBool = Utils.bool(b);
+      // return aBool + bBool - 2 * aBool * bBool;
+
+      return Utils.toInt(Utils.toBool(a) ^ Utils.toBool(b));
    }
 }

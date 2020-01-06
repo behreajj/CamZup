@@ -1034,7 +1034,7 @@ public class Color extends Vec4 {
 
    /**
     * Ensures that the values of the color are clamped to the
-    * range [0, 1].
+    * range [0.0, 1.0].
     *
     * @param a
     *           the color
@@ -1104,14 +1104,13 @@ public class Color extends Vec4 {
          final Vec2 v,
          final Color target ) {
 
-      float r = 0.5f;
-      float g = 0.5f;
-
       final float mSq = Vec2.magSq(v);
-
       if (mSq == 0.0f) {
          return target.set(0.5f, 0.5f, 0.5f, 1.0f);
       }
+
+      float r = 0.5f;
+      float g = 0.5f;
 
       if (Utils.approxFast(mSq, 1.0f)) {
          r = v.x * 0.5f + 0.5f;
@@ -1139,15 +1138,14 @@ public class Color extends Vec4 {
          final Vec3 v,
          final Color target ) {
 
-      float r = 0.5f;
-      float g = 0.5f;
-      float b = 0.5f;
-
       final float mSq = Vec3.magSq(v);
-
       if (mSq == 0.0f) {
          return target.set(0.5f, 0.5f, 0.5f, 1.0f);
       }
+
+      float r = 0.5f;
+      float g = 0.5f;
+      float b = 0.5f;
 
       if (Utils.approxFast(mSq, 1.0f)) {
          r = v.x * 0.5f + 0.5f;
@@ -1624,8 +1622,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Creates a random color. The alpha channel is not
-    * included.
+    * Creates a random color from red, green and blue channels.
+    * The alpha channel is not included.
     *
     * @param rng
     *           the random number generator
@@ -1674,7 +1672,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Creates a random color. The alpha channel is randomized.
+    * Creates a random color from red, green, blue and alpha
+    * channels.
     *
     * @param rng
     *           the random number generator
@@ -2062,10 +2061,6 @@ public class Color extends Vec4 {
 
       super();
       this.set(red, green, blue);
-      // super(IUtils.ONE_255 * (red & 0xff),
-      // IUtils.ONE_255 * (green & 0xff),
-      // IUtils.ONE_255 * (blue & 0xff),
-      // 1.0f);
    }
 
    /**
@@ -2089,10 +2084,6 @@ public class Color extends Vec4 {
 
       super();
       this.set(red, green, blue, alpha);
-      // super(IUtils.ONE_255 * (red & 0xff),
-      // IUtils.ONE_255 * (green & 0xff),
-      // IUtils.ONE_255 * (blue & 0xff),
-      // IUtils.ONE_255 * (alpha & 0xff));
    }
 
    /**
@@ -2490,12 +2481,7 @@ public class Color extends Vec4 {
          final byte green,
          final byte blue ) {
 
-      super.set(
-            IUtils.ONE_255 * (red & 0xff),
-            IUtils.ONE_255 * (green & 0xff),
-            IUtils.ONE_255 * (blue & 0xff),
-            1.0f);
-      return this;
+      return this.set(red, green, blue, -1);
    }
 
    /**

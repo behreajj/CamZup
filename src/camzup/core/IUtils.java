@@ -54,6 +54,10 @@ public interface IUtils {
     */
    double HALF_PI_D = 1.5707963267948966d;
 
+   int HASH_BASE = -2128831035;
+
+   int HASH_MUL = 16777619;
+
    /**
     * One divided by 2.2 , 1.0 / 2.2 . Gamma-adjustments to
     * color commonly raise the color's RGB channels to the

@@ -256,7 +256,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       public int compare ( final Vec2 a, final Vec2 b ) {
 
          /*
-          * TODO: Is there a more efficient way than atan2? See
+          * TODO: Is there a more efficient way than atan2? cf.
           * https://gamedev.stackexchange.com/questions/13229/
           * sorting-array-of-points-in-clockwise-order , such as
           * using the sign of the cross product a.x * b.y - a.y * bx
@@ -579,7 +579,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     */
    public static boolean all ( final Vec2 v ) {
 
-      return v.x != 0.0f && v.y != 0.0f;
+      return v.y != 0.0f &&
+            v.x != 0.0f;
    }
 
    /**
@@ -639,7 +640,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     */
    public static boolean any ( final Vec2 v ) {
 
-      return v.x != 0.0f || v.y != 0.0f;
+      return v.y != 0.0f ||
+            v.x != 0.0f;
    }
 
    /**
@@ -2027,7 +2029,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     */
    public static boolean none ( final Vec2 v ) {
 
-      return v.x == 0.0f && v.y == 0.0f;
+      return v.y == 0.0f &&
+            v.x == 0.0f;
    }
 
    /**
@@ -2504,9 +2507,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final float mInv = (float) (1.0d / Math.sqrt(nMSq));
       final float nx = normal.x * mInv;
       final float ny = normal.y * mInv;
-      final float scalar = 2.0f *
-            (nx * incident.x +
-                  ny * incident.y);
+      final float scalar = 2.0f * (nx * incident.x + ny * incident.y);
       return target.set(
             incident.x - scalar * nx,
             incident.y - scalar * ny);
@@ -3124,17 +3125,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    @Override
    public int hashCode () {
 
-      // final int prime = 31;
-      // int result = 1;
-      // result = prime * result + Float.floatToIntBits(this.x);
-      // result = prime * result + Float.floatToIntBits(this.y);
-      // return result;
-
-      final int hashBase = -2128831035;
-      final int hashMul = 16777619;
-      int hash = hashBase;
-      hash = hash * hashMul ^ Float.floatToIntBits(this.x);
-      hash = hash * hashMul ^ Float.floatToIntBits(this.y);
+      int hash = IUtils.HASH_BASE;
+      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.x);
+      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y);
       return hash;
    }
 

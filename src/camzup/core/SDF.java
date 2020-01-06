@@ -2,7 +2,7 @@ package camzup.core;
 
 /**
  * Facilitates implicit shapes created with signed distance
- * fields. Adapted from Inigo Quilez: <a href=
+ * fields. Adapted from the GLSL of Inigo Quilez: <a href=
  * "https://www.iquilezles.org/www/articles/distfunctions2d/distfunctions2d.htm">2D
  * Distance Functions</a>, <a href=
  * "https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm">Distance
@@ -12,81 +12,63 @@ package camzup.core;
  */
 public abstract class SDF {
 
-   private static final Vec3 HEXAGON;
+   /**
+    * A constant used when drawing an octagon. -Math.sqrt(2.0 +
+    * Math.sqrt(2.0)) / 2.0
+    */
+   private static final float OCTAGON_X = -0.9238795f;
 
-   private static final Vec3 OCTAGON;
+   /**
+    * A constant used when drawing an octagon. Math.sqrt(2.0 -
+    * Math.sqrt(2.0)) / 2.0
+    */
+   private static final float OCTAGON_Y = 0.38268343f;
 
-   static {
-      HEXAGON = new Vec3(-IUtils.SQRT_3_2, 0.5f, IUtils.ONE_SQRT_3);
-      OCTAGON = new Vec3(-0.9238795f, 0.38268343f, 0.41421357f);
-   }
-
-   static float arc (
-         final Vec2 point,
-         final float angOffset,
-         final float apperture,
-         final float bounds,
-         final float weight ) {
-
-      return SDF.arc(point,
-            (float) Math.cos(angOffset),
-            (float) Math.sin(angOffset),
-
-            (float) Math.cos(apperture * 0.5f),
-            (float) Math.sin(apperture * 0.5f),
-
-            bounds, weight);
-   }
+   /**
+    * A constant used when drawing an octagon. Math.sqrt(2.0) -
+    * 1.0
+    */
+   private static final float OCTAGON_Z = 0.41421357f;
 
    static float arc (
          final Vec2 point,
          final float cosOff,
          final float sinOff,
-         final float cosAprt,
-         final float sinAprt,
+         final float cosAptr2,
+         final float sinAptr2,
          final float bounds,
          final float weight ) {
 
-      /*
-       * float ta = 3.14 * (0.5 + 0.5 * cos(iTime * 0.52 + 2.0));
-       * float tb = 3.14 * (0.5 + 0.5 * cos(iTime * 0.31 + 2.0));
-       * float rb = 0.15 * (0.5 + 0.5 * cos(iTime * 0.41 + 3.0));
-       * float len = sdArc(uv, vec2(sin(ta), cos(ta)),
-       * vec2(sin(tb), cos(tb)), 0.5, rb);
-       */
-
-      /*
-       * p *= mat2(sca.x, sca.y, -sca.y, sca.x); p.x = abs(p.x);
-       * float k = (scb.y * p.x > scb.x * p.y) ? dot(p.xy, scb) :
-       * length(p.xy); return sqrt(dot(p, p) + ra * ra - 2.0 * ra
-       * * k) - rb;
-       */
-
       /* Multiply the point by a rotate z 2x2 matrix. */
-      final float px0 = sinOff * point.x - cosOff * point.y;
+      final float px0 = Utils.abs(sinOff * point.x - cosOff * point.y);
       final float py0 = cosOff * point.x + sinOff * point.y;
+      final double dotp = px0 * px0 + py0 * py0;
 
-      final float px1 = Utils.abs(px0);
-
-      final double dotp = px1 * px1 + py0 * py0;
-      final double k = cosAprt * px1 > sinAprt * py0
-            ? px1 * sinAprt + py0 * cosAprt
+      final double k = cosAptr2 * px0 > sinAptr2 * py0
+            ? px0 * sinAptr2 + py0 * cosAptr2
             : Math.sqrt(dotp);
 
       return (float) Math.sqrt(
             dotp + bounds * bounds - 2.0d * bounds * k) - weight;
    }
 
-   static float conic (
+   public static float arc (
          final Vec2 point,
-         final Vec2 origin,
-         final float radians ) {
+         final float startAngle,
+         final float stopAngle,
+         final float bounds,
+         final float weight ) {
 
-      // TODO: Should other functions like circle include
-      // translation for you, or should this not include a
-      // separate origin?
-      return Utils.mod1(Utils.atan2(point.y - origin.y, point.x - origin.x)
-            * IUtils.ONE_TAU - radians);
+      final float a = Utils.modRadians(startAngle);
+      final float b = Utils.modRadians(stopAngle);
+
+      /* Aperture is 2x arc length in Quilez formula. */
+      final float arcLen = 0.5f * Utils.modRadians(b - a);
+      final float arcOff = a + arcLen;
+      return SDF.arc(point,
+            (float) Math.cos(arcOff), (float) Math.sin(arcOff),
+            (float) Math.cos(arcLen), (float) Math.sin(arcLen),
+            bounds, weight);
    }
 
    public static float box (
@@ -144,33 +126,14 @@ public abstract class SDF {
          final Vec2 point,
          final float radians ) {
 
-      return Utils.mod1(Utils.atan2(point.y, point.x)
-            * IUtils.ONE_TAU - radians);
+      return Utils.mod1(
+            (Utils.atan2(point.y, point.x) - radians) *
+                  IUtils.ONE_TAU);
    }
 
    public static float ellipse (
          final Vec2 point,
          final Vec2 bounds ) {
-
-      /*
-       * p = abs(p); if( p.x > p.y ) { p = p.yx; ab = ab.yx; }
-       * float l = ab.y * ab.y - ab.x * ab.x; float m = ab.x * p.x
-       * / l; float m2 = m * m; float n = ab.y * p.y / l; float n2
-       * = n * n; float c = (m2 + n2 - 1.0) / 3.0; float c3 = c *
-       * c * c; float q = c3 + m2 * n2 * 2.0; float d = c3 + m2 *
-       * n2; float g = m + m * n2; float co; if(d< 0.0) { float h
-       * = acos(q / c3) / 3.0; float s = cos(h); float t = sin(h)
-       * * sqrt(3.0); float rx = sqrt( -c * (s + t + 2.0) + m2);
-       * float ry = sqrt( -c * (s - t + 2.0) + m2); co = (ry +
-       * sign(l) * rx + abs(g) / (rx * ry)- m) / 2.0; } else {
-       * float h = 2.0 * m * n * sqrt(d); float s = sign(q + h) *
-       * pow(abs(q + h), 1.0 / 3.0); float u = sign(q - h) *
-       * pow(abs(q - h), 1.0 / 3.0); float rx = -s - u - c * 4.0 +
-       * 2.0 * m2; float ry = (s - u) * sqrt(3.0); float rm =
-       * sqrt(rx * rx + ry * ry); co = (ry / sqrt(rm - rx) +2.0 *
-       * g / rm - m) / 2.0; } vec2 r = ab * vec2(co, sqrt(1.0 - co
-       * * co)); return length(r - p) * sign(p.y - r.y);
-       */
 
       final float px0 = Utils.abs(point.x);
       final float py0 = Utils.abs(point.y);
@@ -224,11 +187,6 @@ public abstract class SDF {
          final Vec3 point,
          final Vec3 bounds ) {
 
-      /*
-       * float k0 = length(p / r); float k1 = length(p / (r * r));
-       * return k0 * (k0 - 1.0) / k1;
-       */
-
       // TODO: Needs testing.
 
       final float k1 = Utils.hypot(
@@ -251,23 +209,16 @@ public abstract class SDF {
          final Vec2 point,
          final float bounds ) {
 
-      /*
-       * const vec3 k = vec3(-0.866025404, 0.5, 0.577350269); p =
-       * abs(p); p -= 2.0 * min(dot(k.xy, p), 0.0) * k.xy; p -=
-       * vec2(clamp(p.x, -k.z * r, k.z * r), r); return length(p)
-       * * sign(p.y);
-       */
-
       final float px0 = Math.abs(point.x);
       final float py0 = Math.abs(point.y);
 
       final float dotkp2 = 2.0f * Utils.min(0.0f,
-            SDF.HEXAGON.x * px0 + SDF.HEXAGON.y * py0);
+            -IUtils.SQRT_3_2 * px0 + IUtils.ONE_SQRT_3 * py0);
 
-      final float px1 = px0 - dotkp2 * SDF.HEXAGON.x;
-      final float py1 = py0 - dotkp2 * SDF.HEXAGON.y;
+      final float px1 = px0 - dotkp2 * -IUtils.SQRT_3_2;
+      final float py1 = py0 - dotkp2 * IUtils.ONE_SQRT_3;
 
-      final float limit = SDF.HEXAGON.z * bounds;
+      final float limit = 0.5f * bounds;
       final float px2 = px1 - Utils.clamp(px1, -limit, limit);
       final float py2 = py1 - bounds;
 
@@ -374,31 +325,22 @@ public abstract class SDF {
          final Vec2 point,
          final float bounds ) {
 
-      /*
-       * const vec3 k = vec3(-0.9238795325, 0.3826834323,
-       * 0.4142135623); p = abs(p); p -= 2.0 * min(dot(vec2(k.x,
-       * k.y), p), 0.0) * vec2(k.x, k.y); p -= 2.0 *
-       * min(dot(vec2(-k.x, k.y), p), 0.0) * vec2(-k.x, k.y); p -=
-       * vec2(clamp(p.x, -k.z * r, k.z * r), r); return length(p)
-       * * sign(p.y);
-       */
-
       final float px0 = Utils.abs(point.x);
       final float py0 = Utils.abs(point.y);
 
       final float dot0 = 2.0f * Utils.min(0.0f,
-            SDF.OCTAGON.x * px0 + SDF.OCTAGON.y * py0);
+            SDF.OCTAGON_X * px0 + SDF.OCTAGON_Y * py0);
 
-      final float px1 = px0 - dot0 * SDF.OCTAGON.x;
-      final float py1 = py0 - dot0 * SDF.OCTAGON.y;
+      final float px1 = px0 - dot0 * SDF.OCTAGON_X;
+      final float py1 = py0 - dot0 * SDF.OCTAGON_Y;
 
       final float dot1 = 2.0f * Utils.min(0.0f,
-            SDF.OCTAGON.y * py1 - SDF.OCTAGON.x * px1);
+            SDF.OCTAGON_Y * py1 - SDF.OCTAGON_X * px1);
 
-      final float px2 = px1 + dot1 * SDF.OCTAGON.x;
-      final float py2 = py1 - dot1 * SDF.OCTAGON.y;
+      final float px2 = px1 + dot1 * SDF.OCTAGON_X;
+      final float py2 = py1 - dot1 * SDF.OCTAGON_Y;
 
-      final float limit = SDF.OCTAGON.z * bounds;
+      final float limit = SDF.OCTAGON_Z * bounds;
       final float px3 = px2 - Utils.clamp(px2, -limit, limit);
       final float py3 = py2 - bounds;
 
@@ -417,16 +359,6 @@ public abstract class SDF {
          final Vec2 point,
          final Vec2[] vertices ) {
 
-      /*
-       * float d = dot(p - v[0], p - v[0]); float s = 1.0; for(int
-       * i = 0, j = N; i < N; j = i, i++) { vec2 e = v[j] - v[i];
-       * vec2 w = p - v[i]; vec2 b = w - e * clamp(dot(w, e) /
-       * dot(e, e), 0.0, 1.0); d = min(d, dot(b, b)); bvec3 c =
-       * bvec3(p.y >= v[i].y, p.y < v[j].y, e.x * w.y > e.y *
-       * w.x); if(all(c) || all(not(c))) { s *= -1.0; } } return s
-       * * sqrt(d);
-       */
-
       final int len = vertices.length;
       if (len < 3) {
          return 0.0f;
@@ -435,13 +367,9 @@ public abstract class SDF {
       Vec2 curr = vertices[0];
       Vec2 prev = vertices[len - 1];
 
-      final float diffx0 = point.x - curr.x;
-      final float diffy0 = point.y - curr.y;
-
-      float d = diffx0 * diffx0 + diffy0 * diffy0;
+      float d = Float.MAX_VALUE;
       float s = 1.0f;
 
-      // TODO: Should this begin at i = 1 ?
       for (int i = 0; i < len; ++i) {
          curr = vertices[i];
 
@@ -473,19 +401,17 @@ public abstract class SDF {
       return (float) (s * Math.sqrt(d));
    }
 
+   public static float polygon (
+         final Vec2 point,
+         final Vec2[] vertices,
+         final float rounding ) {
+
+      return SDF.polygon(point, vertices) - rounding;
+   }
+
    public static float rhombus (
          final Vec2 point,
          final Vec2 bounds ) {
-
-      /*
-       * float ndot(vec2 a, vec2 b) { return a.x * b.x - a.y *
-       * b.y; }
-       *
-       * vec2 q = abs(p); float h = clamp((-2.0 * ndot(q, b) +
-       * ndot(b, b)) / dot(b, b), -1.0, 1.0); float d = length(q -
-       * 0.5 * b * vec2(1.0 - h, 1.0 + h)); return d * sign(q.x *
-       * b.y + q.y * b.x - b.x * b.y);
-       */
 
       final float bxsq = bounds.x * bounds.x;
       final float bysq = bounds.y * bounds.y;
@@ -521,30 +447,53 @@ public abstract class SDF {
       return Vec3.mag(point) - bounds;
    }
 
+   public static float star (
+         final Vec2 point,
+         final float bounds,
+         final float inset,
+         final int count ) {
+
+      final float n = count < 3 ? 3.0f : count;
+      final float an = IUtils.PI / n;
+      final float en = IUtils.PI / Utils.clamp(inset, 2.0f, n);
+      final float bn = Utils.mod(Utils.atan2(point.x, point.y), an + an) - an;
+
+      final float lenp = Vec2.mag(point);
+      final float acsx = (float) Math.cos(an); /* Used only once */
+      final float acsy = (float) Math.sin(an); /* Used only once */
+      final float cosbn = (float) Math.cos(bn); /* Used only once */
+      final float sinbn = (float) Math.sin(bn); /* Used only once */
+      final float px1 = lenp * cosbn - bounds * acsx;
+      final float py1 = lenp * Utils.abs(sinbn) - bounds * acsy;
+
+      final float ecsx = (float) Math.cos(en);
+      final float ecsy = (float) Math.sin(en);
+
+      final float dotpecs = px1 * ecsx + py1 * ecsy;
+      final float scalar = Utils.clamp(-dotpecs, 0.0f,
+            bounds * Utils.div(acsy, ecsy));
+
+      final float px2 = px1 + ecsx * scalar;
+      final float py2 = py1 + ecsy * scalar;
+
+      return Math.copySign(Utils.hypot(px2, py2), px2);
+   }
+
+   public static float star (
+         final Vec2 point,
+         final float bounds,
+         final float inset,
+         final int count,
+         final float rounding ) {
+
+      return SDF.star(point, bounds, inset, count) - rounding;
+   }
+
    public static float subtract (
          final float a,
          final float b ) {
 
       return Utils.max(-a, b);
-   }
-
-   public static float triangle ( final Vec2 point ) {
-
-      /*
-       * const float k = sqrt(3.0); p.x = abs(p.x) - 1.0; p.y =
-       * p.y + 1.0 / k; if(p.x + k * p.y > 0.0) { p =
-       * vec2(p.x-k*p.y,-k*p.x-p.y)/2.0; } p.x -= clamp(p.x, -2.0,
-       * 0.0); return -length(p) * sign(p.y);
-       */
-
-      final float px0 = Utils.abs(point.x) - 1.0f;
-      final float py0 = point.y + IUtils.ONE_SQRT_3;
-      final float kpy0 = IUtils.SQRT_3 * py0;
-      final boolean eval = px0 + kpy0 > 0.0f;
-      final float px1 = eval ? 0.5f * (px0 - kpy0) : px0;
-      final float py1 = eval ? 0.5f * (-IUtils.SQRT_3 * px0 - py0) : py0;
-      final float px2 = px1 - Utils.clamp(px1, -2.0f, 0.0f);
-      return Math.copySign(-Utils.hypot(px2, py1), py1);
    }
 
    public static float union (

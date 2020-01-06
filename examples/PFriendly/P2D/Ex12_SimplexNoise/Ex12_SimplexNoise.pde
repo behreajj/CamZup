@@ -9,15 +9,13 @@ int seed = (int)System.currentTimeMillis();
 
 Vec3 noise = new Vec3();
 Vec3 deriv = new Vec3();
+Color clr = new Color();
 
 void setup() {
   size(512, 512, "camzup.pfriendly.Yup2");
-  frameRate(1000);
-  colorMode(RGB, 1.0);
 }
 
 void draw() {
-
   float hNorm = 1.0 / (height - 1.0);
   float wNorm = 1.0 / (width - 1.0);
   noise.z = frameCount * 0.05;
@@ -44,19 +42,11 @@ void draw() {
       float xNorm = x * wNorm;
       noise.x = (xNorm + xNorm - 1.0) * scale;
 
-      Simplex.fbm(
-        noise, seed, 
-        octaves, 
-        lacunarity, 
-        persist, 
-        deriv);
+      Simplex.fbm(noise, seed, octaves, 
+        lacunarity, persist, deriv); 
 
-      Vec3.normalize(deriv, deriv);
-
-      pixels[idx] = color(
-        deriv.x * 0.5 + 0.5, 
-        deriv.y * 0.5 + 0.5, 
-        deriv.z * 0.5 + 0.5);
+      pixels[idx] = Color.toHexInt(
+        Color.fromDir(deriv, clr));
     }
   }
   updatePixels();

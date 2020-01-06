@@ -445,24 +445,11 @@ public class Mat2 extends Matrix {
    @Override
    public int hashCode () {
 
-      // final int prime = 31;
-      // int result = 1;
-      //
-      // result = prime * result + Float.floatToIntBits(this.m00);
-      // result = prime * result + Float.floatToIntBits(this.m01);
-      //
-      // result = prime * result + Float.floatToIntBits(this.m10);
-      // result = prime * result + Float.floatToIntBits(this.m11);
-      //
-      // return result;
-
-      final int hashBase = -2128831035;
-      final int hashMul = 16777619;
-      int hash = hashBase;
-      hash = hash * hashMul ^ Float.floatToIntBits(this.m00);
-      hash = hash * hashMul ^ Float.floatToIntBits(this.m01);
-      hash = hash * hashMul ^ Float.floatToIntBits(this.m10);
-      hash = hash * hashMul ^ Float.floatToIntBits(this.m11);
+      int hash = IUtils.HASH_BASE;
+      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m00);
+      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m01);
+      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m10);
+      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m11);
       return hash;
    }
 
