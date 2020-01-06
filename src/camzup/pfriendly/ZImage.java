@@ -12,6 +12,35 @@ public class ZImage extends PImage {
 
    private static final Color clr = new Color();
 
+   /**
+    * Generates a diagnostic image where a pixel's location on
+    * the x-axis correlates to the color red; on the y-axis, to
+    * green.
+    * 
+    * @param target
+    *           the output image
+    * @return the image
+    */
+   public static PImage rgb ( final PImage target ) {
+
+      target.loadPixels();
+      final int[] px = target.pixels;
+      final int h = target.height;
+      final int w = target.width;
+
+      final float hInv = 0xff / (h - 1.0f);
+      final float wInv = 0xff / (w - 1.0f);
+      for (int i = 0, y = 0; y < h; ++y) {
+         final int green = (int) (y * hInv + 0.5f) << 0x8;
+         for (int x = 0; x < w; ++x, ++i) {
+            final int red = (int) (x * wInv + 0.5f) << 0x10;
+            px[i] = 0xff00007f | red | green;
+         }
+      }
+      target.updatePixels();
+      return target;
+   }
+
    public static PImage sdfLine (
          final Vec2 origin,
          final Vec2 dest,
@@ -59,6 +88,54 @@ public class ZImage extends PImage {
 
       target.updatePixels();
       return target;
+   }
+
+   public static int[] wrap (
+         final int[] target, final int wTarget, final int hTarget,
+         final int[] source, final int wSource, final int hSource,
+         final int dx, final int dy ) {
+
+      for (int i = 0, y = 0; y < hTarget; ++y) {
+         final int ny = wSource * Utils.mod(y + dy, hSource);
+
+         for (int x = 0; x < wTarget; ++x, ++i) {
+            final int nx = Utils.mod(x + dx, wSource);
+            target[i] = source[nx + ny];
+         }
+      }
+      return target;
+   }
+
+   public static PImage wrap (
+         final PImage target,
+         final PImage source,
+         final float dx, final float dy ) {
+
+      return ZImage.wrap(target, source, (int) dx, (int) dy);
+   }
+
+   public static PImage wrap (
+         final PImage target,
+         final PImage source,
+         final int dx, final int dy ) {
+
+      source.loadPixels();
+      target.loadPixels();
+      ZImage.wrap(
+            target.pixels, target.width, target.height,
+            source.pixels, source.width, source.height,
+            dx, dy);
+      target.updatePixels();
+      source.updatePixels();
+      return target;
+   }
+
+   public static PImage wrap (
+         final PImage target,
+         final PImage source,
+         final Vec2 d ) {
+
+      return ZImage.wrap(target, source, (int) d.x, (int) d.y);
    }
 
    public ZImage () {
