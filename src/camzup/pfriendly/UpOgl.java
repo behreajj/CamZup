@@ -2078,8 +2078,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             bottom, top,
             near, far,
             this.projection);
-
-      // IUp.invert(this.projection, this.projInv);
    }
 
    /**
@@ -2125,8 +2123,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             fov, aspect,
             near, far,
             this.projection);
-
-      // IUp.invert(this.projection, this.projInv);
    }
 
    @Override

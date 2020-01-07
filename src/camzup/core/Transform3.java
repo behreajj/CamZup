@@ -553,6 +553,18 @@ public class Transform3 extends Transform {
    }
 
    /**
+    * Creates a new 3D transform from a 2D source
+    *
+    * @param source
+    *           the source transform
+    */
+   public Transform3 ( final Transform2 source ) {
+
+      super();
+      this.set(source);
+   }
+
+   /**
     * Creates a new transform from a source.
     *
     * @param source
@@ -1379,6 +1391,27 @@ public class Transform3 extends Transform {
       this.scaleTo(xScale, yScale, zScale);
 
       return this;
+   }
+
+   /**
+    * Promotes a 2D transform to a 3D transform.
+    *
+    * @param source
+    *           the source transform
+    * @return this transform
+    */
+   @Chainable
+   public Transform set ( final Transform2 source ) {
+
+      final Vec2 loc = source.location;
+      final Vec2 scl = source.scale;
+      final float halfAngle = 0.5f * source.rotation;
+
+      return this.set(
+            loc.x, loc.y, 0.0f,
+            (float) Math.cos(halfAngle), 0.0f,
+            0.0f, (float) Math.sin(halfAngle),
+            scl.x, scl.y, 1.0f);
    }
 
    /**

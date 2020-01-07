@@ -1681,21 +1681,11 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    @Override
    public int hashCode () {
 
-      // final int prime = 31;
-      // int result = 1;
-      // result = prime * result + Float.floatToIntBits(this.w);
-      // result = prime * result + Float.floatToIntBits(this.x);
-      // result = prime * result + Float.floatToIntBits(this.y);
-      // result = prime * result + Float.floatToIntBits(this.z);
-      // return result;
-
-      final int hashBase = -2128831035;
-      final int hashMul = 16777619;
-      int hash = hashBase;
-      hash = hash * hashMul ^ Float.floatToIntBits(this.x);
-      hash = hash * hashMul ^ Float.floatToIntBits(this.y);
-      hash = hash * hashMul ^ Float.floatToIntBits(this.z);
-      hash = hash * hashMul ^ Float.floatToIntBits(this.w);
+      int hash = Utils.HASH_BASE;
+      hash = hash * Utils.HASH_MUL ^ Float.floatToIntBits(this.x);
+      hash = hash * Utils.HASH_MUL ^ Float.floatToIntBits(this.y);
+      hash = hash * Utils.HASH_MUL ^ Float.floatToIntBits(this.z);
+      hash = hash * Utils.HASH_MUL ^ Float.floatToIntBits(this.w);
       return hash;
    }
 

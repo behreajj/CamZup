@@ -81,16 +81,7 @@ public class CamZup {
    }
 
    public static void main ( final String[] args ) {
-
-      final double a = Math.sqrt(2.0 + Math.sqrt(2.0)) / 2.0;
-      final float af = (float) a;
-
-      final double b = Math.sqrt(2.0 - Math.sqrt(2.0)) / 2.0;
-      final float bf = (float) b;
-
-      final double c = Math.sqrt(2.0) - 1.0d;
-      final float cf = (float) c;
-      System.out.println(cf);
+      System.out.println(0x80000000);
    }
 
    public static < T > T[] sort ( final T[] arr,

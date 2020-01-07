@@ -30,6 +30,29 @@ public abstract class SDF {
     */
    private static final float OCTAGON_Z = 0.41421357f;
 
+   /**
+    * Draws an open arc with rounded stroke caps. The angular
+    * offset of the arc's aperture is to be calculated outside
+    * of the function. The same goes for <em>twice</em> the
+    * arc-length of the arc's aperture. Based on the GLSL: <a href=
+    * "https://www.shadertoy.com/view/wl23RK">https://www.shadertoy.com/view/wl23RK</a>
+    *
+    * @param point
+    *           the point
+    * @param cosOff
+    *           cosine of the offset angle
+    * @param sinOff
+    *           sine of the offset angle
+    * @param cosAptr2
+    *           cosine of 2x the apertuare
+    * @param sinAptr2
+    *           sine of 2x the aperture
+    * @param bounds
+    *           the bounds
+    * @param weight
+    *           the stroke weight
+    * @return the signed distance
+    */
    static float arc (
          final Vec2 point,
          final float cosOff,
@@ -39,19 +62,44 @@ public abstract class SDF {
          final float bounds,
          final float weight ) {
 
-      /* Multiply the point by a rotate z 2x2 matrix. */
+      /*
+       * Multiplying by a 2x2 matrix is equivalent to creating a
+       * rotation around the z axis and applying to the point.
+       */
       final float px0 = Utils.abs(sinOff * point.x - cosOff * point.y);
       final float py0 = cosOff * point.x + sinOff * point.y;
       final double dotp = px0 * px0 + py0 * py0;
-
-      final double k = cosAptr2 * px0 > sinAptr2 * py0
-            ? px0 * sinAptr2 + py0 * cosAptr2
-            : Math.sqrt(dotp);
-
       return (float) Math.sqrt(
-            dotp + bounds * bounds - 2.0d * bounds * k) - weight;
+            dotp + bounds * bounds - 2.0d * bounds *
+                  (cosAptr2 * px0 > sinAptr2 * py0
+                        ? px0 * sinAptr2 + py0 * cosAptr2
+                        : Math.sqrt(dotp)))
+            - weight;
    }
 
+   /**
+    * A wrapper function around the default signed distance for
+    * arc. Follows the Processing convention of specifying the
+    * start and stop angle as inputs. This calls cosine twice
+    * and sine twice, and so will slow performance.
+    *
+    * @param point
+    *           the point
+    * @param startAngle
+    *           the start angle
+    * @param stopAngle
+    *           the stop angle
+    * @param bounds
+    *           the bounds
+    * @param weight
+    *           the stroke weight
+    * @return the signed distance
+    * @see Utils#modRadians(float)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    * @see SDF#arc(Vec2, float, float, float, float, float,
+    *      float)
+    */
    public static float arc (
          final Vec2 point,
          final float startAngle,
@@ -62,7 +110,7 @@ public abstract class SDF {
       final float a = Utils.modRadians(startAngle);
       final float b = Utils.modRadians(stopAngle);
 
-      /* Aperture is 2x arc length in Quilez formula. */
+      /* Aperture is 2x arc length in the original. */
       final float arcLen = 0.5f * Utils.modRadians(b - a);
       final float arcOff = a + arcLen;
       return SDF.arc(point,
@@ -123,14 +171,32 @@ public abstract class SDF {
    }
 
    public static float conic (
-         final Vec2 point,
+         final float pointx,
+         final float pointy,
          final float radians ) {
 
       return Utils.mod1(
-            (Utils.atan2(point.y, point.x) - radians) *
+            (Utils.atan2(pointy, pointx) - radians) *
                   IUtils.ONE_TAU);
    }
 
+   public static float conic (
+         final Vec2 point,
+         final float radians ) {
+
+      return SDF.conic(point.x, point.y, radians);
+   }
+
+   /**
+    * <a href=
+    * "https://www.shadertoy.com/view/4sS3zz">https://www.shadertoy.com/view/4sS3zz</a>
+    *
+    * @param point
+    *           the point
+    * @param bounds
+    *           the bounds
+    * @return the signed distance
+    */
    public static float ellipse (
          final Vec2 point,
          final Vec2 bounds ) {
@@ -178,9 +244,8 @@ public abstract class SDF {
          co = (float) ((ry / Math.sqrt(rm - rx) + 2.0d * g / rm - m) * 0.5d);
       }
 
-      final float rx = abx0 * co;
       final float ry = aby0 * (float) Math.sqrt(1.0d - co * co);
-      return Math.copySign(Utils.hypot(rx - px1, ry - py1), py1 - ry);
+      return Math.copySign(Utils.hypot(abx0 * co - px1, ry - py1), py1 - ry);
    }
 
    public static float ellipsoid (
@@ -211,18 +276,13 @@ public abstract class SDF {
 
       final float px0 = Math.abs(point.x);
       final float py0 = Math.abs(point.y);
-
       final float dotkp2 = 2.0f * Utils.min(0.0f,
             -IUtils.SQRT_3_2 * px0 + IUtils.ONE_SQRT_3 * py0);
-
-      final float px1 = px0 - dotkp2 * -IUtils.SQRT_3_2;
-      final float py1 = py0 - dotkp2 * IUtils.ONE_SQRT_3;
-
+      final float px1 = px0 + dotkp2 * IUtils.SQRT_3_2;
       final float limit = 0.5f * bounds;
-      final float px2 = px1 - Utils.clamp(px1, -limit, limit);
-      final float py2 = py1 - bounds;
-
-      return Math.copySign(Utils.hypot(px2, py2), py2);
+      final float py2 = py0 - dotkp2 * IUtils.ONE_SQRT_3 - bounds;
+      return Math.copySign(Utils.hypot(
+            px1 - Utils.clamp(px1, -limit, limit), py2), py2);
    }
 
    public static float hexagon (
@@ -238,6 +298,14 @@ public abstract class SDF {
          final float b ) {
 
       return Utils.max(a, b);
+   }
+
+   public static float intersectRound ( final float a, final float b,
+         final float radius ) {
+
+      return Utils.hypot(Utils.max(0.0f, a + radius),
+            Utils.max(0.0f, b + radius))
+            + Utils.min(Utils.max(a, b), -radius);
    }
 
    public static float line (
@@ -321,30 +389,34 @@ public abstract class SDF {
       return SDF.line(point, origin, dest) - rounding;
    }
 
+   /**
+    * <a href=
+    * "https://www.shadertoy.com/view/llGfDG">https://www.shadertoy.com/view/llGfDG</a>
+    *
+    * @param point
+    *           the point
+    * @param bounds
+    *           the bounds
+    * @return the signed distance
+    */
    public static float octagon (
          final Vec2 point,
          final float bounds ) {
 
       final float px0 = Utils.abs(point.x);
       final float py0 = Utils.abs(point.y);
-
       final float dot0 = 2.0f * Utils.min(0.0f,
             SDF.OCTAGON_X * px0 + SDF.OCTAGON_Y * py0);
-
       final float px1 = px0 - dot0 * SDF.OCTAGON_X;
       final float py1 = py0 - dot0 * SDF.OCTAGON_Y;
-
       final float dot1 = 2.0f * Utils.min(0.0f,
             SDF.OCTAGON_Y * py1 - SDF.OCTAGON_X * px1);
-
       final float px2 = px1 + dot1 * SDF.OCTAGON_X;
-      final float py2 = py1 - dot1 * SDF.OCTAGON_Y;
-
       final float limit = SDF.OCTAGON_Z * bounds;
-      final float px3 = px2 - Utils.clamp(px2, -limit, limit);
-      final float py3 = py2 - bounds;
-
-      return Math.copySign(Utils.hypot(px3, py3), py3);
+      final float py3 = py1 - dot1 * SDF.OCTAGON_Y - bounds;
+      return Math.copySign(Utils.hypot(
+            px2 - Utils.clamp(px2, -limit, limit),
+            py3), py3);
    }
 
    public static float octagon (
@@ -355,6 +427,16 @@ public abstract class SDF {
       return SDF.octagon(point, bounds) - rounding;
    }
 
+   /**
+    * <a href=
+    * "https://www.shadertoy.com/view/wdBXRW">https://www.shadertoy.com/view/wdBXRW</a>
+    *
+    * @param point
+    *           the point
+    * @param vertices
+    *           the vertices
+    * @return the signed distance
+    */
    public static float polygon (
          final Vec2 point,
          final Vec2[] vertices ) {
@@ -367,6 +449,12 @@ public abstract class SDF {
       Vec2 curr = vertices[0];
       Vec2 prev = vertices[len - 1];
 
+      /*
+       * i begins at zero, and so the initial distance from 0 to
+       * len - 1 does not need to be calculated prior to the
+       * for-loop. d will be replaced by any lesser value, so it
+       * makes sense to start with MAX_VALUE instead.
+       */
       float d = Float.MAX_VALUE;
       float s = 1.0f;
 
@@ -409,6 +497,16 @@ public abstract class SDF {
       return SDF.polygon(point, vertices) - rounding;
    }
 
+   /**
+    * <a href=
+    * "https://www.shadertoy.com/view/XdXcRB">https://www.shadertoy.com/view/XdXcRB</a>
+    *
+    * @param point
+    *           the point
+    * @param bounds
+    *           the bounds
+    * @return the signed distance
+    */
    public static float rhombus (
          final Vec2 point,
          final Vec2 bounds ) {
@@ -447,6 +545,30 @@ public abstract class SDF {
       return Vec3.mag(point) - bounds;
    }
 
+   /**
+    * <a href=
+    * "https://www.shadertoy.com/view/3tSGDy">https://www.shadertoy.com/view/3tSGDy</a>
+    *
+    * @param point
+    *           the point
+    * @param bounds
+    *           the bounds
+    * @param inset
+    *           the inset scale
+    * @param count
+    *           the number of points
+    * @return the signed distance
+    * @see Utils#clamp(float, float, float)
+    * @see Utils#mod(float, float)
+    * @see Utils#atan2(float, float)
+    * @see Utils#abs(float)
+    * @see Utils#div(float, float)
+    * @see Utils#hypot(float, float)
+    * @see Math#copySign(float, float)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    * @see Vec2#mag(Vec2)
+    */
    public static float star (
          final Vec2 point,
          final float bounds,
@@ -457,26 +579,17 @@ public abstract class SDF {
       final float an = IUtils.PI / n;
       final float en = IUtils.PI / Utils.clamp(inset, 2.0f, n);
       final float bn = Utils.mod(Utils.atan2(point.x, point.y), an + an) - an;
-
       final float lenp = Vec2.mag(point);
-      final float acsx = (float) Math.cos(an); /* Used only once */
-      final float acsy = (float) Math.sin(an); /* Used only once */
-      final float cosbn = (float) Math.cos(bn); /* Used only once */
-      final float sinbn = (float) Math.sin(bn); /* Used only once */
-      final float px1 = lenp * cosbn - bounds * acsx;
-      final float py1 = lenp * Utils.abs(sinbn) - bounds * acsy;
-
+      final float acsy = (float) Math.sin(an);
+      final float px1 = lenp * (float) Math.cos(bn)
+            - bounds * (float) Math.cos(an);
+      final float py1 = lenp * Utils.abs((float) Math.sin(bn)) - bounds * acsy;
       final float ecsx = (float) Math.cos(en);
       final float ecsy = (float) Math.sin(en);
-
-      final float dotpecs = px1 * ecsx + py1 * ecsy;
-      final float scalar = Utils.clamp(-dotpecs, 0.0f,
+      final float scalar = Utils.clamp(-(px1 * ecsx + py1 * ecsy), 0.0f,
             bounds * Utils.div(acsy, ecsy));
-
       final float px2 = px1 + ecsx * scalar;
-      final float py2 = py1 + ecsy * scalar;
-
-      return Math.copySign(Utils.hypot(px2, py2), px2);
+      return Math.copySign(Utils.hypot(px2, py1 + ecsy * scalar), px2);
    }
 
    public static float star (
@@ -496,10 +609,28 @@ public abstract class SDF {
       return Utils.max(-a, b);
    }
 
+   public static float subtractRound (
+         final float a,
+         final float b,
+         final float radius ) {
+
+      return SDF.intersectRound(a, -b, radius);
+   }
+
    public static float union (
          final float a,
          final float b ) {
 
       return Utils.min(a, b);
+   }
+
+   public static float unionRound (
+         final float a,
+         final float b,
+         final float radius ) {
+
+      return Utils.max(Utils.min(a, b), radius) - Utils.hypot(
+            Utils.min(0.0f, a - radius),
+            Utils.min(0.0f, b - radius));
    }
 }

@@ -255,16 +255,8 @@ public class Gradient implements Iterable < Gradient.Key > {
       @Override
       public int hashCode () {
 
-         // final int prime = 31;
-         // int result = 1;
-         // result = prime * result +
-         // Float.floatToIntBits(this.step);
-         // return result;
-
-         final int hashBase = -2128831035;
-         final int hashMul = 16777619;
-         int hash = hashBase;
-         hash = hash * hashMul ^ Float.floatToIntBits(this.step);
+         int hash = IUtils.HASH_BASE;
+         hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.step);
          return hash;
       }
 
@@ -990,14 +982,12 @@ public class Gradient implements Iterable < Gradient.Key > {
          return target.set(this.keys.last().clr);
       }
 
-      /*
-       * It shouldn't be necessary to guard against divide by
-       * zero, since no two keys would have the same step.
-       */
       return easing.applyUnclamped(
             next.clr, prev.clr,
+            // Utils.div(step - next.step,
+            // prev.step - next.step),
             (step - next.step) /
-                  (prev.step - next.step),
+            (prev.step - next.step),
             target);
    }
 
@@ -1074,16 +1064,8 @@ public class Gradient implements Iterable < Gradient.Key > {
    @Override
    public int hashCode () {
 
-      // final int prime = 31;
-      // int result = 1;
-      // result = prime * result
-      // + (this.keys == null ? 0 : this.keys.hashCode());
-      // return result;
-
-      final int base = -2128831035;
-      final int hashMul = 16777619;
-      int hash = base;
-      hash = hash * hashMul
+      int hash = IUtils.HASH_BASE;
+      hash = hash * IUtils.HASH_MUL
             ^ (this.keys == null ? 0 : this.keys.hashCode());
       return hash;
    }

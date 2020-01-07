@@ -1001,6 +1001,14 @@ public abstract class Utils implements IUtils {
       return value < 0.0f ? 0.0f : value > 1.0f ? 1.0f : value;
    }
 
+//   public static float copySign ( final float magnitude, final float sign ) {
+//
+//      return Float.intBitsToFloat(Float.floatToRawIntBits(sign) &
+//            -2147483648
+//            | Float.floatToRawIntBits(magnitude) &
+//                  2147483647);
+//   }
+
    /**
     * Converts an angle in radians to an angle in degrees.
     *
@@ -1734,7 +1742,7 @@ public abstract class Utils implements IUtils {
       }
 
       /*
-       * Hard-coded values from FloatConsts class for fast
+       * Hard-coded values from jdk.internal.math.FloatConsts class for fast
        * absolute value and sign.
        */
       final int raw = Float.floatToRawIntBits(value);
