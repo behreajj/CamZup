@@ -1338,7 +1338,7 @@ public class Color extends Vec4 {
 
       return Color.hsbaToRgba(hbsa.x, hbsa.y, hbsa.z, hbsa.w, target);
    }
-
+   
    /**
     * Returns the relative luminance of the color, based on
     * https://en.wikipedia.org/wiki/Relative_luminance .

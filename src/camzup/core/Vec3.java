@@ -992,52 +992,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the signed vector
     */
    public static Vec3 copySign (
-         final float magnitude,
-         final Vec3 sign,
-         final Vec3 target ) {
-
-      return target.set(
-            Math.copySign(magnitude, sign.x),
-            Math.copySign(magnitude, sign.y),
-            Math.copySign(magnitude, sign.z));
-   }
-
-   /**
-    * Finds first vector argument with the sign of the second
-    * vector argument.
-    *
-    * @param magnitude
-    *           the magnitude
-    * @param sign
-    *           the sign
-    * @param target
-    *           the output vector
-    * @return the signed vector
-    */
-   public static Vec3 copySign (
-         final Vec3 magnitude,
-         final float sign,
-         final Vec3 target ) {
-
-      return target.set(
-            Math.copySign(magnitude.x, sign),
-            Math.copySign(magnitude.y, sign),
-            Math.copySign(magnitude.z, sign));
-   }
-
-   /**
-    * Finds first vector argument with the sign of the second
-    * vector argument.
-    *
-    * @param magnitude
-    *           the magnitude
-    * @param sign
-    *           the sign
-    * @param target
-    *           the output vector
-    * @return the signed vector
-    */
-   public static Vec3 copySign (
          final Vec3 magnitude,
          final Vec3 sign,
          final Vec3 target ) {
@@ -1842,17 +1796,21 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param target
     *           the output vector
     * @return the limited vector
-    * @see Vec3#dot(Vec3, Vec3)
-    * @see Vec3#rescale(Vec3, float, Vec3)
     */
    public static Vec3 limit (
          final Vec3 v,
          final float limit,
          final Vec3 target ) {
 
-      if (Vec3.magSq(v) > limit * limit) {
-         return Vec3.rescale(v, limit, target);
+      final float mSq = Vec3.magSq(v);
+      if (limit > 0.0f && mSq > limit * limit) {
+         final float scalar = (float) (limit / Math.sqrt(mSq));
+         return target.set(
+               v.x * scalar,
+               v.y * scalar,
+               v.z * scalar);
       }
+
       return target.set(v);
    }
 
@@ -2611,7 +2569,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       // x * rhoNorm,
       // y * rhoNorm,
       // z * rhoNorm);
-      
+
       return Vec3.fromSpherical(
             rng.uniform(-IUtils.PI, IUtils.PI),
             rng.uniform(-IUtils.HALF_PI, IUtils.HALF_PI),

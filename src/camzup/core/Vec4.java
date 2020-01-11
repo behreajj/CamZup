@@ -447,54 +447,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @return the signed vector
     */
    public static Vec4 copySign (
-         final float magnitude,
-         final Vec4 sign,
-         final Vec4 target ) {
-
-      return target.set(
-            Math.copySign(magnitude, sign.x),
-            Math.copySign(magnitude, sign.y),
-            Math.copySign(magnitude, sign.z),
-            Math.copySign(magnitude, sign.w));
-   }
-
-   /**
-    * Finds first vector argument with the sign of the second
-    * vector argument.
-    *
-    * @param magnitude
-    *           the magnitude
-    * @param sign
-    *           the sign
-    * @param target
-    *           the output vector
-    * @return the signed vector
-    */
-   public static Vec4 copySign (
-         final Vec4 magnitude,
-         final float sign,
-         final Vec4 target ) {
-
-      return target.set(
-            Math.copySign(magnitude.x, sign),
-            Math.copySign(magnitude.y, sign),
-            Math.copySign(magnitude.z, sign),
-            Math.copySign(magnitude.w, sign));
-   }
-
-   /**
-    * Finds first vector argument with the sign of the second
-    * vector argument.
-    *
-    * @param magnitude
-    *           the magnitude
-    * @param sign
-    *           the sign
-    * @param target
-    *           the output vector
-    * @return the signed vector
-    */
-   public static Vec4 copySign (
          final Vec4 magnitude,
          final Vec4 sign,
          final Vec4 target ) {

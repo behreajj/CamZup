@@ -984,50 +984,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @return the signed vector
     */
    public static Vec2 copySign (
-         final float magnitude,
-         final Vec2 sign,
-         final Vec2 target ) {
-
-      return target.set(
-            Math.copySign(magnitude, sign.x),
-            Math.copySign(magnitude, sign.y));
-   }
-
-   /**
-    * Finds first vector argument with the sign of the second
-    * vector argument.
-    *
-    * @param magnitude
-    *           the magnitude
-    * @param sign
-    *           the sign
-    * @param target
-    *           the output vector
-    * @return the signed vector
-    */
-   public static Vec2 copySign (
-         final Vec2 magnitude,
-         final float sign,
-         final Vec2 target ) {
-
-      return target.set(
-            Math.copySign(magnitude.x, sign),
-            Math.copySign(magnitude.y, sign));
-   }
-
-   /**
-    * Finds first vector argument with the sign of the second
-    * vector argument.
-    *
-    * @param magnitude
-    *           the magnitude
-    * @param sign
-    *           the sign
-    * @param target
-    *           the output vector
-    * @return the signed vector
-    */
-   public static Vec2 copySign (
          final Vec2 magnitude,
          final Vec2 sign,
          final Vec2 target ) {
@@ -1608,17 +1564,20 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param target
     *           the output vector
     * @return the limited vector
-    * @see Vec2#dot(Vec2, Vec2)
-    * @see Vec2#rescale(Vec2, float, Vec2)
     */
    public static Vec2 limit (
          final Vec2 v,
          final float limit,
          final Vec2 target ) {
 
-      if (Vec2.magSq(v) > limit * limit) {
-         return Vec2.rescale(v, limit, target);
+      final float mSq = Vec2.magSq(v);
+      if (limit > 0.0f && mSq > limit * limit) {
+         final float scalar = (float) (limit / Math.sqrt(mSq));
+         return target.set(
+               v.x * scalar,
+               v.y * scalar);
       }
+
       return target.set(v);
    }
 

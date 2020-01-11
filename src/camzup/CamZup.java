@@ -3,6 +3,8 @@ package camzup;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import camzup.core.Color;
+import camzup.core.Gradient;
 import camzup.core.Mesh3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -81,7 +83,9 @@ public class CamZup {
    }
 
    public static void main ( final String[] args ) {
-      System.out.println(0x80000000);
+      Gradient gr = new Gradient();
+      gr.append(new Gradient.Key(0.0f, Color.white(new Color())));
+      System.out.println(0.00392156862745098f);
    }
 
    public static < T > T[] sort ( final T[] arr,

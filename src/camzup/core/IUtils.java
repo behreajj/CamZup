@@ -21,7 +21,7 @@ public interface IUtils {
     * convert it to radians. \u03c0 / 180.0 , approximately
     * 0.017453292 .
     */
-   float DEG_TO_RAD = 0.017453293f;
+   float DEG_TO_RAD = 0.017453292f;
 
    /**
     * An angle in degrees is multiplied by this constant to
@@ -45,17 +45,23 @@ public interface IUtils {
    double FOUR_THIRDS_D = 1.3333333333333333d;
 
    /**
-    * \u03c0 divided by two. Approximately 1.570796327 .
+    * \u03c0 divided by two. Approximately 1.5707964 .
     */
-   float HALF_PI = 1.570796327f;
+   float HALF_PI = 1.5707964f;
 
    /**
     * \u03c0 divided by two. Approximately 1.5707963267948966 .
     */
    double HALF_PI_D = 1.5707963267948966d;
 
+   /**
+    * base value used by hash code functions.
+    */
    int HASH_BASE = -2128831035;
 
+   /**
+    * Multiplier used by hash code functions.
+    */
    int HASH_MUL = 16777619;
 
    /**
@@ -118,9 +124,9 @@ public interface IUtils {
    double ONE_SIX_D = 0.16666666666666667d;
 
    /**
-    * An approximation of 1.0 / ( \u221a 2.0 ), 0.70710678 .
+    * An approximation of 1.0 / ( \u221a 2.0 ), 0.70710677 .
     */
-   float ONE_SQRT_2 = 0.70710678f;
+   float ONE_SQRT_2 = 0.70710677f;
 
    /**
     * An approximation of 1.0 / ( \u221a 2.0 ),
@@ -129,9 +135,9 @@ public interface IUtils {
    double ONE_SQRT_2_D = 0.7071067811865475d;
 
    /**
-    * An approximation of 1.0 / ( \u221a 3.0 ), 0.57735027 .
+    * An approximation of 1.0 / ( \u221a 3.0 ), 0.57735026 .
     */
-   float ONE_SQRT_3 = 0.57735027f;
+   float ONE_SQRT_3 = 0.57735026f;
 
    /**
     * An approximation of 1.0 / ( \u221a 3.0 ),
@@ -157,7 +163,7 @@ public interface IUtils {
     * One-third, 1.0 / 3.0 . Approximately 0.33333333 . Useful
     * for setting handles on the knot of a Bezier curve.
     */
-   float ONE_THIRD = 0.33333333f;
+   float ONE_THIRD = 0.33333334f;
 
    /**
     * One-third, 1.0 / 3.0 . Approximately 0.3333333333333333 .
@@ -167,9 +173,9 @@ public interface IUtils {
 
    /**
     * An approximation of \u03c6, or ( 1.0 + \u221a 5.0 ) / 2.0
-    * , 1.61803399 .
+    * , 1.618034 .
     */
-   float PHI = 1.61803399f;
+   float PHI = 1.618034f;
 
    /**
     * An approximation of \u03c6, or ( 1.0 + \u221a 5.0 ) / 2.0
@@ -178,9 +184,9 @@ public interface IUtils {
    double PHI_D = 1.618033988749895d;
 
    /**
-    * An approximation of \u03c0, 3.141592654 .
+    * An approximation of \u03c0, 3.1415927 .
     */
-   float PI = 3.141592654f;
+   float PI = 3.1415927f;
 
    /**
     * An angle in radians is multiplied by this constant to
@@ -197,9 +203,9 @@ public interface IUtils {
    double RAD_TO_DEG_D = 57.29577951308232d;
 
    /**
-    * An approximation of \u221a 2.0, 1.4142136 .
+    * An approximation of \u221a 2.0, 1.4142137 .
     */
-   float SQRT_2 = 1.4142136f;
+   float SQRT_2 = 1.4142137f;
 
    /**
     * An approximation of \u221a 2.0, 1.4142135623730951 .
@@ -231,7 +237,7 @@ public interface IUtils {
     * An approximation of \u03c4 . Equal to 2.0 \u03c0, or
     * 6.2831853 .
     */
-   float TAU = 6.2831853f;
+   float TAU = 6.2831855f;
 
    /**
     * An approximation of \u03c4 . Equal to 2.0 \u03c0, or

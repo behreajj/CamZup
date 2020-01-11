@@ -2312,12 +2312,11 @@ public class Curve3 extends Curve
    @Override
    public int hashCode () {
 
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (this.closedLoop ? 1231 : 1237);
-      result = prime * result
-            + (this.knots == null ? 0 : this.knots.hashCode());
-      return result;
+      int hash = IUtils.HASH_BASE;
+      hash = hash * IUtils.HASH_MUL ^ (this.closedLoop ? 1231 : 1237);
+      hash = hash * IUtils.HASH_MUL
+            ^ (this.knots == null ? 0 : this.knots.hashCode());
+      return hash;
    }
 
    /**

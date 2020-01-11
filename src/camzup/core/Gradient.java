@@ -21,6 +21,28 @@ public class Gradient implements Iterable < Gradient.Key > {
    public static class Key implements Comparable < Key >, Cloneable {
 
       /**
+       * The default tolerance used when comparing color keys.
+       */
+      public static final float DEFAULT_TOLERANCE = 0.0005f;
+
+      /**
+       * Tests to see if two keys have approximately the same
+       * step.
+       *
+       * @param a
+       *           the left comparisand
+       * @param b
+       *           the right comparisand
+       * @return the evaluation
+       */
+      public static boolean approx (
+            final Key a,
+            final Key b ) {
+
+         return Key.approx(a, b, Key.DEFAULT_TOLERANCE);
+      }
+
+      /**
        * Tests to see if two keys have approximately the same
        * step.
        *
@@ -261,6 +283,18 @@ public class Gradient implements Iterable < Gradient.Key > {
       }
 
       /**
+       * Ressets this key to an initial condition.
+       *
+       * @return this key
+       */
+      public Key reset () {
+
+         this.step = 0.0f;
+         this.clr.reset();
+         return this;
+      }
+
+      /**
        * Sets this key with a step and color.
        *
        * @param step
@@ -403,7 +437,7 @@ public class Gradient implements Iterable < Gradient.Key > {
 
          return new StringBuilder()
                .append("{ step: ")
-               .append(Utils.toFixed(this.step, places))
+               .append(Utils.toFixed(this.step, 3))
                .append(", clr: ")
                .append(this.clr.toString(places))
                .append(' ').append('}')
@@ -540,7 +574,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     * A temporary variable to hold queries in evaluation
     * functions.
     */
-   protected final transient Gradient.Key query = new Key();
+   protected final Gradient.Key query = new Key();
 
    /**
     * The set of keys.
@@ -583,7 +617,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     */
    public Gradient ( final Color... colors ) {
 
-      this.append(colors);
+      this.appendAll(colors);
    }
 
    /**
@@ -610,7 +644,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     */
    public Gradient ( final int... colors ) {
 
-      this.append(colors);
+      this.appendAll(colors);
    }
 
    /**
@@ -621,7 +655,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     */
    public Gradient ( final Key... keys ) {
 
-      this.append(keys);
+      this.appendAll(keys);
    }
 
    /**
@@ -648,7 +682,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     */
    public Gradient ( final String... colors ) {
 
-      this.append(colors);
+      this.appendAll(colors);
    }
 
    /**
@@ -676,8 +710,10 @@ public class Gradient implements Iterable < Gradient.Key > {
     *
     * @param added
     *           number of new items
+    * @return this gradient
     */
-   protected void shiftKeysLeft ( final int added ) {
+   @Chainable
+   protected Gradient shiftKeysLeft ( final int added ) {
 
       final Iterator < Gradient.Key > itr = this.keys.iterator();
       int i = 0;
@@ -686,6 +722,7 @@ public class Gradient implements Iterable < Gradient.Key > {
          final Gradient.Key key = itr.next();
          key.step = key.step * i++ * scalar;
       }
+      return this;
    }
 
    // @Chainable
@@ -730,30 +767,6 @@ public class Gradient implements Iterable < Gradient.Key > {
    }
 
    /**
-    * Appends a list of colors to this gradient. Shifts
-    * existing keys to the left.
-    *
-    * @param colors
-    *           the colors
-    * @return this gradient
-    * @see Gradient#shiftKeysLeft(int)
-    * @see TreeSet#size()
-    * @see TreeSet#add(Object)
-    */
-   @Chainable
-   public Gradient append ( final Color... colors ) {
-
-      final int len = colors.length;
-      this.shiftKeysLeft(len);
-      final int oldLen = this.keys.size();
-      final float denom = 1.0f / (oldLen + len - 1.0f);
-      for (int i = 0; i < len; ++i) {
-         this.keys.add(new Key((oldLen + i) * denom, colors[i]));
-      }
-      return this;
-   }
-
-   /**
     * Appends a color at step 1.0 . Shifts existing keys to the
     * left.
     *
@@ -772,46 +785,20 @@ public class Gradient implements Iterable < Gradient.Key > {
    }
 
    /**
-    * Appends a list of color integers to this gradient. Shifts
-    * existing keys to the left.
+    * Appends a color key to this gradient.
     *
-    * @param colors
-    *           the colors
-    * @return this gradient
-    * @see Gradient#shiftKeysLeft(int)
-    * @see TreeSet#size()
-    * @see TreeSet#add(Object)
-    */
-   @Chainable
-   public Gradient append ( final int... colors ) {
-
-      final int len = colors.length;
-      this.shiftKeysLeft(len);
-      final int oldLen = this.keys.size();
-      final float denom = 1.0f / (oldLen + len - 1.0f);
-      for (int i = 0; i < len; ++i) {
-         this.keys.add(new Key((oldLen + i) * denom, colors[i]));
-      }
-      return this;
-   }
-
-   /**
-    * Appends color keys to this gradient. If a color key
-    * already exists at a given step, it will not be added.
-    *
-    * @param keys
-    *           the keys
+    * @param key
+    *           the key
     * @return this gradient
     * @see TreeSet#add(Object)
     */
    @Chainable
-   public Gradient append ( final Key... keys ) {
+   public Gradient append ( final Key key ) {
 
-      final int len = keys.length;
-      for (int i = 0; i < len; ++i) {
-         final Key key = keys[i];
-         this.keys.add(key);
+      if (this.keys.contains(key)) {
+         this.keys.remove(key);
       }
+      this.keys.add(key);
       return this;
    }
 
@@ -832,7 +819,7 @@ public class Gradient implements Iterable < Gradient.Key > {
    }
 
    /**
-    * Appends a list of color strings to this gradient. Shifts
+    * Appends a list of colors to this gradient. Shifts
     * existing keys to the left.
     *
     * @param colors
@@ -843,7 +830,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @see TreeSet#add(Object)
     */
    @Chainable
-   public Gradient append ( final String... colors ) {
+   public Gradient appendAll ( final Color... colors ) {
 
       final int len = colors.length;
       this.shiftKeysLeft(len);
@@ -856,26 +843,90 @@ public class Gradient implements Iterable < Gradient.Key > {
    }
 
    /**
-    * Returns the least key in this gradient greater than or
-    * equal to the given step. If there is no key, returns the
-    * last key instead of null.
+    * Appends a list of color integers to this gradient. Shifts
+    * existing keys to the left.
     *
-    * @param step
-    *           the step
-    * @return the key
-    * @see TreeSet#ceiling(Object)
-    * @see TreeSet#last()
+    * @param colors
+    *           the colors
+    * @return this gradient
+    * @see Gradient#shiftKeysLeft(int)
+    * @see TreeSet#size()
+    * @see TreeSet#add(Object)
     */
-   public Key ceil ( final float step ) {
+   @Chainable
+   public Gradient appendAll ( final int... colors ) {
 
-      this.query.step = step;
-      final Key result = this.keys.ceiling(this.query);
-      return result == null ? this.keys.last() : result;
+      final int len = colors.length;
+      this.shiftKeysLeft(len);
+      final int oldLen = this.keys.size();
+      final float denom = 1.0f / (oldLen + len - 1.0f);
+      for (int i = 0; i < len; ++i) {
+         this.keys.add(new Key((oldLen + i) * denom, colors[i]));
+      }
+      return this;
    }
 
    /**
-    * Distributes this gradient's color key's evenly through
-    * the range [0.0, 1.0] .
+    * Appends color keys to this gradient.
+    *
+    * @param keys
+    *           the keys
+    * @return this gradient
+    * @see TreeSet#add(Object)
+    */
+   @Chainable
+   public Gradient appendAll ( final Key... keys ) {
+
+      final int len = keys.length;
+      for (int i = 0; i < len; ++i) {
+         final Key key = keys[i];
+         if (this.keys.contains(key)) {
+            this.keys.remove(key);
+         }
+         this.keys.add(key);
+      }
+      return this;
+   }
+
+   /**
+    * Appends a list of color strings to this gradient. Shifts
+    * existing keys to the left.
+    *
+    * @param colors
+    *           the colors
+    * @return this gradient
+    * @see Gradient#shiftKeysLeft(int)
+    * @see TreeSet#size()
+    * @see TreeSet#add(Object)
+    */
+   @Chainable
+   public Gradient appendAll ( final String... colors ) {
+
+      final int len = colors.length;
+      this.shiftKeysLeft(len);
+      final int oldLen = this.keys.size();
+      final float denom = 1.0f / (oldLen + len - 1.0f);
+      for (int i = 0; i < len; ++i) {
+         this.keys.add(new Key((oldLen + i) * denom, colors[i]));
+      }
+      return this;
+   }
+
+   /**
+    * Checks to see if this gradient contains a specified key.
+    *
+    * @param key
+    *           the key
+    * @return the evaluation
+    */
+   public boolean contains ( final Key key ) {
+
+      return this.keys.contains(key);
+   }
+
+   /**
+    * Distributes this gradient's color keys evenly through the
+    * range [0.0, 1.0] .
     *
     * @param keyArr
     *           a temporary list
@@ -928,9 +979,9 @@ public class Gradient implements Iterable < Gradient.Key > {
    }
 
    /**
-    * Evaluates a step without checking to see if it is greater
-    * than 1.0 or less than 0.0. Uses the static easing
-    * function belonging to the class.
+    * Finds a color given a step in the range [0.0, 1.0]. When
+    * the step falls between color keys, the resultant color is
+    * created by an easing function.
     *
     * @param step
     *           the step
@@ -950,8 +1001,9 @@ public class Gradient implements Iterable < Gradient.Key > {
    }
 
    /**
-    * Evaluates a step without checking to see if it is greater
-    * than 1.0 or less than 0.0.
+    * Finds a color given a step in the range [0.0, 1.0]. When
+    * the step falls between color keys, the resultant color is
+    * created by an easing function.
     *
     * @param step
     *           the step
@@ -984,10 +1036,8 @@ public class Gradient implements Iterable < Gradient.Key > {
 
       return easing.applyUnclamped(
             next.clr, prev.clr,
-            // Utils.div(step - next.step,
-            // prev.step - next.step),
             (step - next.step) /
-            (prev.step - next.step),
+                  (prev.step - next.step),
             target);
    }
 
@@ -1016,10 +1066,10 @@ public class Gradient implements Iterable < Gradient.Key > {
          final int count,
          final Color.AbstrEasing easing ) {
 
-      final int vcount = count < 3 ? 3 : count;
-      final Color[] result = new Color[vcount];
-      final float toPercent = 1.0f / (vcount - 1.0f);
-      for (int i = 0; i < vcount; ++i) {
+      final int vCount = count < 3 ? 3 : count;
+      final Color[] result = new Color[vCount];
+      final float toPercent = 1.0f / (vCount - 1.0f);
+      for (int i = 0; i < vCount; ++i) {
          result[i] = this.eval(
                i * toPercent, easing, new Color());
       }
@@ -1028,13 +1078,21 @@ public class Gradient implements Iterable < Gradient.Key > {
    }
 
    /**
-    * Retrieves the first key in this gradient.
+    * Returns the least key in this gradient greater than or
+    * equal to the given step. If there is no key, returns the
+    * last key instead of null.
     *
-    * @return the first key
+    * @param step
+    *           the step
+    * @return the key
+    * @see TreeSet#ceiling(Object)
+    * @see TreeSet#last()
     */
-   public Key first () {
+   public Key findGe ( final float step ) {
 
-      return this.keys.first();
+      this.query.step = step;
+      final Key result = this.keys.ceiling(this.query);
+      return result == null ? this.keys.last() : result;
    }
 
    /**
@@ -1048,11 +1106,31 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @see TreeSet#floor(Object)
     * @see TreeSet#first()
     */
-   public Key floor ( final float step ) {
+   public Key findLe ( final float step ) {
 
       this.query.step = step;
       final Key result = this.keys.floor(this.query);
       return result == null ? this.keys.first() : result;
+   }
+
+   /**
+    * Retrieves the first key in this gradient.
+    *
+    * @return the first key
+    */
+   public Key getFirst () {
+
+      return this.keys.first();
+   }
+
+   /**
+    * Retrieves the last key in this gradient.
+    *
+    * @return the last key
+    */
+   public Key getLast () {
+
+      return this.keys.last();
    }
 
    /**
@@ -1068,24 +1146,6 @@ public class Gradient implements Iterable < Gradient.Key > {
       hash = hash * IUtils.HASH_MUL
             ^ (this.keys == null ? 0 : this.keys.hashCode());
       return hash;
-   }
-
-   /**
-    * Returns the least key in this gradient greater than the
-    * given step. If there is no key, returns the last key
-    * instead of null.
-    *
-    * @param step
-    *           the step
-    * @return the key
-    * @see TreeSet#higher(Object)
-    * @see TreeSet#last()
-    */
-   public Key higher ( final float step ) {
-
-      this.query.step = step;
-      final Key result = this.keys.higher(this.query);
-      return result == null ? this.keys.last() : result;
    }
 
    /**
@@ -1113,31 +1173,38 @@ public class Gradient implements Iterable < Gradient.Key > {
    }
 
    /**
-    * Retrieves the last key in this gradient.
+    * Removes a key from the gradient. Returns true if
+    * successful.
     *
-    * @return the last key
+    * @param key
+    *           the key
+    * @return the success
     */
-   public Key last () {
+   public boolean remove ( final Key key ) {
 
-      return this.keys.last();
+      return this.keys.remove(key);
    }
 
    /**
-    * Returns the greatest key in this gradient less the given
-    * step. If there is no key, returns the first key instead
-    * of null.
+    * Removes the first key from the gradient.
     *
-    * @param step
-    *           the step
     * @return the key
-    * @see TreeSet#lower(Object)
-    * @see TreeSet#first()
+    * @see TreeSet#pollFirst()
     */
-   public Key lower ( final float step ) {
+   public Key removeFirst () {
 
-      this.query.step = step;
-      final Key result = this.keys.lower(this.query);
-      return result == null ? this.keys.first() : result;
+      return this.keys.pollFirst();
+   }
+
+   /**
+    * Removes the last key from the gradient.
+    *
+    * @return the key
+    * @see TreeSet#pollLast()
+    */
+   public Key removeLast () {
+
+      return this.keys.pollLast();
    }
 
    /**
@@ -1176,16 +1243,13 @@ public class Gradient implements Iterable < Gradient.Key > {
 
       keyArr.clear();
       keyArr.addAll(this.keys);
-
-      this.keys.clear();
-
       Collections.reverse(keyArr);
+      this.keys.clear();
       final Iterator < Key > itr = keyArr.iterator();
       while (itr.hasNext()) {
          final Key key = itr.next();
          key.step = 1.0f - key.step;
       }
-
       this.keys.addAll(keyArr);
       return this;
    }

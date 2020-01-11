@@ -2702,6 +2702,16 @@ public class Curve2 extends Curve
 
       return this.knots.getLast();
    }
+   
+   @Override
+   public int hashCode () {
+
+      int hash = IUtils.HASH_BASE;
+      hash = hash * IUtils.HASH_MUL ^ (this.closedLoop ? 1231 : 1237);
+      hash = hash * IUtils.HASH_MUL
+            ^ (this.knots == null ? 0 : this.knots.hashCode());
+      return hash;
+   }
 
    /**
     * Returns an iterator, which allows an enhanced for-loop to

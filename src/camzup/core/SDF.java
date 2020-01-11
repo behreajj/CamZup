@@ -14,19 +14,19 @@ public abstract class SDF {
 
    /**
     * A constant used when drawing an octagon. -Math.sqrt(2.0 +
-    * Math.sqrt(2.0)) / 2.0
+    * Math.sqrt(2.0)) / 2.0 . Approximately -0.9238795 .
     */
    private static final float OCTAGON_X = -0.9238795f;
 
    /**
     * A constant used when drawing an octagon. Math.sqrt(2.0 -
-    * Math.sqrt(2.0)) / 2.0
+    * Math.sqrt(2.0)) / 2.0 . Approximately 0.38268343 .
     */
    private static final float OCTAGON_Y = 0.38268343f;
 
    /**
     * A constant used when drawing an octagon. Math.sqrt(2.0) -
-    * 1.0
+    * 1.0 . Approximately 0.41421357 .
     */
    private static final float OCTAGON_Z = 0.41421357f;
 
@@ -34,8 +34,10 @@ public abstract class SDF {
     * Draws an open arc with rounded stroke caps. The angular
     * offset of the arc's aperture is to be calculated outside
     * of the function. The same goes for <em>twice</em> the
-    * arc-length of the arc's aperture. Based on the GLSL: <a href=
+    * arc-length of the arc's aperture. Based on the GLSL:
+    * <a href=
     * "https://www.shadertoy.com/view/wl23RK">https://www.shadertoy.com/view/wl23RK</a>
+    * .
     *
     * @param point
     *           the point
@@ -52,6 +54,8 @@ public abstract class SDF {
     * @param weight
     *           the stroke weight
     * @return the signed distance
+    * @see Utils#abs(float)
+    * @see Math#sqrt(double)
     */
    static float arc (
          final Vec2 point,
@@ -119,6 +123,19 @@ public abstract class SDF {
             bounds, weight);
    }
 
+   /**
+    * Draws a two dimensional box whose dimensions are
+    * described by the bounds.
+    * 
+    * @param point
+    *           the point
+    * @param bounds
+    *           the bounds
+    * @return the signed distance
+    * @see Utils#hypot(float, float)
+    * @see Utils#min(float, float)
+    * @see Utils#max(float, float)
+    */
    public static float box (
          final Vec2 point,
          final Vec2 bounds ) {
@@ -132,6 +149,19 @@ public abstract class SDF {
             Utils.min(Utils.max(qx, qy), 0.0f);
    }
 
+   /**
+    * Draws a two dimensional box with rounded corners whose
+    * dimensions are described by the bounds.
+    * 
+    * @param point
+    *           the point
+    * @param bounds
+    *           the bounds
+    * @param rounding
+    *           corner rounding factor
+    * @return the signed distance
+    * @see SDF#box(Vec2, Vec2)
+    */
    public static float box (
          final Vec2 point,
          final Vec2 bounds,
@@ -140,6 +170,19 @@ public abstract class SDF {
       return SDF.box(point, bounds) - rounding;
    }
 
+   /**
+    * Draws a three dimensional box whose dimensions are
+    * described by the bounds.
+    * 
+    * @param point
+    *           the point
+    * @param bounds
+    *           the bounds
+    * @return the signed distance
+    * @see Utils#hypot(float, float, float)
+    * @see Utils#max(float, float)
+    * @see Utils#min(float, float)
+    */
    public static float box (
          final Vec3 point,
          final Vec3 bounds ) {
@@ -155,6 +198,19 @@ public abstract class SDF {
             Utils.min(Utils.max(qx, qy, qz), 0.0f);
    }
 
+   /**
+    * Draws a three dimensional box with rounded corners whose
+    * dimensions are described by the bounds.
+    * 
+    * @param point
+    *           the point
+    * @param bounds
+    *           the bounds
+    * @param rounding
+    *           corner rounding factor
+    * @return the signed distance
+    * @see SDF#box(Vec3, Vec3)
+    */
    public static float box (
          final Vec3 point,
          final Vec3 bounds,
@@ -163,6 +219,16 @@ public abstract class SDF {
       return SDF.box(point, bounds) - rounding;
    }
 
+   /**
+    * Draws a circle.
+    * 
+    * @param point
+    *           the point
+    * @param bounds
+    *           the bounds
+    * @return the signed distance
+    * @see Vec2#mag(Vec2)
+    */
    public static float circle (
          final Vec2 point,
          final float bounds ) {
@@ -170,6 +236,19 @@ public abstract class SDF {
       return Vec2.mag(point) - bounds;
    }
 
+   /**
+    * Draws a conic gradient.
+    * 
+    * @param pointx
+    *           the x coordinate
+    * @param pointy
+    *           the y coordinate
+    * @param radians
+    *           the angular offset
+    * @return the factor
+    * @see Utils#mod1(float)
+    * @see Utils#atan2(float, float)
+    */
    public static float conic (
          final float pointx,
          final float pointy,
@@ -180,6 +259,16 @@ public abstract class SDF {
                   IUtils.ONE_TAU);
    }
 
+   /**
+    * Draws a conic gradient.
+    * 
+    * @param point
+    *           the point
+    * @param radians
+    *           the angular offset
+    * @return the factor
+    * @see SDF#conic(float, float, float)
+    */
    public static float conic (
          final Vec2 point,
          final float radians ) {
@@ -188,14 +277,25 @@ public abstract class SDF {
    }
 
    /**
-    * <a href=
+    * Draws an ellipse, with bounds described by a vector. With
+    * reference to <a href=
     * "https://www.shadertoy.com/view/4sS3zz">https://www.shadertoy.com/view/4sS3zz</a>
+    * .
     *
     * @param point
     *           the point
     * @param bounds
     *           the bounds
     * @return the signed distance
+    * @see Utils#abs(float)
+    * @see Utils#div(float, float)
+    * @see Utils#acos(float)
+    * @see Utils#hypot(float, float)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    * @see Math#copySign(float, float)
+    * @see Math#pow(double, double)
+    * @see Math#sqrt(double)
     */
    public static float ellipse (
          final Vec2 point,
@@ -234,9 +334,9 @@ public abstract class SDF {
                Utils.abs(g) / (rx * ry) - m) * 0.5d);
       } else {
          final double h = 2.0d * m * n * Math.sqrt(d);
-         final double s = Math.copySign(Math.pow(Math.abs(q + h),
+         final double s = Math.copySign(Math.pow(Utils.abs(q + h),
                IUtils.ONE_THIRD_D), q + h);
-         final double u = Math.copySign(Math.pow(Math.abs(q - h),
+         final double u = Math.copySign(Math.pow(Utils.abs(q - h),
                IUtils.ONE_THIRD_D), q - h);
          final double rx = -s - u - c * 4.0d + 2.0d * msq;
          final double ry = (s - u) * IUtils.SQRT_3_D;
@@ -270,12 +370,26 @@ public abstract class SDF {
 
    }
 
+   /**
+    * Draws a hexagon.
+    * 
+    * @param point
+    *           the point
+    * @param bounds
+    *           the bounds
+    * @return the signed distance
+    * @see Utils#abs(float)
+    * @see Utils#min(float, float)
+    * @see Math#copySign(float, float)
+    * @see Utils#hypot(float, float)
+    * @see Utils#clamp(float, float, float)
+    */
    public static float hexagon (
          final Vec2 point,
          final float bounds ) {
 
-      final float px0 = Math.abs(point.x);
-      final float py0 = Math.abs(point.y);
+      final float px0 = Utils.abs(point.x);
+      final float py0 = Utils.abs(point.y);
       final float dotkp2 = 2.0f * Utils.min(0.0f,
             -IUtils.SQRT_3_2 * px0 + IUtils.ONE_SQRT_3 * py0);
       final float px1 = px0 + dotkp2 * IUtils.SQRT_3_2;
@@ -285,14 +399,37 @@ public abstract class SDF {
             px1 - Utils.clamp(px1, -limit, limit), py2), py2);
    }
 
+   /**
+    * Draws a hexagon with rounded corners.
+    * 
+    * @param point
+    *           the point
+    * @param bounds
+    *           the bounds
+    * @param rounding
+    *           the corner rounding
+    * @return the signed distance
+    * @see SDF#hexagon(Vec2, float)
+    */
    public static float hexagon (
          final Vec2 point,
-         final float size,
+         final float bounds,
          final float rounding ) {
 
-      return SDF.hexagon(point, size) - rounding;
+      return SDF.hexagon(point, bounds) - rounding;
    }
 
+   /**
+    * Finds the intersection between two shapes as represented
+    * by factors.
+    * 
+    * @param a
+    *           the left factor
+    * @param b
+    *           the right factor
+    * @return the intersection
+    * @see Utils#max(float, float)
+    */
    public static float intersect (
          final float a,
          final float b ) {
@@ -300,7 +437,24 @@ public abstract class SDF {
       return Utils.max(a, b);
    }
 
-   public static float intersectRound ( final float a, final float b,
+   /**
+    * Finds the rounded intersection between two shapes as
+    * represented by factors.
+    * 
+    * @param a
+    *           the left factor
+    * @param b
+    *           the right factor
+    * @param radius
+    *           the radius
+    * @return the intersection
+    * @see Utils#hypot(float, float)
+    * @see Utils#max(float, float)
+    * @see Utils#min(float, float)
+    */
+   public static float intersectRound (
+         final float a,
+         final float b,
          final float radius ) {
 
       return Utils.hypot(Utils.max(0.0f, a + radius),
@@ -428,14 +582,21 @@ public abstract class SDF {
    }
 
    /**
-    * <a href=
+    * Draws a polygon from a series of vertices. The number of
+    * vertices is assumed to be greater than three. With
+    * reference to <a href=
     * "https://www.shadertoy.com/view/wdBXRW">https://www.shadertoy.com/view/wdBXRW</a>
+    * .
     *
     * @param point
     *           the point
     * @param vertices
     *           the vertices
     * @return the signed distance
+    * @see Utils#clamp01(float)
+    * @see Utils#div(float, float)
+    * @see Utils#min(float, float)
+    * @see Math#sqrt(double)
     */
    public static float polygon (
          final Vec2 point,
@@ -489,6 +650,19 @@ public abstract class SDF {
       return (float) (s * Math.sqrt(d));
    }
 
+   /**
+    * Draws a rounded polygon from an array of vertices,
+    * assumed to be greater than two.
+    * 
+    * @param point
+    *           the point
+    * @param vertices
+    *           the vertices
+    * @param rounding
+    *           corner rounding
+    * @return the signed distance
+    * @see SDF#polygon(Vec2, Vec2[])
+    */
    public static float polygon (
          final Vec2 point,
          final Vec2[] vertices,
