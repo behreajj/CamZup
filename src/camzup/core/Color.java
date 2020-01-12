@@ -1338,7 +1338,7 @@ public class Color extends Vec4 {
 
       return Color.hsbaToRgba(hbsa.x, hbsa.y, hbsa.z, hbsa.w, target);
    }
-   
+
    /**
     * Returns the relative luminance of the color, based on
     * https://en.wikipedia.org/wiki/Relative_luminance .
@@ -1744,7 +1744,9 @@ public class Color extends Vec4 {
     * @return the grayscale color
     * @see Color#luminance(Color)
     */
-   public static Color rgbaToGray ( final Color c, final Color target ) {
+   public static Color rgbaToGray (
+         final Color c,
+         final Color target ) {
 
       final float lum = Color.luminance(c);
       return target.set(lum, lum, lum, c.w);
@@ -1833,9 +1835,10 @@ public class Color extends Vec4 {
 
    /**
     * Converts a color from RGB to CIE XYZ. References Pharr,
-    * Jakob, and Humphreys' <a href=
-    * "http://www.pbr-book.org/3ed-2018/Color_and_Radiometry/The_SampledSpectrum_Class.html#fragment-SpectrumUtilityDeclarations-2">Physically
-    * Based Rendering</a>.
+    * Jakob, and Humphreys' <a href="http://www.pbr-book.org/3ed-2018/Color_and_Radiometry/
+    * The_SampledSpectrum_Class.html#fragment-
+    * SpectrumUtilityDeclarations-2">Physically Based
+    * Rendering</a>.
     *
     * @param r
     *           the red component
@@ -1979,9 +1982,10 @@ public class Color extends Vec4 {
 
    /**
     * Converts a color from CIE XYZ to RGB. References Pharr,
-    * Jakob, and Humphreys' <a href=
-    * "http://www.pbr-book.org/3ed-2018/Color_and_Radiometry/The_SampledSpectrum_Class.html#fragment-SpectrumUtilityDeclarations-1">Physically
-    * Based Rendering</a>.
+    * Jakob, and Humphreys' <a href="http://www.pbr-book.org/3ed-2018/Color_and_Radiometry/
+    * The_SampledSpectrum_Class.html#fragment-
+    * SpectrumUtilityDeclarations-1">Physically Based
+    * Rendering</a>.
     *
     * @param x
     *           the x coordinate

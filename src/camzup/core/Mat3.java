@@ -514,58 +514,6 @@ public class Mat3 extends Matrix {
                   a.m22 * b.z);
    }
 
-   // public static Mat3 rotateZ (
-   // final Mat3 m,
-   // final float cosa,
-   // final float sina,
-   // final Mat3 target ) {
-   //
-   // final float n00 = cosa * m.m00 + sina * m.m01;
-   // final float n01 = -sina * m.m00 + cosa * m.m01;
-   //
-   // final float n10 = cosa * m.m10 + sina * m.m11;
-   // final float n11 = -sina * m.m10 + cosa * m.m11;
-   //
-   // return target.set(
-   // n00, n01, m.m02,
-   // n10, n11, m.m12,
-   // m.m20, m.m12, m.m22);
-   // }
-
-   // public static Mat3 rotateZ (
-   // final Mat3 m,
-   // final float radians,
-   // final Mat3 target ) {
-   //
-   // return Mat3.rotateZ(
-   // m,
-   // (float) Math.cos(radians),
-   // (float) Math.sin(radians),
-   // target);
-   // }
-
-   // public static Mat3 scale (
-   // final Mat3 a,
-   // final float b,
-   // final Mat3 target ) {
-   //
-   // return target.set(
-   // a.m00 * b, a.m01 * b, a.m02,
-   // a.m10 * b, a.m11 * b, a.m12,
-   // a.m20 * b, a.m21 * b, a.m22);
-   // }
-
-   // public static Mat3 scale (
-   // final Mat3 a,
-   // final Vec2 b,
-   // final Mat3 target ) {
-   //
-   // return target.set(
-   // a.m00 * b.x, a.m01 * b.y, a.m02,
-   // a.m10 * b.x, a.m11 * b.y, a.m12,
-   // a.m20 * b.x, a.m21 * b.y, a.m22);
-   // }
-
    /**
     * Subtracts the right matrix from the left matrix.
     *
@@ -587,20 +535,6 @@ public class Mat3 extends Matrix {
             a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12,
             a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22);
    }
-
-   // public static Mat3 translate (
-   // final Mat3 a,
-   // final Vec2 b,
-   // final Mat3 target ) {
-   //
-   // final float n02 = a.m02 + b.x * a.m00 + b.y * a.m01;
-   // final float n12 = a.m12 + b.x * a.m10 + b.y * a.m11;
-   //
-   // return target.set(
-   // a.m00, a.m01, n02,
-   // a.m10, a.m11, n12,
-   // a.m20, a.m21, a.m22);
-   // }
 
    /**
     * Transposes a matrix, switching its row and column

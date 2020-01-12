@@ -969,7 +969,29 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Clamps a value between a lower and an upper bound.
+    * Clamps a whole number value between a lower and an upper
+    * bound.
+    *
+    * @param value
+    *           the input value
+    * @param lowerBound
+    *           the upper bound
+    * @param upperBound
+    *           the lower bound
+    * @return the clamped value
+    */
+   public static int clamp (
+         final int value,
+         final int lowerBound,
+         final int upperBound ) {
+
+      return value < lowerBound ? lowerBound
+            : value > upperBound ? upperBound : value;
+   }
+
+   /**
+    * Clamps a real number value between a lower and an upper
+    * bound.
     *
     * @param value
     *           the input value
@@ -1001,13 +1023,15 @@ public abstract class Utils implements IUtils {
       return value < 0.0f ? 0.0f : value > 1.0f ? 1.0f : value;
    }
 
-//   public static float copySign ( final float magnitude, final float sign ) {
-//
-//      return Float.intBitsToFloat(Float.floatToRawIntBits(sign) &
-//            -2147483648
-//            | Float.floatToRawIntBits(magnitude) &
-//                  2147483647);
-//   }
+   // public static float copySign ( final float magnitude,
+   // final float sign ) {
+   //
+   // return Float.intBitsToFloat(Float.floatToRawIntBits(sign)
+   // &
+   // -2147483648
+   // | Float.floatToRawIntBits(magnitude) &
+   // 2147483647);
+   // }
 
    /**
     * Converts an angle in radians to an angle in degrees.
@@ -1592,6 +1616,31 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * Rounded a value to a number of places right of the
+    * decimal point. Promotes the float to a double, rounds it,
+    * then downcasts back to a float.
+    *
+    * Note that floating (or single) precision will likely led
+    * to errors.
+    *
+    * @param value
+    *           value
+    * @param places
+    *           the number of places
+    * @return the rounded value
+    * @see Math#pow(double, double)
+    * @see Math#round(double)
+    */
+   public static float round ( final float value, final int places ) {
+
+      if (places < 1) {
+         return Math.round(value);
+      }
+      final double n = Math.pow(10, places);
+      return (float) (Math.round(value * n) / n);
+   }
+
+   /**
     * An alternative to the {@link Math#signum(float)}
     * function.
     *
@@ -1742,8 +1791,8 @@ public abstract class Utils implements IUtils {
       }
 
       /*
-       * Hard-coded values from jdk.internal.math.FloatConsts class for fast
-       * absolute value and sign.
+       * Hard-coded values from jdk.internal.math.FloatConsts
+       * class for fast absolute value and sign.
        */
       final int raw = Float.floatToRawIntBits(value);
       final float sign = Float.intBitsToFloat(raw & -2147483648 | 1065353216);

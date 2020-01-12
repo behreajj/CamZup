@@ -703,7 +703,6 @@ public class Mat4 extends Matrix {
          final float near, final float far,
          final Mat4 target ) {
 
-      // TODO: Needs testing...
       final float n2 = near + near;
       final float w = Utils.div(1.0f, right - left);
       final float h = Utils.div(1.0f, top - bottom);
@@ -1065,78 +1064,6 @@ public class Mat4 extends Matrix {
             0.0f, 0.0f, -1.0f, 0.0f);
    }
 
-   // static Mat4 rotateZ (
-   // Mat4 source,
-   // final float c,
-   // final float s,
-   // Mat4 target ) {
-   //
-   // // TODO: Needs testing...
-   // // TODO: rotatex and rotatey
-   //
-   // float t0 = source.m00;
-   // float t1 = source.m01;
-   // final float n00 = t0 * c + t1 * s;
-   // final float n01 = t0 * -s + t1 * c;
-   //
-   // t0 = source.m10;
-   // t1 = source.m11;
-   // final float n10 = t0 * c + t1 * s;
-   // final float n11 = t0 * -s + t1 * c;
-   //
-   // t0 = source.m20;
-   // t1 = source.m21;
-   // final float n20 = t0 * c + t1 * s;
-   // final float n21 = t0 * -s + t1 * c;
-   //
-   // t0 = source.m30;
-   // t1 = source.m31;
-   // final float n30 = t0 * c + t1 * s;
-   // final float n31 = t0 * -s + t1 * c;
-   //
-   // return target.set(
-   // n00, n01, source.m02, source.m03,
-   // n10, n11, source.m12, source.m13,
-   // n20, n21, source.m22, source.m23,
-   // n30, n31, source.m32, source.m33);
-   // }
-
-   // public static Mat4 scale (
-   // final Mat4 a,
-   // final float b,
-   // final Mat4 target ) {
-   //
-   // return target.set(
-   // a.m00 * b, a.m01 * b, a.m02 * b, a.m03,
-   // a.m10 * b, a.m11 * b, a.m12 * b, a.m13,
-   // a.m20 * b, a.m21 * b, a.m22 * b, a.m23,
-   // a.m30 * b, a.m31 * b, a.m32 * b, a.m33);
-   // }
-
-   // public static Mat4 scale (
-   // final Mat4 a,
-   // final Vec2 b,
-   // final Mat4 target ) {
-   //
-   // return target.set(
-   // a.m00 * b.x, a.m01 * b.y, a.m02, a.m03,
-   // a.m10 * b.x, a.m11 * b.y, a.m12, a.m13,
-   // a.m20 * b.x, a.m21 * b.y, a.m22, a.m23,
-   // a.m30 * b.x, a.m31 * b.y, a.m32, a.m33);
-   // }
-
-   // public static Mat4 scale (
-   // final Mat4 a,
-   // final Vec3 b,
-   // final Mat4 target ) {
-   //
-   // return target.set(
-   // a.m00 * b.x, a.m01 * b.y, a.m02 * b.z, a.m03,
-   // a.m10 * b.x, a.m11 * b.y, a.m12 * b.z, a.m13,
-   // a.m20 * b.x, a.m21 * b.y, a.m22 * b.z, a.m23,
-   // a.m30 * b.x, a.m31 * b.y, a.m32 * b.z, a.m33);
-   // }
-
    /**
     * Subtracts the right matrix from the left matrix.
     *
@@ -1159,44 +1086,6 @@ public class Mat4 extends Matrix {
             a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22, a.m23 - b.m23,
             a.m30 - b.m30, a.m31 - b.m31, a.m32 - b.m32, a.m33 - b.m33);
    }
-
-   // public static Mat4 translate (
-   // final Mat4 a,
-   // final Vec2 b,
-   // final Mat4 target ) {
-   //
-   // final float n03 = a.m03 + b.x * a.m00 + b.y * a.m01;
-   // final float n13 = a.m13 + b.x * a.m10 + b.y * a.m11;
-   // final float n23 = a.m23 + b.x * a.m20 + b.y * a.m21;
-   // final float n33 = a.m33 + b.x * a.m30 + b.y * a.m31;
-   //
-   // return target.set(
-   // a.m00, a.m01, a.m02, n03,
-   // a.m10, a.m11, a.m12, n13,
-   // a.m20, a.m21, a.m22, n23,
-   // a.m30, a.m31, a.m32, n33);
-   // }
-
-   // public static Mat4 translate (
-   // final Mat4 a,
-   // final Vec3 b,
-   // final Mat4 target ) {
-   //
-   // final float n03 = a.m03 + b.x * a.m00 + b.y * a.m01 + b.z
-   // * a.m02;
-   // final float n13 = a.m13 + b.x * a.m10 + b.y * a.m11 + b.z
-   // * a.m12;
-   // final float n23 = a.m23 + b.x * a.m20 + b.y * a.m21 + b.z
-   // * a.m22;
-   // final float n33 = a.m33 + b.x * a.m30 + b.y * a.m31 + b.z
-   // * a.m32;
-   //
-   // return target.set(
-   // a.m00, a.m01, a.m02, n03,
-   // a.m10, a.m11, a.m12, n13,
-   // a.m20, a.m21, a.m22, n23,
-   // a.m30, a.m31, a.m32, n33);
-   // }
 
    /**
     * Transposes a matrix, switching its row and column

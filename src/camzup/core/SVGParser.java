@@ -14,7 +14,10 @@ import org.w3c.dom.NodeList;
 
 import camzup.core.Curve2.Knot2;
 
-public abstract class SVGParser {
+/**
+ * A draft SVG parser class. Currently unfinished.
+ */
+abstract class SVGParser {
 
    /**
     * Command found in the "d" attribute of an SVG's path

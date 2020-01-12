@@ -2084,16 +2084,21 @@ public class Curve3 extends Curve
       if (this == obj) {
          return true;
       }
+      
       if (obj == null) {
          return false;
       }
+      
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+      
       final Curve3 other = (Curve3) obj;
+      
       if (this.closedLoop != other.closedLoop) {
          return false;
       }
+      
       if (this.knots == null) {
          if (other.knots != null) {
             return false;
@@ -2101,6 +2106,7 @@ public class Curve3 extends Curve
       } else if (!this.knots.equals(other.knots)) {
          return false;
       }
+      
       return true;
    }
 

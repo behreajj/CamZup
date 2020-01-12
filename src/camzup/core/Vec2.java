@@ -2738,6 +2738,25 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
+    * Finds the sign of the vector: -1, if negative; 1, if
+    * positive.
+    * 
+    * @param v
+    *           the vector
+    * @param target
+    *           the output vector
+    * @return the sign
+    */
+   public static Vec2 sign (
+         final Vec2 v,
+         final Vec2 target ) {
+
+      return target.set(
+            Utils.sign(v.x),
+            Utils.sign(v.y));
+   }
+
+   /**
     * Subtracts the right vector from the left vector.
     *
     * @param a

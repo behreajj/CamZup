@@ -13,31 +13,12 @@ package camzup.core;
 public abstract class SDF {
 
    /**
-    * A constant used when drawing an octagon. -Math.sqrt(2.0 +
-    * Math.sqrt(2.0)) / 2.0 . Approximately -0.9238795 .
-    */
-   private static final float OCTAGON_X = -0.9238795f;
-
-   /**
-    * A constant used when drawing an octagon. Math.sqrt(2.0 -
-    * Math.sqrt(2.0)) / 2.0 . Approximately 0.38268343 .
-    */
-   private static final float OCTAGON_Y = 0.38268343f;
-
-   /**
-    * A constant used when drawing an octagon. Math.sqrt(2.0) -
-    * 1.0 . Approximately 0.41421357 .
-    */
-   private static final float OCTAGON_Z = 0.41421357f;
-
-   /**
     * Draws an open arc with rounded stroke caps. The angular
     * offset of the arc's aperture is to be calculated outside
     * of the function. The same goes for <em>twice</em> the
     * arc-length of the arc's aperture. Based on the GLSL:
-    * <a href=
-    * "https://www.shadertoy.com/view/wl23RK">https://www.shadertoy.com/view/wl23RK</a>
-    * .
+    * <a href="https://www.shadertoy.com/view/wl23RK">
+    * https://www.shadertoy.com/view/wl23RK</a>.
     *
     * @param point
     *           the point
@@ -278,9 +259,9 @@ public abstract class SDF {
 
    /**
     * Draws an ellipse, with bounds described by a vector. With
-    * reference to <a href=
-    * "https://www.shadertoy.com/view/4sS3zz">https://www.shadertoy.com/view/4sS3zz</a>
-    * .
+    * reference to
+    * <a href="https://www.shadertoy.com/view/4sS3zz">
+    * https://www.shadertoy.com/view/4sS3zz</a> .
     *
     * @param point
     *           the point
@@ -348,11 +329,18 @@ public abstract class SDF {
       return Math.copySign(Utils.hypot(abx0 * co - px1, ry - py1), py1 - ry);
    }
 
+   /**
+    * Draws an ellipsoid.
+    * 
+    * @param point
+    *           the point
+    * @param bounds
+    *           the bounds
+    * @return the signed distance
+    */
    public static float ellipsoid (
          final Vec3 point,
          final Vec3 bounds ) {
-
-      // TODO: Needs testing.
 
       final float k1 = Utils.hypot(
             Utils.div(point.x, bounds.x * bounds.x),
@@ -462,6 +450,21 @@ public abstract class SDF {
             + Utils.min(Utils.max(a, b), -radius);
    }
 
+   /**
+    * Draws a line from the origin to the destination, where
+    * the distance field is characterized by a third point's
+    * distance from the line.
+    * 
+    * @param point
+    *           the point
+    * @param origin
+    *           the origin
+    * @param dest
+    *           the destination
+    * @return the signed distance
+    * @see Utils#hypot(float, float)
+    * @see Utils#clamp01(float)
+    */
    public static float line (
          final Vec2 point,
          final Vec2 origin,
@@ -492,6 +495,22 @@ public abstract class SDF {
             pay - h * bay);
    }
 
+   /**
+    * Draws a line from the origin to the destination, where
+    * the distance field is characterized by a third point's
+    * distance from the line.
+    * 
+    * @param point
+    *           the point
+    * @param origin
+    *           the origin
+    * @param dest
+    *           the destination
+    * @param rounding
+    *           the rounding factor.
+    * @return the signed distance
+    * @see SDF#line(Vec2, Vec2, Vec2)
+    */
    public static float line (
          final Vec2 point,
          final Vec2 origin,
@@ -501,6 +520,21 @@ public abstract class SDF {
       return SDF.line(point, origin, dest) - rounding;
    }
 
+   /**
+    * Draws a line from the origin to the destination, where
+    * the distance field is characterized by a third point's
+    * distance from the line.
+    * 
+    * @param point
+    *           the point
+    * @param origin
+    *           the origin
+    * @param dest
+    *           the destination
+    * @return the signed distance
+    * @see Utils#hypot(float, float, float)
+    * @see Utils#clamp01(float)
+    */
    public static float line (
          final Vec3 point,
          final Vec3 origin,
@@ -534,6 +568,22 @@ public abstract class SDF {
             paz - h * baz);
    }
 
+   /**
+    * Draws a line from the origin to the destination, where
+    * the distance field is characterized by a third point's
+    * distance from the line.
+    * 
+    * @param point
+    *           the point
+    * @param origin
+    *           the origin
+    * @param dest
+    *           the destination
+    * @param rounding
+    *           the rounding factor.
+    * @return the signed distance
+    * @see SDF#line(Vec3, Vec3, Vec3)
+    */
    public static float line (
          final Vec3 point,
          final Vec3 origin,
@@ -544,49 +594,11 @@ public abstract class SDF {
    }
 
    /**
-    * <a href=
-    * "https://www.shadertoy.com/view/llGfDG">https://www.shadertoy.com/view/llGfDG</a>
-    *
-    * @param point
-    *           the point
-    * @param bounds
-    *           the bounds
-    * @return the signed distance
-    */
-   public static float octagon (
-         final Vec2 point,
-         final float bounds ) {
-
-      final float px0 = Utils.abs(point.x);
-      final float py0 = Utils.abs(point.y);
-      final float dot0 = 2.0f * Utils.min(0.0f,
-            SDF.OCTAGON_X * px0 + SDF.OCTAGON_Y * py0);
-      final float px1 = px0 - dot0 * SDF.OCTAGON_X;
-      final float py1 = py0 - dot0 * SDF.OCTAGON_Y;
-      final float dot1 = 2.0f * Utils.min(0.0f,
-            SDF.OCTAGON_Y * py1 - SDF.OCTAGON_X * px1);
-      final float px2 = px1 + dot1 * SDF.OCTAGON_X;
-      final float limit = SDF.OCTAGON_Z * bounds;
-      final float py3 = py1 - dot1 * SDF.OCTAGON_Y - bounds;
-      return Math.copySign(Utils.hypot(
-            px2 - Utils.clamp(px2, -limit, limit),
-            py3), py3);
-   }
-
-   public static float octagon (
-         final Vec2 point,
-         final float bounds,
-         final float rounding ) {
-
-      return SDF.octagon(point, bounds) - rounding;
-   }
-
-   /**
     * Draws a polygon from a series of vertices. The number of
     * vertices is assumed to be greater than three. With
-    * reference to <a href=
-    * "https://www.shadertoy.com/view/wdBXRW">https://www.shadertoy.com/view/wdBXRW</a>
-    * .
+    * reference to
+    * <a href="https://www.shadertoy.com/view/wdBXRW">
+    * https://www.shadertoy.com/view/wdBXRW</a> .
     *
     * @param point
     *           the point
@@ -672,46 +684,14 @@ public abstract class SDF {
    }
 
    /**
-    * <a href=
-    * "https://www.shadertoy.com/view/XdXcRB">https://www.shadertoy.com/view/XdXcRB</a>
-    *
+    * Draws a sphere.
+    * 
     * @param point
     *           the point
     * @param bounds
     *           the bounds
     * @return the signed distance
     */
-   public static float rhombus (
-         final Vec2 point,
-         final Vec2 bounds ) {
-
-      final float bxsq = bounds.x * bounds.x;
-      final float bysq = bounds.y * bounds.y;
-
-      final float qx = Utils.abs(point.x);
-      final float qy = Utils.abs(point.y);
-      final float ndotqb = qx * bounds.x - qy * bounds.y;
-
-      final float h = Utils.clamp(Utils.div(
-            bxsq - bysq - ndotqb - ndotqb,
-            bxsq + bysq),
-            -1.0f, 1.0f);
-
-      return Math.copySign(
-            Utils.hypot(
-                  qx - 0.5f * bounds.x * (1.0f - h),
-                  qy - 0.5f * bounds.y * (1.0f + h)),
-            qx * bounds.y + qy * bounds.x - bounds.x * bounds.y);
-   }
-
-   public static float rhombus (
-         final Vec2 point,
-         final Vec2 bounds,
-         final float rounding ) {
-
-      return SDF.rhombus(point, bounds) - rounding;
-   }
-
    public static float sphere (
          final Vec3 point,
          final float bounds ) {
@@ -720,62 +700,16 @@ public abstract class SDF {
    }
 
    /**
-    * <a href=
-    * "https://www.shadertoy.com/view/3tSGDy">https://www.shadertoy.com/view/3tSGDy</a>
-    *
-    * @param point
-    *           the point
-    * @param bounds
-    *           the bounds
-    * @param inset
-    *           the inset scale
-    * @param count
-    *           the number of points
-    * @return the signed distance
-    * @see Utils#clamp(float, float, float)
-    * @see Utils#mod(float, float)
-    * @see Utils#atan2(float, float)
-    * @see Utils#abs(float)
-    * @see Utils#div(float, float)
-    * @see Utils#hypot(float, float)
-    * @see Math#copySign(float, float)
-    * @see Math#cos(double)
-    * @see Math#sin(double)
-    * @see Vec2#mag(Vec2)
+    * Finds the subtraction of two shapes as represented by
+    * factors.
+    * 
+    * @param a
+    *           the left factor
+    * @param b
+    *           the right factor
+    * @return the subtraction
+    * @see Utils#max(float, float)
     */
-   public static float star (
-         final Vec2 point,
-         final float bounds,
-         final float inset,
-         final int count ) {
-
-      final float n = count < 3 ? 3.0f : count;
-      final float an = IUtils.PI / n;
-      final float en = IUtils.PI / Utils.clamp(inset, 2.0f, n);
-      final float bn = Utils.mod(Utils.atan2(point.x, point.y), an + an) - an;
-      final float lenp = Vec2.mag(point);
-      final float acsy = (float) Math.sin(an);
-      final float px1 = lenp * (float) Math.cos(bn)
-            - bounds * (float) Math.cos(an);
-      final float py1 = lenp * Utils.abs((float) Math.sin(bn)) - bounds * acsy;
-      final float ecsx = (float) Math.cos(en);
-      final float ecsy = (float) Math.sin(en);
-      final float scalar = Utils.clamp(-(px1 * ecsx + py1 * ecsy), 0.0f,
-            bounds * Utils.div(acsy, ecsy));
-      final float px2 = px1 + ecsx * scalar;
-      return Math.copySign(Utils.hypot(px2, py1 + ecsy * scalar), px2);
-   }
-
-   public static float star (
-         final Vec2 point,
-         final float bounds,
-         final float inset,
-         final int count,
-         final float rounding ) {
-
-      return SDF.star(point, bounds, inset, count) - rounding;
-   }
-
    public static float subtract (
          final float a,
          final float b ) {
@@ -783,6 +717,19 @@ public abstract class SDF {
       return Utils.max(-a, b);
    }
 
+   /**
+    * Finds the rounded subtraction of two shapes as
+    * represented by factors.
+    * 
+    * @param a
+    *           the left factor
+    * @param b
+    *           the right factor
+    * @param radius
+    *           the radius
+    * @return the subtraction
+    * @see SDF#intersectRound(float, float, float)
+    */
    public static float subtractRound (
          final float a,
          final float b,
@@ -791,6 +738,16 @@ public abstract class SDF {
       return SDF.intersectRound(a, -b, radius);
    }
 
+   /**
+    * Finds the union of two shapes as represented by factors.
+    * 
+    * @param a
+    *           the left factor
+    * @param b
+    *           the right factor
+    * @return the union
+    * @see Utils#min(float, float)
+    */
    public static float union (
          final float a,
          final float b ) {
@@ -798,6 +755,21 @@ public abstract class SDF {
       return Utils.min(a, b);
    }
 
+   /**
+    * Finds the rounded union of two shapes as represented by
+    * factors.
+    * 
+    * @param a
+    *           the left factor
+    * @param b
+    *           the right factor
+    * @param radius
+    *           the radius
+    * @return the union
+    * @see Utils#hypot(float, float)
+    * @see Utils#max(float, float)
+    * @see Utils#min(float, float)
+    */
    public static float unionRound (
          final float a,
          final float b,

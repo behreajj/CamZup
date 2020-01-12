@@ -1256,6 +1256,27 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
 
       Vec4.COMPARATOR = comparator;
    }
+   
+   /**
+    * Finds the sign of the vector: -1, if negative; 1, if
+    * positive.
+    * 
+    * @param v
+    *           the vector
+    * @param target
+    *           the output vector
+    * @return the sign
+    */
+   public static Vec4 sign (
+         final Vec4 v,
+         final Vec4 target ) {
+
+      return target.set(
+            Utils.sign(v.x),
+            Utils.sign(v.y),
+            Utils.sign(v.z),
+            Utils.sign(v.w));
+   }
 
    /**
     * Subtracts the right vector from the left vector.

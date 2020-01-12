@@ -9,10 +9,35 @@ import camzup.core.Utils;
 import camzup.core.Vec2;
 import processing.core.PImage;
 
+/**
+ * An extension of PImage, designed primarily around static
+ * methods that generate color gradients similar to those
+ * provided in HTML5 canvas and CSS.
+ */
 public class ZImage extends PImage {
 
+   /**
+    * A temporary color used for converting color data to and
+    * from hexadecimal values.
+    */
    private static final Color clr = new Color();
 
+   /**
+    * Generates a conic gradient, where the factor rotates on
+    * the z axis around an origin point.
+    * 
+    * @param xOrigin
+    *           the origin x coordinate
+    * @param yOrigin
+    *           the origin y coordinate
+    * @param radians
+    *           the angular offset
+    * @param grd
+    *           the gradient
+    * @param target
+    *           the output image
+    * @return the image
+    */
    public static PImage conic (
          final float xOrigin,
          final float yOrigin,
@@ -47,15 +72,50 @@ public class ZImage extends PImage {
       return target;
    }
 
+   /**
+    * Generates a conic gradient, where the factor rotates on
+    * the z axis around an origin point.
+    * 
+    * @param origin
+    *           the origin
+    * @param radians
+    *           the angular offset
+    * @param grd
+    *           the gradient
+    * @param target
+    *           the output image
+    * @return the image
+    */
    public static PImage conic (
          final Vec2 origin,
          final float radians,
          final Gradient grd,
          final PImage target ) {
 
-      return ZImage.conic(origin.x, origin.y, radians, grd, target);
+      return ZImage.conic(
+            origin.x, origin.y,
+            radians, grd, target);
    }
 
+   /**
+    * Generates a linear gradient from an origin point to a
+    * destination point. The value is clamped to a range [0.0,
+    * 1.0] .
+    * 
+    * @param xOrigin
+    *           the origin x coordinate
+    * @param yOrigin
+    *           the origin y coordinate
+    * @param xDest
+    *           the destination x coordinate
+    * @param yDest
+    *           the destination y coordinate
+    * @param grd
+    *           the gradient
+    * @param target
+    *           the output image
+    * @return the image
+    */
    public static PImage linear (
          final float xOrigin,
          final float yOrigin,
@@ -96,15 +156,51 @@ public class ZImage extends PImage {
       return target;
    }
 
+   /**
+    * Generates a linear gradient from an origin point to a
+    * destination point. The value is clamped to a range [0.0,
+    * 1.0] .
+    * 
+    * @param origin
+    *           the origin
+    * @param dest
+    *           the destinatino
+    * @param grd
+    *           the gradient
+    * @param target
+    *           the output image
+    * @return the image
+    */
    public static PImage linear (
          final Vec2 origin,
          final Vec2 dest,
          final Gradient grd,
          final PImage target ) {
 
-      return ZImage.linear(origin.x, origin.y, dest.x, dest.y, grd, target);
+      return ZImage.linear(
+            origin.x, origin.y,
+            dest.x, dest.y,
+            grd, target);
    }
 
+   /**
+    * Generates a radial gradient.
+    * 
+    * This does not account for aspect ratio, so an image that
+    * is not 1:1 will result in an ellipsoid.
+    * 
+    * @param xOrigin
+    *           the x coordinate
+    * @param yOrigin
+    *           the y coordinate
+    * @param radius
+    *           the radius
+    * @param grd
+    *           the gradient
+    * @param target
+    *           the output imag
+    * @return the image
+    */
    public static PImage radial (
          final float xOrigin,
          final float yOrigin,
@@ -144,6 +240,22 @@ public class ZImage extends PImage {
       return target;
    }
 
+   /**
+    * Generates a radial gradient.
+    * 
+    * This does not account for aspect ratio, so an image that
+    * is not 1:1 will result in an ellipsoid.
+    * 
+    * @param origin
+    *           the origin
+    * @param radius
+    *           the radius
+    * @param grd
+    *           the gradient
+    * @param target
+    *           the output image
+    * @return the image
+    */
    public static PImage radial (
          final Vec2 origin,
          final float radius,
@@ -175,7 +287,7 @@ public class ZImage extends PImage {
 
       for (int i = 0, y = h - 1; y > -1; --y) {
 
-         final int grbl = 0xff00007f | (int) (y * hInv + 0.5f) << 0x8;
+         final int grbl = 0xff000080 | (int) (y * hInv + 0.5f) << 0x8;
 
          for (int x = 0; x < w; ++x, ++i) {
 

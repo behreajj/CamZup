@@ -1,9 +1,5 @@
 package camzup;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
-import camzup.core.Color;
 import camzup.core.Gradient;
 import camzup.core.Mesh3;
 import camzup.core.Utils;
@@ -11,8 +7,15 @@ import camzup.core.Vec2;
 import camzup.core.Vec3;
 import processing.core.PApplet;
 
+/**
+ * The main class of this library. This is not needed to use
+ * the library and is for development and debugging only.
+ */
 public class CamZup {
 
+   /**
+    * The library's current version.
+    */
    public final static String VERSION = "##library.prettyVersion##";
 
    static String toHardCode ( final Mesh3 mesh ) {
@@ -83,25 +86,33 @@ public class CamZup {
    }
 
    public static void main ( final String[] args ) {
-      Gradient gr = new Gradient();
-      gr.append(new Gradient.Key(0.0f, Color.white(new Color())));
-      System.out.println(0.00392156862745098f);
+
+      // Gradient gr = Gradient.paletteMagma(new Gradient());
+      // System.out.println(gr.toBlenderCode("Magma", 8));
    }
 
-   public static < T > T[] sort ( final T[] arr,
-         final Comparator < ? super T > comparator ) {
-
-      Arrays.sort(arr, comparator);
-      return arr;
-   }
-
+   /**
+    * Gets the version of the library.
+    * 
+    * @return the version
+    */
    public static String version () {
 
       return CamZup.VERSION;
    }
 
+   /**
+    * The PApplet referenced by this class.
+    */
    public final PApplet parent;
 
+   /**
+    * Constructs a new instance of this library with the
+    * PApplet as a reference.
+    * 
+    * @param parent
+    *           the parent applet
+    */
    public CamZup ( final PApplet parent ) {
 
       this.parent = parent;

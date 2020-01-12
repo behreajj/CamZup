@@ -223,13 +223,13 @@ public class Ray2 extends Ray implements Comparable < Ray2 > {
     */
    protected boolean equals ( final Ray2 ray ) {
 
-      if (this.dir == null) {
-         if (ray.dir != null) {
-            return false;
-         }
-      } else if (!this.dir.equals(ray.dir)) {
-         return false;
-      }
+      // if (this.dir == null) {
+      // if (ray.dir != null) {
+      // return false;
+      // }
+      // } else if (!this.dir.equals(ray.dir)) {
+      // return false;
+      // }
 
       if (this.origin == null) {
          if (ray.origin != null) {
