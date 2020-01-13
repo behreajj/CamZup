@@ -72,9 +72,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
        * Compares the w, z, y and x component.
        *
        * @param a
-       *           the left operand
+       *           left comparisand
        * @param b
-       *           the right operand
+       *           right comparisand
        * @return the comparison
        */
       @Override
@@ -126,7 +126,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       @Override
       public boolean hasNext () {
 
-         return this.index < this.vec.size();
+         return this.index < this.vec.length();
       }
 
       /**
@@ -188,9 +188,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * Adds two vectors together.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the sum
@@ -225,13 +225,13 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
-    * Evaluates two vectors like booleans, using the analytic
-    * definition of the AND logic gate.
+    * Evaluates two vectors like booleans, using the AND logic
+    * gate.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the evaluation
@@ -269,9 +269,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * Tests to see if two vectors approximate each other.
     *
     * @param a
-    *           left operand
+    *           left comparisand
     * @param b
-    *           right operand
+    *           right comparisand
     * @return the evaluation
     * @see Utils#approxFast(float, float)
     */
@@ -899,9 +899,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * right.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the modulated vector
@@ -1114,13 +1114,13 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
-    * Evaluates two vectors like booleans, using the analytic
-    * definition of the OR logic gate.
+    * Evaluates two vectors like booleans, using the OR logic
+    * gate.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the evaluation
@@ -1142,9 +1142,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * Raises a scalar to a vector.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the result
@@ -1166,9 +1166,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * Raises a vector to the power of a scalar.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the result
@@ -1190,9 +1190,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * Raises a vector to the power of another vector.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the result
@@ -1221,6 +1221,42 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    public static Vec4 right ( final Vec4 target ) {
 
       return target.set(1.0f, 0.0f, 0.0f, 0.0f);
+   }
+
+   /**
+    * Rounds each component of the vector to a given number of
+    * places right of the decimal point.
+    *
+    * Beware of inaccuracies due to single precision.
+    *
+    * @param v
+    *           the input vector
+    * @param places
+    *           the number of places
+    * @param target
+    *           the output vector
+    * @return the rounded vector
+    * @see Math#round(double)
+    * @see Math#pow(double, double)
+    * @see Vec4#round(Vec4, Vec4)
+    */
+   public static Vec4 round (
+         final Vec4 v,
+         final int places,
+         final Vec4 target ) {
+
+      if (places < 1) {
+         return Vec4.round(v, target);
+      }
+
+      final double n = Math.pow(10, places);
+      final double nInv = 1.0d / n;
+
+      return target.set(
+            (float) (Math.round(v.x * n) * nInv),
+            (float) (Math.round(v.y * n) * nInv),
+            (float) (Math.round(v.z * n) * nInv),
+            (float) (Math.round(v.w * n) * nInv));
    }
 
    /**
@@ -1256,13 +1292,13 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
 
       Vec4.COMPARATOR = comparator;
    }
-   
+
    /**
     * Finds the sign of the vector: -1, if negative; 1, if
     * positive.
-    * 
+    *
     * @param v
-    *           the vector
+    *           the input vector
     * @param target
     *           the output vector
     * @return the sign
@@ -1282,9 +1318,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * Subtracts the right vector from the left vector.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the difference
@@ -1335,13 +1371,13 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
-    * Evaluates two vectors like booleans, using the analytic
-    * definition of the exclusive or (XOR) logic gate.
+    * Evaluates two vectors like booleans, using the exclusive
+    * or (XOR) logic gate.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the evaluation
@@ -1654,11 +1690,11 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    @Override
    public int hashCode () {
 
-      int hash = Utils.HASH_BASE;
-      hash = hash * Utils.HASH_MUL ^ Float.floatToIntBits(this.x);
-      hash = hash * Utils.HASH_MUL ^ Float.floatToIntBits(this.y);
-      hash = hash * Utils.HASH_MUL ^ Float.floatToIntBits(this.z);
-      hash = hash * Utils.HASH_MUL ^ Float.floatToIntBits(this.w);
+      int hash = IUtils.HASH_BASE;
+      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.x);
+      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y);
+      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.z);
+      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.w);
       return hash;
    }
 

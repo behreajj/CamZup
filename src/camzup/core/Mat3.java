@@ -47,7 +47,7 @@ public class Mat3 extends Matrix {
       @Override
       public boolean hasNext () {
 
-         return this.index < this.mtx.size();
+         return this.index < this.mtx.length();
       }
 
       /**
@@ -100,6 +100,35 @@ public class Mat3 extends Matrix {
             a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02,
             a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12,
             a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22);
+   }
+
+   /**
+    * Decomposes a matrix into its constituent transforms:
+    * translation, rotation and scale. Rotation is returned
+    * from the function, while translation and scale are loaded
+    * into out parameters.
+    * 
+    * @param m
+    *           the matrix
+    * @param trans
+    *           the output translation
+    * @param scale
+    *           the output scale
+    * @return the rotation
+    */
+   public static float decompose (
+         final Mat3 m,
+         final Vec2 trans,
+         final Vec2 scale ) {
+
+      final float xMag = Utils.hypot(m.m00, m.m10);
+      final float yMag = Utils.hypot(m.m01, m.m11);
+      final float det = Mat3.determinant(m);
+      scale.set(xMag, det < 0.0f ? -yMag : yMag);
+
+      trans.set(m.m02, m.m12);
+
+      return Utils.modRadians((float) Math.atan2(m.m10, m.m00));
    }
 
    /**
@@ -1287,9 +1316,9 @@ public class Mat3 extends Matrix {
     *
     * @return the string
     */
-   public String toStringTab () {
+   public String toStringCol () {
 
-      return this.toStringTab(4);
+      return this.toStringCol(4);
    }
 
    /**
@@ -1300,7 +1329,7 @@ public class Mat3 extends Matrix {
     *           number of decimal places
     * @return the string
     */
-   public String toStringTab ( final int places ) {
+   public String toStringCol ( final int places ) {
 
       return new StringBuilder()
             // .append(this.hashIdentityString())

@@ -969,27 +969,6 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Clamps a whole number value between a lower and an upper
-    * bound.
-    *
-    * @param value
-    *           the input value
-    * @param lowerBound
-    *           the upper bound
-    * @param upperBound
-    *           the lower bound
-    * @return the clamped value
-    */
-   public static int clamp (
-         final int value,
-         final int lowerBound,
-         final int upperBound ) {
-
-      return value < lowerBound ? lowerBound
-            : value > upperBound ? upperBound : value;
-   }
-
-   /**
     * Clamps a real number value between a lower and an upper
     * bound.
     *
@@ -1005,6 +984,27 @@ public abstract class Utils implements IUtils {
          final float value,
          final float lowerBound,
          final float upperBound ) {
+
+      return value < lowerBound ? lowerBound
+            : value > upperBound ? upperBound : value;
+   }
+
+   /**
+    * Clamps a whole number value between a lower and an upper
+    * bound.
+    *
+    * @param value
+    *           the input value
+    * @param lowerBound
+    *           the upper bound
+    * @param upperBound
+    *           the lower bound
+    * @return the clamped value
+    */
+   public static int clamp (
+         final int value,
+         final int lowerBound,
+         final int upperBound ) {
 
       return value < lowerBound ? lowerBound
             : value > upperBound ? upperBound : value;
@@ -1616,12 +1616,12 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Rounded a value to a number of places right of the
-    * decimal point. Promotes the float to a double, rounds it,
-    * then downcasts back to a float.
+    * Rounds a value to a number of places right of the decimal
+    * point. Promotes the float to a double, rounds it, then
+    * downcasts back to a float.
     *
-    * Note that floating (or single) precision will likely led
-    * to errors.
+    * Note that floating (or single) precision will likely lead
+    * to inaccuracies.
     *
     * @param value
     *           value

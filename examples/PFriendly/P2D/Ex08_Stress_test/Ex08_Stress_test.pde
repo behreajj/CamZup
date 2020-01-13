@@ -1,7 +1,7 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-Yup2 graphics;
+YupJ2 graphics;
 
 int rows = 50;
 int cols = 50;
@@ -11,40 +11,41 @@ float w;
 float h;
 
 void setup() {
-  size(512, 512, "camzup.pfriendly.Yup2");
+  size(720, 405, "camzup.pfriendly.YupJ2");
   smooth(8);
   frameRate(1000);
+  noStroke();
   colorMode(RGB, 1.0);
-  graphics = (Yup2)getGraphics();
+  graphics = (YupJ2)getGraphics();
   w = (float)width / (cols - 1.0);
   h = (float)height / (rows - 1.0);
 }
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  
+
   float right = width * 0.5;
   float left = -right;
   float top = height * 0.5;
   float bottom = -top;
 
-  background(#fff7d5);
+  graphics.background();
 
-  pushMatrix();
-  rotateZ(frameCount * .01);
+  graphics.pushMatrix();
+  graphics.rotateZ(frameCount * 0.01);
   for (int i = 0; i < rows; ++i) {
     float yPrc = i * toY;
-    float y = lerp(bottom, top, yPrc);
+    float y = Utils.lerpUnclamped(bottom, top, yPrc);
     for (int j = 0; j < cols; ++j) {
-      float xPrc = j * toY;
-      float x = lerp(left, right, xPrc);
-      fill(xPrc, yPrc, 0.5, 0.75);
-      ellipse(x, y, w, h);
+      float xPrc = j * toX;
+      float x = Utils.lerpUnclamped(left, right, xPrc);
+      graphics.fill(xPrc, yPrc, 0.5, 0.75);
+      graphics.ellipse(x, y, w, h);
     }
   }
-  popMatrix();
-  
-  textSize(52);
-  fill(0xaf202020);
-  text("Lorem ipsum", 0.0, 0.0);
+  graphics.popMatrix();
+
+  graphics.textSize(52);
+  graphics.fill(0xaf202020);
+  graphics.text("Lorem ipsum", 0.0, 0.0);
 }

@@ -13,7 +13,7 @@ public interface IMatrix
    /**
     * Returns a matrix element by index, as though the matrix
     * were a 1D array.
-    * 
+    *
     * @param index
     *           the index
     * @return the value
@@ -23,9 +23,11 @@ public interface IMatrix
    /**
     * Retrieves a matrix element by two indices, as though the
     * matrix were a 2D array.
-    * 
-    * @param i the row
-    * @param j the column
+    *
+    * @param i
+    *           the row
+    * @param j
+    *           the column
     * @return the value
     */
    float get ( final int i, final int j );
@@ -41,14 +43,14 @@ public interface IMatrix
 
    /**
     * Returns the number of elements in the matrix.
-    * 
-    * @return the size
+    *
+    * @return the length
     */
-   int size ();
+   int length ();
 
    /**
     * Converts the matrix to a 1D array.
-    * 
+    *
     * @return the array.
     */
    float[] toArray ();

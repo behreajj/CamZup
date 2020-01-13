@@ -1175,7 +1175,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @return the key count
     * @see TreeSet#size()
     */
-   public int keyCount () {
+   public int length () {
 
       return this.keys.size();
    }
@@ -1274,55 +1274,73 @@ public class Gradient implements Iterable < Gradient.Key > {
       return this.keys.toArray(target);
    }
 
+   /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes.
+    *
+    * @param name
+    *           the material's name
+    * @param samples
+    *           number of gradient samples
+    * @return the string
+    */
    public String toBlenderCode ( final String name, final int samples ) {
 
+      /*
+       * Blender gradients may contain a max of 32 color keys.
+       * While they may contain a minimum of only 1, they default
+       * to 2 keys when created.
+       */
       final int valSamples = Utils.clamp(samples, 2, 32);
       final Color[] clrs = this.evalRange(valSamples);
       final int len = clrs.length;
       final int last = len - 1;
-      final float toPercent = 1.0f / (len - 1.0f);
+      final float toPercent = 1.0f / last;
 
-      final StringBuilder result = new StringBuilder();
-      result.append("from bpy import data as D, context as C\n\n");
-      result.append("grd_data = [");
+      final StringBuilder result = new StringBuilder()
+            .append("from bpy import data as D, context as C\n\n")
+            .append("grd_data = [");
+
       for (int i = 0; i < len; ++i) {
          final Color clr = clrs[i];
          final float percent = i * toPercent;
-         result.append("\n    {\"position\": ");
-         result.append(Utils.toFixed(percent, 6));
-         result.append(", \"color\": (");
-         result.append(Utils.toFixed(clr.x, 6));
-         result.append(", ");
-         result.append(Utils.toFixed(clr.y, 6));
-         result.append(", ");
-         result.append(Utils.toFixed(clr.z, 6));
-         result.append(", ");
-         result.append(Utils.toFixed(clr.w, 6));
-         result.append(")}");
+         result.append("\n    {\"position\": ")
+               .append(Utils.toFixed(percent, 6))
+               .append(", \"color\": (")
+               .append(Utils.toFixed(clr.x, 6))
+               .append(',').append(' ')
+               .append(Utils.toFixed(clr.y, 6))
+               .append(',').append(' ')
+               .append(Utils.toFixed(clr.z, 6))
+               .append(',').append(' ')
+               .append(Utils.toFixed(clr.w, 6))
+               .append(")}");
+
          if (i < last) {
             result.append(",");
          }
       }
       result.append("]\n\n");
 
-      result.append("material = D.materials.new(\"");
-      result.append(name);
-      result.append("\")\n");
-      result.append("material.use_nodes = True\n");
-      result.append("mat_node_tree = material.node_tree\n");
-      result.append("mat_nodes = mat_node_tree.nodes\n");
-      result.append("clr_rmp_node = mat_nodes.new(\"ShaderNodeValToRGB\")\n");
-      result.append("clr_rmp_data = clr_rmp_node.color_ramp\n");
-      result.append("color_keys = clr_rmp_data.elements\n\n");
-      result.append("color_keys[0].position = grd_data[0][\"position\"]\n");
-      result.append("color_keys[0].color = grd_data[0][\"color\"]\n\n");
-      result.append("color_keys[1].position = grd_data[1][\"position\"]\n");
-      result.append("color_keys[1].color = grd_data[1][\"color\"]\n\n");
-      result.append("i_itr = range(2, len(grd_data))\n");
-      result.append("for i in i_itr:");
-      result.append("\n    datum = grd_data[i]");
-      result.append("\n    new_key = color_keys.new(datum[\"position\"])");
-      result.append("\n    new_key.color = datum[\"color\"]");
+      result.append("material = D.materials.new(\"")
+            .append(name)
+            .append("\")\n")
+            .append("material.use_nodes = True\n")
+            .append("mat_node_tree = material.node_tree\n")
+            .append("mat_nodes = mat_node_tree.nodes\n")
+            .append("clr_rmp_node = mat_nodes.new(\"ShaderNodeValToRGB\")\n")
+            .append("clr_rmp_data = clr_rmp_node.color_ramp\n")
+            .append("color_keys = clr_rmp_data.elements\n\n")
+            .append("color_keys[0].position = grd_data[0][\"position\"]\n")
+            .append("color_keys[0].color = grd_data[0][\"color\"]\n\n")
+            .append("color_keys[1].position = grd_data[1][\"position\"]\n")
+            .append("color_keys[1].color = grd_data[1][\"color\"]\n\n")
+            .append("i_itr = range(2, len(grd_data))\n")
+            .append("for i in i_itr:")
+            .append("\n    datum = grd_data[i]")
+            .append("\n    new_key = color_keys.new(datum[\"position\"])")
+            .append("\n    new_key.color = datum[\"color\"]\n");
       return result.toString();
    }
 

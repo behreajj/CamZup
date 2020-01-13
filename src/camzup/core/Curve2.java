@@ -2702,7 +2702,7 @@ public class Curve2 extends Curve
 
       return this.knots.getLast();
    }
-   
+
    @Override
    public int hashCode () {
 
@@ -2727,12 +2727,13 @@ public class Curve2 extends Curve
    }
 
    /**
-    * The number of knots in the curve.
+    * Gets the number of knots in the curve.
     *
-    * @return the size
+    * @return the knot count
     * @see LinkedList#size()
     */
-   public int knotCount () {
+   @Override
+   public int length () {
 
       return this.knots.size();
    }

@@ -291,9 +291,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
        * Compares the y and x component.
        *
        * @param a
-       *           the left operand
+       *           left comparisand
        * @param b
-       *           the right operand
+       *           right comparisand
        * @return the comparison
        */
       @Override
@@ -427,7 +427,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       @Override
       public boolean hasNext () {
 
-         return this.index < this.vec.size();
+         return this.index < this.vec.length();
       }
 
       /**
@@ -493,9 +493,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * Adds two vectors together.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the sum
@@ -514,9 +514,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * Adds and then normalizes two vectors.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the normalized sum
@@ -545,9 +545,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * intermediate, unnormalized sum as an output.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @param sum
@@ -584,13 +584,13 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Evaluates two vectors like booleans, using the analytic
-    * definition of the AND logic gate.
+    * Evaluates two vectors like booleans, using the AND logic
+    * gate.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the evaluation
@@ -666,9 +666,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * Tests to see if two vectors approximate each other.
     *
     * @param a
-    *           left operand
+    *           left comparisand
     * @param b
-    *           right operand
+    *           right comparisand
     * @param tolerance
     *           the tolerance
     * @return the evaluation
@@ -728,9 +728,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * Tests to see if two vectors are parallel.
     *
     * @param a
-    *           the left comparisand
+    *           left comparisand
     * @param b
-    *           the right comparisand
+    *           right comparisand
     * @return the evaluation
     */
    public static boolean areParallel (
@@ -756,7 +756,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    /**
     * Returns a point on a Bezier curve described by two anchor
     * points and two control points according to a step in
-    * [0.0, 1.0].
+    * [0.0, 1.0] .
     *
     * When the step is less than one, returns the first anchor
     * point. When the step is greater than one, returns the
@@ -813,7 +813,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    /**
     * Returns a tangent on a Bezier curve described by two
     * anchor points and two control points according to a step
-    * in [0.0, 1.0].
+    * in [0.0, 1.0] .
     *
     * When the step is less than one, returns the first anchor
     * point subtracted from the first control point. When the
@@ -1497,8 +1497,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Finds the vector's heading in the range [-\u03c0,
-    * \u03c0].
+    * Finds the vector's heading in the range [-\u03c0, \u03c0]
+    * .
     *
     * @param v
     *           the input vector
@@ -1512,7 +1512,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Finds the vector's heading in the range [0.0, \u03c4].
+    * Finds the vector's heading in the range [0.0, \u03c4] .
     *
     * @param v
     *           the input vector
@@ -1527,7 +1527,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
    /**
     * Tests to see if the vector is on the unit circle, i.e.,
-    * has a magnitude of approximately 1.0.
+    * has a magnitude of approximately 1.0 .
     *
     * @param v
     *           the input vector
@@ -1846,9 +1846,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * right.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the modulated vector
@@ -1867,7 +1867,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    /**
     * A specialized form of mod which subtracts the floor of
     * the vector from the vector. For Vec2s, useful for
-    * managing texture coordinates in the range [0.0, 1.0].
+    * managing texture coordinates in the range [0.0, 1.0] .
     *
     * @param v
     *           the input vector
@@ -1994,7 +1994,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
    /**
     * Divides a vector by its magnitude, such that the new
-    * magnitude is 1.0. <em>\u00e2</em> = <em>a</em> /
+    * magnitude is 1.0 . <em>\u00e2</em> = <em>a</em> /
     * |<em>a</em>| . The result is a unit vector, as it lies on
     * the circumference of a unit circle.
     *
@@ -2058,13 +2058,13 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Evaluates two vectors like booleans, using the analytic
-    * definition of the OR logic gate.
+    * Evaluates two vectors like booleans, using the OR logic
+    * gate.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the evaluation
@@ -2171,9 +2171,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * Raises a scalar to a vector.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the result
@@ -2193,9 +2193,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * Raises a vector to the power of a scalar.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the result
@@ -2215,9 +2215,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * Raises a vector to the power of another vector.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the result
@@ -2237,9 +2237,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * Projects one vector onto another.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the projection
@@ -2258,9 +2258,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * <em>b</em>.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @return the scalar projection
     * @see Vec2#magSq(Vec2)
     * @see Vec2#dot(Vec2, Vec2)
@@ -2284,9 +2284,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * <em>b</em> )
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the projection
@@ -2689,6 +2689,40 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
+    * Rounds each component of the vector to a given number of
+    * places right of the decimal point.
+    *
+    * Beware of inaccuracies due to single precision.
+    *
+    * @param v
+    *           the input vector
+    * @param places
+    *           the number of places
+    * @param target
+    *           the output vector
+    * @return the rounded vector
+    * @see Math#round(double)
+    * @see Math#pow(double, double)
+    * @see Vec2#round(Vec2, Vec2)
+    */
+   public static Vec2 round (
+         final Vec2 v,
+         final int places,
+         final Vec2 target ) {
+
+      if (places < 1) {
+         return Vec2.round(v, target);
+      }
+
+      final double n = Math.pow(10, places);
+      final double nInv = 1.0d / n;
+
+      return target.set(
+            (float) (Math.round(v.x * n) * nInv),
+            (float) (Math.round(v.y * n) * nInv));
+   }
+
+   /**
     * Rounds each component of the vector to the nearest whole
     * number.
     *
@@ -2740,9 +2774,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    /**
     * Finds the sign of the vector: -1, if negative; 1, if
     * positive.
-    * 
+    *
     * @param v
-    *           the vector
+    *           the input vector
     * @param target
     *           the output vector
     * @return the sign
@@ -2760,9 +2794,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * Subtracts the right vector from the left vector.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the difference
@@ -2782,9 +2816,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * normalizes the difference.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the normalized difference
@@ -2813,9 +2847,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * normalizes the difference.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @param dir
@@ -2867,13 +2901,13 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Evaluates two vectors like booleans, using the analytic
-    * definition of the exclusive or (XOR) logic gate.
+    * Evaluates two vectors like booleans, using the exclusive
+    * or (XOR) logic gate.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the evaluation

@@ -222,9 +222,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
        * Compares the z, y and x component.
        *
        * @param a
-       *           the left operand
+       *           left comparisand
        * @param b
-       *           the right operand
+       *           right comparisand
        * @return the comparison
        */
       @Override
@@ -361,7 +361,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       @Override
       public boolean hasNext () {
 
-         return this.index < this.vec.size();
+         return this.index < this.vec.length();
       }
 
       /**
@@ -427,9 +427,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * Adds two vectors together.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the sum
@@ -449,9 +449,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * Adds and then normalizes two vectors.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the normalized sum
@@ -482,9 +482,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * intermediate, unnormalized sum as an output.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @param sum
@@ -522,13 +522,13 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Evaluates two vectors like booleans, using the analytic
-    * definition of the AND logic gate.
+    * Evaluates two vectors like booleans, using the AND logic
+    * gate.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the evaluation
@@ -588,9 +588,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * Tests to see if two vectors approximate each other.
     *
     * @param a
-    *           left operand
+    *           left comparisand
     * @param b
-    *           right operand
+    *           right comparisand
     * @return the evaluation
     * @see Utils#approxFast(float, float)
     */
@@ -768,7 +768,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    /**
     * Returns a point on a Bezier curve described by two anchor
     * points and two control points according to a step in
-    * [0.0, 1.0].
+    * [0.0, 1.0] .
     *
     * When the step is less than one, returns the first anchor
     * point. When the step is greater than one, returns the
@@ -819,7 +819,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    /**
     * Returns a tangent on a Bezier curve described by two
     * anchor points and two control points according to a step
-    * in [0.0, 1.0].
+    * in [0.0, 1.0] .
     *
     * When the step is less than one, returns the first anchor
     * point subtracted from the first control point. When the
@@ -1036,9 +1036,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * The 3D equivalent to the 2D vector's perpendicular.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the cross product
@@ -1061,9 +1061,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * matrices.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the normalized cross product
@@ -1096,9 +1096,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * as an output.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @param crossed
@@ -1722,7 +1722,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
    /**
     * Finds the vector's inclination in the range [-\u03c0 /
-    * 2.0, \u03c0 / 2.0]. It is necessary to calculate the
+    * 2.0, \u03c0 / 2.0] . It is necessary to calculate the
     * vector's magnitude in order to find its inclination.
     *
     * @param v
@@ -1744,7 +1744,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
    /**
     * Finds the vector's inclination in the range [3.0 \u03c0 /
-    * 2.0, \u03c0 / 2.0].
+    * 2.0, \u03c0 / 2.0] .
     *
     * @param v
     *           the input vector
@@ -2085,9 +2085,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * right.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the modulated vector
@@ -2301,13 +2301,13 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Evaluates two vectors like booleans, using the analytic
-    * definition of the OR logic gate.
+    * Evaluates two vectors like booleans, using the OR logic
+    * gate.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the evaluation
@@ -2328,9 +2328,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * Raises a scalar to a vector.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the result
@@ -2351,9 +2351,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * Raises a vector to the power of a scalar.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the result
@@ -2374,9 +2374,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * Raises a vector to the power of another vector.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the result
@@ -2397,9 +2397,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * Projects one vector onto another.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the projection
@@ -2418,9 +2418,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * <em>b</em>.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @return the scalar projection
     * @see Vec3#magSq(Vec3)
     * @see Vec3#dot(Vec3, Vec3)
@@ -2444,9 +2444,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * <em>b</em> )
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the projection
@@ -2573,7 +2573,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       return Vec3.fromSpherical(
             rng.uniform(-IUtils.PI, IUtils.PI),
             rng.uniform(-IUtils.HALF_PI, IUtils.HALF_PI),
-            1.0f, target);
+            rng.uniform(rhoMin, rhoMax), target);
    }
 
    /**
@@ -3015,6 +3015,41 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
+    * Rounds each component of the vector to a given number of
+    * places right of the decimal point.
+    *
+    * Beware of inaccuracies due to single precision.
+    *
+    * @param v
+    *           the input vector
+    * @param places
+    *           the number of places
+    * @param target
+    *           the output vector
+    * @return the rounded vector
+    * @see Math#round(double)
+    * @see Math#pow(double, double)
+    * @see Vec3#round(Vec3, Vec3)
+    */
+   public static Vec3 round (
+         final Vec3 v,
+         final int places,
+         final Vec3 target ) {
+
+      if (places < 1) {
+         return Vec3.round(v, target);
+      }
+
+      final double n = Math.pow(10, places);
+      final double nInv = 1.0d / n;
+
+      return target.set(
+            (float) (Math.round(v.x * n) * nInv),
+            (float) (Math.round(v.y * n) * nInv),
+            (float) (Math.round(v.z * n) * nInv));
+   }
+
+   /**
     * Rounds each component of the vector to the nearest whole
     * number.
     *
@@ -3066,9 +3101,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    /**
     * Finds the sign of the vector: -1, if negative; 1, if
     * positive.
-    * 
+    *
     * @param v
-    *           the vector
+    *           the input vector
     * @param target
     *           the output vector
     * @return the sign
@@ -3082,14 +3117,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
             Utils.sign(v.y),
             Utils.sign(v.z));
    }
-   
+
    /**
     * Subtracts the right vector from the left vector.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the difference
@@ -3110,9 +3145,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * normalizes the difference.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the normalized difference
@@ -3143,9 +3178,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * normalizes the difference.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @param dir
@@ -3198,13 +3233,13 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Evaluates two vectors like booleans, using the analytic
-    * definition of the exclusive or (XOR) logic gate.
+    * Evaluates two vectors like booleans, using the exclusive
+    * or (XOR) logic gate.
     *
     * @param a
-    *           the left operand
+    *           left operand
     * @param b
-    *           the right operand
+    *           right operand
     * @param target
     *           the output vector
     * @return the evaluation

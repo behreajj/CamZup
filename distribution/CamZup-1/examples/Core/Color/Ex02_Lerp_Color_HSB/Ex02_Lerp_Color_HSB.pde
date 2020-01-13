@@ -15,12 +15,12 @@ void setup() {
 void randomColors() {
   float hue0 = random(0.0, 1.0);
   int hueSign = random(0.0, 1.0) < 0.5 ? -1 : 1;
-  float hueOffset = hueSign * random(0.01, 0.5);
+  float hueOffset = hueSign * random(0.01, 0.425);
   float hue1 = Utils.mod1(hue0 + hueOffset);
   a = color(hue0, 1.0, 1.0, 1.0);
   b = color(hue1, 1.0, 1.0, 1.0);
-  println(hex(a));
-  println(hex(b));
+  println(hex(a), hex(b));
+  println("");
 }
 
 void mouseReleased() {

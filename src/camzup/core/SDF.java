@@ -107,7 +107,7 @@ public abstract class SDF {
    /**
     * Draws a two dimensional box whose dimensions are
     * described by the bounds.
-    * 
+    *
     * @param point
     *           the point
     * @param bounds
@@ -133,7 +133,7 @@ public abstract class SDF {
    /**
     * Draws a two dimensional box with rounded corners whose
     * dimensions are described by the bounds.
-    * 
+    *
     * @param point
     *           the point
     * @param bounds
@@ -154,7 +154,7 @@ public abstract class SDF {
    /**
     * Draws a three dimensional box whose dimensions are
     * described by the bounds.
-    * 
+    *
     * @param point
     *           the point
     * @param bounds
@@ -182,7 +182,7 @@ public abstract class SDF {
    /**
     * Draws a three dimensional box with rounded corners whose
     * dimensions are described by the bounds.
-    * 
+    *
     * @param point
     *           the point
     * @param bounds
@@ -202,7 +202,7 @@ public abstract class SDF {
 
    /**
     * Draws a circle.
-    * 
+    *
     * @param point
     *           the point
     * @param bounds
@@ -219,7 +219,7 @@ public abstract class SDF {
 
    /**
     * Draws a conic gradient.
-    * 
+    *
     * @param pointx
     *           the x coordinate
     * @param pointy
@@ -242,7 +242,7 @@ public abstract class SDF {
 
    /**
     * Draws a conic gradient.
-    * 
+    *
     * @param point
     *           the point
     * @param radians
@@ -331,7 +331,7 @@ public abstract class SDF {
 
    /**
     * Draws an ellipsoid.
-    * 
+    *
     * @param point
     *           the point
     * @param bounds
@@ -360,7 +360,7 @@ public abstract class SDF {
 
    /**
     * Draws a hexagon.
-    * 
+    *
     * @param point
     *           the point
     * @param bounds
@@ -389,7 +389,7 @@ public abstract class SDF {
 
    /**
     * Draws a hexagon with rounded corners.
-    * 
+    *
     * @param point
     *           the point
     * @param bounds
@@ -410,7 +410,7 @@ public abstract class SDF {
    /**
     * Finds the intersection between two shapes as represented
     * by factors.
-    * 
+    *
     * @param a
     *           the left factor
     * @param b
@@ -428,7 +428,7 @@ public abstract class SDF {
    /**
     * Finds the rounded intersection between two shapes as
     * represented by factors.
-    * 
+    *
     * @param a
     *           the left factor
     * @param b
@@ -454,7 +454,7 @@ public abstract class SDF {
     * Draws a line from the origin to the destination, where
     * the distance field is characterized by a third point's
     * distance from the line.
-    * 
+    *
     * @param point
     *           the point
     * @param origin
@@ -499,7 +499,7 @@ public abstract class SDF {
     * Draws a line from the origin to the destination, where
     * the distance field is characterized by a third point's
     * distance from the line.
-    * 
+    *
     * @param point
     *           the point
     * @param origin
@@ -524,7 +524,7 @@ public abstract class SDF {
     * Draws a line from the origin to the destination, where
     * the distance field is characterized by a third point's
     * distance from the line.
-    * 
+    *
     * @param point
     *           the point
     * @param origin
@@ -572,7 +572,7 @@ public abstract class SDF {
     * Draws a line from the origin to the destination, where
     * the distance field is characterized by a third point's
     * distance from the line.
-    * 
+    *
     * @param point
     *           the point
     * @param origin
@@ -665,7 +665,7 @@ public abstract class SDF {
    /**
     * Draws a rounded polygon from an array of vertices,
     * assumed to be greater than two.
-    * 
+    *
     * @param point
     *           the point
     * @param vertices
@@ -685,7 +685,7 @@ public abstract class SDF {
 
    /**
     * Draws a sphere.
-    * 
+    *
     * @param point
     *           the point
     * @param bounds
@@ -702,7 +702,7 @@ public abstract class SDF {
    /**
     * Finds the subtraction of two shapes as represented by
     * factors.
-    * 
+    *
     * @param a
     *           the left factor
     * @param b
@@ -720,7 +720,7 @@ public abstract class SDF {
    /**
     * Finds the rounded subtraction of two shapes as
     * represented by factors.
-    * 
+    *
     * @param a
     *           the left factor
     * @param b
@@ -740,7 +740,7 @@ public abstract class SDF {
 
    /**
     * Finds the union of two shapes as represented by factors.
-    * 
+    *
     * @param a
     *           the left factor
     * @param b
@@ -758,7 +758,7 @@ public abstract class SDF {
    /**
     * Finds the rounded union of two shapes as represented by
     * factors.
-    * 
+    *
     * @param a
     *           the left factor
     * @param b

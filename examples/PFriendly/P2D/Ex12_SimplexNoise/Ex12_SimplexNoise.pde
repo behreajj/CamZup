@@ -5,7 +5,6 @@ float scale = 1.0;
 int octaves = 4;
 float lacunarity = 2.5;
 float persist = 0.5;
-int seed = (int)System.currentTimeMillis();
 
 Vec3 noise = new Vec3();
 Vec3 deriv = new Vec3();
@@ -42,7 +41,7 @@ void draw() {
       float xNorm = x * wNorm;
       noise.x = (xNorm + xNorm - 1.0) * scale;
 
-      Simplex.fbm(noise, seed, octaves, 
+      Simplex.fbm(noise, Simplex.DEFAULT_SEED, octaves, 
         lacunarity, persist, deriv); 
 
       pixels[idx] = Color.toHexInt(

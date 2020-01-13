@@ -66,7 +66,9 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
     * @param curves
     *           the list of curves
     */
-   public CurveEntity3 ( final String name, final Transform3 transform,
+   public CurveEntity3 ( 
+         final String name, 
+         final Transform3 transform,
          final Curve3... curves ) {
 
       super(name);
@@ -271,7 +273,7 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
 
          int knotIndex = 0;
          final Curve3 curve = curveItr.next();
-         final int knotLast = curve.knotCount() - 1;
+         final int knotLast = curve.length() - 1;
          final Iterator < Knot3 > knotItr = curve.iterator();
 
          result.append("        {\"closed_loop\": ")

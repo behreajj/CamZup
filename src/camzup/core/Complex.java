@@ -89,7 +89,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       @Override
       public boolean hasNext () {
 
-         return this.index < this.z.size();
+         return this.index < this.z.length();
       }
 
       /**

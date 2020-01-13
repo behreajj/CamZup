@@ -31,7 +31,7 @@ void setup() {
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  background(#fff7d5);
+  graphics.background();
   graphics.origin();
   graphics.shape(entity);
   graphics.handles(entity, 0.0075);

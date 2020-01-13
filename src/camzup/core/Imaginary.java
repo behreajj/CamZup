@@ -14,28 +14,28 @@ public abstract class Imaginary implements IImaginary {
    /**
     * Number of components held by the complex number.
     */
-   protected final int size;
+   protected final int length;
 
    /**
     * The default constructor
     *
-    * @param size
+    * @param length
     *           the number of components
     */
-   protected Imaginary ( final int size ) {
+   protected Imaginary ( final int length ) {
 
-      this.size = size;
+      this.length = length;
    }
 
    /**
     * Gets the number of components held by the complex number.
     *
-    * @return the size
+    * @return the length
     */
    @Override
-   public int size () {
+   public int length () {
 
-      return this.size;
+      return this.length;
    }
 
 }

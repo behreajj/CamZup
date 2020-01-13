@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import camzup.core.Curve2;
 import camzup.core.Curve2.Knot2;
 import camzup.core.CurveEntity2;
+import camzup.core.Mat3;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
 import camzup.core.MeshEntity2;
@@ -428,6 +429,25 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       return target.set(
             this.cameraX,
             this.cameraY);
+   }
+
+   /**
+    * Gets the renderer modelview matrix.
+    *
+    * @param target
+    *           the output matrix
+    * @return the modelview
+    */
+   public Mat3 getMatrix ( final Mat3 target ) {
+
+      return target.set(
+            this.modelview.m00, this.modelview.m01,
+            this.modelview.m03,
+
+            this.modelview.m10, this.modelview.m11,
+            this.modelview.m13,
+
+            0.0f, 0.0f, 1.0f);
    }
 
    /**

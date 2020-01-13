@@ -1835,7 +1835,8 @@ public class Color extends Vec4 {
 
    /**
     * Converts a color from RGB to CIE XYZ. References Pharr,
-    * Jakob, and Humphreys' <a href="http://www.pbr-book.org/3ed-2018/Color_and_Radiometry/
+    * Jakob, and Humphreys' <a href=
+    * "http://www.pbr-book.org/3ed-2018/Color_and_Radiometry/
     * The_SampledSpectrum_Class.html#fragment-
     * SpectrumUtilityDeclarations-2">Physically Based
     * Rendering</a>.
@@ -1982,7 +1983,8 @@ public class Color extends Vec4 {
 
    /**
     * Converts a color from CIE XYZ to RGB. References Pharr,
-    * Jakob, and Humphreys' <a href="http://www.pbr-book.org/3ed-2018/Color_and_Radiometry/
+    * Jakob, and Humphreys' <a href=
+    * "http://www.pbr-book.org/3ed-2018/Color_and_Radiometry/
     * The_SampledSpectrum_Class.html#fragment-
     * SpectrumUtilityDeclarations-1">Physically Based
     * Rendering</a>.

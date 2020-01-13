@@ -13,6 +13,8 @@ import camzup.core.Curve2;
 import camzup.core.Curve2.Knot2;
 import camzup.core.CurveEntity2;
 import camzup.core.IUtils;
+import camzup.core.Mat3;
+import camzup.core.Mat4;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
 import camzup.core.MeshEntity2;
@@ -856,8 +858,46 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float m00, final float m01, final float m02,
          final float m10, final float m11, final float m12 ) {
 
-      this.affineNative.setTransform(m00, m10, m01, m11, m02, m12);
+      /*
+       * Beware of unconventional method signature:
+       *
+       * m00: scale x, m10: shear y, m01: shear x, m11: scale y,
+       * m02: trans x, m12: trans y .
+       */
+      this.affineNative.setTransform(
+            m00, m10,
+            m01, m11,
+            m02, m12);
       this.g2.transform(this.affineNative);
+   }
+
+   /**
+    * Applies an affine transform matrix to the current
+    * renderer transform.
+    *
+    * @param source
+    *           the source matrix
+    */
+   public void applyMatrix ( final Mat3 source ) {
+
+      this.applyMatrix(
+            source.m00, source.m01, source.m02,
+            source.m10, source.m11, source.m12);
+   }
+
+   /**
+    * Applies an affine transform matrix to the current
+    * renderer transform.
+    *
+    * @param source
+    *           the source matrix
+    */
+   @Override
+   public void applyMatrix ( final PMatrix2D source ) {
+
+      this.applyMatrix(
+            source.m00, source.m01, source.m02,
+            source.m10, source.m11, source.m12);
    }
 
    /**
@@ -1402,6 +1442,104 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    public float getLocY () {
 
       return this.cameraY;
+   }
+
+   /**
+    * Retrieves the renderer's matrix.
+    *
+    * @param target
+    *           the output matrix
+    * @return the renderer matrix
+    */
+   public Mat3 getMatrix ( final Mat3 target ) {
+
+      return target.set(
+            (float) this.affineNative.getScaleX(),
+            (float) this.affineNative.getShearX(),
+            (float) this.affineNative.getTranslateX(),
+            (float) this.affineNative.getShearY(),
+            (float) this.affineNative.getScaleY(),
+            (float) this.affineNative.getTranslateY(),
+            0.0f, 0.0f, 1.0f);
+   }
+
+   /**
+    * Retrieves the renderer's matrix.
+    *
+    * @param target
+    *           the output matrix
+    * @return the renderer matrix
+    */
+   public Mat4 getMatrix ( final Mat4 target ) {
+
+      return target.set(
+            (float) this.affineNative.getScaleX(),
+            (float) this.affineNative.getShearX(),
+            0.0f,
+            (float) this.affineNative.getTranslateX(),
+
+            (float) this.affineNative.getShearY(),
+            (float) this.affineNative.getScaleY(),
+            0.0f,
+            (float) this.affineNative.getTranslateY(),
+
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
+
+   }
+
+   /**
+    * Retrieves the renderer's matrix.
+    *
+    * @param target
+    *           the output matrix
+    * @return the renderer matrix
+    */
+   @Override
+   public PMatrix2D getMatrix ( PMatrix2D target ) {
+
+      if (target == null) {
+         target = new PMatrix2D();
+      }
+
+      target.set(
+            (float) this.affineNative.getScaleX(),
+            (float) this.affineNative.getShearX(),
+            (float) this.affineNative.getTranslateX(),
+            (float) this.affineNative.getShearY(),
+            (float) this.affineNative.getScaleY(),
+            (float) this.affineNative.getTranslateY());
+      return target;
+   }
+
+   /**
+    * Retrieves the renderer's matrix.
+    *
+    * @param target
+    *           the output matrix
+    * @return the renderer matrix
+    */
+   @Override
+   public PMatrix3D getMatrix ( PMatrix3D target ) {
+
+      if (target == null) {
+         target = new PMatrix3D();
+      }
+
+      target.set(
+            (float) this.affineNative.getScaleX(),
+            (float) this.affineNative.getShearX(),
+            0.0f,
+            (float) this.affineNative.getTranslateX(),
+
+            (float) this.affineNative.getShearY(),
+            (float) this.affineNative.getScaleY(),
+            0.0f,
+            (float) this.affineNative.getTranslateY(),
+
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
+      return target;
    }
 
    /**
@@ -2407,10 +2545,33 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float m00, final float m01, final float m02,
          final float m10, final float m11, final float m12 ) {
 
+      /*
+       * Beware of unconventional method signature:
+       *
+       * m00: scale x, m10: shear y, m01: shear x, m11: scale y,
+       * m02: trans x, m12: trans y .
+       */
       this.affineNative.setTransform(
-            m00, m01, m02,
-            m10, m11, m12);
+            m00, m10,
+            m01, m11,
+            m02, m12);
       this.g2.setTransform(this.affineNative);
+   }
+
+   /**
+    * Sets the renderer matrix.
+    *
+    * @param source
+    *           a 3 x 3 matrix
+    * @see AffineTransform#setTransform(double, double, double,
+    *      double, double, double)
+    * @see Graphics2D#setTransform(AffineTransform)
+    */
+   public void setMatrix ( final Mat3 source ) {
+
+      this.setMatrix(
+            source.m00, source.m01, source.m02,
+            source.m10, source.m11, source.m12);
    }
 
    /**

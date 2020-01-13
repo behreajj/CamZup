@@ -14,27 +14,27 @@ public abstract class Vec implements IVec {
    /**
     * Number of components held by the vector.
     */
-   protected final int size;
+   protected final int length;
 
    /**
     * The default constructor.
     *
-    * @param size
+    * @param length
     *           the number of components
     */
-   protected Vec ( final int size ) {
+   protected Vec ( final int length ) {
 
-      this.size = size;
+      this.length = length;
    }
 
    /**
     * Gets the number of components held by the vector.
     *
-    * @return the size
+    * @return the length
     */
    @Override
-   public int size () {
+   public int length () {
 
-      return this.size;
+      return this.length;
    }
 }

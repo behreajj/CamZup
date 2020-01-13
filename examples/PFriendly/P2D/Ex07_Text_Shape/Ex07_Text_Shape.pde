@@ -13,7 +13,7 @@ void setup() {
   graphics2 = (YupJ2)getGraphics();
 
   textMode(SHAPE);
-  font = createFont("Garamond", 200);
+  font = createFont("Garamond", 180);
 
   glyphs = graphics2.glyph(font, 0.0, "ipsum");
 
@@ -21,7 +21,7 @@ void setup() {
     .setFill(false)
     .setStroke(true)
     .setStrokeWeight(0.01);
-  
+
   int len = glyphs.length;
   float toPercent = 1.0 / (float)len;
   Vec2 right = new Vec2(width * 0.5, 0.0);
@@ -30,7 +30,7 @@ void setup() {
     CurveEntity2 glyph = glyphs[i];
     glyph.appendMaterial(material);
     glyph.transform.scaleTo(200);
-    
+
     float percent = i * toPercent;
     Vec2 pos = Vec2.mix(left, right, percent, new Vec2());
     glyph.transform.moveTo(pos);
@@ -40,8 +40,8 @@ void setup() {
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  background(#fff7d5);
-  camera();
+  graphics2.background();
+  graphics2.camera();
 
   for (CurveEntity2 glyph : glyphs) {
     graphics2.shape(glyph);

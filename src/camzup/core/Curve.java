@@ -3,7 +3,7 @@ package camzup.core;
 /**
  * An abstract parent for curve objects.
  */
-public abstract class Curve extends EntityData {
+public abstract class Curve extends EntityData implements ICurve {
 
    /**
     * Determines how an arc will be displayed.

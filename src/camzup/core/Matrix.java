@@ -14,27 +14,27 @@ public abstract class Matrix implements IMatrix {
    /**
     * The number of elements in the matrix.
     */
-   protected final int size;
+   protected final int length;
 
    /**
     * Constructs a matrix with a specified size.
-    * 
-    * @param size
-    *           the size
+    *
+    * @param length
+    *           the length
     */
-   protected Matrix ( final int size ) {
+   protected Matrix ( final int length ) {
 
-      this.size = size;
+      this.length = length;
    }
 
    /**
     * Returns the number of elements in the matrix.
-    * 
+    *
     * @return the size
     */
    @Override
-   public int size () {
+   public int length () {
 
-      return this.size;
+      return this.length;
    }
 }

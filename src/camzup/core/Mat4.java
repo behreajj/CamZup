@@ -47,7 +47,7 @@ public class Mat4 extends Matrix {
       @Override
       public boolean hasNext () {
 
-         return this.index < this.mtx.size();
+         return this.index < this.mtx.length();
       }
 
       /**
@@ -101,6 +101,36 @@ public class Mat4 extends Matrix {
             a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12, a.m13 + b.m13,
             a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22, a.m23 + b.m23,
             a.m30 + b.m30, a.m31 + b.m31, a.m32 + b.m32, a.m33 + b.m33);
+   }
+
+   /**
+    * Decomposes a matrix into its constituent transforms:
+    * translation, rotation and scale. Rotation is returned
+    * from the function, while translation and scale are loaded
+    * into out parameters.
+    * 
+    * @param m
+    *           the matrix
+    * @param trans
+    *           the output translation
+    * @param rot
+    *           the output rotation
+    * @param scale
+    *           the output scale
+    */
+   public static void decompose (
+         final Mat4 m,
+         final Vec3 trans,
+         final Quaternion rot,
+         final Vec3 scale ) {
+
+      float xMag = Utils.hypot(m.m00, m.m10, m.m20);
+      float yMag = Utils.hypot(m.m01, m.m11, m.m21);
+      float zMag = Utils.hypot(m.m02, m.m12, m.m22);
+      float det = Mat4.determinant(m);
+      scale.set(xMag, det < 0.0f ? -yMag : yMag, zMag);
+      Quaternion.fromMat4(m, rot);
+      trans.set(m.m03, m.m13, m.m23);
    }
 
    /**
@@ -2097,9 +2127,9 @@ public class Mat4 extends Matrix {
     *
     * @return the string
     */
-   public String toStringTab () {
+   public String toStringCol () {
 
-      return this.toStringTab(4);
+      return this.toStringCol(4);
    }
 
    /**
@@ -2110,7 +2140,7 @@ public class Mat4 extends Matrix {
     *           number of decimal places
     * @return the string
     */
-   public String toStringTab ( final int places ) {
+   public String toStringCol ( final int places ) {
 
       return new StringBuilder()
             // .append(this.hashIdentityString())

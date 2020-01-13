@@ -32,7 +32,7 @@ public interface IImaginary
     *
     * @return the size
     */
-   int size ();
+   int length ();
 
    /**
     * Returns a float array containing the complex number's

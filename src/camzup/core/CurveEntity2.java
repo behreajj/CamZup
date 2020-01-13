@@ -273,7 +273,7 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
 
          int knotIndex = 0;
          final Curve2 curve = curveItr.next();
-         final int knotLast = curve.knotCount() - 1;
+         final int knotLast = curve.length() - 1;
          final Iterator < Knot2 > knotItr = curve.iterator();
 
          result.append("        {\"closed_loop\": ")

@@ -35,8 +35,8 @@ void draw() {
   transform.rotateBy(0.01, new Vec3(0.0, 1.0, 1.0));
 
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  background(#fff7d5);
-  lights();
+  graphics3.background();
+  graphics3.lights();
 
   graphics3.origin(75.0, 1.0);
   graphics3.shape(entity);

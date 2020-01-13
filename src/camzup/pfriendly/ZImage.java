@@ -25,7 +25,7 @@ public class ZImage extends PImage {
    /**
     * Generates a conic gradient, where the factor rotates on
     * the z axis around an origin point.
-    * 
+    *
     * @param xOrigin
     *           the origin x coordinate
     * @param yOrigin
@@ -75,7 +75,7 @@ public class ZImage extends PImage {
    /**
     * Generates a conic gradient, where the factor rotates on
     * the z axis around an origin point.
-    * 
+    *
     * @param origin
     *           the origin
     * @param radians
@@ -101,7 +101,7 @@ public class ZImage extends PImage {
     * Generates a linear gradient from an origin point to a
     * destination point. The value is clamped to a range [0.0,
     * 1.0] .
-    * 
+    *
     * @param xOrigin
     *           the origin x coordinate
     * @param yOrigin
@@ -160,7 +160,7 @@ public class ZImage extends PImage {
     * Generates a linear gradient from an origin point to a
     * destination point. The value is clamped to a range [0.0,
     * 1.0] .
-    * 
+    *
     * @param origin
     *           the origin
     * @param dest
@@ -185,10 +185,10 @@ public class ZImage extends PImage {
 
    /**
     * Generates a radial gradient.
-    * 
+    *
     * This does not account for aspect ratio, so an image that
     * is not 1:1 will result in an ellipsoid.
-    * 
+    *
     * @param xOrigin
     *           the x coordinate
     * @param yOrigin
@@ -242,10 +242,10 @@ public class ZImage extends PImage {
 
    /**
     * Generates a radial gradient.
-    * 
+    *
     * This does not account for aspect ratio, so an image that
     * is not 1:1 will result in an ellipsoid.
-    * 
+    *
     * @param origin
     *           the origin
     * @param radius
@@ -305,7 +305,7 @@ public class ZImage extends PImage {
     * pixels, using integer floor modulo to wrap the source
     * image. The source image can be offset horizontally and/or
     * vertically, creating the illusion of parallax.
-    * 
+    *
     * @param source
     *           source pixel array
     * @param wSource
@@ -343,7 +343,7 @@ public class ZImage extends PImage {
     * pixels, using integer floor modulo to wrap the source
     * image. The source image can be offset horizontally and/or
     * vertically, creating the illusion of parallax.
-    * 
+    *
     * @param source
     *           the source image
     * @param target
@@ -368,7 +368,7 @@ public class ZImage extends PImage {
     * pixels, using integer floor modulo to wrap the source
     * image. The source image can be offset horizontally and/or
     * vertically, creating the illusion of parallax.
-    * 
+    *
     * @param source
     *           the source image
     * @param target
@@ -401,7 +401,7 @@ public class ZImage extends PImage {
     * pixels, using integer floor modulo to wrap the source
     * image. The source image can be offset horizontally and/or
     * vertically, creating the illusion of parallax.
-    * 
+    *
     * @param source
     *           the source image
     * @param target
@@ -428,7 +428,7 @@ public class ZImage extends PImage {
 
    /**
     * Constructs an image from the native AWT image.
-    * 
+    *
     * @param img
     *           the image
     */
@@ -440,7 +440,7 @@ public class ZImage extends PImage {
    /**
     * Constructs an image from its dimensions, width and
     * height.
-    * 
+    *
     * @param width
     *           the image width
     * @param height
@@ -453,7 +453,7 @@ public class ZImage extends PImage {
 
    /**
     * Constructs an image from the dimensions and format.
-    * 
+    *
     * @param width
     *           the image width
     * @param height
@@ -472,7 +472,7 @@ public class ZImage extends PImage {
    /**
     * Constructs an image from the dimensions, format and pixel
     * density.
-    * 
+    *
     * @param width
     *           the image width
     * @param height

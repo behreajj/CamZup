@@ -28,10 +28,10 @@ void setup() {
 
 void draw() {
   entity.transform.rotateZ(-0.05);
-  
-  surface.setTitle(String.format("%.1f", frameRate));
 
-  background(#fff7d5);
+  surface.setTitle(Utils.toFixed(frameRate, 1));
+
+  graphics2.background();
   graphics2.camera();
   graphics2.origin();
   graphics2.shape(entity);

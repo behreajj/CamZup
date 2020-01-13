@@ -31,9 +31,9 @@ public interface IVec
    /**
     * Gets the number of components held by the vector.
     *
-    * @return the size
+    * @return the length
     */
-   int size ();
+   int length ();
 
    /**
     * Returns a float array containing this vector's

@@ -63,6 +63,16 @@ public class Mesh2 extends Mesh {
       }
 
       /**
+       * Returns the number of vertices in this face.
+       *
+       * @return the vertex count
+       */
+      public int length () {
+
+         return this.vertices.length;
+      }
+
+      /**
        * Sets this face's vertices to refer to a an array.
        *
        * @param vertices
@@ -96,16 +106,6 @@ public class Mesh2 extends Mesh {
          }
          sb.append(" ] }");
          return sb.toString();
-      }
-
-      /**
-       * Returns the number of vertices in this face.
-       *
-       * @return the vertex count
-       */
-      public int vertCount () {
-
-         return this.vertices.length;
       }
    }
 

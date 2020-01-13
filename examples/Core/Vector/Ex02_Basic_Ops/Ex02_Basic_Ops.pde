@@ -19,10 +19,10 @@ void setup() {
   // mathematically, but has many practical
   // applications.
   Vec2 product = new Vec2();
-  Vec2.mult(a, b, product);
+  Vec2.mul(a, b, product);
   println("vec - vec product", product);
 
-  Vec2.mult(a, -4.0, product);
+  Vec2.mul(a, -4.0, product);
   println("vec - scalar product", product);
 
   Vec2 quotient = new Vec2();

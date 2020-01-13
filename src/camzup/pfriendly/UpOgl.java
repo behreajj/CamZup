@@ -4,6 +4,8 @@ import camzup.core.Color;
 import camzup.core.Curve2;
 import camzup.core.Curve2.Knot2;
 import camzup.core.IUtils;
+import camzup.core.Mat3;
+import camzup.core.Mat4;
 import camzup.core.Transform;
 import camzup.core.Transform2;
 import camzup.core.Utils;
@@ -136,7 +138,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final Transform2 transform,
          final Transform.Order trOrder ) {
 
-      final int knotLength = curve.knotCount();
+      final int knotLength = curve.length();
       if (knotLength < 2) {
          return;
       }
@@ -1099,6 +1101,51 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Applies the matrix to the renderer.
+    *
+    * @param source
+    *           the source matrix
+    */
+   public void applyMatrix ( final Mat3 source ) {
+
+      this.applyMatrixImpl(
+            source.m00, source.m01, 0.0f, source.m02,
+            source.m10, source.m11, 0.0f, source.m12,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            source.m20, source.m21, 0.0f, source.m22);
+   }
+
+   /**
+    * Applies the matrix to the renderer.
+    *
+    * @param source
+    *           the source matrix
+    */
+   public void applyMatrix ( final Mat4 source ) {
+
+      this.applyMatrixImpl(
+            source.m00, source.m01, source.m02, source.m03,
+            source.m10, source.m11, source.m12, source.m13,
+            source.m20, source.m21, source.m22, source.m23,
+            source.m30, source.m31, source.m32, source.m33);
+   }
+
+   /**
+    * Applies the projection to the current.
+    *
+    * @param m
+    *           the matrix
+    */
+   public void applyProjection ( final Mat4 m ) {
+
+      this.applyProjection(
+            m.m00, m.m01, m.m02, m.m03,
+            m.m10, m.m11, m.m12, m.m13,
+            m.m20, m.m21, m.m22, m.m23,
+            m.m30, m.m31, m.m32, m.m33);
+   }
+
+   /**
     * Draws an arc at a location from a start angle to a stop
     * angle. The meaning of the first four parameters depends
     * on the renderer's ellipseMode.
@@ -1628,6 +1675,29 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public float getLocZ () {
 
       return this.cameraZ;
+   }
+
+   /**
+    * Gets the renderer modelview matrix.
+    *
+    * @param target
+    *           the output matrix
+    * @return the modelview
+    */
+   public Mat4 getMatrix ( final Mat4 target ) {
+
+      return target.set(
+            this.modelview.m00, this.modelview.m01,
+            this.modelview.m02, this.modelview.m03,
+
+            this.modelview.m10, this.modelview.m11,
+            this.modelview.m12, this.modelview.m13,
+
+            this.modelview.m20, this.modelview.m21,
+            this.modelview.m22, this.modelview.m23,
+
+            this.modelview.m30, this.modelview.m31,
+            this.modelview.m32, this.modelview.m33);
    }
 
    /**
@@ -2518,11 +2588,64 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param source
     *           the source matrix
     */
+   public void setMatrix ( final Mat3 source ) {
+
+      this.resetMatrix();
+      this.applyMatrixImpl(
+            source.m00, source.m01, 0.0f, source.m02,
+            source.m10, source.m11, 0.0f, source.m12,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            source.m20, source.m21, 0.0f, source.m22);
+   }
+
+   /**
+    * Sets the renderer matrix to the source.
+    *
+    * @param source
+    *           the source matrix
+    */
+   public void setMatrix ( final Mat4 source ) {
+
+      this.resetMatrix();
+      this.applyMatrixImpl(
+            source.m00, source.m01, source.m02, source.m03,
+            source.m10, source.m11, source.m12, source.m13,
+            source.m20, source.m21, source.m22, source.m23,
+            source.m30, source.m31, source.m32, source.m33);
+   }
+
+   /**
+    * Sets the renderer matrix to the source.
+    *
+    * @param source
+    *           the source matrix
+    */
    @Override
    public void setMatrix ( final PMatrix3D source ) {
 
       this.resetMatrix();
-      this.applyMatrix(source);
+      this.applyMatrixImpl(
+            source.m00, source.m01, source.m02, source.m03,
+            source.m10, source.m11, source.m12, source.m13,
+            source.m20, source.m21, source.m22, source.m23,
+            source.m30, source.m31, source.m32, source.m33);
+   }
+
+   /**
+    * Sets the renderer's current projection.
+    *
+    * @param m
+    *           the matrix
+    */
+   public void setProjection ( final Mat4 m ) {
+
+      this.flush();
+      this.projection.set(
+            m.m00, m.m01, m.m02, m.m03,
+            m.m10, m.m11, m.m12, m.m13,
+            m.m20, m.m21, m.m22, m.m23,
+            m.m30, m.m31, m.m32, m.m33);
+      this.updateProjmodelview();
    }
 
    /**
@@ -3012,7 +3135,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param order
     *           the transform order
     */
-   public void transform ( final Transform2 tr2,
+   public void transform (
+         final Transform2 tr2,
          final Transform.Order order ) {
 
       final Vec2 dim = tr2.getScale(this.tr2Scale);
@@ -3145,6 +3269,22 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * access.
     *
     * @param m
+    *           the matrix
+    */
+   public void updateGLModelview ( final Mat4 m ) {
+
+      this.updateGLModelview(
+            m.m00, m.m01, m.m02, m.m03,
+            m.m10, m.m11, m.m12, m.m13,
+            m.m20, m.m21, m.m22, m.m23,
+            m.m30, m.m31, m.m32, m.m33);
+   }
+
+   /**
+    * Exposes the OpenGL model view array to more direct
+    * access.
+    *
+    * @param m
     *           the Processing matrix
     */
    public void updateGLModelview ( final PMatrix3D m ) {
@@ -3204,6 +3344,20 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * Exposes the OpenGL normal array to more direct access.
     *
     * @param m
+    *           the matrix
+    */
+   public void updateGLNormal ( final Mat4 m ) {
+
+      this.updateGLNormal(
+            m.m00, m.m01, m.m02,
+            m.m10, m.m11, m.m12,
+            m.m20, m.m21, m.m22);
+   }
+
+   /**
+    * Exposes the OpenGL normal array to more direct access.
+    *
+    * @param m
     *           the Processing matrix
     */
    public void updateGLNormal ( final PMatrix3D m ) {
@@ -3213,33 +3367,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             m.m10, m.m11, m.m12,
             m.m20, m.m21, m.m22);
    }
-
-   // @Override
-   // protected float screenYImpl (
-   // final float x,
-   // final float y,
-   // final float z,
-   // final float w ) {
-   //
-   // final float oy = this.projection.m10 * x +
-   // this.projection.m11 * y +
-   // this.projection.m12 * z +
-   // this.projection.m13 * w;
-   //
-   // final float ow = this.projection.m30 * x +
-   // this.projection.m31 * y +
-   // this.projection.m32 * z +
-   // this.projection.m33 * w;
-   //
-   // // if (ow == 0.0f) {
-   // // return 0.0f;
-   // // }
-   //
-   // if (ow != 0.0f && ow != 1.0f) {
-   // return this.height * (1.0f + oy / ow) * 0.5f;
-   // }
-   // return this.height * (1.0f + oy) * 0.5f;
-   // }
 
    /**
     * Exposes the OpenGL projection array to more direct
@@ -3307,6 +3434,22 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.glProjection[13] = m13;
       this.glProjection[14] = m23;
       this.glProjection[15] = m33;
+   }
+
+   /**
+    * Exposes the OpenGL projection array to more direct
+    * access.
+    *
+    * @param m
+    *           the matrix
+    */
+   public void updateGLProjection ( final Mat4 m ) {
+
+      this.updateGLProjection(
+            m.m00, m.m01, m.m02, m.m03,
+            m.m10, m.m11, m.m12, m.m13,
+            m.m20, m.m21, m.m22, m.m23,
+            m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -3398,7 +3541,23 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * direct access.
     *
     * @param m
-    *           the Processing Matrix
+    *           the matrix
+    */
+   public void updateGLProjmodelview ( final Mat4 m ) {
+
+      this.updateGLProjmodelview(
+            m.m00, m.m01, m.m02, m.m03,
+            m.m10, m.m11, m.m12, m.m13,
+            m.m20, m.m21, m.m22, m.m23,
+            m.m30, m.m31, m.m32, m.m33);
+   }
+
+   /**
+    * Exposes the OpenGL project model view array to more
+    * direct access.
+    *
+    * @param m
+    *           the Processing matrix
     */
    public void updateGLProjmodelview ( final PMatrix3D m ) {
 

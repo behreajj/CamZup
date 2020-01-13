@@ -7,8 +7,8 @@ import camzup.core.Vec3;
 
 public class Cam3 extends Entity {
 
-   //TODO: EXPERIMENTAL.
-   
+   // TODO: EXPERIMENTAL.
+
    public final Up3 renderer;
 
    /**
