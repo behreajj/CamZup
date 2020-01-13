@@ -66,8 +66,8 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
     * @param curves
     *           the list of curves
     */
-   public CurveEntity3 ( 
-         final String name, 
+   public CurveEntity3 (
+         final String name,
          final Transform3 transform,
          final Curve3... curves ) {
 

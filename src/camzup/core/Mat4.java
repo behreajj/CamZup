@@ -108,7 +108,7 @@ public class Mat4 extends Matrix {
     * translation, rotation and scale. Rotation is returned
     * from the function, while translation and scale are loaded
     * into out parameters.
-    * 
+    *
     * @param m
     *           the matrix
     * @param trans
@@ -117,6 +117,11 @@ public class Mat4 extends Matrix {
     *           the output rotation
     * @param scale
     *           the output scale
+    * @see Utils#hypot(float, float, float)
+    * @see Mat4#determinant(Mat4)
+    * @see Utils#div(float, float)
+    * @see Quaternion#fromAxes(float, float, float, float,
+    *      float, float, float, float, float, Quaternion)
     */
    public static void decompose (
          final Mat4 m,
@@ -124,12 +129,39 @@ public class Mat4 extends Matrix {
          final Quaternion rot,
          final Vec3 scale ) {
 
-      float xMag = Utils.hypot(m.m00, m.m10, m.m20);
-      float yMag = Utils.hypot(m.m01, m.m11, m.m21);
-      float zMag = Utils.hypot(m.m02, m.m12, m.m22);
-      float det = Mat4.determinant(m);
+      final float xMag = Utils.hypot(m.m00, m.m10, m.m20);
+      final float yMag = Utils.hypot(m.m01, m.m11, m.m21);
+      final float zMag = Utils.hypot(m.m02, m.m12, m.m22);
+      final float det = Mat4.determinant(m);
       scale.set(xMag, det < 0.0f ? -yMag : yMag, zMag);
-      Quaternion.fromMat4(m, rot);
+
+      /*
+       * Extract rotation matrix from affine transform matrix by
+       * dividing each axis by the scale.
+       */
+      final float sxInv = Utils.div(1.0f, xMag);
+      final float syInv = Utils.div(1.0f, yMag);
+      final float szInv = Utils.div(1.0f, zMag);
+
+      final float rightx = m.m00 * sxInv;
+      final float righty = m.m10 * sxInv;
+      final float rightz = m.m20 * sxInv;
+
+      final float forwardx = m.m01 * syInv;
+      final float forwardy = m.m11 * syInv;
+      final float forwardz = m.m21 * syInv;
+
+      final float upx = m.m02 * szInv;
+      final float upy = m.m12 * szInv;
+      final float upz = m.m22 * szInv;
+
+      Quaternion.fromAxes(
+            rightx, forwardy, upz,
+            forwardz, upy,
+            upx, rightz,
+            righty, forwardx,
+            rot);
+
       trans.set(m.m03, m.m13, m.m23);
    }
 

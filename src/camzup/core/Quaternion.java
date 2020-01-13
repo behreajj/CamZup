@@ -1206,18 +1206,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final float righty, final float forwardx,
          final Quaternion target ) {
 
-//      out.setComponents(
-//            sqrt(max(0.0, 1.0 + i.x - j.y - k.z)) * 0.5, // x
-//            sqrt(max(0.0, 1.0 - i.x + j.y - k.z)) * 0.5, // y
-//            sqrt(max(0.0, 1.0 - i.x - j.y + k.z)) * 0.5, // z
-//            sqrt(max(0.0, 1.0 + i.x + j.y + k.z)) * 0.5); // w
-//
-//      out.x *= Math.sign(j.z - k.y);
-//      out.y *= Math.sign(k.x - i.z);
-//      out.z *= Math.sign(i.y - j.x);
-//      return out;
-
-      // TODO: Double check that this formula is correct...
       final float w = (float) (0.5d * Math.sqrt(
             Utils.max(0.0f, 1.0f + rightx + forwardy + upz)));
 
@@ -1307,38 +1295,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             nx * sinHalf,
             ny * sinHalf,
             nz * sinHalf);
-   }
-
-   /**
-    * Creates a quaternion from a 4 x 4 matrix.
-    *
-    * @param source
-    *           the matrix
-    * @param target
-    *           the output quaternion
-    * @return the quaternion
-    * @see Quaternion#fromAxes(float, float, float, float,
-    *      float, float, float, float, float, Quaternion)
-    */
-   public static Quaternion fromMat4 (
-         final Mat4 source,
-         final Quaternion target ) {
-
-      // TODO: This function does not produce the correct results.
-
-      // final float rightx, final float forwardy, final float
-      // upz,
-      // final float forwardz, final float upy,
-      // final float upx, final float rightz,
-      // final float righty, final float forwardx,
-      // final Quaternion target ) {
-
-      return Quaternion.fromAxes(
-            source.m00, source.m11, source.m22,
-            source.m21, source.m12,
-            source.m02, source.m20,
-            source.m10, source.m01,
-            target);
    }
 
    /**

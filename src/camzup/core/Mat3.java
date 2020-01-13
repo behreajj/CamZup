@@ -107,7 +107,7 @@ public class Mat3 extends Matrix {
     * translation, rotation and scale. Rotation is returned
     * from the function, while translation and scale are loaded
     * into out parameters.
-    * 
+    *
     * @param m
     *           the matrix
     * @param trans

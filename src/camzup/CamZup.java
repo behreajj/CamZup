@@ -1,7 +1,5 @@
 package camzup;
 
-import camzup.core.Gradient;
-import camzup.core.Mat3;
 import camzup.core.Mat4;
 import camzup.core.Mesh3;
 import camzup.core.Quaternion;
@@ -9,7 +7,6 @@ import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
-import camzup.core.Vec4;
 import processing.core.PApplet;
 
 /**
@@ -92,7 +89,7 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-      Random rng = new Random();
+      // final Random rng = new Random();
 
       // Gradient gr = Gradient.paletteMagma(new Gradient());
       // System.out.println(gr.toBlenderCode("Magma", 8));
@@ -127,26 +124,30 @@ public class CamZup {
       // System.out.println(td);
       // System.out.println(sd);
 
-      Vec3 tin = Vec3.randomCartesian(rng, -1.0f, 1.0f, new Vec3());
-      Quaternion rin = Quaternion.random(rng, new Quaternion());
-      Vec3 sin = Vec3.randomCartesian(rng, 1.0f, 5.0f, new Vec3());
-      System.out.println(tin);
-      System.out.println(rin);
-      System.out.println(sin);
+      // final Vec3 tin = Vec3.randomCartesian(rng, -1.0f, 1.0f,
+      // new Vec3());
+      // final Quaternion rin = Quaternion.random(rng, new
+      // Quaternion());
+      // final Vec3 sin = Vec3.randomCartesian(rng, 1.0f, 5.0f,
+      // new Vec3());
+      // System.out.println(tin);
+      // System.out.println(rin);
+      // System.out.println(sin);
+      //
+      // final Mat4 t = Mat4.fromTranslation(tin, new Mat4());
+      // final Mat4 r = Mat4.fromRotation(rin, new Mat4());
+      // final Mat4 s = Mat4.fromScale(sin, new Mat4());
+      // final Mat4 m = Mat4.mul(t, r, s, new Mat4());
+      // System.out.println(m.toStringCol());
+      //
+      // final Vec3 tout = new Vec3();
+      // final Quaternion rout = new Quaternion();
+      // final Vec3 sout = new Vec3();
+      // Mat4.decompose(m, tout, rout, sout);
+      // System.out.println(tout);
+      // System.out.println(rout);
+      // System.out.println(sout);
 
-      Mat4 t = Mat4.fromTranslation(tin, new Mat4());
-      Mat4 r = Mat4.fromRotation(rin, new Mat4());
-      Mat4 s = Mat4.fromScale(sin, new Mat4());
-      Mat4 m = Mat4.mul(t, r, s, new Mat4());
-      System.out.println(m.toStringCol());
-      
-      Vec3 tout = new Vec3();
-      Quaternion rout = new Quaternion();
-      Vec3 sout = new Vec3();
-      Mat4.decompose(m, tout, rout, sout);
-      System.out.println(tout);
-      System.out.println(rout);
-      System.out.println(sout);
    }
 
    /**
