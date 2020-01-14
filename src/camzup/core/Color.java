@@ -583,6 +583,17 @@ public class Color extends Vec4 {
             final float step,
             final Color target ) {
 
+         /*
+          * This should remain as double precision!!!
+          */
+
+         // final float u = 1.0f - step;
+         // return target.set(
+         // u * origin.x + step * dest.x,
+         // u * origin.y + step * dest.y,
+         // u * origin.z + step * dest.z,
+         // u * origin.w + step * dest.w);
+
          final double td = step;
          final double ud = 1.0d - td;
          return target.set(
@@ -799,6 +810,18 @@ public class Color extends Vec4 {
             final float step,
             final Color target ) {
 
+         /*
+          * This should remain as double-precision.
+          */
+
+         // final float ts = step * step * (3.0f - (step + step));
+         // final float us = 1.0f - ts;
+         // return target.set(
+         // us * origin.x + ts * dest.x,
+         // us * origin.y + ts * dest.y,
+         // us * origin.z + ts * dest.z,
+         // us * origin.w + ts * dest.w);
+
          final double td = step;
          final double ts = td * td * (3.0d - (td + td));
          final double us = 1.0d - ts;
@@ -824,6 +847,34 @@ public class Color extends Vec4 {
     * The default color comparator, by hue.
     */
    public static Comparator < Color > COMPARATOR = new ComparatorHue();
+
+   /**
+    * Tests to see if all color channels are greater than zero.
+    *
+    * @param c
+    *           the color
+    * @return the evaluation
+    */
+   public static boolean all ( final Color c ) {
+
+      return c.w > 0.0f &&
+            c.x > 0.0f &&
+            c.y > 0.0f &&
+            c.z > 0.0f;
+   }
+
+   /**
+    * Tests to see if the alpha channel of this color is
+    * greater than zero, i.e. if it has some opacity.
+    *
+    * @param c
+    *           the color
+    * @return the evaluation
+    */
+   public static boolean any ( final Color c ) {
+
+      return c.w > 0.0f;
+   }
 
    /**
     * Converts two colors to integers, performs the bitwise AND
@@ -1205,32 +1256,100 @@ public class Color extends Vec4 {
             (c >> 0x18 & 0xff) * IUtils.ONE_255);
    }
 
+   /**
+    * Attempts to convert a hexadecimal String to a color.
+    * Recognized formats include:
+    *
+    * <ul>
+    * <li>"abc" - RGB, one digit per channel.</li>
+    * <li>"#abc" - hash tag, RGB, one digit per channel.</li>
+    * <li>"aabbcc" - RRGGBB, two digits per channel.
+    * <li>"#aabbcc" - hash tag, RRGGBB, two digits per
+    * channel.</li>
+    * <li>"aabbccdd" - AARRGGBB, two digits per channel.</li>
+    * <li>"0xaabbccdd" - '0x' prefix, AARRGGBB, two digits per
+    * channel.</li>
+    * </ul>
+    *
+    * The output color will be reset if no suitable format is
+    * recognized.
+    *
+    * @param c
+    *           the input String
+    * @param target
+    *           the output color
+    * @return the color
+    * @see Integer#parseInt(String, int)
+    * @see Long#parseLong(String, int)
+    * @see Color#fromHex(int, Color)
+    * @see String#replaceAll(String, String)
+    * @see String#substring(int)
+    */
    public static Color fromHex (
          final String c,
          final Color target ) {
 
-      // TODO: Optimize where possible. Would a switch case be
-      // easier to read?
+      final int len = c.length();
+
       try {
-         final int len = c.length();
-         if (len == 3) {
-            final String longform = c.replaceAll("^(.)(.)(.)$", "$1$1$2$2$3$3");
-            final int cint = Integer.parseInt(longform, 16);
-            return Color.fromHex(0xff000000 | cint, target);
-         } else if (len == 4) {
-            final String longform = c.replaceAll("^#(.)(.)(.)$",
-                  "#$1$1$2$2$3$3");
-            final int cint = Integer.parseInt(longform.substring(1), 16);
-            return Color.fromHex(0xff000000 | cint, target);
-         } else if (len == 6) {
-            final int cint = Integer.parseInt(c, 16);
-            return Color.fromHex(0xff000000 | cint, target);
-         } else if (len == 7) {
-            final int cint = Integer.parseInt(c.substring(1), 16);
-            return Color.fromHex(0xff000000 | cint, target);
+         String longform = "";
+         int cint = 0xffffffff;
+
+         switch (len) {
+
+            case 3:
+
+               /* Example: "rgb" */
+
+               longform = c.replaceAll("^(.)(.)(.)$",
+                     "$1$1$2$2$3$3");
+               cint = Integer.parseInt(longform, 16);
+               return Color.fromHex(0xff000000 | cint, target);
+
+            case 4:
+
+               /* Example: "#abc" */
+
+               longform = c.replaceAll("^#(.)(.)(.)$",
+                     "#$1$1$2$2$3$3");
+               cint = Integer.parseInt(longform.substring(1), 16);
+               return Color.fromHex(0xff000000 | cint, target);
+
+            case 6:
+
+               /* Example: "aabbcc" */
+
+               cint = Integer.parseInt(c, 16);
+               return Color.fromHex(0xff000000 | cint, target);
+
+            case 7:
+
+               /* Example: "#aabbcc" */
+
+               cint = Integer.parseInt(c.substring(1), 16);
+               return Color.fromHex(0xff000000 | cint, target);
+
+            case 8:
+
+               /* Example: "aabbccdd" */
+
+               cint = (int) Long.parseLong(c, 16);
+               return Color.fromHex(cint, target);
+
+            case 10:
+
+               /* Example: "0xaabbccdd" */
+
+               cint = (int) Long.parseLong(c.substring(2), 16);
+               return Color.fromHex(cint, target);
+
+            default:
+
+               return target.reset();
          }
+
       } catch (final NumberFormatException e) {
-         System.out.println(e);
+         // System.out.println(e);
       }
 
       return target.reset();
@@ -1439,6 +1558,20 @@ public class Color extends Vec4 {
          final AbstrEasing easingFunc ) {
 
       return easingFunc.apply(origin, dest, step, target);
+   }
+
+   /**
+    * Tests to see if the alpha channel of this color is less
+    * than or equal to zero, i.e., if it is completely
+    * transparent.
+    *
+    * @param c
+    *           the color
+    * @return the evaluation
+    */
+   public static boolean none ( final Color c ) {
+
+      return c.w <= 0.0f;
    }
 
    /**

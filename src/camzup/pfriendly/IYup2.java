@@ -444,6 +444,12 @@ public interface IYup2 extends IUp {
          final float dim ) {
 
       this.pushStyle();
+      // TODO: Deal with strokeCap, strokeJoin strokeWeight all
+      // being set by one factor in AWT and the fact that point
+      // is slower in AWT?
+      // Maybe make set stroke style that sets all three an interface
+      // method, then call it here to ensure the stroke cap is round?
+      
       this.strokeWeight(strokeWeight);
 
       final float right = dim * 0.5f;

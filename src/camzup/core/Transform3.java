@@ -347,14 +347,14 @@ public class Transform3 extends Transform {
     * @param target
     *           the output direction
     * @return the direction
-    * @see Quaternion#applyTo(Quaternion, Vec3, Vec3)
+    * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     */
    public static Vec3 mulDir (
          final Transform3 t,
          final Vec3 source,
          final Vec3 target ) {
 
-      Quaternion.applyTo(t.rotation, source, target);
+      Quaternion.mulVector(t.rotation, source, target);
       return target;
    }
 
@@ -370,14 +370,14 @@ public class Transform3 extends Transform {
     * @param target
     *           the output point
     * @return the point
-    * @see Quaternion#applyTo(Quaternion, Vec3, Vec3)
+    * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     */
    public static Vec3 mulPoint (
          final Transform3 t,
          final Vec3 source,
          final Vec3 target ) {
 
-      Quaternion.applyTo(t.rotation, source, target);
+      Quaternion.mulVector(t.rotation, source, target);
       Vec3.mul(target, t.scale, target);
       Vec3.add(target, t.location, target);
 
@@ -396,14 +396,14 @@ public class Transform3 extends Transform {
     * @param target
     *           the output vector
     * @return the vector
-    * @see Quaternion#applyTo(Quaternion, Vec3, Vec3)
+    * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     */
    public static Vec3 mulVector (
          final Transform3 t,
          final Vec3 source,
          final Vec3 target ) {
 
-      Quaternion.applyTo(t.rotation, source, target);
+      Quaternion.mulVector(t.rotation, source, target);
       Vec3.mul(target, t.scale, target);
 
       return target;

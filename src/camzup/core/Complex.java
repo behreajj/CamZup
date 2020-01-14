@@ -1045,22 +1045,6 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    }
 
    /**
-    * Constructs a complex number from boolean values.
-    *
-    * @param real
-    *           the real component
-    * @param imag
-    *           the imaginary component
-    */
-   public Complex (
-         final boolean real,
-         final boolean imag ) {
-
-      super(2);
-      this.set(real, imag);
-   }
-
-   /**
     * Constructs a complex number from the source's components.
     *
     * @param source
@@ -1251,27 +1235,6 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    public Complex reset () {
 
       return Complex.zero(this);
-   }
-
-   /**
-    * Sets the components of this complex number from booleans,
-    * where false is 0.0 and true is 1.0 .
-    *
-    * @param real
-    *           the real component
-    * @param imag
-    *           the imaginary component
-    * @return this complex number
-    * @see Utils#toFloat(boolean)
-    */
-   @Chainable
-   public Complex set (
-         final boolean real,
-         final boolean imag ) {
-
-      this.real = Utils.toFloat(real);
-      this.imag = Utils.toFloat(imag);
-      return this;
    }
 
    /**

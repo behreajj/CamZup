@@ -29,17 +29,17 @@ public class Yup3 extends Up3 {
    /**
     * Default camera location x component.
     */
-   public static final float DEFAULT_LOC_X = 623.53829072f;
+   public static final float DEFAULT_LOC_X = 623.53827f;
 
    /**
     * Default camera location y component.
     */
-   public static final float DEFAULT_LOC_Y = 623.53829072f;
+   public static final float DEFAULT_LOC_Y = 623.53827f;
 
    /**
     * Default camera location z component.
     */
-   public static final float DEFAULT_LOC_Z = -623.53829072f;
+   public static final float DEFAULT_LOC_Z = -623.53827f;
 
    /**
     * Default world up x component.

@@ -156,7 +156,7 @@ public interface IUp {
    /**
     * Default camera location on the depth axis.
     */
-   float DEFAULT_LOC_Z = -623.53829072f;
+   float DEFAULT_LOC_Z = -623.53827f;
 
    /**
     * Default near-clip when orthographic or perspective

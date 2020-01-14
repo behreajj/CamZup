@@ -4,7 +4,7 @@ import camzup.pfriendly.*;
 Vec2 st = new Vec2();
 Gradient gr = Gradient.paletteViridis(new Gradient());
 Color clr = new Color();
-Mesh2 m = Mesh2.polygon(new Mesh2(), 6, Mesh2.PolyType.NGON);
+Mesh2 m = Mesh2.polygon(new Mesh2(), 3, Mesh2.PolyType.NGON);
 Vec2[] pts = m.coords;
 
 void setup() {
@@ -17,6 +17,7 @@ void draw() {
   float hNorm = 1.0 / (height - 1.0);
   float wNorm = 1.0 / (width - 1.0);
   float ang1 = frameCount * 0.1;
+  float ang0 = -ang1 * 0.5;
 
   loadPixels();
   for (int idx = 0, y = 0; y < height; ++y) {
@@ -27,9 +28,9 @@ void draw() {
       float xNorm = x * wNorm;
       st.x = xNorm + xNorm - 1.0;
 
-      float fac1 = SDF.arc(st, 0, ang1, 0.75, 0.05);
+      float fac1 = SDF.arc(st, ang0, ang1, 0.785, 0.05);
       float fac2 = SDF.polygon(st, pts);
-      float fac = SDF.intersectRound(fac1, fac2, 0.2);
+      float fac = SDF.unionRound(fac1, fac2, 0.1);
 
       pixels[idx] = Color.toHexInt(gr.eval(fac, clr));
     }

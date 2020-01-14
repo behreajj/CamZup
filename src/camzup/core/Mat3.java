@@ -544,6 +544,71 @@ public class Mat3 extends Matrix {
    }
 
    /**
+    * Multiplies a matrix and a point. The z component of the
+    * point is assumed to be 1.0 , so the point is impacted by
+    * the matrix's translation.
+    *
+    * @param a
+    *           the matrix
+    * @param b
+    *           the point
+    * @param target
+    *           the output point
+    * @return the product
+    */
+   public static Vec2 mulPoint (
+         final Mat3 a,
+         final Vec2 b,
+         final Vec2 target ) {
+
+      // TODO: Might need to test to see if this needs
+      // to be divided by w?
+
+      // return target.set(
+      // a.m00 * b.x + a.m01 * b.y + a.m02,
+      // a.m10 * b.x + a.m11 * b.y + a.m12);
+
+      final float w = a.m20 * b.x + a.m21 * b.y + a.m22;
+      final float wInv = Utils.div(1.0f, w);
+
+      return target.set(
+            (a.m00 * b.x + a.m01 * b.y + a.m02) * wInv,
+            (a.m10 * b.x + a.m11 * b.y + a.m12) * wInv);
+   }
+
+   /**
+    * Multiplies a matrix and a vector. The z component of the
+    * vector is assumed to be 0.0 , so the vector is not
+    * impacted by the matrix's translation.
+    *
+    * @param a
+    *           the matrix
+    * @param b
+    *           the vector
+    * @param target
+    *           the output vector
+    * @return the product
+    */
+   public static Vec2 mulVector (
+         final Mat3 a,
+         final Vec2 b,
+         final Vec2 target ) {
+
+      // TODO: Needs testing.
+
+      // return target.set(
+      // a.m00 * b.x + a.m01 * b.y,
+      // a.m10 * b.x + a.m11 * b.y);
+
+      final float w = a.m20 * b.x + a.m21 * b.y + a.m22;
+      final float wInv = Utils.div(1.0f, w);
+
+      return target.set(
+            (a.m00 * b.x + a.m01 * b.y) * wInv,
+            (a.m10 * b.x + a.m11 * b.y) * wInv);
+   }
+
+   /**
     * Subtracts the right matrix from the left matrix.
     *
     * @param a

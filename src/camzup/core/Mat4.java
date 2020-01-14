@@ -1056,6 +1056,181 @@ public class Mat4 extends Matrix {
    }
 
    /**
+    * Multiplies a matrix and a point. The z component of the
+    * point is assumed to be 0.0 . The w component of the point
+    * is assumed to be 1.0 , so the point is impacted by the
+    * matrix's translation.
+    *
+    * @param a
+    *           the matrix
+    * @param b
+    *           the point
+    * @param target
+    *           the output point
+    * @return the product
+    */
+   public static Vec3 mulPoint (
+         final Mat4 a,
+         final Vec2 b,
+         final Vec3 target ) {
+
+      // TODO: Needs testing.
+
+      // return target.set(
+      // a.m00 * b.x + a.m01 * b.y + a.m03,
+      // a.m10 * b.x + a.m11 * b.y + a.m13,
+      // a.m20 * b.x + a.m21 * b.y + a.m23);
+
+      final float w = a.m30 * b.x + a.m31 * b.y + a.m33;
+      final float wInv = Utils.div(1.0f, w);
+
+      return target.set(
+            (a.m00 * b.x + a.m01 * b.y + a.m03) * wInv,
+            (a.m10 * b.x + a.m11 * b.y + a.m13) * wInv,
+            (a.m20 * b.x + a.m21 * b.y + a.m23) * wInv);
+   }
+
+   /**
+    * Multiplies a matrix and a point. The w component of the
+    * point is assumed to be 1.0 , so the point is impacted by
+    * the matrix's translation.
+    *
+    * @param a
+    *           the matrix
+    * @param b
+    *           the point
+    * @param target
+    *           the output point
+    * @return the product
+    */
+   public static Vec3 mulPoint (
+         final Mat4 a,
+         final Vec3 b,
+         final Vec3 target ) {
+
+      // TODO: Needs testing.
+
+      // return target.set(
+      // a.m00 * b.x +
+      // a.m01 * b.y +
+      // a.m02 * b.z +
+      // a.m03,
+      //
+      // a.m10 * b.x +
+      // a.m11 * b.y +
+      // a.m12 * b.z +
+      // a.m13,
+      //
+      // a.m20 * b.x +
+      // a.m21 * b.y +
+      // a.m22 * b.z +
+      // a.m23);
+
+      final float w = a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33;
+      final float wInv = Utils.div(1.0f, w);
+
+      return target.set(
+            (a.m00 * b.x +
+                  a.m01 * b.y +
+                  a.m02 * b.z +
+                  a.m03) * wInv,
+
+            (a.m10 * b.x +
+                  a.m11 * b.y +
+                  a.m12 * b.z +
+                  a.m13) * wInv,
+
+            (a.m20 * b.x +
+                  a.m21 * b.y +
+                  a.m22 * b.z +
+                  a.m23) * wInv);
+   }
+
+   /**
+    * Multiplies a matrix and a vector. The z and w components
+    * of the vector are assumed to be 0.0 , so the vector is
+    * not impacted by the matrix's translation.
+    *
+    * @param a
+    *           the matrix
+    * @param b
+    *           the vector
+    * @param target
+    *           the output vector
+    * @return the product
+    */
+   public static Vec3 mulVector (
+         final Mat4 a,
+         final Vec2 b,
+         final Vec3 target ) {
+
+      // TODO: Needs testing.
+
+      // return target.set(
+      // a.m00 * b.x + a.m01 * b.y,
+      // a.m10 * b.x + a.m11 * b.y,
+      // a.m20 * b.x + a.m21 * b.y);
+
+      final float w = a.m30 * b.x + a.m31 * b.y + a.m33;
+      final float wInv = Utils.div(1.0f, w);
+
+      return target.set(
+            (a.m00 * b.x + a.m01 * b.y) * wInv,
+            (a.m10 * b.x + a.m11 * b.y) * wInv,
+            (a.m20 * b.x + a.m21 * b.y) * wInv);
+   }
+
+   /**
+    * Multiplies a matrix and a vector. The w component of the
+    * vector is assumed to be 0.0 , so the vector is not
+    * impacted by the matrix's translation.
+    *
+    * @param a
+    *           the matrix
+    * @param b
+    *           the vector
+    * @param target
+    *           the output vector
+    * @return the product
+    */
+   public static Vec3 mulVector (
+         final Mat4 a,
+         final Vec3 b,
+         final Vec3 target ) {
+
+      // TODO: Needs testing.
+
+      // return target.set(
+      // a.m00 * b.x +
+      // a.m01 * b.y +
+      // a.m02 * b.z,
+      //
+      // a.m10 * b.x +
+      // a.m11 * b.y +
+      // a.m12 * b.z,
+      //
+      // a.m20 * b.x +
+      // a.m21 * b.y +
+      // a.m22 * b.z);
+
+      final float w = a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33;
+      final float wInv = Utils.div(1.0f, w);
+
+      return target.set(
+            (a.m00 * b.x +
+                  a.m01 * b.y +
+                  a.m02 * b.z) * wInv,
+
+            (a.m10 * b.x +
+                  a.m11 * b.y +
+                  a.m12 * b.z) * wInv,
+
+            (a.m20 * b.x +
+                  a.m21 * b.y +
+                  a.m22 * b.z) * wInv);
+   }
+
+   /**
     * Creates an orthographic projection matrix, where objects
     * maintain their size regardless of distance from the
     * camera.

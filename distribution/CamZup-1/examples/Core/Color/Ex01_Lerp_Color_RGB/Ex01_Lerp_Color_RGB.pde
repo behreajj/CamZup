@@ -31,7 +31,7 @@ void draw() {
     color c1 = graphics.lerpColor(a, b, xFac);
 
     for (int y = 0; y < height; ++y) {
-      px[y * width + x] = y > hHalf ? c1: c0;
+      px[y * width + x] = y > hHalf ? c1 : c0;
     }
   }
   graphics.updatePixels();

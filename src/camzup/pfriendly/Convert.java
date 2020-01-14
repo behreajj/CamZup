@@ -1,12 +1,14 @@
 package camzup.pfriendly;
 
 import camzup.core.ITransform;
+import camzup.core.Mat3;
+import camzup.core.Mat4;
 import camzup.core.Quaternion;
 import camzup.core.Transform2;
 import camzup.core.Transform3;
-import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
+import camzup.core.Vec4;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PVector;
@@ -16,6 +18,95 @@ import processing.core.PVector;
  * Processing objects.
  */
 public abstract class Convert {
+
+   /**
+    * Converts a PMatrix2D to a 3 x 3 matrix.
+    *
+    * @param source
+    *           the souce matrix
+    * @param target
+    *           the target matrix
+    * @return the matrix
+    */
+   public static Mat3 toMat3 (
+         final PMatrix2D source,
+         final Mat3 target ) {
+
+      return target.set(
+            source.m00, source.m01, source.m02,
+            source.m10, source.m11, source.m12,
+            0.0f, 0.0f, 1.0f);
+   }
+
+   /**
+    * Converts a PMatrix2D to a 4 x 4 matrix.
+    *
+    * @param source
+    *           the souce matrix
+    * @param target
+    *           the target matrix
+    * @return the matrix
+    */
+   public static Mat4 toMat4 (
+         final PMatrix2D source,
+         final Mat4 target ) {
+
+      return target.set(
+            source.m00, source.m01, 0.0f, source.m02,
+            source.m10, source.m11, 0.0f, source.m12,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
+   }
+
+   /**
+    * Converts a PMatrix3D to a 4 x 4 matrix.
+    *
+    * @param source
+    *           the souce matrix
+    * @param target
+    *           the target matrix
+    * @return the matrix
+    */
+   public static Mat4 toMat4 ( final PMatrix3D source, final Mat4 target ) {
+
+      return target.set(
+            source.m00, source.m01, source.m02, source.m03,
+            source.m10, source.m11, source.m12, source.m13,
+            source.m20, source.m21, source.m22, source.m23,
+            source.m30, source.m31, source.m32, source.m33);
+   }
+
+   /**
+    * Converts a 3 x 3 matrix to a PMatrix2D.
+    *
+    * @param source
+    *           the source matrix
+    * @return the PMatrix2D
+    */
+   public static PMatrix2D toPMatrix2D ( final Mat3 source ) {
+
+      return Convert.toPMatrix2D(source, (PMatrix2D) null);
+   }
+
+   /**
+    * Converts a 3 x 3 matrix to a PMatrix2D.
+    *
+    * @param source
+    *           the source matrix
+    * @param target
+    *           the target matrix
+    * @return the PMatrix2D
+    */
+   public static PMatrix2D toPMatrix2D ( final Mat3 source, PMatrix2D target ) {
+
+      if (target == null) {
+         target = new PMatrix2D();
+      }
+      target.set(
+            source.m00, source.m01, source.m02,
+            source.m01, source.m11, source.m12);
+      return target;
+   }
 
    /**
     * Converts a 2D transform to a PMatrix2D.
@@ -332,28 +423,34 @@ public abstract class Convert {
    }
 
    /**
-    * Converts a PMatrix3D, representing a rotation matrix, to
-    * a quaternion.
+    * Converts a Vec4 to a PVector.
     *
     * @param source
-    *           the PMatrix3D
-    * @param target
-    *           the quaternion
-    * @return the quaternion
-    * @see Math#sqrt(double)
-    * @see Utils#max(float, float)
-    * @see Utils#sign(float)
+    *           the source vector
+    * @return the vector
     */
-   public static Quaternion toQuaternion (
-         final PMatrix3D source,
-         final Quaternion target ) {
+   public static PVector toPVector ( final Vec4 source ) {
 
-      return Quaternion.fromAxes(
-            source.m00, source.m11, source.m22,
-            source.m21, source.m12,
-            source.m02, source.m20,
-            source.m10, source.m01,
-            target);
+      return Convert.toPVector(source, (PVector) null);
+   }
+
+   /**
+    * Converts a Vec4 to a PVector.
+    *
+    * @param source
+    *           the source vector
+    * @param target
+    *           the target vector
+    * @return the vector
+    */
+   public static PVector toPVector (
+         final Vec4 source,
+         PVector target ) {
+
+      if (target == null) {
+         target = new PVector();
+      }
+      return target.set(source.x, source.y, source.z);
    }
 
    /**
@@ -369,8 +466,6 @@ public abstract class Convert {
          final PVector source,
          final Vec2 target ) {
 
-      // if(source.z != 0.0f) {
-      // }
       return target.set(source.x, source.y);
    }
 
@@ -388,6 +483,22 @@ public abstract class Convert {
          final Vec3 target ) {
 
       return target.set(source.x, source.y, source.z);
+   }
+
+   /**
+    * Converts from a PVector to a Vec4.
+    *
+    * @param source
+    *           the source vector
+    * @param target
+    *           the target vector
+    * @return the vector
+    */
+   public static Vec4 toVec4 (
+         final PVector source,
+         final Vec4 target ) {
+
+      return target.set(source.x, source.y, source.z, 0.0f);
    }
 
 }
