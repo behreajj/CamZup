@@ -590,6 +590,122 @@ public class Mesh3 extends Mesh {
       return target.set(faces, coords, texCoords, normals);
    }
 
+   public static Mesh3 torus (
+         final float radius1,
+         final float radius2,
+         final int radSeg,
+         final int sides,
+         final Mesh3 target ) {
+
+      // TODO: Yup3 compliance first
+
+      final int radSeg1 = radSeg + 1;
+      final int sides1 = sides + 1;
+
+      /* Precalculate t2 */
+
+      final float[] cosas = new float[sides1];
+      final float[] sinas = new float[sides1];
+      final float toAngle2 = IUtils.TAU / sides;
+
+      for (int side = 0; side < sides1; ++side) {
+         final int currSide = side % sides;
+         final float t2 = currSide * toAngle2;
+         cosas[side] = (float) Math.cos(t2);
+         sinas[side] = (float) Math.sin(t2);
+      }
+
+      final Vec3[] coords = new Vec3[radSeg1 * sides1];
+      final Vec3[] normals = new Vec3[coords.length];
+      final Vec2[] texCoords = new Vec2[coords.length];
+
+      /* Coordinates */
+
+      final float toU = 1.0f / (float) radSeg;
+      final float toV = 1.0f / (float) sides;
+      final float toAngle1 = IUtils.TAU / radSeg;
+
+      for (int k = 0, seg = 0; seg < radSeg1; ++seg) {
+
+         final int currSeg = seg % radSeg;
+         final float t1 = currSeg * toAngle1;
+
+         final float cost1 = (float) Math.cos(t1);
+         final float sint1 = (float) Math.sin(t1);
+
+         final float r1x = cost1 * radius1;
+         final float r1z = sint1 * radius1;
+
+         final float u = seg * toU;
+
+         final Vec3 r1 = new Vec3(r1x, 0.0f, r1z);
+
+         for (int side = 0; side < sides1; ++side, ++k) {
+
+            final float mulqx = radius2 * sinas[side];
+            final float mulqy = radius2 * cosas[side];
+
+            final float v = side * toV;
+
+            final Vec3 mulq = new Vec3(mulqx, mulqy, 0.0f);
+
+            final Quaternion q = Quaternion.fromAxisAngle(-t1,
+                  Vec3.forward(new Vec3()), new Quaternion());
+
+            final Vec3 r2 = Quaternion.mulVector(q, mulq, new Vec3());
+
+            coords[k] = Vec3.add(r1, r2, new Vec3());
+
+            normals[k] = Vec3.subNorm(coords[k], r1, new Vec3());
+
+            texCoords[k] = new Vec2(u, v);
+         }
+      }
+
+      final int nbTriangles = coords.length * 2;
+      final int nbIndexes = nbTriangles * 3;
+      final int[][][] faces = new int[nbTriangles][3][3];
+
+      int i = 0;
+      int m = 0;
+
+      for (int seg = 0; seg < radSeg1; ++seg) {
+
+         /* NOTE: This for-loop is different than the others. */
+         for (int side = 0; side < sides; ++side) {
+
+            final int current = side + seg * sides1;
+            final int next = side
+                  + (seg < radSeg ? (seg + 1) * sides1 : 0);
+
+            if (i < nbIndexes - 6) {
+
+               final int n1 = next + 1;
+               final int c1 = current + 1;
+
+               faces[m++] = new int[][] {
+                     { current, current, current },
+                     { next, next, next },
+                     { n1, n1, n1 } };
+
+               faces[m++] = new int[][] {
+                     { current, current, current },
+                     { n1, n1, n1 },
+                     { c1, c1, c1 } };
+
+               i += 6;
+            }
+         }
+      }
+
+      return target.set(faces, coords, texCoords, normals);
+   }
+
+   public static Mesh3 torus ( final Mesh3 target ) {
+
+      return Mesh3.torus(1.0f, 0.25f, 24, 12, target);
+   }
+
    /**
     * Creates a triangle.
     *
