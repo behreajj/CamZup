@@ -449,6 +449,10 @@ public interface IYup2 extends IUp {
       // is slower in AWT?
       // Maybe make set stroke style that sets all three an interface
       // method, then call it here to ensure the stroke cap is round?
+      // 
+      // Use line from this to epsilon instead?
+      // Depends on whether or not the OpenGL implements
+      // point as line + EPS as well or not...
       
       this.strokeWeight(strokeWeight);
 

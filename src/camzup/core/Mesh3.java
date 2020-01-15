@@ -253,7 +253,7 @@ public class Mesh3 extends Mesh {
          final int detailV,
          final Mesh3 target ) {
 
-      // TODO: Needs testing...
+      // TODO: Unfinished.
 
       // int nind = 3 * detailU + (6 * detailU + 3) * (detailV -
       // 2) + 3 * detailU;

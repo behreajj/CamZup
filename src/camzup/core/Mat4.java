@@ -129,6 +129,8 @@ public class Mat4 extends Matrix {
          final Quaternion rot,
          final Vec3 scale ) {
 
+      // TODO: Add decompose to a transform2 option?
+
       final float xMag = Utils.hypot(m.m00, m.m10, m.m20);
       final float yMag = Utils.hypot(m.m01, m.m11, m.m21);
       final float zMag = Utils.hypot(m.m02, m.m12, m.m22);
@@ -766,9 +768,9 @@ public class Mat4 extends Matrix {
          final Mat4 target ) {
 
       final float n2 = near + near;
-      final float w = Utils.div(1.0f, right - left);
-      final float h = Utils.div(1.0f, top - bottom);
-      final float d = Utils.div(1.0f, far - near);
+      final float w = 1.0f / Utils.max(Utils.EPSILON, right - left);
+      final float h = 1.0f / Utils.max(Utils.EPSILON, top - bottom);
+      final float d = 1.0f / Utils.max(Utils.EPSILON, far - near);
 
       return target.set(
             n2 * w, 0.0f, (right + left) * w, 0.0f,
@@ -1257,9 +1259,9 @@ public class Mat4 extends Matrix {
          final float near, final float far,
          final Mat4 target ) {
 
-      final float w = Utils.div(1.0f, right - left);
-      final float h = Utils.div(1.0f, top - bottom);
-      final float d = Utils.div(1.0f, far - near);
+      final float w = 1.0f / Utils.max(Utils.EPSILON, right - left);
+      final float h = 1.0f / Utils.max(Utils.EPSILON, top - bottom);
+      final float d = 1.0f / Utils.max(Utils.EPSILON, far - near);
 
       return target.set(
             w + w, 0.0f, 0.0f, w * (left + right),
@@ -1696,6 +1698,12 @@ public class Mat4 extends Matrix {
    @Override
    public float get ( final int index ) {
 
+      /*
+       * Atm, there is a get function to facilitate an iterator, but no
+       * set function, because setCol is the encouraged way to set
+       * matrix elms.
+       */
+      
       switch (index) {
 
          /* Row 0 */

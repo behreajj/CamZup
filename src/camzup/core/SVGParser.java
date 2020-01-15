@@ -680,8 +680,6 @@ abstract class SVGParser {
 
          final LinkedList < Curve2 > curves = result.curves;
 
-         // TODO: What about rect, ellipse, etc.
-
          final NodeList paths = doc.getElementsByTagName("path");
          final int nodeLen = paths.getLength();
          for (int i = 0; i < nodeLen; ++i) {

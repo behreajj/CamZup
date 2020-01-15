@@ -121,6 +121,8 @@ public class Mat3 extends Matrix {
          final Vec2 trans,
          final Vec2 scale ) {
 
+      // TODO: Add decompose to a transform2 option?
+
       final float xMag = Utils.hypot(m.m00, m.m10);
       final float yMag = Utils.hypot(m.m01, m.m11);
       final float det = Mat3.determinant(m);
@@ -561,9 +563,6 @@ public class Mat3 extends Matrix {
          final Vec2 b,
          final Vec2 target ) {
 
-      // TODO: Might need to test to see if this needs
-      // to be divided by w?
-
       // return target.set(
       // a.m00 * b.x + a.m01 * b.y + a.m02,
       // a.m10 * b.x + a.m11 * b.y + a.m12);
@@ -899,6 +898,12 @@ public class Mat3 extends Matrix {
     */
    @Override
    public float get ( final int index ) {
+
+      /*
+       * Atm, there is a get function to facilitate an iterator, but no
+       * set function, because setCol is the encouraged way to set
+       * matrix elms.
+       */
 
       switch (index) {
 

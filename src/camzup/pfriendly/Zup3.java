@@ -373,7 +373,7 @@ public class Zup3 extends Up3 {
    // this.glNormal = new float[9];
    // }
    //
-   // // TODO: This doesn't seem to be enough...
+   // TODO: Normals in cam zup screwed up.
    // this.glNormal[0] = m00;
    // this.glNormal[1] = m02;
    // this.glNormal[2] = m01;

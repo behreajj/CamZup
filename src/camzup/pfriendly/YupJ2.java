@@ -2591,78 +2591,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             source.m10, source.m11, source.m12);
    }
 
-   // public void shape ( final CurveEntity2 entity ) {
-   //
-   // this.pushMatrix();
-   // this.transform(entity.transform, entity.transformOrder);
-   //
-   // Knot2 currKnot;
-   // Knot2 prevKnot;
-   // Vec2 coord;
-   // Vec2 foreHandle;
-   // Vec2 rearHandle;
-   //
-   // final LinkedList < Curve2 > curves = entity.curves;
-   // final LinkedList < MaterialSolid > materials =
-   // entity.materials;
-   // final boolean useMaterial = !materials.isEmpty();
-   //
-   // curveLoop: for (final Curve2 curve : curves) {
-   //
-   // final int knotLength = curve.knotCount();
-   // if (knotLength < 2) {
-   // continue curveLoop;
-   // }
-   //
-   // if (useMaterial) {
-   // final int index = curve.materialIndex;
-   // final MaterialSolid material = materials.get(index);
-   // this.pushStyle();
-   // this.material(material);
-   // }
-   //
-   // int end = 0;
-   // if (curve.closedLoop) {
-   // end = knotLength + 1;
-   // } else {
-   // end = knotLength;
-   // }
-   //
-   // prevKnot = curve.get(0);
-   // coord = prevKnot.coord;
-   // // TODO: Simplify by adding an extra bezier vertex call
-   // // in the subsequent if loop and NOT using the modulo
-   // // in the for loop.
-   // this.gp.reset();
-   // this.gp.moveTo(coord.x, coord.y);
-   //
-   // for (int i = 1; i < end; ++i) {
-   // currKnot = curve.get(i % knotLength);
-   //
-   // foreHandle = prevKnot.foreHandle;
-   // rearHandle = currKnot.rearHandle;
-   // coord = currKnot.coord;
-   //
-   // this.gp.curveTo(
-   // foreHandle.x, foreHandle.y,
-   // rearHandle.x, rearHandle.y,
-   // coord.x, coord.y);
-   //
-   // prevKnot = currKnot;
-   // }
-   //
-   // if (curve.closedLoop) {
-   // this.gp.closePath();
-   // }
-   // this.drawShape(this.gp);
-   //
-   // if (useMaterial) {
-   // this.popStyle();
-   // }
-   // }
-   // this.popMatrix();
-   // }
-
    /**
     * Set size is the last function called by size,
     * createGraphics, makeGraphics, etc. when initializing the
@@ -2694,7 +2622,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    public void shape ( final CurveEntity2 entity ) {
 
-      // TODO: Needs fixing...
+      // TODO: Needs fixing... Does this refer to curve materials
+      // not showing??
       final LinkedList < Curve2 > curves = entity.curves;
       final LinkedList < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();

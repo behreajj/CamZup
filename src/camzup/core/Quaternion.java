@@ -1264,9 +1264,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * fromTo (a, b) := { a \u00b7 b, a \u00d7 b }
     *
     * @param origin
-    *           the origin vector, normalized
+    *           the origin vector
     * @param dest
-    *           the destination vector, normalized
+    *           the destination vector
     * @param target
     *           the output quaternion
     * @return the quaternion
@@ -1927,7 +1927,25 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion q,
          final Quaternion target ) {
 
-      return Quaternion.div(q, Quaternion.mag(q), target);
+      // return Quaternion.div(q, Quaternion.mag(q), target);
+
+      Vec3 i = q.imag;
+      final float mSq = q.real * q.real + i.x * i.x + i.y * i.y + i.z * i.z;
+      
+      if (mSq == 0.0f) {
+         return Quaternion.identity(target);
+      }
+
+      // if (Utils.abs(1.0f - mSq) < Utils.EPSILON) {
+      // return target.set(q);
+      // }
+
+      final float mInv = (float) (1.0d / Math.sqrt(mSq));
+      return target.set(
+            q.real * mInv,
+            i.x * mInv,
+            i.y * mInv,
+            i.z * mInv);
    }
 
    /**

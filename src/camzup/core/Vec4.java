@@ -843,6 +843,104 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
+    * Sets the target vector to the maximum of the input vector
+    * and an upper bound.
+    *
+    * @param a
+    *           the input value
+    * @param upperBound
+    *           the upper bound
+    * @param target
+    *           the output vector
+    * @return the maximum values
+    */
+   public static Vec4 max (
+         final Vec4 a,
+         final float upperBound,
+         final Vec4 target ) {
+
+      return target.set(
+            Utils.max(a.x, upperBound),
+            Utils.max(a.y, upperBound),
+            Utils.max(a.z, upperBound),
+            Utils.max(a.w, upperBound));
+   }
+
+   /**
+    * Sets the target vector to the maximum components of the
+    * input vector and a upper bound.
+    *
+    * @param a
+    *           the input vector
+    * @param upperBound
+    *           the upper bound
+    * @param target
+    *           the output vector
+    * @return the maximum values
+    * @see Utils#max(float, float)
+    */
+   public static Vec4 max (
+         final Vec4 a,
+         final Vec4 upperBound,
+         final Vec4 target ) {
+
+      return target.set(
+            Utils.max(a.x, upperBound.x),
+            Utils.max(a.y, upperBound.y),
+            Utils.max(a.z, upperBound.z),
+            Utils.max(a.w, upperBound.w));
+   }
+
+   /**
+    * Sets the target vector to the minimum components of the
+    * input vector and a lower bound.
+    *
+    * @param a
+    *           the input value
+    * @param lowerBound
+    *           the lower bound
+    * @param target
+    *           the output vector
+    * @return the minimum values
+    */
+   public static Vec4 min (
+         final Vec4 a,
+         final float lowerBound,
+         final Vec4 target ) {
+
+      return target.set(
+            Utils.min(a.x, lowerBound),
+            Utils.min(a.y, lowerBound),
+            Utils.min(a.z, lowerBound),
+            Utils.min(a.w, lowerBound));
+   }
+
+   /**
+    * Sets the target vector to the minimum components of the
+    * input vector and a lower bound.
+    *
+    * @param a
+    *           the input vector
+    * @param lowerBound
+    *           the lower bound
+    * @param target
+    *           the output vector
+    * @return the minimal values
+    * @see Utils#min(float, float)
+    */
+   public static Vec4 min (
+         final Vec4 a,
+         final Vec4 lowerBound,
+         final Vec4 target ) {
+
+      return target.set(
+            Utils.min(a.x, lowerBound.x),
+            Utils.min(a.y, lowerBound.y),
+            Utils.min(a.z, lowerBound.z),
+            Utils.min(a.w, lowerBound.w));
+   }
+
+   /**
     * Mods a scalar by each component of a vector.
     *
     * @param a
@@ -1208,6 +1306,135 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
             (float) Math.pow(a.y, b.y),
             (float) Math.pow(a.z, b.z),
             (float) Math.pow(a.w, b.w));
+   }
+
+   /**
+    * Creates a random point in the Cartesian coordinate system
+    * given a lower and an upper bound.
+    *
+    * @param rng
+    *           the random number generator
+    * @param lowerBound
+    *           the lower bound
+    * @param upperBound
+    *           the upper bound
+    * @param target
+    *           the output vector
+    * @return the random vector
+    * @see Random#uniform(float, float)
+    */
+   public static Vec4 randomCartesian (
+         final Random rng,
+         final Vec4 lowerBound,
+         final Vec4 upperBound,
+         final Vec4 target ) {
+
+      return target.set(
+            rng.uniform(lowerBound.x, upperBound.x),
+            rng.uniform(lowerBound.y, upperBound.y),
+            rng.uniform(lowerBound.z, upperBound.z),
+            rng.uniform(lowerBound.w, upperBound.w));
+   }
+
+   /**
+    * Generates a random coordinate on a sphere. Uses the same
+    * formula as that for a random quaternion.
+    *
+    * @param rng
+    *           the random number generator
+    * @param rhoMin
+    *           the minimum radius
+    * @param rhoMax
+    *           the maximum radius
+    * @param target
+    *           the output vector
+    * @return the vector
+    * @see Quaternion#random(Random, Quaternion)
+    */
+   public static Vec4 randomSpherical (
+         final Random rng,
+         final float rhoMin,
+         final float rhoMax,
+         final Vec4 target ) {
+
+      final float rho = rng.uniform(rhoMin, rhoMax);
+
+      final double t0 = IUtils.TAU_D * rng.nextDouble();
+      final double t1 = IUtils.TAU_D * rng.nextDouble();
+
+      final double r1 = rng.nextDouble();
+      final double x0 = rho * Math.sqrt(1.0d - r1);
+      final double x1 = rho * Math.sqrt(r1);
+
+      return target.set(
+            (float) (x0 * Math.cos(t0)),
+            (float) (x1 * Math.sin(t1)),
+            (float) (x1 * Math.cos(t1)),
+            (float) (x0 * Math.sin(t0)));
+   }
+
+   /**
+    * Normalizes a vector, then multiplies it by a scalar, in
+    * effect setting its magnitude to that scalar.
+    *
+    * @param v
+    *           the vector
+    * @param scalar
+    *           the scalar
+    * @param target
+    *           the output vector
+    * @return the rescaled vector
+    * @see Vec4#rescale(Vec4, float, Vec4, Vec4)
+    */
+   public static Vec4 rescale (
+         final Vec4 v,
+         final float scalar,
+         final Vec4 target ) {
+
+      if (scalar == 0.0f) {
+         return target.reset();
+      }
+
+      final float mSq = Vec4.magSq(v);
+
+      if (mSq == 0.0f) {
+         return target.reset();
+      }
+
+      if (Utils.approxFast(mSq, 1.0f)) {
+         return Vec4.mul(v, scalar, target);
+      }
+
+      return Vec4.mul(v, (float) (scalar / Math.sqrt(mSq)), target);
+   }
+
+   /**
+    * Normalizes a vector, then multiplies it by a scalar, in
+    * effect setting its magnitude to that scalar.
+    *
+    * @param v
+    *           the vector
+    * @param scalar
+    *           the scalar
+    * @param target
+    *           the output vector
+    * @param normalized
+    *           the normalized vector
+    * @return the rescaled vector
+    * @see Vec4#normalize(Vec4, Vec4)
+    * @see Vec4#mul(Vec4, float, Vec4)
+    */
+   public static Vec4 rescale (
+         final Vec4 v,
+         final float scalar,
+         final Vec4 target,
+         final Vec4 normalized ) {
+
+      if (scalar == 0.0f) {
+         return target.reset();
+      }
+      Vec4.normalize(v, normalized);
+      return Vec4.mul(normalized, scalar, target);
    }
 
    /**

@@ -1085,89 +1085,6 @@ public class Curve2 extends Curve
    }
 
    /**
-    * A utility function which defines two target knots as a
-    * rounded corner given a point as input. It is assumed here
-    * that another function will replace an old knot at the
-    * corner with the two generated knots.
-    *
-    * @param corner
-    *           the corner
-    * @param radius
-    *           the rounding radius
-    * @param prevKnot
-    *           the knot preceding the corner
-    * @param nextKnot
-    *           the knot following the corner
-    * @param target0
-    *           the new knot preceding the corner
-    * @param target1
-    *           the new knot following the corner
-    */
-   private static void roundCorner (
-         final Vec2 corner,
-         final float radius,
-         final Knot2 prevKnot,
-         final Knot2 nextKnot,
-         final Knot2 target0,
-         final Knot2 target1 ) {
-
-      /* Cache knot coordinates. */
-      final Vec2 prevCoord = prevKnot.coord;
-      final Vec2 nextCoord = nextKnot.coord;
-
-      /*
-       * The corner is the coord of a knot; the knot will be split
-       * into two knots; it is expected that the old corner knot
-       * will be replaced by the two new corners.
-       */
-      final Vec2 corner0 = target0.coord;
-      final Vec2 corner1 = target1.coord;
-
-      /*
-       * These vectors do not have to be set until the end of the
-       * function, with lerp 1 / 3. For that reason, they are used
-       * as temp placeholders so as to not have to create new
-       * vectors.
-       */
-      final Vec2 fh0 = target0.foreHandle;
-      final Vec2 rh0 = target0.rearHandle;
-      final Vec2 fh1 = target1.foreHandle;
-      final Vec2 rh1 = target1.rearHandle;
-
-      /*
-       * Find the vectors from previous point to corner, and from
-       * corner to next point.
-       */
-      final Vec2 diff0 = Vec2.subNorm(corner, prevCoord, fh0);
-      final Vec2 diff1 = Vec2.subNorm(corner, nextCoord, rh0);
-
-      /*
-       * Find angle between vectors - simplified because they are
-       * already normalized - then divide radius by tangent.
-       */
-      final float halfAng = 0.5f * Utils.acos(Vec2.dot(diff0, diff1));
-      final float rtanHalf = (float) (radius / Math.tan(halfAng));
-
-      /*
-       * Multiply the differences (legs of the angle formed at the
-       * corner) by the radius-tangent. Then, subtract the product
-       * from the corner.
-       */
-      Vec2.sub(corner, Vec2.mul(diff0, rtanHalf, fh1), corner0);
-      Vec2.sub(corner, Vec2.mul(diff1, rtanHalf, rh1), corner1);
-
-      /* Set rounded-corner handles. */
-      Curve2.lerp13(corner, corner0, fh0);
-      Curve2.lerp13(corner, corner1, rh1);
-
-      /* Flatten edge handles */
-
-      // TODO: These are incorrect.
-      // Curve2.lerp13(corner0, prevCoord, rh0);
-      // Curve2.lerp13(corner1, nextCoord, fh1);
-   }
-
-   /**
     * A utility function for setting the handles of knots on
     * straight curve segments. Finds unclamped linear
     * interpolation from origin to destination by a step of 1.0
@@ -1503,76 +1420,6 @@ public class Curve2 extends Curve
 
       target.name = "Polygon";
       return Curve2.straightenHandles(target);
-   }
-
-   /**
-    * Creates a regular convex polygon with rounded corners.
-    * The rounding factor is limited to half the radius.
-    *
-    * @param offsetAngle
-    *           the offset angle
-    * @param radius
-    *           the radius
-    * @param knotCount
-    *           the number of knots
-    * @param rounding
-    *           corner rounding factor
-    * @param target
-    *           the output curve
-    * @return the polygon
-    */
-   public static Curve2 polygon (
-         final float offsetAngle,
-         final float radius,
-         final int knotCount,
-         final float rounding,
-         final Curve2 target ) {
-
-      Curve2.polygon(offsetAngle, radius, knotCount, target);
-
-      /* Limit scope of rounding factor. */
-      final float valRound = Utils.clamp(rounding, Utils.EPSILON,
-            radius * 0.5f);
-
-      /*
-       * Old knots will be replaced by new knots, which will be
-       * twice the length of the old.
-       */
-      final LinkedList < Knot2 > oldKn = target.knots;
-      // final LinkedList < Knot2 > newKn = new LinkedList <>();
-      final int len = oldKn.size();
-      final Knot2[] newKn = new Knot2[len * 2];
-
-      // for (int i = 0; i < len; ++i) {
-      for (int i = 0, j = 0; i < len; ++i, j += 2) {
-
-         /* Acquire corner and surrounding knots. */
-         final Knot2 prevKnot = oldKn.get(Utils.mod(i - 1, len));
-         final Knot2 cornerKnot = oldKn.get(i);
-         final Knot2 nextKnot = oldKn.get((i + 1) % len);
-
-         /* Create outputs for roundCorner. */
-         final Knot2 new0 = new Knot2();
-         final Knot2 new1 = new Knot2();
-
-         /* Round corners */
-         Curve2.roundCorner(
-               cornerKnot.coord, valRound,
-               prevKnot, nextKnot,
-               new0, new1);
-
-         /* Add new knots to the new list. */
-         // newKn.add(new0);
-         // newKn.add(new1);
-         newKn[j] = new0;
-         newKn[j + 1] = new1;
-      }
-
-      /* Replace old knots with new. */
-      oldKn.clear();
-      // oldKn.addAll(newKn);
-      target.append(newKn);
-      return target;
    }
 
    /**
@@ -2484,8 +2331,6 @@ public class Curve2 extends Curve
     */
    public float calcLength ( final int precision ) {
 
-      // TODO: Is there a way to use distSq instead of dist when
-      // summing the distances and then scale sum?
       float sum = 0.0f;
       final Vec2[][] segments = this.evalRange(precision + 1);
       final int len = segments.length;

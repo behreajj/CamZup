@@ -2384,7 +2384,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           the output vector
     * @return the random vector
     * @see Random#uniform(float, float)
-    * @see Math#sqrt(double)
+    * @see Vec2#fromPolar(float, float, Vec2)
     */
    public static Vec2 randomPolar (
          final Random rng,
@@ -2392,20 +2392,10 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final float rhoMax,
          final Vec2 target ) {
 
-      final float x = rng.uniform(-1.0f, 1.0f);
-      final float y = rng.uniform(-1.0f, 1.0f);
-
-      final float mSq = x * x + y * y;
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
-
-      final float rho = rng.uniform(rhoMin, rhoMax);
-      final float rhoNorm = (float) (rho / Math.sqrt(mSq));
-
-      return target.set(
-            x * rhoNorm,
-            y * rhoNorm);
+      return Vec2.fromPolar(
+            rng.uniform(-IUtils.PI, IUtils.PI),
+            rng.uniform(rhoMin, rhoMax),
+            target);
    }
 
    /**

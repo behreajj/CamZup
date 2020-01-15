@@ -1670,35 +1670,6 @@ public abstract class Utils implements IUtils {
     *           the step
     * @return the eased value
     */
-   public static float smootherStep (
-         final float origin,
-         final float dest,
-         final float step ) {
-
-      if (step <= 0.0f) {
-         return origin;
-      }
-      if (step >= 1.0f) {
-         return dest;
-      }
-
-      // TODO: Needs testing.
-      final float t = step * step * (step * (step * 6.0f - 15.0f) + 10.0f);
-      return (1.0f - t) * origin + t * dest;
-   }
-
-   /**
-    * Eases between an origin and destination by a step in
-    * [0.0, 1.0] .
-    *
-    * @param origin
-    *           the origin
-    * @param dest
-    *           the destination
-    * @param step
-    *           the step
-    * @return the eased value
-    */
    public static float smoothStep (
          final float origin,
          final float dest,

@@ -294,11 +294,10 @@ public interface IUp {
          target = new PMatrix3D();
       }
 
-      // TODO: Needs testing...
       final float n2 = near + near;
-      final float w = Utils.div(1.0f, right - left);
-      final float h = Utils.div(1.0f, top - bottom);
-      final float d = Utils.div(1.0f, far - near);
+      final float w = 1.0f / Utils.max(Utils.EPSILON, right - left);
+      final float h = 1.0f / Utils.max(Utils.EPSILON, top - bottom);
+      final float d = 1.0f / Utils.max(Utils.EPSILON, far - near);
 
       target.set(
             n2 * w, 0.0f, (right + left) * w, 0.0f,
@@ -1039,9 +1038,9 @@ public interface IUp {
          target = new PMatrix3D();
       }
 
-      final float w = Utils.div(1.0f, right - left);
-      final float h = Utils.div(1.0f, top - bottom);
-      final float d = Utils.div(1.0f, far - near);
+      final float w = 1.0f / Utils.max(Utils.EPSILON, right - left);
+      final float h = 1.0f / Utils.max(Utils.EPSILON, top - bottom);
+      final float d = 1.0f / Utils.max(Utils.EPSILON, far - near);
 
       target.set(
             w + w, 0.0f, 0.0f, w * (left + right),

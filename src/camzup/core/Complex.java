@@ -879,24 +879,26 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     *
     * @param rng
     *           the random number generator
+    * @param rMin
+    *           the radius minimum
+    * @param rMax
+    *           the radius maximum
     * @param target
     *           the output complex number
     * @return the random complex number
     * @see Random#uniform(float, float)
-    * @see Math#sqrt(double)
+    * @see Complex#rect(float, float, Complex)
     */
    public static Complex random (
          final Random rng,
+         final float rMin,
+         final float rMax,
          final Complex target ) {
 
-      final float real = rng.uniform(-1.0f, 1.0f);
-      final float imag = rng.uniform(-1.0f, 1.0f);
-      final float mSq = real * real + imag * imag;
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
-      final float mInv = (float) (1.0d / Math.sqrt(mSq));
-      return target.set(real * mInv, imag * mInv);
+      return Complex.rect(
+            rng.uniform(rMin, rMax),
+            rng.uniform(-IUtils.PI, IUtils.PI),
+            target);
    }
 
    /**
