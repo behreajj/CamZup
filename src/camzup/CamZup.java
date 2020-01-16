@@ -89,7 +89,7 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       Mesh3 m = Mesh3.torus(new Mesh3());
-      PApplet.printArray(m.getFaces());
+//      PApplet.printArray(m.getFaces());
    }
 
    /**

@@ -1001,6 +1001,9 @@ public class Transform3 extends Transform {
          final float radians,
          final Vec3 axis ) {
 
+      // TODO: When (1.0, 1.0, 0.0) is supplied to this function,
+      // the shape seems to have a wobble.
+
       this.rotPrev.set(this.rotation);
       Quaternion.rotate(this.rotPrev, radians, axis, this.rotation);
       this.updateAxes();

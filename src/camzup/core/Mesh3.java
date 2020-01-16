@@ -591,109 +591,146 @@ public class Mesh3 extends Mesh {
    }
 
    public static Mesh3 torus (
-         final float radius1,
-         final float radius2,
-         final int radSeg,
-         final int sides,
+         final float radius,
+         final float thickness,
+         final int sectors,
+         final int tubeRes,
          final Mesh3 target ) {
 
       // TODO: Yup3 compliance first
 
-      final int radSeg1 = radSeg + 1;
-      final int sides1 = sides + 1;
+      final int sectors1 = sectors + 1;
+      final int tubeRes1 = tubeRes + 1;
 
-      /* Precalculate t2 */
+      final float toU = 1.0f / sectors;
+      final float toV = 1.0f / tubeRes;
+      final float toTheta = IUtils.TAU / sectors;
+      final float toPhi = IUtils.TAU / tubeRes;
 
-      final float[] cosas = new float[sides1];
-      final float[] sinas = new float[sides1];
-      final float toAngle2 = IUtils.TAU / sides;
+      /* Precalculate phi and the v coordinate in uvs. */
 
-      for (int side = 0; side < sides1; ++side) {
-         final int currSide = side % sides;
-         final float t2 = currSide * toAngle2;
-         cosas[side] = (float) Math.cos(t2);
-         sinas[side] = (float) Math.sin(t2);
+      final float[] cosPhis = new float[tubeRes1];
+      final float[] sinPhis = new float[tubeRes1];
+      final float[] vs = new float[tubeRes1];
+
+      for (int side = 0; side < tubeRes1; ++side) {
+         final float phi = side % tubeRes * toPhi;
+         cosPhis[side] = (float) Math.cos(phi);
+         sinPhis[side] = (float) Math.sin(phi);
+         vs[side] = side * toV;
       }
 
-      final Vec3[] coords = new Vec3[radSeg1 * sides1];
+      /* Create mesh arrays. */
+
+      final Vec3[] coords = new Vec3[sectors1 * tubeRes1];
       final Vec3[] normals = new Vec3[coords.length];
       final Vec2[] texCoords = new Vec2[coords.length];
 
-      /* Coordinates */
+      final float refx = 0.0f;
+      final float refy = 1.0f;
+      final float refz = 0.0f;
 
-      final float toU = 1.0f / (float) radSeg;
-      final float toV = 1.0f / (float) sides;
-      final float toAngle1 = IUtils.TAU / radSeg;
+      for (int k = 0, seg = 0; seg < sectors1; ++seg) {
 
-      for (int k = 0, seg = 0; seg < radSeg1; ++seg) {
+         /* Calculate theta. */
+         final float theta = seg % sectors * toTheta;
+         final float cosTheta = (float) Math.cos(theta);
+         final float sinTheta = (float) Math.sin(theta);
 
-         final int currSeg = seg % radSeg;
-         final float t1 = currSeg * toAngle1;
+         /* Calculate r1 */
+         final float r1x = radius * cosTheta;
+         final float r1y = 0.0f;
+         final float r1z = radius * sinTheta;
 
-         final float cost1 = (float) Math.cos(t1);
-         final float sint1 = (float) Math.sin(t1);
-
-         final float r1x = cost1 * radius1;
-         final float r1z = sint1 * radius1;
-
+         /* Calculate horizontal texture coordinate. */
          final float u = seg * toU;
 
-         final Vec3 r1 = new Vec3(r1x, 0.0f, r1z);
+         /* Calculate quaternion. Assumes forward is normalized. */
+         final double halfAngle = 0.5d * -theta;
+         final float sinHalf = (float) Math.sin(halfAngle);
+         final float qw = (float) Math.cos(halfAngle);
+         final float qx = refx * sinHalf;
+         final float qy = refy * sinHalf;
+         final float qz = refz * sinHalf;
 
-         for (int side = 0; side < sides1; ++side, ++k) {
+         for (int side = 0; side < tubeRes1; ++side, ++k) {
 
-            final float mulqx = radius2 * sinas[side];
-            final float mulqy = radius2 * cosas[side];
+            /*
+             * Calculate the vector which will be multiplied by a
+             * quaternion.
+             */
+            final float mulqx = thickness * sinPhis[side];
+            final float mulqy = thickness * cosPhis[side];
+            final float mulqz = 0.0f;
 
-            final float v = side * toV;
+            /* Multiply quaternion q by vector mulq pt. 1 */
+            final float iw = -qx * mulqx - qy * mulqy - qz * mulqz;
+            final float ix = qw * mulqx + qy * mulqz - qz * mulqy;
+            final float iy = qw * mulqy + qz * mulqx - qx * mulqz;
+            final float iz = qw * mulqz + qx * mulqy - qy * mulqx;
 
-            final Vec3 mulq = new Vec3(mulqx, mulqy, 0.0f);
+            /* Multiply quaternion q by vector mulq pt. 2 */
+            final float r2x = ix * qw + iz * qy - iw * qx - iy * qz;
+            final float r2y = iy * qw + ix * qz - iw * qy - iz * qx;
+            final float r2z = iz * qw + iy * qx - iw * qz - ix * qy;
 
-            final Quaternion q = Quaternion.fromAxisAngle(-t1,
-                  Vec3.forward(new Vec3()), new Quaternion());
+            coords[k] = new Vec3(
+                  r1x + r2x,
+                  r1y + r2y,
+                  r1z + r2z);
 
-            final Vec3 r2 = Quaternion.mulVector(q, mulq, new Vec3());
+            /* Normal is r2 normalized. */
 
-            coords[k] = Vec3.add(r1, r2, new Vec3());
+            // TODO: You can avoid the normalization by calculating the
+            // normal first, and not multiplying sin and cos phi by
+            // thickness when finding mulqx. the coord is then r1 + r2 *
+            // thickness.
+            final float msq = r2x * r2x + r2y * r2y + r2z * r2z;
+            final float invm = Utils.div(1.0f, (float) Math.sqrt(msq));
+            normals[k] = new Vec3(
+                  r2x * invm,
+                  r2y * invm,
+                  r2z * invm);
 
-            normals[k] = Vec3.subNorm(coords[k], r1, new Vec3());
-
-            texCoords[k] = new Vec2(u, v);
+            texCoords[k] = new Vec2(u, vs[side]);
          }
       }
 
-      final int nbTriangles = coords.length * 2;
-      final int nbIndexes = nbTriangles * 3;
-      final int[][][] faces = new int[nbTriangles][3][3];
+      final int triangles = coords.length + coords.length;
+      final int idxLimit = triangles + triangles + triangles - 6;
+      final int[][][] faces = new int[triangles][3][3];
 
-      int i = 0;
-      int m = 0;
+      /* Six vertices per 2 triangles. */
+      int vIdx = 0;
+      int fIdx = 0;
 
-      for (int seg = 0; seg < radSeg1; ++seg) {
+      for (int seg = 0; seg < sectors1; ++seg) {
 
-         /* NOTE: This for-loop is different than the others. */
-         for (int side = 0; side < sides; ++side) {
+         final int currentFac = seg * tubeRes1;
+         final int nextFac = (seg + 1) * tubeRes1;
 
-            final int current = side + seg * sides1;
-            final int next = side
-                  + (seg < radSeg ? (seg + 1) * sides1 : 0);
+         /* This for-loop is different than the others. */
+         for (int side = 0; side < tubeRes; ++side) {
 
-            if (i < nbIndexes - 6) {
+            /* The precaution i < idxLimit may be unecessary? */
+            if (vIdx < idxLimit) {
 
+               final int current = side + currentFac;
+               final int next = side + (seg < sectors ? nextFac : 0);
                final int n1 = next + 1;
                final int c1 = current + 1;
 
-               faces[m++] = new int[][] {
+               faces[fIdx++] = new int[][] {
                      { current, current, current },
                      { next, next, next },
                      { n1, n1, n1 } };
 
-               faces[m++] = new int[][] {
+               faces[fIdx++] = new int[][] {
                      { current, current, current },
                      { n1, n1, n1 },
                      { c1, c1, c1 } };
 
-               i += 6;
+               vIdx += 6;
             }
          }
       }
@@ -703,7 +740,7 @@ public class Mesh3 extends Mesh {
 
    public static Mesh3 torus ( final Mesh3 target ) {
 
-      return Mesh3.torus(1.0f, 0.25f, 24, 12, target);
+      return Mesh3.torus(0.5f, 0.1f, 24, 12, target);
    }
 
    /**
