@@ -770,6 +770,7 @@ public class Mesh2 extends Mesh {
     *
     * @return the string
     */
+   @Experimental
    public String toObjString () {
 
       // TODO: Needs testing.

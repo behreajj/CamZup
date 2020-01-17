@@ -5,6 +5,7 @@ package camzup.core;
  * materials. Holds a transform that may be applied to UV
  * coordinates.
  */
+@Experimental
 public class MaterialUV extends Material {
 
    /**

@@ -1071,6 +1071,7 @@ public class Mat4 extends Matrix {
     *           the output point
     * @return the product
     */
+   @Experimental
    public static Vec3 mulPoint (
          final Mat4 a,
          final Vec2 b,
@@ -1105,6 +1106,7 @@ public class Mat4 extends Matrix {
     *           the output point
     * @return the product
     */
+   @Experimental
    public static Vec3 mulPoint (
          final Mat4 a,
          final Vec3 b,
@@ -1161,6 +1163,7 @@ public class Mat4 extends Matrix {
     *           the output vector
     * @return the product
     */
+   @Experimental
    public static Vec3 mulVector (
          final Mat4 a,
          final Vec2 b,
@@ -1195,6 +1198,7 @@ public class Mat4 extends Matrix {
     *           the output vector
     * @return the product
     */
+   @Experimental
    public static Vec3 mulVector (
          final Mat4 a,
          final Vec3 b,

@@ -247,10 +247,11 @@ public class Mesh3 extends Mesh {
       return target;
    }
 
+   @Experimental
    static Mesh3 uvSphere (
          final float r,
-         final int detailU,
-         final int detailV,
+         final int longitudes,
+         final int latitudes,
          final Mesh3 target ) {
 
       // TODO: Unfinished.
@@ -269,10 +270,13 @@ public class Mesh3 extends Mesh {
       // }
       // }
 
-      final float[] cosTheta = new float[detailU];
-      final float[] sinTheta = new float[detailU];
-      final float uToPrc = 1.0f / detailU;
-      for (int i = 0; i < detailU; ++i) {
+      final int vlats = latitudes < 3 ? 3 : latitudes;
+      final int vlons = longitudes < 3 ? 3 : longitudes;
+
+      final float[] cosTheta = new float[vlons];
+      final float[] sinTheta = new float[vlons];
+      final float uToPrc = 1.0f / vlons;
+      for (int i = 0; i < vlons; ++i) {
          final float phi = Utils.lerpUnclamped(
                -IUtils.PI,
                IUtils.PI,
@@ -281,10 +285,10 @@ public class Mesh3 extends Mesh {
          sinTheta[i] = (float) Math.sin(phi);
       }
 
-      final float[] cosPhi = new float[detailV];
-      final float[] sinPhi = new float[detailV];
-      final float vToPrc = 1.0f / (detailV - 1.0f);
-      for (int i = 0; i < detailV; ++i) {
+      final float[] cosPhi = new float[vlats];
+      final float[] sinPhi = new float[vlats];
+      final float vToPrc = 1.0f / (vlats - 1.0f);
+      for (int i = 0; i < vlats; ++i) {
          final float phi = Utils.lerpUnclamped(
                -IUtils.HALF_PI,
                IUtils.HALF_PI,
@@ -354,6 +358,73 @@ public class Mesh3 extends Mesh {
             zMax - zMin);
    }
 
+   @Experimental
+   public static Mesh3 cone (
+         final float height,
+         final float bottomRadius,
+         final float topRadius,
+         final int nbSides,
+         final int nbHeightSeg,
+         final Mesh3 target ) {
+
+      final int nbVerticesCap = nbSides + 1;
+      int vert = 0;
+      final float _2pi = (float) Math.PI * 2f;
+
+      final Vec3[] vertices = new Vec3[nbVerticesCap + nbVerticesCap
+            + nbSides * nbHeightSeg * 2 + 2];
+      final Vec3[] normales = new Vec3[vertices.length];
+      final Vec2[] uvss = new Vec2[vertices.length];
+      final int[][][] triangles = {};
+
+      /* Bottom cap. */
+      vertices[vert++] = new Vec3(0.0f, 0.0f, 0.0f);
+      while (vert <= nbSides) {
+         final float rad = (float) vert / nbSides * _2pi;
+         vertices[vert] = new Vec3(
+               (float) Math.cos(rad) * bottomRadius,
+               0.0f,
+               (float) Math.sin(rad) * bottomRadius);
+         vert++;
+      }
+
+      /* Top cap. */
+      final int nbSides2 = nbSides + nbSides;
+      vertices[vert++] = new Vec3(0.0f, height, 0.0f);
+      while (vert <= nbSides2 + 1) {
+         final float rad = (float) (vert - nbSides - 1) / nbSides * _2pi;
+         vertices[vert] = new Vec3(
+               (float) Math.cos(rad) * topRadius,
+               height,
+               (float) Math.sin(rad) * topRadius);
+         vert++;
+      }
+
+      /* Sides. */
+      int v = 0;
+      while (vert <= vertices.length - 4) {
+         
+         final float rad = (float) v / nbSides * _2pi;
+         final float cosrad = (float) Math.cos(rad);
+         final float sinrad = (float) Math.sin(rad);
+         
+         vertices[vert] = new Vec3(
+               cosrad * topRadius,
+               height,
+               sinrad * topRadius);
+         vertices[vert + 1] = new Vec3(
+               cosrad * bottomRadius,
+               0.0f,
+               sinrad * bottomRadius);
+         vert += 2;
+         v++;
+      }
+      vertices[vert] = vertices[nbSides2 + 2];
+      vertices[vert + 1] = vertices[nbSides2 + 3];
+
+      return target.set(triangles, vertices, uvss, normales);
+   }
+
    /**
     * Generates a cube mesh.
     *
@@ -361,6 +432,7 @@ public class Mesh3 extends Mesh {
     *           the output mesh
     * @return the cube
     */
+   @Experimental
    public static Mesh3 cube ( final Mesh3 target ) {
 
       final Vec3[] coords = new Vec3[] {
@@ -375,19 +447,19 @@ public class Mesh3 extends Mesh {
       };
 
       final Vec3[] normals = new Vec3[] {
-            new Vec3(-1.0f, 0.0f, 0.0f), /* 00 */
-            new Vec3(0.0f, +1.0f, 0.0f), /* 01 */
-            new Vec3(+1.0f, 0.0f, 0.0f), /* 02 */
-            new Vec3(0.0f, -1.0f, 0.0f), /* 03 */
-            new Vec3(0.0f, 0.0f, -1.0f), /* 04 */
-            new Vec3(0.0f, 0.0f, +1.0f) /* 05 */
+            new Vec3(-1.0f, 0.0f, 0.0f), /* 00 Left */
+            new Vec3(0.0f, +1.0f, 0.0f), /* 01 Forward */
+            new Vec3(+1.0f, 0.0f, 0.0f), /* 02 Right */
+            new Vec3(0.0f, -1.0f, 0.0f), /* 03 Back */
+            new Vec3(0.0f, 0.0f, -1.0f), /* 04 Down */
+            new Vec3(0.0f, 0.0f, +1.0f) /* 05 Up */
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            new Vec2(0.0f, 0.0f), /* 00 */
-            new Vec2(1.0f, 0.0f), /* 01 */
-            new Vec2(1.0f, 1.0f), /* 02 */
-            new Vec2(0.0f, 1.0f) /* 03 */
+            new Vec2(0.0f, 0.0f), /* 00 Left-Bottom */
+            new Vec2(1.0f, 0.0f), /* 01 Right-Bottom */
+            new Vec2(1.0f, 1.0f), /* 02 Right-Top */
+            new Vec2(0.0f, 1.0f) /* 03 Left-Top */
       };
 
       final int[][][] faces = new int[][][] {
@@ -590,6 +662,7 @@ public class Mesh3 extends Mesh {
       return target.set(faces, coords, texCoords, normals);
    }
 
+   @Experimental
    public static Mesh3 torus (
          final float radius,
          final float thickness,
@@ -597,7 +670,7 @@ public class Mesh3 extends Mesh {
          final int tubeRes,
          final Mesh3 target ) {
 
-      // TODO: Yup3 compliance first
+      // TODO: Yup3 compliance or Zup3 compliance?
 
       final int sectors1 = sectors + 1;
       final int tubeRes1 = tubeRes + 1;
@@ -626,7 +699,11 @@ public class Mesh3 extends Mesh {
       final Vec3[] normals = new Vec3[coords.length];
       final Vec2[] texCoords = new Vec2[coords.length];
 
-      final float refx = 0.0f;
+      /*
+       * Reference up for world: y-up or z-up. Either way, x
+       * should be zero.
+       */
+      // final float refx = 0.0f;
       final float refy = 1.0f;
       final float refz = 0.0f;
 
@@ -649,7 +726,7 @@ public class Mesh3 extends Mesh {
          final double halfAngle = 0.5d * -theta;
          final float sinHalf = (float) Math.sin(halfAngle);
          final float qw = (float) Math.cos(halfAngle);
-         final float qx = refx * sinHalf;
+         // final float qx = refx * sinHalf;
          final float qy = refy * sinHalf;
          final float qz = refz * sinHalf;
 
@@ -659,40 +736,38 @@ public class Mesh3 extends Mesh {
              * Calculate the vector which will be multiplied by a
              * quaternion.
              */
-            final float mulqx = thickness * sinPhis[side];
-            final float mulqy = thickness * cosPhis[side];
+            final float mulqx = sinPhis[side];
+            final float mulqy = cosPhis[side];
             final float mulqz = 0.0f;
 
             /* Multiply quaternion q by vector mulq pt. 1 */
-            final float iw = -qx * mulqx - qy * mulqy - qz * mulqz;
             final float ix = qw * mulqx + qy * mulqz - qz * mulqy;
-            final float iy = qw * mulqy + qz * mulqx - qx * mulqz;
-            final float iz = qw * mulqz + qx * mulqy - qy * mulqx;
+            // final float iy = qw * mulqy + qz * mulqx - qx * mulqz;
+            // final float iz = qw * mulqz + qx * mulqy - qy * mulqx;
+            // final float iw = -qx * mulqx - qy * mulqy - qz * mulqz;
+
+            final float iy = qw * mulqy + qz * mulqx;
+            final float iz = qw * mulqz - qy * mulqx;
+            final float iw = -qy * mulqy - qz * mulqz;
 
             /* Multiply quaternion q by vector mulq pt. 2 */
-            final float r2x = ix * qw + iz * qy - iw * qx - iy * qz;
-            final float r2y = iy * qw + ix * qz - iw * qy - iz * qx;
-            final float r2z = iz * qw + iy * qx - iw * qz - ix * qy;
 
-            coords[k] = new Vec3(
-                  r1x + r2x,
-                  r1y + r2y,
-                  r1z + r2z);
+            // final float r2x = ix * qw + iz * qy - iw * qx - iy * qz;
+            // final float r2y = iy * qw + ix * qz - iw * qy - iz * qx;
+            // final float r2z = iz * qw + iy * qx - iw * qz - ix * qy;
 
-            /* Normal is r2 normalized. */
-
-            // TODO: You can avoid the normalization by calculating the
-            // normal first, and not multiplying sin and cos phi by
-            // thickness when finding mulqx. the coord is then r1 + r2 *
-            // thickness.
-            final float msq = r2x * r2x + r2y * r2y + r2z * r2z;
-            final float invm = Utils.div(1.0f, (float) Math.sqrt(msq));
-            normals[k] = new Vec3(
-                  r2x * invm,
-                  r2y * invm,
-                  r2z * invm);
+            final float r2x = ix * qw + iz * qy - iy * qz;
+            final float r2y = iy * qw + ix * qz - iw * qy;
+            final float r2z = iz * qw - iw * qz - ix * qy;
 
             texCoords[k] = new Vec2(u, vs[side]);
+
+            normals[k] = new Vec3(r2x, r2y, r2z);
+
+            coords[k] = new Vec3(
+                  r1x + r2x * thickness,
+                  r1y + r2y * thickness,
+                  r1z + r2z * thickness);
          }
       }
 

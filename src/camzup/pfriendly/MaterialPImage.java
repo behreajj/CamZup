@@ -1,6 +1,7 @@
 package camzup.pfriendly;
 
 import camzup.core.Color;
+import camzup.core.Experimental;
 import camzup.core.MaterialUV;
 import camzup.core.Transform2;
 import processing.core.PImage;
@@ -8,6 +9,7 @@ import processing.core.PImage;
 /**
  * A material which supports PImages as textures.
  */
+@Experimental
 public class MaterialPImage extends MaterialUV {
 
    /**

@@ -1,11 +1,17 @@
 package camzup;
 
+import java.util.Comparator;
+import java.util.TreeSet;
+
 import camzup.core.Color;
+import processing.core.PVector;
 import camzup.core.Mesh3;
 import camzup.core.Quaternion;
+import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
+import camzup.core.Vec4;
 import processing.core.PApplet;
 
 /**
@@ -87,9 +93,7 @@ public class CamZup {
    }
 
    public static void main ( final String[] args ) {
-
-      Mesh3 m = Mesh3.torus(new Mesh3());
-//      PApplet.printArray(m.getFaces());
+      
    }
 
    /**

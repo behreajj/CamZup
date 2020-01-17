@@ -1285,6 +1285,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     *           number of gradient samples
     * @return the string
     */
+   @Experimental
    public String toBlenderCode ( final String name, final int samples ) {
 
       /*

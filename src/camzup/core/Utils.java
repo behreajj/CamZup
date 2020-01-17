@@ -949,7 +949,8 @@ public abstract class Utils implements IUtils {
     */
    public static float ceil ( final float value ) {
 
-      return -Utils.floor(-value);
+      return value > 0.0f ? (int) value + 1.0f
+            : value < 0.0f ? (int) value : 0.0f;
    }
 
    /**
@@ -1107,11 +1108,8 @@ public abstract class Utils implements IUtils {
     */
    public static double floor ( final double value ) {
 
-      if (value == 0.0d || Double.isNaN(value)) {
-         return 0.0d;
-      }
-
-      return value > 0.0d ? (long) value : (long) value - 1;
+      return value > 0.0d ? (int) value
+            : value < 0.0d ? (int) value - 1.0d : 0.0d;
    }
 
    /**
@@ -1126,11 +1124,8 @@ public abstract class Utils implements IUtils {
     */
    public static float floor ( final float value ) {
 
-      if (value == 0.0f || value != value) {
-         return 0.0f;
-      }
-
-      return value > 0.0f ? (int) value : (int) value - 1;
+      return value > 0.0f ? (int) value
+            : value < 0.0f ? (int) value - 1.0f : 0.0f;
    }
 
    /**
@@ -1376,7 +1371,8 @@ public abstract class Utils implements IUtils {
          final float b,
          final float c ) {
 
-      return Utils.max(Utils.max(a, b), c);
+      final float d = a >= b ? a : a < b ? b : 0.0f;
+      return d >= c ? d : d < c ? c : 0.0f;
    }
 
    /**
@@ -1412,7 +1408,8 @@ public abstract class Utils implements IUtils {
          final float b,
          final float c ) {
 
-      return Utils.min(Utils.min(a, b), c);
+      final float d = a <= b ? a : a > b ? b : 0.0f;
+      return d <= c ? d : d > c ? c : 0.0f;
    }
 
    /**
@@ -1437,7 +1434,11 @@ public abstract class Utils implements IUtils {
       if (b == 0.0f || b != b) {
          return a;
       }
-      return Utils.modUnchecked(a, b);
+
+      // return Utils.modUnchecked(a, b);
+      final float value = a / b;
+      return a - b * (value > 0.0f ? (int) value
+            : value < 0.0f ? (int) value - 1.0f : 0.0f);
    }
 
    /**
@@ -1473,7 +1474,8 @@ public abstract class Utils implements IUtils {
     */
    public static float mod1 ( final float value ) {
 
-      return value - Utils.floor(value);
+      return value > 0.0f ? value - (int) value
+            : value < 0.0f ? value - ((int) value - 1.0f) : 0.0f;
    }
 
    /**
@@ -1530,7 +1532,10 @@ public abstract class Utils implements IUtils {
     */
    public static float modUnchecked ( final float a, final float b ) {
 
-      return a - b * Utils.floor(a / b);
+      // return a - b * Utils.floor(a / b);
+      final float value = a / b;
+      return a - b * (value > 0.0f ? (int) value
+            : value < 0.0f ? (int) value - 1.0f : 0.0f);
    }
 
    /**
@@ -1544,7 +1549,6 @@ public abstract class Utils implements IUtils {
     */
    public static int not ( final float value ) {
 
-      // return 1 - Utils.bool(value);
       return Utils.toInt(!Utils.toBool(value));
    }
 
@@ -1559,7 +1563,6 @@ public abstract class Utils implements IUtils {
     */
    public static int not ( final int value ) {
 
-      // return 1 - Utils.bool(value);
       return Utils.toInt(!Utils.toBool(value));
    }
 
@@ -1616,6 +1619,22 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * Rounds a value to an integer based on whether its
+    * fractional portion is greater than or equal to plus or
+    * minus 0.5 .
+    *
+    * @param value
+    *           the value
+    * @return the rounded value
+    */
+   public static int round ( final float value ) {
+
+      final int trunc = (int) value;
+      final float frac = value - trunc;
+      return frac <= -0.5f ? trunc - 1 : frac >= 0.5f ? trunc + 1 : trunc;
+   }
+
+   /**
     * Rounds a value to a number of places right of the decimal
     * point. Promotes the float to a double, rounds it, then
     * downcasts back to a float.
@@ -1631,13 +1650,23 @@ public abstract class Utils implements IUtils {
     * @see Math#pow(double, double)
     * @see Math#round(double)
     */
-   public static float round ( final float value, final int places ) {
+   public static float round ( 
+         final float value, 
+         final int places ) {
 
       if (places < 1) {
-         return Math.round(value);
+         return Utils.round(value);
       }
-      final double n = Math.pow(10, places);
-      return (float) (Math.round(value * n) / n);
+      
+      if (places > 7) {
+         return value;
+      }
+
+      int n = 10;
+      for (int i = 1; i < places; ++i) {
+         n *= 10;
+      }
+      return Utils.round(value * n) / (float) n;
    }
 
    /**

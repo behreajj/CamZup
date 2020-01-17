@@ -17,6 +17,7 @@ import camzup.core.Curve2.Knot2;
 /**
  * A draft SVG parser class. Currently unfinished.
  */
+@Experimental
 abstract class SVGParser {
 
    /**

@@ -1,13 +1,14 @@
 package camzup.pfriendly;
 
 import camzup.core.Entity;
+import camzup.core.Experimental;
 import camzup.core.ITransform;
 import camzup.core.Transform3;
 import camzup.core.Vec3;
 
+@Experimental
 public class Cam3 extends Entity {
 
-   // TODO: EXPERIMENTAL.
 
    public final Up3 renderer;
 

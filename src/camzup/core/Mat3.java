@@ -558,6 +558,7 @@ public class Mat3 extends Matrix {
     *           the output point
     * @return the product
     */
+   @Experimental
    public static Vec2 mulPoint (
          final Mat3 a,
          final Vec2 b,
@@ -588,6 +589,7 @@ public class Mat3 extends Matrix {
     *           the output vector
     * @return the product
     */
+   @Experimental
    public static Vec2 mulVector (
          final Mat3 a,
          final Vec2 b,

@@ -255,6 +255,7 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
     *
     * @return the string
     */
+   @Experimental
    public String toBlenderCode () {
 
       final StringBuilder result = new StringBuilder();

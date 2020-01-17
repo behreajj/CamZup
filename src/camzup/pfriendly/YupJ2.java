@@ -61,8 +61,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * renderer matrix.
     */
    protected AffineTransform affineNative = new AffineTransform(
-         1.0d, 0.0d, 0.0d,
-         0.0d, 1.0d, 0.0d);
+         1.0d, 0.0d,
+         0.0d, 1.0d,
+         0.0d, 0.0d);
 
    /**
     * A Java AWT arc object.
@@ -1201,8 +1202,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.cameraZoomX = zx < PConstants.EPSILON ? 1.0f : zx;
       this.cameraZoomY = zy < PConstants.EPSILON ? 1.0f : zy;
 
-      this.resetMatrix();
-      this.applyMatrix(
+      this.setMatrix(
             1.0f, 0.0f, this.width * 0.5f,
             0.0f, 1.0f, this.height * 0.5f);
       this.scale(this.cameraZoomX, -this.cameraZoomY);
@@ -1453,13 +1453,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    public Mat3 getMatrix ( final Mat3 target ) {
 
+      AffineTransform tr = this.g2.getTransform();
       return target.set(
-            (float) this.affineNative.getScaleX(),
-            (float) this.affineNative.getShearX(),
-            (float) this.affineNative.getTranslateX(),
-            (float) this.affineNative.getShearY(),
-            (float) this.affineNative.getScaleY(),
-            (float) this.affineNative.getTranslateY(),
+            (float) tr.getScaleX(),
+            (float) tr.getShearX(),
+            (float) tr.getTranslateX(),
+            (float) tr.getShearY(),
+            (float) tr.getScaleY(),
+            (float) tr.getTranslateY(),
             0.0f, 0.0f, 1.0f);
    }
 
@@ -1472,16 +1473,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    public Mat4 getMatrix ( final Mat4 target ) {
 
+      AffineTransform tr = this.g2.getTransform();
       return target.set(
-            (float) this.affineNative.getScaleX(),
-            (float) this.affineNative.getShearX(),
+            (float) tr.getScaleX(),
+            (float) tr.getShearX(),
             0.0f,
-            (float) this.affineNative.getTranslateX(),
+            (float) tr.getTranslateX(),
 
-            (float) this.affineNative.getShearY(),
-            (float) this.affineNative.getScaleY(),
+            (float) tr.getShearY(),
+            (float) tr.getScaleY(),
             0.0f,
-            (float) this.affineNative.getTranslateY(),
+            (float) tr.getTranslateY(),
 
             0.0f, 0.0f, 1.0f, 0.0f,
             0.0f, 0.0f, 0.0f, 1.0f);
@@ -1502,13 +1504,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          target = new PMatrix2D();
       }
 
+      AffineTransform tr = this.g2.getTransform();
       target.set(
-            (float) this.affineNative.getScaleX(),
-            (float) this.affineNative.getShearX(),
-            (float) this.affineNative.getTranslateX(),
-            (float) this.affineNative.getShearY(),
-            (float) this.affineNative.getScaleY(),
-            (float) this.affineNative.getTranslateY());
+            (float) tr.getScaleX(),
+            (float) tr.getShearX(),
+            (float) tr.getTranslateX(),
+            (float) tr.getShearY(),
+            (float) tr.getScaleY(),
+            (float) tr.getTranslateY());
       return target;
    }
 
@@ -1526,16 +1529,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          target = new PMatrix3D();
       }
 
+      AffineTransform tr = this.g2.getTransform();
       target.set(
-            (float) this.affineNative.getScaleX(),
-            (float) this.affineNative.getShearX(),
+            (float) tr.getScaleX(),
+            (float) tr.getShearX(),
             0.0f,
-            (float) this.affineNative.getTranslateX(),
+            (float) tr.getTranslateX(),
 
-            (float) this.affineNative.getShearY(),
-            (float) this.affineNative.getScaleY(),
+            (float) tr.getShearY(),
+            (float) tr.getScaleY(),
             0.0f,
-            (float) this.affineNative.getTranslateY(),
+            (float) tr.getTranslateY(),
 
             0.0f, 0.0f, 1.0f, 0.0f,
             0.0f, 0.0f, 0.0f, 1.0f);
@@ -1676,6 +1680,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final int rearColor,
          final int foreColor,
          final int coordColor ) {
+
+      // TODO: Point stroke cap ROUND issue.
 
       this.pushStyle();
       this.pushMatrix();
@@ -2137,6 +2143,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
       final boolean needSwap = this.capNative == BasicStroke.CAP_BUTT;
       if (needSwap) {
+
          this.strokeObject = new BasicStroke(
                this.strokeWeight,
                BasicStroke.CAP_SQUARE,
@@ -2150,7 +2157,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
                this.capNative,
                this.joinNative);
          this.g2.setStroke(this.strokeObject);
+
       } else {
+
          this.line(x, y, x + PConstants.EPSILON, y);
       }
    }
@@ -2524,6 +2533,24 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.cameraY = v.y;
    }
 
+   @Override
+   public float screenX ( float x, float y ) {
+
+      AffineTransform tr = this.g2.getTransform();
+      return (float) (tr.getScaleX() * x +
+            tr.getShearX() * y +
+            tr.getTranslateX());
+   }
+
+   @Override
+   public float screenY ( float x, float y ) {
+
+      AffineTransform tr = this.g2.getTransform();
+      return (float) (tr.getShearY() * x +
+            tr.getScaleY() * y +
+            tr.getTranslateY());
+   }
+
    /**
     * Sets the renderer's affine transform matrix to the
     * supplied arguments.
@@ -2858,7 +2885,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void strokeWeight ( final float weight ) {
 
-      this.strokeWeight = Utils.max(weight, PConstants.EPSILON);
+      this.strokeWeight = Utils.max(weight, Utils.EPSILON);
       this.strokeImpl();
    }
 
