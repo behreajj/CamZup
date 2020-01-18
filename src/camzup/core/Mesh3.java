@@ -403,11 +403,11 @@ public class Mesh3 extends Mesh {
       /* Sides. */
       int v = 0;
       while (vert <= vertices.length - 4) {
-         
+
          final float rad = (float) v / nbSides * _2pi;
          final float cosrad = (float) Math.cos(rad);
          final float sinrad = (float) Math.sin(rad);
-         
+
          vertices[vert] = new Vec3(
                cosrad * topRadius,
                height,

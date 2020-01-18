@@ -1472,6 +1472,23 @@ public abstract class Utils implements IUtils {
     * @see Utils#mod(float, float)
     * @see Utils#floor(float)
     */
+   public static double mod1 ( final double value ) {
+
+      return value > 0.0d ? value - (int) value
+            : value < 0.0d ? value - ((int) value - 1.0d) : 0.0d;
+   }
+
+   /**
+    * Subtracts the floor of the input value from the value.
+    *
+    * Use this instead of mod(a, 1.0).
+    *
+    * @param value
+    *           the input value
+    * @return the result
+    * @see Utils#mod(float, float)
+    * @see Utils#floor(float)
+    */
    public static float mod1 ( final float value ) {
 
       return value > 0.0f ? value - (int) value
@@ -1629,9 +1646,8 @@ public abstract class Utils implements IUtils {
     */
    public static int round ( final float value ) {
 
-      final int trunc = (int) value;
-      final float frac = value - trunc;
-      return frac <= -0.5f ? trunc - 1 : frac >= 0.5f ? trunc + 1 : trunc;
+      return value < 0.0f ? (int) (value - 0.5f)
+            : value > 0.0f ? (int) (value + 0.5f) : 0;
    }
 
    /**
@@ -1650,14 +1666,14 @@ public abstract class Utils implements IUtils {
     * @see Math#pow(double, double)
     * @see Math#round(double)
     */
-   public static float round ( 
-         final float value, 
+   public static float round (
+         final float value,
          final int places ) {
 
       if (places < 1) {
          return Utils.round(value);
       }
-      
+
       if (places > 7) {
          return value;
       }

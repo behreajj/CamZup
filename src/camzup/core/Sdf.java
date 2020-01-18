@@ -10,7 +10,38 @@ package camzup.core;
  *
  * @author Inigo Quilez
  */
-public abstract class SDF {
+public abstract class Sdf {
+
+   @FunctionalInterface
+   @Experimental
+   interface FieldFunc {
+
+      float execute ( Object... args );
+   }
+
+   @Experimental
+   class Torus implements FieldFunc {
+
+      @Override
+      public float execute ( final Object... args ) {
+
+         return this.execute(
+               (Vec3) args[0],
+               (Float) args[1],
+               (Float) args[2]);
+
+      }
+
+      public float execute (
+            final Vec3 point,
+            final Float radius,
+            final Float thickness ) {
+
+         return Utils.hypot(Utils.hypot(point.x, point.y)
+               - radius, point.z) - thickness;
+      }
+
+   }
 
    /**
     * Draws an open arc with rounded stroke caps. The angular
@@ -82,7 +113,7 @@ public abstract class SDF {
     * @see Utils#modRadians(float)
     * @see Math#cos(double)
     * @see Math#sin(double)
-    * @see SDF#arc(Vec2, float, float, float, float, float,
+    * @see Sdf#arc(Vec2, float, float, float, float, float,
     *      float)
     */
    public static float arc (
@@ -98,7 +129,7 @@ public abstract class SDF {
       /* Aperture is 2x arc length in the original. */
       final float arcLen = 0.5f * Utils.modRadians(b - a);
       final float arcOff = a + arcLen;
-      return SDF.arc(point,
+      return Sdf.arc(point,
             (float) Math.cos(arcOff), (float) Math.sin(arcOff),
             (float) Math.cos(arcLen), (float) Math.sin(arcLen),
             bounds, weight);
@@ -141,14 +172,14 @@ public abstract class SDF {
     * @param rounding
     *           corner rounding factor
     * @return the signed distance
-    * @see SDF#box(Vec2, Vec2)
+    * @see Sdf#box(Vec2, Vec2)
     */
    public static float box (
          final Vec2 point,
          final Vec2 bounds,
          final float rounding ) {
 
-      return SDF.box(point, bounds) - rounding;
+      return Sdf.box(point, bounds) - rounding;
    }
 
    /**
@@ -190,14 +221,14 @@ public abstract class SDF {
     * @param rounding
     *           corner rounding factor
     * @return the signed distance
-    * @see SDF#box(Vec3, Vec3)
+    * @see Sdf#box(Vec3, Vec3)
     */
    public static float box (
          final Vec3 point,
          final Vec3 bounds,
          final float rounding ) {
 
-      return SDF.box(point, bounds) - rounding;
+      return Sdf.box(point, bounds) - rounding;
    }
 
    /**
@@ -248,13 +279,13 @@ public abstract class SDF {
     * @param radians
     *           the angular offset
     * @return the factor
-    * @see SDF#conic(float, float, float)
+    * @see Sdf#conic(float, float, float)
     */
    public static float conic (
          final Vec2 point,
          final float radians ) {
 
-      return SDF.conic(point.x, point.y, radians);
+      return Sdf.conic(point.x, point.y, radians);
    }
 
    /**
@@ -303,6 +334,11 @@ public abstract class SDF {
       final float d = ccb + m2n2;
       final float q = d + m2n2;
       final float g = m + m * nsq;
+
+      // TODO: n * Math.sign(o) is not the same as
+      // Math.copySign(n, m), so you should go back
+      // to quilez's code and replace all instances
+      // of copySign with n * sign(m)
 
       float co = 0.0f;
       if (d < 0.0f) {
@@ -397,14 +433,14 @@ public abstract class SDF {
     * @param rounding
     *           the corner rounding
     * @return the signed distance
-    * @see SDF#hexagon(Vec2, float)
+    * @see Sdf#hexagon(Vec2, float)
     */
    public static float hexagon (
          final Vec2 point,
          final float bounds,
          final float rounding ) {
 
-      return SDF.hexagon(point, bounds) - rounding;
+      return Sdf.hexagon(point, bounds) - rounding;
    }
 
    /**
@@ -509,7 +545,7 @@ public abstract class SDF {
     * @param rounding
     *           the rounding factor.
     * @return the signed distance
-    * @see SDF#line(Vec2, Vec2, Vec2)
+    * @see Sdf#line(Vec2, Vec2, Vec2)
     */
    public static float line (
          final Vec2 point,
@@ -517,7 +553,7 @@ public abstract class SDF {
          final Vec2 dest,
          final float rounding ) {
 
-      return SDF.line(point, origin, dest) - rounding;
+      return Sdf.line(point, origin, dest) - rounding;
    }
 
    /**
@@ -582,7 +618,7 @@ public abstract class SDF {
     * @param rounding
     *           the rounding factor.
     * @return the signed distance
-    * @see SDF#line(Vec3, Vec3, Vec3)
+    * @see Sdf#line(Vec3, Vec3, Vec3)
     */
    public static float line (
          final Vec3 point,
@@ -590,7 +626,7 @@ public abstract class SDF {
          final Vec3 dest,
          final float rounding ) {
 
-      return SDF.line(point, origin, dest) - rounding;
+      return Sdf.line(point, origin, dest) - rounding;
    }
 
    /**
@@ -640,9 +676,10 @@ public abstract class SDF {
          final float wx = point.x - curr.x;
          final float wy = point.y - curr.y;
 
-         final float dotp = Utils.clamp01(Utils.div(
-               wx * ex + wy * ey,
-               ex * ex + ey * ey));
+         final float denom = ex * ex + ey * ey;
+         final float dotp = denom == 0.0f ? 0.0f
+               : Utils.clamp01(
+                     (wx * ex + wy * ey) / denom);
          final float bx = wx - ex * dotp;
          final float by = wy - ey * dotp;
 
@@ -673,14 +710,14 @@ public abstract class SDF {
     * @param rounding
     *           corner rounding
     * @return the signed distance
-    * @see SDF#polygon(Vec2, Vec2[])
+    * @see Sdf#polygon(Vec2, Vec2[])
     */
    public static float polygon (
          final Vec2 point,
          final Vec2[] vertices,
          final float rounding ) {
 
-      return SDF.polygon(point, vertices) - rounding;
+      return Sdf.polygon(point, vertices) - rounding;
    }
 
    /**
@@ -728,14 +765,54 @@ public abstract class SDF {
     * @param radius
     *           the radius
     * @return the subtraction
-    * @see SDF#intersectRound(float, float, float)
+    * @see Sdf#intersectRound(float, float, float)
     */
    public static float subtractRound (
          final float a,
          final float b,
          final float radius ) {
 
-      return SDF.intersectRound(a, -b, radius);
+      return Sdf.intersectRound(a, -b, radius);
+   }
+
+   /**
+    * Draws a torus.
+    *
+    * @param point
+    *           the point
+    * @param radius
+    *           the radius
+    * @param thickness
+    *           the thickness
+    * @return the signed distance
+    */
+   public static float torus (
+         final Vec2 point,
+         final float radius,
+         final float thickness ) {
+
+      final float n = Vec2.mag(point) - radius;
+      return (float) Math.sqrt(n * n) - thickness;
+   }
+
+   /**
+    * Draws a torus.
+    *
+    * @param point
+    *           the point
+    * @param radius
+    *           the radius
+    * @param thickness
+    *           the thickness
+    * @return the signed distance
+    */
+   public static float torus (
+         final Vec3 point,
+         final float radius,
+         final float thickness ) {
+
+      return Utils.hypot(Utils.hypot(point.x, point.y)
+            - radius, point.z) - thickness;
    }
 
    /**

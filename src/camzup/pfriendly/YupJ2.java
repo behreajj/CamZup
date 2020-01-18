@@ -1453,7 +1453,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    public Mat3 getMatrix ( final Mat3 target ) {
 
-      AffineTransform tr = this.g2.getTransform();
+      final AffineTransform tr = this.g2.getTransform();
       return target.set(
             (float) tr.getScaleX(),
             (float) tr.getShearX(),
@@ -1473,7 +1473,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    public Mat4 getMatrix ( final Mat4 target ) {
 
-      AffineTransform tr = this.g2.getTransform();
+      final AffineTransform tr = this.g2.getTransform();
       return target.set(
             (float) tr.getScaleX(),
             (float) tr.getShearX(),
@@ -1504,7 +1504,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          target = new PMatrix2D();
       }
 
-      AffineTransform tr = this.g2.getTransform();
+      final AffineTransform tr = this.g2.getTransform();
       target.set(
             (float) tr.getScaleX(),
             (float) tr.getShearX(),
@@ -1529,7 +1529,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          target = new PMatrix3D();
       }
 
-      AffineTransform tr = this.g2.getTransform();
+      final AffineTransform tr = this.g2.getTransform();
       target.set(
             (float) tr.getScaleX(),
             (float) tr.getShearX(),
@@ -2521,6 +2521,24 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.g2.scale(dim.x, dim.y);
    }
 
+   @Override
+   public float screenX ( final float x, final float y ) {
+
+      final AffineTransform tr = this.g2.getTransform();
+      return (float) (tr.getScaleX() * x +
+            tr.getShearX() * y +
+            tr.getTranslateX());
+   }
+
+   @Override
+   public float screenY ( final float x, final float y ) {
+
+      final AffineTransform tr = this.g2.getTransform();
+      return (float) (tr.getShearY() * x +
+            tr.getScaleY() * y +
+            tr.getTranslateY());
+   }
+
    /**
     * Sets the renderer camera's location.
     *
@@ -2531,24 +2549,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
       this.cameraX = v.x;
       this.cameraY = v.y;
-   }
-
-   @Override
-   public float screenX ( float x, float y ) {
-
-      AffineTransform tr = this.g2.getTransform();
-      return (float) (tr.getScaleX() * x +
-            tr.getShearX() * y +
-            tr.getTranslateX());
-   }
-
-   @Override
-   public float screenY ( float x, float y ) {
-
-      AffineTransform tr = this.g2.getTransform();
-      return (float) (tr.getShearY() * x +
-            tr.getScaleY() * y +
-            tr.getTranslateY());
    }
 
    /**

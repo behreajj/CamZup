@@ -4,7 +4,7 @@ import java.awt.Image;
 
 import camzup.core.Color;
 import camzup.core.Gradient;
-import camzup.core.SDF;
+import camzup.core.Sdf;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import processing.core.PImage;
@@ -64,7 +64,7 @@ public class ZImage extends PImage {
             final float xn = x * wInv;
             final float s = xn + xn - xOrigin - 1.0f;
 
-            grd.eval(SDF.conic(s, t, radians), ZImage.clr);
+            grd.eval(Sdf.conic(s, t, radians), ZImage.clr);
             pixels[i] = Color.toHexInt(ZImage.clr);
          }
       }

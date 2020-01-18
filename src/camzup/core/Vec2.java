@@ -2712,7 +2712,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       for (int i = 1; i < places; ++i) {
          n *= 10;
       }
-      float nInv = 1.0f / n;
+      final float nInv = 1.0f / n;
       return target.set(
             Utils.round(v.x * n) * nInv,
             Utils.round(v.y * n) * nInv);

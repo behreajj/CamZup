@@ -1703,11 +1703,11 @@ public class Mat4 extends Matrix {
    public float get ( final int index ) {
 
       /*
-       * Atm, there is a get function to facilitate an iterator, but no
-       * set function, because setCol is the encouraged way to set
-       * matrix elms.
+       * Atm, there is a get function to facilitate an iterator,
+       * but no set function, because setCol is the encouraged way
+       * to set matrix elms.
        */
-      
+
       switch (index) {
 
          /* Row 0 */

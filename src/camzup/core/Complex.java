@@ -920,8 +920,8 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex target ) {
 
       return target.set(
-            (float)(r * Math.cos(phi)),
-            (float)(r * Math.sin(phi)));
+            (float) (r * Math.cos(phi)),
+            (float) (r * Math.sin(phi)));
    }
 
    /**

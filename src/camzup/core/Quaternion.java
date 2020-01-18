@@ -1929,9 +1929,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
 
       // return Quaternion.div(q, Quaternion.mag(q), target);
 
-      Vec3 i = q.imag;
+      final Vec3 i = q.imag;
       final float mSq = q.real * q.real + i.x * i.x + i.y * i.y + i.z * i.z;
-      
+
       if (mSq == 0.0f) {
          return Quaternion.identity(target);
       }
