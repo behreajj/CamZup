@@ -1085,7 +1085,10 @@ public class Mat4 extends Matrix {
       // a.m20 * b.x + a.m21 * b.y + a.m23);
 
       final float w = a.m30 * b.x + a.m31 * b.y + a.m33;
-      final float wInv = Utils.div(1.0f, w);
+      if(w == 0.0f) {
+         return target.reset();
+      }
+      final float wInv = 1.0f / w;
 
       return target.set(
             (a.m00 * b.x + a.m01 * b.y + a.m03) * wInv,
@@ -1131,23 +1134,15 @@ public class Mat4 extends Matrix {
       // a.m23);
 
       final float w = a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33;
-      final float wInv = Utils.div(1.0f, w);
+      if(w == 0.0f) {
+         return target.reset();
+      }
+      final float wInv = 1.0f / w;
 
       return target.set(
-            (a.m00 * b.x +
-                  a.m01 * b.y +
-                  a.m02 * b.z +
-                  a.m03) * wInv,
-
-            (a.m10 * b.x +
-                  a.m11 * b.y +
-                  a.m12 * b.z +
-                  a.m13) * wInv,
-
-            (a.m20 * b.x +
-                  a.m21 * b.y +
-                  a.m22 * b.z +
-                  a.m23) * wInv);
+            (a.m00 * b.x + a.m01 * b.y + a.m02 * b.z + a.m03) * wInv,
+            (a.m10 * b.x + a.m11 * b.y + a.m12 * b.z + a.m13) * wInv,
+            (a.m20 * b.x + a.m21 * b.y + a.m22 * b.z + a.m23) * wInv);
    }
 
    /**
@@ -1177,7 +1172,10 @@ public class Mat4 extends Matrix {
       // a.m20 * b.x + a.m21 * b.y);
 
       final float w = a.m30 * b.x + a.m31 * b.y + a.m33;
-      final float wInv = Utils.div(1.0f, w);
+      if(w == 0.0f) {
+         return target.reset();
+      }
+      final float wInv =  1.0f / w;
 
       return target.set(
             (a.m00 * b.x + a.m01 * b.y) * wInv,
@@ -1220,20 +1218,15 @@ public class Mat4 extends Matrix {
       // a.m22 * b.z);
 
       final float w = a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33;
-      final float wInv = Utils.div(1.0f, w);
+      if(w == 0.0f) {
+         return target.reset();
+      }
+      final float wInv = 1.0f / w;
 
       return target.set(
-            (a.m00 * b.x +
-                  a.m01 * b.y +
-                  a.m02 * b.z) * wInv,
-
-            (a.m10 * b.x +
-                  a.m11 * b.y +
-                  a.m12 * b.z) * wInv,
-
-            (a.m20 * b.x +
-                  a.m21 * b.y +
-                  a.m22 * b.z) * wInv);
+            (a.m00 * b.x + a.m01 * b.y + a.m02 * b.z) * wInv,
+            (a.m10 * b.x + a.m11 * b.y + a.m12 * b.z) * wInv,
+            (a.m20 * b.x + a.m21 * b.y + a.m22 * b.z) * wInv);
    }
 
    /**

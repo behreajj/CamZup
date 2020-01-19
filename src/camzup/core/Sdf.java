@@ -335,11 +335,6 @@ public abstract class Sdf {
       final float q = d + m2n2;
       final float g = m + m * nsq;
 
-      // TODO: n * Math.sign(o) is not the same as
-      // Math.copySign(n, m), so you should go back
-      // to quilez's code and replace all instances
-      // of copySign with n * sign(m)
-
       float co = 0.0f;
       if (d < 0.0f) {
          final float h = Utils.acos(Utils.div(q, ccb)) * IUtils.ONE_THIRD;
@@ -655,9 +650,6 @@ public abstract class Sdf {
          return 0.0f;
       }
 
-      Vec2 curr = vertices[0];
-      Vec2 prev = vertices[len - 1];
-
       /*
        * i begins at zero, and so the initial distance from 0 to
        * len - 1 does not need to be calculated prior to the
@@ -666,6 +658,8 @@ public abstract class Sdf {
        */
       float d = Float.MAX_VALUE;
       float s = 1.0f;
+      Vec2 curr;
+      Vec2 prev = vertices[len - 1];
 
       for (int i = 0; i < len; ++i) {
          curr = vertices[i];

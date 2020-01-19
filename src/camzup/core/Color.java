@@ -1609,7 +1609,7 @@ public class Color extends Vec4 {
     *           the output color
     * @return the premultiplied color
     */
-   public static Color preMult (
+   public static Color preMul (
          final Color c,
          final Color target ) {
 
@@ -1624,6 +1624,38 @@ public class Color extends Vec4 {
             c.y * c.w,
             c.z * c.w,
             c.w);
+   }
+
+   /**
+    * Reduces the signal, or granularity, of a color's
+    * channels. Any level less than 2 or greater than 255
+    * returns sets the target to the input.
+    *
+    * @param c
+    *           the color
+    * @param levels
+    *           the levels
+    * @param target
+    *           the output color
+    * @return the posterized color
+    * @see Vec4#quantize(Vec4, int, Vec4)
+    * @see Utils#floor(float)
+    */
+   public static Color quantize (
+         final Color c,
+         final int levels,
+         final Color target ) {
+
+      if (levels < 2 || levels > 255) {
+         return target.set(c);
+      }
+
+      final float delta = 1.0f / levels;
+      return target.set(
+            delta * Utils.floor(0.5f + c.x * levels),
+            delta * Utils.floor(0.5f + c.y * levels),
+            delta * Utils.floor(0.5f + c.z * levels),
+            delta * Utils.floor(0.5f + c.w * levels));
    }
 
    /**
@@ -1968,10 +2000,8 @@ public class Color extends Vec4 {
 
    /**
     * Converts a color from RGB to CIE XYZ. References Pharr,
-    * Jakob, and Humphreys' <a href=
-    * "http://www.pbr-book.org/3ed-2018/Color_and_Radiometry/
-    * The_SampledSpectrum_Class.html#fragment-
-    * SpectrumUtilityDeclarations-2">Physically Based
+    * Jakob, and Humphreys'
+    * <a href="http://www.pbr-book.org/">Physically Based
     * Rendering</a>.
     *
     * @param r
@@ -2116,10 +2146,8 @@ public class Color extends Vec4 {
 
    /**
     * Converts a color from CIE XYZ to RGB. References Pharr,
-    * Jakob, and Humphreys' <a href=
-    * "http://www.pbr-book.org/3ed-2018/Color_and_Radiometry/
-    * The_SampledSpectrum_Class.html#fragment-
-    * SpectrumUtilityDeclarations-1">Physically Based
+    * Jakob, and Humphreys'
+    * <a href="http://www.pbr-book.org/">Physically Based
     * Rendering</a>.
     *
     * @param x

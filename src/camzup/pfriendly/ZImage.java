@@ -7,6 +7,7 @@ import camzup.core.Gradient;
 import camzup.core.Sdf;
 import camzup.core.Utils;
 import camzup.core.Vec2;
+import processing.core.PApplet;
 import processing.core.PImage;
 
 /**
@@ -286,11 +287,8 @@ public class ZImage extends PImage {
       final float wInv = 0xff / (w - 1.0f);
 
       for (int i = 0, y = h - 1; y > -1; --y) {
-
          final int grbl = 0xff000080 | (int) (y * hInv + 0.5f) << 0x8;
-
          for (int x = 0; x < w; ++x, ++i) {
-
             final int red = (int) (x * wInv + 0.5f) << 0x10;
             px[i] = red | grbl;
          }
@@ -329,10 +327,18 @@ public class ZImage extends PImage {
          final int[] target, final int wTarget, final int hTarget,
          final int dx, final int dy ) {
 
+      /*
+       * This uses unchecked integer floor mod for optimization.
+       */
+
+      if (wSource < 1 || hSource < 1) {
+         return target;
+      }
+
       for (int i = 0, y = 0; y < hTarget; ++y) {
-         final int ny = wSource * Utils.mod(y - dy, hSource);
+         final int ny = wSource * Math.floorMod(y - dy, hSource);
          for (int x = 0; x < wTarget; ++x, ++i) {
-            target[i] = source[Utils.mod(x + dx, wSource) + ny];
+            target[i] = source[Math.floorMod(x + dx, wSource) + ny];
          }
       }
       return target;
@@ -421,8 +427,9 @@ public class ZImage extends PImage {
    /**
     * The default constructor.
     */
-   public ZImage () {
+   protected ZImage () {
 
+      // super(128, 128, PConstants.ARGB, 1);
       super();
    }
 
@@ -492,6 +499,17 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Finds the aspect ratio of an image, it's width divided by
+    * its height.
+    *
+    * @return the aspect ratio
+    */
+   public float aspect () {
+
+      return Utils.div(this.width, this.height);
+   }
+
+   /**
     * Returns a string representation of an image, including
     * its format, width, height and pixel density.
     */
@@ -509,5 +527,58 @@ public class ZImage extends PImage {
             .append(this.pixelDensity)
             .append(' ').append('}')
             .toString();
+   }
+
+   /**
+    * Update the pixels[] buffer to the PGraphics image.
+    *
+    * The overriden functionality eliminates unnecessary
+    * checks.
+    */
+   @Override
+   public void updatePixels () {
+
+      if (!this.modified) {
+         this.mx1 = 0;
+         this.mx2 = this.pixelWidth;
+         this.my1 = 0;
+         this.my2 = this.pixelHeight;
+         this.modified = true;
+
+      } else {
+
+         /*
+          * Because pixelWidth and pixelHeight are mutable, public
+          * ints, they have to be checked by sensitive functions.
+          */
+
+         if (0 < this.mx1) {
+            this.mx1 = 0;
+         }
+         if (this.pixelWidth < this.mx1) {
+            this.mx1 = PApplet.max(0, this.pixelWidth);
+         }
+
+         if (0 > this.mx2) {
+            this.mx2 = PApplet.min(this.pixelWidth, 0);
+         }
+         if (this.pixelWidth > this.mx2) {
+            this.mx2 = this.pixelWidth;
+         }
+
+         if (0 < this.my1) {
+            this.my1 = 0;
+         }
+         if (this.pixelHeight < this.my1) {
+            this.my1 = PApplet.max(0, this.pixelHeight);
+         }
+
+         if (0 > this.my2) {
+            this.my2 = PApplet.min(this.pixelHeight, 0);
+         }
+         if (this.pixelHeight > this.my2) {
+            this.my2 = this.pixelHeight;
+         }
+      }
    }
 }

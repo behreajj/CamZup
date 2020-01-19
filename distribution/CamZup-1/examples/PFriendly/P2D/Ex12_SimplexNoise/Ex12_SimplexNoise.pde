@@ -43,9 +43,8 @@ void draw() {
 
       Simplex.fbm(noise, Simplex.DEFAULT_SEED, octaves, 
         lacunarity, persist, deriv); 
-
-      pixels[idx] = Color.toHexInt(
-        Color.fromDir(deriv, clr));
+      Color.fromDir(deriv, clr);
+      pixels[idx] = Color.toHexInt(clr);
     }
   }
   updatePixels();

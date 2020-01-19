@@ -2462,6 +2462,37 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
+    * Reduces the signal, or granularity, of a vector's
+    * components. Any level less than 2 returns sets the target
+    * to the input.
+    *
+    * @param v
+    *           the input vector
+    * @param levels
+    *           the levels
+    * @param target
+    *           the output vector
+    * @return the quantized vector
+    * @see Utils#floor(float)
+    */
+   @Experimental
+   public static Vec3 quantize (
+         final Vec3 v,
+         final int levels,
+         final Vec3 target ) {
+
+      if (levels < 2) {
+         return target.set(v);
+      }
+
+      final float delta = 1.0f / levels;
+      return target.set(
+            delta * Utils.floor(0.5f + v.x * levels),
+            delta * Utils.floor(0.5f + v.y * levels),
+            delta * Utils.floor(0.5f + v.z * levels));
+   }
+
+   /**
     * Creates a vector with a magnitude of 1.0 at a random
     * azimuth and inclination, such that it lies on the unit
     * sphere.

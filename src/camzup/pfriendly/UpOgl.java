@@ -1063,7 +1063,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @see Utils#clamp01(float)
     * @see Utils#mod1(float)
     */
-   protected void vertexTexture ( float u, float v,
+   protected void vertexTexture (
+         float u,
+         float v,
          final int desiredTextureMode,
          final int desiredTextureWrap ) {
 
@@ -1762,6 +1764,118 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Displays a PGraphicsOpenGL at the origin.
+    *
+    * @param buff
+    *           the renderer
+    */
+   public void image ( final PGraphicsOpenGL buff ) {
+
+      if (buff.pgl.threadIsCurrent()) {
+         this.image((PImage) buff);
+      }
+   }
+
+   /**
+    * Displays a PGraphicsOpenGL buffer. Checks if the buffer's
+    * PGL thread is current before proceeding. This is to help
+    * ensure that beginDraw and endDraw have already been
+    * called.
+    *
+    * @param buff
+    *           the renderer
+    * @param x
+    *           the first x coordinate
+    * @param y
+    *           the first y coordinate
+    */
+   public void image (
+         final PGraphicsOpenGL buff,
+         final float x,
+         final float y ) {
+
+      if (buff.pgl.threadIsCurrent()) {
+         this.image((PImage) buff, x, y);
+      }
+   }
+
+   /**
+    * Displays a PGraphicsOpenGL buffer. Checks if the buffer's
+    * PGL thread is current before proceeding. This is to help
+    * ensure that beginDraw and endDraw have already been
+    * called.
+    *
+    * @param buff
+    *           the renderer
+    * @param x
+    *           the first x coordinate
+    * @param y
+    *           the first y coordinate
+    * @param u
+    *           the second x coordinate
+    * @param v
+    *           the second y coordinate
+    */
+   public void image (
+         final PGraphicsOpenGL buff,
+         final float x, final float y,
+         final float u, final float v ) {
+
+      if (buff.pgl.threadIsCurrent()) {
+         this.image((PImage) buff, x, y, u, v);
+      }
+   }
+
+   /**
+    * Displays a PGraphicsOpenGL buffer. Checks if the buffer's
+    * PGL thread is current before proceeding. This is to help
+    * ensure that beginDraw and endDraw have already been
+    * called.
+    *
+    * @param buff
+    *           the renderer
+    * @param x
+    *           the first x coordinate
+    * @param y
+    *           the first y coordinate
+    * @param u
+    *           the second x coordinate
+    * @param v
+    *           the second y coordinate
+    * @param a
+    *           the image top-left corner u
+    * @param b
+    *           the image top-left corner v
+    * @param c
+    *           the image bottom-right corner u
+    * @param d
+    *           the image bottom-right cornver v
+    */
+   public void image (
+         final PGraphicsOpenGL buff,
+         final float x, final float y,
+         final float u, final float v,
+
+         final int a, final int b,
+         final int c, final int d ) {
+
+      if (buff.pgl.threadIsCurrent()) {
+         this.image((PImage) buff, x, y, u, v, a, b, c, d);
+      }
+   }
+
+   /**
+    * Displays a PImage at the origin.
+    *
+    * @param img
+    *           the image
+    */
+   public void image ( final PImage img ) {
+
+      this.image(img, 0.0f, 0.0f);
+   }
+
+   /**
     * Displays a PImage at a location. Uses the image's width
     * and height as the second parameters.
     *
@@ -1816,6 +1930,31 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             vtx, vty);
    }
 
+   /**
+    * Displays a PImage. The meaning of the first four
+    * parameters depends on imageMode. The last four
+    * coordinates specify the image texture coordinates (or
+    * UVs).
+    *
+    * @param img
+    *           the PImage
+    * @param x
+    *           the first x coordinate
+    * @param y
+    *           the first y coordinate
+    * @param u
+    *           the second x coordinate
+    * @param v
+    *           the second y coordinate
+    * @param a
+    *           the image top-left corner u
+    * @param b
+    *           the image top-left corner v
+    * @param c
+    *           the image bottom-right corner u
+    * @param d
+    *           the image bottom-right cornver v
+    */
    @Override
    public void image (
          final PImage img,
@@ -1831,8 +1970,48 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Displays a PGraphicsOpenGL buffer. Checks if the buffer's
+    * PGL thread is current before proceeding. This is to help
+    * ensure that beginDraw and endDraw have already been
+    * called.
+    *
+    * @param buff
+    *           the renderer
+    * @param x1
+    *           the first x coordinate
+    * @param y1
+    *           the first y coordinate
+    * @param x2
+    *           the second x coordinate
+    * @param y2
+    *           the second y coordinate
+    * @param u1
+    *           the image top-left corner u
+    * @param v1
+    *           the image top-left corner v
+    * @param u2
+    *           the image bottom-right corner u
+    * @param v2
+    *           the image bottom-right cornver v
+    */
+   public void imageImpl (
+         final PGraphicsOpenGL buff,
+         final float x1, final float y1,
+         final float x2, final float y2,
+
+         final float u1, final float v1,
+         final float u2, final float v2 ) {
+
+      if (buff.pgl.threadIsCurrent()) {
+         this.imageImpl((PImage) buff, x1, y1, x2, y2, u1, v1, u2, v2);
+      }
+   }
+
+   /**
     * Displays a PImage. The meaning of the first four
-    * parameters depends on imageMode.
+    * parameters depends on imageMode. The last four
+    * coordinates specify the image texture coordinates (or
+    * UVs).
     *
     * @param img
     *           the PImage
@@ -1860,6 +2039,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          final float u1, final float v1,
          final float u2, final float v2 ) {
+
+      if (img.width < 2 || img.height < 2) {
+         return;
+      }
 
       this.pushStyle();
       this.noStroke();
@@ -2693,6 +2876,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * Sets the renderer's texture sampling from an enum
     * constant.
     *
+    * @param sampleType
+    *           the sample type
     */
    @Override
    public void setTextureSampling ( final Sampling sampleType ) {
@@ -3093,6 +3278,20 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Assigns the PGraphicsOpenGL buffer as the current
+    * texture.
+    *
+    * @param buff
+    *           the buffer
+    */
+   public void texture ( final PGraphicsOpenGL buff ) {
+
+      if (buff.pgl.threadIsCurrent()) {
+         this.texture((PImage) buff);
+      }
+   }
+
+   /**
     * Texture mode is not supported by this renderer.
     *
     * @param mode
@@ -3102,6 +3301,18 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void textureMode ( final int mode ) {
 
       PApplet.showMethodWarning("textureMode");
+   }
+
+   /**
+    * Sets the renderer's texture sampling from an enum
+    * constant.
+    *
+    * @param sampleType
+    *           the sample type
+    */
+   public void textureSampling ( final Sampling sampleType ) {
+
+      this.textureSampling = sampleType.getVal();
    }
 
    /**
@@ -3566,6 +3777,51 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             m.m10, m.m11, m.m12, m.m13,
             m.m20, m.m21, m.m22, m.m23,
             m.m30, m.m31, m.m32, m.m33);
+   }
+
+   /**
+    * Update the pixels[] buffer to the PGraphics image.
+    *
+    * The overriden functionality eliminates unnecessary
+    * checks.
+    */
+   @Override
+   public void updatePixels () {
+
+      if (!this.modified) {
+         this.mx1 = 0;
+         this.mx2 = this.pixelWidth;
+         this.my1 = 0;
+         this.my2 = this.pixelHeight;
+         this.modified = true;
+
+      } else {
+         if (0 < this.mx1) {
+            this.mx1 = 0;
+         }
+         if (0 > this.mx2) {
+            this.mx2 = PApplet.min(this.pixelWidth, 0);
+         }
+         if (0 < this.my1) {
+            this.my1 = 0;
+         }
+         if (0 > this.my2) {
+            this.my2 = PApplet.min(this.pixelHeight, 0);
+         }
+
+         if (this.pixelWidth < this.mx1) {
+            this.mx1 = PApplet.max(0, this.pixelWidth);
+         }
+         if (this.pixelWidth > this.mx2) {
+            this.mx2 = this.pixelWidth;
+         }
+         if (this.pixelHeight < this.my1) {
+            this.my1 = PApplet.max(0, this.pixelHeight);
+         }
+         if (this.pixelHeight > this.my2) {
+            this.my2 = this.pixelHeight;
+         }
+      }
    }
 
    /**

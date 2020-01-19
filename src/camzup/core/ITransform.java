@@ -73,7 +73,7 @@ public interface ITransform extends IUtils, Cloneable, Serializable {
       /**
        * The longform name displayed in the console.
        */
-      private String name;
+      private final String name;
 
       /**
        * The default constrctor

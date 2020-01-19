@@ -19,9 +19,12 @@ import camzup.core.IUtils;
 import camzup.core.Transform;
 import camzup.core.Utils;
 import camzup.core.Vec2;
+import camzup.core.Vec3;
+import camzup.core.Vec4;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PMatrix3D;
+import processing.core.PVector;
 
 /**
  * Maintains consistent behavior across renderers in the
@@ -856,11 +859,11 @@ public interface IUp {
     * @see PMatrix3D#apply(PMatrix3D)
     * @see PMatrix3D#preApply(PMatrix3D)
     */
-   static PMatrix3D mult (
+   static PMatrix3D mul (
          final PMatrix3D a,
          final PMatrix3D b ) {
 
-      return IUp.mult(a, b, (PMatrix3D) null);
+      return IUp.mul(a, b, (PMatrix3D) null);
    }
 
    /**
@@ -878,7 +881,7 @@ public interface IUp {
     * @see PMatrix3D#apply(PMatrix3D)
     * @see PMatrix3D#preApply(PMatrix3D)
     */
-   static PMatrix3D mult (
+   static PMatrix3D mul (
          final PMatrix3D a,
          final PMatrix3D b,
          PMatrix3D target ) {
@@ -973,6 +976,104 @@ public interface IUp {
       target.m33 = n33;
 
       return target;
+   }
+
+   /**
+    * Multiplies a matrix with a four dimensional vector.
+    *
+    * @param m
+    *           the matrix
+    * @param v
+    *           the input vector
+    * @param target
+    *           the output vector
+    * @return the product
+    */
+   static Vec4 mul (
+         final PMatrix3D m,
+         final Vec4 v,
+         final Vec4 target ) {
+
+      return target.set(
+            m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03 * v.w,
+            m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13 * v.w,
+            m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m23 * v.w,
+            m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33 * v.w);
+   }
+
+   /**
+    * Multiplies a matrix with a three dimensional point, where
+    * its implicit fourth coordinate, w, is 1.0 .
+    *
+    * @param m
+    *           the matrix
+    * @param v
+    *           the input vector
+    * @return the product
+    */
+   static PVector mulPoint ( final PMatrix3D m, final PVector v ) {
+
+      return IUp.mulPoint(m, v, (PVector) null);
+   }
+
+   /**
+    * Multiplies a matrix with a three dimensional point, where
+    * its implicit fourth coordinate, w, is 1.0 .
+    *
+    * @param m
+    *           the matrix
+    * @param v
+    *           the input vector
+    * @param target
+    *           the output vector
+    * @return the product
+    */
+   static PVector mulPoint (
+         final PMatrix3D m,
+         final PVector v,
+         PVector target ) {
+
+      if (target == null) {
+         target = new PVector();
+      }
+
+      final float w = m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33;
+      if (w == 0.0f) {
+         return target.set(0.0f, 0.0f, 0.0f);
+      }
+      final float wInv = 1.0f / w;
+      return target.set(
+            (m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03) * wInv,
+            (m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13) * wInv,
+            (m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m23) * wInv);
+   }
+
+   /**
+    * Multiplies a matrix with a three dimensional point, where
+    * its implicit fourth coordinate, w, is 1.0 .
+    *
+    * @param m
+    *           the matrix
+    * @param v
+    *           the input vector
+    * @param target
+    *           the output vector
+    * @return the product
+    */
+   static Vec3 mulPoint (
+         final PMatrix3D m,
+         final Vec3 v,
+         final Vec3 target ) {
+
+      final float w = m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33;
+      if (w == 0.0f) {
+         return target.reset();
+      }
+      final float wInv = 1.0f / w;
+      return target.set(
+            (m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03) * wInv,
+            (m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13) * wInv,
+            (m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m23) * wInv);
    }
 
    /**
@@ -1139,6 +1240,7 @@ public interface IUp {
             yAxis * yAxis +
             zAxis * zAxis;
       if (mSq == 0.0f) {
+         // target.reset();
          return target;
       }
 
@@ -1661,5 +1763,5 @@ public interface IUp {
     * @param sw
     *           the weight
     */
-   void strokeWeight ( float sw );
+   void strokeWeight ( final float sw );
 }

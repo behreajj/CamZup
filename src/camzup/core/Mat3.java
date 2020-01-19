@@ -564,12 +564,17 @@ public class Mat3 extends Matrix {
          final Vec2 b,
          final Vec2 target ) {
 
+      // TODO: Needs testing.
+      
       // return target.set(
       // a.m00 * b.x + a.m01 * b.y + a.m02,
       // a.m10 * b.x + a.m11 * b.y + a.m12);
 
       final float w = a.m20 * b.x + a.m21 * b.y + a.m22;
-      final float wInv = Utils.div(1.0f, w);
+      if(w == 0.0f) {
+         return target.reset();
+      }
+      final float wInv = 1.0f / w;
 
       return target.set(
             (a.m00 * b.x + a.m01 * b.y + a.m02) * wInv,
@@ -602,7 +607,10 @@ public class Mat3 extends Matrix {
       // a.m10 * b.x + a.m11 * b.y);
 
       final float w = a.m20 * b.x + a.m21 * b.y + a.m22;
-      final float wInv = Utils.div(1.0f, w);
+      if(w == 0.0f) {
+         return target.reset();
+      }
+      final float wInv = 1.0f / w;
 
       return target.set(
             (a.m00 * b.x + a.m01 * b.y) * wInv,

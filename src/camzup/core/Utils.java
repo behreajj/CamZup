@@ -1624,6 +1624,37 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * Reduces the signal, or granularity, of a value. Applied
+    * to a color, this yields the 'posterization' effect.
+    * Applied to a vector, this yields a pixellated, or
+    * crenelated effect.
+    *
+    * Any level less than 2 returns the value unaltered.
+    *
+    * @param value
+    *           the value
+    * @param levels
+    *           the level
+    * @return the quantized value
+    * @see Utils#floor(float)
+    */
+   public static float quantize ( final float value, final int levels ) {
+
+      if (levels < 2) {
+         return value;
+      }
+
+      /*
+       * The method used to describe posterize in the Blender
+       * manual, round(x × n - 0.5) / (n - 1), should not be used,
+       * as it will lead to output values exceeding the magnitude
+       * of input values, e.g. 1.0 will return 2.0 .
+       */
+
+      return Utils.floor(0.5f + value * levels) / levels;
+   }
+
+   /**
     * Converts an angle in degrees to an angle in radians.
     *
     * @param degrees

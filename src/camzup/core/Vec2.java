@@ -2302,6 +2302,37 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
+    * Reduces the signal, or granularity, of a vector's
+    * components. Any level less than 2 returns sets the target
+    * to the input.
+    *
+    * @param v
+    *           the input vector
+    * @param levels
+    *           the levels
+    * @param target
+    *           the output vector
+    * @return the quantized vector
+    * @see Utils#floor(float)
+    */
+   @Experimental
+   public static Vec2 quantize (
+         final Vec2 v,
+         final int levels,
+         final Vec2 target ) {
+
+      if (levels < 2) {
+         return target.set(v);
+      }
+
+      final float delta = 1.0f / levels;
+      return target.set(
+            delta * Utils.floor(0.5f + v.x * levels),
+            delta * Utils.floor(0.5f + v.y * levels));
+
+   }
+
+   /**
     * Generates a vector with a random heading and a magnitude
     * of 1.0, such that it lies on the unit circle.
     *

@@ -1309,6 +1309,38 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
+    * Reduces the signal, or granularity, of a vector's
+    * components. Any level less than 2 returns sets the target
+    * to the input.
+    *
+    * @param v
+    *           the input vector
+    * @param levels
+    *           the levels
+    * @param target
+    *           the output vector
+    * @return the quantized vector
+    * @see Utils#floor(float)
+    */
+   @Experimental
+   public static Vec4 quantize (
+         final Vec4 v,
+         final int levels,
+         final Vec4 target ) {
+
+      if (levels < 2) {
+         return target.set(v);
+      }
+
+      final float delta = 1.0f / levels;
+      return target.set(
+            delta * Utils.floor(0.5f + v.x * levels),
+            delta * Utils.floor(0.5f + v.y * levels),
+            delta * Utils.floor(0.5f + v.z * levels),
+            delta * Utils.floor(0.5f + v.w * levels));
+   }
+
+   /**
     * Creates a random point in the Cartesian coordinate system
     * given a lower and an upper bound.
     *

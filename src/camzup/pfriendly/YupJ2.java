@@ -31,6 +31,7 @@ import processing.core.PImage;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
+import processing.core.PVector;
 
 /**
  * A 2D renderer based on the Java AWT (Abstract Window
@@ -1825,7 +1826,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final int u1, final int v1,
          final int u2, final int v2 ) {
 
-      if (img.width < 2 || img.height < 2) {
+      if (img.pixels == null || img.width < 2 || img.height < 2) {
          return;
       }
 
@@ -2521,6 +2522,90 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.g2.scale(dim.x, dim.y);
    }
 
+   /**
+    * Takes a two-dimensional x, y position and returns the
+    * coordinate for where it will appear on a two-dimensional
+    * screen.
+    *
+    * @param source
+    *           the source coordinate
+    * @return the screen coordinate
+    */
+   public PVector screen ( final PVector source ) {
+
+      return this.screen(source, (PVector) null);
+   }
+
+   /**
+    * Takes a two-dimensional x, y position and returns the
+    * coordinate for where it will appear on a two-dimensional
+    * screen.
+    *
+    * @param source
+    *           the source coordinate
+    * @param target
+    *           the target coordinate
+    * @return the screen coordinate
+    */
+   public PVector screen ( final PVector source, PVector target ) {
+
+      if (target == null) {
+         target = new PVector();
+      }
+
+      final AffineTransform tr = this.g2.getTransform();
+      return target.set(
+            (float) (tr.getScaleX() * source.x +
+                  tr.getShearX() * source.y +
+                  tr.getTranslateX()),
+
+            (float) (tr.getShearY() * source.x +
+                  tr.getScaleY() * source.y +
+                  tr.getTranslateY()),
+
+            0.0f);
+
+   }
+
+   /**
+    * Takes a two-dimensional x, y position and returns the
+    * coordinate for where it will appear on a two-dimensional
+    * screen.
+    *
+    * @param source
+    *           the source coordinate
+    * @param target
+    *           the target coordinate
+    * @return the screen coordinate
+    */
+   public Vec2 screen ( final Vec2 source, final Vec2 target ) {
+
+      final AffineTransform tr = this.g2.getTransform();
+      return target.set(
+            (float) (tr.getScaleX() * source.x +
+                  tr.getShearX() * source.y +
+                  tr.getTranslateX()),
+
+            (float) (tr.getShearY() * source.x +
+                  tr.getScaleY() * source.y +
+                  tr.getTranslateY()));
+
+   }
+
+   /**
+    * Takes a two-dimensional x, y position and returns the x
+    * value for where it will appear on a two-dimensional
+    * screen.
+    *
+    * This is inefficient, use screen with a PVector or Vec2
+    * instead.
+    *
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @return the screen x coordinate
+    */
    @Override
    public float screenX ( final float x, final float y ) {
 
@@ -2530,6 +2615,22 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             tr.getTranslateX());
    }
 
+   /**
+    * Takes a two-dimensional x, y position and returns the y
+    * value for where it will appear on a two-dimensional
+    * screen.
+    *
+    * This is inefficient, use screen with a PVector or Vec2
+    * instead.
+    *
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @return the screen y coordinate
+    * @see YupJ2#screen(PVector, PVector)
+    * @see YupJ2#screen(Vec2, Vec2)
+    */
    @Override
    public float screenY ( final float x, final float y ) {
 
@@ -3358,6 +3459,21 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             a.x, a.y,
             b.x, b.y,
             c.x, c.y);
+   }
+
+   /**
+    * Update the pixels[] buffer to the PGraphics image.
+    *
+    * The overriden functionality eliminates unnecessary checks.
+    */
+   @Override
+   public void updatePixels () {
+
+      if (this.pixels != null) {
+         this.getRaster().setDataElements(0, 0, this.pixelWidth,
+               this.pixelHeight, this.pixels);
+      }
+      this.modified = true;
    }
 
    /**
