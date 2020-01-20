@@ -625,6 +625,36 @@ public abstract class Sdf {
    }
 
    /**
+    * Draws a regular polygon given a count of vertices. The
+    * number of vertices should be greater than three.
+    *
+    * @param point
+    *           the point
+    * @param vertices
+    *           number of vertices
+    * @param bounds
+    *           the bounds
+    * @return the signed distance
+    */
+   @Experimental
+   public static float polygon (
+         final Vec2 point,
+         final int vertices,
+         final float bounds ) {
+
+      if (vertices < 3) {
+         return 0.0f;
+      }
+
+      final float a = IUtils.HALF_PI + Utils.atan2(point.y, point.x);
+      final float b = IUtils.TAU / vertices;
+
+      return (float) Math.cos(Utils.floor(0.5f + a / b) * b - a)
+            * Utils.hypot(point.x, point.y)
+            - bounds * 0.5f;
+   }
+
+   /**
     * Draws a polygon from a series of vertices. The number of
     * vertices is assumed to be greater than three. With
     * reference to

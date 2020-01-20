@@ -626,7 +626,9 @@ public abstract class Utils implements IUtils {
       }
 
       @Override
-      public Float apply ( final Float origin, final Float dest,
+      public Float apply (
+            final Float origin,
+            final Float dest,
             final Float step ) {
 
          if (step <= 0.0f) {
@@ -712,6 +714,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * A bounds-checked approximation of the arc-cosine for
+    * single precision real numbers.
+    *
     * Returns a value in the range [0.0, \u03c0]: \u03c0, when
     * the input is -1.0; \u03c0 / 2.0, when the input is 0.0;
     * 0.0, when the input is 1.0.
@@ -726,7 +731,7 @@ public abstract class Utils implements IUtils {
     * @return the angle in radians
     * @see Math#acos(double)
     */
-   public static float acos ( float value ) {
+   public static float acos ( final float value ) {
 
       if (value <= -1.0f) {
          return IUtils.PI;
@@ -735,18 +740,14 @@ public abstract class Utils implements IUtils {
          return 0.0f;
       }
 
-      final float negate = value < 0.0f ? 1.0f : 0.0f;
-      value = Utils.abs(value);
-      float ret = -0.0187293f;
-      ret = ret * value;
-      ret = ret + 0.0742610f;
-      ret = ret * value;
-      ret = ret - 0.2121144f;
-      ret = ret * value;
-      ret = ret + IUtils.HALF_PI;
-      ret = ret * (float) Math.sqrt(1.0f - value);
-      ret = ret - negate * (ret + ret);
-      return negate * IUtils.PI + ret;
+      final float x = Utils.abs(value);
+      float ret = 0.074261f - 0.0187293f * x;
+      ret *= x;
+      ret -= 0.2121144f;
+      ret *= x;
+      ret += IUtils.HALF_PI;
+      ret *= (float) Math.sqrt(1.0f - x);
+      return value < 0.0f ? IUtils.PI - ret : ret;
    }
 
    /**
@@ -825,6 +826,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * A bounds-checked approximation of the arc-sine for single
+    * precision real numbers.
+    *
     * Returns a value in the range [-\u03c0 / 2.0, \u03c0 /
     * 2.0]: -\u03c0 / 2.0, when the input is -1.0; 0.0, when
     * the input is 0.0; \u03c0 / 2.0, when the input is 1.0.
@@ -839,7 +843,7 @@ public abstract class Utils implements IUtils {
     * @return the angle in radians
     * @see Math#asin(double)
     */
-   public static float asin ( float value ) {
+   public static float asin ( final float value ) {
 
       if (value <= -1.0f) {
          return -IUtils.HALF_PI;
@@ -848,17 +852,14 @@ public abstract class Utils implements IUtils {
          return IUtils.HALF_PI;
       }
 
-      final float negate = value < 0.0f ? 1.0f : 0.0f;
-      value = Utils.abs(value);
-      float ret = -0.0187293f;
-      ret *= value;
-      ret += 0.0742610f;
-      ret *= value;
+      final float x = Utils.abs(value);
+      float ret = 0.074261f - 0.0187293f * x;
+      ret *= x;
       ret -= 0.2121144f;
-      ret *= value;
+      ret *= x;
       ret += IUtils.HALF_PI;
-      ret = IUtils.PI * 0.5f - (float) Math.sqrt(1.0f - value) * ret;
-      return ret - negate * (ret + ret);
+      ret = IUtils.HALF_PI - ret * (float) Math.sqrt(1.0f - x);
+      return value < 0.0f ? -ret : ret;
    }
 
    /**
@@ -877,19 +878,18 @@ public abstract class Utils implements IUtils {
 
       final float yAbs = Utils.abs(y);
       final float xAbs = Utils.abs(x);
-      float t1 = yAbs;
-      float t2 = xAbs;
-      float t0 = Utils.max(t1, t2);
-      t1 = Utils.min(t1, t2);
-      t2 = 1.0f / t0;
-      t2 = t1 * t2;
+      float t0 = Utils.max(xAbs, yAbs);
+      if (t0 == 0.0f) {
+         return 0.0f;
+      }
+      float t2 = Utils.min(xAbs, yAbs) / t0;
       final float t3 = t2 * t2;
-      t0 = -0.013480470f;
+      t0 = -0.01348047f;
       t0 = t0 * t3 + 0.057477314f;
       t0 = t0 * t3 - 0.121239071f;
       t0 = t0 * t3 + 0.195635925f;
       t0 = t0 * t3 - 0.332994597f;
-      t0 = t0 * t3 + 0.999995630f;
+      t0 = t0 * t3 + 0.99999563f;
       t2 = t0 * t2;
       t2 = yAbs > xAbs ? IUtils.HALF_PI - t2 : t2;
       t2 = x < 0.0f ? IUtils.PI - t2 : t2;
@@ -1212,7 +1212,7 @@ public abstract class Utils implements IUtils {
     */
    public static float hypot ( final float a, final float b ) {
 
-      return (float) Math.sqrt(a * a + b * b);
+      return (float) Math.hypot(a, b);
    }
 
    /**
@@ -1646,9 +1646,9 @@ public abstract class Utils implements IUtils {
 
       /*
        * The method used to describe posterize in the Blender
-       * manual, round(x × n - 0.5) / (n - 1), should not be used,
-       * as it will lead to output values exceeding the magnitude
-       * of input values, e.g. 1.0 will return 2.0 .
+       * manual, round(m x n - 0.5) / (n - 1), should not be used.
+       * It will yield output values exceeding the magnitude of
+       * input values, e.g. 1.0 will return 2.0 .
        */
 
       return Utils.floor(0.5f + value * levels) / levels;
@@ -1847,9 +1847,7 @@ public abstract class Utils implements IUtils {
       final int trunc = (int) abs;
       final StringBuilder sb = new StringBuilder(16);
 
-      /*
-       * Append integral to StringBuilder.
-       */
+      /* Append integral to StringBuilder. */
       int len = 0;
       if (sign < 0.0f) {
          sb.append('-').append(trunc);

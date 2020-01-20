@@ -12,6 +12,7 @@ import camzup.core.Color;
 import camzup.core.Curve2;
 import camzup.core.Curve2.Knot2;
 import camzup.core.CurveEntity2;
+import camzup.core.Experimental;
 import camzup.core.IUtils;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
@@ -1009,6 +1010,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             mode);
    }
 
+   @Override
+   public void beginDraw () {
+
+      super.beginDraw();
+      this.camera();
+   }
+
    /**
     * Draws a cubic Bezier curve between two anchor points,
     * where the control points shape the curve.
@@ -1264,6 +1272,70 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             loc.x, loc.y,
             radians,
             zoom.x, zoom.y);
+   }
+
+   @Override
+   @Experimental
+   public void circle (
+         final float x,
+         final float y,
+         final float extent ) {
+
+      float extap = 0.0f;
+      float extcp = 0.0f;
+
+      float right = 0.0f;
+      float left = 0.0f;
+      float top = 0.0f;
+      float bottom = 0.0f;
+
+      switch (this.ellipseMode) {
+
+         case RADIUS:
+
+            extap = extent;
+            extcp = 0.552125f * extent;
+
+            right = x + extap;
+            left = x - extap;
+            top = y + extap;
+            bottom = y - extap;
+
+            break;
+
+         case CENTER:
+
+         default:
+
+            extap = 0.5f * extent;
+            extcp = 0.276063f * extent;
+
+            right = x + extap;
+            left = x - extap;
+            top = y + extap;
+            bottom = y - extap;
+      }
+
+      this.gp.reset();
+      this.gp.moveTo(right, y);
+      this.gp.curveTo(
+            right, y + extcp,
+            x + extcp, top,
+            x, top);
+      this.gp.curveTo(
+            x - extcp, top,
+            left, y + extcp,
+            left, y);
+      this.gp.curveTo(
+            left, y - extcp,
+            x - extcp, bottom,
+            x, bottom);
+      this.gp.curveTo(
+            x + extcp, bottom,
+            right, y - extcp,
+            right, y);
+      this.gp.closePath();
+      this.drawShape(this.gp);
    }
 
    /**
@@ -1723,6 +1795,136 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       }
       this.popMatrix();
       this.popStyle();
+   }
+
+   /**
+    * Draws a buffer at the origin.
+    *
+    * @param buff
+    *           the renderer
+    */
+   public void image ( final PGraphicsJava2D buff ) {
+
+      if (buff.g2 != null) {
+         this.image((PImage) buff);
+      }
+   }
+
+   /**
+    * Displays a buffer at a location. Uses the buffer's width
+    * and height as the second parameters.
+    *
+    * @param buff
+    *           the renderer
+    * @param x
+    *           the first x coordinate
+    * @param y
+    *           the first y coordinate
+    */
+   public void image ( final PGraphicsJava2D buff, final float x,
+         final float y ) {
+
+      if (buff.g2 != null) {
+         this.image((PImage) buff, x, y);
+      }
+   }
+
+   /**
+    * Displays a buffer. The meaning of the first four
+    * parameters depends on imageMode.
+    *
+    * @param buff
+    *           the renderer
+    * @param x
+    *           the first x coordinate
+    * @param y
+    *           the first y coordinate
+    * @param u
+    *           the second x coordinate
+    * @param v
+    *           the second y coordinate
+    */
+   public void image ( final PGraphicsJava2D buff, final float x, final float y,
+         final float u, final float v ) {
+
+      if (buff.g2 != null) {
+         this.image((PImage) buff, x, y, u, v);
+      }
+   }
+
+   /**
+    * Displays a buffer. The meaning of the first four
+    * parameters depends on imageMode.
+    *
+    * @param buff
+    *           the buffer
+    * @param a
+    *           the first x coordinate
+    * @param b
+    *           the first y coordinate
+    * @param c
+    *           the second x coordinate
+    * @param d
+    *           the second y coordinate
+    * @param u1
+    *           the image top-left corner u
+    * @param v1
+    *           the image top-left corner v
+    * @param u2
+    *           the imag bottom-right corner u
+    * @param v2
+    *           the imag bottom-right cornver v
+    */
+   public void image (
+         final PGraphicsJava2D buff,
+         final float a, final float b,
+         final float c, final float d,
+
+         final int u1, final int v1,
+         final int u2, final int v2 ) {
+
+      if (buff.g2 != null) {
+         this.image((PImage) buff,
+               a, b, c, d,
+               u1, v1, u2, v2);
+      }
+   }
+
+   /**
+    * Draws a buffer at a given coordinate.
+    *
+    * @param buff
+    *           the renderer
+    * @param coord
+    *           the coordinate
+    */
+   public void image (
+         final PGraphicsJava2D buff,
+         final Vec2 coord ) {
+
+      if (buff.g2 != null) {
+         this.image((PImage) buff, coord);
+      }
+   }
+
+   /**
+    * Draws a buffer at a given coordinate.
+    *
+    * @param buff
+    *           the renderer
+    * @param coord
+    *           the coordinate
+    * @param dim
+    *           the dimension
+    */
+   public void image (
+         final PGraphicsJava2D buff,
+         final Vec2 coord,
+         final Vec2 dim ) {
+
+      if (buff.g2 != null) {
+         this.image((PImage) buff, coord, dim);
+      }
    }
 
    /**
@@ -2736,6 +2938,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.width = width;
       this.height = height;
 
+      this.affineNative.setTransform(
+            1.0d, 0.0d,
+            0.0d, 1.0d,
+            width * 0.5d,
+            height * 0.5d);
+
       this.pixelWidth = this.width * this.pixelDensity;
       this.pixelHeight = this.height * this.pixelDensity;
 
@@ -3002,7 +3210,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    public void text (
          final boolean bool,
-         final float x, final float y ) {
+         final float x,
+         final float y ) {
 
       this.text(String.valueOf(bool), x, y);
    }
@@ -3020,7 +3229,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void text (
          final char character,
-         final float x, float y ) {
+         final float x,
+         float y ) {
 
       if (this.textFont == null) {
          this.defaultFontOrDeath("text");
@@ -3087,7 +3297,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    public void text (
          final char[] chars,
-         final float x, final float y ) {
+         final float x,
+         final float y ) {
 
       this.text(chars, 0, chars.length, x, y);
    }
@@ -3107,9 +3318,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the y coordinate
     */
    @Override
-   public void text ( final char[] chars,
-         int start, final int stop,
-         final float x, float y ) {
+   public void text (
+         final char[] chars,
+         int start,
+         final int stop,
+         final float x,
+         float y ) {
 
       float high = 0;
       for (int i = start; i < stop; i++) {
@@ -3249,6 +3463,25 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
       PGraphics.showDepthWarningXYZ("text");
       this.text(num, x, y);
+   }
+
+   /**
+    * Displays an object as text at a location. Calls the
+    * object's toString function.
+    *
+    * @param obj
+    *           the object
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    */
+   public void text (
+         final Object obj,
+         final float x,
+         final float y ) {
+
+      this.text(obj.toString(), x, y);
    }
 
    @Override
@@ -3440,14 +3673,44 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    }
 
    /**
-    * Draws a triangle between three points.
+    * Draws a triangle from three 2D coordinates.
+    *
+    * @param x1
+    *           first corner x
+    * @param y1
+    *           first corner y
+    * @param x2
+    *           second corner x
+    * @param y2
+    *           second corner y
+    * @param x3
+    *           third corner x
+    * @param y3
+    *           third corner y
+    */
+   @Override
+   public void triangle (
+         final float x1, final float y1,
+         final float x2, final float y2,
+         final float x3, final float y3 ) {
+
+      this.gp.reset();
+      this.gp.moveTo(x1, y1);
+      this.gp.lineTo(x2, y2);
+      this.gp.lineTo(x3, y3);
+      this.gp.closePath();
+      this.drawShape(this.gp);
+   }
+
+   /**
+    * Draws a triangle from three coordinates.
     *
     * @param a
-    *           the first point
+    *           the first coordinate
     * @param b
-    *           the second point
+    *           the second coordinate
     * @param c
-    *           the third point
+    *           the third coordinate
     */
    @Override
    public void triangle (
@@ -3464,7 +3727,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    /**
     * Update the pixels[] buffer to the PGraphics image.
     *
-    * The overriden functionality eliminates unnecessary checks.
+    * The overriden functionality eliminates unnecessary
+    * checks.
     */
    @Override
    public void updatePixels () {

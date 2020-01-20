@@ -9,6 +9,7 @@ float toY = 1.0 / (rows - 1.0);
 float toX = 1.0 / (cols - 1.0);
 float w;
 float h;
+float crcsz;
 
 void setup() {
   size(720, 405, "camzup.pfriendly.YupJ2");
@@ -16,9 +17,17 @@ void setup() {
   frameRate(1000);
   noStroke();
   colorMode(RGB, 1.0);
+  textSize(52);
+  println(g.ellipseMode);
+  //ellipseMode(RADIUS);
+  println(g.ellipseMode);
+
+
   graphics = (YupJ2)getGraphics();
+
   w = (float)width / (cols - 1.0);
   h = (float)height / (rows - 1.0);
+  crcsz = min(w, h);
 }
 
 void draw() {
@@ -30,7 +39,6 @@ void draw() {
   float bottom = -top;
 
   graphics.background();
-
   graphics.pushMatrix();
   graphics.rotateZ(frameCount * 0.01);
   for (int i = 0; i < rows; ++i) {
@@ -40,12 +48,10 @@ void draw() {
       float xPrc = j * toX;
       float x = Utils.lerpUnclamped(left, right, xPrc);
       graphics.fill(xPrc, yPrc, 0.5, 0.75);
-      graphics.ellipse(x, y, w, h);
+      graphics.circle(x, y, crcsz);
     }
   }
   graphics.popMatrix();
-
-  graphics.textSize(52);
-  graphics.fill(0xaf202020);
+  graphics.fill(0x7f202020);
   graphics.text("Lorem ipsum", 0.0, 0.0);
 }

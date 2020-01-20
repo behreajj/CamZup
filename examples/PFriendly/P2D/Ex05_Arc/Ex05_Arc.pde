@@ -15,7 +15,6 @@ void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
   background(#fff7d5);
 
-  graphics.camera();
   graphics.origin();
   graphics.mouse(mouse);
 

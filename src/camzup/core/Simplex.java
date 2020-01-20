@@ -9,42 +9,75 @@ package camzup.core;
  * "http://burtleburtle.net/bob/c/lookup3.c">http://burtleburtle.net/bob/c/lookup3.c</a>.
  * Flow implementations written with reference to Simon
  * Geilfus's <a href=
- * "https://github.com/simongeilfus/SimplexNoise">implementation</a>.
+ * "https://github.com/simongeilfus/SimplexNoise">implementation</a>,
+ * which in turn references the work of
+ * <a href="https://www.cs.ubc.ca/~rbridson/">Robert
+ * Bridson</a>.<br>
+ * <br>
+ * This implementation uses the following variations:
+ * <ul>
+ * <li>stores stretch constants multiplied by their
+ * coefficients in constants (e.g., G2_2);</li>
+ * <li>sets a DEFAULT_SEED to the current time in
+ * milliseconds;</li>
+ * <li>does not combine scalars with derivatives into a
+ * vector one dimension higher than the input (output
+ * parameters are used instead);</li>
+ * <li>initializes mutable integer offsets i, j, k to zero,
+ * then changes them only if appropriate conditions are
+ * met;</li>
+ * <li>changes where n and t factors are multiplied in eval
+ * so that a calculation does not need to be redone for
+ * derivatives;</li>
+ * <li>attempts to match the offset step in noise functions
+ * to the magnitude of the input vector rather than using an
+ * arbitrary one (123.456, etc.).</li>
+ * </ul>
  *
+ * Most simplex functions scale the sum of noise
+ * contributions by an arbitrary factor to bring it into
+ * range. There is little explanation for how these factors
+ * are arrived at, and the range of the return from eval is
+ * not guaranteed.
+ *
+ * @author Robert Bridson
+ * @author Simon Geilfus
  * @author Stefan Gustavson
  * @author Bob Jenkins
- * @author Simon Geilfus
  */
 public abstract class Simplex {
 
    /**
-    * Squish constant 2D (Math.sqrt(3.0d) - 1.0d) / 2.0d;
-    * approximately 0.36602542 .
+    * Squish constant 2D
+    * <code>(Math.sqrt(3.0) - 1.0) / 2.0</code>; approximately
+    * 0.36602542 .
     */
-   private static final float F2 = 0.3660254037844386f;
+   private static final float F2 = 0.36602542f;
 
    /**
-    * Squish constant 3D (Math.sqrt(4.0d) - 1.0d) / 3.0d;
-    * approximately 0.33333334 .
+    * Squish constant 3D
+    * <code>(Math.sqrt(4.0) - 1.0) / 3.0</code>; approximately
+    * 0.33333334 .
     */
    private static final float F3 = IUtils.ONE_THIRD;
 
    /**
-    * Squish constant 4D (Math.sqrt(5.0d) - 1.0d) / 4.0d;
-    * approximately 0.309017 .
+    * Squish constant 4D
+    * <code>(Math.sqrt(5.0) - 1.0) / 4.0</code>; approximately
+    * 0.309017 .
     */
-   private static final float F4 = 0.30901699437494745f;
+   private static final float F4 = 0.309017f;
 
    /**
-    * Stretch constant 2D (1.0d / Math.sqrt(3.0d) - 1.0d) /
-    * 2.0d; approximately 0.21132487 .
+    * Stretch constant 2D <code>(1.0 / Math.sqrt(3.0) - 1.0) /
+    * 2.0</code>; approximately 0.21132487 .
     */
-   private static final float G2 = 0.21132486540518708f;
+   private static final float G2 = 0.21132487f;
 
    /**
     * 2x stretch constant 2D. Approximately 0.42264974 .
     */
-   private static final float G2_2 = 0.42264973081037416f;
+   private static final float G2_2 = 0.42264974f;
 
    /**
     * Stretch constant 3D.
@@ -62,25 +95,25 @@ public abstract class Simplex {
    private static final float G3_3 = 0.5f;
 
    /**
-    * Stretch constant 4D (1.0d / Math.sqrt(5.0d) - 1.0d) /
-    * 4.0d; approximately 0.1381966 .
+    * Stretch constant 4D (<code>1.0 / Math.sqrt(5.0) - 1.0) /
+    * 4.0</code>; approximately 0.1381966 .
     */
-   private static final float G4 = 0.13819660112501053f;
+   private static final float G4 = 0.1381966f;
 
    /**
     * 2x stretch constant 4D. Approximately 0.2763932 .
     */
-   private static final float G4_2 = 0.27639320225002106f;
+   private static final float G4_2 = 0.2763932f;
 
    /**
     * 3x stretch constant 4D. Approximately 0.4145898 .
     */
-   private static final float G4_3 = 0.41458980337503159f;
+   private static final float G4_3 = 0.4145898f;
 
    /**
     * 4x stretch constant 4D. Approximately 0.5527864 .
     */
-   private static final float G4_4 = 0.55278640450004212f;
+   private static final float G4_4 = 0.4145898f;
 
    /**
     * 2D simplex gradient look-up table.
@@ -125,8 +158,8 @@ public abstract class Simplex {
    private static final transient Vec3 ROT_3;
 
    /**
-    * sqrt(2.0) / Math.sqrt(3.0) Used by rotation look up
-    * tables. Approximately 0.8164966 .
+    * <code>Math.sqrt(2.0) / Math.sqrt(3.0)</code>. Used by
+    * rotation look up tables. Approximately 0.8164966 .
     */
    private static final float RT2_RT3 = 0.8164966f;
 
@@ -146,20 +179,23 @@ public abstract class Simplex {
    private static final float SCALE_4 = 54.0f;
 
    /**
-    * Factor added to 2D noise when returning a Vec2. 1.0d /
-    * Math.sqrt(2.0d); approximately 0.70710677 .
+    * Factor added to 2D noise when returning a Vec2.
+    * <code>1.0 /
+    * Math.sqrt(2.0)</code>; approximately 0.70710677 .
     */
    private final static float STEP_2 = IUtils.ONE_SQRT_2;
 
    /**
-    * Factor added to 3D noise when returning a Vec3. 1.0d /
-    * Math.sqrt(3.0d); approximately 0.57735026 .
+    * Factor added to 3D noise when returning a Vec3.
+    * <code>1.0 /
+    * Math.sqrt(3.0)</code>; approximately 0.57735026 .
     */
    private final static float STEP_3 = IUtils.ONE_SQRT_3;
 
    /**
-    * Factor added to 4D noise when returning a Vec4. 1.0d /
-    * Math.sqrt(4.0d); 0.5 .
+    * Factor added to 4D noise when returning a Vec4.
+    * <code>1.0 /
+    * Math.sqrt(4.0)</code>; 0.5 .
     */
    private final static float STEP_4 = 0.5f;
 
@@ -483,7 +519,6 @@ public abstract class Simplex {
     * A helper function to the gradient functions. Performs a
     * series of bit-shifting operations to create a hash.
     *
-    * @author Bob Jenkins
     * @param a
     *           first input
     * @param b
@@ -491,6 +526,7 @@ public abstract class Simplex {
     * @param c
     *           third input
     * @return the hash
+    * @author Bob Jenkins
     */
    private static int hash ( int a, int b, int c ) {
 
@@ -588,20 +624,21 @@ public abstract class Simplex {
       final int sc2 = sc[2];
       final int sc3 = sc[3];
 
-      final int i1 = sc0 >= 3 ? 1 : 0;
-      final int j1 = sc1 >= 3 ? 1 : 0;
-      final int k1 = sc2 >= 3 ? 1 : 0;
-      final int l1 = sc3 >= 3 ? 1 : 0;
+      // These have been truncated from >= to > .
+      final int i1 = sc0 > 2 ? 1 : 0; // final int i1 = sc0 >= 3 ? 1 : 0;
+      final int j1 = sc1 > 2 ? 1 : 0; // final int j1 = sc1 >= 3 ? 1 : 0;
+      final int k1 = sc2 > 2 ? 1 : 0; // final int k1 = sc2 >= 3 ? 1 : 0;
+      final int l1 = sc3 > 2 ? 1 : 0; // final int l1 = sc3 >= 3 ? 1 : 0;
 
-      final int i2 = sc0 >= 2 ? 1 : 0;
-      final int j2 = sc1 >= 2 ? 1 : 0;
-      final int k2 = sc2 >= 2 ? 1 : 0;
-      final int l2 = sc3 >= 2 ? 1 : 0;
+      final int i2 = sc0 > 1 ? 1 : 0; // final int i2 = sc0 >= 2 ? 1 : 0;
+      final int j2 = sc1 > 1 ? 1 : 0; // final int j2 = sc1 >= 2 ? 1 : 0;
+      final int k2 = sc2 > 1 ? 1 : 0; // final int k2 = sc2 >= 2 ? 1 : 0;
+      final int l2 = sc3 > 1 ? 1 : 0; // final int l2 = sc3 >= 2 ? 1 : 0;
 
-      final int i3 = sc0 >= 1 ? 1 : 0;
-      final int j3 = sc1 >= 1 ? 1 : 0;
-      final int k3 = sc2 >= 1 ? 1 : 0;
-      final int l3 = sc3 >= 1 ? 1 : 0;
+      final int i3 = sc0 > 0 ? 1 : 0; // final int i3 = sc0 >= 1 ? 1 : 0;
+      final int j3 = sc1 > 0 ? 1 : 0; // final int j3 = sc1 >= 1 ? 1 : 0;
+      final int k3 = sc2 > 0 ? 1 : 0; // final int k3 = sc2 >= 1 ? 1 : 0;
+      final int l3 = sc3 > 0 ? 1 : 0; // final int l3 = sc3 >= 1 ? 1 : 0;
 
       final float x1 = x0 - i1 + Simplex.G4;
       final float y1 = y0 - j1 + Simplex.G4;
@@ -1025,6 +1062,8 @@ public abstract class Simplex {
       Vec2 g1 = Simplex.ZERO_2;
       Vec2 g2 = Simplex.ZERO_2;
 
+      // TODO: Research whether or not these conditionals can be
+      // changed to t0 > 0.0f instead of t0 >= 0.0f.
       final float t0 = 0.5f - (x0 * x0 + y0 * y0);
       if (t0 >= 0.0f) {
          g0 = Simplex.gradient2(i, j, seed);
@@ -1581,7 +1620,10 @@ public abstract class Simplex {
 
       final float t0 = 0.5f - (x0 * x0 + y0 * y0 + z0 * z0);
       if (t0 >= 0.0f) {
-         g0 = Simplex.gradRot3(i, j, k, seed, cosa, sina, Simplex.ROT_3);
+         g0 = Simplex.gradRot3(
+               i, j, k, seed,
+               cosa, sina,
+               Simplex.ROT_3);
          t20 = t0 * t0;
          t40 = t20 * t20;
          n0 = g0.x * x0 + g0.y * y0 + g0.z * z0;
@@ -1589,7 +1631,9 @@ public abstract class Simplex {
 
       final float t1 = 0.5f - (x1 * x1 + y1 * y1 + z1 * z1);
       if (t1 >= 0.0f) {
-         g1 = Simplex.gradRot3(i + i1, j + j1, k + k1, seed, cosa, sina,
+         g1 = Simplex.gradRot3(
+               i + i1, j + j1, k + k1, seed,
+               cosa, sina,
                Simplex.ROT_3);
          t21 = t1 * t1;
          t41 = t21 * t21;
@@ -1598,7 +1642,9 @@ public abstract class Simplex {
 
       final float t2 = 0.5f - (x2 * x2 + y2 * y2 + z2 * z2);
       if (t2 >= 0.0f) {
-         g2 = Simplex.gradRot3(i + i2, j + j2, k + k2, seed, cosa, sina,
+         g2 = Simplex.gradRot3(
+               i + i2, j + j2, k + k2, seed,
+               cosa, sina,
                Simplex.ROT_3);
          t22 = t2 * t2;
          t42 = t22 * t22;
@@ -1607,7 +1653,9 @@ public abstract class Simplex {
 
       final float t3 = 0.5f - (x3 * x3 + y3 * y3 + z3 * z3);
       if (t3 >= 0.0f) {
-         g3 = Simplex.gradRot3(i + 1, j + 1, k + 1, seed, cosa, sina,
+         g3 = Simplex.gradRot3(
+               i + 1, j + 1, k + 1, seed,
+               cosa, sina,
                Simplex.ROT_3);
          t23 = t3 * t3;
          t43 = t23 * t23;

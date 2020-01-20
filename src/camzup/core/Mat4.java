@@ -1085,7 +1085,7 @@ public class Mat4 extends Matrix {
       // a.m20 * b.x + a.m21 * b.y + a.m23);
 
       final float w = a.m30 * b.x + a.m31 * b.y + a.m33;
-      if(w == 0.0f) {
+      if (w == 0.0f) {
          return target.reset();
       }
       final float wInv = 1.0f / w;
@@ -1134,7 +1134,7 @@ public class Mat4 extends Matrix {
       // a.m23);
 
       final float w = a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33;
-      if(w == 0.0f) {
+      if (w == 0.0f) {
          return target.reset();
       }
       final float wInv = 1.0f / w;
@@ -1172,10 +1172,10 @@ public class Mat4 extends Matrix {
       // a.m20 * b.x + a.m21 * b.y);
 
       final float w = a.m30 * b.x + a.m31 * b.y + a.m33;
-      if(w == 0.0f) {
+      if (w == 0.0f) {
          return target.reset();
       }
-      final float wInv =  1.0f / w;
+      final float wInv = 1.0f / w;
 
       return target.set(
             (a.m00 * b.x + a.m01 * b.y) * wInv,
@@ -1218,7 +1218,7 @@ public class Mat4 extends Matrix {
       // a.m22 * b.z);
 
       final float w = a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33;
-      if(w == 0.0f) {
+      if (w == 0.0f) {
          return target.reset();
       }
       final float wInv = 1.0f / w;

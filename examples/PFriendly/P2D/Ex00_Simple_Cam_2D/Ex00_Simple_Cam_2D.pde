@@ -11,7 +11,6 @@ void setup() {
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
   background(#fff7d5);
-  camera();
   graphics2.origin();
   
   pushMatrix();

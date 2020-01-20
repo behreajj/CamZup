@@ -8,14 +8,11 @@ PFont font;
 
 void setup() {
   size(720, 405, "camzup.pfriendly.YupJ2");
-  smooth(8);
-
   graphics2 = (YupJ2)getGraphics();
 
   textMode(SHAPE);
-  font = createFont("Garamond", 180);
-
-  glyphs = graphics2.glyph(font, 0.0, "ipsum");
+  font = createFont("Garamond", 80);
+  glyphs = graphics2.glyph(font, 0.02, "Lorem ipsum");
 
   MaterialSolid material = new MaterialSolid()
     .setFill(false)
@@ -29,7 +26,7 @@ void setup() {
   for (int i = 0; i < len; ++i) {
     CurveEntity2 glyph = glyphs[i];
     glyph.appendMaterial(material);
-    glyph.transform.scaleTo(200);
+    glyph.transform.scaleTo(80);
 
     float percent = i * toPercent;
     Vec2 pos = Vec2.mix(left, right, percent, new Vec2());
@@ -41,7 +38,6 @@ void setup() {
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
   graphics2.background();
-  graphics2.camera();
 
   for (CurveEntity2 glyph : glyphs) {
     graphics2.shape(glyph);

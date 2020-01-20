@@ -2315,7 +2315,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @return the quantized vector
     * @see Utils#floor(float)
     */
-   @Experimental
    public static Vec2 quantize (
          final Vec2 v,
          final int levels,

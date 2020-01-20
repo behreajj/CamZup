@@ -1322,7 +1322,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @return the quantized vector
     * @see Utils#floor(float)
     */
-   @Experimental
    public static Vec4 quantize (
          final Vec4 v,
          final int levels,

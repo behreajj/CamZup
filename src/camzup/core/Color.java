@@ -864,8 +864,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Tests to see if the alpha channel of this color is
-    * greater than zero, i.e. if it has some opacity.
+    * Tests to see if the alpha channel of the color is greater
+    * than zero, i.e. if it has some opacity.
     *
     * @param c
     *           the color
@@ -1460,13 +1460,34 @@ public class Color extends Vec4 {
 
    /**
     * Returns the relative luminance of the color, based on
-    * https://en.wikipedia.org/wiki/Relative_luminance .
+    * <a href=
+    * "https://en.wikipedia.org/wiki/Relative_luminance">
+    * https://en.wikipedia.org/wiki/Relative_luminance</a> .
     *
     * @param c
     *           the input color
     * @return the luminance
     */
    public static float luminance ( final Color c ) {
+
+      /*
+       * In bytes:
+       *
+       * 0.2126 x 256.0 = 54.4256 = 0x36
+       *
+       * 0.7152 x 256.0 = 183.0912 = 0xb7
+       *
+       * 0.0722 x 256.0 = 18.4832 = 0x12
+       *
+       * PImage blend uses:
+       *
+       * 0.30 x 256.0 = 76.8 = 0x4d
+       *
+       * 0.59 x 256.0 = 151.04 = 0x97
+       *
+       * 0.11 x 256.0 = 28.16 = 0x1c
+       *
+       **/
 
       return 0.2126f * c.x + 0.7152f * c.y + 0.0722f * c.z;
    }
@@ -1575,8 +1596,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Raises each component of the color to a power. Useful for
-    * gamma adjustment.
+    * Raises each component of the color, except for the alpha
+    * channel, to a power. Useful for gamma adjustment.
     *
     * @param a
     *           the color
@@ -1859,8 +1880,7 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Creates a random color from a lower- and upper-bound. The
-    * alpha channel is randomized.
+    * Creates a random color from a lower- and upper-bound.
     *
     * @param rng
     *           the random number generator
@@ -1918,8 +1938,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Converts rgba channels to a vector which holds hue,
-    * saturation, brightness and alpha.
+    * Converts a color to a vector which holds hue, saturation,
+    * brightness and alpha.
     *
     * @param c
     *           the color

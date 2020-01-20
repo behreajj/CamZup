@@ -1,9 +1,6 @@
 package camzup;
 
-import camzup.core.Random;
-
 import camzup.core.Mesh3;
-import camzup.core.Simplex;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -89,14 +86,9 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-      // Vec3 a = Vec3.random(new Random(), new Vec3());
-      // a = Vec3.mul(a, 40, new Vec3());
-      // Vec3 b = Vec3.quantize(a, 9, new Vec3());
-      // System.out.println(a);
-      // System.out.println(b);
-      
+      System.out.println(Utils.ceilToInt(-1.1f));
    }
-   
+
    /**
     * Gets the version of the library.
     *

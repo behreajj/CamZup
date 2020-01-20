@@ -22,13 +22,13 @@ void setup() {
 
   graphics = (Yup3)getGraphics();
   graphics.camera(
-    0.0, 0.0, -height * sqrt(3.0) * 0.5,
+    0.0, 0.0, -height * sqrt(3.0) * 0.5, 
     0.0, 0.0, 0.0, 
     0.0, 1.0, 0.0);
 
   Quaternion.setEasing(new Quaternion.Slerp());
 
-  Mesh3 mesh = Mesh3.cube(new Mesh3());
+  Mesh3 mesh = Mesh3.torus(new Mesh3());
   entity.appendMesh(mesh);
 
   MaterialSolid material = new MaterialSolid();
@@ -68,10 +68,10 @@ void draw() {
     rotSphere, rotWorld, smoothing, rotSphere);
 
   entity.transform.rotateTo(rotSphere);
-  
+
   background(0xfffff7d5);
   graphics.origin();
-  
+
   strokeWeight(1.5);
   stroke(0xffff0000);
   graphics.shape(entity);

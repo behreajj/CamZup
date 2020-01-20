@@ -12,7 +12,6 @@ void setup() {
   graphics = (YupJ2)getGraphics();
 }
 
-
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 

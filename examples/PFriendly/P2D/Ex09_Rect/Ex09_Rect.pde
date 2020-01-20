@@ -1,11 +1,11 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-Yup2 graphics;
+YupJ2 graphics;
 
 void setup() {
-  size(720, 405, "camzup.pfriendly.Yup2");
-  graphics = (Yup2)getGraphics();
+  size(720, 405, "camzup.pfriendly.YupJ2");
+  graphics = (YupJ2)getGraphics();
   noStroke();
 }
 
@@ -13,7 +13,6 @@ void setup() {
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
   background(#202020);
-  camera();
   graphics.grid(16, 4.0);
 
   rectMode(RADIUS);
