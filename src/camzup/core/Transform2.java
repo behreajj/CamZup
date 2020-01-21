@@ -630,10 +630,8 @@ public class Transform2 extends Transform {
    @Override
    protected void updateAxes () {
 
-      this.cosa = (float) Math.cos(this.rotation);
-      this.sina = (float) Math.sin(this.rotation);
-      this.right.set(this.cosa, this.sina);
-      this.forward.set(-this.sina, this.cosa);
+      Vec2.fromPolar(this.rotation, this.right);
+      Vec2.perpendicularCCW(this.right, this.forward);
    }
 
    /**

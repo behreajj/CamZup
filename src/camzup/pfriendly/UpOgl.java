@@ -2932,22 +2932,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Displays an object as text at a location. Calls the
-    * object's toString function.
-    * 
-    * @param obj the object
-    * @param x the x coordinate
-    * @param y the y coordinate
-    */
-   public void text (
-         final Object obj,
-         final float x,
-         final float y ) {
-
-      this.text(obj.toString(), x, y);
-   }
-
-   /**
     * Displays a boolean as text at a location.
     *
     * @param b
@@ -3212,6 +3196,25 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float z ) {
 
       this.text(num, x, y);
+   }
+
+   /**
+    * Displays an object as text at a location. Calls the
+    * object's toString function.
+    *
+    * @param obj
+    *           the object
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    */
+   public void text (
+         final Object obj,
+         final float x,
+         final float y ) {
+
+      this.text(obj.toString(), x, y);
    }
 
    /**

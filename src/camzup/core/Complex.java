@@ -911,12 +911,36 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     * @param target
     *           the output complex number
     * @return the complex number
-    * @see Math#cos(double)
-    * @see Math#sin(double)
+    * @see SinCos#eval(float)
     */
    public static Complex rect (
          final float r,
          final float phi,
+         final Complex target ) {
+
+      final float nrm = IUtils.ONE_TAU * phi;
+      return target.set(
+            SinCos.eval(nrm) * r,
+            SinCos.eval(nrm - 0.25f) * r);
+   }
+
+   /**
+    * Converts from polar to rectilinear coordinates.
+    *
+    * @param r
+    *           the radius
+    * @param phi
+    *           the angle in radians
+    * @param target
+    *           the output complex number
+    * @return the complex number
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    */
+   @Experimental
+   public static Complex rect (
+         final double r,
+         final double phi,
          final Complex target ) {
 
       return target.set(
@@ -952,6 +976,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex z,
          final Complex target ) {
 
+      // TODO: Replace with SinCos.eval
       return target.set(
             (float) (Math.sin(z.real) * Math.cosh(z.imag)),
             (float) (Math.cos(z.real) * Math.sinh(z.imag)));

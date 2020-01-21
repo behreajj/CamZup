@@ -1210,8 +1210,35 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
-    * Creates a quaternion from an axis and angle. Normalizes
-    * the axis prior to calculating the quaternion.
+    * Sets a quaternion from an angle. The axis is assumed to
+    * be (0.0, 0.0, 1.0) . Sets the real component of the
+    * quaternion to cosine of the angle; the imaginary z
+    * component is set to the sine.
+    * 
+    * Useful when working in 2.5D, where a two-dimensional
+    * angle may need to be transferred to a three-dimensional
+    * transform.
+    * 
+    * @param radians
+    *           the angle
+    * @param target
+    *           the output quaternion
+    * @return the quaternion
+    */
+   public static Quaternion fromAngle (
+         final float radians,
+         final Quaternion target ) {
+
+      final float nrm = IUtils.ONE_TAU_2 * radians;
+      final float cosa = SinCos.eval(nrm);
+      final float sina = SinCos.eval(nrm - 0.25f);
+
+      return target.set(cosa, 0.0f, 0.0f, sina);
+   }
+
+   /**
+    * Sets a quaternion from an axis and angle. Normalizes the
+    * axis prior to calculating the quaternion.
     *
     * @param radians
     *           the angle in radians

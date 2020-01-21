@@ -35,10 +35,10 @@ package camzup.core;
  * </ul>
  *
  * Most simplex functions scale the sum of noise
- * contributions by an arbitrary factor to bring it into
- * range. There is little explanation for how these factors
- * are arrived at, and the range of the return from eval is
- * not guaranteed.
+ * contributions by a magic number to bring it into range.
+ * There is little explanation for how these numbers are
+ * arrived at. Although the range is expected to be within
+ * [-1.0, 1.0], it is not guaranteed.
  *
  * @author Robert Bridson
  * @author Simon Geilfus
@@ -1723,10 +1723,7 @@ public abstract class Simplex {
          final float radians,
          final int seed ) {
 
-      return Simplex.flow(x, y, z,
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
-            seed, (Vec3) null);
+      return Simplex.flow(x, y, z, radians, seed, (Vec3) null);
    }
 
    /**
@@ -1776,6 +1773,8 @@ public abstract class Simplex {
       final float x1 = x0 - i1 + Simplex.G2;
       final float y1 = y0 - j1 + Simplex.G2;
 
+      // TODO: Can the sub1 plus1 be incorporated into the
+      // constant?
       final float x2 = x0 - 1.0f + Simplex.G2_2;
       final float y2 = y0 - 1.0f + Simplex.G2_2;
 
@@ -1873,10 +1872,11 @@ public abstract class Simplex {
          final int seed,
          final Vec3 deriv ) {
 
+      final float nrm = IUtils.ONE_TAU * radians;
       return Simplex.flow(
             x, y, z,
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
             seed, deriv);
    }
 
@@ -1900,11 +1900,7 @@ public abstract class Simplex {
          final float radians,
          final int seed ) {
 
-      return Simplex.flow(
-            x, y,
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
-            seed, (Vec2) null);
+      return Simplex.flow(x, y, radians, seed, (Vec2) null);
    }
 
    /**
@@ -1930,10 +1926,11 @@ public abstract class Simplex {
          final int seed,
          final Vec2 deriv ) {
 
+      final float nrm = IUtils.ONE_TAU * radians;
       return Simplex.flow(
             x, y,
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
             seed, deriv);
    }
 
@@ -1953,7 +1950,7 @@ public abstract class Simplex {
          final float radians,
          final int seed ) {
 
-      return Simplex.flow(v, radians, seed, null);
+      return Simplex.flow(v.x, v.y, radians, seed, (Vec2) null);
    }
 
    /**
@@ -1995,7 +1992,7 @@ public abstract class Simplex {
          final float radians,
          final int seed ) {
 
-      return Simplex.flow(v, radians, seed, null);
+      return Simplex.flow(v.x, v.y, v.z, radians, seed, (Vec3) null);
    }
 
    /**
@@ -2040,8 +2037,7 @@ public abstract class Simplex {
          final int seed,
          final Vec2 target ) {
 
-      return Simplex.noise(v, seed, target,
-            null, null);
+      return Simplex.noise(v, seed, target, null, null);
    }
 
    /**

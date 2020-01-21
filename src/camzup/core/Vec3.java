@@ -1522,14 +1522,15 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
+   @Experimental
    public static Vec3 fromPolar (
-         final float azimuth,
-         final float radius,
+         final double azimuth,
+         final double radius,
          final Vec3 target ) {
 
       return target.set(
-            (float) (radius * Math.cos(azimuth)),
-            (float) (radius * Math.sin(azimuth)),
+            (float) (Math.cos(azimuth) * radius),
+            (float) (Math.sin(azimuth) * radius),
             0.0f);
    }
 
@@ -1546,13 +1547,67 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
+   @Experimental
    public static Vec3 fromPolar (
-         final float azimuth,
+         final double azimuth,
          final Vec3 target ) {
 
       return target.set(
             (float) Math.cos(azimuth),
             (float) Math.sin(azimuth),
+            0.0f);
+   }
+
+   /**
+    * Creates a vector from polar coordinates: (1) theta,
+    * \u03b8, an angle in radians, the vector's azimuth; (2)
+    * rho, \u03c1, a radius, the vector's magnitude. Uses the
+    * formula<br>
+    * <br>
+    * ( \u03c1 cos ( \u03b8 ),<br>
+    * \u03c1 sin ( \u03b8 ) )
+    *
+    * @param azimuth
+    *           the angle in radians
+    * @param radius
+    *           the radius
+    * @param target
+    *           the output vector
+    * @return the vector
+    * @see SinCos#eval(float)
+    */
+   public static Vec3 fromPolar (
+         final float azimuth,
+         final float radius,
+         final Vec3 target ) {
+
+      final float nrm = IUtils.ONE_TAU * azimuth;
+      return target.set(
+            SinCos.eval(nrm) * radius,
+            SinCos.eval(nrm - 0.25f) * radius,
+            0.0f);
+   }
+
+   /**
+    * Creates a vector with a magnitude of 1.0 from an angle,
+    * such that the vector is on the equator of the unit
+    * sphere.
+    *
+    * @param azimuth
+    *           the angle in radians
+    * @param target
+    *           the output vector
+    * @return the vector
+    * @see SinCos#eval(float)
+    */
+   public static Vec3 fromPolar (
+         final float azimuth,
+         final Vec3 target ) {
+
+      final float nrm = IUtils.ONE_TAU * azimuth;
+      return target.set(
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
             0.0f);
    }
 
@@ -1578,11 +1633,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param target
     *           the output vector
     * @return the vector
+    * @see Math#cos(double)
+    * @see Math#sin(double)
     */
+   @Experimental
    public static Vec3 fromSpherical (
-         final float azimuth,
-         final float inclination,
-         final float radius,
+         final double azimuth,
+         final double inclination,
+         final double radius,
          final Vec3 target ) {
 
       final double rhoCosPhi = radius * Math.cos(inclination);
@@ -1590,6 +1648,46 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
             (float) (rhoCosPhi * Math.cos(azimuth)),
             (float) (rhoCosPhi * Math.sin(azimuth)),
             (float) (radius * -Math.sin(inclination)));
+   }
+
+   /**
+    * Creates a vector from spherical coordinates: (1) theta,
+    * \u03b8, the azimuth or longitude; (2) phi, \u03c6, the
+    * inclination or latitude; (3) rho, \u03c1, the radius or
+    * magnitude. Uses the formula<br>
+    * <br>
+    * ( \u03c1 cos ( \u03b8 ) cos ( \u03c6 ),<br>
+    * \u03c1 sin ( \u03b8 ) cos ( \u03c6 ),<br>
+    * - \u03c1 sin ( \u03c6 ) )<br>
+    * <br>
+    * The poles will be upright in a z-up coordinate system;
+    * sideways in a y-up coordinate system.
+    *
+    * @param azimuth
+    *           the angle theta in radians
+    * @param inclination
+    *           the angle phi in radians
+    * @param radius
+    *           rho, the vector's magnitude
+    * @param target
+    *           the output vector
+    * @return the vector
+    * @see SinCos#eval(float)
+    */
+   public static Vec3 fromSpherical (
+         final float azimuth,
+         final float inclination,
+         final float radius,
+         final Vec3 target ) {
+
+      // TODO: Needs testing.
+      final float nrmazim = IUtils.ONE_TAU * azimuth;
+      final float nrmincl = IUtils.ONE_TAU * inclination;
+      final float rhoCosPhi = radius * SinCos.eval(nrmincl);
+      return target.set(
+            rhoCosPhi * SinCos.eval(nrmazim),
+            rhoCosPhi * SinCos.eval(nrmazim - 0.25f),
+            radius * -SinCos.eval(nrmincl - 0.25f));
    }
 
    /**
@@ -2859,10 +2957,11 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final Vec3 axis,
          final Vec3 target ) {
 
+      final float nrm = IUtils.ONE_TAU * radians;
       return Vec3.rotate(
             v,
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
             axis,
             target);
    }
@@ -2919,10 +3018,11 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final float radians,
          final Vec3 target ) {
 
+      final float nrm = IUtils.ONE_TAU * radians;
       return Vec3.rotateX(
             v,
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
             target);
    }
 
@@ -2978,10 +3078,11 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final float radians,
          final Vec3 target ) {
 
+      final float nrm = IUtils.ONE_TAU * radians;
       return Vec3.rotateY(
             v,
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
             target);
    }
 
@@ -3028,19 +3129,19 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param target
     *           the output vector
     * @return the rotated vector
-    * @see Math#cos(double)
-    * @see Math#sin(double)
+    * @see SinCos#eval(float)
     * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
     */
    public static Vec3 rotateZ (
          final Vec3 v,
          final float radians,
          final Vec3 target ) {
-
+      
+      final float nrm = IUtils.ONE_TAU * radians;
       return Vec3.rotateZ(
             v,
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
             target);
    }
 

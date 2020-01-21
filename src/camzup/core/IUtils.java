@@ -160,6 +160,19 @@ public interface IUtils {
    double ONE_TAU_D = 0.15915494309189535d;
 
    /**
+    * 1.0 / 4.0 \u03c0 . Useful when normalizing angles
+    * supplied to quaternions. Approximately 0.07957747 .
+    */
+   float ONE_TAU_2 = 0.07957747154594767f;
+
+   /**
+    * 1.0 / 4.0 \u03c0 . Useful when normalizing angles
+    * supplied to quaternions. Approximately
+    * 0.07957747154594767 .
+    */
+   double ONE_TAU_2_D = 0.07957747154594767d;
+
+   /**
     * One-third, 1.0 / 3.0 . Approximately 0.33333333 . Useful
     * for setting handles on the knot of a Bezier curve.
     */

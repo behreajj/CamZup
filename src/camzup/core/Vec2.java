@@ -1381,14 +1381,15 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
+   @Experimental
    public static Vec2 fromPolar (
-         final float heading,
-         final float radius,
+         final double heading,
+         final double radius,
          final Vec2 target ) {
 
       return target.set(
-            (float) Math.cos(heading) * radius,
-            (float) Math.sin(heading) * radius);
+            (float) (Math.cos(heading) * radius),
+            (float) (Math.sin(heading) * radius));
    }
 
    /**
@@ -1400,14 +1401,67 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param target
     *           the output vector
     * @return the vector
+    * @see Math#cos(double)
+    * @see Math#sin(double)
     */
+   @Experimental
    public static Vec2 fromPolar (
-         final float heading,
+         final double heading,
          final Vec2 target ) {
 
       return target.set(
             (float) Math.cos(heading),
             (float) Math.sin(heading));
+   }
+
+   /**
+    * Creates a vector from polar coordinates: (1) theta,
+    * \u03b8, an angle in radians, the vector's heading; (2)
+    * rho, \u03c1, a radius, the vector's magnitude. Uses the
+    * formula<br>
+    * <br>
+    * ( \u03c1 cos ( \u03b8 ),<br>
+    * \u03c1 sin ( \u03b8 ) ).
+    *
+    * @param heading
+    *           the angle in radians
+    * @param radius
+    *           the radius
+    * @param target
+    *           the output vector
+    * @return the vector
+    * @see SinCos#eval(float)
+    */
+   public static Vec2 fromPolar (
+         final float heading,
+         final float radius,
+         final Vec2 target ) {
+
+      final float nrm = IUtils.ONE_TAU * heading;
+      return target.set(
+            SinCos.eval(nrm) * radius,
+            SinCos.eval(nrm - 0.25f) * radius);
+   }
+
+   /**
+    * Creates a vector with a magnitude of 1.0 from an angle,
+    * such that the vector is on the unit circle.
+    *
+    * @param heading
+    *           the angle in radians
+    * @param target
+    *           the output vector
+    * @return the vector
+    * @see SinCos#eval(float)
+    */
+   public static Vec2 fromPolar (
+         final float heading,
+         final Vec2 target ) {
+
+      final float nrm = IUtils.ONE_TAU * heading;
+      return target.set(
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f));
    }
 
    /**
@@ -2617,7 +2671,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param target
     *           the output vector
     * @return the rotated vector
-    * @see Math#cos(double)
+    * @see Utils#cos(float)
     */
    public static Vec2 rotateX (
          final Vec2 v,
@@ -2626,7 +2680,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
       return target.set(
             v.x,
-            v.y * (float) Math.cos(radians));
+            v.y * Utils.cos(radians));
    }
 
    /**
@@ -2643,7 +2697,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param target
     *           the output vector
     * @return the rotated vector
-    * @see Math#cos(double)
+    * @see Utils#cos(float)
     */
    public static Vec2 rotateY (
          final Vec2 v,
@@ -2651,7 +2705,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final Vec2 target ) {
 
       return target.set(
-            v.x * (float) Math.cos(radians),
+            v.x * Utils.cos(radians),
             v.y);
    }
 
@@ -2693,18 +2747,18 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param target
     *           the output vector
     * @return the rotated vector
-    * @see Math#cos(double)
-    * @see Math#sin(double)
+    * @see SinCos#eval(float)
     */
    public static Vec2 rotateZ (
          final Vec2 v,
          final float radians,
          final Vec2 target ) {
 
+      final float nrm = IUtils.ONE_TAU * radians;
       return Vec2.rotateZ(
             v,
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
             target);
    }
 

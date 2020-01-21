@@ -710,6 +710,7 @@ public abstract class Utils implements IUtils {
     */
    public static float abs ( final float value ) {
 
+      // abs(a) := max(-a, a)
       return Float.intBitsToFloat(0x7fffffff & Float.floatToRawIntBits(value));
    }
 
@@ -721,10 +722,11 @@ public abstract class Utils implements IUtils {
     * the input is -1.0; \u03c0 / 2.0, when the input is 0.0;
     * 0.0, when the input is 1.0.
     *
-    * Based on the algorithm at <a href=
-    * "https://developer.download.nvidia.com/cg/acos.html">https://developer.download.nvidia.com/cg/acos.html</a>
-    * , which in turn cites M. Abramowitz and I.A. Stegun,
-    * Eds., <em>Handbook of Mathematical Functions</em> .
+    * Based on the algorithm at the <a href=
+    * "https://developer.download.nvidia.com/cg/acos.html">Nvidia
+    * Cg 3.1 Toolkit Documentation</a> , which in turn cites M.
+    * Abramowitz and I.A. Stegun, Eds., <em>Handbook of
+    * Mathematical Functions</em> .
     *
     * @param value
     *           the input value
@@ -740,14 +742,17 @@ public abstract class Utils implements IUtils {
          return 0.0f;
       }
 
-      final float x = Utils.abs(value);
-      float ret = 0.074261f - 0.0187293f * x;
+      final boolean ltZero = value < 0.0f;
+      final float x = ltZero ? -value : value;
+      float ret = -0.0187293f;
+      ret *= x;
+      ret += 0.074261f;
       ret *= x;
       ret -= 0.2121144f;
       ret *= x;
       ret += IUtils.HALF_PI;
       ret *= (float) Math.sqrt(1.0f - x);
-      return value < 0.0f ? IUtils.PI - ret : ret;
+      return ltZero ? IUtils.PI - ret : ret;
    }
 
    /**
@@ -763,7 +768,6 @@ public abstract class Utils implements IUtils {
     */
    public static int and ( final float a, final float b ) {
 
-      // return Utils.bool(a) * Utils.bool(b);
       return Utils.toInt(Utils.toBool(a) & Utils.toBool(b));
    }
 
@@ -780,7 +784,6 @@ public abstract class Utils implements IUtils {
     */
    public static int and ( final int a, final int b ) {
 
-      // return Utils.bool(a) * Utils.bool(b);
       return Utils.toInt(Utils.toBool(a) & Utils.toBool(b));
    }
 
@@ -833,10 +836,11 @@ public abstract class Utils implements IUtils {
     * 2.0]: -\u03c0 / 2.0, when the input is -1.0; 0.0, when
     * the input is 0.0; \u03c0 / 2.0, when the input is 1.0.
     *
-    * Based on the algorithm at <a href=
-    * "https://developer.download.nvidia.com/cg/asin.html">https://developer.download.nvidia.com/cg/asin.html</a>
-    * , which in turn cites M. Abramowitz and I.A. Stegun,
-    * Eds., <em>Handbook of Mathematical Functions</em> .
+    * Based on the algorithm at the <a href=
+    * "https://developer.download.nvidia.com/cg/asin.html">Nvidia
+    * Cg 3.1 Toolkit Documentation</a> , which in turn cites M.
+    * Abramowitz and I.A. Stegun, Eds., <em>Handbook of
+    * Mathematical Functions</em> .
     *
     * @param value
     *           the input value
@@ -852,48 +856,66 @@ public abstract class Utils implements IUtils {
          return IUtils.HALF_PI;
       }
 
-      final float x = Utils.abs(value);
-      float ret = 0.074261f - 0.0187293f * x;
+      final boolean ltZero = value < 0.0f;
+      final float x = ltZero ? -value : value;
+      float ret = -0.0187293f;
+      ret *= x;
+      ret += 0.074261f;
       ret *= x;
       ret -= 0.2121144f;
       ret *= x;
       ret += IUtils.HALF_PI;
       ret = IUtils.HALF_PI - ret * (float) Math.sqrt(1.0f - x);
-      return value < 0.0f ? -ret : ret;
+      return ltZero ? -ret : ret;
    }
 
    /**
+    * Finds a single precision approximation of a signed angle
+    * given a vertical and horizontal component. Note that the
+    * vertical component <em>precedes</em> the horizontal. The
+    * return value falls in the range [-\u03c0, \u03c0] .
+    *
     * An alternative to {@link Math#atan2(double, double)} .
-    * Based on the algorithm at <a href=
-    * "https://developer.download.nvidia.com/cg/atan2.html">https://developer.download.nvidia.com/cg/atan2.html</a>
-    * .
+    * Based on the algorithm at the <a href=
+    * "https://developer.download.nvidia.com/cg/atan2.html">Nvidia
+    * Cg 3.1 Toolkit Documentation</a> .
     *
     * @param y
-    *           the y coordinate
+    *           the y coordinate (the ordinate)
     * @param x
-    *           the x coordinate
+    *           the x coordinate (the abscissa)
     * @return the angle
     */
    public static float atan2 ( final float y, final float x ) {
 
-      final float yAbs = Utils.abs(y);
-      final float xAbs = Utils.abs(x);
-      float t0 = Utils.max(xAbs, yAbs);
+      final boolean yLtZero = y < 0.0f;
+      final boolean xLtZero = x < 0.0f;
+      final float yAbs = yLtZero ? -y : y;
+      final float xAbs = xLtZero ? -x : x;
+
+      final boolean yGtX = yAbs > xAbs;
+      float t0 = yGtX ? yAbs : xAbs;
+      // if (t0 == 0.0f || y != y || x != x) {
       if (t0 == 0.0f) {
          return 0.0f;
       }
-      float t2 = Utils.min(xAbs, yAbs) / t0;
+      float t2 = (yGtX ? xAbs : yAbs) / t0;
+
+      /*
+       * When stored independently as floats, some of these magic
+       * numbers are truncated to slightly different values.
+       */
       final float t3 = t2 * t2;
       t0 = -0.01348047f;
       t0 = t0 * t3 + 0.057477314f;
-      t0 = t0 * t3 - 0.121239071f;
-      t0 = t0 * t3 + 0.195635925f;
-      t0 = t0 * t3 - 0.332994597f;
-      t0 = t0 * t3 + 0.99999563f;
+      t0 = t0 * t3 - 0.121239071f; /* 0.12123907f */
+      t0 = t0 * t3 + 0.195635925f; /* 0.19563593f */
+      t0 = t0 * t3 - 0.332994597f; /* 0.3329946f */
+      t0 = t0 * t3 + 0.99999563f; /* 0.99999565f */
       t2 = t0 * t2;
-      t2 = yAbs > xAbs ? IUtils.HALF_PI - t2 : t2;
-      t2 = x < 0.0f ? IUtils.PI - t2 : t2;
-      return y < 0.0f ? -t2 : t2;
+      t2 = yGtX ? IUtils.HALF_PI - t2 : t2;
+      t2 = xLtZero ? IUtils.PI - t2 : t2;
+      return yLtZero ? -t2 : t2;
    }
 
    /**
@@ -939,7 +961,7 @@ public abstract class Utils implements IUtils {
 
    /**
     * An alternative to {@link Math#ceil(double)} . ceil ( x )
-    * = -floor ( -x )
+    * = -floor ( -x ) .
     *
     * @param value
     *           the input value
@@ -1033,6 +1055,25 @@ public abstract class Utils implements IUtils {
    // | Float.floatToRawIntBits(magnitude) &
    // 2147483647);
    // }
+
+   /**
+    * Finds the approximate cosine of an angle in radians.
+    * Returns a value in the range [-1.0, 1.0] . An alternative
+    * to the double precision {@link Math#cos(double)} , this
+    * function uses single-precision numbers.
+    *
+    * To find the cosine and sine of an angle simultaneously,
+    * use either {@link Vec2#fromPolar(float, Vec2)} or
+    * {@link Vec3#fromPolar(float, Vec3)} .
+    *
+    * @param radians
+    *           the angle in radians
+    * @return the cosine of the angle
+    */
+   public static float cos ( final float radians ) {
+
+      return SinCos.eval(IUtils.ONE_TAU * radians);
+   }
 
    /**
     * Converts an angle in radians to an angle in degrees.
@@ -1284,6 +1325,35 @@ public abstract class Utils implements IUtils {
 
    /**
     * Linear interpolation from the origin to the destination
+    * value by a step. If the step is less than zero, returns
+    * the origin. If the step is greater than one, returns the
+    * destination.
+    *
+    * @param origin
+    *           the origin value
+    * @param dest
+    *           the destination value
+    * @param step
+    *           the step
+    * @return the interpolated value
+    * @see Utils#lerpUnclamped(float, float, float)
+    */
+   public static int lerp (
+         final int origin,
+         final int dest,
+         final float step ) {
+
+      if (step <= 0.0f) {
+         return origin;
+      }
+      if (step >= 1.0f) {
+         return dest;
+      }
+      return Utils.lerpUnclamped(origin, dest, step);
+   }
+
+   /**
+    * Linear interpolation from the origin to the destination
     * value by a step. Does not check to see if the step is
     * beyond the range [0.0, 1.0] .
     *
@@ -1300,10 +1370,31 @@ public abstract class Utils implements IUtils {
          final float dest,
          final float step ) {
 
-      // final double td = step;
-      // return (float) ((1.0d - td) * origin + td * dest);
-
       return (1.0f - step) * origin + step * dest;
+   }
+
+   /**
+    * Linear interpolation from the origin to the destination
+    * value by a step. Does not check to see if the step is
+    * beyond the range [0.0, 1.0] .
+    *
+    * Rounds the result to an integer.
+    *
+    * @param origin
+    *           the origin value
+    * @param dest
+    *           the destination value
+    * @param step
+    *           the step
+    * @return the interpolated value
+    * @see Utils#round(float)
+    */
+   public static int lerpUnclamped (
+         final int origin,
+         final int dest,
+         final float step ) {
+
+      return Utils.round((1.0f - step) * origin + step * dest);
    }
 
    /**
@@ -1728,10 +1819,25 @@ public abstract class Utils implements IUtils {
    public static int sign ( final float value ) {
 
       return value < 0.0f ? -1 : value > 0.0f ? 1 : 0;
+   }
 
-      // return
-      // Float.intBitsToFloat((Float.floatToRawIntBits(value) &
-      // -2147483648) | 1065353216);
+   /**
+    * Finds the approximate sine of an angle in radians.
+    * Returns a value in the range [-1.0, 1.0] . An alternative
+    * to the double precision {@link Math#sin(double)} , this
+    * function uses single-precision numbers
+    *
+    * To find the cosine and sine of an angle simultaneously,
+    * use either {@link Vec2#fromPolar(float, Vec2)} or
+    * {@link Vec3#fromPolar(float, Vec3)} .
+    *
+    * @param radians
+    *           the angle in radians
+    * @return the sine of the angle
+    */
+   public static float sin ( final float radians ) {
+
+      return SinCos.eval(IUtils.ONE_TAU * radians - 0.25f);
    }
 
    /**
@@ -1760,6 +1866,39 @@ public abstract class Utils implements IUtils {
 
       final float t = step * step * (3.0f - (step + step));
       return (1.0f - t) * origin + t * dest;
+   }
+
+   /**
+    * Wraps around {@link Math#sqrt(double)} to return 0.0
+    * instead of NaN when the input value is negative.
+    *
+    * @param value
+    *           the value
+    * @return the square-root
+    */
+   public static float sqrt ( final float value ) {
+
+      return value <= 0.0f || value != value ? 0.0f
+            : (float) Math.sqrt(value);
+   }
+
+   /**
+    * Finds the approximate tangent of an angle in radians. An
+    * alternative to the double precision
+    * {@link Math#tan(double)} , this function uses
+    * single-precision numbers. Equivalent to dividing the sine
+    * of the angle by the cosine.
+    *
+    * @param radians
+    *           the angle in radians
+    * @return the tangent
+    * @see SinCos#eval(float)
+    */
+   public static float tan ( final float radians ) {
+
+      final float nrm = IUtils.ONE_TAU * radians;
+      final float cost = SinCos.eval(nrm);
+      return cost == 0.0f ? 0.0f : SinCos.eval(nrm - 0.25f) / cost;
    }
 
    /**

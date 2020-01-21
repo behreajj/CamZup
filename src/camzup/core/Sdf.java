@@ -12,37 +12,6 @@ package camzup.core;
  */
 public abstract class Sdf {
 
-   @FunctionalInterface
-   @Experimental
-   interface FieldFunc {
-
-      float execute ( Object... args );
-   }
-
-   @Experimental
-   class Torus implements FieldFunc {
-
-      @Override
-      public float execute ( final Object... args ) {
-
-         return this.execute(
-               (Vec3) args[0],
-               (Float) args[1],
-               (Float) args[2]);
-
-      }
-
-      public float execute (
-            final Vec3 point,
-            final Float radius,
-            final Float thickness ) {
-
-         return Utils.hypot(Utils.hypot(point.x, point.y)
-               - radius, point.z) - thickness;
-      }
-
-   }
-
    /**
     * Draws an open arc with rounded stroke caps. The angular
     * offset of the arc's aperture is to be calculated outside
@@ -86,7 +55,7 @@ public abstract class Sdf {
       final float py0 = cosOff * point.x + sinOff * point.y;
       final double dotp = px0 * px0 + py0 * py0;
       return (float) Math.sqrt(
-            dotp + bounds * bounds - 2.0d * bounds *
+            dotp + bounds * bounds - 2.0f * bounds *
                   (cosAptr2 * px0 > sinAptr2 * py0
                         ? px0 * sinAptr2 + py0 * cosAptr2
                         : Math.sqrt(dotp)))
@@ -123,15 +92,14 @@ public abstract class Sdf {
          final float bounds,
          final float weight ) {
 
-      final float a = Utils.modRadians(startAngle);
-      final float b = Utils.modRadians(stopAngle);
-
-      /* Aperture is 2x arc length in the original. */
-      final float arcLen = 0.5f * Utils.modRadians(b - a);
+      final float a = Utils.mod1(IUtils.ONE_TAU * startAngle);
+      final float b = Utils.mod1(IUtils.ONE_TAU * stopAngle);
+      final float arcLen = 0.5f * Utils.mod1(b - a);
       final float arcOff = a + arcLen;
+
       return Sdf.arc(point,
-            (float) Math.cos(arcOff), (float) Math.sin(arcOff),
-            (float) Math.cos(arcLen), (float) Math.sin(arcLen),
+            SinCos.eval(arcOff), SinCos.eval(arcOff - 0.25f),
+            SinCos.eval(arcLen), SinCos.eval(arcLen - 0.25f),
             bounds, weight);
    }
 
@@ -286,78 +254,6 @@ public abstract class Sdf {
          final float radians ) {
 
       return Sdf.conic(point.x, point.y, radians);
-   }
-
-   /**
-    * Draws an ellipse, with bounds described by a vector. With
-    * reference to
-    * <a href="https://www.shadertoy.com/view/4sS3zz">
-    * https://www.shadertoy.com/view/4sS3zz</a> .
-    *
-    * @param point
-    *           the point
-    * @param bounds
-    *           the bounds
-    * @return the signed distance
-    * @see Utils#abs(float)
-    * @see Utils#div(float, float)
-    * @see Utils#acos(float)
-    * @see Utils#hypot(float, float)
-    * @see Math#cos(double)
-    * @see Math#sin(double)
-    * @see Math#copySign(float, float)
-    * @see Math#pow(double, double)
-    * @see Math#sqrt(double)
-    */
-   public static float ellipse (
-         final Vec2 point,
-         final Vec2 bounds ) {
-
-      final float px0 = Utils.abs(point.x);
-      final float py0 = Utils.abs(point.y);
-
-      final boolean eval = px0 > py0;
-      final float px1 = eval ? py0 : px0;
-      final float py1 = eval ? px0 : py0;
-      final float abx0 = eval ? bounds.y : bounds.x;
-      final float aby0 = eval ? bounds.x : bounds.y;
-
-      final float l = aby0 * aby0 - abx0 * abx0;
-      final float m = abx0 * Utils.div(px1, l);
-      final float n = aby0 * Utils.div(py1, l);
-      final float msq = m * m;
-      final float nsq = n * n;
-
-      final float c = (msq + nsq - 1.0f) * IUtils.ONE_THIRD;
-      final float ccb = c * c * c;
-      final float m2n2 = msq * nsq;
-      final float d = ccb + m2n2;
-      final float q = d + m2n2;
-      final float g = m + m * nsq;
-
-      float co = 0.0f;
-      if (d < 0.0f) {
-         final float h = Utils.acos(Utils.div(q, ccb)) * IUtils.ONE_THIRD;
-         final double s = Math.cos(h);
-         final double t = Math.sin(h) * IUtils.SQRT_3_D;
-         final double rx = Math.sqrt(msq - c * (s + t + 2.0d));
-         final double ry = Math.sqrt(msq - c * (s - t + 2.0d));
-         co = (float) ((ry + Math.copySign(rx, l) +
-               Utils.abs(g) / (rx * ry) - m) * 0.5d);
-      } else {
-         final double h = 2.0d * m * n * Math.sqrt(d);
-         final double s = Math.copySign(Math.pow(Utils.abs(q + h),
-               IUtils.ONE_THIRD_D), q + h);
-         final double u = Math.copySign(Math.pow(Utils.abs(q - h),
-               IUtils.ONE_THIRD_D), q - h);
-         final double rx = -s - u - c * 4.0d + 2.0d * msq;
-         final double ry = (s - u) * IUtils.SQRT_3_D;
-         final double rm = Math.sqrt(rx * rx + ry * ry);
-         co = (float) ((ry / Math.sqrt(rm - rx) + 2.0d * g / rm - m) * 0.5d);
-      }
-
-      final float ry = aby0 * (float) Math.sqrt(1.0d - co * co);
-      return Math.copySign(Utils.hypot(abx0 * co - px1, ry - py1), py1 - ry);
    }
 
    /**
@@ -632,6 +528,8 @@ public abstract class Sdf {
     *           the point
     * @param vertices
     *           number of vertices
+    * @param angle
+    *           angular offset
     * @param bounds
     *           the bounds
     * @return the signed distance
@@ -640,18 +538,13 @@ public abstract class Sdf {
    public static float polygon (
          final Vec2 point,
          final int vertices,
+         final float angle,
          final float bounds ) {
 
-      if (vertices < 3) {
-         return 0.0f;
-      }
-
-      final float a = IUtils.HALF_PI + Utils.atan2(point.y, point.x);
-      final float b = IUtils.TAU / vertices;
-
-      return (float) Math.cos(Utils.floor(0.5f + a / b) * b - a)
-            * Utils.hypot(point.x, point.y)
-            - bounds * 0.5f;
+      final float a = angle + Utils.atan2(point.y, -point.x);
+      final float b = IUtils.TAU / Utils.max(3, vertices);
+      return Utils.cos(b * Utils.floor(0.5f + a / b) - a)
+            * Utils.hypot(point.x, point.y) - bounds * 0.5f;
    }
 
    /**

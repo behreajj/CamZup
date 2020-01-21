@@ -11,7 +11,8 @@ Vec3 deriv = new Vec3();
 Color clr = new Color();
 
 void setup() {
-  size(512, 512, "camzup.pfriendly.Yup2");
+  size(384, 384, "camzup.pfriendly.Yup2");
+  colorMode(RGB, 1.0);
 }
 
 void draw() {
@@ -20,7 +21,7 @@ void draw() {
   noise.z = frameCount * 0.05;
 
   persist = Utils.lerp(0.1, 0.85, mouseX * wNorm);
-  octaves = (int)Utils.lerp(1, 16, mouseY * hNorm);
+  octaves = (int)Utils.lerp(1, 9, mouseY * hNorm);
 
   String diagnostic = new StringBuilder()
     .append("FPS: ")

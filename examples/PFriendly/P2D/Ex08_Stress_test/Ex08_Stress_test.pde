@@ -18,10 +18,6 @@ void setup() {
   noStroke();
   colorMode(RGB, 1.0);
   textSize(52);
-  println(g.ellipseMode);
-  //ellipseMode(RADIUS);
-  println(g.ellipseMode);
-
 
   graphics = (YupJ2)getGraphics();
 
@@ -47,7 +43,7 @@ void draw() {
     for (int j = 0; j < cols; ++j) {
       float xPrc = j * toX;
       float x = Utils.lerpUnclamped(left, right, xPrc);
-      graphics.fill(xPrc, yPrc, 0.5, 0.75);
+      graphics.fill(xPrc, yPrc, 0.5, 1.0);
       graphics.circle(x, y, crcsz);
     }
   }

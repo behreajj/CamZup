@@ -1406,15 +1406,11 @@ public class Transform3 extends Transform {
    @Chainable
    public Transform set ( final Transform2 source ) {
 
-      final Vec2 loc = source.location;
-      final Vec2 scl = source.scale;
-      final float halfAngle = 0.5f * source.rotation;
+      this.location.set(source.location, 0.0f);
+      Quaternion.fromAngle(source.rotation, this.rotation);
+      this.scale.set(source.scale, 1.0f);
 
-      return this.set(
-            loc.x, loc.y, 0.0f,
-            (float) Math.cos(halfAngle), 0.0f,
-            0.0f, (float) Math.sin(halfAngle),
-            scl.x, scl.y, 1.0f);
+      return this;
    }
 
    /**

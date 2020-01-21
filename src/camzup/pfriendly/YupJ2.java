@@ -1000,14 +1000,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    public void arc (
          final Vec2 v,
          final float sz,
-         final float start, final float stop,
+         final float start,
+         final float stop,
          final int mode ) {
 
-      this.arc(
-            v.x, v.y,
-            sz, sz,
-            start, stop,
-            mode);
+      this.arc(v.x, v.y, sz, sz, start, stop, mode);
    }
 
    @Override

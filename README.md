@@ -70,7 +70,6 @@ Here is a brief list of issues with this library and differences which are not b
 - The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles.
 - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), [ellipseMode](https://processing.org/reference/ellipseMode_.html) and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with these renderers. For that reason, `CENTER` is the default alignment.
 -  In OpenGL renderers, an arc will not have rounded corners, no matter which [strokeJoin](https://processing.org/reference/strokeJoin_.html) and [strokeCap](https://processing.org/reference/strokeCap_.html) methods you specify.
-- For `YupJ2`, `camera` should be called in the `draw` loop.
 - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter.
 - `YupJ2`'s `point` supports `strokeCap(SQUARE)` at the expense of performance.
 - [textureMode](https://processing.org/reference/textureMode_.html) `IMAGE` is not supported; `NORMAL` is the default. This is because many redundant operations on UV coordinates interfered with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT`. In making this conversion, support for high density pixel displays may be lost; I cannot test this at the moment, so please report issues with `image`.

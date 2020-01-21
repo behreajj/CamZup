@@ -109,28 +109,6 @@ public class Ray3 extends Ray implements Comparable < Ray3 > {
     */
    private static final long serialVersionUID = -8386381837024621749L;
 
-   @Experimental
-   static float march (
-         final Ray3 ray,
-         final int maxStep,
-         final Sdf.FieldFunc func,
-         final Object... args ) {
-
-      float result = 0.0f;
-      float t = 0.0f;
-      final Vec3 point = new Vec3();
-      for (int i = 0; i < maxStep; ++i) {
-         Ray3.eval(ray, t, point);
-         final float d = func.execute(args);
-         if (d < Utils.EPSILON) {
-            result = 0.5f;
-            break;
-         }
-         t += d;
-      }
-      return result;
-   }
-
    /**
     * Finds the point at a given time on a ray.
     *
