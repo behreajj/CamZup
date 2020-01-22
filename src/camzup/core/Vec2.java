@@ -528,16 +528,10 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
       final float dx = a.x + b.x;
       final float dy = a.y + b.y;
-
-      final float mSq = dx * dx + dy * dy;
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
-
-      final float m = (float) (1.0d / Math.sqrt(mSq));
+      final float mInv = Utils.invHypot(dx, dy);
       return target.set(
-            dx * m,
-            dy * m);
+            dx * mInv,
+            dy * mInv);
    }
 
    /**
@@ -619,15 +613,12 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @see Vec2#mag(Vec2)
     * @see Utils#acos(float)
     */
-   public static float angleBetween (
-         final Vec2 a,
-         final Vec2 b ) {
+   public static float angleBetween ( Vec2 a, Vec2 b ) {
 
-      if (Vec2.none(a) || Vec2.none(b)) {
-         return 0.0f;
-      }
-
-      return Utils.acos(Vec2.dot(a, b) / (Vec2.mag(a) * Vec2.mag(b)));
+      return (Vec2.none(a) || Vec2.none(b)) ? 0.0f
+            : Utils.acos(Vec2.dot(a, b) *
+                  Utils.invSqrtUnchecked(Vec2.magSq(a)) *
+                  Utils.invSqrtUnchecked(Vec2.magSq(b)));
    }
 
    /**
@@ -652,14 +643,14 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param b
     *           right operand
     * @return the evaluation
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     */
    public static boolean approx (
          final Vec2 a,
          final Vec2 b ) {
 
-      return Utils.approxFast(a.y, b.y)
-            && Utils.approxFast(a.x, b.x);
+      return Utils.approx(a.y, b.y)
+            && Utils.approx(a.x, b.x);
    }
 
    /**
@@ -672,15 +663,15 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param tolerance
     *           the tolerance
     * @return the evaluation
-    * @see Utils#approxFast(float, float, float)
+    * @see Utils#approx(float, float, float)
     */
    public static boolean approx (
          final Vec2 a,
          final Vec2 b,
          final float tolerance ) {
 
-      return Utils.approxFast(a.y, b.y, tolerance)
-            && Utils.approxFast(a.x, b.x, tolerance);
+      return Utils.approx(a.y, b.y, tolerance)
+            && Utils.approx(a.x, b.x, tolerance);
    }
 
    /**
@@ -692,14 +683,14 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param b
     *           the magnitude
     * @return the evaluation
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     * @see Vec2#dot(Vec2, Vec2)
     */
    public static boolean approxMag (
          final Vec2 a,
          final float b ) {
 
-      return Utils.approxFast(Vec2.magSq(a), b * b);
+      return Utils.approx(Vec2.magSq(a), b * b);
    }
 
    /**
@@ -713,7 +704,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param tolerance
     *           the tolerance
     * @return the evaluation
-    * @see Utils#approxFast(float, float, float)
+    * @see Utils#approx(float, float, float)
     * @see Vec2#dot(Vec2, Vec2)
     */
    public static boolean approxMag (
@@ -721,7 +712,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final float b,
          final float tolerance ) {
 
-      return Utils.approxFast(Vec2.magSq(a), b * b, tolerance);
+      return Utils.approx(Vec2.magSq(a), b * b, tolerance);
    }
 
    /**
@@ -893,13 +884,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final Vec2 target ) {
 
       Vec2.bezierTangent(ap0, cp0, cp1, ap1, step, target);
-
-      final float mSq = Vec2.magSq(target);
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
-
-      final float mInv = 1.0f / (float) Math.sqrt(mSq);
+      final float mInv = Utils.invHypot(target.x, target.y);
       return target.set(
             target.x * mInv,
             target.y * mInv);
@@ -1070,7 +1055,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final Vec2 a,
          final Vec2 b ) {
 
-      return (float) Math.sqrt(Vec2.distSq(a, b));
+      return Utils.sqrtUnchecked(Vec2.distSq(a, b));
    }
 
    /**
@@ -1108,6 +1093,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @return the Minkowski distance
     * @see Vec2#distEuclidean(Vec2, Vec2)
     * @see Vec2#distManhattan(Vec2, Vec2)
+    * @see Math#pow(double, double)
     */
    public static float distMinkowski (
          final Vec2 a,
@@ -1586,12 +1572,12 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param v
     *           the input vector
     * @return the evaluation
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     * @see Vec2#dot(Vec2, Vec2)
     */
    public static boolean isUnit ( final Vec2 v ) {
 
-      return Utils.approxFast(Vec2.magSq(v), 1.0f);
+      return Utils.approx(Vec2.magSq(v), 1.0f);
    }
 
    /**
@@ -1618,6 +1604,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param target
     *           the output vector
     * @return the limited vector
+    * @see Vec2#magSq(Vec2)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec2 limit (
          final Vec2 v,
@@ -1626,7 +1614,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
       final float mSq = Vec2.magSq(v);
       if (limit > 0.0f && mSq > limit * limit) {
-         final float scalar = (float) (limit / Math.sqrt(mSq));
+         final float scalar = limit * Utils.invSqrtUnchecked(mSq);
          return target.set(
                v.x * scalar,
                v.y * scalar);
@@ -1651,10 +1639,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     */
    public static float mag ( final Vec2 v ) {
 
-      // return (float) Math.hypot(v.x, v.y);
-      // return Utils.hypot(v.x, v.y);
-
-      return (float) Math.sqrt(Vec2.magSq(v));
+      return Utils.hypot(v.x, v.y);
    }
 
    /**
@@ -2064,17 +2049,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final Vec2 v,
          final Vec2 target ) {
 
-      final float mSq = v.x * v.x + v.y * v.y;
-
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
-
-      if (Utils.approxFast(mSq, 1.0f)) {
-         return target.set(v);
-      }
-
-      final float mInv = (float) (1.0d / Math.sqrt(mSq));
+      final float mInv = Utils.invHypot(v.x, v.y);
       return target.set(
             v.x * mInv,
             v.y * mInv);
@@ -2530,14 +2505,14 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          return target.reset();
       }
 
-      if (Utils.approxFast(nMSq, 1.0f)) {
+      if (Utils.approx(nMSq, 1.0f)) {
          final float scalar = 2.0f * Vec2.dot(normal, incident);
          return target.set(
                incident.x - scalar * normal.x,
                incident.y - scalar * normal.y);
       }
 
-      final float mInv = (float) (1.0d / Math.sqrt(nMSq));
+      final float mInv = Utils.invSqrtUnchecked(nMSq);
       final float nx = normal.x * mInv;
       final float ny = normal.y * mInv;
       final float scalar = 2.0f * (nx * incident.x + ny * incident.y);
@@ -2571,10 +2546,10 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
       final float nDotI = Vec2.dot(normal, incident);
       final float k = 1.0f - eta * eta * (1.0f - nDotI * nDotI);
-      if (k < 0.0f) {
+      if (k <= 0.0f) {
          return target.reset();
       }
-      final float scalar = eta * nDotI + (float) Math.sqrt(k);
+      final float scalar = eta * nDotI + Utils.sqrtUnchecked(k);
       return target.set(
             eta * incident.x - scalar * normal.x,
             eta * incident.y - scalar * normal.y);
@@ -2602,17 +2577,17 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          return target.reset();
       }
 
-      final float mSq = Vec2.magSq(v);
+      // final float mSq = Vec2.magSq(v);
+      // if (mSq == 0.0f) {
+      // return target.reset();
+      // }
+      // if (Utils.approx(mSq, 1.0f)) {
+      // return Vec2.mul(v, scalar, target);
+      // }
+      // return Vec2.mul(v, (float) (scalar / Math.sqrt(mSq)),
+      // target);
 
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
-
-      if (Utils.approxFast(mSq, 1.0f)) {
-         return Vec2.mul(v, scalar, target);
-      }
-
-      return Vec2.mul(v, (float) (scalar / Math.sqrt(mSq)), target);
+      return Vec2.mul(v, scalar * Utils.invHypot(v.x, v.y), target);
    }
 
    /**
@@ -2911,12 +2886,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final float dx = a.x - b.x;
       final float dy = a.y - b.y;
 
-      final float mSq = dx * dx + dy * dy;
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
-
-      final float mInv = (float) (1.0d / Math.sqrt(mSq));
+      final float mInv = Utils.invHypot(dx, dy);
       return target.set(
             dx * mInv,
             dy * mInv);
@@ -2933,7 +2903,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param target
     *           the output vector
     * @param dir
-    *           the unnormalized direction
+    *           the direction with magnitude
     * @return the normalized difference
     * @see Vec2#sub(Vec2, Vec2, Vec2)
     * @see Vec2#normalize(Vec2, Vec2)

@@ -12,7 +12,7 @@ public interface IUtils {
     * testing approximation between two floats. Set to 0.000001
     * .
     *
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     */
    float DEFAULT_EPSILON = 0.000001f;
 

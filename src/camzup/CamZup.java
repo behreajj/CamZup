@@ -1,7 +1,9 @@
 package camzup;
 
+import camzup.core.Complex;
 import camzup.core.IUtils;
 import camzup.core.Mesh3;
+import camzup.core.Quaternion;
 import camzup.core.Random;
 import camzup.core.SinCos;
 import camzup.core.Utils;
@@ -89,7 +91,29 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
+      // final Random rng = new Random();
+      // for (int i = 0; i < 20; ++i) {
+      // Vec2 a = Vec2.random(rng, new Vec2());
+      // Vec2 b = Vec2.random(rng, new Vec2());
+      // System.out.println(Vec2.angleBetween(a, b));
+      // System.out.println("");
+      // }
 
+      // double maxDiff = 0;
+      // for (int i = 0; i < 20; ++i) {
+      // final double a = 2.0d * rng.nextDouble() - 1.0d;
+      // final double r0 = Math.asin(a);
+      // final float r1 = Utils.asin((float)a);
+      // final double diff = Math.abs(r0 - r1);
+      // if (maxDiff < diff) maxDiff = diff;
+      // System.out.println(r0);
+      // System.out.println(r1);
+      // System.out.println("");
+      // }
+      // System.out.println(String.format("Max Diff: %.6f",
+      // maxDiff));
+
+      // System.out.println(Complex.sqrt(-45, new Complex()));
    }
 
    /**

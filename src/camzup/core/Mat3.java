@@ -302,13 +302,36 @@ public class Mat3 extends Matrix {
     *           the output matrix
     * @return the matrix
     */
+   @Experimental
+   public static Mat3 fromRotZ (
+         final double radians,
+         final Mat3 target ) {
+
+      // TODO: Switch away from Math.?
+      return Mat3.fromRotZ(
+            (float) Math.cos(radians),
+            (float) Math.sin(radians),
+            target);
+   }
+
+   /**
+    * Creates a rotation matrix from an angle in radians around
+    * the z axis.
+    *
+    * @param radians
+    *           the angle
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
    public static Mat3 fromRotZ (
          final float radians,
          final Mat3 target ) {
 
+      final float nrm = IUtils.ONE_TAU * radians;
       return Mat3.fromRotZ(
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
             target);
    }
 

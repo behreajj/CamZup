@@ -212,7 +212,7 @@ public class Transform2 extends Transform {
       final float c = target.right.y;
 
       target.rotPrev = target.rotation;
-      target.rotation = (float) Math.atan2(c, a);
+      target.rotation = Utils.atan2(c, a);
       target.cosa = a;
       target.sina = c;
 
@@ -1193,9 +1193,9 @@ public class Transform2 extends Transform {
        * Quaternion from angle: (cos(a * 0.5), 0.0, 0.0, sin(a *
        * 0.5))
        */
-      final double ha = 0.5d * this.rotation;
-      final float qw = (float) Math.cos(ha);
-      final float qz = (float) Math.sin(ha);
+      final float nrm = IUtils.ONE_TAU_2 * this.rotation;
+      final float qw = SinCos.eval(nrm);
+      final float qz = SinCos.eval(nrm - 0.25f);
 
       return new StringBuilder()
             .append("{\n        \"location\": (")

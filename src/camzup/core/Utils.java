@@ -171,7 +171,7 @@ public abstract class Utils implements IUtils {
        *           the step
        * @return the eased value
        * @see Utils#lerpUnclamped(float, float, float)
-       * @see Utils#mod(float, float)
+       * @see Utils#modUnchecked(float, float)
        */
       @Override
       public float applyUnclamped (
@@ -186,7 +186,7 @@ public abstract class Utils implements IUtils {
 
          final float fac = Utils.lerpUnclamped(this.a, this.b, step);
          if (this.modResult) {
-            return Utils.mod(fac, this.range);
+            return Utils.modUnchecked(fac, this.range);
          }
          return fac;
       }
@@ -230,7 +230,7 @@ public abstract class Utils implements IUtils {
        *           the step
        * @return the eased value
        * @see Utils#lerpUnclamped(float, float, float)
-       * @see Utils#mod(float, float)
+       * @see Utils#modUnchecked(float, float)
        */
       @Override
       public float applyUnclamped (
@@ -245,7 +245,7 @@ public abstract class Utils implements IUtils {
 
          final float fac = Utils.lerpUnclamped(this.a, this.b, step);
          if (this.modResult) {
-            return Utils.mod(fac, this.range);
+            return Utils.modUnchecked(fac, this.range);
          }
          return fac;
       }
@@ -289,7 +289,7 @@ public abstract class Utils implements IUtils {
        *           the step
        * @return the eased value
        * @see Utils#lerpUnclamped(float, float, float)
-       * @see Utils#mod(float, float)
+       * @see Utils#modUnchecked(float, float)
        */
       @Override
       public float applyUnclamped (
@@ -307,7 +307,7 @@ public abstract class Utils implements IUtils {
 
          final float fac = Utils.lerpUnclamped(this.a, this.b, step);
          if (this.modResult) {
-            return Utils.mod(fac, this.range);
+            return Utils.modUnchecked(fac, this.range);
          }
          return fac;
       }
@@ -351,7 +351,7 @@ public abstract class Utils implements IUtils {
        *           the step
        * @return the eased value
        * @see Utils#lerpUnclamped(float, float, float)
-       * @see Utils#mod(float, float)
+       * @see Utils#modUnchecked(float, float)
        */
       @Override
       public float applyUnclamped (
@@ -369,7 +369,7 @@ public abstract class Utils implements IUtils {
 
          final float fac = Utils.lerpUnclamped(this.a, this.b, step);
          if (this.modResult) {
-            return Utils.mod(fac, this.range);
+            return Utils.modUnchecked(fac, this.range);
          }
          return fac;
       }
@@ -491,12 +491,12 @@ public abstract class Utils implements IUtils {
        *           origin value
        * @param dest
        *           destination value
-       * @see Utils#mod(float, float)
+       * @see Utils#modUnchecked(float, float)
        */
       protected void eval ( final float origin, final float dest ) {
 
-         this.a = Utils.mod(origin, this.range);
-         this.b = Utils.mod(dest, this.range);
+         this.a = Utils.modUnchecked(origin, this.range);
+         this.b = Utils.modUnchecked(dest, this.range);
          this.diff = this.b - this.a;
          this.aLtb = this.a < this.b;
          this.aGtb = this.a > this.b;
@@ -751,7 +751,7 @@ public abstract class Utils implements IUtils {
       ret -= 0.2121144f;
       ret *= x;
       ret += IUtils.HALF_PI;
-      ret *= (float) Math.sqrt(1.0f - x);
+      ret *= Utils.sqrt(1.0f - x);
       return ltZero ? IUtils.PI - ret : ret;
    }
 
@@ -800,9 +800,9 @@ public abstract class Utils implements IUtils {
     * @see Utils#diff(float, float)
     * @see IUtils#DEFAULT_EPSILON
     */
-   public static boolean approxFast ( final float a, final float b ) {
+   public static boolean approx ( final float a, final float b ) {
 
-      return Utils.approxFast(a, b, Utils.EPSILON);
+      return Utils.approx(a, b, Utils.EPSILON);
    }
 
    /**
@@ -819,7 +819,7 @@ public abstract class Utils implements IUtils {
     * @return the evaluation
     * @see Utils#diff(float, float)
     */
-   public static boolean approxFast (
+   public static boolean approx (
          final float a,
          final float b,
          final float tolerance ) {
@@ -865,7 +865,7 @@ public abstract class Utils implements IUtils {
       ret -= 0.2121144f;
       ret *= x;
       ret += IUtils.HALF_PI;
-      ret = IUtils.HALF_PI - ret * (float) Math.sqrt(1.0f - x);
+      ret = IUtils.HALF_PI - ret * Utils.sqrt(1.0f - x);
       return ltZero ? -ret : ret;
    }
 
@@ -1060,15 +1060,16 @@ public abstract class Utils implements IUtils {
     * Finds the approximate cosine of an angle in radians.
     * Returns a value in the range [-1.0, 1.0] . An alternative
     * to the double precision {@link Math#cos(double)} , this
-    * function uses single-precision numbers.
-    *
+    * function uses single-precision numbers.<br>
+    * <br>
     * To find the cosine and sine of an angle simultaneously,
-    * use either {@link Vec2#fromPolar(float, Vec2)} or
-    * {@link Vec3#fromPolar(float, Vec3)} .
+    * use either {@link Vec2#fromPolar(float, Vec2)} (the
+    * target vector should be created once, in advance)..
     *
     * @param radians
     *           the angle in radians
     * @return the cosine of the angle
+    * @see SinCos#eval(float)
     */
    public static float cos ( final float radians ) {
 
@@ -1236,28 +1237,36 @@ public abstract class Utils implements IUtils {
    public static float fract ( final float value ) {
 
       if (value != value) {
-         return 1.0f;
+         return 0.0f;
       }
       return value - (int) value;
    }
 
    /**
-    * Finds the hypotenuse between two values.
+    * Finds the hypotenuse between two values. Useful when
+    * finding the magnitude of a vector.
     *
     * @param a
     *           the first value
     * @param b
     *           the second value
     * @return the hypotenuse
-    * @see Math#sqrt(double)
+    * @see Utils#sqrtUnchecked(float)
     */
    public static float hypot ( final float a, final float b ) {
 
-      return (float) Math.hypot(a, b);
+      /*
+       * Do not use Math.hypot . It is not a
+       * HotSpotIntrinsicCandidate , and it delegates to
+       * StrictMath .
+       */
+
+      return Utils.sqrtUnchecked(a * a + b * b);
    }
 
    /**
-    * Finds the hypotenuse between three values.
+    * Finds the hypotenuse given three values. Useful when
+    * finding the magnitude of a vector.
     *
     * @param a
     *           the first value
@@ -1266,32 +1275,99 @@ public abstract class Utils implements IUtils {
     * @param c
     *           the third value
     * @return the hypotenuse
-    * @see Math#sqrt(double)
+    * @see Utils#sqrtUnchecked(float)
     */
    public static float hypot (
          final float a,
          final float b,
          final float c ) {
 
-      return (float) Math.sqrt(a * a + b * b + c * c);
+      return Utils.sqrtUnchecked(a * a + b * b + c * c);
    }
 
    /**
-    * Finds 1.0 divided by the square-root of a value. This is
-    * <em>not</em> a fast inverse square root function; it
-    * depends on {@link Math#sqrt(double)} . Returns zero when
-    * the value is zero or NaN.
+    * Finds one divided by the hypotenuse of two values. Useful
+    * when normalizing vectors.
+    * 
+    * @param a
+    *           the first value
+    * @param b
+    *           the second value
+    * @return the inverse hypotenuse
+    * @see Utils#invSqrtUnchecked
+    */
+   public static float invHypot (
+         final float a,
+         final float b ) {
+
+      return Utils.invSqrtUnchecked(a * a + b * b);
+   }
+
+   /**
+    * Finds one divided by the hypotenuse of three values.
+    * Useful when normalizing vectors.
+    * 
+    * @param a
+    *           the first value
+    * @param b
+    *           the second value
+    * @param c
+    *           the third value
+    * @return the inverse hypotenuse
+    * @see Utils#invSqrtUnchecked
+    */
+   public static float invHypot (
+         final float a,
+         final float b,
+         final float c ) {
+
+      return Utils.invSqrtUnchecked(a * a + b * b + c * c);
+   }
+
+   /**
+    * A fast inverse square-root. Returns 0.0 when the value is
+    * less then or equal to zero. Use the unchecked version
+    * when the input value is known to be positive.
     *
     * @param value
     *           the value
-    * @return the inverse square-root
+    * @return the inverse square root
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static float invSqrt ( final float value ) {
 
-      if (value <= 0.0f || value != value) {
-         return 0.0f;
-      }
-      return (float) (1.0d / Math.sqrt(value));
+      return value <= 0.0f ? 0.0f : Utils.invSqrtUnchecked(value);
+   }
+
+   /**
+    * The fast inverse square root implementation based on the
+    * 'evil bit hack' from Quake 3, as described by Chris
+    * Lomont in "<a href=
+    * "http://www.lomont.org/papers/2003/InvSqrt.pdf">Fast
+    * Inverse Square Root</a>." For accuracy, the result is
+    * refined three times with the Newton-Raphson method.<br>
+    * <br>
+    * Useful when normalizing vectors or quaternions. Give this
+    * preference over {@link Utils#sqrt(float)} when
+    * normalizing.
+    *
+    * @param value
+    *           the value
+    * @return the inverse square root
+    * @author Chris Lomont
+    * @author Greg Walsh
+    * @see Float#floatToIntBits(float)
+    * @see Float#intBitsToFloat(int)
+    */
+   public static float invSqrtUnchecked ( final float value ) {
+
+      final float vhalf = value * 0.5f;
+      float y = Float
+            .intBitsToFloat(0x5f375a86 - (Float.floatToIntBits(value) >> 1));
+      y *= 1.5f - vhalf * y * y;
+      y *= 1.5f - vhalf * y * y;
+      y *= 1.5f - vhalf * y * y;
+      return y;
    }
 
    /**
@@ -1526,7 +1602,6 @@ public abstract class Utils implements IUtils {
          return a;
       }
 
-      // return Utils.modUnchecked(a, b);
       final float value = a / b;
       return a - b * (value > 0.0f ? (int) value
             : value < 0.0f ? (int) value - 1.0f : 0.0f);
@@ -1619,6 +1694,7 @@ public abstract class Utils implements IUtils {
       final double radd = radians;
       return (float) (radd
             - IUtils.TAU_D * Utils.floor(radd * IUtils.ONE_TAU_D));
+
    }
 
    /**
@@ -1687,10 +1763,6 @@ public abstract class Utils implements IUtils {
     */
    public static int or ( final float a, final float b ) {
 
-      // final int aBool = Utils.bool(a);
-      // final int bBool = Utils.bool(b);
-      // return aBool + bBool - aBool * bBool;
-
       return Utils.toInt(Utils.toBool(a) | Utils.toBool(b));
    }
 
@@ -1706,10 +1778,6 @@ public abstract class Utils implements IUtils {
     * @see Utils#bool(int)
     */
    public static int or ( final int a, final int b ) {
-
-      // final int aBool = Utils.bool(a);
-      // final int bBool = Utils.bool(b);
-      // return aBool + bBool - aBool * bBool;
 
       return Utils.toInt(Utils.toBool(a) | Utils.toBool(b));
    }
@@ -1825,15 +1893,16 @@ public abstract class Utils implements IUtils {
     * Finds the approximate sine of an angle in radians.
     * Returns a value in the range [-1.0, 1.0] . An alternative
     * to the double precision {@link Math#sin(double)} , this
-    * function uses single-precision numbers
-    *
+    * function uses single-precision numbers.<br>
+    * <br>
     * To find the cosine and sine of an angle simultaneously,
-    * use either {@link Vec2#fromPolar(float, Vec2)} or
-    * {@link Vec3#fromPolar(float, Vec3)} .
+    * use either {@link Vec2#fromPolar(float, Vec2)} (the
+    * target vector should be created once, in advance).
     *
     * @param radians
     *           the angle in radians
     * @return the sine of the angle
+    * @see SinCos#eval(float)
     */
    public static float sin ( final float radians ) {
 
@@ -1869,17 +1938,35 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Wraps around {@link Math#sqrt(double)} to return 0.0
-    * instead of NaN when the input value is negative.
+    * Finds the approximate square root of a value. Returns 0.0
+    * when the value is less than zero. Use
+    * {@link Utils#sqrtUnchecked(float)} when the value is
+    * known to be positive. Use
+    * {@link Complex#sqrt(float, Complex)} when the input may
+    * be negative and a complex output is desired.
     *
     * @param value
     *           the value
-    * @return the square-root
+    * @return the square root
+    * @see Utils#sqrtUnchecked(float)
     */
    public static float sqrt ( final float value ) {
 
-      return value <= 0.0f || value != value ? 0.0f
-            : (float) Math.sqrt(value);
+      return value <= 0.0f ? 0.0f : Utils.sqrtUnchecked(value);
+   }
+
+   /**
+    * Finds the approximate square root of a value. Does so by
+    * multiplying the value by its inverse square root.
+    *
+    * @param value
+    *           the value
+    * @return the square root
+    * @see Utils#invSqrtUnchecked(float)
+    */
+   public static float sqrtUnchecked ( final float value ) {
+
+      return value * Utils.invSqrtUnchecked(value);
    }
 
    /**
@@ -2083,17 +2170,18 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * An alias for {@link Byte#toUnsignedInt(byte)} .
+    *
     * Converts a signed byte in the range [-127, 128] to an
     * unsigned byte in the range [0, 255], promoted to an int.
     * Useful when working with colors.
     *
-    * Defined for cross-language support with C#, which uses
+    * Defined for cross-language comparison with C#, which uses
     * signed and unsigned versions of primitive data types.
     *
     * @param a
     *           the signed byte
     * @return the unsigned byte, promoted
-    * @see Byte#toUnsignedInt(byte)
     */
    public static int ubyte ( final byte a ) {
 
@@ -2101,18 +2189,20 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    *
+    * An alias for {@link Integer#toUnsignedLong(int)}.
+    *
     * Converts a signed int in the range [-2147483648 ,
     * 2147483647] to an unsigned int in the range [0,
     * 4294967295], promoted to a long. Useful when working with
     * colors.
     *
-    * Defined for cross-language support with C#, which uses
+    * Defined for cross-language comparison with C#, which uses
     * signed and unsigned versions of primitive data types.
     *
     * @param a
     *           the signed int
     * @return the unsigned int, promoted
-    * @see Integer#toUnsignedLong(int)
     */
    public static long uint ( final int a ) {
 
@@ -2132,10 +2222,6 @@ public abstract class Utils implements IUtils {
     */
    public static int xor ( final float a, final float b ) {
 
-      // final int aBool = Utils.bool(a);
-      // final int bBool = Utils.bool(b);
-      // return aBool + bBool - 2 * aBool * bBool;
-
       return Utils.toInt(Utils.toBool(a) ^ Utils.toBool(b));
    }
 
@@ -2151,10 +2237,6 @@ public abstract class Utils implements IUtils {
     * @see Utils#bool(int)
     */
    public static int xor ( final int a, final int b ) {
-
-      // final int aBool = Utils.bool(a);
-      // final int bBool = Utils.bool(b);
-      // return aBool + bBool - 2 * aBool * bBool;
 
       return Utils.toInt(Utils.toBool(a) ^ Utils.toBool(b));
    }

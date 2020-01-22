@@ -270,7 +270,7 @@ public interface IUp3 extends IUp {
          float dy = 0.0f;
          float dz = 0.0f;
 
-         if (Utils.approxFast(mSq, 1.0f, 0.0001f)) {
+         if (Utils.approx(mSq, 1.0f, 0.0001f)) {
             dx = xOrigin + xDir * dLen;
             dy = yOrigin + yDir * dLen;
             dz = zOrigin + zDir * dLen;
@@ -278,7 +278,7 @@ public interface IUp3 extends IUp {
                   xOrigin, yOrigin, zOrigin,
                   dx, dy, dz);
          } else {
-            final float mInv = dLen / (float) Math.sqrt(mSq);
+            final float mInv = dLen * Utils.invSqrtUnchecked(mSq);
             dx = xOrigin + xDir * mInv;
             dy = yOrigin + yDir * mInv;
             dz = zOrigin + zDir * mInv;

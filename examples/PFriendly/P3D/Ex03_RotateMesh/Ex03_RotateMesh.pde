@@ -22,7 +22,7 @@ void setup() {
 
   graphics = (Yup3)getGraphics();
   graphics.camera(
-    0.0, 0.0, -height * sqrt(3.0) * 0.5, 
+    0.0, 0.0, -height * Utils.sqrt(3.0) * 0.5, 
     0.0, 0.0, 0.0, 
     0.0, 1.0, 0.0);
 

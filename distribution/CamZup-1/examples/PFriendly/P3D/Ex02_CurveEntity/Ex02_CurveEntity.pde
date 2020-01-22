@@ -23,7 +23,6 @@ void setup() {
   size(720, 405, "camzup.pfriendly.Yup3");
   smooth(8);
   ortho();
-  frameRate(1000);
   graphics3 = (Yup3)getGraphics();
 }
 

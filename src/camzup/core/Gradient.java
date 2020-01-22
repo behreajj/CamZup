@@ -53,14 +53,14 @@ public class Gradient implements Iterable < Gradient.Key > {
        * @param tolerance
        *           the tolerance
        * @return the evaluation
-       * @see Utils#approxFast(float, float, float)
+       * @see Utils#approx(float, float, float)
        */
       public static boolean approx (
             final Key a,
             final Key b,
             final float tolerance ) {
 
-         return Utils.approxFast(a.step, b.step, tolerance);
+         return Utils.approx(a.step, b.step, tolerance);
       }
 
       /**
@@ -1027,6 +1027,9 @@ public class Gradient implements Iterable < Gradient.Key > {
 
       this.query.step = step;
 
+      // TODO: Would this be better as higher and lower, or lb
+      // inclusive, ub exclusive?
+
       final Key prev = this.keys.floor(this.query);
       if (prev == null) {
          return target.set(this.keys.first().clr);
@@ -1319,12 +1322,12 @@ public class Gradient implements Iterable < Gradient.Key > {
                .append(")}");
 
          if (i < last) {
-            result.append(",");
+            result.append(',');
          }
       }
-      result.append("]\n\n");
+      result.append(']');
 
-      result.append("material = D.materials.new(\"")
+      result.append("\n\nmaterial = D.materials.new(\"")
             .append(name)
             .append("\")\n")
             .append("material.use_nodes = True\n")

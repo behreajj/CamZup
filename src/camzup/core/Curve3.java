@@ -42,8 +42,9 @@ public class Curve3 extends Curve
             final float handleMag,
             final Knot3 target ) {
 
-         final float cosa = (float) Math.cos(angle);
-         final float sina = (float) Math.sin(angle);
+         final float nrm = IUtils.ONE_TAU * angle;
+         final float cosa = SinCos.eval(nrm);
+         final float sina = SinCos.eval(nrm - 0.25f);
 
          final Vec3 coord = target.coord;
          coord.set(
@@ -618,8 +619,9 @@ public class Curve3 extends Curve
       @Chainable
       public Knot3 rotate ( final float radians, final Vec3 axis ) {
 
-         final float cosa = (float) Math.cos(radians);
-         final float sina = (float) Math.sin(radians);
+         final float nrm = IUtils.ONE_TAU * radians;
+         final float cosa = SinCos.eval(nrm);
+         final float sina = SinCos.eval(nrm - 0.25f);
 
          return this.rotate(cosa, sina, axis);
       }
@@ -635,8 +637,9 @@ public class Curve3 extends Curve
       @Chainable
       public Knot3 rotateX ( final float radians ) {
 
-         final float cosa = (float) Math.cos(radians);
-         final float sina = (float) Math.sin(radians);
+         final float nrm = IUtils.ONE_TAU * radians;
+         final float cosa = SinCos.eval(nrm);
+         final float sina = SinCos.eval(nrm - 0.25f);
 
          return this.rotateX(cosa, sina);
       }
@@ -674,8 +677,9 @@ public class Curve3 extends Curve
       @Chainable
       public Knot3 rotateY ( final float radians ) {
 
-         final float cosa = (float) Math.cos(radians);
-         final float sina = (float) Math.sin(radians);
+         final float nrm = IUtils.ONE_TAU * radians;
+         final float cosa = SinCos.eval(nrm);
+         final float sina = SinCos.eval(nrm - 0.25f);
 
          return this.rotateY(cosa, sina);
       }
@@ -713,8 +717,9 @@ public class Curve3 extends Curve
       @Chainable
       public Knot3 rotateZ ( final float radians ) {
 
-         final float cosa = (float) Math.cos(radians);
-         final float sina = (float) Math.sin(radians);
+         final float nrm = IUtils.ONE_TAU * radians;
+         final float cosa = SinCos.eval(nrm);
+         final float sina = SinCos.eval(nrm - 0.25f);
 
          return this.rotateZ(cosa, sina);
       }
@@ -1283,7 +1288,7 @@ public class Curve3 extends Curve
          final Curve3 target ) {
 
       /* Case where arc is used as a progress bar. */
-      if (Utils.approxFast(stopAngle - startAngle, IUtils.TAU)) {
+      if (Utils.approx(stopAngle - startAngle, IUtils.TAU)) {
          return Curve3.circle(startAngle, target);
       }
 
@@ -1304,8 +1309,13 @@ public class Curve3 extends Curve
 
       /* Find the step for each knot to progress. */
       final float toStep = 1.0f / (knotCount - 1.0f);
-      final float handleMag = (float) (radius * IUtils.FOUR_THIRDS_D
-            * Math.tan(IUtils.HALF_PI_D * toStep * arcFac));
+      
+      // TODO: Test.
+      // final float handleMag = (float) (radius *
+      // IUtils.FOUR_THIRDS_D
+      // * Math.tan(IUtils.HALF_PI_D * toStep * arcFac));
+      final float handleMag = radius * IUtils.FOUR_THIRDS
+            * Utils.tan(IUtils.HALF_PI * toStep * arcFac);
 
       target.clear();
       for (int i = 0; i < knotCount; ++i) {
@@ -2432,8 +2442,9 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 rotate ( final float radians, final Vec3 axis ) {
 
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
+      final float nrm = IUtils.ONE_TAU * radians;
+      final float cosa = SinCos.eval(nrm);
+      final float sina = SinCos.eval(nrm - 0.25f);
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
@@ -2454,8 +2465,9 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 rotateX ( final float radians ) {
 
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
+      final float nrm = IUtils.ONE_TAU * radians;
+      final float cosa = SinCos.eval(nrm);
+      final float sina = SinCos.eval(nrm - 0.25f);
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
@@ -2476,8 +2488,9 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 rotateY ( final float radians ) {
 
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
+      final float nrm = IUtils.ONE_TAU * radians;
+      final float cosa = SinCos.eval(nrm);
+      final float sina = SinCos.eval(nrm - 0.25f);
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
@@ -2498,8 +2511,9 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 rotateZ ( final float radians ) {
 
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
+      final float nrm = IUtils.ONE_TAU * radians;
+      final float cosa = SinCos.eval(nrm);
+      final float sina = SinCos.eval(nrm - 0.25f);
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {

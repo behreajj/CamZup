@@ -23,7 +23,7 @@ void setup() {
 }
 
 void draw() {
-  graphics.camera();
+  surface.setTitle(Utils.toFixed(frameRate, 1));
   graphics.mouse(mouse);
 
   float speed = 0.02;

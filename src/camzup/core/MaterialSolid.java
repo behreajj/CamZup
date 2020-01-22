@@ -30,7 +30,7 @@ public class MaterialSolid extends Material {
    /**
     * Whether or not to display a shape with a stroke.
     */
-   public boolean useStroke = true;
+   public boolean useStroke = false;
 
    /**
     * The default constructor.

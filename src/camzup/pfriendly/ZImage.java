@@ -136,7 +136,7 @@ public class ZImage extends PImage {
 
       final float bx = xOrigin - xDest;
       final float by = yOrigin - yDest;
-      final float bbInv = Utils.div(1.0f, bx * bx + by * by);
+      final float bbInv = 1.0f / Utils.max(Utils.EPSILON, bx * bx + by * by);
 
       for (int i = 0, y = 0; y < h; ++y) {
 

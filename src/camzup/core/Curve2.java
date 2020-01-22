@@ -42,8 +42,9 @@ public class Curve2 extends Curve
             final float handleMag,
             final Knot2 target ) {
 
-         final float cosa = (float) Math.cos(angle);
-         final float sina = (float) Math.sin(angle);
+         final float nrm = IUtils.ONE_TAU * angle;
+         final float cosa = SinCos.eval(nrm);
+         final float sina = SinCos.eval(nrm - 0.25f);
 
          final Vec2 coord = target.coord;
          coord.set(
@@ -591,8 +592,9 @@ public class Curve2 extends Curve
       @Chainable
       public Knot2 rotateZ ( final float radians ) {
 
-         final float cosa = (float) Math.cos(radians);
-         final float sina = (float) Math.sin(radians);
+         final float nrm = IUtils.ONE_TAU * radians;
+         final float cosa = SinCos.eval(nrm);
+         final float sina = SinCos.eval(nrm - 0.25f);
 
          return this.rotateZ(cosa, sina);
       }
@@ -1169,7 +1171,7 @@ public class Curve2 extends Curve
          final Curve2 target ) {
 
       /* Case where arc is used as a progress bar. */
-      if (Utils.approxFast(stopAngle - startAngle, IUtils.TAU)) {
+      if (Utils.approx(stopAngle - startAngle, IUtils.TAU)) {
          return Curve2.circle(startAngle, target);
       }
 
@@ -1190,8 +1192,13 @@ public class Curve2 extends Curve
 
       /* Find the step for each knot to progress. */
       final float toStep = 1.0f / (knotCount - 1.0f);
-      final float handleMag = (float) (radius * IUtils.FOUR_THIRDS_D
-            * Math.tan(IUtils.HALF_PI_D * toStep * arcFac));
+
+      // TODO: Test.
+      // final float handleMag = (float) (radius *
+      // IUtils.FOUR_THIRDS_D
+      // * Math.tan(IUtils.HALF_PI_D * toStep * arcFac));
+      final float handleMag = radius * IUtils.FOUR_THIRDS
+            * Utils.tan(IUtils.HALF_PI * toStep * arcFac);
 
       /* Calculate knots along arc. */
       target.clear();
@@ -2665,8 +2672,9 @@ public class Curve2 extends Curve
    @Chainable
    public Curve2 rotateZ ( final float radians ) {
 
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
+      final float nrm = IUtils.ONE_TAU * radians;
+      final float cosa = SinCos.eval(nrm);
+      final float sina = SinCos.eval(nrm - 0.25f);
 
       final Iterator < Knot2 > itr = this.knots.iterator();
       while (itr.hasNext()) {

@@ -133,13 +133,13 @@ public class Ray2 extends Ray implements Comparable < Ray2 > {
          return target.set(origin);
       }
 
-      if (Utils.approxFast(dmSq, 1.0f)) {
+      if (Utils.approx(dmSq, 1.0f)) {
          return target.set(
                origin.x + dir.x * time,
                origin.y + dir.y * time);
       }
 
-      final float scalar = (float) (time / Math.sqrt(dmSq));
+      final float scalar = time * Utils.invSqrtUnchecked(dmSq);
       return target.set(
             origin.x + dir.x * scalar,
             origin.y + dir.y * scalar);

@@ -51,9 +51,6 @@ public interface IYup2 extends IUp {
       /* Rotate. */
       final float angle = renderer.getRot();
 
-      // final float cosa = (float) Math.cos(angle);
-      // final float sina = (float) Math.sin(angle);
-
       final float cosa = PApplet.cos(angle);
       final float sina = PApplet.sin(angle);
 
@@ -730,14 +727,14 @@ public interface IYup2 extends IUp {
          float dx = 0.0f;
          float dy = 0.0f;
 
-         if (Utils.approxFast(mSq, 1.0f, 0.0001f)) {
+         if (Utils.approx(mSq, 1.0f, 0.0001f)) {
             dx = xOrigin + xDir * dLen;
             dy = yOrigin + yDir * dLen;
             this.line(
                   xOrigin, yOrigin,
                   dx, dy);
          } else {
-            final float mInv = dLen / (float) Math.sqrt(mSq);
+            final float mInv = dLen * Utils.invSqrtUnchecked(mSq);
             dx = xOrigin + xDir * mInv;
             dy = yOrigin + yDir * mInv;
             this.line(

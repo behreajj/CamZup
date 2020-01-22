@@ -464,13 +464,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float dx = a.x + b.x;
       final float dy = a.y + b.y;
       final float dz = a.z + b.z;
-
-      final float mSq = dx * dx + dy * dy + dz * dz;
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
-
-      final float mInv = (float) (1.0d / Math.sqrt(mSq));
+      final float mInv = Utils.invHypot(dx, dy);
       return target.set(
             dx * mInv,
             dy * mInv,
@@ -562,11 +556,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final Vec3 a,
          final Vec3 b ) {
 
-      if (Vec3.none(a) || Vec3.none(b)) {
-         return 0.0f;
-      }
-
-      return Utils.acos(Vec3.dot(a, b) / (Vec3.mag(a) * Vec3.mag(b)));
+      return (Vec3.none(a) || Vec3.none(b)) ? 0.0f
+            : Utils.acos(Vec3.dot(a, b) *
+                  Utils.invSqrtUnchecked(Vec3.magSq(a)) *
+                  Utils.invSqrtUnchecked(Vec3.magSq(b)));
    }
 
    /**
@@ -592,15 +585,15 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param b
     *           right comparisand
     * @return the evaluation
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     */
    public static boolean approx (
          final Vec3 a,
          final Vec3 b ) {
 
-      return Utils.approxFast(a.z, b.z) &&
-            Utils.approxFast(a.y, b.y) &&
-            Utils.approxFast(a.x, b.x);
+      return Utils.approx(a.z, b.z) &&
+            Utils.approx(a.y, b.y) &&
+            Utils.approx(a.x, b.x);
    }
 
    /**
@@ -613,16 +606,16 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param tolerance
     *           the tolerance
     * @return the evaluation
-    * @see Utils#approxFast(float, float, float)
+    * @see Utils#approx(float, float, float)
     */
    public static boolean approx (
          final Vec3 a,
          final Vec3 b,
          final float tolerance ) {
 
-      return Utils.approxFast(a.z, b.z, tolerance)
-            && Utils.approxFast(a.y, b.y, tolerance)
-            && Utils.approxFast(a.x, b.x, tolerance);
+      return Utils.approx(a.z, b.z, tolerance)
+            && Utils.approx(a.y, b.y, tolerance)
+            && Utils.approx(a.x, b.x, tolerance);
    }
 
    /**
@@ -634,14 +627,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param b
     *           the magnitude
     * @return the evaluation
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     * @see Vec3#dot(Vec3, Vec3)
     */
    public static boolean approxMag (
          final Vec3 a,
          final float b ) {
 
-      return Utils.approxFast(Vec3.magSq(a), b * b);
+      return Utils.approx(Vec3.magSq(a), b * b);
    }
 
    /**
@@ -655,7 +648,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param tolerance
     *           the tolerance
     * @return the evaluation
-    * @see Utils#approxFast(float, float, float)
+    * @see Utils#approx(float, float, float)
     * @see Vec3#dot(Vec3, Vec3)
     */
    public static boolean approxMag (
@@ -663,7 +656,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final float b,
          final float tolerance ) {
 
-      return Utils.approxFast(Vec3.magSq(a), b * b, tolerance);
+      return Utils.approx(Vec3.magSq(a), b * b, tolerance);
    }
 
    /**
@@ -900,13 +893,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final Vec3 target ) {
 
       Vec3.bezierTangent(ap0, cp0, cp1, ap1, step, target);
-
-      final float mSq = Vec3.magSq(target);
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
-
-      final float mInv = 1.0f / (float) Math.sqrt(mSq);
+      final float mInv = Utils.invHypot(target.x, target.y, target.z);
       return target.set(
             target.x * mInv,
             target.y * mInv,
@@ -1078,12 +1065,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float y = a.z * b.x - a.x * b.z;
       final float z = a.x * b.y - a.y * b.x;
 
-      final float mSq = x * x + y * y + z * z;
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
-
-      final float mInv = 1.0f / (float) Math.sqrt(mSq);
+      final float mInv = Utils.invHypot(x, y, z);
       return target.set(
             x * mInv,
             y * mInv,
@@ -1195,7 +1177,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final Vec3 a,
          final Vec3 b ) {
 
-      return (float) Math.sqrt(Vec3.distSq(a, b));
+      return Utils.sqrtUnchecked(Vec3.distSq(a, b));
    }
 
    /**
@@ -1833,11 +1815,13 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     */
    public static float inclinationSigned ( final Vec3 v ) {
 
-      final float mSq = Vec3.magSq(v);
-      if (mSq == 0.0f) {
-         return 0.0f;
-      }
-      return Utils.asin((float) (v.z / Math.sqrt(mSq)));
+      // final float mSq = Vec3.magSq(v);
+      // if (mSq == 0.0f) {
+      // return 0.0f;
+      // }
+      // return Utils.asin((float) (v.z / Math.sqrt(mSq)));
+
+      return Utils.asin(v.z * Utils.invHypot(v.x, v.y, v.z));
    }
 
    /**
@@ -1862,12 +1846,12 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param v
     *           the input vector
     * @return the evaluation
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     * @see Vec3#dot(Vec3, Vec3)
     */
    public static boolean isUnit ( final Vec3 v ) {
 
-      return Utils.approxFast(Vec3.magSq(v), 1.0f);
+      return Utils.approx(Vec3.magSq(v), 1.0f);
    }
 
    /**
@@ -1902,7 +1886,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
       final float mSq = Vec3.magSq(v);
       if (limit > 0.0f && mSq > limit * limit) {
-         final float scalar = (float) (limit / Math.sqrt(mSq));
+         final float scalar = limit * Utils.invSqrtUnchecked(mSq);
          return target.set(
                v.x * scalar,
                v.y * scalar,
@@ -1928,8 +1912,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     */
    public static float mag ( final Vec3 v ) {
 
-      // return Utils.hypot(v.x, v.y, v.z);
-      return (float) Math.sqrt(Vec3.magSq(v));
+      return Utils.hypot(v.x, v.y, v.z);
    }
 
    /**
@@ -2349,17 +2332,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final Vec3 v,
          final Vec3 target ) {
 
-      final float mSq = v.x * v.x + v.y * v.y + v.z * v.z;
-
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
-
-      if (Utils.approxFast(mSq, 1.0f)) {
-         return target.set(v);
-      }
-
-      final float mInv = (float) (1.0d / Math.sqrt(mSq));
+      final float mInv = Utils.invHypot(v.x, v.y, v.z);
       return target.set(
             v.x * mInv,
             v.y * mInv,
@@ -2684,20 +2657,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final float rhoMax,
          final Vec3 target ) {
 
-      // final float x = rng.uniform(-1.0f, 1.0f);
-      // final float y = rng.uniform(-1.0f, 1.0f);
-      // final float z = rng.uniform(-1.0f, 1.0f);
-      // final float mSq = x * x + y * y + z * z;
-      // if (mSq == 0.0f) {
-      // return target.reset();
-      // }
-      // final float rho = rng.uniform(rhoMin, rhoMax);
-      // final float rhoNorm = (float) (rho / Math.sqrt(mSq));
-      // return target.set(
-      // x * rhoNorm,
-      // y * rhoNorm,
-      // z * rhoNorm);
-
       return Vec3.fromSpherical(
             rng.uniform(-IUtils.PI, IUtils.PI),
             rng.uniform(-IUtils.HALF_PI, IUtils.HALF_PI),
@@ -2753,7 +2712,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          return target.reset();
       }
 
-      if (Utils.approxFast(nMSq, 1.0f)) {
+      if (Utils.approx(nMSq, 1.0f)) {
          final float scalar = 2.0f * Vec3.dot(normal, incident);
          return target.set(
                incident.x - scalar * normal.x,
@@ -2761,7 +2720,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
                incident.z - scalar * normal.z);
       }
 
-      final float mInv = (float) (1.0d / Math.sqrt(nMSq));
+      final float mInv = Utils.invSqrtUnchecked(nMSq);
       final float nx = normal.x * mInv;
       final float ny = normal.y * mInv;
       final float nz = normal.z * mInv;
@@ -2799,10 +2758,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
       final float nDotI = Vec3.dot(normal, incident);
       final float k = 1.0f - eta * eta * (1.0f - nDotI * nDotI);
-      if (k < 0.0f) {
+      if (k <= 0.0f) {
          return target.reset();
       }
-      final float scalar = eta * nDotI + (float) Math.sqrt(k);
+      final float scalar = eta * nDotI + Utils.sqrtUnchecked(k);
       return target.set(
             eta * incident.x - normal.x * scalar,
             eta * incident.y - normal.y * scalar,
@@ -2831,17 +2790,17 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          return target.reset();
       }
 
-      final float mSq = Vec3.magSq(v);
+      // final float mSq = Vec3.magSq(v);
+      //
+      // if (mSq == 0.0f) {
+      // return target.reset();
+      // }
+      //
+      // if (Utils.approx(mSq, 1.0f)) {
+      // return Vec3.mul(v, scalar, target);
+      // }
 
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
-
-      if (Utils.approxFast(mSq, 1.0f)) {
-         return Vec3.mul(v, scalar, target);
-      }
-
-      return Vec3.mul(v, (float) (scalar / Math.sqrt(mSq)), target);
+      return Vec3.mul(v, scalar * Utils.invHypot(v.x, v.y, v.z), target);
    }
 
    /**
@@ -3136,7 +3095,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final Vec3 v,
          final float radians,
          final Vec3 target ) {
-      
+
       final float nrm = IUtils.ONE_TAU * radians;
       return Vec3.rotateZ(
             v,
@@ -3204,7 +3163,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       return target.set(
             Utils.round(v.x),
             Utils.round(v.y),
-            Math.round(v.z));
+            Utils.round(v.z));
    }
 
    /**
@@ -3303,7 +3262,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          return target.reset();
       }
 
-      final float mInv = (float) (1.0d / Math.sqrt(mSq));
+      final float mInv = Utils.invHypot(dx, dy, dz);
       return target.set(
             dx * mInv,
             dy * mInv,

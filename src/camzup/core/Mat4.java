@@ -422,7 +422,8 @@ public class Mat4 extends Matrix {
          return Mat4.identity(target);
       }
 
-      final float mInv = (float) (1.0d / Math.sqrt(mSq));
+      // TODO: Replace Math.sqrt s.
+      final float mInv = Utils.invSqrtUnchecked(mSq);
       final float ax = axis.x * mInv;
       final float ay = axis.y * mInv;
       final float az = axis.z * mInv;
@@ -460,9 +461,16 @@ public class Mat4 extends Matrix {
          final Vec3 axis,
          final Mat4 target ) {
 
+      // return Mat4.fromRotation(
+      // (float) Math.cos(radians),
+      // (float) Math.sin(radians),
+      // axis,
+      // target);
+
+      final float nrm = IUtils.ONE_TAU * radians;
       return Mat4.fromRotation(
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
             axis,
             target);
    }
@@ -544,9 +552,15 @@ public class Mat4 extends Matrix {
          final float radians,
          final Mat4 target ) {
 
+      // return Mat4.fromRotX(
+      // (float) Math.cos(radians),
+      // (float) Math.sin(radians),
+      // target);
+
+      final float nrm = IUtils.ONE_TAU * radians;
       return Mat4.fromRotX(
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
             target);
    }
 
@@ -588,9 +602,15 @@ public class Mat4 extends Matrix {
          final float radians,
          final Mat4 target ) {
 
+      // return Mat4.fromRotY(
+      // (float) Math.cos(radians),
+      // (float) Math.sin(radians),
+      // target);
+
+      final float nrm = IUtils.ONE_TAU * radians;
       return Mat4.fromRotY(
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
             target);
    }
 
@@ -632,9 +652,15 @@ public class Mat4 extends Matrix {
          final float radians,
          final Mat4 target ) {
 
+      // return Mat4.fromRotZ(
+      // (float) Math.cos(radians),
+      // (float) Math.sin(radians),
+      // target);
+
+      final float nrm = IUtils.ONE_TAU * radians;
       return Mat4.fromRotZ(
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
             target);
    }
 

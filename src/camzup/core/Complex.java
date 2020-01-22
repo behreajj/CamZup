@@ -170,8 +170,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     */
    public static float abs ( final Complex z ) {
 
-      // return (float) Math.hypot(z.real, z.imag);
-      return (float) Math.sqrt(Complex.absSq(z));
+      return Utils.hypot(z.real, z.imag);
    }
 
    /**
@@ -281,14 +280,14 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     * @param b
     *           the right comparisand
     * @return the evaluation
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     */
    public static boolean approx (
          final Complex a,
          final Complex b ) {
 
-      return Utils.approxFast(a.imag, b.imag)
-            && Utils.approxFast(a.real, b.real);
+      return Utils.approx(a.imag, b.imag)
+            && Utils.approx(a.real, b.real);
    }
 
    /**
@@ -302,15 +301,15 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     * @param tolerance
     *           the tolerance
     * @return the evaluation
-    * @see Utils#approxFast(float, float, float)
+    * @see Utils#approx(float, float, float)
     */
    public static boolean approx (
          final Complex a,
          final Complex b,
          final float tolerance ) {
 
-      return Utils.approxFast(a.imag, b.imag, tolerance)
-            && Utils.approxFast(a.real, b.real, tolerance);
+      return Utils.approx(a.imag, b.imag, tolerance)
+            && Utils.approx(a.real, b.real, tolerance);
    }
 
    /**
@@ -327,7 +326,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex z,
          final float abs ) {
 
-      return Utils.approxFast(Complex.absSq(z), abs * abs);
+      return Utils.approx(Complex.absSq(z), abs * abs);
    }
 
    /**
@@ -496,10 +495,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex z,
          final Complex target ) {
 
-      final double r = Math.exp(z.real);
-      return target.set(
-            (float) (r * Math.cos(z.imag)),
-            (float) (r * Math.sin(z.imag)));
+      return Complex.rect(Math.exp(z.real), z.imag, target);
    }
 
    /**
@@ -575,12 +571,12 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     * @param z
     *           the complex number
     * @return the evaluation
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     * @see Complex#absSq(Complex)
     */
    public static boolean isUnit ( final Complex z ) {
 
-      return Utils.approxFast(Complex.absSq(z), 1.0f);
+      return Utils.approx(Complex.absSq(z), 1.0f);
    }
 
    /**
@@ -776,9 +772,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final double phi = b.real * logImag + b.imag * logReal;
       final double r = Math.exp(b.real * logReal - b.imag * logImag);
 
-      return target.set(
-            (float) (r * Math.cos(phi)),
-            (float) (r * Math.sin(phi)));
+      return Complex.rect(r, phi, target);
    }
 
    /**
@@ -838,9 +832,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final double phi = b * logImag;
       final double r = Math.exp(b * logReal);
 
-      return target.set(
-            (float) (r * Math.cos(phi)),
-            (float) (r * Math.sin(phi)));
+      return Complex.rect(r, phi, target);
    }
 
    /**
@@ -869,9 +861,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final double phi = b.real * logImag + b.imag * logReal;
       final double r = Math.exp(b.real * logReal - b.imag * logImag);
 
-      return target.set(
-            (float) (r * Math.cos(phi)),
-            (float) (r * Math.sin(phi)));
+      return Complex.rect(r, phi, target);
    }
 
    /**
@@ -911,17 +901,17 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     * @param target
     *           the output complex number
     * @return the complex number
-    * @see SinCos#eval(float)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
     */
    public static Complex rect (
-         final float r,
-         final float phi,
+         final double r,
+         final double phi,
          final Complex target ) {
 
-      final float nrm = IUtils.ONE_TAU * phi;
       return target.set(
-            SinCos.eval(nrm) * r,
-            SinCos.eval(nrm - 0.25f) * r);
+            (float) (r * Math.cos(phi)),
+            (float) (r * Math.sin(phi)));
    }
 
    /**
@@ -934,18 +924,17 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     * @param target
     *           the output complex number
     * @return the complex number
-    * @see Math#cos(double)
-    * @see Math#sin(double)
+    * @see SinCos#eval(float)
     */
-   @Experimental
    public static Complex rect (
-         final double r,
-         final double phi,
+         final float r,
+         final float phi,
          final Complex target ) {
 
+      final float nrm = IUtils.ONE_TAU * phi;
       return target.set(
-            (float) (r * Math.cos(phi)),
-            (float) (r * Math.sin(phi)));
+            SinCos.eval(nrm) * r,
+            SinCos.eval(nrm - 0.25f) * r);
    }
 
    /**
@@ -976,10 +965,26 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex z,
          final Complex target ) {
 
-      // TODO: Replace with SinCos.eval
       return target.set(
             (float) (Math.sin(z.real) * Math.cosh(z.imag)),
             (float) (Math.cos(z.real) * Math.sinh(z.imag)));
+   }
+
+   /**
+    * Finds the square root of a real number which could be
+    * either positive or negative.
+    *
+    * @param a
+    *           the value
+    * @param target
+    *           the output complex number
+    * @return the square root
+    */
+   public static Complex sqrt ( final float a, final Complex target ) {
+
+      return a > 0.0f ? target.set(Utils.sqrtUnchecked(a), 0.0f)
+            : a < 0.0f ? target.set(0.0f, Utils.sqrtUnchecked(-a))
+                  : target.reset();
    }
 
    /**

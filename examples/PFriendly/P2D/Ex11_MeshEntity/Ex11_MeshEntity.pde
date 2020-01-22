@@ -5,9 +5,9 @@ YupJ2 graphics2;
 
 MaterialSolid material = new MaterialSolid()
   .setStroke(true)
-  .setStroke(#254441)
+  .setStroke(#ffbfaf)
   .setFill(true)
-  .setFill(#7f00ff)
+  .setFill(#7f003f)
   .setStrokeWeight(0.01);
 
 Transform2 transform = new Transform2()

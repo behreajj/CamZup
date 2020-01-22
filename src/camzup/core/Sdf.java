@@ -53,12 +53,13 @@ public abstract class Sdf {
        */
       final float px0 = Utils.abs(sinOff * point.x - cosOff * point.y);
       final float py0 = cosOff * point.x + sinOff * point.y;
-      final double dotp = px0 * px0 + py0 * py0;
-      return (float) Math.sqrt(
-            dotp + bounds * bounds - 2.0f * bounds *
+      final float dotp = px0 * px0 + py0 * py0;
+
+      return Utils.sqrt(
+            dotp + bounds * bounds - (bounds + bounds) *
                   (cosAptr2 * px0 > sinAptr2 * py0
                         ? px0 * sinAptr2 + py0 * cosAptr2
-                        : Math.sqrt(dotp)))
+                        : Utils.sqrtUnchecked(dotp)))
             - weight;
    }
 
@@ -234,9 +235,15 @@ public abstract class Sdf {
          final float pointy,
          final float radians ) {
 
+      /*
+       * Judging by the appearance of ZImage gradients made with
+       * this function, Math#atan2 with double precision is
+       * necessary.
+       */
+      
       return Utils.mod1(
-            (Utils.atan2(pointy, pointx) - radians) *
-                  IUtils.ONE_TAU);
+            (float) ((Math.atan2(pointy, pointx) - radians) *
+                  IUtils.ONE_TAU_D));
    }
 
    /**
@@ -372,7 +379,8 @@ public abstract class Sdf {
          final float b,
          final float radius ) {
 
-      return Utils.hypot(Utils.max(0.0f, a + radius),
+      return Utils.hypot(
+            Utils.max(0.0f, a + radius),
             Utils.max(0.0f, b + radius))
             + Utils.min(Utils.max(a, b), -radius);
    }
@@ -613,7 +621,7 @@ public abstract class Sdf {
          prev = curr;
       }
 
-      return (float) (s * Math.sqrt(d));
+      return s * Utils.sqrtUnchecked(d);
    }
 
    /**
@@ -709,7 +717,7 @@ public abstract class Sdf {
          final float thickness ) {
 
       final float n = Vec2.mag(point) - radius;
-      return (float) Math.sqrt(n * n) - thickness;
+      return Utils.sqrtUnchecked(n * n) - thickness;
    }
 
    /**

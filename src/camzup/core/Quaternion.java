@@ -543,6 +543,108 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    private static final long serialVersionUID = -7363582058797081319L;
 
    /**
+    * Finds the value of Euler's number <em>e</em> raised to
+    * the power of the quaternion. Uses the formula:<br>
+    * <br>
+    * exp ( <em>q</em> ) := <em>e<sup>r</sup></em> ( { cos (
+    * |<em>i</em>| ), <em>\u00ee</em> sin ( |<em>i</em>| ) }
+    * )<br>
+    * <br>
+    *
+    * where <em>r</em> is <em>q<sub>real</sub></em> and
+    * <em>i</em> is <em>q<sub>imag</sub></em>.
+    *
+    * @param q
+    *           the input quaternion
+    * @param target
+    *           the output quaternion
+    * @return the result
+    * @see Math#exp(double)
+    * @see Vec3#mag(Vec3)
+    * @see Vec3#zero(Vec3)
+    * @see Math#sqrt(double)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    */
+   static Quaternion exp (
+         final Quaternion q,
+         final Quaternion target ) {
+
+      final double ea = Math.exp(q.real);
+      final float imSq = Vec3.mag(q.imag);
+      if (imSq == 0.0f) {
+         Vec3.zero(target.imag);
+         target.real = (float) ea;
+         return target;
+      }
+
+      final double im = Math.sqrt(imSq);
+      target.real = (float) (ea * Math.cos(im));
+      Vec3.mul(
+            q.imag,
+            (float) (ea * Math.sin(im) / im),
+            target.imag);
+
+      return target;
+   }
+
+   /**
+    * Finds the natural logarithm of the quaternion. Uses the
+    * formula:<br>
+    * <br>
+    * ln ( <em>q</em> ) := { ln ( |<em>q</em>| ),
+    * <em>\u00ee</em> acos ( a<sub>real</sub> / |<em>q</em>| )
+    * }<br>
+    * <br>
+    * where <em>i</em> is <em>q<sub>imag</sub></em>.
+    *
+    * @param q
+    *           the quaternion
+    * @param target
+    *           the output quaternion
+    * @return the result
+    * @see Vec3#magSq(Vec3)
+    * @see Math#sqrt(double)
+    * @see Math#log(double)
+    * @see Utils#approx(float, float)
+    * @see Vec3#zero(Vec3)
+    * @see Math#acos(double)
+    * @see Vec3#mul(Vec3, float, Vec3)
+    */
+   static Quaternion log (
+         final Quaternion q,
+         final Quaternion target ) {
+
+      final float imSq = Vec3.magSq(q.imag);
+      final float qmSq = q.real * q.real + imSq;
+
+      if (qmSq == 0.0f) {
+         return target.reset();
+      }
+
+      final double qm = Math.sqrt(qmSq);
+      target.real = (float) Math.log(qm);
+
+      if (Utils.approx(imSq, 0.0f)) {
+         Vec3.zero(target.imag);
+         return target;
+      }
+
+      final double wNorm = q.real / qm;
+      final double wAcos = wNorm <= -1.0d ? Math.PI
+            : wNorm >= 1.0d ? 0.0d : Math.acos(wNorm);
+
+      if (Utils.approx(imSq, 1.0f)) {
+         Vec3.mul(q.imag, (float) wAcos, target.imag);
+         return target;
+      }
+
+      final double scalarNorm = wAcos / Math.sqrt(imSq);
+      Vec3.mul(q.imag, (float) scalarNorm, target.imag);
+      return target;
+   }
+
+   /**
     * Raises a quaternion to the power of a real number. Uses
     * the formula<br>
     * <br>
@@ -567,7 +669,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   protected static Quaternion pow (
+   static Quaternion pow (
          final Quaternion a,
          final float b,
          final Quaternion target ) {
@@ -584,7 +686,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
 
       double m = mSq;
       double wNorm = a.real;
-      if (!Utils.approxFast(mSq, 1.0f)) {
+      if (!Utils.approx(mSq, 1.0f)) {
          m = Math.sqrt(mSq);
          wNorm /= m;
       }
@@ -686,7 +788,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          return target.reset();
       }
 
-      final float mInv = (float) (1.0d / Math.sqrt(mSq));
+      final float mInv = Utils.invSqrtUnchecked(mSq);
       final Vec3 i = target.imag;
       return target.set(
             target.real * mInv,
@@ -759,14 +861,14 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param b
     *           the right comparisand
     * @return the evaluation
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     * @see Vec3#approx(Vec3, Vec3)
     */
    public static boolean approx (
          final Quaternion a,
          final Quaternion b ) {
 
-      return Utils.approxFast(a.real, b.real)
+      return Utils.approx(a.real, b.real)
             && Vec3.approx(a.imag, b.imag);
    }
 
@@ -781,7 +883,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param tolerance
     *           the tolerance
     * @return the evaluation
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     * @see Vec3#approx(Vec3, Vec3)
     */
    public static boolean approx (
@@ -789,7 +891,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion b,
          final float tolerance ) {
 
-      return Utils.approxFast(a.real, b.real, tolerance)
+      return Utils.approx(a.real, b.real, tolerance)
             && Vec3.approx(a.imag, b.imag, tolerance);
    }
 
@@ -802,14 +904,14 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param b
     *           the magnitude
     * @return the evaluation
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     * @see Quaternion#magSq(Quaternion)
     */
    public static boolean approxMag (
          final Quaternion a,
          final float b ) {
 
-      return Utils.approxFast(
+      return Utils.approx(
             Quaternion.magSq(a), b * b);
    }
 
@@ -824,7 +926,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param tolerance
     *           the tolerance
     * @return the evaluation
-    * @see Utils#approxFast(float, float, float)
+    * @see Utils#approx(float, float, float)
     * @see Quaternion#magSq(Quaternion)
     */
    public static boolean approxMag (
@@ -832,7 +934,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final float b,
          final float tolerance ) {
 
-      return Utils.approxFast(
+      return Utils.approx(
             Quaternion.magSq(a), b * b, tolerance);
    }
 
@@ -871,7 +973,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param inverted
     *           the inverse
     * @return the quotient
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     */
    public static Quaternion div (
          final float a,
@@ -896,7 +998,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       float byInv = -by;
       float bzInv = -bz;
 
-      if (!Utils.approxFast(bmSq, 1.0f)) {
+      if (!Utils.approx(bmSq, 1.0f)) {
          final float bmSqInv = 1.0f / bmSq;
          bwInv *= bmSqInv;
          bxInv *= bmSqInv;
@@ -981,7 +1083,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the quotient
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     */
    public static Quaternion div (
          final Quaternion a,
@@ -1005,7 +1107,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       float byInv = -by;
       float bzInv = -bz;
 
-      if (!Utils.approxFast(bmSq, 1.0f)) {
+      if (!Utils.approx(bmSq, 1.0f)) {
          final float bmSqInv = 1.0f / bmSq;
          bwInv *= bmSqInv;
          bxInv *= bmSqInv;
@@ -1080,49 +1182,60 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
-    * Finds the value of Euler's number <em>e</em> raised to
-    * the power of the quaternion. Uses the formula:<br>
-    * <br>
-    * exp ( <em>q</em> ) := <em>e<sup>r</sup></em> ( { cos (
-    * |<em>i</em>| ), <em>\u00ee</em> sin ( |<em>i</em>| ) }
-    * )<br>
-    * <br>
+    * Sets a quaternion from an angle. The axis is assumed to
+    * be (0.0, 0.0, 1.0) . Sets the real component of the
+    * quaternion to cosine of the angle; the imaginary z
+    * component is set to the sine.
     *
-    * where <em>r</em> is <em>q<sub>real</sub></em> and
-    * <em>i</em> is <em>q<sub>imag</sub></em>.
+    * Useful when working in 2.5D, where a two-dimensional
+    * angle may need to be transferred to a three-dimensional
+    * transform.
     *
-    * @param q
-    *           the input quaternion
+    * @param radians
+    *           the angle
     * @param target
     *           the output quaternion
-    * @return the result
-    * @see Math#exp(double)
-    * @see Vec3#mag(Vec3)
-    * @see Vec3#zero(Vec3)
-    * @see Math#sqrt(double)
+    * @return the quaternion
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   public static Quaternion exp (
-         final Quaternion q,
+   @Experimental
+   public static Quaternion fromAngle (
+         final double radians,
          final Quaternion target ) {
 
-      final double ea = Math.exp(q.real);
-      final float imSq = Vec3.mag(q.imag);
-      if (imSq == 0.0f) {
-         Vec3.zero(target.imag);
-         target.real = (float) ea;
-         return target;
-      }
+      final double halfRadians = radians * 0.5d;
+      return target.set(
+            (float) Math.cos(halfRadians),
+            0.0f, 0.0f,
+            (float) Math.sin(halfRadians));
+   }
 
-      final double im = Math.sqrt(imSq);
-      target.real = (float) (ea * Math.cos(im));
-      Vec3.mul(
-            q.imag,
-            (float) (ea * Math.sin(im) / im),
-            target.imag);
+   /**
+    * Sets a quaternion from an angle. The axis is assumed to
+    * be up, (0.0, 0.0, 1.0) . Sets the real component of the
+    * quaternion to cosine of the angle; the imaginary z
+    * component, to the sine.
+    *
+    * Useful when working in 2.5D, where a two-dimensional
+    * angle may need to be transferred to a three-dimensional
+    * transform.
+    *
+    * @param radians
+    *           the angle
+    * @param target
+    *           the output quaternion
+    * @return the quaternion
+    */
+   public static Quaternion fromAngle (
+         final float radians,
+         final Quaternion target ) {
 
-      return target;
+      final float nrm = IUtils.ONE_TAU_2 * radians;
+      final float cosa = SinCos.eval(nrm);
+      final float sina = SinCos.eval(nrm - 0.25f);
+
+      return target.set(cosa, 0.0f, 0.0f, sina);
    }
 
    /**
@@ -1155,6 +1268,30 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @see Math#copySign(float, float)
     * @see Math#sqrt(double)
     */
+   @Experimental
+   public static Quaternion fromAxes (
+         final double rightx, final double forwardy, final double upz,
+         final double forwardz, final double upy,
+         final double upx, final double rightz,
+         final double righty, final double forwardx,
+         final Quaternion target ) {
+
+      final double w = 0.5d * Math.sqrt(
+            Math.max(0.0d, 1.0d + rightx + forwardy + upz));
+
+      final double x = 0.5d * Math.sqrt(
+            Math.max(0.0d, 1.0d + rightx - forwardy - upz));
+      final double y = 0.5d * Math.sqrt(
+            Math.max(0.0d, 1.0d - rightx + forwardy - upz));
+      final double z = 0.5d * Math.sqrt(
+            Math.max(0.0d, 1.0d - rightx - forwardy + upz));
+
+      return target.set((float) w,
+            (float) Math.copySign(x, forwardz - upy),
+            (float) Math.copySign(y, upx - rightz),
+            (float) Math.copySign(z, righty - forwardx));
+   }
+
    public static Quaternion fromAxes (
          final float rightx, final float forwardy, final float upz,
          final float forwardz, final float upy,
@@ -1162,15 +1299,15 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final float righty, final float forwardx,
          final Quaternion target ) {
 
-      final float w = (float) (0.5d * Math.sqrt(
-            Utils.max(0.0f, 1.0f + rightx + forwardy + upz)));
+      final float w = 0.5f * Utils.sqrt(
+            Utils.max(0.0f, 1.0f + rightx + forwardy + upz));
 
-      final float x = (float) (0.5d * Math.sqrt(
-            Utils.max(0.0f, 1.0f + rightx - forwardy - upz)));
-      final float y = (float) (0.5d * Math.sqrt(
-            Utils.max(0.0f, 1.0f - rightx + forwardy - upz)));
-      final float z = (float) (0.5d * Math.sqrt(
-            Utils.max(0.0f, 1.0f - rightx - forwardy + upz)));
+      final float x = 0.5f * Utils.sqrt(
+            Utils.max(0.0f, 1.0f + rightx - forwardy - upz));
+      final float y = 0.5f * Utils.sqrt(
+            Utils.max(0.0f, 1.0f - rightx + forwardy - upz));
+      final float z = 0.5f * Utils.sqrt(
+            Utils.max(0.0f, 1.0f - rightx - forwardy + upz));
 
       return target.set(w,
             Math.copySign(x, forwardz - upy),
@@ -1210,33 +1347,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
-    * Sets a quaternion from an angle. The axis is assumed to
-    * be (0.0, 0.0, 1.0) . Sets the real component of the
-    * quaternion to cosine of the angle; the imaginary z
-    * component is set to the sine.
-    * 
-    * Useful when working in 2.5D, where a two-dimensional
-    * angle may need to be transferred to a three-dimensional
-    * transform.
-    * 
-    * @param radians
-    *           the angle
-    * @param target
-    *           the output quaternion
-    * @return the quaternion
-    */
-   public static Quaternion fromAngle (
-         final float radians,
-         final Quaternion target ) {
-
-      final float nrm = IUtils.ONE_TAU_2 * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
-
-      return target.set(cosa, 0.0f, 0.0f, sina);
-   }
-
-   /**
     * Sets a quaternion from an axis and angle. Normalizes the
     * axis prior to calculating the quaternion.
     *
@@ -1248,7 +1358,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *           the output quaternion
     * @return the quaternion
     * @see Vec3#magSq(Vec3)
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     * @see Math#sqrt(double)
     * @see Math#cos(double)
     * @see Math#sin(double)
@@ -1267,20 +1377,26 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       float ny = axis.y;
       float nz = axis.z;
 
-      if (!Utils.approxFast(amSq, 1.0f)) {
-         final float amInv = (float) (1.0d / Math.sqrt(amSq));
+      if (!Utils.approx(amSq, 1.0f)) {
+         final float amInv = Utils.invSqrtUnchecked(amSq);
          nx *= amInv;
          ny *= amInv;
          nz *= amInv;
       }
 
-      final double halfAngle = 0.5d * radians;
-      final float sinHalf = (float) Math.sin(halfAngle);
-      return target.set(
-            (float) Math.cos(halfAngle),
-            nx * sinHalf,
-            ny * sinHalf,
-            nz * sinHalf);
+      // final double halfAngle = 0.5d * radians;
+      // final float sinHalf = (float) Math.sin(halfAngle);
+      // return target.set(
+      // (float) Math.cos(halfAngle),
+      // nx * sinHalf,
+      // ny * sinHalf,
+      // nz * sinHalf);
+
+      final float nrm = IUtils.ONE_TAU_2 * radians;
+      final float cosa = SinCos.eval(nrm);
+      final float sina = SinCos.eval(nrm - 0.25f);
+
+      return target.set(cosa, nx * sina, ny * sina, nz * sina);
    }
 
    /**
@@ -1297,7 +1413,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the quaternion
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     * @see Math#sqrt(double)
     */
    public static Quaternion fromTo (
@@ -1321,15 +1437,15 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          return target.reset();
       }
 
-      if (!Utils.approxFast(amsq, 1.0f)) {
-         final float aminv = (float) (1.0d / Math.sqrt(amsq));
+      if (!Utils.approx(amsq, 1.0f)) {
+         final float aminv = Utils.invSqrtUnchecked(amsq);
          anx *= aminv;
          any *= aminv;
          anz *= aminv;
       }
 
-      if (!Utils.approxFast(bmsq, 1.0f)) {
-         final float bminv = (float) (1.0d / Math.sqrt(bmsq));
+      if (!Utils.approx(bmsq, 1.0f)) {
+         final float bminv = Utils.invSqrtUnchecked(bmsq);
          bnx *= bminv;
          bny *= bminv;
          bnz *= bminv;
@@ -1570,67 +1686,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     *           the quaternion
     * @return the evaluation
     * @see Quaternion#dot(Quaternion, Quaternion)
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     */
    public static boolean isUnit ( final Quaternion q ) {
 
-      return Utils.approxFast(Quaternion.magSq(q), 1.0f);
-   }
-
-   /**
-    * Finds the natural logarithm of the quaternion. Uses the
-    * formula:<br>
-    * <br>
-    * ln ( <em>q</em> ) := { ln ( |<em>q</em>| ),
-    * <em>\u00ee</em> acos ( a<sub>real</sub> / |<em>q</em>| )
-    * }<br>
-    * <br>
-    * where <em>i</em> is <em>q<sub>imag</sub></em>.
-    *
-    * @param q
-    *           the quaternion
-    * @param target
-    *           the output quaternion
-    * @return the result
-    * @see Vec3#magSq(Vec3)
-    * @see Math#sqrt(double)
-    * @see Math#log(double)
-    * @see Utils#approxFast(float, float)
-    * @see Vec3#zero(Vec3)
-    * @see Math#acos(double)
-    * @see Vec3#mul(Vec3, float, Vec3)
-    */
-   public static Quaternion log (
-         final Quaternion q,
-         final Quaternion target ) {
-
-      final float imSq = Vec3.magSq(q.imag);
-      final float qmSq = q.real * q.real + imSq;
-
-      if (qmSq == 0.0f) {
-         return target.reset();
-      }
-
-      final double qm = Math.sqrt(qmSq);
-      target.real = (float) Math.log(qm);
-
-      if (Utils.approxFast(imSq, 0.0f)) {
-         Vec3.zero(target.imag);
-         return target;
-      }
-
-      final double wNorm = q.real / qm;
-      final double wAcos = wNorm <= -1.0d ? Math.PI
-            : wNorm >= 1.0d ? 0.0d : Math.acos(wNorm);
-
-      if (Utils.approxFast(imSq, 1.0f)) {
-         Vec3.mul(q.imag, (float) wAcos, target.imag);
-         return target;
-      }
-
-      final double scalarNorm = wAcos / Math.sqrt(imSq);
-      Vec3.mul(q.imag, (float) scalarNorm, target.imag);
-      return target;
+      return Utils.approx(Quaternion.magSq(q), 1.0f);
    }
 
    /**
@@ -1643,12 +1703,12 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param q
     *           the input quaternion
     * @return the magnitude
-    * @see Math#sqrt(double)
+    * @see Utils#sqrtUnchecked(float)
     * @see Quaternion#dot(Quaternion, Quaternion)
     */
    public static float mag ( final Quaternion q ) {
 
-      return (float) Math.sqrt(Quaternion.magSq(q));
+      return Utils.sqrtUnchecked(Quaternion.magSq(q));
    }
 
    /**
@@ -1843,7 +1903,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       if (mSq == 0.0f) {
          return target.reset();
       }
-      final float mInv = (float) (1.0d / Math.sqrt(mSq));
+      final float mInv = Utils.invSqrtUnchecked(mSq);
       return target.set(
             qw * mInv,
             qx * mInv,
@@ -1954,8 +2014,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion q,
          final Quaternion target ) {
 
-      // return Quaternion.div(q, Quaternion.mag(q), target);
-
       final Vec3 i = q.imag;
       final float mSq = q.real * q.real + i.x * i.x + i.y * i.y + i.z * i.z;
 
@@ -1963,11 +2021,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          return Quaternion.identity(target);
       }
 
-      // if (Utils.abs(1.0f - mSq) < Utils.EPSILON) {
-      // return target.set(q);
-      // }
-
-      final float mInv = (float) (1.0d / Math.sqrt(mSq));
+      final float mInv = Utils.invSqrtUnchecked(mSq);
       return target.set(
             q.real * mInv,
             i.x * mInv,
@@ -1997,18 +2051,27 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Random rng,
          final Quaternion target ) {
 
-      final double t0 = IUtils.TAU_D * rng.nextDouble();
-      final double t1 = IUtils.TAU_D * rng.nextDouble();
+      // final double t0 = IUtils.TAU_D * rng.nextDouble();
+      // final double t1 = IUtils.TAU_D * rng.nextDouble();
+      // final double r1 = rng.nextDouble();
+      // final double x0 = Math.sqrt(1.0d - r1);
+      // final double x1 = Math.sqrt(r1);
+      // return target.set(
+      // (float) (x0 * Math.sin(t0)),
+      // (float) (x0 * Math.cos(t0)),
+      // (float) (x1 * Math.sin(t1)),
+      // (float) (x1 * Math.cos(t1)));
 
-      final double r1 = rng.nextDouble();
-      final double x0 = Math.sqrt(1.0d - r1);
-      final double x1 = Math.sqrt(r1);
-
+      final float t0 = rng.nextFloat();
+      final float t1 = rng.nextFloat();
+      final float r1 = rng.nextFloat();
+      final float x0 = Utils.sqrt(1.0f - r1);
+      final float x1 = Utils.sqrt(r1);
       return target.set(
-            (float) (x0 * Math.sin(t0)),
-            (float) (x0 * Math.cos(t0)),
-            (float) (x1 * Math.sin(t1)),
-            (float) (x1 * Math.cos(t1)));
+            x0 * SinCos.eval(t0 - 0.25f),
+            x0 * SinCos.eval(t0),
+            x1 * SinCos.eval(t1 - 0.25f),
+            x1 * SinCos.eval(t1));
    }
 
    /**
@@ -2042,14 +2105,44 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
                radians, axis, target);
       }
 
-      final float wNorm = mSq == 1.0f ? q.real
-            : (float) (q.real / Math.sqrt(mSq));
+      final float wNorm = q.real * Utils.invSqrtUnchecked(mSq);
       final float halfAngle = Utils.acos(wNorm);
 
       return Quaternion.fromAxisAngle(
             Utils.modRadians(
                   halfAngle + halfAngle + radians),
             axis, target);
+   }
+
+   /**
+    * Rotates a quaternion about the x axis by an angle.
+    *
+    * Do not use sequences of ortho-normal rotations by Euler
+    * angles; this will result in gimbal lock, defeating the
+    * purpose behind a quaternion.
+    *
+    * @param q
+    *           the input quaternion
+    * @param radians
+    *           the angle in radians
+    * @param target
+    *           the output quaternion
+    * @return the rotated quaternion
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    */
+   @Experimental
+   public static Quaternion rotateX (
+         final Quaternion q,
+         final double radians,
+         final Quaternion target ) {
+
+      final double halfAngle = radians * 0.5d;
+      return Quaternion.rotateX(
+            q,
+            (float) Math.cos(halfAngle),
+            (float) Math.sin(halfAngle),
+            target);
    }
 
    /**
@@ -2097,16 +2190,46 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the rotated quaternion
-    * @see Math#cos(double)
-    * @see Math#sin(double)
+    * @see SinCos#eval(float)
     */
    public static Quaternion rotateX (
          final Quaternion q,
          final float radians,
          final Quaternion target ) {
 
-      final double halfAngle = radians * 0.5d;
+      final float nrm = IUtils.ONE_TAU_2 * radians;
       return Quaternion.rotateX(
+            q,
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
+            target);
+   }
+
+   /**
+    * Rotates a quaternion about the y axis by an angle.
+    *
+    * Do not use sequences of ortho-normal rotations by Euler
+    * angles; this will result in gimbal lock, defeating the
+    * purpose behind a quaternion.
+    *
+    * @param q
+    *           the input quaternion
+    * @param radians
+    *           the angle in radians
+    * @param target
+    *           the output quaternion
+    * @return the rotated quaternion
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    */
+   @Experimental
+   public static Quaternion rotateY (
+         final Quaternion q,
+         final double radians,
+         final Quaternion target ) {
+
+      final double halfAngle = radians * 0.5d;
+      return Quaternion.rotateY(
             q,
             (float) Math.cos(halfAngle),
             (float) Math.sin(halfAngle),
@@ -2158,16 +2281,47 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the rotated quaternion
-    * @see Math#cos(double)
-    * @see Math#sin(double)
+    * @see SinCos#eval(float)
     */
+   @Experimental
    public static Quaternion rotateY (
          final Quaternion q,
          final float radians,
          final Quaternion target ) {
 
-      final double halfAngle = radians * 0.5d;
+      final float nrm = IUtils.ONE_TAU_2 * radians;
       return Quaternion.rotateY(
+            q,
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
+            target);
+   }
+
+   /**
+    * Rotates a quaternion about the z axis by an angle.
+    *
+    * Do not use sequences of ortho-normal rotations by Euler
+    * angles; this will result in gimbal lock, defeating the
+    * purpose behind a quaternion.
+    *
+    * @param q
+    *           the input quaternion
+    * @param radians
+    *           the angle in radians
+    * @param target
+    *           the output quaternion
+    * @return the rotated quaternion
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    */
+   @Experimental
+   public static Quaternion rotateZ (
+         final Quaternion q,
+         final double radians,
+         final Quaternion target ) {
+
+      final double halfAngle = radians * 0.5d;
+      return Quaternion.rotateZ(
             q,
             (float) Math.cos(halfAngle),
             (float) Math.sin(halfAngle),
@@ -2219,19 +2373,17 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the rotated quaternion
-    * @see Math#cos(double)
-    * @see Math#sin(double)
     */
    public static Quaternion rotateZ (
          final Quaternion q,
          final float radians,
          final Quaternion target ) {
 
-      final double halfAngle = radians * 0.5d;
+      final float nrm = IUtils.ONE_TAU_2 * radians;
       return Quaternion.rotateZ(
             q,
-            (float) Math.cos(halfAngle),
-            (float) Math.sin(halfAngle),
+            SinCos.eval(nrm),
+            SinCos.eval(nrm - 0.25f),
             target);
    }
 
@@ -2314,7 +2466,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          return target.reset();
       }
 
-      final float mInv = (float) (1.0d / Math.sqrt(mSq));
+      final float mInv = Utils.invSqrtUnchecked(mSq);
       final Vec3 i = target.imag;
       return target.set(
             target.real * mInv,

@@ -15,7 +15,7 @@ void draw() {
   float hNorm = 1.0 / (height - 1.0);
   float wNorm = 1.0 / (width - 1.0);
   float ang1 = frameCount * 0.1;
-  float ang0 = -ang1 * 0.5;
+  float ang0 = -ang1 * 0.2;
   int sides = Utils.lerp(3, 8, mouseX * wNorm);
 
   loadPixels();
@@ -27,10 +27,9 @@ void draw() {
       float xNorm = x * wNorm;
       st.x = xNorm + xNorm - 1.0;
 
-      float fac1 = Sdf.arc(st, ang0, ang1, 0.333, 0.02);
+      float fac1 = Sdf.arc(st, ang0, ang1, 0.325, 0.2);
       float fac2 = Sdf.polygon(st, sides, -ang0, 1.25);
       float fac = Sdf.subtract(fac1, fac2);
-      fac -= floor(fac);
       pixels[idx] = Color.toHexInt(gr.eval(fac, clr));
     }
   }

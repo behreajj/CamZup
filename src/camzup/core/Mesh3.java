@@ -367,6 +367,8 @@ public class Mesh3 extends Mesh {
          final int nbHeightSeg,
          final Mesh3 target ) {
 
+      // TODO: Work in progress...
+
       final int nbVerticesCap = nbSides + 1;
       int vert = 0;
       final float _2pi = (float) Math.PI * 2f;
@@ -677,8 +679,8 @@ public class Mesh3 extends Mesh {
 
       final float toU = 1.0f / sectors;
       final float toV = 1.0f / tubeRes;
-      final float toTheta = IUtils.TAU / sectors;
-      final float toPhi = IUtils.TAU / tubeRes;
+      // final float toTheta = IUtils.TAU / sectors;
+      // final float toPhi = IUtils.TAU / tubeRes;
 
       /* Precalculate phi and the v coordinate in uvs. */
 
@@ -687,9 +689,12 @@ public class Mesh3 extends Mesh {
       final float[] vs = new float[tubeRes1];
 
       for (int side = 0; side < tubeRes1; ++side) {
-         final float phi = side % tubeRes * toPhi;
-         cosPhis[side] = (float) Math.cos(phi);
-         sinPhis[side] = (float) Math.sin(phi);
+         // final float phi = side % tubeRes * toPhi;
+         // final float nrmphi = IUtils.ONE_TAU * phi;
+         final float nrmphi = side % tubeRes * toV;
+         cosPhis[side] = SinCos.eval(nrmphi);
+         sinPhis[side] = SinCos.eval(nrmphi - 0.25f);
+
          vs[side] = side * toV;
       }
 
@@ -709,10 +714,11 @@ public class Mesh3 extends Mesh {
 
       for (int k = 0, seg = 0; seg < sectors1; ++seg) {
 
-         /* Calculate theta. */
-         final float theta = seg % sectors * toTheta;
-         final float cosTheta = (float) Math.cos(theta);
-         final float sinTheta = (float) Math.sin(theta);
+         // final float theta = seg % sectors * toTheta;
+         // final float nrmtheta = IUtils.ONE_TAU * theta;
+         final float nrmtheta = seg % sectors * toU;
+         final float cosTheta = SinCos.eval(nrmtheta);
+         final float sinTheta = SinCos.eval(nrmtheta - 0.25f);
 
          /* Calculate r1 */
          final float r1x = radius * cosTheta;
@@ -723,9 +729,10 @@ public class Mesh3 extends Mesh {
          final float u = seg * toU;
 
          /* Calculate quaternion. Assumes forward is normalized. */
-         final double halfAngle = 0.5d * -theta;
-         final float sinHalf = (float) Math.sin(halfAngle);
-         final float qw = (float) Math.cos(halfAngle);
+         final float halfnrm = -nrmtheta * 0.5f;
+         final float sinHalf = SinCos.eval(halfnrm - 0.25f);
+         final float qw = SinCos.eval(halfnrm);
+
          // final float qx = refx * sinHalf;
          final float qy = refy * sinHalf;
          final float qz = refz * sinHalf;
@@ -1093,9 +1100,10 @@ public class Mesh3 extends Mesh {
          final float radians,
          final Vec3 axis ) {
 
+      final float nrm = IUtils.ONE_TAU * radians;
+      final float cosa = SinCos.eval(nrm);
+      final float sina = SinCos.eval(nrm - 0.25f);
       final int len = this.coords.length;
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
 
       for (int i = 0; i < len; ++i) {
          Vec3.rotate(this.coords[i], cosa, sina, axis, this.coords[i]);
@@ -1117,9 +1125,10 @@ public class Mesh3 extends Mesh {
    @Chainable
    public Mesh3 rotateX ( final float radians ) {
 
+      final float nrm = IUtils.ONE_TAU * radians;
+      final float cosa = SinCos.eval(nrm);
+      final float sina = SinCos.eval(nrm - 0.25f);
       final int len = this.coords.length;
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
 
       for (int i = 0; i < len; ++i) {
          Vec3.rotateX(this.coords[i], cosa, sina, this.coords[i]);
@@ -1141,9 +1150,10 @@ public class Mesh3 extends Mesh {
    @Chainable
    public Mesh3 rotateY ( final float radians ) {
 
+      final float nrm = IUtils.ONE_TAU * radians;
+      final float cosa = SinCos.eval(nrm);
+      final float sina = SinCos.eval(nrm - 0.25f);
       final int len = this.coords.length;
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
 
       for (int i = 0; i < len; ++i) {
          Vec3.rotateY(this.coords[i], cosa, sina, this.coords[i]);
@@ -1165,9 +1175,10 @@ public class Mesh3 extends Mesh {
    @Chainable
    public Mesh3 rotateZ ( final float radians ) {
 
+      final float nrm = IUtils.ONE_TAU * radians;
+      final float cosa = SinCos.eval(nrm);
+      final float sina = SinCos.eval(nrm - 0.25f);
       final int len = this.coords.length;
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
 
       for (int i = 0; i < len; ++i) {
          Vec3.rotateZ(this.coords[i], cosa, sina, this.coords[i]);

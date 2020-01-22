@@ -1163,16 +1163,12 @@ public class Color extends Vec4 {
       float r = 0.5f;
       float g = 0.5f;
 
-      if (Utils.approxFast(mSq, 1.0f)) {
-         r = v.x * 0.5f + 0.5f;
-         g = v.y * 0.5f + 0.5f;
-      } else {
-         final float mInv = (float) (0.5d / Math.sqrt(mSq));
-         r = v.x * mInv + 0.5f;
-         g = v.y * mInv + 0.5f;
-      }
+      final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
+      r = v.x * mInv + 0.5f;
+      g = v.y * mInv + 0.5f;
 
       return target.set(r, g, 0.5f, 1.0f);
+
    }
 
    /**
@@ -1198,16 +1194,10 @@ public class Color extends Vec4 {
       float g = 0.5f;
       float b = 0.5f;
 
-      if (Utils.approxFast(mSq, 1.0f)) {
-         r = v.x * 0.5f + 0.5f;
-         g = v.y * 0.5f + 0.5f;
-         b = v.z * 0.5f + 0.5f;
-      } else {
-         final float mInv = (float) (0.5d / Math.sqrt(mSq));
-         r = v.x * mInv + 0.5f;
-         g = v.y * mInv + 0.5f;
-         b = v.z * mInv + 0.5f;
-      }
+      final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
+      r = v.x * mInv + 0.5f;
+      g = v.y * mInv + 0.5f;
+      b = v.z * mInv + 0.5f;
 
       return target.set(r, g, b, 1.0f);
    }

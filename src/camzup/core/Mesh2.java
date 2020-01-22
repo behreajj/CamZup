@@ -692,8 +692,9 @@ public class Mesh2 extends Mesh {
    @Chainable
    public Mesh2 rotateZ ( final float radians ) {
 
-      final float cosa = (float) Math.cos(radians);
-      final float sina = (float) Math.sin(radians);
+      final float nrm = IUtils.ONE_TAU * radians;
+      final float cosa = SinCos.eval(nrm);
+      final float sina = SinCos.eval(nrm - 0.25f);
       final int len = this.coords.length;
 
       for (int i = 0; i < len; ++i) {

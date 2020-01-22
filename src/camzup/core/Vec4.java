@@ -273,16 +273,16 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @param b
     *           right comparisand
     * @return the evaluation
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     */
    public static boolean approx (
          final Vec4 a,
          final Vec4 b ) {
 
-      return Utils.approxFast(a.w, b.w)
-            && Utils.approxFast(a.z, b.z)
-            && Utils.approxFast(a.y, b.y)
-            && Utils.approxFast(a.x, b.x);
+      return Utils.approx(a.w, b.w)
+            && Utils.approx(a.z, b.z)
+            && Utils.approx(a.y, b.y)
+            && Utils.approx(a.x, b.x);
    }
 
    /**
@@ -295,17 +295,17 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @param tolerance
     *           the tolerance
     * @return the evaluation
-    * @see Utils#approxFast(float, float, float)
+    * @see Utils#approx(float, float, float)
     */
    public static boolean approx (
          final Vec4 a,
          final Vec4 b,
          final float tolerance ) {
 
-      return Utils.approxFast(a.w, b.w, tolerance)
-            && Utils.approxFast(a.z, b.z, tolerance)
-            && Utils.approxFast(a.y, b.y, tolerance)
-            && Utils.approxFast(a.x, b.x, tolerance);
+      return Utils.approx(a.w, b.w, tolerance)
+            && Utils.approx(a.z, b.z, tolerance)
+            && Utils.approx(a.y, b.y, tolerance)
+            && Utils.approx(a.x, b.x, tolerance);
    }
 
    /**
@@ -317,14 +317,14 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @param b
     *           the magnitude
     * @return the evaluation
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     * @see Vec4#dot(Vec4, Vec4)
     */
    public static boolean approxMag (
          final Vec4 a,
          final float b ) {
 
-      return Utils.approxFast(Vec4.magSq(a), b * b);
+      return Utils.approx(Vec4.magSq(a), b * b);
    }
 
    /**
@@ -338,7 +338,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @param tolerance
     *           the tolerance
     * @return the evaluation
-    * @see Utils#approxFast(float, float, float)
+    * @see Utils#approx(float, float, float)
     * @see Vec4#dot(Vec4, Vec4)
     */
    public static boolean approxMag (
@@ -346,7 +346,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
          final float b,
          final float tolerance ) {
 
-      return Utils.approxFast(Vec4.magSq(a), b * b, tolerance);
+      return Utils.approx(Vec4.magSq(a), b * b, tolerance);
    }
 
    /**
@@ -751,12 +751,12 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @param v
     *           the input vector
     * @return the evaluation
-    * @see Utils#approxFast(float, float)
+    * @see Utils#approx(float, float)
     * @see Vec4#dot(Vec4, Vec4)
     */
    public static boolean isUnit ( final Vec4 v ) {
 
-      return Utils.approxFast(Vec4.magSq(v), 1.0f);
+      return Utils.approx(Vec4.magSq(v), 1.0f);
    }
 
    /**
@@ -787,7 +787,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     */
    public static float mag ( final Vec4 v ) {
 
-      return (float) Math.sqrt(Vec4.magSq(v));
+      return Utils.sqrtUnchecked(Vec4.magSq(v));
    }
 
    /**
@@ -1166,11 +1166,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
          return target.reset();
       }
 
-      if (Utils.approxFast(mSq, 1.0f)) {
-         return target.set(v);
-      }
-
-      final float mInv = (float) (1.0d / Math.sqrt(mSq));
+      final float mInv = Utils.invSqrtUnchecked(mSq);
       return target.set(
             v.x * mInv,
             v.y * mInv,
@@ -1427,17 +1423,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
          return target.reset();
       }
 
-      final float mSq = Vec4.magSq(v);
-
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
-
-      if (Utils.approxFast(mSq, 1.0f)) {
-         return Vec4.mul(v, scalar, target);
-      }
-
-      return Vec4.mul(v, (float) (scalar / Math.sqrt(mSq)), target);
+      return Vec4.mul(v, scalar *
+            Utils.invSqrtUnchecked(Vec4.magSq(v)),
+            target);
    }
 
    /**
