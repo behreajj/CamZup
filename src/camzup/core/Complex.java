@@ -904,6 +904,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
+   @Experimental
    public static Complex rect (
          final double r,
          final double phi,

@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import camzup.core.Curve2.Knot2;
+
 /**
  * Organizes a Bezier curve into a list of knots. Provides a
  * function to retrieve a point and tangent on a curve from
@@ -315,6 +317,7 @@ public class Curve3 extends Curve
          } else if (!this.coord.equals(other.coord)) {
             return false;
          }
+
          if (this.foreHandle == null) {
             if (other.foreHandle != null) {
                return false;
@@ -322,6 +325,7 @@ public class Curve3 extends Curve
          } else if (!this.foreHandle.equals(other.foreHandle)) {
             return false;
          }
+
          if (this.rearHandle == null) {
             if (other.rearHandle != null) {
                return false;
@@ -329,6 +333,7 @@ public class Curve3 extends Curve
          } else if (!this.rearHandle.equals(other.rearHandle)) {
             return false;
          }
+
          return true;
       }
 
@@ -336,53 +341,45 @@ public class Curve3 extends Curve
        * Aligns this knot's handles in the same direction while
        * preserving their magnitude.
        *
-       * @param rearDir
-       *           a temporary vector
-       * @param foreDir
-       *           a temporary vector
-       * @param rearScaled
-       *           a temporary vector
        * @return this knot
-       * @see Knot3#alignHandlesForward(Vec3, Vec3, Vec3)
+       * @see Knot3#alignHandlesForward()
        */
       @Chainable
-      public Knot3 alignHandles (
-            final Vec3 rearDir,
-            final Vec3 foreDir,
-            final Vec3 rearScaled ) {
+      public Knot3 alignHandles () {
 
-         return this.alignHandlesForward(
-               rearDir,
-               foreDir,
-               rearScaled);
+         return this.alignHandlesForward();
       }
 
       /**
        * Aligns this knot's fore handle to its rear handle while
        * preserving magnitude.
        *
-       * @param foreDir
-       *           a temporary vector
-       * @param rearDir
-       *           a temporary vector
-       * @param foreScaled
-       *           a temporary vector
        * @return this knot
-       * @see Vec3#sub(Vec3, Vec3, Vec3)
-       * @see Vec3#mag(Vec3)
-       * @see Vec3#rescale(Vec3, float, Vec3)
-       * @see Vec3#add(Vec3, Vec3, Vec3)
+       * @see Utils#hypot(float, float, float)
+       * @see Utils#invHypot(float, float, float)
        */
       @Chainable
-      public Knot3 alignHandlesBackward (
-            final Vec3 foreDir,
-            final Vec3 rearDir,
-            final Vec3 foreScaled ) {
+      public Knot3 alignHandlesBackward () {
 
-         Vec3.sub(this.rearHandle, this.coord, rearDir);
-         Vec3.sub(this.foreHandle, this.coord, foreDir);
-         Vec3.rescale(rearDir, -Vec3.mag(foreDir), foreScaled);
-         Vec3.add(foreScaled, this.coord, this.foreHandle);
+         final float cox = this.coord.x;
+         final float coy = this.coord.y;
+         final float coz = this.coord.z;
+
+         final float rearDirx = this.rearHandle.x - cox;
+         final float rearDiry = this.rearHandle.y - coy;
+         final float rearDirz = this.rearHandle.z - coz;
+
+         final float foreDirx = this.foreHandle.x - cox;
+         final float foreDiry = this.foreHandle.y - coy;
+         final float foreDirz = this.foreHandle.z - coz;
+
+         final float flipRescale = -Utils.hypot(foreDirx, foreDiry, foreDirz)
+               * Utils.invHypot(rearDirx, rearDiry, rearDirz);
+
+         this.foreHandle.x = rearDirx * flipRescale + cox;
+         this.foreHandle.y = rearDiry * flipRescale + coy;
+         this.foreHandle.z = rearDirz * flipRescale + coz;
+
          return this;
       }
 
@@ -390,28 +387,32 @@ public class Curve3 extends Curve
        * Aligns this knot's rear handle to its fore handle while
        * preserving magnitude.
        *
-       * @param rearDir
-       *           a temporary vector
-       * @param foreDir
-       *           a temporary vector
-       * @param rearScaled
-       *           a temporary vector
        * @return this knot
-       * @see Vec3#sub(Vec3, Vec3, Vec3)
-       * @see Vec3#mag(Vec3)
-       * @see Vec3#rescale(Vec3, float, Vec3)
-       * @see Vec3#add(Vec3, Vec3, Vec3)
+       * @see Utils#hypot(float, float, float)
+       * @see Utils#invHypot(float, float, float)
        */
       @Chainable
-      public Knot3 alignHandlesForward (
-            final Vec3 rearDir,
-            final Vec3 foreDir,
-            final Vec3 rearScaled ) {
+      public Knot3 alignHandlesForward () {
 
-         Vec3.sub(this.rearHandle, this.coord, rearDir);
-         Vec3.sub(this.foreHandle, this.coord, foreDir);
-         Vec3.rescale(foreDir, -Vec3.mag(rearDir), rearScaled);
-         Vec3.add(rearScaled, this.coord, this.rearHandle);
+         final float cox = this.coord.x;
+         final float coy = this.coord.y;
+         final float coz = this.coord.z;
+
+         final float rearDirx = this.rearHandle.x - cox;
+         final float rearDiry = this.rearHandle.y - coy;
+         final float rearDirz = this.rearHandle.z - coz;
+
+         final float foreDirx = this.foreHandle.x - cox;
+         final float foreDiry = this.foreHandle.y - coy;
+         final float foreDirz = this.foreHandle.z - coz;
+
+         final float flipRescale = -Utils.hypot(rearDirx, rearDiry, rearDirz)
+               * Utils.invHypot(foreDirx, foreDiry, foreDirz);
+
+         this.rearHandle.x = foreDirx * flipRescale + cox;
+         this.rearHandle.y = foreDiry * flipRescale + coy;
+         this.rearHandle.z = foreDirz * flipRescale + coz;
+
          return this;
       }
 
@@ -499,21 +500,6 @@ public class Curve3 extends Curve
       }
 
       /**
-       * Mirrors this knot's handles. Defaults to mirroring in the
-       * forward direction.
-       *
-       * @param temp
-       *           a temporary vector
-       * @return this knot
-       * @see Knot3#mirrorHandlesForward(Vec3)
-       */
-      @Chainable
-      public Knot3 mirrorHandles ( final Vec3 temp ) {
-
-         return this.mirrorHandlesForward(temp);
-      }
-
-      /**
        * Sets the forward-facing handle to mirror the rear-facing
        * handle: the fore will have the same magnitude and negated
        * direction of the rear.
@@ -531,57 +517,19 @@ public class Curve3 extends Curve
       }
 
       /**
-       * Sets the forward-facing handle to mirror the rear-facing
-       * handle: the fore will have the same magnitude and negated
-       * direction of the rear. A temporary vector is required for
-       * the swap.
-       *
-       * @param rearDir
-       *           a temp vector
-       * @return this knot
-       * @see Vec3#sub(Vec3, Vec3, Vec3)
-       */
-      @Chainable
-      public Knot3 mirrorHandlesBackward ( final Vec3 rearDir ) {
-
-         Vec3.sub(this.rearHandle, this.coord, rearDir);
-         Vec3.sub(this.coord, rearDir, this.foreHandle);
-         return this;
-      }
-
-      /**
        * Sets the rear-facing handle to mirror the forward-facing
        * handle: the rear will have the same magnitude and negated
        * direction of the fore.
        *
        * @return this knot
        */
+      @Chainable
       public Knot3 mirrorHandlesForward () {
 
          this.rearHandle.set(
                this.coord.x - (this.foreHandle.x - this.coord.x),
                this.coord.y - (this.foreHandle.y - this.coord.y),
                this.coord.z - (this.foreHandle.z - this.coord.z));
-         return this;
-      }
-
-      /**
-       * Sets the rear-facing handle to mirror the forward-facing
-       * handle: the rear will have the same magnitude and negated
-       * direction of the fore. A temporary vector is required for
-       * the swap.
-       *
-       * @param foreDir
-       *           a temp vector
-       * @return this knot
-       * @see Vec3#sub(Vec3, Vec3, Vec3)
-       */
-      @Chainable
-      public Knot3 mirrorHandlesForward ( final Vec3 foreDir ) {
-
-         Vec3.sub(this.foreHandle, this.coord, foreDir);
-         Vec3.sub(this.coord, foreDir, this.rearHandle);
-
          return this;
       }
 
@@ -1318,8 +1266,8 @@ public class Curve3 extends Curve
        * more detailed comments.
        */
 
-      if (Utils.approx(stopAngle - startAngle, IUtils.TAU)) {
-         return Curve3.circle(startAngle, target);
+      if (Utils.approx(stopAngle - startAngle, IUtils.TAU, 0.00139f)) {
+         return Curve3.circle(startAngle, radius, 4, target);
       }
 
       final float a1 = Utils.mod1(startAngle * IUtils.ONE_TAU);
@@ -1339,12 +1287,12 @@ public class Curve3 extends Curve
       for (int i = 0; i < knotCount; ++i) {
          final float angle1 = Utils.lerpUnclamped(
                a1, destAngle1, i * toStep);
-         final Knot3 knot = Knot3.fromPolar(
-               SinCos.eval(angle1),
-               SinCos.eval(angle1 - 0.25f),
-               radius, handleMag,
-               new Knot3());
-         knots.addLast(knot);
+         knots.addLast(
+               Knot3.fromPolar(
+                     SinCos.eval(angle1),
+                     SinCos.eval(angle1 - 0.25f),
+                     radius, handleMag,
+                     new Knot3()));
       }
 
       target.closedLoop = arcMode != ArcMode.OPEN;
@@ -1452,18 +1400,25 @@ public class Curve3 extends Curve
 
       target.clear();
       target.closedLoop = true;
+      
+      final float offset1 = offsetAngle * IUtils.ONE_TAU;
       final int vknct = knotCount < 3 ? 3 : knotCount;
       final float invKnCt = 1.0f / vknct;
-      final float toAngle = IUtils.TAU * invKnCt;
-      final float handleMag = radius * IUtils.FOUR_THIRDS
-            * Utils.tan(IUtils.HALF_PI * invKnCt);
+      final float hndtn = 0.25f * invKnCt;
+      final float cost = SinCos.eval(hndtn);
+      final float handleMag = cost == 0.0f ? 0.0f
+            : SinCos.eval(hndtn - 0.25f) / cost
+                  * radius * IUtils.FOUR_THIRDS;
 
       final LinkedList < Knot3 > knots = target.knots;
       for (int i = 0; i < vknct; ++i) {
-         final float angle = offsetAngle + i * toAngle;
-         final Knot3 knot = Knot3.fromPolar(
-               angle, radius, handleMag, new Knot3());
-         knots.add(knot);
+         final float angle1 = offset1 + i * invKnCt;
+         knots.add(
+               Knot3.fromPolar(
+                     SinCos.eval(angle1),
+                     SinCos.eval(angle1 - 0.25f),
+                     radius, handleMag,
+                     new Knot3()));
       }
 
       target.name = "Circle";
@@ -1490,10 +1445,11 @@ public class Curve3 extends Curve
       final int knotCount = points.length;
       target.clear();
       target.closedLoop = closedLoop;
+      final LinkedList < Knot3 > knots = target.knots;
       for (int i = 0; i < knotCount; ++i) {
          final Vec3 point = points[i];
          final Knot3 knot = new Knot3(point, point, point);
-         target.append(knot);
+         knots.addLast(knot);
       }
       return Curve3.smoothHandles(target);
    }
@@ -1522,11 +1478,12 @@ public class Curve3 extends Curve
       final int vknct = knotCount < 3 ? 3 : knotCount;
       final float invKnCt = 1.0f / vknct;
       final float toAngle = IUtils.TAU * invKnCt;
+      final LinkedList < Knot3 > knots = target.knots;
       for (int i = 0; i < vknct; ++i) {
          final float angle = offsetAngle + i * toAngle;
          final Knot3 knot = new Knot3();
          Vec3.fromPolar(angle, radius, knot.coord);
-         target.append(knot);
+         knots.addLast(knot);
       }
 
       target.name = "Polygon";
@@ -1654,7 +1611,7 @@ public class Curve3 extends Curve
 
          if (closedLoop) {
 
-            final int prevIndex = Utils.mod(i - 1, knotLength);
+            final int prevIndex = Math.floorMod(i - 1, knotLength);
             final Knot3 prev = knots.get(prevIndex);
 
             Vec3.sub(prev.coord, currCoord, back);
@@ -1673,7 +1630,7 @@ public class Curve3 extends Curve
          } else {
 
             final int prevIndex = i - 1;
-            if (prevIndex >= 0) {
+            if (prevIndex > -1) {
                final Knot3 prev = knots.get(prevIndex);
 
                Vec3.sub(prev.coord, currCoord, back);
@@ -1707,10 +1664,8 @@ public class Curve3 extends Curve
        * the curve is not closed.
        */
       if (!closedLoop) {
-         final Knot3 first = target.knots.getFirst();
-         first.mirrorHandlesForward();
-         final Knot3 last = target.knots.getLast();
-         last.mirrorHandlesBackward();
+         knots.getFirst().mirrorHandlesForward();
+         knots.getLast().mirrorHandlesBackward();
       }
 
       return target;
@@ -2428,19 +2383,16 @@ public class Curve3 extends Curve
    public Curve3 reset () {
 
       this.knots.clear();
-
-      final Knot3 knot0 = new Knot3(
-            -0.5f, 0.0f, 0.0f,
-            -0.25f, 0.25f, 0.0f,
-            -0.75f, -0.25f, 0.0f);
-
-      final Knot3 knot1 = new Knot3(
-            0.5f, 0.0f, 0.0f,
-            1.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 0.0f);
-
-      this.knots.add(knot0);
-      this.knots.add(knot1);
+      this.knots.addLast(
+            new Knot3(
+                  -0.5f, 0.0f, 0.0f,
+                  -0.25f, 0.25f, 0.0f,
+                  -0.75f, -0.25f, 0.0f));
+      this.knots.addLast(
+            new Knot3(
+                  0.5f, 0.0f, 0.0f,
+                  1.0f, 0.0f, 0.0f,
+                  0.0f, 0.0f, 0.0f));
 
       this.closedLoop = false;
       this.name = this.hashIdentityString();

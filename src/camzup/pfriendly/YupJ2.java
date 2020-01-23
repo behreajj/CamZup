@@ -31,7 +31,6 @@ import processing.core.PImage;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
-import processing.core.PVector;
 
 /**
  * A 2D renderer based on the Java AWT (Abstract Window

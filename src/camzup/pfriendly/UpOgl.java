@@ -487,7 +487,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float mSq = nx * nx + ny * ny + nz * nz;
       final int num3 = num + num + num;
       if (0.0f < mSq) {
-         final float mInv = 1.0f / PApplet.sqrt(mSq);
+         final float mInv = Utils.invSqrtUnchecked(mSq);
          this.lightNormal[num3] = mInv * nx;
          this.lightNormal[num3 + 1] = mInv * ny;
          this.lightNormal[num3 + 2] = mInv * nz;

@@ -1,6 +1,8 @@
 package camzup;
 
 import camzup.core.Color;
+import camzup.core.Curve2;
+import camzup.core.Curve3;
 import camzup.core.Mesh3;
 import camzup.core.Random;
 import camzup.core.Utils;
@@ -89,14 +91,16 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       final Random rng = new Random();
-      final Color target = new Color();
-      for (int i = 0; i < 20; ++i) {
-         final Color a = Color.randomRgb(rng, target);
-         final int b = Color.toHexInt(a);
+      System.out.println(rng);
 
-         System.out.println(Color.luminance(a));
-         System.out.println(Color.luminance(b));
-      }
+      // final Color target = new Color();
+      // for (int i = 0; i < 20; ++i) {
+      // final Color a = Color.randomRgb(rng, target);
+      // final int b = Color.toHexInt(a);
+      //
+      // System.out.println(Color.luminance(a));
+      // System.out.println(Color.luminance(b));
+      // }
 
       // double maxDiff = 0;
       // for (int i = 0; i < 20; ++i) {

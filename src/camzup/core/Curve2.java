@@ -307,53 +307,40 @@ public class Curve2 extends Curve
        * Aligns this knot's handles in the same direction while
        * preserving their magnitude.
        *
-       * @param rearDir
-       *           a temporary vector
-       * @param foreDir
-       *           a temporary vector
-       * @param rearScaled
-       *           a temporary vector
        * @return this knot
-       * @see Knot2#alignHandlesForward(Vec2, Vec2, Vec2)
+       * @see Knot2#alignHandlesForward()
        */
       @Chainable
-      public Knot2 alignHandles (
-            final Vec2 rearDir,
-            final Vec2 foreDir,
-            final Vec2 rearScaled ) {
+      public Knot2 alignHandles () {
 
-         return this.alignHandlesForward(
-               rearDir,
-               foreDir,
-               rearScaled);
+         return this.alignHandlesForward();
       }
 
       /**
        * Aligns this knot's fore handle to its rear handle while
        * preserving magnitude.
        *
-       * @param foreDir
-       *           a temporary vector
-       * @param rearDir
-       *           a temporary vector
-       * @param foreScaled
-       *           a temporary vector
        * @return this knot
-       * @see Vec2#sub(Vec2, Vec2, Vec2)
-       * @see Vec2#mag(Vec2)
-       * @see Vec2#rescale(Vec2, float, Vec2)
-       * @see Vec2#add(Vec2, Vec2, Vec2)
+       * @see Utils#hypot(float, float)
+       * @see Utils#invHypot(float, float)
        */
       @Chainable
-      public Knot2 alignHandlesBackward (
-            final Vec2 foreDir,
-            final Vec2 rearDir,
-            final Vec2 foreScaled ) {
+      public Knot2 alignHandlesBackward () {
 
-         Vec2.sub(this.rearHandle, this.coord, rearDir);
-         Vec2.sub(this.foreHandle, this.coord, foreDir);
-         Vec2.rescale(rearDir, -Vec2.mag(foreDir), foreScaled);
-         Vec2.add(foreScaled, this.coord, this.foreHandle);
+         final float cox = this.coord.x;
+         final float coy = this.coord.y;
+
+         final float rearDirx = this.rearHandle.x - cox;
+         final float rearDiry = this.rearHandle.y - coy;
+
+         final float foreDirx = this.foreHandle.x - cox;
+         final float foreDiry = this.foreHandle.y - coy;
+
+         final float flipRescale = -Utils.hypot(foreDirx, foreDiry)
+               * Utils.invHypot(rearDirx, rearDiry);
+
+         this.foreHandle.x = rearDirx * flipRescale + cox;
+         this.foreHandle.y = rearDiry * flipRescale + coy;
 
          return this;
       }
@@ -362,23 +349,15 @@ public class Curve2 extends Curve
        * Aligns this knot's rear handle to its fore handle while
        * preserving magnitude.
        *
-       * @param rearDir
-       *           a temporary vector
-       * @param foreDir
-       *           a temporary vector
-       * @param rearScaled
-       *           a temporary vector
        * @return this knot
-       * @see Vec2#sub(Vec2, Vec2, Vec2)
-       * @see Vec2#mag(Vec2)
-       * @see Vec2#rescale(Vec2, float, Vec2)
-       * @see Vec2#add(Vec2, Vec2, Vec2)
+       * @see Utils#hypot(float, float)
+       * @see Utils#invHypot(float, float)
        */
       @Chainable
-      public Knot2 alignHandlesForward (
-            final Vec2 rearDir,
-            final Vec2 foreDir,
-            final Vec2 rearScaled ) {
+      public Knot2 alignHandlesForward () {
+
+         final float cox = this.coord.x;
+         final float coy = this.coord.y;
 
          /*
           * The rear handle is a point in space. Subtract the coord
@@ -386,32 +365,32 @@ public class Curve2 extends Curve
           * relative to the coordinate, which now serves as an
           * origin, or pivot.
           */
-         Vec2.sub(this.rearHandle, this.coord, rearDir);
+         final float rearDirx = this.rearHandle.x - cox;
+         final float rearDiry = this.rearHandle.y - coy;
 
          /*
           * Subtract the coord from the foreHandle to get the
           * foreHandle direction.
           */
-         Vec2.sub(this.foreHandle, this.coord, foreDir);
+         final float foreDirx = this.foreHandle.x - cox;
+         final float foreDiry = this.foreHandle.y - coy;
 
          /*
-          * Find the magnitude of the rear direction.
+          * Find the magnitude of the rear direction. Align the rear
+          * handle with the fore by changing its direction while
+          * preserving its magnitude. The negative sign indicates
+          * that the rear handle is 180 degrees opposite the
+          * forehandle.
           */
-         final float rearMag = Vec2.mag(rearDir);
-
-         /*
-          * Align the rear handle with the fore by changing its
-          * direction while preserving its magnitude. The negative
-          * sign indicates that the rear handle is 180 degrees
-          * opposite the forehandle.
-          */
-         Vec2.rescale(foreDir, -rearMag, rearScaled);
+         final float flipRescale = -Utils.hypot(rearDirx, rearDiry)
+               * Utils.invHypot(foreDirx, foreDiry);
 
          /*
           * Add the coord back to the new rear direction to convert
           * it from a direction to a point.
           */
-         Vec2.add(rearScaled, this.coord, this.rearHandle);
+         this.rearHandle.x = foreDirx * flipRescale + cox;
+         this.rearHandle.y = foreDiry * flipRescale + coy;
 
          return this;
       }
@@ -503,21 +482,6 @@ public class Curve2 extends Curve
       }
 
       /**
-       * Mirrors this knot's handles. Defaults to mirroring in the
-       * forward direction.
-       *
-       * @param temp
-       *           a temporary vector
-       * @return this knot
-       * @see Knot2#mirrorHandlesForward(Vec2)
-       */
-      @Chainable
-      public Knot2 mirrorHandles ( final Vec2 temp ) {
-
-         return this.mirrorHandlesForward(temp);
-      }
-
-      /**
        * Sets the forward-facing handle to mirror the rear-facing
        * handle: the fore will have the same magnitude and negated
        * direction of the rear.
@@ -535,57 +499,18 @@ public class Curve2 extends Curve
       }
 
       /**
-       * Sets the forward-facing handle to mirror the rear-facing
-       * handle: the fore will have the same magnitude and negated
-       * direction of the rear. A temporary vector is required for
-       * the swap.
-       *
-       * @param rearDir
-       *           a temp vector
-       * @return the knot
-       * @see Vec2#sub(Vec2, Vec2, Vec2)
-       */
-      @Chainable
-      public Knot2 mirrorHandlesBackward ( final Vec2 rearDir ) {
-
-         Vec2.sub(this.rearHandle, this.coord, rearDir);
-         Vec2.sub(this.coord, rearDir, this.foreHandle);
-
-         return this;
-      }
-
-      /**
        * Sets the rear-facing handle to mirror the forward-facing
        * handle: the rear will have the same magnitude and negated
        * direction of the fore.
        *
        * @return this knot
        */
+      @Chainable
       public Knot2 mirrorHandlesForward () {
 
          this.rearHandle.set(
                this.coord.x - (this.foreHandle.x - this.coord.x),
                this.coord.y - (this.foreHandle.y - this.coord.y));
-
-         return this;
-      }
-
-      /**
-       * Sets the rear-facing handle to mirror the forward-facing
-       * handle: the rear will have the same magnitude and negated
-       * direction of the fore. A temporary vector is required for
-       * the swap.
-       *
-       * @param foreDir
-       *           a temp vector
-       * @return this knot
-       * @see Vec2#sub(Vec2, Vec2, Vec2)
-       */
-      @Chainable
-      public Knot2 mirrorHandlesForward ( final Vec2 foreDir ) {
-
-         Vec2.sub(this.foreHandle, this.coord, foreDir);
-         Vec2.sub(this.coord, foreDir, this.rearHandle);
 
          return this;
       }
@@ -700,6 +625,8 @@ public class Curve2 extends Curve
             final Vec2 temp0,
             final Vec2 temp1 ) {
 
+         // TODO: Inline.
+
          Vec2.sub(this.foreHandle, this.coord, temp0);
          Vec2.mul(temp0, scalar, temp1);
          Vec2.add(temp1, this.coord, this.foreHandle);
@@ -723,6 +650,8 @@ public class Curve2 extends Curve
             final float magnitude,
             final Vec2 temp0,
             final Vec2 temp1 ) {
+
+         // TODO: Inline.
 
          Vec2.subNorm(this.foreHandle, this.coord, temp0);
          Vec2.mul(temp0, magnitude, temp1);
@@ -807,6 +736,8 @@ public class Curve2 extends Curve
             final Vec2 temp0,
             final Vec2 temp1 ) {
 
+         // TODO: Inline.
+
          Vec2.sub(this.rearHandle, this.coord, temp0);
          Vec2.mul(temp0, scalar, temp1);
          Vec2.add(temp1, this.coord, this.rearHandle);
@@ -833,6 +764,8 @@ public class Curve2 extends Curve
             final float magnitude,
             final Vec2 temp0,
             final Vec2 temp1 ) {
+
+         // TODO: Inline.
 
          Vec2.subNorm(this.rearHandle, this.coord, temp0);
          Vec2.mul(temp0, magnitude, temp1);
@@ -1201,9 +1134,14 @@ public class Curve2 extends Curve
        * renderer arc function.
        */
 
-      /* Case where arc is used as a progress bar. */
-      if (Utils.approx(stopAngle - startAngle, IUtils.TAU)) {
-         return Curve2.circle(startAngle, target);
+      /*
+       * Outlier case where arc is used as a progress bar. The
+       * tolerance is less than half a degree, 1.0 / 720.0, which
+       * is the minimum step used by the Processing sine cosine
+       * look-up table (LUT).
+       */
+      if (Utils.approx(stopAngle - startAngle, IUtils.TAU, 0.00139f)) {
+         return Curve2.circle(startAngle, radius, 4, target);
       }
 
       /* Divide by TAU then wrap around the range, [0.0, 1.0] . */
@@ -1245,16 +1183,21 @@ public class Curve2 extends Curve
                   * radius * IUtils.FOUR_THIRDS;
 
       final LinkedList < Knot2 > knots = target.knots;
+
+      // TODO: Research whether or not is more efficient to clear
+      // knots of an existing linked list or to measure how many
+      // the list has and change them in place? Can they be
+      // changed in place or is there a mutability issue?
       knots.clear();
       for (int i = 0; i < knotCount; ++i) {
          final float angle1 = Utils.lerpUnclamped(
                a1, destAngle1, i * toStep);
-         final Knot2 knot = Knot2.fromPolar(
-               SinCos.eval(angle1),
-               SinCos.eval(angle1 - 0.25f),
-               radius, handleMag,
-               new Knot2());
-         knots.addLast(knot);
+         knots.addLast(
+               Knot2.fromPolar(
+                     SinCos.eval(angle1),
+                     SinCos.eval(angle1 - 0.25f),
+                     radius, handleMag,
+                     new Knot2()));
       }
 
       /* Depending on arc mode, calculate chord or legs. */
@@ -1393,20 +1336,30 @@ public class Curve2 extends Curve
          final int knotCount,
          final Curve2 target ) {
 
+      /*
+       * Since this is called by arc, it also needs to be
+       * optimized.
+       */
       target.clear();
       target.closedLoop = true;
+      final float offset1 = offsetAngle * IUtils.ONE_TAU;
       final int vknct = knotCount < 3 ? 3 : knotCount;
       final float invKnCt = 1.0f / vknct;
-      final float toAngle = IUtils.TAU * invKnCt;
-      final float handleMag = radius * IUtils.FOUR_THIRDS
-            * Utils.tan(IUtils.HALF_PI * invKnCt);
+      final float hndtn = 0.25f * invKnCt;
+      final float cost = SinCos.eval(hndtn);
+      final float handleMag = cost == 0.0f ? 0.0f
+            : SinCos.eval(hndtn - 0.25f) / cost
+                  * radius * IUtils.FOUR_THIRDS;
 
       final LinkedList < Knot2 > knots = target.knots;
       for (int i = 0; i < vknct; ++i) {
-         final float angle = offsetAngle + i * toAngle;
-         final Knot2 knot = Knot2.fromPolar(
-               angle, radius, handleMag, new Knot2());
-         knots.add(knot);
+         final float angle1 = offset1 + i * invKnCt;
+         knots.add(
+               Knot2.fromPolar(
+                     SinCos.eval(angle1),
+                     SinCos.eval(angle1 - 0.25f),
+                     radius, handleMag,
+                     new Knot2()));
       }
 
       target.name = "Circle";
@@ -1437,7 +1390,7 @@ public class Curve2 extends Curve
       for (int i = 0; i < knotCount; ++i) {
          final Vec2 point = points[i];
          final Knot2 knot = new Knot2(point, point, point);
-         knots.add(knot);
+         knots.addLast(knot);
       }
       return Curve2.smoothHandles(target);
    }
@@ -1470,7 +1423,7 @@ public class Curve2 extends Curve
          final float angle = offsetAngle + i * toAngle;
          final Knot2 knot = new Knot2();
          Vec2.fromPolar(angle, radius, knot.coord);
-         knots.add(knot);
+         knots.addLast(knot);
       }
 
       target.name = "Polygon";
@@ -1946,7 +1899,7 @@ public class Curve2 extends Curve
 
          if (closedLoop) {
 
-            final int prevIndex = Utils.mod(i - 1, knotLength);
+            final int prevIndex = Math.floorMod(i - 1, knotLength);
             final Knot2 prev = knots.get(prevIndex);
 
             Vec2.sub(prev.coord, currCoord, back);
@@ -1965,7 +1918,7 @@ public class Curve2 extends Curve
          } else {
 
             final int prevIndex = i - 1;
-            if (prevIndex >= 0) {
+            if (prevIndex > -1) {
                final Knot2 prev = knots.get(prevIndex);
 
                Vec2.sub(prev.coord, currCoord, back);
@@ -1999,10 +1952,8 @@ public class Curve2 extends Curve
        * the curve is not closed.
        */
       if (!closedLoop) {
-         final Knot2 first = target.knots.getFirst();
-         first.mirrorHandlesForward();
-         final Knot2 last = target.knots.getLast();
-         last.mirrorHandlesBackward();
+         knots.getFirst().mirrorHandlesForward();
+         knots.getLast().mirrorHandlesBackward();
       }
 
       return target;
@@ -2694,19 +2645,16 @@ public class Curve2 extends Curve
    public Curve2 reset () {
 
       this.knots.clear();
-
-      final Knot2 knot0 = new Knot2(
-            -0.5f, 0.0f,
-            -0.25f, 0.25f,
-            -0.75f, -0.25f);
-
-      final Knot2 knot1 = new Knot2(
-            0.5f, 0.0f,
-            1.0f, 0.0f,
-            0.0f, 0.0f);
-
-      this.knots.add(knot0);
-      this.knots.add(knot1);
+      this.knots.addLast(
+            new Knot2(
+                  -0.5f, 0.0f,
+                  -0.25f, 0.25f,
+                  -0.75f, -0.25f));
+      this.knots.addLast(
+            new Knot2(
+                  0.5f, 0.0f,
+                  1.0f, 0.0f,
+                  0.0f, 0.0f));
 
       this.closedLoop = false;
       this.name = this.hashIdentityString();
@@ -2913,23 +2861,19 @@ public class Curve2 extends Curve
    public String toSvgString () {
 
       final int knotLength = this.knots.size();
-
       if (knotLength < 2) {
          return "";
       }
 
-      final int end = this.closedLoop ? knotLength + 1 : knotLength;
-      Knot2 currKnot = null;
-      Knot2 prevKnot = this.getFirst();
-
-      final StringBuilder result = new StringBuilder();
-      result.append("<path d=\"M ")
+      final Iterator < Knot2 > itr = this.knots.iterator();
+      Knot2 prevKnot = itr.next();
+      final StringBuilder result = new StringBuilder()
+            .append("<path d=\"M ")
             .append(prevKnot.coord.toSvgString());
 
-      for (int i = 1; i < end; ++i) {
-         // TODO: Could be updated to match the drawing of the curve,
-         // i.e., to avoid using the modulo operation.
-         currKnot = this.knots.get(i % knotLength);
+      Knot2 currKnot = null;
+      while (itr.hasNext()) {
+         currKnot = itr.next();
 
          result.append(' ')
                .append('C')
@@ -2944,10 +2888,20 @@ public class Curve2 extends Curve
       }
 
       if (this.closedLoop) {
-         result.append(' ').append('Z');
+         currKnot = this.knots.getFirst();
+         result.append(' ')
+               .append('C')
+               .append(' ')
+               .append(prevKnot.foreHandle.toSvgString())
+               .append(',')
+               .append(currKnot.rearHandle.toSvgString())
+               .append(',')
+               .append(currKnot.coord.toSvgString())
+               .append(' ')
+               .append('Z');
       }
-      result.append("\"></path>");
-      return result.toString();
+
+      return result.append("\"></path>").toString();
    }
 
    /**

@@ -756,8 +756,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Evaluates two floats like booleans, using the analytic
-    * definition of the and (AND) logic gate.
+    * Evaluates two floats like booleans using the and logic gate.
     *
     * @param a
     *           the left operand
@@ -772,8 +771,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Evaluates two integers like booleans, using the analytic
-    * definition of the and (AND) logic gate.
+    * Evaluates two integers like booleans, using the and (AND) logic gate.
     *
     * @param a
     *           the left operand
@@ -1336,7 +1334,7 @@ public abstract class Utils implements IUtils {
     */
    public static float invSqrt ( final float value ) {
 
-      return value <= 0.0f ? 0.0f : Utils.invSqrtUnchecked(value);
+      return value > 0.0f ? Utils.invSqrtUnchecked(value) : 0.0f;
    }
 
    /**
@@ -1951,7 +1949,7 @@ public abstract class Utils implements IUtils {
     */
    public static float sqrt ( final float value ) {
 
-      return value <= 0.0f ? 0.0f : Utils.sqrtUnchecked(value);
+      return value > 0.0f ? Utils.sqrtUnchecked(value) : 0.0f;
    }
 
    /**
