@@ -639,7 +639,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final float czdi = c.real * z.imag + c.imag * z.real + d.imag;
       final float mSq = czdr * czdr + czdi * czdi;
 
-      if (Utils.abs(mSq) < Utils.EPSILON) {
+      if (mSq < Utils.EPSILON) {
          return target.reset();
       }
 

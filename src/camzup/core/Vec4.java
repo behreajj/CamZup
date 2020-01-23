@@ -1384,21 +1384,17 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
          final float rhoMax,
          final Vec4 target ) {
 
-      // TODO: Replace with sincos eval.
       final float rho = rng.uniform(rhoMin, rhoMax);
-
-      final double t0 = IUtils.TAU_D * rng.nextDouble();
-      final double t1 = IUtils.TAU_D * rng.nextDouble();
-
-      final double r1 = rng.nextDouble();
-      final double x0 = rho * Math.sqrt(1.0d - r1);
-      final double x1 = rho * Math.sqrt(r1);
-
+      final float t0 = rng.nextFloat();
+      final float t1 = rng.nextFloat();
+      final float r1 = rng.nextFloat();
+      final float x0 = rho * Utils.sqrt(1.0f - r1);
+      final float x1 = rho * Utils.sqrt(r1);
       return target.set(
-            (float) (x0 * Math.cos(t0)),
-            (float) (x1 * Math.sin(t1)),
-            (float) (x1 * Math.cos(t1)),
-            (float) (x0 * Math.sin(t0)));
+            x0 * SinCos.eval(t0 - 0.25f),
+            x0 * SinCos.eval(t0),
+            x1 * SinCos.eval(t1 - 0.25f),
+            x1 * SinCos.eval(t1));
    }
 
    /**

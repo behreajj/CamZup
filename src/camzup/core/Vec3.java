@@ -556,7 +556,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final Vec3 a,
          final Vec3 b ) {
 
-      return (Vec3.none(a) || Vec3.none(b)) ? 0.0f
+      return Vec3.none(a) || Vec3.none(b) ? 0.0f
             : Utils.acos(Vec3.dot(a, b) *
                   Utils.invSqrtUnchecked(Vec3.magSq(a)) *
                   Utils.invSqrtUnchecked(Vec3.magSq(b)));

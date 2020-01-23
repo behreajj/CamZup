@@ -240,7 +240,7 @@ public abstract class Sdf {
        * this function, Math#atan2 with double precision is
        * necessary.
        */
-      
+
       return Utils.mod1(
             (float) ((Math.atan2(pointy, pointx) - radians) *
                   IUtils.ONE_TAU_D));

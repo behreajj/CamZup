@@ -270,6 +270,28 @@ public class Mat3 extends Matrix {
    }
 
    /**
+    * Creates a rotation matrix from an angle in radians around
+    * the z axis.
+    *
+    * @param radians
+    *           the angle
+    * @param target
+    *           the output matrix
+    * @return the matrix
+    */
+   @Experimental
+   public static Mat3 fromRotZ (
+         final double radians,
+         final Mat3 target ) {
+
+      // TODO: Switch away from Math.?
+      return Mat3.fromRotZ(
+            (float) Math.cos(radians),
+            (float) Math.sin(radians),
+            target);
+   }
+
+   /**
     * Creates a rotation matrix from a cosine and sine around
     * the z axis.
     *
@@ -290,28 +312,6 @@ public class Mat3 extends Matrix {
             cosa, -sina, 0.0f,
             sina, cosa, 0.0f,
             0.0f, 0.0f, 1.0f);
-   }
-
-   /**
-    * Creates a rotation matrix from an angle in radians around
-    * the z axis.
-    *
-    * @param radians
-    *           the angle
-    * @param target
-    *           the output matrix
-    * @return the matrix
-    */
-   @Experimental
-   public static Mat3 fromRotZ (
-         final double radians,
-         final Mat3 target ) {
-
-      // TODO: Switch away from Math.?
-      return Mat3.fromRotZ(
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
-            target);
    }
 
    /**

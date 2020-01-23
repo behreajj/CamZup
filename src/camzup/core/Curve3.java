@@ -26,25 +26,24 @@ public class Curve3 extends Curve
        * Creates a knot from polar coordinates, where the knot's
        * fore handle is tangent to the radius.
        *
-       * @param angle
-       *           the angle in radians
+       * @param cosa
+       *           the cosine of the angle
+       * @param sina
+       *           the sine of the angle
        * @param radius
        *           the radius
        * @param handleMag
-       *           the magnitude of the handles
+       *           the length of the handles
        * @param target
        *           the output knot
        * @return the knot
        */
       public static Knot3 fromPolar (
-            final float angle,
+            final float cosa,
+            final float sina,
             final float radius,
             final float handleMag,
             final Knot3 target ) {
-
-         final float nrm = IUtils.ONE_TAU * angle;
-         final float cosa = SinCos.eval(nrm);
-         final float sina = SinCos.eval(nrm - 0.25f);
 
          final Vec3 coord = target.coord;
          coord.set(
@@ -66,6 +65,33 @@ public class Curve3 extends Curve
                coord.z);
 
          return target;
+      }
+
+      /**
+       * Creates a knot from polar coordinates, where the knot's
+       * fore handle is tangent to the radius.
+       *
+       * @param angle
+       *           the angle in radians
+       * @param radius
+       *           the radius
+       * @param handleMag
+       *           the length of the handles
+       * @param target
+       *           the output knot
+       * @return the knot
+       */
+      public static Knot3 fromPolar (
+            final float angle,
+            final float radius,
+            final float handleMag,
+            final Knot3 target ) {
+
+         final float nrm = IUtils.ONE_TAU * angle;
+         return Knot3.fromPolar(
+               SinCos.eval(nrm),
+               SinCos.eval(nrm - 0.25f),
+               radius, handleMag, target);
       }
 
       /**
@@ -1287,75 +1313,62 @@ public class Curve3 extends Curve
          final ArcMode arcMode,
          final Curve3 target ) {
 
-      /* Case where arc is used as a progress bar. */
+      /*
+       * Optimized where possible. See Curve2's arc function for
+       * more detailed comments.
+       */
+
       if (Utils.approx(stopAngle - startAngle, IUtils.TAU)) {
          return Curve3.circle(startAngle, target);
       }
 
-      final float a = Utils.modRadians(startAngle);
-      final float b = Utils.modRadians(stopAngle);
-      final float arcLength = Utils.modRadians(b - a);
-      final float destAngle = a + arcLength;
-
-      /* Arc represented as a value in [0.0, 1.0]. */
-      final float arcFac = arcLength * IUtils.ONE_TAU;
-
-      /*
-       * Finds minimal amount of knots to represent an arc.
-       * Assumes that at least 1 knot is needed and that 4 knots
-       * accurately represent a complete circle.
-       */
-      final int knotCount = Utils.ceilToInt(1 + 4 * arcFac);
-
-      /* Find the step for each knot to progress. */
+      final float a1 = Utils.mod1(startAngle * IUtils.ONE_TAU);
+      final float b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU);
+      final float arcLen1 = Utils.mod1(b1 - a1);
+      final float destAngle1 = a1 + arcLen1;
+      final int knotCount = Utils.ceilToInt(1 + 4 * arcLen1);
       final float toStep = 1.0f / (knotCount - 1.0f);
-      
-      // TODO: Test.
-      // final float handleMag = (float) (radius *
-      // IUtils.FOUR_THIRDS_D
-      // * Math.tan(IUtils.HALF_PI_D * toStep * arcFac));
-      final float handleMag = radius * IUtils.FOUR_THIRDS
-            * Utils.tan(IUtils.HALF_PI * toStep * arcFac);
+      final float hndtn = 0.25f * toStep * arcLen1;
+      final float cost = SinCos.eval(hndtn);
+      final float handleMag = cost == 0.0f ? 0.0f
+            : SinCos.eval(hndtn - 0.25f) / cost
+                  * radius * IUtils.FOUR_THIRDS;
 
-      target.clear();
+      final LinkedList < Knot3 > knots = target.knots;
+      knots.clear();
       for (int i = 0; i < knotCount; ++i) {
-         final float step = i * toStep;
-         final float angle = Utils.lerpUnclamped(a, destAngle, step);
+         final float angle1 = Utils.lerpUnclamped(
+               a1, destAngle1, i * toStep);
          final Knot3 knot = Knot3.fromPolar(
-               angle, radius, handleMag,
+               SinCos.eval(angle1),
+               SinCos.eval(angle1 - 0.25f),
+               radius, handleMag,
                new Knot3());
-         target.append(knot);
+         knots.addLast(knot);
       }
 
       target.closedLoop = arcMode != ArcMode.OPEN;
       if (target.closedLoop) {
          if (arcMode == ArcMode.CHORD) {
 
-            final Knot3 first = target.getFirst();
-            final Knot3 last = target.getLast();
+            final Knot3 first = knots.getFirst();
+            final Knot3 last = knots.getLast();
 
-            /* Flatten the first to last handles. */
             Curve3.lerp13(last.coord, first.coord, last.foreHandle);
             Curve3.lerp13(first.coord, last.coord, first.rearHandle);
 
          } else if (arcMode == ArcMode.PIE) {
 
-            final Knot3 first = target.getFirst();
-            final Knot3 last = target.getLast();
-
-            /* Add a center knot. */
+            final Knot3 first = knots.getFirst();
+            final Knot3 last = knots.getLast();
             final Knot3 center = new Knot3();
-            target.append(center);
-            final Vec3 coCenter = center.coord;
 
-            /* Flatten center handles. */
+            knots.addLast(center);
+
+            final Vec3 coCenter = center.coord;
             Curve3.lerp13(coCenter, last.coord, center.rearHandle);
             Curve3.lerp13(coCenter, first.coord, center.foreHandle);
-
-            /* Flatten handle from first to center. */
             Curve3.lerp13(first.coord, coCenter, first.rearHandle);
-
-            /* Flatten handle from last to center. */
             Curve3.lerp13(last.coord, coCenter, last.foreHandle);
          }
       }
@@ -1442,14 +1455,15 @@ public class Curve3 extends Curve
       final int vknct = knotCount < 3 ? 3 : knotCount;
       final float invKnCt = 1.0f / vknct;
       final float toAngle = IUtils.TAU * invKnCt;
-      final float handleMag = radius * (float) (IUtils.FOUR_THIRDS_D
-            * Math.tan(IUtils.HALF_PI_D * invKnCt));
+      final float handleMag = radius * IUtils.FOUR_THIRDS
+            * Utils.tan(IUtils.HALF_PI * invKnCt);
 
+      final LinkedList < Knot3 > knots = target.knots;
       for (int i = 0; i < vknct; ++i) {
          final float angle = offsetAngle + i * toAngle;
          final Knot3 knot = Knot3.fromPolar(
                angle, radius, handleMag, new Knot3());
-         target.append(knot);
+         knots.add(knot);
       }
 
       target.name = "Circle";
@@ -2025,6 +2039,8 @@ public class Curve3 extends Curve
     */
    public boolean append ( final Collection < ? extends Knot3 > knots ) {
 
+      // TODO: Is it possible to add null knots to the list this
+      // way?
       return this.knots.addAll(knots);
    }
 
@@ -2039,7 +2055,9 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 append ( final Knot3 knot ) {
 
-      this.knots.add(knot);
+      if (knot != null) {
+         this.knots.addLast(knot);
+      }
       return this;
    }
 
@@ -2057,7 +2075,7 @@ public class Curve3 extends Curve
       for (int i = 0; i < len; ++i) {
          final Knot3 knot = knots[i];
          if (knot != null) {
-            this.knots.add(knot);
+            this.knots.addLast(knot);
          }
       }
       return this;
@@ -2299,8 +2317,8 @@ public class Curve3 extends Curve
     */
    public Knot3 get ( final int i ) {
 
-      final int index = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
-      return this.knots.get(index);
+      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
+      return this.knots.get(j);
    }
 
    /**
@@ -2333,6 +2351,26 @@ public class Curve3 extends Curve
       hash = hash * IUtils.HASH_MUL
             ^ (this.knots == null ? 0 : this.knots.hashCode());
       return hash;
+   }
+
+   /**
+    * Inserts a knot at a given index. When the curve is a
+    * closed loop, the index wraps around; this means negative
+    * indices are accepted.
+    *
+    * @param i
+    *           the index
+    * @param knot
+    *           the knot
+    * @return the curve
+    */
+   public Curve3 insert ( final int i, final Knot3 knot ) {
+
+      if (knot != null) {
+         final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
+         this.knots.add(j, knot);
+      }
+      return this;
    }
 
    /**
@@ -2583,6 +2621,7 @@ public class Curve3 extends Curve
     *           the precision
     * @return the string
     */
+   @Experimental
    public String toObjString ( final int precision ) {
 
       final StringBuilder result = new StringBuilder();

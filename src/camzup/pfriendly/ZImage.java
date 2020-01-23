@@ -3,6 +3,7 @@ package camzup.pfriendly;
 import java.awt.Image;
 
 import camzup.core.Color;
+import camzup.core.Experimental;
 import camzup.core.Gradient;
 import camzup.core.Sdf;
 import camzup.core.Utils;
@@ -96,6 +97,39 @@ public class ZImage extends PImage {
       return ZImage.conic(
             origin.x, origin.y,
             radians, grd, target);
+   }
+
+   /**
+    * Recolors an image in-place with a color gradient. The
+    * image's luminance is used as the factor
+    *
+    * @param target
+    *           the target image
+    * @param grd
+    *           the color gradient
+    * @return the augmented image
+    */
+   @Experimental
+   public static PImage falseColor (
+         final PImage target,
+         final Gradient grd ) {
+
+      target.loadPixels();
+
+      final int[] px = target.pixels;
+      final int h = target.height;
+      final int w = target.width;
+
+      for (int i = 0, y = 0; y < h; ++y) {
+         for (int x = 0; x < w; ++x, ++i) {
+            px[i] = Color.toHexInt(
+                  grd.eval(Color.luminance(px[i]),
+                        ZImage.clr));
+         }
+      }
+
+      target.updatePixels();
+      return target;
    }
 
    /**
@@ -398,7 +432,7 @@ public class ZImage extends PImage {
             target.pixels, target.width, target.height,
             dx, dy);
       target.updatePixels();
-      source.updatePixels();
+      // source.updatePixels();
       return target;
    }
 

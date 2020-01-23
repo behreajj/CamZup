@@ -16,7 +16,9 @@ public class Cam3 extends Entity {
     */
    public final Transform3 transform;
 
-   public Cam3 ( final String name, final Transform3 transform,
+   public Cam3 ( 
+         final String name, 
+         final Transform3 transform,
          final Up3 renderer ) {
 
       super(name);
@@ -59,7 +61,7 @@ public class Cam3 extends Entity {
 
       Convert.toPMatrix3D(this.transform, ITransform.Order.RST,
             this.renderer.modelviewInv);
-      IUp.invert(this.renderer.modelviewInv, this.renderer.modelview);
+      PMatAux.invert(this.renderer.modelviewInv, this.renderer.modelview);
       this.renderer.camera.set(this.renderer.modelview);
       this.renderer.cameraInv.set(this.renderer.modelviewInv);
       this.renderer.updateProjmodelview();

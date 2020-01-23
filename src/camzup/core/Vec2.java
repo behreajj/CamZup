@@ -613,9 +613,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @see Vec2#mag(Vec2)
     * @see Utils#acos(float)
     */
-   public static float angleBetween ( Vec2 a, Vec2 b ) {
+   public static float angleBetween ( final Vec2 a, final Vec2 b ) {
 
-      return (Vec2.none(a) || Vec2.none(b)) ? 0.0f
+      return Vec2.none(a) || Vec2.none(b) ? 0.0f
             : Utils.acos(Vec2.dot(a, b) *
                   Utils.invSqrtUnchecked(Vec2.magSq(a)) *
                   Utils.invSqrtUnchecked(Vec2.magSq(b)));

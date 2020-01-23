@@ -153,13 +153,6 @@ public interface IUtils {
    float ONE_TAU = 0.15915494f;
 
    /**
-    * One divided by \u03c4. Approximately 0.15915494309189535
-    * . Useful for converting an index in a for-loop to an
-    * angle and for applying mod to an angle.
-    */
-   double ONE_TAU_D = 0.15915494309189535d;
-
-   /**
     * 1.0 / 4.0 \u03c0 . Useful when normalizing angles
     * supplied to quaternions. Approximately 0.07957747 .
     */
@@ -171,6 +164,13 @@ public interface IUtils {
     * 0.07957747154594767 .
     */
    double ONE_TAU_2_D = 0.07957747154594767d;
+
+   /**
+    * One divided by \u03c4. Approximately 0.15915494309189535
+    * . Useful for converting an index in a for-loop to an
+    * angle and for applying mod to an angle.
+    */
+   double ONE_TAU_D = 0.15915494309189535d;
 
    /**
     * One-third, 1.0 / 3.0 . Approximately 0.33333333 . Useful

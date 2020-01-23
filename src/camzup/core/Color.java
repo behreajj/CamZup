@@ -1476,10 +1476,26 @@ public class Color extends Vec4 {
        * 0.59 x 256.0 = 151.04 = 0x97
        *
        * 0.11 x 256.0 = 28.16 = 0x1c
-       *
        **/
 
       return 0.2126f * c.x + 0.7152f * c.y + 0.0722f * c.z;
+   }
+
+   /**
+    * Returns the relative luminance of the color, based on
+    * <a href=
+    * "https://en.wikipedia.org/wiki/Relative_luminance">
+    * https://en.wikipedia.org/wiki/Relative_luminance</a> .
+    *
+    * @param c
+    *           the input color
+    * @return the luminance
+    */
+   public static float luminance ( final int c ) {
+
+      return (c >> 0x10 & 0xff) * 0.000830469f +
+            (c >> 0x8 & 0xff) * 0.00279375f +
+            (c & 0xff) * 0.000282031f;
    }
 
    /**

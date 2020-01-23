@@ -1,11 +1,8 @@
 package camzup;
 
-import camzup.core.Complex;
-import camzup.core.IUtils;
+import camzup.core.Color;
 import camzup.core.Mesh3;
-import camzup.core.Quaternion;
 import camzup.core.Random;
-import camzup.core.SinCos;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -91,13 +88,15 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-      // final Random rng = new Random();
-      // for (int i = 0; i < 20; ++i) {
-      // Vec2 a = Vec2.random(rng, new Vec2());
-      // Vec2 b = Vec2.random(rng, new Vec2());
-      // System.out.println(Vec2.angleBetween(a, b));
-      // System.out.println("");
-      // }
+      final Random rng = new Random();
+      final Color target = new Color();
+      for (int i = 0; i < 20; ++i) {
+         final Color a = Color.randomRgb(rng, target);
+         final int b = Color.toHexInt(a);
+
+         System.out.println(Color.luminance(a));
+         System.out.println(Color.luminance(b));
+      }
 
       // double maxDiff = 0;
       // for (int i = 0; i < 20; ++i) {

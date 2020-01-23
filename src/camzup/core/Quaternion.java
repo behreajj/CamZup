@@ -2051,17 +2051,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Random rng,
          final Quaternion target ) {
 
-      // final double t0 = IUtils.TAU_D * rng.nextDouble();
-      // final double t1 = IUtils.TAU_D * rng.nextDouble();
-      // final double r1 = rng.nextDouble();
-      // final double x0 = Math.sqrt(1.0d - r1);
-      // final double x1 = Math.sqrt(r1);
-      // return target.set(
-      // (float) (x0 * Math.sin(t0)),
-      // (float) (x0 * Math.cos(t0)),
-      // (float) (x1 * Math.sin(t1)),
-      // (float) (x1 * Math.cos(t1)));
-
       final float t0 = rng.nextFloat();
       final float t1 = rng.nextFloat();
       final float r1 = rng.nextFloat();

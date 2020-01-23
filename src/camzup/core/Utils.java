@@ -638,7 +638,7 @@ public abstract class Utils implements IUtils {
             return dest;
          }
          final double td = step;
-         final float ts = (float) (td * td * (3.0d - 2.0d * td));
+         final float ts = (float) (td * td * (3.0d - (td + td)));
          return super.apply(origin, dest, ts);
       }
    }
@@ -1288,7 +1288,7 @@ public abstract class Utils implements IUtils {
    /**
     * Finds one divided by the hypotenuse of two values. Useful
     * when normalizing vectors.
-    * 
+    *
     * @param a
     *           the first value
     * @param b
@@ -1306,7 +1306,7 @@ public abstract class Utils implements IUtils {
    /**
     * Finds one divided by the hypotenuse of three values.
     * Useful when normalizing vectors.
-    * 
+    *
     * @param a
     *           the first value
     * @param b
@@ -1716,7 +1716,6 @@ public abstract class Utils implements IUtils {
     */
    public static float modUnchecked ( final float a, final float b ) {
 
-      // return a - b * Utils.floor(a / b);
       final float value = a / b;
       return a - b * (value > 0.0f ? (int) value
             : value < 0.0f ? (int) value - 1.0f : 0.0f);

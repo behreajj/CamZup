@@ -441,18 +441,6 @@ public interface IYup2 extends IUp {
          final float dim ) {
 
       this.pushStyle();
-      // TODO: Deal with strokeCap, strokeJoin strokeWeight all
-      // being set by one factor in AWT and the fact that point
-      // is slower in AWT?
-      // Maybe make set stroke style that sets all three an
-      // interface
-      // method, then call it here to ensure the stroke cap is
-      // round?
-      //
-      // Use line from this to epsilon instead?
-      // Depends on whether or not the OpenGL implements
-      // point as line + EPS as well or not...
-
       this.strokeWeight(strokeWeight);
 
       final float right = dim * 0.5f;
@@ -840,6 +828,74 @@ public interface IYup2 extends IUp {
     */
    @Override
    void strokeWeight ( final float sw );
+
+   /**
+    * Displays a boolean as text at a location.
+    *
+    * @param bool
+    *           the boolean
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    */
+   default void text (
+         final boolean bool,
+         final float x,
+         final float y ) {
+
+      this.text(bool ? "true" : "false", x, y);
+   }
+
+   /**
+    * Displays a real number at a 2D location. Fixes the number
+    * display to four decimal places.
+    *
+    * @param num
+    *           the number
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    */
+   default void text (
+         final float num,
+         final float x,
+         final float y ) {
+
+      this.text(Utils.toFixed(num, 4), x, y);
+   }
+
+   /**
+    * Displays an object as text at a location. Calls the
+    * object's toString function.
+    *
+    * @param obj
+    *           the object
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    */
+   default void text (
+         final Object obj,
+         final float x,
+         final float y ) {
+
+      this.text(obj.toString(), x, y);
+   }
+
+   /**
+    * Displays a string at a coordinate.
+    *
+    * @param str
+    *           the string
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    */
+   void text ( final String str, final float x, final float y );
 
    /**
     * Generates an SVG string from several 2D curve entities.

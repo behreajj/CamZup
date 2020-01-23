@@ -79,7 +79,8 @@ public class Yup3 extends Up3 {
     *           is the renderer primary
     */
    public Yup3 (
-         final int width, final int height,
+         final int width,
+         final int height,
          final PApplet parent,
          final String path,
          final boolean isPrimary ) {
@@ -128,7 +129,10 @@ public class Yup3 extends Up3 {
     *           the depth
     */
    @Override
-   public void box ( final float w, final float h, final float d ) {
+   public void box (
+         final float w,
+         final float h,
+         final float d ) {
 
       final float wHalf = w * 0.5f;
       final float hHalf = h * 0.5f;
@@ -454,7 +458,7 @@ public class Yup3 extends Up3 {
             -this.cameraZ);
 
       /* Update renderer matrices. */
-      IUp.invert(this.modelview, this.modelviewInv);
+      PMatAux.invert(this.modelview, this.modelviewInv);
       this.camera.set(this.modelview);
       this.cameraInv.set(this.modelviewInv);
       this.updateProjmodelview();

@@ -1,5 +1,7 @@
 package camzup.pfriendly;
 
+import java.util.Iterator;
+
 import camzup.core.Color;
 import camzup.core.Curve2;
 import camzup.core.Curve2.Knot2;
@@ -11,10 +13,10 @@ import camzup.core.Transform2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
+import camzup.core.Vec4;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
-import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
@@ -138,24 +140,24 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final Transform2 transform,
          final Transform.Order trOrder ) {
 
-      final int knotLength = curve.length();
-      if (knotLength < 2) {
-         return;
-      }
-
-      final int end = curve.closedLoop ? knotLength + 1 : knotLength;
+      // FIXME: Stroke cap and join issue?
 
       Knot2 currKnot = null;
-      Knot2 prevKnot = curve.get(0);
-      Vec2 coord = prevKnot.coord;
+      Knot2 prevKnot = null;
+      Vec2 coord = null;
       Vec2 foreHandle = null;
       Vec2 rearHandle = null;
+
+      final Iterator < Knot2 > itr = curve.iterator();
+      prevKnot = itr.next();
+      coord = prevKnot.coord;
 
       this.pushMatrix();
       this.transform(transform, trOrder);
 
       final float oldSw = this.strokeWeight;
-      final float swLine = oldSw / Transform2.minDimension(transform);
+      final float swLine = oldSw /
+            Transform2.minDimension(transform);
       this.strokeWeight = swLine;
 
       this.beginShape(PConstants.POLYGON);
@@ -164,31 +166,35 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             coord.x, coord.y, 0.0f,
             this.textureU, this.textureV);
 
-      for (int i = 1; i < end; ++i) {
-         currKnot = curve.get(i % knotLength);
+      while (itr.hasNext()) {
 
+         currKnot = itr.next();
          foreHandle = prevKnot.foreHandle;
          rearHandle = currKnot.rearHandle;
          coord = currKnot.coord;
 
          this.bezierVertexImpl(
-               foreHandle.x,
-               foreHandle.y,
-               0.0f,
-
-               rearHandle.x,
-               rearHandle.y,
-               0.0f,
-
-               coord.x,
-               coord.y,
-               0.0f);
+               foreHandle.x, foreHandle.y, 0.0f,
+               rearHandle.x, rearHandle.y, 0.0f,
+               coord.x, coord.y, 0.0f);
 
          prevKnot = currKnot;
       }
 
-      this.endShape(
-            curve.closedLoop ? PConstants.CLOSE : PConstants.OPEN);
+      if (curve.closedLoop) {
+         currKnot = curve.getFirst();
+         foreHandle = prevKnot.foreHandle;
+         rearHandle = currKnot.rearHandle;
+         coord = currKnot.coord;
+
+         this.bezierVertexImpl(
+               foreHandle.x, foreHandle.y, 0.0f,
+               rearHandle.x, rearHandle.y, 0.0f,
+               coord.x, coord.y, 0.0f);
+         this.endShape(PConstants.CLOSE);
+      } else {
+         this.endShape(PConstants.OPEN);
+      }
 
       this.strokeWeight = oldSw;
       this.popMatrix();
@@ -814,10 +820,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float yAxis,
          final float zAxis ) {
 
-      IUp.rotate(angle,
+      PMatAux.rotate(angle,
             xAxis, yAxis, zAxis,
             this.modelview);
-      IUp.invRotate(angle,
+      PMatAux.invRotate(angle,
             xAxis, yAxis, zAxis,
             this.modelviewInv);
 
@@ -1212,6 +1218,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             h = Utils.abs(y1);
       }
 
+      // FIXME: Could issue with stroke weight start here??
       final boolean oldFill = this.fill;
 
       switch (mode) {
@@ -1609,7 +1616,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float bottom, final float top,
          final float near, final float far ) {
 
-      IUp.frustum(
+      PMatAux.frustum(
             left, right,
             bottom, top,
             near, far,
@@ -2003,7 +2010,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float u2, final float v2 ) {
 
       if (buff.pgl.threadIsCurrent()) {
-         this.imageImpl((PImage) buff, x1, y1, x2, y2, u1, v1, u2, v2);
+         this.imageImpl((PImage) buff,
+               x1, y1, x2, y2,
+               u1, v1, u2, v2);
       }
    }
 
@@ -2326,7 +2335,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float bottom, final float top,
          final float near, final float far ) {
 
-      IUp.orthographic(
+      PMatAux.orthographic(
             left, right,
             bottom, top,
             near, far,
@@ -2372,38 +2381,40 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float fov, final float aspect,
          final float near, final float far ) {
 
-      IUp.perspective(
+      PMatAux.perspective(
             fov, aspect,
             near, far,
             this.projection);
    }
 
+   /**
+    * Prints the camera matrix in columns, for easier viewing
+    * in the console.
+    */
    @Override
    public void printCamera () {
 
-      System.out.println(IUp.toString(this.camera, 4));
+      System.out.println(PMatAux.toString(this.camera, 4));
    }
 
+   /**
+    * Prints the modelview matrix in columns, for easier
+    * viewing in the console.
+    */
    @Override
    public void printMatrix () {
 
-      System.out.println(IUp.toString(this.modelview, 4));
+      System.out.println(PMatAux.toString(this.modelview, 4));
    }
 
+   /**
+    * Prints the projection matrix in columns, for easier
+    * viewing in the console.
+    */
    @Override
    public void printProjection () {
 
-      System.out.println(IUp.toString(this.projection, 4));
-   }
-
-   @Override
-   public void pushProjection () {
-
-      if (this.projectionStackDepth == PGraphicsOpenGL.MATRIX_STACK_DEPTH) {
-         throw new RuntimeException(PGraphics.ERROR_PUSHMATRIX_OVERFLOW);
-      }
-      this.projection.get(this.projectionStack[this.projectionStackDepth]);
-      this.projectionStackDepth++;
+      System.out.println(PMatAux.toString(this.projection, 4));
    }
 
    /**
@@ -2435,10 +2446,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
-      this.vertexImpl(x0, y0, 0.0f, 0.5f, 0.5f);
-      this.vertexImpl(x1, y1, 0.0f, 0.5f, 0.5f);
-      this.vertexImpl(x2, y2, 0.0f, 0.5f, 0.5f);
-      this.vertexImpl(x3, y3, 0.0f, 0.5f, 0.5f);
+      this.vertexImpl(x0, y0, 0.0f, 0.0f, 0.0f);
+      this.vertexImpl(x1, y1, 0.0f, 1.0f, 0.0f);
+      this.vertexImpl(x2, y2, 0.0f, 1.0f, 1.0f);
+      this.vertexImpl(x3, y3, 0.0f, 0.0f, 1.0f);
       this.endShape(PConstants.CLOSE);
    }
 
@@ -2655,8 +2666,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void rotateX ( final float angle ) {
 
-      IUp.rotateX(angle, this.modelview);
-      IUp.invRotateX(angle, this.modelviewInv);
+      PMatAux.rotateX(angle, this.modelview);
+      PMatAux.invRotateX(angle, this.modelviewInv);
       this.updateProjmodelview();
    }
 
@@ -2675,8 +2686,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void rotateY ( final float angle ) {
 
-      IUp.rotateY(angle, this.modelview);
-      IUp.invRotateY(angle, this.modelviewInv);
+      PMatAux.rotateY(angle, this.modelview);
+      PMatAux.invRotateY(angle, this.modelviewInv);
       this.updateProjmodelview();
    }
 
@@ -2695,16 +2706,50 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void rotateZ ( final float angle ) {
 
-      IUp.rotateZ(angle, this.modelview);
-      IUp.invRotateZ(angle, this.modelviewInv);
+      PMatAux.rotateZ(angle, this.modelview);
+      PMatAux.invRotateZ(angle, this.modelviewInv);
       this.updateProjmodelview();
    }
 
+   /**
+    * Attempts to find the screen position of a point in the
+    * world. Does so by
+    * <ol>
+    * <li>promoting the point to a vector 4, where its w
+    * component is 1.0 .</li>
+    * <li>multiplying the vector 4 by the modelview
+    * matrix;</li>
+    * <li>multiplying the product by the projection;</li>
+    * <li>demoting the vector 4 to a point by dividing the x, y
+    * and z components by w;</li>
+    * <li>normalizing the result by dividing by the renderer's
+    * width and height;</li>
+    * <li>shifting the normalized range.
+    * </ol>
+    * 
+    * More efficient than calling
+    * {@link PApplet#screenX(float, float, float)} ,
+    * {@link PApplet#screenY(float, float, float)} , and
+    * {@link PApplet#screenZ(float, float, float)} separately.
+    * However, it is advisable to work with {@link Vec4}s and
+    * the renderer matrices directly.
+    * 
+    * @param v
+    *           the point
+    * @param target
+    *           the output vector
+    * @return the screen point
+    */
    public Vec3 screen ( final Vec3 v, final Vec3 target ) {
 
       /*
        * Multiply point by model-view matrix.
        */
+      final float aw = this.modelview.m30 * v.x +
+            this.modelview.m31 * v.y +
+            this.modelview.m32 * v.z +
+            this.modelview.m33;
+
       final float ax = this.modelview.m00 * v.x +
             this.modelview.m01 * v.y +
             this.modelview.m02 * v.z +
@@ -2719,11 +2764,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.modelview.m21 * v.y +
             this.modelview.m22 * v.z +
             this.modelview.m23;
-
-      final float aw = this.modelview.m30 * v.x +
-            this.modelview.m31 * v.y +
-            this.modelview.m32 * v.z +
-            this.modelview.m33;
 
       /*
        * Multiply new point by projection.
@@ -2929,24 +2969,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       PApplet.showMissingWarning("shape");
       super.shape(shape, x1, y1, x2, y2);
-   }
-
-   /**
-    * Displays a boolean as text at a location.
-    *
-    * @param b
-    *           the boolean
-    * @param x
-    *           the x coordinate
-    * @param y
-    *           the y coordinate
-    */
-   public void text (
-         final boolean b,
-         final float x,
-         final float y ) {
-
-      this.text(String.valueOf(b), x, y);
    }
 
    /**
@@ -3196,25 +3218,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float z ) {
 
       this.text(num, x, y);
-   }
-
-   /**
-    * Displays an object as text at a location. Calls the
-    * object's toString function.
-    *
-    * @param obj
-    *           the object
-    * @param x
-    *           the x coordinate
-    * @param y
-    *           the y coordinate
-    */
-   public void text (
-         final Object obj,
-         final float x,
-         final float y ) {
-
-      this.text(obj.toString(), x, y);
    }
 
    /**
@@ -3809,6 +3812,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void updatePixels () {
 
       if (!this.modified) {
+
          this.mx1 = 0;
          this.mx2 = this.pixelWidth;
          this.my1 = 0;
@@ -3816,12 +3820,14 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          this.modified = true;
 
       } else {
+
          if (0 < this.mx1) {
             this.mx1 = 0;
          }
          if (0 > this.mx2) {
             this.mx2 = PApplet.min(this.pixelWidth, 0);
          }
+
          if (0 < this.my1) {
             this.my1 = 0;
          }
@@ -3835,6 +3841,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          if (this.pixelWidth > this.mx2) {
             this.mx2 = this.pixelWidth;
          }
+
          if (this.pixelHeight < this.my1) {
             this.my1 = PApplet.max(0, this.pixelHeight);
          }

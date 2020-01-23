@@ -267,7 +267,7 @@ public class Zup3 extends Up3 {
             -this.cameraZ);
 
       /* Update renderer matrices. */
-      IUp.invert(this.modelview, this.modelviewInv);
+      PMatAux.invert(this.modelview, this.modelviewInv);
       this.camera.set(this.modelview);
       this.cameraInv.set(this.modelviewInv);
       this.updateProjmodelview();
@@ -362,30 +362,6 @@ public class Zup3 extends Up3 {
          }
       }
    }
-
-   // @Override
-   // public void updateGLNormal (
-   // final float m00, final float m01, final float m02,
-   // final float m10, final float m11, final float m12,
-   // final float m20, final float m21, final float m22 ) {
-   //
-   // if (this.glNormal == null) {
-   // this.glNormal = new float[9];
-   // }
-   //
-   // TODO: Normals in cam zup screwed up.
-   // this.glNormal[0] = m00;
-   // this.glNormal[1] = m02;
-   // this.glNormal[2] = m01;
-   //
-   // this.glNormal[3] = m20;
-   // this.glNormal[4] = m22;
-   // this.glNormal[5] = m21;
-   //
-   // this.glNormal[6] = m10;
-   // this.glNormal[7] = m12;
-   // this.glNormal[8] = m11;
-   // }
 
    /**
     * Set size is the last function called by size,

@@ -284,14 +284,14 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             this.cameraZoomX,
             this.cameraZoomY,
             1.0f);
-      IUp.rotateZ(-radians, this.modelview);
+      PMatAux.rotateZ(-radians, this.modelview);
       this.modelview.translate(
             -this.cameraX,
             -this.cameraY,
             -zDist);
 
       this.projmodelview.set(this.projection);
-      IUp.invert(this.modelview, this.modelviewInv);
+      PMatAux.invert(this.modelview, this.modelviewInv);
       this.camera.set(this.modelview);
       this.cameraInv.set(this.modelviewInv);
    }

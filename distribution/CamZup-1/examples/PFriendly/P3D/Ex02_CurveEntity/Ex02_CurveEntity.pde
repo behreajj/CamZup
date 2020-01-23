@@ -22,7 +22,6 @@ CurveEntity3 entity = new CurveEntity3("Example", transform, curve)
 void setup() {
   size(720, 405, "camzup.pfriendly.Yup3");
   smooth(8);
-  ortho();
   graphics3 = (Yup3)getGraphics();
 }
 

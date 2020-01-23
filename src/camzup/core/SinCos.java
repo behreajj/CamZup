@@ -63,8 +63,8 @@ public abstract class SinCos {
     * Fifth factor in the power series used by eval.
     * Approximately 19.739208 .
     */
-   public static final float  FAC4   = 19.739208f;
-   
+   public static final float FAC4 = 19.739208f;
+
    /**
     * Fifth factor in the power series used by eval.
     * Approximately 19.7392082214 .
