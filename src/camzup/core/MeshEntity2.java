@@ -189,6 +189,8 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
     */
    public String toSvgString () {
 
+      // TODO: Use mesh iterator.
+
       final StringBuilder result = new StringBuilder()
             .append("<g id=\"")
             .append(this.name.toLowerCase())
@@ -196,20 +198,45 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
             .append(this.transform.toSvgString())
             .append(">\n");
 
+      final float scale = Transform2.minDimension(this.transform);
+      final boolean includesMats = this.materials.size() > 0;
+
+      /*
+       * If no materials are present, use a default one instead.
+       */
+      if (!includesMats) {
+         result.append(MaterialSolid.defaultSvgMaterial(scale));
+      }
+
       for (final Mesh2 mesh : this.meshes) {
 
-         /*
-          * It would be more efficient to create a defs block that
-          * contains the data for each material, which is then used
-          * by a mesh element with xlink, but such tags are ignored
-          * when Processing imports an SVG with loadShape.
-          */
-         final MaterialSolid material = this.materials.get(mesh.materialIndex);
-         result.append("<g ")
-               .append(material.toSvgString())
-               .append(">\n")
-               .append(mesh.toSvgString())
+         if (includesMats) {
+
+            /*
+             * It would be more efficient to create a defs block that
+             * contains the data for each material, which is then used
+             * by a mesh element with xlink, but such tags are ignored
+             * when Processing imports an SVG with loadShape.
+             */
+            final MaterialSolid material = this.materials
+                  .get(mesh.materialIndex);
+            result.append("<g ")
+                  .append(material.toSvgString())
+                  .append(">\n");
+         }
+
+         result.append(mesh.toSvgString())
                .append("</g>\n");
+
+         /* Close out material group. */
+         if (includesMats) {
+            result.append("</g>\n");
+         }
+      }
+
+      /* Close out default material group. */
+      if (!includesMats) {
+         result.append("</g>\n");
       }
 
       result.append("</g>");

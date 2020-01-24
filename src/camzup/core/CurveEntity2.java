@@ -432,6 +432,8 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
     */
    public String toSvgString () {
 
+      // TODO: Use curve iterator.
+
       final StringBuilder result = new StringBuilder()
             .append("<g id=\"")
             .append(this.name.toLowerCase())
@@ -448,10 +450,7 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
        * If no materials are present, use a default one instead.
        */
       if (!includesMats) {
-         result.append("<g stroke-width=\"")
-               .append(Utils.toFixed(1.125f / scale, 4))
-               .append("\" stroke-opacity=\"1.0\" stroke=\"#202020\"")
-               .append(" fill-opacity=\"1.0\" fill=\"#9ad8e2\">\n");
+         result.append(MaterialSolid.defaultSvgMaterial(scale));
       }
 
       for (final Curve2 curve : this.curves) {
@@ -459,9 +458,10 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
          if (includesMats) {
 
             /*
-             * This is inefficient, as it invites the repetitive
-             * inclusion of the same material; however, Processing does
-             * not support definitions and references to them.
+             * It would be more efficient to create a defs block that
+             * contains the data for each material, which is then used
+             * by a mesh element with xlink, but such tags are ignored
+             * when Processing imports an SVG with loadShape.
              */
             final MaterialSolid material = this.materials
                   .get(curve.materialIndex);
@@ -474,16 +474,14 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
          result.append(curve.toSvgString())
                .append('\n');
 
+         /* Close out material group. */
          if (includesMats) {
-
-            /* Close out material group. */
             result.append("</g>\n");
          }
       }
 
+      /* Close out default material. */
       if (!includesMats) {
-
-         /* Close out default material group. */
          result.append("</g>\n");
       }
 

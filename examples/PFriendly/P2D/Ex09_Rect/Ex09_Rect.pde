@@ -9,7 +9,6 @@ void setup() {
   noStroke();
 }
 
-
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
   background(#202020);

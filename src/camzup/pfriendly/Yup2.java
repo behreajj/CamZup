@@ -10,7 +10,6 @@ import camzup.core.Mat3;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
 import camzup.core.MeshEntity2;
-import camzup.core.Transform2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import processing.core.PApplet;
@@ -782,18 +781,20 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
          final int xColor,
          final int yColor ) {
 
+      final float vl = Utils.max(Utils.EPSILON, lineLength);
+
       this.pushStyle();
 
       this.strokeWeight(strokeWeight);
       this.stroke(xColor);
       this.lineImpl(
             0.0f, 0.0f, 0.0f,
-            lineLength, 0.0f, 0.0f);
+            vl, 0.0f, 0.0f);
 
       this.stroke(yColor);
       this.lineImpl(
             0.0f, 0.0f, 0.0f,
-            0.0f, lineLength, 0.0f);
+            0.0f, vl, 0.0f);
 
       this.popStyle();
    }
@@ -932,14 +933,12 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     */
    public void shape ( final CurveEntity2 entity ) {
 
-      final LinkedList < Curve2 > curves = entity.curves;
+      this.pushMatrix();
+      this.transform(entity.transform, entity.transformOrder);
+
       final LinkedList < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
-
-      final Transform2 tr = entity.transform;
-      final Vec2 v0 = new Vec2();
-      final Vec2 v1 = new Vec2();
-      final Vec2 v2 = new Vec2();
+      final Iterator < Curve2 > citr = entity.curves.iterator();
 
       Knot2 currKnot;
       Knot2 prevKnot;
@@ -947,7 +946,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       Vec2 foreHandle;
       Vec2 rearHandle;
 
-      for (final Curve2 curve : curves) {
+      while (citr.hasNext()) {
+         final Curve2 curve = citr.next();
 
          if (useMaterial) {
             this.pushStyle();
@@ -955,30 +955,26 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
                   curve.materialIndex));
          }
 
-         final Iterator < Knot2 > itr = curve.iterator();
-         prevKnot = itr.next();
+         final Iterator < Knot2 > knitr = curve.iterator();
+         prevKnot = knitr.next();
          coord = prevKnot.coord;
-         Transform2.mulPoint(tr, coord, v2);
+
          this.beginShape();
          this.vertexImpl(
-               v2.x, v2.y, 0.0f,
+               coord.x, coord.y, 0.0f,
                this.textureU,
                this.textureV);
 
-         while (itr.hasNext()) {
-            currKnot = itr.next();
+         while (knitr.hasNext()) {
+            currKnot = knitr.next();
             foreHandle = prevKnot.foreHandle;
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
-            Transform2.mulPoint(tr, foreHandle, v0);
-            Transform2.mulPoint(tr, rearHandle, v1);
-            Transform2.mulPoint(tr, coord, v2);
-
             this.bezierVertexImpl(
-                  v0.x, v0.y, 0.0f,
-                  v1.x, v1.y, 0.0f,
-                  v2.x, v2.y, 0.0f);
+                  foreHandle.x, foreHandle.y, 0.0f,
+                  rearHandle.x, rearHandle.y, 0.0f,
+                  coord.x, coord.y, 0.0f);
 
             prevKnot = currKnot;
          }
@@ -989,14 +985,10 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
-            Transform2.mulPoint(tr, foreHandle, v0);
-            Transform2.mulPoint(tr, rearHandle, v1);
-            Transform2.mulPoint(tr, coord, v2);
-
             this.bezierVertexImpl(
-                  v0.x, v0.y, 0.0f,
-                  v1.x, v1.y, 0.0f,
-                  v2.x, v2.y, 0.0f);
+                  foreHandle.x, foreHandle.y, 0.0f,
+                  rearHandle.x, rearHandle.y, 0.0f,
+                  coord.x, coord.y, 0.0f);
             this.endShape(PConstants.CLOSE);
          } else {
             this.endShape(PConstants.OPEN);
@@ -1006,6 +998,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             this.popStyle();
          }
       }
+
+      this.popMatrix();
    }
 
    /**

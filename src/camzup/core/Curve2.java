@@ -1389,8 +1389,7 @@ public class Curve2 extends Curve
       final LinkedList < Knot2 > knots = target.knots;
       for (int i = 0; i < knotCount; ++i) {
          final Vec2 point = points[i];
-         final Knot2 knot = new Knot2(point, point, point);
-         knots.addLast(knot);
+         knots.addLast(new Knot2(point, point, point));
       }
       return Curve2.smoothHandles(target);
    }

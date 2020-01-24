@@ -173,7 +173,7 @@ public interface IUp {
    /**
     * Default stroke weight.
     */
-   float DEFAULT_STROKE_WEIGHT = 1.0f;
+   float DEFAULT_STROKE_WEIGHT = 1.125f;
 
    /**
     * Default text leading.

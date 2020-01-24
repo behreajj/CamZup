@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import camzup.core.Curve2.Knot2;
-
 /**
  * Organizes a Bezier curve into a list of knots. Provides a
  * function to retrieve a point and tangent on a curve from
@@ -1400,7 +1398,7 @@ public class Curve3 extends Curve
 
       target.clear();
       target.closedLoop = true;
-      
+
       final float offset1 = offsetAngle * IUtils.ONE_TAU;
       final int vknct = knotCount < 3 ? 3 : knotCount;
       final float invKnCt = 1.0f / vknct;
@@ -1448,8 +1446,7 @@ public class Curve3 extends Curve
       final LinkedList < Knot3 > knots = target.knots;
       for (int i = 0; i < knotCount; ++i) {
          final Vec3 point = points[i];
-         final Knot3 knot = new Knot3(point, point, point);
-         knots.addLast(knot);
+         knots.addLast(new Knot3(point, point, point));
       }
       return Curve3.smoothHandles(target);
    }
@@ -2575,6 +2572,9 @@ public class Curve3 extends Curve
     */
    @Experimental
    public String toObjString ( final int precision ) {
+
+      // TODO: Create a toPolyLine function based on parameterized
+      // curve which provide a better result for this function.
 
       final StringBuilder result = new StringBuilder();
       final Vec3[][] segments = this.evalRange(precision);

@@ -4,7 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -55,6 +55,16 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    public static final float DEFAULT_ZOOM_Y = 1.0f;
 
+   static Vec2 lerp13 (
+         final Vec2 a,
+         final Vec2 b,
+         final Vec2 target ) {
+
+      return target.set(
+            0.6666667f * a.x + IUtils.ONE_THIRD * b.x,
+            0.6666667f * a.y + IUtils.ONE_THIRD * b.y);
+   }
+
    /**
     * A Java AWT affine transform object. This is cached so a
     * new object is not created when accessing or mutating the
@@ -66,9 +76,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          0.0d, 0.0d);
 
    /**
-    * A Java AWT arc object.
+    * A Java AWT arc object. This uses double precision, as
+    * Arc2D.Float simply casts between float and double anyway.
     */
-   protected final Arc2D.Float arc = new Arc2D.Float();
+   protected final Arc2D.Double arc = new Arc2D.Double();
 
    /**
     * A placeholder color used during lerpColor.
@@ -82,8 +93,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
    /**
     * Representation of a stroke cap in the native AWT library.
-    *
-    * @see BasicStroke
     */
    protected int capNative = BasicStroke.CAP_ROUND;
 
@@ -96,7 +105,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * A Java AWT general path object. This is reset when a new
     * shape needs to be displayed in draw.
     */
-   protected final GeneralPath gp = new GeneralPath();
+   protected final Path2D.Double gp = new Path2D.Double();
 
    /**
     * One divided by the maximum for the alpha channel.
@@ -169,6 +178,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    public float cameraZoomY = 1.0f;
 
    /**
+    * The miter limit supplied to the basic stroke.
+    */
+   public float miterLimit = 1.0f;
+
+   /**
     * The default constructor.
     */
    public YupJ2 () {
@@ -216,11 +230,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the arc width
     * @param h
     *           the arc height
-    * @param start
+    * @param startAngle
     *           the start angle
-    * @param stop
+    * @param stopAngle
     *           the stop angle
-    * @param mode
+    * @param arcMode
     *           the arc mode
     */
    @Override
@@ -229,19 +243,24 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float y,
          final float w,
          final float h,
-         final float start,
-         final float stop,
-         final int mode ) {
+         final float startAngle,
+         final float stopAngle,
+         final int arcMode ) {
 
-      final float a = 1.0f - Utils.mod1(start * IUtils.ONE_TAU);
-      final float b = 1.0f - Utils.mod1(stop * IUtils.ONE_TAU);
-      final float c = 360.0f * a;
-      final float d = 360.0f * Utils.mod1(b - a);
+      /*
+       * The Arc2D object uses double precision real numbers --
+       * regardless of whether the "Float" version is used or not.
+       * So if nothing else, using doubles spares (float) casts.
+       */
+      final double a = 1.0d - Utils.mod1(startAngle * IUtils.ONE_TAU_D);
+      final double b = 1.0d - Utils.mod1(stopAngle * IUtils.ONE_TAU_D);
+      final double c = 360.0d * a;
+      final double d = 360.0d * Utils.mod1(b - a);
 
       int fillMode = Arc2D.PIE;
       int strokeMode = Arc2D.OPEN;
 
-      switch (mode) {
+      switch (arcMode) {
 
          case PConstants.PIE:
 
@@ -261,7 +280,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          default:
 
             fillMode = Arc2D.OPEN;
-
       }
 
       if (this.fill) {
@@ -273,6 +291,107 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          this.arc.setArc(x, y, w, h, c, d, strokeMode);
          this.strokeShape(this.arc);
       }
+   }
+
+   protected void arcImpl2 (
+         final float x,
+         final float y,
+         final float extent,
+         final float startAngle,
+         final float stopAngle,
+         final int arcMode ) {
+
+      // final Curve2.Knot2[] arcKnots = new Curve2.Knot2[] {
+      // new Curve2.Knot2(),
+      // new Curve2.Knot2(),
+      // new Curve2.Knot2(),
+      // new Curve2.Knot2(),
+      // new Curve2.Knot2() };
+
+      // if (Utils.approx(stopAngle - startAngle, IUtils.TAU,
+      // 0.00139f)) {
+      // this.ellipse(x, y, extent, extent);
+      // return;
+      // }
+
+      // final float a1 = Utils.mod1(startAngle * IUtils.ONE_TAU);
+      // final float b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU);
+      // final float arcLen1 = Utils.mod1(b1 - a1);
+      // final float destAngle1 = a1 + arcLen1;
+      // final boolean isPie = arcMode == PConstants.PIE;
+      // final int knotCount = isPie ? 4 : 5;
+      // final float toStep = 1.0f / (knotCount - 1.0f);
+      // final float hndtn = 0.25f * toStep * arcLen1;
+      // final float cost = SinCos.eval(hndtn);
+      // final float handleMag = cost == 0.0f ? 0.0f
+      // : SinCos.eval(hndtn - 0.25f) / cost
+      // * extent * IUtils.FOUR_THIRDS;
+
+      // for (int i = 0; i < knotCount; ++i) {
+      // final float angle1 = Utils.lerpUnclamped(
+      // a1, destAngle1, i * toStep);
+      // Knot2.fromPolar(
+      // SinCos.eval(angle1),
+      // SinCos.eval(angle1 - 0.25f),
+      // extent, handleMag,
+      // YupJ2.arcKnots[i]);
+      // }
+
+      // if (arcMode != PConstants.OPEN) {
+      // if (isPie) {
+      // final Knot2 first = YupJ2.arcKnots[0];
+      // final Knot2 last = YupJ2.arcKnots[3];
+      // final Knot2 center = YupJ2.arcKnots[4] = new Knot2(x, y);
+      // final Vec2 coCenter = center.coord;
+      // YupJ2.lerp13(coCenter, last.coord, center.rearHandle);
+      // YupJ2.lerp13(coCenter, first.coord, center.foreHandle);
+      // YupJ2.lerp13(first.coord, coCenter, first.rearHandle);
+      // YupJ2.lerp13(last.coord, coCenter, last.foreHandle);
+      // } else if (arcMode == PConstants.CHORD) {
+      // final Knot2 first = YupJ2.arcKnots[0];
+      // final Knot2 last = YupJ2.arcKnots[4];
+      // YupJ2.lerp13(last.coord, first.coord, last.foreHandle);
+      // YupJ2.lerp13(first.coord, last.coord, first.rearHandle);
+      // }
+      // }
+
+      // Knot2 currKnot = null;
+      // Knot2 prevKnot = YupJ2.arcKnots[0];
+
+      // Vec2 v0 = null;
+      // Vec2 v1 = null;
+      // Vec2 v2 = prevKnot.coord;
+
+      // this.gp.reset();
+      // this.gp.moveTo(v2.x, v2.y);
+
+      // for (int i = 1; i < 5; ++i) {
+      // currKnot = YupJ2.arcKnots[i];
+      // v0 = prevKnot.foreHandle;
+      // v1 = currKnot.rearHandle;
+      // v2 = currKnot.coord;
+
+      // this.gp.curveTo(
+      // v0.x, v0.y,
+      // v1.x, v1.y,
+      // v2.x, v2.y);
+      // prevKnot = currKnot;
+      // }
+
+      // if (isPie) {
+      // currKnot = YupJ2.arcKnots[0];
+      // v0 = prevKnot.foreHandle;
+      // v1 = currKnot.rearHandle;
+      // v2 = currKnot.coord;
+
+      // this.gp.curveTo(
+      // v0.x, v0.y,
+      // v1.x, v1.y,
+      // v2.x, v2.y);
+      // this.gp.closePath();
+      // }
+
+      // this.drawShape(this.gp);
    }
 
    /**
@@ -476,7 +595,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       if (this.bezierBasisInverse == null) {
          this.bezierBasisInverse = new PMatrix3D(this.bezierBasisMatrix);
          this.bezierBasisInverse.invert();
-
          this.curveToBezierMatrix = new PMatrix3D();
       }
 
@@ -643,9 +761,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * BasicStroke objects instantiated.
     *
     * @param strokeCap
-    *           the stroke cap
+    *           the stroke cap {SQUARE, PROJECT, ROUND}
     * @param strokeJoin
-    *           the stroke join
+    *           the stroke join {MITER, BEVEL, ROUND}
     * @param strokeWeight
     *           the stroke weight
     * @see YupJ2#chooseStrokeCap(int)
@@ -678,7 +796,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * strokeImpl should be minimized in internal code.
     *
     * @see YupJ2#setStroke(int, int, float)
-    * @see BasicStroke#BasicStroke(float, int, int)
+    * @see BasicStroke#BasicStroke(float, int, int, float)
     * @see Graphics2D#setStroke(java.awt.Stroke)
     */
    @Override
@@ -687,7 +805,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.strokeObject = new BasicStroke(
             this.strokeWeight,
             this.capNative,
-            this.joinNative);
+            this.joinNative,
+            this.miterLimit);
+
       this.g2.setStroke(this.strokeObject);
    }
 
@@ -1367,8 +1487,24 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.curveVertex(a.x, a.y);
    }
 
+   /**
+    * Draws an ellipse. The parameters meanings are determined
+    * by the ellipseMode.
+    *
+    * @param x
+    *           the x coordinate
+    * @param y
+    *           the y coordinate
+    * @param w
+    *           the third parameter
+    * @param h
+    *           the fourth parameter
+    */
    @Override
-   public void ellipse ( final float x, final float y, final float w,
+   public void ellipse (
+         final float x,
+         final float y,
+         final float w,
          final float h ) {
 
       float extapw = 0.0f;
@@ -1607,7 +1743,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * @return the renderer matrix
     */
    @Override
-   public PMatrix2D getMatrix ( PMatrix2D target ) {
+   public PMatrix2D getMatrix ( final PMatrix2D target ) {
 
       return PMatAux.fromAwt(this.g2.getTransform(), target);
    }
@@ -1620,7 +1756,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * @return the renderer matrix
     */
    @Override
-   public PMatrix3D getMatrix ( PMatrix3D target ) {
+   public PMatrix3D getMatrix ( final PMatrix3D target ) {
 
       return PMatAux.fromAwt(this.g2.getTransform(), target);
    }
@@ -1740,11 +1876,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          reds[j] = (int) (jPercent * 0xff + 0.5f) << 0x10;
       }
 
-      this.strokeObject = new BasicStroke(
-            Utils.max(PConstants.EPSILON, strokeWeight),
-            BasicStroke.CAP_ROUND,
-            this.joinNative);
-      this.g2.setStroke(this.strokeObject);
+      this.pushStyle();
+      this.setStroke(PConstants.ROUND, PConstants.ROUND, strokeWeight);
 
       for (int i = 0; i < last; ++i) {
          final float iPercent = i * toPercent;
@@ -1760,11 +1893,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          }
       }
 
-      this.strokeObject = new BasicStroke(
-            this.strokeWeight,
-            this.capNative,
-            this.joinNative);
-      this.g2.setStroke(this.strokeObject);
+      this.popStyle();
    }
 
    /**
@@ -2413,18 +2542,20 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final int xColor,
          final int yColor ) {
 
+      final float vl = Utils.max(Utils.EPSILON, lineLength);
+
       this.pushStyle();
 
-      this.strokeWeight(strokeWeight);
+      this.setStroke(PConstants.ROUND, PConstants.ROUND, strokeWeight);
       this.stroke(xColor);
       this.line(
             0.0f, 0.0f,
-            lineLength, 0.0f);
+            vl, 0.0f);
 
       this.stroke(yColor);
       this.line(
             0.0f, 0.0f,
-            0.0f, lineLength);
+            0.0f, vl);
 
       this.popStyle();
    }
@@ -2451,7 +2582,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          this.strokeObject = new BasicStroke(
                this.strokeWeight,
                BasicStroke.CAP_SQUARE,
-               this.joinNative);
+               this.joinNative,
+               this.miterLimit);
          this.g2.setStroke(this.strokeObject);
 
          this.line(x, y, x + PConstants.EPSILON, y);
@@ -2459,7 +2591,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          this.strokeObject = new BasicStroke(
                this.strokeWeight,
                this.capNative,
-               this.joinNative);
+               this.joinNative,
+               this.miterLimit);
          this.g2.setStroke(this.strokeObject);
 
       } else {
@@ -3006,31 +3139,28 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    }
 
    /**
-    * Displays a curve entity.
+    * Draws a 2D curve entity.
     *
     * @param entity
-    *           the entity
+    *           the curve entity
     */
    public void shape ( final CurveEntity2 entity ) {
 
-      // FIXME: curve materials not showing??
+      this.pushMatrix();
+      this.transform(entity.transform, entity.transformOrder);
 
-      final LinkedList < Curve2 > curves = entity.curves;
       final LinkedList < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
+      final Iterator < Curve2 > citr = entity.curves.iterator();
 
-      final Transform2 tr = entity.transform;
-      final Vec2 v0 = new Vec2();
-      final Vec2 v1 = new Vec2();
-      final Vec2 v2 = new Vec2();
+      Knot2 currKnot;
+      Knot2 prevKnot;
+      Vec2 coord;
+      Vec2 foreHandle;
+      Vec2 rearHandle;
 
-      Knot2 currKnot = null;
-      Knot2 prevKnot = null;
-      Vec2 coord = null;
-      Vec2 foreHandle = null;
-      Vec2 rearHandle = null;
-
-      for (final Curve2 curve : curves) {
+      while (citr.hasNext()) {
+         final Curve2 curve = citr.next();
 
          if (useMaterial) {
             this.pushStyle();
@@ -3038,30 +3168,23 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
                   curve.materialIndex));
          }
 
-         final Iterator < Knot2 > itr = curve.iterator();
-         prevKnot = itr.next();
+         final Iterator < Knot2 > knitr = curve.iterator();
+         prevKnot = knitr.next();
          coord = prevKnot.coord;
 
-         Transform2.mulPoint(tr, coord, v2);
-
          this.gp.reset();
-         this.gp.moveTo(v2.x, v2.y);
+         this.gp.moveTo(coord.x, coord.y);
 
-         while (itr.hasNext()) {
-
-            currKnot = itr.next();
+         while (knitr.hasNext()) {
+            currKnot = knitr.next();
             foreHandle = prevKnot.foreHandle;
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
-            Transform2.mulPoint(tr, foreHandle, v0);
-            Transform2.mulPoint(tr, rearHandle, v1);
-            Transform2.mulPoint(tr, coord, v2);
-
             this.gp.curveTo(
-                  v0.x, v0.y,
-                  v1.x, v1.y,
-                  v2.x, v2.y);
+                  foreHandle.x, foreHandle.y,
+                  rearHandle.x, rearHandle.y,
+                  coord.x, coord.y);
 
             prevKnot = currKnot;
          }
@@ -3072,14 +3195,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
-            Transform2.mulPoint(tr, foreHandle, v0);
-            Transform2.mulPoint(tr, rearHandle, v1);
-            Transform2.mulPoint(tr, coord, v2);
-
             this.gp.curveTo(
-                  v0.x, v0.y,
-                  v1.x, v1.y,
-                  v2.x, v2.y);
+                  foreHandle.x, foreHandle.y,
+                  rearHandle.x, rearHandle.y,
+                  coord.x, coord.y);
             this.gp.closePath();
          }
 
@@ -3089,6 +3208,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             this.popStyle();
          }
       }
+
+      this.popMatrix();
    }
 
    /**
@@ -3189,6 +3310,95 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
       PApplet.showMissingWarning("shape");
       super.shape(shape, x1, y1, x2, y2);
+   }
+
+   /**
+    * Displays a curve entity.
+    *
+    * @param entity
+    *           the entity
+    */
+   public void shape0 ( final CurveEntity2 entity ) {
+
+      // FIXME: curve materials not showing??
+      // FIXME: Handles rotate with the transform, but the curve
+      // shape does not. Return to using pushMatrix and popMatrix
+      // instead?
+
+      final LinkedList < Curve2 > curves = entity.curves;
+      final LinkedList < MaterialSolid > materials = entity.materials;
+      final boolean useMaterial = !materials.isEmpty();
+
+      final Transform2 tr = entity.transform;
+      final Vec2 v0 = new Vec2();
+      final Vec2 v1 = new Vec2();
+      final Vec2 v2 = new Vec2();
+
+      Knot2 currKnot = null;
+      Knot2 prevKnot = null;
+      Vec2 coord = null;
+      Vec2 foreHandle = null;
+      Vec2 rearHandle = null;
+
+      for (final Curve2 curve : curves) {
+
+         if (useMaterial) {
+            this.pushStyle();
+            this.material(materials.get(
+                  curve.materialIndex));
+         }
+
+         final Iterator < Knot2 > itr = curve.iterator();
+         prevKnot = itr.next();
+         coord = prevKnot.coord;
+
+         Transform2.mulPoint(tr, coord, v2);
+
+         this.gp.reset();
+         this.gp.moveTo(v2.x, v2.y);
+
+         while (itr.hasNext()) {
+
+            currKnot = itr.next();
+            foreHandle = prevKnot.foreHandle;
+            rearHandle = currKnot.rearHandle;
+            coord = currKnot.coord;
+
+            Transform2.mulPoint(tr, foreHandle, v0);
+            Transform2.mulPoint(tr, rearHandle, v1);
+            Transform2.mulPoint(tr, coord, v2);
+
+            this.gp.curveTo(
+                  v0.x, v0.y,
+                  v1.x, v1.y,
+                  v2.x, v2.y);
+
+            prevKnot = currKnot;
+         }
+
+         if (curve.closedLoop) {
+            currKnot = curve.getFirst();
+            foreHandle = prevKnot.foreHandle;
+            rearHandle = currKnot.rearHandle;
+            coord = currKnot.coord;
+
+            Transform2.mulPoint(tr, foreHandle, v0);
+            Transform2.mulPoint(tr, rearHandle, v1);
+            Transform2.mulPoint(tr, coord, v2);
+
+            this.gp.curveTo(
+                  v0.x, v0.y,
+                  v1.x, v1.y,
+                  v2.x, v2.y);
+            this.gp.closePath();
+         }
+
+         this.drawShape(this.gp);
+
+         if (useMaterial) {
+            this.popStyle();
+         }
+      }
    }
 
    /**

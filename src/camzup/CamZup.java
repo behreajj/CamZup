@@ -91,7 +91,6 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       final Random rng = new Random();
-      System.out.println(rng);
 
       // final Color target = new Color();
       // for (int i = 0; i < 20; ++i) {
@@ -115,8 +114,6 @@ public class CamZup {
       // }
       // System.out.println(String.format("Max Diff: %.6f",
       // maxDiff));
-
-      // System.out.println(Complex.sqrt(-45, new Complex()));
    }
 
    /**

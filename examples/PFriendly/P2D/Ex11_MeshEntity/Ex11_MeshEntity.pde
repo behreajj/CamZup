@@ -7,12 +7,12 @@ MaterialSolid material = new MaterialSolid()
   .setStroke(true)
   .setStroke(#ffbfaf)
   .setFill(true)
-  .setFill(#7f003f)
+  .setFill(#7f000f)
   .setStrokeWeight(0.01);
 
 Transform2 transform = new Transform2()
-  .moveTo(new Vec2(100.0, 50.0))
-  .scaleTo(100.0);
+  .moveTo(new Vec2(-100.0, -50.0))
+  .scaleTo(150.0);
 
 Mesh2 mesh = Mesh2.polygon(new Mesh2(), 6, Mesh2.PolyType.TRI);
 
@@ -27,7 +27,7 @@ void setup() {
 }
 
 void draw() {
-  entity.transform.rotateZ(0.05);
+  entity.transform.rotateZ(0.025);
 
   surface.setTitle(Utils.toFixed(frameRate, 1));
 

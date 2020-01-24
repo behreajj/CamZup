@@ -1,11 +1,42 @@
 package camzup.core;
 
+import camzup.pfriendly.IUp;
+
 /**
  * A material which holds data to display materials with
  * solid colors only (no textures, or patterns). Contains
  * data for a fill and/or stroke.
  */
 public class MaterialSolid extends Material {
+
+   public static final String DEFAULT_SVG_STR_CAP = "round";
+
+   public static final String DEFAULT_SVG_STR_JOIN = "round";
+
+   public static final float SVG_MIN_STROKE_WT = 0.005f;
+
+   public static String defaultSvgMaterial ( final float scale ) {
+
+      final String strokeStr = Utils.toFixed(Utils.max(
+            MaterialSolid.SVG_MIN_STROKE_WT,
+            IUp.DEFAULT_STROKE_WEIGHT / scale), 4);
+
+      final StringBuilder result = new StringBuilder();
+      result.append("<g stroke-width=\"")
+            .append(strokeStr)
+            .append("\" stroke-opacity=\"1.0\" stroke=\"#")
+            .append(Integer.toHexString(IUp.DEFAULT_STROKE_COLOR)
+                  .substring(2))
+            .append("\" fill-opacity=\"1.0\" fill=\"#")
+            .append(Integer.toHexString(IUp.DEFAULT_FILL_COLOR)
+                  .substring(2))
+            .append("\" stroke-linejoin=\"")
+            .append(MaterialSolid.DEFAULT_SVG_STR_JOIN)
+            .append("\" stroke-linecap=\"")
+            .append(MaterialSolid.DEFAULT_SVG_STR_CAP)
+            .append("\">\n");
+      return result.toString();
+   }
 
    /**
     * The fill color.
@@ -36,6 +67,8 @@ public class MaterialSolid extends Material {
     * The default constructor.
     */
    public MaterialSolid () {
+
+      // TODO: Add stroke cap and stroke join options?
 
       super();
    }
@@ -207,7 +240,7 @@ public class MaterialSolid extends Material {
    @Chainable
    public MaterialSolid setStrokeWeight ( final float strokeWeight ) {
 
-      this.strokeWeight = strokeWeight;
+      this.strokeWeight = Utils.max(Utils.EPSILON, strokeWeight);
       return this;
    }
 
@@ -258,16 +291,26 @@ public class MaterialSolid extends Material {
     */
    public String toSvgString ( final float transformScale ) {
 
+      // TODO: If this is updated to include stroke cap and join,
+      // update this method to return those, not defaults.
+
+      final String strokeStr = Utils.toFixed(Utils.max(
+            MaterialSolid.SVG_MIN_STROKE_WT,
+            this.strokeWeight / transformScale), 4);
       final StringBuilder result = new StringBuilder(32);
 
       /* Stroke style. */
       if (this.useStroke) {
          result.append("stroke-width=\"")
-               .append(Utils.toFixed(this.strokeWeight / transformScale, 4))
+               .append(strokeStr)
                .append("\" stroke-opacity=\"")
                .append(Utils.toFixed(Utils.clamp01(this.stroke.w), 2))
                .append("\" stroke=\"")
                .append(Color.toHexWeb(this.stroke))
+               .append("\" stroke-linejoin=\"")
+               .append(MaterialSolid.DEFAULT_SVG_STR_JOIN)
+               .append("\" stroke-linecap=\"")
+               .append(MaterialSolid.DEFAULT_SVG_STR_CAP)
                .append('\"')
                .append(' ');
       } else {
