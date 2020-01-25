@@ -1,7 +1,7 @@
 package camzup.pfriendly;
 
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 
 import camzup.core.Color;
 import camzup.core.Curve3;
@@ -524,11 +524,17 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final float swFore = swRear * 1.25f;
       final float swCoord = swFore * 1.25f;
 
-      final LinkedList < Curve3 > curves = ce.curves;
+      final List < Curve3 > curves = ce.curves;
+      final Iterator < Curve3 > curveItr = curves.iterator();
+      Iterator < Knot3 > knItr = null;
 
-      // TODO: Replace enhanced for loops with iterators.
-      for (final Curve3 curve : curves) {
-         for (final Knot3 knot : curve) {
+      while (curveItr.hasNext()) {
+         final Curve3 curve = curveItr.next();
+         knItr = curve.iterator();
+
+         while (knItr.hasNext()) {
+            final Knot3 knot = knItr.next();
+
             final Vec3 coord = knot.coord;
             final Vec3 foreHandle = knot.foreHandle;
             final Vec3 rearHandle = knot.rearHandle;
@@ -796,8 +802,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
    public void shape ( final CurveEntity3 entity ) {
 
-      final LinkedList < Curve3 > curves = entity.curves;
-      final LinkedList < MaterialSolid > materials = entity.materials;
+      final List < Curve3 > curves = entity.curves;
+      final Iterator < Curve3 > curveItr = curves.iterator();
+      final List < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
 
       final Transform3 tr = entity.transform;
@@ -811,7 +818,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       Vec3 foreHandle;
       Vec3 rearHandle;
 
-      for (final Curve3 curve : curves) {
+      while (curveItr.hasNext()) {
+         final Curve3 curve = curveItr.next();
 
          if (useMaterial) {
             this.pushStyle();
@@ -819,8 +827,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
                   curve.materialIndex));
          }
 
-         final Iterator < Knot3 > itr = curve.iterator();
-         prevKnot = itr.next();
+         final Iterator < Knot3 > knItr = curve.iterator();
+         prevKnot = knItr.next();
          coord = prevKnot.coord;
          Transform3.mulPoint(tr, coord, v2);
          this.beginShape();
@@ -829,8 +837,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
                this.textureU,
                this.textureV);
 
-         while (itr.hasNext()) {
-            currKnot = itr.next();
+         while (knItr.hasNext()) {
+            currKnot = knItr.next();
             foreHandle = prevKnot.foreHandle;
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
@@ -880,15 +888,19 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     */
    public void shape ( final MeshEntity3 entity ) {
 
-      final LinkedList < Mesh3 > meshes = entity.meshes;
-      final LinkedList < MaterialSolid > materials = entity.materials;
+      final List < Mesh3 > meshes = entity.meshes;
+      final Iterator < Mesh3 > meshItr = meshes.iterator();
+
+      final List < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
 
       final Vec3 v = new Vec3();
       final Vec3 vn = new Vec3();
       final Transform3 tr = entity.transform;
 
-      for (final Mesh3 mesh : meshes) {
+      while (meshItr.hasNext()) {
+         final Mesh3 mesh = meshItr.next();
+
          if (useMaterial) {
             /*
              * TODO: Flickering issue with strokes. Maybe don't allow 3D

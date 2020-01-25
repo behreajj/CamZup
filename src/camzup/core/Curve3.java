@@ -1,10 +1,12 @@
 package camzup.core;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Organizes a Bezier curve into a list of knots. Provides a
@@ -757,21 +759,18 @@ public class Curve3 extends Curve
        *
        * @param scalar
        *           the scalar
-       * @param temp0
-       *           a temporary vector
-       * @param temp1
-       *           a temporary vector
        * @return this knot
        */
       @Chainable
-      public Knot3 scaleForeHandleBy (
-            final float scalar,
-            final Vec3 temp0,
-            final Vec3 temp1 ) {
+      public Knot3 scaleForeHandleBy ( final float scalar ) {
 
-         Vec3.sub(this.foreHandle, this.coord, temp0);
-         Vec3.mul(temp0, scalar, temp1);
-         Vec3.add(temp1, this.coord, this.foreHandle);
+         /* fh = co + scalar * (fh - co) */
+         this.foreHandle.x = this.coord.x
+               + scalar * (this.foreHandle.x - this.coord.x);
+         this.foreHandle.y = this.coord.y
+               + scalar * (this.foreHandle.y - this.coord.y);
+         this.foreHandle.z = this.coord.z
+               + scalar * (this.foreHandle.z - this.coord.z);
 
          return this;
       }
@@ -805,24 +804,13 @@ public class Curve3 extends Curve
        *
        * @param scalar
        *           the scalar
-       * @param temp0
-       *           a temporary vector
-       * @param temp1
-       *           a temporary vector
        * @return this knot
        */
       @Chainable
-      public Knot3 scaleHandlesBy (
-            final float scalar,
-            final Vec3 temp0,
-            final Vec3 temp1 ) {
+      public Knot3 scaleHandlesBy ( final float scalar ) {
 
-         this.scaleForeHandleBy(
-               scalar,
-               temp0, temp1);
-         this.scaleRearHandleBy(
-               scalar,
-               temp0, temp1);
+         this.scaleForeHandleBy(scalar);
+         this.scaleRearHandleBy(scalar);
 
          return this;
       }
@@ -861,24 +849,18 @@ public class Curve3 extends Curve
        *
        * @param scalar
        *           the scalar
-       * @param temp0
-       *           a temporary vector
-       * @param temp1
-       *           a temporary vector
        * @return this knot
-       * @see Vec3#sub(Vec3, Vec3, Vec3)
-       * @see Vec3#mul(Vec3, float, Vec3)
-       * @see Vec3#add(Vec3, Vec3, Vec3)
        */
       @Chainable
-      public Knot3 scaleRearHandleBy (
-            final float scalar,
-            final Vec3 temp0,
-            final Vec3 temp1 ) {
+      public Knot3 scaleRearHandleBy ( final float scalar ) {
 
-         Vec3.sub(this.rearHandle, this.coord, temp0);
-         Vec3.mul(temp0, scalar, temp1);
-         Vec3.add(temp1, this.coord, this.rearHandle);
+         /* rh = co + scalar * (rh - co) */
+         this.rearHandle.x = this.coord.x
+               + scalar * (this.rearHandle.x - this.coord.x);
+         this.rearHandle.y = this.coord.y
+               + scalar * (this.rearHandle.y - this.coord.y);
+         this.rearHandle.z = this.coord.z
+               + scalar * (this.rearHandle.z - this.coord.z);
 
          return this;
       }
@@ -1280,12 +1262,12 @@ public class Curve3 extends Curve
             : SinCos.eval(hndtn - 0.25f) / cost
                   * radius * IUtils.FOUR_THIRDS;
 
-      final LinkedList < Knot3 > knots = target.knots;
+      final List < Knot3 > knots = target.knots;
       knots.clear();
       for (int i = 0; i < knotCount; ++i) {
          final float angle1 = Utils.lerpUnclamped(
                a1, destAngle1, i * toStep);
-         knots.addLast(
+         knots.add(
                Knot3.fromPolar(
                      SinCos.eval(angle1),
                      SinCos.eval(angle1 - 0.25f),
@@ -1297,19 +1279,19 @@ public class Curve3 extends Curve
       if (target.closedLoop) {
          if (arcMode == ArcMode.CHORD) {
 
-            final Knot3 first = knots.getFirst();
-            final Knot3 last = knots.getLast();
+            final Knot3 first = knots.get(0);
+            final Knot3 last = knots.get(knots.size() - 1);
 
             Curve3.lerp13(last.coord, first.coord, last.foreHandle);
             Curve3.lerp13(first.coord, last.coord, first.rearHandle);
 
          } else if (arcMode == ArcMode.PIE) {
 
-            final Knot3 first = knots.getFirst();
-            final Knot3 last = knots.getLast();
+            final Knot3 first = knots.get(0);
+            final Knot3 last = knots.get(knots.size() - 1);
             final Knot3 center = new Knot3();
 
-            knots.addLast(center);
+            knots.add(center);
 
             final Vec3 coCenter = center.coord;
             Curve3.lerp13(coCenter, last.coord, center.rearHandle);
@@ -1321,6 +1303,61 @@ public class Curve3 extends Curve
 
       target.name = "Arc";
       return target;
+   }
+
+   /**
+    * Calculates the approximate length of a curve to a given
+    * level of precision.
+    *
+    * @param c
+    *           the curve
+    * @param precision
+    *           the precision
+    * @return the length
+    * @see Curve3#evalRange(int)
+    */
+   public static float calcSegLength (
+         final Curve3 c,
+         final int precision ) {
+
+      float sum = 0.0f;
+      final Vec3[][] segments = c.evalRange(precision + 1);
+      final int len = segments.length;
+      for (int i = 1, j = 0; i < len; ++i, ++j) {
+         sum += Vec3.dist(
+               segments[j][0],
+               segments[i][0]);
+      }
+
+      return sum;
+   }
+
+   /**
+    * Calculates the approximates lengths of segments
+    * approximating a curve to a given precision.
+    *
+    * @param c
+    *           the curve
+    * @param precision
+    *           the precision
+    * @return the segment lengths
+    */
+   public static float[] calcSegLengths (
+         final Curve3 c,
+         final int precision ) {
+
+      // TODO: Needs testing.
+
+      final Vec3[][] segments = c.evalRange(precision + 1);
+      final int len = segments.length;
+      final float[] results = new float[precision];
+      for (int i = 1, j = 0; i < len; ++i, ++j) {
+         results[j] = Vec3.dist(
+               segments[j][0],
+               segments[i][0]);
+      }
+
+      return results;
    }
 
    /**
@@ -1408,7 +1445,7 @@ public class Curve3 extends Curve
             : SinCos.eval(hndtn - 0.25f) / cost
                   * radius * IUtils.FOUR_THIRDS;
 
-      final LinkedList < Knot3 > knots = target.knots;
+      final List < Knot3 > knots = target.knots;
       for (int i = 0; i < vknct; ++i) {
          final float angle1 = offset1 + i * invKnCt;
          knots.add(
@@ -1443,10 +1480,10 @@ public class Curve3 extends Curve
       final int knotCount = points.length;
       target.clear();
       target.closedLoop = closedLoop;
-      final LinkedList < Knot3 > knots = target.knots;
+      final List < Knot3 > knots = target.knots;
       for (int i = 0; i < knotCount; ++i) {
          final Vec3 point = points[i];
-         knots.addLast(new Knot3(point, point, point));
+         knots.add(new Knot3(point, point, point));
       }
       return Curve3.smoothHandles(target);
    }
@@ -1475,12 +1512,12 @@ public class Curve3 extends Curve
       final int vknct = knotCount < 3 ? 3 : knotCount;
       final float invKnCt = 1.0f / vknct;
       final float toAngle = IUtils.TAU * invKnCt;
-      final LinkedList < Knot3 > knots = target.knots;
+      final List < Knot3 > knots = target.knots;
       for (int i = 0; i < vknct; ++i) {
          final float angle = offsetAngle + i * toAngle;
          final Knot3 knot = new Knot3();
          Vec3.fromPolar(angle, radius, knot.coord);
-         knots.addLast(knot);
+         knots.add(knot);
       }
 
       target.name = "Polygon";
@@ -1578,7 +1615,7 @@ public class Curve3 extends Curve
     */
    public static Curve3 smoothHandles ( final Curve3 target ) {
 
-      final LinkedList < Knot3 > knots = target.knots;
+      final List < Knot3 > knots = target.knots;
       final int knotLength = knots.size();
       if (knotLength < 3) {
          return target;
@@ -1661,8 +1698,8 @@ public class Curve3 extends Curve
        * the curve is not closed.
        */
       if (!closedLoop) {
-         knots.getFirst().mirrorHandlesForward();
-         knots.getLast().mirrorHandlesBackward();
+         knots.get(0).mirrorHandlesForward();
+         knots.get(knotLength - 1).mirrorHandlesBackward();
       }
 
       return target;
@@ -1678,15 +1715,15 @@ public class Curve3 extends Curve
     */
    public static Curve3 straightenHandles ( final Curve3 target ) {
 
-      final LinkedList < Knot3 > knots = target.knots;
+      final List < Knot3 > knots = target.knots;
       final int knotLength = knots.size();
       if (knotLength < 2) {
          return target;
       }
 
       if (knotLength == 2) {
-         final Knot3 first = knots.getFirst();
-         final Knot3 last = knots.getLast();
+         final Knot3 first = knots.get(0);
+         final Knot3 last = knots.get(knotLength - 1);
 
          Curve3.lerp13(first.coord, last.coord, first.foreHandle);
          first.mirrorHandlesForward();
@@ -1708,13 +1745,13 @@ public class Curve3 extends Curve
       }
 
       if (target.closedLoop) {
-         final Knot3 first = knots.getFirst();
-         final Knot3 last = knots.getLast();
+         final Knot3 first = knots.get(0);
+         final Knot3 last = knots.get(knotLength - 1);
          Curve3.lerp13(first.coord, last.coord, first.rearHandle);
          Curve3.lerp13(last.coord, first.coord, last.foreHandle);
       } else {
-         knots.getFirst().mirrorHandlesForward();
-         knots.getLast().mirrorHandlesBackward();
+         knots.get(0).mirrorHandlesForward();
+         knots.get(knotLength - 1).mirrorHandlesBackward();
       }
 
       return target;
@@ -1723,7 +1760,7 @@ public class Curve3 extends Curve
    /**
     * The list of knots contained by the curve.
     */
-   private final LinkedList < Knot3 > knots = new LinkedList <>();
+   private final List < Knot3 > knots;
 
    /**
     * Whether or not the curve is a closed loop.
@@ -1734,7 +1771,18 @@ public class Curve3 extends Curve
     * The material associated with this curve in a curve
     * entity.
     */
-   public int materialIndex = 0;
+   public int materialIndex = -1;
+
+   {
+      /*
+       * Seems to perform better when the class is used over the
+       * interface is not used. Problem is that it's hard to
+       * decide one whether to use an array or linked list.
+       */
+
+      // knots = new LinkedList <>();
+      this.knots = new ArrayList <>();
+   }
 
    /**
     * Creates a curve with two default knots.
@@ -1981,19 +2029,23 @@ public class Curve3 extends Curve
    }
 
    /**
-    * Append a collection of knots to the curve's list of
-    * knots. Returns true if the operation was successful.
+    * Append an collection of knots to the curve's list of
+    * knots.
     *
     * @param knots
     *           the collection of knots
-    * @return success
-    * @see LinkedList#addAll(Collection)
+    * @return this curve.
     */
-   public boolean append ( final Collection < ? extends Knot3 > knots ) {
+   public Curve3 append ( final Collection < Knot3 > knots ) {
 
-      // TODO: Is it possible to add null knots to the list this
-      // way?
-      return this.knots.addAll(knots);
+      final Iterator < Knot3 > knItr = knots.iterator();
+      while (knItr.hasNext()) {
+         final Knot3 knot = knItr.next();
+         if (knot != null) {
+            this.knots.add(knot);
+         }
+      }
+      return this;
    }
 
    /**
@@ -2008,7 +2060,7 @@ public class Curve3 extends Curve
    public Curve3 append ( final Knot3 knot ) {
 
       if (knot != null) {
-         this.knots.addLast(knot);
+         this.knots.add(knot);
       }
       return this;
    }
@@ -2027,35 +2079,10 @@ public class Curve3 extends Curve
       for (int i = 0; i < len; ++i) {
          final Knot3 knot = knots[i];
          if (knot != null) {
-            this.knots.addLast(knot);
+            this.knots.add(knot);
          }
       }
       return this;
-   }
-
-   /**
-    * Calculates the approximate length of a curve to a given
-    * level of precision.
-    *
-    * @param precision
-    *           the precision
-    * @return the length
-    * @see Curve3#evalRange(int)
-    */
-   public float calcLength ( final int precision ) {
-
-      // Is there a way to use distSq instead of dist when
-      // summing the distances and then scale sum?
-      float sum = 0.0f;
-      final Vec3[][] segments = this.evalRange(precision + 1);
-      final int len = segments.length;
-      for (int i = 1, j = 0; i < len; ++i, ++j) {
-         sum += Vec3.dist(
-               segments[j][0],
-               segments[i][0]);
-      }
-
-      return sum;
    }
 
    @Override
@@ -2118,10 +2145,10 @@ public class Curve3 extends Curve
          b = this.knots.get((i + 1) % knotLength);
       } else {
          if (knotLength == 1 || step <= 0.0f) {
-            return target.set(this.getFirst());
+            return target.set(this.get(0));
          }
          if (step >= 1.0f) {
-            return target.set(this.getLast());
+            return target.set(this.get(knotLength - 1));
          }
 
          tScaled = step * (knotLength - 1);
@@ -2203,7 +2230,7 @@ public class Curve3 extends Curve
          final Vec3 coord,
          final Vec3 tangent ) {
 
-      final Knot3 kFirst = this.knots.getFirst();
+      final Knot3 kFirst = this.knots.get(0);
       coord.set(kFirst.coord);
       Vec3.subNorm(kFirst.foreHandle, coord, tangent);
       return coord;
@@ -2224,7 +2251,7 @@ public class Curve3 extends Curve
          final Vec3 coord,
          final Vec3 tangent ) {
 
-      final Knot3 kLast = this.knots.getLast();
+      final Knot3 kLast = this.knots.get(this.knots.size() - 1);
       coord.set(kLast.coord);
       Vec3.subNorm(coord, kLast.rearHandle, tangent);
 
@@ -2281,7 +2308,7 @@ public class Curve3 extends Curve
     */
    public Knot3 getFirst () {
 
-      return this.knots.getFirst();
+      return this.knots.get(0);
    }
 
    /**
@@ -2292,7 +2319,7 @@ public class Curve3 extends Curve
     */
    public Knot3 getLast () {
 
-      return this.knots.getLast();
+      return this.knots.get(this.knots.size() - 1);
    }
 
    @Override
@@ -2358,7 +2385,7 @@ public class Curve3 extends Curve
     */
    public Knot3 removeFirst () {
 
-      return this.knots.removeFirst();
+      return this.knots.remove(0);
    }
 
    /**
@@ -2368,7 +2395,7 @@ public class Curve3 extends Curve
     */
    public Knot3 removeLast () {
 
-      return this.knots.removeLast();
+      return this.knots.remove(this.knots.size() - 1);
    }
 
    /**
@@ -2380,12 +2407,12 @@ public class Curve3 extends Curve
    public Curve3 reset () {
 
       this.knots.clear();
-      this.knots.addLast(
+      this.knots.add(
             new Knot3(
                   -0.5f, 0.0f, 0.0f,
                   -0.25f, 0.25f, 0.0f,
                   -0.75f, -0.25f, 0.0f));
-      this.knots.addLast(
+      this.knots.add(
             new Knot3(
                   0.5f, 0.0f, 0.0f,
                   1.0f, 0.0f, 0.0f,
@@ -2572,9 +2599,6 @@ public class Curve3 extends Curve
     */
    @Experimental
    public String toObjString ( final int precision ) {
-
-      // TODO: Create a toPolyLine function based on parameterized
-      // curve which provide a better result for this function.
 
       final StringBuilder result = new StringBuilder();
       final Vec3[][] segments = this.evalRange(precision);

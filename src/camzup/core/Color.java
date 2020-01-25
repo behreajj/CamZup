@@ -1602,31 +1602,6 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Raises each component of the color, except for the alpha
-    * channel, to a power. Useful for gamma adjustment.
-    *
-    * @param a
-    *           the color
-    * @param b
-    *           the power
-    * @param target
-    *           the output color
-    * @return the adjusted color
-    * @see Math#pow(double, double)
-    */
-   public static Color pow (
-         final Color a,
-         final float b,
-         final Color target ) {
-
-      return target.set(
-            (float) Math.pow(a.x, b),
-            (float) Math.pow(a.y, b),
-            (float) Math.pow(a.z, b),
-            a.w);
-   }
-
-   /**
     * Multiplies the red, green and blue color channels of a
     * color by the alpha channel.
     *

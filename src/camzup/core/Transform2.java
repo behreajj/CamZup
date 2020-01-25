@@ -216,8 +216,11 @@ public class Transform2 extends Transform {
       target.cosa = a;
       target.sina = c;
 
-      target.moveTo(0.0f, 0.0f);
-      target.scaleTo(1.0f);
+      target.locPrev.set(target.location);
+      target.location.reset();
+
+      target.scalePrev.set(target.scale);
+      Vec2.one(target.scale);
 
       return target;
    }
@@ -242,16 +245,17 @@ public class Transform2 extends Transform {
     */
    public static Transform2 identity ( final Transform2 target ) {
 
+      target.locPrev.set(target.location);
       target.location.reset();
-      target.locPrev.reset();
 
+      target.rotPrev = target.rotation;
+      target.rotation = 0.0f;
+
+      target.scalePrev.set(target.scale);
       Vec2.one(target.scale);
-      Vec2.one(target.scalePrev);
 
       target.cosa = 1.0f;
       target.sina = 0.0f;
-      target.rotation = 0.0f;
-      target.rotPrev = 0.0f;
 
       Vec2.right(target.right);
       Vec2.forward(target.forward);
@@ -395,7 +399,6 @@ public class Transform2 extends Transform {
       Vec2.rotateZ(source, t.cosa, t.sina, target);
       Vec2.mul(target, t.scale, target);
       Vec2.add(target, t.location, target);
-
       return target;
    }
 
@@ -420,7 +423,6 @@ public class Transform2 extends Transform {
 
       Vec2.rotateZ(source, t.cosa, t.sina, target);
       Vec2.mul(target, t.scale, target);
-
       return target;
    }
 
@@ -800,25 +802,6 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Sets the transform's location.
-    *
-    * @param x
-    *           the x location
-    * @param y
-    *           the y location
-    * @return this transform
-    */
-   @Chainable
-   public Transform2 moveTo (
-         final float x,
-         final float y ) {
-
-      this.locPrev.set(this.location);
-      this.location.set(x, y);
-      return this;
-   }
-
-   /**
     * Sets the transforms' location.
     *
     * @param locNew
@@ -883,7 +866,21 @@ public class Transform2 extends Transform {
    @Chainable
    public Transform2 reset () {
 
-      return Transform2.identity(this);
+      this.locPrev.reset();
+      this.location.reset();
+
+      this.rotPrev = 0.0f;
+      this.rotation = 0.0f;
+
+      Vec2.one(this.scalePrev);
+      Vec2.one(this.scale);
+
+      this.cosa = 1.0f;
+      this.sina = 0.0f;
+      Vec2.right(this.right);
+      Vec2.forward(this.forward);
+
+      return this;
    }
 
    /**
@@ -1019,27 +1016,6 @@ public class Transform2 extends Transform {
    /**
     * Scales the transform to a non-uniform size.
     *
-    * @param x
-    *           the size on the x axis
-    * @param y
-    *           the size on the y axis
-    * @return this transform
-    */
-   @Chainable
-   public Transform2 scaleTo (
-         final float x,
-         final float y ) {
-
-      if (x != 0.0f && y != 0.0f) {
-         this.scalePrev.set(this.scale);
-         this.scale.set(x, y);
-      }
-      return this;
-   }
-
-   /**
-    * Scales the transform to a non-uniform size.
-    *
     * @param scaleNew
     *           the new scale
     * @return this transform
@@ -1128,9 +1104,13 @@ public class Transform2 extends Transform {
          final float xScale,
          final float yScale ) {
 
-      this.moveTo(xLoc, yLoc);
+      this.locPrev.set(this.location);
+      this.location.set(xLoc, yLoc);
+
       this.rotateTo(radians);
-      this.scaleTo(xScale, yScale);
+
+      this.scalePrev.set(this.scale);
+      this.scale.set(xScale, yScale);
 
       return this;
    }
@@ -1283,5 +1263,26 @@ public class Transform2 extends Transform {
             .append(Utils.toFixed(this.scale.y, 1))
             .append(")\"")
             .toString();
+   }
+
+   /**
+    * Wraps the transform's location around a periodic range as
+    * defined by an upper and lower bound: lower bounds
+    * inclusive; upper bounds exclusive.
+    *
+    * @param lb
+    *           the lower bound
+    * @param ub
+    *           the upper bound
+    * @return the wrapped transform
+    */
+   @Chainable
+   public Transform2 wrap (
+         final Vec2 lb,
+         final Vec2 ub ) {
+
+      this.locPrev.set(this.location);
+      Vec2.wrap(this.locPrev, lb, ub, this.location);
+      return this;
    }
 }

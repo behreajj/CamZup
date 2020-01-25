@@ -9,12 +9,33 @@ import camzup.pfriendly.IUp;
  */
 public class MaterialSolid extends Material {
 
+   /**
+    * Default stroke cap to use when rendering to an SVG.
+    */
    public static final String DEFAULT_SVG_STR_CAP = "round";
 
+   /**
+    * Default stroke join to use when rendering to an SVG.
+    */
    public static final String DEFAULT_SVG_STR_JOIN = "round";
 
+   /**
+    * Minimum stroke weight allowed when rendering to SVG.
+    */
    public static final float SVG_MIN_STROKE_WT = 0.005f;
 
+   /**
+    * Default material to use when no material is contained by
+    * an entity. Stroke weight is impacted by transforms, so
+    * the stroke weight is divided by the scale.
+    *
+    * This opens a group node, so it should be closed
+    * elsewhere.
+    *
+    * @param scale
+    *           the transform scale
+    * @return the string
+    */
    public static String defaultSvgMaterial ( final float scale ) {
 
       final String strokeStr = Utils.toFixed(Utils.max(
@@ -41,12 +62,12 @@ public class MaterialSolid extends Material {
    /**
     * The fill color.
     */
-   public final Color fill = IMaterial.DEFAULT_FILL;
+   public final Color fill;
 
    /**
     * The stroke color.
     */
-   public final Color stroke = IMaterial.DEFAULT_STROKE;
+   public final Color stroke;
 
    /**
     * The weight, or width, of the stroke.
@@ -63,12 +84,30 @@ public class MaterialSolid extends Material {
     */
    public boolean useStroke = false;
 
+   {
+      /*
+       * Instance variables should never be assigned constants
+       * when the constants are objects, as the constants will be
+       * overwritten. Rather, instance variables should receive
+       * copies of constants. To make this clearer, an initializer
+       * block.
+       */
+
+      this.fill = new Color(IMaterial.DEFAULT_FILL);
+      this.stroke = new Color(IMaterial.DEFAULT_STROKE);
+   }
+
    /**
     * The default constructor.
     */
    public MaterialSolid () {
 
-      // TODO: Add stroke cap and stroke join options?
+      /*
+       * Stroke cap and join are not implemented because it would
+       * require storing PConstants value for each constant, AWT's
+       * constant, and SVG's. And there are renderer issues with
+       * Awt and OpenGL, so consistency is hard to guarantee.
+       */
 
       super();
    }
@@ -269,6 +308,43 @@ public class MaterialSolid extends Material {
    }
 
    /**
+    * Returns a string representation of this material.
+    *
+    * @return the string
+    */
+   @Override
+   public String toString () {
+
+      return this.toString(4);
+   }
+
+   /**
+    * Returns a string representation of this complex number.
+    *
+    * @param places
+    *           the number of places
+    * @return the string
+    * @see Utils#toFixed(float, int)
+    */
+   public String toString ( final int places ) {
+
+      return new StringBuilder()
+            .append("{ fill: ")
+            .append(this.fill.toString(places))
+            .append(", stroke: ")
+            .append(this.stroke.toString(places))
+            .append(", strokeWeight: ")
+            .append(Utils.toFixed(this.strokeWeight, places))
+            .append(", useFill: ")
+            .append(this.useFill)
+            .append(", useStroke: ")
+            .append(this.useStroke)
+            .append(' ')
+            .append('}')
+            .toString();
+   }
+
+   /**
     * Returns an SVG snippet as a string.
     *
     * @return the string
@@ -290,9 +366,6 @@ public class MaterialSolid extends Material {
     * @see Color#toHexWeb(Color)
     */
    public String toSvgString ( final float transformScale ) {
-
-      // TODO: If this is updated to include stroke cap and join,
-      // update this method to return those, not defaults.
 
       final String strokeStr = Utils.toFixed(Utils.max(
             MaterialSolid.SVG_MIN_STROKE_WT,

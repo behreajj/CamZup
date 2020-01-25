@@ -1,7 +1,7 @@
 package camzup.pfriendly;
 
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 
 import camzup.core.Curve2;
 import camzup.core.Curve2.Knot2;
@@ -559,9 +559,17 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       final float swFore = swRear * 1.25f;
       final float swCoord = swFore * 1.25f;
 
-      final LinkedList < Curve2 > curves = ce.curves;
-      for (final Curve2 curve : curves) {
-         for (final Knot2 knot : curve) {
+      final List < Curve2 > curves = ce.curves;
+      final Iterator < Curve2 > curveItr = curves.iterator();
+      Iterator < Knot2 > knItr = null;
+
+      while (curveItr.hasNext()) {
+         final Curve2 curve = curveItr.next();
+         knItr = curve.iterator();
+
+         while (knItr.hasNext()) {
+            final Knot2 knot = knItr.next();
+
             final Vec2 coord = knot.coord;
             final Vec2 foreHandle = knot.foreHandle;
             final Vec2 rearHandle = knot.rearHandle;
@@ -936,9 +944,16 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       this.pushMatrix();
       this.transform(entity.transform, entity.transformOrder);
 
-      final LinkedList < MaterialSolid > materials = entity.materials;
+      /*
+       * TODO: Damned if you do and damned if you don't, it seems
+       * like. For performance, it seems better to not use
+       * interfaces but rather classes, i.e. ArrayList or
+       * LinkedList instead of List. However, a generic list is
+       * easier on implementation.
+       */
+      final List < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
-      final Iterator < Curve2 > citr = entity.curves.iterator();
+      final Iterator < Curve2 > curveItr = entity.curves.iterator();
 
       Knot2 currKnot;
       Knot2 prevKnot;
@@ -946,8 +961,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       Vec2 foreHandle;
       Vec2 rearHandle;
 
-      while (citr.hasNext()) {
-         final Curve2 curve = citr.next();
+      while (curveItr.hasNext()) {
+         final Curve2 curve = curveItr.next();
 
          if (useMaterial) {
             this.pushStyle();
@@ -955,8 +970,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
                   curve.materialIndex));
          }
 
-         final Iterator < Knot2 > knitr = curve.iterator();
-         prevKnot = knitr.next();
+         final Iterator < Knot2 > knItr = curve.iterator();
+         prevKnot = knItr.next();
          coord = prevKnot.coord;
 
          this.beginShape();
@@ -965,8 +980,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
                this.textureU,
                this.textureV);
 
-         while (knitr.hasNext()) {
-            currKnot = knitr.next();
+         while (knItr.hasNext()) {
+            currKnot = knItr.next();
             foreHandle = prevKnot.foreHandle;
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
@@ -1013,11 +1028,14 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       this.pushMatrix();
       this.transform(entity.transform, entity.transformOrder);
 
-      final LinkedList < Mesh2 > meshes = entity.meshes;
-      final LinkedList < MaterialSolid > materials = entity.materials;
+      final List < Mesh2 > meshes = entity.meshes;
+      final List < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
+      final Iterator < Mesh2 > meshItr = meshes.iterator();
 
-      for (final Mesh2 mesh : meshes) {
+      while (meshItr.hasNext()) {
+         final Mesh2 mesh = meshItr.next();
+
          if (useMaterial) {
             final int index = mesh.materialIndex;
             final MaterialSolid material = materials.get(index);

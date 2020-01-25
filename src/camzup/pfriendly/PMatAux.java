@@ -226,7 +226,7 @@ public abstract class PMatAux {
          final float yAxis,
          final float zAxis ) {
 
-      //TODO: Finish comments.
+      // TODO: Finish comments.
       return PMatAux.invRotate(
             radians,
             xAxis, yAxis, zAxis,

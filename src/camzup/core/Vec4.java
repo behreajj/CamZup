@@ -1479,8 +1479,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @param target
     *           the output vector
     * @return the rounded vector
-    * @see Math#round(double)
-    * @see Math#pow(double, double)
     * @see Vec4#round(Vec4, Vec4)
     */
    public static Vec4 round (
@@ -1517,7 +1515,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @param target
     *           the output vector
     * @return the rounded vector
-    * @see Math#round(float)
+    * @see Utils#round(float)
     */
    public static Vec4 round (
          final Vec4 v,
@@ -1551,6 +1549,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * @param target
     *           the output vector
     * @return the sign
+    * @see Utils#sign(float)
     */
    public static Vec4 sign (
          final Vec4 v,
@@ -1617,6 +1616,39 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    public static Vec4 up ( final Vec4 target ) {
 
       return target.set(0.0f, 0.0f, 1.0f, 0.0f);
+   }
+
+   /**
+    * Wraps a vector around a periodic range as defined by an
+    * upper and lower bound: lower bounds inclusive; upper
+    * bounds exclusive.
+    *
+    * In cases where the lower bound is (0.0, 0.0) , use
+    * {@link Vec4#mod(Vec4, Vec4, Vec4)} .
+    *
+    * @param v
+    *           the vector
+    * @param lb
+    *           the lower bound
+    * @param ub
+    *           the upper bound
+    * @param target
+    *           the output vector
+    * @return the wrapped vector
+    * @see Utils#wrap(float, float, float)
+    */
+   @Experimental
+   public static Vec4 wrap (
+         final Vec4 v,
+         final Vec4 lb,
+         final Vec4 ub,
+         final Vec4 target ) {
+
+      return target.set(
+            Utils.wrap(v.x, lb.x, ub.x),
+            Utils.wrap(v.y, lb.y, ub.y),
+            Utils.wrap(v.z, lb.z, ub.z),
+            Utils.wrap(v.w, lb.w, ub.w));
    }
 
    /**

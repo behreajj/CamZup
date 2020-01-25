@@ -1,10 +1,11 @@
 package camzup.core;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Organizes a Bezier curve into a list of knots. Provides a
@@ -613,23 +614,16 @@ public class Curve2 extends Curve
        *
        * @param scalar
        *           the scalar
-       * @param temp0
-       *           a temporary vector
-       * @param temp1
-       *           a temporary vector
        * @return this knot
        */
       @Chainable
-      public Knot2 scaleForeHandleBy (
-            final float scalar,
-            final Vec2 temp0,
-            final Vec2 temp1 ) {
+      public Knot2 scaleForeHandleBy ( final float scalar ) {
 
-         // TODO: Inline.
-
-         Vec2.sub(this.foreHandle, this.coord, temp0);
-         Vec2.mul(temp0, scalar, temp1);
-         Vec2.add(temp1, this.coord, this.foreHandle);
+         /* fh = co + scalar * (fh - co) */
+         this.foreHandle.x = this.coord.x
+               + scalar * (this.foreHandle.x - this.coord.x);
+         this.foreHandle.y = this.coord.y
+               + scalar * (this.foreHandle.y - this.coord.y);
 
          return this;
       }
@@ -651,7 +645,7 @@ public class Curve2 extends Curve
             final Vec2 temp0,
             final Vec2 temp1 ) {
 
-         // TODO: Inline.
+         // TODO: Inline. Can this just use forehandle as an out?
 
          Vec2.subNorm(this.foreHandle, this.coord, temp0);
          Vec2.mul(temp0, magnitude, temp1);
@@ -665,24 +659,13 @@ public class Curve2 extends Curve
        *
        * @param scalar
        *           the scalar
-       * @param temp0
-       *           a temporary vector
-       * @param temp1
-       *           a temporary vector
        * @return this knot
        */
       @Chainable
-      public Knot2 scaleHandlesBy (
-            final float scalar,
-            final Vec2 temp0,
-            final Vec2 temp1 ) {
+      public Knot2 scaleHandlesBy ( final float scalar ) {
 
-         this.scaleForeHandleBy(
-               scalar,
-               temp0, temp1);
-         this.scaleRearHandleBy(
-               scalar,
-               temp0, temp1);
+         this.scaleForeHandleBy(scalar);
+         this.scaleRearHandleBy(scalar);
 
          return this;
       }
@@ -721,26 +704,16 @@ public class Curve2 extends Curve
        *
        * @param scalar
        *           the scalar
-       * @param temp0
-       *           a temporary vector
-       * @param temp1
-       *           a temporary vector
        * @return this knot
-       * @see Vec2#sub(Vec2, Vec2, Vec2)
-       * @see Vec2#mul(Vec2, float, Vec2)
-       * @see Vec2#add(Vec2, Vec2, Vec2)
        */
       @Chainable
-      public Knot2 scaleRearHandleBy (
-            final float scalar,
-            final Vec2 temp0,
-            final Vec2 temp1 ) {
+      public Knot2 scaleRearHandleBy ( final float scalar ) {
 
-         // TODO: Inline.
-
-         Vec2.sub(this.rearHandle, this.coord, temp0);
-         Vec2.mul(temp0, scalar, temp1);
-         Vec2.add(temp1, this.coord, this.rearHandle);
+         /* rh = co + scalar * (rh - co) */
+         this.rearHandle.x = this.coord.x
+               + scalar * (this.rearHandle.x - this.coord.x);
+         this.rearHandle.y = this.coord.y
+               + scalar * (this.rearHandle.y - this.coord.y);
 
          return this;
       }
@@ -1130,11 +1103,9 @@ public class Curve2 extends Curve
          final Curve2 target ) {
 
       /*
-       * This is optimized where possible due to its use by the
-       * renderer arc function.
-       */
-
-      /*
+       * Optimized where possible because Yup2 renderer uses this
+       * to display arcs.
+       *
        * Outlier case where arc is used as a progress bar. The
        * tolerance is less than half a degree, 1.0 / 720.0, which
        * is the minimum step used by the Processing sine cosine
@@ -1182,7 +1153,7 @@ public class Curve2 extends Curve
             : SinCos.eval(hndtn - 0.25f) / cost
                   * radius * IUtils.FOUR_THIRDS;
 
-      final LinkedList < Knot2 > knots = target.knots;
+      final List < Knot2 > knots = target.knots;
 
       // TODO: Research whether or not is more efficient to clear
       // knots of an existing linked list or to measure how many
@@ -1192,7 +1163,7 @@ public class Curve2 extends Curve
       for (int i = 0; i < knotCount; ++i) {
          final float angle1 = Utils.lerpUnclamped(
                a1, destAngle1, i * toStep);
-         knots.addLast(
+         knots.add(
                Knot2.fromPolar(
                      SinCos.eval(angle1),
                      SinCos.eval(angle1 - 0.25f),
@@ -1205,8 +1176,8 @@ public class Curve2 extends Curve
       if (target.closedLoop) {
          if (arcMode == ArcMode.CHORD) {
 
-            final Knot2 first = knots.getFirst();
-            final Knot2 last = knots.getLast();
+            final Knot2 first = knots.get(0);
+            final Knot2 last = knots.get(knots.size() - 1);
 
             /* Flatten the first to last handles. */
             Curve2.lerp13(last.coord, first.coord, last.foreHandle);
@@ -1214,12 +1185,12 @@ public class Curve2 extends Curve
 
          } else if (arcMode == ArcMode.PIE) {
 
-            final Knot2 first = knots.getFirst();
-            final Knot2 last = knots.getLast();
+            final Knot2 first = knots.get(0);
+            final Knot2 last = knots.get(knots.size() - 1);
 
             /* Add a center knot. */
             final Knot2 center = new Knot2();
-            knots.addLast(center);
+            knots.add(center);
             final Vec2 coCenter = center.coord;
 
             /* Flatten center handles. */
@@ -1261,6 +1232,61 @@ public class Curve2 extends Curve
       return Curve2.arc(
             startAngle, stopAngle,
             radius, ArcMode.OPEN, target);
+   }
+
+   /**
+    * Calculates the approximate length of a curve to a given
+    * level of precision.
+    *
+    * @param c
+    *           the curve
+    * @param precision
+    *           the precision
+    * @return the length
+    * @see Curve2#evalRange(int)
+    */
+   public static float calcSegLength (
+         final Curve2 c,
+         final int precision ) {
+
+      float sum = 0.0f;
+      final Vec2[][] segments = c.evalRange(precision + 1);
+      final int len = segments.length;
+      for (int i = 1, j = 0; i < len; ++i, ++j) {
+         sum += Vec2.dist(
+               segments[j][0],
+               segments[i][0]);
+      }
+
+      return sum;
+   }
+
+   /**
+    * Calculates the approximates lengths of segments
+    * approximating a curve to a given precision.
+    *
+    * @param c
+    *           the curve
+    * @param precision
+    *           the precision
+    * @return the segment lengths
+    */
+   public static float[] calcSegLengths (
+         final Curve2 c,
+         final int precision ) {
+
+      // TODO: Needs testing.
+
+      final Vec2[][] segments = c.evalRange(precision + 1);
+      final int len = segments.length;
+      final float[] results = new float[precision];
+      for (int i = 1, j = 0; i < len; ++i, ++j) {
+         results[j] = Vec2.dist(
+               segments[j][0],
+               segments[i][0]);
+      }
+
+      return results;
    }
 
    /**
@@ -1351,7 +1377,7 @@ public class Curve2 extends Curve
             : SinCos.eval(hndtn - 0.25f) / cost
                   * radius * IUtils.FOUR_THIRDS;
 
-      final LinkedList < Knot2 > knots = target.knots;
+      final List < Knot2 > knots = target.knots;
       for (int i = 0; i < vknct; ++i) {
          final float angle1 = offset1 + i * invKnCt;
          knots.add(
@@ -1386,10 +1412,10 @@ public class Curve2 extends Curve
       final int knotCount = points.length;
       target.clear();
       target.closedLoop = closedLoop;
-      final LinkedList < Knot2 > knots = target.knots;
+      final List < Knot2 > knots = target.knots;
       for (int i = 0; i < knotCount; ++i) {
          final Vec2 point = points[i];
-         knots.addLast(new Knot2(point, point, point));
+         knots.add(new Knot2(point, point, point));
       }
       return Curve2.smoothHandles(target);
    }
@@ -1417,12 +1443,12 @@ public class Curve2 extends Curve
       target.closedLoop = true;
       final int vknct = knotCount < 3 ? 3 : knotCount;
       final float toAngle = IUtils.TAU / vknct;
-      final LinkedList < Knot2 > knots = target.knots;
+      final List < Knot2 > knots = target.knots;
       for (int i = 0; i < vknct; ++i) {
          final float angle = offsetAngle + i * toAngle;
          final Knot2 knot = new Knot2();
          Vec2.fromPolar(angle, radius, knot.coord);
-         knots.addLast(knot);
+         knots.add(knot);
       }
 
       target.name = "Polygon";
@@ -1531,7 +1557,7 @@ public class Curve2 extends Curve
       target.closedLoop = true;
       target.name = "Rect";
 
-      final LinkedList < Knot2 > knots = target.knots;
+      final List < Knot2 > knots = target.knots;
       knots.add(new Knot2(x0, y0));
       knots.add(new Knot2(x1, y0));
       knots.add(new Knot2(x1, y1));
@@ -1582,13 +1608,13 @@ public class Curve2 extends Curve
     * four parameters specify the rounding factor for the top
     * left, top right, bottom right and bottom left corners.
     *
-    * @param x0
+    * @param x0i
     *           top left corner x
-    * @param y0
+    * @param y0i
     *           top left corner y
-    * @param x1
+    * @param x1i
     *           bottom right corner x
-    * @param y1
+    * @param y1i
     *           bottom right corner y
     * @param tl
     *           rounding top left corner
@@ -1603,25 +1629,27 @@ public class Curve2 extends Curve
     * @return the rounded rectangle
     */
    public static Curve2 rect (
-         final float x0,
-         final float y0,
-         final float x1,
-         final float y1,
+         final float x0i,
+         final float y0i,
+         final float x1i,
+         final float y1i,
          final float tl,
          final float tr,
          final float br,
          final float bl,
          final Curve2 target ) {
 
-      /* Validate corner values. */
-      final float vtl = Utils.clamp(Utils.abs(tl),
-            Utils.EPSILON, IUtils.ONE_THIRD);
-      final float vtr = Utils.clamp(Utils.abs(tr),
-            Utils.EPSILON, IUtils.ONE_THIRD);
-      final float vbr = Utils.clamp(Utils.abs(br),
-            Utils.EPSILON, IUtils.ONE_THIRD);
-      final float vbl = Utils.clamp(Utils.abs(bl),
-            Utils.EPSILON, IUtils.ONE_THIRD);
+      /* Validate corners. */
+      final float x0 = x0i < x1i ? x0i : x1i;
+      final float x1 = x1i > x0i ? x1i : x0i;
+      final float y0 = y0i > y1i ? y0i : y1i;
+      final float y1 = y1i < y0i ? y1i : y0i;
+
+      /* Validate corner insetting. */
+      final float vtl = Utils.max(Utils.abs(tl), Utils.EPSILON);
+      final float vtr = Utils.max(Utils.abs(tr), Utils.EPSILON);
+      final float vbr = Utils.max(Utils.abs(br), Utils.EPSILON);
+      final float vbl = Utils.max(Utils.abs(bl), Utils.EPSILON);
 
       /* Top edge. */
       final Knot2 k0 = new Knot2(x0 + vtl, y0, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -1751,7 +1779,7 @@ public class Curve2 extends Curve
       target.name = "Rect";
 
       /* Add knots to the target. */
-      final LinkedList < Knot2 > knots = target.knots;
+      final List < Knot2 > knots = target.knots;
       knots.add(k0);
       knots.add(k1);
       knots.add(k2);
@@ -1868,7 +1896,7 @@ public class Curve2 extends Curve
     */
    public static Curve2 smoothHandles ( final Curve2 target ) {
 
-      final LinkedList < Knot2 > knots = target.knots;
+      final List < Knot2 > knots = target.knots;
       final int knotLength = knots.size();
       if (knotLength < 3) {
          return target;
@@ -1951,8 +1979,8 @@ public class Curve2 extends Curve
        * the curve is not closed.
        */
       if (!closedLoop) {
-         knots.getFirst().mirrorHandlesForward();
-         knots.getLast().mirrorHandlesBackward();
+         knots.get(0).mirrorHandlesForward();
+         knots.get(knotLength - 1).mirrorHandlesBackward();
       }
 
       return target;
@@ -1968,15 +1996,15 @@ public class Curve2 extends Curve
     */
    public static Curve2 straightenHandles ( final Curve2 target ) {
 
-      final LinkedList < Knot2 > knots = target.knots;
+      final List < Knot2 > knots = target.knots;
       final int knotLength = knots.size();
       if (knotLength < 2) {
          return target;
       }
 
       if (knotLength == 2) {
-         final Knot2 first = knots.getFirst();
-         final Knot2 last = knots.getLast();
+         final Knot2 first = knots.get(0);
+         final Knot2 last = knots.get(knotLength - 1);
 
          Curve2.lerp13(first.coord, last.coord, first.foreHandle);
          first.mirrorHandlesForward();
@@ -1998,13 +2026,13 @@ public class Curve2 extends Curve
       }
 
       if (target.closedLoop) {
-         final Knot2 first = knots.getFirst();
-         final Knot2 last = knots.getLast();
+         final Knot2 first = knots.get(0);
+         final Knot2 last = knots.get(knotLength - 1);
          Curve2.lerp13(first.coord, last.coord, first.rearHandle);
          Curve2.lerp13(last.coord, first.coord, last.foreHandle);
       } else {
-         knots.getFirst().mirrorHandlesForward();
-         knots.getLast().mirrorHandlesBackward();
+         knots.get(0).mirrorHandlesForward();
+         knots.get(knotLength - 1).mirrorHandlesBackward();
       }
 
       return target;
@@ -2013,7 +2041,7 @@ public class Curve2 extends Curve
    /**
     * The list of knots contained by the curve.
     */
-   private final LinkedList < Knot2 > knots = new LinkedList <>();
+   private final List < Knot2 > knots;
 
    /**
     * Whether or not the curve is a closed loop.
@@ -2024,7 +2052,18 @@ public class Curve2 extends Curve
     * The material associated with this curve in a curve
     * entity.
     */
-   public int materialIndex = 0;
+   public int materialIndex = -1;
+
+   {
+      /*
+       * Seems to perform better when the class is used over the
+       * interface is not used. Problem is that it's hard to
+       * decide one whether to use an array or linked list.
+       */
+
+      // knots = new LinkedList <>();
+      this.knots = new ArrayList <>();
+   }
 
    /**
     * Creates a curve with two default knots.
@@ -2277,19 +2316,23 @@ public class Curve2 extends Curve
    }
 
    /**
-    * Append a collection of knots to the curve's list of
-    * knots. Returns true if the operation was successful.
+    * Append an collection of knots to the curve's list of
+    * knots.
     *
     * @param knots
     *           the collection of knots
-    * @return success
-    * @see LinkedList#addAll(Collection)
+    * @return this curve.
     */
-   public boolean append ( final Collection < ? extends Knot2 > knots ) {
+   public Curve2 append ( final Collection < Knot2 > knots ) {
 
-      // TODO: Is it possible to add null knots to the list this
-      // way?
-      return this.knots.addAll(knots);
+      final Iterator < Knot2 > knItr = knots.iterator();
+      while (knItr.hasNext()) {
+         final Knot2 knot = knItr.next();
+         if (knot != null) {
+            this.knots.add(knot);
+         }
+      }
+      return this;
    }
 
    /**
@@ -2306,7 +2349,7 @@ public class Curve2 extends Curve
       for (int i = 0; i < len; ++i) {
          final Knot2 knot = knots[i];
          if (knot != null) {
-            this.knots.addLast(knot);
+            this.knots.add(knot);
          }
       }
       return this;
@@ -2318,38 +2361,15 @@ public class Curve2 extends Curve
     * @param knot
     *           the knot
     * @return the curve
-    * @see LinkedList#add(Object)
+    * @see List#add(Object)
     */
    @Chainable
    public Curve2 append ( final Knot2 knot ) {
 
       if (knot != null) {
-         this.knots.addLast(knot);
+         this.knots.add(knot);
       }
       return this;
-   }
-
-   /**
-    * Calculates the approximate length of a curve to a given
-    * level of precision.
-    *
-    * @param precision
-    *           the precision
-    * @return the length
-    * @see Curve2#evalRange(int)
-    */
-   public float calcLength ( final int precision ) {
-
-      float sum = 0.0f;
-      final Vec2[][] segments = this.evalRange(precision + 1);
-      final int len = segments.length;
-      for (int i = 1, j = 0; i < len; ++i, ++j) {
-         sum += Vec2.dist(
-               segments[j][0],
-               segments[i][0]);
-      }
-
-      return sum;
    }
 
    /**
@@ -2380,10 +2400,10 @@ public class Curve2 extends Curve
          b = this.knots.get((i + 1) % knotLength);
       } else {
          if (knotLength == 1 || step <= 0.0f) {
-            return target.set(this.getFirst());
+            return target.set(this.get(0));
          }
          if (step >= 1.0f) {
-            return target.set(this.getLast());
+            return target.set(this.get(knotLength - 1));
          }
 
          tScaled = step * (knotLength - 1);
@@ -2465,7 +2485,7 @@ public class Curve2 extends Curve
          final Vec2 coord,
          final Vec2 tangent ) {
 
-      final Knot2 kFirst = this.knots.getFirst();
+      final Knot2 kFirst = this.knots.get(0);
       coord.set(kFirst.coord);
       Vec2.subNorm(kFirst.foreHandle, coord, tangent);
       return coord;
@@ -2486,7 +2506,7 @@ public class Curve2 extends Curve
          final Vec2 coord,
          final Vec2 tangent ) {
 
-      final Knot2 kLast = this.knots.getLast();
+      final Knot2 kLast = this.knots.get(this.knots.size() - 1);
       coord.set(kLast.coord);
       Vec2.subNorm(coord, kLast.rearHandle, tangent);
 
@@ -2527,7 +2547,7 @@ public class Curve2 extends Curve
     * @param i
     *           the index
     * @return the knot
-    * @see LinkedList#get(int)
+    * @see List#get(int)
     * @see Utils#mod(int, int)
     */
    public Knot2 get ( final int i ) {
@@ -2540,22 +2560,22 @@ public class Curve2 extends Curve
     * Gets the first knot in the curve.
     *
     * @return the knot
-    * @see LinkedList#getFirst()
+    * @see List#get(int)
     */
    public Knot2 getFirst () {
 
-      return this.knots.getFirst();
+      return this.knots.get(0);
    }
 
    /**
     * Gets the last knot in the curve.
     *
     * @return the knot
-    * @see LinkedList#getLast()
+    * @see List#get(int)
     */
    public Knot2 getLast () {
 
-      return this.knots.getLast();
+      return this.knots.get(this.knots.size() - 1);
    }
 
    @Override
@@ -2593,7 +2613,7 @@ public class Curve2 extends Curve
     * access the knots in a curve.
     *
     * @return the iterator
-    * @see LinkedList#iterator()
+    * @see List#iterator()
     */
    @Override
    public Iterator < Curve2.Knot2 > iterator () {
@@ -2605,7 +2625,7 @@ public class Curve2 extends Curve
     * Gets the number of knots in the curve.
     *
     * @return the knot count
-    * @see LinkedList#size()
+    * @see List#size()
     */
    @Override
    public int length () {
@@ -2617,22 +2637,22 @@ public class Curve2 extends Curve
     * Returns and removes the first knot in the curve.
     *
     * @return the knot
-    * @see LinkedList#removeFirst()
+    * @see List#remove(int)
     */
    public Knot2 removeFirst () {
 
-      return this.knots.removeFirst();
+      return this.knots.remove(0);
    }
 
    /**
     * Removes and returns the last knot in the curve.
     *
     * @return the knot
-    * @see LinkedList#removeLast()
+    * @see List#remove(int)
     */
    public Knot2 removeLast () {
 
-      return this.knots.removeLast();
+      return this.knots.remove(this.knots.size() - 1);
    }
 
    /**
@@ -2644,12 +2664,12 @@ public class Curve2 extends Curve
    public Curve2 reset () {
 
       this.knots.clear();
-      this.knots.addLast(
+      this.knots.add(
             new Knot2(
                   -0.5f, 0.0f,
                   -0.25f, 0.25f,
                   -0.75f, -0.25f));
-      this.knots.addLast(
+      this.knots.add(
             new Knot2(
                   0.5f, 0.0f,
                   1.0f, 0.0f,
@@ -2887,7 +2907,7 @@ public class Curve2 extends Curve
       }
 
       if (this.closedLoop) {
-         currKnot = this.knots.getFirst();
+         currKnot = this.knots.get(0);
          result.append(' ')
                .append('C')
                .append(' ')

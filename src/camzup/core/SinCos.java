@@ -71,6 +71,15 @@ public abstract class SinCos {
     */
    public static final double FAC4_D = 19.7392082214d;
 
+   /**
+    * Evaluates an angle normalized to the range [0.0, 1.0] .
+    * This evalutes cosine as well as sine, where sine is 0.25
+    * less than cosine.
+    *
+    * @param normRad
+    *           the radians
+    * @return the evaluation
+    */
    public static final float eval ( final float normRad ) {
 
       /*

@@ -3154,7 +3154,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param target
     *           the output vector
     * @return the rounded vector
-    * @see Math#round(float)
+    * @see Utils#round(float)
     */
    public static Vec3 round (
          final Vec3 v,
@@ -3203,6 +3203,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param target
     *           the output vector
     * @return the sign
+    * @see Utils#sign(float)
     */
    public static Vec3 sign (
          final Vec3 v,
@@ -3326,6 +3327,38 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    public static Vec3 up ( final Vec3 target ) {
 
       return target.set(0.0f, 0.0f, 1.0f);
+   }
+
+   /**
+    * Wraps a vector around a periodic range as defined by an
+    * upper and lower bound: lower bounds inclusive; upper
+    * bounds exclusive.
+    *
+    * In cases where the lower bound is (0.0, 0.0) , use
+    * {@link Vec3#mod(Vec3, Vec3, Vec3)} .
+    *
+    * @param v
+    *           the vector
+    * @param lb
+    *           the lower bound
+    * @param ub
+    *           the upper bound
+    * @param target
+    *           the output vector
+    * @return the wrapped vector
+    * @see Utils#wrap(float, float, float)
+    */
+   @Experimental
+   public static Vec3 wrap (
+         final Vec3 v,
+         final Vec3 lb,
+         final Vec3 ub,
+         final Vec3 target ) {
+
+      return target.set(
+            Utils.wrap(v.x, lb.x, ub.x),
+            Utils.wrap(v.y, lb.y, ub.y),
+            Utils.wrap(v.z, lb.z, ub.z));
    }
 
    /**

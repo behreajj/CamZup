@@ -1,7 +1,7 @@
 package camzup.core;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import camzup.core.Curve2.Knot2;
@@ -16,12 +16,12 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
    /**
     * The list of curves held by the entity.
     */
-   public final LinkedList < Curve2 > curves = new LinkedList <>();
+   public final List < Curve2 > curves;
 
    /**
     * The list of materials held by the entity.
     */
-   public final LinkedList < MaterialSolid > materials = new LinkedList <>();
+   public final List < MaterialSolid > materials;
 
    /**
     * The entity's transform.
@@ -33,6 +33,11 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
     * the curve.
     */
    public Transform.Order transformOrder = Transform.Order.TRS;
+
+   {
+      this.materials = new ArrayList <>();
+      this.curves = new ArrayList <>();
+   }
 
    /**
     * The default constructor.
@@ -73,11 +78,7 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
 
       super(name);
       this.transform = transform;
-      for (final Curve2 curve : curves) {
-         if (curve != null) {
-            this.curves.add(curve);
-         }
-      }
+      this.appendCurves(curves);
    }
 
    /**
@@ -95,11 +96,7 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
 
       super();
       this.transform = transform;
-      for (final Curve2 curve : curves) {
-         if (curve != null) {
-            this.curves.add(curve);
-         }
-      }
+      this.appendCurves(curves);
    }
 
    /**
@@ -114,6 +111,11 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
 
       if (curve != null) {
          this.curves.add(curve);
+
+         final int matLen = this.materials.size();
+         if (curve.materialIndex < 0 && matLen > 0) {
+            curve.materialIndex = matLen - 1;
+         }
       }
       return this;
    }
@@ -125,12 +127,10 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
     *           the curves
     * @return this curve entity
     */
-   public CurveEntity2 appendCurve ( final Curve2... curves ) {
+   public CurveEntity2 appendCurves ( final Curve2... curves ) {
 
       for (final Curve2 curve : curves) {
-         if (curve != null) {
-            this.curves.add(curve);
-         }
+         this.appendCurve(curve);
       }
       return this;
    }
@@ -159,12 +159,10 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
     * @return this curve entity
     */
    @Chainable
-   public CurveEntity2 appendMaterial ( final MaterialSolid... materials ) {
+   public CurveEntity2 appendMaterials ( final MaterialSolid... materials ) {
 
       for (final MaterialSolid mat : materials) {
-         if (mat != null) {
-            this.materials.add(mat);
-         }
+         this.appendMaterial(mat);
       }
       return this;
    }
@@ -432,8 +430,6 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
     */
    public String toSvgString () {
 
-      // TODO: Use curve iterator.
-
       final StringBuilder result = new StringBuilder()
             .append("<g id=\"")
             .append(this.name.toLowerCase())
@@ -453,7 +449,9 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
          result.append(MaterialSolid.defaultSvgMaterial(scale));
       }
 
-      for (final Curve2 curve : this.curves) {
+      final Iterator < Curve2 > curveItr = this.curves.iterator();
+      while (curveItr.hasNext()) {
+         final Curve2 curve = curveItr.next();
 
          if (includesMats) {
 

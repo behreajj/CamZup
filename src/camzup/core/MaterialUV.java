@@ -11,12 +11,25 @@ public class MaterialUV extends Material {
    /**
     * The texture tint.
     */
-   public final Color tint = IMaterial.DEFAULT_FILL;
+   public final Color tint;
 
    /**
     * The UV coordinate transform.
     */
-   public final Transform2 transform = new Transform2();
+   public final Transform2 transform;
+
+   {
+      /*
+       * Instance variables should never be assigned constants
+       * when the constants are objects, as the constants will be
+       * overwritten. Rather, instance variables should receive
+       * copies of constants. To make this clearer, an initializer
+       * block.
+       */
+
+      this.tint = new Color(IMaterial.DEFAULT_FILL);
+      this.transform = new Transform2();
+   }
 
    /**
     * The default constructor.

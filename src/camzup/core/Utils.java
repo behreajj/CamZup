@@ -756,7 +756,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Evaluates two floats like booleans using the and logic gate.
+    * Evaluates two floats like booleans using the and logic
+    * gate.
     *
     * @param a
     *           the left operand
@@ -771,7 +772,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Evaluates two integers like booleans, using the and (AND) logic gate.
+    * Evaluates two integers like booleans, using the and (AND)
+    * logic gate.
     *
     * @param a
     *           the left operand
@@ -893,7 +895,6 @@ public abstract class Utils implements IUtils {
 
       final boolean yGtX = yAbs > xAbs;
       float t0 = yGtX ? yAbs : xAbs;
-      // if (t0 == 0.0f || y != y || x != x) {
       if (t0 == 0.0f) {
          return 0.0f;
       }
@@ -1043,16 +1044,6 @@ public abstract class Utils implements IUtils {
 
       return value < 0.0f ? 0.0f : value > 1.0f ? 1.0f : value;
    }
-
-   // public static float copySign ( final float magnitude,
-   // final float sign ) {
-   //
-   // return Float.intBitsToFloat(Float.floatToRawIntBits(sign)
-   // &
-   // -2147483648
-   // | Float.floatToRawIntBits(magnitude) &
-   // 2147483647);
-   // }
 
    /**
     * Finds the approximate cosine of an angle in radians.
@@ -1360,11 +1351,13 @@ public abstract class Utils implements IUtils {
    public static float invSqrtUnchecked ( final float value ) {
 
       final float vhalf = value * 0.5f;
-      float y = Float
-            .intBitsToFloat(0x5f375a86 - (Float.floatToIntBits(value) >> 1));
+      float y = Float.intBitsToFloat(0x5f375a86 -
+            (Float.floatToIntBits(value) >> 1));
+
       y *= 1.5f - vhalf * y * y;
       y *= 1.5f - vhalf * y * y;
       y *= 1.5f - vhalf * y * y;
+
       return y;
    }
 
@@ -2204,6 +2197,52 @@ public abstract class Utils implements IUtils {
    public static long uint ( final int a ) {
 
       return a & 0xffffffffL;
+   }
+
+   /**
+    * Wraps a value around a periodic range as defined by an
+    * upper and lower bound: lower bounds inclusive; upper
+    * bounds exclusive. Due to single precision accuracy,
+    * results will be inexact.
+    *
+    * In cases where the lower bound is greater than the upper
+    * bound, the two will be swapped. In cases where the range
+    * is 0.0, 0.0 will be returned.
+    *
+    * @param value
+    *           the value
+    * @param lb
+    *           the lower bound
+    * @param ub
+    *           the upper bound
+    * @return the wrapped value
+    */
+   @Experimental
+   public static float wrap (
+         final float value,
+         final float lb,
+         final float ub ) {
+
+      float lbc = 0.0f;
+      float ubc = 0.0f;
+      final float span = ub - lb;
+
+      if (span < 0.0f) {
+         lbc = ub;
+         ubc = lb;
+      } else if (span > 0.0f) {
+         lbc = lb;
+         ubc = ub;
+      } else {
+         return 0.0f;
+      }
+
+      if (value < lbc) {
+         return ubc - (lbc - value) % span;
+      } else if (value >= ubc) {
+         return lbc + (value - lbc) % span;
+      }
+      return value;
    }
 
    /**

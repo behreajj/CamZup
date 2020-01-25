@@ -3,6 +3,7 @@ package camzup.core;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -679,7 +680,7 @@ abstract class SVGParser {
          final Document doc = db.parse(file);
          doc.normalizeDocument();
 
-         final LinkedList < Curve2 > curves = result.curves;
+         final List < Curve2 > curves = result.curves;
 
          final NodeList paths = doc.getElementsByTagName("path");
          final int nodeLen = paths.getLength();

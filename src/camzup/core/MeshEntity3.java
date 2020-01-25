@@ -1,7 +1,7 @@
 package camzup.core;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -14,12 +14,12 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
    /**
     * The list of materials held by the entity.
     */
-   public final LinkedList < MaterialSolid > materials = new LinkedList <>();
+   public final List < MaterialSolid > materials;
 
    /**
     * The list of meshes held by the entity.
     */
-   public final LinkedList < Mesh3 > meshes = new LinkedList <>();
+   public final List < Mesh3 > meshes;
 
    /**
     * The entity's transform.
@@ -31,6 +31,11 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
     * the mesh.
     */
    public Transform.Order transformOrder = Transform.Order.TRS;
+
+   {
+      this.materials = new ArrayList <>();
+      this.meshes = new ArrayList <>();
+   }
 
    /**
     * The default constructor.
@@ -140,12 +145,10 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
     * @return this mesh entity
     */
    @Chainable
-   public MeshEntity3 appendMaterial ( final MaterialSolid... materials ) {
+   public MeshEntity3 appendMaterials ( final MaterialSolid... materials ) {
 
       for (final MaterialSolid mat : materials) {
-         if (mat != null) {
-            this.materials.add(mat);
-         }
+         this.appendMaterial(mat);
       }
       return this;
    }
@@ -162,6 +165,11 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
 
       if (mesh != null) {
          this.meshes.add(mesh);
+
+         final int matLen = this.materials.size();
+         if (mesh.materialIndex < 0 && matLen > 0) {
+            mesh.materialIndex = matLen - 1;
+         }
       }
       return this;
    }
@@ -174,12 +182,10 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
     * @return this mesh entity
     */
    @Chainable
-   public MeshEntity3 appendMesh ( final Mesh3... meshes ) {
+   public MeshEntity3 appendMeshes ( final Mesh3... meshes ) {
 
       for (final Mesh3 m : meshes) {
-         if (m != null) {
-            this.meshes.add(m);
-         }
+         this.appendMesh(m);
       }
       return this;
    }

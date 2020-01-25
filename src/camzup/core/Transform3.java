@@ -201,8 +201,11 @@ public class Transform3 extends Transform {
       Quaternion.fromAxes(right, forward, up, target.rotation);
       target.updateAxes();
 
-      target.moveTo(0.0f, 0.0f, 0.0f);
-      target.scaleTo(1.0f);
+      target.location.reset();
+      target.locPrev.reset();
+
+      target.scalePrev.set(target.scale);
+      Vec3.one(target.scale);
 
       return target;
    }
@@ -227,14 +230,14 @@ public class Transform3 extends Transform {
     */
    public static Transform3 identity ( final Transform3 target ) {
 
+      target.locPrev.set(target.location);
       target.location.reset();
-      target.locPrev.reset();
 
-      Vec3.one(target.scale);
-      Vec3.one(target.scalePrev);
-
+      target.rotPrev.set(target.rotation);
       target.rotation.reset();
-      target.rotPrev.reset();
+
+      target.scalePrev.set(target.scale);
+      Vec3.one(target.scale);
 
       Vec3.right(target.right);
       Vec3.forward(target.forward);
@@ -380,7 +383,6 @@ public class Transform3 extends Transform {
       Quaternion.mulVector(t.rotation, source, target);
       Vec3.mul(target, t.scale, target);
       Vec3.add(target, t.location, target);
-
       return target;
    }
 
@@ -405,7 +407,6 @@ public class Transform3 extends Transform {
 
       Quaternion.mulVector(t.rotation, source, target);
       Vec3.mul(target, t.scale, target);
-
       return target;
    }
 
@@ -855,28 +856,6 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Sets the transform's location.
-    *
-    * @param x
-    *           the x location
-    * @param y
-    *           the y location
-    * @param z
-    *           the z location
-    * @return this transform
-    */
-   @Chainable
-   public Transform3 moveTo (
-         final float x,
-         final float y,
-         final float z ) {
-
-      this.locPrev.set(this.location);
-      this.location.set(x, y, z);
-      return this;
-   }
-
-   /**
     * Sets the transforms' location.
     *
     * @param locNew
@@ -981,7 +960,20 @@ public class Transform3 extends Transform {
    @Chainable
    public Transform3 reset () {
 
-      return Transform3.identity(this);
+      this.locPrev.reset();
+      this.location.reset();
+
+      this.rotPrev.reset();
+      this.rotation.reset();
+
+      Vec3.one(this.scalePrev);
+      Vec3.one(this.scale);
+
+      Vec3.right(this.right);
+      Vec3.forward(this.forward);
+      Vec3.up(this.up);
+
+      return this;
    }
 
    /**
@@ -1024,34 +1016,6 @@ public class Transform3 extends Transform {
       this.rotPrev.set(this.rotation);
       Quaternion.addNorm(this.rotPrev, rot, this.rotation);
       this.updateAxes();
-      return this;
-   }
-
-   /**
-    * Rotates the transform to a new orientation.
-    *
-    * @param real
-    *           the real (w) component
-    * @param xImag
-    *           the x component
-    * @param yImag
-    *           the y component
-    * @param zImag
-    *           the z component
-    * @return this transform
-    */
-   @Chainable
-   public Transform3 rotateTo (
-         final float real,
-         final float xImag,
-         final float yImag,
-         final float zImag ) {
-
-      if (!(real == 0.0f && xImag == 0.0f && yImag == 0.0f && zImag == 0.0f)) {
-         this.rotPrev.set(this.rotation);
-         this.rotation.set(real, xImag, yImag, zImag);
-         this.updateAxes();
-      }
       return this;
    }
 
@@ -1264,30 +1228,6 @@ public class Transform3 extends Transform {
    /**
     * Scales the transform to a non-uniform size.
     *
-    * @param x
-    *           the size on the x axis
-    * @param y
-    *           the size on the y axis
-    * @param z
-    *           the size on the z axis
-    * @return this transform
-    */
-   @Chainable
-   public Transform3 scaleTo (
-         final float x,
-         final float y,
-         final float z ) {
-
-      if (x != 0.0f && y != 0.0f && z != 0.0f) {
-         this.scalePrev.set(this.scale);
-         this.scale.set(x, y, z);
-      }
-      return this;
-   }
-
-   /**
-    * Scales the transform to a non-uniform size.
-    *
     * @param scaleNew
     *           the new scale
     * @return this transform
@@ -1380,13 +1320,18 @@ public class Transform3 extends Transform {
    @Chainable
    public Transform3 set (
          final float xLoc, final float yLoc, final float zLoc,
-         final float real, final float xImag, final float yImag,
-         final float zImag, final float xScale, final float yScale,
-         final float zScale ) {
+         final float real,
+         final float xImag, final float yImag, final float zImag,
+         final float xScale, final float yScale, final float zScale ) {
 
-      this.moveTo(xLoc, yLoc, zLoc);
-      this.rotateTo(real, xImag, yImag, zImag);
-      this.scaleTo(xScale, yScale, zScale);
+      this.locPrev.set(this.location);
+      this.location.set(xLoc, yLoc, zLoc);
+
+      this.rotPrev.set(this.rotation);
+      this.rotation.set(real, xImag, yImag, zImag);
+
+      this.scalePrev.set(this.scale);
+      this.scale.set(xScale, yScale, zScale);
 
       return this;
    }
@@ -1520,5 +1465,26 @@ public class Transform3 extends Transform {
             .append(' ')
             .append('}')
             .toString();
+   }
+
+   /**
+    * Wraps the transform's location around a periodic range as
+    * defined by an upper and lower bound: lower bounds
+    * inclusive; upper bounds exclusive.
+    *
+    * @param lb
+    *           the lower bound
+    * @param ub
+    *           the upper bound
+    * @return the wrapped transform
+    */
+   @Chainable
+   public Transform3 wrap (
+         final Vec3 lb,
+         final Vec3 ub ) {
+
+      this.locPrev.set(this.location);
+      Vec3.wrap(this.locPrev, lb, ub, this.location);
+      return this;
    }
 }

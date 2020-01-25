@@ -883,7 +883,7 @@ public class Mesh3 extends Mesh {
    /**
     * The material associated with this mesh in a mesh entity.
     */
-   public int materialIndex = 0;
+   public int materialIndex = -1;
 
    /**
     * An array of normals to indicate how light will bounce off

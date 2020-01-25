@@ -1,8 +1,6 @@
 package camzup;
 
-import camzup.core.Color;
-import camzup.core.Curve2;
-import camzup.core.Curve3;
+import camzup.core.Gradient;
 import camzup.core.Mesh3;
 import camzup.core.Random;
 import camzup.core.Utils;
@@ -91,6 +89,10 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       final Random rng = new Random();
+      System.out.println(rng);
+
+      final Gradient gr = Gradient.paletteViridis(new Gradient());
+      System.out.println(gr.toBlenderCode("Viridis", 8, 2.2f));
 
       // final Color target = new Color();
       // for (int i = 0; i < 20; ++i) {

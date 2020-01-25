@@ -1243,9 +1243,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.arcMode = Curve2.ArcMode.PIE;
       }
 
-      this.transform.moveTo(x, y);
+      this.transform.moveTo(this.tr2Loc.set(x, y));
       this.transform.rotateTo(0.0f);
-      this.transform.scaleTo(w, h);
+      this.transform.scaleTo(this.tr2Scale.set(w, h));
 
       Curve2.arc(start, stop,
             0.5f, this.arcMode, this.arc);
@@ -2726,14 +2726,14 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * width and height;</li>
     * <li>shifting the normalized range.
     * </ol>
-    * 
+    *
     * More efficient than calling
     * {@link PApplet#screenX(float, float, float)} ,
     * {@link PApplet#screenY(float, float, float)} , and
     * {@link PApplet#screenZ(float, float, float)} separately.
     * However, it is advisable to work with {@link Vec4}s and
     * the renderer matrices directly.
-    * 
+    *
     * @param v
     *           the point
     * @param target
@@ -2895,6 +2895,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.defCameraFOV = IUp.DEFAULT_FOV;
       this.defCameraX = 0.0f;
       this.defCameraY = 0.0f;
+
+      // TODO: Replace with inline-sin cos since you're flipping
+      // the division.
       this.defCameraZ = this.height
             / PApplet.tan(this.defCameraFOV * 0.5f);
       this.defCameraNear = this.defCameraZ * 0.01f;

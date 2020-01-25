@@ -1,7 +1,7 @@
 package camzup.core;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import camzup.core.Curve3.Knot3;
@@ -16,12 +16,12 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
    /**
     * The list of curves held by the entity.
     */
-   public final LinkedList < Curve3 > curves = new LinkedList <>();
+   public final List < Curve3 > curves;
 
    /**
     * The list of materials held by the entity.
     */
-   public final LinkedList < MaterialSolid > materials = new LinkedList <>();
+   public final List < MaterialSolid > materials;
 
    /**
     * The entity's transform.
@@ -33,6 +33,11 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
     * the curve.
     */
    public Transform.Order transformOrder = Transform.Order.TRS;
+
+   {
+      this.materials = new ArrayList <>();
+      this.curves = new ArrayList <>();
+   }
 
    /**
     * The default constructor.
@@ -73,11 +78,7 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
 
       super(name);
       this.transform = transform;
-      for (final Curve3 curve : curves) {
-         if (curve != null) {
-            this.curves.add(curve);
-         }
-      }
+      this.appendCurves(curves);
    }
 
    /**
@@ -95,11 +96,7 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
 
       super();
       this.transform = transform;
-      for (final Curve3 curve : curves) {
-         if (curve != null) {
-            this.curves.add(curve);
-         }
-      }
+      this.appendCurves(curves);
    }
 
    /**
@@ -114,6 +111,11 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
 
       if (curve != null) {
          this.curves.add(curve);
+
+         final int matLen = this.materials.size();
+         if (curve.materialIndex < 0 && matLen > 0) {
+            curve.materialIndex = matLen - 1;
+         }
       }
       return this;
    }
@@ -125,12 +127,10 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
     *           the curves
     * @return this curve entity
     */
-   public CurveEntity3 appendCurve ( final Curve3... curves ) {
+   public CurveEntity3 appendCurves ( final Curve3... curves ) {
 
       for (final Curve3 curve : curves) {
-         if (curve != null) {
-            this.curves.add(curve);
-         }
+         this.appendCurve(curve);
       }
       return this;
    }
@@ -159,12 +159,10 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
     * @return this curve entity
     */
    @Chainable
-   public CurveEntity3 appendMaterial ( final MaterialSolid... materials ) {
+   public CurveEntity3 appendMaterials ( final MaterialSolid... materials ) {
 
       for (final MaterialSolid mat : materials) {
-         if (mat != null) {
-            this.materials.add(mat);
-         }
+         this.appendMaterial(mat);
       }
       return this;
    }

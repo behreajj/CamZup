@@ -726,31 +726,6 @@ public class Gradient implements Iterable < Gradient.Key > {
       return this;
    }
 
-   // @Chainable
-   // public Gradient prepend ( final int... colors ) {
-   //
-   // final int len = colors.length;
-   // this.shiftKeysRight(len);
-   // final int oldLen = this.keys.size();
-   // final float denom = 1.0f / (oldLen + len - 1.0f);
-   // for (int i = 0; i < len; ++i) {
-   // this.keys.add(new Key((oldLen + i) * denom, colors[i]));
-   // }
-   // return this;
-   // }
-
-   // public void shiftKeysRight ( final int added ) {
-   //
-   // final Iterator < Gradient.Key > itr =
-   // this.keys.iterator();
-   // int i = added + 1;
-   // final float scalar = 1.0f / (this.keys.size() + 1);
-   // while (itr.hasNext()) {
-   // final Gradient.Key key = itr.next();
-   // key.step = key.step * i++ * scalar;
-   // }
-   // }
-
    /**
     * Appends a color at step 1.0 . Shifts existing keys to the
     * left.
@@ -945,8 +920,8 @@ public class Gradient implements Iterable < Gradient.Key > {
       this.keys.clear();
 
       final Iterator < Key > itr = keyArr.iterator();
-      int i = 0;
       final float denom = 1.0f / (keyArr.size() - 1.0f);
+      int i = 0;
       while (itr.hasNext()) {
          final Key key = itr.next();
          key.step = i++ * denom;
@@ -1286,10 +1261,15 @@ public class Gradient implements Iterable < Gradient.Key > {
     *           the material's name
     * @param samples
     *           number of gradient samples
+    * @param gamma
+    *           the gamma adjustment
     * @return the string
     */
    @Experimental
-   public String toBlenderCode ( final String name, final int samples ) {
+   public String toBlenderCode (
+         final String name,
+         final int samples,
+         final float gamma ) {
 
       /*
        * Blender gradients may contain a max of 32 color keys.
@@ -1301,6 +1281,7 @@ public class Gradient implements Iterable < Gradient.Key > {
       final int len = clrs.length;
       final int last = len - 1;
       final float toPercent = 1.0f / last;
+      final float expn = gamma == 0.0f ? 1.0f : gamma;
 
       final StringBuilder result = new StringBuilder()
             .append("from bpy import data as D, context as C\n\n")
@@ -1312,11 +1293,11 @@ public class Gradient implements Iterable < Gradient.Key > {
          result.append("\n    {\"position\": ")
                .append(Utils.toFixed(percent, 6))
                .append(", \"color\": (")
-               .append(Utils.toFixed(clr.x, 6))
+               .append(Utils.toFixed((float) Math.pow(clr.x, expn), 6))
                .append(',').append(' ')
-               .append(Utils.toFixed(clr.y, 6))
+               .append(Utils.toFixed((float) Math.pow(clr.y, expn), 6))
                .append(',').append(' ')
-               .append(Utils.toFixed(clr.z, 6))
+               .append(Utils.toFixed((float) Math.pow(clr.z, expn), 6))
                .append(',').append(' ')
                .append(Utils.toFixed(clr.w, 6))
                .append(")}");

@@ -495,7 +495,7 @@ public class Mesh2 extends Mesh {
    /**
     * The material associated with this mesh in a mesh entity.
     */
-   public int materialIndex = 0;
+   public int materialIndex = -1;
 
    /**
     * The texture (UV) coordinates that describe how an image
