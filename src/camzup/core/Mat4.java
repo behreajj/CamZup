@@ -422,7 +422,6 @@ public class Mat4 extends Matrix {
          return Mat4.identity(target);
       }
 
-      // TODO: Replace Math.sqrt s.
       final float mInv = Utils.invSqrtUnchecked(mSq);
       final float ax = axis.x * mInv;
       final float ay = axis.y * mInv;
@@ -460,12 +459,6 @@ public class Mat4 extends Matrix {
          final float radians,
          final Vec3 axis,
          final Mat4 target ) {
-
-      // return Mat4.fromRotation(
-      // (float) Math.cos(radians),
-      // (float) Math.sin(radians),
-      // axis,
-      // target);
 
       final float nrm = IUtils.ONE_TAU * radians;
       return Mat4.fromRotation(
@@ -552,11 +545,6 @@ public class Mat4 extends Matrix {
          final float radians,
          final Mat4 target ) {
 
-      // return Mat4.fromRotX(
-      // (float) Math.cos(radians),
-      // (float) Math.sin(radians),
-      // target);
-
       final float nrm = IUtils.ONE_TAU * radians;
       return Mat4.fromRotX(
             SinCos.eval(nrm),
@@ -602,11 +590,6 @@ public class Mat4 extends Matrix {
          final float radians,
          final Mat4 target ) {
 
-      // return Mat4.fromRotY(
-      // (float) Math.cos(radians),
-      // (float) Math.sin(radians),
-      // target);
-
       final float nrm = IUtils.ONE_TAU * radians;
       return Mat4.fromRotY(
             SinCos.eval(nrm),
@@ -651,11 +634,6 @@ public class Mat4 extends Matrix {
    public static Mat4 fromRotZ (
          final float radians,
          final Mat4 target ) {
-
-      // return Mat4.fromRotZ(
-      // (float) Math.cos(radians),
-      // (float) Math.sin(radians),
-      // target);
 
       final float nrm = IUtils.ONE_TAU * radians;
       return Mat4.fromRotZ(
@@ -1317,11 +1295,11 @@ public class Mat4 extends Matrix {
          final float far,
          final Mat4 target ) {
 
-      final float tanfov = (float) Math.tan(fov * 0.5d);
+      final float cotfov = Utils.cot(fov * 0.5f);
       final float d = Utils.div(1.0f, far - near);
       return target.set(
-            Utils.div(1.0f, tanfov * aspect), 0.0f, 0.0f, 0.0f,
-            0.0f, Utils.div(1.0f, tanfov), 0.0f, 0.0f,
+            Utils.div(cotfov, aspect), 0.0f, 0.0f, 0.0f,
+            0.0f, cotfov, 0.0f, 0.0f,
             0.0f, 0.0f, (far + near) * -d, (near + near) * far * -d,
             0.0f, 0.0f, -1.0f, 0.0f);
    }
@@ -2316,7 +2294,7 @@ public class Mat4 extends Matrix {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder()
+      return new StringBuilder(512)
             .append("{ m00: ")
             .append(Utils.toFixed(this.m00, places))
             .append(", m01: ")
@@ -2380,8 +2358,7 @@ public class Mat4 extends Matrix {
     */
    public String toStringCol ( final int places ) {
 
-      return new StringBuilder()
-            // .append(this.hashIdentityString())
+      return new StringBuilder(256)
             .append('\n')
             .append(Utils.toFixed(this.m00, places))
             .append(',').append(' ')

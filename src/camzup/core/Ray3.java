@@ -176,13 +176,18 @@ public class Ray3 extends Ray implements Comparable < Ray3 > {
    /**
     * The ray's direction.
     */
-   public final Vec3 dir = Vec3.forward(new Vec3());
+   public final Vec3 dir;
 
    /**
     * The ray's origin point.
     */
-   public final Vec3 origin = new Vec3();
+   public final Vec3 origin;
 
+   {
+      origin = new Vec3();
+      dir = Vec3.forward(new Vec3());
+   }
+   
    /**
     * The default constructor.
     */

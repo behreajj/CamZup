@@ -4,7 +4,7 @@ import camzup.pfriendly.*;
 int entityCount = 1000;
 MeshEntity2[] entities = new MeshEntity2[entityCount];
 Random rng = new Random();
-YupJ2 graphics2;
+Yup2 graphics2;
 Mesh2 mesh = Mesh2.polygon(new Mesh2(), 6, Mesh2.PolyType.NGON);
 Vec2 locub;
 Vec2 loclb;
@@ -17,10 +17,10 @@ MaterialSolid material = new MaterialSolid()
   .setStrokeWeight(0.01);
 
 void setup() {
-  size(720, 405, "camzup.pfriendly.YupJ2");
+  size(720, 405, "camzup.pfriendly.Yup2");
   smooth(8);
   frameRate(1000);
-  graphics2 = (YupJ2)getGraphics();
+  graphics2 = (Yup2)getGraphics();
 
   locub = new Vec2(width * 0.5, height * 0.5);
   loclb = Vec2.negate(locub, new Vec2());

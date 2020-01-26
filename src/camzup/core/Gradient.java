@@ -1276,8 +1276,7 @@ public class Gradient implements Iterable < Gradient.Key > {
        * While they may contain a minimum of only 1, they default
        * to 2 keys when created.
        */
-      final int valSamples = Utils.clamp(samples, 2, 32);
-      final Color[] clrs = this.evalRange(valSamples);
+      final Color[] clrs = this.evalRange(Utils.clamp(samples, 2, 32));
       final int len = clrs.length;
       final int last = len - 1;
       final float toPercent = 1.0f / last;
@@ -1289,9 +1288,8 @@ public class Gradient implements Iterable < Gradient.Key > {
 
       for (int i = 0; i < len; ++i) {
          final Color clr = clrs[i];
-         final float percent = i * toPercent;
          result.append("\n    {\"position\": ")
-               .append(Utils.toFixed(percent, 6))
+               .append(Utils.toFixed(i * toPercent, 6))
                .append(", \"color\": (")
                .append(Utils.toFixed((float) Math.pow(clr.x, expn), 6))
                .append(',').append(' ')
@@ -1300,7 +1298,7 @@ public class Gradient implements Iterable < Gradient.Key > {
                .append(Utils.toFixed((float) Math.pow(clr.z, expn), 6))
                .append(',').append(' ')
                .append(Utils.toFixed(clr.w, 6))
-               .append(")}");
+               .append(')').append('}');
 
          if (i < last) {
             result.append(',');
@@ -1349,7 +1347,8 @@ public class Gradient implements Iterable < Gradient.Key > {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder()
+      final StringBuilder sb = new StringBuilder(
+            16 + 128 * this.keys.size())
             .append("{ keys: [ \n");
       final Iterator < Key > itr = this.keys.iterator();
       while (itr.hasNext()) {

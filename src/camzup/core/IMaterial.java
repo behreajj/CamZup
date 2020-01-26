@@ -9,15 +9,15 @@ public interface IMaterial extends IUtils {
 
    /**
     * The default fill color used when none is specified.
+    * Equivalent to (0.6039, 0.8471, 0.8863, 1.0) .
     */
-   Color DEFAULT_FILL = new Color(0.6039f, 0.8471f, 0.8863f,
-         1.0f);
+   int DEFAULT_FILL = 0xff9ad8e2;
 
    /**
     * The default stroke color used when none is specified.
+    * Equivalent to (0.125, 0.125, 0.125, 1.0) .
     */
-   Color DEFAULT_STROKE = new Color(0.125f, 0.125f,
-         0.125f, 1.0f);
+   int DEFAULT_STROKE = 0xff202020;
 
    /**
     * The default stroke weight used when none is specified.

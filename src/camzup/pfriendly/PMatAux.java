@@ -704,11 +704,11 @@ public abstract class PMatAux {
          target = new PMatrix3D();
       }
 
-      final float tanfov = Utils.tan(fov * 0.5f);
+      final float cotfov = Utils.cot(fov * 0.5f);
       final float d = Utils.div(1.0f, far - near);
       target.set(
-            Utils.div(1.0f, tanfov * aspect), 0.0f, 0.0f, 0.0f,
-            0.0f, Utils.div(1.0f, tanfov), 0.0f, 0.0f,
+            Utils.div(cotfov, aspect), 0.0f, 0.0f, 0.0f,
+            0.0f, cotfov, 0.0f, 0.0f,
             0.0f, 0.0f, (far + near) * -d, (near + near) * far * -d,
             0.0f, 0.0f, -1.0f, 0.0f);
 

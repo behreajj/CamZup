@@ -16,8 +16,9 @@ Transform3 transform = new Transform3()
   .scaleTo(256.0);
 
 Curve3 curve = Curve3.circle(0.0, 0.5, 4, new Curve3());
-CurveEntity3 entity = new CurveEntity3("Example", transform, curve)
-  .appendMaterial(material);
+CurveEntity3 entity = new CurveEntity3("Example", transform)
+  .appendMaterial(material)
+  .appendCurve(curve);
 
 void setup() {
   size(720, 405, "camzup.pfriendly.Yup3");

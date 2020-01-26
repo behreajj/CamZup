@@ -1066,6 +1066,22 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * Finds the approximate cotangent of an angle in radians.
+    * Equivalent to dividing the cosine of the angle by the
+    * sine, or to 1.0 / tan ( a ) .
+    *
+    * @param radians
+    *           the radians
+    * @return the cotangent
+    */
+   public static float cot ( final float radians ) {
+
+      final float nrm = IUtils.ONE_TAU * radians;
+      final float sint = SinCos.eval(nrm - 0.25f);
+      return sint == 0.0f ? 0.0f : SinCos.eval(nrm) / sint;
+   }
+
+   /**
     * Converts an angle in radians to an angle in degrees.
     *
     * @param radians
@@ -1329,9 +1345,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * The fast inverse square root implementation based on the
-    * 'evil bit hack' from Quake 3, as described by Chris
-    * Lomont in "<a href=
+    * The inverse square root implementation based on the 'evil
+    * bit hack' from Quake 3, as described by Chris Lomont in
+    * "<a href=
     * "http://www.lomont.org/papers/2003/InvSqrt.pdf">Fast
     * Inverse Square Root</a>." For accuracy, the result is
     * refined three times with the Newton-Raphson method.<br>

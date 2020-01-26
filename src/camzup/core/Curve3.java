@@ -780,21 +780,14 @@ public class Curve3 extends Curve
        *
        * @param magnitude
        *           the magnitude
-       * @param temp0
-       *           a temporary vector
-       * @param temp1
-       *           a temporary vector
        * @return this knot
        */
       @Chainable
-      public Knot3 scaleForeHandleTo (
-            final float magnitude,
-            final Vec3 temp0,
-            final Vec3 temp1 ) {
+      public Knot3 scaleForeHandleTo ( final float magnitude ) {
 
-         Vec3.subNorm(this.foreHandle, this.coord, temp0);
-         Vec3.mul(temp0, magnitude, temp1);
-         Vec3.add(temp1, this.coord, this.foreHandle);
+         Vec3.subNorm(this.foreHandle, this.coord, this.foreHandle);
+         Vec3.mul(this.foreHandle, magnitude, this.foreHandle);
+         Vec3.add(this.foreHandle, this.coord, this.foreHandle);
 
          return this;
       }
@@ -820,27 +813,15 @@ public class Curve3 extends Curve
        *
        * @param magnitude
        *           the magnitude
-       * @param temp0
-       *           a temporary vector
-       * @param temp1
-       *           a temporary vector
        * @return this knot
-       * @see Knot3#scaleForeHandleTo(float, Vec3, Vec3)
-       * @see Knot3#scaleRearHandleTo(float, Vec3, Vec3)
+       * @see Knot3#scaleForeHandleTo(float)
+       * @see Knot3#scaleRearHandleTo(float)
        */
       @Chainable
-      public Knot3 scaleHandlesTo (
-            final float magnitude,
-            final Vec3 temp0,
-            final Vec3 temp1 ) {
+      public Knot3 scaleHandlesTo ( final float magnitude ) {
 
-         this.scaleForeHandleTo(
-               magnitude,
-               temp0, temp1);
-         this.scaleRearHandleTo(
-               magnitude,
-               temp0, temp1);
-
+         this.scaleForeHandleTo(magnitude);
+         this.scaleRearHandleTo(magnitude);
          return this;
       }
 
@@ -870,24 +851,17 @@ public class Curve3 extends Curve
        *
        * @param magnitude
        *           the magnitude
-       * @param temp0
-       *           a temporary vector
-       * @param temp1
-       *           a temporary vector
        * @return this knot
        * @see Vec3#subNorm(Vec3, Vec3, Vec3)
        * @see Vec3#mul(Vec3, float, Vec3)
        * @see Vec3#add(Vec3, Vec3, Vec3)
        */
       @Chainable
-      public Knot3 scaleRearHandleTo (
-            final float magnitude,
-            final Vec3 temp0,
-            final Vec3 temp1 ) {
+      public Knot3 scaleRearHandleTo ( final float magnitude ) {
 
-         Vec3.subNorm(this.rearHandle, this.coord, temp0);
-         Vec3.mul(temp0, magnitude, temp1);
-         Vec3.add(temp1, this.coord, this.rearHandle);
+         Vec3.subNorm(this.rearHandle, this.coord, this.rearHandle);
+         Vec3.mul(this.rearHandle, magnitude, this.rearHandle);
+         Vec3.add(this.rearHandle, this.coord, this.rearHandle);
 
          return this;
       }
@@ -1624,11 +1598,9 @@ public class Curve3 extends Curve
       // TODO: Can this be optimized to use fewer temp vectors?
       final Vec3 back = new Vec3();
       final Vec3 backNorm = new Vec3();
-      final Vec3 backRescale = new Vec3();
 
       final Vec3 forward = new Vec3();
       final Vec3 forNorm = new Vec3();
-      final Vec3 forRescale = new Vec3();
 
       final Vec3 dir0 = new Vec3();
       final Vec3 dir1 = new Vec3();
@@ -1686,11 +1658,13 @@ public class Curve3 extends Curve
 
          Vec3.rescale(dir2, IUtils.ONE_THIRD, dir0);
 
-         Vec3.mul(dir0, backDist, backRescale);
-         Vec3.add(backRescale, currCoord, knot.rearHandle);
+         final Vec3 rh = knot.rearHandle;
+         Vec3.mul(dir0, backDist, rh);
+         Vec3.add(rh, currCoord, rh);
 
-         Vec3.mul(dir0, foreDist, forRescale);
-         Vec3.add(forRescale, currCoord, knot.foreHandle);
+         final Vec3 fh = knot.foreHandle;
+         Vec3.mul(dir0, foreDist, fh);
+         Vec3.add(fh, currCoord, fh);
       }
 
       /*
@@ -1771,13 +1745,13 @@ public class Curve3 extends Curve
     * The material associated with this curve in a curve
     * entity.
     */
-   public int materialIndex = -1;
+   public int materialIndex = 0;
 
    {
       /*
-       * Seems to perform better when the class is used over the
-       * interface is not used. Problem is that it's hard to
-       * decide one whether to use an array or linked list.
+       * Seems to perform better when the class is instead of the
+       * interface. Problem is that it's hard to decide one
+       * whether to use an array or linked list.
        */
 
       // knots = new LinkedList <>();
@@ -2091,21 +2065,16 @@ public class Curve3 extends Curve
       if (this == obj) {
          return true;
       }
-
-      if (obj == null) {
+      if (!super.equals(obj)) {
          return false;
       }
-
       if (this.getClass() != obj.getClass()) {
          return false;
       }
-
       final Curve3 other = (Curve3) obj;
-
       if (this.closedLoop != other.closedLoop) {
          return false;
       }
-
       if (this.knots == null) {
          if (other.knots != null) {
             return false;
@@ -2113,7 +2082,6 @@ public class Curve3 extends Curve
       } else if (!this.knots.equals(other.knots)) {
          return false;
       }
-
       return true;
    }
 
@@ -2589,66 +2557,6 @@ public class Curve3 extends Curve
    }
 
    /**
-    * Writes a Wavefront OBJ file format string by converting
-    * this curve to line segments. The points will not be
-    * evenly distributed along the curve.
-    *
-    * @param precision
-    *           the precision
-    * @return the string
-    */
-   @Experimental
-   public String toObjString ( final int precision ) {
-
-      final StringBuilder result = new StringBuilder();
-      final Vec3[][] segments = this.evalRange(precision);
-      final int len = segments.length;
-
-      result.append("# v: ")
-            .append(len)
-            .append('\n')
-            .append('\n');
-
-      result.append('o')
-            .append(' ')
-            .append(this.name)
-            .append('\n')
-            .append('\n');
-
-      for (int i = 0; i < len; ++i) {
-         final Vec3 coord = segments[i][0];
-         result.append('v')
-               .append(' ')
-               .append(coord.toObjString())
-               .append('\n');
-      }
-
-      /*
-       * Create a line linking the prior segment to the next.
-       * Indices in an .obj file start at 1, not 0.
-       */
-      for (int i = 1, j = 2; i < len; ++i, ++j) {
-         result.append('l')
-               .append(' ')
-               .append(i)
-               .append(' ')
-               .append(j)
-               .append('\n');
-      }
-
-      if (this.closedLoop) {
-         result.append('l')
-               .append(' ')
-               .append(len)
-               .append(' ')
-               .append(1)
-               .append('\n');
-      }
-
-      return result.toString();
-   }
-
-   /**
     * Returns a string representation of the curve.
     *
     * @return the string
@@ -2668,10 +2576,11 @@ public class Curve3 extends Curve
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder()
-            .append("{ closedLoop: ")
-            .append(this.closedLoop)
-            .append(", \n  knots: [ \n");
+      final StringBuilder sb = new StringBuilder(
+            64 + 256 * this.knots.size())
+                  .append("{ closedLoop: ")
+                  .append(this.closedLoop)
+                  .append(", \n  knots: [ \n");
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {

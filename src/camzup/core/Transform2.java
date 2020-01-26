@@ -479,23 +479,23 @@ public class Transform2 extends Transform {
    /**
     * The transform's forward axis.
     */
-   protected final Vec2 forward = Vec2.forward(new Vec2());
+   protected final Vec2 forward;
 
    /**
     * The transform's location.
     */
-   protected final Vec2 location = Vec2.zero(new Vec2());
+   protected final Vec2 location;
 
    /**
     * The previous location. Subtract from the current location
     * to find the delta, or change, in location.
     */
-   protected final Vec2 locPrev = Vec2.zero(new Vec2());
+   protected final Vec2 locPrev;
 
    /**
     * The transform's right axis.
     */
-   protected final Vec2 right = Vec2.right(new Vec2());
+   protected final Vec2 right;
 
    /**
     * The transform's rotation.
@@ -511,19 +511,30 @@ public class Transform2 extends Transform {
    /**
     * The transform's scale.
     */
-   protected final Vec2 scale = Vec2.one(new Vec2());
+   protected final Vec2 scale;
 
    /**
     * The previous scale. Subtract from the current scale to
     * find the delta, or change, in scale.
     */
-   protected final Vec2 scalePrev = Vec2.one(new Vec2());
+   protected final Vec2 scalePrev;
 
    /**
     * Stores the result of sin ( rotation ) when calculating
     * the transform's right and forward axes.
     */
    protected float sina = 0.0f;
+
+   {
+      this.location = new Vec2();
+      this.locPrev = new Vec2();
+
+      this.scale = Vec2.one(new Vec2());
+      this.scalePrev = Vec2.one(new Vec2());
+      
+      this.right = Vec2.right(new Vec2());
+      this.forward = Vec2.forward(new Vec2());
+   }
 
    /**
     * The default constructor.
@@ -1177,7 +1188,7 @@ public class Transform2 extends Transform {
       final float qw = SinCos.eval(nrm);
       final float qz = SinCos.eval(nrm - 0.25f);
 
-      return new StringBuilder()
+      return new StringBuilder(256)
             .append("{\n        \"location\": (")
             .append(Utils.toFixed(this.location.x, 6))
             .append(',').append(' ')
@@ -1222,7 +1233,6 @@ public class Transform2 extends Transform {
     * @param places
     *           the number of places
     * @return the string
-    * @see IUtils#RAD_TO_DEG
     */
    public String toString ( final int places ) {
 
@@ -1248,7 +1258,7 @@ public class Transform2 extends Transform {
     */
    public String toSvgString () {
 
-      return new StringBuilder()
+      return new StringBuilder(96)
             .append("transform=\"translate(")
             .append(Utils.toFixed(this.location.x, 1))
             .append(',')

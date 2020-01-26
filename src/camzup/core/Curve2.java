@@ -633,23 +633,14 @@ public class Curve2 extends Curve
        *
        * @param magnitude
        *           the magnitude
-       * @param temp0
-       *           a temporary vector
-       * @param temp1
-       *           a temporary vector
        * @return this knot
        */
       @Chainable
-      public Knot2 scaleForeHandleTo (
-            final float magnitude,
-            final Vec2 temp0,
-            final Vec2 temp1 ) {
+      public Knot2 scaleForeHandleTo ( final float magnitude ) {
 
-         // TODO: Inline. Can this just use forehandle as an out?
-
-         Vec2.subNorm(this.foreHandle, this.coord, temp0);
-         Vec2.mul(temp0, magnitude, temp1);
-         Vec2.add(temp1, this.coord, this.foreHandle);
+         Vec2.subNorm(this.foreHandle, this.coord, this.foreHandle);
+         Vec2.mul(this.foreHandle, magnitude, this.foreHandle);
+         Vec2.add(this.foreHandle, this.coord, this.foreHandle);
 
          return this;
       }
@@ -675,27 +666,15 @@ public class Curve2 extends Curve
        *
        * @param magnitude
        *           the magnitude
-       * @param temp0
-       *           a temporary vector
-       * @param temp1
-       *           a temporary vector
        * @return this knot
-       * @see Knot2#scaleForeHandleTo(float, Vec2, Vec2)
-       * @see Knot2#scaleRearHandleTo(float, Vec2, Vec2)
+       * @see Knot2#scaleForeHandleTo(float)
+       * @see Knot2#scaleRearHandleTo(float)
        */
       @Chainable
-      public Knot2 scaleHandlesTo (
-            final float magnitude,
-            final Vec2 temp0,
-            final Vec2 temp1 ) {
+      public Knot2 scaleHandlesTo ( final float magnitude ) {
 
-         this.scaleForeHandleTo(
-               magnitude,
-               temp0, temp1);
-         this.scaleRearHandleTo(
-               magnitude,
-               temp0, temp1);
-
+         this.scaleForeHandleTo(magnitude);
+         this.scaleRearHandleTo(magnitude);
          return this;
       }
 
@@ -723,26 +702,17 @@ public class Curve2 extends Curve
        *
        * @param magnitude
        *           the magnitude
-       * @param temp0
-       *           a temporary vector
-       * @param temp1
-       *           a temporary vector
        * @return this knot
        * @see Vec2#subNorm(Vec2, Vec2, Vec2)
        * @see Vec2#mul(Vec2, float, Vec2)
        * @see Vec2#add(Vec2, Vec2, Vec2)
        */
       @Chainable
-      public Knot2 scaleRearHandleTo (
-            final float magnitude,
-            final Vec2 temp0,
-            final Vec2 temp1 ) {
+      public Knot2 scaleRearHandleTo ( final float magnitude ) {
 
-         // TODO: Inline.
-
-         Vec2.subNorm(this.rearHandle, this.coord, temp0);
-         Vec2.mul(temp0, magnitude, temp1);
-         Vec2.add(temp1, this.coord, this.rearHandle);
+         Vec2.subNorm(this.rearHandle, this.coord, this.rearHandle);
+         Vec2.mul(this.rearHandle, magnitude, this.rearHandle);
+         Vec2.add(this.rearHandle, this.coord, this.rearHandle);
 
          return this;
       }
@@ -1143,8 +1113,8 @@ public class Curve2 extends Curve
       final float hndtn = 0.25f * toStep * arcLen1;
 
       /*
-       * The tangent function has been inlined (tan ( x ) := sin (
-       * x ) / cos ( x ) ). The result is multiplied by 4 / 3
+       * The tangent function has been inlined ( tan ( x ) := sin
+       * ( x ) / cos ( x ) ). The result is multiplied by 4 / 3
        * (picture a circle enclosed by a square, and the
        * osculating edges), then by the radius.
        */
@@ -1703,74 +1673,54 @@ public class Curve2 extends Curve
 
       /* Top Right Corner. */
       if (tr < 0.0f) {
-         final float ix1 = x1 - vtr;
-         final float iy0 = y0 - vtr;
-
-         k1fh.x = (k1co.x + ix1) * 0.5f;
-         k1fh.y = (k1co.y + iy0) * 0.5f;
-
-         k2rh.x = (k2co.x + ix1) * 0.5f;
-         k2rh.y = (k2co.y + iy0) * 0.5f;
+         k1fh.x = k1co.x;
+         k1fh.y = (k1co.y + k2co.y) * 0.5f;
+         k2rh.x = (k2co.x + k1co.x) * 0.5f;
+         k2rh.y = k2co.y;
       } else {
          k1fh.x = (k1co.x + x1) * 0.5f;
-         k1fh.y = (k1co.y + y0) * 0.5f;
-
-         k2rh.x = (k2co.x + x1) * 0.5f;
+         k1fh.y = y0;
+         k2rh.x = x1;
          k2rh.y = (k2co.y + y0) * 0.5f;
       }
 
       /* Bottom Right Corner. */
       if (br < 0.0f) {
-         final float ix1 = x1 - vbr;
-         final float iy1 = y1 + vbr;
-
-         k3fh.x = (k3co.x + ix1) * 0.5f;
-         k3fh.y = (k3co.y + iy1) * 0.5f;
-
-         k4rh.x = (k4co.x + ix1) * 0.5f;
-         k4rh.y = (k4co.y + iy1) * 0.5f;
+         k3fh.x = (k3co.x + k4co.x) * 0.5f;
+         k3fh.y = k3co.y;
+         k4rh.x = k4co.x;
+         k4rh.y = (k4co.y + k3co.y) * 0.5f;
       } else {
-         k3fh.x = (k3co.x + x1) * 0.5f;
+         k3fh.x = x1;
          k3fh.y = (k3co.y + y1) * 0.5f;
-
          k4rh.x = (k4co.x + x1) * 0.5f;
-         k4rh.y = (k4co.y + y1) * 0.5f;
+         k4rh.y = y1;
       }
 
       /* Bottom Left Corner. */
       if (bl < 0.0f) {
-         final float ix0 = x0 + vbl;
-         final float iy1 = y1 + vbl;
-
-         k5fh.x = (k5co.x + ix0) * 0.5f;
-         k5fh.y = (k5co.y + iy1) * 0.5f;
-
-         k6rh.x = (k6co.x + ix0) * 0.5f;
-         k6rh.y = (k6co.y + iy1) * 0.5f;
+         k5fh.x = k5co.x;
+         k5fh.y = (k5co.y + k6co.y) * 0.5f;
+         k6rh.x = (k6co.x + k5co.x) * 0.5f;
+         k6rh.y = k6co.y;
       } else {
          k5fh.x = (k5co.x + x0) * 0.5f;
-         k5fh.y = (k5co.y + y1) * 0.5f;
-
-         k6rh.x = (k6co.x + x0) * 0.5f;
+         k5fh.y = y1;
+         k6rh.x = x0;
          k6rh.y = (k6co.y + y1) * 0.5f;
       }
 
       /* Top Left Corner. */
       if (tl < 0.0f) {
-         final float ix0 = x0 + vtl;
-         final float iy0 = y0 - vtl;
-
-         k7fh.x = (k7co.x + ix0) * 0.5f;
-         k7fh.y = (k7co.y + iy0) * 0.5f;
-
-         k0rh.x = (k0co.x + ix0) * 0.5f;
-         k0rh.y = (k0co.y + iy0) * 0.5f;
+         k7fh.x = (k7co.x + k0co.x) * 0.5f;
+         k7fh.y = k7co.y;
+         k0rh.x = k0co.x;
+         k0rh.y = (k0co.y + k7co.y) * 0.5f;
       } else {
-         k7fh.x = (k7co.x + x0) * 0.5f;
+         k7fh.x = x0;
          k7fh.y = (k7co.y + y0) * 0.5f;
-
          k0rh.x = (k0co.x + x0) * 0.5f;
-         k0rh.y = (k0co.y + y0) * 0.5f;
+         k0rh.y = y0;
       }
 
       /* Clear old data from target. */
@@ -1905,11 +1855,9 @@ public class Curve2 extends Curve
       // TODO: Can this be optimized to use fewer temp vectors?
       final Vec2 back = new Vec2();
       final Vec2 backNorm = new Vec2();
-      final Vec2 backRescale = new Vec2();
 
       final Vec2 forward = new Vec2();
       final Vec2 forNorm = new Vec2();
-      final Vec2 forRescale = new Vec2();
 
       final Vec2 dir0 = new Vec2();
       final Vec2 dir1 = new Vec2();
@@ -1917,6 +1865,9 @@ public class Curve2 extends Curve
 
       final boolean closedLoop = target.closedLoop;
 
+      // TODO: Could this be refactored to not use an if check in
+      // the middle? if closed loop use this for loop else use
+      // another for loop?
       for (int i = 0; i < knotLength; ++i) {
          final Knot2 knot = knots.get(i);
          final Vec2 currCoord = knot.coord;
@@ -1926,6 +1877,8 @@ public class Curve2 extends Curve
 
          if (closedLoop) {
 
+            // prevIndex is extraneous as a variable?
+            // as is nextIndex?
             final int prevIndex = Math.floorMod(i - 1, knotLength);
             final Knot2 prev = knots.get(prevIndex);
 
@@ -1943,6 +1896,12 @@ public class Curve2 extends Curve
             Vec2.sub(dir1, forNorm, dir2);
 
          } else {
+
+            /*
+             * If the curve is open, then prior and ensuing index have
+             * to be clamped to array bounds. This could be done with a
+             * for-loop that does i = 1 to i < len - 1?
+             */
 
             final int prevIndex = i - 1;
             if (prevIndex > -1) {
@@ -1967,11 +1926,13 @@ public class Curve2 extends Curve
 
          Vec2.rescale(dir2, IUtils.ONE_THIRD, dir0);
 
-         Vec2.mul(dir0, backDist, backRescale);
-         Vec2.add(backRescale, currCoord, knot.rearHandle);
+         final Vec2 rh = knot.rearHandle;
+         Vec2.mul(dir0, backDist, rh);
+         Vec2.add(rh, currCoord, rh);
 
-         Vec2.mul(dir0, foreDist, forRescale);
-         Vec2.add(forRescale, currCoord, knot.foreHandle);
+         final Vec2 fh = knot.foreHandle;
+         Vec2.mul(dir0, foreDist, fh);
+         Vec2.add(fh, currCoord, fh);
       }
 
       /*
@@ -2052,13 +2013,13 @@ public class Curve2 extends Curve
     * The material associated with this curve in a curve
     * entity.
     */
-   public int materialIndex = -1;
+   public int materialIndex = 0;
 
    {
       /*
-       * Seems to perform better when the class is used over the
-       * interface is not used. Problem is that it's hard to
-       * decide one whether to use an array or linked list.
+       * Seems to perform better when the class is instead of the
+       * interface. Problem is that it's hard to decide one
+       * whether to use an array or linked list.
        */
 
       // knots = new LinkedList <>();
@@ -2372,6 +2333,32 @@ public class Curve2 extends Curve
       return this;
    }
 
+   @Override
+   public boolean equals ( final Object obj ) {
+
+      if (this == obj) {
+         return true;
+      }
+      if (!super.equals(obj)) {
+         return false;
+      }
+      if (this.getClass() != obj.getClass()) {
+         return false;
+      }
+      final Curve2 other = (Curve2) obj;
+      if (this.closedLoop != other.closedLoop) {
+         return false;
+      }
+      if (this.knots == null) {
+         if (other.knots != null) {
+            return false;
+         }
+      } else if (!this.knots.equals(other.knots)) {
+         return false;
+      }
+      return true;
+   }
+
    /**
     * Evaluates a step in the range [0.0, 1.0], returning a
     * knot on the curve. The knot's fore handle and rear handle
@@ -2400,6 +2387,7 @@ public class Curve2 extends Curve
          b = this.knots.get((i + 1) % knotLength);
       } else {
          if (knotLength == 1 || step <= 0.0f) {
+            // TODO: Why does this use this.get not this.knots.get ?
             return target.set(this.get(0));
          }
          if (step >= 1.0f) {
@@ -2776,66 +2764,6 @@ public class Curve2 extends Curve
    }
 
    /**
-    * Writes a Wavefront OBJ file format string by converting
-    * this curve to line segments. The points will not be
-    * evenly distributed along the curve.
-    *
-    * @param precision
-    *           the precision
-    * @return the string
-    */
-   @Experimental
-   public String toObjString ( final int precision ) {
-
-      final StringBuilder result = new StringBuilder();
-      final Vec2[][] segments = this.evalRange(precision);
-      final int len = segments.length;
-
-      result.append("# v: ")
-            .append(len)
-            .append('\n')
-            .append('\n');
-
-      result.append('o')
-            .append(' ')
-            .append(this.name)
-            .append('\n')
-            .append('\n');
-
-      for (int i = 0; i < len; ++i) {
-         final Vec2 coord = segments[i][0];
-         result.append('v')
-               .append(' ')
-               .append(coord.toObjString())
-               .append(" 0.0\n");
-      }
-
-      /*
-       * Create a line linking the prior segment to the next.
-       * Indices in an .obj file start at 1, not 0.
-       */
-      for (int i = 1, j = 2; i < len; ++i, ++j) {
-         result.append('l')
-               .append(' ')
-               .append(i)
-               .append(' ')
-               .append(j)
-               .append('\n');
-      }
-
-      if (this.closedLoop) {
-         result.append('l')
-               .append(' ')
-               .append(len)
-               .append(' ')
-               .append(1)
-               .append('\n');
-      }
-
-      return result.toString();
-   }
-
-   /**
     * Returns a string representation of the curve.
     *
     * @return the string
@@ -2855,10 +2783,11 @@ public class Curve2 extends Curve
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder()
-            .append("{ closedLoop: ")
-            .append(this.closedLoop)
-            .append(", \n  knots: [ \n");
+      final StringBuilder sb = new StringBuilder(
+            64 + 256 * this.knots.size())
+                  .append("{ closedLoop: ")
+                  .append(this.closedLoop)
+                  .append(", \n  knots: [ \n");
 
       final Iterator < Knot2 > itr = this.knots.iterator();
       while (itr.hasNext()) {
@@ -2886,9 +2815,10 @@ public class Curve2 extends Curve
 
       final Iterator < Knot2 > itr = this.knots.iterator();
       Knot2 prevKnot = itr.next();
-      final StringBuilder result = new StringBuilder()
-            .append("<path d=\"M ")
-            .append(prevKnot.coord.toSvgString());
+      final StringBuilder result = new StringBuilder(
+            32 + 64 * (this.closedLoop ? knotLength + 1 : knotLength))
+                  .append("<path d=\"M ")
+                  .append(prevKnot.coord.toSvgString());
 
       Knot2 currKnot = null;
       while (itr.hasNext()) {

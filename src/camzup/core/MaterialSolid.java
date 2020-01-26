@@ -42,21 +42,22 @@ public class MaterialSolid extends Material {
             MaterialSolid.SVG_MIN_STROKE_WT,
             IUp.DEFAULT_STROKE_WEIGHT / scale), 4);
 
-      final StringBuilder result = new StringBuilder();
-      result.append("<g stroke-width=\"")
+      return new StringBuilder(256)
+            .append("<g stroke-width=\"")
             .append(strokeStr)
             .append("\" stroke-opacity=\"1.0\" stroke=\"#")
-            .append(Integer.toHexString(IUp.DEFAULT_STROKE_COLOR)
+            .append(Integer.toHexString(
+                  IUp.DEFAULT_STROKE_COLOR)
                   .substring(2))
             .append("\" fill-opacity=\"1.0\" fill=\"#")
-            .append(Integer.toHexString(IUp.DEFAULT_FILL_COLOR)
+            .append(Integer.toHexString(
+                  IUp.DEFAULT_FILL_COLOR)
                   .substring(2))
             .append("\" stroke-linejoin=\"")
             .append(MaterialSolid.DEFAULT_SVG_STR_JOIN)
             .append("\" stroke-linecap=\"")
             .append(MaterialSolid.DEFAULT_SVG_STR_CAP)
-            .append("\">\n");
-      return result.toString();
+            .append("\">\n").toString();
    }
 
    /**
@@ -93,8 +94,8 @@ public class MaterialSolid extends Material {
        * block.
        */
 
-      this.fill = new Color(IMaterial.DEFAULT_FILL);
-      this.stroke = new Color(IMaterial.DEFAULT_STROKE);
+      this.fill = Color.fromHex(IMaterial.DEFAULT_FILL, new Color());
+      this.stroke = Color.fromHex(IMaterial.DEFAULT_STROKE, new Color());
    }
 
    /**
@@ -328,7 +329,7 @@ public class MaterialSolid extends Material {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder()
+      return new StringBuilder(256)
             .append("{ fill: ")
             .append(this.fill.toString(places))
             .append(", stroke: ")
@@ -370,7 +371,7 @@ public class MaterialSolid extends Material {
       final String strokeStr = Utils.toFixed(Utils.max(
             MaterialSolid.SVG_MIN_STROKE_WT,
             this.strokeWeight / transformScale), 4);
-      final StringBuilder result = new StringBuilder(32);
+      final StringBuilder result = new StringBuilder(256);
 
       /* Stroke style. */
       if (this.useStroke) {

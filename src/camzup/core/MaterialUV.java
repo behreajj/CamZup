@@ -27,7 +27,7 @@ public class MaterialUV extends Material {
        * block.
        */
 
-      this.tint = new Color(IMaterial.DEFAULT_FILL);
+      this.tint = Color.fromHex(IMaterial.DEFAULT_FILL, new Color());
       this.transform = new Transform2();
    }
 

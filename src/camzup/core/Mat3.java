@@ -1385,7 +1385,7 @@ public class Mat3 extends Matrix {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder()
+      return new StringBuilder(128)
             .append("{ m00: ")
             .append(Utils.toFixed(this.m00, places))
             .append(", m01: ")
@@ -1434,8 +1434,7 @@ public class Mat3 extends Matrix {
     */
    public String toStringCol ( final int places ) {
 
-      return new StringBuilder()
-            // .append(this.hashIdentityString())
+      return new StringBuilder(128)
             .append('\n')
             .append(Utils.toFixed(this.m00, places))
             .append(',').append(' ')

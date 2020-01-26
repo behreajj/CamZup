@@ -256,7 +256,7 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
    @Experimental
    public String toBlenderCode () {
 
-      final StringBuilder result = new StringBuilder();
+      final StringBuilder result = new StringBuilder(2048);
       result.append("from bpy import data as D, context as C\n\n")
             .append("curve_entity = {")
             .append("\n    \"name\": \"")
@@ -355,7 +355,7 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
             .append("crv_obj.rotation_quaternion = ")
             .append("tr[\"rotation_quaternion\"]\n")
             .append("crv_obj.scale = tr[\"scale\"]\n")
-            .append("C.scene.collection.objects.link(crv_obj)");
+            .append("C.scene.collection.objects.link(crv_obj)\n");
 
       return result.toString();
    }

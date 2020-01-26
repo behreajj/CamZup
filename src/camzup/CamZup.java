@@ -1,8 +1,19 @@
 package camzup;
 
+import camzup.core.Color;
+import camzup.core.Curve2;
 import camzup.core.Gradient;
+import camzup.core.IMaterial;
+import camzup.core.Mat3;
+import camzup.core.Mat4;
+import camzup.core.MaterialSolid;
+import camzup.core.Mesh2;
 import camzup.core.Mesh3;
+import camzup.core.MeshEntity2;
+import camzup.core.MeshEntity3;
 import camzup.core.Random;
+import camzup.core.Transform2;
+import camzup.core.Transform3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -88,34 +99,10 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-      final Random rng = new Random();
-      System.out.println(rng);
-
-      final Gradient gr = Gradient.paletteViridis(new Gradient());
-      System.out.println(gr.toBlenderCode("Viridis", 8, 2.2f));
-
-      // final Color target = new Color();
-      // for (int i = 0; i < 20; ++i) {
-      // final Color a = Color.randomRgb(rng, target);
-      // final int b = Color.toHexInt(a);
-      //
-      // System.out.println(Color.luminance(a));
-      // System.out.println(Color.luminance(b));
-      // }
-
-      // double maxDiff = 0;
-      // for (int i = 0; i < 20; ++i) {
-      // final double a = 2.0d * rng.nextDouble() - 1.0d;
-      // final double r0 = Math.asin(a);
-      // final float r1 = Utils.asin((float)a);
-      // final double diff = Math.abs(r0 - r1);
-      // if (maxDiff < diff) maxDiff = diff;
-      // System.out.println(r0);
-      // System.out.println(r1);
-      // System.out.println("");
-      // }
-      // System.out.println(String.format("Max Diff: %.6f",
-      // maxDiff));
+      MeshEntity2 me2 = new MeshEntity2();
+      me2.appendMesh(Mesh2.polygon(new Mesh2(), 6, Mesh2.PolyType.TRI));
+//      me2.appendMesh(new Mesh2());
+      System.out.println(me2.toBlenderCode());
    }
 
    /**

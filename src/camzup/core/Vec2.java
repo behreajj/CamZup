@@ -3351,9 +3351,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    @Override
    public float[] toArray () {
 
-      return new float[] {
-            this.x, this.y
-      };
+      return new float[] { this.x, this.y };
    }
 
    /**

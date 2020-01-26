@@ -19,8 +19,9 @@ Curve2 curve = Curve2.rect(
   new Curve2());
 
 CurveEntity2 entity = new CurveEntity2(
-  "Example", transform, curve)
-  .appendMaterial(material);
+  "Example", transform)
+  .appendMaterial(material)
+  .appendCurve(curve);
   
 
 void setup() {

@@ -256,7 +256,7 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
    @Experimental
    public String toBlenderCode () {
 
-      final StringBuilder result = new StringBuilder();
+      final StringBuilder result = new StringBuilder(2048);
       result.append("from bpy import data as D, context as C\n\n")
             .append("curve_entity = {")
             .append("\n    \"name\": \"")
@@ -350,7 +350,7 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
             .append("crv_obj.rotation_quaternion = ")
             .append("tr[\"rotation_quaternion\"]\n")
             .append("crv_obj.scale = tr[\"scale\"]\n")
-            .append("C.scene.collection.objects.link(crv_obj)");
+            .append("C.scene.collection.objects.link(crv_obj)\n");
 
       return result.toString();
    }
@@ -454,13 +454,6 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
          final Curve2 curve = curveItr.next();
 
          if (includesMats) {
-
-            /*
-             * It would be more efficient to create a defs block that
-             * contains the data for each material, which is then used
-             * by a mesh element with xlink, but such tags are ignored
-             * when Processing imports an SVG with loadShape.
-             */
             final MaterialSolid material = this.materials
                   .get(curve.materialIndex);
             result.append("<g ")

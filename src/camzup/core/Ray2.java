@@ -174,13 +174,18 @@ public class Ray2 extends Ray implements Comparable < Ray2 > {
    /**
     * The ray's direction.
     */
-   public final Vec2 dir = Vec2.forward(new Vec2());
+   public final Vec2 dir;
 
    /**
     * The ray's origin point.
     */
-   public final Vec2 origin = new Vec2();
+   public final Vec2 origin;
 
+   {
+      origin = new Vec2();
+      dir = Vec2.forward(new Vec2());
+   }
+   
    public Ray2 () {
 
       super();

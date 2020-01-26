@@ -1,10 +1,14 @@
 package camzup.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Organizes data needed to draw a two dimensional shape
- * using vertices and faces.
+ * using vertices and faces. Given that a mesh is primarily
+ * a collection of references, it is initialized with null
+ * arrays (coordinates, texture coordinates and indices).
+ * These are not final, and so can be reassigned.
  */
 public class Mesh2 extends Mesh {
 
@@ -94,6 +98,8 @@ public class Mesh2 extends Mesh {
 
       public String toString ( final int places ) {
 
+         // TODO: Test the typical length of a face, then set the
+         // stringbuilder to an appropriate capacity.
          final int len = this.vertices.length;
          final int last = len - 1;
          final StringBuilder sb = new StringBuilder()
@@ -227,6 +233,8 @@ public class Mesh2 extends Mesh {
 
       public String toString ( final int places ) {
 
+         // TODO: Test the typical length of a vertex, then set the
+         // stringbuilder to an appropriate capacity.
          return new StringBuilder()
                .append("{ coord: ")
                .append(this.coord.toString(places))
@@ -478,13 +486,12 @@ public class Mesh2 extends Mesh {
    public Vec2[] coords;
 
    /**
-    * The faces array does not include information about the
-    * faces themselves, but rather indices to other arrays
-    * which contain vertex data. It is a three-dimensional
-    * array organized by
+    * The faces array does not include face data itself, but
+    * rather indices to other arrays which contain vertex data.
+    * It is a three-dimensional array organized by
     * <ol>
     * <li>the number of faces;</li>
-    * <li>the number of vetices per faces;</li>
+    * <li>the number of vertices per faces;</li>
     * <li>the information per face;</li>
     * </ol>
     * 2D meshes contain two pieces of information per vertex:
@@ -495,7 +502,7 @@ public class Mesh2 extends Mesh {
    /**
     * The material associated with this mesh in a mesh entity.
     */
-   public int materialIndex = -1;
+   public int materialIndex = 0;
 
    /**
     * The texture (UV) coordinates that describe how an image
@@ -566,6 +573,28 @@ public class Mesh2 extends Mesh {
 
       super(name);
       this.set(faces, coords, texCoords);
+   }
+
+   @Override
+   public boolean equals ( final Object obj ) {
+
+      if (this == obj) {
+         return true;
+      }
+      if (!super.equals(obj)) {
+         return false;
+      }
+      if (this.getClass() != obj.getClass()) {
+         return false;
+      }
+      final Mesh2 other = (Mesh2) obj;
+      if (!Arrays.equals(this.coords, other.coords)) {
+         return false;
+      }
+      if (!Arrays.deepEquals(this.faces, other.faces)) {
+         return false;
+      }
+      return true;
    }
 
    /**
@@ -680,6 +709,15 @@ public class Mesh2 extends Mesh {
       return result.toArray(new Vert2[result.size()]);
    }
 
+   @Override
+   public int hashCode () {
+
+      int hash = IUtils.HASH_BASE;
+      hash = hash * IUtils.HASH_MUL ^ Arrays.hashCode(this.coords);
+      hash = hash * IUtils.HASH_MUL ^ Arrays.deepHashCode(this.faces);
+      return hash;
+   }
+
    /**
     * Rotates all coordinates in the mesh by an angle around
     * the z axis.
@@ -788,10 +826,9 @@ public class Mesh2 extends Mesh {
             .append(coordsLen)
             .append(", vt: ")
             .append(texCoordsLen)
-            .append(", vn: ")
-            .append(1)
-            .append(", f: ")
-            .append(facesLen).append("\n \n");
+            .append(", vn: 1, f: ")
+            .append(facesLen)
+            .append("\n \n");
 
       result.append("o ")
             .append(this.name)
@@ -803,22 +840,21 @@ public class Mesh2 extends Mesh {
                .append(" 0.0 ")
                .append('\n');
       }
-      result.append(" \n");
+      result.append('\n');
 
       for (final Vec2 texCoord : this.texCoords) {
          result.append("vt ")
                .append(texCoord.toObjString())
                .append('\n');
       }
-      result.append('\n');
 
-      result.append("vn 0.0 0.0 1.0 \n");
+      result.append("\nvn 0.0 0.0 1.0 \n");
 
       for (int i = 0; i < facesLen; ++i) {
 
          final int[][] face = this.faces[i];
          final int vLen = face.length;
-         result.append("f ");
+         result.append('f').append(' ');
 
          for (int j = 0; j < vLen; ++j) {
 
@@ -828,7 +864,7 @@ public class Mesh2 extends Mesh {
                   .append('/')
                   .append(vert[1] + 1)
                   .append('/')
-                  .append(vert[2] + 1)
+                  .append('1')
                   .append(' ');
          }
 
@@ -837,6 +873,116 @@ public class Mesh2 extends Mesh {
 
       result.append('\n');
       return result.toString();
+   }
+
+   /**
+    * Returns a string representation of the mesh.
+    *
+    * @return the string
+    */
+   @Override
+   public String toString () {
+
+      return this.toString(4, Integer.MAX_VALUE);
+   }
+
+   /**
+    * Returns a string representation of the mesh.
+    *
+    * @param places
+    *           the number of places
+    * @return the string
+    */
+   public String toString ( final int places ) {
+
+      return this.toString(places, Integer.MAX_VALUE);
+   }
+
+   /**
+    * Returns a string representation of the mesh. Includes an
+    * option to truncate the listing in case of large meshes.
+    *
+    * @param places
+    *           the number of places
+    * @param truncate
+    *           truncate elements in a list
+    * @return the string
+    */
+   public String toString ( final int places, final int truncate ) {
+
+      // TODO: Refine and, when satisfied, transfer to Mesh3.
+
+      final StringBuilder sb = new StringBuilder();
+
+      sb.append("{ coords: [");
+      if (this.coords != null) {
+         sb.append('\n');
+         final int len = Math.min(this.coords.length, truncate);
+         final int last = len - 1;
+         for (int i = 0; i < len; ++i) {
+
+            sb.append(this.coords[i].toString(places));
+            if (i < last) {
+               sb.append(',').append('\n');
+            }
+         }
+      }
+
+      sb.append(" ],\ntexCoords: [");
+      if (this.texCoords != null) {
+         sb.append('\n');
+         final int len = Math.min(this.texCoords.length, truncate);
+         final int last = len - 1;
+         for (int i = 0; i < len; ++i) {
+            sb.append(this.texCoords[i].toString(places));
+            if (i < last) {
+               sb.append(',').append('\n');
+            }
+         }
+      }
+
+      sb.append(" ],\nfaces: [");
+      if (this.faces != null) {
+         sb.append('\n');
+         final int facesLen = Math.min(this.faces.length, truncate);
+         final int facesLast = facesLen - 1;
+
+         for (int i = 0; i < facesLen; ++i) {
+
+            final int[][] verts = this.faces[i];
+            final int vertsLen = verts.length;
+            final int vertsLast = vertsLen - 1;
+            sb.append('[').append(' ');
+
+            for (int j = 0; j < vertsLen; ++j) {
+
+               final int[] vert = verts[j];
+               final int infoLen = vert.length;
+               final int infoLast = infoLen - 1;
+               sb.append('[').append(' ');
+
+               for (int k = 0; k < infoLen; ++k) {
+
+                  sb.append(vert[k]);
+                  if (k < infoLast) {
+                     sb.append(',').append(' ');
+                  }
+               }
+
+               sb.append(' ').append(']');
+               if (j < vertsLast) {
+                  sb.append(',').append(' ');
+               }
+            }
+
+            sb.append(' ').append(']');
+            if (i < facesLast) {
+               sb.append(',').append('\n');
+            }
+         }
+      }
+      sb.append(" ] }");
+      return sb.toString();
    }
 
    /**

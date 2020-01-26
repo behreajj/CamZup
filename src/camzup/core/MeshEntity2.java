@@ -115,6 +115,7 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
    @Chainable
    public MeshEntity2 appendMaterial ( final MaterialSolid material ) {
 
+      // TODO: Guard against duplicates?
       if (material != null) {
          this.materials.add(material);
       }
@@ -147,6 +148,7 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
    @Chainable
    public MeshEntity2 appendMesh ( final Mesh2 mesh ) {
 
+      // TODO: Guard against duplicates?
       if (mesh != null) {
          this.meshes.add(mesh);
 
@@ -195,8 +197,6 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
     */
    public String toSvgString () {
 
-      // TODO: Use mesh iterator.
-
       final StringBuilder result = new StringBuilder()
             .append("<g id=\"")
             .append(this.name.toLowerCase())
@@ -214,16 +214,17 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
          result.append(MaterialSolid.defaultSvgMaterial(scale));
       }
 
-      for (final Mesh2 mesh : this.meshes) {
+      final Iterator < Mesh2 > meshItr = this.meshes.iterator();
+      while (meshItr.hasNext()) {
+         final Mesh2 mesh = meshItr.next();
 
+         /*
+          * It would be more efficient to create a defs block that
+          * contains the data for each material, which is then used
+          * by a mesh element with xlink, but such tags are ignored
+          * when Processing imports an SVG with loadShape.
+          */
          if (includesMats) {
-
-            /*
-             * It would be more efficient to create a defs block that
-             * contains the data for each material, which is then used
-             * by a mesh element with xlink, but such tags are ignored
-             * when Processing imports an SVG with loadShape.
-             */
             final MaterialSolid material = this.materials
                   .get(mesh.materialIndex);
             result.append("<g ")
@@ -232,7 +233,7 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
          }
 
          result.append(mesh.toSvgString())
-               .append("</g>\n");
+               .append('\n');
 
          /* Close out material group. */
          if (includesMats) {
@@ -246,6 +247,120 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
       }
 
       result.append("</g>");
+      return result.toString();
+   }
+   
+   @Experimental
+   public String toBlenderCode () {
+
+      final int coordPairsOnLine = 3;
+      final StringBuilder result = new StringBuilder(2048);
+      result.append("from bpy import data as D, context as C\n\n")
+            .append("mesh_entity = {")
+            .append("\n    \"name\": \"")
+            .append(this.name)
+            .append("\",\n    \"transform\": ")
+            .append(this.transform.toBlenderCode())
+            .append(",\n    \"meshes\": [\n");
+
+      int meshIndex = 0;
+      final int meshLast = this.meshes.size() - 1;
+      final Iterator < Mesh2 > meshItr = this.meshes.iterator();
+      while (meshItr.hasNext()) {
+
+         final Mesh2 mesh = meshItr.next();
+         final Vec2[] coords = mesh.coords;
+         final int coordLen = coords.length;
+         final int coordLast = coordLen - 1;
+
+         result.append("        {\"name\": \"")
+               .append(mesh.name)
+               .append("\",\n         \"vertices\": [\n");
+
+         /* Append vertex coordinates. */
+         for (int i = 0; i < coordLen; ++i) {
+            final Vec2 v = coords[i];
+
+            result.append("             (")
+                  .append(Utils.toFixed(v.x, 6))
+                  .append(',').append(' ')
+                  .append(Utils.toFixed(v.y, 6))
+                  .append(", 0.0)");
+
+            if (i < coordLast) {
+               result.append(',').append('\n');
+            }
+         }
+
+         result.append("],\n         \"faces\": [\n             ");
+
+         /* Append indices (for vertices only). */
+         final int[][][] faces = mesh.faces;
+         final int faceLen = faces.length;
+         final int faceLast = faceLen - 1;
+
+         for (int j = 0; j < faceLen; ++j) {
+            final int[][] vrtInd = faces[j];
+            final int vrtIndLen = vrtInd.length;
+            final int vrtLast = vrtIndLen - 1;
+
+            result.append('(');
+            for (int k = 0; k < vrtIndLen; ++k) {
+               result.append(vrtInd[k][0]);
+
+               if (k < vrtLast) {
+                  result.append(',').append(' ');
+               }
+            }
+
+            result.append(')');
+
+            if (j < faceLast) {
+               result.append(',');
+
+               if ((j + 1) % coordPairsOnLine == 0) {
+                  result.append("\n             ");
+               } else {
+                  result.append(' ');
+               }
+            }
+         }
+
+         result.append(']').append('}');
+
+         if (meshIndex < meshLast) {
+            result.append(',').append('\n').append('\n');
+         }
+
+         meshIndex++;
+      }
+
+      result.append("]}\n\nd_objs = D.objects\n")
+            .append("parent_obj = d_objs.new(")
+            .append("mesh_entity[\"name\"], None)\n")
+            .append("tr = mesh_entity[\"transform\"]\n")
+            .append("parent_obj.location = tr[\"location\"]\n")
+            .append("parent_obj.rotation_mode = tr[\"rotation_mode\"]\n")
+            .append("parent_obj.rotation_quaternion = ")
+            .append("tr[\"rotation_quaternion\"]\n")
+            .append("parent_obj.scale = tr[\"scale\"]\n")
+            .append("parent_obj.empty_display_size = 0.25\n")
+            .append("scene_objs = C.scene.collection.objects\n")
+            .append("scene_objs.link(parent_obj)\n\n")
+            .append("meshes = mesh_entity[\"meshes\"]\n")
+            .append("d_meshes = D.meshes\n")
+            .append("for mesh in meshes:\n")
+            .append("\tname = mesh[\"name\"]\n")
+            .append("\tmesh_data = d_meshes.new(name)\n")
+            .append("\tmesh_data.from_pydata(\n")
+            .append("\t\tmesh[\"vertices\"],\n")
+            .append("\t\t[],\n")
+            .append("\t\tmesh[\"faces\"])\n")
+            .append("\tmesh_data.validate()\n")
+            .append("\tmesh_obj = d_objs.new(name, mesh_data)\n")
+            .append("\tscene_objs.link(mesh_obj)\n")
+            .append("\tmesh_obj.parent = parent_obj\n");
+
       return result.toString();
    }
 }

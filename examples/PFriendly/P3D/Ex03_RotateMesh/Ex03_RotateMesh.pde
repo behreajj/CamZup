@@ -18,7 +18,7 @@ Quaternion identity = new Quaternion();
 MeshEntity3 entity = new MeshEntity3();
 
 void setup() {
-  size(512, 512, "camzup.pfriendly.Yup3");
+  size(720, 405, "camzup.pfriendly.Yup3");
 
   graphics = (Yup3)getGraphics();
   graphics.camera(
@@ -69,10 +69,10 @@ void draw() {
 
   entity.transform.rotateTo(rotSphere);
 
-  background(0xfffff7d5);
+  graphics.background();
   graphics.origin();
 
-  strokeWeight(1.5);
-  stroke(0xffff0000);
+  graphics.strokeWeight(1.5);
+  graphics.stroke(0xffff0000);
   graphics.shape(entity);
 }

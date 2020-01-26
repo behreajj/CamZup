@@ -1,10 +1,14 @@
 package camzup.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Organizes data needed to draw a three dimensional shape
- * using vertices and faces.
+ * using vertices and faces. Given that a mesh is primarily
+ * a collection of references, it is initialized with null
+ * arrays (coordinates, texture coordinates and indices).
+ * These are not final, and so can be reassigned.
  */
 public class Mesh3 extends Mesh {
 
@@ -94,6 +98,8 @@ public class Mesh3 extends Mesh {
 
       public String toString ( final int places ) {
 
+         // TODO: Test the typical length of a face, then set the
+         // stringbuilder to an appropriate capacity.
          final int len = this.vertices.length;
          final int last = len - 1;
          final StringBuilder sb = new StringBuilder()
@@ -216,6 +222,8 @@ public class Mesh3 extends Mesh {
 
       public String toString ( final int places ) {
 
+         // TODO: Test the typical length of a face, then set the
+         // stringbuilder to an appropriate capacity.
          return new StringBuilder()
                .append("{ coord: ")
                .append(this.coord.toString(places))
@@ -673,14 +681,13 @@ public class Mesh3 extends Mesh {
          final Mesh3 target ) {
 
       // TODO: Yup3 compliance or Zup3 compliance?
+      // TODO: Reference Unity script where this came from.
 
       final int sectors1 = sectors + 1;
       final int tubeRes1 = tubeRes + 1;
 
       final float toU = 1.0f / sectors;
       final float toV = 1.0f / tubeRes;
-      // final float toTheta = IUtils.TAU / sectors;
-      // final float toPhi = IUtils.TAU / tubeRes;
 
       /* Precalculate phi and the v coordinate in uvs. */
 
@@ -689,8 +696,6 @@ public class Mesh3 extends Mesh {
       final float[] vs = new float[tubeRes1];
 
       for (int side = 0; side < tubeRes1; ++side) {
-         // final float phi = side % tubeRes * toPhi;
-         // final float nrmphi = IUtils.ONE_TAU * phi;
          final float nrmphi = side % tubeRes * toV;
          cosPhis[side] = SinCos.eval(nrmphi);
          sinPhis[side] = SinCos.eval(nrmphi - 0.25f);
@@ -714,8 +719,6 @@ public class Mesh3 extends Mesh {
 
       for (int k = 0, seg = 0; seg < sectors1; ++seg) {
 
-         // final float theta = seg % sectors * toTheta;
-         // final float nrmtheta = IUtils.ONE_TAU * theta;
          final float nrmtheta = seg % sectors * toU;
          final float cosTheta = SinCos.eval(nrmtheta);
          final float sinTheta = SinCos.eval(nrmtheta - 0.25f);
@@ -866,13 +869,12 @@ public class Mesh3 extends Mesh {
    public Vec3[] coords;
 
    /**
-    * The faces array does not include information about the
-    * faces themselves, but rather indices to other arrays
-    * which contain vertex data. It is a three-dimensional
-    * array organized by
+    * The faces array does not include face data itself, but
+    * rather indices to other arrays which contain vertex data.
+    * It is a three-dimensional array organized by
     * <ol>
     * <li>the number of faces;</li>
-    * <li>the number of vetices per faces;</li>
+    * <li>the number of vertices per faces;</li>
     * <li>the information per face;</li>
     * </ol>
     * 2D meshes contain two pieces of information per vertex:
@@ -883,7 +885,7 @@ public class Mesh3 extends Mesh {
    /**
     * The material associated with this mesh in a mesh entity.
     */
-   public int materialIndex = -1;
+   public int materialIndex = 0;
 
    /**
     * An array of normals to indicate how light will bounce off
@@ -966,6 +968,28 @@ public class Mesh3 extends Mesh {
 
       super(name);
       this.set(faces, coords, texCoords, normals);
+   }
+
+   @Override
+   public boolean equals ( final Object obj ) {
+
+      if (this == obj) {
+         return true;
+      }
+      if (!super.equals(obj)) {
+         return false;
+      }
+      if (this.getClass() != obj.getClass()) {
+         return false;
+      }
+      final Mesh3 other = (Mesh3) obj;
+      if (!Arrays.equals(this.coords, other.coords)) {
+         return false;
+      }
+      if (!Arrays.deepEquals(this.faces, other.faces)) {
+         return false;
+      }
+      return true;
    }
 
    /**
@@ -1082,6 +1106,15 @@ public class Mesh3 extends Mesh {
       }
 
       return result.toArray(new Vert3[result.size()]);
+   }
+
+   @Override
+   public int hashCode () {
+
+      int hash = IUtils.HASH_BASE;
+      hash = hash * IUtils.HASH_MUL ^ Arrays.hashCode(this.coords);
+      hash = hash * IUtils.HASH_MUL ^ Arrays.deepHashCode(this.faces);
+      return hash;
    }
 
    /**

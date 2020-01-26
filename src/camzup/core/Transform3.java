@@ -143,15 +143,25 @@ public class Transform3 extends Transform {
             final Transform3 target ) {
 
          target.locPrev.set(target.location);
-         this.loc.applyUnclamped(origin.location, dest.location, step,
+         this.loc.applyUnclamped(
+               origin.location, 
+               dest.location,
+               step,
                target.location);
 
          target.rotPrev.set(target.rotation);
-         this.rot.applyUnclamped(origin.rotation, dest.rotation, step,
+         this.rot.applyUnclamped(
+               origin.rotation, 
+               dest.rotation,
+               step,
                target.rotation);
 
          target.scalePrev.set(target.scale);
-         this.loc.applyUnclamped(origin.scale, dest.scale, step, target.scale);
+         this.loc.applyUnclamped(
+               origin.scale,
+               dest.scale, 
+               step, 
+               target.scale);
 
          return target;
       }
@@ -457,50 +467,66 @@ public class Transform3 extends Transform {
    /**
     * The transform's forward axis.
     */
-   protected final Vec3 forward = Vec3.forward(new Vec3());
+   protected final Vec3 forward;
 
    /**
     * The transform's location.
     */
-   protected final Vec3 location = Vec3.zero(new Vec3());
+   protected final Vec3 location;
 
    /**
     * The previous location. Subtract from the current location
     * to find the delta, or change, in location.
     */
-   protected final Vec3 locPrev = Vec3.zero(new Vec3());
+   protected final Vec3 locPrev;
 
    /**
     * The transform's right axis.
     */
-   protected final Vec3 right = Vec3.right(new Vec3());
+   protected final Vec3 right;
 
    /**
-    * The transform's rotation.
+    * The transform's rotation. Defaults to the identity, (1.0,
+    * 0.0, 0.0, 0.0) .
     */
-   protected final Quaternion rotation = Quaternion.identity(new Quaternion());
+   protected final Quaternion rotation;
 
    /**
     * The previous rotation. Subtract from the current rotation
     * to find the delta, or change, in rotation.
     */
-   protected final Quaternion rotPrev = Quaternion.identity(new Quaternion());
+   protected final Quaternion rotPrev;
 
    /**
     * The transform's scale.
     */
-   protected final Vec3 scale = Vec3.one(new Vec3());
+   protected final Vec3 scale;
 
    /**
     * The previous scale. Subtract from the current scale to
     * find the delta, or change, in scale.
     */
-   protected final Vec3 scalePrev = Vec3.one(new Vec3());
+   protected final Vec3 scalePrev;
 
    /**
     * The transform's up axis.
     */
-   protected final Vec3 up = Vec3.up(new Vec3());
+   protected final Vec3 up;
+
+   {
+      this.location = new Vec3();
+      this.locPrev = new Vec3();
+
+      this.rotation = Quaternion.identity(new Quaternion());
+      this.rotPrev = Quaternion.identity(new Quaternion());
+
+      this.scale = Vec3.one(new Vec3());
+      this.scalePrev = Vec3.one(new Vec3());
+
+      this.right = Vec3.right(new Vec3());
+      this.forward = Vec3.forward(new Vec3());
+      this.up = Vec3.up(new Vec3());
+   }
 
    /**
     * The default constructor.
@@ -1405,7 +1431,7 @@ public class Transform3 extends Transform {
       final Vec3 i = this.rotation.imag;
       final String rotationMode = "QUATERNION";
 
-      return new StringBuilder()
+      return new StringBuilder(256)
             .append("{\n        \"location\": (")
             .append(Utils.toFixed(this.location.x, 6))
             .append(',').append(' ')

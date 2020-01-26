@@ -2644,12 +2644,16 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * The coefficients of the imaginary components <em>i</em>,
     * <em>j</em> and <em>k</em>.
     */
-   public final Vec3 imag = new Vec3();
+   public final Vec3 imag;
 
    /**
     * The real component.
     */
    public float real = 1.0f;
+
+   {
+      this.imag = new Vec3();
+   }
 
    /**
     * The default constructor.
