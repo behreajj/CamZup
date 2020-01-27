@@ -215,6 +215,7 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
    @Experimental
    public String toBlenderCode () {
 
+      //TODO: Don't use tabs...
       final int coordPairsOnLine = 3;
       final StringBuilder result = new StringBuilder(2048);
       result.append("from bpy import data as D, context as C\n\n")
@@ -237,7 +238,9 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
 
          result.append("        {\"name\": \"")
                .append(mesh.name)
-               .append("\",\n         \"vertices\": [\n");
+               .append("\",\n         \"material_index\": ")
+               .append(mesh.materialIndex)
+               .append(",\n         \"vertices\": [\n");
 
          /* Append vertex coordinates. */
          for (int i = 0; i < coordLen; ++i) {
@@ -292,10 +295,24 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
          result.append(']').append('}');
 
          if (meshIndex < meshLast) {
-            result.append(',').append('\n').append('\n');
+            result.append(',').append('\n');
          }
 
          meshIndex++;
+      }
+
+      result.append("],\n    \"materials\": [\n");
+
+      int matIndex = 0;
+      final float expn = 2.2f;
+      final int matLast = this.materials.size() - 1;
+      final Iterator < MaterialSolid > matItr = this.materials.iterator();
+      while (matItr.hasNext()) {
+         result.append(matItr.next().toBlenderCode(expn));
+         if (matIndex < matLast) {
+            result.append(',').append('\n');
+         }
+         matIndex++;
       }
 
       result.append("]}\n\nd_objs = D.objects\n")
@@ -310,6 +327,23 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
             .append("parent_obj.empty_display_size = 0.25\n")
             .append("scene_objs = C.scene.collection.objects\n")
             .append("scene_objs.link(parent_obj)\n\n")
+
+            .append("materials = mesh_entity[\"materials\"]\n")
+            .append("d_mats = D.materials\n")
+            .append("for material in materials:\n")
+            .append("\tmat_data = d_mats.new(material[\"name\"])\n")
+            .append("\tfill_clr = material[\"fill\"]\n")
+            .append("\tmat_data.diffuse_color = fill_clr\n")
+            .append("\tmat_data.roughness = 1.0\n")
+            .append("\tmat_data.use_nodes = True\n")
+            .append("\tnode_tree = mat_data.node_tree\n")
+            .append("\tnodes = node_tree.nodes\n")
+            .append("\tpbr = nodes[\"Principled BSDF\"]\n")
+            .append("\troughness = pbr.inputs[\"Roughness\"]\n")
+            .append("\troughness.default_value = 1.0\n")
+            .append("\tbase_clr = pbr.inputs[\"Base Color\"]\n")
+            .append("\tbase_clr.default_value = fill_clr\n\n")
+
             .append("meshes = mesh_entity[\"meshes\"]\n")
             .append("d_meshes = D.meshes\n")
             .append("for mesh in meshes:\n")
@@ -320,6 +354,9 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
             .append("\t\t[],\n")
             .append("\t\tmesh[\"faces\"])\n")
             .append("\tmesh_data.validate()\n")
+            .append("\tidx = mesh[\"material_index\"]\n")
+            .append("\tmat_name = materials[idx][\"name\"]\n")
+            .append("\tmesh_data.materials.append(d_mats[mat_name])\n")
             .append("\tmesh_obj = d_objs.new(name, mesh_data)\n")
             .append("\tscene_objs.link(mesh_obj)\n")
             .append("\tmesh_obj.parent = parent_obj\n");

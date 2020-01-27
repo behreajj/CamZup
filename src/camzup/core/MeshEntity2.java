@@ -190,66 +190,14 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
    }
 
    /**
-    * Creates a string representing a group node in the SVG
-    * format.
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how curve
+    * geometry looks in Blender (the control) vs. in the
+    * library (the test).
     *
     * @return the string
     */
-   public String toSvgString () {
-
-      final StringBuilder result = new StringBuilder()
-            .append("<g id=\"")
-            .append(this.name.toLowerCase())
-            .append("\" ")
-            .append(this.transform.toSvgString())
-            .append(">\n");
-
-      final float scale = Transform2.minDimension(this.transform);
-      final boolean includesMats = this.materials.size() > 0;
-
-      /*
-       * If no materials are present, use a default one instead.
-       */
-      if (!includesMats) {
-         result.append(MaterialSolid.defaultSvgMaterial(scale));
-      }
-
-      final Iterator < Mesh2 > meshItr = this.meshes.iterator();
-      while (meshItr.hasNext()) {
-         final Mesh2 mesh = meshItr.next();
-
-         /*
-          * It would be more efficient to create a defs block that
-          * contains the data for each material, which is then used
-          * by a mesh element with xlink, but such tags are ignored
-          * when Processing imports an SVG with loadShape.
-          */
-         if (includesMats) {
-            final MaterialSolid material = this.materials
-                  .get(mesh.materialIndex);
-            result.append("<g ")
-                  .append(material.toSvgString())
-                  .append(">\n");
-         }
-
-         result.append(mesh.toSvgString())
-               .append('\n');
-
-         /* Close out material group. */
-         if (includesMats) {
-            result.append("</g>\n");
-         }
-      }
-
-      /* Close out default material group. */
-      if (!includesMats) {
-         result.append("</g>\n");
-      }
-
-      result.append("</g>");
-      return result.toString();
-   }
-   
    @Experimental
    public String toBlenderCode () {
 
@@ -275,7 +223,9 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
 
          result.append("        {\"name\": \"")
                .append(mesh.name)
-               .append("\",\n         \"vertices\": [\n");
+               .append("\",\n         \"material_index\": ")
+               .append(mesh.materialIndex)
+               .append(",\n         \"vertices\": [\n");
 
          /* Append vertex coordinates. */
          for (int i = 0; i < coordLen; ++i) {
@@ -335,6 +285,34 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
          meshIndex++;
       }
 
+      result.append("],\n    \"materials\": [\n");
+
+      int matIndex = 0;
+      final float expn = 2.2f;
+      final int matLast = this.materials.size() - 1;
+      final Iterator < MaterialSolid > matItr = this.materials.iterator();
+      while (matItr.hasNext()) {
+         final MaterialSolid mat = matItr.next();
+         final Color fill = mat.fill;
+         result.append("        {\"name\": \"")
+               .append(mat.name)
+               .append("\",\n         \"fill\": (")
+               .append(Utils.toFixed((float) Math.pow(fill.x, expn), 6))
+               .append(',').append(' ')
+               .append(Utils.toFixed((float) Math.pow(fill.y, expn), 6))
+               .append(',').append(' ')
+               .append(Utils.toFixed((float) Math.pow(fill.z, expn), 6))
+               .append(',').append(' ')
+               .append(Utils.toFixed(fill.w, 6))
+               .append(')');
+         result.append("}");
+         if (matIndex < matLast) {
+            result.append(',').append('\n').append('\n');
+         }
+
+         matIndex++;
+      }
+
       result.append("]}\n\nd_objs = D.objects\n")
             .append("parent_obj = d_objs.new(")
             .append("mesh_entity[\"name\"], None)\n")
@@ -347,6 +325,23 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
             .append("parent_obj.empty_display_size = 0.25\n")
             .append("scene_objs = C.scene.collection.objects\n")
             .append("scene_objs.link(parent_obj)\n\n")
+
+            .append("materials = mesh_entity[\"materials\"]\n")
+            .append("d_mats = D.materials\n")
+            .append("for material in materials:\n")
+            .append("\tmat_data = d_mats.new(material[\"name\"])\n")
+            .append("\tfill_clr = material[\"fill\"]\n")
+            .append("\tmat_data.diffuse_color = fill_clr\n")
+            .append("\tmat_data.roughness = 1.0\n")
+            .append("\tmat_data.use_nodes = True\n")
+            .append("\tnode_tree = mat_data.node_tree\n")
+            .append("\tnodes = node_tree.nodes\n")
+            .append("\tpbr = nodes[\"Principled BSDF\"]\n")
+            .append("\troughness = pbr.inputs[\"Roughness\"]\n")
+            .append("\troughness.default_value = 1.0\n")
+            .append("\tbase_clr = pbr.inputs[\"Base Color\"]\n")
+            .append("\tbase_clr.default_value = fill_clr\n\n")
+
             .append("meshes = mesh_entity[\"meshes\"]\n")
             .append("d_meshes = D.meshes\n")
             .append("for mesh in meshes:\n")
@@ -357,10 +352,74 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
             .append("\t\t[],\n")
             .append("\t\tmesh[\"faces\"])\n")
             .append("\tmesh_data.validate()\n")
+            .append("\tidx = mesh[\"material_index\"]\n")
+            .append("\tmat_name = materials[idx][\"name\"]\n")
+            .append("\tmesh_data.materials.append(d_mats[mat_name])\n")
             .append("\tmesh_obj = d_objs.new(name, mesh_data)\n")
             .append("\tscene_objs.link(mesh_obj)\n")
             .append("\tmesh_obj.parent = parent_obj\n");
 
+      return result.toString();
+   }
+
+   /**
+    * Creates a string representing a group node in the SVG
+    * format.
+    *
+    * @return the string
+    */
+   public String toSvgString () {
+
+      final StringBuilder result = new StringBuilder()
+            .append("<g id=\"")
+            .append(this.name.toLowerCase())
+            .append("\" ")
+            .append(this.transform.toSvgString())
+            .append(">\n");
+
+      final float scale = Transform2.minDimension(this.transform);
+      final boolean includesMats = this.materials.size() > 0;
+
+      /*
+       * If no materials are present, use a default one instead.
+       */
+      if (!includesMats) {
+         result.append(MaterialSolid.defaultSvgMaterial(scale));
+      }
+
+      final Iterator < Mesh2 > meshItr = this.meshes.iterator();
+      while (meshItr.hasNext()) {
+         final Mesh2 mesh = meshItr.next();
+
+         /*
+          * It would be more efficient to create a defs block that
+          * contains the data for each material, which is then used
+          * by a mesh element with xlink, but such tags are ignored
+          * when Processing imports an SVG with loadShape.
+          */
+         if (includesMats) {
+            final MaterialSolid material = this.materials
+                  .get(mesh.materialIndex);
+            result.append("<g ")
+                  .append(material.toSvgString())
+                  .append(">\n");
+         }
+
+         result.append(mesh.toSvgString())
+               .append('\n');
+
+         /* Close out material group. */
+         if (includesMats) {
+            result.append("</g>\n");
+         }
+      }
+
+      /* Close out default material group. */
+      if (!includesMats) {
+         result.append("</g>\n");
+      }
+
+      result.append("</g>");
       return result.toString();
    }
 }

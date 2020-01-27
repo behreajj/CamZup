@@ -119,6 +119,8 @@ public class Color extends Vec4 {
 
          Color.rgbaToHsba(a, this.aHsb);
          Color.rgbaToHsba(b, this.bHsb);
+
+         // TODO: Replace float compare with basic ternary operators.
          return Float.compare(this.aHsb.z, this.bHsb.z);
       }
    }
@@ -237,6 +239,8 @@ public class Color extends Vec4 {
 
          Color.rgbaToHsba(a, this.aHsb);
          Color.rgbaToHsba(b, this.bHsb);
+
+         // TODO: Replace float compare with basic ternary operators.
          return Float.compare(this.aHsb.y, this.bHsb.y);
       }
    }
@@ -844,11 +848,6 @@ public class Color extends Vec4 {
    private static final long serialVersionUID = 3863260730744999721L;
 
    /**
-    * The default color comparator, by hue.
-    */
-   public static Comparator < Color > COMPARATOR = new ComparatorHue();
-
-   /**
     * Tests to see if all color channels are greater than zero.
     *
     * @param c
@@ -1343,17 +1342,6 @@ public class Color extends Vec4 {
       }
 
       return target.reset();
-   }
-
-   /**
-    * Gets the name of the comparator function used to sort
-    * colors.
-    *
-    * @return the comparator
-    */
-   public static String getComparatorString () {
-
-      return Color.COMPARATOR.toString();
    }
 
    /**
@@ -2308,6 +2296,50 @@ public class Color extends Vec4 {
    }
 
    /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how curve
+    * geometry looks in Blender (the control) vs. in the
+    * library (the test).
+    *
+    * @return the string
+    */
+   String toBlenderCode () {
+
+      return this.toBlenderCode(1.0f);
+   }
+
+   /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how curve
+    * geometry looks in Blender (the control) vs. in the
+    * library (the test).
+    *
+    * Formatted as a four-tuple, where red, green and blue
+    * channels have been raised to the power of gamma, usually
+    * 2.2.
+    *
+    * @param gamma
+    *           the exponent
+    * @return the string
+    */
+   String toBlenderCode ( final float gamma ) {
+
+      return new StringBuilder(96)
+            .append('(')
+            .append(Utils.toFixed((float) Math.pow(this.x, gamma), 6))
+            .append(',').append(' ')
+            .append(Utils.toFixed((float) Math.pow(this.y, gamma), 6))
+            .append(',').append(' ')
+            .append(Utils.toFixed((float) Math.pow(this.z, gamma), 6))
+            .append(',').append(' ')
+            .append(Utils.toFixed(this.w, 6))
+            .append(')')
+            .toString();
+   }
+
+   /**
     * Tests equivalence between this and another color.
     * Converts both to hexadecimal integers.
     *
@@ -2422,7 +2454,9 @@ public class Color extends Vec4 {
     */
    public int compareTo ( final Color c ) {
 
-      return Color.COMPARATOR.compare(this, c);
+      final float alum = Color.luminance(this);
+      final float blum = Color.luminance(c);
+      return alum < blum ? -1 : alum > blum ? 1 : 0;
    }
 
    /**
@@ -2462,7 +2496,7 @@ public class Color extends Vec4 {
          return false;
       }
 
-      return Color.toHexInt(this) == Color.toHexInt((Color) obj);
+      return this.equals((Color) obj);
    }
 
    /**

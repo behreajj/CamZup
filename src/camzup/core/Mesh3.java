@@ -105,7 +105,7 @@ public class Mesh3 extends Mesh {
          final StringBuilder sb = new StringBuilder()
                .append("{ vertices: [ \n");
          for (int i = 0; i < len; ++i) {
-            sb.append(this.vertices[i].toString());
+            sb.append(this.vertices[i].toString(places));
             if (i < last) {
                sb.append(',').append('\n');
             }
@@ -672,6 +672,25 @@ public class Mesh3 extends Mesh {
       return target.set(faces, coords, texCoords, normals);
    }
 
+   /**
+    *
+    * Sourced from the Unify Community Wiki <a href=
+    * "https://wiki.unity3d.com/index.php/ProceduralPrimitives">ProceduralPrimitives</a>
+    * page, authored by Berenger.
+    *
+    * @param radius
+    *           the radius
+    * @param thickness
+    *           the thickness
+    * @param sectors
+    *           number of sectors
+    * @param tubeRes
+    *           tube resolution
+    * @param target
+    *           output mesh
+    * @return the mesh
+    * @author Berenger
+    */
    @Experimental
    public static Mesh3 torus (
          final float radius,
@@ -681,8 +700,9 @@ public class Mesh3 extends Mesh {
          final Mesh3 target ) {
 
       // TODO: Yup3 compliance or Zup3 compliance?
-      // TODO: Reference Unity script where this came from.
-
+      
+      // TODO: Generates excess vertices. Try using P5 formula instead.
+      
       final int sectors1 = sectors + 1;
       final int tubeRes1 = tubeRes + 1;
 
@@ -690,7 +710,6 @@ public class Mesh3 extends Mesh {
       final float toV = 1.0f / tubeRes;
 
       /* Precalculate phi and the v coordinate in uvs. */
-
       final float[] cosPhis = new float[tubeRes1];
       final float[] sinPhis = new float[tubeRes1];
       final float[] vs = new float[tubeRes1];
@@ -699,12 +718,10 @@ public class Mesh3 extends Mesh {
          final float nrmphi = side % tubeRes * toV;
          cosPhis[side] = SinCos.eval(nrmphi);
          sinPhis[side] = SinCos.eval(nrmphi - 0.25f);
-
          vs[side] = side * toV;
       }
 
       /* Create mesh arrays. */
-
       final Vec3[] coords = new Vec3[sectors1 * tubeRes1];
       final Vec3[] normals = new Vec3[coords.length];
       final Vec2[] texCoords = new Vec2[coords.length];
@@ -717,7 +734,7 @@ public class Mesh3 extends Mesh {
       final float refy = 1.0f;
       final float refz = 0.0f;
 
-      for (int k = 0, seg = 0; seg < sectors1; ++seg) {
+      for (int k = 0, seg = 0; seg < sectors1; seg++) {
 
          final float nrmtheta = seg % sectors * toU;
          final float cosTheta = SinCos.eval(nrmtheta);
@@ -740,7 +757,7 @@ public class Mesh3 extends Mesh {
          final float qy = refy * sinHalf;
          final float qz = refz * sinHalf;
 
-         for (int side = 0; side < tubeRes1; ++side, ++k) {
+         for (int side = 0; side < tubeRes1; side++, k++) {
 
             /*
              * Calculate the vector which will be multiplied by a
@@ -782,20 +799,21 @@ public class Mesh3 extends Mesh {
       }
 
       final int triangles = coords.length + coords.length;
-      final int idxLimit = triangles + triangles + triangles - 6;
+      final int idxLimit = (triangles + triangles + triangles -
+            6);
       final int[][][] faces = new int[triangles][3][3];
 
       /* Six vertices per 2 triangles. */
       int vIdx = 0;
       int fIdx = 0;
 
-      for (int seg = 0; seg < sectors1; ++seg) {
+      for (int seg = 0; seg < sectors1; seg++) {
 
          final int currentFac = seg * tubeRes1;
          final int nextFac = (seg + 1) * tubeRes1;
 
          /* This for-loop is different than the others. */
-         for (int side = 0; side < tubeRes; ++side) {
+         for (int side = 0; side < tubeRes; side++) {
 
             /* The precaution i < idxLimit may be unecessary? */
             if (vIdx < idxLimit) {
@@ -970,6 +988,17 @@ public class Mesh3 extends Mesh {
       this.set(faces, coords, texCoords, normals);
    }
 
+   @Experimental
+   String toBlenderCode () {
+
+      // TODO: Finish.
+      final StringBuilder result = new StringBuilder();
+      result.append("{\"name\": \"")
+            .append(this.name)
+            .append("\",");
+      return result.toString();
+   }
+
    @Override
    public boolean equals ( final Object obj ) {
 
@@ -1118,8 +1147,8 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Rotates all coordinates in the mesh by an angle around an
-    * arbitrary axis.
+    * Rotates all coordinates and normals in the mesh by an
+    * angle around an arbitrary axis.
     *
     * @param radians
     *           the angle in radians
@@ -1147,8 +1176,28 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Rotates all coordinates in the mesh by an angle around
-    * the x axis.
+    * Rotates all coordinates and normals in the mesh by a
+    * quaternion.
+    *
+    * @param q
+    *           the quaternion
+    * @return the mesh
+    */
+   @Chainable
+   public Mesh3 rotate ( final Quaternion q ) {
+
+      final int len = this.coords.length;
+
+      for (int i = 0; i < len; ++i) {
+         Quaternion.mulVector(q, this.coords[i], this.coords[i]);
+         Quaternion.mulVector(q, this.normals[i], this.normals[i]);
+      }
+      return this;
+   }
+
+   /**
+    * Rotates all coordinates and normals in the mesh by an
+    * angle around the x axis.
     *
     * @param radians
     *           the angle in radians
@@ -1172,8 +1221,8 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Rotates all coordinates in the mesh by an angle around
-    * the y axis.
+    * Rotates all coordinates and normals in the mesh by an
+    * angle around the y axis.
     *
     * @param radians
     *           the angle in radians
@@ -1197,8 +1246,8 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Rotates all coordinates in the mesh by an angle around
-    * the z axis.
+    * Rotates all coordinates and normals in the mesh by an
+    * angle around the z axis.
     *
     * @param radians
     *           the angle in radians
@@ -1358,6 +1407,145 @@ public class Mesh3 extends Mesh {
       }
       result.append('\n');
       return result.toString();
+   }
+
+   /**
+    * Returns a string representation of the mesh.
+    *
+    * @return the string
+    */
+   @Override
+   public String toString () {
+
+      return this.toString(4, Integer.MAX_VALUE);
+   }
+
+   /**
+    * Returns a string representation of the mesh.
+    *
+    * @param places
+    *           the number of places
+    * @return the string
+    */
+   public String toString ( final int places ) {
+
+      return this.toString(places, Integer.MAX_VALUE);
+   }
+
+   /**
+    * Returns a string representation of the mesh. Includes an
+    * option to truncate the listing in case of large meshes.
+    *
+    * @param places
+    *           the number of places
+    * @param truncate
+    *           truncate elements in a list
+    * @return the string
+    */
+   public String toString ( final int places, final int truncate ) {
+
+      final StringBuilder sb = new StringBuilder();
+
+      sb.append("{ coords: [");
+      if (this.coords != null) {
+         sb.append('\n');
+         final int len = Math.min(this.coords.length, truncate);
+         final int last = len - 1;
+         for (int i = 0; i < len; ++i) {
+            sb.append(this.coords[i].toString(places));
+            if (i < last) {
+               sb.append(',').append('\n');
+            }
+         }
+      }
+
+      if (this.coords.length > truncate) {
+         sb.append("\n/* ... */");
+      }
+
+      sb.append(" ],\ntexCoords: [");
+      if (this.texCoords != null) {
+         sb.append('\n');
+         final int len = Math.min(this.texCoords.length, truncate);
+         final int last = len - 1;
+         for (int i = 0; i < len; ++i) {
+            sb.append(this.texCoords[i].toString(places));
+            if (i < last) {
+               sb.append(',').append('\n');
+            }
+         }
+      }
+
+      if (this.texCoords.length > truncate) {
+         sb.append("\n/* ... */");
+      }
+
+      sb.append(" ],\nnormals: [");
+      if (this.normals != null) {
+         sb.append('\n');
+         final int len = Math.min(this.normals.length, truncate);
+         final int last = len - 1;
+         for (int i = 0; i < len; ++i) {
+            sb.append(this.normals[i].toString(places));
+            if (i < last) {
+               sb.append(',').append('\n');
+            }
+         }
+      }
+
+      if (this.normals.length > truncate) {
+         sb.append("\n/* ... */");
+      }
+
+      sb.append(" ],\nfaces: [");
+      if (this.faces != null) {
+         sb.append('\n');
+         final int facesLen = Math.min(this.faces.length, truncate);
+         final int facesLast = facesLen - 1;
+
+         for (int i = 0; i < facesLen; ++i) {
+
+            final int[][] verts = this.faces[i];
+            final int vertsLen = verts.length;
+            final int vertsLast = vertsLen - 1;
+            sb.append('[').append(' ');
+
+            for (int j = 0; j < vertsLen; ++j) {
+
+               final int[] vert = verts[j];
+               final int infoLen = vert.length;
+               final int infoLast = infoLen - 1;
+               sb.append('[').append(' ');
+
+               /*
+                * There should be 3 indices: coordinate, texture coordinate
+                * and normal.
+                */
+               for (int k = 0; k < infoLen; ++k) {
+
+                  sb.append(vert[k]);
+                  if (k < infoLast) {
+                     sb.append(',').append(' ');
+                  }
+               }
+               sb.append(' ').append(']');
+               if (j < vertsLast) {
+                  sb.append(',').append(' ');
+               }
+            }
+            sb.append(' ').append(']');
+            if (i < facesLast) {
+               sb.append(',').append('\n');
+            }
+         }
+      }
+
+      if (this.faces.length > truncate) {
+         sb.append("\n/* ... */");
+      }
+
+      sb.append(" ] }");
+      return sb.toString();
    }
 
    /**

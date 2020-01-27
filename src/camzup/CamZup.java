@@ -99,10 +99,11 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-      MeshEntity2 me2 = new MeshEntity2();
-      me2.appendMesh(Mesh2.polygon(new Mesh2(), 6, Mesh2.PolyType.TRI));
-//      me2.appendMesh(new Mesh2());
-      System.out.println(me2.toBlenderCode());
+      MeshEntity3 me = new MeshEntity3();
+      me.appendMaterial(new MaterialSolid());
+      me.appendMesh(Mesh3.torus(new Mesh3()));
+
+      System.out.println(me.toBlenderCode());
    }
 
    /**

@@ -1,6 +1,7 @@
 package camzup.core;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
@@ -1214,9 +1215,9 @@ public class Gradient implements Iterable < Gradient.Key > {
 
    /**
     * Reverses the gradient. The step of each color key is
-    * subtracted from one. Does so with a temporary ArrayList.
+    * subtracted from one. Does so with a temporary List.
     *
-    * @param keyArr
+    * @param keyList
     *           a temp list
     * @return the gradient
     * @see List#clear()
@@ -1225,18 +1226,71 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @see TreeSet#clear()
     * @see Collections#reverse(java.util.List)
     */
-   public Gradient reverse ( final List < Key > keyArr ) {
+   public Gradient reverse ( final List < Key > keyList ) {
 
-      keyArr.clear();
-      keyArr.addAll(this.keys);
-      Collections.reverse(keyArr);
+      keyList.clear();
+      keyList.addAll(this.keys);
+      Collections.reverse(keyList);
       this.keys.clear();
-      final Iterator < Key > itr = keyArr.iterator();
+      final Iterator < Key > itr = keyList.iterator();
       while (itr.hasNext()) {
          final Key key = itr.next();
          key.step = 1.0f - key.step;
       }
-      this.keys.addAll(keyArr);
+      this.keys.addAll(keyList);
+      return this;
+   }
+
+   /**
+    * Sorts the gradient according to a property of the colors
+    * in each key. Does so with a temporary List.
+    * 
+    * @param clrList
+    *           a temporary list
+    * @return the gradient
+    */
+   @Experimental
+   public Gradient sort (
+         final List < Color > clrList ) {
+
+      return sort(clrList, null);
+   }
+
+   /**
+    * Sorts the gradient according to a property of the colors
+    * in each key. Does so with a temporary List.
+    * 
+    * @param clrList
+    *           a temporary list
+    * @param sorter
+    *           the sorting function
+    * @return the gradient
+    */
+   @Experimental
+   public Gradient sort (
+         final List < Color > clrList,
+         final Comparator < Color > sorter ) {
+
+      clrList.clear();
+      int j = 0;
+      int len = this.keys.size();
+      final Iterator < Key > keyItr = this.keys.iterator();
+      float[] steps = new float[len];
+      while (keyItr.hasNext()) {
+         Key key = keyItr.next();
+         steps[j++] = key.step;
+         clrList.add(key.clr);
+      }
+
+      Collections.sort(clrList, sorter);
+      this.keys.clear();
+
+      int i = 0;
+      final Iterator < Color > clrItr = clrList.iterator();
+      while (clrItr.hasNext()) {
+         this.keys.add(new Key(steps[i++], clrItr.next()));
+      }
+
       return this;
    }
 
@@ -1349,7 +1403,7 @@ public class Gradient implements Iterable < Gradient.Key > {
 
       final StringBuilder sb = new StringBuilder(
             16 + 128 * this.keys.size())
-            .append("{ keys: [ \n");
+                  .append("{ keys: [ \n");
       final Iterator < Key > itr = this.keys.iterator();
       while (itr.hasNext()) {
          sb.append(itr.next().toString(places));

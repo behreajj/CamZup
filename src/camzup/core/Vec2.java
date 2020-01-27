@@ -3102,6 +3102,46 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how
+    * transforms look in Blender (the control) vs. in the
+    * library (the test).
+    *
+    * This is formatted as a three-tuple.
+    *
+    * @return the string
+    */
+   @Experimental
+   String toBlenderCode ( final float z ) {
+
+      return new StringBuilder(96)
+            .append('(')
+            .append(Utils.toFixed(this.x, 6))
+            .append(',').append(' ')
+            .append(Utils.toFixed(this.y, 6))
+            .append(',').append(' ')
+            .append(Utils.toFixed(z, 6))
+            .append(')')
+            .toString();
+   }
+
+   /**
+    * Returns a string representation of this vector as a comma
+    * separated value for use by SVG formatting functions.
+    *
+    * @return the string
+    */
+   String toSvgString () {
+
+      return new StringBuilder(16)
+            .append(Utils.toFixed(this.x, 4))
+            .append(' ')
+            .append(Utils.toFixed(this.y, 4))
+            .toString();
+   }
+
+   /**
     * Tests equivalence between this and another vector. For
     * rough equivalence of floating point components, use the
     * static approx function instead.
@@ -3396,21 +3436,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
             .append(Utils.toFixed(this.y, places))
             .append(' ')
             .append('}')
-            .toString();
-   }
-
-   /**
-    * Returns a string representation of this vector as a comma
-    * separated value for use by SVG formatting functions.
-    *
-    * @return the string
-    */
-   public String toSvgString () {
-
-      return new StringBuilder(16)
-            .append(Utils.toFixed(this.x, 4))
-            .append(' ')
-            .append(Utils.toFixed(this.y, 4))
             .toString();
    }
 }

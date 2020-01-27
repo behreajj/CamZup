@@ -1244,9 +1244,7 @@ public class Curve2 extends Curve
    public static float[] calcSegLengths (
          final Curve2 c,
          final int precision ) {
-
-      // TODO: Needs testing.
-
+      
       final Vec2[][] segments = c.evalRange(precision + 1);
       final int len = segments.length;
       final float[] results = new float[precision];
@@ -1379,10 +1377,10 @@ public class Curve2 extends Curve
          final Vec2[] points,
          final Curve2 target ) {
 
-      final int knotCount = points.length;
       target.clear();
       target.closedLoop = closedLoop;
       final List < Knot2 > knots = target.knots;
+      final int knotCount = points.length;
       for (int i = 0; i < knotCount; ++i) {
          final Vec2 point = points[i];
          knots.add(new Knot2(point, point, point));
@@ -1865,9 +1863,6 @@ public class Curve2 extends Curve
 
       final boolean closedLoop = target.closedLoop;
 
-      // TODO: Could this be refactored to not use an if check in
-      // the middle? if closed loop use this for loop else use
-      // another for loop?
       for (int i = 0; i < knotLength; ++i) {
          final Knot2 knot = knots.get(i);
          final Vec2 currCoord = knot.coord;
@@ -1877,18 +1872,16 @@ public class Curve2 extends Curve
 
          if (closedLoop) {
 
-            // prevIndex is extraneous as a variable?
-            // as is nextIndex?
-            final int prevIndex = Math.floorMod(i - 1, knotLength);
-            final Knot2 prev = knots.get(prevIndex);
+            final Knot2 prev = knots.get(
+                  Math.floorMod(i - 1, knotLength));
 
             Vec2.sub(prev.coord, currCoord, back);
             backDist = Vec2.mag(back);
             Vec2.normalize(back, backNorm);
             Vec2.add(dir0, backNorm, dir1);
 
-            final int nextIndex = (i + 1) % knotLength;
-            final Knot2 next = knots.get(nextIndex);
+            final Knot2 next = knots.get(
+                  (i + 1) % knotLength);
 
             Vec2.sub(next.coord, currCoord, forward);
             foreDist = -Vec2.mag(forward);

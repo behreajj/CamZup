@@ -1426,35 +1426,19 @@ public class Transform3 extends Transform {
     * @return the string
     */
    @Experimental
-   public String toBlenderCode () {
+   String toBlenderCode () {
 
-      final Vec3 i = this.rotation.imag;
-      final String rotationMode = "QUATERNION";
+      final String rotationMode = "\"QUATERNION\"";
 
       return new StringBuilder(256)
-            .append("{\n        \"location\": (")
-            .append(Utils.toFixed(this.location.x, 6))
-            .append(',').append(' ')
-            .append(Utils.toFixed(this.location.y, 6))
-            .append(',').append(' ')
-            .append(Utils.toFixed(this.location.z, 6))
-            .append("),\n        \"rotation_mode\": \"")
+            .append("{ \"location\": ")
+            .append(location.toBlenderCode())
+            .append(", \"rotation_mode\": ")
             .append(rotationMode)
-            .append("\",\n        \"rotation_quaternion\": (")
-            .append(Utils.toFixed(this.rotation.real, 6))
-            .append(',').append(' ')
-            .append(Utils.toFixed(i.x, 6))
-            .append(',').append(' ')
-            .append(Utils.toFixed(i.y, 6))
-            .append(',').append(' ')
-            .append(Utils.toFixed(i.z, 6))
-            .append("),\n        \"scale\": (")
-            .append(Utils.toFixed(this.scale.x, 6))
-            .append(',').append(' ')
-            .append(Utils.toFixed(this.scale.y, 6))
-            .append(',').append(' ')
-            .append(Utils.toFixed(this.scale.z, 6))
-            .append(')')
+            .append(", \"rotation_quaternion\": ")
+            .append(rotation.toBlenderCode())
+            .append(", \"scale\": ")
+            .append(scale.toBlenderCode())
             .append('}')
             .toString();
    }

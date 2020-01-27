@@ -2740,6 +2740,35 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how
+    * transforms look in Blender (the control) vs. in the
+    * library (the test).
+    * 
+    * This is formatted as a four-tuple where w is the first
+    * element.
+    *
+    * @return the string
+    */
+   @Experimental
+   String toBlenderCode () {
+
+      final Vec3 i = this.imag;
+      return new StringBuilder()
+            .append('(')
+            .append(Utils.toFixed(this.real, 6))
+            .append(',').append(' ')
+            .append(Utils.toFixed(i.x, 6))
+            .append(',').append(' ')
+            .append(Utils.toFixed(i.y, 6))
+            .append(',').append(' ')
+            .append(Utils.toFixed(i.z, 6))
+            .append(')')
+            .toString();
+   }
+
+   /**
     * Tests equivalence between this and another quaternion.
     * For rough equivalence of floating point components, use
     * the static approx function instead.

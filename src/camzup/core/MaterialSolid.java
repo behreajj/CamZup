@@ -186,6 +186,104 @@ public class MaterialSolid extends Material {
    }
 
    /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how curve
+    * geometry looks in Blender (the control) vs. in the
+    * library (the test).
+    *
+    * @return the string
+    */
+   @Experimental
+   String toBlenderCode () {
+
+      return this.toBlenderCode(1.0f);
+   }
+
+   /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how curve
+    * geometry looks in Blender (the control) vs. in the
+    * library (the test).
+    *
+    * @param gamma
+    *           the gamma adjustment
+    * @return the string
+    */
+   @Experimental
+   String toBlenderCode ( final float gamma ) {
+
+      return new StringBuilder()
+            .append("{\"name\": \"")
+            .append(this.name)
+            .append("\", \"fill\": ")
+            .append(this.fill.toBlenderCode(gamma))
+            .append('}')
+            .toString();
+
+   }
+
+   /**
+    * Returns an SVG snippet as a string.
+    *
+    * @return the string
+    * @see Utils#clamp01(float)
+    * @see Color#toHexWeb(Color)
+    */
+   String toSvgString () {
+
+      return this.toSvgString(1.0f);
+   }
+
+   /**
+    * Returns an SVG snippet as a string.
+    *
+    * @param transformScale
+    *           the transform scale.
+    * @return the string
+    * @see Utils#clamp01(float)
+    * @see Color#toHexWeb(Color)
+    */
+   String toSvgString ( final float transformScale ) {
+
+      final String strokeStr = Utils.toFixed(Utils.max(
+            MaterialSolid.SVG_MIN_STROKE_WT,
+            this.strokeWeight / transformScale), 4);
+      final StringBuilder result = new StringBuilder(256);
+
+      /* Stroke style. */
+      if (this.useStroke) {
+         result.append("stroke-width=\"")
+               .append(strokeStr)
+               .append("\" stroke-opacity=\"")
+               .append(Utils.toFixed(Utils.clamp01(this.stroke.w), 2))
+               .append("\" stroke=\"")
+               .append(Color.toHexWeb(this.stroke))
+               .append("\" stroke-linejoin=\"")
+               .append(MaterialSolid.DEFAULT_SVG_STR_JOIN)
+               .append("\" stroke-linecap=\"")
+               .append(MaterialSolid.DEFAULT_SVG_STR_CAP)
+               .append('\"')
+               .append(' ');
+      } else {
+         result.append("stroke=\"none\" ");
+      }
+
+      /* Fill style. */
+      if (this.useFill) {
+         result.append("fill-opacity=\"")
+               .append(Utils.toFixed(Utils.clamp01(this.fill.w), 2))
+               .append("\" fill=\"")
+               .append(Color.toHexWeb(this.fill))
+               .append('\"');
+      } else {
+         result.append("fill=\"none\"");
+      }
+      return result.toString();
+   }
+
+   /**
     * Sets whether or not to use a stroke with a boolean.
     *
     * @param fill
@@ -343,64 +441,5 @@ public class MaterialSolid extends Material {
             .append(' ')
             .append('}')
             .toString();
-   }
-
-   /**
-    * Returns an SVG snippet as a string.
-    *
-    * @return the string
-    * @see Utils#clamp01(float)
-    * @see Color#toHexWeb(Color)
-    */
-   public String toSvgString () {
-
-      return this.toSvgString(1.0f);
-   }
-
-   /**
-    * Returns an SVG snippet as a string.
-    *
-    * @param transformScale
-    *           the transform scale.
-    * @return the string
-    * @see Utils#clamp01(float)
-    * @see Color#toHexWeb(Color)
-    */
-   public String toSvgString ( final float transformScale ) {
-
-      final String strokeStr = Utils.toFixed(Utils.max(
-            MaterialSolid.SVG_MIN_STROKE_WT,
-            this.strokeWeight / transformScale), 4);
-      final StringBuilder result = new StringBuilder(256);
-
-      /* Stroke style. */
-      if (this.useStroke) {
-         result.append("stroke-width=\"")
-               .append(strokeStr)
-               .append("\" stroke-opacity=\"")
-               .append(Utils.toFixed(Utils.clamp01(this.stroke.w), 2))
-               .append("\" stroke=\"")
-               .append(Color.toHexWeb(this.stroke))
-               .append("\" stroke-linejoin=\"")
-               .append(MaterialSolid.DEFAULT_SVG_STR_JOIN)
-               .append("\" stroke-linecap=\"")
-               .append(MaterialSolid.DEFAULT_SVG_STR_CAP)
-               .append('\"')
-               .append(' ');
-      } else {
-         result.append("stroke=\"none\" ");
-      }
-
-      /* Fill style. */
-      if (this.useFill) {
-         result.append("fill-opacity=\"")
-               .append(Utils.toFixed(Utils.clamp01(this.fill.w), 2))
-               .append("\" fill=\"")
-               .append(Color.toHexWeb(this.fill))
-               .append('\"');
-      } else {
-         result.append("fill=\"none\"");
-      }
-      return result.toString();
    }
 }

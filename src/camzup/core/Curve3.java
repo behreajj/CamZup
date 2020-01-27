@@ -1451,10 +1451,10 @@ public class Curve3 extends Curve
          final Vec3[] points,
          final Curve3 target ) {
 
-      final int knotCount = points.length;
       target.clear();
       target.closedLoop = closedLoop;
       final List < Knot3 > knots = target.knots;
+      final int knotCount = points.length;
       for (int i = 0; i < knotCount; ++i) {
          final Vec3 point = points[i];
          knots.add(new Knot3(point, point, point));
@@ -1484,8 +1484,7 @@ public class Curve3 extends Curve
       target.clear();
       target.closedLoop = true;
       final int vknct = knotCount < 3 ? 3 : knotCount;
-      final float invKnCt = 1.0f / vknct;
-      final float toAngle = IUtils.TAU * invKnCt;
+      final float toAngle = IUtils.TAU / vknct;
       final List < Knot3 > knots = target.knots;
       for (int i = 0; i < vknct; ++i) {
          final float angle = offsetAngle + i * toAngle;
@@ -1529,8 +1528,7 @@ public class Curve3 extends Curve
       final Vec3[] points = new Vec3[valCount];
       for (int i = 0; i < valCount; ++i) {
          points[i] = Vec3.randomCartesian(rng,
-               lowerBound, upperBound,
-               new Vec3());
+               lowerBound, upperBound, new Vec3());
       }
       return Curve3.fromPoints(closedLoop, points, target);
    }
@@ -1617,16 +1615,16 @@ public class Curve3 extends Curve
 
          if (closedLoop) {
 
-            final int prevIndex = Math.floorMod(i - 1, knotLength);
-            final Knot3 prev = knots.get(prevIndex);
+            final Knot3 prev = knots.get(
+                  Math.floorMod(i - 1, knotLength));
 
             Vec3.sub(prev.coord, currCoord, back);
             backDist = Vec3.mag(back);
             Vec3.normalize(back, backNorm);
             Vec3.add(dir0, backNorm, dir1);
 
-            final int nextIndex = (i + 1) % knotLength;
-            final Knot3 next = knots.get(nextIndex);
+            final Knot3 next = knots.get(
+                  (i + 1) % knotLength);
 
             Vec3.sub(next.coord, currCoord, forward);
             foreDist = -Vec3.mag(forward);

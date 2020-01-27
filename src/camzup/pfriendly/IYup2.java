@@ -882,7 +882,7 @@ public interface IYup2 extends IUp {
          final float x,
          final float y ) {
 
-      this.text(obj.toString(), x, y);
+      this.text(obj.toString().substring(0, 96), x, y);
    }
 
    /**

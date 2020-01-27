@@ -105,7 +105,7 @@ public class Mesh2 extends Mesh {
          final StringBuilder sb = new StringBuilder()
                .append("{ vertices: [ \n");
          for (int i = 0; i < len; ++i) {
-            sb.append(this.vertices[i].toString());
+            sb.append(this.vertices[i].toString(places));
             if (i < last) {
                sb.append(',').append('\n');
             }
@@ -837,8 +837,7 @@ public class Mesh2 extends Mesh {
       for (final Vec2 coord : this.coords) {
          result.append("v ")
                .append(coord.toObjString())
-               .append(" 0.0 ")
-               .append('\n');
+               .append(" 0.0 \n");
       }
       result.append('\n');
 
@@ -910,8 +909,6 @@ public class Mesh2 extends Mesh {
     */
    public String toString ( final int places, final int truncate ) {
 
-      // TODO: Refine and, when satisfied, transfer to Mesh3.
-
       final StringBuilder sb = new StringBuilder();
 
       sb.append("{ coords: [");
@@ -920,7 +917,6 @@ public class Mesh2 extends Mesh {
          final int len = Math.min(this.coords.length, truncate);
          final int last = len - 1;
          for (int i = 0; i < len; ++i) {
-
             sb.append(this.coords[i].toString(places));
             if (i < last) {
                sb.append(',').append('\n');
@@ -928,6 +924,10 @@ public class Mesh2 extends Mesh {
          }
       }
 
+      if(this.coords.length > truncate) {
+         sb.append("\n/* ... */");
+      }
+      
       sb.append(" ],\ntexCoords: [");
       if (this.texCoords != null) {
          sb.append('\n');
@@ -941,6 +941,10 @@ public class Mesh2 extends Mesh {
          }
       }
 
+      if(this.texCoords.length > truncate) {
+         sb.append("\n/* ... */");
+      }
+      
       sb.append(" ],\nfaces: [");
       if (this.faces != null) {
          sb.append('\n');
@@ -961,6 +965,10 @@ public class Mesh2 extends Mesh {
                final int infoLast = infoLen - 1;
                sb.append('[').append(' ');
 
+               /*
+                * There should be 2 indices: coordinate, texture
+                * coordinate.
+                */
                for (int k = 0; k < infoLen; ++k) {
 
                   sb.append(vert[k]);
@@ -968,19 +976,22 @@ public class Mesh2 extends Mesh {
                      sb.append(',').append(' ');
                   }
                }
-
                sb.append(' ').append(']');
                if (j < vertsLast) {
                   sb.append(',').append(' ');
                }
             }
-
             sb.append(' ').append(']');
             if (i < facesLast) {
                sb.append(',').append('\n');
             }
          }
       }
+      
+      if(this.faces.length > truncate) {
+         sb.append("\n/* ... */");
+      }
+      
       sb.append(" ] }");
       return sb.toString();
    }
