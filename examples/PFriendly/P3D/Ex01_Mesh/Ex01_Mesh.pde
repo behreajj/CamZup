@@ -23,7 +23,7 @@ void setup() {
   size(720, 405, "camzup.pfriendly.Yup3");
   graphics3 = (Yup3)getGraphics();
 
-  poly = Mesh3.torus(new Mesh3());
+  poly = Mesh3.cube(new Mesh3());
 
   entity = new MeshEntity3(transform)
     .appendMesh(poly)

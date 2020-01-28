@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import camzup.core.Curve3.Knot3;
-
 /**
  * An entity which contains a transform that is applied to a
  * list of curves. The curves may references a list of
@@ -258,70 +256,20 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
 
       final StringBuilder result = new StringBuilder(2048);
       result.append("from bpy import data as D, context as C\n\n")
-            .append("curve_entity = {")
-            .append("\n    \"name\": \"")
+            .append("curve_entity = {\"name\": \"")
             .append(this.name)
-            .append("\",\n    \"transform\": ")
+            .append("\", \"transform\": ")
             .append(this.transform.toBlenderCode())
-            .append(",\n    \"curves\": [\n");
+            .append(", \"curves\": [");
 
       int curveIndex = 0;
       final int curveLast = this.curves.size() - 1;
       final Iterator < Curve3 > curveItr = this.curves.iterator();
       while (curveItr.hasNext()) {
-
-         int knotIndex = 0;
-         final Curve3 curve = curveItr.next();
-         final int knotLast = curve.length() - 1;
-         final Iterator < Knot3 > knotItr = curve.iterator();
-
-         result.append("        {\"closed_loop\": ")
-               .append(curve.closedLoop ? "True" : "False")
-               .append(",\n         \"knots\": [\n");
-
-         while (knotItr.hasNext()) {
-
-            final Knot3 knot = knotItr.next();
-            final Vec3 co = knot.coord;
-            final Vec3 rear = knot.rearHandle;
-            final Vec3 fore = knot.foreHandle;
-
-            /* Append coordinate (co in Blender). */
-            result.append("             {\"co\": (")
-                  .append(Utils.toFixed(co.x, 6))
-                  .append(',').append(' ')
-                  .append(Utils.toFixed(co.y, 6))
-                  .append(',').append(' ')
-                  .append(Utils.toFixed(co.z, 6))
-
-                  .append("), \n              \"handle_right\": (")
-                  .append(Utils.toFixed(fore.x, 6))
-                  .append(',').append(' ')
-                  .append(Utils.toFixed(fore.y, 6))
-                  .append(',').append(' ')
-                  .append(Utils.toFixed(fore.z, 6))
-
-                  .append("), \n              \"handle_left\": (")
-                  .append(Utils.toFixed(rear.x, 6))
-                  .append(',').append(' ')
-                  .append(Utils.toFixed(rear.y, 6))
-                  .append(',').append(' ')
-                  .append(Utils.toFixed(rear.z, 6))
-                  .append(')').append('}');
-
-            if (knotIndex < knotLast) {
-               result.append(',').append('\n');
-            }
-
-            knotIndex++;
-         }
-
-         result.append(']').append('}');
-
+         result.append(curveItr.next().toBlenderCode());
          if (curveIndex < curveLast) {
-            result.append(',').append('\n');
+            result.append(',').append(' ');
          }
-
          curveIndex++;
       }
 
@@ -333,21 +281,21 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
             .append("crv_index = 0\n")
             .append("splines_raw = curve_entity[\"curves\"]\n")
             .append("for spline_raw in splines_raw:\n")
-            .append("\tspline = crv_splines.new(\"BEZIER\")\n")
-            .append("\tspline.use_cyclic_u = spline_raw[\"closed_loop\"]\n")
-            .append("\tknots_raw = spline_raw[\"knots\"]\n")
-            .append("\tknt_index = 0\n")
-            .append("\tbz_pts = spline.bezier_points\n")
-            .append("\tbz_pts.add(len(knots_raw) - 1)\n")
-            .append("\tfor knot in bz_pts:\n")
-            .append("\t\tknot_raw = knots_raw[knt_index]\n")
-            .append("\t\tknot.handle_left_type = \"FREE\"\n")
-            .append("\t\tknot.handle_right_type = \"FREE\"\n")
-            .append("\t\tknot.co = knot_raw[\"co\"]\n")
-            .append("\t\tknot.handle_left = knot_raw[\"handle_left\"]\n")
-            .append("\t\tknot.handle_right = knot_raw[\"handle_right\"]\n")
-            .append("\t\tknt_index = knt_index + 1\n")
-            .append("\tcrv_index = crv_index + 1\n\n")
+            .append("    spline = crv_splines.new(\"BEZIER\")\n")
+            .append("    spline.use_cyclic_u = spline_raw[\"closed_loop\"]\n")
+            .append("    knots_raw = spline_raw[\"knots\"]\n")
+            .append("    knt_index = 0\n")
+            .append("    bz_pts = spline.bezier_points\n")
+            .append("    bz_pts.add(len(knots_raw) - 1)\n")
+            .append("    for knot in bz_pts:\n")
+            .append("        knot_raw = knots_raw[knt_index]\n")
+            .append("        knot.handle_left_type = \"FREE\"\n")
+            .append("        knot.handle_right_type = \"FREE\"\n")
+            .append("        knot.co = knot_raw[\"co\"]\n")
+            .append("        knot.handle_left = knot_raw[\"handle_left\"]\n")
+            .append("        knot.handle_right = knot_raw[\"handle_right\"]\n")
+            .append("        knt_index = knt_index + 1\n")
+            .append("    crv_index = crv_index + 1\n\n")
             .append("crv_obj = D.objects.new(crv_data.name, crv_data)\n")
             .append("tr = curve_entity[\"transform\"]\n")
             .append("crv_obj.location = tr[\"location\"]\n")

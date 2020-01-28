@@ -201,117 +201,42 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
    @Experimental
    public String toBlenderCode () {
 
-      final int coordPairsOnLine = 3;
+      final float expn = 2.2f;
+
       final StringBuilder result = new StringBuilder(2048);
       result.append("from bpy import data as D, context as C\n\n")
-            .append("mesh_entity = {")
-            .append("\n    \"name\": \"")
+            .append("mesh_entity = {\"name\": \"")
             .append(this.name)
-            .append("\",\n    \"transform\": ")
+            .append("\", \"transform\": ")
             .append(this.transform.toBlenderCode())
-            .append(",\n    \"meshes\": [\n");
+            .append(", \"meshes\": [");
 
       int meshIndex = 0;
       final int meshLast = this.meshes.size() - 1;
       final Iterator < Mesh2 > meshItr = this.meshes.iterator();
       while (meshItr.hasNext()) {
-
-         final Mesh2 mesh = meshItr.next();
-         final Vec2[] coords = mesh.coords;
-         final int coordLen = coords.length;
-         final int coordLast = coordLen - 1;
-
-         result.append("        {\"name\": \"")
-               .append(mesh.name)
-               .append("\",\n         \"material_index\": ")
-               .append(mesh.materialIndex)
-               .append(",\n         \"vertices\": [\n");
-
-         /* Append vertex coordinates. */
-         for (int i = 0; i < coordLen; ++i) {
-            final Vec2 v = coords[i];
-
-            result.append("             (")
-                  .append(Utils.toFixed(v.x, 6))
-                  .append(',').append(' ')
-                  .append(Utils.toFixed(v.y, 6))
-                  .append(", 0.0)");
-
-            if (i < coordLast) {
-               result.append(',').append('\n');
-            }
-         }
-
-         result.append("],\n         \"faces\": [\n             ");
-
-         /* Append indices (for vertices only). */
-         final int[][][] faces = mesh.faces;
-         final int faceLen = faces.length;
-         final int faceLast = faceLen - 1;
-
-         for (int j = 0; j < faceLen; ++j) {
-            final int[][] vrtInd = faces[j];
-            final int vrtIndLen = vrtInd.length;
-            final int vrtLast = vrtIndLen - 1;
-
-            result.append('(');
-            for (int k = 0; k < vrtIndLen; ++k) {
-               result.append(vrtInd[k][0]);
-
-               if (k < vrtLast) {
-                  result.append(',').append(' ');
-               }
-            }
-
-            result.append(')');
-
-            if (j < faceLast) {
-               result.append(',');
-
-               if ((j + 1) % coordPairsOnLine == 0) {
-                  result.append("\n             ");
-               } else {
-                  result.append(' ');
-               }
-            }
-         }
-
-         result.append(']').append('}');
-
+         result.append(meshItr.next().toBlenderCode());
          if (meshIndex < meshLast) {
-            result.append(',').append('\n').append('\n');
+            result.append(',').append(' ');
          }
-
          meshIndex++;
       }
 
-      result.append("],\n    \"materials\": [\n");
+      result.append("], \"materials\": [");
 
       int matIndex = 0;
-      final float expn = 2.2f;
       final int matLast = this.materials.size() - 1;
       final Iterator < MaterialSolid > matItr = this.materials.iterator();
       while (matItr.hasNext()) {
-         final MaterialSolid mat = matItr.next();
-         final Color fill = mat.fill;
-         result.append("        {\"name\": \"")
-               .append(mat.name)
-               .append("\",\n         \"fill\": (")
-               .append(Utils.toFixed((float) Math.pow(fill.x, expn), 6))
-               .append(',').append(' ')
-               .append(Utils.toFixed((float) Math.pow(fill.y, expn), 6))
-               .append(',').append(' ')
-               .append(Utils.toFixed((float) Math.pow(fill.z, expn), 6))
-               .append(',').append(' ')
-               .append(Utils.toFixed(fill.w, 6))
-               .append(')');
-         result.append("}");
+         result.append(matItr.next().toBlenderCode(expn));
          if (matIndex < matLast) {
-            result.append(',').append('\n').append('\n');
+            result.append(',').append(' ');
          }
-
          matIndex++;
       }
+
+      // TODO: Forgot to deal with the case where a mesh entity
+      // has no materials.
 
       result.append("]}\n\nd_objs = D.objects\n")
             .append("parent_obj = d_objs.new(")
@@ -329,35 +254,35 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
             .append("materials = mesh_entity[\"materials\"]\n")
             .append("d_mats = D.materials\n")
             .append("for material in materials:\n")
-            .append("\tmat_data = d_mats.new(material[\"name\"])\n")
-            .append("\tfill_clr = material[\"fill\"]\n")
-            .append("\tmat_data.diffuse_color = fill_clr\n")
-            .append("\tmat_data.roughness = 1.0\n")
-            .append("\tmat_data.use_nodes = True\n")
-            .append("\tnode_tree = mat_data.node_tree\n")
-            .append("\tnodes = node_tree.nodes\n")
-            .append("\tpbr = nodes[\"Principled BSDF\"]\n")
-            .append("\troughness = pbr.inputs[\"Roughness\"]\n")
-            .append("\troughness.default_value = 1.0\n")
-            .append("\tbase_clr = pbr.inputs[\"Base Color\"]\n")
-            .append("\tbase_clr.default_value = fill_clr\n\n")
+            .append("    mat_data = d_mats.new(material[\"name\"])\n")
+            .append("    fill_clr = material[\"fill\"]\n")
+            .append("    mat_data.diffuse_color = fill_clr\n")
+            .append("    mat_data.roughness = 1.0\n")
+            .append("    mat_data.use_nodes = True\n")
+            .append("    node_tree = mat_data.node_tree\n")
+            .append("    nodes = node_tree.nodes\n")
+            .append("    pbr = nodes[\"Principled BSDF\"]\n")
+            .append("    roughness = pbr.inputs[\"Roughness\"]\n")
+            .append("    roughness.default_value = 1.0\n")
+            .append("    base_clr = pbr.inputs[\"Base Color\"]\n")
+            .append("    base_clr.default_value = fill_clr\n\n")
 
             .append("meshes = mesh_entity[\"meshes\"]\n")
             .append("d_meshes = D.meshes\n")
             .append("for mesh in meshes:\n")
-            .append("\tname = mesh[\"name\"]\n")
-            .append("\tmesh_data = d_meshes.new(name)\n")
-            .append("\tmesh_data.from_pydata(\n")
-            .append("\t\tmesh[\"vertices\"],\n")
-            .append("\t\t[],\n")
-            .append("\t\tmesh[\"faces\"])\n")
-            .append("\tmesh_data.validate()\n")
-            .append("\tidx = mesh[\"material_index\"]\n")
-            .append("\tmat_name = materials[idx][\"name\"]\n")
-            .append("\tmesh_data.materials.append(d_mats[mat_name])\n")
-            .append("\tmesh_obj = d_objs.new(name, mesh_data)\n")
-            .append("\tscene_objs.link(mesh_obj)\n")
-            .append("\tmesh_obj.parent = parent_obj\n");
+            .append("    name = mesh[\"name\"]\n")
+            .append("    mesh_data = d_meshes.new(name)\n")
+            .append("    mesh_data.from_pydata(\n")
+            .append("        mesh[\"vertices\"],\n")
+            .append("        [],\n")
+            .append("        mesh[\"faces\"])\n")
+            .append("    mesh_data.validate()\n")
+            .append("    idx = mesh[\"material_index\"]\n")
+            .append("    mat_name = materials[idx][\"name\"]\n")
+            .append("    mesh_data.materials.append(d_mats[mat_name])\n")
+            .append("    mesh_obj = d_objs.new(name, mesh_data)\n")
+            .append("    scene_objs.link(mesh_obj)\n")
+            .append("    mesh_obj.parent = parent_obj\n");
 
       return result.toString();
    }

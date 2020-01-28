@@ -120,8 +120,8 @@ public class Color extends Vec4 {
          Color.rgbaToHsba(a, this.aHsb);
          Color.rgbaToHsba(b, this.bHsb);
 
-         // TODO: Replace float compare with basic ternary operators.
-         return Float.compare(this.aHsb.z, this.bHsb.z);
+         return this.aHsb.z < this.bHsb.z ? -1
+               : this.aHsb.z > this.bHsb.z ? 1 : 0;
       }
    }
 
@@ -204,7 +204,9 @@ public class Color extends Vec4 {
 
          Color.rgbaToHsba(a, this.aHsb);
          Color.rgbaToHsba(b, this.bHsb);
-         return Float.compare(this.aHsb.x, this.bHsb.x);
+
+         return this.aHsb.x < this.bHsb.x ? -1
+               : this.aHsb.x > this.bHsb.x ? 1 : 0;
       }
    }
 
@@ -240,8 +242,8 @@ public class Color extends Vec4 {
          Color.rgbaToHsba(a, this.aHsb);
          Color.rgbaToHsba(b, this.bHsb);
 
-         // TODO: Replace float compare with basic ternary operators.
-         return Float.compare(this.aHsb.y, this.bHsb.y);
+         return this.aHsb.y < this.bHsb.y ? -1
+               : this.aHsb.y > this.bHsb.y ? 1 : 0;
       }
    }
 
@@ -588,15 +590,8 @@ public class Color extends Vec4 {
             final Color target ) {
 
          /*
-          * This should remain as double precision!!!
+          * This should remain as double precision!
           */
-
-         // final float u = 1.0f - step;
-         // return target.set(
-         // u * origin.x + step * dest.x,
-         // u * origin.y + step * dest.y,
-         // u * origin.z + step * dest.z,
-         // u * origin.w + step * dest.w);
 
          final double td = step;
          final double ud = 1.0d - td;
@@ -815,16 +810,8 @@ public class Color extends Vec4 {
             final Color target ) {
 
          /*
-          * This should remain as double-precision.
+          * This should remain as double-precision!
           */
-
-         // final float ts = step * step * (3.0f - (step + step));
-         // final float us = 1.0f - ts;
-         // return target.set(
-         // us * origin.x + ts * dest.x,
-         // us * origin.y + ts * dest.y,
-         // us * origin.z + ts * dest.z,
-         // us * origin.w + ts * dest.w);
 
          final double td = step;
          final double ts = td * td * (3.0d - (td + td));
@@ -846,6 +833,34 @@ public class Color extends Vec4 {
     * The unique identification for serialized classes.
     */
    private static final long serialVersionUID = 3863260730744999721L;
+
+   /**
+    * Adds the left and right operand, except for the alpha
+    * channel, then clamps the sum to [0.0, 1.0] . The left
+    * operand's alpha channel is retained.
+    *
+    * For that reason, color addition is <em>not</em>
+    * commutative.
+    *
+    * @param a
+    *           left operand
+    * @param b
+    *           right operand
+    * @param target
+    *           output color
+    * @return the sum
+    */
+   public static Color add (
+         final Color a,
+         final Color b,
+         final Color target ) {
+
+      return target.set(
+            Utils.clamp01(a.x + b.x),
+            Utils.clamp01(a.y + b.y),
+            Utils.clamp01(a.z + b.z),
+            Utils.clamp01(a.w));
+   }
 
    /**
     * Tests to see if all color channels are greater than zero.
@@ -1141,6 +1156,86 @@ public class Color extends Vec4 {
    }
 
    /**
+    * Divides the left operand by the right, except for the
+    * alpha channel, then clamps the product to [0.0, 1.0] .
+    * The left operand's alpha channel is retained.
+    *
+    * @param a
+    *           left operand, numerator
+    * @param b
+    *           right operand, denominator
+    * @param target
+    *           output color
+    * @return the quotient
+    */
+   public static Color div (
+         final Color a,
+         final Color b,
+         final Color target ) {
+
+      return target.set(
+            Utils.clamp01(Utils.div(a.x, b.x)),
+            Utils.clamp01(Utils.div(a.y, b.y)),
+            Utils.clamp01(Utils.div(a.z, b.z)),
+            Utils.clamp01(a.w));
+   }
+
+   /**
+    * Divides the left operand by the right, except for the
+    * alpha channel, then clamps the product to [0.0, 1.0] .
+    * The left operand's alpha channel is retained.
+    *
+    * @param a
+    *           left operand, numerator
+    * @param b
+    *           right operand, denominator
+    * @param target
+    *           output color
+    * @return the quotient
+    */
+   public static Color div (
+         final Color a,
+         final float b,
+         final Color target ) {
+
+      if (b == 0.0f) {
+         return target.set(0.0f, 0.0f, 0.0f, Utils.clamp01(a.w));
+      }
+      final float bInv = 1.0f / b;
+      return target.set(
+            Utils.clamp01(a.x * bInv),
+            Utils.clamp01(a.y * bInv),
+            Utils.clamp01(a.z * bInv),
+            Utils.clamp01(a.w));
+   }
+
+   /**
+    * Divides the left operand by the right, except for the
+    * alpha channel, then clamps the product to [0.0, 1.0] .
+    * The left operand is also supplied to the alpha channel.
+    *
+    * @param a
+    *           left operand, numerator
+    * @param b
+    *           right operand, denominator
+    * @param target
+    *           output color
+    * @return the quotient
+    */
+   public static Color div (
+         final float a,
+         final Color b,
+         final Color target ) {
+
+      return a == 0.0f ? target.reset()
+            : target.set(
+                  Utils.clamp01(Utils.div(a, b.x)),
+                  Utils.clamp01(Utils.div(a, b.y)),
+                  Utils.clamp01(Utils.div(a, b.z)),
+                  Utils.clamp01(a));
+   }
+
+   /**
     * Converts a direction to a color. Normalizes the
     * direction, multiplies it by 0.5, then adds 0.5 .
     *
@@ -1159,14 +1254,11 @@ public class Color extends Vec4 {
          return target.set(0.5f, 0.5f, 0.5f, 1.0f);
       }
 
-      float r = 0.5f;
-      float g = 0.5f;
-
       final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
-      r = v.x * mInv + 0.5f;
-      g = v.y * mInv + 0.5f;
-
-      return target.set(r, g, 0.5f, 1.0f);
+      return target.set(
+            v.x * mInv + 0.5f,
+            v.y * mInv + 0.5f,
+            0.5f, 1.0f);
 
    }
 
@@ -1189,16 +1281,11 @@ public class Color extends Vec4 {
          return target.set(0.5f, 0.5f, 0.5f, 1.0f);
       }
 
-      float r = 0.5f;
-      float g = 0.5f;
-      float b = 0.5f;
-
       final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
-      r = v.x * mInv + 0.5f;
-      g = v.y * mInv + 0.5f;
-      b = v.z * mInv + 0.5f;
-
-      return target.set(r, g, b, 1.0f);
+      return target.set(
+            v.x * mInv + 0.5f,
+            v.y * mInv + 0.5f,
+            v.z * mInv + 0.5f, 1.0f);
    }
 
    /**
@@ -1573,6 +1660,90 @@ public class Color extends Vec4 {
          final AbstrEasing easingFunc ) {
 
       return easingFunc.apply(origin, dest, step, target);
+   }
+
+   /**
+    * Multiplies the left and right operand, except for the
+    * alpha channel, then clamps the product to [0.0, 1.0] .
+    * The left operand's alpha channel is retained.
+    *
+    * For that reason, color multiplication is <em>not</em>
+    * commutative.
+    *
+    * @param a
+    *           left operand
+    * @param b
+    *           right operand
+    * @param target
+    *           output color
+    * @return the product
+    */
+   public static Color mul (
+         final Color a,
+         final Color b,
+         final Color target ) {
+
+      return target.set(
+            Utils.clamp01(a.x * b.x),
+            Utils.clamp01(a.y * b.y),
+            Utils.clamp01(a.z * b.z),
+            Utils.clamp01(a.w));
+   }
+
+   /**
+    * Multiplies the left and right operand, except for the
+    * alpha channel, then clamps the product to [0.0, 1.0] .
+    * The left operand's alpha channel is retained.
+    *
+    * For that reason, color multiplication is <em>not</em>
+    * commutative.
+    *
+    * @param a
+    *           left operand
+    * @param b
+    *           right operand
+    * @param target
+    *           output color
+    * @return the product
+    */
+   public static Color mul (
+         final Color a,
+         final float b,
+         final Color target ) {
+
+      return target.set(
+            Utils.clamp01(a.x * b),
+            Utils.clamp01(a.y * b),
+            Utils.clamp01(a.z * b),
+            Utils.clamp01(a.w));
+   }
+
+   /**
+    * Multiplies the left and right operand, except for the
+    * alpha channel, then clamps the product to [0.0, 1.0] .
+    * The left operand is also supplied to the alpha channel.
+    *
+    * For that reason, color multiplication is <em>not</em>
+    * commutative.
+    *
+    * @param a
+    *           left operand
+    * @param b
+    *           right operand
+    * @param target
+    *           output color
+    * @return the product
+    */
+   public static Color mul (
+         final float a,
+         final Color b,
+         final Color target ) {
+
+      return target.set(
+            Utils.clamp01(a * b.x),
+            Utils.clamp01(a * b.y),
+            Utils.clamp01(a * b.z),
+            Utils.clamp01(a));
    }
 
    /**
@@ -2030,6 +2201,29 @@ public class Color extends Vec4 {
       if (easing != null) {
          Color.EASING = easing;
       }
+   }
+
+   /**
+    * Subtracts the right operand from the left operand, except
+    * for the alpha channel, then clamps the sum to [0.0, 1.0]
+    * . The left operand's alpha channel is retained.
+    *
+    * @param a
+    *           left operand
+    * @param b
+    *           right operand
+    * @param target
+    *           output color
+    * @return the difference
+    */
+   public static Color sub ( final Color a, final Color b,
+         final Color target ) {
+
+      return target.set(
+            Utils.clamp01(a.x - b.x),
+            Utils.clamp01(a.y - b.y),
+            Utils.clamp01(a.z - b.z),
+            Utils.clamp01(a.w));
    }
 
    /**

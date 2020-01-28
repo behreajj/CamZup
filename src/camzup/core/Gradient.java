@@ -194,6 +194,31 @@ public class Gradient implements Iterable < Gradient.Key > {
       }
 
       /**
+       * Returns a String of Python code targeted toward the
+       * Blender 2.8x API. This code is brittle and is used for
+       * internal testing purposes.
+       *
+       * @param name
+       *           the material's name
+       * @param samples
+       *           number of gradient samples
+       * @param gamma
+       *           the gamma adjustment
+       * @return the string
+       */
+      @Experimental
+      String toBlenderCode ( final float gamma ) {
+
+         return new StringBuilder()
+               .append("{\"position\": ")
+               .append(Utils.toFixed(this.step, 3))
+               .append(", \"color\": ")
+               .append(this.clr.toBlenderCode(gamma))
+               .append('}')
+               .toString();
+      }
+
+      /**
        * Tests this key for equality to another based on its step,
        * not color.
        *
@@ -438,7 +463,7 @@ public class Gradient implements Iterable < Gradient.Key > {
 
          return new StringBuilder()
                .append("{ step: ")
-               .append(Utils.toFixed(this.step, 3))
+               .append(Utils.toFixed(this.step, 6))
                .append(", clr: ")
                .append(this.clr.toString(places))
                .append(' ').append('}')
@@ -1244,7 +1269,7 @@ public class Gradient implements Iterable < Gradient.Key > {
    /**
     * Sorts the gradient according to a property of the colors
     * in each key. Does so with a temporary List.
-    * 
+    *
     * @param clrList
     *           a temporary list
     * @return the gradient
@@ -1253,13 +1278,13 @@ public class Gradient implements Iterable < Gradient.Key > {
    public Gradient sort (
          final List < Color > clrList ) {
 
-      return sort(clrList, null);
+      return this.sort(clrList, null);
    }
 
    /**
     * Sorts the gradient according to a property of the colors
     * in each key. Does so with a temporary List.
-    * 
+    *
     * @param clrList
     *           a temporary list
     * @param sorter
@@ -1273,11 +1298,11 @@ public class Gradient implements Iterable < Gradient.Key > {
 
       clrList.clear();
       int j = 0;
-      int len = this.keys.size();
+      final int len = this.keys.size();
       final Iterator < Key > keyItr = this.keys.iterator();
-      float[] steps = new float[len];
+      final float[] steps = new float[len];
       while (keyItr.hasNext()) {
-         Key key = keyItr.next();
+         final Key key = keyItr.next();
          steps[j++] = key.step;
          clrList.add(key.clr);
       }
@@ -1334,7 +1359,6 @@ public class Gradient implements Iterable < Gradient.Key > {
       final int len = clrs.length;
       final int last = len - 1;
       final float toPercent = 1.0f / last;
-      final float expn = gamma == 0.0f ? 1.0f : gamma;
 
       final StringBuilder result = new StringBuilder()
             .append("from bpy import data as D, context as C\n\n")
@@ -1344,15 +1368,9 @@ public class Gradient implements Iterable < Gradient.Key > {
          final Color clr = clrs[i];
          result.append("\n    {\"position\": ")
                .append(Utils.toFixed(i * toPercent, 6))
-               .append(", \"color\": (")
-               .append(Utils.toFixed((float) Math.pow(clr.x, expn), 6))
-               .append(',').append(' ')
-               .append(Utils.toFixed((float) Math.pow(clr.y, expn), 6))
-               .append(',').append(' ')
-               .append(Utils.toFixed((float) Math.pow(clr.z, expn), 6))
-               .append(',').append(' ')
-               .append(Utils.toFixed(clr.w, 6))
-               .append(')').append('}');
+               .append(", \"color\": ")
+               .append(clr.toBlenderCode(gamma))
+               .append('}');
 
          if (i < last) {
             result.append(',');

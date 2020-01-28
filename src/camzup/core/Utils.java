@@ -716,22 +716,25 @@ public abstract class Utils implements IUtils {
 
    /**
     * A bounds-checked approximation of the arc-cosine for
-    * single precision real numbers.
-    *
-    * Returns a value in the range [0.0, \u03c0]: \u03c0, when
-    * the input is -1.0; \u03c0 / 2.0, when the input is 0.0;
-    * 0.0, when the input is 1.0.
-    *
-    * Based on the algorithm at the <a href=
+    * single precision real numbers. Returns a value in the
+    * range [0.0, \u03c0]: \u03c0, when the input is -1.0;
+    * \u03c0 / 2.0, when the input is 0.0; 0.0, when the input
+    * is 1.0.<br>
+    * <br>
+    * An alternative to {@link Math#acos(double)} . Based on
+    * the algorithm at the <a href=
     * "https://developer.download.nvidia.com/cg/acos.html">Nvidia
-    * Cg 3.1 Toolkit Documentation</a> , which in turn cites M.
+    * Cg 3.1 Toolkit Documentation</a>. This cites M.
     * Abramowitz and I.A. Stegun, Eds., <em>Handbook of
-    * Mathematical Functions</em> .
+    * Mathematical Functions</em>, possibly p. 83, which cites
+    * <em>Approximations for Digital Computers</em> by C.
+    * Hastings, Jr.
     *
     * @param value
     *           the input value
     * @return the angle in radians
     * @see Math#acos(double)
+    * @author C. Hastings, Jr
     */
    public static float acos ( final float value ) {
 
@@ -764,7 +767,8 @@ public abstract class Utils implements IUtils {
     * @param b
     *           the right operand
     * @return the evaluation
-    * @see Utils#bool(float)
+    * @see Utils#toBool(float)
+    * @see Utils#toInt(boolean)
     */
    public static int and ( final float a, final float b ) {
 
@@ -781,6 +785,7 @@ public abstract class Utils implements IUtils {
     *           the right operand
     * @return the evaluation
     * @see Utils#bool(int)
+    * @see Utils#toInt(boolean)
     */
    public static int and ( final int a, final int b ) {
 
@@ -830,22 +835,25 @@ public abstract class Utils implements IUtils {
 
    /**
     * A bounds-checked approximation of the arc-sine for single
-    * precision real numbers.
-    *
-    * Returns a value in the range [-\u03c0 / 2.0, \u03c0 /
-    * 2.0]: -\u03c0 / 2.0, when the input is -1.0; 0.0, when
-    * the input is 0.0; \u03c0 / 2.0, when the input is 1.0.
-    *
-    * Based on the algorithm at the <a href=
+    * precision real numbers. Returns a value in the range
+    * [-\u03c0 / 2.0, \u03c0 / 2.0]: -\u03c0 / 2.0, when the
+    * input is -1.0; 0.0, when the input is 0.0; \u03c0 / 2.0,
+    * when the input is 1.0.<br>
+    * <br>
+    * An alternative to {@link Math#asin(double)} . Based on
+    * the algorithm at the <a href=
     * "https://developer.download.nvidia.com/cg/asin.html">Nvidia
-    * Cg 3.1 Toolkit Documentation</a> , which in turn cites M.
+    * Cg 3.1 Toolkit Documentation</a> . This cites M.
     * Abramowitz and I.A. Stegun, Eds., <em>Handbook of
-    * Mathematical Functions</em> .
+    * Mathematical Functions</em>, possibly p. 83, which cites
+    * <em>Approximations for Digital Computers</em> by C.
+    * Hastings, Jr.
     *
     * @param value
     *           the input value
     * @return the angle in radians
     * @see Math#asin(double)
+    * @author C. Hastings, Jr.
     */
    public static float asin ( final float value ) {
 
@@ -1073,6 +1081,7 @@ public abstract class Utils implements IUtils {
     * @param radians
     *           the radians
     * @return the cotangent
+    * @see SinCos#eval(float)
     */
    public static float cot ( final float radians ) {
 
@@ -1765,7 +1774,8 @@ public abstract class Utils implements IUtils {
     * @param b
     *           the right operand
     * @return the evaluation
-    * @see Utils#bool(float)
+    * @see Utils#toBool(float)
+    * @see Utils#toInt(boolean)
     */
    public static int or ( final float a, final float b ) {
 
@@ -1782,6 +1792,7 @@ public abstract class Utils implements IUtils {
     *           the right operand
     * @return the evaluation
     * @see Utils#bool(int)
+    * @see Utils#toInt(boolean)
     */
    public static int or ( final int a, final int b ) {
 
@@ -1859,8 +1870,7 @@ public abstract class Utils implements IUtils {
     * @param places
     *           the number of places
     * @return the rounded value
-    * @see Math#pow(double, double)
-    * @see Math#round(double)
+    * @see Utils#round(float)
     */
    public static float round (
          final float value,
@@ -1945,7 +1955,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Finds the approximate square root of a value. Returns 0.0
-    * when the value is less than zero. Use
+    * when the value is less than zero. An alternative to
+    * {@link Math#sqrt(double)} . Use
     * {@link Utils#sqrtUnchecked(float)} when the value is
     * known to be positive. Use
     * {@link Complex#sqrt(float, Complex)} when the input may
@@ -2022,7 +2033,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * A quick, dirty representation of a single-precision real
-    * number as a String to a number of places. Edge cases:
+    * number as a String to a number of places. Truncates the
+    * final digit right of the decimal place. Edge cases:
     * <ul>
     * <li>When the number of places is less than one, returns
     * the String of the truncated value.</li>
@@ -2271,6 +2283,7 @@ public abstract class Utils implements IUtils {
     *           the right operand
     * @return the evaluation
     * @see Utils#toBool(float)
+    * @see Utils#toInt(boolean)
     */
    public static int xor ( final float a, final float b ) {
 
@@ -2286,7 +2299,8 @@ public abstract class Utils implements IUtils {
     * @param b
     *           the right operand
     * @return the evaluation
-    * @see Utils#bool(int)
+    * @see Utils#toBool(int)
+    * @see Utils#toInt(boolean)
     */
    public static int xor ( final int a, final int b ) {
 

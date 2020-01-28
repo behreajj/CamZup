@@ -1473,12 +1473,14 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Generates a 2D array of vectors.
-    *
-    * @param rows
-    *           number of rows
+    * Generates a 2D array of vectors. The result is in
+    * row-major order, but the parameters are supplied in
+    * reverse: columns first, then rows.
+    * 
     * @param cols
     *           number of columns
+    * @param rows
+    *           number of rows
     * @param lowerBound
     *           the lower bound
     * @param upperBound
@@ -1486,8 +1488,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @return the array
     */
    public static Vec2[][] grid (
-         final int rows,
          final int cols,
+         final int rows,
          final Vec2 lowerBound,
          final Vec2 upperBound ) {
 

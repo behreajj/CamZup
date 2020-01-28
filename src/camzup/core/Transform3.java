@@ -144,14 +144,14 @@ public class Transform3 extends Transform {
 
          target.locPrev.set(target.location);
          this.loc.applyUnclamped(
-               origin.location, 
+               origin.location,
                dest.location,
                step,
                target.location);
 
          target.rotPrev.set(target.rotation);
          this.rot.applyUnclamped(
-               origin.rotation, 
+               origin.rotation,
                dest.rotation,
                step,
                target.rotation);
@@ -159,8 +159,8 @@ public class Transform3 extends Transform {
          target.scalePrev.set(target.scale);
          this.loc.applyUnclamped(
                origin.scale,
-               dest.scale, 
-               step, 
+               dest.scale,
+               step,
                target.scale);
 
          return target;
@@ -384,6 +384,8 @@ public class Transform3 extends Transform {
     *           the output point
     * @return the point
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
+    * @see Vec3#mul(Vec3, Vec3, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    public static Vec3 mulPoint (
          final Transform3 t,
@@ -409,6 +411,7 @@ public class Transform3 extends Transform {
     *           the output vector
     * @return the vector
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
+    * @see Vec3#mul(Vec3, Vec3, Vec3)
     */
    public static Vec3 mulVector (
          final Transform3 t,
@@ -623,6 +626,33 @@ public class Transform3 extends Transform {
    }
 
    /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how
+    * transforms look in Blender (the control) vs. in the
+    * library (the test).
+    *
+    * @return the string
+    */
+   @Experimental
+   String toBlenderCode () {
+
+      final String rotationMode = "\"QUATERNION\"";
+
+      return new StringBuilder(256)
+            .append("{\"location\": ")
+            .append(this.location.toBlenderCode())
+            .append(", \"rotation_mode\": ")
+            .append(rotationMode)
+            .append(", \"rotation_quaternion\": ")
+            .append(this.rotation.toBlenderCode())
+            .append(", \"scale\": ")
+            .append(this.scale.toBlenderCode())
+            .append('}')
+            .toString();
+   }
+
+   /**
     * Tests the equivalence between this and another transform.
     *
     * @param t
@@ -659,16 +689,11 @@ public class Transform3 extends Transform {
     * Updates the local axes of the transform based on its
     * rotation.
     *
-    * @see Quaternion#getRight(Quaternion, Vec3)
-    * @see Quaternion#getForward(Quaternion, Vec3)
-    * @see Quaternion#getUp(Quaternion, Vec3)
+    * @see Quaternion#toAxes(Quaternion, Vec3, Vec3, Vec3)
     */
    @Override
    protected void updateAxes () {
 
-      // Quaternion.getRight(this.rotation, this.right);
-      // Quaternion.getForward(this.rotation, this.forward);
-      // Quaternion.getUp(this.rotation, this.up);
       Quaternion.toAxes(this.rotation, this.right, this.forward, this.up);
    }
 
@@ -713,6 +738,7 @@ public class Transform3 extends Transform {
     * @param axis
     *           the output axis
     * @return the angle in radians
+    * @see Quaternion#toAxisAngle(Quaternion, Vec3)
     */
    public float getAxisAngle ( final Vec3 axis ) {
 
@@ -1051,6 +1077,7 @@ public class Transform3 extends Transform {
     * @param rotNew
     *           the new orientation
     * @return this transform
+    * @see Transform3#updateAxes()
     */
    @Chainable
    public Transform3 rotateTo ( final Quaternion rotNew ) {
@@ -1257,7 +1284,7 @@ public class Transform3 extends Transform {
     * @param scaleNew
     *           the new scale
     * @return this transform
-    * @see Vec2#all(Vec2)
+    * @see Vec3#all(Vec3)
     */
    @Chainable
    public Transform3 scaleTo ( final Vec3 scaleNew ) {
@@ -1414,33 +1441,6 @@ public class Transform3 extends Transform {
       this.scaleTo(scaleNew);
 
       return this;
-   }
-
-   /**
-    * Returns a String of Python code targeted toward the
-    * Blender 2.8x API. This code is brittle and is used for
-    * internal testing purposes, i.e., to compare how
-    * transforms look in Blender (the control) vs. in the
-    * library (the test).
-    *
-    * @return the string
-    */
-   @Experimental
-   String toBlenderCode () {
-
-      final String rotationMode = "\"QUATERNION\"";
-
-      return new StringBuilder(256)
-            .append("{ \"location\": ")
-            .append(location.toBlenderCode())
-            .append(", \"rotation_mode\": ")
-            .append(rotationMode)
-            .append(", \"rotation_quaternion\": ")
-            .append(rotation.toBlenderCode())
-            .append(", \"scale\": ")
-            .append(scale.toBlenderCode())
-            .append('}')
-            .toString();
    }
 
    /**

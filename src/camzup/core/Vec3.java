@@ -1716,12 +1716,14 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Generates a 3D array of vectors.
-    *
-    * @param rows
-    *           number of rows
+    * Generates a 3D array of vectors. The result is in
+    * layer-row-major order, but the parameters are supplied in
+    * reverse: columns first, then rows, then layers.
+    * 
     * @param cols
     *           number of columns
+    * @param rows
+    *           number of rows
     * @param layers
     *           number of layers
     * @param lowerBound
@@ -1731,15 +1733,15 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @return the array
     */
    public static Vec3[][][] grid (
-         final int rows,
          final int cols,
+         final int rows,
          final int layers,
          final Vec3 lowerBound,
          final Vec3 upperBound ) {
 
+      final int lval = layers < 3 ? 3 : layers;
       final int rval = rows < 3 ? 3 : rows;
       final int cval = cols < 3 ? 3 : cols;
-      final int lval = layers < 3 ? 3 : layers;
 
       final float hToStep = 1.0f / (lval - 1.0f);
       final float iToStep = 1.0f / (rval - 1.0f);
@@ -2222,7 +2224,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final Vec3 b,
          final Vec3 target ) {
 
-      return target.set(a * b.x, a * b.y, a * b.z);
+      return target.set(
+            a * b.x,
+            a * b.y,
+            a * b.z);
    }
 
    /**

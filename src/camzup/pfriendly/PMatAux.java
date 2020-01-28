@@ -817,6 +817,7 @@ public abstract class PMatAux {
          target = new PMatrix3D();
       }
 
+      // TODO: Replace all PApplet.cos and sin.
       final float c = PApplet.cos(radians);
       final float s = PApplet.sin(radians);
 

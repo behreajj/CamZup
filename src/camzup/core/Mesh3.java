@@ -55,11 +55,6 @@ public class Mesh3 extends Mesh {
          return Integer.compare(a, b);
       }
 
-      /**
-       * Gets the system identity hash code.
-       *
-       * @return the hash code
-       */
       @Override
       public int hashCode () {
 
@@ -74,6 +69,207 @@ public class Mesh3 extends Mesh {
       public int length () {
 
          return this.vertices.length;
+      }
+
+      /**
+       * Rotates all coordinates and normals in the mesh by an
+       * angle around an arbitrary axis.
+       *
+       * @param radians
+       *           the angle in radians
+       * @param axis
+       *           the axis of rotation
+       * @return this mesh
+       * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
+       */
+      @Chainable
+      public Face3 rotate (
+            final float radians,
+            final Vec3 axis ) {
+
+         final float nrm = IUtils.ONE_TAU * radians;
+         final float cosa = SinCos.eval(nrm);
+         final float sina = SinCos.eval(nrm - 0.25f);
+
+         Vert3 vt3;
+         Vec3 c;
+         Vec3 n;
+
+         final int len = this.vertices.length;
+         for (int i = 0; i < len; ++i) {
+            vt3 = this.vertices[i];
+            c = vt3.coord;
+            n = vt3.normal;
+            Vec3.rotate(c, cosa, sina, axis, c);
+            Vec3.rotate(n, cosa, sina, axis, n);
+         }
+
+         return this;
+      }
+
+      /**
+       * Rotates all coordinates and normals in the face by a
+       * quaternion.
+       *
+       * @param q
+       *           the quaternion
+       * @return the mesh
+       */
+      @Chainable
+      public Face3 rotate ( final Quaternion q ) {
+
+         Vert3 vt3;
+         Vec3 c;
+         Vec3 n;
+
+         final int len = this.vertices.length;
+         for (int i = 0; i < len; ++i) {
+            vt3 = this.vertices[i];
+            c = vt3.coord;
+            n = vt3.normal;
+            Quaternion.mulVector(q, c, c);
+            Quaternion.mulVector(q, n, n);
+         }
+
+         return this;
+      }
+
+      /**
+       * Rotates all coordinates and normals in the face by an
+       * angle around the x axis.
+       *
+       * @param radians
+       *           the angle in radians
+       * @return this mesh
+       * @see Vec3#rotateX(Vec3, float, Vec3)
+       */
+      @Chainable
+      public Face3 rotateX ( final float radians ) {
+
+         final float nrm = IUtils.ONE_TAU * radians;
+         final float cosa = SinCos.eval(nrm);
+         final float sina = SinCos.eval(nrm - 0.25f);
+
+         Vert3 vt3;
+         Vec3 c;
+         Vec3 n;
+
+         final int len = this.vertices.length;
+         for (int i = 0; i < len; ++i) {
+            vt3 = this.vertices[i];
+            c = vt3.coord;
+            n = vt3.normal;
+            Vec3.rotateX(c, cosa, sina, c);
+            Vec3.rotateX(n, cosa, sina, n);
+         }
+
+         return this;
+      }
+
+      /**
+       * Rotates all coordinates and normals in the face by an
+       * angle around the y axis.
+       *
+       * @param radians
+       *           the angle in radians
+       * @return this mesh
+       * @see Vec3#rotateY(Vec3, float, Vec3)
+       */
+      @Chainable
+      public Face3 rotateY ( final float radians ) {
+
+         final float nrm = IUtils.ONE_TAU * radians;
+         final float cosa = SinCos.eval(nrm);
+         final float sina = SinCos.eval(nrm - 0.25f);
+
+         Vert3 vt3;
+         Vec3 c;
+         Vec3 n;
+
+         final int len = this.vertices.length;
+         for (int i = 0; i < len; ++i) {
+            vt3 = this.vertices[i];
+            c = vt3.coord;
+            n = vt3.normal;
+            Vec3.rotateY(c, cosa, sina, c);
+            Vec3.rotateY(n, cosa, sina, n);
+         }
+
+         return this;
+      }
+
+      /**
+       * Rotates all coordinates and normals in the face by an
+       * angle around the z axis.
+       *
+       * @param radians
+       *           the angle in radians
+       * @return this mesh
+       * @see Vec3#rotateZ(Vec3, float, Vec3)
+       */
+      @Chainable
+      public Face3 rotateZ ( final float radians ) {
+
+         final float nrm = IUtils.ONE_TAU * radians;
+         final float cosa = SinCos.eval(nrm);
+         final float sina = SinCos.eval(nrm - 0.25f);
+
+         Vert3 vt3;
+         Vec3 c;
+         Vec3 n;
+
+         final int len = this.vertices.length;
+         for (int i = 0; i < len; ++i) {
+            vt3 = this.vertices[i];
+            c = vt3.coord;
+            n = vt3.normal;
+            Vec3.rotateZ(c, cosa, sina, c);
+            Vec3.rotateZ(n, cosa, sina, n);
+         }
+
+         return this;
+      }
+
+      /**
+       * Scales all coordinates in the face by a scalar.
+       *
+       * @param scale
+       *           the vector
+       * @return this face
+       * @see Vec3#mul(Vec3, float, Vec3)
+       */
+      @Chainable
+      public Face3 scale ( final float scale ) {
+
+         Vec3 c;
+         final int len = this.vertices.length;
+         for (int i = 0; i < len; ++i) {
+            c = this.vertices[i].coord;
+            Vec3.mul(c, scale, c);
+         }
+
+         return this;
+      }
+
+      /**
+       * Scales all coordinates in the face by a vector.
+       *
+       * @param scale
+       *           the vector
+       * @return this face
+       * @see Vec3#mul(Vec3, Vec3, Vec3)
+       */
+      @Chainable
+      public Face3 scale ( final Vec3 scale ) {
+
+         Vec3 c;
+         final int len = this.vertices.length;
+         for (int i = 0; i < len; ++i) {
+            c = this.vertices[i].coord;
+            Vec3.mul(c, scale, c);
+         }
+
+         return this;
       }
 
       /**
@@ -98,11 +294,9 @@ public class Mesh3 extends Mesh {
 
       public String toString ( final int places ) {
 
-         // TODO: Test the typical length of a face, then set the
-         // stringbuilder to an appropriate capacity.
          final int len = this.vertices.length;
          final int last = len - 1;
-         final StringBuilder sb = new StringBuilder()
+         final StringBuilder sb = new StringBuilder(len * 512)
                .append("{ vertices: [ \n");
          for (int i = 0; i < len; ++i) {
             sb.append(this.vertices[i].toString(places));
@@ -112,6 +306,27 @@ public class Mesh3 extends Mesh {
          }
          sb.append(" ] }");
          return sb.toString();
+      }
+
+      /**
+       * Translates all coordinates in the face by a vector.
+       *
+       * @param v
+       *           the vector
+       * @return this face
+       * @see Vec3#add(Vec3, Vec3, Vec3)
+       */
+      @Chainable
+      public Face3 translate ( final Vec3 v ) {
+
+         Vec3 c;
+         final int len = this.vertices.length;
+         for (int i = 0; i < len; ++i) {
+            c = this.vertices[i].coord;
+            Vec3.add(c, v, c);
+         }
+
+         return this;
       }
    }
 
@@ -176,6 +391,7 @@ public class Mesh3 extends Mesh {
 
          final int a = this.hashCode();
          final int b = vert.hashCode();
+         // TODO: Replace with ternary operator compare.
          return Integer.compare(a, b);
       }
 
@@ -222,9 +438,7 @@ public class Mesh3 extends Mesh {
 
       public String toString ( final int places ) {
 
-         // TODO: Test the typical length of a face, then set the
-         // stringbuilder to an appropriate capacity.
-         return new StringBuilder()
+         return new StringBuilder(512)
                .append("{ coord: ")
                .append(this.coord.toString(places))
                .append(", texCoord: ")
@@ -366,75 +580,6 @@ public class Mesh3 extends Mesh {
             zMax - zMin);
    }
 
-   @Experimental
-   public static Mesh3 cone (
-         final float height,
-         final float bottomRadius,
-         final float topRadius,
-         final int nbSides,
-         final int nbHeightSeg,
-         final Mesh3 target ) {
-
-      // TODO: Work in progress...
-
-      final int nbVerticesCap = nbSides + 1;
-      int vert = 0;
-      final float _2pi = (float) Math.PI * 2f;
-
-      final Vec3[] vertices = new Vec3[nbVerticesCap + nbVerticesCap
-            + nbSides * nbHeightSeg * 2 + 2];
-      final Vec3[] normales = new Vec3[vertices.length];
-      final Vec2[] uvss = new Vec2[vertices.length];
-      final int[][][] triangles = {};
-
-      /* Bottom cap. */
-      vertices[vert++] = new Vec3(0.0f, 0.0f, 0.0f);
-      while (vert <= nbSides) {
-         final float rad = (float) vert / nbSides * _2pi;
-         vertices[vert] = new Vec3(
-               (float) Math.cos(rad) * bottomRadius,
-               0.0f,
-               (float) Math.sin(rad) * bottomRadius);
-         vert++;
-      }
-
-      /* Top cap. */
-      final int nbSides2 = nbSides + nbSides;
-      vertices[vert++] = new Vec3(0.0f, height, 0.0f);
-      while (vert <= nbSides2 + 1) {
-         final float rad = (float) (vert - nbSides - 1) / nbSides * _2pi;
-         vertices[vert] = new Vec3(
-               (float) Math.cos(rad) * topRadius,
-               height,
-               (float) Math.sin(rad) * topRadius);
-         vert++;
-      }
-
-      /* Sides. */
-      int v = 0;
-      while (vert <= vertices.length - 4) {
-
-         final float rad = (float) v / nbSides * _2pi;
-         final float cosrad = (float) Math.cos(rad);
-         final float sinrad = (float) Math.sin(rad);
-
-         vertices[vert] = new Vec3(
-               cosrad * topRadius,
-               height,
-               sinrad * topRadius);
-         vertices[vert + 1] = new Vec3(
-               cosrad * bottomRadius,
-               0.0f,
-               sinrad * bottomRadius);
-         vert += 2;
-         v++;
-      }
-      vertices[vert] = vertices[nbSides2 + 2];
-      vertices[vert + 1] = vertices[nbSides2 + 3];
-
-      return target.set(triangles, vertices, uvss, normales);
-   }
-
    /**
     * Generates a cube mesh.
     *
@@ -534,20 +679,17 @@ public class Mesh3 extends Mesh {
             } else if (initialToken.equals("v")) {
 
                /* Coordinate. */
-               final Vec3 read = new Vec3(tokens[1], tokens[2], tokens[3]);
-               coordList.add(read);
+               coordList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
 
             } else if (initialToken.equals("vt")) {
 
                /* Texture coordinate. */
-               final Vec2 read = new Vec2(tokens[1], tokens[2]);
-               texCoordList.add(read);
+               texCoordList.add(new Vec2(tokens[1], tokens[2]));
 
             } else if (initialToken.equals("vn")) {
 
                /* Normal. */
-               final Vec3 read = new Vec3(tokens[1], tokens[2], tokens[3]);
-               normalList.add(read);
+               normalList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
 
             } else if (initialToken.equals("f")) {
 
@@ -579,7 +721,8 @@ public class Mesh3 extends Mesh {
 
       /* Convert to fixed-sized array. */
       target.name = name;
-      target.set(faceList.toArray(new int[faceList.size()][][]),
+      target.set(
+            faceList.toArray(new int[faceList.size()][][]),
             coordList.toArray(new Vec3[coordList.size()]),
             texCoordList.toArray(new Vec2[texCoordList.size()]),
             normalList.toArray(new Vec3[normalList.size()]));
@@ -587,17 +730,114 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Generates a regular convex polygon.
-    *
+    * Creates a subdvided plane. Useful for meshes which later
+    * will be augmented by noise or height maps to simulate
+    * terrain.
+    * 
+    * @param div
+    *           subdivisions
     * @param target
     *           the output mesh
+    * @return the plane
+    */
+   public static final Mesh3 plane ( 
+         final int div, 
+         final Mesh3 target ) {
+
+      return Mesh3.plane(div, div, target);
+   }
+   
+   /**
+    * Creates a plane subdivided into either tris or quads,
+    * depending on the polygon type. Useful for meshes which
+    * later will be augmented by noise or height maps to
+    * simulate terrain.
+    *
+    * @param cols
+    *           number of columns
+    * @param rows
+    *           number of rows
+    * @param target
+    *           the output mesh
+    * @return the mesh
+    */
+   public static final Mesh3 plane (
+         final int cols,
+         final int rows,
+         final Mesh3 target ) {
+
+      target.name = "Plane";
+
+      final int rval = rows < 1 ? 1 : rows;
+      final int cval = cols < 1 ? 1 : cols;
+
+      final int rval1 = rval + 1;
+      final int cval1 = cval + 1;
+
+      final float iToStep = 1.0f / rval;
+      final float jToStep = 1.0f / cval;
+
+      final Vec3[] coords = new Vec3[rval1 * cval1];
+      final Vec2[] texCoords = new Vec2[coords.length];
+      final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
+
+      /* Calculate x values in separate loop. */
+      final float[] xs = new float[cval1];
+      final float[] us = new float[cval1];
+      for (int j = 0; j < cval1; ++j) {
+         final float u = us[j] = j * jToStep;
+         xs[j] = u - 0.5f;
+      }
+
+      for (int k = 0, i = 0; i < rval1; ++i) {
+         final float v = i * iToStep;
+         final float y = v - 0.5f;
+
+         for (int j = 0; j < cval1; ++j, ++k) {
+            coords[k] = new Vec3(xs[j], y, 0.0f);
+            texCoords[k] = new Vec2(us[j], v);
+         }
+      }
+
+      final int len = rval * cval;
+      final int[][][] faces = new int[len + len][3][3];
+      for (int k = 0, i = 0; i < rval; ++i) {
+         final int noff0 = i * cval1;
+         final int noff1 = (i + 1) * cval1;
+
+         for (int j = 0; j < cval; ++j, k += 2) {
+            final int n00 = noff0 + j;
+            final int n10 = n00 + 1;
+            final int n01 = noff1 + j;
+            final int n11 = n01 + 1;
+
+            faces[k] = new int[][] {
+                  { n00, n00, 0 },
+                  { n10, n10, 0 },
+                  { n11, n11, 0 } };
+
+            faces[k + 1] = new int[][] {
+                  { n11, n11, 0 },
+                  { n01, n01, 0 },
+                  { n00, n00, 0 } };
+         }
+      }
+
+      return target.set(faces, coords, texCoords, normals);
+   }
+
+   /**
+    * Generates a regular convex polygon.
+    *
     * @param sectors
     *           the number of sides
+    * @param target
+    *           the output mesh
     * @return the polygon
     */
    public static Mesh3 polygon (
-         final Mesh3 target,
-         final int sectors ) {
+         final int sectors,
+         final Mesh3 target ) {
 
       target.name = "Polygon";
 
@@ -609,18 +849,14 @@ public class Mesh3 extends Mesh {
 
       final Vec3[] coords = new Vec3[seg + 1];
       final Vec2[] texCoords = new Vec2[seg + 1];
-      final Vec3[] normals = new Vec3[] {
-            Vec3.up(new Vec3())
-      };
+      final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
       final int[][][] faces = new int[seg][3][3];
 
       coords[0] = new Vec3();
       texCoords[0] = uvCenter;
 
       for (int i = 0, j = 1; i < seg; ++i, ++j) {
-         final float theta = i * toTheta;
-
-         Vec2.fromPolar(theta, 0.5f, pureCoord);
+         Vec2.fromPolar(i * toTheta, 0.5f, pureCoord);
          texCoords[j] = Vec2.add(pureCoord, uvCenter, new Vec2());
 
          coords[j] = new Vec3(pureCoord.x, pureCoord.y, 0.0f);
@@ -672,178 +908,58 @@ public class Mesh3 extends Mesh {
       return target.set(faces, coords, texCoords, normals);
    }
 
-   /**
-    *
-    * Sourced from the Unify Community Wiki <a href=
-    * "https://wiki.unity3d.com/index.php/ProceduralPrimitives">ProceduralPrimitives</a>
-    * page, authored by Berenger.
-    *
-    * @param radius
-    *           the radius
-    * @param thickness
-    *           the thickness
-    * @param sectors
-    *           number of sectors
-    * @param tubeRes
-    *           tube resolution
-    * @param target
-    *           output mesh
-    * @return the mesh
-    * @author Berenger
-    */
    @Experimental
    public static Mesh3 torus (
          final float radius,
-         final float thickness,
-         final int sectors,
-         final int tubeRes,
+         final float tubeRadius,
+         final int detailX,
+         final int detailY,
          final Mesh3 target ) {
 
-      // TODO: Yup3 compliance or Zup3 compliance?
-      
-      // TODO: Generates excess vertices. Try using P5 formula instead.
-      
-      final int sectors1 = sectors + 1;
-      final int tubeRes1 = tubeRes + 1;
+      // TODO: REWORKING...
 
-      final float toU = 1.0f / sectors;
-      final float toV = 1.0f / tubeRes;
+      final float tubeRatio = tubeRadius / radius;
+      final float toV = 1.0f / (float) detailY;
+      final float toU = 1.0f / (float) detailX;
+      final int detailY1 = detailY + 1;
+      final int detailX1 = detailX + 1;
 
-      /* Precalculate phi and the v coordinate in uvs. */
-      final float[] cosPhis = new float[tubeRes1];
-      final float[] sinPhis = new float[tubeRes1];
-      final float[] vs = new float[tubeRes1];
+      int len = detailY1 * detailX1;
+      Vec3[] coords = new Vec3[len];
+      Vec2[] texCoords = new Vec2[len];
+      Vec3[] normals = new Vec3[len];
+      for (int k = 0, i = 0; i < detailY1; ++i) {
+         final float v = i * toV;
+         // final float phi = IUtils.TAU * v;
+         // final float cosPhi = Utils.cos(phi);
+         // final float sinPhi = Utils.sin(phi);
+         final float cosPhi = SinCos.eval(v);
+         final float sinPhi = SinCos.eval(v - 0.25f);
+         final float r = 1.0f + tubeRatio * cosPhi;
 
-      for (int side = 0; side < tubeRes1; ++side) {
-         final float nrmphi = side % tubeRes * toV;
-         cosPhis[side] = SinCos.eval(nrmphi);
-         sinPhis[side] = SinCos.eval(nrmphi - 0.25f);
-         vs[side] = side * toV;
-      }
-
-      /* Create mesh arrays. */
-      final Vec3[] coords = new Vec3[sectors1 * tubeRes1];
-      final Vec3[] normals = new Vec3[coords.length];
-      final Vec2[] texCoords = new Vec2[coords.length];
-
-      /*
-       * Reference up for world: y-up or z-up. Either way, x
-       * should be zero.
-       */
-      // final float refx = 0.0f;
-      final float refy = 1.0f;
-      final float refz = 0.0f;
-
-      for (int k = 0, seg = 0; seg < sectors1; seg++) {
-
-         final float nrmtheta = seg % sectors * toU;
-         final float cosTheta = SinCos.eval(nrmtheta);
-         final float sinTheta = SinCos.eval(nrmtheta - 0.25f);
-
-         /* Calculate r1 */
-         final float r1x = radius * cosTheta;
-         final float r1y = 0.0f;
-         final float r1z = radius * sinTheta;
-
-         /* Calculate horizontal texture coordinate. */
-         final float u = seg * toU;
-
-         /* Calculate quaternion. Assumes forward is normalized. */
-         final float halfnrm = -nrmtheta * 0.5f;
-         final float sinHalf = SinCos.eval(halfnrm - 0.25f);
-         final float qw = SinCos.eval(halfnrm);
-
-         // final float qx = refx * sinHalf;
-         final float qy = refy * sinHalf;
-         final float qz = refz * sinHalf;
-
-         for (int side = 0; side < tubeRes1; side++, k++) {
-
-            /*
-             * Calculate the vector which will be multiplied by a
-             * quaternion.
-             */
-            final float mulqx = sinPhis[side];
-            final float mulqy = cosPhis[side];
-            final float mulqz = 0.0f;
-
-            /* Multiply quaternion q by vector mulq pt. 1 */
-            final float ix = qw * mulqx + qy * mulqz - qz * mulqy;
-            // final float iy = qw * mulqy + qz * mulqx - qx * mulqz;
-            // final float iz = qw * mulqz + qx * mulqy - qy * mulqx;
-            // final float iw = -qx * mulqx - qy * mulqy - qz * mulqz;
-
-            final float iy = qw * mulqy + qz * mulqx;
-            final float iz = qw * mulqz - qy * mulqx;
-            final float iw = -qy * mulqy - qz * mulqz;
-
-            /* Multiply quaternion q by vector mulq pt. 2 */
-
-            // final float r2x = ix * qw + iz * qy - iw * qx - iy * qz;
-            // final float r2y = iy * qw + ix * qz - iw * qy - iz * qx;
-            // final float r2z = iz * qw + iy * qx - iw * qz - ix * qy;
-
-            final float r2x = ix * qw + iz * qy - iy * qz;
-            final float r2y = iy * qw + ix * qz - iw * qy;
-            final float r2z = iz * qw - iw * qz - ix * qy;
-
-            texCoords[k] = new Vec2(u, vs[side]);
-
-            normals[k] = new Vec3(r2x, r2y, r2z);
+         for (int j = 0; j < detailX1; ++j, ++k) {
+            final float u = j / toU;
+            // final float theta = IUtils.TAU * u;
+            // final float cosTheta = Utils.cos(theta);
+            // final float sinTheta = Utils.sin(theta);
+            final float cosTheta = SinCos.eval(u);
+            final float sinTheta = SinCos.eval(u - 0.25f);
 
             coords[k] = new Vec3(
-                  r1x + r2x * thickness,
-                  r1y + r2y * thickness,
-                  r1z + r2z * thickness);
+                  r * cosTheta,
+                  r * sinTheta,
+                  tubeRatio * sinPhi);
+
+            texCoords[k] = new Vec2(u, v);
+
+            normals[k] = new Vec3(
+                  cosPhi * cosTheta,
+                  cosPhi * sinTheta,
+                  sinPhi);
          }
       }
 
-      final int triangles = coords.length + coords.length;
-      final int idxLimit = (triangles + triangles + triangles -
-            6);
-      final int[][][] faces = new int[triangles][3][3];
-
-      /* Six vertices per 2 triangles. */
-      int vIdx = 0;
-      int fIdx = 0;
-
-      for (int seg = 0; seg < sectors1; seg++) {
-
-         final int currentFac = seg * tubeRes1;
-         final int nextFac = (seg + 1) * tubeRes1;
-
-         /* This for-loop is different than the others. */
-         for (int side = 0; side < tubeRes; side++) {
-
-            /* The precaution i < idxLimit may be unecessary? */
-            if (vIdx < idxLimit) {
-
-               final int current = side + currentFac;
-               final int next = side + (seg < sectors ? nextFac : 0);
-               final int n1 = next + 1;
-               final int c1 = current + 1;
-
-               faces[fIdx++] = new int[][] {
-                     { current, current, current },
-                     { next, next, next },
-                     { n1, n1, n1 } };
-
-               faces[fIdx++] = new int[][] {
-                     { current, current, current },
-                     { n1, n1, n1 },
-                     { c1, c1, c1 } };
-
-               vIdx += 6;
-            }
-         }
-      }
-
-      return target.set(faces, coords, texCoords, normals);
-   }
-
-   public static Mesh3 torus ( final Mesh3 target ) {
-
-      return Mesh3.torus(0.5f, 0.1f, 24, 12, target);
+      return target;
    }
 
    /**
@@ -988,14 +1104,58 @@ public class Mesh3 extends Mesh {
       this.set(faces, coords, texCoords, normals);
    }
 
+   /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how curve
+    * geometry looks in Blender (the control) vs. in the
+    * library (the test).
+    *
+    * @return the string
+    */
    @Experimental
    String toBlenderCode () {
 
-      // TODO: Finish.
       final StringBuilder result = new StringBuilder();
       result.append("{\"name\": \"")
             .append(this.name)
-            .append("\",");
+            .append("\", \"material_index\": ")
+            .append(this.materialIndex)
+            .append(", \"vertices\": [");
+
+      final int vlen = this.coords.length;
+      final int vlast = vlen - 1;
+      for (int i = 0; i < vlen; ++i) {
+         result.append(this.coords[i].toBlenderCode());
+         if (i < vlast) {
+            result.append(',').append(' ');
+         }
+      }
+
+      result.append("], \"faces\": [");
+
+      final int flen = this.faces.length;
+      final int flast = flen - 1;
+      for (int j = 0; j < flen; ++j) {
+         final int[][] vrtInd = this.faces[j];
+         final int vrtIndLen = vrtInd.length;
+         final int vrtLast = vrtIndLen - 1;
+
+         result.append('(');
+         for (int k = 0; k < vrtIndLen; ++k) {
+            result.append(vrtInd[k][0]);
+            if (k < vrtLast) {
+               result.append(',').append(' ');
+            }
+         }
+         result.append(')');
+
+         if (j < flast) {
+            result.append(',').append(' ');
+         }
+      }
+
+      result.append(']').append('}');
       return result.toString();
    }
 
@@ -1165,11 +1325,16 @@ public class Mesh3 extends Mesh {
       final float nrm = IUtils.ONE_TAU * radians;
       final float cosa = SinCos.eval(nrm);
       final float sina = SinCos.eval(nrm - 0.25f);
-      final int len = this.coords.length;
 
+      Vec3 c;
+      Vec3 n;
+
+      final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec3.rotate(this.coords[i], cosa, sina, axis, this.coords[i]);
-         Vec3.rotate(this.normals[i], cosa, sina, axis, this.normals[i]);
+         c = this.coords[i];
+         n = this.normals[i];
+         Vec3.rotate(c, cosa, sina, axis, c);
+         Vec3.rotate(n, cosa, sina, axis, n);
       }
 
       return this;
@@ -1186,11 +1351,15 @@ public class Mesh3 extends Mesh {
    @Chainable
    public Mesh3 rotate ( final Quaternion q ) {
 
-      final int len = this.coords.length;
+      Vec3 c;
+      Vec3 n;
 
+      final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Quaternion.mulVector(q, this.coords[i], this.coords[i]);
-         Quaternion.mulVector(q, this.normals[i], this.normals[i]);
+         c = this.coords[i];
+         n = this.normals[i];
+         Quaternion.mulVector(q, c, c);
+         Quaternion.mulVector(q, n, n);
       }
       return this;
    }
@@ -1210,11 +1379,16 @@ public class Mesh3 extends Mesh {
       final float nrm = IUtils.ONE_TAU * radians;
       final float cosa = SinCos.eval(nrm);
       final float sina = SinCos.eval(nrm - 0.25f);
-      final int len = this.coords.length;
 
+      Vec3 c;
+      Vec3 n;
+
+      final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec3.rotateX(this.coords[i], cosa, sina, this.coords[i]);
-         Vec3.rotateX(this.normals[i], cosa, sina, this.normals[i]);
+         c = this.coords[i];
+         n = this.normals[i];
+         Vec3.rotateX(c, cosa, sina, n);
+         Vec3.rotateX(n, cosa, sina, n);
       }
 
       return this;
@@ -1235,11 +1409,16 @@ public class Mesh3 extends Mesh {
       final float nrm = IUtils.ONE_TAU * radians;
       final float cosa = SinCos.eval(nrm);
       final float sina = SinCos.eval(nrm - 0.25f);
-      final int len = this.coords.length;
 
+      Vec3 c;
+      Vec3 n;
+
+      final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec3.rotateY(this.coords[i], cosa, sina, this.coords[i]);
-         Vec3.rotateY(this.normals[i], cosa, sina, this.normals[i]);
+         c = this.coords[i];
+         n = this.normals[i];
+         Vec3.rotateY(c, cosa, sina, c);
+         Vec3.rotateY(n, cosa, sina, n);
       }
 
       return this;
@@ -1260,11 +1439,16 @@ public class Mesh3 extends Mesh {
       final float nrm = IUtils.ONE_TAU * radians;
       final float cosa = SinCos.eval(nrm);
       final float sina = SinCos.eval(nrm - 0.25f);
-      final int len = this.coords.length;
 
+      Vec3 c;
+      Vec3 n;
+
+      final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec3.rotateZ(this.coords[i], cosa, sina, this.coords[i]);
-         Vec3.rotateZ(this.normals[i], cosa, sina, this.normals[i]);
+         c = this.coords[i];
+         n = this.normals[i];
+         Vec3.rotateZ(c, cosa, sina, c);
+         Vec3.rotateZ(n, cosa, sina, n);
       }
 
       return this;
@@ -1281,10 +1465,13 @@ public class Mesh3 extends Mesh {
    @Chainable
    public Mesh3 scale ( final float scale ) {
 
+      Vec3 c;
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec3.mul(this.coords[i], scale, this.coords[i]);
+         c = this.coords[i];
+         Vec3.mul(c, scale, c);
       }
+
       return this;
    }
 
@@ -1294,14 +1481,18 @@ public class Mesh3 extends Mesh {
     * @param scale
     *           the vector
     * @return this mesh
+    * @see Vec3#mul(Vec3, Vec3, Vec3)
     */
    @Chainable
    public Mesh3 scale ( final Vec3 scale ) {
 
+      Vec3 c;
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec3.mul(this.coords[i], scale, this.coords[i]);
+         c = this.coords[i];
+         Vec3.mul(c, scale, c);
       }
+
       return this;
    }
 
@@ -1446,7 +1637,9 @@ public class Mesh3 extends Mesh {
 
       final StringBuilder sb = new StringBuilder();
 
-      sb.append("{ coords: [");
+      sb.append("{ name: \"")
+            .append(this.name)
+            .append("\", coords: [");
       if (this.coords != null) {
          sb.append('\n');
          final int len = Math.min(this.coords.length, truncate);
@@ -1559,9 +1752,11 @@ public class Mesh3 extends Mesh {
    @Chainable
    public Mesh3 translate ( final Vec3 v ) {
 
+      Vec3 c;
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec3.add(this.coords[i], v, this.coords[i]);
+         c = this.coords[i];
+         Vec3.add(c, v, c);
       }
       return this;
    }

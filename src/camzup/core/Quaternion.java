@@ -2745,7 +2745,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * internal testing purposes, i.e., to compare how
     * transforms look in Blender (the control) vs. in the
     * library (the test).
-    * 
+    *
     * This is formatted as a four-tuple where w is the first
     * element.
     *

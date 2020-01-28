@@ -199,6 +199,8 @@ public class Transform2 extends Transform {
     * @param target
     *           the output transform
     * @return the transform
+    * @see Vec2#normalize(Vec2, Vec2)
+    * @see Utils#atan2(float, float)
     */
    public static Transform2 fromAxes (
          final Vec2 right,
@@ -390,6 +392,8 @@ public class Transform2 extends Transform {
     *           the output point
     * @return the point
     * @see Vec2#rotateZ(Vec2, float, Vec2)
+    * @see Vec2#mul(Vec2, Vec2, Vec2)
+    * @see Vec2#add(Vec2, Vec2, Vec2)
     */
    public static Vec2 mulPoint (
          final Transform2 t,
@@ -415,6 +419,7 @@ public class Transform2 extends Transform {
     *           the output vector
     * @return the vector
     * @see Vec2#rotateZ(Vec2, float, Vec2)
+    * @see Vec2#mul(Vec2, Vec2, Vec2)
     */
    public static Vec2 mulVector (
          final Transform2 t,
@@ -531,7 +536,7 @@ public class Transform2 extends Transform {
 
       this.scale = Vec2.one(new Vec2());
       this.scalePrev = Vec2.one(new Vec2());
-      
+
       this.right = Vec2.right(new Vec2());
       this.forward = Vec2.forward(new Vec2());
    }
@@ -601,6 +606,41 @@ public class Transform2 extends Transform {
 
       super();
       this.set(location, rotation, scale);
+   }
+
+   /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how
+    * transforms look in Blender (the control) vs. in the
+    * library (the test).
+    *
+    * @return the string
+    */
+   @Experimental
+   String toBlenderCode () {
+
+      /*
+       * Quaternion from angle: (cos(a * 0.5), 0.0, 0.0, sin(a *
+       * 0.5))
+       */
+      final String rotationMode = "\"QUATERNION\"";
+      final float nrm = IUtils.ONE_TAU_2 * this.rotation;
+
+      return new StringBuilder(256)
+            .append("{\"location\": ")
+            .append(this.location.toBlenderCode(0.0f))
+            .append(", \"rotation_mode\": ")
+            .append(rotationMode)
+            .append(", \"rotation_quaternion\": (")
+            .append(Utils.toFixed(SinCos.eval(nrm), 6))
+            .append(", 0.0, 0.0, ")
+            .append(Utils.toFixed(SinCos.eval(nrm - 0.25f), 6))
+            .append("), \"scale\": ")
+            .append(this.scale.toBlenderCode(
+                  (this.scale.x + this.scale.y) * 0.5f))
+            .append("}")
+            .toString();
    }
 
    /**
@@ -1164,47 +1204,6 @@ public class Transform2 extends Transform {
       this.scaleTo(scaleNew);
 
       return this;
-   }
-
-   /**
-    * Returns a String of Python code targeted toward the
-    * Blender 2.8x API. This code is brittle and is used for
-    * internal testing purposes, i.e., to compare how
-    * transforms look in Blender (the control) vs. in the
-    * library (the test).
-    *
-    * @return the string
-    */
-   @Experimental
-   String toBlenderCode () {
-
-      final String rotationMode = "QUATERNION";
-
-      /*
-       * Quaternion from angle: (cos(a * 0.5), 0.0, 0.0, sin(a *
-       * 0.5))
-       */
-      final float nrm = IUtils.ONE_TAU_2 * this.rotation;
-      final float qw = SinCos.eval(nrm);
-      final float qz = SinCos.eval(nrm - 0.25f);
-
-      return new StringBuilder(256)
-            .append("{\n        \"location\": (")
-            .append(Utils.toFixed(this.location.x, 6))
-            .append(',').append(' ')
-            .append(Utils.toFixed(this.location.y, 6))
-            .append(", 0.0),\n        \"rotation_mode\": \"")
-            .append(rotationMode)
-            .append("\",\n        \"rotation_quaternion\": (")
-            .append(Utils.toFixed(qw, 6))
-            .append(", 0.0, 0.0, ")
-            .append(Utils.toFixed(qz, 6))
-            .append("),\n        \"scale\": (")
-            .append(Utils.toFixed(this.scale.x, 6))
-            .append(',').append(' ')
-            .append(Utils.toFixed(this.scale.y, 6))
-            .append(", 1.0)}")
-            .toString();
    }
 
    /**

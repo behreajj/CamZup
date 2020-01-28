@@ -182,10 +182,10 @@ public class Ray2 extends Ray implements Comparable < Ray2 > {
    public final Vec2 origin;
 
    {
-      origin = new Vec2();
-      dir = Vec2.forward(new Vec2());
+      this.origin = new Vec2();
+      this.dir = Vec2.forward(new Vec2());
    }
-   
+
    public Ray2 () {
 
       super();

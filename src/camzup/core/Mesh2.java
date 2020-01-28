@@ -55,11 +55,6 @@ public class Mesh2 extends Mesh {
          return Integer.compare(a, b);
       }
 
-      /**
-       * Gets the system identity hash code.
-       *
-       * @return the hash code
-       */
       @Override
       public int hashCode () {
 
@@ -74,6 +69,74 @@ public class Mesh2 extends Mesh {
       public int length () {
 
          return this.vertices.length;
+      }
+
+      /**
+       * Rotates all coordinates in the face by an angle around
+       * the z axis.
+       *
+       * @param radians
+       *           the angle in radians
+       * @return this mesh
+       * @see Vec2#rotateZ(Vec2, float, Vec2)
+       */
+      @Chainable
+      public Face2 rotateZ ( final float radians ) {
+
+         final float nrm = IUtils.ONE_TAU * radians;
+         final float cosa = SinCos.eval(nrm);
+         final float sina = SinCos.eval(nrm - 0.25f);
+         Vec2 c;
+
+         final int len = this.vertices.length;
+         for (int i = 0; i < len; ++i) {
+            c = this.vertices[i].coord;
+            Vec2.rotateZ(c, cosa, sina, c);
+         }
+
+         return this;
+      }
+
+      /**
+       * Scales all coordinates in the face by a scalar.
+       *
+       * @param scale
+       *           the vector
+       * @return this face
+       * @see Vec2#mul(Vec2, float, Vec2)
+       */
+      @Chainable
+      public Face2 scale ( final float scale ) {
+
+         Vec2 c;
+         final int len = this.vertices.length;
+         for (int i = 0; i < len; ++i) {
+            c = this.vertices[i].coord;
+            Vec2.mul(c, scale, c);
+         }
+
+         return this;
+      }
+
+      /**
+       * Scales all coordinates in the face by a vector.
+       *
+       * @param scale
+       *           the vector
+       * @return this face
+       * @see Vec2#mul(Vec2, Vec2, Vec2)
+       */
+      @Chainable
+      public Face2 scale ( final Vec2 scale ) {
+
+         Vec2 c;
+         final int len = this.vertices.length;
+         for (int i = 0; i < len; ++i) {
+            c = this.vertices[i].coord;
+            Vec2.mul(c, scale, c);
+         }
+
+         return this;
       }
 
       /**
@@ -98,11 +161,9 @@ public class Mesh2 extends Mesh {
 
       public String toString ( final int places ) {
 
-         // TODO: Test the typical length of a face, then set the
-         // stringbuilder to an appropriate capacity.
          final int len = this.vertices.length;
          final int last = len - 1;
-         final StringBuilder sb = new StringBuilder()
+         final StringBuilder sb = new StringBuilder(len * 256)
                .append("{ vertices: [ \n");
          for (int i = 0; i < len; ++i) {
             sb.append(this.vertices[i].toString(places));
@@ -112,6 +173,27 @@ public class Mesh2 extends Mesh {
          }
          sb.append(" ] }");
          return sb.toString();
+      }
+
+      /**
+       * Translates all coordinates in the face by a vector.
+       *
+       * @param v
+       *           the vector
+       * @return this face
+       * @see Vec2#add(Vec2, Vec2, Vec2)
+       */
+      @Chainable
+      public Face2 translate ( final Vec2 v ) {
+
+         Vec2 c;
+         final int len = this.vertices.length;
+         for (int i = 0; i < len; ++i) {
+            c = this.vertices[i].coord;
+            Vec2.add(c, v, c);
+         }
+
+         return this;
       }
    }
 
@@ -191,6 +273,7 @@ public class Mesh2 extends Mesh {
 
          final int a = this.hashCode();
          final int b = vert.hashCode();
+         // TODO: Replace with ternary operator compare.
          return Integer.compare(a, b);
       }
 
@@ -233,9 +316,7 @@ public class Mesh2 extends Mesh {
 
       public String toString ( final int places ) {
 
-         // TODO: Test the typical length of a vertex, then set the
-         // stringbuilder to an appropriate capacity.
-         return new StringBuilder()
+         return new StringBuilder(256)
                .append("{ coord: ")
                .append(this.coord.toString(places))
                .append(", texCoord: ")
@@ -244,6 +325,18 @@ public class Mesh2 extends Mesh {
                .toString();
       }
    }
+
+   /**
+    * Default annulus for rings, 0.25 * Math.sqrt(2.0) ,
+    * approximately 0.35355338 .
+    */
+   public static final float DEFAULT_ANNULUS = 0.35355338f;
+
+   /**
+    * Default count of sectors in a regular convex polygon, so
+    * as to approximate a circle.
+    */
+   public static final int DEFAULT_POLY_SECTORS = 32;
 
    /**
     * Type of polygon to draw when it is not supplied to the
@@ -299,39 +392,193 @@ public class Mesh2 extends Mesh {
    }
 
    /**
-    * Creates a regular convex polygon.
-    *
+    * Creates a subdvided plane. Useful for meshes which later
+    * will be augmented by noise or height maps to simulate
+    * terrain.
+    * 
+    * @param div
+    *           subdivisions
     * @param target
     *           the output mesh
-    * @param sectors
-    *           the number of sides
-    * @return the polygon
+    * @return the plane
     */
-   public static Mesh2 polygon (
-         final Mesh2 target,
-         final int sectors ) {
+   public static final Mesh2 plane ( 
+         final int div, 
+         final Mesh2 target ) {
 
-      return Mesh2.polygon(target, sectors, Mesh2.DEFAULT_POLY_TYPE);
+      return Mesh2.plane(div, div, Mesh2.DEFAULT_POLY_TYPE, target);
+   }
+
+   /**
+    * Creates a subdvided plane. Useful for meshes which later
+    * will be augmented by noise or height maps to simulate
+    * terrain.
+    *
+    * @param cols
+    *           number of columns
+    * @param rows
+    *           number of rows
+    * @param target
+    *           the output mesh
+    * @return the plane
+    */
+   public static final Mesh2 plane (
+         final int cols,
+         final int rows,
+         final Mesh2 target ) {
+
+      return Mesh2.plane(cols, rows, Mesh2.DEFAULT_POLY_TYPE, target);
+   }
+
+   /**
+    * Creates a plane subdivided into either tris or quads,
+    * depending on the polygon type. Useful for meshes which
+    * later will be augmented by noise or height maps to
+    * simulate terrain.
+    *
+    * @param cols
+    *           number of columns
+    * @param rows
+    *           number of rows
+    * @param poly
+    *           the polygon type
+    * @param target
+    *           the output mesh
+    * @return the plane
+    */
+   public static final Mesh2 plane (
+         final int cols,
+         final int rows,
+         final PolyType poly,
+         final Mesh2 target ) {
+
+      target.name = "Plane";
+
+      final int rval = rows < 1 ? 1 : rows;
+      final int cval = cols < 1 ? 1 : cols;
+
+      final int rval1 = rval + 1;
+      final int cval1 = cval + 1;
+
+      final float iToStep = 1.0f / rval;
+      final float jToStep = 1.0f / cval;
+
+      final Vec2[] coords = new Vec2[rval1 * cval1];
+      final Vec2[] texCoords = new Vec2[coords.length];
+
+      /* Calculate x values in separate loop. */
+      final float[] xs = new float[cval1];
+      final float[] us = new float[cval1];
+      for (int j = 0; j < cval1; ++j) {
+         final float u = us[j] = j * jToStep;
+         xs[j] = u - 0.5f;
+      }
+
+      for (int k = 0, i = 0; i < rval1; ++i) {
+         final float v = i * iToStep;
+         final float y = v - 0.5f;
+
+         for (int j = 0; j < cval1; ++j, ++k) {
+            coords[k] = new Vec2(xs[j], y);
+            texCoords[k] = new Vec2(us[j], v);
+         }
+      }
+
+      int[][][] faces;
+      final int len = rval * cval;
+      switch (poly) {
+
+         case TRI:
+
+            faces = new int[len + len][3][2];
+
+            for (int k = 0, i = 0; i < rval; ++i) {
+               final int noff0 = i * cval1;
+               final int noff1 = (i + 1) * cval1;
+
+               for (int j = 0; j < cval; ++j, k += 2) {
+                  final int n00 = noff0 + j;
+                  final int n10 = n00 + 1;
+                  final int n01 = noff1 + j;
+                  final int n11 = n01 + 1;
+
+                  faces[k] = new int[][] {
+                        { n00, n00 },
+                        { n10, n10 },
+                        { n11, n11 } };
+
+                  faces[k + 1] = new int[][] {
+                        { n11, n11 },
+                        { n01, n01 },
+                        { n00, n00 } };
+               }
+            }
+
+            break;
+
+         case NGON:
+
+         default:
+
+            faces = new int[len][4][2];
+
+            for (int k = 0, i = 0; i < rval; ++i) {
+               final int noff0 = i * cval1;
+               final int noff1 = (i + 1) * cval1;
+
+               for (int j = 0; j < cval; ++j, ++k) {
+                  final int n00 = noff0 + j;
+                  final int n10 = n00 + 1;
+                  final int n01 = noff1 + j;
+                  final int n11 = n01 + 1;
+
+                  faces[k] = new int[][] {
+                        { n00, n00 },
+                        { n10, n10 },
+                        { n11, n11 },
+                        { n01, n01 } };
+               }
+            }
+
+      }
+
+      return target.set(faces, coords, texCoords);
    }
 
    /**
     * Creates a regular convex polygon.
     *
+    * @param sectors
+    *           the number of sides
+    *
     * @param target
     *           the output mesh
+    * @return the polygon
+    */
+   public static Mesh2 polygon (
+         final int sectors,
+         final Mesh2 target ) {
+
+      return Mesh2.polygon(sectors, Mesh2.DEFAULT_POLY_TYPE, target);
+   }
+
+   /**
+    * Creates a regular convex polygon.
+    *
     * @param sectors
     *           the number of sides
     * @param poly
     *           the polygon type
+    * @param target
+    *           the output mesh
     * @return the polygon
     */
    public static Mesh2 polygon (
-         final Mesh2 target,
          final int sectors,
-         final PolyType poly ) {
+         final PolyType poly,
+         final Mesh2 target ) {
 
       target.name = "Polygon";
-
       final int seg = sectors < 3 ? 3 : sectors;
       final float toTheta = IUtils.TAU / seg;
 
@@ -350,16 +597,14 @@ public class Mesh2 extends Mesh {
             final int[][] ngon = faces[0];
 
             for (int i = 0; i < seg; ++i) {
-               final float theta = i * toTheta;
-               Vec2.fromPolar(theta, 0.5f, pureCoord);
-               texCoords[i] = Vec2.add(pureCoord, uvCenter, new Vec2());
+
+               Vec2.fromPolar(i * toTheta, 0.5f, pureCoord);
+               texCoords[i] = Vec2.add(uvCenter, pureCoord, new Vec2());
                coords[i] = new Vec2(pureCoord);
-               ngon[i] = new int[] {
-                     i, i
-               };
+               ngon[i] = new int[] { i, i };
             }
 
-            return target.set(faces, coords, texCoords);
+            break;
 
          case TRI:
          default:
@@ -373,19 +618,186 @@ public class Mesh2 extends Mesh {
 
             for (int i = 0, j = 1; i < seg; ++i, ++j) {
 
-               final float theta = i * toTheta;
-               Vec2.fromPolar(theta, 0.5f, pureCoord);
-               texCoords[j] = Vec2.add(pureCoord, uvCenter, new Vec2());
+               Vec2.fromPolar(i * toTheta, 0.5f, pureCoord);
+               texCoords[j] = Vec2.add(uvCenter, pureCoord, new Vec2());
                coords[j] = new Vec2(pureCoord);
 
                final int k = 1 + j % seg;
-               final int[][] face = new int[][] {
+               faces[i] = new int[][] {
                      { 0, 0 }, { j, j }, { k, k } };
-               faces[i] = face;
+            }
+      }
+
+      return target.set(faces, coords, texCoords);
+   }
+
+   /**
+    * Creates a regular convex polygon, approximating a circle.
+    *
+    * @param target
+    *           the output mesh
+    * @return the polygon
+    */
+   public static Mesh2 polygon (
+         final Mesh2 target ) {
+
+      return Mesh2.polygon(
+            Mesh2.DEFAULT_POLY_SECTORS,
+            Mesh2.DEFAULT_POLY_TYPE,
+            target);
+   }
+
+   /**
+    * Creates a regular convex polygon with an opening in its
+    * center. The annulus describes the relative size of this
+    * opening.
+    *
+    * @param sectors
+    *           the number of sides
+    * @param annulus
+    *           the size of the opening
+    * @param target
+    *           the output type
+    * @return the ring
+    */
+   public static final Mesh2 ring (
+         final int sectors,
+         final float annulus,
+         final Mesh2 target ) {
+
+      return Mesh2.ring(sectors, annulus, Mesh2.DEFAULT_POLY_TYPE, target);
+   }
+
+   /**
+    * Creates a regular convex polygon with an opening in its
+    * center. The annulus describes the relative size of this
+    * opening. When the polygon type is NGON, the ring will be
+    * composed of quads; otherwise, tris.
+    *
+    * @param sectors
+    *           the number of sides
+    * @param annulus
+    *           the size of the opening
+    * @param poly
+    *           the polygon type
+    * @param target
+    *           the output type
+    * @return the ring
+    */
+   public static final Mesh2 ring (
+         final int sectors,
+         final float annulus,
+         final PolyType poly,
+         final Mesh2 target ) {
+
+      target.name = "Ring";
+      final int seg = sectors < 3 ? 3 : sectors;
+      final int seg2 = seg + seg;
+      final float toTheta = IUtils.TAU / seg;
+      final float annul = Utils.clamp(annulus,
+            Utils.EPSILON, 1.0f - Utils.EPSILON);
+
+      Vec2[] coords;
+      Vec2[] texCoords;
+      int[][][] faces;
+      final Vec2 uvCenter = Vec2.uvCenter(new Vec2());
+      final Vec2 pureCoord = new Vec2();
+
+      switch (poly) {
+         case NGON:
+            coords = new Vec2[seg2];
+            texCoords = new Vec2[seg2];
+            faces = new int[seg][4][2];
+
+            for (int k = 0, i = 0, j = 1; k < seg; ++k, i += 2, j += 2) {
+               Vec2.fromPolar(k * toTheta, 0.5f, pureCoord);
+
+               coords[i] = new Vec2(pureCoord);
+               final Vec2 v1 = coords[j] = Vec2.mul(
+                     pureCoord, annul, new Vec2());
+
+               texCoords[i] = Vec2.add(uvCenter, pureCoord, new Vec2());
+               texCoords[j] = Vec2.add(uvCenter, v1, new Vec2());
+
+               final int m = (i + 2) % seg2;
+               final int n = (j + 2) % seg2;
+
+               faces[k] = new int[][] {
+                     { i, i }, { m, m }, { n, n }, { j, j } };
             }
 
-            return target.set(faces, coords, texCoords);
+            break;
+
+         case TRI:
+
+         default:
+
+            coords = new Vec2[seg2];
+            texCoords = new Vec2[seg2];
+            faces = new int[seg2][3][2];
+
+            for (int k = 0, i = 0, j = 1; k < seg; ++k, i += 2, j += 2) {
+               Vec2.fromPolar(k * toTheta, 0.5f, pureCoord);
+
+               coords[i] = new Vec2(pureCoord);
+               final Vec2 v1 = coords[j] = Vec2.mul(
+                     pureCoord, annul, new Vec2());
+
+               texCoords[i] = Vec2.add(uvCenter, pureCoord, new Vec2());
+               texCoords[j] = Vec2.add(uvCenter, v1, new Vec2());
+
+               final int m = (i + 2) % seg2;
+               final int n = (j + 2) % seg2;
+
+               faces[i] = new int[][] {
+                     { i, i }, { m, m }, { j, j } };
+
+               faces[j] = new int[][] {
+                     { m, m }, { n, n }, { j, j } };
+            }
+
       }
+
+      return target.set(faces, coords, texCoords);
+   }
+
+   /**
+    * Creates a regular convex polygon with an opening in its
+    * center.
+    *
+    * @param sectors
+    *           the number of sides
+    * @param target
+    *           the output type
+    * @return the ring
+    */
+   public static final Mesh2 ring (
+         final int sectors,
+         final Mesh2 target ) {
+
+      return Mesh2.ring(
+            sectors,
+            Mesh2.DEFAULT_ANNULUS,
+            Mesh2.DEFAULT_POLY_TYPE,
+            target);
+   }
+
+   /**
+    * Creates a regular convex polygon with an opening in its
+    * center.
+    *
+    * @param target
+    *           the output type
+    * @return the ring
+    */
+   public static final Mesh2 ring (
+         final Mesh2 target ) {
+
+      return Mesh2.ring(
+            Mesh2.DEFAULT_POLY_SECTORS,
+            Mesh2.DEFAULT_ANNULUS,
+            Mesh2.DEFAULT_POLY_TYPE,
+            target);
    }
 
    /**
@@ -395,9 +807,9 @@ public class Mesh2 extends Mesh {
     *           the output mesh
     * @return the rectangle
     */
-   public static final Mesh2 rectangle ( final Mesh2 target ) {
+   public static final Mesh2 square ( final Mesh2 target ) {
 
-      return Mesh2.rectangle(target, Mesh2.DEFAULT_POLY_TYPE);
+      return Mesh2.square(target, Mesh2.DEFAULT_POLY_TYPE);
    }
 
    /**
@@ -409,7 +821,7 @@ public class Mesh2 extends Mesh {
     *           the polygon type
     * @return the rectangle
     */
-   public static final Mesh2 rectangle (
+   public static final Mesh2 square (
          final Mesh2 target,
          final PolyType poly ) {
 
@@ -575,6 +987,61 @@ public class Mesh2 extends Mesh {
       this.set(faces, coords, texCoords);
    }
 
+   /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how curve
+    * geometry looks in Blender (the control) vs. in the
+    * library (the test).
+    *
+    * @return the string
+    */
+   @Experimental
+   String toBlenderCode () {
+
+      final StringBuilder result = new StringBuilder();
+      result.append("{\"name\": \"")
+            .append(this.name)
+            .append("\", \"material_index\": ")
+            .append(this.materialIndex)
+            .append(", \"vertices\": [");
+
+      final int vlen = this.coords.length;
+      final int vlast = vlen - 1;
+      for (int i = 0; i < vlen; ++i) {
+         result.append(this.coords[i].toBlenderCode(0.0f));
+         if (i < vlast) {
+            result.append(',').append(' ');
+         }
+      }
+
+      result.append("], \"faces\": [");
+
+      final int flen = this.faces.length;
+      final int flast = flen - 1;
+      for (int j = 0; j < flen; ++j) {
+         final int[][] vrtInd = this.faces[j];
+         final int vrtIndLen = vrtInd.length;
+         final int vrtLast = vrtIndLen - 1;
+
+         result.append('(');
+         for (int k = 0; k < vrtIndLen; ++k) {
+            result.append(vrtInd[k][0]);
+            if (k < vrtLast) {
+               result.append(',').append(' ');
+            }
+         }
+         result.append(')');
+
+         if (j < flast) {
+            result.append(',').append(' ');
+         }
+      }
+
+      result.append(']').append('}');
+      return result.toString();
+   }
+
    @Override
    public boolean equals ( final Object obj ) {
 
@@ -733,10 +1200,12 @@ public class Mesh2 extends Mesh {
       final float nrm = IUtils.ONE_TAU * radians;
       final float cosa = SinCos.eval(nrm);
       final float sina = SinCos.eval(nrm - 0.25f);
-      final int len = this.coords.length;
+      Vec2 c;
 
+      final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec2.rotateZ(this.coords[i], cosa, sina, this.coords[i]);
+         c = this.coords[i];
+         Vec2.rotateZ(c, cosa, sina, c);
       }
 
       return this;
@@ -753,9 +1222,11 @@ public class Mesh2 extends Mesh {
    @Chainable
    public Mesh2 scale ( final float scale ) {
 
+      Vec2 c;
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec2.mul(this.coords[i], scale, this.coords[i]);
+         c = this.coords[i];
+         Vec2.mul(c, scale, c);
       }
 
       return this;
@@ -772,9 +1243,11 @@ public class Mesh2 extends Mesh {
    @Chainable
    public Mesh2 scale ( final Vec2 scale ) {
 
+      Vec2 c;
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec2.mul(this.coords[i], scale, this.coords[i]);
+         c = this.coords[i];
+         Vec2.mul(c, scale, c);
       }
 
       return this;
@@ -830,7 +1303,7 @@ public class Mesh2 extends Mesh {
             .append(facesLen)
             .append("\n \n");
 
-      result.append("o ")
+      result.append('o').append(' ')
             .append(this.name)
             .append("\n \n");
 
@@ -911,7 +1384,10 @@ public class Mesh2 extends Mesh {
 
       final StringBuilder sb = new StringBuilder();
 
-      sb.append("{ coords: [");
+      sb.append("{ name: \"")
+            .append(this.name)
+            .append("\", coords: [");
+
       if (this.coords != null) {
          sb.append('\n');
          final int len = Math.min(this.coords.length, truncate);
@@ -924,10 +1400,10 @@ public class Mesh2 extends Mesh {
          }
       }
 
-      if(this.coords.length > truncate) {
+      if (this.coords.length > truncate) {
          sb.append("\n/* ... */");
       }
-      
+
       sb.append(" ],\ntexCoords: [");
       if (this.texCoords != null) {
          sb.append('\n');
@@ -941,10 +1417,10 @@ public class Mesh2 extends Mesh {
          }
       }
 
-      if(this.texCoords.length > truncate) {
+      if (this.texCoords.length > truncate) {
          sb.append("\n/* ... */");
       }
-      
+
       sb.append(" ],\nfaces: [");
       if (this.faces != null) {
          sb.append('\n');
@@ -987,11 +1463,11 @@ public class Mesh2 extends Mesh {
             }
          }
       }
-      
-      if(this.faces.length > truncate) {
+
+      if (this.faces.length > truncate) {
          sb.append("\n/* ... */");
       }
-      
+
       sb.append(" ] }");
       return sb.toString();
    }
@@ -1004,6 +1480,11 @@ public class Mesh2 extends Mesh {
     */
    public String toSvgString () {
 
+      // TODO: Create internal and external toSvgStrings so that
+      // you can create a svg from a mesh and mesh entity
+      // independently of the renderer. Make this one
+      // toSvgStringInternal with package level access.
+
       final StringBuilder result = new StringBuilder();
 
       final int[][][] fs = this.faces;
@@ -1013,18 +1494,16 @@ public class Mesh2 extends Mesh {
          final int[][] f = fs[i];
          final int flen1 = f.length;
 
-         Vec2 v = vs[f[0][0]];
          result.append("<path d=\"M ")
-               .append(v.toSvgString())
+               .append(vs[f[0][0]].toSvgString())
                .append(' ');
 
          for (int j = 1; j < flen1; ++j) {
-            v = vs[f[j][0]];
-
-            result.append("L ")
-                  .append(v.toSvgString())
+            result.append('L').append(' ')
+                  .append(vs[f[j][0]].toSvgString())
                   .append(' ');
          }
+
          result.append("Z\"></path>\n");
       }
 
@@ -1042,9 +1521,11 @@ public class Mesh2 extends Mesh {
    @Chainable
    public Mesh2 translate ( final Vec2 v ) {
 
+      Vec2 c;
       final int len = this.coords.length;
       for (int i = 0; i < len; ++i) {
-         Vec2.add(this.coords[i], v, this.coords[i]);
+         c = this.coords[i];
+         Vec2.add(c, v, c);
       }
 
       return this;

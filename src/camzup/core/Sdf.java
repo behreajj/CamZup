@@ -36,7 +36,6 @@ public abstract class Sdf {
     *           the stroke weight
     * @return the signed distance
     * @see Utils#abs(float)
-    * @see Math#sqrt(double)
     */
    static float arc (
          final Vec2 point,

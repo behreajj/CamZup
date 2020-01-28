@@ -270,6 +270,29 @@ public class Curve2 extends Curve
       }
 
       /**
+       * Returns a String of Python code targeted toward the
+       * Blender 2.8x API. This code is brittle and is used for
+       * internal testing purposes, i.e., to compare how curve
+       * geometry looks in Blender (the control) vs. in the
+       * library (the test).
+       *
+       * @return the string
+       */
+      @Experimental
+      String toBlenderCode () {
+
+         return new StringBuilder(256)
+               .append("{\"co\": ")
+               .append(this.coord.toBlenderCode(0.0f))
+               .append(", \"handle_right\": ")
+               .append(this.foreHandle.toBlenderCode(0.0f))
+               .append(", \"handle_left\": ")
+               .append(this.rearHandle.toBlenderCode(0.0f))
+               .append('}')
+               .toString();
+      }
+
+      /**
        * Tests to see if this knot equals another.
        *
        * @param other
@@ -1244,7 +1267,7 @@ public class Curve2 extends Curve
    public static float[] calcSegLengths (
          final Curve2 c,
          final int precision ) {
-      
+
       final Vec2[][] segments = c.evalRange(precision + 1);
       final int len = segments.length;
       final float[] results = new float[precision];
@@ -2112,6 +2135,37 @@ public class Curve2 extends Curve
    }
 
    /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how curve
+    * geometry looks in Blender (the control) vs. in the
+    * library (the test).
+    *
+    * @return the string
+    */
+   @Experimental
+   String toBlenderCode () {
+
+      final StringBuilder sb = new StringBuilder();
+      sb.append("{\"closed_loop\": ")
+            .append(this.closedLoop ? "True" : "False")
+            .append(", \"knots\": [");
+      final Iterator < Knot2 > itr = this.knots.iterator();
+      int i = 0;
+      final int last = this.knots.size() - 1;
+      while (itr.hasNext()) {
+         sb.append(itr.next().toBlenderCode());
+         if (i < last) {
+            sb.append(',').append(' ');
+         }
+         i++;
+      }
+
+      sb.append(']').append('}');
+      return sb.toString();
+   }
+
+   /**
     * A helper function. Returns a knot given two knots and a
     * step. Assumes the step has already been vetted, and that
     * the knots are in sequence along the curve. The knot's
@@ -2380,11 +2434,10 @@ public class Curve2 extends Curve
          b = this.knots.get((i + 1) % knotLength);
       } else {
          if (knotLength == 1 || step <= 0.0f) {
-            // TODO: Why does this use this.get not this.knots.get ?
-            return target.set(this.get(0));
+            return target.set(this.knots.get(0));
          }
          if (step >= 1.0f) {
-            return target.set(this.get(knotLength - 1));
+            return target.set(this.knots.get(knotLength - 1));
          }
 
          tScaled = step * (knotLength - 1);
@@ -2778,7 +2831,9 @@ public class Curve2 extends Curve
 
       final StringBuilder sb = new StringBuilder(
             64 + 256 * this.knots.size())
-                  .append("{ closedLoop: ")
+                  .append("{ name: \"")
+                  .append(this.name)
+                  .append("\", closedLoop: ")
                   .append(this.closedLoop)
                   .append(", \n  knots: [ \n");
 

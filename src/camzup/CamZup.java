@@ -1,19 +1,18 @@
 package camzup;
 
-import camzup.core.Color;
+import java.util.Random;
+
 import camzup.core.Curve2;
+import camzup.core.Curve3;
+import camzup.core.CurveEntity2;
+import camzup.core.CurveEntity3;
 import camzup.core.Gradient;
-import camzup.core.IMaterial;
-import camzup.core.Mat3;
-import camzup.core.Mat4;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
+import camzup.core.Mesh2.PolyType;
 import camzup.core.Mesh3;
 import camzup.core.MeshEntity2;
 import camzup.core.MeshEntity3;
-import camzup.core.Random;
-import camzup.core.Transform2;
-import camzup.core.Transform3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -99,11 +98,10 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-      MeshEntity3 me = new MeshEntity3();
-      me.appendMaterial(new MaterialSolid());
-      me.appendMesh(Mesh3.torus(new Mesh3()));
-
-      System.out.println(me.toBlenderCode());
+      final MeshEntity3 ce = new MeshEntity3();
+      ce.appendMaterial(new MaterialSolid());
+      ce.appendMesh(Mesh3.plane(16, 8, new Mesh3()));
+      System.out.println(ce.toBlenderCode());
    }
 
    /**
