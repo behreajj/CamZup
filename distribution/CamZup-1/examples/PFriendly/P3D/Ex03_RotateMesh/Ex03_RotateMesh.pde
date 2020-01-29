@@ -28,7 +28,7 @@ void setup() {
 
   Quaternion.setEasing(new Quaternion.Slerp());
 
-  Mesh3 mesh = Mesh3.torus(new Mesh3());
+  Mesh3 mesh = Mesh3.dodecahedron(new Mesh3());
   entity.appendMesh(mesh);
 
   MaterialSolid material = new MaterialSolid();

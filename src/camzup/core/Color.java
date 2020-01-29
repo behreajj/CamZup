@@ -1524,6 +1524,27 @@ public class Color extends Vec4 {
    }
 
    /**
+    * Inverts a color by subtracting the red, green and blue
+    * channels from one. Similar to bitNot, except alpha is
+    * unaffected. Similar to adding 0.5 to the hue of a Vec4
+    * storing hue, saturation and brightness.
+    *
+    * @param c
+    *           the color
+    * @param target
+    *           the output color
+    * @return the inverse
+    */
+   public static Color inverse ( final Color c, final Color target ) {
+
+      return target.set(
+            Utils.max(0.0f, 1.0f - c.x),
+            Utils.max(0.0f, 1.0f - c.y),
+            Utils.max(0.0f, 1.0f - c.z),
+            Utils.clamp01(c.w));
+   }
+
+   /**
     * Returns the relative luminance of the color, based on
     * <a href=
     * "https://en.wikipedia.org/wiki/Relative_luminance">

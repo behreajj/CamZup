@@ -273,8 +273,7 @@ public class Mesh2 extends Mesh {
 
          final int a = this.hashCode();
          final int b = vert.hashCode();
-         // TODO: Replace with ternary operator compare.
-         return Integer.compare(a, b);
+         return a < b ? -1 : a > b ? 1 : 0;
       }
 
       /**
@@ -395,24 +394,6 @@ public class Mesh2 extends Mesh {
     * Creates a subdvided plane. Useful for meshes which later
     * will be augmented by noise or height maps to simulate
     * terrain.
-    * 
-    * @param div
-    *           subdivisions
-    * @param target
-    *           the output mesh
-    * @return the plane
-    */
-   public static final Mesh2 plane ( 
-         final int div, 
-         final Mesh2 target ) {
-
-      return Mesh2.plane(div, div, Mesh2.DEFAULT_POLY_TYPE, target);
-   }
-
-   /**
-    * Creates a subdvided plane. Useful for meshes which later
-    * will be augmented by noise or height maps to simulate
-    * terrain.
     *
     * @param cols
     *           number of columns
@@ -451,8 +432,6 @@ public class Mesh2 extends Mesh {
          final int rows,
          final PolyType poly,
          final Mesh2 target ) {
-
-      target.name = "Plane";
 
       final int rval = rows < 1 ? 1 : rows;
       final int cval = cols < 1 ? 1 : cols;
@@ -542,7 +521,26 @@ public class Mesh2 extends Mesh {
 
       }
 
+      target.name = "Plane";
       return target.set(faces, coords, texCoords);
+   }
+
+   /**
+    * Creates a subdvided plane. Useful for meshes which later
+    * will be augmented by noise or height maps to simulate
+    * terrain.
+    *
+    * @param div
+    *           subdivisions
+    * @param target
+    *           the output mesh
+    * @return the plane
+    */
+   public static final Mesh2 plane (
+         final int div,
+         final Mesh2 target ) {
+
+      return Mesh2.plane(div, div, Mesh2.DEFAULT_POLY_TYPE, target);
    }
 
    /**
@@ -578,7 +576,6 @@ public class Mesh2 extends Mesh {
          final PolyType poly,
          final Mesh2 target ) {
 
-      target.name = "Polygon";
       final int seg = sectors < 3 ? 3 : sectors;
       final float toTheta = IUtils.TAU / seg;
 
@@ -628,6 +625,7 @@ public class Mesh2 extends Mesh {
             }
       }
 
+      target.name = "Polygon";
       return target.set(faces, coords, texCoords);
    }
 
@@ -690,7 +688,6 @@ public class Mesh2 extends Mesh {
          final PolyType poly,
          final Mesh2 target ) {
 
-      target.name = "Ring";
       final int seg = sectors < 3 ? 3 : sectors;
       final int seg2 = seg + seg;
       final float toTheta = IUtils.TAU / seg;
@@ -758,6 +755,7 @@ public class Mesh2 extends Mesh {
 
       }
 
+      target.name = "Ring";
       return target.set(faces, coords, texCoords);
    }
 
@@ -801,11 +799,11 @@ public class Mesh2 extends Mesh {
    }
 
    /**
-    * Creates a rectangle.
+    * Creates a square.
     *
     * @param target
     *           the output mesh
-    * @return the rectangle
+    * @return the square
     */
    public static final Mesh2 square ( final Mesh2 target ) {
 
@@ -813,19 +811,17 @@ public class Mesh2 extends Mesh {
    }
 
    /**
-    * Creates a rectangle.
+    * Creates a square.
     *
     * @param target
     *           the output mesh
     * @param poly
     *           the polygon type
-    * @return the rectangle
+    * @return the square
     */
    public static final Mesh2 square (
          final Mesh2 target,
          final PolyType poly ) {
-
-      target.name = "Rectangle";
 
       final Vec2[] coords = new Vec2[] {
             new Vec2(0.5f, 0.5f),
@@ -860,6 +856,7 @@ public class Mesh2 extends Mesh {
                   { { 0, 0 }, { 1, 1 }, { 2, 2 }, { 3, 3 } } };
       }
 
+      target.name = "Square";
       return target.set(faces, coords, texCoords);
    }
 
@@ -871,8 +868,6 @@ public class Mesh2 extends Mesh {
     * @return the triangle
     */
    public static final Mesh2 triangle ( final Mesh2 target ) {
-
-      target.name = "Triangle";
 
       final Vec2[] coords = new Vec2[] {
             new Vec2(0.0f, 0.5f),
@@ -889,6 +884,7 @@ public class Mesh2 extends Mesh {
       final int[][][] faces = new int[][][] {
             { { 0, 0 }, { 1, 1 }, { 2, 2 } } };
 
+      target.name = "Triangle";
       return target.set(faces, coords, texCoords);
    }
 

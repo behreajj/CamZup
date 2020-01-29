@@ -1476,7 +1476,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * Generates a 2D array of vectors. The result is in
     * row-major order, but the parameters are supplied in
     * reverse: columns first, then rows.
-    * 
+    *
     * @param cols
     *           number of columns
     * @param rows

@@ -1719,7 +1719,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * Generates a 3D array of vectors. The result is in
     * layer-row-major order, but the parameters are supplied in
     * reverse: columns first, then rows, then layers.
-    * 
+    *
     * @param cols
     *           number of columns
     * @param rows

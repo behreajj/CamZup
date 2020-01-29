@@ -13,7 +13,7 @@ Yup2 rndr;
 void setup() {
   size(720, 405, "camzup.pfriendly.Yup2");
   rndr = (Yup2)getGraphics();
-  input = createImage(512, 512, ARGB);
+  input = createImage(256, 256, ARGB);
 }
 
 void draw() {

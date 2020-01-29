@@ -33,8 +33,8 @@ void draw() {
   cwAngle = easeCW.apply(cwAngle, targetAngle, speed);
   ccwAngle = easeCCW.apply(ccwAngle, targetAngle, speed);
 
-  Vec2.fromPolar(nearAngle, 150.0, followNear);
-  Vec2.fromPolar(cwAngle, 150.0, followCW);
+  Vec2.fromPolar(nearAngle, 110.0, followNear);
+  Vec2.fromPolar(cwAngle, 130.0, followCW);
   Vec2.fromPolar(ccwAngle, 150.0, followCCW);
 
   graphics.background(#fff7d5);  

@@ -23,7 +23,7 @@ void setup() {
   size(720, 405, "camzup.pfriendly.Yup3");
   graphics3 = (Yup3)getGraphics();
 
-  poly = Mesh3.cube(new Mesh3());
+  poly = Mesh3.icosahedron(new Mesh3());
 
   entity = new MeshEntity3(transform)
     .appendMesh(poly)
@@ -41,4 +41,10 @@ void draw() {
 
   graphics3.origin(75.0, 1.0);
   graphics3.shape(entity);
+}
+
+void mouseReleased() {
+  saveStrings("mesh.obj", 
+    new String[] { entity.meshes.get(0).toObjString() });
+  println("Saved mesh.obj");
 }

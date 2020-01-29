@@ -21,7 +21,7 @@ void draw() {
   noise.z = frameCount * 0.05;
 
   persist = Utils.lerp(0.1, 0.85, mouseX * wNorm);
-  octaves = (int)Utils.lerp(1, 9, mouseY * hNorm);
+  octaves = Utils.lerp(1, 8, mouseY * hNorm);
 
   String diagnostic = new StringBuilder()
     .append("FPS: ")
