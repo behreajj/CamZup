@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import camzup.core.Curve2;
-import camzup.core.Curve2.Knot2;
 import camzup.core.CurveEntity2;
+import camzup.core.Knot2;
 import camzup.core.Mat3;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
@@ -266,11 +266,11 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     * @see Utils#modRadians(float)
     */
    public void camera (
-         final float x, final float y,
+         final float x,
+         final float y,
          final float radians,
-         final float zx, final float zy ) {
-
-      final float zDist = Utils.min(128, this.height);
+         final float zx,
+         final float zy ) {
 
       this.cameraX = x;
       this.cameraY = y;
@@ -284,6 +284,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             this.cameraZoomY,
             1.0f);
       PMatAux.rotateZ(-radians, this.modelview);
+
+      final float zDist = Utils.min(128, this.height);
       this.modelview.translate(
             -this.cameraX,
             -this.cameraY,
@@ -702,29 +704,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    }
 
    /**
-    * Sets the renderer's stroke, stroke weight and fill to the
-    * material's.
-    *
-    * @param material
-    *           the material
-    */
-   public void material ( final MaterialSolid material ) {
-
-      if (material.useStroke) {
-         this.strokeWeight(material.strokeWeight);
-         this.stroke(material.stroke);
-      } else {
-         this.noStroke();
-      }
-
-      if (material.useFill) {
-         this.fill(material.fill);
-      } else {
-         this.noFill();
-      }
-   }
-
-   /**
     * Draws the world origin.
     */
    @Override
@@ -890,7 +869,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    @Override
    public void rotateX ( final float angle ) {
 
-      this.scale(1.0f, PApplet.cos(angle));
+      this.scale(1.0f, Utils.cos(angle));
    }
 
    /**
@@ -904,7 +883,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    @Override
    public void rotateY ( final float angle ) {
 
-      this.scale(PApplet.cos(angle), 1.0f);
+      this.scale(Utils.cos(angle), 1.0f);
    }
 
    /**
@@ -1029,9 +1008,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       this.transform(entity.transform, entity.transformOrder);
 
       final List < Mesh2 > meshes = entity.meshes;
+      final Iterator < Mesh2 > meshItr = meshes.iterator();
       final List < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
-      final Iterator < Mesh2 > meshItr = meshes.iterator();
 
       while (meshItr.hasNext()) {
          final Mesh2 mesh = meshItr.next();

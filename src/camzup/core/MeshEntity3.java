@@ -240,17 +240,18 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
 
       int matIndex = 0;
       final int matLast = this.materials.size() - 1;
-      final Iterator < MaterialSolid > matItr = this.materials.iterator();
-      while (matItr.hasNext()) {
-         result.append(matItr.next().toBlenderCode(expn));
-         if (matIndex < matLast) {
-            result.append(',').append(' ');
+      if (matLast > -1) {
+         final Iterator < MaterialSolid > matItr = this.materials.iterator();
+         while (matItr.hasNext()) {
+            result.append(matItr.next().toBlenderCode(expn));
+            if (matIndex < matLast) {
+               result.append(',').append(' ');
+            }
+            matIndex++;
          }
-         matIndex++;
+      } else {
+         result.append(MaterialSolid.defaultBlenderMaterial(expn));
       }
-
-      // TODO: Forgot to deal with the case where a mesh entity
-      // has no materials.
 
       result.append("]}\n\nd_objs = D.objects\n")
             .append("parent_obj = d_objs.new(")
@@ -285,12 +286,23 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
             .append("d_meshes = D.meshes\n")
             .append("for mesh in meshes:\n")
             .append("    name = mesh[\"name\"]\n")
+            .append("    vert_dat = mesh[\"vertices\"]\n")
+            .append("    face_idcs = mesh[\"faces\"]\n")
             .append("    mesh_data = d_meshes.new(name)\n")
             .append("    mesh_data.from_pydata(\n")
-            .append("        mesh[\"vertices\"],\n")
+            .append("        vert_dat,\n")
             .append("        [],\n")
-            .append("        mesh[\"faces\"])\n")
+            .append("        face_idcs)\n")
             .append("    mesh_data.validate()\n")
+            
+            // .append(" normal_dat = mesh[\"normals\"]\n")
+            // .append(" curr = 0\n")
+            // .append(" mesh_verts = mesh_data.vertices\n")
+            // .append(" for vert in mesh_verts:\n")
+            // .append(" nrm_idx = face_idcs[curr]\n")
+            // .append(" vert.normal = normal_dat[nrm_idx]\n")
+            // .append(" curr = curr + 1\n")
+            
             .append("    idx = mesh[\"material_index\"]\n")
             .append("    mat_name = materials[idx][\"name\"]\n")
             .append("    mesh_data.materials.append(d_mats[mat_name])\n")

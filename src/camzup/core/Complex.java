@@ -525,7 +525,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex target ) {
 
       final float absSq = Complex.absSq(z);
-      if (absSq <= 0.0f) {
+      if (absSq == 0.0f) {
          return target.reset();
       }
       final float invAbsSq = 1.0f / absSq;
@@ -554,7 +554,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex conj ) {
 
       final float absSq = Complex.absSq(z);
-      if (absSq <= 0.0f) {
+      if (absSq == 0.0f) {
          return target.reset();
       }
       Complex.conj(z, conj);
@@ -981,7 +981,9 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     *           the output complex number
     * @return the square root
     */
-   public static Complex sqrt ( final float a, final Complex target ) {
+   public static Complex sqrt (
+         final float a,
+         final Complex target ) {
 
       return a > 0.0f ? target.set(Utils.sqrtUnchecked(a), 0.0f)
             : a < 0.0f ? target.set(0.0f, Utils.sqrtUnchecked(-a))

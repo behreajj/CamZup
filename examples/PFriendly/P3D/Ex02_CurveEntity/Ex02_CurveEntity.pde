@@ -33,6 +33,8 @@ void mouseReleased() {
 }
 
 void draw() {
+  
+  entity.transform.rotateBy(0.01, new Vec3(1, 1, 0));
   surface.setTitle(Utils.toFixed(frameRate, 1));
   background(#fff7d5);
   perspective();

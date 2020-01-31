@@ -226,17 +226,18 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
 
       int matIndex = 0;
       final int matLast = this.materials.size() - 1;
-      final Iterator < MaterialSolid > matItr = this.materials.iterator();
-      while (matItr.hasNext()) {
-         result.append(matItr.next().toBlenderCode(expn));
-         if (matIndex < matLast) {
-            result.append(',').append(' ');
+      if (matLast > -1) {
+         final Iterator < MaterialSolid > matItr = this.materials.iterator();
+         while (matItr.hasNext()) {
+            result.append(matItr.next().toBlenderCode(expn));
+            if (matIndex < matLast) {
+               result.append(',').append(' ');
+            }
+            matIndex++;
          }
-         matIndex++;
+      } else {
+         result.append(MaterialSolid.defaultBlenderMaterial(expn));
       }
-
-      // TODO: Forgot to deal with the case where a mesh entity
-      // has no materials.
 
       result.append("]}\n\nd_objs = D.objects\n")
             .append("parent_obj = d_objs.new(")

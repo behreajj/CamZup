@@ -1,5 +1,7 @@
 package camzup.pfriendly;
 
+import java.awt.geom.AffineTransform;
+
 import camzup.core.ITransform;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
@@ -18,6 +20,79 @@ import processing.core.PVector;
  * Processing objects.
  */
 public abstract class Convert {
+
+   /**
+    * Converts a Java AWT matrix to a PMatrix2D.
+    *
+    * @param tr
+    *           the affine transform
+    * @return the PMatrix
+    */
+   public static PMatrix2D fromAwt (
+         final AffineTransform tr ) {
+
+      return Convert.fromAwt(tr, (PMatrix2D) null);
+   }
+
+   /**
+    * Converts a Java AWT matrix to a PMatrix2D.
+    *
+    * @param tr
+    *           the affine transform
+    * @param target
+    *           the output matrix
+    * @return the PMatrix
+    */
+   public static PMatrix2D fromAwt (
+         final AffineTransform tr,
+         PMatrix2D target ) {
+
+      if (target == null) {
+         target = new PMatrix2D();
+      }
+
+      target.set(
+            (float) tr.getScaleX(),
+            (float) tr.getShearX(),
+            (float) tr.getTranslateX(),
+            (float) tr.getShearY(),
+            (float) tr.getScaleY(),
+            (float) tr.getTranslateY());
+      return target;
+   }
+
+   /**
+    * Converts a Java AWT matrix to a PMatrix3D.
+    *
+    * @param tr
+    *           the affine transform
+    * @param target
+    *           the output matrix
+    * @return the PMatrix
+    */
+   public static PMatrix3D fromAwt (
+         final AffineTransform tr,
+         PMatrix3D target ) {
+
+      if (target == null) {
+         target = new PMatrix3D();
+      }
+
+      target.set(
+            (float) tr.getScaleX(),
+            (float) tr.getShearX(),
+            0.0f,
+            (float) tr.getTranslateX(),
+
+            (float) tr.getShearY(),
+            (float) tr.getScaleY(),
+            0.0f,
+            (float) tr.getTranslateY(),
+
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
+      return target;
+   }
 
    /**
     * Converts a PMatrix2D to a 3 x 3 matrix.
@@ -67,7 +142,9 @@ public abstract class Convert {
     *           the target matrix
     * @return the matrix
     */
-   public static Mat4 toMat4 ( final PMatrix3D source, final Mat4 target ) {
+   public static Mat4 toMat4 (
+         final PMatrix3D source,
+         final Mat4 target ) {
 
       return target.set(
             source.m00, source.m01, source.m02, source.m03,
@@ -97,14 +174,18 @@ public abstract class Convert {
     *           the target matrix
     * @return the PMatrix2D
     */
-   public static PMatrix2D toPMatrix2D ( final Mat3 source, PMatrix2D target ) {
+   public static PMatrix2D toPMatrix2D (
+         final Mat3 source,
+         PMatrix2D target ) {
 
       if (target == null) {
          target = new PMatrix2D();
       }
+
       target.set(
             source.m00, source.m01, source.m02,
             source.m01, source.m11, source.m12);
+
       return target;
    }
 
@@ -297,9 +378,10 @@ public abstract class Convert {
          target = new PMatrix3D();
       }
 
-      final Quaternion quat = tr3.getRotation(new Quaternion());
-      final Vec3 axis = new Vec3();
-      final float angle = Quaternion.toAxisAngle(quat, axis);
+      // TODO: Needs testing...
+      final Quaternion q = tr3.getRotation(new Quaternion());
+      // final Vec3 axis = new Vec3();
+      // final float angle = Quaternion.toAxisAngle(quat, axis);
 
       final Vec3 dim = tr3.getScale(new Vec3());
       final Vec3 loc = tr3.getLocation(new Vec3());
@@ -310,7 +392,8 @@ public abstract class Convert {
 
          case RST:
 
-            target.rotate(angle, axis.x, axis.y, axis.z);
+            // target.rotate(angle, axis.x, axis.y, axis.z);
+            PMatAux.rotate(q, target);
             target.scale(dim.x, dim.y, dim.z);
             target.translate(loc.x, loc.y, loc.z);
 
@@ -318,7 +401,8 @@ public abstract class Convert {
 
          case RTS:
 
-            target.rotate(angle, axis.x, axis.y, axis.z);
+            // target.rotate(angle, axis.x, axis.y, axis.z);
+            PMatAux.rotate(q, target);
             target.translate(loc.x, loc.y, loc.z);
             target.scale(dim.x, dim.y, dim.z);
 
@@ -327,7 +411,8 @@ public abstract class Convert {
          case SRT:
 
             target.scale(dim.x, dim.y, dim.z);
-            target.rotate(angle, axis.x, axis.y, axis.z);
+            // target.rotate(angle, axis.x, axis.y, axis.z);
+            PMatAux.rotate(q, target);
             target.translate(loc.x, loc.y, loc.z);
 
             return target;
@@ -336,7 +421,8 @@ public abstract class Convert {
 
             target.scale(dim.x, dim.y, dim.z);
             target.translate(loc.x, loc.y, loc.z);
-            target.rotate(angle, axis.x, axis.y, axis.z);
+            // target.rotate(angle, axis.x, axis.y, axis.z);
+            PMatAux.rotate(q, target);
 
             return target;
 
@@ -344,7 +430,8 @@ public abstract class Convert {
 
             target.translate(loc.x, loc.y, loc.z);
             target.scale(dim.x, dim.y, dim.z);
-            target.rotate(angle, axis.x, axis.y, axis.z);
+            // target.rotate(angle, axis.x, axis.y, axis.z);
+            PMatAux.rotate(q, target);
 
             return target;
 
@@ -353,7 +440,8 @@ public abstract class Convert {
          default:
 
             target.translate(loc.x, loc.y, loc.z);
-            target.rotate(angle, axis.x, axis.y, axis.z);
+            // target.rotate(angle, axis.x, axis.y, axis.z);
+            PMatAux.rotate(q, target);
             target.scale(dim.x, dim.y, dim.z);
 
             return target;

@@ -6,6 +6,12 @@ package camzup.core;
 public abstract class Mesh extends EntityData {
 
    /**
+    * Default count of sectors in a regular convex polygon, so
+    * as to approximate a circle.
+    */
+   public static final int DEFAULT_CIRCLE_SECTORS = 32;
+
+   /**
     * The default constructor.
     */
    protected Mesh () {

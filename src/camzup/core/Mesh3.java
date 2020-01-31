@@ -3,6 +3,8 @@ package camzup.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import camzup.core.Mesh2.PolyType;
+
 /**
  * Organizes data needed to draw a three dimensional shape
  * using vertices and faces. Given that a mesh is primarily
@@ -11,441 +13,6 @@ import java.util.Arrays;
  * These are not final, and so can be reassigned.
  */
 public class Mesh3 extends Mesh {
-
-   /**
-    * Packages 3D mesh vertices into an object.
-    */
-   public static class Face3 implements Comparable < Face3 > {
-
-      /**
-       * The array of vertices in a face.
-       */
-      public Vert3[] vertices = new Vert3[] {};
-
-      /**
-       * The default constructor.
-       */
-      public Face3 () {
-
-      }
-
-      /**
-       * Creates a face from an array of vertices.
-       *
-       * @param vertices
-       *           the vertices
-       */
-      public Face3 ( final Vert3[] vertices ) {
-
-         this.set(vertices);
-      }
-
-      /**
-       * Compares this face to another by hash code.
-       *
-       * @param face
-       *           the comparisand
-       * @return the comparison
-       */
-      @Override
-      public int compareTo ( final Face3 face ) {
-
-         final int a = this.hashCode();
-         final int b = face.hashCode();
-         return Integer.compare(a, b);
-      }
-
-      @Override
-      public int hashCode () {
-
-         return System.identityHashCode(this);
-      }
-
-      /**
-       * Returns the number of vertices in this face.
-       *
-       * @return the vertex count
-       */
-      public int length () {
-
-         return this.vertices.length;
-      }
-
-      /**
-       * Rotates all coordinates and normals in the mesh by an
-       * angle around an arbitrary axis.
-       *
-       * @param radians
-       *           the angle in radians
-       * @param axis
-       *           the axis of rotation
-       * @return this mesh
-       * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
-       */
-      @Chainable
-      public Face3 rotate ( final float radians, final Vec3 axis ) {
-
-         final float nrm = IUtils.ONE_TAU * radians;
-         final float cosa = SinCos.eval(nrm);
-         final float sina = SinCos.eval(nrm - 0.25f);
-
-         Vert3 vt3;
-         Vec3 c;
-         Vec3 n;
-
-         final int len = this.vertices.length;
-         for (int i = 0; i < len; ++i) {
-            vt3 = this.vertices[i];
-            c = vt3.coord;
-            n = vt3.normal;
-            Vec3.rotate(c, cosa, sina, axis, c);
-            Vec3.rotate(n, cosa, sina, axis, n);
-         }
-
-         return this;
-      }
-
-      /**
-       * Rotates all coordinates and normals in the face by a
-       * quaternion.
-       *
-       * @param q
-       *           the quaternion
-       * @return the mesh
-       */
-      @Chainable
-      public Face3 rotate ( final Quaternion q ) {
-
-         Vert3 vt3;
-         Vec3 c;
-         Vec3 n;
-
-         final int len = this.vertices.length;
-         for (int i = 0; i < len; ++i) {
-            vt3 = this.vertices[i];
-            c = vt3.coord;
-            n = vt3.normal;
-            Quaternion.mulVector(q, c, c);
-            Quaternion.mulVector(q, n, n);
-         }
-
-         return this;
-      }
-
-      /**
-       * Rotates all coordinates and normals in the face by an
-       * angle around the x axis.
-       *
-       * @param radians
-       *           the angle in radians
-       * @return this mesh
-       * @see Vec3#rotateX(Vec3, float, Vec3)
-       */
-      @Chainable
-      public Face3 rotateX ( final float radians ) {
-
-         final float nrm = IUtils.ONE_TAU * radians;
-         final float cosa = SinCos.eval(nrm);
-         final float sina = SinCos.eval(nrm - 0.25f);
-
-         Vert3 vt3;
-         Vec3 c;
-         Vec3 n;
-
-         final int len = this.vertices.length;
-         for (int i = 0; i < len; ++i) {
-            vt3 = this.vertices[i];
-            c = vt3.coord;
-            n = vt3.normal;
-            Vec3.rotateX(c, cosa, sina, c);
-            Vec3.rotateX(n, cosa, sina, n);
-         }
-
-         return this;
-      }
-
-      /**
-       * Rotates all coordinates and normals in the face by an
-       * angle around the y axis.
-       *
-       * @param radians
-       *           the angle in radians
-       * @return this mesh
-       * @see Vec3#rotateY(Vec3, float, Vec3)
-       */
-      @Chainable
-      public Face3 rotateY ( final float radians ) {
-
-         final float nrm = IUtils.ONE_TAU * radians;
-         final float cosa = SinCos.eval(nrm);
-         final float sina = SinCos.eval(nrm - 0.25f);
-
-         Vert3 vt3;
-         Vec3 c;
-         Vec3 n;
-
-         final int len = this.vertices.length;
-         for (int i = 0; i < len; ++i) {
-            vt3 = this.vertices[i];
-            c = vt3.coord;
-            n = vt3.normal;
-            Vec3.rotateY(c, cosa, sina, c);
-            Vec3.rotateY(n, cosa, sina, n);
-         }
-
-         return this;
-      }
-
-      /**
-       * Rotates all coordinates and normals in the face by an
-       * angle around the z axis.
-       *
-       * @param radians
-       *           the angle in radians
-       * @return this mesh
-       * @see Vec3#rotateZ(Vec3, float, Vec3)
-       */
-      @Chainable
-      public Face3 rotateZ ( final float radians ) {
-
-         final float nrm = IUtils.ONE_TAU * radians;
-         final float cosa = SinCos.eval(nrm);
-         final float sina = SinCos.eval(nrm - 0.25f);
-
-         Vert3 vt3;
-         Vec3 c;
-         Vec3 n;
-
-         final int len = this.vertices.length;
-         for (int i = 0; i < len; ++i) {
-            vt3 = this.vertices[i];
-            c = vt3.coord;
-            n = vt3.normal;
-            Vec3.rotateZ(c, cosa, sina, c);
-            Vec3.rotateZ(n, cosa, sina, n);
-         }
-
-         return this;
-      }
-
-      /**
-       * Scales all coordinates in the face by a scalar.
-       *
-       * @param scale
-       *           the vector
-       * @return this face
-       * @see Vec3#mul(Vec3, float, Vec3)
-       */
-      @Chainable
-      public Face3 scale ( final float scale ) {
-
-         Vec3 c;
-         final int len = this.vertices.length;
-         for (int i = 0; i < len; ++i) {
-            c = this.vertices[i].coord;
-            Vec3.mul(c, scale, c);
-         }
-
-         return this;
-      }
-
-      /**
-       * Scales all coordinates in the face by a vector.
-       *
-       * @param scale
-       *           the vector
-       * @return this face
-       * @see Vec3#mul(Vec3, Vec3, Vec3)
-       */
-      @Chainable
-      public Face3 scale ( final Vec3 scale ) {
-
-         Vec3 c;
-         final int len = this.vertices.length;
-         for (int i = 0; i < len; ++i) {
-            c = this.vertices[i].coord;
-            Vec3.mul(c, scale, c);
-         }
-
-         return this;
-      }
-
-      /**
-       * Sets this face's vertices to refer to a an array.
-       *
-       * @param vertices
-       *           the array of vertices
-       * @return this face
-       */
-      @Chainable
-      public Face3 set ( final Vert3[] vertices ) {
-
-         this.vertices = vertices;
-         return this;
-      }
-
-      @Override
-      public String toString () {
-
-         return this.toString(4);
-      }
-
-      public String toString ( final int places ) {
-
-         final int len = this.vertices.length;
-         final int last = len - 1;
-         final StringBuilder sb = new StringBuilder(len * 512)
-               .append("{ vertices: [ \n");
-         for (int i = 0; i < len; ++i) {
-            sb.append(this.vertices[i].toString(places));
-            if (i < last) {
-               sb.append(',').append('\n');
-            }
-         }
-         sb.append(" ] }");
-         return sb.toString();
-      }
-
-      /**
-       * Translates all coordinates in the face by a vector.
-       *
-       * @param v
-       *           the vector
-       * @return this face
-       * @see Vec3#add(Vec3, Vec3, Vec3)
-       */
-      @Chainable
-      public Face3 translate ( final Vec3 v ) {
-
-         Vec3 c;
-         final int len = this.vertices.length;
-         for (int i = 0; i < len; ++i) {
-            c = this.vertices[i].coord;
-            Vec3.add(c, v, c);
-         }
-
-         return this;
-      }
-   }
-
-   /**
-    * Packages 3D mesh coordinates, texture coordinates and
-    * normals into a single object.
-    */
-   public static class Vert3 implements Comparable < Vert3 > {
-
-      /**
-       * The coordinate of the vertex in world space.
-       */
-      public Vec3 coord;
-
-      /**
-       * The direction in which light will bounce from the surface
-       * of the mesh at the vertex.
-       */
-      public Vec3 normal;
-
-      /**
-       * The texture (UV) coordinate for an image mapped onto the
-       * mesh.
-       */
-      public Vec2 texCoord;
-
-      /**
-       * The default constructor.
-       */
-      public Vert3 () {
-
-      }
-
-      /**
-       * Constructs a vertex from a coordinate, texture coordinate
-       * and normal.
-       *
-       * @param coord
-       *           the coordinate
-       * @param texCoord
-       *           the texture coordinate
-       * @param normal
-       *           the normal
-       */
-      public Vert3 (
-            final Vec3 coord,
-            final Vec2 texCoord,
-            final Vec3 normal ) {
-
-         this.set(coord, texCoord, normal);
-      }
-
-      /**
-       * Compares this vertex to another by hash code.
-       *
-       * @param vert
-       *           the comparisand
-       * @return the comparison
-       */
-      @Override
-      public int compareTo ( final Vert3 vert ) {
-
-         final int a = this.hashCode();
-         final int b = vert.hashCode();
-         return a < b ? -1 : a > b ? 1 : 0;
-      }
-
-      /**
-       * Gets the system identity hash code.
-       *
-       * @return the hash code
-       */
-      @Override
-      public int hashCode () {
-
-         return System.identityHashCode(this);
-      }
-
-      /**
-       * Sets the coordinate, texture coordinate and normal of the
-       * vertex by reference.
-       *
-       * @param coord
-       *           the coordinate
-       * @param texCoord
-       *           the texture coordinate
-       * @param normal
-       *           the normal
-       * @return this vertex
-       */
-      @Chainable
-      public Vert3 set (
-            final Vec3 coord,
-            final Vec2 texCoord,
-            final Vec3 normal ) {
-
-         this.coord = coord;
-         this.texCoord = texCoord;
-         this.normal = normal;
-         return this;
-      }
-
-      @Override
-      public String toString () {
-
-         return this.toString(4);
-      }
-
-      public String toString ( final int places ) {
-
-         return new StringBuilder(512)
-               .append("{ coord: ")
-               .append(this.coord.toString(places))
-               .append(", texCoord: ")
-               .append(this.texCoord.toString(places))
-               .append(", normal: ")
-               .append(this.normal.toString(places))
-               .append(' ').append('}')
-               .toString();
-      }
-   }
 
    /**
     * A helper function for parsing an OBJ file. Attempts to
@@ -466,63 +33,19 @@ public class Mesh3 extends Mesh {
       return target;
    }
 
-   @Experimental
-   static Mesh3 uvSphere ( final float r, final int longitudes,
-         final int latitudes, final Mesh3 target ) {
-
-      // TODO: Unfinished.
-
-      // int nind = 3 * detailU + (6 * detailU + 3) * (detailV -
-      // 2) + 3 * detailU;
-      // int[] indices = new int[nind];
-
-      // final float xs[][] = new float[detailU][detailV];
-      // final float ys[][] = new float[detailU][detailV];
-      // final float zs[][] = new float[detailU][detailV];
-      //
-      // for(int i = 0; i < detailU; ++i) {
-      // for(int j = 0; j < detailV; ++j) {
-      //
-      // }
-      // }
-
-      final int vlats = latitudes < 3 ? 3 : latitudes;
-      final int vlons = longitudes < 3 ? 3 : longitudes;
-
-      final float[] cosTheta = new float[vlons];
-      final float[] sinTheta = new float[vlons];
-      final float uToPrc = 1.0f / vlons;
-      for (int i = 0; i < vlons; ++i) {
-         final float phi = Utils.lerpUnclamped(-IUtils.PI, IUtils.PI,
-               i * uToPrc);
-         cosTheta[i] = (float) Math.cos(phi);
-         sinTheta[i] = (float) Math.sin(phi);
-      }
-
-      final float[] cosPhi = new float[vlats];
-      final float[] sinPhi = new float[vlats];
-      final float vToPrc = 1.0f / (vlats - 1.0f);
-      for (int i = 0; i < vlats; ++i) {
-         final float phi = Utils.lerpUnclamped(-IUtils.HALF_PI, IUtils.HALF_PI,
-               i * vToPrc);
-         cosPhi[i] = (float) Math.cos(phi);
-         sinPhi[i] = (float) Math.sin(phi);
-      }
-
-      return target;
-   }
-
    /**
     * Calculates the dimensions of an Axis-Aligned Bounding Box
     * (AABB) encompassing the mesh.
     *
     * @param mesh
     *           the mesh
-    * @param dim
+    * @param target
     *           the output vector
     * @return the dimensions
     */
-   public static Vec3 calcDimensions ( final Mesh3 mesh, final Vec3 dim ) {
+   public static Vec3 calcDimensions (
+         final Mesh3 mesh,
+         final Vec3 target ) {
 
       float xMin = Float.MAX_VALUE;
       float xMax = Float.MIN_VALUE;
@@ -562,59 +85,83 @@ public class Mesh3 extends Mesh {
          }
       }
 
-      return dim.set(xMax - xMin, yMax - yMin, zMax - zMin);
+      return target.set(
+            xMax - xMin,
+            yMax - yMin,
+            zMax - zMin);
    }
 
    /**
-    * Generates a cube mesh.
+    * Creates a regular convex polygon, approximating a circle.
+    *
+    * @param target
+    *           the output mesh
+    * @return the polygon
+    * @see Mesh2#polygon(int, PolyType, Mesh2)
+    */
+   public static Mesh3 circle (
+         final Mesh3 target ) {
+
+      return Mesh3.polygon(
+            Mesh.DEFAULT_CIRCLE_SECTORS,
+            target);
+   }
+
+   /**
+    * Generates a cube mesh. In the context of Platonic solids,
+    * also known as a hexahedron.
     *
     * @param target
     *           the output mesh
     * @return the cube
     */
-   @Experimental
    public static Mesh3 cube ( final Mesh3 target ) {
 
       final Vec3[] coords = new Vec3[] {
-            /* 00 */ new Vec3(-0.5f, -0.5f, -0.5f),
-            /* 01 */ new Vec3(-0.5f, -0.5f, +0.5f),
-            /* 02 */ new Vec3(-0.5f, +0.5f, -0.5f),
-            /* 03 */ new Vec3(-0.5f, +0.5f, +0.5f),
-            /* 04 */ new Vec3(+0.5f, -0.5f, -0.5f),
-            /* 05 */ new Vec3(+0.5f, -0.5f, +0.5f),
-            /* 06 */ new Vec3(+0.5f, +0.5f, -0.5f),
-            /* 07 */ new Vec3(+0.5f, +0.5f, +0.5f)
+            new Vec3(-0.5f, -0.5f, -0.5f),
+            new Vec3(-0.5f, -0.5f, 0.5f),
+            new Vec3(-0.5f, 0.5f, -0.5f),
+            new Vec3(-0.5f, 0.5f, 0.5f),
+            new Vec3(0.5f, -0.5f, -0.5f),
+            new Vec3(0.5f, -0.5f, 0.5f),
+            new Vec3(0.5f, 0.5f, -0.5f),
+            new Vec3(0.5f, 0.5f, 0.5f)
       };
 
       final Vec3[] normals = new Vec3[] {
-            new Vec3(-1.0f, 0.0f, 0.0f),
-            new Vec3(0.0f, +1.0f, 0.0f), /* 01 Forward */
-            new Vec3(+1.0f, 0.0f, 0.0f), /* 02 Right */
-            new Vec3(0.0f, -1.0f, 0.0f), /* 03 Back */
-            new Vec3(0.0f, 0.0f, -1.0f), /* 04 Down */
-            new Vec3(0.0f, 0.0f, +1.0f) /* 05 Up */
+            new Vec3(1.0f, -0.0f, 0.0f),
+            new Vec3(0.0f, -0.0f, 1.0f),
+            new Vec3(0.0f, 0.0f, -1.0f),
+            new Vec3(0.0f, -1.0f, 0.0f),
+            new Vec3(-1.0f, -0.0f, 0.0f),
+            new Vec3(0.0f, 1.0f, 0.0f)
       };
 
+      // TODO: Maybe redo uvs to use the basic four corners setup.
       final Vec2[] texCoords = new Vec2[] {
-            new Vec2(0.0f, 0.0f),
-            new Vec2(1.0f, 0.0f), /* 01 Right-Bottom */
-            new Vec2(1.0f, 1.0f), /* 02 Right-Top */
-            new Vec2(0.0f, 1.0f) /* 03 Left-Top */
+            new Vec2(0.625f, 1.0f),
+            new Vec2(0.375f, 1.0f),
+            new Vec2(0.375f, 0.25f),
+            new Vec2(0.625f, 0.25f),
+            new Vec2(0.375f, 0.0f),
+            new Vec2(0.625f, 0.0f),
+            new Vec2(0.625f, 0.5f),
+            new Vec2(0.375f, 0.5f),
+            new Vec2(0.625f, 0.75f),
+            new Vec2(0.375f, 0.75f),
+            new Vec2(0.125f, 0.5f),
+            new Vec2(0.125f, 0.75f),
+            new Vec2(0.875f, 0.75f),
+            new Vec2(0.875f, 0.5f)
       };
 
       final int[][][] faces = new int[][][] {
-            { { 1, 1, 0 }, { 2, 3, 0 }, { 0, 2, 0 } }, /* 00 */
-            { { 3, 1, 1 }, { 6, 3, 1 }, { 2, 2, 1 } }, /* 01 */
-            { { 7, 1, 2 }, { 4, 3, 2 }, { 6, 2, 2 } }, /* 02 */
-            { { 5, 1, 3 }, { 0, 3, 3 }, { 4, 2, 3 } }, /* 03 */
-            { { 6, 1, 4 }, { 0, 3, 4 }, { 2, 2, 4 } }, /* 04 */
-            { { 3, 1, 5 }, { 5, 3, 5 }, { 7, 2, 5 } }, /* 05 */
-            { { 1, 1, 0 }, { 3, 0, 0 }, { 2, 3, 0 } }, /* 06 */
-            { { 3, 1, 1 }, { 7, 0, 1 }, { 6, 3, 1 } }, /* 07 */
-            { { 7, 1, 2 }, { 5, 0, 2 }, { 4, 3, 2 } }, /* 08 */
-            { { 5, 1, 3 }, { 1, 0, 3 }, { 0, 3, 3 } }, /* 09 */
-            { { 6, 1, 4 }, { 4, 0, 4 }, { 0, 3, 4 } }, /* 10 */
-            { { 3, 1, 5 }, { 1, 0, 5 }, { 5, 3, 5 } } /* 11 */
+            { { 0, 4, 4 }, { 1, 5, 4 }, { 3, 3, 4 }, { 2, 2, 4 } },
+            { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 6, 5 }, { 6, 7, 5 } },
+            { { 6, 7, 0 }, { 7, 6, 0 }, { 5, 8, 0 }, { 4, 9, 0 } },
+            { { 4, 9, 3 }, { 5, 8, 3 }, { 1, 0, 3 }, { 0, 1, 3 } },
+            { { 2, 10, 2 }, { 6, 7, 2 }, { 4, 9, 2 }, { 0, 11, 2 } },
+            { { 7, 6, 1 }, { 3, 13, 1 }, { 1, 12, 1 }, { 5, 8, 1 } }
       };
 
       target.name = "Cube";
@@ -623,7 +170,7 @@ public class Mesh3 extends Mesh {
 
    /**
     * Creates an dodecahedron, a Platonic solid with twelve
-    * faces.
+    * faces, each face being a pentagon.
     *
     * @param target
     *           the output mesh
@@ -636,129 +183,78 @@ public class Mesh3 extends Mesh {
        * 2.0d; double b = r * (1.0d / phi); double c = r * (2.0d -
        * phi); 0.3090169943749474, 0.19098300562505255
        */
-      final Vec3[] coords = new Vec3[] {
-            /* 00 */ new Vec3(0.190983f, 0.0f, 0.5f),
-            /* 01 */ new Vec3(-0.190983f, 0.0f, 0.5f),
-            /* 02 */ new Vec3(-0.309017f, 0.309017f, 0.309017f),
-            /* 03 */ new Vec3(0.0f, 0.5f, 0.190983f),
-            /* 04 */ new Vec3(0.309017f, 0.309017f, 0.309017f),
-            /* 05 */ new Vec3(-0.190983f, 0.0f, 0.5f),
-            /* 06 */ new Vec3(0.190983f, 0.0f, 0.5f),
-            /* 07 */ new Vec3(0.309017f, -0.309017f, 0.309017f),
-            /* 08 */ new Vec3(0.0f, -0.5f, 0.190983f),
-            /* 09 */ new Vec3(-0.309017f, -0.309017f, 0.309017f),
-            /* 10 */ new Vec3(0.190983f, 0.0f, -0.5f),
-            /* 11 */ new Vec3(-0.190983f, 0.0f, -0.5f),
-            /* 12 */ new Vec3(-0.309017f, -0.309017f, -0.309017f),
-            /* 13 */ new Vec3(0.0f, -0.5f, -0.190983f),
-            /* 14 */ new Vec3(0.309017f, -0.309017f, -0.309017f),
-            /* 15 */ new Vec3(-0.190983f, 0.0f, -0.5f),
-            /* 16 */ new Vec3(0.190983f, 0.0f, -0.5f),
-            /* 17 */ new Vec3(0.309017f, 0.309017f, -0.309017f),
-            /* 18 */ new Vec3(0.0f, 0.5f, -0.190983f),
-            /* 19 */ new Vec3(-0.309017f, 0.309017f, -0.309017f),
-            /* 20 */ new Vec3(0.0f, 0.5f, -0.190983f),
-            /* 21 */ new Vec3(0.0f, 0.5f, 0.190983f),
-            /* 22 */ new Vec3(0.309017f, 0.309017f, 0.309017f),
-            /* 23 */ new Vec3(0.5f, 0.190983f, 0.0f),
-            /* 24 */ new Vec3(0.309017f, 0.309017f, -0.309017f),
-            /* 25 */ new Vec3(0.0f, 0.5f, 0.190983f),
-            /* 26 */ new Vec3(0.0f, 0.5f, -0.190983f),
-            /* 27 */ new Vec3(-0.309017f, 0.309017f, -0.309017f),
-            /* 28 */ new Vec3(-0.5f, 0.190983f, 0.0f),
-            /* 29 */ new Vec3(-0.309017f, 0.309017f, 0.309017f),
-            /* 30 */ new Vec3(0.0f, -0.5f, -0.190983f),
-            /* 31 */ new Vec3(0.0f, -0.5f, 0.190983f),
-            /* 32 */ new Vec3(-0.309017f, -0.309017f, 0.309017f),
-            /* 33 */ new Vec3(-0.5f, -0.190983f, 0.0f),
-            /* 34 */ new Vec3(-0.309017f, -0.309017f, -0.309017f),
-            /* 35 */ new Vec3(0.0f, -0.5f, 0.190983f),
-            /* 36 */ new Vec3(0.0f, -0.5f, -0.190983f),
-            /* 37 */ new Vec3(0.309017f, -0.309017f, -0.309017f),
-            /* 38 */ new Vec3(0.5f, -0.190983f, 0.0f),
-            /* 39 */ new Vec3(0.309017f, -0.309017f, 0.309017f),
-            /* 40 */ new Vec3(0.5f, 0.190983f, 0.0f),
-            /* 41 */ new Vec3(0.5f, -0.190983f, 0.0f),
-            /* 42 */ new Vec3(0.309017f, -0.309017f, 0.309017f),
-            /* 43 */ new Vec3(0.190983f, 0.0f, 0.5f),
-            /* 44 */ new Vec3(0.309017f, 0.309017f, 0.309017f),
-            /* 45 */ new Vec3(0.5f, -0.190983f, 0.0f),
-            /* 46 */ new Vec3(0.5f, 0.190983f, 0.0f),
-            /* 47 */ new Vec3(0.309017f, 0.309017f, -0.309017f),
-            /* 48 */ new Vec3(0.190983f, 0.0f, -0.5f),
-            /* 49 */ new Vec3(0.309017f, -0.309017f, -0.309017f),
-            /* 50 */ new Vec3(-0.5f, 0.190983f, 0.0f),
-            /* 51 */ new Vec3(-0.5f, -0.190983f, 0.0f),
-            /* 52 */ new Vec3(-0.309017f, -0.309017f, -0.309017f),
-            /* 53 */ new Vec3(-0.190983f, 0.0f, -0.5f),
-            /* 54 */ new Vec3(-0.309017f, 0.309017f, -0.309017f),
-            /* 55 */ new Vec3(-0.5f, -0.190983f, 0.0f),
-            /* 56 */ new Vec3(-0.5f, 0.190983f, 0.0f),
-            /* 57 */ new Vec3(-0.309017f, 0.309017f, 0.309017f),
-            /* 58 */ new Vec3(-0.190983f, 0.0f, 0.5f),
-            /* 59 */ new Vec3(-0.309017f, -0.309017f, 0.309017f)
-      };
 
-      final Vec2[] texCoords = new Vec2[] {
-            /* 00 */ new Vec2(0.024472f, 0.654509f),
-            /* 01 */ new Vec2(0.793893f, 0.095491f),
-            /* 02 */ new Vec2(0.975528f, 0.654508f),
-            /* 03 */ new Vec2(0.206107f, 0.095492f), /* 25 */
-            /* 04 */ new Vec2(0.5f, 1.0f) /* 36 */
+      final Vec3[] coords = new Vec3[] {
+            new Vec3(0.0f, 0.5f, 0.19098301f),
+            new Vec3(-0.19098301f, 0.0f, 0.5f),
+            new Vec3(0.19098301f, 0.0f, 0.5f),
+            new Vec3(0.309017f, -0.309017f, 0.309017f),
+            new Vec3(-0.309017f, -0.309017f, 0.309017f),
+            new Vec3(-0.19098301f, 0.0f, -0.5f),
+            new Vec3(-0.309017f, -0.309017f, -0.309017f),
+            new Vec3(0.19098301f, 0.0f, -0.5f),
+            new Vec3(0.309017f, 0.309017f, -0.309017f),
+            new Vec3(0.0f, 0.5f, -0.19098301f),
+            new Vec3(0.309017f, 0.309017f, 0.309017f),
+            new Vec3(0.5f, 0.19098301f, 0.0f),
+            new Vec3(-0.309017f, 0.309017f, -0.309017f),
+            new Vec3(-0.5f, 0.19098301f, 0.0f),
+            new Vec3(-0.309017f, 0.309017f, 0.309017f),
+            new Vec3(0.0f, -0.5f, 0.19098301f),
+            new Vec3(0.0f, -0.5f, -0.19098301f),
+            new Vec3(0.309017f, -0.309017f, -0.309017f),
+            new Vec3(0.5f, -0.19098301f, 0.0f),
+            new Vec3(-0.5f, -0.19098301f, 0.0f)
       };
 
       final Vec3[] normals = new Vec3[] {
-            /* 00 */ new Vec3(0.0f, 0.5257f, 0.8507f),
-            /* 01 */ new Vec3(0.0f, -0.5257f, 0.8507f),
-            /* 02 */ new Vec3(0.0f, -0.5257f, -0.8507f),
-            /* 03 */ new Vec3(0.0f, 0.5257f, -0.8507f),
-            /* 04 */ new Vec3(-0.5257f, -0.8507f, 0.0f),
-            /* 05 */ new Vec3(0.5257f, -0.8507f, 0.0f),
-            /* 06 */ new Vec3(0.5257f, 0.8507f, 0.0f),
-            /* 07 */ new Vec3(-0.5257f, 0.8507f, 0.0f),
-            /* 08 */ new Vec3(-0.8507f, 0.0f, -0.5257f),
-            /* 09 */ new Vec3(-0.8507f, 0.0f, 0.5257f),
-            /* 10 */ new Vec3(0.8507f, 0.0f, 0.5257f),
-            /* 11 */ new Vec3(0.8507f, 0.0f, -0.5257f)
+            new Vec3(-0.85065079f, 0.0f, 0.52573115f),
+            new Vec3(0.0f, 0.52573115f, 0.85065079f),
+            new Vec3(0.0f, -0.52573115f, -0.85065079f),
+            new Vec3(0.0f, 0.52573115f, -0.85065079f),
+            new Vec3(0.0f, -0.52573115f, 0.85065079f),
+            new Vec3(0.52573115f, 0.85065085f, 0.0f),
+            new Vec3(-0.52573115f, 0.85065085f, 0.0f),
+            new Vec3(-0.52573115f, -0.85065085f, 0.0f),
+            new Vec3(0.52573115f, -0.85065085f, 0.0f),
+            new Vec3(0.85065079f, 0.0f, 0.52573115f),
+            new Vec3(0.85065079f, 0.0f, -0.52573115f),
+            new Vec3(-0.85065079f, 0.0f, -0.52573115f)
+      };
+
+      final Vec2[] texCoords = new Vec2[] {
+            new Vec2(0.5f, 1.0f),
+            new Vec2(0.79389262f, 0.09549147f),
+            new Vec2(0.02447176f, 0.65450859f),
+            new Vec2(0.20610732f, 0.09549153f),
+            new Vec2(0.97552824f, 0.65450847f)
       };
 
       final int[][][] faces = new int[][][] {
-            { { 4, 0, 0 }, { 2, 1, 0 }, { 1, 2, 0 } },
-            { { 9, 0, 1 }, { 7, 1, 1 }, { 6, 2, 1 } },
-            { { 14, 0, 2 }, { 12, 1, 2 }, { 11, 2, 2 } },
-            { { 19, 0, 3 }, { 17, 1, 3 }, { 16, 2, 3 } },
-            { { 24, 0, 4 }, { 22, 1, 4 }, { 21, 2, 4 } },
-            { { 29, 0, 5 }, { 27, 1, 5 }, { 26, 2, 5 } },
-            { { 34, 0, 6 }, { 32, 1, 6 }, { 31, 2, 6 } },
-            { { 39, 0, 7 }, { 37, 1, 7 }, { 36, 2, 7 } },
-            { { 42, 1, 8 }, { 43, 3, 8 }, { 44, 0, 8 } },
-            { { 47, 1, 9 }, { 48, 3, 9 }, { 49, 0, 9 } },
-            { { 52, 1, 10 }, { 53, 3, 10 }, { 54, 0, 10 } },
-            { { 57, 1, 11 }, { 58, 3, 11 }, { 59, 0, 11 } },
-            { { 1, 2, 0 }, { 0, 4, 0 }, { 4, 0, 0 } },
-            { { 4, 0, 0 }, { 3, 3, 0 }, { 2, 1, 0 } },
-            { { 6, 2, 1 }, { 5, 4, 1 }, { 9, 0, 1 } },
-            { { 9, 0, 1 }, { 8, 3, 1 }, { 7, 1, 1 } },
-            { { 11, 2, 2 }, { 10, 4, 2 }, { 14, 0, 2 } },
-            { { 14, 0, 2 }, { 13, 3, 2 }, { 12, 1, 2 } },
-            { { 16, 2, 3 }, { 15, 4, 3 }, { 19, 0, 3 } },
-            { { 19, 0, 3 }, { 18, 3, 3 }, { 17, 1, 3 } },
-            { { 21, 2, 4 }, { 20, 4, 4 }, { 24, 0, 4 } },
-            { { 24, 0, 4 }, { 23, 3, 4 }, { 22, 1, 4 } },
-            { { 26, 2, 5 }, { 25, 4, 5 }, { 29, 0, 5 } },
-            { { 29, 0, 5 }, { 28, 3, 5 }, { 27, 1, 5 } },
-            { { 31, 2, 6 }, { 30, 4, 6 }, { 34, 0, 6 } },
-            { { 34, 0, 6 }, { 33, 3, 6 }, { 32, 1, 6 } },
-            { { 36, 2, 7 }, { 35, 4, 7 }, { 39, 0, 7 } },
-            { { 39, 0, 7 }, { 38, 3, 7 }, { 37, 1, 7 } },
-            { { 44, 0, 8 }, { 40, 4, 8 }, { 41, 2, 8 } },
-            { { 41, 2, 8 }, { 42, 1, 8 }, { 44, 0, 8 } },
-            { { 49, 0, 9 }, { 45, 4, 9 }, { 46, 2, 9 } },
-            { { 46, 2, 9 }, { 47, 1, 9 }, { 49, 0, 9 } },
-            { { 54, 0, 10 }, { 50, 4, 10 }, { 51, 2, 10 } },
-            { { 51, 2, 10 }, { 52, 1, 10 }, { 54, 0, 10 } },
-            { { 59, 0, 11 }, { 55, 4, 11 }, { 56, 2, 11 } },
-            { { 56, 2, 11 }, { 57, 1, 11 }, { 59, 0, 11 } }
+            { { 2, 0, 1 }, { 10, 2, 1 }, { 0, 3, 1 },
+                  { 14, 1, 1 }, { 1, 4, 1 } },
+            { { 1, 0, 4 }, { 4, 2, 4 }, { 15, 3, 4 },
+                  { 3, 1, 4 }, { 2, 4, 4 } },
+            { { 7, 0, 2 }, { 17, 2, 2 }, { 16, 3, 2 },
+                  { 6, 1, 2 }, { 5, 4, 2 } },
+            { { 5, 0, 3 }, { 12, 2, 3 }, { 9, 3, 3 },
+                  { 8, 1, 3 }, { 7, 4, 3 } },
+            { { 9, 0, 5 }, { 0, 4, 5 }, { 10, 1, 5 },
+                  { 11, 3, 5 }, { 8, 2, 5 } },
+            { { 0, 0, 6 }, { 9, 4, 6 }, { 12, 1, 6 },
+                  { 13, 3, 6 }, { 14, 2, 6 } },
+            { { 16, 0, 7 }, { 15, 4, 7 }, { 4, 1, 7 },
+                  { 19, 3, 7 }, { 6, 2, 7 } },
+            { { 15, 0, 8 }, { 16, 4, 8 }, { 17, 1, 8 },
+                  { 18, 3, 8 }, { 3, 2, 8 } },
+            { { 11, 0, 9 }, { 10, 2, 9 }, { 2, 3, 9 },
+                  { 3, 1, 9 }, { 18, 4, 9 } },
+            { { 18, 0, 10 }, { 17, 2, 10 }, { 7, 3, 10 },
+                  { 8, 1, 10 }, { 11, 4, 10 } },
+            { { 13, 0, 11 }, { 12, 2, 11 }, { 5, 3, 11 },
+                  { 6, 1, 11 }, { 19, 4, 11 } },
+            { { 19, 0, 0 }, { 4, 2, 0 }, { 1, 3, 0 },
+                  { 14, 1, 0 }, { 13, 4, 0 } }
       };
 
       target.name = "Dodecahedron";
@@ -778,7 +274,9 @@ public class Mesh3 extends Mesh {
     *           the output mesh
     * @return the mesh
     */
-   public static Mesh3 fromObj ( final String[] lines, final Mesh3 target ) {
+   public static Mesh3 fromObj (
+         final String[] lines,
+         final Mesh3 target ) {
 
       String[] tokens;
       String[] facetokens;
@@ -867,88 +365,88 @@ public class Mesh3 extends Mesh {
 
       final Vec3[] coords = new Vec3[] {
             new Vec3(0.0f, 0.0f, -0.5f),
-            new Vec3(0.3618f, -0.26286f, -0.223607f),
-            new Vec3(-0.138193f, -0.42532f, -0.223607f),
-            new Vec3(-0.447212f, 0.0f, -0.223607f),
-            new Vec3(-0.138193f, 0.42532f, -0.223607f),
-            new Vec3(0.3618f, 0.26286f, -0.223607f),
-            new Vec3(0.138193f, -0.42532f, 0.223607f),
-            new Vec3(-0.3618f, -0.26286f, 0.223607f),
-            new Vec3(-0.3618f, 0.26286f, 0.223607f),
-            new Vec3(0.138193f, 0.42532f, 0.223607f),
-            new Vec3(0.447212f, 0.0f, 0.223607f),
+            new Vec3(0.3618f, -0.26286f, -0.2236075f),
+            new Vec3(-0.1381925f, -0.42532f, -0.2236075f),
+            new Vec3(-0.4472125f, 0.0f, -0.2236075f),
+            new Vec3(-0.1381925f, 0.42532f, -0.2236075f),
+            new Vec3(0.3618f, 0.26286f, -0.2236075f),
+            new Vec3(0.1381925f, -0.42532f, 0.2236075f),
+            new Vec3(-0.3618f, -0.26286f, 0.2236075f),
+            new Vec3(-0.3618f, 0.26286f, 0.2236075f),
+            new Vec3(0.1381925f, 0.42532f, 0.2236075f),
+            new Vec3(0.4472125f, 0.0f, 0.2236075f),
             new Vec3(0.0f, 0.0f, 0.5f)
       };
 
+      final Vec3[] normals = new Vec3[] {
+            new Vec3(-0.30353555f, -0.9341715f, 0.18758915f),
+            new Vec3(-0.9822461f, 0.0f, 0.18759680f),
+            new Vec3(-0.30353555f, 0.9341715f, 0.18758912f),
+            new Vec3(0.79464918f, 0.57735938f, 0.18758696f),
+            new Vec3(0.4911221f, -0.35682905f, 0.79465222f),
+            new Vec3(-0.18759654f, -0.57735366f, 0.79465103f),
+            new Vec3(0.18759654f, -0.57735366f, -0.79465103f),
+            new Vec3(-0.4911221f, -0.35682905f, -0.79465222f),
+            new Vec3(-0.4911221f, 0.35682905f, -0.79465222f),
+            new Vec3(0.60706466f, 0.0f, -0.7946524f),
+            new Vec3(0.18759654f, 0.57735366f, -0.79465103f),
+            new Vec3(0.9822461f, 0.0f, -0.18759680f),
+            new Vec3(0.30353555f, -0.9341715f, -0.18758912f),
+            new Vec3(-0.79464918f, -0.57735938f, -0.18758696f),
+            new Vec3(-0.79464918f, 0.57735938f, -0.18758698f),
+            new Vec3(0.30353555f, 0.9341715f, -0.18758915f),
+            new Vec3(-0.18759654f, 0.57735366f, 0.79465103f),
+            new Vec3(0.79464918f, -0.57735938f, 0.18758698f),
+            new Vec3(-0.60706466f, 0.0f, 0.7946524f),
+            new Vec3(0.4911221f, 0.35682905f, 0.79465222f)
+      };
+
       final Vec2[] texCoords = new Vec2[] {
+            new Vec2(0.636363f, 0.314921f),
+            new Vec2(0.818181f, 0.314921f),
+            new Vec2(0.090909f, 0.314921f),
+            new Vec2(0.272727f, 0.314921f),
+            new Vec2(0.454545f, 0.314921f),
+            new Vec2(0.727272f, 0.472382f),
+            new Vec2(0.90909f, 0.472382f),
+            new Vec2(0.454545f, 0.0f),
+            new Vec2(0.181818f, 0.472382f),
+            new Vec2(0.363636f, 0.472382f),
+            new Vec2(0.636363f, 0.0f),
+            new Vec2(0.90909f, 0.157461f),
             new Vec2(0.818181f, 0.0f),
             new Vec2(0.727272f, 0.157461f),
-            new Vec2(0.90909f, 0.157461f),
-            new Vec2(0.636363f, 0.0f),
             new Vec2(0.545454f, 0.157461f),
             new Vec2(0.090909f, 0.0f),
             new Vec2(0.0f, 0.157461f),
             new Vec2(0.181818f, 0.157461f),
             new Vec2(0.272727f, 0.0f),
             new Vec2(0.363636f, 0.157461f),
-            new Vec2(0.454545f, 0.0f),
-            new Vec2(0.636363f, 0.314921f),
-            new Vec2(0.818181f, 0.314921f),
-            new Vec2(0.090909f, 0.314921f),
-            new Vec2(0.272727f, 0.314921f),
-            new Vec2(0.454545f, 0.314921f),
             new Vec2(1.0f, 0.314921f),
-            new Vec2(0.727272f, 0.472382f),
-            new Vec2(0.909090f, 0.472382f),
-            new Vec2(0.181818f, 0.472382f),
-            new Vec2(0.363636f, 0.472382f),
             new Vec2(0.545454f, 0.472382f)
       };
 
-      final Vec3[] normals = new Vec3[] {
-            new Vec3(0.1876f, -0.57735026f, -0.7947f),
-            new Vec3(0.6071f, 0.0f, -0.7947f),
-            new Vec3(-0.4911f, -0.3568f, -0.7947f),
-            new Vec3(-0.4911f, 0.3568f, -0.7947f),
-            new Vec3(0.1876f, 0.57735026f, -0.7947f),
-            new Vec3(0.9822f, 0.0f, -0.1876f),
-            new Vec3(0.3035f, -0.9342f, -0.1876f),
-            new Vec3(-0.7946f, -0.57735026f, -0.1876f),
-            new Vec3(-0.7946f, 0.57735026f, -0.1876f),
-            new Vec3(0.3035f, 0.9342f, -0.1876f),
-            new Vec3(0.7946f, -0.57735026f, 0.1876f),
-            new Vec3(-0.3035f, -0.9342f, 0.1876f),
-            new Vec3(-0.9822f, 0.0f, 0.1876f),
-            new Vec3(-0.3035f, 0.9342f, 0.1876f),
-            new Vec3(0.7946f, 0.57735026f, 0.1876f),
-            new Vec3(0.4911f, -0.3568f, 0.7947f),
-            new Vec3(-0.1876f, -0.57735026f, 0.7947f),
-            new Vec3(-0.6071f, 0.0f, 0.7947f),
-            new Vec3(-0.1876f, 0.57735026f, 0.7947f),
-            new Vec3(0.4911f, 0.3568f, 0.7947f)
-      };
-
       final int[][][] faces = new int[][][] {
-            { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 } },
-            { { 1, 1, 1 }, { 0, 3, 1 }, { 5, 4, 1 } },
-            { { 0, 5, 2 }, { 2, 6, 2 }, { 3, 7, 2 } },
-            { { 0, 8, 3 }, { 3, 7, 3 }, { 4, 9, 3 } },
-            { { 0, 10, 4 }, { 4, 9, 4 }, { 5, 4, 4 } },
-            { { 1, 1, 5 }, { 5, 4, 5 }, { 10, 11, 5 } },
-            { { 2, 2, 6 }, { 1, 1, 6 }, { 6, 12, 6 } },
-            { { 3, 7, 7 }, { 2, 6, 7 }, { 7, 13, 7 } },
-            { { 4, 9, 8 }, { 3, 7, 8 }, { 8, 14, 8 } },
-            { { 5, 4, 9 }, { 4, 9, 9 }, { 9, 15, 9 } },
-            { { 1, 1, 10 }, { 10, 11, 10 }, { 6, 12, 10 } },
-            { { 2, 2, 11 }, { 6, 12, 11 }, { 7, 16, 11 } },
-            { { 3, 7, 12 }, { 7, 13, 12 }, { 8, 14, 12 } },
-            { { 4, 9, 13 }, { 8, 14, 13 }, { 9, 15, 13 } },
-            { { 5, 4, 14 }, { 9, 15, 14 }, { 10, 11, 14 } },
-            { { 6, 12, 15 }, { 10, 11, 15 }, { 11, 17, 15 } },
-            { { 7, 16, 16 }, { 6, 12, 16 }, { 11, 18, 16 } },
-            { { 8, 14, 17 }, { 7, 13, 17 }, { 11, 19, 17 } },
-            { { 9, 15, 18 }, { 8, 14, 18 }, { 11, 20, 18 } },
-            { { 10, 11, 19 }, { 9, 15, 19 }, { 11, 21, 19 } }
+            { { 0, 12, 6 }, { 1, 13, 6 }, { 2, 11, 6 } },
+            { { 1, 13, 9 }, { 0, 10, 9 }, { 5, 14, 9 } },
+            { { 0, 15, 7 }, { 2, 16, 7 }, { 3, 17, 7 } },
+            { { 0, 18, 8 }, { 3, 17, 8 }, { 4, 19, 8 } },
+            { { 0, 7, 10 }, { 4, 19, 10 }, { 5, 14, 10 } },
+            { { 1, 13, 11 }, { 5, 14, 11 }, { 10, 0, 11 } },
+            { { 2, 11, 12 }, { 1, 13, 12 }, { 6, 1, 12 } },
+            { { 3, 17, 13 }, { 2, 16, 13 }, { 7, 2, 13 } },
+            { { 4, 19, 14 }, { 3, 17, 14 }, { 8, 3, 14 } },
+            { { 5, 14, 15 }, { 4, 19, 15 }, { 9, 4, 15 } },
+            { { 1, 13, 17 }, { 10, 0, 17 }, { 6, 1, 17 } },
+            { { 2, 11, 0 }, { 6, 1, 0 }, { 7, 20, 0 } },
+            { { 3, 17, 1 }, { 7, 2, 1 }, { 8, 3, 1 } },
+            { { 4, 19, 2 }, { 8, 3, 2 }, { 9, 4, 2 } },
+            { { 5, 14, 3 }, { 9, 4, 3 }, { 10, 0, 3 } },
+            { { 6, 1, 4 }, { 10, 0, 4 }, { 11, 5, 4 } },
+            { { 7, 20, 5 }, { 6, 1, 5 }, { 11, 6, 5 } },
+            { { 8, 3, 18 }, { 7, 2, 18 }, { 11, 8, 18 } },
+            { { 9, 4, 16 }, { 8, 3, 16 }, { 11, 9, 16 } },
+            { { 10, 0, 19 }, { 9, 4, 19 }, { 11, 21, 19 } }
       };
 
       target.name = "Icosahedron";
@@ -973,35 +471,34 @@ public class Mesh3 extends Mesh {
             new Vec3(0.0f, 0.0f, -0.5f)
       };
 
-      final Vec2[] texCoords = new Vec2[] {
-            new Vec2(0.5f, 0.5f),
-            new Vec2(1.0f, 0.5f),
-            new Vec2(0.5f, 1.0f),
-            new Vec2(0.5f, 0.5f),
-            new Vec2(0.0f, 0.5f),
-            new Vec2(0.5f, 0.0f)
-      };
-
       final Vec3[] normals = new Vec3[] {
             new Vec3(0.57735026f, -0.57735026f, 0.57735026f),
-            new Vec3(0.57735026f, 0.57735026f, 0.57735026f),
             new Vec3(-0.57735026f, 0.57735026f, 0.57735026f),
             new Vec3(-0.57735026f, -0.57735026f, 0.57735026f),
+            new Vec3(0.57735026f, 0.57735026f, 0.57735026f),
             new Vec3(-0.57735026f, 0.57735026f, -0.57735026f),
             new Vec3(0.57735026f, 0.57735026f, -0.57735026f),
             new Vec3(0.57735026f, -0.57735026f, -0.57735026f),
             new Vec3(-0.57735026f, -0.57735026f, -0.57735026f)
       };
 
+      final Vec2[] texCoords = new Vec2[] {
+            new Vec2(0.5f, 1.0f),
+            new Vec2(0.0f, 0.5f),
+            new Vec2(0.5f, 0.0f),
+            new Vec2(0.5f, 0.5f),
+            new Vec2(1.0f, 0.5f)
+      };
+
       final int[][][] faces = new int[][][] {
-            { { 0, 0, 0 }, { 1, 1, 0 }, { 4, 2, 0 } },
-            { { 1, 1, 1 }, { 3, 3, 1 }, { 4, 2, 1 } },
-            { { 3, 3, 2 }, { 2, 4, 2 }, { 4, 2, 2 } },
-            { { 2, 4, 3 }, { 0, 0, 3 }, { 4, 2, 3 } },
-            { { 2, 4, 4 }, { 3, 3, 4 }, { 5, 5, 4 } },
-            { { 3, 3, 5 }, { 1, 1, 5 }, { 5, 5, 5 } },
-            { { 1, 1, 6 }, { 0, 0, 6 }, { 5, 5, 6 } },
-            { { 0, 0, 7 }, { 2, 4, 7 }, { 5, 5, 7 } }
+            { { 0, 2, 0 }, { 1, 4, 0 }, { 4, 3, 0 } },
+            { { 1, 4, 3 }, { 3, 0, 3 }, { 4, 3, 3 } },
+            { { 3, 0, 1 }, { 2, 1, 1 }, { 4, 3, 1 } },
+            { { 2, 1, 2 }, { 0, 2, 2 }, { 4, 3, 2 } },
+            { { 2, 1, 4 }, { 3, 0, 4 }, { 5, 3, 4 } },
+            { { 3, 0, 5 }, { 1, 4, 5 }, { 5, 3, 5 } },
+            { { 1, 4, 6 }, { 0, 2, 6 }, { 5, 3, 6 } },
+            { { 0, 2, 7 }, { 2, 1, 7 }, { 5, 3, 7 } }
       };
 
       target.name = "Octahedron";
@@ -1058,8 +555,7 @@ public class Mesh3 extends Mesh {
          }
       }
 
-      final int len = rval * cval;
-      final int[][][] faces = new int[len + len][3][3];
+      final int[][][] faces = new int[2 * rval * cval][3][3];
       for (int k = 0, i = 0; i < rval; ++i) {
          final int noff0 = i * cval1;
          final int noff1 = (i + 1) * cval1;
@@ -1097,7 +593,9 @@ public class Mesh3 extends Mesh {
     *           the output mesh
     * @return the plane
     */
-   public static final Mesh3 plane ( final int div, final Mesh3 target ) {
+   public static final Mesh3 plane (
+         final int div,
+         final Mesh3 target ) {
 
       return Mesh3.plane(div, div, target);
    }
@@ -1111,7 +609,9 @@ public class Mesh3 extends Mesh {
     *           the output mesh
     * @return the polygon
     */
-   public static Mesh3 polygon ( final int sectors, final Mesh3 target ) {
+   public static Mesh3 polygon (
+         final int sectors,
+         final Mesh3 target ) {
 
       final int seg = sectors < 3 ? 3 : sectors;
       final float toTheta = IUtils.TAU / seg;
@@ -1143,6 +643,128 @@ public class Mesh3 extends Mesh {
 
       target.name = "Polygon";
       return target.set(faces, coords, texCoords, normals);
+   }
+
+   /**
+    * Creates a UV sphere.
+    * 
+    * @param radius
+    *           the radius
+    * @param longitudes
+    *           the longitudes
+    * @param latitudes
+    *           the latitudes
+    * @param target
+    *           the output mesh
+    * @return the sphere
+    */
+   public static Mesh3 sphere (
+         final float radius,
+         final int longitudes,
+         final int latitudes,
+         final Mesh3 target ) {
+
+      // TODO: Creates a seam. Needs to switch to using modulo in
+      // faces, and to use one last longitude.
+
+      final float vrad = Utils.max(Utils.EPSILON, radius);
+      final int vlats = latitudes < 3 ? 3 : latitudes;
+      final int vlons = longitudes < 3 ? 3 : longitudes;
+
+      final int lats1 = vlats + 1;
+      final int lons1 = vlons + 1;
+      final int len = lats1 * lons1;
+
+      final Vec3[] coords = new Vec3[len];
+      final Vec2[] texCoords = new Vec2[len];
+      final Vec3[] normals = new Vec3[len];
+
+      final float toU = 1.0f / vlons;
+      // final float toU = 1.0f / lons1;
+      final float toV = 1.0f / vlats;
+
+      for (int k = 0, i = 0; i < lats1; ++i) {
+         final float v = i * toV;
+         final float phi = 0.5f * v - 0.25f;
+         final float cosPhi = SinCos.eval(phi);
+         final float sinPhi = SinCos.eval(phi - 0.25f);
+
+         for (int j = 0; j < lons1; ++j, ++k) {
+            final float u = j * toU;
+            final float theta = u;
+            final float cosTheta = SinCos.eval(theta);
+            final float sinTheta = SinCos.eval(theta - 0.25f);
+
+            texCoords[k] = new Vec2(u, v);
+
+            final Vec3 nrm = normals[k] = new Vec3(
+                  cosPhi * cosTheta,
+                  cosPhi * sinTheta,
+                  sinPhi);
+            coords[k] = Vec3.mul(nrm, vrad, new Vec3());
+         }
+      }
+
+      final int[][][] faces = new int[2 * vlons * vlats][3][3];
+      final int sliceCount = vlons + 1;
+      int e = 0;
+      int f = sliceCount;
+      for (int k = 0, i = 0; i < vlats; ++i) {
+         for (int j = 0; j < vlons; ++j, k += 2) {
+            final int a = e + j;
+            final int b = a + 1;
+            final int d = f + j;
+            final int c = d + 1;
+
+            faces[k] = new int[][] {
+                  { a, a, a }, { b, b, b }, { d, d, d } };
+
+            faces[k + 1] = new int[][] {
+                  { d, d, d }, { b, b, b }, { c, c, c } };
+         }
+
+         e += sliceCount;
+         f += sliceCount;
+      }
+
+      target.name = "UV Sphere";
+      return target.set(faces, coords, texCoords, normals);
+   }
+
+   /**
+    * Creates a UV sphere.
+    * 
+    * @param radius
+    *           the radius
+    * @param target
+    *           the output mesh
+    * @return the sphere
+    */
+   public static Mesh3 sphere (
+         final float radius,
+         final Mesh3 target ) {
+
+      return Mesh3.sphere(
+            radius,
+            Mesh.DEFAULT_CIRCLE_SECTORS,
+            Mesh.DEFAULT_CIRCLE_SECTORS >> 1,
+            target);
+   }
+
+   /**
+    * Creates a UV sphere.
+    * 
+    * @param target
+    *           the output mesh
+    * @return the sphere
+    */
+   public static Mesh3 sphere ( final Mesh3 target ) {
+
+      return Mesh3.sphere(
+            0.5f,
+            Mesh.DEFAULT_CIRCLE_SECTORS,
+            Mesh.DEFAULT_CIRCLE_SECTORS >> 1,
+            target);
    }
 
    /**
@@ -1198,81 +820,175 @@ public class Mesh3 extends Mesh {
        * 0.40824829046386301636621401245098
        */
       final Vec3[] coords = new Vec3[] {
-            new Vec3(0.0f, 0.47140452f, -0.16666667f),
-            new Vec3(-0.4082483f, -0.23570226f, -0.16666667f),
-            new Vec3(0.4082483f, -0.23570226f, -0.16666667f),
+            new Vec3(-0.0f, 0.47140452f, -0.16666667f),
+            new Vec3(-0.40824829f, -0.23570226f, -0.16666667f),
+            new Vec3(0.40824829f, -0.23570226f, -0.16666667f),
             new Vec3(0.0f, 0.0f, 0.5f)
-      };
-
-      final Vec2[] texCoords = new Vec2[] {
-            new Vec2(0.5f, 1.0f),
-            new Vec2(1.0f, 0.0f),
-            new Vec2(0.0f, 0.0f),
-            new Vec2(0.5f, 0.33333333f)
       };
 
       final Vec3[] normals = new Vec3[] {
             new Vec3(0.0f, 0.0f, -1.0f),
-            new Vec3(-0.8165f, 0.4714f, 0.33333333f),
-            new Vec3(0.8165f, 0.4714f, 0.33333333f),
-            new Vec3(0.0f, -0.9428f, 0.33333333f)
+            new Vec3(-0.8164966f, 0.47140453f, 0.33333333f),
+            new Vec3(0.0f, -0.9428091f, 0.33333333f),
+            new Vec3(0.8164966f, 0.47140453f, 0.33333333f)
+      };
+
+      final Vec2[] texCoords = new Vec2[] {
+            new Vec2(0.5f, 0.07735026f),
+            new Vec2(0.5f, 0.11237240f),
+            new Vec2(0.0f, 0.21132487f),
+            new Vec2(0.21132487f, 0.29587588f),
+            new Vec2(0.21132487f, 0.29587588f),
+            new Vec2(0.0f, 0.29587588f),
+            new Vec2(1.0f, 0.211324987f),
+            new Vec2(1.0f, 0.29587588f),
+            new Vec2(0.07735026f, 0.29587588f)
       };
 
       final int[][][] faces = new int[][][] {
-            { { 0, 0, 0 }, { 2, 1, 0 }, { 1, 2, 0 } },
-            { { 0, 0, 1 }, { 1, 2, 1 }, { 3, 3, 1 } },
-            { { 0, 0, 2 }, { 3, 3, 2 }, { 2, 1, 2 } },
-            { { 1, 2, 3 }, { 2, 1, 3 }, { 3, 3, 3 } }
+            { { 0, 0, 0 }, { 2, 6, 0 }, { 1, 2, 0 } },
+            { { 0, 8, 1 }, { 1, 3, 1 }, { 3, 1, 1 } },
+            { { 0, 8, 3 }, { 3, 1, 3 }, { 2, 4, 3 } },
+            { { 1, 5, 2 }, { 2, 7, 2 }, { 3, 1, 2 } }
       };
 
       target.name = "Tetrahedron";
       return target.set(faces, coords, texCoords, normals);
    }
 
+   /**
+    * Creates a torus.
+    * 
+    * @param radius
+    *           the radius
+    * @param tubeRadius
+    *           the tube thickness
+    * @param xDetail
+    *           number of sectors
+    * @param yDetail
+    *           number of panels in a sector
+    * @param target
+    *           the output mesh
+    * @return the torus
+    */
    @Experimental
-   public static Mesh3 torus ( final float radius, final float tubeRadius,
-         final int detailX, final int detailY,
+   public static Mesh3 torus (
+         final float radius,
+         final float tubeRadius,
+         final int xDetail,
+         final int yDetail,
          final Mesh3 target ) {
 
-      // TODO: REWORKING...
+      // TODO: Creates a seam. Needs to switch to using modulo in
+      // faces, and to use one last longitude.
 
-      final float tubeRatio = tubeRadius / radius;
-      final float toV = 1.0f / detailY;
-      final float toU = 1.0f / detailX;
-      final int detailY1 = detailY + 1;
-      final int detailX1 = detailX + 1;
+      final float vtrad = Utils.max(Utils.EPSILON, tubeRadius);
+      final float vrad = Utils.max(vtrad, radius);
+      final int sectors = xDetail < 3 ? 3 : xDetail;
+      final int panels = yDetail < 3 ? 3 : yDetail;
 
-      final int len = detailY1 * detailX1;
+      final int panels1 = panels + 1;
+      final int sectors1 = sectors + 1;
+      final int len = panels1 * sectors1;
+
       final Vec3[] coords = new Vec3[len];
       final Vec2[] texCoords = new Vec2[len];
       final Vec3[] normals = new Vec3[len];
-      for (int k = 0, i = 0; i < detailY1; ++i) {
+
+      // final float tubeRatio = vtrad / vrad;
+      final float tubeRatio = 0.5f * vtrad / vrad;
+      final float toU = 1.0f / sectors;
+      final float toV = 1.0f / panels;
+
+      for (int k = 0, i = 0; i < panels1; ++i) {
+
          final float v = i * toV;
-         // final float phi = IUtils.TAU * v;
-         // final float cosPhi = Utils.cos(phi);
-         // final float sinPhi = Utils.sin(phi);
          final float cosPhi = SinCos.eval(v);
          final float sinPhi = SinCos.eval(v - 0.25f);
-         final float r = 1.0f + tubeRatio * cosPhi;
+         // final float r = 1.0f + tubeRatio * cosPhi;
+         final float r = 0.5f + tubeRatio * cosPhi;
 
-         for (int j = 0; j < detailX1; ++j, ++k) {
-            final float u = j / toU;
-            // final float theta = IUtils.TAU * u;
-            // final float cosTheta = Utils.cos(theta);
-            // final float sinTheta = Utils.sin(theta);
+         for (int j = 0; j < sectors1; ++j, ++k) {
+
+            final float u = j * toU;
             final float cosTheta = SinCos.eval(u);
             final float sinTheta = SinCos.eval(u - 0.25f);
 
-            coords[k] = new Vec3(r * cosTheta, r * sinTheta,
+            coords[k] = new Vec3(
+                  r * cosTheta,
+                  r * sinTheta,
                   tubeRatio * sinPhi);
 
             texCoords[k] = new Vec2(u, v);
 
-            normals[k] = new Vec3(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
+            normals[k] = new Vec3(
+                  cosPhi * cosTheta,
+                  cosPhi * sinTheta,
+                  sinPhi);
          }
       }
 
-      return target;
+      final int[][][] faces = new int[2 * sectors * panels][3][3];
+      final int sliceCount = sectors + 1;
+      int e = 0;
+      int f = sliceCount;
+      for (int k = 0, i = 0; i < panels; ++i) {
+         for (int j = 0; j < sectors; ++j, k += 2) {
+            final int a = e + j;
+            final int b = a + 1;
+            final int d = f + j;
+            final int c = d + 1;
+
+            faces[k] = new int[][] {
+                  { a, a, a }, { b, b, b }, { d, d, d } };
+
+            faces[k + 1] = new int[][] {
+                  { d, d, d }, { b, b, b }, { c, c, c } };
+         }
+
+         e += sliceCount;
+         f += sliceCount;
+      }
+
+      target.name = "Torus";
+      return target.set(faces, coords, texCoords, normals);
+   }
+
+   /**
+    * Creates a torus.
+    * 
+    * @param radius
+    *           the radius
+    * @param tubeRadius
+    *           the tube thickness
+    * @param target
+    *           the output mesh
+    * @return the torus
+    */
+   public static Mesh3 torus (
+         final float radius,
+         final float tubeRadius,
+         final Mesh3 target ) {
+
+      return Mesh3.torus(radius, tubeRadius,
+            Mesh.DEFAULT_CIRCLE_SECTORS,
+            Mesh.DEFAULT_CIRCLE_SECTORS >> 1,
+            target);
+   }
+
+   /**
+    * Creates a torus.
+    * 
+    * @param target
+    *           the output mesh
+    * @return the torus
+    */
+   public static Mesh3 torus ( final Mesh3 target ) {
+
+      return Mesh3.torus(0.5f, 0.15f,
+            Mesh.DEFAULT_CIRCLE_SECTORS,
+            Mesh.DEFAULT_CIRCLE_SECTORS >> 1,
+            target);
    }
 
    /**
@@ -1298,8 +1014,10 @@ public class Mesh3 extends Mesh {
 
       final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
 
-      final int[][][] faces = new int[][][] {
-            { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 } } };
+      final int[][][] faces = new int[][][] { {
+            { 0, 0, 0 },
+            { 1, 1, 0 },
+            { 2, 2, 0 } } };
 
       target.name = "Triangle";
       return target.set(faces, coords, texCoords, normals);
@@ -1461,6 +1179,17 @@ public class Mesh3 extends Mesh {
          }
       }
 
+      result.append("], \"normals\": [");
+      
+      final int nlen = this.normals.length;
+      final int nlast = nlen - 1;
+      for (int h = 0; h < nlen; ++h) {
+         result.append(this.normals[h].toBlenderCode());
+         if (h < nlast) {
+            result.append(',').append(' ');
+         }
+      }
+      
       result.append(']').append('}');
       return result.toString();
    }
@@ -1471,20 +1200,99 @@ public class Mesh3 extends Mesh {
       if (this == obj) {
          return true;
       }
+
       if (!super.equals(obj)) {
          return false;
       }
+
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+
       final Mesh3 other = (Mesh3) obj;
       if (!Arrays.equals(this.coords, other.coords)) {
          return false;
       }
+
       if (!Arrays.deepEquals(this.faces, other.faces)) {
          return false;
       }
       return true;
+   }
+
+   /**
+    * Gets an edge from the mesh.
+    *
+    * @param i
+    *           the face index
+    * @param j
+    *           the vertex index
+    * @param target
+    *           the output edge
+    * @return the edge
+    */
+   @Experimental
+   public Edge3 getEdge (
+         final int i,
+         final int j,
+         final Edge3 target ) {
+
+      final int[][] f0 = this.faces[Math.floorMod(
+            i, this.faces.length)];
+      final int f0len = f0.length;
+      final int[] f1 = f0[Math.floorMod(
+            j, f0len)];
+      final int[] f2 = f0[Math.floorMod(
+            j + 1, f0len)];
+
+      return target.set(
+            this.coords[f1[0]],
+            this.texCoords[f1[1]],
+            this.normals[f1[2]],
+
+            this.coords[f2[0]],
+            this.texCoords[f2[1]],
+            this.normals[f2[2]]);
+   }
+
+   /**
+    * Gets an array of edges from the mesh.
+    *
+    * @return the edges array
+    */
+   @Experimental
+   public Edge3[] getEdges () {
+
+      final ArrayList < Edge3 > result = new ArrayList <>();
+      Edge3 trial = new Edge3();
+      final int len0 = this.faces.length;
+
+      for (int i = 0; i < len0; ++i) {
+
+         final int[][] fs = this.faces[i];
+         final int len1 = fs.length;
+
+         for (int j = 0; j < len1; ++j) {
+
+            final int[] fo = fs[j];
+            final int[] fd = fs[(j + 1) % len1];
+            trial.set(
+                  this.coords[fo[0]],
+                  this.texCoords[fo[1]],
+                  this.normals[fo[2]],
+
+                  this.coords[fd[0]],
+                  this.texCoords[fd[1]],
+                  this.normals[fd[2]]);
+
+            if (!result.contains(trial)) {
+               result.add(trial);
+               trial = new Edge3();
+            }
+         }
+      }
+
+      return result.toArray(new Edge3[result.size()]);
    }
 
    /**
@@ -1498,13 +1306,15 @@ public class Mesh3 extends Mesh {
     */
    public Face3 getFace ( final int i, final Face3 target ) {
 
-      final int[][] face = this.faces[i];
+      final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
       final int len = face.length;
       final Vert3[] vertices = new Vert3[len];
 
       for (int j = 0; j < len; ++j) {
          final int[] vert = face[j];
-         vertices[j] = new Vert3(this.coords[vert[0]], this.texCoords[vert[1]],
+         vertices[j] = new Vert3(
+               this.coords[vert[0]],
+               this.texCoords[vert[1]],
                this.normals[vert[2]]);
       }
 
@@ -1512,7 +1322,7 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Gets an array of faces from teh mesh.
+    * Gets an array of faces from the mesh.
     *
     * @return the faces array
     */
@@ -1530,7 +1340,9 @@ public class Mesh3 extends Mesh {
          for (int j = 0; j < len1; ++j) {
 
             final int[] fs1 = fs0[j];
-            verts[j] = new Vert3(this.coords[fs1[0]], this.texCoords[fs1[1]],
+            verts[j] = new Vert3(
+                  this.coords[fs1[0]],
+                  this.texCoords[fs1[1]],
                   this.normals[fs1[2]]);
          }
 
@@ -1551,11 +1363,20 @@ public class Mesh3 extends Mesh {
     *           the output vertex
     * @return the vertex
     */
-   public Vert3 getVertex ( final int i, final int j, final Vert3 target ) {
+   public Vert3 getVertex (
+         final int i,
+         final int j,
+         final Vert3 target ) {
 
-      final int[] vert = this.faces[i][j];
-      return target.set(this.coords[vert[0]], this.texCoords[vert[1]],
-            this.normals[vert[2]]);
+      final int[][] f0 = this.faces[Math.floorMod(
+            i, this.faces.length)];
+      final int[] f = f0[Math.floorMod(
+            j, f0.length)];
+
+      return target.set(
+            this.coords[f[0]],
+            this.texCoords[f[1]],
+            this.normals[f[2]]);
    }
 
    /**
@@ -1577,7 +1398,9 @@ public class Mesh3 extends Mesh {
          for (int j = 0; j < len1; ++j) {
 
             final int[] f = fs[j];
-            trial.set(this.coords[f[0]], this.texCoords[f[1]],
+            trial.set(
+                  this.coords[f[0]],
+                  this.texCoords[f[1]],
                   this.normals[f[2]]);
 
             if (!result.contains(trial)) {
@@ -1618,13 +1441,16 @@ public class Mesh3 extends Mesh {
       final float sina = SinCos.eval(nrm - 0.25f);
 
       Vec3 c;
-      Vec3 n;
-
-      final int len = this.coords.length;
-      for (int i = 0; i < len; ++i) {
+      final int len0 = this.coords.length;
+      for (int i = 0; i < len0; ++i) {
          c = this.coords[i];
-         n = this.normals[i];
          Vec3.rotate(c, cosa, sina, axis, c);
+      }
+
+      Vec3 n;
+      final int len1 = this.normals.length;
+      for (int j = 0; j < len1; ++j) {
+         n = this.normals[j];
          Vec3.rotate(n, cosa, sina, axis, n);
       }
 
@@ -1643,15 +1469,19 @@ public class Mesh3 extends Mesh {
    public Mesh3 rotate ( final Quaternion q ) {
 
       Vec3 c;
-      Vec3 n;
-
-      final int len = this.coords.length;
-      for (int i = 0; i < len; ++i) {
+      final int len0 = this.coords.length;
+      for (int i = 0; i < len0; ++i) {
          c = this.coords[i];
-         n = this.normals[i];
          Quaternion.mulVector(q, c, c);
+      }
+
+      Vec3 n;
+      final int len1 = this.normals.length;
+      for (int j = 0; j < len1; ++j) {
+         n = this.normals[j];
          Quaternion.mulVector(q, n, n);
       }
+
       return this;
    }
 
@@ -1672,13 +1502,16 @@ public class Mesh3 extends Mesh {
       final float sina = SinCos.eval(nrm - 0.25f);
 
       Vec3 c;
-      Vec3 n;
-
-      final int len = this.coords.length;
-      for (int i = 0; i < len; ++i) {
+      final int len0 = this.coords.length;
+      for (int i = 0; i < len0; ++i) {
          c = this.coords[i];
-         n = this.normals[i];
-         Vec3.rotateX(c, cosa, sina, n);
+         Vec3.rotateX(c, cosa, sina, c);
+      }
+
+      Vec3 n;
+      final int len1 = this.normals.length;
+      for (int j = 0; j < len1; ++j) {
+         n = this.normals[j];
          Vec3.rotateX(n, cosa, sina, n);
       }
 
@@ -1702,13 +1535,16 @@ public class Mesh3 extends Mesh {
       final float sina = SinCos.eval(nrm - 0.25f);
 
       Vec3 c;
-      Vec3 n;
-
-      final int len = this.coords.length;
-      for (int i = 0; i < len; ++i) {
+      final int len0 = this.coords.length;
+      for (int i = 0; i < len0; ++i) {
          c = this.coords[i];
-         n = this.normals[i];
          Vec3.rotateY(c, cosa, sina, c);
+      }
+
+      Vec3 n;
+      final int len1 = this.normals.length;
+      for (int j = 0; j < len1; ++j) {
+         n = this.normals[j];
          Vec3.rotateY(n, cosa, sina, n);
       }
 
@@ -1732,13 +1568,16 @@ public class Mesh3 extends Mesh {
       final float sina = SinCos.eval(nrm - 0.25f);
 
       Vec3 c;
-      Vec3 n;
-
-      final int len = this.coords.length;
-      for (int i = 0; i < len; ++i) {
+      final int len0 = this.coords.length;
+      for (int i = 0; i < len0; ++i) {
          c = this.coords[i];
-         n = this.normals[i];
          Vec3.rotateZ(c, cosa, sina, c);
+      }
+
+      Vec3 n;
+      final int len1 = this.normals.length;
+      for (int j = 0; j < len1; ++j) {
+         n = this.normals[j];
          Vec3.rotateZ(n, cosa, sina, n);
       }
 
@@ -1801,8 +1640,11 @@ public class Mesh3 extends Mesh {
     * @return this mesh
     */
    @Chainable
-   public Mesh3 set ( final int[][][] faces, final Vec3[] coords,
-         final Vec2[] texCoords, final Vec3[] normals ) {
+   public Mesh3 set (
+         final int[][][] faces,
+         final Vec3[] coords,
+         final Vec2[] texCoords,
+         final Vec3[] normals ) {
 
       this.faces = faces;
       this.coords = coords;
@@ -1829,42 +1671,57 @@ public class Mesh3 extends Mesh {
        * Append a comment listing the number of coordinates,
        * texture coordinates, normals and faces.
        */
-      result.append("# v: ").append(coordsLen).append(", vt: ")
-            .append(texCoordsLen).append(", vn: ").append(normalsLen)
-            .append(", f: ").append(facesLen).append('\n').append('\n');
+      result.append("# v: ").append(coordsLen)
+            .append(", vt: ").append(texCoordsLen)
+            .append(", vn: ").append(normalsLen)
+            .append(", f: ").append(facesLen)
+            .append('\n').append('\n');
 
-      result.append('o').append(' ').append(this.name).append('\n')
-            .append('\n');
+      result.append('o').append(' ').append(this.name)
+            .append('\n').append('\n');
 
       for (final Vec3 coord : this.coords) {
-         result.append('v').append(' ').append(coord.toObjString())
+         result.append('v').append(' ')
+               .append(coord.toObjString())
                .append('\n');
       }
       result.append('\n');
 
       for (final Vec2 texCoord : this.texCoords) {
-         result.append("vt ").append(texCoord.toObjString()).append('\n');
+         result.append("vt ")
+               .append(texCoord.toObjString())
+               .append('\n');
       }
       result.append('\n');
 
       for (final Vec3 normal : this.normals) {
-         result.append("vn ").append(normal.toObjString()).append('\n');
+         result.append("vn ")
+               .append(normal.toObjString())
+               .append('\n');
       }
       result.append('\n');
 
       for (int i = 0; i < facesLen; ++i) {
+
          final int[][] face = this.faces[i];
          final int vLen = face.length;
          result.append('f').append(' ');
+
          for (int j = 0; j < vLen; ++j) {
 
             /* Indices in an .obj file start at 1, not 0. */
             final int[] vert = face[j];
-            result.append(vert[0] + 1).append('/').append(vert[1] + 1)
-                  .append('/').append(vert[2] + 1).append(' ');
+            result.append(vert[0] + 1)
+                  .append('/')
+                  .append(vert[1] + 1)
+                  .append('/')
+                  .append(vert[2] + 1)
+                  .append(' ');
          }
+
          result.append('\n');
       }
+
       result.append('\n');
       return result.toString();
    }
@@ -1902,11 +1759,15 @@ public class Mesh3 extends Mesh {
     *           truncate elements in a list
     * @return the string
     */
-   public String toString ( final int places, final int truncate ) {
+   public String toString (
+         final int places,
+         final int truncate ) {
 
       final StringBuilder sb = new StringBuilder();
 
-      sb.append("{ name: \"").append(this.name).append("\", coords: [");
+      sb.append("{ name: \"")
+            .append(this.name)
+            .append("\", coords: [");
       if (this.coords != null) {
          sb.append('\n');
          final int len = Math.min(this.coords.length, truncate);
@@ -1978,8 +1839,7 @@ public class Mesh3 extends Mesh {
                sb.append('[').append(' ');
 
                /*
-                * There should be 3 indices: coordinate, texture coordinate
-                * and normal.
+                * 3 indices: coordinate, texture coordinate and normal.
                 */
                for (int k = 0; k < infoLen; ++k) {
 

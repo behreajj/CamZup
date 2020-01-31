@@ -4,10 +4,11 @@ import java.util.Iterator;
 
 import camzup.core.Color;
 import camzup.core.Curve2;
-import camzup.core.Curve2.Knot2;
 import camzup.core.IUtils;
+import camzup.core.Knot2;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
+import camzup.core.MaterialSolid;
 import camzup.core.Transform;
 import camzup.core.Transform2;
 import camzup.core.Utils;
@@ -588,7 +589,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float exponent ) {
 
       final int num2 = num + num;
-      this.lightSpotParameters[num2] = Utils.max(0.0f, PApplet.cos(radians));
+      this.lightSpotParameters[num2] = Utils.max(0.0f, Utils.cos(radians));
       this.lightSpotParameters[num2 + 1] = exponent;
    }
 
@@ -823,9 +824,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       PMatAux.rotate(angle,
             xAxis, yAxis, zAxis,
             this.modelview);
-      PMatAux.invRotate(angle,
-            xAxis, yAxis, zAxis,
-            this.modelviewInv);
+      // PMatAux.invRotate(angle,
+      // xAxis, yAxis, zAxis,
+      // this.modelviewInv);
+      PMatAux.invert(this.modelview, this.modelviewInv);
 
       this.updateProjmodelview();
    }
@@ -2172,6 +2174,29 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Sets the renderer's stroke, stroke weight and fill to the
+    * material's.
+    *
+    * @param material
+    *           the material
+    */
+   public void material ( final MaterialSolid material ) {
+
+      if (material.useStroke) {
+         this.strokeWeight(material.strokeWeight);
+         this.stroke(material.stroke);
+      } else {
+         this.noStroke();
+      }
+
+      if (material.useFill) {
+         this.fill(material.fill);
+      } else {
+         this.noFill();
+      }
+   }
+
+   /**
     * Processing's modelX, modelY and modelZ functions are very
     * inefficient, as each one calculates the product of the
     * modelview and the point. This function groups all three
@@ -2271,11 +2296,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        * actual constants.
        */
 
-      final float right = this.width < 128 ? IUp.DEFAULT_HALF_WIDTH
+      final float right = this.width < 128
+            ? IUp.DEFAULT_HALF_WIDTH
             : this.width * 0.5f;
       final float left = -right;
 
-      final float top = this.height < 128 ? IUp.DEFAULT_HALF_HEIGHT
+      final float top = this.height < 128
+            ? IUp.DEFAULT_HALF_HEIGHT
             : this.height * 0.5f;
       final float bottom = -top;
 
@@ -2306,6 +2333,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        * actual constants.
        */
 
+      // TODO: Does this need to calculate near and far based on
+      // camera pos?
       this.ortho(left, right,
             bottom, top,
             IUp.DEFAULT_NEAR_CLIP, IUp.DEFAULT_FAR_CLIP);
@@ -2355,9 +2384,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        * actual constants.
        */
 
+      final float aspect = this.width > 128 && this.height > 128
+            ? this.width / (float) this.height
+            : IUp.DEFAULT_ASPECT;
+
+      // TODO: Does this need to calculate near and far based on
+      // camera loc?
       this.perspective(
             IUp.DEFAULT_FOV,
-            IUp.DEFAULT_ASPECT,
+            aspect,
             IUp.DEFAULT_NEAR_CLIP,
             IUp.DEFAULT_FAR_CLIP);
    }
@@ -2667,8 +2702,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void rotateX ( final float angle ) {
 
       PMatAux.rotateX(angle, this.modelview);
-      PMatAux.invRotateX(angle, this.modelviewInv);
+      PMatAux.invert(this.modelview, this.modelviewInv);
       this.updateProjmodelview();
+
    }
 
    /**
@@ -2687,7 +2723,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void rotateY ( final float angle ) {
 
       PMatAux.rotateY(angle, this.modelview);
-      PMatAux.invRotateY(angle, this.modelviewInv);
+      PMatAux.invert(this.modelview, this.modelviewInv);
       this.updateProjmodelview();
    }
 
@@ -2707,7 +2743,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void rotateZ ( final float angle ) {
 
       PMatAux.rotateZ(angle, this.modelview);
-      PMatAux.invRotateZ(angle, this.modelviewInv);
+      PMatAux.invert(this.modelview, this.modelviewInv);
       this.updateProjmodelview();
    }
 
@@ -2896,10 +2932,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.defCameraX = 0.0f;
       this.defCameraY = 0.0f;
 
-      // TODO: Replace with inline-sin cos since you're flipping
-      // the division.
-      this.defCameraZ = this.height
-            / PApplet.tan(this.defCameraFOV * 0.5f);
+      this.defCameraZ = this.height * Utils.cot(this.defCameraFOV * 0.5f);
       this.defCameraNear = this.defCameraZ * 0.01f;
       this.defCameraFar = this.defCameraZ * 10.0f;
       this.defCameraAspect = (float) this.width / (float) this.height;

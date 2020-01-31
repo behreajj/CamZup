@@ -29,7 +29,7 @@ void setup() {
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 
-  entity.transform.rotateZ(0.025);
+  entity.transform.rotateZ(0.02);
 
   graphics2.background();
   graphics2.origin();

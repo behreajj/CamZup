@@ -26,17 +26,14 @@ void setup() {
     0.0, 0.0, 0.0, 
     0.0, 1.0, 0.0);
 
-  Quaternion.setEasing(new Quaternion.Slerp());
-
-  Mesh3 mesh = Mesh3.icosahedron(new Mesh3());
+  Mesh3 mesh = Mesh3.dodecahedron(new Mesh3());
   entity.appendMesh(mesh);
 
-  MaterialSolid material = new MaterialSolid();
-  material.setStroke(true);
-  material.setStroke(0xffff7d5);
-  material.setStrokeWeight(1.0);
-  material.setFill(0xff817d6c);
-
+  MaterialSolid material = new MaterialSolid()
+    .setFill(#00939c)
+    .setStroke(#ff798a)
+    .setStrokeWeight(2.0)
+    .toggleStroke();
   entity.appendMaterial(material);
 
   entity.transform.scaleTo(min(width, height) * 0.5);
@@ -70,9 +67,7 @@ void draw() {
   entity.transform.rotateTo(rotSphere);
 
   graphics.background();
+  graphics.lights();
   graphics.origin();
-
-  graphics.strokeWeight(1.5);
-  graphics.stroke(0xffff0000);
   graphics.shape(entity);
 }

@@ -5,8 +5,9 @@ import java.util.List;
 
 import camzup.core.Color;
 import camzup.core.Curve3;
-import camzup.core.Curve3.Knot3;
 import camzup.core.CurveEntity3;
+import camzup.core.Experimental;
+import camzup.core.Knot3;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh3;
 import camzup.core.MeshEntity3;
@@ -79,13 +80,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
          Yup3.DEFAULT_REF_X,
          Yup3.DEFAULT_REF_Y,
          Yup3.DEFAULT_REF_Z);
-
-   /**
-    * A temporary axis used when converting a transform's
-    * quaternion to an axis-angle, which is in turn converted
-    * to a PMatrix3D.
-    */
-   protected final Vec3 tr3Axis = new Vec3();
 
    /**
     * A temporary point used when converting a transform's
@@ -204,6 +198,201 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             cp0.x, cp0.y, cp0.z,
             cp1.x, cp1.y, cp1.z,
             ap1.x, ap1.y, ap1.z);
+   }
+
+   /**
+    * Draws a 3D cube of a given size.
+    *
+    * @param size
+    *           the size
+    */
+   @Override
+   public void box ( final float size ) {
+
+      this.box(size, size, size);
+   }
+
+   /**
+    * Draws a 3D box with the given width, height and depth.
+    *
+    * @param w
+    *           the width
+    * @param h
+    *           the height
+    * @param d
+    *           the depth
+    */
+   @Override
+   public void box (
+         final float w,
+         final float h,
+         final float d ) {
+
+      final float wHalf = w * 0.5f;
+      final float hHalf = h * 0.5f;
+      final float dHalf = d * 0.5f;
+
+      /* Right */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(1.0f, 0.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.vertexImpl(
+            wHalf, hHalf, -dHalf,
+            1.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      this.beginShape(PConstants.POLYGON);
+      this.normal(1.0f, 0.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, dHalf,
+            0.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      /* Left */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(-1.0f, 0.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, -dHalf,
+            1.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      this.beginShape(PConstants.POLYGON);
+      this.normal(-1.0f, 0.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, dHalf,
+            0.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      /* Forward */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, -dHalf,
+            1.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, hHalf, dHalf,
+            0.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      /* Back */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, -1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, -dHalf,
+            1.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, -1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, dHalf,
+            0.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      /* Up */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 0.0f, 1.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, dHalf,
+            0.0f, 1.0f);
+      this.vertexImpl(
+            wHalf, hHalf, dHalf,
+            1.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 0.0f, 1.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, dHalf,
+            0.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, dHalf,
+            0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      /* Down */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 0.0f, -1.0f);
+      this.vertexImpl(
+            wHalf, hHalf, -dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.vertexImpl(
+            -wHalf, hHalf, -dHalf,
+            1.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 0.0f, -1.0f);
+      this.vertexImpl(
+            wHalf, hHalf, -dHalf,
+            1.0f, 0.0f);
+      this.vertexImpl(
+            wHalf, -hHalf, -dHalf,
+            0.0f, 0.0f);
+      this.vertexImpl(
+            -wHalf, -hHalf, -dHalf,
+            0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
    }
 
    /**
@@ -631,19 +820,24 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     * @param material
     *           the material
     */
+   @Override
    public void material ( final MaterialSolid material ) {
-
-      if (material.useStroke) {
-         this.strokeWeight(material.strokeWeight);
-         this.stroke(Color.toHexInt(material.stroke));
-      } else {
-         this.noStroke();
-      }
 
       if (material.useFill) {
          this.fill(material.fill);
       } else {
          this.noFill();
+         if (material.useStroke) {
+
+            /*
+             * FIXME: Due to stroke flickering issues, a material in 3D
+             * will not have both a stroke and a fill.
+             */
+            this.strokeWeight(material.strokeWeight);
+            this.stroke(Color.toHexInt(material.stroke));
+         } else {
+            this.noStroke();
+         }
       }
    }
 
@@ -777,6 +971,20 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    }
 
    /**
+    * Rotates the renderer by a quaternion.
+    *
+    * @param q
+    *           the quaternion
+    */
+   @Experimental
+   public void rotate ( final Quaternion q ) {
+
+      PMatAux.rotate(q, this.modelview);
+      PMatAux.rotateInv(q, this.modelviewInv);
+      this.updateProjmodelview();
+   }
+
+   /**
     * Scales the renderer by a dimension.
     *
     * @param dim
@@ -902,10 +1110,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
          final Mesh3 mesh = meshItr.next();
 
          if (useMaterial) {
-            /*
-             * TODO: Flickering issue with strokes. Maybe don't allow 3D
-             * meshes to have solid materials.
-             */
             final int index = mesh.materialIndex;
             final MaterialSolid material = materials.get(index);
             this.pushStyle();
@@ -936,7 +1140,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
                Transform3.mulDir(tr, vns[vnIndex], vn);
 
                this.normal(vn.x, vn.y, vn.z);
-               this.vertexImpl(v.x, v.y, v.z,
+               this.vertexImpl(
+                     v.x, v.y, v.z,
                      vt.x, vt.y);
             }
             this.endShape(PConstants.CLOSE);
@@ -1119,7 +1324,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     * @see IUp3#DEFAULT_SPHERE_DETAIL
     */
    @Override
-   public void sphereDetail ( final int longitudes, final int latitudes ) {
+   public void sphereDetail (
+         final int longitudes,
+         final int latitudes ) {
 
       final int lon = longitudes < 3 ? 3 : longitudes;
       final int lat = latitudes < 3 ? 3 : latitudes;
@@ -1226,53 +1433,49 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
          final Transform3 tr3,
          final Transform.Order order ) {
 
+      tr3.getScale(this.tr3Scale);
+      tr3.getLocation(this.tr3Loc);
       tr3.getRotation(this.tr3Rot);
-      final float angle = Quaternion.toAxisAngle(
-            this.tr3Rot, this.tr3Axis);
-      final Vec3 axis = this.tr3Axis;
-
-      final Vec3 dim = tr3.getScale(this.tr3Scale);
-      final Vec3 loc = tr3.getLocation(this.tr3Loc);
 
       switch (order) {
 
          case RST:
 
-            this.rotateImpl(angle, axis.x, axis.y, axis.z);
-            this.scale(dim.x, dim.y, dim.z);
-            this.translate(loc.x, loc.y, loc.z);
+            this.rotate(this.tr3Rot);
+            this.scale(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
+            this.translate(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
 
             return;
 
          case RTS:
 
-            this.rotateImpl(angle, axis.x, axis.y, axis.z);
-            this.translate(loc.x, loc.y, loc.z);
-            this.scale(dim.x, dim.y, dim.z);
+            this.rotate(this.tr3Rot);
+            this.translate(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
+            this.scale(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
 
             return;
 
          case SRT:
 
-            this.scale(dim.x, dim.y, dim.z);
-            this.rotateImpl(angle, axis.x, axis.y, axis.z);
-            this.translate(loc.x, loc.y, loc.z);
+            this.scale(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
+            this.rotate(this.tr3Rot);
+            this.translate(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
 
             return;
 
          case STR:
 
-            this.scale(dim.x, dim.y, dim.z);
-            this.translate(loc.x, loc.y, loc.z);
-            this.rotateImpl(angle, axis.x, axis.y, axis.z);
+            this.scale(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
+            this.translate(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
+            this.rotate(this.tr3Rot);
 
             return;
 
          case TSR:
 
-            this.translate(loc.x, loc.y, loc.z);
-            this.scale(dim.x, dim.y, dim.z);
-            this.rotateImpl(angle, axis.x, axis.y, axis.z);
+            this.translate(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
+            this.scale(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
+            this.rotate(this.tr3Rot);
 
             return;
 
@@ -1280,9 +1483,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
          default:
 
-            this.translate(loc.x, loc.y, loc.z);
-            this.rotateImpl(angle, axis.x, axis.y, axis.z);
-            this.scale(dim.x, dim.y, dim.z);
+            this.translate(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
+            this.rotate(this.tr3Rot);
+            this.scale(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
 
             return;
       }

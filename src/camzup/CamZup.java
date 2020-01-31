@@ -1,6 +1,7 @@
 package camzup;
 
 import camzup.core.Mesh3;
+import camzup.core.MeshEntity3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -86,6 +87,44 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
+       MeshEntity3 me = new MeshEntity3();
+       Mesh3 m = new Mesh3();
+       me.appendMesh(Mesh3.dodecahedron(m));
+       System.out.println(me.toBlenderCode());
+
+      // int count = 10;
+      // Random rng = new Random();
+      // float angle = 0.0f;
+      // Vec3 axis = new Vec3();
+      // PMatrix3D test = new PMatrix3D();
+      // PMatrix3D control = new PMatrix3D();
+      // Quaternion inv = new Quaternion();
+      // Vec3 axisInv = new Vec3();
+      // for (int i = 0; i < count; ++i) {
+      // control.reset();
+      // test.reset();
+      //
+      // Quaternion q = Quaternion.random(rng, new Quaternion());
+      // angle = Quaternion.toAxisAngle(q, axis);
+      // System.out.println(IUtils.RAD_TO_DEG * angle);
+      // System.out.println(axis);
+      // System.out.println("");
+      //
+      // Quaternion.inverse(q, inv);
+      // float angleInv = Quaternion.toAxisAngle(inv, axisInv);
+      // System.out.println(IUtils.RAD_TO_DEG * angleInv);
+      // System.out.println(axisInv);
+      // System.out.println("");
+      //
+      // PMatAux.invRotate(angle, axis.x, axis.y, axis.z,
+      // control);
+      // System.out.println(PMatAux.toString(control, 4));
+      //
+      // PMatAux.invRotate(q, test);
+      // // PMatAux.rotate(inv, test);
+      // System.out.println(PMatAux.toString(test, 4));
+      // System.out.println("");
+      // }
    }
 
    /**

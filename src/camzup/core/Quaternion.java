@@ -1607,7 +1607,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       }
 
       final Vec3 i = q.imag;
-      if (mSq == 1.0f) {
+      if (Utils.approx(mSq, 1.0f)) {
          return target.set(q.real, -i.x, -i.y, -i.z);
       }
 
@@ -2575,6 +2575,58 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion q,
          final Vec3 axis ) {
 
+      // final float mSq = Quaternion.magSq(q);
+      //
+      // if (mSq == 0.0f) {
+      // Vec3.forward(axis);
+      // return 0.0f;
+      // }
+
+      // double wNorm;
+      // final Vec3 i = q.imag;
+
+      // if (Math.abs(1.0d - mSq) < Utils.EPSILON) {
+      // wNorm = q.real;
+      // } else {
+      // final double mInv = 1.0d / Math.sqrt(mSq);
+      // wNorm = q.real * mInv;
+      // }
+
+      // final double angle = wNorm <= -1.0d ? IUtils.TAU_D
+      // : wNorm >= 1.0d ? 0.0d : 2.0d * Math.acos(wNorm);
+      // final double wAsin = IUtils.TAU_D - angle;
+      // if (wAsin == 0.0d) {
+      // Vec3.forward(axis);
+      // return (float) angle;
+      // }
+
+      // final double sInv = 1.0d / wAsin;
+      // final double ax = i.x * sInv;
+      // final double ay = i.y * sInv;
+      // final double az = i.z * sInv;
+
+      // final double amSq = ax * ax + ay * ay + az * az;
+
+      // if (amSq == 0.0d) {
+      // Vec3.forward(axis);
+      // return (float) angle;
+      // }
+
+      // if (Math.abs(1.0d - amSq) < Utils.EPSILON) {
+      // axis.set(
+      // (float) ax,
+      // (float) ay,
+      // (float) az);
+      // return (float) angle;
+      // }
+
+      // final double mInv = 1.0d / Math.sqrt(amSq);
+      // axis.set(
+      // (float) (ax * mInv),
+      // (float) (ay * mInv),
+      // (float) (az * mInv));
+      // return (float) angle;
+
       final float mSq = Quaternion.magSq(q);
 
       if (mSq == 0.0f) {
@@ -2582,62 +2634,37 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          return 0.0f;
       }
 
-      double wNorm;
-      // float xNorm;
-      // float yNorm;
-      // float zNorm;
+      final float wNorm = Utils.approx(mSq, 1.0f) ? q.real
+            : q.real * Utils.invSqrtUnchecked(mSq);
+
+      final float angle = 2.0f * Utils.acos(wNorm);
+      final float wAsin = IUtils.TAU - angle;
+      if (wAsin == 0.0f) {
+         Vec3.forward(axis);
+         return angle;
+      }
+
+      final float sInv = 1.0f / wAsin;
       final Vec3 i = q.imag;
+      final float ax = i.x * sInv;
+      final float ay = i.y * sInv;
+      final float az = i.z * sInv;
 
-      if (Math.abs(1.0d - mSq) < Utils.EPSILON) {
-         final double mInv = 1.0d / Math.sqrt(mSq);
-         wNorm = q.real * mInv;
-         // xNorm = i.x * mInv;
-         // yNorm = i.y * mInv;
-         // zNorm = i.z * mInv;
-      } else {
-         wNorm = q.real;
-         // xNorm = i.x;
-         // yNorm = i.y;
-         // zNorm = i.z;
-      }
+      final float amSq = ax * ax + ay * ay + az * az;
 
-      final double angle = wNorm <= -1.0d ? IUtils.TAU_D
-            : wNorm >= 1.0d ? 0.0d : 2.0d * Math.acos(wNorm);
-      final double wAsin = IUtils.TAU_D - angle;
-      if (wAsin == 0.0d) {
+      if (amSq == 0.0f) {
          Vec3.forward(axis);
-         return (float) angle;
+         return angle;
       }
 
-      final double sInv = 1.0d / wAsin;
-      // final float ax = xNorm * sInv;
-      // final float ay = yNorm * sInv;
-      // final float az = zNorm * sInv;
-      final double ax = i.x * sInv;
-      final double ay = i.y * sInv;
-      final double az = i.z * sInv;
-
-      final double amSq = ax * ax + ay * ay + az * az;
-
-      if (amSq == 0.0d) {
-         Vec3.forward(axis);
-         return (float) angle;
+      if (Utils.approx(amSq, 1.0f)) {
+         axis.set(ax, ay, az);
+         return angle;
       }
 
-      if (Math.abs(1.0d - amSq) < Utils.EPSILON) {
-         axis.set(
-               (float) ax,
-               (float) ay,
-               (float) az);
-         return (float) angle;
-      }
-
-      final double mInv = 1.0d / Math.sqrt(amSq);
-      axis.set(
-            (float) (ax * mInv),
-            (float) (ay * mInv),
-            (float) (az * mInv));
-      return (float) angle;
+      final float mInv = Utils.invSqrtUnchecked(amSq);
+      axis.set(ax * mInv, ay * mInv, az * mInv);
+      return angle;
    }
 
    /**
@@ -2647,16 +2674,17 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    public final Vec3 imag;
 
    /**
-    * The real component.
+    * The real component (also known as w).
     */
    public float real = 1.0f;
 
    {
-      this.imag = new Vec3();
+      this.imag = new Vec3(0.0f, 0.0f, 0.0f);
    }
 
    /**
-    * The default constructor.
+    * The default constructor. Defaults to the identity, (1.0,
+    * 0.0, 0.0, 0.0) .
     */
    public Quaternion () {
 
@@ -2667,7 +2695,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Constructs a quaternion by float component.
     *
     * @param real
-    *           the real (w) component
+    *           the real component (w)
     * @param xImag
     *           the x component
     * @param yImag

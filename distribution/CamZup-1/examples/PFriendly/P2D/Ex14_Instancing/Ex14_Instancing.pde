@@ -5,7 +5,7 @@ int entityCount = 1000;
 MeshEntity2[] entities = new MeshEntity2[entityCount];
 Random rng = new Random();
 Yup2 graphics2;
-Mesh2 mesh = Mesh2.polygon(new Mesh2(), 6, Mesh2.PolyType.NGON);
+Mesh2 mesh = Mesh2.polygon(6, Mesh2.PolyType.NGON, new Mesh2());
 Vec2 locub;
 Vec2 loclb;
 

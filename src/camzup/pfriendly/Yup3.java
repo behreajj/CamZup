@@ -1,5 +1,6 @@
 package camzup.pfriendly;
 
+import camzup.core.Utils;
 import camzup.core.Vec3;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -107,201 +108,6 @@ public class Yup3 extends Up3 {
    }
 
    /**
-    * Draws a 3D cube of a given size.
-    *
-    * @param size
-    *           the size
-    */
-   @Override
-   public void box ( final float size ) {
-
-      this.box(size, size, size);
-   }
-
-   /**
-    * Draws a 3D box with the given width, height and depth.
-    *
-    * @param w
-    *           the width
-    * @param h
-    *           the height
-    * @param d
-    *           the depth
-    */
-   @Override
-   public void box (
-         final float w,
-         final float h,
-         final float d ) {
-
-      final float wHalf = w * 0.5f;
-      final float hHalf = h * 0.5f;
-      final float dHalf = d * 0.5f;
-
-      /* Right */
-      this.beginShape(PConstants.POLYGON);
-      this.normal(1.0f, 0.0f, 0.0f);
-      this.vertexImpl(
-            wHalf, hHalf, dHalf,
-            1.0f, 0.0f);
-      this.vertexImpl(
-            wHalf, -hHalf, -dHalf,
-            0.0f, 1.0f);
-      this.vertexImpl(
-            wHalf, hHalf, -dHalf,
-            1.0f, 1.0f);
-      this.endShape(PConstants.CLOSE);
-
-      this.beginShape(PConstants.POLYGON);
-      this.normal(1.0f, 0.0f, 0.0f);
-      this.vertexImpl(
-            wHalf, hHalf, dHalf,
-            1.0f, 0.0f);
-      this.vertexImpl(
-            wHalf, -hHalf, dHalf,
-            0.0f, 0.0f);
-      this.vertexImpl(
-            wHalf, -hHalf, -dHalf,
-            0.0f, 1.0f);
-      this.endShape(PConstants.CLOSE);
-
-      /* Left */
-      this.beginShape(PConstants.POLYGON);
-      this.normal(-1.0f, 0.0f, 0.0f);
-      this.vertexImpl(
-            -wHalf, -hHalf, dHalf,
-            1.0f, 0.0f);
-      this.vertexImpl(
-            -wHalf, hHalf, -dHalf,
-            0.0f, 1.0f);
-      this.vertexImpl(
-            -wHalf, -hHalf, -dHalf,
-            1.0f, 1.0f);
-      this.endShape(PConstants.CLOSE);
-
-      this.beginShape(PConstants.POLYGON);
-      this.normal(-1.0f, 0.0f, 0.0f);
-      this.vertexImpl(
-            -wHalf, -hHalf, dHalf,
-            1.0f, 0.0f);
-      this.vertexImpl(
-            -wHalf, hHalf, dHalf,
-            0.0f, 0.0f);
-      this.vertexImpl(
-            -wHalf, hHalf, -dHalf,
-            0.0f, 1.0f);
-      this.endShape(PConstants.CLOSE);
-
-      /* Forward */
-      this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 1.0f, 0.0f);
-      this.vertexImpl(
-            -wHalf, hHalf, dHalf,
-            1.0f, 0.0f);
-      this.vertexImpl(
-            wHalf, hHalf, -dHalf,
-            0.0f, 1.0f);
-      this.vertexImpl(
-            -wHalf, hHalf, -dHalf,
-            1.0f, 1.0f);
-      this.endShape(PConstants.CLOSE);
-
-      this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 1.0f, 0.0f);
-      this.vertexImpl(
-            -wHalf, hHalf, dHalf,
-            1.0f, 0.0f);
-      this.vertexImpl(
-            wHalf, hHalf, dHalf,
-            0.0f, 0.0f);
-      this.vertexImpl(
-            wHalf, hHalf, -dHalf,
-            0.0f, 1.0f);
-      this.endShape(PConstants.CLOSE);
-
-      /* Back */
-      this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, -1.0f, 0.0f);
-      this.vertexImpl(
-            wHalf, -hHalf, dHalf,
-            1.0f, 0.0f);
-      this.vertexImpl(
-            -wHalf, -hHalf, -dHalf,
-            0.0f, 1.0f);
-      this.vertexImpl(
-            wHalf, -hHalf, -dHalf,
-            1.0f, 1.0f);
-      this.endShape(PConstants.CLOSE);
-
-      this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, -1.0f, 0.0f);
-      this.vertexImpl(
-            wHalf, -hHalf, dHalf,
-            1.0f, 0.0f);
-      this.vertexImpl(
-            -wHalf, -hHalf, dHalf,
-            0.0f, 0.0f);
-      this.vertexImpl(
-            -wHalf, -hHalf, -dHalf,
-            0.0f, 1.0f);
-      this.endShape(PConstants.CLOSE);
-
-      /* Up */
-      this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, 1.0f);
-      this.vertexImpl(
-            -wHalf, hHalf, dHalf,
-            1.0f, 0.0f);
-      this.vertexImpl(
-            wHalf, -hHalf, dHalf,
-            0.0f, 1.0f);
-      this.vertexImpl(
-            wHalf, hHalf, dHalf,
-            1.0f, 1.0f);
-      this.endShape(PConstants.CLOSE);
-
-      this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, 1.0f);
-      this.vertexImpl(
-            -wHalf, hHalf, dHalf,
-            1.0f, 0.0f);
-      this.vertexImpl(
-            -wHalf, -hHalf, dHalf,
-            0.0f, 0.0f);
-      this.vertexImpl(
-            wHalf, -hHalf, dHalf,
-            0.0f, 1.0f);
-      this.endShape(PConstants.CLOSE);
-
-      /* Down */
-      this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, -1.0f);
-      this.vertexImpl(
-            wHalf, hHalf, -dHalf,
-            1.0f, 0.0f);
-      this.vertexImpl(
-            -wHalf, -hHalf, -dHalf,
-            0.0f, 1.0f);
-      this.vertexImpl(
-            -wHalf, hHalf, -dHalf,
-            1.0f, 1.0f);
-      this.endShape(PConstants.CLOSE);
-
-      this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, -1.0f);
-      this.vertexImpl(
-            wHalf, hHalf, -dHalf,
-            1.0f, 0.0f);
-      this.vertexImpl(
-            wHalf, -hHalf, -dHalf,
-            0.0f, 0.0f);
-      this.vertexImpl(
-            -wHalf, -hHalf, -dHalf,
-            0.0f, 1.0f);
-      this.endShape(PConstants.CLOSE);
-   }
-
-   /**
     * Creates a camera that looks at a default location and a
     * vantage point based on the renderer's height.
     */
@@ -351,8 +157,12 @@ public class Yup3 extends Up3 {
     * @see Yup3#DEFAULT_REF_Z
     */
    public void camera (
-         final float eyeX, final float eyeY, final float eyeZ,
-         final float centerX, final float centerY, final float centerZ ) {
+         final float eyeX,
+         final float eyeY,
+         final float eyeZ,
+         final float centerX,
+         final float centerY,
+         final float centerZ ) {
 
       /*
        * CAUTION: Never use defCameraXXX values. They are not
@@ -372,43 +182,41 @@ public class Yup3 extends Up3 {
     * Looks at the center point from the eye point, using the
     * world up axis as a reference.
     *
-    * @param eyeX
+    * @param xEye
     *           camera location x
-    * @param eyeY
+    * @param yEye
     *           camera location y
-    * @param eyeZ
+    * @param zEye
     *           camera location z
-    * @param centerX
+    * @param xCenter
     *           target location x
-    * @param centerY
+    * @param yCenter
     *           target location y
-    * @param centerZ
+    * @param zCenter
     *           target location z
-    * @param upX
+    * @param xUp
     *           world up axis x
-    * @param upY
+    * @param yUp
     *           world up axis y
-    * @param upZ
+    * @param zUp
     *           world up axis z
     */
    @Override
    public void camera (
-         final float eyeX,
-         final float eyeY,
-         final float eyeZ,
-
-         final float centerX,
-         final float centerY,
-         final float centerZ,
-
-         final float upX,
-         final float upY,
-         final float upZ ) {
+         final float xEye,
+         final float yEye,
+         final float zEye,
+         final float xCenter,
+         final float yCenter,
+         final float zCenter,
+         final float xUp,
+         final float yUp,
+         final float zUp ) {
 
       // TODO: Is it problematic when the camera's look direction
       // is co-linear with the world up direction?
 
-      this.refUp.set(upX, upY, upZ);
+      this.refUp.set(xUp, yUp, zUp);
       if (Vec3.magSq(this.refUp) < PConstants.EPSILON) {
 
          this.refUp.set(
@@ -419,9 +227,9 @@ public class Yup3 extends Up3 {
       }
 
       this.lookDir.set(
-            eyeX - centerX,
-            eyeY - centerY,
-            eyeZ - centerZ);
+            xEye - xCenter,
+            yEye - yCenter,
+            zEye - zCenter);
 
       final float lookDist = Vec3.magSq(this.lookDir);
       if (lookDist < PConstants.EPSILON) {
@@ -429,13 +237,13 @@ public class Yup3 extends Up3 {
          return;
       }
 
-      this.cameraX = eyeX;
-      this.cameraY = eyeY;
-      this.cameraZ = eyeZ;
+      this.cameraX = xEye;
+      this.cameraY = yEye;
+      this.cameraZ = zEye;
 
-      this.lookTarget.set(centerX, centerY, centerZ);
+      this.lookTarget.set(xCenter, yCenter, zCenter);
 
-      this.eyeDist = PApplet.sqrt(lookDist);
+      this.eyeDist = Utils.sqrt(lookDist);
 
       /* Create three axes. Handedness will change by renderer. */
       Vec3.normalize(this.lookDir, this.k);
@@ -534,7 +342,9 @@ public class Yup3 extends Up3 {
     * need initialization can be attempted here.
     */
    @Override
-   public void setSize ( final int iwidth, final int iheight ) {
+   public void setSize (
+         final int iwidth,
+         final int iheight ) {
 
       super.setSize(iwidth, iheight);
       this.ortho();

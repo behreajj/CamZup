@@ -10,9 +10,9 @@ import java.util.List;
 
 import camzup.core.Color;
 import camzup.core.Curve2;
-import camzup.core.Curve2.Knot2;
 import camzup.core.CurveEntity2;
 import camzup.core.IUtils;
+import camzup.core.Knot2;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
 import camzup.core.MaterialSolid;
@@ -1745,7 +1745,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public PMatrix2D getMatrix ( final PMatrix2D target ) {
 
-      return PMatAux.fromAwt(this.g2.getTransform(), target);
+      return Convert.fromAwt(this.g2.getTransform(), target);
    }
 
    /**
@@ -1758,7 +1758,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public PMatrix3D getMatrix ( final PMatrix3D target ) {
 
-      return PMatAux.fromAwt(this.g2.getTransform(), target);
+      return Convert.fromAwt(this.g2.getTransform(), target);
    }
 
    /**
@@ -2913,12 +2913,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * @param angle
     *           the angle
     * @see Graphics2D#scale(double, double)
-    * @see PApplet#cos(float)
+    * @see Utils#cos(float)
     */
    @Override
    public void rotateX ( final float angle ) {
 
-      this.g2.scale(1.0f, PApplet.cos(angle));
+      this.g2.scale(1.0f, Utils.cos(angle));
    }
 
    /**
@@ -2928,12 +2928,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * @param angle
     *           the angle
     * @see Graphics2D#scale(double, double)
-    * @see PApplet#cos(float)
+    * @see Utils#cos(float)
     */
    @Override
    public void rotateY ( final float angle ) {
 
-      this.g2.scale(PApplet.cos(angle), 1.0f);
+      this.g2.scale(Utils.cos(angle), 1.0f);
    }
 
    /**

@@ -25,9 +25,30 @@ public class MaterialSolid extends Material {
    public static final float SVG_MIN_STROKE_WT = 0.005f;
 
    /**
-    * Default material to use when no material is contained by
-    * an entity. Stroke weight is impacted by transforms, so
-    * the stroke weight is divided by the scale.
+    * Default material to use when an entity does not have one.
+    *
+    * @param gamma
+    *           gamma adjustment
+    * @return the material string
+    */
+   @Experimental
+   static String defaultBlenderMaterial ( final float gamma ) {
+
+      return new StringBuilder()
+            .append("{\"name\": \"")
+            .append("Material")
+            .append("\", \"fill\": ")
+            .append(Color.fromHex(
+                  IUp.DEFAULT_FILL_COLOR, new Color())
+                  .toBlenderCode(gamma))
+            .append('}')
+            .toString();
+   }
+
+   /**
+    * Default material to use when an entity does not have one.
+    * Stroke weight is impacted by transforms, so the stroke
+    * weight is divided by the scale.
     *
     * This opens a group node, so it should be closed
     * elsewhere.
@@ -114,7 +135,41 @@ public class MaterialSolid extends Material {
    }
 
    /**
-    * Creates a named solid material by component.
+    * Creates a material from a fill color.
+    *
+    * @param fill
+    *           the fill color
+    */
+   public MaterialSolid ( final Color fill ) {
+
+      this(fill, Color.clearBlack(new Color()), 0.0f);
+   }
+
+   /**
+    * Creates a material from a fill, stroke color and stroke
+    * weight. Whether or not to use a fill is inferred from the
+    * fill's alpha; whether or not to use stroke is inferred
+    * from the stroke weight and stroke color's alpha.
+    *
+    * @param fill
+    *           the fill color
+    * @param stroke
+    *           the stroke color
+    * @param strokeWeight
+    *           the stroke weight
+    */
+   public MaterialSolid (
+         final Color fill,
+         final Color stroke,
+         final float strokeWeight ) {
+
+      this(fill, stroke, strokeWeight,
+            fill.w > 0.0f,
+            stroke.w > 0.0f && strokeWeight > 0.0f);
+   }
+
+   /**
+    * Creates a solid material by component.
     *
     * @param fill
     *           the fill color
@@ -134,12 +189,10 @@ public class MaterialSolid extends Material {
          final boolean useFill,
          final boolean useStroke ) {
 
-      super();
-      this.fill.set(fill);
-      this.stroke.set(stroke);
-      this.strokeWeight = strokeWeight;
-      this.useFill = useFill;
-      this.useStroke = useStroke;
+      this("Material",
+            fill, stroke,
+            strokeWeight,
+            useFill, useStroke);
    }
 
    /**
@@ -151,6 +204,47 @@ public class MaterialSolid extends Material {
    public MaterialSolid ( final String name ) {
 
       super(name);
+   }
+
+   /**
+    * Creates a named material from a fill color.
+    *
+    * @param name
+    *           the material name
+    * @param fill
+    *           the fill color
+    */
+   public MaterialSolid (
+         final String name,
+         final Color fill ) {
+
+      this(name, fill, Color.clearBlack(new Color()), 0.0f);
+   }
+
+   /**
+    * Creates a named material from a fill, stroke color and
+    * stroke weight. Whether or not to use a fill is inferred
+    * from the fill's alpha; whether or not to use stroke is
+    * inferred from the stroke weight and stroke color's alpha.
+    *
+    * @param name
+    *           the name
+    * @param fill
+    *           the fill color
+    * @param stroke
+    *           the stroke color
+    * @param strokeWeight
+    *           the stroke weight
+    */
+   public MaterialSolid (
+         final String name,
+         final Color fill,
+         final Color stroke,
+         final float strokeWeight ) {
+
+      this(name, fill, stroke, strokeWeight,
+            fill.w > 0.0f,
+            stroke.w > 0.0f && strokeWeight > 0.0f);
    }
 
    /**
@@ -221,7 +315,6 @@ public class MaterialSolid extends Material {
             .append(this.fill.toBlenderCode(gamma))
             .append('}')
             .toString();
-
    }
 
    /**

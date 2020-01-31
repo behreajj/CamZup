@@ -13,191 +13,6 @@ import java.util.Arrays;
 public class Mesh2 extends Mesh {
 
    /**
-    * Packages 2D mesh vertices into an object.
-    */
-   public static class Face2 implements Comparable < Face2 > {
-
-      /**
-       * The array of vertices in a face.
-       */
-      public Vert2[] vertices = new Vert2[] {};
-
-      /**
-       * The default constructor.
-       */
-      public Face2 () {
-
-      }
-
-      /**
-       * Creates a face from an array of vertices.
-       *
-       * @param vertices
-       *           the vertices
-       */
-      public Face2 ( final Vert2[] vertices ) {
-
-         this.set(vertices);
-      }
-
-      /**
-       * Compares this face to another by hash code.
-       *
-       * @param face
-       *           the comparisand
-       * @return the comparison
-       */
-      @Override
-      public int compareTo ( final Face2 face ) {
-
-         final int a = this.hashCode();
-         final int b = face.hashCode();
-         return Integer.compare(a, b);
-      }
-
-      @Override
-      public int hashCode () {
-
-         return System.identityHashCode(this);
-      }
-
-      /**
-       * Returns the number of vertices in this face.
-       *
-       * @return the vertex count
-       */
-      public int length () {
-
-         return this.vertices.length;
-      }
-
-      /**
-       * Rotates all coordinates in the face by an angle around
-       * the z axis.
-       *
-       * @param radians
-       *           the angle in radians
-       * @return this mesh
-       * @see Vec2#rotateZ(Vec2, float, Vec2)
-       */
-      @Chainable
-      public Face2 rotateZ ( final float radians ) {
-
-         final float nrm = IUtils.ONE_TAU * radians;
-         final float cosa = SinCos.eval(nrm);
-         final float sina = SinCos.eval(nrm - 0.25f);
-         Vec2 c;
-
-         final int len = this.vertices.length;
-         for (int i = 0; i < len; ++i) {
-            c = this.vertices[i].coord;
-            Vec2.rotateZ(c, cosa, sina, c);
-         }
-
-         return this;
-      }
-
-      /**
-       * Scales all coordinates in the face by a scalar.
-       *
-       * @param scale
-       *           the vector
-       * @return this face
-       * @see Vec2#mul(Vec2, float, Vec2)
-       */
-      @Chainable
-      public Face2 scale ( final float scale ) {
-
-         Vec2 c;
-         final int len = this.vertices.length;
-         for (int i = 0; i < len; ++i) {
-            c = this.vertices[i].coord;
-            Vec2.mul(c, scale, c);
-         }
-
-         return this;
-      }
-
-      /**
-       * Scales all coordinates in the face by a vector.
-       *
-       * @param scale
-       *           the vector
-       * @return this face
-       * @see Vec2#mul(Vec2, Vec2, Vec2)
-       */
-      @Chainable
-      public Face2 scale ( final Vec2 scale ) {
-
-         Vec2 c;
-         final int len = this.vertices.length;
-         for (int i = 0; i < len; ++i) {
-            c = this.vertices[i].coord;
-            Vec2.mul(c, scale, c);
-         }
-
-         return this;
-      }
-
-      /**
-       * Sets this face's vertices to refer to a an array.
-       *
-       * @param vertices
-       *           the array of vertices
-       * @return this face
-       */
-      @Chainable
-      public Face2 set ( final Vert2[] vertices ) {
-
-         this.vertices = vertices;
-         return this;
-      }
-
-      @Override
-      public String toString () {
-
-         return this.toString(4);
-      }
-
-      public String toString ( final int places ) {
-
-         final int len = this.vertices.length;
-         final int last = len - 1;
-         final StringBuilder sb = new StringBuilder(len * 256)
-               .append("{ vertices: [ \n");
-         for (int i = 0; i < len; ++i) {
-            sb.append(this.vertices[i].toString(places));
-            if (i < last) {
-               sb.append(',').append('\n');
-            }
-         }
-         sb.append(" ] }");
-         return sb.toString();
-      }
-
-      /**
-       * Translates all coordinates in the face by a vector.
-       *
-       * @param v
-       *           the vector
-       * @return this face
-       * @see Vec2#add(Vec2, Vec2, Vec2)
-       */
-      @Chainable
-      public Face2 translate ( final Vec2 v ) {
-
-         Vec2 c;
-         final int len = this.vertices.length;
-         for (int i = 0; i < len; ++i) {
-            c = this.vertices[i].coord;
-            Vec2.add(c, v, c);
-         }
-
-         return this;
-      }
-   }
-
-   /**
     * The type of polygon produced by the static polygon
     * function.
     */
@@ -222,120 +37,10 @@ public class Mesh2 extends Mesh {
    }
 
    /**
-    * Packages 2D mesh coordinates, texture coordinates and
-    * normals into a single object.
-    */
-   public static class Vert2 implements Comparable < Vert2 > {
-
-      /**
-       * The coordinate of the vertex in world space.
-       */
-      public Vec2 coord;
-
-      /**
-       * The texture (UV) coordinate for an image mapped onto the
-       * mesh.
-       */
-      public Vec2 texCoord;
-
-      /**
-       * The default constructor
-       */
-      public Vert2 () {
-
-      }
-
-      /**
-       * Constructs a vertex from a coordinate and texture
-       * coordinate.
-       *
-       * @param coord
-       *           the coordinate
-       * @param texCoord
-       *           the texture coordinate
-       */
-      public Vert2 (
-            final Vec2 coord,
-            final Vec2 texCoord ) {
-
-         this.set(coord, texCoord);
-      }
-
-      /**
-       * Compares this vertex to another by hash code.
-       *
-       * @param vert
-       *           the comparisand
-       * @return the comparison
-       */
-      @Override
-      public int compareTo ( final Vert2 vert ) {
-
-         final int a = this.hashCode();
-         final int b = vert.hashCode();
-         return a < b ? -1 : a > b ? 1 : 0;
-      }
-
-      /**
-       * Gets the system identity hash code.
-       *
-       * @return the hash code
-       */
-      @Override
-      public int hashCode () {
-
-         return System.identityHashCode(this);
-      }
-
-      /**
-       * Sets the coordinate and texture coordinate of the vertex
-       * by reference.
-       *
-       * @param coord
-       *           the coordinate
-       * @param texCoord
-       *           the texture coordinate
-       * @return this vertex
-       */
-      @Chainable
-      public Vert2 set (
-            final Vec2 coord,
-            final Vec2 texCoord ) {
-
-         this.coord = coord;
-         this.texCoord = texCoord;
-         return this;
-      }
-
-      @Override
-      public String toString () {
-
-         return this.toString(4);
-      }
-
-      public String toString ( final int places ) {
-
-         return new StringBuilder(256)
-               .append("{ coord: ")
-               .append(this.coord.toString(places))
-               .append(", texCoord: ")
-               .append(this.texCoord.toString(places))
-               .append(' ').append('}')
-               .toString();
-      }
-   }
-
-   /**
     * Default annulus for rings, 0.25 * Math.sqrt(2.0) ,
     * approximately 0.35355338 .
     */
    public static final float DEFAULT_ANNULUS = 0.35355338f;
-
-   /**
-    * Default count of sectors in a regular convex polygon, so
-    * as to approximate a circle.
-    */
-   public static final int DEFAULT_POLY_SECTORS = 32;
 
    /**
     * Type of polygon to draw when it is not supplied to the
@@ -349,13 +54,13 @@ public class Mesh2 extends Mesh {
     *
     * @param mesh
     *           the mesh
-    * @param dim
+    * @param target
     *           the output vector
     * @return the dimensions
     */
    public static Vec2 calcDimensions (
          final Mesh2 mesh,
-         final Vec2 dim ) {
+         final Vec2 target ) {
 
       float xMin = Float.MAX_VALUE;
       float xMax = Float.MIN_VALUE;
@@ -385,9 +90,26 @@ public class Mesh2 extends Mesh {
          }
       }
 
-      return dim.set(
+      return target.set(
             xMax - xMin,
             yMax - yMin);
+   }
+
+   /**
+    * Creates a regular convex polygon, approximating a circle.
+    *
+    * @param target
+    *           the output mesh
+    * @return the polygon
+    * @see Mesh2#polygon(int, PolyType, Mesh2)
+    */
+   public static Mesh2 circle (
+         final Mesh2 target ) {
+
+      return Mesh2.polygon(
+            Mesh.DEFAULT_CIRCLE_SECTORS,
+            Mesh2.DEFAULT_POLY_TYPE,
+            target);
    }
 
    /**
@@ -630,22 +352,6 @@ public class Mesh2 extends Mesh {
    }
 
    /**
-    * Creates a regular convex polygon, approximating a circle.
-    *
-    * @param target
-    *           the output mesh
-    * @return the polygon
-    */
-   public static Mesh2 polygon (
-         final Mesh2 target ) {
-
-      return Mesh2.polygon(
-            Mesh2.DEFAULT_POLY_SECTORS,
-            Mesh2.DEFAULT_POLY_TYPE,
-            target);
-   }
-
-   /**
     * Creates a regular convex polygon with an opening in its
     * center. The annulus describes the relative size of this
     * opening.
@@ -788,11 +494,10 @@ public class Mesh2 extends Mesh {
     *           the output type
     * @return the ring
     */
-   public static final Mesh2 ring (
-         final Mesh2 target ) {
+   public static final Mesh2 ring ( final Mesh2 target ) {
 
       return Mesh2.ring(
-            Mesh2.DEFAULT_POLY_SECTORS,
+            Mesh.DEFAULT_CIRCLE_SECTORS,
             Mesh2.DEFAULT_ANNULUS,
             Mesh2.DEFAULT_POLY_TYPE,
             target);
@@ -1061,6 +766,77 @@ public class Mesh2 extends Mesh {
    }
 
    /**
+    * Gets an edge from the mesh.
+    *
+    * @param i
+    *           the face index
+    * @param j
+    *           the vertex index
+    * @param target
+    *           the output edge
+    * @return the edge
+    */
+   @Experimental
+   public Edge2 getEdge (
+         final int i,
+         final int j,
+         final Edge2 target ) {
+
+      final int[][] f0 = this.faces[Math.floorMod(
+            i, this.faces.length)];
+      final int f0len = f0.length;
+      final int[] f1 = f0[Math.floorMod(
+            j, f0len)];
+      final int[] f2 = f0[Math.floorMod(
+            j + 1, f0len)];
+
+      return target.set(
+            this.coords[f1[0]],
+            this.texCoords[f1[1]],
+
+            this.coords[f2[0]],
+            this.texCoords[f2[1]]);
+   }
+
+   /**
+    * Gets an array of edges from the mesh.
+    *
+    * @return the edges array
+    */
+   @Experimental
+   public Edge2[] getEdges () {
+
+      final ArrayList < Edge2 > result = new ArrayList <>();
+      Edge2 trial = new Edge2();
+      final int len0 = this.faces.length;
+
+      for (int i = 0; i < len0; ++i) {
+
+         final int[][] fs = this.faces[i];
+         final int len1 = fs.length;
+
+         for (int j = 0; j < len1; ++j) {
+
+            final int[] fo = fs[j];
+            final int[] fd = fs[(j + 1) % len1];
+            trial.set(
+                  this.coords[fo[0]],
+                  this.texCoords[fo[1]],
+
+                  this.coords[fd[0]],
+                  this.texCoords[fd[1]]);
+
+            if (!result.contains(trial)) {
+               result.add(trial);
+               trial = new Edge2();
+            }
+         }
+      }
+
+      return result.toArray(new Edge2[result.size()]);
+   }
+
+   /**
     * Gets a face from the mesh.
     *
     * @param i
@@ -1073,7 +849,7 @@ public class Mesh2 extends Mesh {
          final int i,
          final Face2 target ) {
 
-      final int[][] face = this.faces[i];
+      final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
       final int len = face.length;
       final Vert2[] vertices = new Vert2[len];
 
@@ -1088,7 +864,7 @@ public class Mesh2 extends Mesh {
    }
 
    /**
-    * Gets an array of faces from teh mesh.
+    * Gets an array of faces from the mesh.
     *
     * @return the faces array
     */
@@ -1133,7 +909,11 @@ public class Mesh2 extends Mesh {
          final int j,
          final Vert2 target ) {
 
-      final int[] f = this.faces[i][j];
+      final int[][] f0 = this.faces[Math.floorMod(
+            i, this.faces.length)];
+      final int[] f = f0[Math.floorMod(
+            j, f0.length)];
+
       return target.set(
             this.coords[f[0]],
             this.texCoords[f[1]]);
@@ -1291,20 +1071,16 @@ public class Mesh2 extends Mesh {
        * Append a comment listing the number of coordinates,
        * texture coordinates, normals and faces.
        */
-      result.append("# v: ")
-            .append(coordsLen)
-            .append(", vt: ")
-            .append(texCoordsLen)
-            .append(", vn: 1, f: ")
-            .append(facesLen)
+      result.append("# v: ").append(coordsLen)
+            .append(", vt: ").append(texCoordsLen)
+            .append(", vn: 1, f: ").append(facesLen)
             .append("\n \n");
 
-      result.append('o').append(' ')
-            .append(this.name)
+      result.append('o').append(' ').append(this.name)
             .append("\n \n");
 
       for (final Vec2 coord : this.coords) {
-         result.append("v ")
+         result.append('v').append(' ')
                .append(coord.toObjString())
                .append(" 0.0 \n");
       }
@@ -1438,8 +1214,7 @@ public class Mesh2 extends Mesh {
                sb.append('[').append(' ');
 
                /*
-                * There should be 2 indices: coordinate, texture
-                * coordinate.
+                * 2 indices: coordinate, texture coordinate.
                 */
                for (int k = 0; k < infoLen; ++k) {
 

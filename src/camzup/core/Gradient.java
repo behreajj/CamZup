@@ -163,7 +163,9 @@ public class Gradient implements Iterable < Gradient.Key > {
        * @param color
        *           the color
        */
-      public Key ( final float step, final int color ) {
+      public Key (
+            final float step,
+            final int color ) {
 
          this.set(step, color);
       }
@@ -177,7 +179,9 @@ public class Gradient implements Iterable < Gradient.Key > {
        * @param color
        *           the color string
        */
-      public Key ( final float step, final String color ) {
+      public Key (
+            final float step,
+            final String color ) {
 
          this.set(step, color);
       }
@@ -330,7 +334,9 @@ public class Gradient implements Iterable < Gradient.Key > {
        * @return this key
        */
       @Chainable
-      public Key set ( final float step, final Color color ) {
+      public Key set (
+            final float step,
+            final Color color ) {
 
          this.step = step;
          this.clr.set(color);

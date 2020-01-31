@@ -13,9 +13,9 @@ import java.util.List;
 
 import camzup.core.Color;
 import camzup.core.Curve2;
-import camzup.core.Curve2.Knot2;
 import camzup.core.CurveEntity2;
 import camzup.core.IUtils;
+import camzup.core.Knot2;
 import camzup.core.Transform;
 import camzup.core.Vec2;
 import processing.core.PApplet;
@@ -28,9 +28,10 @@ import processing.core.PFont;
 public interface IUp {
 
    /**
-    * Assumes 1920 / 1080, 1.7778 .
+    * Default camera aspect ratio used by perspective camera
+    * when size is less than 128. Assumes 1:1.
     */
-   float DEFAULT_ASPECT = 1.7777778f;
+   float DEFAULT_ASPECT = 1.0f;
 
    /**
     * An off-white background color, 255, 245, 215 in RGB.
@@ -74,14 +75,16 @@ public interface IUp {
    float DEFAULT_GLYPH_DETAIL = 0.01f;
 
    /**
-    * Assumes height of 1080 . 1080 / 2 = 540 .
+    * Default used by orthographic camera when sketch size is
+    * less than 128.
     */
-   float DEFAULT_HALF_HEIGHT = 540.0f;
+   float DEFAULT_HALF_HEIGHT = 64.0f;
 
    /**
-    * Assumes width of 1920 . 1920 / 2 = 960 .
+    * Default used by orthographic camera when sketch size is
+    * less than 128.
     */
-   float DEFAULT_HALF_WIDTH = 960.0f;
+   float DEFAULT_HALF_WIDTH = 64.0f;
 
    /**
     * Color for the lines connected the forehandle, coord and

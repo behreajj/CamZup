@@ -1,5 +1,6 @@
 package camzup.pfriendly;
 
+import camzup.core.Utils;
 import camzup.core.Vec3;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -246,7 +247,7 @@ public class Zup3 extends Up3 {
 
       this.lookTarget.set(centerX, centerY, centerZ);
 
-      this.eyeDist = PApplet.sqrt(lookDist);
+      this.eyeDist = Utils.sqrt(lookDist);
 
       /* Create three axes. */
       Vec3.normalize(this.lookDir, this.k);

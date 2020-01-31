@@ -5,6 +5,7 @@ import camzup.core.CurveEntity2;
 import camzup.core.IUtils;
 import camzup.core.MeshEntity2;
 import camzup.core.Ray2;
+import camzup.core.SinCos;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import processing.core.PApplet;
@@ -51,8 +52,11 @@ public interface IYup2 extends IUp {
       /* Rotate. */
       final float angle = renderer.getRot();
 
-      final float cosa = PApplet.cos(angle);
-      final float sina = PApplet.sin(angle);
+      final float nrm = IUtils.ONE_TAU * angle;
+      final float cosa = SinCos.eval(nrm);
+      final float sina = SinCos.eval(nrm - 0.25f);
+      // final float cosa = PApplet.cos(angle);
+      // final float sina = PApplet.sin(angle);
 
       final float temp = mx;
       mx = cosa * mx - sina * my;
