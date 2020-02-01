@@ -10,7 +10,7 @@ MeshEntity3[] entities = {
 
   new MeshEntity3()
   .appendMaterial(new MaterialSolid().setFill(#ffabb1))
-  .appendMesh(Mesh3.uvSphere(new Mesh3())), 
+  .appendMesh(Mesh3.cube(new Mesh3())), 
 
   new MeshEntity3()
   .appendMaterial(new MaterialSolid().setFill(#f6c89a))
@@ -55,10 +55,4 @@ void draw() {
     me3.transform.rotateX(0.01);
     graphics3.shape(me3);
   }
-}
-
-void mouseReleased() {
-  print("Saved");
-  saveStrings("blah.py", new String[] { entities[1].toBlenderCode() });
-
 }

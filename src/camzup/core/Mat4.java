@@ -1874,40 +1874,9 @@ public class Mat4 extends Matrix {
 
    /**
     * Gets a column of this matrix with an index and vector.
-    * The last row of the matrix is assumed to be 0.0, 0.0,
-    * 0.0, 1.0 .
     *
     * @param j
-    *           the index
-    * @param target
-    *           the vector
-    * @return the column
-    */
-   public Vec3 getCol ( final int j, final Vec3 target ) {
-
-      switch (j) {
-         case 0:
-         case -4:
-            return target.set(this.m00, this.m10, this.m20);
-         case 1:
-         case -3:
-            return target.set(this.m01, this.m11, this.m21);
-         case 2:
-         case -2:
-            return target.set(this.m02, this.m12, this.m22);
-         case 3:
-         case -1:
-            return target.set(this.m03, this.m13, this.m23);
-         default:
-            return target.reset();
-      }
-   }
-
-   /**
-    * Gets a column of this matrix with an index and vector.
-    *
-    * @param j
-    *           the index
+    *           the column index
     * @param target
     *           the vector
     * @return the column
@@ -1927,6 +1896,35 @@ public class Mat4 extends Matrix {
          case 3:
          case -1:
             return target.set(this.m03, this.m13, this.m23, this.m33);
+         default:
+            return target.reset();
+      }
+   }
+
+   /**
+    * Gets a row of this matrix with an index and vector.
+    *
+    * @param i
+    *           the row index
+    * @param target
+    *           the vector
+    * @return the row
+    */
+   public Vec4 getRow ( final int i, final Vec4 target ) {
+
+      switch (i) {
+         case 0:
+         case -4:
+            return target.set(this.m00, this.m01, this.m02, this.m03);
+         case 1:
+         case -3:
+            return target.set(this.m10, this.m11, this.m12, this.m13);
+         case 2:
+         case -2:
+            return target.set(this.m20, this.m21, this.m22, this.m23);
+         case 3:
+         case -1:
+            return target.set(this.m30, this.m31, this.m32, this.m33);
          default:
             return target.reset();
       }
@@ -2181,33 +2179,54 @@ public class Mat4 extends Matrix {
       switch (j) {
          case 0:
          case -4:
+
+            /* Right axis. */
+
             this.m00 = source.x;
             this.m10 = source.y;
             this.m20 = source.z;
             this.m30 = 0.0f;
+
             return this;
+
          case 1:
          case -3:
+
+            /* Foward axis. */
+
             this.m01 = source.x;
             this.m11 = source.y;
             this.m21 = source.z;
             this.m31 = 0.0f;
+
             return this;
+
          case 2:
          case -2:
+
+            /* Up axis. */
+
             this.m02 = source.x;
             this.m12 = source.y;
             this.m22 = source.z;
             this.m32 = 0.0f;
+
             return this;
+
          case 3:
          case -1:
+
+            /* Translation. */
+
             this.m03 = source.x;
             this.m13 = source.y;
             this.m23 = source.z;
             this.m33 = 1.0f;
+
             return this;
+
          default:
+
             return this;
       }
    }
@@ -2227,30 +2246,145 @@ public class Mat4 extends Matrix {
       switch (j) {
          case 0:
          case -4:
+
+            /* Right axis. */
+
             this.m00 = source.x;
             this.m10 = source.y;
             this.m20 = source.z;
             this.m30 = source.w;
+
             return this;
+
          case 1:
          case -3:
+
+            /* Foward axis. */
+
             this.m01 = source.x;
             this.m11 = source.y;
             this.m21 = source.z;
             this.m31 = source.w;
+
             return this;
+
          case 2:
          case -2:
+
+            /* Up axis. */
+
             this.m02 = source.x;
             this.m12 = source.y;
             this.m22 = source.z;
             this.m32 = source.w;
+
             return this;
+
          case 3:
          case -1:
+
+            /* Translation. */
+
             this.m03 = source.x;
             this.m13 = source.y;
             this.m23 = source.z;
+            this.m33 = source.w;
+
+            return this;
+
+         default:
+
+            return this;
+      }
+   }
+
+   /**
+    * Sets a row of this matrix with an index and vector. The
+    * translation is set to 0.0 for a given row, while the
+    * element (3, 3) is set to 1.0 .
+    *
+    * @param i
+    *           the row index
+    * @param source
+    *           the the row
+    * @return this matrix
+    */
+   @Chainable
+   public Mat4 setRow ( final int i, final Vec3 source ) {
+
+      switch (i) {
+         case 0:
+         case -4:
+            this.m00 = source.x;
+            this.m01 = source.y;
+            this.m02 = source.z;
+            this.m03 = 0.0f;
+            return this;
+         case 1:
+         case -3:
+            this.m10 = source.x;
+            this.m11 = source.y;
+            this.m12 = source.z;
+            this.m13 = 0.0f;
+            return this;
+         case 2:
+         case -2:
+            this.m20 = source.x;
+            this.m21 = source.y;
+            this.m22 = source.z;
+            this.m23 = 0.0f;
+            return this;
+         case 3:
+         case -1:
+            this.m30 = source.x;
+            this.m31 = source.y;
+            this.m32 = source.z;
+            this.m33 = 1.0f;
+            return this;
+         default:
+            return this;
+      }
+   }
+
+   /**
+    * Sets a row of this matrix with an index and vector.
+    *
+    * @param i
+    *           the row index
+    * @param source
+    *           the row
+    * @return this matrix
+    */
+   @Chainable
+   public Mat4 setRow ( final int i, final Vec4 source ) {
+
+      switch (i) {
+         case 0:
+         case -4:
+            this.m00 = source.x;
+            this.m01 = source.y;
+            this.m02 = source.z;
+            this.m03 = source.w;
+            return this;
+         case 1:
+         case -3:
+            this.m10 = source.x;
+            this.m11 = source.y;
+            this.m12 = source.z;
+            this.m13 = source.w;
+            return this;
+         case 2:
+         case -2:
+            this.m20 = source.x;
+            this.m21 = source.y;
+            this.m22 = source.z;
+            this.m23 = source.w;
+            return this;
+         case 3:
+         case -1:
+            this.m30 = source.x;
+            this.m31 = source.y;
+            this.m32 = source.z;
             this.m33 = source.w;
             return this;
          default:

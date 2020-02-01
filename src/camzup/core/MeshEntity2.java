@@ -177,6 +177,31 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
    }
 
    /**
+    * Gets a material from this mesh entity.
+    *
+    * @param i
+    *           the index
+    *
+    * @return the material
+    */
+   public MaterialSolid getMaterial ( final int i ) {
+
+      return this.materials.get(Math.floorMod(i, this.materials.size()));
+   }
+
+   /**
+    * Gets a mesh from this mesh entity.
+    *
+    * @param i
+    *           the index
+    * @return the mesh
+    */
+   public Mesh2 getMesh ( final int i ) {
+
+      return this.meshes.get(Math.floorMod(i, this.meshes.size()));
+   }
+
+   /**
     * Returns an iterator, which allows an enhanced for-loop to
     * access the meshes in the mesh entity.
     *

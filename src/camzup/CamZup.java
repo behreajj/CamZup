@@ -1,7 +1,12 @@
 package camzup;
 
+import java.util.HashSet;
+
+import camzup.core.Color;
+import camzup.core.IUtils;
+import camzup.core.Mesh2;
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity3;
+import camzup.core.MeshEntity2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -17,6 +22,100 @@ public class CamZup {
     * The library's current version.
     */
    public final static String VERSION = "##library.prettyVersion##";
+
+   static Vec2[] permute ( final Vec2 source ) {
+
+      final HashSet < Vec2 > result = new HashSet <>();
+
+      /* All positive. */
+      result.add(new Vec2(source.x, source.y));
+      result.add(new Vec2(source.y, source.x));
+
+      /* All negative. */
+      result.add(new Vec2(-source.x, -source.y));
+      result.add(new Vec2(-source.y, -source.x));
+
+      /* X positive. */
+      result.add(new Vec2(-source.x, source.y));
+      result.add(new Vec2(-source.y, source.x));
+
+      /* X negative. */
+      result.add(new Vec2(source.x, -source.y));
+      result.add(new Vec2(source.y, -source.x));
+
+      return result.toArray(new Vec2[result.size()]);
+   }
+
+   static Vec3[] permute ( final Vec3 source ) {
+
+      final HashSet < Vec3 > result = new HashSet <>();
+
+      /* All positive. */
+      result.add(new Vec3(+source.x, +source.y, +source.z));
+      result.add(new Vec3(+source.x, +source.z, +source.y));
+      result.add(new Vec3(+source.y, +source.x, +source.z));
+      result.add(new Vec3(+source.y, +source.z, +source.x));
+      result.add(new Vec3(+source.z, +source.x, +source.y));
+      result.add(new Vec3(+source.z, +source.y, +source.z));
+
+      /* All negative. */
+      result.add(new Vec3(-source.x, -source.y, -source.z));
+      result.add(new Vec3(-source.x, -source.z, -source.y));
+      result.add(new Vec3(-source.y, -source.x, -source.z));
+      result.add(new Vec3(-source.y, -source.z, -source.x));
+      result.add(new Vec3(-source.z, -source.x, -source.y));
+      result.add(new Vec3(-source.z, -source.y, -source.z));
+
+      /* X all negative. */
+      result.add(new Vec3(-source.x, +source.y, +source.z));
+      result.add(new Vec3(-source.x, +source.z, +source.y));
+      result.add(new Vec3(-source.y, +source.x, +source.z));
+      result.add(new Vec3(-source.y, +source.z, +source.x));
+      result.add(new Vec3(-source.z, +source.x, +source.y));
+      result.add(new Vec3(-source.z, +source.y, +source.z));
+
+      /* Y all negative. */
+      result.add(new Vec3(+source.x, -source.y, +source.z));
+      result.add(new Vec3(+source.x, -source.z, +source.y));
+      result.add(new Vec3(+source.y, -source.x, +source.z));
+      result.add(new Vec3(+source.y, -source.z, +source.x));
+      result.add(new Vec3(+source.z, -source.x, +source.y));
+      result.add(new Vec3(+source.z, -source.y, +source.z));
+
+      /* Z all negative. */
+      result.add(new Vec3(+source.x, +source.y, -source.z));
+      result.add(new Vec3(+source.x, +source.z, -source.y));
+      result.add(new Vec3(+source.y, +source.x, -source.z));
+      result.add(new Vec3(+source.y, +source.z, -source.x));
+      result.add(new Vec3(+source.z, +source.x, -source.y));
+      result.add(new Vec3(+source.z, +source.y, -source.z));
+
+      /* X all positive. */
+      result.add(new Vec3(+source.x, -source.y, -source.z));
+      result.add(new Vec3(+source.x, -source.z, -source.y));
+      result.add(new Vec3(+source.y, -source.x, -source.z));
+      result.add(new Vec3(+source.y, -source.z, -source.x));
+      result.add(new Vec3(+source.z, -source.x, -source.y));
+      result.add(new Vec3(+source.z, -source.y, -source.z));
+
+      /* Y all positive. */
+      result.add(new Vec3(-source.x, +source.y, -source.z));
+      result.add(new Vec3(-source.x, +source.z, -source.y));
+      result.add(new Vec3(-source.y, +source.x, -source.z));
+      result.add(new Vec3(-source.y, +source.z, -source.x));
+      result.add(new Vec3(-source.z, +source.x, -source.y));
+      result.add(new Vec3(-source.z, +source.y, -source.z));
+
+      /* Z all positive. */
+      result.add(new Vec3(-source.x, -source.y, +source.z));
+      result.add(new Vec3(-source.x, -source.z, +source.y));
+      result.add(new Vec3(-source.y, -source.x, +source.z));
+      result.add(new Vec3(-source.y, -source.z, +source.x));
+      result.add(new Vec3(-source.z, -source.x, +source.y));
+      result.add(new Vec3(-source.z, -source.y, +source.z));
+
+      return result.toArray(new Vec3[result.size()]);
+   }
 
    static String toHardCode ( final Mesh3 mesh ) {
 
@@ -87,44 +186,28 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-       MeshEntity3 me = new MeshEntity3();
-       Mesh3 m = new Mesh3();
-       me.appendMesh(Mesh3.dodecahedron(m));
-       System.out.println(me.toBlenderCode());
+      MeshEntity2 me = new MeshEntity2();
+      Mesh2 m = new Mesh2();
+      me.appendMesh(Mesh2.arc(0f, Utils.PI, 0.75f,
+            5, Mesh2.PolyType.TRI, m));
 
-      // int count = 10;
-      // Random rng = new Random();
-      // float angle = 0.0f;
-      // Vec3 axis = new Vec3();
-      // PMatrix3D test = new PMatrix3D();
-      // PMatrix3D control = new PMatrix3D();
-      // Quaternion inv = new Quaternion();
-      // Vec3 axisInv = new Vec3();
-      // for (int i = 0; i < count; ++i) {
-      // control.reset();
-      // test.reset();
+      System.out.println(me.getMesh(0).toString());
+
+      // int sectors = 10;
+      // float arcLen = Utils.TAU / sectors;
+      // float arcMargin = Utils.radians(2.5f);
+      // float halfMarg = arcMargin * 0.5f;
       //
-      // Quaternion q = Quaternion.random(rng, new Quaternion());
-      // angle = Quaternion.toAxisAngle(q, axis);
-      // System.out.println(IUtils.RAD_TO_DEG * angle);
-      // System.out.println(axis);
-      // System.out.println("");
-      //
-      // Quaternion.inverse(q, inv);
-      // float angleInv = Quaternion.toAxisAngle(inv, axisInv);
-      // System.out.println(IUtils.RAD_TO_DEG * angleInv);
-      // System.out.println(axisInv);
-      // System.out.println("");
-      //
-      // PMatAux.invRotate(angle, axis.x, axis.y, axis.z,
-      // control);
-      // System.out.println(PMatAux.toString(control, 4));
-      //
-      // PMatAux.invRotate(q, test);
-      // // PMatAux.rotate(inv, test);
-      // System.out.println(PMatAux.toString(test, 4));
-      // System.out.println("");
+      // for(int i = 0; i < sectors; ++i) {
+      // float start = i * arcLen + halfMarg;
+      // float stop = (i + 1) * arcLen - halfMarg;
+      // Mesh2 m = new Mesh2();
+      // Mesh2.arc(start, stop, 0.75f, 64, Mesh2.PolyType.NGON,
+      // m);
+      // me.appendMesh(m);
       // }
+      //
+      // System.out.println(me.toBlenderCode());
    }
 
    /**

@@ -6,7 +6,6 @@ import java.util.List;
 import camzup.core.Color;
 import camzup.core.Curve3;
 import camzup.core.CurveEntity3;
-import camzup.core.Experimental;
 import camzup.core.Knot3;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh3;
@@ -774,6 +773,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       this.popMatrix();
       this.popStyle();
 
+      // TODO: This should be reset to prior settings, e.g., the
+      // user may have already wanted depth test turned off.
+      // Look again at how hint functions work, then use the
+      // functions hint calls directly.
       this.hint(PConstants.ENABLE_DEPTH_TEST);
       this.hint(PConstants.ENABLE_DEPTH_MASK);
       this.hint(PConstants.ENABLE_DEPTH_SORT);
@@ -814,8 +817,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    }
 
    /**
-    * Sets the renderer's stroke, stroke weight and fill to the
+    * Sets the renderer's stroke, stroke weight and fill to a
     * material's.
+    *
+    * Due to stroke flickering in perspective, currently a
+    * material with a fill may not also use a stroke.
     *
     * @param material
     *           the material
@@ -823,16 +829,16 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    @Override
    public void material ( final MaterialSolid material ) {
 
+      /*
+       * FIXME: Due to stroke flickering issues, a material in 3D
+       * will not have both a stroke and a fill.
+       */
       if (material.useFill) {
          this.fill(material.fill);
+         this.noStroke();
       } else {
          this.noFill();
          if (material.useStroke) {
-
-            /*
-             * FIXME: Due to stroke flickering issues, a material in 3D
-             * will not have both a stroke and a fill.
-             */
             this.strokeWeight(material.strokeWeight);
             this.stroke(Color.toHexInt(material.stroke));
          } else {
@@ -934,6 +940,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
       this.popStyle();
 
+      // TODO: This should be reset to prior settings, e.g., the
+      // user may have already wanted depth test turned off.
+      // Look again at how hint functions work, then use the
+      // functions hint calls directly.
       this.hint(PConstants.ENABLE_DEPTH_TEST);
       this.hint(PConstants.ENABLE_DEPTH_MASK);
       this.hint(PConstants.ENABLE_DEPTH_SORT);
@@ -976,7 +986,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     * @param q
     *           the quaternion
     */
-   @Experimental
    public void rotate ( final Quaternion q ) {
 
       PMatAux.rotate(q, this.modelview);

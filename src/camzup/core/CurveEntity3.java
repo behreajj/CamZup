@@ -230,6 +230,31 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
    }
 
    /**
+    * Gets a curve from this curve entity.
+    *
+    * @param i
+    *           the index
+    * @return the curve.
+    */
+   public Curve3 getCurve ( final int i ) {
+
+      return this.curves.get(Math.floorMod(i, this.curves.size()));
+   }
+
+   /**
+    * Gets a material from this curve entity.
+    *
+    * @param i
+    *           the index
+    *
+    * @return the material
+    */
+   public MaterialSolid getMaterial ( final int i ) {
+
+      return this.materials.get(Math.floorMod(i, this.materials.size()));
+   }
+
+   /**
     * Returns an iterator, which allows an enhanced for-loop to
     * access the curves in the entity.
     *

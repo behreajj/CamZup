@@ -11,6 +11,7 @@ import java.util.List;
 import camzup.core.Color;
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
+import camzup.core.Experimental;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
 import camzup.core.Mat3;
@@ -18,6 +19,7 @@ import camzup.core.Mat4;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
 import camzup.core.MeshEntity2;
+import camzup.core.SinCos;
 import camzup.core.Transform;
 import camzup.core.Transform2;
 import camzup.core.Utils;
@@ -252,6 +254,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
        * regardless of whether the "Float" version is used or not.
        * So if nothing else, using doubles spares (float) casts.
        */
+
       final double a = 1.0d - Utils.mod1(startAngle * IUtils.ONE_TAU_D);
       final double b = 1.0d - Utils.mod1(stopAngle * IUtils.ONE_TAU_D);
       final double c = 360.0d * a;
@@ -293,6 +296,27 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       }
    }
 
+   /**
+    * An experimental method to test if an alternative to the
+    * arc shape is any more efficient or has less jittering.
+    * (The answer seems to be no.)
+    *
+    * @param x
+    *           the arc location x
+    * @param y
+    *           the arc location y
+    * @param w
+    *           the arc width
+    * @param h
+    *           the arc height
+    * @param startAngle
+    *           the start angle
+    * @param stopAngle
+    *           the stop angle
+    * @param arcMode
+    *           the arc mode
+    */
+   @Experimental
    protected void arcImpl2 (
          final float x,
          final float y,
@@ -301,12 +325,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float stopAngle,
          final int arcMode ) {
 
-      // final Curve2.Knot2[] arcKnots = new Curve2.Knot2[] {
-      // new Curve2.Knot2(),
-      // new Curve2.Knot2(),
-      // new Curve2.Knot2(),
-      // new Curve2.Knot2(),
-      // new Curve2.Knot2() };
+      final Knot2[] arcKnots = new Knot2[] {
+            new Knot2(),
+            new Knot2(),
+            new Knot2(),
+            new Knot2(),
+            new Knot2() };
 
       // if (Utils.approx(stopAngle - startAngle, IUtils.TAU,
       // 0.00139f)) {
@@ -314,84 +338,84 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       // return;
       // }
 
-      // final float a1 = Utils.mod1(startAngle * IUtils.ONE_TAU);
-      // final float b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU);
-      // final float arcLen1 = Utils.mod1(b1 - a1);
-      // final float destAngle1 = a1 + arcLen1;
-      // final boolean isPie = arcMode == PConstants.PIE;
-      // final int knotCount = isPie ? 4 : 5;
-      // final float toStep = 1.0f / (knotCount - 1.0f);
-      // final float hndtn = 0.25f * toStep * arcLen1;
-      // final float cost = SinCos.eval(hndtn);
-      // final float handleMag = cost == 0.0f ? 0.0f
-      // : SinCos.eval(hndtn - 0.25f) / cost
-      // * extent * IUtils.FOUR_THIRDS;
+      final float a1 = Utils.mod1(startAngle * IUtils.ONE_TAU);
+      final float b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU);
+      final float arcLen1 = Utils.mod1(b1 - a1);
+      final float destAngle1 = a1 + arcLen1;
+      final boolean isPie = arcMode == PConstants.PIE;
+      final int knotCount = isPie ? 4 : 5;
+      final float toStep = 1.0f / (knotCount - 1.0f);
+      final float hndtn = 0.25f * toStep * arcLen1;
+      final float cost = SinCos.eval(hndtn);
+      final float handleMag = cost == 0.0f ? 0.0f
+            : SinCos.eval(hndtn - 0.25f) / cost
+                  * extent * IUtils.FOUR_THIRDS;
 
-      // for (int i = 0; i < knotCount; ++i) {
-      // final float angle1 = Utils.lerpUnclamped(
-      // a1, destAngle1, i * toStep);
-      // Knot2.fromPolar(
-      // SinCos.eval(angle1),
-      // SinCos.eval(angle1 - 0.25f),
-      // extent, handleMag,
-      // YupJ2.arcKnots[i]);
-      // }
+      for (int i = 0; i < knotCount; ++i) {
+         final float angle1 = Utils.lerpUnclamped(
+               a1, destAngle1, i * toStep);
+         Knot2.fromPolar(
+               SinCos.eval(angle1),
+               SinCos.eval(angle1 - 0.25f),
+               extent, handleMag,
+               arcKnots[i]);
+      }
 
-      // if (arcMode != PConstants.OPEN) {
-      // if (isPie) {
-      // final Knot2 first = YupJ2.arcKnots[0];
-      // final Knot2 last = YupJ2.arcKnots[3];
-      // final Knot2 center = YupJ2.arcKnots[4] = new Knot2(x, y);
-      // final Vec2 coCenter = center.coord;
-      // YupJ2.lerp13(coCenter, last.coord, center.rearHandle);
-      // YupJ2.lerp13(coCenter, first.coord, center.foreHandle);
-      // YupJ2.lerp13(first.coord, coCenter, first.rearHandle);
-      // YupJ2.lerp13(last.coord, coCenter, last.foreHandle);
-      // } else if (arcMode == PConstants.CHORD) {
-      // final Knot2 first = YupJ2.arcKnots[0];
-      // final Knot2 last = YupJ2.arcKnots[4];
-      // YupJ2.lerp13(last.coord, first.coord, last.foreHandle);
-      // YupJ2.lerp13(first.coord, last.coord, first.rearHandle);
-      // }
-      // }
+      if (arcMode != PConstants.OPEN) {
+         if (isPie) {
+            final Knot2 first = arcKnots[0];
+            final Knot2 last = arcKnots[3];
+            final Knot2 center = arcKnots[4] = new Knot2(x, y);
+            final Vec2 coCenter = center.coord;
+            YupJ2.lerp13(coCenter, last.coord, center.rearHandle);
+            YupJ2.lerp13(coCenter, first.coord, center.foreHandle);
+            YupJ2.lerp13(first.coord, coCenter, first.rearHandle);
+            YupJ2.lerp13(last.coord, coCenter, last.foreHandle);
+         } else if (arcMode == PConstants.CHORD) {
+            final Knot2 first = arcKnots[0];
+            final Knot2 last = arcKnots[4];
+            YupJ2.lerp13(last.coord, first.coord, last.foreHandle);
+            YupJ2.lerp13(first.coord, last.coord, first.rearHandle);
+         }
+      }
 
-      // Knot2 currKnot = null;
-      // Knot2 prevKnot = YupJ2.arcKnots[0];
+      Knot2 currKnot = null;
+      Knot2 prevKnot = arcKnots[0];
 
-      // Vec2 v0 = null;
-      // Vec2 v1 = null;
-      // Vec2 v2 = prevKnot.coord;
+      Vec2 v0 = null;
+      Vec2 v1 = null;
+      Vec2 v2 = prevKnot.coord;
 
-      // this.gp.reset();
-      // this.gp.moveTo(v2.x, v2.y);
+      this.gp.reset();
+      this.gp.moveTo(v2.x, v2.y);
 
-      // for (int i = 1; i < 5; ++i) {
-      // currKnot = YupJ2.arcKnots[i];
-      // v0 = prevKnot.foreHandle;
-      // v1 = currKnot.rearHandle;
-      // v2 = currKnot.coord;
+      for (int i = 1; i < 5; ++i) {
+         currKnot = arcKnots[i];
+         v0 = prevKnot.foreHandle;
+         v1 = currKnot.rearHandle;
+         v2 = currKnot.coord;
 
-      // this.gp.curveTo(
-      // v0.x, v0.y,
-      // v1.x, v1.y,
-      // v2.x, v2.y);
-      // prevKnot = currKnot;
-      // }
+         this.gp.curveTo(
+               v0.x, v0.y,
+               v1.x, v1.y,
+               v2.x, v2.y);
+         prevKnot = currKnot;
+      }
 
-      // if (isPie) {
-      // currKnot = YupJ2.arcKnots[0];
-      // v0 = prevKnot.foreHandle;
-      // v1 = currKnot.rearHandle;
-      // v2 = currKnot.coord;
+      if (isPie) {
+         currKnot = arcKnots[0];
+         v0 = prevKnot.foreHandle;
+         v1 = currKnot.rearHandle;
+         v2 = currKnot.coord;
 
-      // this.gp.curveTo(
-      // v0.x, v0.y,
-      // v1.x, v1.y,
-      // v2.x, v2.y);
-      // this.gp.closePath();
-      // }
+         this.gp.curveTo(
+               v0.x, v0.y,
+               v1.x, v1.y,
+               v2.x, v2.y);
+         this.gp.closePath();
+      }
 
-      // this.drawShape(this.gp);
+      this.drawShape(this.gp);
    }
 
    /**
@@ -2035,8 +2059,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * @param y
     *           the first y coordinate
     */
-   public void image ( final PGraphicsJava2D buff, final float x,
-         final float y ) {
+   public void image (
+         final PGraphicsJava2D buff,
+         final float x, final float y ) {
 
       if (buff.g2 != null) {
          this.image((PImage) buff, x, y);
@@ -2058,7 +2083,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * @param v
     *           the second y coordinate
     */
-   public void image ( final PGraphicsJava2D buff, final float x, final float y,
+   public void image (
+         final PGraphicsJava2D buff,
+         final float x, final float y,
          final float u, final float v ) {
 
       if (buff.g2 != null) {
@@ -2624,6 +2651,65 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    }
 
    /**
+    * Prints the renderer matrix. Follows the Processing
+    * convention of a row-major 3 x 2 matrix, not the Java AWT
+    * convention.
+    */
+   @Override
+   public void printMatrix () {
+
+      this.printMatrix(4);
+   }
+
+   /**
+    * Prints the renderer matrix. Follows the Processing
+    * convention of a row-major 3 x 2 matrix, not the Java AWT
+    * convention.<br>
+    * <br>
+    *
+    * <code>[ m00, m01, m02,<br>
+    *   m10, m11, m12 ]</code><br>
+    * <br>
+    *
+    * is equivalent to<br>
+    * <br>
+    *
+    * <code>[ scaleX, shearX, translateX,<br>
+    * shearY, scaleY, translateY ]</code>
+    *
+    * @param places
+    *           number of decimal places
+    */
+   public void printMatrix ( final int places ) {
+
+      final AffineTransform tr = this.g2.getTransform();
+      System.out.println(new StringBuilder(320)
+            .append('[').append(' ')
+
+            .append(Utils.toFixed(
+                  (float) tr.getScaleX(), places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(
+                  (float) tr.getShearX(), places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(
+                  (float) tr.getTranslateX(), places))
+            .append(',').append(' ').append('\n')
+
+            .append(Utils.toFixed(
+                  (float) tr.getShearY(), places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(
+                  (float) tr.getScaleY(), places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(
+                  (float) tr.getTranslateY(), places))
+
+            .append(' ').append(']')
+            .toString());
+   }
+
+   /**
     * Draws a quadrilateral between four points.
     *
     * @param x0
@@ -2976,7 +3062,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the target coordinate
     * @return the screen coordinate
     */
-   public Vec2 screen ( final Vec2 source, final Vec2 target ) {
+   public Vec2 screen (
+         final Vec2 source,
+         final Vec2 target ) {
 
       final AffineTransform tr = this.g2.getTransform();
       return target.set(
@@ -2995,8 +3083,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * value for where it will appear on a two-dimensional
     * screen.
     *
-    * This is inefficient, use screen with a PVector or Vec2
-    * instead.
+    * This is inefficient, use screen with Vec2 instead.
     *
     * @param x
     *           the x coordinate
@@ -3005,7 +3092,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * @return the screen x coordinate
     */
    @Override
-   public float screenX ( final float x, final float y ) {
+   public float screenX (
+         final float x,
+         final float y ) {
 
       final AffineTransform tr = this.g2.getTransform();
       return (float) (tr.getScaleX() * x +
@@ -3018,8 +3107,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * value for where it will appear on a two-dimensional
     * screen.
     *
-    * This is inefficient, use screen with a PVector or Vec2
-    * instead.
+    * This is inefficient, use screen with a Vec2 instead.
     *
     * @param x
     *           the x coordinate
@@ -3029,7 +3117,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * @see YupJ2#screen(Vec2, Vec2)
     */
    @Override
-   public float screenY ( final float x, final float y ) {
+   public float screenY (
+         final float x,
+         final float y ) {
 
       final AffineTransform tr = this.g2.getTransform();
       return (float) (tr.getShearY() * x +
@@ -3382,10 +3472,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
       /*
        * The lower bound of the stroke weight has to be < 1.0
-       * because of stroke scaling issues.
+       * because of scaling's impact on stroke weight.
        */
 
-      this.strokeWeight = Utils.max(PConstants.EPSILON, weight);
+      this.strokeWeight = Utils.max(Utils.EPSILON, weight);
       this.strokeImpl();
    }
 
@@ -3763,7 +3853,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * @param order
     *           the transform order
     */
-   public void transform ( final Transform2 tr2,
+   public void transform (
+         final Transform2 tr2,
          final Transform.Order order ) {
 
       final Vec2 dim = tr2.getScale(this.tr2Scale);
@@ -3898,8 +3989,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    public void updatePixels () {
 
       if (this.pixels != null) {
-         this.getRaster().setDataElements(0, 0, this.pixelWidth,
-               this.pixelHeight, this.pixels);
+         this.getRaster().setDataElements(
+               0, 0,
+               this.pixelWidth, this.pixelHeight,
+               this.pixels);
       }
       this.modified = true;
    }

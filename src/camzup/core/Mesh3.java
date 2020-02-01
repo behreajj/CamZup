@@ -185,68 +185,68 @@ public class Mesh3 extends Mesh {
        */
 
       final Vec3[] coords = new Vec3[] {
-            new Vec3(0.0f, 0.5f, 0.19098301f),
-            new Vec3(-0.19098301f, 0.0f, 0.5f),
-            new Vec3(0.19098301f, 0.0f, 0.5f),
-            new Vec3(0.309017f, -0.309017f, 0.309017f),
-            new Vec3(-0.309017f, -0.309017f, 0.309017f),
-            new Vec3(-0.19098301f, 0.0f, -0.5f),
-            new Vec3(-0.309017f, -0.309017f, -0.309017f),
-            new Vec3(0.19098301f, 0.0f, -0.5f),
-            new Vec3(0.309017f, 0.309017f, -0.309017f),
-            new Vec3(0.0f, 0.5f, -0.19098301f),
-            new Vec3(0.309017f, 0.309017f, 0.309017f),
-            new Vec3(0.5f, 0.19098301f, 0.0f),
-            new Vec3(-0.309017f, 0.309017f, -0.309017f),
-            new Vec3(-0.5f, 0.19098301f, 0.0f),
-            new Vec3(-0.309017f, 0.309017f, 0.309017f),
-            new Vec3(0.0f, -0.5f, 0.19098301f),
-            new Vec3(0.0f, -0.5f, -0.19098301f),
-            new Vec3(0.309017f, -0.309017f, -0.309017f),
-            new Vec3(0.5f, -0.19098301f, 0.0f),
-            new Vec3(-0.5f, -0.19098301f, 0.0f)
+            new Vec3(0.0f, 0.33614415f, -0.4165113f),
+            new Vec3(-0.19098301f, 0.47552827f, 0.15450847f),
+            new Vec3(0.19098301f, 0.47552827f, 0.15450847f),
+            new Vec3(0.309017f, 0.19840115f, 0.38938415f),
+            new Vec3(-0.309017f, 0.19840115f, 0.38938415f),
+            new Vec3(-0.19098301f, -0.47552827f, -0.15450847f),
+            new Vec3(-0.309017f, -0.38938415f, 0.19840115f),
+            new Vec3(0.19098301f, -0.47552827f, -0.15450847f),
+            new Vec3(0.309017f, -0.19840115f, -0.38938415f),
+            new Vec3(0.0f, -0.02712715f, -0.53454524f),
+            new Vec3(0.309017f, 0.38938415f, -0.19840115f),
+            new Vec3(0.5f, 0.05901699f, -0.18163565f),
+            new Vec3(-0.309017f, -0.19840115f, -0.38938415f),
+            new Vec3(-0.5f, 0.05901699f, -0.18163565f),
+            new Vec3(-0.309017f, 0.38938415f, -0.19840115f),
+            new Vec3(0.0f, 0.02712715f, 0.53454524f),
+            new Vec3(0.0f, -0.33614415f, 0.4165113f),
+            new Vec3(0.309017f, -0.38938415f, 0.19840115f),
+            new Vec3(0.5f, -0.05901699f, 0.18163565f),
+            new Vec3(-0.5f, -0.05901699f, 0.18163565f)
       };
 
       final Vec3[] normals = new Vec3[] {
-            new Vec3(-0.85065079f, 0.0f, 0.52573115f),
-            new Vec3(0.0f, 0.52573115f, 0.85065079f),
-            new Vec3(0.0f, -0.52573115f, -0.85065079f),
-            new Vec3(0.0f, 0.52573115f, -0.85065079f),
-            new Vec3(0.0f, -0.52573115f, 0.85065079f),
-            new Vec3(0.52573115f, 0.85065085f, 0.0f),
-            new Vec3(-0.52573115f, 0.85065085f, 0.0f),
-            new Vec3(-0.52573115f, -0.85065085f, 0.0f),
-            new Vec3(0.52573115f, -0.85065085f, 0.0f),
-            new Vec3(0.85065079f, 0.0f, 0.52573115f),
-            new Vec3(0.85065079f, 0.0f, -0.52573115f),
-            new Vec3(-0.85065079f, 0.0f, -0.52573115f)
+            new Vec3(-0.8506509f, 0.5f, 0.16245982f),
+            new Vec3(0.0f, -0.97147685f, 0.23713444f),
+            new Vec3(0.0f, 0.97147685f, -0.23713444f),
+            new Vec3(0.0f, -0.64655715f, -0.76286548f),
+            new Vec3(0.52573115f, 0.26286551f, -0.809017f),
+            new Vec3(0.0f, 0.64655715f, 0.76286548f),
+            new Vec3(-0.52573121f, 0.26286554f, -0.809017f),
+            new Vec3(-0.52573121f, -0.26286554f, 0.809017f),
+            new Vec3(0.52573115f, -0.26286551f, 0.809017f),
+            new Vec3(0.85065079f, 0.5f, 0.16245979f),
+            new Vec3(0.85065079f, -0.5f, -0.16245979f),
+            new Vec3(-0.8506509f, -0.5f, -0.16245982f)
       };
 
       final Vec2[] texCoords = new Vec2[] {
             new Vec2(0.5f, 1.0f),
-            new Vec2(0.79389262f, 0.09549147f),
-            new Vec2(0.02447176f, 0.65450859f),
             new Vec2(0.20610732f, 0.09549153f),
-            new Vec2(0.97552824f, 0.65450847f)
+            new Vec2(0.97552824f, 0.65450847f),
+            new Vec2(0.79389262f, 0.09549147f),
+            new Vec2(0.02447176f, 0.65450859f)
       };
 
       final int[][][] faces = new int[][][] {
-            { { 2, 0, 1 }, { 10, 2, 1 }, { 0, 3, 1 },
-                  { 14, 1, 1 }, { 1, 4, 1 } },
-            { { 1, 0, 4 }, { 4, 2, 4 }, { 15, 3, 4 },
-                  { 3, 1, 4 }, { 2, 4, 4 } },
-            { { 7, 0, 2 }, { 17, 2, 2 }, { 16, 3, 2 },
-                  { 6, 1, 2 }, { 5, 4, 2 } },
+            { { 2, 0, 2 }, { 10, 2, 2 }, { 0, 3, 2 },
+                  { 14, 1, 2 }, { 1, 4, 2 } },
+            { { 1, 0, 5 }, { 4, 2, 5 }, { 15, 3, 5 },
+                  { 3, 1, 5 }, { 2, 4, 5 } },
+            { { 7, 0, 1 }, { 17, 2, 1 }, { 16, 3, 1 },
+                  { 6, 1, 1 }, { 5, 4, 1 } },
             { { 5, 0, 3 }, { 12, 2, 3 }, { 9, 3, 3 },
                   { 8, 1, 3 }, { 7, 4, 3 } },
-            { { 9, 0, 5 }, { 0, 4, 5 }, { 10, 1, 5 },
-                  { 11, 3, 5 }, { 8, 2, 5 } },
-            { { 0, 0, 6 }, { 9, 4, 6 }, { 12, 1, 6 },
-                  { 13, 3, 6 }, { 14, 2, 6 } },
-            { { 16, 0, 7 }, { 15, 4, 7 }, { 4, 1, 7 },
-                  { 19, 3, 7 }, { 6, 2, 7 } },
-            { { 15, 0, 8 }, { 16, 4, 8 }, { 17, 1, 8 },
-                  { 18, 3, 8 }, { 3, 2, 8 } },
+            { { 9, 0, 4 }, { 0, 2, 4 }, { 10, 3, 4 },
+                  { 11, 1, 4 }, { 8, 4, 4 } },
+            { { 0, 0, 6 }, { 9, 2, 6 }, { 12, 3, 6 },
+                  { 13, 1, 6 }, { 14, 4, 6 } },
+            { { 16, 0, 7 }, { 15, 2, 7 }, { 4, 3, 7 },
+                  { 19, 1, 7 }, { 6, 4, 7 } },
+            { { 15, 0, 8 }, { 16, 2, 8 }, { 17, 3, 8 },
+                  { 18, 1, 8 }, { 3, 4, 8 } },
             { { 11, 0, 9 }, { 10, 2, 9 }, { 2, 3, 9 },
                   { 3, 1, 9 }, { 18, 4, 9 } },
             { { 18, 0, 10 }, { 17, 2, 10 }, { 7, 3, 10 },
@@ -647,7 +647,7 @@ public class Mesh3 extends Mesh {
 
    /**
     * Creates a UV sphere.
-    * 
+    *
     * @param radius
     *           the radius
     * @param longitudes
@@ -733,7 +733,7 @@ public class Mesh3 extends Mesh {
 
    /**
     * Creates a UV sphere.
-    * 
+    *
     * @param radius
     *           the radius
     * @param target
@@ -753,7 +753,7 @@ public class Mesh3 extends Mesh {
 
    /**
     * Creates a UV sphere.
-    * 
+    *
     * @param target
     *           the output mesh
     * @return the sphere
@@ -858,7 +858,7 @@ public class Mesh3 extends Mesh {
 
    /**
     * Creates a torus.
-    * 
+    *
     * @param radius
     *           the radius
     * @param tubeRadius
@@ -956,7 +956,7 @@ public class Mesh3 extends Mesh {
 
    /**
     * Creates a torus.
-    * 
+    *
     * @param radius
     *           the radius
     * @param tubeRadius
@@ -978,7 +978,7 @@ public class Mesh3 extends Mesh {
 
    /**
     * Creates a torus.
-    * 
+    *
     * @param target
     *           the output mesh
     * @return the torus
@@ -1180,7 +1180,7 @@ public class Mesh3 extends Mesh {
       }
 
       result.append("], \"normals\": [");
-      
+
       final int nlen = this.normals.length;
       final int nlast = nlen - 1;
       for (int h = 0; h < nlen; ++h) {
@@ -1189,7 +1189,7 @@ public class Mesh3 extends Mesh {
             result.append(',').append(' ');
          }
       }
-      
+
       result.append(']').append('}');
       return result.toString();
    }
@@ -1434,7 +1434,9 @@ public class Mesh3 extends Mesh {
     * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
     */
    @Chainable
-   public Mesh3 rotate ( final float radians, final Vec3 axis ) {
+   public Mesh3 rotate (
+         final float radians,
+         final Vec3 axis ) {
 
       final float nrm = IUtils.ONE_TAU * radians;
       final float cosa = SinCos.eval(nrm);
@@ -1767,7 +1769,7 @@ public class Mesh3 extends Mesh {
 
       sb.append("{ name: \"")
             .append(this.name)
-            .append("\", coords: [");
+            .append("\"\n, coords: [");
       if (this.coords != null) {
          sb.append('\n');
          final int len = Math.min(this.coords.length, truncate);

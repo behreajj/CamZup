@@ -821,12 +821,16 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float yAxis,
          final float zAxis ) {
 
+      /*
+       * The PGraphicsOpenGL renderer uses invRotate on
+       * modelviewInv, which seems to pre-multiply the
+       * modelviewInv matrix by the rotation matrix of the
+       * negative angle. This approach was tried here, but there
+       * was an error which impacted normals/shadows.
+       */
       PMatAux.rotate(angle,
             xAxis, yAxis, zAxis,
             this.modelview);
-      // PMatAux.invRotate(angle,
-      // xAxis, yAxis, zAxis,
-      // this.modelviewInv);
       PMatAux.invert(this.modelview, this.modelviewInv);
 
       this.updateProjmodelview();
@@ -2335,9 +2339,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       // TODO: Does this need to calculate near and far based on
       // camera pos?
-      this.ortho(left, right,
+      this.ortho(
+            left, right,
             bottom, top,
-            IUp.DEFAULT_NEAR_CLIP, IUp.DEFAULT_FAR_CLIP);
+            IUp.DEFAULT_NEAR_CLIP,
+            IUp.DEFAULT_FAR_CLIP);
    }
 
    /**
@@ -2374,7 +2380,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Sets the renderer projection to a perspective, where
     * objects nearer to the camera appear larger than objects
-    * distant from the camera.
+    * distant from the camera. Calculates the
     */
    @Override
    public void perspective () {
@@ -2384,14 +2390,45 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        * actual constants.
        */
 
+      this.perspective(IUp.DEFAULT_FOV);
+   }
+
+   /**
+    * Sets the renderer projection to a perspective, where
+    * objects nearer to the camera appear larger than objects
+    * distant from the camera.
+    *
+    * @param fov
+    *           the field of view
+    */
+   public void perspective ( final float fov ) {
+
       final float aspect = this.width > 128 && this.height > 128
             ? this.width / (float) this.height
             : IUp.DEFAULT_ASPECT;
 
+      this.perspective(fov, aspect);
+   }
+
+   /**
+    * Sets the renderer projection to a perspective, where
+    * objects nearer to the camera appear larger than objects
+    * distant from the camera.
+    *
+    * @param fov
+    *           the field of view
+    * @param aspect
+    *           the aspect ratio, width over height
+    */
+   public void perspective (
+         final float fov,
+         final float aspect ) {
+
       // TODO: Does this need to calculate near and far based on
       // camera loc?
+
       this.perspective(
-            IUp.DEFAULT_FOV,
+            fov,
             aspect,
             IUp.DEFAULT_NEAR_CLIP,
             IUp.DEFAULT_FAR_CLIP);
@@ -2413,8 +2450,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    @Override
    public void perspective (
-         final float fov, final float aspect,
-         final float near, final float far ) {
+         final float fov,
+         final float aspect,
+         final float near,
+         final float far ) {
 
       PMatAux.perspective(
             fov, aspect,
@@ -2701,6 +2740,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void rotateX ( final float angle ) {
 
+      /*
+       * The PGraphicsOpenGL renderer uses invRotate on
+       * modelviewInv, which seems to pre-multiply the
+       * modelviewInv matrix by the rotation matrix of the
+       * negative angle. This approach was tried here, but there
+       * was an error which impacted normals/shadows.
+       */
       PMatAux.rotateX(angle, this.modelview);
       PMatAux.invert(this.modelview, this.modelviewInv);
       this.updateProjmodelview();
@@ -2722,6 +2768,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void rotateY ( final float angle ) {
 
+      /*
+       * The PGraphicsOpenGL renderer uses invRotate on
+       * modelviewInv, which seems to pre-multiply the
+       * modelviewInv matrix by the rotation matrix of the
+       * negative angle. This approach was tried here, but there
+       * was an error which impacted normals/shadows.
+       */
       PMatAux.rotateY(angle, this.modelview);
       PMatAux.invert(this.modelview, this.modelviewInv);
       this.updateProjmodelview();
@@ -2742,6 +2795,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void rotateZ ( final float angle ) {
 
+      /*
+       * The PGraphicsOpenGL renderer uses invRotate on
+       * modelviewInv, which seems to pre-multiply the
+       * modelviewInv matrix by the rotation matrix of the
+       * negative angle. This approach was tried here, but there
+       * was an error which impacted normals/shadows.
+       */
       PMatAux.rotateZ(angle, this.modelview);
       PMatAux.invert(this.modelview, this.modelviewInv);
       this.updateProjmodelview();
@@ -2756,11 +2816,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * <li>multiplying the vector 4 by the modelview
     * matrix;</li>
     * <li>multiplying the product by the projection;</li>
-    * <li>demoting the vector 4 to a point by dividing the x, y
-    * and z components by w;</li>
-    * <li>normalizing the result by dividing by the renderer's
-    * width and height;</li>
-    * <li>shifting the normalized range.
+    * <li>demoting the vector 4 to a point 3 by dividing the x,
+    * y and z components by w;</li>
+    * <li>shifting the range from [-1.0, 1.0] to [(0.0, 0.0),
+    * (width, height)] .</li>
     * </ol>
     *
     * More efficient than calling
@@ -2776,7 +2835,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *           the output vector
     * @return the screen point
     */
-   public Vec3 screen ( final Vec3 v, final Vec3 target ) {
+   public Vec3 screen (
+         final Vec3 v,
+         final Vec3 target ) {
 
       /*
        * Multiply point by model-view matrix.

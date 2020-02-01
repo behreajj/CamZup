@@ -191,6 +191,31 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
    }
 
    /**
+    * Gets a material from this mesh entity.
+    *
+    * @param i
+    *           the index
+    *
+    * @return the material
+    */
+   public MaterialSolid getMaterial ( final int i ) {
+
+      return this.materials.get(Math.floorMod(i, this.materials.size()));
+   }
+
+   /**
+    * Gets a mesh from this mesh entity.
+    *
+    * @param i
+    *           the index
+    * @return the mesh
+    */
+   public Mesh3 getMesh ( final int i ) {
+
+      return this.meshes.get(Math.floorMod(i, this.meshes.size()));
+   }
+
+   /**
     * Returns an iterator, which allows an enhanced for-loop to
     * access the meshes in the mesh entity.
     *
@@ -294,7 +319,10 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
             .append("        [],\n")
             .append("        face_idcs)\n")
             .append("    mesh_data.validate()\n")
-            
+
+            // where l is a list of tuples
+            // flattened = [item for sublist in l for item in sublist]
+
             // .append(" normal_dat = mesh[\"normals\"]\n")
             // .append(" curr = 0\n")
             // .append(" mesh_verts = mesh_data.vertices\n")
@@ -302,7 +330,7 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
             // .append(" nrm_idx = face_idcs[curr]\n")
             // .append(" vert.normal = normal_dat[nrm_idx]\n")
             // .append(" curr = curr + 1\n")
-            
+
             .append("    idx = mesh[\"material_index\"]\n")
             .append("    mat_name = materials[idx][\"name\"]\n")
             .append("    mesh_data.materials.append(d_mats[mat_name])\n")

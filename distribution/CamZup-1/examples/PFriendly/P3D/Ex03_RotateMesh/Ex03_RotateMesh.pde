@@ -26,14 +26,11 @@ void setup() {
     0.0, 0.0, 0.0, 
     0.0, 1.0, 0.0);
 
-  Mesh3 mesh = Mesh3.dodecahedron(new Mesh3());
+  Mesh3 mesh = Mesh3.icosahedron(new Mesh3());
   entity.appendMesh(mesh);
 
   MaterialSolid material = new MaterialSolid()
-    .setFill(#00939c)
-    .setStroke(#ff798a)
-    .setStrokeWeight(2.0)
-    .toggleStroke();
+    .setFill(#00939c);
   entity.appendMaterial(material);
 
   entity.transform.scaleTo(min(width, height) * 0.5);

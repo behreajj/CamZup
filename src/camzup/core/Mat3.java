@@ -284,7 +284,6 @@ public class Mat3 extends Matrix {
          final double radians,
          final Mat3 target ) {
 
-      // TODO: Switch away from Math.?
       return Mat3.fromRotZ(
             (float) Math.cos(radians),
             (float) Math.sin(radians),
@@ -1054,34 +1053,6 @@ public class Mat3 extends Matrix {
 
    /**
     * Gets a column of this matrix with an index and vector.
-    * The last row of the matrix is assumed to be 0.0, 0.0, 1.0
-    * .
-    *
-    * @param j
-    *           the index
-    * @param target
-    *           the vector
-    * @return the column
-    */
-   public Vec2 getCol ( final int j, final Vec2 target ) {
-
-      switch (j) {
-         case 0:
-         case -3:
-            return target.set(this.m00, this.m10);
-         case 1:
-         case -2:
-            return target.set(this.m01, this.m11);
-         case 2:
-         case -1:
-            return target.set(this.m02, this.m12);
-         default:
-            return target.reset();
-      }
-   }
-
-   /**
-    * Gets a column of this matrix with an index and vector.
     *
     * @param j
     *           the index
@@ -1101,6 +1072,32 @@ public class Mat3 extends Matrix {
          case 2:
          case -1:
             return target.set(this.m02, this.m12, this.m22);
+         default:
+            return target.reset();
+      }
+   }
+
+   /**
+    * Gets a row of this matrix with an index and vector.
+    *
+    * @param i
+    *           the index
+    * @param target
+    *           the vector
+    * @return the row
+    */
+   public Vec3 getRow ( final int i, final Vec3 target ) {
+
+      switch (i) {
+         case 0:
+         case -3:
+            return target.set(this.m00, this.m01, this.m02);
+         case 1:
+         case -2:
+            return target.set(this.m10, this.m11, this.m12);
+         case 2:
+         case -1:
+            return target.set(this.m20, this.m21, this.m22);
          default:
             return target.reset();
       }
@@ -1294,23 +1291,39 @@ public class Mat3 extends Matrix {
       switch (j) {
          case 0:
          case -3:
+
+            /* Right axis. */
+
             this.m00 = source.x;
             this.m10 = source.y;
             this.m20 = 0.0f;
+
             return this;
+
          case 1:
          case -2:
+
+            /* Foward axis. */
+
             this.m01 = source.x;
             this.m11 = source.y;
             this.m21 = 0.0f;
+
             return this;
+
          case 2:
          case -1:
+
+            /* Translation. */
+
             this.m02 = source.x;
             this.m12 = source.y;
             this.m22 = 1.0f;
+
             return this;
+
          default:
+
             return this;
       }
    }
@@ -1329,20 +1342,108 @@ public class Mat3 extends Matrix {
       switch (j) {
          case 0:
          case -3:
+
+            /* Right axis. */
+
             this.m00 = source.x;
             this.m10 = source.y;
             this.m20 = source.z;
+
             return this;
+
          case 1:
          case -2:
+
+            /* Foward axis. */
+
             this.m01 = source.x;
             this.m11 = source.y;
             this.m21 = source.z;
+
+            return this;
+
+         case 2:
+         case -1:
+
+            /* Translation. */
+
+            this.m02 = source.x;
+            this.m12 = source.y;
+            this.m22 = source.z;
+
+            return this;
+
+         default:
+
+            return this;
+      }
+   }
+
+   /**
+    * Sets a row of this matrix with an index and vector. The
+    * translation is set to 0.0 for a given row, while the
+    * element (2, 2) is set to 1.0 .
+    *
+    * @param i
+    *           the row index
+    * @param source
+    *           the row
+    * @return this row
+    */
+   public Mat3 setRow ( final int i, final Vec2 source ) {
+
+      switch (i) {
+         case 0:
+         case -3:
+            this.m00 = source.x;
+            this.m01 = source.y;
+            this.m02 = 0.0f;
+            return this;
+         case 1:
+         case -2:
+            this.m10 = source.x;
+            this.m11 = source.y;
+            this.m12 = 0.0f;
             return this;
          case 2:
          case -1:
-            this.m02 = source.x;
-            this.m12 = source.y;
+            this.m20 = source.x;
+            this.m21 = source.y;
+            this.m22 = 1.0f;
+            return this;
+         default:
+            return this;
+      }
+   }
+
+   /**
+    * Sets a row of this matrix with an index and vector.
+    *
+    * @param i
+    *           the row index
+    * @param source
+    *           the row
+    * @return this row
+    */
+   public Mat3 setRow ( final int i, final Vec3 source ) {
+
+      switch (i) {
+         case 0:
+         case -3:
+            this.m00 = source.x;
+            this.m01 = source.y;
+            this.m02 = source.z;
+            return this;
+         case 1:
+         case -2:
+            this.m10 = source.x;
+            this.m11 = source.y;
+            this.m12 = source.z;
+            return this;
+         case 2:
+         case -1:
+            this.m20 = source.x;
+            this.m21 = source.y;
             this.m22 = source.z;
             return this;
          default:

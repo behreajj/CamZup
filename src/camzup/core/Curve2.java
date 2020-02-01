@@ -1844,7 +1844,7 @@ public class Curve2 extends Curve
             64 + 256 * this.knots.size())
                   .append("{ name: \"")
                   .append(this.name)
-                  .append("\", closedLoop: ")
+                  .append("\"\n, closedLoop: ")
                   .append(this.closedLoop)
                   .append(", \n  knots: [ \n");
 

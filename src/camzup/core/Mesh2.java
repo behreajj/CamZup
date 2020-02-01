@@ -24,7 +24,7 @@ public class Mesh2 extends Mesh {
       NGON (),
 
       /**
-       * Create a triangle-fan, with a point in the center.
+       * Create a triangle-based polygon.
        */
       TRI ();
 
@@ -47,6 +47,226 @@ public class Mesh2 extends Mesh {
     * polygon function.
     */
    public static final PolyType DEFAULT_POLY_TYPE = PolyType.NGON;
+
+   public static final Mesh2 arc (
+         final float startAngle,
+         final float stopAngle,
+         final float annulus,
+         final int sectors,
+         final Mesh2 target ) {
+
+      return Mesh2.arc(
+            startAngle, stopAngle,
+            annulus, sectors,
+            Mesh2.DEFAULT_POLY_TYPE, target);
+   }
+
+   /**
+    * Creates an arc from a start and stop angle. The
+    * granularity of the approximation is dictated by the
+    * number of sectors in a complete circle. The thickness of
+    * the arc is described by the annulus.
+    *
+    * Useful where sectors may be faster than the Bezier curves
+    * of
+    * {@link Curve2#arc(float, float, float, camzup.core.Curve.ArcMode, Curve2)}
+    * or where there is an issue rendering strokes.
+    *
+    * @param startAngle
+    *           the start angle
+    * @param stopAngle
+    *           the stop angle
+    * @param annulus
+    *           the size of the opening
+    * @param sectors
+    *           number of sectors in a circle
+    * @param poly
+    *           the poly type
+    * @param target
+    *           the output mesh
+    * @return the arc
+    */
+   public static final Mesh2 arc (
+         final float startAngle,
+         final float stopAngle,
+         final float annulus,
+         final int sectors,
+         final PolyType poly,
+         final Mesh2 target ) {
+
+      if (Utils.approx(stopAngle - startAngle, IUtils.TAU, 0.00139f)) {
+         return Mesh2.ring(annulus, sectors, poly, target);
+      }
+
+      final float annul = Utils.clamp(annulus,
+            Utils.EPSILON, 1.0f - Utils.EPSILON);
+      final float radius = 0.5f;
+      final float a1 = Utils.mod1(startAngle * IUtils.ONE_TAU);
+      final float b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU);
+      final float arcLen1 = Utils.mod1(b1 - a1);
+      final float destAngle1 = a1 + arcLen1;
+      final int sctCount = Utils.ceilToInt(
+            1 + (sectors < 3 ? 3 : sectors) * arcLen1);
+      final int sctCount2 = sctCount + sctCount;
+      final float toStep = 1.0f / (sctCount - 1.0f);
+
+      final Vec2[] coords = new Vec2[sctCount2];
+      final Vec2[] texCoords = new Vec2[sctCount2];
+      final Vec2 uvCenter = Vec2.uvCenter(new Vec2());
+      final Vec2 pureCoord = new Vec2();
+      for (int k = 0, i = 0, j = 1; k < sctCount; ++k, i += 2, j += 2) {
+         final float theta = Utils.lerpUnclamped(
+               a1, destAngle1, k * toStep);
+
+         pureCoord.set(
+               SinCos.eval(theta) * radius,
+               SinCos.eval(theta - 0.25f) * radius);
+
+         coords[i] = new Vec2(pureCoord);
+         final Vec2 v1 = coords[j] = Vec2.mul(
+               pureCoord, annul, new Vec2());
+
+         texCoords[i] = Vec2.add(uvCenter, pureCoord, new Vec2());
+         texCoords[j] = Vec2.add(uvCenter, v1, new Vec2());
+      }
+
+      int[][][] faces;
+      int len;
+
+      switch (poly) {
+
+         case NGON:
+
+            len = sctCount - 1;
+            faces = new int[len][4][2];
+
+            for (int k = 0, i = 0, j = 1; k < len; ++k, i += 2, j += 2) {
+               final int m = i + 2;
+               final int n = j + 2;
+
+               faces[k] = new int[][] {
+                     { i, i }, { m, m }, { n, n }, { j, j } };
+            }
+
+            break;
+
+         case TRI:
+
+         default:
+
+            len = sctCount2 - 2;
+            faces = new int[len][3][2];
+
+            // Could probably get rid of k.
+            for (int k = 0, i = 0, j = 1; k < len; k += 2, i += 2, j += 2) {
+               final int m = i + 2;
+               final int n = j + 2;
+
+               faces[k] = new int[][] {
+                     { i, i }, { m, m }, { j, j } };
+
+               faces[k + 1] = new int[][] {
+                     { m, m }, { n, n }, { j, j } };
+            }
+      }
+
+      target.name = "Arc";
+      return target.set(faces, coords, texCoords);
+   }
+
+   /**
+    * Creates an arc from a start and stop angle.
+    *
+    * @param startAngle
+    *           the start angle
+    * @param stopAngle
+    *           the stop angle
+    * @param annulus
+    *           the size of the opening
+    * @param target
+    *           the output mesh
+    * @return the arc
+    */
+   public static final Mesh2 arc (
+         final float startAngle,
+         final float stopAngle,
+         final float annulus,
+         final Mesh2 target ) {
+
+      return Mesh2.arc(
+            startAngle, stopAngle, annulus,
+            Mesh.DEFAULT_CIRCLE_SECTORS,
+            Mesh2.DEFAULT_POLY_TYPE, target);
+   }
+
+   /**
+    * Creates an arc from a start and stop angle.
+    *
+    * @param startAngle
+    *           the start angle
+    * @param stopAngle
+    *           the stop angle
+    * @param sectors
+    *           number of sectors in a circle
+    * @param target
+    *           the output mesh
+    * @return the arc
+    */
+   public static final Mesh2 arc (
+         final float startAngle,
+         final float stopAngle,
+         final int sectors,
+         final Mesh2 target ) {
+
+      return Mesh2.arc(
+            startAngle, stopAngle,
+            Mesh2.DEFAULT_ANNULUS, sectors,
+            Mesh2.DEFAULT_POLY_TYPE, target);
+   }
+
+   /**
+    * Creates an arc from a start and stop angle.
+    *
+    * @param startAngle
+    *           the start angle
+    * @param stopAngle
+    *           the stop angle
+    * @param target
+    *           the output mesh
+    * @return the arc
+    */
+   public static final Mesh2 arc (
+         final float startAngle,
+         final float stopAngle,
+         final Mesh2 target ) {
+
+      return Mesh2.arc(
+            startAngle, stopAngle,
+            Mesh2.DEFAULT_ANNULUS,
+            Mesh.DEFAULT_CIRCLE_SECTORS,
+            Mesh2.DEFAULT_POLY_TYPE, target);
+   }
+
+   /**
+    * Creates an arc from a stop angle. The start angle is
+    * presumed to be 0.0 degrees.
+    *
+    * @param stopAngle
+    *           the stop angle
+    * @param target
+    *           the output mesh
+    * @return the arc
+    */
+   public static final Mesh2 arc (
+         final float stopAngle,
+         final Mesh2 target ) {
+
+      return Mesh2.arc(
+            0.0f, stopAngle,
+            Mesh2.DEFAULT_ANNULUS,
+            Mesh.DEFAULT_CIRCLE_SECTORS,
+            Mesh2.DEFAULT_POLY_TYPE, target);
+   }
 
    /**
     * Calculates the dimensions of an Axis-Aligned Bounding Box
@@ -308,6 +528,7 @@ public class Mesh2 extends Mesh {
       final Vec2 pureCoord = new Vec2();
 
       switch (poly) {
+
          case NGON:
 
             coords = new Vec2[seg];
@@ -316,7 +537,6 @@ public class Mesh2 extends Mesh {
             final int[][] ngon = faces[0];
 
             for (int i = 0; i < seg; ++i) {
-
                Vec2.fromPolar(i * toTheta, 0.5f, pureCoord);
                texCoords[i] = Vec2.add(uvCenter, pureCoord, new Vec2());
                coords[i] = new Vec2(pureCoord);
@@ -326,6 +546,7 @@ public class Mesh2 extends Mesh {
             break;
 
          case TRI:
+
          default:
 
             coords = new Vec2[seg + 1];
@@ -365,11 +586,11 @@ public class Mesh2 extends Mesh {
     * @return the ring
     */
    public static final Mesh2 ring (
-         final int sectors,
          final float annulus,
+         final int sectors,
          final Mesh2 target ) {
 
-      return Mesh2.ring(sectors, annulus, Mesh2.DEFAULT_POLY_TYPE, target);
+      return Mesh2.ring(annulus, sectors, Mesh2.DEFAULT_POLY_TYPE, target);
    }
 
    /**
@@ -378,10 +599,10 @@ public class Mesh2 extends Mesh {
     * opening. When the polygon type is NGON, the ring will be
     * composed of quads; otherwise, tris.
     *
-    * @param sectors
-    *           the number of sides
     * @param annulus
     *           the size of the opening
+    * @param sectors
+    *           the number of sides
     * @param poly
     *           the polygon type
     * @param target
@@ -389,8 +610,8 @@ public class Mesh2 extends Mesh {
     * @return the ring
     */
    public static final Mesh2 ring (
-         final int sectors,
          final float annulus,
+         final int sectors,
          final PolyType poly,
          final Mesh2 target ) {
 
@@ -407,7 +628,11 @@ public class Mesh2 extends Mesh {
       final Vec2 pureCoord = new Vec2();
 
       switch (poly) {
+
          case NGON:
+
+            // TODO: Are these indices correct???
+
             coords = new Vec2[seg2];
             texCoords = new Vec2[seg2];
             faces = new int[seg][4][2];
@@ -469,10 +694,31 @@ public class Mesh2 extends Mesh {
     * Creates a regular convex polygon with an opening in its
     * center.
     *
+    * @param annulus
+    *           the size of the opening
+    * @param target
+    *           the output mesh
+    * @return the ring
+    */
+   public static final Mesh2 ring (
+         final float annulus,
+         final Mesh2 target ) {
+
+      return Mesh2.ring(
+            annulus,
+            Mesh.DEFAULT_CIRCLE_SECTORS,
+            Mesh2.DEFAULT_POLY_TYPE,
+            target);
+   }
+
+   /**
+    * Creates a regular convex polygon with an opening in its
+    * center.
+    *
     * @param sectors
     *           the number of sides
     * @param target
-    *           the output type
+    *           the output mesh
     * @return the ring
     */
    public static final Mesh2 ring (
@@ -480,8 +726,8 @@ public class Mesh2 extends Mesh {
          final Mesh2 target ) {
 
       return Mesh2.ring(
-            sectors,
             Mesh2.DEFAULT_ANNULUS,
+            sectors,
             Mesh2.DEFAULT_POLY_TYPE,
             target);
    }
@@ -491,14 +737,14 @@ public class Mesh2 extends Mesh {
     * center.
     *
     * @param target
-    *           the output type
+    *           the output mesh
     * @return the ring
     */
    public static final Mesh2 ring ( final Mesh2 target ) {
 
       return Mesh2.ring(
-            Mesh.DEFAULT_CIRCLE_SECTORS,
             Mesh2.DEFAULT_ANNULUS,
+            Mesh.DEFAULT_CIRCLE_SECTORS,
             Mesh2.DEFAULT_POLY_TYPE,
             target);
    }
@@ -1158,7 +1404,7 @@ public class Mesh2 extends Mesh {
 
       sb.append("{ name: \"")
             .append(this.name)
-            .append("\", coords: [");
+            .append("\"\n, coords: [");
 
       if (this.coords != null) {
          sb.append('\n');

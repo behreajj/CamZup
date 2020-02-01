@@ -7,6 +7,7 @@ import camzup.core.SinCos;
 import camzup.core.Utils;
 import camzup.core.Vec3;
 import camzup.core.Vec4;
+import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PVector;
 
@@ -979,6 +980,63 @@ public abstract class PMatAux {
     *
     * @param m
     *           the matrix
+    * @return the string
+    */
+   public static String toString ( final PMatrix2D m ) {
+
+      return PMatAux.toString(m, 4);
+   }
+
+   /**
+    * Prints a matrix with a default format.
+    *
+    * @param m
+    *           the matrix
+    * @param places
+    *           number of decimal places
+    * @return the string
+    */
+   public static String toString (
+         final PMatrix2D m,
+         final int places ) {
+
+      return new StringBuilder(320)
+            .append('[').append(' ')
+
+            .append(Utils.toFixed(m.m00, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m01, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m02, places))
+            .append(',').append(' ').append('\n')
+
+            .append(Utils.toFixed(m.m10, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m11, places))
+            .append(',').append(' ')
+            .append(Utils.toFixed(m.m12, places))
+
+            .append(' ').append(']')
+            .toString();
+   }
+
+   /**
+    * Prints a matrix with a default format.
+    *
+    * @param m
+    *           the matrix
+    * @return the string
+    */
+   public static String toString ( final PMatrix3D m ) {
+
+      return PMatAux.toString(m, 4);
+   }
+
+   /**
+    * Prints a matrix with a default format.
+    *
+    * @param m
+    *           the matrix
     * @param places
     *           number of decimal places
     * @return the string
@@ -988,7 +1046,7 @@ public abstract class PMatAux {
          final int places ) {
 
       return new StringBuilder(320)
-            .append("[ ")
+            .append('[').append(' ')
 
             .append(Utils.toFixed(m.m00, places))
             .append(',').append(' ')
@@ -1025,7 +1083,7 @@ public abstract class PMatAux {
             .append(',').append(' ')
             .append(Utils.toFixed(m.m33, places))
 
-            .append(" ]")
+            .append(' ').append(']')
             .toString();
    }
 }

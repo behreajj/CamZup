@@ -52,6 +52,8 @@ secondary.stroke();
 secondary.ellipse(new Vec2(), new Vec2(25.0, 25.0));
 secondary.endDraw();
 
+// Ensure that the secondary renderer is not supplied to 
+// to the primary until after beginDraw and endDraw are called.
 primary.background(0xff202020);
 primary.image(secondary, new Vec2(), new Vec2(50.0, 50.0));
 ```
@@ -74,7 +76,7 @@ Here is a brief list of issues with this library and differences which are not b
 - `YupJ2`'s `point` supports `strokeCap(SQUARE)` at the expense of performance.
 - [textureMode](https://processing.org/reference/textureMode_.html) `IMAGE` is not supported; `NORMAL` is the default. This is because many redundant operations on UV coordinates interfered with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT`. In making this conversion, support for high density pixel displays may be lost; I cannot test this at the moment, so please report issues with `image`.
 - [textMode](https://processing.org/reference/textMode_.html) `SHAPE` is not supported. However you can retrieve glyph outlines from a [PFont](https://processing.org/reference/PFont.html) with the `CurveEntity2` class from the `core` package. (The `PFont` needs to be loaded with [createFont](https://processing.org/reference/createFont_.html)).
-- The [PShape](https://processing.org/reference/PShape.html) interface has many problems (among them: attempting to represent both 2D and 3D shapes, a `rotateZ` bug as of version 3.5.x, difficulty accessing vertices and UV coordinates). This library uses `Curve` and `Mesh` objects instead.
+- The [PShape](https://processing.org/reference/PShape.html) interface has problems stemming from both its implementation and its design (among them: attempting to represent both 2D and 3D shapes, a `rotateZ` bug as of version 3.5.x, difficulty accessing vertices and UV coordinates). This library uses `Curve` and `Mesh` objects instead.
 - Stroke weight is influenced by scale; for that reason, curves and meshes that use materials may require stroke weights smaller than custom. Rendering an anti-aliased stroke with appropriate cap and join is [more difficult](https://mattdesl.svbtle.com/drawing-lines-is-hard) than most appreciate. It is at issue not only for this library, not only for Processing, but for renderers generally. Even when a stroke weight works in one renderer, it may not work with another (e.g., when a shape is saved as an SVG string).
 
 Many core Processing functions are marked `final`, meaning they cannot be extended and modified by classes in this library; similarly, many fields are marked `private` meaning they cannot be accessed and mutated. This is the one of the reasons for the differences noted above.
@@ -198,10 +200,10 @@ if you want to add instance methods, or any other functionality.
 With the exception of creating `new` objects mentioned above, the goal of this library is to create images, not throw exceptions. For that reason some liberties have been taken with mathematics.
 
 - The [linear interpolation](https://en.wikipedia.org/wiki/Linear_interpolation) (`lerp`) method in this library uses the formula `(1.0 - t) * a + t * b`, not `a + t * (b - a)`. Processing uses the latter. Furthermore, Processing's `lerp` is unclamped by default. This library Includes a clamped and unclamped version of `lerp`; clamped is assumed to be the default.
-- I break with GLSL convention when it comes to easing functions. The step provided to easing functions is always a scalar (a `float`). There are no `step`, `smoothStep` and `linearStep` functions which generate the step to be supplied to `mix`. `mix` is, however, is defined in classes where it makes sense.
+- I break with GLSL convention when it comes to easing functions. The step provided to easing functions is always a scalar (a `float`). There are no `step`, `smoothStep` and `linearStep` functions which generate the step to be supplied to `mix`. `mix` is, however, is defined in relevant classes.
 - The formula used for [spherical coordinates](https://en.wikipedia.org/wiki/Spherical_coordinate_system) in 3D is `(rho * cos(theta) * cos(phi), rho * sin(theta) * cos(phi), -rho * sin(phi))`, such that phi, the inclination, is in the range `-PI / 2` to `PI / 2`. At an inclination of zero, a point will lie on the sphere's equator. Other implementations will use the range `0.0` to `PI` for phi, where `PI / 2` is the equator.
 - For [modulo operations](https://en.wikipedia.org/wiki/Modulo_operation), I follow the GLSL convention of distinguishing `mod` from `fmod`. `fmod` is based on `trunc`, where `fmod(a, b) := a - b * trunc(a / b)`; `mod`, on `floor`, where `mod(a, b) := a - b * floor(a / b)`. In Java, the `%`  operator uses `fmod`. The Java `Math` library supports `floorMod` for `int`s.
 - As with shader languages, I try to protect against divide-by-zero errors whenever possible. Though mathematically incorrect, `div(x, 0.0) = 0.0` ; in consequence `fmod(x, 0.0)` and `mod(x, 0.0)` return `x`.
 - Component-wise multiplication between two vectors -- again, mathematically incorrect -- is assumed to be a shorthand for the multiplication of a vector with a non-uniform scalar, which would more appropriately be stored in a matrix.
 - `Utils.acos` and `Utils.asin` clamp the input value to the range `-1.0` to `1.0` so as to avoid exceptions.
-- As with Python, JavaScript and OSL, `x != 0` is `true`, `true` is `1` and `false` is `0`.
+- As with Python, JavaScript and OSL, `x != 0` is `true`; `true` is `1` and `false` is `0`.

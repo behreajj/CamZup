@@ -33,3 +33,7 @@ void draw() {
   strokeWeight(10.0);
   point(graphics.cameraX, graphics.cameraY);
 }
+
+void mouseReleased() {
+  printMatrix();
+}
