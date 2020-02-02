@@ -48,6 +48,21 @@ public class Mesh2 extends Mesh {
     */
    public static final PolyType DEFAULT_POLY_TYPE = PolyType.NGON;
 
+   /**
+    * Creates an arc from a start and stop angle.
+    *
+    * @param startAngle
+    *           the start angle
+    * @param stopAngle
+    *           the stop angle
+    * @param annulus
+    *           the size of the opening
+    * @param sectors
+    *           number of sectors in a circle
+    * @param target
+    *           the output mesh
+    * @return the arc
+    */
    public static final Mesh2 arc (
          final float startAngle,
          final float stopAngle,
@@ -101,19 +116,22 @@ public class Mesh2 extends Mesh {
       final float annul = Utils.clamp(annulus,
             Utils.EPSILON, 1.0f - Utils.EPSILON);
       final float radius = 0.5f;
+
       final float a1 = Utils.mod1(startAngle * IUtils.ONE_TAU);
       final float b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU);
       final float arcLen1 = Utils.mod1(b1 - a1);
       final float destAngle1 = a1 + arcLen1;
+
       final int sctCount = Utils.ceilToInt(
             1 + (sectors < 3 ? 3 : sectors) * arcLen1);
       final int sctCount2 = sctCount + sctCount;
-      final float toStep = 1.0f / (sctCount - 1.0f);
-
       final Vec2[] coords = new Vec2[sctCount2];
       final Vec2[] texCoords = new Vec2[sctCount2];
+
+      final float toStep = 1.0f / (sctCount - 1.0f);
       final Vec2 uvCenter = Vec2.uvCenter(new Vec2());
       final Vec2 pureCoord = new Vec2();
+
       for (int k = 0, i = 0, j = 1; k < sctCount; ++k, i += 2, j += 2) {
          final float theta = Utils.lerpUnclamped(
                a1, destAngle1, k * toStep);
@@ -157,15 +175,14 @@ public class Mesh2 extends Mesh {
             len = sctCount2 - 2;
             faces = new int[len][3][2];
 
-            // Could probably get rid of k.
-            for (int k = 0, i = 0, j = 1; k < len; k += 2, i += 2, j += 2) {
+            for (int i = 0, j = 1; i < len; i += 2, j += 2) {
                final int m = i + 2;
                final int n = j + 2;
 
-               faces[k] = new int[][] {
+               faces[i] = new int[][] {
                      { i, i }, { m, m }, { j, j } };
 
-               faces[k + 1] = new int[][] {
+               faces[j] = new int[][] {
                      { m, m }, { n, n }, { j, j } };
             }
       }

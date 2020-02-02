@@ -267,6 +267,110 @@ public class CurveEntity3 extends Entity implements Iterable < Curve3 > {
       return this.curves.iterator();
    }
 
+   @Chainable
+   public CurveEntity3 moveBy ( final Vec3 dir ) {
+
+      this.transform.moveBy(dir);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity3 moveTo ( final Vec3 locNew ) {
+
+      this.transform.moveTo(locNew);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity3 moveTo (
+         final Vec3 locNew,
+         final float step ) {
+
+      this.transform.moveTo(locNew, step);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity3 rotateBy ( final Quaternion rotNew ) {
+
+      this.transform.rotateBy(rotNew);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity3 rotateTo ( final Quaternion rotNew ) {
+
+      this.transform.rotateTo(rotNew);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity3 rotateTo (
+         final Quaternion rotNew,
+         final float step ) {
+
+      this.transform.rotateTo(rotNew, step);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity3 rotateX ( final float radians ) {
+
+      this.transform.rotateX(radians);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity3 rotateY ( final float radians ) {
+
+      this.transform.rotateY(radians);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity3 rotateZ ( final float radians ) {
+
+      this.transform.rotateZ(radians);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity3 scaleBy ( final float scalar ) {
+
+      this.transform.scaleBy(scalar);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity3 scaleBy ( final Vec3 scalar ) {
+
+      this.transform.scaleBy(scalar);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity3 scaleTo ( final float scalar ) {
+
+      this.transform.scaleTo(scalar);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity3 scaleTo ( final Vec3 scalar ) {
+
+      this.transform.scaleTo(scalar);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity3 scaleTo (
+         final Vec3 scalar,
+         final float step ) {
+
+      this.transform.scaleTo(scalar, step);
+      return this;
+   }
+
    /**
     * Returns a String of Python code targeted toward the
     * Blender 2.8x API. This code is brittle and is used for

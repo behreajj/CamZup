@@ -267,6 +267,89 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
       return this.curves.iterator();
    }
 
+   @Chainable
+   public CurveEntity2 moveBy ( final Vec2 dir ) {
+
+      this.transform.moveBy(dir);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity2 moveTo ( final Vec2 locNew ) {
+
+      this.transform.moveTo(locNew);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity2 moveTo ( 
+         final Vec2 locNew, 
+         final float step ) {
+
+      this.transform.moveTo(locNew, step);
+      return this;
+   }
+   
+   @Chainable
+   public CurveEntity2 rotateTo ( final float rotNew ) {
+
+      this.transform.rotateTo(rotNew);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity2 rotateTo ( 
+         final float radians, 
+         final float step ) {
+
+      this.transform.rotateTo(radians, step);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity2 rotateZ ( final float radians ) {
+
+      this.transform.rotateZ(radians);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity2 scaleBy ( final float scalar ) {
+
+      this.transform.scaleBy(scalar);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity2 scaleBy ( final Vec2 scalar ) {
+
+      this.transform.scaleBy(scalar);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity2 scaleTo ( final float scalar ) {
+
+      this.transform.scaleTo(scalar);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity2 scaleTo ( final Vec2 scalar ) {
+
+      this.transform.scaleTo(scalar);
+      return this;
+   }
+
+   @Chainable
+   public CurveEntity2 scaleTo ( 
+         final Vec2 scalar, 
+         final float step ) {
+
+      this.transform.scaleTo(scalar, step);
+      return this;
+   }
+
    /**
     * Returns a String of Python code targeted toward the
     * Blender 2.8x API. This code is brittle and is used for

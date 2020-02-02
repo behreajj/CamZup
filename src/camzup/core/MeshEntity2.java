@@ -215,6 +215,110 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
    }
 
    /**
+    * Moves this mesh entity by a vector.
+    * 
+    * @param dir
+    *           the vector
+    * @return this mesh entity
+    */
+   @Chainable
+   public MeshEntity2 moveBy ( final Vec2 dir ) {
+
+      this.transform.moveBy(dir);
+      return this;
+   }
+
+   /**
+    * Moves this mesh entity to a location.
+    * 
+    * @param locNew
+    *           the location
+    * @return this mesh entity
+    */
+   @Chainable
+   public MeshEntity2 moveTo ( final Vec2 locNew ) {
+
+      this.transform.moveTo(locNew);
+      return this;
+   }
+
+   /**
+    * Moves this mesh entity to a location over a step in time.
+    * 
+    * @param locNew
+    *           the location
+    * @return this mesh entity
+    */
+   @Chainable
+   public MeshEntity2 moveTo (
+         final Vec2 locNew,
+         final float step ) {
+
+      this.transform.moveTo(locNew, step);
+      return this;
+   }
+
+   @Chainable
+   public MeshEntity2 rotateTo ( final float rotNew ) {
+
+      this.transform.rotateTo(rotNew);
+      return this;
+   }
+
+   @Chainable
+   public MeshEntity2 rotateTo (
+         final float radians,
+         final float step ) {
+
+      this.transform.rotateTo(radians, step);
+      return this;
+   }
+
+   @Chainable
+   public MeshEntity2 rotateZ ( final float radians ) {
+
+      this.transform.rotateZ(radians);
+      return this;
+   }
+
+   @Chainable
+   public MeshEntity2 scaleBy ( final float scalar ) {
+
+      this.transform.scaleBy(scalar);
+      return this;
+   }
+
+   @Chainable
+   public MeshEntity2 scaleBy ( final Vec2 scalar ) {
+
+      this.transform.scaleBy(scalar);
+      return this;
+   }
+
+   @Chainable
+   public MeshEntity2 scaleTo ( final float scalar ) {
+
+      this.transform.scaleTo(scalar);
+      return this;
+   }
+
+   @Chainable
+   public MeshEntity2 scaleTo ( final Vec2 scalar ) {
+
+      this.transform.scaleTo(scalar);
+      return this;
+   }
+
+   @Chainable
+   public MeshEntity2 scaleTo (
+         final Vec2 scalar,
+         final float step ) {
+
+      this.transform.scaleTo(scalar, step);
+      return this;
+   }
+
+   /**
     * Returns a String of Python code targeted toward the
     * Blender 2.8x API. This code is brittle and is used for
     * internal testing purposes, i.e., to compare how curve
