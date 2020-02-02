@@ -19,16 +19,7 @@ public class MaterialUV extends Material {
    public final Transform2 transform;
 
    {
-      /*
-       * Instance variables should never be assigned constants
-       * when the constants are objects, as the constants will be
-       * overwritten. Rather, instance variables should receive
-       * copies of constants. To make this clearer, an initializer
-       * block.
-       */
-
-      this.tint = Color.fromHex(IMaterial.DEFAULT_FILL, new Color());
-      this.transform = new Transform2();
+      this.tint = Color.white(new Color());
    }
 
    /**
@@ -36,7 +27,7 @@ public class MaterialUV extends Material {
     */
    public MaterialUV () {
 
-      super();
+      this("MaterialUV");
    }
 
    /**
@@ -48,6 +39,8 @@ public class MaterialUV extends Material {
    public MaterialUV ( final String name ) {
 
       super(name);
+      this.transform = new Transform2();
+      this.tint.set(this.tint);
    }
 
    /**
@@ -66,7 +59,7 @@ public class MaterialUV extends Material {
          final Color tint ) {
 
       super(name);
-      this.transform.set(transform);
+      this.transform = transform;
       this.tint.set(tint);
    }
 }

@@ -9,7 +9,7 @@ import java.util.List;
  * list of meshes. The meshes may references a list of
  * materials by index.
  */
-public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
+public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
 
    /**
     * The list of materials held by the entity.
@@ -20,17 +20,6 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
     * The list of meshes held by the entity.
     */
    public final List < Mesh2 > meshes;
-
-   /**
-    * The entity's transform.
-    */
-   public final Transform2 transform;
-
-   /**
-    * The order in which the entity's transform is applied to
-    * the mesh.
-    */
-   public Transform.Order transformOrder = Transform.Order.TRS;
 
    {
       this.materials = new ArrayList <>();
@@ -43,7 +32,6 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
    public MeshEntity2 () {
 
       super();
-      this.transform = new Transform2();
    }
 
    /**
@@ -55,7 +43,6 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
    public MeshEntity2 ( final String name ) {
 
       super(name);
-      this.transform = new Transform2();
    }
 
    /**
@@ -74,8 +61,7 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
          final Transform2 transform,
          final Mesh2... meshes ) {
 
-      super(name);
-      this.transform = transform;
+      super(name, transform);
       for (final Mesh2 mesh : meshes) {
          if (mesh != null) {
             this.meshes.add(mesh);
@@ -96,13 +82,8 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
          final Transform2 transform,
          final Mesh2... meshes ) {
 
-      super();
-      this.transform = transform;
-      for (final Mesh2 mesh : meshes) {
-         if (mesh != null) {
-            this.meshes.add(mesh);
-         }
-      }
+      super(transform);
+      this.appendMeshes(meshes);
    }
 
    /**
@@ -212,110 +193,6 @@ public class MeshEntity2 extends Entity implements Iterable < Mesh2 > {
    public Iterator < Mesh2 > iterator () {
 
       return this.meshes.iterator();
-   }
-
-   /**
-    * Moves this mesh entity by a vector.
-    * 
-    * @param dir
-    *           the vector
-    * @return this mesh entity
-    */
-   @Chainable
-   public MeshEntity2 moveBy ( final Vec2 dir ) {
-
-      this.transform.moveBy(dir);
-      return this;
-   }
-
-   /**
-    * Moves this mesh entity to a location.
-    * 
-    * @param locNew
-    *           the location
-    * @return this mesh entity
-    */
-   @Chainable
-   public MeshEntity2 moveTo ( final Vec2 locNew ) {
-
-      this.transform.moveTo(locNew);
-      return this;
-   }
-
-   /**
-    * Moves this mesh entity to a location over a step in time.
-    * 
-    * @param locNew
-    *           the location
-    * @return this mesh entity
-    */
-   @Chainable
-   public MeshEntity2 moveTo (
-         final Vec2 locNew,
-         final float step ) {
-
-      this.transform.moveTo(locNew, step);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity2 rotateTo ( final float rotNew ) {
-
-      this.transform.rotateTo(rotNew);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity2 rotateTo (
-         final float radians,
-         final float step ) {
-
-      this.transform.rotateTo(radians, step);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity2 rotateZ ( final float radians ) {
-
-      this.transform.rotateZ(radians);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity2 scaleBy ( final float scalar ) {
-
-      this.transform.scaleBy(scalar);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity2 scaleBy ( final Vec2 scalar ) {
-
-      this.transform.scaleBy(scalar);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity2 scaleTo ( final float scalar ) {
-
-      this.transform.scaleTo(scalar);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity2 scaleTo ( final Vec2 scalar ) {
-
-      this.transform.scaleTo(scalar);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity2 scaleTo (
-         final Vec2 scalar,
-         final float step ) {
-
-      this.transform.scaleTo(scalar, step);
-      return this;
    }
 
    /**

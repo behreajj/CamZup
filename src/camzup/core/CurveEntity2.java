@@ -9,7 +9,7 @@ import java.util.List;
  * list of curves. The curves may references a list of
  * materials by index.
  */
-public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
+public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
 
    /**
     * The list of curves held by the entity.
@@ -20,17 +20,6 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
     * The list of materials held by the entity.
     */
    public final List < MaterialSolid > materials;
-
-   /**
-    * The entity's transform.
-    */
-   public final Transform2 transform;
-
-   /**
-    * The order in which the entity's transform is applied to
-    * the curve.
-    */
-   public Transform.Order transformOrder = Transform.Order.TRS;
 
    {
       this.materials = new ArrayList <>();
@@ -43,7 +32,6 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
    public CurveEntity2 () {
 
       super();
-      this.transform = new Transform2();
    }
 
    /**
@@ -55,7 +43,6 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
    public CurveEntity2 ( final String name ) {
 
       super(name);
-      this.transform = new Transform2();
    }
 
    /**
@@ -74,8 +61,7 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
          final Transform2 transform,
          final Curve2... curves ) {
 
-      super(name);
-      this.transform = transform;
+      super(name, transform);
       this.appendCurves(curves);
    }
 
@@ -92,8 +78,7 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
          final Transform2 transform,
          final Curve2... curves ) {
 
-      super();
-      this.transform = transform;
+      super(transform);
       this.appendCurves(curves);
    }
 
@@ -265,89 +250,6 @@ public class CurveEntity2 extends Entity implements Iterable < Curve2 > {
    public Iterator < Curve2 > iterator () {
 
       return this.curves.iterator();
-   }
-
-   @Chainable
-   public CurveEntity2 moveBy ( final Vec2 dir ) {
-
-      this.transform.moveBy(dir);
-      return this;
-   }
-
-   @Chainable
-   public CurveEntity2 moveTo ( final Vec2 locNew ) {
-
-      this.transform.moveTo(locNew);
-      return this;
-   }
-
-   @Chainable
-   public CurveEntity2 moveTo ( 
-         final Vec2 locNew, 
-         final float step ) {
-
-      this.transform.moveTo(locNew, step);
-      return this;
-   }
-   
-   @Chainable
-   public CurveEntity2 rotateTo ( final float rotNew ) {
-
-      this.transform.rotateTo(rotNew);
-      return this;
-   }
-
-   @Chainable
-   public CurveEntity2 rotateTo ( 
-         final float radians, 
-         final float step ) {
-
-      this.transform.rotateTo(radians, step);
-      return this;
-   }
-
-   @Chainable
-   public CurveEntity2 rotateZ ( final float radians ) {
-
-      this.transform.rotateZ(radians);
-      return this;
-   }
-
-   @Chainable
-   public CurveEntity2 scaleBy ( final float scalar ) {
-
-      this.transform.scaleBy(scalar);
-      return this;
-   }
-
-   @Chainable
-   public CurveEntity2 scaleBy ( final Vec2 scalar ) {
-
-      this.transform.scaleBy(scalar);
-      return this;
-   }
-
-   @Chainable
-   public CurveEntity2 scaleTo ( final float scalar ) {
-
-      this.transform.scaleTo(scalar);
-      return this;
-   }
-
-   @Chainable
-   public CurveEntity2 scaleTo ( final Vec2 scalar ) {
-
-      this.transform.scaleTo(scalar);
-      return this;
-   }
-
-   @Chainable
-   public CurveEntity2 scaleTo ( 
-         final Vec2 scalar, 
-         final float step ) {
-
-      this.transform.scaleTo(scalar, step);
-      return this;
    }
 
    /**

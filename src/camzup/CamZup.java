@@ -191,7 +191,8 @@ public class CamZup {
       me.appendMesh(Mesh2.arc(0f, Utils.PI, 0.75f,
             5, Mesh2.PolyType.TRI, m));
 
-      System.out.println(me.getMesh(0).toString());
+      // System.out.println(me.getMesh(0).toString());
+      System.out.println(me);
 
       // int sectors = 10;
       // float arcLen = Utils.TAU / sectors;

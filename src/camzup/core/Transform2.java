@@ -1238,9 +1238,9 @@ public class Transform2 extends Transform {
       return new StringBuilder(160)
             .append("{ location: ")
             .append(this.location.toString(places))
-            .append(", \nrotation: ")
+            .append(", rotation: ")
             .append(Utils.toFixed(IUtils.RAD_TO_DEG * this.rotation, 1))
-            .append(", \nscale: ")
+            .append(", scale: ")
             .append(this.scale.toString(places))
             .append(" }")
             .toString();

@@ -9,7 +9,7 @@ import java.util.List;
  * list of meshes. The meshes may references a list of
  * materials by index.
  */
-public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
+public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
 
    /**
     * The list of materials held by the entity.
@@ -20,17 +20,6 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
     * The list of meshes held by the entity.
     */
    public final List < Mesh3 > meshes;
-
-   /**
-    * The entity's transform.
-    */
-   public final Transform3 transform;
-
-   /**
-    * The order in which the entity's transform is applied to
-    * the mesh.
-    */
-   public Transform.Order transformOrder = Transform.Order.TRS;
 
    {
       this.materials = new ArrayList <>();
@@ -43,7 +32,6 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
    public MeshEntity3 () {
 
       super();
-      this.transform = new Transform3();
    }
 
    /**
@@ -55,7 +43,6 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
    public MeshEntity3 ( final String name ) {
 
       super(name);
-      this.transform = new Transform3();
    }
 
    /**
@@ -74,13 +61,8 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
          final Transform3 transform,
          final Mesh3... meshes ) {
 
-      super(name);
-      this.transform = transform;
-      for (final Mesh3 mesh : meshes) {
-         if (mesh != null) {
-            this.meshes.add(mesh);
-         }
-      }
+      super(name, transform);
+      this.appendMeshes(meshes);
    }
 
    /**
@@ -96,13 +78,8 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
          final Transform3 transform,
          final Mesh3... meshes ) {
 
-      super();
-      this.transform = transform;
-      for (final Mesh3 mesh : meshes) {
-         if (mesh != null) {
-            this.meshes.add(mesh);
-         }
-      }
+      super(transform);
+      this.appendMeshes(meshes);
    }
 
    /**
@@ -226,110 +203,6 @@ public class MeshEntity3 extends Entity implements Iterable < Mesh3 > {
    public Iterator < Mesh3 > iterator () {
 
       return this.meshes.iterator();
-   }
-
-   @Chainable
-   public MeshEntity3 moveBy ( final Vec3 dir ) {
-
-      this.transform.moveBy(dir);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity3 moveTo ( final Vec3 locNew ) {
-
-      this.transform.moveTo(locNew);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity3 moveTo ( 
-         final Vec3 locNew, 
-         final float step ) {
-
-      this.transform.moveTo(locNew, step);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity3 rotateBy ( final Quaternion rotNew ) {
-
-      this.transform.rotateBy(rotNew);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity3 rotateTo ( final Quaternion rotNew ) {
-
-      this.transform.rotateTo(rotNew);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity3 rotateTo ( 
-         final Quaternion rotNew, 
-         final float step ) {
-
-      this.transform.rotateTo(rotNew, step);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity3 rotateX ( final float radians ) {
-
-      this.transform.rotateX(radians);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity3 rotateY ( final float radians ) {
-
-      this.transform.rotateY(radians);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity3 rotateZ ( final float radians ) {
-
-      this.transform.rotateZ(radians);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity3 scaleBy ( final float scalar ) {
-
-      this.transform.scaleBy(scalar);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity3 scaleBy ( final Vec3 scalar ) {
-
-      this.transform.scaleBy(scalar);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity3 scaleTo ( final float scalar ) {
-
-      this.transform.scaleTo(scalar);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity3 scaleTo ( final Vec3 scalar ) {
-
-      this.transform.scaleTo(scalar);
-      return this;
-   }
-
-   @Chainable
-   public MeshEntity3 scaleTo ( 
-         final Vec3 scalar, 
-         final float step ) {
-
-      this.transform.scaleTo(scalar, step);
-      return this;
    }
 
    /**
