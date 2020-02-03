@@ -1,9 +1,6 @@
 import camzup.core.Vec2;
 
 void setup() {
-  size(512, 256);
-  background(#fff7d5);
-
   Vec2 sum = new Vec2();
   Vec2 a = new Vec2(10, 15);
   Vec2 b = new Vec2(3, 7);

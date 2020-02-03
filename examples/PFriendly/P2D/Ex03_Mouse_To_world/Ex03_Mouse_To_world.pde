@@ -1,15 +1,18 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-YupJ2 graphics;
+Yup2 graphics;
 
 float x = 0.0;
 float y = 0.0;
 Vec2 mouse = new Vec2();
 
+void settings() {
+  size(720, 405, "camzup.pfriendly.Yup2");
+}
+
 void setup() {
-  size(720, 405, "camzup.pfriendly.YupJ2");
-  graphics = (YupJ2)getGraphics();
+  graphics = (Yup2)getGraphics();
 }
 
 void draw() {
@@ -19,7 +22,7 @@ void draw() {
   float angle = frameCount * 0.01;
   x += random(-1.0, 1.0);
   y += random(-1.0, 1.0);
-  float s = lerp(0.5, 4.0, cos(angle) * 0.5 + 0.5);
+  float s = Utils.lerp(0.5, 4.0, Utils.cos(angle) * 0.5 + 0.5);
 
   graphics.camera(x, y, angle, s, s);
 

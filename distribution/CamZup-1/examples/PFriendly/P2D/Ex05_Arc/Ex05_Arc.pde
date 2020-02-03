@@ -5,30 +5,30 @@ YupJ2 graphics;
 
 Vec2 mouse = new Vec2();
 
-void setup() {
+void settings() {
   size(720, 405, "camzup.pfriendly.YupJ2");
-  ellipseMode(CENTER);
-  strokeJoin(ROUND);
-  strokeCap(ROUND);
+  smooth(8);
+}
+
+void setup() {
   graphics = (YupJ2)getGraphics();
 }
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  background(#fff7d5);
 
-  graphics.origin();
   graphics.mouse(mouse);
-
   float start = Vec2.heading(mouse);
   float stop = -frameCount * 0.025;
 
+  background(#fff7d5);
+  graphics.origin();
   strokeWeight(5.0);
   stroke(#373737);
-  arc(0.0, 0.0, 
-    175.0, 175.0, 
+  arc(0.0, 0.0,
+    175.0, 175.0,
     start, stop,
-   PIE);
+    PIE);
 
   stroke(#ff2020);
   strokeWeight(12.0);

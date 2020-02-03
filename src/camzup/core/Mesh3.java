@@ -686,14 +686,14 @@ public class Mesh3 extends Mesh {
       for (int k = 0, i = 0; i < lats1; ++i) {
          final float v = i * toV;
          final float phi = 0.5f * v - 0.25f;
-         final float cosPhi = SinCos.eval(phi);
-         final float sinPhi = SinCos.eval(phi - 0.25f);
+         final float cosPhi = Utils.cos(phi * IUtils.TAU);
+         final float sinPhi = Utils.sin(phi * IUtils.TAU);
 
          for (int j = 0; j < lons1; ++j, ++k) {
             final float u = j * toU;
             final float theta = u;
-            final float cosTheta = SinCos.eval(theta);
-            final float sinTheta = SinCos.eval(theta - 0.25f);
+            final float cosTheta = Utils.cos(theta * IUtils.TAU);
+            final float sinTheta = Utils.sin(theta * IUtils.TAU);
 
             texCoords[k] = new Vec2(u, v);
 
@@ -903,16 +903,16 @@ public class Mesh3 extends Mesh {
       for (int k = 0, i = 0; i < panels1; ++i) {
 
          final float v = i * toV;
-         final float cosPhi = SinCos.eval(v);
-         final float sinPhi = SinCos.eval(v - 0.25f);
-         // final float r = 1.0f + tubeRatio * cosPhi;
+         final float cosPhi = Utils.cos(v * IUtils.TAU);
+         final float sinPhi = Utils.sin(v * IUtils.TAU);
+
          final float r = 0.5f + tubeRatio * cosPhi;
 
          for (int j = 0; j < sectors1; ++j, ++k) {
 
             final float u = j * toU;
-            final float cosTheta = SinCos.eval(u);
-            final float sinTheta = SinCos.eval(u - 0.25f);
+            final float cosTheta = Utils.cos(u * IUtils.TAU);
+            final float sinTheta = Utils.sin(u * IUtils.TAU);
 
             coords[k] = new Vec3(
                   r * cosTheta,
@@ -1438,9 +1438,8 @@ public class Mesh3 extends Mesh {
          final float radians,
          final Vec3 axis ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
 
       Vec3 c;
       final int len0 = this.coords.length;
@@ -1499,9 +1498,8 @@ public class Mesh3 extends Mesh {
    @Chainable
    public Mesh3 rotateX ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
 
       Vec3 c;
       final int len0 = this.coords.length;
@@ -1532,9 +1530,8 @@ public class Mesh3 extends Mesh {
    @Chainable
    public Mesh3 rotateY ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
 
       Vec3 c;
       final int len0 = this.coords.length;
@@ -1565,9 +1562,8 @@ public class Mesh3 extends Mesh {
    @Chainable
    public Mesh3 rotateZ ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
 
       Vec3 c;
       final int len0 = this.coords.length;

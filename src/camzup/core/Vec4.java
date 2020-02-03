@@ -1385,16 +1385,16 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
          final Vec4 target ) {
 
       final float rho = rng.uniform(rhoMin, rhoMax);
-      final float t0 = rng.nextFloat();
-      final float t1 = rng.nextFloat();
+      final float t0 = IUtils.TAU * rng.nextFloat();
+      final float t1 = IUtils.TAU * rng.nextFloat();
       final float r1 = rng.nextFloat();
       final float x0 = rho * Utils.sqrt(1.0f - r1);
       final float x1 = rho * Utils.sqrt(r1);
       return target.set(
-            x0 * SinCos.eval(t0 - 0.25f),
-            x0 * SinCos.eval(t0),
-            x1 * SinCos.eval(t1 - 0.25f),
-            x1 * SinCos.eval(t1));
+            x0 * Utils.sin(t0),
+            x0 * Utils.cos(t0),
+            x1 * Utils.sin(t1),
+            x1 * Utils.cos(t1));
    }
 
    /**

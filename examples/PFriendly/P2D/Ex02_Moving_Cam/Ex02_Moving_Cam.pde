@@ -8,8 +8,11 @@ float y = 0.0;
 float angle = 0.0;
 float scale = 1.0;
 
-void setup() {
+void settings() {
   size(720, 405, "camzup.pfriendly.YupJ2");
+}
+
+void setup() {
   graphics = (YupJ2)getGraphics();
 }
 
@@ -21,8 +24,8 @@ void draw() {
   scale = lerp(0.33333, 3.0, oscillation);
 
   float extents = min(width, height) * 0.25;
-  x = lerp(-extents, extents, oscillation);
-  y = lerp(-extents, extents, oscillation);
+  x = Utils.lerp(-extents, extents, oscillation);
+  y = Utils.lerp(-extents, extents, oscillation);
 
   background(#202020);
   graphics.camera(x, y, angle, scale, scale);

@@ -1199,43 +1199,15 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   @Experimental
-   public static Quaternion fromAngle (
-         final double radians,
-         final Quaternion target ) {
-
-      final double halfRadians = radians * 0.5d;
-      return target.set(
-            (float) Math.cos(halfRadians),
-            0.0f, 0.0f,
-            (float) Math.sin(halfRadians));
-   }
-
-   /**
-    * Sets a quaternion from an angle. The axis is assumed to
-    * be up, (0.0, 0.0, 1.0) . Sets the real component of the
-    * quaternion to cosine of the angle; the imaginary z
-    * component, to the sine.
-    *
-    * Useful when working in 2.5D, where a two-dimensional
-    * angle may need to be transferred to a three-dimensional
-    * transform.
-    *
-    * @param radians
-    *           the angle
-    * @param target
-    *           the output quaternion
-    * @return the quaternion
-    */
    public static Quaternion fromAngle (
          final float radians,
          final Quaternion target ) {
 
-      final float nrm = IUtils.ONE_TAU_2 * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
-
-      return target.set(cosa, 0.0f, 0.0f, sina);
+      final float halfRadians = radians * 0.5f;
+      return target.set(
+            Utils.cos(halfRadians),
+            0.0f, 0.0f,
+            Utils.sin(halfRadians));
    }
 
    /**
@@ -1384,19 +1356,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          nz *= amInv;
       }
 
-      // final double halfAngle = 0.5d * radians;
-      // final float sinHalf = (float) Math.sin(halfAngle);
-      // return target.set(
-      // (float) Math.cos(halfAngle),
-      // nx * sinHalf,
-      // ny * sinHalf,
-      // nz * sinHalf);
-
-      final float nrm = IUtils.ONE_TAU_2 * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
-
-      return target.set(cosa, nx * sina, ny * sina, nz * sina);
+      final float halfAngle = 0.5f * radians;
+      final float sinHalf = Utils.sin(halfAngle);
+      return target.set(
+            Utils.cos(halfAngle),
+            nx * sinHalf,
+            ny * sinHalf,
+            nz * sinHalf);
    }
 
    /**
@@ -2051,16 +2017,16 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Random rng,
          final Quaternion target ) {
 
-      final float t0 = rng.nextFloat();
-      final float t1 = rng.nextFloat();
+      final float t0 = IUtils.TAU * rng.nextFloat();
+      final float t1 = IUtils.TAU * rng.nextFloat();
       final float r1 = rng.nextFloat();
       final float x0 = Utils.sqrt(1.0f - r1);
       final float x1 = Utils.sqrt(r1);
       return target.set(
-            x0 * SinCos.eval(t0 - 0.25f),
-            x0 * SinCos.eval(t0),
-            x1 * SinCos.eval(t1 - 0.25f),
-            x1 * SinCos.eval(t1));
+            x0 * Utils.sin(t0),
+            x0 * Utils.cos(t0),
+            x1 * Utils.sin(t1),
+            x1 * Utils.cos(t1));
    }
 
    /**
@@ -2101,37 +2067,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             Utils.modRadians(
                   halfAngle + halfAngle + radians),
             axis, target);
-   }
-
-   /**
-    * Rotates a quaternion about the x axis by an angle.
-    *
-    * Do not use sequences of ortho-normal rotations by Euler
-    * angles; this will result in gimbal lock, defeating the
-    * purpose behind a quaternion.
-    *
-    * @param q
-    *           the input quaternion
-    * @param radians
-    *           the angle in radians
-    * @param target
-    *           the output quaternion
-    * @return the rotated quaternion
-    * @see Math#cos(double)
-    * @see Math#sin(double)
-    */
-   @Experimental
-   public static Quaternion rotateX (
-         final Quaternion q,
-         final double radians,
-         final Quaternion target ) {
-
-      final double halfAngle = radians * 0.5d;
-      return Quaternion.rotateX(
-            q,
-            (float) Math.cos(halfAngle),
-            (float) Math.sin(halfAngle),
-            target);
    }
 
    /**
@@ -2179,49 +2114,19 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the rotated quaternion
-    * @see SinCos#eval(float)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
     */
    public static Quaternion rotateX (
          final Quaternion q,
          final float radians,
          final Quaternion target ) {
 
-      final float nrm = IUtils.ONE_TAU_2 * radians;
+      final float halfAngle = radians * 0.5f;
       return Quaternion.rotateX(
             q,
-            SinCos.eval(nrm),
-            SinCos.eval(nrm - 0.25f),
-            target);
-   }
-
-   /**
-    * Rotates a quaternion about the y axis by an angle.
-    *
-    * Do not use sequences of ortho-normal rotations by Euler
-    * angles; this will result in gimbal lock, defeating the
-    * purpose behind a quaternion.
-    *
-    * @param q
-    *           the input quaternion
-    * @param radians
-    *           the angle in radians
-    * @param target
-    *           the output quaternion
-    * @return the rotated quaternion
-    * @see Math#cos(double)
-    * @see Math#sin(double)
-    */
-   @Experimental
-   public static Quaternion rotateY (
-         final Quaternion q,
-         final double radians,
-         final Quaternion target ) {
-
-      final double halfAngle = radians * 0.5d;
-      return Quaternion.rotateY(
-            q,
-            (float) Math.cos(halfAngle),
-            (float) Math.sin(halfAngle),
+            Utils.cos(halfAngle),
+            Utils.sin(halfAngle),
             target);
    }
 
@@ -2270,7 +2175,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the rotated quaternion
-    * @see SinCos#eval(float)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
     */
    @Experimental
    public static Quaternion rotateY (
@@ -2278,42 +2184,11 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final float radians,
          final Quaternion target ) {
 
-      final float nrm = IUtils.ONE_TAU_2 * radians;
+      final float halfAngle = radians * 0.5f;
       return Quaternion.rotateY(
             q,
-            SinCos.eval(nrm),
-            SinCos.eval(nrm - 0.25f),
-            target);
-   }
-
-   /**
-    * Rotates a quaternion about the z axis by an angle.
-    *
-    * Do not use sequences of ortho-normal rotations by Euler
-    * angles; this will result in gimbal lock, defeating the
-    * purpose behind a quaternion.
-    *
-    * @param q
-    *           the input quaternion
-    * @param radians
-    *           the angle in radians
-    * @param target
-    *           the output quaternion
-    * @return the rotated quaternion
-    * @see Math#cos(double)
-    * @see Math#sin(double)
-    */
-   @Experimental
-   public static Quaternion rotateZ (
-         final Quaternion q,
-         final double radians,
-         final Quaternion target ) {
-
-      final double halfAngle = radians * 0.5d;
-      return Quaternion.rotateZ(
-            q,
-            (float) Math.cos(halfAngle),
-            (float) Math.sin(halfAngle),
+            Utils.cos(halfAngle),
+            Utils.sin(halfAngle),
             target);
    }
 
@@ -2362,17 +2237,19 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @param target
     *           the output quaternion
     * @return the rotated quaternion
+    * @see Math#cos(double)
+    * @see Math#sin(double)
     */
    public static Quaternion rotateZ (
          final Quaternion q,
          final float radians,
          final Quaternion target ) {
 
-      final float nrm = IUtils.ONE_TAU_2 * radians;
+      final float halfAngle = radians * 0.5f;
       return Quaternion.rotateZ(
             q,
-            SinCos.eval(nrm),
-            SinCos.eval(nrm - 0.25f),
+            Utils.cos(halfAngle),
+            Utils.sin(halfAngle),
             target);
    }
 

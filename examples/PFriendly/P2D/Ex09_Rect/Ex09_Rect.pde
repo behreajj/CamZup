@@ -3,8 +3,11 @@ import camzup.core.*;
 
 YupJ2 graphics;
 
-void setup() {
+void settings() {
   size(720, 405, "camzup.pfriendly.YupJ2");
+}
+
+void setup() {
   graphics = (YupJ2)getGraphics();
   noStroke();
 }

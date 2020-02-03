@@ -87,10 +87,12 @@ public class Curve3 extends Curve
       final int knotCount = Utils.ceilToInt(1 + 4 * arcLen1);
       final float toStep = 1.0f / (knotCount - 1.0f);
       final float hndtn = 0.25f * toStep * arcLen1;
-      final float cost = SinCos.eval(hndtn);
-      final float handleMag = cost == 0.0f ? 0.0f
-            : SinCos.eval(hndtn - 0.25f) / cost
-                  * radius * IUtils.FOUR_THIRDS;
+      // final float cost = SinCos.eval(hndtn);
+      // final float handleMag = cost == 0.0f ? 0.0f
+      // : SinCos.eval(hndtn - 0.25f) / cost
+      // * radius * IUtils.FOUR_THIRDS;
+      final float handleMag = Utils.tan(hndtn * IUtils.TAU) * radius
+            * IUtils.FOUR_THIRDS;
 
       final List < Knot3 > knots = target.knots;
       knots.clear();
@@ -99,8 +101,7 @@ public class Curve3 extends Curve
                a1, destAngle1, i * toStep);
          knots.add(
                Knot3.fromPolar(
-                     SinCos.eval(angle1),
-                     SinCos.eval(angle1 - 0.25f),
+                     angle1 * IUtils.TAU,
                      radius, handleMag,
                      new Knot3()));
       }
@@ -270,18 +271,19 @@ public class Curve3 extends Curve
       final int vknct = knotCount < 3 ? 3 : knotCount;
       final float invKnCt = 1.0f / vknct;
       final float hndtn = 0.25f * invKnCt;
-      final float cost = SinCos.eval(hndtn);
-      final float handleMag = cost == 0.0f ? 0.0f
-            : SinCos.eval(hndtn - 0.25f) / cost
-                  * radius * IUtils.FOUR_THIRDS;
+      // final float cost = SinCos.eval(hndtn);
+      // final float handleMag = cost == 0.0f ? 0.0f
+      // : SinCos.eval(hndtn - 0.25f) / cost
+      // * radius * IUtils.FOUR_THIRDS;
+      final float handleMag = Utils.tan(hndtn * IUtils.TAU) * radius
+            * IUtils.FOUR_THIRDS;
 
       final List < Knot3 > knots = target.knots;
       for (int i = 0; i < vknct; ++i) {
          final float angle1 = offset1 + i * invKnCt;
          knots.add(
                Knot3.fromPolar(
-                     SinCos.eval(angle1),
-                     SinCos.eval(angle1 - 0.25f),
+                     angle1 * IUtils.TAU,
                      radius, handleMag,
                      new Knot3()));
       }
@@ -1311,9 +1313,8 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 rotate ( final float radians, final Vec3 axis ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
@@ -1334,9 +1335,8 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 rotateX ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
@@ -1357,9 +1357,8 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 rotateY ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
@@ -1380,9 +1379,8 @@ public class Curve3 extends Curve
    @Chainable
    public Curve3 rotateZ ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {

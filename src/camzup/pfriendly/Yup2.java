@@ -77,7 +77,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     *           is the renderer primary
     */
    public Yup2 (
-         final int width, final int height,
+         final int width,
+         final int height,
          final PApplet parent,
          final String path,
          final boolean isPrimary ) {
@@ -145,7 +146,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    public void arc (
          final Vec2 v,
          final float sz,
-         final float start, final float stop,
+         final float start,
+         final float stop,
          final int mode ) {
 
       this.arc(v.x, v.y,
@@ -225,8 +227,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     */
    public void camera ( final float x, final float y ) {
 
-      this.camera(x, y,
-            Yup2.DEFAULT_ROT,
+      this.camera(x, y, Yup2.DEFAULT_ROT,
             Yup2.DEFAULT_ZOOM_X, Yup2.DEFAULT_ZOOM_Y);
    }
 
@@ -241,11 +242,11 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     *           the rotation
     */
    public void camera (
-         final float x, final float y,
+         final float x,
+         final float y,
          final float radians ) {
 
-      this.camera(x, y,
-            radians,
+      this.camera(x, y, radians,
             Yup2.DEFAULT_ZOOM_X, Yup2.DEFAULT_ZOOM_Y);
    }
 
@@ -275,21 +276,33 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       this.cameraX = x;
       this.cameraY = y;
       this.cameraRot = Utils.modRadians(radians);
-      this.cameraZoomX = zx < PConstants.EPSILON ? 1.0f : zx;
-      this.cameraZoomY = zy < PConstants.EPSILON ? 1.0f : zy;
+      this.cameraZoomX = zx < Utils.EPSILON ? 1.0f : zx;
+      this.cameraZoomY = zy < Utils.EPSILON ? 1.0f : zy;
+      final float zDist = this.height < 128 ? 128 : this.height;
 
-      this.modelview.reset();
-      this.modelview.scale(
-            this.cameraZoomX,
-            this.cameraZoomY,
-            1.0f);
-      PMatAux.rotateZ(-radians, this.modelview);
+      // this.modelview.reset();
+      // this.modelview.scale(
+      // this.cameraZoomX,
+      // this.cameraZoomY,
+      // 1.0f);
+      // this.modelview.rotateZ(-radians);
+      // this.modelview.translate(
+      // -this.cameraX,
+      // -this.cameraY,
+      // -zDist);
 
-      final float zDist = Utils.min(128, this.height);
-      this.modelview.translate(
-            -this.cameraX,
-            -this.cameraY,
-            -zDist);
+      final float c = Utils.cos(-radians);
+      final float s = Utils.sin(-radians);
+      final float m00 = c * this.cameraZoomX;
+      final float m01 = -s * this.cameraZoomY;
+      final float m10 = s * this.cameraZoomX;
+      final float m11 = c * this.cameraZoomY;
+
+      this.modelview.set(
+            m00, m01, 0.0f, -this.cameraX * m00 - this.cameraY * m01,
+            m10, m11, 0.0f, -this.cameraX * m10 - this.cameraY * m11,
+            0.0f, 0.0f, 1.0f, -zDist,
+            0.0f, 0.0f, 0.0f, 1.0f);
 
       this.projmodelview.set(this.projection);
       PMatAux.invert(this.modelview, this.modelviewInv);
@@ -442,12 +455,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    public Mat3 getMatrix ( final Mat3 target ) {
 
       return target.set(
-            this.modelview.m00, this.modelview.m01,
-            this.modelview.m03,
-
-            this.modelview.m10, this.modelview.m11,
-            this.modelview.m13,
-
+            this.modelview.m00, this.modelview.m01, this.modelview.m03,
+            this.modelview.m10, this.modelview.m11, this.modelview.m13,
             0.0f, 0.0f, 1.0f);
    }
 
@@ -553,10 +562,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
          final int foreColor,
          final int coordColor ) {
 
-      this.pushStyle();
-      this.pushMatrix();
-      this.transform(ce.transform, ce.transformOrder);
-
       final float swRear = strokeWeight * 4.0f;
       final float swFore = swRear * 1.25f;
       final float swCoord = swFore * 1.25f;
@@ -564,6 +569,10 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       final List < Curve2 > curves = ce.curves;
       final Iterator < Curve2 > curveItr = curves.iterator();
       Iterator < Knot2 > knItr = null;
+
+      this.pushStyle();
+      this.pushMatrix();
+      this.transform(ce.transform, ce.transformOrder);
 
       while (curveItr.hasNext()) {
          final Curve2 curve = curveItr.next();
@@ -578,46 +587,29 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
 
             this.strokeWeight(strokeWeight);
             this.stroke(lineColor);
-            this.lineImpl(
-                  rearHandle.x,
-                  rearHandle.y,
-                  0.0f,
-
-                  coord.x,
-                  coord.y,
-                  0.0f);
 
             this.lineImpl(
-                  coord.x,
-                  coord.y,
-                  0.0f,
+                  rearHandle.x, rearHandle.y, 0.0f,
+                  coord.x, coord.y, 0.0f);
 
-                  foreHandle.x,
-                  foreHandle.y,
-                  0.0f);
+            this.lineImpl(
+                  coord.x, coord.y, 0.0f,
+                  foreHandle.x, foreHandle.y, 0.0f);
 
             this.strokeWeight(swRear);
             this.stroke(rearColor);
-            this.pointImpl(
-                  rearHandle.x,
-                  rearHandle.y,
-                  0.0f);
+            this.pointImpl(rearHandle.x, rearHandle.y, 0.0f);
 
             this.strokeWeight(swCoord);
             this.stroke(coordColor);
-            this.pointImpl(
-                  coord.x,
-                  coord.y,
-                  0.0f);
+            this.pointImpl(coord.x, coord.y, 0.0f);
 
             this.strokeWeight(swFore);
             this.stroke(foreColor);
-            this.pointImpl(
-                  foreHandle.x,
-                  foreHandle.y,
-                  0.0f);
+            this.pointImpl(foreHandle.x, foreHandle.y, 0.0f);
          }
       }
+
       this.popMatrix();
       this.popStyle();
    }
@@ -920,25 +912,27 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     */
    public void shape ( final CurveEntity2 entity ) {
 
-      this.pushMatrix();
-      this.transform(entity.transform, entity.transformOrder);
-
       /*
-       * TODO: Damned if you do and damned if you don't, it seems
-       * like. For performance, it seems better to not use
-       * interfaces but rather classes, i.e. ArrayList or
-       * LinkedList instead of List. However, a generic list is
-       * easier on implementation.
+       * TODO: Damned if you do and damned if you don't, seems
+       * like. For performance, better to not use interfaces but
+       * rather classes, i.e. ArrayList or LinkedList instead of
+       * List. However, a generic list is easier on
+       * implementation.
        */
+
       final List < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
       final Iterator < Curve2 > curveItr = entity.curves.iterator();
+      Iterator < Knot2 > knItr;
 
       Knot2 currKnot;
       Knot2 prevKnot;
       Vec2 coord;
       Vec2 foreHandle;
       Vec2 rearHandle;
+
+      this.pushMatrix();
+      this.transform(entity.transform, entity.transformOrder);
 
       while (curveItr.hasNext()) {
          final Curve2 curve = curveItr.next();
@@ -949,7 +943,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
                   curve.materialIndex));
          }
 
-         final Iterator < Knot2 > knItr = curve.iterator();
+         knItr = curve.iterator();
          prevKnot = knItr.next();
          coord = prevKnot.coord;
 
@@ -1060,6 +1054,12 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    public void square ( final Vec2 a, final float b ) {
 
       this.square(a.x, a.y, b);
+   }
+
+   @Override
+   public String toString () {
+
+      return "camzup.pfriendly.Yup2";
    }
 
    /**

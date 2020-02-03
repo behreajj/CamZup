@@ -5,7 +5,7 @@ Vec2 st = new Vec2();
 Gradient gr = Gradient.paletteViridis(new Gradient());
 Color clr = new Color();
 
-void setup() {
+void settings() {
   size(256, 256, "camzup.pfriendly.Yup2");
 }
 

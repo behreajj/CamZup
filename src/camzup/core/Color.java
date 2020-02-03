@@ -1535,7 +1535,9 @@ public class Color extends Vec4 {
     *           the output color
     * @return the inverse
     */
-   public static Color inverse ( final Color c, final Color target ) {
+   public static Color inverse (
+         final Color c,
+         final Color target ) {
 
       return target.set(
             Utils.max(0.0f, 1.0f - c.x),

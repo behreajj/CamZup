@@ -1,8 +1,6 @@
 import camzup.core.Vec2;
 
 void setup() {
-  size(512, 256);
-  background(#fff7d5);
 
   // Constructors.
   Vec2 v = new Vec2();

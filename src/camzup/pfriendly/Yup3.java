@@ -350,4 +350,10 @@ public class Yup3 extends Up3 {
       this.ortho();
       this.camera();
    }
+
+   @Override
+   public String toString () {
+
+      return "camzup.pfriendly.Yup3";
+   }
 }

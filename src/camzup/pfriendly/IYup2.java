@@ -5,7 +5,6 @@ import camzup.core.CurveEntity2;
 import camzup.core.IUtils;
 import camzup.core.MeshEntity2;
 import camzup.core.Ray2;
-import camzup.core.SinCos;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import processing.core.PApplet;
@@ -52,11 +51,8 @@ public interface IYup2 extends IUp {
       /* Rotate. */
       final float angle = renderer.getRot();
 
-      final float nrm = IUtils.ONE_TAU * angle;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
-      // final float cosa = PApplet.cos(angle);
-      // final float sina = PApplet.sin(angle);
+      final float cosa = Utils.cos(angle);
+      final float sina = Utils.sin(angle);
 
       final float temp = mx;
       mx = cosa * mx - sina * my;
@@ -659,10 +655,8 @@ public interface IYup2 extends IUp {
    default void ray (
          final float xOrigin,
          final float yOrigin,
-
          final float xDir,
          final float yDir,
-
          final float dLen ) {
 
       this.ray(xOrigin, yOrigin,
@@ -674,9 +668,6 @@ public interface IYup2 extends IUp {
     * Displays a ray, i.e., an origin point and a direction.
     * The display length of the direction is dictated by an
     * input.
-    *
-    * For improved performance, ensure that the direction is of
-    * unit length (normalized).
     *
     * @param xOrigin
     *           the x origin
@@ -698,10 +689,8 @@ public interface IYup2 extends IUp {
    default void ray (
          final float xOrigin,
          final float yOrigin,
-
          final float xDir,
          final float yDir,
-
          final float dLen,
          final float lnwgt,
          final float oWeight,
@@ -714,26 +703,13 @@ public interface IYup2 extends IUp {
       this.point(xOrigin, yOrigin);
 
       if (mSq != 0.0f) {
+
+         final float mInv = dLen * Utils.invSqrtUnchecked(mSq);
+         final float dx = xOrigin + xDir * mInv;
+         final float dy = yOrigin + yDir * mInv;
+
          this.strokeWeight(lnwgt);
-
-         float dx = 0.0f;
-         float dy = 0.0f;
-
-         if (Utils.approx(mSq, 1.0f, 0.0001f)) {
-            dx = xOrigin + xDir * dLen;
-            dy = yOrigin + yDir * dLen;
-            this.line(
-                  xOrigin, yOrigin,
-                  dx, dy);
-         } else {
-            final float mInv = dLen * Utils.invSqrtUnchecked(mSq);
-            dx = xOrigin + xDir * mInv;
-            dy = yOrigin + yDir * mInv;
-            this.line(
-                  xOrigin, yOrigin,
-                  dx, dy);
-         }
-
+         this.line(xOrigin, yOrigin, dx, dy);
          this.strokeWeight(dWeight);
          this.point(dx, dy);
       }
@@ -886,7 +862,12 @@ public interface IYup2 extends IUp {
          final float x,
          final float y ) {
 
-      this.text(obj.toString().substring(0, 96), x, y);
+      final String str = obj.toString();
+      if (str.length() > 96) {
+         this.text(str.substring(0, 95), x, y);
+      } else {
+         this.text(str, x, y);
+      }
    }
 
    /**

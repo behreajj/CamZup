@@ -327,11 +327,7 @@ public class Mat3 extends Matrix {
          final float radians,
          final Mat3 target ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      return Mat3.fromRotZ(
-            SinCos.eval(nrm),
-            SinCos.eval(nrm - 0.25f),
-            target);
+      return Mat3.fromRotZ(Utils.cos(radians), Utils.sin(radians), target);
    }
 
    /**

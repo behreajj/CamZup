@@ -113,6 +113,7 @@ public abstract class SinCos {
          r1z = r1z * r0z - 1.0f;
       }
 
+      // A refactor along the way made this turn out wrong...
       float r0y = 0.5f - r1y;
       r1y = 0.0f;
       if (r1y >= -9.0f ^ (r2x | r2z)) {

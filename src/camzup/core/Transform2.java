@@ -210,13 +210,8 @@ public class Transform2 extends Transform {
       Vec2.normalize(right, target.right);
       Vec2.normalize(forward, target.forward);
 
-      final float a = target.right.x;
-      final float c = target.right.y;
-
       target.rotPrev = target.rotation;
-      target.rotation = Utils.atan2(c, a);
-      target.cosa = a;
-      target.sina = c;
+      target.rotation = Vec2.headingSigned(target.right);
 
       target.locPrev.set(target.location);
       target.location.reset();
@@ -255,9 +250,6 @@ public class Transform2 extends Transform {
 
       target.scalePrev.set(target.scale);
       Vec2.one(target.scale);
-
-      target.cosa = 1.0f;
-      target.sina = 0.0f;
 
       Vec2.right(target.right);
       Vec2.forward(target.forward);
@@ -375,7 +367,7 @@ public class Transform2 extends Transform {
          final Vec2 source,
          final Vec2 target ) {
 
-      Vec2.rotateZ(source, t.cosa, t.sina, target);
+      Vec2.rotateZ(source, t.right.x, t.right.y, target);
       return target;
    }
 
@@ -400,7 +392,43 @@ public class Transform2 extends Transform {
          final Vec2 source,
          final Vec2 target ) {
 
-      Vec2.rotateZ(source, t.cosa, t.sina, target);
+      Vec2.rotateZ(source, t.right.x, t.right.y, target);
+      Vec2.mul(target, t.scale, target);
+      Vec2.add(target, t.location, target);
+      return target;
+   }
+
+   /**
+    * Multiplies a texture coordinate (or UV) by a transform.
+    *
+    * @param t
+    *           the transform
+    * @param source
+    *           the input coordinate
+    * @param target
+    *           the output coordinate
+    * @return the transformed coordinate
+    */
+   public static Vec2 mulTexCoord (
+         final Transform2 t,
+         final Vec2 source,
+         final Vec2 target ) {
+
+      // TODO: See OSL transform point script to refine...
+      // This should behave more like a camera over an infinite
+      // field...
+
+      // target.x -= 0.5f;
+      // target.y -= 0.5f;
+
+      target.x = source.x - 0.5f;
+      target.y = source.y - 0.5f;
+
+      Vec2.rotateZ(target, t.right.x, t.right.y, target);
+
+      target.x += 0.5f;
+      target.y += 0.5f;
+
       Vec2.mul(target, t.scale, target);
       Vec2.add(target, t.location, target);
       return target;
@@ -426,7 +454,7 @@ public class Transform2 extends Transform {
          final Vec2 source,
          final Vec2 target ) {
 
-      Vec2.rotateZ(source, t.cosa, t.sina, target);
+      Vec2.rotateZ(source, t.right.x, t.right.y, target);
       Vec2.mul(target, t.scale, target);
       return target;
    }
@@ -476,12 +504,6 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Stores the result of cos ( rotation ) when calculating
-    * the transform's right and forward axes.
-    */
-   protected float cosa = 1.0f;
-
-   /**
     * The transform's forward axis.
     */
    protected final Vec2 forward;
@@ -523,12 +545,6 @@ public class Transform2 extends Transform {
     * find the delta, or change, in scale.
     */
    protected final Vec2 scalePrev;
-
-   /**
-    * Stores the result of sin ( rotation ) when calculating
-    * the transform's right and forward axes.
-    */
-   protected float sina = 0.0f;
 
    {
       this.location = new Vec2();
@@ -622,10 +638,10 @@ public class Transform2 extends Transform {
 
       /*
        * Quaternion from angle: (cos(a * 0.5), 0.0, 0.0, sin(a *
-       * 0.5))
+       * 0.5)) . Scale z is an average of scale x and y to keep
+       * the mesh proportionate in Blender when it is extruded.
        */
       final String rotationMode = "\"QUATERNION\"";
-      final float nrm = IUtils.ONE_TAU_2 * this.rotation;
 
       return new StringBuilder(256)
             .append("{\"location\": ")
@@ -633,9 +649,9 @@ public class Transform2 extends Transform {
             .append(", \"rotation_mode\": ")
             .append(rotationMode)
             .append(", \"rotation_quaternion\": (")
-            .append(Utils.toFixed(SinCos.eval(nrm), 6))
+            .append(Math.cos(this.rotation * 0.5d))
             .append(", 0.0, 0.0, ")
-            .append(Utils.toFixed(SinCos.eval(nrm - 0.25f), 6))
+            .append(Math.sin(this.rotation * 0.5d))
             .append("), \"scale\": ")
             .append(this.scale.toBlenderCode(
                   (this.scale.x + this.scale.y) * 0.5f))
@@ -926,8 +942,6 @@ public class Transform2 extends Transform {
       Vec2.one(this.scalePrev);
       Vec2.one(this.scale);
 
-      this.cosa = 1.0f;
-      this.sina = 0.0f;
       Vec2.right(this.right);
       Vec2.forward(this.forward);
 

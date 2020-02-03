@@ -1872,11 +1872,9 @@ public abstract class Simplex {
          final int seed,
          final Vec3 deriv ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
       return Simplex.flow(
             x, y, z,
-            SinCos.eval(nrm),
-            SinCos.eval(nrm - 0.25f),
+            Utils.cos(radians), Utils.sin(radians),
             seed, deriv);
    }
 
@@ -1926,11 +1924,9 @@ public abstract class Simplex {
          final int seed,
          final Vec2 deriv ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
       return Simplex.flow(
             x, y,
-            SinCos.eval(nrm),
-            SinCos.eval(nrm - 0.25f),
+            Utils.cos(radians), Utils.sin(radians),
             seed, deriv);
    }
 

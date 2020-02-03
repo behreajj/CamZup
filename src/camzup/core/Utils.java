@@ -1066,28 +1066,25 @@ public abstract class Utils implements IUtils {
     * @param radians
     *           the angle in radians
     * @return the cosine of the angle
-    * @see SinCos#eval(float)
     */
    public static float cos ( final float radians ) {
 
-      return SinCos.eval(IUtils.ONE_TAU * radians);
+      return (float) Math.cos(radians);
    }
 
    /**
-    * Finds the approximate cotangent of an angle in radians.
     * Equivalent to dividing the cosine of the angle by the
-    * sine, or to 1.0 / tan ( a ) .
+    * sine, or to 1.0 / tan ( a ) . Finds the approximate
+    * cotangent of an angle in radians.
     *
     * @param radians
     *           the radians
     * @return the cotangent
-    * @see SinCos#eval(float)
     */
    public static float cot ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float sint = SinCos.eval(nrm - 0.25f);
-      return sint == 0.0f ? 0.0f : SinCos.eval(nrm) / sint;
+      final double sint = Math.sin(radians);
+      return sint == 0.0d ? 0.0f : (float) (Math.cos(radians) / sint);
    }
 
    /**
@@ -1918,11 +1915,10 @@ public abstract class Utils implements IUtils {
     * @param radians
     *           the angle in radians
     * @return the sine of the angle
-    * @see SinCos#eval(float)
     */
    public static float sin ( final float radians ) {
 
-      return SinCos.eval(IUtils.ONE_TAU * radians - 0.25f);
+      return (float) Math.sin(radians);
    }
 
    /**
@@ -1987,22 +1983,22 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds the approximate tangent of an angle in radians. An
-    * alternative to the double precision
+    * Equivalent to dividing the sine of the angle by the
+    * cosine. Finds the approximate tangent of an angle in
+    * radians. An alternative to the double precision
     * {@link Math#tan(double)} , this function uses
-    * single-precision numbers. Equivalent to dividing the sine
-    * of the angle by the cosine.
+    * single-precision numbers.
     *
     * @param radians
     *           the angle in radians
     * @return the tangent
-    * @see SinCos#eval(float)
     */
    public static float tan ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cost = SinCos.eval(nrm);
-      return cost == 0.0f ? 0.0f : SinCos.eval(nrm - 0.25f) / cost;
+      // final double cost = Math.cos(radians);
+      // return cost == 0.0d ? 0.0f : (float) (Math.sin(radians) /
+      // cost);
+      return (float) Math.tan(radians);
    }
 
    /**

@@ -17,8 +17,11 @@ float nearAngle = 0.0;
 float cwAngle = 0.0;
 float ccwAngle = 0.0;
 
-void setup() {
+void settings() {
   size(720, 405, "camzup.pfriendly.YupJ2");
+}
+
+void setup() {
   graphics = (YupJ2)getGraphics();
 }
 
@@ -37,7 +40,7 @@ void draw() {
   Vec2.fromPolar(cwAngle, 130.0, followCW);
   Vec2.fromPolar(ccwAngle, 150.0, followCCW);
 
-  graphics.background(#fff7d5);  
+  graphics.background(#fff7d5);
   graphics.stroke(#202020);
   graphics.strokeWeight(10.0);
   graphics.point(mouse.x, mouse.y);

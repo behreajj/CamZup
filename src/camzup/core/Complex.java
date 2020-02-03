@@ -495,7 +495,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex z,
          final Complex target ) {
 
-      return Complex.rect(Math.exp(z.real), z.imag, target);
+      return Complex.rect((float) Math.exp(z.real), z.imag, target);
    }
 
    /**
@@ -772,7 +772,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final double phi = b.real * logImag + b.imag * logReal;
       final double r = Math.exp(b.real * logReal - b.imag * logImag);
 
-      return Complex.rect(r, phi, target);
+      return Complex.rect((float) r, (float) phi, target);
    }
 
    /**
@@ -832,7 +832,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final double phi = b * logImag;
       final double r = Math.exp(b * logReal);
 
-      return Complex.rect(r, phi, target);
+      return Complex.rect((float) r, (float) phi, target);
    }
 
    /**
@@ -861,7 +861,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final double phi = b.real * logImag + b.imag * logReal;
       final double r = Math.exp(b.real * logReal - b.imag * logImag);
 
-      return Complex.rect(r, phi, target);
+      return Complex.rect((float) r, (float) phi, target);
    }
 
    /**
@@ -906,36 +906,13 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     */
    @Experimental
    public static Complex rect (
-         final double r,
-         final double phi,
+         final float r,
+         final float phi,
          final Complex target ) {
 
       return target.set(
             (float) (r * Math.cos(phi)),
             (float) (r * Math.sin(phi)));
-   }
-
-   /**
-    * Converts from polar to rectilinear coordinates.
-    *
-    * @param r
-    *           the radius
-    * @param phi
-    *           the angle in radians
-    * @param target
-    *           the output complex number
-    * @return the complex number
-    * @see SinCos#eval(float)
-    */
-   public static Complex rect (
-         final float r,
-         final float phi,
-         final Complex target ) {
-
-      final float nrm = IUtils.ONE_TAU * phi;
-      return target.set(
-            SinCos.eval(nrm) * r,
-            SinCos.eval(nrm - 0.25f) * r);
    }
 
    /**

@@ -98,8 +98,8 @@ public abstract class Sdf {
       final float arcOff = a + arcLen;
 
       return Sdf.arc(point,
-            SinCos.eval(arcOff), SinCos.eval(arcOff - 0.25f),
-            SinCos.eval(arcLen), SinCos.eval(arcLen - 0.25f),
+            Utils.cos(arcOff), Utils.sin(arcOff),
+            Utils.cos(arcLen), Utils.sin(arcLen),
             bounds, weight);
    }
 

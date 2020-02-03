@@ -10,8 +10,11 @@ Vec3 noise = new Vec3();
 Vec3 deriv = new Vec3();
 Color clr = new Color();
 
-void setup() {
+void settings() {
   size(384, 384, "camzup.pfriendly.Yup2");
+}
+
+void setup() {
   colorMode(RGB, 1.0);
 }
 

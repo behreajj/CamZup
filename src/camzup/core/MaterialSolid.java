@@ -190,8 +190,7 @@ public class MaterialSolid extends Material {
          final boolean useStroke ) {
 
       this("Material",
-            fill, stroke,
-            strokeWeight,
+            fill, stroke, strokeWeight,
             useFill, useStroke);
    }
 

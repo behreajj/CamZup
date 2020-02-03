@@ -7,14 +7,17 @@ int currentMode;
 int index;
 int[] modes = { CENTER, CORNERS, CORNER };
 
-void setup() {
+void settings() {
   size(720, 405, "camzup.pfriendly.YupJ2");
+}
+
+void setup() {
   graphics = (YupJ2)getGraphics();
+  img = loadImage("diagnostic.png");
 
   // For Yup2.
-  //graphics.setTextureSampling(IUpOgl.Sampling.TRILINEAR);
+  // graphics.setTextureSampling(IUpOgl.Sampling.TRILINEAR);
 
-  img = loadImage("diagnostic.png");
 }
 
 void draw() {
@@ -22,7 +25,7 @@ void draw() {
   background(#202020);
   graphics.grid(16, 4.0);
   graphics.origin(32);
-  image(img, 64, 32, 196, 196);
+  graphics.image(img, 64, 32, 196, 196);
 }
 
 void mouseReleased() {

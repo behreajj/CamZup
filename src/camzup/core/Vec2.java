@@ -1106,7 +1106,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       return (float) Math.pow(
             Math.pow(Utils.diff(a.x, b.x), c)
                   + Math.pow(Utils.diff(a.y, b.y), c),
-            1.0f / c);
+            1.0d / c);
    }
 
    /**
@@ -1364,69 +1364,15 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param target
     *           the output vector
     * @return the vector
-    * @see Math#cos(double)
-    * @see Math#sin(double)
-    */
-   @Experimental
-   public static Vec2 fromPolar (
-         final double heading,
-         final double radius,
-         final Vec2 target ) {
-
-      return target.set(
-            (float) (Math.cos(heading) * radius),
-            (float) (Math.sin(heading) * radius));
-   }
-
-   /**
-    * Creates a vector with a magnitude of 1.0 from an angle,
-    * such that the vector is on the unit circle.
-    *
-    * @param heading
-    *           the angle in radians
-    * @param target
-    *           the output vector
-    * @return the vector
-    * @see Math#cos(double)
-    * @see Math#sin(double)
-    */
-   @Experimental
-   public static Vec2 fromPolar (
-         final double heading,
-         final Vec2 target ) {
-
-      return target.set(
-            (float) Math.cos(heading),
-            (float) Math.sin(heading));
-   }
-
-   /**
-    * Creates a vector from polar coordinates: (1) theta,
-    * \u03b8, an angle in radians, the vector's heading; (2)
-    * rho, \u03c1, a radius, the vector's magnitude. Uses the
-    * formula<br>
-    * <br>
-    * ( \u03c1 cos ( \u03b8 ),<br>
-    * \u03c1 sin ( \u03b8 ) ).
-    *
-    * @param heading
-    *           the angle in radians
-    * @param radius
-    *           the radius
-    * @param target
-    *           the output vector
-    * @return the vector
-    * @see SinCos#eval(float)
     */
    public static Vec2 fromPolar (
          final float heading,
          final float radius,
          final Vec2 target ) {
 
-      final float nrm = IUtils.ONE_TAU * heading;
       return target.set(
-            SinCos.eval(nrm) * radius,
-            SinCos.eval(nrm - 0.25f) * radius);
+            radius * Utils.cos(heading),
+            radius * Utils.sin(heading));
    }
 
    /**
@@ -1438,16 +1384,14 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param target
     *           the output vector
     * @return the vector
-    * @see SinCos#eval(float)
     */
    public static Vec2 fromPolar (
          final float heading,
          final Vec2 target ) {
 
-      final float nrm = IUtils.ONE_TAU * heading;
       return target.set(
-            SinCos.eval(nrm),
-            SinCos.eval(nrm - 0.25f));
+            Utils.cos(heading),
+            Utils.sin(heading));
    }
 
    /**
@@ -2655,9 +2599,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final float radians,
          final Vec2 target ) {
 
-      return target.set(
-            v.x,
-            v.y * Utils.cos(radians));
+      return target.set(v.x, v.y * Utils.cos(radians));
    }
 
    /**
@@ -2681,9 +2623,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final float radians,
          final Vec2 target ) {
 
-      return target.set(
-            v.x * Utils.cos(radians),
-            v.y);
+      return target.set(v.x * Utils.cos(radians), v.y);
    }
 
    /**
@@ -2724,19 +2664,13 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param target
     *           the output vector
     * @return the rotated vector
-    * @see SinCos#eval(float)
     */
    public static Vec2 rotateZ (
          final Vec2 v,
          final float radians,
          final Vec2 target ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      return Vec2.rotateZ(
-            v,
-            SinCos.eval(nrm),
-            SinCos.eval(nrm - 0.25f),
-            target);
+      return Vec2.rotateZ(v, Utils.cos(radians), Utils.sin(radians), target);
    }
 
    /**
@@ -2888,7 +2822,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
       final float dx = a.x - b.x;
       final float dy = a.y - b.y;
-
       final float mInv = Utils.invHypot(dx, dy);
       return target.set(
             dx * mInv,

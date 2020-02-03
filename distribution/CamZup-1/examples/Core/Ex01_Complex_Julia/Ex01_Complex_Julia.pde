@@ -13,7 +13,7 @@ Complex seed = Complex.rect(seedr, seedphi, new Complex());
 Gradient gr = new Gradient(#322020, #dbcab8, #fff7d5);
 Color clr = new Color();
 
-void setup() {
+void settings() {
   size(512, 256, "camzup.pfriendly.Yup2");
 }
 
@@ -46,7 +46,7 @@ void draw() {
   updatePixels();
 }
 
-float julia(Complex seed, Complex z, float exp, int itr, 
+float julia(Complex seed, Complex z, float exp, int itr,
   Complex target) {
 
   int i = 0;

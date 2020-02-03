@@ -1,9 +1,7 @@
 package camzup.pfriendly;
 
 import camzup.core.Experimental;
-import camzup.core.IUtils;
 import camzup.core.Quaternion;
-import camzup.core.SinCos;
 import camzup.core.Utils;
 import camzup.core.Vec3;
 import camzup.core.Vec4;
@@ -573,9 +571,8 @@ public abstract class PMatAux {
          zAxis *= mInv;
       }
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float c = SinCos.eval(nrm);
-      final float s = SinCos.eval(nrm - 0.25f);
+      final float c = Utils.cos(radians);
+      final float s = Utils.sin(radians);
       final float t = 1.0f - c;
 
       final float tax = t * xAxis;
@@ -801,9 +798,8 @@ public abstract class PMatAux {
          target = new PMatrix3D();
       }
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float c = SinCos.eval(nrm);
-      final float s = SinCos.eval(nrm - 0.25f);
+      final float c = Utils.cos(radians);
+      final float s = Utils.sin(radians);
 
       float t1 = target.m01;
       float t2 = target.m02;
@@ -870,9 +866,8 @@ public abstract class PMatAux {
          target = new PMatrix3D();
       }
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float c = SinCos.eval(nrm);
-      final float s = SinCos.eval(nrm - 0.25f);
+      final float c = Utils.cos(radians);
+      final float s = Utils.sin(radians);
 
       float t0 = target.m00;
       float t2 = target.m02;
@@ -939,9 +934,8 @@ public abstract class PMatAux {
          target = new PMatrix3D();
       }
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float c = SinCos.eval(nrm);
-      final float s = SinCos.eval(nrm - 0.25f);
+      final float c = Utils.cos(radians);
+      final float s = Utils.sin(radians);
 
       float t0 = target.m00;
       float t1 = target.m01;
@@ -1001,7 +995,7 @@ public abstract class PMatAux {
          final int places ) {
 
       return new StringBuilder(320)
-            .append('[').append(' ')
+            .append('\n').append('[').append(' ')
 
             .append(Utils.toFixed(m.m00, places))
             .append(',').append(' ')
@@ -1016,7 +1010,7 @@ public abstract class PMatAux {
             .append(',').append(' ')
             .append(Utils.toFixed(m.m12, places))
 
-            .append(' ').append(']')
+            .append(' ').append(']').append('\n')
             .toString();
    }
 
@@ -1046,7 +1040,7 @@ public abstract class PMatAux {
          final int places ) {
 
       return new StringBuilder(320)
-            .append('[').append(' ')
+            .append('\n').append('[').append(' ')
 
             .append(Utils.toFixed(m.m00, places))
             .append(',').append(' ')
@@ -1083,7 +1077,7 @@ public abstract class PMatAux {
             .append(',').append(' ')
             .append(Utils.toFixed(m.m33, places))
 
-            .append(' ').append(']')
+            .append(' ').append(']').append('\n')
             .toString();
    }
 }

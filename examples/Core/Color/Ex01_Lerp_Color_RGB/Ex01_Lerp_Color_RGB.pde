@@ -6,8 +6,11 @@ Yup2 graphics;
 color a = #007fff;
 color b = #ff007f;
 
-void setup() {
+void settings() {
   size(1024, 128, "camzup.pfriendly.Yup2");
+}
+
+void setup() {
   colorMode(RGB, 1.0);
   graphics = (Yup2)getGraphics();
 }

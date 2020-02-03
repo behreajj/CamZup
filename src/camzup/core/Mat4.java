@@ -460,10 +460,9 @@ public class Mat4 extends Matrix {
          final Vec3 axis,
          final Mat4 target ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
       return Mat4.fromRotation(
-            SinCos.eval(nrm),
-            SinCos.eval(nrm - 0.25f),
+            Utils.cos(radians),
+            Utils.sin(radians),
             axis,
             target);
    }
@@ -545,10 +544,9 @@ public class Mat4 extends Matrix {
          final float radians,
          final Mat4 target ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
       return Mat4.fromRotX(
-            SinCos.eval(nrm),
-            SinCos.eval(nrm - 0.25f),
+            Utils.cos(radians),
+            Utils.sin(radians),
             target);
    }
 
@@ -590,10 +588,9 @@ public class Mat4 extends Matrix {
          final float radians,
          final Mat4 target ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
       return Mat4.fromRotY(
-            SinCos.eval(nrm),
-            SinCos.eval(nrm - 0.25f),
+            Utils.cos(radians),
+            Utils.sin(radians),
             target);
    }
 
@@ -635,10 +632,9 @@ public class Mat4 extends Matrix {
          final float radians,
          final Mat4 target ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
       return Mat4.fromRotZ(
-            SinCos.eval(nrm),
-            SinCos.eval(nrm - 0.25f),
+            Utils.cos(radians),
+            Utils.sin(radians),
             target);
    }
 

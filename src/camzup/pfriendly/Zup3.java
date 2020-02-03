@@ -208,11 +208,9 @@ public class Zup3 extends Up3 {
          final float eyeX,
          final float eyeY,
          final float eyeZ,
-
          final float centerX,
          final float centerY,
          final float centerZ,
-
          final float upX,
          final float upY,
          final float upZ ) {
@@ -383,5 +381,11 @@ public class Zup3 extends Up3 {
       super.setSize(iwidth, iheight);
       this.ortho();
       this.camera();
+   }
+
+   @Override
+   public String toString () {
+
+      return "camzup.pfriendly.Zup3";
    }
 }

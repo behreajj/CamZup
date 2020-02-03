@@ -50,13 +50,17 @@ public class Entity3 extends Entity {
       if (this == obj) {
          return true;
       }
+
       if (!super.equals(obj)) {
          return false;
       }
+
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+
       final Entity3 other = (Entity3) obj;
+
       if (this.transform == null) {
          if (other.transform != null) {
             return false;
@@ -64,9 +68,11 @@ public class Entity3 extends Entity {
       } else if (!this.transform.equals(other.transform)) {
          return false;
       }
+
       if (this.transformOrder != other.transformOrder) {
          return false;
       }
+
       return true;
    }
 
@@ -102,6 +108,15 @@ public class Entity3 extends Entity {
          final float step ) {
 
       this.transform.moveTo(locNew, step);
+      return this;
+   }
+
+   @Chainable
+   public Entity3 rotateBy (
+         final float radians,
+         final Vec3 axis ) {
+
+      this.transform.rotateBy(radians, axis);
       return this;
    }
 

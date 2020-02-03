@@ -123,9 +123,8 @@ public class Face3 implements Comparable < Face3 > {
    @Chainable
    public Face3 rotate ( final float radians, final Vec3 axis ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
 
       Vert3 vt3;
       Vec3 c;
@@ -182,9 +181,8 @@ public class Face3 implements Comparable < Face3 > {
    @Chainable
    public Face3 rotateX ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
 
       Vert3 vt3;
       Vec3 c;
@@ -214,9 +212,8 @@ public class Face3 implements Comparable < Face3 > {
    @Chainable
    public Face3 rotateY ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
 
       Vert3 vt3;
       Vec3 c;
@@ -246,9 +243,8 @@ public class Face3 implements Comparable < Face3 > {
    @Chainable
    public Face3 rotateZ ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
 
       Vert3 vt3;
       Vec3 c;

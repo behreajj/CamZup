@@ -67,11 +67,8 @@ public class Knot3 implements Comparable < Knot3 > {
          final float handleMag,
          final Knot3 target ) {
 
-      final float nrm = IUtils.ONE_TAU * angle;
-      return Knot3.fromPolar(
-            SinCos.eval(nrm),
-            SinCos.eval(nrm - 0.25f),
-            radius, handleMag, target);
+      return Knot3.fromPolar(Utils.cos(angle), Utils.sin(angle), radius,
+            handleMag, target);
    }
 
    /**
@@ -594,11 +591,7 @@ public class Knot3 implements Comparable < Knot3 > {
    @Chainable
    public Knot3 rotate ( final float radians, final Vec3 axis ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
-
-      return this.rotate(cosa, sina, axis);
+      return this.rotate(Utils.cos(radians), Utils.sin(radians), axis);
    }
 
    /**
@@ -612,11 +605,7 @@ public class Knot3 implements Comparable < Knot3 > {
    @Chainable
    public Knot3 rotateX ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
-
-      return this.rotateX(cosa, sina);
+      return this.rotateX(Utils.cos(radians), Utils.sin(radians));
    }
 
    /**
@@ -652,11 +641,7 @@ public class Knot3 implements Comparable < Knot3 > {
    @Chainable
    public Knot3 rotateY ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
-
-      return this.rotateY(cosa, sina);
+      return this.rotateY(Utils.cos(radians), Utils.sin(radians));
    }
 
    /**
@@ -692,11 +677,7 @@ public class Knot3 implements Comparable < Knot3 > {
    @Chainable
    public Knot3 rotateZ ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
-
-      return this.rotateZ(cosa, sina);
+      return this.rotateZ(Utils.cos(radians), Utils.sin(radians));
    }
 
    /**

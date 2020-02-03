@@ -63,10 +63,9 @@ public class Knot2 implements Comparable < Knot2 > {
          final float handleMag,
          final Knot2 target ) {
 
-      final float nrm = IUtils.ONE_TAU * angle;
       return Knot2.fromPolar(
-            SinCos.eval(nrm),
-            SinCos.eval(nrm - 0.25f),
+            Utils.cos(angle),
+            Utils.sin(angle),
             radius, handleMag, target);
    }
 
@@ -546,11 +545,7 @@ public class Knot2 implements Comparable < Knot2 > {
    @Chainable
    public Knot2 rotateZ ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
-
-      return this.rotateZ(cosa, sina);
+      return this.rotateZ(Utils.cos(radians), Utils.sin(radians));
    }
 
    /**

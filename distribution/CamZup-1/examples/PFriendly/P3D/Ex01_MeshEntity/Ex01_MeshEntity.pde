@@ -25,9 +25,13 @@ MeshEntity3[] entities = {
   .appendMesh(Mesh3.icosahedron(new Mesh3()))
 };
 
-void setup() {
+void settings() {
   size(720, 405, "camzup.pfriendly.Yup3");
+}
+
+void setup() {
   graphics3 = (Yup3)getGraphics();
+ 
   float scl = Utils.min(width, height);
   Vec3 ub = new Vec3(scl, scl, scl);
   Vec3.mul(ub, 0.375, ub);
@@ -38,8 +42,8 @@ void setup() {
     float prc = i * 0.25;
     Vec3 v = Vec3.mix(ub, lb, prc, new Vec3());
     MeshEntity3 me3 = entities[i];
-    me3.transform.scaleTo(scl);
-    me3.transform.moveTo(v);
+    me3.scaleTo(scl);
+    me3.moveTo(v);
   }
 }
 
@@ -52,7 +56,7 @@ void draw() {
   graphics3.origin(75.0, 1.0);
 
   for (MeshEntity3 me3 : entities) {
-    me3.transform.rotateX(0.01);
+    me3.rotateX(0.01);
     graphics3.shape(me3);
   }
 }

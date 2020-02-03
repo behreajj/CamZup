@@ -15,12 +15,11 @@ public interface IMaterial extends IUtils {
 
    /**
     * The default stroke color used when none is specified.
-    * Equivalent to (0.125, 0.125, 0.125, 1.0) .
     */
-   int DEFAULT_STROKE = 0xff202020;
+   int DEFAULT_STROKE = 0xff232323;
 
    /**
     * The default stroke weight used when none is specified.
     */
-   float DEFAULT_STROKE_WEIGHT = 0.825f;
+   float DEFAULT_STROKE_WEIGHT = 0.8f;
 }

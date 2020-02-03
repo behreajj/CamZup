@@ -121,9 +121,8 @@ public class Face2 implements Comparable < Face2 > {
    @Chainable
    public Face2 rotateZ ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
       Vec2 c;
 
       final int len = this.vertices.length;

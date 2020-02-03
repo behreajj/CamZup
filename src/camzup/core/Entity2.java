@@ -50,13 +50,17 @@ public class Entity2 extends Entity {
       if (this == obj) {
          return true;
       }
+
       if (!super.equals(obj)) {
          return false;
       }
+
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+
       final Entity2 other = (Entity2) obj;
+
       if (this.transform == null) {
          if (other.transform != null) {
             return false;
@@ -64,9 +68,11 @@ public class Entity2 extends Entity {
       } else if (!this.transform.equals(other.transform)) {
          return false;
       }
+
       if (this.transformOrder != other.transformOrder) {
          return false;
       }
+
       return true;
    }
 
@@ -148,7 +154,7 @@ public class Entity2 extends Entity {
     *           the angle
     * @param step
     *           the step
-    * @return the entity
+    * @return this entity
     */
    @Chainable
    public Entity2 rotateTo (
@@ -159,6 +165,13 @@ public class Entity2 extends Entity {
       return this;
    }
 
+   /**
+    * Rotates this entity by an angle.
+    *
+    * @param radians
+    *           the angle
+    * @return this entity
+    */
    @Chainable
    public Entity2 rotateZ ( final float radians ) {
 

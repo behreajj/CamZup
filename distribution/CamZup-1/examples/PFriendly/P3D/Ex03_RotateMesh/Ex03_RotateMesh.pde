@@ -17,23 +17,25 @@ Quaternion identity = new Quaternion();
 
 MeshEntity3 entity = new MeshEntity3();
 
-void setup() {
+void settings() {
   size(720, 405, "camzup.pfriendly.Yup3");
+}
 
+void setup() {
   graphics = (Yup3)getGraphics();
   graphics.camera(
-    0.0, 0.0, -height * Utils.sqrt(3.0) * 0.5, 
-    0.0, 0.0, 0.0, 
+    0.0, 0.0, -height * Utils.SQRT_3_2,
+    0.0, 0.0, 0.0,
     0.0, 1.0, 0.0);
 
-  Mesh3 mesh = Mesh3.icosahedron(new Mesh3());
+  Mesh3 mesh = Mesh3.dodecahedron(new Mesh3());
   entity.appendMesh(mesh);
 
   MaterialSolid material = new MaterialSolid()
     .setFill(#00939c);
   entity.appendMaterial(material);
 
-  entity.transform.scaleTo(min(width, height) * 0.5);
+  entity.scaleTo(min(width, height) * 0.5);
 }
 
 void draw() {
@@ -61,7 +63,7 @@ void draw() {
   Quaternion.mix(
     rotSphere, rotWorld, smoothing, rotSphere);
 
-  entity.transform.rotateTo(rotSphere);
+  entity.rotateTo(rotSphere);
 
   graphics.background();
   graphics.lights();

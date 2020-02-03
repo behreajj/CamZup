@@ -13,7 +13,7 @@ static class MyVec2 extends Vec2 {
     this.y += b.y;
   }
 
-  // I wanto call static functions without having
+  // I want to call static functions without having
   // to create a new target vector.
   static Vec2 add(Vec2 a, Vec2 b) {
     return add(a, b, new Vec2());

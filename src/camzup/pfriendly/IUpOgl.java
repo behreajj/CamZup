@@ -64,7 +64,7 @@ public interface IUpOgl extends IUp {
       /**
        * The integer code of the constant.
        */
-      private final int val;
+      private int val;
 
       /**
        * The enum constructor.

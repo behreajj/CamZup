@@ -6,8 +6,11 @@ CurveEntity2[] glyphs;
 
 PFont font;
 
-void setup() {
+void settings() {
   size(720, 405, "camzup.pfriendly.YupJ2");
+}
+
+void setup() {
   graphics2 = (YupJ2)getGraphics();
 
   textMode(SHAPE);
@@ -26,11 +29,11 @@ void setup() {
   for (int i = 0; i < len; ++i) {
     CurveEntity2 glyph = glyphs[i];
     glyph.appendMaterial(material);
-    glyph.transform.scaleTo(80);
+    glyph.scaleTo(80);
 
     float percent = i * toPercent;
     Vec2 pos = Vec2.mix(left, right, percent, new Vec2());
-    glyph.transform.moveTo(pos);
+    glyph.moveTo(pos);
   }
 }
 
@@ -38,7 +41,6 @@ void setup() {
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
   graphics2.background();
-
   for (CurveEntity2 glyph : glyphs) {
     graphics2.shape(glyph);
   }

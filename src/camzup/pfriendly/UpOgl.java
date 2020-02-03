@@ -3435,16 +3435,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.textureSampling = sampleType.getVal();
    }
 
-   /**
-    * Gets the String representation of the renderer as the
-    * class's simple name.
-    *
-    * @return the string
-    */
    @Override
    public String toString () {
 
-      return this.getClass().getSimpleName();
+      return "camzup.pfriendly.UpOgl";
    }
 
    /**

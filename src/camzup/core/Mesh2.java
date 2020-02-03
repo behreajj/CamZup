@@ -136,9 +136,10 @@ public class Mesh2 extends Mesh {
          final float theta = Utils.lerpUnclamped(
                a1, destAngle1, k * toStep);
 
-         pureCoord.set(
-               SinCos.eval(theta) * radius,
-               SinCos.eval(theta - 0.25f) * radius);
+         // pureCoord.set(
+         // SinCos.eval(theta) * radius,
+         // SinCos.eval(theta - 0.25f) * radius);
+         Vec2.fromPolar(theta * IUtils.TAU, radius, pureCoord);
 
          coords[i] = new Vec2(pureCoord);
          final Vec2 v1 = coords[j] = Vec2.mul(
@@ -647,8 +648,6 @@ public class Mesh2 extends Mesh {
       switch (poly) {
 
          case NGON:
-
-            // TODO: Are these indices correct???
 
             coords = new Vec2[seg2];
             texCoords = new Vec2[seg2];
@@ -1236,9 +1235,8 @@ public class Mesh2 extends Mesh {
    @Chainable
    public Mesh2 rotateZ ( final float radians ) {
 
-      final float nrm = IUtils.ONE_TAU * radians;
-      final float cosa = SinCos.eval(nrm);
-      final float sina = SinCos.eval(nrm - 0.25f);
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
       Vec2 c;
 
       final int len = this.coords.length;

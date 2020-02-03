@@ -12,470 +12,7 @@ import java.util.TreeSet;
  * Allows smooth color transitions to be evaluated by a
  * factor.
  */
-public class Gradient implements Iterable < Gradient.Key > {
-
-   /**
-    * A color key which stores a color at a given step (or
-    * percent). Key equality and hash is based solely on the
-    * step, not on the color it holds.
-    */
-   public static class Key implements Comparable < Key >, Cloneable {
-
-      /**
-       * The default tolerance used when comparing color keys.
-       */
-      public static final float DEFAULT_TOLERANCE = 0.0005f;
-
-      /**
-       * Tests to see if two keys have approximately the same
-       * step.
-       *
-       * @param a
-       *           the left comparisand
-       * @param b
-       *           the right comparisand
-       * @return the evaluation
-       */
-      public static boolean approx (
-            final Key a,
-            final Key b ) {
-
-         return Key.approx(a, b, Key.DEFAULT_TOLERANCE);
-      }
-
-      /**
-       * Tests to see if two keys have approximately the same
-       * step.
-       *
-       * @param a
-       *           the left comparisand
-       * @param b
-       *           the right comparisand
-       * @param tolerance
-       *           the tolerance
-       * @return the evaluation
-       * @see Utils#approx(float, float, float)
-       */
-      public static boolean approx (
-            final Key a,
-            final Key b,
-            final float tolerance ) {
-
-         return Utils.approx(a.step, b.step, tolerance);
-      }
-
-      /**
-       * The key's color. Abbreviated to 'clr' because 'color' is
-       * a data type in Processing IDE.
-       */
-      public final Color clr = new Color();
-
-      /**
-       * The key's step, expected to be in the range [0.0, 1.0].
-       */
-      public float step = 0.0f;
-
-      /**
-       * The default constructor. Creates a clear black color at
-       * 0.0 .
-       */
-      public Key () {
-
-         this.set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-      }
-
-      /**
-       * Creates a key at a given step. All values of the color
-       * (including alpha) are set to the step.
-       *
-       * @param step
-       *           the step
-       */
-      public Key ( final float step ) {
-
-         this.set(step, step, step, step, step);
-      }
-
-      /**
-       * Creates a new key with a step and color.
-       *
-       * @param step
-       *           the step
-       * @param color
-       *           the color
-       */
-      public Key ( final float step, final Color color ) {
-
-         this.set(step, color);
-      }
-
-      /**
-       * Creates a key by step and color channel. The color's
-       * alpha is assumed to be 1.0 .
-       *
-       * @param step
-       *           the step
-       * @param red
-       *           the red channel
-       * @param green
-       *           the green channel
-       * @param blue
-       *           the blue channel
-       */
-      public Key (
-            final float step,
-            final float red,
-            final float green,
-            final float blue ) {
-
-         this.set(step, red, green, blue);
-      }
-
-      /**
-       * Creates a key by step and color channel.
-       *
-       * @param step
-       *           the step
-       * @param red
-       *           the red channel
-       * @param green
-       *           the green channel
-       * @param blue
-       *           the blue channel
-       * @param alpha
-       *           the transparency channel
-       */
-      public Key (
-            final float step,
-            final float red,
-            final float green,
-            final float blue,
-            final float alpha ) {
-
-         this.set(step, red, green, blue, alpha);
-      }
-
-      /**
-       * Creates a new key with a step and a color in hexadecimal.
-       *
-       * @param step
-       *           the step
-       * @param color
-       *           the color
-       */
-      public Key (
-            final float step,
-            final int color ) {
-
-         this.set(step, color);
-      }
-
-      /**
-       * Creates a new key with a step and a string representing a
-       * color hexadecimal.
-       *
-       * @param step
-       *           the step
-       * @param color
-       *           the color string
-       */
-      public Key (
-            final float step,
-            final String color ) {
-
-         this.set(step, color);
-      }
-
-      /**
-       * Creates a key from a source
-       *
-       * @param source
-       *           the source key
-       */
-      public Key ( final Key source ) {
-
-         this.set(source);
-      }
-
-      /**
-       * Returns a String of Python code targeted toward the
-       * Blender 2.8x API. This code is brittle and is used for
-       * internal testing purposes.
-       *
-       * @param name
-       *           the material's name
-       * @param samples
-       *           number of gradient samples
-       * @param gamma
-       *           the gamma adjustment
-       * @return the string
-       */
-      @Experimental
-      String toBlenderCode ( final float gamma ) {
-
-         return new StringBuilder()
-               .append("{\"position\": ")
-               .append(Utils.toFixed(this.step, 3))
-               .append(", \"color\": ")
-               .append(this.clr.toBlenderCode(gamma))
-               .append('}')
-               .toString();
-      }
-
-      /**
-       * Tests this key for equality to another based on its step,
-       * not color.
-       *
-       * @param key
-       *           the key
-       * @return the evaluation
-       */
-      protected boolean equals ( final Key key ) {
-
-         if (Float.floatToIntBits(this.step) != Float
-               .floatToIntBits(key.step)) {
-            return false;
-         }
-         return true;
-      }
-
-      /**
-       * Returns a new color with this color's components. Java's
-       * cloneable interface is problematic; use set or a copy
-       * constructor instead.
-       *
-       * @return a new key
-       * @see Key#set(Key)
-       * @see Key#Key(Key)
-       */
-      @Override
-      public Key clone () {
-
-         return new Key(this.step, this.clr);
-      }
-
-      /**
-       * Returns -1 when this key is less than the comparisand; 1
-       * when it is greater than; 0 when the two are 'equal'. The
-       * implementation of this method allows collections of keys
-       * to be sorted.
-       *
-       * @param key
-       *           the comparisand
-       * @return the numeric code
-       */
-      @Override
-      public int compareTo ( final Key key ) {
-
-         return this.step > key.step ? 1
-               : this.step < key.step ? -1 : 0;
-      }
-
-      /**
-       * Tests this key for equivalence with another object.
-       *
-       * @param obj
-       *           the object
-       * @return the equivalence
-       * @see Key#equals(Key)
-       */
-      @Override
-      public boolean equals ( final Object obj ) {
-
-         if (this == obj) {
-            return true;
-         }
-
-         if (obj == null) {
-            return false;
-         }
-
-         if (this.getClass() != obj.getClass()) {
-            return false;
-         }
-
-         return this.equals((Key) obj);
-      }
-
-      /**
-       * Returns a hash code for this key based on its step, not
-       * based on its color.
-       *
-       * @return the hash code
-       * @see Float#floatToIntBits(float)
-       */
-      @Override
-      public int hashCode () {
-
-         int hash = IUtils.HASH_BASE;
-         hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.step);
-         return hash;
-      }
-
-      /**
-       * Ressets this key to an initial condition.
-       *
-       * @return this key
-       */
-      public Key reset () {
-
-         this.step = 0.0f;
-         this.clr.reset();
-         return this;
-      }
-
-      /**
-       * Sets this key with a step and color.
-       *
-       * @param step
-       *           the step
-       * @param color
-       *           the color
-       * @return this key
-       */
-      @Chainable
-      public Key set (
-            final float step,
-            final Color color ) {
-
-         this.step = step;
-         this.clr.set(color);
-         return this;
-      }
-
-      /**
-       * Sets this key by step and color channel. The color's
-       * alpha is assumed to be 1.0 .
-       *
-       * @param step
-       *           the step
-       * @param red
-       *           the red channel
-       * @param green
-       *           the green channel
-       * @param blue
-       *           the blue channel
-       * @return this key
-       */
-      @Chainable
-      public Key set (
-            final float step,
-            final float red,
-            final float green,
-            final float blue ) {
-
-         this.step = step;
-         this.clr.set(red, green, blue);
-
-         return this;
-      }
-
-      /**
-       * Sets this key by step and color channel.
-       *
-       * @param step
-       *           the step
-       * @param red
-       *           the red channel
-       * @param green
-       *           the green channel
-       * @param blue
-       *           the blue channel
-       * @param alpha
-       *           the transparency channel
-       * @return this key
-       */
-      @Chainable
-      public Key set (
-            final float step,
-            final float red,
-            final float green,
-            final float blue,
-            final float alpha ) {
-
-         this.step = step;
-         this.clr.set(red, green, blue, alpha);
-
-         return this;
-      }
-
-      /**
-       * Sets this key with a step and a color in hexadecimal.
-       *
-       * @param step
-       *           the step
-       * @param color
-       *           the color
-       * @return this key
-       */
-      @Chainable
-      public Key set ( final float step, final int color ) {
-
-         this.step = step;
-         Color.fromHex(color, this.clr);
-         return this;
-      }
-
-      /**
-       * Sets this key with a step and a string representing a
-       * color hexadecimal.
-       *
-       * @param step
-       *           the step
-       * @param color
-       *           the color string
-       * @return this key
-       */
-      @Chainable
-      public Key set ( final float step, final String color ) {
-
-         this.step = step;
-         Color.fromHex(color, this.clr);
-         return this;
-      }
-
-      /**
-       * Sets this key from a source.
-       *
-       * @param source
-       *           the source ky
-       * @return this key
-       */
-      @Chainable
-      public Key set ( final Key source ) {
-
-         return this.set(source.step, source.clr);
-      }
-
-      /**
-       * Returns a string representation of this key.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString () {
-
-         return this.toString(4);
-      }
-
-      /**
-       * Returns a string representation of this key.
-       *
-       * @param places
-       *           number of decimal places
-       * @return the string
-       */
-      public String toString ( final int places ) {
-
-         return new StringBuilder()
-               .append("{ step: ")
-               .append(Utils.toFixed(this.step, 6))
-               .append(", clr: ")
-               .append(this.clr.toString(places))
-               .append(' ').append('}')
-               .toString();
-      }
-   }
+public class Gradient implements Iterable < ColorKey > {
 
    /**
     * The default easing function, lerp RGBA.
@@ -502,28 +39,28 @@ public class Gradient implements Iterable < Gradient.Key > {
     */
    public static Gradient paletteMagma ( final Gradient target ) {
 
-      final TreeSet < Key > keys = target.keys;
+      final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
-      keys.add(new Key(0.0f, 0.988235f, 1.0f, 0.698039f));
-      keys.add(new Key(0.06666667f, 0.98719f, 0.843137f, 0.562092f));
-      keys.add(new Key(0.13333333f, 0.984314f, 0.694118f, 0.446275f));
-      keys.add(new Key(0.2f, 0.981176f, 0.548235f, 0.35451f));
+      keys.add(new ColorKey(0.0f, 0.988235f, 1.0f, 0.698039f));
+      keys.add(new ColorKey(0.06666667f, 0.98719f, 0.843137f, 0.562092f));
+      keys.add(new ColorKey(0.13333333f, 0.984314f, 0.694118f, 0.446275f));
+      keys.add(new ColorKey(0.2f, 0.981176f, 0.548235f, 0.35451f));
 
-      keys.add(new Key(0.26666667f, 0.962353f, 0.412549f, 0.301176f));
-      keys.add(new Key(0.33333333f, 0.912418f, 0.286275f, 0.298039f));
-      keys.add(new Key(0.4f, 0.824314f, 0.198431f, 0.334902f));
-      keys.add(new Key(0.46666667f, 0.703268f, 0.142484f, 0.383007f));
+      keys.add(new ColorKey(0.26666667f, 0.962353f, 0.412549f, 0.301176f));
+      keys.add(new ColorKey(0.33333333f, 0.912418f, 0.286275f, 0.298039f));
+      keys.add(new ColorKey(0.4f, 0.824314f, 0.198431f, 0.334902f));
+      keys.add(new ColorKey(0.46666667f, 0.703268f, 0.142484f, 0.383007f));
 
-      keys.add(new Key(0.53333333f, 0.584052f, 0.110588f, 0.413856f));
-      keys.add(new Key(0.6f, 0.471373f, 0.080784f, 0.430588f));
-      keys.add(new Key(0.66666667f, 0.36732f, 0.045752f, 0.43268f));
-      keys.add(new Key(0.73333333f, 0.267974f, 0.002353f, 0.416732f));
+      keys.add(new ColorKey(0.53333333f, 0.584052f, 0.110588f, 0.413856f));
+      keys.add(new ColorKey(0.6f, 0.471373f, 0.080784f, 0.430588f));
+      keys.add(new ColorKey(0.66666667f, 0.36732f, 0.045752f, 0.43268f));
+      keys.add(new ColorKey(0.73333333f, 0.267974f, 0.002353f, 0.416732f));
 
-      keys.add(new Key(0.8f, 0.174118f, 0.006275f, 0.357647f));
-      keys.add(new Key(0.86666667f, 0.093856f, 0.036863f, 0.232941f));
-      keys.add(new Key(0.93333333f, 0.040784f, 0.028758f, 0.110327f));
-      keys.add(new Key(1.0f, 0.0f, 0.0f, 0.019608f));
+      keys.add(new ColorKey(0.8f, 0.174118f, 0.006275f, 0.357647f));
+      keys.add(new ColorKey(0.86666667f, 0.093856f, 0.036863f, 0.232941f));
+      keys.add(new ColorKey(0.93333333f, 0.040784f, 0.028758f, 0.110327f));
+      keys.add(new ColorKey(1.0f, 0.0f, 0.0f, 0.019608f));
 
       return target;
    }
@@ -539,16 +76,16 @@ public class Gradient implements Iterable < Gradient.Key > {
     */
    public static Gradient paletteRgb ( final Gradient target ) {
 
-      final TreeSet < Key > keys = target.keys;
+      final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
-      keys.add(new Key(0.0f, 1.0f, 0.0f, 0.0f)); /* Red */
-      keys.add(new Key(0.16666667f, 1.0f, 1.0f, 0.0f)); /* Yellow */
-      keys.add(new Key(0.33333333f, 0.0f, 1.0f, 0.0f)); /* Green */
-      keys.add(new Key(0.5f, 0.0f, 1.0f, 1.0f)); /* Cyan */
-      keys.add(new Key(0.66666667f, 0.0f, 0.0f, 1.0f)); /* Blue */
-      keys.add(new Key(0.83333333f, 1.0f, 0.0f, 1.0f)); /* Magenta */
-      keys.add(new Key(1.0f, 1.0f, 0.0f, 0.0f)); /* Red */
+      keys.add(new ColorKey(0.0f, 1.0f, 0.0f, 0.0f)); /* Red */
+      keys.add(new ColorKey(0.16666667f, 1.0f, 1.0f, 0.0f)); /* Yellow */
+      keys.add(new ColorKey(0.33333333f, 0.0f, 1.0f, 0.0f)); /* Green */
+      keys.add(new ColorKey(0.5f, 0.0f, 1.0f, 1.0f)); /* Cyan */
+      keys.add(new ColorKey(0.66666667f, 0.0f, 0.0f, 1.0f)); /* Blue */
+      keys.add(new ColorKey(0.83333333f, 1.0f, 0.0f, 1.0f)); /* Magenta */
+      keys.add(new ColorKey(1.0f, 1.0f, 0.0f, 0.0f)); /* Red */
 
       return target;
    }
@@ -562,28 +99,28 @@ public class Gradient implements Iterable < Gradient.Key > {
     */
    public static Gradient paletteViridis ( final Gradient target ) {
 
-      final TreeSet < Key > keys = target.keys;
+      final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
-      keys.add(new Key(0.0f, 0.266667f, 0.003922f, 0.329412f));
-      keys.add(new Key(0.06666667f, 0.282353f, 0.100131f, 0.420654f));
-      keys.add(new Key(0.13333333f, 0.276078f, 0.184575f, 0.487582f));
-      keys.add(new Key(0.2f, 0.254902f, 0.265882f, 0.527843f));
+      keys.add(new ColorKey(0.0f, 0.266667f, 0.003922f, 0.329412f));
+      keys.add(new ColorKey(0.06666667f, 0.282353f, 0.100131f, 0.420654f));
+      keys.add(new ColorKey(0.13333333f, 0.276078f, 0.184575f, 0.487582f));
+      keys.add(new ColorKey(0.2f, 0.254902f, 0.265882f, 0.527843f));
 
-      keys.add(new Key(0.26666667f, 0.221961f, 0.340654f, 0.549281f));
-      keys.add(new Key(0.33333333f, 0.192157f, 0.405229f, 0.554248f));
-      keys.add(new Key(0.4f, 0.164706f, 0.469804f, 0.556863f));
-      keys.add(new Key(0.46666667f, 0.139869f, 0.534379f, 0.553464f));
+      keys.add(new ColorKey(0.26666667f, 0.221961f, 0.340654f, 0.549281f));
+      keys.add(new ColorKey(0.33333333f, 0.192157f, 0.405229f, 0.554248f));
+      keys.add(new ColorKey(0.4f, 0.164706f, 0.469804f, 0.556863f));
+      keys.add(new ColorKey(0.46666667f, 0.139869f, 0.534379f, 0.553464f));
 
-      keys.add(new Key(0.53333333f, 0.122092f, 0.595033f, 0.543007f));
-      keys.add(new Key(0.6f, 0.139608f, 0.658039f, 0.516863f));
-      keys.add(new Key(0.66666667f, 0.210458f, 0.717647f, 0.471895f));
-      keys.add(new Key(0.73333333f, 0.326797f, 0.773595f, 0.407582f));
+      keys.add(new ColorKey(0.53333333f, 0.122092f, 0.595033f, 0.543007f));
+      keys.add(new ColorKey(0.6f, 0.139608f, 0.658039f, 0.516863f));
+      keys.add(new ColorKey(0.66666667f, 0.210458f, 0.717647f, 0.471895f));
+      keys.add(new ColorKey(0.73333333f, 0.326797f, 0.773595f, 0.407582f));
 
-      keys.add(new Key(0.8f, 0.477647f, 0.821961f, 0.316863f));
-      keys.add(new Key(0.86666667f, 0.648366f, 0.858039f, 0.208889f));
-      keys.add(new Key(0.93333333f, 0.825098f, 0.884967f, 0.114771f));
-      keys.add(new Key(1.0f, 0.992157f, 0.905882f, 0.145098f));
+      keys.add(new ColorKey(0.8f, 0.477647f, 0.821961f, 0.316863f));
+      keys.add(new ColorKey(0.86666667f, 0.648366f, 0.858039f, 0.208889f));
+      keys.add(new ColorKey(0.93333333f, 0.825098f, 0.884967f, 0.114771f));
+      keys.add(new ColorKey(1.0f, 0.992157f, 0.905882f, 0.145098f));
 
       return target;
    }
@@ -606,12 +143,12 @@ public class Gradient implements Iterable < Gradient.Key > {
     * A temporary variable to hold queries in evaluation
     * functions.
     */
-   protected final Gradient.Key query = new Key();
+   protected final ColorKey query = new ColorKey();
 
    /**
     * The set of keys.
     */
-   public final TreeSet < Gradient.Key > keys = new TreeSet <>();
+   public final TreeSet < ColorKey > keys = new TreeSet <>();
 
    /**
     * Creates a gradient with two default color keys, clear
@@ -622,8 +159,8 @@ public class Gradient implements Iterable < Gradient.Key > {
     */
    public Gradient () {
 
-      this.keys.add(new Key(0.0f, 0.0f, 0.0f, 0.0f, 0.0f));
-      this.keys.add(new Key(1.0f, 1.0f, 1.0f, 1.0f, 1.0f));
+      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, 0.0f));
+      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, 1.0f));
    }
 
    /**
@@ -636,8 +173,8 @@ public class Gradient implements Iterable < Gradient.Key > {
     */
    public Gradient ( final Color color ) {
 
-      this.keys.add(new Key(0.0f, 1.0f, 1.0f, 1.0f, 1.0f));
-      this.keys.add(new Key(1.0f, color));
+      this.keys.add(new ColorKey(0.0f, 1.0f, 1.0f, 1.0f, 1.0f));
+      this.keys.add(new ColorKey(1.0f, color));
    }
 
    /**
@@ -653,6 +190,17 @@ public class Gradient implements Iterable < Gradient.Key > {
    }
 
    /**
+    * Creates a gradient from color keys.
+    *
+    * @param keys
+    *           the color keys
+    */
+   public Gradient ( final ColorKey... keys ) {
+
+      this.appendAll(keys);
+   }
+
+   /**
     * Creates a gradient from a color integer; an additional
     * color key, white at 0.0, is created.
     *
@@ -662,8 +210,8 @@ public class Gradient implements Iterable < Gradient.Key > {
     */
    public Gradient ( final int color ) {
 
-      this.keys.add(new Key(0.0f, 1.0f, 1.0f, 1.0f, 1.0f));
-      this.keys.add(new Key(1.0f, color));
+      this.keys.add(new ColorKey(0.0f, 1.0f, 1.0f, 1.0f, 1.0f));
+      this.keys.add(new ColorKey(1.0f, color));
    }
 
    /**
@@ -680,17 +228,6 @@ public class Gradient implements Iterable < Gradient.Key > {
    }
 
    /**
-    * Creates a gradient from color keys.
-    *
-    * @param keys
-    *           the color keys
-    */
-   public Gradient ( final Key... keys ) {
-
-      this.appendAll(keys);
-   }
-
-   /**
     * Creates a gradient from a color string; an additional
     * color key, white at 0.0, is created.
     *
@@ -700,8 +237,8 @@ public class Gradient implements Iterable < Gradient.Key > {
     */
    public Gradient ( final String color ) {
 
-      this.keys.add(new Key(0.0f, 1.0f, 1.0f, 1.0f, 1.0f));
-      this.keys.add(new Key(1.0f, color));
+      this.keys.add(new ColorKey(0.0f, 1.0f, 1.0f, 1.0f, 1.0f));
+      this.keys.add(new ColorKey(1.0f, color));
    }
 
    /**
@@ -746,13 +283,13 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @return this gradient
     */
    @Chainable
-   protected Gradient shiftKeysLeft ( final int added ) {
+   protected Gradient shiftGradientKeysLeft ( final int added ) {
 
-      final Iterator < Gradient.Key > itr = this.keys.iterator();
+      final Iterator < ColorKey > itr = this.keys.iterator();
       int i = 0;
       final float scalar = 1.0f / (this.keys.size() + added - 1.0f);
       while (itr.hasNext()) {
-         final Gradient.Key key = itr.next();
+         final ColorKey key = itr.next();
          key.step = key.step * i++ * scalar;
       }
       return this;
@@ -769,26 +306,8 @@ public class Gradient implements Iterable < Gradient.Key > {
    @Chainable
    public Gradient append ( final Color color ) {
 
-      this.shiftKeysLeft(1);
-      this.keys.add(new Key(1.0f, color));
-      return this;
-   }
-
-   /**
-    * Appends a color at step 1.0 . Shifts existing keys to the
-    * left.
-    *
-    * @param color
-    *           the color
-    * @return this gradient
-    * @see Gradient#shiftKeysLeft(int)
-    * @see TreeSet#add(Object)
-    */
-   @Chainable
-   public Gradient append ( final int color ) {
-
-      this.shiftKeysLeft(1);
-      this.keys.add(new Key(1.0f, color));
+      this.shiftGradientKeysLeft(1);
+      this.keys.add(new ColorKey(1.0f, color));
       return this;
    }
 
@@ -802,7 +321,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @see TreeSet#add(Object)
     */
    @Chainable
-   public Gradient append ( final Key key ) {
+   public Gradient append ( final ColorKey key ) {
 
       if (this.keys.contains(key)) {
          this.keys.remove(key);
@@ -818,12 +337,30 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @param color
     *           the color
     * @return this gradient
+    * @see Gradient#shiftGradientKeysLeft(int)
+    * @see TreeSet#add(Object)
+    */
+   @Chainable
+   public Gradient append ( final int color ) {
+
+      this.shiftGradientKeysLeft(1);
+      this.keys.add(new ColorKey(1.0f, color));
+      return this;
+   }
+
+   /**
+    * Appends a color at step 1.0 . Shifts existing keys to the
+    * left.
+    *
+    * @param color
+    *           the color
+    * @return this gradient
     */
    @Chainable
    public Gradient append ( final String color ) {
 
-      this.shiftKeysLeft(1);
-      this.keys.add(new Key(1.0f, color));
+      this.shiftGradientKeysLeft(1);
+      this.keys.add(new ColorKey(1.0f, color));
       return this;
    }
 
@@ -834,7 +371,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @param colors
     *           the colors
     * @return this gradient
-    * @see Gradient#shiftKeysLeft(int)
+    * @see Gradient#shiftGradientKeysLeft(int)
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
@@ -842,35 +379,11 @@ public class Gradient implements Iterable < Gradient.Key > {
    public Gradient appendAll ( final Color... colors ) {
 
       final int len = colors.length;
-      this.shiftKeysLeft(len);
+      this.shiftGradientKeysLeft(len);
       final int oldLen = this.keys.size();
       final float denom = 1.0f / (oldLen + len - 1.0f);
       for (int i = 0; i < len; ++i) {
-         this.keys.add(new Key((oldLen + i) * denom, colors[i]));
-      }
-      return this;
-   }
-
-   /**
-    * Appends a list of color integers to this gradient. Shifts
-    * existing keys to the left.
-    *
-    * @param colors
-    *           the colors
-    * @return this gradient
-    * @see Gradient#shiftKeysLeft(int)
-    * @see TreeSet#size()
-    * @see TreeSet#add(Object)
-    */
-   @Chainable
-   public Gradient appendAll ( final int... colors ) {
-
-      final int len = colors.length;
-      this.shiftKeysLeft(len);
-      final int oldLen = this.keys.size();
-      final float denom = 1.0f / (oldLen + len - 1.0f);
-      for (int i = 0; i < len; ++i) {
-         this.keys.add(new Key((oldLen + i) * denom, colors[i]));
+         this.keys.add(new ColorKey((oldLen + i) * denom, colors[i]));
       }
       return this;
    }
@@ -885,15 +398,39 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @see TreeSet#add(Object)
     */
    @Chainable
-   public Gradient appendAll ( final Key... keys ) {
+   public Gradient appendAll ( final ColorKey... keys ) {
 
       final int len = keys.length;
       for (int i = 0; i < len; ++i) {
-         final Key key = keys[i];
+         final ColorKey key = keys[i];
          if (this.keys.contains(key)) {
             this.keys.remove(key);
          }
          this.keys.add(key);
+      }
+      return this;
+   }
+
+   /**
+    * Appends a list of color integers to this gradient. Shifts
+    * existing keys to the left.
+    *
+    * @param colors
+    *           the colors
+    * @return this gradient
+    * @see Gradient#shiftGradientKeysLeft(int)
+    * @see TreeSet#size()
+    * @see TreeSet#add(Object)
+    */
+   @Chainable
+   public Gradient appendAll ( final int... colors ) {
+
+      final int len = colors.length;
+      this.shiftGradientKeysLeft(len);
+      final int oldLen = this.keys.size();
+      final float denom = 1.0f / (oldLen + len - 1.0f);
+      for (int i = 0; i < len; ++i) {
+         this.keys.add(new ColorKey((oldLen + i) * denom, colors[i]));
       }
       return this;
    }
@@ -905,7 +442,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @param colors
     *           the colors
     * @return this gradient
-    * @see Gradient#shiftKeysLeft(int)
+    * @see Gradient#shiftGradientKeysLeft(int)
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
@@ -913,11 +450,11 @@ public class Gradient implements Iterable < Gradient.Key > {
    public Gradient appendAll ( final String... colors ) {
 
       final int len = colors.length;
-      this.shiftKeysLeft(len);
+      this.shiftGradientKeysLeft(len);
       final int oldLen = this.keys.size();
       final float denom = 1.0f / (oldLen + len - 1.0f);
       for (int i = 0; i < len; ++i) {
-         this.keys.add(new Key((oldLen + i) * denom, colors[i]));
+         this.keys.add(new ColorKey((oldLen + i) * denom, colors[i]));
       }
       return this;
    }
@@ -929,7 +466,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     *           the key
     * @return the evaluation
     */
-   public boolean contains ( final Key key ) {
+   public boolean contains ( final ColorKey key ) {
 
       return this.keys.contains(key);
    }
@@ -944,18 +481,18 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @see List#clear()
     * @see List#addAll(java.util.Collection)
     */
-   public Gradient distribute ( final List < Key > keyArr ) {
+   public Gradient distribute ( final List < ColorKey > keyArr ) {
 
       keyArr.clear();
       keyArr.addAll(this.keys);
 
       this.keys.clear();
 
-      final Iterator < Key > itr = keyArr.iterator();
+      final Iterator < ColorKey > itr = keyArr.iterator();
       final float denom = 1.0f / (keyArr.size() - 1.0f);
       int i = 0;
       while (itr.hasNext()) {
-         final Key key = itr.next();
+         final ColorKey key = itr.next();
          key.step = i++ * denom;
       }
 
@@ -1034,15 +571,12 @@ public class Gradient implements Iterable < Gradient.Key > {
 
       this.query.step = step;
 
-      // TODO: Would this be better as higher and lower, or lb
-      // inclusive, ub exclusive?
-
-      final Key prev = this.keys.floor(this.query);
+      final ColorKey prev = this.keys.floor(this.query);
       if (prev == null) {
          return target.set(this.keys.first().clr);
       }
 
-      final Key next = this.keys.ceiling(this.query);
+      final ColorKey next = this.keys.ceiling(this.query);
       if (next == null) {
          return target.set(this.keys.last().clr);
       }
@@ -1106,10 +640,10 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @see TreeSet#ceiling(Object)
     * @see TreeSet#last()
     */
-   public Key findGe ( final float step ) {
+   public ColorKey findGe ( final float step ) {
 
       this.query.step = step;
-      final Key result = this.keys.ceiling(this.query);
+      final ColorKey result = this.keys.ceiling(this.query);
       return result == null ? this.keys.last() : result;
    }
 
@@ -1124,10 +658,10 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @see TreeSet#floor(Object)
     * @see TreeSet#first()
     */
-   public Key findLe ( final float step ) {
+   public ColorKey findLe ( final float step ) {
 
       this.query.step = step;
-      final Key result = this.keys.floor(this.query);
+      final ColorKey result = this.keys.floor(this.query);
       return result == null ? this.keys.first() : result;
    }
 
@@ -1136,7 +670,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     *
     * @return the first key
     */
-   public Key getFirst () {
+   public ColorKey getFirst () {
 
       return this.keys.first();
    }
@@ -1146,7 +680,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     *
     * @return the last key
     */
-   public Key getLast () {
+   public ColorKey getLast () {
 
       return this.keys.last();
    }
@@ -1174,7 +708,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @see TreeSet#iterator()
     */
    @Override
-   public Iterator < Gradient.Key > iterator () {
+   public Iterator < ColorKey > iterator () {
 
       return this.keys.iterator();
    }
@@ -1198,7 +732,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     *           the key
     * @return the success
     */
-   public boolean remove ( final Key key ) {
+   public boolean remove ( final ColorKey key ) {
 
       return this.keys.remove(key);
    }
@@ -1209,7 +743,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @return the key
     * @see TreeSet#pollFirst()
     */
-   public Key removeFirst () {
+   public ColorKey removeFirst () {
 
       return this.keys.pollFirst();
    }
@@ -1220,7 +754,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @return the key
     * @see TreeSet#pollLast()
     */
-   public Key removeLast () {
+   public ColorKey removeLast () {
 
       return this.keys.pollLast();
    }
@@ -1238,8 +772,8 @@ public class Gradient implements Iterable < Gradient.Key > {
    public Gradient reset () {
 
       this.keys.clear();
-      this.keys.add(new Key(0.0f, 0.0f, 0.0f, 0.0f, 0.0f));
-      this.keys.add(new Key(1.0f, 1.0f, 1.0f, 1.0f, 1.0f));
+      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, 0.0f));
+      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, 1.0f));
 
       return this;
    }
@@ -1257,15 +791,15 @@ public class Gradient implements Iterable < Gradient.Key > {
     * @see TreeSet#clear()
     * @see Collections#reverse(java.util.List)
     */
-   public Gradient reverse ( final List < Key > keyList ) {
+   public Gradient reverse ( final List < ColorKey > keyList ) {
 
       keyList.clear();
       keyList.addAll(this.keys);
       Collections.reverse(keyList);
       this.keys.clear();
-      final Iterator < Key > itr = keyList.iterator();
+      final Iterator < ColorKey > itr = keyList.iterator();
       while (itr.hasNext()) {
-         final Key key = itr.next();
+         final ColorKey key = itr.next();
          key.step = 1.0f - key.step;
       }
       this.keys.addAll(keyList);
@@ -1302,13 +836,15 @@ public class Gradient implements Iterable < Gradient.Key > {
          final List < Color > clrList,
          final Comparator < Color > sorter ) {
 
+      // TODO: Needs testing.
+
       clrList.clear();
       int j = 0;
       final int len = this.keys.size();
-      final Iterator < Key > keyItr = this.keys.iterator();
+      final Iterator < ColorKey > keyItr = this.keys.iterator();
       final float[] steps = new float[len];
       while (keyItr.hasNext()) {
-         final Key key = keyItr.next();
+         final ColorKey key = keyItr.next();
          steps[j++] = key.step;
          clrList.add(key.clr);
       }
@@ -1319,7 +855,7 @@ public class Gradient implements Iterable < Gradient.Key > {
       int i = 0;
       final Iterator < Color > clrItr = clrList.iterator();
       while (clrItr.hasNext()) {
-         this.keys.add(new Key(steps[i++], clrItr.next()));
+         this.keys.add(new ColorKey(steps[i++], clrItr.next()));
       }
 
       return this;
@@ -1332,7 +868,7 @@ public class Gradient implements Iterable < Gradient.Key > {
     *           the target array
     * @return the array
     */
-   public Key[] toArray ( final Key[] target ) {
+   public ColorKey[] toArray ( final ColorKey[] target ) {
 
       return this.keys.toArray(target);
    }
@@ -1428,7 +964,7 @@ public class Gradient implements Iterable < Gradient.Key > {
       final StringBuilder sb = new StringBuilder(
             16 + 128 * this.keys.size())
                   .append("{ keys: [ \n");
-      final Iterator < Key > itr = this.keys.iterator();
+      final Iterator < ColorKey > itr = this.keys.iterator();
       while (itr.hasNext()) {
          sb.append(itr.next().toString(places));
          if (itr.hasNext()) {

@@ -121,7 +121,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     *           is the renderer primary
     */
    public Up3 (
-         final int width, final int height,
+         final int width,
+         final int height,
          final PApplet parent,
          final String path,
          final boolean isPrimary ) {
@@ -731,43 +732,27 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             this.stroke(lineColor);
 
             this.lineImpl(
-                  rearHandle.x,
-                  rearHandle.y,
-                  rearHandle.z,
-
-                  coord.x,
-                  coord.y,
-                  coord.z);
+                  rearHandle.x, rearHandle.y, rearHandle.z,
+                  coord.x, coord.y, coord.z);
 
             this.lineImpl(
-                  coord.x,
-                  coord.y,
-                  coord.z,
-
-                  foreHandle.x,
-                  foreHandle.y,
-                  foreHandle.z);
+                  coord.x, coord.y, coord.z,
+                  foreHandle.x, foreHandle.y, foreHandle.z);
 
             this.strokeWeight(swRear);
             this.stroke(rearColor);
             this.pointImpl(
-                  rearHandle.x,
-                  rearHandle.y,
-                  rearHandle.z);
+                  rearHandle.x, rearHandle.y, rearHandle.z);
 
             this.strokeWeight(swCoord);
             this.stroke(coordColor);
             this.pointImpl(
-                  coord.x,
-                  coord.y,
-                  coord.z);
+                  coord.x, coord.y, coord.z);
 
             this.strokeWeight(swFore);
             this.stroke(foreColor);
             this.pointImpl(
-                  foreHandle.x,
-                  foreHandle.y,
-                  foreHandle.z);
+                  foreHandle.x, foreHandle.y, foreHandle.z);
          }
       }
       this.popMatrix();
@@ -916,6 +901,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
          final int yColor,
          final int zColor ) {
 
+      final float vl = Utils.max(Utils.EPSILON, lineLength);
+
       this.hint(PConstants.DISABLE_DEPTH_TEST);
       this.hint(PConstants.DISABLE_DEPTH_MASK);
       this.hint(PConstants.DISABLE_DEPTH_SORT);
@@ -926,17 +913,17 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       this.stroke(zColor);
       this.lineImpl(
             0.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, lineLength);
+            0.0f, 0.0f, vl);
 
       this.stroke(yColor);
       this.lineImpl(
             0.0f, 0.0f, 0.0f,
-            0.0f, lineLength, 0.0f);
+            0.0f, vl, 0.0f);
 
       this.stroke(xColor);
       this.lineImpl(
             0.0f, 0.0f, 0.0f,
-            lineLength, 0.0f, 0.0f);
+            vl, 0.0f, 0.0f);
 
       this.popStyle();
 
@@ -1019,12 +1006,15 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
    public void shape ( final CurveEntity3 entity ) {
 
+      final Transform3 tr = entity.transform;
+
       final List < Curve3 > curves = entity.curves;
       final Iterator < Curve3 > curveItr = curves.iterator();
+      Iterator < Knot3 > knItr = null;
+
       final List < MaterialSolid > materials = entity.materials;
       final boolean useMaterial = !materials.isEmpty();
 
-      final Transform3 tr = entity.transform;
       final Vec3 v0 = new Vec3();
       final Vec3 v1 = new Vec3();
       final Vec3 v2 = new Vec3();
@@ -1044,10 +1034,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
                   curve.materialIndex));
          }
 
-         final Iterator < Knot3 > knItr = curve.iterator();
+         knItr = curve.iterator();
          prevKnot = knItr.next();
          coord = prevKnot.coord;
+
          Transform3.mulPoint(tr, coord, v2);
+
          this.beginShape();
          this.vertexImpl(
                v2.x, v2.y, v2.z,
@@ -1105,6 +1097,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     */
    public void shape ( final MeshEntity3 entity ) {
 
+      final Transform3 tr = entity.transform;
       final List < Mesh3 > meshes = entity.meshes;
       final Iterator < Mesh3 > meshItr = meshes.iterator();
 
@@ -1113,7 +1106,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
       final Vec3 v = new Vec3();
       final Vec3 vn = new Vec3();
-      final Transform3 tr = entity.transform;
 
       while (meshItr.hasNext()) {
          final Mesh3 mesh = meshItr.next();
@@ -1417,6 +1409,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
          final float z ) {
 
       this.text(str, x, y);
+   }
+
+   @Override
+   public String toString () {
+
+      return "camzup.pfriendly.Up3";
    }
 
    /**
