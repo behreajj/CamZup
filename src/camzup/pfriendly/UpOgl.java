@@ -821,17 +821,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float yAxis,
          final float zAxis ) {
 
-      /*
-       * The PGraphicsOpenGL renderer uses invRotate on
-       * modelviewInv, which seems to pre-multiply the
-       * modelviewInv matrix by the rotation matrix of the
-       * negative angle. This approach was tried here, but there
-       * was an error which impacted normals/shadows.
-       */
       PMatAux.rotate(angle,
             xAxis, yAxis, zAxis,
             this.modelview);
-      PMatAux.invert(this.modelview, this.modelviewInv);
+      PMatAux.invRotate(angle, xAxis, yAxis, zAxis, this.modelviewInv);
 
       this.updateProjmodelview();
    }
@@ -2721,8 +2714,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float angle,
          final Vec3 axis ) {
 
-      this.rotateImpl(angle,
-            axis.x, axis.y, axis.z);
+      this.rotateImpl(angle, axis.x, axis.y, axis.z);
    }
 
    /**
@@ -2740,15 +2732,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void rotateX ( final float angle ) {
 
-      /*
-       * The PGraphicsOpenGL renderer uses invRotate on
-       * modelviewInv, which seems to pre-multiply the
-       * modelviewInv matrix by the rotation matrix of the
-       * negative angle. This approach was tried here, but there
-       * was an error which impacted normals/shadows.
-       */
       PMatAux.rotateX(angle, this.modelview);
-      PMatAux.invert(this.modelview, this.modelviewInv);
+      PMatAux.invRotateX(angle, this.modelviewInv);
       this.updateProjmodelview();
 
    }
@@ -2768,15 +2753,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void rotateY ( final float angle ) {
 
-      /*
-       * The PGraphicsOpenGL renderer uses invRotate on
-       * modelviewInv, which seems to pre-multiply the
-       * modelviewInv matrix by the rotation matrix of the
-       * negative angle. This approach was tried here, but there
-       * was an error which impacted normals/shadows.
-       */
       PMatAux.rotateY(angle, this.modelview);
-      PMatAux.invert(this.modelview, this.modelviewInv);
+      PMatAux.invRotateY(angle, this.modelviewInv);
       this.updateProjmodelview();
    }
 
@@ -2795,15 +2773,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void rotateZ ( final float angle ) {
 
-      /*
-       * The PGraphicsOpenGL renderer uses invRotate on
-       * modelviewInv, which seems to pre-multiply the
-       * modelviewInv matrix by the rotation matrix of the
-       * negative angle. This approach was tried here, but there
-       * was an error which impacted normals/shadows.
-       */
       PMatAux.rotateZ(angle, this.modelview);
-      PMatAux.invert(this.modelview, this.modelviewInv);
+      PMatAux.invRotateZ(angle, this.modelviewInv);
       this.updateProjmodelview();
    }
 
@@ -3036,7 +3007,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void shape (
          final PShape shape,
-         final float x, final float y ) {
+         final float x,
+         final float y ) {
 
       PApplet.showMissingWarning("shape");
       super.shape(shape, x, y);

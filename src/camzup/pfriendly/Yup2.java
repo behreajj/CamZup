@@ -280,16 +280,13 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       this.cameraZoomY = zy < Utils.EPSILON ? 1.0f : zy;
       final float zDist = this.height < 128 ? 128 : this.height;
 
-      // this.modelview.reset();
-      // this.modelview.scale(
-      // this.cameraZoomX,
-      // this.cameraZoomY,
-      // 1.0f);
-      // this.modelview.rotateZ(-radians);
-      // this.modelview.translate(
-      // -this.cameraX,
-      // -this.cameraY,
-      // -zDist);
+      /*
+       * this.modelview.reset(); this.modelview.scale(
+       * this.cameraZoomX, this.cameraZoomY, 1.0f);
+       * this.modelview.rotateZ(-radians);
+       * this.modelview.translate( -this.cameraX, -this.cameraY,
+       * -zDist);
+       */
 
       final float c = Utils.cos(-radians);
       final float s = Utils.sin(-radians);

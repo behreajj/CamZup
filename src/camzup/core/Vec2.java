@@ -2523,16 +2523,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          return target.reset();
       }
 
-      // final float mSq = Vec2.magSq(v);
-      // if (mSq == 0.0f) {
-      // return target.reset();
-      // }
-      // if (Utils.approx(mSq, 1.0f)) {
-      // return Vec2.mul(v, scalar, target);
-      // }
-      // return Vec2.mul(v, (float) (scalar / Math.sqrt(mSq)),
-      // target);
-
       return Vec2.mul(v, scalar * Utils.invHypot(v.x, v.y), target);
    }
 

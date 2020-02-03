@@ -1222,12 +1222,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.cameraZoomX = zx < Utils.EPSILON ? 1.0f : zx;
       this.cameraZoomY = zy < Utils.EPSILON ? 1.0f : zy;
 
-      // this.setMatrix(
-      // 1.0f, 0.0f, this.width * 0.5f,
-      // 0.0f, 1.0f, this.height * 0.5f);
-      // this.scale(this.cameraZoomX, -this.cameraZoomY);
-      // this.rotate(-radians);
-      // this.translate(-this.cameraX, -this.cameraY);
+      /*
+       * this.setMatrix( 1.0f, 0.0f, this.width * 0.5f, 0.0f,
+       * 1.0f, this.height * 0.5f); this.scale(this.cameraZoomX,
+       * -this.cameraZoomY); this.rotate(-radians);
+       * this.translate(-this.cameraX, -this.cameraY);
+       */
 
       final double c = Math.cos(-radians);
       final double s = Math.sin(-radians);
@@ -1235,14 +1235,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       final double m01 = -s * -this.cameraZoomY;
       final double m10 = s * this.cameraZoomX;
       final double m11 = c * -this.cameraZoomY;
-      final double m02 = this.width * 0.5d
-            - this.cameraX * m00
-            - this.cameraY * m01;
-      final double m12 = this.height * 0.5d
-            - this.cameraX * m10
-            - this.cameraY * m11;
 
-      this.affineNative.setTransform(m00, m10, m01, m11, m02, m12);
+      this.affineNative.setTransform(m00, m10, m01, m11,
+            this.width * 0.5d
+                  - this.cameraX * m00
+                  - this.cameraY * m01,
+            this.height * 0.5d
+                  - this.cameraX * m10
+                  - this.cameraY * m11);
       this.g2.setTransform(this.affineNative);
    }
 

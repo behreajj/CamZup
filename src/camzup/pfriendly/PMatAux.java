@@ -1,6 +1,7 @@
 package camzup.pfriendly;
 
 import camzup.core.Experimental;
+import camzup.core.IUtils;
 import camzup.core.Quaternion;
 import camzup.core.Utils;
 import camzup.core.Vec3;
@@ -25,6 +26,135 @@ public abstract class PMatAux {
 
    static {
       PMatAux.inv = new Quaternion();
+   }
+
+   static PMatrix3D invRotate (
+         final float radians,
+         final float xAxis,
+         final float yAxis,
+         final float zAxis ) {
+
+      return PMatAux.invRotate(
+            radians,
+            xAxis, yAxis, zAxis,
+            (PMatrix3D) null);
+   }
+
+   static PMatrix3D invRotate (
+         final float radians,
+         final float xAxis,
+         final float yAxis,
+         final float zAxis,
+         PMatrix3D target ) {
+
+      if (target == null) {
+         target = new PMatrix3D();
+      }
+
+      final float normRad = -radians * IUtils.ONE_TAU;
+      final float c = Utils.scNorm(normRad);
+      final float s = Utils.scNorm(normRad - 0.25f);
+      final float t = 1.0f - c;
+
+      final float sv0 = s * xAxis;
+      final float sv1 = s * yAxis;
+      final float sv2 = s * zAxis;
+
+      final float tv0 = t * xAxis;
+      final float tv1 = t * yAxis;
+      final float tv2 = t * zAxis;
+
+      target.preApply(
+            tv0 * xAxis + c,
+            tv0 * yAxis - sv2,
+            tv0 * zAxis + sv1,
+            0.0f,
+
+            tv1 * xAxis + sv2,
+            tv1 * yAxis + c,
+            tv1 * zAxis - sv0,
+            0.0f,
+
+            tv2 * xAxis - sv1,
+            tv2 * yAxis + sv0,
+            tv2 * zAxis + c,
+            0.0f,
+
+            0.0f, 0.0f, 0.0f, 1.0f);
+      return target;
+   }
+
+   static PMatrix3D invRotateX ( final float radians ) {
+
+      return PMatAux.invRotateX(radians, (PMatrix3D) null);
+   }
+
+   static PMatrix3D invRotateX (
+         final float radians,
+         PMatrix3D target ) {
+
+      if (target == null) {
+         target = new PMatrix3D();
+      }
+
+      final float normRad = -radians * IUtils.ONE_TAU;
+      final float c = Utils.scNorm(normRad);
+      final float s = Utils.scNorm(normRad - 0.25f);
+      target.preApply(
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, c, -s, 0.0f,
+            0.0f, s, c, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
+      return target;
+   }
+
+   static PMatrix3D invRotateY ( final float radians ) {
+
+      return PMatAux.invRotateY(radians, (PMatrix3D) null);
+   }
+
+   static PMatrix3D invRotateY (
+         final float radians,
+         PMatrix3D target ) {
+
+      if (target == null) {
+         target = new PMatrix3D();
+      }
+
+      final float normRad = -radians * IUtils.ONE_TAU;
+      final float c = Utils.scNorm(normRad);
+      final float s = Utils.scNorm(normRad - 0.25f);
+      target.preApply(
+            c, 0.0f, s, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            -s, 0.0f, c, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
+      return target;
+   }
+
+   static PMatrix3D invRotateZ ( final float radians ) {
+
+      return PMatAux.invRotateZ(radians, (PMatrix3D) null);
+   }
+
+   static PMatrix3D invRotateZ ( final float radians,
+         PMatrix3D target ) {
+
+      if (target == null) {
+         target = new PMatrix3D();
+      }
+
+      // final float c = Utils.cos(-radians);
+      // final float s = Utils.sin(-radians);
+      final float normRad = -radians * IUtils.ONE_TAU;
+      final float c = Utils.scNorm(normRad);
+      final float s = Utils.scNorm(normRad - 0.25f);
+      target.preApply(
+            c, -s, 0.0f, 0.0f,
+            s, c, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
+      return target;
    }
 
    /**

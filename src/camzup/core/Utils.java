@@ -1058,10 +1058,6 @@ public abstract class Utils implements IUtils {
     * Returns a value in the range [-1.0, 1.0] . An alternative
     * to the double precision {@link Math#cos(double)} , this
     * function uses single-precision numbers.<br>
-    * <br>
-    * To find the cosine and sine of an angle simultaneously,
-    * use either {@link Vec2#fromPolar(float, Vec2)} (the
-    * target vector should be created once, in advance)..
     *
     * @param radians
     *           the angle in radians
@@ -1889,6 +1885,63 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * A helper method to facilitate the approximate sine and
+    * cosine of an angle with single precision real numbers.
+    * The radians supplied to this function should be
+    * normalized through division by TAU. The method then uses
+    * {@link Utils#mod1(float)} to bring the radians into the
+    * range [0.0, 1.0] .
+    * 
+    * Instead of a look-up table, this is based on the
+    * algorithm described <a href=
+    * "https://developer.download.nvidia.com/cg/sin.html">Nvidia
+    * Cg 3.1 Toolkit Documentation</a> . It has been
+    * de-vectorized and the initial step has been changed from
+    * fract to mod1.
+    */
+   @Experimental
+   public static float scNorm ( final float normRad ) {
+
+      float r1y = Utils.mod1(normRad);
+
+      final boolean r2x = r1y < 0.25f;
+      float r1x = 0.0f;
+      if (r2x) {
+         final float r0x = r1y * r1y;
+         r1x = 24.980804f * r0x - 60.14581f;
+         r1x = r1x * r0x + 85.45379f;
+         r1x = r1x * r0x - 64.939354f;
+         r1x = r1x * r0x + 19.739208f;
+         r1x = r1x * r0x - 1.0f;
+      }
+
+      final boolean r2z = r1y >= 0.75f;
+      float r1z = 0.0f;
+      if (r2z) {
+         float r0z = 1.0f - r1y;
+         r0z = r0z * r0z;
+         r1z = 24.980804f * r0z - 60.14581f;
+         r1z = r1z * r0z + 85.45379f;
+         r1z = r1z * r0z - 64.939354f;
+         r1z = r1z * r0z + 19.739208f;
+         r1z = r1z * r0z - 1.0f;
+      }
+
+      float r0y = 0.5f - r1y;
+      r1y = 0.0f;
+      if (r1y >= -9.0f ^ (r2x | r2z)) {
+         r0y = r0y * r0y;
+         r1y = 60.14581f - r0y * 24.980804f;
+         r1y = r1y * r0y - 85.45379f;
+         r1y = r1y * r0y + 64.939354f;
+         r1y = r1y * r0y - 19.739208f;
+         r1y = r1y * r0y + 1.0f;
+      }
+
+      return -r1x - r1z - r1y;
+   }
+
+   /**
     * An alternative to the {@link Math#signum(float)}
     * function.
     *
@@ -1906,11 +1959,7 @@ public abstract class Utils implements IUtils {
     * Finds the approximate sine of an angle in radians.
     * Returns a value in the range [-1.0, 1.0] . An alternative
     * to the double precision {@link Math#sin(double)} , this
-    * function uses single-precision numbers.<br>
-    * <br>
-    * To find the cosine and sine of an angle simultaneously,
-    * use either {@link Vec2#fromPolar(float, Vec2)} (the
-    * target vector should be created once, in advance).
+    * function uses single-precision numbers.
     *
     * @param radians
     *           the angle in radians

@@ -2,7 +2,9 @@ package camzup;
 
 import java.util.HashSet;
 
+import camzup.core.IUtils;
 import camzup.core.Mesh3;
+import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -197,6 +199,25 @@ public class CamZup {
       // }
       //
       // System.out.println(me.toBlenderCode());
+
+      Random rng = new Random();
+      for (int i = 0; i < 100; ++i) {
+         double theta = -IUtils.TAU_D * rng.nextDouble() + Math.PI;
+         float cosa = (float) Math.cos(theta);
+         float sina = (float) Math.sin(theta);
+         float tnorm = (float) (theta * IUtils.ONE_TAU_D);
+         float cosat = Utils.scNorm(tnorm);
+         float sinat = Utils.scNorm(tnorm - 0.25f);
+//         System.out.println(cosa);
+//         System.out.println(cosat);
+         System.out.println(Utils.approx(cosa, cosat, 0.000001f));
+
+//         System.out.println(sina);
+//         System.out.println(sinat);
+         System.out.println(Utils.approx(sina, sinat, 0.000001f));
+
+         System.out.println("");
+      }
    }
 
    /**
