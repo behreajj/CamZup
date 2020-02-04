@@ -28,14 +28,14 @@ void setup() {
     0.0, 0.0, 0.0,
     0.0, 1.0, 0.0);
 
-  Mesh3 mesh = Mesh3.dodecahedron(new Mesh3());
+  Mesh3 mesh = Mesh3.sphere(0.5, 32, 16, new Mesh3());
   entity.appendMesh(mesh);
 
   MaterialSolid material = new MaterialSolid()
-    .setFill(#00939c);
+    .toggleStroke().toggleFill();
   entity.appendMaterial(material);
 
-  entity.scaleTo(min(width, height) * 0.5);
+  entity.scaleTo(min(width, height) * 0.65);
 }
 
 void draw() {

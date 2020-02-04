@@ -109,7 +109,8 @@ public class Mesh3 extends Mesh {
 
    /**
     * Generates a cube mesh. In the context of Platonic solids,
-    * also known as a hexahedron.
+    * also known as a hexahedron, as it has 6 faces and 8
+    * vertices.
     *
     * @param target
     *           the output mesh
@@ -118,41 +119,40 @@ public class Mesh3 extends Mesh {
    public static Mesh3 cube ( final Mesh3 target ) {
 
       final Vec3[] coords = new Vec3[] {
-            new Vec3(-0.5f, -0.5f, -0.5f),
-            new Vec3(-0.5f, -0.5f, 0.5f),
-            new Vec3(-0.5f, 0.5f, -0.5f),
-            new Vec3(-0.5f, 0.5f, 0.5f),
-            new Vec3(0.5f, -0.5f, -0.5f),
-            new Vec3(0.5f, -0.5f, 0.5f),
-            new Vec3(0.5f, 0.5f, -0.5f),
-            new Vec3(0.5f, 0.5f, 0.5f)
+            /* 0 */ new Vec3(-0.5f, -0.5f, -0.5f),
+            /* 1 */ new Vec3(-0.5f, -0.5f, 0.5f),
+            /* 2 */ new Vec3(-0.5f, 0.5f, -0.5f),
+            /* 3 */ new Vec3(-0.5f, 0.5f, 0.5f),
+            /* 4 */ new Vec3(0.5f, -0.5f, -0.5f),
+            /* 5 */ new Vec3(0.5f, -0.5f, 0.5f),
+            /* 6 */ new Vec3(0.5f, 0.5f, -0.5f),
+            /* 7 */ new Vec3(0.5f, 0.5f, 0.5f)
       };
 
       final Vec3[] normals = new Vec3[] {
-            new Vec3(1.0f, -0.0f, 0.0f),
-            new Vec3(0.0f, -0.0f, 1.0f),
-            new Vec3(0.0f, 0.0f, -1.0f),
-            new Vec3(0.0f, -1.0f, 0.0f),
-            new Vec3(-1.0f, -0.0f, 0.0f),
-            new Vec3(0.0f, 1.0f, 0.0f)
+            /* 0 */ new Vec3(1.0f, 0.0f, 0.0f),
+            /* 1 */ new Vec3(0.0f, 0.0f, 1.0f),
+            /* 2 */ new Vec3(0.0f, 0.0f, -1.0f),
+            /* 3 */ new Vec3(0.0f, -1.0f, 0.0f),
+            /* 4 */ new Vec3(-1.0f, -0.0f, 0.0f),
+            /* 5 */ new Vec3(0.0f, 1.0f, 0.0f)
       };
 
-      // TODO: Maybe redo uvs to use the basic four corners setup.
       final Vec2[] texCoords = new Vec2[] {
-            new Vec2(0.625f, 1.0f),
-            new Vec2(0.375f, 1.0f),
-            new Vec2(0.375f, 0.25f),
-            new Vec2(0.625f, 0.25f),
-            new Vec2(0.375f, 0.0f),
-            new Vec2(0.625f, 0.0f),
-            new Vec2(0.625f, 0.5f),
-            new Vec2(0.375f, 0.5f),
-            new Vec2(0.625f, 0.75f),
-            new Vec2(0.375f, 0.75f),
-            new Vec2(0.125f, 0.5f),
-            new Vec2(0.125f, 0.75f),
-            new Vec2(0.875f, 0.75f),
-            new Vec2(0.875f, 0.5f)
+            /* 00 */ new Vec2(0.625f, 1.0f),
+            /* 01 */ new Vec2(0.375f, 1.0f),
+            /* 02 */ new Vec2(0.375f, 0.25f),
+            /* 03 */ new Vec2(0.625f, 0.25f),
+            /* 04 */ new Vec2(0.375f, 0.0f),
+            /* 05 */ new Vec2(0.625f, 0.0f),
+            /* 06 */ new Vec2(0.625f, 0.5f),
+            /* 07 */ new Vec2(0.375f, 0.5f),
+            /* 08 */ new Vec2(0.625f, 0.75f),
+            /* 09 */ new Vec2(0.375f, 0.75f),
+            /* 10 */ new Vec2(0.125f, 0.5f),
+            /* 11 */ new Vec2(0.125f, 0.75f),
+            /* 12 */ new Vec2(0.875f, 0.75f),
+            /* 13 */ new Vec2(0.875f, 0.5f)
       };
 
       final int[][][] faces = new int[][][] {
@@ -169,8 +169,8 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Creates an dodecahedron, a Platonic solid with twelve
-    * faces, each face being a pentagon.
+    * Creates an dodecahedron, a Platonic solid with 12 faces
+    * and 20 coords.
     *
     * @param target
     *           the output mesh
@@ -185,49 +185,49 @@ public class Mesh3 extends Mesh {
        */
 
       final Vec3[] coords = new Vec3[] {
-            new Vec3(0.0f, 0.33614415f, -0.4165113f),
-            new Vec3(-0.19098301f, 0.47552827f, 0.15450847f),
-            new Vec3(0.19098301f, 0.47552827f, 0.15450847f),
-            new Vec3(0.309017f, 0.19840115f, 0.38938415f),
-            new Vec3(-0.309017f, 0.19840115f, 0.38938415f),
-            new Vec3(-0.19098301f, -0.47552827f, -0.15450847f),
-            new Vec3(-0.309017f, -0.38938415f, 0.19840115f),
-            new Vec3(0.19098301f, -0.47552827f, -0.15450847f),
-            new Vec3(0.309017f, -0.19840115f, -0.38938415f),
-            new Vec3(0.0f, -0.02712715f, -0.53454524f),
-            new Vec3(0.309017f, 0.38938415f, -0.19840115f),
-            new Vec3(0.5f, 0.05901699f, -0.18163565f),
-            new Vec3(-0.309017f, -0.19840115f, -0.38938415f),
-            new Vec3(-0.5f, 0.05901699f, -0.18163565f),
-            new Vec3(-0.309017f, 0.38938415f, -0.19840115f),
-            new Vec3(0.0f, 0.02712715f, 0.53454524f),
-            new Vec3(0.0f, -0.33614415f, 0.4165113f),
-            new Vec3(0.309017f, -0.38938415f, 0.19840115f),
-            new Vec3(0.5f, -0.05901699f, 0.18163565f),
-            new Vec3(-0.5f, -0.05901699f, 0.18163565f)
+            /* 00 */ new Vec3(0.0f, 0.33614415f, -0.4165113f),
+            /* 01 */ new Vec3(-0.19098301f, 0.47552827f, 0.15450847f),
+            /* 02 */ new Vec3(0.19098301f, 0.47552827f, 0.15450847f),
+            /* 03 */ new Vec3(0.309017f, 0.19840115f, 0.38938415f),
+            /* 04 */ new Vec3(-0.309017f, 0.19840115f, 0.38938415f),
+            /* 05 */ new Vec3(-0.19098301f, -0.47552827f, -0.15450847f),
+            /* 06 */ new Vec3(-0.309017f, -0.38938415f, 0.19840115f),
+            /* 07 */ new Vec3(0.19098301f, -0.47552827f, -0.15450847f),
+            /* 08 */ new Vec3(0.309017f, -0.19840115f, -0.38938415f),
+            /* 09 */ new Vec3(0.0f, -0.02712715f, -0.53454524f),
+            /* 10 */ new Vec3(0.309017f, 0.38938415f, -0.19840115f),
+            /* 11 */ new Vec3(0.5f, 0.05901699f, -0.18163565f),
+            /* 12 */ new Vec3(-0.309017f, -0.19840115f, -0.38938415f),
+            /* 13 */ new Vec3(-0.5f, 0.05901699f, -0.18163565f),
+            /* 14 */ new Vec3(-0.309017f, 0.38938415f, -0.19840115f),
+            /* 15 */ new Vec3(0.0f, 0.02712715f, 0.53454524f),
+            /* 16 */ new Vec3(0.0f, -0.33614415f, 0.4165113f),
+            /* 17 */ new Vec3(0.309017f, -0.38938415f, 0.19840115f),
+            /* 18 */ new Vec3(0.5f, -0.05901699f, 0.18163565f),
+            /* 19 */ new Vec3(-0.5f, -0.05901699f, 0.18163565f)
       };
 
       final Vec3[] normals = new Vec3[] {
-            new Vec3(-0.8506509f, 0.5f, 0.16245982f),
-            new Vec3(0.0f, -0.97147685f, 0.23713444f),
-            new Vec3(0.0f, 0.97147685f, -0.23713444f),
-            new Vec3(0.0f, -0.64655715f, -0.76286548f),
-            new Vec3(0.52573115f, 0.26286551f, -0.809017f),
-            new Vec3(0.0f, 0.64655715f, 0.76286548f),
-            new Vec3(-0.52573121f, 0.26286554f, -0.809017f),
-            new Vec3(-0.52573121f, -0.26286554f, 0.809017f),
-            new Vec3(0.52573115f, -0.26286551f, 0.809017f),
-            new Vec3(0.85065079f, 0.5f, 0.16245979f),
-            new Vec3(0.85065079f, -0.5f, -0.16245979f),
-            new Vec3(-0.8506509f, -0.5f, -0.16245982f)
+            /* 00 */ new Vec3(-0.8506509f, 0.5f, 0.16245982f),
+            /* 01 */ new Vec3(0.0f, -0.97147685f, 0.23713444f),
+            /* 02 */ new Vec3(0.0f, 0.97147685f, -0.23713444f),
+            /* 03 */ new Vec3(0.0f, -0.64655715f, -0.76286548f),
+            /* 04 */ new Vec3(0.52573115f, 0.26286551f, -0.809017f),
+            /* 05 */ new Vec3(0.0f, 0.64655715f, 0.76286548f),
+            /* 06 */ new Vec3(-0.52573121f, 0.26286554f, -0.809017f),
+            /* 07 */ new Vec3(-0.52573121f, -0.26286554f, 0.809017f),
+            /* 08 */ new Vec3(0.52573115f, -0.26286551f, 0.809017f),
+            /* 09 */ new Vec3(0.85065079f, 0.5f, 0.16245979f),
+            /* 10 */ new Vec3(0.85065079f, -0.5f, -0.16245979f),
+            /* 11 */ new Vec3(-0.8506509f, -0.5f, -0.16245982f)
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            new Vec2(0.5f, 1.0f),
-            new Vec2(0.20610732f, 0.09549153f),
-            new Vec2(0.97552824f, 0.65450847f),
-            new Vec2(0.79389262f, 0.09549147f),
-            new Vec2(0.02447176f, 0.65450859f)
+            /* 0 */ new Vec2(0.5f, 1.0f),
+            /* 1 */ new Vec2(0.20610732f, 0.09549153f),
+            /* 2 */ new Vec2(0.97552824f, 0.65450847f),
+            /* 3 */ new Vec2(0.79389262f, 0.09549147f),
+            /* 4 */ new Vec2(0.02447176f, 0.65450859f)
       };
 
       final int[][][] faces = new int[][][] {
@@ -354,8 +354,8 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Creates an icosahedron, a Platonic solid with twenty
-    * faces.
+    * Creates an icosahedron, a Platonic solid with 20 faces
+    * and 12 coords.
     *
     * @param target
     *           the output mesh
@@ -364,66 +364,66 @@ public class Mesh3 extends Mesh {
    public static final Mesh3 icosahedron ( final Mesh3 target ) {
 
       final Vec3[] coords = new Vec3[] {
-            new Vec3(0.0f, 0.0f, -0.5f),
-            new Vec3(0.3618f, -0.26286f, -0.2236075f),
-            new Vec3(-0.1381925f, -0.42532f, -0.2236075f),
-            new Vec3(-0.4472125f, 0.0f, -0.2236075f),
-            new Vec3(-0.1381925f, 0.42532f, -0.2236075f),
-            new Vec3(0.3618f, 0.26286f, -0.2236075f),
-            new Vec3(0.1381925f, -0.42532f, 0.2236075f),
-            new Vec3(-0.3618f, -0.26286f, 0.2236075f),
-            new Vec3(-0.3618f, 0.26286f, 0.2236075f),
-            new Vec3(0.1381925f, 0.42532f, 0.2236075f),
-            new Vec3(0.4472125f, 0.0f, 0.2236075f),
-            new Vec3(0.0f, 0.0f, 0.5f)
+            /* 00 */ new Vec3(0.0f, 0.0f, -0.5f),
+            /* 01 */ new Vec3(0.3618f, -0.26286f, -0.2236075f),
+            /* 02 */ new Vec3(-0.1381925f, -0.42532f, -0.2236075f),
+            /* 03 */ new Vec3(-0.4472125f, 0.0f, -0.2236075f),
+            /* 04 */ new Vec3(-0.1381925f, 0.42532f, -0.2236075f),
+            /* 05 */ new Vec3(0.3618f, 0.26286f, -0.2236075f),
+            /* 06 */ new Vec3(0.1381925f, -0.42532f, 0.2236075f),
+            /* 07 */ new Vec3(-0.3618f, -0.26286f, 0.2236075f),
+            /* 08 */ new Vec3(-0.3618f, 0.26286f, 0.2236075f),
+            /* 09 */ new Vec3(0.1381925f, 0.42532f, 0.2236075f),
+            /* 10 */ new Vec3(0.4472125f, 0.0f, 0.2236075f),
+            /* 11 */ new Vec3(0.0f, 0.0f, 0.5f)
       };
 
       final Vec3[] normals = new Vec3[] {
-            new Vec3(-0.30353555f, -0.9341715f, 0.18758915f),
-            new Vec3(-0.9822461f, 0.0f, 0.18759680f),
-            new Vec3(-0.30353555f, 0.9341715f, 0.18758912f),
-            new Vec3(0.79464918f, 0.57735938f, 0.18758696f),
-            new Vec3(0.4911221f, -0.35682905f, 0.79465222f),
-            new Vec3(-0.18759654f, -0.57735366f, 0.79465103f),
-            new Vec3(0.18759654f, -0.57735366f, -0.79465103f),
-            new Vec3(-0.4911221f, -0.35682905f, -0.79465222f),
-            new Vec3(-0.4911221f, 0.35682905f, -0.79465222f),
-            new Vec3(0.60706466f, 0.0f, -0.7946524f),
-            new Vec3(0.18759654f, 0.57735366f, -0.79465103f),
-            new Vec3(0.9822461f, 0.0f, -0.18759680f),
-            new Vec3(0.30353555f, -0.9341715f, -0.18758912f),
-            new Vec3(-0.79464918f, -0.57735938f, -0.18758696f),
-            new Vec3(-0.79464918f, 0.57735938f, -0.18758698f),
-            new Vec3(0.30353555f, 0.9341715f, -0.18758915f),
-            new Vec3(-0.18759654f, 0.57735366f, 0.79465103f),
-            new Vec3(0.79464918f, -0.57735938f, 0.18758698f),
-            new Vec3(-0.60706466f, 0.0f, 0.7946524f),
-            new Vec3(0.4911221f, 0.35682905f, 0.79465222f)
+            /* 00 */ new Vec3(-0.30353555f, -0.9341715f, 0.18758915f),
+            /* 01 */ new Vec3(-0.9822461f, 0.0f, 0.18759680f),
+            /* 02 */ new Vec3(-0.30353555f, 0.9341715f, 0.18758912f),
+            /* 03 */ new Vec3(0.79464918f, 0.57735938f, 0.18758696f),
+            /* 04 */ new Vec3(0.4911221f, -0.35682905f, 0.79465222f),
+            /* 05 */ new Vec3(-0.18759654f, -0.57735366f, 0.79465103f),
+            /* 06 */ new Vec3(0.18759654f, -0.57735366f, -0.79465103f),
+            /* 07 */ new Vec3(-0.4911221f, -0.35682905f, -0.79465222f),
+            /* 08 */ new Vec3(-0.4911221f, 0.35682905f, -0.79465222f),
+            /* 09 */ new Vec3(0.60706466f, 0.0f, -0.7946524f),
+            /* 10 */ new Vec3(0.18759654f, 0.57735366f, -0.79465103f),
+            /* 11 */ new Vec3(0.9822461f, 0.0f, -0.18759680f),
+            /* 12 */ new Vec3(0.30353555f, -0.9341715f, -0.18758912f),
+            /* 13 */ new Vec3(-0.79464918f, -0.57735938f, -0.18758696f),
+            /* 14 */ new Vec3(-0.79464918f, 0.57735938f, -0.18758698f),
+            /* 15 */ new Vec3(0.30353555f, 0.9341715f, -0.18758915f),
+            /* 16 */ new Vec3(-0.18759654f, 0.57735366f, 0.79465103f),
+            /* 17 */ new Vec3(0.79464918f, -0.57735938f, 0.18758698f),
+            /* 18 */ new Vec3(-0.60706466f, 0.0f, 0.7946524f),
+            /* 19 */ new Vec3(0.4911221f, 0.35682905f, 0.79465222f)
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            new Vec2(0.636363f, 0.314921f),
-            new Vec2(0.818181f, 0.314921f),
-            new Vec2(0.090909f, 0.314921f),
-            new Vec2(0.272727f, 0.314921f),
-            new Vec2(0.454545f, 0.314921f),
-            new Vec2(0.727272f, 0.472382f),
-            new Vec2(0.90909f, 0.472382f),
-            new Vec2(0.454545f, 0.0f),
-            new Vec2(0.181818f, 0.472382f),
-            new Vec2(0.363636f, 0.472382f),
-            new Vec2(0.636363f, 0.0f),
-            new Vec2(0.90909f, 0.157461f),
-            new Vec2(0.818181f, 0.0f),
-            new Vec2(0.727272f, 0.157461f),
-            new Vec2(0.545454f, 0.157461f),
-            new Vec2(0.090909f, 0.0f),
-            new Vec2(0.0f, 0.157461f),
-            new Vec2(0.181818f, 0.157461f),
-            new Vec2(0.272727f, 0.0f),
-            new Vec2(0.363636f, 0.157461f),
-            new Vec2(1.0f, 0.314921f),
-            new Vec2(0.545454f, 0.472382f)
+            /* 00 */ new Vec2(0.636363f, 0.314921f),
+            /* 01 */ new Vec2(0.818181f, 0.314921f),
+            /* 02 */ new Vec2(0.090909f, 0.314921f),
+            /* 03 */ new Vec2(0.272727f, 0.314921f),
+            /* 04 */ new Vec2(0.454545f, 0.314921f),
+            /* 05 */ new Vec2(0.727272f, 0.472382f),
+            /* 06 */ new Vec2(0.90909f, 0.472382f),
+            /* 07 */ new Vec2(0.454545f, 0.0f),
+            /* 08 */ new Vec2(0.181818f, 0.472382f),
+            /* 09 */ new Vec2(0.363636f, 0.472382f),
+            /* 10 */ new Vec2(0.636363f, 0.0f),
+            /* 11 */ new Vec2(0.90909f, 0.157461f),
+            /* 12 */ new Vec2(0.818181f, 0.0f),
+            /* 13 */ new Vec2(0.727272f, 0.157461f),
+            /* 14 */ new Vec2(0.545454f, 0.157461f),
+            /* 15 */ new Vec2(0.090909f, 0.0f),
+            /* 16 */ new Vec2(0.0f, 0.157461f),
+            /* 17 */ new Vec2(0.181818f, 0.157461f),
+            /* 18 */ new Vec2(0.272727f, 0.0f),
+            /* 19 */ new Vec2(0.363636f, 0.157461f),
+            /* 20 */ new Vec2(1.0f, 0.314921f),
+            /* 21 */ new Vec2(0.545454f, 0.472382f)
       };
 
       final int[][][] faces = new int[][][] {
@@ -454,7 +454,8 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Creates an octahedron, a Platonic solid with eight faces.
+    * Creates an octahedron, a Platonic solid with 8 faces and
+    * 6 coords.
     *
     * @param target
     *           the output mesh
@@ -463,31 +464,31 @@ public class Mesh3 extends Mesh {
    public static final Mesh3 octahedron ( final Mesh3 target ) {
 
       final Vec3[] coords = new Vec3[] {
-            new Vec3(0.0f, -0.5f, 0.0f),
-            new Vec3(0.5f, 0.0f, 0.0f),
-            new Vec3(-0.5f, 0.0f, 0.0f),
-            new Vec3(0.0f, 0.5f, 0.0f),
-            new Vec3(0.0f, 0.0f, 0.5f),
-            new Vec3(0.0f, 0.0f, -0.5f)
+            /* 0 */ new Vec3(0.0f, -0.5f, 0.0f),
+            /* 1 */ new Vec3(0.5f, 0.0f, 0.0f),
+            /* 2 */ new Vec3(-0.5f, 0.0f, 0.0f),
+            /* 3 */ new Vec3(0.0f, 0.5f, 0.0f),
+            /* 4 */ new Vec3(0.0f, 0.0f, 0.5f),
+            /* 5 */ new Vec3(0.0f, 0.0f, -0.5f)
       };
 
       final Vec3[] normals = new Vec3[] {
-            new Vec3(0.57735026f, -0.57735026f, 0.57735026f),
-            new Vec3(-0.57735026f, 0.57735026f, 0.57735026f),
-            new Vec3(-0.57735026f, -0.57735026f, 0.57735026f),
-            new Vec3(0.57735026f, 0.57735026f, 0.57735026f),
-            new Vec3(-0.57735026f, 0.57735026f, -0.57735026f),
-            new Vec3(0.57735026f, 0.57735026f, -0.57735026f),
-            new Vec3(0.57735026f, -0.57735026f, -0.57735026f),
-            new Vec3(-0.57735026f, -0.57735026f, -0.57735026f)
+            /* 0 */ new Vec3(0.57735026f, -0.57735026f, 0.57735026f),
+            /* 1 */ new Vec3(-0.57735026f, 0.57735026f, 0.57735026f),
+            /* 2 */ new Vec3(-0.57735026f, -0.57735026f, 0.57735026f),
+            /* 3 */ new Vec3(0.57735026f, 0.57735026f, 0.57735026f),
+            /* 4 */ new Vec3(-0.57735026f, 0.57735026f, -0.57735026f),
+            /* 5 */ new Vec3(0.57735026f, 0.57735026f, -0.57735026f),
+            /* 6 */ new Vec3(0.57735026f, -0.57735026f, -0.57735026f),
+            /* 7 */ new Vec3(-0.57735026f, -0.57735026f, -0.57735026f)
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            new Vec2(0.5f, 1.0f),
-            new Vec2(0.0f, 0.5f),
-            new Vec2(0.5f, 0.0f),
-            new Vec2(0.5f, 0.5f),
-            new Vec2(1.0f, 0.5f)
+            /* 0 */ new Vec2(0.5f, 1.0f),
+            /* 1 */ new Vec2(0.0f, 0.5f),
+            /* 2 */ new Vec2(0.5f, 0.0f),
+            /* 3 */ new Vec2(0.5f, 0.5f),
+            /* 4 */ new Vec2(1.0f, 0.5f)
       };
 
       final int[][][] faces = new int[][][] {
@@ -777,17 +778,17 @@ public class Mesh3 extends Mesh {
    public static final Mesh3 square ( final Mesh3 target ) {
 
       final Vec3[] coords = new Vec3[] {
-            new Vec3(0.5f, 0.5f, 0.0f),
-            new Vec3(-0.5f, 0.5f, 0.0f),
-            new Vec3(-0.5f, -0.5f, 0.0f),
-            new Vec3(0.5f, -0.5f, 0.0f)
+            /* 0 */ new Vec3(0.5f, 0.5f, 0.0f),
+            /* 1 */ new Vec3(-0.5f, 0.5f, 0.0f),
+            /* 2 */ new Vec3(-0.5f, -0.5f, 0.0f),
+            /* 3 */ new Vec3(0.5f, -0.5f, 0.0f)
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            new Vec2(1.0f, 1.0f),
-            new Vec2(0.0f, 1.0f),
-            new Vec2(0.0f, 0.0f),
-            new Vec2(1.0f, 0.0f)
+            /* 0 */ new Vec2(1.0f, 1.0f),
+            /* 1 */ new Vec2(0.0f, 1.0f),
+            /* 2 */ new Vec2(0.0f, 0.0f),
+            /* 3 */ new Vec2(1.0f, 0.0f)
       };
 
       final int[][][] faces = new int[][][] {
@@ -802,7 +803,8 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Creates a tetrahedron, a Platonic solid with four faces.
+    * Creates a tetrahedron, a Platonic solid with 4 faces and
+    * 4 coords.
     *
     * @param target
     *           the output mesh
@@ -820,29 +822,29 @@ public class Mesh3 extends Mesh {
        * 0.40824829046386301636621401245098
        */
       final Vec3[] coords = new Vec3[] {
-            new Vec3(-0.0f, 0.47140452f, -0.16666667f),
-            new Vec3(-0.40824829f, -0.23570226f, -0.16666667f),
-            new Vec3(0.40824829f, -0.23570226f, -0.16666667f),
-            new Vec3(0.0f, 0.0f, 0.5f)
+            /* 0 */ new Vec3(-0.0f, 0.47140452f, -0.16666667f),
+            /* 1 */ new Vec3(-0.40824829f, -0.23570226f, -0.16666667f),
+            /* 2 */ new Vec3(0.40824829f, -0.23570226f, -0.16666667f),
+            /* 3 */ new Vec3(0.0f, 0.0f, 0.5f)
       };
 
       final Vec3[] normals = new Vec3[] {
-            new Vec3(0.0f, 0.0f, -1.0f),
-            new Vec3(-0.8164966f, 0.47140453f, 0.33333333f),
-            new Vec3(0.0f, -0.9428091f, 0.33333333f),
-            new Vec3(0.8164966f, 0.47140453f, 0.33333333f)
+            /* 0 */ new Vec3(0.0f, 0.0f, -1.0f),
+            /* 1 */ new Vec3(-0.8164966f, 0.47140453f, 0.33333333f),
+            /* 2 */ new Vec3(0.0f, -0.9428091f, 0.33333333f),
+            /* 3 */ new Vec3(0.8164966f, 0.47140453f, 0.33333333f)
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            new Vec2(0.5f, 0.07735026f),
-            new Vec2(0.5f, 0.11237240f),
-            new Vec2(0.0f, 0.21132487f),
-            new Vec2(0.21132487f, 0.29587588f),
-            new Vec2(0.21132487f, 0.29587588f),
-            new Vec2(0.0f, 0.29587588f),
-            new Vec2(1.0f, 0.211324987f),
-            new Vec2(1.0f, 0.29587588f),
-            new Vec2(0.07735026f, 0.29587588f)
+            /* 0 */ new Vec2(0.5f, 0.07735026f),
+            /* 1 */ new Vec2(0.5f, 0.11237240f),
+            /* 2 */ new Vec2(0.0f, 0.21132487f),
+            /* 3 */ new Vec2(0.21132487f, 0.29587588f),
+            /* 4 */ new Vec2(0.21132487f, 0.29587588f),
+            /* 5 */ new Vec2(0.0f, 0.29587588f),
+            /* 6 */ new Vec2(1.0f, 0.211324987f),
+            /* 7 */ new Vec2(1.0f, 0.29587588f),
+            /* 8 */ new Vec2(0.07735026f, 0.29587588f)
       };
 
       final int[][][] faces = new int[][][] {
@@ -895,7 +897,6 @@ public class Mesh3 extends Mesh {
       final Vec2[] texCoords = new Vec2[len];
       final Vec3[] normals = new Vec3[len];
 
-      // final float tubeRatio = vtrad / vrad;
       final float tubeRatio = 0.5f * vtrad / vrad;
       final float toU = 1.0f / sectors;
       final float toV = 1.0f / panels;
@@ -1001,15 +1002,15 @@ public class Mesh3 extends Mesh {
    public static final Mesh3 triangle ( final Mesh3 target ) {
 
       final Vec3[] coords = new Vec3[] {
-            new Vec3(0.0f, 0.5f, 0.0f),
-            new Vec3(-0.4330127f, -0.25f, 0.0f),
-            new Vec3(0.4330127f, -0.25f, 0.0f)
+            /* 0 */ new Vec3(0.0f, 0.5f, 0.0f),
+            /* 1 */ new Vec3(-0.4330127f, -0.25f, 0.0f),
+            /* 2 */ new Vec3(0.4330127f, -0.25f, 0.0f)
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            new Vec2(0.5f, 1.0f),
-            new Vec2(0.0669873f, 0.25f),
-            new Vec2(0.9330127f, 0.25f)
+            /* 0 */ new Vec2(0.5f, 1.0f),
+            /* 1 */ new Vec2(0.0669873f, 0.25f),
+            /* 2 */ new Vec2(0.9330127f, 0.25f)
       };
 
       final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
@@ -1320,7 +1321,7 @@ public class Mesh3 extends Mesh {
 
       return target.set(vertices);
    }
-
+   
    /**
     * Gets an array of faces from the mesh.
     *

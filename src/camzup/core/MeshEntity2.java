@@ -271,8 +271,8 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
             .append("    pbr = nodes[\"Principled BSDF\"]\n")
             .append("    roughness = pbr.inputs[\"Roughness\"]\n")
             .append("    roughness.default_value = 1.0\n")
-            // .append(" specular = pbr.inputs[\"Specular\"]")
-            // .append(" specular.default_value = 0.000001\n")
+            .append("    specular = pbr.inputs[\"Specular\"]\n")
+            .append("    specular.default_value = 0.0\n")
             .append("    base_clr = pbr.inputs[\"Base Color\"]\n")
             .append("    base_clr.default_value = fill_clr\n\n")
 

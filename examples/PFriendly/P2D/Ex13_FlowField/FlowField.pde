@@ -54,8 +54,8 @@ static class FlowField {
   }
 
   // Draw every vector
-  void display(YupJ2 pg) {
-    pg.stroke(#272727);
+  void display(Yup2 pg) {
+    pg.stroke(#007fff);
     float scale = resolution - 7.5;
     for (int i = 0; i < cols; ++i) {
       Ray2[] col = field[i];

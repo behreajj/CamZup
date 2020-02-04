@@ -23,7 +23,7 @@ static class Vehicle {
     maxForce = mf;
   }
 
-  public void run(YupJ2 pg, float sz, color clr) {
+  public void run(Yup2 pg, float sz, color clr) {
 
     lb.set(radius, radius);
     ub.set(pg.width - radius, pg.height - radius);
@@ -71,7 +71,7 @@ static class Vehicle {
     acceleration.reset();
   }
 
-  void display(YupJ2 pg, float sz, color stroke) {
+  void display(Yup2 pg, float sz, color stroke) {
     pg.stroke(stroke);
     pg.ray(position.x, position.y, velocity.x, velocity.y, sz);
   }

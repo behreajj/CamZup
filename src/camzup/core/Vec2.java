@@ -1389,9 +1389,13 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final float heading,
          final Vec2 target ) {
 
-      return target.set(
-            Utils.cos(heading),
-            Utils.sin(heading));
+      /*
+       * return target.set( Utils.cos(heading),
+       * Utils.sin(heading));
+       */
+
+      final float nrm = heading * IUtils.ONE_TAU;
+      return target.set(Utils.scNorm(nrm), Utils.scNorm(nrm - 0.25f));
    }
 
    /**
@@ -2660,7 +2664,17 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final float radians,
          final Vec2 target ) {
 
-      return Vec2.rotateZ(v, Utils.cos(radians), Utils.sin(radians), target);
+      /*
+       * return Vec2.rotateZ(v, Utils.cos(radians),
+       * Utils.sin(radians), target);
+       */
+
+      final float nrm = radians * IUtils.ONE_TAU;
+      final float cosa = Utils.scNorm(nrm);
+      final float sina = Utils.scNorm(nrm - 0.25f);
+      return target.set(
+            cosa * v.x - sina * v.y,
+            cosa * v.y + sina * v.x);
    }
 
    /**

@@ -45,10 +45,10 @@ public abstract class PMatAux {
          final float xAxis,
          final float yAxis,
          final float zAxis,
-         PMatrix3D target ) {
+         PMatrix3D b ) {
 
-      if (target == null) {
-         target = new PMatrix3D();
+      if (b == null) {
+         b = new PMatrix3D();
       }
 
       final float normRad = -radians * IUtils.ONE_TAU;
@@ -64,24 +64,44 @@ public abstract class PMatAux {
       final float tv1 = t * yAxis;
       final float tv2 = t * zAxis;
 
-      target.preApply(
-            tv0 * xAxis + c,
-            tv0 * yAxis - sv2,
-            tv0 * zAxis + sv1,
-            0.0f,
+      /*
+       * b.preApply( tv0 * xAxis + c, tv0 * yAxis - sv2, tv0 *
+       * zAxis + sv1, 0.0f, tv1 * xAxis + sv2, tv1 * yAxis + c,
+       * tv1 * zAxis - sv0, 0.0f, tv2 * xAxis - sv1, tv2 * yAxis +
+       * sv0, tv2 * zAxis + c, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+       */
 
-            tv1 * xAxis + sv2,
-            tv1 * yAxis + c,
-            tv1 * zAxis - sv0,
-            0.0f,
+      final float am00 = tv0 * xAxis + c;
+      final float am01 = tv0 * yAxis - sv2;
+      final float am02 = tv0 * zAxis + sv1;
 
-            tv2 * xAxis - sv1,
-            tv2 * yAxis + sv0,
-            tv2 * zAxis + c,
-            0.0f,
+      final float am10 = tv1 * xAxis + sv2;
+      final float am11 = tv1 * yAxis + c;
+      final float am12 = tv1 * zAxis - sv0;
 
-            0.0f, 0.0f, 0.0f, 1.0f);
-      return target;
+      final float am20 = tv2 * xAxis - sv1;
+      final float am21 = tv2 * yAxis + sv0;
+      final float am22 = tv2 * zAxis + c;
+
+      b.set(
+            am00 * b.m00 + am01 * b.m10 + am02 * b.m20,
+            am00 * b.m01 + am01 * b.m11 + am02 * b.m21,
+            am00 * b.m02 + am01 * b.m12 + am02 * b.m22,
+            am00 * b.m03 + am01 * b.m13 + am02 * b.m23,
+            
+            am10 * b.m00 + am11 * b.m10 + am12 * b.m20,
+            am10 * b.m01 + am11 * b.m11 + am12 * b.m21,
+            am10 * b.m02 + am11 * b.m12 + am12 * b.m22,
+            am10 * b.m03 + am11 * b.m13 + am12 * b.m23,
+            
+            am20 * b.m00 + am21 * b.m10 + am22 * b.m20,
+            am20 * b.m01 + am21 * b.m11 + am22 * b.m21,
+            am20 * b.m02 + am21 * b.m12 + am22 * b.m22,
+            am20 * b.m03 + am21 * b.m13 + am22 * b.m23,
+            
+            b.m30, b.m31, b.m32, b.m33);
+
+      return b;
    }
 
    static PMatrix3D invRotateX ( final float radians ) {
@@ -91,21 +111,34 @@ public abstract class PMatAux {
 
    static PMatrix3D invRotateX (
          final float radians,
-         PMatrix3D target ) {
+         PMatrix3D b ) {
 
-      if (target == null) {
-         target = new PMatrix3D();
+      if (b == null) {
+         b = new PMatrix3D();
       }
 
       final float normRad = -radians * IUtils.ONE_TAU;
       final float c = Utils.scNorm(normRad);
       final float s = Utils.scNorm(normRad - 0.25f);
-      target.preApply(
-            1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, c, -s, 0.0f,
-            0.0f, s, c, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f);
-      return target;
+
+      /*
+       * b.preApply( 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c, -s, 0.0f,
+       * 0.0f, s, c, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+       */
+
+      b.set(
+            b.m00, b.m01, b.m02, b.m03,
+            c * b.m10 - s * b.m20,
+            c * b.m11 - s * b.m21,
+            c * b.m12 - s * b.m22,
+            c * b.m13 - s * b.m23,
+            s * b.m10 + c * b.m20,
+            s * b.m11 + c * b.m21,
+            s * b.m12 + c * b.m22,
+            s * b.m13 + c * b.m23,
+            b.m30, b.m31, b.m32, b.m33);
+
+      return b;
    }
 
    static PMatrix3D invRotateY ( final float radians ) {
@@ -115,21 +148,34 @@ public abstract class PMatAux {
 
    static PMatrix3D invRotateY (
          final float radians,
-         PMatrix3D target ) {
+         PMatrix3D b ) {
 
-      if (target == null) {
-         target = new PMatrix3D();
+      if (b == null) {
+         b = new PMatrix3D();
       }
 
       final float normRad = -radians * IUtils.ONE_TAU;
       final float c = Utils.scNorm(normRad);
       final float s = Utils.scNorm(normRad - 0.25f);
-      target.preApply(
-            c, 0.0f, s, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f,
-            -s, 0.0f, c, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f);
-      return target;
+
+      /*
+       * b.preApply( c, 0.0f, s, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -s,
+       * 0.0f, c, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+       */
+
+      b.set(
+            c * b.m00 + s * b.m20,
+            c * b.m01 + s * b.m21,
+            c * b.m02 + s * b.m22,
+            c * b.m03 + s * b.m23,
+            b.m10, b.m11, b.m12, b.m13,
+            c * b.m20 - s * b.m00,
+            c * b.m21 - s * b.m01,
+            c * b.m22 - s * b.m02,
+            c * b.m23 - s * b.m03,
+            b.m30, b.m31, b.m32, b.m33);
+
+      return b;
    }
 
    static PMatrix3D invRotateZ ( final float radians ) {
@@ -137,24 +183,36 @@ public abstract class PMatAux {
       return PMatAux.invRotateZ(radians, (PMatrix3D) null);
    }
 
-   static PMatrix3D invRotateZ ( final float radians,
-         PMatrix3D target ) {
+   static PMatrix3D invRotateZ (
+         final float radians,
+         PMatrix3D b ) {
 
-      if (target == null) {
-         target = new PMatrix3D();
+      if (b == null) {
+         b = new PMatrix3D();
       }
 
-      // final float c = Utils.cos(-radians);
-      // final float s = Utils.sin(-radians);
       final float normRad = -radians * IUtils.ONE_TAU;
       final float c = Utils.scNorm(normRad);
       final float s = Utils.scNorm(normRad - 0.25f);
-      target.preApply(
-            c, -s, 0.0f, 0.0f,
-            s, c, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f);
-      return target;
+
+      /*
+       * b.preApply( c, -s, 0.0f, 0.0f, s, c, 0.0f, 0.0f, 0.0f,
+       * 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+       */
+
+      b.set(
+            c * b.m00 - s * b.m10,
+            c * b.m01 - s * b.m11,
+            c * b.m02 - s * b.m12,
+            c * b.m03 - s * b.m13,
+            s * b.m00 + c * b.m10,
+            s * b.m01 + c * b.m11,
+            s * b.m02 + c * b.m12,
+            s * b.m03 + c * b.m13,
+            b.m20, b.m21, b.m22, b.m23,
+            b.m30, b.m31, b.m32, b.m33);
+
+      return b;
    }
 
    /**

@@ -21,7 +21,7 @@ public class Zup3 extends Up3 {
    /**
     * Default lighting directional light axis y component.
     */
-   public static final float DEFAULT_LIGHT_Y = 0.6471502f;
+   public static final float DEFAULT_LIGHT_Y = -0.6471502f;
 
    /**
     * Default lighting directional light axis z component.
@@ -184,66 +184,66 @@ public class Zup3 extends Up3 {
     * Looks at the center point from the eye point, using the
     * world up axis as a reference.
     *
-    * @param eyeX
+    * @param xEye
     *           camera location x
-    * @param eyeY
+    * @param yEye
     *           camera location y
-    * @param eyeZ
+    * @param zEye
     *           camera location z
-    * @param centerX
+    * @param xCenter
     *           target location x
-    * @param centerY
+    * @param yCenter
     *           target location y
-    * @param centerZ
+    * @param zCenter
     *           target location z
-    * @param upX
+    * @param xUp
     *           world up axis x
-    * @param upY
+    * @param yUp
     *           world up axis y
-    * @param upZ
+    * @param zUp
     *           world up axis z
     */
    @Override
    public void camera (
-         final float eyeX,
-         final float eyeY,
-         final float eyeZ,
-         final float centerX,
-         final float centerY,
-         final float centerZ,
-         final float upX,
-         final float upY,
-         final float upZ ) {
+         final float xEye,
+         final float yEye,
+         final float zEye,
+         final float xCenter,
+         final float yCenter,
+         final float zCenter,
+         final float xUp,
+         final float yUp,
+         final float zUp ) {
 
       // TODO: Is it problematic when the camera's look direction
       // is co-linear with the world up direction?
 
-      this.refUp.set(upX, upY, upZ);
+      this.refUp.set(xUp, yUp, zUp);
       if (Vec3.magSq(this.refUp) < PConstants.EPSILON) {
 
          this.refUp.set(
                Yup3.DEFAULT_REF_X,
                Yup3.DEFAULT_REF_Y,
                Yup3.DEFAULT_REF_Z);
-         return;
+         return; // Why return?
       }
 
       this.lookDir.set(
-            eyeX - centerX,
-            eyeY - centerY,
-            eyeZ - centerZ);
+            xEye - xCenter,
+            yEye - yCenter,
+            zEye - zCenter);
 
       final float lookDist = Vec3.magSq(this.lookDir);
       if (lookDist < PConstants.EPSILON) {
          this.lookDir.set(0.0f, 0.0f, -1.0f);
-         return;
+         return; // Why return?
       }
 
-      this.cameraX = eyeX;
-      this.cameraY = eyeY;
-      this.cameraZ = eyeZ;
+      this.cameraX = xEye;
+      this.cameraY = yEye;
+      this.cameraZ = zEye;
 
-      this.lookTarget.set(centerX, centerY, centerZ);
+      this.lookTarget.set(xCenter, yCenter, zCenter);
 
       this.eyeDist = Utils.sqrt(lookDist);
 
@@ -251,24 +251,35 @@ public class Zup3 extends Up3 {
       Vec3.normalize(this.lookDir, this.k);
       Vec3.crossNorm(this.refUp, this.k, this.i);
       Vec3.crossNorm(this.k, this.i, this.j);
+      // Vec3.crossNorm(this.k, this.refUp, this.i);
+      // Vec3.crossNorm(this.i, this.k, this.j);
 
-      /* Set matrix to axes by row. */
-      this.modelview.set(
-            this.i.x, this.i.y, this.i.z, 0.0f,
-            this.j.x, this.j.y, this.j.z, 0.0f,
-            this.k.x, this.k.y, this.k.z, 0.0f,
+      final float m00 = this.i.x;
+      final float m01 = this.i.y;
+      final float m02 = this.i.z;
+
+      final float m10 = this.j.x;
+      final float m11 = this.j.y;
+      final float m12 = this.j.z;
+
+      final float m20 = this.k.x;
+      final float m21 = this.k.y;
+      final float m22 = this.k.z;
+
+      this.camera.set(
+            m00, m01, m02, -xEye * m00 - yEye * m01 - zEye * m02,
+            m10, m11, m12, -xEye * m10 - yEye * m11 - zEye * m12,
+            m20, m21, m22, -xEye * m20 - yEye * m21 - zEye * m22,
             0.0f, 0.0f, 0.0f, 1.0f);
 
-      /* Translate by negative location. */
-      this.modelview.translate(
-            -this.cameraX,
-            -this.cameraY,
-            -this.cameraZ);
+      this.cameraInv.set(
+            m00, m10, m20, xEye,
+            m01, m11, m21, yEye,
+            m02, m12, m22, zEye,
+            0.0f, 0.0f, 0.0f, 1.0f);
 
-      /* Update renderer matrices. */
-      PMatAux.invert(this.modelview, this.modelviewInv);
-      this.camera.set(this.modelview);
-      this.cameraInv.set(this.modelviewInv);
+      this.modelview.set(this.camera);
+      this.modelviewInv.set(this.cameraInv);
       this.updateProjmodelview();
    }
 
@@ -347,10 +358,6 @@ public class Zup3 extends Up3 {
       this.normalY = ny;
       this.normalZ = nz;
 
-      // this.normalX = nx;
-      // this.normalY = -nz;
-      // this.normalZ = -ny;
-
       if (this.shape != 0) {
          if (this.normalMode == PGraphics.NORMAL_MODE_AUTO) {
             /* One normal per begin/end shape */
@@ -387,5 +394,55 @@ public class Zup3 extends Up3 {
    public String toString () {
 
       return "camzup.pfriendly.Zup3";
+   }
+
+   /**
+    * Sets lighting normals. Overrides the default by swapping
+    * and negating to accomodate Z-up camera.
+    *
+    * @param num
+    *           the index
+    * @param xDir
+    *           the direction x
+    * @param yDir
+    *           the direction y
+    * @param zDir
+    *           the directoin z
+    */
+   @Override
+   protected void lightNormal (
+         final int num,
+         final float xDir,
+         final float yDir,
+         final float zDir ) {
+
+      /*
+       * Applying normal matrix to the light direction vector,
+       * which is the transpose of the inverse of the modelview.
+       */
+      final float nx = xDir * this.modelviewInv.m00 +
+            yDir * this.modelviewInv.m10 +
+            zDir * this.modelviewInv.m20;
+
+      final float ny = xDir * this.modelviewInv.m01 +
+            yDir * this.modelviewInv.m11 +
+            zDir * this.modelviewInv.m21;
+
+      final float nz = xDir * this.modelviewInv.m02 +
+            yDir * this.modelviewInv.m12 +
+            zDir * this.modelviewInv.m22;
+
+      final float mSq = nx * nx + ny * ny + nz * nz;
+      final int num3 = num + num + num;
+      if (0.0f < mSq) {
+         final float mInv = Utils.invSqrtUnchecked(mSq);
+         this.lightNormal[num3] = mInv * -nx;
+         this.lightNormal[num3 + 1] = mInv * nz;
+         this.lightNormal[num3 + 2] = mInv * -ny;
+      } else {
+         this.lightNormal[num3] = 0.0f;
+         this.lightNormal[num3 + 1] = 0.0f;
+         this.lightNormal[num3 + 2] = 0.0f;
+      }
    }
 }

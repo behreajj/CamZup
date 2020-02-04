@@ -414,23 +414,13 @@ public class Transform2 extends Transform {
          final Vec2 source,
          final Vec2 target ) {
 
-      // TODO: See OSL transform point script to refine...
-      // This should behave more like a camera over an infinite
-      // field...
-
-      // target.x -= 0.5f;
-      // target.y -= 0.5f;
-
       target.x = source.x - 0.5f;
       target.y = source.y - 0.5f;
-
-      Vec2.rotateZ(target, t.right.x, t.right.y, target);
-
+      Vec2.rotateZ(target, t.right.x, -t.right.y, target);
       target.x += 0.5f;
       target.y += 0.5f;
-
       Vec2.mul(target, t.scale, target);
-      Vec2.add(target, t.location, target);
+      Vec2.sub(target, t.location, target);
       return target;
    }
 

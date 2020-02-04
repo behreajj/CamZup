@@ -5,6 +5,7 @@ import java.util.List;
 
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
+import camzup.core.IUtils;
 import camzup.core.Knot2;
 import camzup.core.Mat3;
 import camzup.core.MaterialSolid;
@@ -275,7 +276,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
 
       this.cameraX = x;
       this.cameraY = y;
-      this.cameraRot = Utils.modRadians(radians);
+      this.cameraRot = radians;
       this.cameraZoomX = zx < Utils.EPSILON ? 1.0f : zx;
       this.cameraZoomY = zy < Utils.EPSILON ? 1.0f : zy;
       final float zDist = this.height < 128 ? 128 : this.height;
@@ -288,8 +289,10 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
        * -zDist);
        */
 
-      final float c = Utils.cos(-radians);
-      final float s = Utils.sin(-radians);
+      final float nrm = -radians * IUtils.ONE_TAU;
+      final float c = Utils.scNorm(nrm);
+      final float s = Utils.scNorm(nrm - 0.25f);
+
       final float m00 = c * this.cameraZoomX;
       final float m01 = -s * this.cameraZoomY;
       final float m10 = s * this.cameraZoomX;
@@ -301,10 +304,16 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             0.0f, 0.0f, 1.0f, -zDist,
             0.0f, 0.0f, 0.0f, 1.0f);
 
-      this.projmodelview.set(this.projection);
-      PMatAux.invert(this.modelview, this.modelviewInv);
+      /* PMatAux.invert(this.modelview, this.modelviewInv); */
+      this.modelviewInv.set(
+            c / this.cameraZoomX, s / this.cameraZoomX, 0.0f, this.cameraX,
+            -s / this.cameraZoomY, c / this.cameraZoomY, 0.0f, this.cameraY,
+            0.0f, 0.0f, 1.0f, zDist,
+            0.0f, 0.0f, 0.0f, 1.0f);
+
       this.camera.set(this.modelview);
       this.cameraInv.set(this.modelviewInv);
+      this.projmodelview.set(this.projection);
    }
 
    /**

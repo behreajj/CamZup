@@ -11,26 +11,25 @@ import camzup.pfriendly.*;
 boolean debug = false;
 int flowCount = 20;
 int vehicleCount = 120;
-color vehicleClr = 0x021f7fff;
+color vehicleClr = 0x02fff7d5;
 
-YupJ2 rndr;
+Yup2 rndr;
 FlowField flowfield;
 Random rng = new Random();
 
 Vehicle[] vehicles = new Vehicle[vehicleCount];
 
 void settings() {
-  size(720, 405, "camzup.pfriendly.YupJ2");
+  size(720, 405, "camzup.pfriendly.Yup2");
   smooth(8);
 }
 
 void setup() {
   frameRate(1000);
-  rndr = (YupJ2)getGraphics();
-  rndr.background(#fff7d5);
+  rndr = (Yup2)getGraphics();
+  rndr.background(#202020);
 
   flowfield = new FlowField(rndr.width, rndr.height, flowCount);
-
   Vec2 ub = new Vec2(rndr.width, rndr.height);
   Vec2 lb = Vec2.zero(new Vec2());
   Vec2 pos = new Vec2();
@@ -49,7 +48,7 @@ void draw() {
   rndr.camera(width * 0.5, height * 0.5, 0.0, 1.0, 1.0);
 
   if (debug) {
-    rndr.background();
+    rndr.background(#202020);
     flowfield.display(rndr);
   }
 
@@ -66,9 +65,7 @@ void keyReleased() {
 }
 
 void mouseReleased() {
-  flowfield.init();
-  //vehicleClr = Color.toHexInt(Color.randomRgba(rng,
-  //  new Color(0.325, 0.325, 0.325, Utils.ONE_255 * 3),
-  //  new Color(1.0, 1.0, 1.0, Utils.ONE_255 * 5),
-  //  new Color()));
+  if (mouseButton == RIGHT) {
+    flowfield.init();
+  }
 }

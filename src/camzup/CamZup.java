@@ -4,11 +4,14 @@ import java.util.HashSet;
 
 import camzup.core.IUtils;
 import camzup.core.Mesh3;
+import camzup.core.Quaternion;
 import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
+import camzup.pfriendly.PMatAux;
 import processing.core.PApplet;
+import processing.core.PMatrix3D;
 
 /**
  * The main class of this library. This is not needed to use
@@ -184,40 +187,9 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-      // int sectors = 10;
-      // float arcLen = Utils.TAU / sectors;
-      // float arcMargin = Utils.radians(2.5f);
-      // float halfMarg = arcMargin * 0.5f;
-      //
-      // for(int i = 0; i < sectors; ++i) {
-      // float start = i * arcLen + halfMarg;
-      // float stop = (i + 1) * arcLen - halfMarg;
-      // Mesh2 m = new Mesh2();
-      // Mesh2.arc(start, stop, 0.75f, 64, Mesh2.PolyType.NGON,
-      // m);
-      // me.appendMesh(m);
-      // }
-      //
-      // System.out.println(me.toBlenderCode());
-
-      Random rng = new Random();
-      for (int i = 0; i < 100; ++i) {
-         double theta = -IUtils.TAU_D * rng.nextDouble() + Math.PI;
-         float cosa = (float) Math.cos(theta);
-         float sina = (float) Math.sin(theta);
-         float tnorm = (float) (theta * IUtils.ONE_TAU_D);
-         float cosat = Utils.scNorm(tnorm);
-         float sinat = Utils.scNorm(tnorm - 0.25f);
-//         System.out.println(cosa);
-//         System.out.println(cosat);
-         System.out.println(Utils.approx(cosa, cosat, 0.000001f));
-
-//         System.out.println(sina);
-//         System.out.println(sinat);
-         System.out.println(Utils.approx(sina, sinat, 0.000001f));
-
-         System.out.println("");
-      }
+      // Mesh3 m = new Mesh3();
+      // Mesh3.sphere(m);
+      // System.out.println(m.coords.length);
    }
 
    /**

@@ -1079,8 +1079,13 @@ public abstract class Utils implements IUtils {
     */
    public static float cot ( final float radians ) {
 
-      final double sint = Math.sin(radians);
-      return sint == 0.0d ? 0.0f : (float) (Math.cos(radians) / sint);
+      // final double sint = Math.sin(radians);
+      // return sint == 0.0d ? 0.0f : (float) (Math.cos(radians) /
+      // sint);
+
+      final float nrmRad = radians * IUtils.ONE_TAU;
+      final float sint = Utils.scNorm(nrmRad - 0.25f);
+      return sint == 0.0f ? 0.0f : Utils.scNorm(nrmRad) / sint;
    }
 
    /**
@@ -1888,16 +1893,20 @@ public abstract class Utils implements IUtils {
     * A helper method to facilitate the approximate sine and
     * cosine of an angle with single precision real numbers.
     * The radians supplied to this function should be
-    * normalized through division by TAU. The method then uses
-    * {@link Utils#mod1(float)} to bring the radians into the
-    * range [0.0, 1.0] .
-    * 
+    * normalized through division by TAU. Subtract 0.25 from
+    * the input value to return the sine instead of the
+    * cosine.<br>
+    * <br>
     * Instead of a look-up table, this is based on the
     * algorithm described <a href=
     * "https://developer.download.nvidia.com/cg/sin.html">Nvidia
     * Cg 3.1 Toolkit Documentation</a> . It has been
     * de-vectorized and the initial step has been changed from
     * fract to mod1.
+    *
+    * @param normRad
+    *           the normalized radians
+    * @return the approximate value
     */
    @Experimental
    public static float scNorm ( final float normRad ) {
@@ -2044,10 +2053,11 @@ public abstract class Utils implements IUtils {
     */
    public static float tan ( final float radians ) {
 
-      // final double cost = Math.cos(radians);
-      // return cost == 0.0d ? 0.0f : (float) (Math.sin(radians) /
-      // cost);
-      return (float) Math.tan(radians);
+      // return (float) Math.tan(radians);
+
+      final float nrmRad = radians * IUtils.ONE_TAU;
+      final float cost = Utils.scNorm(nrmRad);
+      return cost == 0.0f ? 0.0f : Utils.scNorm(nrmRad - 0.25f) / cost;
    }
 
    /**

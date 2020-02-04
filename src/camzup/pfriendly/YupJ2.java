@@ -1218,7 +1218,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
       this.cameraX = x;
       this.cameraY = y;
-      this.cameraRot = Utils.modRadians(radians);
+      this.cameraRot = radians;
       this.cameraZoomX = zx < Utils.EPSILON ? 1.0f : zx;
       this.cameraZoomY = zy < Utils.EPSILON ? 1.0f : zy;
 
@@ -1236,7 +1236,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       final double m10 = s * this.cameraZoomX;
       final double m11 = c * -this.cameraZoomY;
 
-      this.affineNative.setTransform(m00, m10, m01, m11,
+      this.affineNative.setTransform(
+            m00, m10, m01, m11,
             this.width * 0.5d
                   - this.cameraX * m00
                   - this.cameraY * m01,

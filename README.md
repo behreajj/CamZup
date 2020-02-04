@@ -19,7 +19,7 @@ To get started with this library you can set up your Processing sketch like so:
 // Import the library
 import camzup.pfriendly.*;
 
-void setup() {
+void settings() {
   // Supply the renderer's path to size as the
   // third argument.
   size(128, 128, "camzup.pfriendly.YupJ2");
@@ -36,8 +36,11 @@ String rpath = "camzup.pfriendly.YupJ2";
 YupJ2 primary;
 YupJ2 secondary;
 
-void setup() {
+void settings() {
   size(128, 128, rpath);
+}
+
+void setup() {
   secondary = (YupJ2)createGraphics(256, 256, rpath);
   primary = (YupJ2)getGraphics();
 }
@@ -64,20 +67,27 @@ Please see the examples folder for more possibilities.
 
 ## Differences, Issues
 
-Here is a brief list of issues with this library and differences which are not bugs but may be unexpected to new users.
+Here is a brief list of issues with this library and differences which may be unexpected to new users. Some are unresolved bugs, some arise from the design philosophy of the library.
 
-- Flipping the axes changes the default rotational direction of a positive angle from clockwise to counter-clockwise.
-- A z-up axis changes the relationship between a 2D vector's polar coordinates and a 3D vector's spherical coordinates.
-- As a consequence of the above, `P3D`'s UV [sphere](https://processing.org/reference/sphere_.html) is tipped on its side with a z-up renderer.
-- The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles.
-- `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), [ellipseMode](https://processing.org/reference/ellipseMode_.html) and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with these renderers. For that reason, `CENTER` is the default alignment.
--  In OpenGL renderers, an arc will not have rounded corners, no matter which [strokeJoin](https://processing.org/reference/strokeJoin_.html) and [strokeCap](https://processing.org/reference/strokeCap_.html) methods you specify.
-- Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter.
-- `YupJ2`'s `point` supports `strokeCap(SQUARE)` at the expense of performance.
-- [textureMode](https://processing.org/reference/textureMode_.html) `IMAGE` is not supported; `NORMAL` is the default. This is because many redundant operations on UV coordinates interfered with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT`. In making this conversion, support for high density pixel displays may be lost; I cannot test this at the moment, so please report issues with `image`.
-- [textMode](https://processing.org/reference/textMode_.html) `SHAPE` is not supported. However you can retrieve glyph outlines from a [PFont](https://processing.org/reference/PFont.html) with the `CurveEntity2` class from the `core` package. (The `PFont` needs to be loaded with [createFont](https://processing.org/reference/createFont_.html)).
-- The [PShape](https://processing.org/reference/PShape.html) interface has problems stemming from both its implementation and its design (among them: attempting to represent both 2D and 3D shapes, a `rotateZ` bug as of version 3.5.x, difficulty accessing vertices and UV coordinates). This library uses `Curve` and `Mesh` objects instead.
-- Stroke weight is influenced by scale; for that reason, curves and meshes that use materials may require stroke weights smaller than custom. Rendering an anti-aliased stroke with appropriate cap and join is [more difficult](https://mattdesl.svbtle.com/drawing-lines-is-hard) than most appreciate. It is at issue not only for this library, not only for Processing, but for renderers generally. Even when a stroke weight works in one renderer, it may not work with another (e.g., when a shape is saved as an SVG string).
+- 2D & 3D
+  - Flipping the axes changes the default rotational direction of a positive angle from clockwise to counter-clockwise.
+  - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter.
+  - `YupJ2`'s `point` supports `strokeCap(SQUARE)` at the expense of performance.
+  - [textureMode](https://processing.org/reference/textureMode_.html) `IMAGE` is not supported; `NORMAL` is the default. This is for three reasons: (1.) the belief that `IMAGE` is _harder_, not easier, to understand; (2.) recognition that `NORMAL` is the standard; (3.) redundant operations in `PGraphicsOpenGL` that interfere with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT` and cannot be overidden by this library.
+  -  In making this conversion, support for high density pixel displays may be lost; I cannot test this at the moment, so please report issues with `image`.
+  - [textMode](https://processing.org/reference/textMode_.html) `SHAPE` is not supported. However you can retrieve glyph outlines from a [PFont](https://processing.org/reference/PFont.html) with the `CurveEntity2` class from the `core` package. (Reminder: the `PFont` needs to be loaded with [createFont](https://processing.org/reference/createFont_.html)).
+  - The [PShape](https://processing.org/reference/PShape.html) interface has numerous problems stemming from both its implementation and its design. This library uses `Curve` and `Mesh` objects instead.
+  - Stroke weight is influenced by scale; for that reason, curves and meshes that use materials may require stroke weights smaller than custom.
+
+- 2D
+  - The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles.
+  -  In OpenGL renderers, an arc will not have rounded corners, no matter which [strokeJoin](https://processing.org/reference/strokeJoin_.html) and [strokeCap](https://processing.org/reference/strokeCap_.html) methods you specify.
+  - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), [ellipseMode](https://processing.org/reference/ellipseMode_.html) and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with these renderers. For that reason, `CENTER` is the default alignment.
+
+- 3D
+  - A z-up axis changes the relationship between a 2D vector's polar coordinates and a 3D vector's spherical coordinates: a 3D vector's azimuth matches a 2D vector's heading.
+  - Neither 3D primitive, the `sphere` nor the `box`, are supported; use mesh entities instead.
+  - A `Mesh3` material may not have both a fill and a stroke due to flickering in `perspective` cameras.
 
 Many core Processing functions are marked `final`, meaning they cannot be extended and modified by classes in this library; similarly, many fields are marked `private` meaning they cannot be accessed and mutated. This is the one of the reasons for the differences noted above.
 
@@ -167,7 +177,7 @@ Vec2 b = new Vec2(4.0, 5.0);
 Vec2 sum = new Vec2();
 Vec2 prod = new Vec2();
 
-for(int i = 0; i < 15; ++i) {
+for(int i = 0; i < 16; ++i) {
     println(Vec2.mul(3.0, Vec2.add(a, b, sum), prod));
 }
 ```
@@ -178,10 +188,6 @@ I have tried to make these classes as extensible as possible. This means that me
 
 ```java
 import camzup.core.*;
-
-// setup is needed when making your own classes.
-void setup() {
-}
 
 // Classes made in the PDE should be marked static,
 // as they are actually inner classes.

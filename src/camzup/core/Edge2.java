@@ -1,14 +1,14 @@
 package camzup.core;
 
-@Experimental
+/**
+ * Organizes two vertices of a mesh into an edge.
+ */
 public class Edge2 implements Comparable < Edge2 > {
 
    public Vert2 dest;
    public Vert2 origin;
 
    public Edge2 () {
-
-      // TODO: Needs testing.
 
       this.origin = new Vert2();
       this.dest = new Vert2();

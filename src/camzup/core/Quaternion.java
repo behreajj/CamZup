@@ -1204,9 +1204,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion target ) {
 
       final float halfRadians = radians * 0.5f;
-      return target.set(
-            Utils.cos(halfRadians),
-            0.0f, 0.0f,
+      return target.set(Utils.cos(halfRadians), 0.0f, 0.0f,
             Utils.sin(halfRadians));
    }
 
@@ -2123,11 +2121,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion target ) {
 
       final float halfAngle = radians * 0.5f;
-      return Quaternion.rotateX(
-            q,
-            Utils.cos(halfAngle),
-            Utils.sin(halfAngle),
-            target);
+      return Quaternion.rotateX(q, Utils.cos(halfAngle),
+            Utils.sin(halfAngle), target);
+
    }
 
    /**
@@ -2185,11 +2181,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion target ) {
 
       final float halfAngle = radians * 0.5f;
-      return Quaternion.rotateY(
-            q,
-            Utils.cos(halfAngle),
-            Utils.sin(halfAngle),
-            target);
+      return Quaternion.rotateY(q, Utils.cos(halfAngle),
+            Utils.sin(halfAngle), target);
+
    }
 
    /**
@@ -2246,11 +2240,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion target ) {
 
       final float halfAngle = radians * 0.5f;
-      return Quaternion.rotateZ(
-            q,
-            Utils.cos(halfAngle),
-            Utils.sin(halfAngle),
-            target);
+      return Quaternion.rotateZ(q, Utils.cos(halfAngle),
+            Utils.sin(halfAngle), target);
    }
 
    /**

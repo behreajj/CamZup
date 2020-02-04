@@ -1401,6 +1401,39 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Unsupported by this renderer. Use a MeshEntity and Mesh
+    * instead.
+    *
+    * @param size
+    *           the size
+    */
+   @Override
+   public void box ( final float size ) {
+
+      PApplet.showMethodWarning("box");
+   }
+
+   /**
+    * Unsupported by this renderer. Use a MeshEntity and Mesh
+    * instead.
+    *
+    * @param w
+    *           the width
+    * @param h
+    *           the height
+    * @param d
+    *           the depth
+    */
+   @Override
+   public void box (
+         final float w,
+         final float h,
+         final float d ) {
+
+      PApplet.showMethodWarning("box");
+   }
+
+   /**
     * Exposes the color calculation to the public. Includes the
     * option to premultiply alpha. Refers to the helper
     * function
@@ -3038,6 +3071,36 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       PApplet.showMissingWarning("shape");
       super.shape(shape, x1, y1, x2, y2);
+   }
+
+   /**
+    * Unsupported by this renderer. Use a MeshEntity and Mesh
+    * instead.
+    *
+    * @param r
+    *           the radius
+    */
+   @Override
+   public void sphere ( final float r ) {
+
+      PApplet.showMethodWarning("sphere");
+   }
+
+   /**
+    * Unsupported by this renderer. Use a MeshEntity and Mesh
+    * instead.
+    *
+    * @param longitudes
+    *           the longitudes
+    * @param latitudes
+    *           the latitudes
+    */
+   @Override
+   public void sphereDetail (
+         final int longitudes,
+         final int latitudes ) {
+
+      PApplet.showMethodWarning("sphereDetail");
    }
 
    /**

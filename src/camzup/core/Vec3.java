@@ -995,7 +995,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * plane on which <em>a</em> and <em>b</em> rest.<br>
     * <br>
     *
-    * <em>a</em> \u00d7 <em>b</em> :=<br>
+    * <em>a</em> x <em>b</em> :=<br>
     * ( <em>a<sub>y</sub> b<sub>z</sub></em> -
     * <em>a<sub>z</sub> b<sub>y</sub></em> ,<br>
     * <em>a<sub>z</sub> b<sub>x</sub></em> - <em>a<sub>x</sub>
@@ -1005,22 +1005,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * <br>
     *
     * The cross product is anti-commutative, meaning <em>a</em>
-    * \u00d7 <em>b</em> = - ( <em>b</em> \u00d7 <em>a</em> ) .
-    * A unit vector does not necessarily result from the cross
-    * of two unit vectors. Crossed orthonormal vectors are as
-    * follows:
-    * <ul>
-    * <li>right \u00d7 forward = up, <br>
-    * ( 1.0, 0.0, 0.0 ) \u00d7 ( 0.0, 1.0, 0.0 ) = ( 0.0, 0.0,
-    * 1.0 )</li>
-    * <li>forward \u00d7 up = right, <br>
-    * ( 0.0, 1.0, 0.0 ) \u00d7 ( 0.0, 0.0, 1.0 ) = ( 1.0, 0.0,
-    * 0.0 )</li>
-    * <li>up \u00d7 right = forward, <br>
-    * ( 0.0, 0.0, 1.0 ) \u00d7 ( 1.0, 0.0, 0.0 ) = ( 0.0, 1.0,
-    * 0.0 )</li>
-    * </ul>
-    * The 3D equivalent to the 2D vector's perpendicular.
+    * x <em>b</em> = - ( <em>b</em> x <em>a</em> ) . A unit
+    * vector does not necessarily result from the cross of two
+    * unit vectors. The 3D equivalent to the 2D vector's
+    * perpendicular.
     *
     * @param a
     *           left operand
@@ -1046,6 +1034,21 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * A specialized form of the cross product which normalizes
     * the result. This is to facilitate the creation of lookAt
     * matrices.
+    * 
+    * Crossed orthonormal vectors are as follows:
+    * <ul>
+    * <li>right x forward = up, <br>
+    * ( 1.0, 0.0, 0.0 ) x ( 0.0, 1.0, 0.0 ) = ( 0.0, 0.0, 1.0
+    * )</li>
+    * <li>forward x up = right, <br>
+    * ( 0.0, 1.0, 0.0 ) x ( 0.0, 0.0, 1.0 ) = ( 1.0, 0.0, 0.0
+    * )</li>
+    * <li>up x right = forward, <br>
+    * ( 0.0, 0.0, 1.0 ) x ( 1.0, 0.0, 0.0 ) = ( 0.0, 1.0, 0.0
+    * )</li>
+    * </ul>
+    * The cross product is anti-commutative, meaning <em>a</em>
+    * x <em>b</em> = - ( <em>b</em> x <em>a</em> ) .
     *
     * @param a
     *           left operand

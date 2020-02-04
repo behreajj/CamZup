@@ -603,6 +603,8 @@ public abstract class Simplex {
          final float w,
          final int seed,
          final Vec4 deriv ) {
+      
+      // TODO: IS there a problem with the output of this evaluation?
 
       final float s = (x + y + z + w) * Simplex.F4;
       final int i = Utils.floorToInt(x + s);
@@ -624,21 +626,18 @@ public abstract class Simplex {
       final int sc2 = sc[2];
       final int sc3 = sc[3];
 
-      // These have been truncated from >= to > .
-      final int i1 = sc0 > 2 ? 1 : 0; // final int i1 = sc0 >= 3 ? 1 : 0;
-      final int j1 = sc1 > 2 ? 1 : 0; // final int j1 = sc1 >= 3 ? 1 : 0;
-      final int k1 = sc2 > 2 ? 1 : 0; // final int k1 = sc2 >= 3 ? 1 : 0;
-      final int l1 = sc3 > 2 ? 1 : 0; // final int l1 = sc3 >= 3 ? 1 : 0;
-
-      final int i2 = sc0 > 1 ? 1 : 0; // final int i2 = sc0 >= 2 ? 1 : 0;
-      final int j2 = sc1 > 1 ? 1 : 0; // final int j2 = sc1 >= 2 ? 1 : 0;
-      final int k2 = sc2 > 1 ? 1 : 0; // final int k2 = sc2 >= 2 ? 1 : 0;
-      final int l2 = sc3 > 1 ? 1 : 0; // final int l2 = sc3 >= 2 ? 1 : 0;
-
-      final int i3 = sc0 > 0 ? 1 : 0; // final int i3 = sc0 >= 1 ? 1 : 0;
-      final int j3 = sc1 > 0 ? 1 : 0; // final int j3 = sc1 >= 1 ? 1 : 0;
-      final int k3 = sc2 > 0 ? 1 : 0; // final int k3 = sc2 >= 1 ? 1 : 0;
-      final int l3 = sc3 > 0 ? 1 : 0; // final int l3 = sc3 >= 1 ? 1 : 0;
+      final int i1 = sc0 >= 3 ? 1 : 0;
+      final int j1 = sc1 >= 3 ? 1 : 0;
+      final int k1 = sc2 >= 3 ? 1 : 0;
+      final int l1 = sc3 >= 3 ? 1 : 0;
+      final int i2 = sc0 >= 2 ? 1 : 0;
+      final int j2 = sc1 >= 2 ? 1 : 0;
+      final int k2 = sc2 >= 2 ? 1 : 0;
+      final int l2 = sc3 >= 2 ? 1 : 0;
+      final int i3 = sc0 >= 1 ? 1 : 0;
+      final int j3 = sc1 >= 1 ? 1 : 0;
+      final int k3 = sc2 >= 1 ? 1 : 0;
+      final int l3 = sc3 >= 1 ? 1 : 0;
 
       final float x1 = x0 - i1 + Simplex.G4;
       final float y1 = y0 - j1 + Simplex.G4;
@@ -1872,9 +1871,14 @@ public abstract class Simplex {
          final int seed,
          final Vec3 deriv ) {
 
-      return Simplex.flow(
-            x, y, z,
-            Utils.cos(radians), Utils.sin(radians),
+      /*
+       * return Simplex.flow(x, y, z, Utils.cos(radians),
+       * Utils.sin(radians), seed, deriv);
+       */
+
+      final float nrm = radians * IUtils.ONE_TAU;
+      return Simplex.flow(x, y, z,
+            Utils.scNorm(nrm), Utils.scNorm(nrm - 0.25f),
             seed, deriv);
    }
 
@@ -1924,9 +1928,14 @@ public abstract class Simplex {
          final int seed,
          final Vec2 deriv ) {
 
-      return Simplex.flow(
-            x, y,
-            Utils.cos(radians), Utils.sin(radians),
+      /*
+       * return Simplex.flow(x, y, Utils.cos(radians),
+       * Utils.sin(radians), seed, deriv);
+       */
+
+      final float nrm = radians * IUtils.ONE_TAU;
+      return Simplex.flow(x, y,
+            Utils.scNorm(nrm), Utils.scNorm(nrm - 0.25f),
             seed, deriv);
    }
 

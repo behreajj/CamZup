@@ -1,7 +1,7 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-YupJ2 graphics;
+Yup2 graphics;
 
 float x = 0.0;
 float y = 0.0;
@@ -9,11 +9,12 @@ float angle = 0.0;
 float scale = 1.0;
 
 void settings() {
-  size(720, 405, "camzup.pfriendly.YupJ2");
+  size(720, 405, "camzup.pfriendly.Yup2");
 }
 
 void setup() {
-  graphics = (YupJ2)getGraphics();
+  graphics = (Yup2)getGraphics();
+  graphics.camera();
 }
 
 void draw() {
