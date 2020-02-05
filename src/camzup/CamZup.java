@@ -187,12 +187,6 @@ public class CamZup {
    }
 
    public static void main ( final String[] args ) {
-
-//      Mesh3 m = new Mesh3();
-//      Mesh3.sphere(32, 16, m);
-//      MeshEntity3 me3 = new MeshEntity3()
-//            .appendMesh(m);
-//      System.out.println(me3.toBlenderCode());
    }
 
    /**

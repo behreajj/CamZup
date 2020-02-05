@@ -1419,7 +1419,9 @@ public class Mesh2 extends Mesh {
 
       sb.append("{ name: \"")
             .append(this.name)
-            .append("\"\n, coords: [");
+            .append('\"').append(',').append(' ')
+            .append('\n')
+            .append("coords: [ ");
 
       if (this.coords != null) {
          sb.append('\n');
@@ -1428,7 +1430,8 @@ public class Mesh2 extends Mesh {
          for (int i = 0; i < len; ++i) {
             sb.append(this.coords[i].toString(places));
             if (i < last) {
-               sb.append(',').append('\n');
+               sb.append(',').append(' ');
+               sb.append('\n');
             }
          }
       }
@@ -1445,7 +1448,8 @@ public class Mesh2 extends Mesh {
          for (int i = 0; i < len; ++i) {
             sb.append(this.texCoords[i].toString(places));
             if (i < last) {
-               sb.append(',').append('\n');
+               sb.append(',').append(' ');
+               sb.append('\n');
             }
          }
       }
@@ -1491,7 +1495,8 @@ public class Mesh2 extends Mesh {
             }
             sb.append(' ').append(']');
             if (i < facesLast) {
-               sb.append(',').append('\n');
+               sb.append(',').append(' ');
+               sb.append('\n');
             }
          }
       }

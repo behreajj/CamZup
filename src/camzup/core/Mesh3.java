@@ -33,6 +33,104 @@ public class Mesh3 extends Mesh {
       return target;
    }
 
+   public static Mesh3 arc (
+         final float majorStart,
+         final float majorStop,
+         final float minorStart,
+         final float minorStop,
+         final float thickness,
+         final int sectors,
+         final int panels,
+         final Mesh3 target ) {
+
+      final float vtrad = Utils.max(Utils.EPSILON, thickness);
+
+      /* Sector Arc */
+      final float a1 = Utils.mod1(majorStart * IUtils.ONE_TAU);
+      final float b1 = Utils.mod1(majorStop * IUtils.ONE_TAU);
+      final float arcLen1 = Utils.mod1(b1 - a1);
+      final float destAngle1 = a1 + arcLen1;
+      final int vsect = Utils.ceilToInt(
+            1 + (sectors < 3 ? 3 : sectors) * arcLen1);
+
+      /* Panel Arc */
+      final float a0 = Utils.mod1(minorStart * IUtils.ONE_TAU);
+      final float b0 = Utils.mod1(minorStop * IUtils.ONE_TAU);
+      final float arcLen0 = Utils.mod1(b0 - a0);
+      final float destAngle0 = a0 + arcLen0;
+      final int vpanl = Utils.ceilToInt(
+            1 + (panels < 3 ? 3 : panels) * arcLen0);
+
+      final int panels1 = vpanl + 1;
+      final int sectors1 = vsect + 1;
+      final int len = panels1 * sectors1;
+
+      final Vec3[] coords = new Vec3[len];
+      final Vec2[] texCoords = new Vec2[len];
+      final Vec3[] normals = new Vec3[len];
+
+      final float toU = 1.0f / vsect;
+      final float toV = 1.0f / vpanl;
+
+      for (int k = 0, i = 0; i < panels1; ++i) {
+
+         final float v = i * toV;
+         final float phi = Utils.lerpUnclamped(
+               a0, destAngle0, v);
+         final float cosPhi = Utils.scNorm(phi);
+         final float sinPhi = Utils.scNorm(phi - 0.25f);
+
+         final float r = 0.5f + vtrad * cosPhi;
+
+         for (int j = 0; j < sectors1; ++j, ++k) {
+
+            final float u = j * toU;
+            final float theta = Utils.lerpUnclamped(
+                  a1, destAngle1, u);
+            final float cosTheta = Utils.scNorm(theta);
+            final float sinTheta = Utils.scNorm(theta - 0.25f);
+
+            coords[k] = new Vec3(
+                  r * cosTheta,
+                  r * sinTheta,
+                  vtrad * sinPhi);
+
+            texCoords[k] = new Vec2(u, v);
+
+            normals[k] = new Vec3(
+                  cosPhi * cosTheta,
+                  cosPhi * sinTheta,
+                  sinPhi);
+         }
+      }
+
+      final int[][][] faces = new int[2 * vsect *
+            vpanl][3][3];
+      final int sliceCount = vsect + 1;
+      int e = 0;
+      int f = sliceCount;
+      for (int k = 0, i = 0; i < vpanl; ++i) {
+         for (int j = 0; j < vsect; ++j, k += 2) {
+            final int a = e + j;
+            final int b = a + 1;
+            final int d = f + j;
+            final int c = d + 1;
+
+            faces[k] = new int[][] {
+                  { a, a, a }, { b, b, b }, { d, d, d } };
+
+            faces[k + 1] = new int[][] {
+                  { d, d, d }, { b, b, b }, { c, c, c } };
+         }
+
+         e += sliceCount;
+         f += sliceCount;
+      }
+
+      target.name = "Arc";
+      return target.set(faces, coords, texCoords, normals);
+   }
+
    /**
     * Calculates the dimensions of an Axis-Aligned Bounding Box
     * (AABB) encompassing the mesh.
@@ -670,6 +768,10 @@ public class Mesh3 extends Mesh {
 
       final int lats1 = vlats + 1;
       final int lons1 = vlons + 1;
+
+      /*
+       * The additional two comes from the North and South poles.
+       */
       final int len = lons1 * vlats + 2;
 
       final Vec3[] coords = new Vec3[len];
@@ -682,27 +784,28 @@ public class Mesh3 extends Mesh {
       final float toTheta = 1.0f / vlons;
       final float toPhi = 0.5f / lats1;
 
-      /* Set south pole. */
+      /*
+       * Set south pole. This is vertex 0, so subsequent vertex
+       * indices begin at an offset of 1.
+       */
       coords[0] = new Vec3(0.0f, 0.0f, -0.5f);
       texCoords[0] = new Vec2(0.0f, 0.0f);
       normals[0] = new Vec3(0.0f, 0.0f, -1.0f);
 
-      for (int h = 1, i = 0; i < vlats; ++h, ++i) {
+      for (int k = 1, h = 1, i = 0; i < vlats; ++h, ++i) {
          final float v = h * toV;
          final float phi = h * toPhi - 0.25f;
          final float cosPhi = Utils.scNorm(phi);
          final float sinPhi = Utils.scNorm(phi - 0.25f);
-         final int ilons1 = i * lons1;
 
-         // To change the seam, this should be j < lons, 
+         // To change the seam, this should be j < lons,
          // and toTheta should be 1 / lons1 .
-         for (int j = 0; j < lons1; ++j) {
+         for (int j = 0; j < lons1; ++j, ++k) {
             final float u = j * toU;
             final float theta = j * toTheta;
             final float cosTheta = Utils.scNorm(theta);
             final float sinTheta = Utils.scNorm(theta - 0.25f);
 
-            final int k = j + ilons1 + 1;
             texCoords[k] = new Vec2(u, v);
 
             final Vec3 nrm = normals[k] = new Vec3(
@@ -723,7 +826,7 @@ public class Mesh3 extends Mesh {
       int idx = 0;
 
       /* Top cap. */
-      for (int j = 0; j < vlons; j++) {
+      for (int j = 0; j < vlons; ++j) {
          final int n0 = j + 2;
          final int n1 = j + 1;
 
@@ -736,9 +839,9 @@ public class Mesh3 extends Mesh {
 
       /* Middle */
       final int latsn1 = vlats - 1;
-      for (int i = 0; i < latsn1; i++) {
+      for (int i = 0; i < latsn1; ++i) {
          final int ilons1 = i * lons1;
-         for (int j = 0; j < vlons; j++) {
+         for (int j = 0; j < vlons; ++j) {
             final int current = j + ilons1 + 1;
             final int next = current + lons1;
             final int n1 = current + 1;
@@ -759,7 +862,7 @@ public class Mesh3 extends Mesh {
       }
 
       /* Bottom cap. */
-      for (int j = 0; j < vlons; j++) {
+      for (int j = 0; j < vlons; ++j) {
          final int n1 = last - (j + 2);
          final int n2 = last - (j + 1);
 
@@ -886,32 +989,37 @@ public class Mesh3 extends Mesh {
          final int panels,
          final Mesh3 target ) {
 
-      final float vtrad = Utils.max(Utils.EPSILON, thickness);
-      final int vsec = sectors < 3 ? 3 : sectors;
-      final int vpan = panels < 3 ? 3 : panels;
+      // TODO: Creates a seam. Needs to switch to using modulo in
+      // faces, and to use one last longitude.
 
-      final int len = vsec * vpan;
+      final float vtrad = Utils.max(Utils.EPSILON, thickness);
+      final int vsect = sectors < 3 ? 3 : sectors;
+      final int vpanl = panels < 3 ? 3 : panels;
+
+      final int panels1 = vpanl + 1;
+      final int sectors1 = vsect + 1;
+      final int len = panels1 * sectors1;
 
       final Vec3[] coords = new Vec3[len];
       final Vec2[] texCoords = new Vec2[len];
       final Vec3[] normals = new Vec3[len];
 
-      final float toTheta = 1.0f / vsec;
-      final float toPhi = 1.0f / vpan;
+      final float toU = 1.0f / vsect;
+      final float toV = 1.0f / vpanl;
 
-      final float toV = 1.0f / (vpan - 1.0f);
-      final float toU = 1.0f / (vsec - 1.0f);
+      final float toTheta = 1.0f / vsect;
+      final float toPhi = 1.0f / vpanl;
 
-      for (int k = 0, i = 0; i < vpan; ++i) {
+      for (int k = 0, i = 0; i < panels1; ++i) {
 
          final float v = i * toV;
          final float phi = i * toPhi;
          final float cosPhi = Utils.scNorm(phi);
          final float sinPhi = Utils.scNorm(phi - 0.25f);
-         final float zCoord = vtrad * sinPhi;
+
          final float r = 0.5f + vtrad * cosPhi;
 
-         for (int j = 0; j < vsec; ++j, ++k) {
+         for (int j = 0; j < sectors1; ++j, ++k) {
 
             final float u = j * toU;
             final float theta = j * toTheta;
@@ -921,7 +1029,7 @@ public class Mesh3 extends Mesh {
             coords[k] = new Vec3(
                   r * cosTheta,
                   r * sinTheta,
-                  zCoord);
+                  vtrad * sinPhi);
 
             texCoords[k] = new Vec2(u, v);
 
@@ -932,12 +1040,13 @@ public class Mesh3 extends Mesh {
          }
       }
 
-      final int[][][] faces = new int[2 * vsec * vpan][3][3];
-      final int sliceCount = vpan + 1;
+      final int[][][] faces = new int[2 * vsect *
+            vpanl][3][3];
+      final int sliceCount = vsect + 1;
       int e = 0;
       int f = sliceCount;
-      for (int k = 0, i = 0; i < vpan; ++i) {
-         for (int j = 0; j < vsec; ++j, k += 2) {
+      for (int k = 0, i = 0; i < vpanl; ++i) {
+         for (int j = 0; j < vsect; ++j, k += 2) {
             final int a = e + j;
             final int b = a + 1;
             final int d = f + j;
@@ -1197,53 +1306,6 @@ public class Mesh3 extends Mesh {
 
    @Experimental
    public Mesh3 calcNormals () {
-
-      return this.calcNormalsSmooth();
-   }
-
-   @Experimental
-   public Mesh3 calcNormalsFlat () {
-
-      // TODO: Research...
-      final int len0 = this.faces.length;
-      if (this.normals == null || this.normals.length != len0) {
-         this.normals = new Vec3[len0];
-         for (int h = 0; h < len0; ++h) {
-            this.normals[h] = new Vec3();
-         }
-      }
-
-      final Vec3 sum = new Vec3();
-      final Vec3 ref = Vec3.forward(new Vec3());
-      Vec3 curr = null;
-
-      for (int i = 0; i < len0; ++i) {
-         final int[][] faceIndices = this.faces[i];
-         final int len1 = faceIndices.length;
-         sum.reset();
-
-         for (int j = 0; j < len1; ++j) {
-
-            final int[] faceIndex = faceIndices[j];
-            final int currIndex = faceIndex[0];
-
-            /* Acquire normal and update face index reference to it. */
-            faceIndex[2] = i;
-
-            curr = this.coords[currIndex];
-
-            Vec3.add(sum, curr, sum);
-         }
-
-         Vec3.div(sum, len1, sum);
-         Vec3.crossNorm(sum, ref, this.normals[i]);
-      }
-
-      return this;
-   }
-
-   @Experimental
-   public Mesh3 calcNormalsSmooth () {
 
       if (this.normals == null || this.normals.length != this.coords.length) {
          final int len = this.coords.length;
@@ -1865,7 +1927,10 @@ public class Mesh3 extends Mesh {
 
       sb.append("{ name: \"")
             .append(this.name)
-            .append("\"\n, coords: [");
+            .append('\"').append(',').append(' ')
+            .append('\n')
+            .append("coords: [ ");
+
       if (this.coords != null) {
          sb.append('\n');
          final int len = Math.min(this.coords.length, truncate);
@@ -1873,7 +1938,8 @@ public class Mesh3 extends Mesh {
          for (int i = 0; i < len; ++i) {
             sb.append(this.coords[i].toString(places));
             if (i < last) {
-               sb.append(',').append('\n');
+               sb.append(',').append(' ');
+               sb.append('\n');
             }
          }
       }
@@ -1890,7 +1956,8 @@ public class Mesh3 extends Mesh {
          for (int i = 0; i < len; ++i) {
             sb.append(this.texCoords[i].toString(places));
             if (i < last) {
-               sb.append(',').append('\n');
+               sb.append(',').append(' ');
+               sb.append('\n');
             }
          }
       }
@@ -1907,7 +1974,8 @@ public class Mesh3 extends Mesh {
          for (int i = 0; i < len; ++i) {
             sb.append(this.normals[i].toString(places));
             if (i < last) {
-               sb.append(',').append('\n');
+               sb.append(',').append(' ');
+               sb.append('\n');
             }
          }
       }
@@ -1953,7 +2021,8 @@ public class Mesh3 extends Mesh {
             }
             sb.append(' ').append(']');
             if (i < facesLast) {
-               sb.append(',').append('\n');
+               sb.append(',').append(' ');
+               sb.append('\n');
             }
          }
       }
