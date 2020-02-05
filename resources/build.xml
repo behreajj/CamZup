@@ -82,8 +82,6 @@
 		<echo message="init library ..." />
 	</target>
 
-
-
 	<target name="library.run" depends="library.init">
 		<echo message="building library ..." />
 		<antcall target="generate.structure">
@@ -106,8 +104,6 @@
 		<delete dir="${project.tmp}" />
 	</target>
 
-
-
 	<target name="generate.libprops" if="is.normal">
 		<property name="libprops.destination"
 			location="${project.tmp}/${project.name}/library.properties" />
@@ -116,8 +112,6 @@
 			<param name="file" value="${libprops.destination}" />
 		</antcall>
 	</target>
-
-
 
 	<target name="copyToSketchbook">
 		<echo
@@ -128,7 +122,6 @@
 			<fileset dir="${project.tmp}/${project.name}" />
 		</copy>
 	</target>
-
 
 	<target name="compile">
 		<javac srcdir="${project.tmp}/${project.name}/src"
@@ -178,7 +171,6 @@
 		<antcall target="generate.source.win" />
 		<antcall target="generate.source.nix" />
 	</target>
-
 
 	<target name="generate.source.win" if="is.windows">
 		<echo message="generating source (windows) ..." />
@@ -363,6 +355,7 @@
 		<copy
 			file="${project.dist.version}/web/download/${project.name}.zip"
 			tofile="${project.dist.version}/web/download/${project.name}-${library.version}.zip" />
+		
 		<copy
 			file="${project.dist.version}/web/download/${project.name}.txt"
 			tofile="${project.dist.version}/web/download/${project.name}-${library.version}.txt" />

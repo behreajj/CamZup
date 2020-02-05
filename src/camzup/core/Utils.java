@@ -1130,7 +1130,7 @@ public abstract class Utils implements IUtils {
     */
    public static double div ( final double a, final double b ) {
 
-      return b == 0.0d || b != b ? 0.0d : a / b;
+      return b == 0.0d ? 0.0d : a / b;
    }
 
    /**
@@ -1147,7 +1147,27 @@ public abstract class Utils implements IUtils {
     */
    public static float div ( final float a, final float b ) {
 
-      return b == 0.0f || b != b ? 0.0f : a / b;
+      return b == 0.0f ? 0.0f : a / b;
+   }
+
+   /**
+    * Returns the value if it is within the lower and upper
+    * bounds. Otherwise, returns 0.0 .
+    *
+    * @param value
+    *           the input value
+    * @param lb
+    *           the lower bound
+    * @param ub
+    *           the upper bound
+    * @return the filtered value
+    */
+   public static float filter (
+         final float value,
+         final float lb,
+         final float ub ) {
+
+      return value >= lb && value < ub ? value : 0.0f;
    }
 
    /**
@@ -1226,7 +1246,7 @@ public abstract class Utils implements IUtils {
     */
    public static float fmod ( final float a, final float b ) {
 
-      if (b == 0.0f || b != b) {
+      if (b == 0.0f) {
          return a;
       }
       return a % b;
@@ -1248,9 +1268,6 @@ public abstract class Utils implements IUtils {
     */
    public static float fract ( final float value ) {
 
-      if (value != value) {
-         return 0.0f;
-      }
       return value - (int) value;
    }
 
@@ -1612,7 +1629,7 @@ public abstract class Utils implements IUtils {
     */
    public static float mod ( final float a, final float b ) {
 
-      if (b == 0.0f || b != b) {
+      if (b == 0.0f) {
          return a;
       }
 
@@ -1687,8 +1704,8 @@ public abstract class Utils implements IUtils {
     */
    public static float modDegrees ( final float degrees ) {
 
-      final double degd = degrees;
-      return (float) (degd - 360.0d * Utils.floor(degd * IUtils.ONE_360_D));
+      final double d = degrees;
+      return (float) (d - 360.0d * Utils.floor(d * IUtils.ONE_360_D));
    }
 
    /**
@@ -1705,9 +1722,8 @@ public abstract class Utils implements IUtils {
     */
    public static float modRadians ( final float radians ) {
 
-      final double radd = radians;
-      return (float) (radd
-            - IUtils.TAU_D * Utils.floor(radd * IUtils.ONE_TAU_D));
+      final double r = radians;
+      return (float) (r - IUtils.TAU_D * Utils.floor(r * IUtils.ONE_TAU_D));
 
    }
 
@@ -1814,17 +1830,16 @@ public abstract class Utils implements IUtils {
     */
    public static float quantize ( final float value, final int levels ) {
 
-      if (levels < 2) {
-         return value;
-      }
-
       /*
        * The method used to describe posterize in the Blender
        * manual, round(m x n - 0.5) / (n - 1), should not be used.
        * It will yield output values exceeding the magnitude of
        * input values, e.g. 1.0 will return 2.0 .
        */
-
+      
+      if (levels < 2) {
+         return value;
+      }
       return Utils.floor(0.5f + value * levels) / levels;
    }
 

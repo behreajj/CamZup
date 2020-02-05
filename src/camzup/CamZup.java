@@ -4,6 +4,7 @@ import java.util.HashSet;
 
 import camzup.core.IUtils;
 import camzup.core.Mesh3;
+import camzup.core.MeshEntity3;
 import camzup.core.Quaternion;
 import camzup.core.Random;
 import camzup.core.Utils;
@@ -187,9 +188,11 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-      // Mesh3 m = new Mesh3();
-      // Mesh3.sphere(m);
-      // System.out.println(m.coords.length);
+//      Mesh3 m = new Mesh3();
+//      Mesh3.sphere(32, 16, m);
+//      MeshEntity3 me3 = new MeshEntity3()
+//            .appendMesh(m);
+//      System.out.println(me3.toBlenderCode());
    }
 
    /**
@@ -217,6 +220,5 @@ public class CamZup {
    public CamZup ( final PApplet parent ) {
 
       this.parent = parent;
-
    }
 }

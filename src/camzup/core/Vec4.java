@@ -600,6 +600,34 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
+    * Filters a vector by setting each component to the input
+    * component if it is in bounds and 0.0 if it is out of
+    * bounds.
+    * 
+    * @param v
+    *           the vector
+    * @param lb
+    *           the lower bound
+    * @param ub
+    *           the upper bound
+    * @param target
+    *           the output vector
+    * @return the filtered vector
+    */
+   public static Vec4 filter (
+         final Vec4 v,
+         final Vec4 lb,
+         final Vec4 ub,
+         final Vec4 target ) {
+
+      return target.set(
+            Utils.filter(v.x, lb.x, ub.x),
+            Utils.filter(v.y, lb.y, ub.y),
+            Utils.filter(v.z, lb.z, ub.z),
+            Utils.filter(v.w, lb.w, ub.w));
+   }
+
+   /**
     * Floors each component of the vector.
     *
     * @param v

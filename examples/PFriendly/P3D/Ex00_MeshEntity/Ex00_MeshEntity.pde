@@ -2,7 +2,7 @@ import camzup.pfriendly.*;
 import camzup.core.*;
 
 Zup3 graphics3;
-Vec3 rotAxis = Vec3.up(new Vec3());
+Vec3 rotAxis = new Vec3(0.0, 0.6, 0.8);
 
 MeshEntity3[] entities = {
   new MeshEntity3()
@@ -36,8 +36,8 @@ void setup() {
   Vec3 lb = new Vec3(-width * 0.4, 0.0, 0.0);
   Vec3 ub = new Vec3(width * 0.4, 0.0, 0.0);
   float scl = min(width, height) * 0.25;
-
-  for (int i = 0; i < entities.length; ++i) {
+  int len = entities.length;
+  for (int i = 0; i < len; ++i) {
     float prc = i * 0.25;
     Vec3 v = Vec3.mix(ub, lb, prc, new Vec3());
     MeshEntity3 me3 = entities[i];
@@ -48,12 +48,10 @@ void setup() {
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  //graphics3.ortho();
-  graphics3.perspective();
+  graphics3.ortho();
   graphics3.lights();
   graphics3.background();
   graphics3.origin(75.0, 1.0);
-
   for (MeshEntity3 me3 : entities) {
     me3.rotateBy(0.01, rotAxis);
     graphics3.shape(me3);

@@ -1259,7 +1259,6 @@ public class Color extends Vec4 {
             v.x * mInv + 0.5f,
             v.y * mInv + 0.5f,
             0.5f, 1.0f);
-
    }
 
    /**

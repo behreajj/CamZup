@@ -115,7 +115,6 @@ public class Mesh2 extends Mesh {
 
       final float annul = Utils.clamp(annulus,
             Utils.EPSILON, 1.0f - Utils.EPSILON);
-      final float radius = 0.5f;
 
       final float a1 = Utils.mod1(startAngle * IUtils.ONE_TAU);
       final float b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU);
@@ -133,13 +132,13 @@ public class Mesh2 extends Mesh {
       final Vec2 pureCoord = new Vec2();
 
       for (int k = 0, i = 0, j = 1; k < sctCount; ++k, i += 2, j += 2) {
-         final float theta = Utils.lerpUnclamped(
+         final float theta1 = Utils.lerpUnclamped(
                a1, destAngle1, k * toStep);
 
-         // pureCoord.set(
-         // SinCos.eval(theta) * radius,
-         // SinCos.eval(theta - 0.25f) * radius);
-         Vec2.fromPolar(theta * IUtils.TAU, radius, pureCoord);
+         // Vec2.fromPolar(theta1 * IUtils.TAU, 0.5f, pureCoord);
+         pureCoord.set(
+               0.5f * Utils.scNorm(theta1),
+               0.5f * Utils.scNorm(theta1 - 0.5f));
 
          coords[i] = new Vec2(pureCoord);
          final Vec2 v1 = coords[j] = Vec2.mul(
@@ -425,6 +424,7 @@ public class Mesh2 extends Mesh {
 
       int[][][] faces;
       final int len = rval * cval;
+
       switch (poly) {
 
          case TRI:

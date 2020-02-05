@@ -1226,6 +1226,32 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
+    * Filters a vector by setting each component to the input
+    * component if it is in bounds and 0.0 if it is out of
+    * bounds.
+    * 
+    * @param v
+    *           the vector
+    * @param lb
+    *           the lower bound
+    * @param ub
+    *           the upper bound
+    * @param target
+    *           the output vector
+    * @return the filtered vector
+    */
+   public static Vec2 filter (
+         final Vec2 v,
+         final Vec2 lb,
+         final Vec2 ub,
+         final Vec2 target ) {
+
+      return target.set(
+            Utils.filter(v.x, lb.x, ub.x),
+            Utils.filter(v.y, lb.y, ub.y));
+   }
+
+   /**
     * Floors each component of the vector.
     *
     * @param v
@@ -1370,9 +1396,15 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final float radius,
          final Vec2 target ) {
 
+      /*
+       * return target.set( radius * Utils.cos(heading), radius *
+       * Utils.sin(heading));
+       */
+
+      final float nrm = heading * IUtils.ONE_TAU;
       return target.set(
-            radius * Utils.cos(heading),
-            radius * Utils.sin(heading));
+            radius * Utils.scNorm(nrm),
+            radius * Utils.scNorm(nrm - 0.25f));
    }
 
    /**
@@ -1395,7 +1427,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
        */
 
       final float nrm = heading * IUtils.ONE_TAU;
-      return target.set(Utils.scNorm(nrm), Utils.scNorm(nrm - 0.25f));
+      return target.set(
+            Utils.scNorm(nrm),
+            Utils.scNorm(nrm - 0.25f));
    }
 
    /**

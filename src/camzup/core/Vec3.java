@@ -1034,7 +1034,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * A specialized form of the cross product which normalizes
     * the result. This is to facilitate the creation of lookAt
     * matrices.
-    * 
+    *
     * Crossed orthonormal vectors are as follows:
     * <ul>
     * <li>right x forward = up, <br>
@@ -1364,6 +1364,33 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    public static Vec3 down ( final Vec3 target ) {
 
       return target.set(0.0f, 0.0f, -1.0f);
+   }
+
+   /**
+    * Filters a vector by setting each component to the input
+    * component if it is in bounds and 0.0 if it is out of
+    * bounds.
+    *
+    * @param v
+    *           the vector
+    * @param lb
+    *           the lower bound
+    * @param ub
+    *           the upper bound
+    * @param target
+    *           the output vector
+    * @return the filtered vector
+    */
+   public static Vec3 filter (
+         final Vec3 v,
+         final Vec3 lb,
+         final Vec3 ub,
+         final Vec3 target ) {
+
+      return target.set(
+            Utils.filter(v.x, lb.x, ub.x),
+            Utils.filter(v.y, lb.y, ub.y),
+            Utils.filter(v.z, lb.z, ub.z));
    }
 
    /**

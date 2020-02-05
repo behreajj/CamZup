@@ -603,8 +603,6 @@ public abstract class Simplex {
          final float w,
          final int seed,
          final Vec4 deriv ) {
-      
-      // TODO: IS there a problem with the output of this evaluation?
 
       final float s = (x + y + z + w) * Simplex.F4;
       final int i = Utils.floorToInt(x + s);
@@ -618,9 +616,12 @@ public abstract class Simplex {
       final float z0 = z - (k - t);
       final float w0 = w - (l - t);
 
-      final int[] sc = Simplex.PERMUTE[(x0 > y0 ? 0x20 : 0)
-            | (x0 > z0 ? 0x10 : 0) | (y0 > z0 ? 0x8 : 0)
-            | (x0 > w0 ? 0x4 : 0) | (y0 > w0 ? 0x2 : 0) | (z0 > w0 ? 0x1 : 0)];
+      final int[] sc = Simplex.PERMUTE[(x0 > y0 ? 32 : 0) |
+            (x0 > z0 ? 16 : 0) |
+            (y0 > z0 ? 8 : 0) |
+            (x0 > w0 ? 4 : 0) |
+            (y0 > w0 ? 2 : 0) |
+            (z0 > w0 ? 1 : 0)];
       final int sc0 = sc[0];
       final int sc1 = sc[1];
       final int sc2 = sc[2];
@@ -1772,8 +1773,6 @@ public abstract class Simplex {
       final float x1 = x0 - i1 + Simplex.G2;
       final float y1 = y0 - j1 + Simplex.G2;
 
-      // TODO: Can the sub1 plus1 be incorporated into the
-      // constant?
       final float x2 = x0 - 1.0f + Simplex.G2_2;
       final float y2 = y0 - 1.0f + Simplex.G2_2;
 
@@ -1871,15 +1870,8 @@ public abstract class Simplex {
          final int seed,
          final Vec3 deriv ) {
 
-      /*
-       * return Simplex.flow(x, y, z, Utils.cos(radians),
-       * Utils.sin(radians), seed, deriv);
-       */
-
-      final float nrm = radians * IUtils.ONE_TAU;
-      return Simplex.flow(x, y, z,
-            Utils.scNorm(nrm), Utils.scNorm(nrm - 0.25f),
-            seed, deriv);
+      return Simplex.flow(x, y, z, Utils.cos(radians),
+            Utils.sin(radians), seed, deriv);
    }
 
    /**
@@ -1928,15 +1920,8 @@ public abstract class Simplex {
          final int seed,
          final Vec2 deriv ) {
 
-      /*
-       * return Simplex.flow(x, y, Utils.cos(radians),
-       * Utils.sin(radians), seed, deriv);
-       */
-
-      final float nrm = radians * IUtils.ONE_TAU;
-      return Simplex.flow(x, y,
-            Utils.scNorm(nrm), Utils.scNorm(nrm - 0.25f),
-            seed, deriv);
+      return Simplex.flow(x, y, Utils.cos(radians),
+            Utils.sin(radians), seed, deriv);
    }
 
    /**

@@ -314,6 +314,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
             .append("    mat_name = materials[idx][\"name\"]\n")
             .append("    mesh_data.materials.append(d_mats[mat_name])\n")
             .append("    mesh_obj = d_objs.new(name, mesh_data)\n")
+            .append("    mesh_obj.rotation_mode = \"QUATERNION\"\n")
             .append("    scene_objs.link(mesh_obj)\n")
             .append("    mesh_obj.parent = parent_obj\n");
 
