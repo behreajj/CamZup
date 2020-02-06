@@ -455,10 +455,7 @@ public class Curve3 extends Curve
       // maybe get rid of fornorm and backnorm and reuse forward
       // and back?
       final Vec3 back = new Vec3();
-      final Vec3 backNorm = new Vec3();
-
       final Vec3 forward = new Vec3();
-      final Vec3 forNorm = new Vec3();
 
       final Vec3 dir0 = new Vec3();
       final Vec3 dir1 = new Vec3();
@@ -480,16 +477,16 @@ public class Curve3 extends Curve
 
             Vec3.sub(prev.coord, currCoord, back);
             backDist = Vec3.mag(back);
-            Vec3.normalize(back, backNorm);
-            Vec3.add(dir0, backNorm, dir1);
+            Vec3.normalize(back, back);
+            Vec3.add(dir0, back, dir1);
 
             final Knot3 next = knots.get(
                   (i + 1) % knotLength);
 
             Vec3.sub(next.coord, currCoord, forward);
             foreDist = -Vec3.mag(forward);
-            Vec3.normalize(forward, forNorm);
-            Vec3.sub(dir1, forNorm, dir2);
+            Vec3.normalize(forward, forward);
+            Vec3.sub(dir1, forward, dir2);
 
          } else {
 
@@ -499,8 +496,8 @@ public class Curve3 extends Curve
 
                Vec3.sub(prev.coord, currCoord, back);
                backDist = Vec3.mag(back);
-               Vec3.normalize(back, backNorm);
-               Vec3.add(dir0, backNorm, dir1);
+               Vec3.normalize(back, back);
+               Vec3.add(dir0, back, dir1);
             }
 
             final int nextIndex = i + 1;
@@ -509,8 +506,8 @@ public class Curve3 extends Curve
 
                Vec3.sub(next.coord, currCoord, forward);
                foreDist = -Vec3.mag(forward);
-               Vec3.normalize(forward, forNorm);
-               Vec3.sub(dir1, forNorm, dir2);
+               Vec3.normalize(forward, forward);
+               Vec3.sub(dir1, forward, dir2);
             }
          }
 

@@ -141,8 +141,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final Transform2 transform,
          final Transform.Order trOrder ) {
 
-      // FIXME: Stroke cap and join issue?
-
       Knot2 currKnot = null;
       Knot2 prevKnot = null;
       Vec2 coord = null;
@@ -1217,7 +1215,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             h = Utils.abs(y1);
       }
 
-      // FIXME: Could issue with stroke weight start here??
+      // TODO: Could issue with stroke weight start here??
       final boolean oldFill = this.fill;
 
       switch (mode) {

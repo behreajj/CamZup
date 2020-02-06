@@ -121,8 +121,6 @@ public class Mat3 extends Matrix {
          final Vec2 trans,
          final Vec2 scale ) {
 
-      // TODO: Add decompose to a transform2 option?
-
       final float xMag = Utils.hypot(m.m00, m.m10);
       final float yMag = Utils.hypot(m.m01, m.m11);
       final float det = Mat3.determinant(m);

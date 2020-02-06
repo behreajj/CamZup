@@ -129,8 +129,6 @@ public class Mat4 extends Matrix {
          final Quaternion rot,
          final Vec3 scale ) {
 
-      // TODO: Add decompose to a transform2 option?
-
       final float xMag = Utils.hypot(m.m00, m.m10, m.m20);
       final float yMag = Utils.hypot(m.m01, m.m11, m.m21);
       final float zMag = Utils.hypot(m.m02, m.m12, m.m22);

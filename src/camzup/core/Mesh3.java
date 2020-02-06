@@ -338,7 +338,7 @@ public class Mesh3 extends Mesh {
 
       // TODO: Creates a seam. Needs to switch to using modulo in
       // faces, and to use one last longitude.
-      
+
       // TODO: Redo concept of thickness / tube ratio...
 
       final int vsect = sectors < 3 ? 3 : sectors;
@@ -417,7 +417,6 @@ public class Mesh3 extends Mesh {
       target.name = "Torus";
       return target.set(faces, coords, texCoords, normals);
    }
-
 
    /**
     * Calculates the dimensions of an Axis-Aligned Bounding Box

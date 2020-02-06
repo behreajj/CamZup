@@ -299,15 +299,15 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
             .append("        [],\n")
             .append("        face_idcs)\n")
             .append("    mesh_data.validate()\n");
-            
-            if(useSmooth) {
-               result.append("    mesh_data.use_auto_smooth = True\n")
-                     .append("    polys = mesh_data.polygons\n")
-                     .append("    for poly in polys:\n")
-                     .append("        poly.use_smooth = True\n");
-            }
 
-            result.append("    idx = mesh[\"material_index\"]\n")
+      if (useSmooth) {
+         result.append("    mesh_data.use_auto_smooth = True\n")
+               .append("    polys = mesh_data.polygons\n")
+               .append("    for poly in polys:\n")
+               .append("        poly.use_smooth = True\n");
+      }
+
+      result.append("    idx = mesh[\"material_index\"]\n")
             .append("    mat_name = materials[idx][\"name\"]\n")
             .append("    mesh_data.materials.append(d_mats[mat_name])\n")
             .append("    mesh_obj = d_objs.new(name, mesh_data)\n")

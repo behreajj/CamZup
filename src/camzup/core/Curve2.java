@@ -883,11 +883,10 @@ public class Curve2 extends Curve
       }
 
       // TODO: Can this be optimized to use fewer temp vectors?
+      // maybe get rid of fornorm and backnorm and reuse forward
+      // and back?
       final Vec2 back = new Vec2();
-      final Vec2 backNorm = new Vec2();
-
       final Vec2 forward = new Vec2();
-      final Vec2 forNorm = new Vec2();
 
       final Vec2 dir0 = new Vec2();
       final Vec2 dir1 = new Vec2();
@@ -909,16 +908,16 @@ public class Curve2 extends Curve
 
             Vec2.sub(prev.coord, currCoord, back);
             backDist = Vec2.mag(back);
-            Vec2.normalize(back, backNorm);
-            Vec2.add(dir0, backNorm, dir1);
+            Vec2.normalize(back, back);
+            Vec2.add(dir0, back, dir1);
 
             final Knot2 next = knots.get(
                   (i + 1) % knotLength);
 
             Vec2.sub(next.coord, currCoord, forward);
             foreDist = -Vec2.mag(forward);
-            Vec2.normalize(forward, forNorm);
-            Vec2.sub(dir1, forNorm, dir2);
+            Vec2.normalize(forward, forward);
+            Vec2.sub(dir1, forward, dir2);
 
          } else {
 
@@ -928,8 +927,8 @@ public class Curve2 extends Curve
 
                Vec2.sub(prev.coord, currCoord, back);
                backDist = Vec2.mag(back);
-               Vec2.normalize(back, backNorm);
-               Vec2.add(dir0, backNorm, dir1);
+               Vec2.normalize(back, back);
+               Vec2.add(dir0, back, dir1);
             }
 
             final int nextIndex = i + 1;
@@ -938,8 +937,8 @@ public class Curve2 extends Curve
 
                Vec2.sub(next.coord, currCoord, forward);
                foreDist = -Vec2.mag(forward);
-               Vec2.normalize(forward, forNorm);
-               Vec2.sub(dir1, forNorm, dir2);
+               Vec2.normalize(forward, forward);
+               Vec2.sub(dir1, forward, dir2);
             }
          }
 
