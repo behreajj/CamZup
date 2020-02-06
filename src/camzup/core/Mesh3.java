@@ -33,7 +33,7 @@ public class Mesh3 extends Mesh {
       return target;
    }
 
-   public static Mesh3 arc (
+   static Mesh3 arc (
          final float majorStart,
          final float majorStop,
          final float minorStart,
@@ -43,12 +43,17 @@ public class Mesh3 extends Mesh {
          final int panels,
          final Mesh3 target ) {
 
-      final float vtrad = Utils.max(Utils.EPSILON, thickness);
+      // if(Utils.approx(majorStop - majorStart, 0.00139f)) {
+      // }
+
+      // if(Utils.approx(minorStop - minorStart, 0.00139f)) {
+      // }
 
       /* Sector Arc */
       final float a1 = Utils.mod1(majorStart * IUtils.ONE_TAU);
       final float b1 = Utils.mod1(majorStop * IUtils.ONE_TAU);
-      final float arcLen1 = Utils.mod1(b1 - a1);
+      final float df1 = b1 - a1;
+      final float arcLen1 = Utils.mod1(df1);
       final float destAngle1 = a1 + arcLen1;
       final int vsect = Utils.ceilToInt(
             1 + (sectors < 3 ? 3 : sectors) * arcLen1);
@@ -56,7 +61,8 @@ public class Mesh3 extends Mesh {
       /* Panel Arc */
       final float a0 = Utils.mod1(minorStart * IUtils.ONE_TAU);
       final float b0 = Utils.mod1(minorStop * IUtils.ONE_TAU);
-      final float arcLen0 = Utils.mod1(b0 - a0);
+      final float df0 = b0 - a0;
+      final float arcLen0 = Utils.mod1(df0);
       final float destAngle0 = a0 + arcLen0;
       final int vpanl = Utils.ceilToInt(
             1 + (panels < 3 ? 3 : panels) * arcLen0);
@@ -72,6 +78,9 @@ public class Mesh3 extends Mesh {
       final float toU = 1.0f / vsect;
       final float toV = 1.0f / vpanl;
 
+      final float vtrad = 0.5f * Utils.max(Utils.EPSILON, thickness);
+      final float ratio = vtrad + vtrad;
+
       for (int k = 0, i = 0; i < panels1; ++i) {
 
          final float v = i * toV;
@@ -79,8 +88,7 @@ public class Mesh3 extends Mesh {
                a0, destAngle0, v);
          final float cosPhi = Utils.scNorm(phi);
          final float sinPhi = Utils.scNorm(phi - 0.25f);
-
-         final float r = 0.5f + vtrad * cosPhi;
+         final float r = 1.0f + ratio * cosPhi;
 
          for (int j = 0; j < sectors1; ++j, ++k) {
 
@@ -93,7 +101,7 @@ public class Mesh3 extends Mesh {
             coords[k] = new Vec3(
                   r * cosTheta,
                   r * sinTheta,
-                  vtrad * sinPhi);
+                  ratio * sinPhi);
 
             texCoords[k] = new Vec2(u, v);
 
@@ -130,6 +138,286 @@ public class Mesh3 extends Mesh {
       target.name = "Arc";
       return target.set(faces, coords, texCoords, normals);
    }
+
+   static Mesh3 arc (
+         final float majorStart,
+         final float majorStop,
+         final float minorStart,
+         final float minorStop,
+         final float thickness,
+         final Mesh3 target ) {
+
+      return Mesh3.arc(majorStart, majorStop,
+            minorStart, minorStop,
+            thickness,
+            Mesh.DEFAULT_CIRCLE_SECTORS,
+            Mesh.DEFAULT_CIRCLE_SECTORS >> 1,
+            target);
+   }
+
+   static Mesh3 arc (
+         final float majorStart,
+         final float majorStop,
+         final float minorStart,
+         final float minorStop,
+         final Mesh3 target ) {
+
+      return Mesh3.arc(majorStart, majorStop,
+            minorStart, minorStop, 0.15f, target);
+   }
+
+   @Experimental
+   static Mesh3 cube (
+         final int cols, /* x */
+         final int rows, /* y */
+         final int layers, /* z */
+         final Mesh3 target ) {
+
+      final int lval = layers < 1 ? 1 : layers;
+      final int rval = rows < 1 ? 1 : rows;
+      final int cval = cols < 1 ? 1 : cols;
+
+      final int lval1 = lval + 1;
+      final int rval1 = rval + 1;
+      final int cval1 = cval + 1;
+
+      final float hToStep = 1.0f / lval;
+      final float iToStep = 1.0f / rval;
+      final float jToStep = 1.0f / cval;
+
+      /* Calculate x values in separate loop. */
+      final float[] us = new float[cval1];
+      final float[] xs = new float[cval1];
+      for (int j = 0; j < cval1; ++j) {
+         final float u = us[j] = j * jToStep;
+         xs[j] = u - 0.5f;
+      }
+
+      /* Calculate y values in separate loop. */
+      final float[] vs = new float[rval1];
+      final float[] ys = new float[rval1];
+      for (int i = 0; i < rval1; ++i) {
+         final float v = vs[i] = i * iToStep;
+         ys[i] = v - 0.5f;
+      }
+
+      /* Calculate z values in separate loop. */
+      final float[] ws = new float[lval1];
+      final float[] zs = new float[lval1];
+      for (int h = 0; h < lval1; ++h) {
+         final float w = ws[h] = h * hToStep;
+         zs[h] = w - 0.5f;
+      }
+
+      final int lrlen0 = lval * rval;
+      final int rclen0 = rval * cval;
+      final int cllen0 = cval * lval;
+
+      final int lrlen1 = lval1 * rval1;
+      final int rclen1 = rval1 * cval1;
+      final int cllen1 = cval1 * lval1;
+
+      final int lrlen2 = lrlen1 + lrlen1; /* Left & Right */
+      final int rclen2 = rclen1 + rclen1; /* Front & Back */
+      final int cllen2 = cllen1 + cllen1; /* Top & Bottom */
+      final int totalLen = lrlen2 + rclen2 + cllen2;
+
+      final Vec3[] coords = new Vec3[totalLen];
+      final Vec2[] texCoords = new Vec2[totalLen];
+      final Vec3[] normals = new Vec3[] {
+            /* 0 */ new Vec3(-1.0f, 0.0f, 0.0f),
+            /* 1 */ new Vec3(1.0f, 0.0f, 0.0f),
+            /* 2 */ new Vec3(0.0f, 0.0f, -1.0f),
+            /* 3 */ new Vec3(0.0f, 0.0f, 1.0f),
+            /* 4 */ new Vec3(0.0f, -1.0f, 0.0f),
+            /* 5 */ new Vec3(0.0f, 1.0f, 0.0f),
+      };
+
+      final int totalfaces = lrlen0 * 2 + rclen0 * 2 + cllen0 * 2;
+      final int[][][] faces = new int[totalfaces][4][3];
+
+      int idx0 = 0;
+
+      /* Left & Right */
+      final int lrOff0 = idx0;
+      final int lrOff1 = lrOff0 + lrlen1;
+
+      for (int h = 0; h < lval1; ++h) {
+
+         final float z = zs[h];
+         final float w = ws[h];
+
+         for (int i = 0; i < rval1; ++i) {
+
+            final float y = ys[i];
+            final float v = vs[i];
+
+            final int leftIdx = lrOff0 + idx0;
+            final int rightIdx = lrOff1 + idx0;
+
+            /* Left */
+            coords[leftIdx] = new Vec3(-0.5f, y, z);
+            texCoords[leftIdx] = new Vec2(w, v);
+
+            /* Right */
+            coords[rightIdx] = new Vec3(0.5f, y, z);
+            texCoords[rightIdx] = new Vec2(w, v);
+
+            idx0++;
+         }
+      }
+
+      /* Front & Back */
+      final int rcOff0 = idx0;
+      final int rcOff1 = rcOff0 + rclen1;
+
+      for (int i = 0; i < rval1; ++i) {
+
+         final float y = ys[i];
+         final float v = vs[i];
+
+         for (int j = 0; j < cval1; ++j) {
+
+            final float x = xs[j];
+            final float u = us[j];
+
+            final int backIdx = rcOff0 + idx0;
+            final int frontIdx = rcOff1 + idx0;
+
+            /* Back */
+            coords[backIdx] = new Vec3(x, y, -0.5f);
+            texCoords[backIdx] = new Vec2(u, v);
+
+            /* Front */
+            coords[frontIdx] = new Vec3(x, y, 0.5f);
+            texCoords[frontIdx] = new Vec2(u, v);
+
+            idx0++;
+         }
+      }
+
+      /* Top & Bottom */
+      final int clOff0 = idx0;
+      final int clOff1 = clOff0 + cllen1;
+
+      for (int j = 0; j < cval1; ++j) {
+
+         final float x = xs[j];
+         final float u = us[j];
+
+         for (int h = 0; h < lval1; ++h) {
+
+            final float z = zs[h];
+            final float w = ws[h];
+
+            final int bottomIdx = clOff0 + idx0;
+            final int topIdx = clOff1 + idx0;
+
+            /* Bottom */
+            coords[bottomIdx] = new Vec3(x, -0.5f, z);
+            texCoords[bottomIdx] = new Vec2(u, w);
+
+            /* Top */
+            coords[topIdx] = new Vec3(x, 0.5f, z);
+            texCoords[topIdx] = new Vec2(u, w);
+
+            idx0++;
+         }
+      }
+
+      target.name = "Cube";
+      return target.set(faces, coords, texCoords, normals);
+   }
+
+   @Experimental
+   static Mesh3 torus (
+         final float thickness,
+         final int sectors,
+         final int panels,
+         final Mesh3 target ) {
+
+      // TODO: Creates a seam. Needs to switch to using modulo in
+      // faces, and to use one last longitude.
+      
+      // TODO: Redo concept of thickness / tube ratio...
+
+      final int vsect = sectors < 3 ? 3 : sectors;
+      final int vpanl = panels < 3 ? 3 : panels;
+
+      final int panels1 = vpanl + 1;
+      final int sectors1 = vsect + 1;
+      final int len = panels1 * sectors1;
+
+      final Vec3[] coords = new Vec3[len];
+      final Vec2[] texCoords = new Vec2[len];
+      final Vec3[] normals = new Vec3[len];
+
+      final float toU = 1.0f / vsect;
+      final float toV = 1.0f / vpanl;
+
+      final float toTheta = 1.0f / vsect;
+      final float toPhi = 1.0f / vpanl;
+
+      final float vtrad = 0.5f * Utils.max(Utils.EPSILON, thickness);
+      final float ratio = vtrad + vtrad;
+
+      for (int k = 0, i = 0; i < panels1; ++i) {
+
+         final float v = i * toV;
+         final float phi = i * toPhi;
+         final float cosPhi = Utils.scNorm(phi);
+         final float sinPhi = Utils.scNorm(phi - 0.25f);
+
+         final float r = 1.0f + ratio * cosPhi;
+
+         for (int j = 0; j < sectors1; ++j, ++k) {
+
+            final float u = j * toU;
+            final float theta = j * toTheta;
+            final float cosTheta = Utils.scNorm(theta);
+            final float sinTheta = Utils.scNorm(theta - 0.25f);
+
+            coords[k] = new Vec3(
+                  r * cosTheta,
+                  r * sinTheta,
+                  ratio * sinPhi);
+
+            texCoords[k] = new Vec2(u, v);
+
+            normals[k] = new Vec3(
+                  cosPhi * cosTheta,
+                  cosPhi * sinTheta,
+                  sinPhi);
+         }
+      }
+
+      final int[][][] faces = new int[2 * vsect *
+            vpanl][3][3];
+      final int sliceCount = vsect + 1;
+      int e = 0;
+      int f = sliceCount;
+      for (int k = 0, i = 0; i < vpanl; ++i) {
+         for (int j = 0; j < vsect; ++j, k += 2) {
+            final int a = e + j;
+            final int b = a + 1;
+            final int d = f + j;
+            final int c = d + 1;
+
+            faces[k] = new int[][] {
+                  { a, a, a }, { b, b, b }, { d, d, d } };
+
+            faces[k + 1] = new int[][] {
+                  { d, d, d }, { b, b, b }, { c, c, c } };
+         }
+
+         e += sliceCount;
+         f += sliceCount;
+      }
+
+      target.name = "Torus";
+      return target.set(faces, coords, texCoords, normals);
+   }
+
 
    /**
     * Calculates the dimensions of an Axis-Aligned Bounding Box
@@ -980,125 +1268,6 @@ public class Mesh3 extends Mesh {
 
       target.name = "Tetrahedron";
       return target.set(faces, coords, texCoords, normals);
-   }
-
-   @Experimental
-   public static Mesh3 torus (
-         final float thickness,
-         final int sectors,
-         final int panels,
-         final Mesh3 target ) {
-
-      // TODO: Creates a seam. Needs to switch to using modulo in
-      // faces, and to use one last longitude.
-
-      final float vtrad = Utils.max(Utils.EPSILON, thickness);
-      final int vsect = sectors < 3 ? 3 : sectors;
-      final int vpanl = panels < 3 ? 3 : panels;
-
-      final int panels1 = vpanl + 1;
-      final int sectors1 = vsect + 1;
-      final int len = panels1 * sectors1;
-
-      final Vec3[] coords = new Vec3[len];
-      final Vec2[] texCoords = new Vec2[len];
-      final Vec3[] normals = new Vec3[len];
-
-      final float toU = 1.0f / vsect;
-      final float toV = 1.0f / vpanl;
-
-      final float toTheta = 1.0f / vsect;
-      final float toPhi = 1.0f / vpanl;
-
-      for (int k = 0, i = 0; i < panels1; ++i) {
-
-         final float v = i * toV;
-         final float phi = i * toPhi;
-         final float cosPhi = Utils.scNorm(phi);
-         final float sinPhi = Utils.scNorm(phi - 0.25f);
-
-         final float r = 0.5f + vtrad * cosPhi;
-
-         for (int j = 0; j < sectors1; ++j, ++k) {
-
-            final float u = j * toU;
-            final float theta = j * toTheta;
-            final float cosTheta = Utils.scNorm(theta);
-            final float sinTheta = Utils.scNorm(theta - 0.25f);
-
-            coords[k] = new Vec3(
-                  r * cosTheta,
-                  r * sinTheta,
-                  vtrad * sinPhi);
-
-            texCoords[k] = new Vec2(u, v);
-
-            normals[k] = new Vec3(
-                  cosPhi * cosTheta,
-                  cosPhi * sinTheta,
-                  sinPhi);
-         }
-      }
-
-      final int[][][] faces = new int[2 * vsect *
-            vpanl][3][3];
-      final int sliceCount = vsect + 1;
-      int e = 0;
-      int f = sliceCount;
-      for (int k = 0, i = 0; i < vpanl; ++i) {
-         for (int j = 0; j < vsect; ++j, k += 2) {
-            final int a = e + j;
-            final int b = a + 1;
-            final int d = f + j;
-            final int c = d + 1;
-
-            faces[k] = new int[][] {
-                  { a, a, a }, { b, b, b }, { d, d, d } };
-
-            faces[k + 1] = new int[][] {
-                  { d, d, d }, { b, b, b }, { c, c, c } };
-         }
-
-         e += sliceCount;
-         f += sliceCount;
-      }
-
-      target.name = "Torus";
-      return target.set(faces, coords, texCoords, normals);
-   }
-
-   /**
-    * Creates a torus.
-    *
-    * @param thickness
-    *           the tube thickness
-    * @param target
-    *           the output mesh
-    * @return the torus
-    */
-   public static Mesh3 torus (
-         final float thickness,
-         final Mesh3 target ) {
-
-      return Mesh3.torus(thickness,
-            Mesh.DEFAULT_CIRCLE_SECTORS,
-            Mesh.DEFAULT_CIRCLE_SECTORS >> 1,
-            target);
-   }
-
-   /**
-    * Creates a torus.
-    *
-    * @param target
-    *           the output mesh
-    * @return the torus
-    */
-   public static Mesh3 torus ( final Mesh3 target ) {
-
-      return Mesh3.torus(0.15f,
-            Mesh.DEFAULT_CIRCLE_SECTORS,
-            Mesh.DEFAULT_CIRCLE_SECTORS >> 1,
-            target);
    }
 
    /**

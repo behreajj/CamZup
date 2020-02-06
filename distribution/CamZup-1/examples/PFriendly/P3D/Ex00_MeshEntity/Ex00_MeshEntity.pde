@@ -7,7 +7,7 @@ Vec3 rotAxis = new Vec3(0.0, 0.6, 0.8);
 MeshEntity3[] entities = {
   new MeshEntity3()
   .appendMaterial(new MaterialSolid().setFill(#e8455d))
-  .appendMesh(Mesh3.tetrahedron(new Mesh3())),
+  .appendMesh(Mesh3.sphere(new Mesh3())),
 
   new MeshEntity3()
   .appendMaterial(new MaterialSolid().setFill(#ffabb1))
