@@ -96,7 +96,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    @Chainable
    public MeshEntity2 appendMaterial ( final MaterialSolid material ) {
 
-      // TODO: Guard against duplicates?
       if (material != null) {
          this.materials.add(material);
       }
@@ -129,7 +128,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    @Chainable
    public MeshEntity2 appendMesh ( final Mesh2 mesh ) {
 
-      // TODO: Guard against duplicates?
       if (mesh != null) {
          this.meshes.add(mesh);
 
@@ -355,6 +353,56 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
       }
 
       result.append("</g>");
+      return result.toString();
+   }
+
+   @Experimental
+   public String toUnityCode () {
+
+      final StringBuilder vs = new StringBuilder()
+            .append("Vector3[] vs = { \n");
+
+      final StringBuilder vts = new StringBuilder()
+            .append("Vector2[] vts = { \n");
+
+      final StringBuilder vns = new StringBuilder()
+            .append("Vector3[] vns = { \n");
+
+      final StringBuilder tris = new StringBuilder()
+            .append("int[] tris = { \n");
+
+      final Iterator < Mesh2 > meshItr = this.meshes.iterator();
+      while (meshItr.hasNext()) {
+         meshItr.next().toUnityCode(vs, vts, vns, tris);
+      }
+
+      vs.append(' ').append('}').append(';');
+      vts.append(' ').append('}').append(';');
+      vns.append(' ').append('}').append(';');
+      tris.append(' ').append('}').append(';');
+
+      final StringBuilder result = new StringBuilder();
+      result.append("using UnityEngine;\n\npublic class Mesh")
+            .append(this.name)
+            .append(" : MonoBehaviour\n{ \n    ")
+            .append(vs.toString())
+            .append("\n\n    ")
+            .append(vts.toString())
+            .append("\n\n    ")
+            .append(vns.toString())
+            .append("\n\n    ")
+            .append(tris.toString())
+            .append("\n\n    void Start()\n    {\n")
+            .append("        Mesh mesh = new Mesh();\n")
+            .append("        GetComponent<MeshFilter>().mesh = mesh;\n")
+            .append("        mesh.vertices = vs;\n")
+            .append("        mesh.uv = vts;\n")
+            .append("        mesh.normals = vns;\n")
+            .append("        mesh.triangles = tris;\n")
+            .append("        mesh.RecalculateTangents();\n")
+            .append("    }");
+
+      result.append('\n').append('}');
       return result.toString();
    }
 }

@@ -2635,8 +2635,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final Vec3 normal,
          final Vec3 target ) {
 
-      // TODO: Needs testing.
-
       final float nMSq = Vec3.magSq(normal);
       if (Utils.abs(nMSq) < Utils.EPSILON) {
          return target.reset();
@@ -3453,6 +3451,20 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
             .append(Utils.toFixed(this.z, 6))
             .append(')')
             .toString();
+   }
+
+   @Experimental
+   String toUnityCode () {
+
+      StringBuilder sb = new StringBuilder(96);
+      sb.append("new Vector3(")
+            .append(this.x)
+            .append("f, ")
+            .append(this.y)
+            .append("f, ")
+            .append(this.z)
+            .append("f)");
+      return sb.toString();
    }
 
    /**

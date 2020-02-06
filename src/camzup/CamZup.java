@@ -3,7 +3,9 @@ package camzup;
 import java.util.HashSet;
 
 import camzup.core.IUtils;
+import camzup.core.Mesh2;
 import camzup.core.Mesh3;
+import camzup.core.MeshEntity2;
 import camzup.core.MeshEntity3;
 import camzup.core.Quaternion;
 import camzup.core.Random;
@@ -387,6 +389,16 @@ public class CamZup {
       // me.appendMesh(m);
       // String str = me.toBlenderCode();
       // System.out.println(str);
+      
+//      Mesh2 m = new Mesh2();
+//      Mesh2.polygon(5,Mesh2.PolyType.TRI, m);
+//      MeshEntity2 me = new MeshEntity2().appendMesh(m);
+//      System.out.println(me.toUnityCode());
+      
+      Vec3 i = new Vec3(1,2,3);
+      Vec3 n = new Vec3(0.0f, 0.6f, 0.8f);
+      Vec3 r = Vec3.reflect(i, n, new Vec3());
+      System.out.println(r);
    }
 
    /**

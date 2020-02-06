@@ -1062,8 +1062,6 @@ public abstract class Simplex {
       Vec2 g1 = Simplex.ZERO_2;
       Vec2 g2 = Simplex.ZERO_2;
 
-      // TODO: Research whether or not these conditionals can be
-      // changed to t0 > 0.0f instead of t0 >= 0.0f.
       final float t0 = 0.5f - (x0 * x0 + y0 * y0);
       if (t0 >= 0.0f) {
          g0 = Simplex.gradient2(i, j, seed);

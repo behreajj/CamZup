@@ -97,10 +97,9 @@ public abstract class Sdf {
       final float arcLen = 0.5f * Utils.mod1(b - a);
       final float arcOff = a + arcLen;
 
-      // TODO: Reintroduce fast sincos approx.
       return Sdf.arc(point,
-            Utils.cos(arcOff), Utils.sin(arcOff),
-            Utils.cos(arcLen), Utils.sin(arcLen),
+            Utils.scNorm(arcOff),Utils.scNorm(arcOff - 0.25f),
+            Utils.scNorm(arcLen),Utils.scNorm(arcLen - 0.25f),
             bounds, weight);
    }
 

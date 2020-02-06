@@ -1005,6 +1005,47 @@ public class Mesh2 extends Mesh {
       return result.toString();
    }
 
+   void toUnityCode (
+         final StringBuilder vs,
+         final StringBuilder vts,
+         final StringBuilder vns,
+         final StringBuilder tris ) {
+
+      final int len0 = this.faces.length;
+      for (int k = 0, i = 0; i < len0; ++i) {
+
+         final int[][] fs0 = this.faces[i];
+         final int len1 = fs0.length;
+
+         for (int j = 0; j < len1; ++j, ++k) {
+
+            final int[] fs1 = fs0[j];
+
+            final Vec2 v = this.coords[fs1[0]];
+            final Vec2 vt = this.texCoords[fs1[1]];
+
+            vs.append(v.toUnityCode(0.0f));
+            vts.append(vt.toUnityCode());
+            vns.append("new Vector3(0.0f, 0.0f, 1.0f)");
+            tris.append(k);
+
+            if (j < len1 - 1) {
+               vs.append(',').append(' ').append('\n');
+               vts.append(',').append(' ').append('\n');
+               vns.append(',').append(' ').append('\n');
+               tris.append(',').append(' ');
+            }
+         }
+
+         if (i < len0 - 1) {
+            vs.append(',').append(' ').append('\n');
+            vts.append(',').append(' ').append('\n');
+            vns.append(',').append(' ').append('\n');
+            tris.append(',').append(' ').append('\n');
+         }
+      }
+   }
+
    @Override
    public boolean equals ( final Object obj ) {
 
@@ -1335,11 +1376,15 @@ public class Mesh2 extends Mesh {
       result.append("# v: ").append(coordsLen)
             .append(", vt: ").append(texCoordsLen)
             .append(", vn: 1, f: ").append(facesLen)
-            .append("\n \n");
+            .append('\n').append('\n');
 
+      /*
+       * Append name.
+       */
       result.append('o').append(' ').append(this.name)
-            .append("\n \n");
+            .append('\n').append('\n');
 
+      /* Append coordinates. */
       for (final Vec2 coord : this.coords) {
          result.append('v').append(' ')
                .append(coord.toObjString())
@@ -1347,14 +1392,17 @@ public class Mesh2 extends Mesh {
       }
       result.append('\n');
 
+      /* Append a texture coordinates. */
       for (final Vec2 texCoord : this.texCoords) {
          result.append("vt ")
                .append(texCoord.toObjString())
                .append('\n');
       }
 
-      result.append("\nvn 0.0 0.0 1.0 \n");
+      /* Append a single normal. */
+      result.append("\nvn 0.0 0.0 1.0\n");
 
+      /* Append face indices. */
       for (int i = 0; i < facesLen; ++i) {
 
          final int[][] face = this.faces[i];
@@ -1369,8 +1417,7 @@ public class Mesh2 extends Mesh {
                   .append('/')
                   .append(vert[1] + 1)
                   .append('/')
-                  .append('1')
-                  .append(' ');
+                  .append('1');
          }
 
          result.append('\n');

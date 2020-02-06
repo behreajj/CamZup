@@ -378,11 +378,7 @@ public abstract class Convert {
          target = new PMatrix3D();
       }
 
-      // TODO: Needs testing...
       final Quaternion q = tr3.getRotation(new Quaternion());
-      // final Vec3 axis = new Vec3();
-      // final float angle = Quaternion.toAxisAngle(quat, axis);
-
       final Vec3 dim = tr3.getScale(new Vec3());
       final Vec3 loc = tr3.getLocation(new Vec3());
 
@@ -392,7 +388,6 @@ public abstract class Convert {
 
          case RST:
 
-            // target.rotate(angle, axis.x, axis.y, axis.z);
             PMatAux.rotate(q, target);
             target.scale(dim.x, dim.y, dim.z);
             target.translate(loc.x, loc.y, loc.z);
@@ -401,7 +396,6 @@ public abstract class Convert {
 
          case RTS:
 
-            // target.rotate(angle, axis.x, axis.y, axis.z);
             PMatAux.rotate(q, target);
             target.translate(loc.x, loc.y, loc.z);
             target.scale(dim.x, dim.y, dim.z);
@@ -411,7 +405,6 @@ public abstract class Convert {
          case SRT:
 
             target.scale(dim.x, dim.y, dim.z);
-            // target.rotate(angle, axis.x, axis.y, axis.z);
             PMatAux.rotate(q, target);
             target.translate(loc.x, loc.y, loc.z);
 
@@ -421,7 +414,6 @@ public abstract class Convert {
 
             target.scale(dim.x, dim.y, dim.z);
             target.translate(loc.x, loc.y, loc.z);
-            // target.rotate(angle, axis.x, axis.y, axis.z);
             PMatAux.rotate(q, target);
 
             return target;
@@ -430,7 +422,6 @@ public abstract class Convert {
 
             target.translate(loc.x, loc.y, loc.z);
             target.scale(dim.x, dim.y, dim.z);
-            // target.rotate(angle, axis.x, axis.y, axis.z);
             PMatAux.rotate(q, target);
 
             return target;
@@ -440,7 +431,6 @@ public abstract class Convert {
          default:
 
             target.translate(loc.x, loc.y, loc.z);
-            // target.rotate(angle, axis.x, axis.y, axis.z);
             PMatAux.rotate(q, target);
             target.scale(dim.x, dim.y, dim.z);
 

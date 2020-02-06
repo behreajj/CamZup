@@ -1472,6 +1472,48 @@ public class Mesh3 extends Mesh {
       return result.toString();
    }
 
+   void toUnityCode (
+         final StringBuilder vs,
+         final StringBuilder vts,
+         final StringBuilder vns,
+         final StringBuilder tris ) {
+
+      final int len0 = this.faces.length;
+      for (int k = 0, i = 0; i < len0; ++i) {
+
+         final int[][] fs0 = this.faces[i];
+         final int len1 = fs0.length;
+
+         for (int j = 0; j < len1; ++j, ++k) {
+
+            final int[] fs1 = fs0[j];
+
+            final Vec3 v = this.coords[fs1[0]];
+            final Vec2 vt = this.texCoords[fs1[1]];
+            final Vec3 vn = this.normals[fs1[2]];
+
+            vs.append(v.toUnityCode());
+            vts.append(vt.toUnityCode());
+            vns.append(vn.toUnityCode());
+            tris.append(k);
+
+            if (j < len1 - 1) {
+               vs.append(',').append(' ').append('\n');
+               vts.append(',').append(' ').append('\n');
+               vns.append(',').append(' ').append('\n');
+               tris.append(',').append(' ');
+            }
+         }
+
+         if (i < len0 - 1) {
+            vs.append(',').append(' ').append('\n');
+            vts.append(',').append(' ').append('\n');
+            vns.append(',').append(' ').append('\n');
+            tris.append(',').append(' ').append('\n');
+         }
+      }
+   }
+
    @Experimental
    public Mesh3 calcNormals () {
 
@@ -2043,8 +2085,7 @@ public class Mesh3 extends Mesh {
                   .append('/')
                   .append(vert[1] + 1)
                   .append('/')
-                  .append(vert[2] + 1)
-                  .append(' ');
+                  .append(vert[2] + 1);
          }
 
          result.append('\n');

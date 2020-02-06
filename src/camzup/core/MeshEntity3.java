@@ -83,22 +83,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
    }
 
    /**
-    * Creates a string representing a Wavefront OBJ file.
-    *
-    * @return the string
-    */
-   String toObjString () {
-
-      // TODO: Needs testing. Like CurveEntity3, indices
-      // may need to be offset for multiple objects.
-      final StringBuilder result = new StringBuilder();
-      for (final Mesh3 m : this.meshes) {
-         result.append(m.toObjString());
-      }
-      return result.toString();
-   }
-
-   /**
     * Appends a material to this mesh entity.
     *
     * @param material
@@ -315,6 +299,56 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
             .append("    scene_objs.link(mesh_obj)\n")
             .append("    mesh_obj.parent = parent_obj\n");
 
+      return result.toString();
+   }
+
+   @Experimental
+   public String toUnityCode () {
+
+      final StringBuilder vs = new StringBuilder()
+            .append("Vector3[] vs = { \n");
+
+      final StringBuilder vts = new StringBuilder()
+            .append("Vector2[] vts = { \n");
+
+      final StringBuilder vns = new StringBuilder()
+            .append("Vector3[] vns = { \n");
+
+      final StringBuilder tris = new StringBuilder()
+            .append("int[] tris = { \n");
+
+      final Iterator < Mesh3 > meshItr = this.meshes.iterator();
+      while (meshItr.hasNext()) {
+         meshItr.next().toUnityCode(vs, vts, vns, tris);
+      }
+
+      vs.append(' ').append('}').append(';');
+      vts.append(' ').append('}').append(';');
+      vns.append(' ').append('}').append(';');
+      tris.append(' ').append('}').append(';');
+
+      final StringBuilder result = new StringBuilder();
+      result.append("using UnityEngine;\n\npublic class Mesh")
+            .append(this.name)
+            .append(" : MonoBehaviour\n{ \n    ")
+            .append(vs.toString())
+            .append("\n\n    ")
+            .append(vts.toString())
+            .append("\n\n    ")
+            .append(vns.toString())
+            .append("\n\n    ")
+            .append(tris.toString())
+            .append("\n\n    void Start()\n    {\n")
+            .append("        Mesh mesh = new Mesh();\n")
+            .append("        GetComponent<MeshFilter>().mesh = mesh;\n")
+            .append("        mesh.vertices = vs;\n")
+            .append("        mesh.uv = vts;\n")
+            .append("        mesh.normals = vns;\n")
+            .append("        mesh.triangles = tris;\n")
+            .append("        mesh.RecalculateTangents();\n")
+            .append("    }");
+
+      result.append('\n').append('}');
       return result.toString();
    }
 }

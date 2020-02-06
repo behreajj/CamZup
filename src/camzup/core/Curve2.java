@@ -156,11 +156,6 @@ public class Curve2 extends Curve
             * IUtils.FOUR_THIRDS;
 
       final List < Knot2 > knots = target.knots;
-
-      // TODO: Research whether or not is more efficient to clear
-      // knots of an existing linked list or to measure how many
-      // the list has and change them in place? Can they be
-      // changed in place or is there a mutability issue?
       knots.clear();
       for (int i = 0; i < knotCount; ++i) {
          final float angle1 = Utils.lerpUnclamped(

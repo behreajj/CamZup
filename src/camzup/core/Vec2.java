@@ -256,7 +256,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       public int compare ( final Vec2 a, final Vec2 b ) {
 
          /*
-          * TODO: Is there a more efficient way than atan2? cf.
+          * Is there a more efficient way than atan2? cf.
           * https://gamedev.stackexchange.com/questions/13229/
           * sorting-array-of-points-in-clockwise-order , such as
           * using the sign of the cross product a.x * b.y - a.y * bx
@@ -1229,7 +1229,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * Filters a vector by setting each component to the input
     * component if it is in bounds and 0.0 if it is out of
     * bounds.
-    * 
+    *
     * @param v
     *           the vector
     * @param lb
@@ -3112,6 +3112,32 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
             .append(' ')
             .append(Utils.toFixed(this.y, 4))
             .toString();
+   }
+
+   @Experimental
+   String toUnityCode () {
+
+      final StringBuilder sb = new StringBuilder(96);
+      sb.append("new Vector2(")
+            .append(this.x)
+            .append("f, ")
+            .append(this.y)
+            .append("f)");
+      return sb.toString();
+   }
+
+   @Experimental
+   String toUnityCode ( final float z ) {
+
+      final StringBuilder sb = new StringBuilder(96);
+      sb.append("new Vector3(")
+            .append(this.x)
+            .append("f, ")
+            .append(this.y)
+            .append("f, ")
+            .append(z)
+            .append("f)");
+      return sb.toString();
    }
 
    /**
