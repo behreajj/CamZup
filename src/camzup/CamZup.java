@@ -5,22 +5,21 @@ import java.util.HashSet;
 import camzup.core.IUtils;
 import camzup.core.Mesh2;
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity2;
-import camzup.core.MeshEntity3;
-import camzup.core.Quaternion;
-import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
-import camzup.pfriendly.PMatAux;
 import processing.core.PApplet;
-import processing.core.PMatrix3D;
 
 /**
  * The main class of this library. This is not needed to use
  * the library and is for development and debugging only.
  */
 public class CamZup {
+
+   /**
+    * The library's current version.
+    */
+   public final static String VERSION = "##library.prettyVersion##";
 
    private static int createLowerStrip (
          final int steps,
@@ -93,133 +92,6 @@ public class CamZup {
       }
       return v;
    }
-
-   /**
-    * Cf.
-    * https://catlikecoding.com/unity/tutorials/octahedron-sphere/
-    *
-    * @param div
-    *           divisions
-    * @param target
-    *           the output mesh
-    * @return the sphere
-    * @author Jasper Flick
-    */
-   public static Mesh3 sphere1 ( final int div, final Mesh3 target ) {
-
-      final int subdivisions = Utils.clamp(div, 0, 6);
-
-      /* Raise 2 to the power of subdivisions. */
-      final int resolution = 1 << subdivisions;
-      final int res1 = resolution + 1;
-      final Vec3[] coords = new Vec3[res1 * res1 * 4
-            - (resolution * 2 - 1) * 3];
-      final int[][][] faces = new int[1 << subdivisions * 2 + 3][3][3];
-
-      int v = 0;
-      int vBottom = 0;
-      int t = 0;
-
-      /* Bottom cap. */
-      coords[v++] = Vec3.down(new Vec3());
-      coords[v++] = Vec3.down(new Vec3());
-      coords[v++] = Vec3.down(new Vec3());
-      coords[v++] = Vec3.down(new Vec3());
-
-      final Vec3 down = Vec3.down(new Vec3());
-      final Vec3 forward = Vec3.forward(new Vec3());
-      final Vec3 up = Vec3.up(new Vec3());
-
-      Vec3 from;
-      Vec3 to;
-
-      final float toPercent = 1.0f / resolution;
-
-      final Vec3[] directions = new Vec3[] {
-            Vec3.left(new Vec3()),
-            Vec3.back(new Vec3()),
-            Vec3.right(new Vec3()),
-            Vec3.forward(new Vec3())
-      };
-
-      for (int i = 1; i <= resolution; ++i) {
-         final float prc = i * toPercent;
-         coords[v++] = to = Vec3.mix(down, forward, prc, new Vec3());
-
-         for (int d = 0; d < 4; ++d) {
-            from = to;
-            to = Vec3.mix(down, directions[d], prc, new Vec3());
-            t = createLowerStrip(i, v, vBottom, t, faces);
-            v = createVertexLine(from, to, i, v, coords);
-            vBottom += i > 1 ? i - 1 : 1;
-         }
-         vBottom = v - 1 - i * 4;
-      }
-
-      for (int i = resolution - 1; i >= 1; i--) {
-         final float prc = i * toPercent;
-         coords[v++] = to = Vec3.mix(up, forward, prc, new Vec3());
-         for (int d = 0; d < 4; d++) {
-            from = to;
-            to = Vec3.mix(up, directions[d], prc, new Vec3());
-            t = createUpperStrip(i, v, vBottom, t, faces);
-            v = createVertexLine(from, to, i, v, coords);
-            vBottom += i + 1;
-         }
-         vBottom = v - 1 - i * 4;
-      }
-
-      /* Top cap. */
-      for (int i = 0; i < 4; ++i) {
-         faces[t++] = new int[][] {
-               { vBottom, vBottom, vBottom },
-               { v, v, v },
-               { ++vBottom, vBottom, vBottom }
-         };
-
-         coords[v++] = Vec3.up(new Vec3());
-      }
-
-      /* Normalize vertices and create a copy for normals. */
-      final Vec3[] normals = new Vec3[coords.length];
-      for (int i = 0; i < coords.length; ++i) {
-         normals[i] = new Vec3(Vec3.normalize(coords[i], coords[i]));
-      }
-
-      final Vec2[] texCoords = new Vec2[coords.length];
-      float xPrev = 1.0f;
-      for (int i = 0; i < coords.length; ++i) {
-         final Vec3 v1 = coords[i];
-         if (v1.x == xPrev) {
-            texCoords[i - 1].x = 1.0f;
-         }
-         xPrev = v1.x;
-         final Vec2 st = new Vec2();
-         st.x = Utils.atan2(v1.x, v1.z) * -IUtils.ONE_TAU;
-         if (st.x < 0.0f) {
-            st.x += 1.0f;
-         }
-         st.y = Utils.asin(v1.y) / IUtils.PI + 0.5f;
-         texCoords[i] = st;
-      }
-      texCoords[coords.length - 4].x = texCoords[0].x = 0.125f;
-      texCoords[coords.length - 3].x = texCoords[1].x = 0.375f;
-      texCoords[coords.length - 2].x = texCoords[2].x = 0.625f;
-      texCoords[coords.length - 1].x = texCoords[3].x = 0.875f;
-
-      /* Scale vertices to radius. */
-      for (int i = 0; i < coords.length; i++) {
-         Vec3.mul(coords[i], 0.5f, coords[i]);
-      }
-
-      target.name = "Sphere";
-      return target.set(faces, coords, texCoords, normals);
-   }
-
-   /**
-    * The library's current version.
-    */
-   public final static String VERSION = "##library.prettyVersion##";
 
    static Vec2[] permute ( final Vec2 source ) {
 
@@ -389,16 +261,133 @@ public class CamZup {
       // me.appendMesh(m);
       // String str = me.toBlenderCode();
       // System.out.println(str);
-      
-//      Mesh2 m = new Mesh2();
-//      Mesh2.polygon(5,Mesh2.PolyType.TRI, m);
-//      MeshEntity2 me = new MeshEntity2().appendMesh(m);
-//      System.out.println(me.toUnityCode());
-      
-      Vec3 i = new Vec3(1,2,3);
-      Vec3 n = new Vec3(0.0f, 0.6f, 0.8f);
-      Vec3 r = Vec3.reflect(i, n, new Vec3());
-      System.out.println(r);
+
+      // Mesh2 m = new Mesh2();
+      // Mesh2.polygon(5,Mesh2.PolyType.TRI, m);
+      // MeshEntity2 me = new MeshEntity2().appendMesh(m);
+      // System.out.println(me.toUnityCode());
+   }
+
+   /**
+    * Cf.
+    * https://catlikecoding.com/unity/tutorials/octahedron-sphere/
+    *
+    * @param div
+    *           divisions
+    * @param target
+    *           the output mesh
+    * @return the sphere
+    * @author Jasper Flick
+    */
+   public static Mesh3 sphere1 ( final int div, final Mesh3 target ) {
+
+      final int subdivisions = Utils.clamp(div, 0, 6);
+
+      /* Raise 2 to the power of subdivisions. */
+      final int resolution = 1 << subdivisions;
+      final int res1 = resolution + 1;
+      final Vec3[] coords = new Vec3[res1 * res1 * 4
+            - (resolution * 2 - 1) * 3];
+      final int[][][] faces = new int[1 << subdivisions * 2 + 3][3][3];
+
+      int v = 0;
+      int vBottom = 0;
+      int t = 0;
+
+      /* Bottom cap. */
+      coords[v++] = Vec3.down(new Vec3());
+      coords[v++] = Vec3.down(new Vec3());
+      coords[v++] = Vec3.down(new Vec3());
+      coords[v++] = Vec3.down(new Vec3());
+
+      final Vec3 down = Vec3.down(new Vec3());
+      final Vec3 forward = Vec3.forward(new Vec3());
+      final Vec3 up = Vec3.up(new Vec3());
+
+      Vec3 from;
+      Vec3 to;
+
+      final float toPercent = 1.0f / resolution;
+
+      final Vec3[] directions = new Vec3[] {
+            Vec3.left(new Vec3()),
+            Vec3.back(new Vec3()),
+            Vec3.right(new Vec3()),
+            Vec3.forward(new Vec3())
+      };
+
+      for (int i = 1; i <= resolution; ++i) {
+         final float prc = i * toPercent;
+         coords[v++] = to = Vec3.mix(down, forward, prc, new Vec3());
+
+         for (int d = 0; d < 4; ++d) {
+            from = to;
+            to = Vec3.mix(down, directions[d], prc, new Vec3());
+            t = CamZup.createLowerStrip(i, v, vBottom, t, faces);
+            v = CamZup.createVertexLine(from, to, i, v, coords);
+            vBottom += i > 1 ? i - 1 : 1;
+         }
+         vBottom = v - 1 - i * 4;
+      }
+
+      for (int i = resolution - 1; i >= 1; i--) {
+         final float prc = i * toPercent;
+         coords[v++] = to = Vec3.mix(up, forward, prc, new Vec3());
+         for (int d = 0; d < 4; d++) {
+            from = to;
+            to = Vec3.mix(up, directions[d], prc, new Vec3());
+            t = CamZup.createUpperStrip(i, v, vBottom, t, faces);
+            v = CamZup.createVertexLine(from, to, i, v, coords);
+            vBottom += i + 1;
+         }
+         vBottom = v - 1 - i * 4;
+      }
+
+      /* Top cap. */
+      for (int i = 0; i < 4; ++i) {
+         faces[t++] = new int[][] {
+               { vBottom, vBottom, vBottom },
+               { v, v, v },
+               { ++vBottom, vBottom, vBottom }
+         };
+
+         coords[v++] = Vec3.up(new Vec3());
+      }
+
+      /* Normalize vertices and create a copy for normals. */
+      final Vec3[] normals = new Vec3[coords.length];
+      for (int i = 0; i < coords.length; ++i) {
+         normals[i] = new Vec3(Vec3.normalize(coords[i], coords[i]));
+      }
+
+      final Vec2[] texCoords = new Vec2[coords.length];
+      float xPrev = 1.0f;
+      for (int i = 0; i < coords.length; ++i) {
+         final Vec3 v1 = coords[i];
+         if (v1.x == xPrev) {
+            texCoords[i - 1].x = 1.0f;
+         }
+         xPrev = v1.x;
+         final Vec2 st = new Vec2();
+         st.x = Utils.atan2(v1.x, v1.z) * -IUtils.ONE_TAU;
+         if (st.x < 0.0f) {
+            st.x += 1.0f;
+         }
+         st.y = Utils.asin(v1.y) / IUtils.PI + 0.5f;
+         texCoords[i] = st;
+      }
+      texCoords[coords.length - 4].x = texCoords[0].x = 0.125f;
+      texCoords[coords.length - 3].x = texCoords[1].x = 0.375f;
+      texCoords[coords.length - 2].x = texCoords[2].x = 0.625f;
+      texCoords[coords.length - 1].x = texCoords[3].x = 0.875f;
+
+      /* Scale vertices to radius. */
+      for (int i = 0; i < coords.length; i++) {
+         Vec3.mul(coords[i], 0.5f, coords[i]);
+      }
+
+      target.name = "Sphere";
+      return target.set(faces, coords, texCoords, normals);
    }
 
    /**

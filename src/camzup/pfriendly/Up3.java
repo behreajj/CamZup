@@ -619,8 +619,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    public void material ( final MaterialSolid material ) {
 
       /*
-       * Due to stroke flickering issues, a material in 3D
-       * will not have both a stroke and a fill.
+       * Due to stroke flickering issues, a material in 3D will
+       * not have both a stroke and a fill.
        */
       if (material.useFill) {
          this.fill(material.fill);

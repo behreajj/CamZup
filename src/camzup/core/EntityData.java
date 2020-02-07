@@ -30,6 +30,13 @@ public abstract class EntityData implements IEntityData {
       this.name = name;
    }
 
+   /**
+    * Tests this entity data for equivalence with an object.
+    *
+    * @param obj
+    *           the object
+    * @return the evaluation
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
@@ -56,6 +63,22 @@ public abstract class EntityData implements IEntityData {
       return true;
    }
 
+   /**
+    * Gets the entity data's name.
+    *
+    * @return the name
+    */
+   public String getName () {
+
+      return this.name;
+   }
+
+   /**
+    * Returns a hash code for this entity data based on its
+    * name.
+    *
+    * @return the hash code
+    */
    @Override
    public int hashCode () {
 
@@ -63,6 +86,22 @@ public abstract class EntityData implements IEntityData {
       hash = hash * IUtils.HASH_MUL
             ^ (this.name == null ? 0 : this.name.hashCode());
       return hash;
+   }
+
+   /**
+    * Sets the entity data's name.
+    *
+    * @param name
+    *           the name
+    * @return this entity
+    */
+   @Chainable
+   public EntityData setName ( final String name ) {
+
+      if (name != null) {
+         this.name = name;
+      }
+      return this;
    }
 
    /**

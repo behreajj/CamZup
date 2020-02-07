@@ -2,6 +2,13 @@ package camzup.core;
 
 import java.util.Arrays;
 
+/**
+ * Organizes components of a 2D mesh into a list of vertices
+ * that form a face.
+ * 
+ * This is not used by a mesh internally; it is created upon
+ * retrieval from a mesh.
+ */
 public class Face2 implements Comparable < Face2 > {
 
    /**
@@ -24,7 +31,7 @@ public class Face2 implements Comparable < Face2 > {
     * @param vertices
     *           the vertices
     */
-   public Face2 ( final Vert2[] vertices ) {
+   public Face2 ( final Vert2... vertices ) {
 
       this.set(vertices);
    }
@@ -44,27 +51,49 @@ public class Face2 implements Comparable < Face2 > {
       return a < b ? -1 : a > b ? 1 : 0;
    }
 
+   /**
+    * Tests this face for equivalence with another object.
+    *
+    * @return the evaluation
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
       if (this == obj) {
          return true;
       }
+
       if (obj == null) {
          return false;
       }
+
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+
       final Face2 other = (Face2) obj;
+
       if (!Arrays.equals(this.vertices, other.vertices)) {
          return false;
       }
+
       return true;
    }
 
+   /**
+    * Gets an edge from this face. Wraps the index by the
+    * number of vertices in the face.
+    * 
+    * @param i
+    *           index
+    * @param target
+    *           output edge
+    * @return the edge
+    */
    @Experimental
-   public Edge2 getEdge ( final int i, final Edge2 target ) {
+   public Edge2 getEdge (
+         final int i,
+         final Edge2 target ) {
 
       final int len = this.vertices.length;
       final int j = Math.floorMod(i, len);
@@ -74,6 +103,11 @@ public class Face2 implements Comparable < Face2 > {
             this.vertices[k]);
    }
 
+   /**
+    * Gets all the edges in this face.
+    * 
+    * @return the edges
+    */
    @Experimental
    public Edge2[] getEdges () {
 
@@ -91,6 +125,11 @@ public class Face2 implements Comparable < Face2 > {
       return result;
    }
 
+   /**
+    * Returns a hash code for this face.
+    * 
+    * @return the hash
+    */
    @Override
    public int hashCode () {
 
@@ -184,18 +223,30 @@ public class Face2 implements Comparable < Face2 > {
     * @return this face
     */
    @Chainable
-   public Face2 set ( final Vert2[] vertices ) {
+   public Face2 set ( final Vert2... vertices ) {
 
       this.vertices = vertices;
       return this;
    }
 
+   /**
+    * Returns a string representation of this face.
+    * 
+    * @return the string
+    */
    @Override
    public String toString () {
 
       return this.toString(4);
    }
 
+   /**
+    * Returns a string representation of this face.
+    * 
+    * @param places
+    *           the number of places
+    * @return the string
+    */
    public String toString ( final int places ) {
 
       final int len = this.vertices.length;

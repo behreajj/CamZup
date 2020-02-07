@@ -2,6 +2,13 @@ package camzup.core;
 
 import java.util.Arrays;
 
+/**
+ * Organizes components of a 3D mesh into a list of vertices
+ * that form a face.
+ * 
+ * This is not used by a mesh internally; it is created upon
+ * retrieval from a mesh.
+ */
 public class Face3 implements Comparable < Face3 > {
 
    /**
@@ -24,7 +31,7 @@ public class Face3 implements Comparable < Face3 > {
     * @param vertices
     *           the vertices
     */
-   public Face3 ( final Vert3[] vertices ) {
+   public Face3 ( final Vert3... vertices ) {
 
       this.set(vertices);
    }
@@ -44,27 +51,49 @@ public class Face3 implements Comparable < Face3 > {
       return a < b ? -1 : a > b ? 1 : 0;
    }
 
+   /**
+    * Tests this face for equivalence with another object.
+    *
+    * @return the evaluation
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
       if (this == obj) {
          return true;
       }
+
       if (obj == null) {
          return false;
       }
+
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+
       final Face3 other = (Face3) obj;
+
       if (!Arrays.equals(this.vertices, other.vertices)) {
          return false;
       }
+
       return true;
    }
 
+   /**
+    * Gets an edge from this face. Wraps the index by the
+    * number of vertices in the face.
+    * 
+    * @param i
+    *           index
+    * @param target
+    *           output edge
+    * @return the edge
+    */
    @Experimental
-   public Edge3 getEdge ( final int i, final Edge3 target ) {
+   public Edge3 getEdge (
+         final int i,
+         final Edge3 target ) {
 
       final int len = this.vertices.length;
       final int j = Math.floorMod(i, len);
@@ -74,6 +103,11 @@ public class Face3 implements Comparable < Face3 > {
             this.vertices[k]);
    }
 
+   /**
+    * Gets all the edges in this face.
+    * 
+    * @return the edges
+    */
    @Experimental
    public Edge3[] getEdges () {
 
@@ -91,6 +125,11 @@ public class Face3 implements Comparable < Face3 > {
       return result;
    }
 
+   /**
+    * Returns a hash code for this face.
+    * 
+    * @return the hash
+    */
    @Override
    public int hashCode () {
 
@@ -120,8 +159,11 @@ public class Face3 implements Comparable < Face3 > {
     * @return this mesh
     * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
     */
+   @Experimental
    @Chainable
-   public Face3 rotate ( final float radians, final Vec3 axis ) {
+   public Face3 rotate (
+         final float radians,
+         final Vec3 axis ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
@@ -150,6 +192,7 @@ public class Face3 implements Comparable < Face3 > {
     *           the quaternion
     * @return the mesh
     */
+   @Experimental
    @Chainable
    public Face3 rotate ( final Quaternion q ) {
 
@@ -178,6 +221,7 @@ public class Face3 implements Comparable < Face3 > {
     * @return this mesh
     * @see Vec3#rotateX(Vec3, float, Vec3)
     */
+   @Experimental
    @Chainable
    public Face3 rotateX ( final float radians ) {
 
@@ -209,6 +253,7 @@ public class Face3 implements Comparable < Face3 > {
     * @return this mesh
     * @see Vec3#rotateY(Vec3, float, Vec3)
     */
+   @Experimental
    @Chainable
    public Face3 rotateY ( final float radians ) {
 
@@ -240,6 +285,7 @@ public class Face3 implements Comparable < Face3 > {
     * @return this mesh
     * @see Vec3#rotateZ(Vec3, float, Vec3)
     */
+   @Experimental
    @Chainable
    public Face3 rotateZ ( final float radians ) {
 
@@ -291,6 +337,7 @@ public class Face3 implements Comparable < Face3 > {
     * @return this face
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     */
+   @Experimental
    @Chainable
    public Face3 scale ( final Vec3 scale ) {
 
@@ -312,18 +359,30 @@ public class Face3 implements Comparable < Face3 > {
     * @return this face
     */
    @Chainable
-   public Face3 set ( final Vert3[] vertices ) {
+   public Face3 set ( final Vert3... vertices ) {
 
       this.vertices = vertices;
       return this;
    }
 
+   /**
+    * Returns a string representation of this face.
+    * 
+    * @return the string
+    */
    @Override
    public String toString () {
 
       return this.toString(4);
    }
 
+   /**
+    * Returns a string representation of this face.
+    * 
+    * @param places
+    *           the number of places
+    * @return the string
+    */
    public String toString ( final int places ) {
 
       final int len = this.vertices.length;

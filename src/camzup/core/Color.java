@@ -1606,7 +1606,7 @@ public class Color extends Vec4 {
 
       return target.set(1.0f, 0.0f, 1.0f, 1.0f);
    }
-   
+
    /**
     * Finds the maximum color channel of a color, excluding
     * alpha.

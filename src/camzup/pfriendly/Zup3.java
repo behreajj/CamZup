@@ -109,6 +109,56 @@ public class Zup3 extends Up3 {
    }
 
    /**
+    * Sets lighting normals. Overrides the default by swapping
+    * and negating to accomodate Z-up camera.
+    *
+    * @param num
+    *           the index
+    * @param xDir
+    *           the direction x
+    * @param yDir
+    *           the direction y
+    * @param zDir
+    *           the directoin z
+    */
+   @Override
+   protected void lightNormal (
+         final int num,
+         final float xDir,
+         final float yDir,
+         final float zDir ) {
+
+      /*
+       * Applying normal matrix to the light direction vector,
+       * which is the transpose of the inverse of the modelview.
+       */
+      final float nx = xDir * this.modelviewInv.m00 +
+            yDir * this.modelviewInv.m10 +
+            zDir * this.modelviewInv.m20;
+
+      final float ny = xDir * this.modelviewInv.m01 +
+            yDir * this.modelviewInv.m11 +
+            zDir * this.modelviewInv.m21;
+
+      final float nz = xDir * this.modelviewInv.m02 +
+            yDir * this.modelviewInv.m12 +
+            zDir * this.modelviewInv.m22;
+
+      final float mSq = nx * nx + ny * ny + nz * nz;
+      final int num3 = num + num + num;
+      if (0.0f < mSq) {
+         final float mInv = Utils.invSqrtUnchecked(mSq);
+         this.lightNormal[num3] = mInv * -nx;
+         this.lightNormal[num3 + 1] = mInv * nz;
+         this.lightNormal[num3 + 2] = mInv * -ny;
+      } else {
+         this.lightNormal[num3] = 0.0f;
+         this.lightNormal[num3 + 1] = 0.0f;
+         this.lightNormal[num3 + 2] = 0.0f;
+      }
+   }
+
+   /**
     * Creates a camera that looks at a default location and a
     * vantage point based on the renderer's height.
     */
@@ -394,55 +444,5 @@ public class Zup3 extends Up3 {
    public String toString () {
 
       return "camzup.pfriendly.Zup3";
-   }
-
-   /**
-    * Sets lighting normals. Overrides the default by swapping
-    * and negating to accomodate Z-up camera.
-    *
-    * @param num
-    *           the index
-    * @param xDir
-    *           the direction x
-    * @param yDir
-    *           the direction y
-    * @param zDir
-    *           the directoin z
-    */
-   @Override
-   protected void lightNormal (
-         final int num,
-         final float xDir,
-         final float yDir,
-         final float zDir ) {
-
-      /*
-       * Applying normal matrix to the light direction vector,
-       * which is the transpose of the inverse of the modelview.
-       */
-      final float nx = xDir * this.modelviewInv.m00 +
-            yDir * this.modelviewInv.m10 +
-            zDir * this.modelviewInv.m20;
-
-      final float ny = xDir * this.modelviewInv.m01 +
-            yDir * this.modelviewInv.m11 +
-            zDir * this.modelviewInv.m21;
-
-      final float nz = xDir * this.modelviewInv.m02 +
-            yDir * this.modelviewInv.m12 +
-            zDir * this.modelviewInv.m22;
-
-      final float mSq = nx * nx + ny * ny + nz * nz;
-      final int num3 = num + num + num;
-      if (0.0f < mSq) {
-         final float mInv = Utils.invSqrtUnchecked(mSq);
-         this.lightNormal[num3] = mInv * -nx;
-         this.lightNormal[num3 + 1] = mInv * nz;
-         this.lightNormal[num3 + 2] = mInv * -ny;
-      } else {
-         this.lightNormal[num3] = 0.0f;
-         this.lightNormal[num3 + 1] = 0.0f;
-         this.lightNormal[num3 + 2] = 0.0f;
-      }
    }
 }

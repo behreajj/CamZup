@@ -63,15 +63,13 @@
 	</tstamp>
 
 	<target name="init">
-		<echo>${line}
+		<echo>
 			Building the Processing Library ${project.name} ${library.version}
-			${line}
 			src path ${project.src}
 			bin path ${project.bin}
 			classpath.local ${classpath.local.location}
 			sketchbook ${sketchbook.location}
 			java version ${java.target.version}
-			${line}
 		</echo>
 
 
@@ -407,14 +405,10 @@
 		<delete dir="${project.bin}" />
 		<delete dir="${project.tmp}" />
 		<echo>
-			${line}
 			Name ${project.name}
 			Version ${library.prettyVersion} (${library.version})
 			Compiled ${project.compile}
 			Sketchbook ${sketchbook.location}
-			${line}
-			done, finished.
-			${line}
 		</echo>
 	</target>
 

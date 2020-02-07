@@ -1836,7 +1836,7 @@ public abstract class Utils implements IUtils {
        * It will yield output values exceeding the magnitude of
        * input values, e.g. 1.0 will return 2.0 .
        */
-      
+
       if (levels < 2) {
          return value;
       }

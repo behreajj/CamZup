@@ -98,8 +98,8 @@ public abstract class Sdf {
       final float arcOff = a + arcLen;
 
       return Sdf.arc(point,
-            Utils.scNorm(arcOff),Utils.scNorm(arcOff - 0.25f),
-            Utils.scNorm(arcLen),Utils.scNorm(arcLen - 0.25f),
+            Utils.scNorm(arcOff), Utils.scNorm(arcOff - 0.25f),
+            Utils.scNorm(arcLen), Utils.scNorm(arcLen - 0.25f),
             bounds, weight);
    }
 

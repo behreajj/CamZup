@@ -88,17 +88,17 @@ public abstract class PMatAux {
             am00 * b.m01 + am01 * b.m11 + am02 * b.m21,
             am00 * b.m02 + am01 * b.m12 + am02 * b.m22,
             am00 * b.m03 + am01 * b.m13 + am02 * b.m23,
-            
+
             am10 * b.m00 + am11 * b.m10 + am12 * b.m20,
             am10 * b.m01 + am11 * b.m11 + am12 * b.m21,
             am10 * b.m02 + am11 * b.m12 + am12 * b.m22,
             am10 * b.m03 + am11 * b.m13 + am12 * b.m23,
-            
+
             am20 * b.m00 + am21 * b.m10 + am22 * b.m20,
             am20 * b.m01 + am21 * b.m11 + am22 * b.m21,
             am20 * b.m02 + am21 * b.m12 + am22 * b.m22,
             am20 * b.m03 + am21 * b.m13 + am22 * b.m23,
-            
+
             b.m30, b.m31, b.m32, b.m33);
 
       return b;

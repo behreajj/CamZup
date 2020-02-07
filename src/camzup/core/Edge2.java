@@ -1,30 +1,66 @@
 package camzup.core;
 
 /**
- * Organizes two vertices of a mesh into an edge.
+ * Organizes components of a 2D mesh into an edge with an
+ * origin and destination.
+ *
+ * This is not used by a mesh internally; it is created upon
+ * retrieval from a mesh.
  */
 public class Edge2 implements Comparable < Edge2 > {
 
+   /**
+    * The destination vertex.
+    */
    public Vert2 dest;
+
+   /**
+    * The origin vertex.
+    */
    public Vert2 origin;
 
+   /**
+    * The default constructor. Creates two empty vertices.
+    */
    public Edge2 () {
 
       this.origin = new Vert2();
       this.dest = new Vert2();
    }
 
+   /**
+    * Constructs an edge from the origin and destination
+    * coordinate and texture coordinate data. Creates two
+    * vertex objects.`
+    *
+    * @param coOrigin
+    *           origin coordinate
+    * @param txOrigin
+    *           origin texture coordinate
+    * @param coDest
+    *           destination coordinate
+    * @param txDest
+    *           destination texture coordinate
+    */
    public Edge2 (
          final Vec2 coOrigin,
          final Vec2 txOrigin,
          final Vec2 coDest,
          final Vec2 txDest ) {
 
-      this.set(
-            coOrigin, txOrigin,
-            coDest, txDest);
+      this.origin = new Vert2(coOrigin, txOrigin);
+      this.dest = new Vert2(coDest, txDest);
    }
 
+   /**
+    * Constructs an edge from two vertices, an origin and
+    * destination.
+    *
+    * @param origin
+    *           the origin
+    * @param dest
+    *           the destination
+    */
    public Edge2 (
          final Vert2 origin,
          final Vert2 dest ) {
@@ -32,6 +68,11 @@ public class Edge2 implements Comparable < Edge2 > {
       this.set(origin, dest);
    }
 
+   /**
+    * Compares two edges based on their identity hash codes.
+    *
+    * @return the evaluation
+    */
    @Override
    public int compareTo ( final Edge2 edge ) {
 
@@ -40,6 +81,11 @@ public class Edge2 implements Comparable < Edge2 > {
       return a < b ? -1 : a > b ? 1 : 0;
    }
 
+   /**
+    * Tests this edge for equivalence with another object.
+    *
+    * @return the evaluation
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
@@ -76,6 +122,12 @@ public class Edge2 implements Comparable < Edge2 > {
       return true;
    }
 
+   /**
+    * Returns a hash code for this edge based on its origin and
+    * destination.
+    *
+    * @return the hash
+    */
    @Override
    public int hashCode () {
 
@@ -87,6 +139,38 @@ public class Edge2 implements Comparable < Edge2 > {
       return hash;
    }
 
+   /**
+    * Reverses the edge. Does so not by swapping references,
+    * but by value.
+    * 
+    * @return this edge
+    */
+   @Experimental
+   @Chainable
+   public Edge2 reverse () {
+
+      // TODO: Needs testing.
+
+      final Vec2 tmp = new Vec2(this.origin.coord);
+      this.origin.coord.set(this.dest.coord);
+      this.dest.coord.set(tmp);
+
+      tmp.set(this.origin.texCoord);
+      this.origin.texCoord.set(this.dest.texCoord);
+      this.dest.texCoord.set(tmp);
+
+      return this;
+   }
+
+   /**
+    * Rotates the coordinates of this edge by an angle in
+    * radians around the z axis. The texture coordinates are
+    * unaffected.
+    * 
+    * @param radians
+    *           angle
+    * @return this edge
+    */
    @Chainable
    public Edge2 rotateZ ( final float radians ) {
 
@@ -100,6 +184,14 @@ public class Edge2 implements Comparable < Edge2 > {
       return this;
    }
 
+   /**
+    * Scales the coordinates of this edge. The texture
+    * coordinates are unaffected.
+    * 
+    * @param v
+    *           uniform scalar
+    * @return this edge
+    */
    @Chainable
    public Edge2 scale ( final float v ) {
 
@@ -108,6 +200,14 @@ public class Edge2 implements Comparable < Edge2 > {
       return this;
    }
 
+   /**
+    * Scales the coordinates of this edge. The texture
+    * coordinates are unaffected.
+    * 
+    * @param v
+    *           non uniform scalar
+    * @return this edge
+    */
    @Chainable
    public Edge2 scale ( final Vec2 v ) {
 
@@ -116,6 +216,20 @@ public class Edge2 implements Comparable < Edge2 > {
       return this;
    }
 
+   /**
+    * Sets the origin and destination coordinate, texture
+    * coordinate and normal data.
+    * 
+    * @param coOrigin
+    *           origin coordinate
+    * @param txOrigin
+    *           origin texture coordinate
+    * @param coDest
+    *           destination coordinate
+    * @param txDest
+    *           destination texture coordinate
+    * @return this edge
+    */
    @Chainable
    public Edge2 set (
          final Vec2 coOrigin,
@@ -128,6 +242,15 @@ public class Edge2 implements Comparable < Edge2 > {
       return this;
    }
 
+   /**
+    * Sets this edge by vertex.
+    * 
+    * @param origin
+    *           the origin vertex
+    * @param dest
+    *           the destination vertex
+    * @return this edge
+    */
    @Chainable
    public Edge2 set (
          final Vert2 origin,
@@ -139,12 +262,24 @@ public class Edge2 implements Comparable < Edge2 > {
       return this;
    }
 
+   /**
+    * Returns a string representation of this edge.
+    * 
+    * @return the string
+    */
    @Override
    public String toString () {
 
       return this.toString(4);
    }
 
+   /**
+    * Returns a string representation of this edge.
+    * 
+    * @param places
+    *           the number of places
+    * @return the string
+    */
    public String toString ( final int places ) {
 
       final StringBuilder sb = new StringBuilder(512)
@@ -156,6 +291,14 @@ public class Edge2 implements Comparable < Edge2 > {
       return sb.toString();
    }
 
+   /**
+    * Translates the coordinates of this edge. The texture
+    * coordinates are unaffected.
+    * 
+    * @param v
+    *           translation
+    * @return this edge
+    */
    @Chainable
    public Edge2 translate ( final Vec2 v ) {
 

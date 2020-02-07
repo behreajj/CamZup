@@ -13,15 +13,7 @@ import java.util.List;
  * function to retrieve a point and tangent on a curve from
  * a step in the range [0.0, 1.0].
  */
-public class Curve3 extends Curve
-      implements Iterable < Knot3 > {
-
-   /**
-    * Groups together vectors which shape a Bezier curve into a
-    * coordinate (or anchor point), fore handle (the following
-    * control point) and rear handle (the preceding control
-    * point).
-    */
+public class Curve3 extends Curve implements Iterable < Knot3 > {
 
    /**
     * A utility function for setting the handles of knots on
@@ -84,13 +76,10 @@ public class Curve3 extends Curve
       final float b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU);
       final float arcLen1 = Utils.mod1(b1 - a1);
       final float destAngle1 = a1 + arcLen1;
+
       final int knotCount = Utils.ceilToInt(1 + 4 * arcLen1);
       final float toStep = 1.0f / (knotCount - 1.0f);
       final float hndtn = 0.25f * toStep * arcLen1;
-      // final float cost = SinCos.eval(hndtn);
-      // final float handleMag = cost == 0.0f ? 0.0f
-      // : SinCos.eval(hndtn - 0.25f) / cost
-      // * radius * IUtils.FOUR_THIRDS;
       final float handleMag = Utils.tan(hndtn * IUtils.TAU) * radius
             * IUtils.FOUR_THIRDS;
 
@@ -99,11 +88,11 @@ public class Curve3 extends Curve
       for (int i = 0; i < knotCount; ++i) {
          final float angle1 = Utils.lerpUnclamped(
                a1, destAngle1, i * toStep);
-         knots.add(
-               Knot3.fromPolar(
-                     angle1 * IUtils.TAU,
-                     radius, handleMag,
-                     new Knot3()));
+         final Knot3 knot = Knot3.fromPolar(
+               angle1 * IUtils.TAU,
+               radius, handleMag,
+               new Knot3());
+         knots.add(knot);
       }
 
       target.closedLoop = arcMode != ArcMode.OPEN;
@@ -202,8 +191,7 @@ public class Curve3 extends Curve
    public static Curve3 circle (
          final Curve3 target ) {
 
-      return Curve3.circle(
-            0.0f, 0.5f, 4, target);
+      return Curve3.circle(0.0f, 0.5f, 4, target);
    }
 
    /**
@@ -220,8 +208,7 @@ public class Curve3 extends Curve
          final float offsetAngle,
          final Curve3 target ) {
 
-      return Curve3.circle(
-            offsetAngle, 0.5f, 4, target);
+      return Curve3.circle(offsetAngle, 0.5f, 4, target);
    }
 
    /**
@@ -241,8 +228,7 @@ public class Curve3 extends Curve
          final float radius,
          final Curve3 target ) {
 
-      return Curve3.circle(
-            offsetAngle, radius, 4, target);
+      return Curve3.circle(offsetAngle, radius, 4, target);
    }
 
    /**
@@ -271,10 +257,6 @@ public class Curve3 extends Curve
       final int vknct = knotCount < 3 ? 3 : knotCount;
       final float invKnCt = 1.0f / vknct;
       final float hndtn = 0.25f * invKnCt;
-      // final float cost = SinCos.eval(hndtn);
-      // final float handleMag = cost == 0.0f ? 0.0f
-      // : SinCos.eval(hndtn - 0.25f) / cost
-      // * radius * IUtils.FOUR_THIRDS;
       final float handleMag = Utils.tan(hndtn * IUtils.TAU) * radius
             * IUtils.FOUR_THIRDS;
 
@@ -945,22 +927,32 @@ public class Curve3 extends Curve
       return this;
    }
 
+   /**
+    * Tests this curve for equality with another object.
+    *
+    * @return the evaluation
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
       if (this == obj) {
          return true;
       }
+
       if (!super.equals(obj)) {
          return false;
       }
+
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+
       final Curve3 other = (Curve3) obj;
+
       if (this.closedLoop != other.closedLoop) {
          return false;
       }
+
       if (this.knots == null) {
          if (other.knots != null) {
             return false;
@@ -968,6 +960,7 @@ public class Curve3 extends Curve
       } else if (!this.knots.equals(other.knots)) {
          return false;
       }
+
       return true;
    }
 
@@ -1176,6 +1169,22 @@ public class Curve3 extends Curve
       return this.knots.get(this.knots.size() - 1);
    }
 
+   /**
+    * Gets this curve's material index.
+    *
+    * @return the material index
+    */
+   public int getMaterialIndex () {
+
+      return this.materialIndex;
+   }
+
+   /**
+    * Calculates this curve's hash code based on its knots and
+    * on whether it is a closed loop.
+    *
+    * @return the hash
+    */
    @Override
    public int hashCode () {
 
@@ -1197,7 +1206,9 @@ public class Curve3 extends Curve
     *           the knot
     * @return the curve
     */
-   public Curve3 insert ( final int i, final Knot3 knot ) {
+   public Curve3 insert (
+         final int i,
+         final Knot3 knot ) {
 
       if (knot != null) {
          final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
@@ -1419,6 +1430,19 @@ public class Curve3 extends Curve
       while (itr.hasNext()) {
          itr.next().scale(scale);
       }
+      return this;
+   }
+
+   /**
+    * Sets this curve's material index.
+    *
+    * @param i
+    *           the index
+    */
+   @Chainable
+   public Curve3 setMaterialIndex ( final int i ) {
+
+      this.materialIndex = i;
       return this;
    }
 

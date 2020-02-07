@@ -33,6 +33,13 @@ public abstract class Entity implements IEntity {
       this.name = name;
    }
 
+   /**
+    * Tests this entity for equivalence with an object.
+    *
+    * @param obj
+    *           the object
+    * @return the evaluation
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
@@ -56,6 +63,21 @@ public abstract class Entity implements IEntity {
       return true;
    }
 
+   /**
+    * Gets the entity's name.
+    *
+    * @return the name
+    */
+   public String getName () {
+
+      return this.name;
+   }
+
+   /**
+    * Returns a hash code for this entity.
+    *
+    * @return the hash code
+    */
    @Override
    public int hashCode () {
 
@@ -63,6 +85,22 @@ public abstract class Entity implements IEntity {
       hash = hash * IUtils.HASH_MUL
             ^ (this.name == null ? 0 : this.name.hashCode());
       return hash;
+   }
+
+   /**
+    * Sets the entity's name.
+    *
+    * @param name
+    *           the name
+    * @return this entity
+    */
+   @Chainable
+   public Entity setName ( final String name ) {
+
+      if (name != null) {
+         this.name = name;
+      }
+      return this;
    }
 
    /**

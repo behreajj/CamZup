@@ -1,5 +1,15 @@
 package camzup.core;
 
+/**
+ * Organizes the components of a 3D mesh into a group of
+ * coordinate, normal and texture coordinate such that they
+ * can be edited together.
+ * 
+ * This is not used by a mesh internally; it is created upon
+ * retrieval from a mesh. All of its components should be
+ * treated as references to data within the mesh, not as
+ * unique values.
+ */
 public class Vert3 implements Comparable < Vert3 > {
 
    /**
@@ -61,19 +71,28 @@ public class Vert3 implements Comparable < Vert3 > {
       return a < b ? -1 : a > b ? 1 : 0;
    }
 
+   /**
+    * Tests this vertex for equivalence with another object.
+    * 
+    * @return the evaluation
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
       if (this == obj) {
          return true;
       }
+
       if (obj == null) {
          return false;
       }
+
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+
       final Vert3 other = (Vert3) obj;
+
       if (this.coord == null) {
          if (other.coord != null) {
             return false;
@@ -81,6 +100,7 @@ public class Vert3 implements Comparable < Vert3 > {
       } else if (!this.coord.equals(other.coord)) {
          return false;
       }
+
       if (this.normal == null) {
          if (other.normal != null) {
             return false;
@@ -88,6 +108,7 @@ public class Vert3 implements Comparable < Vert3 > {
       } else if (!this.normal.equals(other.normal)) {
          return false;
       }
+
       if (this.texCoord == null) {
          if (other.texCoord != null) {
             return false;
@@ -95,9 +116,16 @@ public class Vert3 implements Comparable < Vert3 > {
       } else if (!this.texCoord.equals(other.texCoord)) {
          return false;
       }
+
       return true;
    }
 
+   /**
+    * Returns a hash code for this vertex based on its
+    * coordinate, texture coordinate and normal.
+    * 
+    * @return the hash
+    */
    @Override
    public int hashCode () {
 
@@ -135,12 +163,24 @@ public class Vert3 implements Comparable < Vert3 > {
       return this;
    }
 
+   /**
+    * Returns a string representation of this vertex.
+    * 
+    * @return the string
+    */
    @Override
    public String toString () {
 
       return this.toString(4);
    }
 
+   /**
+    * Returns a string representation of this vertex.
+    * 
+    * @param places
+    *           the number of places
+    * @return the string
+    */
    public String toString ( final int places ) {
 
       return new StringBuilder(512)

@@ -603,7 +603,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * Filters a vector by setting each component to the input
     * component if it is in bounds and 0.0 if it is out of
     * bounds.
-    * 
+    *
     * @param v
     *           the vector
     * @param lb

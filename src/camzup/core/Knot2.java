@@ -1,5 +1,11 @@
 package camzup.core;
 
+/**
+ * Organizes the vectors the shape a Bezier curve into a
+ * coordinate (or anchor point), fore handle (the following
+ * control point) and rear handle (the preceding control
+ * point).
+ */
 public class Knot2 implements Comparable < Knot2 > {
 
    /**

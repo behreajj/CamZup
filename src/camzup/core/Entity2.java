@@ -4,7 +4,6 @@ package camzup.core;
  * An entity in two dimensional space that can be moved
  * around with a transform, but contains no other data.
  * Useful when a 'target' entity is needed.
- *
  */
 public class Entity2 extends Entity {
 
@@ -18,18 +17,38 @@ public class Entity2 extends Entity {
     */
    public Transform.Order transformOrder = Transform.Order.TRS;
 
+   /**
+    * The default constructor.
+    */
    Entity2 () {
 
       super();
       this.transform = new Transform2();
    }
 
+   /**
+    * Constructs a named entity. A new transform is created by
+    * the constructor.
+    * 
+    * @param name
+    *           the name
+    */
    Entity2 ( final String name ) {
 
       super(name);
       this.transform = new Transform2();
    }
 
+   /**
+    * Constructs a named entity with a transform. The transform
+    * is assigned by reference, and so it can be changed
+    * outside the entity.
+    * 
+    * @param name
+    *           the name
+    * @param transform
+    *           the transform
+    */
    Entity2 (
          final String name,
          final Transform2 transform ) {
@@ -38,12 +57,27 @@ public class Entity2 extends Entity {
       this.transform = transform;
    }
 
+   /**
+    * Constructs an entity with a transform. The transform is
+    * assigned by reference, and so it can be changed outside
+    * the entity.
+    * 
+    * @param transform
+    *           the transform
+    */
    Entity2 ( final Transform2 transform ) {
 
       super();
       this.transform = transform;
    }
 
+   /**
+    * Tests this entity for equivalence with an object.
+    *
+    * @param obj
+    *           the object
+    * @return the evaluation
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
@@ -76,6 +110,11 @@ public class Entity2 extends Entity {
       return true;
    }
 
+   /**
+    * Returns a hash code for this entity.
+    *
+    * @return the hash code
+    */
    @Override
    public int hashCode () {
 
@@ -166,7 +205,7 @@ public class Entity2 extends Entity {
    }
 
    /**
-    * Rotates this entity by an angle.
+    * Rotates this entity by an angle around the z axis.
     *
     * @param radians
     *           the angle
@@ -179,6 +218,13 @@ public class Entity2 extends Entity {
       return this;
    }
 
+   /**
+    * Scales the entity by a scalar.
+    * 
+    * @param scalar
+    *           the scalar
+    * @return this entity
+    */
    @Chainable
    public Entity2 scaleBy ( final float scalar ) {
 
@@ -186,6 +232,13 @@ public class Entity2 extends Entity {
       return this;
    }
 
+   /**
+    * Scales the entity by a non-uniform scalar.
+    * 
+    * @param scalar
+    *           the scalar
+    * @return the entity
+    */
    @Chainable
    public Entity2 scaleBy ( final Vec2 scalar ) {
 
@@ -193,6 +246,13 @@ public class Entity2 extends Entity {
       return this;
    }
 
+   /**
+    * Scales the entity to a uniform size.
+    *
+    * @param scalar
+    *           the size
+    * @return this entity
+    */
    @Chainable
    public Entity2 scaleTo ( final float scalar ) {
 
@@ -200,6 +260,13 @@ public class Entity2 extends Entity {
       return this;
    }
 
+   /**
+    * Scales the entity to a non-uniform size.
+    *
+    * @param scalar
+    *           the size
+    * @return this entity
+    */
    @Chainable
    public Entity2 scaleTo ( final Vec2 scalar ) {
 
@@ -207,6 +274,15 @@ public class Entity2 extends Entity {
       return this;
    }
 
+   /**
+    * Eases the entity to a scale by a step over time.
+    * 
+    * @param scalar
+    *           the scalar
+    * @param step
+    *           the step
+    * @return this entity
+    */
    @Chainable
    public Entity2 scaleTo (
          final Vec2 scalar,
@@ -216,12 +292,24 @@ public class Entity2 extends Entity {
       return this;
    }
 
+   /**
+    * Returns a string representation of this entity
+    * 
+    * @return the string
+    */
    @Override
    public String toString () {
 
       return this.toString(4);
    }
 
+   /**
+    * Returns a string representation of this entity
+    * 
+    * @param places
+    *           number of places
+    * @return the string
+    */
    public String toString ( final int places ) {
 
       return new StringBuilder()

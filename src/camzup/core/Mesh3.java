@@ -1411,7 +1411,7 @@ public class Mesh3 extends Mesh {
    /**
     * Returns a String of Python code targeted toward the
     * Blender 2.8x API. This code is brittle and is used for
-    * internal testing purposes, i.e., to compare how curve
+    * internal testing purposes, i.e., to compare how mesh
     * geometry looks in Blender (the control) vs. in the
     * library (the test).
     *
@@ -1421,8 +1421,10 @@ public class Mesh3 extends Mesh {
    String toBlenderCode () {
 
       final StringBuilder result = new StringBuilder();
-      result.append("{\"name\": \"").append(this.name)
-            .append("\", \"material_index\": ").append(this.materialIndex)
+      result.append("{\"name\": \"")
+            .append(this.name)
+            .append("\", \"material_index\": ")
+            .append(this.materialIndex)
             .append(", \"vertices\": [");
 
       final int vlen = this.coords.length;
@@ -1472,6 +1474,23 @@ public class Mesh3 extends Mesh {
       return result.toString();
    }
 
+   /**
+    * Sets StringBuilders of C# code targeted toward the Unity
+    * 2019 API. This code is brittle and is used for internal
+    * testing purposes, i.e., to compare how mesh geometry
+    * looks in Blender (the control) vs. in the library (the
+    * test).
+    *
+    * @param vs
+    *           the vertices string builder
+    * @param vts
+    *           the texture coordinates string builder
+    * @param vns
+    *           the normals string builder
+    * @param tris
+    *           the triangle indices string builder
+    */
+   @Experimental
    void toUnityCode (
          final StringBuilder vs,
          final StringBuilder vts,
@@ -1514,7 +1533,16 @@ public class Mesh3 extends Mesh {
       }
    }
 
+   /**
+    * Attempts to recalculate the normals of this mesh per
+    * vertex. If the normals array is null, or if its length is
+    * not equal to the length of coordinates, the normals array
+    * is reallocated.
+    *
+    * @return this mesh
+    */
    @Experimental
+   @Chainable
    public Mesh3 calcNormals () {
 
       if (this.normals == null || this.normals.length != this.coords.length) {
@@ -1566,6 +1594,67 @@ public class Mesh3 extends Mesh {
       return this;
    }
 
+   /**
+    * Clones this mesh.
+    *
+    * @return the cloned mesh
+    */
+   @Override
+   public Mesh3 clone () {
+
+      final int vslen = this.coords.length;
+      final Vec3[] vs = new Vec3[vslen];
+      for (int i = 0; i < vslen; ++i) {
+         vs[i] = new Vec3(this.coords[i]);
+      }
+
+      final int vtslen = this.texCoords.length;
+      final Vec2[] vts = new Vec2[vtslen];
+      for (int i = 0; i < vtslen; ++i) {
+         vts[i] = new Vec2(this.texCoords[i]);
+      }
+
+      final int vnslen = this.normals.length;
+      final Vec3[] vns = new Vec3[vnslen];
+      for (int i = 0; i < vnslen; ++i) {
+         vns[i] = new Vec3(this.normals[i]);
+      }
+
+      final int fslen0 = this.faces.length;
+      final int[][][] fs = new int[fslen0][][];
+
+      for (int i = 0; i < fslen0; ++i) {
+
+         final int[][] source1 = this.faces[i];
+         final int fslen1 = source1.length;
+         final int[][] target1 = new int[fslen1][];
+         fs[i] = target1;
+
+         for (int j = 0; j < fslen1; ++j) {
+
+            final int[] source2 = source1[j];
+            final int fslen2 = source2.length;
+            final int[] target2 = new int[fslen2];
+            target1[j] = target2;
+
+            for (int k = 0; k < fslen2; ++k) {
+               target2[k] = source2[k];
+            }
+         }
+      }
+
+      final Mesh3 m = new Mesh3(this.name, fs, vs, vts, vns);
+      m.materialIndex = this.materialIndex;
+      return m;
+   }
+
+   /**
+    * Tests this mesh for equivalence with an object.
+    *
+    * @param obj
+    *           the object
+    * @return the evaluation
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
@@ -1612,10 +1701,8 @@ public class Mesh3 extends Mesh {
       final int[][] f0 = this.faces[Math.floorMod(
             i, this.faces.length)];
       final int f0len = f0.length;
-      final int[] f1 = f0[Math.floorMod(
-            j, f0len)];
-      final int[] f2 = f0[Math.floorMod(
-            j + 1, f0len)];
+      final int[] f1 = f0[Math.floorMod(j, f0len)];
+      final int[] f2 = f0[Math.floorMod(j + 1, f0len)];
 
       return target.set(
             this.coords[f1[0]],
@@ -1648,6 +1735,7 @@ public class Mesh3 extends Mesh {
 
             final int[] fo = fs[j];
             final int[] fd = fs[(j + 1) % len1];
+
             trial.set(
                   this.coords[fo[0]],
                   this.texCoords[fo[1]],
@@ -1676,7 +1764,9 @@ public class Mesh3 extends Mesh {
     *           the output face
     * @return the face
     */
-   public Face3 getFace ( final int i, final Face3 target ) {
+   public Face3 getFace (
+         final int i,
+         final Face3 target ) {
 
       final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
       final int len = face.length;
@@ -1722,6 +1812,16 @@ public class Mesh3 extends Mesh {
       }
 
       return result;
+   }
+
+   /**
+    * Gets this mesh's material index.
+    *
+    * @return the material index
+    */
+   public int getMaterialIndex () {
+
+      return this.materialIndex;
    }
 
    /**
@@ -1785,6 +1885,12 @@ public class Mesh3 extends Mesh {
       return result.toArray(new Vert3[result.size()]);
    }
 
+   /**
+    * Returns a hash code for this mesh based on its
+    * coordinates and its face indices.
+    *
+    * @return the hash code
+    */
    @Override
    public int hashCode () {
 
@@ -2024,6 +2130,19 @@ public class Mesh3 extends Mesh {
    }
 
    /**
+    * Sets this mesh's material index.
+    *
+    * @param i
+    *           the index
+    */
+   @Chainable
+   public Mesh3 setMaterialIndex ( final int i ) {
+
+      this.materialIndex = i;
+      return this;
+   }
+
+   /**
     * Renders the mesh as a string following the Wavefront OBJ
     * file format.
     *
@@ -2050,6 +2169,7 @@ public class Mesh3 extends Mesh {
       result.append('o').append(' ').append(this.name)
             .append('\n').append('\n');
 
+      /* Write coordinates. */
       for (final Vec3 coord : this.coords) {
          result.append('v').append(' ')
                .append(coord.toObjString())
@@ -2057,6 +2177,7 @@ public class Mesh3 extends Mesh {
       }
       result.append('\n');
 
+      /* Write texture coordinates. */
       for (final Vec2 texCoord : this.texCoords) {
          result.append("vt ")
                .append(texCoord.toObjString())
@@ -2064,6 +2185,7 @@ public class Mesh3 extends Mesh {
       }
       result.append('\n');
 
+      /* Write normals. */
       for (final Vec3 normal : this.normals) {
          result.append("vn ")
                .append(normal.toObjString())

@@ -3456,7 +3456,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    @Experimental
    String toUnityCode () {
 
-      StringBuilder sb = new StringBuilder(96);
+      final StringBuilder sb = new StringBuilder(96);
       sb.append("new Vector3(")
             .append(this.x)
             .append("f, ")

@@ -3,7 +3,7 @@ package camzup.core;
 /**
  * An abstract parent for mesh objects.
  */
-public abstract class Mesh extends EntityData {
+public abstract class Mesh extends EntityData implements Cloneable {
 
    /**
     * Default count of sectors in a regular convex polygon, so

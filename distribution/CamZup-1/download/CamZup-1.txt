@@ -50,7 +50,9 @@ prettyVersion = 0.0.4  # This is treated as a String
 # The min and max revision of Processing compatible with your Library.
 # Note that these fields use the revision and not the version of Processing, 
 # parsable as an int. For example, the revision number for 2.2.1 is 227. 
-# You can find the revision numbers in the change log: https://raw.githubusercontent.com/processing/processing/master/build/shared/revisions.txt
+# You can find the revision numbers in the change log:
+# https://raw.githubusercontent.com/processing/
+# processing/master/build/shared/revisions.txt
 # Only use maxRevision (or minRevision), when your Library is known to 
 # break in a later (or earlier) release. Otherwise, use the default value 0.
 minRevision = 0
