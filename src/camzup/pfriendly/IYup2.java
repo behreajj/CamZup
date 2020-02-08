@@ -211,7 +211,8 @@ public interface IYup2 extends IUp {
     *           the mesh entities
     * @return the string
     */
-   static String toSvgString ( final IYup2 renderer,
+   static String toSvgString ( 
+         final IYup2 renderer,
          final MeshEntity2... mes ) {
 
       final StringBuilder result = new StringBuilder();

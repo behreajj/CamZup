@@ -1,9 +1,9 @@
 package camzup.core;
 
 /**
- * A color key which stores a color at a given step (or
- * percent). GradientKey equality and hash is based solely
- * on the step, not on the color it holds.
+ * Stores a color at a given step (or percent). Equality and
+ * hash are based solely on the step, not on the color it
+ * holds.
  */
 public class ColorKey implements Comparable < ColorKey >, Cloneable {
 
@@ -188,10 +188,19 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     * Blender 2.8x API. This code is brittle and is used for
     * internal testing purposes.
     *
-    * @param name
-    *           the material's name
-    * @param samples
-    *           number of gradient samples
+    * @return the string
+    */
+   @Experimental
+   String toBlenderCode () {
+
+      return this.toBlenderCode(1.0f);
+   }
+
+   /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes.
+    *
     * @param gamma
     *           the gamma adjustment
     * @return the string
@@ -407,7 +416,9 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     * @return this key
     */
    @Chainable
-   public ColorKey set ( final float step, final int color ) {
+   public ColorKey set (
+         final float step,
+         final int color ) {
 
       this.step = step;
       Color.fromHex(color, this.clr);
@@ -425,7 +436,9 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     * @return this key
     */
    @Chainable
-   public ColorKey set ( final float step, final String color ) {
+   public ColorKey set (
+         final float step,
+         final String color ) {
 
       this.step = step;
       Color.fromHex(color, this.clr);

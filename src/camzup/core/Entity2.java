@@ -20,7 +20,7 @@ public class Entity2 extends Entity {
    /**
     * The default constructor.
     */
-   Entity2 () {
+   public Entity2 () {
 
       super();
       this.transform = new Transform2();
@@ -29,11 +29,11 @@ public class Entity2 extends Entity {
    /**
     * Constructs a named entity. A new transform is created by
     * the constructor.
-    * 
+    *
     * @param name
     *           the name
     */
-   Entity2 ( final String name ) {
+   public Entity2 ( final String name ) {
 
       super(name);
       this.transform = new Transform2();
@@ -43,13 +43,13 @@ public class Entity2 extends Entity {
     * Constructs a named entity with a transform. The transform
     * is assigned by reference, and so it can be changed
     * outside the entity.
-    * 
+    *
     * @param name
     *           the name
     * @param transform
     *           the transform
     */
-   Entity2 (
+   public Entity2 (
          final String name,
          final Transform2 transform ) {
 
@@ -61,11 +61,11 @@ public class Entity2 extends Entity {
     * Constructs an entity with a transform. The transform is
     * assigned by reference, and so it can be changed outside
     * the entity.
-    * 
+    *
     * @param transform
     *           the transform
     */
-   Entity2 ( final Transform2 transform ) {
+   public Entity2 ( final Transform2 transform ) {
 
       super();
       this.transform = transform;
@@ -220,7 +220,7 @@ public class Entity2 extends Entity {
 
    /**
     * Scales the entity by a scalar.
-    * 
+    *
     * @param scalar
     *           the scalar
     * @return this entity
@@ -234,7 +234,7 @@ public class Entity2 extends Entity {
 
    /**
     * Scales the entity by a non-uniform scalar.
-    * 
+    *
     * @param scalar
     *           the scalar
     * @return the entity
@@ -276,7 +276,7 @@ public class Entity2 extends Entity {
 
    /**
     * Eases the entity to a scale by a step over time.
-    * 
+    *
     * @param scalar
     *           the scalar
     * @param step
@@ -294,7 +294,7 @@ public class Entity2 extends Entity {
 
    /**
     * Returns a string representation of this entity
-    * 
+    *
     * @return the string
     */
    @Override
@@ -305,7 +305,7 @@ public class Entity2 extends Entity {
 
    /**
     * Returns a string representation of this entity
-    * 
+    *
     * @param places
     *           number of places
     * @return the string

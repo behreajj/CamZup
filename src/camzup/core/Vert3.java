@@ -4,7 +4,7 @@ package camzup.core;
  * Organizes the components of a 3D mesh into a group of
  * coordinate, normal and texture coordinate such that they
  * can be edited together.
- * 
+ *
  * This is not used by a mesh internally; it is created upon
  * retrieval from a mesh. All of its components should be
  * treated as references to data within the mesh, not as
@@ -73,7 +73,7 @@ public class Vert3 implements Comparable < Vert3 > {
 
    /**
     * Tests this vertex for equivalence with another object.
-    * 
+    *
     * @return the evaluation
     */
    @Override
@@ -123,7 +123,7 @@ public class Vert3 implements Comparable < Vert3 > {
    /**
     * Returns a hash code for this vertex based on its
     * coordinate, texture coordinate and normal.
-    * 
+    *
     * @return the hash
     */
    @Override
@@ -165,7 +165,7 @@ public class Vert3 implements Comparable < Vert3 > {
 
    /**
     * Returns a string representation of this vertex.
-    * 
+    *
     * @return the string
     */
    @Override
@@ -176,7 +176,7 @@ public class Vert3 implements Comparable < Vert3 > {
 
    /**
     * Returns a string representation of this vertex.
-    * 
+    *
     * @param places
     *           the number of places
     * @return the string

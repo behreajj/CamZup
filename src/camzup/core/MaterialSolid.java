@@ -107,14 +107,6 @@ public class MaterialSolid extends Material {
    public boolean useStroke = false;
 
    {
-      /*
-       * Instance variables should never be assigned constants
-       * when the constants are objects, as the constants will be
-       * overwritten. Rather, instance variables should receive
-       * copies of constants. To make this clearer, an initializer
-       * block.
-       */
-
       this.fill = Color.fromHex(IMaterial.DEFAULT_FILL, new Color());
       this.stroke = Color.fromHex(IMaterial.DEFAULT_STROKE, new Color());
    }

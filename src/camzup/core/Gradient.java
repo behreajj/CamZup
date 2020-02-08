@@ -12,7 +12,7 @@ import java.util.TreeSet;
  * Allows smooth color transitions to be evaluated by a
  * factor.
  */
-public class Gradient implements Iterable < ColorKey > {
+public class Gradient implements Cloneable, Iterable < ColorKey > {
 
    /**
     * The default easing function, lerp RGBA.
@@ -201,6 +201,17 @@ public class Gradient implements Iterable < ColorKey > {
    }
 
    /**
+    * Constructs a copy of a source gradient.
+    *
+    * @param source
+    *           the source
+    */
+   public Gradient ( final Gradient source ) {
+
+      this.set(source);
+   }
+
+   /**
     * Creates a gradient from a color integer; an additional
     * color key, white at 0.0, is created.
     *
@@ -285,8 +296,8 @@ public class Gradient implements Iterable < ColorKey > {
    @Chainable
    protected Gradient shiftGradientKeysLeft ( final int added ) {
 
-      final Iterator < ColorKey > itr = this.keys.iterator();
       int i = 0;
+      final Iterator < ColorKey > itr = this.keys.iterator();
       final float scalar = 1.0f / (this.keys.size() + added - 1.0f);
       while (itr.hasNext()) {
          final ColorKey key = itr.next();
@@ -460,6 +471,17 @@ public class Gradient implements Iterable < ColorKey > {
    }
 
    /**
+    * Creates a clone of this gradient
+    *
+    * @return the clone
+    */
+   @Override
+   public Gradient clone () {
+
+      return new Gradient(this);
+   }
+
+   /**
     * Checks to see if this gradient contains a specified key.
     *
     * @param key
@@ -487,15 +509,13 @@ public class Gradient implements Iterable < ColorKey > {
       keyArr.addAll(this.keys);
 
       this.keys.clear();
-
+      int i = 0;
       final Iterator < ColorKey > itr = keyArr.iterator();
       final float denom = 1.0f / (keyArr.size() - 1.0f);
-      int i = 0;
       while (itr.hasNext()) {
          final ColorKey key = itr.next();
          key.step = i++ * denom;
       }
-
       this.keys.addAll(keyArr);
       return this;
    }
@@ -807,6 +827,23 @@ public class Gradient implements Iterable < ColorKey > {
    }
 
    /**
+    * Copies data from a source gradient.
+    *
+    * @param source
+    *           the source
+    * @return this gradient
+    */
+   public Gradient set ( final Gradient source ) {
+
+      this.keys.clear();
+      final Iterator < ColorKey > srcItr = source.keys.iterator();
+      while (srcItr.hasNext()) {
+         this.keys.add(new ColorKey(srcItr.next()));
+      }
+      return this;
+   }
+
+   /**
     * Sorts the gradient according to a property of the colors
     * in each key. Does so with a temporary List.
     *
@@ -815,8 +852,7 @@ public class Gradient implements Iterable < ColorKey > {
     * @return the gradient
     */
    @Experimental
-   public Gradient sort (
-         final List < Color > clrList ) {
+   public Gradient sort (final List < Color > clrList ) {
 
       return this.sort(clrList, null);
    }
@@ -915,7 +951,7 @@ public class Gradient implements Iterable < ColorKey > {
                .append('}');
 
          if (i < last) {
-            result.append(',');
+            result.append(',').append(' ');
          }
       }
       result.append(']');

@@ -207,6 +207,8 @@ public class Transform3 extends Transform {
          final Vec3 up,
          final Transform3 target ) {
 
+      // TODO: Loose float version of from axes?
+      
       target.rotPrev.set(target.rotation);
       Quaternion.fromAxes(right, forward, up, target.rotation);
       target.updateAxes();
@@ -668,7 +670,7 @@ public class Transform3 extends Transform {
       } else if (!this.scale.equals(t.scale)) {
          return false;
       }
-      
+
       if (this.location == null) {
          if (t.location != null) {
             return false;
@@ -676,7 +678,7 @@ public class Transform3 extends Transform {
       } else if (!this.location.equals(t.location)) {
          return false;
       }
-      
+
       if (this.rotation == null) {
          if (t.rotation != null) {
             return false;
@@ -684,7 +686,7 @@ public class Transform3 extends Transform {
       } else if (!this.rotation.equals(t.rotation)) {
          return false;
       }
-      
+
       return true;
    }
 

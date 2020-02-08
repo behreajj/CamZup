@@ -2,6 +2,8 @@ package camzup;
 
 import java.util.HashSet;
 
+import camzup.core.Curve3;
+import camzup.core.Face3;
 import camzup.core.IUtils;
 import camzup.core.Mesh2;
 import camzup.core.Mesh3;
@@ -15,6 +17,8 @@ import processing.core.PApplet;
  * the library and is for development and debugging only.
  */
 public class CamZup {
+
+   static final float ONE_PI = 0.31830987f;
 
    /**
     * The library's current version.
@@ -262,10 +266,16 @@ public class CamZup {
       // String str = me.toBlenderCode();
       // System.out.println(str);
 
-      // Mesh2 m = new Mesh2();
-      // Mesh2.polygon(5,Mesh2.PolyType.TRI, m);
-      // MeshEntity2 me = new MeshEntity2().appendMesh(m);
-      // System.out.println(me.toUnityCode());
+      // Mesh3 m = new Mesh3();
+      // Mesh3.polygon(32, m);
+      // Mesh3 n = new Mesh3(m);
+      // System.out.println(n);
+
+//      final Curve3 a = new Curve3();
+//      Curve3.circle(a);
+//      final Curve3 b = new Curve3(a);
+//      System.out.println(b.toString());
+
    }
 
    /**
@@ -286,8 +296,8 @@ public class CamZup {
       /* Raise 2 to the power of subdivisions. */
       final int resolution = 1 << subdivisions;
       final int res1 = resolution + 1;
-      final Vec3[] coords = new Vec3[res1 * res1 * 4
-            - (resolution * 2 - 1) * 3];
+      final int clen = res1 * res1 * 4 - (resolution * 2 - 1) * 3;
+      final Vec3[] coords = new Vec3[clen];
       final int[][][] faces = new int[1 << subdivisions * 2 + 3][3][3];
 
       int v = 0;
@@ -319,7 +329,7 @@ public class CamZup {
       for (int i = 1; i <= resolution; ++i) {
          final float prc = i * toPercent;
          coords[v++] = to = Vec3.mix(down, forward, prc, new Vec3());
-
+         final int i4 = i * 4;
          for (int d = 0; d < 4; ++d) {
             from = to;
             to = Vec3.mix(down, directions[d], prc, new Vec3());
@@ -327,20 +337,21 @@ public class CamZup {
             v = CamZup.createVertexLine(from, to, i, v, coords);
             vBottom += i > 1 ? i - 1 : 1;
          }
-         vBottom = v - 1 - i * 4;
+         vBottom = v - 1 - i4;
       }
 
-      for (int i = resolution - 1; i >= 1; i--) {
+      for (int i = resolution - 1; i > 0; i--) {
          final float prc = i * toPercent;
          coords[v++] = to = Vec3.mix(up, forward, prc, new Vec3());
-         for (int d = 0; d < 4; d++) {
+         final int i4 = i * 4;
+         for (int d = 0; d < 4; ++d) {
             from = to;
             to = Vec3.mix(up, directions[d], prc, new Vec3());
             t = CamZup.createUpperStrip(i, v, vBottom, t, faces);
             v = CamZup.createVertexLine(from, to, i, v, coords);
             vBottom += i + 1;
          }
-         vBottom = v - 1 - i * 4;
+         vBottom = v - 1 - i4;
       }
 
       /* Top cap. */
@@ -355,35 +366,45 @@ public class CamZup {
       }
 
       /* Normalize vertices and create a copy for normals. */
-      final Vec3[] normals = new Vec3[coords.length];
-      for (int i = 0; i < coords.length; ++i) {
-         normals[i] = new Vec3(Vec3.normalize(coords[i], coords[i]));
+      final Vec3[] normals = new Vec3[clen];
+      for (int i = 0; i < clen; ++i) {
+         final Vec3 coord = coords[i];
+         normals[i] = new Vec3(Vec3.normalize(coord, coord));
       }
 
-      final Vec2[] texCoords = new Vec2[coords.length];
+      final Vec2[] texCoords = new Vec2[clen];
       float xPrev = 1.0f;
-      for (int i = 0; i < coords.length; ++i) {
+      final float onePi = 0.31830987f;
+      for (int i = 0; i < clen; ++i) {
          final Vec3 v1 = coords[i];
+
          if (v1.x == xPrev) {
             texCoords[i - 1].x = 1.0f;
          }
          xPrev = v1.x;
+
          final Vec2 st = new Vec2();
+
          st.x = Utils.atan2(v1.x, v1.z) * -IUtils.ONE_TAU;
+
          if (st.x < 0.0f) {
             st.x += 1.0f;
          }
-         st.y = Utils.asin(v1.y) / IUtils.PI + 0.5f;
+         // st.y = Utils.asin(v1.y) / IUtils.PI + 0.5f;
+         st.y = Utils.asin(v1.y) * onePi + 0.5f;
+
          texCoords[i] = st;
       }
-      texCoords[coords.length - 4].x = texCoords[0].x = 0.125f;
-      texCoords[coords.length - 3].x = texCoords[1].x = 0.375f;
-      texCoords[coords.length - 2].x = texCoords[2].x = 0.625f;
-      texCoords[coords.length - 1].x = texCoords[3].x = 0.875f;
+
+      texCoords[clen - 4].x = texCoords[0].x = 0.125f;
+      texCoords[clen - 3].x = texCoords[1].x = 0.375f;
+      texCoords[clen - 2].x = texCoords[2].x = 0.625f;
+      texCoords[clen - 1].x = texCoords[3].x = 0.875f;
 
       /* Scale vertices to radius. */
-      for (int i = 0; i < coords.length; i++) {
-         Vec3.mul(coords[i], 0.5f, coords[i]);
+      for (int i = 0; i < clen; i++) {
+         final Vec3 coord = coords[i];
+         Vec3.mul(coord, 0.5f, coord);
       }
 
       target.name = "Sphere";

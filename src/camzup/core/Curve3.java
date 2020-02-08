@@ -79,6 +79,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
       final int knotCount = Utils.ceilToInt(1 + 4 * arcLen1);
       final float toStep = 1.0f / (knotCount - 1.0f);
+
+      // TODO: Reintroduce scNorm?
       final float hndtn = 0.25f * toStep * arcLen1;
       final float handleMag = Utils.tan(hndtn * IUtils.TAU) * radius
             * IUtils.FOUR_THIRDS;
@@ -573,17 +575,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    private final List < Knot3 > knots;
 
-   /**
-    * Whether or not the curve is a closed loop.
-    */
-   public boolean closedLoop = false;
-
-   /**
-    * The material associated with this curve in a curve
-    * entity.
-    */
-   public int materialIndex = 0;
-
    {
       /*
        * Seems to perform better when the class is instead of the
@@ -616,8 +607,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          final boolean closedLoop,
          final Collection < Knot3 > knots ) {
 
-      super();
-      this.closedLoop = closedLoop;
+      super(closedLoop);
       this.knots.addAll(knots);
    }
 
@@ -634,6 +624,18 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          final Knot3... knots ) {
 
       this(closedLoop, Arrays.asList(knots));
+   }
+
+   /**
+    * Constructs a copy of the source.
+    *
+    * @param source
+    *           the source curve
+    */
+   public Curve3 ( final Curve3 source ) {
+
+      super();
+      this.set(source);
    }
 
    /**
@@ -663,8 +665,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          final boolean closedLoop,
          final Collection < Knot3 > knots ) {
 
-      super(name);
-      this.closedLoop = closedLoop;
+      super(name, closedLoop);
       this.knots.addAll(knots);
    }
 
@@ -928,6 +929,17 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
+    * Clones this curve
+    *
+    * @return the cloned curve
+    */
+   @Override
+   public Curve3 clone () {
+
+      return new Curve3(this);
+   }
+
+   /**
     * Tests this curve for equality with another object.
     *
     * @return the evaluation
@@ -1170,16 +1182,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Gets this curve's material index.
-    *
-    * @return the material index
-    */
-   public int getMaterialIndex () {
-
-      return this.materialIndex;
-   }
-
-   /**
     * Calculates this curve's hash code based on its knots and
     * on whether it is a closed loop.
     *
@@ -1319,7 +1321,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see Knot3#rotate(float, Vec3)
     */
    @Chainable
-   public Curve3 rotate ( final float radians, final Vec3 axis ) {
+   public Curve3 rotate (
+         final float radians,
+         final Vec3 axis ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
@@ -1327,6 +1331,23 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Iterator < Knot3 > itr = this.knots.iterator();
       while (itr.hasNext()) {
          itr.next().rotate(cosa, sina, axis);
+      }
+      return this;
+   }
+
+   /**
+    * Rotates all knots in the curve by a quaternion.
+    *
+    * @param q
+    *           the quaternion
+    * @return this curve
+    */
+   @Chainable
+   public Curve3 rotate ( final Quaternion q ) {
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while (itr.hasNext()) {
+         itr.next().rotate(q);
       }
       return this;
    }
@@ -1434,15 +1455,26 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Sets this curve's material index.
+    * Sets this curve to a copy of the source.
     *
-    * @param i
-    *           the index
+    * @param source
+    *           the source curve
+    * @return this curve
     */
    @Chainable
-   public Curve3 setMaterialIndex ( final int i ) {
+   public Curve3 set ( final Curve3 source ) {
 
-      this.materialIndex = i;
+      // TODO: Needs testing.
+
+      this.knots.clear();
+      final Iterator < Knot3 > srcItr = source.knots.iterator();
+      while (srcItr.hasNext()) {
+         this.knots.add(new Knot3(srcItr.next()));
+      }
+
+      this.closedLoop = source.closedLoop;
+      this.materialIndex = source.materialIndex;
+      this.name = source.name;
       return this;
    }
 
@@ -1486,7 +1518,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
             64 + 256 * this.knots.size())
                   .append("{ name: \"")
                   .append(this.name)
-                  .append("\"\n, closedLoop: ")
+                  .append("\", \n  closedLoop: ")
                   .append(this.closedLoop)
                   .append(", \n  knots: [ \n");
 

@@ -670,7 +670,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
        * because of stroke scaling issues.
        */
 
-      this.strokeWeight = Utils.max(PConstants.EPSILON, strokeWeight);
+      this.strokeWeight = Utils.max(Utils.EPSILON, strokeWeight);
       this.chooseStrokeCap(strokeCap);
       this.chooseStrokeJoin(strokeJoin);
       this.strokeImpl();
@@ -1043,8 +1043,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    @Override
    public void bezier (
-         final Vec2 ap0, final Vec2 cp0,
-         final Vec2 cp1, final Vec2 ap1 ) {
+         final Vec2 ap0,
+         final Vec2 cp0,
+         final Vec2 cp1,
+         final Vec2 ap1 ) {
 
       this.bezier(
             ap0.x, ap0.y,
@@ -3785,6 +3787,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       PApplet.showMethodWarning("textureMode");
    }
 
+   /**
+    * Returns the string representation of this renderer.
+    * 
+    * @return the string
+    */
    @Override
    public String toString () {
 

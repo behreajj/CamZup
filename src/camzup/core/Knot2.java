@@ -6,7 +6,7 @@ package camzup.core;
  * control point) and rear handle (the preceding control
  * point).
  */
-public class Knot2 implements Comparable < Knot2 > {
+public class Knot2 implements Cloneable, Comparable < Knot2 > {
 
    /**
     * Creates a knot from polar coordinates, where the knot's
@@ -32,9 +32,7 @@ public class Knot2 implements Comparable < Knot2 > {
          final Knot2 target ) {
 
       final Vec2 coord = target.coord;
-      coord.set(
-            cosa * radius,
-            sina * radius);
+      coord.set(cosa * radius, sina * radius);
 
       final float hmsina = sina * handleMag;
       final float hmcosa = cosa * handleMag;
@@ -308,6 +306,7 @@ public class Knot2 implements Comparable < Knot2 > {
       } else if (!this.rearHandle.equals(other.rearHandle)) {
          return false;
       }
+      
       return true;
    }
 
@@ -678,6 +677,7 @@ public class Knot2 implements Comparable < Knot2 > {
 
       this.scaleForeHandleTo(magnitude);
       this.scaleRearHandleTo(magnitude);
+      
       return this;
    }
 
@@ -741,10 +741,8 @@ public class Knot2 implements Comparable < Knot2 > {
 
       return this.set(
             xCoord, yCoord,
-
             xCoord + xOff,
             yCoord + yOff,
-
             xCoord - xOff,
             yCoord - yOff);
    }

@@ -140,33 +140,10 @@ public class Edge2 implements Comparable < Edge2 > {
    }
 
    /**
-    * Reverses the edge. Does so not by swapping references,
-    * but by value.
-    * 
-    * @return this edge
-    */
-   @Experimental
-   @Chainable
-   public Edge2 reverse () {
-
-      // TODO: Needs testing.
-
-      final Vec2 tmp = new Vec2(this.origin.coord);
-      this.origin.coord.set(this.dest.coord);
-      this.dest.coord.set(tmp);
-
-      tmp.set(this.origin.texCoord);
-      this.origin.texCoord.set(this.dest.texCoord);
-      this.dest.texCoord.set(tmp);
-
-      return this;
-   }
-
-   /**
     * Rotates the coordinates of this edge by an angle in
     * radians around the z axis. The texture coordinates are
     * unaffected.
-    * 
+    *
     * @param radians
     *           angle
     * @return this edge
@@ -187,7 +164,7 @@ public class Edge2 implements Comparable < Edge2 > {
    /**
     * Scales the coordinates of this edge. The texture
     * coordinates are unaffected.
-    * 
+    *
     * @param v
     *           uniform scalar
     * @return this edge
@@ -203,7 +180,7 @@ public class Edge2 implements Comparable < Edge2 > {
    /**
     * Scales the coordinates of this edge. The texture
     * coordinates are unaffected.
-    * 
+    *
     * @param v
     *           non uniform scalar
     * @return this edge
@@ -219,7 +196,7 @@ public class Edge2 implements Comparable < Edge2 > {
    /**
     * Sets the origin and destination coordinate, texture
     * coordinate and normal data.
-    * 
+    *
     * @param coOrigin
     *           origin coordinate
     * @param txOrigin
@@ -244,7 +221,7 @@ public class Edge2 implements Comparable < Edge2 > {
 
    /**
     * Sets this edge by vertex.
-    * 
+    *
     * @param origin
     *           the origin vertex
     * @param dest
@@ -264,7 +241,7 @@ public class Edge2 implements Comparable < Edge2 > {
 
    /**
     * Returns a string representation of this edge.
-    * 
+    *
     * @return the string
     */
    @Override
@@ -275,7 +252,7 @@ public class Edge2 implements Comparable < Edge2 > {
 
    /**
     * Returns a string representation of this edge.
-    * 
+    *
     * @param places
     *           the number of places
     * @return the string
@@ -294,7 +271,7 @@ public class Edge2 implements Comparable < Edge2 > {
    /**
     * Translates the coordinates of this edge. The texture
     * coordinates are unaffected.
-    * 
+    *
     * @param v
     *           translation
     * @return this edge

@@ -5,7 +5,7 @@ import java.util.Arrays;
 /**
  * Organizes components of a 3D mesh into a list of vertices
  * that form a face.
- * 
+ *
  * This is not used by a mesh internally; it is created upon
  * retrieval from a mesh.
  */
@@ -83,7 +83,7 @@ public class Face3 implements Comparable < Face3 > {
    /**
     * Gets an edge from this face. Wraps the index by the
     * number of vertices in the face.
-    * 
+    *
     * @param i
     *           index
     * @param target
@@ -105,7 +105,7 @@ public class Face3 implements Comparable < Face3 > {
 
    /**
     * Gets all the edges in this face.
-    * 
+    *
     * @return the edges
     */
    @Experimental
@@ -127,7 +127,7 @@ public class Face3 implements Comparable < Face3 > {
 
    /**
     * Returns a hash code for this face.
-    * 
+    *
     * @return the hash
     */
    @Override
@@ -149,8 +149,8 @@ public class Face3 implements Comparable < Face3 > {
    }
 
    /**
-    * Rotates all coordinates and normals in the mesh by an
-    * angle around an arbitrary axis.
+    * Rotates all coordinates in the mesh by an angle around an
+    * arbitrary axis.
     *
     * @param radians
     *           the angle in radians
@@ -170,23 +170,22 @@ public class Face3 implements Comparable < Face3 > {
 
       Vert3 vt3;
       Vec3 c;
-      Vec3 n;
+      // Vec3 n;
 
       final int len = this.vertices.length;
       for (int i = 0; i < len; ++i) {
          vt3 = this.vertices[i];
          c = vt3.coord;
-         n = vt3.normal;
+         // n = vt3.normal;
          Vec3.rotate(c, cosa, sina, axis, c);
-         Vec3.rotate(n, cosa, sina, axis, n);
+         // Vec3.rotate(n, cosa, sina, axis, n);
       }
 
       return this;
    }
 
    /**
-    * Rotates all coordinates and normals in the face by a
-    * quaternion.
+    * Rotates all coordinates in the face by a quaternion.
     *
     * @param q
     *           the quaternion
@@ -198,23 +197,23 @@ public class Face3 implements Comparable < Face3 > {
 
       Vert3 vt3;
       Vec3 c;
-      Vec3 n;
+      // Vec3 n;
 
       final int len = this.vertices.length;
       for (int i = 0; i < len; ++i) {
          vt3 = this.vertices[i];
          c = vt3.coord;
-         n = vt3.normal;
+         // n = vt3.normal;
          Quaternion.mulVector(q, c, c);
-         Quaternion.mulVector(q, n, n);
+         // Quaternion.mulVector(q, n, n);
       }
 
       return this;
    }
 
    /**
-    * Rotates all coordinates and normals in the face by an
-    * angle around the x axis.
+    * Rotates all coordinates in the face by an angle around
+    * the x axis.
     *
     * @param radians
     *           the angle in radians
@@ -230,23 +229,23 @@ public class Face3 implements Comparable < Face3 > {
 
       Vert3 vt3;
       Vec3 c;
-      Vec3 n;
+      // Vec3 n;
 
       final int len = this.vertices.length;
       for (int i = 0; i < len; ++i) {
          vt3 = this.vertices[i];
          c = vt3.coord;
-         n = vt3.normal;
+         // n = vt3.normal;
          Vec3.rotateX(c, cosa, sina, c);
-         Vec3.rotateX(n, cosa, sina, n);
+         // Vec3.rotateX(n, cosa, sina, n);
       }
 
       return this;
    }
 
    /**
-    * Rotates all coordinates and normals in the face by an
-    * angle around the y axis.
+    * Rotates all coordinates in the face by an angle around
+    * the y axis.
     *
     * @param radians
     *           the angle in radians
@@ -262,23 +261,23 @@ public class Face3 implements Comparable < Face3 > {
 
       Vert3 vt3;
       Vec3 c;
-      Vec3 n;
+      // Vec3 n;
 
       final int len = this.vertices.length;
       for (int i = 0; i < len; ++i) {
          vt3 = this.vertices[i];
          c = vt3.coord;
-         n = vt3.normal;
+         // n = vt3.normal;
          Vec3.rotateY(c, cosa, sina, c);
-         Vec3.rotateY(n, cosa, sina, n);
+         // Vec3.rotateY(n, cosa, sina, n);
       }
 
       return this;
    }
 
    /**
-    * Rotates all coordinates and normals in the face by an
-    * angle around the z axis.
+    * Rotates all coordinates in the face by an angle around
+    * the z axis.
     *
     * @param radians
     *           the angle in radians
@@ -294,15 +293,15 @@ public class Face3 implements Comparable < Face3 > {
 
       Vert3 vt3;
       Vec3 c;
-      Vec3 n;
+      // Vec3 n;
 
       final int len = this.vertices.length;
       for (int i = 0; i < len; ++i) {
          vt3 = this.vertices[i];
          c = vt3.coord;
-         n = vt3.normal;
+         // n = vt3.normal;
          Vec3.rotateZ(c, cosa, sina, c);
-         Vec3.rotateZ(n, cosa, sina, n);
+         // Vec3.rotateZ(n, cosa, sina, n);
       }
 
       return this;
@@ -367,7 +366,7 @@ public class Face3 implements Comparable < Face3 > {
 
    /**
     * Returns a string representation of this face.
-    * 
+    *
     * @return the string
     */
    @Override
@@ -378,7 +377,7 @@ public class Face3 implements Comparable < Face3 > {
 
    /**
     * Returns a string representation of this face.
-    * 
+    *
     * @param places
     *           the number of places
     * @return the string

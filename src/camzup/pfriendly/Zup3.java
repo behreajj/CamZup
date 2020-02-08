@@ -211,7 +211,6 @@ public class Zup3 extends Up3 {
          final float eyeX,
          final float eyeY,
          final float eyeZ,
-
          final float centerX,
          final float centerY,
          final float centerZ ) {
@@ -224,7 +223,6 @@ public class Zup3 extends Up3 {
       this.camera(
             eyeX, eyeY, eyeZ,
             centerX, centerY, centerZ,
-
             Zup3.DEFAULT_REF_X,
             Zup3.DEFAULT_REF_Y,
             Zup3.DEFAULT_REF_Z);
@@ -270,12 +268,11 @@ public class Zup3 extends Up3 {
 
       this.refUp.set(xUp, yUp, zUp);
       if (Vec3.magSq(this.refUp) < PConstants.EPSILON) {
-
          this.refUp.set(
                Yup3.DEFAULT_REF_X,
                Yup3.DEFAULT_REF_Y,
                Yup3.DEFAULT_REF_Z);
-         return; // Why return?
+         return;
       }
 
       this.lookDir.set(
@@ -284,9 +281,9 @@ public class Zup3 extends Up3 {
             zEye - zCenter);
 
       final float lookDist = Vec3.magSq(this.lookDir);
-      if (lookDist < PConstants.EPSILON) {
+      if (lookDist < Utils.EPSILON) {
          this.lookDir.set(0.0f, 0.0f, -1.0f);
-         return; // Why return?
+         return;
       }
 
       this.cameraX = xEye;
@@ -297,40 +294,14 @@ public class Zup3 extends Up3 {
 
       this.eyeDist = Utils.sqrt(lookDist);
 
-      /* Create three axes. */
+      /* Create three axes through cross normalize. */
       Vec3.normalize(this.lookDir, this.k);
       Vec3.crossNorm(this.refUp, this.k, this.i);
       Vec3.crossNorm(this.k, this.i, this.j);
       // Vec3.crossNorm(this.k, this.refUp, this.i);
       // Vec3.crossNorm(this.i, this.k, this.j);
 
-      final float m00 = this.i.x;
-      final float m01 = this.i.y;
-      final float m02 = this.i.z;
-
-      final float m10 = this.j.x;
-      final float m11 = this.j.y;
-      final float m12 = this.j.z;
-
-      final float m20 = this.k.x;
-      final float m21 = this.k.y;
-      final float m22 = this.k.z;
-
-      this.camera.set(
-            m00, m01, m02, -xEye * m00 - yEye * m01 - zEye * m02,
-            m10, m11, m12, -xEye * m10 - yEye * m11 - zEye * m12,
-            m20, m21, m22, -xEye * m20 - yEye * m21 - zEye * m22,
-            0.0f, 0.0f, 0.0f, 1.0f);
-
-      this.cameraInv.set(
-            m00, m10, m20, xEye,
-            m01, m11, m21, yEye,
-            m02, m12, m22, zEye,
-            0.0f, 0.0f, 0.0f, 1.0f);
-
-      this.modelview.set(this.camera);
-      this.modelviewInv.set(this.cameraInv);
-      this.updateProjmodelview();
+      this.updateCamera();
    }
 
    /**
@@ -352,7 +323,6 @@ public class Zup3 extends Up3 {
       this.camera(
             eye.x, eye.y, eye.z,
             center.x, center.y, center.z,
-
             Zup3.DEFAULT_REF_X,
             Zup3.DEFAULT_REF_Y,
             Zup3.DEFAULT_REF_Z);
@@ -398,6 +368,16 @@ public class Zup3 extends Up3 {
       this.colorMode = colorModeSaved;
    }
 
+   /**
+    * Sets the current normal used by the renderer.
+    *
+    * @param nx
+    *           the x component
+    * @param ny
+    *           the y component
+    * @param nz
+    *           the z component
+    */
    @Override
    public void normal (
          final float nx,
@@ -410,9 +390,11 @@ public class Zup3 extends Up3 {
 
       if (this.shape != 0) {
          if (this.normalMode == PGraphics.NORMAL_MODE_AUTO) {
+
             /* One normal per begin/end shape */
             this.normalMode = PGraphics.NORMAL_MODE_SHAPE;
          } else if (this.normalMode == PGraphics.NORMAL_MODE_SHAPE) {
+
             /* a separate normal for each vertex */
             this.normalMode = PGraphics.NORMAL_MODE_VERTEX;
          }
@@ -440,6 +422,11 @@ public class Zup3 extends Up3 {
       this.camera();
    }
 
+   /**
+    * Returns the string representation of this renderer.
+    *
+    * @return the string
+    */
    @Override
    public String toString () {
 

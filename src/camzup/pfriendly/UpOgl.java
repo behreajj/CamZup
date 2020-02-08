@@ -114,7 +114,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *           is the renderer primary
     */
    public UpOgl (
-         final int width, final int height,
+         final int width,
+         final int height,
          final PApplet parent,
          final String path,
          final boolean isPrimary ) {
@@ -334,10 +335,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    protected void imageImpl (
          final PImage img,
-
          final float x1, final float y1,
          final float x2, final float y2,
-
          final int u1, final int v1,
          final int u2, final int v2 ) {
 
@@ -694,7 +693,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    protected void rectImpl (
          final float a, final float b,
          final float c, final float d,
-
          float tl, float tr,
          float br, float bl ) {
 
@@ -822,7 +820,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       PMatAux.rotate(angle,
             xAxis, yAxis, zAxis,
             this.modelview);
-      PMatAux.invRotate(angle, xAxis, yAxis, zAxis, this.modelviewInv);
+      PMatAux.invRotate(angle,
+            xAxis, yAxis, zAxis,
+            this.modelviewInv);
 
       this.updateProjmodelview();
    }
@@ -873,9 +873,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    protected void textCharModelImpl (
          final char ch,
-         final float x, final float y ) {
+         final float x,
+         final float y ) {
 
-      /**
+      /*
        * FontTexture.TextureInfo is a static inner class, and so
        * cannot be accessed from here.
        */
@@ -1040,7 +1041,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *           the t or v coordinate
     */
    @Override
-   protected void vertexTexture ( final float u, final float v ) {
+   protected void vertexTexture ( 
+         final float u, 
+         final float v ) {
 
       this.vertexTexture(u, v,
             this.textureMode,
@@ -1215,7 +1218,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             h = Utils.abs(y1);
       }
 
-      // TODO: Could issue with stroke weight start here??
       final boolean oldFill = this.fill;
 
       switch (mode) {
@@ -1244,8 +1246,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.transform.rotateTo(0.0f);
       this.transform.scaleTo(this.tr2Scale.set(w, h));
 
-      Curve2.arc(start, stop,
-            0.5f, this.arcMode, this.arc);
+      Curve2.arc(start, stop, 0.5f, this.arcMode, this.arc);
       this.arcImpl(this.arc, this.transform, IUp.DEFAULT_ORDER);
 
       this.fill = oldFill;
@@ -2190,7 +2191,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    @Override
    public int lerpColor (
-         final int origin, final int dest,
+         final int origin,
+         final int dest,
          final float step ) {
 
       return Color.toHexInt(
@@ -2687,7 +2689,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void rect (
          final float x1, final float y1,
          final float x2, final float y2,
-
          final float tl, final float tr,
          final float br, final float bl ) {
 
@@ -2982,7 +2983,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *           the applet height
     */
    @Override
-   public void setSize ( final int width, final int height ) {
+   public void setSize ( 
+         final int width, 
+         final int height ) {
 
       this.width = width;
       this.height = height;
@@ -3112,10 +3115,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *           the y coordinate
     */
    @Override
-   public void text (
-         final char c,
-         final float x,
-         float y ) {
+   public void text (final char c, final float x, float y ) {
 
       if (this.textFont == null) {
          this.defaultFontOrDeath("text");
@@ -3468,6 +3468,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.textureSampling = sampleType.getVal();
    }
 
+   /**
+    * Returns the string representation of this renderer.
+    * 
+    * @return the string
+    */
    @Override
    public String toString () {
 
@@ -3516,6 +3521,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.rotateZ(angle);
             this.translate(loc.x, loc.y, 0.0f);
             this.scale(dim.x, dim.y, 1.0f);
+            
             return;
 
          case SRT:
@@ -4030,7 +4036,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void vertex (
          final float x,
          final float y,
-
          final float u,
          final float v ) {
 
@@ -4059,7 +4064,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float x,
          final float y,
          final float z,
-
          final float u,
          final float v ) {
 

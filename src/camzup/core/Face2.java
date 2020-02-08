@@ -5,7 +5,7 @@ import java.util.Arrays;
 /**
  * Organizes components of a 2D mesh into a list of vertices
  * that form a face.
- * 
+ *
  * This is not used by a mesh internally; it is created upon
  * retrieval from a mesh.
  */
@@ -83,7 +83,7 @@ public class Face2 implements Comparable < Face2 > {
    /**
     * Gets an edge from this face. Wraps the index by the
     * number of vertices in the face.
-    * 
+    *
     * @param i
     *           index
     * @param target
@@ -105,7 +105,7 @@ public class Face2 implements Comparable < Face2 > {
 
    /**
     * Gets all the edges in this face.
-    * 
+    *
     * @return the edges
     */
    @Experimental
@@ -127,7 +127,7 @@ public class Face2 implements Comparable < Face2 > {
 
    /**
     * Returns a hash code for this face.
-    * 
+    *
     * @return the hash
     */
    @Override
@@ -231,7 +231,7 @@ public class Face2 implements Comparable < Face2 > {
 
    /**
     * Returns a string representation of this face.
-    * 
+    *
     * @return the string
     */
    @Override
@@ -242,7 +242,7 @@ public class Face2 implements Comparable < Face2 > {
 
    /**
     * Returns a string representation of this face.
-    * 
+    *
     * @param places
     *           the number of places
     * @return the string

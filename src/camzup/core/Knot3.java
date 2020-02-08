@@ -6,7 +6,7 @@ package camzup.core;
  * control point) and rear handle (the preceding control
  * point).
  */
-public class Knot3 implements Comparable < Knot3 > {
+public class Knot3 implements Cloneable, Comparable < Knot3 > {
 
    /**
     * Creates a knot from polar coordinates, where the knot's
@@ -32,10 +32,7 @@ public class Knot3 implements Comparable < Knot3 > {
          final Knot3 target ) {
 
       final Vec3 coord = target.coord;
-      coord.set(
-            cosa * radius,
-            sina * radius,
-            0.0f);
+      coord.set(cosa * radius, sina * radius, 0.0f);
 
       final float hmsina = sina * handleMag;
       final float hmcosa = cosa * handleMag;
@@ -519,6 +516,7 @@ public class Knot3 implements Comparable < Knot3 > {
             this.coord.x - (this.rearHandle.x - this.coord.x),
             this.coord.y - (this.rearHandle.y - this.coord.y),
             this.coord.z - (this.rearHandle.z - this.coord.z));
+      
       return this;
    }
 
@@ -536,6 +534,7 @@ public class Knot3 implements Comparable < Knot3 > {
             this.coord.x - (this.foreHandle.x - this.coord.x),
             this.coord.y - (this.foreHandle.y - this.coord.y),
             this.coord.z - (this.foreHandle.z - this.coord.z));
+      
       return this;
    }
 
@@ -597,9 +596,28 @@ public class Knot3 implements Comparable < Knot3 > {
     * @return this knot
     */
    @Chainable
-   public Knot3 rotate ( final float radians, final Vec3 axis ) {
+   public Knot3 rotate (
+         final float radians,
+         final Vec3 axis ) {
 
       return this.rotate(Utils.cos(radians), Utils.sin(radians), axis);
+   }
+
+   /**
+    * Rotates this knot by a quaternion.
+    *
+    * @param q
+    *           the quaternion
+    * @return this knot
+    */
+   @Chainable
+   public Knot3 rotate ( final Quaternion q ) {
+
+      Quaternion.mulVector(q, this.coord, this.coord);
+      Quaternion.mulVector(q, this.foreHandle, this.foreHandle);
+      Quaternion.mulVector(q, this.rearHandle, this.rearHandle);
+
+      return this;
    }
 
    /**
@@ -629,7 +647,9 @@ public class Knot3 implements Comparable < Knot3 > {
     * @return this knot
     */
    @Chainable
-   public Knot3 rotateX ( final float cosa, final float sina ) {
+   public Knot3 rotateX (
+         final float cosa,
+         final float sina ) {
 
       Vec3.rotateX(this.coord, cosa, sina, this.coord);
       Vec3.rotateX(this.foreHandle, cosa, sina, this.foreHandle);
@@ -665,7 +685,9 @@ public class Knot3 implements Comparable < Knot3 > {
     * @return this knot
     */
    @Chainable
-   public Knot3 rotateY ( final float cosa, final float sina ) {
+   public Knot3 rotateY (
+         final float cosa,
+         final float sina ) {
 
       Vec3.rotateY(this.coord, cosa, sina, this.coord);
       Vec3.rotateY(this.foreHandle, cosa, sina, this.foreHandle);
@@ -701,7 +723,9 @@ public class Knot3 implements Comparable < Knot3 > {
     * @return this knot
     */
    @Chainable
-   public Knot3 rotateZ ( final float cosa, final float sina ) {
+   public Knot3 rotateZ (
+         final float cosa,
+         final float sina ) {
 
       Vec3.rotateZ(this.coord, cosa, sina, this.coord);
       Vec3.rotateZ(this.foreHandle, cosa, sina, this.foreHandle);
@@ -812,6 +836,7 @@ public class Knot3 implements Comparable < Knot3 > {
 
       this.scaleForeHandleTo(magnitude);
       this.scaleRearHandleTo(magnitude);
+
       return this;
    }
 
@@ -881,11 +906,9 @@ public class Knot3 implements Comparable < Knot3 > {
 
       return this.set(
             xCoord, yCoord, zCoord,
-
             xCoord + xOff,
             yCoord + yOff,
             zCoord + zOff,
-
             xCoord - xOff,
             yCoord - yOff,
             zCoord - zOff);
@@ -1153,6 +1176,7 @@ public class Knot3 implements Comparable < Knot3 > {
       Vec3.add(this.coord, v, this.coord);
       Vec3.add(this.foreHandle, v, this.foreHandle);
       Vec3.add(this.rearHandle, v, this.rearHandle);
+      
       return this;
    }
 }

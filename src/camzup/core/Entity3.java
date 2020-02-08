@@ -4,7 +4,6 @@ package camzup.core;
  * An entity in three dimensional space that can be moved
  * around with a transform, but contains no other data.
  * Useful when a 'target' entity is needed.
- *
  */
 public class Entity3 extends Entity {
 
@@ -21,7 +20,7 @@ public class Entity3 extends Entity {
    /**
     * The default constructor.
     */
-   Entity3 () {
+   public Entity3 () {
 
       super();
       this.transform = new Transform3();
@@ -30,11 +29,11 @@ public class Entity3 extends Entity {
    /**
     * Constructs a named entity. A new transform is created by
     * the constructor.
-    * 
+    *
     * @param name
     *           the name
     */
-   Entity3 ( final String name ) {
+   public Entity3 ( final String name ) {
 
       super(name);
       this.transform = new Transform3();
@@ -44,13 +43,13 @@ public class Entity3 extends Entity {
     * Constructs a named entity with a transform. The transform
     * is assigned by reference, and so it can be changed
     * outside the entity.
-    * 
+    *
     * @param name
     *           the name
     * @param transform
     *           the transform
     */
-   Entity3 (
+   public Entity3 (
          final String name,
          final Transform3 transform ) {
 
@@ -62,11 +61,11 @@ public class Entity3 extends Entity {
     * Constructs an entity with a transform. The transform is
     * assigned by reference, and so it can be changed outside
     * the entity.
-    * 
+    *
     * @param transform
     *           the transform
     */
-   Entity3 ( final Transform3 transform ) {
+   public Entity3 ( final Transform3 transform ) {
 
       super();
       this.transform = transform;
@@ -176,7 +175,7 @@ public class Entity3 extends Entity {
 
    /**
     * Rotates the transform by an axis and angle in radians.
-    * 
+    *
     * @param radians
     *           the angle in radians
     * @param axis
@@ -194,7 +193,7 @@ public class Entity3 extends Entity {
 
    /**
     * Rotates this entity by a quaternion.
-    * 
+    *
     * @param rot
     *           the quaternion
     * @return this entity
@@ -208,7 +207,7 @@ public class Entity3 extends Entity {
 
    /**
     * Rotates this entity to a quaternion.
-    * 
+    *
     * @param rotNew
     *           the new rotation
     * @return this entity
@@ -222,7 +221,7 @@ public class Entity3 extends Entity {
 
    /**
     * Rotates this entity to a quaternion over a step in time.
-    * 
+    *
     * @param rotNew
     *           the new rotation
     * @param step
@@ -282,7 +281,7 @@ public class Entity3 extends Entity {
 
    /**
     * Scales the entity by a scalar.
-    * 
+    *
     * @param scalar
     *           the scalar
     * @return this entity
@@ -296,7 +295,7 @@ public class Entity3 extends Entity {
 
    /**
     * Scales the entity by a non-uniform scalar.
-    * 
+    *
     * @param scalar
     *           the scalar
     * @return the entity
@@ -338,7 +337,7 @@ public class Entity3 extends Entity {
 
    /**
     * Eases the entity to a scale by a step over time.
-    * 
+    *
     * @param scalar
     *           the scalar
     * @param step
@@ -356,7 +355,7 @@ public class Entity3 extends Entity {
 
    /**
     * Returns a string representation of this entity
-    * 
+    *
     * @return the string
     */
    @Override
@@ -367,7 +366,7 @@ public class Entity3 extends Entity {
 
    /**
     * Returns a string representation of this entity
-    * 
+    *
     * @param places
     *           number of places
     * @return the string

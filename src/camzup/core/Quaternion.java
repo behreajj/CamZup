@@ -1262,6 +1262,36 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             (float) Math.copySign(z, righty - forwardx));
    }
 
+   /**
+    * Creates a quaternion from three axes - either separate
+    * vectors or the columns of a matrix. This is an internal
+    * helper function which uses only the relevant information
+    * to create a quaternion.
+    *
+    * @param rightx
+    *           m00 : right x
+    * @param forwardy
+    *           m11 : forward y
+    * @param upz
+    *           m22 : up z
+    * @param forwardz
+    *           m21 : forward z
+    * @param upy
+    *           m12 : up y
+    * @param upx
+    *           m02 : up x
+    * @param rightz
+    *           m20 : right z
+    * @param righty
+    *           m10 : right y
+    * @param forwardx
+    *           m01 : forward x
+    * @param target
+    *           the output quaternion
+    * @return the quaternion
+    * @see Math#copySign(float, float)
+    * @see Math#sqrt(double)
+    */
    public static Quaternion fromAxes (
          final float rightx, final float forwardy, final float upz,
          final float forwardz, final float upy,

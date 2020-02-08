@@ -3,13 +3,12 @@ package camzup.core;
 /**
  * An abstract parent for mesh objects.
  */
-public abstract class Mesh extends EntityData implements Cloneable {
+public abstract class Mesh extends EntityData implements IMesh {
 
    /**
-    * Default count of sectors in a regular convex polygon, so
-    * as to approximate a circle.
+    * The material associated with this mesh in a mesh entity.
     */
-   public static final int DEFAULT_CIRCLE_SECTORS = 32;
+   public int materialIndex = 0;
 
    /**
     * The default constructor.
@@ -28,5 +27,29 @@ public abstract class Mesh extends EntityData implements Cloneable {
    protected Mesh ( final String name ) {
 
       super(name);
+   }
+
+   /**
+    * Gets this mesh's material index.
+    *
+    * @return the material index
+    */
+   public int getMaterialIndex () {
+
+      return this.materialIndex;
+   }
+
+   /**
+    * Sets this mesh's material index.
+    *
+    * @param i
+    *           the index
+    * @return this mesh
+    */
+   @Chainable
+   public Mesh setMaterialIndex ( final int i ) {
+
+      this.materialIndex = i;
+      return this;
    }
 }

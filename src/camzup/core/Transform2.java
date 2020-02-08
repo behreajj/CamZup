@@ -665,7 +665,7 @@ public class Transform2 extends Transform {
       } else if (!this.scale.equals(t.scale)) {
          return false;
       }
-      
+
       if (this.location == null) {
          if (t.location != null) {
             return false;
@@ -673,21 +673,18 @@ public class Transform2 extends Transform {
       } else if (!this.location.equals(t.location)) {
          return false;
       }
-      
+
       if (Float.floatToIntBits(this.rotation) != Float
             .floatToIntBits(t.rotation)) {
          return false;
       }
-      
+
       return true;
    }
 
    /**
     * Updates the local axes of the transform based on its
     * rotation.
-    *
-    * @see Math#cos(double)
-    * @see Math#sin(double)
     */
    @Override
    protected void updateAxes () {

@@ -1062,6 +1062,11 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       this.square(a.x, a.y, b);
    }
 
+   /**
+    * Returns the string representation of this renderer.
+    * 
+    * @return the string
+    */
    @Override
    public String toString () {
 

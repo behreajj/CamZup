@@ -150,6 +150,50 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    }
 
    /**
+    * A helper function for the renderer camera. Updates the
+    * camera matrix, its inverse, the modelview and its
+    * inverse, and updates the project model view.
+    */
+   protected void updateCamera () {
+
+      final float m00 = this.i.x;
+      final float m01 = this.i.y;
+      final float m02 = this.i.z;
+
+      final float m10 = this.j.x;
+      final float m11 = this.j.y;
+      final float m12 = this.j.z;
+
+      final float m20 = this.k.x;
+      final float m21 = this.k.y;
+      final float m22 = this.k.z;
+
+      /*
+       * Set matrix to axes by row. Translate by a negative
+       * location after the rotation.
+       */
+      this.camera.set(
+            m00, m01, m02,
+            -this.cameraX * m00 - this.cameraY * m01 - this.cameraZ * m02,
+            m10, m11, m12,
+            -this.cameraX * m10 - this.cameraY * m11 - this.cameraZ * m12,
+            m20, m21, m22,
+            -this.cameraX * m20 - this.cameraY * m21 - this.cameraZ * m22,
+            0.0f, 0.0f, 0.0f, 1.0f);
+
+      /* Set inverse by column. */
+      this.cameraInv.set(
+            m00, m10, m20, this.cameraX,
+            m01, m11, m21, this.cameraY,
+            m02, m12, m22, this.cameraZ,
+            0.0f, 0.0f, 0.0f, 1.0f);
+
+      this.modelview.set(this.camera);
+      this.modelviewInv.set(this.cameraInv);
+      this.updateProjmodelview();
+   }
+
+   /**
     * Draws a single Bezier curve.
     *
     * @param ap0
@@ -350,6 +394,16 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             this.colorModeZ * color.z,
 
             dir.x, dir.y, dir.z);
+   }
+
+   /**
+    * Gets the eye distance of the camera.
+    *
+    * @return the eye distance
+    */
+   public float getEyeDist () {
+
+      return this.eyeDist;
    }
 
    /**
@@ -796,6 +850,20 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    }
 
    /**
+    * Sets the eye distance of the camera. The value is usually
+    * set by the camera function, and to calculate the far clip
+    * plane of perspective functions, but is exposed for public
+    * access.
+    *
+    * @param ed
+    *           the eye distance
+    */
+   public void setEyeDist ( final float ed ) {
+
+      this.eyeDist = ed;
+   }
+
+   /**
     * Sets the renderer camera's 3D location.
     *
     * @param v
@@ -1001,6 +1069,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       this.text(str, x, y);
    }
 
+   /**
+    * Returns the string representation of this renderer.
+    *
+    * @return the string
+    */
    @Override
    public String toString () {
 

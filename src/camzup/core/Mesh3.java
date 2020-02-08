@@ -150,8 +150,8 @@ public class Mesh3 extends Mesh {
       return Mesh3.arc(majorStart, majorStop,
             minorStart, minorStop,
             thickness,
-            Mesh.DEFAULT_CIRCLE_SECTORS,
-            Mesh.DEFAULT_CIRCLE_SECTORS >> 1,
+            IMesh.DEFAULT_CIRCLE_SECTORS,
+            IMesh.DEFAULT_CIRCLE_SECTORS >> 1,
             target);
    }
 
@@ -488,7 +488,7 @@ public class Mesh3 extends Mesh {
          final Mesh3 target ) {
 
       return Mesh3.polygon(
-            Mesh.DEFAULT_CIRCLE_SECTORS,
+            IMesh.DEFAULT_CIRCLE_SECTORS,
             target);
    }
 
@@ -1048,7 +1048,7 @@ public class Mesh3 extends Mesh {
          final Mesh3 target ) {
 
       // TODO: This still creates a seam, but it is better by far
-      // than the Processing version...
+      // than the p5 version...
 
       final int vlats = latitudes < 3 ? 3 : latitudes;
       final int vlons = longitudes < 3 ? 3 : longitudes;
@@ -1072,7 +1072,7 @@ public class Mesh3 extends Mesh {
       final float toPhi = 0.5f / lats1;
 
       /*
-       * Set south pole. This is vertex 0, so subsequent vertex
+       * Set South pole. This is vertex 0, so subsequent vertex
        * indices begin at an offset of 1.
        */
       coords[0] = new Vec3(0.0f, 0.0f, -0.5f);
@@ -1103,7 +1103,7 @@ public class Mesh3 extends Mesh {
          }
       }
 
-      /* Set north pole. */
+      /* Set North pole. */
       final int last = len - 1;
       coords[last] = new Vec3(0.0f, 0.0f, 0.5f);
       texCoords[last] = new Vec2(0.0f, 1.0f);
@@ -1174,8 +1174,8 @@ public class Mesh3 extends Mesh {
    public static Mesh3 sphere ( final Mesh3 target ) {
 
       return Mesh3.sphere(
-            Mesh.DEFAULT_CIRCLE_SECTORS,
-            Mesh.DEFAULT_CIRCLE_SECTORS >> 1,
+            IMesh.DEFAULT_CIRCLE_SECTORS,
+            IMesh.DEFAULT_CIRCLE_SECTORS >> 1,
             target);
    }
 
@@ -1232,6 +1232,7 @@ public class Mesh3 extends Mesh {
        * 0.23570226039551584146694812070162,
        * 0.40824829046386301636621401245098
        */
+      
       final Vec3[] coords = new Vec3[] {
             /* 0 */ new Vec3(-0.0f, 0.47140452f, -0.16666667f),
             /* 1 */ new Vec3(-0.40824829f, -0.23570226f, -0.16666667f),
@@ -1321,11 +1322,6 @@ public class Mesh3 extends Mesh {
    public int[][][] faces;
 
    /**
-    * The material associated with this mesh in a mesh entity.
-    */
-   public int materialIndex = 0;
-
-   /**
     * An array of normals to indicate how light will bounce off
     * the mesh's surface.
     */
@@ -1368,6 +1364,18 @@ public class Mesh3 extends Mesh {
 
       super();
       this.set(faces, coords, texCoords, normals);
+   }
+
+   /**
+    * Constructs a copy of the source mesh.
+    *
+    * @param source
+    *           the source mesh
+    */
+   public Mesh3 ( final Mesh3 source ) {
+
+      super();
+      this.set(source);
    }
 
    /**
@@ -1602,50 +1610,7 @@ public class Mesh3 extends Mesh {
    @Override
    public Mesh3 clone () {
 
-      final int vslen = this.coords.length;
-      final Vec3[] vs = new Vec3[vslen];
-      for (int i = 0; i < vslen; ++i) {
-         vs[i] = new Vec3(this.coords[i]);
-      }
-
-      final int vtslen = this.texCoords.length;
-      final Vec2[] vts = new Vec2[vtslen];
-      for (int i = 0; i < vtslen; ++i) {
-         vts[i] = new Vec2(this.texCoords[i]);
-      }
-
-      final int vnslen = this.normals.length;
-      final Vec3[] vns = new Vec3[vnslen];
-      for (int i = 0; i < vnslen; ++i) {
-         vns[i] = new Vec3(this.normals[i]);
-      }
-
-      final int fslen0 = this.faces.length;
-      final int[][][] fs = new int[fslen0][][];
-
-      for (int i = 0; i < fslen0; ++i) {
-
-         final int[][] source1 = this.faces[i];
-         final int fslen1 = source1.length;
-         final int[][] target1 = new int[fslen1][];
-         fs[i] = target1;
-
-         for (int j = 0; j < fslen1; ++j) {
-
-            final int[] source2 = source1[j];
-            final int fslen2 = source2.length;
-            final int[] target2 = new int[fslen2];
-            target1[j] = target2;
-
-            for (int k = 0; k < fslen2; ++k) {
-               target2[k] = source2[k];
-            }
-         }
-      }
-
-      final Mesh3 m = new Mesh3(this.name, fs, vs, vts, vns);
-      m.materialIndex = this.materialIndex;
-      return m;
+      return new Mesh3(this);
    }
 
    /**
@@ -1815,16 +1780,6 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Gets this mesh's material index.
-    *
-    * @return the material index
-    */
-   public int getMaterialIndex () {
-
-      return this.materialIndex;
-   }
-
-   /**
     * Get a vertex from the mesh.
     *
     * @param i
@@ -1898,6 +1853,48 @@ public class Mesh3 extends Mesh {
       hash = hash * IUtils.HASH_MUL ^ Arrays.hashCode(this.coords);
       hash = hash * IUtils.HASH_MUL ^ Arrays.deepHashCode(this.faces);
       return hash;
+   }
+
+   /**
+    * Flips the indices which specify an edge.
+    *
+    * @param i
+    *           face index
+    * @param j
+    *           edge index
+    * @return this mesh
+    */
+   public Mesh3 reverseEdge ( final int i, final int j ) {
+
+      final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
+      final int len = face.length;
+      final int jOrigin = Math.floorMod(j, len);
+      final int jDest = Math.floorMod(j + 1, len);
+      final int[] temp = face[jOrigin];
+      face[jOrigin] = face[jDest];
+      face[jDest] = temp;
+      return this;
+   }
+
+   /**
+    * Flips the indices which specify a face.
+    *
+    * @param i
+    *           face index
+    * @return this mesh
+    */
+   public Mesh3 reverseFace ( final int i ) {
+
+      final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
+      final int len = face.length;
+      final int halfLen = len >> 1;
+      for (int j = 0; j < halfLen; ++j) {
+         final int reverse = len - j - 1;
+         final int[] temp = face[j];
+         face[j] = face[reverse];
+         face[reverse] = temp;
+      }
+      return this;
    }
 
    /**
@@ -2130,15 +2127,68 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Sets this mesh's material index.
+    * Sets this mesh to a copy of the source. Allocates new
+    * arrays for coordinates, texture coordinates, normals and
+    * faces.
     *
-    * @param i
-    *           the index
+    * @param source
+    *           the source mesh
+    * @return this mesh
     */
    @Chainable
-   public Mesh3 setMaterialIndex ( final int i ) {
+   public Mesh3 set ( final Mesh3 source ) {
 
-      this.materialIndex = i;
+      /* Copy coordinates. */
+      final Vec3[] sourcevs = source.coords;
+      final int vslen = sourcevs.length;
+      this.coords = new Vec3[vslen];
+      for (int i = 0; i < vslen; ++i) {
+         this.coords[i] = new Vec3(sourcevs[i]);
+      }
+
+      /* Copy texture coordinates. */
+      final Vec2[] sourcevts = source.texCoords;
+      final int vtslen = sourcevts.length;
+      this.texCoords = new Vec2[vtslen];
+      for (int j = 0; j < vtslen; ++j) {
+         this.texCoords[j] = new Vec2(sourcevts[j]);
+      }
+
+      /* Copy normals. */
+      final Vec3[] sourcevns = source.normals;
+      final int vnslen = sourcevns.length;
+      this.normals = new Vec3[vnslen];
+      for (int k = 0; k < vnslen; ++k) {
+         this.normals[k] = new Vec3(sourcevns[k]);
+      }
+
+      /* Copy faces. */
+      final int[][][] sourcefs = source.faces;
+      final int fslen0 = sourcefs.length;
+      this.faces = new int[fslen0][][];
+
+      for (int i = 0; i < fslen0; ++i) {
+
+         final int[][] source1 = sourcefs[i];
+         final int fslen1 = source1.length;
+         final int[][] target1 = new int[fslen1][];
+         this.faces[i] = target1;
+
+         for (int j = 0; j < fslen1; ++j) {
+
+            final int[] source2 = source1[j];
+            final int fslen2 = source2.length;
+            final int[] target2 = new int[fslen2];
+            target1[j] = target2;
+
+            for (int k = 0; k < fslen2; ++k) {
+               target2[k] = source2[k];
+            }
+         }
+      }
+
+      this.materialIndex = source.materialIndex;
+      this.name = source.name;
       return this;
    }
 
@@ -2258,7 +2308,9 @@ public class Mesh3 extends Mesh {
 
       sb.append("{ name: \"")
             .append(this.name)
-            .append('\"').append(',').append(' ')
+            .append('\"')
+            .append(',')
+            .append(' ')
             .append('\n')
             .append("coords: [ ");
 

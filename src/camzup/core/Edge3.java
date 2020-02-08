@@ -146,36 +146,9 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
-    * Reverses the edge. Does so not by swapping references,
-    * but by value.
-    * 
-    * @return this edge
-    */
-   @Experimental
-   @Chainable
-   public Edge3 reverse () {
-
-      // TODO: Needs testing.
-
-      final Vec3 tmp3 = new Vec3(this.origin.coord);
-      this.origin.coord.set(this.dest.coord);
-      this.dest.coord.set(tmp3);
-
-      final Vec2 tmp2 = new Vec2(this.origin.texCoord);
-      this.origin.texCoord.set(this.dest.texCoord);
-      this.dest.texCoord.set(tmp2);
-
-      tmp3.set(this.origin.normal);
-      this.origin.normal.set(this.dest.normal);
-      this.dest.normal.set(tmp3);
-
-      return this;
-   }
-
-   /**
     * Rotates the coordinates and normals of this edge by an
     * angle and axis. The texture coordinates are unaffected.
-    * 
+    *
     * @param radians
     *           angle
     * @param axis
@@ -207,7 +180,7 @@ public class Edge3 implements Comparable < Edge3 > {
    /**
     * Rotates the coordinates and normals of this edge by a
     * quaternion. The texture coordinates are unaffected.
-    * 
+    *
     * @param q
     *           the quaternion
     * @return this edge
@@ -233,7 +206,7 @@ public class Edge3 implements Comparable < Edge3 > {
     * Rotates the coordinates and normals of this edge by an
     * angle in radians around the x axis. The texture
     * coordinates are unaffected.
-    * 
+    *
     * @param radians
     *           angle
     * @return this edge
@@ -262,7 +235,7 @@ public class Edge3 implements Comparable < Edge3 > {
     * Rotates the coordinates and normals of this edge by an
     * angle in radians around the y axis. The texture
     * coordinates are unaffected.
-    * 
+    *
     * @param radians
     *           angle
     * @return this edge
@@ -291,7 +264,7 @@ public class Edge3 implements Comparable < Edge3 > {
     * Rotates the coordinates and normals of this edge by an
     * angle in radians around the z axis. The texture
     * coordinates are unaffected.
-    * 
+    *
     * @param radians
     *           angle
     * @return this edge
@@ -319,7 +292,7 @@ public class Edge3 implements Comparable < Edge3 > {
    /**
     * Scales the coordinates of this edge. The texture
     * coordinates and normals are unaffected.
-    * 
+    *
     * @param v
     *           uniform scalar
     * @return this edge
@@ -335,7 +308,7 @@ public class Edge3 implements Comparable < Edge3 > {
    /**
     * Scales the coordinates of this edge. The texture
     * coordinates and normals are unaffected.
-    * 
+    *
     * @param v
     *           non uniform scalar
     * @return this edge
@@ -352,7 +325,7 @@ public class Edge3 implements Comparable < Edge3 > {
    /**
     * Sets the origin and destination coordinate, texture
     * coordinate and normal data.
-    * 
+    *
     * @param coOrigin
     *           origin coordinate
     * @param txOrigin
@@ -383,7 +356,7 @@ public class Edge3 implements Comparable < Edge3 > {
 
    /**
     * Sets this edge by vertex.
-    * 
+    *
     * @param origin
     *           the origin vertex
     * @param dest
@@ -402,7 +375,7 @@ public class Edge3 implements Comparable < Edge3 > {
 
    /**
     * Returns a string representation of this edge.
-    * 
+    *
     * @return the string
     */
    @Override
@@ -413,7 +386,7 @@ public class Edge3 implements Comparable < Edge3 > {
 
    /**
     * Returns a string representation of this edge.
-    * 
+    *
     * @param places
     *           the number of places
     * @return the string
@@ -432,7 +405,7 @@ public class Edge3 implements Comparable < Edge3 > {
    /**
     * Translates the coordinates of this edge. The texture
     * coordinates and normals are unaffected.
-    * 
+    *
     * @param v
     *           translation
     * @return this edge

@@ -212,7 +212,7 @@ public class Mesh2 extends Mesh {
 
       return Mesh2.arc(
             startAngle, stopAngle, annulus,
-            Mesh.DEFAULT_CIRCLE_SECTORS,
+            IMesh.DEFAULT_CIRCLE_SECTORS,
             Mesh2.DEFAULT_POLY_TYPE, target);
    }
 
@@ -260,7 +260,7 @@ public class Mesh2 extends Mesh {
       return Mesh2.arc(
             startAngle, stopAngle,
             Mesh2.DEFAULT_ANNULUS,
-            Mesh.DEFAULT_CIRCLE_SECTORS,
+            IMesh.DEFAULT_CIRCLE_SECTORS,
             Mesh2.DEFAULT_POLY_TYPE, target);
    }
 
@@ -281,7 +281,7 @@ public class Mesh2 extends Mesh {
       return Mesh2.arc(
             0.0f, stopAngle,
             Mesh2.DEFAULT_ANNULUS,
-            Mesh.DEFAULT_CIRCLE_SECTORS,
+            IMesh.DEFAULT_CIRCLE_SECTORS,
             Mesh2.DEFAULT_POLY_TYPE, target);
    }
 
@@ -344,9 +344,28 @@ public class Mesh2 extends Mesh {
          final Mesh2 target ) {
 
       return Mesh2.polygon(
-            Mesh.DEFAULT_CIRCLE_SECTORS,
+            IMesh.DEFAULT_CIRCLE_SECTORS,
             Mesh2.DEFAULT_POLY_TYPE,
             target);
+   }
+
+   /**
+    * Creates a regular convex polygon, approximating a circle.
+    *
+    * @param poly
+    *           the polygon type
+    * @param target
+    *           the output mesh
+    * @return the polygon
+    * @see Mesh2#polygon(int, PolyType, Mesh2)
+    */
+   public static Mesh2 circle (
+         final Mesh2.PolyType poly,
+         final Mesh2 target ) {
+
+      return Mesh2.polygon(
+            IMesh.DEFAULT_CIRCLE_SECTORS,
+            poly, target);
    }
 
    /**
@@ -721,7 +740,7 @@ public class Mesh2 extends Mesh {
 
       return Mesh2.ring(
             annulus,
-            Mesh.DEFAULT_CIRCLE_SECTORS,
+            IMesh.DEFAULT_CIRCLE_SECTORS,
             Mesh2.DEFAULT_POLY_TYPE,
             target);
    }
@@ -759,7 +778,7 @@ public class Mesh2 extends Mesh {
 
       return Mesh2.ring(
             Mesh2.DEFAULT_ANNULUS,
-            Mesh.DEFAULT_CIRCLE_SECTORS,
+            IMesh.DEFAULT_CIRCLE_SECTORS,
             Mesh2.DEFAULT_POLY_TYPE,
             target);
    }
@@ -874,11 +893,6 @@ public class Mesh2 extends Mesh {
    public int[][][] faces;
 
    /**
-    * The material associated with this mesh in a mesh entity.
-    */
-   public int materialIndex = 0;
-
-   /**
     * The texture (UV) coordinates that describe how an image
     * is mapped onto the geometry of the mesh. Typically in the
     * range [0.0, 1.0].
@@ -912,6 +926,18 @@ public class Mesh2 extends Mesh {
 
       super();
       this.set(faces, coords, texCoords);
+   }
+
+   /**
+    * Constructs a copy of the source mesh.
+    *
+    * @param source
+    *           the source mesh
+    */
+   public Mesh2 ( final Mesh2 source ) {
+
+      super();
+      this.set(source);
    }
 
    /**
@@ -1064,50 +1090,13 @@ public class Mesh2 extends Mesh {
 
    /**
     * Clones this mesh.
-    * 
+    *
     * @return the cloned mesh
     */
    @Override
    public Mesh2 clone () {
 
-      final int vslen = this.coords.length;
-      final Vec2[] vs = new Vec2[vslen];
-      for (int i = 0; i < vslen; ++i) {
-         vs[i] = new Vec2(this.coords[i]);
-      }
-
-      final int vtslen = this.texCoords.length;
-      final Vec2[] vts = new Vec2[vtslen];
-      for (int i = 0; i < vtslen; ++i) {
-         vts[i] = new Vec2(this.texCoords[i]);
-      }
-
-      final int fslen0 = this.faces.length;
-      final int[][][] fs = new int[fslen0][][];
-
-      for (int i = 0; i < fslen0; ++i) {
-
-         final int[][] source1 = this.faces[i];
-         final int fslen1 = source1.length;
-         final int[][] target1 = new int[fslen1][];
-         fs[i] = target1;
-
-         for (int j = 0; j < fslen1; ++j) {
-
-            final int[] source2 = source1[j];
-            final int fslen2 = source2.length;
-            final int[] target2 = new int[fslen2];
-            target1[j] = target2;
-
-            for (int k = 0; k < fslen2; ++k) {
-               target2[k] = source2[k];
-            }
-         }
-      }
-
-      final Mesh2 m = new Mesh2(this.name, fs, vs, vts);
-      m.materialIndex = this.materialIndex;
-      return m;
+      return new Mesh2(this);
    }
 
    /**
@@ -1123,19 +1112,25 @@ public class Mesh2 extends Mesh {
       if (this == obj) {
          return true;
       }
+      
       if (!super.equals(obj)) {
          return false;
       }
+      
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+      
       final Mesh2 other = (Mesh2) obj;
+      
       if (!Arrays.equals(this.coords, other.coords)) {
          return false;
       }
+      
       if (!Arrays.deepEquals(this.faces, other.faces)) {
          return false;
       }
+      
       return true;
    }
 
@@ -1266,16 +1261,6 @@ public class Mesh2 extends Mesh {
    }
 
    /**
-    * Gets this mesh's material index.
-    *
-    * @return the material index
-    */
-   public int getMaterialIndex () {
-
-      return this.materialIndex;
-   }
-
-   /**
     * Get a vertex from the mesh.
     *
     * @param i
@@ -1347,6 +1332,50 @@ public class Mesh2 extends Mesh {
       hash = hash * IUtils.HASH_MUL ^ Arrays.hashCode(this.coords);
       hash = hash * IUtils.HASH_MUL ^ Arrays.deepHashCode(this.faces);
       return hash;
+   }
+
+   /**
+    * Flips the indices which specify an edge.
+    * 
+    * @param i
+    *           face index
+    * @param j
+    *           edge index
+    * @return this mesh
+    */
+   public Mesh2 reverseEdge ( final int i, final int j ) {
+
+      final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
+      final int len = face.length;
+      final int jOrigin = Math.floorMod(j, len);
+      final int jDest = Math.floorMod(j + 1, len);
+      
+      final int[] temp = face[jOrigin];
+      face[jOrigin] = face[jDest];
+      face[jDest] = temp;
+      
+      return this;
+   }
+
+   /**
+    * Flips the indices which specify a face.
+    * 
+    * @param i
+    *           face index
+    * @return this mesh
+    */
+   public Mesh2 reverseFace ( final int i ) {
+
+      final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
+      final int len = face.length;
+      final int halfLen = len >> 1;
+      for (int j = 0; j < halfLen; ++j) {
+         final int reverse = len - j - 1;
+         final int[] temp = face[j];
+         face[j] = face[reverse];
+         face[reverse] = temp;
+      }
+      return this;
    }
 
    /**
@@ -1440,15 +1469,59 @@ public class Mesh2 extends Mesh {
    }
 
    /**
-    * Sets this mesh's material index.
+    * Sets this mesh to a copy of the source. Allocates new
+    * arrays for coordinates, texture coordinates and faces.
     *
-    * @param i
-    *           the index
+    * @param source
+    *           the source mesh
+    * @return this mesh
     */
    @Chainable
-   public Mesh2 setMaterialIndex ( final int i ) {
+   public Mesh2 set ( final Mesh2 source ) {
 
-      this.materialIndex = i;
+      /* Copy coordinates. */
+      final Vec2[] sourcevs = source.coords;
+      final int vslen = sourcevs.length;
+      this.coords = new Vec2[vslen];
+      for (int i = 0; i < vslen; ++i) {
+         this.coords[i] = new Vec2(sourcevs[i]);
+      }
+
+      /* Copy texture coordinates. */
+      final Vec2[] sourcevts = source.texCoords;
+      final int vtslen = sourcevts.length;
+      this.texCoords = new Vec2[vtslen];
+      for (int j = 0; j < vtslen; ++j) {
+         this.texCoords[j] = new Vec2(sourcevts[j]);
+      }
+
+      /* Copy faces. */
+      final int[][][] sourcefs = source.faces;
+      final int fslen0 = sourcefs.length;
+      this.faces = new int[fslen0][][];
+
+      for (int i = 0; i < fslen0; ++i) {
+
+         final int[][] source1 = sourcefs[i];
+         final int fslen1 = source1.length;
+         final int[][] target1 = new int[fslen1][];
+         this.faces[i] = target1;
+
+         for (int j = 0; j < fslen1; ++j) {
+
+            final int[] source2 = source1[j];
+            final int fslen2 = source2.length;
+            final int[] target2 = new int[fslen2];
+            target1[j] = target2;
+
+            for (int k = 0; k < fslen2; ++k) {
+               target2[k] = source2[k];
+            }
+         }
+      }
+
+      this.materialIndex = source.materialIndex;
+      this.name = source.name;
       return this;
    }
 

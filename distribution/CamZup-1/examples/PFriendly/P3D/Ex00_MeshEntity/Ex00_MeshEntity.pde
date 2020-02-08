@@ -7,19 +7,19 @@ Vec3 rotAxis = new Vec3(0.0, 0.6, 0.8);
 MeshEntity3[] entities = {
   new MeshEntity3()
   .appendMaterial(new MaterialSolid().setFill(#e8455d))
-  .appendMesh(Mesh3.sphere(new Mesh3())),
+  .appendMesh(Mesh3.tetrahedron(new Mesh3())), 
 
   new MeshEntity3()
   .appendMaterial(new MaterialSolid().setFill(#ffabb1))
-  .appendMesh(Mesh3.cube(new Mesh3())),
+  .appendMesh(Mesh3.cube(new Mesh3())), 
 
   new MeshEntity3()
   .appendMaterial(new MaterialSolid().setFill(#f6c89a))
-  .appendMesh(Mesh3.octahedron(new Mesh3())),
+  .appendMesh(Mesh3.octahedron(new Mesh3())), 
 
   new MeshEntity3()
   .appendMaterial(new MaterialSolid().setFill(#0cc0de))
-  .appendMesh(Mesh3.dodecahedron(new Mesh3())),
+  .appendMesh(Mesh3.dodecahedron(new Mesh3())), 
 
   new MeshEntity3()
   .appendMaterial(new MaterialSolid().setFill(#113b49))

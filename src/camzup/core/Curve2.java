@@ -1017,12 +1017,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
     */
    public boolean closedLoop = false;
 
-   /**
-    * The material associated with this curve in a curve
-    * entity.
-    */
-   public int materialIndex = 0;
-
    {
       /*
        * Seems to perform better when the class is instead of the
@@ -1055,8 +1049,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
          final boolean closedLoop,
          final Collection < Knot2 > knots ) {
 
-      super();
-      this.closedLoop = closedLoop;
+      super(closedLoop);
       this.knots.addAll(knots);
    }
 
@@ -1073,6 +1066,18 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
          final Knot2... knots ) {
 
       this(closedLoop, Arrays.asList(knots));
+   }
+
+   /**
+    * Constructs a copy of the source.
+    *
+    * @param source
+    *           the source curve
+    */
+   public Curve2 ( final Curve2 source ) {
+
+      super();
+      this.set(source);
    }
 
    /**
@@ -1102,8 +1107,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
          final boolean closedLoop,
          final Collection < Knot2 > knots ) {
 
-      super(name);
-      this.closedLoop = closedLoop;
+      super(name, closedLoop);
       this.knots.addAll(knots);
    }
 
@@ -1373,6 +1377,17 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
    }
 
    /**
+    * Clones this curve
+    *
+    * @return the cloned curve
+    */
+   @Override
+   public Curve2 clone () {
+
+      return new Curve2(this);
+   }
+
+   /**
     * Tests this curve for equality with another object.
     *
     * @return the evaluation
@@ -1616,16 +1631,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
    }
 
    /**
-    * Gets this curve's material index.
-    *
-    * @return the material index
-    */
-   public int getMaterialIndex () {
-
-      return this.materialIndex;
-   }
-
-   /**
     * Calculates this curve's hash code based on its knots and
     * on whether it is a closed loop.
     *
@@ -1814,15 +1819,24 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
    }
 
    /**
-    * Sets this curve's material index.
+    * Sets this curve to a copy of the source.
     *
-    * @param i
-    *           the index
+    * @param source
+    *           the source curve
+    * @return this curve
     */
    @Chainable
-   public Curve2 setMaterialIndex ( final int i ) {
+   public Curve2 set ( final Curve2 source ) {
 
-      this.materialIndex = i;
+      this.knots.clear();
+      final Iterator < Knot2 > srcItr = source.knots.iterator();
+      while (srcItr.hasNext()) {
+         this.knots.add(new Knot2(srcItr.next()));
+      }
+
+      this.closedLoop = source.closedLoop;
+      this.materialIndex = source.materialIndex;
+      this.name = source.name;
       return this;
    }
 
@@ -1866,7 +1880,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
             64 + 256 * this.knots.size())
                   .append("{ name: \"")
                   .append(this.name)
-                  .append("\"\n, closedLoop: ")
+                  .append("\", \n  closedLoop: ")
                   .append(this.closedLoop)
                   .append(", \n  knots: [ \n");
 

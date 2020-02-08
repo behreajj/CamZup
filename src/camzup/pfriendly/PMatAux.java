@@ -334,7 +334,7 @@ public abstract class PMatAux {
     *      float, float, float, float)
     * @see PMatrix3D#determinant()
     */
-   public static PMatrix3D invert (
+   public static PMatrix3D inverse (
          final PMatrix3D m,
          final PMatrix3D target ) {
 

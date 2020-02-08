@@ -172,7 +172,6 @@ public class Yup3 extends Up3 {
       this.camera(
             eyeX, eyeY, eyeZ,
             centerX, centerY, centerZ,
-
             Yup3.DEFAULT_REF_X,
             Yup3.DEFAULT_REF_Y,
             Yup3.DEFAULT_REF_Z);
@@ -218,12 +217,11 @@ public class Yup3 extends Up3 {
 
       this.refUp.set(xUp, yUp, zUp);
       if (Vec3.magSq(this.refUp) < PConstants.EPSILON) {
-
          this.refUp.set(
                Yup3.DEFAULT_REF_X,
                Yup3.DEFAULT_REF_Y,
                Yup3.DEFAULT_REF_Z);
-         return; // Why return?
+         return;
       }
 
       this.lookDir.set(
@@ -234,7 +232,7 @@ public class Yup3 extends Up3 {
       final float lookDist = Vec3.magSq(this.lookDir);
       if (lookDist < PConstants.EPSILON) {
          this.lookDir.set(0.0f, 0.0f, -1.0f);
-         return; // Why return?
+         return;
       }
 
       this.cameraX = xEye;
@@ -250,44 +248,7 @@ public class Yup3 extends Up3 {
       Vec3.crossNorm(this.k, this.refUp, this.i);
       Vec3.crossNorm(this.i, this.k, this.j);
 
-      final float m00 = this.i.x;
-      final float m01 = this.i.y;
-      final float m02 = this.i.z;
-
-      final float m10 = this.j.x;
-      final float m11 = this.j.y;
-      final float m12 = this.j.z;
-
-      final float m20 = this.k.x;
-      final float m21 = this.k.y;
-      final float m22 = this.k.z;
-
-      /*
-       * Set matrix to axes by row. Translate by a negative
-       * location.
-       */
-      this.camera.set(
-            m00, m01, m02, -xEye * m00 - yEye * m01 - zEye * m02,
-            m10, m11, m12, -xEye * m10 - yEye * m11 - zEye * m12,
-            m20, m21, m22, -xEye * m20 - yEye * m21 - zEye * m22,
-            0.0f, 0.0f, 0.0f, 1.0f);
-      /*
-       * this.camera.translate( -this.cameraX, -this.cameraY,
-       * -this.cameraZ);
-       */
-
-      /* Set inverse. */
-      this.cameraInv.set(
-            m00, m10, m20, xEye,
-            m01, m11, m21, yEye,
-            m02, m12, m22, zEye,
-            0.0f, 0.0f, 0.0f, 1.0f);
-      /* PMatAux.invert(this.camera, this.cameraInv); */
-
-      /* Update renderer matrices. */
-      this.modelview.set(this.camera);
-      this.modelviewInv.set(this.cameraInv);
-      this.updateProjmodelview();
+      this.updateCamera();
    }
 
    /**
@@ -369,78 +330,14 @@ public class Yup3 extends Up3 {
       this.camera();
    }
 
+   /**
+    * Returns the string representation of this renderer.
+    *
+    * @return the string
+    */
    @Override
    public String toString () {
 
       return "camzup.pfriendly.Yup3";
    }
-
-   // /**
-   // * Controls the detail used to render a sphere by
-   // adjusting
-   // * the number of vertices of the sphere mesh.
-   // *
-   // * @param longitudes
-   // * the number of longitudes
-   // * @param latitudes
-   // * the number of latitudes
-   // * @see IUp3#DEFAULT_SPHERE_DETAIL
-   // */
-   // @Override
-   // public void sphereDetail (
-   // final int longitudes,
-   // final int latitudes ) {
-   //
-   // final int lon = longitudes < 3 ? 3 : longitudes;
-   // final int lat = latitudes < 3 ? 3 : latitudes;
-   //
-   // if (lon == this.sphereDetailU &&
-   // lat == this.sphereDetailV) {
-   // return;
-   // }
-   //
-   // final float delta = (float) PGraphics.SINCOS_LENGTH /
-   // lon;
-   // final float[] cx = new float[lon];
-   // final float[] cz = new float[lon];
-   //
-   // for (int i = 0; i < lon; ++i) {
-   //
-   // final int index = (int) (i * delta) %
-   // PGraphics.SINCOS_LENGTH;
-   // cx[i] = PGraphics.cosLUT[index];
-   // cz[i] = PGraphics.sinLUT[index];
-   //
-   // }
-   //
-   // final int vertCount = lon * (lat - 1) + 2;
-   // int currVert = 0;
-   //
-   // this.sphereX = new float[vertCount];
-   // this.sphereY = new float[vertCount];
-   // this.sphereZ = new float[vertCount];
-   //
-   // final float angleStep = PGraphics.SINCOS_LENGTH * 0.5f /
-   // lat;
-   // float angle = angleStep;
-   //
-   // for (int i = 1; i < lat; ++i) {
-   //
-   // final int index = (int) angle % PGraphics.SINCOS_LENGTH;
-   // final float curradius = PGraphics.sinLUT[index];
-   // final float currY = PGraphics.cosLUT[index];
-   //
-   // for (int j = 0; j < lon; ++j) {
-   //
-   // this.sphereX[currVert] = cx[j] * curradius;
-   // this.sphereY[currVert] = -currY;
-   // this.sphereZ[currVert++] = cz[j] * curradius;
-   // }
-   //
-   // angle += angleStep;
-   // }
-   //
-   // this.sphereDetailU = lon;
-   // this.sphereDetailV = lat;
-   // }
 }

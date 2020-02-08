@@ -362,7 +362,7 @@ public class ZImage extends PImage {
          final int dx, final int dy ) {
 
       /*
-       * This uses unchecked integer floor mod for optimization.
+       * Uses unchecked integer floor mod for optimization.
        */
 
       if (wSource < 1 || hSource < 1) {
