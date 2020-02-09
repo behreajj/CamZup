@@ -2,6 +2,7 @@ package camzup.pfriendly;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
@@ -245,8 +246,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
       final double a = 1.0d - Utils.mod1(startAngle * IUtils.ONE_TAU_D);
       final double b = 1.0d - Utils.mod1(stopAngle * IUtils.ONE_TAU_D);
-      final double c = 360.0d * a;
-      final double d = 360.0d * Utils.mod1(b - a);
+      final double c = 360.0d * b;
+      final double d = 360.0d * Utils.mod1(a - b);
 
       int fillMode = Arc2D.PIE;
       int strokeMode = Arc2D.OPEN;
@@ -275,12 +276,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
       if (this.fill) {
          this.arc.setArc(x, y, w, h, c, d, fillMode);
-         this.fillShape(this.arc);
+         this.g2.setColor(this.fillColorObject);
+         this.g2.fill(this.arc);
       }
 
       if (this.stroke) {
          this.arc.setArc(x, y, w, h, c, d, strokeMode);
-         this.strokeShape(this.arc);
+         this.g2.setColor(this.strokeColorObject);
+         this.g2.draw(this.arc);
       }
    }
 
@@ -355,6 +358,31 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    }
 
    /**
+    * Calculates the color channels from a color object.
+    *
+    * @param c
+    *           the color
+    */
+   protected void colorCalc ( final Color c ) {
+
+      this.calcR = Utils.clamp01(c.x);
+      this.calcG = Utils.clamp01(c.y);
+      this.calcB = Utils.clamp01(c.z);
+      this.calcA = Utils.clamp01(c.w);
+
+      this.calcRi = (int) (this.calcR * 0xff + 0.5f);
+      this.calcGi = (int) (this.calcG * 0xff + 0.5f);
+      this.calcBi = (int) (this.calcB * 0xff + 0.5f);
+      this.calcAi = (int) (this.calcA * 0xff + 0.5f);
+
+      this.calcColor = this.calcAi << 0x18
+            | this.calcRi << 0x10
+            | this.calcGi << 0x8
+            | this.calcBi;
+      this.calcAlpha = this.calcAi != 0xff;
+   }
+
+   /**
     * Calculates the color channels from four input channels.
     * The manner in which the first three are interpreted
     * depends on color mode.
@@ -368,7 +396,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the second color channel, saturation or green
     * @param z
     *           the third color channel, brightness or blue
-    * @param a
+    * @param w
     *           the alpha channel
     */
    @Override
@@ -376,11 +404,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float x,
          final float y,
          final float z,
-         final float a ) {
+         final float w ) {
 
       this.calcG = Utils.clamp01(y * this.invColorModeY);
       this.calcB = Utils.clamp01(z * this.invColorModeZ);
-      this.calcA = Utils.clamp01(a * this.invColorModeA);
+      this.calcA = Utils.clamp01(w * this.invColorModeA);
 
       switch (this.colorMode) {
 
@@ -536,6 +564,26 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    }
 
    /**
+    * Draws an AWT shape object without inquiring as to whether
+    * a gradient fill or stroke is to be used.
+    *
+    * @param s
+    *           the shape
+    */
+   protected void drawShapeSolid ( final Shape s ) {
+
+      if (this.fill) {
+         this.g2.setColor(this.fillColorObject);
+         this.g2.fill(s);
+      }
+
+      if (this.stroke) {
+         this.g2.setColor(this.strokeColorObject);
+         this.g2.draw(s);
+      }
+   }
+
+   /**
     * The rounded corner rectangle implementation. The meaning
     * of the first four parameters depends on rectMode.
     *
@@ -643,7 +691,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.gp.lineTo(x1, y1 - tl);
       this.gp.quadTo(x1, y1, x1 + tl, y1);
       this.gp.closePath();
-      this.drawShape(this.gp);
+      this.drawShapeSolid(this.gp);
    }
 
    /**
@@ -697,7 +745,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             this.capNative,
             this.joinNative,
             this.miterLimit);
-
       this.g2.setStroke(this.strokeObject);
    }
 
@@ -941,6 +988,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float start, final float stop,
          final int mode ) {
 
+      if (Utils.approx(stop - start, IUtils.TAU, 0.00139f)) {
+         this.ellipse(x0, y0, x1, y1);
+         return;
+      }
+
       float x = x0;
       float y = y0;
       float w = x1;
@@ -1014,6 +1066,20 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final int mode ) {
 
       this.arc(v.x, v.y, sz, sz, start, stop, mode);
+   }
+
+   /**
+    * Set the renderer's background color.
+    *
+    * @param c
+    *           the color
+    */
+   @Override
+   public void background ( final Color c ) {
+
+      /* backgroundFromCalc calls backgroundImpl. */
+      this.colorCalc(c);
+      this.backgroundFromCalc();
    }
 
    /**
@@ -1234,18 +1300,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       final double c = Math.cos(-radians);
       final double s = Math.sin(-radians);
       final double m00 = c * this.cameraZoomX;
-      final double m01 = -s * -this.cameraZoomY;
+      final double m01 = -s * this.cameraZoomY;
       final double m10 = s * this.cameraZoomX;
-      final double m11 = c * -this.cameraZoomY;
+      final double m11 = c * this.cameraZoomY;
 
       this.affineNative.setTransform(
-            m00, m10, m01, m11,
+            m00, -m10,
+            m01, -m11,
             this.width * 0.5d
                   - this.cameraX * m00
                   - this.cameraY * m01,
             this.height * 0.5d
-                  - this.cameraX * m10
-                  - this.cameraY * m11);
+                  + this.cameraX * m10
+                  + this.cameraY * m11);
       this.g2.setTransform(this.affineNative);
    }
 
@@ -1317,7 +1384,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final Vec2 a,
          final float b ) {
 
-      this.circle(a.x, a.y, b);
+      this.ellipse(a.x, a.y, b, b);
    }
 
    /**
@@ -1508,7 +1575,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             right, yc - extcph,
             right, yc);
       this.gp.closePath();
-      this.drawShape(this.gp);
+      this.drawShapeSolid(this.gp);
    }
 
    /**
@@ -1523,9 +1590,23 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void ellipse ( final Vec2 a, final Vec2 b ) {
 
-      this.ellipse(
-            a.x, a.y,
-            b.x, b.y);
+      this.ellipse(a.x, a.y, b.x, b.y);
+   }
+
+   /**
+    * Sets the renderer's current fill to the color.
+    *
+    * @param c
+    *           the color
+    */
+   @Override
+   public void fill ( final camzup.core.Color c ) {
+
+      this.colorCalc(c);
+      this.fillFromCalc();
+      this.fillColorObject = new java.awt.Color(
+            this.fillColor, true);
+      this.fillGradient = false;
    }
 
    /**
@@ -1600,6 +1681,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
    /**
     * Retrieves the renderer's matrix.
+    */
+   @Override
+   public PMatrix2D getMatrix () {
+
+      return this.getMatrix((PMatrix2D) null);
+   }
+
+   /**
+    * Retrieves the renderer's matrix.
     *
     * @param target
     *           the output matrix
@@ -1653,7 +1743,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public PMatrix2D getMatrix ( final PMatrix2D target ) {
 
-      return Convert.fromAwt(this.g2.getTransform(), target);
+      return Convert.fromAwtTransform(this.g2.getTransform(), target);
    }
 
    /**
@@ -1666,7 +1756,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public PMatrix3D getMatrix ( final PMatrix3D target ) {
 
-      return Convert.fromAwt(this.g2.getTransform(), target);
+      return Convert.fromAwtTransform(this.g2.getTransform(), target);
    }
 
    /**
@@ -1776,6 +1866,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       final int last = count + 1;
       final int ab = 0xff000080;
 
+      /* Pre-calculate inner for-loop values. */
       final float[] xs = new float[last];
       final int[] reds = new int[last];
       for (int j = 0; j < last; ++j) {
@@ -1794,17 +1885,16 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float iPercent = i * toPercent;
          final float y = Utils.lerpUnclamped(bottom, top, iPercent);
          final float yeps = y + PConstants.EPSILON;
-         final int green = (int) (iPercent * 0xff + 0.5f) << 0x8;
-         final int agb = ab | green;
+         final int agb = ab | (int) (iPercent * 0xff + 0.5f) << 0x8;
 
          for (int j = 0; j < last; ++j) {
-            this.stroke(agb | reds[j]);
             final float x = xs[j];
 
             this.gp.reset();
             this.gp.moveTo(x, yeps);
             this.gp.lineTo(x, y);
-            this.drawShape(this.gp);
+            this.g2.setColor(new java.awt.Color(agb | reds[j], true));
+            this.g2.draw(this.gp);
          }
       }
 
@@ -1865,21 +1955,27 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final int foreColor,
          final int coordColor ) {
 
-      /*
-       * Any other way to make this more efficient given the
-       * inefficiency of setting stroke caps, joins and weights?
-       */
+      /* Cache stroke colors. */
+      final java.awt.Color lineClrAwt = new java.awt.Color(lineColor, true);
+      final java.awt.Color rearClrAwt = new java.awt.Color(rearColor, true);
+      final java.awt.Color foreClrAwt = new java.awt.Color(foreColor, true);
+      final java.awt.Color crdClrAwt = new java.awt.Color(coordColor, true);
 
-      final float swRear = strokeWeight * 4.0f;
-      final float swFore = swRear * 1.25f;
-      final float swCoord = swFore * 1.25f;
+      /* Cache stroke weights. */
+      final BasicStroke sw = new BasicStroke(strokeWeight,
+            BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+      final BasicStroke swRear = new BasicStroke(strokeWeight * 4.0f,
+            BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+      final BasicStroke swFore = new BasicStroke(strokeWeight * 5.0f,
+            BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+      final BasicStroke swCoord = new BasicStroke(strokeWeight * 6.25f,
+            BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
       final List < Curve2 > curves = ce.curves;
       final Iterator < Curve2 > curveItr = curves.iterator();
       Iterator < Knot2 > knItr = null;
 
       this.pushStyle();
-      this.strokeCap(PConstants.ROUND);
       this.pushMatrix();
       this.transform(ce.transform, ce.transformOrder);
 
@@ -1903,22 +1999,38 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             final float fhx = foreHandle.x;
             final float fhy = foreHandle.y;
 
-            this.strokeWeight(strokeWeight);
-            this.stroke(lineColor);
-            this.line(rhx, rhy, cox, coy);
-            this.line(cox, coy, fhx, fhy);
+            /* Draw handle bars. */
+            this.gp.reset();
+            this.gp.moveTo(rhx, rhy);
+            this.gp.lineTo(cox, coy);
+            this.gp.lineTo(fhx, fhy);
+            this.g2.setStroke(sw);
+            this.g2.setColor(lineClrAwt);
+            this.g2.draw(this.gp);
 
-            this.strokeWeight(swRear);
-            this.stroke(rearColor);
-            this.line(rhx + PConstants.EPSILON, rhy, rhx, rhy);
+            /* Draw rear handle. */
+            this.gp.reset();
+            this.gp.moveTo(rhx + PConstants.EPSILON, rhy);
+            this.gp.lineTo(rhx, rhy);
+            this.g2.setStroke(swRear);
+            this.g2.setColor(rearClrAwt);
+            this.g2.draw(this.gp);
 
-            this.strokeWeight(swCoord);
-            this.stroke(coordColor);
-            this.line(cox + PConstants.EPSILON, coy, cox, coy);
+            /* Draw coordinate. */
+            this.gp.reset();
+            this.gp.moveTo(cox + PConstants.EPSILON, coy);
+            this.gp.lineTo(cox, coy);
+            this.g2.setStroke(swCoord);
+            this.g2.setColor(crdClrAwt);
+            this.g2.draw(this.gp);
 
-            this.strokeWeight(swFore);
-            this.stroke(foreColor);
-            this.line(fhx + PConstants.EPSILON, fhy, fhx, fhy);
+            /* Draw fore handle. */
+            this.gp.reset();
+            this.gp.moveTo(fhx + PConstants.EPSILON, fhy);
+            this.gp.lineTo(fhx, fhy);
+            this.g2.setStroke(swFore);
+            this.g2.setColor(foreClrAwt);
+            this.g2.draw(this.gp);
          }
       }
 
@@ -1952,7 +2064,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    public void image (
          final PGraphicsJava2D buff,
-         final float x, final float y ) {
+         final float x,
+         final float y ) {
 
       if (buff.g2 != null) {
          this.image((PImage) buff, x, y);
@@ -2011,7 +2124,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final PGraphicsJava2D buff,
          final float a, final float b,
          final float c, final float d,
-
          final int u1, final int v1,
          final int u2, final int v2 ) {
 
@@ -2150,7 +2262,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final PImage img,
          final float a, final float b,
          final float c, final float d,
-
          final int u1, final int v1,
          final int u2, final int v2 ) {
 
@@ -2355,10 +2466,18 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float xDest,
          final float yDest ) {
 
-      this.gp.reset();
-      this.gp.moveTo(xOrigin, yOrigin);
-      this.gp.lineTo(xDest, yDest);
-      this.drawShape(this.gp);
+      /*
+       * It doesn't make sense why turning off the stroke would
+       * also turn off a line, but for now this is Processing's
+       * expected behavior.
+       */
+      if (this.stroke) {
+         this.gp.reset();
+         this.gp.moveTo(xOrigin, yOrigin);
+         this.gp.lineTo(xDest, yDest);
+         this.g2.setColor(this.strokeColorObject);
+         this.g2.draw(this.gp);
+      }
    }
 
    /**
@@ -2388,13 +2507,23 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
       if (material.useStroke) {
          this.strokeWeight(material.strokeWeight);
-         this.stroke(material.stroke);
+         final camzup.core.Color coreStr = material.stroke;
+         this.strokeColorObject = new java.awt.Color(
+               coreStr.x,
+               coreStr.y,
+               coreStr.z,
+               coreStr.w);
       } else {
          this.noStroke();
       }
 
       if (material.useFill) {
-         this.fill(material.fill);
+         final camzup.core.Color coreFll = material.fill;
+         this.fillColorObject = new java.awt.Color(
+               coreFll.x,
+               coreFll.y,
+               coreFll.z,
+               coreFll.w);
       } else {
          this.noFill();
       }
@@ -2472,17 +2601,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             PConstants.ROUND,
             strokeWeight);
 
-      this.stroke(xColor);
       this.gp.reset();
       this.gp.moveTo(0.0d, 0.0d);
       this.gp.lineTo(vl, 0.0d);
-      this.drawShape(this.gp);
+      this.g2.setColor(new java.awt.Color(xColor, true));
+      this.g2.draw(this.gp);
 
-      this.stroke(yColor);
       this.gp.reset();
       this.gp.moveTo(0.0d, 0.0d);
       this.gp.lineTo(0.0d, vl);
-      this.drawShape(this.gp);
+      this.g2.setColor(new java.awt.Color(yColor, true));
+      this.g2.draw(this.gp);
 
       this.popStyle();
    }
@@ -2503,34 +2632,44 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void point ( final float x, final float y ) {
 
-      final boolean needSwap = this.capNative == BasicStroke.CAP_BUTT;
-      if (needSwap) {
+      /*
+       * It doesn't make sense why turning off the stroke would
+       * also turn off a point, but for now this is Processing's
+       * expected behavior.
+       */
+      if (this.stroke) {
 
-         this.strokeObject = new BasicStroke(
-               this.strokeWeight,
-               BasicStroke.CAP_SQUARE,
-               this.joinNative,
-               this.miterLimit);
-         this.g2.setStroke(this.strokeObject);
+         final boolean needSwap = this.capNative == BasicStroke.CAP_BUTT;
+         if (needSwap) {
 
-         this.gp.reset();
-         this.gp.moveTo(x, y);
-         this.gp.lineTo(x + PConstants.EPSILON, y);
-         this.drawShape(this.gp);
+            this.strokeObject = new BasicStroke(
+                  this.strokeWeight,
+                  BasicStroke.CAP_SQUARE,
+                  this.joinNative,
+                  this.miterLimit);
+            this.g2.setStroke(this.strokeObject);
 
-         this.strokeObject = new BasicStroke(
-               this.strokeWeight,
-               this.capNative,
-               this.joinNative,
-               this.miterLimit);
-         this.g2.setStroke(this.strokeObject);
+            this.gp.reset();
+            this.gp.moveTo(x, y);
+            this.gp.lineTo(x + PConstants.EPSILON, y);
+            this.g2.setColor(this.strokeColorObject);
+            this.g2.draw(this.gp);
 
-      } else {
+            this.strokeObject = new BasicStroke(
+                  this.strokeWeight,
+                  this.capNative,
+                  this.joinNative,
+                  this.miterLimit);
+            this.g2.setStroke(this.strokeObject);
 
-         this.gp.reset();
-         this.gp.moveTo(x, y);
-         this.gp.lineTo(x + PConstants.EPSILON, y);
-         this.drawShape(this.gp);
+         } else {
+
+            this.gp.reset();
+            this.gp.moveTo(x, y);
+            this.gp.lineTo(x + PConstants.EPSILON, y);
+            this.g2.setColor(this.strokeColorObject);
+            this.g2.draw(this.gp);
+         }
       }
    }
 
@@ -2567,7 +2706,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * <br>
     *
     * <code>[ m00, m01, m02,<br>
-    *   m10, m11, m12 ]</code><br>
+    * m10, m11, m12 ]</code><br>
     * <br>
     *
     * is equivalent to<br>
@@ -2641,7 +2780,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.gp.lineTo(x2, y2);
       this.gp.lineTo(x3, y3);
       this.gp.closePath();
-      this.drawShape(this.gp);
+      this.drawShapeSolid(this.gp);
    }
 
    /**
@@ -2728,7 +2867,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.gp.reset();
       this.gp.moveTo(xOrigin, yOrigin);
       this.gp.lineTo(xOrigin + PConstants.EPSILON, yOrigin);
-      this.drawShape(this.gp);
+      this.g2.setColor(this.strokeColorObject);
+      this.g2.draw(this.gp);
 
       if (mSq != 0.0f) {
 
@@ -2740,13 +2880,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          this.gp.reset();
          this.gp.moveTo(xOrigin, yOrigin);
          this.gp.lineTo(dx, dy);
-         this.drawShape(this.gp);
+         this.g2.draw(this.gp);
 
          this.strokeWeight(dWeight);
          this.gp.reset();
          this.gp.moveTo(dx, dy);
          this.gp.lineTo(dx + PConstants.EPSILON, dy);
-         this.drawShape(this.gp);
+         this.g2.draw(this.gp);
       }
 
       this.popStyle();
@@ -2770,9 +2910,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float a, final float b,
          final float c, final float d ) {
 
-      /**
-       * It is much simpler to draw straight lines than to defer
-       * to the rounded-corner rectImpl below.
+      /*
+       * It is simpler to draw straight lines than to defer to the
+       * rounded-corner rectImpl below.
        */
 
       float x0 = 0.0f;
@@ -2837,7 +2977,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.gp.lineTo(x1, y1);
       this.gp.lineTo(x0, y1);
       this.gp.closePath();
-      this.drawShape(this.gp);
+      this.drawShapeSolid(this.gp);
    }
 
    /**
@@ -2859,7 +2999,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    public void rect (
          final float x1, final float y1,
          final float x2, final float y2,
-
          final float r ) {
 
       this.rectImpl(
@@ -2892,7 +3031,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    public void rect (
          final float x1, final float y1,
          final float x2, final float y2,
-
          final float tl, final float tr,
          final float br, final float bl ) {
 
@@ -2913,9 +3051,29 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void rect ( final Vec2 a, final Vec2 b ) {
 
-      this.rect(
+      this.rectImpl(
             a.x, a.y,
             b.x, b.y);
+   }
+
+   /**
+    * Draws a rounded rectangle; the meaning of the first two
+    * parameters depends on the renderer's rectMode.
+    *
+    * @param a
+    *           the first parameter
+    * @param b
+    *           the second parameter
+    * @param r
+    *           the corner rounding
+    */
+   @Override
+   public void rect ( final Vec2 a, final Vec2 b, final float r ) {
+
+      this.rectImpl(
+            a.x, a.y,
+            b.x, b.y,
+            r, r, r, r);
    }
 
    /**
@@ -2968,7 +3126,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void rotateX ( final float angle ) {
 
-      this.g2.scale(1.0f, Utils.cos(angle));
+      this.g2.scale(1.0d, Math.cos(angle));
    }
 
    /**
@@ -2983,7 +3141,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void rotateY ( final float angle ) {
 
-      this.g2.scale(Utils.cos(angle), 1.0f);
+      this.g2.scale(Math.cos(angle), 1.0d);
    }
 
    /**
@@ -3187,6 +3345,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.width = width;
       this.height = height;
 
+      /*
+       * Beware of unconventional method signature:
+       *
+       * m00: scale x, m10: shear y, m01: shear x, m11: scale y,
+       * m02: trans x, m12: trans y .
+       */
       this.affineNative.setTransform(
             1.0d, 0.0d,
             0.0d, 1.0d,
@@ -3226,8 +3390,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
          if (useMaterial) {
             this.pushStyle();
-            this.material(materials.get(
-                  curve.materialIndex));
+            this.material(materials.get(curve.materialIndex));
          }
 
          knItr = curve.iterator();
@@ -3264,7 +3427,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             this.gp.closePath();
          }
 
-         this.drawShape(this.gp);
+         this.drawShapeSolid(this.gp);
 
          if (useMaterial) {
             this.popStyle();
@@ -3316,7 +3479,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
                this.gp.lineTo(v.x, v.y);
             }
             this.gp.closePath();
-            this.drawShape(this.gp);
+            this.drawShapeSolid(this.gp);
          }
 
          if (useMaterial) {
@@ -3388,7 +3551,39 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void square ( final Vec2 a, final float b ) {
 
-      this.square(a.x, a.y, b);
+      this.rectImpl(a.x, a.y, b, b);
+   }
+
+   /**
+    * Draws a rounded square.
+    *
+    * @param a
+    *           the location
+    * @param b
+    *           the size
+    * @param r
+    *           the corner rounding
+    */
+   @Override
+   public void square ( final Vec2 a, final float b, final float r ) {
+
+      this.rectImpl(a.x, a.y, b, b, r, r, r, r);
+   }
+
+   /**
+    * Sets the renderer's current stroke to the color.
+    *
+    * @param c
+    *           the color
+    */
+   @Override
+   public void stroke ( final camzup.core.Color c ) {
+
+      this.colorCalc(c);
+      this.strokeFromCalc();
+      this.strokeColorObject = new java.awt.Color(
+            this.strokeColor, true);
+      this.strokeGradient = false;
    }
 
    /**
@@ -3439,7 +3634,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
        * The lower bound of the stroke weight has to be < 1.0
        * because of scaling's impact on stroke weight.
        */
-
       this.strokeWeight = Utils.max(Utils.EPSILON, weight);
       this.strokeImpl();
    }
@@ -3553,7 +3747,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float x,
          float y ) {
 
-      float high = 0;
+      float high = 0.0f;
       for (int i = start; i < stop; i++) {
          if (chars[i] == '\n') {
             high += this.textLeading;
@@ -3788,8 +3982,23 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    }
 
    /**
+    * Sets the renderer's current stroke to the tint.
+    *
+    * @param c
+    *           the color
+    */
+   @Override
+   public void tint ( final camzup.core.Color c ) {
+
+      this.colorCalc(c);
+      this.tintFromCalc();
+      this.tintColorObject = new java.awt.Color(
+            this.tintColor, true);
+   }
+
+   /**
     * Returns the string representation of this renderer.
-    * 
+    *
     * @return the string
     */
    @Override
@@ -3918,7 +4127,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.gp.lineTo(x2, y2);
       this.gp.lineTo(x3, y3);
       this.gp.closePath();
-      this.drawShape(this.gp);
+      this.drawShapeSolid(this.gp);
    }
 
    /**

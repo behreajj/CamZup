@@ -16,6 +16,7 @@ import camzup.core.Vec2;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PImage;
+import processing.core.PMatrix2D;
 import processing.opengl.PGL;
 
 /**
@@ -122,6 +123,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
        * Ensure depth-related features are turned off. These
        * summarize the hint system.
        */
+
+      // TODO: Could this be causing a problem with secondary
+      // renderers?
       this.flush();
       this.pgl.disable(PGL.DEPTH_TEST);
       this.pgl.depthMask(false);
@@ -213,9 +217,11 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    public void camera () {
 
       this.camera(
-            IUp.DEFAULT_LOC_X, IUp.DEFAULT_LOC_Y,
+            IUp.DEFAULT_LOC_X,
+            IUp.DEFAULT_LOC_Y,
             Yup2.DEFAULT_ROT,
-            Yup2.DEFAULT_ZOOM_X, Yup2.DEFAULT_ZOOM_Y);
+            Yup2.DEFAULT_ZOOM_X,
+            Yup2.DEFAULT_ZOOM_Y);
    }
 
    /**
@@ -229,7 +235,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    public void camera ( final float x, final float y ) {
 
       this.camera(x, y, Yup2.DEFAULT_ROT,
-            Yup2.DEFAULT_ZOOM_X, Yup2.DEFAULT_ZOOM_Y);
+            Yup2.DEFAULT_ZOOM_X,
+            Yup2.DEFAULT_ZOOM_Y);
    }
 
    /**
@@ -342,8 +349,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
          final Vec2 loc,
          final float radians ) {
 
-      this.camera(loc.x, loc.y,
-            radians,
+      this.camera(loc.x, loc.y, radians,
             YupJ2.DEFAULT_ZOOM_X,
             YupJ2.DEFAULT_ZOOM_Y);
    }
@@ -431,9 +437,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    @Override
    public void ellipse ( final Vec2 a, final Vec2 b ) {
 
-      this.ellipse(
-            a.x, a.y,
-            b.x, b.y);
+      this.ellipse(a.x, a.y, b.x, b.y);
    }
 
    /**
@@ -449,6 +453,17 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       return target.set(
             this.cameraX,
             this.cameraY);
+   }
+
+   /**
+    * Gets the renderer modelview matrix.
+    *
+    * @return the modelview
+    */
+   @Override
+   public PMatrix2D getMatrix () {
+
+      return this.getMatrix((PMatrix2D) null);
    }
 
    /**
@@ -851,9 +866,32 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    @Override
    public void rect ( final Vec2 a, final Vec2 b ) {
 
-      this.rect(
+      this.rectImpl(
             a.x, a.y,
             b.x, b.y);
+   }
+
+   /**
+    * Draws a rounded rectangle; the meaning of the first two
+    * parameters depends on the renderer's rectMode.
+    *
+    * @param a
+    *           the first parameter
+    * @param b
+    *           the second parameter
+    * @param r
+    *           the corner rounding
+    */
+   @Override
+   public void rect (
+         final Vec2 a,
+         final Vec2 b,
+         final float r ) {
+
+      this.rectImpl(
+            a.x, a.y,
+            b.x, b.y,
+            r, r, r, r);
    }
 
    /**
@@ -867,7 +905,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    @Override
    public void rotateX ( final float angle ) {
 
-      this.scale(1.0f, Utils.cos(angle));
+      this.scaleImpl(1.0f, Utils.cos(angle), 1.0f);
    }
 
    /**
@@ -881,7 +919,18 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    @Override
    public void rotateY ( final float angle ) {
 
-      this.scale(Utils.cos(angle), 1.0f);
+      this.scaleImpl(Utils.cos(angle), 1.0f, 1.0f);
+   }
+
+   /**
+    * Scale the renderer by a vector.
+    *
+    * @param v
+    *           the vector
+    */
+   public void scale ( final Vec2 v ) {
+
+      this.scaleImpl(v.x, v.y, 1.0f);
    }
 
    /**
@@ -903,7 +952,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     * need initialization can be attempted here.
     */
    @Override
-   public void setSize ( final int iwidth, final int iheight ) {
+   public void setSize (
+         final int iwidth,
+         final int iheight ) {
 
       super.setSize(iwidth, iheight);
       this.ortho();
@@ -1059,12 +1110,28 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    @Override
    public void square ( final Vec2 a, final float b ) {
 
-      this.square(a.x, a.y, b);
+      this.rectImpl(a.x, a.y, b, b);
+   }
+
+   /**
+    * Draws a rounded square.
+    *
+    * @param a
+    *           the location
+    * @param b
+    *           the size
+    * @param r
+    *           the corner rounding
+    */
+   @Override
+   public void square ( final Vec2 a, final float b, final float r ) {
+
+      this.rectImpl(a.x, a.y, b, b, r, r, r, r);
    }
 
    /**
     * Returns the string representation of this renderer.
-    * 
+    *
     * @return the string
     */
    @Override
@@ -1081,7 +1148,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     */
    public void translate ( final Vec2 v ) {
 
-      this.translate(v.x, v.y, 0.0f);
+      this.translateImpl(v.x, v.y, 0.0f);
    }
 
    /**

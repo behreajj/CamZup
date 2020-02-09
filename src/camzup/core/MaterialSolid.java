@@ -396,6 +396,49 @@ public class MaterialSolid extends Material {
    }
 
    /**
+    * Sets the material's fill color.
+    *
+    * @param r
+    *           red
+    * @param g
+    *           green
+    * @param b
+    *           blue
+    * @return this material
+    */
+   public MaterialSolid setFill (
+         final float r,
+         final float g,
+         final float b ) {
+
+      this.fill.set(r, g, b);
+      return this;
+   }
+
+   /**
+    * Sets the material's fill color.
+    *
+    * @param r
+    *           red
+    * @param g
+    *           green
+    * @param b
+    *           blue
+    * @param a
+    *           transparency
+    * @return this material
+    */
+   public MaterialSolid setFill (
+         final float r,
+         final float g,
+         final float b,
+         final float a ) {
+
+      this.fill.set(r, g, b, a);
+      return this;
+   }
+
+   /**
     * Sets the material's fill color from a hexadecimal value.
     *
     * @param fill
@@ -434,6 +477,49 @@ public class MaterialSolid extends Material {
    public MaterialSolid setStroke ( final Color stroke ) {
 
       this.stroke.set(stroke);
+      return this;
+   }
+
+   /**
+    * Sets the material's stroke color.
+    *
+    * @param r
+    *           red
+    * @param g
+    *           green
+    * @param b
+    *           blue
+    * @return this material
+    */
+   public MaterialSolid setStroke (
+         final float r,
+         final float g,
+         final float b ) {
+
+      this.stroke.set(r, g, b);
+      return this;
+   }
+
+   /**
+    * Sets the material's stroke color.
+    *
+    * @param r
+    *           red
+    * @param g
+    *           green
+    * @param b
+    *           blue
+    * @param a
+    *           transparency
+    * @return this material
+    */
+   public MaterialSolid setStroke (
+         final float r,
+         final float g,
+         final float b,
+         final float a ) {
+
+      this.stroke.set(r, g, b, a);
       return this;
    }
 

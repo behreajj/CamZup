@@ -229,11 +229,9 @@ public interface IUp3 extends IUp {
          final float xOrigin,
          final float yOrigin,
          final float zOrigin,
-
          final float xDir,
          final float yDir,
          final float zDir,
-
          final float dLen ) {
 
       this.ray(
@@ -246,11 +244,9 @@ public interface IUp3 extends IUp {
          final float xOrigin,
          final float yOrigin,
          final float zOrigin,
-
          final float xDir,
          final float yDir,
          final float zDir,
-
          final float dLen,
          final float lnwgt,
          final float oWeight,
@@ -318,15 +314,6 @@ public interface IUp3 extends IUp {
             dir.x, dir.y, dir.z,
             dLen, lnwgt, oWeight, dWeight);
    }
-
-   /**
-    * Sets the renderer's stroke color.
-    *
-    * @param c
-    *           the hexadecimal color
-    */
-   @Override
-   void stroke ( final int c );
 
    /**
     * Sets the renderer's stroke weight.

@@ -19,6 +19,7 @@ import camzup.core.Vec3;
 import camzup.core.Vec4;
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PMatrix3D;
 import processing.opengl.PGraphicsOpenGL;
 
 /**
@@ -188,8 +189,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             m02, m12, m22, this.cameraZ,
             0.0f, 0.0f, 0.0f, 1.0f);
 
+      /* Set modelview to camera. */
       this.modelview.set(this.camera);
       this.modelviewInv.set(this.cameraInv);
+
       this.updateProjmodelview();
    }
 
@@ -344,7 +347,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             this.colorModeX * this.aTemp.x,
             this.colorModeY * this.aTemp.y,
             this.colorModeZ * this.aTemp.z,
-
             dir.x, dir.y, dir.z);
    }
 
@@ -371,7 +373,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             this.colorModeX * color.x,
             this.colorModeY * color.y,
             this.colorModeZ * color.z,
-
             xDir, yDir, zDir);
    }
 
@@ -392,8 +393,17 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             this.colorModeX * color.x,
             this.colorModeY * color.y,
             this.colorModeZ * color.z,
-
             dir.x, dir.y, dir.z);
+   }
+
+   /**
+    * Gets whether or not depth sorting is enabled.
+    *
+    * @return the depth sorting
+    */
+   public boolean getDepthSorting () {
+
+      return this.isDepthSortingEnabled;
    }
 
    /**
@@ -483,6 +493,17 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    }
 
    /**
+    * Gets the renderer modelview matrix.
+    *
+    * @return the modelview
+    */
+   @Override
+   public PMatrix3D getMatrix () {
+
+      return this.getMatrix((PMatrix3D) null);
+   }
+
+   /**
     * Gets the reference up axis of the camera.
     *
     * @param target
@@ -559,6 +580,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
          final int foreColor,
          final int coordColor ) {
 
+      // this.flush();
+      // this.pgl.disable(PGL.DEPTH_TEST);
+      // this.pgl.depthMask(false);
+      // this.isDepthSortingEnabled = false;
       this.hint(PConstants.DISABLE_DEPTH_TEST);
       this.hint(PConstants.DISABLE_DEPTH_MASK);
       this.hint(PConstants.DISABLE_DEPTH_SORT);
@@ -616,10 +641,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       this.popMatrix();
       this.popStyle();
 
-      // TODO: This should be reset to prior settings, e.g., the
-      // user may have already wanted depth test turned off.
-      // Look again at how hint functions work, then use the
-      // functions hint calls directly.
+      // Trying to shortcut this leads to an error.
+      // this.flush();
+      // this.pgl.enable(PGL.DEPTH_TEST);
+      // this.pgl.depthMask(true);
+      // this.isDepthSortingEnabled = true;
       this.hint(PConstants.ENABLE_DEPTH_TEST);
       this.hint(PConstants.ENABLE_DEPTH_MASK);
       this.hint(PConstants.ENABLE_DEPTH_SORT);
@@ -677,8 +703,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
        * not have both a stroke and a fill.
        */
       if (material.useFill) {
-         this.fill(material.fill);
          this.noStroke();
+         this.fill(material.fill);
       } else {
          this.noFill();
          if (material.useStroke) {
@@ -759,11 +785,15 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
          final int yColor,
          final int zColor ) {
 
-      final float vl = Utils.max(Utils.EPSILON, lineLength);
-
+      // this.flush();
+      // this.pgl.disable(PGL.DEPTH_TEST);
+      // this.pgl.depthMask(false);
+      // this.isDepthSortingEnabled = false;
       this.hint(PConstants.DISABLE_DEPTH_TEST);
       this.hint(PConstants.DISABLE_DEPTH_MASK);
       this.hint(PConstants.DISABLE_DEPTH_SORT);
+
+      final float vl = Utils.max(Utils.EPSILON, lineLength);
 
       this.pushStyle();
       this.strokeWeight(strokeWeight);
@@ -785,10 +815,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
       this.popStyle();
 
-      // TODO: This should be reset to prior settings, e.g., the
-      // user may have already wanted depth test turned off.
-      // Look again at how hint functions work, then use the
-      // functions hint calls directly.
+      // this.flush();
+      // this.pgl.enable(PGL.DEPTH_TEST);
+      // this.pgl.depthMask(true);
+      // this.isDepthSortingEnabled = true;
       this.hint(PConstants.ENABLE_DEPTH_TEST);
       this.hint(PConstants.ENABLE_DEPTH_MASK);
       this.hint(PConstants.ENABLE_DEPTH_SORT);
@@ -846,7 +876,20 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     */
    public void scale ( final Vec3 dim ) {
 
-      this.scale(dim.x, dim.y, dim.z);
+      this.scaleImpl(dim.x, dim.y, dim.z);
+   }
+
+   /**
+    * Sets whether or not depth sorting is enabled. Flushes the
+    * geometry.
+    *
+    * @param ds
+    *           the depth sorting
+    */
+   public void setDepthSorting ( final boolean ds ) {
+
+      this.flush();
+      this.isDepthSortingEnabled = ds;
    }
 
    /**
@@ -891,11 +934,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final Vec3 v1 = new Vec3();
       final Vec3 v2 = new Vec3();
 
-      Knot3 currKnot;
-      Knot3 prevKnot;
-      Vec3 coord;
-      Vec3 foreHandle;
-      Vec3 rearHandle;
+      Knot3 currKnot = null;
+      Knot3 prevKnot = null;
+      Vec3 coord = null;
+      Vec3 foreHandle = null;
+      Vec3 rearHandle = null;
 
       while (curveItr.hasNext()) {
          final Curve3 curve = curveItr.next();
@@ -1027,17 +1070,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    }
 
    /**
-    * Controls the detail used to render a sphere by adjusting
-    * the number of vertices of the sphere mesh.
-    *
-    * @see IUp3#DEFAULT_SPHERE_DETAIL
-    */
-   public void sphereDetail () {
-
-      this.sphereDetail(IUp3.DEFAULT_SPHERE_DETAIL);
-   }
-
-   /**
     * This parent function attempts to translate the text and
     * then undo the translation. It's better to acknowledge
     * that text is 2D, not 3D, in nature.
@@ -1067,6 +1099,16 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
          final float z ) {
 
       this.text(str, x, y);
+   }
+
+   /**
+    * Toggles the depth sorting boolean and flushes the
+    * geometry.
+    */
+   public void toggleDepthSorting () {
+
+      this.flush();
+      this.isDepthSortingEnabled = !this.isDepthSortingEnabled;
    }
 
    /**
@@ -1112,39 +1154,39 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
          case RST:
 
             this.rotate(this.tr3Rot);
-            this.scale(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
-            this.translate(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
+            this.scaleImpl(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
+            this.translateImpl(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
 
             return;
 
          case RTS:
 
             this.rotate(this.tr3Rot);
-            this.translate(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
-            this.scale(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
+            this.translateImpl(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
+            this.scaleImpl(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
 
             return;
 
          case SRT:
 
-            this.scale(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
+            this.scaleImpl(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
             this.rotate(this.tr3Rot);
-            this.translate(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
+            this.translateImpl(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
 
             return;
 
          case STR:
 
-            this.scale(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
-            this.translate(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
+            this.scaleImpl(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
+            this.translateImpl(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
             this.rotate(this.tr3Rot);
 
             return;
 
          case TSR:
 
-            this.translate(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
-            this.scale(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
+            this.translateImpl(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
+            this.scaleImpl(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
             this.rotate(this.tr3Rot);
 
             return;
@@ -1153,9 +1195,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
          default:
 
-            this.translate(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
+            this.translateImpl(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
             this.rotate(this.tr3Rot);
-            this.scale(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
+            this.scaleImpl(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
 
             return;
       }
@@ -1169,7 +1211,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     */
    public void translate ( final Vec3 v ) {
 
-      this.translate(v.x, v.y, v.z);
+      this.translateImpl(v.x, v.y, v.z);
    }
 
    /**

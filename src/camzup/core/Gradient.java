@@ -852,7 +852,7 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
     * @return the gradient
     */
    @Experimental
-   public Gradient sort (final List < Color > clrList ) {
+   public Gradient sort ( final List < Color > clrList ) {
 
       return this.sort(clrList, null);
    }

@@ -24,10 +24,9 @@ void draw() {
 
   fill(#202020);
   text("The quick brown fox\njumps over the lazy dog.", 0.0, 0.0);
-  text(0.12345, 100.0, 72.0);
-  text(0.56789, -100.0, 72.0);
+  text(PI, 0.0, 72.0);
 
-  fill(#ff2828);
+  fill(#1f7fff);
   graphics.text(false, 0.0, -82.0);
   graphics.text(new Complex(0.0, 1.0), 0.0, -144.0);
 }

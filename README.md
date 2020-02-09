@@ -41,7 +41,7 @@ void settings() {
 }
 
 void setup() {
-  secondary = (YupJ2)createGraphics(256, 256, rpath);
+  secondary = (YupJ2)createGraphics(128, 128, rpath);
   primary = (YupJ2)getGraphics();
 }
 ```
@@ -95,7 +95,7 @@ Many core Processing functions are marked `final`, meaning they cannot be extend
 
 The following explains some decisions behind how the library's code base is written.
 
-### Mutable vs. Immutable
+### Mutable Versus Immutable
 
 Classes in the `core` package attempt to compromise between the design of Processing classes like [PVector](https://processing.org/reference/PVector.html) --
 

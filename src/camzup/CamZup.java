@@ -2,10 +2,7 @@ package camzup;
 
 import java.util.HashSet;
 
-import camzup.core.Curve3;
-import camzup.core.Face3;
 import camzup.core.IUtils;
-import camzup.core.Mesh2;
 import camzup.core.Mesh3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -271,10 +268,10 @@ public class CamZup {
       // Mesh3 n = new Mesh3(m);
       // System.out.println(n);
 
-//      final Curve3 a = new Curve3();
-//      Curve3.circle(a);
-//      final Curve3 b = new Curve3(a);
-//      System.out.println(b.toString());
+      // final Curve3 a = new Curve3();
+      // Curve3.circle(a);
+      // final Curve3 b = new Curve3(a);
+      // System.out.println(b.toString());
 
    }
 

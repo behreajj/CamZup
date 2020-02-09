@@ -1507,6 +1507,68 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
+    * Generates a grid of points conducive to hexagonal forms.
+    * This will be contained within the frame of the upper and
+    * lower bound.
+    *
+    * @param count
+    *           number of columns and rows
+    * @param lowerBound
+    *           the lower bound
+    * @param upperBound
+    *           the upper bound
+    * @return the array
+    */
+   public static Vec2[][] gridHex (
+         final int count,
+         final Vec2 lowerBound,
+         final Vec2 upperBound ) {
+
+      final int vcnt = count < 3 ? 3 : count;
+      final float toStep = 1.0f / (vcnt - 1.0f);
+
+      /*
+       * Math.sqrt(3.0d) / 8.0d = 0.21650635094610965d . This is
+       * the constant sqrt(3) / 2 multiplied by the expected
+       * radius, 0.5, multiplied by a half, so that the x offset
+       * can be both positive and negative.
+       */
+      final float w = 0.21650635f * Utils.abs(
+            upperBound.x - lowerBound.x) / vcnt;
+
+      /* Multiply x values by sqrt(3) / 2 . */
+      final float[] xs = new float[vcnt];
+      for (int j = 0; j < vcnt; ++j) {
+         xs[j] = IUtils.SQRT_3_2 * Utils.lerpUnclamped(
+               lowerBound.x,
+               upperBound.x,
+               j * toStep);
+      }
+
+      final Vec2[][] result = new Vec2[vcnt][vcnt];
+      for (int i = 0; i < vcnt; ++i) {
+         final Vec2[] row = result[i];
+
+         /*
+          * Multiply y by 0.75 -- cell radius plus half the radius .
+          */
+         final float y = 0.75f * Utils.lerpUnclamped(
+               lowerBound.y,
+               upperBound.y,
+               i * toStep);
+
+         /*
+          * Shift alternating cells by positive or negative offset.
+          */
+         final float xoff = i % 2 == 0 ? w : -w;
+         for (int j = 0; j < vcnt; ++j) {
+            row[j] = new Vec2(xoff + xs[j], y);
+         }
+      }
+      return result;
+   }
+
+   /**
     * Finds the vector's heading. Defaults to headingSigned.
     *
     * @param v

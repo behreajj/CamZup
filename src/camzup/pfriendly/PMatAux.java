@@ -28,193 +28,6 @@ public abstract class PMatAux {
       PMatAux.inv = new Quaternion();
    }
 
-   static PMatrix3D invRotate (
-         final float radians,
-         final float xAxis,
-         final float yAxis,
-         final float zAxis ) {
-
-      return PMatAux.invRotate(
-            radians,
-            xAxis, yAxis, zAxis,
-            (PMatrix3D) null);
-   }
-
-   static PMatrix3D invRotate (
-         final float radians,
-         final float xAxis,
-         final float yAxis,
-         final float zAxis,
-         PMatrix3D b ) {
-
-      if (b == null) {
-         b = new PMatrix3D();
-      }
-
-      final float normRad = -radians * IUtils.ONE_TAU;
-      final float c = Utils.scNorm(normRad);
-      final float s = Utils.scNorm(normRad - 0.25f);
-      final float t = 1.0f - c;
-
-      final float sv0 = s * xAxis;
-      final float sv1 = s * yAxis;
-      final float sv2 = s * zAxis;
-
-      final float tv0 = t * xAxis;
-      final float tv1 = t * yAxis;
-      final float tv2 = t * zAxis;
-
-      /*
-       * b.preApply( tv0 * xAxis + c, tv0 * yAxis - sv2, tv0 *
-       * zAxis + sv1, 0.0f, tv1 * xAxis + sv2, tv1 * yAxis + c,
-       * tv1 * zAxis - sv0, 0.0f, tv2 * xAxis - sv1, tv2 * yAxis +
-       * sv0, tv2 * zAxis + c, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-       */
-
-      final float am00 = tv0 * xAxis + c;
-      final float am01 = tv0 * yAxis - sv2;
-      final float am02 = tv0 * zAxis + sv1;
-
-      final float am10 = tv1 * xAxis + sv2;
-      final float am11 = tv1 * yAxis + c;
-      final float am12 = tv1 * zAxis - sv0;
-
-      final float am20 = tv2 * xAxis - sv1;
-      final float am21 = tv2 * yAxis + sv0;
-      final float am22 = tv2 * zAxis + c;
-
-      b.set(
-            am00 * b.m00 + am01 * b.m10 + am02 * b.m20,
-            am00 * b.m01 + am01 * b.m11 + am02 * b.m21,
-            am00 * b.m02 + am01 * b.m12 + am02 * b.m22,
-            am00 * b.m03 + am01 * b.m13 + am02 * b.m23,
-
-            am10 * b.m00 + am11 * b.m10 + am12 * b.m20,
-            am10 * b.m01 + am11 * b.m11 + am12 * b.m21,
-            am10 * b.m02 + am11 * b.m12 + am12 * b.m22,
-            am10 * b.m03 + am11 * b.m13 + am12 * b.m23,
-
-            am20 * b.m00 + am21 * b.m10 + am22 * b.m20,
-            am20 * b.m01 + am21 * b.m11 + am22 * b.m21,
-            am20 * b.m02 + am21 * b.m12 + am22 * b.m22,
-            am20 * b.m03 + am21 * b.m13 + am22 * b.m23,
-
-            b.m30, b.m31, b.m32, b.m33);
-
-      return b;
-   }
-
-   static PMatrix3D invRotateX ( final float radians ) {
-
-      return PMatAux.invRotateX(radians, (PMatrix3D) null);
-   }
-
-   static PMatrix3D invRotateX (
-         final float radians,
-         PMatrix3D b ) {
-
-      if (b == null) {
-         b = new PMatrix3D();
-      }
-
-      final float normRad = -radians * IUtils.ONE_TAU;
-      final float c = Utils.scNorm(normRad);
-      final float s = Utils.scNorm(normRad - 0.25f);
-
-      /*
-       * b.preApply( 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c, -s, 0.0f,
-       * 0.0f, s, c, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-       */
-
-      b.set(
-            b.m00, b.m01, b.m02, b.m03,
-            c * b.m10 - s * b.m20,
-            c * b.m11 - s * b.m21,
-            c * b.m12 - s * b.m22,
-            c * b.m13 - s * b.m23,
-            s * b.m10 + c * b.m20,
-            s * b.m11 + c * b.m21,
-            s * b.m12 + c * b.m22,
-            s * b.m13 + c * b.m23,
-            b.m30, b.m31, b.m32, b.m33);
-
-      return b;
-   }
-
-   static PMatrix3D invRotateY ( final float radians ) {
-
-      return PMatAux.invRotateY(radians, (PMatrix3D) null);
-   }
-
-   static PMatrix3D invRotateY (
-         final float radians,
-         PMatrix3D b ) {
-
-      if (b == null) {
-         b = new PMatrix3D();
-      }
-
-      final float normRad = -radians * IUtils.ONE_TAU;
-      final float c = Utils.scNorm(normRad);
-      final float s = Utils.scNorm(normRad - 0.25f);
-
-      /*
-       * b.preApply( c, 0.0f, s, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -s,
-       * 0.0f, c, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-       */
-
-      b.set(
-            c * b.m00 + s * b.m20,
-            c * b.m01 + s * b.m21,
-            c * b.m02 + s * b.m22,
-            c * b.m03 + s * b.m23,
-            b.m10, b.m11, b.m12, b.m13,
-            c * b.m20 - s * b.m00,
-            c * b.m21 - s * b.m01,
-            c * b.m22 - s * b.m02,
-            c * b.m23 - s * b.m03,
-            b.m30, b.m31, b.m32, b.m33);
-
-      return b;
-   }
-
-   static PMatrix3D invRotateZ ( final float radians ) {
-
-      return PMatAux.invRotateZ(radians, (PMatrix3D) null);
-   }
-
-   static PMatrix3D invRotateZ (
-         final float radians,
-         PMatrix3D b ) {
-
-      if (b == null) {
-         b = new PMatrix3D();
-      }
-
-      final float normRad = -radians * IUtils.ONE_TAU;
-      final float c = Utils.scNorm(normRad);
-      final float s = Utils.scNorm(normRad - 0.25f);
-
-      /*
-       * b.preApply( c, -s, 0.0f, 0.0f, s, c, 0.0f, 0.0f, 0.0f,
-       * 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-       */
-
-      b.set(
-            c * b.m00 - s * b.m10,
-            c * b.m01 - s * b.m11,
-            c * b.m02 - s * b.m12,
-            c * b.m03 - s * b.m13,
-            s * b.m00 + c * b.m10,
-            s * b.m01 + c * b.m11,
-            s * b.m02 + c * b.m12,
-            s * b.m03 + c * b.m13,
-            b.m20, b.m21, b.m22, b.m23,
-            b.m30, b.m31, b.m32, b.m33);
-
-      return b;
-   }
-
    /**
     * Helper function for inverting a PMatrix3D. Finds the
     * determinant for a 3x3 section of a 4x4 matrix.
@@ -415,6 +228,334 @@ public abstract class PMatAux {
             m.m20, m.m21, m.m22);
 
       return target;
+   }
+
+   public static PMatrix3D invRotate (
+         final float radians,
+         final float xAxis,
+         final float yAxis,
+         final float zAxis ) {
+
+      return PMatAux.invRotate(
+            radians,
+            xAxis, yAxis, zAxis,
+            (PMatrix3D) null);
+   }
+
+   public static PMatrix3D invRotate (
+         final float radians,
+         final float xAxis,
+         final float yAxis,
+         final float zAxis,
+         PMatrix3D b ) {
+
+      if (b == null) {
+         b = new PMatrix3D();
+      }
+
+      final float normRad = -radians * IUtils.ONE_TAU;
+      final float c = Utils.scNorm(normRad);
+      final float s = Utils.scNorm(normRad - 0.25f);
+      final float t = 1.0f - c;
+
+      final float sv0 = s * xAxis;
+      final float sv1 = s * yAxis;
+      final float sv2 = s * zAxis;
+
+      final float tv0 = t * xAxis;
+      final float tv1 = t * yAxis;
+      final float tv2 = t * zAxis;
+
+      /*
+       * b.preApply( tv0 * xAxis + c, tv0 * yAxis - sv2, tv0 *
+       * zAxis + sv1, 0.0f, tv1 * xAxis + sv2, tv1 * yAxis + c,
+       * tv1 * zAxis - sv0, 0.0f, tv2 * xAxis - sv1, tv2 * yAxis +
+       * sv0, tv2 * zAxis + c, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+       */
+
+      final float am00 = tv0 * xAxis + c;
+      final float am01 = tv0 * yAxis - sv2;
+      final float am02 = tv0 * zAxis + sv1;
+
+      final float am10 = tv1 * xAxis + sv2;
+      final float am11 = tv1 * yAxis + c;
+      final float am12 = tv1 * zAxis - sv0;
+
+      final float am20 = tv2 * xAxis - sv1;
+      final float am21 = tv2 * yAxis + sv0;
+      final float am22 = tv2 * zAxis + c;
+
+      b.set(
+            am00 * b.m00 + am01 * b.m10 + am02 * b.m20,
+            am00 * b.m01 + am01 * b.m11 + am02 * b.m21,
+            am00 * b.m02 + am01 * b.m12 + am02 * b.m22,
+            am00 * b.m03 + am01 * b.m13 + am02 * b.m23,
+
+            am10 * b.m00 + am11 * b.m10 + am12 * b.m20,
+            am10 * b.m01 + am11 * b.m11 + am12 * b.m21,
+            am10 * b.m02 + am11 * b.m12 + am12 * b.m22,
+            am10 * b.m03 + am11 * b.m13 + am12 * b.m23,
+
+            am20 * b.m00 + am21 * b.m10 + am22 * b.m20,
+            am20 * b.m01 + am21 * b.m11 + am22 * b.m21,
+            am20 * b.m02 + am21 * b.m12 + am22 * b.m22,
+            am20 * b.m03 + am21 * b.m13 + am22 * b.m23,
+
+            b.m30, b.m31, b.m32, b.m33);
+
+      return b;
+   }
+
+   public static PMatrix3D invRotateX ( final float radians ) {
+
+      return PMatAux.invRotateX(radians, (PMatrix3D) null);
+   }
+
+   public static PMatrix3D invRotateX (
+         final float radians,
+         PMatrix3D b ) {
+
+      if (b == null) {
+         b = new PMatrix3D();
+      }
+
+      final float normRad = -radians * IUtils.ONE_TAU;
+      final float c = Utils.scNorm(normRad);
+      final float s = Utils.scNorm(normRad - 0.25f);
+
+      /*
+       * b.preApply( 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, c, -s, 0.0f,
+       * 0.0f, s, c, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+       */
+
+      b.set(
+            b.m00, b.m01, b.m02, b.m03,
+            c * b.m10 - s * b.m20,
+            c * b.m11 - s * b.m21,
+            c * b.m12 - s * b.m22,
+            c * b.m13 - s * b.m23,
+            s * b.m10 + c * b.m20,
+            s * b.m11 + c * b.m21,
+            s * b.m12 + c * b.m22,
+            s * b.m13 + c * b.m23,
+            b.m30, b.m31, b.m32, b.m33);
+
+      return b;
+   }
+
+   public static PMatrix3D invRotateY ( final float radians ) {
+
+      return PMatAux.invRotateY(radians, (PMatrix3D) null);
+   }
+
+   public static PMatrix3D invRotateY (
+         final float radians,
+         PMatrix3D b ) {
+
+      if (b == null) {
+         b = new PMatrix3D();
+      }
+
+      final float normRad = -radians * IUtils.ONE_TAU;
+      final float c = Utils.scNorm(normRad);
+      final float s = Utils.scNorm(normRad - 0.25f);
+
+      /*
+       * b.preApply( c, 0.0f, s, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -s,
+       * 0.0f, c, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+       */
+
+      b.set(
+            c * b.m00 + s * b.m20,
+            c * b.m01 + s * b.m21,
+            c * b.m02 + s * b.m22,
+            c * b.m03 + s * b.m23,
+            b.m10, b.m11, b.m12, b.m13,
+            c * b.m20 - s * b.m00,
+            c * b.m21 - s * b.m01,
+            c * b.m22 - s * b.m02,
+            c * b.m23 - s * b.m03,
+            b.m30, b.m31, b.m32, b.m33);
+
+      return b;
+   }
+
+   public static PMatrix3D invRotateZ ( final float radians ) {
+
+      return PMatAux.invRotateZ(radians, (PMatrix3D) null);
+   }
+
+   public static PMatrix3D invRotateZ (
+         final float radians,
+         PMatrix3D b ) {
+
+      if (b == null) {
+         b = new PMatrix3D();
+      }
+
+      final float normRad = -radians * IUtils.ONE_TAU;
+      final float c = Utils.scNorm(normRad);
+      final float s = Utils.scNorm(normRad - 0.25f);
+
+      /*
+       * b.preApply( c, -s, 0.0f, 0.0f, s, c, 0.0f, 0.0f, 0.0f,
+       * 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+       */
+
+      b.set(
+            c * b.m00 - s * b.m10,
+            c * b.m01 - s * b.m11,
+            c * b.m02 - s * b.m12,
+            c * b.m03 - s * b.m13,
+            s * b.m00 + c * b.m10,
+            s * b.m01 + c * b.m11,
+            s * b.m02 + c * b.m12,
+            s * b.m03 + c * b.m13,
+            b.m20, b.m21, b.m22, b.m23,
+            b.m30, b.m31, b.m32, b.m33);
+
+      return b;
+   }
+
+   /**
+    * Applies the inverse scale to a matrix in-place.
+    * Equivalent to creating a matrix from 1.0 divided by the
+    * scale, then pre-applying the scalar matrix to the input.
+    *
+    * @param sx
+    *           the scale x
+    * @param sy
+    *           the scale y
+    * @param sz
+    *           the scale z
+    * @param b
+    *           the matrix
+    * @return the scaled matrix
+    */
+   public static PMatrix3D invScale (
+         final float sx,
+         final float sy,
+         final float sz,
+         PMatrix3D b ) {
+
+      if (b == null) {
+         b = new PMatrix3D();
+      }
+
+      final float xInv = sx == 0.0f ? 1.0f : 1.0f / sx;
+      final float yInv = sy == 0.0f ? 1.0f : 1.0f / sy;
+      final float zInv = sz == 0.0f ? 1.0f : 1.0f / sz;
+
+      b.set(
+            xInv * b.m00, xInv * b.m01, xInv * b.m02, xInv * b.m03,
+            yInv * b.m10, yInv * b.m11, yInv * b.m12, yInv * b.m13,
+            zInv * b.m20, zInv * b.m21, zInv * b.m22, zInv * b.m23,
+            b.m30, b.m31, b.m32, b.m33);
+      return b;
+   }
+
+   /**
+    * Applies the inverse scale to a matrix in-place.
+    * Equivalent to creating a matrix from 1.0 divided by the
+    * scale, then pre-applying the scalar matrix to the input.
+    *
+    * @param sx
+    *           the scale x
+    * @param sy
+    *           the scale y
+    * @param b
+    *           the matrix
+    * @return the scaled matrix
+    */
+   public static PMatrix3D invScale (
+         final float sx,
+         final float sy,
+         final PMatrix3D b ) {
+
+      return PMatAux.invScale(sx, sy, 1.0f, b);
+   }
+
+   /**
+    * Applies the inverse scale to a matrix in-place.
+    * Equivalent to creating a matrix from 1.0 divided by the
+    * scale, then pre-applying the scalar matrix to the input.
+    *
+    * @param scalar
+    *           the scalar
+    * @param b
+    *           the matrix
+    * @return the scaled matrix
+    */
+   public static PMatrix3D invScale (
+         final float scalar,
+         final PMatrix3D b ) {
+
+      return PMatAux.invScale(scalar, scalar, scalar, b);
+   }
+
+   /**
+    * Applies the inverse translation to a matrix in-place.
+    * Equivalent to creating a matrix from the negative
+    * translation, then pre-applying the translation matrix to
+    * the input.
+    *
+    * @param tx
+    *           the translation x
+    * @param ty
+    *           the translation y
+    * @param tz
+    *           the translation z
+    * @param b
+    *           the matrix
+    * @return the translated matrix
+    */
+   public static PMatrix3D invTranslate (
+         final float tx,
+         final float ty,
+         final float tz,
+         PMatrix3D b ) {
+
+      if (b == null) {
+         b = new PMatrix3D();
+      }
+
+      b.set(
+            b.m00 - tx * b.m30,
+            b.m01 - tx * b.m31,
+            b.m02 - tx * b.m32,
+            b.m03 - tx * b.m33,
+            b.m10 - ty * b.m30,
+            b.m11 - ty * b.m31,
+            b.m12 - ty * b.m32,
+            b.m13 - ty * b.m33,
+            b.m20 - tz * b.m30,
+            b.m21 - tz * b.m31,
+            b.m22 - tz * b.m32,
+            b.m23 - tz * b.m33,
+            b.m30, b.m31, b.m32, b.m33);
+      return b;
+   }
+
+   /**
+    * Applies the inverse translation to a matrix in-place.
+    * Equivalent to creating a matrix from the negative
+    * translation, then pre-applying the translation matrix to
+    * the input.
+    *
+    * @param tx
+    *           the translation x
+    * @param ty
+    *           the translation y
+    * @param b
+    *           the matrix
+    * @return the translated matrix
+    */
+   public static PMatrix3D invTranslate (
+         final float tx,
+         final float ty,
+         final PMatrix3D b ) {
+
+      return PMatAux.invTranslate(tx, ty, 0.0f, b);
    }
 
    /**

@@ -395,23 +395,22 @@ public interface IUp {
                currKnot = currCurve.getFirst();
 
                /*
-                * Resolve first and last handles.
+                * Resolve first and last handles. Not sure why these used
+                * to use third pi.
                 */
 
                Vec2.mix(
                      prevKnot.coord,
                      currKnot.coord,
-
-                     IUtils.THIRD_PI,
-
+                     // IUtils.THIRD_PI,
+                     IUtils.ONE_THIRD,
                      prevKnot.foreHandle);
 
                Vec2.mix(
                      currKnot.coord,
                      prevKnot.coord,
-
-                     IUtils.THIRD_PI,
-
+                     // IUtils.THIRD_PI,
+                     IUtils.ONE_THIRD,
                      currKnot.rearHandle);
 
                currCurve.closedLoop = true;
@@ -736,4 +735,24 @@ public interface IUp {
     *           the weight
     */
    void strokeWeight ( final float sw );
+
+   /**
+    * Sets the renderer's current stroke to the tint.
+    *
+    * @param c
+    *           the color
+    */
+   default void tint ( final Color c ) {
+
+      this.tint(Color.toHexInt(c));
+   }
+
+   /**
+    * Sets the renderer's current tint to the hexadecimal
+    * value.
+    *
+    * @param c
+    *           the color in hexadecimal.
+    */
+   void tint ( final int c );
 }

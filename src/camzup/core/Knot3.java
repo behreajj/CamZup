@@ -516,7 +516,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
             this.coord.x - (this.rearHandle.x - this.coord.x),
             this.coord.y - (this.rearHandle.y - this.coord.y),
             this.coord.z - (this.rearHandle.z - this.coord.z));
-      
+
       return this;
    }
 
@@ -534,7 +534,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
             this.coord.x - (this.foreHandle.x - this.coord.x),
             this.coord.y - (this.foreHandle.y - this.coord.y),
             this.coord.z - (this.foreHandle.z - this.coord.z));
-      
+
       return this;
    }
 
@@ -1176,7 +1176,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       Vec3.add(this.coord, v, this.coord);
       Vec3.add(this.foreHandle, v, this.foreHandle);
       Vec3.add(this.rearHandle, v, this.rearHandle);
-      
+
       return this;
    }
 }

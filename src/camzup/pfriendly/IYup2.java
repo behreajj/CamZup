@@ -211,7 +211,7 @@ public interface IYup2 extends IUp {
     *           the mesh entities
     * @return the string
     */
-   static String toSvgString ( 
+   static String toSvgString (
          final IYup2 renderer,
          final MeshEntity2... mes ) {
 
@@ -469,8 +469,7 @@ public interface IYup2 extends IUp {
       for (int i = 0; i < last; ++i) {
          final float iPercent = i * toPercent;
          final float y = Utils.lerpUnclamped(bottom, top, iPercent);
-         final int green = (int) (iPercent * 0xff + 0.5f) << 0x8;
-         final int agb = ab | green;
+         final int agb = ab | (int) (iPercent * 0xff + 0.5f) << 0x8;
 
          for (int j = 0; j < last; ++j) {
             this.stroke(agb | reds[j]);
@@ -660,7 +659,8 @@ public interface IYup2 extends IUp {
          final float yDir,
          final float dLen ) {
 
-      this.ray(xOrigin, yOrigin,
+      this.ray(
+            xOrigin, yOrigin,
             xDir, yDir,
             dLen, 1.0f, 4.0f, 2.0f);
    }
@@ -783,7 +783,20 @@ public interface IYup2 extends IUp {
    void rect ( final Vec2 a, final Vec2 b );
 
    /**
-    * Draws a square at a location.
+    * Draws a rounded rectangle; the meaning of the first two
+    * parameters depends on the renderer's rectMode.
+    *
+    * @param a
+    *           the first parameter
+    * @param b
+    *           the second parameter
+    * @param rounding
+    *           the corner rounding
+    */
+   void rect ( final Vec2 a, final Vec2 b, final float rounding );
+
+   /**
+    * Draws a square.
     *
     * @param a
     *           the location
@@ -791,6 +804,18 @@ public interface IYup2 extends IUp {
     *           the size
     */
    void square ( final Vec2 a, final float b );
+
+   /**
+    * Draws a rounded square.
+    *
+    * @param a
+    *           the location
+    * @param b
+    *           the size
+    * @param rounding
+    *           the corner rounding
+    */
+   void square ( final Vec2 a, final float b, final float rounding );
 
    /**
     * Sets the renderer's stroke color.

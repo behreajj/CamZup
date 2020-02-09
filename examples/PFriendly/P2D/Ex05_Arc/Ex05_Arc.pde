@@ -18,15 +18,15 @@ void draw() {
 
   graphics.mouse(mouse);
   float start = Vec2.heading(mouse);
-  float stop = -frameCount * 0.025;
+  float stop = frameCount * 0.025;
 
   background(#fff7d5);
   graphics.origin();
   strokeWeight(5.0);
   stroke(#373737);
-  arc(0.0, 0.0,
-    175.0, 175.0,
-    start, stop,
+  arc(0.0, 0.0, 
+    175.0, 175.0, 
+    start, stop, 
     PIE);
 
   stroke(#ff2020);

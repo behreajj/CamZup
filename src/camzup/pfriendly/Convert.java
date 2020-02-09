@@ -28,10 +28,10 @@ public abstract class Convert {
     *           the affine transform
     * @return the PMatrix
     */
-   public static PMatrix2D fromAwt (
+   public static PMatrix2D fromAwtTransform (
          final AffineTransform tr ) {
 
-      return Convert.fromAwt(tr, (PMatrix2D) null);
+      return Convert.fromAwtTransform(tr, (PMatrix2D) null);
    }
 
    /**
@@ -43,7 +43,7 @@ public abstract class Convert {
     *           the output matrix
     * @return the PMatrix
     */
-   public static PMatrix2D fromAwt (
+   public static PMatrix2D fromAwtTransform (
          final AffineTransform tr,
          PMatrix2D target ) {
 
@@ -70,7 +70,7 @@ public abstract class Convert {
     *           the output matrix
     * @return the PMatrix
     */
-   public static PMatrix3D fromAwt (
+   public static PMatrix3D fromAwtTransform (
          final AffineTransform tr,
          PMatrix3D target ) {
 

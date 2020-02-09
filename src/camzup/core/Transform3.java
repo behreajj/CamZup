@@ -208,7 +208,7 @@ public class Transform3 extends Transform {
          final Transform3 target ) {
 
       // TODO: Loose float version of from axes?
-      
+
       target.rotPrev.set(target.rotation);
       Quaternion.fromAxes(right, forward, up, target.rotation);
       target.updateAxes();

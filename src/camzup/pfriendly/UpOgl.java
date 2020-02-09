@@ -19,6 +19,7 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PImage;
+import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.opengl.PGraphicsOpenGL;
@@ -223,8 +224,20 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.colorCalc(x, y, z, a, true);
    }
 
+   /**
+    * Calculates a color from an integer and alpha value.
+    * Useful in the IDE for colors defined with hash-tag
+    * literals, such as "#aabbcc" .
+    *
+    * @param argb
+    *           the hexadecimal color
+    * @param alpha
+    *           the alpha channel
+    */
    @Override
-   protected void colorCalcARGB ( final int argb, final float alpha ) {
+   protected void colorCalcARGB (
+         final int argb,
+         final float alpha ) {
 
       if (alpha == this.colorModeA) {
          this.calcAi = argb >> 0x18 & 0xff;
@@ -247,6 +260,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.calcAlpha = this.calcAi != 0xff;
    }
 
+   /**
+    * Initializes the curve basis and draw matrix.
+    */
    @Override
    protected void curveInit () {
 
@@ -279,6 +295,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.curveDrawMatrix.apply(this.curveBasisMatrix);
    }
 
+   /**
+    * Sets the renderer's default styling.
+    */
    @Override
    protected void defaultSettings () {
 
@@ -322,16 +341,40 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.colorModeZ * IUpOgl.DEFAULT_SPEC_B);
       this.emissive(0.0f, 0.0f, 0.0f);
       this.shininess(0.0f);
+
       this.setAmbient = false;
-
       this.manipulatingCamera = false;
-
       this.settingsInited = true;
       this.reapplySettings = false;
 
       this.hint(PConstants.DISABLE_OPENGL_ERRORS);
    }
 
+   /**
+    * The renderer specific implementation of Processing's
+    * image function. This uses integers to specify the UV
+    * coordinates for unknown reasons; it defers to a public,
+    * single precision real number function.
+    *
+    * @param img
+    *           the PImage
+    * @param x1
+    *           the first x coordinate
+    * @param y1
+    *           the first y coordinate
+    * @param x2
+    *           the second x coordinate
+    * @param y2
+    *           the second y coordinate
+    * @param u1
+    *           the image top-left corner u
+    * @param v1
+    *           the image top-left corner v
+    * @param u2
+    *           the image bottom-right corner u
+    * @param v2
+    *           the image bottom-right cornver v
+    */
    @Override
    protected void imageImpl (
          final PImage img,
@@ -341,11 +384,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final int u2, final int v2 ) {
 
       /*
-       * This is backwards due to Processing's insistence on using
-       * integers to specify UV coordinates (maybe as a result
-       * from working with AWT?). All image functions should flow
-       * into this, but instead this flows into an image
-       * implementation above.
+       * This is backwards due to Processing's insistence on
+       * specifying UV coordinates with integers (maybe as a
+       * result from working with AWT?). All image functions
+       * should flow into this, but instead this flows into a
+       * public image implementation.
        */
 
       final int savedTextureMode = this.textureMode;
@@ -823,8 +866,28 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       PMatAux.invRotate(angle,
             xAxis, yAxis, zAxis,
             this.modelviewInv);
-
       this.updateProjmodelview();
+   }
+
+   /**
+    * Scales the renderer by a non-unform scalar.
+    *
+    * @param sx
+    *           the scale x
+    * @param sy
+    *           the scale y
+    * @param sz
+    *           the scalez
+    */
+   @Override
+   protected void scaleImpl (
+         final float sx,
+         final float sy,
+         final float sz ) {
+
+      this.modelview.scale(sx, sy, sz);
+      PMatAux.invScale(sx, sy, sz, this.modelviewInv);
+      this.projmodelview.scale(sx, sy, sz);
    }
 
    /**
@@ -988,6 +1051,27 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Translates the renderer by a vector.
+    *
+    * @param tx
+    *           the translation x
+    * @param ty
+    *           the translation y
+    * @param tz
+    *           the translation z
+    */
+   @Override
+   protected void translateImpl (
+         final float tx,
+         final float ty,
+         final float tz ) {
+
+      this.modelview.translate(tx, ty, tz);
+      PMatAux.invTranslate(tx, ty, tz, this.modelviewInv);
+      this.projmodelview.translate(tx, ty, tz);
+   }
+
+   /**
     * Transfers the modelview from a PMatrix3D to a
     * one-dimensional float array used by OpenGL.
     */
@@ -1041,8 +1125,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *           the t or v coordinate
     */
    @Override
-   protected void vertexTexture ( 
-         final float u, 
+   protected void vertexTexture (
+         final float u,
          final float v ) {
 
       this.vertexTexture(u, v,
@@ -1433,6 +1517,31 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Calculates the color channels from a color object.
+    *
+    * @param c
+    *           the color
+    */
+   public void colorCalc ( final Color c ) {
+
+      this.calcR = Utils.clamp01(c.x);
+      this.calcG = Utils.clamp01(c.y);
+      this.calcB = Utils.clamp01(c.z);
+      this.calcA = Utils.clamp01(c.w);
+
+      this.calcRi = (int) (this.calcR * 0xff + 0.5f);
+      this.calcGi = (int) (this.calcG * 0xff + 0.5f);
+      this.calcBi = (int) (this.calcB * 0xff + 0.5f);
+      this.calcAi = (int) (this.calcA * 0xff + 0.5f);
+
+      this.calcColor = this.calcAi << 0x18
+            | this.calcRi << 0x10
+            | this.calcGi << 0x8
+            | this.calcBi;
+      this.calcAlpha = this.calcAi != 0xff;
+   }
+
+   /**
     * Exposes the color calculation to the public. Includes the
     * option to premultiply alpha. Refers to the helper
     * function
@@ -1625,6 +1734,19 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Sets the renderer's current fill to the color.
+    *
+    * @param c
+    *           the color
+    */
+   @Override
+   public void fill ( final Color c ) {
+
+      this.colorCalc(c);
+      this.fillFromCalc();
+   }
+
+   /**
     * Sets the renderer projection matrix to the frustum
     * defined by the edges of the view port.
     *
@@ -1646,6 +1768,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float left, final float right,
          final float bottom, final float top,
          final float near, final float far ) {
+
+      // this.cameraFOV = fov;
+      // this.cameraAspect = aspect;
+      // this.cameraNear = near;
+      // this.cameraFar = far;
 
       PMatAux.frustum(
             left, right,
@@ -1729,15 +1856,31 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       return target.set(
             this.modelview.m00, this.modelview.m01,
             this.modelview.m02, this.modelview.m03,
-
             this.modelview.m10, this.modelview.m11,
             this.modelview.m12, this.modelview.m13,
-
             this.modelview.m20, this.modelview.m21,
             this.modelview.m22, this.modelview.m23,
-
             this.modelview.m30, this.modelview.m31,
             this.modelview.m32, this.modelview.m33);
+   }
+
+   /**
+    * Gets the renderer modelview matrix.
+    *
+    * @param target
+    *           the output matrix
+    * @return the modelview
+    */
+   @Override
+   public PMatrix2D getMatrix ( PMatrix2D target ) {
+
+      if (target == null) {
+         target = new PMatrix2D();
+      }
+      target.set(
+            this.modelview.m00, this.modelview.m01, this.modelview.m03,
+            this.modelview.m10, this.modelview.m11, this.modelview.m13);
+      return target;
    }
 
    /**
@@ -1963,7 +2106,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.imageImpl(img,
             x, y,
             u, v,
-
             0.0f, 0.0f,
             vtx, vty);
    }
@@ -2363,13 +2505,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        * actual constants.
        */
 
-      // TODO: Does this need to calculate near and far based on
-      // camera pos?
-      this.ortho(
-            left, right,
-            bottom, top,
-            IUp.DEFAULT_NEAR_CLIP,
-            IUp.DEFAULT_FAR_CLIP);
+      float far = IUp.DEFAULT_FAR_CLIP;
+      if (this.eyeDist != 0.0f) {
+         far = IUp.DEFAULT_NEAR_CLIP + this.eyeDist * 10.0f;
+      }
+      this.ortho(left, right, bottom, top, IUp.DEFAULT_NEAR_CLIP, far);
    }
 
    /**
@@ -2412,8 +2552,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void perspective () {
 
       /*
-       * CAUTION: Never use defCameraXXX values. They are not
-       * actual constants.
+       * Never use defCameraXXX values. They are not actual
+       * constants.
        */
 
       this.perspective(IUp.DEFAULT_FOV);
@@ -2450,14 +2590,14 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float fov,
          final float aspect ) {
 
-      // TODO: Does this need to calculate near and far based on
-      // camera loc?
+      float near = IUp.DEFAULT_NEAR_CLIP;
+      float far = IUp.DEFAULT_FAR_CLIP;
+      if (this.cameraZ != 0.0f) {
+         near *= this.cameraZ;
+         far *= this.cameraZ;
+      }
 
-      this.perspective(
-            fov,
-            aspect,
-            IUp.DEFAULT_NEAR_CLIP,
-            IUp.DEFAULT_FAR_CLIP);
+      this.perspective(fov, aspect, near, far);
    }
 
    /**
@@ -2481,10 +2621,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float near,
          final float far ) {
 
-      PMatAux.perspective(
-            fov, aspect,
-            near, far,
-            this.projection);
+      // this.cameraFOV = fov;
+      // this.cameraAspect = aspect;
+      // this.cameraNear = near;
+      // this.cameraFar = far;
+
+      PMatAux.perspective(fov, aspect, near, far, this.projection);
    }
 
    /**
@@ -2656,7 +2798,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void rect (
          final float x1, final float y1,
          final float x2, final float y2,
-
          final float r ) {
 
       this.rectImpl(
@@ -2767,7 +2908,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       PMatAux.rotateX(angle, this.modelview);
       PMatAux.invRotateX(angle, this.modelviewInv);
       this.updateProjmodelview();
-
    }
 
    /**
@@ -2983,9 +3123,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *           the applet height
     */
    @Override
-   public void setSize ( 
-         final int width, 
+   public void setSize (
+         final int width,
          final int height ) {
+
+      // TODO: Issue with secondary Ogl graphics not working when
+      // width and height exceed that of the applet?
 
       this.width = width;
       this.height = height;
@@ -3105,6 +3248,19 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Sets the renderer's current stroke to the color.
+    *
+    * @param c
+    *           the color
+    */
+   @Override
+   public void stroke ( final Color c ) {
+
+      this.colorCalc(c);
+      this.strokeFromCalc();
+   }
+
+   /**
     * Displays a character at a location.
     *
     * @param c
@@ -3115,7 +3271,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *           the y coordinate
     */
    @Override
-   public void text (final char c, final float x, float y ) {
+   public void text ( final char c, final float x, float y ) {
 
       if (this.textFont == null) {
          this.defaultFontOrDeath("text");
@@ -3469,8 +3625,21 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Sets the renderer's current stroke to the tint.
+    *
+    * @param c
+    *           the color
+    */
+   @Override
+   public void tint ( final Color c ) {
+
+      this.colorCalc(c);
+      this.tintFromCalc();
+   }
+
+   /**
     * Returns the string representation of this renderer.
-    * 
+    *
     * @return the string
     */
    @Override
@@ -3511,39 +3680,39 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          case RST:
 
             this.rotateZ(angle);
-            this.scale(dim.x, dim.y, 1.0f);
-            this.translate(loc.x, loc.y, 0.0f);
+            this.scaleImpl(dim.x, dim.y, 1.0f);
+            this.translateImpl(loc.x, loc.y, 0.0f);
 
             return;
 
          case RTS:
 
             this.rotateZ(angle);
-            this.translate(loc.x, loc.y, 0.0f);
-            this.scale(dim.x, dim.y, 1.0f);
-            
+            this.translateImpl(loc.x, loc.y, 0.0f);
+            this.scaleImpl(dim.x, dim.y, 1.0f);
+
             return;
 
          case SRT:
 
-            this.scale(dim.x, dim.y, 1.0f);
+            this.scaleImpl(dim.x, dim.y, 1.0f);
             this.rotateZ(angle);
-            this.translate(loc.x, loc.y, 0.0f);
+            this.translateImpl(loc.x, loc.y, 0.0f);
 
             return;
 
          case STR:
 
-            this.scale(dim.x, dim.y, 1.0f);
-            this.translate(loc.x, loc.y, 0.0f);
+            this.scaleImpl(dim.x, dim.y, 1.0f);
+            this.translateImpl(loc.x, loc.y, 0.0f);
             this.rotateZ(angle);
 
             return;
 
          case TSR:
 
-            this.translate(loc.x, loc.y, 0.0f);
-            this.scale(dim.x, dim.y, 1.0f);
+            this.translateImpl(loc.x, loc.y, 0.0f);
+            this.scaleImpl(dim.x, dim.y, 1.0f);
             this.rotateZ(angle);
 
             return;
@@ -3552,9 +3721,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          default:
 
-            this.translate(loc.x, loc.y, 0.0f);
+            this.translateImpl(loc.x, loc.y, 0.0f);
             this.rotateZ(angle);
-            this.scale(dim.x, dim.y, 1.0f);
+            this.scaleImpl(dim.x, dim.y, 1.0f);
 
             return;
       }
@@ -3994,9 +4163,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float x,
          final float y ) {
 
-      this.vertexImpl(
-            x, y, 0.0f,
-            this.textureU, this.textureV);
+      this.vertexImpl(x, y, 0.0f, this.textureU, this.textureV);
    }
 
    /**
@@ -4015,9 +4182,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float y,
          final float z ) {
 
-      this.vertexImpl(
-            x, y, z,
-            this.textureU, this.textureV);
+      this.vertexImpl(x, y, z, this.textureU, this.textureV);
    }
 
    /**

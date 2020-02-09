@@ -5,9 +5,9 @@ Yup2 graphics2;
 
 MaterialSolid material = new MaterialSolid()
   .setStroke(true)
-  .setStroke(IUp.DEFAULT_HANDLE_FORE_COLOR)
+  .setStroke(#1f7fff)
   .setFill(true)
-  .setFill(IUp.DEFAULT_HANDLE_COLOR)
+  .setFill(#303030)
   .setStrokeWeight(0.01);
 
 Transform2 transform = new Transform2()
@@ -31,7 +31,6 @@ void setup() {
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-
   entity.rotateZ(0.02);
   graphics2.background();
   graphics2.origin();

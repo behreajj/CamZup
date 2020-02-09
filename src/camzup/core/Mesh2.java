@@ -1112,25 +1112,25 @@ public class Mesh2 extends Mesh {
       if (this == obj) {
          return true;
       }
-      
+
       if (!super.equals(obj)) {
          return false;
       }
-      
+
       if (this.getClass() != obj.getClass()) {
          return false;
       }
-      
+
       final Mesh2 other = (Mesh2) obj;
-      
+
       if (!Arrays.equals(this.coords, other.coords)) {
          return false;
       }
-      
+
       if (!Arrays.deepEquals(this.faces, other.faces)) {
          return false;
       }
-      
+
       return true;
    }
 
@@ -1336,7 +1336,7 @@ public class Mesh2 extends Mesh {
 
    /**
     * Flips the indices which specify an edge.
-    * 
+    *
     * @param i
     *           face index
     * @param j
@@ -1349,17 +1349,17 @@ public class Mesh2 extends Mesh {
       final int len = face.length;
       final int jOrigin = Math.floorMod(j, len);
       final int jDest = Math.floorMod(j + 1, len);
-      
+
       final int[] temp = face[jOrigin];
       face[jOrigin] = face[jDest];
       face[jDest] = temp;
-      
+
       return this;
    }
 
    /**
     * Flips the indices which specify a face.
-    * 
+    *
     * @param i
     *           face index
     * @return this mesh

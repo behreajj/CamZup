@@ -306,7 +306,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       } else if (!this.rearHandle.equals(other.rearHandle)) {
          return false;
       }
-      
+
       return true;
    }
 
@@ -677,7 +677,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
 
       this.scaleForeHandleTo(magnitude);
       this.scaleRearHandleTo(magnitude);
-      
+
       return this;
    }
 
