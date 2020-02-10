@@ -725,6 +725,135 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    }
 
    /**
+    * Draws a 2D curve entity.
+    *
+    * @param entity
+    *           the curve entity
+    */
+   @Deprecated
+   protected void shapeOld ( final CurveEntity2 entity ) {
+
+      this.pushMatrix();
+      this.transform(entity.transform, entity.transformOrder);
+
+      final List < MaterialSolid > materials = entity.materials;
+      final boolean useMaterial = !materials.isEmpty();
+      final Iterator < Curve2 > curveItr = entity.curves.iterator();
+      Iterator < Knot2 > knItr;
+
+      Knot2 currKnot;
+      Knot2 prevKnot;
+      Vec2 coord;
+      Vec2 foreHandle;
+      Vec2 rearHandle;
+
+      while (curveItr.hasNext()) {
+         final Curve2 curve = curveItr.next();
+
+         if (useMaterial) {
+            this.pushStyle();
+            this.material(materials.get(curve.materialIndex));
+         }
+
+         knItr = curve.iterator();
+         prevKnot = knItr.next();
+         coord = prevKnot.coord;
+
+         this.gp.reset();
+         this.gp.moveTo(coord.x, coord.y);
+
+         while (knItr.hasNext()) {
+            currKnot = knItr.next();
+            foreHandle = prevKnot.foreHandle;
+            rearHandle = currKnot.rearHandle;
+            coord = currKnot.coord;
+
+            this.gp.curveTo(
+                  foreHandle.x, foreHandle.y,
+                  rearHandle.x, rearHandle.y,
+                  coord.x, coord.y);
+
+            prevKnot = currKnot;
+         }
+
+         if (curve.closedLoop) {
+            currKnot = curve.getFirst();
+            foreHandle = prevKnot.foreHandle;
+            rearHandle = currKnot.rearHandle;
+            coord = currKnot.coord;
+
+            this.gp.curveTo(
+                  foreHandle.x, foreHandle.y,
+                  rearHandle.x, rearHandle.y,
+                  coord.x, coord.y);
+            this.gp.closePath();
+         }
+
+         this.drawShapeSolid(this.gp);
+
+         if (useMaterial) {
+            this.popStyle();
+         }
+      }
+
+      this.popMatrix();
+   }
+
+   /**
+    * Draws a mesh entity.
+    *
+    * @param entity
+    *           the mesh entity
+    */
+   @Deprecated
+   protected void shapeOld ( final MeshEntity2 entity ) {
+
+      this.pushMatrix();
+      this.transform(entity.transform, entity.transformOrder);
+
+      final List < Mesh2 > meshes = entity.meshes;
+      final List < MaterialSolid > materials = entity.materials;
+      final boolean useMaterial = !materials.isEmpty();
+      final Iterator < Mesh2 > meshItr = meshes.iterator();
+
+      while (meshItr.hasNext()) {
+         final Mesh2 mesh = meshItr.next();
+
+         if (useMaterial) {
+            final int index = mesh.materialIndex;
+            final MaterialSolid material = materials.get(index);
+            this.pushStyle();
+            this.material(material);
+         }
+
+         final int[][][] fs = mesh.faces;
+         final Vec2[] vs = mesh.coords;
+         final int flen0 = fs.length;
+
+         for (int i = 0; i < flen0; ++i) {
+            final int[][] f = fs[i];
+            final int flen1 = f.length;
+
+            this.gp.reset();
+            Vec2 v = vs[f[0][0]];
+            this.gp.moveTo(v.x, v.y);
+            for (int j = 1; j < flen1; ++j) {
+               v = vs[f[j][0]];
+               this.gp.lineTo(v.x, v.y);
+            }
+            this.gp.closePath();
+            this.drawShapeSolid(this.gp);
+         }
+
+         if (useMaterial) {
+            this.popStyle();
+         }
+      }
+
+      this.popMatrix();
+   }
+
+   /**
     * Creates a new BasicStroke object from the stroke weight,
     * stroke cap (native), and stroke join (native), then sets
     * the AWT renderer's stroke with this object.
@@ -3371,34 +3500,49 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    public void shape ( final CurveEntity2 entity ) {
 
-      this.pushMatrix();
-      this.transform(entity.transform, entity.transformOrder);
+      /*
+       * TODO: Damned if you do and damned if you don't, seems
+       * like. For performance, better to not use interfaces but
+       * rather classes, i.e. ArrayList or LinkedList instead of
+       * List. However, a generic list is easier on
+       * implementation.
+       */
 
+      final Transform2 tr = entity.transform;
+      final List < Curve2 > curves = entity.curves;
       final List < MaterialSolid > materials = entity.materials;
-      final boolean useMaterial = !materials.isEmpty();
-      final Iterator < Curve2 > curveItr = entity.curves.iterator();
-      Iterator < Knot2 > knItr;
 
-      Knot2 currKnot;
-      Knot2 prevKnot;
-      Vec2 coord;
-      Vec2 foreHandle;
-      Vec2 rearHandle;
+      final Iterator < Curve2 > curveItr = curves.iterator();
+      final boolean useMaterial = !materials.isEmpty();
+      Iterator < Knot2 > knItr = null;
+
+      final Vec2 v0 = new Vec2();
+      final Vec2 v1 = new Vec2();
+      final Vec2 v2 = new Vec2();
+
+      Knot2 currKnot = null;
+      Knot2 prevKnot = null;
+      Vec2 coord = null;
+      Vec2 foreHandle = null;
+      Vec2 rearHandle = null;
 
       while (curveItr.hasNext()) {
          final Curve2 curve = curveItr.next();
 
          if (useMaterial) {
             this.pushStyle();
-            this.material(materials.get(curve.materialIndex));
+            this.material(materials.get(
+                  curve.materialIndex));
          }
 
          knItr = curve.iterator();
          prevKnot = knItr.next();
          coord = prevKnot.coord;
 
+         Transform2.mulPoint(tr, coord, v2);
+
          this.gp.reset();
-         this.gp.moveTo(coord.x, coord.y);
+         this.gp.moveTo(v2.x, v2.y);
 
          while (knItr.hasNext()) {
             currKnot = knItr.next();
@@ -3406,10 +3550,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
+            Transform2.mulPoint(tr, foreHandle, v0);
+            Transform2.mulPoint(tr, rearHandle, v1);
+            Transform2.mulPoint(tr, coord, v2);
+
             this.gp.curveTo(
-                  foreHandle.x, foreHandle.y,
-                  rearHandle.x, rearHandle.y,
-                  coord.x, coord.y);
+                  v0.x, v0.y,
+                  v1.x, v1.y,
+                  v2.x, v2.y);
 
             prevKnot = currKnot;
          }
@@ -3420,10 +3568,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
+            Transform2.mulPoint(tr, foreHandle, v0);
+            Transform2.mulPoint(tr, rearHandle, v1);
+            Transform2.mulPoint(tr, coord, v2);
+
             this.gp.curveTo(
-                  foreHandle.x, foreHandle.y,
-                  rearHandle.x, rearHandle.y,
-                  coord.x, coord.y);
+                  v0.x, v0.y,
+                  v1.x, v1.y,
+                  v2.x, v2.y);
             this.gp.closePath();
          }
 
@@ -3433,8 +3585,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             this.popStyle();
          }
       }
-
-      this.popMatrix();
    }
 
    /**
@@ -3445,13 +3595,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    public void shape ( final MeshEntity2 entity ) {
 
-      this.pushMatrix();
-      this.transform(entity.transform, entity.transformOrder);
-
+      final Transform2 tr = entity.transform;
       final List < Mesh2 > meshes = entity.meshes;
       final List < MaterialSolid > materials = entity.materials;
-      final boolean useMaterial = !materials.isEmpty();
+
       final Iterator < Mesh2 > meshItr = meshes.iterator();
+      final boolean useMaterial = !materials.isEmpty();
+
+      final Vec2 v = new Vec2();
 
       while (meshItr.hasNext()) {
          final Mesh2 mesh = meshItr.next();
@@ -3463,21 +3614,26 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             this.material(material);
          }
 
-         final int[][][] fs = mesh.faces;
          final Vec2[] vs = mesh.coords;
+         final int[][][] fs = mesh.faces;
          final int flen0 = fs.length;
 
          for (int i = 0; i < flen0; ++i) {
             final int[][] f = fs[i];
             final int flen1 = f.length;
 
+            Transform2.mulPoint(tr, vs[f[0][0]], v);
+
             this.gp.reset();
-            Vec2 v = vs[f[0][0]];
             this.gp.moveTo(v.x, v.y);
+
             for (int j = 1; j < flen1; ++j) {
-               v = vs[f[j][0]];
+
+               Transform2.mulPoint(tr, vs[f[j][0]], v);
                this.gp.lineTo(v.x, v.y);
+
             }
+
             this.gp.closePath();
             this.drawShapeSolid(this.gp);
          }
@@ -3486,8 +3642,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             this.popStyle();
          }
       }
-
-      this.popMatrix();
    }
 
    /**

@@ -1507,9 +1507,11 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Generates a grid of points conducive to hexagonal forms.
-    * This will be contained within the frame of the upper and
-    * lower bound.
+    * Generates a 2D array of vectors for a hexagonal map. In
+    * spatial coordinates, rows are staggered by an offset. In
+    * array storage, the grid uses an axial coordinate system:
+    * column-minor coordinates advance diagonally rather than
+    * in a jagged vertical.
     *
     * @param count
     *           number of columns and rows
@@ -1528,41 +1530,50 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final float toStep = 1.0f / (vcnt - 1.0f);
 
       /*
-       * Math.sqrt(3.0d) / 8.0d = 0.21650635094610965d . This is
-       * the constant sqrt(3) / 2 multiplied by the expected
-       * radius, 0.5, multiplied by a half, so that the x offset
-       * can be both positive and negative.
+       * Find the width of each hexagonal cell by dividing the
+       * absolute difference between the upper and lower bound by
+       * the count. Math.sqrt(3.0d) / 8.0d = 0.21650635094610965d
+       * . This is the constant Math.sqrt(3.0d) / 2.0d multiplied
+       * by the expected radius, 0.5d, then halved, so that the x
+       * offset can be both positive and negative.
        */
       final float w = 0.21650635f * Utils.abs(
             upperBound.x - lowerBound.x) / vcnt;
 
-      /* Multiply x values by sqrt(3) / 2 . */
+      /* Multiply x values by Math.sqrt(3.0d) / 2.0d . */
       final float[] xs = new float[vcnt];
       for (int j = 0; j < vcnt; ++j) {
          xs[j] = IUtils.SQRT_3_2 * Utils.lerpUnclamped(
-               lowerBound.x,
-               upperBound.x,
-               j * toStep);
+               lowerBound.x, upperBound.x, j * toStep);
       }
 
       final Vec2[][] result = new Vec2[vcnt][vcnt];
+
+      // final int center = Utils.ceilToInt(vcnt * 0.5f);
       for (int i = 0; i < vcnt; ++i) {
+         // final int m = (center + i) % vcnt;
+         // final Vec2[] row = result[m];
          final Vec2[] row = result[i];
 
          /*
           * Multiply y by 0.75 -- cell radius plus half the radius .
           */
          final float y = 0.75f * Utils.lerpUnclamped(
-               lowerBound.y,
-               upperBound.y,
-               i * toStep);
+               lowerBound.y, upperBound.y, i * toStep);
 
          /*
           * Shift alternating cells by positive or negative offset.
           */
          final float xoff = i % 2 == 0 ? w : -w;
+         final int joff = Utils.ceilToInt(i * 0.5f);
          for (int j = 0; j < vcnt; ++j) {
-            row[j] = new Vec2(xoff + xs[j], y);
+
+            /*
+             * Shift indices so that they move smoothly along a diagonal
+             * between hex edges, not along a jagged, orthogonal path.
+             */
+            final int k = Math.floorMod(j - joff, vcnt);
+            row[k] = new Vec2(xoff + xs[j], y);
          }
       }
       return result;

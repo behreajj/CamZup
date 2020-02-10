@@ -114,6 +114,8 @@ public class ZImage extends PImage {
          final PImage target,
          final Gradient grd ) {
 
+      // TODO: Needs testing.
+      
       target.loadPixels();
 
       final int[] px = target.pixels;
@@ -323,8 +325,7 @@ public class ZImage extends PImage {
       for (int i = 0, y = h - 1; y > -1; --y) {
          final int grbl = 0xff000080 | (int) (y * hInv + 0.5f) << 0x8;
          for (int x = 0; x < w; ++x, ++i) {
-            final int red = (int) (x * wInv + 0.5f) << 0x10;
-            px[i] = red | grbl;
+            px[i] = (int) (x * wInv + 0.5f) << 0x10 | grbl;
          }
       }
 
@@ -507,7 +508,7 @@ public class ZImage extends PImage {
          final int height,
          final int format ) {
 
-      super(width, height, format, 1);
+      super(width, height, format);
    }
 
    /**
@@ -573,6 +574,7 @@ public class ZImage extends PImage {
    public void updatePixels () {
 
       if (!this.modified) {
+
          this.mx1 = 0;
          this.mx2 = this.pixelWidth;
          this.my1 = 0;

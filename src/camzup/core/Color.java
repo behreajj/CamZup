@@ -1509,24 +1509,24 @@ public class Color extends Vec4 {
     * Converts from hue, saturation and brightness to a color
     * with red, green and blue channels.
     *
-    * @param hbsa
+    * @param hsba
     *           the HSBA vector
     * @param target
     *           the output color
     * @return the color
     */
    public static Color hsbaToRgba (
-         final Vec4 hbsa,
+         final Vec4 hsba,
          final Color target ) {
 
-      return Color.hsbaToRgba(hbsa.x, hbsa.y, hbsa.z, hbsa.w, target);
+      return Color.hsbaToRgba(hsba.x, hsba.y, hsba.z, hsba.w, target);
    }
 
    /**
     * Inverts a color by subtracting the red, green and blue
-    * channels from one. Similar to bitNot, except alpha is
-    * unaffected. Similar to adding 0.5 to the hue of a Vec4
-    * storing hue, saturation and brightness.
+    * channels from one. Similar to bitNot, except alpha is not
+    * affected. Also similar to adding 0.5 to the x component
+    * of a Vec4 storing hue, saturation and brightness.
     *
     * @param c
     *           the color
@@ -1865,8 +1865,7 @@ public class Color extends Vec4 {
             rng.nextFloat(),
             rng.nextFloat(),
             1.0f);
-      Color.hsbaToRgba(hsba, target);
-      return target;
+      return Color.hsbaToRgba(hsba, target);
    }
 
    /**
@@ -1901,8 +1900,7 @@ public class Color extends Vec4 {
             rng.uniform(lowerBound.z, upperBound.z),
             1.0f);
 
-      Color.hsbaToRgba(hsba, target);
-      return target;
+      return Color.hsbaToRgba(hsba, target);
    }
 
    /**
@@ -1929,8 +1927,7 @@ public class Color extends Vec4 {
             rng.nextFloat(),
             rng.nextFloat(),
             rng.nextFloat());
-      Color.hsbaToRgba(hsba, target);
-      return target;
+      return Color.hsbaToRgba(hsba, target);
    }
 
    /**
@@ -1965,8 +1962,7 @@ public class Color extends Vec4 {
             rng.uniform(lowerBound.z, upperBound.z),
             rng.uniform(lowerBound.w, upperBound.w));
 
-      Color.hsbaToRgba(hsba, target);
-      return target;
+      return Color.hsbaToRgba(hsba, target);
    }
 
    /**
@@ -2226,6 +2222,137 @@ public class Color extends Vec4 {
    }
 
    /**
+    * Shifts a color's brightness by a factor. The brightness
+    * is clamped to the range [0.0, 1.0] .
+    *
+    * @param c
+    *           the input color
+    * @param shift
+    *           the brightness shift
+    * @param target
+    *           the output color
+    * @param hsba
+    *           the color in HSB
+    * @return the shifted color
+    */
+   public static Color shiftBri (
+         final Color c,
+         final float shift,
+         final Color target,
+         final Vec4 hsba ) {
+
+      Color.rgbaToHsba(c, hsba);
+      hsba.z = Utils.clamp01(hsba.z + shift);
+      return Color.hsbaToRgba(hsba, target);
+   }
+
+   /**
+    * Shifts a color's hue, saturation and brightness by a
+    * vector. The color's alpha remains unaffected.
+    *
+    * @param c
+    *           the input color
+    * @param shift
+    *           the shift
+    * @param target
+    *           the output color
+    * @param hsba
+    *           the color in HSB
+    * @return the shifted color
+    */
+   public static Color shiftHsb (
+         final Color c,
+         final Vec4 shift,
+         final Color target,
+         final Vec4 hsba ) {
+
+      Color.rgbaToHsba(c, hsba);
+      hsba.x += shift.x;
+      hsba.y = Utils.clamp01(hsba.y + shift.y);
+      hsba.z = Utils.clamp01(hsba.z + shift.z);
+      return Color.hsbaToRgba(hsba, target);
+   }
+
+   /**
+    * Shifts a color's hue, saturation and brightness by a
+    * vector.
+    *
+    * @param c
+    *           the input color
+    * @param shift
+    *           the shift
+    * @param target
+    *           the output color
+    * @param hsba
+    *           the color in HSB
+    * @return the shifted color
+    */
+   public static Color shiftHsba (
+         final Color c,
+         final Vec4 shift,
+         final Color target,
+         final Vec4 hsba ) {
+
+      Color.rgbaToHsba(c, hsba);
+      hsba.x += shift.x;
+      hsba.y = Utils.clamp01(hsba.y + shift.y);
+      hsba.z = Utils.clamp01(hsba.z + shift.z);
+      hsba.w = Utils.clamp01(hsba.w + shift.w);
+      return Color.hsbaToRgba(hsba, target);
+   }
+
+   /**
+    * Shifts a color's hue by a factor. The hue wraps around
+    * the range [0.0, 1.0] .
+    *
+    * @param c
+    *           the input color
+    * @param shift
+    *           the hue shift
+    * @param target
+    *           the output color
+    * @param hsba
+    *           the color in HSB
+    * @return the shifted color
+    */
+   public static Color shiftHue (
+         final Color c,
+         final float shift,
+         final Color target,
+         final Vec4 hsba ) {
+
+      /* HSBA to RGBA conversion takes care of modding the hue. */
+      Color.rgbaToHsba(c, hsba);
+      hsba.x += shift;
+      return Color.hsbaToRgba(hsba, target);
+   }
+
+   /**
+    * Shifts a color's saturation by a factor. The saturation
+    * is clamped to the range [0.0, 1.0] .
+    *
+    * @param c
+    *           the input color
+    * @param shift
+    *           the saturation shift
+    * @param target
+    *           the output color
+    * @param hsba
+    *           the color in HSB
+    * @return the shifted color
+    */
+   public static Color shiftSat (
+         final Color c,
+         final float shift,
+         final Color target,
+         final Vec4 hsba ) {
+
+      Color.rgbaToHsba(c, hsba);
+      hsba.y = Utils.clamp01(hsba.y + shift);
+      return Color.hsbaToRgba(hsba, target);
+   }
+
+   /**
     * Subtracts the right operand from the left operand, except
     * for the alpha channel, then clamps the sum to [0.0, 1.0]
     * . The left operand's alpha channel is retained.
@@ -2238,7 +2365,9 @@ public class Color extends Vec4 {
     *           output color
     * @return the difference
     */
-   public static Color sub ( final Color a, final Color b,
+   public static Color sub (
+         final Color a,
+         final Color b,
          final Color target ) {
 
       return target.set(
@@ -2660,8 +2789,7 @@ public class Color extends Vec4 {
     * Returns -1 when this color is less than the comparisand;
     * 1 when it is greater than; 0 when the two are 'equal'.
     * The implementation of this method allows collections of
-    * colors to be sorted. This depends upon the static
-    * comparator of the Color class, which can be changed.
+    * colors to be sorted.
     *
     * @param c
     *           the comparisand

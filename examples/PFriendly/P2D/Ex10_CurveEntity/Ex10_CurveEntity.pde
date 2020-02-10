@@ -9,7 +9,7 @@ MaterialSolid material = new MaterialSolid()
   .setStroke(true)
   .setStroke(#808080)
   .setFill(false)
-  .setStrokeWeight(0.01);
+  .setStrokeWeight(1.0);
 
 Transform2 transform = new Transform2()
   .scaleTo(200.0);

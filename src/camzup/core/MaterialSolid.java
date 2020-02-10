@@ -553,6 +553,29 @@ public class MaterialSolid extends Material {
    }
 
    /**
+    * Swaps this material's stroke and fill. This includes both
+    * the color and whether or not to use fill and stroke.
+    *
+    * @return this material
+    */
+   @Chainable
+   public MaterialSolid swapFillStroke () {
+
+      final boolean t = this.useFill;
+      this.useFill = this.useStroke;
+      this.useStroke = t;
+
+      final float fr = this.fill.x;
+      final float fg = this.fill.y;
+      final float fb = this.fill.z;
+      final float fa = this.fill.w;
+      this.fill.set(this.stroke);
+      this.stroke.set(fr, fg, fb, fa);
+
+      return this;
+   }
+
+   /**
     * Toggles the material's fill.
     *
     * @return this material

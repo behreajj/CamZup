@@ -11,6 +11,7 @@ import camzup.core.Mat3;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
 import camzup.core.MeshEntity2;
+import camzup.core.Transform2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import processing.core.PApplet;
@@ -130,6 +131,139 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       this.pgl.disable(PGL.DEPTH_TEST);
       this.pgl.depthMask(false);
       this.isDepthSortingEnabled = false;
+   }
+
+   /**
+    * Draws a 2D curve entity.
+    *
+    * @param entity
+    *           the curve entity
+    */
+   @Deprecated
+   protected void shapeOld ( final CurveEntity2 entity ) {
+
+      final List < MaterialSolid > materials = entity.materials;
+      final boolean useMaterial = !materials.isEmpty();
+      final Iterator < Curve2 > curveItr = entity.curves.iterator();
+      Iterator < Knot2 > knItr;
+
+      Knot2 currKnot;
+      Knot2 prevKnot;
+      Vec2 coord;
+      Vec2 foreHandle;
+      Vec2 rearHandle;
+
+      this.pushMatrix();
+      this.transform(entity.transform, entity.transformOrder);
+
+      while (curveItr.hasNext()) {
+         final Curve2 curve = curveItr.next();
+
+         if (useMaterial) {
+            this.pushStyle();
+            this.material(materials.get(
+                  curve.materialIndex));
+         }
+
+         knItr = curve.iterator();
+         prevKnot = knItr.next();
+         coord = prevKnot.coord;
+
+         this.beginShape();
+         this.vertexImpl(
+               coord.x, coord.y, 0.0f,
+               this.textureU,
+               this.textureV);
+
+         while (knItr.hasNext()) {
+            currKnot = knItr.next();
+            foreHandle = prevKnot.foreHandle;
+            rearHandle = currKnot.rearHandle;
+            coord = currKnot.coord;
+
+            this.bezierVertexImpl(
+                  foreHandle.x, foreHandle.y, 0.0f,
+                  rearHandle.x, rearHandle.y, 0.0f,
+                  coord.x, coord.y, 0.0f);
+
+            prevKnot = currKnot;
+         }
+
+         if (curve.closedLoop) {
+            currKnot = curve.getFirst();
+            foreHandle = prevKnot.foreHandle;
+            rearHandle = currKnot.rearHandle;
+            coord = currKnot.coord;
+
+            this.bezierVertexImpl(
+                  foreHandle.x, foreHandle.y, 0.0f,
+                  rearHandle.x, rearHandle.y, 0.0f,
+                  coord.x, coord.y, 0.0f);
+            this.endShape(PConstants.CLOSE);
+         } else {
+            this.endShape(PConstants.OPEN);
+         }
+
+         if (useMaterial) {
+            this.popStyle();
+         }
+      }
+
+      this.popMatrix();
+   }
+
+   /**
+    * Draws a 2D mesh entity.
+    *
+    * @param entity
+    *           the mesh entity
+    */
+   @Deprecated
+   protected void shapeOld ( final MeshEntity2 entity ) {
+
+      this.pushMatrix();
+      this.transform(entity.transform, entity.transformOrder);
+
+      final List < Mesh2 > meshes = entity.meshes;
+      final Iterator < Mesh2 > meshItr = meshes.iterator();
+
+      final List < MaterialSolid > materials = entity.materials;
+      final boolean useMaterial = !materials.isEmpty();
+
+      while (meshItr.hasNext()) {
+         final Mesh2 mesh = meshItr.next();
+
+         if (useMaterial) {
+            final int index = mesh.materialIndex;
+            final MaterialSolid material = materials.get(index);
+            this.pushStyle();
+            this.material(material);
+         }
+
+         final int[][][] fs = mesh.faces;
+         final Vec2[] vs = mesh.coords;
+         final int flen0 = fs.length;
+
+         for (int i = 0; i < flen0; ++i) {
+            final int[][] f = fs[i];
+            final int flen1 = f.length;
+            this.beginShape(PConstants.POLYGON);
+            this.normal(0.0f, 0.0f, 1.0f);
+            for (int j = 0; j < flen1; ++j) {
+               final Vec2 v = vs[f[j][0]];
+               this.vertexImpl(
+                     v.x, v.y, 0.0f,
+                     this.textureU, this.textureV);
+            }
+            this.endShape(PConstants.CLOSE);
+         }
+
+         if (useMaterial) {
+            this.popStyle();
+         }
+      }
+
+      this.popMatrix();
    }
 
    /**
@@ -582,7 +716,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
          final int rearColor,
          final int foreColor,
          final int coordColor ) {
-
+      
       final float swRear = strokeWeight * 4.0f;
       final float swFore = swRear * 1.25f;
       final float swCoord = swFore * 1.25f;
@@ -977,19 +1111,23 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
        * implementation.
        */
 
+      final Transform2 tr = entity.transform;
+      final List < Curve2 > curves = entity.curves;
       final List < MaterialSolid > materials = entity.materials;
+
+      final Iterator < Curve2 > curveItr = curves.iterator();
       final boolean useMaterial = !materials.isEmpty();
-      final Iterator < Curve2 > curveItr = entity.curves.iterator();
-      Iterator < Knot2 > knItr;
+      Iterator < Knot2 > knItr = null;
 
-      Knot2 currKnot;
-      Knot2 prevKnot;
-      Vec2 coord;
-      Vec2 foreHandle;
-      Vec2 rearHandle;
+      final Vec2 v0 = new Vec2();
+      final Vec2 v1 = new Vec2();
+      final Vec2 v2 = new Vec2();
 
-      this.pushMatrix();
-      this.transform(entity.transform, entity.transformOrder);
+      Knot2 currKnot = null;
+      Knot2 prevKnot = null;
+      Vec2 coord = null;
+      Vec2 foreHandle = null;
+      Vec2 rearHandle = null;
 
       while (curveItr.hasNext()) {
          final Curve2 curve = curveItr.next();
@@ -1004,9 +1142,11 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
          prevKnot = knItr.next();
          coord = prevKnot.coord;
 
+         Transform2.mulPoint(tr, coord, v2);
+
          this.beginShape();
          this.vertexImpl(
-               coord.x, coord.y, 0.0f,
+               v2.x, v2.y, 0.0f,
                this.textureU,
                this.textureV);
 
@@ -1016,10 +1156,14 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
+            Transform2.mulPoint(tr, foreHandle, v0);
+            Transform2.mulPoint(tr, rearHandle, v1);
+            Transform2.mulPoint(tr, coord, v2);
+
             this.bezierVertexImpl(
-                  foreHandle.x, foreHandle.y, 0.0f,
-                  rearHandle.x, rearHandle.y, 0.0f,
-                  coord.x, coord.y, 0.0f);
+                  v0.x, v0.y, 0.0f,
+                  v1.x, v1.y, 0.0f,
+                  v2.x, v2.y, 0.0f);
 
             prevKnot = currKnot;
          }
@@ -1030,10 +1174,14 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
+            Transform2.mulPoint(tr, foreHandle, v0);
+            Transform2.mulPoint(tr, rearHandle, v1);
+            Transform2.mulPoint(tr, coord, v2);
+
             this.bezierVertexImpl(
-                  foreHandle.x, foreHandle.y, 0.0f,
-                  rearHandle.x, rearHandle.y, 0.0f,
-                  coord.x, coord.y, 0.0f);
+                  v0.x, v0.y, 0.0f,
+                  v1.x, v1.y, 0.0f,
+                  v2.x, v2.y, 0.0f);
             this.endShape(PConstants.CLOSE);
          } else {
             this.endShape(PConstants.OPEN);
@@ -1043,8 +1191,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             this.popStyle();
          }
       }
-
-      this.popMatrix();
    }
 
    /**
@@ -1055,13 +1201,14 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     */
    public void shape ( final MeshEntity2 entity ) {
 
-      this.pushMatrix();
-      this.transform(entity.transform, entity.transformOrder);
-
+      final Transform2 tr = entity.transform;
       final List < Mesh2 > meshes = entity.meshes;
-      final Iterator < Mesh2 > meshItr = meshes.iterator();
       final List < MaterialSolid > materials = entity.materials;
+
+      final Iterator < Mesh2 > meshItr = meshes.iterator();
       final boolean useMaterial = !materials.isEmpty();
+
+      final Vec2 v = new Vec2();
 
       while (meshItr.hasNext()) {
          final Mesh2 mesh = meshItr.next();
@@ -1073,20 +1220,31 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             this.material(material);
          }
 
-         final int[][][] fs = mesh.faces;
          final Vec2[] vs = mesh.coords;
+         final Vec2[] vts = mesh.texCoords;
+         final int[][][] fs = mesh.faces;
          final int flen0 = fs.length;
 
          for (int i = 0; i < flen0; ++i) {
+
             final int[][] f = fs[i];
             final int flen1 = f.length;
+
             this.beginShape(PConstants.POLYGON);
             this.normal(0.0f, 0.0f, 1.0f);
+
             for (int j = 0; j < flen1; ++j) {
-               final Vec2 v = vs[f[j][0]];
+
+               final int[] data = f[j];
+               final int vIndex = data[0];
+               final int vtIndex = data[1];
+
+               Transform2.mulPoint(tr, vs[vIndex], v);
+               final Vec2 vt = vts[vtIndex];
+
                this.vertexImpl(
                      v.x, v.y, 0.0f,
-                     this.textureU, this.textureV);
+                     vt.x, vt.y);
             }
             this.endShape(PConstants.CLOSE);
          }
@@ -1095,8 +1253,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             this.popStyle();
          }
       }
-
-      this.popMatrix();
    }
 
    /**

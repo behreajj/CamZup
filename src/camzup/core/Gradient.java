@@ -140,6 +140,215 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
    }
 
    /**
+    * Shifts the brightness of all colors in a gradient. The
+    * brightness is clamped to the range [0.0, 1.0] . The
+    * source gradient may either be the same as or different
+    * from the target.
+    *
+    * @param source
+    *           the source gradient
+    * @param shift
+    *           the brightness shift
+    * @param target
+    *           the output gradient
+    * @param hsba
+    *           the color in HSB
+    * @return the shifted ramp
+    */
+   public static Gradient shiftBri (
+         final Gradient source,
+         final float shift,
+         final Gradient target,
+         final Vec4 hsba ) {
+
+      if (source == target) {
+         final Iterator < ColorKey > kyItr = source.keys.iterator();
+         while (kyItr.hasNext()) {
+            final Color clr = kyItr.next().clr;
+            Color.shiftBri(clr, shift, clr, hsba);
+         }
+      } else {
+         final TreeSet < ColorKey > trgKeys = target.keys;
+         trgKeys.clear();
+         final Iterator < ColorKey > srcItr = source.keys.iterator();
+         while (srcItr.hasNext()) {
+            final ColorKey trgKey = new ColorKey(srcItr.next());
+            final Color clr = trgKey.clr;
+            Color.shiftBri(clr, shift, clr, hsba);
+            trgKeys.add(trgKey);
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Shifts the hue, saturation and brightness in a gradient.
+    * The alpha remains unaffected.
+    *
+    * @param source
+    *           the input gradient
+    * @param shift
+    *           the shift
+    * @param target
+    *           the output gradient
+    * @param hsba
+    *           the color in HSB
+    * @return the shifted ramp
+    */
+   public static Gradient shiftHsb (
+         final Gradient source,
+         final Vec4 shift,
+         final Gradient target,
+         final Vec4 hsba ) {
+
+      if (source == target) {
+         final Iterator < ColorKey > kyItr = source.keys.iterator();
+         while (kyItr.hasNext()) {
+            final Color clr = kyItr.next().clr;
+            Color.shiftHsb(clr, shift, clr, hsba);
+         }
+      } else {
+         final TreeSet < ColorKey > trgKeys = target.keys;
+         trgKeys.clear();
+         final Iterator < ColorKey > srcItr = source.keys.iterator();
+         while (srcItr.hasNext()) {
+            final ColorKey trgKey = new ColorKey(srcItr.next());
+            final Color clr = trgKey.clr;
+            Color.shiftHsb(clr, shift, clr, hsba);
+            trgKeys.add(trgKey);
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Shifts the hue, saturation and brightness in a gradient.
+    *
+    * @param source
+    *           the input gradient
+    * @param shift
+    *           the shift
+    * @param target
+    *           the output gradient
+    * @param hsba
+    *           the color in HSB
+    * @return the shifted ramp
+    */
+   public static Gradient shiftHsba (
+         final Gradient source,
+         final Vec4 shift,
+         final Gradient target,
+         final Vec4 hsba ) {
+
+      if (source == target) {
+         final Iterator < ColorKey > kyItr = source.keys.iterator();
+         while (kyItr.hasNext()) {
+            final Color clr = kyItr.next().clr;
+            Color.shiftHsba(clr, shift, clr, hsba);
+         }
+      } else {
+         final TreeSet < ColorKey > trgKeys = target.keys;
+         trgKeys.clear();
+         final Iterator < ColorKey > srcItr = source.keys.iterator();
+         while (srcItr.hasNext()) {
+            final ColorKey trgKey = new ColorKey(srcItr.next());
+            final Color clr = trgKey.clr;
+            Color.shiftHsba(clr, shift, clr, hsba);
+            trgKeys.add(trgKey);
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Shifts the hue of all colors in a gradient. The hue wraps
+    * around the range [0.0, 1.0] . The source gradient may
+    * either be the same as or different from the target.
+    *
+    * @param source
+    *           the source gradient
+    * @param shift
+    *           the hue shift
+    * @param target
+    *           the output gradient
+    * @param hsba
+    *           the color in HSB
+    * @return the shifted ramp
+    */
+   public static Gradient shiftHue (
+         final Gradient source,
+         final float shift,
+         final Gradient target,
+         final Vec4 hsba ) {
+
+      if (source == target) {
+         final Iterator < ColorKey > kyItr = source.keys.iterator();
+         while (kyItr.hasNext()) {
+            final Color clr = kyItr.next().clr;
+            Color.shiftHue(clr, shift, clr, hsba);
+         }
+      } else {
+         final TreeSet < ColorKey > trgKeys = target.keys;
+         trgKeys.clear();
+         final Iterator < ColorKey > srcItr = source.keys.iterator();
+         while (srcItr.hasNext()) {
+            final ColorKey trgKey = new ColorKey(srcItr.next());
+            final Color clr = trgKey.clr;
+            Color.shiftHue(clr, shift, clr, hsba);
+            trgKeys.add(trgKey);
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Shifts the saturation of all colors in a gradient. The
+    * saturation is clamped to the range [0.0, 1.0] . The
+    * source gradient may either be the same as or different
+    * from the target.
+    *
+    * @param source
+    *           the source gradient
+    * @param shift
+    *           the saturation shift
+    * @param target
+    *           the output gradient
+    * @param hsba
+    *           the color in HSB
+    * @return the shifted ramp
+    */
+   public static Gradient shiftSat (
+         final Gradient source,
+         final float shift,
+         final Gradient target,
+         final Vec4 hsba ) {
+
+      if (source == target) {
+         final Iterator < ColorKey > kyItr = source.keys.iterator();
+         while (kyItr.hasNext()) {
+            final Color clr = kyItr.next().clr;
+            Color.shiftSat(clr, shift, clr, hsba);
+         }
+      } else {
+         final TreeSet < ColorKey > trgKeys = target.keys;
+         trgKeys.clear();
+         final Iterator < ColorKey > srcItr = source.keys.iterator();
+         while (srcItr.hasNext()) {
+            final ColorKey trgKey = new ColorKey(srcItr.next());
+            final Color clr = trgKey.clr;
+            Color.shiftSat(clr, shift, clr, hsba);
+            trgKeys.add(trgKey);
+         }
+      }
+
+      return target;
+   }
+
+   /**
     * A temporary variable to hold queries in evaluation
     * functions.
     */
@@ -294,7 +503,7 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
     * @return this gradient
     */
    @Chainable
-   protected Gradient shiftGradientKeysLeft ( final int added ) {
+   protected Gradient shiftKeysLeft ( final int added ) {
 
       int i = 0;
       final Iterator < ColorKey > itr = this.keys.iterator();
@@ -317,14 +526,15 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
    @Chainable
    public Gradient append ( final Color color ) {
 
-      this.shiftGradientKeysLeft(1);
+      this.shiftKeysLeft(1);
       this.keys.add(new ColorKey(1.0f, color));
       return this;
    }
 
    /**
     * Appends a color key to this gradient. If a color key
-    * exists at the insertion's step, the old key is removed.
+    * exists at the insertion key's step, the old key is
+    * removed.
     *
     * @param key
     *           the key
@@ -348,13 +558,13 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
     * @param color
     *           the color
     * @return this gradient
-    * @see Gradient#shiftGradientKeysLeft(int)
+    * @see Gradient#shiftKeysLeft(int)
     * @see TreeSet#add(Object)
     */
    @Chainable
    public Gradient append ( final int color ) {
 
-      this.shiftGradientKeysLeft(1);
+      this.shiftKeysLeft(1);
       this.keys.add(new ColorKey(1.0f, color));
       return this;
    }
@@ -370,7 +580,7 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
    @Chainable
    public Gradient append ( final String color ) {
 
-      this.shiftGradientKeysLeft(1);
+      this.shiftKeysLeft(1);
       this.keys.add(new ColorKey(1.0f, color));
       return this;
    }
@@ -382,7 +592,7 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
     * @param colors
     *           the colors
     * @return this gradient
-    * @see Gradient#shiftGradientKeysLeft(int)
+    * @see Gradient#shiftKeysLeft(int)
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
@@ -390,7 +600,7 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
    public Gradient appendAll ( final Color... colors ) {
 
       final int len = colors.length;
-      this.shiftGradientKeysLeft(len);
+      this.shiftKeysLeft(len);
       final int oldLen = this.keys.size();
       final float denom = 1.0f / (oldLen + len - 1.0f);
       for (int i = 0; i < len; ++i) {
@@ -429,7 +639,7 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
     * @param colors
     *           the colors
     * @return this gradient
-    * @see Gradient#shiftGradientKeysLeft(int)
+    * @see Gradient#shiftKeysLeft(int)
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
@@ -437,7 +647,7 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
    public Gradient appendAll ( final int... colors ) {
 
       final int len = colors.length;
-      this.shiftGradientKeysLeft(len);
+      this.shiftKeysLeft(len);
       final int oldLen = this.keys.size();
       final float denom = 1.0f / (oldLen + len - 1.0f);
       for (int i = 0; i < len; ++i) {
@@ -453,7 +663,7 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
     * @param colors
     *           the colors
     * @return this gradient
-    * @see Gradient#shiftGradientKeysLeft(int)
+    * @see Gradient#shiftKeysLeft(int)
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
@@ -461,7 +671,7 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
    public Gradient appendAll ( final String... colors ) {
 
       final int len = colors.length;
-      this.shiftGradientKeysLeft(len);
+      this.shiftKeysLeft(len);
       final int oldLen = this.keys.size();
       final float denom = 1.0f / (oldLen + len - 1.0f);
       for (int i = 0; i < len; ++i) {

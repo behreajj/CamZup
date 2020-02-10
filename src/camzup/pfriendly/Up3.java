@@ -922,13 +922,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    public void shape ( final CurveEntity3 entity ) {
 
       final Transform3 tr = entity.transform;
-
       final List < Curve3 > curves = entity.curves;
-      final Iterator < Curve3 > curveItr = curves.iterator();
-      Iterator < Knot3 > knItr = null;
-
       final List < MaterialSolid > materials = entity.materials;
+      
+      final Iterator < Curve3 > curveItr = curves.iterator();
       final boolean useMaterial = !materials.isEmpty();
+      Iterator < Knot3 > knItr = null;
 
       final Vec3 v0 = new Vec3();
       final Vec3 v1 = new Vec3();
@@ -1014,9 +1013,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
       final Transform3 tr = entity.transform;
       final List < Mesh3 > meshes = entity.meshes;
-      final Iterator < Mesh3 > meshItr = meshes.iterator();
-
       final List < MaterialSolid > materials = entity.materials;
+
+      final Iterator < Mesh3 > meshItr = meshes.iterator();
       final boolean useMaterial = !materials.isEmpty();
 
       final Vec3 v = new Vec3();
@@ -1032,27 +1031,27 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             this.material(material);
          }
 
-         final int[][][] fs = mesh.faces;
          final Vec3[] vs = mesh.coords;
          final Vec3[] vns = mesh.normals;
          final Vec2[] vts = mesh.texCoords;
-
+         final int[][][] fs = mesh.faces;
          final int flen0 = fs.length;
+         
          for (int i = 0; i < flen0; ++i) {
+            
             final int[][] f = fs[i];
             final int flen1 = f.length;
-
             this.beginShape(PConstants.POLYGON);
+
             for (int j = 0; j < flen1; ++j) {
+            
                final int[] data = f[j];
-
                final int vIndex = data[0];
-               Transform3.mulPoint(tr, vs[vIndex], v);
-
                final int vtIndex = data[1];
-               final Vec2 vt = vts[vtIndex];
-
                final int vnIndex = data[2];
+
+               Transform3.mulPoint(tr, vs[vIndex], v);
+               final Vec2 vt = vts[vtIndex];
                Transform3.mulDir(tr, vns[vnIndex], vn);
 
                this.normal(vn.x, vn.y, vn.z);
