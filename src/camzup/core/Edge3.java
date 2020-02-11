@@ -75,6 +75,32 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
+    * Tests this edge for equivalence with another.
+    *
+    * @return the evaluation
+    */
+   protected boolean equals ( final Edge3 edge3 ) {
+
+      if (this.dest == null) {
+         if (edge3.dest != null) {
+            return false;
+         }
+      } else if (!this.dest.equals(edge3.dest)) {
+         return false;
+      }
+
+      if (this.origin == null) {
+         if (edge3.origin != null) {
+            return false;
+         }
+      } else if (!this.origin.equals(edge3.origin)) {
+         return false;
+      }
+
+      return true;
+   }
+
+   /**
     * Compares two edges based on their identity hash codes.
     *
     * @return the evaluation
@@ -107,25 +133,7 @@ public class Edge3 implements Comparable < Edge3 > {
          return false;
       }
 
-      final Edge3 other = (Edge3) obj;
-
-      if (this.dest == null) {
-         if (other.dest != null) {
-            return false;
-         }
-      } else if (!this.dest.equals(other.dest)) {
-         return false;
-      }
-
-      if (this.origin == null) {
-         if (other.origin != null) {
-            return false;
-         }
-      } else if (!this.origin.equals(other.origin)) {
-         return false;
-      }
-
-      return true;
+      return this.equals((Edge3) obj);
    }
 
    /**

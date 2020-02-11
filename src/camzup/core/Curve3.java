@@ -1,7 +1,6 @@
 package camzup.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -80,7 +79,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final int knotCount = Utils.ceilToInt(1 + 4 * arcLen1);
       final float toStep = 1.0f / (knotCount - 1.0f);
 
-      // TODO: Reintroduce scNorm?
       final float hndtn = 0.25f * toStep * arcLen1;
       final float handleMag = Utils.tan(hndtn * IUtils.TAU) * radius
             * IUtils.FOUR_THIRDS;
@@ -90,11 +88,12 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       for (int i = 0; i < knotCount; ++i) {
          final float angle1 = Utils.lerpUnclamped(
                a1, destAngle1, i * toStep);
-         final Knot3 knot = Knot3.fromPolar(
-               angle1 * IUtils.TAU,
-               radius, handleMag,
-               new Knot3());
-         knots.add(knot);
+         knots.add(
+               Knot3.fromPolar(
+                     Utils.scNorm(angle1),
+                     Utils.scNorm(angle1 - 0.25f),
+                     radius, handleMag,
+                     new Knot3()));
       }
 
       target.closedLoop = arcMode != ArcMode.OPEN;
@@ -302,6 +301,68 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          knots.add(new Knot3(point, point, point));
       }
       return Curve3.smoothHandles(target);
+   }
+
+   /**
+    * Mixes between two curves. The curves must both have the
+    * same number of knots and must both be open or closed.
+    *
+    * @param origin
+    *           the origin curve
+    * @param dest
+    *           the destination curve
+    * @param step
+    *           the step
+    * @param target
+    *           the output curve
+    * @param easingFunc
+    *           the knot easing function
+    * @return the result
+    */
+   @Experimental
+   public static Curve3 mix (
+         final Curve3 origin,
+         final Curve3 dest,
+         final float step,
+         final Curve3 target,
+         final Knot3.AbstrEasing easingFunc ) {
+
+      final List < Knot3 > orKn = origin.knots;
+      final List < Knot3 > dsKn = dest.knots;
+
+      if (orKn.size() == dsKn.size() &&
+            origin.closedLoop == dest.closedLoop) {
+
+         target.closedLoop = origin.closedLoop;
+         final List < Knot3 > tgKn = target.knots;
+         tgKn.clear();
+
+         if (step <= 0.0f) {
+            final Iterator < Knot3 > orItr = orKn.iterator();
+            while (orItr.hasNext()) {
+               tgKn.add(new Knot3(orItr.next()));
+            }
+            return target;
+         }
+
+         if (step >= 1.0f) {
+            final Iterator < Knot3 > dsItr = dsKn.iterator();
+            while (dsItr.hasNext()) {
+               tgKn.add(new Knot3(dsItr.next()));
+            }
+            return target;
+         }
+
+         final Iterator < Knot3 > orItr = orKn.iterator();
+         final Iterator < Knot3 > dsItr = dsKn.iterator();
+         while (orItr.hasNext() && dsItr.hasNext()) {
+            tgKn.add(Knot3.mix(
+                  orItr.next(), dsItr.next(),
+                  step, new Knot3(), easingFunc));
+         }
+      }
+
+      return target;
    }
 
    /**
@@ -598,32 +659,33 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    /**
     * Creates a curve from a collection of knots
     *
-    * @param closedLoop
+    * @param cl
     *           whether or not the curve is closed
     * @param knots
     *           the collection of knots
     */
    public Curve3 (
-         final boolean closedLoop,
+         final boolean cl,
          final Collection < Knot3 > knots ) {
 
-      super(closedLoop);
-      this.knots.addAll(knots);
+      super(cl);
+      this.append(knots);
    }
 
    /**
     * Creates a curve from a comma-separated list of knots.
     *
-    * @param closedLoop
+    * @param cl
     *           whether or not the curve is closed
     * @param knots
     *           the list of knots
     */
    public Curve3 (
-         final boolean closedLoop,
+         final boolean cl,
          final Knot3... knots ) {
 
-      this(closedLoop, Arrays.asList(knots));
+      super(cl);
+      this.append(knots);
    }
 
    /**
@@ -655,18 +717,18 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @param name
     *           the name
-    * @param closedLoop
+    * @param cl
     *           whether or not the curve is closed
     * @param knots
     *           the collection of knots
     */
    public Curve3 (
          final String name,
-         final boolean closedLoop,
+         final boolean cl,
          final Collection < Knot3 > knots ) {
 
-      super(name, closedLoop);
-      this.knots.addAll(knots);
+      super(name, cl);
+      this.append(knots);
    }
 
    /**
@@ -674,17 +736,18 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @param name
     *           the name
-    * @param closedLoop
+    * @param cl
     *           whether or not the curve is closed
     * @param knots
     *           the list of knots
     */
    public Curve3 (
          final String name,
-         final boolean closedLoop,
+         final boolean cl,
          final Knot3... knots ) {
 
-      this(name, closedLoop, Arrays.asList(knots));
+      super(name, cl);
+      this.append(knots);
    }
 
    /**
@@ -872,6 +935,28 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
+    * Tests this curve for equality with another.
+    *
+    * @return the evaluation
+    */
+   protected boolean equals ( final Curve3 curve ) {
+
+      if (this.closedLoop != curve.closedLoop) {
+         return false;
+      }
+
+      if (this.knots == null) {
+         if (curve.knots != null) {
+            return false;
+         }
+      } else if (!this.knots.equals(curve.knots)) {
+         return false;
+      }
+
+      return true;
+   }
+
+   /**
     * Append an collection of knots to the curve's list of
     * knots.
     *
@@ -929,7 +1014,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Clones this curve
+    * Clones this curve.
     *
     * @return the cloned curve
     */
@@ -959,21 +1044,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          return false;
       }
 
-      final Curve3 other = (Curve3) obj;
-
-      if (this.closedLoop != other.closedLoop) {
-         return false;
-      }
-
-      if (this.knots == null) {
-         if (other.knots != null) {
-            return false;
-         }
-      } else if (!this.knots.equals(other.knots)) {
-         return false;
-      }
-
-      return true;
+      return this.equals((Curve3) obj);
    }
 
    /**
@@ -1182,6 +1253,37 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
+    * Gets a segment with two knots from this curve.
+    *
+    * @param i
+    *           the index
+    * @param target
+    *           the output curve
+    * @return the segment
+    */
+   public Curve3 getSegment (
+         final int i,
+         final Curve3 target ) {
+
+      if (this.closedLoop) {
+         final int len = this.knots.size();
+         target.closedLoop = false;
+         target.knots.clear();
+         target.knots.add(new Knot3(
+               this.knots.get(Utils.mod(i, len))));
+         target.knots.add(new Knot3(
+               this.knots.get(Utils.mod(i + 1, len))));
+      } else if (i > -1 && i < this.knots.size() - 1) {
+         target.closedLoop = false;
+         target.knots.clear();
+         target.knots.add(new Knot3(this.knots.get(i)));
+         target.knots.add(new Knot3(this.knots.get(i + 1)));
+      }
+
+      return target;
+   }
+
+   /**
     * Calculates this curve's hash code based on its knots and
     * on whether it is a closed loop.
     *
@@ -1242,6 +1344,20 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public int length () {
 
       return this.knots.size();
+
+   }
+
+   /**
+    * Returns and removes a knot at a given index.
+    *
+    * @param i
+    *           the index
+    * @return the knot
+    */
+   public Knot3 removeAt ( final int i ) {
+
+      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
+      return this.knots.remove(j);
    }
 
    /**

@@ -9,6 +9,147 @@ package camzup.core;
 public class Knot3 implements Cloneable, Comparable < Knot3 > {
 
    /**
+    * An abstract class to facilitate the creation of knot
+    * easing functions.
+    */
+   public static abstract class AbstrEasing
+         implements Utils.EasingFuncObject < Knot3 > {
+
+      /**
+       * The default constructor.
+       */
+      public AbstrEasing () {
+
+         super();
+      }
+
+      /**
+       * A clamped interpolation between the origin and
+       * destination. Defers to an unclamped interpolation, which
+       * is to be defined by sub-classes of this class.
+       *
+       * @param origin
+       *           the origin knot
+       * @param dest
+       *           the destination knot
+       * @param step
+       *           a factor in [0.0, 1.0]
+       * @param target
+       *           the output knot
+       * @return the eased knot
+       */
+      @Override
+      public Knot3 apply (
+            final Knot3 origin,
+            final Knot3 dest,
+            final Float step,
+            final Knot3 target ) {
+
+         if (step <= 0.0f) {
+            return target.set(origin);
+         }
+         if (step >= 1.0f) {
+            return target.set(dest);
+         }
+         return this.applyUnclamped(origin, dest, step, target);
+      }
+
+      /**
+       * The interpolation to be defined by subclasses.
+       *
+       * @param origin
+       *           the origin knot
+       * @param dest
+       *           the destination knot
+       * @param step
+       *           a factor in [0.0, 1.0]
+       * @param target
+       *           the output knot
+       * @return the eased knot
+       */
+      public abstract Knot3 applyUnclamped (
+            final Knot3 origin,
+            final Knot3 dest,
+            final float step,
+            final Knot3 target );
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString () {
+
+         return this.getClass().getSimpleName();
+      }
+   }
+
+   /**
+    * A functional class to ease between two knots with linear
+    * interpolation.
+    */
+   public static class Lerp extends AbstrEasing {
+
+      /**
+       * The default constructor.
+       */
+      public Lerp () {
+
+         super();
+      }
+
+      /**
+       * Lerps between two knots by a step using the formula (1 -
+       * t) * a + b . Promotes the step from a float to a double.
+       *
+       * @param origin
+       *           the origin knot
+       * @param dest
+       *           the destination knot
+       * @param step
+       *           the step
+       * @param target
+       *           the output knot
+       * @return the eased knot
+       */
+      @Override
+      public Knot3 applyUnclamped (
+            final Knot3 origin,
+            final Knot3 dest,
+            final float step,
+            final Knot3 target ) {
+
+         final float u = 1.0f - step;
+
+         final Vec3 orCo = origin.coord;
+         final Vec3 orFh = origin.foreHandle;
+         final Vec3 orRh = origin.rearHandle;
+
+         final Vec3 deCo = dest.coord;
+         final Vec3 deFh = dest.foreHandle;
+         final Vec3 deRh = dest.rearHandle;
+
+         target.coord.set(
+               u * orCo.x + step * deCo.x,
+               u * orCo.y + step * deCo.y,
+               u * orCo.z + step * deCo.z);
+
+         target.foreHandle.set(
+               u * orFh.x + step * deFh.x,
+               u * orFh.y + step * deFh.y,
+               u * orFh.z + step * deFh.z);
+
+         target.rearHandle.set(
+               u * orRh.x + step * deRh.x,
+               u * orRh.y + step * deRh.y,
+               u * orRh.z + step * deRh.z);
+
+         return target;
+      }
+   }
+
+   /**
     * Creates a knot from polar coordinates, where the knot's
     * fore handle is tangent to the radius.
     *
@@ -74,6 +215,32 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
             Utils.cos(angle),
             Utils.sin(angle),
             radius, handleMag, target);
+   }
+
+   /**
+    * Mixes two knots together by a step in [0.0, 1.0] with the
+    * help of an easing function.
+    *
+    * @param origin
+    *           the original knot
+    * @param dest
+    *           the destination knot
+    * @param step
+    *           the step
+    * @param target
+    *           the output knot
+    * @param easingFunc
+    *           the easing function
+    * @return the mix
+    */
+   public static Knot3 mix (
+         final Knot3 origin,
+         final Knot3 dest,
+         final float step,
+         final Knot3 target,
+         final AbstrEasing easingFunc ) {
+
+      return easingFunc.apply(origin, dest, step, target);
    }
 
    /**

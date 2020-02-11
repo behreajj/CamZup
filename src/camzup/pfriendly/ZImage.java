@@ -115,7 +115,7 @@ public class ZImage extends PImage {
          final Gradient grd ) {
 
       // TODO: Needs testing.
-      
+
       target.loadPixels();
 
       final int[] px = target.pixels;
@@ -464,7 +464,6 @@ public class ZImage extends PImage {
     */
    protected ZImage () {
 
-      // super(128, 128, PConstants.ARGB, 1);
       super();
    }
 

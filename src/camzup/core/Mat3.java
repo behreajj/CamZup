@@ -325,7 +325,10 @@ public class Mat3 extends Matrix {
          final float radians,
          final Mat3 target ) {
 
-      return Mat3.fromRotZ(Utils.cos(radians), Utils.sin(radians), target);
+      return Mat3.fromRotZ(
+            Utils.cos(radians),
+            Utils.sin(radians),
+            target);
    }
 
    /**

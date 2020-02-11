@@ -16,6 +16,7 @@ import camzup.core.Utils;
 import camzup.core.Vec2;
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PMatrix2D;
 import processing.opengl.PGL;
@@ -716,7 +717,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
          final int rearColor,
          final int foreColor,
          final int coordColor ) {
-      
+
       final float swRear = strokeWeight * 4.0f;
       final float swFore = swRear * 1.25f;
       final float swCoord = swFore * 1.25f;
@@ -1026,6 +1027,29 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             a.x, a.y,
             b.x, b.y,
             r, r, r, r);
+   }
+
+   /**
+    * Rotates the modelview matrix around an arbitrary axis by
+    * an angle in radians. Not supported by this renderer.
+    *
+    * @param angle
+    *           the angle in radians
+    * @param vx
+    *           the axis x coordinate
+    * @param vy
+    *           the axis y coordinate
+    * @param vz
+    *           the axis z coordinate
+    */
+   @Override
+   public void rotate (
+         final float angle,
+         final float vx,
+         final float vy,
+         final float vz ) {
+
+      PGraphics.showVariationWarning("rotate");
    }
 
    /**

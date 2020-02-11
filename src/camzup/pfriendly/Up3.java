@@ -856,6 +856,45 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    }
 
    /**
+    * Rotates the modelview matrix around an arbitrary axis by
+    * an angle in radians.
+    *
+    * @param angle
+    *           the angle in radians
+    * @param xAxis
+    *           the axis x coordinate
+    * @param yAxis
+    *           the axis y coordinate
+    * @param zAxis
+    *           the axis z coordinate
+    */
+   @Override
+   public void rotate (
+         final float angle,
+         final float xAxis,
+         final float yAxis,
+         final float zAxis ) {
+
+      this.rotateImpl(angle, xAxis, yAxis, zAxis);
+   }
+
+   /**
+    * Rotates the sketch by an angle in radians around an
+    * arbitrary axis.
+    *
+    * @param angle
+    *           the angle
+    * @param axis
+    *           the axis
+    */
+   public void rotate (
+         final float angle,
+         final Vec3 axis ) {
+
+      this.rotateImpl(angle, axis.x, axis.y, axis.z);
+   }
+
+   /**
     * Rotates the renderer by a quaternion.
     *
     * @param q
@@ -919,12 +958,18 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       this.cameraZ = v.z;
    }
 
+   /**
+    * Draws a curve entity.
+    *
+    * @param entity
+    *           the curve entity
+    */
    public void shape ( final CurveEntity3 entity ) {
 
       final Transform3 tr = entity.transform;
       final List < Curve3 > curves = entity.curves;
       final List < MaterialSolid > materials = entity.materials;
-      
+
       final Iterator < Curve3 > curveItr = curves.iterator();
       final boolean useMaterial = !materials.isEmpty();
       Iterator < Knot3 > knItr = null;
@@ -1036,15 +1081,15 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
          final Vec2[] vts = mesh.texCoords;
          final int[][][] fs = mesh.faces;
          final int flen0 = fs.length;
-         
+
          for (int i = 0; i < flen0; ++i) {
-            
+
             final int[][] f = fs[i];
             final int flen1 = f.length;
             this.beginShape(PConstants.POLYGON);
 
             for (int j = 0; j < flen1; ++j) {
-            
+
                final int[] data = f[j];
                final int vIndex = data[0];
                final int vtIndex = data[1];

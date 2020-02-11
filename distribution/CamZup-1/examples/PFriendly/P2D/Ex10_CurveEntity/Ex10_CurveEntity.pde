@@ -15,7 +15,7 @@ Transform2 transform = new Transform2()
   .scaleTo(200.0);
 
 Curve2 curve = Curve2.rect(
-  -0.75, 0.5, 0.75, -0.5, -0.25,
+  -0.75, 0.5, 0.75, -0.5, -0.25, 
   new Curve2());
 
 CurveEntity2 entity = new CurveEntity2(
@@ -34,7 +34,7 @@ void setup() {
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
   entity.rotateZ(0.01);
-  
+
   graphics.background();
   graphics.origin();
   graphics.shape(entity);
@@ -43,7 +43,7 @@ void draw() {
 
 void mouseReleased() {
   if (mouseButton == LEFT) {
-    Curve2.random(rng, 6,
+    Curve2.random(rng, 6, 
       -0.75, 0.75, false, curve);
   } else if (mouseButton == RIGHT) {
     String result = graphics.toSvgString(entity);

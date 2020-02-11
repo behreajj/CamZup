@@ -38,7 +38,7 @@ public abstract class Curve extends EntityData implements ICurve {
    /**
     * Whether or not the curve is a closed loop.
     */
-   public boolean closedLoop = false;
+   public boolean closedLoop;
 
    /**
     * The material associated with this curve in a curve
@@ -52,18 +52,19 @@ public abstract class Curve extends EntityData implements ICurve {
    protected Curve () {
 
       super();
+      this.closedLoop = false;
    }
 
    /**
     * Constructs a curve and specifies whether it is a loop.
     *
-    * @param closedLoop
+    * @param cl
     *           the loop
     */
-   protected Curve ( final boolean closedLoop ) {
+   protected Curve ( final boolean cl ) {
 
       super();
-      this.closedLoop = closedLoop;
+      this.closedLoop = cl;
    }
 
    /**
@@ -75,6 +76,7 @@ public abstract class Curve extends EntityData implements ICurve {
    protected Curve ( final String name ) {
 
       super(name);
+      this.closedLoop = false;
    }
 
    /**
@@ -83,15 +85,15 @@ public abstract class Curve extends EntityData implements ICurve {
     *
     * @param name
     *           the name
-    * @param closedLoop
+    * @param cl
     *           the loop
     */
    protected Curve (
          final String name,
-         final boolean closedLoop ) {
+         final boolean cl ) {
 
       super(name);
-      this.closedLoop = closedLoop;
+      this.closedLoop = cl;
    }
 
    /**

@@ -2852,45 +2852,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Rotates the modelview matrix around an arbitrary axis by
-    * an angle in radians.
-    *
-    * @param angle
-    *           the angle in radians
-    * @param xAxis
-    *           the axis x coordinate
-    * @param yAxis
-    *           the axis y coordinate
-    * @param zAxis
-    *           the axis z coordinate
-    */
-   @Override
-   public void rotate (
-         final float angle,
-         final float xAxis,
-         final float yAxis,
-         final float zAxis ) {
-
-      this.rotateImpl(angle, xAxis, yAxis, zAxis);
-   }
-
-   /**
-    * Rotates the sketch by an angle in radians around an
-    * arbitrary axis.
-    *
-    * @param angle
-    *           the angle
-    * @param axis
-    *           the axis
-    */
-   public void rotate (
-         final float angle,
-         final Vec3 axis ) {
-
-      this.rotateImpl(angle, axis.x, axis.y, axis.z);
-   }
-
-   /**
     * Rotates the sketch by an angle in radians around the x
     * axis.
     *

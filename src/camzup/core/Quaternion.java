@@ -85,9 +85,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
        * which is to be defined by sub-classes of this class.
        *
        * @param origin
-       *           the origin vector
+       *           the origin quaternion
        * @param dest
-       *           the destination vector
+       *           the destination quaternion
        * @param step
        *           a factor in [0.0, 1.0]
        * @param target
