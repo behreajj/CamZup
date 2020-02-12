@@ -2,6 +2,7 @@ package camzup.pfriendly;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
@@ -12,6 +13,7 @@ import java.util.List;
 import camzup.core.Color;
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
+import camzup.core.Experimental;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
 import camzup.core.Mat3;
@@ -206,6 +208,21 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.setPrimary(isPrimary);
       this.setPath(path);
       this.setSize(width, height);
+   }
+
+   @Experimental
+   void imageImpl ( final PImage img, final float x, final float y ) {
+
+      /*
+       * The problem is that the super function accounts for
+       * tinting an image or pixelwidth and pixel height (and
+       * relies on an inner class that acts as a cache)... Also,
+       * if PImage is not a PImageAWT, getNative will return null.
+       */
+      final Image imgNative = (Image) img.getNative();
+      if (imgNative != null) {
+         this.g2.drawImage(imgNative, (int) x, (int) y, null);
+      }
    }
 
    /**
@@ -1364,8 +1381,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float x,
          final float y ) {
 
-      this.camera(
-            x, y,
+      this.camera(x, y,
             YupJ2.DEFAULT_ROT,
             YupJ2.DEFAULT_ZOOM_X,
             YupJ2.DEFAULT_ZOOM_Y);
@@ -1386,9 +1402,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float y,
          final float radians ) {
 
-      this.camera(
-            x, y,
-            radians,
+      this.camera(x, y, radians,
             YupJ2.DEFAULT_ZOOM_X,
             YupJ2.DEFAULT_ZOOM_Y);
    }
@@ -1409,22 +1423,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * @see Utils#modRadians(float)
     */
    public void camera (
-         final float x, final float y,
+         final float x,
+         final float y,
          final float radians,
-         final float zx, final float zy ) {
+         final float zx,
+         final float zy ) {
 
       this.cameraX = x;
       this.cameraY = y;
       this.cameraRot = radians;
       this.cameraZoomX = zx < Utils.EPSILON ? 1.0f : zx;
       this.cameraZoomY = zy < Utils.EPSILON ? 1.0f : zy;
-
-      /*
-       * this.setMatrix( 1.0f, 0.0f, this.width * 0.5f, 0.0f,
-       * 1.0f, this.height * 0.5f); this.scale(this.cameraZoomX,
-       * -this.cameraZoomY); this.rotate(-radians);
-       * this.translate(-this.cameraX, -this.cameraY);
-       */
 
       final double c = Math.cos(-radians);
       final double s = Math.sin(-radians);
@@ -1611,6 +1620,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float y,
          final float w,
          final float h ) {
+
+      /*
+       * Does not defer to ellipseImpl . Instead, approximates a
+       * circle with four Bezier curves.
+       */
 
       float extapw = 0.0f;
       float extaph = 0.0f;
@@ -2019,6 +2033,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          for (int j = 0; j < last; ++j) {
             final float x = xs[j];
 
+            /*
+             * Draw a point. Epsilon is added to y instead of x to
+             * minimize a calculation. Color is set directly with an
+             * object instead of through colorCalc.
+             */
             this.gp.reset();
             this.gp.moveTo(x, yeps);
             this.gp.lineTo(x, y);
@@ -2730,12 +2749,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             PConstants.ROUND,
             strokeWeight);
 
+      /* Draw x (right) axis. */
       this.gp.reset();
       this.gp.moveTo(0.0d, 0.0d);
       this.gp.lineTo(vl, 0.0d);
       this.g2.setColor(new java.awt.Color(xColor, true));
       this.g2.draw(this.gp);
 
+      /* Draw y (forward) axis. */
       this.gp.reset();
       this.gp.moveTo(0.0d, 0.0d);
       this.gp.lineTo(0.0d, vl);
@@ -2768,6 +2789,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
        */
       if (this.stroke) {
 
+         /*
+          * Processing's SQUARE equals AWT BUTT; PROJECT equals AWT
+          * SQUARE.
+          */
          final boolean needSwap = this.capNative == BasicStroke.CAP_BUTT;
          if (needSwap) {
 
@@ -2798,6 +2823,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             this.gp.lineTo(x + PConstants.EPSILON, y);
             this.g2.setColor(this.strokeColorObject);
             this.g2.draw(this.gp);
+
          }
       }
    }
@@ -2992,6 +3018,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
       this.pushStyle();
 
+      /* Draw point for ray origin. */
       this.strokeWeight(oWeight);
       this.gp.reset();
       this.gp.moveTo(xOrigin, yOrigin);
@@ -3005,12 +3032,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float dx = xOrigin + xDir * mInv;
          final float dy = yOrigin + yDir * mInv;
 
+         /* Draw ray line. */
          this.strokeWeight(lnwgt);
          this.gp.reset();
          this.gp.moveTo(xOrigin, yOrigin);
          this.gp.lineTo(dx, dy);
          this.g2.draw(this.gp);
 
+         /* Draw point for ray direction. */
          this.strokeWeight(dWeight);
          this.gp.reset();
          this.gp.moveTo(dx, dy);
@@ -3041,7 +3070,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
       /*
        * It is simpler to draw straight lines than to defer to the
-       * rounded-corner rectImpl below.
+       * rounded-corner rectImpl.
        */
 
       float x0 = 0.0f;
@@ -3180,9 +3209,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    @Override
    public void rect ( final Vec2 a, final Vec2 b ) {
 
-      this.rectImpl(
-            a.x, a.y,
-            b.x, b.y);
+      this.rectImpl(a.x, a.y, b.x, b.y);
    }
 
    /**
@@ -3501,11 +3528,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    public void shape ( final CurveEntity2 entity ) {
 
       /*
-       * TODO: Damned if you do and damned if you don't, seems
-       * like. For performance, better to not use interfaces but
-       * rather classes, i.e. ArrayList or LinkedList instead of
-       * List. However, a generic list is easier on
-       * implementation.
+       * TODO: For performance, better to use classes instead of
+       * interfaces, i.e. ArrayList or LinkedList instead of List.
+       * However, a generic list is easier on implementation.
        */
 
       final Transform2 tr = entity.transform;

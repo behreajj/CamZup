@@ -60,7 +60,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * easing functions.
     */
    public static abstract class AbstrEasing
-         implements Utils.EasingFuncObject < Vec2 > {
+         implements Utils.EasingFuncObj < Vec2 > {
 
       /**
        * The default constructor.

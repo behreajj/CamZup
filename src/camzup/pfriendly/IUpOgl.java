@@ -134,13 +134,6 @@ public interface IUpOgl extends IUp {
    float DEFAULT_SPEC_R = 0.375f;
 
    /**
-    * Gets the renderer's texture sampling.
-    *
-    * @return the texture sampling
-    */
-   Sampling getTextureSampling ();
-
-   /**
     * Returns whether or not the renderer is 2D.
     *
     * @return the evaluation
@@ -161,10 +154,17 @@ public interface IUpOgl extends IUp {
    void origin ();
 
    /**
+    * Gets the renderer's texture sampling.
+    *
+    * @return the texture sampling
+    */
+   Sampling textureSampling ();
+
+   /**
     * Sets the renderer's texture sampling.
     *
     * @param sampleType
     *           the sampling type
     */
-   void setTextureSampling ( Sampling sampleType );
+   void textureSampling ( Sampling sampleType );
 }

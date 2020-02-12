@@ -13,7 +13,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * easing functions.
     */
    public static abstract class AbstrEasing
-         implements Utils.EasingFuncObject < Knot2 > {
+         implements Utils.EasingFuncObj < Knot2 > {
 
       /**
        * The default constructor.

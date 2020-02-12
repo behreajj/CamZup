@@ -18,7 +18,7 @@ public class Vert2 implements Comparable < Vert2 > {
     */
    @Experimental
    static abstract class AbstrEasing
-         implements Utils.EasingFuncObject < Vert2 > {
+         implements Utils.EasingFuncObj < Vert2 > {
 
       /**
        * The default constructor.

@@ -40,7 +40,7 @@ public abstract class Utils implements IUtils {
     *           the parameter type
     */
    @FunctionalInterface
-   public interface EasingFuncObject < T >
+   public interface EasingFuncObj < T >
          extends QuadFunction < T, T, Float, T, T > {
 
       /**

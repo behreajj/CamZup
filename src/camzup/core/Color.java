@@ -14,7 +14,7 @@ public class Color extends Vec4 {
     * easing functions.
     */
    public static abstract class AbstrEasing
-         implements Utils.EasingFuncObject < Color > {
+         implements Utils.EasingFuncObj < Color > {
 
       /**
        * The default constructor.
@@ -2171,9 +2171,9 @@ public class Color extends Vec4 {
     *           the output vector
     * @return the XYZ color
     */
-   public static Vec4 rgbaToXyza ( final Color c, final Vec4 target ) {
+   public static Vec4 rgbaToXyzw ( final Color c, final Vec4 target ) {
 
-      return Color.rgbaToXyza(c.x, c.y, c.z, c.w, target);
+      return Color.rgbaToXyzw(c.x, c.y, c.z, c.w, target);
    }
 
    /**
@@ -2194,7 +2194,7 @@ public class Color extends Vec4 {
     *           the output vector
     * @return the XYZ values.
     */
-   public static Vec4 rgbaToXyza (
+   public static Vec4 rgbaToXyzw (
          final float r,
          final float g,
          final float b,

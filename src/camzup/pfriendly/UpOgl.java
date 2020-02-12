@@ -1925,15 +1925,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Gets the renderer's texture sampling as an enum constant.
-    */
-   @Override
-   public Sampling getTextureSampling () {
-
-      return Sampling.fromValue(this.textureSampling);
-   }
-
-   /**
     * Gets the renderer's width.
     *
     * @return the width
@@ -3119,19 +3110,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Sets the renderer's texture sampling from an enum
-    * constant.
-    *
-    * @param sampleType
-    *           the sample type
-    */
-   @Override
-   public void setTextureSampling ( final Sampling sampleType ) {
-
-      this.textureSampling = sampleType.getVal();
-   }
-
-   /**
     * Displays a PShape. Use of this function is discouraged by
     * this renderer. See mesh and curve entities instead.
     *
@@ -3574,12 +3552,22 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Gets the renderer's texture sampling as an enum constant.
+    */
+   @Override
+   public Sampling textureSampling () {
+
+      return Sampling.fromValue(this.textureSampling);
+   }
+
+   /**
     * Sets the renderer's texture sampling from an enum
     * constant.
     *
     * @param sampleType
     *           the sample type
     */
+   @Override
    public void textureSampling ( final Sampling sampleType ) {
 
       this.textureSampling = sampleType.getVal();

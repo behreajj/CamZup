@@ -68,7 +68,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * quaternion easing functions.
     */
    public static abstract class AbstrEasing
-         implements Utils.EasingFuncObject < Quaternion > {
+         implements Utils.EasingFuncObj < Quaternion > {
 
       /**
        * The default constructor.

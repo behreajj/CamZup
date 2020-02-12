@@ -1,6 +1,7 @@
 package camzup.core;
 
 import camzup.core.Utils.EasingFuncArr;
+import camzup.core.Utils.EasingFuncObj;
 
 /**
  * Facilitates 3D affine transformations for entities.
@@ -8,25 +9,26 @@ import camzup.core.Utils.EasingFuncArr;
 public class Transform3 extends Transform {
 
    /**
-    * An easing function to facilitate animating multiple
-    * transforms.
+    * An easing function to facilitate animation between
+    * multiple transforms.
     */
-   public static class Easing implements EasingFuncArr < Transform3 > {
+   public static class Easing implements EasingFuncArr < Transform3 >,
+         EasingFuncObj < Transform3 > {
 
       /**
        * The location easing function.
        */
-      public Vec3.AbstrEasing loc;
+      public final Vec3.AbstrEasing loc;
 
       /**
        * The rotation easing function.
        */
-      public Quaternion.AbstrEasing rot;
+      public final Quaternion.AbstrEasing rot;
 
       /**
        * The scale easing function.
        */
-      public Vec3.AbstrEasing scale;
+      public final Vec3.AbstrEasing scale;
 
       /**
        * The default constructor.
@@ -72,6 +74,7 @@ public class Transform3 extends Transform {
        *           the output transform
        * @return the eased transform
        */
+      @Override
       public Transform3 apply (
             final Transform3 origin,
             final Transform3 dest,
