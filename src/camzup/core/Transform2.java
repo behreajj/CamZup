@@ -724,12 +724,15 @@ public class Transform2 extends Transform {
       if (this == obj) {
          return true;
       }
+
       if (obj == null) {
          return false;
       }
+
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+
       return this.equals((Transform2) obj);
    }
 

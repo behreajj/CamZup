@@ -367,7 +367,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     * @param y
     *           the location y component
     */
-   public void camera ( final float x, final float y ) {
+   public void camera (
+         final float x,
+         final float y ) {
 
       this.camera(x, y, Yup2.DEFAULT_ROT,
             Yup2.DEFAULT_ZOOM_X,
@@ -513,15 +515,17 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    /**
     * Draws a circle at a location
     *
-    * @param a
+    * @param coord
     *           the coordinate
-    * @param b
+    * @param size
     *           the size
     */
    @Override
-   public void circle ( final Vec2 a, final float b ) {
+   public void circle (
+         final Vec2 coord,
+         final float size ) {
 
-      this.circle(a.x, a.y, b);
+      this.circle(coord.x, coord.y, size);
    }
 
    /**
@@ -838,17 +842,19 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    /**
     * Draws a line between two coordinates.
     *
-    * @param a
+    * @param origin
     *           the origin coordinate
-    * @param b
+    * @param dest
     *           the destination coordinate
     */
    @Override
-   public void line ( final Vec2 a, final Vec2 b ) {
+   public void line (
+         final Vec2 origin,
+         final Vec2 dest ) {
 
       this.lineImpl(
-            a.x, a.y, 0.0f,
-            b.x, b.y, 0.0f);
+            origin.x, origin.y, 0.0f,
+            dest.x, dest.y, 0.0f);
    }
 
    /**
@@ -937,13 +943,13 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    /**
     * Draws a point at a given coordinate
     *
-    * @param v
+    * @param coord
     *           the coordinate
     */
    @Override
-   public void point ( final Vec2 v ) {
+   public void point ( final Vec2 coord ) {
 
-      this.point(v.x, v.y, 0.0f);
+      this.point(coord.x, coord.y, 0.0f);
    }
 
    /**
@@ -1128,11 +1134,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    public void shape ( final CurveEntity2 entity ) {
 
       /*
-       * TODO: Damned if you do and damned if you don't, seems
-       * like. For performance, better to not use interfaces but
-       * rather classes, i.e. ArrayList or LinkedList instead of
-       * List. However, a generic list is easier on
-       * implementation.
+       * TODO: For performance, seems better to use classes not
+       * interfaces, i.e. ArrayList or LinkedList instead of List.
+       * However, a generic list is easier on implementation.
        */
 
       final Transform2 tr = entity.transform;
@@ -1217,6 +1221,32 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       }
    }
 
+   public void shape (
+         final MeshEntity2 entity,
+         final MaterialPImage[] materials ) {
+
+      final Transform2 tr = entity.transform;
+      final List < Mesh2 > meshes = entity.meshes;
+      final boolean useMaterial = materials != null && materials.length > 0;
+
+      final Iterator < Mesh2 > meshItr = meshes.iterator();
+      final Vec2 v = new Vec2();
+      final Vec2 vt = new Vec2();
+      
+      while(meshItr.hasNext()) {
+         final Mesh2 mesh = meshItr.next();
+         if (useMaterial) {
+            final int index = mesh.materialIndex;
+            MaterialPImage mat = materials[index];
+            this.pushStyle();
+            this.drawMesh2(mesh, tr, mat, v, vt);
+            this.popStyle();
+         } else {
+            this.drawMesh2(mesh, tr, null, v, null);
+         }
+      }
+   }
+
    /**
     * Draws a 2D mesh entity.
     *
@@ -1225,6 +1255,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     */
    public void shape ( final MeshEntity2 entity ) {
 
+      // TODO: Refactor...
+      
       final Transform2 tr = entity.transform;
       final List < Mesh2 > meshes = entity.meshes;
       final List < MaterialSolid > materials = entity.materials;
@@ -1244,34 +1276,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
             this.material(material);
          }
 
-         final Vec2[] vs = mesh.coords;
-         final Vec2[] vts = mesh.texCoords;
-         final int[][][] fs = mesh.faces;
-         final int flen0 = fs.length;
-
-         for (int i = 0; i < flen0; ++i) {
-
-            final int[][] f = fs[i];
-            final int flen1 = f.length;
-
-            this.beginShape(PConstants.POLYGON);
-            this.normal(0.0f, 0.0f, 1.0f);
-
-            for (int j = 0; j < flen1; ++j) {
-
-               final int[] data = f[j];
-               final int vIndex = data[0];
-               final int vtIndex = data[1];
-
-               Transform2.mulPoint(tr, vs[vIndex], v);
-               final Vec2 vt = vts[vtIndex];
-
-               this.vertexImpl(
-                     v.x, v.y, 0.0f,
-                     vt.x, vt.y);
-            }
-            this.endShape(PConstants.CLOSE);
-         }
+         this.drawMesh2(mesh, tr, null, v, null);
 
          if (useMaterial) {
             this.popStyle();
@@ -1282,31 +1287,36 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    /**
     * Draws a square at a location.
     *
-    * @param a
+    * @param loc
     *           the location
-    * @param b
+    * @param size
     *           the size
     */
    @Override
-   public void square ( final Vec2 a, final float b ) {
+   public void square (
+         final Vec2 loc,
+         final float size ) {
 
-      this.rectImpl(a.x, a.y, b, b);
+      this.rectImpl(loc.x, loc.y, size, size);
    }
 
    /**
     * Draws a rounded square.
     *
-    * @param a
+    * @param loc
     *           the location
-    * @param b
+    * @param size
     *           the size
     * @param r
     *           the corner rounding
     */
    @Override
-   public void square ( final Vec2 a, final float b, final float r ) {
+   public void square (
+         final Vec2 loc,
+         final float size,
+         final float r ) {
 
-      this.rectImpl(a.x, a.y, b, b, r, r, r, r);
+      this.rectImpl(loc.x, loc.y, size, size, r, r, r, r);
    }
 
    /**

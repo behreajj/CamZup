@@ -31,6 +31,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
     */
    public MeshEntity2 () {
 
+      // TODO: Get rid of internal materials...
       super();
    }
 

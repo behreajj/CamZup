@@ -268,27 +268,6 @@ public class Mat3 extends Matrix {
    }
 
    /**
-    * Creates a rotation matrix from an angle in radians around
-    * the z axis.
-    *
-    * @param radians
-    *           the angle
-    * @param target
-    *           the output matrix
-    * @return the matrix
-    */
-   @Experimental
-   public static Mat3 fromRotZ (
-         final double radians,
-         final Mat3 target ) {
-
-      return Mat3.fromRotZ(
-            (float) Math.cos(radians),
-            (float) Math.sin(radians),
-            target);
-   }
-
-   /**
     * Creates a rotation matrix from a cosine and sine around
     * the z axis.
     *
@@ -345,6 +324,10 @@ public class Mat3 extends Matrix {
          final float scalar,
          final Mat3 target ) {
 
+      if (scalar == 0.0f) {
+         return target.reset();
+      }
+
       return target.set(
             scalar, 0.0f, 0.0f,
             0.0f, scalar, 0.0f,
@@ -365,10 +348,13 @@ public class Mat3 extends Matrix {
          final Vec2 scalar,
          final Mat3 target ) {
 
-      return target.set(
-            scalar.x, 0.0f, 0.0f,
-            0.0f, scalar.y, 0.0f,
-            0.0f, 0.0f, 1.0f);
+      if (Vec2.all(scalar)) {
+         return target.set(
+               scalar.x, 0.0f, 0.0f,
+               0.0f, scalar.y, 0.0f,
+               0.0f, 0.0f, 1.0f);
+      }
+      return target.reset();
    }
 
    /**
@@ -1111,6 +1097,7 @@ public class Mat3 extends Matrix {
    public int hashCode () {
 
       int hash = IUtils.HASH_BASE;
+
       hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m00);
       hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m01);
       hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m02);

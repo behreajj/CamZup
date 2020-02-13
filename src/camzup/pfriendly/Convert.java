@@ -2,12 +2,12 @@ package camzup.pfriendly;
 
 import java.awt.geom.AffineTransform;
 
-import camzup.core.ITransform;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
 import camzup.core.Quaternion;
 import camzup.core.Transform2;
 import camzup.core.Transform3;
+import camzup.core.TransformOrder;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
 import camzup.core.Vec4;
@@ -200,7 +200,7 @@ public abstract class Convert {
     */
    public static PMatrix2D toPMatrix2D (
          final Transform2 tr2,
-         final ITransform.Order order ) {
+         final TransformOrder order ) {
 
       return Convert.toPMatrix2D(tr2, order, (PMatrix2D) null);
    }
@@ -218,7 +218,7 @@ public abstract class Convert {
     */
    public static PMatrix2D toPMatrix2D (
          final Transform2 tr2,
-         final ITransform.Order order,
+         final TransformOrder order,
          PMatrix2D target ) {
 
       if (target == null) {
@@ -352,7 +352,7 @@ public abstract class Convert {
     */
    public static PMatrix3D toPMatrix3D (
          final Transform3 tr3,
-         final ITransform.Order order ) {
+         final TransformOrder order ) {
 
       return Convert.toPMatrix3D(tr3, order, (PMatrix3D) null);
    }
@@ -370,7 +370,7 @@ public abstract class Convert {
     */
    public static PMatrix3D toPMatrix3D (
          final Transform3 tr3,
-         final ITransform.Order order,
+         final TransformOrder order,
 
          PMatrix3D target ) {
 

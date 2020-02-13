@@ -16,7 +16,7 @@ import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
-import camzup.core.Transform;
+import camzup.core.TransformOrder;
 import camzup.core.Vec2;
 import processing.core.PApplet;
 import processing.core.PFont;
@@ -166,7 +166,7 @@ public interface IUp {
     * Default transform order when converting a transform to a
     * matrix. TRS is short for Translation-Rotation-Scale.
     */
-   Transform.Order DEFAULT_ORDER = Transform.Order.TRS;
+   TransformOrder DEFAULT_ORDER = TransformOrder.TRS;
 
    /**
     * Default stroke color.

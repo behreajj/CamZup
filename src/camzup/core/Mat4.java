@@ -650,6 +650,10 @@ public class Mat4 extends Matrix {
          final float scalar,
          final Mat4 target ) {
 
+      if (scalar == 0.0f) {
+         return target.reset();
+      }
+
       return target.set(
             scalar, 0.0f, 0.0f, 0.0f,
             0.0f, scalar, 0.0f, 0.0f,
@@ -672,11 +676,14 @@ public class Mat4 extends Matrix {
          final Vec2 scalar,
          final Mat4 target ) {
 
-      return target.set(
-            scalar.x, 0.0f, 0.0f, 0.0f,
-            0.0f, scalar.y, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f);
+      if (Vec2.all(scalar)) {
+         return target.set(
+               scalar.x, 0.0f, 0.0f, 0.0f,
+               0.0f, scalar.y, 0.0f, 0.0f,
+               0.0f, 0.0f, 1.0f, 0.0f,
+               0.0f, 0.0f, 0.0f, 1.0f);
+      }
+      return target.reset();
    }
 
    /**
@@ -693,11 +700,14 @@ public class Mat4 extends Matrix {
          final Vec3 scalar,
          final Mat4 target ) {
 
-      return target.set(
-            scalar.x, 0.0f, 0.0f, 0.0f,
-            0.0f, scalar.y, 0.0f, 0.0f,
-            0.0f, 0.0f, scalar.z, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f);
+      if (Vec3.all(scalar)) {
+         return target.set(
+               scalar.x, 0.0f, 0.0f, 0.0f,
+               0.0f, scalar.y, 0.0f, 0.0f,
+               0.0f, 0.0f, scalar.z, 0.0f,
+               0.0f, 0.0f, 0.0f, 1.0f);
+      }
+      return target.reset();
    }
 
    /**
@@ -1935,6 +1945,7 @@ public class Mat4 extends Matrix {
    public int hashCode () {
 
       int hash = IUtils.HASH_BASE;
+
       hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m00);
       hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m01);
       hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m02);

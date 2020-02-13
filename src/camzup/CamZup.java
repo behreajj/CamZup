@@ -3,6 +3,7 @@ package camzup;
 import java.util.HashSet;
 
 import camzup.core.IUtils;
+import camzup.core.MaterialUv;
 import camzup.core.Mesh3;
 import camzup.core.Utils;
 import camzup.core.Vec2;

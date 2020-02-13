@@ -167,7 +167,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          return this.getClass().getSimpleName();
       }
    }
-   
+
    /**
     * A utility function for setting the handles of knots on
     * straight curve segments. Finds unclamped linear

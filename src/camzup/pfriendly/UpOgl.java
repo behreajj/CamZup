@@ -4,13 +4,17 @@ import java.util.Iterator;
 
 import camzup.core.Color;
 import camzup.core.Curve2;
+import camzup.core.Experimental;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
 import camzup.core.MaterialSolid;
-import camzup.core.Transform;
+import camzup.core.Mesh2;
+import camzup.core.Mesh3;
 import camzup.core.Transform2;
+import camzup.core.Transform3;
+import camzup.core.TransformOrder;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -141,7 +145,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    protected void arcImpl (
          final Curve2 curve,
          final Transform2 transform,
-         final Transform.Order trOrder ) {
+         final TransformOrder trOrder ) {
 
       Knot2 currKnot = null;
       Knot2 prevKnot = null;
@@ -348,6 +352,149 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.reapplySettings = false;
 
       this.hint(PConstants.DISABLE_OPENGL_ERRORS);
+   }
+
+   /**
+    * A helper function to draw meshes in a mesh entity.
+    *
+    * @param mesh
+    *           2D mesh
+    * @param tr
+    *           2D Transform
+    * @param v
+    *           temporary coordinate vector
+    * @param texture
+    *           texture
+    * @param uvtr
+    *           texture coordinate transform
+    * @param vt
+    *           temporary texture coordinate
+    */
+   @Experimental
+   protected void drawMesh2 (
+         final Mesh2 mesh,
+         final Transform2 tr,
+         final MaterialPImage mat,
+         final Vec2 v,
+         final Vec2 vt ) {
+
+      final Vec2[] vs = mesh.coords;
+      final Vec2[] vts = mesh.texCoords;
+      final int[][][] fs = mesh.faces;
+      final int flen0 = fs.length;
+      
+      boolean useTexture = false;
+      PImage texture = null;
+      Transform2 uvtr = null;
+      if(mat != null) {
+         texture = mat.texture;
+         uvtr = mat.transform;
+         useTexture = true;
+         this.tint(mat.tint);
+      }
+      
+      for (int i = 0; i < flen0; ++i) {
+
+         final int[][] f = fs[i];
+         final int flen1 = f.length;
+
+         this.beginShape(PConstants.POLYGON);
+         this.normal(0.0f, 0.0f, 1.0f);
+         if (useTexture) {
+            this.texture(texture);
+         }
+
+         for (int j = 0; j < flen1; ++j) {
+
+            final int[] data = f[j];
+            final int vIndex = data[0];
+            Transform2.mulPoint(tr, vs[vIndex], v);
+
+            if (useTexture) {
+               final int vtIndex = data[1];
+               Transform2.mulTexCoord(uvtr, vts[vtIndex], vt);
+               this.vertexImpl(
+                     v.x, v.y, 0.0f,
+                     vt.x, vt.y);
+            } else {
+               this.vertexImpl(
+                     v.x, v.y, 0.0f,
+                     this.textureU, this.textureV);
+            }
+         }
+         this.endShape(PConstants.CLOSE);
+      }
+   }
+
+   /**
+    * A helper function to draw meshes in a mesh entity.
+    *
+    * @param mesh
+    *           3D mesh
+    * @param tr
+    *           3D transform
+    * @param v
+    *           temporary coordinate vector
+    * @param vn
+    *           temporary normal vector
+    * @param texture
+    *           texture
+    * @param uvtr
+    *           texture coordinate transform
+    * @param vt
+    *           temporary texture coordinate
+    */
+   @Experimental
+   protected void drawMesh3 (
+         final Mesh3 mesh,
+         final Transform3 tr,
+         final Vec3 v,
+         final Vec3 vn,
+         final PImage texture,
+         final Transform2 uvtr,
+         final Vec2 vt ) {
+
+      final Vec3[] vs = mesh.coords;
+      final Vec3[] vns = mesh.normals;
+      final Vec2[] vts = mesh.texCoords;
+      final int[][][] fs = mesh.faces;
+      final int flen0 = fs.length;
+      final boolean useTexture = texture != null;
+
+      for (int i = 0; i < flen0; ++i) {
+
+         final int[][] f = fs[i];
+         final int flen1 = f.length;
+         this.beginShape(PConstants.POLYGON);
+         if (useTexture) {
+            this.texture(texture);
+         }
+
+         for (int j = 0; j < flen1; ++j) {
+
+            final int[] data = f[j];
+            final int vIndex = data[0];
+            final int vnIndex = data[2];
+
+            Transform3.mulPoint(tr, vs[vIndex], v);
+            Transform3.mulDir(tr, vns[vnIndex], vn);
+
+            this.normal(vn.x, vn.y, vn.z);
+
+            if (useTexture) {
+               final int vtIndex = data[1];
+               Transform2.mulTexCoord(uvtr, vts[vtIndex], vt);
+               this.vertexImpl(
+                     v.x, v.y, v.z,
+                     vt.x, vt.y);
+            } else {
+               this.vertexImpl(
+                     v.x, v.y, v.z,
+                     this.textureU, this.textureV);
+            }
+         }
+         this.endShape(PConstants.CLOSE);
+      }
    }
 
    /**
@@ -2255,6 +2402,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.vertexImpl(x1 + hu, y1 - hv, 0.0f, u2, v2);
             this.vertexImpl(x1 - hu, y1 - hv, 0.0f, u1, v2);
       }
+
       this.endShape(PConstants.CLOSE);
       this.popStyle();
    }
@@ -2344,6 +2492,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *           the material
     */
    public void material ( final MaterialSolid material ) {
+
+      // TODO: Refactor..
 
       if (material.useStroke) {
          this.strokeWeight(material.strokeWeight);
@@ -3618,7 +3768,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void transform (
          final Transform2 tr2,
-         final Transform.Order order ) {
+         final TransformOrder order ) {
 
       final Vec2 dim = tr2.getScale(this.tr2Scale);
       final Vec2 loc = tr2.getLocation(this.tr2Loc);

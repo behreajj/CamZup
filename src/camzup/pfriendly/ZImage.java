@@ -124,9 +124,10 @@ public class ZImage extends PImage {
 
       for (int i = 0, y = 0; y < h; ++y) {
          for (int x = 0; x < w; ++x, ++i) {
-            px[i] = Color.toHexInt(
-                  grd.eval(Color.luminance(px[i]),
-                        ZImage.clr));
+            grd.eval(
+                  Color.luminance(px[i]),
+                  ZImage.clr);
+            px[i] = Color.toHexInt(ZImage.clr);
          }
       }
 
@@ -334,6 +335,29 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Returns a string representation of an image, including
+    * its format, width, height and pixel density.
+    *
+    * @param pi
+    *           the PImage
+    * @return the string
+    */
+   public static String toString ( final PImage pi ) {
+
+      return new StringBuilder(64)
+            .append("{ format: ")
+            .append(pi.format)
+            .append(", width: ")
+            .append(pi.width)
+            .append(", height: ")
+            .append(pi.height)
+            .append(", pixelDensity: ")
+            .append(pi.pixelDensity)
+            .append(' ').append('}')
+            .toString();
+   }
+
+   /**
     * Blits a source image's pixels onto a target image's
     * pixels, using integer floor modulo to wrap the source
     * image. The source image can be offset horizontally and/or
@@ -358,9 +382,14 @@ public class ZImage extends PImage {
     * @return the target pixels
     */
    public static int[] wrap (
-         final int[] source, final int wSource, final int hSource,
-         final int[] target, final int wTarget, final int hTarget,
-         final int dx, final int dy ) {
+         final int[] source,
+         final int wSource,
+         final int hSource,
+         final int[] target,
+         final int wTarget,
+         final int hTarget,
+         final int dx,
+         final int dy ) {
 
       /*
        * Uses unchecked integer floor mod for optimization.
@@ -487,7 +516,9 @@ public class ZImage extends PImage {
     * @param height
     *           the image height
     */
-   public ZImage ( final int width, final int height ) {
+   public ZImage (
+         final int width,
+         final int height ) {
 
       super(width, height);
    }
@@ -546,21 +577,14 @@ public class ZImage extends PImage {
    /**
     * Returns a string representation of an image, including
     * its format, width, height and pixel density.
+    *
+    * @return the string
     */
    @Override
    public String toString () {
 
-      return new StringBuilder(64)
-            .append("{ format: ")
-            .append(this.format)
-            .append(", width: ")
-            .append(this.width)
-            .append(", height: ")
-            .append(this.height)
-            .append(", pixelDensity: ")
-            .append(this.pixelDensity)
-            .append(' ').append('}')
-            .toString();
+      return ZImage.toString(this);
+
    }
 
    /**

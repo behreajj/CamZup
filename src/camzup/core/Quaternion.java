@@ -1204,7 +1204,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Quaternion target ) {
 
       final float halfRadians = radians * 0.5f;
-      return target.set(Utils.cos(halfRadians), 0.0f, 0.0f,
+      return target.set(
+            Utils.cos(halfRadians),
+            0.0f, 0.0f,
             Utils.sin(halfRadians));
    }
 
@@ -1240,10 +1242,15 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     */
    @Experimental
    public static Quaternion fromAxes (
-         final double rightx, final double forwardy, final double upz,
-         final double forwardz, final double upy,
-         final double upx, final double rightz,
-         final double righty, final double forwardx,
+         final double rightx,
+         final double forwardy,
+         final double upz,
+         final double forwardz,
+         final double upy,
+         final double upx,
+         final double rightz,
+         final double righty,
+         final double forwardx,
          final Quaternion target ) {
 
       final double w = 0.5d * Math.sqrt(
@@ -1293,10 +1300,15 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @see Math#sqrt(double)
     */
    public static Quaternion fromAxes (
-         final float rightx, final float forwardy, final float upz,
-         final float forwardz, final float upy,
-         final float upx, final float rightz,
-         final float righty, final float forwardx,
+         final float rightx,
+         final float forwardy,
+         final float upz,
+         final float forwardz,
+         final float upy,
+         final float upx,
+         final float rightz,
+         final float righty,
+         final float forwardx,
          final Quaternion target ) {
 
       final float w = 0.5f * Utils.sqrt(
@@ -2474,7 +2486,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          final Vec3 axis ) {
 
       // final float mSq = Quaternion.magSq(q);
-      //
+
       // if (mSq == 0.0f) {
       // Vec3.forward(axis);
       // return 0.0f;
@@ -2715,8 +2727,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
          return false;
       }
 
-      // return Utils.approxFast(this.real, q.real);
-
       if (Float.floatToIntBits(this.real) != Float.floatToIntBits(q.real)) {
          return false;
       }
@@ -2772,12 +2782,15 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       if (this == obj) {
          return true;
       }
+
       if (obj == null) {
          return false;
       }
+
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+
       return this.equals((Quaternion) obj);
    }
 

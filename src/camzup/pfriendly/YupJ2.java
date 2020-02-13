@@ -21,8 +21,8 @@ import camzup.core.Mat4;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
 import camzup.core.MeshEntity2;
-import camzup.core.Transform;
 import camzup.core.Transform2;
+import camzup.core.TransformOrder;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import processing.awt.PGraphicsJava2D;
@@ -4207,7 +4207,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    public void transform (
          final Transform2 tr2,
-         final Transform.Order order ) {
+         final TransformOrder order ) {
 
       final Vec2 dim = tr2.getScale(this.tr2Scale);
       final Vec2 loc = tr2.getLocation(this.tr2Loc);

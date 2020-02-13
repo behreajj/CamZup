@@ -15,7 +15,7 @@ public class Entity3 extends Entity {
    /**
     * The order in which the transform is applied.
     */
-   public Transform.Order transformOrder = Transform.Order.TRS;
+   public TransformOrder transformOrder = TransformOrder.TRS;
 
    /**
     * The default constructor.
@@ -72,6 +72,30 @@ public class Entity3 extends Entity {
    }
 
    /**
+    * Tests this entity for equivalence with another.
+    *
+    * @param entity
+    *           the entity
+    * @return the evaluation
+    */
+   protected boolean equals ( final Entity3 entity ) {
+
+      if (this.transform == null) {
+         if (entity.transform != null) {
+            return false;
+         }
+      } else if (!this.transform.equals(entity.transform)) {
+         return false;
+      }
+
+      if (this.transformOrder != entity.transformOrder) {
+         return false;
+      }
+
+      return true;
+   }
+
+   /**
     * Tests this entity for equivalence with an object.
     *
     * @param obj
@@ -93,21 +117,7 @@ public class Entity3 extends Entity {
          return false;
       }
 
-      final Entity3 other = (Entity3) obj;
-
-      if (this.transform == null) {
-         if (other.transform != null) {
-            return false;
-         }
-      } else if (!this.transform.equals(other.transform)) {
-         return false;
-      }
-
-      if (this.transformOrder != other.transformOrder) {
-         return false;
-      }
-
-      return true;
+      return this.equals((Entity3) obj);
    }
 
    /**

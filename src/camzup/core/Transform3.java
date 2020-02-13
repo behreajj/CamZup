@@ -702,7 +702,11 @@ public class Transform3 extends Transform {
    @Override
    protected void updateAxes () {
 
-      Quaternion.toAxes(this.rotation, this.right, this.forward, this.up);
+      Quaternion.toAxes(
+            this.rotation,
+            this.right,
+            this.forward,
+            this.up);
    }
 
    /**
@@ -714,7 +718,10 @@ public class Transform3 extends Transform {
    @Override
    public Transform3 clone () {
 
-      return new Transform3(this.location, this.rotation, this.scale);
+      return new Transform3(
+            this.location,
+            this.rotation,
+            this.scale);
    }
 
    /**
@@ -730,12 +737,15 @@ public class Transform3 extends Transform {
       if (this == obj) {
          return true;
       }
+
       if (obj == null) {
          return false;
       }
+
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+
       return this.equals((Transform3) obj);
    }
 
@@ -1102,7 +1112,7 @@ public class Transform3 extends Transform {
 
    /**
     * Eases the transform toward a new orientation by a step in
-    * [0.0, 1.0].
+    * [0.0, 1.0] .
     *
     * @param rotNew
     *           the new orientation
@@ -1380,10 +1390,16 @@ public class Transform3 extends Transform {
     */
    @Chainable
    public Transform3 set (
-         final float xLoc, final float yLoc, final float zLoc,
+         final float xLoc,
+         final float yLoc,
+         final float zLoc,
          final float real,
-         final float xImag, final float yImag, final float zImag,
-         final float xScale, final float yScale, final float zScale ) {
+         final float xImag,
+         final float yImag,
+         final float zImag,
+         final float xScale,
+         final float yScale,
+         final float zScale ) {
 
       this.locPrev.set(this.location);
       this.location.set(xLoc, yLoc, zLoc);
@@ -1424,7 +1440,10 @@ public class Transform3 extends Transform {
    @Chainable
    public Transform3 set ( final Transform3 source ) {
 
-      return this.set(source.location, source.rotation, source.scale);
+      return this.set(
+            source.location,
+            source.rotation,
+            source.scale);
    }
 
    /**

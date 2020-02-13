@@ -11,8 +11,8 @@ import camzup.core.MaterialSolid;
 import camzup.core.Mesh3;
 import camzup.core.MeshEntity3;
 import camzup.core.Quaternion;
-import camzup.core.Transform;
 import camzup.core.Transform3;
+import camzup.core.TransformOrder;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -1076,36 +1076,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
             this.material(material);
          }
 
-         final Vec3[] vs = mesh.coords;
-         final Vec3[] vns = mesh.normals;
-         final Vec2[] vts = mesh.texCoords;
-         final int[][][] fs = mesh.faces;
-         final int flen0 = fs.length;
-
-         for (int i = 0; i < flen0; ++i) {
-
-            final int[][] f = fs[i];
-            final int flen1 = f.length;
-            this.beginShape(PConstants.POLYGON);
-
-            for (int j = 0; j < flen1; ++j) {
-
-               final int[] data = f[j];
-               final int vIndex = data[0];
-               final int vtIndex = data[1];
-               final int vnIndex = data[2];
-
-               Transform3.mulPoint(tr, vs[vIndex], v);
-               final Vec2 vt = vts[vtIndex];
-               Transform3.mulDir(tr, vns[vnIndex], vn);
-
-               this.normal(vn.x, vn.y, vn.z);
-               this.vertexImpl(
-                     v.x, v.y, v.z,
-                     vt.x, vt.y);
-            }
-            this.endShape(PConstants.CLOSE);
-         }
+         this.drawMesh3(mesh, tr, v, vn, null, null, null);
 
          if (useMaterial) {
             this.popStyle();
@@ -1187,7 +1158,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     */
    public void transform (
          final Transform3 tr3,
-         final Transform.Order order ) {
+         final TransformOrder order ) {
 
       tr3.getScale(this.tr3Scale);
       tr3.getLocation(this.tr3Loc);

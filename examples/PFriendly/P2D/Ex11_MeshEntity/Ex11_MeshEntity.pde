@@ -1,10 +1,10 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-YupJ2 graphics2;
+Yup2 graphics2;
 
 MaterialSolid material = new MaterialSolid()
-  .setStroke(false)
+  .setStroke(true)
   .setStroke(#1f7fff)
   .setFill(true)
   .setFill(#303030)
@@ -21,12 +21,12 @@ MeshEntity2 entity = new MeshEntity2("Example", transform)
   .appendMaterial(material);
 
 void settings() {
-  size(720, 405, "camzup.pfriendly.YupJ2");
+  size(720, 405, "camzup.pfriendly.Yup2");
   smooth(8);
 }
 
 void setup() {
-  graphics2 = (YupJ2)getGraphics();
+  graphics2 = (Yup2)getGraphics();
 }
 
 void draw() {

@@ -611,7 +611,7 @@ public class MaterialSolid extends Material {
    }
 
    /**
-    * Returns a string representation of this complex number.
+    * Returns a string representation of this material.
     *
     * @param places
     *           the number of places
@@ -621,7 +621,9 @@ public class MaterialSolid extends Material {
    public String toString ( final int places ) {
 
       return new StringBuilder(256)
-            .append("{ fill: ")
+            .append("{ name: \"")
+            .append(this.name)
+            .append("\", fill: ")
             .append(this.fill.toString(places))
             .append(", stroke: ")
             .append(this.stroke.toString(places))
@@ -631,8 +633,7 @@ public class MaterialSolid extends Material {
             .append(this.useFill)
             .append(", useStroke: ")
             .append(this.useStroke)
-            .append(' ')
-            .append('}')
+            .append(' ').append('}')
             .toString();
    }
 }
