@@ -46,57 +46,69 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     * A vector to store the x axis (first column) when creating
     * a camera look-at matrix.
     */
-   protected final Vec3 i = new Vec3();
+   protected final Vec3 i;
 
    /**
     * A vector to store the y axis (second column) when
     * creating a camera look-at matrix.
     */
-   protected final Vec3 j = new Vec3();
+   protected final Vec3 j;
 
    /**
     * A vector to store the z axis (third column) when creating
     * a camera look-at matrix.
     */
-   protected final Vec3 k = new Vec3();
+   protected final Vec3 k;
 
    /**
     * A vector to store the unnormalized look direction when
     * creating a camera look-at matrix.
     */
-   protected final Vec3 lookDir = new Vec3();
+   protected final Vec3 lookDir;
 
    /**
     * A vector to store the target at which a camera looks.
     */
-   protected final Vec3 lookTarget = new Vec3();
+   protected final Vec3 lookTarget;
 
    /**
     * The reference or "world" up vector against which a camera
     * look-at matrix is created.
     */
-   protected final Vec3 refUp = new Vec3(
-         Yup3.DEFAULT_REF_X,
-         Yup3.DEFAULT_REF_Y,
-         Yup3.DEFAULT_REF_Z);
+   protected final Vec3 refUp;
 
    /**
     * A temporary point used when converting a transform's
     * location to a PMatrix3D.
     */
-   protected final Vec3 tr3Loc = new Vec3();
+   protected final Vec3 tr3Loc;
 
    /**
     * A temporary quaternion used when converting a transform's
     * rotation to a PMatrix3D.
     */
-   protected final Quaternion tr3Rot = new Quaternion();
+   protected final Quaternion tr3Rot;
 
    /**
     * A temporary non-uniform dimension used when converting a
     * transform's scale to a PMatrix3D.
     */
-   protected final Vec3 tr3Scale = new Vec3();
+   protected final Vec3 tr3Scale;
+
+   {
+      this.i = new Vec3();
+      this.j = new Vec3();
+      this.k = new Vec3();
+      this.lookDir = new Vec3();
+      this.lookTarget = new Vec3();
+      this.refUp = new Vec3(
+            Yup3.DEFAULT_REF_X,
+            Yup3.DEFAULT_REF_Y,
+            Yup3.DEFAULT_REF_Z);
+      this.tr3Loc = new Vec3();
+      this.tr3Rot = new Quaternion();
+      this.tr3Scale = new Vec3();
+   }
 
    /**
     * The default constructor.
@@ -1049,19 +1061,55 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    }
 
    /**
+    * Draws a 3D mesh entity.
+    *
+    * @param entity
+    *           the mesh entity
+    * @param materials
+    *           the materials
+    */
+   public void shape (
+         final MeshEntity3 entity,
+         final MaterialPImage[] materials ) {
+
+      final Transform3 tr = entity.transform;
+      final List < Mesh3 > meshes = entity.meshes;
+      final Iterator < Mesh3 > meshItr = meshes.iterator();
+      final boolean useMaterial = materials != null && materials.length > 0;
+
+      final Vec3 v = new Vec3();
+      final Vec2 vt = new Vec2();
+      final Vec3 vn = new Vec3();
+
+      while (meshItr.hasNext()) {
+         final Mesh3 mesh = meshItr.next();
+         if (useMaterial) {
+            final MaterialPImage mat = materials[mesh.materialIndex];
+            this.pushStyle();
+            this.drawMesh3(mesh, tr, mat, v, vt, vn);
+            this.popStyle();
+         } else {
+            this.drawMesh3(mesh, tr, null, v, null, vn);
+         }
+      }
+   }
+
+   /**
     * Draws a mesh entity.
     *
     * @param entity
     *           the mesh entity
+    * @param materials
+    *           the materials
     */
-   public void shape ( final MeshEntity3 entity ) {
+   public void shape (
+         final MeshEntity3 entity,
+         final MaterialSolid[] materials ) {
 
       final Transform3 tr = entity.transform;
       final List < Mesh3 > meshes = entity.meshes;
-      final List < MaterialSolid > materials = entity.materials;
-
       final Iterator < Mesh3 > meshItr = meshes.iterator();
-      final boolean useMaterial = !materials.isEmpty();
+      final boolean useMaterial = materials != null && materials.length > 0;
 
       final Vec3 v = new Vec3();
       final Vec3 vn = new Vec3();
@@ -1070,13 +1118,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
          final Mesh3 mesh = meshItr.next();
 
          if (useMaterial) {
-            final int index = mesh.materialIndex;
-            final MaterialSolid material = materials.get(index);
             this.pushStyle();
-            this.material(material);
+            this.material(materials[mesh.materialIndex]);
          }
 
-         this.drawMesh3(mesh, tr, v, vn, null, null, null);
+         this.drawMesh3(mesh, tr, null, v, null, vn);
 
          if (useMaterial) {
             this.popStyle();

@@ -14,7 +14,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    /**
     * The list of materials held by the entity.
     */
-   public final List < MaterialSolid > materials;
+   // public final List < MaterialSolid > materials;
 
    /**
     * The list of meshes held by the entity.
@@ -22,7 +22,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    public final List < Mesh2 > meshes;
 
    {
-      this.materials = new ArrayList <>();
+      // this.materials = new ArrayList <>();
       this.meshes = new ArrayList <>();
    }
 
@@ -94,14 +94,15 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
     *           the material
     * @return this mesh entity
     */
-   @Chainable
-   public MeshEntity2 appendMaterial ( final MaterialSolid material ) {
-
-      if (material != null) {
-         this.materials.add(material);
-      }
-      return this;
-   }
+   // @Chainable
+   // public MeshEntity2 appendMaterial ( final MaterialSolid
+   // material ) {
+   //
+   // if (material != null) {
+   // this.materials.add(material);
+   // }
+   // return this;
+   // }
 
    /**
     * Appends a list of materials to this mesh entity.
@@ -110,14 +111,15 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
     *           the list of materials
     * @return this mesh entity
     */
-   @Chainable
-   public MeshEntity2 appendMaterials ( final MaterialSolid... materials ) {
-
-      for (final MaterialSolid mat : materials) {
-         this.appendMaterial(mat);
-      }
-      return this;
-   }
+   // @Chainable
+   // public MeshEntity2 appendMaterials ( final
+   // MaterialSolid... materials ) {
+   //
+   // for (final MaterialSolid mat : materials) {
+   // this.appendMaterial(mat);
+   // }
+   // return this;
+   // }
 
    /**
     * Appends a mesh to this mesh entity.
@@ -132,10 +134,10 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
       if (mesh != null) {
          this.meshes.add(mesh);
 
-         final int matLen = this.materials.size();
-         if (mesh.materialIndex < 0 && matLen > 0) {
-            mesh.materialIndex = matLen - 1;
-         }
+         // final int matLen = this.materials.size();
+         // if (mesh.materialIndex < 0 && matLen > 0) {
+         // mesh.materialIndex = matLen - 1;
+         // }
       }
       return this;
    }
@@ -164,10 +166,11 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
     *
     * @return the material
     */
-   public MaterialSolid getMaterial ( final int i ) {
-
-      return this.materials.get(Math.floorMod(i, this.materials.size()));
-   }
+   // public MaterialSolid getMaterial ( final int i ) {
+   //
+   // return this.materials.get(Math.floorMod(i,
+   // this.materials.size()));
+   // }
 
    /**
     * Gets a mesh from this mesh entity.
@@ -206,7 +209,22 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    @Experimental
    public String toBlenderCode () {
 
-      final float expn = 2.2f;
+      return this.toBlenderCode(null);
+   }
+
+   /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how curve
+    * geometry looks in Blender (the control) vs. in the
+    * library (the test).
+    *
+    * @param materials
+    *           the materials
+    * @return the string
+    */
+   @Experimental
+   public String toBlenderCode ( final MaterialSolid[] materials ) {
 
       final StringBuilder result = new StringBuilder(2048);
       result.append("from bpy import data as D, context as C\n\n")
@@ -229,16 +247,17 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
 
       result.append("], \"materials\": [");
 
-      int matIndex = 0;
-      final int matLast = this.materials.size() - 1;
-      if (matLast > -1) {
-         final Iterator < MaterialSolid > matItr = this.materials.iterator();
-         while (matItr.hasNext()) {
-            result.append(matItr.next().toBlenderCode(expn));
-            if (matIndex < matLast) {
+      final float expn = 2.2f;
+      final boolean useMaterials = materials != null && materials.length > 0;
+      if (useMaterials) {
+         final int matLen = materials.length;
+         final int matLast = matLen - 1;
+
+         for (int i = 0; i < matLen; ++i) {
+            result.append(materials[i].toBlenderCode(expn));
+            if (i < matLast) {
                result.append(',').append(' ');
             }
-            matIndex++;
          }
       } else {
          result.append(MaterialSolid.defaultBlenderMaterial(expn));
@@ -304,6 +323,19 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
     */
    public String toSvgString () {
 
+      return this.toSvgString(null);
+   }
+
+   /**
+    * Creates a string representing a group node in the SVG
+    * format.
+    *
+    * @param materials
+    *           the materials to use
+    * @return the string
+    */
+   public String toSvgString ( final MaterialSolid[] materials ) {
+
       final StringBuilder result = new StringBuilder()
             .append("<g id=\"")
             .append(this.name.toLowerCase())
@@ -312,7 +344,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
             .append(">\n");
 
       final float scale = Transform2.minDimension(this.transform);
-      final boolean includesMats = this.materials.size() > 0;
+      final boolean includesMats = materials != null && materials.length > 0;
 
       /*
        * If no materials are present, use a default one instead.
@@ -332,8 +364,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
           * when Processing imports an SVG with loadShape.
           */
          if (includesMats) {
-            final MaterialSolid material = this.materials
-                  .get(mesh.materialIndex);
+            final MaterialSolid material = materials[mesh.materialIndex];
             result.append("<g ")
                   .append(material.toSvgString())
                   .append(">\n");

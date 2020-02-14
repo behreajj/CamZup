@@ -90,6 +90,32 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
       return target;
    }
 
+   public static Gradient paletteRyb ( final Gradient target ) {
+
+      final TreeSet < ColorKey > keys = target.keys;
+      keys.clear();
+
+      keys.add(new ColorKey(0.0f, 1.0f, 0.0f, 0.0f));
+      keys.add(new ColorKey(0.0833333f, 1.0f, 0.25f, 0.0f));
+      keys.add(new ColorKey(0.1666667f, 1.0f, 0.5f, 0.0f));
+      
+      keys.add(new ColorKey(0.25f, 1.0f, 0.75f, 0.0f));
+      keys.add(new ColorKey(0.3333333f, 1.0f, 1.0f, 0.0f));
+      keys.add(new ColorKey(0.4166667f, 0.5058824f, 0.8313726f, 0.1019608f));
+      
+      keys.add(new ColorKey(0.5f, 0.0f, 0.6627451f, 0.2f));
+      
+      keys.add(new ColorKey(0.5833333f, 0.0823529f, 0.517647f, 0.4f));
+      keys.add(new ColorKey(0.6666667f, 0.1647059f, 0.3764706f, 0.6f));
+      keys.add(new ColorKey(0.75f, 0.3333333f, 0.1882353f, 0.5529412f));
+      
+      keys.add(new ColorKey(0.8333333f, 0.5f, 0.0f, 0.5f));
+      keys.add(new ColorKey(0.9166667f, 0.75f, 0.0f, 0.25f));
+      keys.add(new ColorKey(1.0f, 1.0f, 0.0f, 0.0f));
+
+      return target;
+   }
+
    /**
     * Returns the Viridis color palette, consisting of 16 keys.
     *
@@ -1117,6 +1143,36 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
    public ColorKey[] toArray ( final ColorKey[] target ) {
 
       return this.keys.toArray(target);
+   }
+
+   /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes.
+    *
+    * @param name
+    *           the material's name
+    * @return the string
+    */
+   public String toBlenderCode ( final String name ) {
+
+      return this.toBlenderCode(name, Utils.clamp(this.keys.size(), 2, 32));
+   }
+
+   /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes.
+    *
+    * @param name
+    *           the material's name
+    * @param samples
+    *           number of gradient samples
+    * @return the string
+    */
+   public String toBlenderCode ( final String name, final int samples ) {
+
+      return this.toBlenderCode(name, samples, 1.0f);
    }
 
    /**

@@ -210,21 +210,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.setSize(width, height);
    }
 
-   @Experimental
-   void imageImpl ( final PImage img, final float x, final float y ) {
-
-      /*
-       * The problem is that the super function accounts for
-       * tinting an image or pixelwidth and pixel height (and
-       * relies on an inner class that acts as a cache)... Also,
-       * if PImage is not a PImageAWT, getNative will return null.
-       */
-      final Image imgNative = (Image) img.getNative();
-      if (imgNative != null) {
-         this.g2.drawImage(imgNative, (int) x, (int) y, null);
-      }
-   }
-
    /**
     * The arc implementation. The underlying Java AWT arc asks
     * for a start angle and an arc length, not a stop angle, in
@@ -244,6 +229,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the stop angle
     * @param arcMode
     *           the arc mode
+    * @see Utils#mod1(double)
+    * @see Graphics2D#setColor(java.awt.Color)
+    * @see Graphics2D#fill(Shape)
+    * @see Graphics2D#draw(Shape)
     */
    @Override
    protected void arcImpl (
@@ -379,6 +368,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *
     * @param c
     *           the color
+    * @see Utils#clamp01(float)
     */
    protected void colorCalc ( final Color c ) {
 
@@ -415,6 +405,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the third color channel, brightness or blue
     * @param w
     *           the alpha channel
+    * @see Utils#clamp01(float)
+    * @see Color#hsbaToRgba(float, float, float, float, Color)
     */
    @Override
    protected void colorCalc (
@@ -476,6 +468,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the color in hexadecimal
     * @param alpha
     *           the alpha channel
+    * @see Utils#clamp01(float)
     */
    @Override
    protected void colorCalcARGB (
@@ -586,6 +579,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *
     * @param s
     *           the shape
+    * @see Graphics2D#setColor(java.awt.Color)
+    * @see Graphics2D#fill(Shape)
+    * @see Graphics2D#draw(Shape)
     */
    protected void drawShapeSolid ( final Shape s ) {
 
@@ -597,6 +593,26 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       if (this.stroke) {
          this.g2.setColor(this.strokeColorObject);
          this.g2.draw(s);
+      }
+   }
+
+   @Experimental
+   protected void imageImpl (
+         final PImage img,
+         final float x,
+         final float y ) {
+
+      /*
+       * TODO: Maybe call to super.image if tint is not white.
+       *
+       * The problem is that the super function accounts for
+       * tinting an image or pixelwidth and pixel height (and
+       * relies on an inner class that acts as a cache)... Also,
+       * if PImage is not a PImageAWT, getNative will return null.
+       */
+      final Image imgNative = (Image) img.getNative();
+      if (imgNative != null) {
+         this.g2.drawImage(imgNative, (int) x, (int) y, null);
       }
    }
 
@@ -817,60 +833,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    }
 
    /**
-    * Draws a mesh entity.
-    *
-    * @param entity
-    *           the mesh entity
-    */
-   @Deprecated
-   protected void shapeOld ( final MeshEntity2 entity ) {
-
-      this.pushMatrix();
-      this.transform(entity.transform, entity.transformOrder);
-
-      final List < Mesh2 > meshes = entity.meshes;
-      final List < MaterialSolid > materials = entity.materials;
-      final boolean useMaterial = !materials.isEmpty();
-      final Iterator < Mesh2 > meshItr = meshes.iterator();
-
-      while (meshItr.hasNext()) {
-         final Mesh2 mesh = meshItr.next();
-
-         if (useMaterial) {
-            final int index = mesh.materialIndex;
-            final MaterialSolid material = materials.get(index);
-            this.pushStyle();
-            this.material(material);
-         }
-
-         final int[][][] fs = mesh.faces;
-         final Vec2[] vs = mesh.coords;
-         final int flen0 = fs.length;
-
-         for (int i = 0; i < flen0; ++i) {
-            final int[][] f = fs[i];
-            final int flen1 = f.length;
-
-            this.gp.reset();
-            Vec2 v = vs[f[0][0]];
-            this.gp.moveTo(v.x, v.y);
-            for (int j = 1; j < flen1; ++j) {
-               v = vs[f[j][0]];
-               this.gp.lineTo(v.x, v.y);
-            }
-            this.gp.closePath();
-            this.drawShapeSolid(this.gp);
-         }
-
-         if (useMaterial) {
-            this.popStyle();
-         }
-      }
-
-      this.popMatrix();
-   }
-
-   /**
     * Creates a new BasicStroke object from the stroke weight,
     * stroke cap (native), and stroke join (native), then sets
     * the AWT renderer's stroke with this object.
@@ -1060,8 +1022,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    @Override
    public void applyMatrix (
-         final float m00, final float m01, final float m02,
-         final float m10, final float m11, final float m12 ) {
+         final float m00,
+         final float m01,
+         final float m02,
+         final float m10,
+         final float m11,
+         final float m12 ) {
 
       /*
        * Beware of unconventional method signature:
@@ -1129,9 +1095,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     */
    @Override
    public void arc (
-         final float x0, final float y0,
-         final float x1, final float y1,
-         final float start, final float stop,
+         final float x0,
+         final float y0,
+         final float x1,
+         final float y1,
+         final float start,
+         final float stop,
          final int mode ) {
 
       if (Utils.approx(stop - start, IUtils.TAU, 0.00139f)) {
@@ -1275,60 +1244,60 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * with the y coordinates to get the location of a bezier
     * curve at t.
     *
-    * @param a
+    * @param ap0
     *           coordinate of first point on the curve
-    * @param b
+    * @param cp0
     *           coordinate of first control point
-    * @param c
+    * @param cp1
     *           coordinate of second control point
-    * @param d
+    * @param ap1
     *           coordinate of second point on the curve
     * @param t
-    *           value between 0 and 1
+    *           step in the range [0.0, 1.0]
     * @return the evaluation
     */
    @Override
    public float bezierPoint (
-         final float a,
-         final float b,
-         final float c,
-         final float d,
+         final float ap0,
+         final float cp0,
+         final float cp1,
+         final float ap1,
          final float t ) {
 
       final float u = 1.0f - t;
-      return (a * u + b * (t + t + t)) * u * u
-            + (c * (u + u + u) + d * t) * t * t;
+      return (ap0 * u + cp0 * (t + t + t)) * u * u
+            + (cp1 * (u + u + u) + ap1 * t) * t * t;
    }
 
    /**
     * Calculates the tangent of a point on a Bezier curve.
     *
-    * @param a
+    * @param ap0
     *           coordinate of first point on the curve
-    * @param b
+    * @param cp0
     *           coordinate of first control point
-    * @param c
+    * @param cp1
     *           coordinate of second control point
-    * @param d
+    * @param ap1
     *           coordinate of second point on the curve
     * @param t
-    *           value between 0 and 1
+    *           step in the range [0.0, 1.0]
     * @return the evaluation
     */
    @Override
    public float bezierTangent (
-         final float a,
-         final float b,
-         final float c,
-         final float d,
+         final float ap0,
+         final float cp0,
+         final float cp1,
+         final float ap1,
          final float t ) {
 
       final float t3 = t + t + t;
-      final float b2 = b + b;
-      final float ac = a + c;
-      final float bna = b - a;
+      final float b2 = cp0 + cp0;
+      final float ac = ap0 + cp1;
+      final float bna = cp0 - ap0;
 
-      return t3 * t * (b2 + b + d - (ac + c + c)) +
+      return t3 * t * (b2 + cp0 + ap1 - (ac + cp1 + cp1)) +
             (t3 + t3) * (ac - b2) +
             (bna + bna + bna);
    }
@@ -1537,7 +1506,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the second channel maximum, saturation or green
     * @param max3
     *           the third channel maximum, brightness or blue
-    * @param maxA
+    * @param aMax
     *           the alpha channel maximum
     */
    @Override
@@ -1546,13 +1515,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final float max1,
          final float max2,
          final float max3,
-         final float maxA ) {
+         final float aMax ) {
 
       super.colorMode(mode,
             Utils.max(Utils.abs(max1), 1.0f),
             Utils.max(Utils.abs(max2), 1.0f),
             Utils.max(Utils.abs(max3), 1.0f),
-            Utils.max(Utils.abs(maxA), 1.0f));
+            Utils.max(Utils.abs(aMax), 1.0f));
 
       /*
        * Cache the inverse of the color maximums so that color
@@ -1613,6 +1582,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the third parameter
     * @param h
     *           the fourth parameter
+    * @see Utils#abs(float)
+    * @see Path2D#reset()
+    * @see Path2D#moveTo(double, double)
+    * @see Path2D#curveTo(double, double, double, double,
+    *      double, double)
+    * @see Path2D#closePath()
+    * @see YupJ2#drawShapeSolid(Shape)
     */
    @Override
    public void ellipse (
@@ -1882,6 +1858,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * @param target
     *           the output matrix
     * @return the renderer matrix
+    * @see Graphics2D#getTransform()
+    * @see Convert#fromAwtTransform(AffineTransform, PMatrix2D)
     */
    @Override
    public PMatrix2D getMatrix ( final PMatrix2D target ) {
@@ -1895,6 +1873,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * @param target
     *           the output matrix
     * @return the renderer matrix
+    * @see Graphics2D#getTransform()
+    * @see Convert#fromAwtTransform(AffineTransform, PMatrix3D)
     */
    @Override
    public PMatrix3D getMatrix ( final PMatrix3D target ) {
@@ -3617,15 +3597,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *
     * @param entity
     *           the mesh entity
+    * @param materials
+    *           the materials array
     */
-   public void shape ( final MeshEntity2 entity ) {
+   public void shape (
+         final MeshEntity2 entity,
+         final MaterialSolid[] materials ) {
 
       final Transform2 tr = entity.transform;
       final List < Mesh2 > meshes = entity.meshes;
-      final List < MaterialSolid > materials = entity.materials;
-
       final Iterator < Mesh2 > meshItr = meshes.iterator();
-      final boolean useMaterial = !materials.isEmpty();
+      final boolean useMaterial = materials != null && materials.length > 0;
 
       final Vec2 v = new Vec2();
 
@@ -3634,7 +3616,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
          if (useMaterial) {
             final int index = mesh.materialIndex;
-            final MaterialSolid material = materials.get(index);
+            final MaterialSolid material = materials[index];
             this.pushStyle();
             this.material(material);
          }
@@ -3679,13 +3661,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the x coordinate
     * @param y
     *           the y coordinate
-    * @see YupJ2#shape(CurveEntity2)
-    * @see YupJ2#shape(MeshEntity2)
     */
    @Override
    public void shape (
          final PShape shape,
-         final float x, final float y ) {
+         final float x,
+         final float y ) {
 
       PApplet.showMissingWarning("shape");
       super.shape(shape, x, y);
@@ -3705,15 +3686,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     * @param x2
     *           the second x coordinate
     * @param y2
-    *           the second y coordinate
-    * @see YupJ2#shape(CurveEntity2)
-    * @see YupJ2#shape(MeshEntity2)
+    *           the second y coordinated
     */
    @Override
    public void shape (
          final PShape shape,
-         final float x1, final float y1,
-         final float x2, final float y2 ) {
+         final float x1,
+         final float y1,
+         final float x2,
+         final float y2 ) {
 
       PApplet.showMissingWarning("shape");
       super.shape(shape, x1, y1, x2, y2);
@@ -3722,31 +3703,40 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    /**
     * Draws a square at a location.
     *
-    * @param a
+    * @param coord
     *           the location
-    * @param b
+    * @param size
     *           the size
     */
    @Override
-   public void square ( final Vec2 a, final float b ) {
+   public void square (
+         final Vec2 coord,
+         final float size ) {
 
-      this.rectImpl(a.x, a.y, b, b);
+      this.rectImpl(coord.x, coord.y, size, size);
    }
 
    /**
     * Draws a rounded square.
     *
-    * @param a
+    * @param coord
     *           the location
-    * @param b
+    * @param size
     *           the size
-    * @param r
+    * @param rounding
     *           the corner rounding
     */
    @Override
-   public void square ( final Vec2 a, final float b, final float r ) {
+   public void square (
+         final Vec2 coord,
+         final float size,
+         final float rounding ) {
 
-      this.rectImpl(a.x, a.y, b, b, r, r, r, r);
+      this.rectImpl(
+            coord.x, coord.y,
+            size, size,
+            rounding, rounding,
+            rounding, rounding);
    }
 
    /**
@@ -4008,6 +3998,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the x coordinate
     * @param y
     *           the y coordinate
+    * @see Utils#toFixed(float, int)
     */
    @Override
    public void text (
@@ -4204,6 +4195,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           the transform
     * @param order
     *           the transform order
+    * @see Graphics2D#translate(double, double)
+    * @see Graphics2D#rotate(double)
+    * @see Graphics2D#scale(double, double)
+    * @see Transform2#getLocation(Vec2)
+    * @see Transform2#getRotation()
+    * @see Transform2#getScale(Vec2)
     */
    public void transform (
          final Transform2 tr2,
@@ -4294,6 +4291,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     *           third corner x
     * @param y3
     *           third corner y
+    * @see Path2D#reset()
+    * @see Path2D#moveTo(double, double)
+    * @see Path2D#lineTo(double, double)
+    * @see Path2D#closePath()
+    * @see YupJ2#drawShapeSolid(Shape)
     */
    @Override
    public void triangle (

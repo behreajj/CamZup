@@ -1216,23 +1216,23 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * helper function which uses only the relevant information
     * to create a quaternion.
     *
-    * @param rightx
+    * @param xRight
     *           m00 : right x
-    * @param forwardy
+    * @param yForward
     *           m11 : forward y
-    * @param upz
+    * @param zUp
     *           m22 : up z
-    * @param forwardz
+    * @param zForward
     *           m21 : forward z
-    * @param upy
+    * @param yUp
     *           m12 : up y
-    * @param upx
+    * @param xUp
     *           m02 : up x
-    * @param rightz
+    * @param zRight
     *           m20 : right z
-    * @param righty
+    * @param yRight
     *           m10 : right y
-    * @param forwardx
+    * @param xForward
     *           m01 : forward x
     * @param target
     *           the output quaternion
@@ -1242,31 +1242,31 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     */
    @Experimental
    public static Quaternion fromAxes (
-         final double rightx,
-         final double forwardy,
-         final double upz,
-         final double forwardz,
-         final double upy,
-         final double upx,
-         final double rightz,
-         final double righty,
-         final double forwardx,
+         final double xRight,
+         final double yForward,
+         final double zUp,
+         final double zForward,
+         final double yUp,
+         final double xUp,
+         final double zRight,
+         final double yRight,
+         final double xForward,
          final Quaternion target ) {
 
       final double w = 0.5d * Math.sqrt(
-            Math.max(0.0d, 1.0d + rightx + forwardy + upz));
+            Math.max(0.0d, 1.0d + xRight + yForward + zUp));
 
       final double x = 0.5d * Math.sqrt(
-            Math.max(0.0d, 1.0d + rightx - forwardy - upz));
+            Math.max(0.0d, 1.0d + xRight - yForward - zUp));
       final double y = 0.5d * Math.sqrt(
-            Math.max(0.0d, 1.0d - rightx + forwardy - upz));
+            Math.max(0.0d, 1.0d - xRight + yForward - zUp));
       final double z = 0.5d * Math.sqrt(
-            Math.max(0.0d, 1.0d - rightx - forwardy + upz));
+            Math.max(0.0d, 1.0d - xRight - yForward + zUp));
 
       return target.set((float) w,
-            (float) Math.copySign(x, forwardz - upy),
-            (float) Math.copySign(y, upx - rightz),
-            (float) Math.copySign(z, righty - forwardx));
+            (float) Math.copySign(x, zForward - yUp),
+            (float) Math.copySign(y, xUp - zRight),
+            (float) Math.copySign(z, yRight - xForward));
    }
 
    /**
@@ -1275,23 +1275,23 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * helper function which uses only the relevant information
     * to create a quaternion.
     *
-    * @param rightx
+    * @param xRight
     *           m00 : right x
-    * @param forwardy
+    * @param yForward
     *           m11 : forward y
-    * @param upz
+    * @param zUp
     *           m22 : up z
-    * @param forwardz
+    * @param zForward
     *           m21 : forward z
-    * @param upy
+    * @param yUp
     *           m12 : up y
-    * @param upx
+    * @param xUp
     *           m02 : up x
-    * @param rightz
+    * @param zRight
     *           m20 : right z
-    * @param righty
+    * @param yRight
     *           m10 : right y
-    * @param forwardx
+    * @param xForward
     *           m01 : forward x
     * @param target
     *           the output quaternion
@@ -1300,31 +1300,31 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * @see Math#sqrt(double)
     */
    public static Quaternion fromAxes (
-         final float rightx,
-         final float forwardy,
-         final float upz,
-         final float forwardz,
-         final float upy,
-         final float upx,
-         final float rightz,
-         final float righty,
-         final float forwardx,
+         final float xRight,
+         final float yForward,
+         final float zUp,
+         final float zForward,
+         final float yUp,
+         final float xUp,
+         final float zRight,
+         final float yRight,
+         final float xForward,
          final Quaternion target ) {
 
       final float w = 0.5f * Utils.sqrt(
-            Utils.max(0.0f, 1.0f + rightx + forwardy + upz));
+            Utils.max(0.0f, 1.0f + xRight + yForward + zUp));
 
       final float x = 0.5f * Utils.sqrt(
-            Utils.max(0.0f, 1.0f + rightx - forwardy - upz));
+            Utils.max(0.0f, 1.0f + xRight - yForward - zUp));
       final float y = 0.5f * Utils.sqrt(
-            Utils.max(0.0f, 1.0f - rightx + forwardy - upz));
+            Utils.max(0.0f, 1.0f - xRight + yForward - zUp));
       final float z = 0.5f * Utils.sqrt(
-            Utils.max(0.0f, 1.0f - rightx - forwardy + upz));
+            Utils.max(0.0f, 1.0f - xRight - yForward + zUp));
 
       return target.set(w,
-            Math.copySign(x, forwardz - upy),
-            Math.copySign(y, upx - rightz),
-            Math.copySign(z, righty - forwardx));
+            Math.copySign(x, zForward - yUp),
+            Math.copySign(y, xUp - zRight),
+            Math.copySign(z, yRight - xForward));
    }
 
    /**
@@ -1355,7 +1355,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
             right.x, forward.y, up.z,
             forward.z, up.y,
             up.x, right.z,
-            right.y, forward.x, target);
+            right.y, forward.x,
+            target);
    }
 
    /**

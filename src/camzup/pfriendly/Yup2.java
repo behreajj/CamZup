@@ -214,60 +214,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    }
 
    /**
-    * Draws a 2D mesh entity.
-    *
-    * @param entity
-    *           the mesh entity
-    */
-   @Deprecated
-   protected void shapeOld ( final MeshEntity2 entity ) {
-
-      this.pushMatrix();
-      this.transform(entity.transform, entity.transformOrder);
-
-      final List < Mesh2 > meshes = entity.meshes;
-      final Iterator < Mesh2 > meshItr = meshes.iterator();
-
-      final List < MaterialSolid > materials = entity.materials;
-      final boolean useMaterial = !materials.isEmpty();
-
-      while (meshItr.hasNext()) {
-         final Mesh2 mesh = meshItr.next();
-
-         if (useMaterial) {
-            final int index = mesh.materialIndex;
-            final MaterialSolid material = materials.get(index);
-            this.pushStyle();
-            this.material(material);
-         }
-
-         final int[][][] fs = mesh.faces;
-         final Vec2[] vs = mesh.coords;
-         final int flen0 = fs.length;
-
-         for (int i = 0; i < flen0; ++i) {
-            final int[][] f = fs[i];
-            final int flen1 = f.length;
-            this.beginShape(PConstants.POLYGON);
-            this.normal(0.0f, 0.0f, 1.0f);
-            for (int j = 0; j < flen1; ++j) {
-               final Vec2 v = vs[f[j][0]];
-               this.vertexImpl(
-                     v.x, v.y, 0.0f,
-                     this.textureU, this.textureV);
-            }
-            this.endShape(PConstants.CLOSE);
-         }
-
-         if (useMaterial) {
-            this.popStyle();
-         }
-      }
-
-      this.popMatrix();
-   }
-
-   /**
     * Draws an arc at a location from a start angle to a stop
     * angle.
     *
@@ -1221,6 +1167,14 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       }
    }
 
+   /**
+    * Draws a 2D mesh entity.
+    *
+    * @param entity
+    *           the mesh entity
+    * @param materials
+    *           the materials
+    */
    public void shape (
          final MeshEntity2 entity,
          final MaterialPImage[] materials ) {
@@ -1232,12 +1186,11 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       final Iterator < Mesh2 > meshItr = meshes.iterator();
       final Vec2 v = new Vec2();
       final Vec2 vt = new Vec2();
-      
-      while(meshItr.hasNext()) {
+
+      while (meshItr.hasNext()) {
          final Mesh2 mesh = meshItr.next();
          if (useMaterial) {
-            final int index = mesh.materialIndex;
-            MaterialPImage mat = materials[index];
+            final MaterialPImage mat = materials[mesh.materialIndex];
             this.pushStyle();
             this.drawMesh2(mesh, tr, mat, v, vt);
             this.popStyle();
@@ -1252,17 +1205,17 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     *
     * @param entity
     *           the mesh entity
+    * @param materials
+    *           the materials
     */
-   public void shape ( final MeshEntity2 entity ) {
+   public void shape (
+         final MeshEntity2 entity,
+         final MaterialSolid[] materials ) {
 
-      // TODO: Refactor...
-      
       final Transform2 tr = entity.transform;
       final List < Mesh2 > meshes = entity.meshes;
-      final List < MaterialSolid > materials = entity.materials;
-
       final Iterator < Mesh2 > meshItr = meshes.iterator();
-      final boolean useMaterial = !materials.isEmpty();
+      final boolean useMaterial = materials != null && materials.length > 0;
 
       final Vec2 v = new Vec2();
 
@@ -1270,10 +1223,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
          final Mesh2 mesh = meshItr.next();
 
          if (useMaterial) {
-            final int index = mesh.materialIndex;
-            final MaterialSolid material = materials.get(index);
             this.pushStyle();
-            this.material(material);
+            this.material(materials[mesh.materialIndex]);
          }
 
          this.drawMesh2(mesh, tr, null, v, null);

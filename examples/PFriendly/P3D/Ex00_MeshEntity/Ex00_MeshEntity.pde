@@ -54,6 +54,6 @@ void draw() {
   graphics3.origin(75.0, 1.0);
   for (MeshEntity3 me3 : entities) {
     me3.rotateBy(0.01, rotAxis);
-    graphics3.shape(me3);
+    graphics3.shape(me3, null);
   }
 }

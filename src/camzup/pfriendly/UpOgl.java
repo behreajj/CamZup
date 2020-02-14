@@ -356,19 +356,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
    /**
     * A helper function to draw meshes in a mesh entity.
-    *
-    * @param mesh
-    *           2D mesh
-    * @param tr
-    *           2D Transform
-    * @param v
-    *           temporary coordinate vector
-    * @param texture
-    *           texture
-    * @param uvtr
-    *           texture coordinate transform
-    * @param vt
-    *           temporary texture coordinate
     */
    @Experimental
    protected void drawMesh2 (
@@ -382,17 +369,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final Vec2[] vts = mesh.texCoords;
       final int[][][] fs = mesh.faces;
       final int flen0 = fs.length;
-      
+
       boolean useTexture = false;
       PImage texture = null;
       Transform2 uvtr = null;
-      if(mat != null) {
+      if (mat != null) {
          texture = mat.texture;
          uvtr = mat.transform;
          useTexture = true;
          this.tint(mat.tint);
       }
-      
+
       for (int i = 0; i < flen0; ++i) {
 
          final int[][] f = fs[i];
@@ -433,33 +420,39 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *           3D mesh
     * @param tr
     *           3D transform
+    * @param mat
+    *           the material
     * @param v
-    *           temporary coordinate vector
-    * @param vn
-    *           temporary normal vector
-    * @param texture
-    *           texture
-    * @param uvtr
-    *           texture coordinate transform
+    *           a temporary coordinate
     * @param vt
-    *           temporary texture coordinate
+    *           a temporary texture coordinate
+    * @param vn
+    *           a temporary normal
     */
    @Experimental
    protected void drawMesh3 (
          final Mesh3 mesh,
          final Transform3 tr,
+         final MaterialPImage mat,
          final Vec3 v,
-         final Vec3 vn,
-         final PImage texture,
-         final Transform2 uvtr,
-         final Vec2 vt ) {
+         final Vec2 vt,
+         final Vec3 vn ) {
 
       final Vec3[] vs = mesh.coords;
       final Vec3[] vns = mesh.normals;
       final Vec2[] vts = mesh.texCoords;
       final int[][][] fs = mesh.faces;
       final int flen0 = fs.length;
-      final boolean useTexture = texture != null;
+
+      boolean useTexture = false;
+      PImage texture = null;
+      Transform2 uvtr = null;
+      if (mat != null) {
+         texture = mat.texture;
+         uvtr = mat.transform;
+         useTexture = true;
+         this.tint(mat.tint);
+      }
 
       for (int i = 0; i < flen0; ++i) {
 

@@ -3,7 +3,6 @@ package camzup;
 import java.util.HashSet;
 
 import camzup.core.IUtils;
-import camzup.core.MaterialUv;
 import camzup.core.Mesh3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -273,7 +272,6 @@ public class CamZup {
       // Curve3.circle(a);
       // final Curve3 b = new Curve3(a);
       // System.out.println(b.toString());
-
    }
 
    /**
