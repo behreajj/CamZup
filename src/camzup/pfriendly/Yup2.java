@@ -1167,6 +1167,37 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       }
    }
 
+   public void shape ( final MeshEntity2 entity ) {
+
+      final Transform2 tr = entity.transform;
+      final List < Mesh2 > meshes = entity.meshes;
+      final Iterator < Mesh2 > meshItr = meshes.iterator();
+      final Vec2 v = new Vec2();
+
+      while (meshItr.hasNext()) {
+         this.drawMesh2(meshItr.next(), tr, v);
+      }
+   }
+
+   public void shape (
+         final MeshEntity2 entity,
+         final MaterialPImage material ) {
+
+      final Transform2 tr = entity.transform;
+      final List < Mesh2 > meshes = entity.meshes;
+
+      final Iterator < Mesh2 > meshItr = meshes.iterator();
+      final Vec2 v = new Vec2();
+      final Vec2 vt = new Vec2();
+
+      this.pushStyle();
+      while (meshItr.hasNext()) {
+         final Mesh2 mesh = meshItr.next();
+         this.drawMesh2(mesh, tr, material, v, vt);
+      }
+      this.popStyle();
+   }
+
    /**
     * Draws a 2D mesh entity.
     *
@@ -1181,23 +1212,43 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
 
       final Transform2 tr = entity.transform;
       final List < Mesh2 > meshes = entity.meshes;
-      final boolean useMaterial = materials != null && materials.length > 0;
-
       final Iterator < Mesh2 > meshItr = meshes.iterator();
       final Vec2 v = new Vec2();
       final Vec2 vt = new Vec2();
 
+      this.pushStyle();
       while (meshItr.hasNext()) {
          final Mesh2 mesh = meshItr.next();
-         if (useMaterial) {
-            final MaterialPImage mat = materials[mesh.materialIndex];
-            this.pushStyle();
-            this.drawMesh2(mesh, tr, mat, v, vt);
-            this.popStyle();
-         } else {
-            this.drawMesh2(mesh, tr, null, v, null);
-         }
+         final MaterialPImage mat = materials[mesh.materialIndex];
+         this.drawMesh2(mesh, tr, mat, v, vt);
       }
+      this.popStyle();
+   }
+
+   /**
+    * Draws a 2D mesh entity.
+    *
+    * @param entity
+    *           the mesh entity
+    * @param material
+    *           the material
+    */
+   public void shape (
+         final MeshEntity2 entity,
+         final MaterialSolid material ) {
+
+      final Transform2 tr = entity.transform;
+      final List < Mesh2 > meshes = entity.meshes;
+      final Iterator < Mesh2 > meshItr = meshes.iterator();
+      final Vec2 v = new Vec2();
+
+      this.pushStyle();
+      this.material(material);
+      while (meshItr.hasNext()) {
+         final Mesh2 mesh = meshItr.next();
+         this.drawMesh2(mesh, tr, v);
+      }
+      this.popStyle();
    }
 
    /**
@@ -1215,23 +1266,14 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       final Transform2 tr = entity.transform;
       final List < Mesh2 > meshes = entity.meshes;
       final Iterator < Mesh2 > meshItr = meshes.iterator();
-      final boolean useMaterial = materials != null && materials.length > 0;
-
       final Vec2 v = new Vec2();
 
       while (meshItr.hasNext()) {
          final Mesh2 mesh = meshItr.next();
-
-         if (useMaterial) {
-            this.pushStyle();
-            this.material(materials[mesh.materialIndex]);
-         }
-
-         this.drawMesh2(mesh, tr, null, v, null);
-
-         if (useMaterial) {
-            this.popStyle();
-         }
+         this.pushStyle();
+         this.material(materials[mesh.materialIndex]);
+         this.drawMesh2(mesh, tr, v);
+         this.popStyle();
       }
    }
 

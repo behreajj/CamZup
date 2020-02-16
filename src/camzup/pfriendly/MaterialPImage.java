@@ -1,24 +1,34 @@
 package camzup.pfriendly;
 
+import camzup.core.Chainable;
 import camzup.core.Color;
-import camzup.core.Experimental;
 import camzup.core.MaterialUv;
 import camzup.core.Transform2;
+import processing.core.PConstants;
 import processing.core.PImage;
 
 /**
  * A material which supports PImages as textures.
  */
-@Experimental
 public class MaterialPImage extends MaterialUv {
 
    /**
-    * The texture.
+    * The material's texture.
     */
-   public final PImage texture;
+   public PImage texture;
 
    /**
     * The default constructor.
+    */
+   public MaterialPImage () {
+
+      super("MaterialPImage");
+      this.texture = new PImage(128, 128, PConstants.ARGB, 1);
+      ZImage.fill(0xffffffff, this.texture);
+   }
+
+   /**
+    * Constructs a material from a texture.
     *
     * @param texture
     *           the texture
@@ -26,7 +36,7 @@ public class MaterialPImage extends MaterialUv {
    public MaterialPImage ( final PImage texture ) {
 
       super("MaterialPImage");
-      this.texture = texture;
+      this.setTexture(texture);
    }
 
    /**
@@ -48,7 +58,38 @@ public class MaterialPImage extends MaterialUv {
          final PImage texture ) {
 
       super(name, transform, tint);
-      this.texture = texture;
+      this.setTexture(texture);
+   }
+
+   /**
+    * Gets the material's texture.
+    *
+    * @return the texture
+    */
+   public PImage getTexture () {
+
+      return this.texture;
+   }
+
+   /**
+    * Sets the material's texture. If the supplied texture is
+    * null, then a new texture is created and filled with a
+    * color.
+    *
+    * @param texture
+    *           the texture
+    * @return this material
+    */
+   @Chainable
+   public MaterialPImage setTexture ( final PImage texture ) {
+
+      if (texture != null) {
+         this.texture = texture;
+      } else {
+         this.texture = new PImage(128, 128, PConstants.ARGB, 1);
+         ZImage.fill(0xffffffff, this.texture);
+      }
+      return this;
    }
 
    /**

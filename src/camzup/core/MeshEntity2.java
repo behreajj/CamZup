@@ -12,17 +12,11 @@ import java.util.List;
 public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
 
    /**
-    * The list of materials held by the entity.
-    */
-   // public final List < MaterialSolid > materials;
-
-   /**
     * The list of meshes held by the entity.
     */
    public final List < Mesh2 > meshes;
 
    {
-      // this.materials = new ArrayList <>();
       this.meshes = new ArrayList <>();
    }
 
@@ -31,7 +25,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
     */
    public MeshEntity2 () {
 
-      // TODO: Get rid of internal materials...
       super();
    }
 
@@ -63,11 +56,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
          final Mesh2... meshes ) {
 
       super(name, transform);
-      for (final Mesh2 mesh : meshes) {
-         if (mesh != null) {
-            this.meshes.add(mesh);
-         }
-      }
+      this.appendMeshes(meshes);
    }
 
    /**
@@ -88,40 +77,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    }
 
    /**
-    * Appends a material to this mesh entity.
-    *
-    * @param material
-    *           the material
-    * @return this mesh entity
-    */
-   // @Chainable
-   // public MeshEntity2 appendMaterial ( final MaterialSolid
-   // material ) {
-   //
-   // if (material != null) {
-   // this.materials.add(material);
-   // }
-   // return this;
-   // }
-
-   /**
-    * Appends a list of materials to this mesh entity.
-    *
-    * @param materials
-    *           the list of materials
-    * @return this mesh entity
-    */
-   // @Chainable
-   // public MeshEntity2 appendMaterials ( final
-   // MaterialSolid... materials ) {
-   //
-   // for (final MaterialSolid mat : materials) {
-   // this.appendMaterial(mat);
-   // }
-   // return this;
-   // }
-
-   /**
     * Appends a mesh to this mesh entity.
     *
     * @param mesh
@@ -133,11 +88,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
 
       if (mesh != null) {
          this.meshes.add(mesh);
-
-         // final int matLen = this.materials.size();
-         // if (mesh.materialIndex < 0 && matLen > 0) {
-         // mesh.materialIndex = matLen - 1;
-         // }
       }
       return this;
    }
@@ -157,20 +107,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
       }
       return this;
    }
-
-   /**
-    * Gets a material from this mesh entity.
-    *
-    * @param i
-    *           the index
-    *
-    * @return the material
-    */
-   // public MaterialSolid getMaterial ( final int i ) {
-   //
-   // return this.materials.get(Math.floorMod(i,
-   // this.materials.size()));
-   // }
 
    /**
     * Gets a mesh from this mesh entity.

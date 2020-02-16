@@ -355,7 +355,20 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * A helper function to draw meshes in a mesh entity.
+    * Draws a textured mesh as multiplied by a transform.
+    * Supplied temporary vectors hold model and texture
+    * coordinates.
+    *
+    * @param mesh
+    *           the mesh
+    * @param tr
+    *           the transform
+    * @param mat
+    *           the material
+    * @param v
+    *           a temporary vector
+    * @param vt
+    *           a temporary vector
     */
    @Experimental
    protected void drawMesh2 (
@@ -365,20 +378,14 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final Vec2 v,
          final Vec2 vt ) {
 
+      final PImage texture = mat.texture;
+      final Transform2 uvtr = mat.transform;
+      this.tint(mat.tint);
+
       final Vec2[] vs = mesh.coords;
       final Vec2[] vts = mesh.texCoords;
       final int[][][] fs = mesh.faces;
       final int flen0 = fs.length;
-
-      boolean useTexture = false;
-      PImage texture = null;
-      Transform2 uvtr = null;
-      if (mat != null) {
-         texture = mat.texture;
-         uvtr = mat.transform;
-         useTexture = true;
-         this.tint(mat.tint);
-      }
 
       for (int i = 0; i < flen0; ++i) {
 
@@ -387,47 +394,82 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          this.beginShape(PConstants.POLYGON);
          this.normal(0.0f, 0.0f, 1.0f);
-         if (useTexture) {
-            this.texture(texture);
-         }
+         this.texture(texture);
 
          for (int j = 0; j < flen1; ++j) {
 
             final int[] data = f[j];
             final int vIndex = data[0];
-            Transform2.mulPoint(tr, vs[vIndex], v);
+            final int vtIndex = data[1];
 
-            if (useTexture) {
-               final int vtIndex = data[1];
-               Transform2.mulTexCoord(uvtr, vts[vtIndex], vt);
-               this.vertexImpl(
-                     v.x, v.y, 0.0f,
-                     vt.x, vt.y);
-            } else {
-               this.vertexImpl(
-                     v.x, v.y, 0.0f,
-                     this.textureU, this.textureV);
-            }
+            Transform2.mulPoint(tr, vs[vIndex], v);
+            Transform2.mulTexCoord(uvtr, vts[vtIndex], vt);
+
+            this.vertexImpl(
+                  v.x, v.y, 0.0f,
+                  vt.x, vt.y);
+
          }
          this.endShape(PConstants.CLOSE);
       }
    }
 
    /**
-    * A helper function to draw meshes in a mesh entity.
+    * Draws a mesh as multiplied by a transform. The supplied
+    * temporary vector holds the transformed coordinate.
     *
     * @param mesh
-    *           3D mesh
+    *           the mesh
     * @param tr
-    *           3D transform
+    *           the transform
+    * @param v
+    *           a temporary vector
+    */
+   @Experimental
+   protected void drawMesh2 (
+         final Mesh2 mesh,
+         final Transform2 tr,
+         final Vec2 v ) {
+
+      final Vec2[] vs = mesh.coords;
+      final int[][][] fs = mesh.faces;
+      final int flen0 = fs.length;
+
+      for (int i = 0; i < flen0; ++i) {
+
+         final int[][] f = fs[i];
+         final int flen1 = f.length;
+
+         this.beginShape(PConstants.POLYGON);
+         this.normal(0.0f, 0.0f, 1.0f);
+
+         for (int j = 0; j < flen1; ++j) {
+            Transform2.mulPoint(tr, vs[f[j][0]], v);
+            this.vertexImpl(
+                  v.x, v.y, 0.0f,
+                  this.textureU, this.textureV);
+         }
+         this.endShape(PConstants.CLOSE);
+      }
+   }
+
+   /**
+    * Draws a textured mesh as multiplied by a transform.
+    * Supplied temporary vectors hold model, texture
+    * coordinates and normals.
+    *
+    * @param mesh
+    *           the mesh
+    * @param tr
+    *           the transform
     * @param mat
     *           the material
     * @param v
-    *           a temporary coordinate
+    *           a temporary vector
     * @param vt
-    *           a temporary texture coordinate
+    *           a temporary vector
     * @param vn
-    *           a temporary normal
+    *           a temporary vector
     */
    @Experimental
    protected void drawMesh3 (
@@ -438,30 +480,74 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final Vec2 vt,
          final Vec3 vn ) {
 
+      final PImage texture = mat.texture;
+      final Transform2 uvtr = mat.transform;
+      this.tint(mat.tint);
+
       final Vec3[] vs = mesh.coords;
       final Vec3[] vns = mesh.normals;
       final Vec2[] vts = mesh.texCoords;
       final int[][][] fs = mesh.faces;
       final int flen0 = fs.length;
 
-      boolean useTexture = false;
-      PImage texture = null;
-      Transform2 uvtr = null;
-      if (mat != null) {
-         texture = mat.texture;
-         uvtr = mat.transform;
-         useTexture = true;
-         this.tint(mat.tint);
+      for (int i = 0; i < flen0; ++i) {
+
+         final int[][] f = fs[i];
+         final int flen1 = f.length;
+         this.beginShape(PConstants.POLYGON);
+         this.texture(texture);
+
+         for (int j = 0; j < flen1; ++j) {
+
+            final int[] data = f[j];
+            final int vIndex = data[0];
+            final int vnIndex = data[2];
+            final int vtIndex = data[1];
+
+            Transform3.mulPoint(tr, vs[vIndex], v);
+            Transform2.mulTexCoord(uvtr, vts[vtIndex], vt);
+            Transform3.mulDir(tr, vns[vnIndex], vn);
+
+            this.normal(vn.x, vn.y, vn.z);
+            this.vertexImpl(
+                  v.x, v.y, v.z,
+                  vt.x, vt.y);
+         }
+         this.endShape(PConstants.CLOSE);
       }
+   }
+
+   /**
+    * Draws a mesh as multiplied by a transform. Supplied
+    * temporary vectors hold the transformed coordinate and
+    * normal.
+    *
+    * @param mesh
+    *           the mesh
+    * @param tr
+    *           the transform
+    * @param v
+    *           a temporary vector
+    * @param vn
+    *           a temporary vector
+    */
+   @Experimental
+   protected void drawMesh3 (
+         final Mesh3 mesh,
+         final Transform3 tr,
+         final Vec3 v,
+         final Vec3 vn ) {
+
+      final Vec3[] vs = mesh.coords;
+      final Vec3[] vns = mesh.normals;
+      final int[][][] fs = mesh.faces;
+      final int flen0 = fs.length;
 
       for (int i = 0; i < flen0; ++i) {
 
          final int[][] f = fs[i];
          final int flen1 = f.length;
          this.beginShape(PConstants.POLYGON);
-         if (useTexture) {
-            this.texture(texture);
-         }
 
          for (int j = 0; j < flen1; ++j) {
 
@@ -473,18 +559,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             Transform3.mulDir(tr, vns[vnIndex], vn);
 
             this.normal(vn.x, vn.y, vn.z);
-
-            if (useTexture) {
-               final int vtIndex = data[1];
-               Transform2.mulTexCoord(uvtr, vts[vtIndex], vt);
-               this.vertexImpl(
-                     v.x, v.y, v.z,
-                     vt.x, vt.y);
-            } else {
-               this.vertexImpl(
-                     v.x, v.y, v.z,
-                     this.textureU, this.textureV);
-            }
+            this.vertexImpl(
+                  v.x, v.y, v.z,
+                  this.textureU, this.textureV);
          }
          this.endShape(PConstants.CLOSE);
       }
@@ -2486,8 +2563,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void material ( final MaterialSolid material ) {
 
-      // TODO: Refactor..
-
       if (material.useStroke) {
          this.strokeWeight(material.strokeWeight);
          this.stroke(material.stroke);
@@ -2598,8 +2673,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void ortho () {
 
       /*
-       * CAUTION: Never use defCameraXXX values. They are not
-       * actual constants.
+       * Never use defCameraXXX values. They are not actual
+       * constants.
        */
 
       final float right = this.width < 128
@@ -2635,8 +2710,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float bottom, final float top ) {
 
       /*
-       * CAUTION: Never use defCameraXXX values. They are not
-       * actual constants.
+       * Never use defCameraXXX values. They are not actual
+       * constants.
        */
 
       float far = IUp.DEFAULT_FAR_CLIP;
@@ -2703,9 +2778,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void perspective ( final float fov ) {
 
-      final float aspect = this.width > 128 && this.height > 128
-            ? this.width / (float) this.height
-            : IUp.DEFAULT_ASPECT;
+      final float aspect = this.width < 128 && this.height < 128
+            ? IUp.DEFAULT_ASPECT
+            : this.width / (float) this.height;
 
       this.perspective(fov, aspect);
    }

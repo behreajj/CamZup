@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Yup2 graphics2;
+YupJ2 graphics2;
 
 MaterialSolid material = new MaterialSolid()
   .setStroke(true)
@@ -17,16 +17,15 @@ Transform2 transform = new Transform2()
 Mesh2 mesh = Mesh2.ring(0.5, 6, Mesh2.PolyType.NGON, new Mesh2());
 
 MeshEntity2 entity = new MeshEntity2("Example", transform)
-  .appendMesh(mesh)
-  .appendMaterial(material);
+  .appendMesh(mesh);
 
 void settings() {
-  size(720, 405, "camzup.pfriendly.Yup2");
+  size(720, 405, "camzup.pfriendly.YupJ2");
   smooth(8);
 }
 
 void setup() {
-  graphics2 = (Yup2)getGraphics();
+  graphics2 = (YupJ2)getGraphics();
 }
 
 void draw() {
@@ -34,7 +33,7 @@ void draw() {
   entity.rotateZ(0.02);
   graphics2.background();
   graphics2.origin();
-  graphics2.shape(entity);
+  graphics2.shape(entity, new MaterialSolid[] { material });
 }
 
 void mouseReleased() {

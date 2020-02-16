@@ -2,6 +2,7 @@ package camzup.pfriendly;
 
 import java.awt.Image;
 
+import camzup.core.Chainable;
 import camzup.core.Color;
 import camzup.core.Experimental;
 import camzup.core.Gradient;
@@ -102,19 +103,65 @@ public class ZImage extends PImage {
    /**
     * Recolors an image in-place with a color gradient. The
     * image's luminance is used as the factor
-    *
-    * @param target
-    *           the target image
+    * 
     * @param grd
     *           the color gradient
+    * @param target
+    *           the target image
     * @return the augmented image
     */
    @Experimental
    public static PImage falseColor (
-         final PImage target,
-         final Gradient grd ) {
+         final Gradient grd,
+         final PImage target ) {
 
-      // TODO: Needs testing.
+      target.loadPixels();
+      final int[] px = target.pixels;  
+      final int len = px.length;
+      for (int i = 0; i < len; ++i) {
+         grd.eval(
+               Color.luminance(px[i]),
+               ZImage.clr);
+         px[i] = Color.toHexInt(ZImage.clr);
+      }
+      target.updatePixels();
+      return target;
+   }
+
+   /**
+    * Fills an image in place with a color.
+    *
+    * @param target
+    *           the target image
+    * @param clr
+    *           the fill color
+    * @return the image
+    */
+   public static PImage fill (
+         final Color clr,
+         final PImage target ) {
+
+      return ZImage.fill(Color.toHexInt(clr), target);
+   }
+
+   /**
+    * Fills an image with two gradients, one for each axis of
+    * the image.
+    * 
+    * @param grdHor
+    *           the horizontal gradient
+    * @param grdVer
+    *           the vertical gradient
+    * 
+    * @param target
+    *           the target image
+    * @return the image
+    */
+   @Experimental
+   public static PImage fill (
+         final Gradient grdHor,
+         final Gradient grdVer,
+         final PImage target ) {
 
       target.loadPixels();
 
@@ -122,15 +169,66 @@ public class ZImage extends PImage {
       final int h = target.height;
       final int w = target.width;
 
-      for (int i = 0, y = 0; y < h; ++y) {
+      final float hInv = 1.0f / (h - 1.0f);
+      final float wInv = 1.0f / (w - 1.0f);
+
+      final Color a = new Color();
+      final Color b = new Color();
+      final Color c = new Color();
+
+      for (int i = 0, y = h - 1; y > - 1; --y) {
+         grdVer.eval(y * hInv, a);
+
+         // a.x *= a.x;
+         // a.y *= a.y;
+         // a.z *= a.z;
+         // a.w *= a.w;
+
          for (int x = 0; x < w; ++x, ++i) {
-            grd.eval(
-                  Color.luminance(px[i]),
-                  ZImage.clr);
-            px[i] = Color.toHexInt(ZImage.clr);
+            grdHor.eval(x * wInv, b);
+
+            // b.x *= b.x;
+            // b.y *= b.y;
+            // b.z *= b.z;
+            // b.w *= b.w;
+
+            // c.x = Utils.sqrt(0.5f * (a.x + b.x));
+            // c.y = Utils.sqrt(0.5f * (a.y + b.y));
+            // c.z = Utils.sqrt(0.5f * (a.z + b.z));
+            // c.w = Utils.sqrt(0.5f * (a.w + b.w));
+
+            c.x = a.x * b.x;
+            c.y = a.y * b.y;
+            c.z = a.z * b.z;
+            c.w = a.w * b.w;
+
+            px[i] = Color.toHexInt(c);
          }
       }
 
+      target.updatePixels();
+      return target;
+   }
+
+   /**
+    * Fills an image with a color in place.
+    * 
+    * @param clr
+    *           the fill color
+    * @param target
+    *           the target image
+    * @return the image
+    */
+   public static PImage fill (
+         final int clr,
+         final PImage target ) {
+
+      target.loadPixels();
+      final int[] px = target.pixels;
+      final int len = px.length;
+      for (int i = 0; i < len; ++i) {
+         px[i] = clr;
+      }
       target.updatePixels();
       return target;
    }
@@ -561,6 +659,31 @@ public class ZImage extends PImage {
          final int pixelDensity ) {
 
       super(width, height, format, pixelDensity);
+   }
+
+   /**
+    * Gets the parent applet of this PImage.
+    *
+    * @return the parent
+    */
+   PApplet getParent () {
+
+      return this.parent;
+   }
+
+   /**
+    * Sets the parent of this PImage. The parent reference is
+    * needed for the save function.
+    *
+    * @param parent
+    *           the PApplet
+    * @return this image
+    */
+   @Chainable
+   PImage setParent ( final PApplet parent ) {
+
+      this.parent = parent;
+      return this;
    }
 
    /**

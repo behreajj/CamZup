@@ -12,17 +12,11 @@ import java.util.List;
 public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
 
    /**
-    * The list of materials held by the entity.
-    */
-   public final List < MaterialSolid > materials;
-
-   /**
     * The list of meshes held by the entity.
     */
    public final List < Mesh3 > meshes;
 
    {
-      this.materials = new ArrayList <>();
       this.meshes = new ArrayList <>();
    }
 
@@ -83,38 +77,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
    }
 
    /**
-    * Appends a material to this mesh entity.
-    *
-    * @param material
-    *           the material
-    * @return this mesh entity
-    */
-   @Chainable
-   public MeshEntity3 appendMaterial ( final MaterialSolid material ) {
-
-      if (material != null) {
-         this.materials.add(material);
-      }
-      return this;
-   }
-
-   /**
-    * Appends a list of materials to this mesh entity.
-    *
-    * @param materials
-    *           the list of materials
-    * @return this mesh entity
-    */
-   @Chainable
-   public MeshEntity3 appendMaterials ( final MaterialSolid... materials ) {
-
-      for (final MaterialSolid mat : materials) {
-         this.appendMaterial(mat);
-      }
-      return this;
-   }
-
-   /**
     * Appends a mesh to this mesh entity.
     *
     * @param mesh
@@ -126,11 +88,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
 
       if (mesh != null) {
          this.meshes.add(mesh);
-
-         final int matLen = this.materials.size();
-         if (mesh.materialIndex < 0 && matLen > 0) {
-            mesh.materialIndex = matLen - 1;
-         }
       }
       return this;
    }
@@ -149,19 +106,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
          this.appendMesh(m);
       }
       return this;
-   }
-
-   /**
-    * Gets a material from this mesh entity.
-    *
-    * @param i
-    *           the index
-    *
-    * @return the material
-    */
-   public MaterialSolid getMaterial ( final int i ) {
-
-      return this.materials.get(Math.floorMod(i, this.materials.size()));
    }
 
    /**
@@ -201,7 +145,23 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
    @Experimental
    public String toBlenderCode () {
 
-      final float expn = 2.2f;
+      return this.toBlenderCode(null);
+   }
+
+   /**
+    * Returns a String of Python code targeted toward the
+    * Blender 2.8x API. This code is brittle and is used for
+    * internal testing purposes, i.e., to compare how curve
+    * geometry looks in Blender (the control) vs. in the
+    * library (the test).
+    *
+    * @param materials
+    *           the materials
+    * @return the string
+    */
+   @Experimental
+   public String toBlenderCode ( final MaterialSolid[] materials ) {
+
       final boolean useSmooth = true;
 
       final StringBuilder result = new StringBuilder(2048);
@@ -225,16 +185,17 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
 
       result.append("], \"materials\": [");
 
-      int matIndex = 0;
-      final int matLast = this.materials.size() - 1;
-      if (matLast > -1) {
-         final Iterator < MaterialSolid > matItr = this.materials.iterator();
-         while (matItr.hasNext()) {
-            result.append(matItr.next().toBlenderCode(expn));
-            if (matIndex < matLast) {
+      final float expn = 2.2f;
+      final boolean useMaterials = materials != null && materials.length > 0;
+      if (useMaterials) {
+         final int matLen = materials.length;
+         final int matLast = matLen - 1;
+
+         for (int i = 0; i < matLen; ++i) {
+            result.append(materials[i].toBlenderCode(expn));
+            if (i < matLast) {
                result.append(',').append(' ');
             }
-            matIndex++;
          }
       } else {
          result.append(MaterialSolid.defaultBlenderMaterial(expn));

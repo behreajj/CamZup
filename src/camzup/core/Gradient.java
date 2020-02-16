@@ -79,17 +79,25 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
-      keys.add(new ColorKey(0.0f, 1.0f, 0.0f, 0.0f)); /* Red */
-      keys.add(new ColorKey(0.16666667f, 1.0f, 1.0f, 0.0f)); /* Yellow */
-      keys.add(new ColorKey(0.33333333f, 0.0f, 1.0f, 0.0f)); /* Green */
-      keys.add(new ColorKey(0.5f, 0.0f, 1.0f, 1.0f)); /* Cyan */
-      keys.add(new ColorKey(0.66666667f, 0.0f, 0.0f, 1.0f)); /* Blue */
-      keys.add(new ColorKey(0.83333333f, 1.0f, 0.0f, 1.0f)); /* Magenta */
-      keys.add(new ColorKey(1.0f, 1.0f, 0.0f, 0.0f)); /* Red */
+      keys.add(new ColorKey(0.0f, 1.0f, 0.0f, 0.0f));
+      keys.add(new ColorKey(0.16666667f, 1.0f, 1.0f, 0.0f));
+      keys.add(new ColorKey(0.33333333f, 0.0f, 1.0f, 0.0f));
+      keys.add(new ColorKey(0.5f, 0.0f, 1.0f, 1.0f));
+      keys.add(new ColorKey(0.66666667f, 0.0f, 0.0f, 1.0f));
+      keys.add(new ColorKey(0.83333333f, 1.0f, 0.0f, 1.0f));
+      keys.add(new ColorKey(1.0f, 1.0f, 0.0f, 0.0f));
 
       return target;
    }
 
+   /**
+    * Returns a gradient simulating the red-yellow-green color
+    * wheel. Red is repeated so the gradient is periodic.
+    *
+    * @param target
+    *           the output gradient
+    * @return the gradient
+    */
    public static Gradient paletteRyb ( final Gradient target ) {
 
       final TreeSet < ColorKey > keys = target.keys;
@@ -98,17 +106,13 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
       keys.add(new ColorKey(0.0f, 1.0f, 0.0f, 0.0f));
       keys.add(new ColorKey(0.0833333f, 1.0f, 0.25f, 0.0f));
       keys.add(new ColorKey(0.1666667f, 1.0f, 0.5f, 0.0f));
-      
       keys.add(new ColorKey(0.25f, 1.0f, 0.75f, 0.0f));
       keys.add(new ColorKey(0.3333333f, 1.0f, 1.0f, 0.0f));
       keys.add(new ColorKey(0.4166667f, 0.5058824f, 0.8313726f, 0.1019608f));
-      
       keys.add(new ColorKey(0.5f, 0.0f, 0.6627451f, 0.2f));
-      
       keys.add(new ColorKey(0.5833333f, 0.0823529f, 0.517647f, 0.4f));
-      keys.add(new ColorKey(0.6666667f, 0.1647059f, 0.3764706f, 0.6f));
+      keys.add(new ColorKey(0.6666667f, 0.1647059f, 0.376471f, 0.6f));
       keys.add(new ColorKey(0.75f, 0.3333333f, 0.1882353f, 0.5529412f));
-      
       keys.add(new ColorKey(0.8333333f, 0.5f, 0.0f, 0.5f));
       keys.add(new ColorKey(0.9166667f, 0.75f, 0.0f, 0.25f));
       keys.add(new ColorKey(1.0f, 1.0f, 0.0f, 0.0f));
@@ -436,6 +440,18 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
    }
 
    /**
+    * Creates a gradient from a list of scalars; the resultant
+    * keys are evenly distributed over the range [0.0, 1.0].
+    *
+    * @param scalars
+    *           the scalars
+    */
+   public Gradient ( final float... scalars ) {
+
+      this.appendAll(scalars);
+   }
+
+   /**
     * Constructs a copy of a source gradient.
     *
     * @param source
@@ -578,6 +594,24 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
    }
 
    /**
+    * Appends a scalar at step 1.0 . Shifts existing keys to
+    * the left.
+    *
+    * @param scalar
+    *           the scalar
+    * @return this gradient
+    * @see Gradient#shiftKeysLeft(int)
+    * @see TreeSet#add(Object)
+    */
+   @Chainable
+   public Gradient append ( final float scalar ) {
+
+      this.shiftKeysLeft(1);
+      this.keys.add(new ColorKey(1.0f, scalar, scalar, scalar, scalar));
+      return this;
+   }
+
+   /**
     * Appends a color at step 1.0 . Shifts existing keys to the
     * left.
     *
@@ -630,7 +664,10 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
       final int oldLen = this.keys.size();
       final float denom = 1.0f / (oldLen + len - 1.0f);
       for (int i = 0; i < len; ++i) {
-         this.keys.add(new ColorKey((oldLen + i) * denom, colors[i]));
+         this.keys.add(
+               new ColorKey(
+                     (oldLen + i) * denom,
+                     colors[i]));
       }
       return this;
    }
@@ -659,6 +696,34 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
    }
 
    /**
+    * Appends a list of scalars to this gradient. Shifts
+    * existing keys to the left.
+    *
+    * @param scalars
+    *           the scalars
+    * @return the gradient
+    * @see Gradient#shiftKeysLeft(int)
+    * @see TreeSet#size()
+    * @see TreeSet#add(Object)
+    */
+   @Chainable
+   public Gradient appendAll ( final float... scalars ) {
+
+      final int len = scalars.length;
+      this.shiftKeysLeft(len);
+      final int oldLen = this.keys.size();
+      final float denom = 1.0f / (oldLen + len - 1.0f);
+      for (int i = 0; i < len; ++i) {
+         final float scalar = scalars[i];
+         this.keys.add(
+               new ColorKey(
+                     (oldLen + i) * denom,
+                     scalar, scalar, scalar, scalar));
+      }
+      return this;
+   }
+
+   /**
     * Appends a list of color integers to this gradient. Shifts
     * existing keys to the left.
     *
@@ -677,7 +742,10 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
       final int oldLen = this.keys.size();
       final float denom = 1.0f / (oldLen + len - 1.0f);
       for (int i = 0; i < len; ++i) {
-         this.keys.add(new ColorKey((oldLen + i) * denom, colors[i]));
+         this.keys.add(
+               new ColorKey(
+                     (oldLen + i) * denom,
+                     colors[i]));
       }
       return this;
    }
@@ -701,7 +769,10 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
       final int oldLen = this.keys.size();
       final float denom = 1.0f / (oldLen + len - 1.0f);
       for (int i = 0; i < len; ++i) {
-         this.keys.add(new ColorKey((oldLen + i) * denom, colors[i]));
+         this.keys.add(
+               new ColorKey(
+                     (oldLen + i) * denom,
+                     colors[i]));
       }
       return this;
    }
@@ -1087,7 +1158,6 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
     *           a temporary list
     * @return the gradient
     */
-   @Experimental
    public Gradient sort ( final List < Color > clrList ) {
 
       return this.sort(clrList, null);
@@ -1103,12 +1173,9 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
     *           the sorting function
     * @return the gradient
     */
-   @Experimental
    public Gradient sort (
          final List < Color > clrList,
          final Comparator < Color > sorter ) {
-
-      // TODO: Needs testing.
 
       clrList.clear();
       int j = 0;

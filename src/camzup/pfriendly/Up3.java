@@ -1060,6 +1060,20 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       }
    }
 
+   public void shape ( final MeshEntity3 entity ) {
+
+      final Transform3 tr = entity.transform;
+      final List < Mesh3 > meshes = entity.meshes;
+      final Iterator < Mesh3 > meshItr = meshes.iterator();
+
+      final Vec3 v = new Vec3();
+      final Vec3 vn = new Vec3();
+
+      while (meshItr.hasNext()) {
+         this.drawMesh3(meshItr.next(), tr, v, vn);
+      }
+   }
+
    /**
     * Draws a 3D mesh entity.
     *
@@ -1075,7 +1089,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final Transform3 tr = entity.transform;
       final List < Mesh3 > meshes = entity.meshes;
       final Iterator < Mesh3 > meshItr = meshes.iterator();
-      final boolean useMaterial = materials != null && materials.length > 0;
 
       final Vec3 v = new Vec3();
       final Vec2 vt = new Vec2();
@@ -1083,14 +1096,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
       while (meshItr.hasNext()) {
          final Mesh3 mesh = meshItr.next();
-         if (useMaterial) {
-            final MaterialPImage mat = materials[mesh.materialIndex];
-            this.pushStyle();
-            this.drawMesh3(mesh, tr, mat, v, vt, vn);
-            this.popStyle();
-         } else {
-            this.drawMesh3(mesh, tr, null, v, null, vn);
-         }
+         final MaterialPImage mat = materials[mesh.materialIndex];
+         this.pushStyle();
+         this.drawMesh3(mesh, tr, mat, v, vt, vn);
+         this.popStyle();
       }
    }
 
@@ -1109,24 +1118,16 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final Transform3 tr = entity.transform;
       final List < Mesh3 > meshes = entity.meshes;
       final Iterator < Mesh3 > meshItr = meshes.iterator();
-      final boolean useMaterial = materials != null && materials.length > 0;
 
       final Vec3 v = new Vec3();
       final Vec3 vn = new Vec3();
 
       while (meshItr.hasNext()) {
          final Mesh3 mesh = meshItr.next();
-
-         if (useMaterial) {
-            this.pushStyle();
-            this.material(materials[mesh.materialIndex]);
-         }
-
-         this.drawMesh3(mesh, tr, null, v, null, vn);
-
-         if (useMaterial) {
-            this.popStyle();
-         }
+         this.pushStyle();
+         this.material(materials[mesh.materialIndex]);
+         this.drawMesh3(mesh, tr, v, vn);
+         this.popStyle();
       }
    }
 

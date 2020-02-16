@@ -1481,17 +1481,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    /**
     * Draws a circle at a location
     *
-    * @param a
+    * @param coord
     *           the coordinate
-    * @param b
+    * @param size
     *           the size
     */
    @Override
    public void circle (
-         final Vec2 a,
-         final float b ) {
+         final Vec2 coord,
+         final float size ) {
 
-      this.ellipse(a.x, a.y, b, b);
+      this.ellipse(coord.x, coord.y, size, size);
    }
 
    /**
@@ -3591,7 +3591,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          }
       }
    }
-
+   
    /**
     * Draws a mesh entity.
     *
@@ -3603,6 +3603,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    public void shape (
          final MeshEntity2 entity,
          final MaterialSolid[] materials ) {
+
+      // TODO: Version with just one material solid.
 
       final Transform2 tr = entity.transform;
       final List < Mesh2 > meshes = entity.meshes;
@@ -3647,6 +3649,44 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
          if (useMaterial) {
             this.popStyle();
+         }
+      }
+   }
+   
+   public void shape (
+         final MeshEntity2 entity) {
+
+      final Transform2 tr = entity.transform;
+      final List < Mesh2 > meshes = entity.meshes;
+      final Iterator < Mesh2 > meshItr = meshes.iterator();
+      
+      final Vec2 v = new Vec2();
+
+      while (meshItr.hasNext()) {
+         final Mesh2 mesh = meshItr.next();
+
+         final Vec2[] vs = mesh.coords;
+         final int[][][] fs = mesh.faces;
+         final int flen0 = fs.length;
+
+         for (int i = 0; i < flen0; ++i) {
+            final int[][] f = fs[i];
+            final int flen1 = f.length;
+
+            Transform2.mulPoint(tr, vs[f[0][0]], v);
+
+            this.gp.reset();
+            this.gp.moveTo(v.x, v.y);
+
+            for (int j = 1; j < flen1; ++j) {
+
+               Transform2.mulPoint(tr, vs[f[j][0]], v);
+               this.gp.lineTo(v.x, v.y);
+
+            }
+
+            this.gp.closePath();
+            this.drawShapeSolid(this.gp);
          }
       }
    }
