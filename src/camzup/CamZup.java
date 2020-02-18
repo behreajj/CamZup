@@ -255,6 +255,49 @@ public class CamZup {
       return sb.toString();
    }
 
+   public static Vec3[][] gridSpherical (
+         final int longitudes,
+         final int latitudes,
+         final float radius,
+         final boolean includePoles ) {
+
+      final int vlons = longitudes < 3 ? 3 : longitudes;
+      final int vlats = latitudes < 3 ? 3 : latitudes;
+      final int latLen = includePoles ? vlats + 2 : vlats;
+      final Vec3[][] result = new Vec3[latLen][];
+
+      if (includePoles) {
+         result[0] = new Vec3[] { new Vec3(0.0f, 0.0f, radius) };
+         result[latLen - 1] = new Vec3[] { new Vec3(0.0f, 0.0f, -radius) };
+      }
+
+      final float toPhi = 0.5f / (vlats + 1.0f);
+      final float toTheta = 1.0f / (vlons);
+
+      for (int i = 0, h = 1; i < vlats; ++i, ++h) {
+
+         final float phi = (h * toPhi) - 0.25f;
+         final float rhoCosPhi = radius * Utils.scNorm(phi);
+         final float rhoSinPhi = radius * Utils.scNorm(phi - 0.25f);
+
+         final Vec3[] lat = result[includePoles ? h : i] = new Vec3[vlons];
+
+         for (int j = 0; j < vlons; ++j) {
+
+            final float theta = j * toTheta;
+            final float cosTheta = Utils.scNorm(theta);
+            final float sinTheta = Utils.scNorm(theta - 0.25f);
+
+            lat[j] = new Vec3(
+                  rhoCosPhi * cosTheta,
+                  rhoCosPhi * sinTheta,
+                  -rhoSinPhi);
+         }
+      }
+
+      return result;
+   }
+
    public static void main ( final String[] args ) {
 
       // MeshEntity3 me = new MeshEntity3();
@@ -272,6 +315,10 @@ public class CamZup {
       // Curve3.circle(a);
       // final Curve3 b = new Curve3(a);
       // System.out.println(b.toString());
+
+      // Vec3[][][] grid = Vec3.gridSpherical(3, 3, 3, 0.5f, 1.0f,
+      // false);
+      // PApplet.printArray(Vec3.flat(grid));
    }
 
    /**

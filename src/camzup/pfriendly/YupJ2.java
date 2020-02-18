@@ -3591,7 +3591,97 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          }
       }
    }
-   
+
+   public void shape (
+         final MeshEntity2 entity ) {
+
+      final Transform2 tr = entity.transform;
+      final List < Mesh2 > meshes = entity.meshes;
+      final Iterator < Mesh2 > meshItr = meshes.iterator();
+
+      final Vec2 v = new Vec2();
+
+      while (meshItr.hasNext()) {
+         final Mesh2 mesh = meshItr.next();
+
+         final Vec2[] vs = mesh.coords;
+         final int[][][] fs = mesh.faces;
+         final int flen0 = fs.length;
+
+         for (int i = 0; i < flen0; ++i) {
+            final int[][] f = fs[i];
+            final int flen1 = f.length;
+
+            Transform2.mulPoint(tr, vs[f[0][0]], v);
+
+            this.gp.reset();
+            this.gp.moveTo(v.x, v.y);
+
+            for (int j = 1; j < flen1; ++j) {
+
+               Transform2.mulPoint(tr, vs[f[j][0]], v);
+               this.gp.lineTo(v.x, v.y);
+
+            }
+
+            this.gp.closePath();
+            this.drawShapeSolid(this.gp);
+         }
+      }
+   }
+
+   /**
+    * Draws a mesh entity.
+    *
+    * @param entity
+    *           the mesh entity
+    * @param material
+    *           the material
+    */
+   public void shape (
+         final MeshEntity2 entity,
+         final MaterialSolid material ) {
+
+      this.pushStyle();
+      this.material(material);
+
+      final Transform2 tr = entity.transform;
+      final List < Mesh2 > meshes = entity.meshes;
+      final Iterator < Mesh2 > meshItr = meshes.iterator();
+
+      final Vec2 v = new Vec2();
+
+      while (meshItr.hasNext()) {
+         final Mesh2 mesh = meshItr.next();
+
+         final Vec2[] vs = mesh.coords;
+         final int[][][] fs = mesh.faces;
+         final int flen0 = fs.length;
+
+         for (int i = 0; i < flen0; ++i) {
+            final int[][] f = fs[i];
+            final int flen1 = f.length;
+
+            Transform2.mulPoint(tr, vs[f[0][0]], v);
+
+            this.gp.reset();
+            this.gp.moveTo(v.x, v.y);
+
+            for (int j = 1; j < flen1; ++j) {
+
+               Transform2.mulPoint(tr, vs[f[j][0]], v);
+               this.gp.lineTo(v.x, v.y);
+
+            }
+
+            this.gp.closePath();
+            this.drawShapeSolid(this.gp);
+         }
+      }
+
+      this.popStyle();
+   }
+
    /**
     * Draws a mesh entity.
     *
@@ -3604,24 +3694,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
          final MeshEntity2 entity,
          final MaterialSolid[] materials ) {
 
-      // TODO: Version with just one material solid.
-
       final Transform2 tr = entity.transform;
       final List < Mesh2 > meshes = entity.meshes;
       final Iterator < Mesh2 > meshItr = meshes.iterator();
-      final boolean useMaterial = materials != null && materials.length > 0;
 
       final Vec2 v = new Vec2();
 
       while (meshItr.hasNext()) {
          final Mesh2 mesh = meshItr.next();
 
-         if (useMaterial) {
-            final int index = mesh.materialIndex;
-            final MaterialSolid material = materials[index];
-            this.pushStyle();
-            this.material(material);
-         }
+         this.pushStyle();
+         this.material(materials[mesh.materialIndex]);
 
          final Vec2[] vs = mesh.coords;
          final int[][][] fs = mesh.faces;
@@ -3647,47 +3730,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
             this.drawShapeSolid(this.gp);
          }
 
-         if (useMaterial) {
-            this.popStyle();
-         }
-      }
-   }
-   
-   public void shape (
-         final MeshEntity2 entity) {
-
-      final Transform2 tr = entity.transform;
-      final List < Mesh2 > meshes = entity.meshes;
-      final Iterator < Mesh2 > meshItr = meshes.iterator();
-      
-      final Vec2 v = new Vec2();
-
-      while (meshItr.hasNext()) {
-         final Mesh2 mesh = meshItr.next();
-
-         final Vec2[] vs = mesh.coords;
-         final int[][][] fs = mesh.faces;
-         final int flen0 = fs.length;
-
-         for (int i = 0; i < flen0; ++i) {
-            final int[][] f = fs[i];
-            final int flen1 = f.length;
-
-            Transform2.mulPoint(tr, vs[f[0][0]], v);
-
-            this.gp.reset();
-            this.gp.moveTo(v.x, v.y);
-
-            for (int j = 1; j < flen1; ++j) {
-
-               Transform2.mulPoint(tr, vs[f[j][0]], v);
-               this.gp.lineTo(v.x, v.y);
-
-            }
-
-            this.gp.closePath();
-            this.drawShapeSolid(this.gp);
-         }
+         this.popStyle();
       }
    }
 

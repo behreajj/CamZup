@@ -181,7 +181,7 @@ public class MaterialSolid extends Material {
          final boolean useFill,
          final boolean useStroke ) {
 
-      this("Material",
+      this(Color.toHexString(fill),
             fill, stroke, strokeWeight,
             useFill, useStroke);
    }

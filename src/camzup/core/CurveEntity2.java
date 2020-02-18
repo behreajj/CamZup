@@ -31,6 +31,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
     */
    public CurveEntity2 () {
 
+      // TODO: Remove materials.
       super();
    }
 

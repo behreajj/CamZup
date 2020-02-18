@@ -1,5 +1,6 @@
 package camzup.core;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -1394,6 +1395,54 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
+    * Flattens a two dimensional array of vectors to a one
+    * dimensional array.
+    *
+    * @param arr
+    *           the 2D array
+    * @return the 1D array
+    */
+   public static Vec3[] flat ( final Vec3[][] arr ) {
+
+      final ArrayList < Vec3 > list = new ArrayList <>();
+      final int len = arr.length;
+      for (int i = 0; i < len; ++i) {
+         final Vec3[] arr1 = arr[i];
+         final int len1 = arr1.length;
+         for (int j = 0; j < len1; ++j) {
+            list.add(arr1[j]);
+         }
+      }
+      return list.toArray(new Vec3[list.size()]);
+   }
+
+   /**
+    * Flattens a three dimensional array of vectors to a one
+    * dimensional array.
+    *
+    * @param arr
+    *           the 3D array
+    * @return the 1D array
+    */
+   public static Vec3[] flat ( final Vec3[][][] arr ) {
+
+      final ArrayList < Vec3 > list = new ArrayList <>();
+      final int len = arr.length;
+      for (int i = 0; i < len; ++i) {
+         final Vec3[][] arr1 = arr[i];
+         final int len1 = arr1.length;
+         for (int j = 0; j < len1; ++j) {
+            final Vec3[] arr2 = arr1[j];
+            final int len2 = arr2.length;
+            for (int k = 0; k < len2; ++k) {
+               list.add(arr2[k]);
+            }
+         }
+      }
+      return list.toArray(new Vec3[list.size()]);
+   }
+
+   /**
     * Floors each component of the vector.
     *
     * @param v
@@ -1664,9 +1713,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final Vec3 lowerBound,
          final Vec3 upperBound ) {
 
-      final int lval = layers < 3 ? 3 : layers;
-      final int rval = rows < 3 ? 3 : rows;
-      final int cval = cols < 3 ? 3 : cols;
+      final int lval = layers < 2 ? 2 : layers;
+      final int rval = rows < 2 ? 2 : rows;
+      final int cval = cols < 2 ? 2 : cols;
 
       final float hToStep = 1.0f / (lval - 1.0f);
       final float iToStep = 1.0f / (rval - 1.0f);
@@ -1709,6 +1758,102 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
             }
          }
       }
+      return result;
+   }
+
+   public static Vec3[][][] gridSpherical (
+         final int longitudes,
+         final int latitudes ) {
+
+      return gridSpherical(longitudes, latitudes, true);
+   }
+
+   public static Vec3[][][] gridSpherical (
+         final int longitudes,
+         final int latitudes,
+         final boolean includePoles ) {
+
+      return gridSpherical(
+            longitudes,
+            latitudes,
+            1, 0.5f, 0.5f,
+            includePoles);
+   }
+
+   public static Vec3[][][] gridSpherical (
+         final int longitudes,
+         final int latitudes,
+         final int layers,
+         final float radiusMin,
+         final float radiusMax ) {
+
+      return gridSpherical(
+            longitudes,
+            latitudes,
+            layers,
+            radiusMin,
+            radiusMax,
+            true);
+   }
+
+   public static Vec3[][][] gridSpherical (
+         final int longitudes,
+         final int latitudes,
+         final int layers,
+         final float radiusMin,
+         final float radiusMax,
+         final boolean includePoles ) {
+
+      // TODO: Support multiple layers of radius...
+
+      final int vlons = longitudes < 3 ? 3 : longitudes;
+      final int vlats = latitudes < 3 ? 3 : latitudes;
+      final int vlayers = layers < 1 ? 1 : layers;
+
+      final boolean oneLayer = vlayers == 1;
+      final float vrMax = Utils.max(Utils.EPSILON, radiusMin, radiusMax);
+      final float vrMin = oneLayer ? vrMax
+            : Utils.max(Utils.EPSILON, Utils.min(radiusMin, radiusMax));
+
+      final int latLen = includePoles ? vlats + 2 : vlats;
+      final Vec3[][][] result = new Vec3[vlayers][][];
+
+      final float toPrc = oneLayer ? 1.0f : 1.0f / (vlayers - 1.0f);
+      final float toPhi = 0.5f / (vlats + 1.0f);
+      final float toTheta = 1.0f / (vlons);
+
+      for (int h = 0; h < vlayers; ++h) {
+         final Vec3[][] layer = result[h] = new Vec3[latLen][];
+         final float prc = h * toPrc;
+         final float radius = Utils.lerpUnclamped(vrMin, vrMax, prc);
+
+         if (includePoles) {
+            layer[0] = new Vec3[] { new Vec3(0.0f, 0.0f, radius) };
+            layer[latLen - 1] = new Vec3[] { new Vec3(0.0f, 0.0f, -radius) };
+         }
+
+         for (int i = 0, k = 1; i < vlats; ++i, ++k) {
+
+            final float phi = (k * toPhi) - 0.25f;
+            final float rhoCosPhi = radius * Utils.scNorm(phi);
+            final float rhoSinPhi = radius * Utils.scNorm(phi - 0.25f);
+
+            final Vec3[] lat = layer[includePoles ? k : i] = new Vec3[vlons];
+
+            for (int j = 0; j < vlons; ++j) {
+
+               final float theta = j * toTheta;
+               final float cosTheta = Utils.scNorm(theta);
+               final float sinTheta = Utils.scNorm(theta - 0.25f);
+
+               lat[j] = new Vec3(
+                     rhoCosPhi * cosTheta,
+                     rhoCosPhi * sinTheta,
+                     -rhoSinPhi);
+            }
+         }
+      }
+
       return result;
    }
 

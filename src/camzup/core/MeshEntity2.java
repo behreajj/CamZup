@@ -186,6 +186,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
       final float expn = 2.2f;
       final boolean useMaterials = materials != null && materials.length > 0;
       if (useMaterials) {
+         // TODO: No longer works appropriately...
          final int matLen = materials.length;
          final int matLast = matLen - 1;
 

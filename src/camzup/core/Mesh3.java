@@ -1050,11 +1050,15 @@ public class Mesh3 extends Mesh {
       // TODO: This still creates a seam, but it is better by far
       // than the p5 version...
 
-      final int vlats = latitudes < 3 ? 3 : latitudes;
+      /*
+       * Longitude corresponds to azimuth; latitude, to
+       * inclination.
+       */
       final int vlons = longitudes < 3 ? 3 : longitudes;
+      final int vlats = latitudes < 3 ? 3 : latitudes;
 
-      final int lats1 = vlats + 1;
       final int lons1 = vlons + 1;
+      final int lats1 = vlats + 1;
 
       /*
        * The additional two comes from the North and South poles.

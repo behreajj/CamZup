@@ -101,8 +101,8 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     * @param color
     *           the color
     */
-   public ColorKey ( 
-         final float step, 
+   public ColorKey (
+         final float step,
          final Color color ) {
 
       this.set(step, color);

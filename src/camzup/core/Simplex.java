@@ -9,12 +9,12 @@ package camzup.core;
  * "http://burtleburtle.net/bob/c/lookup3.c">http://burtleburtle.net/bob/c/lookup3.c</a>.
  * Flow implementations written with reference to Simon
  * Geilfus's <a href=
- * "https://github.com/simongeilfus/SimplexNoise">implementation</a>,
+ * "https://github.com/simongeilfus/SimplexNoise">library</a>,
  * which in turn references the work of
  * <a href="https://www.cs.ubc.ca/~rbridson/">Robert
  * Bridson</a>.<br>
  * <br>
- * This implementation uses the following variations:
+ * This class uses the following variations:
  * <ul>
  * <li>stores stretch constants multiplied by their
  * coefficients in constants (e.g., G2_2);</li>

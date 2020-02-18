@@ -1,5 +1,6 @@
 package camzup.core;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -1252,6 +1253,28 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
+    * Flattens a two dimensional array of vectors to a one
+    * dimensional array.
+    *
+    * @param arr
+    *           the 2D array
+    * @return the 1D array
+    */
+   public static Vec2[] flat ( final Vec2[][] arr ) {
+
+      final ArrayList < Vec2 > list = new ArrayList <>();
+      final int len = arr.length;
+      for (int i = 0; i < len; ++i) {
+         final Vec2[] arr1 = arr[i];
+         final int len1 = arr1.length;
+         for (int j = 0; j < len1; ++j) {
+            list.add(arr1[j]);
+         }
+      }
+      return list.toArray(new Vec2[list.size()]);
+   }
+
+   /**
     * Floors each component of the vector.
     *
     * @param v
@@ -1475,8 +1498,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final Vec2 lowerBound,
          final Vec2 upperBound ) {
 
-      final int rval = rows < 3 ? 3 : rows;
-      final int cval = cols < 3 ? 3 : cols;
+      final int rval = rows < 2 ? 2 : rows;
+      final int cval = cols < 2 ? 2 : cols;
 
       final float iToStep = 1.0f / (rval - 1.0f);
       final float jToStep = 1.0f / (cval - 1.0f);

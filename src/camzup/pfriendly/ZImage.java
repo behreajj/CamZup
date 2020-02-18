@@ -103,7 +103,7 @@ public class ZImage extends PImage {
    /**
     * Recolors an image in-place with a color gradient. The
     * image's luminance is used as the factor
-    * 
+    *
     * @param grd
     *           the color gradient
     * @param target
@@ -116,7 +116,7 @@ public class ZImage extends PImage {
          final PImage target ) {
 
       target.loadPixels();
-      final int[] px = target.pixels;  
+      final int[] px = target.pixels;
       final int len = px.length;
       for (int i = 0; i < len; ++i) {
          grd.eval(
@@ -147,12 +147,12 @@ public class ZImage extends PImage {
    /**
     * Fills an image with two gradients, one for each axis of
     * the image.
-    * 
+    *
     * @param grdHor
     *           the horizontal gradient
     * @param grdVer
     *           the vertical gradient
-    * 
+    *
     * @param target
     *           the target image
     * @return the image
@@ -176,7 +176,7 @@ public class ZImage extends PImage {
       final Color b = new Color();
       final Color c = new Color();
 
-      for (int i = 0, y = h - 1; y > - 1; --y) {
+      for (int i = 0, y = h - 1; y > -1; --y) {
          grdVer.eval(y * hInv, a);
 
          // a.x *= a.x;
@@ -212,7 +212,7 @@ public class ZImage extends PImage {
 
    /**
     * Fills an image with a color in place.
-    * 
+    *
     * @param clr
     *           the fill color
     * @param target
