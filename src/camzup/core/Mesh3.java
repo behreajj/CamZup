@@ -419,6 +419,141 @@ public class Mesh3 extends Mesh {
    }
 
    /**
+    * Creates a UV sphere.
+    *
+    * @param longitudes
+    *           the longitudes
+    * @param latitudes
+    *           the latitudes
+    * @param target
+    *           the output mesh
+    * @return the sphere
+    */
+   @Deprecated
+   protected static Mesh3 sphereOld (
+         final int longitudes,
+         final int latitudes,
+         final Mesh3 target ) {
+
+      /*
+       * Longitude corresponds to azimuth; latitude, to
+       * inclination.
+       */
+      final int vlons = longitudes < 3 ? 3 : longitudes;
+      final int vlats = latitudes < 3 ? 3 : latitudes;
+
+      final int lons1 = vlons + 1;
+      final int lats1 = vlats + 1;
+
+      /*
+       * The additional two comes from the North and South poles.
+       */
+      final int len = lons1 * vlats + 2;
+
+      final Vec3[] coords = new Vec3[len];
+      final Vec2[] texCoords = new Vec2[len];
+      final Vec3[] normals = new Vec3[len];
+
+      final float toU = 1.0f / vlons;
+      final float toV = 1.0f / lats1;
+
+      final float toTheta = 1.0f / vlons;
+      final float toPhi = 0.5f / lats1;
+
+      /*
+       * Set South pole. This is vertex 0, so subsequent vertex
+       * indices begin at an offset of 1.
+       */
+      coords[0] = new Vec3(0.0f, 0.0f, -0.5f);
+      texCoords[0] = new Vec2(0.0f, 0.0f);
+      normals[0] = new Vec3(0.0f, 0.0f, -1.0f);
+
+      for (int k = 1, h = 1, i = 0; i < vlats; ++h, ++i) {
+         final float v = h * toV;
+         final float phi = h * toPhi - 0.25f;
+         final float cosPhi = Utils.scNorm(phi);
+         final float sinPhi = Utils.scNorm(phi - 0.25f);
+
+         // To change the seam, this should be j < lons,
+         // and toTheta should be 1 / lons1 .
+         for (int j = 0; j < lons1; ++j, ++k) {
+            final float u = j * toU;
+            final float theta = j * toTheta;
+            final float cosTheta = Utils.scNorm(theta);
+            final float sinTheta = Utils.scNorm(theta - 0.25f);
+
+            texCoords[k] = new Vec2(u, v);
+
+            final Vec3 nrm = normals[k] = new Vec3(
+                  cosPhi * cosTheta,
+                  cosPhi * sinTheta,
+                  sinPhi);
+            coords[k] = Vec3.mul(nrm, 0.5f, new Vec3());
+         }
+      }
+
+      /* Set North pole. */
+      final int last = len - 1;
+      coords[last] = new Vec3(0.0f, 0.0f, 0.5f);
+      texCoords[last] = new Vec2(0.0f, 1.0f);
+      normals[last] = new Vec3(0.0f, 0.0f, 1.0f);
+
+      final int[][][] faces = new int[2 * len][3][3];
+      int idx = 0;
+
+      /* Top cap. */
+      for (int j = 0; j < vlons; ++j) {
+         final int n0 = j + 2;
+         final int n1 = j + 1;
+
+         faces[idx] = new int[][] {
+               { n0, n0, n0 },
+               { n1, n1, n1 },
+               { 0, 0, 0 } };
+         idx++;
+      }
+
+      /* Middle */
+      final int latsn1 = vlats - 1;
+      for (int i = 0; i < latsn1; ++i) {
+         final int ilons1 = i * lons1;
+         for (int j = 0; j < vlons; ++j) {
+            final int current = j + ilons1 + 1;
+            final int next = current + lons1;
+            final int n1 = current + 1;
+            final int n2 = next + 1;
+
+            faces[idx] = new int[][] {
+                  { current, current, current },
+                  { n1, n1, n1 },
+                  { n2, n2, n2 } };
+            idx++;
+
+            faces[idx] = new int[][] {
+                  { current, current, current },
+                  { n2, n2, n2 },
+                  { next, next, next } };
+            idx++;
+         }
+      }
+
+      /* Bottom cap. */
+      for (int j = 0; j < vlons; ++j) {
+         final int n1 = last - (j + 2);
+         final int n2 = last - (j + 1);
+
+         faces[idx] = new int[][] {
+               { last, last, last },
+               { n1, n1, n1 },
+               { n2, n2, n2 } };
+         idx++;
+      }
+
+      target.name = "UV Sphere";
+      return target.set(faces, coords, texCoords, normals);
+   }
+
+   /**
     * Calculates the dimensions of an Axis-Aligned Bounding Box
     * (AABB) encompassing the mesh.
     *
@@ -524,29 +659,19 @@ public class Mesh3 extends Mesh {
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            /* 00 */ new Vec2(0.625f, 1.0f),
-            /* 01 */ new Vec2(0.375f, 1.0f),
-            /* 02 */ new Vec2(0.375f, 0.25f),
-            /* 03 */ new Vec2(0.625f, 0.25f),
-            /* 04 */ new Vec2(0.375f, 0.0f),
-            /* 05 */ new Vec2(0.625f, 0.0f),
-            /* 06 */ new Vec2(0.625f, 0.5f),
-            /* 07 */ new Vec2(0.375f, 0.5f),
-            /* 08 */ new Vec2(0.625f, 0.75f),
-            /* 09 */ new Vec2(0.375f, 0.75f),
-            /* 10 */ new Vec2(0.125f, 0.5f),
-            /* 11 */ new Vec2(0.125f, 0.75f),
-            /* 12 */ new Vec2(0.875f, 0.75f),
-            /* 13 */ new Vec2(0.875f, 0.5f)
+            /* 0 */ new Vec2(0.0f, 0.0f),
+            /* 1 */ new Vec2(0.0f, 1.0f),
+            /* 2 */ new Vec2(1.0f, 1.0f),
+            /* 3 */ new Vec2(1.0f, 0.0f)
       };
 
       final int[][][] faces = new int[][][] {
-            { { 0, 4, 4 }, { 1, 5, 4 }, { 3, 3, 4 }, { 2, 2, 4 } },
-            { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 6, 5 }, { 6, 7, 5 } },
-            { { 6, 7, 0 }, { 7, 6, 0 }, { 5, 8, 0 }, { 4, 9, 0 } },
-            { { 4, 9, 3 }, { 5, 8, 3 }, { 1, 0, 3 }, { 0, 1, 3 } },
-            { { 2, 10, 2 }, { 6, 7, 2 }, { 4, 9, 2 }, { 0, 11, 2 } },
-            { { 7, 6, 1 }, { 3, 13, 1 }, { 1, 12, 1 }, { 5, 8, 1 } }
+            { { 0, 2, 4 }, { 1, 3, 4 }, { 3, 0, 4 }, { 2, 1, 4 } },
+            { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 }, { 6, 1, 5 } },
+            { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 }, { 4, 1, 0 } },
+            { { 4, 2, 3 }, { 5, 3, 3 }, { 1, 0, 3 }, { 0, 1, 3 } },
+            { { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 }, { 0, 0, 2 } },
+            { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } }
       };
 
       target.name = "Cube";
@@ -608,11 +733,11 @@ public class Mesh3 extends Mesh {
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            /* 0 */ new Vec2(0.5f, 1.0f),
-            /* 1 */ new Vec2(0.20610732f, 0.09549153f),
-            /* 2 */ new Vec2(0.97552824f, 0.65450847f),
-            /* 3 */ new Vec2(0.79389262f, 0.09549147f),
-            /* 4 */ new Vec2(0.02447176f, 0.65450859f)
+            /* 0 */ new Vec2(0.5f, 0.0f),
+            /* 1 */ new Vec2(0.79389268f, 0.90450847f),
+            /* 2 */ new Vec2(0.02447176f, 0.34549153f),
+            /* 3 */ new Vec2(0.20610738f, 0.90450853f),
+            /* 4 */ new Vec2(0.97552824f, 0.34549141f)
       };
 
       final int[][][] faces = new int[][][] {
@@ -749,89 +874,96 @@ public class Mesh3 extends Mesh {
    public static final Mesh3 icosahedron ( final Mesh3 target ) {
 
       final Vec3[] coords = new Vec3[] {
-            /* 00 */ new Vec3(0.0f, 0.0f, -0.5f),
-            /* 01 */ new Vec3(0.3618f, -0.26286f, -0.2236075f),
-            /* 02 */ new Vec3(-0.1381925f, -0.42532f, -0.2236075f),
-            /* 03 */ new Vec3(-0.4472125f, 0.0f, -0.2236075f),
-            /* 04 */ new Vec3(-0.1381925f, 0.42532f, -0.2236075f),
-            /* 05 */ new Vec3(0.3618f, 0.26286f, -0.2236075f),
-            /* 06 */ new Vec3(0.1381925f, -0.42532f, 0.2236075f),
-            /* 07 */ new Vec3(-0.3618f, -0.26286f, 0.2236075f),
-            /* 08 */ new Vec3(-0.3618f, 0.26286f, 0.2236075f),
-            /* 09 */ new Vec3(0.1381925f, 0.42532f, 0.2236075f),
-            /* 10 */ new Vec3(0.4472125f, 0.0f, 0.2236075f),
-            /* 11 */ new Vec3(0.0f, 0.0f, 0.5f)
+            /* 00 */ new Vec3(0.0f, 0.5f, 0.0f),
+            /* 01 */ new Vec3(0.42532045f, 0.22360751f, -0.13819239f),
+            /* 02 */ new Vec3(0.00000225f, 0.22360751f, -0.44720721f),
+            /* 03 */ new Vec3(-0.42532432f, 0.22360750f, -0.13819626f),
+            /* 04 */ new Vec3(-0.26286000f, 0.22360748f, 0.36179957f),
+            /* 05 */ new Vec3(0.26286399f, 0.22360748f, 0.36179706f),
+            /* 06 */ new Vec3(0.26286000f, -0.22360748f, -0.36179957f),
+            /* 07 */ new Vec3(-0.26286399f, -0.22360748f, -0.36179706f),
+            /* 08 */ new Vec3(-0.42532045f, -0.22360751f, 0.13819239f),
+            /* 09 */ new Vec3(-0.00000225f, -0.22360751f, 0.44720721f),
+            /* 10 */ new Vec3(0.42532432f, -0.22360750f, 0.13819624f),
+            /* 11 */ new Vec3(0.0f, -0.5f, 0.0f)
       };
 
       final Vec3[] normals = new Vec3[] {
-            /* 00 */ new Vec3(-0.30353555f, -0.9341715f, 0.18758915f),
-            /* 01 */ new Vec3(-0.9822461f, 0.0f, 0.18759680f),
-            /* 02 */ new Vec3(-0.30353555f, 0.9341715f, 0.18758912f),
-            /* 03 */ new Vec3(0.79464918f, 0.57735938f, 0.18758696f),
-            /* 04 */ new Vec3(0.4911221f, -0.35682905f, 0.79465222f),
-            /* 05 */ new Vec3(-0.18759654f, -0.57735366f, 0.79465103f),
-            /* 06 */ new Vec3(0.18759654f, -0.57735366f, -0.79465103f),
-            /* 07 */ new Vec3(-0.4911221f, -0.35682905f, -0.79465222f),
-            /* 08 */ new Vec3(-0.4911221f, 0.35682905f, -0.79465222f),
-            /* 09 */ new Vec3(0.60706466f, 0.0f, -0.7946524f),
-            /* 10 */ new Vec3(0.18759654f, 0.57735366f, -0.79465103f),
-            /* 11 */ new Vec3(0.9822461f, 0.0f, -0.18759680f),
-            /* 12 */ new Vec3(0.30353555f, -0.9341715f, -0.18758912f),
-            /* 13 */ new Vec3(-0.79464918f, -0.57735938f, -0.18758696f),
-            /* 14 */ new Vec3(-0.79464918f, 0.57735938f, -0.18758698f),
-            /* 15 */ new Vec3(0.30353555f, 0.9341715f, -0.18758915f),
-            /* 16 */ new Vec3(-0.18759654f, 0.57735366f, 0.79465103f),
-            /* 17 */ new Vec3(0.79464918f, -0.57735938f, 0.18758698f),
-            /* 18 */ new Vec3(-0.60706466f, 0.0f, 0.7946524f),
-            /* 19 */ new Vec3(0.4911221f, 0.35682905f, 0.79465222f)
+            /* 00 */ new Vec3(-0.00000468f, -0.18758917f, -0.98224759f),
+            /* 01 */ new Vec3(-0.93417150f, -0.18759677f, -0.30353081f),
+            /* 02 */ new Vec3(-0.57735437f, -0.18758918f, 0.79465222f),
+            /* 03 */ new Vec3(0.57734245f, -0.18758699f, 0.79466146f),
+            /* 04 */ new Vec3(0.57735109f, -0.79465222f, -0.18759950f),
+            /* 05 */ new Vec3(-0.57735270f, -0.79465240f, -0.18759337f),
+            /* 06 */ new Vec3(0.35682699f, 0.79465109f, -0.49112532f),
+            /* 07 */ new Vec3(-0.35681862f, 0.79465222f, -0.49112961f),
+            /* 08 */ new Vec3(-0.57735115f, 0.79465222f, 0.18759952f),
+            /* 09 */ new Vec3(0.57735276f, 0.79465240f, 0.18759334f),
+            /* 10 */ new Vec3(0.00000289f, 0.79465103f, 0.60706645f),
+            /* 11 */ new Vec3(0.93417150f, 0.18759677f, 0.30353081f),
+            /* 12 */ new Vec3(0.57735437f, 0.18758918f, -0.79465222f),
+            /* 13 */ new Vec3(-0.57734245f, 0.18758696f, -0.79466146f),
+            /* 14 */ new Vec3(-0.93417013f, 0.18758696f, 0.30354115f),
+            /* 15 */ new Vec3(0.00000468f, 0.18758917f, 0.98224759f),
+            /* 16 */ new Vec3(-0.00000289f, -0.79465103f, -0.60706645f),
+            /* 17 */ new Vec3(0.93417013f, -0.18758696f, -0.30354115f),
+            /* 18 */ new Vec3(-0.35682699f, -0.79465109f, 0.49112532f),
+            /* 19 */ new Vec3(0.35681865f, -0.79465222f, 0.49112961f)
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            /* 00 */ new Vec2(0.636363f, 0.314921f),
-            /* 01 */ new Vec2(0.818181f, 0.314921f),
-            /* 02 */ new Vec2(0.090909f, 0.314921f),
-            /* 03 */ new Vec2(0.272727f, 0.314921f),
-            /* 04 */ new Vec2(0.454545f, 0.314921f),
-            /* 05 */ new Vec2(0.727272f, 0.472382f),
-            /* 06 */ new Vec2(0.90909f, 0.472382f),
-            /* 07 */ new Vec2(0.454545f, 0.0f),
-            /* 08 */ new Vec2(0.181818f, 0.472382f),
-            /* 09 */ new Vec2(0.363636f, 0.472382f),
-            /* 10 */ new Vec2(0.636363f, 0.0f),
-            /* 11 */ new Vec2(0.90909f, 0.157461f),
-            /* 12 */ new Vec2(0.818181f, 0.0f),
-            /* 13 */ new Vec2(0.727272f, 0.157461f),
-            /* 14 */ new Vec2(0.545454f, 0.157461f),
-            /* 15 */ new Vec2(0.090909f, 0.0f),
-            /* 16 */ new Vec2(0.0f, 0.157461f),
-            /* 17 */ new Vec2(0.181818f, 0.157461f),
-            /* 18 */ new Vec2(0.272727f, 0.0f),
-            /* 19 */ new Vec2(0.363636f, 0.157461f),
-            /* 20 */ new Vec2(1.0f, 0.314921f),
-            /* 21 */ new Vec2(0.545454f, 0.472382f)
+            /* 00 */ new Vec2(0.76286000f, 0.72360748f),
+            /* 01 */ new Vec2(0.07467568f, 0.27639252f),
+            /* 02 */ new Vec2(0.23713601f, 0.72360748f),
+            /* 03 */ new Vec2(0.72360748f, 0.13820040f),
+            /* 04 */ new Vec2(0.72360748f, 0.63819626f),
+            /* 05 */ new Vec2(0.27639249f, 0.36180758f),
+            /* 06 */ new Vec2(0.23714000f, 0.27639252f),
+            /* 07 */ new Vec2(0.76286399f, 0.27639252f),
+            /* 08 */ new Vec2(0.92532045f, 0.27639246f),
+            /* 09 */ new Vec2(0.49999776f, 0.72360751f),
+            /* 10 */ new Vec2(0.76286399f, 0.13820291f),
+            /* 11 */ new Vec2(0.50000226f, 0.94720721f),
+            /* 12 */ new Vec2(0.5f, 0.5f),
+            /* 13 */ new Vec2(0.92532045f, 0.63819239f),
+            /* 14 */ new Vec2(0.07467568f, 0.63819626f),
+            /* 15 */ new Vec2(0.23714000f, 0.13820040f),
+            /* 16 */ new Vec2(0.72360754f, 0.63819239f),
+            /* 17 */ new Vec2(0.72360748f, 0.13820291f),
+            /* 18 */ new Vec2(0.27639252f, 0.36180377f),
+            /* 19 */ new Vec2(0.50000226f, 0.27639246f),
+            /* 20 */ new Vec2(0.27639252f, 0.86179957f),
+            /* 21 */ new Vec2(0.27639252f, 0.86179706f),
+            /* 22 */ new Vec2(0.07467955f, 0.72360751f),
+            /* 23 */ new Vec2(0.92532432f, 0.72360748f),
+            /* 24 */ new Vec2(0.76286000f, 0.86179957f),
+            /* 25 */ new Vec2(0.92532432f, 0.36180377f),
+            /* 26 */ new Vec2(0.23713601f, 0.86179706f),
+            /* 27 */ new Vec2(0.07467955f, 0.36180758f),
+            /* 28 */ new Vec2(0.49999776f, 0.05279279f)
       };
 
       final int[][][] faces = new int[][][] {
             { { 0, 12, 6 }, { 1, 13, 6 }, { 2, 11, 6 } },
-            { { 1, 13, 9 }, { 0, 10, 9 }, { 5, 14, 9 } },
-            { { 0, 15, 7 }, { 2, 16, 7 }, { 3, 17, 7 } },
-            { { 0, 18, 8 }, { 3, 17, 8 }, { 4, 19, 8 } },
-            { { 0, 7, 10 }, { 4, 19, 10 }, { 5, 14, 10 } },
-            { { 1, 13, 11 }, { 5, 14, 11 }, { 10, 0, 11 } },
-            { { 2, 11, 12 }, { 1, 13, 12 }, { 6, 1, 12 } },
-            { { 3, 17, 13 }, { 2, 16, 13 }, { 7, 2, 13 } },
-            { { 4, 19, 14 }, { 3, 17, 14 }, { 8, 3, 14 } },
-            { { 5, 14, 15 }, { 4, 19, 15 }, { 9, 4, 15 } },
-            { { 1, 13, 17 }, { 10, 0, 17 }, { 6, 1, 17 } },
-            { { 2, 11, 0 }, { 6, 1, 0 }, { 7, 20, 0 } },
-            { { 3, 17, 1 }, { 7, 2, 1 }, { 8, 3, 1 } },
-            { { 4, 19, 2 }, { 8, 3, 2 }, { 9, 4, 2 } },
-            { { 5, 14, 3 }, { 9, 4, 3 }, { 10, 0, 3 } },
-            { { 6, 1, 4 }, { 10, 0, 4 }, { 11, 5, 4 } },
-            { { 7, 20, 5 }, { 6, 1, 5 }, { 11, 6, 5 } },
-            { { 8, 3, 18 }, { 7, 2, 18 }, { 11, 8, 18 } },
-            { { 9, 4, 16 }, { 8, 3, 16 }, { 11, 9, 16 } },
-            { { 10, 0, 19 }, { 9, 4, 19 }, { 11, 21, 19 } }
+            { { 1, 13, 9 }, { 0, 12, 9 }, { 5, 10, 9 } },
+            { { 0, 12, 7 }, { 2, 11, 7 }, { 3, 14, 7 } },
+            { { 0, 12, 8 }, { 3, 14, 8 }, { 4, 15, 8 } },
+            { { 0, 12, 10 }, { 4, 15, 10 }, { 5, 10, 10 } },
+            { { 1, 16, 11 }, { 5, 17, 11 }, { 10, 18, 11 } },
+            { { 2, 19, 12 }, { 1, 8, 12 }, { 6, 0, 12 } },
+            { { 3, 1, 13 }, { 2, 19, 13 }, { 7, 2, 13 } },
+            { { 4, 3, 14 }, { 3, 4, 14 }, { 8, 5, 14 } },
+            { { 5, 7, 15 }, { 4, 6, 15 }, { 9, 9, 15 } },
+            { { 1, 16, 17 }, { 10, 18, 17 }, { 6, 20, 17 } },
+            { { 2, 19, 0 }, { 6, 0, 0 }, { 7, 2, 0 } },
+            { { 3, 4, 1 }, { 7, 21, 1 }, { 8, 5, 1 } },
+            { { 4, 6, 2 }, { 8, 22, 2 }, { 9, 9, 2 } },
+            { { 5, 7, 3 }, { 9, 9, 3 }, { 10, 23, 3 } },
+            { { 6, 24, 4 }, { 10, 25, 4 }, { 11, 12, 4 } },
+            { { 7, 26, 16 }, { 6, 24, 16 }, { 11, 12, 16 } },
+            { { 8, 27, 5 }, { 7, 26, 5 }, { 11, 12, 5 } },
+            { { 9, 28, 18 }, { 8, 27, 18 }, { 11, 12, 18 } },
+            { { 10, 25, 19 }, { 9, 28, 19 }, { 11, 12, 19 } }
       };
 
       target.name = "Icosahedron";
@@ -869,22 +1001,20 @@ public class Mesh3 extends Mesh {
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            /* 0 */ new Vec2(0.5f, 1.0f),
-            /* 1 */ new Vec2(0.0f, 0.5f),
-            /* 2 */ new Vec2(0.5f, 0.0f),
-            /* 3 */ new Vec2(0.5f, 0.5f),
-            /* 4 */ new Vec2(1.0f, 0.5f)
+            /* 0 */ new Vec2(0.5f, 0.0f),
+            /* 1 */ new Vec2(1.0f, 1.0f),
+            /* 2 */ new Vec2(0.0f, 1.0f)
       };
 
       final int[][][] faces = new int[][][] {
-            { { 0, 2, 0 }, { 1, 4, 0 }, { 4, 3, 0 } },
-            { { 1, 4, 3 }, { 3, 0, 3 }, { 4, 3, 3 } },
-            { { 3, 0, 1 }, { 2, 1, 1 }, { 4, 3, 1 } },
-            { { 2, 1, 2 }, { 0, 2, 2 }, { 4, 3, 2 } },
-            { { 2, 1, 4 }, { 3, 0, 4 }, { 5, 3, 4 } },
-            { { 3, 0, 5 }, { 1, 4, 5 }, { 5, 3, 5 } },
-            { { 1, 4, 6 }, { 0, 2, 6 }, { 5, 3, 6 } },
-            { { 0, 2, 7 }, { 2, 1, 7 }, { 5, 3, 7 } }
+            { { 0, 2, 0 }, { 1, 1, 0 }, { 4, 0, 0 } },
+            { { 1, 2, 3 }, { 3, 1, 3 }, { 4, 0, 3 } },
+            { { 3, 2, 1 }, { 2, 1, 1 }, { 4, 0, 1 } },
+            { { 2, 2, 2 }, { 0, 1, 2 }, { 4, 0, 2 } },
+            { { 2, 2, 4 }, { 3, 1, 4 }, { 5, 0, 4 } },
+            { { 3, 2, 5 }, { 1, 1, 5 }, { 5, 0, 5 } },
+            { { 1, 2, 6 }, { 0, 1, 6 }, { 5, 0, 6 } },
+            { { 0, 2, 7 }, { 2, 1, 7 }, { 5, 0, 7 } }
       };
 
       target.name = "Octahedron";
@@ -927,13 +1057,15 @@ public class Mesh3 extends Mesh {
       final float[] xs = new float[cval1];
       final float[] us = new float[cval1];
       for (int j = 0; j < cval1; ++j) {
-         final float u = us[j] = j * jToStep;
-         xs[j] = u - 0.5f;
+         final float xPrc = j * jToStep;
+         xs[j] = xPrc - 0.5f;
+         us[j] = xPrc;
       }
 
       for (int k = 0, i = 0; i < rval1; ++i) {
-         final float v = i * iToStep;
-         final float y = v - 0.5f;
+         final float yPrc = i * iToStep;
+         final float y = yPrc - 0.5f;
+         final float v = 1.0f - yPrc;
 
          for (int j = 0; j < cval1; ++j, ++k) {
             coords[k] = new Vec3(xs[j], y, 0.0f);
@@ -1015,16 +1147,18 @@ public class Mesh3 extends Mesh {
 
       for (int i = 0, j = 1; i < seg; ++i, ++j) {
          Vec2.fromPolar(i * toTheta, 0.5f, pureCoord);
-         texCoords[j] = Vec2.add(pureCoord, uvCenter, new Vec2());
+
+         final Vec2 st = Vec2.add(uvCenter, pureCoord, new Vec2());
+         st.y = 1.0f - st.y;
+         texCoords[j] = st;
 
          coords[j] = new Vec3(pureCoord.x, pureCoord.y, 0.0f);
 
          final int k = 1 + j % seg;
-         final int[][] face = new int[][] {
+         faces[i] = new int[][] {
                { 0, 0, 0 },
                { j, j, 0 },
                { k, k, 0 } };
-         faces[i] = face;
       }
 
       target.name = "Polygon";
@@ -1047,120 +1181,139 @@ public class Mesh3 extends Mesh {
          final int latitudes,
          final Mesh3 target ) {
 
-      // TODO: This still creates a seam, but it is better by far
-      // than the p5 version...
-
-      /*
-       * Longitude corresponds to azimuth; latitude, to
-       * inclination.
-       */
       final int vlons = longitudes < 3 ? 3 : longitudes;
       final int vlats = latitudes < 3 ? 3 : latitudes;
+      final int latLen = vlons * vlats + 2;
+      final int latLast = latLen - 1;
+      final Vec3[] coords = new Vec3[latLen];
+      final Vec3[] normals = new Vec3[latLen];
 
-      final int lons1 = vlons + 1;
-      final int lats1 = vlats + 1;
+      final float radius = 0.5f;
 
-      /*
-       * The additional two comes from the North and South poles.
-       */
-      final int len = lons1 * vlats + 2;
+      coords[0] = new Vec3(0.0f, 0.0f, radius);
+      coords[latLast] = new Vec3(0.0f, 0.0f, -radius);
 
-      final Vec3[] coords = new Vec3[len];
-      final Vec2[] texCoords = new Vec2[len];
-      final Vec3[] normals = new Vec3[len];
+      normals[0] = new Vec3(0.0f, 0.0f, 1.0f);
+      normals[latLast] = new Vec3(0.0f, 0.0f, -1.0f);
 
-      final float toU = 1.0f / vlons;
-      final float toV = 1.0f / lats1;
-
+      final float toPhi = 0.5f / (vlats + 1.0f);
       final float toTheta = 1.0f / vlons;
-      final float toPhi = 0.5f / lats1;
 
-      /*
-       * Set South pole. This is vertex 0, so subsequent vertex
-       * indices begin at an offset of 1.
-       */
-      coords[0] = new Vec3(0.0f, 0.0f, -0.5f);
-      texCoords[0] = new Vec2(0.0f, 0.0f);
-      normals[0] = new Vec3(0.0f, 0.0f, -1.0f);
+      for (int k = 1, i = 0, h = 1; i < vlats; ++i, ++h) {
 
-      for (int k = 1, h = 1, i = 0; i < vlats; ++h, ++i) {
-         final float v = h * toV;
          final float phi = h * toPhi - 0.25f;
          final float cosPhi = Utils.scNorm(phi);
          final float sinPhi = Utils.scNorm(phi - 0.25f);
+         final float rhoCosPhi = radius * cosPhi;
+         final float rhoSinPhi = radius * sinPhi;
 
-         // To change the seam, this should be j < lons,
-         // and toTheta should be 1 / lons1 .
-         for (int j = 0; j < lons1; ++j, ++k) {
-            final float u = j * toU;
+         for (int j = 0; j < vlons; ++j, ++k) {
+
             final float theta = j * toTheta;
             final float cosTheta = Utils.scNorm(theta);
             final float sinTheta = Utils.scNorm(theta - 0.25f);
 
-            texCoords[k] = new Vec2(u, v);
+            coords[k] = new Vec3(
+                  rhoCosPhi * cosTheta,
+                  rhoCosPhi * sinTheta,
+                  -rhoSinPhi);
 
-            final Vec3 nrm = normals[k] = new Vec3(
+            normals[k] = new Vec3(
                   cosPhi * cosTheta,
                   cosPhi * sinTheta,
-                  sinPhi);
-            coords[k] = Vec3.mul(nrm, 0.5f, new Vec3());
+                  -sinPhi);
          }
       }
 
-      /* Set North pole. */
-      final int last = len - 1;
-      coords[last] = new Vec3(0.0f, 0.0f, 0.5f);
-      texCoords[last] = new Vec2(0.0f, 1.0f);
-      normals[last] = new Vec3(0.0f, 0.0f, 1.0f);
+      // TODO: UVs are screwed up.
 
-      final int[][][] faces = new int[2 * len][3][3];
+      /* Texture coordinates. */
+      final int vlons1 = vlons + 1;
+      final int uvLen = vlons1 * vlats + 2;
+      final int uvLast = uvLen - 1;
+      final Vec2[] texCoords = new Vec2[uvLen];
+      final float toV = 1.0f / (vlats + 1.0f);
+      final float toU = 1.0f / vlons;
+      texCoords[0] = new Vec2(0.0f, 0.0f);
+      texCoords[uvLast] = new Vec2(0.0f, 1.0f);
+      for (int k = 1, i = 0, h = 1; i < vlats; ++i, ++h) {
+         final float v = h * toV;
+         for (int j = 0; j < vlons1; ++j, ++k) {
+            final float u = j * toU;
+            texCoords[k] = new Vec2(u, v);
+         }
+      }
+
+      final int[][][] faces = new int[2 * vlons1 * vlats][3][3];
       int idx = 0;
 
       /* Top cap. */
-      for (int j = 0; j < vlons; ++j) {
-         final int n0 = j + 2;
-         final int n1 = j + 1;
+      for (int j = 0; j < vlons1; ++j) {
+
+         final int n0 = 1 + j % vlons;
+         final int n1 = 1 + (j + 1) % vlons;
+
+         final int uv0 = 1 + j % vlons1;
+         final int uv1 = 1 + (j + 1) % vlons1;
 
          faces[idx] = new int[][] {
-               { n0, n0, n0 },
-               { n1, n1, n1 },
+               { n0, uv0, n0 },
+               { n1, uv1, n1 },
                { 0, 0, 0 } };
          idx++;
       }
 
       /* Middle */
-      final int latsn1 = vlats - 1;
-      for (int i = 0; i < latsn1; ++i) {
-         final int ilons1 = i * lons1;
-         for (int j = 0; j < vlons; ++j) {
-            final int current = j + ilons1 + 1;
-            final int next = current + lons1;
-            final int n1 = current + 1;
-            final int n2 = next + 1;
+      final int vlatsn1 = vlats - 1;
+      for (int i = 0; i < vlatsn1; ++i) {
+         final int currLat = i * vlons;
+         final int nextLat = (i + 1) * vlons;
+
+         for (int j = 0; j < vlons1; ++j) {
+            final int j0 = 1 + j % vlons;
+            final int j1 = 1 + (j + 1) % vlons;
+
+            final int uv0 = 1 + j % vlons1;
+            final int uv1 = 1 + (j + 1) % vlons1;
+
+            final int current = j0 + currLat;
+            final int next = j1 + currLat;
+            final int n1 = j0 + nextLat;
+            final int n2 = j1 + nextLat;
+
+            final int uvcurrent = uv0 + currLat;
+            final int uvnext = uv1 + currLat;
+            final int uvn1 = uv0 + nextLat;
+            final int uvn2 = uv1 + nextLat;
 
             faces[idx] = new int[][] {
-                  { current, current, current },
-                  { n1, n1, n1 },
-                  { n2, n2, n2 } };
+                  { current, uvcurrent, current },
+                  { n1, uvn1, n1 },
+                  { n2, uvn2, n2 } };
             idx++;
 
             faces[idx] = new int[][] {
-                  { current, current, current },
-                  { n2, n2, n2 },
-                  { next, next, next } };
+                  { current, uvcurrent, current },
+                  { n2, uvn2, n2 },
+                  { next, uvnext, next } };
             idx++;
          }
       }
 
       /* Bottom cap. */
-      for (int j = 0; j < vlons; ++j) {
-         final int n1 = last - (j + 2);
-         final int n2 = last - (j + 1);
+      final int lastCoord = coords.length - 1;
+      final int lastTexCoord = texCoords.length - 1;
+      for (int j = 0; j < vlons1; ++j) {
+         final int n1 = lastCoord - (1 + j % vlons);
+         final int n2 = lastCoord - (1 + (j + 1) % vlons);
+
+         final int uv1 = lastTexCoord - (1 + j % vlons1);
+         final int uv2 = lastTexCoord - (1 + (j + 1) % vlons1);
 
          faces[idx] = new int[][] {
-               { last, last, last },
-               { n1, n1, n1 },
-               { n2, n2, n2 } };
+               { lastCoord, lastTexCoord, lastCoord },
+               { n1, uv1, n1 },
+               { n2, uv2, n2 } };
          idx++;
       }
 
@@ -1193,17 +1346,17 @@ public class Mesh3 extends Mesh {
    public static final Mesh3 square ( final Mesh3 target ) {
 
       final Vec3[] coords = new Vec3[] {
-            new Vec3(0.5f, 0.5f, 0.0f),
             new Vec3(-0.5f, 0.5f, 0.0f),
-            new Vec3(-0.5f, -0.5f, 0.0f),
-            new Vec3(0.5f, -0.5f, 0.0f)
+            new Vec3(0.5f, 0.5f, 0.0f),
+            new Vec3(0.5f, -0.5f, 0.0f),
+            new Vec3(-0.5f, -0.5f, 0.0f)
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            new Vec2(1.0f, 1.0f),
-            new Vec2(0.0f, 1.0f),
             new Vec2(0.0f, 0.0f),
-            new Vec2(1.0f, 0.0f)
+            new Vec2(1.0f, 0.0f),
+            new Vec2(1.0f, 1.0f),
+            new Vec2(0.0f, 1.0f)
       };
 
       final int[][][] faces = new int[][][] {
@@ -1252,22 +1405,16 @@ public class Mesh3 extends Mesh {
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            /* 0 */ new Vec2(0.5f, 0.07735026f),
-            /* 1 */ new Vec2(0.5f, 0.11237240f),
-            /* 2 */ new Vec2(0.0f, 0.21132487f),
-            /* 3 */ new Vec2(0.21132487f, 0.29587588f),
-            /* 4 */ new Vec2(0.21132487f, 0.29587588f),
-            /* 5 */ new Vec2(0.0f, 0.29587588f),
-            /* 6 */ new Vec2(1.0f, 0.211324987f),
-            /* 7 */ new Vec2(1.0f, 0.29587588f),
-            /* 8 */ new Vec2(0.07735026f, 0.29587588f)
+            /* 0 */ new Vec2(0.5f, 0.0f),
+            /* 1 */ new Vec2(1.0f, 1.0f),
+            /* 2 */ new Vec2(0.0f, 1.0f)
       };
 
       final int[][][] faces = new int[][][] {
-            { { 0, 0, 0 }, { 2, 6, 0 }, { 1, 2, 0 } },
-            { { 0, 8, 1 }, { 1, 3, 1 }, { 3, 1, 1 } },
-            { { 0, 8, 3 }, { 3, 1, 3 }, { 2, 4, 3 } },
-            { { 1, 5, 2 }, { 2, 7, 2 }, { 3, 1, 2 } }
+            { { 0, 0, 0 }, { 2, 2, 0 }, { 1, 1, 0 } },
+            { { 0, 2, 1 }, { 1, 1, 1 }, { 3, 0, 1 } },
+            { { 0, 1, 3 }, { 3, 0, 3 }, { 2, 2, 3 } },
+            { { 1, 2, 2 }, { 2, 1, 2 }, { 3, 0, 2 } }
       };
 
       target.name = "Tetrahedron";
@@ -1290,9 +1437,9 @@ public class Mesh3 extends Mesh {
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            new Vec2(0.5f, 1.0f),
-            new Vec2(0.0669873f, 0.25f),
-            new Vec2(0.9330127f, 0.25f)
+            new Vec2(0.5f, 0.0f),
+            new Vec2(0.0669873f, 0.75f),
+            new Vec2(0.9330127f, 0.75f)
       };
 
       final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
@@ -1546,6 +1693,26 @@ public class Mesh3 extends Mesh {
    }
 
    /**
+    * Tests this mesh for equivalence with another.
+    *
+    * @param mesh3
+    *           the mesh
+    * @return the evaluation
+    */
+   protected boolean equals ( final Mesh3 mesh3 ) {
+
+      if (!Arrays.equals(this.coords, mesh3.coords)) {
+         return false;
+      }
+
+      if (!Arrays.deepEquals(this.faces, mesh3.faces)) {
+         return false;
+      }
+
+      return true;
+   }
+
+   /**
     * Attempts to recalculate the normals of this mesh per
     * vertex. If the normals array is null, or if its length is
     * not equal to the length of coordinates, the normals array
@@ -1639,15 +1806,7 @@ public class Mesh3 extends Mesh {
          return false;
       }
 
-      final Mesh3 other = (Mesh3) obj;
-      if (!Arrays.equals(this.coords, other.coords)) {
-         return false;
-      }
-
-      if (!Arrays.deepEquals(this.faces, other.faces)) {
-         return false;
-      }
-      return true;
+      return this.equals((Mesh3) obj);
    }
 
    /**

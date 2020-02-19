@@ -1191,6 +1191,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       final Vec2 vt = new Vec2();
 
       this.pushStyle();
+      this.noStroke();
       while (meshItr.hasNext()) {
          final Mesh2 mesh = meshItr.next();
          this.drawMesh2(mesh, tr, material, v, vt);
@@ -1217,6 +1218,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       final Vec2 vt = new Vec2();
 
       this.pushStyle();
+      this.noStroke();
       while (meshItr.hasNext()) {
          final Mesh2 mesh = meshItr.next();
          final MaterialPImage mat = materials[mesh.materialIndex];

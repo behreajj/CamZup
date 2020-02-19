@@ -29,6 +29,18 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
    }
 
    /**
+    * Creates a mesh entity from a list of meshes.
+    *
+    * @param meshes
+    *           the list of meshes
+    */
+   public MeshEntity3 ( final Mesh3... meshes ) {
+
+      super(new Transform3());
+      this.appendMeshes(meshes);
+   }
+
+   /**
     * Creates a named mesh entity.
     *
     * @param name
@@ -37,6 +49,22 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
    public MeshEntity3 ( final String name ) {
 
       super(name);
+   }
+
+   /**
+    * Creates a mesh entity from a name and list of meshes.
+    *
+    * @param name
+    *           the name
+    * @param meshes
+    *           the list of meshes
+    */
+   public MeshEntity3 (
+         final String name,
+         final Mesh3... meshes ) {
+
+      super(name, new Transform3());
+      this.appendMeshes(meshes);
    }
 
    /**

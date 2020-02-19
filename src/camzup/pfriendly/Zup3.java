@@ -191,29 +191,30 @@ public class Zup3 extends Up3 {
     * Looks at the center point from the eye point, using the
     * default reference up axis.
     *
-    * @param eyeX
+    * @param xEye
     *           camera location x
-    * @param eyeY
+    * @param yEye
     *           camera location y
-    * @param eyeZ
+    * @param zEye
     *           camera location z
-    * @param centerX
+    * @param xCenter
     *           target location x
-    * @param centerY
+    * @param yCenter
     *           target location y
-    * @param centerZ
+    * @param zCenter
     *           target location z
     * @see Zup3#DEFAULT_REF_X
     * @see Zup3#DEFAULT_REF_Y
     * @see Zup3#DEFAULT_REF_Z
     */
+   @Override
    public void camera (
-         final float eyeX,
-         final float eyeY,
-         final float eyeZ,
-         final float centerX,
-         final float centerY,
-         final float centerZ ) {
+         final float xEye,
+         final float yEye,
+         final float zEye,
+         final float xCenter,
+         final float yCenter,
+         final float zCenter ) {
 
       /*
        * CAUTION: Never use defCameraXXX values. They are not
@@ -221,8 +222,8 @@ public class Zup3 extends Up3 {
        */
 
       this.camera(
-            eyeX, eyeY, eyeZ,
-            centerX, centerY, centerZ,
+            xEye, yEye, zEye,
+            xCenter, yCenter, zCenter,
             Zup3.DEFAULT_REF_X,
             Zup3.DEFAULT_REF_Y,
             Zup3.DEFAULT_REF_Z);
@@ -316,6 +317,7 @@ public class Zup3 extends Up3 {
     * @see Zup3#DEFAULT_REF_Y
     * @see Zup3#DEFAULT_REF_Z
     */
+   @Override
    public void camera (
          final Vec3 eye,
          final Vec3 center ) {

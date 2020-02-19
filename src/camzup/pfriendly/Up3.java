@@ -1074,6 +1074,27 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       }
    }
 
+   public void shape (
+         final MeshEntity3 entity,
+         final MaterialPImage material ) {
+
+      final Transform3 tr = entity.transform;
+      final List < Mesh3 > meshes = entity.meshes;
+      final Iterator < Mesh3 > meshItr = meshes.iterator();
+
+      final Vec3 v = new Vec3();
+      final Vec2 vt = new Vec2();
+      final Vec3 vn = new Vec3();
+
+      this.pushStyle();
+      this.noStroke();
+      while (meshItr.hasNext()) {
+         final Mesh3 mesh = meshItr.next();
+         this.drawMesh3(mesh, tr, material, v, vt, vn);
+      }
+      this.popStyle();
+   }
+
    /**
     * Draws a 3D mesh entity.
     *
@@ -1094,13 +1115,34 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final Vec2 vt = new Vec2();
       final Vec3 vn = new Vec3();
 
+      this.pushStyle();
+      this.noStroke();
       while (meshItr.hasNext()) {
          final Mesh3 mesh = meshItr.next();
          final MaterialPImage mat = materials[mesh.materialIndex];
-         this.pushStyle();
          this.drawMesh3(mesh, tr, mat, v, vt, vn);
-         this.popStyle();
       }
+      this.popStyle();
+   }
+
+   public void shape (
+         final MeshEntity3 entity,
+         final MaterialSolid material ) {
+
+      final Transform3 tr = entity.transform;
+      final List < Mesh3 > meshes = entity.meshes;
+      final Iterator < Mesh3 > meshItr = meshes.iterator();
+
+      final Vec3 v = new Vec3();
+      final Vec3 vn = new Vec3();
+
+      this.pushStyle();
+      this.material(material);
+      while (meshItr.hasNext()) {
+         final Mesh3 mesh = meshItr.next();
+         this.drawMesh3(mesh, tr, v, vn);
+      }
+      this.popStyle();
    }
 
    /**
@@ -1298,7 +1340,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     * @param vt
     *           the texture coordinate
     */
-   public void vertex ( final Vec3 v, final Vec2 vt ) {
+   public void vertex (
+         final Vec3 v,
+         final Vec2 vt ) {
 
       this.vertexImpl(v.x, v.y, v.z, vt.x, vt.y);
    }

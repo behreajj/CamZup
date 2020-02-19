@@ -29,6 +29,18 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    }
 
    /**
+    * Creates a mesh entity from a list of meshes.
+    *
+    * @param meshes
+    *           the list of meshes
+    */
+   public MeshEntity2 ( final Mesh2... meshes ) {
+
+      super(new Transform2());
+      this.appendMeshes(meshes);
+   }
+
+   /**
     * Creates a named mesh entity.
     *
     * @param name
@@ -37,6 +49,22 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    public MeshEntity2 ( final String name ) {
 
       super(name);
+   }
+
+   /**
+    * Creates a mesh entity from a name and list of meshes.
+    *
+    * @param name
+    *           the name
+    * @param meshes
+    *           the list of meshes
+    */
+   public MeshEntity2 (
+         final String name,
+         final Mesh2... meshes ) {
+
+      super(name, new Transform2());
+      this.appendMeshes(meshes);
    }
 
    /**
@@ -186,7 +214,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
       final float expn = 2.2f;
       final boolean useMaterials = materials != null && materials.length > 0;
       if (useMaterials) {
-         // TODO: No longer works appropriately...
          final int matLen = materials.length;
          final int matLast = matLen - 1;
 

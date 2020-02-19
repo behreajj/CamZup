@@ -13,6 +13,7 @@ import processing.core.PApplet;
  * The main class of this library. This is not needed to use
  * the library and is for development and debugging only.
  */
+@SuppressWarnings("unused")
 public class CamZup {
 
    static final float ONE_PI = 0.31830987f;
@@ -94,7 +95,26 @@ public class CamZup {
       return v;
    }
 
-   static Vec2[] permute ( final Vec2 source ) {
+   private static float[] flat ( final float[][] arr ) {
+
+      final int sourceLen = arr.length;
+      int totalLen = 0;
+      for (int i = 0; i < sourceLen; ++i) {
+         totalLen += arr[i].length;
+      }
+
+      final float[] result = new float[totalLen];
+      for (int j = 0, i = 0; i < sourceLen; ++i) {
+         final float[] arrInner = arr[i];
+         final int len = arrInner.length;
+         System.arraycopy(arrInner, 0, result, j, len);
+         j += len;
+      }
+
+      return result;
+   }
+
+   private static Vec2[] permute ( final Vec2 source ) {
 
       final HashSet < Vec2 > result = new HashSet <>();
 
@@ -117,7 +137,7 @@ public class CamZup {
       return result.toArray(new Vec2[result.size()]);
    }
 
-   static Vec3[] permute ( final Vec3 source ) {
+   private static Vec3[] permute ( final Vec3 source ) {
 
       final HashSet < Vec3 > result = new HashSet <>();
 
@@ -188,139 +208,6 @@ public class CamZup {
       return result.toArray(new Vec3[result.size()]);
    }
 
-   static String toHardCode ( final Mesh3 mesh ) {
-
-      final StringBuilder sb = new StringBuilder();
-      final int[][][] fs = mesh.faces;
-      final Vec3[] vs = mesh.coords;
-      final Vec2[] vts = mesh.texCoords;
-      final Vec3[] vns = mesh.normals;
-
-      final int flen0 = fs.length;
-      for (int i = 0; i < flen0; ++i) {
-         final int[][] f = fs[i];
-         final int flen1 = f.length;
-         sb.append("this.beginShape(PConstants.POLYGON);\n");
-         for (int j = 0; j < flen1; ++j) {
-            final int[] data = f[j];
-
-            final int vIndex = data[0];
-            final Vec3 v = vs[vIndex];
-
-            final int vtIndex = data[1];
-            final Vec2 vt = vts[vtIndex];
-
-            final int vnIndex = data[2];
-            final Vec3 vn = vns[vnIndex];
-
-            sb.append("this.normal(");
-            sb.append(Utils.toFixed(vn.x, 5));
-            sb.append("f, ");
-            sb.append(Utils.toFixed(vn.y, 5));
-            sb.append("f, ");
-            sb.append(Utils.toFixed(vn.z, 5));
-            sb.append("f);\n");
-
-            sb.append("this.vertexImpl(\n");
-
-            sb.append(Utils.toFixed(v.x, 5));
-            if (v.x == 0.0f) {
-               sb.append("f, ");
-            } else {
-               sb.append("f * radius, ");
-            }
-
-            sb.append(Utils.toFixed(v.y, 5));
-            if (v.y == 0.0f) {
-               sb.append("f, ");
-            } else {
-               sb.append("f * radius, ");
-            }
-
-            sb.append(Utils.toFixed(v.z, 5));
-            if (v.z == 0.0f) {
-               sb.append("f,\n");
-            } else {
-               sb.append("f * radius,\n");
-            }
-
-            sb.append(Utils.toFixed(vt.x, 5));
-            sb.append("f, ");
-
-            sb.append(Utils.toFixed(vt.y, 5));
-            sb.append("f);\n");
-         }
-         sb.append("this.endShape(PConstants.CLOSE);\n\n");
-      }
-      return sb.toString();
-   }
-
-   public static Vec3[][] gridSpherical (
-         final int longitudes,
-         final int latitudes,
-         final float radius,
-         final boolean includePoles ) {
-
-      final int vlons = longitudes < 3 ? 3 : longitudes;
-      final int vlats = latitudes < 3 ? 3 : latitudes;
-      final int latLen = includePoles ? vlats + 2 : vlats;
-      final Vec3[][] result = new Vec3[latLen][];
-
-      if (includePoles) {
-         result[0] = new Vec3[] { new Vec3(0.0f, 0.0f, radius) };
-         result[latLen - 1] = new Vec3[] { new Vec3(0.0f, 0.0f, -radius) };
-      }
-
-      final float toPhi = 0.5f / (vlats + 1.0f);
-      final float toTheta = 1.0f / (vlons);
-
-      for (int i = 0, h = 1; i < vlats; ++i, ++h) {
-
-         final float phi = (h * toPhi) - 0.25f;
-         final float rhoCosPhi = radius * Utils.scNorm(phi);
-         final float rhoSinPhi = radius * Utils.scNorm(phi - 0.25f);
-
-         final Vec3[] lat = result[includePoles ? h : i] = new Vec3[vlons];
-
-         for (int j = 0; j < vlons; ++j) {
-
-            final float theta = j * toTheta;
-            final float cosTheta = Utils.scNorm(theta);
-            final float sinTheta = Utils.scNorm(theta - 0.25f);
-
-            lat[j] = new Vec3(
-                  rhoCosPhi * cosTheta,
-                  rhoCosPhi * sinTheta,
-                  -rhoSinPhi);
-         }
-      }
-
-      return result;
-   }
-
-   public static void main ( final String[] args ) {
-
-      // MeshEntity3 me = new MeshEntity3();
-      // Mesh3 m = new Mesh3();
-      // me.appendMesh(m);
-      // String str = me.toBlenderCode();
-      // System.out.println(str);
-
-      // Mesh3 m = new Mesh3();
-      // Mesh3.polygon(32, m);
-      // Mesh3 n = new Mesh3(m);
-      // System.out.println(n);
-
-      // final Curve3 a = new Curve3();
-      // Curve3.circle(a);
-      // final Curve3 b = new Curve3(a);
-      // System.out.println(b.toString());
-
-      // Vec3[][][] grid = Vec3.gridSpherical(3, 3, 3, 0.5f, 1.0f,
-      // false);
-      // PApplet.printArray(Vec3.flat(grid));
-   }
-
    /**
     * Cf.
     * https://catlikecoding.com/unity/tutorials/octahedron-sphere/
@@ -332,7 +219,7 @@ public class CamZup {
     * @return the sphere
     * @author Jasper Flick
     */
-   public static Mesh3 sphere1 ( final int div, final Mesh3 target ) {
+   private static Mesh3 sphere1 ( final int div, final Mesh3 target ) {
 
       final int subdivisions = Utils.clamp(div, 0, 6);
 
@@ -452,6 +339,98 @@ public class CamZup {
 
       target.name = "Sphere";
       return target.set(faces, coords, texCoords, normals);
+   }
+
+   private static String toHardCode (
+         final Mesh3 mesh,
+         final float radius ) {
+
+      final StringBuilder sb = new StringBuilder()
+            .append("float radius = ")
+            .append(radius)
+            .append("f;\n\n");
+      final int[][][] fs = mesh.faces;
+      final Vec3[] vs = mesh.coords;
+      final Vec2[] vts = mesh.texCoords;
+      final Vec3[] vns = mesh.normals;
+
+      final int flen0 = fs.length;
+      for (int i = 0; i < flen0; ++i) {
+         final int[][] f = fs[i];
+         final int flen1 = f.length;
+         sb.append("this.beginShape(PConstants.POLYGON);\n");
+         sb.append("this.texture(txtr);\n");
+         for (int j = 0; j < flen1; ++j) {
+            final int[] data = f[j];
+
+            final int vIndex = data[0];
+            final Vec3 v = vs[vIndex];
+
+            final int vtIndex = data[1];
+            final Vec2 vt = vts[vtIndex];
+
+            final int vnIndex = data[2];
+            final Vec3 vn = vns[vnIndex];
+
+            sb.append("this.normal(");
+            sb.append(Utils.toFixed(vn.x, 5));
+            sb.append("f, ");
+            sb.append(Utils.toFixed(vn.y, 5));
+            sb.append("f, ");
+            sb.append(Utils.toFixed(vn.z, 5));
+            sb.append("f);\n");
+
+            sb.append("this.vertex(\n");
+
+            sb.append(Utils.toFixed(v.x, 5));
+            if (v.x == 0.0f) {
+               sb.append("f, ");
+            } else {
+               sb.append("f * radius, ");
+            }
+
+            sb.append(Utils.toFixed(v.y, 5));
+            if (v.y == 0.0f) {
+               sb.append("f, ");
+            } else {
+               sb.append("f * radius, ");
+            }
+
+            sb.append(Utils.toFixed(v.z, 5));
+            if (v.z == 0.0f) {
+               sb.append("f,\n");
+            } else {
+               sb.append("f * radius,\n");
+            }
+
+            sb.append(Utils.toFixed(vt.x, 5));
+            sb.append("f, ");
+
+            sb.append(Utils.toFixed(vt.y, 5));
+            sb.append("f);\n");
+         }
+         sb.append("this.endShape(PConstants.CLOSE);\n\n");
+      }
+      return sb.toString();
+   }
+
+   public static void main ( final String[] args ) {
+
+      // MeshEntity3 me = new MeshEntity3();
+      // Mesh3 m = new Mesh3();
+      // me.appendMesh(m);
+      // String str = me.toBlenderCode();
+      // System.out.println(str);
+
+      // Mesh3 m = new Mesh3();
+      // Mesh3.polygon(32, m);
+      // Mesh3 n = new Mesh3(m);
+      // System.out.println(n);
+
+      // final Curve3 a = new Curve3();
+      // Curve3.circle(a);
+      // final Curve3 b = new Curve3(a);
+      // System.out.println(b.toString());
    }
 
    /**

@@ -110,7 +110,6 @@ public class ZImage extends PImage {
     *           the target image
     * @return the augmented image
     */
-   @Experimental
    public static PImage falseColor (
          final Gradient grd,
          final PImage target ) {

@@ -1,6 +1,5 @@
 package camzup.core;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -1262,16 +1261,21 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     */
    public static Vec2[] flat ( final Vec2[][] arr ) {
 
-      final ArrayList < Vec2 > list = new ArrayList <>();
-      final int len = arr.length;
-      for (int i = 0; i < len; ++i) {
-         final Vec2[] arr1 = arr[i];
-         final int len1 = arr1.length;
-         for (int j = 0; j < len1; ++j) {
-            list.add(arr1[j]);
-         }
+      final int sourceLen = arr.length;
+      int totalLen = 0;
+      for (int i = 0; i < sourceLen; ++i) {
+         totalLen += arr[i].length;
       }
-      return list.toArray(new Vec2[list.size()]);
+
+      final Vec2[] result = new Vec2[totalLen];
+      for (int j = 0, i = 0; i < sourceLen; ++i) {
+         final Vec2[] arrInner = arr[i];
+         final int len = arrInner.length;
+         System.arraycopy(arrInner, 0, result, j, len);
+         j += len;
+      }
+
+      return result;
    }
 
    /**
@@ -1599,6 +1603,121 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
             row[k] = new Vec2(xoff + xs[j], y);
          }
       }
+      return result;
+   }
+
+   /**
+    * Generates a 2D array of vectors. The array is ordered by
+    * rings, then sectors; the parameters are supplied in
+    * reverse order.
+    *
+    * @param sectors
+    *           the sectors, headings
+    * @return the array
+    */
+   public static Vec2[][] gridPolar ( final int sectors ) {
+
+      return Vec2.gridPolar(sectors, 1, 0.5f, 0.5f, true);
+   }
+
+   /**
+    * Generates a 2D array of vectors. The array is ordered by
+    * rings, then sectors; the parameters are supplied in
+    * reverse order.
+    *
+    * @param sectors
+    *           the sectors, headings
+    * @param includeCenter
+    *           include the center
+    * @return the array
+    */
+   public static Vec2[][] gridPolar (
+         final int sectors,
+         final boolean includeCenter ) {
+
+      return Vec2.gridPolar(sectors, 1, 0.5f, 0.5f, includeCenter);
+   }
+
+   /**
+    * Generates a 2D array of vectors. The array is ordered by
+    * rings, then sectors; the parameters are supplied in
+    * reverse order.
+    *
+    * @param sectors
+    *           the sectors, headings
+    * @param rings
+    *           the rings, radii
+    * @param radiusMin
+    *           minimum radius
+    * @param radiusMax
+    *           maxmum radius
+    * @return the array
+    */
+   public static Vec2[][] gridPolar (
+         final int sectors,
+         final int rings,
+         final float radiusMin,
+         final float radiusMax ) {
+
+      return Vec2.gridPolar(sectors, rings, radiusMin, radiusMax, true);
+   }
+
+   /**
+    * Generates a 2D array of vectors. The array is ordered by
+    * rings, then sectors; the parameters are supplied in
+    * reverse order.
+    *
+    * @param sectors
+    *           the sectors, headings
+    * @param rings
+    *           the rings, radii
+    * @param radiusMin
+    *           minimum radius
+    * @param radiusMax
+    *           maxmum radius
+    * @param includeCenter
+    *           include the center
+    * @return the array
+    */
+   public static Vec2[][] gridPolar (
+         final int sectors,
+         final int rings,
+         final float radiusMin,
+         final float radiusMax,
+         final boolean includeCenter ) {
+
+      final int vsect = sectors < 3 ? 3 : sectors;
+      final int vring = rings < 1 ? 1 : rings;
+      final boolean oneRing = vring == 1;
+      final float vrMax = Utils.max(Utils.EPSILON, radiusMin, radiusMax);
+      final float vrMin = oneRing ? vrMax
+            : Utils.max(Utils.EPSILON, Utils.min(radiusMin, radiusMax));
+
+      final int ringLen = includeCenter ? rings + 1 : rings;
+      final Vec2[][] result = new Vec2[ringLen][vsect];
+      if (includeCenter) {
+         result[0] = new Vec2[] { new Vec2(0.0f, 0.0f) };
+      }
+
+      final float toPrc = oneRing ? 1.0f : 1.0f / (vring - 1.0f);
+      final float toTheta = 1.0f / vsect;
+
+      for (int h = 0; h < vring; ++h) {
+
+         final float prc = h * toPrc;
+         final float radius = Utils.lerpUnclamped(vrMin, vrMax, prc);
+         final Vec2[] ring = result[includeCenter ? h + 1 : h];
+
+         for (int i = 0; i < vsect; ++i) {
+
+            final float theta = i * toTheta;
+            final float cosTheta = Utils.scNorm(theta);
+            final float sinTheta = Utils.scNorm(theta - 0.25f);
+
+            ring[i] = new Vec2(radius * cosTheta, radius * sinTheta);
+         }
+      }
+
       return result;
    }
 

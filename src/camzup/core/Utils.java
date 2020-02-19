@@ -710,7 +710,7 @@ public abstract class Utils implements IUtils {
     */
    public static float abs ( final float value ) {
 
-      // abs(a) := max(-a, a)
+      /* abs(a) := max(-a, a) */
       return Float.intBitsToFloat(0x7fffffff & Float.floatToRawIntBits(value));
    }
 
@@ -2244,6 +2244,87 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * Returns a String representation of a one dimensional
+    * array of objects.
+    *
+    * @param arr
+    *           the array
+    * @return the String
+    */
+   public static String toString ( final Object[] arr ) {
+
+      final int len = arr.length;
+      final int last = len - 1;
+
+      final StringBuilder sb = new StringBuilder(len * 32)
+            .append('[')
+            .append(' ');
+      for (int i = 0; i < arr.length; ++i) {
+         sb.append(arr[i].toString());
+         if (i < last) {
+            sb.append(',').append(' ');
+         }
+      }
+
+      sb.append(' ').append(']');
+      return sb.toString();
+   }
+
+   /**
+    * Returns a String representation of a two dimensional
+    * array of objects.
+    *
+    * @param arr
+    *           the array
+    * @return the String
+    */
+   public static String toString ( final Object[][] arr ) {
+
+      final int len = arr.length;
+      final int last = len - 1;
+
+      final StringBuilder sb = new StringBuilder(len * 128)
+            .append('[')
+            .append(' ');
+      for (int i = 0; i < arr.length; ++i) {
+         sb.append(Utils.toString(arr[i]));
+         if (i < last) {
+            sb.append(',').append(' ');
+         }
+      }
+
+      sb.append(' ').append(']');
+      return sb.toString();
+   }
+
+   /**
+    * Returns a String representation of a three dimensional
+    * array of objects.
+    *
+    * @param arr
+    *           the array
+    * @return the String
+    */
+   public static String toString ( final Object[][][] arr ) {
+
+      final int len = arr.length;
+      final int last = len - 1;
+
+      final StringBuilder sb = new StringBuilder(len * 512)
+            .append('[')
+            .append(' ');
+      for (int i = 0; i < arr.length; ++i) {
+         sb.append(Utils.toString(arr[i]));
+         if (i < last) {
+            sb.append(',').append(' ');
+         }
+      }
+
+      sb.append(' ').append(']');
+      return sb.toString();
+   }
+
+   /**
     * Truncates the input value. This is an alias for
     * explicitly casting a float to an integer, then implicitly
     * casting the integral to a float.
@@ -2315,7 +2396,6 @@ public abstract class Utils implements IUtils {
     *           the upper bound
     * @return the wrapped value
     */
-   @Experimental
    public static float wrap (
          final float value,
          final float lb,

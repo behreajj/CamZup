@@ -25,9 +25,9 @@ public interface IUp3 extends IUp {
 
    /**
     * Gets a mouse within a unit square, where either component
-    * may be in the range [-1.0, 1.0]. The mouse's y coordinate
-    * is flipped and assigned to the vector's y component.
-    * (This is not a normalized vector.)
+    * may be in the range [-1.0, 1.0] . The mouse's y
+    * coordinate is flipped and assigned to the vector's y
+    * component. (This is not a normalized vector.)
     *
     * @param parent
     *           the parent applet
@@ -87,6 +87,49 @@ public interface IUp3 extends IUp {
          final Vec3 cp0,
          final Vec3 cp1,
          final Vec3 ap1 );
+
+   /**
+    * Looks at the center point from the eye point, using a
+    * default reference up axis.
+    *
+    * @param xEye
+    *           camera location x
+    * @param yEye
+    *           camera location y
+    * @param zEye
+    *           camera location z
+    * @param xCenter
+    *           target location x
+    * @param yCenter
+    *           target location y
+    * @param zCenter
+    *           target location z
+    */
+   void camera (
+         final float xEye,
+         final float yEye,
+         final float zEye,
+         final float xCenter,
+         final float yCenter,
+         final float zCenter );
+
+   /**
+    * Sets the camera to a location, looking at a center, with
+    * the default up direction.
+    *
+    * @param eye
+    *           the eye location
+    * @param center
+    *           the center of the gaze
+    */
+   default void camera (
+         final Vec3 eye,
+         final Vec3 center ) {
+
+      this.camera(
+            eye.x, eye.y, eye.z,
+            center.x, center.y, center.z);
+   }
 
    /**
     * Gets the renderer's camera location.
@@ -225,6 +268,26 @@ public interface IUp3 extends IUp {
          final Vec3 cp,
          final Vec3 ap1 );
 
+   /**
+    * Displays a ray, i.e., an origin point and a direction.
+    * The display length of the direction is dictated by an
+    * input.
+    *
+    * @param xOrigin
+    *           the x origin
+    * @param yOrigin
+    *           the y origin
+    * @param zOrigin
+    *           the z origin
+    * @param xDir
+    *           the x direction
+    * @param yDir
+    *           the y direction
+    * @param zDir
+    *           the z direction
+    * @param dLen
+    *           the display length
+    */
    default void ray (
          final float xOrigin,
          final float yOrigin,
@@ -240,6 +303,32 @@ public interface IUp3 extends IUp {
             dLen, 1.0f, 4.0f, 2.0f);
    }
 
+   /**
+    * Displays a ray, i.e., an origin point and a direction.
+    * The display length of the direction is dictated by an
+    * input.
+    *
+    * @param xOrigin
+    *           the x origin
+    * @param yOrigin
+    *           the y origin
+    * @param zOrigin
+    *           the z origin
+    * @param xDir
+    *           the x direction
+    * @param yDir
+    *           the y direction
+    * @param zDir
+    *           the z direction
+    * @param dLen
+    *           the display length
+    * @param lnwgt
+    *           the line weight
+    * @param oWeight
+    *           the origin stroke weight
+    * @param dWeight
+    *           the direction stroke weight
+    */
    default void ray (
          final float xOrigin,
          final float yOrigin,
@@ -288,6 +377,16 @@ public interface IUp3 extends IUp {
       this.popStyle();
    }
 
+   /**
+    * Displays a ray, i.e., an origin point and a direction.
+    * The display length of the direction is dictated by an
+    * input.
+    *
+    * @param ray
+    *           the ray
+    * @param dLen
+    *           the display length
+    */
    default void ray (
          final Ray3 ray,
          final float dLen ) {
@@ -300,6 +399,22 @@ public interface IUp3 extends IUp {
             dLen);
    }
 
+   /**
+    * Displays a ray, i.e., an origin point and a direction.
+    * The display length of the direction is dictated by an
+    * input.
+    *
+    * @param ray
+    *           the ray
+    * @param dLen
+    *           the display length
+    * @param lnwgt
+    *           the line weight
+    * @param oWeight
+    *           the origin stroke weight
+    * @param dWeight
+    *           the direction stroke weight
+    */
    default void ray (
          final Ray3 ray,
          final float dLen,

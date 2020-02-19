@@ -1,6 +1,5 @@
 package camzup.core;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -1404,16 +1403,20 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     */
    public static Vec3[] flat ( final Vec3[][] arr ) {
 
-      final ArrayList < Vec3 > list = new ArrayList <>();
-      final int len = arr.length;
-      for (int i = 0; i < len; ++i) {
-         final Vec3[] arr1 = arr[i];
-         final int len1 = arr1.length;
-         for (int j = 0; j < len1; ++j) {
-            list.add(arr1[j]);
-         }
+      final int sourceLen = arr.length;
+      int totalLen = 0;
+      for (int i = 0; i < sourceLen; ++i) {
+         totalLen += arr[i].length;
       }
-      return list.toArray(new Vec3[list.size()]);
+
+      final Vec3[] result = new Vec3[totalLen];
+      for (int j = 0, i = 0; i < sourceLen; ++i) {
+         final Vec3[] arrInner = arr[i];
+         final int len = arrInner.length;
+         System.arraycopy(arrInner, 0, result, j, len);
+         j += len;
+      }
+      return result;
    }
 
    /**
@@ -1426,20 +1429,45 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     */
    public static Vec3[] flat ( final Vec3[][][] arr ) {
 
-      final ArrayList < Vec3 > list = new ArrayList <>();
-      final int len = arr.length;
-      for (int i = 0; i < len; ++i) {
-         final Vec3[][] arr1 = arr[i];
-         final int len1 = arr1.length;
-         for (int j = 0; j < len1; ++j) {
-            final Vec3[] arr2 = arr1[j];
-            final int len2 = arr2.length;
-            for (int k = 0; k < len2; ++k) {
-               list.add(arr2[k]);
-            }
+      // final ArrayList < Vec3 > list = new ArrayList <>();
+      // final int len = arr.length;
+      // for (int i = 0; i < len; ++i) {
+      // final Vec3[][] arr1 = arr[i];
+      // final int len1 = arr1.length;
+      // for (int j = 0; j < len1; ++j) {
+      // final Vec3[] arr2 = arr1[j];
+      // final int len2 = arr2.length;
+      // for (int k = 0; k < len2; ++k) {
+      // list.add(arr2[k]);
+      // }
+      // }
+      // }
+      // return list.toArray(new Vec3[list.size()]);
+
+      final int sourceLen0 = arr.length;
+      int totalLen = 0;
+      for (int i = 0; i < sourceLen0; ++i) {
+         final Vec3[][] arrInner = arr[i];
+         final int sourceLen1 = arrInner.length;
+         for (int j = 0; j < sourceLen1; ++j) {
+            totalLen += arrInner[j].length;
          }
       }
-      return list.toArray(new Vec3[list.size()]);
+
+      final Vec3[] result = new Vec3[totalLen];
+
+      for (int k = 0, i = 0; i < sourceLen0; ++i) {
+         final Vec3[][] arrInner1 = arr[i];
+         final int sourceLen1 = arrInner1.length;
+         for (int j = 0; j < sourceLen1; ++j) {
+            final Vec3[] arrInner2 = arrInner1[j];
+            final int sourceLen2 = arrInner2.length;
+            System.arraycopy(arrInner2, 0, result, k, sourceLen2);
+            k += sourceLen2;
+         }
+      }
+
+      return result;
    }
 
    /**
@@ -1587,7 +1615,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
       return target.set(
             radius * Utils.cos(azimuth),
-            radius * Utils.sin(azimuth), 0.0f);
+            radius * Utils.sin(azimuth),
+            0.0f);
    }
 
    /**
@@ -1761,25 +1790,67 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       return result;
    }
 
+   /**
+    * Generates a 3D array of vectors. The array is ordered by
+    * layers, latitudes, then longitudes; the parameters are
+    * supplied in reverse order.
+    *
+    * @param longitudes
+    *           the longitudes, azimuths
+    * @param latitudes
+    *           the latitudes, inclinations
+    * @return the array
+    */
    public static Vec3[][][] gridSpherical (
          final int longitudes,
          final int latitudes ) {
 
-      return gridSpherical(longitudes, latitudes, true);
+      return Vec3.gridSpherical(
+            longitudes, latitudes,
+            true);
    }
 
+   /**
+    * Generates a 3D array of vectors. The array is ordered by
+    * layers, latitudes, then longitudes; the parameters are
+    * supplied in reverse order.
+    *
+    * @param longitudes
+    *           the longitudes, azimuths
+    * @param latitudes
+    *           the latitudes, inclinations
+    * @param includePoles
+    *           include the poles
+    * @return the array
+    */
    public static Vec3[][][] gridSpherical (
          final int longitudes,
          final int latitudes,
          final boolean includePoles ) {
 
-      return gridSpherical(
-            longitudes,
-            latitudes,
+      return Vec3.gridSpherical(
+            longitudes, latitudes,
             1, 0.5f, 0.5f,
             includePoles);
    }
 
+   /**
+    * Generates a 3D array of vectors. The array is ordered by
+    * layers, latitudes, then longitudes; the parameters are
+    * supplied in reverse order.
+    *
+    * @param longitudes
+    *           the longitudes, azimuths
+    * @param latitudes
+    *           the latitudes, inclinations
+    * @param layers
+    *           the layers, radii
+    * @param radiusMin
+    *           minimum radius
+    * @param radiusMax
+    *           maximum radius
+    * @return the array
+    */
    public static Vec3[][][] gridSpherical (
          final int longitudes,
          final int latitudes,
@@ -1787,15 +1858,31 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final float radiusMin,
          final float radiusMax ) {
 
-      return gridSpherical(
-            longitudes,
-            latitudes,
-            layers,
-            radiusMin,
-            radiusMax,
+      return Vec3.gridSpherical(
+            longitudes, latitudes,
+            layers, radiusMin, radiusMax,
             true);
    }
 
+   /**
+    * Generates a 3D array of vectors. The array is ordered by
+    * layers, latitudes, then longitudes; the parameters are
+    * supplied in reverse order.
+    *
+    * @param longitudes
+    *           the longitudes, azimuths
+    * @param latitudes
+    *           the latitudes, inclinations
+    * @param layers
+    *           the layers, radii
+    * @param radiusMin
+    *           minimum radius
+    * @param radiusMax
+    *           maximum radius
+    * @param includePoles
+    *           include the poles
+    * @return the array
+    */
    public static Vec3[][][] gridSpherical (
          final int longitudes,
          final int latitudes,
@@ -1803,8 +1890,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final float radiusMin,
          final float radiusMax,
          final boolean includePoles ) {
-
-      // TODO: Support multiple layers of radius...
 
       final int vlons = longitudes < 3 ? 3 : longitudes;
       final int vlats = latitudes < 3 ? 3 : latitudes;
@@ -1816,16 +1901,18 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
             : Utils.max(Utils.EPSILON, Utils.min(radiusMin, radiusMax));
 
       final int latLen = includePoles ? vlats + 2 : vlats;
-      final Vec3[][][] result = new Vec3[vlayers][][];
+      final Vec3[][][] result = new Vec3[vlayers][latLen][];
 
       final float toPrc = oneLayer ? 1.0f : 1.0f / (vlayers - 1.0f);
       final float toPhi = 0.5f / (vlats + 1.0f);
-      final float toTheta = 1.0f / (vlons);
+      final float toTheta = 1.0f / vlons;
 
       for (int h = 0; h < vlayers; ++h) {
-         final Vec3[][] layer = result[h] = new Vec3[latLen][];
+
          final float prc = h * toPrc;
          final float radius = Utils.lerpUnclamped(vrMin, vrMax, prc);
+
+         final Vec3[][] layer = result[h];
 
          if (includePoles) {
             layer[0] = new Vec3[] { new Vec3(0.0f, 0.0f, radius) };
@@ -1834,7 +1921,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
          for (int i = 0, k = 1; i < vlats; ++i, ++k) {
 
-            final float phi = (k * toPhi) - 0.25f;
+            final float phi = k * toPhi - 0.25f;
             final float rhoCosPhi = radius * Utils.scNorm(phi);
             final float rhoSinPhi = radius * Utils.scNorm(phi - 0.25f);
 
@@ -1842,6 +1929,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
             for (int j = 0; j < vlons; ++j) {
 
+               // TODO: Precalculate values?
                final float theta = j * toTheta;
                final float cosTheta = Utils.scNorm(theta);
                final float sinTheta = Utils.scNorm(theta - 0.25f);

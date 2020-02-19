@@ -272,8 +272,10 @@ public interface IYup2 extends IUp {
     *           the second anchor point
     */
    void bezier (
-         final Vec2 ap0, final Vec2 cp0,
-         final Vec2 cp1, final Vec2 ap1 );
+         final Vec2 ap0,
+         final Vec2 cp0,
+         final Vec2 cp1,
+         final Vec2 ap1 );
 
    /**
     * Draws a cubic Bezier curve segment to the next anchor
@@ -638,9 +640,6 @@ public interface IYup2 extends IUp {
     * The display length of the direction is dictated by an
     * input.
     *
-    * For improved performance, ensure that the direction is of
-    * unit length (normalized).
-    *
     * @param xOrigin
     *           the x origin
     * @param yOrigin
@@ -722,9 +721,6 @@ public interface IYup2 extends IUp {
     * The display length of the direction is dictated by an
     * input.
     *
-    * For improved performance, ensure that the direction is of
-    * unit length (normalized).
-    *
     * @param ray
     *           the ray
     * @param dLen
@@ -743,9 +739,6 @@ public interface IYup2 extends IUp {
     * Displays a ray, i.e., an origin point and a direction.
     * The display length of the direction is dictated by an
     * input.
-    *
-    * For improved performance, ensure that the direction is of
-    * unit length (normalized).
     *
     * @param ray
     *           the ray

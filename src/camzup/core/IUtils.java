@@ -45,6 +45,20 @@ public interface IUtils {
    double FOUR_THIRDS_D = 1.3333333333333333d;
 
    /**
+    * An approximation of \u03c4 / \u03c6<sup>2</sup> ,
+    * 2.3999631 . Useful for replicating phyllotaxis. In
+    * degrees, 137.50777 .
+    */
+   float GOLDEN_ANGLE = 2.3999631f;
+
+   /**
+    * An approximation of \u03c4 / \u03c6<sup>2</sup> ,
+    * 2.399963229728653 . Useful for replicating phyllotaxis.
+    * In degrees, 137.50776405003785 .
+    */
+   double GOLDEN_ANGLE_D = 2.399963229728653d;
+
+   /**
     * \u03c0 divided by two. Approximately 1.5707964 .
     */
    float HALF_PI = 1.5707964f;
@@ -55,7 +69,7 @@ public interface IUtils {
    double HALF_PI_D = 1.5707963267948966d;
 
    /**
-    * base value used by hash code functions.
+    * Base value used by hash code functions.
     */
    int HASH_BASE = -2128831035;
 

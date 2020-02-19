@@ -136,16 +136,23 @@ public class Mesh2 extends Mesh {
                a1, destAngle1, k * toStep);
 
          // Vec2.fromPolar(theta1 * IUtils.TAU, 0.5f, pureCoord);
+
          pureCoord.set(
                0.5f * Utils.scNorm(theta1),
-               0.5f * Utils.scNorm(theta1 - 0.5f));
+               0.5f * Utils.scNorm(theta1 - 0.25f));
 
          coords[i] = new Vec2(pureCoord);
          final Vec2 v1 = coords[j] = Vec2.mul(
                pureCoord, annul, new Vec2());
 
-         texCoords[i] = Vec2.add(uvCenter, pureCoord, new Vec2());
-         texCoords[j] = Vec2.add(uvCenter, v1, new Vec2());
+         final Vec2 st0 = Vec2.add(uvCenter, pureCoord, new Vec2());
+         final Vec2 st1 = Vec2.add(uvCenter, v1, new Vec2());
+
+         st0.y = 1.0f - st0.y;
+         st1.y = 1.0f - st1.y;
+
+         texCoords[i] = st0;
+         texCoords[j] = st1;
       }
 
       int[][][] faces;
@@ -427,13 +434,15 @@ public class Mesh2 extends Mesh {
       final float[] xs = new float[cval1];
       final float[] us = new float[cval1];
       for (int j = 0; j < cval1; ++j) {
-         final float u = us[j] = j * jToStep;
-         xs[j] = u - 0.5f;
+         final float xPrc = j * jToStep;
+         xs[j] = xPrc - 0.5f;
+         us[j] = xPrc;
       }
 
       for (int k = 0, i = 0; i < rval1; ++i) {
-         final float v = i * iToStep;
-         final float y = v - 0.5f;
+         final float yPrc = i * iToStep;
+         final float y = yPrc - 0.5f;
+         final float v = 1.0f - yPrc;
 
          for (int j = 0; j < cval1; ++j, ++k) {
             coords[k] = new Vec2(xs[j], y);
@@ -574,9 +583,15 @@ public class Mesh2 extends Mesh {
             final int[][] ngon = faces[0];
 
             for (int i = 0; i < seg; ++i) {
+
                Vec2.fromPolar(i * toTheta, 0.5f, pureCoord);
-               texCoords[i] = Vec2.add(uvCenter, pureCoord, new Vec2());
+
+               final Vec2 st = Vec2.add(uvCenter, pureCoord, new Vec2());
+               st.y = 1.0f - st.y;
+               texCoords[i] = st;
+
                coords[i] = new Vec2(pureCoord);
+
                ngon[i] = new int[] { i, i };
             }
 
@@ -596,11 +611,18 @@ public class Mesh2 extends Mesh {
             for (int i = 0, j = 1; i < seg; ++i, ++j) {
 
                Vec2.fromPolar(i * toTheta, 0.5f, pureCoord);
-               texCoords[j] = Vec2.add(uvCenter, pureCoord, new Vec2());
+
+               final Vec2 st = Vec2.add(uvCenter, pureCoord, new Vec2());
+               st.y = 1.0f - st.y;
+               texCoords[j] = st;
+
                coords[j] = new Vec2(pureCoord);
 
                final int k = 1 + j % seg;
-               faces[i] = new int[][] { { 0, 0 }, { j, j }, { k, k } };
+               faces[i] = new int[][] {
+                     { 0, 0 },
+                     { j, j },
+                     { k, k } };
             }
       }
 
@@ -678,8 +700,14 @@ public class Mesh2 extends Mesh {
                final Vec2 v1 = coords[j] = Vec2.mul(
                      pureCoord, annul, new Vec2());
 
-               texCoords[i] = Vec2.add(uvCenter, pureCoord, new Vec2());
-               texCoords[j] = Vec2.add(uvCenter, v1, new Vec2());
+               final Vec2 st0 = Vec2.add(uvCenter, pureCoord, new Vec2());
+               final Vec2 st1 = Vec2.add(uvCenter, v1, new Vec2());
+
+               st0.y = 1.0f - st0.y;
+               st1.y = 1.0f - st1.y;
+
+               texCoords[i] = st0;
+               texCoords[j] = st1;
 
                final int m = (i + 2) % seg2;
                final int n = (j + 2) % seg2;
@@ -809,17 +837,17 @@ public class Mesh2 extends Mesh {
          final PolyType poly ) {
 
       final Vec2[] coords = new Vec2[] {
-            new Vec2(0.5f, 0.5f),
             new Vec2(-0.5f, 0.5f),
-            new Vec2(-0.5f, -0.5f),
-            new Vec2(0.5f, -0.5f)
+            new Vec2(0.5f, 0.5f),
+            new Vec2(0.5f, -0.5f),
+            new Vec2(-0.5f, -0.5f)
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            new Vec2(1.0f, 1.0f),
-            new Vec2(0.0f, 1.0f),
             new Vec2(0.0f, 0.0f),
-            new Vec2(1.0f, 0.0f)
+            new Vec2(1.0f, 0.0f),
+            new Vec2(1.0f, 1.0f),
+            new Vec2(0.0f, 1.0f)
       };
 
       int[][][] faces;
@@ -861,9 +889,9 @@ public class Mesh2 extends Mesh {
       };
 
       final Vec2[] texCoords = new Vec2[] {
-            new Vec2(0.5f, 1.0f),
-            new Vec2(0.0669873f, 0.25f),
-            new Vec2(0.9330127f, 0.25f)
+            new Vec2(0.5f, 0.0f),
+            new Vec2(0.0669873f, 0.75f),
+            new Vec2(0.9330127f, 0.75f)
       };
 
       final int[][][] faces = new int[][][] {
@@ -1089,6 +1117,26 @@ public class Mesh2 extends Mesh {
    }
 
    /**
+    * Tests this mesh for equivalence with another.
+    *
+    * @param mesh2
+    *           the mesh
+    * @return the evaluation
+    */
+   protected boolean equals ( final Mesh2 mesh2 ) {
+
+      if (!Arrays.equals(this.coords, mesh2.coords)) {
+         return false;
+      }
+
+      if (!Arrays.deepEquals(this.faces, mesh2.faces)) {
+         return false;
+      }
+
+      return true;
+   }
+
+   /**
     * Clones this mesh.
     *
     * @return the cloned mesh
@@ -1121,17 +1169,7 @@ public class Mesh2 extends Mesh {
          return false;
       }
 
-      final Mesh2 other = (Mesh2) obj;
-
-      if (!Arrays.equals(this.coords, other.coords)) {
-         return false;
-      }
-
-      if (!Arrays.deepEquals(this.faces, other.faces)) {
-         return false;
-      }
-
-      return true;
+      return this.equals((Mesh2) obj);
    }
 
    /**
