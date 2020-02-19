@@ -31,6 +31,26 @@ public abstract class EntityData implements IEntityData {
    }
 
    /**
+    * Tests this entity data for equivalence with another.
+    *
+    * @param other
+    *           the other entity
+    * @return the evaluation
+    */
+   protected boolean equals ( final EntityData other ) {
+
+      if (this.name == null) {
+         if (other.name != null) {
+            return false;
+         }
+      } else if (!this.name.equals(other.name)) {
+         return false;
+      }
+
+      return true;
+   }
+
+   /**
     * Tests this entity data for equivalence with an object.
     *
     * @param obj
@@ -52,15 +72,7 @@ public abstract class EntityData implements IEntityData {
          return false;
       }
 
-      final EntityData other = (EntityData) obj;
-      if (this.name == null) {
-         if (other.name != null) {
-            return false;
-         }
-      } else if (!this.name.equals(other.name)) {
-         return false;
-      }
-      return true;
+      return this.equals((EntityData) obj);
    }
 
    /**

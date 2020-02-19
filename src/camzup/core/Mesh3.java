@@ -33,139 +33,6 @@ public class Mesh3 extends Mesh {
       return target;
    }
 
-   static Mesh3 arc (
-         final float majorStart,
-         final float majorStop,
-         final float minorStart,
-         final float minorStop,
-         final float thickness,
-         final int sectors,
-         final int panels,
-         final Mesh3 target ) {
-
-      // if(Utils.approx(majorStop - majorStart, 0.00139f)) {
-      // }
-
-      // if(Utils.approx(minorStop - minorStart, 0.00139f)) {
-      // }
-
-      /* Sector Arc */
-      final float a1 = Utils.mod1(majorStart * IUtils.ONE_TAU);
-      final float b1 = Utils.mod1(majorStop * IUtils.ONE_TAU);
-      final float df1 = b1 - a1;
-      final float arcLen1 = Utils.mod1(df1);
-      final float destAngle1 = a1 + arcLen1;
-      final int vsect = Utils.ceilToInt(
-            1 + (sectors < 3 ? 3 : sectors) * arcLen1);
-
-      /* Panel Arc */
-      final float a0 = Utils.mod1(minorStart * IUtils.ONE_TAU);
-      final float b0 = Utils.mod1(minorStop * IUtils.ONE_TAU);
-      final float df0 = b0 - a0;
-      final float arcLen0 = Utils.mod1(df0);
-      final float destAngle0 = a0 + arcLen0;
-      final int vpanl = Utils.ceilToInt(
-            1 + (panels < 3 ? 3 : panels) * arcLen0);
-
-      final int panels1 = vpanl + 1;
-      final int sectors1 = vsect + 1;
-      final int len = panels1 * sectors1;
-
-      final Vec3[] coords = new Vec3[len];
-      final Vec2[] texCoords = new Vec2[len];
-      final Vec3[] normals = new Vec3[len];
-
-      final float toU = 1.0f / vsect;
-      final float toV = 1.0f / vpanl;
-
-      final float vtrad = 0.5f * Utils.max(Utils.EPSILON, thickness);
-      final float ratio = vtrad + vtrad;
-
-      for (int k = 0, i = 0; i < panels1; ++i) {
-
-         final float v = i * toV;
-         final float phi = Utils.lerpUnclamped(
-               a0, destAngle0, v);
-         final float cosPhi = Utils.scNorm(phi);
-         final float sinPhi = Utils.scNorm(phi - 0.25f);
-         final float r = 1.0f + ratio * cosPhi;
-
-         for (int j = 0; j < sectors1; ++j, ++k) {
-
-            final float u = j * toU;
-            final float theta = Utils.lerpUnclamped(
-                  a1, destAngle1, u);
-            final float cosTheta = Utils.scNorm(theta);
-            final float sinTheta = Utils.scNorm(theta - 0.25f);
-
-            coords[k] = new Vec3(
-                  r * cosTheta,
-                  r * sinTheta,
-                  ratio * sinPhi);
-
-            texCoords[k] = new Vec2(u, v);
-
-            normals[k] = new Vec3(
-                  cosPhi * cosTheta,
-                  cosPhi * sinTheta,
-                  sinPhi);
-         }
-      }
-
-      final int[][][] faces = new int[2 * vsect *
-            vpanl][3][3];
-      final int sliceCount = vsect + 1;
-      int e = 0;
-      int f = sliceCount;
-      for (int k = 0, i = 0; i < vpanl; ++i) {
-         for (int j = 0; j < vsect; ++j, k += 2) {
-            final int a = e + j;
-            final int b = a + 1;
-            final int d = f + j;
-            final int c = d + 1;
-
-            faces[k] = new int[][] {
-                  { a, a, a }, { b, b, b }, { d, d, d } };
-
-            faces[k + 1] = new int[][] {
-                  { d, d, d }, { b, b, b }, { c, c, c } };
-         }
-
-         e += sliceCount;
-         f += sliceCount;
-      }
-
-      target.name = "Arc";
-      return target.set(faces, coords, texCoords, normals);
-   }
-
-   static Mesh3 arc (
-         final float majorStart,
-         final float majorStop,
-         final float minorStart,
-         final float minorStop,
-         final float thickness,
-         final Mesh3 target ) {
-
-      return Mesh3.arc(majorStart, majorStop,
-            minorStart, minorStop,
-            thickness,
-            IMesh.DEFAULT_CIRCLE_SECTORS,
-            IMesh.DEFAULT_CIRCLE_SECTORS >> 1,
-            target);
-   }
-
-   static Mesh3 arc (
-         final float majorStart,
-         final float majorStop,
-         final float minorStart,
-         final float minorStop,
-         final Mesh3 target ) {
-
-      return Mesh3.arc(majorStart, majorStop,
-            minorStart, minorStop, 0.15f, target);
-   }
-
    @Experimental
    static Mesh3 cube (
          final int cols, /* x */
@@ -772,11 +639,12 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Creates a mesh from an array of strings. This is a simple
-    * obj file reader. It assumes that the faces data of the
-    * mesh includes texture coordinates and normals. Material
-    * information is not parsed from the file, as Processing
-    * would not accurately recreate it.
+    * Creates a mesh from an array of strings representing a
+    * WaveFront obj file. This is a simple obj parser. It
+    * assumes that the face indices of the mesh include texture
+    * coordinates and normals. Material information is not
+    * parsed from the file, as Processing would not accurately
+    * recreate it.
     *
     * @param lines
     *           the String tokens
@@ -911,14 +779,15 @@ public class Mesh3 extends Mesh {
             /* 19 */ new Vec3(0.35681865f, -0.79465222f, 0.49112961f)
       };
 
+      // Seems like a wasteful number of texture coordinates...
       final Vec2[] texCoords = new Vec2[] {
-            /* 00 */ new Vec2(0.76286000f, 0.72360748f),
+            /* 00 */ new Vec2(0.76286f, 0.72360748f),
             /* 01 */ new Vec2(0.07467568f, 0.27639252f),
             /* 02 */ new Vec2(0.23713601f, 0.72360748f),
-            /* 03 */ new Vec2(0.72360748f, 0.13820040f),
+            /* 03 */ new Vec2(0.72360748f, 0.1382004f),
             /* 04 */ new Vec2(0.72360748f, 0.63819626f),
             /* 05 */ new Vec2(0.27639249f, 0.36180758f),
-            /* 06 */ new Vec2(0.23714000f, 0.27639252f),
+            /* 06 */ new Vec2(0.23714f, 0.27639252f),
             /* 07 */ new Vec2(0.76286399f, 0.27639252f),
             /* 08 */ new Vec2(0.92532045f, 0.27639246f),
             /* 09 */ new Vec2(0.49999776f, 0.72360751f),
@@ -927,7 +796,7 @@ public class Mesh3 extends Mesh {
             /* 12 */ new Vec2(0.5f, 0.5f),
             /* 13 */ new Vec2(0.92532045f, 0.63819239f),
             /* 14 */ new Vec2(0.07467568f, 0.63819626f),
-            /* 15 */ new Vec2(0.23714000f, 0.13820040f),
+            /* 15 */ new Vec2(0.23714f, 0.1382004f),
             /* 16 */ new Vec2(0.72360754f, 0.63819239f),
             /* 17 */ new Vec2(0.72360748f, 0.13820291f),
             /* 18 */ new Vec2(0.27639252f, 0.36180377f),
@@ -936,7 +805,7 @@ public class Mesh3 extends Mesh {
             /* 21 */ new Vec2(0.27639252f, 0.86179706f),
             /* 22 */ new Vec2(0.07467955f, 0.72360751f),
             /* 23 */ new Vec2(0.92532432f, 0.72360748f),
-            /* 24 */ new Vec2(0.76286000f, 0.86179957f),
+            /* 24 */ new Vec2(0.76286f, 0.86179957f),
             /* 25 */ new Vec2(0.92532432f, 0.36180377f),
             /* 26 */ new Vec2(0.23713601f, 0.86179706f),
             /* 27 */ new Vec2(0.07467955f, 0.36180758f),
@@ -1225,8 +1094,6 @@ public class Mesh3 extends Mesh {
          }
       }
 
-      // TODO: UVs are screwed up.
-
       /* Texture coordinates. */
       final int vlons1 = vlons + 1;
       final int uvLen = vlons1 * vlats + 2;
@@ -1247,14 +1114,16 @@ public class Mesh3 extends Mesh {
       final int[][][] faces = new int[2 * vlons1 * vlats][3][3];
       int idx = 0;
 
+      // TODO: UVs are screwed up.
+
       /* Top cap. */
       for (int j = 0; j < vlons1; ++j) {
 
          final int n0 = 1 + j % vlons;
          final int n1 = 1 + (j + 1) % vlons;
 
-         final int uv0 = 1 + j % vlons1;
-         final int uv1 = 1 + (j + 1) % vlons1;
+         final int uv0 = 1 + (j + 1) % vlons;
+         final int uv1 = 1 + (j + 2) % vlons;
 
          faces[idx] = new int[][] {
                { n0, uv0, n0 },

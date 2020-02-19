@@ -2685,6 +2685,37 @@ public class Color extends Vec4 {
    }
 
    /**
+    * Returns a String representation of the color compatible
+    * with .gpl (Gimp palette) file formats.
+    *
+    * @return the string
+    */
+   @Experimental
+   String toGplString () {
+
+      final int r = (int) (this.x * 0xff + 0.5f);
+      final int g = (int) (this.y * 0xff + 0.5f);
+      final int b = (int) (this.z * 0xff + 0.5f);
+
+      final StringBuilder sb = new StringBuilder(32);
+
+      if (r < 100 && r > 9) {
+         sb.append(' ');
+      } else if (r < 10) {
+         sb.append("  ");
+      }
+
+      sb.append(r)
+            .append(g > 99 ? ' ' : g > 9 ? "  " : "   ")
+            .append(g)
+            .append(b > 99 ? ' ' : b > 9 ? "  " : "   ")
+            .append(b)
+            .toString();
+
+      return sb.toString();
+   }
+
+   /**
     * Tests equivalence between this and another color.
     * Converts both to hexadecimal integers.
     *

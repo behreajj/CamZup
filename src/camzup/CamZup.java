@@ -2,8 +2,11 @@ package camzup;
 
 import java.util.HashSet;
 
+import camzup.core.Color;
+import camzup.core.Gradient;
 import camzup.core.IUtils;
 import camzup.core.Mesh3;
+import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -415,7 +418,11 @@ public class CamZup {
    }
 
    public static void main ( final String[] args ) {
-
+      Random rng = new Random();
+      
+      Gradient grd = Gradient.paletteViridis(new Gradient());
+      System.out.println(grd.toGplString("Viridis"));
+      
       // MeshEntity3 me = new MeshEntity3();
       // Mesh3 m = new Mesh3();
       // me.appendMesh(m);

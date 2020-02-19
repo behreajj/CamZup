@@ -1,5 +1,7 @@
 package camzup.core;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -12,12 +14,80 @@ import java.util.TreeSet;
  * Allows smooth color transitions to be evaluated by a
  * factor.
  */
-public class Gradient implements Cloneable, Iterable < ColorKey > {
+public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
    /**
     * The default easing function, lerp RGBA.
     */
    private static Color.AbstrEasing EASING = new Color.LerpRgba();
+
+   /**
+    * A helper function for parsing an OBJ file. Attempts to
+    * convert a string to an integer.
+    *
+    * @param i
+    *           the string
+    * @return the integer
+    */
+   private static int intFromStr ( final String i ) {
+
+      int target = 0;
+      try {
+         target = Integer.parseInt(i);
+      } catch (final NumberFormatException e) {
+         target = 0;
+      }
+      return target;
+   }
+
+   /**
+    * Creates a gradient from an array of strings representing
+    * a GIMP color palette (.gpl) .
+    *
+    * @param lines
+    *           the String tokens
+    * @param target
+    *           the output gradient
+    * @return the gradient
+    */
+   @Experimental
+   public static Gradient fromGpl (
+         final String[] lines,
+         final Gradient target ) {
+
+      target.keys.clear();
+
+      // TODO: Needs testing.
+
+      final int len = lines.length;
+      String[] tokens;
+      final ArrayList < Color > clrs = new ArrayList <>();
+
+      for (int i = 0; i < len; ++i) {
+         final String line = lines[i].toLowerCase();
+         if (line.equals("gimp palette")) {
+         } else if (line.contains("name:")) {
+         } else if (line.contains("columns:")) {
+         } else if (line.indexOf('#') == 0) {
+         } else {
+            tokens = line.trim().split("\\s+");
+            if (tokens.length > 2) {
+               final int ri = Gradient.intFromStr(tokens[0]);
+               final int gi = Gradient.intFromStr(tokens[1]);
+               final int bi = Gradient.intFromStr(tokens[2]);
+               final Color clr = new Color(
+                     ri * IUtils.ONE_255,
+                     gi * IUtils.ONE_255,
+                     bi * IUtils.ONE_255,
+                     1.0f);
+               clrs.add(clr);
+            }
+         }
+      }
+
+      target.appendAll(clrs);
+      return target;
+   }
 
    /**
     * Gets the string representation of the default gradient
@@ -403,6 +473,19 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
    }
 
    /**
+    * Creates a gradient from a collection of color integers;
+    * the resultant keys are evenly distributed over the range
+    * [0.0, 1.0].
+    *
+    * @param colors
+    *           the colors
+    */
+   public Gradient ( final Collection < Color > colors ) {
+
+      this.appendAll(colors);
+   }
+
+   /**
     * Creates a gradient from a color; an additional color key,
     * white at 0.0, is created.
     *
@@ -646,6 +729,37 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
    }
 
    /**
+    * Appends a collection of colors to this gradient. Shifts
+    * existing keys to the left.
+    *
+    * @param colors
+    *           the colors
+    * @return this gradient
+    * @see Gradient#shiftKeysLeft(int)
+    * @see TreeSet#size()
+    * @see TreeSet#add(Object)
+    */
+   public Gradient appendAll ( final Collection < Color > colors ) {
+
+      final int len = colors.size();
+      this.shiftKeysLeft(len);
+      final int oldLen = this.keys.size();
+      final float denom = 1.0f / (oldLen + len - 1.0f);
+
+      int i = 0;
+      final Iterator < Color > clrItr = colors.iterator();
+      while (clrItr.hasNext()) {
+         this.keys.add(
+               new ColorKey(
+                     (oldLen + i) * denom,
+                     clrItr.next()));
+         i++;
+      }
+
+      return this;
+   }
+
+   /**
     * Appends a list of colors to this gradient. Shifts
     * existing keys to the left.
     *
@@ -804,15 +918,13 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
     * Distributes this gradient's color keys evenly through the
     * range [0.0, 1.0] .
     *
-    * @param keyArr
-    *           a temporary list
     * @return this gradient
-    * @see List#clear()
+    *
     * @see List#addAll(java.util.Collection)
     */
-   public Gradient distribute ( final List < ColorKey > keyArr ) {
+   public Gradient distribute () {
 
-      keyArr.clear();
+      final ArrayList < ColorKey > keyArr = new ArrayList <>();
       keyArr.addAll(this.keys);
 
       this.keys.clear();
@@ -1109,8 +1221,6 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
     * Reverses the gradient. The step of each color key is
     * subtracted from one. Does so with a temporary List.
     *
-    * @param keyList
-    *           a temp list
     * @return the gradient
     * @see List#clear()
     * @see List#addAll(java.util.Collection)
@@ -1118,11 +1228,12 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
     * @see TreeSet#clear()
     * @see Collections#reverse(java.util.List)
     */
-   public Gradient reverse ( final List < ColorKey > keyList ) {
+   public Gradient reverse () {
 
-      keyList.clear();
+      final ArrayList < ColorKey > keyList = new ArrayList <>();
       keyList.addAll(this.keys);
       Collections.reverse(keyList);
+
       this.keys.clear();
       final Iterator < ColorKey > itr = keyList.iterator();
       while (itr.hasNext()) {
@@ -1130,6 +1241,7 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
          key.step = 1.0f - key.step;
       }
       this.keys.addAll(keyList);
+
       return this;
    }
 
@@ -1154,30 +1266,24 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
     * Sorts the gradient according to a property of the colors
     * in each key. Does so with a temporary List.
     *
-    * @param clrList
-    *           a temporary list
     * @return the gradient
     */
-   public Gradient sort ( final List < Color > clrList ) {
+   public Gradient sort () {
 
-      return this.sort(clrList, null);
+      return this.sort(null);
    }
 
    /**
     * Sorts the gradient according to a property of the colors
     * in each key. Does so with a temporary List.
     *
-    * @param clrList
-    *           a temporary list
     * @param sorter
     *           the sorting function
     * @return the gradient
     */
-   public Gradient sort (
-         final List < Color > clrList,
-         final Comparator < Color > sorter ) {
+   public Gradient sort ( final Comparator < Color > sorter ) {
 
-      clrList.clear();
+      final ArrayList < Color > clrList = new ArrayList <>();
       int j = 0;
       final int len = this.keys.size();
       final Iterator < ColorKey > keyItr = this.keys.iterator();
@@ -1198,18 +1304,6 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
       }
 
       return this;
-   }
-
-   /**
-    * Returns an array of keys.
-    *
-    * @param target
-    *           the target array
-    * @return the array
-    */
-   public ColorKey[] toArray ( final ColorKey[] target ) {
-
-      return this.keys.toArray(target);
    }
 
    /**
@@ -1308,6 +1402,76 @@ public class Gradient implements Cloneable, Iterable < ColorKey > {
             .append("\n    new_key = color_keys.new(datum[\"position\"])")
             .append("\n    new_key.color = datum[\"color\"]\n");
       return result.toString();
+   }
+
+   /**
+    * Returns a String representation of the gradient
+    * compatible with .gpl (Gimp palette) file formats.
+    *
+    * @return the string
+    */
+   public String toGplString () {
+
+      return this.toGplString(this.hashIdentityString(), 0);
+   }
+
+   /**
+    * Returns a String representation of the gradient
+    * compatible with .gpl (Gimp palette) file formats.
+    *
+    * @param name
+    *           palette name
+    * @return the string
+    */
+   public String toGplString ( final String name ) {
+
+      return this.toGplString(name, 0);
+   }
+
+   /**
+    * Returns a String representation of the gradient
+    * compatible with .gpl (Gimp palette) file formats.
+    *
+    * @param name
+    *           palette name
+    * @param displayColumns
+    *           display columns
+    * @return the string
+    */
+   @Experimental
+   public String toGplString (
+         final String name,
+         final int displayColumns ) {
+
+      final StringBuilder sb = new StringBuilder();
+      sb.append("GIMP Palette\n")
+            .append("Name: ")
+            .append(name)
+            .append('\n')
+            .append("Columns: ")
+            .append(displayColumns)
+            .append('\n')
+            .append("# https://github.com/behreajj/CamZup \n");
+
+      int i = 0;
+      final int len = this.keys.size();
+      final int last = len - 1;
+      final Iterator < ColorKey > itr = this.keys.iterator();
+      while (itr.hasNext()) {
+         sb.append(itr.next().clr.toGplString())
+               .append(' ')
+               .append(name)
+               .append(' ')
+               .append(i);
+
+         if (i < last) {
+            sb.append('\n');
+         }
+
+         i++;
+      }
+
+      return sb.toString();
    }
 
    /**
