@@ -139,13 +139,9 @@ public final class Vec2 {
   }
 
   // Public accessor methods.
-  public float x() {
-    return this.x;
-  }
+  public float x() { return x; }
 
-  public float y() {
-    return this.y;
-  }
+  public float y() { return y; }
 
   public static Vec2 add(final Vec2 a, final Vec2 b) {
     return new Vec2(a.x + b.x, a.y + b.y);

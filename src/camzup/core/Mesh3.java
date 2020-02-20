@@ -286,141 +286,6 @@ public class Mesh3 extends Mesh {
    }
 
    /**
-    * Creates a UV sphere.
-    *
-    * @param longitudes
-    *           the longitudes
-    * @param latitudes
-    *           the latitudes
-    * @param target
-    *           the output mesh
-    * @return the sphere
-    */
-   @Deprecated
-   protected static Mesh3 sphereOld (
-         final int longitudes,
-         final int latitudes,
-         final Mesh3 target ) {
-
-      /*
-       * Longitude corresponds to azimuth; latitude, to
-       * inclination.
-       */
-      final int vlons = longitudes < 3 ? 3 : longitudes;
-      final int vlats = latitudes < 3 ? 3 : latitudes;
-
-      final int lons1 = vlons + 1;
-      final int lats1 = vlats + 1;
-
-      /*
-       * The additional two comes from the North and South poles.
-       */
-      final int len = lons1 * vlats + 2;
-
-      final Vec3[] coords = new Vec3[len];
-      final Vec2[] texCoords = new Vec2[len];
-      final Vec3[] normals = new Vec3[len];
-
-      final float toU = 1.0f / vlons;
-      final float toV = 1.0f / lats1;
-
-      final float toTheta = 1.0f / vlons;
-      final float toPhi = 0.5f / lats1;
-
-      /*
-       * Set South pole. This is vertex 0, so subsequent vertex
-       * indices begin at an offset of 1.
-       */
-      coords[0] = new Vec3(0.0f, 0.0f, -0.5f);
-      texCoords[0] = new Vec2(0.0f, 0.0f);
-      normals[0] = new Vec3(0.0f, 0.0f, -1.0f);
-
-      for (int k = 1, h = 1, i = 0; i < vlats; ++h, ++i) {
-         final float v = h * toV;
-         final float phi = h * toPhi - 0.25f;
-         final float cosPhi = Utils.scNorm(phi);
-         final float sinPhi = Utils.scNorm(phi - 0.25f);
-
-         // To change the seam, this should be j < lons,
-         // and toTheta should be 1 / lons1 .
-         for (int j = 0; j < lons1; ++j, ++k) {
-            final float u = j * toU;
-            final float theta = j * toTheta;
-            final float cosTheta = Utils.scNorm(theta);
-            final float sinTheta = Utils.scNorm(theta - 0.25f);
-
-            texCoords[k] = new Vec2(u, v);
-
-            final Vec3 nrm = normals[k] = new Vec3(
-                  cosPhi * cosTheta,
-                  cosPhi * sinTheta,
-                  sinPhi);
-            coords[k] = Vec3.mul(nrm, 0.5f, new Vec3());
-         }
-      }
-
-      /* Set North pole. */
-      final int last = len - 1;
-      coords[last] = new Vec3(0.0f, 0.0f, 0.5f);
-      texCoords[last] = new Vec2(0.0f, 1.0f);
-      normals[last] = new Vec3(0.0f, 0.0f, 1.0f);
-
-      final int[][][] faces = new int[2 * len][3][3];
-      int idx = 0;
-
-      /* Top cap. */
-      for (int j = 0; j < vlons; ++j) {
-         final int n0 = j + 2;
-         final int n1 = j + 1;
-
-         faces[idx] = new int[][] {
-               { n0, n0, n0 },
-               { n1, n1, n1 },
-               { 0, 0, 0 } };
-         idx++;
-      }
-
-      /* Middle */
-      final int latsn1 = vlats - 1;
-      for (int i = 0; i < latsn1; ++i) {
-         final int ilons1 = i * lons1;
-         for (int j = 0; j < vlons; ++j) {
-            final int current = j + ilons1 + 1;
-            final int next = current + lons1;
-            final int n1 = current + 1;
-            final int n2 = next + 1;
-
-            faces[idx] = new int[][] {
-                  { current, current, current },
-                  { n1, n1, n1 },
-                  { n2, n2, n2 } };
-            idx++;
-
-            faces[idx] = new int[][] {
-                  { current, current, current },
-                  { n2, n2, n2 },
-                  { next, next, next } };
-            idx++;
-         }
-      }
-
-      /* Bottom cap. */
-      for (int j = 0; j < vlons; ++j) {
-         final int n1 = last - (j + 2);
-         final int n2 = last - (j + 1);
-
-         faces[idx] = new int[][] {
-               { last, last, last },
-               { n1, n1, n1 },
-               { n2, n2, n2 } };
-         idx++;
-      }
-
-      target.name = "UV Sphere";
-      return target.set(faces, coords, texCoords, normals);
-   }
-
-   /**
     * Calculates the dimensions of an Axis-Aligned Bounding Box
     * (AABB) encompassing the mesh.
     *
@@ -1050,139 +915,116 @@ public class Mesh3 extends Mesh {
          final int latitudes,
          final Mesh3 target ) {
 
+      /*
+       * Longitude corresponds to azimuth; latitude, to
+       * inclination.
+       */
       final int vlons = longitudes < 3 ? 3 : longitudes;
       final int vlats = latitudes < 3 ? 3 : latitudes;
-      final int latLen = vlons * vlats + 2;
-      final int latLast = latLen - 1;
-      final Vec3[] coords = new Vec3[latLen];
-      final Vec3[] normals = new Vec3[latLen];
 
-      final float radius = 0.5f;
+      final int lons1 = vlons + 1;
+      final int lats1 = vlats + 1;
 
-      coords[0] = new Vec3(0.0f, 0.0f, radius);
-      coords[latLast] = new Vec3(0.0f, 0.0f, -radius);
+      /*
+       * The additional two comes from the North and South poles.
+       */
+      final int len = lons1 * vlats + 2;
 
-      normals[0] = new Vec3(0.0f, 0.0f, 1.0f);
-      normals[latLast] = new Vec3(0.0f, 0.0f, -1.0f);
+      final Vec3[] coords = new Vec3[len];
+      final Vec2[] texCoords = new Vec2[len];
+      final Vec3[] normals = new Vec3[len];
 
-      final float toPhi = 0.5f / (vlats + 1.0f);
+      final float toU = 1.0f / vlons;
+      final float toV = 1.0f / lats1;
+
       final float toTheta = 1.0f / vlons;
+      final float toPhi = 0.5f / lats1;
 
-      for (int k = 1, i = 0, h = 1; i < vlats; ++i, ++h) {
+      /*
+       * Set South pole. This is vertex 0, so subsequent vertex
+       * indices begin at an offset of 1.
+       */
+      coords[0] = new Vec3(0.0f, 0.0f, -0.5f);
+      texCoords[0] = new Vec2(0.5f, 1.0f - toV * 0.5f);
+      normals[0] = new Vec3(0.0f, 0.0f, -1.0f);
 
+      for (int k = 1, h = 1, i = 0; i < vlats; ++h, ++i) {
+         final float v = h * toV;
          final float phi = h * toPhi - 0.25f;
          final float cosPhi = Utils.scNorm(phi);
          final float sinPhi = Utils.scNorm(phi - 0.25f);
-         final float rhoCosPhi = radius * cosPhi;
-         final float rhoSinPhi = radius * sinPhi;
 
-         for (int j = 0; j < vlons; ++j, ++k) {
-
+         for (int j = 0; j < lons1; ++j, ++k) {
+            final float u = j * toU;
             final float theta = j * toTheta;
             final float cosTheta = Utils.scNorm(theta);
             final float sinTheta = Utils.scNorm(theta - 0.25f);
 
-            coords[k] = new Vec3(
-                  rhoCosPhi * cosTheta,
-                  rhoCosPhi * sinTheta,
-                  -rhoSinPhi);
+            texCoords[k] = new Vec2(u, 1.0f - v);
 
-            normals[k] = new Vec3(
+            final Vec3 nrm = normals[k] = new Vec3(
                   cosPhi * cosTheta,
                   cosPhi * sinTheta,
-                  -sinPhi);
+                  sinPhi);
+            coords[k] = Vec3.mul(nrm, 0.5f, new Vec3());
          }
       }
 
-      /* Texture coordinates. */
-      final int vlons1 = vlons + 1;
-      final int uvLen = vlons1 * vlats + 2;
-      final int uvLast = uvLen - 1;
-      final Vec2[] texCoords = new Vec2[uvLen];
-      final float toV = 1.0f / (vlats + 1.0f);
-      final float toU = 1.0f / vlons;
-      texCoords[0] = new Vec2(0.0f, 0.0f);
-      texCoords[uvLast] = new Vec2(0.0f, 1.0f);
-      for (int k = 1, i = 0, h = 1; i < vlats; ++i, ++h) {
-         final float v = h * toV;
-         for (int j = 0; j < vlons1; ++j, ++k) {
-            final float u = j * toU;
-            texCoords[k] = new Vec2(u, v);
-         }
-      }
+      /* Set North pole. */
+      final int last = len - 1;
+      coords[last] = new Vec3(0.0f, 0.0f, 0.5f);
+      texCoords[last] = new Vec2(0.5f, toV * 0.5f);
+      normals[last] = new Vec3(0.0f, 0.0f, 1.0f);
 
-      final int[][][] faces = new int[2 * vlons1 * vlats][3][3];
+      // TODO: This list is longer than it should be...
+      final int[][][] faces = new int[2 * vlons * vlats][3][3];
       int idx = 0;
 
-      // TODO: UVs are screwed up.
-
       /* Top cap. */
-      for (int j = 0; j < vlons1; ++j) {
-
-         final int n0 = 1 + j % vlons;
-         final int n1 = 1 + (j + 1) % vlons;
-
-         final int uv0 = 1 + (j + 1) % vlons;
-         final int uv1 = 1 + (j + 2) % vlons;
+      for (int j = 0; j < vlons; ++j) {
+         final int n0 = j + 2;
+         final int n1 = j + 1;
 
          faces[idx] = new int[][] {
-               { n0, uv0, n0 },
-               { n1, uv1, n1 },
+               { n0, n0, n0 },
+               { n1, n1, n1 },
                { 0, 0, 0 } };
          idx++;
       }
 
       /* Middle */
-      final int vlatsn1 = vlats - 1;
-      for (int i = 0; i < vlatsn1; ++i) {
-         final int currLat = i * vlons;
-         final int nextLat = (i + 1) * vlons;
-
-         for (int j = 0; j < vlons1; ++j) {
-            final int j0 = 1 + j % vlons;
-            final int j1 = 1 + (j + 1) % vlons;
-
-            final int uv0 = 1 + j % vlons1;
-            final int uv1 = 1 + (j + 1) % vlons1;
-
-            final int current = j0 + currLat;
-            final int next = j1 + currLat;
-            final int n1 = j0 + nextLat;
-            final int n2 = j1 + nextLat;
-
-            final int uvcurrent = uv0 + currLat;
-            final int uvnext = uv1 + currLat;
-            final int uvn1 = uv0 + nextLat;
-            final int uvn2 = uv1 + nextLat;
+      final int latsn1 = vlats - 1;
+      for (int i = 0; i < latsn1; ++i) {
+         final int ilons1 = i * lons1;
+         for (int j = 0; j < vlons; ++j) {
+            final int current = j + ilons1 + 1;
+            final int next = current + lons1;
+            final int n1 = current + 1;
+            final int n2 = next + 1;
 
             faces[idx] = new int[][] {
-                  { current, uvcurrent, current },
-                  { n1, uvn1, n1 },
-                  { n2, uvn2, n2 } };
+                  { current, current, current },
+                  { n1, n1, n1 },
+                  { n2, n2, n2 } };
             idx++;
 
             faces[idx] = new int[][] {
-                  { current, uvcurrent, current },
-                  { n2, uvn2, n2 },
-                  { next, uvnext, next } };
+                  { current, current, current },
+                  { n2, n2, n2 },
+                  { next, next, next } };
             idx++;
          }
       }
 
       /* Bottom cap. */
-      final int lastCoord = coords.length - 1;
-      final int lastTexCoord = texCoords.length - 1;
-      for (int j = 0; j < vlons1; ++j) {
-         final int n1 = lastCoord - (1 + j % vlons);
-         final int n2 = lastCoord - (1 + (j + 1) % vlons);
-
-         final int uv1 = lastTexCoord - (1 + j % vlons1);
-         final int uv2 = lastTexCoord - (1 + (j + 1) % vlons1);
+      for (int j = 0; j < vlons; ++j) {
+         final int n1 = last - (j + 2);
+         final int n2 = last - (j + 1);
 
          faces[idx] = new int[][] {
-               { lastCoord, lastTexCoord, lastCoord },
-               { n1, uv1, n1 },
-               { n2, uv2, n2 } };
+               { last, last, last },
+               { n1, n1, n1 },
+               { n2, n2, n2 } };
          idx++;
       }
 

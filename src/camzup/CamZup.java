@@ -418,26 +418,21 @@ public class CamZup {
    }
 
    public static void main ( final String[] args ) {
-      Random rng = new Random();
-      
-      Gradient grd = Gradient.paletteViridis(new Gradient());
-      System.out.println(grd.toGplString("Viridis"));
-      
-      // MeshEntity3 me = new MeshEntity3();
-      // Mesh3 m = new Mesh3();
-      // me.appendMesh(m);
-      // String str = me.toBlenderCode();
-      // System.out.println(str);
 
-      // Mesh3 m = new Mesh3();
-      // Mesh3.polygon(32, m);
-      // Mesh3 n = new Mesh3(m);
-      // System.out.println(n);
-
-      // final Curve3 a = new Curve3();
-      // Curve3.circle(a);
-      // final Curve3 b = new Curve3(a);
-      // System.out.println(b.toString());
+      final Random rng = new Random();
+      
+      Color a1 = Color.fromHex(0xff_ff_6e_0c, new Color());
+      Color a2 = Color.fromHex(0xff_ff_b3_6c, new Color());
+      Color a3 = Color.fromHex(0xff_ff_da_b7, new Color());
+      Color a4 = Color.fromHex(0xff_ff_f2_ee, new Color());
+      
+      Color a5 = Color.fromHex(0xff_ea_ed_ff, new Color());
+      Color a6 = Color.fromHex(0xff_d3_df_ff, new Color());
+      Color a7 = Color.fromHex(0xff_c5_d6_ff, new Color());
+      Color a8 = Color.fromHex(0xff_bc_d0_ff, new Color());
+      
+      Gradient grd = Gradient.paletteTemperature(new Gradient());
+      System.out.println(grd.toBlenderCode("Temp", 8, 2.2f));
    }
 
    /**
