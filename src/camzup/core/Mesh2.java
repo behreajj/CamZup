@@ -109,6 +109,13 @@ public class Mesh2 extends Mesh {
          final PolyType poly,
          final Mesh2 target ) {
 
+      /*
+       * Unlike curve arcs, where speed is important, mesh arcs
+       * require greater precision to accomodate SVG rendering.
+       * For that reason, double precision polar coordinates are
+       * used.
+       */
+
       if (Utils.approx(stopAngle - startAngle, IUtils.TAU, 0.00139f)) {
          return Mesh2.ring(annulus, sectors, poly, target);
       }
@@ -116,30 +123,49 @@ public class Mesh2 extends Mesh {
       final float annul = Utils.clamp(annulus,
             Utils.EPSILON, 1.0f - Utils.EPSILON);
 
-      final float a1 = Utils.mod1(startAngle * IUtils.ONE_TAU);
-      final float b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU);
-      final float arcLen1 = Utils.mod1(b1 - a1);
-      final float destAngle1 = a1 + arcLen1;
+      /*
+       * final float a1 = Utils.mod1(startAngle * IUtils.ONE_TAU);
+       * final float b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU);
+       * final float arcLen1 = Utils.mod1(b1 - a1); final int
+       * sctCount = Utils.ceilToInt( 1 + (sectors < 3 ? 3 :
+       * sectors) * arcLen1);
+       */
 
+      final double a1 = Utils.mod1(startAngle * IUtils.ONE_TAU_D);
+      final double b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU_D);
+      final double arcLen1 = Utils.mod1(b1 - a1);
       final int sctCount = Utils.ceilToInt(
-            1 + (sectors < 3 ? 3 : sectors) * arcLen1);
+            1 + (sectors < 3 ? 3 : sectors) * (float) arcLen1);
+
       final int sctCount2 = sctCount + sctCount;
       final Vec2[] coords = new Vec2[sctCount2];
       final Vec2[] texCoords = new Vec2[sctCount2];
 
-      final float toStep = 1.0f / (sctCount - 1.0f);
       final Vec2 uvCenter = Vec2.uvCenter(new Vec2());
       final Vec2 pureCoord = new Vec2();
 
+      final double toStep = 1.0d / (sctCount - 1.0d);
+      final double origAngle = IUtils.TAU_D * a1;
+      final double destAngle = IUtils.TAU_D * (a1 + arcLen1);
+
+      /*
+       * final float toStep = 1.0f / (sctCount - 1.0f); final
+       * float destAngle1 = a1 + arcLen1;
+       */
+
       for (int k = 0, i = 0, j = 1; k < sctCount; ++k, i += 2, j += 2) {
-         final float theta1 = Utils.lerpUnclamped(
-               a1, destAngle1, k * toStep);
 
-         // Vec2.fromPolar(theta1 * IUtils.TAU, 0.5f, pureCoord);
-
+         final double theta = Utils.lerpUnclamped(
+               origAngle, destAngle, k * toStep);
          pureCoord.set(
-               0.5f * Utils.scNorm(theta1),
-               0.5f * Utils.scNorm(theta1 - 0.25f));
+               (float) (0.5d * Math.cos(theta)),
+               (float) (0.5d * Math.sin(theta)));
+
+         /*
+          * final float theta1 = Utils.lerpUnclamped( a1, destAngle1,
+          * k * toStep); pureCoord.set( 0.5f * Utils.scNorm(theta1),
+          * 0.5f * Utils.scNorm(theta1 - 0.25f));
+          */
 
          coords[i] = new Vec2(pureCoord);
          final Vec2 v1 = coords[j] = Vec2.mul(
@@ -564,8 +590,13 @@ public class Mesh2 extends Mesh {
          final PolyType poly,
          final Mesh2 target ) {
 
+      /*
+       * Polar coordinates need to be more precise, given that
+       * they are scaled up and can impact SVG rendering.
+       */
       final int seg = sectors < 3 ? 3 : sectors;
-      final float toTheta = IUtils.TAU / seg;
+      final double toTheta = IUtils.TAU_D / seg;
+      /* final float toTheta = IUtils.TAU / seg; */
 
       Vec2[] coords;
       Vec2[] texCoords;
@@ -584,7 +615,11 @@ public class Mesh2 extends Mesh {
 
             for (int i = 0; i < seg; ++i) {
 
-               Vec2.fromPolar(i * toTheta, 0.5f, pureCoord);
+               final double theta = i * toTheta;
+               pureCoord.set(
+                     (float) (0.5d * Math.cos(theta)),
+                     (float) (0.5d * Math.sin(theta)));
+               /* Vec2.fromPolar(i * toTheta, 0.5f, pureCoord); */
 
                final Vec2 st = Vec2.add(uvCenter, pureCoord, new Vec2());
                st.y = 1.0f - st.y;
@@ -610,7 +645,11 @@ public class Mesh2 extends Mesh {
 
             for (int i = 0, j = 1; i < seg; ++i, ++j) {
 
-               Vec2.fromPolar(i * toTheta, 0.5f, pureCoord);
+               final double theta = i * toTheta;
+               pureCoord.set(
+                     (float) (0.5d * Math.cos(theta)),
+                     (float) (0.5d * Math.sin(theta)));
+               /* Vec2.fromPolar(i * toTheta, 0.5f, pureCoord); */
 
                final Vec2 st = Vec2.add(uvCenter, pureCoord, new Vec2());
                st.y = 1.0f - st.y;
@@ -675,9 +714,15 @@ public class Mesh2 extends Mesh {
 
       final int seg = sectors < 3 ? 3 : sectors;
       final int seg2 = seg + seg;
-      final float toTheta = IUtils.TAU / seg;
       final float annul = Utils.clamp(annulus,
             Utils.EPSILON, 1.0f - Utils.EPSILON);
+
+      /*
+       * Polar coordinates need to be more precise, given that
+       * they are scaled up and can impact SVG rendering.
+       */
+      final double toTheta = IUtils.TAU_D / seg;
+      /* final float toTheta = IUtils.TAU / seg; */
 
       Vec2[] coords;
       Vec2[] texCoords;
@@ -694,7 +739,12 @@ public class Mesh2 extends Mesh {
             faces = new int[seg][4][2];
 
             for (int k = 0, i = 0, j = 1; k < seg; ++k, i += 2, j += 2) {
-               Vec2.fromPolar(k * toTheta, 0.5f, pureCoord);
+
+               final double theta = k * toTheta;
+               pureCoord.set(
+                     (float) (0.5d * Math.cos(theta)),
+                     (float) (0.5d * Math.sin(theta)));
+               /* Vec2.fromPolar(k * toTheta, 0.5f, pureCoord); */
 
                coords[i] = new Vec2(pureCoord);
                final Vec2 v1 = coords[j] = Vec2.mul(
@@ -727,7 +777,12 @@ public class Mesh2 extends Mesh {
             faces = new int[seg2][3][2];
 
             for (int k = 0, i = 0, j = 1; k < seg; ++k, i += 2, j += 2) {
-               Vec2.fromPolar(k * toTheta, 0.5f, pureCoord);
+
+               final double theta = k * toTheta;
+               pureCoord.set(
+                     (float) (0.5d * Math.cos(theta)),
+                     (float) (0.5d * Math.sin(theta)));
+               /* Vec2.fromPolar(k * toTheta, 0.5f, pureCoord); */
 
                coords[i] = new Vec2(pureCoord);
                final Vec2 v1 = coords[j] = Vec2.mul(

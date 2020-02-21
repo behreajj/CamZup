@@ -2686,11 +2686,26 @@ public class Color extends Vec4 {
 
    /**
     * Returns a String representation of the color compatible
+    * with .ggr (Gimp gradient) file formats.
+    *
+    * @return the string
+    */
+   String toGgrString () {
+
+      return new StringBuilder(96)
+            .append(Utils.toFixed(this.x, 6)).append(' ')
+            .append(Utils.toFixed(this.y, 6)).append(' ')
+            .append(Utils.toFixed(this.z, 6)).append(' ')
+            .append(Utils.toFixed(this.w, 6))
+            .toString();
+   }
+
+   /**
+    * Returns a String representation of the color compatible
     * with .gpl (Gimp palette) file formats.
     *
     * @return the string
     */
-   @Experimental
    String toGplString () {
 
       final int r = (int) (this.x * 0xff + 0.5f);
@@ -2709,8 +2724,7 @@ public class Color extends Vec4 {
             .append(g > 99 ? ' ' : g > 9 ? "  " : "   ")
             .append(g)
             .append(b > 99 ? ' ' : b > 9 ? "  " : "   ")
-            .append(b)
-            .toString();
+            .append(b);
 
       return sb.toString();
    }

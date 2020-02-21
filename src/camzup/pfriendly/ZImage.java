@@ -4,7 +4,6 @@ import java.awt.Image;
 
 import camzup.core.Chainable;
 import camzup.core.Color;
-import camzup.core.Experimental;
 import camzup.core.Gradient;
 import camzup.core.Sdf;
 import camzup.core.Utils;

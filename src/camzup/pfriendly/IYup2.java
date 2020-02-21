@@ -3,6 +3,7 @@ package camzup.pfriendly;
 import camzup.core.Color;
 import camzup.core.CurveEntity2;
 import camzup.core.IUtils;
+import camzup.core.MaterialSolid;
 import camzup.core.MeshEntity2;
 import camzup.core.Ray2;
 import camzup.core.Utils;
@@ -209,11 +210,14 @@ public interface IYup2 extends IUp {
     *           the renderer
     * @param mes
     *           the mesh entities
+    * @param mats
+    *           the materials
     * @return the string
     */
    static String toSvgString (
          final IYup2 renderer,
-         final MeshEntity2... mes ) {
+         final MeshEntity2[] mes,
+         final MaterialSolid[] mats ) {
 
       final StringBuilder result = new StringBuilder();
 
@@ -229,7 +233,7 @@ public interface IYup2 extends IUp {
             .append('\n');
 
       for (final MeshEntity2 me : mes) {
-         result.append(me.toSvgString());
+         result.append(me.toSvgString(mats));
          result.append('\n');
       }
 
@@ -918,11 +922,15 @@ public interface IYup2 extends IUp {
     *
     * @param mes
     *           the mesh entities
+    * @param mats
+    *           the materials
     * @return the string
     */
-   default String toSvgString ( final MeshEntity2... mes ) {
+   default String toSvgString (
+         final MeshEntity2[] mes,
+         final MaterialSolid[] mats ) {
 
-      return IYup2.toSvgString(this, mes);
+      return IYup2.toSvgString(this, mes, mats);
    }
 
    /**

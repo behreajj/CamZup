@@ -1472,6 +1472,27 @@ public abstract class Utils implements IUtils {
     *           the step
     * @return the interpolated value
     */
+   public static double lerpUnclamped (
+         final double origin,
+         final double dest,
+         final double step ) {
+
+      return (1.0d - step) * origin + step * dest;
+   }
+
+   /**
+    * Linear interpolation from the origin to the destination
+    * value by a step. Does not check to see if the step is
+    * beyond the range [0.0, 1.0] .
+    *
+    * @param origin
+    *           the origin value
+    * @param dest
+    *           the destination value
+    * @param step
+    *           the step
+    * @return the interpolated value
+    */
    public static float lerpUnclamped (
          final float origin,
          final float dest,

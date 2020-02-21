@@ -2,7 +2,7 @@ package camzup;
 
 import java.util.HashSet;
 
-import camzup.core.Color;
+import camzup.core.ColorKey;
 import camzup.core.Gradient;
 import camzup.core.IUtils;
 import camzup.core.Mesh3;
@@ -420,19 +420,6 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       final Random rng = new Random();
-      
-      Color a1 = Color.fromHex(0xff_ff_6e_0c, new Color());
-      Color a2 = Color.fromHex(0xff_ff_b3_6c, new Color());
-      Color a3 = Color.fromHex(0xff_ff_da_b7, new Color());
-      Color a4 = Color.fromHex(0xff_ff_f2_ee, new Color());
-      
-      Color a5 = Color.fromHex(0xff_ea_ed_ff, new Color());
-      Color a6 = Color.fromHex(0xff_d3_df_ff, new Color());
-      Color a7 = Color.fromHex(0xff_c5_d6_ff, new Color());
-      Color a8 = Color.fromHex(0xff_bc_d0_ff, new Color());
-      
-      Gradient grd = Gradient.paletteTemperature(new Gradient());
-      System.out.println(grd.toBlenderCode("Temp", 8, 2.2f));
    }
 
    /**

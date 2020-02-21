@@ -40,6 +40,13 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       return target;
    }
 
+   // @Experimental
+   // public static Gradient fromGgr (
+   // final String[] lines,
+   // final Gradient target) {
+   //
+   // }
+
    /**
     * Creates a gradient from an array of strings representing
     * a GIMP color palette (.gpl) .
@@ -96,6 +103,42 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    public static String getEasingString () {
 
       return Gradient.EASING.toString();
+   }
+
+   /**
+    * Inverts all colors in the gradient and reverses the
+    * gradient.
+    *
+    * @param source
+    *           the source gradient
+    * @param target
+    *           the target gradient
+    * @return the inverse
+    */
+   public static Gradient inverse (
+         final Gradient source,
+         final Gradient target ) {
+
+      if (source == target) {
+         final Iterator < ColorKey > kyItr = source.keys.iterator();
+         while (kyItr.hasNext()) {
+            final Color clr = kyItr.next().clr;
+            Color.inverse(clr, clr);
+         }
+      } else {
+         final TreeSet < ColorKey > trgKeys = target.keys;
+         trgKeys.clear();
+         final Iterator < ColorKey > srcItr = source.keys.iterator();
+         while (srcItr.hasNext()) {
+            final ColorKey trgKey = new ColorKey(srcItr.next());
+            final Color clr = trgKey.clr;
+            Color.inverse(clr, clr);
+            trgKeys.add(trgKey);
+         }
+      }
+
+      target.reverse();
+      return target;
    }
 
    /**
@@ -191,8 +234,9 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    /**
     * Returns a heavily stylized approximation of color
     * temperature, where the middle key (0.5) is white at 6500
-    * Kelvin. The lower bound (0.0), black, is at 800 Kelvin; the
-    * upper bound (1.0) is a blue-ish white at 12000 Kelvin.
+    * Kelvin. The lower bound (0.0), black, is at 800 Kelvin;
+    * the upper bound (1.0) is a blue-ish white at 12000
+    * Kelvin.
     *
     * @param target
     *           the output gradient
@@ -204,7 +248,6 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
-//      keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f)); /* 800K */
       keys.add(new ColorKey(0.0f, 1.0f, 0.0f, 0.0f));
       keys.add(new ColorKey(0.125f, 1.0f, 0.4313f, 0.047f));
       keys.add(new ColorKey(0.25f, 1.0f, 0.7019f, 0.4235f));
@@ -1547,6 +1590,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
        * While they may contain a minimum of only 1, they default
        * to 2 keys when created.
        */
+      
       final Color[] clrs = this.evalRange(Utils.clamp(samples, 2, 32));
       final int len = clrs.length;
       final int last = len - 1;
@@ -1589,6 +1633,127 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
             .append("\n    new_key = color_keys.new(datum[\"position\"])")
             .append("\n    new_key.color = datum[\"color\"]\n");
       return result.toString();
+   }
+
+   /**
+    * Returns a String representation of the gradient
+    * compatible with .ggr (Gimp gradient) file formats.
+    *
+    * @return the string
+    */
+   public String toGgrString () {
+
+      return this.toGgrString(this.hashIdentityString());
+   }
+
+   /**
+    * Returns a String representation of the gradient
+    * compatible with .ggr (Gimp gradient) file formats.
+    *
+    * @param name
+    *           the name
+    * @return the string
+    */
+   @Experimental
+   public String toGgrString ( final String name ) {
+
+      /*
+       * GIMP gradients are slightly more sophisticated than this
+       * gradient. The entire span of [0.0, 1.0] must be covered
+       * by the keys. Each key has a left edge (column 1), center
+       * point (column 2) and right edge (column 3). A color is
+       * located on the left edge; its red, green, blue and alpha
+       * channels are columns 4, 5, 6 and 7. Another is located on
+       * the right edge; columns 8, 9, 10 and 11.
+       */
+
+      // TODO: Look up what two integers in last columns of line
+      // mean.
+
+      final ColorKey first = this.keys.first();
+      final float firstStep = first.step;
+      final Color firstColor = first.clr;
+      final boolean nonZeroFirst = firstStep > 0.0f;
+
+      final ColorKey last = this.keys.last();
+      final float lastStep = last.step;
+      final Color lastColor = last.clr;
+      final boolean nonOneLast = lastStep < 1.0f;
+
+      int len = this.keys.size() - 1;
+      if (nonZeroFirst) {
+         len++;
+      }
+      if (nonOneLast) {
+         len++;
+      }
+
+      final StringBuilder sb = new StringBuilder()
+            .append("GIMP Gradient\n")
+            .append("Name: ")
+            .append(name)
+            .append('\n')
+            .append(len)
+            .append('\n');
+
+      if (nonZeroFirst) {
+         final String frstClrStr = firstColor.toGgrString();
+         sb.append("0.000000 ")
+               .append(Utils.toFixed(firstStep * 0.5f, 6))
+               .append(' ')
+               .append(Utils.toFixed(firstStep, 6))
+               .append(' ')
+               .append(frstClrStr)
+               .append(' ')
+               .append(frstClrStr)
+               .append(" 0 0\n");
+      }
+
+      final Iterator < ColorKey > itr = this.keys.iterator();
+
+      ColorKey prev = itr.next();
+      float prevStep = prev.step;
+      Color prevColor = prev.clr;
+
+      ColorKey curr = null;
+      float currStep = 0.0f;
+      Color currColor = null;
+
+      while (itr.hasNext()) {
+         curr = itr.next();
+         currStep = curr.step;
+         currColor = curr.clr;
+
+         final float midStep = (currStep + prevStep) * 0.5f;
+         sb.append(Utils.toFixed(prevStep, 6))
+               .append(' ')
+               .append(Utils.toFixed(midStep, 6))
+               .append(' ')
+               .append(Utils.toFixed(currStep, 6))
+               .append(' ')
+               .append(prevColor.toGgrString())
+               .append(' ')
+               .append(currColor.toGgrString())
+               .append(" 0 0\n");
+
+         prev = curr;
+         prevStep = currStep;
+         prevColor = currColor;
+      }
+
+      if (nonOneLast) {
+         final String lastClrStr = lastColor.toGgrString();
+         sb.append(Utils.toFixed(lastStep, 6))
+               .append(' ')
+               .append(Utils.toFixed((1.0f + lastStep) * 0.5f, 6))
+               .append(" 1.000000 ")
+               .append(lastClrStr)
+               .append(' ')
+               .append(lastClrStr)
+               .append(" 0 0");
+      }
+
+      return sb.toString();
    }
 
    /**
@@ -1641,26 +1806,9 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
             .append('\n')
             .append("# https://github.com/behreajj/CamZup \n");
 
-      int i = 0;
-      final int len = this.keys.size();
-      final int last = len - 1;
       final Iterator < ColorKey > itr = this.keys.iterator();
-
       while (itr.hasNext()) {
-
-//         sb.append(itr.next().clr.toGplString())
-//               .append(' ')
-//               .append(name)
-//               .append(' ')
-//               .append(i);
-         
-         sb.append(itr.next().clr.toGplString());
-
-         if (i < last) {
-            sb.append('\n');
-         }
-
-         i++;
+         sb.append(itr.next().clr.toGplString()).append('\n');
       }
 
       return sb.toString();

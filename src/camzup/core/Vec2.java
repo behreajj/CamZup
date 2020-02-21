@@ -1613,29 +1613,15 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *
     * @param sectors
     *           the sectors, headings
-    * @return the array
-    */
-   public static Vec2[][] gridPolar ( final int sectors ) {
-
-      return Vec2.gridPolar(sectors, 1, 0.5f, 0.5f, true);
-   }
-
-   /**
-    * Generates a 2D array of vectors. The array is ordered by
-    * rings, then sectors; the parameters are supplied in
-    * reverse order.
-    *
-    * @param sectors
-    *           the sectors, headings
-    * @param includeCenter
-    *           include the center
+    * @param radius
+    *           the radius
     * @return the array
     */
    public static Vec2[][] gridPolar (
          final int sectors,
-         final boolean includeCenter ) {
+         final float radius ) {
 
-      return Vec2.gridPolar(sectors, 1, 0.5f, 0.5f, includeCenter);
+      return Vec2.gridPolar(sectors, 1, radius, radius, 0.0f, true);
    }
 
    /**
@@ -1659,7 +1645,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final float radiusMin,
          final float radiusMax ) {
 
-      return Vec2.gridPolar(sectors, rings, radiusMin, radiusMax, true);
+      return Vec2.gridPolar(sectors, rings, radiusMin, radiusMax, 0.0f, true);
    }
 
    /**
@@ -1675,8 +1661,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           minimum radius
     * @param radiusMax
     *           maxmum radius
-    * @param includeCenter
-    *           include the center
+    * @param angOffset
+    *           angular offset per ring
     * @return the array
     */
    public static Vec2[][] gridPolar (
@@ -1684,10 +1670,46 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final int rings,
          final float radiusMin,
          final float radiusMax,
+         final float angOffset ) {
+
+      return Vec2.gridPolar(
+            sectors, rings,
+            radiusMin, radiusMax,
+            angOffset, true);
+   }
+
+   /**
+    * Generates a 2D array of vectors. The array is ordered by
+    * rings, then sectors; the parameters are supplied in
+    * reverse order.
+    *
+    * @param sectors
+    *           the sectors, headings
+    * @param rings
+    *           the rings, radii
+    * @param radiusMin
+    *           minimum radius
+    * @param radiusMax
+    *           maxmum radius
+    * @param angOffset
+    *           angular offset per ring
+    * @param includeCenter
+    *           include the center
+    * 
+    * @return the array
+    */
+   public static Vec2[][] gridPolar (
+         final int sectors,
+         final int rings,
+         final float radiusMin,
+         final float radiusMax,
+         final float angOffset,
          final boolean includeCenter ) {
 
       final int vsect = sectors < 3 ? 3 : sectors;
       final int vring = rings < 1 ? 1 : rings;
+      final float angNorm = Utils.mod1(angOffset * IUtils.ONE_TAU);
+
       final boolean oneRing = vring == 1;
       final float vrMax = Utils.max(Utils.EPSILON, radiusMin, radiusMax);
       final float vrMin = oneRing ? vrMax
@@ -1701,6 +1723,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
       final float toPrc = oneRing ? 1.0f : 1.0f / (vring - 1.0f);
       final float toTheta = 1.0f / vsect;
+      float off = 0.0f;
 
       for (int h = 0; h < vring; ++h) {
 
@@ -1710,12 +1733,14 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
          for (int i = 0; i < vsect; ++i) {
 
-            final float theta = i * toTheta;
+            final float theta = off + i * toTheta;
             final float cosTheta = Utils.scNorm(theta);
             final float sinTheta = Utils.scNorm(theta - 0.25f);
 
             ring[i] = new Vec2(radius * cosTheta, radius * sinTheta);
          }
+
+         off += angNorm;
       }
 
       return result;
@@ -3322,10 +3347,15 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     */
    String toSvgString () {
 
+      /*
+       * With precision of 4, SVG rendering encountered glitches
+       * due to single-precision values being scaled up.
+       */
+
       return new StringBuilder(16)
-            .append(Utils.toFixed(this.x, 4))
+            .append(Utils.toFixed(this.x, 6))
             .append(' ')
-            .append(Utils.toFixed(this.y, 4))
+            .append(Utils.toFixed(this.y, 6))
             .toString();
    }
 
