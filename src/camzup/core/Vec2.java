@@ -1695,7 +1695,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     *           angular offset per ring
     * @param includeCenter
     *           include the center
-    * 
+    *
     * @return the array
     */
    public static Vec2[][] gridPolar (

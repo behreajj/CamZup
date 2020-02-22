@@ -1313,6 +1313,63 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
    }
 
    /**
+    * Renders the curve as a string containing an SVG path.
+    *
+    * @return the SVG string
+    */
+   String toSvgString () {
+
+      // TODO: Create internal and external toSvgStrings so that
+      // you can create a svg from a mesh and mesh entity
+      // independently of the renderer. Make this one
+      // toSvgStringInternal with package level access.
+
+      final int knotLength = this.knots.size();
+      if (knotLength < 2) {
+         return "";
+      }
+
+      final Iterator < Knot2 > itr = this.knots.iterator();
+      Knot2 prevKnot = itr.next();
+      final StringBuilder result = new StringBuilder(
+            32 + 64 * (this.closedLoop ? knotLength + 1 : knotLength))
+                  .append("<path d=\"M ")
+                  .append(prevKnot.coord.toSvgString());
+
+      Knot2 currKnot = null;
+      while (itr.hasNext()) {
+         currKnot = itr.next();
+
+         result.append(' ')
+               .append('C')
+               .append(' ')
+               .append(prevKnot.foreHandle.toSvgString())
+               .append(',')
+               .append(currKnot.rearHandle.toSvgString())
+               .append(',')
+               .append(currKnot.coord.toSvgString());
+
+         prevKnot = currKnot;
+      }
+
+      if (this.closedLoop) {
+         currKnot = this.knots.get(0);
+         result.append(' ')
+               .append('C')
+               .append(' ')
+               .append(prevKnot.foreHandle.toSvgString())
+               .append(',')
+               .append(currKnot.rearHandle.toSvgString())
+               .append(',')
+               .append(currKnot.coord.toSvgString())
+               .append(' ')
+               .append('Z');
+      }
+
+      return result.append("\"></path>").toString();
+   }
+
+   /**
     * A helper function. Returns a knot given two knots and a
     * step. Assumes the step has already been vetted, and that
     * the knots are in sequence along the curve. The knot's
@@ -2098,58 +2155,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
 
       sb.append(" ] }");
       return sb.toString();
-   }
-
-   /**
-    * Renders the curve as a string containing an SVG path.
-    *
-    * @return the SVG string
-    */
-   public String toSvgString () {
-
-      final int knotLength = this.knots.size();
-      if (knotLength < 2) {
-         return "";
-      }
-
-      final Iterator < Knot2 > itr = this.knots.iterator();
-      Knot2 prevKnot = itr.next();
-      final StringBuilder result = new StringBuilder(
-            32 + 64 * (this.closedLoop ? knotLength + 1 : knotLength))
-                  .append("<path d=\"M ")
-                  .append(prevKnot.coord.toSvgString());
-
-      Knot2 currKnot = null;
-      while (itr.hasNext()) {
-         currKnot = itr.next();
-
-         result.append(' ')
-               .append('C')
-               .append(' ')
-               .append(prevKnot.foreHandle.toSvgString())
-               .append(',')
-               .append(currKnot.rearHandle.toSvgString())
-               .append(',')
-               .append(currKnot.coord.toSvgString());
-
-         prevKnot = currKnot;
-      }
-
-      if (this.closedLoop) {
-         currKnot = this.knots.get(0);
-         result.append(' ')
-               .append('C')
-               .append(' ')
-               .append(prevKnot.foreHandle.toSvgString())
-               .append(',')
-               .append(currKnot.rearHandle.toSvgString())
-               .append(',')
-               .append(currKnot.coord.toSvgString())
-               .append(' ')
-               .append('Z');
-      }
-
-      return result.append("\"></path>").toString();
    }
 
    /**

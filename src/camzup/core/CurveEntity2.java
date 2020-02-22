@@ -321,7 +321,8 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
 
    /**
     * Creates a string representing a Wavefront OBJ file.
-    * Renders the curve as a series of line segments.
+    * Renders the curve as a series of line segments. Points
+    * are <em>not</em> equally distributed along the curve.
     *
     * @param precision
     *           the decimal place precision
@@ -405,6 +406,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
 
       final float scale = Transform2.minDimension(this.transform);
       final boolean includesMats = this.materials.size() > 0;
+      final int matLen = this.materials.size();
 
       /*
        * If no materials are present, use a default one instead.
@@ -418,8 +420,9 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
          final Curve2 curve = curveItr.next();
 
          if (includesMats) {
+            final int vmatidx = Math.floorMod(curve.materialIndex, matLen);
             final MaterialSolid material = this.materials
-                  .get(curve.materialIndex);
+                  .get(vmatidx);
             result.append("<g ")
                   .append(material.toSvgString(scale))
                   .append('>')

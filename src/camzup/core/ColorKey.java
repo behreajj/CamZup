@@ -214,7 +214,7 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
             .append("{\"position\": ")
             .append(Utils.toFixed(this.step, 3))
             .append(", \"color\": ")
-            .append(this.clr.toBlenderCode(gamma))
+            .append(this.clr.toBlenderCode(gamma, true))
             .append('}')
             .toString();
    }

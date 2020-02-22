@@ -321,7 +321,8 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 > {
 
    /**
     * Creates a string representing a Wavefront OBJ file.
-    * Renders the curve as a series of line segments.
+    * Renders the curve as a series of line segments; points
+    * are <em>not</em> equally distributed along the curve.
     *
     * @param precision
     *           the decimal place precision

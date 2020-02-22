@@ -1114,6 +1114,44 @@ public class Mesh2 extends Mesh {
    }
 
    /**
+    * Renders the mesh as a string following the SVG file
+    * format.
+    *
+    * @return the string
+    */
+   String toSvgString () {
+
+      // TODO: Create internal and external toSvgStrings so that
+      // you can create a svg from a mesh and mesh entity
+      // independently of the renderer. Make this one
+      // toSvgStringInternal with package level access.
+
+      final StringBuilder result = new StringBuilder();
+
+      final int[][][] fs = this.faces;
+      final Vec2[] vs = this.coords;
+      final int flen0 = fs.length;
+      for (int i = 0; i < flen0; ++i) {
+         final int[][] f = fs[i];
+         final int flen1 = f.length;
+
+         result.append("<path d=\"M ")
+               .append(vs[f[0][0]].toSvgString())
+               .append(' ');
+
+         for (int j = 1; j < flen1; ++j) {
+            result.append('L').append(' ')
+                  .append(vs[f[j][0]].toSvgString())
+                  .append(' ');
+         }
+
+         result.append("Z\"></path>\n");
+      }
+
+      return result.toString();
+   }
+
+   /**
     * Sets StringBuilders of C# code targeted toward the Unity
     * 2019 API. This code is brittle and is used for internal
     * testing purposes, i.e., to compare how mesh geometry
@@ -1238,7 +1276,6 @@ public class Mesh2 extends Mesh {
     *           the output edge
     * @return the edge
     */
-   @Experimental
    public Edge2 getEdge (
          final int i,
          final int j,
@@ -1263,7 +1300,6 @@ public class Mesh2 extends Mesh {
     *
     * @return the edges array
     */
-   @Experimental
    public Edge2[] getEdges () {
 
       final ArrayList < Edge2 > result = new ArrayList <>();
@@ -1436,7 +1472,10 @@ public class Mesh2 extends Mesh {
     *           edge index
     * @return this mesh
     */
-   public Mesh2 reverseEdge ( final int i, final int j ) {
+   @Chainable
+   public Mesh2 reverseEdge (
+         final int i,
+         final int j ) {
 
       final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
       final int len = face.length;
@@ -1457,6 +1496,7 @@ public class Mesh2 extends Mesh {
     *           face index
     * @return this mesh
     */
+   @Chainable
    public Mesh2 reverseFace ( final int i ) {
 
       final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
@@ -1468,6 +1508,7 @@ public class Mesh2 extends Mesh {
          face[j] = face[reverse];
          face[reverse] = temp;
       }
+
       return this;
    }
 
@@ -1789,9 +1830,6 @@ public class Mesh2 extends Mesh {
                final int infoLast = infoLen - 1;
                sb.append('[').append(' ');
 
-               /*
-                * 2 indices: coordinate, texture coordinate.
-                */
                for (int k = 0; k < infoLen; ++k) {
 
                   sb.append(vert[k]);
@@ -1818,44 +1856,6 @@ public class Mesh2 extends Mesh {
 
       sb.append(" ] }");
       return sb.toString();
-   }
-
-   /**
-    * Renders the mesh as a string following the SVG file
-    * format.
-    *
-    * @return the string
-    */
-   public String toSvgString () {
-
-      // TODO: Create internal and external toSvgStrings so that
-      // you can create a svg from a mesh and mesh entity
-      // independently of the renderer. Make this one
-      // toSvgStringInternal with package level access.
-
-      final StringBuilder result = new StringBuilder();
-
-      final int[][][] fs = this.faces;
-      final Vec2[] vs = this.coords;
-      final int flen0 = fs.length;
-      for (int i = 0; i < flen0; ++i) {
-         final int[][] f = fs[i];
-         final int flen1 = f.length;
-
-         result.append("<path d=\"M ")
-               .append(vs[f[0][0]].toSvgString())
-               .append(' ');
-
-         for (int j = 1; j < flen1; ++j) {
-            result.append('L').append(' ')
-                  .append(vs[f[j][0]].toSvgString())
-                  .append(' ');
-         }
-
-         result.append("Z\"></path>\n");
-      }
-
-      return result.toString();
    }
 
    /**

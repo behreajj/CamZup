@@ -645,7 +645,20 @@ public class Color extends Vec4 {
        */
       public MixHsba () {
 
-         this(new HueNear(), new Utils.Lerp(), new Utils.Lerp());
+         this(new HueNear());
+      }
+
+      /**
+       * Creates a color HSBA mixing function with the given hue
+       * easing function. Saturation and brightness are governed
+       * by linear interpolation.
+       *
+       * @param hueFunc
+       *           the hue easing function
+       */
+      public MixHsba ( final HueEasing hueFunc ) {
+
+         this(hueFunc, new Utils.Lerp(), new Utils.Lerp());
       }
 
       /**
@@ -2651,7 +2664,7 @@ public class Color extends Vec4 {
     */
    String toBlenderCode () {
 
-      return this.toBlenderCode(1.0f);
+      return this.toBlenderCode(1.0f, true);
    }
 
    /**
@@ -2661,32 +2674,41 @@ public class Color extends Vec4 {
     * geometry looks in Blender (the control) vs. in the
     * library (the test).
     *
-    * Formatted as a four-tuple, where red, green and blue
-    * channels have been raised to the power of gamma, usually
-    * 2.2.
+    * Formatted as a tuple where red, green and blue channels
+    * have been raised to the power of gamma, usually 2.2. If
+    * include alpha is true, then the alpha is also included.
     *
     * @param gamma
     *           the exponent
+    * @param inclAlpha
+    *           include the alpha channel
     * @return the string
     */
-   String toBlenderCode ( final float gamma ) {
+   String toBlenderCode ( final float gamma, final boolean inclAlpha ) {
 
-      return new StringBuilder(96)
+      final StringBuilder sb = new StringBuilder(96)
             .append('(')
             .append(Utils.toFixed((float) Math.pow(this.x, gamma), 6))
             .append(',').append(' ')
             .append(Utils.toFixed((float) Math.pow(this.y, gamma), 6))
             .append(',').append(' ')
-            .append(Utils.toFixed((float) Math.pow(this.z, gamma), 6))
-            .append(',').append(' ')
-            .append(Utils.toFixed(this.w, 6))
-            .append(')')
-            .toString();
+            .append(Utils.toFixed((float) Math.pow(this.z, gamma), 6));
+
+      if (inclAlpha) {
+         sb.append(',')
+               .append(' ')
+               .append(Utils.toFixed(this.w, 6));
+      }
+
+      sb.append(')');
+      return sb.toString();
    }
 
    /**
     * Returns a String representation of the color compatible
-    * with .ggr (Gimp gradient) file formats.
+    * with .ggr (Gimp gradient) file formats. Each channel,
+    * including alpha, is represented as a float in [0.0, 1.0]
+    * separated by a space.
     *
     * @return the string
     */
@@ -2702,7 +2724,9 @@ public class Color extends Vec4 {
 
    /**
     * Returns a String representation of the color compatible
-    * with .gpl (Gimp palette) file formats.
+    * with .gpl (Gimp palette) file formats. Each channel,
+    * including alpha, is represented an unsigned byte in [0,
+    * 255] separated by a space.
     *
     * @return the string
     */

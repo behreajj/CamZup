@@ -653,6 +653,34 @@ public class Transform2 extends Transform {
    }
 
    /**
+    * Returns a string representation of this transform in SVG
+    * syntax.
+    *
+    * The angle is converted from radians to degrees.
+    *
+    * @return the SVG string
+    * @see IUtils#RAD_TO_DEG
+    */
+   String toSvgString () {
+
+      return new StringBuilder(96)
+            .append("transform=\"translate(")
+            .append(Utils.toFixed(this.location.x, 6))
+            .append(',')
+            .append(' ')
+            .append(Utils.toFixed(this.location.y, 6))
+            .append(") rotate(")
+            .append(Utils.toFixed(this.rotation * IUtils.RAD_TO_DEG, 0))
+            .append(") scale(")
+            .append(Utils.toFixed(this.scale.x, 6))
+            .append(',')
+            .append(' ')
+            .append(Utils.toFixed(this.scale.y, 6))
+            .append(")\"")
+            .toString();
+   }
+
+   /**
     * Tests the equivalence between this and another transform.
     *
     * @param t
@@ -1253,34 +1281,6 @@ public class Transform2 extends Transform {
             .append(", scale: ")
             .append(this.scale.toString(places))
             .append(" }")
-            .toString();
-   }
-
-   /**
-    * Returns a string representation of this transform in SVG
-    * syntax.
-    *
-    * The angle is converted from radians to degrees.
-    *
-    * @return the SVG string
-    * @see IUtils#RAD_TO_DEG
-    */
-   public String toSvgString () {
-
-      return new StringBuilder(96)
-            .append("transform=\"translate(")
-            .append(Utils.toFixed(this.location.x, 1))
-            .append(',')
-            .append(' ')
-            .append(Utils.toFixed(this.location.y, 1))
-            .append(") rotate(")
-            .append(Utils.toFixed(this.rotation * IUtils.RAD_TO_DEG, 0))
-            .append(") scale(")
-            .append(Utils.toFixed(this.scale.x, 1))
-            .append(',')
-            .append(' ')
-            .append(Utils.toFixed(this.scale.y, 1))
-            .append(")\"")
             .toString();
    }
 

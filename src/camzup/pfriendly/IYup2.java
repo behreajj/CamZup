@@ -219,6 +219,8 @@ public interface IYup2 extends IUp {
          final MeshEntity2[] mes,
          final MaterialSolid[] mats ) {
 
+      // TODO: toSvgString for single me, single mat, no mats.
+
       final StringBuilder result = new StringBuilder();
 
       result.append(IYup2.svgHeader(renderer))

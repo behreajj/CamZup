@@ -190,6 +190,8 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    @Experimental
    public String toBlenderCode ( final MaterialSolid[] materials ) {
 
+      final boolean useSmooth = true;
+
       final StringBuilder result = new StringBuilder(2048);
       result.append("from bpy import data as D, context as C\n\n")
             .append("mesh_entity = {\"name\": \"")
@@ -266,8 +268,16 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
             .append("    mesh_data.from_pydata(\n")
             .append("        mesh[\"vertices\"],\n")
             .append("        [],\n")
-            .append("        mesh[\"faces\"])\n")
-            .append("    mesh_data.validate()\n")
+            .append("        mesh[\"faces\"])\n");
+
+      if (useSmooth) {
+         result.append("    mesh_data.use_auto_smooth = True\n")
+               .append("    polys = mesh_data.polygons\n")
+               .append("    for poly in polys:\n")
+               .append("        poly.use_smooth = True\n");
+      }
+
+      result.append("    mesh_data.validate()\n")
             .append("    idx = mesh[\"material_index\"]\n")
             .append("    mat_name = materials[idx][\"name\"]\n")
             .append("    mesh_data.materials.append(d_mats[mat_name])\n")
@@ -287,7 +297,20 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
     */
    public String toSvgString () {
 
-      return this.toSvgString(null);
+      return this.toSvgString(new MaterialSolid[] {});
+   }
+
+   /**
+    * Creates a string representing a group node in the SVG
+    * format.
+    *
+    * @param material
+    *           the material to use
+    * @return the string
+    */
+   public String toSvgString ( final MaterialSolid material ) {
+
+      return this.toSvgString(new MaterialSolid[] { material });
    }
 
    /**
@@ -309,6 +332,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
 
       final float scale = Transform2.minDimension(this.transform);
       final boolean includesMats = materials != null && materials.length > 0;
+      final int matLen = materials.length;
 
       /*
        * If no materials are present, use a default one instead.
@@ -328,9 +352,11 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
           * when Processing imports an SVG with loadShape.
           */
          if (includesMats) {
-            final MaterialSolid material = materials[mesh.materialIndex];
+
+            final int vmatidx = Math.floorMod(mesh.materialIndex, matLen);
+            final MaterialSolid material = materials[vmatidx];
             result.append("<g ")
-                  .append(material.toSvgString())
+                  .append(material.toSvgString(scale))
                   .append(">\n");
          }
 

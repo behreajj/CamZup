@@ -56,24 +56,27 @@ public class Mesh3 extends Mesh {
       final float[] us = new float[cval1];
       final float[] xs = new float[cval1];
       for (int j = 0; j < cval1; ++j) {
-         final float u = us[j] = j * jToStep;
-         xs[j] = u - 0.5f;
+         final float xPrc = j * jToStep;
+         us[j] = xPrc;
+         xs[j] = xPrc - 0.5f;
       }
 
       /* Calculate y values in separate loop. */
       final float[] vs = new float[rval1];
       final float[] ys = new float[rval1];
       for (int i = 0; i < rval1; ++i) {
-         final float v = vs[i] = i * iToStep;
-         ys[i] = v - 0.5f;
+         final float yPrc = i * iToStep;
+         vs[i] = 1.0f - yPrc;
+         ys[i] = yPrc - 0.5f;
       }
 
       /* Calculate z values in separate loop. */
       final float[] ws = new float[lval1];
       final float[] zs = new float[lval1];
       for (int h = 0; h < lval1; ++h) {
-         final float w = ws[h] = h * hToStep;
-         zs[h] = w - 0.5f;
+         final float zPrc = h * hToStep;
+         ws[h] = 1.0f - zPrc;
+         zs[h] = zPrc - 0.5f;
       }
 
       final int lrlen0 = lval * rval;
@@ -258,8 +261,7 @@ public class Mesh3 extends Mesh {
          }
       }
 
-      final int[][][] faces = new int[2 * vsect *
-            vpanl][3][3];
+      final int[][][] faces = new int[2 * vsect * vpanl][3][3];
       final int sliceCount = vsect + 1;
       int e = 0;
       int f = sliceCount;
@@ -351,12 +353,9 @@ public class Mesh3 extends Mesh {
     * @return the polygon
     * @see Mesh2#polygon(int, PolyType, Mesh2)
     */
-   public static Mesh3 circle (
-         final Mesh3 target ) {
+   public static Mesh3 circle ( final Mesh3 target ) {
 
-      return Mesh3.polygon(
-            IMesh.DEFAULT_CIRCLE_SECTORS,
-            target);
+      return Mesh3.polygon(IMesh.DEFAULT_CIRCLE_SECTORS, target);
    }
 
    /**
@@ -386,7 +385,7 @@ public class Mesh3 extends Mesh {
             /* 1 */ new Vec3(0.0f, 0.0f, 1.0f),
             /* 2 */ new Vec3(0.0f, 0.0f, -1.0f),
             /* 3 */ new Vec3(0.0f, -1.0f, 0.0f),
-            /* 4 */ new Vec3(-1.0f, -0.0f, 0.0f),
+            /* 4 */ new Vec3(-1.0f, 0.0f, 0.0f),
             /* 5 */ new Vec3(0.0f, 1.0f, 0.0f)
       };
 
@@ -976,7 +975,6 @@ public class Mesh3 extends Mesh {
       texCoords[last] = new Vec2(0.5f, toV * 0.5f);
       normals[last] = new Vec3(0.0f, 0.0f, 1.0f);
 
-      // TODO: This list is longer than it should be...
       final int[][][] faces = new int[2 * vlons * vlats][3][3];
       int idx = 0;
 
@@ -1531,7 +1529,6 @@ public class Mesh3 extends Mesh {
     *           the output edge
     * @return the edge
     */
-   @Experimental
    public Edge3 getEdge (
          final int i,
          final int j,
@@ -1558,7 +1555,6 @@ public class Mesh3 extends Mesh {
     *
     * @return the edges array
     */
-   @Experimental
    public Edge3[] getEdges () {
 
       final ArrayList < Edge3 > result = new ArrayList <>();
@@ -1738,7 +1734,10 @@ public class Mesh3 extends Mesh {
     *           edge index
     * @return this mesh
     */
-   public Mesh3 reverseEdge ( final int i, final int j ) {
+   @Chainable
+   public Mesh3 reverseEdge (
+         final int i,
+         final int j ) {
 
       final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
       final int len = face.length;
@@ -1757,6 +1756,7 @@ public class Mesh3 extends Mesh {
     *           face index
     * @return this mesh
     */
+   @Chainable
    public Mesh3 reverseFace ( final int i ) {
 
       final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];

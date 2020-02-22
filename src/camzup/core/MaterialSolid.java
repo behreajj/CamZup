@@ -20,11 +20,6 @@ public class MaterialSolid extends Material {
    public static final String DEFAULT_SVG_STR_JOIN = "round";
 
    /**
-    * Minimum stroke weight allowed when rendering to SVG.
-    */
-   public static final float SVG_MIN_STROKE_WT = 0.005f;
-
-   /**
     * Default material to use when an entity does not have one.
     *
     * @param gamma
@@ -40,7 +35,7 @@ public class MaterialSolid extends Material {
             .append("\", \"fill\": ")
             .append(Color.fromHex(
                   IUp.DEFAULT_FILL_COLOR, new Color())
-                  .toBlenderCode(gamma))
+                  .toBlenderCode(gamma, true))
             .append('}')
             .toString();
    }
@@ -59,9 +54,14 @@ public class MaterialSolid extends Material {
     */
    public static String defaultSvgMaterial ( final float scale ) {
 
-      final String strokeStr = Utils.toFixed(Utils.max(
-            MaterialSolid.SVG_MIN_STROKE_WT,
-            IUp.DEFAULT_STROKE_WEIGHT / scale), 4);
+      /*
+       * This needs to be printed to a higher precision, six,
+       * because of small meshes which are blown up by scale.
+       */
+      final String strokeStr = Utils.toFixed(
+            Utils.max(Utils.EPSILON,
+                  Utils.div(IUp.DEFAULT_STROKE_WEIGHT, scale)),
+            6);
 
       return new StringBuilder(256)
             .append("<g stroke-width=\"")
@@ -303,7 +303,7 @@ public class MaterialSolid extends Material {
             .append("{\"name\": \"")
             .append(this.name)
             .append("\", \"fill\": ")
-            .append(this.fill.toBlenderCode(gamma))
+            .append(this.fill.toBlenderCode(gamma, true))
             .append('}')
             .toString();
    }
@@ -323,17 +323,21 @@ public class MaterialSolid extends Material {
    /**
     * Returns an SVG snippet as a string.
     *
-    * @param transformScale
+    * @param scale
     *           the transform scale.
     * @return the string
     * @see Utils#clamp01(float)
     * @see Color#toHexWeb(Color)
     */
-   String toSvgString ( final float transformScale ) {
+   String toSvgString ( final float scale ) {
 
+      /*
+       * This needs to be printed to a high precision because of
+       * small meshes which are blown up by scale.
+       */
       final String strokeStr = Utils.toFixed(Utils.max(
-            MaterialSolid.SVG_MIN_STROKE_WT,
-            this.strokeWeight / transformScale), 4);
+            Utils.EPSILON,
+            Utils.div(this.strokeWeight, scale)), 6);
       final StringBuilder result = new StringBuilder(256);
 
       /* Stroke style. */
@@ -341,7 +345,7 @@ public class MaterialSolid extends Material {
          result.append("stroke-width=\"")
                .append(strokeStr)
                .append("\" stroke-opacity=\"")
-               .append(Utils.toFixed(Utils.clamp01(this.stroke.w), 2))
+               .append(Utils.toFixed(Utils.clamp01(this.stroke.w), 6))
                .append("\" stroke=\"")
                .append(Color.toHexWeb(this.stroke))
                .append("\" stroke-linejoin=\"")
@@ -357,7 +361,7 @@ public class MaterialSolid extends Material {
       /* Fill style. */
       if (this.useFill) {
          result.append("fill-opacity=\"")
-               .append(Utils.toFixed(Utils.clamp01(this.fill.w), 2))
+               .append(Utils.toFixed(Utils.clamp01(this.fill.w), 6))
                .append("\" fill=\"")
                .append(Color.toHexWeb(this.fill))
                .append('\"');

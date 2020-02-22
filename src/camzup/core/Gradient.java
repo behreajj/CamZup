@@ -23,7 +23,26 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
    /**
     * A helper function for parsing an OBJ file. Attempts to
-    * convert a string to an integer.
+    * convert a string to a single precision real number.
+    *
+    * @param f
+    *           the string
+    * @return the number
+    */
+   private static float floatFromStr ( final String f ) {
+
+      float target = 0.0f;
+      try {
+         target = Float.parseFloat(f);
+      } catch (final NumberFormatException e) {
+         target = 0.0f;
+      }
+      return target;
+   }
+
+   /**
+    * A helper function for parsing an gradient and palette
+    * files. Attempts to convert a string to an integer.
     *
     * @param i
     *           the string
@@ -40,12 +59,204 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       return target;
    }
 
-   // @Experimental
-   // public static Gradient fromGgr (
-   // final String[] lines,
-   // final Gradient target) {
-   //
-   // }
+   /**
+    * Attempts to parse a .ggr file containing a GIMP gradient.
+    * Given the differences between the two implementations,
+    * this may not always return a matching result, for
+    * example, when the source file contains only one key.<br>
+    * <br>
+    * This code is adapted to Java from the public domain
+    * Python of Ned Batchelder. See <a href=
+    * "https://nedbatchelder.com/code/modules/ggr.html">nedbatchelder.com/</a>
+    * .
+    *
+    * @param lines
+    *           ggr strings
+    * @param samples
+    *           the samples
+    * @param target
+    *           output gradient
+    * @return the gradient
+    * @author Ned Batchelder
+    */
+   @Experimental
+   public static Gradient fromGgr (
+         final String[] lines,
+         final int samples,
+         final Gradient target ) {
+
+      /*
+       * Separate parsing from gradient construction. Create a
+       * list of float arrays presumed to be of length 13, then
+       * demote the list to a 2D array.
+       */
+      final int lineLen = lines.length;
+      String[] tokens;
+      final ArrayList < float[] > keys = new ArrayList <>();
+      for (int i = 0; i < lineLen; ++i) {
+         final String line = lines[i].trim().toLowerCase();
+         if (line.equals("gimp gradient")) {
+         } else if (line.contains("name:")) {
+         } else if (line.indexOf('#') == 0) {
+         } else {
+
+            /*
+             * The last two tokens are int values representing
+             * enumeration constants. They are promoted to floats here
+             * to avoid having to create a separate int array.
+             */
+
+            tokens = line.split("\\s+");
+            if (tokens.length > 12) {
+               final float[] key = new float[13];
+               for (int j = 0; j < 13; ++j) {
+                  key[j] = Gradient.floatFromStr(tokens[j]);
+               }
+               keys.add(key);
+            }
+         }
+      }
+
+      final float[][] keyArr = keys.toArray(new float[keys.size()][13]);
+      final int keyLen = keyArr.length;
+
+      /* Cache target keys, then clear out old keys. */
+      final TreeSet < ColorKey > trgKeys = target.keys;
+      trgKeys.clear();
+
+      /*
+       * The GGR file is sampled rather than transferred
+       * one-to-one.
+       */
+      final int vsmp = Utils.clamp(samples, 3, 32);
+      final float toStep = 1.0f / (vsmp - 1.0f);
+      final Color ltClr = new Color();
+      final Color rtClr = new Color();
+      Color.AbstrEasing mixer;
+
+      sampling: for (int k = 0; k < vsmp; ++k) {
+
+         /* Create new color key data. */
+         final float step = k * toStep;
+         final Color clr = new Color();
+         float[] seg = keyArr[0];
+
+         /*
+          * Deal with boundary cases: when step is less than or equal
+          * to left edge of first key or when step is greater than or
+          * equal to right edge of the last key. This will likely
+          * amount to step <= 0.0 or step >= 1.0 .
+          */
+         if (step <= keyArr[0][0]) {
+
+            /* If less than lower bound, set to left color of key 0. */
+            seg = keyArr[0];
+            clr.set(seg[3], seg[4], seg[5], seg[6]);
+            trgKeys.add(new ColorKey(step, clr));
+            continue sampling;
+         } else if (step >= keyArr[keyLen - 1][2]) {
+
+            /*
+             * If greater than upper bound, set to right color of key
+             * -1.
+             */
+            seg = keyArr[keyLen - 1];
+            clr.set(seg[7], seg[8], seg[9], seg[10]);
+            trgKeys.add(new ColorKey(step, clr));
+            continue sampling;
+         }
+
+         /*
+          * Search for segment within which the step falls.
+          */
+         segSearch: for (int m = 0; m < keyLen; ++m) {
+            seg = keyArr[m];
+            if (seg[0] <= step && step <= seg[2]) {
+               break segSearch;
+            }
+         }
+
+         /* Cache the segment's left, mid and right steps. */
+         final float segl = seg[0];
+         final float segm = seg[1];
+         final float segr = seg[2];
+
+         /* Cache the segment's left and right colors. */
+         ltClr.set(seg[3], seg[4], seg[5], seg[6]);
+         rtClr.set(seg[7], seg[8], seg[9], seg[10]);
+
+         /* Find normalized step. */
+         final float denom = Utils.div(1.0f, segr - segl);
+         final float mid = (segm - segl) * denom;
+         final float pos = (step - segl) * denom;
+
+         float f = 0.0f;
+         if (pos <= mid) {
+            f = 0.5f * Utils.div(pos, mid);
+         } else {
+            f = 0.5f + 0.5f * Utils.div(pos - mid, 1.0f - mid);
+         }
+
+         /* Adjust step based on interpolation type. */
+         final int blndFunc = (int) seg[11];
+         switch (blndFunc) {
+
+            /* Curved */
+            case 1:
+
+               f = (float) Math.pow(pos, Math.log(0.5d) / Math.log(mid));
+
+               break;
+
+            /* Sine */
+            case 2:
+
+               f = 0.5f * (Utils.sin(IUtils.PI * f - IUtils.HALF_PI) + 1.0f);
+
+               break;
+
+            /* Sphere increasing */
+            case 3:
+
+               f -= 1.0f;
+               f = Utils.sqrt(1.0f - f * f);
+
+               break;
+
+            /* Sphere decreasing */
+            case 4:
+
+               f = 1.0f - Utils.sqrt(1.0f - f * f);
+
+               break;
+
+         }
+
+         /* Mix color based on color space. Default to RGB. */
+         final int clrSpc = (int) seg[12];
+         if (clrSpc == 1 || clrSpc == 2) {
+            /* HSB */
+
+            // TODO: Would matching this more closely to the original
+            // Python allow it to handle a single key HSB gradient
+            // better ?
+            final Color.HueEasing hueFunc = clrSpc == 2 ? new Color.HueCW()
+                  : new Color.HueCCW();
+            mixer = new Color.MixHsba(hueFunc);
+            mixer.apply(ltClr, rtClr, f, clr);
+         } else {
+            /* RGB */
+            mixer = new Color.LerpRgba();
+            mixer.apply(ltClr, rtClr, f, clr);
+         }
+
+         /* Create key and add to the tree set. */
+         final ColorKey key = new ColorKey(step, clr);
+         trgKeys.add(key);
+      }
+
+      return target;
+   }
 
    /**
     * Creates a gradient from an array of strings representing
@@ -1590,7 +1801,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
        * While they may contain a minimum of only 1, they default
        * to 2 keys when created.
        */
-      
+
       final Color[] clrs = this.evalRange(Utils.clamp(samples, 2, 32));
       final int len = clrs.length;
       final int last = len - 1;
@@ -1605,7 +1816,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
          result.append("\n    {\"position\": ")
                .append(Utils.toFixed(i * toPercent, 6))
                .append(", \"color\": ")
-               .append(clr.toBlenderCode(gamma))
+               .append(clr.toBlenderCode(gamma, true))
                .append('}');
 
          if (i < last) {
@@ -1654,21 +1865,42 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     *           the name
     * @return the string
     */
-   @Experimental
    public String toGgrString ( final String name ) {
 
-      /*
-       * GIMP gradients are slightly more sophisticated than this
-       * gradient. The entire span of [0.0, 1.0] must be covered
-       * by the keys. Each key has a left edge (column 1), center
-       * point (column 2) and right edge (column 3). A color is
-       * located on the left edge; its red, green, blue and alpha
-       * channels are columns 4, 5, 6 and 7. Another is located on
-       * the right edge; columns 8, 9, 10 and 11.
-       */
+      return this.toGgrString(name, 0, 0);
+   }
 
-      // TODO: Look up what two integers in last columns of line
-      // mean.
+   /**
+    * Returns a String representation of the gradient
+    * compatible with .ggr (Gimp gradient) file formats. <br>
+    * <br>
+    * Blend types include: (0) linear; (1) curved; (2) sine;
+    * (3) sphere increasing; (4) sphere decreasing.<br>
+    * <br>
+    * Color types include: (0) RGB, (1) HSV CCW, (2) HSV CW.
+    *
+    * @param name
+    *           the name
+    * @param blendType
+    *           the blend type
+    * @param colorType
+    *           the color type
+    * @return the string
+    */
+   @Experimental
+   public String toGgrString (
+         final String name,
+         final int blendType,
+         final int colorType ) {
+
+      /*
+       * The entire span of [0.0, 1.0] must be covered by the keys
+       * of a GIMP gradient. Each key has a left edge (column 1),
+       * center point (column 2) and right edge (column 3). A
+       * color is located on the left edge; its red, green, blue
+       * and alpha channels are columns 4, 5, 6 and 7. Another is
+       * located on the right edge; columns 8, 9, 10 and 11.
+       */
 
       final ColorKey first = this.keys.first();
       final float firstStep = first.step;
@@ -1706,39 +1938,48 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
                .append(frstClrStr)
                .append(' ')
                .append(frstClrStr)
-               .append(" 0 0\n");
+               .append(' ')
+               .append(blendType)
+               .append(' ')
+               .append(colorType)
+               .append('\n');
       }
 
       final Iterator < ColorKey > itr = this.keys.iterator();
 
-      ColorKey prev = itr.next();
-      float prevStep = prev.step;
-      Color prevColor = prev.clr;
+      ColorKey curr = itr.next();
+      float prevStep = curr.step;
+      String prevClrStr = curr.clr.toGgrString();
 
-      ColorKey curr = null;
-      float currStep = 0.0f;
-      Color currColor = null;
-
+      /*
+       * Fence posting problem due to differences in gradient
+       * implementation. Length of GIMP gradient is one less than
+       * this implementation because each GIMP key is a segment.
+       * This implementation's key lies on the left edge of the
+       * GIMP key segment.
+       */
       while (itr.hasNext()) {
          curr = itr.next();
-         currStep = curr.step;
-         currColor = curr.clr;
+         final float currStep = curr.step;
+         final String currClrStr = curr.clr.toGgrString();
 
-         final float midStep = (currStep + prevStep) * 0.5f;
          sb.append(Utils.toFixed(prevStep, 6))
                .append(' ')
-               .append(Utils.toFixed(midStep, 6))
+               .append(Utils.toFixed((prevStep + currStep) * 0.5f, 6))
                .append(' ')
                .append(Utils.toFixed(currStep, 6))
                .append(' ')
-               .append(prevColor.toGgrString())
+               .append(prevClrStr)
                .append(' ')
-               .append(currColor.toGgrString())
-               .append(" 0 0\n");
+               .append(currClrStr)
+               .append(' ')
+               .append(blendType)
+               .append(' ')
+               .append(colorType)
+               .append('\n');
 
-         prev = curr;
          prevStep = currStep;
-         prevColor = currColor;
+         prevClrStr = currClrStr;
       }
 
       if (nonOneLast) {
@@ -1750,7 +1991,10 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
                .append(lastClrStr)
                .append(' ')
                .append(lastClrStr)
-               .append(" 0 0");
+               .append(' ')
+               .append(blendType)
+               .append(' ')
+               .append(colorType);
       }
 
       return sb.toString();
