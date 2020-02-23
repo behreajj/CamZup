@@ -9,6 +9,108 @@ package camzup.core;
  */
 public class Edge2 implements Comparable < Edge2 > {
 
+   @Experimental
+   public static Vec2 eval (
+         final Edge2 edge,
+         final float step,
+         final Vec2 target ) {
+
+      final Vec2 coOrigin = edge.origin.coord;
+      final Vec2 coDest = edge.dest.coord;
+
+      if (step <= 0.0f) {
+         return target.set(coOrigin);
+      }
+
+      if (step >= 1.0f) {
+         return target.set(coDest);
+      }
+
+      final float u = 1.0f - step;
+      return target.set(
+            step * coOrigin.x + u * coDest.x,
+            step * coOrigin.y + u * coDest.y);
+   }
+
+   @Experimental
+   public static Vert2 eval (
+         final Edge2 edge,
+         final float step,
+         final Vert2 target ) {
+
+      // TODO: Needs testing...
+
+      final Vert2 origin = edge.origin;
+      final Vert2 dest = edge.dest;
+
+      final Vec2 vOrigin = origin.coord;
+      final Vec2 vDest = dest.coord;
+      final Vec2 vTarget = target.coord;
+
+      final Vec2 vtOrigin = origin.texCoord;
+      final Vec2 vtDest = dest.texCoord;
+      final Vec2 vtTarget = target.texCoord;
+
+      if (step <= 0.0f) {
+         vTarget.set(vOrigin);
+         vtTarget.set(vtOrigin);
+         return target;
+      }
+
+      if (step >= 1.0f) {
+         vTarget.set(vDest);
+         vtTarget.set(vtDest);
+         return target;
+      }
+
+      final float u = 1.0f - step;
+
+      vTarget.set(
+            step * vOrigin.x + u * vDest.x,
+            step * vOrigin.y + u * vDest.y);
+
+      vtTarget.set(
+            step * vtOrigin.x + u * vtDest.x,
+            step * vtOrigin.y + u * vtDest.y);
+
+      return target;
+   }
+
+   @Experimental
+   public static Vec2 projectVector (
+         final Edge2 edge,
+         final Vec2 v,
+         final Vec2 target ) {
+
+      final Vec2 coOrigin = edge.origin.coord;
+      final Vec2 coDest = edge.dest.coord;
+
+      final float ax = v.x - coOrigin.x;
+      final float ay = v.y - coOrigin.y;
+
+      final float bx = coDest.x - coOrigin.x;
+      final float by = coDest.y - coOrigin.y;
+
+      final float bSq = bx * bx + by * by;
+      final float fac = bSq == 0.0f ? 0.0f
+            : Utils.clamp01(
+                  (ax * bx + ay * by) / bSq);
+
+      return target.set(
+            coOrigin.x + bx * fac,
+            coOrigin.y + by * fac);
+   }
+
+   @Experimental
+   public static float slope ( final Edge2 edge ) {
+
+      final Vec2 dest = edge.dest.coord;
+      final Vec2 origin = edge.origin.coord;
+      return Utils.atan2(
+            dest.y - origin.y,
+            dest.x - origin.x);
+   }
+
    /**
     * The destination vertex.
     */

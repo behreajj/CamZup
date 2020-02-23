@@ -79,6 +79,11 @@ public interface IUtils {
    int HASH_MUL = 16777619;
 
    /**
+    * The hash base multiplied by the hash multiplier.
+    */
+   int MUL_BASE = Utils.HASH_BASE * Utils.HASH_MUL;
+
+   /**
     * One divided by 2.2 , 1.0 / 2.2 . Gamma-adjustments to
     * color commonly raise the color's RGB channels to the
     * power 2.2 or ( 1.0 / 2.0 ). Approximately 0.45454545 .

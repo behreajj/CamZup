@@ -2875,11 +2875,8 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    @Override
    public int hashCode () {
 
-      int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.real);
-      hash = hash * IUtils.HASH_MUL
-            ^ (this.imag == null ? 0 : this.imag.hashCode());
-      return hash;
+      return (IUtils.MUL_BASE ^ Float.floatToIntBits(this.real))
+            * IUtils.HASH_MUL ^ (this.imag == null ? 0 : this.imag.hashCode());
    }
 
    /**

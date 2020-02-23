@@ -2007,6 +2007,207 @@ public abstract class Simplex {
    }
 
    /**
+    * Returns a signed pseudo-random number in the range [-1.0,
+    * 1.0] given a vector input and a seed, based on the
+    * vector's hash code.
+    *
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @return a random number
+    * @see Vec2#hashCode()
+    * @see Float#intBitsToFloat(int)
+    * @see Simplex#hash(int, int, int)
+    */
+   public static float hash (
+         final Vec2 v,
+         final int seed ) {
+
+      return (Float.intBitsToFloat(
+            Simplex.hash(v.hashCode(), seed, 0)
+                  & 0x007fffff | 0x3f800000)
+            - 1.0f) * 2.0f - 1.0f;
+   }
+
+   /**
+    * Returns a vector in the range [-1.0, 1.0] given a vector
+    * input and a seed.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the result
+    * @param target
+    *           the output vector
+    * @return the vector
+    */
+   public static Vec2 hash (
+         final Vec2 v,
+         final int seed,
+         final Vec2 target ) {
+
+      final float st = Simplex.STEP_2 * Vec2.mag(v);
+
+      int ahash = IUtils.MUL_BASE ^ Float.floatToIntBits(v.x + st);
+      ahash = ahash * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y);
+
+      int bhash = IUtils.MUL_BASE ^ Float.floatToIntBits(v.x);
+      bhash = bhash * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y + st);
+
+      return target.set(
+            (Float.intBitsToFloat(Simplex.hash(ahash, seed, 0)
+                  & 0x007fffff | 0x3f800000) - 1.0f) * 2.0f - 1.0f,
+            (Float.intBitsToFloat(Simplex.hash(bhash, seed, 0)
+                  & 0x007fffff | 0x3f800000) - 1.0f) * 2.0f - 1.0f);
+   }
+
+   /**
+    * Returns a signed pseudo-random number in the range [-1.0,
+    * 1.0] given a vector input and a seed, based on the
+    * vector's hash code.
+    *
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @return a random number
+    * @see Vec3#hashCode()
+    * @see Float#intBitsToFloat(int)
+    * @see Simplex#hash(int, int, int)
+    */
+   public static float hash (
+         final Vec3 v,
+         final int seed ) {
+
+      return (Float.intBitsToFloat(
+            Simplex.hash(v.hashCode(), seed, 0)
+                  & 0x007fffff | 0x3f800000)
+            - 1.0f) * 2.0f - 1.0f;
+   }
+
+   /**
+    * Returns a vector in the range [-1.0, 1.0] given a vector
+    * input and a seed.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the result
+    * @param target
+    *           the output vector
+    * @return the vector
+    */
+   public static Vec3 hash (
+         final Vec3 v,
+         final int seed,
+         final Vec3 target ) {
+
+      final float st = Simplex.STEP_3 * Vec3.mag(v);
+      final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(v.x);
+      final int vybit = Float.floatToIntBits(v.y);
+      final int vzbit = Float.floatToIntBits(v.z);
+
+      int ahash = IUtils.MUL_BASE ^ Float.floatToIntBits(v.x + st);
+      ahash = ahash * IUtils.HASH_MUL ^ vybit;
+      ahash = ahash * IUtils.HASH_MUL ^ vzbit;
+
+      int bhash = mulvx;
+      bhash = bhash * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y + st);
+      bhash = bhash * IUtils.HASH_MUL ^ vzbit;
+
+      int chash = mulvx;
+      chash = chash * IUtils.HASH_MUL ^ vybit;
+      chash = chash * IUtils.HASH_MUL ^ Float.floatToIntBits(v.z + st);
+
+      return target.set(
+            (Float.intBitsToFloat(Simplex.hash(ahash, seed, 0)
+                  & 0x007fffff | 0x3f800000) - 1.0f) * 2.0f - 1.0f,
+            (Float.intBitsToFloat(Simplex.hash(bhash, seed, 0)
+                  & 0x007fffff | 0x3f800000) - 1.0f) * 2.0f - 1.0f,
+            (Float.intBitsToFloat(Simplex.hash(chash, seed, 0)
+                  & 0x007fffff | 0x3f800000) - 1.0f) * 2.0f - 1.0f);
+   }
+
+   /**
+    * Returns a signed pseudo-random number in the range [-1.0,
+    * 1.0] given a vector input and a seed, based on the
+    * vector's hash code.
+    *
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the seed
+    * @return a random number
+    * @see Vec4#hashCode()
+    * @see Float#intBitsToFloat(int)
+    * @see Simplex#hash(int, int, int)
+    */
+   public static float hash (
+         final Vec4 v,
+         final int seed ) {
+
+      return (Float.intBitsToFloat(
+            Simplex.hash(v.hashCode(), seed, 0)
+                  & 0x007fffff | 0x3f800000)
+            - 1.0f) * 2.0f - 1.0f;
+   }
+
+   /**
+    * Returns a vector in the range [-1.0, 1.0] given a vector
+    * input and a seed.
+    * 
+    * @param v
+    *           the input vector
+    * @param seed
+    *           the result
+    * @param target
+    *           the output vector
+    * @return the vector
+    */
+   public static Vec4 hash (
+         final Vec4 v,
+         final int seed,
+         final Vec4 target ) {
+
+      final float st = Simplex.STEP_4 * Vec4.mag(v);
+      final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(v.x);
+      final int vybit = Float.floatToIntBits(v.y);
+      final int vzbit = Float.floatToIntBits(v.z);
+      final int vwbit = Float.floatToIntBits(v.w);
+
+      int ahash = IUtils.MUL_BASE ^ Float.floatToIntBits(v.x + st);
+      ahash = ahash * IUtils.HASH_MUL ^ vybit;
+      ahash = ahash * IUtils.HASH_MUL ^ vzbit;
+      ahash = ahash * IUtils.HASH_MUL ^ vwbit;
+
+      int bhash = mulvx;
+      bhash = bhash * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y + st);
+      bhash = bhash * IUtils.HASH_MUL ^ vzbit;
+      bhash = bhash * IUtils.HASH_MUL ^ vwbit;
+
+      int chash = mulvx;
+      chash = chash * IUtils.HASH_MUL ^ vybit;
+      chash = chash * IUtils.HASH_MUL ^ Float.floatToIntBits(v.z + st);
+      chash = chash * IUtils.HASH_MUL ^ vwbit;
+
+      int dhash = mulvx;
+      dhash = dhash * IUtils.HASH_MUL ^ vybit;
+      dhash = dhash * IUtils.HASH_MUL ^ vzbit;
+      dhash = dhash * IUtils.HASH_MUL ^ Float.floatToIntBits(v.w + st);
+
+      return target.set(
+            (Float.intBitsToFloat(Simplex.hash(ahash, seed, 0)
+                  & 0x007fffff | 0x3f800000) - 1.0f) * 2.0f - 1.0f,
+            (Float.intBitsToFloat(Simplex.hash(bhash, seed, 0)
+                  & 0x007fffff | 0x3f800000) - 1.0f) * 2.0f - 1.0f,
+            (Float.intBitsToFloat(Simplex.hash(chash, seed, 0)
+                  & 0x007fffff | 0x3f800000) - 1.0f) * 2.0f - 1.0f,
+            (Float.intBitsToFloat(Simplex.hash(dhash, seed, 0)
+                  & 0x007fffff | 0x3f800000) - 1.0f) * 2.0f - 1.0f);
+   }
+
+   /**
     * Returns a value with the same number of dimensions as the
     * input, 2. This is done by calling
     * {@link Simplex#eval(float, float, int, Vec2)} twice, with
@@ -2195,5 +2396,389 @@ public abstract class Simplex {
             Simplex.eval(v.x, v.y + st, v.z, v.w, seed, yDeriv),
             Simplex.eval(v.x, v.y, v.z + st, v.w, seed, zDeriv),
             Simplex.eval(v.x, v.y, v.z, v.w + st, seed, wDeriv));
+   }
+
+   /**
+    * Generates 2D voronoi noise. Returns the minimum Euclidean
+    * distance; the voronoi point is stored in an output
+    * vector.
+    * 
+    * @param coord
+    *           the coordinate
+    * @param seed
+    *           the seed
+    * @param scale
+    *           the scale
+    * @param target
+    *           the output vector
+    * @return the distance
+    */
+   public static float voronoi (
+         final Vec2 coord,
+         final int seed,
+         final float scale,
+         final Vec2 target ) {
+
+      if (scale == 0.0f) {
+         target.reset();
+         return 0.0f;
+      }
+
+      final float scaledx = coord.x * scale;
+      final float scaledy = coord.y * scale;
+
+      final float cellx = scaledx > 0.0f ? (int) scaledx
+            : scaledx < 0.0f ? (int) scaledx - 1.0f : 0.0f;
+      final float celly = scaledy > 0.0f ? (int) scaledy
+            : scaledy < 0.0f ? (int) scaledy - 1.0f : 0.0f;
+
+      final float localx = scaledx - cellx;
+      final float localy = scaledy - celly;
+
+      float minDist = Float.MAX_VALUE;
+      float hshx = 0.0f;
+      float hshy = 0.0f;
+
+      for (int j = -1; j < 2; ++j) {
+
+         final float sumy = celly + j;
+         final float sumysq = sumy * sumy;
+         final int vybit = Float.floatToIntBits(sumy);
+
+         for (int i = -1; i < 2; ++i) {
+
+            final float sumx = cellx + i;
+            final float sumxsq = sumx * sumx;
+
+            /* Calculate an offset step for the vector. */
+            final float st = Utils.sqrtUnchecked(sumxsq + sumysq)
+                  * Simplex.STEP_2;
+
+            /* Create an int hash for the x component. */
+            final int ahsh = (IUtils.MUL_BASE ^ Float.floatToIntBits(sumx + st))
+                  * IUtils.HASH_MUL ^ vybit;
+
+            /* Create a int hash for the y component. */
+            final int bhsh = (IUtils.MUL_BASE ^ Float.floatToIntBits(sumx))
+                  * IUtils.HASH_MUL ^ Float.floatToIntBits(sumy + st);
+
+            /*
+             * Create an unsigned hash in the range [0.0, 1.0] . Add the
+             * cell offset.
+             */
+            hshx = i + Float.intBitsToFloat(Simplex.hash(ahsh, seed, 0)
+                  & 0x007fffff | 0x3f800000) - 1.0f;
+            hshy = j + Float.intBitsToFloat(Simplex.hash(bhsh, seed, 0)
+                  & 0x007fffff | 0x3f800000) - 1.0f;
+
+            /*
+             * Find the Euclidean distance between the local coordinate
+             * and the random point.
+             */
+            final float xDist = localx - hshx;
+            final float yDist = localy - hshy;
+            final float dist = xDist * xDist + yDist * yDist;
+
+            /* Reassign minimums. */
+            if (dist < minDist) {
+               minDist = dist;
+               target.x = hshx;
+               target.y = hshy;
+            }
+         }
+      }
+
+      target.x += cellx;
+      target.y += celly;
+
+      final float scaleInv = 1.0f / scale;
+      target.x *= scaleInv;
+      target.y *= scaleInv;
+
+      return Utils.sqrtUnchecked(minDist);
+   }
+
+   /**
+    * Generates 3D voronoi noise. Returns the minimum Euclidean
+    * distance; the voronoi point is stored in an output
+    * vector.
+    * 
+    * @param coord
+    *           the coordinate
+    * @param seed
+    *           the seed
+    * @param scale
+    *           the scale
+    * @param target
+    *           the output vector
+    * @return the distance
+    */
+   public static float voronoi (
+         final Vec3 coord,
+         final int seed,
+         final float scale,
+         final Vec3 target ) {
+
+      if (scale == 0.0f) {
+         target.reset();
+         return 0.0f;
+      }
+
+      final float scaledx = coord.x * scale;
+      final float scaledy = coord.y * scale;
+      final float scaledz = coord.z * scale;
+
+      final float cellx = scaledx > 0.0f ? (int) scaledx
+            : scaledx < 0.0f ? (int) scaledx - 1.0f : 0.0f;
+      final float celly = scaledy > 0.0f ? (int) scaledy
+            : scaledy < 0.0f ? (int) scaledy - 1.0f : 0.0f;
+      final float cellz = scaledz > 0.0f ? (int) scaledz
+            : scaledz < 0.0f ? (int) scaledz - 1.0f : 0.0f;
+
+      final float localx = scaledx - cellx;
+      final float localy = scaledy - celly;
+      final float localz = scaledz - cellz;
+
+      float minDist = Float.MAX_VALUE;
+      float hshx = 0.0f;
+      float hshy = 0.0f;
+      float hshz = 0.0f;
+
+      for (int k = -1; k < 2; ++k) {
+
+         final float sumz = cellz + k;
+         final float sumzsq = sumz * sumz;
+         final int vzbit = Float.floatToIntBits(sumz);
+
+         for (int j = -1; j < 2; ++j) {
+
+            final float sumy = celly + j;
+            final float sumysq = sumy * sumy;
+            final int vybit = Float.floatToIntBits(sumy);
+
+            for (int i = -1; i < 2; ++i) {
+
+               final float sumx = cellx + i;
+               final float sumxsq = sumx * sumx;
+               final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(sumx);
+
+               /* Calculate an offset step for the vector. */
+               final float st = Simplex.STEP_3 * Utils.sqrtUnchecked(
+                     sumxsq + sumysq + sumzsq);
+
+               /* Create an int hash for the x component. */
+               final int ahsh = ((IUtils.MUL_BASE
+                     ^ Float.floatToIntBits(sumx + st))
+                     * IUtils.HASH_MUL ^ vybit)
+                     * IUtils.HASH_MUL ^ vzbit;
+
+               /* Create a int hash for the y component. */
+               final int bhsh = (mulvx * IUtils.HASH_MUL
+                     ^ Float.floatToIntBits(sumy + st))
+                     * IUtils.HASH_MUL ^ vzbit;
+
+               /* Create a int hash for the z component. */
+               final int chsh = (mulvx * IUtils.HASH_MUL ^ vybit)
+                     * IUtils.HASH_MUL ^ Float.floatToIntBits(sumz + st);
+
+               /*
+                * Create an unsigned hash in the range [0.0, 1.0] . Add the
+                * cell offset.
+                */
+               hshx = i + Float.intBitsToFloat(Simplex.hash(ahsh, seed, 0)
+                     & 0x007fffff | 0x3f800000) - 1.0f;
+               hshy = j + Float.intBitsToFloat(Simplex.hash(bhsh, seed, 0)
+                     & 0x007fffff | 0x3f800000) - 1.0f;
+               hshz = k + Float.intBitsToFloat(Simplex.hash(chsh, seed, 0)
+                     & 0x007fffff | 0x3f800000) - 1.0f;
+
+               /*
+                * Find the Euclidean distance between the local coordinate
+                * and the random point.
+                */
+               final float xDist = localx - hshx;
+               final float yDist = localy - hshy;
+               final float zDist = localz - hshz;
+               final float dist = xDist * xDist +
+                     yDist * yDist +
+                     zDist * zDist;
+
+               /* Reassign minimums. */
+               if (dist < minDist) {
+                  minDist = dist;
+                  target.x = hshx;
+                  target.y = hshy;
+                  target.z = hshz;
+               }
+            }
+         }
+      }
+
+      target.x += cellx;
+      target.y += celly;
+      target.z += cellz;
+
+      final float scaleInv = 1.0f / scale;
+      target.x *= scaleInv;
+      target.y *= scaleInv;
+      target.z *= scaleInv;
+
+      return Utils.sqrtUnchecked(minDist);
+   }
+
+   /**
+    * Generates 4D voronoi noise. Returns the minimum Euclidean
+    * distance; the voronoi point is stored in an output
+    * vector.
+    * 
+    * @param coord
+    *           the coordinate
+    * @param seed
+    *           the seed
+    * @param scale
+    *           the scale
+    * @param target
+    *           the output vector
+    * @return the distance
+    */
+   public static float voronoi (
+         final Vec4 coord,
+         final int seed,
+         final float scale,
+         final Vec4 target ) {
+
+      if (scale == 0.0f) {
+         target.reset();
+         return 0.0f;
+      }
+
+      final float scaledx = coord.x * scale;
+      final float scaledy = coord.y * scale;
+      final float scaledz = coord.z * scale;
+      final float scaledw = coord.w * scale;
+
+      final float cellx = scaledx > 0.0f ? (int) scaledx
+            : scaledx < 0.0f ? (int) scaledx - 1.0f : 0.0f;
+      final float celly = scaledy > 0.0f ? (int) scaledy
+            : scaledy < 0.0f ? (int) scaledy - 1.0f : 0.0f;
+      final float cellz = scaledz > 0.0f ? (int) scaledz
+            : scaledz < 0.0f ? (int) scaledz - 1.0f : 0.0f;
+      final float cellw = scaledw > 0.0f ? (int) scaledw
+            : scaledw < 0.0f ? (int) scaledw - 1.0f : 0.0f;
+
+      final float localx = scaledx - cellx;
+      final float localy = scaledy - celly;
+      final float localz = scaledz - cellz;
+      final float localw = scaledw - cellw;
+
+      float minDist = Float.MAX_VALUE;
+      float hshx = 0.0f;
+      float hshy = 0.0f;
+      float hshz = 0.0f;
+      float hshw = 0.0f;
+
+      for (int m = -1; m < 2; ++m) {
+
+         final float sumw = cellw + m;
+         final float sumwsq = sumw * sumw;
+         final int vwbit = Float.floatToIntBits(sumw);
+
+         for (int k = -1; k < 2; ++k) {
+
+            final float sumz = cellz + k;
+            final float sumzsq = sumz * sumz;
+            final int vzbit = Float.floatToIntBits(sumz);
+
+            for (int j = -1; j < 2; ++j) {
+
+               final float sumy = celly + j;
+               final float sumysq = sumy * sumy;
+               final int vybit = Float.floatToIntBits(sumy);
+
+               for (int i = -1; i < 2; ++i) {
+
+                  final float sumx = cellx + i;
+                  final float sumxsq = sumx * sumx;
+                  final int mulvx = IUtils.MUL_BASE
+                        ^ Float.floatToIntBits(sumx);
+
+                  /* Calculate an offset step for the vector. */
+                  final float st = Simplex.STEP_4 * Utils.sqrtUnchecked(
+                        sumxsq + sumysq + sumzsq + sumwsq);
+
+                  /* Create an int hash for the x component. */
+                  final int ahsh = (((IUtils.MUL_BASE
+                        ^ Float.floatToIntBits(sumx + st))
+                        * IUtils.HASH_MUL ^ vybit)
+                        * IUtils.HASH_MUL ^ vzbit)
+                        * IUtils.HASH_MUL ^ vwbit;
+
+                  /* Create a int hash for the y component. */
+                  final int bhsh = ((mulvx * IUtils.HASH_MUL
+                        ^ Float.floatToIntBits(sumy + st))
+                        * IUtils.HASH_MUL ^ vzbit)
+                        * IUtils.HASH_MUL ^ vwbit;
+
+                  /* Create a int hash for the z component. */
+                  final int chsh = ((mulvx * IUtils.HASH_MUL ^ vybit)
+                        * IUtils.HASH_MUL ^ Float.floatToIntBits(sumz + st))
+                        * IUtils.HASH_MUL ^ vwbit;
+
+                  /* Create a int hash for the w component. */
+                  final int dhsh = ((mulvx * IUtils.HASH_MUL ^ vybit)
+                        * IUtils.HASH_MUL ^ vzbit)
+                        * IUtils.HASH_MUL ^ Float.floatToIntBits(sumw + st);
+
+                  /*
+                   * Create an unsigned hash in the range [0.0, 1.0] . Add the
+                   * cell offset.
+                   */
+                  hshx = i + Float.intBitsToFloat(Simplex.hash(ahsh, seed, 0)
+                        & 0x007fffff | 0x3f800000) - 1.0f;
+                  hshy = j + Float.intBitsToFloat(Simplex.hash(bhsh, seed, 0)
+                        & 0x007fffff | 0x3f800000) - 1.0f;
+                  hshz = k + Float.intBitsToFloat(Simplex.hash(chsh, seed, 0)
+                        & 0x007fffff | 0x3f800000) - 1.0f;
+                  hshw = m + Float.intBitsToFloat(Simplex.hash(dhsh, seed, 0)
+                        & 0x007fffff | 0x3f800000) - 1.0f;
+
+                  /*
+                   * Find the Euclidean distance between the local coordinate
+                   * and the random point.
+                   */
+                  final float xDist = localx - hshx;
+                  final float yDist = localy - hshy;
+                  final float zDist = localz - hshz;
+                  final float wDist = localw - hshw;
+                  final float dist = xDist * xDist +
+                        yDist * yDist +
+                        zDist * zDist +
+                        wDist * wDist;
+
+                  /* Reassign minimums. */
+                  if (dist < minDist) {
+                     minDist = dist;
+                     target.x = hshx;
+                     target.y = hshy;
+                     target.z = hshz;
+                     target.w = hshw;
+                  }
+               }
+            }
+         }
+      }
+
+      target.x += cellx;
+      target.y += celly;
+      target.z += cellz;
+      target.w += cellw;
+
+      final float scaleInv = 1.0f / scale;
+      target.x *= scaleInv;
+      target.y *= scaleInv;
+      target.z *= scaleInv;
+      target.w *= scaleInv;
+
+      return Utils.sqrtUnchecked(minDist);
    }
 }

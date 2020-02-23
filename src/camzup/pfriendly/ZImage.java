@@ -162,20 +162,10 @@ public class ZImage extends PImage {
       final int w = target.width;
       final int[] pixels = target.pixels;
 
-      // TODO: Optimize.
-
-      // final float hInv = 1.0f / (h - 1.0f);
       final float wInv = 1.0f / (w - 1.0f);
-
       for (int i = 0, y = 0; y < h; ++y) {
-
-         // final float yn = y * hInv;
-
          for (int x = 0; x < w; ++x, ++i) {
-
-            final float xn = x * wInv;
-
-            grd.eval(xn, ZImage.clr);
+            grd.eval(x * wInv, ZImage.clr);
             pixels[i] = Color.toHexInt(ZImage.clr);
          }
       }

@@ -1096,9 +1096,7 @@ public class Mat3 extends Matrix {
    @Override
    public int hashCode () {
 
-      int hash = IUtils.HASH_BASE;
-
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m00);
+      int hash = IUtils.MUL_BASE ^ Float.floatToIntBits(this.m00);
       hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m01);
       hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m02);
 

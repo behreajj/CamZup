@@ -2279,6 +2279,7 @@ public class Color extends Vec4 {
          final Color target,
          final Vec4 hsba ) {
 
+      /* HSBA to RGBA conversion takes care of modding the hue. */
       Color.rgbaToHsba(c, hsba);
       hsba.x += shift.x;
       hsba.y = Utils.clamp01(hsba.y + shift.y);
@@ -2306,6 +2307,7 @@ public class Color extends Vec4 {
          final Color target,
          final Vec4 hsba ) {
 
+      /* HSBA to RGBA conversion takes care of modding the hue. */
       Color.rgbaToHsba(c, hsba);
       hsba.x += shift.x;
       hsba.y = Utils.clamp01(hsba.y + shift.y);
@@ -2532,7 +2534,9 @@ public class Color extends Vec4 {
     *           the output color
     * @return the color
     */
-   public static Color xyzaToRgba ( final Vec4 v, final Color target ) {
+   public static Color xyzaToRgba (
+         final Vec4 v,
+         final Color target ) {
 
       return Color.xyzaToRgba(v.x, v.y, v.z, v.w, target);
    }
@@ -2672,8 +2676,8 @@ public class Color extends Vec4 {
     * Blender 2.8x API. This code is brittle and is used for
     * internal testing purposes, i.e., to compare how curve
     * geometry looks in Blender (the control) vs. in the
-    * library (the test).
-    *
+    * library (the test).<br>
+    * <br>
     * Formatted as a tuple where red, green and blue channels
     * have been raised to the power of gamma, usually 2.2. If
     * include alpha is true, then the alpha is also included.
@@ -2684,7 +2688,9 @@ public class Color extends Vec4 {
     *           include the alpha channel
     * @return the string
     */
-   String toBlenderCode ( final float gamma, final boolean inclAlpha ) {
+   String toBlenderCode (
+         final float gamma,
+         final boolean inclAlpha ) {
 
       final StringBuilder sb = new StringBuilder(96)
             .append('(')

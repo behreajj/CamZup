@@ -86,22 +86,25 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
          final Gradient target ) {
 
       /*
-       * Separate parsing from gradient construction. Create a
+       * Separates parsing from gradient construction. Create a
        * list of float arrays presumed to be of length 13, then
        * demote the list to a 2D array.
        */
       final int lineLen = lines.length;
       String[] tokens;
-      final ArrayList < float[] > keys = new ArrayList <>();
+      final ArrayList < float[] > keys = new ArrayList <>(lineLen);
       for (int i = 0; i < lineLen; ++i) {
          final String line = lines[i].trim().toLowerCase();
          if (line.equals("gimp gradient")) {
+            continue;
          } else if (line.contains("name:")) {
+            continue;
          } else if (line.indexOf('#') == 0) {
+            continue;
          } else {
 
             /*
-             * The last two tokens are int values representing
+             * The last two tokens are int values that represent
              * enumeration constants. They are promoted to floats here
              * to avoid having to create a separate int array.
              */
@@ -117,8 +120,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
          }
       }
 
-      final float[][] keyArr = keys.toArray(new float[keys.size()][13]);
-      final int keyLen = keyArr.length;
+      final int keyLen = keys.size();
+      final float[][] keyArr = keys.toArray(new float[keyLen][13]);
 
       /* Cache target keys, then clear out old keys. */
       final TreeSet < ColorKey > trgKeys = target.keys;
@@ -282,9 +285,13 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       for (int i = 0; i < len; ++i) {
          final String line = lines[i].trim().toLowerCase();
          if (line.equals("gimp palette")) {
+            continue;
          } else if (line.contains("name:")) {
+            continue;
          } else if (line.contains("columns:")) {
+            continue;
          } else if (line.indexOf('#') == 0) {
+            continue;
          } else {
             tokens = line.split("\\s+");
             if (tokens.length > 2) {
@@ -1346,10 +1353,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    @Override
    public int hashCode () {
 
-      int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL
-            ^ (this.keys == null ? 0 : this.keys.hashCode());
-      return hash;
+      return this.keys == null ? 0 : this.keys.hashCode();
    }
 
    /**
@@ -1719,7 +1723,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final int len = this.keys.size();
       final float[] steps = new float[len];
       final ArrayList < Color > clrList = new ArrayList <>(len);
-
+      
       int j = 0;
       final Iterator < ColorKey > keyItr = this.keys.iterator();
       while (keyItr.hasNext()) {
@@ -1772,7 +1776,9 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     *           number of gradient samples
     * @return the string
     */
-   public String toBlenderCode ( final String name, final int samples ) {
+   public String toBlenderCode ( 
+         final String name, 
+         final int samples ) {
 
       return this.toBlenderCode(name, samples, 1.0f);
    }
@@ -1812,11 +1818,10 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
             .append("grd_data = [");
 
       for (int i = 0; i < len; ++i) {
-         final Color clr = clrs[i];
          result.append("\n    {\"position\": ")
                .append(Utils.toFixed(i * toPercent, 6))
                .append(", \"color\": ")
-               .append(clr.toBlenderCode(gamma, true))
+               .append(clrs[i].toBlenderCode(gamma, true))
                .append('}');
 
          if (i < last) {
@@ -2034,7 +2039,6 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     *           display columns
     * @return the string
     */
-   @Experimental
    public String toGplString (
          final String name,
          final int displayColumns ) {

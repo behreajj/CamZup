@@ -9,6 +9,126 @@ package camzup.core;
  */
 public class Edge3 implements Comparable < Edge3 > {
 
+   @Experimental
+   public static float azimuth ( final Edge3 edge ) {
+
+      final Vec3 dest = edge.dest.coord;
+      final Vec3 origin = edge.origin.coord;
+      return Utils.atan2(
+            dest.y - origin.y,
+            dest.x - origin.x);
+   }
+
+   @Experimental
+   public static Vec3 eval (
+         final Edge3 edge,
+         final float step,
+         final Vec3 target ) {
+
+      final Vec3 coOrigin = edge.origin.coord;
+      final Vec3 coDest = edge.dest.coord;
+
+      if (step <= 0.0f) {
+         return target.set(coOrigin);
+      }
+
+      if (step >= 1.0f) {
+         return target.set(coDest);
+      }
+
+      final float u = 1.0f - step;
+      return target.set(
+            step * coOrigin.x + u * coDest.x,
+            step * coOrigin.y + u * coDest.y,
+            step * coOrigin.z + u * coDest.z);
+   }
+
+   @Experimental
+   public static Vert3 eval (
+         final Edge3 edge,
+         final float step,
+         final Vert3 target ) {
+
+      // TODO: Needs testing...
+
+      final Vert3 origin = edge.origin;
+      final Vert3 dest = edge.dest;
+
+      final Vec3 vOrigin = origin.coord;
+      final Vec3 vDest = dest.coord;
+      final Vec3 vTarget = target.coord;
+
+      final Vec2 vtOrigin = origin.texCoord;
+      final Vec2 vtDest = dest.texCoord;
+      final Vec2 vtTarget = target.texCoord;
+
+      final Vec3 vnOrigin = origin.normal;
+      final Vec3 vnDest = dest.normal;
+      final Vec3 vnTarget = target.normal;
+
+      if (step <= 0.0f) {
+         vTarget.set(vOrigin);
+         vtTarget.set(vtOrigin);
+         vnTarget.set(vnOrigin);
+         return target;
+      }
+
+      if (step >= 1.0f) {
+         vTarget.set(vDest);
+         vtTarget.set(vtDest);
+         vnTarget.set(vnDest);
+         return target;
+      }
+
+      final float u = 1.0f - step;
+
+      vTarget.set(
+            step * vOrigin.x + u * vDest.x,
+            step * vOrigin.y + u * vDest.y,
+            step * vOrigin.z + u * vDest.z);
+
+      vtTarget.set(
+            step * vtOrigin.x + u * vtDest.x,
+            step * vtOrigin.y + u * vtDest.y);
+
+      vnTarget.set(
+            step * vnOrigin.x + u * vnDest.x,
+            step * vnOrigin.y + u * vnDest.y,
+            step * vnOrigin.z + u * vnDest.z);
+
+      Vec3.normalize(vnTarget, vnTarget);
+
+      return target;
+   }
+
+   @Experimental
+   public static Vec3 projectVector (
+         final Edge3 edge,
+         final Vec3 v,
+         final Vec3 target ) {
+
+      final Vec3 coOrigin = edge.origin.coord;
+      final Vec3 coDest = edge.dest.coord;
+
+      final float ax = v.x - coOrigin.x;
+      final float ay = v.y - coOrigin.y;
+      final float az = v.z - coOrigin.z;
+
+      final float bx = coDest.x - coOrigin.x;
+      final float by = coDest.y - coOrigin.y;
+      final float bz = coDest.z - coOrigin.z;
+
+      final float bSq = bx * bx + by * by + bz * bz;
+      final float fac = bSq == 0.0f ? 0.0f
+            : Utils.clamp01(
+                  (ax * bx + ay * by + az * bz) / bSq);
+
+      return target.set(
+            coOrigin.x + bx * fac,
+            coOrigin.y + by * fac,
+            coOrigin.z + bz * fac);
+   }
+
    /**
     * The destination vertex.
     */

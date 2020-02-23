@@ -1219,10 +1219,8 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    @Override
    public int hashCode () {
 
-      int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.real);
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.imag);
-      return hash;
+      return (IUtils.MUL_BASE ^ Float.floatToIntBits(this.real))
+            * IUtils.HASH_MUL ^ Float.floatToIntBits(this.imag);
    }
 
    /**
@@ -1246,7 +1244,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    @Chainable
    public Complex reset () {
 
-      return Complex.zero(this);
+      return this.set(0.0f, 0.0f);
    }
 
    /**

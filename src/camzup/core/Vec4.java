@@ -1999,12 +1999,10 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    @Override
    public int hashCode () {
 
-      int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.x);
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y);
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.z);
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.w);
-      return hash;
+      return (((IUtils.MUL_BASE ^ Float.floatToIntBits(this.x))
+            * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y))
+            * IUtils.HASH_MUL ^ Float.floatToIntBits(this.z))
+            * IUtils.HASH_MUL ^ Float.floatToIntBits(this.w);
    }
 
    /**

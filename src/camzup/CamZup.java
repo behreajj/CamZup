@@ -2,11 +2,10 @@ package camzup;
 
 import java.util.HashSet;
 
+import camzup.core.Gradient;
 import camzup.core.IUtils;
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity3;
 import camzup.core.Random;
-import camzup.core.Simplex;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -418,12 +417,12 @@ public class CamZup {
    }
 
    public static void main ( final String[] args ) {
-
-      final Random rng = new Random();
+      float f = new Random().nextFloat();
       
-      Vec2 v = Vec2.random(rng, new Vec2());
-      System.out.println(v);
+      Gradient grd = new Gradient();
+      Gradient.paletteTemperature(grd);
       
+      System.out.println(grd.keys.comparator());
    }
 
    /**

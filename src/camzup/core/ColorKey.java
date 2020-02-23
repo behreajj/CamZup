@@ -54,12 +54,16 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     * The key's color. Abbreviated to 'clr' because 'color' is
     * a data type in Processing IDE.
     */
-   public final Color clr = new Color();
+   public final Color clr;
 
    /**
     * The key's step, expected to be in the range [0.0, 1.0].
     */
    public float step = 0.0f;
+
+   {
+      clr = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+   }
 
    /**
     * The default constructor. Creates a clear black color at
@@ -229,11 +233,8 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     */
    protected boolean equals ( final ColorKey key ) {
 
-      if (Float.floatToIntBits(this.step) != Float
-            .floatToIntBits(key.step)) {
-         return false;
-      }
-      return true;
+      return Float.floatToIntBits(this.step) == Float
+            .floatToIntBits(key.step);
    }
 
    /**
@@ -303,9 +304,7 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
    @Override
    public int hashCode () {
 
-      int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.step);
-      return hash;
+      return Float.floatToIntBits(this.step);
    }
 
    /**
@@ -316,7 +315,7 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
    public ColorKey reset () {
 
       this.step = 0.0f;
-      this.clr.reset();
+      this.clr.set(0.0f, 0.0f, 0.0f, 0.0f);
       return this;
    }
 

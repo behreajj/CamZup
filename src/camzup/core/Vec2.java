@@ -3503,10 +3503,13 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    @Override
    public int hashCode () {
 
-      int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.x);
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y);
-      return hash;
+      // TODO: hash codes are not as efficient as they could be
+      // because the multiplication has precedence over the bit
+      // xor, so
+      // HASH_BASE * HASH_MUL can be precalculated.
+
+      return (IUtils.MUL_BASE ^ Float.floatToIntBits(this.x))
+            * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y);
    }
 
    /**

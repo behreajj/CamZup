@@ -94,10 +94,7 @@ public abstract class EntityData implements IEntityData {
    @Override
    public int hashCode () {
 
-      int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL
-            ^ (this.name == null ? 0 : this.name.hashCode());
-      return hash;
+      return IUtils.MUL_BASE ^ (this.name == null ? 0 : this.name.hashCode());
    }
 
    /**

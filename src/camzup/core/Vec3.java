@@ -3824,11 +3824,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    @Override
    public int hashCode () {
 
-      int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.x);
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y);
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.z);
-      return hash;
+      return ((IUtils.MUL_BASE ^ Float.floatToIntBits(this.x))
+            * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y))
+            * IUtils.HASH_MUL ^ Float.floatToIntBits(this.z);
    }
 
    /**
