@@ -1074,7 +1074,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param knot
     *           the knot
     * @return the curve
-    * @see LinkedList#add(Object)
+    * @see List#add(Object)
     */
    @Chainable
    public Curve3 append ( final Knot3 knot ) {
@@ -1206,6 +1206,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          final Vec3 coord,
          final Vec3 tangent ) {
 
+      // TODO: Make static (along with range.)
       final int knotLength = this.knots.size();
 
       float tScaled = 0.0f;
@@ -1232,7 +1233,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       }
 
       final float t = tScaled - i;
-
       this.bezierPoint(a, b, t, coord);
       this.bezierTanUnit(a, b, t, tangent);
 
@@ -1439,6 +1439,68 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
       return this.knots.size();
 
+   }
+
+   /**
+    * Prepend an collection of knots to the curve's list of
+    * knots.
+    *
+    * @param knots
+    *           the collection of knots
+    * @return this curve.
+    */
+   public Curve3 prepend ( final Collection < Knot3 > knots ) {
+
+      int i = 0;
+      final Iterator < Knot3 > knItr = knots.iterator();
+      while (knItr.hasNext()) {
+         final Knot3 knot = knItr.next();
+         if (knot != null) {
+            this.knots.add(i, knot);
+            i++;
+         }
+      }
+      return this;
+   }
+
+   /**
+    * Prepend an array of knots to the curve's list of knots.
+    *
+    * @param knots
+    *           the array of knots
+    * @return this curve.
+    * @see List#add(int, Object)
+    */
+   @Chainable
+   public Curve3 prepend ( final Knot3... knots ) {
+
+      // TODO: Needs testing...
+      final int len = knots.length;
+      for (int i = 0, j = 0; i < len; ++i) {
+         final Knot3 knot = knots[i];
+         if (knot != null) {
+            this.knots.add(j, knot);
+            j++;
+         }
+      }
+      return this;
+   }
+
+   /**
+    * Prepend a knot to the curve's list of knots.
+    *
+    * @param knot
+    *           the knot
+    * @return the curve
+    * @see List#add(int, Object)
+    */
+   @Chainable
+   public Curve3 prepend ( final Knot3 knot ) {
+
+      if (knot != null) {
+         this.knots.add(0, knot);
+      }
+      return this;
    }
 
    /**

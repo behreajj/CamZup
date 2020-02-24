@@ -22,6 +22,10 @@ public class Face2 implements Comparable < Face2 > {
     */
    public Face2 () {
 
+      // TODO: Add index information. Temporarily remove empty
+      // constructor above to ensure all calls to constructor
+      // include new info.
+
       this.vertices = new Vert2[] {};
    }
 

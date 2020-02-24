@@ -62,7 +62,7 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
    public float step = 0.0f;
 
    {
-      clr = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+      this.clr = new Color(0.0f, 0.0f, 0.0f, 0.0f);
    }
 
    /**

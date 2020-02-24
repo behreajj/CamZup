@@ -53,6 +53,10 @@ public class Vert3 implements Comparable < Vert3 > {
          final Vec2 texCoord,
          final Vec3 normal ) {
 
+      // TODO: Add index information. Temporarily remove empty
+      // constructor above to ensure all calls to constructor
+      // include new info.
+
       this.set(coord, texCoord, normal);
    }
 

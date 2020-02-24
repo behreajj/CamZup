@@ -1706,6 +1706,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
          final float step,
          final Vec2 coord,
          final Vec2 tangent ) {
+      
+      // TODO: Make static (along with range.)
 
       final int knotLength = this.knots.size();
 
@@ -1733,7 +1735,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
       }
 
       final float t = tScaled - i;
-
       this.bezierPoint(a, b, t, coord);
       this.bezierTanUnit(a, b, t, tangent);
 
@@ -1940,6 +1941,68 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
    public int length () {
 
       return this.knots.size();
+   }
+
+   /**
+    * Prepend an collection of knots to the curve's list of
+    * knots.
+    *
+    * @param knots
+    *           the collection of knots
+    * @return this curve.
+    */
+   public Curve2 prepend ( final Collection < Knot2 > knots ) {
+
+      int i = 0;
+      final Iterator < Knot2 > knItr = knots.iterator();
+      while (knItr.hasNext()) {
+         final Knot2 knot = knItr.next();
+         if (knot != null) {
+            this.knots.add(i, knot);
+            i++;
+         }
+      }
+      return this;
+   }
+
+   /**
+    * Prepend an array of knots to the curve's list of knots.
+    *
+    * @param knots
+    *           the array of knots
+    * @return this curve.
+    * @see List#add(int, Object)
+    */
+   @Chainable
+   public Curve2 prepend ( final Knot2... knots ) {
+
+      // TODO: Needs testing...
+      final int len = knots.length;
+      for (int i = 0, j = 0; i < len; ++i) {
+         final Knot2 knot = knots[i];
+         if (knot != null) {
+            this.knots.add(j, knot);
+            j++;
+         }
+      }
+      return this;
+   }
+
+   /**
+    * Prepend a knot to the curve's list of knots.
+    *
+    * @param knot
+    *           the knot
+    * @return the curve
+    * @see List#add(int, Object)
+    */
+   @Chainable
+   public Curve2 prepend ( final Knot2 knot ) {
+
+      if (knot != null) {
+         this.knots.add(0, knot);
+      }
+      return this;
    }
 
    /**

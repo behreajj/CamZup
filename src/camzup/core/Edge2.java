@@ -9,6 +9,19 @@ package camzup.core;
  */
 public class Edge2 implements Comparable < Edge2 > {
 
+   /**
+    * Finds a point on the edge given a factor in the range
+    * [0.0, 1.0] . Uses linear interpolation from the origin
+    * coordinate to that of the destination.
+    *
+    * @param edge
+    *           the edge
+    * @param step
+    *           the step
+    * @param target
+    *           the output vector
+    * @return the point
+    */
    @Experimental
    public static Vec2 eval (
          final Edge2 edge,
@@ -28,54 +41,77 @@ public class Edge2 implements Comparable < Edge2 > {
 
       final float u = 1.0f - step;
       return target.set(
-            step * coOrigin.x + u * coDest.x,
-            step * coOrigin.y + u * coDest.y);
+            u * coOrigin.x + step * coDest.x,
+            u * coOrigin.y + step * coDest.y);
    }
 
+   /**
+    * Finds the heading of an edge. Subtracts the destination
+    * coordinate from that of the origin, then supplies the
+    * difference to atan2 .
+    *
+    * @param edge
+    *           the edge
+    * @return the heading
+    * @see Utils#atan2(float, float)
+    */
    @Experimental
-   public static Vert2 eval (
-         final Edge2 edge,
-         final float step,
-         final Vert2 target ) {
+   public static float heading ( final Edge2 edge ) {
 
-      // TODO: Needs testing...
-
-      final Vert2 origin = edge.origin;
-      final Vert2 dest = edge.dest;
-
-      final Vec2 vOrigin = origin.coord;
-      final Vec2 vDest = dest.coord;
-      final Vec2 vTarget = target.coord;
-
-      final Vec2 vtOrigin = origin.texCoord;
-      final Vec2 vtDest = dest.texCoord;
-      final Vec2 vtTarget = target.texCoord;
-
-      if (step <= 0.0f) {
-         vTarget.set(vOrigin);
-         vtTarget.set(vtOrigin);
-         return target;
-      }
-
-      if (step >= 1.0f) {
-         vTarget.set(vDest);
-         vtTarget.set(vtDest);
-         return target;
-      }
-
-      final float u = 1.0f - step;
-
-      vTarget.set(
-            step * vOrigin.x + u * vDest.x,
-            step * vOrigin.y + u * vDest.y);
-
-      vtTarget.set(
-            step * vtOrigin.x + u * vtDest.x,
-            step * vtOrigin.y + u * vtDest.y);
-
-      return target;
+      final Vec2 dest = edge.dest.coord;
+      final Vec2 origin = edge.origin.coord;
+      return Utils.atan2(
+            dest.y - origin.y,
+            dest.x - origin.x);
    }
 
+   /**
+    * Finds the Euclidean distance from the edge's origin
+    * coordinate to that of its destination.
+    *
+    * @param edge
+    *           the edge
+    * @return the magnitude
+    * @see Vec2#distEuclidean(Vec2, Vec2)
+    */
+   public static float mag ( final Edge2 edge ) {
+
+      return Vec2.distEuclidean(
+            edge.origin.coord,
+            edge.dest.coord);
+   }
+
+   /**
+    * Finds the squared Euclidean distance from the edge's
+    * origin coordinate to that of its destination.
+    *
+    * @param edge
+    *           the edge
+    * @return the magnitude
+    * @see Vec2#distSq(Vec2, Vec2)
+    */
+   public static float magSq ( final Edge2 edge ) {
+
+      return Vec2.distSq(
+            edge.origin.coord,
+            edge.dest.coord);
+   }
+
+   /**
+    * Projects a vector, representing a point, onto an edge.
+    * The scalar projection is clamped to the range [0.0, 1.0],
+    * meaning the projection will not exceed the edge's origin
+    * and destination.
+    *
+    * @param edge
+    *           the edge
+    * @param v
+    *           the input vector
+    * @param target
+    *           the output vecctor
+    * @return the projection
+    * @see Utils#clamp01(float)
+    */
    @Experimental
    public static Vec2 projectVector (
          final Edge2 edge,
@@ -101,16 +137,6 @@ public class Edge2 implements Comparable < Edge2 > {
             coOrigin.y + by * fac);
    }
 
-   @Experimental
-   public static float slope ( final Edge2 edge ) {
-
-      final Vec2 dest = edge.dest.coord;
-      final Vec2 origin = edge.origin.coord;
-      return Utils.atan2(
-            dest.y - origin.y,
-            dest.x - origin.x);
-   }
-
    /**
     * The destination vertex.
     */
@@ -125,6 +151,10 @@ public class Edge2 implements Comparable < Edge2 > {
     * The default constructor. Creates two empty vertices.
     */
    public Edge2 () {
+
+      // TODO: Add index information. Temporarily remove empty
+      // constructor above to ensure all calls to constructor
+      // include new info.
 
       this.origin = new Vert2();
       this.dest = new Vert2();

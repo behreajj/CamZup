@@ -48,6 +48,99 @@ public class Mesh2 extends Mesh {
     */
    public static final PolyType DEFAULT_POLY_TYPE = PolyType.NGON;
 
+   @Experimental
+   private static final Mesh2 fromPoints (
+         final Vec2[] coords,
+         final Mesh2 target ) {
+
+      final int origLen = coords.length;
+      if (origLen < 3) {
+         return target;
+      }
+
+      final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
+      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      for (int i = 0; i < origLen; ++i) {
+         final Vec2 coord = coords[i];
+         if (coord.x < lb.x) {
+            lb.x = coord.x;
+         }
+         if (coord.y < lb.y) {
+            lb.y = coord.y;
+         }
+
+         if (coord.x > ub.x) {
+            ub.x = coord.x;
+         }
+         if (coord.y > ub.y) {
+            ub.y = coord.y;
+         }
+      }
+
+      // final Vec2 locus = new Vec2();
+      // Vec2.add(lb, ub, locus);
+      // Vec2.mul(locus, 0.5f, locus);
+
+      // Arrays.sort(
+      // coords,
+      // new Vec2.ComparatorWinding(locus));
+
+      final Vec2 dimInv = new Vec2();
+      Vec2.sub(ub, lb, dimInv);
+      Vec2.div(0.5f, dimInv, dimInv);
+
+      final Vec2[] texCoords = new Vec2[origLen];
+      final Vec2 uvCenter = Vec2.uvCenter(new Vec2());
+      for (int i = 0; i < origLen; ++i) {
+         final Vec2 texCoord = new Vec2();
+         Vec2.mul(coords[i], dimInv, texCoord);
+         Vec2.add(texCoord, uvCenter, texCoord);
+         texCoord.y = 1.0f - texCoord.y;
+         texCoords[i] = texCoord;
+      }
+
+      int[][][] faces;
+
+      faces = new int[1][origLen][2];
+      final int[][] ngon = faces[0];
+      for (int i = 0; i < origLen; ++i) {
+         ngon[i][0] = i;
+         ngon[i][1] = i;
+      }
+
+      return target.set(faces, coords, texCoords);
+   }
+
+   /**
+    * Inserts a 2D array in the midst of another. For use by
+    * subdivision functions.
+    *
+    * @param arr
+    *           the array
+    * @param index
+    *           the insertion index
+    * @param insert
+    *           the inserted array
+    * @return the new array
+    * @see System#arraycopy(Object, int, Object, int, int)
+    */
+   private static int[][] insert (
+         final int[][] arr,
+         final int index,
+         final int[][] insert ) {
+
+      final int alen = arr.length;
+      final int blen = insert.length;
+      final int valIdx = Utils.mod(index, alen + 1);
+
+      final int[][] result = new int[alen + blen][];
+      System.arraycopy(arr, 0, result, 0, valIdx);
+      System.arraycopy(insert, 0, result, valIdx, blen);
+      System.arraycopy(arr, valIdx, result, valIdx + blen, alen - valIdx);
+
+      return result;
+   }
+
    /**
     * Creates an arc from a start and stop angle.
     *
@@ -195,6 +288,8 @@ public class Mesh2 extends Mesh {
                final int m = i + 2;
                final int n = j + 2;
 
+               // TODO: Isn't this reallocating, rather than using
+               // faces[k][0], etc. ?
                faces[k] = new int[][] {
                      { i, i }, { m, m }, { n, n }, { j, j } };
             }
@@ -212,6 +307,8 @@ public class Mesh2 extends Mesh {
                final int m = i + 2;
                final int n = j + 2;
 
+               // TODO: Isn't this reallocating, rather than using
+               // faces[k][0], etc. ?
                faces[i] = new int[][] {
                      { i, i }, { m, m }, { j, j } };
 
@@ -495,6 +592,8 @@ public class Mesh2 extends Mesh {
                   final int n01 = noff1 + j;
                   final int n11 = n01 + 1;
 
+                  // TODO: Isn't this reallocating, rather than using
+                  // faces[k][0], etc. ?
                   faces[k] = new int[][] {
                         { n00, n00 },
                         { n10, n10 },
@@ -1656,6 +1755,125 @@ public class Mesh2 extends Mesh {
 
       this.materialIndex = source.materialIndex;
       this.name = source.name;
+      return this;
+   }
+
+   /**
+    * Subdivides an edge by the number of cuts given. For
+    * example, one cut will divide an edge in half; two cuts,
+    * into thirds.
+    *
+    * @param faceIndex
+    *           the face index
+    * @param edgeIndex
+    *           the edge index
+    * @param cuts
+    *           number of cuts
+    * @return this mesh
+    */
+   @Experimental
+   public Mesh2 subdivEdge (
+         final int faceIndex,
+         final int edgeIndex,
+         final int cuts ) {
+
+      if (cuts < 1) {
+         return this;
+      }
+
+      /* Validate face index, find face. */
+      final int facesLen = this.faces.length;
+      final int i = Math.floorMod(faceIndex, facesLen);
+      final int[][] face = this.faces[i];
+      final int faceLen = face.length;
+
+      /* Find edge origin vertex. */
+      final int j0 = Math.floorMod(edgeIndex, faceLen);
+      final int[] vert0Idx = face[j0];
+      final Vec2 vOrigin = this.coords[vert0Idx[0]];
+      final Vec2 vtOrigin = this.texCoords[vert0Idx[1]];
+
+      /* Find edge destination vertex. */
+      final int j1 = Math.floorMod(edgeIndex + 1, faceLen);
+      final int[] vert1Idx = face[j1];
+      final Vec2 vDest = this.coords[vert1Idx[0]];
+      final Vec2 vtDest = this.texCoords[vert1Idx[1]];
+
+      /*
+       * Cache old length of coordinates and texture coordinates
+       * so new ones can be appended to the end.
+       */
+      final int vsOldLen = this.coords.length;
+      final int vtsOldLen = this.texCoords.length;
+
+      /* Create arrays to hold new data. */
+      final Vec2[] vsNew = new Vec2[cuts];
+      final Vec2[] vtsNew = new Vec2[cuts];
+      final int[][] fsNew = new int[cuts][2];
+
+      /*
+       * Subdivide the edge. The edge origin and destination are
+       * to be excluded from the new set, so the conversion to the
+       * step accounts for this.
+       */
+      final float toStep = 1.0f / (cuts + 1.0f);
+      for (int k = 0; k < cuts; ++k) {
+         final float step = toStep + k * toStep;
+         final float u = 1.0f - step;
+
+         final Vec2 v = new Vec2();
+         final Vec2 vt = new Vec2();
+
+         v.set(
+               u * vOrigin.x + step * vDest.x,
+               u * vOrigin.y + step * vDest.y);
+
+         vt.set(
+               u * vtOrigin.x + step * vtDest.x,
+               u * vtOrigin.y + step * vtDest.y);
+
+         vsNew[k] = v;
+         vtsNew[k] = vt;
+
+         final int[] newf = fsNew[k];
+         newf[0] = vsOldLen + k;
+         newf[1] = vtsOldLen + k;
+      }
+
+      /*
+       * Append new coords and tex coords to the end of their
+       * respective arrays. The new faces need to be inserted to
+       * this.faces[idx], not reassigned to local face array.
+       */
+      this.coords = Vec2.concat(this.coords, vsNew);
+      this.texCoords = Vec2.concat(this.texCoords, vtsNew);
+      this.faces[i] = Mesh2.insert(face, j1, fsNew);
+
+      return this;
+   }
+
+   /**
+    * Subdivides all edges in a face by the number of cuts
+    * given. For example, one cut will divide an edge in half;
+    * two cuts, into thirds.
+    *
+    * @param faceIndex
+    *           the face index
+    * @param cuts
+    *           number of cuts
+    * @return this mesh
+    */
+   @Experimental
+   public Mesh2 subdivEdges (
+         final int faceIndex,
+         final int cuts ) {
+
+      final int faceLen = this.faces[Math.floorMod(faceIndex,
+            this.faces.length)].length;
+      for (int j = 0, k = 0; j < faceLen; ++j, k += cuts) {
+         this.subdivEdge(faceIndex, k + j, cuts);
+      }
+
       return this;
    }
 

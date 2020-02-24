@@ -266,8 +266,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          Vec2.sub(a, this.locus, this.aDiff);
          Vec2.sub(b, this.locus, this.bDiff);
 
-         final float aHead = Vec2.headingSigned(this.aDiff);
-         final float bHead = Vec2.headingSigned(this.bDiff);
+         final float aHead = Vec2.headingUnsigned(this.aDiff);
+         final float bHead = Vec2.headingUnsigned(this.bDiff);
 
          return aHead > bHead ? 1 : aHead < bHead ? -1 : 0;
       }
@@ -469,6 +469,65 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * The unique identification for serialized classes.
     */
    private static final long serialVersionUID = 8867395334130420105L;
+
+   /**
+    * Internal function for generating 2D array of vectors. The
+    * result is in row-major order, but the parameters are
+    * supplied in reverse: columns first, then rows.<br>
+    * <br>
+    * This is separated to make overriding the public grid
+    * functions easier. This is private because it is too easy
+    * for ints to be quietly promoted to floats if the
+    * signature parameters are confused.
+    *
+    * @param cols
+    *           number of columns
+    * @param rows
+    *           number of rows
+    * @param lbx
+    *           lower bound x
+    * @param lby
+    *           lower bound y
+    * @param ubx
+    *           upper bound x
+    * @param uby
+    *           upper bound y
+    * @return the array
+    */
+   private static Vec2[][] grid (
+         final int cols,
+         final int rows,
+         final float lbx,
+         final float lby,
+         final float ubx,
+         final float uby ) {
+
+      final int rval = rows < 2 ? 2 : rows;
+      final int cval = cols < 2 ? 2 : cols;
+
+      final float iToStep = 1.0f / (rval - 1.0f);
+      final float jToStep = 1.0f / (cval - 1.0f);
+
+      /* Calculate x values in separate loop. */
+      final float[] xs = new float[cval];
+      for (int j = 0; j < cval; ++j) {
+         xs[j] = Utils.lerpUnclamped(
+               lbx, ubx, j * jToStep);
+      }
+
+      final Vec2[][] result = new Vec2[rval][cval];
+      for (int i = 0; i < rval; ++i) {
+
+         final Vec2[] row = result[i];
+         final float y = Utils.lerpUnclamped(
+               lby, uby, i * iToStep);
+
+         for (int j = 0; j < cval; ++j) {
+            row[j] = new Vec2(xs[j], y);
+         }
+      }
+      return result;
+   }
 
    /**
     * Finds the absolute value of each vector component.
@@ -954,6 +1013,28 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       return target.set(
             Utils.clamp01(v.x),
             Utils.clamp01(v.y));
+   }
+
+   /**
+    * Concatenates two one-dimensional Vec2 arrays.
+    *
+    * @param a
+    *           the first array
+    * @param b
+    *           the second array
+    * @return the concatenated array.
+    * @see System#arraycopy(Object, int, Object, int, int)
+    */
+   public static Vec2[] concat (
+         final Vec2[] a,
+         final Vec2[] b ) {
+
+      final int alen = a.length;
+      final int blen = b.length;
+      final Vec2[] result = new Vec2[alen + blen];
+      System.arraycopy(a, 0, result, 0, alen);
+      System.arraycopy(b, 0, result, alen, blen);
+      return result;
    }
 
    /**
@@ -1482,6 +1563,65 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
+    * Generates a 2D array of vectors. Defaults to the
+    * coordinate range of [-0.5, 0.5] .
+    *
+    * @param res
+    *           the resolution
+    * @return the array
+    */
+   public static Vec2[][] grid ( final int res ) {
+
+      return Vec2.grid(res, res, -0.5f, -0.5f, 0.5f, 0.5f);
+   }
+
+   /**
+    * Generates a 2D array of vectors. The result is in
+    * row-major order, but the parameters are supplied in
+    * reverse: columns first, then rows. Defaults to the
+    * coordinate range of [-0.5, 0.5] .
+    *
+    * @param cols
+    *           number of columns
+    * @param rows
+    *           number of rows
+    * @return the array
+    */
+   public static Vec2[][] grid (
+         final int cols,
+         final int rows ) {
+
+      return Vec2.grid(cols, rows, -0.5f, -0.5f, 0.5f, 0.5f);
+   }
+
+   /**
+    * Generates a 2D array of vectors. The result is in
+    * row-major order, but the parameters are supplied in
+    * reverse: columns first, then rows.
+    *
+    * @param cols
+    *           number of columns
+    * @param rows
+    *           number of rows
+    * @param lowerBound
+    *           the lower bound
+    * @param upperBound
+    *           the upper bound
+    * @return the array
+    */
+   public static Vec2[][] grid (
+         final int cols,
+         final int rows,
+         final float lowerBound,
+         final float upperBound ) {
+
+      return Vec2.grid(
+            cols, rows,
+            lowerBound, lowerBound,
+            upperBound, upperBound);
+   }
+
+   /**
     * Generates a 2D array of vectors. The result is in
     * row-major order, but the parameters are supplied in
     * reverse: columns first, then rows.
@@ -1502,35 +1642,10 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final Vec2 lowerBound,
          final Vec2 upperBound ) {
 
-      final int rval = rows < 2 ? 2 : rows;
-      final int cval = cols < 2 ? 2 : cols;
-
-      final float iToStep = 1.0f / (rval - 1.0f);
-      final float jToStep = 1.0f / (cval - 1.0f);
-
-      /* Calculate x values in separate loop. */
-      final float[] xs = new float[cval];
-      for (int j = 0; j < cval; ++j) {
-         xs[j] = Utils.lerpUnclamped(
-               lowerBound.x,
-               upperBound.x,
-               j * jToStep);
-      }
-
-      final Vec2[][] result = new Vec2[rval][cval];
-      for (int i = 0; i < rval; ++i) {
-
-         final Vec2[] row = result[i];
-         final float y = Utils.lerpUnclamped(
-               lowerBound.y,
-               upperBound.y,
-               i * iToStep);
-
-         for (int j = 0; j < cval; ++j) {
-            row[j] = new Vec2(xs[j], y);
-         }
-      }
-      return result;
+      return Vec2.grid(
+            cols, rows,
+            lowerBound.x, lowerBound.y,
+            upperBound.x, upperBound.y);
    }
 
    /**
@@ -1575,11 +1690,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       }
 
       final Vec2[][] result = new Vec2[vcnt][vcnt];
-
-      // final int center = Utils.ceilToInt(vcnt * 0.5f);
       for (int i = 0; i < vcnt; ++i) {
-         // final int m = (center + i) % vcnt;
-         // final Vec2[] row = result[m];
          final Vec2[] row = result[i];
 
          /*
@@ -1787,6 +1898,37 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    public static float headingUnsigned ( final Vec2 v ) {
 
       return Utils.modRadians(Vec2.headingSigned(v));
+   }
+
+   /**
+    * Inserts an array of vectors in the midst of another. The
+    * insertion point is before, or to the left of, the
+    * existing element at a given index.
+    *
+    * @param arr
+    *           the array
+    * @param index
+    *           the insertion index
+    * @param insert
+    *           the inserted array
+    * @return the new array
+    */
+   @Experimental
+   public static Vec2[] insert (
+         final Vec2[] arr,
+         final int index,
+         final Vec2[] insert ) {
+
+      final int alen = arr.length;
+      final int blen = insert.length;
+      final int valIdx = Utils.mod(index, alen + 1);
+
+      final Vec2[] result = new Vec2[alen + blen];
+      System.arraycopy(arr, 0, result, 0, valIdx);
+      System.arraycopy(insert, 0, result, valIdx, blen);
+      System.arraycopy(arr, valIdx, result, valIdx + blen, alen - valIdx);
+
+      return result;
    }
 
    /**
@@ -2964,9 +3106,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param target
     *           the output vector
     * @return the rounded vector
-    * @see Math#round(double)
-    * @see Math#pow(double, double)
     * @see Vec2#round(Vec2, Vec2)
+    * @see Utils#round(float)
     */
    public static Vec2 round (
          final Vec2 v,
@@ -3018,8 +3159,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * @param comparator
     *           the comparator
     */
-   public static void setComparator (
-         final Comparator < Vec2 > comparator ) {
+   public static void setComparator ( final Comparator < Vec2 > comparator ) {
 
       if (comparator != null) {
          Vec2.COMPARATOR = comparator;
@@ -3459,6 +3599,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       if (this == obj) {
          return true;
       }
+
       if (obj == null) {
          return false;
       }

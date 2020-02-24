@@ -565,6 +565,9 @@ public class Mat4 extends Matrix {
          final float sina,
          final Mat4 target ) {
 
+      // TODO: Is this inconsistent when compared with 4D rotation
+      // about the YW axis? Should sina and -sina be transpoed?
+
       return target.set(
             cosa, 0.0f, sina, 0.0f,
             0.0f, 1.0f, 0.0f, 0.0f,

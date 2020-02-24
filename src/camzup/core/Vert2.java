@@ -44,6 +44,13 @@ public class Vert2 implements Comparable < Vert2 > {
          final Vec2 coord,
          final Vec2 texCoord ) {
 
+      // TODO: Add index information. Temporarily remove empty
+      // constructor above to ensure all calls to constructor
+      // include new info.
+      // public int index = -1;
+      // public int coordIndex = -1;
+      // public int texCoordIndex = -1;
+
       this.set(coord, texCoord);
    }
 

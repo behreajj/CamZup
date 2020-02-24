@@ -9,6 +9,16 @@ package camzup.core;
  */
 public class Edge3 implements Comparable < Edge3 > {
 
+   /**
+    * Finds the azimuth of an edge. Subtracts the destination
+    * coordinate from that of the origin, then supplies the
+    * difference to atan2 .
+    *
+    * @param edge
+    *           the edge
+    * @return the heading
+    * @see Utils#atan2(float, float)
+    */
    @Experimental
    public static float azimuth ( final Edge3 edge ) {
 
@@ -19,6 +29,19 @@ public class Edge3 implements Comparable < Edge3 > {
             dest.x - origin.x);
    }
 
+   /**
+    * Finds a point on the edge given a factor in the range
+    * [0.0, 1.0] . Uses linear interpolation from the origin
+    * coordinate to that of the destination.
+    *
+    * @param edge
+    *           the edge
+    * @param step
+    *           the step
+    * @param target
+    *           the output vector
+    * @return the point
+    */
    @Experimental
    public static Vec3 eval (
          final Edge3 edge,
@@ -38,69 +61,68 @@ public class Edge3 implements Comparable < Edge3 > {
 
       final float u = 1.0f - step;
       return target.set(
-            step * coOrigin.x + u * coDest.x,
-            step * coOrigin.y + u * coDest.y,
-            step * coOrigin.z + u * coDest.z);
+            u * coOrigin.x + step * coDest.x,
+            u * coOrigin.y + step * coDest.y,
+            u * coOrigin.z + step * coDest.z);
    }
 
-   @Experimental
-   public static Vert3 eval (
-         final Edge3 edge,
-         final float step,
-         final Vert3 target ) {
+   public static float inclination ( final Edge3 edge ) {
 
-      // TODO: Needs testing...
+      final Vec3 dest = edge.dest.coord;
+      final Vec3 origin = edge.origin.coord;
 
-      final Vert3 origin = edge.origin;
-      final Vert3 dest = edge.dest;
+      final float dx = dest.x - origin.x;
+      final float dy = dest.y - origin.y;
+      final float dz = dest.z - origin.z;
 
-      final Vec3 vOrigin = origin.coord;
-      final Vec3 vDest = dest.coord;
-      final Vec3 vTarget = target.coord;
-
-      final Vec2 vtOrigin = origin.texCoord;
-      final Vec2 vtDest = dest.texCoord;
-      final Vec2 vtTarget = target.texCoord;
-
-      final Vec3 vnOrigin = origin.normal;
-      final Vec3 vnDest = dest.normal;
-      final Vec3 vnTarget = target.normal;
-
-      if (step <= 0.0f) {
-         vTarget.set(vOrigin);
-         vtTarget.set(vtOrigin);
-         vnTarget.set(vnOrigin);
-         return target;
-      }
-
-      if (step >= 1.0f) {
-         vTarget.set(vDest);
-         vtTarget.set(vtDest);
-         vnTarget.set(vnDest);
-         return target;
-      }
-
-      final float u = 1.0f - step;
-
-      vTarget.set(
-            step * vOrigin.x + u * vDest.x,
-            step * vOrigin.y + u * vDest.y,
-            step * vOrigin.z + u * vDest.z);
-
-      vtTarget.set(
-            step * vtOrigin.x + u * vtDest.x,
-            step * vtOrigin.y + u * vtDest.y);
-
-      vnTarget.set(
-            step * vnOrigin.x + u * vnDest.x,
-            step * vnOrigin.y + u * vnDest.y,
-            step * vnOrigin.z + u * vnDest.z);
-
-      Vec3.normalize(vnTarget, vnTarget);
-
-      return target;
+      return Utils.asin(dz * Utils.invHypot(dx, dy, dz));
    }
 
+   /**
+    * Finds the Euclidean distance from the edge's origin
+    * coordinate to that of its destination.
+    *
+    * @param edge the edge
+    * @return the magnitude
+    * @see Vec3#distEuclidean(Vec3, Vec3)
+    */
+   public static float mag ( final Edge3 edge ) {
+
+      return Vec3.distEuclidean(
+            edge.origin.coord,
+            edge.dest.coord);
+   }
+
+   /**
+    * Finds the squared Euclidean distance from the edge's
+    * origin coordinate to that of its destination.
+    *
+    * @param edge the edge
+    * @return the magnitude
+    * @see Vec3#distSq(Vec3, Vec3)
+    */
+   public static float magSq ( final Edge3 edge ) {
+
+      return Vec3.distSq(
+            edge.origin.coord,
+            edge.dest.coord);
+   }
+
+   /**
+    * Projects a vector, representing a point, onto an edge.
+    * The scalar projection is clamped to the range [0.0, 1.0],
+    * meaning the projection will not exceed the edge's origin
+    * and destination.
+    *
+    * @param edge
+    *           the edge
+    * @param v
+    *           the input vector
+    * @param target
+    *           the output vecctor
+    * @return the projection
+    * @see Utils#clamp01(float)
+    */
    @Experimental
    public static Vec3 projectVector (
          final Edge3 edge,
@@ -173,6 +195,10 @@ public class Edge3 implements Comparable < Edge3 > {
          final Vec3 coDest,
          final Vec2 txDest,
          final Vec3 nmDest ) {
+
+      // TODO: Add index information. Temporarily remove empty
+      // constructor above to ensure all calls to constructor
+      // include new info.
 
       this.origin = new Vert3(coOrigin, txOrigin, nmOrigin);
       this.dest = new Vert3(coDest, txDest, nmDest);

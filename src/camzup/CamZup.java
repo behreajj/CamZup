@@ -4,11 +4,14 @@ import java.util.HashSet;
 
 import camzup.core.Gradient;
 import camzup.core.IUtils;
+import camzup.core.Mesh2;
 import camzup.core.Mesh3;
+import camzup.core.MeshEntity2;
 import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
+import camzup.core.Vert2;
 import processing.core.PApplet;
 
 /**
@@ -417,12 +420,26 @@ public class CamZup {
    }
 
    public static void main ( final String[] args ) {
-      float f = new Random().nextFloat();
-      
-      Gradient grd = new Gradient();
+
+      final Random rng = new Random();
+
+      final Gradient grd = new Gradient();
       Gradient.paletteTemperature(grd);
-      
-      System.out.println(grd.keys.comparator());
+
+      final Mesh2 mesh = new Mesh2();
+      Mesh2.square(mesh);
+      mesh.subdivEdges(0, 16);
+
+      final Vert2[] verts = mesh.getVertices();
+      for (int i = 0; i < verts.length; i += 4) {
+         final Vert2 vert0 = verts[i % verts.length];
+         final Vert2 vert1 = verts[(i + 1) % verts.length];
+         Vec2.mul(vert0.coord, IUtils.ONE_SQRT_2, vert0.coord);
+         Vec2.mul(vert1.coord, IUtils.ONE_SQRT_2, vert1.coord);
+      }
+
+      final MeshEntity2 me = new MeshEntity2(mesh);
+      System.out.println(me.toBlenderCode());
    }
 
    /**

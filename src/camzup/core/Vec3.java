@@ -404,6 +404,89 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    private static final long serialVersionUID = -7814214074840696365L;
 
    /**
+    * Generates a 3D array of vectors. The result is in
+    * layer-row-major order, but the parameters are supplied in
+    * reverse: columns first, then rows, then layers.<br>
+    * <br>
+    * This is separated to make overriding the public grid
+    * functions easier. This is private because it is too easy
+    * for ints to be quietly promoted to floats if the
+    * signature parameters are confused.
+    *
+    * @param cols
+    *           number of columns
+    * @param rows
+    *           number of rows
+    * @param layers
+    *           number of layers
+    * @param lbx
+    *           lower bound x
+    * @param lby
+    *           lower bound y
+    * @param lbz
+    *           lower bound z
+    * @param ubx
+    *           upper bound x
+    * @param uby
+    *           upper bound y
+    * @param ubz
+    *           upper bound z
+    * @return the array
+    */
+   private static Vec3[][][] grid (
+         final int cols,
+         final int rows,
+         final int layers,
+         final float lbx,
+         final float lby,
+         final float lbz,
+         final float ubx,
+         final float uby,
+         final float ubz ) {
+
+      final int lval = layers < 2 ? 2 : layers;
+      final int rval = rows < 2 ? 2 : rows;
+      final int cval = cols < 2 ? 2 : cols;
+
+      final float hToStep = 1.0f / (lval - 1.0f);
+      final float iToStep = 1.0f / (rval - 1.0f);
+      final float jToStep = 1.0f / (cval - 1.0f);
+
+      /* Calculate x values in separate loop. */
+      final float[] xs = new float[cval];
+      for (int j = 0; j < cval; ++j) {
+         xs[j] = Utils.lerpUnclamped(
+               lbx, ubx, j * jToStep);
+      }
+
+      /* Calculate y values in separate loop. */
+      final float[] ys = new float[rval];
+      for (int i = 0; i < rval; ++i) {
+         ys[i] = Utils.lerpUnclamped(
+               lby, uby, i * iToStep);
+      }
+
+      final Vec3[][][] result = new Vec3[lval][rval][cval];
+      for (int h = 0; h < lval; ++h) {
+
+         final Vec3[][] layer = result[h];
+         final float z = Utils.lerpUnclamped(
+               lbz, ubz, h * hToStep);
+
+         for (int i = 0; i < rval; ++i) {
+
+            final Vec3[] row = layer[i];
+            final float y = ys[i];
+
+            for (int j = 0; j < cval; ++j) {
+               row[j] = new Vec3(xs[j], y, z);
+            }
+         }
+      }
+      return result;
+   }
+
+   /**
     * Finds the absolute value of each vector component.
     *
     * @param v
@@ -964,6 +1047,28 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
             Utils.clamp01(a.x),
             Utils.clamp01(a.y),
             Utils.clamp01(a.z));
+   }
+
+   /**
+    * Concatenates two one-dimensional Vec2 arrays.
+    *
+    * @param a
+    *           the first array
+    * @param b
+    *           the second array
+    * @return the concatenated array.
+    * @see System#arraycopy(Object, int, Object, int, int)
+    */
+   public static Vec3[] concat (
+         final Vec3[] a,
+         final Vec3[] b ) {
+
+      final int alen = a.length;
+      final int blen = b.length;
+      final Vec3[] result = new Vec3[alen + blen];
+      System.arraycopy(a, 0, result, 0, alen);
+      System.arraycopy(b, 0, result, alen, blen);
+      return result;
    }
 
    /**
@@ -1719,6 +1824,77 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
+    * Generates a 3D array of vectors. Defaults to the
+    * coordinate range of [-0.5, 0.5] .
+    *
+    * @param res
+    *           the resolution
+    * @return the array
+    */
+   public static Vec3[][][] grid ( final int res ) {
+
+      return Vec3.grid(
+            res, res, res,
+            -0.5f, -0.5f, -0.5f,
+            0.5f, 0.5f, 0.5f);
+   }
+
+   /**
+    * Generates a 3D array of vectors. The result is in
+    * layer-row-major order, but the parameters are supplied in
+    * reverse: columns first, then rows, then layers. Defaults
+    * to the coordinate range of [-0.5, 0.5] .
+    *
+    * @param cols
+    *           number of columns
+    * @param rows
+    *           number of rows
+    * @param layers
+    *           number of layers
+    * @return the array
+    */
+   public static Vec3[][][] grid (
+         final int cols,
+         final int rows,
+         final int layers ) {
+
+      return Vec3.grid(
+            cols, rows, layers,
+            -0.5f, -0.5f, -0.5f,
+            0.5f, 0.5f, 0.5f);
+   }
+
+   /**
+    * Generates a 3D array of vectors. The result is in
+    * layer-row-major order, but the parameters are supplied in
+    * reverse: columns first, then rows, then layers.
+    *
+    * @param cols
+    *           number of columns
+    * @param rows
+    *           number of rows
+    * @param layers
+    *           number of layers
+    * @param lowerBound
+    *           the lower bound
+    * @param upperBound
+    *           the upper bound
+    * @return the array
+    */
+   public static Vec3[][][] grid (
+         final int cols,
+         final int rows,
+         final int layers,
+         final float lowerBound,
+         final float upperBound ) {
+
+      return Vec3.grid(
+            cols, rows, layers,
+            lowerBound, lowerBound, lowerBound,
+            upperBound, upperBound, upperBound);
+   }
+
+   /**
     * Generates a 3D array of vectors. The result is in
     * layer-row-major order, but the parameters are supplied in
     * reverse: columns first, then rows, then layers.
@@ -1742,52 +1918,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final Vec3 lowerBound,
          final Vec3 upperBound ) {
 
-      final int lval = layers < 2 ? 2 : layers;
-      final int rval = rows < 2 ? 2 : rows;
-      final int cval = cols < 2 ? 2 : cols;
-
-      final float hToStep = 1.0f / (lval - 1.0f);
-      final float iToStep = 1.0f / (rval - 1.0f);
-      final float jToStep = 1.0f / (cval - 1.0f);
-
-      /* Calculate x values in separate loop. */
-      final float[] xs = new float[cval];
-      for (int j = 0; j < cval; ++j) {
-         xs[j] = Utils.lerpUnclamped(
-               lowerBound.x,
-               upperBound.x,
-               j * jToStep);
-      }
-
-      /* Calculate y values in separate loop. */
-      final float[] ys = new float[rval];
-      for (int i = 0; i < rval; ++i) {
-         ys[i] = Utils.lerpUnclamped(
-               lowerBound.y,
-               upperBound.y,
-               i * iToStep);
-      }
-
-      final Vec3[][][] result = new Vec3[lval][rval][cval];
-      for (int h = 0; h < lval; ++h) {
-
-         final Vec3[][] layer = result[h];
-         final float z = Utils.lerpUnclamped(
-               lowerBound.z,
-               upperBound.z,
-               h * hToStep);
-
-         for (int i = 0; i < rval; ++i) {
-
-            final Vec3[] row = layer[i];
-            final float y = ys[i];
-
-            for (int j = 0; j < cval; ++j) {
-               row[j] = new Vec3(xs[j], y, z);
-            }
-         }
-      }
-      return result;
+      return Vec3.grid(
+            cols, rows, layers,
+            lowerBound.x, lowerBound.y, lowerBound.z,
+            upperBound.x, upperBound.y, upperBound.z);
    }
 
    /**
@@ -1968,18 +2102,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param v
     *           the input vector
     * @return the inclination
-    * @see Vec3#inclinationUnsigned(Vec3)
     * @see Utils#asin(float)
-    * @see Vec3#dot(Vec3, Vec3)
-    * @see Math#sqrt(double)
+    * @see Utils#invHypot(float, float, float)
     */
    public static float inclinationSigned ( final Vec3 v ) {
-
-      // final float mSq = Vec3.magSq(v);
-      // if (mSq == 0.0f) {
-      // return 0.0f;
-      // }
-      // return Utils.asin((float) (v.z / Math.sqrt(mSq)));
 
       return Utils.asin(v.z * Utils.invHypot(v.x, v.y, v.z));
    }
@@ -1997,6 +2123,37 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    public static float inclinationUnsigned ( final Vec3 v ) {
 
       return Utils.modRadians(Vec3.inclinationSigned(v));
+   }
+
+   /**
+    * Inserts an array of vectors in the midst of another. The
+    * insertion point is before, or to the left of, the
+    * existing element at a given index.
+    *
+    * @param arr
+    *           the array
+    * @param index
+    *           the insertion index
+    * @param insert
+    *           the inserted array
+    * @return the new array
+    */
+   @Experimental
+   public static Vec3[] insert (
+         final Vec3[] arr,
+         final int index,
+         final Vec3[] insert ) {
+
+      final int alen = arr.length;
+      final int blen = insert.length;
+      final int valIdx = Utils.mod(index, alen + 1);
+
+      final Vec3[] result = new Vec3[alen + blen];
+      System.arraycopy(arr, 0, result, 0, valIdx);
+      System.arraycopy(insert, 0, result, valIdx, blen);
+      System.arraycopy(arr, valIdx, result, valIdx + blen, alen - valIdx);
+
+      return result;
    }
 
    /**
@@ -2951,16 +3108,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          return target.reset();
       }
 
-      // final float mSq = Vec3.magSq(v);
-      //
-      // if (mSq == 0.0f) {
-      // return target.reset();
-      // }
-      //
-      // if (Utils.approx(mSq, 1.0f)) {
-      // return Vec3.mul(v, scalar, target);
-      // }
-
       return Vec3.mul(v, scalar * Utils.invHypot(v.x, v.y, v.z), target);
    }
 
@@ -3260,9 +3407,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * @param target
     *           the output vector
     * @return the rounded vector
-    * @see Math#round(double)
-    * @see Math#pow(double, double)
     * @see Vec3#round(Vec3, Vec3)
+    * @see Utils#round(float)
     */
    public static Vec3 round (
          final Vec3 v,
@@ -3778,12 +3924,15 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       if (this == obj) {
          return true;
       }
+      
       if (obj == null) {
          return false;
       }
+      
       if (this.getClass() != obj.getClass()) {
          return false;
       }
+      
       return this.equals((Vec3) obj);
    }
 

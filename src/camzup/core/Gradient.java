@@ -1723,7 +1723,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final int len = this.keys.size();
       final float[] steps = new float[len];
       final ArrayList < Color > clrList = new ArrayList <>(len);
-      
+
       int j = 0;
       final Iterator < ColorKey > keyItr = this.keys.iterator();
       while (keyItr.hasNext()) {
@@ -1776,8 +1776,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     *           number of gradient samples
     * @return the string
     */
-   public String toBlenderCode ( 
-         final String name, 
+   public String toBlenderCode (
+         final String name,
          final int samples ) {
 
       return this.toBlenderCode(name, samples, 1.0f);
