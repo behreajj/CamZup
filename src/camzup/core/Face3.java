@@ -22,10 +22,6 @@ public class Face3 implements Comparable < Face3 > {
     */
    public Face3 () {
 
-      // TODO: Add index information. Temporarily remove empty
-      // constructor above to ensure all calls to constructor
-      // include new info.
-
       this.vertices = new Vert3[] {};
    }
 
@@ -137,9 +133,7 @@ public class Face3 implements Comparable < Face3 > {
    @Override
    public int hashCode () {
 
-      int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ Arrays.hashCode(this.vertices);
-      return hash;
+      return Arrays.hashCode(this.vertices);
    }
 
    /**
@@ -163,7 +157,6 @@ public class Face3 implements Comparable < Face3 > {
     * @return this mesh
     * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
     */
-   @Experimental
    @Chainable
    public Face3 rotate (
          final float radians,
@@ -174,7 +167,6 @@ public class Face3 implements Comparable < Face3 > {
 
       Vert3 vt3;
       Vec3 c;
-      // Vec3 n;
 
       final int len = this.vertices.length;
       for (int i = 0; i < len; ++i) {
@@ -182,7 +174,6 @@ public class Face3 implements Comparable < Face3 > {
          c = vt3.coord;
          // n = vt3.normal;
          Vec3.rotate(c, cosa, sina, axis, c);
-         // Vec3.rotate(n, cosa, sina, axis, n);
       }
 
       return this;
@@ -195,21 +186,17 @@ public class Face3 implements Comparable < Face3 > {
     *           the quaternion
     * @return the mesh
     */
-   @Experimental
    @Chainable
    public Face3 rotate ( final Quaternion q ) {
 
       Vert3 vt3;
       Vec3 c;
-      // Vec3 n;
 
       final int len = this.vertices.length;
       for (int i = 0; i < len; ++i) {
          vt3 = this.vertices[i];
          c = vt3.coord;
-         // n = vt3.normal;
          Quaternion.mulVector(q, c, c);
-         // Quaternion.mulVector(q, n, n);
       }
 
       return this;
@@ -224,7 +211,6 @@ public class Face3 implements Comparable < Face3 > {
     * @return this mesh
     * @see Vec3#rotateX(Vec3, float, Vec3)
     */
-   @Experimental
    @Chainable
    public Face3 rotateX ( final float radians ) {
 
@@ -239,9 +225,7 @@ public class Face3 implements Comparable < Face3 > {
       for (int i = 0; i < len; ++i) {
          vt3 = this.vertices[i];
          c = vt3.coord;
-         // n = vt3.normal;
          Vec3.rotateX(c, cosa, sina, c);
-         // Vec3.rotateX(n, cosa, sina, n);
       }
 
       return this;
@@ -256,7 +240,6 @@ public class Face3 implements Comparable < Face3 > {
     * @return this mesh
     * @see Vec3#rotateY(Vec3, float, Vec3)
     */
-   @Experimental
    @Chainable
    public Face3 rotateY ( final float radians ) {
 
@@ -265,15 +248,12 @@ public class Face3 implements Comparable < Face3 > {
 
       Vert3 vt3;
       Vec3 c;
-      // Vec3 n;
 
       final int len = this.vertices.length;
       for (int i = 0; i < len; ++i) {
          vt3 = this.vertices[i];
          c = vt3.coord;
-         // n = vt3.normal;
          Vec3.rotateY(c, cosa, sina, c);
-         // Vec3.rotateY(n, cosa, sina, n);
       }
 
       return this;
@@ -288,7 +268,6 @@ public class Face3 implements Comparable < Face3 > {
     * @return this mesh
     * @see Vec3#rotateZ(Vec3, float, Vec3)
     */
-   @Experimental
    @Chainable
    public Face3 rotateZ ( final float radians ) {
 
@@ -297,15 +276,12 @@ public class Face3 implements Comparable < Face3 > {
 
       Vert3 vt3;
       Vec3 c;
-      // Vec3 n;
 
       final int len = this.vertices.length;
       for (int i = 0; i < len; ++i) {
          vt3 = this.vertices[i];
          c = vt3.coord;
-         // n = vt3.normal;
          Vec3.rotateZ(c, cosa, sina, c);
-         // Vec3.rotateZ(n, cosa, sina, n);
       }
 
       return this;

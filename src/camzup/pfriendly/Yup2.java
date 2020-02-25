@@ -20,6 +20,7 @@ import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PMatrix2D;
 import processing.opengl.PGL;
+import processing.opengl.PGraphicsOpenGL;
 
 /**
  * A 2.5D renderer based on OpenGL. Supposes that the the
@@ -783,6 +784,44 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    public boolean is3D () {
 
       return false;
+   }
+
+   /**
+    * Enable lighting and use default lights, typically an
+    * ambient light and a directional light.
+    *
+    * @see PGraphicsOpenGL#lightFalloff(float, float, float)
+    * @see PGraphicsOpenGL#lightSpecular(float, float, float)
+    * @see PGraphicsOpenGL#ambientLight(float, float, float)
+    * @see PGraphicsOpenGL#directionalLight(float, float,
+    *      float, float, float, float)
+    */
+   @Override
+   public void lights () {
+
+      this.enableLighting();
+
+      this.lightCount = 0;
+
+      final int colorModeSaved = this.colorMode;
+      this.colorMode = PConstants.RGB;
+
+      this.lightFalloff(1.0f, 0.0f, 0.0f);
+      this.lightSpecular(0.0f, 0.0f, 0.0f);
+
+      this.ambientLight(
+            this.colorModeX * IUpOgl.DEFAULT_AMB_R,
+            this.colorModeY * IUpOgl.DEFAULT_AMB_G,
+            this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
+
+      this.directionalLight(
+            this.colorModeX * IUpOgl.DEFAULT_LIGHT_R,
+            this.colorModeY * IUpOgl.DEFAULT_LIGHT_G,
+            this.colorModeZ * IUpOgl.DEFAULT_LIGHT_B,
+
+            0.0f, 0.0f, -1.0f);
+
+      this.colorMode = colorModeSaved;
    }
 
    /**

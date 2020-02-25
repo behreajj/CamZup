@@ -22,10 +22,6 @@ public class Face2 implements Comparable < Face2 > {
     */
    public Face2 () {
 
-      // TODO: Add index information. Temporarily remove empty
-      // constructor above to ensure all calls to constructor
-      // include new info.
-
       this.vertices = new Vert2[] {};
    }
 
@@ -137,9 +133,7 @@ public class Face2 implements Comparable < Face2 > {
    @Override
    public int hashCode () {
 
-      int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ Arrays.hashCode(this.vertices);
-      return hash;
+      return Arrays.hashCode(this.vertices);
    }
 
    /**

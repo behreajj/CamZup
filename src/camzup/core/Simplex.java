@@ -2672,12 +2672,12 @@ public abstract class Simplex {
 
       return Utils.sqrtUnchecked(minDistSq);
    }
-   
+
    /**
     * Generates 4D voronoi noise. Returns the minimum Euclidean
     * distance; the voronoi point is stored in an output
     * vector.
-    * 
+    *
     * @param coord
     *           the coordinate
     * @param seed

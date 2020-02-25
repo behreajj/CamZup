@@ -2,16 +2,15 @@ package camzup;
 
 import java.util.HashSet;
 
-import camzup.core.Gradient;
 import camzup.core.IUtils;
 import camzup.core.Mesh2;
 import camzup.core.Mesh3;
 import camzup.core.MeshEntity2;
+import camzup.core.MeshEntity3;
 import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
-import camzup.core.Vert2;
 import processing.core.PApplet;
 
 /**
@@ -422,24 +421,37 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       final Random rng = new Random();
+      //
+      // final Gradient grd = new Gradient();
+      // Gradient.paletteTemperature(grd);
+      //
+      // final Mesh2 mesh = new Mesh2();
+      // Mesh2.square(mesh);
+      // mesh.subdivEdges(0, 16);
+      //
+      // final Vert2[] verts = mesh.getVertices();
+      // for (int i = 0; i < verts.length; i += 4) {
+      // final Vert2 vert0 = verts[i % verts.length];
+      // final Vert2 vert1 = verts[(i + 1) % verts.length];
+      // Vec2.mul(vert0.coord, IUtils.ONE_SQRT_2, vert0.coord);
+      // Vec2.mul(vert1.coord, IUtils.ONE_SQRT_2, vert1.coord);
+      // }
+      //
+      // final MeshEntity2 me = new MeshEntity2(mesh);
+      // System.out.println(me.toBlenderCode());
+      //
+      //
 
-      final Gradient grd = new Gradient();
-      Gradient.paletteTemperature(grd);
+      // Mesh2 m = Mesh2.ring(32, new Mesh2());
+      // Mesh2 m = Mesh2.arc(Utils.PI * 0.125f, Utils.PI * 2.0f /
+      // 3.0f, 0.5f, 32,
+      // Mesh2.PolyType.TRI, new Mesh2());
+      Mesh2 m = Mesh2.plane(8, 8, new Mesh2());
+      m.subdivEdges(2);
+      m.sort();
 
-      final Mesh2 mesh = new Mesh2();
-      Mesh2.square(mesh);
-      mesh.subdivEdges(0, 16);
-
-      final Vert2[] verts = mesh.getVertices();
-      for (int i = 0; i < verts.length; i += 4) {
-         final Vert2 vert0 = verts[i % verts.length];
-         final Vert2 vert1 = verts[(i + 1) % verts.length];
-         Vec2.mul(vert0.coord, IUtils.ONE_SQRT_2, vert0.coord);
-         Vec2.mul(vert1.coord, IUtils.ONE_SQRT_2, vert1.coord);
-      }
-
-      final MeshEntity2 me = new MeshEntity2(mesh);
-      System.out.println(me.toBlenderCode());
+      // System.out.println(m.toString(8));
+      System.out.println(new MeshEntity2().appendMesh(m).toBlenderCode());
    }
 
    /**

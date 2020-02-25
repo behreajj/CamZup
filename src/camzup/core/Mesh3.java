@@ -128,21 +128,21 @@ public class Mesh3 extends Mesh {
     * @param mesh
     *           the mesh
     * @param target
-    *           the output vector
+    *           the output dimensions
+    * @param lb
+    *           the lower bound
+    * @param ub
+    *           the upper bound
     * @return the dimensions
     */
    public static Vec3 calcDimensions (
          final Mesh3 mesh,
-         final Vec3 target ) {
+         final Vec3 target,
+         final Vec3 lb,
+         final Vec3 ub ) {
 
-      float xMin = Float.MAX_VALUE;
-      float xMax = Float.MIN_VALUE;
-
-      float yMin = Float.MAX_VALUE;
-      float yMax = Float.MIN_VALUE;
-
-      float zMin = Float.MAX_VALUE;
-      float zMax = Float.MIN_VALUE;
+      Vec3.highestValue(lb);
+      Vec3.lowestValue(ub);
 
       final Vec3[] coords = mesh.coords;
       final int len = coords.length;
@@ -154,29 +154,33 @@ public class Mesh3 extends Mesh {
          final float y = coord.y;
          final float z = coord.z;
 
-         if (x < xMin) {
-            xMin = x;
-         } else if (x > xMax) {
-            xMax = x;
+         /* Min, max need separate if checks, not if-else. */
+         if (x < lb.x) {
+            lb.x = x;
          }
 
-         if (y < yMin) {
-            yMin = y;
-         } else if (y > yMax) {
-            yMax = y;
+         if (x > ub.x) {
+            ub.x = x;
          }
 
-         if (z < zMin) {
-            zMin = z;
-         } else if (z > zMax) {
-            zMax = z;
+         if (y < lb.y) {
+            lb.y = y;
+         }
+
+         if (y > ub.y) {
+            ub.y = y;
+         }
+
+         if (z < lb.z) {
+            lb.z = z;
+         }
+
+         if (z > ub.z) {
+            ub.z = z;
          }
       }
 
-      return target.set(
-            xMax - xMin,
-            yMax - yMin,
-            zMax - zMin);
+      return Vec3.sub(ub, lb, target);
    }
 
    /**
@@ -203,34 +207,33 @@ public class Mesh3 extends Mesh {
     */
    public static Mesh3 cube ( final Mesh3 target ) {
 
-      final Vec3[] coords = new Vec3[] {
-            /* 0 */ new Vec3(-0.5f, -0.5f, -0.5f),
-            /* 1 */ new Vec3(-0.5f, -0.5f, 0.5f),
-            /* 2 */ new Vec3(-0.5f, 0.5f, -0.5f),
-            /* 3 */ new Vec3(-0.5f, 0.5f, 0.5f),
-            /* 4 */ new Vec3(0.5f, -0.5f, -0.5f),
-            /* 5 */ new Vec3(0.5f, -0.5f, 0.5f),
-            /* 6 */ new Vec3(0.5f, 0.5f, -0.5f),
-            /* 7 */ new Vec3(0.5f, 0.5f, 0.5f)
-      };
+      target.name = "Cube";
 
-      final Vec3[] normals = new Vec3[] {
-            /* 0 */ new Vec3(1.0f, 0.0f, 0.0f),
-            /* 1 */ new Vec3(0.0f, 0.0f, 1.0f),
-            /* 2 */ new Vec3(0.0f, 0.0f, -1.0f),
-            /* 3 */ new Vec3(0.0f, -1.0f, 0.0f),
-            /* 4 */ new Vec3(-1.0f, 0.0f, 0.0f),
-            /* 5 */ new Vec3(0.0f, 1.0f, 0.0f)
-      };
+      target.coords = Vec3.resize(target.coords, 8);
+      target.coords[0].set(-0.5f, -0.5f, -0.5f);
+      target.coords[1].set(-0.5f, -0.5f, 0.5f);
+      target.coords[2].set(-0.5f, 0.5f, -0.5f);
+      target.coords[3].set(-0.5f, 0.5f, 0.5f);
+      target.coords[4].set(0.5f, -0.5f, -0.5f);
+      target.coords[5].set(0.5f, -0.5f, 0.5f);
+      target.coords[6].set(0.5f, 0.5f, -0.5f);
+      target.coords[7].set(0.5f, 0.5f, 0.5f);
 
-      final Vec2[] texCoords = new Vec2[] {
-            /* 0 */ new Vec2(0.0f, 0.0f),
-            /* 1 */ new Vec2(0.0f, 1.0f),
-            /* 2 */ new Vec2(1.0f, 1.0f),
-            /* 3 */ new Vec2(1.0f, 0.0f)
-      };
+      target.texCoords = Vec2.resize(target.texCoords, 4);
+      target.texCoords[0].set(0.0f, 0.0f);
+      target.texCoords[1].set(0.0f, 1.0f);
+      target.texCoords[2].set(1.0f, 1.0f);
+      target.texCoords[3].set(1.0f, 0.0f);
 
-      final int[][][] faces = new int[][][] {
+      target.normals = Vec3.resize(target.normals, 6);
+      target.normals[0].set(1.0f, 0.0f, 0.0f);
+      target.normals[1].set(0.0f, 0.0f, 1.0f);
+      target.normals[2].set(0.0f, 0.0f, -1.0f);
+      target.normals[3].set(0.0f, -1.0f, 0.0f);
+      target.normals[4].set(-1.0f, 0.0f, 0.0f);
+      target.normals[5].set(0.0f, 1.0f, 0.0f);
+
+      target.faces = new int[][][] {
             { { 0, 2, 4 }, { 1, 3, 4 }, { 3, 0, 4 }, { 2, 1, 4 } },
             { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 }, { 6, 1, 5 } },
             { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 }, { 4, 1, 0 } },
@@ -239,8 +242,7 @@ public class Mesh3 extends Mesh {
             { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } }
       };
 
-      target.name = "Cube";
-      return target.set(faces, coords, texCoords, normals);
+      return target;
    }
 
    /**
@@ -252,6 +254,8 @@ public class Mesh3 extends Mesh {
     * @return the dodecahedron
     */
    public static final Mesh3 dodecahedron ( final Mesh3 target ) {
+
+      // TODO: Refactor to use Vec3 resize
 
       /*
        * double r = 0.5d; double phi = (1.0d + Math.sqrt(5.0d)) /
@@ -422,7 +426,8 @@ public class Mesh3 extends Mesh {
 
       /* Convert to fixed-sized array. */
       target.name = name;
-      target.set(faceList.toArray(new int[faceList.size()][][]),
+      target.set(
+            faceList.toArray(new int[faceList.size()][][]),
             coordList.toArray(new Vec3[coordList.size()]),
             texCoordList.toArray(new Vec2[texCoordList.size()]),
             normalList.toArray(new Vec3[normalList.size()]));
@@ -439,102 +444,73 @@ public class Mesh3 extends Mesh {
     */
    public static final Mesh3 icosahedron ( final Mesh3 target ) {
 
-      final Vec3[] coords = new Vec3[] {
-            /* 00 */ new Vec3(0.0f, 0.5f, 0.0f),
-            /* 01 */ new Vec3(0.42532045f, 0.22360751f, -0.13819239f),
-            /* 02 */ new Vec3(0.00000225f, 0.22360751f, -0.44720721f),
-            /* 03 */ new Vec3(-0.42532432f, 0.22360750f, -0.13819626f),
-            /* 04 */ new Vec3(-0.26286000f, 0.22360748f, 0.36179957f),
-            /* 05 */ new Vec3(0.26286399f, 0.22360748f, 0.36179706f),
-            /* 06 */ new Vec3(0.26286000f, -0.22360748f, -0.36179957f),
-            /* 07 */ new Vec3(-0.26286399f, -0.22360748f, -0.36179706f),
-            /* 08 */ new Vec3(-0.42532045f, -0.22360751f, 0.13819239f),
-            /* 09 */ new Vec3(-0.00000225f, -0.22360751f, 0.44720721f),
-            /* 10 */ new Vec3(0.42532432f, -0.22360750f, 0.13819624f),
-            /* 11 */ new Vec3(0.0f, -0.5f, 0.0f)
-      };
-
-      final Vec3[] normals = new Vec3[] {
-            /* 00 */ new Vec3(-0.00000468f, -0.18758917f, -0.98224759f),
-            /* 01 */ new Vec3(-0.93417150f, -0.18759677f, -0.30353081f),
-            /* 02 */ new Vec3(-0.57735437f, -0.18758918f, 0.79465222f),
-            /* 03 */ new Vec3(0.57734245f, -0.18758699f, 0.79466146f),
-            /* 04 */ new Vec3(0.57735109f, -0.79465222f, -0.18759950f),
-            /* 05 */ new Vec3(-0.57735270f, -0.79465240f, -0.18759337f),
-            /* 06 */ new Vec3(0.35682699f, 0.79465109f, -0.49112532f),
-            /* 07 */ new Vec3(-0.35681862f, 0.79465222f, -0.49112961f),
-            /* 08 */ new Vec3(-0.57735115f, 0.79465222f, 0.18759952f),
-            /* 09 */ new Vec3(0.57735276f, 0.79465240f, 0.18759334f),
-            /* 10 */ new Vec3(0.00000289f, 0.79465103f, 0.60706645f),
-            /* 11 */ new Vec3(0.93417150f, 0.18759677f, 0.30353081f),
-            /* 12 */ new Vec3(0.57735437f, 0.18758918f, -0.79465222f),
-            /* 13 */ new Vec3(-0.57734245f, 0.18758696f, -0.79466146f),
-            /* 14 */ new Vec3(-0.93417013f, 0.18758696f, 0.30354115f),
-            /* 15 */ new Vec3(0.00000468f, 0.18758917f, 0.98224759f),
-            /* 16 */ new Vec3(-0.00000289f, -0.79465103f, -0.60706645f),
-            /* 17 */ new Vec3(0.93417013f, -0.18758696f, -0.30354115f),
-            /* 18 */ new Vec3(-0.35682699f, -0.79465109f, 0.49112532f),
-            /* 19 */ new Vec3(0.35681865f, -0.79465222f, 0.49112961f)
-      };
-
-      // Seems like a wasteful number of texture coordinates...
-      final Vec2[] texCoords = new Vec2[] {
-            /* 00 */ new Vec2(0.76286f, 0.72360748f),
-            /* 01 */ new Vec2(0.07467568f, 0.27639252f),
-            /* 02 */ new Vec2(0.23713601f, 0.72360748f),
-            /* 03 */ new Vec2(0.72360748f, 0.1382004f),
-            /* 04 */ new Vec2(0.72360748f, 0.63819626f),
-            /* 05 */ new Vec2(0.27639249f, 0.36180758f),
-            /* 06 */ new Vec2(0.23714f, 0.27639252f),
-            /* 07 */ new Vec2(0.76286399f, 0.27639252f),
-            /* 08 */ new Vec2(0.92532045f, 0.27639246f),
-            /* 09 */ new Vec2(0.49999776f, 0.72360751f),
-            /* 10 */ new Vec2(0.76286399f, 0.13820291f),
-            /* 11 */ new Vec2(0.50000226f, 0.94720721f),
-            /* 12 */ new Vec2(0.5f, 0.5f),
-            /* 13 */ new Vec2(0.92532045f, 0.63819239f),
-            /* 14 */ new Vec2(0.07467568f, 0.63819626f),
-            /* 15 */ new Vec2(0.23714f, 0.1382004f),
-            /* 16 */ new Vec2(0.72360754f, 0.63819239f),
-            /* 17 */ new Vec2(0.72360748f, 0.13820291f),
-            /* 18 */ new Vec2(0.27639252f, 0.36180377f),
-            /* 19 */ new Vec2(0.50000226f, 0.27639246f),
-            /* 20 */ new Vec2(0.27639252f, 0.86179957f),
-            /* 21 */ new Vec2(0.27639252f, 0.86179706f),
-            /* 22 */ new Vec2(0.07467955f, 0.72360751f),
-            /* 23 */ new Vec2(0.92532432f, 0.72360748f),
-            /* 24 */ new Vec2(0.76286f, 0.86179957f),
-            /* 25 */ new Vec2(0.92532432f, 0.36180377f),
-            /* 26 */ new Vec2(0.23713601f, 0.86179706f),
-            /* 27 */ new Vec2(0.07467955f, 0.36180758f),
-            /* 28 */ new Vec2(0.49999776f, 0.05279279f)
-      };
-
-      final int[][][] faces = new int[][][] {
-            { { 0, 12, 6 }, { 1, 13, 6 }, { 2, 11, 6 } },
-            { { 1, 13, 9 }, { 0, 12, 9 }, { 5, 10, 9 } },
-            { { 0, 12, 7 }, { 2, 11, 7 }, { 3, 14, 7 } },
-            { { 0, 12, 8 }, { 3, 14, 8 }, { 4, 15, 8 } },
-            { { 0, 12, 10 }, { 4, 15, 10 }, { 5, 10, 10 } },
-            { { 1, 16, 11 }, { 5, 17, 11 }, { 10, 18, 11 } },
-            { { 2, 19, 12 }, { 1, 8, 12 }, { 6, 0, 12 } },
-            { { 3, 1, 13 }, { 2, 19, 13 }, { 7, 2, 13 } },
-            { { 4, 3, 14 }, { 3, 4, 14 }, { 8, 5, 14 } },
-            { { 5, 7, 15 }, { 4, 6, 15 }, { 9, 9, 15 } },
-            { { 1, 16, 17 }, { 10, 18, 17 }, { 6, 20, 17 } },
-            { { 2, 19, 0 }, { 6, 0, 0 }, { 7, 2, 0 } },
-            { { 3, 4, 1 }, { 7, 21, 1 }, { 8, 5, 1 } },
-            { { 4, 6, 2 }, { 8, 22, 2 }, { 9, 9, 2 } },
-            { { 5, 7, 3 }, { 9, 9, 3 }, { 10, 23, 3 } },
-            { { 6, 24, 4 }, { 10, 25, 4 }, { 11, 12, 4 } },
-            { { 7, 26, 16 }, { 6, 24, 16 }, { 11, 12, 16 } },
-            { { 8, 27, 5 }, { 7, 26, 5 }, { 11, 12, 5 } },
-            { { 9, 28, 18 }, { 8, 27, 18 }, { 11, 12, 18 } },
-            { { 10, 25, 19 }, { 9, 28, 19 }, { 11, 12, 19 } }
-      };
-
       target.name = "Icosahedron";
-      return target.set(faces, coords, texCoords, normals);
+
+      target.coords = Vec3.resize(target.coords, 12);
+      target.coords[0].set(0.0f, 0.5f, 0.0f);
+      target.coords[1].set(0.42532045f, 0.22360753f, -0.13819239f);
+      target.coords[2].set(0.00000225f, 0.22360753f, -0.44720721f);
+      target.coords[3].set(-0.42532432f, 0.22360751f, -0.13819626f);
+      target.coords[4].set(-0.26286f, 0.2236075f, 0.36179957f);
+      target.coords[5].set(0.26286399f, 0.22360750f, 0.36179706f);
+      target.coords[6].set(0.26286f, -0.22360747f, -0.36179957f);
+      target.coords[7].set(-0.26286399f, -0.22360747f, -0.36179706f);
+      target.coords[8].set(-0.42532045f, -0.2236075f, 0.13819239f);
+      target.coords[9].set(-0.00000225f, -0.2236075f, 0.44720721f);
+      target.coords[10].set(0.42532432f, -0.22360748f, 0.13819624f);
+      target.coords[11].set(0.0f, -0.5f, 0.0f);
+
+      target.texCoords = Vec2.resize(target.texCoords, 3);
+      target.texCoords[0].set(0.5f, 0.0f);
+      target.texCoords[1].set(1.0f, 1.0f);
+      target.texCoords[2].set(0.0f, 1.0f);
+
+      target.normals = Vec3.resize(target.normals, 20);
+      target.normals[0].set(-0.00000468f, -0.18758917f, -0.98224759f);
+      target.normals[1].set(-0.93417150f, -0.18759677f, -0.30353081f);
+      target.normals[2].set(-0.57735437f, -0.18758921f, 0.79465222f);
+      target.normals[3].set(0.57734251f, -0.18758698f, 0.79466146f);
+      target.normals[4].set(0.57735109f, -0.79465222f, -0.18759950f);
+      target.normals[5].set(-0.57735270f, -0.79465240f, -0.18759337f);
+      target.normals[6].set(0.35682696f, 0.79465121f, -0.49112532f);
+      target.normals[7].set(-0.35681859f, 0.79465222f, -0.49112958f);
+      target.normals[8].set(-0.57735109f, 0.79465222f, 0.18759951f);
+      target.normals[9].set(0.57735270f, 0.79465240f, 0.18759339f);
+      target.normals[10].set(0.00000289f, 0.79465103f, 0.60706645f);
+      target.normals[11].set(0.93417150f, 0.18759677f, 0.30353081f);
+      target.normals[12].set(0.57735437f, 0.18758918f, -0.79465222f);
+      target.normals[13].set(-0.57734245f, 0.18758696f, -0.79466146f);
+      target.normals[14].set(-0.93417013f, 0.18758696f, 0.30354115f);
+      target.normals[15].set(0.00000468f, 0.18758917f, 0.98224759f);
+      target.normals[16].set(-0.00000289f, -0.79465103f, -0.60706645f);
+      target.normals[17].set(0.93417013f, -0.18758696f, -0.30354115f);
+      target.normals[18].set(-0.35682702f, -0.79465109f, 0.49112538f);
+      target.normals[19].set(0.35681871f, -0.79465216f, 0.49112964f);
+
+      target.faces = new int[][][] {
+            { { 0, 2, 6 }, { 1, 1, 6 }, { 2, 0, 6 } },
+            { { 1, 2, 9 }, { 0, 1, 9 }, { 5, 0, 9 } },
+            { { 0, 2, 7 }, { 2, 1, 7 }, { 3, 0, 7 } },
+            { { 0, 2, 8 }, { 3, 1, 8 }, { 4, 0, 8 } },
+            { { 0, 2, 10 }, { 4, 1, 10 }, { 5, 0, 10 } },
+            { { 1, 2, 11 }, { 5, 1, 11 }, { 10, 0, 11 } },
+            { { 2, 2, 12 }, { 1, 1, 12 }, { 6, 0, 12 } },
+            { { 3, 2, 13 }, { 2, 1, 13 }, { 7, 0, 13 } },
+            { { 4, 2, 14 }, { 3, 1, 14 }, { 8, 0, 14 } },
+            { { 5, 2, 15 }, { 4, 1, 15 }, { 9, 0, 15 } },
+            { { 1, 2, 17 }, { 10, 1, 17 }, { 6, 0, 17 } },
+            { { 2, 2, 0 }, { 6, 1, 0 }, { 7, 0, 0 } },
+            { { 3, 2, 1 }, { 7, 1, 1 }, { 8, 0, 1 } },
+            { { 4, 2, 2 }, { 8, 1, 2 }, { 9, 0, 2 } },
+            { { 5, 2, 3 }, { 9, 1, 3 }, { 10, 0, 3 } },
+            { { 6, 2, 4 }, { 10, 1, 4 }, { 11, 0, 4 } },
+            { { 7, 2, 16 }, { 6, 1, 16 }, { 11, 0, 16 } },
+            { { 8, 2, 5 }, { 7, 1, 5 }, { 11, 0, 5 } },
+            { { 9, 2, 18 }, { 8, 1, 18 }, { 11, 0, 18 } },
+            { { 10, 2, 19 }, { 9, 1, 19 }, { 11, 0, 19 } }
+      };
+
+      return target;
    }
 
    /**
@@ -547,33 +523,32 @@ public class Mesh3 extends Mesh {
     */
    public static final Mesh3 octahedron ( final Mesh3 target ) {
 
-      final Vec3[] coords = new Vec3[] {
-            /* 0 */ new Vec3(0.0f, -0.5f, 0.0f),
-            /* 1 */ new Vec3(0.5f, 0.0f, 0.0f),
-            /* 2 */ new Vec3(-0.5f, 0.0f, 0.0f),
-            /* 3 */ new Vec3(0.0f, 0.5f, 0.0f),
-            /* 4 */ new Vec3(0.0f, 0.0f, 0.5f),
-            /* 5 */ new Vec3(0.0f, 0.0f, -0.5f)
-      };
+      target.name = "Octahedron";
 
-      final Vec3[] normals = new Vec3[] {
-            /* 0 */ new Vec3(0.57735026f, -0.57735026f, 0.57735026f),
-            /* 1 */ new Vec3(-0.57735026f, 0.57735026f, 0.57735026f),
-            /* 2 */ new Vec3(-0.57735026f, -0.57735026f, 0.57735026f),
-            /* 3 */ new Vec3(0.57735026f, 0.57735026f, 0.57735026f),
-            /* 4 */ new Vec3(-0.57735026f, 0.57735026f, -0.57735026f),
-            /* 5 */ new Vec3(0.57735026f, 0.57735026f, -0.57735026f),
-            /* 6 */ new Vec3(0.57735026f, -0.57735026f, -0.57735026f),
-            /* 7 */ new Vec3(-0.57735026f, -0.57735026f, -0.57735026f)
-      };
+      target.coords = Vec3.resize(target.coords, 6);
+      target.coords[0].set(0.0f, -0.5f, 0.0f);
+      target.coords[1].set(0.5f, 0.0f, 0.0f);
+      target.coords[2].set(-0.5f, 0.0f, 0.0f);
+      target.coords[3].set(0.0f, 0.5f, 0.0f);
+      target.coords[4].set(0.0f, 0.0f, 0.5f);
+      target.coords[5].set(0.0f, 0.0f, -0.5f);
 
-      final Vec2[] texCoords = new Vec2[] {
-            /* 0 */ new Vec2(0.5f, 0.0f),
-            /* 1 */ new Vec2(1.0f, 1.0f),
-            /* 2 */ new Vec2(0.0f, 1.0f)
-      };
+      target.texCoords = Vec2.resize(target.texCoords, 3);
+      target.texCoords[0].set(0.5f, 0.0f);
+      target.texCoords[1].set(1.0f, 1.0f);
+      target.texCoords[2].set(0.0f, 1.0f);
 
-      final int[][][] faces = new int[][][] {
+      target.normals = Vec3.resize(target.normals, 8);
+      target.normals[0].set(0.57735026f, -0.57735026f, 0.57735026f);
+      target.normals[1].set(-0.57735026f, 0.57735026f, 0.57735026f);
+      target.normals[2].set(-0.57735026f, -0.57735026f, 0.57735026f);
+      target.normals[3].set(0.57735026f, 0.57735026f, 0.57735026f);
+      target.normals[4].set(-0.57735026f, 0.57735026f, -0.57735026f);
+      target.normals[5].set(0.57735026f, 0.57735026f, -0.57735026f);
+      target.normals[6].set(0.57735026f, -0.57735026f, -0.57735026f);
+      target.normals[7].set(-0.57735026f, -0.57735026f, -0.57735026f);
+
+      target.faces = new int[][][] {
             { { 0, 2, 0 }, { 1, 1, 0 }, { 4, 0, 0 } },
             { { 1, 2, 3 }, { 3, 1, 3 }, { 4, 0, 3 } },
             { { 3, 2, 1 }, { 2, 1, 1 }, { 4, 0, 1 } },
@@ -584,8 +559,7 @@ public class Mesh3 extends Mesh {
             { { 0, 2, 7 }, { 2, 1, 7 }, { 5, 0, 7 } }
       };
 
-      target.name = "Octahedron";
-      return target.set(faces, coords, texCoords, normals);
+      return target;
    }
 
    /**
@@ -607,6 +581,8 @@ public class Mesh3 extends Mesh {
          final int rows,
          final Mesh3 target ) {
 
+      target.name = "Plane";
+
       final int rval = rows < 1 ? 1 : rows;
       final int cval = cols < 1 ? 1 : cols;
 
@@ -616,9 +592,13 @@ public class Mesh3 extends Mesh {
       final float iToStep = 1.0f / rval;
       final float jToStep = 1.0f / cval;
 
-      final Vec3[] coords = new Vec3[rval1 * cval1];
-      final Vec2[] texCoords = new Vec2[coords.length];
-      final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
+      final Vec3[] vs = target.coords = Vec3.resize(
+            target.coords, rval1 * cval1);
+      final Vec2[] vts = target.texCoords = Vec2.resize(
+            target.texCoords, vs.length);
+      target.normals = Vec3.resize(target.normals, 1);
+      Vec3.up(target.normals[0]);
+      final int flen = rval * cval;
 
       /* Calculate x values in separate loop. */
       final float[] xs = new float[cval1];
@@ -635,12 +615,14 @@ public class Mesh3 extends Mesh {
          final float v = 1.0f - yPrc;
 
          for (int j = 0; j < cval1; ++j, ++k) {
-            coords[k] = new Vec3(xs[j], y, 0.0f);
-            texCoords[k] = new Vec2(us[j], v);
+            vs[k].set(xs[j], y, 0.0f);
+            vts[k].set(us[j], v);
          }
       }
 
-      final int[][][] faces = new int[2 * rval * cval][3][3];
+      target.faces = new int[flen + flen][3][3];
+
+      /* Normals indices should default to 0. */
       for (int k = 0, i = 0; i < rval; ++i) {
          final int noff0 = i * cval1;
          final int noff1 = (i + 1) * cval1;
@@ -651,20 +633,35 @@ public class Mesh3 extends Mesh {
             final int n01 = noff1 + j;
             final int n11 = n01 + 1;
 
-            faces[k] = new int[][] {
-                  { n00, n00, 0 },
-                  { n10, n10, 0 },
-                  { n11, n11, 0 } };
+            final int[][] f0 = target.faces[k];
+            f0[0][0] = n00;
+            f0[0][1] = n00;
+            /* f0[0][2] = 0; */
 
-            faces[k + 1] = new int[][] {
-                  { n11, n11, 0 },
-                  { n01, n01, 0 },
-                  { n00, n00, 0 } };
+            f0[1][0] = n10;
+            f0[1][1] = n10;
+            /* f0[1][2] = 0; */
+
+            f0[2][0] = n11;
+            f0[2][1] = n11;
+            /* f0[2][2] = 0; */
+
+            final int[][] f1 = target.faces[k + 1];
+            f1[0][0] = n11;
+            f1[0][1] = n11;
+            /* f1[0][2] = 0; */
+
+            f1[1][0] = n01;
+            f1[1][1] = n01;
+            /* f1[1][2] = 0; */
+
+            f1[2][0] = n00;
+            f1[2][1] = n00;
+            /* f1[2][2] = 0; */
          }
       }
 
-      target.name = "Plane";
-      return target.set(faces, coords, texCoords, normals);
+      return target;
    }
 
    /**
@@ -697,6 +694,8 @@ public class Mesh3 extends Mesh {
    public static Mesh3 polygon (
          final int sectors,
          final Mesh3 target ) {
+
+      // TODO: Refactor to use Vec3 resize
 
       final int seg = sectors < 3 ? 3 : sectors;
       final float toTheta = IUtils.TAU / seg;
@@ -747,6 +746,8 @@ public class Mesh3 extends Mesh {
          final int longitudes,
          final int latitudes,
          final Mesh3 target ) {
+
+      // TODO: Refactor to use Vec3 resize
 
       /*
        * Longitude corresponds to azimuth; latitude, to
@@ -888,29 +889,29 @@ public class Mesh3 extends Mesh {
     */
    public static final Mesh3 square ( final Mesh3 target ) {
 
-      final Vec3[] coords = new Vec3[] {
-            new Vec3(-0.5f, 0.5f, 0.0f),
-            new Vec3(0.5f, 0.5f, 0.0f),
-            new Vec3(0.5f, -0.5f, 0.0f),
-            new Vec3(-0.5f, -0.5f, 0.0f)
-      };
+      target.name = "Square";
 
-      final Vec2[] texCoords = new Vec2[] {
-            new Vec2(0.0f, 0.0f),
-            new Vec2(1.0f, 0.0f),
-            new Vec2(1.0f, 1.0f),
-            new Vec2(0.0f, 1.0f)
-      };
+      target.coords = Vec3.resize(target.coords, 4);
+      target.coords[0].set(-0.5f, 0.5f, 0.0f);
+      target.coords[1].set(0.5f, 0.5f, 0.0f);
+      target.coords[2].set(0.5f, -0.5f, 0.0f);
+      target.coords[3].set(-0.5f, -0.5f, 0.0f);
 
-      final int[][][] faces = new int[][][] {
+      target.texCoords = Vec2.resize(target.texCoords, 4);
+      target.texCoords[0].set(0.0f, 0.0f);
+      target.texCoords[1].set(1.0f, 0.0f);
+      target.texCoords[2].set(1.0f, 1.0f);
+      target.texCoords[3].set(0.0f, 1.0f);
+
+      target.normals = Vec3.resize(target.normals, 1);
+      Vec3.up(target.normals[0]);
+
+      target.faces = new int[][][] {
             { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 } },
             { { 2, 2, 0 }, { 3, 3, 0 }, { 0, 0, 0 } }
       };
 
-      final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
-
-      target.name = "Square";
-      return target.set(faces, coords, texCoords, normals);
+      return target;
    }
 
    /**
@@ -932,36 +933,32 @@ public class Mesh3 extends Mesh {
        * 0.23570226039551584146694812070162,
        * 0.40824829046386301636621401245098
        */
+      target.name = "Tetrahedron";
 
-      final Vec3[] coords = new Vec3[] {
-            /* 0 */ new Vec3(-0.0f, 0.47140452f, -0.16666667f),
-            /* 1 */ new Vec3(-0.40824829f, -0.23570226f, -0.16666667f),
-            /* 2 */ new Vec3(0.40824829f, -0.23570226f, -0.16666667f),
-            /* 3 */ new Vec3(0.0f, 0.0f, 0.5f)
-      };
+      target.coords = Vec3.resize(target.coords, 4);
+      target.coords[0].set(-0.0f, 0.47140452f, -0.16666667f);
+      target.coords[1].set(-0.40824829f, -0.23570226f, -0.16666667f);
+      target.coords[2].set(0.40824829f, -0.23570226f, -0.16666667f);
+      target.coords[3].set(0.0f, 0.0f, 0.5f);
 
-      final Vec3[] normals = new Vec3[] {
-            /* 0 */ new Vec3(0.0f, 0.0f, -1.0f),
-            /* 1 */ new Vec3(-0.8164966f, 0.47140453f, 0.33333333f),
-            /* 2 */ new Vec3(0.0f, -0.9428091f, 0.33333333f),
-            /* 3 */ new Vec3(0.8164966f, 0.47140453f, 0.33333333f)
-      };
+      target.texCoords = Vec2.resize(target.texCoords, 3);
+      target.texCoords[0].set(0.5f, 0.0f);
+      target.texCoords[1].set(1.0f, 1.0f);
+      target.texCoords[2].set(0.0f, 1.0f);
 
-      final Vec2[] texCoords = new Vec2[] {
-            /* 0 */ new Vec2(0.5f, 0.0f),
-            /* 1 */ new Vec2(1.0f, 1.0f),
-            /* 2 */ new Vec2(0.0f, 1.0f)
-      };
+      target.normals = Vec3.resize(target.normals, 4);
+      target.normals[0].set(0.0f, 0.0f, -1.0f);
+      target.normals[1].set(-0.8164966f, 0.47140453f, 0.33333333f);
+      target.normals[2].set(0.0f, -0.9428091f, 0.33333333f);
+      target.normals[3].set(0.8164966f, 0.47140453f, 0.33333333f);
 
-      final int[][][] faces = new int[][][] {
+      target.faces = new int[][][] {
             { { 0, 0, 0 }, { 2, 2, 0 }, { 1, 1, 0 } },
             { { 0, 2, 1 }, { 1, 1, 1 }, { 3, 0, 1 } },
             { { 0, 1, 3 }, { 3, 0, 3 }, { 2, 2, 3 } },
-            { { 1, 2, 2 }, { 2, 1, 2 }, { 3, 0, 2 } }
-      };
+            { { 1, 2, 2 }, { 2, 1, 2 }, { 3, 0, 2 } } };
 
-      target.name = "Tetrahedron";
-      return target.set(faces, coords, texCoords, normals);
+      return target;
    }
 
    /**
@@ -973,27 +970,79 @@ public class Mesh3 extends Mesh {
     */
    public static final Mesh3 triangle ( final Mesh3 target ) {
 
-      final Vec3[] coords = new Vec3[] {
-            new Vec3(0.0f, 0.5f, 0.0f),
-            new Vec3(-0.4330127f, -0.25f, 0.0f),
-            new Vec3(0.4330127f, -0.25f, 0.0f)
-      };
-
-      final Vec2[] texCoords = new Vec2[] {
-            new Vec2(0.5f, 0.0f),
-            new Vec2(0.0669873f, 0.75f),
-            new Vec2(0.9330127f, 0.75f)
-      };
-
-      final Vec3[] normals = new Vec3[] { Vec3.up(new Vec3()) };
-
-      final int[][][] faces = new int[][][] { {
-            { 0, 0, 0 },
-            { 1, 1, 0 },
-            { 2, 2, 0 } } };
-
       target.name = "Triangle";
-      return target.set(faces, coords, texCoords, normals);
+
+      target.coords = Vec3.resize(target.coords, 3);
+      target.coords[0].set(0.0f, 0.5f, 0.0f);
+      target.coords[1].set(-0.4330127f, -0.25f, 0.0f);
+      target.coords[2].set(0.4330127f, -0.25f, 0.0f);
+
+      target.texCoords = Vec2.resize(target.texCoords, 3);
+      target.texCoords[0].set(0.5f, 0.0f);
+      target.texCoords[1].set(0.0669873f, 0.75f);
+      target.texCoords[2].set(0.9330127f, 0.75f);
+
+      target.normals = Vec3.resize(target.normals, 1);
+      Vec3.up(target.normals[0]);
+
+      target.faces = new int[][][] {
+            { { 0, 0, 0 }, { 1, 1, 1 }, { 2, 2, 2 } } };
+
+      return target;
+   }
+
+   /**
+    * Restructures the mesh so that each face index refers to
+    * unique data, indifferent to redundancies. As a
+    * consequence, coord and texture coordinate are of equal
+    * length and face indices are easier to read and
+    * understand. Useful prior to subdividing edges, or to make
+    * mesh similar to Unity meshes. Similar to 'ripping'
+    * vertices or 'tearing' edges in Blender.
+    *
+    * @param source
+    *           the source mesh
+    * @param target
+    *           the target mesh
+    * @return the mesh
+    */
+   public static Mesh3 uniformData (
+         final Mesh3 source,
+         final Mesh3 target ) {
+
+      target.name = source.name;
+
+      final int len0 = source.faces.length;
+      final ArrayList < Vec3 > vs = new ArrayList <>();
+      final ArrayList < Vec2 > vts = new ArrayList <>();
+      final ArrayList < Vec3 > vns = new ArrayList <>();
+
+      target.faces = new int[len0][][];
+
+      for (int k = 0, i = 0; i < len0; ++i) {
+
+         final int[][] fs0 = source.faces[i];
+         final int len1 = fs0.length;
+         final int[][] trgfs0 = target.faces[i] = new int[len1][2];
+
+         for (int j = 0; j < len1; ++j, ++k) {
+
+            final int[] fs1 = fs0[j];
+
+            vs.add(new Vec3(source.coords[fs1[0]]));
+            vts.add(new Vec2(source.texCoords[fs1[1]]));
+            vns.add(new Vec3(source.normals[fs1[2]]));
+
+            trgfs0[j][0] = k;
+            trgfs0[j][1] = k;
+            trgfs0[j][2] = k;
+         }
+      }
+
+      target.coords = vs.toArray(new Vec3[vs.size()]);
+      target.texCoords = vts.toArray(new Vec2[vts.size()]);
+      target.normals = vns.toArray(new Vec3[vns.size()]);
+      return target;
    }
 
    /**
@@ -1267,13 +1316,7 @@ public class Mesh3 extends Mesh {
    @Chainable
    public Mesh3 calcNormals () {
 
-      if (this.normals == null || this.normals.length != this.coords.length) {
-         final int len = this.coords.length;
-         this.normals = new Vec3[len];
-         for (int h = 0; h < len; ++h) {
-            this.normals[h] = new Vec3();
-         }
-      }
+      this.normals = Vec3.resize(this.normals, this.coords.length);
 
       Vec3 prev = null;
       Vec3 curr = null;
@@ -1304,8 +1347,6 @@ public class Mesh3 extends Mesh {
             next = this.coords[nextIndex];
 
             Vec3.sub(curr, prev, edge0);
-            // Should this be next - curr?
-            // Vec3.sub(next, prev, e1);
             Vec3.sub(next, curr, edge1);
             Vec3.crossNorm(edge0, edge1, normal);
 
@@ -1846,6 +1887,11 @@ public class Mesh3 extends Mesh {
    @Chainable
    public Mesh3 set ( final Mesh3 source ) {
 
+      /*
+       * This should not use Vec3#resize, as it is copying all
+       * vectors.
+       */
+
       /* Copy coordinates. */
       final Vec3[] sourcevs = source.coords;
       final int vslen = sourcevs.length;
@@ -1897,6 +1943,174 @@ public class Mesh3 extends Mesh {
 
       this.materialIndex = source.materialIndex;
       this.name = source.name;
+      return this;
+   }
+
+   /**
+    * Subdivides an edge by the number of cuts given. For
+    * example, one cut will divide an edge in half; two cuts,
+    * into thirds.<br>
+    * <br>
+    * Does not distinguish between interior edges, which have a
+    * complement elsewhere, and border edges; for that reason
+    * this works best with NGONs.
+    *
+    * @param faceIndex
+    *           the face index
+    * @param edgeIndex
+    *           the edge index
+    * @param cuts
+    *           number of cuts
+    * @return this mesh
+    */
+   @Experimental
+   public Mesh3 subdivEdge (
+         final int faceIndex,
+         final int edgeIndex,
+         final int cuts ) {
+
+      if (cuts < 1) {
+         return this;
+      }
+
+      /* Validate face index, find face. */
+      final int facesLen = this.faces.length;
+      final int i = Math.floorMod(faceIndex, facesLen);
+      final int[][] face = this.faces[i];
+      final int faceLen = face.length;
+
+      /* Find edge origin vertex. */
+      final int j0 = Math.floorMod(edgeIndex, faceLen);
+      final int[] vert0Idx = face[j0];
+      final Vec3 vOrigin = this.coords[vert0Idx[0]];
+      final Vec2 vtOrigin = this.texCoords[vert0Idx[1]];
+      final Vec3 vnOrigin = this.normals[vert0Idx[2]];
+
+      /* Find edge destination vertex. */
+      final int j1 = Math.floorMod(edgeIndex + 1, faceLen);
+      final int[] vert1Idx = face[j1];
+      final Vec3 vDest = this.coords[vert1Idx[0]];
+      final Vec2 vtDest = this.texCoords[vert1Idx[1]];
+      final Vec3 vnDest = this.normals[vert1Idx[2]];
+
+      /*
+       * Cache old length of coordinates and texture coordinates
+       * so new ones can be appended to the end.
+       */
+      final int vsOldLen = this.coords.length;
+      final int vtsOldLen = this.texCoords.length;
+      final int vnsOldLen = this.normals.length;
+
+      /* Create arrays to hold new data. */
+      final Vec3[] vsNew = new Vec3[cuts];
+      final Vec2[] vtsNew = new Vec2[cuts];
+      final Vec3[] vnsNew = new Vec3[cuts];
+      final int[][] fsNew = new int[cuts][3];
+
+      /*
+       * Subdivide the edge. The edge origin and destination are
+       * to be excluded from the new set, so the conversion to the
+       * step accounts for this.
+       */
+      final float toStep = 1.0f / (cuts + 1.0f);
+      for (int k = 0; k < cuts; ++k) {
+         final float step = toStep + k * toStep;
+         final float u = 1.0f - step;
+
+         final Vec3 v = new Vec3();
+         final Vec2 vt = new Vec2();
+         final Vec3 vn = new Vec3();
+
+         v.set(
+               u * vOrigin.x + step * vDest.x,
+               u * vOrigin.y + step * vDest.y,
+               u * vOrigin.z + step * vDest.z);
+
+         vt.set(
+               u * vtOrigin.x + step * vtDest.x,
+               u * vtOrigin.y + step * vtDest.y);
+
+         vn.set(
+               u * vnOrigin.x + step * vnDest.x,
+               u * vnOrigin.y + step * vnDest.y,
+               u * vnOrigin.z + step * vnDest.z);
+         Vec3.normalize(vn, vn);
+
+         vsNew[k] = v;
+         vtsNew[k] = vt;
+         vnsNew[k] = vn;
+
+         final int[] newf = fsNew[k];
+         newf[0] = vsOldLen + k;
+         newf[1] = vtsOldLen + k;
+         newf[2] = vnsOldLen + k;
+      }
+
+      /*
+       * Append new coords and tex coords to the end of their
+       * respective arrays. The new faces need to be inserted to
+       * this.faces[idx], not reassigned to local face array.
+       */
+      this.coords = Vec3.concat(this.coords, vsNew);
+      this.texCoords = Vec2.concat(this.texCoords, vtsNew);
+      this.normals = Vec3.concat(this.normals, vnsNew);
+      this.faces[i] = Mesh.insert(face, j1, fsNew);
+
+      return this;
+   }
+
+   /**
+    * Subdivides all edges in a mesh by the number of cuts
+    * given. For example, one cut will divide an edge in half;
+    * two cuts, into thirds.<br>
+    * <br>
+    * Does not distinguish between interior edges, which have a
+    * complement elsewhere, and border edges; for that reason
+    * this works best with NGONs.
+    *
+    * @param cuts
+    *           number of cuts
+    * @return this mesh
+    */
+   @Experimental
+   public Mesh3 subdivEdges ( final int cuts ) {
+
+      final int len0 = this.faces.length;
+      for (int i = 0; i < len0; ++i) {
+         final int len1 = this.faces[i].length;
+         for (int j = 0, k = 0; j < len1; ++j, k += cuts) {
+            this.subdivEdge(i, k + j, cuts);
+         }
+      }
+      return this;
+   }
+
+   /**
+    * Subdivides all edges in a face by the number of cuts
+    * given. For example, one cut will divide an edge in half;
+    * two cuts, into thirds.<br>
+    * <br>
+    * Does not distinguish between interior edges, which have a
+    * complement elsewhere, and border edges; for that reason
+    * this works best with NGONs.
+    *
+    * @param faceIndex
+    *           the face index
+    * @param cuts
+    *           number of cuts
+    * @return this mesh
+    */
+   @Experimental
+   public Mesh3 subdivEdges (
+         final int faceIndex,
+         final int cuts ) {
+
+      final int faceLen = this.faces[Math.floorMod(faceIndex,
+            this.faces.length)].length;
+      for (int j = 0, k = 0; j < faceLen; ++j, k += cuts) {
+         this.subdivEdge(faceIndex, k + j, cuts);
+      }
+
       return this;
    }
 
@@ -1973,6 +2187,31 @@ public class Mesh3 extends Mesh {
 
       result.append('\n');
       return result.toString();
+   }
+
+   /**
+    * Centers the mesh about the origin, (0.0, 0.0), by
+    * calculating its dimensions then subtracting the center
+    * point.
+    *
+    * @return this mesh
+    * @see Mesh3#calcDimensions(Mesh3, Vec3, Vec3, Vec3)
+    * @see Mesh3#translate(Vec3)
+    */
+   @Chainable
+   public Mesh3 toOrigin () {
+
+      final Vec3 dim = new Vec3();
+      final Vec3 lb = new Vec3();
+      final Vec3 ub = new Vec3();
+      Mesh3.calcDimensions(this, dim, lb, ub);
+
+      lb.x = -0.5f * (lb.x + ub.x);
+      lb.y = -0.5f * (lb.y + ub.y);
+      lb.z = -0.5f * (lb.z + ub.z);
+      this.translate(lb);
+
+      return this;
    }
 
    /**
@@ -2145,4 +2384,5 @@ public class Mesh3 extends Mesh {
       }
       return this;
    }
+
 }

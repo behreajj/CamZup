@@ -1301,6 +1301,33 @@ public class Color extends Vec4 {
    }
 
    /**
+    * Converts a direction to a color. Normalizes the
+    * direction, multiplies it by 0.5, then adds 0.5 .
+    *
+    * @param v
+    *           the direction
+    * @param target
+    *           the output color
+    * @return the color
+    */
+   public static Color fromDir (
+         final Vec4 v,
+         final Color target ) {
+
+      final float mSq = Vec4.magSq(v);
+      if (mSq == 0.0f) {
+         return target.set(0.5f, 0.5f, 0.5f, 0.5f);
+      }
+
+      final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
+      return target.set(
+            v.x * mInv + 0.5f,
+            v.y * mInv + 0.5f,
+            v.z * mInv + 0.5f,
+            v.w * mInv + 0.5f);
+   }
+
+   /**
     * Convert a hexadecimal representation of a color stored as
     * 0xAARRGGBB into a color.
     *
@@ -2742,21 +2769,26 @@ public class Color extends Vec4 {
       final int g = (int) (this.y * 0xff + 0.5f);
       final int b = (int) (this.z * 0xff + 0.5f);
 
-      final StringBuilder sb = new StringBuilder(32);
+      final StringBuilder result = new StringBuilder(32);
 
-      if (r < 100 && r > 9) {
-         sb.append(' ');
-      } else if (r < 10) {
-         sb.append("  ");
-      }
+      // if (r < 100 && r > 9) {
+      // sb.append(' ');
+      // } else if (r < 10) {
+      // sb.append(" ");
+      // }
+      // sb.append(r)
+      // .append(g > 99 ? ' ' : g > 9 ? " " : " ")
+      // .append(g)
+      // .append(b > 99 ? ' ' : b > 9 ? " " : " ")
+      // .append(b);
 
-      sb.append(r)
-            .append(g > 99 ? ' ' : g > 9 ? "  " : "   ")
+      result.append(r)
+            .append(' ')
             .append(g)
-            .append(b > 99 ? ' ' : b > 9 ? "  " : "   ")
+            .append(' ')
             .append(b);
 
-      return sb.toString();
+      return result.toString();
    }
 
    /**

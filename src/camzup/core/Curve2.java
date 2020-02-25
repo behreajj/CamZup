@@ -1706,7 +1706,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
          final float step,
          final Vec2 coord,
          final Vec2 tangent ) {
-      
+
       // TODO: Make static (along with range.)
 
       final int knotLength = this.knots.size();

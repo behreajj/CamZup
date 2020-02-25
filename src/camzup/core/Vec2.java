@@ -132,148 +132,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Compares two vectors by their distance from a locus. The
-    * locus should be set in the creation of the comparator.
-    */
-   public static class ComparatorDist extends AbstrComparator {
-
-      /**
-       * The difference between the locus and left comparisand.
-       */
-      public final Vec2 aDiff = new Vec2();
-
-      /**
-       * The difference between the locus and right comparisand.
-       */
-      public final Vec2 bDiff = new Vec2();
-
-      /**
-       * The locus against which points are compared.
-       */
-      public final Vec2 locus = new Vec2();
-
-      /**
-       * The default constructor.
-       */
-      public ComparatorDist () {
-
-         super();
-      }
-
-      /**
-       * A constructor which sets a locus against which two points
-       * are compared.
-       *
-       * @param locus
-       *           the locus
-       */
-      public ComparatorDist ( final Vec2 locus ) {
-
-         this.locus.set(locus);
-      }
-
-      /**
-       * Compares two vectors by subtracting the locus from each,
-       * then comparing the dot products of the respective
-       * differences.
-       *
-       * @param a
-       *           the left comparisand
-       * @param b
-       *           the right comparisand
-       * @return the comparison
-       * @see Vec2#sub(Vec2, Vec2, Vec2)
-       * @see Vec2#dot(Vec2, Vec2)
-       */
-      @Override
-      public int compare ( final Vec2 a, final Vec2 b ) {
-
-         Vec2.sub(a, this.locus, this.aDiff);
-         Vec2.sub(b, this.locus, this.bDiff);
-
-         final float aDist = Vec2.magSq(this.aDiff);
-         final float bDist = Vec2.magSq(this.bDiff);
-
-         return aDist > bDist ? 1 : aDist < bDist ? -1 : 0;
-      }
-   }
-
-   /**
-    * Compares two vectors by subtracting them from a center
-    * point, then measuring their signed heading.
-    */
-   public static class ComparatorWinding extends AbstrComparator {
-
-      /**
-       * The difference between the point and left comparisand.
-       */
-      public final Vec2 aDiff = new Vec2();
-
-      /**
-       * The difference between the point and right comparisand.
-       */
-      public final Vec2 bDiff = new Vec2();
-
-      /**
-       * The point against which points are compared.
-       */
-      public final Vec2 locus = new Vec2();
-
-      /**
-       * The default constructor.
-       */
-      public ComparatorWinding () {
-
-         super();
-      }
-
-      /**
-       * A constructor which sets a point against which two points
-       * are compared.
-       *
-       * @param locus
-       *           the centroid
-       */
-      public ComparatorWinding ( final Vec2 locus ) {
-
-         this.locus.set(locus);
-      }
-
-      /**
-       * Compares two vectors by subtracting the locus from each,
-       * then comparing the headings of the respective
-       * differences.
-       *
-       * @param a
-       *           the left comparisand
-       * @param b
-       *           the right comparisand
-       * @return the comparison
-       * @see Vec2#sub(Vec2, Vec2, Vec2)
-       * @see Vec2#headingSigned(Vec2)
-       */
-      @Override
-      public int compare ( final Vec2 a, final Vec2 b ) {
-
-         /*
-          * Is there a more efficient way than atan2? cf.
-          * https://gamedev.stackexchange.com/questions/13229/
-          * sorting-array-of-points-in-clockwise-order , such as
-          * using the sign of the cross product a.x * b.y - a.y * bx
-          * ?
-          */
-
-         Vec2.sub(a, this.locus, this.aDiff);
-         Vec2.sub(b, this.locus, this.bDiff);
-
-         final float aHead = Vec2.headingUnsigned(this.aDiff);
-         final float bHead = Vec2.headingUnsigned(this.bDiff);
-
-         return aHead > bHead ? 1 : aHead < bHead ? -1 : 0;
-      }
-   }
-
-   /**
     * Compares two vectors by their y component, then by their
     * x component.
     */
@@ -1901,6 +1759,21 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
+    * Returns to a vector with all components set to the
+    * maximum float value.
+    *
+    * @param target
+    *           the output vector
+    * @return the maximum vector
+    */
+   public static Vec2 highestValue ( final Vec2 target ) {
+
+      return target.set(
+            Float.MAX_VALUE,
+            Float.MAX_VALUE);
+   }
+
+   /**
     * Inserts an array of vectors in the midst of another. The
     * insertion point is before, or to the left of, the
     * existing element at a given index.
@@ -1987,6 +1860,21 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       }
 
       return target.set(v);
+   }
+
+   /**
+    * Returns to a vector with all components set to the
+    * minimum float value.
+    *
+    * @param target
+    *           the output vector
+    * @return the minimum vector
+    */
+   public static Vec2 lowestValue ( final Vec2 target ) {
+
+      return target.set(
+            Float.MIN_VALUE,
+            Float.MIN_VALUE);
    }
 
    /**
@@ -2415,10 +2303,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          final Vec2 v,
          final Vec2 target ) {
 
-      final float mInv = Utils.invHypot(v.x, v.y);
-      return target.set(
-            v.x * mInv,
-            v.y * mInv);
+      final float mInv = Utils.invSqrtUnchecked(
+            v.x * v.x + v.y * v.y);
+      return target.set(v.x * mInv, v.y * mInv);
    }
 
    /**
@@ -2973,6 +2860,49 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       }
       Vec2.normalize(v, normalized);
       return Vec2.mul(normalized, scalar, target);
+   }
+
+   /**
+    * Resizes an array of vectors to a requested length. If the
+    * new length is greater than the current length, the new
+    * elements are filled with new vectors. If the new length
+    * equals the old, the input array is returned.<br>
+    * <br>
+    * This does <em>not</em> use
+    * {@link System#arraycopy(Object, int, Object, int, int)}
+    * at the moment because it iterates through the entire
+    * array checking for null entries.
+    *
+    * @param arr
+    *           the array
+    * @param sz
+    *           the new size
+    * @return the array
+    */
+   public static Vec2[] resize (
+         final Vec2[] arr,
+         final int sz ) {
+
+      final int vsz = sz < 1 ? 1 : sz;
+      final Vec2[] result = new Vec2[vsz];
+
+      if (arr == null) {
+         for (int i = 0; i < vsz; ++i) {
+            result[i] = new Vec2();
+         }
+         return result;
+      }
+
+      final int last = arr.length - 1;
+      for (int i = 0; i < vsz; ++i) {
+         if (i > last || arr[i] == null) {
+            result[i] = new Vec2();
+         } else {
+            result[i] = arr[i];
+         }
+      }
+
+      return result;
    }
 
    /**

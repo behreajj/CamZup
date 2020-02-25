@@ -1185,16 +1185,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
          final Vec4 v,
          final Vec4 target ) {
 
-      final float mSq = v.x * v.x +
-            v.y * v.y +
-            v.z * v.z +
-            v.w * v.w;
-
-      if (mSq == 0.0f) {
-         return target.reset();
-      }
-
-      final float mInv = Utils.invSqrtUnchecked(mSq);
+      final float mInv = Utils.invSqrtUnchecked(
+            v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);
       return target.set(
             v.x * mInv,
             v.y * mInv,

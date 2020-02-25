@@ -82,7 +82,8 @@ public class Edge3 implements Comparable < Edge3 > {
     * Finds the Euclidean distance from the edge's origin
     * coordinate to that of its destination.
     *
-    * @param edge the edge
+    * @param edge
+    *           the edge
     * @return the magnitude
     * @see Vec3#distEuclidean(Vec3, Vec3)
     */
@@ -97,7 +98,8 @@ public class Edge3 implements Comparable < Edge3 > {
     * Finds the squared Euclidean distance from the edge's
     * origin coordinate to that of its destination.
     *
-    * @param edge the edge
+    * @param edge
+    *           the edge
     * @return the magnitude
     * @see Vec3#distSq(Vec3, Vec3)
     */
@@ -132,23 +134,29 @@ public class Edge3 implements Comparable < Edge3 > {
       final Vec3 coOrigin = edge.origin.coord;
       final Vec3 coDest = edge.dest.coord;
 
-      final float ax = v.x - coOrigin.x;
-      final float ay = v.y - coOrigin.y;
-      final float az = v.z - coOrigin.z;
-
       final float bx = coDest.x - coOrigin.x;
       final float by = coDest.y - coOrigin.y;
       final float bz = coDest.z - coOrigin.z;
-
       final float bSq = bx * bx + by * by + bz * bz;
-      final float fac = bSq == 0.0f ? 0.0f
-            : Utils.clamp01(
-                  (ax * bx + ay * by + az * bz) / bSq);
 
+      if (bSq <= 0.0f) {
+         return target.set(coOrigin);
+      }
+
+      final float ax = v.x - coOrigin.x;
+      final float ay = v.y - coOrigin.y;
+      final float az = v.z - coOrigin.z;
+      final float fac = (ax * bx + ay * by + az * bz) / bSq;
+
+      if (fac >= 1.0f) {
+         return target.set(coDest);
+      }
+
+      final float u = 1.0f - fac;
       return target.set(
-            coOrigin.x + bx * fac,
-            coOrigin.y + by * fac,
-            coOrigin.z + bz * fac);
+            u * coOrigin.x + fac * coDest.x,
+            u * coOrigin.y + fac * coDest.y,
+            u * coOrigin.z + fac * coDest.z);
    }
 
    /**
@@ -195,10 +203,6 @@ public class Edge3 implements Comparable < Edge3 > {
          final Vec3 coDest,
          final Vec2 txDest,
          final Vec3 nmDest ) {
-
-      // TODO: Add index information. Temporarily remove empty
-      // constructor above to ensure all calls to constructor
-      // include new info.
 
       this.origin = new Vert3(coOrigin, txOrigin, nmOrigin);
       this.dest = new Vert3(coDest, txDest, nmDest);
@@ -309,7 +313,6 @@ public class Edge3 implements Comparable < Edge3 > {
     *           axis
     * @return this edge
     */
-   @Experimental
    @Chainable
    public Edge3 rotate (
          final float radians,
@@ -323,49 +326,35 @@ public class Edge3 implements Comparable < Edge3 > {
       Vec3.rotate(this.dest.coord,
             cosa, sina, axis, this.dest.coord);
 
-      Vec3.rotate(this.origin.normal,
-            cosa, sina, axis, this.origin.normal);
-      Vec3.rotate(this.dest.normal,
-            cosa, sina, axis, this.dest.normal);
-
       return this;
    }
 
    /**
-    * Rotates the coordinates and normals of this edge by a
-    * quaternion. The texture coordinates are unaffected.
+    * Rotates the coordinates of this edge by a quaternion. The
+    * texture coordinates are unaffected.
     *
     * @param q
     *           the quaternion
     * @return this edge
     */
-   @Experimental
    @Chainable
    public Edge3 rotate ( final Quaternion q ) {
 
-      Quaternion.mulVector(q, this.origin.coord,
-            this.origin.coord);
-      Quaternion.mulVector(q, this.dest.coord,
-            this.dest.coord);
-
-      Quaternion.mulVector(q, this.origin.normal,
-            this.origin.normal);
-      Quaternion.mulVector(q, this.dest.normal,
-            this.dest.normal);
+      Quaternion.mulVector(q, this.origin.coord, this.origin.coord);
+      Quaternion.mulVector(q, this.dest.coord, this.dest.coord);
 
       return this;
    }
 
    /**
-    * Rotates the coordinates and normals of this edge by an
-    * angle in radians around the x axis. The texture
-    * coordinates are unaffected.
+    * Rotates the coordinates of this edge by an angle in
+    * radians around the x axis. The texture coordinates are
+    * unaffected.
     *
     * @param radians
     *           angle
     * @return this edge
     */
-   @Experimental
    @Chainable
    public Edge3 rotateX ( final float radians ) {
 
@@ -377,24 +366,18 @@ public class Edge3 implements Comparable < Edge3 > {
       Vec3.rotateX(this.dest.coord,
             cosa, sina, this.dest.coord);
 
-      Vec3.rotateX(this.origin.normal,
-            cosa, sina, this.origin.normal);
-      Vec3.rotateX(this.dest.normal,
-            cosa, sina, this.dest.normal);
-
       return this;
    }
 
    /**
-    * Rotates the coordinates and normals of this edge by an
-    * angle in radians around the y axis. The texture
-    * coordinates are unaffected.
+    * Rotates the coordinates of this edge by an angle in
+    * radians around the y axis. The texture coordinates are
+    * unaffected.
     *
     * @param radians
     *           angle
     * @return this edge
     */
-   @Experimental
    @Chainable
    public Edge3 rotateY ( final float radians ) {
 
@@ -406,24 +389,18 @@ public class Edge3 implements Comparable < Edge3 > {
       Vec3.rotateY(this.dest.coord,
             cosa, sina, this.dest.coord);
 
-      Vec3.rotateY(this.origin.normal,
-            cosa, sina, this.origin.normal);
-      Vec3.rotateY(this.dest.normal,
-            cosa, sina, this.dest.normal);
-
       return this;
    }
 
    /**
-    * Rotates the coordinates and normals of this edge by an
-    * angle in radians around the z axis. The texture
-    * coordinates are unaffected.
+    * Rotates the coordinates of this edge by an angle in
+    * radians around the z axis. The texture coordinates are
+    * unaffected.
     *
     * @param radians
     *           angle
     * @return this edge
     */
-   @Experimental
    @Chainable
    public Edge3 rotateZ ( final float radians ) {
 
@@ -434,11 +411,6 @@ public class Edge3 implements Comparable < Edge3 > {
             cosa, sina, this.origin.coord);
       Vec3.rotateZ(this.dest.coord,
             cosa, sina, this.dest.coord);
-
-      Vec3.rotateZ(this.origin.normal,
-            cosa, sina, this.origin.normal);
-      Vec3.rotateZ(this.dest.normal,
-            cosa, sina, this.dest.normal);
 
       return this;
    }

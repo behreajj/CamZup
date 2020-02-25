@@ -44,13 +44,6 @@ public class Vert2 implements Comparable < Vert2 > {
          final Vec2 coord,
          final Vec2 texCoord ) {
 
-      // TODO: Add index information. Temporarily remove empty
-      // constructor above to ensure all calls to constructor
-      // include new info.
-      // public int index = -1;
-      // public int coordIndex = -1;
-      // public int texCoordIndex = -1;
-
       this.set(coord, texCoord);
    }
 
@@ -69,14 +62,6 @@ public class Vert2 implements Comparable < Vert2 > {
          return false;
       }
 
-      if (this.texCoord == null) {
-         if (vert2.texCoord != null) {
-            return false;
-         }
-      } else if (!this.texCoord.equals(vert2.texCoord)) {
-         return false;
-      }
-
       return true;
    }
 
@@ -90,9 +75,12 @@ public class Vert2 implements Comparable < Vert2 > {
    @Override
    public int compareTo ( final Vert2 vert ) {
 
-      final int a = System.identityHashCode(this);
-      final int b = System.identityHashCode(vert);
-      return a < b ? -1 : a > b ? 1 : 0;
+      Vec2 a = this.coord;
+      Vec2 b = vert.coord;
+      return a.y > b.y ? 1
+            : a.y < b.y ? -1
+                  : a.x > b.x ? 1
+                        : a.x < b.x ? -1 : 0;
    }
 
    /**
@@ -127,12 +115,7 @@ public class Vert2 implements Comparable < Vert2 > {
    @Override
    public int hashCode () {
 
-      int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL
-            ^ (this.coord == null ? 0 : this.coord.hashCode());
-      hash = hash * IUtils.HASH_MUL
-            ^ (this.texCoord == null ? 0 : this.texCoord.hashCode());
-      return hash;
+      return this.coord.hashCode();
    }
 
    /**

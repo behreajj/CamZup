@@ -53,10 +53,6 @@ public class Vert3 implements Comparable < Vert3 > {
          final Vec2 texCoord,
          final Vec3 normal ) {
 
-      // TODO: Add index information. Temporarily remove empty
-      // constructor above to ensure all calls to constructor
-      // include new info.
-
       this.set(coord, texCoord, normal);
    }
 
@@ -75,22 +71,6 @@ public class Vert3 implements Comparable < Vert3 > {
          return false;
       }
 
-      if (this.texCoord == null) {
-         if (vert3.texCoord != null) {
-            return false;
-         }
-      } else if (!this.texCoord.equals(vert3.texCoord)) {
-         return false;
-      }
-
-      if (this.normal == null) {
-         if (vert3.normal != null) {
-            return false;
-         }
-      } else if (!this.normal.equals(vert3.normal)) {
-         return false;
-      }
-
       return true;
    }
 
@@ -104,9 +84,14 @@ public class Vert3 implements Comparable < Vert3 > {
    @Override
    public int compareTo ( final Vert3 vert ) {
 
-      final int a = System.identityHashCode(this);
-      final int b = System.identityHashCode(vert);
-      return a < b ? -1 : a > b ? 1 : 0;
+      Vec3 a = this.coord;
+      Vec3 b = vert.coord;
+      return a.z > b.z ? 1
+            : a.z < b.z ? -1
+                  : a.y > b.y ? 1
+                        : a.y < b.y ? -1
+                              : a.x > b.x ? 1
+                                    : a.x < b.x ? -1 : 0;
    }
 
    /**
@@ -141,14 +126,7 @@ public class Vert3 implements Comparable < Vert3 > {
    @Override
    public int hashCode () {
 
-      int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL
-            ^ (this.coord == null ? 0 : this.coord.hashCode());
-      hash = hash * IUtils.HASH_MUL
-            ^ (this.texCoord == null ? 0 : this.texCoord.hashCode());
-      hash = hash * IUtils.HASH_MUL
-            ^ (this.normal == null ? 0 : this.normal.hashCode());
-      return hash;
+      return this.coord.hashCode();
    }
 
    /**

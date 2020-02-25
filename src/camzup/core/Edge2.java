@@ -121,20 +121,26 @@ public class Edge2 implements Comparable < Edge2 > {
       final Vec2 coOrigin = edge.origin.coord;
       final Vec2 coDest = edge.dest.coord;
 
-      final float ax = v.x - coOrigin.x;
-      final float ay = v.y - coOrigin.y;
-
       final float bx = coDest.x - coOrigin.x;
       final float by = coDest.y - coOrigin.y;
-
       final float bSq = bx * bx + by * by;
-      final float fac = bSq == 0.0f ? 0.0f
-            : Utils.clamp01(
-                  (ax * bx + ay * by) / bSq);
 
+      if (bSq <= 0.0f) {
+         return target.set(coOrigin);
+      }
+
+      final float ax = v.x - coOrigin.x;
+      final float ay = v.y - coOrigin.y;
+      final float fac = (ax * bx + ay * by) / bSq;
+
+      if (fac >= 1.0f) {
+         return target.set(coDest);
+      }
+
+      final float u = 1.0f - fac;
       return target.set(
-            coOrigin.x + bx * fac,
-            coOrigin.y + by * fac);
+            u * coOrigin.x + fac * coDest.x,
+            u * coOrigin.y + fac * coDest.y);
    }
 
    /**

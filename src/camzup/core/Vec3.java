@@ -134,77 +134,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Compares two vectors by their distance from a locus. The
-    * locus should be set in the creation of the comparator.
-    */
-   public static class ComparatorDist extends AbstrComparator {
-
-      /**
-       * The difference between the locus and left comparisand.
-       */
-      public final Vec3 aDiff = new Vec3();
-
-      /**
-       * The difference between the locus and right comparisand.
-       */
-      public final Vec3 bDiff = new Vec3();
-
-      /**
-       * The locus against which points are compared.
-       */
-      public final Vec3 locus = new Vec3();
-
-      /**
-       * The default constructor.
-       */
-      public ComparatorDist () {
-
-         super();
-      }
-
-      /**
-       * A constructor which sets a locus against which two points
-       * are compared.
-       *
-       * @param locus
-       *           the locus
-       */
-      public ComparatorDist ( final Vec3 locus ) {
-
-         this.locus.set(locus);
-      }
-
-      /**
-       * Compares two vectors by subtracting the locus from each,
-       * then comparing the dot products of the respective
-       * differences.
-       *
-       * @param a
-       *           the left comparisand
-       * @param b
-       *           the right comparisand
-       * @return the comparison
-       * @see Vec3#sub(Vec3, Vec3, Vec3)
-       * @see Vec3#dot(Vec3, Vec3)
-       */
-      @Override
-      public int compare ( final Vec3 a, final Vec3 b ) {
-
-         Vec3.sub(a, this.locus, this.aDiff);
-         Vec3.sub(b, this.locus, this.bDiff);
-
-         // return Float.compare(
-         // Vec3.magSq(this.aDiff),
-         // Vec3.magSq(this.bDiff));
-
-         final float aDist = Vec3.magSq(this.aDiff);
-         final float bDist = Vec3.magSq(this.bDiff);
-
-         return aDist > bDist ? 1 : aDist < bDist ? -1 : 0;
-      }
-   }
-
-   /**
     * Compares two vectors by their z component, then by their
     * y component, then by their x component.
     */
@@ -234,7 +163,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
                : a.z < b.z ? -1
                      : a.y > b.y ? 1
                            : a.y < b.y ? -1
-                                 : a.x > b.x ? 1 : a.x < b.x ? -1 : 0;
+                                 : a.x > b.x ? 1
+                                       : a.x < b.x ? -1 : 0;
       }
    }
 
@@ -2080,6 +2010,22 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
+    * Returns to a vector with all components set to the
+    * maximum float value.
+    *
+    * @param target
+    *           the output vector
+    * @return the maximum vector
+    */
+   public static Vec3 highestValue ( final Vec3 target ) {
+
+      return target.set(
+            Float.MAX_VALUE,
+            Float.MAX_VALUE,
+            Float.MAX_VALUE);
+   }
+
+   /**
     * Finds the vector's inclination. Defaults to inclination
     * signed.
     *
@@ -2211,6 +2157,22 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       }
 
       return target.set(v);
+   }
+
+   /**
+    * Returns to a vector with all components set to the
+    * minimum float value.
+    *
+    * @param target
+    *           the output vector
+    * @return the minimum vector
+    */
+   public static Vec3 lowestValue ( final Vec3 target ) {
+
+      return target.set(
+            Float.MIN_VALUE,
+            Float.MIN_VALUE,
+            Float.MIN_VALUE);
    }
 
    /**
@@ -2652,7 +2614,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final Vec3 v,
          final Vec3 target ) {
 
-      final float mInv = Utils.invHypot(v.x, v.y, v.z);
+      final float mInv = Utils.invSqrtUnchecked(
+            v.x * v.x + v.y * v.y + v.z * v.z);
       return target.set(
             v.x * mInv,
             v.y * mInv,
@@ -3138,6 +3101,49 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       }
       Vec3.normalize(v, normalized);
       return Vec3.mul(normalized, scalar, target);
+   }
+
+   /**
+    * Resizes an array of vectors to a requested length. If the
+    * new length is greater than the current length, the new
+    * elements are filled with new vectors. If the new length
+    * equals the old, the input array is returned.<br>
+    * <br>
+    * This does <em>not</em> use
+    * {@link System#arraycopy(Object, int, Object, int, int)}
+    * at the moment because it iterates through the entire
+    * array checking for null entries.
+    *
+    * @param arr
+    *           the array
+    * @param sz
+    *           the new size
+    * @return the array
+    */
+   public static Vec3[] resize (
+         final Vec3[] arr,
+         final int sz ) {
+
+      final int vsz = sz < 1 ? 1 : sz;
+      final Vec3[] result = new Vec3[vsz];
+
+      if (arr == null) {
+         for (int i = 0; i < vsz; ++i) {
+            result[i] = new Vec3();
+         }
+         return result;
+      }
+
+      final int last = arr.length - 1;
+      for (int i = 0; i < vsz; ++i) {
+         if (i > last || arr[i] == null) {
+            result[i] = new Vec3();
+         } else {
+            result[i] = arr[i];
+         }
+      }
+
+      return result;
    }
 
    /**
@@ -3924,15 +3930,15 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       if (this == obj) {
          return true;
       }
-      
+
       if (obj == null) {
          return false;
       }
-      
+
       if (this.getClass() != obj.getClass()) {
          return false;
       }
-      
+
       return this.equals((Vec3) obj);
    }
 
