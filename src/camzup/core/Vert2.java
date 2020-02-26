@@ -75,12 +75,7 @@ public class Vert2 implements Comparable < Vert2 > {
    @Override
    public int compareTo ( final Vert2 vert ) {
 
-      Vec2 a = this.coord;
-      Vec2 b = vert.coord;
-      return a.y > b.y ? 1
-            : a.y < b.y ? -1
-                  : a.x > b.x ? 1
-                        : a.x < b.x ? -1 : 0;
+      return this.coord.compareTo(vert.coord);
    }
 
    /**

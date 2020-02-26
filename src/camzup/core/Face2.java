@@ -12,6 +12,29 @@ import java.util.Arrays;
 public class Face2 implements Comparable < Face2 > {
 
    /**
+    * Finds the centroid of a face by averaging all the
+    * coordinates in its list of vertices.
+    *
+    * @param face
+    *           the face
+    * @param target
+    *           the output vector
+    * @return the centroid
+    */
+   public static Vec2 centroid (
+         final Face2 face,
+         final Vec2 target ) {
+
+      target.reset();
+      final Vert2[] verts = face.vertices;
+      final int len = verts.length;
+      for (int i = 0; i < len; ++i) {
+         Vec2.add(target, verts[i].coord, target);
+      }
+      return Vec2.div(target, len, target);
+   }
+
+   /**
     * The array of vertices in a face.
     */
    public Vert2[] vertices;
@@ -46,9 +69,8 @@ public class Face2 implements Comparable < Face2 > {
    @Override
    public int compareTo ( final Face2 face ) {
 
-      final int a = System.identityHashCode(this);
-      final int b = System.identityHashCode(face);
-      return a < b ? -1 : a > b ? 1 : 0;
+      return Face2.centroid(this, new Vec2()).compareTo(
+            Face2.centroid(face, new Vec2()));
    }
 
    /**
@@ -71,9 +93,7 @@ public class Face2 implements Comparable < Face2 > {
          return false;
       }
 
-      final Face2 other = (Face2) obj;
-
-      if (!Arrays.equals(this.vertices, other.vertices)) {
+      if (!Arrays.equals(this.vertices, ((Face2) obj).vertices)) {
          return false;
       }
 
@@ -96,11 +116,9 @@ public class Face2 implements Comparable < Face2 > {
          final Edge2 target ) {
 
       final int len = this.vertices.length;
-      final int j = Math.floorMod(i, len);
-      final int k = Math.floorMod(i + 1, len);
       return target.set(
-            this.vertices[j],
-            this.vertices[k]);
+            this.vertices[Math.floorMod(i, len)],
+            this.vertices[Math.floorMod(i + 1, len)]);
    }
 
    /**

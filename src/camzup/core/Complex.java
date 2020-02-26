@@ -117,45 +117,6 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    }
 
    /**
-    * Compares two complex numbers by their imaginary and real
-    * components.
-    */
-   public static class ComparatorRealImag extends AbstrComparator {
-
-      /**
-       * The default constructor.
-       */
-      public ComparatorRealImag () {
-
-         super();
-      }
-
-      /**
-       * Compares two complex numbers by imaginary, then by real
-       * components.
-       *
-       * @param a
-       *           the left comparisand
-       * @param b
-       *           the right comparisand
-       * @return the evaluation
-       */
-      @Override
-      public int compare ( final Complex a, final Complex b ) {
-
-         return a.imag > b.imag ? 1
-               : a.imag < b.imag ? -1
-                     : a.real > b.real ? 1
-                           : a.real < b.real ? -1 : 0;
-      }
-   }
-
-   /**
-    * The default complex comparator.
-    */
-   private static Comparator < Complex > COMPARATOR = new ComparatorRealImag();
-
-   /**
     * The unique identification for serialized classes.
     */
    private static final long serialVersionUID = 1389157472482304159L;
@@ -496,17 +457,6 @@ public class Complex extends Imaginary implements Comparable < Complex > {
          final Complex target ) {
 
       return Complex.rect((float) Math.exp(z.real), z.imag, target);
-   }
-
-   /**
-    * Gets the string representation of the default Complex
-    * comparator.
-    *
-    * @return the string
-    */
-   public static String getComparatorString () {
-
-      return Complex.COMPARATOR.toString();
    }
 
    /**
@@ -916,21 +866,6 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    }
 
    /**
-    * Sets the comparator function by which collections of
-    * complex numbers are compared.
-    *
-    * @param comparator
-    *           the comparator
-    */
-   public static void setComparator (
-         final Comparator < Complex > comparator ) {
-
-      if (comparator != null) {
-         Complex.COMPARATOR = comparator;
-      }
-   }
-
-   /**
     * Finds the sine of a complex number.
     *
     * @param z
@@ -1148,19 +1083,19 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     * Returns -1 when this complex number is less than the
     * comparisand; 1 when it is greater than; 0 when the two
     * are 'equal'. The implementation of this method allows
-    * collections of complex number to be sorted. This depends
-    * upon the static comparator of the Complex class, which
-    * can be changed.
+    * collections of complex number to be sorted.
     *
     * @param z
     *           the comparisand
     * @return the numeric code
-    * @see Complex#COMPARATOR
     */
    @Override
    public int compareTo ( final Complex z ) {
 
-      return Complex.COMPARATOR.compare(this, z);
+      return this.imag > z.imag ? 1
+            : this.imag < z.imag ? -1
+                  : this.real > z.real ? 1
+                        : this.real < z.real ? -1 : 0;
    }
 
    /**

@@ -134,41 +134,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Compares two vectors by their z component, then by their
-    * y component, then by their x component.
-    */
-   public static class ComparatorZYX extends AbstrComparator {
-
-      /**
-       * The default constructor.
-       */
-      public ComparatorZYX () {
-
-         super();
-      }
-
-      /**
-       * Compares the z, y and x component.
-       *
-       * @param a
-       *           left comparisand
-       * @param b
-       *           right comparisand
-       * @return the comparison
-       */
-      @Override
-      public int compare ( final Vec3 a, final Vec3 b ) {
-
-         return a.z > b.z ? 1
-               : a.z < b.z ? -1
-                     : a.y > b.y ? 1
-                           : a.y < b.y ? -1
-                                 : a.x > b.x ? 1
-                                       : a.x < b.x ? -1 : 0;
-      }
-   }
-
-   /**
     * A linear interpolation functional class.
     */
    public static class Lerp extends AbstrEasing {
@@ -317,11 +282,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          return this.getClass().getSimpleName();
       }
    }
-
-   /**
-    * The default Vec3 comparator, ComparatorZYX .
-    */
-   private static Comparator < Vec3 > COMPARATOR = new ComparatorZYX();
 
    /**
     * The default easing function, lerp.
@@ -1732,17 +1692,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Gets the string representation of the default Vec2
-    * comparator.
-    *
-    * @return the string
-    */
-   public static String getComparatorString () {
-
-      return Vec3.COMPARATOR.toString();
-   }
-
-   /**
     * Gets the string representation of the default Vec2 easing
     * function.
     *
@@ -2010,22 +1959,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    }
 
    /**
-    * Returns to a vector with all components set to the
-    * maximum float value.
-    *
-    * @param target
-    *           the output vector
-    * @return the maximum vector
-    */
-   public static Vec3 highestValue ( final Vec3 target ) {
-
-      return target.set(
-            Float.MAX_VALUE,
-            Float.MAX_VALUE,
-            Float.MAX_VALUE);
-   }
-
-   /**
     * Finds the vector's inclination. Defaults to inclination
     * signed.
     *
@@ -2157,22 +2090,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       }
 
       return target.set(v);
-   }
-
-   /**
-    * Returns to a vector with all components set to the
-    * minimum float value.
-    *
-    * @param target
-    *           the output vector
-    * @return the minimum vector
-    */
-   public static Vec3 lowestValue ( final Vec3 target ) {
-
-      return target.set(
-            Float.MIN_VALUE,
-            Float.MIN_VALUE,
-            Float.MIN_VALUE);
    }
 
    /**
@@ -3314,6 +3231,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
          final float sina,
          final Vec3 target ) {
 
+      // TODO: Double check that this produces correct rotation...
       return target.set(
             cosa * v.x + sina * v.z,
             v.y,
@@ -3459,20 +3377,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
             Utils.round(v.x),
             Utils.round(v.y),
             Utils.round(v.z));
-   }
-
-   /**
-    * Sets the comparator function by which collections of
-    * vectors are compared.
-    *
-    * @param comparator
-    *           the comparator
-    */
-   public static void setComparator ( final Comparator < Vec3 > comparator ) {
-
-      if (comparator != null) {
-         Vec3.COMPARATOR = comparator;
-      }
    }
 
    /**
@@ -3902,18 +3806,21 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     * Returns -1 when this vector is less than the comparisand;
     * 1 when it is greater than; 0 when the two are 'equal'.
     * The implementation of this method allows collections of
-    * vectors to be sorted. This depends upon the static
-    * comparator of the Vec3 class, which can be changed.
+    * vectors to be sorted.
     *
     * @param v
     *           the comparisand
     * @return the numeric code
-    * @see Vec3#COMPARATOR
     */
    @Override
    public int compareTo ( final Vec3 v ) {
 
-      return Vec3.COMPARATOR.compare(this, v);
+      return this.z > v.z ? 1
+            : this.z < v.z ? -1
+                  : this.y > v.y ? 1
+                        : this.y < v.y ? -1
+                              : this.x > v.x ? 1
+                                    : this.x < v.x ? -1 : 0;
    }
 
    /**

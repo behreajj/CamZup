@@ -179,7 +179,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    /**
     * Returns a String of Python code targeted toward the
     * Blender 2.8x API. This code is brittle and is used for
-    * internal testing purposes, i.e., to compare how curve
+    * internal testing purposes, i.e., to compare how mesh
     * geometry looks in Blender (the control) vs. in the
     * library (the test).
     *
@@ -191,6 +191,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    public String toBlenderCode ( final MaterialSolid[] materials ) {
 
       final boolean useSmooth = true;
+      final boolean addVertGroups = true;
 
       final StringBuilder result = new StringBuilder(2048);
       result.append("from bpy import data as D, context as C\n\n")
@@ -264,27 +265,43 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
             .append("d_meshes = D.meshes\n")
             .append("for mesh in meshes:\n")
             .append("    name = mesh[\"name\"]\n")
+            .append("    vert_dat = mesh[\"vertices\"]\n")
+            .append("    fc_idcs = mesh[\"faces\"]\n")
             .append("    mesh_data = d_meshes.new(name)\n")
             .append("    mesh_data.from_pydata(\n")
-            .append("        mesh[\"vertices\"],\n")
+            .append("        vert_dat,\n")
             .append("        [],\n")
-            .append("        mesh[\"faces\"])\n");
+            .append("        fc_idcs)\n");
+      result.append("    mesh_data.validate()\n\n");
 
       if (useSmooth) {
          result.append("    mesh_data.use_auto_smooth = True\n")
                .append("    polys = mesh_data.polygons\n")
                .append("    for poly in polys:\n")
-               .append("        poly.use_smooth = True\n");
+               .append("        poly.use_smooth = True\n\n");
       }
 
-      result.append("    mesh_data.validate()\n")
-            .append("    idx = mesh[\"material_index\"]\n")
+      result.append("    idx = mesh[\"material_index\"]\n")
             .append("    mat_name = materials[idx][\"name\"]\n")
             .append("    mesh_data.materials.append(d_mats[mat_name])\n")
             .append("    mesh_obj = d_objs.new(name, mesh_data)\n")
             .append("    mesh_obj.rotation_mode = \"QUATERNION\"\n")
             .append("    scene_objs.link(mesh_obj)\n")
-            .append("    mesh_obj.parent = parent_obj\n");
+            .append("    mesh_obj.parent = parent_obj\n\n");
+
+      if (addVertGroups) {
+         String vertGroupName = "All";
+         result.append("    vert_group = mesh_obj.vertex_groups.new(name=\"")
+               .append(vertGroupName)
+               .append("\")\n")
+               .append("    fc_len = len(fc_idcs)\n")
+               .append("    fc_itr = range(0, fc_len)\n")
+               .append("    to_weight = 1.0 / (fc_len - 1.0)\n")
+               .append("    for i in fc_itr:\n")
+               .append("        fc_idx = fc_idcs[i]\n")
+               .append("        weight = i * to_weight\n")
+               .append("        vert_group.add(fc_idx, weight, \"ADD\")\n");
+      }
 
       return result.toString();
    }
@@ -378,6 +395,15 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
       return result.toString();
    }
 
+   /**
+    * Returns a String of C# code targeted toward the Unity
+    * 2019 API. This code is brittle and is used for internal
+    * testing purposes, i.e., to compare how mesh geometry
+    * looks in Unity (the control) vs. in the library (the
+    * test).
+    *
+    * @return the string
+    */
    @Experimental
    public String toUnityCode () {
 

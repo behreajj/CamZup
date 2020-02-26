@@ -55,43 +55,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    }
 
    /**
-    * Compares two vectors by their w, z, y and then x
-    * components.
-    */
-   public static class ComparatorWZYX extends AbstrComparator {
-
-      /**
-       * The default constructor.
-       */
-      public ComparatorWZYX () {
-
-         super();
-      }
-
-      /**
-       * Compares the w, z, y and x component.
-       *
-       * @param a
-       *           left comparisand
-       * @param b
-       *           right comparisand
-       * @return the comparison
-       */
-      @Override
-      public int compare ( final Vec4 a, final Vec4 b ) {
-
-         return a.w > b.w ? 1
-               : a.w < b.w ? -1
-                     : a.z > b.z ? 1
-                           : a.z < b.z ? -1
-                                 : a.y > b.y ? 1
-                                       : a.y < b.y ? -1
-                                             : a.x > b.x ? 1
-                                                   : a.x < b.x ? -1 : 0;
-      }
-   }
-
-   /**
     * An iterator, which allows a vector's components to be
     * accessed in an enhanced for loop.
     */
@@ -157,11 +120,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * The unique identification for serialized classes.
     */
    private static final long serialVersionUID = -7601802836396728054L;
-
-   /**
-    * The default Vec4 comparator, ComparatorWZYX .
-    */
-   public static Comparator < Vec4 > COMPARATOR = new ComparatorWZYX();
 
    /**
     * Finds the absolute value of each vector component.
@@ -759,17 +717,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
             Utils.fract(v.y),
             Utils.fract(v.z),
             Utils.fract(v.w));
-   }
-
-   /**
-    * Gets the string representation of the default Vec4
-    * comparator.
-    *
-    * @return the string
-    */
-   public static String getComparatorString () {
-
-      return Vec4.COMPARATOR.toString();
    }
 
    /**
@@ -1486,6 +1433,92 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       return target.set(1.0f, 0.0f, 0.0f, 0.0f);
    }
 
+   @Experimental
+   public static Vec4 rotateXW (
+         final Vec4 v,
+         final float cosa,
+         final float sina,
+         final Vec4 target ) {
+
+      // Like 3D rotateX.
+      return target.set(
+            v.x,
+            cosa * v.y - sina * v.z,
+            cosa * v.z + sina * v.y,
+            v.w);
+   }
+
+   @Experimental
+   public static Vec4 rotateXY (
+         final Vec4 v,
+         final float cosa,
+         final float sina,
+         final Vec4 target ) {
+
+      return target.set(
+            v.x,
+            v.y,
+            cosa * v.z - sina * v.w,
+            cosa * v.w + sina * v.z);
+   }
+
+   @Experimental
+   public static Vec4 rotateXZ (
+         final Vec4 v,
+         final float cosa,
+         final float sina,
+         final Vec4 target ) {
+
+      return target.set(
+            v.x,
+            cosa * v.y - sina * v.w,
+            v.z,
+            cosa * v.w + sina * v.y);
+   }
+
+   @Experimental
+   public static Vec4 rotateYW (
+         final Vec4 v,
+         final float cosa,
+         final float sina,
+         final Vec4 target ) {
+
+      // Transposed 3D rotateY
+      return target.set(
+            cosa * v.x - sina * v.z,
+            v.y,
+            cosa * v.z + sina * v.x,
+            v.w);
+   }
+
+   @Experimental
+   public static Vec4 rotateYZ (
+         final Vec4 v,
+         final float cosa,
+         final float sina,
+         final Vec4 target ) {
+
+      return target.set(
+            cosa * v.x - sina * v.w,
+            v.y,
+            v.z,
+            cosa * v.w + sina * v.x);
+   }
+
+   @Experimental
+   public static Vec4 rotateZW (
+         final Vec4 v,
+         final float cosa,
+         final float sina,
+         final Vec4 target ) {
+
+      // Like 3D rotateZ
+      return target.set(
+            cosa * v.x - sina * v.y,
+            cosa * v.y + sina * v.x,
+            v.z, v.w);
+   }
+
    /**
     * Rounds each component of the vector to a given number of
     * places right of the decimal point.
@@ -1546,18 +1579,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
             Utils.round(v.y),
             Utils.round(v.z),
             Utils.round(v.w));
-   }
-
-   /**
-    * Sets the comparator function by which collections of
-    * vectors are compared.
-    *
-    * @param comparator
-    *           the comparator
-    */
-   public static void setComparator ( final Comparator < Vec4 > comparator ) {
-
-      Vec4.COMPARATOR = comparator;
    }
 
    /**
@@ -1913,18 +1934,23 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     * Returns -1 when this vector is less than the comparisand;
     * 1 when it is greater than; 0 when the two are 'equal'.
     * The implementation of this method allows collections of
-    * vectors to be sorted. This depends upon the static
-    * comparator of the Vec4 class, which can be changed.
+    * vectors to be sorted.
     *
     * @param v
     *           the comparisand
     * @return the numeric code
-    * @see Vec4#COMPARATOR
     */
    @Override
    public int compareTo ( final Vec4 v ) {
 
-      return Vec4.COMPARATOR.compare(this, v);
+      return this.w > v.w ? 1
+            : this.w < v.w ? -1
+                  : this.z > v.z ? 1
+                        : this.z < v.z ? -1
+                              : this.y > v.y ? 1
+                                    : this.y < v.y ? -1
+                                          : this.x > v.x ? 1
+                                                : this.x < v.x ? -1 : 0;
    }
 
    /**

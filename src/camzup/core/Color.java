@@ -2901,13 +2901,12 @@ public class Color extends Vec4 {
     * @param c
     *           the comparisand
     * @return the numeric code
-    * @see Color#COMPARATOR
     */
    public int compareTo ( final Color c ) {
 
-      final float alum = Color.luminance(this);
-      final float blum = Color.luminance(c);
-      return alum < blum ? -1 : alum > blum ? 1 : 0;
+      final int a = Color.toHexInt(this);
+      final int b = Color.toHexInt(c);
+      return a > b ? 1 : a < b ? -1 : 0;
    }
 
    /**

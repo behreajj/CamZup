@@ -29,7 +29,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     *           the string
     * @return the number
     */
-   private static float floatFromStr ( final String f ) {
+   protected static float floatFromStr ( final String f ) {
 
       float target = 0.0f;
       try {
@@ -48,7 +48,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     *           the string
     * @return the integer
     */
-   private static int intFromStr ( final String i ) {
+   protected static int intFromStr ( final String i ) {
 
       int target = 0;
       try {
@@ -57,6 +57,38 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
          target = 0;
       }
       return target;
+   }
+
+   /**
+    * Internal helper function to reverse the <em>steps</em> in
+    * an array of color keys. Does <em>not</em> reverse the
+    * ordering of the elements, as it is assumed that the keys
+    * will be returned to an ordered set.
+    *
+    * @param arr
+    *           the array
+    * @param start
+    *           the start index
+    * @param end
+    *           the end index
+    * @return the array
+    */
+   protected static ColorKey[] reverse (
+         final ColorKey[] arr,
+         final int start,
+         final int end ) {
+
+      int st = start;
+      int ed = end;
+      while (st < ed) {
+         final float temp = arr[st].step;
+         arr[st].step = arr[ed].step;
+         arr[ed].step = temp;
+         st++;
+         ed--;
+      }
+
+      return arr;
    }
 
    /**
@@ -873,6 +905,53 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
+    * Helper function that compresses existing keys to the left
+    * when a new color is added to the gradient without a key.
+    *
+    * @param added
+    *           number of new items
+    * @return this gradient
+    */
+   @Chainable
+   protected Gradient compressKeysLeft ( final int added ) {
+
+      int i = 0;
+      final Iterator < ColorKey > itr = this.keys.iterator();
+      final float scalar = 1.0f / (this.keys.size() + added - 1.0f);
+      while (itr.hasNext()) {
+         final ColorKey key = itr.next();
+         key.step = key.step * i++ * scalar;
+      }
+      return this;
+   }
+
+   /**
+    * Helper function that compresses existing keys to the
+    * right when a new color is added to the gradient without a
+    * key.
+    *
+    * @param added
+    *           number of new items
+    * @return this gradient
+    */
+   @Chainable
+   protected Gradient compressKeysRight ( final int added ) {
+
+      /*
+       * A simplification of Utils.map(key.step, 0.0f, 1.0f,
+       * scalar, 1.0f);
+       */
+      final Iterator < ColorKey > itr = this.keys.iterator();
+      final float scalar = added / (this.keys.size() + added - 1.0f);
+      final float coeff = 1.0f - scalar;
+      while (itr.hasNext()) {
+         final ColorKey key = itr.next();
+         key.step = scalar + coeff * key.step;
+      }
+      return this;
+   }
+
+   /**
     * Tests to see if this gradient equals another.
     *
     * @param other
@@ -892,101 +971,55 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Helper function that shifts existing keys to the left
-    * when a new color is added to the gradient without a key.
-    *
-    * @param added
-    *           number of new items
-    * @return this gradient
-    */
-   @Chainable
-   protected Gradient shiftKeysLeft ( final int added ) {
-
-      int i = 0;
-      final Iterator < ColorKey > itr = this.keys.iterator();
-      final float scalar = 1.0f / (this.keys.size() + added - 1.0f);
-      while (itr.hasNext()) {
-         final ColorKey key = itr.next();
-         key.step = key.step * i++ * scalar;
-      }
-      return this;
-   }
-
-   /**
-    * Helper function that shifts existing keys to the right
-    * when a new color is added to the gradient without a key.
-    *
-    * @param added
-    *           number of new items
-    * @return this gradient
-    */
-   @Chainable
-   protected Gradient shiftKeysRight ( final int added ) {
-
-      /*
-       * A simplification of Utils.map(key.step, 0.0f, 1.0f,
-       * scalar, 1.0f);
-       */
-      final Iterator < ColorKey > itr = this.keys.iterator();
-      final float scalar = added / (this.keys.size() + added - 1.0f);
-      final float coeff = 1.0f - scalar;
-      while (itr.hasNext()) {
-         final ColorKey key = itr.next();
-         key.step = scalar + coeff * key.step;
-      }
-      return this;
-   }
-
-   /**
-    * Appends a color at step 1.0 . Shifts existing keys to the
-    * left.
+    * Appends a color at step 1.0 . Compresses existing keys to
+    * the left.
     *
     * @param color
     *           the color
     * @return this gradient
-    * @see Gradient#shiftKeysLeft(int)
+    * @see Gradient#compressKeysLeft(int)
     * @see TreeSet#add(Object)
     */
    @Chainable
    public Gradient append ( final Color color ) {
 
-      this.shiftKeysLeft(1);
+      this.compressKeysLeft(1);
       this.keys.add(new ColorKey(1.0f, color));
       return this;
    }
 
    /**
-    * Appends a scalar at step 1.0 . Shifts existing keys to
-    * the left.
+    * Appends a scalar at step 1.0 . Compresses existing keys
+    * to the left.
     *
     * @param scalar
     *           the scalar
     * @return this gradient
-    * @see Gradient#shiftKeysLeft(int)
+    * @see Gradient#compressKeysLeft(int)
     * @see TreeSet#add(Object)
     */
    @Chainable
    public Gradient append ( final float scalar ) {
 
-      this.shiftKeysLeft(1);
+      this.compressKeysLeft(1);
       this.keys.add(new ColorKey(1.0f, scalar, scalar, scalar, scalar));
       return this;
    }
 
    /**
-    * Appends a color at step 1.0 . Shifts existing keys to the
-    * left.
+    * Appends a color at step 1.0 . Compresses existing keys to
+    * the left.
     *
     * @param color
     *           the color
     * @return this gradient
-    * @see Gradient#shiftKeysLeft(int)
+    * @see Gradient#compressKeysLeft(int)
     * @see TreeSet#add(Object)
     */
    @Chainable
    public Gradient append ( final int color ) {
 
-      this.shiftKeysLeft(1);
+      this.compressKeysLeft(1);
       this.keys.add(new ColorKey(1.0f, color));
       return this;
    }
@@ -998,7 +1031,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @param colors
     *           the colors
     * @return this gradient
-    * @see Gradient#shiftKeysLeft(int)
+    * @see Gradient#compressKeysLeft(int)
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
@@ -1006,7 +1039,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    public Gradient appendAll ( final Collection < Color > colors ) {
 
       final int len = colors.size();
-      this.shiftKeysLeft(len);
+      this.compressKeysLeft(len);
       final int oldLen = this.keys.size();
       final float denom = 1.0f / (oldLen + len - 1.0f);
 
@@ -1030,7 +1063,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @param colors
     *           the colors
     * @return this gradient
-    * @see Gradient#shiftKeysLeft(int)
+    * @see Gradient#compressKeysLeft(int)
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
@@ -1038,15 +1071,12 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    public Gradient appendAll ( final Color... colors ) {
 
       final int len = colors.length;
-      this.shiftKeysLeft(len);
+      this.compressKeysLeft(len);
       final int oldLen = this.keys.size();
       final float denom = 1.0f / (oldLen + len - 1.0f);
 
       for (int i = 0; i < len; ++i) {
-         this.keys.add(
-               new ColorKey(
-                     (oldLen + i) * denom,
-                     colors[i]));
+         this.keys.add(new ColorKey((oldLen + i) * denom, colors[i]));
       }
 
       return this;
@@ -1059,7 +1089,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @param scalars
     *           the scalars
     * @return the gradient
-    * @see Gradient#shiftKeysLeft(int)
+    * @see Gradient#compressKeysLeft(int)
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
@@ -1067,7 +1097,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    public Gradient appendAll ( final float... scalars ) {
 
       final int len = scalars.length;
-      this.shiftKeysLeft(len);
+      this.compressKeysLeft(len);
       final int oldLen = this.keys.size();
       final float denom = 1.0f / (oldLen + len - 1.0f);
 
@@ -1089,7 +1119,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @param colors
     *           the colors
     * @return this gradient
-    * @see Gradient#shiftKeysLeft(int)
+    * @see Gradient#compressKeysLeft(int)
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
@@ -1097,7 +1127,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    public Gradient appendAll ( final int... colors ) {
 
       final int len = colors.length;
-      this.shiftKeysLeft(len);
+      this.compressKeysLeft(len);
       final int oldLen = this.keys.size();
       final float denom = 1.0f / (oldLen + len - 1.0f);
 
@@ -1135,11 +1165,46 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
+    * Cycles the steps of a color gradient. The number of
+    * places can be positive or negative, indicating which
+    * direction to shift the array: positive numbers shift to
+    * the right; negative, to the left.
+    *
+    * @param places
+    *           the number of places
+    * @return this gradient
+    */
+   public Gradient cycle ( final int places ) {
+
+      // TODO: Make this static?
+
+      final int len = this.keys.size();
+      final Iterator < ColorKey > itr = this.keys.iterator();
+      final ColorKey[] arr = new ColorKey[len];
+      int i = 0;
+      while (itr.hasNext()) {
+         arr[i] = itr.next();
+         i++;
+      }
+
+      final int k = Math.floorMod(-places, len);
+      Gradient.reverse(arr, 0, len - 1);
+      Gradient.reverse(arr, 0, k - 1);
+      Gradient.reverse(arr, k, len - 1);
+
+      this.keys.clear();
+      for (int m = 0; m < len; ++m) {
+         this.keys.add(arr[m]);
+      }
+
+      return this;
+   }
+
+   /**
     * Distributes this gradient's color keys evenly through the
     * range [0.0, 1.0] .
     *
     * @return this gradient
-    *
     * @see List#addAll(java.util.Collection)
     */
    public Gradient distribute () {
@@ -1427,83 +1492,80 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Prepends a color at step 0.0 . Shifts existing keys to
-    * the right.
+    * Prepends a color at step 0.0 . Compresses existing keys
+    * to the right.
     *
     * @param color
     *           the color
     * @return this gradient
-    * @see Gradient#shiftKeysRight(int)
+    * @see Gradient#compressKeysRight(int)
     * @see TreeSet#add(Object)
     */
    @Chainable
    public Gradient prepend ( final Color color ) {
 
-      this.shiftKeysRight(1);
+      this.compressKeysRight(1);
       this.keys.add(new ColorKey(0.0f, color));
       return this;
    }
 
    /**
-    * Prepends a scalar at step 0.0 . Shifts existing keys to
-    * the right.
+    * Prepends a scalar at step 0.0 . Compresses existing keys
+    * to the right.
     *
     * @param scalar
     *           the scalar
     * @return this gradient
-    * @see Gradient#shiftKeysRight(int)
+    * @see Gradient#compressKeysRight(int)
     * @see TreeSet#add(Object)
     */
    @Chainable
    public Gradient prepend ( final float scalar ) {
 
-      this.shiftKeysRight(1);
+      this.compressKeysRight(1);
       this.keys.add(new ColorKey(0.0f, scalar, scalar, scalar, scalar));
       return this;
    }
 
    /**
-    * Prepends a color at step 0.0 . Shifts existing keys to
-    * the right.
+    * Prepends a color at step 0.0 . Compresses existing keys
+    * to the right.
     *
     * @param color
     *           the color
     * @return this gradient
-    * @see Gradient#shiftKeysRight(int)
+    * @see Gradient#compressKeysRight(int)
     * @see TreeSet#add(Object)
     */
    @Chainable
    public Gradient prepend ( final int color ) {
 
-      this.shiftKeysRight(1);
+      this.compressKeysRight(1);
       this.keys.add(new ColorKey(0.0f, color));
       return this;
    }
 
    /**
-    * Prepends a collection of colors to this gradient. Shifts
-    * existing keys to the right.
+    * Prepends a collection of colors to this gradient.
+    * Compresses existing keys to the right.
     *
     * @param colors
     *           the colors
     * @return this gradient
-    * @see Gradient#shiftKeysRight(int)
+    * @see Gradient#compressKeysRight(int)
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
    public Gradient prependAll ( final Collection < Color > colors ) {
 
       final int len = colors.size();
-      this.shiftKeysRight(len);
+      this.compressKeysRight(len);
       final float denom = 1.0f / (this.keys.size() + len - 1.0f);
 
       int i = 0;
       final Iterator < Color > clrItr = colors.iterator();
       while (clrItr.hasNext()) {
-         this.keys.add(
-               new ColorKey(
-                     i * denom,
-                     clrItr.next()));
+         this.keys.add(new ColorKey(i * denom, clrItr.next()));
          i++;
       }
 
@@ -1517,7 +1579,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @param colors
     *           the colors
     * @return this gradient
-    * @see Gradient#shiftKeysRight(int)
+    * @see Gradient#compressKeysRight(int)
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
@@ -1525,14 +1587,11 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    public Gradient prependAll ( final Color... colors ) {
 
       final int len = colors.length;
-      this.shiftKeysRight(len);
+      this.compressKeysRight(len);
       final float denom = 1.0f / (this.keys.size() + len - 1.0f);
 
       for (int i = 0; i < len; ++i) {
-         this.keys.add(
-               new ColorKey(
-                     i * denom,
-                     colors[i]));
+         this.keys.add(new ColorKey(i * denom, colors[i]));
       }
 
       return this;
@@ -1545,7 +1604,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @param scalars
     *           the scalars
     * @return this gradient
-    * @see Gradient#shiftKeysRight(int)
+    * @see Gradient#compressKeysRight(int)
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
@@ -1553,15 +1612,14 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    public Gradient prependAll ( final float... scalars ) {
 
       final int len = scalars.length;
-      this.shiftKeysRight(len);
+      this.compressKeysRight(len);
       final float denom = 1.0f / (this.keys.size() + len - 1.0f);
 
       for (int i = 0; i < len; ++i) {
          final float scalar = scalars[i];
-         this.keys.add(
-               new ColorKey(
-                     i * denom,
-                     scalar, scalar, scalar, scalar));
+         this.keys.add(new ColorKey(
+               i * denom,
+               scalar, scalar, scalar, scalar));
       }
 
       return this;
@@ -1569,12 +1627,12 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
    /**
     * Prepends a list of color integers to this gradient.
-    * Shifts existing keys to the right.
+    * Compresses existing keys to the right.
     *
     * @param colors
     *           the colors
     * @return this gradient
-    * @see Gradient#shiftKeysRight(int)
+    * @see Gradient#compressKeysRight(int)
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
@@ -1582,14 +1640,11 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    public Gradient prependAll ( final int... colors ) {
 
       final int len = colors.length;
-      this.shiftKeysRight(len);
+      this.compressKeysRight(len);
       final float denom = 1.0f / (this.keys.size() + len - 1.0f);
 
       for (int i = 0; i < len; ++i) {
-         this.keys.add(
-               new ColorKey(
-                     i * denom,
-                     colors[i]));
+         this.keys.add(new ColorKey(i * denom, colors[i]));
       }
 
       return this;
@@ -1662,17 +1717,23 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     */
    public Gradient reverse () {
 
-      final ArrayList < ColorKey > keyList = new ArrayList <>();
-      keyList.addAll(this.keys);
-      Collections.reverse(keyList);
+      // TODO: Make this static?
+
+      final int len = this.keys.size();
+      final Iterator < ColorKey > itr = this.keys.iterator();
+      final ColorKey[] arr = new ColorKey[len];
+      int i = 0;
+      while (itr.hasNext()) {
+         arr[i] = itr.next();
+         i++;
+      }
+
+      Gradient.reverse(arr, 0, len - 1);
 
       this.keys.clear();
-      final Iterator < ColorKey > itr = keyList.iterator();
-      while (itr.hasNext()) {
-         final ColorKey key = itr.next();
-         key.step = 1.0f - key.step;
+      for (int m = 0; m < len; ++m) {
+         this.keys.add(arr[m]);
       }
-      this.keys.addAll(keyList);
 
       return this;
    }

@@ -142,53 +142,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
-    * Compares two quaternions based on the real component and
-    * on a vector comparison for the imaginary component. The
-    * vector comparator is to be provided to this comparator.
-    */
-   public static class ComparatorRealImag
-         extends AbstrComparator {
-
-      /**
-       * The comparator for the imaginary vector.
-       */
-      public final Comparator < Vec3 > imagComparator;
-
-      /**
-       * Constructs a quaternion comparator with the supplied
-       * vector comparator.
-       *
-       * @param imagComparator
-       *           the vector comparator
-       */
-      public ComparatorRealImag (
-            final Comparator < Vec3 > imagComparator ) {
-
-         super();
-         this.imagComparator = imagComparator;
-      }
-
-      /**
-       * Compares two quaternions by component.
-       *
-       * @param a
-       *           the left comparisand
-       * @param b
-       *           the right comparisand
-       * @return the evaluation
-       */
-      @Override
-      public int compare (
-            final Quaternion a,
-            final Quaternion b ) {
-
-         return a.real > b.real ? 1
-               : a.real < b.real ? -1
-                     : this.imagComparator.compare(a.imag, b.imag);
-      }
-   }
-
-   /**
     * An iterator, which allows a quaternion's components to be
     * accessed in an enhanced for loop. The 'w' component is
     * listed first.
@@ -525,12 +478,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
                (float) (cz * mInv));
       }
    }
-
-   /**
-    * The default Quaternion comparator, ComparatorRealImag .
-    */
-   private static Comparator < Quaternion > COMPARATOR = new ComparatorRealImag(
-         new Vec3.ComparatorZYX());
 
    /**
     * The default easing function.
@@ -1468,17 +1415,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
 
    /**
     * Gets the string representation of the default Quaternion
-    * comparator.
-    *
-    * @return the string
-    */
-   public static String getComparatorString () {
-
-      return Quaternion.COMPARATOR.toString();
-   }
-
-   /**
-    * Gets the string representation of the default Quaternion
     * easing function.
     *
     * @return the string
@@ -2288,21 +2224,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    }
 
    /**
-    * Sets the comparator function by which collections of
-    * quaternions are compared.
-    *
-    * @param comparator
-    *           the comparator
-    */
-   public static void setComparator (
-         final Comparator < Quaternion > comparator ) {
-
-      if (comparator != null) {
-         Quaternion.COMPARATOR = comparator;
-      }
-   }
-
-   /**
     * Sets the easing function by which quaternions are
     * interpolated.
     *
@@ -2753,19 +2674,17 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     * Returns -1 when this quaternion is less than the
     * comparisand; 1 when it is greater than; 0 when the two
     * are 'equal'. The implementation of this method allows
-    * collections of quaternions to be sorted. This depends
-    * upon the static comparator of the Quaternion class, which
-    * can be changed.
+    * collections of quaternions to be sorted.
     *
     * @param q
     *           the comparisand
     * @return the numeric code
-    * @see Quaternion#COMPARATOR
     */
    @Override
    public int compareTo ( final Quaternion q ) {
 
-      return Quaternion.COMPARATOR.compare(this, q);
+      return this.real > q.real ? 1
+            : this.real < q.real ? -1 : this.imag.compareTo(q.imag);
    }
 
    /**

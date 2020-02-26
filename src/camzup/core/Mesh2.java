@@ -16,6 +16,77 @@ import java.util.TreeSet;
 public class Mesh2 extends Mesh {
 
    /**
+    * Compares two face indices (an array of vertex indices) by
+    * averaging the vectors referenced by them, then comparing
+    * the averages.
+    */
+   protected static final class SortIndices2 implements Comparator < int[][] > {
+
+      /**
+       * The coordinates array.
+       */
+      final Vec2[] coords;
+
+      /**
+       * Internal vector used to store the average coordinate for
+       * the left comparisand.
+       */
+      protected final Vec2 aAvg = new Vec2();
+
+      /**
+       * Internal vector used to store the average coordinate for
+       * the right comparisand.
+       */
+      protected final Vec2 bAvg = new Vec2();
+
+      /**
+       * The default constructor.
+       *
+       * @param coords
+       *           the coordinate array.
+       */
+      protected SortIndices2 ( final Vec2[] coords ) {
+
+         this.coords = coords;
+      }
+
+      /**
+       * Compares two faces indices.
+       *
+       * @param a
+       *           the left comparisand
+       * @param b
+       *           the right comparisandS
+       */
+      @Override
+      public int compare ( final int[][] a, final int[][] b ) {
+
+         this.aAvg.reset();
+         final int aLen = a.length;
+         for (int i = 0; i < aLen; ++i) {
+            Vec2.add(
+                  this.aAvg,
+                  this.coords[a[i][0]],
+                  this.aAvg);
+         }
+         Vec2.div(this.aAvg, aLen, this.aAvg);
+
+         this.bAvg.reset();
+         final int bLen = b.length;
+         for (int i = 0; i < bLen; ++i) {
+            Vec2.add(
+                  this.bAvg,
+                  this.coords[b[i][0]],
+                  this.bAvg);
+         }
+         Vec2.div(this.bAvg, bLen, this.bAvg);
+
+         return this.aAvg.compareTo(this.bAvg);
+      }
+
+   }
+
+   /**
     * The type of polygon produced by the static polygon
     * function.
     */
@@ -331,8 +402,12 @@ public class Mesh2 extends Mesh {
          final Vec2 lb,
          final Vec2 ub ) {
 
-      Vec2.highestValue(lb);
-      Vec2.lowestValue(ub);
+      lb.set(
+            Float.MAX_VALUE,
+            Float.MAX_VALUE);
+      ub.set(
+            Float.MIN_VALUE,
+            Float.MIN_VALUE);
 
       final Vec2[] coords = mesh.coords;
       final int len = coords.length;
@@ -984,20 +1059,6 @@ public class Mesh2 extends Mesh {
    public Vec2[] coords;
 
    /**
-    * The faces array does not include face data itself, but
-    * rather indices to other arrays which contain vertex data.
-    * It is a three-dimensional array organized by
-    * <ol>
-    * <li>the number of faces;</li>
-    * <li>the number of vertices per faces;</li>
-    * <li>the information per face;</li>
-    * </ol>
-    * 2D meshes contain two pieces of information per vertex:
-    * spatial coordinates and texture coordinates.
-    */
-   public int[][][] faces;
-
-   /**
     * The texture (UV) coordinates that describe how an image
     * is mapped onto the geometry of the mesh. Typically in the
     * range [0.0, 1.0].
@@ -1518,6 +1579,37 @@ public class Mesh2 extends Mesh {
    }
 
    /**
+    * Centers the mesh about the origin, (0.0, 0.0) and
+    * rescales it to the range [-0.5, 0.5]. Parallel to
+    * p5.Geometry's normalize method.
+    *
+    * @return this mesh
+    * @see Mesh2#calcDimensions(Mesh2, Vec2, Vec2, Vec2)
+    */
+   @Chainable
+   public Mesh2 reframe () {
+
+      final Vec2 dim = new Vec2();
+      final Vec2 lb = new Vec2();
+      final Vec2 ub = new Vec2();
+      Mesh2.calcDimensions(this, dim, lb, ub);
+
+      lb.x = -0.5f * (lb.x + ub.x);
+      lb.y = -0.5f * (lb.y + ub.y);
+      final float scl = Utils.div(1.0f, Utils.max(dim.x, dim.y));
+
+      Vec2 c;
+      final int len = this.coords.length;
+      for (int i = 0; i < len; ++i) {
+         c = this.coords[i];
+         Vec2.add(c, lb, c);
+         Vec2.mul(c, scl, c);
+      }
+
+      return this;
+   }
+
+   /**
     * Flips the indices which specify an edge.
     *
     * @param i
@@ -1668,7 +1760,7 @@ public class Mesh2 extends Mesh {
    public Mesh2 set ( final Mesh2 source ) {
 
       /*
-       * This should not use Vec3#resize, as it is copying all
+       * This should not use Vec2#resize, as it is copying all
        * vectors.
        */
 
@@ -1733,16 +1825,21 @@ public class Mesh2 extends Mesh {
     * Sorts the coordinates and texture coordinates of a mesh,
     * then reassigns indices in the face.
     *
+    * @param tolerance
+    *           the quantization tolerance
     * @return this mesh
     */
    @Experimental
    @Chainable
    public Mesh2 sort ( final float tolerance ) {
 
-      final Comparator < Vec2 > cmpr = new Mesh.SortQuantized2(
-            (int) (1.0f / tolerance));
+      final Comparator < Vec2 > cmpr = Mesh.SORT_2;
 
-      /* Sort coordinates. */
+      /*
+       * Sort coordinates: copy old indices, load into sorted set
+       * to both remove duplicates and to sort, then unload back
+       * into a new array.
+       */
       final int vlen = this.coords.length;
       final Vec2[] vold = new Vec2[vlen];
       System.arraycopy(this.coords, 0, vold, 0, vlen);
@@ -1752,7 +1849,9 @@ public class Mesh2 extends Mesh {
       }
       this.coords = vsUnique.toArray(new Vec2[vsUnique.size()]);
 
-      /* Sort texture coordinates. */
+      /*
+       * Sort texture coordinates.
+       */
       final int vtlen = this.texCoords.length;
       final Vec2[] vtold = new Vec2[vtlen];
       System.arraycopy(this.texCoords, 0, vtold, 0, vtlen);
@@ -1762,21 +1861,189 @@ public class Mesh2 extends Mesh {
       }
       this.texCoords = vtsUnique.toArray(new Vec2[vtsUnique.size()]);
 
+      /* Update face indices. */
       final int facesLen = this.faces.length;
       for (int i = 0; i < facesLen; ++i) {
          final int[][] face = this.faces[i];
-         final int vLen = face.length;
-         for (int j = 0; j < vLen; ++j) {
+         final int vertsLen = face.length;
+
+         for (int j = 0; j < vertsLen; ++j) {
             final int[] vert = face[j];
+
+            /* Update coord index. */
             final int vidx = Arrays.binarySearch(
                   this.coords, vold[vert[0]], cmpr);
             vert[0] = vidx < 0 ? vert[0] : vidx;
 
+            /* Update tex coord index. */
             final int vtidx = Arrays.binarySearch(
                   this.texCoords, vtold[vert[1]], cmpr);
             vert[1] = vtidx < 0 ? vert[1] : vtidx;
          }
       }
+
+      /* Sort faces by centroid. */
+      Arrays.sort(this.faces, new Mesh2.SortIndices2(this.coords));
+
+      return this;
+   }
+
+   /**
+    * Subdivides a convex face by subdividing each of its edges
+    * with one cut to create a midpoint, then connecting them.
+    * This generates peripheral triangles and a new central
+    * face with the same number of edges as the original. This
+    * is best suited to triangle-based meshes.
+    * 
+    * @param faceIdx
+    *           the face index
+    * @return the mesh
+    */
+   @Experimental
+   public Mesh2 subdivFaceInscribe ( final int faceIdx ) {
+
+      /* Validate face index, find face. */
+      final int facesLen = this.faces.length;
+      final int i = Math.floorMod(faceIdx, facesLen);
+      final int[][] face = this.faces[i];
+      final int faceLen = face.length;
+
+      /*
+       * Cache old length of coordinates and texture coordinates
+       * so new ones can be appended to the end.
+       */
+      final int vsOldLen = this.coords.length;
+      final int vtsOldLen = this.texCoords.length;
+
+      final Vec2[] vsNew = new Vec2[faceLen];
+      final Vec2[] vtsNew = new Vec2[faceLen];
+      final int[][][] fsNew = new int[faceLen + 1][][];
+      final int[][] centerFace = fsNew[faceLen] = new int[faceLen][2];
+
+      for (int j = 0; j < faceLen; ++j) {
+         int[] vertCurr = face[j];
+         Vec2 vCurr = coords[vertCurr[0]];
+         Vec2 vtCurr = texCoords[vertCurr[1]];
+         int k = (j + 1) % faceLen;
+         int[] vertNext = face[k];
+
+         int vNextIdx = vertNext[0];
+         Vec2 vNext = coords[vNextIdx];
+         vsNew[j] = new Vec2(
+               (vCurr.x + vNext.x) * 0.5f,
+               (vCurr.y + vNext.y) * 0.5f);
+
+         int vtNextIdx = vertNext[1];
+         Vec2 vtNext = texCoords[vtNextIdx];
+         vtsNew[j] = new Vec2(
+               (vtCurr.x + vtNext.x) * 0.5f,
+               (vtCurr.y + vtNext.y) * 0.5f);
+
+         int vSubdivIdx = vsOldLen + j;
+         int vtSubdivIdx = vtsOldLen + j;
+         fsNew[j] = new int[][] {
+               { vSubdivIdx, vtSubdivIdx },
+               { vNextIdx, vtNextIdx },
+               { vsOldLen + k, vtsOldLen + k } };
+
+         centerFace[j][0] = vSubdivIdx;
+         centerFace[j][1] = vtSubdivIdx;
+      }
+
+      this.coords = Vec2.concat(this.coords, vsNew);
+      this.texCoords = Vec2.concat(this.texCoords, vtsNew);
+      this.faces = Mesh.splice(this.faces, i, 1, fsNew);
+
+      return this;
+   }
+
+   /**
+    * Subdivides a convex face. Defaults to centroid-based
+    * subdivision.
+    * 
+    * @param faceIdx
+    *           the face index
+    * @return this mesh.
+    */
+   @Experimental
+   @Chainable
+   public Mesh2 subdivFace ( final int faceIdx ) {
+
+      return subdivFaceCentroid(faceIdx);
+   }
+
+   /**
+    * Subdivides a convex face by calculating its centroid,
+    * subdividing each of its edges with one cut to create a
+    * midpoint, then connecting the midpoints to the centroid.
+    * This generates a quadrilateral for the number of edges in
+    * the face.
+    * 
+    * @param faceIdx
+    *           the face index
+    * @return this mesh
+    */
+   @Experimental
+   @Chainable
+   public Mesh2 subdivFaceCentroid ( final int faceIdx ) {
+
+      /* Validate face index, find face. */
+      final int facesLen = this.faces.length;
+      final int i = Math.floorMod(faceIdx, facesLen);
+      final int[][] face = this.faces[i];
+      final int faceLen = face.length;
+
+      /*
+       * Cache old length of coordinates and texture coordinates
+       * so new ones can be appended to the end.
+       */
+      final int vsOldLen = this.coords.length;
+      final int vtsOldLen = this.texCoords.length;
+
+      /* Create arrays to hold new data. */
+      final Vec2[] vsNew = new Vec2[faceLen + 1];
+      final Vec2[] vtsNew = new Vec2[faceLen + 1];
+      final int[][][] fsNew = new int[faceLen][4][2];
+
+      Vec2 vCentroid = vsNew[faceLen] = new Vec2();
+      Vec2 vtCentroid = vtsNew[faceLen] = new Vec2();
+      int vCentroidIdx = vsOldLen + faceLen;
+      int vtCentroidIdx = vtsOldLen + faceLen;
+      for (int j = 0; j < faceLen; ++j) {
+         int[] vertCurr = face[j];
+         Vec2 vCurr = coords[vertCurr[0]];
+         Vec2 vtCurr = texCoords[vertCurr[1]];
+
+         Vec2.add(vCentroid, vCurr, vCentroid);
+         Vec2.add(vtCentroid, vtCurr, vtCentroid);
+
+         int k = (j + 1) % faceLen;
+         int[] vertNext = face[k];
+
+         int vNextIdx = vertNext[0];
+         Vec2 vNext = coords[vNextIdx];
+         vsNew[j] = new Vec2(
+               (vCurr.x + vNext.x) * 0.5f,
+               (vCurr.y + vNext.y) * 0.5f);
+
+         int vtNextIdx = vertNext[1];
+         Vec2 vtNext = texCoords[vtNextIdx];
+         vtsNew[j] = new Vec2(
+               (vtCurr.x + vtNext.x) * 0.5f,
+               (vtCurr.y + vtNext.y) * 0.5f);
+
+         fsNew[j] = new int[][] {
+               { vCentroidIdx, vtCentroidIdx },
+               { vsOldLen + j, vtsOldLen + j },
+               { vNextIdx, vtNextIdx },
+               { vsOldLen + k, vtsOldLen + k } };
+      }
+      Vec2.div(vCentroid, faceLen, vCentroid);
+      Vec2.div(vtCentroid, faceLen, vtCentroid);
+
+      this.coords = Vec2.concat(this.coords, vsNew);
+      this.texCoords = Vec2.concat(this.texCoords, vtsNew);
+      this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
       return this;
    }
@@ -1876,32 +2143,6 @@ public class Mesh2 extends Mesh {
       this.texCoords = Vec2.concat(this.texCoords, vtsNew);
       this.faces[i] = Mesh.insert(face, j1, fsNew);
 
-      return this;
-   }
-
-   /**
-    * Subdivides all edges in a mesh by the number of cuts
-    * given. For example, one cut will divide an edge in half;
-    * two cuts, into thirds.<br>
-    * <br>
-    * Does not distinguish between interior edges, which have a
-    * complement elsewhere, and border edges; for that reason
-    * this works best with NGONs.
-    *
-    * @param cuts
-    *           number of cuts
-    * @return this mesh
-    */
-   @Experimental
-   public Mesh2 subdivEdges ( final int cuts ) {
-
-      final int len0 = this.faces.length;
-      for (int i = 0; i < len0; ++i) {
-         final int len1 = this.faces[i].length;
-         for (int j = 0, k = 0; j < len1; ++j, k += cuts) {
-            this.subdivEdge(i, k + j, cuts);
-         }
-      }
       return this;
    }
 
@@ -2017,10 +2258,9 @@ public class Mesh2 extends Mesh {
    @Chainable
    public Mesh2 toOrigin () {
 
-      final Vec2 dim = new Vec2();
       final Vec2 lb = new Vec2();
       final Vec2 ub = new Vec2();
-      Mesh2.calcDimensions(this, dim, lb, ub);
+      Mesh2.calcDimensions(this, new Vec2(), lb, ub);
 
       lb.x = -0.5f * (lb.x + ub.x);
       lb.y = -0.5f * (lb.y + ub.y);
@@ -2085,10 +2325,10 @@ public class Mesh2 extends Mesh {
                sb.append('\n');
             }
          }
-      }
 
-      if (this.coords.length > truncate) {
-         sb.append("\n/* ... */");
+         if (this.coords.length > truncate) {
+            sb.append("\n/* ... */");
+         }
       }
 
       sb.append(" ],\ntexCoords: [");
@@ -2103,10 +2343,10 @@ public class Mesh2 extends Mesh {
                sb.append('\n');
             }
          }
-      }
 
-      if (this.texCoords.length > truncate) {
-         sb.append("\n/* ... */");
+         if (this.texCoords.length > truncate) {
+            sb.append("\n/* ... */");
+         }
       }
 
       sb.append(" ],\nfaces: [");
@@ -2147,10 +2387,10 @@ public class Mesh2 extends Mesh {
                sb.append('\n');
             }
          }
-      }
 
-      if (this.faces.length > truncate) {
-         sb.append("\n/* ... */");
+         if (this.faces.length > truncate) {
+            sb.append("\n/* ... */");
+         }
       }
 
       sb.append(" ] }");

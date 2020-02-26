@@ -5,7 +5,7 @@ import java.util.Comparator;
 /**
  * A direction that extends from an originating point.
  */
-public class Ray3 extends Ray implements Comparable < Ray3 > {
+public class Ray3 extends Ray {
 
    /**
     * An abstract class that may serve as an umbrella for any
@@ -51,60 +51,6 @@ public class Ray3 extends Ray implements Comparable < Ray3 > {
    }
 
    /**
-    * Compares two rays by their origin.
-    */
-   public static class ComparatorOrigin extends AbstrComparator {
-
-      /**
-       * The location comparator.
-       */
-      public final Comparator < Vec3 > locCmp;
-
-      /**
-       * The default constructor.
-       */
-      public ComparatorOrigin () {
-
-         super();
-         this.locCmp = new Vec3.ComparatorZYX();
-      }
-
-      /**
-       * A constructor which sets the comparator by which each
-       * ray's origins will be compared.
-       *
-       * @param comparator
-       *           the vector comparator
-       */
-      public ComparatorOrigin ( final Comparator < Vec3 > comparator ) {
-
-         super();
-         this.locCmp = comparator;
-      }
-
-      /**
-       * Compares two rays by their origin.
-       *
-       * @param a
-       *           the left comparisand
-       * @param b
-       *           the right comparisand
-       * @return the comparison
-       */
-      @Override
-      public int compare ( final Ray3 a, final Ray3 b ) {
-
-         return this.locCmp.compare(a.origin, b.origin);
-      }
-
-   }
-
-   /**
-    * The default Ray2 comparator.
-    */
-   private static Comparator < Ray3 > COMPARATOR = new ComparatorOrigin();
-
-   /**
     * The unique identification for serialized classes.
     */
    private static final long serialVersionUID = -8386381837024621749L;
@@ -145,32 +91,6 @@ public class Ray3 extends Ray implements Comparable < Ray3 > {
             origin.x + dir.x * scalar,
             origin.y + dir.y * scalar,
             origin.z + dir.z * scalar);
-   }
-
-   /**
-    * Gets the string representation of the default Ray2
-    * comparator.
-    *
-    * @return the string
-    */
-   public static String getComparatorString () {
-
-      return Ray3.COMPARATOR.toString();
-   }
-
-   /**
-    * Sets the comparator function by which collections of rays
-    * are compared.
-    *
-    * @param comparator
-    *           the comparator
-    */
-   public static void setComparator (
-         final Comparator < Ray3 > comparator ) {
-
-      if (comparator != null) {
-         Ray3.COMPARATOR = comparator;
-      }
    }
 
    /**
@@ -265,12 +185,6 @@ public class Ray3 extends Ray implements Comparable < Ray3 > {
    public Ray3 clone () {
 
       return new Ray3(this.origin, this.dir);
-   }
-
-   @Override
-   public int compareTo ( final Ray3 o ) {
-
-      return Ray3.COMPARATOR.compare(this, o);
    }
 
    /**

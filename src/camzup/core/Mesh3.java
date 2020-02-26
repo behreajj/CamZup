@@ -2,6 +2,7 @@ package camzup.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 
 import camzup.core.Mesh2.PolyType;
 
@@ -13,6 +14,77 @@ import camzup.core.Mesh2.PolyType;
  * These are not final, and so can be reassigned.
  */
 public class Mesh3 extends Mesh {
+
+   /**
+    * Compares two face indices (an array of vertex indices) by
+    * averaging the vectors referenced by them, then comparing
+    * the averages.
+    */
+   protected static final class SortIndices3 implements Comparator < int[][] > {
+
+      /**
+       * The coordinates array.
+       */
+      final Vec3[] coords;
+
+      /**
+       * Internal vector used to store the average coordinate for
+       * the left comparisand.
+       */
+      protected final Vec3 aAvg = new Vec3();
+
+      /**
+       * Internal vector used to store the average coordinate for
+       * the right comparisand.
+       */
+      protected final Vec3 bAvg = new Vec3();
+
+      /**
+       * The default constructor.
+       *
+       * @param coords
+       *           the coordinate array.
+       */
+      protected SortIndices3 ( final Vec3[] coords ) {
+
+         this.coords = coords;
+      }
+
+      /**
+       * Compares two faces indices.
+       *
+       * @param a
+       *           the left comparisand
+       * @param b
+       *           the right comparisandS
+       */
+      @Override
+      public int compare ( final int[][] a, final int[][] b ) {
+
+         this.aAvg.reset();
+         final int aLen = a.length;
+         for (int i = 0; i < aLen; ++i) {
+            Vec3.add(
+                  this.aAvg,
+                  this.coords[a[i][0]],
+                  this.aAvg);
+         }
+         Vec3.div(this.aAvg, aLen, this.aAvg);
+
+         this.bAvg.reset();
+         final int bLen = b.length;
+         for (int i = 0; i < bLen; ++i) {
+            Vec3.add(
+                  this.bAvg,
+                  this.coords[b[i][0]],
+                  this.bAvg);
+         }
+         Vec3.div(this.bAvg, bLen, this.bAvg);
+
+         return this.aAvg.compareTo(this.bAvg);
+      }
+
+   }
 
    /**
     * A helper function for parsing an OBJ file. Attempts to
@@ -141,8 +213,14 @@ public class Mesh3 extends Mesh {
          final Vec3 lb,
          final Vec3 ub ) {
 
-      Vec3.highestValue(lb);
-      Vec3.lowestValue(ub);
+      lb.set(
+            Float.MAX_VALUE,
+            Float.MAX_VALUE,
+            Float.MAX_VALUE);
+      ub.set(
+            Float.MIN_VALUE,
+            Float.MIN_VALUE,
+            Float.MIN_VALUE);
 
       final Vec3[] coords = mesh.coords;
       final int len = coords.length;
@@ -1051,20 +1129,6 @@ public class Mesh3 extends Mesh {
    public Vec3[] coords;
 
    /**
-    * The faces array does not include face data itself, but
-    * rather indices to other arrays which contain vertex data.
-    * It is a three-dimensional array organized by
-    * <ol>
-    * <li>the number of faces;</li>
-    * <li>the number of vertices per faces;</li>
-    * <li>the information per face;</li>
-    * </ol>
-    * 2D meshes contain two pieces of information per vertex:
-    * spatial coordinates and texture coordinates.
-    */
-   public int[][][] faces;
-
-   /**
     * An array of normals to indicate how light will bounce off
     * the mesh's surface.
     */
@@ -1598,6 +1662,39 @@ public class Mesh3 extends Mesh {
       hash = hash * IUtils.HASH_MUL ^ Arrays.hashCode(this.coords);
       hash = hash * IUtils.HASH_MUL ^ Arrays.deepHashCode(this.faces);
       return hash;
+   }
+
+   /**
+    * Centers the mesh about the origin, (0.0, 0.0) and
+    * rescales it to the range [-0.5, 0.5]. Parallel to
+    * p5.Geometry's normalize method.
+    *
+    * @return this mesh
+    * @see Mesh3#calcDimensions(Mesh3, Vec3, Vec3, Vec3)
+    */
+   @Chainable
+   public Mesh3 reframe () {
+
+      final Vec3 dim = new Vec3();
+      final Vec3 lb = new Vec3();
+      final Vec3 ub = new Vec3();
+      Mesh3.calcDimensions(this, dim, lb, ub);
+
+      lb.x = -0.5f * (lb.x + ub.x);
+      lb.y = -0.5f * (lb.y + ub.y);
+      lb.z = -0.5f * (lb.z + ub.z);
+      final float scl = Utils.div(1.0f,
+            Utils.max(dim.x, dim.y, dim.z));
+
+      Vec3 c;
+      final int len = this.coords.length;
+      for (int i = 0; i < len; ++i) {
+         c = this.coords[i];
+         Vec3.add(c, lb, c);
+         Vec3.mul(c, scl, c);
+      }
+
+      return this;
    }
 
    /**
@@ -2201,10 +2298,9 @@ public class Mesh3 extends Mesh {
    @Chainable
    public Mesh3 toOrigin () {
 
-      final Vec3 dim = new Vec3();
       final Vec3 lb = new Vec3();
       final Vec3 ub = new Vec3();
-      Mesh3.calcDimensions(this, dim, lb, ub);
+      Mesh3.calcDimensions(this, new Vec3(), lb, ub);
 
       lb.x = -0.5f * (lb.x + ub.x);
       lb.y = -0.5f * (lb.y + ub.y);
@@ -2272,10 +2368,10 @@ public class Mesh3 extends Mesh {
                sb.append('\n');
             }
          }
-      }
 
-      if (this.coords.length > truncate) {
-         sb.append("\n/* ... */");
+         if (this.coords.length > truncate) {
+            sb.append("\n/* ... */");
+         }
       }
 
       sb.append(" ],\ntexCoords: [");
@@ -2290,10 +2386,10 @@ public class Mesh3 extends Mesh {
                sb.append('\n');
             }
          }
-      }
 
-      if (this.texCoords.length > truncate) {
-         sb.append("\n/* ... */");
+         if (this.texCoords.length > truncate) {
+            sb.append("\n/* ... */");
+         }
       }
 
       sb.append(" ],\nnormals: [");
@@ -2308,10 +2404,10 @@ public class Mesh3 extends Mesh {
                sb.append('\n');
             }
          }
-      }
 
-      if (this.normals.length > truncate) {
-         sb.append("\n/* ... */");
+         if (this.normals.length > truncate) {
+            sb.append("\n/* ... */");
+         }
       }
 
       sb.append(" ],\nfaces: [");
@@ -2355,10 +2451,10 @@ public class Mesh3 extends Mesh {
                sb.append('\n');
             }
          }
-      }
 
-      if (this.faces.length > truncate) {
-         sb.append("\n/* ... */");
+         if (this.faces.length > truncate) {
+            sb.append("\n/* ... */");
+         }
       }
 
       sb.append(" ] }");

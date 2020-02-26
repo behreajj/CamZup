@@ -158,10 +158,6 @@ public class Edge2 implements Comparable < Edge2 > {
     */
    public Edge2 () {
 
-      // TODO: Add index information. Temporarily remove empty
-      // constructor above to ensure all calls to constructor
-      // include new info.
-
       this.origin = new Vert2();
       this.dest = new Vert2();
    }

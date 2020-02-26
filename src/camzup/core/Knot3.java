@@ -646,14 +646,12 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    @Override
    public int hashCode () {
 
-      int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL
-            ^ (this.coord == null ? 0 : this.coord.hashCode());
-      hash = hash * IUtils.HASH_MUL
-            ^ (this.foreHandle == null ? 0 : this.foreHandle.hashCode());
-      hash = hash * IUtils.HASH_MUL
+      return ((IUtils.MUL_BASE
+            ^ (this.coord == null ? 0 : this.coord.hashCode()))
+            * IUtils.HASH_MUL
+            ^ (this.foreHandle == null ? 0 : this.foreHandle.hashCode()))
+            * IUtils.HASH_MUL
             ^ (this.rearHandle == null ? 0 : this.rearHandle.hashCode());
-      return hash;
    }
 
    /**

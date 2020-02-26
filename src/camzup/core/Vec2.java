@@ -132,39 +132,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Compares two vectors by their y component, then by their
-    * x component.
-    */
-   public static class ComparatorYX extends AbstrComparator {
-
-      /**
-       * The default constructor.
-       */
-      public ComparatorYX () {
-
-         super();
-      }
-
-      /**
-       * Compares the y and x component.
-       *
-       * @param a
-       *           left comparisand
-       * @param b
-       *           right comparisand
-       * @return the comparison
-       */
-      @Override
-      public int compare ( final Vec2 a, final Vec2 b ) {
-
-         return a.y > b.y ? 1
-               : a.y < b.y ? -1
-                     : a.x > b.x ? 1
-                           : a.x < b.x ? -1 : 0;
-      }
-   }
-
-   /**
     * A linear interpolation functional class.
     */
    public static class Lerp extends AbstrEasing {
@@ -312,11 +279,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       }
 
    }
-
-   /**
-    * The default Vec2 comparator, ComparatorYX .
-    */
-   private static Comparator < Vec2 > COMPARATOR = new ComparatorYX();
 
    /**
     * The default easing function, lerp.
@@ -1399,17 +1361,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Gets the string representation of the default Vec2
-    * comparator.
-    *
-    * @return the string
-    */
-   public static String getComparatorString () {
-
-      return Vec2.COMPARATOR.toString();
-   }
-
-   /**
     * Gets the string representation of the default Vec2 easing
     * function.
     *
@@ -1759,21 +1710,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Returns to a vector with all components set to the
-    * maximum float value.
-    *
-    * @param target
-    *           the output vector
-    * @return the maximum vector
-    */
-   public static Vec2 highestValue ( final Vec2 target ) {
-
-      return target.set(
-            Float.MAX_VALUE,
-            Float.MAX_VALUE);
-   }
-
-   /**
     * Inserts an array of vectors in the midst of another. The
     * insertion point is before, or to the left of, the
     * existing element at a given index.
@@ -1860,21 +1796,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       }
 
       return target.set(v);
-   }
-
-   /**
-    * Returns to a vector with all components set to the
-    * minimum float value.
-    *
-    * @param target
-    *           the output vector
-    * @return the minimum vector
-    */
-   public static Vec2 lowestValue ( final Vec2 target ) {
-
-      return target.set(
-            Float.MIN_VALUE,
-            Float.MIN_VALUE);
    }
 
    /**
@@ -3083,20 +3004,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    }
 
    /**
-    * Sets the comparator function by which collections of
-    * vectors are compared.
-    *
-    * @param comparator
-    *           the comparator
-    */
-   public static void setComparator ( final Comparator < Vec2 > comparator ) {
-
-      if (comparator != null) {
-         Vec2.COMPARATOR = comparator;
-      }
-   }
-
-   /**
     * Sets the easing function by which vectors are
     * interpolated.
     *
@@ -3501,18 +3408,19 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     * Returns -1 when this vector is less than the comparisand;
     * 1 when it is greater than; 0 when the two are 'equal'.
     * The implementation of this method allows collections of
-    * vectors to be sorted. This depends upon the static
-    * comparator of the Vec2 class, which can be changed.
+    * vectors to be sorted.
     *
     * @param v
     *           the comparisand
     * @return the numeric code
-    * @see Vec2#COMPARATOR
     */
    @Override
    public int compareTo ( final Vec2 v ) {
 
-      return Vec2.COMPARATOR.compare(this, v);
+      return this.y > v.y ? 1
+            : this.y < v.y ? -1
+                  : this.x > v.x ? 1
+                        : this.x < v.x ? -1 : 0;
    }
 
    /**
