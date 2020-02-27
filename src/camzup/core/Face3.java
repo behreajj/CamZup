@@ -3,417 +3,386 @@ package camzup.core;
 import java.util.Arrays;
 
 /**
- * Organizes components of a 3D mesh into a list of vertices
- * that form a face.
+ * Organizes components of a 3D mesh into a list of vertices that form
+ * a face.
  *
- * This is not used by a mesh internally; it is created upon
- * retrieval from a mesh.
+ * This is not used by a mesh internally; it is created upon retrieval
+ * from a mesh.
  */
 public class Face3 implements Comparable < Face3 > {
 
-   /**
-    * Finds the centroid of a face by averaging all the
-    * coordinates in its list of vertices.
-    *
-    * @param face
-    *           the face
-    * @param target
-    *           the output vector
-    * @return the centroid
-    */
-   public static Vec3 centroid (
-         final Face3 face,
-         final Vec3 target ) {
+  /**
+   * The array of vertices in a face.
+   */
+  public Vert3[] vertices;
 
-      target.reset();
-      final Vert3[] verts = face.vertices;
-      final int len = verts.length;
-      for (int i = 0; i < len; ++i) {
-         Vec3.add(target, verts[i].coord, target);
-      }
-      return Vec3.div(target, len, target);
-   }
+  /**
+   * The default constructor. When used, initializes an empty array.
+   */
+  public Face3 ( ) {
 
-   /**
-    * The array of vertices in a face.
-    */
-   public Vert3[] vertices;
+    this.vertices = new Vert3[] {};
+  }
 
-   /**
-    * The default constructor. When used, initializes an empty
-    * array.
-    */
-   public Face3 () {
+  /**
+   * Creates a face from an array of vertices.
+   *
+   * @param vertices the vertices
+   */
+  public Face3 ( final Vert3 ... vertices ) {
 
-      this.vertices = new Vert3[] {};
-   }
+    this.set(vertices);
+  }
 
-   /**
-    * Creates a face from an array of vertices.
-    *
-    * @param vertices
-    *           the vertices
-    */
-   public Face3 ( final Vert3... vertices ) {
+  /**
+   * Compares this face to another by hash code.
+   *
+   * @param face the comparisand
+   * @return the comparison
+   */
+  @Override
+  public int compareTo ( final Face3 face ) {
 
-      this.set(vertices);
-   }
+    return Face3.centroid(this, new Vec3()).compareTo(
+        Face3.centroid(face, new Vec3()));
+  }
 
-   /**
-    * Compares this face to another by hash code.
-    *
-    * @param face
-    *           the comparisand
-    * @return the comparison
-    */
-   @Override
-   public int compareTo ( final Face3 face ) {
+  /**
+   * Tests this face for equivalence with another object.
+   *
+   * @return the evaluation
+   */
+  @Override
+  public boolean equals ( final Object obj ) {
 
-      return Face3.centroid(this, new Vec3()).compareTo(
-            Face3.centroid(face, new Vec3()));
-   }
+    if (this == obj) { return true; }
 
-   /**
-    * Tests this face for equivalence with another object.
-    *
-    * @return the evaluation
-    */
-   @Override
-   public boolean equals ( final Object obj ) {
+    if (obj == null) { return false; }
 
-      if (this == obj) {
-         return true;
-      }
+    if (this.getClass() != obj.getClass()) { return false; }
 
-      if (obj == null) {
-         return false;
-      }
+    if (!Arrays.equals(this.vertices, ((Face3) obj).vertices)) { return false; }
 
-      if (this.getClass() != obj.getClass()) {
-         return false;
-      }
+    return true;
+  }
 
-      if (!Arrays.equals(this.vertices, ((Face3) obj).vertices)) {
-         return false;
-      }
+  /**
+   * Gets an edge from this face. Wraps the index by the number of
+   * vertices in the face.
+   *
+   * @param i      index
+   * @param target output edge
+   * @return the edge
+   */
+  @Experimental
+  public Edge3 getEdge (
+      final int i,
+      final Edge3 target ) {
 
-      return true;
-   }
+    final int len = this.vertices.length;
+    return target.set(
+        this.vertices[Math.floorMod(i, len)],
+        this.vertices[Math.floorMod(i + 1, len)]);
+  }
 
-   /**
-    * Gets an edge from this face. Wraps the index by the
-    * number of vertices in the face.
-    *
-    * @param i
-    *           index
-    * @param target
-    *           output edge
-    * @return the edge
-    */
-   @Experimental
-   public Edge3 getEdge (
-         final int i,
-         final Edge3 target ) {
+  /**
+   * Gets all the edges in this face.
+   *
+   * @return the edges
+   */
+  @Experimental
+  public Edge3[] getEdges ( ) {
 
-      final int len = this.vertices.length;
-      return target.set(
-            this.vertices[Math.floorMod(i, len)],
-            this.vertices[Math.floorMod(i + 1, len)]);
-   }
+    final int len = this.vertices.length;
+    final int last = len - 1;
+    final Edge3[] result = new Edge3[len];
+    for (int i = 0; i < last; ++i) {
+      result[i] = new Edge3(
+          this.vertices[i],
+          this.vertices[i + 1]);
+    }
+    result[last] = new Edge3(
+        this.vertices[last],
+        this.vertices[0]);
+    return result;
+  }
 
-   /**
-    * Gets all the edges in this face.
-    *
-    * @return the edges
-    */
-   @Experimental
-   public Edge3[] getEdges () {
+  /**
+   * Returns a hash code for this face.
+   *
+   * @return the hash
+   */
+  @Override
+  public int hashCode ( ) {
 
-      final int len = this.vertices.length;
-      final int last = len - 1;
-      final Edge3[] result = new Edge3[len];
-      for (int i = 0; i < last; ++i) {
-         result[i] = new Edge3(
-               this.vertices[i],
-               this.vertices[i + 1]);
-      }
-      result[last] = new Edge3(
-            this.vertices[last],
-            this.vertices[0]);
-      return result;
-   }
+    return Arrays.hashCode(this.vertices);
+  }
 
-   /**
-    * Returns a hash code for this face.
-    *
-    * @return the hash
-    */
-   @Override
-   public int hashCode () {
+  /**
+   * Returns the number of vertices in this face.
+   *
+   * @return the vertex count
+   */
+  public int length ( ) {
 
-      return Arrays.hashCode(this.vertices);
-   }
+    return this.vertices.length;
+  }
 
-   /**
-    * Returns the number of vertices in this face.
-    *
-    * @return the vertex count
-    */
-   public int length () {
+  /**
+   * Rotates all coordinates in the mesh by an angle around an arbitrary
+   * axis.
+   *
+   * @param radians the angle in radians
+   * @param axis    the axis of rotation
+   * @return this mesh
+   * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
+   */
+  @Chainable
+  public Face3 rotate (
+      final float radians,
+      final Vec3 axis ) {
 
-      return this.vertices.length;
-   }
+    final float cosa = Utils.cos(radians);
+    final float sina = Utils.sin(radians);
 
-   /**
-    * Rotates all coordinates in the mesh by an angle around an
-    * arbitrary axis.
-    *
-    * @param radians
-    *           the angle in radians
-    * @param axis
-    *           the axis of rotation
-    * @return this mesh
-    * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
-    */
-   @Chainable
-   public Face3 rotate (
-         final float radians,
-         final Vec3 axis ) {
+    Vert3 vt3;
+    Vec3 c;
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+    final int len = this.vertices.length;
+    for (int i = 0; i < len; ++i) {
+      vt3 = this.vertices[i];
+      c = vt3.coord;
+      // n = vt3.normal;
+      Vec3.rotate(c, cosa, sina, axis, c);
+    }
 
-      Vert3 vt3;
-      Vec3 c;
+    return this;
+  }
 
-      final int len = this.vertices.length;
-      for (int i = 0; i < len; ++i) {
-         vt3 = this.vertices[i];
-         c = vt3.coord;
-         // n = vt3.normal;
-         Vec3.rotate(c, cosa, sina, axis, c);
-      }
+  /**
+   * Rotates all coordinates in the face by a quaternion.
+   *
+   * @param q the quaternion
+   * @return the mesh
+   */
+  @Chainable
+  public Face3 rotate ( final Quaternion q ) {
 
-      return this;
-   }
+    Vert3 vt3;
+    Vec3 c;
 
-   /**
-    * Rotates all coordinates in the face by a quaternion.
-    *
-    * @param q
-    *           the quaternion
-    * @return the mesh
-    */
-   @Chainable
-   public Face3 rotate ( final Quaternion q ) {
+    final int len = this.vertices.length;
+    for (int i = 0; i < len; ++i) {
+      vt3 = this.vertices[i];
+      c = vt3.coord;
+      Quaternion.mulVector(q, c, c);
+    }
 
-      Vert3 vt3;
-      Vec3 c;
+    return this;
+  }
 
-      final int len = this.vertices.length;
-      for (int i = 0; i < len; ++i) {
-         vt3 = this.vertices[i];
-         c = vt3.coord;
-         Quaternion.mulVector(q, c, c);
-      }
+  /**
+   * Rotates all coordinates in the face by an angle around the x axis.
+   *
+   * @param radians the angle in radians
+   * @return this mesh
+   * @see Vec3#rotateX(Vec3, float, Vec3)
+   */
+  @Chainable
+  public Face3 rotateX ( final float radians ) {
 
-      return this;
-   }
+    final float cosa = Utils.cos(radians);
+    final float sina = Utils.sin(radians);
 
-   /**
-    * Rotates all coordinates in the face by an angle around
-    * the x axis.
-    *
-    * @param radians
-    *           the angle in radians
-    * @return this mesh
-    * @see Vec3#rotateX(Vec3, float, Vec3)
-    */
-   @Chainable
-   public Face3 rotateX ( final float radians ) {
+    Vert3 vt3;
+    Vec3 c;
+    // Vec3 n;
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+    final int len = this.vertices.length;
+    for (int i = 0; i < len; ++i) {
+      vt3 = this.vertices[i];
+      c = vt3.coord;
+      Vec3.rotateX(c, cosa, sina, c);
+    }
 
-      Vert3 vt3;
-      Vec3 c;
-      // Vec3 n;
+    return this;
+  }
 
-      final int len = this.vertices.length;
-      for (int i = 0; i < len; ++i) {
-         vt3 = this.vertices[i];
-         c = vt3.coord;
-         Vec3.rotateX(c, cosa, sina, c);
-      }
+  /**
+   * Rotates all coordinates in the face by an angle around the y axis.
+   *
+   * @param radians the angle in radians
+   * @return this mesh
+   * @see Vec3#rotateY(Vec3, float, Vec3)
+   */
+  @Chainable
+  public Face3 rotateY ( final float radians ) {
 
-      return this;
-   }
+    final float cosa = Utils.cos(radians);
+    final float sina = Utils.sin(radians);
 
-   /**
-    * Rotates all coordinates in the face by an angle around
-    * the y axis.
-    *
-    * @param radians
-    *           the angle in radians
-    * @return this mesh
-    * @see Vec3#rotateY(Vec3, float, Vec3)
-    */
-   @Chainable
-   public Face3 rotateY ( final float radians ) {
+    Vert3 vt3;
+    Vec3 c;
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+    final int len = this.vertices.length;
+    for (int i = 0; i < len; ++i) {
+      vt3 = this.vertices[i];
+      c = vt3.coord;
+      Vec3.rotateY(c, cosa, sina, c);
+    }
 
-      Vert3 vt3;
-      Vec3 c;
+    return this;
+  }
 
-      final int len = this.vertices.length;
-      for (int i = 0; i < len; ++i) {
-         vt3 = this.vertices[i];
-         c = vt3.coord;
-         Vec3.rotateY(c, cosa, sina, c);
-      }
+  /**
+   * Rotates all coordinates in the face by an angle around the z axis.
+   *
+   * @param radians the angle in radians
+   * @return this mesh
+   * @see Vec3#rotateZ(Vec3, float, Vec3)
+   */
+  @Chainable
+  public Face3 rotateZ ( final float radians ) {
 
-      return this;
-   }
+    final float cosa = Utils.cos(radians);
+    final float sina = Utils.sin(radians);
 
-   /**
-    * Rotates all coordinates in the face by an angle around
-    * the z axis.
-    *
-    * @param radians
-    *           the angle in radians
-    * @return this mesh
-    * @see Vec3#rotateZ(Vec3, float, Vec3)
-    */
-   @Chainable
-   public Face3 rotateZ ( final float radians ) {
+    Vert3 vt3;
+    Vec3 c;
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+    final int len = this.vertices.length;
+    for (int i = 0; i < len; ++i) {
+      vt3 = this.vertices[i];
+      c = vt3.coord;
+      Vec3.rotateZ(c, cosa, sina, c);
+    }
 
-      Vert3 vt3;
-      Vec3 c;
+    return this;
+  }
 
-      final int len = this.vertices.length;
-      for (int i = 0; i < len; ++i) {
-         vt3 = this.vertices[i];
-         c = vt3.coord;
-         Vec3.rotateZ(c, cosa, sina, c);
-      }
+  /**
+   * Scales all coordinates in the face by a scalar.
+   *
+   * @param scale the vector
+   * @return this face
+   * @see Vec3#mul(Vec3, float, Vec3)
+   */
+  @Chainable
+  public Face3 scale ( final float scale ) {
 
-      return this;
-   }
+    Vec3 c;
+    final int len = this.vertices.length;
+    for (int i = 0; i < len; ++i) {
+      c = this.vertices[i].coord;
+      Vec3.mul(c, scale, c);
+    }
 
-   /**
-    * Scales all coordinates in the face by a scalar.
-    *
-    * @param scale
-    *           the vector
-    * @return this face
-    * @see Vec3#mul(Vec3, float, Vec3)
-    */
-   @Chainable
-   public Face3 scale ( final float scale ) {
+    return this;
+  }
 
-      Vec3 c;
-      final int len = this.vertices.length;
-      for (int i = 0; i < len; ++i) {
-         c = this.vertices[i].coord;
-         Vec3.mul(c, scale, c);
-      }
+  /**
+   * Scales all coordinates in the face by a vector.
+   *
+   * @param scale the vector
+   * @return this face
+   * @see Vec3#mul(Vec3, Vec3, Vec3)
+   */
+  @Experimental
+  @Chainable
+  public Face3 scale ( final Vec3 scale ) {
 
-      return this;
-   }
+    Vec3 c;
+    final int len = this.vertices.length;
+    for (int i = 0; i < len; ++i) {
+      c = this.vertices[i].coord;
+      Vec3.mul(c, scale, c);
+    }
 
-   /**
-    * Scales all coordinates in the face by a vector.
-    *
-    * @param scale
-    *           the vector
-    * @return this face
-    * @see Vec3#mul(Vec3, Vec3, Vec3)
-    */
-   @Experimental
-   @Chainable
-   public Face3 scale ( final Vec3 scale ) {
+    return this;
+  }
 
-      Vec3 c;
-      final int len = this.vertices.length;
-      for (int i = 0; i < len; ++i) {
-         c = this.vertices[i].coord;
-         Vec3.mul(c, scale, c);
-      }
+  /**
+   * Sets this face's vertices to refer to a an array.
+   *
+   * @param vertices the array of vertices
+   * @return this face
+   */
+  @Chainable
+  public Face3 set ( final Vert3 ... vertices ) {
 
-      return this;
-   }
+    this.vertices = vertices;
+    return this;
+  }
 
-   /**
-    * Sets this face's vertices to refer to a an array.
-    *
-    * @param vertices
-    *           the array of vertices
-    * @return this face
-    */
-   @Chainable
-   public Face3 set ( final Vert3... vertices ) {
+  /**
+   * Returns a string representation of this face.
+   *
+   * @return the string
+   */
+  @Override
+  public String toString ( ) {
 
-      this.vertices = vertices;
-      return this;
-   }
+    return this.toString(4);
+  }
 
-   /**
-    * Returns a string representation of this face.
-    *
-    * @return the string
-    */
-   @Override
-   public String toString () {
+  /**
+   * Returns a string representation of this face.
+   *
+   * @param places the number of places
+   * @return the string
+   */
+  public String toString ( final int places ) {
 
-      return this.toString(4);
-   }
+    final int len = this.vertices.length;
+    final int last = len - 1;
+    final StringBuilder sb = new StringBuilder(len * 512)
+        .append("{ vertices: [ \n");
+    for (int i = 0; i < len; ++i) {
+      sb.append(this.vertices[i].toString(places));
+      if (i < last) { sb.append(',').append('\n'); }
+    }
+    sb.append(" ] }");
+    return sb.toString();
+  }
 
-   /**
-    * Returns a string representation of this face.
-    *
-    * @param places
-    *           the number of places
-    * @return the string
-    */
-   public String toString ( final int places ) {
+  /**
+   * Translates all coordinates in the face by a vector.
+   *
+   * @param v the vector
+   * @return this face
+   * @see Vec3#add(Vec3, Vec3, Vec3)
+   */
+  @Chainable
+  public Face3 translate ( final Vec3 v ) {
 
-      final int len = this.vertices.length;
-      final int last = len - 1;
-      final StringBuilder sb = new StringBuilder(len * 512)
-            .append("{ vertices: [ \n");
-      for (int i = 0; i < len; ++i) {
-         sb.append(this.vertices[i].toString(places));
-         if (i < last) {
-            sb.append(',').append('\n');
-         }
-      }
-      sb.append(" ] }");
-      return sb.toString();
-   }
+    Vec3 c;
+    final int len = this.vertices.length;
+    for (int i = 0; i < len; ++i) {
+      c = this.vertices[i].coord;
+      Vec3.add(c, v, c);
+    }
 
-   /**
-    * Translates all coordinates in the face by a vector.
-    *
-    * @param v
-    *           the vector
-    * @return this face
-    * @see Vec3#add(Vec3, Vec3, Vec3)
-    */
-   @Chainable
-   public Face3 translate ( final Vec3 v ) {
+    return this;
+  }
 
-      Vec3 c;
-      final int len = this.vertices.length;
-      for (int i = 0; i < len; ++i) {
-         c = this.vertices[i].coord;
-         Vec3.add(c, v, c);
-      }
+  /**
+   * Finds the centroid of a face by averaging all the coordinates in
+   * its list of vertices.
+   *
+   * @param face   the face
+   * @param target the output vector
+   * @return the centroid
+   */
+  public static Vec3 centroid (
+      final Face3 face,
+      final Vec3 target ) {
 
-      return this;
-   }
+    target.reset();
+    final Vert3[] verts = face.vertices;
+    final int len = verts.length;
+    for (int i = 0; i < len; ++i) {
+      Vec3.add(target, verts[i].coord, target);
+    }
+    return Vec3.div(target, len, target);
+  }
 }

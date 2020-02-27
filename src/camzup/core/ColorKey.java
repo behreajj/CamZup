@@ -1,477 +1,422 @@
 package camzup.core;
 
 /**
- * Stores a color at a given step (or percent). Equality and
- * hash are based solely on the step, not on the color it
- * holds.
+ * Stores a color at a given step (or percent). Equality and hash are
+ * based solely on the step, not on the color it holds.
  */
 public class ColorKey implements Comparable < ColorKey >, Cloneable {
 
-   /**
-    * The default tolerance used when comparing color keys.
-    */
-   public static final float DEFAULT_TOLERANCE = 0.0005f;
+  /**
+   * The default tolerance used when comparing color keys.
+   */
+  public static final float DEFAULT_TOLERANCE = 0.0005f;
 
-   /**
-    * Tests to see if two keys have approximately the same
-    * step.
-    *
-    * @param a
-    *           the left comparisand
-    * @param b
-    *           the right comparisand
-    * @return the evaluation
-    */
-   public static boolean approx (
-         final ColorKey a,
-         final ColorKey b ) {
+  /**
+   * The key's color. Abbreviated to 'clr' because 'color' is a data
+   * type in Processing IDE.
+   */
+  public final Color clr;
 
-      return ColorKey.approx(a, b, ColorKey.DEFAULT_TOLERANCE);
-   }
+  /**
+   * The key's step, expected to be in the range [0.0, 1.0].
+   */
+  public float step = 0.0f;
 
-   /**
-    * Tests to see if two keys have approximately the same
-    * step.
-    *
-    * @param a
-    *           the left comparisand
-    * @param b
-    *           the right comparisand
-    * @param tolerance
-    *           the tolerance
-    * @return the evaluation
-    * @see Utils#approx(float, float, float)
-    */
-   public static boolean approx (
-         final ColorKey a,
-         final ColorKey b,
-         final float tolerance ) {
+  {
+    this.clr = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+  }
 
-      return Utils.approx(a.step, b.step, tolerance);
-   }
+  /**
+   * The default constructor. Creates a clear black color at 0.0 .
+   */
+  public ColorKey ( ) {
 
-   /**
-    * The key's color. Abbreviated to 'clr' because 'color' is
-    * a data type in Processing IDE.
-    */
-   public final Color clr;
+    this.set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+  }
 
-   /**
-    * The key's step, expected to be in the range [0.0, 1.0].
-    */
-   public float step = 0.0f;
+  /**
+   * Creates a key from a source
+   *
+   * @param source the source key
+   */
+  public ColorKey ( final ColorKey source ) {
 
-   {
-      this.clr = new Color(0.0f, 0.0f, 0.0f, 0.0f);
-   }
+    this.set(source);
+  }
 
-   /**
-    * The default constructor. Creates a clear black color at
-    * 0.0 .
-    */
-   public ColorKey () {
+  /**
+   * Creates a key at a given step. All values of the color (including
+   * alpha) are set to the step.
+   *
+   * @param step the step
+   */
+  public ColorKey ( final float step ) {
 
-      this.set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-   }
+    this.set(step, step, step, step, step);
+  }
 
-   /**
-    * Creates a key from a source
-    *
-    * @param source
-    *           the source key
-    */
-   public ColorKey ( final ColorKey source ) {
+  /**
+   * Creates a new key with a step and color.
+   *
+   * @param step  the step
+   * @param color the color
+   */
+  public ColorKey (
+      final float step,
+      final Color color ) {
 
-      this.set(source);
-   }
+    this.set(step, color);
+  }
 
-   /**
-    * Creates a key at a given step. All values of the color
-    * (including alpha) are set to the step.
-    *
-    * @param step
-    *           the step
-    */
-   public ColorKey ( final float step ) {
+  /**
+   * Creates a key by step and color channel. The color's alpha is
+   * assumed to be 1.0 .
+   *
+   * @param step  the step
+   * @param red   the red channel
+   * @param green the green channel
+   * @param blue  the blue channel
+   */
+  public ColorKey (
+      final float step,
+      final float red,
+      final float green,
+      final float blue ) {
 
-      this.set(step, step, step, step, step);
-   }
+    this.set(step, red, green, blue);
+  }
 
-   /**
-    * Creates a new key with a step and color.
-    *
-    * @param step
-    *           the step
-    * @param color
-    *           the color
-    */
-   public ColorKey (
-         final float step,
-         final Color color ) {
+  /**
+   * Creates a key by step and color channel.
+   *
+   * @param step  the step
+   * @param red   the red channel
+   * @param green the green channel
+   * @param blue  the blue channel
+   * @param alpha the transparency channel
+   */
+  public ColorKey (
+      final float step,
+      final float red,
+      final float green,
+      final float blue,
+      final float alpha ) {
 
-      this.set(step, color);
-   }
+    this.set(step, red, green, blue, alpha);
+  }
 
-   /**
-    * Creates a key by step and color channel. The color's
-    * alpha is assumed to be 1.0 .
-    *
-    * @param step
-    *           the step
-    * @param red
-    *           the red channel
-    * @param green
-    *           the green channel
-    * @param blue
-    *           the blue channel
-    */
-   public ColorKey (
-         final float step,
-         final float red,
-         final float green,
-         final float blue ) {
+  /**
+   * Creates a new key with a step and a color in hexadecimal.
+   *
+   * @param step  the step
+   * @param color the color
+   */
+  public ColorKey (
+      final float step,
+      final int color ) {
 
-      this.set(step, red, green, blue);
-   }
+    this.set(step, color);
+  }
 
-   /**
-    * Creates a key by step and color channel.
-    *
-    * @param step
-    *           the step
-    * @param red
-    *           the red channel
-    * @param green
-    *           the green channel
-    * @param blue
-    *           the blue channel
-    * @param alpha
-    *           the transparency channel
-    */
-   public ColorKey (
-         final float step,
-         final float red,
-         final float green,
-         final float blue,
-         final float alpha ) {
+  /**
+   * Creates a new key with a step and a string representing a color
+   * hexadecimal.
+   *
+   * @param step  the step
+   * @param color the color string
+   */
+  public ColorKey (
+      final float step,
+      final String color ) {
 
-      this.set(step, red, green, blue, alpha);
-   }
+    this.set(step, color);
+  }
 
-   /**
-    * Creates a new key with a step and a color in hexadecimal.
-    *
-    * @param step
-    *           the step
-    * @param color
-    *           the color
-    */
-   public ColorKey (
-         final float step,
-         final int color ) {
+  /**
+   * Tests this key for equality to another based on its step, not
+   * color.
+   *
+   * @param key the key
+   * @return the evaluation
+   */
+  protected boolean equals ( final ColorKey key ) {
 
-      this.set(step, color);
-   }
+    return Float.floatToIntBits(this.step) == Float
+        .floatToIntBits(key.step);
+  }
 
-   /**
-    * Creates a new key with a step and a string representing a
-    * color hexadecimal.
-    *
-    * @param step
-    *           the step
-    * @param color
-    *           the color string
-    */
-   public ColorKey (
-         final float step,
-         final String color ) {
+  /**
+   * Returns a String of Python code targeted toward the Blender 2.8x
+   * API. This code is brittle and is used for internal testing
+   * purposes.
+   *
+   * @return the string
+   */
+  @Experimental
+  String toBlenderCode ( ) {
 
-      this.set(step, color);
-   }
+    return this.toBlenderCode(1.0f);
+  }
 
-   /**
-    * Returns a String of Python code targeted toward the
-    * Blender 2.8x API. This code is brittle and is used for
-    * internal testing purposes.
-    *
-    * @return the string
-    */
-   @Experimental
-   String toBlenderCode () {
+  /**
+   * Returns a String of Python code targeted toward the Blender 2.8x
+   * API. This code is brittle and is used for internal testing
+   * purposes.
+   *
+   * @param gamma the gamma adjustment
+   * @return the string
+   */
+  @Experimental
+  String toBlenderCode ( final float gamma ) {
 
-      return this.toBlenderCode(1.0f);
-   }
+    return new StringBuilder()
+        .append("{\"position\": ")
+        .append(Utils.toFixed(this.step, 3))
+        .append(", \"color\": ")
+        .append(this.clr.toBlenderCode(gamma, true))
+        .append('}')
+        .toString();
+  }
 
-   /**
-    * Returns a String of Python code targeted toward the
-    * Blender 2.8x API. This code is brittle and is used for
-    * internal testing purposes.
-    *
-    * @param gamma
-    *           the gamma adjustment
-    * @return the string
-    */
-   @Experimental
-   String toBlenderCode ( final float gamma ) {
+  /**
+   * Returns a new color with this color's components. Java's cloneable
+   * interface is problematic; use set or a copy constructor instead.
+   *
+   * @return a new key
+   * @see ColorKey#set(ColorKey)
+   */
+  @Override
+  public ColorKey clone ( ) {
 
-      return new StringBuilder()
-            .append("{\"position\": ")
-            .append(Utils.toFixed(this.step, 3))
-            .append(", \"color\": ")
-            .append(this.clr.toBlenderCode(gamma, true))
-            .append('}')
-            .toString();
-   }
+    return new ColorKey(this.step, this.clr);
+  }
 
-   /**
-    * Tests this key for equality to another based on its step,
-    * not color.
-    *
-    * @param key
-    *           the key
-    * @return the evaluation
-    */
-   protected boolean equals ( final ColorKey key ) {
+  /**
+   * Returns -1 when this key is less than the comparisand; 1 when it is
+   * greater than; 0 when the two are 'equal'. The implementation of
+   * this method allows collections of keys to be sorted.
+   *
+   * @param key the comparisand
+   * @return the numeric code
+   */
+  @Override
+  public int compareTo ( final ColorKey key ) {
 
-      return Float.floatToIntBits(this.step) == Float
-            .floatToIntBits(key.step);
-   }
+    return this.step > key.step ? 1
+        : this.step < key.step ? -1 : 0;
+  }
 
-   /**
-    * Returns a new color with this color's components. Java's
-    * cloneable interface is problematic; use set or a copy
-    * constructor instead.
-    *
-    * @return a new key
-    * @see ColorKey#set(ColorKey)
-    */
-   @Override
-   public ColorKey clone () {
+  /**
+   * Tests this key for equivalence with another object.
+   *
+   * @param obj the object
+   * @return the equivalence
+   * @see ColorKey#equals(ColorKey)
+   */
+  @Override
+  public boolean equals ( final Object obj ) {
 
-      return new ColorKey(this.step, this.clr);
-   }
+    if (this == obj) { return true; }
 
-   /**
-    * Returns -1 when this key is less than the comparisand; 1
-    * when it is greater than; 0 when the two are 'equal'. The
-    * implementation of this method allows collections of keys
-    * to be sorted.
-    *
-    * @param key
-    *           the comparisand
-    * @return the numeric code
-    */
-   @Override
-   public int compareTo ( final ColorKey key ) {
+    if (obj == null) { return false; }
 
-      return this.step > key.step ? 1
-            : this.step < key.step ? -1 : 0;
-   }
+    if (this.getClass() != obj.getClass()) { return false; }
 
-   /**
-    * Tests this key for equivalence with another object.
-    *
-    * @param obj
-    *           the object
-    * @return the equivalence
-    * @see ColorKey#equals(ColorKey)
-    */
-   @Override
-   public boolean equals ( final Object obj ) {
+    return this.equals((ColorKey) obj);
+  }
 
-      if (this == obj) {
-         return true;
-      }
+  /**
+   * Returns a hash code for this key based on its step, not based on
+   * its color.
+   *
+   * @return the hash code
+   * @see Float#floatToIntBits(float)
+   */
+  @Override
+  public int hashCode ( ) {
 
-      if (obj == null) {
-         return false;
-      }
+    return Float.floatToIntBits(this.step);
+  }
 
-      if (this.getClass() != obj.getClass()) {
-         return false;
-      }
+  /**
+   * Ressets this key to an initial condition.
+   *
+   * @return this key
+   */
+  public ColorKey reset ( ) {
 
-      return this.equals((ColorKey) obj);
-   }
+    this.step = 0.0f;
+    this.clr.set(0.0f, 0.0f, 0.0f, 0.0f);
+    return this;
+  }
 
-   /**
-    * Returns a hash code for this key based on its step, not
-    * based on its color.
-    *
-    * @return the hash code
-    * @see Float#floatToIntBits(float)
-    */
-   @Override
-   public int hashCode () {
+  /**
+   * Sets this key from a source.
+   *
+   * @param source the source ky
+   * @return this key
+   */
+  @Chainable
+  public ColorKey set ( final ColorKey source ) {
 
-      return Float.floatToIntBits(this.step);
-   }
+    return this.set(source.step, source.clr);
+  }
 
-   /**
-    * Ressets this key to an initial condition.
-    *
-    * @return this key
-    */
-   public ColorKey reset () {
+  /**
+   * Sets this key with a step and color.
+   *
+   * @param step  the step
+   * @param color the color
+   * @return this key
+   */
+  @Chainable
+  public ColorKey set (
+      final float step,
+      final Color color ) {
 
-      this.step = 0.0f;
-      this.clr.set(0.0f, 0.0f, 0.0f, 0.0f);
-      return this;
-   }
+    this.step = step;
+    this.clr.set(color);
+    return this;
+  }
 
-   /**
-    * Sets this key from a source.
-    *
-    * @param source
-    *           the source ky
-    * @return this key
-    */
-   @Chainable
-   public ColorKey set ( final ColorKey source ) {
+  /**
+   * Sets this key by step and color channel. The color's alpha is
+   * assumed to be 1.0 .
+   *
+   * @param step  the step
+   * @param red   the red channel
+   * @param green the green channel
+   * @param blue  the blue channel
+   * @return this key
+   */
+  @Chainable
+  public ColorKey set (
+      final float step,
+      final float red,
+      final float green,
+      final float blue ) {
 
-      return this.set(source.step, source.clr);
-   }
+    this.step = step;
+    this.clr.set(red, green, blue);
 
-   /**
-    * Sets this key with a step and color.
-    *
-    * @param step
-    *           the step
-    * @param color
-    *           the color
-    * @return this key
-    */
-   @Chainable
-   public ColorKey set (
-         final float step,
-         final Color color ) {
+    return this;
+  }
 
-      this.step = step;
-      this.clr.set(color);
-      return this;
-   }
+  /**
+   * Sets this key by step and color channel.
+   *
+   * @param step  the step
+   * @param red   the red channel
+   * @param green the green channel
+   * @param blue  the blue channel
+   * @param alpha the transparency channel
+   * @return this key
+   */
+  @Chainable
+  public ColorKey set (
+      final float step,
+      final float red,
+      final float green,
+      final float blue,
+      final float alpha ) {
 
-   /**
-    * Sets this key by step and color channel. The color's
-    * alpha is assumed to be 1.0 .
-    *
-    * @param step
-    *           the step
-    * @param red
-    *           the red channel
-    * @param green
-    *           the green channel
-    * @param blue
-    *           the blue channel
-    * @return this key
-    */
-   @Chainable
-   public ColorKey set (
-         final float step,
-         final float red,
-         final float green,
-         final float blue ) {
+    this.step = step;
+    this.clr.set(red, green, blue, alpha);
 
-      this.step = step;
-      this.clr.set(red, green, blue);
+    return this;
+  }
 
-      return this;
-   }
+  /**
+   * Sets this key with a step and a color in hexadecimal.
+   *
+   * @param step  the step
+   * @param color the color
+   * @return this key
+   */
+  @Chainable
+  public ColorKey set (
+      final float step,
+      final int color ) {
 
-   /**
-    * Sets this key by step and color channel.
-    *
-    * @param step
-    *           the step
-    * @param red
-    *           the red channel
-    * @param green
-    *           the green channel
-    * @param blue
-    *           the blue channel
-    * @param alpha
-    *           the transparency channel
-    * @return this key
-    */
-   @Chainable
-   public ColorKey set (
-         final float step,
-         final float red,
-         final float green,
-         final float blue,
-         final float alpha ) {
+    this.step = step;
+    Color.fromHex(color, this.clr);
+    return this;
+  }
 
-      this.step = step;
-      this.clr.set(red, green, blue, alpha);
+  /**
+   * Sets this key with a step and a string representing a color
+   * hexadecimal.
+   *
+   * @param step  the step
+   * @param color the color string
+   * @return this key
+   */
+  @Chainable
+  public ColorKey set (
+      final float step,
+      final String color ) {
 
-      return this;
-   }
+    this.step = step;
+    Color.fromHex(color, this.clr);
+    return this;
+  }
 
-   /**
-    * Sets this key with a step and a color in hexadecimal.
-    *
-    * @param step
-    *           the step
-    * @param color
-    *           the color
-    * @return this key
-    */
-   @Chainable
-   public ColorKey set (
-         final float step,
-         final int color ) {
+  /**
+   * Returns a string representation of this key.
+   *
+   * @return the string
+   */
+  @Override
+  public String toString ( ) {
 
-      this.step = step;
-      Color.fromHex(color, this.clr);
-      return this;
-   }
+    return this.toString(4);
+  }
 
-   /**
-    * Sets this key with a step and a string representing a
-    * color hexadecimal.
-    *
-    * @param step
-    *           the step
-    * @param color
-    *           the color string
-    * @return this key
-    */
-   @Chainable
-   public ColorKey set (
-         final float step,
-         final String color ) {
+  /**
+   * Returns a string representation of this key.
+   *
+   * @param places number of decimal places
+   * @return the string
+   */
+  public String toString ( final int places ) {
 
-      this.step = step;
-      Color.fromHex(color, this.clr);
-      return this;
-   }
+    return new StringBuilder()
+        .append("{ step: ")
+        .append(Utils.toFixed(this.step, 6))
+        .append(", clr: ")
+        .append(this.clr.toString(places))
+        .append(' ').append('}')
+        .toString();
+  }
 
-   /**
-    * Returns a string representation of this key.
-    *
-    * @return the string
-    */
-   @Override
-   public String toString () {
+  /**
+   * Tests to see if two keys have approximately the same step.
+   *
+   * @param a the left comparisand
+   * @param b the right comparisand
+   * @return the evaluation
+   */
+  public static boolean approx (
+      final ColorKey a,
+      final ColorKey b ) {
 
-      return this.toString(4);
-   }
+    return ColorKey.approx(a, b, ColorKey.DEFAULT_TOLERANCE);
+  }
 
-   /**
-    * Returns a string representation of this key.
-    *
-    * @param places
-    *           number of decimal places
-    * @return the string
-    */
-   public String toString ( final int places ) {
+  /**
+   * Tests to see if two keys have approximately the same step.
+   *
+   * @param a         the left comparisand
+   * @param b         the right comparisand
+   * @param tolerance the tolerance
+   * @return the evaluation
+   * @see Utils#approx(float, float, float)
+   */
+  public static boolean approx (
+      final ColorKey a,
+      final ColorKey b,
+      final float tolerance ) {
 
-      return new StringBuilder()
-            .append("{ step: ")
-            .append(Utils.toFixed(this.step, 6))
-            .append(", clr: ")
-            .append(this.clr.toString(places))
-            .append(' ').append('}')
-            .toString();
-   }
+    return Utils.approx(a.step, b.step, tolerance);
+  }
 }
