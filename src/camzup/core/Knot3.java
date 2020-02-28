@@ -153,7 +153,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    * The default constructor.
    */
   public Knot3 ( ) {
-
   }
 
   /**
@@ -330,7 +329,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    * Returns a String of Python code targeted toward the Blender 2.8x
    * API. This code is brittle and is used for internal testing
    * purposes, i.e., to compare how curve geometry looks in Blender (the
-   * control) vs. in the library (the test).
+   * control) versus in the library (the test).
    *
    * @return the string
    */
@@ -749,7 +748,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
   @Chainable
   public Knot3 scaleForeHandleBy ( final float scalar ) {
 
-    /* fh = co + scalar * (fh - co) */
+    /* forehandle = coordinate + scalar * (forehandle - coordinate) */
     this.foreHandle.x = this.coord.x
         + scalar * (this.foreHandle.x - this.coord.x);
     this.foreHandle.y = this.coord.y
@@ -817,7 +816,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
   @Chainable
   public Knot3 scaleRearHandleBy ( final float scalar ) {
 
-    /* rh = co + scalar * (rh - co) */
+    /* rearhandle = coordinate + scalar * (rearhandle - coordinate) */
     this.rearHandle.x = this.coord.x
         + scalar * (this.rearHandle.x - this.coord.x);
     this.rearHandle.y = this.coord.y

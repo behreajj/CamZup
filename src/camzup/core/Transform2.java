@@ -74,9 +74,7 @@ public class Transform2 extends Transform {
         final Transform2 target ) {
 
       if (step <= 0.0f) { return target.set(origin); }
-
       if (step >= 1.0f) { return target.set(dest); }
-
       return this.applyUnclamped(origin, dest, step, target);
     }
 

@@ -134,19 +134,6 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
   }
 
   /**
-   * Creates a gradient from a color string; an additional color key,
-   * white at 0.0, is created.
-   *
-   * @param color the color
-   * @see Color#white(Color)
-   */
-  public Gradient ( final String color ) {
-
-    this.keys.add(new ColorKey(0.0f, 1.0f, 1.0f, 1.0f, 1.0f));
-    this.keys.add(new ColorKey(1.0f, color));
-  }
-
-  /**
    * Helper function that compresses existing keys to the left when a
    * new color is added to the gradient without a key.
    *
@@ -232,7 +219,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
   public Gradient append ( final float scalar ) {
 
     this.compressKeysLeft(1);
-    this.keys.add(new ColorKey(1.0f, scalar, scalar, scalar, scalar));
+    final float scl = Utils.clamp01(scalar);
+    this.keys.add(new ColorKey(1.0f, scl, scl, scl, scl));
     return this;
   }
 
@@ -455,11 +443,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
   public boolean equals ( final Object obj ) {
 
     if (this == obj) { return true; }
-
     if (obj == null) { return false; }
-
     if (this.getClass() != obj.getClass()) { return false; }
-
     return this.equals((Gradient) obj);
   }
 
@@ -712,7 +697,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
   public Gradient prepend ( final float scalar ) {
 
     this.compressKeysRight(1);
-    this.keys.add(new ColorKey(0.0f, scalar, scalar, scalar, scalar));
+    final float scl = Utils.clamp01(scalar);
+    this.keys.add(new ColorKey(0.0f, scl, scl, scl, scl));
     return this;
   }
 
@@ -1076,10 +1062,10 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
         .append("color_keys[1].position = grd_data[1][\"position\"]\n")
         .append("color_keys[1].color = grd_data[1][\"color\"]\n\n")
         .append("i_itr = range(2, len(grd_data))\n")
-        .append("for i in i_itr:")
-        .append("\n    datum = grd_data[i]")
-        .append("\n    new_key = color_keys.new(datum[\"position\"])")
-        .append("\n    new_key.color = datum[\"color\"]\n");
+        .append("for i in i_itr:\n")
+        .append("    datum = grd_data[i]\n")
+        .append("    new_key = color_keys.new(datum[\"position\"])\n")
+        .append("    new_key.color = datum[\"color\"]\n");
     return result.toString();
   }
 
@@ -1617,8 +1603,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       }
     }
 
-    target.appendAll(clrs);
-    return target;
+    return target.appendAll(clrs);
   }
 
   /**

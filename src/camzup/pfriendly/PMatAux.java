@@ -211,12 +211,15 @@ public abstract class PMatAux {
 
     if (target == null) { target = new PMatrix3D(); }
 
-    // TODO: what about cases when top and bottom are inverted? Shouldn't
-    // this subtract, then check for 0 when inverting?
     final float n2 = near + near;
-    final float w = 1.0f / Utils.max(Utils.EPSILON, right - left);
-    final float h = 1.0f / Utils.max(Utils.EPSILON, top - bottom);
-    final float d = 1.0f / Utils.max(Utils.EPSILON, far - near);
+
+    float w = right - left;
+    float h = top - bottom;
+    float d = far - near;
+
+    w = w != 0.0f ? 1.0f / w : 1.0f;
+    h = h != 0.0f ? 1.0f / h : 1.0f;
+    d = d != 0.0f ? 1.0f / d : 1.0f;
 
     target.set(
         n2 * w, 0.0f, (right + left) * w, 0.0f,
@@ -811,11 +814,13 @@ public abstract class PMatAux {
 
     if (target == null) { target = new PMatrix3D(); }
 
-    // TODO: what about cases when top and bottom are inverted? Shouldn't
-    // this subtract, then check for 0 when inverting?
-    final float w = 1.0f / Utils.max(Utils.EPSILON, right - left);
-    final float h = 1.0f / Utils.max(Utils.EPSILON, top - bottom);
-    final float d = 1.0f / Utils.max(Utils.EPSILON, far - near);
+    float w = right - left;
+    float h = top - bottom;
+    float d = far - near;
+
+    w = w != 0.0f ? 1.0f / w : 1.0f;
+    h = h != 0.0f ? 1.0f / h : 1.0f;
+    d = d != 0.0f ? 1.0f / d : 1.0f;
 
     target.set(
         w + w, 0.0f, 0.0f, w * (left + right),
@@ -1084,9 +1089,6 @@ public abstract class PMatAux {
     final float n22 = t2 * c - t1 * s;
 
     t1 = target.m31;
-    // t2 = target.m32;
-    // final float n31 = t1 * c + t2 * s;
-    // final float n32 = t2 * c - t1 * s;
 
     target.m01 = n01;
     target.m02 = n02;
@@ -1168,9 +1170,6 @@ public abstract class PMatAux {
     final float n22 = t0 * s + t2 * c;
 
     t0 = target.m30;
-    // t2 = target.m32;
-    // final float n30 = t0 * c - t2 * s;
-    // final float n32 = t0 * s + t2 * c;
 
     target.m00 = n00;
     target.m02 = n02;
@@ -1252,9 +1251,6 @@ public abstract class PMatAux {
     final float n21 = t1 * c - t0 * s;
 
     t0 = target.m30;
-    // t1 = target.m31;
-    // final float n30 = t0 * c + t1 * s;
-    // final float n31 = t1 * c - t0 * s;
 
     target.m00 = n00;
     target.m01 = n01;

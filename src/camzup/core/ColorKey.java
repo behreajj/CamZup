@@ -1,8 +1,9 @@
 package camzup.core;
 
 /**
- * Stores a color at a given step (or percent). Equality and hash are
- * based solely on the step, not on the color it holds.
+ * Stores a color at a given step (or percent) in the range [0.0, 1.0]
+ * . Equality and hash are based solely on the step, not on the color
+ * it holds.
  */
 public class ColorKey implements Comparable < ColorKey >, Cloneable {
 
@@ -27,6 +28,45 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
   }
 
   /**
+   * Creates a key by step and color channel. The color's alpha is
+   * assumed to be 1.0 . This is for package-level use only, so that the
+   * step can be set without clamp protection.
+   *
+   * @param step  the step
+   * @param red   the red channel
+   * @param green the green channel
+   * @param blue  the blue channel
+   */
+  ColorKey (
+      final float step,
+      final float red,
+      final float green,
+      final float blue ) {
+
+    this.set(step, red, green, blue);
+  }
+
+  /**
+   * Creates a key by step and color channel. This is for package-level
+   * use only, so that the step can be set without clamp protection.
+   *
+   * @param step  the step
+   * @param red   the red channel
+   * @param green the green channel
+   * @param blue  the blue channel
+   * @param alpha the transparency channel
+   */
+  ColorKey (
+      final float step,
+      final float red,
+      final float green,
+      final float blue,
+      final float alpha ) {
+
+    this.set(step, red, green, blue, alpha);
+  }
+
+  /**
    * The default constructor. Creates a clear black color at 0.0 .
    */
   public ColorKey ( ) {
@@ -46,13 +86,16 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
 
   /**
    * Creates a key at a given step. All values of the color (including
-   * alpha) are set to the step.
+   * alpha) are set to the step. To prevent confusion between step and
+   * color channels, a color key cannot be set with a single step, only
+   * constructed.
    *
    * @param step the step
    */
   public ColorKey ( final float step ) {
 
-    this.set(step, step, step, step, step);
+    final float stcl = Utils.clamp01(step);
+    this.set(stcl, stcl, stcl, stcl);
   }
 
   /**
@@ -69,43 +112,6 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
   }
 
   /**
-   * Creates a key by step and color channel. The color's alpha is
-   * assumed to be 1.0 .
-   *
-   * @param step  the step
-   * @param red   the red channel
-   * @param green the green channel
-   * @param blue  the blue channel
-   */
-  public ColorKey (
-      final float step,
-      final float red,
-      final float green,
-      final float blue ) {
-
-    this.set(step, red, green, blue);
-  }
-
-  /**
-   * Creates a key by step and color channel.
-   *
-   * @param step  the step
-   * @param red   the red channel
-   * @param green the green channel
-   * @param blue  the blue channel
-   * @param alpha the transparency channel
-   */
-  public ColorKey (
-      final float step,
-      final float red,
-      final float green,
-      final float blue,
-      final float alpha ) {
-
-    this.set(step, red, green, blue, alpha);
-  }
-
-  /**
    * Creates a new key with a step and a color in hexadecimal.
    *
    * @param step  the step
@@ -114,20 +120,6 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
   public ColorKey (
       final float step,
       final int color ) {
-
-    this.set(step, color);
-  }
-
-  /**
-   * Creates a new key with a step and a string representing a color
-   * hexadecimal.
-   *
-   * @param step  the step
-   * @param color the color string
-   */
-  public ColorKey (
-      final float step,
-      final String color ) {
 
     this.set(step, color);
   }
@@ -143,6 +135,55 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
 
     return Float.floatToIntBits(this.step) == Float
         .floatToIntBits(key.step);
+  }
+
+  /**
+   * Sets this key by step and color channel. The color's alpha is
+   * assumed to be 1.0 . This is for package-level use only, so that the
+   * step can be set without clamp protection.
+   *
+   * @param step  the step
+   * @param red   the red channel
+   * @param green the green channel
+   * @param blue  the blue channel
+   * @return this key
+   */
+  @Chainable
+  ColorKey set (
+      final float step,
+      final float red,
+      final float green,
+      final float blue ) {
+
+    this.step = step;
+    this.clr.set(red, green, blue);
+
+    return this;
+  }
+
+  /**
+   * Sets this key by step and color channel. This is for package-level
+   * use only, so that the step can be set without clamp protection.
+   *
+   * @param step  the step
+   * @param red   the red channel
+   * @param green the green channel
+   * @param blue  the blue channel
+   * @param alpha the transparency channel
+   * @return this key
+   */
+  @Chainable
+  ColorKey set (
+      final float step,
+      final float red,
+      final float green,
+      final float blue,
+      final float alpha ) {
+
+    this.step = step;
+    this.clr.set(red, green, blue, alpha);
+
+    return this;
   }
 
   /**
@@ -171,7 +212,7 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
 
     return new StringBuilder()
         .append("{\"position\": ")
-        .append(Utils.toFixed(this.step, 3))
+        .append(Utils.toFixed(Utils.clamp01(this.step), 3))
         .append(", \"color\": ")
         .append(this.clr.toBlenderCode(gamma, true))
         .append('}')
@@ -217,11 +258,8 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
   public boolean equals ( final Object obj ) {
 
     if (this == obj) { return true; }
-
     if (obj == null) { return false; }
-
     if (this.getClass() != obj.getClass()) { return false; }
-
     return this.equals((ColorKey) obj);
   }
 
@@ -239,7 +277,7 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
   }
 
   /**
-   * Ressets this key to an initial condition.
+   * Resets this key to an initial condition.
    *
    * @return this key
    */
@@ -253,7 +291,7 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
   /**
    * Sets this key from a source.
    *
-   * @param source the source ky
+   * @param source the source key
    * @return this key
    */
   @Chainable
@@ -274,55 +312,8 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
       final float step,
       final Color color ) {
 
-    this.step = step;
+    this.step = Utils.clamp01(step);
     this.clr.set(color);
-    return this;
-  }
-
-  /**
-   * Sets this key by step and color channel. The color's alpha is
-   * assumed to be 1.0 .
-   *
-   * @param step  the step
-   * @param red   the red channel
-   * @param green the green channel
-   * @param blue  the blue channel
-   * @return this key
-   */
-  @Chainable
-  public ColorKey set (
-      final float step,
-      final float red,
-      final float green,
-      final float blue ) {
-
-    this.step = step;
-    this.clr.set(red, green, blue);
-
-    return this;
-  }
-
-  /**
-   * Sets this key by step and color channel.
-   *
-   * @param step  the step
-   * @param red   the red channel
-   * @param green the green channel
-   * @param blue  the blue channel
-   * @param alpha the transparency channel
-   * @return this key
-   */
-  @Chainable
-  public ColorKey set (
-      final float step,
-      final float red,
-      final float green,
-      final float blue,
-      final float alpha ) {
-
-    this.step = step;
-    this.clr.set(red, green, blue, alpha);
-
     return this;
   }
 
@@ -338,25 +329,7 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
       final float step,
       final int color ) {
 
-    this.step = step;
-    Color.fromHex(color, this.clr);
-    return this;
-  }
-
-  /**
-   * Sets this key with a step and a string representing a color
-   * hexadecimal.
-   *
-   * @param step  the step
-   * @param color the color string
-   * @return this key
-   */
-  @Chainable
-  public ColorKey set (
-      final float step,
-      final String color ) {
-
-    this.step = step;
+    this.step = Utils.clamp01(step);
     Color.fromHex(color, this.clr);
     return this;
   }

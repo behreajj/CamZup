@@ -81,3 +81,6 @@ trilinear
 jittering
 blits
 pre
+annulus
+quadrilaterals
+rescales

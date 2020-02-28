@@ -400,11 +400,8 @@ public class Transform3 extends Transform {
   public boolean equals ( final Object obj ) {
 
     if (this == obj) { return true; }
-
     if (obj == null) { return false; }
-
     if (this.getClass() != obj.getClass()) { return false; }
-
     return this.equals((Transform3) obj);
   }
 

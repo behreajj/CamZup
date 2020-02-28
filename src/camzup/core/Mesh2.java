@@ -80,6 +80,16 @@ public class Mesh2 extends Mesh {
       return this.aAvg.compareTo(this.bAvg);
     }
 
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
   }
 
   /**
@@ -202,7 +212,6 @@ public class Mesh2 extends Mesh {
   protected boolean equals ( final Mesh2 mesh2 ) {
 
     if (!Arrays.equals(this.coords, mesh2.coords)) { return false; }
-
     if (!Arrays.deepEquals(this.faces, mesh2.faces)) { return false; }
 
     return true;
@@ -264,7 +273,7 @@ public class Mesh2 extends Mesh {
   String toSvgString ( ) {
 
     // TODO: Create internal and external toSvgStrings so that
-    // you can create a svg from a mesh and mesh entity
+    // you can create a SVG from a mesh and mesh entity
     // independently of the renderer. Make this one
     // toSvgStringInternal with package level access.
 
@@ -344,11 +353,8 @@ public class Mesh2 extends Mesh {
   public boolean equals ( final Object obj ) {
 
     if (this == obj) { return true; }
-
     if (!super.equals(obj)) { return false; }
-
     if (this.getClass() != obj.getClass()) { return false; }
-
     return this.equals((Mesh2) obj);
   }
 
@@ -386,9 +392,9 @@ public class Mesh2 extends Mesh {
    */
   public Edge2[] getEdges ( ) {
 
-    final ArrayList < Edge2 > result = new ArrayList <>();
     Edge2 trial = new Edge2();
     final int len0 = this.faces.length;
+    final ArrayList < Edge2 > result = new ArrayList <>(len0 * 4);
 
     for (int i = 0; i < len0; ++i) {
 
@@ -397,14 +403,14 @@ public class Mesh2 extends Mesh {
 
       for (int j = 0; j < len1; ++j) {
 
-        final int[] fo = fs[j];
-        final int[] fd = fs[(j + 1) % len1];
+        final int[] fOrigin = fs[j];
+        final int[] fDest = fs[(j + 1) % len1];
 
         trial.set(
-            this.coords[fo[0]],
-            this.texCoords[fo[1]],
-            this.coords[fd[0]],
-            this.texCoords[fd[1]]);
+            this.coords[fOrigin[0]],
+            this.texCoords[fOrigin[1]],
+            this.coords[fDest[0]],
+            this.texCoords[fDest[1]]);
 
         if (!result.contains(trial)) {
           result.add(trial);
@@ -502,9 +508,9 @@ public class Mesh2 extends Mesh {
    */
   public Vert2[] getVertices ( ) {
 
-    final ArrayList < Vert2 > result = new ArrayList <>();
     Vert2 trial = new Vert2();
     final int len0 = this.faces.length;
+    final ArrayList < Vert2 > result = new ArrayList <>(len0);
 
     for (int i = 0; i < len0; ++i) {
 
@@ -652,6 +658,8 @@ public class Mesh2 extends Mesh {
   @Chainable
   public Mesh2 scale ( final float scale ) {
 
+    if (scale == 0.0f) { return this; }
+
     Vec2 c;
     final int len = this.coords.length;
     for (int i = 0; i < len; ++i) {
@@ -671,6 +679,8 @@ public class Mesh2 extends Mesh {
    */
   @Chainable
   public Mesh2 scale ( final Vec2 scale ) {
+
+    if (Vec2.none(scale)) { return this; }
 
     Vec2 c;
     final int len = this.coords.length;
@@ -712,24 +722,22 @@ public class Mesh2 extends Mesh {
   @Chainable
   public Mesh2 set ( final Mesh2 source ) {
 
-    /*
-     * This should not use Vec2#resize, as it is copying all vectors.
-     */
+    // TEST
 
     /* Copy coordinates. */
     final Vec2[] sourcevs = source.coords;
     final int vslen = sourcevs.length;
-    this.coords = new Vec2[vslen];
+    this.coords = Vec2.resize(this.coords, vslen);
     for (int i = 0; i < vslen; ++i) {
-      this.coords[i] = new Vec2(sourcevs[i]);
+      this.coords[i].set(sourcevs[i]);
     }
 
     /* Copy texture coordinates. */
     final Vec2[] sourcevts = source.texCoords;
     final int vtslen = sourcevts.length;
-    this.texCoords = new Vec2[vtslen];
+    this.texCoords = Vec2.resize(this.texCoords, vtslen);
     for (int j = 0; j < vtslen; ++j) {
-      this.texCoords[j] = new Vec2(sourcevts[j]);
+      this.texCoords[j].set(sourcevts[j]);
     }
 
     /* Copy faces. */
@@ -784,8 +792,6 @@ public class Mesh2 extends Mesh {
   @Chainable
   public Mesh2 sort ( final float tolerance ) {
 
-    // final Comparator < Vec2 > cmpr = Mesh.SORT_2;
-
     /*
      * Sort coordinates: copy old indices, load into sorted set to both
      * remove duplicates and to sort, then unload back into a new array.
@@ -820,12 +826,12 @@ public class Mesh2 extends Mesh {
       for (int j = 0; j < vertsLen; ++j) {
         final int[] vert = face[j];
 
-        /* Update coord index. */
+        /* Update coordinate index. */
         final int vidx = Arrays.binarySearch(
             this.coords, vold[vert[0]], Mesh.SORT_2);
         vert[0] = vidx < 0 ? vert[0] : vidx;
 
-        /* Update tex coord index. */
+        /* Update texture coordinate index. */
         final int vtidx = Arrays.binarySearch(
             this.texCoords, vtold[vert[1]], Mesh.SORT_2);
         vert[1] = vtidx < 0 ? vert[1] : vtidx;
@@ -856,6 +862,10 @@ public class Mesh2 extends Mesh {
       final int faceIndex,
       final int edgeIndex,
       final int cuts ) {
+
+    // RESEARCH: Is there any way to search for interior half-edge which
+    // travels in the opposite direction?
+    // search for face[j1][n], face[j0][n]
 
     if (cuts < 1) { return this; }
 
@@ -919,9 +929,9 @@ public class Mesh2 extends Mesh {
     }
 
     /*
-     * Append new coords and tex coords to the end of their respective
-     * arrays. The new faces need to be inserted to this.faces[idx], not
-     * reassigned to local face array.
+     * Append new coordinates and texture coordinates to the end of their
+     * respective arrays. The new faces need to be inserted to the
+     * object's faces array, not reassigned to local face array.
      */
     this.coords = Vec2.concat(this.coords, vsNew);
     this.texCoords = Vec2.concat(this.texCoords, vtsNew);
@@ -958,6 +968,48 @@ public class Mesh2 extends Mesh {
   }
 
   /**
+   * Creates an array of meshes wherein each element contains one face
+   * from the source's faces.
+   * 
+   * @param source the source mesh
+   */
+  @Experimental
+  public static Mesh2[] detachFaces ( final Mesh2 source ) {
+
+    // TEST
+
+    final int[][][] fsSrc = source.faces;
+    final Vec2[] vsSrc = source.coords;
+    final Vec2[] vtsSrc = source.texCoords;
+
+    final int fsLen = fsSrc.length;
+    final Mesh2[] meshes = new Mesh2[fsLen];
+
+    for (int i = 0; i < fsLen; ++i) {
+      int[][] fSrc = fsSrc[i];
+      int fLen = fSrc.length;
+
+      final int[][][] fsTrg = new int[1][fLen][3];
+      final Vec2[] vsTrg = new Vec2[fLen];
+      final Vec2[] vtsTrg = new Vec2[fLen];
+
+      final int[][] fTrg = fsTrg[0];
+      for (int j = 0; j < fLen; ++j) {
+        int[] vertSrc = fSrc[j];
+
+        vsTrg[j] = new Vec2(vsSrc[vertSrc[0]]);
+        vtsTrg[j] = new Vec2(vtsSrc[vertSrc[1]]);
+        fTrg[j][0] = fTrg[j][1] = fTrg[j][2] = j;
+      }
+
+      meshes[i] = new Mesh2(
+          fsTrg, vsTrg, vtsTrg);
+    }
+
+    return meshes;
+  }
+
+  /**
    * Subdivides a convex face. Defaults to centroid-based subdivision.
    *
    * @param faceIdx the face index
@@ -983,8 +1035,6 @@ public class Mesh2 extends Mesh {
   @Chainable
   public Mesh2 subdivFaceCentroid ( final int faceIdx ) {
 
-    // TODO: Due to reversion double check this for errors.
-
     /* Validate face index, find face. */
     final int facesLen = this.faces.length;
     final int i = Math.floorMod(faceIdx, facesLen);
@@ -1003,20 +1053,25 @@ public class Mesh2 extends Mesh {
     final Vec2[] vtsNew = new Vec2[faceLen + 1];
     final int[][][] fsNew = new int[faceLen][4][2];
 
+    /* Centroid is last element of new array. */
     final Vec2 vCentroid = vsNew[faceLen] = new Vec2();
     final Vec2 vtCentroid = vtsNew[faceLen] = new Vec2();
+
     final int vCentroidIdx = vsOldLen + faceLen;
     final int vtCentroidIdx = vtsOldLen + faceLen;
+
     for (int j = 0; j < faceLen; ++j) {
+      final int k = (j + 1) % faceLen;
+
       final int[] vertCurr = face[j];
+      final int[] vertNext = face[k];
+
       final Vec2 vCurr = this.coords[vertCurr[0]];
       final Vec2 vtCurr = this.texCoords[vertCurr[1]];
 
+      /* Sum vertex for centroid. */
       Vec2.add(vCentroid, vCurr, vCentroid);
       Vec2.add(vtCentroid, vtCurr, vtCentroid);
-
-      final int k = (j + 1) % faceLen;
-      final int[] vertNext = face[k];
 
       final int vNextIdx = vertNext[0];
       final Vec2 vNext = this.coords[vNextIdx];
@@ -1241,7 +1296,7 @@ public class Mesh2 extends Mesh {
       final int places,
       final int truncate ) {
 
-    final StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder(2048);
 
     sb.append("{ name: \"")
         .append(this.name)
@@ -1378,7 +1433,7 @@ public class Mesh2 extends Mesh {
    * @param stopAngle  the stop angle
    * @param annulus    the size of the opening
    * @param sectors    number of sectors in a circle
-   * @param poly       the poly type
+   * @param poly       the polygon type
    * @param target     the output mesh
    * @return the arc
    */
@@ -1608,13 +1663,10 @@ public class Mesh2 extends Mesh {
       final float x = coord.x;
       final float y = coord.y;
 
-      /* Min, max need separate if checks, not if-else. */
+      /* Minimum, maximum need separate if checks, not if-else. */
       if (x < lb.x) { lb.x = x; }
-
       if (x > ub.x) { ub.x = x; }
-
       if (y < lb.y) { lb.y = y; }
-
       if (y > ub.y) { ub.y = y; }
     }
 
@@ -1655,7 +1707,7 @@ public class Mesh2 extends Mesh {
   }
 
   /**
-   * Creates a subdvided plane. Useful for meshes which later will be
+   * Creates a subdivided plane. Useful for meshes which later will be
    * augmented by noise or height maps to simulate terrain.
    *
    * @param cols   number of columns
@@ -1672,9 +1724,9 @@ public class Mesh2 extends Mesh {
   }
 
   /**
-   * Creates a plane subdivided into either tris or quads, depending on
-   * the polygon type. Useful for meshes which later will be augmented
-   * by noise or height maps to simulate terrain.
+   * Creates a plane subdivided into either triangles or quadrilaterals,
+   * depending on the polygon type. Useful for meshes which later will
+   * be augmented by noise or height maps to simulate terrain.
    *
    * @param cols   number of columns
    * @param rows   number of rows
@@ -1803,7 +1855,7 @@ public class Mesh2 extends Mesh {
   }
 
   /**
-   * Creates a subdvided plane. Useful for meshes which later will be
+   * Creates a subdivided plane. Useful for meshes which later will be
    * augmented by noise or height maps to simulate terrain.
    *
    * @param div    subdivisions
@@ -1940,8 +1992,8 @@ public class Mesh2 extends Mesh {
   /**
    * Creates a regular convex polygon with an opening in its center. The
    * annulus describes the relative size of this opening. When the
-   * polygon type is NGON, the ring will be composed of quads;
-   * otherwise, tris.
+   * polygon type is NGON, the ring will be composed of quadrilaterals;
+   * otherwise, triangles.
    *
    * @param annulus the size of the opening
    * @param sectors the number of sides
@@ -2147,7 +2199,7 @@ public class Mesh2 extends Mesh {
 
   /**
    * Restructures the mesh so that each face index refers to unique
-   * data, indifferent to redundancies. As a consequence, coord and
+   * data, indifferent to redundancies. As a consequence, coordinate and
    * texture coordinate are of equal length and face indices are easier
    * to read and understand. Useful prior to subdividing edges, or to
    * make mesh similar to Unity meshes. Similar to 'ripping' vertices or
@@ -2164,16 +2216,18 @@ public class Mesh2 extends Mesh {
     target.name = source.name;
 
     final int len0 = source.faces.length;
-    final ArrayList < Vec2 > vs = new ArrayList <>();
-    final ArrayList < Vec2 > vts = new ArrayList <>();
+    final int capacity = len0 * 4;
 
-    target.faces = new int[len0][][];
+    /* Has to be a new array for the case source == target. */
+    final int[][][] trgfs = new int[len0][][];
+    final ArrayList < Vec2 > vs = new ArrayList <>(capacity);
+    final ArrayList < Vec2 > vts = new ArrayList <>(capacity);
 
     for (int k = 0, i = 0; i < len0; ++i) {
 
       final int[][] fs0 = source.faces[i];
       final int len1 = fs0.length;
-      final int[][] trgfs0 = target.faces[i] = new int[len1][2];
+      final int[][] trgfs0 = trgfs[i] = new int[len1][2];
 
       for (int j = 0; j < len1; ++j, ++k) {
 
@@ -2189,6 +2243,7 @@ public class Mesh2 extends Mesh {
 
     target.coords = vs.toArray(new Vec2[vs.size()]);
     target.texCoords = vts.toArray(new Vec2[vts.size()]);
+    target.faces = trgfs;
     return target;
   }
 }

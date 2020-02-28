@@ -61,6 +61,17 @@ public abstract class Mesh extends EntityData implements IMesh {
       Vec2.quantize(b, this.levels, this.qb);
       return this.qa.compareTo(this.qb);
     }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
   }
 
   /**
@@ -116,6 +127,17 @@ public abstract class Mesh extends EntityData implements IMesh {
       Vec3.quantize(a, this.levels, this.qa);
       Vec3.quantize(b, this.levels, this.qb);
       return this.qa.compareTo(this.qb);
+    }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
     }
   }
 
@@ -201,8 +223,7 @@ public abstract class Mesh extends EntityData implements IMesh {
    * @return this mesh
    */
   @Chainable
-  public Mesh cycleFaces (
-      final int places ) {
+  public Mesh cycleFaces ( final int places ) {
 
     final int len = this.faces.length;
     final int k = Math.floorMod(places, len);

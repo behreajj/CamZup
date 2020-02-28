@@ -325,6 +325,7 @@ public class Mat4 extends Matrix {
     if (Float.floatToIntBits(this.m33) != Float.floatToIntBits(n.m33)) {
       return false;
     }
+
     return true;
   }
 
@@ -356,11 +357,8 @@ public class Mat4 extends Matrix {
   public boolean equals ( final Object obj ) {
 
     if (this == obj) { return true; }
-
     if (obj == null) { return false; }
-
     if (this.getClass() != obj.getClass()) { return false; }
-
     return this.equals((Mat4) obj);
   }
 
@@ -1576,8 +1574,8 @@ public class Mat4 extends Matrix {
       final float sina,
       final Mat4 target ) {
 
-    // TODO: Is this inconsistent when compared with 4D rotation
-    // about the YW axis? Should sina and -sina be transpoed?
+    // RESEARCH: Is this inconsistent when compared with 4D rotation about
+    // the YW axis? Should sin(a) and -sin(a) be transposed?
 
     return target.set(
         cosa, 0.0f, sina, 0.0f,
@@ -1761,12 +1759,15 @@ public class Mat4 extends Matrix {
       final float near, final float far,
       final Mat4 target ) {
 
-    // TODO: what about cases when top and bottom are inverted? Shouldn't
-    // this subtract, then check for 0 when inverting?
     final float n2 = near + near;
-    final float w = 1.0f / Utils.max(Utils.EPSILON, right - left);
-    final float h = 1.0f / Utils.max(Utils.EPSILON, top - bottom);
-    final float d = 1.0f / Utils.max(Utils.EPSILON, far - near);
+
+    float w = right - left;
+    float h = top - bottom;
+    float d = far - near;
+
+    w = w != 0.0f ? 1.0f / w : 1.0f;
+    h = h != 0.0f ? 1.0f / h : 1.0f;
+    d = d != 0.0f ? 1.0f / d : 1.0f;
 
     return target.set(
         n2 * w, 0.0f, (right + left) * w, 0.0f,
@@ -2052,7 +2053,7 @@ public class Mat4 extends Matrix {
       final Vec2 b,
       final Vec3 target ) {
 
-    // TODO: Needs testing.
+    // TEST
 
     // return target.set(
     // a.m00 * b.x + a.m01 * b.y + a.m03,
@@ -2085,7 +2086,7 @@ public class Mat4 extends Matrix {
       final Vec3 b,
       final Vec3 target ) {
 
-    // TODO: Needs testing.
+    // TEST
 
     // return target.set(
     // a.m00 * b.x +
@@ -2129,7 +2130,7 @@ public class Mat4 extends Matrix {
       final Vec2 b,
       final Vec3 target ) {
 
-    // TODO: Needs testing.
+    // TEST
 
     // return target.set(
     // a.m00 * b.x + a.m01 * b.y,
@@ -2162,7 +2163,7 @@ public class Mat4 extends Matrix {
       final Vec3 b,
       final Vec3 target ) {
 
-    // TODO: Needs testing.
+    // TEST
 
     // return target.set(
     // a.m00 * b.x +
@@ -2206,11 +2207,13 @@ public class Mat4 extends Matrix {
       final float near, final float far,
       final Mat4 target ) {
 
-    // TODO: what about cases when top and bottom are inverted? Shouldn't
-    // this subtract, then check for 0 when inverting?
-    final float w = 1.0f / Utils.max(Utils.EPSILON, right - left);
-    final float h = 1.0f / Utils.max(Utils.EPSILON, top - bottom);
-    final float d = 1.0f / Utils.max(Utils.EPSILON, far - near);
+    float w = right - left;
+    float h = top - bottom;
+    float d = far - near;
+
+    w = w != 0.0f ? 1.0f / w : 1.0f;
+    h = h != 0.0f ? 1.0f / h : 1.0f;
+    d = d != 0.0f ? 1.0f / d : 1.0f;
 
     return target.set(
         w + w, 0.0f, 0.0f, w * (left + right),

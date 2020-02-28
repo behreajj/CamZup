@@ -100,11 +100,8 @@ public class Edge2 implements Comparable < Edge2 > {
   public boolean equals ( final Object obj ) {
 
     if (this == obj) { return true; }
-
     if (obj == null) { return false; }
-
     if (this.getClass() != obj.getClass()) { return false; }
-
     return this.equals((Edge2) obj);
   }
 
@@ -145,18 +142,32 @@ public class Edge2 implements Comparable < Edge2 > {
     return this;
   }
 
+  @Chainable
+  public Edge2 scale ( final float scale ) {
+
+    return this.scaleGlobal(scale);
+  }
+
+  @Chainable
+  public Edge2 scale ( final Vec2 scale ) {
+
+    return this.scaleGlobal(scale);
+  }
+
   /**
    * Scales the coordinates of this edge. The texture coordinates are
    * unaffected.
    *
-   * @param v uniform scalar
+   * @param scale uniform scalar
    * @return this edge
    */
   @Chainable
-  public Edge2 scale ( final float v ) {
+  public Edge2 scaleGlobal ( final float scale ) {
 
-    Vec2.mul(this.origin.coord, v, this.origin.coord);
-    Vec2.mul(this.dest.coord, v, this.dest.coord);
+    if (scale == 0.0f) { return this; }
+
+    Vec2.mul(this.origin.coord, scale, this.origin.coord);
+    Vec2.mul(this.dest.coord, scale, this.dest.coord);
     return this;
   }
 
@@ -164,14 +175,66 @@ public class Edge2 implements Comparable < Edge2 > {
    * Scales the coordinates of this edge. The texture coordinates are
    * unaffected.
    *
-   * @param v non uniform scalar
+   * @param scale non uniform scalar
    * @return this edge
    */
   @Chainable
-  public Edge2 scale ( final Vec2 v ) {
+  public Edge2 scaleGlobal ( final Vec2 scale ) {
 
-    Vec2.mul(this.origin.coord, v, this.origin.coord);
-    Vec2.mul(this.dest.coord, v, this.dest.coord);
+    if (Vec2.none(scale)) { return this; }
+
+    Vec2.mul(this.origin.coord, scale, this.origin.coord);
+    Vec2.mul(this.dest.coord, scale, this.dest.coord);
+    return this;
+  }
+
+  @Chainable
+  public Edge2 scaleLocal ( final float scale ) {
+
+    // TEST
+
+    if (scale == 0.0f) { return this; }
+
+    final Vec2 coOrigin = this.origin.coord;
+    final Vec2 coDest = this.dest.coord;
+
+    final Vec2 mp = new Vec2(
+        (coOrigin.x + coDest.x) * 0.5f,
+        (coOrigin.y + coDest.y) * 0.5f);
+
+    Vec2.sub(coOrigin, mp, coOrigin);
+    Vec2.mul(coOrigin, scale, coOrigin);
+    Vec2.add(coOrigin, mp, coOrigin);
+
+    Vec2.sub(coDest, mp, coDest);
+    Vec2.mul(coDest, scale, coDest);
+    Vec2.add(coDest, mp, coDest);
+
+    return this;
+  }
+
+  @Chainable
+  public Edge2 scaleLocal ( final Vec2 scale ) {
+
+    // TEST
+
+    if (Vec2.none(scale)) { return this; }
+
+    final Vec2 coOrigin = this.origin.coord;
+    final Vec2 coDest = this.dest.coord;
+
+    final Vec2 mp = new Vec2(
+        (coOrigin.x + coDest.x) * 0.5f,
+        (coOrigin.y + coDest.y) * 0.5f);
+
+    Vec2.sub(coOrigin, mp, coOrigin);
+    Vec2.mul(coOrigin, scale, coOrigin);
+    Vec2.add(coOrigin, mp, coOrigin);
+
+    Vec2.sub(coDest, mp, coDest);
+    Vec2.mul(coDest, scale, coDest);
+    Vec2.add(coDest, mp, coDest);
+
     return this;
   }
 
@@ -278,7 +341,6 @@ public class Edge2 implements Comparable < Edge2 > {
     final Vec2 coDest = edge.dest.coord;
 
     if (step <= 0.0f) { return target.set(coOrigin); }
-
     if (step >= 1.0f) { return target.set(coDest); }
 
     final float u = 1.0f - step;

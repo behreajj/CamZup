@@ -236,14 +236,16 @@ public class Edge3 implements Comparable < Edge3 > {
    * Scales the coordinates of this edge. The texture coordinates and
    * normals are unaffected.
    *
-   * @param v uniform scalar
+   * @param scale uniform scalar
    * @return this edge
    */
   @Chainable
-  public Edge3 scale ( final float v ) {
+  public Edge3 scale ( final float scale ) {
 
-    Vec3.mul(this.origin.coord, v, this.origin.coord);
-    Vec3.mul(this.dest.coord, v, this.dest.coord);
+    if (scale == 0.0f) { return this; }
+
+    Vec3.mul(this.origin.coord, scale, this.origin.coord);
+    Vec3.mul(this.dest.coord, scale, this.dest.coord);
     return this;
   }
 
@@ -251,15 +253,16 @@ public class Edge3 implements Comparable < Edge3 > {
    * Scales the coordinates of this edge. The texture coordinates and
    * normals are unaffected.
    *
-   * @param v non uniform scalar
+   * @param scale non uniform scalar
    * @return this edge
    */
-  @Experimental
   @Chainable
-  public Edge3 scale ( final Vec3 v ) {
+  public Edge3 scale ( final Vec3 scale ) {
 
-    Vec3.mul(this.origin.coord, v, this.origin.coord);
-    Vec3.mul(this.dest.coord, v, this.dest.coord);
+    if (Vec3.none(scale)) { return this; }
+
+    Vec3.mul(this.origin.coord, scale, this.origin.coord);
+    Vec3.mul(this.dest.coord, scale, this.dest.coord);
     return this;
   }
 
@@ -387,7 +390,6 @@ public class Edge3 implements Comparable < Edge3 > {
     final Vec3 coDest = edge.dest.coord;
 
     if (step <= 0.0f) { return target.set(coOrigin); }
-
     if (step >= 1.0f) { return target.set(coDest); }
 
     final float u = 1.0f - step;

@@ -820,7 +820,7 @@ public abstract class Utils implements IUtils {
    */
   public static int bool ( final int value ) {
 
-    return value == 0 ? 0 : 1;
+    return value != 0 ? 1 : 0;
   }
 
   /**
@@ -1231,9 +1231,9 @@ public abstract class Utils implements IUtils {
       final float dest,
       final float step ) {
 
-    if (step <= 0.0f) { return origin; }
-    if (step >= 1.0f) { return dest; }
-    return Utils.lerpUnclamped(origin, dest, step);
+    return step <= 0.0f ? origin
+        : step >= 1.0f ? dest
+            : (1.0f - step) * origin + step * dest;
   }
 
   /**

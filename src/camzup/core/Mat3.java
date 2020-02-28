@@ -275,11 +275,8 @@ public class Mat3 extends Matrix {
   public boolean equals ( final Object obj ) {
 
     if (this == obj) { return true; }
-
     if (obj == null) { return false; }
-
     if (this.getClass() != obj.getClass()) { return false; }
-
     return this.equals((Mat3) obj);
   }
 

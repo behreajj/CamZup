@@ -86,11 +86,8 @@ public class Vert3 implements Comparable < Vert3 > {
   public boolean equals ( final Object obj ) {
 
     if (this == obj) { return true; }
-
     if (obj == null) { return false; }
-
     if (this.getClass() != obj.getClass()) { return false; }
-
     return this.equals((Vert3) obj);
   }
 

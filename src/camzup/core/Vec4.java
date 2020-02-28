@@ -1717,7 +1717,10 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final Vec4 target,
       final Vec4 normalized ) {
 
-    if (scalar == 0.0f) { return target.reset(); }
+    if (scalar == 0.0f) {
+      normalized.reset();
+      return target.reset();
+    }
     Vec4.normalize(v, normalized);
     return Vec4.mul(normalized, scalar, target);
   }
@@ -1741,7 +1744,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final float sina,
       final Vec4 target ) {
 
-    // Like 3D rotateX.
+    // TODO: Needs testing.
+
     return target.set(
         v.x,
         cosa * v.y - sina * v.z,
@@ -1755,6 +1759,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final float cosa,
       final float sina,
       final Vec4 target ) {
+
+    // TODO: Needs testing.
 
     return target.set(
         v.x,
@@ -1770,6 +1776,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final float sina,
       final Vec4 target ) {
 
+    // TODO: Needs testing.
+
     return target.set(
         v.x,
         cosa * v.y - sina * v.w,
@@ -1784,7 +1792,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final float sina,
       final Vec4 target ) {
 
-    // Transposed 3D rotateY
+    // TODO: Needs testing.
+
     return target.set(
         cosa * v.x - sina * v.z,
         v.y,
@@ -1798,6 +1807,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final float cosa,
       final float sina,
       final Vec4 target ) {
+
+    // TODO: Needs testing.
 
     return target.set(
         cosa * v.x - sina * v.w,
@@ -1813,7 +1824,8 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final float sina,
       final Vec4 target ) {
 
-    // Like 3D rotateZ
+    // TODO: Needs testing.
+
     return target.set(
         cosa * v.x - sina * v.y,
         cosa * v.y + sina * v.x,
@@ -1838,7 +1850,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final Vec4 target ) {
 
     if (places < 1) { return Vec4.round(v, target); }
-
     if (places > 7) { return target.set(v); }
 
     int n = 10;

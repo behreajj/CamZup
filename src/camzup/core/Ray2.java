@@ -145,11 +145,8 @@ public class Ray2 extends Ray {
   public boolean equals ( final Object obj ) {
 
     if (this == obj) { return true; }
-
     if (obj == null) { return false; }
-
     if (this.getClass() != obj.getClass()) { return false; }
-
     return this.equals((Ray2) obj);
   }
 

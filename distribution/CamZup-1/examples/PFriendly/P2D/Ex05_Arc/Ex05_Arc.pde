@@ -11,6 +11,7 @@ void settings() {
 
 void setup() {
   graphics = (Yup2)getGraphics();
+  //frameRate(1000);
 }
 
 void draw() {
@@ -24,9 +25,9 @@ void draw() {
   graphics.origin();
   strokeWeight(5.0);
   stroke(#373737);
-  arc(0.0, 0.0, 
-    175.0, 175.0, 
-    start, stop, 
+  arc(0.0, 0.0,
+    175.0, 175.0,
+    start, stop,
     PIE);
 
   stroke(#ff2020);

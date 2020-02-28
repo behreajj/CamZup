@@ -3067,7 +3067,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final Vec3 target,
       final Vec3 normalized ) {
 
-    if (scalar == 0.0f) { return target.reset(); }
+    if (scalar == 0.0f) {
+      normalized.reset();
+      return target.reset();
+    }
     Vec3.normalize(v, normalized);
     return Vec3.mul(normalized, scalar, target);
   }
@@ -3348,7 +3351,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final Vec3 target ) {
 
     if (places < 1) { return Vec3.round(v, target); }
-
     if (places > 7) { return target.set(v); }
 
     int n = 10;

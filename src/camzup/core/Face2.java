@@ -161,6 +161,8 @@ public class Face2 implements Comparable < Face2 > {
   @Chainable
   public Face2 scale ( final float scale ) {
 
+    if (scale == 0.0f) { return this; }
+
     Vec2 c;
     final int len = this.vertices.length;
     for (int i = 0; i < len; ++i) {
@@ -180,6 +182,8 @@ public class Face2 implements Comparable < Face2 > {
    */
   @Chainable
   public Face2 scale ( final Vec2 scale ) {
+
+    if (Vec2.none(scale)) { return this; }
 
     Vec2 c;
     final int len = this.vertices.length;

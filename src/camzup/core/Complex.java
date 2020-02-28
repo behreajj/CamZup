@@ -374,9 +374,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
   @Override
   public float[] toArray ( ) {
 
-    return new float[] {
-        this.real, this.imag
-    };
+    return new float[] { this.real, this.imag };
   }
 
   /**

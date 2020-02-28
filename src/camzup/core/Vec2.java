@@ -480,11 +480,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
   @Override
   public int hashCode ( ) {
 
-    // TODO: hash codes are not as efficient as they could be
-    // because the multiplication has precedence over the bit
-    // xor, so
-    // HASH_BASE * HASH_MUL can be pre-calculated.
-
     return (IUtils.MUL_BASE ^ Float.floatToIntBits(this.x))
         * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y);
   }
@@ -2805,7 +2800,10 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final Vec2 target,
       final Vec2 normalized ) {
 
-    if (scalar == 0.0f) { return target.reset(); }
+    if (scalar == 0.0f) {
+      normalized.reset();
+      return target.reset();
+    }
     Vec2.normalize(v, normalized);
     return Vec2.mul(normalized, scalar, target);
   }
@@ -2968,7 +2966,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final Vec2 target ) {
 
     if (places < 1) { return Vec2.round(v, target); }
-
     if (places > 7) { return target.set(v); }
 
     int n = 10;

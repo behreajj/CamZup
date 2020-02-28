@@ -63,9 +63,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
         final Curve2 target ) {
 
       if (step <= 0.0f) { return target.set(origin); }
-
       if (step >= 1.0f) { return target.set(dest); }
-
       return this.applyUnclamped(origin, dest, step, target);
     }
 
@@ -111,6 +109,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
         final float step,
         final Curve2 target ) {
 
+      // TODO: Refactor with resize so new knots shouldn't have to be
+      // created.
       final List < Knot2 > orKn = origin.knots;
       final List < Knot2 > dsKn = dest.knots;
 
@@ -300,9 +300,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
   }
 
   /**
-   * A helper function for eval. Returns a coordinate given two knots
-   * and a step. Assumes the step has already been checked, and that the
-   * knots are in sequence along the curve.
+   * A helper function for evaluation. Returns a coordinate given two
+   * knots and a step. Assumes the step has already been checked, and
+   * that the knots are in sequence along the curve.
    *
    * @param a      the origin knot
    * @param b      the destination knot
@@ -324,9 +324,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
   }
 
   /**
-   * A helper function for eval. Returns a tangent given two knots and a
-   * step. Assumes the step has already been checked, and that the knots
-   * are in sequence along the curve.
+   * A helper function for evaluation. Returns a tangent given two knots
+   * and a step. Assumes the step has already been checked, and that the
+   * knots are in sequence along the curve.
    *
    * @param a      the origin knot
    * @param b      the destination knot
@@ -348,9 +348,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
   }
 
   /**
-   * A helper function for eval. Returns a normalized tangent given two
-   * knots. Assumes the step has already been checked, and that the
-   * knots are in sequence along the curve.
+   * A helper function for evaluation. Returns a normalized tangent
+   * given two knots. Assumes the step has already been checked, and
+   * that the knots are in sequence along the curve.
    *
    * @param a      the origin knot
    * @param b      the destination knot
@@ -399,6 +399,38 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
     } else if (!this.knots.equals(curve.knots)) { return false; }
 
     return true;
+  }
+
+  /**
+   * For internal (package-level) use. Resizes a curve to the specified
+   * length. The length may be no less than 2. When the new length is
+   * greater than the old, new <code>Knot2</code>s are added.<br>
+   * <br>
+   * This does not check if remaining elements in the list are
+   * <code>null</code>.
+   *
+   * @param len the length
+   * @return this curve
+   * @see List#add(Object)
+   * @see List#remove(int)
+   */
+  @Chainable
+  Curve2 resize ( final int len ) {
+
+    final int vlen = len < 2 ? 2 : len;
+    final int oldLen = this.knots.size();
+    final int diff = vlen - oldLen;
+    if (diff < 0) {
+      final int last = oldLen - 1;
+      for (int i = 0; i < -diff; ++i) {
+        this.knots.remove(last - i);
+      }
+    } else if (diff > 0) {
+      for (int i = 0; i < diff; ++i) {
+        this.knots.add(new Knot2());
+      }
+    }
+    return this;
   }
 
   /**
@@ -553,11 +585,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
   public boolean equals ( final Object obj ) {
 
     if (this == obj) { return true; }
-
     if (!super.equals(obj)) { return false; }
-
     if (this.getClass() != obj.getClass()) { return false; }
-
     return this.equals((Curve2) obj);
   }
 
@@ -683,7 +712,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
     final Knot2 kLast = this.knots.get(this.knots.size() - 1);
     coord.set(kLast.coord);
     Vec2.subNorm(coord, kLast.rearHandle, tangent);
-
     return coord;
   }
 
@@ -868,7 +896,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
   @Chainable
   public Curve2 prepend ( final Knot2 ... knots ) {
 
-    // TODO: Needs testing...
+    // TEST
     final int len = knots.length;
     for (int i = 0, j = 0; i < len; ++i) {
       final Knot2 knot = knots[i];
@@ -1003,6 +1031,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
   @Chainable
   public Curve2 scale ( final float scale ) {
 
+    if (scale == 0.0f) { return this; }
+
     final Iterator < Knot2 > itr = this.knots.iterator();
     while (itr.hasNext()) {
       itr.next().scale(scale);
@@ -1019,6 +1049,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
    */
   @Chainable
   public Curve2 scale ( final Vec2 scale ) {
+
+    if (Vec2.none(scale)) { return this; }
 
     final Iterator < Knot2 > itr = this.knots.iterator();
     while (itr.hasNext()) {
@@ -1238,50 +1270,63 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
      * reassignment. Depends on what kind of underlying list (e.g., array
      * or linked) is used.
      */
+    target.resize(knotCount);
     final List < Knot2 > knots = target.knots;
-    knots.clear();
     for (int i = 0; i < knotCount; ++i) {
-      final float angle1 = Utils.lerpUnclamped(
-          a1, destAngle1, i * toStep);
-      knots.add(
-          Knot2.fromPolar(
-              Utils.scNorm(angle1),
-              Utils.scNorm(angle1 - 0.25f),
-              radius, handleMag,
-              new Knot2()));
+      final float t = i * toStep;
+      final float angle1 = (1.0f - t) * a1 + t * destAngle1;
+      Knot2.fromPolar(
+          Utils.scNorm(angle1),
+          Utils.scNorm(angle1 - 0.25f),
+          radius, handleMag,
+          knots.get(i));
     }
 
     /* Depending on arc mode, calculate chord or legs. */
     target.closedLoop = arcMode != ArcMode.OPEN;
     if (target.closedLoop) {
+
+      final Knot2 first = knots.get(0);
+      final Knot2 last = knots.get(knots.size() - 1);
+
+      final Vec2 coLast = last.coord;
+      final Vec2 coFirst = first.coord;
+
       if (arcMode == ArcMode.CHORD) {
 
-        final Knot2 first = knots.get(0);
-        final Knot2 last = knots.get(knots.size() - 1);
-
         /* Flatten the first to last handles. */
-        Curve2.lerp13(last.coord, first.coord, last.foreHandle);
-        Curve2.lerp13(first.coord, last.coord, first.rearHandle);
+        last.foreHandle.set(
+            0.6666667f * coLast.x + 0.33333334f * coFirst.x,
+            0.6666667f * coLast.y + 0.33333334f * coFirst.y);
+
+        first.rearHandle.set(
+            0.6666667f * coFirst.x + 0.33333334f * coLast.x,
+            0.6666667f * coFirst.y + 0.33333334f * coLast.y);
 
       } else if (arcMode == ArcMode.PIE) {
 
-        final Knot2 first = knots.get(0);
-        final Knot2 last = knots.get(knots.size() - 1);
-
         /* Add a center knot. */
         final Knot2 center = new Knot2();
-        knots.add(center);
         final Vec2 coCenter = center.coord;
+        knots.add(center);
 
         /* Flatten center handles. */
-        Curve2.lerp13(coCenter, last.coord, center.rearHandle);
-        Curve2.lerp13(coCenter, first.coord, center.foreHandle);
+        center.rearHandle.set(
+            0.6666667f * coCenter.x + 0.33333334f * coLast.x,
+            0.6666667f * coCenter.y + 0.33333334f * coLast.y);
+        center.foreHandle.set(
+            0.6666667f * coCenter.x + 0.33333334f * coFirst.x,
+            0.6666667f * coCenter.y + 0.33333334f * coFirst.y);
 
         /* Flatten handle from first to center. */
-        Curve2.lerp13(first.coord, coCenter, first.rearHandle);
+        first.rearHandle.set(
+            0.6666667f * coFirst.x + 0.33333334f * coCenter.x,
+            0.6666667f * coFirst.y + 0.33333334f * coCenter.y);
 
         /* Flatten handle from last to center. */
-        Curve2.lerp13(last.coord, coCenter, last.foreHandle);
+        last.foreHandle.set(
+            0.6666667f * coLast.x + 0.33333334f * coCenter.x,
+            0.6666667f * coLast.y + 0.33333334f * coCenter.y);
       }
     }
 
@@ -1420,26 +1465,29 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
     /*
      * Since this is called by arc, it also needs to be optimized.
      */
-    target.clear();
-    target.closedLoop = true;
+
     final float offset1 = offsetAngle * IUtils.ONE_TAU;
     final int vknct = knotCount < 3 ? 3 : knotCount;
+    target.resize(vknct);
     final float invKnCt = 1.0f / vknct;
     final float hndtn = 0.25f * invKnCt;
     final float handleMag = Utils.tan(hndtn * IUtils.TAU) * radius
         * IUtils.FOUR_THIRDS;
 
-    final List < Knot2 > knots = target.knots;
-    for (int i = 0; i < vknct; ++i) {
+    int i = 0;
+    final Iterator < Knot2 > itr = target.knots.iterator();
+    while (itr.hasNext()) {
       final float angle1 = offset1 + i * invKnCt;
-      knots.add(
-          Knot2.fromPolar(
-              angle1 * IUtils.TAU,
-              radius, handleMag,
-              new Knot2()));
+      Knot2.fromPolar(
+          Utils.scNorm(angle1),
+          Utils.scNorm(angle1 - 0.25f),
+          radius, handleMag,
+          itr.next());
+      i++;
     }
 
     target.name = "Circle";
+    target.closedLoop = true;
     return target;
   }
 
@@ -1457,14 +1505,18 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
       final Vec2[] points,
       final Curve2 target ) {
 
-    target.clear();
     target.closedLoop = closedLoop;
-    final List < Knot2 > knots = target.knots;
     final int knotCount = points.length;
-    for (int i = 0; i < knotCount; ++i) {
+    target.resize(knotCount);
+
+    int i = 0;
+    final Iterator < Knot2 > itr = target.knots.iterator();
+    while (itr.hasNext()) {
       final Vec2 point = points[i];
-      knots.add(new Knot2(point, point, point));
+      itr.next().set(point, point, point);
+      i++;
     }
+
     return Curve2.smoothHandles(target);
   }
 
@@ -1483,20 +1535,14 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
       final int knotCount,
       final Curve2 target ) {
 
-    target.clear();
-    target.closedLoop = true;
-    final int vknct = knotCount < 3 ? 3 : knotCount;
-    final float toAngle = IUtils.TAU / vknct;
-    final List < Knot2 > knots = target.knots;
-    for (int i = 0; i < vknct; ++i) {
-      final float angle = offsetAngle + i * toAngle;
-      final Knot2 knot = new Knot2();
-      Vec2.fromPolar(angle, radius, knot.coord);
-      knots.add(knot);
-    }
-
+    Curve2.straightenHandles(
+        Curve2.circle(
+            offsetAngle,
+            radius,
+            knotCount,
+            target));
     target.name = "Polygon";
-    return Curve2.straightenHandles(target);
+    return target;
   }
 
   /**
@@ -1555,87 +1601,97 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
       points[i] = Vec2.randomCartesian(rng,
           lowerBound, upperBound, new Vec2());
     }
-    target.closedLoop = closedLoop;
+
     return Curve2.fromPoints(closedLoop, points, target);
   }
 
   /**
-   * Creates a rectangle. The first coordinate, x0 and y0, specifies the
-   * top left corner; the second coordinate, x1 and y1, specifies the
-   * bottom right corner.
+   * Creates a rectangle.
    *
-   * @param x0i    top left corner x
-   * @param y0i    top left corner y
-   * @param x1i    bottom right corner x
-   * @param y1i    bottom right corner y
+   * @param lbx    lower bound x
+   * @param lby    lower bound y
+   * @param ubx    upper bound x
+   * @param uby    upper bound y
    * @param target the output curve
    * @return the rectangle
    */
   public static Curve2 rect (
-      final float x0i,
-      final float y0i,
-      final float x1i,
-      final float y1i,
+      final float lbx,
+      final float lby,
+      final float ubx,
+      final float uby,
       final Curve2 target ) {
 
-    final float x0 = x0i < x1i ? x0i : x1i;
-    final float x1 = x1i > x0i ? x1i : x0i;
-    final float y0 = y0i > y1i ? y0i : y1i;
-    final float y1 = y1i < y0i ? y1i : y0i;
+    final float x0 = lbx < ubx ? lbx : ubx;
+    final float x1 = ubx > lbx ? ubx : lbx;
+    final float y0 = lby > uby ? lby : uby;
+    final float y1 = uby < lby ? uby : lby;
 
-    target.clear();
     target.closedLoop = true;
     target.name = "Rect";
+    target.resize(4);
 
-    final List < Knot2 > knots = target.knots;
-    knots.add(new Knot2(x0, y0));
-    knots.add(new Knot2(x1, y0));
-    knots.add(new Knot2(x1, y1));
-    knots.add(new Knot2(x0, y1));
+    final Iterator < Knot2 > itr = target.knots.iterator();
+    final Knot2 kn0 = itr.next();
+    final Knot2 kn1 = itr.next();
+    final Knot2 kn2 = itr.next();
+    final Knot2 kn3 = itr.next();
 
-    return Curve2.straightenHandles(target);
+    kn0.set(x0, y0, 0.0f, 0.0f, 0.0f, 0.0f);
+    kn1.set(x1, y0, 0.0f, 0.0f, 0.0f, 0.0f);
+    kn2.set(x1, y1, 0.0f, 0.0f, 0.0f, 0.0f);
+    kn3.set(x0, y1, 0.0f, 0.0f, 0.0f, 0.0f);
+
+    Curve2.lerp13(kn0.coord, kn1.coord, kn0.foreHandle);
+    Curve2.lerp13(kn1.coord, kn2.coord, kn1.foreHandle);
+    Curve2.lerp13(kn2.coord, kn3.coord, kn2.foreHandle);
+    Curve2.lerp13(kn3.coord, kn0.coord, kn3.foreHandle);
+
+    Curve2.lerp13(kn0.coord, kn3.coord, kn0.rearHandle);
+    Curve2.lerp13(kn1.coord, kn0.coord, kn1.rearHandle);
+    Curve2.lerp13(kn2.coord, kn1.coord, kn2.rearHandle);
+    Curve2.lerp13(kn3.coord, kn2.coord, kn3.rearHandle);
+
+    return target;
   }
 
   /**
-   * Creates a rounded rectangle. The first coordinate, x0 and y0,
-   * specifies the top left corner; the second coordinate, x1 and y1,
-   * specifies the bottom right corner. The fifth parameter specifies
-   * the corner rounding factor.
+   * Creates a rounded rectangle. The fifth parameter specifies the
+   * corner rounding factor.
    *
-   * @param x0     top left corner x
-   * @param y0     top left corner y
-   * @param x1     bottom right corner x
-   * @param y1     bottom right corner y
+   * @param lbx    lower bound x
+   * @param lby    lower bound y
+   * @param ubx    upper bound x
+   * @param uby    upper bound y
    * @param corner the rounding factor
    * @param target the output curve
    * @return the rounded rectangle
    */
   public static Curve2 rect (
-      final float x0,
-      final float y0,
-      final float x1,
-      final float y1,
+      final float lbx,
+      final float lby,
+      final float ubx,
+      final float uby,
       final float corner,
       final Curve2 target ) {
 
     return Curve2.rect(
-        x0, y0, x1, y1,
+        lbx, lby, ubx, uby,
         corner, corner,
         corner, corner,
         target);
   }
 
   /**
-   * Creates a rounded rectangle. The first coordinate, x0 and y0,
-   * specifies the top left corner; the second coordinate, x1 and y1,
-   * specifies the bottom right corner. The next four parameters specify
-   * the rounding factor for the top left, top right, bottom right and
-   * bottom left corners.
+   * Creates a rounded rectangle. The first four parameters specify the
+   * lower and upper bound of the rectangle. The next four parameters
+   * specify the rounding factor for the top left, top right, bottom
+   * right and bottom left corners.
    *
-   * @param x0i    top left corner x
-   * @param y0i    top left corner y
-   * @param x1i    bottom right corner x
-   * @param y1i    bottom right corner y
+   * @param lbx    lower bound x
+   * @param lby    lower bound y
+   * @param ubx    upper bound x
+   * @param uby    upper bound y
    * @param tl     rounding top left corner
    * @param tr     rounding top right corner
    * @param br     rounding bottom right corner
@@ -1644,43 +1700,48 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
    * @return the rounded rectangle
    */
   public static Curve2 rect (
-      final float x0i,
-      final float y0i,
-      final float x1i,
-      final float y1i,
+      final float lbx,
+      final float lby,
+      final float ubx,
+      final float uby,
       final float tl,
       final float tr,
       final float br,
       final float bl,
       final Curve2 target ) {
 
+    target.closedLoop = true;
+    target.name = "Rect";
+    target.resize(8);
+    final Iterator < Knot2 > itr = target.knots.iterator();
+
     /* Validate corners. */
-    final float x0 = x0i < x1i ? x0i : x1i;
-    final float x1 = x1i > x0i ? x1i : x0i;
-    final float y0 = y0i > y1i ? y0i : y1i;
-    final float y1 = y1i < y0i ? y1i : y0i;
+    final float x0 = lbx < ubx ? lbx : ubx;
+    final float x1 = ubx > lbx ? ubx : lbx;
+    final float y0 = lby > uby ? lby : uby;
+    final float y1 = uby < lby ? uby : lby;
 
     /* Validate corner insetting. */
-    final float vtl = Utils.max(Utils.abs(tl), Utils.EPSILON);
-    final float vtr = Utils.max(Utils.abs(tr), Utils.EPSILON);
-    final float vbr = Utils.max(Utils.abs(br), Utils.EPSILON);
-    final float vbl = Utils.max(Utils.abs(bl), Utils.EPSILON);
+    final float vtl = Utils.max(Utils.abs(tl), IUtils.DEFAULT_EPSILON);
+    final float vtr = Utils.max(Utils.abs(tr), IUtils.DEFAULT_EPSILON);
+    final float vbr = Utils.max(Utils.abs(br), IUtils.DEFAULT_EPSILON);
+    final float vbl = Utils.max(Utils.abs(bl), IUtils.DEFAULT_EPSILON);
 
     /* Top edge. */
-    final Knot2 k0 = new Knot2(x0 + vtl, y0, 0.0f, 0.0f, 0.0f, 0.0f);
-    final Knot2 k1 = new Knot2(x1 - vtr, y0, 0.0f, 0.0f, 0.0f, 0.0f);
+    final Knot2 k0 = itr.next().set(x0 + vtl, y0, 0.0f, 0.0f, 0.0f, 0.0f);
+    final Knot2 k1 = itr.next().set(x1 - vtr, y0, 0.0f, 0.0f, 0.0f, 0.0f);
 
     /* Right edge. */
-    final Knot2 k2 = new Knot2(x1, y0 - vtr, 0.0f, 0.0f, 0.0f, 0.0f);
-    final Knot2 k3 = new Knot2(x1, y1 + vbr, 0.0f, 0.0f, 0.0f, 0.0f);
+    final Knot2 k2 = itr.next().set(x1, y0 - vtr, 0.0f, 0.0f, 0.0f, 0.0f);
+    final Knot2 k3 = itr.next().set(x1, y1 + vbr, 0.0f, 0.0f, 0.0f, 0.0f);
 
     /* Bottom edge. */
-    final Knot2 k4 = new Knot2(x1 - vbr, y1, 0.0f, 0.0f, 0.0f, 0.0f);
-    final Knot2 k5 = new Knot2(x0 + vbl, y1, 0.0f, 0.0f, 0.0f, 0.0f);
+    final Knot2 k4 = itr.next().set(x1 - vbr, y1, 0.0f, 0.0f, 0.0f, 0.0f);
+    final Knot2 k5 = itr.next().set(x0 + vbl, y1, 0.0f, 0.0f, 0.0f, 0.0f);
 
     /* Left edge. */
-    final Knot2 k6 = new Knot2(x0, y1 + vbl, 0.0f, 0.0f, 0.0f, 0.0f);
-    final Knot2 k7 = new Knot2(x0, y0 - vtl, 0.0f, 0.0f, 0.0f, 0.0f);
+    final Knot2 k6 = itr.next().set(x0, y1 + vbl, 0.0f, 0.0f, 0.0f, 0.0f);
+    final Knot2 k7 = itr.next().set(x0, y0 - vtl, 0.0f, 0.0f, 0.0f, 0.0f);
 
     /* Cache knot coordinate shortcuts . */
     final Vec2 k0co = k0.coord;
@@ -1767,22 +1828,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
       k0rh.x = (k0co.x + x0) * 0.5f;
       k0rh.y = y0;
     }
-
-    /* Clear old data from target. */
-    target.clear();
-    target.closedLoop = true;
-    target.name = "Rect";
-
-    /* Add knots to the target. */
-    final List < Knot2 > knots = target.knots;
-    knots.add(k0);
-    knots.add(k1);
-    knots.add(k2);
-    knots.add(k3);
-    knots.add(k4);
-    knots.add(k5);
-    knots.add(k6);
-    knots.add(k7);
 
     return target;
   }
@@ -1876,9 +1921,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
     final int knotLength = knots.size();
     if (knotLength < 3) { return target; }
 
-    // TODO: Can this be optimized to use fewer temp vectors?
-    // maybe get rid of fornorm and backnorm and reuse forward
-    // and back?
+    // TODO: Can this be optimized to use fewer temporary vectors?
+    // maybe get rid of fore normalized and back normalized and reuse
+    // forward and back?
     final Vec2 back = new Vec2();
     final Vec2 forward = new Vec2();
 

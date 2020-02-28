@@ -270,6 +270,8 @@ public class Face3 implements Comparable < Face3 > {
   @Chainable
   public Face3 scale ( final float scale ) {
 
+    if (scale == 0.0f) { return this; }
+
     Vec3 c;
     final int len = this.vertices.length;
     for (int i = 0; i < len; ++i) {
@@ -287,9 +289,10 @@ public class Face3 implements Comparable < Face3 > {
    * @return this face
    * @see Vec3#mul(Vec3, Vec3, Vec3)
    */
-  @Experimental
   @Chainable
   public Face3 scale ( final Vec3 scale ) {
+
+    if (Vec3.none(scale)) { return this; }
 
     Vec3 c;
     final int len = this.vertices.length;
