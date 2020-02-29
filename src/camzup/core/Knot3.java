@@ -153,6 +153,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    * The default constructor.
    */
   public Knot3 ( ) {
+
   }
 
   /**

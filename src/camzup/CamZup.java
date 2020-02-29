@@ -4,11 +4,10 @@ import java.util.HashSet;
 
 import processing.core.PApplet;
 
-import camzup.core.Edge2;
 import camzup.core.Gradient;
 import camzup.core.Mesh2;
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity2;
+import camzup.core.MeshEntity3;
 import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -235,23 +234,15 @@ public class CamZup {
     final Random rng = new Random();
     final Gradient grd = new Gradient();
 
-    final Mesh2 mesh = new Mesh2();
-    // Mesh2.square(mesh);
-    Mesh2.polygon(12, mesh);
-    Edge2[] edges = mesh.getEdges();
-    for (int i = 0; i < edges.length; ++i) {
-      if (i % 3 == 0) { edges[i].scaleLocal(0.5f); }
-    }
-    // System.out.println(mesh);
-    MeshEntity2 me = new MeshEntity2();
-    me.appendMesh(mesh);
-    System.out.println(me.toBlenderCode());
+    final Mesh2 m2 = new Mesh2();
+    Mesh2.polygon(5, m2);
+    final Mesh3 m3 = new Mesh3(m2);
+    m3.extrudeFace(0, 1.0f);
 
-    // final Mesh3 m = new Mesh3();
-    // Mesh3.dodecahedron(m);
-    // Mesh3.uniformData(m, m);
-    // m.set(mesh);
     // System.out.println(m);
+    final MeshEntity3 me = new MeshEntity3();
+    me.appendMesh(m3);
+    System.out.println(me.toBlenderCode());
   }
 
   /**

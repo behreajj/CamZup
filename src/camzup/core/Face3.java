@@ -34,6 +34,47 @@ public class Face3 implements Comparable < Face3 > {
     this.set(vertices);
   }
 
+  @Experimental
+  @Chainable
+  Face3 translateLocal ( final Vec3 v ) {
+
+    final Vec3 centroid = new Vec3();
+    Face3.centroid(this, centroid);
+
+    Vert3 vert;
+    Vec3 c;
+    Vec3 n;
+
+    final Vec3 refUp = Vec3.up(new Vec3());
+    final Vec3 i = new Vec3();
+    final Vec3 j = new Vec3();
+    final Vec3 k = new Vec3();
+    final Quaternion rot = new Quaternion();
+    final Vec3 rotv = new Vec3();
+
+    // TODO: Easiest way to make a look at matrix?
+    final int len = this.vertices.length;
+    for (int q = 0; q < len; ++q) {
+      vert = this.vertices[q];
+      c = vert.coord;
+      n = vert.normal;
+
+      Vec3.normalize(n, k);
+      Vec3.crossNorm(refUp, k, i);
+      Vec3.crossNorm(k, i, j);
+      Quaternion.fromAxes(i, j, k, rot);
+      // Quaternion.fromAxes(i, k, j, rot);
+      Quaternion.mulVector(rot, v, rotv);
+      // Vec3.crossNorm(a, b, target);
+
+      Vec3.sub(c, centroid, c);
+      Vec3.add(c, rotv, c);
+      Vec3.add(c, centroid, c);
+    }
+
+    return this;
+  }
+
   /**
    * Compares this face to another by hash code.
    *
@@ -56,13 +97,9 @@ public class Face3 implements Comparable < Face3 > {
   public boolean equals ( final Object obj ) {
 
     if (this == obj) { return true; }
-
     if (obj == null) { return false; }
-
     if (this.getClass() != obj.getClass()) { return false; }
-
     if (!Arrays.equals(this.vertices, ((Face3) obj).vertices)) { return false; }
-
     return true;
   }
 
@@ -263,12 +300,38 @@ public class Face3 implements Comparable < Face3 > {
   /**
    * Scales all coordinates in the face by a scalar.
    *
-   * @param scale the vector
+   * @param scale the scalar
    * @return this face
    * @see Vec3#mul(Vec3, float, Vec3)
    */
   @Chainable
   public Face3 scale ( final float scale ) {
+
+    return this.scaleGlobal(scale);
+  }
+
+  /**
+   * Scales all coordinates in the face by a scalar.
+   *
+   * @param scale the nonuniform scalar
+   * @return this face
+   * @see Vec3#mul(Vec3, float, Vec3)
+   */
+  @Chainable
+  public Face3 scale ( final Vec3 scale ) {
+
+    return this.scaleGlobal(scale);
+  }
+
+  /**
+   * Scales all coordinates in the face by a scalar; uses global
+   * coordinates, i.e., doesn't consider the face's position.
+   *
+   * @param scale the scalar
+   * @return this face
+   */
+  @Chainable
+  public Face3 scaleGlobal ( final float scale ) {
 
     if (scale == 0.0f) { return this; }
 
@@ -283,14 +346,14 @@ public class Face3 implements Comparable < Face3 > {
   }
 
   /**
-   * Scales all coordinates in the face by a vector.
+   * Scales all coordinates in the face by a scalar; uses global
+   * coordinates, i.e., doesn't consider the face's position.
    *
-   * @param scale the vector
+   * @param scale the nonuniform scalar
    * @return this face
-   * @see Vec3#mul(Vec3, Vec3, Vec3)
    */
   @Chainable
-  public Face3 scale ( final Vec3 scale ) {
+  public Face3 scaleGlobal ( final Vec3 scale ) {
 
     if (Vec3.none(scale)) { return this; }
 
@@ -299,6 +362,60 @@ public class Face3 implements Comparable < Face3 > {
     for (int i = 0; i < len; ++i) {
       c = this.vertices[i].coord;
       Vec3.mul(c, scale, c);
+    }
+
+    return this;
+  }
+
+  /**
+   * Scales all coordinates in the face by a scalar; subtracts the
+   * face's centroid from each vertex, scales, then adds the centroid.
+   *
+   * @param scale the scalar
+   * @return this face
+   */
+  @Chainable
+  public Face3 scaleLocal ( final float scale ) {
+
+    if (scale == 0.0f) { return this; }
+
+    final Vec3 centroid = new Vec3();
+    Face3.centroid(this, centroid);
+
+    Vec3 c;
+    final int len = this.vertices.length;
+    for (int i = 0; i < len; ++i) {
+      c = this.vertices[i].coord;
+      Vec3.sub(c, centroid, c);
+      Vec3.mul(c, scale, c);
+      Vec3.add(c, centroid, c);
+    }
+
+    return this;
+  }
+
+  /**
+   * Scales all coordinates in the face by a scalar; subtracts the
+   * face's centroid from each vertex, scales, then adds the centroid.
+   *
+   * @param scale the nonuniform scalar
+   * @return this face
+   */
+  @Chainable
+  public Face3 scaleLocal ( final Vec3 scale ) {
+
+    if (Vec3.none(scale)) { return this; }
+
+    final Vec3 centroid = new Vec3();
+    Face3.centroid(this, centroid);
+
+    Vec3 c;
+    final int len = this.vertices.length;
+    for (int i = 0; i < len; ++i) {
+      c = this.vertices[i].coord;
+      Vec3.sub(c, centroid, c);
+      Vec3.mul(c, scale, c);
+      Vec3.add(c, centroid, c);
     }
 
     return this;
@@ -357,6 +474,19 @@ public class Face3 implements Comparable < Face3 > {
    */
   @Chainable
   public Face3 translate ( final Vec3 v ) {
+
+    return this.translateGlobal(v);
+  }
+
+  /**
+   * Translates all coordinates in a face by a vector; uses global
+   * coordinates, i.e., doesn't consider the face's orientation.
+   *
+   * @param v the vector
+   * @return this face.
+   */
+  @Chainable
+  public Face3 translateGlobal ( final Vec3 v ) {
 
     Vec3 c;
     final int len = this.vertices.length;

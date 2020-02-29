@@ -56,11 +56,8 @@ public class Face2 implements Comparable < Face2 > {
   public boolean equals ( final Object obj ) {
 
     if (this == obj) { return true; }
-
     if (obj == null) { return false; }
-
     if (this.getClass() != obj.getClass()) { return false; }
-
     if (!Arrays.equals(this.vertices, ((Face2) obj).vertices)) { return false; }
 
     return true;
@@ -138,6 +135,11 @@ public class Face2 implements Comparable < Face2 > {
   @Chainable
   public Face2 rotateZ ( final float radians ) {
 
+    return this.rotateZGlobal(radians);
+  }
+
+  public Face2 rotateZGlobal ( final float radians ) {
+
     final float cosa = Utils.cos(radians);
     final float sina = Utils.sin(radians);
     Vec2 c;
@@ -151,15 +153,63 @@ public class Face2 implements Comparable < Face2 > {
     return this;
   }
 
+  public Face2 rotateZLocal ( final float radians ) {
+
+    // TEST
+
+    final Vec2 centroid = new Vec2();
+    Face2.centroid(this, centroid);
+
+    final float t = radians + Vec2.heading(centroid);
+    final float cosa = Utils.cos(t);
+    final float sina = Utils.sin(t);
+
+    Vec2 c;
+    final int len = this.vertices.length;
+    for (int i = 0; i < len; ++i) {
+      c = this.vertices[i].coord;
+      Vec2.sub(c, centroid, c);
+      Vec2.rotateZ(c, cosa, sina, c);
+      Vec2.add(c, centroid, c);
+    }
+
+    return this;
+  }
+
   /**
    * Scales all coordinates in the face by a scalar.
    *
-   * @param scale the vector
+   * @param scale the scale
    * @return this face
    * @see Vec2#mul(Vec2, float, Vec2)
    */
   @Chainable
   public Face2 scale ( final float scale ) {
+
+    return this.scaleGlobal(scale);
+  }
+
+  /**
+   * Scales all coordinates in the face by a vector.
+   *
+   * @param scale the nonuniform scalar
+   * @return this face
+   * @see Vec2#mul(Vec2, Vec2, Vec2)
+   */
+  public Face2 scale ( final Vec2 scale ) {
+
+    return this.scaleGlobal(scale);
+  }
+
+  /**
+   * Scales all coordinates in the face by a scalar; uses global
+   * coordinates, i.e., doesn't consider the face's position.
+   *
+   * @param scale the scalar
+   * @return this face
+   */
+  @Chainable
+  public Face2 scaleGlobal ( final float scale ) {
 
     if (scale == 0.0f) { return this; }
 
@@ -174,14 +224,14 @@ public class Face2 implements Comparable < Face2 > {
   }
 
   /**
-   * Scales all coordinates in the face by a vector.
+   * Scales all coordinates in the face by a scalar; uses global
+   * coordinates, i.e., doesn't consider the face's position.
    *
-   * @param scale the vector
+   * @param scale the nonuniform scalar
    * @return this face
-   * @see Vec2#mul(Vec2, Vec2, Vec2)
    */
   @Chainable
-  public Face2 scale ( final Vec2 scale ) {
+  public Face2 scaleGlobal ( final Vec2 scale ) {
 
     if (Vec2.none(scale)) { return this; }
 
@@ -190,6 +240,60 @@ public class Face2 implements Comparable < Face2 > {
     for (int i = 0; i < len; ++i) {
       c = this.vertices[i].coord;
       Vec2.mul(c, scale, c);
+    }
+
+    return this;
+  }
+
+  /**
+   * Scales all coordinates in the face by a scalar; subtracts the
+   * face's centroid from each vertex, scales, then adds the centroid.
+   *
+   * @param scale the scalar
+   * @return this face
+   */
+  @Chainable
+  public Face2 scaleLocal ( final float scale ) {
+
+    if (scale == 0.0f) { return this; }
+
+    final Vec2 centroid = new Vec2();
+    Face2.centroid(this, centroid);
+
+    Vec2 c;
+    final int len = this.vertices.length;
+    for (int i = 0; i < len; ++i) {
+      c = this.vertices[i].coord;
+      Vec2.sub(c, centroid, c);
+      Vec2.mul(c, scale, c);
+      Vec2.add(c, centroid, c);
+    }
+
+    return this;
+  }
+
+  /**
+   * Scales all coordinates in the face by a scalar; subtracts the
+   * face's centroid from each vertex, scales, then adds the centroid.
+   *
+   * @param scale the nonuniform scalar
+   * @return this face
+   */
+  @Chainable
+  public Face2 scaleLocal ( final Vec2 scale ) {
+
+    if (Vec2.none(scale)) { return this; }
+
+    final Vec2 centroid = new Vec2();
+    Face2.centroid(this, centroid);
+
+    Vec2 c;
+    final int len = this.vertices.length;
+    for (int i = 0; i < len; ++i) {
+      c = this.vertices[i].coord;
+      Vec2.sub(c, centroid, c);
+      Vec2.mul(c, scale, c);
+      Vec2.add(c, centroid, c);
     }
 
     return this;

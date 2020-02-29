@@ -3,6 +3,8 @@ package camzup.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import camzup.core.Mesh2.PolyType;
 
@@ -340,6 +342,131 @@ public class Mesh3 extends Mesh {
     return this.equals((Mesh3) obj);
   }
 
+  @Experimental
+  public Mesh3 extrudeFace (
+      final int faceIdx,
+      final float amt ) {
+
+    // TEST
+
+    /* Validate face index, find face. */
+    final int facesLen = this.faces.length;
+    final int i = Utils.mod(faceIdx, facesLen);
+    final int[][] face = this.faces[i];
+    final int faceLen = face.length;
+
+    /*
+     * Find centroid for coordinate and normal. The extrusion is the
+     * multiplication of the centroid normal by the amount.
+     */
+    final Vec3 centroid = new Vec3();
+    final Vec3 extrusion = new Vec3();
+    for (int j = 0; j < faceLen; ++j) {
+      final int[] vert = face[j];
+      Vec3.add(centroid, this.coords[vert[0]], centroid);
+      Vec3.add(extrusion, this.normals[vert[2]], extrusion);
+    }
+    Vec3.div(centroid, faceLen, centroid);
+    Vec3.rescale(extrusion, amt, extrusion);
+
+    /* Cache the vertices and normals which form the original face. */
+    final Vec3[] vnsBase = new Vec3[faceLen];
+
+    /*
+     * Cache old length of coordinates and texture coordinates so new ones
+     * can be appended to the end.
+     */
+    final int vsOldLen = this.coords.length;
+    final int vnsOldLen = this.normals.length;
+
+    /*
+     * There will be a new normal for the extruded face which is a copy of
+     * the original's; additionally there will be a new normal for each
+     * side face.
+     */
+    final Vec3[] vsExtruded = new Vec3[faceLen];
+    final Vec3[] vnsExtruded = new Vec3[faceLen + faceLen];
+
+    final int[][][] fsNew = new int[faceLen + 1][][];
+    final int[][] extrudedFace = fsNew[faceLen] = new int[faceLen][];
+
+    for (int j = 0; j < faceLen; ++j) {
+
+      /* Cache current vertex. */
+      final int[] vertCurr = face[j];
+      final int vCurrIdx = vertCurr[0];
+      final int vtCurrIdx = vertCurr[1];
+
+      /* Cache next vertex for side face. */
+      final int k = (j + 1) % faceLen;
+      final int[] vertNext = face[k];
+      final int vtNextIdx = vertNext[1];
+
+      /*
+       * Retrieve coordinate and normal from vertex. Normals also need to be
+       * stored in an array because the original face's will be flipped.
+       */
+      final Vec3 vBase = this.coords[vCurrIdx];
+      final Vec3 vn = vnsBase[j] = this.normals[vertCurr[2]];
+
+      final Vec3 vExtruded = vsExtruded[j] = new Vec3();
+      vnsExtruded[j] = new Vec3(vn);
+
+      /* Extrude the vertex coordinate. */
+      Vec3.sub(vBase, centroid, vExtruded);
+      Vec3.add(vExtruded, extrusion, vExtruded);
+      Vec3.add(vExtruded, centroid, vExtruded);
+
+      /* Calculate the normal for the face's side. */
+      final Vec3 vnSide = vnsExtruded[faceLen + j] = new Vec3();
+      Vec3.crossNorm(vBase, extrusion, vnSide);
+      final int sideIdx = vnsOldLen + faceLen + j;
+
+      final int[] extrudedVert = extrudedFace[j] = new int[3];
+      extrudedVert[0] = vsOldLen + j;
+      extrudedVert[1] = vtCurrIdx;
+      extrudedVert[2] = vnsOldLen + j;
+
+      /* Create face for side. */
+      final int[][] sideFace = fsNew[j] = new int[4][3];
+      final int[] v00 = sideFace[0] = new int[3];
+      final int[] v10 = sideFace[1] = new int[3];
+      final int[] v11 = sideFace[2] = new int[3];
+      final int[] v01 = sideFace[3] = new int[3];
+
+      /* Top-left corner, origin of edge on extruded face. */
+      v00[0] = vsOldLen + j;
+      v00[1] = vtCurrIdx;
+      v00[2] = sideIdx;
+
+      /* Top-right corner, destination of edge on extruded face. */
+      v10[0] = vsOldLen + k;
+      v10[1] = vtNextIdx;
+      v10[2] = sideIdx;
+
+      /* Bottom-right corner, destination of edge on base. */
+      v11[0] = vertNext[0];
+      v11[1] = vtNextIdx;
+      v11[2] = sideIdx;
+
+      /* Bottom-left corner, origin of edge on base. */
+      v01[0] = vCurrIdx;
+      v01[1] = vtCurrIdx;
+      v01[2] = sideIdx;
+    }
+
+    /* Flip old face's normals. */
+    for (int k = 0; k < vnsBase.length; ++k) {
+      Vec3.negate(vnsBase[k], vnsBase[k]);
+    }
+
+    this.coords = Vec3.concat(this.coords, vsExtruded);
+    this.normals = Vec3.concat(this.normals, vnsExtruded);
+    this.faces = Mesh.splice(this.faces, i, 0, fsNew);
+
+    return this;
+  }
+
   /**
    * Gets an edge from the mesh.
    *
@@ -420,7 +547,7 @@ public class Mesh3 extends Mesh {
       final int i,
       final Face3 target ) {
 
-    final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
+    final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
     final int len = face.length;
     final Vert3[] vertices = new Vert3[len];
 
@@ -479,10 +606,8 @@ public class Mesh3 extends Mesh {
       final int j,
       final Vert3 target ) {
 
-    final int[][] f0 = this.faces[Math.floorMod(
-        i, this.faces.length)];
-    final int[] f = f0[Math.floorMod(
-        j, f0.length)];
+    final int[][] f0 = this.faces[Utils.mod(i, this.faces.length)];
+    final int[] f = f0[Utils.mod(j, f0.length)];
 
     return target.set(
         this.coords[f[0]],
@@ -583,7 +708,7 @@ public class Mesh3 extends Mesh {
       final int i,
       final int j ) {
 
-    final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
+    final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
     final int len = face.length;
     final int jOrigin = Math.floorMod(j, len);
     final int jDest = Math.floorMod(j + 1, len);
@@ -602,7 +727,7 @@ public class Mesh3 extends Mesh {
   @Chainable
   public Mesh3 reverseFace ( final int i ) {
 
-    final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
+    final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
     final int len = face.length;
     final int halfLen = len >> 1;
     for (int j = 0; j < halfLen; ++j) {
@@ -923,6 +1048,77 @@ public class Mesh3 extends Mesh {
     return this;
   }
 
+  @Chainable
+  public Mesh3 sort ( ) {
+
+    return this.sort(IUtils.DEFAULT_EPSILON);
+  }
+
+  @Chainable
+  public Mesh3 sort ( final float tolerance ) {
+
+    /* Sort coordinates. */
+    final int vlen = this.coords.length;
+    final Vec3[] vold = new Vec3[vlen];
+    System.arraycopy(this.coords, 0, vold, 0, vlen);
+    final SortedSet < Vec3 > vsUnique = new TreeSet <>(Mesh.SORT_3);
+    for (int i = 0; i < vlen; ++i) {
+      vsUnique.add(this.coords[i]);
+    }
+    this.coords = vsUnique.toArray(new Vec3[vsUnique.size()]);
+
+    /* Sort texture coordinates. */
+    final int vtlen = this.texCoords.length;
+    final Vec2[] vtold = new Vec2[vtlen];
+    System.arraycopy(this.texCoords, 0, vtold, 0, vtlen);
+    final SortedSet < Vec2 > vtsUnique = new TreeSet <>(Mesh.SORT_2);
+    for (int i = 0; i < vtlen; ++i) {
+      vtsUnique.add(this.texCoords[i]);
+    }
+    this.texCoords = vtsUnique.toArray(new Vec2[vtsUnique.size()]);
+
+    /* Sort normals. */
+    final int vnlen = this.normals.length;
+    final Vec3[] vnold = new Vec3[vnlen];
+    System.arraycopy(this.normals, 0, vnold, 0, vnlen);
+    final SortedSet < Vec3 > vnsUnique = new TreeSet <>(Mesh.SORT_3);
+    for (int i = 0; i < vnlen; ++i) {
+      vnsUnique.add(this.normals[i]);
+    }
+    this.normals = vnsUnique.toArray(new Vec3[vnsUnique.size()]);
+
+    /* Update face indices. */
+    final int facesLen = this.faces.length;
+    for (int i = 0; i < facesLen; ++i) {
+      final int[][] face = this.faces[i];
+      final int vertsLen = face.length;
+
+      for (int j = 0; j < vertsLen; ++j) {
+        final int[] vert = face[j];
+
+        /* Update coordinate index. */
+        final int vidx = Arrays.binarySearch(
+            this.coords, vold[vert[0]], Mesh.SORT_3);
+        vert[0] = vidx < 0 ? vert[0] : vidx;
+
+        /* Update texture coordinate index. */
+        final int vtidx = Arrays.binarySearch(
+            this.texCoords, vtold[vert[1]], Mesh.SORT_2);
+        vert[1] = vtidx < 0 ? vert[1] : vtidx;
+
+        /* Update normal index. */
+        final int vnidx = Arrays.binarySearch(
+            this.normals, vnold[vert[2]], Mesh.SORT_3);
+        vert[2] = vnidx < 0 ? vert[2] : vnidx;
+      }
+    }
+
+    /* Sort faces by centroid. */
+    Arrays.sort(this.faces, new Mesh3.SortIndices3(this.coords));
+
+    return this;
+  }
+
   /**
    * Subdivides an edge by the number of cuts given. For example, one
    * cut will divide an edge in half; two cuts, into thirds.<br>
@@ -947,19 +1143,19 @@ public class Mesh3 extends Mesh {
 
     /* Validate face index, find face. */
     final int facesLen = this.faces.length;
-    final int i = Math.floorMod(faceIndex, facesLen);
+    final int i = Utils.mod(faceIndex, facesLen);
     final int[][] face = this.faces[i];
     final int faceLen = face.length;
 
     /* Find edge origin vertex. */
-    final int j0 = Math.floorMod(edgeIndex, faceLen);
+    final int j0 = Utils.mod(edgeIndex, faceLen);
     final int[] vert0Idx = face[j0];
     final Vec3 vOrigin = this.coords[vert0Idx[0]];
     final Vec2 vtOrigin = this.texCoords[vert0Idx[1]];
     final Vec3 vnOrigin = this.normals[vert0Idx[2]];
 
     /* Find edge destination vertex. */
-    final int j1 = Math.floorMod(edgeIndex + 1, faceLen);
+    final int j1 = Utils.mod(edgeIndex + 1, faceLen);
     final int[] vert1Idx = face[j1];
     final Vec3 vDest = this.coords[vert1Idx[0]];
     final Vec2 vtDest = this.texCoords[vert1Idx[1]];
@@ -1076,7 +1272,7 @@ public class Mesh3 extends Mesh {
       final int faceIndex,
       final int cuts ) {
 
-    final int faceLen = this.faces[Math.floorMod(faceIndex,
+    final int faceLen = this.faces[Utils.mod(faceIndex,
         this.faces.length)].length;
     for (int j = 0, k = 0; j < faceLen; ++j, k += cuts) {
       this.subdivEdge(faceIndex, k + j, cuts);
@@ -1113,7 +1309,7 @@ public class Mesh3 extends Mesh {
 
     /* Validate face index, find face. */
     final int facesLen = this.faces.length;
-    final int i = Math.floorMod(faceIdx, facesLen);
+    final int i = Utils.mod(faceIdx, facesLen);
     final int[][] face = this.faces[i];
     final int faceLen = face.length;
 
@@ -1661,6 +1857,45 @@ public class Mesh3 extends Mesh {
     return target;
   }
 
+  @Experimental
+  public static Mesh3[] detachFaces ( final Mesh3 source ) {
+
+    final int[][][] fsSrc = source.faces;
+    final Vec3[] vsSrc = source.coords;
+    final Vec2[] vtsSrc = source.texCoords;
+    final Vec3[] vnsSrc = source.normals;
+
+    final int fsLen = fsSrc.length;
+    final Mesh3[] meshes = new Mesh3[fsLen];
+
+    for (int i = 0; i < fsLen; ++i) {
+      final int[][] fSrc = fsSrc[i];
+      final int fLen = fSrc.length;
+
+      final int[][][] fsTrg = new int[1][fLen][3];
+      final Vec3[] vsTrg = new Vec3[fLen];
+      final Vec2[] vtsTrg = new Vec2[fLen];
+      final Vec3[] vnsTrg = new Vec3[fLen];
+
+      final int[][] fTrg = fsTrg[0];
+      for (int j = 0; j < fLen; ++j) {
+        final int[] vertSrc = fSrc[j];
+
+        vsTrg[j] = new Vec3(vsSrc[vertSrc[0]]);
+        vtsTrg[j] = new Vec2(vtsSrc[vertSrc[1]]);
+        vnsTrg[j] = new Vec3(vnsSrc[vertSrc[2]]);
+
+        fTrg[j][0] = j;
+        fTrg[j][1] = j;
+        fTrg[j][2] = j;
+      }
+
+      meshes[i] = new Mesh3(fsTrg, vsTrg, vtsTrg, vnsTrg);
+    }
+
+    return meshes;
+  }
+
   /**
    * Creates an dodecahedron, a Platonic solid with 12 faces and 20
    * coordinates.
@@ -1767,7 +2002,7 @@ public class Mesh3 extends Mesh {
       final Mesh3 target ) {
 
     String[] tokens;
-    String[] facetokens;
+    String[] faceTokens;
     String name = target.hashIdentityString();
 
     final int len = lines.length;
@@ -1776,6 +2011,10 @@ public class Mesh3 extends Mesh {
     final ArrayList < Vec2 > texCoordList = new ArrayList <>(capacity);
     final ArrayList < Vec3 > normalList = new ArrayList <>(capacity);
     final ArrayList < int[][] > faceList = new ArrayList <>(capacity);
+
+    boolean missingVs = false;
+    boolean missingVts = false;
+    boolean missingVns = false;
 
     for (int i = 0; i < len; ++i) {
 
@@ -1818,14 +2057,89 @@ public class Mesh3 extends Mesh {
            * formatted as "v/vt/vn".
            */
           for (int j = 1; j < count; ++j) {
-            facetokens = tokens[j].split("/");
-
+            faceTokens = tokens[j].split("/");
+            final int tokenLen = faceTokens.length;
             final int k = j - 1;
 
             /* Indices in .obj file start at 1, not 0. */
-            indices[k][0] = Mesh3.intFromStr(facetokens[0]) - 1;
-            indices[k][1] = Mesh3.intFromStr(facetokens[1]) - 1;
-            indices[k][2] = Mesh3.intFromStr(facetokens[2]) - 1;
+            if (tokenLen > 2) {
+
+              final String vIdx = faceTokens[0];
+              final String vtIdx = faceTokens[1];
+              final String vnIdx = faceTokens[2];
+
+              if (vIdx == null || vIdx.isBlank()) {
+                indices[k][0] = 0;
+                missingVs = true;
+              } else {
+                indices[k][0] = Mesh3.intFromStr(vIdx) - 1;
+              }
+
+              if (vtIdx == null || vtIdx.isBlank()) {
+                indices[k][1] = 0;
+                missingVts = true;
+              } else {
+                indices[k][1] = Mesh3.intFromStr(vtIdx) - 1;
+              }
+
+              if (vnIdx == null || vnIdx.isBlank()) {
+                indices[k][2] = 0;
+                missingVns = true;
+              } else {
+                indices[k][2] = Mesh3.intFromStr(vnIdx) - 1;
+              }
+
+            } else if (tokenLen > 1) {
+
+              final String vIdx = faceTokens[0];
+              final String vtIdx = faceTokens[1];
+
+              if (vIdx == null || vIdx.isBlank()) {
+                indices[k][0] = 0;
+                missingVs = true;
+              } else {
+                indices[k][0] = Mesh3.intFromStr(vIdx) - 1;
+              }
+
+              if (vtIdx == null || vtIdx.isBlank()) {
+                indices[k][1] = 0;
+                missingVts = true;
+              } else {
+                indices[k][1] = Mesh3.intFromStr(vtIdx) - 1;
+              }
+
+              indices[k][2] = 0;
+              missingVns = true;
+
+            } else if (tokenLen > 0) {
+
+              final String vIdx = faceTokens[0];
+
+              if (vIdx == null || vIdx.isBlank()) {
+                indices[k][0] = 0;
+                missingVs = true;
+              } else {
+                indices[k][0] = Mesh3.intFromStr(vIdx) - 1;
+              }
+
+              indices[k][1] = 0;
+              indices[k][2] = 0;
+
+              missingVts = true;
+              missingVns = true;
+
+            } else {
+
+              indices[k][0] = 0;
+              indices[k][1] = 0;
+              indices[k][2] = 0;
+
+              missingVs = true;
+              missingVts = true;
+              missingVns = true;
+
+            }
+
           }
 
           faceList.add(indices);
@@ -1833,13 +2147,34 @@ public class Mesh3 extends Mesh {
       }
     }
 
-    /* Convert to fixed-sized array. */
     target.name = name;
-    target.set(
-        faceList.toArray(new int[faceList.size()][][]),
-        coordList.toArray(new Vec3[coordList.size()]),
-        texCoordList.toArray(new Vec2[texCoordList.size()]),
-        normalList.toArray(new Vec3[normalList.size()]));
+
+    /* Convert to fixed-sized array. */
+    final int[][][] faceArr = new int[faceList.size()][][];
+    faceList.toArray(faceArr);
+
+    Vec3[] coordArr = new Vec3[coordList.size()];
+    if (missingVs && coordArr.length < 1) {
+      coordArr = new Vec3[] { Vec3.zero(new Vec3()) };
+    } else {
+      coordList.toArray(coordArr);
+    }
+
+    Vec2[] texCoordArr = new Vec2[texCoordList.size()];
+    if (missingVts && texCoordArr.length < 1) {
+      texCoordArr = new Vec2[] { Vec2.uvCenter(new Vec2()) };
+    } else {
+      texCoordList.toArray(texCoordArr);
+    }
+
+    Vec3[] normalArr = new Vec3[normalList.size()];
+    if (missingVns && normalArr.length < 1) {
+      normalArr = new Vec3[] { Vec3.up(new Vec3()) };
+    } else {
+      normalList.toArray(normalArr);
+    }
+
+    target.set(faceArr, coordArr, texCoordArr, normalArr);
     return target;
   }
 
@@ -2451,5 +2786,4 @@ public class Mesh3 extends Mesh {
     target.faces = trgfs;
     return target;
   }
-
 }

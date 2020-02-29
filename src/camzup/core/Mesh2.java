@@ -778,7 +778,7 @@ public class Mesh2 extends Mesh {
    */
   public Mesh2 sort ( ) {
 
-    return this.sort(Utils.EPSILON);
+    return this.sort(IUtils.DEFAULT_EPSILON);
   }
 
   /**
@@ -805,9 +805,7 @@ public class Mesh2 extends Mesh {
     }
     this.coords = vsUnique.toArray(new Vec2[vsUnique.size()]);
 
-    /*
-     * Sort texture coordinates.
-     */
+    /* Sort texture coordinates. */
     final int vtlen = this.texCoords.length;
     final Vec2[] vtold = new Vec2[vtlen];
     System.arraycopy(this.texCoords, 0, vtold, 0, vtlen);
@@ -965,48 +963,6 @@ public class Mesh2 extends Mesh {
     }
 
     return this;
-  }
-
-  /**
-   * Creates an array of meshes wherein each element contains one face
-   * from the source's faces.
-   * 
-   * @param source the source mesh
-   */
-  @Experimental
-  public static Mesh2[] detachFaces ( final Mesh2 source ) {
-
-    // TEST
-
-    final int[][][] fsSrc = source.faces;
-    final Vec2[] vsSrc = source.coords;
-    final Vec2[] vtsSrc = source.texCoords;
-
-    final int fsLen = fsSrc.length;
-    final Mesh2[] meshes = new Mesh2[fsLen];
-
-    for (int i = 0; i < fsLen; ++i) {
-      int[][] fSrc = fsSrc[i];
-      int fLen = fSrc.length;
-
-      final int[][][] fsTrg = new int[1][fLen][3];
-      final Vec2[] vsTrg = new Vec2[fLen];
-      final Vec2[] vtsTrg = new Vec2[fLen];
-
-      final int[][] fTrg = fsTrg[0];
-      for (int j = 0; j < fLen; ++j) {
-        int[] vertSrc = fSrc[j];
-
-        vsTrg[j] = new Vec2(vsSrc[vertSrc[0]]);
-        vtsTrg[j] = new Vec2(vtsSrc[vertSrc[1]]);
-        fTrg[j][0] = fTrg[j][1] = fTrg[j][2] = j;
-      }
-
-      meshes[i] = new Mesh2(
-          fsTrg, vsTrg, vtsTrg);
-    }
-
-    return meshes;
   }
 
   /**
@@ -1704,6 +1660,48 @@ public class Mesh2 extends Mesh {
     return Mesh2.polygon(
         IMesh.DEFAULT_CIRCLE_SECTORS,
         poly, target);
+  }
+
+  /**
+   * Creates an array of meshes, each with one face from the source
+   * mesh.
+   *
+   * @param source the source mesh
+   * @return the meshes array
+   */
+  @Experimental
+  public static Mesh2[] detachFaces ( final Mesh2 source ) {
+
+    final int[][][] fsSrc = source.faces;
+    final Vec2[] vsSrc = source.coords;
+    final Vec2[] vtsSrc = source.texCoords;
+
+    final int fsLen = fsSrc.length;
+    final Mesh2[] meshes = new Mesh2[fsLen];
+
+    for (int i = 0; i < fsLen; ++i) {
+      final int[][] fSrc = fsSrc[i];
+      final int fLen = fSrc.length;
+
+      final int[][][] fsTrg = new int[1][fLen][2];
+      final Vec2[] vsTrg = new Vec2[fLen];
+      final Vec2[] vtsTrg = new Vec2[fLen];
+
+      final int[][] fTrg = fsTrg[0];
+      for (int j = 0; j < fLen; ++j) {
+        final int[] vertSrc = fSrc[j];
+
+        vsTrg[j] = new Vec2(vsSrc[vertSrc[0]]);
+        vtsTrg[j] = new Vec2(vtsSrc[vertSrc[1]]);
+
+        fTrg[j][0] = j;
+        fTrg[j][1] = j;
+      }
+
+      meshes[i] = new Mesh2(fsTrg, vsTrg, vtsTrg);
+    }
+
+    return meshes;
   }
 
   /**

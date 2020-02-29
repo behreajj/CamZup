@@ -142,18 +142,6 @@ public class Edge2 implements Comparable < Edge2 > {
     return this;
   }
 
-  @Chainable
-  public Edge2 scale ( final float scale ) {
-
-    return this.scaleGlobal(scale);
-  }
-
-  @Chainable
-  public Edge2 scale ( final Vec2 scale ) {
-
-    return this.scaleGlobal(scale);
-  }
-
   /**
    * Scales the coordinates of this edge. The texture coordinates are
    * unaffected.
@@ -162,38 +150,74 @@ public class Edge2 implements Comparable < Edge2 > {
    * @return this edge
    */
   @Chainable
-  public Edge2 scaleGlobal ( final float scale ) {
+  public Edge2 scale ( final float scale ) {
 
-    if (scale == 0.0f) { return this; }
-
-    Vec2.mul(this.origin.coord, scale, this.origin.coord);
-    Vec2.mul(this.dest.coord, scale, this.dest.coord);
-    return this;
+    return this.scaleGlobal(scale);
   }
 
   /**
    * Scales the coordinates of this edge. The texture coordinates are
    * unaffected.
    *
-   * @param scale non uniform scalar
+   * @param scalar non uniform scalar
    * @return this edge
    */
   @Chainable
-  public Edge2 scaleGlobal ( final Vec2 scale ) {
+  public Edge2 scale ( final Vec2 scalar ) {
 
-    if (Vec2.none(scale)) { return this; }
+    return this.scaleGlobal(scalar);
+  }
 
-    Vec2.mul(this.origin.coord, scale, this.origin.coord);
-    Vec2.mul(this.dest.coord, scale, this.dest.coord);
+  /**
+   * Scales the coordinates of this edge. The texture coordinates are
+   * unaffected. Uses global coordinates, i.e., doesn't consider the
+   * face's position.
+   *
+   * @param scalar the scalar
+   * @return this edge
+   */
+  @Chainable
+  public Edge2 scaleGlobal ( final float scalar ) {
+
+    if (scalar == 0.0f) { return this; }
+
+    Vec2.mul(this.origin.coord, scalar, this.origin.coord);
+    Vec2.mul(this.dest.coord, scalar, this.dest.coord);
     return this;
   }
 
+  /**
+   * Scales the coordinates of this edge. The texture coordinates are
+   * unaffected. Uses global coordinates, i.e., doesn't consider the
+   * face's position.
+   *
+   * @param scalar the nonuniform scalar
+   * @return this edge
+   */
   @Chainable
-  public Edge2 scaleLocal ( final float scale ) {
+  public Edge2 scaleGlobal ( final Vec2 scalar ) {
+
+    if (Vec2.none(scalar)) { return this; }
+
+    Vec2.mul(this.origin.coord, scalar, this.origin.coord);
+    Vec2.mul(this.dest.coord, scalar, this.dest.coord);
+    return this;
+  }
+
+  /**
+   * Scales the coordinates of this edge. Subtracts the edge's centroid
+   * from each vertex, scales, then adds the centroid.
+   *
+   * @param scalar the uniform scalar
+   * @return this edge
+   */
+  @Chainable
+  @Experimental
+  public Edge2 scaleLocal ( final float scalar ) {
 
     // TEST
 
-    if (scale == 0.0f) { return this; }
+    if (scalar == 0.0f) { return this; }
 
     final Vec2 coOrigin = this.origin.coord;
     final Vec2 coDest = this.dest.coord;
@@ -203,22 +227,30 @@ public class Edge2 implements Comparable < Edge2 > {
         (coOrigin.y + coDest.y) * 0.5f);
 
     Vec2.sub(coOrigin, mp, coOrigin);
-    Vec2.mul(coOrigin, scale, coOrigin);
+    Vec2.mul(coOrigin, scalar, coOrigin);
     Vec2.add(coOrigin, mp, coOrigin);
 
     Vec2.sub(coDest, mp, coDest);
-    Vec2.mul(coDest, scale, coDest);
+    Vec2.mul(coDest, scalar, coDest);
     Vec2.add(coDest, mp, coDest);
 
     return this;
   }
 
+  /**
+   * Scales the coordinates of this edge. Subtracts the edge's centroid
+   * from each vertex, scales, then adds the centroid.
+   *
+   * @param scalar the nonuniform scalar
+   * @return this edge
+   */
   @Chainable
-  public Edge2 scaleLocal ( final Vec2 scale ) {
+  @Experimental
+  public Edge2 scaleLocal ( final Vec2 scalar ) {
 
     // TEST
 
-    if (Vec2.none(scale)) { return this; }
+    if (Vec2.none(scalar)) { return this; }
 
     final Vec2 coOrigin = this.origin.coord;
     final Vec2 coDest = this.dest.coord;
@@ -228,11 +260,11 @@ public class Edge2 implements Comparable < Edge2 > {
         (coOrigin.y + coDest.y) * 0.5f);
 
     Vec2.sub(coOrigin, mp, coOrigin);
-    Vec2.mul(coOrigin, scale, coOrigin);
+    Vec2.mul(coOrigin, scalar, coOrigin);
     Vec2.add(coOrigin, mp, coOrigin);
 
     Vec2.sub(coDest, mp, coDest);
-    Vec2.mul(coDest, scale, coDest);
+    Vec2.mul(coDest, scalar, coDest);
     Vec2.add(coDest, mp, coDest);
 
     return this;
@@ -331,7 +363,6 @@ public class Edge2 implements Comparable < Edge2 > {
    * @param target the output vector
    * @return the point
    */
-  @Experimental
   public static Vec2 eval (
       final Edge2 edge,
       final float step,
@@ -357,7 +388,6 @@ public class Edge2 implements Comparable < Edge2 > {
    * @return the heading
    * @see Utils#atan2(float, float)
    */
-  @Experimental
   public static float heading ( final Edge2 edge ) {
 
     final Vec2 dest = edge.dest.coord;
@@ -408,7 +438,6 @@ public class Edge2 implements Comparable < Edge2 > {
    * @return the projection
    * @see Utils#clamp01(float)
    */
-  @Experimental
   public static Vec2 projectVector (
       final Edge2 edge,
       final Vec2 v,

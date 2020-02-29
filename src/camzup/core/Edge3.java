@@ -242,11 +242,7 @@ public class Edge3 implements Comparable < Edge3 > {
   @Chainable
   public Edge3 scale ( final float scale ) {
 
-    if (scale == 0.0f) { return this; }
-
-    Vec3.mul(this.origin.coord, scale, this.origin.coord);
-    Vec3.mul(this.dest.coord, scale, this.dest.coord);
-    return this;
+    return this.scaleGlobal(scale);
   }
 
   /**
@@ -259,10 +255,78 @@ public class Edge3 implements Comparable < Edge3 > {
   @Chainable
   public Edge3 scale ( final Vec3 scale ) {
 
+    return this.scaleGlobal(scale);
+  }
+
+  @Chainable
+  public Edge3 scaleGlobal ( final float scale ) {
+
+    if (scale == 0.0f) { return this; }
+
+    Vec3.mul(this.origin.coord, scale, this.origin.coord);
+    Vec3.mul(this.dest.coord, scale, this.dest.coord);
+    return this;
+  }
+
+  @Chainable
+  public Edge3 scaleGlobal ( final Vec3 scale ) {
+
     if (Vec3.none(scale)) { return this; }
 
     Vec3.mul(this.origin.coord, scale, this.origin.coord);
     Vec3.mul(this.dest.coord, scale, this.dest.coord);
+    return this;
+  }
+
+  @Chainable
+  public Edge3 scaleLocal ( final float scale ) {
+
+    // TEST
+
+    if (scale == 0.0f) { return this; }
+
+    final Vec3 coOrigin = this.origin.coord;
+    final Vec3 coDest = this.dest.coord;
+
+    final Vec3 mp = new Vec3(
+        (coOrigin.x + coDest.x) * 0.5f,
+        (coOrigin.y + coDest.y) * 0.5f,
+        (coOrigin.z + coDest.z) * 0.5f);
+
+    Vec3.sub(coOrigin, mp, coOrigin);
+    Vec3.mul(coOrigin, scale, coOrigin);
+    Vec3.add(coOrigin, mp, coOrigin);
+
+    Vec3.sub(coDest, mp, coDest);
+    Vec3.mul(coDest, scale, coDest);
+    Vec3.add(coDest, mp, coDest);
+
+    return this;
+  }
+
+  @Chainable
+  public Edge3 scaleLocal ( final Vec3 scale ) {
+
+    // TEST
+
+    if (Vec3.none(scale)) { return this; }
+
+    final Vec3 coOrigin = this.origin.coord;
+    final Vec3 coDest = this.dest.coord;
+
+    final Vec3 mp = new Vec3(
+        (coOrigin.x + coDest.x) * 0.5f,
+        (coOrigin.y + coDest.y) * 0.5f,
+        (coOrigin.z + coDest.z) * 0.5f);
+
+    Vec3.sub(coOrigin, mp, coOrigin);
+    Vec3.mul(coOrigin, scale, coOrigin);
+    Vec3.add(coOrigin, mp, coOrigin);
+
+    Vec3.sub(coDest, mp, coDest);
+    Vec3.mul(coDest, scale, coDest);
+    Vec3.add(coDest, mp, coDest);
+
     return this;
   }
 

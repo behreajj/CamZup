@@ -190,33 +190,40 @@ public class MaterialSolid extends Material {
    * Returns a String of Python code targeted toward the Blender 2.8x
    * API. This code is brittle and is used for internal testing
    * purposes, i.e., to compare how curve geometry looks in Blender (the
-   * control) vs. in the library (the test).
-   *
-   * @return the string
-   */
-  @Experimental
-  String toBlenderCode ( ) {
-
-    return this.toBlenderCode(1.0f);
-  }
-
-  /**
-   * Returns a String of Python code targeted toward the Blender 2.8x
-   * API. This code is brittle and is used for internal testing
-   * purposes, i.e., to compare how curve geometry looks in Blender (the
    * control) versus in the library (the test).
    *
-   * @param gamma the gamma adjustment
+   * @param gamma          the gamma adjustment
+   * @param metallic       the metallic factor
+   * @param roughness      the roughness
+   * @param specular       specular highlight strength
+   * @param clearcoat      clear coat factor
+   * @param clearcoatRough clear coat roughness
    * @return the string
    */
   @Experimental
-  String toBlenderCode ( final float gamma ) {
+  String toBlenderCode (
+      final float gamma,
+      final float metallic,
+      final float roughness,
+      final float specular,
+      final float clearcoat,
+      final float clearcoatRough ) {
 
-    return new StringBuilder()
+    return new StringBuilder(256)
         .append("{\"name\": \"")
         .append(this.name)
         .append("\", \"fill\": ")
         .append(this.fill.toBlenderCode(gamma, true))
+        .append(", \"metallic\": ")
+        .append(Utils.toFixed(metallic, 6))
+        .append(", \"roughness\": ")
+        .append(Utils.toFixed(roughness, 6))
+        .append(", \"specular\": ")
+        .append(Utils.toFixed(specular, 6))
+        .append(", \"clearcoat\": ")
+        .append(Utils.toFixed(clearcoat, 6))
+        .append(", \"clearcoat_roughness\": ")
+        .append(Utils.toFixed(clearcoatRough, 6))
         .append('}')
         .toString();
   }
@@ -536,16 +543,20 @@ public class MaterialSolid extends Material {
    * @param gamma gamma adjustment
    * @return the material string
    */
-  @Experimental
   static String defaultBlenderMaterial ( final float gamma ) {
 
-    return new StringBuilder()
+    return new StringBuilder(256)
         .append("{\"name\": \"")
         .append("Material")
         .append("\", \"fill\": ")
         .append(Color.fromHex(
             IUp.DEFAULT_FILL_COLOR, new Color())
             .toBlenderCode(gamma, true))
+        .append(", \"metallic\": 0.0")
+        .append(", \"roughness\": 1.0")
+        .append(", \"specular\": 0.0")
+        .append(", \"clearcoat\": 0.0")
+        .append(", \"clearcoat_roughness\": 0.001")
         .append('}')
         .toString();
   }

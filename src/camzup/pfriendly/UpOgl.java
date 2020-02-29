@@ -3847,6 +3847,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    */
   @Override
   public void updateProjmodelview ( ) {
+
     PMatAux.mul(this.projection, this.modelview, this.projmodelview);
   }
 
