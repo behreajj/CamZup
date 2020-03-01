@@ -797,6 +797,106 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
   }
 
   /**
+   * Returns a vector with all components set to epsilon, a small
+   * positive non-zero value.
+   *
+   * @param target the output vector
+   * @return epsilon
+   */
+  @Experimental
+  static Vec3 epsilon ( final Vec3 target ) {
+
+    return target.set(
+        Utils.EPSILON,
+        Utils.EPSILON,
+        Utils.EPSILON);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is greater than the right
+   * comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  static Vec3 gt (
+      final Vec3 a,
+      final Vec3 b,
+      final Vec3 target ) {
+
+    return target.set(
+        a.x > b.x,
+        a.y > b.y,
+        a.z > b.z);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is greater than or equal to
+   * the right comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  static Vec3 gtEq (
+      final Vec3 a,
+      final Vec3 b,
+      final Vec3 target ) {
+
+    return target.set(
+        a.x >= b.x,
+        a.y >= b.y,
+        a.z >= b.z);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is less than the right
+   * comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  static Vec3 lt (
+      final Vec3 a,
+      final Vec3 b,
+      final Vec3 target ) {
+
+    return target.set(
+        a.x < b.x,
+        a.y < b.y,
+        a.z < b.z);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is less than or equal to the
+   * right comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  static Vec3 ltEq (
+      final Vec3 a,
+      final Vec3 b,
+      final Vec3 target ) {
+
+    return target.set(
+        a.x <= b.x,
+        a.y <= b.y,
+        a.z <= b.z);
+  }
+
+  /**
    * Finds the absolute value of each vector component.
    *
    * @param v      the input vector

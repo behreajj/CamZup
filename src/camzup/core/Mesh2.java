@@ -359,6 +359,93 @@ public class Mesh2 extends Mesh {
   }
 
   /**
+   * Extrudes an edge, creating a new quadrilateral tangent to the edge.
+   *
+   * @param faceIdx the face index.
+   * @param edgeIdx the edge index
+   * @param amt     the extrusion amount
+   * @return this mesh
+   */
+  @Experimental
+  public Mesh2 extrudeEdge (
+      final int faceIdx,
+      final int edgeIdx,
+      final float amt ) {
+
+    // TEST Uv coordinates need testing.
+
+    if (amt == 0.0f) { return this; }
+
+    final int facesLen = this.faces.length;
+    final int i = Utils.mod(faceIdx, facesLen);
+    final int[][] face = this.faces[i];
+    final int vertsLen = face.length;
+
+    final int j = Utils.mod(edgeIdx, vertsLen);
+    final int k = Utils.mod(edgeIdx + 1, vertsLen);
+    final int[] idxOrigin = face[j];
+    final int[] idxDest = face[k];
+
+    final int idxV0 = idxOrigin[0];
+    final int idxV3 = idxDest[0];
+    final int idxVt0 = idxOrigin[1];
+    final int idxVt3 = idxDest[1];
+
+    final int vsOldLen = this.coords.length;
+    final int vtsOldLen = this.texCoords.length;
+
+    final int idxV1 = vsOldLen;
+    final int idxV2 = vsOldLen + 1;
+    final int idxVt1 = vtsOldLen;
+    final int idxVt2 = vtsOldLen + 1;
+
+    final Vec2 vOrigin = this.coords[idxV0];
+    final Vec2 vDest = this.coords[idxV3];
+
+    /*
+     * The perpendicular is not normalized so that the created face is
+     * square, no matter the number of sides on the polygon.
+     */
+    final Vec2 vPerp = new Vec2();
+    Vec2.sub(vOrigin, vDest, vPerp);
+    Vec2.perpendicularCCW(vPerp, vPerp);
+    Vec2.mul(vPerp, amt, vPerp);
+
+    final Vec2 vNewOrigin = new Vec2();
+    final Vec2 vNewDest = new Vec2();
+    Vec2.add(vOrigin, vPerp, vNewOrigin);
+    Vec2.add(vDest, vPerp, vNewDest);
+
+    final Vec2 vtOrigin = this.texCoords[idxVt0];
+    final Vec2 vtDest = this.texCoords[idxVt3];
+
+    final Vec2 vtPerp = new Vec2();
+    Vec2.sub(vtOrigin, vtDest, vtPerp);
+    Vec2.perpendicularCCW(vtPerp, vtPerp);
+    // Vec2.normalize(vtPerp, vtPerp);
+
+    final Vec2 vtNewOrigin = new Vec2();
+    final Vec2 vtNewDest = new Vec2();
+    Vec2.add(vtOrigin, vtPerp, vtNewOrigin);
+    Vec2.add(vtDest, vtPerp, vtNewDest);
+
+    final int[][][] faceNew = { {
+        { idxV0, idxVt0 },
+        { idxV1, idxVt1 },
+        { idxV2, idxVt2 },
+        { idxV3, idxVt3 } } };
+
+    this.coords = Vec2.concat(this.coords,
+        new Vec2[] { vNewOrigin, vNewDest });
+    this.texCoords = Vec2.concat(this.texCoords,
+        new Vec2[] { vtNewOrigin, vtNewDest });
+    this.faces = Mesh.splice(this.faces, i + 1, 0, faceNew);
+
+    return this;
+
+  }
+
+  /**
    * Gets an edge from the mesh.
    *
    * @param i      the face index
@@ -371,11 +458,11 @@ public class Mesh2 extends Mesh {
       final int j,
       final Edge2 target ) {
 
-    final int[][] f0 = this.faces[Math.floorMod(
+    final int[][] f0 = this.faces[Utils.mod(
         i, this.faces.length)];
     final int f0len = f0.length;
-    final int[] f1 = f0[Math.floorMod(j, f0len)];
-    final int[] f2 = f0[Math.floorMod(j + 1, f0len)];
+    final int[] f1 = f0[Utils.mod(j, f0len)];
+    final int[] f2 = f0[Utils.mod(j + 1, f0len)];
 
     return target.set(
         this.coords[f1[0]],
@@ -848,7 +935,10 @@ public class Mesh2 extends Mesh {
    * <br>
    * Does not distinguish between interior edges, which have a
    * complement elsewhere, and border edges; for that reason this works
-   * best with NGONs.
+   * best with NGONs.<br>
+   * <br>
+   * This is protected because it tends to create faces harder to
+   * triangulate.
    *
    * @param faceIndex the face index
    * @param edgeIndex the edge index
@@ -856,7 +946,8 @@ public class Mesh2 extends Mesh {
    * @return this mesh
    */
   @Experimental
-  public Mesh2 subdivEdge (
+  @Chainable
+  protected Mesh2 subdivEdge (
       final int faceIndex,
       final int edgeIndex,
       final int cuts ) {
@@ -939,37 +1030,10 @@ public class Mesh2 extends Mesh {
   }
 
   /**
-   * Subdivides all edges in a face by the number of cuts given. For
-   * example, one cut will divide an edge in half; two cuts, into
-   * thirds.<br>
-   * <br>
-   * Does not distinguish between interior edges, which have a
-   * complement elsewhere, and border edges; for that reason this works
-   * best with NGONs.
-   *
-   * @param faceIndex the face index
-   * @param cuts      number of cuts
-   * @return this mesh
-   */
-  @Experimental
-  public Mesh2 subdivEdges (
-      final int faceIndex,
-      final int cuts ) {
-
-    final int faceLen = this.faces[Math.floorMod(faceIndex,
-        this.faces.length)].length;
-    for (int j = 0, k = 0; j < faceLen; ++j, k += cuts) {
-      this.subdivEdge(faceIndex, k + j, cuts);
-    }
-
-    return this;
-  }
-
-  /**
    * Subdivides a convex face. Defaults to centroid-based subdivision.
    *
    * @param faceIdx the face index
-   * @return this mesh.
+   * @return this mesh
    */
   @Experimental
   @Chainable
@@ -979,10 +1043,10 @@ public class Mesh2 extends Mesh {
   }
 
   /**
-   * Subdivides a convex face by calculating its centroid, subdividing
-   * each of its edges with one cut to create a midpoint, then
-   * connecting the midpoints to the centroid. This generates a
-   * quadrilateral for the number of edges in the face.
+   * Subdivides a convex face by calculating its centroid, cutting each
+   * of its edges once to create a midpoint, then connecting the
+   * midpoints to the centroid. This generates a quadrilateral for the
+   * number of edges in the face.
    *
    * @param faceIdx the face index
    * @return this mesh
@@ -993,7 +1057,7 @@ public class Mesh2 extends Mesh {
 
     /* Validate face index, find face. */
     final int facesLen = this.faces.length;
-    final int i = Math.floorMod(faceIdx, facesLen);
+    final int i = Utils.mod(faceIdx, facesLen);
     final int[][] face = this.faces[i];
     final int faceLen = face.length;
 
@@ -1058,28 +1122,23 @@ public class Mesh2 extends Mesh {
   }
 
   /**
-   * Subdivides a convex face by subdividing each of its edges with one
-   * cut to create a midpoint, then connecting them. This generates
-   * peripheral triangles and a new central face with the same number of
-   * edges as the original. This is best suited to triangle-based
-   * meshes.
+   * Subdivides a convex face by cutting each of its edges once to
+   * create a midpoint, then connecting them. This generates peripheral
+   * triangles and a new central face with the same number of edges as
+   * the original. This is best suited to meshes made of triangles.
    *
    * @param faceIdx the face index
    * @return the mesh
    */
   @Experimental
+  @Chainable
   public Mesh2 subdivFaceInscribe ( final int faceIdx ) {
 
-    /* Validate face index, find face. */
     final int facesLen = this.faces.length;
-    final int i = Math.floorMod(faceIdx, facesLen);
+    final int i = Utils.mod(faceIdx, facesLen);
     final int[][] face = this.faces[i];
     final int faceLen = face.length;
 
-    /*
-     * Cache old length of coordinates and texture coordinates so new ones
-     * can be appended to the end.
-     */
     final int vsOldLen = this.coords.length;
     final int vtsOldLen = this.texCoords.length;
 
@@ -1092,6 +1151,7 @@ public class Mesh2 extends Mesh {
       final int[] vertCurr = face[j];
       final Vec2 vCurr = this.coords[vertCurr[0]];
       final Vec2 vtCurr = this.texCoords[vertCurr[1]];
+
       final int k = (j + 1) % faceLen;
       final int[] vertNext = face[k];
 
@@ -1122,6 +1182,62 @@ public class Mesh2 extends Mesh {
     this.texCoords = Vec2.concat(this.texCoords, vtsNew);
     this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
+    return this;
+  }
+
+  /**
+   * Subdivides all faces in the mesh by a number of iterations.
+   *
+   * @param itr iterations
+   * @return this mesh
+   */
+  @Chainable
+  public Mesh2 subdivFaces ( final int itr ) {
+
+    return this.subdivFacesCentroid(itr);
+  }
+
+  /**
+   * Subdivides all faces in the mesh by a number of iterations. Uses
+   * the centroid method.
+   *
+   * @param itr iterations
+   * @return this mesh
+   */
+  @Chainable
+  public Mesh2 subdivFacesCentroid ( final int itr ) {
+
+    final int vitr = itr < 1 ? 1 : itr;
+    for (int i = 0; i < vitr; ++i) {
+      final int len = this.faces.length;
+      for (int j = 0, k = 0; j < len; ++j) {
+        final int vertLen = this.faces[k].length;
+        this.subdivFaceCentroid(k);
+        k += vertLen;
+      }
+    }
+    return this;
+  }
+
+  /**
+   * Subdivides all faces in the mesh by a number of iterations. Uses
+   * the inscription method.
+   *
+   * @param itr iterations
+   * @return this mesh
+   */
+  @Chainable
+  public Mesh2 subdivFacesInscribe ( final int itr ) {
+
+    final int vitr = itr < 1 ? 1 : itr;
+    for (int i = 0; i < vitr; ++i) {
+      final int len = this.faces.length;
+      for (int j = 0, k = 0; j < len; ++j) {
+        final int vertLen = this.faces[k].length;
+        this.subdivFaceInscribe(k);
+        k += vertLen + 1;
+      }
+    }
     return this;
   }
 
@@ -2153,16 +2269,16 @@ public class Mesh2 extends Mesh {
     target.name = "Square";
 
     target.coords = Vec2.resize(target.coords, 4);
-    target.coords[0].set(-0.5f, 0.5f);
-    target.coords[1].set(0.5f, 0.5f);
-    target.coords[2].set(0.5f, -0.5f);
-    target.coords[3].set(-0.5f, -0.5f);
+    target.coords[0].set(-0.5f, -0.5f);
+    target.coords[1].set(0.5f, -0.5f);
+    target.coords[2].set(0.5f, 0.5f);
+    target.coords[3].set(-0.5f, 0.5f);
 
     target.texCoords = Vec2.resize(target.texCoords, 4);
-    target.texCoords[0].set(0.0f, 0.0f);
-    target.texCoords[1].set(1.0f, 0.0f);
-    target.texCoords[2].set(1.0f, 1.0f);
-    target.texCoords[3].set(0.0f, 1.0f);
+    target.texCoords[0].set(0.0f, 1.0f);
+    target.texCoords[1].set(1.0f, 1.0f);
+    target.texCoords[2].set(1.0f, 0.0f);
+    target.texCoords[3].set(0.0f, 0.0f);
 
     target.faces = new int[][][] {
         { { 0, 0 }, { 1, 1 }, { 2, 2 }, { 3, 3 } } };

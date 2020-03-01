@@ -95,6 +95,13 @@ public class Mesh3 extends Mesh {
   }
 
   /**
+   * Default cube size, such that it will match the dimensions of other
+   * Platonic solids; <code>0.5 / Math.sqrt(2.0)</code> , approximately
+   * 0.35355338 .
+   */
+  public static final float DEFAULT_CUBE_SIZE = 0.35355338f;
+
+  /**
    * An array of coordinates in the mesh.
    */
   public Vec3[] coords;
@@ -342,12 +349,25 @@ public class Mesh3 extends Mesh {
     return this.equals((Mesh3) obj);
   }
 
+  /**
+   * Extrudes a face by an amount. Creates quadrilateral sides to
+   * connect extruded face to original. Does not check as to whether a
+   * face is an bordered by other faces; best used on disconnected
+   * faces.
+   *
+   * @param faceIdx the face index
+   * @param amt     the amount
+   * @return this mesh
+   */
   @Experimental
+  @Chainable
   public Mesh3 extrudeFace (
       final int faceIdx,
       final float amt ) {
 
     // TEST
+
+    if (amt == 0.0f) { return this; }
 
     /* Validate face index, find face. */
     final int facesLen = this.faces.length;
@@ -464,6 +484,30 @@ public class Mesh3 extends Mesh {
     this.normals = Vec3.concat(this.normals, vnsExtruded);
     this.faces = Mesh.splice(this.faces, i, 0, fsNew);
 
+    return this;
+  }
+
+  /**
+   * Extrudes all faces in the mesh by an amount. Creates quadrilateral
+   * sides to connect extruded face to original. Does not check as to
+   * whether a face is an bordered by other faces; best used on
+   * disconnected faces.
+   *
+   * @param amt the amount
+   * @return this mesh
+   */
+  @Chainable
+  @Experimental
+  public Mesh3 extrudeFaces ( final float amt ) {
+
+    // TEST
+
+    final int facesLen = this.faces.length;
+    for (int i = 0, k = 0; i < facesLen; ++i) {
+      final int faceLen = this.faces[k].length;
+      this.extrudeFace(k, amt);
+      k += faceLen + 2;
+    }
     return this;
   }
 
@@ -1125,7 +1169,10 @@ public class Mesh3 extends Mesh {
    * <br>
    * Does not distinguish between interior edges, which have a
    * complement elsewhere, and border edges; for that reason this works
-   * best with NGONs.
+   * best with NGONs.<br>
+   * <br>
+   * This is protected because it tends to create faces harder to
+   * triangulate.
    *
    * @param faceIndex the face index
    * @param edgeIndex the edge index
@@ -1134,7 +1181,7 @@ public class Mesh3 extends Mesh {
    */
   @Experimental
   @Chainable
-  public Mesh3 subdivEdge (
+  protected Mesh3 subdivEdge (
       final int faceIndex,
       final int edgeIndex,
       final int cuts ) {
@@ -1223,60 +1270,6 @@ public class Mesh3 extends Mesh {
     this.texCoords = Vec2.concat(this.texCoords, vtsNew);
     this.normals = Vec3.concat(this.normals, vnsNew);
     this.faces[i] = Mesh.insert(face, j1, fsNew);
-
-    return this;
-  }
-
-  /**
-   * Subdivides all edges in a mesh by the number of cuts given. For
-   * example, one cut will divide an edge in half; two cuts, into
-   * thirds.<br>
-   * <br>
-   * Does not distinguish between interior edges, which have a
-   * complement elsewhere, and border edges; for that reason this works
-   * best with NGONs.
-   *
-   * @param cuts number of cuts
-   * @return this mesh
-   */
-  @Experimental
-  @Chainable
-  public Mesh3 subdivEdges ( final int cuts ) {
-
-    final int len0 = this.faces.length;
-    for (int i = 0; i < len0; ++i) {
-      final int len1 = this.faces[i].length;
-      for (int j = 0, k = 0; j < len1; ++j, k += cuts) {
-        this.subdivEdge(i, k + j, cuts);
-      }
-    }
-    return this;
-  }
-
-  /**
-   * Subdivides all edges in a face by the number of cuts given. For
-   * example, one cut will divide an edge in half; two cuts, into
-   * thirds.<br>
-   * <br>
-   * Does not distinguish between interior edges, which have a
-   * complement elsewhere, and border edges; for that reason this works
-   * best with NGONs.
-   *
-   * @param faceIndex the face index
-   * @param cuts      number of cuts
-   * @return this mesh
-   */
-  @Experimental
-  @Chainable
-  public Mesh3 subdivEdges (
-      final int faceIndex,
-      final int cuts ) {
-
-    final int faceLen = this.faces[Utils.mod(faceIndex,
-        this.faces.length)].length;
-    for (int j = 0, k = 0; j < faceLen; ++j, k += cuts) {
-      this.subdivEdge(faceIndex, k + j, cuts);
-    }
 
     return this;
   }
@@ -1389,6 +1382,141 @@ public class Mesh3 extends Mesh {
     this.normals = Vec3.concat(this.normals, vnsNew);
     this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
+    return this;
+  }
+
+  /**
+   * Subdivides a convex face by cutting each of its edges once to
+   * create a midpoint, then connecting them. This generates peripheral
+   * triangles and a new central face with the same number of edges as
+   * the original. This is best suited to meshes made of triangles.
+   *
+   * @param faceIdx the face index
+   * @return the mesh
+   */
+  @Experimental
+  @Chainable
+  public Mesh3 subdivFaceInscribe ( final int faceIdx ) {
+
+    final int facesLen = this.faces.length;
+    final int i = Utils.mod(faceIdx, facesLen);
+    final int[][] face = this.faces[i];
+    final int faceLen = face.length;
+
+    final int vsOldLen = this.coords.length;
+    final int vtsOldLen = this.texCoords.length;
+    final int vnsOldLen = this.normals.length;
+
+    final Vec3[] vsNew = new Vec3[faceLen];
+    final Vec2[] vtsNew = new Vec2[faceLen];
+    final Vec3[] vnsNew = new Vec3[faceLen];
+    final int[][][] fsNew = new int[faceLen + 1][][];
+    final int[][] centerFace = fsNew[faceLen] = new int[faceLen][3];
+
+    for (int j = 0; j < faceLen; ++j) {
+      final int[] vertCurr = face[j];
+      final Vec3 vCurr = this.coords[vertCurr[0]];
+      final Vec2 vtCurr = this.texCoords[vertCurr[1]];
+      final Vec3 vnCurr = this.normals[vertCurr[2]];
+
+      final int k = (j + 1) % faceLen;
+      final int[] vertNext = face[k];
+
+      final int vNextIdx = vertNext[0];
+      final Vec3 vNext = this.coords[vNextIdx];
+      vsNew[j] = new Vec3(
+          (vCurr.x + vNext.x) * 0.5f,
+          (vCurr.y + vNext.y) * 0.5f,
+          (vCurr.z + vNext.z) * 0.5f);
+
+      final int vtNextIdx = vertNext[1];
+      final Vec2 vtNext = this.texCoords[vtNextIdx];
+      vtsNew[j] = new Vec2(
+          (vtCurr.x + vtNext.x) * 0.5f,
+          (vtCurr.y + vtNext.y) * 0.5f);
+
+      final int vnNextIdx = vertNext[2];
+      final Vec3 vnNext = this.normals[vnNextIdx];
+      final Vec3 vn = vnsNew[j] = new Vec3(
+          (vnCurr.x + vnNext.x) * 0.5f,
+          (vnCurr.y + vnNext.y) * 0.5f,
+          (vnCurr.z + vnNext.z) * 0.5f);
+      Vec3.normalize(vn, vn);
+
+      final int vSubdivIdx = vsOldLen + j;
+      final int vtSubdivIdx = vtsOldLen + j;
+      final int vnSubdivIdx = vnsOldLen + j;
+      fsNew[j] = new int[][] {
+          { vSubdivIdx, vtSubdivIdx, vnSubdivIdx },
+          { vNextIdx, vtNextIdx, vnNextIdx },
+          { vsOldLen + k, vtsOldLen + k, vnsOldLen + k } };
+
+      centerFace[j][0] = vSubdivIdx;
+      centerFace[j][1] = vtSubdivIdx;
+      centerFace[j][2] = vnSubdivIdx;
+    }
+
+    this.coords = Vec3.concat(this.coords, vsNew);
+    this.texCoords = Vec2.concat(this.texCoords, vtsNew);
+    this.normals = Vec3.concat(this.normals, vnsNew);
+    this.faces = Mesh.splice(this.faces, i, 1, fsNew);
+
+    return this;
+  }
+
+  /**
+   * Subdivides all faces in the mesh by a number of iterations.
+   *
+   * @param itr iterations
+   * @return this mesh
+   */
+  @Chainable
+  public Mesh3 subdivFaces ( final int itr ) {
+
+    return this.subdivFacesCentroid(itr);
+  }
+
+  /**
+   * Subdivides all faces in the mesh by a number of iterations. Uses
+   * the centroid method.
+   *
+   * @param itr iterations
+   * @return this mesh
+   */
+  @Chainable
+  public Mesh3 subdivFacesCentroid ( final int itr ) {
+
+    final int vitr = itr < 1 ? 1 : itr;
+    for (int i = 0; i < vitr; ++i) {
+      final int len = this.faces.length;
+      for (int j = 0, k = 0; j < len; ++j) {
+        final int vertLen = this.faces[k].length;
+        this.subdivFaceCentroid(k);
+        k += vertLen;
+      }
+    }
+    return this;
+  }
+
+  /**
+   * Subdivides all faces in the mesh by a number of iterations. Uses
+   * the inscription method.
+   *
+   * @param itr iterations
+   * @return this mesh
+   */
+  @Chainable
+  public Mesh3 subdivFacesInscribe ( final int itr ) {
+
+    final int vitr = itr < 1 ? 1 : itr;
+    for (int i = 0; i < vitr; ++i) {
+      final int len = this.faces.length;
+      for (int j = 0, k = 0; j < len; ++j) {
+        final int vertLen = this.faces[k].length;
+        this.subdivFaceInscribe(k);
+        k += vertLen + 1;
+      }
+    }
     return this;
   }
 
@@ -1814,22 +1942,27 @@ public class Mesh3 extends Mesh {
    * Generates a cube mesh. In the context of Platonic solids, also
    * known as a hexahedron, as it has 6 faces and 8 vertices.
    *
+   * @param size   the corner scalar
    * @param target the output mesh
    * @return the cube
    */
-  public static Mesh3 cube ( final Mesh3 target ) {
+  public static Mesh3 cube (
+      final float size,
+      final Mesh3 target ) {
+
+    final float vsz = Utils.max(IUtils.DEFAULT_EPSILON, size);
 
     target.name = "Cube";
 
     target.coords = Vec3.resize(target.coords, 8);
-    target.coords[0].set(-0.5f, -0.5f, -0.5f);
-    target.coords[1].set(-0.5f, -0.5f, 0.5f);
-    target.coords[2].set(-0.5f, 0.5f, -0.5f);
-    target.coords[3].set(-0.5f, 0.5f, 0.5f);
-    target.coords[4].set(0.5f, -0.5f, -0.5f);
-    target.coords[5].set(0.5f, -0.5f, 0.5f);
-    target.coords[6].set(0.5f, 0.5f, -0.5f);
-    target.coords[7].set(0.5f, 0.5f, 0.5f);
+    target.coords[0].set(-vsz, -vsz, -vsz);
+    target.coords[1].set(-vsz, -vsz, vsz);
+    target.coords[2].set(-vsz, vsz, -vsz);
+    target.coords[3].set(-vsz, vsz, vsz);
+    target.coords[4].set(vsz, -vsz, -vsz);
+    target.coords[5].set(vsz, -vsz, vsz);
+    target.coords[6].set(vsz, vsz, -vsz);
+    target.coords[7].set(vsz, vsz, vsz);
 
     target.texCoords = Vec2.resize(target.texCoords, 4);
     target.texCoords[0].set(0.0f, 0.0f);
@@ -1854,6 +1987,50 @@ public class Mesh3 extends Mesh {
         { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } }
     };
 
+    return target;
+  }
+
+  /**
+   * Generates a cube mesh. In the context of Platonic solids, also
+   * known as a hexahedron, as it has 6 faces and 8 vertices. Uses the
+   * default cube size.
+   *
+   * @param target the output mesh
+   * @return the cube
+   */
+  public static Mesh3 cube ( final Mesh3 target ) {
+
+    return Mesh3.cube(Mesh3.DEFAULT_CUBE_SIZE, target);
+  }
+
+  /**
+   * Creates a cube, subdivides, then casts the vertices to a sphere.
+   * The higher the iteration, the more sphere-like the result.
+   *
+   * @param itrs   iterations
+   * @param target the output mesh
+   * @return the cube sphere
+   */
+  public static Mesh3 cubeSphere (
+      final int itrs,
+      final Mesh3 target ) {
+
+    /*
+     * Sort has to be done first to merge newly created vertices before
+     * normals are calculated.
+     */
+    Mesh3.cube(0.5f, target);
+    target.subdivFacesCentroid(itrs);
+    target.sort();
+
+    final int vsLen = target.coords.length;
+    for (int i = 0; i < vsLen; ++i) {
+      final Vec3 v = target.coords[i];
+      Vec3.rescale(v, 0.5f, v);
+    }
+
+    target.calcNormals();
+    target.name = "Sphere";
     return target;
   }
 
@@ -2257,6 +2434,38 @@ public class Mesh3 extends Mesh {
   }
 
   /**
+   * Creates an icosahedron, subdivides through inscription, then casts
+   * the vertices to a sphere. The higher the iteration, the more
+   * sphere-like the result.
+   *
+   * @param itrs   iterations
+   * @param target the output mesh
+   * @return the icosphere
+   */
+  public static Mesh3 icosphere (
+      final int itrs,
+      final Mesh3 target ) {
+
+    /*
+     * Sort has to be done first to merge newly created vertices before
+     * normals are calculated.
+     */
+    Mesh3.icosahedron(target);
+    target.subdivFacesInscribe(itrs);
+    target.sort();
+
+    final int vsLen = target.coords.length;
+    for (int i = 0; i < vsLen; ++i) {
+      final Vec3 v = target.coords[i];
+      Vec3.rescale(v, 0.5f, v);
+    }
+
+    target.calcNormals();
+    target.name = "Icosphere";
+    return target;
+  }
+
+  /**
    * Creates an octahedron, a Platonic solid with 8 faces and 6
    * coordinates.
    *
@@ -2475,151 +2684,14 @@ public class Mesh3 extends Mesh {
   }
 
   /**
-   * Creates a UV sphere.
-   *
-   * @param longitudes the longitudes
-   * @param latitudes  the latitudes
-   * @param target     the output mesh
-   * @return the sphere
-   */
-  public static Mesh3 sphere (
-      final int longitudes,
-      final int latitudes,
-      final Mesh3 target ) {
-
-    target.name = "UV Sphere";
-
-    /*
-     * Longitude corresponds to azimuth; latitude, to inclination.
-     */
-    final int vlons = longitudes < 3 ? 3 : longitudes;
-    final int vlats = latitudes < 2 ? 2 : latitudes;
-
-    final int lons1 = vlons + 1;
-    final int lats1 = vlats + 1;
-
-    /*
-     * The additional two comes from the North and South poles.
-     */
-    final int len = lons1 * vlats + 2;
-    final Vec3[] vs = target.coords = Vec3.resize(target.coords, len);
-    final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords, len);
-    final Vec3[] vns = target.normals = Vec3.resize(target.normals, len);
-
-    final float toU = 1.0f / vlons;
-    final float toV = 1.0f / lats1;
-
-    final float toTheta = 1.0f / vlons;
-    final float toPhi = 0.5f / lats1;
-
-    /*
-     * Set South pole. This is vertex 0, so subsequent vertex indices
-     * begin at an offset of 1.
-     */
-    vs[0].set(0.0f, 0.0f, -0.5f);
-    vts[0].set(0.5f, 1.0f - toV * 0.5f);
-    vns[0].set(0.0f, 0.0f, -1.0f);
-
-    for (int k = 1, h = 1, i = 0; i < vlats; ++h, ++i) {
-      final float v = h * toV;
-      final float phi = h * toPhi - 0.25f;
-      final float cosPhi = Utils.scNorm(phi);
-      final float sinPhi = Utils.scNorm(phi - 0.25f);
-
-      for (int j = 0; j < lons1; ++j, ++k) {
-        final float u = j * toU;
-        final float theta = j * toTheta;
-        final float cosTheta = Utils.scNorm(theta);
-        final float sinTheta = Utils.scNorm(theta - 0.25f);
-
-        vts[k].set(u, 1.0f - v);
-        final Vec3 nrm = vns[k].set(
-            cosPhi * cosTheta,
-            cosPhi * sinTheta,
-            sinPhi);
-        Vec3.mul(nrm, 0.5f, vs[k]);
-      }
-    }
-
-    /* Set North pole. */
-    final int last = len - 1;
-    vs[last].set(0.0f, 0.0f, 0.5f);
-    vts[last].set(0.5f, toV * 0.5f);
-    vns[last].set(0.0f, 0.0f, 1.0f);
-
-    final int[][][] fs = target.faces = new int[2 * vlons * vlats][3][3];
-    int idx = 0;
-
-    /* Top cap. */
-    for (int j = 0; j < vlons; ++j) {
-
-      final int[] v0 = fs[idx][0];
-      final int[] v1 = fs[idx][1];
-
-      v0[0] = v0[1] = v0[2] = j + 2;
-      v1[0] = v1[1] = v1[2] = j + 1;
-
-      idx++;
-    }
-
-    /* Middle */
-    final int latsn1 = vlats - 1;
-    for (int i = 0; i < latsn1; ++i) {
-      final int ilons1 = i * lons1;
-      for (int j = 0; j < vlons; ++j) {
-        final int current = j + ilons1 + 1;
-        final int next = current + lons1;
-        final int n1 = current + 1;
-        final int n2 = next + 1;
-
-        final int[] v0 = fs[idx][0];
-        final int[] v1 = fs[idx][1];
-        final int[] v2 = fs[idx][2];
-
-        v0[0] = v0[1] = v0[2] = current;
-        v1[0] = v1[1] = v1[2] = n1;
-        v2[0] = v2[1] = v2[2] = n2;
-
-        idx++;
-
-        final int[] v3 = fs[idx][0];
-        final int[] v4 = fs[idx][1];
-        final int[] v5 = fs[idx][2];
-
-        v3[0] = v3[1] = v3[2] = current;
-        v4[0] = v4[1] = v4[2] = n2;
-        v5[0] = v5[1] = v5[2] = next;
-
-        idx++;
-      }
-    }
-
-    /* Bottom cap. */
-    for (int j = 0; j < vlons; ++j) {
-
-      final int[] v0 = fs[idx][0];
-      final int[] v1 = fs[idx][1];
-      final int[] v2 = fs[idx][2];
-
-      v0[0] = v0[1] = v0[2] = last;
-      v1[0] = v1[1] = v1[2] = last - (j + 2);
-      v2[0] = v2[1] = v2[2] = last - (j + 1);
-
-      idx++;
-    }
-
-    return target;
-  }
-
-  /**
-   * Creates a UV sphere.
+   * Creates a sphere; defaults to a UV sphere.
    *
    * @param target the output mesh
    * @return the sphere
    */
   public static Mesh3 sphere ( final Mesh3 target ) {
 
-    return Mesh3.sphere(
+    return Mesh3.uvSphere(
         IMesh.DEFAULT_CIRCLE_SECTORS,
         IMesh.DEFAULT_CIRCLE_SECTORS >> 1,
         target);
@@ -2636,16 +2708,16 @@ public class Mesh3 extends Mesh {
     target.name = "Square";
 
     target.coords = Vec3.resize(target.coords, 4);
-    target.coords[0].set(-0.5f, 0.5f, 0.0f);
-    target.coords[1].set(0.5f, 0.5f, 0.0f);
-    target.coords[2].set(0.5f, -0.5f, 0.0f);
-    target.coords[3].set(-0.5f, -0.5f, 0.0f);
+    target.coords[0].set(-0.5f, -0.5f, 0.0f);
+    target.coords[1].set(0.5f, -0.5f, 0.0f);
+    target.coords[2].set(0.5f, 0.5f, 0.0f);
+    target.coords[3].set(-0.5f, 0.5f, 0.0f);
 
     target.texCoords = Vec2.resize(target.texCoords, 4);
-    target.texCoords[0].set(0.0f, 0.0f);
-    target.texCoords[1].set(1.0f, 0.0f);
-    target.texCoords[2].set(1.0f, 1.0f);
-    target.texCoords[3].set(0.0f, 1.0f);
+    target.texCoords[0].set(0.0f, 1.0f);
+    target.texCoords[1].set(1.0f, 1.0f);
+    target.texCoords[2].set(1.0f, 0.0f);
+    target.texCoords[3].set(0.0f, 0.0f);
 
     target.normals = Vec3.resize(target.normals, 1);
     Vec3.up(target.normals[0]);
@@ -2784,6 +2856,143 @@ public class Mesh3 extends Mesh {
     target.texCoords = vts.toArray(new Vec2[vts.size()]);
     target.normals = vns.toArray(new Vec3[vns.size()]);
     target.faces = trgfs;
+    return target;
+  }
+
+  /**
+   * Creates a UV sphere.
+   *
+   * @param longitudes the longitudes
+   * @param latitudes  the latitudes
+   * @param target     the output mesh
+   * @return the sphere
+   */
+  public static Mesh3 uvSphere (
+      final int longitudes,
+      final int latitudes,
+      final Mesh3 target ) {
+
+    target.name = "UV Sphere";
+
+    /*
+     * Longitude corresponds to azimuth; latitude, to inclination.
+     */
+    final int vlons = longitudes < 3 ? 3 : longitudes;
+    final int vlats = latitudes < 2 ? 2 : latitudes;
+
+    final int lons1 = vlons + 1;
+    final int lats1 = vlats + 1;
+
+    /*
+     * The additional two comes from the North and South poles.
+     */
+    final int len = lons1 * vlats + 2;
+    final Vec3[] vs = target.coords = Vec3.resize(target.coords, len);
+    final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords, len);
+    final Vec3[] vns = target.normals = Vec3.resize(target.normals, len);
+
+    final float toU = 1.0f / vlons;
+    final float toV = 1.0f / lats1;
+
+    final float toTheta = 1.0f / vlons;
+    final float toPhi = 0.5f / lats1;
+
+    /*
+     * Set South pole. This is vertex 0, so subsequent vertex indices
+     * begin at an offset of 1.
+     */
+    vs[0].set(0.0f, 0.0f, -0.5f);
+    vts[0].set(0.5f, 1.0f - toV * 0.5f);
+    vns[0].set(0.0f, 0.0f, -1.0f);
+
+    for (int k = 1, h = 1, i = 0; i < vlats; ++h, ++i) {
+      final float v = h * toV;
+      final float phi = h * toPhi - 0.25f;
+      final float cosPhi = Utils.scNorm(phi);
+      final float sinPhi = Utils.scNorm(phi - 0.25f);
+
+      for (int j = 0; j < lons1; ++j, ++k) {
+        final float u = j * toU;
+        final float theta = j * toTheta;
+        final float cosTheta = Utils.scNorm(theta);
+        final float sinTheta = Utils.scNorm(theta - 0.25f);
+
+        vts[k].set(u, 1.0f - v);
+        final Vec3 nrm = vns[k].set(
+            cosPhi * cosTheta,
+            cosPhi * sinTheta,
+            sinPhi);
+        Vec3.mul(nrm, 0.5f, vs[k]);
+      }
+    }
+
+    /* Set North pole. */
+    final int last = len - 1;
+    vs[last].set(0.0f, 0.0f, 0.5f);
+    vts[last].set(0.5f, toV * 0.5f);
+    vns[last].set(0.0f, 0.0f, 1.0f);
+
+    final int[][][] fs = target.faces = new int[2 * vlons * vlats][3][3];
+    int idx = 0;
+
+    /* Top cap. */
+    for (int j = 0; j < vlons; ++j) {
+
+      final int[] v0 = fs[idx][0];
+      final int[] v1 = fs[idx][1];
+
+      v0[0] = v0[1] = v0[2] = j + 2;
+      v1[0] = v1[1] = v1[2] = j + 1;
+
+      idx++;
+    }
+
+    /* Middle */
+    final int latsn1 = vlats - 1;
+    for (int i = 0; i < latsn1; ++i) {
+      final int ilons1 = i * lons1;
+      for (int j = 0; j < vlons; ++j) {
+        final int current = j + ilons1 + 1;
+        final int next = current + lons1;
+        final int n1 = current + 1;
+        final int n2 = next + 1;
+
+        final int[] v0 = fs[idx][0];
+        final int[] v1 = fs[idx][1];
+        final int[] v2 = fs[idx][2];
+
+        v0[0] = v0[1] = v0[2] = current;
+        v1[0] = v1[1] = v1[2] = n1;
+        v2[0] = v2[1] = v2[2] = n2;
+
+        idx++;
+
+        final int[] v3 = fs[idx][0];
+        final int[] v4 = fs[idx][1];
+        final int[] v5 = fs[idx][2];
+
+        v3[0] = v3[1] = v3[2] = current;
+        v4[0] = v4[1] = v4[2] = n2;
+        v5[0] = v5[1] = v5[2] = next;
+
+        idx++;
+      }
+    }
+
+    /* Bottom cap. */
+    for (int j = 0; j < vlons; ++j) {
+
+      final int[] v0 = fs[idx][0];
+      final int[] v1 = fs[idx][1];
+      final int[] v2 = fs[idx][2];
+
+      v0[0] = v0[1] = v0[2] = last;
+      v1[0] = v1[1] = v1[2] = last - (j + 2);
+      v2[0] = v2[1] = v2[2] = last - (j + 1);
+
+      idx++;
+    }
+
     return target;
   }
 }

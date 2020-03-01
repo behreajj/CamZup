@@ -87,3 +87,7 @@ rescales
 colinear
 extrude
 extrusion
+triangulates
+icosphere
+extrudes
+triangulate

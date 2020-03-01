@@ -236,54 +236,77 @@ public class Edge3 implements Comparable < Edge3 > {
    * Scales the coordinates of this edge. The texture coordinates and
    * normals are unaffected.
    *
-   * @param scale uniform scalar
+   * @param scalar uniform scalar
    * @return this edge
    */
   @Chainable
-  public Edge3 scale ( final float scale ) {
+  public Edge3 scale ( final float scalar ) {
 
-    return this.scaleGlobal(scale);
+    return this.scaleGlobal(scalar);
   }
 
   /**
    * Scales the coordinates of this edge. The texture coordinates and
    * normals are unaffected.
    *
-   * @param scale non uniform scalar
+   * @param scalar non uniform scalar
    * @return this edge
    */
   @Chainable
-  public Edge3 scale ( final Vec3 scale ) {
+  public Edge3 scale ( final Vec3 scalar ) {
 
-    return this.scaleGlobal(scale);
+    return this.scaleGlobal(scalar);
   }
 
+  /**
+   * Scales the coordinates of this edge. The texture coordinates are
+   * unaffected. Uses global coordinates, i.e., doesn't consider the
+   * face's position.
+   *
+   * @param scalar the scalar
+   * @return this edge
+   */
   @Chainable
-  public Edge3 scaleGlobal ( final float scale ) {
+  public Edge3 scaleGlobal ( final float scalar ) {
 
-    if (scale == 0.0f) { return this; }
+    if (scalar == 0.0f) { return this; }
 
-    Vec3.mul(this.origin.coord, scale, this.origin.coord);
-    Vec3.mul(this.dest.coord, scale, this.dest.coord);
+    Vec3.mul(this.origin.coord, scalar, this.origin.coord);
+    Vec3.mul(this.dest.coord, scalar, this.dest.coord);
     return this;
   }
 
+  /**
+   * Scales the coordinates of this edge. The texture coordinates are
+   * unaffected. Uses global coordinates, i.e., doesn't consider the
+   * face's position.
+   *
+   * @param scalar the nonuniform scalar
+   * @return this edge
+   */
   @Chainable
-  public Edge3 scaleGlobal ( final Vec3 scale ) {
+  public Edge3 scaleGlobal ( final Vec3 scalar ) {
 
-    if (Vec3.none(scale)) { return this; }
+    if (Vec3.none(scalar)) { return this; }
 
-    Vec3.mul(this.origin.coord, scale, this.origin.coord);
-    Vec3.mul(this.dest.coord, scale, this.dest.coord);
+    Vec3.mul(this.origin.coord, scalar, this.origin.coord);
+    Vec3.mul(this.dest.coord, scalar, this.dest.coord);
     return this;
   }
 
+  /**
+   * Scales the coordinates of this edge. Subtracts the edge's centroid
+   * from each vertex, scales, then adds the centroid.
+   *
+   * @param scalar the uniform scalar
+   * @return this edge
+   */
   @Chainable
-  public Edge3 scaleLocal ( final float scale ) {
+  public Edge3 scaleLocal ( final float scalar ) {
 
     // TEST
 
-    if (scale == 0.0f) { return this; }
+    if (scalar == 0.0f) { return this; }
 
     final Vec3 coOrigin = this.origin.coord;
     final Vec3 coDest = this.dest.coord;
@@ -294,22 +317,29 @@ public class Edge3 implements Comparable < Edge3 > {
         (coOrigin.z + coDest.z) * 0.5f);
 
     Vec3.sub(coOrigin, mp, coOrigin);
-    Vec3.mul(coOrigin, scale, coOrigin);
+    Vec3.mul(coOrigin, scalar, coOrigin);
     Vec3.add(coOrigin, mp, coOrigin);
 
     Vec3.sub(coDest, mp, coDest);
-    Vec3.mul(coDest, scale, coDest);
+    Vec3.mul(coDest, scalar, coDest);
     Vec3.add(coDest, mp, coDest);
 
     return this;
   }
 
+  /**
+   * Scales the coordinates of this edge. Subtracts the edge's centroid
+   * from each vertex, scales, then adds the centroid.
+   *
+   * @param scalar the nonuniform scalar
+   * @return this edge
+   */
   @Chainable
-  public Edge3 scaleLocal ( final Vec3 scale ) {
+  public Edge3 scaleLocal ( final Vec3 scalar ) {
 
     // TEST
 
-    if (Vec3.none(scale)) { return this; }
+    if (Vec3.none(scalar)) { return this; }
 
     final Vec3 coOrigin = this.origin.coord;
     final Vec3 coDest = this.dest.coord;
@@ -320,11 +350,11 @@ public class Edge3 implements Comparable < Edge3 > {
         (coOrigin.z + coDest.z) * 0.5f);
 
     Vec3.sub(coOrigin, mp, coOrigin);
-    Vec3.mul(coOrigin, scale, coOrigin);
+    Vec3.mul(coOrigin, scalar, coOrigin);
     Vec3.add(coOrigin, mp, coOrigin);
 
     Vec3.sub(coDest, mp, coDest);
-    Vec3.mul(coDest, scale, coDest);
+    Vec3.mul(coDest, scalar, coDest);
     Vec3.add(coDest, mp, coDest);
 
     return this;

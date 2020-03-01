@@ -226,7 +226,7 @@ public abstract class Mesh extends EntityData implements IMesh {
   public Mesh cycleFaces ( final int places ) {
 
     final int len = this.faces.length;
-    final int k = Math.floorMod(places, len);
+    final int k = Utils.mod(places, len);
     Mesh.reverse(this.faces, 0, len - 1);
     Mesh.reverse(this.faces, 0, k - 1);
     Mesh.reverse(this.faces, k, len - 1);
@@ -252,7 +252,7 @@ public abstract class Mesh extends EntityData implements IMesh {
     final int[][] arr = this.faces[Math.floorMod(
         faceIndex, this.faces.length)];
     final int len = arr.length;
-    final int k = Math.floorMod(places, len);
+    final int k = Utils.mod(places, len);
     Mesh.reverse(arr, 0, len - 1);
     Mesh.reverse(arr, 0, k - 1);
     Mesh.reverse(arr, k, len - 1);
@@ -283,8 +283,59 @@ public abstract class Mesh extends EntityData implements IMesh {
   }
 
   /**
-   * Inserts a 2D array in the midst of another. For use by subdivision
-   * functions.
+   * Triangulates all faces in a mesh drawing diagonals from the face's
+   * first vertex to all non-adjacent vertices.
+   *
+   * @return this mesh
+   */
+  public Mesh triangulate ( ) {
+
+    final int facesLen = this.faces.length;
+    for (int i = 0, k = 0; i < facesLen; ++i) {
+      final int faceLen = this.faces[k].length;
+      if (faceLen > 3) {
+        this.triangulate(k);
+        k += faceLen - 2;
+      }
+    }
+    return this;
+  }
+
+  /**
+   * Triangulates a convex face by drawing diagonals from its first
+   * vertex to all non-adjacent vertices.
+   *
+   * @param faceIdx the face index
+   * @return this mesh
+   */
+  public Mesh triangulate ( final int faceIdx ) {
+
+    final int facesLen = this.faces.length;
+    final int i = Utils.mod(faceIdx, facesLen);
+    final int[][] face = this.faces[i];
+    final int faceLen = face.length;
+    if (faceLen < 4) { return this; }
+    final int[] vert0 = face[0];
+    final int vertLen = vert0.length;
+    final int lastNonAdj = faceLen - 2;
+    final int[][][] fsNew = new int[lastNonAdj][3][vertLen];
+    for (int k = 0; k < lastNonAdj; ++k) {
+      final int[] vertn0 = face[k + 1];
+      final int[] vertn1 = face[k + 2];
+      final int[][] fNew = fsNew[k];
+      for (int m = 0; m < vertLen; ++m) {
+        fNew[0][m] = vert0[m];
+        fNew[1][m] = vertn0[m];
+        fNew[2][m] = vertn1[m];
+      }
+    }
+    this.faces = Mesh.splice(this.faces, i, 1, fsNew);
+    return this;
+  }
+
+  /**
+   * Inserts a 2D array in the midst of another. For use by edge
+   * subdivision functions.
    *
    * @param arr    the array
    * @param index  the insertion index

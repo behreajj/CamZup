@@ -590,6 +590,111 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
   }
 
   /**
+   * Returns a vector with all components set to epsilon, a small
+   * positive non-zero value.
+   *
+   * @param target the output vector
+   * @return epsilon
+   */
+  @Experimental
+  static Vec4 epsilon ( final Vec4 target ) {
+
+    return target.set(
+        Utils.EPSILON,
+        Utils.EPSILON,
+        Utils.EPSILON,
+        Utils.EPSILON);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is greater than the right
+   * comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  static Vec4 gt (
+      final Vec4 a,
+      final Vec4 b,
+      final Vec4 target ) {
+
+    return target.set(
+        a.x > b.x,
+        a.y > b.y,
+        a.z > b.z,
+        a.w > b.w);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is greater than or equal to
+   * the right comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  static Vec4 gtEq (
+      final Vec4 a,
+      final Vec4 b,
+      final Vec4 target ) {
+
+    return target.set(
+        a.x >= b.x,
+        a.y >= b.y,
+        a.z >= b.z,
+        a.w >= b.w);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is less than the right
+   * comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  static Vec4 lt (
+      final Vec4 a,
+      final Vec4 b,
+      final Vec4 target ) {
+
+    return target.set(
+        a.x < b.x,
+        a.y < b.y,
+        a.z < b.z,
+        a.w < b.w);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is less than or equal to the
+   * right comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  static Vec4 ltEq (
+      final Vec4 a,
+      final Vec4 b,
+      final Vec4 target ) {
+
+    return target.set(
+        a.x <= b.x,
+        a.y <= b.y,
+        a.z <= b.z,
+        a.w <= b.w);
+  }
+
+  /**
    * Finds the absolute value of each vector component.
    *
    * @param v      the input vector

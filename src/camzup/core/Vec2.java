@@ -703,6 +703,99 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
   }
 
   /**
+   * Returns a vector with all components set to epsilon, a small
+   * positive non-zero value.
+   *
+   * @param target the output vector
+   * @return epsilon
+   */
+  @Experimental
+  static Vec2 epsilon ( final Vec2 target ) {
+
+    return target.set(Utils.EPSILON, Utils.EPSILON);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is greater than the right
+   * comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  static Vec2 gt (
+      final Vec2 a,
+      final Vec2 b,
+      final Vec2 target ) {
+
+    return target.set(
+        a.x > b.x,
+        a.y > b.y);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is greater than or equal to
+   * the right comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  static Vec2 gtEq (
+      final Vec2 a,
+      final Vec2 b,
+      final Vec2 target ) {
+
+    return target.set(
+        a.x >= b.x,
+        a.y >= b.y);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is less than the right
+   * comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  static Vec2 lt (
+      final Vec2 a,
+      final Vec2 b,
+      final Vec2 target ) {
+
+    return target.set(
+        a.x < b.x,
+        a.y < b.y);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is less than or equal to the
+   * right comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  static Vec2 ltEq (
+      final Vec2 a,
+      final Vec2 b,
+      final Vec2 target ) {
+
+    return target.set(
+        a.x <= b.x,
+        a.y <= b.y);
+  }
+
+  /**
    * Finds the absolute value of each vector component.
    *
    * @param v      the input vector
@@ -1721,7 +1814,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
          * Shift indices so that they move smoothly along a diagonal between
          * hex edges, not along a jagged, orthogonal path.
          */
-        final int k = Math.floorMod(j - joff, vcnt);
+        final int k = Utils.mod(j - joff, vcnt);
         row[k] = new Vec2(xoff + xs[j], y);
       }
     }

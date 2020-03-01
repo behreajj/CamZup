@@ -2013,7 +2013,7 @@ public class Color extends Vec4 {
 
   /**
    * Returns the relative luminance of the color, based on
-   * <a href= "https://en.wikipedia.org/wiki/Relative_luminance">
+   * <a href="https://en.wikipedia.org/wiki/Relative_luminance">
    * https://en.wikipedia.org/wiki/Relative_luminance</a> .
    *
    * @param c the input color
@@ -2044,7 +2044,7 @@ public class Color extends Vec4 {
 
   /**
    * Returns the relative luminance of the color, based on
-   * <a href= "https://en.wikipedia.org/wiki/Relative_luminance">
+   * <a href="https://en.wikipedia.org/wiki/Relative_luminance">
    * https://en.wikipedia.org/wiki/Relative_luminance</a> .
    *
    * @param c the input color
@@ -2628,7 +2628,7 @@ public class Color extends Vec4 {
       final Color target,
       final Vec4 hsba ) {
 
-    /* HSBA to RGBA conversion takes care of modding the hue. */
+    /* HSBA to RGBA conversion takes care of wrapping the hue. */
     Color.rgbaToHsba(c, hsba);
     hsba.x += shift.x;
     hsba.y = Utils.clamp01(hsba.y + shift.y);
@@ -2651,7 +2651,7 @@ public class Color extends Vec4 {
       final Color target,
       final Vec4 hsba ) {
 
-    /* HSBA to RGBA conversion takes care of modding the hue. */
+    /* HSBA to RGBA conversion takes care of wrapping the hue. */
     Color.rgbaToHsba(c, hsba);
     hsba.x += shift.x;
     hsba.y = Utils.clamp01(hsba.y + shift.y);
@@ -2676,7 +2676,7 @@ public class Color extends Vec4 {
       final Color target,
       final Vec4 hsba ) {
 
-    /* HSBA to RGBA conversion takes care of modding the hue. */
+    /* HSBA to RGBA conversion takes care of wrapping the hue. */
     Color.rgbaToHsba(c, hsba);
     hsba.x += shift;
     return Color.hsbaToRgba(hsba, target);

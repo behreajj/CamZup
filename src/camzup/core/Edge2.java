@@ -132,6 +132,20 @@ public class Edge2 implements Comparable < Edge2 > {
   @Chainable
   public Edge2 rotateZ ( final float radians ) {
 
+    return this.rotateZGlobal(radians);
+  }
+
+  /**
+   * Rotates the coordinates of this edge by an angle in radians around
+   * the z axis. Uses global coordinates, i.e. doesn't consider the
+   * edge's position. The texture coordinates are unaffected.
+   *
+   * @param radians the angle
+   * @return this edge
+   */
+  @Chainable
+  public Edge2 rotateZGlobal ( final float radians ) {
+
     final float cosa = Utils.cos(radians);
     final float sina = Utils.sin(radians);
 
@@ -139,6 +153,38 @@ public class Edge2 implements Comparable < Edge2 > {
         cosa, sina, this.origin.coord);
     Vec2.rotateZ(this.dest.coord,
         cosa, sina, this.dest.coord);
+    return this;
+  }
+
+  /**
+   * Rotates the coordinates of this edge by an angle in radians around
+   * the z axis. The edge's midpoint acts as a pivot. The texture
+   * coordinates are unaffected.
+   *
+   * @param radians the angle
+   * @return this edge
+   */
+  @Chainable
+  public Edge2 rotateZLocal ( final float radians ) {
+
+    final float cosa = Utils.cos(radians);
+    final float sina = Utils.sin(radians);
+
+    final Vec2 coOrigin = this.origin.coord;
+    final Vec2 coDest = this.dest.coord;
+
+    final Vec2 mp = new Vec2(
+        (coOrigin.x + coDest.x) * 0.5f,
+        (coOrigin.y + coDest.y) * 0.5f);
+
+    Vec2.sub(coOrigin, mp, coOrigin);
+    Vec2.rotateZ(coOrigin, cosa, sina, coOrigin);
+    Vec2.add(coOrigin, mp, coOrigin);
+
+    Vec2.sub(coDest, mp, coDest);
+    Vec2.rotateZ(coDest, cosa, sina, coDest);
+    Vec2.add(coDest, mp, coDest);
+
     return this;
   }
 
