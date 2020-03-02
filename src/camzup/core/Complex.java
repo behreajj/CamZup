@@ -18,9 +18,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     /**
      * The default constructor.
      */
-    public AbstrComparator ( ) {
-
-    }
+    public AbstrComparator ( ) {}
 
     /**
      * The compare function which must be implemented by sub- (child)
@@ -235,9 +233,9 @@ public class Complex extends Imaginary implements Comparable < Complex > {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-    if (obj == null) { return false; }
-    if (this.getClass() != obj.getClass()) { return false; }
+    if ( this == obj ) { return true; }
+    if ( obj == null ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Complex) obj);
   }
 
@@ -250,7 +248,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
   @Override
   public float get ( final int index ) {
 
-    switch (index) {
+    switch ( index ) {
       case 0:
       case -1:
         return this.real;
@@ -349,13 +347,13 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
     try {
       real = Float.parseFloat(realstr);
-    } catch (final NumberFormatException e) {
+    } catch ( final NumberFormatException e ) {
       real = 0.0f;
     }
 
     try {
       imag = Float.parseFloat(imagstr);
-    } catch (final NumberFormatException e) {
+    } catch ( final NumberFormatException e ) {
       imag = 0.0f;
     }
 
@@ -600,7 +598,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final Complex target ) {
 
     final float bAbsSq = Complex.absSq(b);
-    if (bAbsSq == 0.0f) { return target.reset(); }
+    if ( bAbsSq == 0.0f ) { return target.reset(); }
 
     final float bInvAbsSq = 1.0f / bAbsSq;
     final float cReal = b.real * bInvAbsSq;
@@ -647,7 +645,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final float b,
       final Complex target ) {
 
-    if (b == 0.0f) { return target.reset(); }
+    if ( b == 0.0f ) { return target.reset(); }
 
     final float bInv = 1.0f / b;
     return target.set(
@@ -670,7 +668,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final Complex target ) {
 
     final float bAbsSq = Complex.absSq(b);
-    if (bAbsSq == 0.0f) { return target.reset(); }
+    if ( bAbsSq == 0.0f ) { return target.reset(); }
 
     final float abInvAbsSq = a / bAbsSq;
     return target.set(
@@ -708,7 +706,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final Complex target ) {
 
     final float absSq = Complex.absSq(z);
-    if (absSq == 0.0f) { return target.reset(); }
+    if ( absSq == 0.0f ) { return target.reset(); }
     final float invAbsSq = 1.0f / absSq;
     return target.set(
         z.real * invAbsSq,
@@ -731,7 +729,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final Complex conj ) {
 
     final float absSq = Complex.absSq(z);
-    if (absSq == 0.0f) { return target.reset(); }
+    if ( absSq == 0.0f ) { return target.reset(); }
     Complex.conj(z, conj);
     final float invAbsSq = 1.0f / absSq;
     return target.set(
@@ -803,7 +801,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
     final float czdi = c.real * z.imag + c.imag * z.real + d.imag;
     final float mSq = czdr * czdr + czdi * czdi;
 
-    if (mSq < Utils.EPSILON) { return target.reset(); }
+    if ( mSq < Utils.EPSILON ) { return target.reset(); }
 
     /*
      * az + b -- the numerator -- second.

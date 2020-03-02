@@ -74,10 +74,8 @@ public class Transform3 extends Transform {
         final Float step,
         final Transform3 target ) {
 
-      if (step <= 0.0f) { return target.set(origin); }
-
-      if (step >= 1.0f) { return target.set(dest); }
-
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
       return this.applyUnclamped(origin, dest, step, target);
     }
 
@@ -96,9 +94,8 @@ public class Transform3 extends Transform {
         final Transform3 target ) {
 
       final int len = arr.length;
-      if (len == 1 || step <= 0.0f) { return target.set(arr[0]); }
-
-      if (step >= 1.0f) { return target.set(arr[len - 1]); }
+      if ( len == 1 || step <= 0.0f ) { return target.set(arr[0]); }
+      if ( step >= 1.0f ) { return target.set(arr[len - 1]); }
 
       final float scaledStep = step * (len - 1);
       final int i = (int) scaledStep;
@@ -320,17 +317,17 @@ public class Transform3 extends Transform {
    */
   protected boolean equals ( final Transform3 t ) {
 
-    if (this.scale == null) {
-      if (t.scale != null) { return false; }
-    } else if (!this.scale.equals(t.scale)) { return false; }
+    if ( this.scale == null ) {
+      if ( t.scale != null ) { return false; }
+    } else if ( !this.scale.equals(t.scale) ) { return false; }
 
-    if (this.location == null) {
-      if (t.location != null) { return false; }
-    } else if (!this.location.equals(t.location)) { return false; }
+    if ( this.location == null ) {
+      if ( t.location != null ) { return false; }
+    } else if ( !this.location.equals(t.location) ) { return false; }
 
-    if (this.rotation == null) {
-      if (t.rotation != null) { return false; }
-    } else if (!this.rotation.equals(t.rotation)) { return false; }
+    if ( this.rotation == null ) {
+      if ( t.rotation != null ) { return false; }
+    } else if ( !this.rotation.equals(t.rotation) ) { return false; }
 
     return true;
   }
@@ -384,6 +381,7 @@ public class Transform3 extends Transform {
   @Override
   public Transform3 clone ( ) {
 
+    // TODO: Make copy constructor and copy setter instead?
     return new Transform3(
         this.location,
         this.rotation,
@@ -399,9 +397,9 @@ public class Transform3 extends Transform {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-    if (obj == null) { return false; }
-    if (this.getClass() != obj.getClass()) { return false; }
+    if ( this == obj ) { return true; }
+    if ( obj == null ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Transform3) obj);
   }
 
@@ -528,14 +526,15 @@ public class Transform3 extends Transform {
   @Override
   public int hashCode ( ) {
 
-    int hash = IUtils.HASH_BASE;
-    hash = hash * IUtils.HASH_MUL
-        ^ (this.location == null ? 0 : this.location.hashCode());
-    hash = hash * IUtils.HASH_MUL
-        ^ (this.rotation == null ? 0 : this.rotation.hashCode());
-    hash = hash * IUtils.HASH_MUL
-        ^ (this.scale == null ? 0 : this.scale.hashCode());
-    return hash;
+    return ((IUtils.MUL_BASE
+        ^ (this.location == null ? 0
+            : this.location.hashCode()))
+        * IUtils.HASH_MUL
+        ^ (this.rotation == null ? 0
+            : this.rotation.hashCode()))
+        * IUtils.HASH_MUL
+        ^ (this.scale == null ? 0
+            : this.scale.hashCode());
   }
 
   /**
@@ -564,8 +563,42 @@ public class Transform3 extends Transform {
   @Chainable
   public Transform3 moveBy ( final Vec3 dir ) {
 
+    return this.moveByGlobal(dir);
+  }
+
+  /**
+   * Moves the transform by a direction to a new location.
+   *
+   * @param dir the direction
+   * @return this transform
+   * @see Vec3#add(Vec3, Vec3, Vec3)
+   */
+  @Chainable
+  public Transform3 moveByGlobal ( final Vec3 dir ) {
+
     this.locPrev.set(this.location);
     Vec3.add(this.locPrev, dir, this.location);
+    return this;
+  }
+
+  /**
+   * Moves the transform by a direction multiplied by the transform's
+   * rotation. In effect, moves the transform by where it's facing.
+   *
+   * @param dir the direction
+   * @return this transform
+   * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
+   * @see Vec3#add(Vec3, Vec3, Vec3)
+   */
+  @Chainable
+  public Transform3 moveByLocal ( final Vec3 dir ) {
+
+    // TEST
+
+    this.locPrev.set(this.location);
+    Quaternion.mulVector(this.rotation, dir, this.location);
+    Vec3.mul(this.location, this.scale, this.location);
+    Vec3.add(this.locPrev, this.location, this.location);
     return this;
   }
 
@@ -727,7 +760,7 @@ public class Transform3 extends Transform {
   @Chainable
   public Transform3 rotateTo ( final Quaternion rotNew ) {
 
-    if (Quaternion.none(rotNew)) { return this; }
+    if ( Quaternion.none(rotNew) ) { return this; }
 
     this.rotPrev.set(this.rotation);
     this.rotation.set(rotNew);
@@ -766,7 +799,7 @@ public class Transform3 extends Transform {
       final float step,
       final Quaternion.AbstrEasing easingFunc ) {
 
-    if (Quaternion.none(rotNew)) { return this; }
+    if ( Quaternion.none(rotNew) ) { return this; }
     this.rotPrev.set(this.rotation);
     easingFunc.apply(this.rotPrev, rotNew, step, this.rotation);
     this.updateAxes();
@@ -843,7 +876,7 @@ public class Transform3 extends Transform {
   @Chainable
   public Transform3 scaleBy ( final float scalar ) {
 
-    if (scalar == 0.0f) { return this; }
+    if ( scalar == 0.0f ) { return this; }
     this.scalePrev.set(this.scale);
     Vec3.mul(this.scalePrev, scalar, this.scale);
     return this;
@@ -860,7 +893,7 @@ public class Transform3 extends Transform {
   @Chainable
   public Transform3 scaleBy ( final Vec2 nonUniformScale ) {
 
-    if (Vec2.all(nonUniformScale)) {
+    if ( Vec2.all(nonUniformScale) ) {
       this.scalePrev.set(this.scale);
       this.scale.set(nonUniformScale, 1.0f);
       Vec3.mul(this.scalePrev, this.scale, this.scale);
@@ -879,7 +912,7 @@ public class Transform3 extends Transform {
   @Chainable
   public Transform3 scaleBy ( final Vec3 nonUniformScale ) {
 
-    if (Vec3.all(nonUniformScale)) {
+    if ( Vec3.all(nonUniformScale) ) {
       this.scalePrev.set(this.scale);
       Vec3.mul(this.scalePrev, nonUniformScale, this.scale);
     }
@@ -895,7 +928,7 @@ public class Transform3 extends Transform {
   @Chainable
   public Transform3 scaleTo ( final float scalar ) {
 
-    if (scalar != 0.0f) {
+    if ( scalar != 0.0f ) {
       this.scalePrev.set(this.scale);
       this.scale.set(scalar, scalar, scalar);
     }
@@ -912,7 +945,7 @@ public class Transform3 extends Transform {
   @Chainable
   public Transform3 scaleTo ( final Vec3 scaleNew ) {
 
-    if (Vec3.all(scaleNew)) {
+    if ( Vec3.all(scaleNew) ) {
       this.scalePrev.set(this.scale);
       this.scale.set(scaleNew);
     }
@@ -933,7 +966,7 @@ public class Transform3 extends Transform {
       final Vec3 scaleNew,
       final float step ) {
 
-    if (Vec3.all(scaleNew)) {
+    if ( Vec3.all(scaleNew) ) {
       return this.scaleTo(scaleNew, step, Transform3.EASING.scale);
     }
     return this;
@@ -956,7 +989,7 @@ public class Transform3 extends Transform {
       final float step,
       final Vec3.AbstrEasing easingFunc ) {
 
-    if (Vec3.all(scaleNew)) {
+    if ( Vec3.all(scaleNew) ) {
       this.scalePrev.set(this.scale);
       easingFunc.apply(this.scalePrev, scaleNew, step, this.scale);
     }
@@ -1351,6 +1384,6 @@ public class Transform3 extends Transform {
 
   public static void setEasing ( final Easing easing ) {
 
-    if (easing != null) { Transform3.EASING = easing; }
+    if ( easing != null ) { Transform3.EASING = easing; }
   }
 }

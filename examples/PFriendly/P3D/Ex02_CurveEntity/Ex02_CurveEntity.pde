@@ -5,19 +5,12 @@ Zup3 graphics3;
 
 Random rng = new Random();
 
-MaterialSolid material = new MaterialSolid()
-  .setStroke(true)
-  .setStroke(#808080)
-  .setFill(false)
-  .setStrokeWeight(1.0);
-
 Transform3 transform = new Transform3()
   .moveTo(new Vec3(0.0, 0.0, 0.0))
   .scaleTo(256.0);
 
 Curve3 curve = Curve3.circle(0.0, 0.5, 4, new Curve3());
 CurveEntity3 entity = new CurveEntity3("Example", transform)
-  .appendMaterial(material)
   .appendCurve(curve);
 
 void settings() {
@@ -41,6 +34,9 @@ void draw() {
 
   graphics3.background();
   graphics3.origin();
+  
+  graphics3.noFill();
+  graphics3.strokeWeight(1.0);
   graphics3.shape(entity);
   graphics3.handles(entity, 0.005);
 

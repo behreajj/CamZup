@@ -13,11 +13,6 @@ public class Entity3 extends Entity {
   public final Transform3 transform;
 
   /**
-   * The order in which the transform is applied.
-   */
-  public TransformOrder transformOrder = TransformOrder.TRS;
-
-  /**
    * The default constructor.
    */
   public Entity3 ( ) {
@@ -73,11 +68,9 @@ public class Entity3 extends Entity {
    */
   protected boolean equals ( final Entity3 entity ) {
 
-    if (this.transform == null) {
-      if (entity.transform != null) { return false; }
-    } else if (!this.transform.equals(entity.transform)) { return false; }
-
-    if (this.transformOrder != entity.transformOrder) { return false; }
+    if ( this.transform == null ) {
+      if ( entity.transform != null ) { return false; }
+    } else if ( !this.transform.equals(entity.transform) ) { return false; }
 
     return true;
   }
@@ -91,12 +84,9 @@ public class Entity3 extends Entity {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-
-    if (!super.equals(obj)) { return false; }
-
-    if (this.getClass() != obj.getClass()) { return false; }
-
+    if ( this == obj ) { return true; }
+    if ( !super.equals(obj) ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Entity3) obj);
   }
 
@@ -111,9 +101,6 @@ public class Entity3 extends Entity {
     int hash = super.hashCode();
     hash = hash * IUtils.HASH_MUL
         ^ (this.transform == null ? 0 : this.transform.hashCode());
-    hash = hash * IUtils.HASH_MUL
-        ^ (this.transformOrder == null ? 0
-            : this.transformOrder.hashCode());
     return hash;
   }
 
@@ -349,9 +336,6 @@ public class Entity3 extends Entity {
         .append('\"')
         .append(", transform: ")
         .append(this.transform.toString(places))
-        .append(", transformOrder: \"")
-        .append(this.transformOrder)
-        .append('\"')
         .append(' ')
         .append('}')
         .toString();

@@ -136,7 +136,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final boolean isPrimary ) {
 
     super(width, height, parent, path, isPrimary);
-
   }
 
   /**
@@ -551,7 +550,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
     this.pushStyle();
     this.pushMatrix();
-    this.transform(ce.transform, ce.transformOrder);
+
+    // TODO: Is this the way it is because it had to match 2D handles
+    // which had a rotation glitch?
+    this.transform(ce.transform);
 
     final float swRear = strokeWeight * 4.0f;
     final float swFore = swRear * 1.25f;
@@ -561,11 +563,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     final Iterator < Curve3 > curveItr = curves.iterator();
     Iterator < Knot3 > knItr = null;
 
-    while (curveItr.hasNext()) {
+    while ( curveItr.hasNext() ) {
       final Curve3 curve = curveItr.next();
       knItr = curve.iterator();
 
-      while (knItr.hasNext()) {
+      while ( knItr.hasNext() ) {
         final Knot3 knot = knItr.next();
 
         final Vec3 coord = knot.coord;
@@ -633,15 +635,15 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   /**
    * Draws a line between two coordinates.
    *
-   * @param a the origin coordinate
-   * @param b the destination coordinate
+   * @param origin the origin coordinate
+   * @param dest   the destination coordinate
    */
   @Override
-  public void line ( final Vec3 a, final Vec3 b ) {
+  public void line ( final Vec3 origin, final Vec3 dest ) {
 
     this.lineImpl(
-        a.x, a.y, a.z,
-        b.x, b.y, b.z);
+        origin.x, origin.y, origin.z,
+        dest.x, dest.y, dest.z);
   }
 
   /**
@@ -659,12 +661,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
      * Due to stroke flickering issues, a material in 3D will not have
      * both a stroke and a fill.
      */
-    if (material.useFill) {
+    if ( material.useFill ) {
       this.noStroke();
       this.fill(material.fill);
     } else {
       this.noFill();
-      if (material.useStroke) {
+      if ( material.useStroke ) {
         this.strokeWeight(material.strokeWeight);
         this.stroke(Color.toHexInt(material.stroke));
       } else {
@@ -802,7 +804,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   }
 
   /**
-   * Rotates the modelview matrix around an arbitrary axis by an angle
+   * Rotates the model view matrix around an arbitrary axis by an angle
    * in radians.
    *
    * @param angle the angle in radians
@@ -915,10 +917,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     Vec3 foreHandle = null;
     Vec3 rearHandle = null;
 
-    while (curveItr.hasNext()) {
+    while ( curveItr.hasNext() ) {
       final Curve3 curve = curveItr.next();
 
-      if (useMaterial) {
+      if ( useMaterial ) {
         this.pushStyle();
         this.material(materials.get(
             curve.materialIndex));
@@ -936,7 +938,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
           this.textureU,
           this.textureV);
 
-      while (knItr.hasNext()) {
+      while ( knItr.hasNext() ) {
         currKnot = knItr.next();
         foreHandle = prevKnot.foreHandle;
         rearHandle = currKnot.rearHandle;
@@ -954,7 +956,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
         prevKnot = currKnot;
       }
 
-      if (curve.closedLoop) {
+      if ( curve.closedLoop ) {
         currKnot = curve.getFirst();
         foreHandle = prevKnot.foreHandle;
         rearHandle = currKnot.rearHandle;
@@ -973,7 +975,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
         this.endShape(PConstants.OPEN);
       }
 
-      if (useMaterial) { this.popStyle(); }
+      if ( useMaterial ) { this.popStyle(); }
     }
   }
 
@@ -986,7 +988,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     final Vec3 v = new Vec3();
     final Vec3 vn = new Vec3();
 
-    while (meshItr.hasNext()) {
+    while ( meshItr.hasNext() ) {
       this.drawMesh3(meshItr.next(), tr, v, vn);
     }
   }
@@ -1005,7 +1007,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
     this.pushStyle();
     this.noStroke();
-    while (meshItr.hasNext()) {
+    while ( meshItr.hasNext() ) {
       final Mesh3 mesh = meshItr.next();
       this.drawMesh3(mesh, tr, material, v, vt, vn);
     }
@@ -1032,7 +1034,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
     this.pushStyle();
     this.noStroke();
-    while (meshItr.hasNext()) {
+    while ( meshItr.hasNext() ) {
       final Mesh3 mesh = meshItr.next();
       final MaterialPImage mat = materials[mesh.materialIndex];
       this.drawMesh3(mesh, tr, mat, v, vt, vn);
@@ -1053,7 +1055,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
     this.pushStyle();
     this.material(material);
-    while (meshItr.hasNext()) {
+    while ( meshItr.hasNext() ) {
       final Mesh3 mesh = meshItr.next();
       this.drawMesh3(mesh, tr, v, vn);
     }
@@ -1077,7 +1079,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     final Vec3 v = new Vec3();
     final Vec3 vn = new Vec3();
 
-    while (meshItr.hasNext()) {
+    while ( meshItr.hasNext() ) {
       final Mesh3 mesh = meshItr.next();
       this.pushStyle();
       this.material(materials[mesh.materialIndex]);
@@ -1162,7 +1164,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     tr3.getLocation(this.tr3Loc);
     tr3.getRotation(this.tr3Rot);
 
-    switch (order) {
+    switch ( order ) {
 
       case RST:
 

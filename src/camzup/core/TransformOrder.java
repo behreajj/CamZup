@@ -9,37 +9,37 @@ public enum TransformOrder {
   /**
    * Rotation, Scale, Translation
    */
-  RST ( "Rotation, Scale, Translation" ),
+  RST ( "[ \"ROTATION\", \"SCALE\", \"TRANSLATION\" ]" ),
 
   /**
    * Rotation, Translation, Scale
    */
-  RTS ( "Rotation, Translation, Scale" ),
+  RTS ( "[ \"ROTATION\", \"TRANSLATION\", \"SCALE\" ]" ),
 
   /**
    * Scale, Rotation, Translation
    */
-  SRT ( "Scale, Rotation, Translation" ),
+  SRT ( "[ \"SCALE\", \"ROTATION\", \"TRANSLATION\" ]" ),
 
   /**
    * Scale, Translation, Rotation
    */
-  STR ( "Scale, Translation, Rotation" ),
+  STR ( "[ \"SCALE\", \"TRANSLATION\", \"ROTATION\" ]" ),
 
   /**
    * Translation, Rotation, Scale
    */
-  TRS ( "Translation, Rotation, Scale" ),
+  TRS ( "[ \"TRANSLATION\", \"ROTATION\", \"SCALE\" ]" ),
 
   /**
    * Translation, Scale, Rotation
    */
-  TSR ( "Translation, Scale, Rotation" );
+  TSR ( "[ \"TRANSLATION\", \"SCALE\", \"ROTATION\" ]" );
 
   /**
    * The long-form name displayed in the console.
    */
-  private String name;
+  private final String printName;
 
   /**
    * The default constructor
@@ -48,16 +48,17 @@ public enum TransformOrder {
    */
   private TransformOrder ( final String name ) {
 
-    this.name = name;
+    this.printName = name;
   }
 
   /**
-   * Returns a string representation of the transform order.
+   * Gets the print name of this transform order.
+   *
+   * @return the print name
    */
-  @Override
-  public String toString ( ) {
+  public String getPrintName ( ) {
 
-    return this.name;
+    return this.printName;
   }
 
   /**
@@ -68,7 +69,7 @@ public enum TransformOrder {
    */
   public static TransformOrder reverse ( final TransformOrder order ) {
 
-    switch (order) {
+    switch ( order ) {
       case RST:
         return TransformOrder.TSR;
       case RTS:

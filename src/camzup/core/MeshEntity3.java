@@ -101,7 +101,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
   @Chainable
   public MeshEntity3 appendMesh ( final Mesh3 mesh ) {
 
-    if (mesh != null) { this.meshes.add(mesh); }
+    if ( mesh != null ) { this.meshes.add(mesh); }
     return this;
   }
 
@@ -114,7 +114,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
   @Chainable
   public MeshEntity3 appendMeshes ( final Mesh3 ... meshes ) {
 
-    for (final Mesh3 m : meshes) {
+    for ( final Mesh3 m : meshes ) {
       this.appendMesh(m);
     }
     return this;
@@ -199,22 +199,22 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
     int meshIndex = 0;
     final int meshLast = meshLen - 1;
     final Iterator < Mesh3 > meshItr = this.meshes.iterator();
-    while (meshItr.hasNext()) {
+    while ( meshItr.hasNext() ) {
       pyCd.append(meshItr.next().toBlenderCode());
-      if (meshIndex < meshLast) { pyCd.append(',').append(' '); }
+      if ( meshIndex < meshLast ) { pyCd.append(',').append(' '); }
       meshIndex++;
     }
 
     pyCd.append("], \"materials\": [");
-    if (useMaterials) {
+    if ( useMaterials ) {
       final int matLen = materials.length;
       final int matLast = matLen - 1;
 
-      for (int i = 0; i < matLen; ++i) {
+      for ( int i = 0; i < matLen; ++i ) {
         pyCd.append(materials[i].toBlenderCode(
             gamma, metallic, roughness,
             specular, clearcoat, clearcoatRough));
-        if (i < matLast) { pyCd.append(',').append(' '); }
+        if ( i < matLast ) { pyCd.append(',').append(' '); }
       }
     } else {
       pyCd.append(MaterialSolid.defaultBlenderMaterial(gamma));
@@ -272,14 +272,14 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
         .append("    mesh_data.from_pydata(vert_dat, [], fc_idcs)\n");
     pyCd.append("    mesh_data.validate()\n");
 
-    if (autoSmoothNormals) {
+    if ( autoSmoothNormals ) {
       pyCd.append("    mesh_data.use_auto_smooth = True\n")
           .append("    polys = mesh_data.polygons\n")
           .append("    for poly in polys:\n")
           .append("        poly.use_smooth = True\n");
     }
 
-    if (useMaterials) {
+    if ( useMaterials ) {
       pyCd.append("    idx = mesh[\"material_index\"]\n")
           .append("    mat_name = materials[idx][\"name\"]\n")
           .append("    mesh_data.materials.append(d_mats[mat_name])\n");
@@ -292,7 +292,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
         .append("    scene_objs.link(mesh_obj)\n")
         .append("    mesh_obj.parent = parent_obj\n\n");
 
-    if (addVertGroups) {
+    if ( addVertGroups ) {
       final String vertGroupName = "All";
       pyCd.append("    vert_group = mesh_obj.vertex_groups.new(name=\"")
           .append(vertGroupName)

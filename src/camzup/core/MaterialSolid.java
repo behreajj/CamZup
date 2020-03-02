@@ -260,7 +260,7 @@ public class MaterialSolid extends Material {
     final StringBuilder result = new StringBuilder(256);
 
     /* Stroke style. */
-    if (this.useStroke) {
+    if ( this.useStroke ) {
       result.append("stroke-width=\"")
           .append(strokeStr)
           .append("\" stroke-opacity=\"")
@@ -278,7 +278,7 @@ public class MaterialSolid extends Material {
     }
 
     /* Fill style. */
-    if (this.useFill) {
+    if ( this.useFill ) {
       result.append("fill-opacity=\"")
           .append(Utils.toFixed(Utils.clamp01(this.fill.w), 6))
           .append("\" fill=\"")

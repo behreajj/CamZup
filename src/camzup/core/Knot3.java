@@ -40,8 +40,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
         final Float step,
         final Knot3 target ) {
 
-      if (step <= 0.0f) { return target.set(origin); }
-      if (step >= 1.0f) { return target.set(dest); }
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
       return this.applyUnclamped(origin, dest, step, target);
     }
 
@@ -229,6 +229,16 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    *
    * @param source the source
    */
+  public Knot3 ( final Knot2 source ) {
+
+    this.set(source);
+  }
+
+  /**
+   * Creates a knot from a source knot.
+   *
+   * @param source the source
+   */
   public Knot3 ( final Knot3 source ) {
 
     this.set(source);
@@ -262,6 +272,21 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
         xCoord, yCoord, zCoord,
         xFore, yFore, zFore,
         xRear, yRear, zRear);
+  }
+
+  /**
+   * Creates a knot from a series of vectors.
+   *
+   * @param coord      the coordinate
+   * @param foreHandle the fore handle
+   * @param rearHandle the rear handle
+   */
+  public Knot3 (
+      final Vec2 coord,
+      final Vec2 foreHandle,
+      final Vec2 rearHandle ) {
+
+    this.set(coord, foreHandle, rearHandle);
   }
 
   /**
@@ -311,17 +336,17 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    */
   protected boolean equals ( final Knot3 other ) {
 
-    if (this.coord == null) {
-      if (other.coord != null) { return false; }
-    } else if (!this.coord.equals(other.coord)) { return false; }
+    if ( this.coord == null ) {
+      if ( other.coord != null ) { return false; }
+    } else if ( !this.coord.equals(other.coord) ) { return false; }
 
-    if (this.foreHandle == null) {
-      if (other.foreHandle != null) { return false; }
-    } else if (!this.foreHandle.equals(other.foreHandle)) { return false; }
+    if ( this.foreHandle == null ) {
+      if ( other.foreHandle != null ) { return false; }
+    } else if ( !this.foreHandle.equals(other.foreHandle) ) { return false; }
 
-    if (this.rearHandle == null) {
-      if (other.rearHandle != null) { return false; }
-    } else if (!this.rearHandle.equals(other.rearHandle)) { return false; }
+    if ( this.rearHandle == null ) {
+      if ( other.rearHandle != null ) { return false; }
+    } else if ( !this.rearHandle.equals(other.rearHandle) ) { return false; }
 
     return true;
   }
@@ -334,16 +359,41 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    *
    * @return the string
    */
-  @Experimental
   String toBlenderCode ( ) {
 
-    return new StringBuilder(320)
+    return this.toBlenderCode(1.0f, 1.0f, 0.0f);
+  }
+
+  /**
+   * Returns a String of Python code targeted toward the Blender 2.8x
+   * API. This code is brittle and is used for internal testing
+   * purposes, i.e., to compare how curve geometry looks in Blender (the
+   * control) versus in the library (the test).
+   *
+   * @param weight soft body weight
+   * @param radius bevel radius
+   * @param tilt   tilt
+   * @return the string
+   */
+  @Experimental
+  String toBlenderCode (
+      final float weight,
+      final float radius,
+      final float tilt ) {
+
+    return new StringBuilder(384)
         .append("{\"co\": ")
         .append(this.coord.toBlenderCode())
         .append(", \"handle_right\": ")
         .append(this.foreHandle.toBlenderCode())
         .append(", \"handle_left\": ")
         .append(this.rearHandle.toBlenderCode())
+        .append(", \"weight\": ")
+        .append(Utils.toFixed(weight, 6))
+        .append(", \"radius\": ")
+        .append(Utils.toFixed(radius, 6))
+        .append(", \"tilt\": ")
+        .append(Utils.toFixed(tilt, 6))
         .append('}')
         .toString();
   }
@@ -463,9 +513,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-    if (obj == null) { return false; }
-    if (this.getClass() != obj.getClass()) { return false; }
+    if ( this == obj ) { return true; }
+    if ( obj == null ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Knot3) obj);
   }
 
@@ -948,6 +998,21 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    * @return this knot
    */
   @Chainable
+  public Knot3 set ( final Knot2 source ) {
+
+    return this.set(
+        source.coord,
+        source.foreHandle,
+        source.rearHandle);
+  }
+
+  /**
+   * Sets this knot from a source knot.
+   *
+   * @param source the source
+   * @return this knot
+   */
+  @Chainable
   public Knot3 set ( final Knot3 source ) {
 
     return this.set(
@@ -988,6 +1053,26 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     this.foreHandle.set(xFore, yFore, zFore);
     this.rearHandle.set(xRear, yRear, zRear);
 
+    return this;
+  }
+
+  /**
+   * Sets this knot from a series of vectors.
+   *
+   * @param coord      the coordinate
+   * @param foreHandle the fore handle
+   * @param rearHandle the rear handle
+   * @return this knot
+   */
+  @Chainable
+  public Knot3 set (
+      final Vec2 coord,
+      final Vec2 foreHandle,
+      final Vec2 rearHandle ) {
+
+    this.coord.set(coord);
+    this.foreHandle.set(foreHandle);
+    this.rearHandle.set(rearHandle);
     return this;
   }
 

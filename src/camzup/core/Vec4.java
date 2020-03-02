@@ -20,9 +20,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
     /**
      * The default constructor.
      */
-    public AbstrComparator ( ) {
-
-    }
+    public AbstrComparator ( ) {}
 
     /**
      * The compare function which must be implemented by sub- (child)
@@ -314,9 +312,9 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-    if (obj == null) { return false; }
-    if (this.getClass() != obj.getClass()) { return false; }
+    if ( this == obj ) { return true; }
+    if ( obj == null ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Vec4) obj);
   }
 
@@ -330,7 +328,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
   @Override
   public float get ( final int index ) {
 
-    switch (index) {
+    switch ( index ) {
       case 0:
       case -4:
         return this.x;
@@ -461,25 +459,25 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
 
     try {
       x = Float.parseFloat(xstr);
-    } catch (final NumberFormatException e) {
+    } catch ( final NumberFormatException e ) {
       x = 0.0f;
     }
 
     try {
       y = Float.parseFloat(ystr);
-    } catch (final NumberFormatException e) {
+    } catch ( final NumberFormatException e ) {
       y = 0.0f;
     }
 
     try {
       z = Float.parseFloat(zstr);
-    } catch (final NumberFormatException e) {
+    } catch ( final NumberFormatException e ) {
       z = 0.0f;
     }
 
     try {
       w = Float.parseFloat(wstr);
-    } catch (final NumberFormatException e) {
+    } catch ( final NumberFormatException e ) {
       w = 0.0f;
     }
 
@@ -1006,7 +1004,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final float b,
       final Vec4 target ) {
 
-    if (b == 0.0f) { return target.reset(); }
+    if ( b == 0.0f ) { return target.reset(); }
 
     final float denom = 1.0f / b;
     return target.set(
@@ -1151,7 +1149,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final float b,
       final Vec4 target ) {
 
-    if (b == 0.0f) { return target.set(a); }
+    if ( b == 0.0f ) { return target.set(a); }
 
     return target.set(
         a.x % b,
@@ -1424,7 +1422,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final float b,
       final Vec4 target ) {
 
-    if (b == 0.0f) { return target.set(a); }
+    if ( b == 0.0f ) { return target.set(a); }
 
     return target.set(
         Utils.modUnchecked(a.x, b),
@@ -1714,7 +1712,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final int levels,
       final Vec4 target ) {
 
-    if (levels < 2) { return target.set(v); }
+    if ( levels < 2 ) { return target.set(v); }
 
     final float delta = 1.0f / levels;
     return target.set(
@@ -1794,7 +1792,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final Vec4 target ) {
 
     final float mSq = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
-    if (scalar == 0.0f || mSq == 0.0f) { return target.reset(); }
+    if ( scalar == 0.0f || mSq == 0.0f ) { return target.reset(); }
 
     final float sclMag = scalar * Utils.invSqrtUnchecked(mSq);
     return target.set(
@@ -1822,7 +1820,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final Vec4 target,
       final Vec4 normalized ) {
 
-    if (scalar == 0.0f) {
+    if ( scalar == 0.0f ) {
       normalized.reset();
       return target.reset();
     }
@@ -1849,7 +1847,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final float sina,
       final Vec4 target ) {
 
-    // TODO: Needs testing.
+    // TEST
 
     return target.set(
         v.x,
@@ -1865,7 +1863,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final float sina,
       final Vec4 target ) {
 
-    // TODO: Needs testing.
+    // TEST
 
     return target.set(
         v.x,
@@ -1881,7 +1879,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final float sina,
       final Vec4 target ) {
 
-    // TODO: Needs testing.
+    // TEST
 
     return target.set(
         v.x,
@@ -1897,7 +1895,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final float sina,
       final Vec4 target ) {
 
-    // TODO: Needs testing.
+    // TEST
 
     return target.set(
         cosa * v.x - sina * v.z,
@@ -1929,7 +1927,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final float sina,
       final Vec4 target ) {
 
-    // TODO: Needs testing.
+    // TEST
 
     return target.set(
         cosa * v.x - sina * v.y,
@@ -1954,11 +1952,11 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final int places,
       final Vec4 target ) {
 
-    if (places < 1) { return Vec4.round(v, target); }
-    if (places > 7) { return target.set(v); }
+    if ( places < 1 ) { return Vec4.round(v, target); }
+    if ( places > 7 ) { return target.set(v); }
 
     int n = 10;
-    for (int i = 1; i < places; ++i) {
+    for ( int i = 1; i < places; ++i ) {
       n *= 10;
     }
     final float nInv = 1.0f / n;

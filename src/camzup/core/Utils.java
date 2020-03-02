@@ -105,8 +105,8 @@ public abstract class Utils implements IUtils {
         final Float dest,
         final Float step ) {
 
-      if (step <= 0.0f) { return origin; }
-      if (step >= 1.0f) { return dest; }
+      if ( step <= 0.0f ) { return origin; }
+      if ( step >= 1.0f ) { return dest; }
       return super.apply(origin, dest, step);
     }
   }
@@ -152,13 +152,13 @@ public abstract class Utils implements IUtils {
         final float dest,
         final float step ) {
 
-      if (this.aGtb) {
+      if ( this.aGtb ) {
         this.b = this.b + this.range;
         this.modResult = true;
       }
 
-      final float fac = Utils.lerpUnclamped(this.a, this.b, step);
-      if (this.modResult) { return Utils.modUnchecked(fac, this.range); }
+      final float fac = (1.0f - step) * this.a + step * this.b;
+      if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
       return fac;
     }
   }
@@ -203,13 +203,13 @@ public abstract class Utils implements IUtils {
         final float dest,
         final float step ) {
 
-      if (this.aLtb) {
+      if ( this.aLtb ) {
         this.a = this.a + this.range;
         this.modResult = true;
       }
 
-      final float fac = Utils.lerpUnclamped(this.a, this.b, step);
-      if (this.modResult) { return Utils.modUnchecked(fac, this.range); }
+      final float fac = (1.0f - step) * this.a + step * this.b;
+      if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
       return fac;
     }
   }
@@ -255,16 +255,16 @@ public abstract class Utils implements IUtils {
         final float dest,
         final float step ) {
 
-      if (this.aLtb && this.diff < this.halfRange) {
+      if ( this.aLtb && this.diff < this.halfRange ) {
         this.a = this.a + this.range;
         this.modResult = true;
-      } else if (this.aGtb && this.diff > -this.halfRange) {
+      } else if ( this.aGtb && this.diff > -this.halfRange ) {
         this.b = this.b + this.range;
         this.modResult = true;
       }
 
-      final float fac = Utils.lerpUnclamped(this.a, this.b, step);
-      if (this.modResult) { return Utils.modUnchecked(fac, this.range); }
+      final float fac = (1.0f - step) * this.a + step * this.b;
+      if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
       return fac;
     }
   }
@@ -309,16 +309,16 @@ public abstract class Utils implements IUtils {
         final float dest,
         final float step ) {
 
-      if (this.aLtb && this.diff > this.halfRange) {
+      if ( this.aLtb && this.diff > this.halfRange ) {
         this.a = this.a + this.range;
         this.modResult = true;
-      } else if (this.aGtb && this.diff < -this.halfRange) {
+      } else if ( this.aGtb && this.diff < -this.halfRange ) {
         this.b = this.b + this.range;
         this.modResult = true;
       }
 
-      final float fac = Utils.lerpUnclamped(this.a, this.b, step);
-      if (this.modResult) { return Utils.modUnchecked(fac, this.range); }
+      final float fac = (1.0f - step) * this.a + step * this.b;
+      if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
       return fac;
     }
   }
@@ -393,7 +393,7 @@ public abstract class Utils implements IUtils {
     protected transient float halfRange = 0.5f;
 
     /**
-     * Whether or not to floor mod the result of the easing function.
+     * Whether or not to floor wrap the result of the easing function.
      */
     protected transient boolean modResult = false;
 
@@ -457,8 +457,8 @@ public abstract class Utils implements IUtils {
 
       this.eval(origin, dest);
 
-      if (step <= 0.0f || this.diff == 0.0f) { return this.a; }
-      if (step >= 1.0f) { return this.b; }
+      if ( step <= 0.0f || this.diff == 0.0f ) { return this.a; }
+      if ( step >= 1.0f ) { return this.b; }
       return this.applyUnclamped(origin, dest, step);
     }
 
@@ -549,8 +549,8 @@ public abstract class Utils implements IUtils {
         final Float dest,
         final Float step ) {
 
-      if (step <= 0.0f) { return origin; }
-      if (step >= 1.0f) { return dest; }
+      if ( step <= 0.0f ) { return origin; }
+      if ( step >= 1.0f ) { return dest; }
       final double td = step;
       final float ts = (float) (td * td * (3.0d - (td + td)));
       return super.apply(origin, dest, ts);
@@ -639,8 +639,8 @@ public abstract class Utils implements IUtils {
    */
   public static float acos ( final float value ) {
 
-    if (value <= -1.0f) { return IUtils.PI; }
-    if (value >= 1.0f) { return 0.0f; }
+    if ( value <= -1.0f ) { return IUtils.PI; }
+    if ( value >= 1.0f ) { return 0.0f; }
 
     final boolean ltZero = value < 0.0f;
     final float x = ltZero ? -value : value;
@@ -666,7 +666,8 @@ public abstract class Utils implements IUtils {
    */
   public static int and ( final float a, final float b ) {
 
-    return Utils.toInt(Utils.toBool(a) & Utils.toBool(b));
+    // return Utils.toInt(Utils.toBool(a) & Utils.toBool(b));
+    return a == 0.0f || b == 0.0f || a != a || b != b ? 0 : 1;
   }
 
   /**
@@ -726,8 +727,8 @@ public abstract class Utils implements IUtils {
    */
   public static float asin ( final float value ) {
 
-    if (value <= -1.0f) { return -IUtils.HALF_PI; }
-    if (value >= 1.0f) { return IUtils.HALF_PI; }
+    if ( value <= -1.0f ) { return -IUtils.HALF_PI; }
+    if ( value >= 1.0f ) { return IUtils.HALF_PI; }
 
     final boolean ltZero = value < 0.0f;
     final float x = ltZero ? -value : value;
@@ -766,7 +767,7 @@ public abstract class Utils implements IUtils {
 
     final boolean yGtX = yAbs > xAbs;
     float t0 = yGtX ? yAbs : xAbs;
-    if (t0 == 0.0f) { return 0.0f; }
+    if ( t0 == 0.0f ) { return 0.0f; }
     float t2 = (yGtX ? xAbs : yAbs) / t0;
 
     /*
@@ -848,7 +849,7 @@ public abstract class Utils implements IUtils {
   public static int ceilToInt ( final float x ) {
 
     final int xi = (int) x;
-    if (x > xi) { return xi + 1; }
+    if ( x > xi ) { return xi + 1; }
     return xi;
   }
 
@@ -900,9 +901,7 @@ public abstract class Utils implements IUtils {
 
   /**
    * Finds the approximate cosine of an angle in radians. Returns a
-   * value in the range [-1.0, 1.0] . An alternative to the double
-   * precision {@link Math#cos(double)} , this function uses
-   * single-precision numbers.<br>
+   * value in the range [-1.0, 1.0] .
    *
    * @param radians the angle in radians
    * @return the cosine of the angle
@@ -1052,7 +1051,7 @@ public abstract class Utils implements IUtils {
   public static int floorToInt ( final float value ) {
 
     final int xi = (int) value;
-    if (value < xi) { return xi - 1; }
+    if ( value < xi ) { return xi - 1; }
     return xi;
   }
 
@@ -1079,7 +1078,7 @@ public abstract class Utils implements IUtils {
    */
   public static float fmod ( final float a, final float b ) {
 
-    if (b == 0.0f) { return a; }
+    if ( b == 0.0f ) { return a; }
     return a % b;
   }
 
@@ -1252,8 +1251,8 @@ public abstract class Utils implements IUtils {
       final int dest,
       final float step ) {
 
-    if (step <= 0.0f) { return origin; }
-    if (step >= 1.0f) { return dest; }
+    if ( step <= 0.0f ) { return origin; }
+    if ( step >= 1.0f ) { return dest; }
     return Utils.lerpUnclamped(origin, dest, step);
   }
 
@@ -1334,7 +1333,7 @@ public abstract class Utils implements IUtils {
       final float ubDest ) {
 
     final float denom = ubOrigin - lbOrigin;
-    if (denom == 0.0f) { return lbDest; }
+    if ( denom == 0.0f ) { return lbDest; }
     return lbDest + (ubDest - lbDest) * ((value - lbOrigin) / denom);
   }
 
@@ -1416,7 +1415,7 @@ public abstract class Utils implements IUtils {
    */
   public static float mod ( final float a, final float b ) {
 
-    if (b == 0.0f) { return a; }
+    if ( b == 0.0f ) { return a; }
     final float value = a / b;
     return a - b * (value > 0.0f ? (int) value
         : value < 0.0f ? (int) value - 1.0f : 0.0f);
@@ -1433,7 +1432,7 @@ public abstract class Utils implements IUtils {
    */
   public static int mod ( final int a, final int b ) {
 
-    if (b == 0) { return a; }
+    if ( b == 0 ) { return a; }
     final int result = a - b * (a / b);
     return result < 0 ? result + b : result;
   }
@@ -1493,7 +1492,6 @@ public abstract class Utils implements IUtils {
 
     final double r = radians;
     return (float) (r - IUtils.TAU_D * Utils.floor(r * IUtils.ONE_TAU_D));
-
   }
 
   /**
@@ -1566,7 +1564,7 @@ public abstract class Utils implements IUtils {
      * will return 2.0 .
      */
 
-    if (levels < 2) { return value; }
+    if ( levels < 2 ) { return value; }
     return Utils.floor(0.5f + value * levels) / levels;
   }
 
@@ -1611,11 +1609,11 @@ public abstract class Utils implements IUtils {
       final float value,
       final int places ) {
 
-    if (places < 1) { return Utils.round(value); }
-    if (places > 7) { return value; }
+    if ( places < 1 ) { return Utils.round(value); }
+    if ( places > 7 ) { return value; }
 
     int n = 10;
-    for (int i = 1; i < places; ++i) {
+    for ( int i = 1; i < places; ++i ) {
       n *= 10;
     }
     return Utils.round(value * n) / (float) n;
@@ -1643,7 +1641,7 @@ public abstract class Utils implements IUtils {
 
     final boolean r2x = r1y < 0.25f;
     float r1x = 0.0f;
-    if (r2x) {
+    if ( r2x ) {
       final float r0x = r1y * r1y;
       r1x = 24.980804f * r0x - 60.14581f;
       r1x = r1x * r0x + 85.45379f;
@@ -1654,7 +1652,7 @@ public abstract class Utils implements IUtils {
 
     final boolean r2z = r1y >= 0.75f;
     float r1z = 0.0f;
-    if (r2z) {
+    if ( r2z ) {
       float r0z = 1.0f - r1y;
       r0z = r0z * r0z;
       r1z = 24.980804f * r0z - 60.14581f;
@@ -1666,7 +1664,7 @@ public abstract class Utils implements IUtils {
 
     float r0y = 0.5f - r1y;
     r1y = 0.0f;
-    if (r1y >= -9.0f ^ (r2x | r2z)) {
+    if ( r1y >= -9.0f ^ (r2x | r2z) ) {
       r0y = r0y * r0y;
       r1y = 60.14581f - r0y * 24.980804f;
       r1y = r1y * r0y - 85.45379f;
@@ -1692,9 +1690,7 @@ public abstract class Utils implements IUtils {
 
   /**
    * Finds the approximate sine of an angle in radians. Returns a value
-   * in the range [-1.0, 1.0] . An alternative to the double precision
-   * {@link Math#sin(double)} , this function uses single-precision
-   * numbers.
+   * in the range [-1.0, 1.0] .
    *
    * @param radians the angle in radians
    * @return the sine of the angle
@@ -1717,8 +1713,8 @@ public abstract class Utils implements IUtils {
       final float dest,
       final float step ) {
 
-    if (step <= 0.0f) { return origin; }
-    if (step >= 1.0f) { return dest; }
+    if ( step <= 0.0f ) { return origin; }
+    if ( step >= 1.0f ) { return dest; }
     final float t = step * step * (3.0f - (step + step));
     return (1.0f - t) * origin + t * dest;
   }
@@ -1823,12 +1819,12 @@ public abstract class Utils implements IUtils {
       final int places ) {
 
     /* Value is Not a number (NaN). */
-    if (value != value) { return "0.0"; }
-    if (places < 0) { return Integer.toString((int) value); }
-    if (places < 1) { return Float.toString((int) value); }
+    if ( value != value ) { return "0.0"; }
+    if ( places < 0 ) { return Integer.toString((int) value); }
+    if ( places < 1 ) { return Float.toString((int) value); }
 
     /* Value is too big. */
-    if (value <= -3.4028235E38f || value >= 3.4028235E38f) {
+    if ( value <= -3.4028235E38f || value >= 3.4028235E38f ) {
       return Float.toString(value);
     }
 
@@ -1844,7 +1840,7 @@ public abstract class Utils implements IUtils {
 
     /* Append integral to StringBuilder. */
     int len = 0;
-    if (sign < 0.0f) {
+    if ( sign < 0.0f ) {
       sb.append('-').append(trunc);
       len = sb.length() - 1;
     } else {
@@ -1863,13 +1859,13 @@ public abstract class Utils implements IUtils {
      * The integral has so many digits that it has consumed the allotment.
      * (Might be scientific notation?)
      */
-    if (maxPlaces < 1) { return Float.toString(value); }
+    if ( maxPlaces < 1 ) { return Float.toString(value); }
 
     final int vetPlaces = places < maxPlaces ? places : maxPlaces;
     float frac = abs - trunc;
 
     /* Truncation. */
-    for (int i = 0; i < vetPlaces; ++i) {
+    for ( int i = 0; i < vetPlaces; ++i ) {
       frac *= 10.0f;
       final int tr = (int) frac;
       frac -= tr;
@@ -1918,9 +1914,9 @@ public abstract class Utils implements IUtils {
     final StringBuilder sb = new StringBuilder(len * 32)
         .append('[')
         .append(' ');
-    for (int i = 0; i < arr.length; ++i) {
+    for ( int i = 0; i < arr.length; ++i ) {
       sb.append(arr[i].toString());
-      if (i < last) { sb.append(',').append(' '); }
+      if ( i < last ) { sb.append(',').append(' '); }
     }
 
     sb.append(' ').append(']');
@@ -1942,9 +1938,9 @@ public abstract class Utils implements IUtils {
     final StringBuilder sb = new StringBuilder(len * 128)
         .append('[')
         .append(' ');
-    for (int i = 0; i < arr.length; ++i) {
+    for ( int i = 0; i < arr.length; ++i ) {
       sb.append(Utils.toString(arr[i]));
-      if (i < last) { sb.append(',').append(' '); }
+      if ( i < last ) { sb.append(',').append(' '); }
     }
 
     sb.append(' ').append(']');
@@ -1966,9 +1962,9 @@ public abstract class Utils implements IUtils {
     final StringBuilder sb = new StringBuilder(len * 512)
         .append('[')
         .append(' ');
-    for (int i = 0; i < arr.length; ++i) {
+    for ( int i = 0; i < arr.length; ++i ) {
       sb.append(Utils.toString(arr[i]));
-      if (i < last) { sb.append(',').append(' '); }
+      if ( i < last ) { sb.append(',').append(' '); }
     }
 
     sb.append(' ').append(']');
@@ -2048,19 +2044,19 @@ public abstract class Utils implements IUtils {
     float ubc = 0.0f;
     final float span = ub - lb;
 
-    if (span < 0.0f) {
+    if ( span < 0.0f ) {
       lbc = ub;
       ubc = lb;
-    } else if (span > 0.0f) {
+    } else if ( span > 0.0f ) {
       lbc = lb;
       ubc = ub;
     } else {
       return 0.0f;
     }
 
-    if (value < lbc) {
+    if ( value < lbc ) {
       return ubc - (lbc - value) % span;
-    } else if (value >= ubc) { return lbc + (value - lbc) % span; }
+    } else if ( value >= ubc ) { return lbc + (value - lbc) % span; }
     return value;
   }
 

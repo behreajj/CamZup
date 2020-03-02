@@ -183,10 +183,7 @@ public interface IYup2 extends IUp {
       final int count,
       final float strokeWeight ) {
 
-    this.grid(
-        count,
-        strokeWeight,
-        count * IYup2.GRID_FAC);
+    this.grid(count, strokeWeight, count * IYup2.GRID_FAC);
   }
 
   /**
@@ -220,18 +217,18 @@ public interface IYup2 extends IUp {
      */
     final float[] xs = new float[last];
     final int[] reds = new int[last];
-    for (int j = 0; j < last; ++j) {
+    for ( int j = 0; j < last; ++j ) {
       final float jPercent = j * toPercent;
       xs[j] = (1.0f - jPercent) * left + jPercent * right;
       reds[j] = (int) (jPercent * 0xff + 0.5f) << 0x10;
     }
 
-    for (int i = 0; i < last; ++i) {
+    for ( int i = 0; i < last; ++i ) {
       final float iPercent = i * toPercent;
       final float y = (1.0f - iPercent) * bottom + iPercent * top;
       final int agb = ab | (int) (iPercent * 0xff + 0.5f) << 0x8;
 
-      for (int j = 0; j < last; ++j) {
+      for ( int j = 0; j < last; ++j ) {
         this.stroke(agb | reds[j]);
         this.point(xs[j], y);
       }
@@ -288,10 +285,10 @@ public interface IYup2 extends IUp {
   /**
    * Draws a line between two coordinates.
    *
-   * @param a the origin coordinate
-   * @param b the destination coordinate
+   * @param origin the origin coordinate
+   * @param dest   the destination coordinate
    */
-  void line ( final Vec2 a, final Vec2 b );
+  void line ( final Vec2 origin, final Vec2 dest );
 
   /**
    * Finds the mouse's location in world coordinates relative to the
@@ -420,7 +417,7 @@ public interface IYup2 extends IUp {
     this.strokeWeight(oWeight);
     this.point(xOrigin, yOrigin);
 
-    if (mSq != 0.0f) {
+    if ( mSq != 0.0f ) {
 
       final float mInv = dLen * Utils.invSqrtUnchecked(mSq);
       final float dx = xOrigin + xDir * mInv;
@@ -570,7 +567,7 @@ public interface IYup2 extends IUp {
       final float y ) {
 
     final String str = obj.toString();
-    if (str.length() > 96) {
+    if ( str.length() > 96 ) {
       this.text(str.substring(0, 95), x, y);
     } else {
       this.text(str, x, y);
@@ -841,20 +838,15 @@ public interface IYup2 extends IUp {
 
     final StringBuilder result = new StringBuilder();
 
-    result.append(IYup2.svgHeader(renderer))
-        .append('\n');
-
-    result.append(IYup2.svgBackground(renderer))
-        .append('\n');
-
+    result.append(IYup2.svgHeader(renderer)).append('\n');
+    result.append(IYup2.svgBackground(renderer)).append('\n');
     result.append("<g ")
         .append(IYup2.svgCamera(renderer))
         .append('>')
         .append('\n');
 
-    for (final CurveEntity2 ce : ces) {
-      result.append(ce.toSvgString())
-          .append('\n');
+    for ( final CurveEntity2 ce : ces ) {
+      result.append(ce.toSvgString()).append('\n');
     }
 
     return result.append("</g>\n</svg>").toString();
@@ -879,7 +871,7 @@ public interface IYup2 extends IUp {
         .append(IYup2.svgCamera(renderer)).append('>').append('\n');
 
     final int len = mes.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       result.append(mes[i].toSvgString(mats)).append('\n');
     }
 

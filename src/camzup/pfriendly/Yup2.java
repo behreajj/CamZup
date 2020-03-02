@@ -151,12 +151,12 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     Vec2 rearHandle;
 
     this.pushMatrix();
-    this.transform(entity.transform, entity.transformOrder);
+    this.transform(entity.transform);
 
-    while (curveItr.hasNext()) {
+    while ( curveItr.hasNext() ) {
       final Curve2 curve = curveItr.next();
 
-      if (useMaterial) {
+      if ( useMaterial ) {
         this.pushStyle();
         this.material(materials.get(
             curve.materialIndex));
@@ -172,7 +172,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
           this.textureU,
           this.textureV);
 
-      while (knItr.hasNext()) {
+      while ( knItr.hasNext() ) {
         currKnot = knItr.next();
         foreHandle = prevKnot.foreHandle;
         rearHandle = currKnot.rearHandle;
@@ -186,7 +186,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
         prevKnot = currKnot;
       }
 
-      if (curve.closedLoop) {
+      if ( curve.closedLoop ) {
         currKnot = curve.getFirst();
         foreHandle = prevKnot.foreHandle;
         rearHandle = currKnot.rearHandle;
@@ -201,7 +201,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
         this.endShape(PConstants.OPEN);
       }
 
-      if (useMaterial) { this.popStyle(); }
+      if ( useMaterial ) { this.popStyle(); }
     }
 
     this.popMatrix();
@@ -609,6 +609,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       final int foreColor,
       final int coordColor ) {
 
+    // TODO: Does this use pushMatrix because of an old glitch in
+    // Transform2 which prevented rotations from working?
+
     final float swRear = strokeWeight * 4.0f;
     final float swFore = swRear * 1.25f;
     final float swCoord = swFore * 1.25f;
@@ -619,13 +622,13 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
 
     this.pushStyle();
     this.pushMatrix();
-    this.transform(ce.transform, ce.transformOrder);
+    this.transform(ce.transform);
 
-    while (curveItr.hasNext()) {
+    while ( curveItr.hasNext() ) {
       final Curve2 curve = curveItr.next();
       knItr = curve.iterator();
 
-      while (knItr.hasNext()) {
+      while ( knItr.hasNext() ) {
         final Knot2 knot = knItr.next();
 
         final Vec2 coord = knot.coord;
@@ -1046,10 +1049,10 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     Vec2 foreHandle = null;
     Vec2 rearHandle = null;
 
-    while (curveItr.hasNext()) {
+    while ( curveItr.hasNext() ) {
       final Curve2 curve = curveItr.next();
 
-      if (useMaterial) {
+      if ( useMaterial ) {
         this.pushStyle();
         this.material(materials.get(
             curve.materialIndex));
@@ -1067,7 +1070,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
           this.textureU,
           this.textureV);
 
-      while (knItr.hasNext()) {
+      while ( knItr.hasNext() ) {
         currKnot = knItr.next();
         foreHandle = prevKnot.foreHandle;
         rearHandle = currKnot.rearHandle;
@@ -1085,7 +1088,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
         prevKnot = currKnot;
       }
 
-      if (curve.closedLoop) {
+      if ( curve.closedLoop ) {
         currKnot = curve.getFirst();
         foreHandle = prevKnot.foreHandle;
         rearHandle = currKnot.rearHandle;
@@ -1104,7 +1107,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
         this.endShape(PConstants.OPEN);
       }
 
-      if (useMaterial) { this.popStyle(); }
+      if ( useMaterial ) { this.popStyle(); }
     }
   }
 
@@ -1115,7 +1118,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     final Iterator < Mesh2 > meshItr = meshes.iterator();
     final Vec2 v = new Vec2();
 
-    while (meshItr.hasNext()) {
+    while ( meshItr.hasNext() ) {
       this.drawMesh2(meshItr.next(), tr, v);
     }
   }
@@ -1133,7 +1136,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
 
     this.pushStyle();
     this.noStroke();
-    while (meshItr.hasNext()) {
+    while ( meshItr.hasNext() ) {
       final Mesh2 mesh = meshItr.next();
       this.drawMesh2(mesh, tr, material, v, vt);
     }
@@ -1158,7 +1161,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
 
     this.pushStyle();
     this.noStroke();
-    while (meshItr.hasNext()) {
+    while ( meshItr.hasNext() ) {
       final Mesh2 mesh = meshItr.next();
       final MaterialPImage mat = materials[mesh.materialIndex];
       this.drawMesh2(mesh, tr, mat, v, vt);
@@ -1183,7 +1186,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
 
     this.pushStyle();
     this.material(material);
-    while (meshItr.hasNext()) {
+    while ( meshItr.hasNext() ) {
       final Mesh2 mesh = meshItr.next();
       this.drawMesh2(mesh, tr, v);
     }
@@ -1205,7 +1208,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     final Iterator < Mesh2 > meshItr = meshes.iterator();
     final Vec2 v = new Vec2();
 
-    while (meshItr.hasNext()) {
+    while ( meshItr.hasNext() ) {
       final Mesh2 mesh = meshItr.next();
       this.pushStyle();
       this.material(materials[mesh.materialIndex]);

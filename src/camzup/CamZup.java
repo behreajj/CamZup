@@ -4,9 +4,13 @@ import java.util.HashSet;
 
 import processing.core.PApplet;
 
+import camzup.core.Curve2;
+import camzup.core.Curve3;
+import camzup.core.CurveEntity2;
+import camzup.core.CurveEntity3;
 import camzup.core.Mesh2;
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity3;
+import camzup.core.MeshEntity2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -45,12 +49,12 @@ public class CamZup {
 
     final int sourceLen = arr.length;
     int totalLen = 0;
-    for (int i = 0; i < sourceLen; ++i) {
+    for ( int i = 0; i < sourceLen; ++i ) {
       totalLen += arr[i].length;
     }
 
     final float[] result = new float[totalLen];
-    for (int j = 0, i = 0; i < sourceLen; ++i) {
+    for ( int j = 0, i = 0; i < sourceLen; ++i ) {
       final float[] arrInner = arr[i];
       final int len = arrInner.length;
       System.arraycopy(arrInner, 0, result, j, len);
@@ -58,6 +62,138 @@ public class CamZup {
     }
 
     return result;
+  }
+
+  private static int getNextActive (
+      final int x,
+      final int vertexCount,
+      final boolean[] active ) {
+
+    int xMut = x;
+    for ( ;; ) {
+      if ( ++xMut == vertexCount ) { xMut = 0; }
+      if ( active[xMut] ) { return xMut; }
+    }
+  }
+
+  private static int getPrevActive (
+      final int x,
+      final int vertexCount,
+      final boolean[] active ) {
+
+    int xMut = x;
+    for ( ;; ) {
+      if ( --xMut == -1 ) { xMut = vertexCount - 1; }
+      if ( active[xMut] ) { return xMut; }
+    }
+  }
+
+  private static int triangulate (
+      Vec3[] vertex,
+      Vec3 normal,
+      int[][] triangle ) {
+
+    final int vertexCount = vertex.length;
+    boolean[] active = new boolean[vertexCount];
+    for ( int i = 0; i < vertexCount; ++i )
+      active[i] = true;
+    int triangleCount = 0;
+    int start = 0;
+    int p1 = 0;
+    int p2 = 1;
+    int m1 = vertexCount - 1;
+    int m2 = vertexCount - 2;
+    boolean lastPositive = false;
+
+    final Vec3 n1 = new Vec3();
+    final Vec3 n2 = new Vec3();
+    final Vec3 n3 = new Vec3();
+    final Vec3 diffp1p2 = new Vec3();
+    final Vec3 diffp1m1 = new Vec3();
+    final Vec3 diffp2p1 = new Vec3();
+    final Vec3 diffvp2 = new Vec3();
+    final Vec3 diffvm1 = new Vec3();
+    final Vec3 diffvp1 = new Vec3();
+    final Vec3 epsilon = Vec3.epsilon(new Vec3());
+    final Vec3 negEps = Vec3.negate(epsilon, new Vec3());
+    final Vec3 lcmp = new Vec3();
+    final Vec3 gteps = new Vec3();
+
+    for ( ;; ) {
+      if ( p2 == m2 ) {
+        triangle[0][0] = m1;
+        triangle[1][0] = p1;
+        triangle[2][0] = p2;
+        triangleCount++;
+        break;
+      }
+
+      Vec3 vp1 = vertex[p1];
+      Vec3 vp2 = vertex[p2];
+      Vec3 vm1 = vertex[m1];
+      Vec3 vm2 = vertex[m2];
+
+      boolean positive = false;
+      boolean negative = false;
+
+      Vec3.sub(vm1, vp2, n1);
+      Vec3.normalize(n1, n1);
+      Vec3.fmod(normal, n1, n1);
+
+      Vec3.sub(vp1, vp2, diffp1p2);
+      Vec3.mul(n1, diffp1p2, lcmp);
+      Vec3.gt(lcmp, epsilon, gteps);
+
+      if ( Vec3.all(gteps) ) {
+
+        positive = true;
+
+        Vec3.sub(vp1, vm1, diffp1m1);
+        Vec3.normalize(diffp1m1, n2);
+        Vec3.fmod(normal, n2, n2);
+
+        Vec3.sub(vp2, vp1, diffp2p1);
+        Vec3.normalize(diffp2p1, n3);
+        Vec3.fmod(normal, n3, n3);
+
+        for ( int a = 0; a < vertexCount; a++ ) {
+          if ( (active[a]) && (a != p1) && (a != p2) && (a != m1) ) {
+            Vec3 v = vertex[a];
+
+            Vec3.sub(v, vp2, diffvp2);
+            Vec3.normalize(diffvp2, diffvp2);
+            Vec3.mul(n1, diffvp2, diffvp2);
+            Vec3.gt(diffvp2, negEps, diffvp2);
+
+            if ( Vec3.all(diffvp2) ) {
+              Vec3.sub(v, vm1, diffvm1);
+              Vec3.normalize(diffvm1, diffvm1);
+              Vec3.mul(n2, diffvm1, diffvm1);
+              Vec3.gt(diffvm1, negEps, diffvm1);
+
+              if ( Vec3.all(diffvm1) ) {
+                Vec3.sub(v, vp1, diffvp1);
+                Vec3.normalize(diffvp1, diffvp1);
+                Vec3.mul(n3, diffvp1, diffvp1);
+                Vec3.gt(diffvp1, negEps, diffvp1);
+
+                if ( Vec3.all(diffvp1) ) {
+                  positive = false;
+                  break;
+                }
+              }
+            }
+
+            Vec3.sub(vm2, vp1, n1);
+            Vec3.normalize(n1, n1);
+            Vec3.fmod(normal, n1, n1);
+
+          }
+        }
+      }
+    }
+
+    return 0;
   }
 
   private static Vec2[] permute ( final Vec2 source ) {
@@ -168,12 +304,12 @@ public class CamZup {
     final Vec3[] vns = mesh.normals;
 
     final int flen0 = fs.length;
-    for (int i = 0; i < flen0; ++i) {
+    for ( int i = 0; i < flen0; ++i ) {
       final int[][] f = fs[i];
       final int flen1 = f.length;
       sb.append("this.beginShape(PConstants.POLYGON);\n");
       sb.append("this.texture(txtr);\n");
-      for (int j = 0; j < flen1; ++j) {
+      for ( int j = 0; j < flen1; ++j ) {
         final int[] data = f[j];
 
         final int vIndex = data[0];
@@ -196,21 +332,21 @@ public class CamZup {
         sb.append("this.vertex(\n");
 
         sb.append(Utils.toFixed(v.x, 5));
-        if (v.x == 0.0f) {
+        if ( v.x == 0.0f ) {
           sb.append("f, ");
         } else {
           sb.append("f * radius, ");
         }
 
         sb.append(Utils.toFixed(v.y, 5));
-        if (v.y == 0.0f) {
+        if ( v.y == 0.0f ) {
           sb.append("f, ");
         } else {
           sb.append("f * radius, ");
         }
 
         sb.append(Utils.toFixed(v.z, 5));
-        if (v.z == 0.0f) {
+        if ( v.z == 0.0f ) {
           sb.append("f,\n");
         } else {
           sb.append("f * radius,\n");
@@ -233,18 +369,35 @@ public class CamZup {
     // final Gradient grd = new Gradient();
 
     final Mesh2 m2 = new Mesh2();
-    Mesh2.square(m2);
+    Mesh2.polygon(8, m2);
     // m2.triFaces();
     // m2.extrudeEdge(0, 0, 0.5f);
     // System.out.println(m2);
 
-    final Mesh3 m3 = new Mesh3(m2);
+    final MeshEntity2 me2 = new MeshEntity2();
+    me2.appendMesh(m2);
+    final CurveEntity2 ce2 = new CurveEntity2();
+    CurveEntity2.fromMeshEntity(me2, ce2);
 
-    // System.out.println(m3);
-    final MeshEntity3 me = new MeshEntity3();
-    me.appendMesh(m3);
-    System.out.println(me.toBlenderCode());
+    final CurveEntity3 ce3 = new CurveEntity3();
+    for ( final Curve2 c2 : ce2.curves ) {
+      final Curve3 c3 = new Curve3(c2);
+      ce3.appendCurve(c3);
+      Curve3.smoothHandles(c3);
+    }
 
+    // System.out.println(ce2.toString());
+    // System.out.println(ce2.getCurve(0).toString());
+    // System.out.println(ce3.toBlenderCode());
+
+    // final Mesh3 m3 = new Mesh3(m2);
+    // m3.rotateX(IUtils.HALF_PI * 0.5f);
+    // m3.calcNormals();
+    // m3.extrudeEdge(0, 0, 0.5f);
+    // // System.out.println(m3);
+    // final MeshEntity3 me = new MeshEntity3();
+    // me.appendMesh(m3);
+    // System.out.println(me.toBlenderCode());
   }
 
   /**

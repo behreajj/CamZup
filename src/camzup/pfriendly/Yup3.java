@@ -116,7 +116,7 @@ public class Yup3 extends Up3 {
     float x = Yup3.DEFAULT_LOC_X;
     float y = Yup3.DEFAULT_LOC_Y;
     float z = Yup3.DEFAULT_LOC_Z;
-    if (this.width > 128 && this.height > 128) {
+    if ( this.width > 128 && this.height > 128 ) {
       final float distance = this.height * IUp.DEFAULT_CAM_DIST_FAC;
       x = distance;
       y = distance;
@@ -196,7 +196,7 @@ public class Yup3 extends Up3 {
     // is co-linear with the world up direction?
 
     this.refUp.set(xUp, yUp, zUp);
-    if (Vec3.magSq(this.refUp) < PConstants.EPSILON) {
+    if ( Vec3.magSq(this.refUp) < PConstants.EPSILON ) {
       this.refUp.set(
           Yup3.DEFAULT_REF_X,
           Yup3.DEFAULT_REF_Y,
@@ -210,7 +210,7 @@ public class Yup3 extends Up3 {
         zEye - zCenter);
 
     final float lookDist = Vec3.magSq(this.lookDir);
-    if (lookDist < PConstants.EPSILON) {
+    if ( lookDist < PConstants.EPSILON ) {
       this.lookDir.set(0.0f, 0.0f, -1.0f);
       return;
     }

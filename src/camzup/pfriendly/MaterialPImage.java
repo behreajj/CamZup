@@ -77,7 +77,7 @@ public class MaterialPImage extends MaterialUv {
   @Chainable
   public MaterialPImage setTexture ( final PImage texture ) {
 
-    if (texture != null) {
+    if ( texture != null ) {
       this.texture = texture;
     } else {
       this.texture = new PImage(128, 128, PConstants.ARGB, 1);

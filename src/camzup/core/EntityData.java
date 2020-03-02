@@ -37,9 +37,9 @@ public abstract class EntityData implements IEntityData {
    */
   protected boolean equals ( final EntityData other ) {
 
-    if (this.name == null) {
-      if (other.name != null) { return false; }
-    } else if (!this.name.equals(other.name)) { return false; }
+    if ( this.name == null ) {
+      if ( other.name != null ) { return false; }
+    } else if ( !this.name.equals(other.name) ) { return false; }
 
     return true;
   }
@@ -53,12 +53,9 @@ public abstract class EntityData implements IEntityData {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-
-    if (obj == null) { return false; }
-
-    if (this.getClass() != obj.getClass()) { return false; }
-
+    if ( this == obj ) { return true; }
+    if ( obj == null ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((EntityData) obj);
   }
 
@@ -92,7 +89,7 @@ public abstract class EntityData implements IEntityData {
   @Chainable
   public EntityData setName ( final String name ) {
 
-    if (name != null) { this.name = name; }
+    if ( name != null ) { this.name = name; }
     return this;
   }
 

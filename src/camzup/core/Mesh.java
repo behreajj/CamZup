@@ -291,9 +291,9 @@ public abstract class Mesh extends EntityData implements IMesh {
   public Mesh triangulate ( ) {
 
     final int facesLen = this.faces.length;
-    for (int i = 0, k = 0; i < facesLen; ++i) {
+    for ( int i = 0, k = 0; i < facesLen; ++i ) {
       final int faceLen = this.faces[k].length;
-      if (faceLen > 3) {
+      if ( faceLen > 3 ) {
         this.triangulate(k);
         k += faceLen - 2;
       }
@@ -314,16 +314,16 @@ public abstract class Mesh extends EntityData implements IMesh {
     final int i = Utils.mod(faceIdx, facesLen);
     final int[][] face = this.faces[i];
     final int faceLen = face.length;
-    if (faceLen < 4) { return this; }
+    if ( faceLen < 4 ) { return this; }
     final int[] vert0 = face[0];
     final int vertLen = vert0.length;
     final int lastNonAdj = faceLen - 2;
     final int[][][] fsNew = new int[lastNonAdj][3][vertLen];
-    for (int k = 0; k < lastNonAdj; ++k) {
+    for ( int k = 0; k < lastNonAdj; ++k ) {
       final int[] vertn0 = face[k + 1];
       final int[] vertn1 = face[k + 2];
       final int[][] fNew = fsNew[k];
-      for (int m = 0; m < vertLen; ++m) {
+      for ( int m = 0; m < vertLen; ++m ) {
         fNew[0][m] = vert0[m];
         fNew[1][m] = vertn0[m];
         fNew[2][m] = vertn1[m];
@@ -381,7 +381,7 @@ public abstract class Mesh extends EntityData implements IMesh {
 
     int st = start;
     int ed = end;
-    while (st < ed) {
+    while ( st < ed ) {
       final int[] temp = arr[st];
       arr[st] = arr[ed];
       arr[ed] = temp;
@@ -407,7 +407,7 @@ public abstract class Mesh extends EntityData implements IMesh {
 
     int st = start;
     int ed = end;
-    while (st < ed) {
+    while ( st < ed ) {
       final int[][] temp = arr[st];
       arr[st] = arr[ed];
       arr[ed] = temp;
@@ -437,7 +437,7 @@ public abstract class Mesh extends EntityData implements IMesh {
 
     final int alen = arr.length;
 
-    if (deletions >= alen) {
+    if ( deletions >= alen ) {
       final int[][][] result = new int[insert.length][][];
       System.arraycopy(insert, 0, result, 0, insert.length);
       return result;
@@ -445,7 +445,7 @@ public abstract class Mesh extends EntityData implements IMesh {
 
     final int blen = insert.length;
     final int valIdx = Utils.mod(index, alen + 1);
-    if (deletions < 1) {
+    if ( deletions < 1 ) {
       final int[][][] result = new int[alen + blen][][];
       System.arraycopy(arr, 0, result, 0, valIdx);
       System.arraycopy(insert, 0, result, valIdx, blen);

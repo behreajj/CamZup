@@ -191,7 +191,7 @@ abstract class SVGParser {
      */
     public static PathCommand fromChar ( final char c ) {
 
-      switch (c) {
+      switch ( c ) {
         case 'A':
           return ArcToAbs;
         case 'a':
@@ -246,7 +246,7 @@ abstract class SVGParser {
     float x = def;
     try {
       x = Float.parseFloat(v);
-    } catch (final NumberFormatException e) {
+    } catch ( final NumberFormatException e ) {
       x = def;
     }
     return x;
@@ -257,7 +257,7 @@ abstract class SVGParser {
     final NamedNodeMap attributes = path.getAttributes();
     final Node pathData = attributes.getNamedItem("d");
     final Curve2 result = new Curve2();
-    if (pathData != null) {
+    if ( pathData != null ) {
 
       final String pdStr = pathData.getTextContent();
 
@@ -265,7 +265,7 @@ abstract class SVGParser {
       cmdTokens = SVGParser.stripEmptyTokens(cmdTokens);
       final int cmdLen = cmdTokens.length;
       final PathCommand[] commands = new PathCommand[cmdLen];
-      for (int j = 0; j < cmdLen; ++j) {
+      for ( int j = 0; j < cmdLen; ++j ) {
         final String cmdToken = cmdTokens[j];
         final char cmdCode = cmdToken.charAt(0);
         final PathCommand cmd = PathCommand.fromChar(cmdCode);
@@ -300,11 +300,11 @@ abstract class SVGParser {
 
       boolean closedLoop = false;
       final LinkedList < Knot2 > knots = new LinkedList <>();
-      for (int l = 0, cursor = 0; l < cmdLen; ++l) {
+      for ( int l = 0, cursor = 0; l < cmdLen; ++l ) {
         final PathCommand command = commands[l];
         System.out.println(command);
 
-        switch (command) {
+        switch ( command ) {
 
           case ArcToAbs:
 
@@ -581,7 +581,7 @@ abstract class SVGParser {
         }
       }
 
-      if (closedLoop) {
+      if ( closedLoop ) {
         knots.getFirst().rearHandle.set(knots.getLast().rearHandle);
         knots.removeLast();
       } else {
@@ -602,7 +602,7 @@ abstract class SVGParser {
     final String[] coords = ptsstr.split("\\s*");
     final int clen = coords.length;
     final Knot2[] knots = new Knot2[clen];
-    for (int i = 0; i < clen; ++i) {
+    for ( int i = 0; i < clen; ++i ) {
       final String coord = coords[i];
       final String[] xystr = coord.split(",");
       final float x = SVGParser.parseFloat(xystr[0], 0.0f);
@@ -654,9 +654,9 @@ abstract class SVGParser {
 
     final int len = tokens.length;
     final ArrayList < String > list = new ArrayList <>(len);
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       final String token = tokens[i].trim();
-      if (token.length() > 0) { list.add(token); }
+      if ( token.length() > 0 ) { list.add(token); }
     }
     return list.toArray(new String[list.size()]);
   }
@@ -674,12 +674,12 @@ abstract class SVGParser {
 
       final NodeList paths = doc.getElementsByTagName("path");
       final int nodeLen = paths.getLength();
-      for (int i = 0; i < nodeLen; ++i) {
+      for ( int i = 0; i < nodeLen; ++i ) {
         final Node path = paths.item(i);
         final Curve2 curve = SVGParser.parsePath(path);
         curves.add(curve);
       }
-    } catch (final Exception e) {
+    } catch ( final Exception e ) {
       System.err.print(e);
       e.printStackTrace();
     }

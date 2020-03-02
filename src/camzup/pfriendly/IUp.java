@@ -443,9 +443,7 @@ public interface IUp {
      * multiple curves (i, j, p, etc.) can be grouped together.
      */
     final GlyphVector gv = font.createGlyphVector(frc,
-        new char[] {
-            character
-        });
+        new char[] { character });
     final Shape shp = gv.getOutline();
 
     /*
@@ -471,14 +469,14 @@ public interface IUp {
     Knot2 prevKnot = null;
     Knot2 currKnot = null;
 
-    while (!iter.isDone()) {
+    while ( !iter.isDone() ) {
 
       /*
        * y-axis is flipped in all cases, for y-up.
        */
 
       final int segType = iter.currentSegment(itrpts);
-      switch (segType) {
+      switch ( segType ) {
         case PathIterator.SEG_MOVETO:
 
           /*
@@ -648,11 +646,11 @@ public interface IUp {
 
     final List < CurveEntity2 > entities = new ArrayList <>();
     final Font font = (Font) pfont.getNative();
-    if (font != null) {
+    if ( font != null ) {
       final FontRenderContext frc = graphics.getFontRenderContext();
       // FontMetrics fm = graphics.getFontMetrics();
       final int len = characters.length;
-      for (int i = 0; i < len; ++i) {
+      for ( int i = 0; i < len; ++i ) {
         final char character = characters[i];
         // final float w = fm.charWidth(character);
         final CurveEntity2 entity = new CurveEntity2();
@@ -682,7 +680,7 @@ public interface IUp {
 
     final List < CurveEntity2 > entities = new ArrayList <>();
     final Font font = (Font) pfont.getNative();
-    if (font != null) {
+    if ( font != null ) {
 
       /*
        * To avoid having to get an AWT graphics context, the deprecated
@@ -694,7 +692,7 @@ public interface IUp {
           .getFontMetrics(font).getFontRenderContext();
 
       final int len = characters.length;
-      for (int i = 0; i < len; ++i) {
+      for ( int i = 0; i < len; ++i ) {
         final char character = characters[i];
         final CurveEntity2 entity = new CurveEntity2();
         IUp.getGlyph(font, frc, null, detail,

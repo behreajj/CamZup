@@ -16,6 +16,4 @@ import java.lang.annotation.Target;
  */
 @Retention ( SOURCE )
 @Target ( { TYPE, METHOD } )
-public @interface Experimental {
-
-}
+public @interface Experimental {}

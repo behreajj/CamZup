@@ -17,18 +17,12 @@ void setup() {
   font = createFont("Garamond", 160);
   glyphs = graphics2.glyph(font, 0.02, "Qualia");
 
-  MaterialSolid material = new MaterialSolid()
-    .setFill(false)
-    .setStroke(true)
-    .setStrokeWeight(0.01);
-
   int len = glyphs.length;
   float toPercent = 1.0 / len;
   Vec2 right = new Vec2(width * 0.5, 0.0);
   Vec2 left = Vec2.negate(right, new Vec2());
   for (int i = 0; i < len; ++i) {
     CurveEntity2 glyph = glyphs[i];
-    glyph.appendMaterial(material);
     glyph.scaleTo(160);
 
     float percent = i * toPercent;
@@ -41,6 +35,7 @@ void setup() {
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
   graphics2.background();
+  graphics2.noFill();
   for (CurveEntity2 glyph : glyphs) {
     graphics2.shape(glyph);
   }

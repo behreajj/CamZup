@@ -26,6 +26,5 @@ void draw() {
   //ZImage.linear(Vec2.negate(m, new Vec2()), m, gradient, input);
   //ZImage.radial(m, 0.5, gradient, input);
   ZImage.conic(m, frameCount * 0.02, gradient, input);
-
   ZImage.wrap(input, rndr, -104, 0);
 }

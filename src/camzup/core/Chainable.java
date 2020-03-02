@@ -12,6 +12,4 @@ import java.lang.annotation.Target;
  */
 @Retention ( SOURCE )
 @Target ( METHOD )
-public @interface Chainable {
-
-}
+public @interface Chainable {}

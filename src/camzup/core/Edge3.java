@@ -71,13 +71,13 @@ public class Edge3 implements Comparable < Edge3 > {
    */
   protected boolean equals ( final Edge3 edge3 ) {
 
-    if (this.dest == null) {
-      if (edge3.dest != null) { return false; }
-    } else if (!this.dest.equals(edge3.dest)) { return false; }
+    if ( this.dest == null ) {
+      if ( edge3.dest != null ) { return false; }
+    } else if ( !this.dest.equals(edge3.dest) ) { return false; }
 
-    if (this.origin == null) {
-      if (edge3.origin != null) { return false; }
-    } else if (!this.origin.equals(edge3.origin)) { return false; }
+    if ( this.origin == null ) {
+      if ( edge3.origin != null ) { return false; }
+    } else if ( !this.origin.equals(edge3.origin) ) { return false; }
 
     return true;
   }
@@ -103,11 +103,11 @@ public class Edge3 implements Comparable < Edge3 > {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
+    if ( this == obj ) { return true; }
 
-    if (obj == null) { return false; }
+    if ( obj == null ) { return false; }
 
-    if (this.getClass() != obj.getClass()) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
 
     return this.equals((Edge3) obj);
   }
@@ -269,7 +269,7 @@ public class Edge3 implements Comparable < Edge3 > {
   @Chainable
   public Edge3 scaleGlobal ( final float scalar ) {
 
-    if (scalar == 0.0f) { return this; }
+    if ( scalar == 0.0f ) { return this; }
 
     Vec3.mul(this.origin.coord, scalar, this.origin.coord);
     Vec3.mul(this.dest.coord, scalar, this.dest.coord);
@@ -287,7 +287,7 @@ public class Edge3 implements Comparable < Edge3 > {
   @Chainable
   public Edge3 scaleGlobal ( final Vec3 scalar ) {
 
-    if (Vec3.none(scalar)) { return this; }
+    if ( Vec3.none(scalar) ) { return this; }
 
     Vec3.mul(this.origin.coord, scalar, this.origin.coord);
     Vec3.mul(this.dest.coord, scalar, this.dest.coord);
@@ -306,7 +306,7 @@ public class Edge3 implements Comparable < Edge3 > {
 
     // TEST
 
-    if (scalar == 0.0f) { return this; }
+    if ( scalar == 0.0f ) { return this; }
 
     final Vec3 coOrigin = this.origin.coord;
     final Vec3 coDest = this.dest.coord;
@@ -339,7 +339,7 @@ public class Edge3 implements Comparable < Edge3 > {
 
     // TEST
 
-    if (Vec3.none(scalar)) { return this; }
+    if ( Vec3.none(scalar) ) { return this; }
 
     final Vec3 coOrigin = this.origin.coord;
     final Vec3 coDest = this.dest.coord;
@@ -454,7 +454,6 @@ public class Edge3 implements Comparable < Edge3 > {
    * @return the heading
    * @see Utils#atan2(float, float)
    */
-  @Experimental
   public static float azimuth ( final Edge3 edge ) {
 
     final Vec3 dest = edge.dest.coord;
@@ -483,8 +482,8 @@ public class Edge3 implements Comparable < Edge3 > {
     final Vec3 coOrigin = edge.origin.coord;
     final Vec3 coDest = edge.dest.coord;
 
-    if (step <= 0.0f) { return target.set(coOrigin); }
-    if (step >= 1.0f) { return target.set(coDest); }
+    if ( step <= 0.0f ) { return target.set(coOrigin); }
+    if ( step >= 1.0f ) { return target.set(coDest); }
 
     final float u = 1.0f - step;
     return target.set(
@@ -493,6 +492,16 @@ public class Edge3 implements Comparable < Edge3 > {
         u * coOrigin.z + step * coDest.z);
   }
 
+  /**
+   * Finds the inclination of an edge. Subtracts the destination
+   * coordinate from that of the origin, then supplies the difference to
+   * arc sine .
+   *
+   * @param edge the edge
+   * @return the heading
+   * @see Utils#invHypot(float, float, float)
+   * @see Utils#asin(float)
+   */
   public static float inclination ( final Edge3 edge ) {
 
     final Vec3 dest = edge.dest.coord;
@@ -560,14 +569,14 @@ public class Edge3 implements Comparable < Edge3 > {
     final float bz = coDest.z - coOrigin.z;
     final float bSq = bx * bx + by * by + bz * bz;
 
-    if (bSq <= 0.0f) { return target.set(coOrigin); }
+    if ( bSq <= 0.0f ) { return target.set(coOrigin); }
 
     final float ax = v.x - coOrigin.x;
     final float ay = v.y - coOrigin.y;
     final float az = v.z - coOrigin.z;
     final float fac = (ax * bx + ay * by + az * bz) / bSq;
 
-    if (fac >= 1.0f) { return target.set(coDest); }
+    if ( fac >= 1.0f ) { return target.set(coDest); }
 
     final float u = 1.0f - fac;
     return target.set(

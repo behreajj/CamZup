@@ -38,10 +38,9 @@ void setup() {
   Mesh3.cubeSphere(3, cubesphere);
   Mesh3.uvSphere(32, 16, uvsphere);
 
-  float s = Utils.min(rndr.width, rndr.height) * 0.75;
   icosphere.translate(new Vec3(1.125, 0.0, 0.0));
   cubesphere.translate(new Vec3(-1.125, 0.0, 0.0));
-  me.scaleTo(s);
+  me.scaleTo(Utils.min(rndr.width, rndr.height) * 0.75);
 }
 
 void draw() {

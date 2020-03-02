@@ -136,7 +136,7 @@ public class Zup3 extends Up3 {
 
     final float mSq = nx * nx + ny * ny + nz * nz;
     final int num3 = num + num + num;
-    if (0.0f < mSq) {
+    if ( 0.0f < mSq ) {
       final float mInv = Utils.invSqrtUnchecked(mSq);
       this.lightNormal[num3] = mInv * -nx;
       this.lightNormal[num3 + 1] = mInv * nz;
@@ -163,7 +163,7 @@ public class Zup3 extends Up3 {
     float x = Zup3.DEFAULT_LOC_X;
     float y = Zup3.DEFAULT_LOC_Y;
     float z = Zup3.DEFAULT_LOC_Z;
-    if (this.width > 128 && this.height > 128) {
+    if ( this.width > 128 && this.height > 128 ) {
       final float distance = this.height * IUp.DEFAULT_CAM_DIST_FAC;
       x = distance;
       y = -distance;
@@ -243,7 +243,7 @@ public class Zup3 extends Up3 {
     // is colinear with the world up direction?
 
     this.refUp.set(xUp, yUp, zUp);
-    if (Vec3.magSq(this.refUp) < PConstants.EPSILON) {
+    if ( Vec3.magSq(this.refUp) < PConstants.EPSILON ) {
       this.refUp.set(
           Yup3.DEFAULT_REF_X,
           Yup3.DEFAULT_REF_Y,
@@ -257,7 +257,7 @@ public class Zup3 extends Up3 {
         zEye - zCenter);
 
     final float lookDist = Vec3.magSq(this.lookDir);
-    if (lookDist < Utils.EPSILON) {
+    if ( lookDist < Utils.EPSILON ) {
       this.lookDir.set(0.0f, 0.0f, -1.0f);
       return;
     }
@@ -291,9 +291,7 @@ public class Zup3 extends Up3 {
    * @see Zup3#DEFAULT_REF_Z
    */
   @Override
-  public void camera (
-      final Vec3 eye,
-      final Vec3 center ) {
+  public void camera ( final Vec3 eye, final Vec3 center ) {
 
     this.camera(
         eye.x, eye.y, eye.z,
@@ -360,12 +358,12 @@ public class Zup3 extends Up3 {
     this.normalY = ny;
     this.normalZ = nz;
 
-    if (this.shape != 0) {
-      if (this.normalMode == PGraphics.NORMAL_MODE_AUTO) {
+    if ( this.shape != 0 ) {
+      if ( this.normalMode == PGraphics.NORMAL_MODE_AUTO ) {
 
         /* One normal per begin/end shape */
         this.normalMode = PGraphics.NORMAL_MODE_SHAPE;
-      } else if (this.normalMode == PGraphics.NORMAL_MODE_SHAPE) {
+      } else if ( this.normalMode == PGraphics.NORMAL_MODE_SHAPE ) {
 
         /* a separate normal for each vertex */
         this.normalMode = PGraphics.NORMAL_MODE_VERTEX;

@@ -40,8 +40,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
         final Float step,
         final Knot2 target ) {
 
-      if (step <= 0.0f) { return target.set(origin); }
-      if (step >= 1.0f) { return target.set(dest); }
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
       return this.applyUnclamped(origin, dest, step, target);
     }
 
@@ -290,17 +290,17 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    */
   protected boolean equals ( final Knot2 other ) {
 
-    if (this.coord == null) {
-      if (other.coord != null) { return false; }
-    } else if (!this.coord.equals(other.coord)) { return false; }
+    if ( this.coord == null ) {
+      if ( other.coord != null ) { return false; }
+    } else if ( !this.coord.equals(other.coord) ) { return false; }
 
-    if (this.foreHandle == null) {
-      if (other.foreHandle != null) { return false; }
-    } else if (!this.foreHandle.equals(other.foreHandle)) { return false; }
+    if ( this.foreHandle == null ) {
+      if ( other.foreHandle != null ) { return false; }
+    } else if ( !this.foreHandle.equals(other.foreHandle) ) { return false; }
 
-    if (this.rearHandle == null) {
-      if (other.rearHandle != null) { return false; }
-    } else if (!this.rearHandle.equals(other.rearHandle)) { return false; }
+    if ( this.rearHandle == null ) {
+      if ( other.rearHandle != null ) { return false; }
+    } else if ( !this.rearHandle.equals(other.rearHandle) ) { return false; }
 
     return true;
   }
@@ -453,9 +453,9 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-    if (obj == null) { return false; }
-    if (this.getClass() != obj.getClass()) { return false; }
+    if ( this == obj ) { return true; }
+    if ( obj == null ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Knot2) obj);
   }
 

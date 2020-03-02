@@ -31,9 +31,7 @@ public class Vert3 implements Comparable < Vert3 > {
    * The default constructor. When used, the vertex's coordinate, normal
    * and texCoord will remain null.
    */
-  public Vert3 ( ) {
-
-  }
+  public Vert3 ( ) {}
 
   /**
    * Constructs a vertex from a coordinate, texture coordinate and
@@ -58,9 +56,9 @@ public class Vert3 implements Comparable < Vert3 > {
    */
   protected boolean equals ( final Vert3 vert3 ) {
 
-    if (this.coord == null) {
-      if (vert3.coord != null) { return false; }
-    } else if (!this.coord.equals(vert3.coord)) { return false; }
+    if ( this.coord == null ) {
+      if ( vert3.coord != null ) { return false; }
+    } else if ( !this.coord.equals(vert3.coord) ) { return false; }
 
     return true;
   }
@@ -85,9 +83,9 @@ public class Vert3 implements Comparable < Vert3 > {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-    if (obj == null) { return false; }
-    if (this.getClass() != obj.getClass()) { return false; }
+    if ( this == obj ) { return true; }
+    if ( obj == null ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Vert3) obj);
   }
 

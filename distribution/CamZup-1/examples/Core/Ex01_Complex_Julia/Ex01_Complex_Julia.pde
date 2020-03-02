@@ -46,13 +46,16 @@ void draw() {
   updatePixels();
 }
 
-float julia(Complex seed, Complex z, float exp, int itr,
+float julia(
+  Complex seed, Complex z,
+  float exp, int itr,
   Complex target) {
 
   int i = 0;
   target.set(z);
   for (; i < itr && Complex.absSq(target) < 4.0; ++i) {
-    Complex.add(seed, Complex.pow(target, exp, target), target);
+    Complex.pow(target, exp, target);
+    Complex.add(seed, target, target);
   }
   return i >= itr ? 0.0 : Utils.clamp01(i / (float)itr);
 }

@@ -91,3 +91,6 @@ triangulates
 icosphere
 extrudes
 triangulate
+oculus
+viridis
+demoted

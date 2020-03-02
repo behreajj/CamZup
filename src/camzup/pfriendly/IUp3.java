@@ -78,9 +78,7 @@ public interface IUp3 extends IUp {
    * @param eye    the eye location
    * @param center the center of the gaze
    */
-  default void camera (
-      final Vec3 eye,
-      final Vec3 center ) {
+  default void camera ( final Vec3 eye, final Vec3 center ) {
 
     this.camera(
         eye.x, eye.y, eye.z,
@@ -144,10 +142,10 @@ public interface IUp3 extends IUp {
   /**
    * Draws a line between two coordinates.
    *
-   * @param a the origin coordinate
-   * @param b the destination coordinate
+   * @param origin the origin coordinate
+   * @param dest   the destination coordinate
    */
-  void line ( final Vec3 a, final Vec3 b );
+  void line ( final Vec3 origin, final Vec3 dest );
 
   /**
    * Gets a mouse within a unit square, where either component may be in
@@ -157,8 +155,7 @@ public interface IUp3 extends IUp {
    * @param target the output vector
    * @return the mouse
    */
-  default Vec3 mouse1 (
-      final Vec3 target ) {
+  default Vec3 mouse1 ( final Vec3 target ) {
 
     return IUp3.mouse1(this.getParent(), this, target);
   }
@@ -170,10 +167,7 @@ public interface IUp3 extends IUp {
    * @param y the y coordinate
    * @param z the z coordinate
    */
-  void point (
-      final float x,
-      final float y,
-      final float z );
+  void point ( final float x, final float y, final float z );
 
   /**
    * Draws a point at a given coordinate
@@ -202,9 +196,7 @@ public interface IUp3 extends IUp {
    * @param cp  the control point
    * @param ap1 the next anchor point
    */
-  void quadraticVertex (
-      final Vec3 cp,
-      final Vec3 ap1 );
+  void quadraticVertex ( final Vec3 cp, final Vec3 ap1 );
 
   /**
    * Displays a ray, i.e., an origin point and a direction. The display
@@ -267,21 +259,26 @@ public interface IUp3 extends IUp {
     this.pushStyle();
     this.strokeWeight(oWeight);
     this.point(xOrigin, yOrigin, zOrigin);
-    if (mSq != 0.0f) {
+
+    if ( mSq != 0.0f ) {
+
       this.strokeWeight(lnwgt);
 
       float dx = 0.0f;
       float dy = 0.0f;
       float dz = 0.0f;
 
-      if (Utils.approx(mSq, 1.0f, 0.0001f)) {
+      if ( Utils.approx(mSq, 1.0f, 0.0001f) ) {
+
         dx = xOrigin + xDir * dLen;
         dy = yOrigin + yDir * dLen;
         dz = zOrigin + zDir * dLen;
         this.line(
             xOrigin, yOrigin, zOrigin,
             dx, dy, dz);
+
       } else {
+
         final float mInv = dLen * Utils.invSqrtUnchecked(mSq);
         dx = xOrigin + xDir * mInv;
         dy = yOrigin + yDir * mInv;
@@ -289,10 +286,14 @@ public interface IUp3 extends IUp {
         this.line(
             xOrigin, yOrigin, zOrigin,
             dx, dy, dz);
+
       }
+
       this.strokeWeight(dWeight);
       this.point(dx, dy, dz);
+
     }
+
     this.popStyle();
   }
 
@@ -303,9 +304,7 @@ public interface IUp3 extends IUp {
    * @param ray  the ray
    * @param dLen the display length
    */
-  default void ray (
-      final Ray3 ray,
-      final float dLen ) {
+  default void ray ( final Ray3 ray, final float dLen ) {
 
     final Vec3 origin = ray.origin;
     final Vec3 dir = ray.dir;

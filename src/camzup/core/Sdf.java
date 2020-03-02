@@ -245,14 +245,13 @@ public abstract class Sdf {
         Utils.div(point.x, bounds.x * bounds.x),
         Utils.div(point.y, bounds.y * bounds.y),
         Utils.div(point.z, bounds.z * bounds.z));
-    if (k1 == 0.0f) { return 0.0f; }
+    if ( k1 == 0.0f ) { return 0.0f; }
 
     final float k0 = Utils.hypot(
         Utils.div(point.x, bounds.x),
         Utils.div(point.y, bounds.y),
         Utils.div(point.z, bounds.z));
     return k0 * (k0 - 1.0f) / k1;
-
   }
 
   /**
@@ -365,7 +364,7 @@ public abstract class Sdf {
     final float pax = point.x - origin.x;
     final float pay = point.y - origin.y;
 
-    if (baba == 0.0f) { return Utils.hypot(pax, pay); }
+    if ( baba == 0.0f ) { return Utils.hypot(pax, pay); }
 
     /* dot(pa, ba) */
     final float paba = pax * bax + pay * bay;
@@ -426,7 +425,7 @@ public abstract class Sdf {
     final float pay = point.y - origin.y;
     final float paz = point.z - origin.z;
 
-    if (baba == 0.0f) { return Utils.hypot(pax, pay, paz); }
+    if ( baba == 0.0f ) { return Utils.hypot(pax, pay, paz); }
 
     /* dot(pa, ba) */
     final float paba = pax * bax + pay * bay + paz * baz;
@@ -501,7 +500,7 @@ public abstract class Sdf {
       final Vec2[] vertices ) {
 
     final int len = vertices.length;
-    if (len < 3) { return 0.0f; }
+    if ( len < 3 ) { return 0.0f; }
 
     /*
      * i begins at zero, and so the initial distance from 0 to length - 1
@@ -514,7 +513,7 @@ public abstract class Sdf {
     Vec2 curr;
     Vec2 prev = vertices[len - 1];
 
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       curr = vertices[i];
 
       final float ex = prev.x - curr.x;
@@ -536,7 +535,7 @@ public abstract class Sdf {
       final boolean cy = point.y < prev.y;
       final boolean cz = ex * wy > ey * wx;
 
-      if (cx && cy && cz || !cx && !cy && !cz) { s = -s; }
+      if ( cx && cy && cz || !cx && !cy && !cz ) { s = -s; }
 
       prev = curr;
     }

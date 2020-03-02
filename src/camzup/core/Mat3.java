@@ -215,33 +215,33 @@ public class Mat3 extends Matrix {
    */
   protected boolean equals ( final Mat3 n ) {
 
-    if (Float.floatToIntBits(this.m00) != Float.floatToIntBits(n.m00)) {
+    if ( Float.floatToIntBits(this.m00) != Float.floatToIntBits(n.m00) ) {
       return false;
     }
-    if (Float.floatToIntBits(this.m01) != Float.floatToIntBits(n.m01)) {
+    if ( Float.floatToIntBits(this.m01) != Float.floatToIntBits(n.m01) ) {
       return false;
     }
-    if (Float.floatToIntBits(this.m02) != Float.floatToIntBits(n.m02)) {
-      return false;
-    }
-
-    if (Float.floatToIntBits(this.m10) != Float.floatToIntBits(n.m10)) {
-      return false;
-    }
-    if (Float.floatToIntBits(this.m11) != Float.floatToIntBits(n.m11)) {
-      return false;
-    }
-    if (Float.floatToIntBits(this.m12) != Float.floatToIntBits(n.m12)) {
+    if ( Float.floatToIntBits(this.m02) != Float.floatToIntBits(n.m02) ) {
       return false;
     }
 
-    if (Float.floatToIntBits(this.m20) != Float.floatToIntBits(n.m20)) {
+    if ( Float.floatToIntBits(this.m10) != Float.floatToIntBits(n.m10) ) {
       return false;
     }
-    if (Float.floatToIntBits(this.m21) != Float.floatToIntBits(n.m21)) {
+    if ( Float.floatToIntBits(this.m11) != Float.floatToIntBits(n.m11) ) {
       return false;
     }
-    if (Float.floatToIntBits(this.m22) != Float.floatToIntBits(n.m22)) {
+    if ( Float.floatToIntBits(this.m12) != Float.floatToIntBits(n.m12) ) {
+      return false;
+    }
+
+    if ( Float.floatToIntBits(this.m20) != Float.floatToIntBits(n.m20) ) {
+      return false;
+    }
+    if ( Float.floatToIntBits(this.m21) != Float.floatToIntBits(n.m21) ) {
+      return false;
+    }
+    if ( Float.floatToIntBits(this.m22) != Float.floatToIntBits(n.m22) ) {
       return false;
     }
 
@@ -274,9 +274,9 @@ public class Mat3 extends Matrix {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-    if (obj == null) { return false; }
-    if (this.getClass() != obj.getClass()) { return false; }
+    if ( this == obj ) { return true; }
+    if ( obj == null ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Mat3) obj);
   }
 
@@ -297,7 +297,7 @@ public class Mat3 extends Matrix {
      * matrix elms.
      */
 
-    switch (index) {
+    switch ( index ) {
 
       /* Row 0 */
 
@@ -352,11 +352,11 @@ public class Mat3 extends Matrix {
   @Override
   public float get ( final int i, final int j ) {
 
-    switch (i) {
+    switch ( i ) {
       case 0:
       case -3:
 
-        switch (j) {
+        switch ( j ) {
           case 0:
           case -3:
             return this.m00;
@@ -373,7 +373,7 @@ public class Mat3 extends Matrix {
       case 1:
       case -2:
 
-        switch (j) {
+        switch ( j ) {
           case 0:
           case -3:
             return this.m10;
@@ -390,7 +390,7 @@ public class Mat3 extends Matrix {
       case 2:
       case -1:
 
-        switch (j) {
+        switch ( j ) {
           case 0:
           case -3:
             return this.m20;
@@ -418,7 +418,7 @@ public class Mat3 extends Matrix {
    */
   public Vec3 getCol ( final int j, final Vec3 target ) {
 
-    switch (j) {
+    switch ( j ) {
       case 0:
       case -3:
         return target.set(this.m00, this.m10, this.m20);
@@ -442,7 +442,7 @@ public class Mat3 extends Matrix {
    */
   public Vec3 getRow ( final int i, final Vec3 target ) {
 
-    switch (i) {
+    switch ( i ) {
       case 0:
       case -3:
         return target.set(this.m00, this.m01, this.m02);
@@ -617,7 +617,7 @@ public class Mat3 extends Matrix {
    */
   public Mat3 setCol ( final int j, final Vec2 source ) {
 
-    switch (j) {
+    switch ( j ) {
       case 0:
       case -3:
 
@@ -666,7 +666,7 @@ public class Mat3 extends Matrix {
    */
   public Mat3 setCol ( final int j, final Vec3 source ) {
 
-    switch (j) {
+    switch ( j ) {
       case 0:
       case -3:
 
@@ -717,7 +717,7 @@ public class Mat3 extends Matrix {
    */
   public Mat3 setRow ( final int i, final Vec2 source ) {
 
-    switch (i) {
+    switch ( i ) {
       case 0:
       case -3:
         this.m00 = source.x;
@@ -750,7 +750,7 @@ public class Mat3 extends Matrix {
    */
   public Mat3 setRow ( final int i, final Vec3 source ) {
 
-    switch (i) {
+    switch ( i ) {
       case 0:
       case -3:
         this.m00 = source.x;
@@ -1091,7 +1091,7 @@ public class Mat3 extends Matrix {
       final float scalar,
       final Mat3 target ) {
 
-    if (scalar == 0.0f) { return target.reset(); }
+    if ( scalar == 0.0f ) { return target.reset(); }
 
     return target.set(
         scalar, 0.0f, 0.0f,
@@ -1111,7 +1111,7 @@ public class Mat3 extends Matrix {
       final Vec2 scalar,
       final Mat3 target ) {
 
-    if (Vec2.all(scalar)) {
+    if ( Vec2.all(scalar) ) {
       return target.set(
           scalar.x, 0.0f, 0.0f,
           0.0f, scalar.y, 0.0f,
@@ -1170,7 +1170,7 @@ public class Mat3 extends Matrix {
 
     final float det = m.m00 * b01 + m.m01 * b11 + m.m02 * b21;
 
-    if (det == 0.0f) { return target.reset(); }
+    if ( det == 0.0f ) { return target.reset(); }
     final float detInv = 1.0f / det;
 
     return target.set(
@@ -1317,7 +1317,7 @@ public class Mat3 extends Matrix {
     // a.m10 * b.x + a.m11 * b.y + a.m12);
 
     final float w = a.m20 * b.x + a.m21 * b.y + a.m22;
-    if (w == 0.0f) { return target.reset(); }
+    if ( w == 0.0f ) { return target.reset(); }
     final float wInv = 1.0f / w;
 
     return target.set(
@@ -1348,7 +1348,7 @@ public class Mat3 extends Matrix {
     // a.m10 * b.x + a.m11 * b.y);
 
     final float w = a.m20 * b.x + a.m21 * b.y + a.m22;
-    if (w == 0.0f) { return target.reset(); }
+    if ( w == 0.0f ) { return target.reset(); }
     final float wInv = 1.0f / w;
 
     return target.set(

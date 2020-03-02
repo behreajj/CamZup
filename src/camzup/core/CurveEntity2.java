@@ -83,11 +83,11 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
   @Chainable
   public CurveEntity2 appendCurve ( final Curve2 curve ) {
 
-    if (curve != null) {
+    if ( curve != null ) {
       this.curves.add(curve);
 
       final int matLen = this.materials.size();
-      if (curve.materialIndex < 0 && matLen > 0) {
+      if ( curve.materialIndex < 0 && matLen > 0 ) {
         curve.materialIndex = matLen - 1;
       }
     }
@@ -102,36 +102,8 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
    */
   public CurveEntity2 appendCurves ( final Curve2 ... curves ) {
 
-    for (final Curve2 curve : curves) {
+    for ( final Curve2 curve : curves ) {
       this.appendCurve(curve);
-    }
-    return this;
-  }
-
-  /**
-   * Appends a material to this curve entity.
-   *
-   * @param material the material
-   * @return this curve entity
-   */
-  @Chainable
-  public CurveEntity2 appendMaterial ( final MaterialSolid material ) {
-
-    if (material != null) { this.materials.add(material); }
-    return this;
-  }
-
-  /**
-   * Appends a list of materials to this curve entity.
-   *
-   * @param materials the list of materials
-   * @return this curve entity
-   */
-  @Chainable
-  public CurveEntity2 appendMaterials ( final MaterialSolid ... materials ) {
-
-    for (final MaterialSolid mat : materials) {
-      this.appendMaterial(mat);
     }
     return this;
   }
@@ -197,24 +169,13 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
    */
   public Curve2 getCurve ( final int i ) {
 
-    return this.curves.get(Math.floorMod(i, this.curves.size()));
+    return this.curves.get(Utils.mod(i, this.curves.size()));
   }
 
   /**
-   * Gets a material from this curve entity.
    *
-   * @param i the index
-   *
-   * @return the material
-   */
-  public MaterialSolid getMaterial ( final int i ) {
-
-    return this.materials.get(Math.floorMod(i, this.materials.size()));
-  }
-
-  /**
-   * Returns an iterator, which allows an enhanced for-loop to access
-   * the curves in the entity.
+   * /** Returns an iterator, which allows an enhanced for-loop to
+   * access the curves in the entity.
    *
    * @return the iterator
    * @see List#iterator()
@@ -229,14 +190,37 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
    * Returns a String of Python code targeted toward the Blender 2.8x
    * API. This code is brittle and is used for internal testing
    * purposes, i.e., to compare how curve geometry looks in Blender (the
-   * control) vs. in the library (the test).
+   * control) versus in the library (the test).
    *
    * @return the string
    */
   @Experimental
   public String toBlenderCode ( ) {
 
+    return this.toBlenderCode(12, "FULL", 0.0f, 0.0f);
+  }
+
+  /**
+   * Returns a String of Python code targeted toward the Blender 2.8x
+   * API. This code is brittle and is used for internal testing
+   * purposes, i.e., to compare how curve geometry looks in Blender (the
+   * control) versus in the library (the test).
+   *
+   * @param uRes       the resolution u
+   * @param fillMode   the fill mode: "FULL", "BACK", "FRONT", "HALF"
+   * @param extrude    geometry extrusion amount
+   * @param bevelDepth depth of geometry extrusion bevel
+   * @return the string
+   */
+  @Experimental
+  public String toBlenderCode (
+      final int uRes,
+      final String fillMode,
+      final float extrude,
+      final float bevelDepth ) {
+
     final StringBuilder result = new StringBuilder(2048);
+
     result.append("from bpy import data as D, context as C\n\n")
         .append("curve_entity = {\"name\": \"")
         .append(this.name)
@@ -247,9 +231,9 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
     int curveIndex = 0;
     final int curveLast = this.curves.size() - 1;
     final Iterator < Curve2 > curveItr = this.curves.iterator();
-    while (curveItr.hasNext()) {
-      result.append(curveItr.next().toBlenderCode());
-      if (curveIndex < curveLast) { result.append(',').append(' '); }
+    while ( curveItr.hasNext() ) {
+      result.append(curveItr.next().toBlenderCode(uRes));
+      if ( curveIndex < curveLast ) { result.append(',').append(' '); }
       curveIndex++;
     }
 
@@ -257,12 +241,22 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
         .append("curve_entity[\"name\"]")
         .append(", \"CURVE\")\n")
         .append("crv_data.dimensions = \"2D\"\n")
+        .append("crv_data.fill_mode = \"")
+        .append(fillMode)
+        .append("\"\n")
+        .append("crv_data.extrude = ")
+        .append(Utils.toFixed(extrude, 6))
+        .append('\n')
+        .append("crv_data.bevel_depth = ")
+        .append(Utils.toFixed(bevelDepth, 6))
+        .append('\n')
         .append("crv_splines = crv_data.splines\n")
         .append("crv_index = 0\n")
         .append("splines_raw = curve_entity[\"curves\"]\n")
         .append("for spline_raw in splines_raw:\n")
         .append("    spline = crv_splines.new(\"BEZIER\")\n")
         .append("    spline.use_cyclic_u = spline_raw[\"closed_loop\"]\n")
+        .append("    spline.resolution_u = spline_raw[\"resolution_u\"]\n")
         .append("    knots_raw = spline_raw[\"knots\"]\n")
         .append("    knt_index = 0\n")
         .append("    bz_pts = spline.bezier_points\n")
@@ -309,7 +303,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
     int offset = 0;
 
     final Iterator < Curve2 > itr = this.curves.iterator();
-    while (itr.hasNext()) {
+    while ( itr.hasNext() ) {
       final Curve2 curve = itr.next();
       final Vec2[][] segments = curve.evalRange(precision);
       final int len = segments.length;
@@ -320,7 +314,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
           .append('\n')
           .append('\n');
 
-      for (int i = 0; i < len; ++i) {
+      for ( int i = 0; i < len; ++i ) {
         final Vec2 coord = segments[i][0];
         result.append('v')
             .append(' ')
@@ -330,7 +324,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
 
       result.append('\n');
 
-      for (int i = 1, j = 2; i < len; ++i, ++j) {
+      for ( int i = 1, j = 2; i < len; ++i, ++j ) {
         result.append('l')
             .append(' ')
             .append(offset + i)
@@ -339,7 +333,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
             .append('\n');
       }
 
-      if (curve.closedLoop) {
+      if ( curve.closedLoop ) {
         result.append('l')
             .append(' ')
             .append(offset + len)
@@ -378,16 +372,16 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
     /*
      * If no materials are present, use a default one instead.
      */
-    if (!includesMats) {
+    if ( !includesMats ) {
       result.append(MaterialSolid.defaultSvgMaterial(scale));
     }
 
     final Iterator < Curve2 > curveItr = this.curves.iterator();
-    while (curveItr.hasNext()) {
+    while ( curveItr.hasNext() ) {
       final Curve2 curve = curveItr.next();
 
-      if (includesMats) {
-        final int vmatidx = Math.floorMod(curve.materialIndex, matLen);
+      if ( includesMats ) {
+        final int vmatidx = Utils.mod(curve.materialIndex, matLen);
         final MaterialSolid material = this.materials
             .get(vmatidx);
         result.append("<g ")
@@ -396,17 +390,48 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
             .append('\n');
       }
 
-      result.append(curve.toSvgString())
+      result.append(curve.toSvgPath())
           .append('\n');
 
       /* Close out material group. */
-      if (includesMats) { result.append("</g>\n"); }
+      if ( includesMats ) { result.append("</g>\n"); }
     }
 
     /* Close out default material. */
-    if (!includesMats) { result.append("</g>\n"); }
+    if ( !includesMats ) { result.append("</g>\n"); }
 
     result.append("</g>");
     return result.toString();
+  }
+
+  /**
+   * Creates a curve entity from a mesh entity.
+   *
+   * @param meshEntity the source mesh
+   * @param target     the output curve
+   * @return the curve
+   */
+  public static CurveEntity2 fromMeshEntity (
+      final MeshEntity2 meshEntity,
+      final CurveEntity2 target ) {
+
+    final List < Mesh2 > meshes = meshEntity.meshes;
+    final Iterator < Mesh2 > meshItr = meshes.iterator();
+
+    final List < Curve2 > curves = target.curves;
+    curves.clear();
+    target.name = meshEntity.name;
+
+    while ( meshItr.hasNext() ) {
+      final Mesh2 mesh = meshItr.next();
+      final int facesLen = mesh.faces.length;
+      for ( int i = 0; i < facesLen; ++i ) {
+        final Curve2 curve = new Curve2();
+        Curve2.fromMeshFace(i, mesh, curve);
+        curves.add(curve);
+      }
+    }
+
+    return target;
   }
 }

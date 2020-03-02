@@ -54,7 +54,7 @@ public class Face3 implements Comparable < Face3 > {
 
     // TODO: Easiest way to make a look at matrix?
     final int len = this.vertices.length;
-    for (int q = 0; q < len; ++q) {
+    for ( int q = 0; q < len; ++q ) {
       vert = this.vertices[q];
       c = vert.coord;
       n = vert.normal;
@@ -96,10 +96,12 @@ public class Face3 implements Comparable < Face3 > {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-    if (obj == null) { return false; }
-    if (this.getClass() != obj.getClass()) { return false; }
-    if (!Arrays.equals(this.vertices, ((Face3) obj).vertices)) { return false; }
+    if ( this == obj ) { return true; }
+    if ( obj == null ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
+    if ( !Arrays.equals(this.vertices, ((Face3) obj).vertices) ) {
+      return false;
+    }
     return true;
   }
 
@@ -133,7 +135,7 @@ public class Face3 implements Comparable < Face3 > {
     final int len = this.vertices.length;
     final int last = len - 1;
     final Edge3[] result = new Edge3[len];
-    for (int i = 0; i < last; ++i) {
+    for ( int i = 0; i < last; ++i ) {
       result[i] = new Edge3(
           this.vertices[i],
           this.vertices[i + 1]);
@@ -186,10 +188,9 @@ public class Face3 implements Comparable < Face3 > {
     Vec3 c;
 
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       vt3 = this.vertices[i];
       c = vt3.coord;
-      // n = vt3.normal;
       Vec3.rotate(c, cosa, sina, axis, c);
     }
 
@@ -209,7 +210,7 @@ public class Face3 implements Comparable < Face3 > {
     Vec3 c;
 
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       vt3 = this.vertices[i];
       c = vt3.coord;
       Quaternion.mulVector(q, c, c);
@@ -233,10 +234,9 @@ public class Face3 implements Comparable < Face3 > {
 
     Vert3 vt3;
     Vec3 c;
-    // Vec3 n;
 
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       vt3 = this.vertices[i];
       c = vt3.coord;
       Vec3.rotateX(c, cosa, sina, c);
@@ -262,7 +262,7 @@ public class Face3 implements Comparable < Face3 > {
     Vec3 c;
 
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       vt3 = this.vertices[i];
       c = vt3.coord;
       Vec3.rotateY(c, cosa, sina, c);
@@ -288,7 +288,7 @@ public class Face3 implements Comparable < Face3 > {
     Vec3 c;
 
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       vt3 = this.vertices[i];
       c = vt3.coord;
       Vec3.rotateZ(c, cosa, sina, c);
@@ -333,11 +333,11 @@ public class Face3 implements Comparable < Face3 > {
   @Chainable
   public Face3 scaleGlobal ( final float scale ) {
 
-    if (scale == 0.0f) { return this; }
+    if ( scale == 0.0f ) { return this; }
 
     Vec3 c;
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.vertices[i].coord;
       Vec3.mul(c, scale, c);
     }
@@ -355,11 +355,11 @@ public class Face3 implements Comparable < Face3 > {
   @Chainable
   public Face3 scaleGlobal ( final Vec3 scale ) {
 
-    if (Vec3.none(scale)) { return this; }
+    if ( Vec3.none(scale) ) { return this; }
 
     Vec3 c;
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.vertices[i].coord;
       Vec3.mul(c, scale, c);
     }
@@ -377,14 +377,14 @@ public class Face3 implements Comparable < Face3 > {
   @Chainable
   public Face3 scaleLocal ( final float scale ) {
 
-    if (scale == 0.0f) { return this; }
+    if ( scale == 0.0f ) { return this; }
 
     final Vec3 centroid = new Vec3();
     Face3.centroid(this, centroid);
 
     Vec3 c;
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.vertices[i].coord;
       Vec3.sub(c, centroid, c);
       Vec3.mul(c, scale, c);
@@ -404,14 +404,14 @@ public class Face3 implements Comparable < Face3 > {
   @Chainable
   public Face3 scaleLocal ( final Vec3 scale ) {
 
-    if (Vec3.none(scale)) { return this; }
+    if ( Vec3.none(scale) ) { return this; }
 
     final Vec3 centroid = new Vec3();
     Face3.centroid(this, centroid);
 
     Vec3 c;
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.vertices[i].coord;
       Vec3.sub(c, centroid, c);
       Vec3.mul(c, scale, c);
@@ -457,9 +457,9 @@ public class Face3 implements Comparable < Face3 > {
     final int last = len - 1;
     final StringBuilder sb = new StringBuilder(len * 512)
         .append("{ vertices: [ \n");
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       sb.append(this.vertices[i].toString(places));
-      if (i < last) { sb.append(',').append('\n'); }
+      if ( i < last ) { sb.append(',').append('\n'); }
     }
     sb.append(" ] }");
     return sb.toString();
@@ -490,7 +490,7 @@ public class Face3 implements Comparable < Face3 > {
 
     Vec3 c;
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.vertices[i].coord;
       Vec3.add(c, v, c);
     }
@@ -513,7 +513,7 @@ public class Face3 implements Comparable < Face3 > {
     target.reset();
     final Vert3[] verts = face.vertices;
     final int len = verts.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       Vec3.add(target, verts[i].coord, target);
     }
     return Vec3.div(target, len, target);

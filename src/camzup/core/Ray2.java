@@ -16,9 +16,7 @@ public class Ray2 extends Ray {
     /**
      * The default constructor.
      */
-    public AbstrComparator ( ) {
-
-    }
+    public AbstrComparator ( ) {}
 
     /**
      * The compare function which must be implemented by sub- (child)
@@ -113,9 +111,9 @@ public class Ray2 extends Ray {
     // return false;
     // }
 
-    if (this.origin == null) {
-      if (ray.origin != null) { return false; }
-    } else if (!this.origin.equals(ray.origin)) { return false; }
+    if ( this.origin == null ) {
+      if ( ray.origin != null ) { return false; }
+    } else if ( !this.origin.equals(ray.origin) ) { return false; }
 
     return true;
   }
@@ -144,9 +142,9 @@ public class Ray2 extends Ray {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-    if (obj == null) { return false; }
-    if (this.getClass() != obj.getClass()) { return false; }
+    if ( this == obj ) { return true; }
+    if ( obj == null ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Ray2) obj);
   }
 
@@ -250,9 +248,9 @@ public class Ray2 extends Ray {
     final Vec2 dir = ray.dir;
 
     final float dmSq = Vec2.magSq(dir);
-    if (time <= 0.0f || dmSq == 0.0f) { return target.set(origin); }
+    if ( time <= 0.0f || dmSq == 0.0f ) { return target.set(origin); }
 
-    if (Utils.approx(dmSq, 1.0f)) {
+    if ( Utils.approx(dmSq, 1.0f) ) {
       return target.set(
           origin.x + dir.x * time,
           origin.y + dir.y * time);

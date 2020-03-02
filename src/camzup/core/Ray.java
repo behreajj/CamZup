@@ -13,7 +13,5 @@ public class Ray implements IRay {
   /**
    * The default constructor.
    */
-  public Ray ( ) {
-
-  }
+  public Ray ( ) {}
 }

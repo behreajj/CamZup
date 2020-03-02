@@ -35,7 +35,7 @@ public enum TextureSampling {
   /**
    * The integer code of the constant.
    */
-  private int val;
+  private final int val;
 
   /**
    * The enumeration constructor.
@@ -52,7 +52,7 @@ public enum TextureSampling {
    *
    * @return the integer
    */
-  int getVal ( ) {
+  public int getVal ( ) {
 
     return this.val;
   }
@@ -65,7 +65,7 @@ public enum TextureSampling {
    */
   public static TextureSampling fromValue ( final int i ) {
 
-    switch (i) {
+    switch ( i ) {
       case 5:
         return TRILINEAR;
       case 4:

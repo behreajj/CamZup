@@ -65,7 +65,5 @@ void keyReleased() {
 }
 
 void mouseReleased() {
-  if (mouseButton == RIGHT) {
     flowfield.init();
-  }
 }

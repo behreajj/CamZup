@@ -21,9 +21,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     /**
      * The default constructor.
      */
-    public AbstrComparator ( ) {
-
-    }
+    public AbstrComparator ( ) {}
 
     /**
      * The compare function which must be implemented by sub- (child)
@@ -62,9 +60,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     /**
      * The default constructor.
      */
-    public AbstrEasing ( ) {
-
-    }
+    public AbstrEasing ( ) {}
 
     /**
      * A clamped interpolation between the origin and destination. Defers
@@ -84,8 +80,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
         final Float step,
         final Vec2 target ) {
 
-      if (step <= 0.0f) { return target.set(origin); }
-      if (step >= 1.0f) { return target.set(dest); }
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
       return this.applyUnclamped(origin, dest, step, target);
     }
 
@@ -442,9 +438,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-    if (obj == null) { return false; }
-    if (this.getClass() != obj.getClass()) { return false; }
+    if ( this == obj ) { return true; }
+    if ( obj == null ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Vec2) obj);
   }
 
@@ -458,7 +454,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
   @Override
   public float get ( final int index ) {
 
-    switch (index) {
+    switch ( index ) {
       case 0:
       case -2:
         return this.x;
@@ -565,13 +561,13 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
     try {
       x = Float.parseFloat(xstr);
-    } catch (final NumberFormatException e) {
+    } catch ( final NumberFormatException e ) {
       x = 0.0f;
     }
 
     try {
       y = Float.parseFloat(ystr);
-    } catch (final NumberFormatException e) {
+    } catch ( final NumberFormatException e ) {
       y = 0.0f;
     }
 
@@ -683,19 +679,19 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
     /* Calculate x values in separate loop. */
     final float[] xs = new float[cval];
-    for (int j = 0; j < cval; ++j) {
+    for ( int j = 0; j < cval; ++j ) {
       final float step = j * jToStep;
       xs[j] = (1.0f - step) * lbx + step * ubx;
     }
 
     final Vec2[][] result = new Vec2[rval][cval];
-    for (int i = 0; i < rval; ++i) {
+    for ( int i = 0; i < rval; ++i ) {
 
       final Vec2[] row = result[i];
       final float step = i * iToStep;
       final float y = (1.0f - step) * lby + step * uby;
 
-      for (int j = 0; j < cval; ++j) {
+      for ( int j = 0; j < cval; ++j ) {
         row[j] = new Vec2(xs[j], y);
       }
     }
@@ -1057,9 +1053,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final float step,
       final Vec2 target ) {
 
-    if (step <= 0.0f) {
+    if ( step <= 0.0f ) {
       return target.set(ap0);
-    } else if (step >= 1.0f) { return target.set(ap1); }
+    } else if ( step >= 1.0f ) { return target.set(ap1); }
 
     final float u = 1.0f - step;
     float tcb = step * step;
@@ -1107,9 +1103,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final float step,
       final Vec2 target ) {
 
-    if (step <= 0.0f) {
+    if ( step <= 0.0f ) {
       return Vec2.sub(cp0, ap0, target);
-    } else if (step >= 1.0f) { return Vec2.sub(ap1, cp1, target); }
+    } else if ( step >= 1.0f ) { return Vec2.sub(ap1, cp1, target); }
 
     final float u = 1.0f - step;
     final float t3 = step + step + step;
@@ -1355,7 +1351,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final Vec2 b,
       final float c ) {
 
-    if (c == 0.0f) { return 0.0f; }
+    if ( c == 0.0f ) { return 0.0f; }
     return (float) Math.pow(
         Math.pow(Utils.diff(a.x, b.x), c)
             + Math.pow(Utils.diff(a.y, b.y), c),
@@ -1414,7 +1410,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final float b,
       final Vec2 target ) {
 
-    if (b == 0.0f) { return target.reset(); }
+    if ( b == 0.0f ) { return target.reset(); }
     final float denom = 1.0f / b;
     return target.set(
         a.x * denom,
@@ -1494,12 +1490,12 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
     final int sourceLen = arr.length;
     int totalLen = 0;
-    for (int i = 0; i < sourceLen; ++i) {
+    for ( int i = 0; i < sourceLen; ++i ) {
       totalLen += arr[i].length;
     }
 
     final Vec2[] result = new Vec2[totalLen];
-    for (int j = 0, i = 0; i < sourceLen; ++i) {
+    for ( int j = 0, i = 0; i < sourceLen; ++i ) {
       final Vec2[] arrInner = arr[i];
       final int len = arrInner.length;
       System.arraycopy(arrInner, 0, result, j, len);
@@ -1560,7 +1556,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final float b,
       final Vec2 target ) {
 
-    if (b == 0.0f) { return target.set(a); }
+    if ( b == 0.0f ) { return target.set(a); }
     return target.set(
         a.x % b,
         a.y % b);
@@ -1782,7 +1778,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
     /* Multiply x values by Math.sqrt(3.0d) / 2.0d . */
     final float[] xs = new float[vcnt];
-    for (int j = 0; j < vcnt; ++j) {
+    for ( int j = 0; j < vcnt; ++j ) {
 
       // TODO: How to optimize this.
       final float step = j * toStep;
@@ -1791,7 +1787,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     }
 
     final Vec2[][] result = new Vec2[vcnt][vcnt];
-    for (int i = 0; i < vcnt; ++i) {
+    for ( int i = 0; i < vcnt; ++i ) {
       final Vec2[] row = result[i];
 
       /*
@@ -1808,7 +1804,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
        */
       final float xoff = i % 2 == 0 ? w : -w;
       final int joff = Utils.ceilToInt(i * 0.5f);
-      for (int j = 0; j < vcnt; ++j) {
+      for ( int j = 0; j < vcnt; ++j ) {
 
         /*
          * Shift indices so that they move smoothly along a diagonal between
@@ -1911,19 +1907,19 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
     final int ringLen = includeCenter ? rings + 1 : rings;
     final Vec2[][] result = new Vec2[ringLen][vsect];
-    if (includeCenter) { result[0] = new Vec2[] { new Vec2(0.0f, 0.0f) }; }
+    if ( includeCenter ) { result[0] = new Vec2[] { new Vec2(0.0f, 0.0f) }; }
 
     final float toPrc = oneRing ? 1.0f : 1.0f / (vring - 1.0f);
     final float toTheta = 1.0f / vsect;
     float off = 0.0f;
 
-    for (int h = 0; h < vring; ++h) {
+    for ( int h = 0; h < vring; ++h ) {
 
       final float prc = h * toPrc;
       final float radius = (1.0f - prc) * vrMin + prc * vrMax;
       final Vec2[] ring = result[includeCenter ? h + 1 : h];
 
-      for (int i = 0; i < vsect; ++i) {
+      for ( int i = 0; i < vsect; ++i ) {
 
         final float theta = off + i * toTheta;
         final float cosTheta = Utils.scNorm(theta);
@@ -2047,7 +2043,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final Vec2 target ) {
 
     final float mSq = v.x * v.x + v.y * v.y;
-    if (limit > 0.0f && mSq > limit * limit) {
+    if ( limit > 0.0f && mSq > limit * limit ) {
       final float scalar = limit * Utils.invSqrtUnchecked(mSq);
       return target.set(v.x * scalar, v.y * scalar);
     }
@@ -2265,7 +2261,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final float b,
       final Vec2 target ) {
 
-    if (b == 0.0f) { return target.set(a); }
+    if ( b == 0.0f ) { return target.set(a); }
     return target.set(
         Utils.modUnchecked(a.x, b),
         Utils.modUnchecked(a.y, b));
@@ -2637,7 +2633,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final Vec2 b ) {
 
     final float bSq = Vec2.magSq(b);
-    if (bSq != 0.0f) { return Vec2.dot(a, b) / bSq; }
+    if ( bSq != 0.0f ) { return Vec2.dot(a, b) / bSq; }
     return 0.0f;
   }
 
@@ -2677,13 +2673,12 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final int levels,
       final Vec2 target ) {
 
-    if (levels < 2) { return target.set(v); }
+    if ( levels < 2 ) { return target.set(v); }
 
     final float delta = 1.0f / levels;
     return target.set(
         delta * Utils.floor(0.5f + v.x * levels),
         delta * Utils.floor(0.5f + v.y * levels));
-
   }
 
   /**
@@ -2807,9 +2802,9 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     // TODO: Needs testing.
 
     final float nMSq = Vec2.magSq(normal);
-    if (Utils.abs(nMSq) < Utils.EPSILON) { return target.reset(); }
+    if ( Utils.abs(nMSq) < Utils.EPSILON ) { return target.reset(); }
 
-    if (Utils.approx(nMSq, 1.0f)) {
+    if ( Utils.approx(nMSq, 1.0f) ) {
       final float scalar = 2.0f * Vec2.dot(normal, incident);
       return target.set(
           incident.x - scalar * normal.x,
@@ -2846,7 +2841,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
     final float nDotI = Vec2.dot(normal, incident);
     final float k = 1.0f - eta * eta * (1.0f - nDotI * nDotI);
-    if (k <= 0.0f) { return target.reset(); }
+    if ( k <= 0.0f ) { return target.reset(); }
     final float scalar = eta * nDotI + Utils.sqrtUnchecked(k);
     return target.set(
         eta * incident.x - scalar * normal.x,
@@ -2869,8 +2864,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final Vec2 target ) {
 
     final float mSq = v.x * v.x + v.y * v.y;
-    if (scalar == 0.0f || mSq == 0.0f) { return target.reset(); }
-
+    if ( scalar == 0.0f || mSq == 0.0f ) { return target.reset(); }
     final float sclMag = scalar * Utils.invSqrtUnchecked(mSq);
     return target.set(v.x * sclMag, v.y * sclMag);
   }
@@ -2893,7 +2887,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final Vec2 target,
       final Vec2 normalized ) {
 
-    if (scalar == 0.0f) {
+    if ( scalar == 0.0f ) {
       normalized.reset();
       return target.reset();
     }
@@ -2923,16 +2917,16 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     final int vsz = sz < 1 ? 1 : sz;
     final Vec2[] result = new Vec2[vsz];
 
-    if (arr == null) {
-      for (int i = 0; i < vsz; ++i) {
+    if ( arr == null ) {
+      for ( int i = 0; i < vsz; ++i ) {
         result[i] = new Vec2();
       }
       return result;
     }
 
     final int last = arr.length - 1;
-    for (int i = 0; i < vsz; ++i) {
-      if (i > last || arr[i] == null) {
+    for ( int i = 0; i < vsz; ++i ) {
+      if ( i > last || arr[i] == null ) {
         result[i] = new Vec2();
       } else {
         result[i] = arr[i];
@@ -3058,11 +3052,11 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final int places,
       final Vec2 target ) {
 
-    if (places < 1) { return Vec2.round(v, target); }
-    if (places > 7) { return target.set(v); }
+    if ( places < 1 ) { return Vec2.round(v, target); }
+    if ( places > 7 ) { return target.set(v); }
 
     int n = 10;
-    for (int i = 1; i < places; ++i) {
+    for ( int i = 1; i < places; ++i ) {
       n *= 10;
     }
     final float nInv = 1.0f / n;
@@ -3095,7 +3089,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    */
   public static void setEasing ( final AbstrEasing easing ) {
 
-    if (easing != null) { Vec2.EASING = easing; }
+    if ( easing != null ) { Vec2.EASING = easing; }
   }
 
   /**

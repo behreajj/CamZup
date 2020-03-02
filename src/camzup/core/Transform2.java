@@ -73,8 +73,8 @@ public class Transform2 extends Transform {
         final Float step,
         final Transform2 target ) {
 
-      if (step <= 0.0f) { return target.set(origin); }
-      if (step >= 1.0f) { return target.set(dest); }
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
       return this.applyUnclamped(origin, dest, step, target);
     }
 
@@ -93,9 +93,9 @@ public class Transform2 extends Transform {
         final Transform2 target ) {
 
       final int len = arr.length;
-      if (len == 1 || step <= 0.0f) { return target.set(arr[0]); }
+      if ( len == 1 || step <= 0.0f ) { return target.set(arr[0]); }
 
-      if (step >= 1.0f) { return target.set(arr[len - 1]); }
+      if ( step >= 1.0f ) { return target.set(arr[len - 1]); }
 
       final float scaledStep = step * (len - 1);
       final int i = (int) scaledStep;
@@ -287,16 +287,16 @@ public class Transform2 extends Transform {
    */
   protected boolean equals ( final Transform2 t ) {
 
-    if (this.scale == null) {
-      if (t.scale != null) { return false; }
-    } else if (!this.scale.equals(t.scale)) { return false; }
+    if ( this.scale == null ) {
+      if ( t.scale != null ) { return false; }
+    } else if ( !this.scale.equals(t.scale) ) { return false; }
 
-    if (this.location == null) {
-      if (t.location != null) { return false; }
-    } else if (!this.location.equals(t.location)) { return false; }
+    if ( this.location == null ) {
+      if ( t.location != null ) { return false; }
+    } else if ( !this.location.equals(t.location) ) { return false; }
 
-    if (Float.floatToIntBits(this.rotation) != Float
-        .floatToIntBits(t.rotation)) {
+    if ( Float.floatToIntBits(this.rotation) != Float
+        .floatToIntBits(t.rotation) ) {
       return false;
     }
 
@@ -382,6 +382,7 @@ public class Transform2 extends Transform {
   @Override
   public Transform2 clone ( ) {
 
+    // TODO: Make copy constructor and copy setter instead?
     return new Transform2(
         this.location,
         this.rotation,
@@ -397,9 +398,9 @@ public class Transform2 extends Transform {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-    if (obj == null) { return false; }
-    if (this.getClass() != obj.getClass()) { return false; }
+    if ( this == obj ) { return true; }
+    if ( obj == null ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Transform2) obj);
   }
 
@@ -500,13 +501,12 @@ public class Transform2 extends Transform {
   @Override
   public int hashCode ( ) {
 
-    int hash = IUtils.HASH_BASE;
-    hash = hash * IUtils.HASH_MUL
-        ^ (this.location == null ? 0 : this.location.hashCode());
-    hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.rotation);
-    hash = hash * IUtils.HASH_MUL
-        ^ (this.scale == null ? 0 : this.scale.hashCode());
-    return hash;
+    return ((IUtils.MUL_BASE ^ (this.location == null ? 0
+        : this.location.hashCode()))
+        * IUtils.HASH_MUL ^ Float.floatToIntBits(this.rotation))
+        * IUtils.HASH_MUL
+        ^ (this.scale == null ? 0
+            : this.scale.hashCode());
   }
 
   /**
@@ -519,8 +519,40 @@ public class Transform2 extends Transform {
   @Chainable
   public Transform2 moveBy ( final Vec2 dir ) {
 
+    return this.moveByGlobal(dir);
+  }
+
+  /**
+   * Moves the transform by a direction to a new location.
+   *
+   * @param dir the direction
+   * @return this transform
+   * @see Vec2#add(Vec2, Vec2, Vec2)
+   */
+  @Chainable
+  public Transform2 moveByGlobal ( final Vec2 dir ) {
+
     this.locPrev.set(this.location);
     Vec2.add(this.locPrev, dir, this.location);
+    return this;
+  }
+
+  /**
+   * Moves the transform by a direction multiplied by the transform's
+   * rotation. In effect, moves the transform by where it's facing.
+   *
+   * @param dir the direction
+   * @return this transform
+   * @see Vec2#rotateZ(Vec2, float, float, Vec2)
+   * @see Vec2#add(Vec2, Vec2, Vec2)
+   */
+  @Chainable
+  public Transform2 moveByLocal ( final Vec2 dir ) {
+
+    this.locPrev.set(this.location);
+    Vec2.rotateZ(dir, this.right.x, this.right.y, this.location);
+    Vec2.mul(this.location, this.scale, this.location);
+    Vec2.add(this.locPrev, this.location, this.location);
     return this;
   }
 
@@ -674,7 +706,7 @@ public class Transform2 extends Transform {
   @Chainable
   public Transform2 scaleBy ( final float scalar ) {
 
-    if (scalar == 0.0f) { return this; }
+    if ( scalar == 0.0f ) { return this; }
     this.scalePrev.set(this.scale);
     Vec2.mul(this.scalePrev, scalar, this.scale);
     return this;
@@ -691,7 +723,7 @@ public class Transform2 extends Transform {
   @Chainable
   public Transform2 scaleBy ( final Vec2 nonUniformScale ) {
 
-    if (Vec2.all(nonUniformScale)) {
+    if ( Vec2.all(nonUniformScale) ) {
       this.scalePrev.set(this.scale);
       Vec2.mul(this.scalePrev, nonUniformScale, this.scale);
     }
@@ -707,7 +739,7 @@ public class Transform2 extends Transform {
   @Chainable
   public Transform2 scaleTo ( final float scalar ) {
 
-    if (scalar != 0.0f) {
+    if ( scalar != 0.0f ) {
       this.scalePrev.set(this.scale);
       this.scale.set(scalar, scalar);
     }
@@ -724,7 +756,7 @@ public class Transform2 extends Transform {
   @Chainable
   public Transform2 scaleTo ( final Vec2 scaleNew ) {
 
-    if (Vec2.all(scaleNew)) {
+    if ( Vec2.all(scaleNew) ) {
       this.scalePrev.set(this.scale);
       this.scale.set(scaleNew);
     }
@@ -745,11 +777,10 @@ public class Transform2 extends Transform {
       final Vec2 scaleNew,
       final float step ) {
 
-    if (Vec2.all(scaleNew)) {
+    if ( Vec2.all(scaleNew) ) {
       return this.scaleTo(scaleNew, step, Transform2.EASING.scale);
     }
     return this;
-
   }
 
   /**
@@ -769,7 +800,7 @@ public class Transform2 extends Transform {
       final float step,
       final Vec2.AbstrEasing easingFunc ) {
 
-    if (Vec2.all(scaleNew)) {
+    if ( Vec2.all(scaleNew) ) {
       this.scalePrev.set(this.scale);
       easingFunc.apply(this.scalePrev, scaleNew, step, this.scale);
     }
@@ -1166,6 +1197,6 @@ public class Transform2 extends Transform {
    */
   public static void setEasing ( final Transform2.Easing easing ) {
 
-    if (easing != null) { Transform2.EASING = easing; }
+    if ( easing != null ) { Transform2.EASING = easing; }
   }
 }

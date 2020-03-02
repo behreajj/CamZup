@@ -17,7 +17,7 @@ import camzup.core.Vec3;
 import camzup.core.Vec4;
 
 /**
- * Facilitates conversions between Cam Z up objects and Processing
+ * Facilitates conversions between core objects and Processing
  * objects.
  */
 public abstract class Convert {
@@ -28,8 +28,7 @@ public abstract class Convert {
    * @param tr the affine transform
    * @return the PMatrix
    */
-  public static PMatrix2D fromAwtTransform (
-      final AffineTransform tr ) {
+  public static PMatrix2D fromAwtTransform ( final AffineTransform tr ) {
 
     return Convert.fromAwtTransform(tr, (PMatrix2D) null);
   }
@@ -45,7 +44,7 @@ public abstract class Convert {
       final AffineTransform tr,
       PMatrix2D target ) {
 
-    if (target == null) { target = new PMatrix2D(); }
+    if ( target == null ) { target = new PMatrix2D(); }
 
     target.set(
         (float) tr.getScaleX(),
@@ -54,6 +53,7 @@ public abstract class Convert {
         (float) tr.getShearY(),
         (float) tr.getScaleY(),
         (float) tr.getTranslateY());
+
     return target;
   }
 
@@ -68,7 +68,7 @@ public abstract class Convert {
       final AffineTransform tr,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
 
     target.set(
         (float) tr.getScaleX(),
@@ -83,6 +83,7 @@ public abstract class Convert {
 
         0.0f, 0.0f, 1.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 1.0f);
+
     return target;
   }
 
@@ -93,9 +94,7 @@ public abstract class Convert {
    * @param target the target matrix
    * @return the matrix
    */
-  public static Mat3 toMat3 (
-      final PMatrix2D source,
-      final Mat3 target ) {
+  public static Mat3 toMat3 ( final PMatrix2D source, final Mat3 target ) {
 
     return target.set(
         source.m00, source.m01, source.m02,
@@ -106,13 +105,11 @@ public abstract class Convert {
   /**
    * Converts a PMatrix2D to a 4 x 4 matrix.
    *
-   * @param source the souce matrix
+   * @param source the source matrix
    * @param target the target matrix
    * @return the matrix
    */
-  public static Mat4 toMat4 (
-      final PMatrix2D source,
-      final Mat4 target ) {
+  public static Mat4 toMat4 ( final PMatrix2D source, final Mat4 target ) {
 
     return target.set(
         source.m00, source.m01, 0.0f, source.m02,
@@ -124,13 +121,11 @@ public abstract class Convert {
   /**
    * Converts a PMatrix3D to a 4 x 4 matrix.
    *
-   * @param source the souce matrix
+   * @param source the source matrix
    * @param target the target matrix
    * @return the matrix
    */
-  public static Mat4 toMat4 (
-      final PMatrix3D source,
-      final Mat4 target ) {
+  public static Mat4 toMat4 ( final PMatrix3D source, final Mat4 target ) {
 
     return target.set(
         source.m00, source.m01, source.m02, source.m03,
@@ -161,7 +156,7 @@ public abstract class Convert {
       final Mat3 source,
       PMatrix2D target ) {
 
-    if (target == null) { target = new PMatrix2D(); }
+    if ( target == null ) { target = new PMatrix2D(); }
 
     target.set(
         source.m00, source.m01, source.m02,
@@ -197,7 +192,7 @@ public abstract class Convert {
       final TransformOrder order,
       PMatrix2D target ) {
 
-    if (target == null) { target = new PMatrix2D(); }
+    if ( target == null ) { target = new PMatrix2D(); }
 
     final Vec2 dim = tr2.getScale(new Vec2());
     final Vec2 loc = tr2.getLocation(new Vec2());
@@ -205,7 +200,7 @@ public abstract class Convert {
 
     target.reset();
 
-    switch (order) {
+    switch ( order ) {
 
       case RST:
 
@@ -281,7 +276,7 @@ public abstract class Convert {
       final Quaternion source,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
 
     final float w = source.real;
     final Vec3 i = source.imag;
@@ -338,7 +333,7 @@ public abstract class Convert {
 
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
 
     final Quaternion q = tr3.getRotation(new Quaternion());
     final Vec3 dim = tr3.getScale(new Vec3());
@@ -346,7 +341,7 @@ public abstract class Convert {
 
     target.reset();
 
-    switch (order) {
+    switch ( order ) {
 
       case RST:
 
@@ -418,11 +413,9 @@ public abstract class Convert {
    * @param target the target vector
    * @return the vector
    */
-  public static PVector toPVector (
-      final Vec2 source,
-      PVector target ) {
+  public static PVector toPVector ( final Vec2 source, PVector target ) {
 
-    if (target == null) { target = new PVector(); }
+    if ( target == null ) { target = new PVector(); }
     return target.set(source.x, source.y, 0.0f);
   }
 
@@ -444,11 +437,9 @@ public abstract class Convert {
    * @param target the target vector
    * @return the vector
    */
-  public static PVector toPVector (
-      final Vec3 source,
-      PVector target ) {
+  public static PVector toPVector ( final Vec3 source, PVector target ) {
 
-    if (target == null) { target = new PVector(); }
+    if ( target == null ) { target = new PVector(); }
     return target.set(source.x, source.y, source.z);
   }
 
@@ -470,11 +461,9 @@ public abstract class Convert {
    * @param target the target vector
    * @return the vector
    */
-  public static PVector toPVector (
-      final Vec4 source,
-      PVector target ) {
+  public static PVector toPVector ( final Vec4 source, PVector target ) {
 
-    if (target == null) { target = new PVector(); }
+    if ( target == null ) { target = new PVector(); }
     return target.set(source.x, source.y, source.z);
   }
 
@@ -485,9 +474,7 @@ public abstract class Convert {
    * @param target the target vector
    * @return the vector
    */
-  public static Vec2 toVec2 (
-      final PVector source,
-      final Vec2 target ) {
+  public static Vec2 toVec2 ( final PVector source, final Vec2 target ) {
 
     return target.set(source.x, source.y);
   }
@@ -499,9 +486,7 @@ public abstract class Convert {
    * @param target the target vector
    * @return the vector
    */
-  public static Vec3 toVec3 (
-      final PVector source,
-      final Vec3 target ) {
+  public static Vec3 toVec3 ( final PVector source, final Vec3 target ) {
 
     return target.set(source.x, source.y, source.z);
   }
@@ -513,9 +498,7 @@ public abstract class Convert {
    * @param target the target vector
    * @return the vector
    */
-  public static Vec4 toVec4 (
-      final PVector source,
-      final Vec4 target ) {
+  public static Vec4 toVec4 ( final PVector source, final Vec4 target ) {
 
     return target.set(source.x, source.y, source.z, 0.0f);
   }

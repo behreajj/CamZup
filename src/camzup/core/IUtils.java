@@ -155,8 +155,7 @@ public interface IUtils {
 
   /**
    * One divided by \u03c4. Approximately 0.15915494 . Useful for
-   * converting an index in a for-loop to an angle and for applying mod
-   * to an angle.
+   * converting an index in a for-loop to an angle.
    */
   float ONE_TAU = 0.15915494f;
 
@@ -174,8 +173,7 @@ public interface IUtils {
 
   /**
    * One divided by \u03c4. Approximately 0.15915494309189535 . Useful
-   * for converting an index in a for-loop to an angle and for applying
-   * mod to an angle.
+   * for converting an index in a for-loop to an angle.
    */
   double ONE_TAU_D = 0.15915494309189535d;
 

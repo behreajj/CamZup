@@ -28,6 +28,20 @@ public abstract class PMatAux {
     PMatAux.inv = new Quaternion();
   }
 
+  /**
+   * Rotates a matrix and its inverse together by an axis and the cosine
+   * and sine of an angle. Does not check whether the axis is normalized
+   * or valid.
+   *
+   * @param c     cosine of the angle
+   * @param s     sine of the angle
+   * @param xAxis the axis x
+   * @param yAxis the axis y
+   * @param zAxis the axis z
+   * @param m     the matrix
+   * @param mInv  the matrix inverse
+   * @return the matrix
+   */
   public static PMatrix3D compoundRotate (
       final float c,
       final float s,
@@ -37,8 +51,8 @@ public abstract class PMatAux {
       PMatrix3D m,
       PMatrix3D mInv ) {
 
-    if (m == null) { m = new PMatrix3D(); }
-    if (mInv == null) { mInv = new PMatrix3D(); }
+    if ( m == null ) { m = new PMatrix3D(); }
+    if ( mInv == null ) { mInv = new PMatrix3D(); }
 
     final float sax = s * xAxis;
     final float say = s * yAxis;
@@ -95,6 +109,18 @@ public abstract class PMatAux {
     return m;
   }
 
+  /**
+   * Rotates a matrix and its inverse together by an axis an angle. Does
+   * not check whether the axis is normalized or valid.
+   *
+   * @param radians the angle
+   * @param xAxis   the axis x
+   * @param yAxis   the axis y
+   * @param zAxis   the axis z
+   * @param m       the matrix
+   * @param mInv    the matrix inverse
+   * @return the matrix
+   */
   public static PMatrix3D compoundRotate (
       final float radians,
       final float xAxis,
@@ -103,9 +129,6 @@ public abstract class PMatAux {
       final PMatrix3D m,
       final PMatrix3D mInv ) {
 
-    // final float c = Utils.cos(-radians);
-    // final float s = Utils.sin(-radians);
-
     final float normRad = -radians * IUtils.ONE_TAU;
     return PMatAux.compoundRotate(
         Utils.scNorm(normRad),
@@ -113,14 +136,24 @@ public abstract class PMatAux {
         xAxis, yAxis, zAxis, m, mInv);
   }
 
+  /**
+   * Rotates a matrix and its inverse around the z axis by the cosine
+   * and sine of an angle.
+   *
+   * @param c    the cosine
+   * @param s    the sine
+   * @param m    the matrix
+   * @param mInv the matrix inverse
+   * @return the rotated matrix
+   */
   public static PMatrix3D compoundRotateZ (
       final float c,
       final float s,
       PMatrix3D m,
       PMatrix3D mInv ) {
 
-    if (m == null) { m = new PMatrix3D(); }
-    if (mInv == null) { mInv = new PMatrix3D(); }
+    if ( m == null ) { m = new PMatrix3D(); }
+    if ( mInv == null ) { mInv = new PMatrix3D(); }
 
     m.set(
         c * m.m00 + s * m.m01, c * m.m01 - s * m.m00, m.m02, m.m03,
@@ -209,7 +242,7 @@ public abstract class PMatAux {
       final float near, final float far,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
 
     final float n2 = near + near;
 
@@ -245,7 +278,7 @@ public abstract class PMatAux {
       final PMatrix3D target ) {
 
     final float det = m.determinant();
-    if (det == 0.0f) {
+    if ( det == 0.0f ) {
       target.reset();
       return target;
     }
@@ -337,7 +370,7 @@ public abstract class PMatAux {
       final Quaternion q,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
 
     Quaternion.inverse(q, PMatAux.inv);
     final float w = PMatAux.inv.real;
@@ -401,7 +434,7 @@ public abstract class PMatAux {
       final float s,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
     target.set(
         target.m00, target.m01, target.m02, target.m03,
         c * target.m10 + s * target.m20,
@@ -420,9 +453,6 @@ public abstract class PMatAux {
       final float radians,
       final PMatrix3D target ) {
 
-    // final float c = Utils.cos(radians);
-    // final float s = Utils.sin(radians);
-
     final float normRad = radians * IUtils.ONE_TAU;
     return PMatAux.invRotateX(
         Utils.scNorm(normRad),
@@ -439,7 +469,7 @@ public abstract class PMatAux {
       final float s,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
     target.set(
         c * target.m00 - s * target.m20,
         c * target.m01 - s * target.m21,
@@ -458,9 +488,6 @@ public abstract class PMatAux {
       final float radians,
       final PMatrix3D target ) {
 
-    // final float c = Utils.cos(radians);
-    // final float s = Utils.sin(radians);
-
     final float normRad = radians * IUtils.ONE_TAU;
     return PMatAux.invRotateY(
         Utils.scNorm(normRad),
@@ -477,7 +504,7 @@ public abstract class PMatAux {
       final float s,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
     target.set(
         c * target.m00 + s * target.m10,
         c * target.m01 + s * target.m11,
@@ -495,9 +522,6 @@ public abstract class PMatAux {
   public static PMatrix3D invRotateZ (
       final float radians,
       final PMatrix3D target ) {
-
-    // final float c = Utils.cos(radians);
-    // final float s = Utils.sin(radians);
 
     final float normRad = radians * IUtils.ONE_TAU;
     return PMatAux.invRotateZ(
@@ -522,11 +546,11 @@ public abstract class PMatAux {
       final float zScale,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
 
-    final float x = xScale == 0.0f ? 1.0f : 1.0f / xScale;
-    final float y = yScale == 0.0f ? 1.0f : 1.0f / yScale;
-    final float z = zScale == 0.0f ? 1.0f : 1.0f / zScale;
+    final float x = xScale != 0.0f ? 1.0f / xScale : 1.0f;
+    final float y = yScale != 0.0f ? 1.0f / yScale : 1.0f;
+    final float z = zScale != 0.0f ? 1.0f / zScale : 1.0f;
 
     target.set(
         x * target.m00, x * target.m01, x * target.m02, x * target.m03,
@@ -587,7 +611,7 @@ public abstract class PMatAux {
       final float tz,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
 
     target.set(
         target.m00 - tx * target.m30,
@@ -659,7 +683,7 @@ public abstract class PMatAux {
       final PMatrix3D b,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
 
     target.set(
         a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03 * b.m30,
@@ -735,10 +759,10 @@ public abstract class PMatAux {
       final PVector v,
       PVector target ) {
 
-    if (target == null) { target = new PVector(); }
+    if ( target == null ) { target = new PVector(); }
 
     final float w = m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33;
-    if (w == 0.0f) { return target.set(0.0f, 0.0f, 0.0f); }
+    if ( w == 0.0f ) { return target.set(0.0f, 0.0f, 0.0f); }
     final float wInv = 1.0f / w;
     return target.set(
         (m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03) * wInv,
@@ -761,7 +785,7 @@ public abstract class PMatAux {
       final Vec3 target ) {
 
     final float w = m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33;
-    if (w == 0.0f) { return target.reset(); }
+    if ( w == 0.0f ) { return target.reset(); }
     final float wInv = 1.0f / w;
     return target.set(
         (m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03) * wInv,
@@ -812,7 +836,7 @@ public abstract class PMatAux {
       final float near, final float far,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
 
     float w = right - left;
     float h = top - bottom;
@@ -869,7 +893,7 @@ public abstract class PMatAux {
       final float far,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
 
     final float cotfov = Utils.cot(fov * 0.5f);
     final float d = Utils.div(1.0f, far - near);
@@ -901,7 +925,7 @@ public abstract class PMatAux {
       final float zAxis,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
 
     final float t = 1.0f - c;
     final float tax = t * xAxis;
@@ -986,7 +1010,7 @@ public abstract class PMatAux {
       final Quaternion q,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
 
     final float w = q.real;
     final Vec3 i = q.imag;
@@ -1071,7 +1095,7 @@ public abstract class PMatAux {
       final float s,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
 
     float t1 = target.m01;
     float t2 = target.m02;
@@ -1152,7 +1176,7 @@ public abstract class PMatAux {
       final float s,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
 
     float t0 = target.m00;
     float t2 = target.m02;
@@ -1233,7 +1257,7 @@ public abstract class PMatAux {
       final float s,
       PMatrix3D target ) {
 
-    if (target == null) { target = new PMatrix3D(); }
+    if ( target == null ) { target = new PMatrix3D(); }
 
     float t0 = target.m00;
     float t1 = target.m01;

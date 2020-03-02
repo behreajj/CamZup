@@ -11,7 +11,6 @@ void settings() {
 
 void setup() {
   graphics = (Yup2)getGraphics();
-  //frameRate(1000);
 }
 
 void draw() {

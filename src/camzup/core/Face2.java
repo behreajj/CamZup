@@ -55,10 +55,12 @@ public class Face2 implements Comparable < Face2 > {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-    if (obj == null) { return false; }
-    if (this.getClass() != obj.getClass()) { return false; }
-    if (!Arrays.equals(this.vertices, ((Face2) obj).vertices)) { return false; }
+    if ( this == obj ) { return true; }
+    if ( obj == null ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
+    if ( !Arrays.equals(this.vertices, ((Face2) obj).vertices) ) {
+      return false;
+    }
 
     return true;
   }
@@ -93,7 +95,7 @@ public class Face2 implements Comparable < Face2 > {
     final int len = this.vertices.length;
     final int last = len - 1;
     final Edge2[] result = new Edge2[len];
-    for (int i = 0; i < last; ++i) {
+    for ( int i = 0; i < last; ++i ) {
       result[i] = new Edge2(
           this.vertices[i],
           this.vertices[i + 1]);
@@ -138,6 +140,15 @@ public class Face2 implements Comparable < Face2 > {
     return this.rotateZGlobal(radians);
   }
 
+  /**
+   * Rotates all coordinates in the face by an angle around the z axis.
+   * Does not consider the face's pivot or present orientation.
+   *
+   * @param radians the angle in radians
+   * @return this mesh
+   * @see Vec2#rotateZ(Vec2, float, Vec2)
+   */
+  @Chainable
   public Face2 rotateZGlobal ( final float radians ) {
 
     final float cosa = Utils.cos(radians);
@@ -145,7 +156,7 @@ public class Face2 implements Comparable < Face2 > {
     Vec2 c;
 
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.vertices[i].coord;
       Vec2.rotateZ(c, cosa, sina, c);
     }
@@ -153,6 +164,15 @@ public class Face2 implements Comparable < Face2 > {
     return this;
   }
 
+  /**
+   * Rotates all coordinates in the face by an angle around the z axis.
+   * The face's centroid is used as the pivot point.
+   *
+   * @param radians the angle in radians
+   * @return this mesh
+   * @see Vec2#rotateZ(Vec2, float, Vec2)
+   */
+  @Chainable
   public Face2 rotateZLocal ( final float radians ) {
 
     // TEST
@@ -160,13 +180,13 @@ public class Face2 implements Comparable < Face2 > {
     final Vec2 centroid = new Vec2();
     Face2.centroid(this, centroid);
 
-    final float t = radians + Vec2.heading(centroid);
-    final float cosa = Utils.cos(t);
-    final float sina = Utils.sin(t);
+    // final float t = radians + Vec2.heading(centroid);
+    final float cosa = Utils.cos(radians);
+    final float sina = Utils.sin(radians);
 
     Vec2 c;
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.vertices[i].coord;
       Vec2.sub(c, centroid, c);
       Vec2.rotateZ(c, cosa, sina, c);
@@ -211,11 +231,11 @@ public class Face2 implements Comparable < Face2 > {
   @Chainable
   public Face2 scaleGlobal ( final float scale ) {
 
-    if (scale == 0.0f) { return this; }
+    if ( scale == 0.0f ) { return this; }
 
     Vec2 c;
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.vertices[i].coord;
       Vec2.mul(c, scale, c);
     }
@@ -233,11 +253,11 @@ public class Face2 implements Comparable < Face2 > {
   @Chainable
   public Face2 scaleGlobal ( final Vec2 scale ) {
 
-    if (Vec2.none(scale)) { return this; }
+    if ( Vec2.none(scale) ) { return this; }
 
     Vec2 c;
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.vertices[i].coord;
       Vec2.mul(c, scale, c);
     }
@@ -255,14 +275,14 @@ public class Face2 implements Comparable < Face2 > {
   @Chainable
   public Face2 scaleLocal ( final float scale ) {
 
-    if (scale == 0.0f) { return this; }
+    if ( scale == 0.0f ) { return this; }
 
     final Vec2 centroid = new Vec2();
     Face2.centroid(this, centroid);
 
     Vec2 c;
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.vertices[i].coord;
       Vec2.sub(c, centroid, c);
       Vec2.mul(c, scale, c);
@@ -282,14 +302,14 @@ public class Face2 implements Comparable < Face2 > {
   @Chainable
   public Face2 scaleLocal ( final Vec2 scale ) {
 
-    if (Vec2.none(scale)) { return this; }
+    if ( Vec2.none(scale) ) { return this; }
 
     final Vec2 centroid = new Vec2();
     Face2.centroid(this, centroid);
 
     Vec2 c;
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.vertices[i].coord;
       Vec2.sub(c, centroid, c);
       Vec2.mul(c, scale, c);
@@ -335,9 +355,9 @@ public class Face2 implements Comparable < Face2 > {
     final int last = len - 1;
     final StringBuilder sb = new StringBuilder(len * 256)
         .append("{ vertices: [ \n");
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       sb.append(this.vertices[i].toString(places));
-      if (i < last) { sb.append(',').append('\n'); }
+      if ( i < last ) { sb.append(',').append('\n'); }
     }
     sb.append(" ] }");
     return sb.toString();
@@ -353,9 +373,23 @@ public class Face2 implements Comparable < Face2 > {
   @Chainable
   public Face2 translate ( final Vec2 v ) {
 
+    return this.translateGlobal(v);
+  }
+
+  /**
+   * Translates all coordinates in the face by a vector; uses global
+   * coordinates, i.e., doesn't consider the face's orientation.
+   *
+   * @param v the vector
+   * @return this face
+   * @see Vec2#add(Vec2, Vec2, Vec2)
+   */
+  @Chainable
+  public Face2 translateGlobal ( final Vec2 v ) {
+
     Vec2 c;
     final int len = this.vertices.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.vertices[i].coord;
       Vec2.add(c, v, c);
     }
@@ -378,7 +412,7 @@ public class Face2 implements Comparable < Face2 > {
     target.reset();
     final Vert2[] verts = face.vertices;
     final int len = verts.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       Vec2.add(target, verts[i].coord, target);
     }
     return Vec2.div(target, len, target);

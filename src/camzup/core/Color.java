@@ -42,8 +42,8 @@ public class Color extends Vec4 {
         final Float step,
         final Color target ) {
 
-      if (step <= 0.0f) { return target.set(origin); }
-      if (step >= 1.0f) { return target.set(dest); }
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
       return this.applyUnclamped(origin, dest, step, target);
     }
 
@@ -177,9 +177,7 @@ public class Color extends Vec4 {
      * @see Float#compare(float, float)
      */
     @Override
-    public int compare (
-        final Color a,
-        final Color b ) {
+    public int compare ( final Color a, final Color b ) {
 
       Color.rgbaToHsba(a, this.aHsb);
       Color.rgbaToHsba(b, this.bHsb);
@@ -212,9 +210,7 @@ public class Color extends Vec4 {
      * @see Float#compare(float, float)
      */
     @Override
-    public int compare (
-        final Color a,
-        final Color b ) {
+    public int compare ( final Color a, final Color b ) {
 
       Color.rgbaToHsba(a, this.aHsb);
       Color.rgbaToHsba(b, this.bHsb);
@@ -253,14 +249,14 @@ public class Color extends Vec4 {
         final float dest,
         final float step ) {
 
-      if (this.aLtb) {
+      if ( this.aLtb ) {
         this.a = this.a + 1.0f;
         this.modResult = true;
       }
 
       // TODO: Optimize?
       final float fac = Utils.lerpUnclamped(this.a, this.b, step);
-      if (this.modResult) { return Utils.mod1(fac); }
+      if ( this.modResult ) { return Utils.mod1(fac); }
       return fac;
     }
   }
@@ -294,13 +290,13 @@ public class Color extends Vec4 {
         final float dest,
         final float step ) {
 
-      if (this.aGtb) {
+      if ( this.aGtb ) {
         this.b = this.b + 1.0f;
         this.modResult = true;
       }
 
       final float fac = Utils.lerpUnclamped(this.a, this.b, step);
-      if (this.modResult) { return Utils.mod1(fac); }
+      if ( this.modResult ) { return Utils.mod1(fac); }
       return fac;
     }
   }
@@ -385,8 +381,8 @@ public class Color extends Vec4 {
 
       this.eval(origin, dest);
 
-      if (step <= 0.0f || this.diff == 0.0f) { return this.a; }
-      if (step >= 1.0f) { return this.b; }
+      if ( step <= 0.0f || this.diff == 0.0f ) { return this.a; }
+      if ( step >= 1.0f ) { return this.b; }
       return this.applyUnclamped(origin, dest, step);
     }
 
@@ -445,16 +441,16 @@ public class Color extends Vec4 {
         final float dest,
         final float step ) {
 
-      if (this.aLtb && this.diff < 0.5f) {
+      if ( this.aLtb && this.diff < 0.5f ) {
         this.a = this.a + 1.0f;
         this.modResult = true;
-      } else if (this.aGtb && this.diff > -0.5f) {
+      } else if ( this.aGtb && this.diff > -0.5f ) {
         this.b = this.b + 1.0f;
         this.modResult = true;
       }
 
       final float fac = Utils.lerpUnclamped(this.a, this.b, step);
-      if (this.modResult) { return Utils.mod1(fac); }
+      if ( this.modResult ) { return Utils.mod1(fac); }
       return fac;
     }
   }
@@ -488,16 +484,16 @@ public class Color extends Vec4 {
         final float dest,
         final float step ) {
 
-      if (this.aLtb && this.diff > 0.5f) {
+      if ( this.aLtb && this.diff > 0.5f ) {
         this.a = this.a + 1.0f;
         this.modResult = true;
-      } else if (this.aGtb && this.diff < -0.5f) {
+      } else if ( this.aGtb && this.diff < -0.5f ) {
         this.b = this.b + 1.0f;
         this.modResult = true;
       }
 
       final float fac = Utils.lerpUnclamped(this.a, this.b, step);
-      if (this.modResult) { return Utils.mod1(fac); }
+      if ( this.modResult ) { return Utils.mod1(fac); }
       return fac;
     }
   }
@@ -684,7 +680,7 @@ public class Color extends Vec4 {
      */
     public void setBriFunc ( final Utils.LerpUnclamped briFunc ) {
 
-      if (briFunc != null) { this.briFunc = briFunc; }
+      if ( briFunc != null ) { this.briFunc = briFunc; }
     }
 
     /**
@@ -694,7 +690,7 @@ public class Color extends Vec4 {
      */
     public void setHueFunc ( final HueEasing hueFunc ) {
 
-      if (hueFunc != null) { this.hueFunc = hueFunc; }
+      if ( hueFunc != null ) { this.hueFunc = hueFunc; }
     }
 
     /**
@@ -704,7 +700,7 @@ public class Color extends Vec4 {
      */
     public void setSatFunc ( final Utils.LerpUnclamped satFunc ) {
 
-      if (satFunc != null) { this.satFunc = satFunc; }
+      if ( satFunc != null ) { this.satFunc = satFunc; }
     }
   }
 
@@ -900,7 +896,7 @@ public class Color extends Vec4 {
         .append(',').append(' ')
         .append(Utils.toFixed((float) Math.pow(this.z, gamma), 6));
 
-    if (inclAlpha) {
+    if ( inclAlpha ) {
       sb.append(',')
           .append(' ')
           .append(Utils.toFixed(this.w, 6));
@@ -1067,9 +1063,9 @@ public class Color extends Vec4 {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-    if (obj == null) { return false; }
-    if (this.getClass() != obj.getClass()) { return false; }
+    if ( this == obj ) { return true; }
+    if ( obj == null ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Color) obj);
   }
 
@@ -1128,7 +1124,7 @@ public class Color extends Vec4 {
    */
   public float getAlphaFirst ( final int index ) {
 
-    switch (index) {
+    switch ( index ) {
       case 0:
       case -4:
         return this.w;
@@ -1155,7 +1151,7 @@ public class Color extends Vec4 {
    */
   public float getAlphaLast ( final int index ) {
 
-    switch (index) {
+    switch ( index ) {
       case 0:
       case -4:
         return this.x;
@@ -1677,7 +1673,9 @@ public class Color extends Vec4 {
       final float b,
       final Color target ) {
 
-    if (b == 0.0f) { return target.set(0.0f, 0.0f, 0.0f, Utils.clamp01(a.w)); }
+    if ( b == 0.0f ) {
+      return target.set(0.0f, 0.0f, 0.0f, Utils.clamp01(a.w));
+    }
     final float bInv = 1.0f / b;
     return target.set(
         Utils.clamp01(a.x * bInv),
@@ -1722,7 +1720,7 @@ public class Color extends Vec4 {
       final Color target ) {
 
     final float mSq = Vec2.magSq(v);
-    if (mSq == 0.0f) { return target.set(0.5f, 0.5f, 0.5f, 1.0f); }
+    if ( mSq == 0.0f ) { return target.set(0.5f, 0.5f, 0.5f, 1.0f); }
     final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
     return target.set(
         v.x * mInv + 0.5f,
@@ -1743,7 +1741,7 @@ public class Color extends Vec4 {
       final Color target ) {
 
     final float mSq = Vec3.magSq(v);
-    if (mSq == 0.0f) { return target.set(0.5f, 0.5f, 0.5f, 1.0f); }
+    if ( mSq == 0.0f ) { return target.set(0.5f, 0.5f, 0.5f, 1.0f); }
     final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
     return target.set(
         v.x * mInv + 0.5f,
@@ -1764,7 +1762,7 @@ public class Color extends Vec4 {
       final Color target ) {
 
     final float mSq = Vec4.magSq(v);
-    if (mSq == 0.0f) { return target.set(0.5f, 0.5f, 0.5f, 0.5f); }
+    if ( mSq == 0.0f ) { return target.set(0.5f, 0.5f, 0.5f, 0.5f); }
     final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
     return target.set(
         v.x * mInv + 0.5f,
@@ -1848,7 +1846,7 @@ public class Color extends Vec4 {
       String longform = "";
       int cint = 0xffffffff;
 
-      switch (len) {
+      switch ( len ) {
 
         case 3:
 
@@ -1901,7 +1899,7 @@ public class Color extends Vec4 {
           return target.reset();
       }
 
-    } catch (final NumberFormatException e) {
+    } catch ( final NumberFormatException e ) {
       // System.out.println(e);
     }
 
@@ -1948,7 +1946,7 @@ public class Color extends Vec4 {
       final float alpha,
       final Color target ) {
 
-    if (sat <= 0.0f) { return target.set(bri, bri, bri, alpha); }
+    if ( sat <= 0.0f ) { return target.set(bri, bri, bri, alpha); }
 
     final float h = Utils.mod1(hue) * 6.0f;
     final int sector = (int) h;
@@ -1957,7 +1955,7 @@ public class Color extends Vec4 {
     final float tint2 = bri * (1.0f - sat * (h - sector));
     final float tint3 = bri * (1.0f - sat * (1.0f + sector - h));
 
-    switch (sector) {
+    switch ( sector ) {
       case 0:
         return target.set(bri, tint3, tint1, alpha);
       case 1:
@@ -2228,9 +2226,9 @@ public class Color extends Vec4 {
       final Color c,
       final Color target ) {
 
-    if (c.w <= 0.0f) {
+    if ( c.w <= 0.0f ) {
       return target.set(0.0f, 0.0f, 0.0f, 0.0f);
-    } else if (c.w >= 1.0f) { return target.set(c.x, c.y, c.z, 1.0f); }
+    } else if ( c.w >= 1.0f ) { return target.set(c.x, c.y, c.z, 1.0f); }
 
     return target.set(
         c.x * c.w,
@@ -2256,7 +2254,7 @@ public class Color extends Vec4 {
       final int levels,
       final Color target ) {
 
-    if (levels < 2 || levels > 255) { return target.set(c); }
+    if ( levels < 2 || levels > 255 ) { return target.set(c); }
 
     final float delta = 1.0f / levels;
     return target.set(
@@ -2526,17 +2524,17 @@ public class Color extends Vec4 {
     final float delta = bri - mn;
     float hue = 0.0f;
 
-    if (delta != 0.0f) {
-      if (red == bri) {
+    if ( delta != 0.0f ) {
+      if ( red == bri ) {
         hue = (green - blue) / delta;
-      } else if (green == bri) {
+      } else if ( green == bri ) {
         hue = 2.0f + (blue - red) / delta;
       } else {
         hue = 4.0f + (red - green) / delta;
       }
 
       hue *= IUtils.ONE_SIX;
-      if (hue < 0.0f) { hue += 1.0f; }
+      if ( hue < 0.0f ) { hue += 1.0f; }
     }
 
     final float sat = bri == 0.0f ? 0.0f : delta / bri;
@@ -2588,7 +2586,7 @@ public class Color extends Vec4 {
    */
   public static void setEasing ( final AbstrEasing easing ) {
 
-    if (easing != null) { Color.EASING = easing; }
+    if ( easing != null ) { Color.EASING = easing; }
   }
 
   /**

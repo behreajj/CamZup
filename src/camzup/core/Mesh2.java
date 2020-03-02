@@ -59,7 +59,7 @@ public class Mesh2 extends Mesh {
 
       this.aAvg.reset();
       final int aLen = a.length;
-      for (int i = 0; i < aLen; ++i) {
+      for ( int i = 0; i < aLen; ++i ) {
         Vec2.add(
             this.aAvg,
             this.coords[a[i][0]],
@@ -69,7 +69,7 @@ public class Mesh2 extends Mesh {
 
       this.bAvg.reset();
       final int bLen = b.length;
-      for (int i = 0; i < bLen; ++i) {
+      for ( int i = 0; i < bLen; ++i ) {
         Vec2.add(
             this.bAvg,
             this.coords[b[i][0]],
@@ -119,7 +119,7 @@ public class Mesh2 extends Mesh {
    * Default annulus for rings, 0.25 * Math.sqrt(2.0) , approximately
    * 0.35355338 .
    */
-  public static final float DEFAULT_ANNULUS = 0.35355338f;
+  public static final float DEFAULT_OCULUS = 0.35355338f;
 
   /**
    * Type of polygon to draw when it is not supplied to the polygon
@@ -211,17 +211,117 @@ public class Mesh2 extends Mesh {
    */
   protected boolean equals ( final Mesh2 mesh2 ) {
 
-    if (!Arrays.equals(this.coords, mesh2.coords)) { return false; }
-    if (!Arrays.deepEquals(this.faces, mesh2.faces)) { return false; }
+    if ( !Arrays.equals(this.coords, mesh2.coords) ) { return false; }
+    if ( !Arrays.deepEquals(this.faces, mesh2.faces) ) { return false; }
 
     return true;
+  }
+
+  /**
+   * Subdivides an edge by the number of cuts given. For example, one
+   * cut will divide an edge in half; two cuts, into thirds.<br>
+   * <br>
+   * Does not distinguish between interior edges, which have a
+   * complement elsewhere, and border edges; for that reason this works
+   * best with NGONs.<br>
+   * <br>
+   * This is protected because it tends to create faces harder to
+   * triangulate.
+   *
+   * @param faceIndex the face index
+   * @param edgeIndex the edge index
+   * @param cuts      number of cuts
+   * @return this mesh
+   */
+  @Experimental
+  @Chainable
+  protected Mesh2 subdivEdge (
+      final int faceIndex,
+      final int edgeIndex,
+      final int cuts ) {
+
+    // RESEARCH: Is there any way to search for interior half-edge which
+    // travels in the opposite direction?
+    // search for face[j1][n], face[j0][n]
+
+    if ( cuts < 1 ) { return this; }
+
+    /* Validate face index, find face. */
+    final int facesLen = this.faces.length;
+    final int i = Math.floorMod(faceIndex, facesLen);
+    final int[][] face = this.faces[i];
+    final int faceLen = face.length;
+
+    /* Find edge origin vertex. */
+    final int j0 = Math.floorMod(edgeIndex, faceLen);
+    final int[] vert0Idx = face[j0];
+    final Vec2 vOrigin = this.coords[vert0Idx[0]];
+    final Vec2 vtOrigin = this.texCoords[vert0Idx[1]];
+
+    /* Find edge destination vertex. */
+    final int j1 = Math.floorMod(edgeIndex + 1, faceLen);
+    final int[] vert1Idx = face[j1];
+    final Vec2 vDest = this.coords[vert1Idx[0]];
+    final Vec2 vtDest = this.texCoords[vert1Idx[1]];
+
+    /*
+     * Cache old length of coordinates and texture coordinates so new ones
+     * can be appended to the end.
+     */
+    final int vsOldLen = this.coords.length;
+    final int vtsOldLen = this.texCoords.length;
+
+    /* Create arrays to hold new data. */
+    final Vec2[] vsNew = new Vec2[cuts];
+    final Vec2[] vtsNew = new Vec2[cuts];
+    final int[][] fsNew = new int[cuts][2];
+
+    /*
+     * Subdivide the edge. The edge origin and destination are to be
+     * excluded from the new set, so the conversion to the step accounts
+     * for this.
+     */
+    final float toStep = 1.0f / (cuts + 1.0f);
+    for ( int k = 0; k < cuts; ++k ) {
+      final float step = toStep + k * toStep;
+      final float u = 1.0f - step;
+
+      final Vec2 v = new Vec2();
+      final Vec2 vt = new Vec2();
+
+      v.set(
+          u * vOrigin.x + step * vDest.x,
+          u * vOrigin.y + step * vDest.y);
+
+      vt.set(
+          u * vtOrigin.x + step * vtDest.x,
+          u * vtOrigin.y + step * vtDest.y);
+
+      vsNew[k] = v;
+      vtsNew[k] = vt;
+
+      final int[] newf = fsNew[k];
+      newf[0] = vsOldLen + k;
+      newf[1] = vtsOldLen + k;
+    }
+
+    /*
+     * Append new coordinates and texture coordinates to the end of their
+     * respective arrays. The new faces need to be inserted to the
+     * object's faces array, not reassigned to local face array.
+     */
+    this.coords = Vec2.concat(this.coords, vsNew);
+    this.texCoords = Vec2.concat(this.texCoords, vtsNew);
+    this.faces[i] = Mesh.insert(face, j1, fsNew);
+
+    return this;
   }
 
   /**
    * Returns a String of Python code targeted toward the Blender 2.8x
    * API. This code is brittle and is used for internal testing
    * purposes, i.e., to compare how mesh geometry looks in Blender (the
-   * control) vs. in the library (the test).
+   * control) versus in the library (the test).
    *
    * @return the string
    */
@@ -237,28 +337,28 @@ public class Mesh2 extends Mesh {
 
     final int vlen = this.coords.length;
     final int vlast = vlen - 1;
-    for (int i = 0; i < vlen; ++i) {
+    for ( int i = 0; i < vlen; ++i ) {
       result.append(this.coords[i].toBlenderCode(0.0f));
-      if (i < vlast) { result.append(',').append(' '); }
+      if ( i < vlast ) { result.append(',').append(' '); }
     }
 
     result.append("], \"faces\": [");
 
     final int flen = this.faces.length;
     final int flast = flen - 1;
-    for (int j = 0; j < flen; ++j) {
+    for ( int j = 0; j < flen; ++j ) {
       final int[][] vrtInd = this.faces[j];
       final int vrtIndLen = vrtInd.length;
       final int vrtLast = vrtIndLen - 1;
 
       result.append('(');
-      for (int k = 0; k < vrtIndLen; ++k) {
+      for ( int k = 0; k < vrtIndLen; ++k ) {
         result.append(vrtInd[k][0]);
-        if (k < vrtLast) { result.append(',').append(' '); }
+        if ( k < vrtLast ) { result.append(',').append(' '); }
       }
       result.append(')');
 
-      if (j < flast) { result.append(',').append(' '); }
+      if ( j < flast ) { result.append(',').append(' '); }
     }
 
     result.append(']').append('}');
@@ -282,7 +382,7 @@ public class Mesh2 extends Mesh {
     final int[][][] fs = this.faces;
     final Vec2[] vs = this.coords;
     final int flen0 = fs.length;
-    for (int i = 0; i < flen0; ++i) {
+    for ( int i = 0; i < flen0; ++i ) {
       final int[][] f = fs[i];
       final int flen1 = f.length;
 
@@ -290,7 +390,7 @@ public class Mesh2 extends Mesh {
           .append(vs[f[0][0]].toSvgString())
           .append(' ');
 
-      for (int j = 1; j < flen1; ++j) {
+      for ( int j = 1; j < flen1; ++j ) {
         result.append('L').append(' ')
             .append(vs[f[j][0]].toSvgString())
             .append(' ');
@@ -322,7 +422,7 @@ public class Mesh2 extends Mesh {
     final int len = this.coords.length;
     this.texCoords = Vec2.resize(this.texCoords, len);
 
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       final Vec2 v = this.coords[i];
       final Vec2 vt = this.texCoords[i];
       vt.x = v.x * dim.x + 0.5f;
@@ -352,9 +452,9 @@ public class Mesh2 extends Mesh {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-    if (!super.equals(obj)) { return false; }
-    if (this.getClass() != obj.getClass()) { return false; }
+    if ( this == obj ) { return true; }
+    if ( !super.equals(obj) ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Mesh2) obj);
   }
 
@@ -367,14 +467,15 @@ public class Mesh2 extends Mesh {
    * @return this mesh
    */
   @Experimental
+  @Chainable
   public Mesh2 extrudeEdge (
       final int faceIdx,
       final int edgeIdx,
       final float amt ) {
 
-    // TEST Uv coordinates need testing.
+    // TEST UV coordinates need testing.
 
-    if (amt == 0.0f) { return this; }
+    if ( amt == 0.0f ) { return this; }
 
     final int facesLen = this.faces.length;
     final int i = Utils.mod(faceIdx, facesLen);
@@ -442,7 +543,6 @@ public class Mesh2 extends Mesh {
     this.faces = Mesh.splice(this.faces, i + 1, 0, faceNew);
 
     return this;
-
   }
 
   /**
@@ -483,12 +583,12 @@ public class Mesh2 extends Mesh {
     final int len0 = this.faces.length;
     final ArrayList < Edge2 > result = new ArrayList <>(len0 * 4);
 
-    for (int i = 0; i < len0; ++i) {
+    for ( int i = 0; i < len0; ++i ) {
 
       final int[][] fs = this.faces[i];
       final int len1 = fs.length;
 
-      for (int j = 0; j < len1; ++j) {
+      for ( int j = 0; j < len1; ++j ) {
 
         final int[] fOrigin = fs[j];
         final int[] fDest = fs[(j + 1) % len1];
@@ -499,7 +599,7 @@ public class Mesh2 extends Mesh {
             this.coords[fDest[0]],
             this.texCoords[fDest[1]]);
 
-        if (!result.contains(trial)) {
+        if ( !result.contains(trial) ) {
           result.add(trial);
           trial = new Edge2();
         }
@@ -525,7 +625,7 @@ public class Mesh2 extends Mesh {
     final int len = face.length;
     final Vert2[] vertices = new Vert2[len];
 
-    for (int j = 0; j < len; ++j) {
+    for ( int j = 0; j < len; ++j ) {
       final int[] vert = face[j];
       vertices[j] = new Vert2(
           this.coords[vert[0]],
@@ -545,13 +645,13 @@ public class Mesh2 extends Mesh {
     final int len0 = this.faces.length;
     final Face2[] result = new Face2[len0];
 
-    for (int i = 0; i < len0; ++i) {
+    for ( int i = 0; i < len0; ++i ) {
 
       final int[][] fs0 = this.faces[i];
       final int len1 = fs0.length;
       final Vert2[] verts = new Vert2[len1];
 
-      for (int j = 0; j < len1; ++j) {
+      for ( int j = 0; j < len1; ++j ) {
 
         final int[] fs1 = fs0[j];
         verts[j] = new Vert2(
@@ -599,19 +699,19 @@ public class Mesh2 extends Mesh {
     final int len0 = this.faces.length;
     final ArrayList < Vert2 > result = new ArrayList <>(len0);
 
-    for (int i = 0; i < len0; ++i) {
+    for ( int i = 0; i < len0; ++i ) {
 
       final int[][] fs = this.faces[i];
       final int len1 = fs.length;
 
-      for (int j = 0; j < len1; ++j) {
+      for ( int j = 0; j < len1; ++j ) {
 
         final int[] f = fs[j];
         trial.set(
             this.coords[f[0]],
             this.texCoords[f[1]]);
 
-        if (!result.contains(trial)) {
+        if ( !result.contains(trial) ) {
           result.add(trial);
           trial = new Vert2();
         }
@@ -657,7 +757,7 @@ public class Mesh2 extends Mesh {
 
     Vec2 c;
     final int len = this.coords.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.coords[i];
       Vec2.add(c, lb, c);
       Vec2.mul(c, scl, c);
@@ -702,7 +802,7 @@ public class Mesh2 extends Mesh {
     final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
     final int len = face.length;
     final int halfLen = len >> 1;
-    for (int j = 0; j < halfLen; ++j) {
+    for ( int j = 0; j < halfLen; ++j ) {
       final int reverse = len - j - 1;
       final int[] temp = face[j];
       face[j] = face[reverse];
@@ -727,7 +827,7 @@ public class Mesh2 extends Mesh {
     Vec2 c;
 
     final int len = this.coords.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.coords[i];
       Vec2.rotateZ(c, cosa, sina, c);
     }
@@ -745,11 +845,11 @@ public class Mesh2 extends Mesh {
   @Chainable
   public Mesh2 scale ( final float scale ) {
 
-    if (scale == 0.0f) { return this; }
+    if ( scale == 0.0f ) { return this; }
 
     Vec2 c;
     final int len = this.coords.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.coords[i];
       Vec2.mul(c, scale, c);
     }
@@ -767,11 +867,11 @@ public class Mesh2 extends Mesh {
   @Chainable
   public Mesh2 scale ( final Vec2 scale ) {
 
-    if (Vec2.none(scale)) { return this; }
+    if ( Vec2.none(scale) ) { return this; }
 
     Vec2 c;
     final int len = this.coords.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.coords[i];
       Vec2.mul(c, scale, c);
     }
@@ -815,7 +915,7 @@ public class Mesh2 extends Mesh {
     final Vec2[] sourcevs = source.coords;
     final int vslen = sourcevs.length;
     this.coords = Vec2.resize(this.coords, vslen);
-    for (int i = 0; i < vslen; ++i) {
+    for ( int i = 0; i < vslen; ++i ) {
       this.coords[i].set(sourcevs[i]);
     }
 
@@ -823,7 +923,7 @@ public class Mesh2 extends Mesh {
     final Vec2[] sourcevts = source.texCoords;
     final int vtslen = sourcevts.length;
     this.texCoords = Vec2.resize(this.texCoords, vtslen);
-    for (int j = 0; j < vtslen; ++j) {
+    for ( int j = 0; j < vtslen; ++j ) {
       this.texCoords[j].set(sourcevts[j]);
     }
 
@@ -832,21 +932,21 @@ public class Mesh2 extends Mesh {
     final int fslen0 = sourcefs.length;
     this.faces = new int[fslen0][][];
 
-    for (int i = 0; i < fslen0; ++i) {
+    for ( int i = 0; i < fslen0; ++i ) {
 
       final int[][] source1 = sourcefs[i];
       final int fslen1 = source1.length;
       final int[][] target1 = new int[fslen1][];
       this.faces[i] = target1;
 
-      for (int j = 0; j < fslen1; ++j) {
+      for ( int j = 0; j < fslen1; ++j ) {
 
         final int[] source2 = source1[j];
         final int fslen2 = source2.length;
         final int[] target2 = new int[fslen2];
         target1[j] = target2;
 
-        for (int k = 0; k < fslen2; ++k) {
+        for ( int k = 0; k < fslen2; ++k ) {
           target2[k] = source2[k];
         }
       }
@@ -887,7 +987,7 @@ public class Mesh2 extends Mesh {
     final Vec2[] vold = new Vec2[vlen];
     System.arraycopy(this.coords, 0, vold, 0, vlen);
     final SortedSet < Vec2 > vsUnique = new TreeSet <>(Mesh.SORT_2);
-    for (int i = 0; i < vlen; ++i) {
+    for ( int i = 0; i < vlen; ++i ) {
       vsUnique.add(this.coords[i]);
     }
     this.coords = vsUnique.toArray(new Vec2[vsUnique.size()]);
@@ -897,18 +997,18 @@ public class Mesh2 extends Mesh {
     final Vec2[] vtold = new Vec2[vtlen];
     System.arraycopy(this.texCoords, 0, vtold, 0, vtlen);
     final SortedSet < Vec2 > vtsUnique = new TreeSet <>(Mesh.SORT_2);
-    for (int i = 0; i < vtlen; ++i) {
+    for ( int i = 0; i < vtlen; ++i ) {
       vtsUnique.add(this.texCoords[i]);
     }
     this.texCoords = vtsUnique.toArray(new Vec2[vtsUnique.size()]);
 
     /* Update face indices. */
     final int facesLen = this.faces.length;
-    for (int i = 0; i < facesLen; ++i) {
+    for ( int i = 0; i < facesLen; ++i ) {
       final int[][] face = this.faces[i];
       final int vertsLen = face.length;
 
-      for (int j = 0; j < vertsLen; ++j) {
+      for ( int j = 0; j < vertsLen; ++j ) {
         final int[] vert = face[j];
 
         /* Update coordinate index. */
@@ -925,106 +1025,6 @@ public class Mesh2 extends Mesh {
 
     /* Sort faces by centroid. */
     Arrays.sort(this.faces, new Mesh2.SortIndices2(this.coords));
-
-    return this;
-  }
-
-  /**
-   * Subdivides an edge by the number of cuts given. For example, one
-   * cut will divide an edge in half; two cuts, into thirds.<br>
-   * <br>
-   * Does not distinguish between interior edges, which have a
-   * complement elsewhere, and border edges; for that reason this works
-   * best with NGONs.<br>
-   * <br>
-   * This is protected because it tends to create faces harder to
-   * triangulate.
-   *
-   * @param faceIndex the face index
-   * @param edgeIndex the edge index
-   * @param cuts      number of cuts
-   * @return this mesh
-   */
-  @Experimental
-  @Chainable
-  protected Mesh2 subdivEdge (
-      final int faceIndex,
-      final int edgeIndex,
-      final int cuts ) {
-
-    // RESEARCH: Is there any way to search for interior half-edge which
-    // travels in the opposite direction?
-    // search for face[j1][n], face[j0][n]
-
-    if (cuts < 1) { return this; }
-
-    /* Validate face index, find face. */
-    final int facesLen = this.faces.length;
-    final int i = Math.floorMod(faceIndex, facesLen);
-    final int[][] face = this.faces[i];
-    final int faceLen = face.length;
-
-    /* Find edge origin vertex. */
-    final int j0 = Math.floorMod(edgeIndex, faceLen);
-    final int[] vert0Idx = face[j0];
-    final Vec2 vOrigin = this.coords[vert0Idx[0]];
-    final Vec2 vtOrigin = this.texCoords[vert0Idx[1]];
-
-    /* Find edge destination vertex. */
-    final int j1 = Math.floorMod(edgeIndex + 1, faceLen);
-    final int[] vert1Idx = face[j1];
-    final Vec2 vDest = this.coords[vert1Idx[0]];
-    final Vec2 vtDest = this.texCoords[vert1Idx[1]];
-
-    /*
-     * Cache old length of coordinates and texture coordinates so new ones
-     * can be appended to the end.
-     */
-    final int vsOldLen = this.coords.length;
-    final int vtsOldLen = this.texCoords.length;
-
-    /* Create arrays to hold new data. */
-    final Vec2[] vsNew = new Vec2[cuts];
-    final Vec2[] vtsNew = new Vec2[cuts];
-    final int[][] fsNew = new int[cuts][2];
-
-    /*
-     * Subdivide the edge. The edge origin and destination are to be
-     * excluded from the new set, so the conversion to the step accounts
-     * for this.
-     */
-    final float toStep = 1.0f / (cuts + 1.0f);
-    for (int k = 0; k < cuts; ++k) {
-      final float step = toStep + k * toStep;
-      final float u = 1.0f - step;
-
-      final Vec2 v = new Vec2();
-      final Vec2 vt = new Vec2();
-
-      v.set(
-          u * vOrigin.x + step * vDest.x,
-          u * vOrigin.y + step * vDest.y);
-
-      vt.set(
-          u * vtOrigin.x + step * vtDest.x,
-          u * vtOrigin.y + step * vtDest.y);
-
-      vsNew[k] = v;
-      vtsNew[k] = vt;
-
-      final int[] newf = fsNew[k];
-      newf[0] = vsOldLen + k;
-      newf[1] = vtsOldLen + k;
-    }
-
-    /*
-     * Append new coordinates and texture coordinates to the end of their
-     * respective arrays. The new faces need to be inserted to the
-     * object's faces array, not reassigned to local face array.
-     */
-    this.coords = Vec2.concat(this.coords, vsNew);
-    this.texCoords = Vec2.concat(this.texCoords, vtsNew);
-    this.faces[i] = Mesh.insert(face, j1, fsNew);
 
     return this;
   }
@@ -1080,7 +1080,7 @@ public class Mesh2 extends Mesh {
     final int vCentroidIdx = vsOldLen + faceLen;
     final int vtCentroidIdx = vtsOldLen + faceLen;
 
-    for (int j = 0; j < faceLen; ++j) {
+    for ( int j = 0; j < faceLen; ++j ) {
       final int k = (j + 1) % faceLen;
 
       final int[] vertCurr = face[j];
@@ -1147,7 +1147,7 @@ public class Mesh2 extends Mesh {
     final int[][][] fsNew = new int[faceLen + 1][][];
     final int[][] centerFace = fsNew[faceLen] = new int[faceLen][2];
 
-    for (int j = 0; j < faceLen; ++j) {
+    for ( int j = 0; j < faceLen; ++j ) {
       final int[] vertCurr = face[j];
       final Vec2 vCurr = this.coords[vertCurr[0]];
       final Vec2 vtCurr = this.texCoords[vertCurr[1]];
@@ -1208,9 +1208,9 @@ public class Mesh2 extends Mesh {
   public Mesh2 subdivFacesCentroid ( final int itr ) {
 
     final int vitr = itr < 1 ? 1 : itr;
-    for (int i = 0; i < vitr; ++i) {
+    for ( int i = 0; i < vitr; ++i ) {
       final int len = this.faces.length;
-      for (int j = 0, k = 0; j < len; ++j) {
+      for ( int j = 0, k = 0; j < len; ++j ) {
         final int vertLen = this.faces[k].length;
         this.subdivFaceCentroid(k);
         k += vertLen;
@@ -1230,9 +1230,9 @@ public class Mesh2 extends Mesh {
   public Mesh2 subdivFacesInscribe ( final int itr ) {
 
     final int vitr = itr < 1 ? 1 : itr;
-    for (int i = 0; i < vitr; ++i) {
+    for ( int i = 0; i < vitr; ++i ) {
       final int len = this.faces.length;
-      for (int j = 0, k = 0; j < len; ++j) {
+      for ( int j = 0, k = 0; j < len; ++j ) {
         final int vertLen = this.faces[k].length;
         this.subdivFaceInscribe(k);
         k += vertLen + 1;
@@ -1270,7 +1270,7 @@ public class Mesh2 extends Mesh {
         .append('\n').append('\n');
 
     /* Append coordinates. */
-    for (final Vec2 coord : this.coords) {
+    for ( final Vec2 coord : this.coords ) {
       result.append('v').append(' ')
           .append(coord.toObjString())
           .append(" 0.0 \n");
@@ -1278,7 +1278,7 @@ public class Mesh2 extends Mesh {
     result.append('\n');
 
     /* Append a texture coordinates. */
-    for (final Vec2 texCoord : this.texCoords) {
+    for ( final Vec2 texCoord : this.texCoords ) {
       result.append("vt ")
           .append(texCoord.toObjString())
           .append('\n');
@@ -1288,13 +1288,13 @@ public class Mesh2 extends Mesh {
     result.append("\nvn 0.0 0.0 1.0\n");
 
     /* Append face indices. */
-    for (int i = 0; i < facesLen; ++i) {
+    for ( int i = 0; i < facesLen; ++i ) {
 
       final int[][] face = this.faces[i];
       final int vLen = face.length;
       result.append('f').append(' ');
 
-      for (int j = 0; j < vLen; ++j) {
+      for ( int j = 0; j < vLen; ++j ) {
 
         /* Indices in an .obj file start at 1, not 0. */
         final int[] vert = face[j];
@@ -1376,73 +1376,73 @@ public class Mesh2 extends Mesh {
         .append('\n')
         .append("coords: [ ");
 
-    if (this.coords != null) {
+    if ( this.coords != null ) {
       sb.append('\n');
       final int len = Math.min(this.coords.length, truncate);
       final int last = len - 1;
-      for (int i = 0; i < len; ++i) {
+      for ( int i = 0; i < len; ++i ) {
         sb.append(this.coords[i].toString(places));
-        if (i < last) {
+        if ( i < last ) {
           sb.append(',').append(' ');
           sb.append('\n');
         }
       }
 
-      if (this.coords.length > truncate) { sb.append("\n/* ... */"); }
+      if ( this.coords.length > truncate ) { sb.append("\n/* ... */"); }
     }
 
     sb.append(" ],\ntexCoords: [");
-    if (this.texCoords != null) {
+    if ( this.texCoords != null ) {
       sb.append('\n');
       final int len = Math.min(this.texCoords.length, truncate);
       final int last = len - 1;
-      for (int i = 0; i < len; ++i) {
+      for ( int i = 0; i < len; ++i ) {
         sb.append(this.texCoords[i].toString(places));
-        if (i < last) {
+        if ( i < last ) {
           sb.append(',').append(' ');
           sb.append('\n');
         }
       }
 
-      if (this.texCoords.length > truncate) { sb.append("\n/* ... */"); }
+      if ( this.texCoords.length > truncate ) { sb.append("\n/* ... */"); }
     }
 
     sb.append(" ],\nfaces: [");
-    if (this.faces != null) {
+    if ( this.faces != null ) {
       sb.append('\n');
       final int facesLen = Math.min(this.faces.length, truncate);
       final int facesLast = facesLen - 1;
 
-      for (int i = 0; i < facesLen; ++i) {
+      for ( int i = 0; i < facesLen; ++i ) {
 
         final int[][] verts = this.faces[i];
         final int vertsLen = verts.length;
         final int vertsLast = vertsLen - 1;
         sb.append('[').append(' ');
 
-        for (int j = 0; j < vertsLen; ++j) {
+        for ( int j = 0; j < vertsLen; ++j ) {
 
           final int[] vert = verts[j];
           final int infoLen = vert.length;
           final int infoLast = infoLen - 1;
           sb.append('[').append(' ');
 
-          for (int k = 0; k < infoLen; ++k) {
+          for ( int k = 0; k < infoLen; ++k ) {
 
             sb.append(vert[k]);
-            if (k < infoLast) { sb.append(',').append(' '); }
+            if ( k < infoLast ) { sb.append(',').append(' '); }
           }
           sb.append(' ').append(']');
-          if (j < vertsLast) { sb.append(',').append(' '); }
+          if ( j < vertsLast ) { sb.append(',').append(' '); }
         }
         sb.append(' ').append(']');
-        if (i < facesLast) {
+        if ( i < facesLast ) {
           sb.append(',').append(' ');
           sb.append('\n');
         }
       }
 
-      if (this.faces.length > truncate) { sb.append("\n/* ... */"); }
+      if ( this.faces.length > truncate ) { sb.append("\n/* ... */"); }
     }
 
     sb.append(" ] }");
@@ -1461,7 +1461,7 @@ public class Mesh2 extends Mesh {
 
     Vec2 c;
     final int len = this.coords.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       c = this.coords[i];
       Vec2.add(c, v, c);
     }
@@ -1474,7 +1474,7 @@ public class Mesh2 extends Mesh {
    *
    * @param startAngle the start angle
    * @param stopAngle  the stop angle
-   * @param annulus    the size of the opening
+   * @param oculus     the size of the opening
    * @param sectors    number of sectors in a circle
    * @param target     the output mesh
    * @return the arc
@@ -1482,13 +1482,13 @@ public class Mesh2 extends Mesh {
   public static final Mesh2 arc (
       final float startAngle,
       final float stopAngle,
-      final float annulus,
+      final float oculus,
       final int sectors,
       final Mesh2 target ) {
 
     return Mesh2.arc(
         startAngle, stopAngle,
-        annulus, sectors,
+        oculus, sectors,
         Mesh2.DEFAULT_POLY_TYPE, target);
   }
 
@@ -1503,7 +1503,7 @@ public class Mesh2 extends Mesh {
    *
    * @param startAngle the start angle
    * @param stopAngle  the stop angle
-   * @param annulus    the size of the opening
+   * @param oculus     the size of the opening
    * @param sectors    number of sectors in a circle
    * @param poly       the polygon type
    * @param target     the output mesh
@@ -1512,7 +1512,7 @@ public class Mesh2 extends Mesh {
   public static final Mesh2 arc (
       final float startAngle,
       final float stopAngle,
-      final float annulus,
+      final float oculus,
       final int sectors,
       final PolyType poly,
       final Mesh2 target ) {
@@ -1522,8 +1522,8 @@ public class Mesh2 extends Mesh {
     final double a1 = Utils.mod1(startAngle * IUtils.ONE_TAU_D);
     final double b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU_D);
     final double arcLen1 = Utils.mod1(b1 - a1);
-    if (arcLen1 < 0.00139d) {
-      return Mesh2.ring(annulus, sectors, poly, target);
+    if ( arcLen1 < 0.00139d ) {
+      return Mesh2.ring(oculus, sectors, poly, target);
     }
 
     final int sctCount = Utils.ceilToInt(
@@ -1533,7 +1533,7 @@ public class Mesh2 extends Mesh {
     final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
         sctCount2);
 
-    final float annul = Utils.clamp(annulus,
+    final float annul = Utils.clamp(oculus,
         Utils.EPSILON, 1.0f - Utils.EPSILON);
     final double annRad = annul * 0.5d;
 
@@ -1541,7 +1541,7 @@ public class Mesh2 extends Mesh {
     final double origAngle = IUtils.TAU_D * a1;
     final double destAngle = IUtils.TAU_D * (a1 + arcLen1);
 
-    for (int k = 0, i = 0, j = 1; k < sctCount; ++k, i += 2, j += 2) {
+    for ( int k = 0, i = 0, j = 1; k < sctCount; ++k, i += 2, j += 2 ) {
       final double theta = Utils.lerpUnclamped(
           origAngle, destAngle, k * toStep);
       final double cosa = Math.cos(theta);
@@ -1566,14 +1566,14 @@ public class Mesh2 extends Mesh {
 
     int len;
 
-    switch (poly) {
+    switch ( poly ) {
 
       case NGON:
 
         len = sctCount - 1;
         target.faces = new int[len][4][2];
 
-        for (int k = 0, i = 0, j = 1; k < len; ++k, i += 2, j += 2) {
+        for ( int k = 0, i = 0, j = 1; k < len; ++k, i += 2, j += 2 ) {
           final int m = i + 2;
           final int n = j + 2;
           final int[][] f = target.faces[k];
@@ -1596,7 +1596,7 @@ public class Mesh2 extends Mesh {
         len = sctCount2 - 2;
         target.faces = new int[len][3][2];
 
-        for (int i = 0, j = 1; i < len; i += 2, j += 2) {
+        for ( int i = 0, j = 1; i < len; i += 2, j += 2 ) {
           final int m = i + 2;
           final int n = j + 2;
 
@@ -1627,18 +1627,18 @@ public class Mesh2 extends Mesh {
    *
    * @param startAngle the start angle
    * @param stopAngle  the stop angle
-   * @param annulus    the size of the opening
+   * @param oculus     the size of the opening
    * @param target     the output mesh
    * @return the arc
    */
   public static final Mesh2 arc (
       final float startAngle,
       final float stopAngle,
-      final float annulus,
+      final float oculus,
       final Mesh2 target ) {
 
     return Mesh2.arc(
-        startAngle, stopAngle, annulus,
+        startAngle, stopAngle, oculus,
         IMesh.DEFAULT_CIRCLE_SECTORS,
         Mesh2.DEFAULT_POLY_TYPE, target);
   }
@@ -1660,7 +1660,7 @@ public class Mesh2 extends Mesh {
 
     return Mesh2.arc(
         startAngle, stopAngle,
-        Mesh2.DEFAULT_ANNULUS, sectors,
+        Mesh2.DEFAULT_OCULUS, sectors,
         Mesh2.DEFAULT_POLY_TYPE, target);
   }
 
@@ -1679,7 +1679,7 @@ public class Mesh2 extends Mesh {
 
     return Mesh2.arc(
         startAngle, stopAngle,
-        Mesh2.DEFAULT_ANNULUS,
+        Mesh2.DEFAULT_OCULUS,
         IMesh.DEFAULT_CIRCLE_SECTORS,
         Mesh2.DEFAULT_POLY_TYPE, target);
   }
@@ -1698,7 +1698,7 @@ public class Mesh2 extends Mesh {
 
     return Mesh2.arc(
         0.0f, stopAngle,
-        Mesh2.DEFAULT_ANNULUS,
+        Mesh2.DEFAULT_OCULUS,
         IMesh.DEFAULT_CIRCLE_SECTORS,
         Mesh2.DEFAULT_POLY_TYPE, target);
   }
@@ -1729,17 +1729,17 @@ public class Mesh2 extends Mesh {
     final Vec2[] coords = mesh.coords;
     final int len = coords.length;
 
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
 
       final Vec2 coord = coords[i];
       final float x = coord.x;
       final float y = coord.y;
 
       /* Minimum, maximum need separate if checks, not if-else. */
-      if (x < lb.x) { lb.x = x; }
-      if (x > ub.x) { ub.x = x; }
-      if (y < lb.y) { lb.y = y; }
-      if (y > ub.y) { ub.y = y; }
+      if ( x < lb.x ) { lb.x = x; }
+      if ( x > ub.x ) { ub.x = x; }
+      if ( y < lb.y ) { lb.y = y; }
+      if ( y > ub.y ) { ub.y = y; }
     }
 
     return Vec2.sub(ub, lb, target);
@@ -1795,7 +1795,7 @@ public class Mesh2 extends Mesh {
     final int fsLen = fsSrc.length;
     final Mesh2[] meshes = new Mesh2[fsLen];
 
-    for (int i = 0; i < fsLen; ++i) {
+    for ( int i = 0; i < fsLen; ++i ) {
       final int[][] fSrc = fsSrc[i];
       final int fLen = fSrc.length;
 
@@ -1804,7 +1804,7 @@ public class Mesh2 extends Mesh {
       final Vec2[] vtsTrg = new Vec2[fLen];
 
       final int[][] fTrg = fsTrg[0];
-      for (int j = 0; j < fLen; ++j) {
+      for ( int j = 0; j < fLen; ++j ) {
         final int[] vertSrc = fSrc[j];
 
         vsTrg[j] = new Vec2(vsSrc[vertSrc[0]]);
@@ -1874,34 +1874,34 @@ public class Mesh2 extends Mesh {
     /* Calculate x values in separate loop. */
     final float[] xs = new float[cval1];
     final float[] us = new float[cval1];
-    for (int j = 0; j < cval1; ++j) {
+    for ( int j = 0; j < cval1; ++j ) {
       final float xPrc = j * jToStep;
       xs[j] = xPrc - 0.5f;
       us[j] = xPrc;
     }
 
-    for (int k = 0, i = 0; i < rval1; ++i) {
+    for ( int k = 0, i = 0; i < rval1; ++i ) {
       final float yPrc = i * iToStep;
       final float y = yPrc - 0.5f;
       final float v = 1.0f - yPrc;
 
-      for (int j = 0; j < cval1; ++j, ++k) {
+      for ( int j = 0; j < cval1; ++j, ++k ) {
         vs[k].set(xs[j], y);
         vts[k].set(us[j], v);
       }
     }
 
-    switch (poly) {
+    switch ( poly ) {
 
       case NGON:
 
         target.faces = new int[flen][4][2];
 
-        for (int k = 0, i = 0; i < rval; ++i) {
+        for ( int k = 0, i = 0; i < rval; ++i ) {
           final int noff0 = i * cval1;
           final int noff1 = (i + 1) * cval1;
 
-          for (int j = 0; j < cval; ++j, ++k) {
+          for ( int j = 0; j < cval; ++j, ++k ) {
             final int n00 = noff0 + j;
             final int n10 = n00 + 1;
             final int n01 = noff1 + j;
@@ -1931,11 +1931,11 @@ public class Mesh2 extends Mesh {
 
         target.faces = new int[flen + flen][3][2];
 
-        for (int k = 0, i = 0; i < rval; ++i) {
+        for ( int k = 0, i = 0; i < rval; ++i ) {
           final int noff0 = i * cval1;
           final int noff1 = (i + 1) * cval1;
 
-          for (int j = 0; j < cval; ++j, k += 2) {
+          for ( int j = 0; j < cval; ++j, k += 2 ) {
             final int n00 = noff0 + j;
             final int n10 = n00 + 1;
             final int n01 = noff1 + j;
@@ -2027,13 +2027,13 @@ public class Mesh2 extends Mesh {
     final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
         newLen);
 
-    switch (poly) {
+    switch ( poly ) {
       case NGON:
 
         target.faces = new int[1][seg][2];
         final int[][] ngon = target.faces[0];
 
-        for (int i = 0; i < seg; ++i) {
+        for ( int i = 0; i < seg; ++i ) {
           final double theta = i * toTheta;
 
           final Vec2 v = vs[i];
@@ -2058,7 +2058,7 @@ public class Mesh2 extends Mesh {
         vs[0].set(0.0f, 0.0f);
         vts[0].set(0.5f, 0.5f);
 
-        for (int i = 0, j = 1; i < seg; ++i, ++j) {
+        for ( int i = 0, j = 1; i < seg; ++i, ++j ) {
           final double theta = i * toTheta;
 
           final Vec2 v = vs[j];
@@ -2088,35 +2088,35 @@ public class Mesh2 extends Mesh {
 
   /**
    * Creates a regular convex polygon with an opening in its center. The
-   * annulus describes the relative size of this opening.
+   * oculus describes the relative size of this opening.
    *
    * @param sectors the number of sides
-   * @param annulus the size of the opening
+   * @param oculus  the size of the opening
    * @param target  the output type
    * @return the ring
    */
   public static final Mesh2 ring (
-      final float annulus,
+      final float oculus,
       final int sectors,
       final Mesh2 target ) {
 
-    return Mesh2.ring(annulus, sectors, Mesh2.DEFAULT_POLY_TYPE, target);
+    return Mesh2.ring(oculus, sectors, Mesh2.DEFAULT_POLY_TYPE, target);
   }
 
   /**
    * Creates a regular convex polygon with an opening in its center. The
-   * annulus describes the relative size of this opening. When the
+   * oculus describes the relative size of this opening. When the
    * polygon type is NGON, the ring will be composed of quadrilaterals;
    * otherwise, triangles.
    *
-   * @param annulus the size of the opening
+   * @param oculus  the size of the opening
    * @param sectors the number of sides
    * @param poly    the polygon type
    * @param target  the output type
    * @return the ring
    */
   public static final Mesh2 ring (
-      final float annulus,
+      final float oculus,
       final int sectors,
       final PolyType poly,
       final Mesh2 target ) {
@@ -2126,7 +2126,7 @@ public class Mesh2 extends Mesh {
     final boolean isNgon = poly == PolyType.NGON;
     final int seg = sectors < 3 ? 3 : sectors;
     final int seg2 = seg + seg;
-    final float annul = Utils.clamp(annulus,
+    final float annul = Utils.clamp(oculus,
         Utils.EPSILON, 1.0f - Utils.EPSILON);
 
     final double toTheta = IUtils.TAU_D / seg;
@@ -2137,7 +2137,7 @@ public class Mesh2 extends Mesh {
     target.faces = isNgon ? new int[seg][4][2]
         : new int[seg2][3][2];
 
-    for (int k = 0, i = 0, j = 1; k < seg; ++k, i += 2, j += 2) {
+    for ( int k = 0, i = 0, j = 1; k < seg; ++k, i += 2, j += 2 ) {
       final double theta = k * toTheta;
       final double cosa = Math.cos(theta);
       final double sina = Math.sin(theta);
@@ -2161,7 +2161,7 @@ public class Mesh2 extends Mesh {
       final int m = (i + 2) % seg2;
       final int n = (j + 2) % seg2;
 
-      if (isNgon) {
+      if ( isNgon ) {
         final int[][] f = target.faces[k];
         f[0][0] = i;
         f[0][1] = i;
@@ -2196,16 +2196,16 @@ public class Mesh2 extends Mesh {
   /**
    * Creates a regular convex polygon with an opening in its center.
    *
-   * @param annulus the size of the opening
-   * @param target  the output mesh
+   * @param oculus the size of the opening
+   * @param target the output mesh
    * @return the ring
    */
   public static final Mesh2 ring (
-      final float annulus,
+      final float oculus,
       final Mesh2 target ) {
 
     return Mesh2.ring(
-        annulus,
+        oculus,
         IMesh.DEFAULT_CIRCLE_SECTORS,
         Mesh2.DEFAULT_POLY_TYPE,
         target);
@@ -2223,7 +2223,7 @@ public class Mesh2 extends Mesh {
       final Mesh2 target ) {
 
     return Mesh2.ring(
-        Mesh2.DEFAULT_ANNULUS,
+        Mesh2.DEFAULT_OCULUS,
         sectors,
         Mesh2.DEFAULT_POLY_TYPE,
         target);
@@ -2238,7 +2238,7 @@ public class Mesh2 extends Mesh {
   public static final Mesh2 ring ( final Mesh2 target ) {
 
     return Mesh2.ring(
-        Mesh2.DEFAULT_ANNULUS,
+        Mesh2.DEFAULT_OCULUS,
         IMesh.DEFAULT_CIRCLE_SECTORS,
         Mesh2.DEFAULT_POLY_TYPE,
         target);
@@ -2337,13 +2337,13 @@ public class Mesh2 extends Mesh {
     final ArrayList < Vec2 > vs = new ArrayList <>(capacity);
     final ArrayList < Vec2 > vts = new ArrayList <>(capacity);
 
-    for (int k = 0, i = 0; i < len0; ++i) {
+    for ( int k = 0, i = 0; i < len0; ++i ) {
 
       final int[][] fs0 = source.faces[i];
       final int len1 = fs0.length;
       final int[][] trgfs0 = trgfs[i] = new int[len1][2];
 
-      for (int j = 0; j < len1; ++j, ++k) {
+      for ( int j = 0; j < len1; ++j, ++k ) {
 
         final int[] fs1 = fs0[j];
 

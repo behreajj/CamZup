@@ -631,7 +631,7 @@ public abstract class Simplex {
     Vec4 g4 = Simplex.ZERO_4;
 
     final float t0 = 0.5f - (x0 * x0 + y0 * y0 + z0 * z0 + w0 * w0);
-    if (t0 >= 0.0f) {
+    if ( t0 >= 0.0f ) {
       t20 = t0 * t0;
       t40 = t20 * t20;
       g0 = Simplex.gradient4(i, j, k, l, seed);
@@ -639,7 +639,7 @@ public abstract class Simplex {
     }
 
     final float t1 = 0.5f - (x1 * x1 + y1 * y1 + z1 * z1 + w1 * w1);
-    if (t1 >= 0.0f) {
+    if ( t1 >= 0.0f ) {
       t21 = t1 * t1;
       t41 = t21 * t21;
       g1 = Simplex.gradient4(i + i1, j + j1, k + k1, l + l1, seed);
@@ -647,7 +647,7 @@ public abstract class Simplex {
     }
 
     final float t2 = 0.5f - (x2 * x2 + y2 * y2 + z2 * z2 + w2 * w2);
-    if (t2 >= 0.0f) {
+    if ( t2 >= 0.0f ) {
       t22 = t2 * t2;
       t42 = t22 * t22;
       g2 = Simplex.gradient4(i + i2, j + j2, k + k2, l + l2, seed);
@@ -655,7 +655,7 @@ public abstract class Simplex {
     }
 
     final float t3 = 0.5f - (x3 * x3 + y3 * y3 + z3 * z3 + w3 * w3);
-    if (t3 >= 0.0f) {
+    if ( t3 >= 0.0f ) {
       t23 = t3 * t3;
       t43 = t23 * t23;
       g3 = Simplex.gradient4(i + i3, j + j3, k + k3, l + l3, seed);
@@ -663,14 +663,14 @@ public abstract class Simplex {
     }
 
     final float t4 = 0.5f - (x4 * x4 + y4 * y4 + z4 * z4 + w4 * w4);
-    if (t4 >= 0.0f) {
+    if ( t4 >= 0.0f ) {
       t24 = t4 * t4;
       t44 = t24 * t24;
       g4 = Simplex.gradient4(i + 1, j + 1, k + 1, l + 1, seed);
       n4 = g4.x * x4 + g4.y * y4 + g4.z * z4 + g4.w * w4;
     }
 
-    if (deriv != null) {
+    if ( deriv != null ) {
 
       final float tmp0 = t20 * t0 * n0;
       deriv.x = tmp0 * x0;
@@ -785,12 +785,12 @@ public abstract class Simplex {
     int j2 = 0;
     int k2 = 0;
 
-    if (x0 >= y0) {
-      if (y0 >= z0) {
+    if ( x0 >= y0 ) {
+      if ( y0 >= z0 ) {
         i1 = 1;
         i2 = 1;
         j2 = 1;
-      } else if (x0 >= z0) {
+      } else if ( x0 >= z0 ) {
         i1 = 1;
         i2 = 1;
         k2 = 1;
@@ -800,11 +800,11 @@ public abstract class Simplex {
         k2 = 1;
       }
     } else {
-      if (y0 < z0) {
+      if ( y0 < z0 ) {
         k1 = 1;
         j2 = 1;
         k2 = 1;
-      } else if (x0 < z0) {
+      } else if ( x0 < z0 ) {
         j1 = 1;
         j2 = 1;
         k2 = 1;
@@ -848,7 +848,7 @@ public abstract class Simplex {
     Vec3 g3 = Simplex.ZERO_3;
 
     final float t0 = 0.5f - (x0 * x0 + y0 * y0 + z0 * z0);
-    if (t0 >= 0.0f) {
+    if ( t0 >= 0.0f ) {
       g0 = Simplex.gradient3(i, j, k, seed);
       t20 = t0 * t0;
       t40 = t20 * t20;
@@ -856,7 +856,7 @@ public abstract class Simplex {
     }
 
     final float t1 = 0.5f - (x1 * x1 + y1 * y1 + z1 * z1);
-    if (t1 >= 0.0f) {
+    if ( t1 >= 0.0f ) {
       g1 = Simplex.gradient3(i + i1, j + j1, k + k1, seed);
       t21 = t1 * t1;
       t41 = t21 * t21;
@@ -864,7 +864,7 @@ public abstract class Simplex {
     }
 
     final float t2 = 0.5f - (x2 * x2 + y2 * y2 + z2 * z2);
-    if (t2 >= 0.0f) {
+    if ( t2 >= 0.0f ) {
       g2 = Simplex.gradient3(i + i2, j + j2, k + k2, seed);
       t22 = t2 * t2;
       t42 = t22 * t22;
@@ -872,14 +872,14 @@ public abstract class Simplex {
     }
 
     final float t3 = 0.5f - (x3 * x3 + y3 * y3 + z3 * z3);
-    if (t3 >= 0.0f) {
+    if ( t3 >= 0.0f ) {
       g3 = Simplex.gradient3(i + 1, j + 1, k + 1, seed);
       t23 = t3 * t3;
       t43 = t23 * t23;
       n3 = g3.x * x3 + g3.y * y3 + g3.z * z3;
     }
 
-    if (deriv != null) {
+    if ( deriv != null ) {
 
       final float tmp0 = t20 * t0 * n0;
       deriv.x = tmp0 * x0;
@@ -964,7 +964,7 @@ public abstract class Simplex {
 
     int i1 = 0;
     int j1 = 0;
-    if (x0 > y0) {
+    if ( x0 > y0 ) {
       i1 = 1;
     } else {
       j1 = 1;
@@ -993,7 +993,7 @@ public abstract class Simplex {
     Vec2 g2 = Simplex.ZERO_2;
 
     final float t0 = 0.5f - (x0 * x0 + y0 * y0);
-    if (t0 >= 0.0f) {
+    if ( t0 >= 0.0f ) {
       g0 = Simplex.gradient2(i, j, seed);
       t20 = t0 * t0;
       t40 = t20 * t20;
@@ -1001,7 +1001,7 @@ public abstract class Simplex {
     }
 
     final float t1 = 0.5f - (x1 * x1 + y1 * y1);
-    if (t1 >= 0.0f) {
+    if ( t1 >= 0.0f ) {
       g1 = Simplex.gradient2(i + i1, j + j1, seed);
       t21 = t1 * t1;
       t41 = t21 * t21;
@@ -1009,14 +1009,14 @@ public abstract class Simplex {
     }
 
     final float t2 = 0.5f - (x2 * x2 + y2 * y2);
-    if (t2 >= 0.0f) {
+    if ( t2 >= 0.0f ) {
       g2 = Simplex.gradient2(i + 1, j + 1, seed);
       t22 = t2 * t2;
       t42 = t22 * t22;
       n2 = g2.x * x2 + g2.y * y2;
     }
 
-    if (deriv != null) {
+    if ( deriv != null ) {
 
       final float tmp0 = t20 * t0 * n0;
       deriv.x = tmp0 * x0;
@@ -1190,14 +1190,14 @@ public abstract class Simplex {
 
     float sum = 0.0f;
     final boolean calcDeriv = deriv != null;
-    if (calcDeriv) { deriv.reset(); }
+    if ( calcDeriv ) { deriv.reset(); }
 
-    for (int i = 0; i < octaves; ++i) {
+    for ( int i = 0; i < octaves; ++i ) {
       Vec2.mul(v, freq, vin);
       sum += Simplex.eval(vin, seed, nxy) * amp;
       Vec2.mul(nxy, amp, nxy);
 
-      if (calcDeriv) { Vec2.add(deriv, nxy, deriv); }
+      if ( calcDeriv ) { Vec2.add(deriv, nxy, deriv); }
       freq *= lacunarity;
       amp *= gain;
     }
@@ -1259,14 +1259,14 @@ public abstract class Simplex {
 
     float sum = 0.0f;
     final boolean calcDeriv = deriv != null;
-    if (calcDeriv) { deriv.reset(); }
+    if ( calcDeriv ) { deriv.reset(); }
 
-    for (int i = 0; i < octaves; ++i) {
+    for ( int i = 0; i < octaves; ++i ) {
       Vec3.mul(v, freq, vin);
       sum += Simplex.eval(vin, seed, nxyz) * amp;
       Vec3.mul(nxyz, amp, nxyz);
 
-      if (calcDeriv) { Vec3.add(deriv, nxyz, deriv); }
+      if ( calcDeriv ) { Vec3.add(deriv, nxyz, deriv); }
       freq *= lacunarity;
       amp *= gain;
     }
@@ -1328,14 +1328,14 @@ public abstract class Simplex {
 
     float sum = 0.0f;
     final boolean calcDeriv = deriv != null;
-    if (calcDeriv) { deriv.reset(); }
+    if ( calcDeriv ) { deriv.reset(); }
 
-    for (int i = 0; i < octaves; ++i) {
+    for ( int i = 0; i < octaves; ++i ) {
       Vec4.mul(v, freq, vin);
       sum += Simplex.eval(vin, seed, nxyzw) * amp;
       Vec4.mul(nxyzw, amp, nxyzw);
 
-      if (calcDeriv) { Vec4.add(deriv, nxyzw, deriv); }
+      if ( calcDeriv ) { Vec4.add(deriv, nxyzw, deriv); }
       freq *= lacunarity;
       amp *= gain;
     }
@@ -1407,12 +1407,12 @@ public abstract class Simplex {
     int j2 = 0;
     int k2 = 0;
 
-    if (x0 >= y0) {
-      if (y0 >= z0) {
+    if ( x0 >= y0 ) {
+      if ( y0 >= z0 ) {
         i1 = 1;
         i2 = 1;
         j2 = 1;
-      } else if (x0 >= z0) {
+      } else if ( x0 >= z0 ) {
         i1 = 1;
         i2 = 1;
         k2 = 1;
@@ -1422,11 +1422,11 @@ public abstract class Simplex {
         k2 = 1;
       }
     } else {
-      if (y0 < z0) {
+      if ( y0 < z0 ) {
         k1 = 1;
         j2 = 1;
         k2 = 1;
-      } else if (x0 < z0) {
+      } else if ( x0 < z0 ) {
         j1 = 1;
         j2 = 1;
         k2 = 1;
@@ -1470,7 +1470,7 @@ public abstract class Simplex {
     Vec3 g3 = Simplex.ZERO_3;
 
     final float t0 = 0.5f - (x0 * x0 + y0 * y0 + z0 * z0);
-    if (t0 >= 0.0f) {
+    if ( t0 >= 0.0f ) {
       g0 = Simplex.gradRot3(
           i, j, k, seed,
           cosa, sina,
@@ -1481,7 +1481,7 @@ public abstract class Simplex {
     }
 
     final float t1 = 0.5f - (x1 * x1 + y1 * y1 + z1 * z1);
-    if (t1 >= 0.0f) {
+    if ( t1 >= 0.0f ) {
       g1 = Simplex.gradRot3(
           i + i1, j + j1, k + k1, seed,
           cosa, sina,
@@ -1492,7 +1492,7 @@ public abstract class Simplex {
     }
 
     final float t2 = 0.5f - (x2 * x2 + y2 * y2 + z2 * z2);
-    if (t2 >= 0.0f) {
+    if ( t2 >= 0.0f ) {
       g2 = Simplex.gradRot3(
           i + i2, j + j2, k + k2, seed,
           cosa, sina,
@@ -1503,7 +1503,7 @@ public abstract class Simplex {
     }
 
     final float t3 = 0.5f - (x3 * x3 + y3 * y3 + z3 * z3);
-    if (t3 >= 0.0f) {
+    if ( t3 >= 0.0f ) {
       g3 = Simplex.gradRot3(
           i + 1, j + 1, k + 1, seed,
           cosa, sina,
@@ -1513,7 +1513,7 @@ public abstract class Simplex {
       n3 = g3.x * x3 + g3.y * y3 + g3.z * z3;
     }
 
-    if (deriv != null) {
+    if ( deriv != null ) {
 
       final float tmp0 = t20 * t0 * n0;
       deriv.x = tmp0 * x0;
@@ -1602,7 +1602,7 @@ public abstract class Simplex {
 
     int i1 = 0;
     int j1 = 0;
-    if (x0 > y0) {
+    if ( x0 > y0 ) {
       i1 = 1;
     } else {
       j1 = 1;
@@ -1631,7 +1631,7 @@ public abstract class Simplex {
     Vec2 g2 = Simplex.ZERO_2;
 
     final float t0 = 0.5f - (x0 * x0 + y0 * y0);
-    if (t0 >= 0.0f) {
+    if ( t0 >= 0.0f ) {
       g0 = Simplex.gradRot2(i, j, seed, cosa, sina, Simplex.ROT_2);
       t20 = t0 * t0;
       t40 = t20 * t20;
@@ -1639,7 +1639,7 @@ public abstract class Simplex {
     }
 
     final float t1 = 0.5f - (x1 * x1 + y1 * y1);
-    if (t1 >= 0.0f) {
+    if ( t1 >= 0.0f ) {
       g1 = Simplex.gradRot2(i + i1, j + j1, seed, cosa, sina, Simplex.ROT_2);
       t21 = t1 * t1;
       t41 = t21 * t21;
@@ -1647,14 +1647,14 @@ public abstract class Simplex {
     }
 
     final float t2 = 0.5f - (x2 * x2 + y2 * y2);
-    if (t2 >= 0.0f) {
+    if ( t2 >= 0.0f ) {
       g2 = Simplex.gradRot2(i + 1, j + 1, seed, cosa, sina, Simplex.ROT_2);
       t22 = t2 * t2;
       t42 = t22 * t22;
       n2 = g2.x * x2 + g2.y * y2;
     }
 
-    if (deriv != null) {
+    if ( deriv != null ) {
 
       final float tmp0 = t20 * t0 * n0;
       deriv.x = tmp0 * x0;
@@ -2199,7 +2199,7 @@ public abstract class Simplex {
      * creating new Vec3 s).
      */
 
-    if (scale == 0.0f) {
+    if ( scale == 0.0f ) {
       target.reset();
       return 0.0f;
     }
@@ -2220,13 +2220,13 @@ public abstract class Simplex {
     float hshx = 0.0f;
     float hshy = 0.0f;
 
-    for (int j = -1; j < 2; ++j) {
+    for ( int j = -1; j < 2; ++j ) {
 
       final float sumy = celly + j;
       final float sumysq = sumy * sumy;
       final int vybit = Float.floatToIntBits(sumy);
 
-      for (int i = -1; i < 2; ++i) {
+      for ( int i = -1; i < 2; ++i ) {
 
         final float sumx = cellx + i;
         final float sumxsq = sumx * sumx;
@@ -2268,7 +2268,7 @@ public abstract class Simplex {
         final float distSq = xDist * xDist + yDist * yDist;
 
         /* Reassign minimums. */
-        if (distSq < minDistSq) {
+        if ( distSq < minDistSq ) {
           minDistSq = distSq;
           target.x = hshx;
           target.y = hshy;
@@ -2307,7 +2307,7 @@ public abstract class Simplex {
      * creating new Vec3 s).
      */
 
-    if (scale == 0.0f) {
+    if ( scale == 0.0f ) {
       target.reset();
       return 0.0f;
     }
@@ -2333,19 +2333,19 @@ public abstract class Simplex {
     float hshy = 0.0f;
     float hshz = 0.0f;
 
-    for (int k = -1; k < 2; ++k) {
+    for ( int k = -1; k < 2; ++k ) {
 
       final float sumz = cellz + k;
       final float sumzsq = sumz * sumz;
       final int vzbit = Float.floatToIntBits(sumz);
 
-      for (int j = -1; j < 2; ++j) {
+      for ( int j = -1; j < 2; ++j ) {
 
         final float sumy = celly + j;
         final float sumysq = sumy * sumy;
         final int vybit = Float.floatToIntBits(sumy);
 
-        for (int i = -1; i < 2; ++i) {
+        for ( int i = -1; i < 2; ++i ) {
 
           final float sumx = cellx + i;
           final float sumxsq = sumx * sumx;
@@ -2402,7 +2402,7 @@ public abstract class Simplex {
               zDist * zDist;
 
           /* Reassign minimums. */
-          if (distSq < minDistSq) {
+          if ( distSq < minDistSq ) {
             minDistSq = distSq;
             target.x = hshx;
             target.y = hshy;
@@ -2439,7 +2439,7 @@ public abstract class Simplex {
       final float scale,
       final Vec4 target ) {
 
-    if (scale == 0.0f) {
+    if ( scale == 0.0f ) {
       target.reset();
       return 0.0f;
     }
@@ -2470,25 +2470,25 @@ public abstract class Simplex {
     float hshz = 0.0f;
     float hshw = 0.0f;
 
-    for (int m = -1; m < 2; ++m) {
+    for ( int m = -1; m < 2; ++m ) {
 
       final float sumw = cellw + m;
       final float sumwsq = sumw * sumw;
       final int vwbit = Float.floatToIntBits(sumw);
 
-      for (int k = -1; k < 2; ++k) {
+      for ( int k = -1; k < 2; ++k ) {
 
         final float sumz = cellz + k;
         final float sumzsq = sumz * sumz;
         final int vzbit = Float.floatToIntBits(sumz);
 
-        for (int j = -1; j < 2; ++j) {
+        for ( int j = -1; j < 2; ++j ) {
 
           final float sumy = celly + j;
           final float sumysq = sumy * sumy;
           final int vybit = Float.floatToIntBits(sumy);
 
-          for (int i = -1; i < 2; ++i) {
+          for ( int i = -1; i < 2; ++i ) {
 
             final float sumx = cellx + i;
             final float sumxsq = sumx * sumx;
@@ -2549,7 +2549,7 @@ public abstract class Simplex {
                 wDist * wDist;
 
             /* Reassign minimums. */
-            if (dist < minDist) {
+            if ( dist < minDist ) {
               minDist = dist;
               target.x = hshx;
               target.y = hshy;

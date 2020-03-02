@@ -21,9 +21,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     /**
      * The default constructor.
      */
-    public AbstrComparator ( ) {
-
-    }
+    public AbstrComparator ( ) {}
 
     /**
      * The compare function which must be implemented by sub- (child)
@@ -62,9 +60,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     /**
      * The default constructor.
      */
-    public AbstrEasing ( ) {
-
-    }
+    public AbstrEasing ( ) {}
 
     /**
      * A clamped interpolation between the origin and destination. Defers
@@ -84,10 +80,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
         final Float step,
         final Vec3 target ) {
 
-      if (step <= 0.0f) { return target.set(origin); }
-
-      if (step >= 1.0f) { return target.set(dest); }
-
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
       return this.applyUnclamped(origin, dest, step, target);
     }
 
@@ -464,9 +458,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
   @Override
   public boolean equals ( final Object obj ) {
 
-    if (this == obj) { return true; }
-    if (obj == null) { return false; }
-    if (this.getClass() != obj.getClass()) { return false; }
+    if ( this == obj ) { return true; }
+    if ( obj == null ) { return false; }
+    if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Vec3) obj);
   }
 
@@ -480,7 +474,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
   @Override
   public float get ( final int index ) {
 
-    switch (index) {
+    switch ( index ) {
       case 0:
       case -3:
         return this.x;
@@ -600,19 +594,19 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
     try {
       x = Float.parseFloat(xstr);
-    } catch (final NumberFormatException e) {
+    } catch ( final NumberFormatException e ) {
       x = 0.0f;
     }
 
     try {
       y = Float.parseFloat(ystr);
-    } catch (final NumberFormatException e) {
+    } catch ( final NumberFormatException e ) {
       y = 0.0f;
     }
 
     try {
       z = Float.parseFloat(zstr);
-    } catch (final NumberFormatException e) {
+    } catch ( final NumberFormatException e ) {
       z = 0.0f;
     }
 
@@ -764,31 +758,31 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
     /* Calculate x values in separate loop. */
     final float[] xs = new float[cval];
-    for (int j = 0; j < cval; ++j) {
+    for ( int j = 0; j < cval; ++j ) {
       final float step = j * jToStep;
       xs[j] = (1.0f - step) * lbx + step * ubx;
     }
 
     /* Calculate y values in separate loop. */
     final float[] ys = new float[rval];
-    for (int i = 0; i < rval; ++i) {
+    for ( int i = 0; i < rval; ++i ) {
       final float step = i * iToStep;
       ys[i] = (1.0f - step) * lby + step * uby;
     }
 
     final Vec3[][][] result = new Vec3[lval][rval][cval];
-    for (int h = 0; h < lval; ++h) {
+    for ( int h = 0; h < lval; ++h ) {
 
       final Vec3[][] layer = result[h];
       final float step = h * hToStep;
       final float z = (1.0f - step) * lbz + step * ubz;
 
-      for (int i = 0; i < rval; ++i) {
+      for ( int i = 0; i < rval; ++i ) {
 
         final Vec3[] row = layer[i];
         final float y = ys[i];
 
-        for (int j = 0; j < cval; ++j) {
+        for ( int j = 0; j < cval; ++j ) {
           row[j] = new Vec3(xs[j], y, z);
         }
       }
@@ -804,7 +798,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    * @return epsilon
    */
   @Experimental
-  static Vec3 epsilon ( final Vec3 target ) {
+  public static Vec3 epsilon ( final Vec3 target ) {
 
     return target.set(
         Utils.EPSILON,
@@ -822,7 +816,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    * @return the evaluation
    */
   @Experimental
-  static Vec3 gt (
+  public static Vec3 gt (
       final Vec3 a,
       final Vec3 b,
       final Vec3 target ) {
@@ -1230,9 +1224,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float step,
       final Vec3 target ) {
 
-    if (step <= 0.0f) {
+    if ( step <= 0.0f ) {
       return target.set(ap0);
-    } else if (step >= 1.0f) { return target.set(ap1); }
+    } else if ( step >= 1.0f ) { return target.set(ap1); }
 
     final float u = 1.0f - step;
     float tcb = step * step;
@@ -1274,9 +1268,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float step,
       final Vec3 target ) {
 
-    if (step <= 0.0f) {
+    if ( step <= 0.0f ) {
       return Vec3.sub(cp0, ap0, target);
-    } else if (step >= 1.0f) { return Vec3.sub(ap1, cp1, target); }
+    } else if ( step >= 1.0f ) { return Vec3.sub(ap1, cp1, target); }
 
     final float u = 1.0f - step;
     final float t3 = step + step + step;
@@ -1366,17 +1360,19 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
   /**
    * Clamps the vector to a range in [0, 1].
    *
-   * @param a      the input vector
+   * @param v      the input vector
    * @param target the output vector
    * @return the clamped vector
    * @see Utils#clamp01(float)
    */
-  public static Vec3 clamp01 ( final Vec3 a, final Vec3 target ) {
+  public static Vec3 clamp01 (
+      final Vec3 v,
+      final Vec3 target ) {
 
     return target.set(
-        Utils.clamp01(a.x),
-        Utils.clamp01(a.y),
-        Utils.clamp01(a.z));
+        Utils.clamp01(v.x),
+        Utils.clamp01(v.y),
+        Utils.clamp01(v.z));
   }
 
   /**
@@ -1622,7 +1618,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final Vec3 b,
       final float c ) {
 
-    if (c == 0.0f) { return 0.0f; }
+    if ( c == 0.0f ) { return 0.0f; }
 
     return (float) Math.pow(
         Math.pow(Utils.diff(a.x, b.x), c)
@@ -1642,7 +1638,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    * @see Vec3#distEuclidean(Vec3, Vec3)
    * @see Vec3#sub(Vec3, Vec3, Vec3)
    */
-  public static float distSq ( final Vec3 a, final Vec3 b ) {
+  public static float distSq (
+      final Vec3 a,
+      final Vec3 b ) {
 
     final float xDist = b.x - a.x;
     final float yDist = b.y - a.y;
@@ -1683,7 +1681,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float b,
       final Vec3 target ) {
 
-    if (b == 0.0f) { return target.reset(); }
+    if ( b == 0.0f ) { return target.reset(); }
     final float denom = 1.0f / b;
     return target.set(
         a.x * denom,
@@ -1778,12 +1776,12 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
     final int sourceLen = arr.length;
     int totalLen = 0;
-    for (int i = 0; i < sourceLen; ++i) {
+    for ( int i = 0; i < sourceLen; ++i ) {
       totalLen += arr[i].length;
     }
 
     final Vec3[] result = new Vec3[totalLen];
-    for (int j = 0, i = 0; i < sourceLen; ++i) {
+    for ( int j = 0, i = 0; i < sourceLen; ++i ) {
       final Vec3[] arrInner = arr[i];
       final int len = arrInner.length;
       System.arraycopy(arrInner, 0, result, j, len);
@@ -1803,20 +1801,20 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
     final int sourceLen0 = arr.length;
     int totalLen = 0;
-    for (int i = 0; i < sourceLen0; ++i) {
+    for ( int i = 0; i < sourceLen0; ++i ) {
       final Vec3[][] arrInner = arr[i];
       final int sourceLen1 = arrInner.length;
-      for (int j = 0; j < sourceLen1; ++j) {
+      for ( int j = 0; j < sourceLen1; ++j ) {
         totalLen += arrInner[j].length;
       }
     }
 
     final Vec3[] result = new Vec3[totalLen];
 
-    for (int k = 0, i = 0; i < sourceLen0; ++i) {
+    for ( int k = 0, i = 0; i < sourceLen0; ++i ) {
       final Vec3[][] arrInner1 = arr[i];
       final int sourceLen1 = arrInner1.length;
-      for (int j = 0; j < sourceLen1; ++j) {
+      for ( int j = 0; j < sourceLen1; ++j ) {
         final Vec3[] arrInner2 = arrInner1[j];
         final int sourceLen2 = arrInner2.length;
         System.arraycopy(arrInner2, 0, result, k, sourceLen2);
@@ -1835,7 +1833,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    * @return the output
    * @see Utils#floor(float)
    */
-  public static Vec3 floor ( final Vec3 v, final Vec3 target ) {
+  public static Vec3 floor (
+      final Vec3 v,
+      final Vec3 target ) {
 
     return target.set(
         Utils.floor(v.x),
@@ -1878,7 +1878,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float b,
       final Vec3 target ) {
 
-    if (b == 0.0f) { return target.set(a); }
+    if ( b == 0.0f ) { return target.set(a); }
     return target.set(a.x % b, a.y % b, a.z % b);
   }
 
@@ -1923,7 +1923,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    * @return the fractional portion
    * @see Utils#fract(float)
    */
-  public static Vec3 fract ( final Vec3 v, final Vec3 target ) {
+  public static Vec3 fract (
+      final Vec3 v,
+      final Vec3 target ) {
 
     return target.set(
         Utils.fract(v.x),
@@ -2130,9 +2132,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final int longitudes,
       final int latitudes ) {
 
-    return Vec3.gridSpherical(
-        longitudes, latitudes,
-        true);
+    return Vec3.gridSpherical(longitudes, latitudes, true);
   }
 
   /**
@@ -2218,19 +2218,19 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     final float toPhi = 0.5f / (vlats + 1.0f);
     final float toTheta = 1.0f / vlons;
 
-    for (int h = 0; h < vlayers; ++h) {
+    for ( int h = 0; h < vlayers; ++h ) {
 
       final float prc = h * toPrc;
       final float radius = (1.0f - prc) * vrMin + prc * vrMax;
 
       final Vec3[][] layer = result[h];
 
-      if (includePoles) {
+      if ( includePoles ) {
         layer[0] = new Vec3[] { new Vec3(0.0f, 0.0f, radius) };
         layer[latLen - 1] = new Vec3[] { new Vec3(0.0f, 0.0f, -radius) };
       }
 
-      for (int i = 0, k = 1; i < vlats; ++i, ++k) {
+      for ( int i = 0, k = 1; i < vlats; ++i, ++k ) {
 
         final float phi = k * toPhi - 0.25f;
         final float rhoCosPhi = radius * Utils.scNorm(phi);
@@ -2238,7 +2238,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
         final Vec3[] lat = layer[includePoles ? k : i] = new Vec3[vlons];
 
-        for (int j = 0; j < vlons; ++j) {
+        for ( int j = 0; j < vlons; ++j ) {
 
           // TODO: Calculate values?
           final float theta = j * toTheta;
@@ -2367,7 +2367,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final Vec3 target ) {
 
     final float mSq = v.x * v.x + v.y * v.y + v.z * v.z;
-    if (limit > 0.0f && mSq > limit * limit) {
+    if ( limit > 0.0f && mSq > limit * limit ) {
       final float scalar = limit * Utils.invSqrtUnchecked(mSq);
       return target.set(
           v.x * scalar,
@@ -2595,7 +2595,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float b,
       final Vec3 target ) {
 
-    if (b == 0.0f) { return target.set(a); }
+    if ( b == 0.0f ) { return target.set(a); }
 
     return target.set(
         Utils.modUnchecked(a.x, b),
@@ -2902,7 +2902,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final Vec3 b ) {
 
     final float bSq = Vec3.magSq(b);
-    if (bSq != 0.0f) { return Vec3.dot(a, b) / bSq; }
+    if ( bSq != 0.0f ) { return Vec3.dot(a, b) / bSq; }
     return 0.0f;
   }
 
@@ -2942,7 +2942,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final int levels,
       final Vec3 target ) {
 
-    if (levels < 2) { return target.set(v); }
+    if ( levels < 2 ) { return target.set(v); }
 
     final float delta = 1.0f / levels;
     return target.set(
@@ -3072,9 +3072,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final Vec3 target ) {
 
     final float nMSq = Vec3.magSq(normal);
-    if (Utils.abs(nMSq) < Utils.EPSILON) { return target.reset(); }
+    if ( Utils.abs(nMSq) < Utils.EPSILON ) { return target.reset(); }
 
-    if (Utils.approx(nMSq, 1.0f)) {
+    if ( Utils.approx(nMSq, 1.0f) ) {
       final float scalar = 2.0f * Vec3.dot(normal, incident);
       return target.set(
           incident.x - scalar * normal.x,
@@ -3112,11 +3112,11 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float eta,
       final Vec3 target ) {
 
-    // TODO: Needs testing.
+    // TEST
 
     final float nDotI = Vec3.dot(normal, incident);
     final float k = 1.0f - eta * eta * (1.0f - nDotI * nDotI);
-    if (k <= 0.0f) { return target.reset(); }
+    if ( k <= 0.0f ) { return target.reset(); }
     final float scalar = eta * nDotI + Utils.sqrtUnchecked(k);
     return target.set(
         eta * incident.x - normal.x * scalar,
@@ -3140,7 +3140,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final Vec3 target ) {
 
     final float mSq = v.x * v.x + v.y * v.y + v.z * v.z;
-    if (scalar == 0.0f || mSq == 0.0f) { return target.reset(); }
+    if ( scalar == 0.0f || mSq == 0.0f ) { return target.reset(); }
 
     final float sclMag = scalar * Utils.invSqrtUnchecked(mSq);
     return target.set(
@@ -3167,7 +3167,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final Vec3 target,
       final Vec3 normalized ) {
 
-    if (scalar == 0.0f) {
+    if ( scalar == 0.0f ) {
       normalized.reset();
       return target.reset();
     }
@@ -3197,16 +3197,16 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     final int vsz = sz < 1 ? 1 : sz;
     final Vec3[] result = new Vec3[vsz];
 
-    if (arr == null) {
-      for (int i = 0; i < vsz; ++i) {
+    if ( arr == null ) {
+      for ( int i = 0; i < vsz; ++i ) {
         result[i] = new Vec3();
       }
       return result;
     }
 
     final int last = arr.length - 1;
-    for (int i = 0; i < vsz; ++i) {
-      if (i > last || arr[i] == null) {
+    for ( int i = 0; i < vsz; ++i ) {
+      if ( i > last || arr[i] == null ) {
         result[i] = new Vec3();
       } else {
         result[i] = arr[i];
@@ -3289,11 +3289,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final Vec3 axis,
       final Vec3 target ) {
 
-    return Vec3.rotate(
-        v,
-        Utils.cos(radians), Utils.sin(radians),
-        axis,
-        target);
+    return Vec3.rotate(v, Utils.cos(radians), Utils.sin(radians), axis, target);
   }
 
   /**
@@ -3450,11 +3446,11 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final int places,
       final Vec3 target ) {
 
-    if (places < 1) { return Vec3.round(v, target); }
-    if (places > 7) { return target.set(v); }
+    if ( places < 1 ) { return Vec3.round(v, target); }
+    if ( places > 7 ) { return target.set(v); }
 
     int n = 10;
-    for (int i = 1; i < places; ++i) {
+    for ( int i = 1; i < places; ++i ) {
       n *= 10;
     }
     final float nInv = 1.0f / n;
@@ -3489,7 +3485,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    */
   public static void setEasing ( final AbstrEasing easing ) {
 
-    if (easing != null) { Vec3.EASING = easing; }
+    if ( easing != null ) { Vec3.EASING = easing; }
   }
 
   /**

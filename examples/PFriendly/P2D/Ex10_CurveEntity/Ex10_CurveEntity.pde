@@ -5,25 +5,15 @@ Yup2 graphics;
 
 Random rng = new Random();
 
-MaterialSolid material = new MaterialSolid()
-  .setStroke(true)
-  .setStroke(#808080)
-  .setFill(false)
-  .setStrokeWeight(1.0);
-
 Transform2 transform = new Transform2()
   .scaleTo(200.0);
 
-//Curve2 curve = Curve2.rect(
-//  -0.75, 0.5, 0.75, -0.5,
-//  new Curve2());
-
-Curve2 curve = Curve2.polygon(0.0, 0.5, 5,
+Curve2 curve = Curve2.rect(
+  -0.75, 0.5, 0.75, -0.5, -0.25,
   new Curve2());
 
 CurveEntity2 entity = new CurveEntity2(
   "Example", transform)
-  .appendMaterial(material)
   .appendCurve(curve);
 
 void settings() {
@@ -32,7 +22,6 @@ void settings() {
 
 void setup() {
   graphics = (Yup2)getGraphics();
-  //frameRate(1000);
 }
 
 void draw() {
@@ -41,6 +30,8 @@ void draw() {
 
   graphics.background();
   graphics.origin();
+  graphics.noFill();
+  graphics.strokeWeight(1.0);
   graphics.shape(entity);
   graphics.handles(entity, 0.0075);
 }

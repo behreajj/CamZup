@@ -133,7 +133,6 @@ public class ZImage extends PImage {
   public String toString ( ) {
 
     return ZImage.toString(this);
-
   }
 
   /**
@@ -144,7 +143,7 @@ public class ZImage extends PImage {
   @Override
   public void updatePixels ( ) {
 
-    if (!this.modified) {
+    if ( !this.modified ) {
 
       this.mx1 = 0;
       this.mx2 = this.pixelWidth;
@@ -154,25 +153,25 @@ public class ZImage extends PImage {
 
     } else {
 
-      if (0 < this.mx1) { this.mx1 = 0; }
-      if (0 > this.mx2) {
+      if ( 0 < this.mx1 ) { this.mx1 = 0; }
+      if ( 0 > this.mx2 ) {
         this.mx2 = this.pixelWidth <= 0 ? this.pixelWidth : 0;
       }
 
-      if (0 < this.my1) { this.my1 = 0; }
-      if (0 > this.my2) {
+      if ( 0 < this.my1 ) { this.my1 = 0; }
+      if ( 0 > this.my2 ) {
         this.my2 = this.pixelHeight <= 0 ? this.pixelHeight : 0;
       }
 
-      if (this.pixelWidth < this.mx1) {
+      if ( this.pixelWidth < this.mx1 ) {
         this.mx1 = 0 >= this.pixelWidth ? 0 : this.pixelWidth;
       }
-      if (this.pixelWidth > this.mx2) { this.mx2 = this.pixelWidth; }
+      if ( this.pixelWidth > this.mx2 ) { this.mx2 = this.pixelWidth; }
 
-      if (this.pixelHeight < this.my1) {
+      if ( this.pixelHeight < this.my1 ) {
         this.my1 = 0 >= this.pixelHeight ? 0 : this.pixelHeight;
       }
-      if (this.pixelHeight > this.my2) { this.my2 = this.pixelHeight; }
+      if ( this.pixelHeight > this.my2 ) { this.my2 = this.pixelHeight; }
     }
   }
 
@@ -203,12 +202,12 @@ public class ZImage extends PImage {
     final float hInv = 1.0f / (h - 1.0f);
     final float wInv = 1.0f / (w - 1.0f);
 
-    for (int i = 0, y = 0; y < h; ++y) {
+    for ( int i = 0, y = 0; y < h; ++y ) {
 
       final float yn = y * hInv;
       final float t = 1.0f - (yn + yn + yOrigin);
 
-      for (int x = 0; x < w; ++x, ++i) {
+      for ( int x = 0; x < w; ++x, ++i ) {
 
         final float xn = x * wInv;
         final float s = xn + xn - xOrigin - 1.0f;
@@ -257,7 +256,7 @@ public class ZImage extends PImage {
     target.loadPixels();
     final int[] px = target.pixels;
     final int len = px.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       grd.eval(
           Color.luminance(px[i]),
           ZImage.clr);
@@ -300,8 +299,8 @@ public class ZImage extends PImage {
     final int[] pixels = target.pixels;
 
     final float wInv = 1.0f / (w - 1.0f);
-    for (int i = 0, y = 0; y < h; ++y) {
-      for (int x = 0; x < w; ++x, ++i) {
+    for ( int i = 0, y = 0; y < h; ++y ) {
+      for ( int x = 0; x < w; ++x, ++i ) {
         grd.eval(x * wInv, ZImage.clr);
         pixels[i] = Color.toHexInt(ZImage.clr);
       }
@@ -325,7 +324,7 @@ public class ZImage extends PImage {
     target.loadPixels();
     final int[] px = target.pixels;
     final int len = px.length;
-    for (int i = 0; i < len; ++i) {
+    for ( int i = 0; i < len; ++i ) {
       px[i] = clr;
     }
     target.updatePixels();
@@ -365,12 +364,12 @@ public class ZImage extends PImage {
     final float by = yOrigin - yDest;
     final float bbInv = 1.0f / Utils.max(Utils.EPSILON, bx * bx + by * by);
 
-    for (int i = 0, y = 0; y < h; ++y) {
+    for ( int i = 0, y = 0; y < h; ++y ) {
 
       final float yn = y * hInv;
       final float ay = yOrigin - (1.0f - (yn + yn));
 
-      for (int x = 0; x < w; ++x, ++i) {
+      for ( int x = 0; x < w; ++x, ++i ) {
 
         final float xn = x * wInv;
         final float ax = xOrigin - (xn + xn - 1.0f);
@@ -438,13 +437,13 @@ public class ZImage extends PImage {
     final float r2 = radius + radius;
     final float invrsq = 1.0f / Utils.max(Utils.EPSILON, r2 * r2);
 
-    for (int i = 0, y = 0; y < h; ++y) {
+    for ( int i = 0, y = 0; y < h; ++y ) {
 
       final float yn = y * hInv;
       final float ay = yOrigin - (1.0f - (yn + yn));
       final float aysq = ay * ay;
 
-      for (int x = 0; x < w; ++x, ++i) {
+      for ( int x = 0; x < w; ++x, ++i ) {
 
         final float xn = x * wInv;
         final float ax = xOrigin - (xn + xn - 1.0f);
@@ -497,9 +496,9 @@ public class ZImage extends PImage {
     final float hInv = 0xff / (h - 1.0f);
     final float wInv = 0xff / (w - 1.0f);
 
-    for (int i = 0, y = h - 1; y > -1; --y) {
+    for ( int i = 0, y = h - 1; y > -1; --y ) {
       final int grbl = 0xff000080 | (int) (y * hInv + 0.5f) << 0x8;
-      for (int x = 0; x < w; ++x, ++i) {
+      for ( int x = 0; x < w; ++x, ++i ) {
         px[i] = (int) (x * wInv + 0.5f) << 0x10 | grbl;
       }
     }
@@ -560,11 +559,11 @@ public class ZImage extends PImage {
      * Uses unchecked integer floor mod for optimization.
      */
 
-    if (wSource < 1 || hSource < 1) { return target; }
+    if ( wSource < 1 || hSource < 1 ) { return target; }
 
-    for (int i = 0, y = 0; y < hTarget; ++y) {
+    for ( int i = 0, y = 0; y < hTarget; ++y ) {
       final int ny = wSource * Math.floorMod(y - dy, hSource);
-      for (int x = 0; x < wTarget; ++x, ++i) {
+      for ( int x = 0; x < wTarget; ++x, ++i ) {
         target[i] = source[Math.floorMod(x + dx, wSource) + ny];
       }
     }
