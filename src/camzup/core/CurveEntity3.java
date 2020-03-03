@@ -218,6 +218,9 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 > {
       final float extrude,
       final float bevelDepth ) {
 
+    final float tiltStart = 0.0f;
+    final float tiltEnd = 0.0f;
+
     final StringBuilder result = new StringBuilder(2048);
     result.append("from bpy import data as D, context as C\n\n")
         .append("curve_entity = {\"name\": \"")
@@ -230,7 +233,8 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 > {
     final int curveLast = this.curves.size() - 1;
     final Iterator < Curve3 > curveItr = this.curves.iterator();
     while ( curveItr.hasNext() ) {
-      result.append(curveItr.next().toBlenderCode(uRes));
+
+      result.append(curveItr.next().toBlenderCode(uRes, tiltStart, tiltEnd));
       if ( curveIndex < curveLast ) { result.append(',').append(' '); }
       curveIndex++;
     }

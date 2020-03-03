@@ -17,10 +17,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     /**
      * The default constructor.
      */
-    public AbstrEasing ( ) {
-
-      super();
-    }
+    public AbstrEasing ( ) { super(); }
 
     /**
      * A clamped interpolation between the origin and destination. Defers
@@ -135,26 +132,30 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
   /**
    * The spatial coordinate of the knot.
    */
-  public final Vec3 coord = new Vec3();
+  public final Vec3 coord;
 
   /**
    * The handle which warps the curve segment heading away from the knot
    * along the direction of the curve.
    */
-  public final Vec3 foreHandle = new Vec3();
+  public final Vec3 foreHandle;
 
   /**
    * The handle which warps the curve segment heading towards the knot
    * along the direction of the curve.
    */
-  public final Vec3 rearHandle = new Vec3();
+  public final Vec3 rearHandle;
+
+  {
+    this.coord = new Vec3();
+    this.foreHandle = new Vec3();
+    this.rearHandle = new Vec3();
+  }
 
   /**
    * The default constructor.
    */
-  public Knot3 ( ) {
-
-  }
+  public Knot3 ( ) {}
 
   /**
    * Creates a knot from a coordinate.
@@ -640,7 +641,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float radians,
       final Vec3 axis ) {
 
-    return this.rotate(Utils.cos(radians), Utils.sin(radians), axis);
+    return this.rotate(
+        Utils.cos(radians),
+        Utils.sin(radians), axis);
   }
 
   /**
@@ -660,6 +663,56 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
   }
 
   /**
+   * Rotates this knot's fore handle by a quaternion with its coordinate
+   * serving as a pivot.
+   *
+   * @param q the quaternion
+   * @return this knot
+   */
+  @Chainable
+  public Knot3 rotateForeHandle ( final Quaternion q ) {
+
+    Vec3.sub(this.coord, this.foreHandle, this.foreHandle);
+    Quaternion.mulVector(q, this.foreHandle, this.foreHandle);
+    Vec3.add(this.coord, this.foreHandle, this.foreHandle);
+
+    return this;
+  }
+
+  /**
+   * Rotates this knot's handles by a quaternion with its coordinate
+   * serving as a pivot.
+   *
+   * @param q the quaternion
+   * @return this knot
+   */
+  @Chainable
+  public Knot3 rotateHandles ( final Quaternion q ) {
+
+    this.rotateForeHandle(q);
+    this.rotateRearHandle(q);
+
+    return this;
+  }
+
+  /**
+   * Rotates this knot's rear handle by a quaternion with its coordinate
+   * serving as a pivot.
+   *
+   * @param q the quaternion
+   * @return this knot
+   */
+  @Chainable
+  public Knot3 rotateRearHandle ( final Quaternion q ) {
+
+    Vec3.sub(this.coord, this.rearHandle, this.rearHandle);
+    Quaternion.mulVector(q, this.rearHandle, this.rearHandle);
+    Vec3.add(this.coord, this.rearHandle, this.rearHandle);
+
+    return this;
+  }
+
+  /**
    * Rotates this knot around the x axis by an angle in radians.
    *
    * @param radians the angle
@@ -668,7 +721,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
   @Chainable
   public Knot3 rotateX ( final float radians ) {
 
-    return this.rotateX(Utils.cos(radians), Utils.sin(radians));
+    return this.rotateX(
+        Utils.cos(radians),
+        Utils.sin(radians));
   }
 
   /**
@@ -701,7 +756,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
   @Chainable
   public Knot3 rotateY ( final float radians ) {
 
-    return this.rotateY(Utils.cos(radians), Utils.sin(radians));
+    return this.rotateY(
+        Utils.cos(radians),
+        Utils.sin(radians));
   }
 
   /**
@@ -734,7 +791,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
   @Chainable
   public Knot3 rotateZ ( final float radians ) {
 
-    return this.rotateZ(Utils.cos(radians), Utils.sin(radians));
+    return this.rotateZ(
+        Utils.cos(radians),
+        Utils.sin(radians));
   }
 
   /**

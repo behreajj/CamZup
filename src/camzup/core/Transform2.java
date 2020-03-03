@@ -224,10 +224,7 @@ public class Transform2 extends Transform {
   /**
    * The default constructor.
    */
-  public Transform2 ( ) {
-
-    super();
-  }
+  public Transform2 ( ) { super(); }
 
   /**
    * Creates a transform from loose real numbers.
@@ -405,6 +402,32 @@ public class Transform2 extends Transform {
   }
 
   /**
+   * Flips the transform's scale on the horizontal axis.
+   *
+   * @return this transform
+   */
+  @Chainable
+  public Transform2 flipX ( ) {
+
+    this.scalePrev.set(this.scale);
+    this.scale.x = -this.scale.x;
+    return this;
+  }
+
+  /**
+   * Flips the transform's scale on the vertical axis.
+   *
+   * @return this transform
+   */
+  @Chainable
+  public Transform2 flipY ( ) {
+
+    this.scalePrev.set(this.scale);
+    this.scale.y = -this.scale.y;
+    return this;
+  }
+
+  /**
    * Gets the transform's forward axis.
    *
    * @param target the output vector
@@ -548,6 +571,8 @@ public class Transform2 extends Transform {
    */
   @Chainable
   public Transform2 moveByLocal ( final Vec2 dir ) {
+
+    // TEST
 
     this.locPrev.set(this.location);
     Vec2.rotateZ(dir, this.right.x, this.right.y, this.location);
@@ -697,7 +722,7 @@ public class Transform2 extends Transform {
   }
 
   /**
-   * Scales the transform by a scalar.
+   * Scales the transform by a uniform scalar.
    *
    * @param scalar the scalar
    * @return this transform

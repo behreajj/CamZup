@@ -472,10 +472,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    * The default constructor. Defaults to the identity, (1.0, 0.0, 0.0,
    * 0.0) .
    */
-  public Quaternion ( ) {
-
-    super(4);
-  }
+  public Quaternion ( ) { super(4); }
 
   /**
    * Constructs a quaternion by float component.

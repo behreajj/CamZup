@@ -114,12 +114,10 @@ public class Edge2 implements Comparable < Edge2 > {
   @Override
   public int hashCode ( ) {
 
-    int hash = IUtils.HASH_BASE;
-    hash = hash * IUtils.HASH_MUL
-        ^ (this.origin == null ? 0 : this.origin.hashCode());
-    hash = hash * IUtils.HASH_MUL
+    return (IUtils.MUL_BASE
+        ^ (this.origin == null ? 0 : this.origin.hashCode()))
+        * IUtils.HASH_MUL
         ^ (this.dest == null ? 0 : this.dest.hashCode());
-    return hash;
   }
 
   /**
@@ -392,6 +390,7 @@ public class Edge2 implements Comparable < Edge2 > {
 
     Vec2.add(this.origin.coord, v, this.origin.coord);
     Vec2.add(this.dest.coord, v, this.dest.coord);
+
     return this;
   }
 

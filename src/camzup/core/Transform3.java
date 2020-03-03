@@ -233,10 +233,7 @@ public class Transform3 extends Transform {
   /**
    * The default constructor.
    */
-  public Transform3 ( ) {
-
-    super();
-  }
+  public Transform3 ( ) { super(); }
 
   /**
    * Creates a transform from loose real numbers.
@@ -593,8 +590,6 @@ public class Transform3 extends Transform {
   @Chainable
   public Transform3 moveByLocal ( final Vec3 dir ) {
 
-    // TEST
-
     this.locPrev.set(this.location);
     Quaternion.mulVector(this.rotation, dir, this.location);
     Vec3.mul(this.location, this.scale, this.location);
@@ -867,7 +862,7 @@ public class Transform3 extends Transform {
   }
 
   /**
-   * Scales the transform by a scalar.
+   * Scales the transform by a uniform scalar.
    *
    * @param scalar the scalar
    * @return this transform

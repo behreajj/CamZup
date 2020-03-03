@@ -13,9 +13,7 @@ public abstract class Transform implements ITransform {
   /**
    * The default constructor.
    */
-  protected Transform ( ) {
-
-  }
+  protected Transform ( ) {}
 
   /**
    * Updates the local axes of the transform based on its rotation.

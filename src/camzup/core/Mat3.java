@@ -127,10 +127,7 @@ public class Mat3 extends Matrix {
   /**
    * The default constructor. Creates an identity matrix.
    */
-  public Mat3 ( ) {
-
-    super(9);
-  }
+  public Mat3 ( ) { super(9); }
 
   /**
    * Constructs a matrix from float values.

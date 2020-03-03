@@ -435,6 +435,50 @@ public class Mesh3 extends Mesh {
   }
 
   /**
+   * Attempts to recalculate the texture coordinates of this mesh per
+   * vertex through spherical projection. The coordinate's unsigned
+   * azimuth is assigned to the texture coordinate u; the complement of
+   * its inclination is assigned to the texture coordinate v.
+   *
+   * @return this mesh
+   */
+  @Chainable
+  @Experimental
+  public Mesh3 calcUvs ( ) {
+
+    final int coordsLen = this.coords.length;
+    this.texCoords = Vec2.resize(this.texCoords, coordsLen);
+    for ( int i = 0; i < coordsLen; ++i ) {
+      final Vec3 v = this.coords[i];
+      final Vec2 vt = this.texCoords[i];
+
+      final float azim = Utils.atan2(v.y, v.x);
+      final float incl = Utils.asin(v.z
+          * Utils.invSqrt(v.x * v.x + v.y * v.y + v.z * v.z));
+
+      /* Simplification of the map function. */
+      vt.set(
+          Utils.mod1(azim * IUtils.ONE_TAU),
+          (IUtils.HALF_PI - incl) * 0.31830987f);
+    }
+
+    /*
+     * Update indices by assigning same coordinate index to texture
+     * coordinate index.
+     */
+    final int facesLen = this.faces.length;
+    for ( int i = 0; i < facesLen; ++i ) {
+      final int[][] verts = this.faces[i];
+      final int vertsLen = verts.length;
+      for ( int j = 0; j < vertsLen; ++j ) {
+        verts[j][1] = verts[j][0];
+      }
+    }
+
+    return this;
+  }
+
+  /**
    * Clones this mesh.
    *
    * @return the cloned mesh
@@ -1481,6 +1525,70 @@ public class Mesh3 extends Mesh {
   }
 
   /**
+   * Subdivides a convex face by calculating its centroid, then
+   * connecting its vertices to the centroid. This generates a triangle
+   * for the number of edges in the face.
+   *
+   * @param faceIdx the face index
+   * @return this mesh
+   */
+  @Experimental
+  @Chainable
+  public Mesh3 subdivFaceFan ( final int faceIdx ) {
+
+    final int facesLen = this.faces.length;
+    final int i = Utils.mod(faceIdx, facesLen);
+    final int[][] face = this.faces[i];
+    final int faceLen = face.length;
+
+    final int[][][] fsNew = new int[faceLen][3][3];
+    final Vec3 vCentroid = new Vec3();
+    final Vec2 vtCentroid = new Vec2();
+    final Vec3 vnCentroid = new Vec3();
+
+    final int vCentroidIdx = this.coords.length;
+    final int vtCentroidIdx = this.texCoords.length;
+    final int vnCentroidIdx = this.normals.length;
+
+    for ( int j = 0; j < faceLen; ++j ) {
+      final int k = (j + 1) % faceLen;
+
+      final int[] vertCurr = face[j];
+      final int[] vertNext = face[k];
+
+      final int vCurrIdx = vertCurr[0];
+      final int vtCurrIdx = vertCurr[1];
+      final int vnCurrIdx = vertCurr[1];
+
+      final Vec3 vCurr = this.coords[vCurrIdx];
+      final Vec2 vtCurr = this.texCoords[vtCurrIdx];
+      final Vec3 vnCurr = this.normals[vnCurrIdx];
+
+      /* Sum vertex for centroid. */
+      Vec3.add(vCentroid, vCurr, vCentroid);
+      Vec2.add(vtCentroid, vtCurr, vtCentroid);
+      Vec3.add(vnCentroid, vnCurr, vnCentroid);
+
+      fsNew[j] = new int[][] {
+          { vCentroidIdx, vtCentroidIdx, vnCentroidIdx },
+          { vCurrIdx, vtCurrIdx, vnCurrIdx },
+          { vertNext[0], vertNext[1], vertNext[2] } };
+    }
+
+    Vec3.div(vCentroid, faceLen, vCentroid);
+    Vec2.div(vtCentroid, faceLen, vtCentroid);
+    Vec3.div(vnCentroid, faceLen, vnCentroid);
+    Vec3.normalize(vnCentroid, vnCentroid);
+
+    this.coords = Vec3.concat(this.coords, new Vec3[] { vCentroid });
+    this.texCoords = Vec2.concat(this.texCoords, new Vec2[] { vtCentroid });
+    this.normals = Vec3.concat(this.normals, new Vec3[] { vnCentroid });
+    this.faces = Mesh.splice(this.faces, i, 1, fsNew);
+
+    return this;
+  }
+
+  /**
    * Subdivides a convex face by cutting each of its edges once to
    * create a midpoint, then connecting them. This generates peripheral
    * triangles and a new central face with the same number of edges as
@@ -1565,9 +1673,12 @@ public class Mesh3 extends Mesh {
    * @param itr iterations
    * @return this mesh
    */
+  @Experimental
   @Chainable
   public Mesh3 subdivFaces ( final int itr ) {
 
+    // TODO: Create subdivFaces() function which calls this with 1
+    // iteration
     return this.subdivFacesCentroid(itr);
   }
 
@@ -1578,6 +1689,7 @@ public class Mesh3 extends Mesh {
    * @param itr iterations
    * @return this mesh
    */
+  @Experimental
   @Chainable
   public Mesh3 subdivFacesCentroid ( final int itr ) {
 
@@ -1595,11 +1707,35 @@ public class Mesh3 extends Mesh {
 
   /**
    * Subdivides all faces in the mesh by a number of iterations. Uses
+   * the triangle-fan method.
+   *
+   * @param itr iterations
+   * @return this mesh
+   */
+  @Experimental
+  @Chainable
+  public Mesh3 subdivFacesFan ( final int itr ) {
+
+    final int vitr = itr < 1 ? 1 : itr;
+    for ( int i = 0; i < vitr; ++i ) {
+      final int len = this.faces.length;
+      for ( int j = 0, k = 0; j < len; ++j ) {
+        final int vertLen = this.faces[k].length;
+        this.subdivFaceFan(k);
+        k += vertLen;
+      }
+    }
+    return this;
+  }
+
+  /**
+   * Subdivides all faces in the mesh by a number of iterations. Uses
    * the inscription method.
    *
    * @param itr iterations
    * @return this mesh
    */
+  @Experimental
   @Chainable
   public Mesh3 subdivFacesInscribe ( final int itr ) {
 
@@ -2079,8 +2215,7 @@ public class Mesh3 extends Mesh {
         { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 }, { 4, 1, 0 } },
         { { 4, 2, 3 }, { 5, 3, 3 }, { 1, 0, 3 }, { 0, 1, 3 } },
         { { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 }, { 0, 0, 2 } },
-        { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } }
-    };
+        { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } } };
 
     return target;
   }
@@ -2125,6 +2260,7 @@ public class Mesh3 extends Mesh {
     }
 
     target.calcNormals();
+    target.calcUvs();
     target.name = "Sphere";
     return target;
   }
@@ -2252,8 +2388,7 @@ public class Mesh3 extends Mesh {
         { { 13, 0, 11 }, { 12, 2, 11 }, { 5, 3, 11 },
             { 6, 1, 11 }, { 19, 4, 11 } },
         { { 19, 0, 0 }, { 4, 2, 0 }, { 1, 3, 0 },
-            { 14, 1, 0 }, { 13, 4, 0 } }
-    };
+            { 14, 1, 0 }, { 13, 4, 0 } } };
 
     return target;
   }
@@ -2522,8 +2657,7 @@ public class Mesh3 extends Mesh {
         { { 7, 2, 16 }, { 6, 1, 16 }, { 11, 0, 16 } },
         { { 8, 2, 5 }, { 7, 1, 5 }, { 11, 0, 5 } },
         { { 9, 2, 18 }, { 8, 1, 18 }, { 11, 0, 18 } },
-        { { 10, 2, 19 }, { 9, 1, 19 }, { 11, 0, 19 } }
-    };
+        { { 10, 2, 19 }, { 9, 1, 19 }, { 11, 0, 19 } } };
 
     return target;
   }
@@ -2556,6 +2690,7 @@ public class Mesh3 extends Mesh {
     }
 
     target.calcNormals();
+    target.calcUvs();
     target.name = "Icosphere";
     return target;
   }
@@ -2602,8 +2737,7 @@ public class Mesh3 extends Mesh {
         { { 2, 2, 4 }, { 3, 1, 4 }, { 5, 0, 4 } },
         { { 3, 2, 5 }, { 1, 1, 5 }, { 5, 0, 5 } },
         { { 1, 2, 6 }, { 0, 1, 6 }, { 5, 0, 6 } },
-        { { 0, 2, 7 }, { 2, 1, 7 }, { 5, 0, 7 } }
-    };
+        { { 0, 2, 7 }, { 2, 1, 7 }, { 5, 0, 7 } } };
 
     return target;
   }
@@ -2819,8 +2953,7 @@ public class Mesh3 extends Mesh {
 
     target.faces = new int[][][] {
         { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 } },
-        { { 2, 2, 0 }, { 3, 3, 0 }, { 0, 0, 0 } }
-    };
+        { { 2, 2, 0 }, { 3, 3, 0 }, { 0, 0, 0 } } };
 
     return target;
   }

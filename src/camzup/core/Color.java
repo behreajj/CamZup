@@ -19,10 +19,7 @@ public class Color extends Vec4 {
     /**
      * The default constructor.
      */
-    public AbstrEasing ( ) {
-
-      super();
-    }
+    public AbstrEasing ( ) { super(); }
 
     /**
      * A clamped interpolation between the origin and destination. Defers
@@ -82,10 +79,7 @@ public class Color extends Vec4 {
     /**
      * The default constructor.
      */
-    public ComparatorBri ( ) {
-
-      super();
-    }
+    public ComparatorBri ( ) { super(); }
 
     /**
      * The comparison function.
@@ -127,10 +121,7 @@ public class Color extends Vec4 {
     /**
      * The default constructor.
      */
-    public ComparatorHsb ( ) {
-
-      super();
-    }
+    public ComparatorHsb ( ) { super(); }
 
     /**
      * The comparison function.
@@ -162,10 +153,7 @@ public class Color extends Vec4 {
     /**
      * The default constructor.
      */
-    public ComparatorHue ( ) {
-
-      super();
-    }
+    public ComparatorHue ( ) { super(); }
 
     /**
      * Executes the comparison.
@@ -195,10 +183,7 @@ public class Color extends Vec4 {
     /**
      * The default constructor.
      */
-    public ComparatorSat ( ) {
-
-      super();
-    }
+    public ComparatorSat ( ) { super(); }
 
     /**
      * Executes the comparison.
@@ -228,10 +213,7 @@ public class Color extends Vec4 {
     /**
      * The default constructor.
      */
-    public HueCCW ( ) {
-
-      super();
-    }
+    public HueCCW ( ) { super(); }
 
     /**
      * Applies the function.
@@ -269,10 +251,7 @@ public class Color extends Vec4 {
     /**
      * The default constructor.
      */
-    public HueCW ( ) {
-
-      super();
-    }
+    public HueCW ( ) { super(); }
 
     /**
      * Applies the function.
@@ -341,10 +320,7 @@ public class Color extends Vec4 {
     /**
      * The default constructor.
      */
-    public HueEasing ( ) {
-
-      super();
-    }
+    public HueEasing ( ) { super(); }
 
     /**
      * A helper function to pass on to sub-classes of this class. Mutates
@@ -420,10 +396,7 @@ public class Color extends Vec4 {
     /**
      * The default constructor.
      */
-    public HueFar ( ) {
-
-      super();
-    }
+    public HueFar ( ) { super(); }
 
     /**
      * Applies the function.
@@ -463,10 +436,7 @@ public class Color extends Vec4 {
     /**
      * The default constructor.
      */
-    public HueNear ( ) {
-
-      super();
-    }
+    public HueNear ( ) { super(); }
 
     /**
      * Applies the function.
@@ -506,10 +476,7 @@ public class Color extends Vec4 {
     /**
      * The default constructor.
      */
-    public LerpRgba ( ) {
-
-      super();
-    }
+    public LerpRgba ( ) { super(); }
 
     /**
      * Applies the function.
@@ -713,10 +680,7 @@ public class Color extends Vec4 {
     /**
      * The default constructor.
      */
-    public SmoothStepRgba ( ) {
-
-      super();
-    }
+    public SmoothStepRgba ( ) { super(); }
 
     /**
      * Applies the function.

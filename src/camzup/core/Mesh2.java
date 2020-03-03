@@ -1055,6 +1055,8 @@ public class Mesh2 extends Mesh {
   @Chainable
   public Mesh2 subdivFaceCentroid ( final int faceIdx ) {
 
+    // TODO: Make these functional interfaces?
+
     /* Validate face index, find face. */
     final int facesLen = this.faces.length;
     final int i = Utils.mod(faceIdx, facesLen);
@@ -1116,6 +1118,61 @@ public class Mesh2 extends Mesh {
 
     this.coords = Vec2.concat(this.coords, vsNew);
     this.texCoords = Vec2.concat(this.texCoords, vtsNew);
+    this.faces = Mesh.splice(this.faces, i, 1, fsNew);
+
+    return this;
+  }
+
+  /**
+   * Subdivides a convex face by calculating its centroid, then
+   * connecting its vertices to the centroid. This generates a triangle
+   * for the number of edges in the face.
+   *
+   * @param faceIdx the face index
+   * @return this mesh
+   */
+  @Experimental
+  @Chainable
+  public Mesh2 subdivFaceFan ( final int faceIdx ) {
+
+    final int facesLen = this.faces.length;
+    final int i = Utils.mod(faceIdx, facesLen);
+    final int[][] face = this.faces[i];
+    final int faceLen = face.length;
+
+    final int[][][] fsNew = new int[faceLen][3][2];
+    final Vec2 vCentroid = new Vec2();
+    final Vec2 vtCentroid = new Vec2();
+
+    final int vCentroidIdx = this.coords.length;
+    final int vtCentroidIdx = this.texCoords.length;
+
+    for ( int j = 0; j < faceLen; ++j ) {
+      final int k = (j + 1) % faceLen;
+
+      final int[] vertCurr = face[j];
+      final int[] vertNext = face[k];
+
+      final int vCurrIdx = vertCurr[0];
+      final int vtCurrIdx = vertCurr[1];
+      final Vec2 vCurr = this.coords[vCurrIdx];
+      final Vec2 vtCurr = this.texCoords[vtCurrIdx];
+
+      /* Sum vertex for centroid. */
+      Vec2.add(vCentroid, vCurr, vCentroid);
+      Vec2.add(vtCentroid, vtCurr, vtCentroid);
+
+      fsNew[j] = new int[][] {
+          { vCentroidIdx, vtCentroidIdx },
+          { vCurrIdx, vtCurrIdx },
+          { vertNext[0], vertNext[1] } };
+    }
+
+    Vec2.div(vCentroid, faceLen, vCentroid);
+    Vec2.div(vtCentroid, faceLen, vtCentroid);
+
+    this.coords = Vec2.concat(this.coords, new Vec2[] { vCentroid });
+    this.texCoords = Vec2.concat(this.texCoords, new Vec2[] { vtCentroid });
     this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
     return this;
@@ -1194,6 +1251,8 @@ public class Mesh2 extends Mesh {
   @Chainable
   public Mesh2 subdivFaces ( final int itr ) {
 
+    // TODO: Create subdivFaces() function which calls this with 1
+    // iteration.
     return this.subdivFacesCentroid(itr);
   }
 
@@ -1213,6 +1272,29 @@ public class Mesh2 extends Mesh {
       for ( int j = 0, k = 0; j < len; ++j ) {
         final int vertLen = this.faces[k].length;
         this.subdivFaceCentroid(k);
+        k += vertLen;
+      }
+    }
+    return this;
+  }
+
+  /**
+   * Subdivides all faces in the mesh by a number of iterations. Uses
+   * the triangle-fan method.
+   *
+   * @param itr iterations
+   * @return this mesh
+   */
+  @Experimental
+  @Chainable
+  public Mesh2 subdivFacesFan ( final int itr ) {
+
+    final int vitr = itr < 1 ? 1 : itr;
+    for ( int i = 0; i < vitr; ++i ) {
+      final int len = this.faces.length;
+      for ( int j = 0, k = 0; j < len; ++j ) {
+        final int vertLen = this.faces[k].length;
+        this.subdivFaceFan(k);
         k += vertLen;
       }
     }

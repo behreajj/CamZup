@@ -445,7 +445,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
   @Experimental
   String toBlenderCode ( final int uRes ) {
 
-    final StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder(
+        64 + 256 * this.knots.size());
     sb.append("{\"closed_loop\": ")
         .append(this.closedLoop ? "True" : "False")
         .append(", \"resolution_u\": ")

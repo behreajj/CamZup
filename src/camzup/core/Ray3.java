@@ -68,10 +68,7 @@ public class Ray3 extends Ray {
   /**
    * The default constructor.
    */
-  public Ray3 ( ) {
-
-    super();
-  }
+  public Ray3 ( ) { super(); }
 
   /**
    * Creates a new ray from a source.

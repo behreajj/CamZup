@@ -275,7 +275,7 @@ public class Entity2 extends Entity {
    */
   public String toString ( final int places ) {
 
-    return new StringBuilder()
+    return new StringBuilder(512)
         .append("{ name: \"")
         .append(this.name)
         .append('\"')

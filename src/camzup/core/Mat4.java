@@ -162,10 +162,7 @@ public class Mat4 extends Matrix {
   /**
    * The default constructor. Creates an identity matrix.
    */
-  public Mat4 ( ) {
-
-    super(16);
-  }
+  public Mat4 ( ) { super(16); }
 
   /**
    * Constructs a matrix from float values.

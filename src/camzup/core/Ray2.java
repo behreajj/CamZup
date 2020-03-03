@@ -65,10 +65,7 @@ public class Ray2 extends Ray {
     this.dir = Vec2.forward(new Vec2());
   }
 
-  public Ray2 ( ) {
-
-    super();
-  }
+  public Ray2 ( ) { super(); }
 
   /**
    * Creates a new ray from a source.

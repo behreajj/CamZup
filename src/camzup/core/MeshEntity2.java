@@ -187,6 +187,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
     final boolean autoSmoothNormals = true;
     final boolean addVertGroups = true;
     final boolean useMaterials = materials != null && materials.length > 0;
+    // final boolean solidify = true;
 
     final StringBuilder pyCd = new StringBuilder(2048);
     pyCd.append("from bpy import data as D, context as C\n\n")
@@ -292,8 +293,8 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
         .append("    scene_objs.link(mesh_obj)\n")
         .append("    mesh_obj.parent = parent_obj\n\n");
 
+    final String vertGroupName = "All";
     if ( addVertGroups ) {
-      final String vertGroupName = "All";
       pyCd.append("    vert_group = mesh_obj.vertex_groups.new(name=\"")
           .append(vertGroupName)
           .append("\")\n")
@@ -307,6 +308,17 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
           .append("        weight = i * to_weight\n")
           .append("        vert_group.add(fc_idx, weight, \"ADD\")\n");
     }
+
+    // if ( solidify ) {
+    // final float offset = 0.0f;
+    // final float thickness = 0.01f;
+    // pyCd.append(" solidify = mesh_obj.modifiers.new(")
+    // .append("\"Solidify\", \"SOLIDIFY\")\n")
+    // .append(" solidify.thickness = ")
+    // .append(Utils.toFixed(thickness, 6))
+    // .append("\n")
+    // .append(" solidify.offset = offset\n");
+    // }
 
     return pyCd.toString();
   }

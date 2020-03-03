@@ -132,26 +132,30 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
   /**
    * The spatial coordinate of the knot.
    */
-  public final Vec2 coord = new Vec2();
+  public final Vec2 coord;
 
   /**
    * The handle which warps the curve segment heading away from the knot
    * along the direction of the curve.
    */
-  public final Vec2 foreHandle = new Vec2();
+  public final Vec2 foreHandle;
 
   /**
    * The handle which warps the curve segment heading towards the knot
    * along the direction of the curve.
    */
-  public final Vec2 rearHandle = new Vec2();
+  public final Vec2 rearHandle;
+
+  {
+    this.coord = new Vec2();
+    this.foreHandle = new Vec2();
+    this.rearHandle = new Vec2();
+  }
 
   /**
    * The default constructor.
    */
-  public Knot2 ( ) {
-
-  }
+  public Knot2 ( ) {}
 
   /**
    * Creates a knot from a coordinate.
@@ -541,6 +545,104 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
   }
 
   /**
+   * Rotates this knot's fore handle by an angle in radians.
+   *
+   * @param radians the angle
+   * @return this knot
+   */
+  @Chainable
+  public Knot2 rotateForeHandleZ ( final float radians ) {
+
+    return this.rotateForeHandleZ(
+        Utils.cos(radians),
+        Utils.sin(radians));
+  }
+
+  /**
+   * Rotates this knot's fore handle by the cosine and sine of an angle.
+   *
+   * @param cosa the cosine
+   * @param sina the sine
+   * @return this knot
+   */
+  @Chainable
+  public Knot2 rotateForeHandleZ (
+      final float cosa,
+      final float sina ) {
+
+    Vec2.sub(this.coord, this.foreHandle, this.foreHandle);
+    Vec2.rotateZ(this.foreHandle, cosa, sina, this.foreHandle);
+    Vec2.add(this.coord, this.foreHandle, this.foreHandle);
+
+    return this;
+  }
+
+  /**
+   * Rotates this knot's fore and rear handles by an angle in radians.
+   *
+   * @param radians the angle
+   * @return this knot
+   */
+  @Chainable
+  public Knot2 rotateHandlesZ ( final float radians ) {
+
+    return this.rotateHandlesZ(
+        Utils.cos(radians),
+        Utils.sin(radians));
+  }
+
+  /**
+   * Rotates this knot's fore and rear handles by the cosine and sine of
+   * an angle.
+   *
+   * @param cosa the cosine
+   * @param sina the sine
+   * @return this knot
+   */
+  @Chainable
+  public Knot2 rotateHandlesZ (
+      final float cosa,
+      final float sina ) {
+
+    this.rotateForeHandleZ(cosa, sina);
+    this.rotateRearHandleZ(cosa, sina);
+    return this;
+  }
+
+  /**
+   * Rotates this knot's rear handle by an angle in radians.
+   *
+   * @param radians the angle
+   * @return this knot
+   */
+  @Chainable
+  public Knot2 rotateRearHandleZ ( final float radians ) {
+
+    return this.rotateForeHandleZ(
+        Utils.cos(radians),
+        Utils.sin(radians));
+  }
+
+  /**
+   * Rotates this knot's rear handle by the cosine and sine of an angle.
+   *
+   * @param cosa the cosine
+   * @param sina the sine
+   * @return this knot
+   */
+  @Chainable
+  public Knot2 rotateRearHandleZ (
+      final float cosa,
+      final float sina ) {
+
+    Vec2.sub(this.coord, this.rearHandle, this.rearHandle);
+    Vec2.rotateZ(this.rearHandle, cosa, sina, this.rearHandle);
+    Vec2.add(this.coord, this.rearHandle, this.rearHandle);
+
+    return this;
+  }
+
+  /**
    * Rotates this knot around the z axis by an angle in radians.
    *
    * @param radians the angle
@@ -549,7 +651,9 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
   @Chainable
   public Knot2 rotateZ ( final float radians ) {
 
-    return this.rotateZ(Utils.cos(radians), Utils.sin(radians));
+    return this.rotateZ(
+        Utils.cos(radians),
+        Utils.sin(radians));
   }
 
   /**

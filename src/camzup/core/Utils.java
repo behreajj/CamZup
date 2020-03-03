@@ -87,10 +87,7 @@ public abstract class Utils implements IUtils {
     /**
      * The default constructor.
      */
-    Lerp ( ) {
-
-      super();
-    }
+    Lerp ( ) { super(); }
 
     /**
      * Applies the linear interpolation.
@@ -121,20 +118,14 @@ public abstract class Utils implements IUtils {
      * Constructs the lerp CCW functional object with a default range,
      * TAU.
      */
-    public LerpCCW ( ) {
-
-      super();
-    }
+    public LerpCCW ( ) { super(); }
 
     /**
      * Constructs the lerp CCW functional object with a specified range.
      *
      * @param range the range of the period
      */
-    public LerpCCW ( final float range ) {
-
-      super(range);
-    }
+    public LerpCCW ( final float range ) { super(range); }
 
     /**
      * Applies the lerp CCW function.
@@ -172,20 +163,14 @@ public abstract class Utils implements IUtils {
     /**
      * Constructs the lerp CW functional object with a default range, TAU.
      */
-    public LerpCW ( ) {
-
-      super();
-    }
+    public LerpCW ( ) { super(); }
 
     /**
      * Constructs the lerp CW functional object with a specified range.
      *
      * @param range the range of the period
      */
-    public LerpCW ( final float range ) {
-
-      super(range);
-    }
+    public LerpCW ( final float range ) { super(range); }
 
     /**
      * Applies the lerp CW function.
@@ -224,20 +209,14 @@ public abstract class Utils implements IUtils {
      * Constructs the lerp far functional object with a default range,
      * TAU.
      */
-    public LerpFar ( ) {
-
-      super();
-    }
+    public LerpFar ( ) { super(); }
 
     /**
      * Constructs the lerp far functional object with a specified range.
      *
      * @param range the range of the period
      */
-    public LerpFar ( final float range ) {
-
-      super(range);
-    }
+    public LerpFar ( final float range ) { super(range); }
 
     /**
      * Applies the lerp far function.
@@ -278,20 +257,14 @@ public abstract class Utils implements IUtils {
      * Constructs the lerp near functional object with a default range,
      * TAU.
      */
-    public LerpNear ( ) {
-
-      super();
-    }
+    public LerpNear ( ) { super(); }
 
     /**
      * Constructs the lerp near functional object with a specified range.
      *
      * @param range the range of the period
      */
-    public LerpNear ( final float range ) {
-
-      super(range);
-    }
+    public LerpNear ( final float range ) { super(range); }
 
     /**
      * Applies the lerp near function.
@@ -334,10 +307,16 @@ public abstract class Utils implements IUtils {
     /**
      * The default constructor.
      */
-    LerpUnclamped ( ) {
+    LerpUnclamped ( ) {}
 
-    }
-
+    /**
+     * Applies the unclamped lerp function.
+     *
+     * @param origin the origin
+     * @param dest   the destination
+     * @param step   the step
+     * @return the eased value
+     */
     @Override
     public Float apply (
         final Float origin,
@@ -538,11 +517,19 @@ public abstract class Utils implements IUtils {
    */
   public static class SmoothStep extends LerpUnclamped {
 
-    SmoothStep ( ) {
+    /**
+     * The default constructor.
+     */
+    SmoothStep ( ) { super(); }
 
-      super();
-    }
-
+    /**
+     * Applies the unclamped smooth step function.
+     *
+     * @param origin the origin
+     * @param dest   the destination
+     * @param step   the step
+     * @return the eased value
+     */
     @Override
     public Float apply (
         final Float origin,
@@ -1555,7 +1542,9 @@ public abstract class Utils implements IUtils {
    * @return the quantized value
    * @see Utils#floor(float)
    */
-  public static float quantize ( final float value, final int levels ) {
+  public static float quantize (
+      final float value,
+      final int levels ) {
 
     /*
      * The method used to describe posterize in the Blender manual,

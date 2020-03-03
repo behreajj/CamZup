@@ -140,10 +140,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
   /**
    * The default vector constructor.
    */
-  public Vec4 ( ) {
-
-    super(4);
-  }
+  public Vec4 ( ) { super(4); }
 
   /**
    * Constructs a vector from boolean values.
@@ -588,111 +585,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
   }
 
   /**
-   * Returns a vector with all components set to epsilon, a small
-   * positive non-zero value.
-   *
-   * @param target the output vector
-   * @return epsilon
-   */
-  @Experimental
-  static Vec4 epsilon ( final Vec4 target ) {
-
-    return target.set(
-        Utils.EPSILON,
-        Utils.EPSILON,
-        Utils.EPSILON,
-        Utils.EPSILON);
-  }
-
-  /**
-   * Evaluates whether the left comparisand is greater than the right
-   * comparisand.
-   *
-   * @param a      left comparisand
-   * @param b      right comparisand
-   * @param target the output vector
-   * @return the evaluation
-   */
-  @Experimental
-  static Vec4 gt (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
-
-    return target.set(
-        a.x > b.x,
-        a.y > b.y,
-        a.z > b.z,
-        a.w > b.w);
-  }
-
-  /**
-   * Evaluates whether the left comparisand is greater than or equal to
-   * the right comparisand.
-   *
-   * @param a      left comparisand
-   * @param b      right comparisand
-   * @param target the output vector
-   * @return the evaluation
-   */
-  @Experimental
-  static Vec4 gtEq (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
-
-    return target.set(
-        a.x >= b.x,
-        a.y >= b.y,
-        a.z >= b.z,
-        a.w >= b.w);
-  }
-
-  /**
-   * Evaluates whether the left comparisand is less than the right
-   * comparisand.
-   *
-   * @param a      left comparisand
-   * @param b      right comparisand
-   * @param target the output vector
-   * @return the evaluation
-   */
-  @Experimental
-  static Vec4 lt (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
-
-    return target.set(
-        a.x < b.x,
-        a.y < b.y,
-        a.z < b.z,
-        a.w < b.w);
-  }
-
-  /**
-   * Evaluates whether the left comparisand is less than or equal to the
-   * right comparisand.
-   *
-   * @param a      left comparisand
-   * @param b      right comparisand
-   * @param target the output vector
-   * @return the evaluation
-   */
-  @Experimental
-  static Vec4 ltEq (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
-
-    return target.set(
-        a.x <= b.x,
-        a.y <= b.y,
-        a.z <= b.z,
-        a.w <= b.w);
-  }
-
-  /**
    * Finds the absolute value of each vector component.
    *
    * @param v      the input vector
@@ -1072,6 +964,23 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
   }
 
   /**
+   * Returns a vector with all components set to epsilon, a small
+   * positive non-zero value.
+   *
+   * @param target the output vector
+   * @return epsilon
+   */
+  @Experimental
+  public static Vec4 epsilon ( final Vec4 target ) {
+
+    return target.set(
+        Utils.EPSILON,
+        Utils.EPSILON,
+        Utils.EPSILON,
+        Utils.EPSILON);
+  }
+
+  /**
    * Filters a vector by setting each component to the input component
    * if it is in bounds and 0.0 if it is out of bounds.
    *
@@ -1212,6 +1121,50 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
   }
 
   /**
+   * Evaluates whether the left comparisand is greater than the right
+   * comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  public static Vec4 gt (
+      final Vec4 a,
+      final Vec4 b,
+      final Vec4 target ) {
+
+    return target.set(
+        a.x > b.x,
+        a.y > b.y,
+        a.z > b.z,
+        a.w > b.w);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is greater than or equal to
+   * the right comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  public static Vec4 gtEq (
+      final Vec4 a,
+      final Vec4 b,
+      final Vec4 target ) {
+
+    return target.set(
+        a.x >= b.x,
+        a.y >= b.y,
+        a.z >= b.z,
+        a.w >= b.w);
+  }
+
+  /**
    * Tests to see if the vector is on the unit hyper-sphere, i.e., has a
    * magnitude of approximately 1.0.
    *
@@ -1235,6 +1188,50 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
   public static Vec4 left ( final Vec4 target ) {
 
     return target.set(-1.0f, 0.0f, 0.0f, 0.0f);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is less than the right
+   * comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  public static Vec4 lt (
+      final Vec4 a,
+      final Vec4 b,
+      final Vec4 target ) {
+
+    return target.set(
+        a.x < b.x,
+        a.y < b.y,
+        a.z < b.z,
+        a.w < b.w);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is less than or equal to the
+   * right comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  public static Vec4 ltEq (
+      final Vec4 a,
+      final Vec4 b,
+      final Vec4 target ) {
+
+    return target.set(
+        a.x <= b.x,
+        a.y <= b.y,
+        a.z <= b.z,
+        a.w <= b.w);
   }
 
   /**

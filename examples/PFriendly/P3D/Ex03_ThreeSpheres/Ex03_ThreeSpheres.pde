@@ -7,10 +7,9 @@ Mesh3 icosphere = new Mesh3();
 Mesh3 cubesphere = new Mesh3();
 Mesh3 uvsphere = new Mesh3();
 
-MeshEntity3 me = new MeshEntity3()
-  .appendMesh(icosphere)
-  .appendMesh(cubesphere)
-  .appendMesh(uvsphere);
+MeshEntity3 meIco = new MeshEntity3().appendMesh(icosphere);
+MeshEntity3 meCube = new MeshEntity3().appendMesh(cubesphere);
+MeshEntity3 meUv = new MeshEntity3().appendMesh(uvsphere);
 
 MaterialSolid solid = new MaterialSolid()
   .setStroke(true)
@@ -38,23 +37,34 @@ void setup() {
   Mesh3.cubeSphere(3, cubesphere);
   Mesh3.uvSphere(32, 16, uvsphere);
 
-  icosphere.translate(new Vec3(1.125, 0.0, 0.0));
-  cubesphere.translate(new Vec3(-1.125, 0.0, 0.0));
-  me.scaleTo(Utils.min(rndr.width, rndr.height) * 0.75);
+  float uniform = Utils.min(rndr.width, rndr.height) * 0.75;
+  meIco.scaleTo(uniform);
+  meCube.scaleTo(uniform);
+  meUv.scaleTo(uniform);
+
+  meCube.moveBy(new Vec3(uniform, 0.0, 0.0));
+  meUv.moveBy(new Vec3(-uniform, 0.0, 0.0));
 }
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  me.rotateZ(0.01);
+  meIco.rotateZ(0.01);
+  meCube.rotateZ(0.01);
+  meUv.rotateZ(0.01);
+
   rndr.background();
   rndr.perspective();
   rndr.camera();
   rndr.lights();
 
   if (wireframe) {
-    rndr.shape(me, solid);
+    rndr.shape(meIco, solid);
+    rndr.shape(meCube, solid);
+    rndr.shape(meUv, solid);
   } else {
-    rndr.shape(me, textured);
+    rndr.shape(meIco, textured);
+    rndr.shape(meCube, textured);
+    rndr.shape(meUv, textured);
   }
 }
 

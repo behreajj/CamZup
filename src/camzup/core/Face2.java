@@ -80,8 +80,8 @@ public class Face2 implements Comparable < Face2 > {
 
     final int len = this.vertices.length;
     return target.set(
-        this.vertices[Math.floorMod(i, len)],
-        this.vertices[Math.floorMod(i + 1, len)]);
+        this.vertices[Utils.mod(i, len)],
+        this.vertices[Utils.mod(i + 1, len)]);
   }
 
   /**
@@ -153,11 +153,10 @@ public class Face2 implements Comparable < Face2 > {
 
     final float cosa = Utils.cos(radians);
     final float sina = Utils.sin(radians);
-    Vec2 c;
 
     final int len = this.vertices.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.vertices[i].coord;
+      final Vec2 c = this.vertices[i].coord;
       Vec2.rotateZ(c, cosa, sina, c);
     }
 
@@ -180,14 +179,12 @@ public class Face2 implements Comparable < Face2 > {
     final Vec2 centroid = new Vec2();
     Face2.centroid(this, centroid);
 
-    // final float t = radians + Vec2.heading(centroid);
     final float cosa = Utils.cos(radians);
     final float sina = Utils.sin(radians);
 
-    Vec2 c;
     final int len = this.vertices.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.vertices[i].coord;
+      final Vec2 c = this.vertices[i].coord;
       Vec2.sub(c, centroid, c);
       Vec2.rotateZ(c, cosa, sina, c);
       Vec2.add(c, centroid, c);
@@ -233,10 +230,9 @@ public class Face2 implements Comparable < Face2 > {
 
     if ( scale == 0.0f ) { return this; }
 
-    Vec2 c;
     final int len = this.vertices.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.vertices[i].coord;
+      final Vec2 c = this.vertices[i].coord;
       Vec2.mul(c, scale, c);
     }
 
@@ -255,10 +251,9 @@ public class Face2 implements Comparable < Face2 > {
 
     if ( Vec2.none(scale) ) { return this; }
 
-    Vec2 c;
     final int len = this.vertices.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.vertices[i].coord;
+      final Vec2 c = this.vertices[i].coord;
       Vec2.mul(c, scale, c);
     }
 
@@ -280,10 +275,9 @@ public class Face2 implements Comparable < Face2 > {
     final Vec2 centroid = new Vec2();
     Face2.centroid(this, centroid);
 
-    Vec2 c;
     final int len = this.vertices.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.vertices[i].coord;
+      final Vec2 c = this.vertices[i].coord;
       Vec2.sub(c, centroid, c);
       Vec2.mul(c, scale, c);
       Vec2.add(c, centroid, c);
@@ -307,10 +301,9 @@ public class Face2 implements Comparable < Face2 > {
     final Vec2 centroid = new Vec2();
     Face2.centroid(this, centroid);
 
-    Vec2 c;
     final int len = this.vertices.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.vertices[i].coord;
+      final Vec2 c = this.vertices[i].coord;
       Vec2.sub(c, centroid, c);
       Vec2.mul(c, scale, c);
       Vec2.add(c, centroid, c);
@@ -387,10 +380,9 @@ public class Face2 implements Comparable < Face2 > {
   @Chainable
   public Face2 translateGlobal ( final Vec2 v ) {
 
-    Vec2 c;
     final int len = this.vertices.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.vertices[i].coord;
+      final Vec2 c = this.vertices[i].coord;
       Vec2.add(c, v, c);
     }
 

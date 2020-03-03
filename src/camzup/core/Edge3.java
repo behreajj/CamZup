@@ -104,11 +104,8 @@ public class Edge3 implements Comparable < Edge3 > {
   public boolean equals ( final Object obj ) {
 
     if ( this == obj ) { return true; }
-
     if ( obj == null ) { return false; }
-
     if ( this.getClass() != obj.getClass() ) { return false; }
-
     return this.equals((Edge3) obj);
   }
 
@@ -121,12 +118,10 @@ public class Edge3 implements Comparable < Edge3 > {
   @Override
   public int hashCode ( ) {
 
-    int hash = IUtils.HASH_BASE;
-    hash = hash * IUtils.HASH_MUL
-        ^ (this.origin == null ? 0 : this.origin.hashCode());
-    hash = hash * IUtils.HASH_MUL
+    return (IUtils.MUL_BASE
+        ^ (this.origin == null ? 0 : this.origin.hashCode()))
+        * IUtils.HASH_MUL
         ^ (this.dest == null ? 0 : this.dest.hashCode());
-    return hash;
   }
 
   /**

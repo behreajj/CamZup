@@ -452,19 +452,28 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    * @return the string
    */
   @Experimental
-  String toBlenderCode ( final int uRes ) {
+  String toBlenderCode (
+      final int uRes,
+      final float tiltStart,
+      final float tiltEnd ) {
 
-    final StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder(
+        64 + 256 * this.knots.size());
     sb.append("{\"closed_loop\": ")
         .append(this.closedLoop ? "True" : "False")
         .append(", \"resolution_u\": ")
         .append(uRes)
         .append(", \"knots\": [");
+
     final Iterator < Knot3 > itr = this.knots.iterator();
     int i = 0;
-    final int last = this.knots.size() - 1;
+    final int len = this.knots.size();
+    final int last = len - 1;
+    final float toPercent = 1.0f / (this.closedLoop ? len : last);
     while ( itr.hasNext() ) {
-      sb.append(itr.next().toBlenderCode());
+      final float ang = Utils.lerpUnclamped(
+          tiltStart, tiltEnd, i * toPercent);
+      sb.append(itr.next().toBlenderCode(1.0f, 1.0f, ang));
       if ( i < last ) { sb.append(',').append(' '); }
       i++;
     }

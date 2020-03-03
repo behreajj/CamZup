@@ -2517,7 +2517,7 @@ public abstract class Simplex {
                 * IUtils.HASH_MUL ^ Float.floatToIntBits(sumz + st))
                 * IUtils.HASH_MUL ^ vwbit;
 
-            /* Create a int hash for the w component. */
+            /* Create a hash for the w component. */
             final int dhsh = ((mulvx * IUtils.HASH_MUL ^ vybit)
                 * IUtils.HASH_MUL ^ vzbit)
                 * IUtils.HASH_MUL ^ Float.floatToIntBits(sumw + st);

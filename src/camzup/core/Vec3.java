@@ -120,10 +120,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     /**
      * The default constructor.
      */
-    public Lerp ( ) {
-
-      super();
-    }
+    public Lerp ( ) { super(); }
 
     /**
      * Eases between two vectors by a step using the formula (1.0 - t) * a
@@ -160,10 +157,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     /**
      * The default constructor.
      */
-    public SmoothStep ( ) {
-
-      super();
-    }
+    public SmoothStep ( ) { super(); }
 
     /**
      * Applies the function.
@@ -212,10 +206,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
      *
      * @param vec the vector to iterate
      */
-    public V3Iterator ( final Vec3 vec ) {
-
-      this.vec = vec;
-    }
+    public V3Iterator ( final Vec3 vec ) { this.vec = vec; }
 
     /**
      * Tests to see if the iterator has another value.
@@ -787,107 +778,8 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
         }
       }
     }
+
     return result;
-  }
-
-  /**
-   * Returns a vector with all components set to epsilon, a small
-   * positive non-zero value.
-   *
-   * @param target the output vector
-   * @return epsilon
-   */
-  @Experimental
-  public static Vec3 epsilon ( final Vec3 target ) {
-
-    return target.set(
-        Utils.EPSILON,
-        Utils.EPSILON,
-        Utils.EPSILON);
-  }
-
-  /**
-   * Evaluates whether the left comparisand is greater than the right
-   * comparisand.
-   *
-   * @param a      left comparisand
-   * @param b      right comparisand
-   * @param target the output vector
-   * @return the evaluation
-   */
-  @Experimental
-  public static Vec3 gt (
-      final Vec3 a,
-      final Vec3 b,
-      final Vec3 target ) {
-
-    return target.set(
-        a.x > b.x,
-        a.y > b.y,
-        a.z > b.z);
-  }
-
-  /**
-   * Evaluates whether the left comparisand is greater than or equal to
-   * the right comparisand.
-   *
-   * @param a      left comparisand
-   * @param b      right comparisand
-   * @param target the output vector
-   * @return the evaluation
-   */
-  @Experimental
-  static Vec3 gtEq (
-      final Vec3 a,
-      final Vec3 b,
-      final Vec3 target ) {
-
-    return target.set(
-        a.x >= b.x,
-        a.y >= b.y,
-        a.z >= b.z);
-  }
-
-  /**
-   * Evaluates whether the left comparisand is less than the right
-   * comparisand.
-   *
-   * @param a      left comparisand
-   * @param b      right comparisand
-   * @param target the output vector
-   * @return the evaluation
-   */
-  @Experimental
-  static Vec3 lt (
-      final Vec3 a,
-      final Vec3 b,
-      final Vec3 target ) {
-
-    return target.set(
-        a.x < b.x,
-        a.y < b.y,
-        a.z < b.z);
-  }
-
-  /**
-   * Evaluates whether the left comparisand is less than or equal to the
-   * right comparisand.
-   *
-   * @param a      left comparisand
-   * @param b      right comparisand
-   * @param target the output vector
-   * @return the evaluation
-   */
-  @Experimental
-  static Vec3 ltEq (
-      final Vec3 a,
-      final Vec3 b,
-      final Vec3 target ) {
-
-    return target.set(
-        a.x <= b.x,
-        a.y <= b.y,
-        a.z <= b.z);
   }
 
   /**
@@ -1186,7 +1078,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    */
   public static float azimuthUnsigned ( final Vec3 v ) {
 
-    return Utils.modRadians(Vec3.azimuthUnsigned(v));
+    return Utils.modRadians(Vec3.azimuthSigned(v));
   }
 
   /**
@@ -1744,6 +1636,22 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
   }
 
   /**
+   * Returns a vector with all components set to epsilon, a small
+   * positive non-zero value.
+   *
+   * @param target the output vector
+   * @return epsilon
+   */
+  @Experimental
+  public static Vec3 epsilon ( final Vec3 target ) {
+
+    return target.set(
+        Utils.EPSILON,
+        Utils.EPSILON,
+        Utils.EPSILON);
+  }
+
+  /**
    * Filters a vector by setting each component to the input component
    * if it is in bounds and 0.0 if it is out of bounds.
    *
@@ -2207,9 +2115,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     final int vlayers = layers < 1 ? 1 : layers;
 
     final boolean oneLayer = vlayers == 1;
-    final float vrMax = Utils.max(Utils.EPSILON, radiusMin, radiusMax);
+    final float vrMax = Utils.max(IUtils.DEFAULT_EPSILON, radiusMin, radiusMax);
     final float vrMin = oneLayer ? vrMax
-        : Utils.max(Utils.EPSILON, Utils.min(radiusMin, radiusMax));
+        : Utils.max(IUtils.DEFAULT_EPSILON, Utils.min(radiusMin, radiusMax));
 
     final int latLen = includePoles ? vlats + 2 : vlats;
     final Vec3[][][] result = new Vec3[vlayers][latLen][];
@@ -2254,6 +2162,48 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     }
 
     return result;
+  }
+
+  /**
+   * Evaluates whether the left comparisand is greater than the right
+   * comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  public static Vec3 gt (
+      final Vec3 a,
+      final Vec3 b,
+      final Vec3 target ) {
+
+    return target.set(
+        a.x > b.x,
+        a.y > b.y,
+        a.z > b.z);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is greater than or equal to
+   * the right comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  public static Vec3 gtEq (
+      final Vec3 a,
+      final Vec3 b,
+      final Vec3 target ) {
+
+    return target.set(
+        a.x >= b.x,
+        a.y >= b.y,
+        a.z >= b.z);
   }
 
   /**
@@ -2376,6 +2326,48 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
     }
 
     return target.set(v);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is less than the right
+   * comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  public static Vec3 lt (
+      final Vec3 a,
+      final Vec3 b,
+      final Vec3 target ) {
+
+    return target.set(
+        a.x < b.x,
+        a.y < b.y,
+        a.z < b.z);
+  }
+
+  /**
+   * Evaluates whether the left comparisand is less than or equal to the
+   * right comparisand.
+   *
+   * @param a      left comparisand
+   * @param b      right comparisand
+   * @param target the output vector
+   * @return the evaluation
+   */
+  @Experimental
+  public static Vec3 ltEq (
+      final Vec3 a,
+      final Vec3 b,
+      final Vec3 target ) {
+
+    return target.set(
+        a.x <= b.x,
+        a.y <= b.y,
+        a.z <= b.z);
   }
 
   /**
