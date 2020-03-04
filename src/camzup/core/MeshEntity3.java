@@ -114,8 +114,9 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
   @Chainable
   public MeshEntity3 appendMeshes ( final Mesh3 ... meshes ) {
 
-    for ( final Mesh3 m : meshes ) {
-      this.appendMesh(m);
+    final int len = meshes.length;
+    for ( int i = 0; i < len; ++i ) {
+      this.appendMesh(meshes[i]);
     }
     return this;
   }
@@ -128,7 +129,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
    */
   public Mesh3 getMesh ( final int i ) {
 
-    return this.meshes.get(Math.floorMod(i, this.meshes.size()));
+    return this.meshes.get(Utils.mod(i, this.meshes.size()));
   }
 
   /**

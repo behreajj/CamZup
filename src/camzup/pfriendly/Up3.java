@@ -893,19 +893,27 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   }
 
   /**
-   * Draws a curve entity.
+   * Draws a 3D curve entity.
    *
-   * @param entity the curve entity
+   * @param entity    the curve entity
+   * @param materials the array of materials
    */
-  public void shape ( final CurveEntity3 entity ) {
+  public void shape (
+      final CurveEntity3 entity,
+      final MaterialSolid[] materials ) {
 
     final Transform3 tr = entity.transform;
     final List < Curve3 > curves = entity.curves;
-    final List < MaterialSolid > materials = entity.materials;
 
     final Iterator < Curve3 > curveItr = curves.iterator();
-    final boolean useMaterial = !materials.isEmpty();
-    Iterator < Knot3 > knItr = null;
+
+    // TODO: If the above todo is done, eliminate these checks?
+    boolean useMaterial = false;
+    int matLen = 0;
+    if ( materials != null ) {
+      matLen = materials.length;
+      useMaterial = matLen > 0;
+    }
 
     final Vec3 v0 = new Vec3();
     final Vec3 v1 = new Vec3();
@@ -922,11 +930,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
       if ( useMaterial ) {
         this.pushStyle();
-        this.material(materials.get(
-            curve.materialIndex));
+        final int vmatidx = Utils.mod(curve.materialIndex, matLen);
+        this.material(materials[vmatidx]);
       }
 
-      knItr = curve.iterator();
+      final Iterator < Knot3 > knItr = curve.iterator();
       prevKnot = knItr.next();
       coord = prevKnot.coord;
 

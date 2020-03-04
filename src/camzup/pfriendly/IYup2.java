@@ -361,9 +361,7 @@ public interface IYup2 extends IUp {
    * @param cp  the control point
    * @param ap1 the next anchor point
    */
-  void quadraticVertex (
-      final Vec2 cp,
-      final Vec2 ap1 );
+  void quadraticVertex ( final Vec2 cp, final Vec2 ap1 );
 
   /**
    * Displays a ray, i.e., an origin point and a direction. The display
@@ -584,14 +582,69 @@ public interface IYup2 extends IUp {
   void text ( final String str, final float x, final float y );
 
   /**
+   * Generates an SVG string from a 2D curve entity.
+   *
+   * @param ce the curve entity
+   * @return the string
+   */
+  default String toSvgString ( final CurveEntity2 ce ) {
+
+    return IYup2.toSvgString(this,
+        new CurveEntity2[] { ce },
+        new MaterialSolid[] {});
+  }
+
+  /**
+   * Generates an SVG string from a 2D curve entity.
+   *
+   * @param ce   the curve entity
+   * @param mats the materials
+   * @return the string
+   */
+  default String toSvgString (
+      final CurveEntity2 ce,
+      final MaterialSolid[] mats ) {
+
+    return IYup2.toSvgString(this, new CurveEntity2[] { ce }, mats);
+  }
+
+  /**
    * Generates an SVG string from several 2D curve entities.
    *
    * @param ces the curve entities
    * @return the string
    */
-  default String toSvgString ( final CurveEntity2 ... ces ) {
+  default String toSvgString ( final CurveEntity2[] ces ) {
 
-    return IYup2.toSvgString(this, ces);
+    return IYup2.toSvgString(this, ces, new MaterialSolid[] {});
+  }
+
+  /**
+   * Generates an SVG string from several 2D curve entities.
+   *
+   * @param ces the curve entities
+   * @param mat the material
+   * @return the string
+   */
+  default String toSvgString (
+      final CurveEntity2[] ces,
+      final MaterialSolid mat ) {
+
+    return IYup2.toSvgString(this, ces, new MaterialSolid[] { mat });
+  }
+
+  /**
+   * Generates an SVG string from several 2D curve entities.
+   *
+   * @param ces  the curve entities
+   * @param mats the materials
+   * @return the string
+   */
+  default String toSvgString (
+      final CurveEntity2[] ces,
+      final MaterialSolid[] mats ) {
+
+    return IYup2.toSvgString(this, ces, mats);
   }
 
   /**
@@ -602,7 +655,8 @@ public interface IYup2 extends IUp {
    */
   default String toSvgString ( final MeshEntity2 me ) {
 
-    return IYup2.toSvgString(this, new MeshEntity2[] { me },
+    return IYup2.toSvgString(this,
+        new MeshEntity2[] { me },
         new MaterialSolid[] {});
   }
 
@@ -617,7 +671,8 @@ public interface IYup2 extends IUp {
       final MeshEntity2 me,
       final MaterialSolid mat ) {
 
-    return IYup2.toSvgString(this, new MeshEntity2[] { me },
+    return IYup2.toSvgString(this,
+        new MeshEntity2[] { me },
         new MaterialSolid[] { mat });
   }
 
@@ -830,14 +885,15 @@ public interface IYup2 extends IUp {
    *
    * @param renderer the renderer
    * @param ces      the curve entities
+   * @param mats     the materials
    * @return the string
    */
   static String toSvgString (
       final IYup2 renderer,
-      final CurveEntity2 ... ces ) {
+      final CurveEntity2[] ces,
+      final MaterialSolid[] mats ) {
 
-    final StringBuilder result = new StringBuilder();
-
+    final StringBuilder result = new StringBuilder(1024);
     result.append(IYup2.svgHeader(renderer)).append('\n');
     result.append(IYup2.svgBackground(renderer)).append('\n');
     result.append("<g ")
@@ -845,8 +901,9 @@ public interface IYup2 extends IUp {
         .append('>')
         .append('\n');
 
-    for ( final CurveEntity2 ce : ces ) {
-      result.append(ce.toSvgString()).append('\n');
+    final int len = ces.length;
+    for ( int i = 0; i < len; ++i ) {
+      result.append(ces[i].toSvgString(mats)).append('\n');
     }
 
     return result.append("</g>\n</svg>").toString();
@@ -865,7 +922,7 @@ public interface IYup2 extends IUp {
       final MeshEntity2[] mes,
       final MaterialSolid[] mats ) {
 
-    final StringBuilder result = new StringBuilder()
+    final StringBuilder result = new StringBuilder(1024)
         .append(IYup2.svgHeader(renderer)).append('\n')
         .append(IYup2.svgBackground(renderer)).append('\n').append("<g ")
         .append(IYup2.svgCamera(renderer)).append('>').append('\n');

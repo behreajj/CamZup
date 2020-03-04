@@ -22,13 +22,12 @@ MaterialPImage textured;
 boolean wireframe = true;
 
 void settings() {
-  smooth(8);
   size(720, 405, "camzup.pfriendly.Zup3");
+  smooth(8);
 }
 
 void setup() {
   rndr = (Zup3)getGraphics();
-  rndr.textureSampling(TextureSampling.TRILINEAR);
 
   txtr = loadImage("diagnostic.png");
   textured = new MaterialPImage(txtr);

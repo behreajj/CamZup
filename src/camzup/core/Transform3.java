@@ -1377,6 +1377,11 @@ public class Transform3 extends Transform {
     return Vec3.sub(t.scale, t.scalePrev, target);
   }
 
+  /**
+   * Sets the default easing function used by the transform.
+   *
+   * @param easing the easing function.
+   */
   public static void setEasing ( final Easing easing ) {
 
     if ( easing != null ) { Transform3.EASING = easing; }

@@ -1361,7 +1361,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    * @param target the output vector
    * @return epsilon
    */
-  @Experimental
   public static Vec2 epsilon ( final Vec2 target ) {
 
     return target.set(Utils.EPSILON, Utils.EPSILON);
@@ -1852,7 +1851,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    * @param target the output vector
    * @return the evaluation
    */
-  @Experimental
   public static Vec2 gt (
       final Vec2 a,
       final Vec2 b,
@@ -1872,7 +1870,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    * @param target the output vector
    * @return the evaluation
    */
-  @Experimental
   public static Vec2 gtEq (
       final Vec2 a,
       final Vec2 b,
@@ -2009,7 +2006,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    * @param target the output vector
    * @return the evaluation
    */
-  @Experimental
   public static Vec2 lt (
       final Vec2 a,
       final Vec2 b,
@@ -2029,7 +2025,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    * @param target the output vector
    * @return the evaluation
    */
-  @Experimental
   public static Vec2 ltEq (
       final Vec2 a,
       final Vec2 b,
@@ -2788,7 +2783,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final Vec2 normal,
       final Vec2 target ) {
 
-    // TODO: Needs testing.
+    // TEST
 
     final float nMSq = Vec2.magSq(normal);
     if ( Utils.abs(nMSq) < Utils.EPSILON ) { return target.reset(); }
@@ -2826,7 +2821,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final float eta,
       final Vec2 target ) {
 
-    // TODO: Needs testing.
+    // TEST
 
     final float nDotI = Vec2.dot(normal, incident);
     final float k = 1.0f - eta * eta * (1.0f - nDotI * nDotI);

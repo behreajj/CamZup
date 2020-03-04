@@ -24,10 +24,7 @@ public abstract class MaterialUv extends Material {
   /**
    * The default constructor.
    */
-  public MaterialUv ( ) {
-
-    this("MaterialUv");
-  }
+  public MaterialUv ( ) { this("MaterialUv"); }
 
   /**
    * Creates a named texture material.

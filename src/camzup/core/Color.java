@@ -912,10 +912,7 @@ public class Color extends Vec4 {
    *
    * @return the alpha channel
    */
-  public float a ( ) {
-
-    return this.w;
-  }
+  public float a ( ) { return this.w; }
 
   /**
    * Sets the alpha channel.
@@ -946,10 +943,7 @@ public class Color extends Vec4 {
    *
    * @return the blue channel
    */
-  public float b ( ) {
-
-    return this.z;
-  }
+  public float b ( ) { return this.z; }
 
   /**
    * Sets the blue channel.
@@ -1038,10 +1032,7 @@ public class Color extends Vec4 {
    *
    * @return the green channel
    */
-  public float g ( ) {
-
-    return this.y;
-  }
+  public float g ( ) { return this.y; }
 
   /**
    * Sets the green channel.
@@ -1150,10 +1141,7 @@ public class Color extends Vec4 {
    *
    * @return the red channel
    */
-  public float r ( ) {
-
-    return this.x;
-  }
+  public float r ( ) { return this.x; }
 
   /**
    * Sets the red channel.

@@ -56,10 +56,7 @@ public enum TransformOrder {
    *
    * @return the print name
    */
-  public String getPrintName ( ) {
-
-    return this.printName;
-  }
+  public String getPrintName ( ) { return this.printName; }
 
   /**
    * Returns the reverse of a given order. For example, RTS returns STR.

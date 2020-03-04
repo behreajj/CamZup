@@ -139,8 +139,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   @Deprecated
   protected void shapeOld ( final CurveEntity2 entity ) {
 
-    final List < MaterialSolid > materials = entity.materials;
-    final boolean useMaterial = !materials.isEmpty();
+    // final List < MaterialSolid > materials = entity.materials;
+    // final boolean useMaterial = !materials.isEmpty();
     final Iterator < Curve2 > curveItr = entity.curves.iterator();
     Iterator < Knot2 > knItr;
 
@@ -156,11 +156,11 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     while ( curveItr.hasNext() ) {
       final Curve2 curve = curveItr.next();
 
-      if ( useMaterial ) {
-        this.pushStyle();
-        this.material(materials.get(
-            curve.materialIndex));
-      }
+      // if ( useMaterial ) {
+      // this.pushStyle();
+      // this.material(materials.get(
+      // curve.materialIndex));
+      // }
 
       knItr = curve.iterator();
       prevKnot = knItr.next();
@@ -201,7 +201,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
         this.endShape(PConstants.OPEN);
       }
 
-      if ( useMaterial ) { this.popStyle(); }
+      // if ( useMaterial ) { this.popStyle(); }
     }
 
     this.popMatrix();
@@ -1021,9 +1021,12 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   /**
    * Draws a 2D curve entity.
    *
-   * @param entity the curve entity
+   * @param entity    the curve entity
+   * @param materials the materials array
    */
-  public void shape ( final CurveEntity2 entity ) {
+  public void shape (
+      final CurveEntity2 entity,
+      final MaterialSolid[] materials ) {
 
     /*
      * For performance, seems better to use classes not interfaces, i.e.
@@ -1031,13 +1034,20 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
      * easier on implementation.
      */
 
+    // TODO: Support greater variety of display options:
+    // entity with a single material or none
+
     final Transform2 tr = entity.transform;
     final List < Curve2 > curves = entity.curves;
-    final List < MaterialSolid > materials = entity.materials;
-
     final Iterator < Curve2 > curveItr = curves.iterator();
-    final boolean useMaterial = !materials.isEmpty();
-    Iterator < Knot2 > knItr = null;
+
+    // TODO: If the above todo is done, eliminate these checks?
+    boolean useMaterial = false;
+    int matLen = 0;
+    if ( materials != null ) {
+      matLen = materials.length;
+      useMaterial = matLen > 0;
+    }
 
     final Vec2 v0 = new Vec2();
     final Vec2 v1 = new Vec2();
@@ -1054,11 +1064,11 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
 
       if ( useMaterial ) {
         this.pushStyle();
-        this.material(materials.get(
-            curve.materialIndex));
+        final int vmatidx = Utils.mod(curve.materialIndex, matLen);
+        this.material(materials[vmatidx]);
       }
 
-      knItr = curve.iterator();
+      final Iterator < Knot2 > knItr = curve.iterator();
       prevKnot = knItr.next();
       coord = prevKnot.coord;
 
@@ -1111,6 +1121,11 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     }
   }
 
+  /**
+   * Draws a 2D mesh entity.
+   *
+   * @param entity the mesh entity
+   */
   public void shape ( final MeshEntity2 entity ) {
 
     final Transform2 tr = entity.transform;
@@ -1123,6 +1138,12 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     }
   }
 
+  /**
+   * Draws a 2D mesh entity with a textured material.
+   *
+   * @param entity   the mesh entity
+   * @param material the material
+   */
   public void shape (
       final MeshEntity2 entity,
       final MaterialPImage material ) {

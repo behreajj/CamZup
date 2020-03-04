@@ -16,17 +16,22 @@ public abstract class Mesh extends EntityData implements IMesh {
     /**
      * Internal vector to hold quantized left operand.
      */
-    final private Vec2 qa = new Vec2();
+    final private Vec2 qa;
 
     /**
      * Internal vector to hold quantized right operand.
      */
-    final private Vec2 qb = new Vec2();
+    final private Vec2 qb;
 
     /**
      * Quantization level.
      */
     final public int levels;
+
+    {
+      this.qa = new Vec2();
+      this.qb = new Vec2();
+    }
 
     /**
      * The default constructor.
@@ -83,17 +88,22 @@ public abstract class Mesh extends EntityData implements IMesh {
     /**
      * Internal vector to hold quantized left operand.
      */
-    final private Vec3 qa = new Vec3();
+    final private Vec3 qa;
 
     /**
      * Internal vector to hold quantized right operand.
      */
-    final private Vec3 qb = new Vec3();
+    final private Vec3 qb;
 
     /**
      * Quantization level.
      */
     final public int levels;
+
+    {
+      this.qa = new Vec3();
+      this.qb = new Vec3();
+    }
 
     /**
      * The default constructor.
@@ -144,12 +154,17 @@ public abstract class Mesh extends EntityData implements IMesh {
   /**
    * The default sorter for 2 meshes.
    */
-  protected static final Comparator < Vec2 > SORT_2 = new SortQuantized2();
+  protected static final Comparator < Vec2 > SORT_2;
 
   /**
    * The default sorter for 3D meshes.
    */
-  protected static final Comparator < Vec3 > SORT_3 = new SortQuantized3();
+  protected static final Comparator < Vec3 > SORT_3;
+
+  static {
+    SORT_2 = new SortQuantized2();
+    SORT_3 = new SortQuantized3();
+  }
 
   /**
    * The faces array does not include face data itself, but rather
@@ -175,10 +190,7 @@ public abstract class Mesh extends EntityData implements IMesh {
   /**
    * The default constructor.
    */
-  protected Mesh ( ) {
-
-    super();
-  }
+  protected Mesh ( ) { super(); }
 
   /**
    * Construct a mesh with an array of face indices.
@@ -196,10 +208,7 @@ public abstract class Mesh extends EntityData implements IMesh {
    *
    * @param name the name
    */
-  protected Mesh ( final String name ) {
-
-    super(name);
-  }
+  protected Mesh ( final String name ) { super(name); }
 
   /**
    * Construct a mesh with a name and an array of face indices.
@@ -207,7 +216,9 @@ public abstract class Mesh extends EntityData implements IMesh {
    * @param name  the name
    * @param faces the face indices.
    */
-  protected Mesh ( final String name, final int[][][] faces ) {
+  protected Mesh (
+      final String name,
+      final int[][][] faces ) {
 
     super(name);
     this.faces = faces;
@@ -314,15 +325,21 @@ public abstract class Mesh extends EntityData implements IMesh {
     final int i = Utils.mod(faceIdx, facesLen);
     final int[][] face = this.faces[i];
     final int faceLen = face.length;
+
     if ( faceLen < 4 ) { return this; }
+
     final int[] vert0 = face[0];
     final int vertLen = vert0.length;
     final int lastNonAdj = faceLen - 2;
+
     final int[][][] fsNew = new int[lastNonAdj][3][vertLen];
+
     for ( int k = 0; k < lastNonAdj; ++k ) {
+
       final int[] vertn0 = face[k + 1];
       final int[] vertn1 = face[k + 2];
       final int[][] fNew = fsNew[k];
+
       for ( int m = 0; m < vertLen; ++m ) {
         fNew[0][m] = vert0[m];
         fNew[1][m] = vertn0[m];

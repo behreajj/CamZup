@@ -5,7 +5,6 @@ import java.util.HashSet;
 import processing.core.PApplet;
 
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity3;
 import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -376,21 +375,11 @@ public class CamZup {
     // final Random rng = new Random();
     // final Gradient grd = new Gradient();
 
-    // final Mesh2 m2 = new Mesh2();
-    // Mesh2.polygon(8, PolyType.NGON, m2);
-    // m2.subdivFacesFan(1);
-    // System.out.println(m2);
-    // PApplet.printArray(m2.texCoords);
 
-    // final MeshEntity2 me2 = new MeshEntity2();
-    // me2.appendMesh(m2);
-    // System.out.println(me2.toBlenderCode());
-
-    final Mesh3 m3 = new Mesh3();
-    Mesh3.cube(m3);
-    final MeshEntity3 me = new MeshEntity3();
-    me.appendMesh(m3);
-    // System.out.println(me.toBlenderCode());
+    // final Mesh3 m3 = new Mesh3();
+    // final MeshEntity3 me = new MeshEntity3();
+    // me.appendMesh(m3);
+    // System.out.println(me.toBlenderCode())
   }
 
   /**

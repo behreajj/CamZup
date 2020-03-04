@@ -25,10 +25,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     /**
      * The default constructor.
      */
-    public AbstrComparator ( ) {
-
-      super();
-    }
+    public AbstrComparator ( ) { super(); }
 
     /**
      * The compare function which must be implemented by sub- (child)
@@ -69,10 +66,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     /**
      * The default constructor.
      */
-    public AbstrEasing ( ) {
-
-      super();
-    }
+    public AbstrEasing ( ) { super(); }
 
     /**
      * A clamped interpolation between the origin and destination.
@@ -134,12 +128,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     /**
      * The default constructor.
      *
-     * @param quat the quaternion to iterate
+     * @param q the quaternion to iterate
      */
-    public IteratorWFirst ( final Quaternion quat ) {
-
-      super(quat);
-    }
+    public IteratorWFirst ( final Quaternion q ) { super(q); }
 
     /**
      * Gets the next value in the iterator.
@@ -162,12 +153,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     /**
      * The default constructor.
      *
-     * @param quat the quaternion to iterate
+     * @param q the quaternion to iterate
      */
-    public IteratorWLast ( final Quaternion quat ) {
-
-      super(quat);
-    }
+    public IteratorWLast ( final Quaternion q ) { super(q); }
 
     /**
      * Gets the next value in the iterator.
@@ -190,10 +178,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     /**
      * The default constructor.
      */
-    public Lerp ( ) {
-
-      super();
-    }
+    public Lerp ( ) { super(); }
 
     /**
      * Eases between the origin and destination quaternion by a step.
@@ -269,12 +254,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     /**
      * The default constructor.
      *
-     * @param quat the quaternion to iterate
+     * @param q the quaternion to iterate
      */
-    public QIterator ( final Quaternion quat ) {
-
-      this.quat = quat;
-    }
+    public QIterator ( final Quaternion q ) { this.quat = q; }
 
     /**
      * Tests to see if the iterator has another value.
@@ -318,10 +300,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
     /**
      * The default constructor.
      */
-    public Slerp ( ) {
-
-      super();
-    }
+    public Slerp ( ) { super(); }
 
     /**
      * Eases between two quaternions by a step.
@@ -883,10 +862,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    *
    * @return the real component
    */
-  public float w ( ) {
-
-    return this.real;
-  }
+  public float w ( ) { return this.real; }
 
   /**
    * Sets the real component. An alias for those accustomed to calling
@@ -906,10 +882,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    *
    * @return the x value
    */
-  public float x ( ) {
-
-    return this.imag.x;
-  }
+  public float x ( ) { return this.imag.x; }
 
   /**
    * Sets the imaginary coefficient x.
@@ -928,10 +901,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    *
    * @return the y value
    */
-  public float y ( ) {
-
-    return this.imag.y;
-  }
+  public float y ( ) { return this.imag.y; }
 
   /**
    * Sets the imaginary coefficient y.
@@ -950,10 +920,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    *
    * @return the z value
    */
-  public float z ( ) {
-
-    return this.imag.z;
-  }
+  public float z ( ) { return this.imag.z; }
 
   /**
    * Sets the imaginary coefficient z.

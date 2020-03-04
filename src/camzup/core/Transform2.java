@@ -327,6 +327,7 @@ public class Transform2 extends Transform {
      * proportional in Blender when it is extruded.
      */
     final String rotationMode = "\"QUATERNION\"";
+    final double halfRad = this.rotation * 0.5d;
 
     return new StringBuilder(256)
         .append("{\"location\": ")
@@ -334,9 +335,9 @@ public class Transform2 extends Transform {
         .append(", \"rotation_mode\": ")
         .append(rotationMode)
         .append(", \"rotation_quaternion\": (")
-        .append(Math.cos(this.rotation * 0.5d))
+        .append(Math.cos(halfRad))
         .append(", 0.0, 0.0, ")
-        .append(Math.sin(this.rotation * 0.5d))
+        .append(Math.sin(halfRad))
         .append("), \"scale\": ")
         .append(this.scale.toBlenderCode(
             (this.scale.x + this.scale.y) * 0.5f))

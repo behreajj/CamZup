@@ -22,11 +22,7 @@ public abstract class PMatAux {
    * A temporary container to hold inverted quaternions for the purpose
    * of inverse rotation.
    */
-  private static Quaternion inv;
-
-  static {
-    PMatAux.inv = new Quaternion();
-  }
+  private static final Quaternion ROT_INV = new Quaternion();
 
   /**
    * Rotates a matrix and its inverse together by an axis and the cosine
@@ -372,9 +368,9 @@ public abstract class PMatAux {
 
     if ( target == null ) { target = new PMatrix3D(); }
 
-    Quaternion.inverse(q, PMatAux.inv);
-    final float w = PMatAux.inv.real;
-    final Vec3 i = PMatAux.inv.imag;
+    Quaternion.inverse(q, PMatAux.ROT_INV);
+    final float w = PMatAux.ROT_INV.real;
+    final Vec3 i = PMatAux.ROT_INV.imag;
     final float x = i.x;
     final float y = i.y;
     final float z = i.z;

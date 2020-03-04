@@ -726,8 +726,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     this.pushMatrix();
     this.transform(entity.transform);
 
-    final List < MaterialSolid > materials = entity.materials;
-    final boolean useMaterial = !materials.isEmpty();
+    // final List < MaterialSolid > materials = entity.materials;
+    // final boolean useMaterial = !materials.isEmpty();
     final Iterator < Curve2 > curveItr = entity.curves.iterator();
     Iterator < Knot2 > knItr;
 
@@ -740,10 +740,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     while ( curveItr.hasNext() ) {
       final Curve2 curve = curveItr.next();
 
-      if ( useMaterial ) {
-        this.pushStyle();
-        this.material(materials.get(curve.materialIndex));
-      }
+      // if ( useMaterial ) {
+      // this.pushStyle();
+      // this.material(materials.get(curve.materialIndex));
+      // }
 
       knItr = curve.iterator();
       prevKnot = knItr.next();
@@ -781,7 +781,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
       this.drawShapeSolid(this.gp);
 
-      if ( useMaterial ) { this.popStyle(); }
+      // if ( useMaterial ) { this.popStyle(); }
     }
 
     this.popMatrix();
@@ -3185,23 +3185,30 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
   /**
    * Draws a 2D curve entity.
    *
-   * @param entity the curve entity
+   * @param entity    the curve entity
+   * @param materials an array of materials
    */
-  public void shape ( final CurveEntity2 entity ) {
+  public void shape (
+      final CurveEntity2 entity,
+      final MaterialSolid[] materials ) {
 
     /*
-     * TODO: For performance, better to use classes instead of interfaces,
-     * i.e. ArrayList or LinkedList instead of List. However, a generic
-     * list is easier on implementation.
+     * For performance, better to use classes instead of interfaces, i.e.
+     * ArrayList or LinkedList instead of List. However, a generic list is
+     * easier on implementation.
      */
 
     final Transform2 tr = entity.transform;
     final List < Curve2 > curves = entity.curves;
-    final List < MaterialSolid > materials = entity.materials;
-
     final Iterator < Curve2 > curveItr = curves.iterator();
-    final boolean useMaterial = !materials.isEmpty();
-    Iterator < Knot2 > knItr = null;
+
+    // TODO: Eliminate these unnecessary checks?
+    boolean useMaterial = false;
+    int matLen = 0;
+    if ( materials != null ) {
+      matLen = materials.length;
+      useMaterial = matLen > 0;
+    }
 
     final Vec2 v0 = new Vec2();
     final Vec2 v1 = new Vec2();
@@ -3218,11 +3225,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
       if ( useMaterial ) {
         this.pushStyle();
-        this.material(materials.get(
-            curve.materialIndex));
+        final int vmatidx = Utils.mod(curve.materialIndex, matLen);
+        this.material(materials[vmatidx]);
       }
 
-      knItr = curve.iterator();
+      final Iterator < Knot2 > knItr = curve.iterator();
       prevKnot = knItr.next();
       coord = prevKnot.coord;
 
@@ -3272,6 +3279,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     }
   }
 
+  /**
+   * Draws a mesh entity.
+   *
+   * @param entity the mesh entity
+   */
   public void shape ( final MeshEntity2 entity ) {
 
     final Transform2 tr = entity.transform;

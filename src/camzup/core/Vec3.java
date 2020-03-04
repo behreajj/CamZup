@@ -271,10 +271,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
   /**
    * The default vector constructor.
    */
-  public Vec3 ( ) {
-
-    super(3);
-  }
+  public Vec3 ( ) { super(3); }
 
   /**
    * Constructs a vector from boolean values.
@@ -654,9 +651,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
   @Override
   public float[] toArray ( ) {
 
-    return new float[] {
-        this.x, this.y, this.z
-    };
+    return new float[] { this.x, this.y, this.z };
   }
 
   /**

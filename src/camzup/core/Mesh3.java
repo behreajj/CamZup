@@ -6,8 +6,6 @@ import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import camzup.core.Mesh2.PolyType;
-
 /**
  * Organizes data needed to draw a three dimensional shape using
  * vertices and faces. Given that a mesh is primarily a collection of
@@ -27,18 +25,23 @@ public class Mesh3 extends Mesh {
      * Internal vector used to store the average coordinate for the left
      * comparisand.
      */
-    protected final Vec3 aAvg = new Vec3();
+    protected final Vec3 aAvg;
 
     /**
      * Internal vector used to store the average coordinate for the right
      * comparisand.
      */
-    protected final Vec3 bAvg = new Vec3();
+    protected final Vec3 bAvg;
 
     /**
      * The coordinates array.
      */
     final Vec3[] coords;
+
+    {
+      this.aAvg = new Vec3();
+      this.bAvg = new Vec3();
+    }
 
     /**
      * The default constructor.
@@ -121,10 +124,7 @@ public class Mesh3 extends Mesh {
   /**
    * The default constructor.
    */
-  public Mesh3 ( ) {
-
-    super();
-  }
+  public Mesh3 ( ) { super(); }
 
   /**
    * Creates a mesh from arrays of faces, coordinates, texture
@@ -173,10 +173,7 @@ public class Mesh3 extends Mesh {
    *
    * @param name the mesh name
    */
-  public Mesh3 ( final String name ) {
-
-    super(name);
-  }
+  public Mesh3 ( final String name ) { super(name); }
 
   /**
    * Creates a named mesh from arrays of faces, coordinates, texture
@@ -198,6 +195,53 @@ public class Mesh3 extends Mesh {
 
     super(name);
     this.set(faces, coords, texCoords, normals);
+  }
+
+  /**
+   * Attempts to recalculate the texture coordinates of this mesh per
+   * vertex through spherical projection. The coordinate's unsigned
+   * azimuth is assigned to the texture coordinate u; the complement of
+   * its inclination is assigned to the texture coordinate v.<br>
+   * <br>
+   * This is protected because UVs wrapping from 0.0 to 1.0 created
+   * artifacts in meshes that do not have seams.
+   *
+   * @return this mesh
+   */
+  @Chainable
+  @Experimental
+  protected Mesh3 calcUvs ( ) {
+
+    final int coordsLen = this.coords.length;
+    this.texCoords = Vec2.resize(this.texCoords, coordsLen);
+    for ( int i = 0; i < coordsLen; ++i ) {
+      final Vec3 v = this.coords[i];
+      final Vec2 vt = this.texCoords[i];
+
+      final float azim = Utils.atan2(v.y, v.x);
+      final float incl = Utils.asin(v.z
+          * Utils.invSqrt(v.x * v.x + v.y * v.y + v.z * v.z));
+
+      /* Simplification of the map function. */
+      vt.set(
+          Utils.mod1(azim * IUtils.ONE_TAU),
+          (IUtils.HALF_PI - incl) * 0.31830987f);
+    }
+
+    /*
+     * Update indices by assigning same coordinate index to texture
+     * coordinate index.
+     */
+    final int facesLen = this.faces.length;
+    for ( int i = 0; i < facesLen; ++i ) {
+      final int[][] verts = this.faces[i];
+      final int vertsLen = verts.length;
+      for ( int j = 0; j < vertsLen; ++j ) {
+        verts[j][1] = verts[j][0];
+      }
+    }
+
+    return this;
   }
 
   /**
@@ -383,9 +427,9 @@ public class Mesh3 extends Mesh {
   }
 
   /**
-   * Attempts to recalculate the normals of this mesh per vertex. If the
-   * normals array is null, or if its length is not equal to the length
-   * of coordinates, the normals array is reallocated.
+   * Recalculates this mesh's normals per vertex. If the normals array
+   * is null, or if its length is not equal to the length of
+   * coordinates, the normals array is reallocated.
    *
    * @return this mesh
    */
@@ -435,59 +479,12 @@ public class Mesh3 extends Mesh {
   }
 
   /**
-   * Attempts to recalculate the texture coordinates of this mesh per
-   * vertex through spherical projection. The coordinate's unsigned
-   * azimuth is assigned to the texture coordinate u; the complement of
-   * its inclination is assigned to the texture coordinate v.
-   *
-   * @return this mesh
-   */
-  @Chainable
-  @Experimental
-  public Mesh3 calcUvs ( ) {
-
-    final int coordsLen = this.coords.length;
-    this.texCoords = Vec2.resize(this.texCoords, coordsLen);
-    for ( int i = 0; i < coordsLen; ++i ) {
-      final Vec3 v = this.coords[i];
-      final Vec2 vt = this.texCoords[i];
-
-      final float azim = Utils.atan2(v.y, v.x);
-      final float incl = Utils.asin(v.z
-          * Utils.invSqrt(v.x * v.x + v.y * v.y + v.z * v.z));
-
-      /* Simplification of the map function. */
-      vt.set(
-          Utils.mod1(azim * IUtils.ONE_TAU),
-          (IUtils.HALF_PI - incl) * 0.31830987f);
-    }
-
-    /*
-     * Update indices by assigning same coordinate index to texture
-     * coordinate index.
-     */
-    final int facesLen = this.faces.length;
-    for ( int i = 0; i < facesLen; ++i ) {
-      final int[][] verts = this.faces[i];
-      final int vertsLen = verts.length;
-      for ( int j = 0; j < vertsLen; ++j ) {
-        verts[j][1] = verts[j][0];
-      }
-    }
-
-    return this;
-  }
-
-  /**
    * Clones this mesh.
    *
    * @return the cloned mesh
    */
   @Override
-  public Mesh3 clone ( ) {
-
-    return new Mesh3(this);
-  }
+  public Mesh3 clone ( ) { return new Mesh3(this); }
 
   /**
    * Tests this mesh for equivalence with an object.
@@ -1668,6 +1665,14 @@ public class Mesh3 extends Mesh {
   }
 
   /**
+   * Subdivides all faces in the mesh once.
+   *
+   * @return this mesh
+   */
+  @Chainable
+  public Mesh3 subdivFaces ( ) { return this.subdivFaces(1); }
+
+  /**
    * Subdivides all faces in the mesh by a number of iterations.
    *
    * @param itr iterations
@@ -1677,8 +1682,6 @@ public class Mesh3 extends Mesh {
   @Chainable
   public Mesh3 subdivFaces ( final int itr ) {
 
-    // TODO: Create subdivFaces() function which calls this with 1
-    // iteration
     return this.subdivFacesCentroid(itr);
   }
 
@@ -1857,7 +1860,7 @@ public class Mesh3 extends Mesh {
   @Override
   public String toString ( ) {
 
-    return this.toString(4, Integer.MAX_VALUE);
+    return this.toString(4);
   }
 
   /**
@@ -1960,9 +1963,7 @@ public class Mesh3 extends Mesh {
           final int infoLast = infoLen - 1;
           sb.append('[').append(' ');
 
-          /*
-           * 3 indices: coordinate, texture coordinate and normal.
-           */
+          /* 3 indices: coordinate, texture coordinate and normal. */
           for ( int k = 0; k < infoLen; ++k ) {
 
             sb.append(vert[k]);
@@ -2022,17 +2023,24 @@ public class Mesh3 extends Mesh {
     return target;
   }
 
+  /**
+   * Creates a torus. The torus has a seam on the right axis and on its
+   * median.
+   *
+   * @param thickness thickness ratio to radius
+   * @param sectors   sector count
+   * @param panels    side panel count
+   * @param target    the output mesh
+   * @return the torus
+   */
   @Experimental
-  static Mesh3 torus (
+  private static Mesh3 torus (
       final float thickness,
       final int sectors,
       final int panels,
       final Mesh3 target ) {
 
-    // TODO: Creates a seam. Needs to switch to using modulo in
-    // faces, and to use one last longitude.
-
-    // TODO: Redo concept of thickness / tube ratio...
+    target.name = "Torus";
 
     final int vsect = sectors < 3 ? 3 : sectors;
     final int vpanl = panels < 3 ? 3 : panels;
@@ -2041,9 +2049,9 @@ public class Mesh3 extends Mesh {
     final int sectors1 = vsect + 1;
     final int len = panels1 * sectors1;
 
-    final Vec3[] coords = new Vec3[len];
-    final Vec2[] texCoords = new Vec2[len];
-    final Vec3[] normals = new Vec3[len];
+    final Vec3[] vs = target.coords = Vec3.resize(target.coords, len);
+    final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords, len);
+    final Vec3[] vns = target.normals = Vec3.resize(target.normals, len);
 
     final float toU = 1.0f / vsect;
     final float toV = 1.0f / vpanl;
@@ -2070,21 +2078,13 @@ public class Mesh3 extends Mesh {
         final float cosTheta = Utils.scNorm(theta);
         final float sinTheta = Utils.scNorm(theta - 0.25f);
 
-        coords[k] = new Vec3(
-            r * cosTheta,
-            r * sinTheta,
-            ratio * sinPhi);
-
-        texCoords[k] = new Vec2(u, v);
-
-        normals[k] = new Vec3(
-            cosPhi * cosTheta,
-            cosPhi * sinTheta,
-            sinPhi);
+        vs[k].set(r * cosTheta, r * sinTheta, ratio * sinPhi);
+        vts[k].set(u, v);
+        vns[k].set(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
       }
     }
 
-    final int[][][] faces = new int[2 * vsect * vpanl][3][3];
+    final int[][][] fs = new int[2 * vsect * vpanl][3][3];
     final int sliceCount = vsect + 1;
     int e = 0;
     int f = sliceCount;
@@ -2095,10 +2095,10 @@ public class Mesh3 extends Mesh {
         final int d = f + j;
         final int c = d + 1;
 
-        faces[k] = new int[][] {
+        fs[k] = new int[][] {
             { a, a, a }, { b, b, b }, { d, d, d } };
 
-        faces[k + 1] = new int[][] {
+        fs[k + 1] = new int[][] {
             { d, d, d }, { b, b, b }, { c, c, c } };
       }
 
@@ -2106,8 +2106,8 @@ public class Mesh3 extends Mesh {
       f += sliceCount;
     }
 
-    target.name = "Torus";
-    return target.set(faces, coords, texCoords, normals);
+    target.faces = fs;
+    return target;
   }
 
   /**
@@ -2155,18 +2155,6 @@ public class Mesh3 extends Mesh {
     }
 
     return Vec3.sub(ub, lb, target);
-  }
-
-  /**
-   * Creates a regular convex polygon, approximating a circle.
-   *
-   * @param target the output mesh
-   * @return the polygon
-   * @see Mesh2#polygon(int, PolyType, Mesh2)
-   */
-  public static Mesh3 circle ( final Mesh3 target ) {
-
-    return Mesh3.polygon(IMesh.DEFAULT_CIRCLE_SECTORS, target);
   }
 
   /**
@@ -2260,7 +2248,7 @@ public class Mesh3 extends Mesh {
     }
 
     target.calcNormals();
-    target.calcUvs();
+    // target.calcUvs();
     target.name = "Sphere";
     return target;
   }
@@ -2690,7 +2678,7 @@ public class Mesh3 extends Mesh {
     }
 
     target.calcNormals();
-    target.calcUvs();
+    // target.calcUvs();
     target.name = "Icosphere";
     return target;
   }
@@ -2743,176 +2731,6 @@ public class Mesh3 extends Mesh {
   }
 
   /**
-   * Creates a plane subdivided into either triangles or rectangles,
-   * depending on the polygon type. Useful for meshes which later will
-   * be augmented by noise or height maps to simulate terrain.
-   *
-   * @param cols   number of columns
-   * @param rows   number of rows
-   * @param target the output mesh
-   * @return the mesh
-   */
-  public static final Mesh3 plane (
-      final int cols,
-      final int rows,
-      final Mesh3 target ) {
-
-    target.name = "Plane";
-
-    final int rval = rows < 1 ? 1 : rows;
-    final int cval = cols < 1 ? 1 : cols;
-
-    final int rval1 = rval + 1;
-    final int cval1 = cval + 1;
-
-    final float iToStep = 1.0f / rval;
-    final float jToStep = 1.0f / cval;
-
-    final Vec3[] vs = target.coords = Vec3.resize(
-        target.coords, rval1 * cval1);
-    final Vec2[] vts = target.texCoords = Vec2.resize(
-        target.texCoords, vs.length);
-    target.normals = Vec3.resize(target.normals, 1);
-    Vec3.up(target.normals[0]);
-    final int flen = rval * cval;
-
-    /* Calculate x values in separate loop. */
-    final float[] xs = new float[cval1];
-    final float[] us = new float[cval1];
-    for ( int j = 0; j < cval1; ++j ) {
-      final float xPrc = j * jToStep;
-      xs[j] = xPrc - 0.5f;
-      us[j] = xPrc;
-    }
-
-    for ( int k = 0, i = 0; i < rval1; ++i ) {
-      final float yPrc = i * iToStep;
-      final float y = yPrc - 0.5f;
-      final float v = 1.0f - yPrc;
-
-      for ( int j = 0; j < cval1; ++j, ++k ) {
-        vs[k].set(xs[j], y, 0.0f);
-        vts[k].set(us[j], v);
-      }
-    }
-
-    target.faces = new int[flen + flen][3][3];
-
-    /* Normals indices should default to 0. */
-    for ( int k = 0, i = 0; i < rval; ++i ) {
-      final int noff0 = i * cval1;
-      final int noff1 = (i + 1) * cval1;
-
-      for ( int j = 0; j < cval; ++j, k += 2 ) {
-        final int n00 = noff0 + j;
-        final int n10 = n00 + 1;
-        final int n01 = noff1 + j;
-        final int n11 = n01 + 1;
-
-        final int[][] f0 = target.faces[k];
-        f0[0][0] = n00;
-        f0[0][1] = n00;
-        /* f0[0][2] = 0; */
-
-        f0[1][0] = n10;
-        f0[1][1] = n10;
-        /* f0[1][2] = 0; */
-
-        f0[2][0] = n11;
-        f0[2][1] = n11;
-        /* f0[2][2] = 0; */
-
-        final int[][] f1 = target.faces[k + 1];
-        f1[0][0] = n11;
-        f1[0][1] = n11;
-        /* f1[0][2] = 0; */
-
-        f1[1][0] = n01;
-        f1[1][1] = n01;
-        /* f1[1][2] = 0; */
-
-        f1[2][0] = n00;
-        f1[2][1] = n00;
-        /* f1[2][2] = 0; */
-      }
-    }
-
-    return target;
-  }
-
-  /**
-   * Creates a subdivided plane. Useful for meshes which later will be
-   * augmented by noise or height maps to simulate terrain.
-   *
-   * @param div    subdivisions
-   * @param target the output mesh
-   * @return the plane
-   */
-  public static final Mesh3 plane (
-      final int div,
-      final Mesh3 target ) {
-
-    return Mesh3.plane(div, div, target);
-  }
-
-  /**
-   * Generates a regular convex polygon.
-   *
-   * @param sectors the number of sides
-   * @param target  the output mesh
-   * @return the polygon
-   */
-  public static Mesh3 polygon (
-      final int sectors,
-      final Mesh3 target ) {
-
-    target.name = "Polygon";
-
-    final int seg = sectors < 3 ? 3 : sectors;
-    final Vec3[] vs = target.coords = Vec3.resize(
-        target.coords, seg + 1);
-    final Vec2[] vts = target.texCoords = Vec2.resize(
-        target.texCoords, seg + 1);
-    target.normals = Vec3.resize(target.normals, 1);
-    final int[][][] fs = target.faces = new int[seg][3][3];
-
-    Vec3.up(target.normals[0]);
-    vs[0].set(0.0f, 0.0f, 0.0f);
-    vts[0].set(0.5f, 0.5f);
-
-    /* Normals indices should default to 0. */
-    final float toNorm = 1.0f / seg;
-    for ( int i = 0, j = 1; i < seg; ++i, ++j ) {
-      final float theta1 = i * toNorm;
-      final float cosa = Utils.scNorm(theta1);
-      final float sina = Utils.scNorm(theta1 - 0.25f);
-
-      final Vec3 v = vs[j];
-      v.set(0.5f * cosa, 0.5f * sina, 0.0f);
-
-      final Vec2 vt = vts[j];
-      vt.x = v.x + 0.5f;
-      vt.y = 0.5f - v.y;
-
-      final int k = 1 + j % seg;
-      final int[][] f = fs[i];
-      f[0][0] = 0;
-      f[0][1] = 0;
-      /* f[0][2] = 0; */
-
-      f[1][0] = j;
-      f[1][1] = j;
-      /* f[1][2] = 0; */
-
-      f[2][0] = k;
-      f[2][1] = k;
-      /* f[2][2] = 0; */
-    }
-
-    return target;
-  }
-
-  /**
    * Creates a sphere; defaults to a UV sphere.
    *
    * @param target the output mesh
@@ -2924,38 +2742,6 @@ public class Mesh3 extends Mesh {
         IMesh.DEFAULT_CIRCLE_SECTORS,
         IMesh.DEFAULT_CIRCLE_SECTORS >> 1,
         target);
-  }
-
-  /**
-   * Creates a square.
-   *
-   * @param target the output mesh
-   * @return the square
-   */
-  public static final Mesh3 square ( final Mesh3 target ) {
-
-    target.name = "Square";
-
-    target.coords = Vec3.resize(target.coords, 4);
-    target.coords[0].set(-0.5f, -0.5f, 0.0f);
-    target.coords[1].set(0.5f, -0.5f, 0.0f);
-    target.coords[2].set(0.5f, 0.5f, 0.0f);
-    target.coords[3].set(-0.5f, 0.5f, 0.0f);
-
-    target.texCoords = Vec2.resize(target.texCoords, 4);
-    target.texCoords[0].set(0.0f, 1.0f);
-    target.texCoords[1].set(1.0f, 1.0f);
-    target.texCoords[2].set(1.0f, 0.0f);
-    target.texCoords[3].set(0.0f, 0.0f);
-
-    target.normals = Vec3.resize(target.normals, 1);
-    Vec3.up(target.normals[0]);
-
-    target.faces = new int[][][] {
-        { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 } },
-        { { 2, 2, 0 }, { 3, 3, 0 }, { 0, 0, 0 } } };
-
-    return target;
   }
 
   /**
@@ -2979,7 +2765,7 @@ public class Mesh3 extends Mesh {
     target.name = "Tetrahedron";
 
     target.coords = Vec3.resize(target.coords, 4);
-    target.coords[0].set(-0.0f, 0.47140452f, -0.16666667f);
+    target.coords[0].set(0.0f, 0.47140452f, -0.16666667f);
     target.coords[1].set(-0.40824829f, -0.23570226f, -0.16666667f);
     target.coords[2].set(0.40824829f, -0.23570226f, -0.16666667f);
     target.coords[3].set(0.0f, 0.0f, 0.5f);
@@ -3000,35 +2786,6 @@ public class Mesh3 extends Mesh {
         { { 0, 2, 1 }, { 1, 1, 1 }, { 3, 0, 1 } },
         { { 0, 1, 3 }, { 3, 0, 3 }, { 2, 2, 3 } },
         { { 1, 2, 2 }, { 2, 1, 2 }, { 3, 0, 2 } } };
-
-    return target;
-  }
-
-  /**
-   * Creates a triangle.
-   *
-   * @param target the output mesh
-   * @return the triangle
-   */
-  public static final Mesh3 triangle ( final Mesh3 target ) {
-
-    target.name = "Triangle";
-
-    target.coords = Vec3.resize(target.coords, 3);
-    target.coords[0].set(0.0f, 0.5f, 0.0f);
-    target.coords[1].set(-0.4330127f, -0.25f, 0.0f);
-    target.coords[2].set(0.4330127f, -0.25f, 0.0f);
-
-    target.texCoords = Vec2.resize(target.texCoords, 3);
-    target.texCoords[0].set(0.5f, 0.0f);
-    target.texCoords[1].set(0.0669873f, 0.75f);
-    target.texCoords[2].set(0.9330127f, 0.75f);
-
-    target.normals = Vec3.resize(target.normals, 1);
-    Vec3.up(target.normals[0]);
-
-    target.faces = new int[][][] {
-        { { 0, 0, 0 }, { 1, 1, 1 }, { 2, 2, 2 } } };
 
     return target;
   }

@@ -25,18 +25,23 @@ public class Mesh2 extends Mesh {
      * Internal vector used to store the average coordinate for the left
      * comparisand.
      */
-    protected final Vec2 aAvg = new Vec2();
+    protected final Vec2 aAvg;
 
     /**
      * Internal vector used to store the average coordinate for the right
      * comparisand.
      */
-    protected final Vec2 bAvg = new Vec2();
+    protected final Vec2 bAvg;
 
     /**
      * The coordinates array.
      */
     final Vec2[] coords;
+
+    {
+      this.aAvg = new Vec2();
+      this.bAvg = new Vec2();
+    }
 
     /**
      * The default constructor.
@@ -110,9 +115,7 @@ public class Mesh2 extends Mesh {
     /**
      * The default constructor.
      */
-    private PolyType ( ) {
-
-    }
+    private PolyType ( ) {}
   }
 
   /**
@@ -141,10 +144,7 @@ public class Mesh2 extends Mesh {
   /**
    * The default constructor.
    */
-  public Mesh2 ( ) {
-
-    super();
-  }
+  public Mesh2 ( ) { super(); }
 
   /**
    * Creates a mesh from arrays of faces, coordinates and texture
@@ -179,10 +179,7 @@ public class Mesh2 extends Mesh {
    *
    * @param name the mesh name
    */
-  public Mesh2 ( final String name ) {
-
-    super(name);
-  }
+  public Mesh2 ( final String name ) { super(name); }
 
   /**
    * Creates a named mesh from arrays of faces, coordinates and texture
@@ -248,18 +245,18 @@ public class Mesh2 extends Mesh {
 
     /* Validate face index, find face. */
     final int facesLen = this.faces.length;
-    final int i = Math.floorMod(faceIndex, facesLen);
+    final int i = Utils.mod(faceIndex, facesLen);
     final int[][] face = this.faces[i];
     final int faceLen = face.length;
 
     /* Find edge origin vertex. */
-    final int j0 = Math.floorMod(edgeIndex, faceLen);
+    final int j0 = Utils.mod(edgeIndex, faceLen);
     final int[] vert0Idx = face[j0];
     final Vec2 vOrigin = this.coords[vert0Idx[0]];
     final Vec2 vtOrigin = this.texCoords[vert0Idx[1]];
 
     /* Find edge destination vertex. */
-    final int j1 = Math.floorMod(edgeIndex + 1, faceLen);
+    final int j1 = Utils.mod(edgeIndex + 1, faceLen);
     final int[] vert1Idx = face[j1];
     final Vec2 vDest = this.coords[vert1Idx[0]];
     final Vec2 vtDest = this.texCoords[vert1Idx[1]];
@@ -438,10 +435,7 @@ public class Mesh2 extends Mesh {
    * @return the cloned mesh
    */
   @Override
-  public Mesh2 clone ( ) {
-
-    return new Mesh2(this);
-  }
+  public Mesh2 clone ( ) { return new Mesh2(this); }
 
   /**
    * Tests this mesh for equivalence with an object.
@@ -620,7 +614,7 @@ public class Mesh2 extends Mesh {
       final int i,
       final Face2 target ) {
 
-    final int[][] face = this.faces[Math.floorMod(
+    final int[][] face = this.faces[Utils.mod(
         i, this.faces.length)];
     final int len = face.length;
     final Vert2[] vertices = new Vert2[len];
@@ -678,10 +672,9 @@ public class Mesh2 extends Mesh {
       final int j,
       final Vert2 target ) {
 
-    final int[][] f0 = this.faces[Math.floorMod(
+    final int[][] f0 = this.faces[Utils.mod(
         i, this.faces.length)];
-    final int[] f = f0[Math.floorMod(
-        j, f0.length)];
+    final int[] f = f0[Utils.mod(j, f0.length)];
 
     return target.set(
         this.coords[f[0]],
@@ -755,10 +748,9 @@ public class Mesh2 extends Mesh {
     lb.y = -0.5f * (lb.y + ub.y);
     final float scl = Utils.div(1.0f, Utils.max(dim.x, dim.y));
 
-    Vec2 c;
     final int len = this.coords.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.coords[i];
+      final Vec2 c = this.coords[i];
       Vec2.add(c, lb, c);
       Vec2.mul(c, scl, c);
     }
@@ -778,10 +770,10 @@ public class Mesh2 extends Mesh {
       final int i,
       final int j ) {
 
-    final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
+    final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
     final int len = face.length;
-    final int jOrigin = Math.floorMod(j, len);
-    final int jDest = Math.floorMod(j + 1, len);
+    final int jOrigin = Utils.mod(j, len);
+    final int jDest = Utils.mod(j + 1, len);
 
     final int[] temp = face[jOrigin];
     face[jOrigin] = face[jDest];
@@ -799,7 +791,7 @@ public class Mesh2 extends Mesh {
   @Chainable
   public Mesh2 reverseFace ( final int i ) {
 
-    final int[][] face = this.faces[Math.floorMod(i, this.faces.length)];
+    final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
     final int len = face.length;
     final int halfLen = len >> 1;
     for ( int j = 0; j < halfLen; ++j ) {
@@ -1243,6 +1235,14 @@ public class Mesh2 extends Mesh {
   }
 
   /**
+   * Subdivides all faces in the mesh once.
+   *
+   * @return this mesh
+   */
+  @Chainable
+  public Mesh2 subdivFaces ( ) { return this.subdivFaces(1); }
+
+  /**
    * Subdivides all faces in the mesh by a number of iterations.
    *
    * @param itr iterations
@@ -1251,8 +1251,6 @@ public class Mesh2 extends Mesh {
   @Chainable
   public Mesh2 subdivFaces ( final int itr ) {
 
-    // TODO: Create subdivFaces() function which calls this with 1
-    // iteration.
     return this.subdivFacesCentroid(itr);
   }
 
@@ -2369,7 +2367,8 @@ public class Mesh2 extends Mesh {
   }
 
   /**
-   * Creates a triangle
+   * Creates a triangle. A shorthand for calling polygon with three
+   * sides.
    *
    * @param target the output mesh
    * @return the triangle
@@ -2379,14 +2378,14 @@ public class Mesh2 extends Mesh {
     target.name = "Triangle";
 
     target.coords = Vec2.resize(target.coords, 3);
-    target.coords[0].set(0.0f, 0.5f);
-    target.coords[1].set(-0.4330127f, -0.25f);
-    target.coords[2].set(0.4330127f, -0.25f);
+    target.coords[0].set(0.5f, 0.0f);
+    target.coords[1].set(-0.25f, 0.4330127f);
+    target.coords[2].set(-0.25f, -0.4330127f);
 
     target.texCoords = Vec2.resize(target.texCoords, 3);
-    target.texCoords[0].set(0.5f, 0.0f);
-    target.texCoords[1].set(0.0669873f, 0.75f);
-    target.texCoords[2].set(0.9330127f, 0.75f);
+    target.texCoords[0].set(1.0f, 0.5f);
+    target.texCoords[1].set(0.25f, 0.066987306f);
+    target.texCoords[2].set(0.25f, 0.9330127f);
 
     target.faces = new int[][][] { { { 0, 0 }, { 1, 1 }, { 2, 2 } } };
 

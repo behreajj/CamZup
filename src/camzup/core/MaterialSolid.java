@@ -52,17 +52,7 @@ public class MaterialSolid extends Material {
   /**
    * The default constructor.
    */
-  public MaterialSolid ( ) {
-
-    /*
-     * Stroke cap and join are not implemented because it would require
-     * storing PConstants value for each constant, AWT's constant, and
-     * SVG's. And there are renderer issues with AWT and OpenGL, so
-     * consistency is hard to guarantee.
-     */
-
-    super();
-  }
+  public MaterialSolid ( ) { super(); }
 
   /**
    * Creates a material from a fill color.
@@ -70,6 +60,13 @@ public class MaterialSolid extends Material {
    * @param fill the fill color
    */
   public MaterialSolid ( final Color fill ) {
+
+    /*
+     * Stroke cap and join are not implemented because it would require
+     * storing PConstants value for each constant, AWT's constant, and
+     * SVG's. And there are renderer issues with AWT and OpenGL, so
+     * consistency is hard to guarantee.
+     */
 
     this(fill, Color.clearBlack(new Color()), 0.0f);
   }
@@ -120,10 +117,7 @@ public class MaterialSolid extends Material {
    *
    * @param name the name
    */
-  public MaterialSolid ( final String name ) {
-
-    super(name);
-  }
+  public MaterialSolid ( final String name ) { super(name); }
 
   /**
    * Creates a named material from a fill color.

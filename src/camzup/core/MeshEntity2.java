@@ -114,8 +114,9 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
   @Chainable
   public MeshEntity2 appendMeshes ( final Mesh2 ... meshes ) {
 
-    for ( final Mesh2 m : meshes ) {
-      this.appendMesh(m);
+    final int len = meshes.length;
+    for ( int i = 0; i < len; ++i ) {
+      this.appendMesh(meshes[i]);
     }
     return this;
   }
@@ -345,14 +346,15 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
   }
 
   /**
-   * Creates a string representing a group node in the SVG format.
+   * Creates a string representing a group node in the SVG format. This
+   * SVG is designed for Processing compatibility, not for efficiency.
    *
    * @param materials the materials to use
    * @return the string
    */
   public String toSvgString ( final MaterialSolid[] materials ) {
 
-    final StringBuilder result = new StringBuilder()
+    final StringBuilder result = new StringBuilder(1024)
         .append("<g id=\"")
         .append(this.name.toLowerCase())
         .append("\" ")
@@ -360,8 +362,12 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
         .append(">\n");
 
     final float scale = Transform2.minDimension(this.transform);
-    final boolean includesMats = materials != null && materials.length > 0;
-    final int matLen = materials.length;
+    int matLen = 0;
+    boolean includesMats = false;
+    if ( materials != null ) {
+      matLen = materials.length;
+      includesMats = matLen > 0;
+    }
 
     /*
      * If no materials are present, use a default one instead.
@@ -389,8 +395,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
             .append(">\n");
       }
 
-      result.append(mesh.toSvgString())
-          .append('\n');
+      result.append(mesh.toSvgString()).append('\n');
 
       /* Close out material group. */
       if ( includesMats ) { result.append("</g>\n"); }

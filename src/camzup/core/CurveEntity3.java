@@ -15,13 +15,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 > {
    */
   public final List < Curve3 > curves;
 
-  /**
-   * The list of materials held by the entity.
-   */
-  public final List < MaterialSolid > materials;
-
   {
-    this.materials = new ArrayList <>();
     this.curves = new ArrayList <>();
   }
 
@@ -30,7 +24,6 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 > {
    */
   public CurveEntity3 ( ) {
 
-    // TODO: Remove materials.
     super();
   }
 
@@ -83,14 +76,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 > {
   @Chainable
   public CurveEntity3 appendCurve ( final Curve3 curve ) {
 
-    if ( curve != null ) {
-      this.curves.add(curve);
-
-      final int matLen = this.materials.size();
-      if ( curve.materialIndex < 0 && matLen > 0 ) {
-        curve.materialIndex = matLen - 1;
-      }
-    }
+    if ( curve != null ) { this.curves.add(curve); }
     return this;
   }
 
@@ -102,8 +88,9 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 > {
    */
   public CurveEntity3 appendCurves ( final Curve3 ... curves ) {
 
-    for ( final Curve3 curve : curves ) {
-      this.appendCurve(curve);
+    final int len = curves.length;
+    for ( int i = 0; i < len; ++i ) {
+      this.appendCurve(curves[i]);
     }
     return this;
   }

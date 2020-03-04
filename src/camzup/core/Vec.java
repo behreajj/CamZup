@@ -32,8 +32,5 @@ public abstract class Vec implements IVec {
    * @return the length
    */
   @Override
-  public int length ( ) {
-
-    return this.length;
-  }
+  public int length ( ) { return this.length; }
 }

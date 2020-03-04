@@ -13,6 +13,14 @@ Curve3 curve = Curve3.circle(0.0, 0.5, 4, new Curve3());
 CurveEntity3 entity = new CurveEntity3("Example", transform)
   .appendCurve(curve);
 
+MaterialSolid mat = new MaterialSolid()
+  .setFill(false)
+  .setStroke(true)
+  .setStroke(#202020)
+  .setStrokeWeight(1.0);
+
+MaterialSolid[] mats = { mat };
+
 void settings() {
   size(720, 405, "camzup.pfriendly.Zup3");
   smooth(8);
@@ -35,9 +43,7 @@ void draw() {
   graphics3.background();
   graphics3.origin();
   
-  graphics3.noFill();
-  graphics3.strokeWeight(1.0);
-  graphics3.shape(entity);
+  graphics3.shape(entity, mats);
   graphics3.handles(entity, 0.005);
 
   graphics3.strokeWeight(10.0);

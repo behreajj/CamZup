@@ -15,13 +15,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
    */
   public final List < Curve2 > curves;
 
-  /**
-   * The list of materials held by the entity.
-   */
-  public final List < MaterialSolid > materials;
-
   {
-    this.materials = new ArrayList <>();
     this.curves = new ArrayList <>();
   }
 
@@ -30,7 +24,6 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
    */
   public CurveEntity2 ( ) {
 
-    // TODO: Remove materials.
     super();
   }
 
@@ -83,14 +76,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
   @Chainable
   public CurveEntity2 appendCurve ( final Curve2 curve ) {
 
-    if ( curve != null ) {
-      this.curves.add(curve);
-
-      final int matLen = this.materials.size();
-      if ( curve.materialIndex < 0 && matLen > 0 ) {
-        curve.materialIndex = matLen - 1;
-      }
-    }
+    if ( curve != null ) { this.curves.add(curve); }
     return this;
   }
 
@@ -102,8 +88,9 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
    */
   public CurveEntity2 appendCurves ( final Curve2 ... curves ) {
 
-    for ( final Curve2 curve : curves ) {
-      this.appendCurve(curve);
+    final int len = curves.length;
+    for ( int i = 0; i < len; ++i ) {
+      this.appendCurve(curves[i]);
     }
     return this;
   }
@@ -356,7 +343,30 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
    */
   public String toSvgString ( ) {
 
-    final StringBuilder result = new StringBuilder()
+    return this.toSvgString(new MaterialSolid[] {});
+  }
+
+  /**
+   * Creates a string representing a group node in the SVG format.
+   *
+   * @param material the material to use
+   * @return the string
+   */
+  public String toSvgString ( final MaterialSolid material ) {
+
+    return this.toSvgString(new MaterialSolid[] { material });
+  }
+
+  /**
+   * Creates a string representing a group node in the SVG format. This
+   * SVG is designed for Processing compatibility, not for efficiency.
+   *
+   * @param materials the array of materials
+   * @return the string
+   */
+  public String toSvgString ( final MaterialSolid[] materials ) {
+
+    final StringBuilder result = new StringBuilder(1024)
         .append("<g id=\"")
         .append(this.name.toLowerCase())
         .append('\"')
@@ -366,8 +376,12 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
         .append('\n');
 
     final float scale = Transform2.minDimension(this.transform);
-    final boolean includesMats = this.materials.size() > 0;
-    final int matLen = this.materials.size();
+    int matLen = 0;
+    boolean includesMats = false;
+    if ( materials != null ) {
+      matLen = materials.length;
+      includesMats = matLen > 0;
+    }
 
     /*
      * If no materials are present, use a default one instead.
@@ -382,16 +396,14 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
 
       if ( includesMats ) {
         final int vmatidx = Utils.mod(curve.materialIndex, matLen);
-        final MaterialSolid material = this.materials
-            .get(vmatidx);
+        final MaterialSolid material = materials[vmatidx];
         result.append("<g ")
             .append(material.toSvgString(scale))
             .append('>')
             .append('\n');
       }
 
-      result.append(curve.toSvgPath())
-          .append('\n');
+      result.append(curve.toSvgPath()).append('\n');
 
       /* Close out material group. */
       if ( includesMats ) { result.append("</g>\n"); }
