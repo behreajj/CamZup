@@ -378,7 +378,6 @@ public class Transform3 extends Transform {
   @Override
   public Transform3 clone ( ) {
 
-    // TODO: Make copy constructor and copy setter instead?
     return new Transform3(
         this.location,
         this.rotation,
@@ -398,6 +397,26 @@ public class Transform3 extends Transform {
     if ( obj == null ) { return false; }
     if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Transform3) obj);
+  }
+
+  /**
+   * Get the transform's axes.
+   *
+   * @param right   the right axis
+   * @param forward the forward axis
+   * @param up      the up axis
+   * @return this transform
+   */
+  @Chainable
+  public Transform3 getAxes (
+      final Vec3 right,
+      final Vec3 forward,
+      final Vec3 up ) {
+
+    right.set(this.right);
+    forward.set(this.forward);
+    up.set(this.up);
+    return this;
   }
 
   /**
@@ -447,6 +466,30 @@ public class Transform3 extends Transform {
   }
 
   /**
+   * Gets the transform's location x. A convenience to ease interaction
+   * between a transform and a renderer's camera matrix.
+   *
+   * @return the location x
+   */
+  public float getLocX ( ) { return this.location.x; }
+
+  /**
+   * Gets the transform's location y. A convenience to ease interaction
+   * between a transform and a renderer's camera matrix.
+   *
+   * @return the location y
+   */
+  public float getLocY ( ) { return this.location.y; }
+
+  /**
+   * Gets the transform's location z. A convenience to ease interaction
+   * between a transform and a renderer's camera matrix.
+   *
+   * @return the location z
+   */
+  public float getLocZ ( ) { return this.location.z; }
+
+  /**
    * Gets the transform's right axis.
    *
    * @param target the output vector
@@ -466,6 +509,17 @@ public class Transform3 extends Transform {
   public Quaternion getRotation ( final Quaternion target ) {
 
     return target.set(this.rotation);
+  }
+
+  /**
+   * Gets the transform's inverse rotation.
+   *
+   * @param target the output quaternion
+   * @return the inverse rotation
+   */
+  public Quaternion getRotInverse ( final Quaternion target ) {
+
+    return Quaternion.inverse(this.rotation, target);
   }
 
   /**
@@ -871,9 +925,10 @@ public class Transform3 extends Transform {
   @Chainable
   public Transform3 scaleBy ( final float scalar ) {
 
-    if ( scalar == 0.0f ) { return this; }
-    this.scalePrev.set(this.scale);
-    Vec3.mul(this.scalePrev, scalar, this.scale);
+    if ( scalar != 0.0f ) {
+      this.scalePrev.set(this.scale);
+      Vec3.mul(this.scalePrev, scalar, this.scale);
+    }
     return this;
   }
 
@@ -962,7 +1017,8 @@ public class Transform3 extends Transform {
       final float step ) {
 
     if ( Vec3.all(scaleNew) ) {
-      return this.scaleTo(scaleNew, step, Transform3.EASING.scale);
+      return this.scaleTo(scaleNew, step,
+          Transform3.EASING.scale);
     }
     return this;
   }
@@ -1038,7 +1094,7 @@ public class Transform3 extends Transform {
    * @return this transform
    */
   @Chainable
-  public Transform set ( final Transform2 source ) {
+  public Transform3 set ( final Transform2 source ) {
 
     this.location.set(source.location, 0.0f);
     Quaternion.fromAngle(source.rotation, this.rotation);
@@ -1080,6 +1136,110 @@ public class Transform3 extends Transform {
     this.rotateTo(rotNew);
     this.scaleTo(scaleNew);
 
+    return this;
+  }
+
+  /**
+   * Sets the transform by axes: either separate vectors or the columns
+   * of a matrix. This is an internal helper function. The transform's
+   * location and scale remain unchanged.
+   *
+   * @param xRight   m00 : right x
+   * @param yForward m11 : forward y
+   * @param zUp      m22 : up z
+   * @param zForward m21 : forward z
+   * @param yUp      m12 : up y
+   * @param xUp      m02 : up x
+   * @param zRight   m20 : right z
+   * @param yRight   m10 : right y
+   * @param xForward m01 : forward x
+   * @return the transform
+   */
+  public Transform3 setAxes (
+      final float xRight,
+      final float yForward,
+      final float zUp,
+      final float zForward,
+      final float yUp,
+      final float xUp,
+      final float zRight,
+      final float yRight,
+      final float xForward ) {
+
+    this.rotPrev.set(this.rotation);
+    Quaternion.fromAxes(
+        xRight, yForward, zUp,
+        zForward, yUp, xUp,
+        zRight, yRight, xForward,
+        this.rotation);
+    this.updateAxes();
+
+    // target.location.reset();
+    // target.locPrev.reset();
+    //
+    // target.scalePrev.set(target.scale);
+    // Vec3.one(target.scale);
+
+    return this;
+  }
+
+  /**
+   * Sets a transform's rotation to the provided axes. The transform's
+   * location and scale remain unchanged.
+   *
+   * @param right   the right axis
+   * @param forward the forward axis
+   * @param up      the up axis
+   * @return the transform
+   */
+  public Transform3 setAxes (
+      final Vec3 right,
+      final Vec3 forward,
+      final Vec3 up ) {
+
+    return this.setAxes(
+        right.x, forward.y, up.z,
+        forward.z, up.y,
+        up.x, right.z,
+        right.y, forward.x);
+  }
+
+  /**
+   * Sets the transform's location x. A convenience to ease interaction
+   * between a transform and a renderer's camera matrix.
+   *
+   * @param x the x coordinate
+   * @return this transform
+   */
+  public Transform3 setLocX ( final float x ) {
+
+    this.location.x = x;
+    return this;
+  }
+
+  /**
+   * Sets the transform's location y. A convenience to ease interaction
+   * between a transform and a renderer's camera matrix.
+   *
+   * @param y the y coordinate
+   * @return this transform
+   */
+  public Transform3 setLocY ( final float y ) {
+
+    this.location.y = y;
+    return this;
+  }
+
+  /**
+   * Sets the transform's location z. A convenience to ease interaction
+   * between a transform and a renderer's camera matrix.
+   *
+   * @param z the z coordinate
+   * @return this transform
+   */
+  public Transform3 setLocZ ( final float z ) {
+
+    this.location.z = z;
     return this;
   }
 
@@ -1133,36 +1293,6 @@ public class Transform3 extends Transform {
     this.locPrev.set(this.location);
     Vec3.wrap(this.locPrev, lb, ub, this.location);
     return this;
-  }
-
-  /**
-   * Creates a transform from three axes and a translation.
-   *
-   * @param right   the right axis
-   * @param forward the forward axis
-   * @param up      the up axis
-   * @param target  the output transform
-   * @return the transform
-   */
-  public static Transform3 fromAxes (
-      final Vec3 right,
-      final Vec3 forward,
-      final Vec3 up,
-      final Transform3 target ) {
-
-    // TODO: Loose float version of from axes?
-
-    target.rotPrev.set(target.rotation);
-    Quaternion.fromAxes(right, forward, up, target.rotation);
-    target.updateAxes();
-
-    target.location.reset();
-    target.locPrev.reset();
-
-    target.scalePrev.set(target.scale);
-    Vec3.one(target.scale);
-
-    return target;
   }
 
   /**

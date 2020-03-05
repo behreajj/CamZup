@@ -257,7 +257,7 @@ public class Entity2 extends Entity {
   }
 
   /**
-   * Returns a string representation of this entity
+   * Returns a string representation of this entity.
    *
    * @return the string
    */
@@ -268,7 +268,7 @@ public class Entity2 extends Entity {
   }
 
   /**
-   * Returns a string representation of this entity
+   * Returns a string representation of this entity.
    *
    * @param places number of places
    * @return the string

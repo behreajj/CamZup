@@ -22,10 +22,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
   /**
    * The default constructor.
    */
-  public MeshEntity3 ( ) {
-
-    super();
-  }
+  public MeshEntity3 ( ) { super(); }
 
   /**
    * Creates a mesh entity from a list of meshes.
@@ -43,10 +40,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
    *
    * @param name the name
    */
-  public MeshEntity3 ( final String name ) {
-
-    super(name);
-  }
+  public MeshEntity3 ( final String name ) { super(name); }
 
   /**
    * Creates a mesh entity from a name and list of meshes.
@@ -250,17 +244,15 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
         .append("    node_tree = mat_data.node_tree\n")
         .append("    nodes = node_tree.nodes\n")
         .append("    pbr = nodes[\"Principled BSDF\"]\n")
-        .append("    base_clr = pbr.inputs[\"Base Color\"]\n")
-        .append("    base_clr.default_value = fill_clr\n")
-        .append("    metallic = pbr.inputs[\"Metallic\"]\n")
-        .append("    metallic.default_value = metal_val\n")
-        .append("    roughness = pbr.inputs[\"Roughness\"]\n")
-        .append("    roughness.default_value = rough_val\n")
-        .append("    specular = pbr.inputs[\"Specular\"]\n")
+        .append("    pbr_in = pbr.inputs\n")
+        .append("    pbr_in[\"Base Color\"].default_value = fill_clr\n")
+        .append("    pbr_in[\"Metallic\"].default_value = metal_val\n")
+        .append("    pbr_in[\"Roughness\"].default_value = rough_val\n")
+        .append("    specular = pbr_in[\"Specular\"]\n")
         .append("    specular.default_value = material[\"specular\"]\n")
-        .append("    clearcoat = pbr.inputs[\"Clearcoat\"]\n")
+        .append("    clearcoat = pbr_in[\"Clearcoat\"]\n")
         .append("    clearcoat.default_value = material[\"clearcoat\"]\n")
-        .append("    cr = pbr.inputs[\"Clearcoat Roughness\"]\n")
+        .append("    cr = pbr_in[\"Clearcoat Roughness\"]\n")
         .append("    cr.default_value = material[\"clearcoat_roughness\"]\n\n")
 
         .append("meshes = mesh_entity[\"meshes\"]\n")
@@ -290,11 +282,11 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
 
     pyCd.append("    mesh_obj = d_objs.new(name, mesh_data)\n")
         .append("    mesh_obj.rotation_mode = \"QUATERNION\"\n")
-        .append("    scene_objs.link(mesh_obj)\n")
-        .append("    mesh_obj.parent = parent_obj\n\n");
+        .append("    mesh_obj.parent = parent_obj\n")
+        .append("    scene_objs.link(mesh_obj)\n\n");
 
     if ( addVertGroups ) {
-      final String vertGroupName = "All";
+      final String vertGroupName = "Faces";
       pyCd.append("    vert_group = mesh_obj.vertex_groups.new(name=\"")
           .append(vertGroupName)
           .append("\")\n")
@@ -310,5 +302,51 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
     }
 
     return pyCd.toString();
+  }
+
+  /**
+   * Returns a string representation of this mesh entity.
+   *
+   * @return the string
+   */
+  @Override
+  public String toString ( ) {
+
+    return this.toString(4, 8);
+  }
+
+  /**
+   * Returns a string representation of this mesh entity.
+   *
+   * @param places   number of places
+   * @param truncate count before list is truncated
+   * @return the string
+   */
+  public String toString (
+      final int places,
+      final int truncate ) {
+
+    final StringBuilder sb = new StringBuilder(1024)
+        .append("{ name: \"")
+        .append(this.name)
+        .append('\"')
+        .append(", transform: ")
+        .append(this.transform.toString(places))
+        .append(", meshes: [ ");
+
+    int i = 0;
+    final Iterator < Mesh3 > itr = this.meshes.iterator();
+    final int last = this.meshes.size() - 1;
+    while ( itr.hasNext() ) {
+      sb.append(itr.next().toString(places, truncate));
+      if ( i < last ) {
+        sb.append(',').append(' ');
+        // sb.append('\n');
+      }
+      i++;
+    }
+
+    sb.append(" ] }");
+    return sb.toString();
   }
 }

@@ -70,10 +70,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
      *
      * @param z the complex number to iterator
      */
-    public CIterator ( final Complex z ) {
-
-      this.z = z;
-    }
+    public CIterator ( final Complex z ) { this.z = z; }
 
     /**
      * Tests to see if the iterator has another value.
@@ -128,10 +125,7 @@ public class Complex extends Imaginary implements Comparable < Complex > {
   /**
    * The default constructor.
    */
-  public Complex ( ) {
-
-    super(2);
-  }
+  public Complex ( ) { super(2); }
 
   /**
    * Constructs a complex number from the source's components.

@@ -1021,33 +1021,16 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   /**
    * Draws a 2D curve entity.
    *
-   * @param entity    the curve entity
-   * @param materials the materials array
+   * @param entity   the curve entity
+   * @param material the material
    */
   public void shape (
       final CurveEntity2 entity,
-      final MaterialSolid[] materials ) {
-
-    /*
-     * For performance, seems better to use classes not interfaces, i.e.
-     * ArrayList or LinkedList instead of List. However, a generic list is
-     * easier on implementation.
-     */
-
-    // TODO: Support greater variety of display options:
-    // entity with a single material or none
+      final MaterialSolid material ) {
 
     final Transform2 tr = entity.transform;
     final List < Curve2 > curves = entity.curves;
     final Iterator < Curve2 > curveItr = curves.iterator();
-
-    // TODO: If the above todo is done, eliminate these checks?
-    boolean useMaterial = false;
-    int matLen = 0;
-    if ( materials != null ) {
-      matLen = materials.length;
-      useMaterial = matLen > 0;
-    }
 
     final Vec2 v0 = new Vec2();
     final Vec2 v1 = new Vec2();
@@ -1059,15 +1042,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     Vec2 foreHandle = null;
     Vec2 rearHandle = null;
 
+    this.material(material);
     while ( curveItr.hasNext() ) {
       final Curve2 curve = curveItr.next();
-
-      if ( useMaterial ) {
-        this.pushStyle();
-        final int vmatidx = Utils.mod(curve.materialIndex, matLen);
-        this.material(materials[vmatidx]);
-      }
-
       final Iterator < Knot2 > knItr = curve.iterator();
       prevKnot = knItr.next();
       coord = prevKnot.coord;
@@ -1116,8 +1093,96 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       } else {
         this.endShape(PConstants.OPEN);
       }
+    }
+    this.popStyle();
+  }
 
-      if ( useMaterial ) { this.popStyle(); }
+  /**
+   * Draws a 2D curve entity.
+   *
+   * @param entity    the curve entity
+   * @param materials the materials array
+   */
+  public void shape (
+      final CurveEntity2 entity,
+      final MaterialSolid[] materials ) {
+
+    /*
+     * For performance, seems better to use classes not interfaces, i.e.
+     * ArrayList or LinkedList instead of List. However, a generic list is
+     * easier on implementation.
+     */
+
+    final Transform2 tr = entity.transform;
+    final List < Curve2 > curves = entity.curves;
+    final Iterator < Curve2 > curveItr = curves.iterator();
+
+    final Vec2 v0 = new Vec2();
+    final Vec2 v1 = new Vec2();
+    final Vec2 v2 = new Vec2();
+
+    Knot2 currKnot = null;
+    Knot2 prevKnot = null;
+    Vec2 coord = null;
+    Vec2 foreHandle = null;
+    Vec2 rearHandle = null;
+
+    while ( curveItr.hasNext() ) {
+      final Curve2 curve = curveItr.next();
+      final Iterator < Knot2 > knItr = curve.iterator();
+
+      this.pushStyle();
+      this.material(materials[curve.materialIndex]);
+
+      prevKnot = knItr.next();
+      coord = prevKnot.coord;
+
+      Transform2.mulPoint(tr, coord, v2);
+
+      this.beginShape();
+      this.vertexImpl(
+          v2.x, v2.y, 0.0f,
+          this.textureU,
+          this.textureV);
+
+      while ( knItr.hasNext() ) {
+        currKnot = knItr.next();
+        foreHandle = prevKnot.foreHandle;
+        rearHandle = currKnot.rearHandle;
+        coord = currKnot.coord;
+
+        Transform2.mulPoint(tr, foreHandle, v0);
+        Transform2.mulPoint(tr, rearHandle, v1);
+        Transform2.mulPoint(tr, coord, v2);
+
+        this.bezierVertexImpl(
+            v0.x, v0.y, 0.0f,
+            v1.x, v1.y, 0.0f,
+            v2.x, v2.y, 0.0f);
+
+        prevKnot = currKnot;
+      }
+
+      if ( curve.closedLoop ) {
+        currKnot = curve.getFirst();
+        foreHandle = prevKnot.foreHandle;
+        rearHandle = currKnot.rearHandle;
+        coord = currKnot.coord;
+
+        Transform2.mulPoint(tr, foreHandle, v0);
+        Transform2.mulPoint(tr, rearHandle, v1);
+        Transform2.mulPoint(tr, coord, v2);
+
+        this.bezierVertexImpl(
+            v0.x, v0.y, 0.0f,
+            v1.x, v1.y, 0.0f,
+            v2.x, v2.y, 0.0f);
+        this.endShape(PConstants.CLOSE);
+      } else {
+        this.endShape(PConstants.OPEN);
+      }
+
+      this.popStyle();
     }
   }
 
@@ -1208,8 +1273,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     this.pushStyle();
     this.material(material);
     while ( meshItr.hasNext() ) {
-      final Mesh2 mesh = meshItr.next();
-      this.drawMesh2(mesh, tr, v);
+      this.drawMesh2(meshItr.next(), tr, v);
     }
     this.popStyle();
   }

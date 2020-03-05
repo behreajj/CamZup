@@ -1,17 +1,10 @@
 package camzup.core;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * A draft SVG parser class. Currently unfinished.
@@ -236,8 +229,9 @@ abstract class SVGParser {
 
   private static final String dataPattern = "[A|a|C|c|H|h|L|l|M|m|Q|q|S|sT|t|V|v|Z|z|,|\u0020]";
 
-  private static final DocumentBuilderFactory dbf = DocumentBuilderFactory
-      .newDefaultInstance();
+  // private static final DocumentBuilderFactory dbf =
+  // DocumentBuilderFactory
+  // .newDefaultInstance();
 
   static float parseFloat ( final String v, final float def ) {
 
@@ -660,30 +654,30 @@ abstract class SVGParser {
     }
     return list.toArray(new String[list.size()]);
   }
-
-  public static CurveEntity2 parse ( final String fileName ) {
-
-    final CurveEntity2 result = new CurveEntity2();
-    try {
-      final DocumentBuilder db = SVGParser.dbf.newDocumentBuilder();
-      final File file = new File(fileName);
-      final Document doc = db.parse(file);
-      doc.normalizeDocument();
-
-      final List < Curve2 > curves = result.curves;
-
-      final NodeList paths = doc.getElementsByTagName("path");
-      final int nodeLen = paths.getLength();
-      for ( int i = 0; i < nodeLen; ++i ) {
-        final Node path = paths.item(i);
-        final Curve2 curve = SVGParser.parsePath(path);
-        curves.add(curve);
-      }
-    } catch ( final Exception e ) {
-      System.err.print(e);
-      e.printStackTrace();
-    }
-
-    return result;
-  }
+  //
+  // public static CurveEntity2 parse ( final String fileName ) {
+  //
+  // final CurveEntity2 result = new CurveEntity2();
+  // try {
+  // final DocumentBuilder db = SVGParser.dbf.newDocumentBuilder();
+  // final File file = new File(fileName);
+  // final Document doc = db.parse(file);
+  // doc.normalizeDocument();
+  //
+  // final List < Curve2 > curves = result.curves;
+  //
+  // final NodeList paths = doc.getElementsByTagName("path");
+  // final int nodeLen = paths.getLength();
+  // for ( int i = 0; i < nodeLen; ++i ) {
+  // final Node path = paths.item(i);
+  // final Curve2 curve = SVGParser.parsePath(path);
+  // curves.add(curve);
+  // }
+  // } catch ( final Exception e ) {
+  // System.err.print(e);
+  // e.printStackTrace();
+  // }
+  //
+  // return result;
+  // }
 }

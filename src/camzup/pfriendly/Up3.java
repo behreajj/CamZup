@@ -895,6 +895,86 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   /**
    * Draws a 3D curve entity.
    *
+   * @param entity   the curve entity
+   * @param material the material
+   */
+  public void shape (
+      final CurveEntity3 entity,
+      final MaterialSolid material ) {
+
+    final Transform3 tr = entity.transform;
+    final List < Curve3 > curves = entity.curves;
+    final Iterator < Curve3 > curveItr = curves.iterator();
+
+    final Vec3 v0 = new Vec3();
+    final Vec3 v1 = new Vec3();
+    final Vec3 v2 = new Vec3();
+
+    Knot3 currKnot = null;
+    Knot3 prevKnot = null;
+    Vec3 coord = null;
+    Vec3 foreHandle = null;
+    Vec3 rearHandle = null;
+
+    this.pushStyle();
+    this.material(material);
+    while ( curveItr.hasNext() ) {
+      final Curve3 curve = curveItr.next();
+      final Iterator < Knot3 > knItr = curve.iterator();
+      prevKnot = knItr.next();
+      coord = prevKnot.coord;
+
+      Transform3.mulPoint(tr, coord, v2);
+
+      this.beginShape();
+      this.vertexImpl(
+          v2.x, v2.y, v2.z,
+          this.textureU,
+          this.textureV);
+
+      while ( knItr.hasNext() ) {
+        currKnot = knItr.next();
+        foreHandle = prevKnot.foreHandle;
+        rearHandle = currKnot.rearHandle;
+        coord = currKnot.coord;
+
+        Transform3.mulPoint(tr, foreHandle, v0);
+        Transform3.mulPoint(tr, rearHandle, v1);
+        Transform3.mulPoint(tr, coord, v2);
+
+        this.bezierVertexImpl(
+            v0.x, v0.y, v0.z,
+            v1.x, v1.y, v1.z,
+            v2.x, v2.y, v2.z);
+
+        prevKnot = currKnot;
+      }
+
+      if ( curve.closedLoop ) {
+        currKnot = curve.getFirst();
+        foreHandle = prevKnot.foreHandle;
+        rearHandle = currKnot.rearHandle;
+        coord = currKnot.coord;
+
+        Transform3.mulPoint(tr, foreHandle, v0);
+        Transform3.mulPoint(tr, rearHandle, v1);
+        Transform3.mulPoint(tr, coord, v2);
+
+        this.bezierVertexImpl(
+            v0.x, v0.y, v0.z,
+            v1.x, v1.y, v1.z,
+            v2.x, v2.y, v2.z);
+        this.endShape(PConstants.CLOSE);
+      } else {
+        this.endShape(PConstants.OPEN);
+      }
+    }
+    this.popStyle();
+  }
+
+  /**
+   * Draws a 3D curve entity.
+   *
    * @param entity    the curve entity
    * @param materials the array of materials
    */
@@ -904,16 +984,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
     final Transform3 tr = entity.transform;
     final List < Curve3 > curves = entity.curves;
-
     final Iterator < Curve3 > curveItr = curves.iterator();
-
-    // TODO: If the above todo is done, eliminate these checks?
-    boolean useMaterial = false;
-    int matLen = 0;
-    if ( materials != null ) {
-      matLen = materials.length;
-      useMaterial = matLen > 0;
-    }
 
     final Vec3 v0 = new Vec3();
     final Vec3 v1 = new Vec3();
@@ -926,13 +997,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     Vec3 rearHandle = null;
 
     while ( curveItr.hasNext() ) {
-      final Curve3 curve = curveItr.next();
 
-      if ( useMaterial ) {
-        this.pushStyle();
-        final int vmatidx = Utils.mod(curve.materialIndex, matLen);
-        this.material(materials[vmatidx]);
-      }
+      final Curve3 curve = curveItr.next();
+      this.pushStyle();
+      this.material(materials[curve.materialIndex]);
 
       final Iterator < Knot3 > knItr = curve.iterator();
       prevKnot = knItr.next();
@@ -982,11 +1050,15 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       } else {
         this.endShape(PConstants.OPEN);
       }
-
-      if ( useMaterial ) { this.popStyle(); }
+      this.popStyle();
     }
   }
 
+  /**
+   * Draws a 3D mesh entity.
+   *
+   * @param entity the mesh entity
+   */
   public void shape ( final MeshEntity3 entity ) {
 
     final Transform3 tr = entity.transform;
@@ -1001,6 +1073,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     }
   }
 
+  /**
+   * Draws a 3D mesh entity.
+   *
+   * @param entity   the mesh entity
+   * @param material the material
+   */
   public void shape (
       final MeshEntity3 entity,
       final MaterialPImage material ) {
@@ -1016,8 +1094,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     this.pushStyle();
     this.noStroke();
     while ( meshItr.hasNext() ) {
-      final Mesh3 mesh = meshItr.next();
-      this.drawMesh3(mesh, tr, material, v, vt, vn);
+      this.drawMesh3(meshItr.next(), tr, material, v, vt, vn);
     }
     this.popStyle();
   }
@@ -1050,6 +1127,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     this.popStyle();
   }
 
+  /**
+   * Draws a 3D mesh entity.
+   *
+   * @param entity   the mesh entity
+   * @param material the material
+   */
   public void shape (
       final MeshEntity3 entity,
       final MaterialSolid material ) {
@@ -1064,8 +1147,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     this.pushStyle();
     this.material(material);
     while ( meshItr.hasNext() ) {
-      final Mesh3 mesh = meshItr.next();
-      this.drawMesh3(mesh, tr, v, vn);
+      this.drawMesh3(meshItr.next(), tr, v, vn);
     }
     this.popStyle();
   }

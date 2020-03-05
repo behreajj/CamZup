@@ -325,8 +325,8 @@ public class Mesh2 extends Mesh {
   @Experimental
   String toBlenderCode ( ) {
 
-    final StringBuilder result = new StringBuilder();
-    result.append("{\"name\": \"")
+    final StringBuilder pyCd = new StringBuilder(1024);
+    pyCd.append("{\"name\": \"")
         .append(this.name)
         .append("\", \"material_index\": ")
         .append(this.materialIndex)
@@ -335,11 +335,11 @@ public class Mesh2 extends Mesh {
     final int vlen = this.coords.length;
     final int vlast = vlen - 1;
     for ( int i = 0; i < vlen; ++i ) {
-      result.append(this.coords[i].toBlenderCode(0.0f));
-      if ( i < vlast ) { result.append(',').append(' '); }
+      pyCd.append(this.coords[i].toBlenderCode(0.0f));
+      if ( i < vlast ) { pyCd.append(',').append(' '); }
     }
 
-    result.append("], \"faces\": [");
+    pyCd.append("], \"faces\": [");
 
     final int flen = this.faces.length;
     final int flast = flen - 1;
@@ -348,18 +348,18 @@ public class Mesh2 extends Mesh {
       final int vrtIndLen = vrtInd.length;
       final int vrtLast = vrtIndLen - 1;
 
-      result.append('(');
+      pyCd.append('(');
       for ( int k = 0; k < vrtIndLen; ++k ) {
-        result.append(vrtInd[k][0]);
-        if ( k < vrtLast ) { result.append(',').append(' '); }
+        pyCd.append(vrtInd[k][0]);
+        if ( k < vrtLast ) { pyCd.append(',').append(' '); }
       }
-      result.append(')');
+      pyCd.append(')');
 
-      if ( j < flast ) { result.append(',').append(' '); }
+      if ( j < flast ) { pyCd.append(',').append(' '); }
     }
 
-    result.append(']').append('}');
-    return result.toString();
+    pyCd.append(']').append('}');
+    return pyCd.toString();
   }
 
   /**
@@ -374,7 +374,7 @@ public class Mesh2 extends Mesh {
     // independently of the renderer. Make this one
     // toSvgStringInternal with package level access.
 
-    final StringBuilder result = new StringBuilder();
+    final StringBuilder svgp = new StringBuilder(1024);
 
     final int[][][] fs = this.faces;
     final Vec2[] vs = this.coords;
@@ -383,20 +383,20 @@ public class Mesh2 extends Mesh {
       final int[][] f = fs[i];
       final int flen1 = f.length;
 
-      result.append("<path d=\"M ")
+      svgp.append("<path d=\"M ")
           .append(vs[f[0][0]].toSvgString())
           .append(' ');
 
       for ( int j = 1; j < flen1; ++j ) {
-        result.append('L').append(' ')
+        svgp.append('L').append(' ')
             .append(vs[f[j][0]].toSvgString())
             .append(' ');
       }
 
-      result.append("Z\"></path>\n");
+      svgp.append("Z\"></path>\n");
     }
 
-    return result.toString();
+    return svgp.toString();
   }
 
   /**
@@ -561,7 +561,6 @@ public class Mesh2 extends Mesh {
     return target.set(
         this.coords[f1[0]],
         this.texCoords[f1[1]],
-
         this.coords[f2[0]],
         this.texCoords[f2[1]]);
   }
@@ -1450,46 +1449,55 @@ public class Mesh2 extends Mesh {
 
     final StringBuilder sb = new StringBuilder(2048);
 
-    sb.append("{ name: \"")
-        .append(this.name)
-        .append('\"').append(',').append(' ')
-        .append('\n')
+    sb.append("{ name: \"").append(this.name).append('\"')
+        .append(',').append(' ')
+        // .append('\n')
         .append("coords: [ ");
 
     if ( this.coords != null ) {
-      sb.append('\n');
+      // sb.append('\n');
       final int len = Math.min(this.coords.length, truncate);
       final int last = len - 1;
       for ( int i = 0; i < len; ++i ) {
         sb.append(this.coords[i].toString(places));
         if ( i < last ) {
           sb.append(',').append(' ');
-          sb.append('\n');
+          // sb.append('\n');
         }
       }
 
-      if ( this.coords.length > truncate ) { sb.append("\n/* ... */"); }
+      if ( this.coords.length > truncate ) {
+        // sb.append('\n');
+        sb.append(" /* ... */");
+      }
     }
 
-    sb.append(" ],\ntexCoords: [");
+    sb.append(" ], ");
+    sb.append('\n');
+    sb.append("texCoords: [ ");
     if ( this.texCoords != null ) {
-      sb.append('\n');
+      // sb.append('\n');
       final int len = Math.min(this.texCoords.length, truncate);
       final int last = len - 1;
       for ( int i = 0; i < len; ++i ) {
         sb.append(this.texCoords[i].toString(places));
         if ( i < last ) {
           sb.append(',').append(' ');
-          sb.append('\n');
+          // sb.append('\n');
         }
       }
 
-      if ( this.texCoords.length > truncate ) { sb.append("\n/* ... */"); }
+      if ( this.texCoords.length > truncate ) {
+        // sb.append('\n');
+        sb.append(" /* ... */");
+      }
     }
 
-    sb.append(" ],\nfaces: [");
+    sb.append(" ], ");
+    // sb.append('\n');
+    sb.append("faces: [ ");
     if ( this.faces != null ) {
-      sb.append('\n');
+      // sb.append('\n');
       final int facesLen = Math.min(this.faces.length, truncate);
       final int facesLast = facesLen - 1;
 
@@ -1518,11 +1526,14 @@ public class Mesh2 extends Mesh {
         sb.append(' ').append(']');
         if ( i < facesLast ) {
           sb.append(',').append(' ');
-          sb.append('\n');
+          // sb.append('\n');
         }
       }
 
-      if ( this.faces.length > truncate ) { sb.append("\n/* ... */"); }
+      if ( this.faces.length > truncate ) {
+        // sb.append('\n');
+        sb.append(" /* ... */");
+      }
     }
 
     sb.append(" ] }");
@@ -1578,7 +1589,7 @@ public class Mesh2 extends Mesh {
    * circle. The thickness of the arc is described by the annulus.
    *
    * Useful where sectors may be faster than the Bezier curves of
-   * {@link Curve2#arc(float, float, float, camzup.core.Curve.ArcMode, Curve2)}
+   * {@link Curve2#arc(float, float, float, camzup.core.ArcMode, Curve2)}
    * or where there is an issue rendering strokes.
    *
    * @param startAngle the start angle
@@ -2336,7 +2347,8 @@ public class Mesh2 extends Mesh {
   }
 
   /**
-   * Creates a square.
+   * Creates a square. Useful when representing an image plane with a
+   * mesh entity.
    *
    * @param target the output mesh
    * @param poly   the polygon type
@@ -2360,8 +2372,24 @@ public class Mesh2 extends Mesh {
     target.texCoords[2].set(1.0f, 0.0f);
     target.texCoords[3].set(0.0f, 0.0f);
 
-    target.faces = new int[][][] {
-        { { 0, 0 }, { 1, 1 }, { 2, 2 }, { 3, 3 } } };
+    switch ( poly ) {
+
+      case NGON:
+
+        target.faces = new int[][][] {
+            { { 0, 0 }, { 1, 1 }, { 2, 2 }, { 3, 3 } } };
+
+        break;
+
+      case TRI:
+
+      default:
+
+        target.faces = new int[][][] {
+            { { 0, 0 }, { 1, 1 }, { 2, 2 } },
+            { { 0, 0 }, { 2, 2 }, { 3, 3 } } };
+
+    }
 
     return target;
   }

@@ -192,9 +192,6 @@ public class Yup3 extends Up3 {
       final float yUp,
       final float zUp ) {
 
-    // TODO: Is it problematic when the camera's look direction
-    // is co-linear with the world up direction?
-
     this.refUp.set(xUp, yUp, zUp);
     if ( Vec3.magSq(this.refUp) < PConstants.EPSILON ) {
       this.refUp.set(
@@ -214,6 +211,16 @@ public class Yup3 extends Up3 {
       this.lookDir.set(0.0f, 0.0f, -1.0f);
       return;
     }
+
+    // TEST Is it problematic when the camera's look direction
+    // is co-linear with the world up direction?
+    // if ( Vec3.areParallel(lookDir, refUp) ) {
+    // this.lookDir.set(
+    // refUp.x + Utils.EPSILON,
+    // refUp.y - Utils.EPSILON,
+    // refUp.z - Utils.EPSILON);
+    // return;
+    // }
 
     this.cameraX = xEye;
     this.cameraY = yEye;

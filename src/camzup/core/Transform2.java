@@ -380,7 +380,6 @@ public class Transform2 extends Transform {
   @Override
   public Transform2 clone ( ) {
 
-    // TODO: Make copy constructor and copy setter instead?
     return new Transform2(
         this.location,
         this.rotation,
@@ -429,6 +428,22 @@ public class Transform2 extends Transform {
   }
 
   /**
+   * Get the transform's axes.
+   *
+   * @param right   the right axis
+   * @param forward the forward axis
+   * @return this transform
+   */
+  public Transform2 getAxes (
+      final Vec2 right,
+      final Vec2 forward ) {
+
+    right.set(this.right);
+    forward.set(this.forward);
+    return this;
+  }
+
+  /**
    * Gets the transform's forward axis.
    *
    * @param target the output vector
@@ -460,6 +475,22 @@ public class Transform2 extends Transform {
 
     return target.set(this.locPrev);
   }
+
+  /**
+   * Gets the transform's location x. A convenience to ease interaction
+   * between a transform and a renderer's camera matrix.
+   *
+   * @return the location x
+   */
+  public float getLocX ( ) { return this.location.x; }
+
+  /**
+   * Gets the transform's location y. A convenience to ease interaction
+   * between a transform and a renderer's camera matrix.
+   *
+   * @return the location y
+   */
+  public float getLocY ( ) { return this.location.y; }
 
   /**
    * Gets the transform's right axis.
@@ -529,8 +560,7 @@ public class Transform2 extends Transform {
         : this.location.hashCode()))
         * IUtils.HASH_MUL ^ Float.floatToIntBits(this.rotation))
         * IUtils.HASH_MUL
-        ^ (this.scale == null ? 0
-            : this.scale.hashCode());
+        ^ (this.scale == null ? 0 : this.scale.hashCode());
   }
 
   /**
@@ -732,9 +762,10 @@ public class Transform2 extends Transform {
   @Chainable
   public Transform2 scaleBy ( final float scalar ) {
 
-    if ( scalar == 0.0f ) { return this; }
-    this.scalePrev.set(this.scale);
-    Vec2.mul(this.scalePrev, scalar, this.scale);
+    if ( scalar != 0.0f ) {
+      this.scalePrev.set(this.scale);
+      Vec2.mul(this.scalePrev, scalar, this.scale);
+    }
     return this;
   }
 
@@ -804,7 +835,8 @@ public class Transform2 extends Transform {
       final float step ) {
 
     if ( Vec2.all(scaleNew) ) {
-      return this.scaleTo(scaleNew, step, Transform2.EASING.scale);
+      return this.scaleTo(scaleNew, step,
+          Transform2.EASING.scale);
     }
     return this;
   }
@@ -899,6 +931,86 @@ public class Transform2 extends Transform {
   }
 
   /**
+   * Sets the transform by axes: either separate vectors or the columns
+   * of a matrix. This is an internal helper function. The transform's
+   * location and scale remain unchanged.
+   *
+   * @param xRight   m00 : right x
+   * @param yForward m11 : forward y
+   * @param yRight   m10 : right y
+   * @param xForward m01 : forward x
+   * @return the transform
+   * @see Vec2#normalize(Vec2, Vec2)
+   * @see Utils#atan2(float, float)
+   */
+  public Transform2 setAxes (
+      final float xRight,
+      final float yForward,
+      final float yRight,
+      final float xForward ) {
+
+    this.right.set(xRight, yRight);
+    this.forward.set(xForward, yForward);
+
+    Vec2.normalize(this.right, this.right);
+    Vec2.normalize(this.forward, this.forward);
+
+    this.rotPrev = this.rotation;
+    this.rotation = Vec2.headingSigned(this.right);
+
+    // target.locPrev.set(target.location);
+    // target.location.reset();
+    //
+    // target.scalePrev.set(target.scale);
+    // Vec2.one(target.scale);
+
+    return this;
+  }
+
+  /**
+   * Sets a transform's rotation to the given axes. The transform's
+   * location and scale remain unchanged.
+   *
+   * @param right   the right axis
+   * @param forward the forward axis
+   * @return the transform
+   */
+  public Transform2 setAxes (
+      final Vec2 right,
+      final Vec2 forward ) {
+
+    return this.setAxes(
+        right.x, forward.y,
+        right.y, forward.x);
+  }
+
+  /**
+   * Sets the transform's location x. A convenience to ease interaction
+   * between a transform and a renderer's camera matrix.
+   *
+   * @param x the x coordinate
+   * @return this transform
+   */
+  public Transform2 setLocX ( final float x ) {
+
+    this.location.x = x;
+    return this;
+  }
+
+  /**
+   * Sets the transform's location y. A convenience to ease interaction
+   * between a transform and a renderer's camera matrix.
+   *
+   * @param y the y coordinate
+   * @return this transform
+   */
+  public Transform2 setLocY ( final float y ) {
+
+    this.location.y = y;
+    return this;
+  }
+
+  /**
    * Returns a string representation of this transform according to its
    * string format.
    *
@@ -954,36 +1066,6 @@ public class Transform2 extends Transform {
     this.locPrev.set(this.location);
     Vec2.wrap(this.locPrev, lb, ub, this.location);
     return this;
-  }
-
-  /**
-   * Creates a transform from two axes and a translation.
-   *
-   * @param right   the right axis
-   * @param forward the forward axis
-   * @param target  the output transform
-   * @return the transform
-   * @see Vec2#normalize(Vec2, Vec2)
-   * @see Utils#atan2(float, float)
-   */
-  public static Transform2 fromAxes (
-      final Vec2 right,
-      final Vec2 forward,
-      final Transform2 target ) {
-
-    Vec2.normalize(right, target.right);
-    Vec2.normalize(forward, target.forward);
-
-    target.rotPrev = target.rotation;
-    target.rotation = Vec2.headingSigned(target.right);
-
-    target.locPrev.set(target.location);
-    target.location.reset();
-
-    target.scalePrev.set(target.scale);
-    Vec2.one(target.scale);
-
-    return target;
   }
 
   /**

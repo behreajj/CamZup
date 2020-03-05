@@ -289,7 +289,7 @@ public abstract class Mesh extends EntityData implements IMesh {
   @Chainable
   public Mesh setMaterialIndex ( final int i ) {
 
-    this.materialIndex = i;
+    this.materialIndex = i < 0 ? 0 : i;
     return this;
   }
 

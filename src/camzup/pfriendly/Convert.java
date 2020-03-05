@@ -23,71 +23,6 @@ import camzup.core.Vec4;
 public abstract class Convert {
 
   /**
-   * Converts a Java AWT matrix to a PMatrix2D.
-   *
-   * @param tr the affine transform
-   * @return the PMatrix
-   */
-  public static PMatrix2D fromAwtTransform ( final AffineTransform tr ) {
-
-    return Convert.fromAwtTransform(tr, (PMatrix2D) null);
-  }
-
-  /**
-   * Converts a Java AWT matrix to a PMatrix2D.
-   *
-   * @param tr     the affine transform
-   * @param target the output matrix
-   * @return the PMatrix
-   */
-  public static PMatrix2D fromAwtTransform (
-      final AffineTransform tr,
-      PMatrix2D target ) {
-
-    if ( target == null ) { target = new PMatrix2D(); }
-
-    target.set(
-        (float) tr.getScaleX(),
-        (float) tr.getShearX(),
-        (float) tr.getTranslateX(),
-        (float) tr.getShearY(),
-        (float) tr.getScaleY(),
-        (float) tr.getTranslateY());
-
-    return target;
-  }
-
-  /**
-   * Converts a Java AWT matrix to a PMatrix3D.
-   *
-   * @param tr     the affine transform
-   * @param target the output matrix
-   * @return the PMatrix
-   */
-  public static PMatrix3D fromAwtTransform (
-      final AffineTransform tr,
-      PMatrix3D target ) {
-
-    if ( target == null ) { target = new PMatrix3D(); }
-
-    target.set(
-        (float) tr.getScaleX(),
-        (float) tr.getShearX(),
-        0.0f,
-        (float) tr.getTranslateX(),
-
-        (float) tr.getShearY(),
-        (float) tr.getScaleY(),
-        0.0f,
-        (float) tr.getTranslateY(),
-
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f);
-
-    return target;
-  }
-
-  /**
    * Converts a PMatrix2D to a 3 x 3 matrix.
    *
    * @param source the source matrix
@@ -132,6 +67,41 @@ public abstract class Convert {
         source.m10, source.m11, source.m12, source.m13,
         source.m20, source.m21, source.m22, source.m23,
         source.m30, source.m31, source.m32, source.m33);
+  }
+
+  /**
+   * Converts a Java AWT matrix to a PMatrix2D.
+   *
+   * @param tr the affine transform
+   * @return the PMatrix
+   */
+  public static PMatrix2D toPMatrix2D ( final AffineTransform tr ) {
+
+    return Convert.toPMatrix2D(tr, (PMatrix2D) null);
+  }
+
+  /**
+   * Converts a Java AWT matrix to a PMatrix2D.
+   *
+   * @param tr     the affine transform
+   * @param target the output matrix
+   * @return the PMatrix
+   */
+  public static PMatrix2D toPMatrix2D (
+      final AffineTransform tr,
+      PMatrix2D target ) {
+
+    if ( target == null ) { target = new PMatrix2D(); }
+
+    target.set(
+        (float) tr.getScaleX(),
+        (float) tr.getShearX(),
+        (float) tr.getTranslateX(),
+        (float) tr.getShearY(),
+        (float) tr.getScaleY(),
+        (float) tr.getTranslateY());
+
+    return target;
   }
 
   /**
@@ -252,6 +222,36 @@ public abstract class Convert {
 
         return target;
     }
+  }
+
+  /**
+   * Converts a Java AWT matrix to a PMatrix3D.
+   *
+   * @param tr     the affine transform
+   * @param target the output matrix
+   * @return the PMatrix
+   */
+  public static PMatrix3D toPMatrix3D (
+      final AffineTransform tr,
+      PMatrix3D target ) {
+
+    if ( target == null ) { target = new PMatrix3D(); }
+
+    target.set(
+        (float) tr.getScaleX(),
+        (float) tr.getShearX(),
+        0.0f,
+        (float) tr.getTranslateX(),
+
+        (float) tr.getShearY(),
+        (float) tr.getScaleY(),
+        0.0f,
+        (float) tr.getTranslateY(),
+
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f);
+
+    return target;
   }
 
   /**

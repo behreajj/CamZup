@@ -22,10 +22,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
   /**
    * The default constructor.
    */
-  public MeshEntity2 ( ) {
-
-    super();
-  }
+  public MeshEntity2 ( ) { super(); }
 
   /**
    * Creates a mesh entity from a list of meshes.
@@ -43,10 +40,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    *
    * @param name the name
    */
-  public MeshEntity2 ( final String name ) {
-
-    super(name);
-  }
+  public MeshEntity2 ( final String name ) { super(name); }
 
   /**
    * Creates a mesh entity from a name and list of meshes.
@@ -156,7 +150,9 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
   @Experimental
   public String toBlenderCode ( ) {
 
-    return this.toBlenderCode(null, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0001f);
+    return this.toBlenderCode(
+        null, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0001f,
+        0.0f, 0.0f);
   }
 
   /**
@@ -172,6 +168,8 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    * @param specular       specular highlight strength
    * @param clearcoat      clear coat factor
    * @param clearcoatRough clear coat roughness
+   * @param extrude        extrude the shape
+   * @param offset         extrusion offset
    * @return the string
    */
   @Experimental
@@ -182,13 +180,14 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
       final float roughness,
       final float specular,
       final float clearcoat,
-      final float clearcoatRough ) {
+      final float clearcoatRough,
+      final float extrude,
+      final float offset ) {
 
     final int meshLen = this.meshes.size();
     final boolean autoSmoothNormals = true;
     final boolean addVertGroups = true;
     final boolean useMaterials = materials != null && materials.length > 0;
-    // final boolean solidify = true;
 
     final StringBuilder pyCd = new StringBuilder(2048);
     pyCd.append("from bpy import data as D, context as C\n\n")
@@ -251,17 +250,15 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
         .append("    node_tree = mat_data.node_tree\n")
         .append("    nodes = node_tree.nodes\n")
         .append("    pbr = nodes[\"Principled BSDF\"]\n")
-        .append("    base_clr = pbr.inputs[\"Base Color\"]\n")
-        .append("    base_clr.default_value = fill_clr\n")
-        .append("    metallic = pbr.inputs[\"Metallic\"]\n")
-        .append("    metallic.default_value = metal_val\n")
-        .append("    roughness = pbr.inputs[\"Roughness\"]\n")
-        .append("    roughness.default_value = rough_val\n")
-        .append("    specular = pbr.inputs[\"Specular\"]\n")
+        .append("    pbr_in = pbr.inputs\n")
+        .append("    pbr_in[\"Base Color\"].default_value = fill_clr\n")
+        .append("    pbr_in[\"Metallic\"].default_value = metal_val\n")
+        .append("    pbr_in[\"Roughness\"].default_value = rough_val\n")
+        .append("    specular = pbr_in[\"Specular\"]\n")
         .append("    specular.default_value = material[\"specular\"]\n")
-        .append("    clearcoat = pbr.inputs[\"Clearcoat\"]\n")
+        .append("    clearcoat = pbr_in[\"Clearcoat\"]\n")
         .append("    clearcoat.default_value = material[\"clearcoat\"]\n")
-        .append("    cr = pbr.inputs[\"Clearcoat Roughness\"]\n")
+        .append("    cr = pbr_in[\"Clearcoat Roughness\"]\n")
         .append("    cr.default_value = material[\"clearcoat_roughness\"]\n\n")
 
         .append("meshes = mesh_entity[\"meshes\"]\n")
@@ -291,10 +288,10 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
 
     pyCd.append("    mesh_obj = d_objs.new(name, mesh_data)\n")
         .append("    mesh_obj.rotation_mode = \"QUATERNION\"\n")
-        .append("    scene_objs.link(mesh_obj)\n")
-        .append("    mesh_obj.parent = parent_obj\n\n");
+        .append("    mesh_obj.parent = parent_obj\n")
+        .append("    scene_objs.link(mesh_obj)\n\n");
 
-    final String vertGroupName = "All";
+    final String vertGroupName = "Faces";
     if ( addVertGroups ) {
       pyCd.append("    vert_group = mesh_obj.vertex_groups.new(name=\"")
           .append(vertGroupName)
@@ -307,21 +304,67 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
           .append("    for i in fc_itr:\n")
           .append("        fc_idx = fc_idcs[i]\n")
           .append("        weight = i * to_weight\n")
-          .append("        vert_group.add(fc_idx, weight, \"ADD\")\n");
+          .append("        vert_group.add(fc_idx, weight, \"ADD\")\n\n");
     }
 
-    // if ( solidify ) {
-    // final float offset = 0.0f;
-    // final float thickness = 0.01f;
-    // pyCd.append(" solidify = mesh_obj.modifiers.new(")
-    // .append("\"Solidify\", \"SOLIDIFY\")\n")
-    // .append(" solidify.thickness = ")
-    // .append(Utils.toFixed(thickness, 6))
-    // .append("\n")
-    // .append(" solidify.offset = offset\n");
-    // }
+    if ( extrude > 0.0f ) {
+      pyCd.append("    solidify = mesh_obj.modifiers.new(")
+          .append("\"Solidify\", \"SOLIDIFY\")\n")
+          .append("    solidify.thickness = ")
+          .append(Utils.toFixed(extrude, 6))
+          .append("\n")
+          .append("    solidify.offset = ")
+          .append(Utils.toFixed(offset, 6))
+          .append("\n");
+    }
 
     return pyCd.toString();
+  }
+
+  /**
+   * Returns a string representation of this mesh entity.
+   *
+   * @return the string
+   */
+  @Override
+  public String toString ( ) {
+
+    return this.toString(4, 8);
+  }
+
+  /**
+   * Returns a string representation of this mesh entity.
+   *
+   * @param places   number of places
+   * @param truncate count before list is truncated
+   * @return the string
+   */
+  public String toString (
+      final int places,
+      final int truncate ) {
+
+    final StringBuilder sb = new StringBuilder(1024)
+        .append("{ name: \"")
+        .append(this.name)
+        .append('\"')
+        .append(", transform: ")
+        .append(this.transform.toString(places))
+        .append(", meshes: [ ");
+
+    int i = 0;
+    final Iterator < Mesh2 > itr = this.meshes.iterator();
+    final int last = this.meshes.size() - 1;
+    while ( itr.hasNext() ) {
+      sb.append(itr.next().toString(places, truncate));
+      if ( i < last ) {
+        sb.append(',').append(' ');
+        // sb.append('\n');
+      }
+      i++;
+    }
+
+    sb.append(" ] }");
+    return sb.toString();
   }
 
   /**

@@ -380,8 +380,8 @@ public class Mesh3 extends Mesh {
   @Experimental
   String toBlenderCode ( ) {
 
-    final StringBuilder result = new StringBuilder();
-    result.append("{\"name\": \"")
+    final StringBuilder pyCd = new StringBuilder(1024);
+    pyCd.append("{\"name\": \"")
         .append(this.name)
         .append("\", \"material_index\": ")
         .append(this.materialIndex)
@@ -390,11 +390,11 @@ public class Mesh3 extends Mesh {
     final int vlen = this.coords.length;
     final int vlast = vlen - 1;
     for ( int i = 0; i < vlen; ++i ) {
-      result.append(this.coords[i].toBlenderCode());
-      if ( i < vlast ) { result.append(',').append(' '); }
+      pyCd.append(this.coords[i].toBlenderCode());
+      if ( i < vlast ) { pyCd.append(',').append(' '); }
     }
 
-    result.append("], \"faces\": [");
+    pyCd.append("], \"faces\": [");
 
     final int flen = this.faces.length;
     final int flast = flen - 1;
@@ -403,27 +403,27 @@ public class Mesh3 extends Mesh {
       final int vrtIndLen = vrtInd.length;
       final int vrtLast = vrtIndLen - 1;
 
-      result.append('(');
+      pyCd.append('(');
       for ( int k = 0; k < vrtIndLen; ++k ) {
-        result.append(vrtInd[k][0]);
-        if ( k < vrtLast ) { result.append(',').append(' '); }
+        pyCd.append(vrtInd[k][0]);
+        if ( k < vrtLast ) { pyCd.append(',').append(' '); }
       }
-      result.append(')');
+      pyCd.append(')');
 
-      if ( j < flast ) { result.append(',').append(' '); }
+      if ( j < flast ) { pyCd.append(',').append(' '); }
     }
 
-    result.append("], \"normals\": [");
+    pyCd.append("], \"normals\": [");
 
     final int nlen = this.normals.length;
     final int nlast = nlen - 1;
     for ( int h = 0; h < nlen; ++h ) {
-      result.append(this.normals[h].toBlenderCode());
-      if ( h < nlast ) { result.append(',').append(' '); }
+      pyCd.append(this.normals[h].toBlenderCode());
+      if ( h < nlast ) { pyCd.append(',').append(' '); }
     }
 
-    result.append(']').append('}');
-    return result.toString();
+    pyCd.append(']').append('}');
+    return pyCd.toString();
   }
 
   /**
@@ -501,6 +501,14 @@ public class Mesh3 extends Mesh {
     return this.equals((Mesh3) obj);
   }
 
+  /**
+   * Extrudes an edge, creating a new quadrilateral tangent to the edge.
+   *
+   * @param faceIdx the face index.
+   * @param edgeIdx the edge index
+   * @param amt     the extrusion amount
+   * @return this mesh
+   */
   @Experimental
   @Chainable
   public Mesh3 extrudeEdge (
@@ -774,14 +782,13 @@ public class Mesh3 extends Mesh {
     final int[][] f0 = this.faces[Math.floorMod(
         i, this.faces.length)];
     final int f0len = f0.length;
-    final int[] f1 = f0[Math.floorMod(j, f0len)];
-    final int[] f2 = f0[Math.floorMod(j + 1, f0len)];
+    final int[] f1 = f0[Utils.mod(j, f0len)];
+    final int[] f2 = f0[Utils.mod(j + 1, f0len)];
 
     return target.set(
         this.coords[f1[0]],
         this.texCoords[f1[1]],
         this.normals[f1[2]],
-
         this.coords[f2[0]],
         this.texCoords[f2[1]],
         this.normals[f2[2]]);
@@ -976,10 +983,9 @@ public class Mesh3 extends Mesh {
     final float scl = Utils.div(1.0f,
         Utils.max(dim.x, dim.y, dim.z));
 
-    Vec3 c;
     final int len = this.coords.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.coords[i];
+      final Vec3 c = this.coords[i];
       Vec3.add(c, lb, c);
       Vec3.mul(c, scl, c);
     }
@@ -1001,8 +1007,8 @@ public class Mesh3 extends Mesh {
 
     final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
     final int len = face.length;
-    final int jOrigin = Math.floorMod(j, len);
-    final int jDest = Math.floorMod(j + 1, len);
+    final int jOrigin = Utils.mod(j, len);
+    final int jDest = Utils.mod(j + 1, len);
     final int[] temp = face[jOrigin];
     face[jOrigin] = face[jDest];
     face[jDest] = temp;
@@ -1047,10 +1053,9 @@ public class Mesh3 extends Mesh {
     final float cosa = Utils.cos(radians);
     final float sina = Utils.sin(radians);
 
-    Vec3 c;
     final int len0 = this.coords.length;
     for ( int i = 0; i < len0; ++i ) {
-      c = this.coords[i];
+      final Vec3 c = this.coords[i];
       Vec3.rotate(c, cosa, sina, axis, c);
     }
 
@@ -1066,10 +1071,9 @@ public class Mesh3 extends Mesh {
   @Chainable
   public Mesh3 rotate ( final Quaternion q ) {
 
-    Vec3 c;
     final int len0 = this.coords.length;
     for ( int i = 0; i < len0; ++i ) {
-      c = this.coords[i];
+      final Vec3 c = this.coords[i];
       Quaternion.mulVector(q, c, c);
     }
 
@@ -1089,10 +1093,9 @@ public class Mesh3 extends Mesh {
     final float cosa = Utils.cos(radians);
     final float sina = Utils.sin(radians);
 
-    Vec3 c;
     final int len0 = this.coords.length;
     for ( int i = 0; i < len0; ++i ) {
-      c = this.coords[i];
+      final Vec3 c = this.coords[i];
       Vec3.rotateX(c, cosa, sina, c);
     }
 
@@ -1112,10 +1115,9 @@ public class Mesh3 extends Mesh {
     final float cosa = Utils.cos(radians);
     final float sina = Utils.sin(radians);
 
-    Vec3 c;
     final int len0 = this.coords.length;
     for ( int i = 0; i < len0; ++i ) {
-      c = this.coords[i];
+      final Vec3 c = this.coords[i];
       Vec3.rotateY(c, cosa, sina, c);
     }
 
@@ -1135,10 +1137,9 @@ public class Mesh3 extends Mesh {
     final float cosa = Utils.cos(radians);
     final float sina = Utils.sin(radians);
 
-    Vec3 c;
     final int len0 = this.coords.length;
     for ( int i = 0; i < len0; ++i ) {
-      c = this.coords[i];
+      final Vec3 c = this.coords[i];
       Vec3.rotateZ(c, cosa, sina, c);
     }
 
@@ -1157,10 +1158,9 @@ public class Mesh3 extends Mesh {
 
     if ( scale == 0.0f ) { return this; }
 
-    Vec3 c;
     final int len = this.coords.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.coords[i];
+      final Vec3 c = this.coords[i];
       Vec3.mul(c, scale, c);
     }
 
@@ -1179,10 +1179,9 @@ public class Mesh3 extends Mesh {
 
     if ( Vec3.none(scale) ) { return this; }
 
-    Vec3 c;
     final int len = this.coords.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.coords[i];
+      final Vec3 c = this.coords[i];
       Vec3.mul(c, scale, c);
     }
 
@@ -1339,12 +1338,25 @@ public class Mesh3 extends Mesh {
     return this;
   }
 
+  /**
+   * Sorts the coordinates texture coordinates, and normals of a mesh,
+   * then reassigns indices in the face.
+   *
+   * @return this mesh
+   */
   @Chainable
   public Mesh3 sort ( ) {
 
     return this.sort(IUtils.DEFAULT_EPSILON);
   }
 
+  /**
+   * Sorts the coordinates texture coordinates, and normals of a mesh,
+   * then reassigns indices in the face.
+   *
+   * @param tolerance the quantization tolerance
+   * @return this mesh
+   */
   @Chainable
   public Mesh3 sort ( final float tolerance ) {
 
@@ -1888,30 +1900,32 @@ public class Mesh3 extends Mesh {
 
     final StringBuilder sb = new StringBuilder(2048);
 
-    sb.append("{ name: \"")
-        .append(this.name)
-        .append('\"')
-        .append(',')
-        .append(' ')
-        .append('\n')
+    sb.append("{ name: \"").append(this.name).append('\"')
+        .append(',').append(' ')
+        // .append('\n')
         .append("coords: [ ");
 
     if ( this.coords != null ) {
-      sb.append('\n');
+      // sb.append('\n');
       final int len = Math.min(this.coords.length, truncate);
       final int last = len - 1;
       for ( int i = 0; i < len; ++i ) {
         sb.append(this.coords[i].toString(places));
         if ( i < last ) {
           sb.append(',').append(' ');
-          sb.append('\n');
+          // sb.append('\n');
         }
       }
 
-      if ( this.coords.length > truncate ) { sb.append("\n/* ... */"); }
+      if ( this.coords.length > truncate ) {
+        // sb.append('\n');
+        sb.append(" /* ... */");
+      }
     }
 
-    sb.append(" ],\ntexCoords: [");
+    sb.append(" ], ");
+    // sb.append('\n');
+    sb.append("texCoords: [ ");
     if ( this.texCoords != null ) {
       sb.append('\n');
       final int len = Math.min(this.texCoords.length, truncate);
@@ -1920,32 +1934,42 @@ public class Mesh3 extends Mesh {
         sb.append(this.texCoords[i].toString(places));
         if ( i < last ) {
           sb.append(',').append(' ');
-          sb.append('\n');
+          // sb.append('\n');
         }
       }
 
-      if ( this.texCoords.length > truncate ) { sb.append("\n/* ... */"); }
+      if ( this.texCoords.length > truncate ) {
+        // sb.append('\n');
+        sb.append(" /* ... */");
+      }
     }
 
-    sb.append(" ],\nnormals: [");
+    sb.append(" ], ");
+    // sb.append('\n');
+    sb.append("normals: [ ");
     if ( this.normals != null ) {
-      sb.append('\n');
+      // sb.append('\n');
       final int len = Math.min(this.normals.length, truncate);
       final int last = len - 1;
       for ( int i = 0; i < len; ++i ) {
         sb.append(this.normals[i].toString(places));
         if ( i < last ) {
           sb.append(',').append(' ');
-          sb.append('\n');
+          // sb.append('\n');
         }
       }
 
-      if ( this.normals.length > truncate ) { sb.append("\n/* ... */"); }
+      if ( this.normals.length > truncate ) {
+        // sb.append('\n');
+        sb.append(" /* ... */");
+      }
     }
 
-    sb.append(" ],\nfaces: [");
+    sb.append(" ], ");
+    // sb.append('\n');
+    sb.append("faces: [ ");
     if ( this.faces != null ) {
-      sb.append('\n');
+      // sb.append('\n');
       final int facesLen = Math.min(this.faces.length, truncate);
       final int facesLast = facesLen - 1;
 
@@ -1975,11 +1999,14 @@ public class Mesh3 extends Mesh {
         sb.append(' ').append(']');
         if ( i < facesLast ) {
           sb.append(',').append(' ');
-          sb.append('\n');
+          // sb.append('\n');
         }
       }
 
-      if ( this.faces.length > truncate ) { sb.append("\n/* ... */"); }
+      if ( this.faces.length > truncate ) {
+        // sb.append('\n');
+        sb.append(" /* ... */");
+      }
     }
 
     sb.append(" ] }");
@@ -1996,10 +2023,9 @@ public class Mesh3 extends Mesh {
   @Chainable
   public Mesh3 translate ( final Vec3 v ) {
 
-    Vec3 c;
     final int len = this.coords.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.coords[i];
+      final Vec3 c = this.coords[i];
       Vec3.add(c, v, c);
     }
     return this;
@@ -2248,11 +2274,16 @@ public class Mesh3 extends Mesh {
     }
 
     target.calcNormals();
-    // target.calcUvs();
     target.name = "Sphere";
     return target;
   }
 
+  /**
+   * Returns an array of meshes with one face from the source per mesh.
+   *
+   * @param source the source mesh
+   * @return the mesh array
+   */
   @Experimental
   public static Mesh3[] detachFaces ( final Mesh3 source ) {
 
@@ -2463,21 +2494,21 @@ public class Mesh3 extends Mesh {
               final String vtIdx = faceTokens[1];
               final String vnIdx = faceTokens[2];
 
-              if ( vIdx == null || vIdx.isBlank() ) {
+              if ( vIdx == null || vIdx.isEmpty() ) {
                 indices[k][0] = 0;
                 missingVs = true;
               } else {
                 indices[k][0] = Mesh3.intFromStr(vIdx) - 1;
               }
 
-              if ( vtIdx == null || vtIdx.isBlank() ) {
+              if ( vtIdx == null || vtIdx.isEmpty() ) {
                 indices[k][1] = 0;
                 missingVts = true;
               } else {
                 indices[k][1] = Mesh3.intFromStr(vtIdx) - 1;
               }
 
-              if ( vnIdx == null || vnIdx.isBlank() ) {
+              if ( vnIdx == null || vnIdx.isEmpty() ) {
                 indices[k][2] = 0;
                 missingVns = true;
               } else {
@@ -2489,14 +2520,14 @@ public class Mesh3 extends Mesh {
               final String vIdx = faceTokens[0];
               final String vtIdx = faceTokens[1];
 
-              if ( vIdx == null || vIdx.isBlank() ) {
+              if ( vIdx == null || vIdx.isEmpty() ) {
                 indices[k][0] = 0;
                 missingVs = true;
               } else {
                 indices[k][0] = Mesh3.intFromStr(vIdx) - 1;
               }
 
-              if ( vtIdx == null || vtIdx.isBlank() ) {
+              if ( vtIdx == null || vtIdx.isEmpty() ) {
                 indices[k][1] = 0;
                 missingVts = true;
               } else {
@@ -2510,7 +2541,7 @@ public class Mesh3 extends Mesh {
 
               final String vIdx = faceTokens[0];
 
-              if ( vIdx == null || vIdx.isBlank() ) {
+              if ( vIdx == null || vIdx.isEmpty() ) {
                 indices[k][0] = 0;
                 missingVs = true;
               } else {
@@ -2678,7 +2709,6 @@ public class Mesh3 extends Mesh {
     }
 
     target.calcNormals();
-    // target.calcUvs();
     target.name = "Icosphere";
     return target;
   }
@@ -2742,6 +2772,40 @@ public class Mesh3 extends Mesh {
         IMesh.DEFAULT_CIRCLE_SECTORS,
         IMesh.DEFAULT_CIRCLE_SECTORS >> 1,
         target);
+  }
+
+  /**
+   * Creates a square. Useful when representing an image plane with a
+   * mesh entity.
+   *
+   * @param target the output mesh
+   * @return the square
+   */
+  public static final Mesh3 square ( final Mesh3 target ) {
+
+    /* Retained to make image planes easier to create in 3D. */
+
+    target.name = "Square";
+
+    target.coords = Vec3.resize(target.coords, 4);
+    target.coords[0].set(-0.5f, -0.5f, 0.0f);
+    target.coords[1].set(0.5f, -0.5f, 0.0f);
+    target.coords[2].set(0.5f, 0.5f, 0.0f);
+    target.coords[3].set(-0.5f, 0.5f, 0.0f);
+
+    target.texCoords = Vec2.resize(target.texCoords, 4);
+    target.texCoords[0].set(0.0f, 1.0f);
+    target.texCoords[1].set(1.0f, 1.0f);
+    target.texCoords[2].set(1.0f, 0.0f);
+    target.texCoords[3].set(0.0f, 0.0f);
+
+    target.normals = Vec3.resize(target.normals, 1);
+    Vec3.up(target.normals[0]);
+
+    target.faces = new int[][][] {
+        { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 }, { 3, 3, 0 } } };
+
+    return target;
   }
 
   /**
@@ -2845,7 +2909,17 @@ public class Mesh3 extends Mesh {
   }
 
   /**
-   * Creates a UV sphere.
+   * Creates a UV sphere. The longitudes, or meridians, run through the
+   * sphere's poles, and correspond to the azimuth in spherical
+   * coordinates. The latitudes correspond to the inclination. Supplying
+   * half as many latitudes as longitudes will provide the best
+   * results.<br>
+   * <br>
+   * The sphere's prime meridian will create a seam where two sets of
+   * vertices overlap. This is to accommodate duplicate texture
+   * coordinates, where u = 0.0 and u = 1.0 are the same. The North and
+   * South pole, however, are a single point, meaning the mapped texture
+   * will be distorted at the poles.
    *
    * @param longitudes the longitudes
    * @param latitudes  the latitudes
@@ -2859,32 +2933,34 @@ public class Mesh3 extends Mesh {
 
     target.name = "UV Sphere";
 
-    /*
-     * Longitude corresponds to azimuth; latitude, to inclination.
-     */
     final int vlons = longitudes < 3 ? 3 : longitudes;
-    final int vlats = latitudes < 2 ? 2 : latitudes;
-
+    final int vlats = latitudes < 1 ? 1 : latitudes;
     final int lons1 = vlons + 1;
     final int lats1 = vlats + 1;
 
     /*
-     * The additional two comes from the North and South poles.
+     * The 2 comes from the poles.
      */
     final int len = lons1 * vlats + 2;
+    final int last = len - 1;
+
     final Vec3[] vs = target.coords = Vec3.resize(target.coords, len);
     final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords, len);
     final Vec3[] vns = target.normals = Vec3.resize(target.normals, len);
 
+    /*
+     * Longitude is periodic, where 0.0 = 1.0. Latitude is linear from one
+     * pole to the other. However, middle latitudes should exclude poles
+     * themselves.
+     */
     final float toU = 1.0f / vlons;
     final float toV = 1.0f / lats1;
-
     final float toTheta = 1.0f / vlons;
     final float toPhi = 0.5f / lats1;
 
     /*
-     * Set South pole. This is vertex 0, so subsequent vertex indices
-     * begin at an offset of 1.
+     * Set South pole. This is vertex 0; subsequent vertex indices begin
+     * at 1.
      */
     vs[0].set(0.0f, 0.0f, -0.5f);
     vts[0].set(0.5f, 1.0f - toV * 0.5f);
@@ -2912,7 +2988,6 @@ public class Mesh3 extends Mesh {
     }
 
     /* Set North pole. */
-    final int last = len - 1;
     vs[last].set(0.0f, 0.0f, 0.5f);
     vts[last].set(0.5f, toV * 0.5f);
     vns[last].set(0.0f, 0.0f, 1.0f);
@@ -2926,6 +3001,7 @@ public class Mesh3 extends Mesh {
       final int[] v0 = fs[idx][0];
       final int[] v1 = fs[idx][1];
 
+      /* v2 should default to zero. */
       v0[0] = v0[1] = v0[2] = j + 2;
       v1[0] = v1[1] = v1[2] = j + 1;
 
@@ -2942,6 +3018,7 @@ public class Mesh3 extends Mesh {
         final int n1 = current + 1;
         final int n2 = next + 1;
 
+        /* Triangle 1. */
         final int[] v0 = fs[idx][0];
         final int[] v1 = fs[idx][1];
         final int[] v2 = fs[idx][2];
@@ -2952,6 +3029,7 @@ public class Mesh3 extends Mesh {
 
         idx++;
 
+        /* Triangle 2. */
         final int[] v3 = fs[idx][0];
         final int[] v4 = fs[idx][1];
         final int[] v5 = fs[idx][2];
