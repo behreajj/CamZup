@@ -60,10 +60,7 @@ public class Yup3 extends Up3 {
   /**
    * The default constructor.
    */
-  public Yup3 ( ) {
-
-    super();
-  }
+  public Yup3 ( ) { super(); }
 
   /**
    * A constructor for manually initializing the renderer.
@@ -249,7 +246,9 @@ public class Yup3 extends Up3 {
    * @see Yup3#DEFAULT_REF_Z
    */
   @Override
-  public void camera ( final Vec3 eye, final Vec3 center ) {
+  public void camera (
+      final Vec3 eye,
+      final Vec3 center ) {
 
     this.camera(
         eye.x, eye.y, eye.z,

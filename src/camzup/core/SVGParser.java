@@ -150,30 +150,21 @@ abstract class SVGParser {
      *
      * @return the character
      */
-    public char getCode ( ) {
-
-      return this.code;
-    }
+    public char getCode ( ) { return this.code; }
 
     /**
      * Gets the number of parameters.
      *
      * @return the parameter number.
      */
-    public int getDataCount ( ) {
-
-      return this.dataCount;
-    }
+    public int getDataCount ( ) { return this.dataCount; }
 
     /**
      * Is the command relative (true) or absolute (false).
      *
      * @return the boolean
      */
-    public boolean isRelative ( ) {
-
-      return this.isRelative;
-    }
+    public boolean isRelative ( ) { return this.isRelative; }
 
     /**
      * Returns a path command given a character. In cases where the

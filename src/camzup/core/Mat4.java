@@ -33,10 +33,7 @@ public class Mat4 extends Matrix {
      *
      * @param mtx the matrix to iterate
      */
-    public M4Iterator ( final Mat4 mtx ) {
-
-      this.mtx = mtx;
-    }
+    public M4Iterator ( final Mat4 mtx ) { this.mtx = mtx; }
 
     /**
      * Tests to see if the iterator has another value.
@@ -1439,7 +1436,7 @@ public class Mat4 extends Matrix {
       final Mat4 target ) {
 
     final float mSq = Vec3.magSq(axis);
-    if ( mSq == 0.0f ) { return Mat4.identity(target); }
+    if ( mSq == 0.0f ) { return target.reset(); }
 
     final float mInv = Utils.invSqrtUnchecked(mSq);
     final float ax = axis.x * mInv;
@@ -1476,9 +1473,16 @@ public class Mat4 extends Matrix {
       final Vec3 axis,
       final Mat4 target ) {
 
+    // return Mat4.fromRotation(
+    // Utils.cos(radians),
+    // Utils.sin(radians),
+    // axis,
+    // target);
+
+    final float norm = radians * IUtils.ONE_TAU;
     return Mat4.fromRotation(
-        Utils.cos(radians),
-        Utils.sin(radians),
+        Utils.scNorm(norm),
+        Utils.scNorm(norm - 0.25f),
         axis,
         target);
   }
@@ -1552,9 +1556,15 @@ public class Mat4 extends Matrix {
       final float radians,
       final Mat4 target ) {
 
+    // return Mat4.fromRotX(
+    // Utils.cos(radians),
+    // Utils.sin(radians),
+    // target);
+
+    final float norm = radians * IUtils.ONE_TAU;
     return Mat4.fromRotX(
-        Utils.cos(radians),
-        Utils.sin(radians),
+        Utils.scNorm(norm),
+        Utils.scNorm(norm - 0.25f),
         target);
   }
 
@@ -1593,9 +1603,14 @@ public class Mat4 extends Matrix {
       final float radians,
       final Mat4 target ) {
 
+    // return Mat4.fromRotY(
+    // Utils.cos(radians),
+    // Utils.sin(radians),
+    // target);
+    final float norm = radians * IUtils.ONE_TAU;
     return Mat4.fromRotY(
-        Utils.cos(radians),
-        Utils.sin(radians),
+        Utils.scNorm(norm),
+        Utils.scNorm(norm - 0.25f),
         target);
   }
 
@@ -1631,9 +1646,15 @@ public class Mat4 extends Matrix {
       final float radians,
       final Mat4 target ) {
 
+    // return Mat4.fromRotZ(
+    // Utils.cos(radians),
+    // Utils.sin(radians),
+    // target);
+
+    final float norm = radians * IUtils.ONE_TAU;
     return Mat4.fromRotZ(
-        Utils.cos(radians),
-        Utils.sin(radians),
+        Utils.scNorm(norm),
+        Utils.scNorm(norm - 0.25f),
         target);
   }
 
@@ -1649,13 +1670,15 @@ public class Mat4 extends Matrix {
       final float scalar,
       final Mat4 target ) {
 
-    if ( scalar == 0.0f ) { return target.reset(); }
+    if ( scalar != 0.0f ) {
+      return target.set(
+          scalar, 0.0f, 0.0f, 0.0f,
+          0.0f, scalar, 0.0f, 0.0f,
+          0.0f, 0.0f, scalar, 0.0f,
+          0.0f, 0.0f, 0.0f, 1.0f);
 
-    return target.set(
-        scalar, 0.0f, 0.0f, 0.0f,
-        0.0f, scalar, 0.0f, 0.0f,
-        0.0f, 0.0f, scalar, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f);
+    }
+    return target.reset();
   }
 
   /**

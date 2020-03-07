@@ -769,10 +769,12 @@ public interface IYup2 extends IUp {
     my *= Utils.div(renderer.getHeight(), renderer.getZoomY());
 
     /* Rotate. */
-    final float angle = renderer.getRot();
-
-    final float cosa = Utils.cos(angle);
-    final float sina = Utils.sin(angle);
+    // final float angle = renderer.getRot();
+    // final float cosa = Utils.cos(angle);
+    // final float sina = Utils.sin(angle);
+    final float angle = renderer.getRot() * IUtils.ONE_TAU;
+    final float cosa = Utils.scNorm(angle);
+    final float sina = Utils.scNorm(angle - 0.25f);
 
     final float temp = mx;
     mx = cosa * mx - sina * my;

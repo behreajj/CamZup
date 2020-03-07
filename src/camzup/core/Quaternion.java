@@ -40,9 +40,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
      *
      */
     @Override
-    public abstract int compare (
-        final Quaternion a,
-        final Quaternion b );
+    public abstract int compare ( final Quaternion a, final Quaternion b );
 
     /**
      * Returns the simple name of this class.
@@ -323,36 +321,28 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
         final float step,
         final Quaternion target ) {
 
-      /*
-       * Decompose origin vector.
-       */
+      /* Decompose origin vector. */
       final Vec3 ai = origin.imag;
       final float aw = origin.real;
       final float ax = ai.x;
       final float ay = ai.y;
       final float az = ai.z;
 
-      /*
-       * Decompose destination vector.
-       */
+      /* Decompose destination vector. */
       final Vec3 bi = dest.imag;
       float bw = dest.real;
       float bx = bi.x;
       float by = bi.y;
       float bz = bi.z;
 
-      /*
-       * Be sure to clamp the dot product here!
-       */
+      /* Clamp the dot product here! */
       float dotp = Utils.clamp(aw * bw +
           ax * bx +
           ay * by +
           az * bz,
           -1.0f, 1.0f);
 
-      /*
-       * Flip values if the orientation is negative.
-       */
+      /* Flip values if the orientation is negative. */
       if ( dotp < 0.0f ) {
         // TODO Double-check other slerp implementations,
         // this seems to be based on the idea that dot product has had
@@ -371,14 +361,10 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final double theta = Math.acos(dotp);
       final double sinTheta = Math.sqrt(1.0d - dotp * dotp);
 
-      /*
-       * The complementary step, i.e., 1.0 - step.
-       */
+      /* The complementary step, i.e., 1.0 - step. */
       double u = 1.0d;
 
-      /*
-       * The step.
-       */
+      /* The step. */
       double v = 0.0d;
 
       if ( sinTheta > Utils.EPSILON ) {
@@ -390,22 +376,18 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
         v = step;
       }
 
-      /*
-       * Unclamped linear interpolation.
-       */
+      /* Unclamped linear interpolation. */
       final double cw = u * aw + v * bw;
       final double cx = u * ax + v * bx;
       final double cy = u * ay + v * by;
       final double cz = u * az + v * bz;
 
-      /*
-       * Normalize.
-       */
+      /* Normalize. */
       final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
 
-      if ( Math.abs(mSq) < Utils.EPSILON ) { return target.reset(); }
+      if ( Math.abs(mSq) < Utils.DEFAULT_EPSILON ) { return target.reset(); }
 
-      if ( Math.abs(1.0d - mSq) < Utils.EPSILON ) {
+      if ( Math.abs(1.0d - mSq) < Utils.DEFAULT_EPSILON ) {
         return target.set(
             (float) cw,
             (float) cx,
@@ -2257,7 +2239,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final Quaternion target ) {
 
     final Vec3 i = q.imag;
-
     return target.set(
         cosah * q.real - sinah * i.x,
         cosah * i.x + sinah * q.real,
@@ -2307,7 +2288,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final Quaternion target ) {
 
     final Vec3 i = q.imag;
-
     return target.set(
         cosah * q.real - sinah * i.y,
         cosah * i.x - sinah * i.z,
@@ -2358,7 +2338,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final Quaternion target ) {
 
     final Vec3 i = q.imag;
-
     return target.set(
         cosah * q.real - sinah * i.z,
         cosah * i.x + sinah * i.y,

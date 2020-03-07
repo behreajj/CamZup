@@ -28,20 +28,14 @@ public class ZImage extends PImage {
   /**
    * The default constructor.
    */
-  protected ZImage ( ) {
-
-    super();
-  }
+  protected ZImage ( ) { super(); }
 
   /**
    * Constructs an image from the native AWT image.
    *
    * @param img the image
    */
-  public ZImage ( final Image img ) {
-
-    super(img);
-  }
+  public ZImage ( final Image img ) { super(img); }
 
   /**
    * Constructs an image from its dimensions, width and height.
@@ -93,10 +87,7 @@ public class ZImage extends PImage {
    *
    * @return the parent
    */
-  PApplet getParent ( ) {
-
-    return this.parent;
-  }
+  PApplet getParent ( ) { return this.parent; }
 
   /**
    * Sets the parent of this PImage. The parent reference is needed for
@@ -173,6 +164,112 @@ public class ZImage extends PImage {
       }
       if ( this.pixelHeight > this.my2 ) { this.my2 = this.pixelHeight; }
     }
+  }
+
+  @SuppressWarnings ( "unused" )
+  private static PImage flipX ( final PImage img ) {
+
+    // TEST
+
+    img.loadPixels();
+
+    final int h = img.height;
+    final int w = img.width;
+    final int last = w - 1;
+    final int[] pixels = img.pixels;
+
+    for ( int y = 0; y < h; ++y ) {
+      final int i0 = y * w;
+      for ( int x = 0; x < w; ++x ) {
+        final int i = i0 + x;
+        final int k = i0 + last - x;
+        final int temp = pixels[i];
+        pixels[i] = pixels[k];
+        pixels[k] = temp;
+      }
+    }
+    img.updatePixels();
+    return img;
+  }
+
+  @SuppressWarnings ( "unused" )
+  private static PImage flipY ( final PImage img ) {
+
+    // TODO: Doesn't work.
+
+    img.loadPixels();
+
+    final int h = img.height;
+    final int w = img.width;
+    final int last = h - 1;
+    final int[] pixels = img.pixels;
+
+    for ( int y = 0; y < h; ++y ) {
+      final int i0 = y * w;
+      final int k0 = (last - y) * w;
+      for ( int x = 0; x < w; ++x ) {
+        final int i = i0 + x;
+        final int k = k0 + x;
+        final int temp = pixels[i];
+        pixels[i] = pixels[k];
+        pixels[k] = temp;
+      }
+    }
+    img.updatePixels();
+    return img;
+  }
+
+  @SuppressWarnings ( "unused" )
+  private static PImage mirrorX ( final PImage img ) {
+
+    // TEST
+
+    img.loadPixels();
+
+    final int h = img.height;
+    final int w = img.width;
+    final int[] pixels = img.pixels;
+
+    final int last = w - 1;
+    final int w2 = w / 2;
+
+    for ( int y = 0; y < h; ++y ) {
+      final int i0 = y * w;
+      for ( int x = 0; x < w2; ++x ) {
+        final int i = i0 + x;
+        final int k = i0 + last - x;
+        pixels[i] = pixels[k];
+      }
+    }
+    img.updatePixels();
+    return img;
+  }
+
+  @SuppressWarnings ( "unused" )
+  private static PImage mirrorY ( final PImage img ) {
+
+    // TEST
+
+    img.loadPixels();
+
+    final int h = img.height;
+    final int w = img.width;
+    final int[] pixels = img.pixels;
+
+    final int last = h - 1;
+    final int h2 = h / 2;
+
+    for ( int y = 0; y < h2; ++y ) {
+      final int i0 = y * w;
+      final int k0 = (last - y) * w;
+      for ( int x = 0; x < w; ++x ) {
+        final int i = i0 + x;
+        final int k = k0 + x;
+        pixels[i] = pixels[k];
+      }
+    }
+    img.updatePixels();
+    return img;
   }
 
   /**
@@ -555,16 +652,21 @@ public class ZImage extends PImage {
       final int dx,
       final int dy ) {
 
-    /*
-     * Uses unchecked integer floor mod for optimization.
-     */
-
     if ( wSource < 1 || hSource < 1 ) { return target; }
 
     for ( int i = 0, y = 0; y < hTarget; ++y ) {
-      final int ny = wSource * Math.floorMod(y - dy, hSource);
+
+      // final int ny = wSource * Math.floorMod(y - dy, hSource);
+      int ymod = (y - dy) % hSource;
+      if ( (ymod ^ hSource) < 0 && ymod != 0 ) { ymod += hSource; }
+      final int ny = wSource * ymod;
+
       for ( int x = 0; x < wTarget; ++x, ++i ) {
-        target[i] = source[Math.floorMod(x + dx, wSource) + ny];
+
+        // target[i] = source[Math.floorMod(x + dx, wSource) + ny];
+        int xmod = (x + dx) % wSource;
+        if ( (xmod ^ wSource) < 0 && xmod != 0 ) { xmod += wSource; }
+        target[i] = source[xmod + ny];
       }
     }
     return target;

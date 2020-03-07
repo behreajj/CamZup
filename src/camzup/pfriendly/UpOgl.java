@@ -272,17 +272,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     this.splineForward(this.curveDetail, this.curveDrawMatrix);
 
     if ( this.bezierBasisInverse == null ) {
-      // this.bezierBasisInverse = new PMatrix3D(this.bezierBasisMatrix);
-      // this.bezierBasisInverse.invert();
-
       this.bezierBasisInverse = new PMatrix3D();
       PMatAux.inverse(this.bezierBasisMatrix, this.bezierBasisInverse);
       this.curveToBezierMatrix = new PMatrix3D();
     }
-
-    // this.curveToBezierMatrix.set(this.curveBasisMatrix);
-    // this.curveToBezierMatrix.preApply(this.bezierBasisInverse);
-    // this.curveDrawMatrix.apply(this.curveBasisMatrix);
 
     PMatAux.mul(
         this.bezierBasisInverse,
@@ -392,10 +385,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         Transform2.mulPoint(tr, vs[vIndex], v);
         Transform2.mulTexCoord(uvtr, vts[vtIndex], vt);
 
-        this.vertexImpl(
-            v.x, v.y, 0.0f,
-            vt.x, vt.y);
-
+        this.vertexImpl(v.x, v.y, 0.0f, vt.x, vt.y);
       }
       this.endShape(PConstants.CLOSE);
     }
@@ -486,9 +476,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         Transform3.mulDir(tr, vns[vnIndex], vn);
 
         this.normal(vn.x, vn.y, vn.z);
-        this.vertexImpl(
-            v.x, v.y, v.z,
-            vt.x, vt.y);
+        this.vertexImpl(v.x, v.y, v.z, vt.x, vt.y);
       }
       this.endShape(PConstants.CLOSE);
     }
@@ -989,6 +977,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float yAxis,
       final float zAxis ) {
 
+    /* Axis is verified here because PMatAux compound rotate will not. */
     final float mSq = xAxis * xAxis + yAxis * yAxis + zAxis * zAxis;
     if ( mSq == 0.0f ) { return; }
 
@@ -1009,7 +998,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     PMatAux.compoundRotate(
         cosa, sina, xn, yn, zn,
         this.modelview, this.modelviewInv);
-    PMatAux.mul(this.projection, this.modelview, this.projmodelview);
+    PMatAux.mul(
+        this.projection,
+        this.modelview,
+        this.projmodelview);
   }
 
   /**
@@ -1280,36 +1272,33 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     this.textureMode = desiredTextureMode;
     this.textureWrap = desiredTextureWrap;
 
-    final float s = u;
-    final float t = v;
-
     /* This operation is also performed by vertexImpl. */
     if ( this.textureMode == PConstants.IMAGE
         && this.textureImage != null ) {
-      this.textureU = Utils.div(s, this.textureImage.width);
-      this.textureV = Utils.div(t, this.textureImage.height);
+      this.textureU = Utils.div(u, this.textureImage.width);
+      this.textureV = Utils.div(v, this.textureImage.height);
+    } else {
+      this.textureU = u;
+      this.textureV = v;
     }
 
     switch ( desiredTextureWrap ) {
 
       case PConstants.CLAMP:
 
-        this.textureU = Utils.clamp01(s);
-        this.textureV = Utils.clamp01(t);
+        this.textureU = Utils.clamp01(this.textureU);
+        this.textureV = Utils.clamp01(this.textureV);
 
         break;
 
       case PConstants.REPEAT:
 
-        this.textureU = Utils.mod1(s);
-        this.textureV = Utils.mod1(t);
+        this.textureU = Utils.mod1(this.textureU);
+        this.textureV = Utils.mod1(this.textureV);
 
         break;
 
       default:
-
-        this.textureU = s;
-        this.textureV = t;
 
     }
   }
@@ -1759,6 +1748,21 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     }
   }
 
+  /**
+   * Draws a curved line on the screen. The first three parameters
+   * specify the start control point; the last three parameters specify
+   * the ending control point. The middle parameters specify the start
+   * and stop of the curve.
+   * 
+   * @param x1 control point 0 x
+   * @param y1 control point 0 y
+   * @param x2 mid point 0 x
+   * @param y2 mid point 0 y
+   * @param x3 mid point 1 x
+   * @param y3 mid point 1 y
+   * @param x4 control point 1 x
+   * @param y4 control point 1 y
+   */
   @Override
   public void curve (
       final float x1, final float y1,
@@ -1775,6 +1779,25 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     this.endShape(PConstants.OPEN);
   }
 
+  /**
+   * Draws a curved line on the screen. The first three parameters
+   * specify the start control point; the last three parameters specify
+   * the ending control point. The middle parameters specify the start
+   * and stop of the curve.
+   * 
+   * @param x1 control point 0 x
+   * @param y1 control point 0 y
+   * @param z1 control point 0 z
+   * @param x2 mid point 0 x
+   * @param y2 mid point 0 y
+   * @param z2 mid point 0 z
+   * @param x3 mid point 1 x
+   * @param y3 mid point 1 y
+   * @param z3 mid point 1 z
+   * @param x4 control point 1 x
+   * @param y4 control point 1 y
+   * @param z4 control point 1 z
+   */
   @Override
   public void curve (
       final float x1, final float y1, final float z1,
@@ -1837,10 +1860,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    *
    * @return the background color
    */
-  public int getBackground ( ) {
-
-    return this.backgroundColor;
-  }
+  public int getBackground ( ) { return this.backgroundColor; }
 
   /**
    * Gets this renderer's background color.
@@ -1859,40 +1879,28 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * @return the height
    */
   @Override
-  public float getHeight ( ) {
-
-    return this.height;
-  }
+  public float getHeight ( ) { return this.height; }
 
   /**
    * Gets the renderer camera's location on the x axis.
    *
    * @return the x location
    */
-  public float getLocX ( ) {
-
-    return this.cameraX;
-  }
+  public float getLocX ( ) { return this.cameraX; }
 
   /**
    * Gets the renderer camera's location on the y axis.
    *
    * @return the y location
    */
-  public float getLocY ( ) {
-
-    return this.cameraY;
-  }
+  public float getLocY ( ) { return this.cameraY; }
 
   /**
    * Gets the renderer camera's location on the z axis.
    *
    * @return the z location
    */
-  public float getLocZ ( ) {
-
-    return this.cameraZ;
-  }
+  public float getLocZ ( ) { return this.cameraZ; }
 
   /**
    * Gets the renderer model view matrix.
@@ -1949,10 +1957,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * @return the applet
    */
   @Override
-  public PApplet getParent ( ) {
-
-    return this.parent;
-  }
+  public PApplet getParent ( ) { return this.parent; }
 
   /**
    * Gets the renderer's size.
@@ -1972,10 +1977,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * @return the width
    */
   @Override
-  public float getWidth ( ) {
-
-    return this.width;
-  }
+  public float getWidth ( ) { return this.width; }
 
   /**
    * Displays a PGraphicsOpenGL at the origin.
@@ -2450,10 +2452,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float left, final float right,
       final float bottom, final float top ) {
 
-    /*
-     * Never use defCameraXXX values. They are not actual constants.
-     */
-
     float far = IUp.DEFAULT_FAR_CLIP;
     if ( this.eyeDist != 0.0f ) {
       far = IUp.DEFAULT_NEAR_CLIP + this.eyeDist * 10.0f;
@@ -2488,7 +2486,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
   /**
    * Sets the renderer projection to a perspective, where objects nearer
    * to the camera appear larger than objects distant from the camera.
-   * Calculates the
    */
   @Override
   public void perspective ( ) {
@@ -2774,7 +2771,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     final float s = Utils.scNorm(normRad - 0.25f);
     PMatAux.rotateX(c, s, this.modelview);
     PMatAux.invRotateX(c, s, this.modelviewInv);
-    PMatAux.mul(this.projection, this.modelview, this.projmodelview);
+    PMatAux.mul(
+        this.projection,
+        this.modelview,
+        this.projmodelview);
   }
 
   /**
@@ -2795,7 +2795,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     final float s = Utils.scNorm(normRad - 0.25f);
     PMatAux.rotateY(c, s, this.modelview);
     PMatAux.invRotateY(c, s, this.modelviewInv);
-    PMatAux.mul(this.projection, this.modelview, this.projmodelview);
+    PMatAux.mul(
+        this.projection,
+        this.modelview,
+        this.projmodelview);
   }
 
   /**

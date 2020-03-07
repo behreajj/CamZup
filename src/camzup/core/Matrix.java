@@ -21,10 +21,7 @@ public abstract class Matrix implements IMatrix {
    *
    * @param length the length
    */
-  protected Matrix ( final int length ) {
-
-    this.length = length;
-  }
+  protected Matrix ( final int length ) { this.length = length; }
 
   /**
    * Returns the number of elements in the matrix.
@@ -32,8 +29,5 @@ public abstract class Matrix implements IMatrix {
    * @return the size
    */
   @Override
-  public int length ( ) {
-
-    return this.length;
-  }
+  public int length ( ) { return this.length; }
 }

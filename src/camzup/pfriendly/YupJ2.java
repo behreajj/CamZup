@@ -2284,19 +2284,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * Returns whether or not the renderer is 2D.
    */
   @Override
-  public boolean is2D ( ) {
-
-    return true;
-  }
+  public boolean is2D ( ) { return true; }
 
   /**
    * Returns whether or not the renderer is 3D.
    */
   @Override
-  public boolean is3D ( ) {
-
-    return false;
-  }
+  public boolean is3D ( ) { return false; }
 
   /**
    * Eases from an origin color to a destination by a step.

@@ -516,7 +516,7 @@ public class Mesh3 extends Mesh {
       final int edgeIdx,
       final float amt ) {
 
-    // TODO: Test Uvs.
+    // TODO: Test UVs.
 
     if ( amt == 0.0f ) { return this; }
 
@@ -1989,7 +1989,6 @@ public class Mesh3 extends Mesh {
 
           /* 3 indices: coordinate, texture coordinate and normal. */
           for ( int k = 0; k < infoLen; ++k ) {
-
             sb.append(vert[k]);
             if ( k < infoLast ) { sb.append(',').append(' '); }
           }

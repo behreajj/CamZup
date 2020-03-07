@@ -61,10 +61,7 @@ public class Zup3 extends Up3 {
   /**
    * The default constructor.
    */
-  public Zup3 ( ) {
-
-    super();
-  }
+  public Zup3 ( ) { super(); }
 
   /**
    * A constructor for manually initializing the renderer.

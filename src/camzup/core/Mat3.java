@@ -33,10 +33,7 @@ public class Mat3 extends Matrix {
      *
      * @param mtx the matrix to iterate
      */
-    public M3Iterator ( final Mat3 mtx ) {
-
-      this.mtx = mtx;
-    }
+    public M3Iterator ( final Mat3 mtx ) { this.mtx = mtx; }
 
     /**
      * Tests to see if the iterator has another value.
@@ -1070,9 +1067,15 @@ public class Mat3 extends Matrix {
       final float radians,
       final Mat3 target ) {
 
+    // return Mat3.fromRotZ(
+    // Utils.cos(radians),
+    // Utils.sin(radians),
+    // target);
+
+    final float norm = radians * IUtils.ONE_TAU;
     return Mat3.fromRotZ(
-        Utils.cos(radians),
-        Utils.sin(radians),
+        Utils.scNorm(norm),
+        Utils.scNorm(norm - 0.25f),
         target);
   }
 
@@ -1088,12 +1091,13 @@ public class Mat3 extends Matrix {
       final float scalar,
       final Mat3 target ) {
 
-    if ( scalar == 0.0f ) { return target.reset(); }
-
-    return target.set(
-        scalar, 0.0f, 0.0f,
-        0.0f, scalar, 0.0f,
-        0.0f, 0.0f, 1.0f);
+    if ( scalar != 0.0f ) {
+      return target.set(
+          scalar, 0.0f, 0.0f,
+          0.0f, scalar, 0.0f,
+          0.0f, 0.0f, 1.0f);
+    }
+    return target.reset();
   }
 
   /**
@@ -1167,19 +1171,20 @@ public class Mat3 extends Matrix {
 
     final float det = m.m00 * b01 + m.m01 * b11 + m.m02 * b21;
 
-    if ( det == 0.0f ) { return target.reset(); }
-    final float detInv = 1.0f / det;
-
-    return target.set(
-        b01 * detInv,
-        (m.m02 * m.m21 - m.m22 * m.m01) * detInv,
-        (m.m12 * m.m01 - m.m02 * m.m11) * detInv,
-        b11 * detInv,
-        (m.m22 * m.m00 - m.m02 * m.m20) * detInv,
-        (m.m02 * m.m10 - m.m12 * m.m00) * detInv,
-        b21 * detInv,
-        (m.m01 * m.m20 - m.m21 * m.m00) * detInv,
-        (m.m11 * m.m00 - m.m01 * m.m10) * detInv);
+    if ( det != 0.0f ) {
+      final float detInv = 1.0f / det;
+      return target.set(
+          b01 * detInv,
+          (m.m02 * m.m21 - m.m22 * m.m01) * detInv,
+          (m.m12 * m.m01 - m.m02 * m.m11) * detInv,
+          b11 * detInv,
+          (m.m22 * m.m00 - m.m02 * m.m20) * detInv,
+          (m.m02 * m.m10 - m.m12 * m.m00) * detInv,
+          b21 * detInv,
+          (m.m01 * m.m20 - m.m21 * m.m00) * detInv,
+          (m.m11 * m.m00 - m.m01 * m.m10) * detInv);
+    }
+    return target.reset();
   }
 
   /**

@@ -311,6 +311,48 @@ public class Transform2 extends Transform {
   }
 
   /**
+   * Gets the transform's location x. A convenience to ease interaction
+   * between a transform and a renderer's camera matrix.
+   *
+   * @return the location x
+   */
+  float getLocX ( ) { return this.location.x; }
+
+  /**
+   * Gets the transform's location y. A convenience to ease interaction
+   * between a transform and a renderer's camera matrix.
+   *
+   * @return the location y
+   */
+  float getLocY ( ) { return this.location.y; }
+
+  /**
+   * Sets the transform's location x. A convenience to ease interaction
+   * between a transform and a renderer's camera matrix.
+   *
+   * @param x the x coordinate
+   * @return this transform
+   */
+  Transform2 setLocX ( final float x ) {
+
+    this.location.x = x;
+    return this;
+  }
+
+  /**
+   * Sets the transform's location y. A convenience to ease interaction
+   * between a transform and a renderer's camera matrix.
+   *
+   * @param y the y coordinate
+   * @return this transform
+   */
+  Transform2 setLocY ( final float y ) {
+
+    this.location.y = y;
+    return this;
+  }
+
+  /**
    * Returns a String of Python code targeted toward the Blender 2.8x
    * API. This code is brittle and is used for internal testing
    * purposes, i.e., to compare how transforms look in Blender (the
@@ -475,22 +517,6 @@ public class Transform2 extends Transform {
 
     return target.set(this.locPrev);
   }
-
-  /**
-   * Gets the transform's location x. A convenience to ease interaction
-   * between a transform and a renderer's camera matrix.
-   *
-   * @return the location x
-   */
-  public float getLocX ( ) { return this.location.x; }
-
-  /**
-   * Gets the transform's location y. A convenience to ease interaction
-   * between a transform and a renderer's camera matrix.
-   *
-   * @return the location y
-   */
-  public float getLocY ( ) { return this.location.y; }
 
   /**
    * Gets the transform's right axis.
@@ -982,32 +1008,6 @@ public class Transform2 extends Transform {
     return this.setAxes(
         right.x, forward.y,
         right.y, forward.x);
-  }
-
-  /**
-   * Sets the transform's location x. A convenience to ease interaction
-   * between a transform and a renderer's camera matrix.
-   *
-   * @param x the x coordinate
-   * @return this transform
-   */
-  public Transform2 setLocX ( final float x ) {
-
-    this.location.x = x;
-    return this;
-  }
-
-  /**
-   * Sets the transform's location y. A convenience to ease interaction
-   * between a transform and a renderer's camera matrix.
-   *
-   * @param y the y coordinate
-   * @return this transform
-   */
-  public Transform2 setLocY ( final float y ) {
-
-    this.location.y = y;
-    return this;
   }
 
   /**

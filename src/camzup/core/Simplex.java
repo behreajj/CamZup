@@ -434,7 +434,8 @@ public abstract class Simplex {
       final float sina,
       final Vec2 target ) {
 
-    return Vec2.rotateZ(Simplex.GRAD_2_LUT[Simplex.hash(i, j, seed) & 0x7],
+    return Vec2.rotateZ(
+        Simplex.GRAD_2_LUT[Simplex.hash(i, j, seed) & 0x7],
         cosa, sina, target);
   }
 

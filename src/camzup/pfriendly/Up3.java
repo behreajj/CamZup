@@ -387,10 +387,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    *
    * @return the eye distance
    */
-  public float getEyeDist ( ) {
-
-    return this.eyeDist;
-  }
+  public float getEyeDist ( ) { return this.eyeDist; }
 
   /**
    * Gets the x axis of the camera transform.
@@ -618,19 +615,13 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    * Returns whether or not the renderer is 2D (false).
    */
   @Override
-  public boolean is2D ( ) {
-
-    return false;
-  }
+  public boolean is2D ( ) { return false; }
 
   /**
    * Returns whether or not the renderer is 3D (true).
    */
   @Override
-  public boolean is3D ( ) {
-
-    return true;
-  }
+  public boolean is3D ( ) { return true; }
 
   /**
    * Draws a line between two coordinates.

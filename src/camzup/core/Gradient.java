@@ -163,9 +163,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
   @Chainable
   protected Gradient compressKeysRight ( final int added ) {
 
-    /*
-     * A simplification of Utils.map(key.step, 0.0f, 1.0f, scalar, 1.0f);
-     */
+    /* Simplification of Utils.map(key.step, 0.0f, 1.0f, scalar, 1.0f); */
     final Iterator < ColorKey > itr = this.keys.iterator();
     final float scalar = added / (this.keys.size() + added - 1.0f);
     final float coeff = 1.0f - scalar;

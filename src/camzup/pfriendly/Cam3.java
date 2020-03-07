@@ -1,8 +1,11 @@
 package camzup.pfriendly;
 
+import processing.opengl.PGraphicsOpenGL;
+
 import camzup.core.Entity3;
 import camzup.core.Experimental;
 import camzup.core.Transform3;
+import camzup.core.Utils;
 import camzup.core.Vec3;
 
 /**
@@ -11,76 +14,48 @@ import camzup.core.Vec3;
 public class Cam3 extends Entity3 {
 
   /**
-   * The 3D renderer.
+   * An internal vector to hold the location retrieved from the
+   * transform.
    */
-  public final Up3 renderer;
+  protected final Vec3 trLoc;
+
+  {
+    this.trLoc = new Vec3();
+  }
 
   /**
-   * Constructs a camera with a name, transform and renderer.
-   *
-   * @param name      the name
-   * @param transform the transform
-   * @param renderer  the renderer
+   * The default constructor.
    */
-  public Cam3 (
-      final String name,
-      final Transform3 transform,
-      final Up3 renderer ) {
-
-    super(name, transform);
-    this.renderer = renderer;
-  }
+  public Cam3 ( ) { super(); }
 
   /**
    * Constructs a camera with a name and renderer.
    *
-   * @param name     the name
-   * @param renderer the renderer
+   * @param name the name
+   */
+  public Cam3 ( final String name ) { super(name); }
+
+  /**
+   * Constructs a camera with a name, transform.
+   *
+   * @param name      the name
+   * @param transform the transform
    */
   public Cam3 (
       final String name,
-      final Up3 renderer ) {
+      final Transform3 transform ) {
 
-    super(name);
-    this.renderer = renderer;
-    this.initLoc();
+    super(name, transform);
   }
 
   /**
-   * Constructs a camera with a transform and renderer.
+   * Constructs a camera with a transform.
    *
    * @param transform the transform
-   * @param renderer  the renderer
    */
-  public Cam3 (
-      final Transform3 transform,
-      final Up3 renderer ) {
+  public Cam3 ( final Transform3 transform ) {
 
     super(transform);
-    this.renderer = renderer;
-  }
-
-  /**
-   * Constructs a camera with a renderer.
-   *
-   * @param renderer the renderer
-   */
-  public Cam3 ( final Up3 renderer ) {
-
-    super();
-    this.renderer = renderer;
-    this.initLoc();
-  }
-
-  /**
-   * Initializes the camera entity's transform to the renderer's camera
-   * inverse.
-   */
-  protected void initLoc ( ) {
-
-    this.transform.setLocX(0.0f);
-    this.transform.setLocY(-128.0f);
-    this.transform.setLocZ(-128.0f);
   }
 
   /**
@@ -98,64 +73,175 @@ public class Cam3 extends Entity3 {
   }
 
   /**
-   * Moves this entity by a vector. Moves in local space by default.
+   * Sets the renderer projection to orthographic, where objects
+   * maintain their size regardless of distance from the camera.
    *
-   * @param dir the vector
-   * @return this entity
+   * @param rndr the renderer
+   * @return this camera entity
    */
-  @Override
-  public Cam3 moveBy ( final Vec3 dir ) {
+  public Cam3 ortho ( final PGraphicsOpenGL rndr ) {
 
-    this.transform.moveByLocal(dir);
+    final float right = rndr.width < 128
+        ? IUp.DEFAULT_HALF_WIDTH
+        : rndr.width * 0.5f;
+    final float left = -right;
+
+    final float top = rndr.height < 128
+        ? IUp.DEFAULT_HALF_HEIGHT
+        : rndr.height * 0.5f;
+    final float bottom = -top;
+
+    return this.ortho(rndr, left, right, bottom, top);
+  }
+
+  /**
+   * Sets the renderer projection to orthographic, where objects
+   * maintain their size regardless of distance from the camera.
+   *
+   * @param rndr   the renderer
+   * @param left   the left edge of the window
+   * @param right  the right edge of the window
+   * @param bottom the bottom edge of the window
+   * @param top    the top edge of the window
+   * @return this camera entity
+   */
+  public Cam3 ortho (
+      final PGraphicsOpenGL rndr,
+      final float left, final float right,
+      final float bottom, final float top ) {
+
+    return this.ortho(rndr,
+        left, right, bottom, top,
+        IUp.DEFAULT_NEAR_CLIP,
+        IUp.DEFAULT_FAR_CLIP);
+  }
+
+  /**
+   * Sets the renderer projection to orthographic, where objects
+   * maintain their size regardless of distance from the camera.
+   *
+   * @param rndr   the renderer
+   * @param left   the left edge of the window
+   * @param right  the right edge of the window
+   * @param bottom the bottom edge of the window
+   * @param top    the top edge of the window
+   * @param near   the near clip plane
+   * @param far    the far clip plane
+   * @return this camera entity
+   */
+  public Cam3 ortho (
+      final PGraphicsOpenGL rndr,
+      final float left, final float right,
+      final float bottom, final float top,
+      final float near, final float far ) {
+
+    PMatAux.orthographic(
+        left, right,
+        bottom, top,
+        near, far,
+        rndr.projection);
+
     return this;
   }
 
-  // public Cam3 lookAtZup ( final Vec3 target ) {
-  //
-  // final Vec3 right = this.renderer.i;
-  // final Vec3 forward = this.renderer.k;
-  // final Vec3 up = this.renderer.j;
-  //
-  // final Vec3 refUp = this.renderer.refUp;
-  // refUp.set(0.0f, 0.0f, 1.0f);
-  //
-  // final Vec3 lookDir = this.renderer.lookDir;
-  //
-  // lookDir.set(
-  // this.transform.getLocX() - target.x,
-  // this.transform.getLocY() - target.y,
-  // this.transform.getLocZ() - target.z);
-  //
-  // // lookDir.set(
-  // // target.x - this.transform.getLocX(),
-  // // target.y - this.transform.getLocY(),
-  // // target.z - this.transform.getLocZ());
-  //
-  // Vec3.normalize(lookDir, up);
-  // Vec3.crossNorm(refUp, up, right);
-  // Vec3.crossNorm(up, right, forward);
-  //
-  // return this;
-  // }
+  /**
+   * Sets the renderer projection to a perspective, where objects nearer
+   * to the camera appear larger than objects distant from the camera.
+   *
+   * @param rndr the renderer
+   * @return this camera entity
+   */
+  public Cam3 perspective ( final PGraphicsOpenGL rndr ) {
+
+    return this.perspective(rndr, IUp.DEFAULT_FOV);
+  }
+
+  /**
+   * Sets the renderer projection to a perspective, where objects nearer
+   * to the camera appear larger than objects distant from the camera.
+   *
+   * @param rndr the renderer
+   * @param fov  the field of view
+   * @return this camera entity
+   */
+  public Cam3 perspective (
+      final PGraphicsOpenGL rndr,
+      final float fov ) {
+
+    return this.perspective(rndr, fov, Utils.div(rndr.width, rndr.height));
+  }
+
+  /**
+   * Sets the renderer projection to a perspective, where objects nearer
+   * to the camera appear larger than objects distant from the camera.
+   *
+   * @param rndr   the renderer
+   * @param fov    the field of view
+   * @param aspect the aspect ratio, width over height
+   * @return this camera entity
+   */
+  public Cam3 perspective (
+      final PGraphicsOpenGL rndr,
+      final float fov,
+      final float aspect ) {
+
+    this.perspective(rndr, fov, aspect,
+        IUp.DEFAULT_NEAR_CLIP,
+        IUp.DEFAULT_FAR_CLIP);
+
+    return this;
+  }
+
+  /**
+   * Sets the renderer projection to a perspective, where objects nearer
+   * to the camera appear larger than objects distant from the camera.
+   *
+   * @param rndr   the renderer
+   * @param fov    the field of view
+   * @param aspect the aspect ratio, width over height
+   * @param near   the near clip plane
+   * @param far    the far clip plane
+   * @return this camera entity
+   */
+  public Cam3 perspective (
+      final PGraphicsOpenGL rndr,
+      final float fov,
+      final float aspect,
+      final float near,
+      final float far ) {
+
+    rndr.cameraFOV = fov;
+    rndr.cameraAspect = aspect;
+    rndr.cameraNear = near;
+    rndr.cameraFar = far;
+
+    PMatAux.perspective(fov, aspect, near, far, rndr.projection);
+
+    return this;
+  }
 
   /**
    * Updates the renderer's camera matrices based on the transform. To
    * be called in update.
    *
+   * @param rndr the renderer
    * @return this camera entity
    */
-  public Cam3 update ( ) {
+  public Cam3 update ( final Up3 rndr ) {
+
+    // TODO: Generalize to PGraphicsOpenGL renderer.
 
     this.transform.getAxes(
-        this.renderer.i,
-        this.renderer.j,
-        this.renderer.k);
+        rndr.i,
+        rndr.j,
+        rndr.k);
 
-    this.renderer.cameraX = this.transform.getLocX();
-    this.renderer.cameraY = this.transform.getLocY();
-    this.renderer.cameraZ = this.transform.getLocZ();
+    this.transform.getLocation(this.trLoc);
+    rndr.cameraX = this.trLoc.x;
+    rndr.cameraY = this.trLoc.y;
+    rndr.cameraZ = this.trLoc.z;
 
-    this.renderer.updateCamera();
+    rndr.updateCamera();
 
     return this;
   }

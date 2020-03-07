@@ -1782,7 +1782,10 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final Vec3 target ) {
 
     if ( b == 0.0f ) { return target.set(a); }
-    return target.set(a.x % b, a.y % b, a.z % b);
+    return target.set(
+        a.x % b,
+        a.y % b,
+        a.z % b);
   }
 
   /**
@@ -2143,7 +2146,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
         for ( int j = 0; j < vlons; ++j ) {
 
-          // TODO: Calculate values?
           final float theta = j * toTheta;
           final float cosTheta = Utils.scNorm(theta);
           final float sinTheta = Utils.scNorm(theta - 0.25f);

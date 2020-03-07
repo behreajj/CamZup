@@ -523,10 +523,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    * @return the rotation
    */
   @Override
-  public float getRot ( ) {
-
-    return this.cameraRot;
-  }
+  public float getRot ( ) { return this.cameraRot; }
 
   /**
    * Gets the renderer's zoom.
@@ -548,10 +545,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    * @return the zoom on the horizontal axis
    */
   @Override
-  public float getZoomX ( ) {
-
-    return this.cameraZoomX;
-  }
+  public float getZoomX ( ) { return this.cameraZoomX; }
 
   /**
    * Gets the renderer's vertical zoom.
@@ -559,10 +553,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    * @return the zoom on the vertical axis
    */
   @Override
-  public float getZoomY ( ) {
-
-    return this.cameraZoomY;
-  }
+  public float getZoomY ( ) { return this.cameraZoomY; }
 
   /**
    * Displays the handles of a curve entity.
@@ -709,19 +700,13 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    * Returns whether or not the renderer is 2D.
    */
   @Override
-  public boolean is2D ( ) {
-
-    return true;
-  }
+  public boolean is2D ( ) { return true; }
 
   /**
    * Returns whether or not the renderer is 3D.
    */
   @Override
-  public boolean is3D ( ) {
-
-    return false;
-  }
+  public boolean is3D ( ) { return false; }
 
   /**
    * Enable lighting and use default lights, typically an ambient light
