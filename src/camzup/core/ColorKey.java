@@ -363,6 +363,26 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
   }
 
   /**
+   * Returns a String representation of this color stop for an SVG
+   * gradient. Includes the offset, color and opacity.
+   *
+   * @return the string
+   */
+  public String toSvgString ( ) {
+
+    final StringBuilder sb = new StringBuilder(96)
+        .append("<stop offset=\"")
+        .append(Utils.toFixed(this.step, 6))
+        .append("\" stop-color=\"")
+        .append(Color.toHexWeb(this.clr))
+        .append("\" stop-opacity=\"")
+        .append(Utils.toFixed(this.clr.w, 6))
+        .append("\"/>");
+
+    return sb.toString();
+  }
+
+  /**
    * Tests to see if two keys have approximately the same step.
    *
    * @param a the left comparisand

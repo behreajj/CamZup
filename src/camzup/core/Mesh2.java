@@ -413,8 +413,8 @@ public class Mesh2 extends Mesh {
 
     final Vec2 dim = Mesh2.calcDimensions(this,
         new Vec2(), new Vec2(), new Vec2());
-    dim.x = dim.x == 0.0f ? Utils.EPSILON : 1.0f / dim.x;
-    dim.y = dim.y == 0.0f ? Utils.EPSILON : 1.0f / dim.y;
+    dim.x = dim.x == 0.0f ? IUtils.DEFAULT_EPSILON : 1.0f / dim.x;
+    dim.y = dim.y == 0.0f ? IUtils.DEFAULT_EPSILON : 1.0f / dim.y;
 
     final int len = this.coords.length;
     this.texCoords = Vec2.resize(this.texCoords, len);
@@ -726,6 +726,132 @@ public class Mesh2 extends Mesh {
     hash = hash * IUtils.HASH_MUL ^ Arrays.hashCode(this.coords);
     hash = hash * IUtils.HASH_MUL ^ Arrays.deepHashCode(this.faces);
     return hash;
+  }
+
+  /**
+   * Insets a face by calculating its centroid then easing from the
+   * face's vertices toward the centroid by 0.5.
+   *
+   * @param faceIdx the face index
+   * @return this mesh
+   */
+  @Chainable
+  public Mesh2 insetFace ( final int faceIdx ) {
+
+    return this.insetFace(faceIdx, 0.5f);
+  }
+
+  /**
+   * Insets a face by calculating its centroid then easing from the
+   * face's vertices toward the centroid by the amount, expected to be
+   * in the range [0.0, 1.0] . When the amount is less than 0.0, the
+   * face remains unchanged; when the amount is greater than 1.0, then
+   * the face is subdivided by centroid.
+   *
+   * @param faceIdx the face index
+   * @param fac     the inset amount
+   * @return this mesh
+   */
+  @Experimental
+  @Chainable
+  public Mesh2 insetFace (
+      final int faceIdx,
+      final float fac ) {
+
+    if ( fac <= 0.0f ) { return this; }
+    if ( fac >= 1.0f ) { return this.subdivFaceFan(faceIdx); }
+
+    /* Validate face index, find face. */
+    final int facesLen = this.faces.length;
+    final int i = Utils.mod(faceIdx, facesLen);
+    final int[][] face = this.faces[i];
+    final int faceLen = face.length;
+
+    final int vsOldLen = this.coords.length;
+    final int vtsOldLen = this.texCoords.length;
+    final int[][][] fsNew = new int[faceLen + 1][][];
+    final int[][] centerFace = fsNew[faceLen] = new int[faceLen][2];
+
+    final Vec2 vCentroid = new Vec2();
+    final Vec2 vtCentroid = new Vec2();
+
+    /* Find centroid. */
+    for ( int j = 0; j < faceLen; ++j ) {
+      final int[] vertCurr = face[j];
+      final Vec2 vCurr = this.coords[vertCurr[0]];
+      final Vec2 vtCurr = this.texCoords[vertCurr[1]];
+      Vec2.add(vCentroid, vCurr, vCentroid);
+      Vec2.add(vtCentroid, vtCurr, vtCentroid);
+    }
+    Vec2.div(vCentroid, faceLen, vCentroid);
+    Vec2.div(vtCentroid, faceLen, vtCentroid);
+
+    final Vec2[] vsNew = new Vec2[faceLen];
+    final Vec2[] vtsNew = new Vec2[faceLen];
+
+    /* Find new corners. */
+    final float u = 1.0f - fac;
+    for ( int j = 0; j < faceLen; ++j ) {
+      final int k = (j + 1) % faceLen;
+
+      final int[] vertCurr = face[j];
+      final int[] vertNext = face[k];
+
+      final int vCornerIdx = vertCurr[0];
+      final int vtCornerIdx = vertCurr[1];
+      final Vec2 vCurr = this.coords[vCornerIdx];
+      final Vec2 vtCurr = this.texCoords[vtCornerIdx];
+
+      vsNew[j] = new Vec2(
+          u * vCurr.x + fac * vCentroid.x,
+          u * vCurr.y + fac * vCentroid.y);
+
+      vtsNew[j] = new Vec2(
+          u * vtCurr.x + fac * vtCentroid.x,
+          u * vtCurr.y + fac * vtCentroid.y);
+
+      final int vSubdivIdx = vsOldLen + j;
+      final int vtSubdivIdx = vtsOldLen + j;
+
+      fsNew[j] = new int[][] {
+          { vCornerIdx, vtCornerIdx },
+          { vertNext[0], vertNext[1] },
+          { vsOldLen + k, vtsOldLen + k },
+          { vSubdivIdx, vtSubdivIdx } };
+
+      centerFace[j][0] = vSubdivIdx;
+      centerFace[j][1] = vtSubdivIdx;
+
+    }
+
+    this.coords = Vec2.concat(this.coords, vsNew);
+    this.texCoords = Vec2.concat(this.texCoords, vtsNew);
+    this.faces = Mesh.splice(this.faces, i, 1, fsNew);
+
+    return this;
+  }
+
+  /**
+   * Insets all faces in the mesh for a given number of iterations.
+   * 
+   * @param itr the iterations
+   * @param fac the inset factor
+   * @return this mesh
+   */
+  @Chainable
+  @Experimental
+  public Mesh2 insetFaces ( final int itr, final float fac ) {
+
+    final int vitr = itr < 1 ? 1 : itr;
+    for ( int i = 0; i < vitr; ++i ) {
+      final int len = this.faces.length;
+      for ( int j = 0, k = 0; j < len; ++j ) {
+        final int vertLen = this.faces[k].length;
+        this.insetFace(k, fac);
+        k += vertLen + 1;
+      }
+    }
+    return this;
   }
 
   /**
@@ -1046,7 +1172,7 @@ public class Mesh2 extends Mesh {
   @Chainable
   public Mesh2 subdivFaceCentroid ( final int faceIdx ) {
 
-    // TODO: Make these functional interfaces?
+    // RESEARCH Make these functional interfaces?
 
     /* Validate face index, find face. */
     final int facesLen = this.faces.length;
@@ -1625,7 +1751,7 @@ public class Mesh2 extends Mesh {
         sctCount2);
 
     final float annul = Utils.clamp(oculus,
-        Utils.EPSILON, 1.0f - Utils.EPSILON);
+        IUtils.DEFAULT_EPSILON, 1.0f - IUtils.DEFAULT_EPSILON);
     final double annRad = annul * 0.5d;
 
     final double toStep = 1.0d / (sctCount - 1.0d);
@@ -2218,7 +2344,7 @@ public class Mesh2 extends Mesh {
     final int seg = sectors < 3 ? 3 : sectors;
     final int seg2 = seg + seg;
     final float annul = Utils.clamp(oculus,
-        Utils.EPSILON, 1.0f - Utils.EPSILON);
+        IUtils.DEFAULT_EPSILON, 1.0f - IUtils.DEFAULT_EPSILON);
 
     final double toTheta = IUtils.TAU_D / seg;
     final double annRad = annul * 0.5d;
@@ -2424,9 +2550,9 @@ public class Mesh2 extends Mesh {
    * Restructures the mesh so that each face index refers to unique
    * data, indifferent to redundancies. As a consequence, coordinate and
    * texture coordinate are of equal length and face indices are easier
-   * to read and understand. Useful prior to subdividing edges, or to
-   * make mesh similar to Unity meshes. Similar to 'ripping' vertices or
-   * 'tearing' edges in Blender.
+   * to read and understand. Useful for making a mesh similar to those
+   * in Unity. Similar to 'ripping' vertices or 'tearing' edges in
+   * Blender.
    *
    * @param source the source mesh
    * @param target the target mesh

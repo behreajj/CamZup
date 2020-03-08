@@ -95,3 +95,5 @@ oculus
 viridis
 demoted
 hamilton
+magma
+inset

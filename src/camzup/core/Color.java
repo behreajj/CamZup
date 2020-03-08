@@ -2741,7 +2741,9 @@ public class Color extends Vec4 {
 
   /**
    * Returns a web-friendly representation of the color as a hexadecimal
-   * code, preceded by a hash tag, '#', with no alpha.
+   * code, preceded by a hash tag, '#', with no alpha. Assumes the
+   * number will be formatted as <code>0xaabbccdd</code> , where alpha
+   * is the first channel, followed by red, green and blue.
    *
    * @param c the color
    * @return the string
@@ -2749,8 +2751,9 @@ public class Color extends Vec4 {
    */
   public static String toHexWeb ( final int c ) {
 
-    return "#" + Integer
-        .toHexString(c)
+    final String hexStr = Integer.toHexString(c);
+    if ( hexStr.length() < 3 ) { return "#000000"; }
+    return "#" + hexStr
         .substring(2)
         .toUpperCase();
   }
@@ -2778,7 +2781,7 @@ public class Color extends Vec4 {
    * @param target the output color
    * @return the color
    */
-  public static Color xyzaToRgba (
+  public static Color xyzwToRgba (
       final float x,
       final float y,
       final float z,
@@ -2799,11 +2802,11 @@ public class Color extends Vec4 {
    * @param target the output color
    * @return the color
    */
-  public static Color xyzaToRgba (
+  public static Color xyzwToRgba (
       final Vec4 v,
       final Color target ) {
 
-    return Color.xyzaToRgba(v.x, v.y, v.z, v.w, target);
+    return Color.xyzwToRgba(v.x, v.y, v.z, v.w, target);
   }
 
   /**

@@ -34,9 +34,9 @@ public class Cam2 extends Entity2 {
   protected final Vec2 trScl;
 
   {
-    trAxis = new Vec2();
-    trLoc = new Vec2();
-    trScl = new Vec2();
+    this.trAxis = new Vec2();
+    this.trLoc = new Vec2();
+    this.trScl = new Vec2();
   }
 
   /**

@@ -963,6 +963,154 @@ public class Mesh3 extends Mesh {
   }
 
   /**
+   * Insets a face by calculating its centroid then easing from the
+   * face's vertices toward the centroid by 0.5.
+   *
+   * @param faceIdx the face index
+   * @return this mesh
+   */
+  @Chainable
+  public Mesh3 insetFace ( final int faceIdx ) {
+
+    return this.insetFace(faceIdx, 0.5f);
+  }
+
+  /**
+   * Insets a face by calculating its centroid then easing from the
+   * face's vertices toward the centroid by the amount, expected to be
+   * in the range [0.0, 1.0] . When the amount is less than 0.0, the
+   * face remains unchanged; when the amount is greater than 1.0, then
+   * the face is subdivided by centroid.
+   *
+   * @param faceIdx the face index
+   * @param fac     the inset amount
+   * @return this mesh
+   */
+  @Experimental
+  @Chainable
+  public Mesh3 insetFace (
+      final int faceIdx,
+      final float fac ) {
+
+    // TEST
+
+    if ( fac <= 0.0f ) { return this; }
+    if ( fac >= 1.0f ) { return this.subdivFaceFan(faceIdx); }
+
+    /* Validate face index, find face. */
+    final int facesLen = this.faces.length;
+    final int i = Utils.mod(faceIdx, facesLen);
+    final int[][] face = this.faces[i];
+    final int faceLen = face.length;
+
+    final int vsOldLen = this.coords.length;
+    final int vtsOldLen = this.texCoords.length;
+    final int vnsOldLen = this.normals.length;
+
+    final int[][][] fsNew = new int[faceLen + 1][][];
+    final int[][] centerFace = fsNew[faceLen] = new int[faceLen][3];
+
+    final Vec3 vCentroid = new Vec3();
+    final Vec2 vtCentroid = new Vec2();
+    final Vec3 vnCentroid = new Vec3();
+
+    /* Find centroid. */
+    for ( int j = 0; j < faceLen; ++j ) {
+      final int[] vertCurr = face[j];
+      final Vec3 vCurr = this.coords[vertCurr[0]];
+      final Vec2 vtCurr = this.texCoords[vertCurr[1]];
+      final Vec3 vnCurr = this.normals[vertCurr[2]];
+
+      Vec3.add(vCentroid, vCurr, vCentroid);
+      Vec2.add(vtCentroid, vtCurr, vtCentroid);
+      Vec3.add(vnCentroid, vnCurr, vnCentroid);
+    }
+    Vec3.div(vCentroid, faceLen, vCentroid);
+    Vec2.div(vtCentroid, faceLen, vtCentroid);
+    Vec3.div(vnCentroid, faceLen, vnCentroid);
+    Vec3.normalize(vnCentroid, vnCentroid);
+
+    final Vec3[] vsNew = new Vec3[faceLen];
+    final Vec2[] vtsNew = new Vec2[faceLen];
+    final Vec3[] vnsNew = new Vec3[faceLen];
+
+    /* Find new corners. */
+    final float u = 1.0f - fac;
+    for ( int j = 0; j < faceLen; ++j ) {
+      final int k = (j + 1) % faceLen;
+
+      final int[] vertCurr = face[j];
+      final int[] vertNext = face[k];
+
+      final int vCornerIdx = vertCurr[0];
+      final int vtCornerIdx = vertCurr[1];
+      final int vnCornerIdx = vertCurr[2];
+
+      final Vec3 vCurr = this.coords[vCornerIdx];
+      final Vec2 vtCurr = this.texCoords[vtCornerIdx];
+      final Vec3 vnCurr = this.normals[vnCornerIdx];
+
+      vsNew[j] = new Vec3(
+          u * vCurr.x + fac * vCentroid.x,
+          u * vCurr.y + fac * vCentroid.y,
+          u * vCurr.z + fac * vCentroid.z);
+
+      vtsNew[j] = new Vec2(
+          u * vtCurr.x + fac * vtCentroid.x,
+          u * vtCurr.y + fac * vtCentroid.y);
+
+      vnsNew[j] = new Vec3(
+          u * vnCurr.x + fac * vnCentroid.x,
+          u * vnCurr.y + fac * vnCentroid.y,
+          u * vnCurr.z + fac * vnCentroid.z);
+
+      final int vSubdivIdx = vsOldLen + j;
+      final int vtSubdivIdx = vtsOldLen + j;
+      final int vnSubdivIdx = vnsOldLen + j;
+
+      fsNew[j] = new int[][] {
+          { vCornerIdx, vtCornerIdx, vnCornerIdx },
+          { vertNext[0], vertNext[1], vertNext[2] },
+          { vsOldLen + k, vtsOldLen + k, vnsOldLen + k },
+          { vSubdivIdx, vtSubdivIdx, vnSubdivIdx } };
+
+      centerFace[j][0] = vSubdivIdx;
+      centerFace[j][1] = vtSubdivIdx;
+      centerFace[j][2] = vnSubdivIdx;
+    }
+
+    this.coords = Vec3.concat(this.coords, vsNew);
+    this.texCoords = Vec2.concat(this.texCoords, vtsNew);
+    this.normals = Vec3.concat(this.normals, vnsNew);
+    this.faces = Mesh.splice(this.faces, i, 1, fsNew);
+
+    return this;
+  }
+
+  /**
+   * Insets all faces in the mesh for a given number of iterations.
+   * 
+   * @param itr the iterations
+   * @param fac the inset factor
+   * @return this mesh
+   */
+  @Chainable
+  @Experimental
+  public Mesh3 insetFaces ( final int itr, final float fac ) {
+
+    final int vitr = itr < 1 ? 1 : itr;
+    for ( int i = 0; i < vitr; ++i ) {
+      final int len = this.faces.length;
+      for ( int j = 0, k = 0; j < len; ++j ) {
+        final int vertLen = this.faces[k].length;
+        this.insetFace(k, fac);
+        k += vertLen + 1;
+      }
+    }
+    return this;
+  }
+
+  /**
    * Centers the mesh about the origin, (0.0, 0.0) and re-scales it to
    * the range [-0.5, 0.5]. Parallel to p5.Geometry's normalize method.
    *
@@ -1609,6 +1757,8 @@ public class Mesh3 extends Mesh {
   @Experimental
   @Chainable
   public Mesh3 subdivFaceInscribe ( final int faceIdx ) {
+
+    // Return fsNew indices instead?
 
     final int facesLen = this.faces.length;
     final int i = Utils.mod(faceIdx, facesLen);
@@ -2857,9 +3007,9 @@ public class Mesh3 extends Mesh {
    * Restructures the mesh so that each face index refers to unique
    * data, indifferent to redundancies. As a consequence, coordinates
    * and texture coordinate are of equal length and face indices are
-   * easier to read and understand. Useful prior to subdividing edges,
-   * or to make mesh similar to Unity meshes. Similar to 'ripping'
-   * vertices or 'tearing' edges in Blender.
+   * easier to read and understand. Useful for making a mesh similar to
+   * those in Unity. Similar to 'ripping' vertices or 'tearing' edges in
+   * Blender.
    *
    * @param source the source mesh
    * @param target the target mesh
@@ -2937,9 +3087,7 @@ public class Mesh3 extends Mesh {
     final int lons1 = vlons + 1;
     final int lats1 = vlats + 1;
 
-    /*
-     * The 2 comes from the poles.
-     */
+    /* The 2 comes from the poles. */
     final int len = lons1 * vlats + 2;
     final int last = len - 1;
 

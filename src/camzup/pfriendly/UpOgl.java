@@ -1753,7 +1753,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * specify the start control point; the last three parameters specify
    * the ending control point. The middle parameters specify the start
    * and stop of the curve.
-   * 
+   *
    * @param x1 control point 0 x
    * @param y1 control point 0 y
    * @param x2 mid point 0 x
@@ -1784,7 +1784,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * specify the start control point; the last three parameters specify
    * the ending control point. The middle parameters specify the start
    * and stop of the curve.
-   * 
+   *
    * @param x1 control point 0 x
    * @param y1 control point 0 y
    * @param z1 control point 0 z

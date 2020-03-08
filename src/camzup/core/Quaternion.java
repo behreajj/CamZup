@@ -385,9 +385,9 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       /* Normalize. */
       final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
 
-      if ( Math.abs(mSq) < Utils.DEFAULT_EPSILON ) { return target.reset(); }
+      if ( Math.abs(mSq) < IUtils.DEFAULT_EPSILON ) { return target.reset(); }
 
-      if ( Math.abs(1.0d - mSq) < Utils.DEFAULT_EPSILON ) {
+      if ( Math.abs(1.0d - mSq) < IUtils.DEFAULT_EPSILON ) {
         return target.set(
             (float) cw,
             (float) cx,

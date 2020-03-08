@@ -1296,6 +1296,60 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
   }
 
   /**
+   * Returns a String representation of the gradient compatible with the
+   * SVG format. Assumes a linear gradient with an origin and
+   * destination point.
+   *
+   * @param id the gradient id
+   * @return the string
+   */
+  public String toSvgString ( final String id ) {
+
+    return this.toSvgString(id, 0.0f, 0.0f, 0.0f, 1.0f);
+  }
+
+  /**
+   * Returns a String representation of the gradient compatible with the
+   * SVG format. Assumes a linear gradient with an origin and
+   * destination point.
+   *
+   * @param id the gradient id
+   * @param x1 the origin x
+   * @param y1 the origin y
+   * @param x2 the destination x
+   * @param y2 the destination y
+   * @return the string
+   */
+  public String toSvgString (
+      final String id,
+      final float x1,
+      final float y1,
+      final float x2,
+      final float y2 ) {
+
+    final StringBuilder sb = new StringBuilder()
+        .append("<linearGradient id=\"")
+        .append(id)
+        .append("\" x1=\"")
+        .append(Utils.toFixed(x1, 6))
+        .append("\" y1=\"")
+        .append(Utils.toFixed(y1, 6))
+        .append("\" x2=\"")
+        .append(Utils.toFixed(x2, 6))
+        .append("\" y2=\"")
+        .append(Utils.toFixed(y2, 6))
+        .append("\">");
+
+    final Iterator < ColorKey > itr = this.keys.iterator();
+    while ( itr.hasNext() ) {
+      sb.append(itr.next().toSvgString());
+    }
+
+    sb.append("</linearGradient>");
+    return sb.toString();
+  }
+
+  /**
    * A helper function for parsing an OBJ file. Attempts to convert a
    * string to a single precision real number.
    *
@@ -1456,9 +1510,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
         continue sampling;
       } else if ( step >= keyArr[keyLen - 1][2] ) {
 
-        /*
-         * If greater than upper bound, set to right color of key -1.
-         */
+        /* If greater than upper bound, set to right color of key -1. */
         seg = keyArr[keyLen - 1];
         clr.set(seg[7], seg[8], seg[9], seg[10]);
         trgKeys.add(new ColorKey(step, clr));
@@ -1466,14 +1518,12 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       }
 
       /*
-       * Search for segment within which the step falls.
+       * Search for segment within which the step falls. *0/ segSearch : for
+       * ( int m = 0; m < keyLen; ++m ) { seg = keyArr[m]; if ( seg[0] <=
+       * step && step <= seg[2] ) { break segSearch; } }
+       *
+       * /* Cache the segment's left, mid and right steps.
        */
-      segSearch : for ( int m = 0; m < keyLen; ++m ) {
-        seg = keyArr[m];
-        if ( seg[0] <= step && step <= seg[2] ) { break segSearch; }
-      }
-
-      /* Cache the segment's left, mid and right steps. */
       final float segl = seg[0];
       final float segm = seg[1];
       final float segr = seg[2];
@@ -1534,7 +1584,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       if ( clrSpc == 1 || clrSpc == 2 ) {
         /* HSB */
 
-        // TODO: Would matching this more closely to the original
+        // RESEARCH Would matching this more closely to the original
         // Python allow it to handle a single key HSB gradient
         // better ?
         final Color.HueEasing hueFunc = clrSpc == 2 ? new Color.HueCW()

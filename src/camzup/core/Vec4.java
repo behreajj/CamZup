@@ -50,6 +50,105 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
   }
 
   /**
+   * An abstract class to facilitate the creation of vector easing
+   * functions.
+   */
+  public static abstract class AbstrEasing
+      implements Utils.EasingFuncObj < Vec4 > {
+
+    /**
+     * The default constructor.
+     */
+    public AbstrEasing ( ) {}
+
+    /**
+     * A clamped interpolation between the origin and destination. Defers
+     * to an unclamped interpolation, which is to be defined by
+     * sub-classes of this class.
+     *
+     * @param origin the origin vector
+     * @param dest   the destination vector
+     * @param step   a factor in [0.0, 1.0]
+     * @param target the output vector
+     * @return the eased vector
+     */
+    @Override
+    public Vec4 apply (
+        final Vec4 origin,
+        final Vec4 dest,
+        final Float step,
+        final Vec4 target ) {
+
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
+      return this.applyUnclamped(origin, dest, step, target);
+    }
+
+    /**
+     * The interpolation to be defined by subclasses.
+     *
+     * @param origin the origin vector
+     * @param dest   the destination vector
+     * @param step   a factor in [0.0, 1.0]
+     * @param target the output vector
+     * @return the eased vector
+     */
+    public abstract Vec4 applyUnclamped (
+        final Vec4 origin,
+        final Vec4 dest,
+        final float step,
+        Vec4 target );
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * A linear interpolation functional class.
+   */
+  public static class Lerp extends AbstrEasing {
+
+    /**
+     * The default constructor.
+     */
+    public Lerp ( ) { super(); }
+
+    /**
+     * Eases between two vectors by a step using the formula (1.0 - t) * a
+     * + b . Promotes the step from a float to a double.
+     *
+     * @param origin the origin vector
+     * @param dest   the destination vector
+     * @param step   the step
+     * @param target the output vector
+     * @return the result
+     */
+    @Override
+    public Vec4 applyUnclamped (
+        final Vec4 origin,
+        final Vec4 dest,
+        final float step,
+        final Vec4 target ) {
+
+      final double td = step;
+      final double ud = 1.0d - td;
+      return target.set(
+          (float) (ud * origin.x + td * dest.x),
+          (float) (ud * origin.y + td * dest.y),
+          (float) (ud * origin.z + td * dest.z),
+          (float) (ud * origin.w + td * dest.w));
+    }
+  }
+
+  /**
    * An iterator, which allows a vector's components to be accessed in
    * an enhanced for loop.
    */
@@ -109,6 +208,11 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       return this.getClass().getSimpleName();
     }
   }
+
+  /**
+   * The default easing function, lerp.
+   */
+  private static transient AbstrEasing EASING = new Lerp();
 
   /**
    * The unique identification for serialized classes.
@@ -1121,6 +1225,16 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
   }
 
   /**
+   * Gets the string representation of the default Vec2 easing function.
+   *
+   * @return the string
+   */
+  public static String getEasingString ( ) {
+
+    return Vec4.EASING.toString();
+  }
+
+  /**
    * Evaluates whether the left comparisand is greater than the right
    * comparisand.
    *
@@ -1382,6 +1496,47 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
         Utils.min(a.y, lowerBound.y),
         Utils.min(a.z, lowerBound.z),
         Utils.min(a.w, lowerBound.w));
+  }
+
+  /**
+   * Mixes two vectors together by a step in [0.0, 1.0]. Uses the easing
+   * function that is a static field belonging to the Vec3 class.
+   *
+   * @param origin the original vector
+   * @param dest   the destination vector
+   * @param step   the step
+   * @param target the output vector
+   * @return the mix
+   * @see Vec3#EASING
+   */
+  public static Vec4 mix (
+      final Vec4 origin,
+      final Vec4 dest,
+      final float step,
+      final Vec4 target ) {
+
+    return Vec4.EASING.apply(origin, dest, step, target);
+  }
+
+  /**
+   * Mixes two vectors together by a step in [0.0, 1.0] with the help of
+   * a easing function.
+   *
+   * @param origin     the original vector
+   * @param dest       the destination vector
+   * @param step       the step
+   * @param target     the output vector
+   * @param easingFunc the easing function
+   * @return the mix
+   */
+  public static Vec4 mix (
+      final Vec4 origin,
+      final Vec4 dest,
+      final float step,
+      final Vec4 target,
+      final AbstrEasing easingFunc ) {
+
+    return easingFunc.apply(origin, dest, step, target);
   }
 
   /**
@@ -1981,6 +2136,16 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
         Utils.round(v.y),
         Utils.round(v.z),
         Utils.round(v.w));
+  }
+
+  /**
+   * Sets the easing function by which vectors are interpolated.
+   *
+   * @param easing the easing function
+   */
+  public static void setEasing ( final AbstrEasing easing ) {
+
+    if ( easing != null ) { Vec4.EASING = easing; }
   }
 
   /**

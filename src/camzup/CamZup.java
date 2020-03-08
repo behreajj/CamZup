@@ -2,11 +2,7 @@ package camzup;
 
 import processing.core.PApplet;
 
-import camzup.core.Mesh2;
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity2;
-import camzup.core.MeshEntity3;
-import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -166,27 +162,23 @@ public class CamZup {
    */
   public static void main ( final String[] args ) {
 
-    final Random rng = new Random();
-
-    final Mesh2 mesh2 = Mesh2.polygon(9, new Mesh2());
-    final MeshEntity2 entity2 = new MeshEntity2();
-    entity2.appendMesh(mesh2);
-    // System.out.println(entity2.toBlenderCode(
-    // null, 0.2f, 0.0f, 2.2f, 0.0f, 1.0f,
-    // 0.0f, 1.0f, 0.01f));
-    // System.out.println(entity2);
-
-    final MeshEntity3 entity3 = new MeshEntity3();
-    entity3.appendMesh(Mesh3.cube(new Mesh3()));
-    System.out.println(entity3);
-
     // final Random rng = new Random();
-    // final Gradient grd = new Gradient();
+    //
+    // final Mesh2 mesh2 = Mesh2.polygon(6, new Mesh2());
+    // mesh2.insetFaces(3, 0.5f);
+    // final MeshEntity2 entity2 = new MeshEntity2();
+    // entity2.appendMesh(mesh2);
+    // System.out.println(entity2.toBlenderCode(
+    // null, 2.2f, 0.0f, 1.0f,
+    // 0.0f, 1.0f, 0.01f, 0.2f, 0.0f));
 
-    // final Mesh3 m3 = new Mesh3();
-    // final MeshEntity3 me = new MeshEntity3();
-    // me.appendMesh(m3);
-    // System.out.println(me.toBlenderCode())
+    // final Mesh3 mesh3 = Mesh3.dodecahedron(new Mesh3());
+    // mesh3.insetFaces(3, 0.5f);
+    // final MeshEntity3 entity3 = new MeshEntity3();
+    // entity3.appendMesh(mesh3);
+    // System.out.println(entity3.toBlenderCode());
+    //
+    // final Gradient grd = new Gradient();
   }
 
   /**
