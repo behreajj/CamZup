@@ -378,7 +378,19 @@ public class Mesh3 extends Mesh {
    * @return the string
    */
   @Experimental
-  String toBlenderCode ( ) {
+  String toBlenderCode ( ) { return this.toBlenderCode(false); }
+
+  /**
+   * Returns a String of Python code targeted toward the Blender 2.8x
+   * API. This code is brittle and is used for internal testing
+   * purposes, i.e., to compare how mesh geometry looks in Blender (the
+   * control) versus in the library (the test).
+   *
+   * @param includeNormals whether or not to include normals
+   * @return the string
+   */
+  @Experimental
+  String toBlenderCode ( final boolean includeNormals ) {
 
     final StringBuilder pyCd = new StringBuilder(1024);
     pyCd.append("{\"name\": \"")
@@ -413,13 +425,14 @@ public class Mesh3 extends Mesh {
       if ( j < flast ) { pyCd.append(',').append(' '); }
     }
 
-    pyCd.append("], \"normals\": [");
-
-    final int nlen = this.normals.length;
-    final int nlast = nlen - 1;
-    for ( int h = 0; h < nlen; ++h ) {
-      pyCd.append(this.normals[h].toBlenderCode());
-      if ( h < nlast ) { pyCd.append(',').append(' '); }
+    if ( includeNormals ) {
+      pyCd.append("], \"normals\": [");
+      final int nlen = this.normals.length;
+      final int nlast = nlen - 1;
+      for ( int h = 0; h < nlen; ++h ) {
+        pyCd.append(this.normals[h].toBlenderCode());
+        if ( h < nlast ) { pyCd.append(',').append(' '); }
+      }
     }
 
     pyCd.append(']').append('}');
@@ -507,18 +520,18 @@ public class Mesh3 extends Mesh {
    * @param faceIdx the face index.
    * @param edgeIdx the edge index
    * @param amt     the extrusion amount
-   * @return this mesh
+   * @return the new face indices
    */
   @Experimental
   @Chainable
-  public Mesh3 extrudeEdge (
+  public int[][][] extrudeEdge (
       final int faceIdx,
       final int edgeIdx,
       final float amt ) {
 
     // TODO: Test UVs.
 
-    if ( amt == 0.0f ) { return this; }
+    if ( amt == 0.0f ) { return new int[0][0][0]; }
 
     final int facesLen = this.faces.length;
     final int i = Utils.mod(faceIdx, facesLen);
@@ -601,7 +614,7 @@ public class Mesh3 extends Mesh {
         new Vec3[] { vnDiff });
     this.faces = Mesh.splice(this.faces, i + 1, 0, faceNew);
 
-    return this;
+    return faceNew;
   }
 
   /**
@@ -612,17 +625,16 @@ public class Mesh3 extends Mesh {
    *
    * @param faceIdx the face index
    * @param amt     the amount
-   * @return this mesh
+   * @return this new face indices
    */
   @Experimental
-  @Chainable
-  public Mesh3 extrudeFace (
+  public int[][][] extrudeFace (
       final int faceIdx,
       final float amt ) {
 
     // TEST
 
-    if ( amt == 0.0f ) { return this; }
+    if ( amt == 0.0f ) { return new int[0][0][0]; }
 
     /* Validate face index, find face. */
     final int facesLen = this.faces.length;
@@ -739,7 +751,7 @@ public class Mesh3 extends Mesh {
     this.normals = Vec3.concat(this.normals, vnsExtruded);
     this.faces = Mesh.splice(this.faces, i, 0, fsNew);
 
-    return this;
+    return fsNew;
   }
 
   /**
@@ -967,10 +979,9 @@ public class Mesh3 extends Mesh {
    * face's vertices toward the centroid by 0.5.
    *
    * @param faceIdx the face index
-   * @return this mesh
+   * @return the new face indices
    */
-  @Chainable
-  public Mesh3 insetFace ( final int faceIdx ) {
+  public int[][][] insetFace ( final int faceIdx ) {
 
     return this.insetFace(faceIdx, 0.5f);
   }
@@ -984,17 +995,16 @@ public class Mesh3 extends Mesh {
    *
    * @param faceIdx the face index
    * @param fac     the inset amount
-   * @return this mesh
+   * @return the new face indices
    */
   @Experimental
-  @Chainable
-  public Mesh3 insetFace (
+  public int[][][] insetFace (
       final int faceIdx,
       final float fac ) {
 
     // TEST
 
-    if ( fac <= 0.0f ) { return this; }
+    if ( fac <= 0.0f ) { return new int[0][0][0]; }
     if ( fac >= 1.0f ) { return this.subdivFaceFan(faceIdx); }
 
     /* Validate face index, find face. */
@@ -1084,12 +1094,31 @@ public class Mesh3 extends Mesh {
     this.normals = Vec3.concat(this.normals, vnsNew);
     this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
-    return this;
+    return fsNew;
   }
 
   /**
+   * Insets all faces in the mesh once.
+   *
+   * @return this mesh
+   */
+  public Mesh3 insetFaces ( ) { return this.insetFaces(1); }
+
+  /**
    * Insets all faces in the mesh for a given number of iterations.
-   * 
+   *
+   * @param itr the iterations
+   * @return this mesh
+   */
+  public Mesh3 insetFaces ( final int itr ) {
+
+    return this.insetFaces(itr, 0.5f);
+  }
+
+  /**
+   * Insets all faces in the mesh for a given number of iterations by a
+   * factor in the range [0.0, 1.0] .
+   *
    * @param itr the iterations
    * @param fac the inset factor
    * @return this mesh
@@ -1574,11 +1603,10 @@ public class Mesh3 extends Mesh {
    * Subdivides a convex face. Defaults to centroid-based subdivision.
    *
    * @param faceIdx the face index
-   * @return this mesh.
+   * @return the new face indices
    */
   @Experimental
-  @Chainable
-  public Mesh3 subdivFace ( final int faceIdx ) {
+  public int[][][] subdivFace ( final int faceIdx ) {
 
     return this.subdivFaceCentroid(faceIdx);
   }
@@ -1590,11 +1618,10 @@ public class Mesh3 extends Mesh {
    * quadrilateral for the number of edges in the face.
    *
    * @param faceIdx the face index
-   * @return this mesh
+   * @return the new face indices
    */
   @Experimental
-  @Chainable
-  public Mesh3 subdivFaceCentroid ( final int faceIdx ) {
+  public int[][][] subdivFaceCentroid ( final int faceIdx ) {
 
     /* Validate face index, find face. */
     final int facesLen = this.faces.length;
@@ -1678,7 +1705,7 @@ public class Mesh3 extends Mesh {
     this.normals = Vec3.concat(this.normals, vnsNew);
     this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
-    return this;
+    return fsNew;
   }
 
   /**
@@ -1687,11 +1714,10 @@ public class Mesh3 extends Mesh {
    * for the number of edges in the face.
    *
    * @param faceIdx the face index
-   * @return this mesh
+   * @return the new face indices
    */
   @Experimental
-  @Chainable
-  public Mesh3 subdivFaceFan ( final int faceIdx ) {
+  public int[][][] subdivFaceFan ( final int faceIdx ) {
 
     final int facesLen = this.faces.length;
     final int i = Utils.mod(faceIdx, facesLen);
@@ -1742,7 +1768,7 @@ public class Mesh3 extends Mesh {
     this.normals = Vec3.concat(this.normals, new Vec3[] { vnCentroid });
     this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
-    return this;
+    return fsNew;
   }
 
   /**
@@ -1752,13 +1778,10 @@ public class Mesh3 extends Mesh {
    * the original. This is best suited to meshes made of triangles.
    *
    * @param faceIdx the face index
-   * @return the mesh
+   * @return the new face indices
    */
   @Experimental
-  @Chainable
-  public Mesh3 subdivFaceInscribe ( final int faceIdx ) {
-
-    // Return fsNew indices instead?
+  public int[][][] subdivFaceInscribe ( final int faceIdx ) {
 
     final int facesLen = this.faces.length;
     final int i = Utils.mod(faceIdx, facesLen);
@@ -1823,7 +1846,7 @@ public class Mesh3 extends Mesh {
     this.normals = Vec3.concat(this.normals, vnsNew);
     this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
-    return this;
+    return fsNew;
   }
 
   /**
@@ -1840,7 +1863,6 @@ public class Mesh3 extends Mesh {
    * @param itr iterations
    * @return this mesh
    */
-  @Experimental
   @Chainable
   public Mesh3 subdivFaces ( final int itr ) {
 
@@ -1854,7 +1876,6 @@ public class Mesh3 extends Mesh {
    * @param itr iterations
    * @return this mesh
    */
-  @Experimental
   @Chainable
   public Mesh3 subdivFacesCentroid ( final int itr ) {
 
@@ -1877,7 +1898,6 @@ public class Mesh3 extends Mesh {
    * @param itr iterations
    * @return this mesh
    */
-  @Experimental
   @Chainable
   public Mesh3 subdivFacesFan ( final int itr ) {
 
@@ -1900,7 +1920,6 @@ public class Mesh3 extends Mesh {
    * @param itr iterations
    * @return this mesh
    */
-  @Experimental
   @Chainable
   public Mesh3 subdivFacesInscribe ( final int itr ) {
 
@@ -1928,7 +1947,7 @@ public class Mesh3 extends Mesh {
     final int texCoordsLen = this.texCoords.length;
     final int normalsLen = this.normals.length;
     final int facesLen = this.faces.length;
-    final StringBuilder result = new StringBuilder();
+    final StringBuilder result = new StringBuilder(2048);
 
     /*
      * Append a comment listing the number of coordinates, texture
@@ -2234,7 +2253,7 @@ public class Mesh3 extends Mesh {
     final float toTheta = 1.0f / vsect;
     final float toPhi = 1.0f / vpanl;
 
-    final float vtrad = 0.5f * Utils.max(Utils.EPSILON, thickness);
+    final float vtrad = 0.5f * Utils.max(IUtils.DEFAULT_EPSILON, thickness);
     final float ratio = vtrad + vtrad;
 
     for ( int k = 0, i = 0; i < panels1; ++i ) {

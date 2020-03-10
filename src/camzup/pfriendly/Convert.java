@@ -1,13 +1,20 @@
 package camzup.pfriendly;
 
 import java.awt.geom.AffineTransform;
+import java.util.Iterator;
 
+import processing.core.PConstants;
+import processing.core.PGraphics;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
+import processing.core.PShape;
 import processing.core.PVector;
 
+import camzup.core.Experimental;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
+import camzup.core.Mesh2;
+import camzup.core.MeshEntity2;
 import camzup.core.Quaternion;
 import camzup.core.Transform2;
 import camzup.core.Transform3;
@@ -395,6 +402,60 @@ public abstract class Convert {
     }
   }
 
+  @Experimental
+  public static PShape toPShape (
+      final PGraphics rndr,
+      final MeshEntity2 me2 ) {
+
+    final PShape result = rndr.createShape(PConstants.GROUP);
+    final Iterator < Mesh2 > itr = me2.meshes.iterator();
+    while ( itr.hasNext() ) {
+      final Mesh2 mesh = itr.next();
+      final Vec2[] vs = mesh.coords;
+      final Vec2[] vts = mesh.texCoords;
+
+      final PShape child = rndr.createShape(PConstants.GROUP);
+      child.setName(mesh.name);
+      final int[][][] faces = mesh.faces;
+      final int len0 = faces.length;
+      for ( int i = 0; i < len0; ++i ) {
+        final int[][] verts = faces[i];
+        final int len1 = verts.length;
+
+        final PShape face = rndr.createShape();
+        face.beginShape(PConstants.POLYGON);
+        for ( int j = 0; j < len1; ++j ) {
+          final int[] vert = verts[j];
+          final Vec2 v = vs[vert[0]];
+          final Vec2 vt = vts[vert[1]];
+          face.vertex(v.x, v.y, vt.x, vt.y);
+        }
+        face.endShape(PConstants.CLOSE);
+
+        child.addChild(face);
+      }
+      result.addChild(child);
+    }
+
+    result.setName(me2.name);
+    final PMatrix2D transform = Convert.toPMatrix2D(
+        me2.transform,
+        TransformOrder.RST,
+        new PMatrix2D());
+    result.applyMatrix(transform);
+
+    result.setFill(true);
+    result.setFill(IUp.DEFAULT_FILL_COLOR);
+
+    result.setStroke(false);
+    result.setStroke(IUp.DEFAULT_STROKE_COLOR);
+    result.setStrokeWeight(IUp.DEFAULT_STROKE_WEIGHT);
+
+    result.disableStyle();
+
+    return result;
+  }
+
   /**
    * Converts a Vec2 to a PVector.
    *
@@ -502,5 +563,4 @@ public abstract class Convert {
 
     return target.set(source.x, source.y, source.z, 0.0f);
   }
-
 }

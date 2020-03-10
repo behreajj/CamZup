@@ -78,7 +78,9 @@ public interface IUp3 extends IUp {
    * @param eye    the eye location
    * @param center the center of the gaze
    */
-  default void camera ( final Vec3 eye, final Vec3 center ) {
+  default void camera (
+      final Vec3 eye,
+      final Vec3 center ) {
 
     this.camera(
         eye.x, eye.y, eye.z,
@@ -304,7 +306,9 @@ public interface IUp3 extends IUp {
    * @param ray  the ray
    * @param dLen the display length
    */
-  default void ray ( final Ray3 ray, final float dLen ) {
+  default void ray (
+      final Ray3 ray,
+      final float dLen ) {
 
     final Vec3 origin = ray.origin;
     final Vec3 dir = ray.dir;

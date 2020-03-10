@@ -126,6 +126,48 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
   }
 
   /**
+   * Applies the matrix to the renderer.
+   *
+   * @param n00 row 0, column 0
+   * @param n01 row 0, column 1
+   * @param n02 row 0, column 2
+   * @param n03 row 0, column 3
+   * @param n10 row 1, column 0
+   * @param n11 row 1, column 1
+   * @param n12 row 1, column 2
+   * @param n13 row 1, column 3
+   * @param n20 row 2, column 0
+   * @param n21 row 2, column 1
+   * @param n22 row 2, column 2
+   * @param n23 row 2, column 3
+   * @param n30 row 3, column 0
+   * @param n31 row 3, column 1
+   * @param n32 row 3, column 2
+   * @param n33 row 3, column 3
+   */
+  @Override
+  protected void applyMatrixImpl (
+      final float n00, final float n01, final float n02, final float n03,
+      final float n10, final float n11, final float n12, final float n13,
+      final float n20, final float n21, final float n22, final float n23,
+      final float n30, final float n31, final float n32, final float n33 ) {
+
+    this.modelview.apply(
+        n00, n01, n02, n03,
+        n10, n11, n12, n13,
+        n20, n21, n22, n23,
+        n30, n31, n32, n33);
+
+    PMatAux.inverse(this.modelview, this.modelviewInv);
+
+    this.projmodelview.apply(
+        n00, n01, n02, n03,
+        n10, n11, n12, n13,
+        n20, n21, n22, n23,
+        n30, n31, n32, n33);
+  }
+
+  /**
    * Draws the OpenGL implementation of the arc function using a curve
    * and transform.
    *
@@ -922,10 +964,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     }
 
     final float limit = Utils.min(w, h) * 0.5f;
-    tl = Utils.clamp(tl, PConstants.EPSILON, limit);
-    tr = Utils.clamp(tr, PConstants.EPSILON, limit);
-    br = Utils.clamp(br, PConstants.EPSILON, limit);
-    bl = Utils.clamp(bl, PConstants.EPSILON, limit);
+    tl = Utils.clamp(tl, IUtils.DEFAULT_EPSILON, limit);
+    tr = Utils.clamp(tr, IUtils.DEFAULT_EPSILON, limit);
+    br = Utils.clamp(br, IUtils.DEFAULT_EPSILON, limit);
+    bl = Utils.clamp(bl, IUtils.DEFAULT_EPSILON, limit);
 
     this.beginShape(PConstants.POLYGON);
     this.normal(0.0f, 0.0f, 1.0f);
@@ -3059,6 +3101,50 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
     PApplet.showMissingWarning("shape");
     super.shape(shape, x1, y1, x2, y2);
+  }
+
+  /**
+   * Applies a shear transform to the renderer.
+   *
+   * @param v the shear
+   */
+  public void shear ( final Vec2 v ) {
+
+    this.applyMatrixImpl(
+        1.0f, v.x, 0.0f, 0.0f,
+        v.y, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f);
+  }
+
+  /**
+   * Shears a shape around the x axis the amount specified in radians.
+   *
+   * @param radians the angle in radians
+   */
+  @Override
+  public void shearX ( final float radians ) {
+
+    this.applyMatrixImpl(
+        1.0f, Utils.tan(radians), 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f);
+  }
+
+  /**
+   * Shears a shape around the y axis the amount specified in radians.
+   *
+   * @param radians the angle in radians
+   */
+  @Override
+  public void shearY ( final float radians ) {
+
+    this.applyMatrixImpl(
+        1.0f, 0.0f, 0.0f, 0.0f,
+        Utils.tan(radians), 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f);
   }
 
   /**

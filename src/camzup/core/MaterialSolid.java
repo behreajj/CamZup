@@ -249,7 +249,7 @@ public class MaterialSolid extends Material {
      * meshes which are blown up by scale.
      */
     final String strokeStr = Utils.toFixed(Utils.max(
-        Utils.EPSILON,
+        IUtils.DEFAULT_EPSILON,
         Utils.div(this.strokeWeight, scale)), 6);
     final StringBuilder result = new StringBuilder(256);
 
@@ -443,7 +443,7 @@ public class MaterialSolid extends Material {
   @Chainable
   public MaterialSolid setStrokeWeight ( final float strokeWeight ) {
 
-    this.strokeWeight = Utils.max(Utils.EPSILON, strokeWeight);
+    this.strokeWeight = Utils.max(IUtils.DEFAULT_EPSILON, strokeWeight);
     return this;
   }
 
@@ -572,7 +572,7 @@ public class MaterialSolid extends Material {
      * small meshes which are blown up by scale.
      */
     final String strokeStr = Utils.toFixed(
-        Utils.max(Utils.EPSILON,
+        Utils.max(IUtils.DEFAULT_EPSILON,
             Utils.div(IUp.DEFAULT_STROKE_WEIGHT, scale)),
         6);
 

@@ -181,6 +181,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
     final int meshLen = this.meshes.size();
     final boolean autoSmoothNormals = true;
     final boolean addVertGroups = true;
+    final boolean includeNormals = false;
     final boolean useMaterials = materials != null && materials.length > 0;
 
     final StringBuilder pyCd = new StringBuilder(2048);
@@ -195,7 +196,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
     final int meshLast = meshLen - 1;
     final Iterator < Mesh3 > meshItr = this.meshes.iterator();
     while ( meshItr.hasNext() ) {
-      pyCd.append(meshItr.next().toBlenderCode());
+      pyCd.append(meshItr.next().toBlenderCode(includeNormals));
       if ( meshIndex < meshLast ) { pyCd.append(',').append(' '); }
       meshIndex++;
     }

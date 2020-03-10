@@ -11,6 +11,7 @@ import processing.opengl.PGraphicsOpenGL;
 import camzup.core.Color;
 import camzup.core.Curve3;
 import camzup.core.CurveEntity3;
+import camzup.core.IUtils;
 import camzup.core.Knot3;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh3;
@@ -735,7 +736,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     this.hint(PConstants.DISABLE_DEPTH_MASK);
     this.hint(PConstants.DISABLE_DEPTH_SORT);
 
-    final float vl = Utils.max(Utils.EPSILON, lineLength);
+    final float vl = Utils.max(IUtils.DEFAULT_EPSILON, lineLength);
 
     this.pushStyle();
     this.strokeWeight(strokeWeight);

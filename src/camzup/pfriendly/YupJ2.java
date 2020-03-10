@@ -564,27 +564,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     }
   }
 
-  // @Experimental
-  // protected void imageImpl (
-  // final PImage img,
-  // final float x,
-  // final float y ) {
-  //
-  // /*
-  // * TODO: Maybe call to super.image if tint is not white.
-  // *
-  // * The problem is that the super function accounts for tinting an
-  // * image or pixel width and pixel height (and relies on an inner
-  // class
-  // * that acts as a cache)... Also, if PImage is not a PImageAWT,
-  // * getNative will return null.
-  // */
-  // final Image imgNative = (Image) img.getNative();
-  // if (imgNative != null) {
-  // this.g2.drawImage(imgNative, (int) x, (int) y, null);
-  // }
-  // }
-
   /**
    * The rounded corner rectangle implementation. The meaning of the
    * first four parameters depends on rectMode.
@@ -670,10 +649,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     }
 
     final float limit = Utils.min(w, h) * 0.5f;
-    rTl = Utils.clamp(rTl, Utils.EPSILON, limit);
-    rTr = Utils.clamp(rTr, Utils.EPSILON, limit);
-    rBr = Utils.clamp(rBr, Utils.EPSILON, limit);
-    rBl = Utils.clamp(rBl, Utils.EPSILON, limit);
+    rTl = Utils.clamp(rTl, IUtils.DEFAULT_EPSILON, limit);
+    rTr = Utils.clamp(rTr, IUtils.DEFAULT_EPSILON, limit);
+    rBr = Utils.clamp(rBr, IUtils.DEFAULT_EPSILON, limit);
+    rBl = Utils.clamp(rBl, IUtils.DEFAULT_EPSILON, limit);
 
     this.gp.reset();
     this.gp.moveTo(x2 - rTr, y1);
@@ -709,7 +688,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
      * stroke scaling issues.
      */
 
-    this.strokeWeight = Utils.max(Utils.EPSILON, strokeWeight);
+    this.strokeWeight = Utils.max(IUtils.DEFAULT_EPSILON, strokeWeight);
     this.chooseStrokeCap(strokeCap);
     this.chooseStrokeJoin(strokeJoin);
     this.strokeImpl();
@@ -2481,8 +2460,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       final int xColor,
       final int yColor ) {
 
-    final float vl = lineLength > Utils.EPSILON ? lineLength
-        : Utils.EPSILON;
+    final float vl = lineLength > IUtils.DEFAULT_EPSILON ? lineLength
+        : IUtils.DEFAULT_EPSILON;
 
     this.pushStyle();
     this.setStrokeAwt(
@@ -2733,7 +2712,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     this.g2.setColor(this.strokeColorObject);
     this.g2.draw(this.gp);
 
-    if ( mSq != 0.0f ) {
+    if ( mSq > 0.0f ) {
 
       final float mInv = dLen * Utils.invSqrtUnchecked(mSq);
       final float dx = xOrigin + xDir * mInv;
@@ -3510,6 +3489,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     PApplet.showMissingWarning("shape");
     super.shape(shape, x1, y1, x2, y2);
   }
+
+  /**
+   * Applies a shear transform to the renderer.
+   *
+   * @param v the shear
+   */
+  @Override
+  public void shear ( final Vec2 v ) { this.g2.shear(v.x, v.y); }
 
   /**
    * Draws a square at a location.

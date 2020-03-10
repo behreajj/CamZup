@@ -458,18 +458,17 @@ public class Mesh2 extends Mesh {
    * @param faceIdx the face index.
    * @param edgeIdx the edge index
    * @param amt     the extrusion amount
-   * @return this mesh
+   * @return the new face indices
    */
   @Experimental
-  @Chainable
-  public Mesh2 extrudeEdge (
+  public int[][][] extrudeEdge (
       final int faceIdx,
       final int edgeIdx,
       final float amt ) {
 
     // TEST UV coordinates need testing.
 
-    if ( amt == 0.0f ) { return this; }
+    if ( amt == 0.0f ) { return new int[0][0][0]; }
 
     final int facesLen = this.faces.length;
     final int i = Utils.mod(faceIdx, facesLen);
@@ -536,7 +535,7 @@ public class Mesh2 extends Mesh {
         new Vec2[] { vtNewOrigin, vtNewDest });
     this.faces = Mesh.splice(this.faces, i + 1, 0, faceNew);
 
-    return this;
+    return faceNew;
   }
 
   /**
@@ -733,10 +732,9 @@ public class Mesh2 extends Mesh {
    * face's vertices toward the centroid by 0.5.
    *
    * @param faceIdx the face index
-   * @return this mesh
+   * @return the new face indices
    */
-  @Chainable
-  public Mesh2 insetFace ( final int faceIdx ) {
+  public int[][][] insetFace ( final int faceIdx ) {
 
     return this.insetFace(faceIdx, 0.5f);
   }
@@ -750,15 +748,14 @@ public class Mesh2 extends Mesh {
    *
    * @param faceIdx the face index
    * @param fac     the inset amount
-   * @return this mesh
+   * @return the new face indices
    */
   @Experimental
-  @Chainable
-  public Mesh2 insetFace (
+  public int[][][] insetFace (
       final int faceIdx,
       final float fac ) {
 
-    if ( fac <= 0.0f ) { return this; }
+    if ( fac <= 0.0f ) { return new int[0][0][0]; }
     if ( fac >= 1.0f ) { return this.subdivFaceFan(faceIdx); }
 
     /* Validate face index, find face. */
@@ -828,12 +825,31 @@ public class Mesh2 extends Mesh {
     this.texCoords = Vec2.concat(this.texCoords, vtsNew);
     this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
-    return this;
+    return fsNew;
   }
 
   /**
+   * Insets all faces in the mesh once.
+   *
+   * @return this mesh
+   */
+  public Mesh2 insetFaces ( ) { return this.insetFaces(1); }
+
+  /**
    * Insets all faces in the mesh for a given number of iterations.
-   * 
+   *
+   * @param itr the iterations
+   * @return this mesh
+   */
+  public Mesh2 insetFaces ( final int itr ) {
+
+    return this.insetFaces(itr, 0.5f);
+  }
+
+  /**
+   * Insets all faces in the mesh for a given number of iterations by a
+   * factor in the range [0.0, 1.0] .
+   *
    * @param itr the iterations
    * @param fac the inset factor
    * @return this mesh
@@ -986,10 +1002,9 @@ public class Mesh2 extends Mesh {
 
     if ( Vec2.none(scale) ) { return this; }
 
-    Vec2 c;
     final int len = this.coords.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.coords[i];
+      final Vec2 c = this.coords[i];
       Vec2.mul(c, scale, c);
     }
 
@@ -1150,11 +1165,10 @@ public class Mesh2 extends Mesh {
    * Subdivides a convex face. Defaults to centroid-based subdivision.
    *
    * @param faceIdx the face index
-   * @return this mesh
+   * @return the new face indices
    */
   @Experimental
-  @Chainable
-  public Mesh2 subdivFace ( final int faceIdx ) {
+  public int[][][] subdivFace ( final int faceIdx ) {
 
     return this.subdivFaceCentroid(faceIdx);
   }
@@ -1166,11 +1180,10 @@ public class Mesh2 extends Mesh {
    * number of edges in the face.
    *
    * @param faceIdx the face index
-   * @return this mesh
+   * @return the new face indices
    */
   @Experimental
-  @Chainable
-  public Mesh2 subdivFaceCentroid ( final int faceIdx ) {
+  public int[][][] subdivFaceCentroid ( final int faceIdx ) {
 
     // RESEARCH Make these functional interfaces?
 
@@ -1237,7 +1250,7 @@ public class Mesh2 extends Mesh {
     this.texCoords = Vec2.concat(this.texCoords, vtsNew);
     this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
-    return this;
+    return fsNew;
   }
 
   /**
@@ -1246,11 +1259,10 @@ public class Mesh2 extends Mesh {
    * for the number of edges in the face.
    *
    * @param faceIdx the face index
-   * @return this mesh
+   * @return the new face indices
    */
   @Experimental
-  @Chainable
-  public Mesh2 subdivFaceFan ( final int faceIdx ) {
+  public int[][][] subdivFaceFan ( final int faceIdx ) {
 
     final int facesLen = this.faces.length;
     final int i = Utils.mod(faceIdx, facesLen);
@@ -1292,7 +1304,7 @@ public class Mesh2 extends Mesh {
     this.texCoords = Vec2.concat(this.texCoords, new Vec2[] { vtCentroid });
     this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
-    return this;
+    return fsNew;
   }
 
   /**
@@ -1302,11 +1314,10 @@ public class Mesh2 extends Mesh {
    * the original. This is best suited to meshes made of triangles.
    *
    * @param faceIdx the face index
-   * @return the mesh
+   * @return the new face indices
    */
   @Experimental
-  @Chainable
-  public Mesh2 subdivFaceInscribe ( final int faceIdx ) {
+  public int[][][] subdivFaceInscribe ( final int faceIdx ) {
 
     final int facesLen = this.faces.length;
     final int i = Utils.mod(faceIdx, facesLen);
@@ -1356,7 +1367,7 @@ public class Mesh2 extends Mesh {
     this.texCoords = Vec2.concat(this.texCoords, vtsNew);
     this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
-    return this;
+    return fsNew;
   }
 
   /**
@@ -1408,7 +1419,6 @@ public class Mesh2 extends Mesh {
    * @param itr iterations
    * @return this mesh
    */
-  @Experimental
   @Chainable
   public Mesh2 subdivFacesFan ( final int itr ) {
 
@@ -1455,11 +1465,12 @@ public class Mesh2 extends Mesh {
   @Experimental
   public String toObjString ( ) {
 
-    // TODO: Needs testing.
+    // TEST
+
     final int coordsLen = this.coords.length;
     final int texCoordsLen = this.texCoords.length;
     final int facesLen = this.faces.length;
-    final StringBuilder result = new StringBuilder();
+    final StringBuilder result = new StringBuilder(2048);
 
     /*
      * Append a comment listing the number of coordinates, texture
@@ -1676,10 +1687,9 @@ public class Mesh2 extends Mesh {
   @Chainable
   public Mesh2 translate ( final Vec2 v ) {
 
-    Vec2 c;
     final int len = this.coords.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.coords[i];
+      final Vec2 c = this.coords[i];
       Vec2.add(c, v, c);
     }
 
@@ -2379,6 +2389,7 @@ public class Mesh2 extends Mesh {
       final int n = (j + 2) % seg2;
 
       if ( isNgon ) {
+
         final int[][] f = target.faces[k];
         f[0][0] = i;
         f[0][1] = i;
@@ -2388,7 +2399,9 @@ public class Mesh2 extends Mesh {
         f[2][1] = n;
         f[3][0] = j;
         f[3][1] = j;
+
       } else {
+
         final int[][] f0 = target.faces[i];
         f0[0][0] = i;
         f0[0][1] = i;
@@ -2404,6 +2417,7 @@ public class Mesh2 extends Mesh {
         f1[1][1] = n;
         f1[2][0] = j;
         f1[2][1] = j;
+
       }
     }
 

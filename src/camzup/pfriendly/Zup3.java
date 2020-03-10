@@ -5,6 +5,7 @@ import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.opengl.PGraphicsOpenGL;
 
+import camzup.core.IUtils;
 import camzup.core.Utils;
 import camzup.core.Vec3;
 
@@ -251,7 +252,7 @@ public class Zup3 extends Up3 {
         zEye - zCenter);
 
     final float lookDist = Vec3.magSq(this.lookDir);
-    if ( lookDist < Utils.EPSILON ) {
+    if ( lookDist < IUtils.DEFAULT_EPSILON ) {
       this.lookDir.set(0.0f, 0.0f, -1.0f);
       return;
     }

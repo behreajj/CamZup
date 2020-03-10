@@ -473,7 +473,7 @@ public abstract class Utils implements IUtils {
      */
     public void setRange ( final float range ) {
 
-      this.range = Utils.max(Utils.abs(range), Utils.EPSILON);
+      this.range = Utils.max(Utils.abs(range), IUtils.DEFAULT_EPSILON);
       this.halfRange = range * 0.5f;
     }
 
@@ -910,7 +910,7 @@ public abstract class Utils implements IUtils {
 
     final float nrmRad = radians * IUtils.ONE_TAU;
     final float sint = Utils.scNorm(nrmRad - 0.25f);
-    return sint == 0.0f ? 0.0f : Utils.scNorm(nrmRad) / sint;
+    return sint != 0.0f ? Utils.scNorm(nrmRad) / sint : 0.0f;
   }
 
   /**
@@ -1751,7 +1751,7 @@ public abstract class Utils implements IUtils {
 
     final float nrmRad = radians * IUtils.ONE_TAU;
     final float cost = Utils.scNorm(nrmRad);
-    return cost == 0.0f ? 0.0f : Utils.scNorm(nrmRad - 0.25f) / cost;
+    return cost != 0.0f ? Utils.scNorm(nrmRad - 0.25f) / cost : 0.0f;
   }
 
   /**

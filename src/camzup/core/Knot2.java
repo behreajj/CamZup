@@ -825,8 +825,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float xCoord,
       final float yCoord ) {
 
-    final float xOff = Math.copySign(Utils.EPSILON, xCoord);
-    final float yOff = Math.copySign(Utils.EPSILON, yCoord);
+    final float xOff = Math.copySign(IUtils.DEFAULT_EPSILON, xCoord);
+    final float yOff = Math.copySign(IUtils.DEFAULT_EPSILON, yCoord);
 
     return this.set(
         xCoord, yCoord,

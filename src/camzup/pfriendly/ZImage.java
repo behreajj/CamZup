@@ -8,6 +8,7 @@ import processing.core.PImage;
 import camzup.core.Chainable;
 import camzup.core.Color;
 import camzup.core.Gradient;
+import camzup.core.IUtils;
 import camzup.core.Sdf;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -459,7 +460,8 @@ public class ZImage extends PImage {
 
     final float bx = xOrigin - xDest;
     final float by = yOrigin - yDest;
-    final float bbInv = 1.0f / Utils.max(Utils.EPSILON, bx * bx + by * by);
+    final float bbInv = 1.0f
+        / Utils.max(IUtils.DEFAULT_EPSILON, bx * bx + by * by);
 
     for ( int i = 0, y = 0; y < h; ++y ) {
 
@@ -532,7 +534,7 @@ public class ZImage extends PImage {
     final float wInv = 1.0f / (w - 1.0f);
 
     final float r2 = radius + radius;
-    final float invrsq = 1.0f / Utils.max(Utils.EPSILON, r2 * r2);
+    final float invrsq = 1.0f / Utils.max(IUtils.DEFAULT_EPSILON, r2 * r2);
 
     for ( int i = 0, y = 0; y < h; ++y ) {
 

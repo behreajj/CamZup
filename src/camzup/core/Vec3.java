@@ -3061,7 +3061,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final Vec3 target ) {
 
     final float nMSq = Vec3.magSq(normal);
-    if ( Utils.abs(nMSq) < Utils.EPSILON ) { return target.reset(); }
+    if ( Utils.abs(nMSq) < IUtils.DEFAULT_EPSILON ) { return target.reset(); }
 
     if ( Utils.approx(nMSq, 1.0f) ) {
       final float scalar = 2.0f * Vec3.dot(normal, incident);

@@ -162,23 +162,11 @@ public class CamZup {
    */
   public static void main ( final String[] args ) {
 
-    // final Random rng = new Random();
+    // Mesh2 mesh = new Mesh2();
+    // Mesh2.square(mesh);
     //
-    // final Mesh2 mesh2 = Mesh2.polygon(6, new Mesh2());
-    // mesh2.insetFaces(3, 0.5f);
-    // final MeshEntity2 entity2 = new MeshEntity2();
-    // entity2.appendMesh(mesh2);
-    // System.out.println(entity2.toBlenderCode(
-    // null, 2.2f, 0.0f, 1.0f,
-    // 0.0f, 1.0f, 0.01f, 0.2f, 0.0f));
-
-    // final Mesh3 mesh3 = Mesh3.dodecahedron(new Mesh3());
-    // mesh3.insetFaces(3, 0.5f);
-    // final MeshEntity3 entity3 = new MeshEntity3();
-    // entity3.appendMesh(mesh3);
-    // System.out.println(entity3.toBlenderCode());
-    //
-    // final Gradient grd = new Gradient();
+    // PShape shape = Convert.toPShape(mesh);
+    // System.out.println(shape);
   }
 
   /**

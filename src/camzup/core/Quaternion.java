@@ -208,14 +208,12 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final double cy = u * a.y + v * b.y;
       final double cz = u * a.z + v * b.z;
 
-      /*
-       * Normalize.
-       */
+      /* Normalize. */
       final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
 
-      if ( Math.abs(mSq) < Utils.EPSILON ) { return target.reset(); }
+      if ( Math.abs(mSq) < IUtils.DEFAULT_EPSILON ) { return target.reset(); }
 
-      if ( Math.abs(1.0d - mSq) < Utils.EPSILON ) {
+      if ( Math.abs(1.0d - mSq) < IUtils.DEFAULT_EPSILON ) {
         return target.set(
             (float) cw,
             (float) cx,
@@ -367,7 +365,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       /* The step. */
       double v = 0.0d;
 
-      if ( sinTheta > Utils.EPSILON ) {
+      if ( sinTheta > IUtils.DEFAULT_EPSILON ) {
         final double sInv = 1.0d / sinTheta;
         u = Math.sin((1.0f - step) * theta) * sInv;
         v = Math.sin(step * theta) * sInv;

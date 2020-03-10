@@ -337,8 +337,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     this.cameraX = x;
     this.cameraY = y;
     this.cameraRot = radians;
-    this.cameraZoomX = zx < Utils.EPSILON ? 1.0f : zx;
-    this.cameraZoomY = zy < Utils.EPSILON ? 1.0f : zy;
+    this.cameraZoomX = zx < IUtils.DEFAULT_EPSILON ? 1.0f : zx;
+    this.cameraZoomY = zy < IUtils.DEFAULT_EPSILON ? 1.0f : zy;
     final float zDist = this.height < 128 ? 128 : this.height;
 
     /*
@@ -820,7 +820,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       final int xColor,
       final int yColor ) {
 
-    final float vl = Utils.max(Utils.EPSILON, lineLength);
+    final float vl = Utils.max(IUtils.DEFAULT_EPSILON, lineLength);
 
     this.pushStyle();
 

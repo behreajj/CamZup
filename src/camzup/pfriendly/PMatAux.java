@@ -420,11 +420,27 @@ public abstract class PMatAux {
     return target;
   }
 
+  /**
+   * Inverse rotates a matrix in place by an angle in radians around the
+   * x axis.
+   * 
+   * @param radians the angle in radians
+   * @return the rotated matrix
+   */
   public static PMatrix3D invRotateX ( final float radians ) {
 
     return PMatAux.invRotateX(radians, (PMatrix3D) null);
   }
 
+  /**
+   * Inverse rotates a matrix in place by an angle in radians around the
+   * x axis.
+   * 
+   * @param c      the cosine of the angle
+   * @param s      the sine of the angle
+   * @param target the output matrix
+   * @return the rotated matrix
+   */
   public static PMatrix3D invRotateX (
       final float c,
       final float s,
@@ -445,6 +461,14 @@ public abstract class PMatAux {
     return target;
   }
 
+  /**
+   * Inverse rotates a matrix in place by an angle in radians around the
+   * x axis.
+   * 
+   * @param radians the angle in radians
+   * @param target  the output matrix
+   * @return the rotated matrix
+   */
   public static PMatrix3D invRotateX (
       final float radians,
       final PMatrix3D target ) {
@@ -455,11 +479,27 @@ public abstract class PMatAux {
         Utils.scNorm(normRad - 0.25f), target);
   }
 
+  /**
+   * Inverse rotates a matrix in place by an angle in radians around the
+   * y axis.
+   * 
+   * @param radians the angle in radians
+   * @return the rotated matrix
+   */
   public static PMatrix3D invRotateY ( final float radians ) {
 
     return PMatAux.invRotateY(radians, (PMatrix3D) null);
   }
 
+  /**
+   * Inverse rotates a matrix in place by an angle in radians around the
+   * y axis.
+   * 
+   * @param c      the cosine of the angle
+   * @param s      the sine of the angle
+   * @param target the output matrix
+   * @return the rotated matrix
+   */
   public static PMatrix3D invRotateY (
       final float c,
       final float s,
@@ -480,6 +520,14 @@ public abstract class PMatAux {
     return target;
   }
 
+  /**
+   * Inverse rotates a matrix in place by an angle in radians around the
+   * y axis.
+   * 
+   * @param radians the angle in radians
+   * @param target  the output matrix
+   * @return the rotated matrix
+   */
   public static PMatrix3D invRotateY (
       final float radians,
       final PMatrix3D target ) {
@@ -490,11 +538,27 @@ public abstract class PMatAux {
         Utils.scNorm(normRad - 0.25f), target);
   }
 
+  /**
+   * Inverse rotates a matrix in place by an angle in radians around the
+   * z axis.
+   * 
+   * @param radians the angle in radians
+   * @return the rotated matrix
+   */
   public static PMatrix3D invRotateZ ( final float radians ) {
 
     return PMatAux.invRotateZ(radians, (PMatrix3D) null);
   }
 
+  /**
+   * Inverse rotates a matrix in place by an angle in radians around the
+   * z axis.
+   * 
+   * @param c      the cosine of the angle
+   * @param s      the sine of the angle
+   * @param target the output matrix
+   * @return the rotated matrix
+   */
   public static PMatrix3D invRotateZ (
       final float c,
       final float s,
@@ -515,6 +579,14 @@ public abstract class PMatAux {
     return target;
   }
 
+  /**
+   * Inverse rotates a matrix in place by an angle in radians around the
+   * z axis.
+   * 
+   * @param radians the angle in radians
+   * @param target  the output matrix
+   * @return the rotated matrix
+   */
   public static PMatrix3D invRotateZ (
       final float radians,
       final PMatrix3D target ) {
@@ -902,6 +974,16 @@ public abstract class PMatAux {
     return target;
   }
 
+  /**
+   * Rotates a matrix in place around an arbitrary axis by the sine and
+   * cosine of an angle. Does not check that the axis is normalized.
+   * 
+   * @param radians the angle in radians
+   * @param xAxis   the axis x component
+   * @param yAxis   the axis y component
+   * @param zAxis   the axis z component
+   * @return the rotated matrix
+   */
   public static PMatrix3D rotate (
       final float radians,
       final float xAxis,
@@ -913,6 +995,18 @@ public abstract class PMatAux {
         (PMatrix3D) null);
   }
 
+  /**
+   * Rotates a matrix in place around an arbitrary axis by the sine and
+   * cosine of an angle. Does not check that the axis is normalized.
+   * 
+   * @param c      the cosine of the angle
+   * @param s      the sine of the angle
+   * @param xAxis  the axis x component
+   * @param yAxis  the axis y component
+   * @param zAxis  the axis z component
+   * @param target the output matrix
+   * @return the rotated matrix
+   */
   public static PMatrix3D rotate (
       final float c,
       final float s,
@@ -964,15 +1058,23 @@ public abstract class PMatAux {
     return target;
   }
 
+  /**
+   * Rotates a matrix in place around an arbitrary axis by the sine and
+   * cosine of an angle. Does not check that the axis is normalized.
+   * 
+   * @param radians the angle in radians
+   * @param xAxis   the axis x component
+   * @param yAxis   the axis y component
+   * @param zAxis   the axis z component
+   * @param target  the output matrix
+   * @return the rotated matrix
+   */
   public static PMatrix3D rotate (
       final float radians,
       final float xAxis,
       final float yAxis,
       final float zAxis,
       final PMatrix3D target ) {
-
-    // final float c = Utils.cos(radians);
-    // final float s = Utils.sin(radians);
 
     final float normRad = radians * IUtils.ONE_TAU;
     return PMatAux.rotate(
@@ -1135,9 +1237,6 @@ public abstract class PMatAux {
       final float radians,
       final PMatrix3D target ) {
 
-    // final float c = Utils.cos(radians);
-    // final float s = Utils.sin(radians);
-
     final float normRad = radians * IUtils.ONE_TAU;
     return PMatAux.rotateX(
         Utils.scNorm(normRad),
@@ -1216,9 +1315,6 @@ public abstract class PMatAux {
       final float radians,
       final PMatrix3D target ) {
 
-    // final float c = Utils.cos(radians);
-    // final float s = Utils.sin(radians);
-
     final float normRad = radians * IUtils.ONE_TAU;
     return PMatAux.rotateY(
         Utils.scNorm(normRad),
@@ -1296,9 +1392,6 @@ public abstract class PMatAux {
   public static PMatrix3D rotateZ (
       final float radians,
       final PMatrix3D target ) {
-
-    // final float c = Utils.cos(radians);
-    // final float s = Utils.sin(radians);
 
     final float normRad = radians * IUtils.ONE_TAU;
     return PMatAux.rotateZ(

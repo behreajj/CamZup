@@ -227,21 +227,33 @@ public class Cam3 extends Entity3 {
    * @param rndr the renderer
    * @return this camera entity
    */
-  public Cam3 update ( final Up3 rndr ) {
+  // public Cam3 update ( final Up3 rndr ) {
+  //
+  // // TODO: Generalize to PGraphicsOpenGL renderer.
+  //
+  // this.transform.getAxes(
+  // rndr.i,
+  // rndr.j,
+  // rndr.k);
+  //
+  // this.transform.getLocation(this.trLoc);
+  // rndr.cameraX = this.trLoc.x;
+  // rndr.cameraY = this.trLoc.y;
+  // rndr.cameraZ = this.trLoc.z;
+  //
+  // rndr.updateCamera();
+  //
+  // return this;
+  // }
 
-    // TODO: Generalize to PGraphicsOpenGL renderer.
+  public Cam3 update ( final PGraphicsOpenGL rndr ) {
 
-    this.transform.getAxes(
-        rndr.i,
-        rndr.j,
-        rndr.k);
+    // TODO: Implement.
 
     this.transform.getLocation(this.trLoc);
     rndr.cameraX = this.trLoc.x;
     rndr.cameraY = this.trLoc.y;
     rndr.cameraZ = this.trLoc.z;
-
-    rndr.updateCamera();
 
     return this;
   }

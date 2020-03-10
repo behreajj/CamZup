@@ -203,7 +203,6 @@ public interface IYup2 extends IUp {
 
     final float right = dim * 0.5f;
     final float left = -right;
-
     final float top = dim * 0.5f;
     final float bottom = -top;
 
@@ -415,7 +414,7 @@ public interface IYup2 extends IUp {
     this.strokeWeight(oWeight);
     this.point(xOrigin, yOrigin);
 
-    if ( mSq != 0.0f ) {
+    if ( mSq > 0.0f ) {
 
       final float mInv = dLen * Utils.invSqrtUnchecked(mSq);
       final float dx = xOrigin + xDir * mInv;
@@ -486,6 +485,13 @@ public interface IYup2 extends IUp {
    * @param rounding the corner rounding
    */
   void rect ( final Vec2 a, final Vec2 b, final float rounding );
+
+  /**
+   * Applies a shear transform to the renderer.
+   *
+   * @param v the shear
+   */
+  void shear ( final Vec2 v );
 
   /**
    * Draws a square.
