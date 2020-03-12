@@ -3,6 +3,7 @@ package camzup;
 import processing.core.PApplet;
 
 import camzup.core.Mesh3;
+import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -162,11 +163,19 @@ public class CamZup {
    */
   public static void main ( final String[] args ) {
 
-    // Mesh2 mesh = new Mesh2();
-    // Mesh2.square(mesh);
-    //
-    // PShape shape = Convert.toPShape(mesh);
-    // System.out.println(shape);
+    // final Ray2 r = new Ray2();
+    // Ray2.fromPoints(new Vec2(1, 1), new Vec2(-2, 1), r);
+    // System.out.println(r);
+
+    final Random rng = new Random();
+    final Vec2 a = new Vec2();
+    final Vec2 b = new Vec2();
+    Vec2.random(rng, a);
+    Vec2.random(rng, b);
+    final float z = Vec2.cross(a, b);
+    final Vec3 c = new Vec3(0.0f, 0.0f, z);
+    System.out.println(c);
+    System.out.println(Vec3.normalize(c, new Vec3()));
   }
 
   /**

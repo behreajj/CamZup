@@ -1,5 +1,6 @@
 package camzup.core;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -13,7 +14,8 @@ import java.util.Iterator;
  * objects from one orientation to another over minimal distance
  * without suffering gimbal lock.
  */
-public class Quaternion extends Imaginary implements Comparable < Quaternion > {
+public class Quaternion implements Comparable < Quaternion >, Cloneable,
+    Iterable < Float >, Serializable {
 
   /**
    * An abstract class that may serve as an umbrella for any custom
@@ -431,7 +433,7 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    * The default constructor. Defaults to the identity, (1.0, 0.0, 0.0,
    * 0.0) .
    */
-  public Quaternion ( ) { super(4); }
+  public Quaternion ( ) {}
 
   /**
    * Constructs a quaternion by float component.
@@ -447,7 +449,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final float yImag,
       final float zImag ) {
 
-    super(4);
     this.set(real, xImag, yImag, zImag);
   }
 
@@ -461,7 +462,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final float real,
       final Vec3 imag ) {
 
-    super(4);
     this.set(real, imag);
   }
 
@@ -472,7 +472,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    */
   public Quaternion ( final Quaternion source ) {
 
-    super(4);
     this.set(source);
   }
 
@@ -492,7 +491,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
       final String yImag,
       final String zImag ) {
 
-    super(4);
     this.set(real, xImag, yImag, zImag);
   }
 
@@ -597,7 +595,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    * @return the component at that index
    * @see Quaternion#getWFirst(int)
    */
-  @Override
   public float get ( final int index ) {
 
     return this.getWFirst(index);
@@ -678,6 +675,13 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
 
     return new IteratorWFirst(this);
   }
+
+  /**
+   * Gets the number of components held by the quaternion.
+   *
+   * @return the size
+   */
+  public int length ( ) { return 4; }
 
   /**
    * Resets this quaternion to an initial state, ( 1.0, 0.0, 0.0, 0.0 )
@@ -781,7 +785,6 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    *
    * @return the array
    */
-  @Override
   public float[] toArray ( ) {
 
     return this.toArray(true);
@@ -797,15 +800,19 @@ public class Quaternion extends Imaginary implements Comparable < Quaternion > {
    */
   public float[] toArray ( final boolean wFirst ) {
 
-    final float[] result = new float[this.length];
-    for ( int i = 0; i < this.length; ++i ) {
-      if ( wFirst ) {
-        result[i] = this.getWFirst(i);
-      } else {
-        result[i] = this.getWLast(i);
-      }
+    if ( wFirst ) {
+      return new float[] {
+          this.real,
+          this.imag.x,
+          this.imag.y,
+          this.imag.z };
     }
-    return result;
+
+    return new float[] {
+        this.imag.x,
+        this.imag.y,
+        this.imag.z,
+        this.real };
   }
 
   /**

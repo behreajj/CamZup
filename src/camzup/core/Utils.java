@@ -106,6 +106,17 @@ public abstract class Utils implements IUtils {
       if ( step >= 1.0f ) { return dest; }
       return super.apply(origin, dest, step);
     }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
   }
 
   /**
@@ -1325,6 +1336,24 @@ public abstract class Utils implements IUtils {
   }
 
   /**
+   * A convenience function for finding the maximum of more than three
+   * inputs.
+   *
+   * @param fs the list of values
+   * @return the minimum value
+   * @see Utils#max(float, float)
+   */
+  public static float max ( final float ... fs ) {
+
+    float max = Float.MIN_VALUE;
+    final int len = fs.length;
+    for ( int i = 0; i < len; ++i ) {
+      if ( fs[i] > max ) { max = fs[i]; }
+    }
+    return max;
+  }
+
+  /**
    * An alternative to {@link Math#max(float, float)} .
    *
    * @param a the left operand
@@ -1353,6 +1382,24 @@ public abstract class Utils implements IUtils {
 
     final float d = a >= b ? a : a < b ? b : 0.0f;
     return d >= c ? d : d < c ? c : 0.0f;
+  }
+
+  /**
+   * A convenience function for finding the minimum of more than three
+   * inputs.
+   *
+   * @param fs the list of values
+   * @return the minimum value
+   * @see Utils#max(float, float)
+   */
+  public static float min ( final float ... fs ) {
+
+    float min = Float.MAX_VALUE;
+    final int len = fs.length;
+    for ( int i = 0; i < len; ++i ) {
+      if ( fs[i] < min ) { min = fs[i]; }
+    }
+    return min;
   }
 
   /**
@@ -1616,7 +1663,7 @@ public abstract class Utils implements IUtils {
    * the cosine.<br>
    * <br>
    * Instead of a look-up table, this is based on the algorithm
-   * described
+   * described at
    * <a href= "https://developer.download.nvidia.com/cg/sin.html">Nvidia
    * Cg 3.1 Toolkit Documentation</a> .
    *
@@ -1626,7 +1673,9 @@ public abstract class Utils implements IUtils {
   @Experimental
   public static float scNorm ( final float normRad ) {
 
-    float r1y = Utils.mod1(normRad);
+    // float r1y = Utils.mod1(normRad);
+    float r1y = normRad > 0.0f ? normRad - (int) normRad
+        : normRad < 0.0f ? normRad - ((int) normRad - 1.0f) : 0.0f;
 
     final boolean r2x = r1y < 0.25f;
     float r1x = 0.0f;

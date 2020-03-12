@@ -423,7 +423,7 @@ public abstract class PMatAux {
   /**
    * Inverse rotates a matrix in place by an angle in radians around the
    * x axis.
-   * 
+   *
    * @param radians the angle in radians
    * @return the rotated matrix
    */
@@ -435,7 +435,7 @@ public abstract class PMatAux {
   /**
    * Inverse rotates a matrix in place by an angle in radians around the
    * x axis.
-   * 
+   *
    * @param c      the cosine of the angle
    * @param s      the sine of the angle
    * @param target the output matrix
@@ -464,7 +464,7 @@ public abstract class PMatAux {
   /**
    * Inverse rotates a matrix in place by an angle in radians around the
    * x axis.
-   * 
+   *
    * @param radians the angle in radians
    * @param target  the output matrix
    * @return the rotated matrix
@@ -482,7 +482,7 @@ public abstract class PMatAux {
   /**
    * Inverse rotates a matrix in place by an angle in radians around the
    * y axis.
-   * 
+   *
    * @param radians the angle in radians
    * @return the rotated matrix
    */
@@ -494,7 +494,7 @@ public abstract class PMatAux {
   /**
    * Inverse rotates a matrix in place by an angle in radians around the
    * y axis.
-   * 
+   *
    * @param c      the cosine of the angle
    * @param s      the sine of the angle
    * @param target the output matrix
@@ -523,7 +523,7 @@ public abstract class PMatAux {
   /**
    * Inverse rotates a matrix in place by an angle in radians around the
    * y axis.
-   * 
+   *
    * @param radians the angle in radians
    * @param target  the output matrix
    * @return the rotated matrix
@@ -541,7 +541,7 @@ public abstract class PMatAux {
   /**
    * Inverse rotates a matrix in place by an angle in radians around the
    * z axis.
-   * 
+   *
    * @param radians the angle in radians
    * @return the rotated matrix
    */
@@ -553,7 +553,7 @@ public abstract class PMatAux {
   /**
    * Inverse rotates a matrix in place by an angle in radians around the
    * z axis.
-   * 
+   *
    * @param c      the cosine of the angle
    * @param s      the sine of the angle
    * @param target the output matrix
@@ -582,7 +582,7 @@ public abstract class PMatAux {
   /**
    * Inverse rotates a matrix in place by an angle in radians around the
    * z axis.
-   * 
+   *
    * @param radians the angle in radians
    * @param target  the output matrix
    * @return the rotated matrix
@@ -977,7 +977,7 @@ public abstract class PMatAux {
   /**
    * Rotates a matrix in place around an arbitrary axis by the sine and
    * cosine of an angle. Does not check that the axis is normalized.
-   * 
+   *
    * @param radians the angle in radians
    * @param xAxis   the axis x component
    * @param yAxis   the axis y component
@@ -998,7 +998,7 @@ public abstract class PMatAux {
   /**
    * Rotates a matrix in place around an arbitrary axis by the sine and
    * cosine of an angle. Does not check that the axis is normalized.
-   * 
+   *
    * @param c      the cosine of the angle
    * @param s      the sine of the angle
    * @param xAxis  the axis x component
@@ -1061,7 +1061,7 @@ public abstract class PMatAux {
   /**
    * Rotates a matrix in place around an arbitrary axis by the sine and
    * cosine of an angle. Does not check that the axis is normalized.
-   * 
+   *
    * @param radians the angle in radians
    * @param xAxis   the axis x component
    * @param yAxis   the axis y component

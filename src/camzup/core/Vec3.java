@@ -1,5 +1,6 @@
 package camzup.core;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -10,7 +11,8 @@ import java.util.Iterator;
  * are limited, while most static methods require an explicit output
  * variable to be provided.
  */
-public class Vec3 extends Vec implements Comparable < Vec3 > {
+public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
+    Serializable {
 
   /**
    * An abstract class that may serve as an umbrella for any custom
@@ -271,7 +273,7 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
   /**
    * The default vector constructor.
    */
-  public Vec3 ( ) { super(3); }
+  public Vec3 ( ) {}
 
   /**
    * Constructs a vector from boolean values.
@@ -285,7 +287,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final boolean y,
       final boolean z ) {
 
-    super(3);
     this.set(x, y, z);
   }
 
@@ -301,7 +302,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final float y,
       final float z ) {
 
-    super(3);
     this.set(x, y, z);
   }
 
@@ -320,7 +320,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final String ystr,
       final String zstr ) {
 
-    super(3);
     this.set(xstr, ystr, zstr);
   }
 
@@ -331,7 +330,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    */
   public Vec3 ( final Vec2 v2 ) {
 
-    super(3);
     this.set(v2);
   }
 
@@ -345,7 +343,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final Vec2 v2,
       final float z ) {
 
-    super(3);
     this.set(v2, z);
   }
 
@@ -356,7 +353,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    */
   public Vec3 ( final Vec3 source ) {
 
-    super(3);
     this.set(source);
   }
 
@@ -459,7 +455,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    * @param index the index
    * @return the component at that index
    */
-  @Override
   public float get ( final int index ) {
 
     switch ( index ) {
@@ -503,6 +498,13 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
     return new V3Iterator(this);
   }
+
+  /**
+   * Gets the number of components held by the vector.
+   *
+   * @return the length
+   */
+  public int length ( ) { return 3; }
 
   /**
    * Resets this vector to an initial state, ( 0.0, 0.0, 0.0 ) .
@@ -648,7 +650,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    *
    * @return the array
    */
-  @Override
   public float[] toArray ( ) {
 
     return new float[] { this.x, this.y, this.z };
@@ -1308,11 +1309,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    * <em>a</em> and <em>b</em> rest.<br>
    * <br>
    *
-   * <em>a</em> x <em>b</em> :=<br>
-   * ( <em>a<sub>y</sub> b<sub>z</sub></em> - <em>a<sub>z</sub>
-   * b<sub>y</sub></em> ,<br>
-   * <em>a<sub>z</sub> b<sub>x</sub></em> - <em>a<sub>x</sub>
-   * b<sub>z</sub></em> ,<br>
+   * <em>a</em> x <em>b</em> := ( <em>a<sub>y</sub> b<sub>z</sub></em> -
+   * <em>a<sub>z</sub> b<sub>y</sub></em> , <em>a<sub>z</sub>
+   * b<sub>x</sub></em> - <em>a<sub>x</sub> b<sub>z</sub></em> ,
    * <em>a<sub>x</sub> b<sub>y</sub></em> - <em>a<sub>y</sub>
    * b<sub>x</sub></em> )<br>
    * <br>
@@ -1427,7 +1426,9 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    * @return the distance
    * @see Vec3#distEuclidean(Vec3, Vec3)
    */
-  public static float dist ( final Vec3 a, final Vec3 b ) {
+  public static float dist (
+      final Vec3 a,
+      final Vec3 b ) {
 
     return Vec3.distEuclidean(a, b);
   }
@@ -1522,8 +1523,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
    * @param a left operand
    * @param b right operand
    * @return the distance squared
-   * @see Vec3#distEuclidean(Vec3, Vec3)
-   * @see Vec3#sub(Vec3, Vec3, Vec3)
    */
   public static float distSq (
       final Vec3 a,
@@ -2128,7 +2127,6 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
 
       final float prc = h * toPrc;
       final float radius = (1.0f - prc) * vrMin + prc * vrMax;
-
       final Vec3[][] layer = result[h];
 
       if ( includePoles ) {
@@ -3183,18 +3181,18 @@ public class Vec3 extends Vec implements Comparable < Vec3 > {
       final Vec3[] arr,
       final int sz ) {
 
-    final int vsz = sz < 1 ? 1 : sz;
-    final Vec3[] result = new Vec3[vsz];
+    if ( sz < 1 ) { return new Vec3[] {}; }
+    final Vec3[] result = new Vec3[sz];
 
     if ( arr == null ) {
-      for ( int i = 0; i < vsz; ++i ) {
+      for ( int i = 0; i < sz; ++i ) {
         result[i] = new Vec3();
       }
       return result;
     }
 
     final int last = arr.length - 1;
-    for ( int i = 0; i < vsz; ++i ) {
+    for ( int i = 0; i < sz; ++i ) {
       if ( i > last || arr[i] == null ) {
         result[i] = new Vec3();
       } else {

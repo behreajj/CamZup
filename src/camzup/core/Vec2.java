@@ -1,5 +1,6 @@
 package camzup.core;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -10,7 +11,8 @@ import java.util.Iterator;
  * are limited, while most static methods require an explicit output
  * variable to be provided.
  */
-public class Vec2 extends Vec implements Comparable < Vec2 > {
+public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
+    Serializable {
 
   /**
    * An abstract class that may serve as an umbrella for any custom
@@ -265,7 +267,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
   /**
    * The default vector constructor.
    */
-  public Vec2 ( ) { super(2); }
+  public Vec2 ( ) {}
 
   /**
    * Constructs a vector from boolean values.
@@ -277,7 +279,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final boolean x,
       final boolean y ) {
 
-    super(2);
     this.set(x, y);
   }
 
@@ -291,7 +292,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final float x,
       final float y ) {
 
-    super(2);
     this.set(x, y);
   }
 
@@ -308,7 +308,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final String xstr,
       final String ystr ) {
 
-    super(2);
     this.set(xstr, ystr);
   }
 
@@ -319,7 +318,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    */
   public Vec2 ( final Vec2 v ) {
 
-    super(2);
     this.set(v);
   }
 
@@ -439,7 +437,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    * @param index the index
    * @return the component at that index
    */
-  @Override
   public float get ( final int index ) {
 
     switch ( index ) {
@@ -479,6 +476,13 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
 
     return new V2Iterator(this);
   }
+
+  /**
+   * Gets the number of components held by the vector.
+   *
+   * @return the length
+   */
+  public int length ( ) { return 2; }
 
   /**
    * Resets this vector to an initial state, ( 0.0, 0.0 ) .
@@ -583,7 +587,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    *
    * @return the array
    */
-  @Override
   public float[] toArray ( ) {
 
     return new float[] { this.x, this.y };
@@ -639,7 +642,7 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    * columns first, then rows.<br>
    * <br>
    * This is separated to make overriding the public grid functions
-   * easier. This is private because it is too easy for ints to be
+   * easier. This is private because it is too easy for integers to be
    * quietly promoted to floats if the signature parameters are
    * confused.
    *
@@ -1142,6 +1145,23 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
   }
 
   /**
+   * Returns the z component of the cross product between two vectors.
+   * The x and y components of the cross between 2D vectors are always
+   * zero. For that reason, the normalized cross product is equal to the
+   * sign of the cross product.
+   *
+   * @param a left operand
+   * @param b right operand
+   * @return the cross z component
+   */
+  public static float cross (
+      final Vec2 a,
+      final Vec2 b ) {
+
+    return a.x * b.y - a.y * b.x;
+  }
+
+  /**
    * Finds the absolute value of the difference between two vectors.
    *
    * @param a      left operand
@@ -1262,8 +1282,6 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
    * @param a left operand
    * @param b right operand
    * @return the distance squared
-   * @see Vec2#distEuclidean(Vec2, Vec2)
-   * @see Vec2#sub(Vec2, Vec2, Vec2)
    */
   public static float distSq (
       final Vec2 a,
@@ -1670,6 +1688,8 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final Vec2 lowerBound,
       final Vec2 upperBound ) {
 
+    // TEST
+
     final int vcnt = count < 3 ? 3 : count;
     final float toStep = 1.0f / (vcnt - 1.0f);
 
@@ -1684,32 +1704,34 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
     final float w = 0.21650635f * Utils.abs(
         upperBound.x - lowerBound.x) / vcnt;
 
-    /* Multiply x values by Math.sqrt(3.0d) / 2.0d . */
+    /*
+     * Multiply x values by Math.sqrt(3.0d) / 2.0d . Multiply y by 0.75 --
+     * cell radius plus half the radius.
+     */
+    final float lb32 = IUtils.SQRT_3_2 * lowerBound.x;
+    final float ub32 = IUtils.SQRT_3_2 * upperBound.x;
+    final float lb75 = 0.75f * lowerBound.y;
+    final float ub75 = 0.75f * upperBound.y;
+
     final float[] xs = new float[vcnt];
     for ( int j = 0; j < vcnt; ++j ) {
 
-      // TODO: How to optimize this.
       final float step = j * toStep;
-      xs[j] = IUtils.SQRT_3_2
-          * ((1.0f - step) * lowerBound.x + step * upperBound.x);
+      // xs[j] = IUtils.SQRT_3_2
+      // * ((1.0f - step) * lowerBound.x + step * upperBound.x);
+      xs[j] = (1.0f - step) * lb32 + step * ub32;
     }
 
     final Vec2[][] result = new Vec2[vcnt][vcnt];
     for ( int i = 0; i < vcnt; ++i ) {
       final Vec2[] row = result[i];
 
-      /*
-       * Multiply y by 0.75 -- cell radius plus half the radius .
-       */
-
-      // TODO: How to optimize this?
       final float step = i * toStep;
-      final float y = 0.75f
-          * ((1.0f - step) * lowerBound.y + step * upperBound.y);
+      // final float y = 0.75f
+      // * ((1.0f - step) * lowerBound.y + step * upperBound.y);
+      final float y = (1.0f - step) * lb75 + step * ub75;
 
-      /*
-       * Shift alternating cells by positive or negative offset.
-       */
+      /* Shift alternating cells by positive or negative offset. */
       final float xoff = i % 2 == 0 ? w : -w;
       final int joff = Utils.ceilToInt(i * 0.5f);
       for ( int j = 0; j < vcnt; ++j ) {
@@ -2898,18 +2920,18 @@ public class Vec2 extends Vec implements Comparable < Vec2 > {
       final Vec2[] arr,
       final int sz ) {
 
-    final int vsz = sz < 1 ? 1 : sz;
-    final Vec2[] result = new Vec2[vsz];
+    if ( sz < 1 ) { return new Vec2[] {}; }
+    final Vec2[] result = new Vec2[sz];
 
     if ( arr == null ) {
-      for ( int i = 0; i < vsz; ++i ) {
+      for ( int i = 0; i < sz; ++i ) {
         result[i] = new Vec2();
       }
       return result;
     }
 
     final int last = arr.length - 1;
-    for ( int i = 0; i < vsz; ++i ) {
+    for ( int i = 0; i < sz; ++i ) {
       if ( i > last || arr[i] == null ) {
         result[i] = new Vec2();
       } else {

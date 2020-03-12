@@ -1,12 +1,14 @@
 package camzup.core;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
 
 /**
  * A two-dimensional complex number.
  */
-public class Complex extends Imaginary implements Comparable < Complex > {
+public class Complex implements Comparable < Complex >, Cloneable,
+    Iterable < Float >, Serializable {
 
   /**
    * An abstract class that may serve as an umbrella for any custom
@@ -125,18 +127,14 @@ public class Complex extends Imaginary implements Comparable < Complex > {
   /**
    * The default constructor.
    */
-  public Complex ( ) { super(2); }
+  public Complex ( ) {}
 
   /**
    * Constructs a complex number from the source's components.
    *
    * @param source the source complex number
    */
-  public Complex ( final Complex source ) {
-
-    super(2);
-    this.set(source);
-  }
+  public Complex ( final Complex source ) { this.set(source); }
 
   /**
    * Constructs a complex number from float values.
@@ -148,7 +146,6 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final float real,
       final float imag ) {
 
-    super(2);
     this.set(real, imag);
   }
 
@@ -165,7 +162,6 @@ public class Complex extends Imaginary implements Comparable < Complex > {
       final String realstr,
       final String imagstr ) {
 
-    super(2);
     this.set(realstr, imagstr);
   }
 
@@ -239,7 +235,6 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    * @param index the index
    * @return the component at that index
    */
-  @Override
   public float get ( final int index ) {
 
     switch ( index ) {
@@ -279,6 +274,13 @@ public class Complex extends Imaginary implements Comparable < Complex > {
 
     return new CIterator(this);
   }
+
+  /**
+   * Gets the number of components held by the complex number.
+   *
+   * @return the size
+   */
+  public int length ( ) { return 2; }
 
   /**
    * Resets this complex number to an initial state ( 0.0, 0.0 ) .
@@ -363,7 +365,6 @@ public class Complex extends Imaginary implements Comparable < Complex > {
    *
    * @return the array
    */
-  @Override
   public float[] toArray ( ) {
 
     return new float[] { this.real, this.imag };

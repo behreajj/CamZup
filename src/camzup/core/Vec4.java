@@ -1,5 +1,6 @@
 package camzup.core;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -9,7 +10,8 @@ import java.util.Iterator;
  * while most static methods require an explicit output variable to be
  * provided.
  */
-public class Vec4 extends Vec implements Comparable < Vec4 > {
+public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
+    Serializable {
 
   /**
    * An abstract class that may serve as an umbrella for any custom
@@ -244,7 +246,7 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
   /**
    * The default vector constructor.
    */
-  public Vec4 ( ) { super(4); }
+  public Vec4 ( ) {}
 
   /**
    * Constructs a vector from boolean values.
@@ -260,7 +262,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final boolean z,
       final boolean w ) {
 
-    super(4);
     this.set(x, y, z, w);
   }
 
@@ -278,7 +279,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final float z,
       final float w ) {
 
-    super(4);
     this.set(x, y, z, w);
   }
 
@@ -299,7 +299,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
       final String zstr,
       final String wstr ) {
 
-    super(4);
     this.set(xstr, ystr, zstr, wstr);
   }
 
@@ -310,7 +309,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    */
   public Vec4 ( final Vec2 v2 ) {
 
-    super(4);
     this.set(v2);
   }
 
@@ -321,7 +319,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    */
   public Vec4 ( final Vec3 v3 ) {
 
-    super(4);
     this.set(v3);
   }
 
@@ -333,7 +330,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    */
   public Vec4 ( final Vec3 v3, final float w ) {
 
-    super(4);
     this.set(v3, w);
   }
 
@@ -344,7 +340,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    */
   public Vec4 ( final Vec4 source ) {
 
-    super(4);
     this.set(source);
   }
 
@@ -426,7 +421,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    * @param index the index
    * @return the component at that index
    */
-  @Override
   public float get ( final int index ) {
 
     switch ( index ) {
@@ -474,6 +468,13 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
 
     return new V4Iterator(this);
   }
+
+  /**
+   * Gets the number of components held by the vector.
+   *
+   * @return the length
+   */
+  public int length ( ) { return 4; }
 
   /**
    * Resets this vector to an initial state, ( 0.0, 0.0, 0.0, 0.0 ) .
@@ -649,7 +650,6 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
    *
    * @return the array
    */
-  @Override
   public float[] toArray ( ) {
 
     return new float[] { this.x, this.y, this.z, this.w };
@@ -964,6 +964,129 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
         Utils.diff(a.y, b.y),
         Utils.diff(a.z, b.z),
         Utils.diff(a.w, b.w));
+  }
+
+  /**
+   * Finds the Euclidean distance between two vectors.
+   *
+   * @param a left operand
+   * @param b right operand
+   * @return the distance
+   * @see Vec4#distEuclidean(Vec4, Vec4)
+   */
+  public static float dist (
+      final Vec4 a,
+      final Vec4 b ) {
+
+    return Vec4.distEuclidean(a, b);
+  }
+
+  /**
+   * Finds the Chebyshev distance between two vectors. Forms a square
+   * pattern when plotted.
+   *
+   * @param a left operand
+   * @param b right operand
+   * @return the distance
+   * @see Utils#max(float, float)
+   * @see Utils#diff(float, float)
+   */
+  public static float distChebyshev (
+      final Vec4 a,
+      final Vec4 b ) {
+
+    return Utils.max(
+        Utils.diff(a.x, b.x),
+        Utils.diff(a.y, b.y),
+        Utils.diff(a.z, b.z),
+        Utils.diff(a.w, b.w));
+  }
+
+  /**
+   * Finds the Euclidean distance between two vectors. Where possible,
+   * use distance squared to avoid the computational cost of the
+   * square-root.
+   *
+   * @param a left operand
+   * @param b right operand
+   * @return the Euclidean distance
+   * @see Vec4#distSq(Vec4, Vec4)
+   */
+  public static float distEuclidean (
+      final Vec4 a,
+      final Vec4 b ) {
+
+    return Utils.sqrtUnchecked(Vec4.distSq(a, b));
+  }
+
+  /**
+   * Finds the Manhattan distance between two vectors. Forms a diamond
+   * pattern when plotted.
+   *
+   * @param a left operand
+   * @param b right operand
+   * @return the Manhattan distance
+   * @see Utils#diff(float, float)
+   */
+  public static float distManhattan (
+      final Vec4 a,
+      final Vec4 b ) {
+
+    return Utils.diff(a.x, b.x) +
+        Utils.diff(a.y, b.y) +
+        Utils.diff(a.z, b.z) +
+        Utils.diff(a.w, b.w);
+  }
+
+  /**
+   * Finds the Minkowski distance between two vectors. This is a
+   * generalization of other distance formulae. When the exponent value,
+   * c, is 1.0, the Minkowski distance equals the Manhattan distance;
+   * when it is 2.0, Minkowski equals the Euclidean distance.
+   *
+   * @param a left operand
+   * @param b right operand
+   * @param c exponent
+   * @return the Minkowski distance
+   * @see Vec4#distEuclidean(Vec4, Vec4)
+   * @see Vec4#distManhattan(Vec4, Vec4)
+   */
+  public static float distMinkowski (
+      final Vec4 a,
+      final Vec4 b,
+      final float c ) {
+
+    if ( c == 0.0f ) { return 0.0f; }
+
+    return (float) Math.pow(
+        Math.pow(Utils.diff(a.x, b.x), c)
+            + Math.pow(Utils.diff(a.y, b.y), c)
+            + Math.pow(Utils.diff(a.z, b.z), c)
+            + Math.pow(Utils.diff(a.w, b.w), c),
+        1.0f / c);
+  }
+
+  /**
+   * Finds the Euclidean distance squared between two vectors.
+   * Equivalent to subtracting one vector from the other, then finding
+   * the dot product of the difference with itself.
+   *
+   * @param a left operand
+   * @param b right operand
+   * @return the distance squared
+   */
+  public static float distSq (
+      final Vec4 a,
+      final Vec4 b ) {
+
+    final float xDist = b.x - a.x;
+    final float yDist = b.y - a.y;
+    final float zDist = b.z - a.z;
+    final float wDist = b.w - a.w;
+    return xDist * xDist +
+        yDist * yDist +
+        zDist * zDist +
+        wDist * wDist;
   }
 
   /**
@@ -1302,6 +1425,33 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
   public static Vec4 left ( final Vec4 target ) {
 
     return target.set(-1.0f, 0.0f, 0.0f, 0.0f);
+  }
+
+  /**
+   * Limits a vector's magnitude to a scalar. Does nothing if the vector
+   * is beneath the limit.
+   *
+   * @param v      the input vector
+   * @param limit  the limit
+   * @param target the output vector
+   * @return the limited vector
+   */
+  public static Vec4 limit (
+      final Vec4 v,
+      final float limit,
+      final Vec4 target ) {
+
+    final float mSq = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
+    if ( limit > 0.0f && mSq > limit * limit ) {
+      final float scalar = limit * Utils.invSqrtUnchecked(mSq);
+      return target.set(
+          v.x * scalar,
+          v.y * scalar,
+          v.z * scalar,
+          v.w * scalar);
+    }
+
+    return target.set(v);
   }
 
   /**
@@ -1699,6 +1849,17 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
   }
 
   /**
+   * Returns a vector with all components set to negative one.
+   *
+   * @param target the output vector
+   * @return negative one
+   */
+  public static Vec4 negOne ( final Vec4 target ) {
+
+    return target.set(-1.0f, -1.0f, -1.0f, -1.0f);
+  }
+
+  /**
    * Tests to see if all the vector's components are zero.
    *
    * @param v the input vector
@@ -1847,6 +2008,62 @@ public class Vec4 extends Vec implements Comparable < Vec4 > {
         (float) Math.pow(a.y, b.y),
         (float) Math.pow(a.z, b.z),
         (float) Math.pow(a.w, b.w));
+  }
+
+  /**
+   * Projects one vector onto another.
+   *
+   * @param a      left operand
+   * @param b      right operand
+   * @param target the output vector
+   * @return the projection
+   * @see Vec4#projectVector(Vec4, Vec4, Vec4)
+   */
+  public static Vec4 project (
+      final Vec4 a,
+      final Vec4 b,
+      final Vec4 target ) {
+
+    return Vec4.projectVector(a, b, target);
+  }
+
+  /**
+   * Returns the scalar projection of <em>a</em> onto <em>b</em>.
+   *
+   * @param a left operand
+   * @param b right operand
+   * @return the scalar projection
+   * @see Vec4#magSq(Vec4)
+   * @see Vec4#dot(Vec4, Vec4)
+   */
+  public static float projectScalar (
+      final Vec4 a,
+      final Vec4 b ) {
+
+    final float bSq = Vec4.magSq(b);
+    if ( bSq != 0.0f ) { return Vec4.dot(a, b) / bSq; }
+    return 0.0f;
+  }
+
+  /**
+   * Projects one vector onto another. Defined as<br>
+   * <br>
+   * proj ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> \u00b7
+   * <em>b</em> / <em>b</em> \u00b7 <em>b</em> )
+   *
+   * @param a      left operand
+   * @param b      right operand
+   * @param target the output vector
+   * @return the projection
+   * @see Vec3#projectScalar(Vec3, Vec3)
+   * @see Vec3#mul(Vec3, float, Vec3)
+   */
+  public static Vec4 projectVector (
+      final Vec4 a,
+      final Vec4 b,
+      final Vec4 target ) {
+
+    return Vec4.mul(b, Vec4.projectScalar(a, b), target);
   }
 
   /**

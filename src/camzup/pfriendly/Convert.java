@@ -107,7 +107,6 @@ public abstract class Convert {
         (float) tr.getShearY(),
         (float) tr.getScaleY(),
         (float) tr.getTranslateY());
-
     return target;
   }
 
@@ -138,7 +137,6 @@ public abstract class Convert {
     target.set(
         source.m00, source.m01, source.m02,
         source.m01, source.m11, source.m12);
-
     return target;
   }
 
@@ -337,7 +335,6 @@ public abstract class Convert {
   public static PMatrix3D toPMatrix3D (
       final Transform3 tr3,
       final TransformOrder order,
-
       PMatrix3D target ) {
 
     if ( target == null ) { target = new PMatrix3D(); }
@@ -413,10 +410,11 @@ public abstract class Convert {
       final Mesh2 mesh = itr.next();
       final Vec2[] vs = mesh.coords;
       final Vec2[] vts = mesh.texCoords;
+      final int[][][] faces = mesh.faces;
 
       final PShape child = rndr.createShape(PConstants.GROUP);
       child.setName(mesh.name);
-      final int[][][] faces = mesh.faces;
+
       final int len0 = faces.length;
       for ( int i = 0; i < len0; ++i ) {
         final int[][] verts = faces[i];

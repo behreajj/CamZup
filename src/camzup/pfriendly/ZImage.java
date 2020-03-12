@@ -1,12 +1,14 @@
 package camzup.pfriendly;
 
 import java.awt.Image;
+import java.util.function.Function;
 
 import processing.core.PApplet;
 import processing.core.PImage;
 
 import camzup.core.Chainable;
 import camzup.core.Color;
+import camzup.core.Experimental;
 import camzup.core.Gradient;
 import camzup.core.IUtils;
 import camzup.core.Sdf;
@@ -167,8 +169,7 @@ public class ZImage extends PImage {
     }
   }
 
-  @SuppressWarnings ( "unused" )
-  private static PImage flipX ( final PImage img ) {
+  static PImage flipX ( final PImage img ) {
 
     // TEST
 
@@ -193,8 +194,7 @@ public class ZImage extends PImage {
     return img;
   }
 
-  @SuppressWarnings ( "unused" )
-  private static PImage flipY ( final PImage img ) {
+  static PImage flipY ( final PImage img ) {
 
     // TODO: Doesn't work.
 
@@ -220,8 +220,7 @@ public class ZImage extends PImage {
     return img;
   }
 
-  @SuppressWarnings ( "unused" )
-  private static PImage mirrorX ( final PImage img ) {
+  static PImage mirrorX ( final PImage img ) {
 
     // TEST
 
@@ -246,8 +245,7 @@ public class ZImage extends PImage {
     return img;
   }
 
-  @SuppressWarnings ( "unused" )
-  private static PImage mirrorY ( final PImage img ) {
+  static PImage mirrorY ( final PImage img ) {
 
     // TEST
 
@@ -271,6 +269,55 @@ public class ZImage extends PImage {
     }
     img.updatePixels();
     return img;
+  }
+
+  @Experimental
+  static PImage rotateZ (
+      final PImage source,
+      final PImage target,
+      final float radians ) {
+
+    /* Find cosine and sine of the angle. */
+    final float norm = radians * IUtils.ONE_TAU;
+    final float c = Utils.scNorm(norm);
+    final float s = Utils.scNorm(norm - 0.25f);
+
+    /* Convert to unit space. */
+    final int wSource = source.width;
+    final int hSource = source.height;
+    final float wLast = wSource - 1.0f;
+    final float hLast = hSource - 1.0f;
+    final float yNorm = 1.0f / hLast;
+    final float xNorm = 1.0f / wLast;
+
+    source.loadPixels();
+    target.loadPixels();
+
+    for ( int k = 0, y = 0; y < hSource; ++y ) {
+      float yn = y * yNorm;
+      yn = 1.0f - (yn + yn);
+      final float cyn = c * yn;
+      final float syn = s * yn;
+
+      for ( int x = 0; x < wSource; ++x, ++k ) {
+        float xn = x * xNorm;
+        xn = xn + xn - 1.0f;
+
+        /* Rotate, shift from [-1.0, 1.0] to [0.0, 1.0] . */
+        final float xr = (c * xn - syn) * 0.5f + 0.5f;
+        final float yr = (cyn + s * xn) * 0.5f + 0.5f;
+
+        /* Find target index. */
+        final int xi = Utils.round(xr * wLast);
+        final int yi = Utils.round((1.0f - yr) * hLast);
+        final int i = Utils.clamp(yi * wSource + xi,
+            0, target.pixels.length - 1);
+
+        target.pixels[i] = source.pixels[k];
+      }
+    }
+    target.updatePixels();
+    return target;
   }
 
   /**
@@ -340,8 +387,35 @@ public class ZImage extends PImage {
   }
 
   /**
+   * Recolors an image in-place with a color gradient. The color is
+   * converted to a factor in [0.0, 1.0] by an evaluation function.
+   *
+   * @param grd     the color gradient
+   * @param clrEval the color evaluator
+   * @param target  the target image
+   * @return the augmented image
+   */
+  public static PImage falseColor (
+      final Gradient grd,
+      final Function < Integer, Float > clrEval,
+      final PImage target ) {
+
+    target.loadPixels();
+    final int[] px = target.pixels;
+    final int len = px.length;
+    for ( int i = 0; i < len; ++i ) {
+      grd.eval(
+          clrEval.apply(px[i]),
+          ZImage.clr);
+      px[i] = Color.toHexInt(ZImage.clr);
+    }
+    target.updatePixels();
+    return target;
+  }
+
+  /**
    * Recolors an image in-place with a color gradient. The image's
-   * luminance is used as the factor
+   * luminance is used as the factor.
    *
    * @param grd    the color gradient
    * @param target the target image

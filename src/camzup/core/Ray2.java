@@ -1,6 +1,7 @@
 package camzup.core;
 
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * A direction that extends from an originating point.
@@ -162,6 +163,19 @@ public class Ray2 extends Ray {
   }
 
   /**
+   * Sets this ray to look at a target point.
+   *
+   * @param target the target point
+   * @return this ray
+   * @see Vec2#subNorm(Vec2, Vec2, Vec2)
+   */
+  public Ray2 lookAt ( final Vec2 target ) {
+
+    Vec2.subNorm(target, this.origin, this.dir);
+    return this;
+  }
+
+  /**
    * Resets this ray to a default.
    *
    * @return this ray
@@ -258,4 +272,98 @@ public class Ray2 extends Ray {
         origin.x + dir.x * scalar,
         origin.y + dir.y * scalar);
   }
+
+  /**
+   * Sets a ray from an origin and destination point.
+   *
+   * @param origin the origin
+   * @param dest   the destination
+   * @param target the output ray
+   * @return the ray
+   * @see Vec2#subNorm(Vec2, Vec2, Vec2)
+   */
+  public static Ray2 fromPoints (
+      final Vec2 origin,
+      final Vec2 dest,
+      final Ray2 target ) {
+
+    target.origin.set(origin);
+    Vec2.subNorm(dest, origin, target.dir);
+    return target;
+  }
+
+  @Experimental
+  public static float intersectFace (
+      final Ray2 ray,
+      final Face2 face,
+      final List < Vec2 > hits ) {
+
+    Vec2 v1 = new Vec2();
+    Vec2 v2 = new Vec2();
+    Vec2 v3 = new Vec2();
+
+    Vert2[] vertices = face.vertices;
+    hits.clear();
+    int len = vertices.length;
+    float minDist = -1.0f;
+    for ( int i = 0; i < len; ++i ) {
+      Vert2 vert0 = vertices[i];
+      Vert2 vert1 = vertices[(i + 1) % len];
+
+      Vec2 origin = vert0.coord;
+      Vec2 dest = vert1.coord;
+
+      Vec2.sub(ray.origin, origin, v1);
+      Vec2.sub(dest, origin, v2);
+      Vec2.perpendicularCCW(ray.dir, v3);
+
+      // float dist = -1.0f;
+      final float dot = Vec2.dot(v2, v3);
+      if ( !Utils.approx(dot, 0.0f) ) {
+        final float t1 = Vec2.cross(v2, v1) / dot;
+        final float t2 = Vec2.dot(v1, v3) / dot;
+        if ( t1 >= 0.0f && t2 >= 0.0f && t2 <= 1.0f ) {
+          // dist = t1;
+          minDist = Utils.min(minDist, t1);
+          Vec2 hit = Ray2.eval(ray, t1, new Vec2());
+          hits.add(hit);
+        }
+      }
+    }
+
+    return minDist;
+  }
+
+  @Experimental
+  public static float intersectEdge (
+      final Ray2 ray,
+      final Edge2 edge ) {
+
+    return Ray2.intersectLineSeg(
+        ray,
+        edge.origin.coord,
+        edge.dest.coord);
+  }
+
+  @Experimental
+  public static float intersectLineSeg (
+      final Ray2 ray,
+      final Vec2 origin,
+      final Vec2 dest ) {
+
+    // TEST
+
+    final Vec2 v1 = Vec2.sub(ray.origin, origin, new Vec2());
+    final Vec2 v2 = Vec2.sub(dest, origin, new Vec2());
+    final Vec2 v3 = Vec2.perpendicularCCW(ray.dir, new Vec2());
+    final float dot = Vec2.dot(v2, v3);
+    if ( Utils.approx(dot, 0.0f) ) { return -1.0f; }
+
+    final float t1 = Vec2.cross(v2, v1) / dot;
+    final float t2 = Vec2.dot(v1, v3) / dot;
+    if ( t1 >= 0.0f && t2 >= 0.0f && t2 <= 1.0f ) { return t1; }
+
+    return -1.0f;
+  }
+
 }

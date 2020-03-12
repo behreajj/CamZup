@@ -487,9 +487,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   @Override
   public Vec2 getLoc ( final Vec2 target ) {
 
-    return target.set(
-        this.cameraX,
-        this.cameraY);
+    return target.set(this.cameraX, this.cameraY);
   }
 
   /**

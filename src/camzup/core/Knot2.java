@@ -81,10 +81,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     /**
      * The default constructor.
      */
-    public Lerp ( ) {
-
-      super();
-    }
+    public Lerp ( ) { super(); }
 
     /**
      * Eases between two knots by a step using the formula (1.0 - t) * a +

@@ -173,7 +173,7 @@ public abstract class Mesh extends EntityData implements IMesh {
    * <ol>
    * <li>the number of faces;</li>
    * <li>the number of vertices per faces;</li>
-   * <li>the information per face;</li>
+   * <li>the information per vertex;</li>
    * </ol>
    *
    * The inner most array, information per face, may vary with each
