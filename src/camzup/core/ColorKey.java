@@ -1,11 +1,19 @@
 package camzup.core;
 
+import java.io.Serializable;
+
 /**
  * Stores a color at a given step (or percent) in the range [0.0, 1.0]
  * . Equality and hash are based solely on the step, not on the color
  * it holds.
  */
-public class ColorKey implements Comparable < ColorKey >, Cloneable {
+public class ColorKey
+    implements Comparable < ColorKey >, Cloneable, Serializable {
+
+  /**
+   * The unique identification for serialized classes.
+   */
+  private static final long serialVersionUID = -8845265266942414598L;
 
   /**
    * The default tolerance used when comparing color keys.
@@ -353,7 +361,7 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
    */
   public String toString ( final int places ) {
 
-    return new StringBuilder()
+    return new StringBuilder(96)
         .append("{ step: ")
         .append(Utils.toFixed(this.step, 6))
         .append(", clr: ")
@@ -370,16 +378,15 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
    */
   public String toSvgString ( ) {
 
-    final StringBuilder sb = new StringBuilder(96)
+    return new StringBuilder(96)
         .append("<stop offset=\"")
         .append(Utils.toFixed(this.step, 6))
         .append("\" stop-color=\"")
         .append(Color.toHexWeb(this.clr))
         .append("\" stop-opacity=\"")
         .append(Utils.toFixed(this.clr.w, 6))
-        .append("\"/>");
-
-    return sb.toString();
+        .append("\"/>")
+        .toString();
   }
 
   /**

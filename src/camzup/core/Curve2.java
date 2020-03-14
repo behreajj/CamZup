@@ -252,126 +252,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
   }
 
   /**
-   * A helper function. Returns a knot given two knots and a step.
-   * Assumes the step has already been checked, and that the knots are
-   * in sequence along the curve. The knot's rear handle is a mirror of
-   * the fore handle.
-   *
-   * @param a      the origin knot
-   * @param b      the destination knot
-   * @param step   the step
-   * @param target the output knot
-   * @return the knot
-   * @see Vec2#bezierPoint(Vec2, Vec2, Vec2, Vec2, float, Vec2)
-   * @see Vec2#bezierTangent(Vec2, Vec2, Vec2, Vec2, float, Vec2)
-   * @see Knot2#mirrorHandlesForward()
-   */
-  protected Knot2 bezierKnot (
-      final Knot2 a,
-      final Knot2 b,
-      final float step,
-      final Knot2 target ) {
-
-    Vec2.bezierPoint(
-        a.coord, a.foreHandle,
-        b.rearHandle, b.coord,
-        step, target.coord);
-
-    Vec2.bezierTangent(
-        a.coord, a.foreHandle,
-        b.rearHandle, b.coord,
-        step, target.foreHandle);
-
-    Vec2.negate(
-        target.foreHandle,
-        target.rearHandle);
-
-    Vec2.add(
-        target.coord,
-        target.foreHandle,
-        target.foreHandle);
-
-    Vec2.add(
-        target.coord,
-        target.rearHandle,
-        target.rearHandle);
-
-    return target;
-  }
-
-  /**
-   * A helper function for evaluation. Returns a coordinate given two
-   * knots and a step. Assumes the step has already been checked, and
-   * that the knots are in sequence along the curve.
-   *
-   * @param a      the origin knot
-   * @param b      the destination knot
-   * @param step   the step
-   * @param target the output coordinate
-   * @return the coordinate
-   * @see Vec2#bezierPoint(Vec2, Vec2, Vec2, Vec2, float, Vec2)
-   */
-  protected Vec2 bezierPoint (
-      final Knot2 a,
-      final Knot2 b,
-      final float step,
-      final Vec2 target ) {
-
-    return Vec2.bezierPoint(
-        a.coord, a.foreHandle,
-        b.rearHandle, b.coord,
-        step, target);
-  }
-
-  /**
-   * A helper function for evaluation. Returns a tangent given two knots
-   * and a step. Assumes the step has already been checked, and that the
-   * knots are in sequence along the curve.
-   *
-   * @param a      the origin knot
-   * @param b      the destination knot
-   * @param step   the step
-   * @param target the output tangent
-   * @return the tangent
-   * @see Vec2#bezierTangent(Vec2, Vec2, Vec2, Vec2, float, Vec2)
-   */
-  protected Vec2 bezierTangent (
-      final Knot2 a,
-      final Knot2 b,
-      final float step,
-      final Vec2 target ) {
-
-    return Vec2.bezierTangent(
-        a.coord, a.foreHandle,
-        b.rearHandle, b.coord,
-        step, target);
-  }
-
-  /**
-   * A helper function for evaluation. Returns a normalized tangent
-   * given two knots. Assumes the step has already been checked, and
-   * that the knots are in sequence along the curve.
-   *
-   * @param a      the origin knot
-   * @param b      the destination knot
-   * @param step   the step
-   * @param target the output tangent
-   * @return the normalized tangent
-   * @see Vec2#bezierTanUnit(Vec2, Vec2, Vec2, Vec2, float, Vec2)
-   */
-  protected Vec2 bezierTanUnit (
-      final Knot2 a,
-      final Knot2 b,
-      final float step,
-      final Vec2 target ) {
-
-    return Vec2.bezierTanUnit(
-        a.coord, a.foreHandle,
-        b.rearHandle, b.coord,
-        step, target);
-  }
-
-  /**
    * Clears the list of knots and sets the closedLoop flag to false.
    * Unlike the public reset, this does not add two default knots to the
    * list.
@@ -592,153 +472,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
     if ( !super.equals(obj) ) { return false; }
     if ( this.getClass() != obj.getClass() ) { return false; }
     return this.equals((Curve2) obj);
-  }
-
-  /**
-   * Evaluates a step in the range [0.0, 1.0], returning a knot on the
-   * curve. The knot's fore handle and rear handle are mirrored.
-   *
-   * @param step   the step
-   * @param target the output knot
-   * @return the knot
-   */
-  public Knot2 eval (
-      final float step,
-      final Knot2 target ) {
-
-    final int knotLength = this.knots.size();
-
-    float tScaled = 0.0f;
-    int i = 0;
-    Knot2 a = null;
-    Knot2 b = null;
-    if ( this.closedLoop ) {
-      tScaled = knotLength * Utils.mod1(step);
-      i = (int) tScaled;
-      a = this.knots.get(i);
-      b = this.knots.get((i + 1) % knotLength);
-    } else {
-      if ( knotLength == 1 || step <= 0.0f ) {
-        return target.set(this.knots.get(0));
-      }
-      if ( step >= 1.0f ) { return target.set(this.knots.get(knotLength - 1)); }
-
-      tScaled = step * (knotLength - 1);
-      i = (int) tScaled;
-      a = this.knots.get(i);
-      b = this.knots.get(i + 1);
-    }
-
-    return this.bezierKnot(a, b, tScaled - i, target);
-  }
-
-  /**
-   * Evaluates a step in the range [0.0, 1.0], returning a coordinate on
-   * the curve and a tangent. The tangent will be normalized, to be of
-   * unit length.
-   *
-   * @param step    the step
-   * @param coord   the output coordinate
-   * @param tangent the output tangent
-   * @return the coordinate
-   * @see Vec2#bezierPoint(Vec2, Vec2, Vec2, Vec2, float, Vec2)
-   * @see Vec2#bezierTanUnit(Vec2, Vec2, Vec2, Vec2, float, Vec2)
-   */
-  public Vec2 eval (
-      final float step,
-      final Vec2 coord,
-      final Vec2 tangent ) {
-
-    // TODO: Make static (along with range.)
-
-    final int knotLength = this.knots.size();
-
-    float tScaled = 0.0f;
-    int i = 0;
-    Knot2 a = null;
-    Knot2 b = null;
-    if ( this.closedLoop ) {
-      tScaled = knotLength * Utils.mod1(step);
-      i = (int) tScaled;
-      a = this.knots.get(i);
-      b = this.knots.get((i + 1) % knotLength);
-    } else {
-      if ( knotLength == 1 || step <= 0.0f ) {
-        return this.evalFirst(coord, tangent);
-      }
-      if ( step >= 1.0f ) { return this.evalLast(coord, tangent); }
-
-      tScaled = step * (knotLength - 1);
-      i = (int) tScaled;
-      a = this.knots.get(i);
-      b = this.knots.get(i + 1);
-    }
-
-    final float t = tScaled - i;
-    this.bezierPoint(a, b, t, coord);
-    this.bezierTanUnit(a, b, t, tangent);
-
-    return coord;
-  }
-
-  /**
-   * Evaluates the first knot in the curve. The tangent will be
-   * normalized, to be of unit length.
-   *
-   * @param coord   the output coordinate
-   * @param tangent the output tangent
-   * @return the coordinate
-   * @see Vec2#subNorm(Vec2, Vec2, Vec2)
-   */
-  public Vec2 evalFirst (
-      final Vec2 coord,
-      final Vec2 tangent ) {
-
-    final Knot2 kFirst = this.knots.get(0);
-    coord.set(kFirst.coord);
-    Vec2.subNorm(kFirst.foreHandle, coord, tangent);
-    return coord;
-  }
-
-  /**
-   * Evaluates the last knot in the curve. The tangent will be
-   * normalized, to be of unit length.
-   *
-   * @param coord   the output coordinate
-   * @param tangent the output tangent
-   * @return the coordinate
-   * @see Vec2#subNorm(Vec2, Vec2, Vec2)
-   */
-  public Vec2 evalLast (
-      final Vec2 coord,
-      final Vec2 tangent ) {
-
-    final Knot2 kLast = this.knots.get(this.knots.size() - 1);
-    coord.set(kLast.coord);
-    Vec2.subNorm(coord, kLast.rearHandle, tangent);
-    return coord;
-  }
-
-  /**
-   * Evaluates an array of vectors given a supplied count. The array is
-   * two-dimensional, where the first element of the minor dimension is
-   * the coordinate and the second is the tangent.
-   *
-   * @param count the count
-   * @return the array
-   */
-  public Vec2[][] evalRange ( final int count ) {
-
-    final int vcount = count < 3 ? 3 : count;
-    final Vec2[][] result = new Vec2[vcount][2];
-    final int last = this.closedLoop ? vcount : vcount - 1;
-    final float toPercent = 1.0f / last;
-    for ( int i = 0; i < vcount; ++i ) {
-      final Vec2 coord = result[i][0] = new Vec2();
-      final Vec2 tangent = result[i][1] = new Vec2();
-      this.eval(i * toPercent, coord, tangent);
-    }
-    return result;
   }
 
   /**
@@ -1152,6 +885,102 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
   }
 
   /**
+   * A helper function. Returns a knot given two knots and a step.
+   * Assumes the step has already been checked, and that the knots are
+   * in sequence along the curve. The knot's rear handle is a mirror of
+   * the fore handle.
+   *
+   * @param a      the origin knot
+   * @param b      the destination knot
+   * @param step   the step
+   * @param target the output knot
+   * @return the knot
+   * @see Vec2#bezierPoint(Vec2, Vec2, Vec2, Vec2, float, Vec2)
+   * @see Vec2#bezierTangent(Vec2, Vec2, Vec2, Vec2, float, Vec2)
+   * @see Knot2#mirrorHandlesForward()
+   */
+  static Knot2 bezierKnot (
+      final Knot2 a,
+      final Knot2 b,
+      final float step,
+      final Knot2 target ) {
+
+    Vec2.bezierPoint(
+        a.coord, a.foreHandle,
+        b.rearHandle, b.coord,
+        step, target.coord);
+
+    Vec2.bezierTangent(
+        a.coord, a.foreHandle,
+        b.rearHandle, b.coord,
+        step, target.foreHandle);
+
+    Vec2.negate(
+        target.foreHandle,
+        target.rearHandle);
+
+    Vec2.add(
+        target.coord,
+        target.foreHandle,
+        target.foreHandle);
+
+    Vec2.add(
+        target.coord,
+        target.rearHandle,
+        target.rearHandle);
+
+    return target;
+  }
+
+  /**
+   * A helper function for evaluation. Returns a coordinate given two
+   * knots and a step. Assumes the step has already been checked, and
+   * that the knots are in sequence along the curve.
+   *
+   * @param a      the origin knot
+   * @param b      the destination knot
+   * @param step   the step
+   * @param target the output coordinate
+   * @return the coordinate
+   * @see Vec2#bezierPoint(Vec2, Vec2, Vec2, Vec2, float, Vec2)
+   */
+  static Vec2 bezierPoint (
+      final Knot2 a,
+      final Knot2 b,
+      final float step,
+      final Vec2 target ) {
+
+    return Vec2.bezierPoint(
+        a.coord, a.foreHandle,
+        b.rearHandle, b.coord,
+        step, target);
+  }
+
+  /**
+   * A helper function for evaluation. Returns a normalized tangent
+   * given two knots. Assumes the step has already been checked, and
+   * that the knots are in sequence along the curve.
+   *
+   * @param a      the origin knot
+   * @param b      the destination knot
+   * @param step   the step
+   * @param target the output tangent
+   * @return the normalized tangent
+   * @see Vec2#bezierTanUnit(Vec2, Vec2, Vec2, Vec2, float, Vec2)
+   */
+  static Vec2 bezierTanUnit (
+      final Knot2 a,
+      final Knot2 b,
+      final float step,
+      final Vec2 target ) {
+
+    return Vec2.bezierTanUnit(
+        a.coord, a.foreHandle,
+        b.rearHandle, b.coord,
+        step, target);
+  }
+
+  /**
    * Calculates the approximate length of a curve to a given level of
    * precision.
    *
@@ -1165,7 +994,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
       final int precision ) {
 
     float sum = 0.0f;
-    final Vec2[][] segments = c.evalRange(precision + 1);
+    final Vec2[][] segments = Curve2.evalRange(c, precision + 1);
     final int len = segments.length;
     for ( int i = 1, j = 0; i < len; ++i, ++j ) {
       sum += Vec2.dist(
@@ -1188,7 +1017,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
       final Curve2 c,
       final int precision ) {
 
-    final Vec2[][] segments = c.evalRange(precision + 1);
+    final Vec2[][] segments = Curve2.evalRange(c, precision + 1);
     final int len = segments.length;
     final float[] results = new float[precision];
     for ( int i = 1, j = 0; i < len; ++i, ++j ) {
@@ -1494,6 +1323,164 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
   }
 
   /**
+   * Evaluates a step in the range [0.0, 1.0], returning a knot on the
+   * curve. The knot's fore handle and rear handle are mirrored.
+   *
+   * @param curve  the curve
+   * @param step   the step
+   * @param target the output knot
+   * @return the knot
+   */
+  public static Knot2 eval (
+      final Curve2 curve,
+      final float step,
+      final Knot2 target ) {
+
+    final List < Knot2 > knots = curve.knots;
+    final int knotLength = knots.size();
+
+    float tScaled = 0.0f;
+    int i = 0;
+    Knot2 a = null;
+    Knot2 b = null;
+    if ( curve.closedLoop ) {
+      tScaled = knotLength * Utils.mod1(step);
+      i = (int) tScaled;
+      a = knots.get(i);
+      b = knots.get((i + 1) % knotLength);
+    } else {
+      if ( knotLength == 1 || step <= 0.0f ) {
+        return target.set(knots.get(0));
+      }
+      if ( step >= 1.0f ) { return target.set(knots.get(knotLength - 1)); }
+
+      tScaled = step * (knotLength - 1);
+      i = (int) tScaled;
+      a = knots.get(i);
+      b = knots.get(i + 1);
+    }
+
+    return Curve2.bezierKnot(a, b, tScaled - i, target);
+  }
+
+  /**
+   * Evaluates a step in the range [0.0, 1.0], returning a coordinate on
+   * the curve and a tangent. The tangent will be normalized, to be of
+   * unit length.
+   *
+   * @param curve   the curve
+   * @param step    the step
+   * @param coord   the output coordinate
+   * @param tangent the output tangent
+   * @return the coordinate
+   * @see Vec2#bezierPoint(Vec2, Vec2, Vec2, Vec2, float, Vec2)
+   * @see Vec2#bezierTanUnit(Vec2, Vec2, Vec2, Vec2, float, Vec2)
+   */
+  public static Vec2 eval (
+      final Curve2 curve,
+      final float step,
+      final Vec2 coord,
+      final Vec2 tangent ) {
+
+    final List < Knot2 > knots = curve.knots;
+    final int knotLength = knots.size();
+
+    float tScaled = 0.0f;
+    int i = 0;
+    Knot2 a = null;
+    Knot2 b = null;
+    if ( curve.closedLoop ) {
+      tScaled = knotLength * Utils.mod1(step);
+      i = (int) tScaled;
+      a = knots.get(i);
+      b = knots.get((i + 1) % knotLength);
+    } else {
+      if ( knotLength == 1 || step <= 0.0f ) {
+        return Curve2.evalFirst(curve, coord, tangent);
+      }
+      if ( step >= 1.0f ) { return Curve2.evalLast(curve, coord, tangent); }
+
+      tScaled = step * (knotLength - 1);
+      i = (int) tScaled;
+      a = knots.get(i);
+      b = knots.get(i + 1);
+    }
+
+    final float t = tScaled - i;
+    Curve2.bezierPoint(a, b, t, coord);
+    Curve2.bezierTanUnit(a, b, t, tangent);
+
+    return coord;
+  }
+
+  /**
+   * Evaluates the first knot in the curve. The tangent will be
+   * normalized, to be of unit length.
+   *
+   * @param curve   the curve
+   * @param coord   the output coordinate
+   * @param tangent the output tangent
+   * @return the coordinate
+   * @see Vec2#subNorm(Vec2, Vec2, Vec2)
+   */
+  public static Vec2 evalFirst (
+      final Curve2 curve,
+      final Vec2 coord,
+      final Vec2 tangent ) {
+
+    final Knot2 kFirst = curve.knots.get(0);
+    coord.set(kFirst.coord);
+    Vec2.subNorm(kFirst.foreHandle, coord, tangent);
+    return coord;
+  }
+
+  /**
+   * Evaluates the last knot in the curve. The tangent will be
+   * normalized, to be of unit length.
+   *
+   * @param curve   the curve
+   * @param coord   the output coordinate
+   * @param tangent the output tangent
+   * @return the coordinate
+   * @see Vec2#subNorm(Vec2, Vec2, Vec2)
+   */
+  public static Vec2 evalLast (
+      final Curve2 curve,
+      final Vec2 coord,
+      final Vec2 tangent ) {
+
+    final Knot2 kLast = curve.knots.get(curve.knots.size() - 1);
+    coord.set(kLast.coord);
+    Vec2.subNorm(coord, kLast.rearHandle, tangent);
+    return coord;
+  }
+
+  /**
+   * Evaluates an array of vectors given a supplied count. The array is
+   * two-dimensional, where the first element of the minor dimension is
+   * the coordinate and the second is the tangent.
+   *
+   * @param curve the curve
+   * @param count the count
+   * @return the array
+   */
+  public static Vec2[][] evalRange (
+      final Curve2 curve,
+      final int count ) {
+
+    final int vcount = count < 3 ? 3 : count;
+    final Vec2[][] result = new Vec2[vcount][2];
+    final int last = curve.closedLoop ? vcount : vcount - 1;
+    final float toPercent = 1.0f / last;
+    for ( int i = 0; i < vcount; ++i ) {
+      final Vec2 coord = result[i][0] = new Vec2();
+      final Vec2 tangent = result[i][1] = new Vec2();
+      Curve2.eval(curve, i * toPercent, coord, tangent);
+    }
+    return result;
+  }
+
+  /**
    * Creates a curve from a face in a mesh.
    *
    * @param faceIdx the face index
@@ -1513,7 +1500,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
     final Vec2[] vs = mesh.coords;
 
     target.closedLoop = true;
-    target.name = new StringBuilder()
+    target.name = new StringBuilder(64)
         .append(mesh.name)
         .append('.')
         .append(i)

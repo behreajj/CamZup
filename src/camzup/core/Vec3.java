@@ -100,7 +100,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
         final Vec3 origin,
         final Vec3 dest,
         final float step,
-        Vec3 target );
+        final Vec3 target );
 
     /**
      * Returns the simple name of this class.

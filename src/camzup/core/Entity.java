@@ -56,10 +56,7 @@ public abstract class Entity implements IEntity {
    *
    * @return the name
    */
-  public String getName ( ) {
-
-    return this.name;
-  }
+  public String getName ( ) { return this.name; }
 
   /**
    * Returns a hash code for this entity.

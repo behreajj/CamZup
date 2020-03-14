@@ -493,9 +493,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     final ColorKey next = this.keys.ceiling(this.query);
     if ( next == null ) { return target.set(this.keys.last().clr); }
 
-    /*
-     * This needs to be Utils.div to avoid returning 0x0 as a color.
-     */
+    /* This needs to be Utils.div to avoid returning 0x0 as a color. */
     return easing.applyUnclamped(
         next.clr, prev.clr,
         Utils.div(step - next.step,
@@ -940,7 +938,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
   public Gradient sort ( final Comparator < Color > sorter ) {
 
     /*
-     * Separate color keys into a an array of steps and of colors. The key
+     * Separate color keys into an array of steps and of colors. The key
      * steps should remain unaffected by the sort.
      */
     final int len = this.keys.size();
@@ -1030,22 +1028,22 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     final int last = len - 1;
     final float toPercent = 1.0f / last;
 
-    final StringBuilder result = new StringBuilder()
+    final StringBuilder pyCd = new StringBuilder(2048)
         .append("from bpy import data as D, context as C\n\n")
         .append("grd_data = [");
 
     for ( int i = 0; i < len; ++i ) {
-      result.append("\n    {\"position\": ")
+      pyCd.append("\n    {\"position\": ")
           .append(Utils.toFixed(i * toPercent, 6))
           .append(", \"color\": ")
           .append(clrs[i].toBlenderCode(gamma, true))
           .append('}');
 
-      if ( i < last ) { result.append(',').append(' '); }
+      if ( i < last ) { pyCd.append(',').append(' '); }
     }
-    result.append(']');
+    pyCd.append(']');
 
-    result.append("\n\nmaterial = D.materials.new(\"")
+    pyCd.append("\n\nmaterial = D.materials.new(\"")
         .append(name)
         .append("\")\n")
         .append("material.use_nodes = True\n")
@@ -1063,7 +1061,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
         .append("    datum = grd_data[i]\n")
         .append("    new_key = color_keys.new(datum[\"position\"])\n")
         .append("    new_key.color = datum[\"color\"]\n");
-    return result.toString();
+    return pyCd.toString();
   }
 
   /**
@@ -1165,8 +1163,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     /*
      * Fence posting problem due to differences in gradient
      * implementation. Length of GIMP gradient is one less than this
-     * implementation because each GIMP key is a segment. This
-     * implementation's key lies on the left edge of the GIMP key segment.
+     * because each GIMP key is a segment. This implementation's key lies
+     * on the left edge of the GIMP key segment.
      */
     while ( itr.hasNext() ) {
       curr = itr.next();
@@ -1245,7 +1243,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final String name,
       final int displayColumns ) {
 
-    final StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder(1024);
 
     sb.append("GIMP Palette\n")
         .append("Name: ")
@@ -1327,7 +1325,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final float x2,
       final float y2 ) {
 
-    final StringBuilder sb = new StringBuilder()
+    final StringBuilder sb = new StringBuilder(1024)
         .append("<linearGradient id=\"")
         .append(id)
         .append("\" x1=\"")
@@ -1479,9 +1477,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     final TreeSet < ColorKey > trgKeys = target.keys;
     trgKeys.clear();
 
-    /*
-     * The GGR file is sampled rather than transferred one-to-one.
-     */
+    /* The GGR file is sampled rather than transferred one-to-one. */
     final int vsmp = Utils.clamp(samples, 3, 32);
     final float toStep = 1.0f / (vsmp - 1.0f);
     final Color ltClr = new Color();
@@ -1522,7 +1518,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
        * ( int m = 0; m < keyLen; ++m ) { seg = keyArr[m]; if ( seg[0] <=
        * step && step <= seg[2] ) { break segSearch; } }
        *
-       * /* Cache the segment's left, mid and right steps.
+       * Cache the segment's left, mid and right steps.
        */
       final float segl = seg[0];
       final float segm = seg[1];

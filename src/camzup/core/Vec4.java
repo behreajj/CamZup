@@ -2280,7 +2280,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
       final float sina,
       final Vec4 target ) {
 
-    // TODO: Needs testing.
+    // TEST
 
     return target.set(
         cosa * v.x - sina * v.w,

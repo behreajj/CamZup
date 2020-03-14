@@ -216,9 +216,9 @@ abstract class SVGParser {
     }
   }
 
-  private static final String cmdPattern = "[^A|a|C|c|H|h|L|l|M|m|Q|q|S|sT|t|V|v|Z|z]++";
+  private static final String CMD_PATTERN = "[^A|a|C|c|H|h|L|l|M|m|Q|q|S|sT|t|V|v|Z|z]++";
 
-  private static final String dataPattern = "[A|a|C|c|H|h|L|l|M|m|Q|q|S|sT|t|V|v|Z|z|,|\u0020]";
+  private static final String DATA_PATTERN = "[A|a|C|c|H|h|L|l|M|m|Q|q|S|sT|t|V|v|Z|z|,|\u0020]";
 
   // private static final DocumentBuilderFactory dbf =
   // DocumentBuilderFactory
@@ -246,7 +246,7 @@ abstract class SVGParser {
 
       final String pdStr = pathData.getTextContent();
 
-      String[] cmdTokens = pdStr.split(SVGParser.cmdPattern);
+      String[] cmdTokens = pdStr.split(SVGParser.CMD_PATTERN);
       cmdTokens = SVGParser.stripEmptyTokens(cmdTokens);
       final int cmdLen = cmdTokens.length;
       final PathCommand[] commands = new PathCommand[cmdLen];
@@ -258,7 +258,7 @@ abstract class SVGParser {
         // System.out.println(cmd);
       }
 
-      String[] dataTokens = pdStr.split(SVGParser.dataPattern);
+      String[] dataTokens = pdStr.split(SVGParser.DATA_PATTERN);
       dataTokens = SVGParser.stripEmptyTokens(dataTokens);
       // final int dataLen = dataTokens.length;
       // for (int k = 0; k < dataLen; ++k) {
@@ -449,8 +449,8 @@ abstract class SVGParser {
             coord.set(cox, coy);
             Vec2.add(relative, coord, coord);
 
-            xOff = Math.copySign(Utils.EPSILON, coord.x);
-            yOff = Math.copySign(Utils.EPSILON, coord.y);
+            xOff = Math.copySign(Utils.DEFAULT_EPSILON, coord.x);
+            yOff = Math.copySign(Utils.DEFAULT_EPSILON, coord.y);
 
             curr.foreHandle.set(
                 coord.x + xOff,

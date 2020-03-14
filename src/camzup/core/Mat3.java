@@ -1312,7 +1312,7 @@ public class Mat3 extends Matrix {
       final Vec2 b,
       final Vec2 target ) {
 
-    // TODO: Needs testing.
+    // TEST
 
     // return target.set(
     // a.m00 * b.x + a.m01 * b.y + a.m02,
@@ -1343,7 +1343,7 @@ public class Mat3 extends Matrix {
       final Vec2 b,
       final Vec2 target ) {
 
-    // TODO: Needs testing.
+    // TEST
 
     // return target.set(
     // a.m00 * b.x + a.m01 * b.y,

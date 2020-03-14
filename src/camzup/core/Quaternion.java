@@ -344,9 +344,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
       /* Flip values if the orientation is negative. */
       if ( dotp < 0.0f ) {
-        // TODO Double-check other slerp implementations,
-        // this seems to be based on the idea that dot product has had
-        // one added to it.
         bw = -bw;
         bx = -bx;
         by = -by;

@@ -798,9 +798,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
 
     if ( mSq < Utils.EPSILON ) { return target.reset(); }
 
-    /*
-     * az + b -- the numerator -- second.
-     */
+    /* az + b -- the numerator -- second. */
     final float azbr = a.real * z.real - a.imag * z.imag + b.real;
     final float azbi = a.real * z.imag + a.imag * z.real + b.imag;
 
@@ -1026,7 +1024,6 @@ public class Complex implements Comparable < Complex >, Cloneable,
    * @see Math#cos(double)
    * @see Math#sin(double)
    */
-  @Experimental
   public static Complex rect (
       final float r,
       final float phi,

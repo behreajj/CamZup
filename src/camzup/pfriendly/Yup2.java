@@ -122,9 +122,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
      * Ensure depth-related features are turned off. These summarize the
      * hint system.
      */
-
-    // TODO: Could this be causing a problem with secondary
-    // renderers?
     this.flush();
     this.pgl.disable(PGL.DEPTH_TEST);
     this.pgl.depthMask(false);

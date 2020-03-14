@@ -466,7 +466,7 @@ public class Mesh2 extends Mesh {
       final int edgeIdx,
       final float amt ) {
 
-    // TEST UV coordinates need testing.
+    // TEST UV coordinates
 
     if ( amt == 0.0f ) { return new int[0][0][0]; }
 

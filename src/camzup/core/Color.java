@@ -57,7 +57,7 @@ public class Color extends Vec4 {
         final Color origin,
         final Color dest,
         final float step,
-        Color target );
+        final Color target );
 
     /**
      * Returns the simple name of this class.
@@ -236,7 +236,6 @@ public class Color extends Vec4 {
         this.modResult = true;
       }
 
-      // TODO: Optimize?
       final float fac = Utils.lerpUnclamped(this.a, this.b, step);
       if ( this.modResult ) { return Utils.mod1(fac); }
       return fac;
@@ -1177,7 +1176,7 @@ public class Color extends Vec4 {
   @Chainable
   public Color reset ( ) {
 
-    return Color.white(this);
+    return this.set(1.0f, 1.0f, 1.0f, 1.0f);
   }
 
   /**
@@ -1651,8 +1650,7 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-    return a == 0.0f ? target.reset()
-        : target.set(
+    return target.set(
             Utils.clamp01(Utils.div(a, b.x)),
             Utils.clamp01(Utils.div(a, b.y)),
             Utils.clamp01(Utils.div(a, b.z)),
@@ -1987,7 +1985,7 @@ public class Color extends Vec4 {
      * 0.59 x 256.0 = 151.04 = 0x97
      *
      * 0.11 x 256.0 = 28.16 = 0x1c
-     **/
+     */
 
     return 0.2126f * c.x + 0.7152f * c.y + 0.0722f * c.z;
   }
@@ -2265,7 +2263,6 @@ public class Color extends Vec4 {
         rng.uniform(lowerBound.y, upperBound.y),
         rng.uniform(lowerBound.z, upperBound.z),
         1.0f);
-
     return Color.hsbaToRgba(hsba, target);
   }
 
@@ -2318,7 +2315,6 @@ public class Color extends Vec4 {
         rng.uniform(lowerBound.y, upperBound.y),
         rng.uniform(lowerBound.z, upperBound.z),
         rng.uniform(lowerBound.w, upperBound.w));
-
     return Color.hsbaToRgba(hsba, target);
   }
 

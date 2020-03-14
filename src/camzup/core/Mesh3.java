@@ -529,7 +529,7 @@ public class Mesh3 extends Mesh {
       final int edgeIdx,
       final float amt ) {
 
-    // TODO: Test UVs.
+    // TEST Test UVs.
 
     if ( amt == 0.0f ) { return new int[0][0][0]; }
 

@@ -293,48 +293,6 @@ public class Ray2 extends Ray {
   }
 
   @Experimental
-  public static float intersectFace (
-      final Ray2 ray,
-      final Face2 face,
-      final List < Vec2 > hits ) {
-
-    Vec2 v1 = new Vec2();
-    Vec2 v2 = new Vec2();
-    Vec2 v3 = new Vec2();
-
-    Vert2[] vertices = face.vertices;
-    hits.clear();
-    int len = vertices.length;
-    float minDist = -1.0f;
-    for ( int i = 0; i < len; ++i ) {
-      Vert2 vert0 = vertices[i];
-      Vert2 vert1 = vertices[(i + 1) % len];
-
-      Vec2 origin = vert0.coord;
-      Vec2 dest = vert1.coord;
-
-      Vec2.sub(ray.origin, origin, v1);
-      Vec2.sub(dest, origin, v2);
-      Vec2.perpendicularCCW(ray.dir, v3);
-
-      // float dist = -1.0f;
-      final float dot = Vec2.dot(v2, v3);
-      if ( !Utils.approx(dot, 0.0f) ) {
-        final float t1 = Vec2.cross(v2, v1) / dot;
-        final float t2 = Vec2.dot(v1, v3) / dot;
-        if ( t1 >= 0.0f && t2 >= 0.0f && t2 <= 1.0f ) {
-          // dist = t1;
-          minDist = Utils.min(minDist, t1);
-          Vec2 hit = Ray2.eval(ray, t1, new Vec2());
-          hits.add(hit);
-        }
-      }
-    }
-
-    return minDist;
-  }
-
-  @Experimental
   public static float intersectEdge (
       final Ray2 ray,
       final Edge2 edge ) {
@@ -343,6 +301,46 @@ public class Ray2 extends Ray {
         ray,
         edge.origin.coord,
         edge.dest.coord);
+  }
+
+  @Experimental
+  public static float intersectFace (
+      final Ray2 ray,
+      final Face2 face,
+      final List < Vec2 > hits ) {
+
+    final Vec2 v1 = new Vec2();
+    final Vec2 v2 = new Vec2();
+    final Vec2 v3 = new Vec2();
+
+    final Vert2[] vertices = face.vertices;
+    hits.clear();
+    final int len = vertices.length;
+    float minDist = -1.0f;
+    for ( int i = 0; i < len; ++i ) {
+      final Vert2 vert0 = vertices[i];
+      final Vert2 vert1 = vertices[(i + 1) % len];
+
+      final Vec2 origin = vert0.coord;
+      final Vec2 dest = vert1.coord;
+
+      Vec2.sub(ray.origin, origin, v1);
+      Vec2.sub(dest, origin, v2);
+      Vec2.perpendicularCCW(ray.dir, v3);
+
+      final float dot = Vec2.dot(v2, v3);
+      if ( !Utils.approx(dot, 0.0f) ) {
+        final float t1 = Vec2.cross(v2, v1) / dot;
+        final float t2 = Vec2.dot(v1, v3) / dot;
+        if ( t1 >= 0.0f && t2 >= 0.0f && t2 <= 1.0f ) {
+          if ( t1 < minDist ) { minDist = t1; }
+          final Vec2 hit = Ray2.eval(ray, t1, new Vec2());
+          hits.add(hit);
+        }
+      }
+    }
+
+    return minDist;
   }
 
   @Experimental
@@ -364,6 +362,53 @@ public class Ray2 extends Ray {
     if ( t1 >= 0.0f && t2 >= 0.0f && t2 <= 1.0f ) { return t1; }
 
     return -1.0f;
+  }
+
+  @Experimental
+  public static float intersectMesh (
+      final Ray2 ray,
+      final Mesh2 mesh,
+      final List < Vec2 > hits ) {
+
+    float minDist = -1.0f;
+
+    final Vec2 v1 = new Vec2();
+    final Vec2 v2 = new Vec2();
+    final Vec2 v3 = new Vec2();
+
+    final int[][][] faces = mesh.faces;
+    final Vec2[] vs = mesh.coords;
+
+    final int len0 = faces.length;
+    for ( int i = 0; i < len0; ++i ) {
+      final int[][] verts = faces[i];
+      final int len1 = verts.length;
+
+      for ( int j = 0; j < len1; ++j ) {
+        final int[] vert0 = verts[j];
+        final int[] vert1 = verts[(j + 1) % len1];
+
+        final Vec2 origin = vs[vert0[0]];
+        final Vec2 dest = vs[vert1[0]];
+
+        Vec2.sub(ray.origin, origin, v1);
+        Vec2.sub(dest, origin, v2);
+        Vec2.perpendicularCCW(ray.dir, v3);
+
+        final float dot = Vec2.dot(v2, v3);
+        if ( !Utils.approx(dot, 0.0f) ) {
+          final float t1 = Vec2.cross(v2, v1) / dot;
+          final float t2 = Vec2.dot(v1, v3) / dot;
+          if ( t1 >= 0.0f && t2 >= 0.0f && t2 <= 1.0f ) {
+            if ( t1 < minDist ) { minDist = t1; }
+            final Vec2 hit = Ray2.eval(ray, t1, new Vec2());
+            hits.add(hit);
+          }
+        }
+      }
+    }
+
+    return minDist;
   }
 
 }

@@ -22,10 +22,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
   /**
    * The default constructor.
    */
-  public CurveEntity2 ( ) {
-
-    super();
-  }
+  public CurveEntity2 ( ) { super(); }
 
   /**
    * Creates a named curve entity.
@@ -86,6 +83,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
    * @param curves the curves
    * @return this curve entity
    */
+  @Chainable
   public CurveEntity2 appendCurves ( final Curve2 ... curves ) {
 
     final int len = curves.length;
@@ -130,7 +128,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
    * @param coordLocal the output local coordinate
    * @param tanLocal   the output local tangent
    * @return the world coordinate
-   * @see Curve2#eval(float, Vec2, Vec2)
+   * @see Curve2#eval(Curve2, float, Vec2, Vec2)
    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
    * @see Transform2#mulDir(Transform2, Vec2, Vec2)
    */
@@ -142,7 +140,9 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
       final Vec2 coordLocal,
       final Vec2 tanLocal ) {
 
-    this.curves.get(curveIndex).eval(step, coordLocal, tanLocal);
+    Curve2.eval(
+        this.curves.get(curveIndex),
+        step, coordLocal, tanLocal);
     Transform2.mulPoint(this.transform, coordLocal, coordWorld);
     Transform2.mulDir(this.transform, tanLocal, tanWorld);
     return coordWorld;
@@ -206,9 +206,9 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
       final float extrude,
       final float bevelDepth ) {
 
-    final StringBuilder result = new StringBuilder(2048);
+    final StringBuilder pyCd = new StringBuilder(2048);
 
-    result.append("from bpy import data as D, context as C\n\n")
+    pyCd.append("from bpy import data as D, context as C\n\n")
         .append("curve_entity = {\"name\": \"")
         .append(this.name)
         .append("\", \"transform\": ")
@@ -219,12 +219,12 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
     final int curveLast = this.curves.size() - 1;
     final Iterator < Curve2 > curveItr = this.curves.iterator();
     while ( curveItr.hasNext() ) {
-      result.append(curveItr.next().toBlenderCode(uRes));
-      if ( curveIndex < curveLast ) { result.append(',').append(' '); }
+      pyCd.append(curveItr.next().toBlenderCode(uRes));
+      if ( curveIndex < curveLast ) { pyCd.append(',').append(' '); }
       curveIndex++;
     }
 
-    result.append("]}\n\ncrv_data = D.curves.new(")
+    pyCd.append("]}\n\ncrv_data = D.curves.new(")
         .append("curve_entity[\"name\"]")
         .append(", \"CURVE\")\n")
         .append("crv_data.dimensions = \"2D\"\n")
@@ -266,7 +266,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
         .append("crv_obj.scale = tr[\"scale\"]\n")
         .append("C.scene.collection.objects.link(crv_obj)\n");
 
-    return result.toString();
+    return pyCd.toString();
   }
 
   /**
@@ -279,9 +279,9 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
    */
   public String toObjString ( final int precision ) {
 
-    final StringBuilder result = new StringBuilder();
+    final StringBuilder obj = new StringBuilder(2048);
 
-    result.append('o')
+    obj.append('o')
         .append(' ')
         .append(this.name)
         .append('\n')
@@ -292,10 +292,10 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
     final Iterator < Curve2 > itr = this.curves.iterator();
     while ( itr.hasNext() ) {
       final Curve2 curve = itr.next();
-      final Vec2[][] segments = curve.evalRange(precision);
+      final Vec2[][] segments = Curve2.evalRange(curve, precision);
       final int len = segments.length;
 
-      result.append('g')
+      obj.append('g')
           .append(' ')
           .append(curve.name)
           .append('\n')
@@ -303,16 +303,16 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
 
       for ( int i = 0; i < len; ++i ) {
         final Vec2 coord = segments[i][0];
-        result.append('v')
+        obj.append('v')
             .append(' ')
             .append(coord.toObjString())
             .append('\n');
       }
 
-      result.append('\n');
+      obj.append('\n');
 
       for ( int i = 1, j = 2; i < len; ++i, ++j ) {
-        result.append('l')
+        obj.append('l')
             .append(' ')
             .append(offset + i)
             .append(' ')
@@ -321,7 +321,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
       }
 
       if ( curve.closedLoop ) {
-        result.append('l')
+        obj.append('l')
             .append(' ')
             .append(offset + len)
             .append(' ')
@@ -330,10 +330,10 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
       }
 
       offset += len;
-      result.append('\n');
+      obj.append('\n');
     }
 
-    return result.toString();
+    return obj.toString();
   }
 
   /**
@@ -383,9 +383,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
       includesMats = matLen > 0;
     }
 
-    /*
-     * If no materials are present, use a default one instead.
-     */
+    /* If no materials are present, use a default one instead. */
     if ( !includesMats ) {
       result.append(MaterialSolid.defaultSvgMaterial(scale));
     }
