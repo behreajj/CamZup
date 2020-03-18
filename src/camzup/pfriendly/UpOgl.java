@@ -392,7 +392,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * @param v    a temporary vector
    * @param vt   a temporary vector
    */
-  @Experimental
   protected void drawMesh2 (
       final Mesh2 mesh,
       final Transform2 tr,
@@ -441,7 +440,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * @param tr   the transform
    * @param v    a temporary vector
    */
-  @Experimental
   protected void drawMesh2 (
       final Mesh2 mesh,
       final Transform2 tr,
@@ -510,8 +508,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
         final int[] data = f[j];
         final int vIndex = data[0];
-        final int vnIndex = data[2];
         final int vtIndex = data[1];
+        final int vnIndex = data[2];
 
         Transform3.mulPoint(tr, vs[vIndex], v);
         Transform2.mulTexCoord(uvtr, vts[vtIndex], vt);
@@ -1335,8 +1333,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       case PConstants.REPEAT:
 
-        this.textureU = Utils.mod1(this.textureU);
-        this.textureV = Utils.mod1(this.textureV);
+        /*
+         * Problem is where, in meshes which use cylindrical projection (UV
+         * sphere, cylinder), u = 1.0 is returned to u = 0.0 by modulo.
+         */
+
+        // this.textureU = Utils.mod1(this.textureU);
+        // this.textureV = Utils.mod1(this.textureV);
 
         break;
 
@@ -2389,9 +2392,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final Vec3 point,
       final Vec3 target ) {
 
-    /*
-     * Multiply point by model-view matrix.
-     */
+    /* Multiply point by model-view matrix. */
     final float aw = this.modelview.m30 * point.x +
         this.modelview.m31 * point.y +
         this.modelview.m32 * point.z +
@@ -2412,9 +2413,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         this.modelview.m22 * point.z +
         this.modelview.m23;
 
-    /*
-     * Multiply point by inverse of camera matrix.
-     */
+    /* Multiply point by inverse of camera matrix. */
     final float bw = this.cameraInv.m30 * ax +
         this.cameraInv.m31 * ay +
         this.cameraInv.m32 * az +
@@ -2463,10 +2462,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
   @Override
   public void ortho ( ) {
 
-    /*
-     * Never use defCameraXXX values. They are not actual constants.
-     */
-
+    /* Never use defCameraXXX values. They are not actual constants. */
     final float right = this.width < 128
         ? IUp.DEFAULT_HALF_WIDTH
         : this.width * 0.5f;
@@ -2532,10 +2528,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
   @Override
   public void perspective ( ) {
 
-    /*
-     * Never use defCameraXXX values. They are not actual constants.
-     */
-
+    /* Never use defCameraXXX values. They are not actual constants. */
     this.perspective(IUp.DEFAULT_FOV);
   }
 
@@ -2897,9 +2890,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final Vec3 v,
       final Vec3 target ) {
 
-    /*
-     * Multiply point by model-view matrix.
-     */
+    /* Multiply point by model-view matrix. */
     final float aw = this.modelview.m30 * v.x +
         this.modelview.m31 * v.y +
         this.modelview.m32 * v.z +
@@ -2920,9 +2911,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         this.modelview.m22 * v.z +
         this.modelview.m23;
 
-    /*
-     * Multiply new point by projection.
-     */
+    /* Multiply new point by projection. */
     final float bw = this.projection.m30 * ax +
         this.projection.m31 * ay +
         this.projection.m32 * az +
@@ -3033,9 +3022,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
   public void setSize (
       final int width,
       final int height ) {
-
-    // TODO: Issue with secondary OpenGL graphics not working when
-    // width and height exceed that of the applet?
 
     this.width = width;
     this.height = height;

@@ -449,8 +449,8 @@ abstract class SVGParser {
             coord.set(cox, coy);
             Vec2.add(relative, coord, coord);
 
-            xOff = Math.copySign(Utils.DEFAULT_EPSILON, coord.x);
-            yOff = Math.copySign(Utils.DEFAULT_EPSILON, coord.y);
+            xOff = Math.copySign(IUtils.DEFAULT_EPSILON, coord.x);
+            yOff = Math.copySign(IUtils.DEFAULT_EPSILON, coord.y);
 
             curr.foreHandle.set(
                 coord.x + xOff,

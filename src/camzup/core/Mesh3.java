@@ -634,6 +634,8 @@ public class Mesh3 extends Mesh {
 
     // TEST
 
+    // TODO: Extrude by vertex normal, not by calculating centroid normal?
+
     if ( amt == 0.0f ) { return new int[0][0][0]; }
 
     /* Validate face index, find face. */
@@ -1001,8 +1003,6 @@ public class Mesh3 extends Mesh {
   public int[][][] insetFace (
       final int faceIdx,
       final float fac ) {
-
-    // TEST
 
     if ( fac <= 0.0f ) { return new int[0][0][0]; }
     if ( fac >= 1.0f ) { return this.subdivFaceFan(faceIdx); }
@@ -2197,6 +2197,294 @@ public class Mesh3 extends Mesh {
       Vec3.add(c, v, c);
     }
     return this;
+  }
+
+  @Experimental
+  private static Mesh3 cylinder (
+      final float xOrigin,
+      final float yOrigin,
+      final float zOrigin,
+      final float xDest,
+      final float yDest,
+      final float zDest,
+      final int sectors,
+      final boolean includeCaps,
+      final float radiusOrigin,
+      final float radiusDest,
+      final Mesh3 target ) {
+
+    // TODO: Extra seam creates incorrect normals.
+    // TODO: Can't have taper, otherwise normals will
+    // not be correct.
+
+    target.name = "Cylinder";
+
+    final int vsec = sectors < 3 ? 3 : sectors;
+    final float vrad0 = radiusOrigin < IUtils.DEFAULT_EPSILON
+        ? IUtils.DEFAULT_EPSILON
+        : radiusOrigin;
+
+    final float vrad1 = radiusDest < IUtils.DEFAULT_EPSILON
+        ? IUtils.DEFAULT_EPSILON
+        : radiusDest;
+
+    final float x0 = xDest - xOrigin;
+    final float y0 = yDest - yOrigin;
+    final float z0 = zDest - zOrigin;
+    final float mInv0 = Utils.invHypot(x0, y0, z0);
+    final float kx = x0 * mInv0;
+    final float ky = y0 * mInv0;
+    final float kz = z0 * mInv0;
+
+    /*
+     * Cross reference up (0, 0, 1) against forward to make sure the two
+     * are not parallel. If they are parallel, then switch to (0, 1, 0).
+     */
+
+    /*
+     * float refx = 0.0f; float refy = 0.0f; float refz = 1.0f;
+     *
+     * float x1 = refy * kz - refz * ky; float y1 = refz * kx - refx * kz;
+     * float z1 = refx * ky - refy * kx; final boolean coincident = x1 ==
+     * 0.0f && y1 == 0.0f && z1 == 0.0f; if ( coincident ) { refx = 0.0f;
+     * refy = 1.0f; refz = 0.0f;
+     *
+     * x1 = refy * kz - refz * ky; y1 = refz * kx - refx * kz; z1 = refx *
+     * ky - refy * kx; }
+     */
+
+    final boolean parallel = ky == 0.0f && kx == 0.0f;
+    final float x1 = parallel ? kz : -ky;
+    final float y1 = parallel ? 0.0f : kx;
+    final float z1 = parallel ? -kx : 0.0f;
+
+    final float mInv1 = Utils.invHypot(x1, y1, z1);
+    final float ix = x1 * mInv1;
+    final float iy = y1 * mInv1;
+    final float iz = z1 * mInv1;
+
+    /* i x k = j */
+    final float x2 = iy * kz - iz * ky;
+    final float y2 = iz * kx - ix * kz;
+    final float z2 = ix * ky - iy * kx;
+    final float mInv2 = Utils.invHypot(x2, y2, z2);
+    final float jx = x2 * mInv2;
+    final float jy = y2 * mInv2;
+    final float jz = z2 * mInv2;
+
+    final int vsec1 = vsec + 1;
+    final int vsec12 = vsec1 + vsec1;
+
+    Vec3[] vs;
+    Vec2[] vts;
+    Vec3[] vns;
+    int[][][] fs;
+
+    if ( includeCaps ) {
+      vs = target.coords = Vec3.resize(target.coords, vsec12);
+      vts = target.texCoords = Vec2.resize(target.texCoords, vsec12);
+      vns = target.normals = Vec3.resize(target.normals, vsec1 + 2);
+      fs = target.faces = new int[vsec * 2 + 2][3][3];
+    } else {
+
+      vs = target.coords = Vec3.resize(target.coords, vsec12);
+      vts = target.texCoords = Vec2.resize(target.texCoords, vsec12);
+      vns = target.normals = Vec3.resize(target.normals, vsec1);
+      fs = target.faces = new int[vsec * 2][3][3];
+    }
+
+    final float toTheta = 1.0f / vsec;
+    for ( int m = 0, n = 0; n < vsec1; ++n, m += 2 ) {
+      final float theta = n * toTheta;
+      final float cosa = Utils.scNorm(theta);
+      final float sina = Utils.scNorm(theta - 0.25f);
+
+      final Vec3 vn = new Vec3();
+      vn.set(
+          ix * cosa + jx * sina,
+          iy * cosa + jy * sina,
+          iz * cosa + jz * sina);
+      Vec3.normalize(vn, vn);
+      vns[n] = vn;
+
+      final Vec3 vOrigin = new Vec3();
+      Vec3.mul(vn, vrad0, vOrigin);
+      vOrigin.x += xOrigin;
+      vOrigin.y += yOrigin;
+      vOrigin.z += zOrigin;
+
+      final Vec3 vDest = new Vec3();
+      Vec3.mul(vn, vrad1, vDest);
+      vDest.x += xDest;
+      vDest.y += yDest;
+      vDest.z += zDest;
+
+      vs[m] = vOrigin;
+      vs[m + 1] = vDest;
+
+      final Vec2 vtOrigin = new Vec2(1.0f - theta, 1.0f);
+      final Vec2 vtDest = new Vec2(1.0f - theta, 0.0f);
+      vts[m] = vtOrigin;
+      vts[m + 1] = vtDest;
+    }
+
+    for ( int m = 0, n = 0; n < vsec; ++n, m += 2 ) {
+      final int o = m + 1;
+      final int p = n + 1;
+      final int s = (m + 2) % vsec12;
+      final int t = p % vsec1;
+
+      final int[][] tri0 = fs[m];
+      final int[] vert00 = tri0[0];
+      final int[] vert01 = tri0[1];
+      final int[] vert02 = tri0[2];
+
+      final int[][] tri1 = fs[o];
+      final int[] vert10 = tri1[0];
+      final int[] vert11 = tri1[1];
+      final int[] vert12 = tri1[2];
+
+      vert00[0] = m;
+      vert00[1] = m;
+      vert00[2] = n;
+
+      vert01[0] = o;
+      vert01[1] = o;
+      vert01[2] = p;
+
+      vert02[0] = 1 + s;
+      vert02[1] = 1 + s;
+      vert02[2] = 1 + t;
+
+      vert10[0] = 1 + s;
+      vert10[1] = 1 + s;
+      vert10[2] = 1 + t;
+
+      vert11[0] = s;
+      vert11[1] = s;
+      vert11[2] = t;
+
+      vert12[0] = m;
+      vert12[1] = m;
+      vert12[2] = n;
+    }
+
+    if ( includeCaps ) {
+
+      vns[vsec1].set(kx, ky, kz);
+      vns[vsec1 + 1].set(-kx, -ky, -kz);
+
+      final int[][] originCap = fs[fs.length - 2] = new int[vsec][3];
+      final int[][] destCap = fs[fs.length - 1] = new int[vsec][3];
+      for ( int l = 1, m = 0, n = 0; n < vsec; ++n, m += 2, l += 2 ) {
+        final int[] originVert = originCap[n];
+        final int[] destVert = destCap[n];
+
+        originVert[0] = m;
+        originVert[1] = 0;
+        originVert[2] = vsec1;
+
+        destVert[0] = l;
+        destVert[1] = 0;
+        destVert[2] = vsec1 + 1;
+      }
+    }
+
+    return target;
+  }
+
+  @Experimental
+  private static Mesh3 cylinder ( final Mesh3 target ) {
+
+    return Mesh3.cylinder(
+        0.0f, 0.0f, -0.5f,
+        0.0f, 0.0f, 0.5f,
+        IMesh.DEFAULT_CIRCLE_SECTORS,
+        true, 0.25f, 0.25f, target);
+  }
+
+  @Experimental
+  private static Mesh3 cylinder (
+      final Vec3 origin,
+      final Vec3 dest,
+      final int sectors,
+      final boolean includeCaps,
+      final float radiusOrigin,
+      final float radiusDest,
+      final Mesh3 target ) {
+
+    return Mesh3.cylinder(
+        origin.x, origin.y, origin.z,
+        dest.x, dest.y, dest.z,
+        sectors,
+        includeCaps,
+        radiusOrigin, radiusDest,
+        target);
+  }
+
+  @Experimental
+  private static Mesh3 cylinder (
+      final Vec3 origin,
+      final Vec3 dest,
+      final int sectors,
+      final boolean includeCaps,
+      final float radius,
+      final Mesh3 target ) {
+
+    return Mesh3.cylinder(
+        origin.x, origin.y, origin.z,
+        dest.x, dest.y, dest.z,
+        sectors,
+        includeCaps,
+        radius, radius,
+        target);
+  }
+
+  @Experimental
+  private static Mesh3 cylinder (
+      final Vec3 origin,
+      final Vec3 dest,
+      final int sectors,
+      final boolean includeCaps,
+      final Mesh3 target ) {
+
+    final float radius = 0.5f * Utils.hypot(
+        dest.x - origin.x,
+        dest.y - origin.y,
+        dest.z - origin.z);
+
+    return Mesh3.cylinder(
+        origin.x, origin.y, origin.z,
+        dest.x, dest.y, dest.z,
+        sectors,
+        includeCaps,
+        radius, radius,
+        target);
+  }
+
+  @Experimental
+  private static Mesh3 cylinder (
+      final Vec3 origin,
+      final Vec3 dest,
+      final int sectors,
+      final Mesh3 target ) {
+
+    return Mesh3.cylinder(
+        origin, dest,
+        IMesh.DEFAULT_CIRCLE_SECTORS,
+        true, target);
+  }
+
+  @Experimental
+  private static Mesh3 cylinder (
+      final Vec3 origin,
+      final Vec3 dest,
+      final Mesh3 target ) {
+
+    return Mesh3.cylinder(
+        origin, dest,
+        IMesh.DEFAULT_CIRCLE_SECTORS,
+        target);
   }
 
   /**

@@ -850,19 +850,19 @@ public interface IYup2 extends IUp {
 
     return new StringBuilder(128)
         .append("transform=\"translate(")
-        .append(Utils.toFixed(renderer.getWidth() * 0.5f, 4))
+        .append(Utils.toFixed(renderer.getWidth() * 0.5f, 6))
         .append(',').append(' ')
-        .append(Utils.toFixed(renderer.getHeight() * 0.5f, 4))
+        .append(Utils.toFixed(renderer.getHeight() * 0.5f, 6))
         .append(") scale(")
-        .append(Utils.toFixed(renderer.getZoomX(), 4))
+        .append(Utils.toFixed(renderer.getZoomX(), 6))
         .append(',').append(' ')
-        .append(Utils.toFixed(-renderer.getZoomY(), 4))
+        .append(Utils.toFixed(-renderer.getZoomY(), 6))
         .append(") rotate(")
-        .append(Utils.toFixed(-renderer.getRot() * IUtils.RAD_TO_DEG, 1))
+        .append(Utils.toFixed(-renderer.getRot() * IUtils.RAD_TO_DEG, 2))
         .append(") translate(")
-        .append(Utils.toFixed(-renderer.getLocX(), 4))
+        .append(Utils.toFixed(-renderer.getLocX(), 6))
         .append(',').append(' ')
-        .append(Utils.toFixed(-renderer.getLocY(), 4))
+        .append(Utils.toFixed(-renderer.getLocY(), 6))
         .append(')').append('\"')
         .toString();
   }
@@ -911,7 +911,7 @@ public interface IYup2 extends IUp {
 
     final int len = ces.length;
     for ( int i = 0; i < len; ++i ) {
-      result.append(ces[i].toSvgString(mats)).append('\n');
+      result.append(ces[i].toSvgGroup(mats)).append('\n');
     }
 
     return result.append("</g>\n</svg>").toString();
@@ -937,7 +937,7 @@ public interface IYup2 extends IUp {
 
     final int len = mes.length;
     for ( int i = 0; i < len; ++i ) {
-      result.append(mes[i].toSvgString(mats)).append('\n');
+      result.append(mes[i].toSvgGroup(mats)).append('\n');
     }
 
     return result.append("</g>\n</svg>").toString();

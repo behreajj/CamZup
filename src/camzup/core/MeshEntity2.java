@@ -372,9 +372,9 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    *
    * @return the string
    */
-  public String toSvgString ( ) {
+  public String toSvgGroup ( ) {
 
-    return this.toSvgString(new MaterialSolid[] {});
+    return this.toSvgGroup(new MaterialSolid[] {});
   }
 
   /**
@@ -383,9 +383,9 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    * @param material the material to use
    * @return the string
    */
-  public String toSvgString ( final MaterialSolid material ) {
+  public String toSvgGroup ( final MaterialSolid material ) {
 
-    return this.toSvgString(new MaterialSolid[] { material });
+    return this.toSvgGroup(new MaterialSolid[] { material });
   }
 
   /**
@@ -395,7 +395,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    * @param materials the materials to use
    * @return the string
    */
-  public String toSvgString ( final MaterialSolid[] materials ) {
+  public String toSvgGroup ( final MaterialSolid[] materials ) {
 
     final StringBuilder result = new StringBuilder(1024)
         .append("<g id=\"")

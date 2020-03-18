@@ -494,6 +494,17 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   }
 
   /**
+   * Gets the renderer's size. The z component is set to zero.
+   *
+   * @param target the output vector
+   * @return the size
+   */
+  public Vec3 getSize ( final Vec3 target ) {
+
+    return target.set(this.width, this.height, 0.0f);
+  }
+
+  /**
    * Displays the handles of a curve entity.
    *
    * @param ce the curve entity

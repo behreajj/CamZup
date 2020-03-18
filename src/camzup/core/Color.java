@@ -1651,10 +1651,10 @@ public class Color extends Vec4 {
       final Color target ) {
 
     return target.set(
-            Utils.clamp01(Utils.div(a, b.x)),
-            Utils.clamp01(Utils.div(a, b.y)),
-            Utils.clamp01(Utils.div(a, b.z)),
-            Utils.clamp01(a));
+        Utils.clamp01(Utils.div(a, b.x)),
+        Utils.clamp01(Utils.div(a, b.y)),
+        Utils.clamp01(Utils.div(a, b.z)),
+        Utils.clamp01(a));
   }
 
   /**

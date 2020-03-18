@@ -3,6 +3,7 @@ package camzup;
 import processing.core.PApplet;
 
 import camzup.core.Mesh3;
+import camzup.core.MeshEntity3;
 import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -168,14 +169,24 @@ public class CamZup {
     // System.out.println(r);
 
     final Random rng = new Random();
-    final Vec2 a = new Vec2();
-    final Vec2 b = new Vec2();
-    Vec2.random(rng, a);
-    Vec2.random(rng, b);
-    final float z = Vec2.cross(a, b);
-    final Vec3 c = new Vec3(0.0f, 0.0f, z);
-    System.out.println(c);
-    System.out.println(Vec3.normalize(c, new Vec3()));
+
+    final Mesh3 mesh = new Mesh3();
+    final Vec3 origin = new Vec3(-0.5f, -0.5f, -0.5f);
+    final Vec3 dest = new Vec3(0.5f, 0.5f, 0.5f);
+    final int sectors = 8;
+    final float radius0 = .25f;
+    final float radius1 = .125f;
+    final boolean includeCaps = true;
+    // Mesh3.cylinder(origin, dest, sectors,
+    // includeCaps,
+    // radius0, radius1, mesh);
+    // Mesh3.cylinder(mesh);
+    // System.out.println(mesh);
+
+    final MeshEntity3 entity = new MeshEntity3();
+    entity.appendMesh(mesh);
+    final String pycd = entity.toBlenderCode();
+    System.out.println(pycd);
   }
 
   /**
