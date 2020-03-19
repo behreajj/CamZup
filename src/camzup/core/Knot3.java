@@ -1268,7 +1268,10 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final Knot3 target ) {
 
     final Vec3 coord = target.coord;
-    coord.set(cosa * radius, sina * radius, 0.0f);
+    coord.set(
+        radius * cosa,
+        radius * sina,
+        0.0f);
 
     final float hmsina = sina * handleMag;
     final float hmcosa = cosa * handleMag;

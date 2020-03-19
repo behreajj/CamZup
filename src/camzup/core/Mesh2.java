@@ -957,11 +957,10 @@ public class Mesh2 extends Mesh {
 
     final float cosa = Utils.cos(radians);
     final float sina = Utils.sin(radians);
-    Vec2 c;
 
     final int len = this.coords.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.coords[i];
+      final Vec2 c = this.coords[i];
       Vec2.rotateZ(c, cosa, sina, c);
     }
 
@@ -980,10 +979,9 @@ public class Mesh2 extends Mesh {
 
     if ( scale == 0.0f ) { return this; }
 
-    Vec2 c;
     final int len = this.coords.length;
     for ( int i = 0; i < len; ++i ) {
-      c = this.coords[i];
+      final Vec2 c = this.coords[i];
       Vec2.mul(c, scale, c);
     }
 
@@ -1775,11 +1773,13 @@ public class Mesh2 extends Mesh {
       final double sina = Math.sin(theta);
 
       final Vec2 v0 = vs[i];
-      v0.set((float) (0.5d * cosa),
+      v0.set(
+          (float) (0.5d * cosa),
           (float) (0.5d * sina));
 
       final Vec2 v1 = vs[j];
-      v1.set((float) (annRad * cosa),
+      v1.set(
+          (float) (annRad * cosa),
           (float) (annRad * sina));
 
       final Vec2 vt0 = vts[i];
@@ -2003,6 +2003,54 @@ public class Mesh2 extends Mesh {
     return Mesh2.polygon(
         IMesh.DEFAULT_CIRCLE_SECTORS,
         poly, target);
+  }
+
+  @Experimental
+  public static boolean contains (
+      final Mesh2 mesh,
+      final Vec2 point ) {
+
+    // TEST
+
+    final Vec2[] vs = mesh.coords;
+    final int[][][] fs = mesh.faces;
+    final int fsLen = fs.length;
+
+    for ( int i = 0; i < fsLen; ++i ) {
+
+      final int[][] f = fs[i];
+      final int fLen = f.length;
+      int wn = 0;
+
+      for ( int j = 0; j < fLen; ++j ) {
+
+        final int k = (j + 1) % fLen;
+
+        final int[] vert0 = f[j];
+        final int[] vert1 = f[k];
+
+        final Vec2 curr = vs[vert0[0]];
+        final Vec2 next = vs[vert1[0]];
+
+        if ( curr.y <= point.y && next.y > point.y ) {
+
+          final float eval = (next.x - curr.x) * (point.y - curr.y)
+              - (point.x - curr.x) * (next.y - curr.y);
+          if ( eval > 0.0f ) { ++wn; }
+
+        } else if ( next.y <= point.y ) {
+
+          final float eval = (next.x - curr.x) * (point.y - curr.y)
+              - (point.x - curr.x) * (next.y - curr.y);
+          if ( eval < 0.0f ) { --wn; }
+
+        }
+      }
+
+      if ( wn > 0 ) { return true; }
+    }
+
+    return false;
   }
 
   /**
@@ -2264,7 +2312,8 @@ public class Mesh2 extends Mesh {
           final double theta = i * toTheta;
 
           final Vec2 v = vs[i];
-          v.set((float) (0.5d * Math.cos(theta)),
+          v.set(
+              (float) (0.5d * Math.cos(theta)),
               (float) (0.5d * Math.sin(theta)));
 
           final Vec2 vt = vts[i];
@@ -2289,7 +2338,8 @@ public class Mesh2 extends Mesh {
           final double theta = i * toTheta;
 
           final Vec2 v = vs[j];
-          v.set((float) (0.5d * Math.cos(theta)),
+          v.set(
+              (float) (0.5d * Math.cos(theta)),
               (float) (0.5d * Math.sin(theta)));
 
           final Vec2 vt = vts[j];
@@ -2370,11 +2420,13 @@ public class Mesh2 extends Mesh {
       final double sina = Math.sin(theta);
 
       final Vec2 v0 = vs[i];
-      v0.set((float) (0.5d * cosa),
+      v0.set(
+          (float) (0.5d * cosa),
           (float) (0.5d * sina));
 
       final Vec2 v1 = vs[j];
-      v1.set((float) (annRad * cosa),
+      v1.set(
+          (float) (annRad * cosa),
           (float) (annRad * sina));
 
       final Vec2 vt0 = vts[i];

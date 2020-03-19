@@ -17,10 +17,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     /**
      * The default constructor.
      */
-    public AbstrEasing ( ) {
-
-      super();
-    }
+    public AbstrEasing ( ) { super(); }
 
     /**
      * A clamped interpolation between the origin and destination. Defers
@@ -603,6 +600,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
 
     this.rotateForeHandleZ(cosa, sina);
     this.rotateRearHandleZ(cosa, sina);
+
     return this;
   }
 
@@ -1065,7 +1063,9 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final Knot2 target ) {
 
     final Vec2 coord = target.coord;
-    coord.set(cosa * radius, sina * radius);
+    coord.set(
+        radius * cosa,
+        radius * sina);
 
     final float hmsina = sina * handleMag;
     final float hmcosa = cosa * handleMag;

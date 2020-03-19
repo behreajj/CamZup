@@ -1330,25 +1330,66 @@ public class Transform3 extends Transform {
   }
 
   /**
-   * Finds the inverse of the transform. When converting to a matrix,
-   * use the reverse transform order.
+   * Multiplies a direction by a transform's inverse. This rotates the
+   * direction by the inverse quaternion.
    *
-   * @param source the source transform
-   * @param target the target transform
-   * @return the inverse
-   * @see Vec3#negate(Vec3, Vec3)
-   * @see Quaternion#inverse(Quaternion, Quaternion, Quaternion)
-   * @see Vec3#div(float, Vec3, Vec3)
-   * @see Transform3#updateAxes()
+   * @param t      the transform
+   * @param source the input direction
+   * @param target the output direction
+   * @return the direction
+   * @see Quaternion#invMulVector(Quaternion, Vec3, Vec3)
    */
-  public static Transform3 inverse (
-      final Transform3 source,
-      final Transform3 target ) {
+  public static Vec3 invMulDir (
+      final Transform3 t,
+      final Vec3 source,
+      final Vec3 target ) {
 
-    Vec3.negate(source.location, target.location);
-    Quaternion.inverse(source.rotation, target.rotation);
-    Vec3.div(1.0f, source.scale, target.scale);
-    target.updateAxes();
+    Quaternion.invMulVector(t.rotation, source, target);
+    return target;
+  }
+
+  /**
+   * Multiplies a point by a transform's inverse. This subtracts the
+   * translation from the point, divides the point by the scale, then
+   * rotates by the inverse quaternion.
+   *
+   * @param t      the transform
+   * @param source the input point
+   * @param target the output point
+   * @return the point
+   * @see Vec3#sub(Vec3, Vec3, Vec3)
+   * @see Vec3#div(Vec3, Vec3, Vec3)
+   * @see Quaternion#invMulVector(Quaternion, Vec3, Vec3)
+   */
+  public static Vec3 invMulPoint (
+      final Transform3 t,
+      final Vec3 source,
+      final Vec3 target ) {
+
+    Vec3.sub(source, t.location, target);
+    Vec3.div(target, t.scale, target);
+    Quaternion.invMulVector(t.rotation, target, target);
+    return target;
+  }
+
+  /**
+   * Multiplies a vector by the transform's inverse. This divides the
+   * vector by the scale, then rotates by the inverse quaternion.
+   *
+   * @param t      the transform
+   * @param source the input vector
+   * @param target the output vector
+   * @return the vector
+   * @see Vec3#div(Vec3, Vec3, Vec3)
+   * @see Quaternion#invMulVector(Quaternion, Vec3, Vec3)
+   */
+  public static Vec3 invMulVector (
+      final Transform3 t,
+      final Vec3 source,
+      final Vec3 target ) {
+
+    Vec3.div(source, t.scale, target);
+    Quaternion.invMulVector(t.rotation, target, target);
     return target;
   }
 

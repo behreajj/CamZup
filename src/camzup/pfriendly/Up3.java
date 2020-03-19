@@ -905,6 +905,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final CurveEntity3 entity,
       final MaterialSolid material ) {
 
+    // TODO: shape function with curveentity3 but no material.
+
     final Transform3 tr = entity.transform;
     final List < Curve3 > curves = entity.curves;
     final Iterator < Curve3 > curveItr = curves.iterator();

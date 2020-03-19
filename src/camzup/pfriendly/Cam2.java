@@ -6,6 +6,7 @@ import processing.awt.PGraphicsJava2D;
 import processing.opengl.PGraphicsOpenGL;
 
 import camzup.core.Entity2;
+import camzup.core.Experimental;
 import camzup.core.Transform2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -14,6 +15,7 @@ import camzup.core.Vec2;
  * A camera entity designed to update a renderer's camera matrices
  * based on its transform.
  */
+@Experimental
 public class Cam2 extends Entity2 {
 
   /**

@@ -2,9 +2,12 @@ package camzup;
 
 import processing.core.PApplet;
 
+import camzup.core.IUtils;
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity3;
+import camzup.core.Quaternion;
 import camzup.core.Random;
+import camzup.core.Transform2;
+import camzup.core.Transform3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -168,25 +171,52 @@ public class CamZup {
     // Ray2.fromPoints(new Vec2(1, 1), new Vec2(-2, 1), r);
     // System.out.println(r);
 
+    // final Random rng = new Random();
+    //
+    // Mesh2 m = new Mesh2();
+    // Mesh2.circle(m);
+    //
+    // Vec2 lb = new Vec2(-1.0f, -1.0f);
+    // Vec2 ub = new Vec2(1.0f, 1.0f);
+    // int count = 16;
+    // for ( int i = 0; i < count; ++i ) {
+    // Vec2 p = Vec2.randomCartesian(rng, lb, ub, new Vec2());
+    // boolean eval = Mesh2.contains(m, p);
+    // if ( eval ) {
+    // System.out.println(p);
+    // System.out.println(Vec2.mag(p));
+    // }
+    // }
+
     final Random rng = new Random();
+    final Transform2 tr = new Transform2(
+        Vec2.random(rng, new Vec2()),
+        rng.uniform(IUtils.TAU),
+        Vec2.random(rng, new Vec2()));
+    System.out.println(tr);
+    final Vec2 a = Vec2.random(rng, new Vec2());
+    final Vec2 b = new Vec2();
+    final Vec2 c = new Vec2();
+    Transform2.mulPoint(tr, a, b);
+    Transform2.invMulPoint(tr, b, c);
+    System.out.println(a);
+    System.out.println(b);
+    System.out.println(c);
 
-    final Mesh3 mesh = new Mesh3();
-    final Vec3 origin = new Vec3(-0.5f, -0.5f, -0.5f);
-    final Vec3 dest = new Vec3(0.5f, 0.5f, 0.5f);
-    final int sectors = 8;
-    final float radius0 = .25f;
-    final float radius1 = .125f;
-    final boolean includeCaps = true;
-    // Mesh3.cylinder(origin, dest, sectors,
-    // includeCaps,
-    // radius0, radius1, mesh);
-    // Mesh3.cylinder(mesh);
-    // System.out.println(mesh);
-
-    final MeshEntity3 entity = new MeshEntity3();
-    entity.appendMesh(mesh);
-    final String pycd = entity.toBlenderCode();
-    System.out.println(pycd);
+    final Quaternion q = Quaternion.random(rng, new Quaternion());
+    final Transform3 tr3 = new Transform3(
+        Vec3.random(rng, new Vec3()),
+        q,
+        Vec3.random(rng, new Vec3()));
+    System.out.println(tr3);
+    final Vec3 a3 = Vec3.random(rng, new Vec3());
+    final Vec3 b3 = new Vec3();
+    final Vec3 c3 = new Vec3();
+    Transform3.mulPoint(tr3, a3, b3);
+    Transform3.invMulPoint(tr3, b3, c3);
+    System.out.println(a3.toString(7));
+    System.out.println(b3);
+    System.out.println(c3.toString(7));
   }
 
   /**

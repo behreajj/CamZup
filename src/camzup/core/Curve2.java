@@ -1293,9 +1293,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
       final int knotCount,
       final Curve2 target ) {
 
-    /*
-     * Since this is called by arc, it also needs to be optimized.
-     */
+    /* Since this is called by arc, it also needs to be optimized. */
 
     final float offset1 = offsetAngle * IUtils.ONE_TAU;
     final int vknct = knotCount < 3 ? 3 : knotCount;

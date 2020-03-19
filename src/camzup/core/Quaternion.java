@@ -1885,10 +1885,45 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
   }
 
   /**
+   * Multiplies a vector by a quaternion's inverse, allowing a prior
+   * rotation to be undone.
+   *
+   * @param q      the quaternion
+   * @param source the source vector
+   * @param target the target vector
+   * @return the unrotated vector
+   */
+  public static Vec3 invMulVector (
+      final Quaternion q,
+      final Vec3 source,
+      final Vec3 target ) {
+
+    final float mSq = Quaternion.magSq(q);
+    if ( mSq == 0.0f ) { return target.reset(); }
+    final float mSqInv = 1.0f / mSq;
+
+    final float w = q.real * mSqInv;
+    final Vec3 i = q.imag;
+    final float qx = -i.x * mSqInv;
+    final float qy = -i.y * mSqInv;
+    final float qz = -i.z * mSqInv;
+
+    final float iw = -qx * source.x - qy * source.y - qz * source.z;
+    final float ix = w * source.x + qy * source.z - qz * source.y;
+    final float iy = w * source.y + qz * source.x - qx * source.z;
+    final float iz = w * source.z + qx * source.y - qy * source.x;
+
+    return target.set(
+        ix * w + iz * qy - iw * qx - iy * qz,
+        iy * w + ix * qz - iw * qy - iz * qx,
+        iz * w + iy * qx - iw * qz - ix * qy);
+  }
+
+  /**
    * Tests if the quaternion is the identity, where its real component
    * is 1.0 and its imaginary components are all zero.
    *
-   * @param q the quaternion to test
+   * @param q the quaternion
    * @return the evaluation
    * @see Vec3#none(Vec3)
    */
@@ -1898,8 +1933,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
   }
 
   /**
-   * Tests to see if a quaternion is a pure, i.e. if its real component
-   * is zero.
+   * Tests to see if a quaternion is pure, i.e. if its real component is
+   * zero.
    *
    * @param q the quaternion
    * @return the evaluation
@@ -2229,8 +2264,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    * efficiently rotated without repeatedly calling cos and sin.
    *
    * @param q      the input quaternion
-   * @param cosah  cosine of the angle
-   * @param sinah  sine of the angle
+   * @param cosah  cosine of half the angle
+   * @param sinah  sine of half the angle
    * @param target the output quaternion
    * @return the rotated quaternion
    */
@@ -2278,8 +2313,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    * efficiently rotated without repeatedly calling cos and sin.
    *
    * @param q      the input quaternion
-   * @param cosah  cosine of the angle
-   * @param sinah  sine of the angle
+   * @param cosah  cosine of half the angle
+   * @param sinah  sine of half the angle
    * @param target the output quaternion
    * @return the rotated quaternion
    */
@@ -2328,8 +2363,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    * efficiently rotated without repeatedly calling cos and sin.
    *
    * @param q      the input quaternion
-   * @param cosah  cosine of the angle
-   * @param sinah  sine of the angle
+   * @param cosah  cosine of half the angle
+   * @param sinah  sine of half the angle
    * @param target the output quaternion
    * @return the rotated quaternion
    */

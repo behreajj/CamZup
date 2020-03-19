@@ -409,4 +409,39 @@ public class Face2 implements Comparable < Face2 > {
     }
     return Vec2.div(target, len, target);
   }
+
+  @Experimental
+  public static boolean contains (
+      final Face2 face,
+      final Vec2 point ) {
+
+    // TEST
+
+    int wn = 0;
+    final Vert2[] verts = face.vertices;
+    final int len = verts.length;
+
+    for ( int i = 0; i < len; ++i ) {
+
+      final int j = (i + 1) % len;
+      final Vec2 curr = verts[i].coord;
+      final Vec2 next = verts[j].coord;
+
+      if ( curr.y <= point.y && next.y > point.y ) {
+
+        final float eval = (next.x - curr.x) * (point.y - curr.y)
+            - (point.x - curr.x) * (next.y - curr.y);
+        if ( eval > 0.0f ) { ++wn; }
+
+      } else if ( next.y <= point.y ) {
+
+        final float eval = (next.x - curr.x) * (point.y - curr.y)
+            - (point.x - curr.x) * (next.y - curr.y);
+        if ( eval < 0.0f ) { --wn; }
+
+      }
+    }
+
+    return wn > 0;
+  }
 }

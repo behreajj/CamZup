@@ -1042,7 +1042,7 @@ public class Transform2 extends Transform {
         .append("{ location: ")
         .append(this.location.toString(places))
         .append(", rotation: ")
-        .append(Utils.toFixed(IUtils.RAD_TO_DEG * this.rotation, 1))
+        .append(Utils.toFixed(this.rotation, places))
         .append(", scale: ")
         .append(this.scale.toString(places))
         .append(" }")
@@ -1102,24 +1102,67 @@ public class Transform2 extends Transform {
   }
 
   /**
-   * Finds the inverse of the transform. When converting to a matrix,
-   * use the reverse transform order.
+   * Multiplies a direction by a transform's inverse. This rotates the
+   * direction by the transform's negative angle.
    *
-   * @param source the source transform
-   * @param target the target transform
-   * @return the inverse
-   * @see Vec2#negate(Vec2, Vec2)
-   * @see Vec2#div(float, Vec2, Vec2)
-   * @see Transform2#updateAxes()
+   * @param t      the transform
+   * @param source the input direction
+   * @param target the output direction
+   * @return the direction
+   * @see Vec2#rotateZ(Vec2, float, Vec2)
    */
-  public static Transform2 inverse (
-      final Transform2 source,
-      final Transform2 target ) {
+  public static Vec2 invMulDir (
+      final Transform2 t,
+      final Vec2 source,
+      final Vec2 target ) {
 
-    Vec2.negate(source.location, target.location);
-    target.rotation = -source.rotation;
-    Vec2.div(1.0f, source.scale, target.scale);
-    target.updateAxes();
+    /* cos(-a) = cos(a), sin(-a) = -sin(a) */
+    Vec2.rotateZ(source, t.right.x, -t.right.y, target);
+    return target;
+  }
+
+  /**
+   * Multiplies a point by a transform's inverse. This subtracts the
+   * translation from the point, divides the point by the scale, then
+   * rotates by the negative angle.
+   *
+   * @param t      the transform
+   * @param source the input point
+   * @param target the output point
+   * @return the point
+   * @see Vec2#sub(Vec2, Vec2, Vec2)
+   * @see Vec2#div(Vec2, Vec2, Vec2)
+   * @see Vec2#rotateZ(Vec2, float, Vec2)
+   */
+  public static Vec2 invMulPoint (
+      final Transform2 t,
+      final Vec2 source,
+      final Vec2 target ) {
+
+    Vec2.sub(source, t.location, target);
+    Vec2.div(target, t.scale, target);
+    Vec2.rotateZ(target, t.right.x, -t.right.y, target);
+    return target;
+  }
+
+  /**
+   * Multiplies a vector by a transform's inverse. This divides the
+   * vector by the scale, then rotates by the negative angle.
+   *
+   * @param t      the transform
+   * @param source the input point
+   * @param target the output point
+   * @return the point
+   * @see Vec2#div(Vec2, Vec2, Vec2)
+   * @see Vec2#rotateZ(Vec2, float, Vec2)
+   */
+  public static Vec2 invMulVector (
+      final Transform2 t,
+      final Vec2 source,
+      final Vec2 target ) {
+
+    Vec2.div(source, t.scale, target);
+    Vec2.rotateZ(target, t.right.x, -t.right.y, target);
     return target;
   }
 

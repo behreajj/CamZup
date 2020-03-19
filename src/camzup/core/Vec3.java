@@ -1856,9 +1856,15 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final float radius,
       final Vec3 target ) {
 
+    /*
+     * return target.set( radius * Utils.cos(azimuth), radius *
+     * Utils.sin(azimuth), 0.0f);
+     */
+
+    final float nrm = azimuth * IUtils.ONE_TAU;
     return target.set(
-        radius * Utils.cos(azimuth),
-        radius * Utils.sin(azimuth),
+        radius * Utils.scNorm(nrm),
+        radius * Utils.scNorm(nrm - 0.25f),
         0.0f);
   }
 
@@ -1874,7 +1880,13 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final float azimuth,
       final Vec3 target ) {
 
-    return target.set(Utils.cos(azimuth), Utils.sin(azimuth), 0.0f);
+    /* return target.set(Utils.cos(azimuth), Utils.sin(azimuth), 0.0f); */
+
+    final float nrm = azimuth * IUtils.ONE_TAU;
+    return target.set(
+        Utils.scNorm(nrm),
+        Utils.scNorm(nrm - 0.25f),
+        0.0f);
   }
 
   /**
