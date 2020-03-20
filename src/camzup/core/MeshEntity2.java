@@ -32,7 +32,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
   public MeshEntity2 ( final Mesh2 ... meshes ) {
 
     super(new Transform2());
-    this.appendMeshes(meshes);
+    this.appendAll(meshes);
   }
 
   /**
@@ -53,7 +53,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
       final Mesh2 ... meshes ) {
 
     super(name, new Transform2());
-    this.appendMeshes(meshes);
+    this.appendAll(meshes);
   }
 
   /**
@@ -69,7 +69,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
       final Mesh2 ... meshes ) {
 
     super(name, transform);
-    this.appendMeshes(meshes);
+    this.appendAll(meshes);
   }
 
   /**
@@ -83,7 +83,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
       final Mesh2 ... meshes ) {
 
     super(transform);
-    this.appendMeshes(meshes);
+    this.appendAll(meshes);
   }
 
   /**
@@ -93,7 +93,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    * @return this mesh entity
    */
   @Chainable
-  public MeshEntity2 appendMesh ( final Mesh2 mesh ) {
+  public MeshEntity2 append ( final Mesh2 mesh ) {
 
     if ( mesh != null ) { this.meshes.add(mesh); }
     return this;
@@ -106,11 +106,11 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    * @return this mesh entity
    */
   @Chainable
-  public MeshEntity2 appendMeshes ( final Mesh2 ... meshes ) {
+  public MeshEntity2 appendAll ( final Mesh2 ... meshes ) {
 
     final int len = meshes.length;
     for ( int i = 0; i < len; ++i ) {
-      this.appendMesh(meshes[i]);
+      this.append(meshes[i]);
     }
     return this;
   }
@@ -121,7 +121,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    * @param i the index
    * @return the mesh
    */
-  public Mesh2 getMesh ( final int i ) {
+  public Mesh2 get ( final int i ) {
 
     return this.meshes.get(Utils.mod(i, this.meshes.size()));
   }
@@ -291,8 +291,8 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
         .append("    mesh_obj.parent = parent_obj\n")
         .append("    scene_objs.link(mesh_obj)\n\n");
 
-    final String vertGroupName = "Faces";
     if ( addVertGroups ) {
+      final String vertGroupName = "Faces";
       pyCd.append("    vert_group = mesh_obj.vertex_groups.new(name=\"")
           .append(vertGroupName)
           .append("\")\n")
@@ -412,9 +412,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
       includesMats = matLen > 0;
     }
 
-    /*
-     * If no materials are present, use a default one instead.
-     */
+    /* If no materials are present, use a default one instead. */
     if ( !includesMats ) {
       result.append(MaterialSolid.defaultSvgMaterial(scale));
     }

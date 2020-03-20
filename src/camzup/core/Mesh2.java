@@ -1472,7 +1472,7 @@ public class Mesh2 extends Mesh {
 
     /*
      * Append a comment listing the number of coordinates, texture
-     * coordinates, normals and faces.
+     * coordinates and faces.
      */
     result.append("# v: ").append(coordsLen)
         .append(", vt: ").append(texCoordsLen)

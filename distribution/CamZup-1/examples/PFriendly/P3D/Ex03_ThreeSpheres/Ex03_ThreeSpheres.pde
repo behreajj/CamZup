@@ -7,9 +7,9 @@ Mesh3 icosphere = new Mesh3();
 Mesh3 cubesphere = new Mesh3();
 Mesh3 uvsphere = new Mesh3();
 
-MeshEntity3 meIco = new MeshEntity3().appendMesh(icosphere);
-MeshEntity3 meCube = new MeshEntity3().appendMesh(cubesphere);
-MeshEntity3 meUv = new MeshEntity3().appendMesh(uvsphere);
+MeshEntity3 meIco = new MeshEntity3().append(icosphere);
+MeshEntity3 meCube = new MeshEntity3().append(cubesphere);
+MeshEntity3 meUv = new MeshEntity3().append(uvsphere);
 
 MaterialSolid solid = new MaterialSolid()
   .setStroke(true)
@@ -23,11 +23,13 @@ boolean wireframe = true;
 
 void settings() {
   size(720, 405, "camzup.pfriendly.Zup3");
-  smooth(8);
+  //smooth(8);
 }
 
 void setup() {
   rndr = (Zup3)getGraphics();
+  rndr.textureSampling(TextureSampling.LINEAR);
+  rndr.textureWrap(REPEAT);
 
   txtr = loadImage("diagnostic.png");
   textured = new MaterialPImage(txtr);
@@ -41,8 +43,8 @@ void setup() {
   meCube.scaleTo(uniform);
   meUv.scaleTo(uniform);
 
-  meCube.moveBy(new Vec3(uniform, 0.0, 0.0));
-  meUv.moveBy(new Vec3(-uniform, 0.0, 0.0));
+  meIco.moveBy(new Vec3(uniform, 0.0, 0.0));
+  meCube.moveBy(new Vec3(-uniform, 0.0, 0.0));
 }
 
 void draw() {

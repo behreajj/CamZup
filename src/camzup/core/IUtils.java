@@ -75,21 +75,7 @@ public interface IUtils {
   /**
    * The hash base multiplied by the hash multiplier.
    */
-  int MUL_BASE = Utils.HASH_BASE * Utils.HASH_MUL;
-
-  /**
-   * One divided by 2.2 , 1.0 / 2.2 . Gamma-adjustments to color
-   * commonly raise the color's RGB channels to the power 2.2 or ( 1.0 /
-   * 2.0 ). Approximately 0.45454545 .
-   */
-  float ONE_2_2 = 0.45454545f;
-
-  /**
-   * One divided by 2.2 , 1.0 / 2.2 . Gamma-adjustments to color
-   * commonly raise the color's RGB channels to the power 2.2 or ( 1.0 /
-   * 2.0 ). Approximately 0.45454545454545454 .
-   */
-  double ONE_2_2_D = 0.45454545454545454d;
+  int MUL_BASE = IUtils.HASH_BASE * IUtils.HASH_MUL;
 
   /**
    * One-255th, 1.0 / 255.0 . Useful when converting a color with
@@ -118,6 +104,18 @@ public interface IUtils {
    * to an angle in degrees.
    */
   double ONE_360_D = 0.002777777777777778d;
+
+  /**
+   * One divided by \u03c0 . Useful when converting inclinations to
+   * linear ranges. Approximately 0.31830987 .
+   */
+  float ONE_PI = 0.31830987f;
+
+  /**
+   * One divided by \u03c0 . Useful when converting inclinations to
+   * linear ranges. Approximately 0.3183098861837907 .
+   */
+  double ONE_PI_D = 0.3183098861837907d;
 
   /**
    * One-sixth, 1.0 / 6.0 . Useful when converting a color in RGB color
@@ -154,8 +152,8 @@ public interface IUtils {
   double ONE_SQRT_3_D = 0.5773502691896258d;
 
   /**
-   * One divided by \u03c4. Approximately 0.15915494 . Useful for
-   * converting an index in a for-loop to an angle.
+   * One divided by \u03c4 . Useful for converting an index in a
+   * for-loop to an angle. Approximately 0.15915494 .
    */
   float ONE_TAU = 0.15915494f;
 
@@ -172,8 +170,8 @@ public interface IUtils {
   double ONE_TAU_2_D = 0.07957747154594767d;
 
   /**
-   * One divided by \u03c4. Approximately 0.15915494309189535 . Useful
-   * for converting an index in a for-loop to an angle.
+   * One divided by \u03c4. Useful for converting an index in a for-loop
+   * to an angle. Approximately 0.15915494309189535 .
    */
   double ONE_TAU_D = 0.15915494309189535d;
 

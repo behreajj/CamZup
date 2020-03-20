@@ -574,7 +574,7 @@ abstract class SVGParser {
         knots.getLast().mirrorHandlesBackward();
       }
 
-      result.append(knots);
+      result.appendAll(knots);
     }
     return result;
   }

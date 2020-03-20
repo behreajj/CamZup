@@ -32,7 +32,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
   public MeshEntity3 ( final Mesh3 ... meshes ) {
 
     super(new Transform3());
-    this.appendMeshes(meshes);
+    this.appendAll(meshes);
   }
 
   /**
@@ -53,7 +53,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
       final Mesh3 ... meshes ) {
 
     super(name, new Transform3());
-    this.appendMeshes(meshes);
+    this.appendAll(meshes);
   }
 
   /**
@@ -69,7 +69,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
       final Mesh3 ... meshes ) {
 
     super(name, transform);
-    this.appendMeshes(meshes);
+    this.appendAll(meshes);
   }
 
   /**
@@ -83,7 +83,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
       final Mesh3 ... meshes ) {
 
     super(transform);
-    this.appendMeshes(meshes);
+    this.appendAll(meshes);
   }
 
   /**
@@ -93,7 +93,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
    * @return this mesh entity
    */
   @Chainable
-  public MeshEntity3 appendMesh ( final Mesh3 mesh ) {
+  public MeshEntity3 append ( final Mesh3 mesh ) {
 
     if ( mesh != null ) { this.meshes.add(mesh); }
     return this;
@@ -106,11 +106,11 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
    * @return this mesh entity
    */
   @Chainable
-  public MeshEntity3 appendMeshes ( final Mesh3 ... meshes ) {
+  public MeshEntity3 appendAll ( final Mesh3 ... meshes ) {
 
     final int len = meshes.length;
     for ( int i = 0; i < len; ++i ) {
-      this.appendMesh(meshes[i]);
+      this.append(meshes[i]);
     }
     return this;
   }
@@ -121,7 +121,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
    * @param i the index
    * @return the mesh
    */
-  public Mesh3 getMesh ( final int i ) {
+  public Mesh3 get ( final int i ) {
 
     return this.meshes.get(Utils.mod(i, this.meshes.size()));
   }

@@ -181,7 +181,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Collection < Knot3 > knots ) {
 
     super(cl);
-    this.append(knots);
+    this.appendAll(knots);
   }
 
   /**
@@ -195,7 +195,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Knot3 ... knots ) {
 
     super(cl);
-    this.append(knots);
+    this.appendAll(knots);
   }
 
   /**
@@ -244,7 +244,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Collection < Knot3 > knots ) {
 
     super(name, cl);
-    this.append(knots);
+    this.appendAll(knots);
   }
 
   /**
@@ -260,7 +260,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Knot3 ... knots ) {
 
     super(name, cl);
-    this.append(knots);
+    this.appendAll(knots);
   }
 
   /**
@@ -366,22 +366,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
   }
 
   /**
-   * Append an collection of knots to the curve's list of knots.
-   *
-   * @param knots the collection of knots
-   * @return this curve.
-   */
-  public Curve3 append ( final Collection < Knot3 > knots ) {
-
-    final Iterator < Knot3 > knItr = knots.iterator();
-    while ( knItr.hasNext() ) {
-      final Knot3 knot = knItr.next();
-      if ( knot != null ) { this.knots.add(knot); }
-    }
-    return this;
-  }
-
-  /**
    * Append a knot to the curve's list of knots.
    *
    * @param knot the knot
@@ -396,13 +380,29 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
   }
 
   /**
+   * Append an collection of knots to the curve's list of knots.
+   *
+   * @param knots the collection of knots
+   * @return this curve.
+   */
+  public Curve3 appendAll ( final Collection < Knot3 > knots ) {
+
+    final Iterator < Knot3 > knItr = knots.iterator();
+    while ( knItr.hasNext() ) {
+      final Knot3 knot = knItr.next();
+      if ( knot != null ) { this.knots.add(knot); }
+    }
+    return this;
+  }
+
+  /**
    * Append an array of knots to the curve's list of knots.
    *
    * @param knots the array of knots
    * @return this curve.
    */
   @Chainable
-  public Curve3 append ( final Knot3 ... knots ) {
+  public Curve3 appendAll ( final Knot3 ... knots ) {
 
     final int len = knots.length;
     for ( int i = 0; i < len; ++i ) {
@@ -565,12 +565,26 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
   }
 
   /**
+   * Prepend a knot to the curve's list of knots.
+   *
+   * @param knot the knot
+   * @return the curve
+   * @see List#add(int, Object)
+   */
+  @Chainable
+  public Curve3 prepend ( final Knot3 knot ) {
+
+    if ( knot != null ) { this.knots.add(0, knot); }
+    return this;
+  }
+
+  /**
    * Prepend an collection of knots to the curve's list of knots.
    *
    * @param knots the collection of knots
    * @return this curve.
    */
-  public Curve3 prepend ( final Collection < Knot3 > knots ) {
+  public Curve3 prependAll ( final Collection < Knot3 > knots ) {
 
     int i = 0;
     final Iterator < Knot3 > knItr = knots.iterator();
@@ -592,7 +606,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    * @see List#add(int, Object)
    */
   @Chainable
-  public Curve3 prepend ( final Knot3 ... knots ) {
+  public Curve3 prependAll ( final Knot3 ... knots ) {
 
     // TEST
     final int len = knots.length;
@@ -603,20 +617,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
         j++;
       }
     }
-    return this;
-  }
-
-  /**
-   * Prepend a knot to the curve's list of knots.
-   *
-   * @param knot the knot
-   * @return the curve
-   * @see List#add(int, Object)
-   */
-  @Chainable
-  public Curve3 prepend ( final Knot3 knot ) {
-
-    if ( knot != null ) { this.knots.add(0, knot); }
     return this;
   }
 

@@ -11,7 +11,7 @@ Transform3 transform = new Transform3()
 
 Curve3 curve = Curve3.circle(0.0, 0.5, 4, new Curve3());
 CurveEntity3 entity = new CurveEntity3("Example", transform)
-  .appendCurve(curve);
+  .append(curve);
 
 MaterialSolid mat = new MaterialSolid()
   .setFill(false)

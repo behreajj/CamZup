@@ -17,7 +17,7 @@ Transform2 transform = new Transform2()
 Mesh2 mesh = Mesh2.ring(0.5, 3, Mesh2.PolyType.TRI, new Mesh2());
 
 MeshEntity2 entity = new MeshEntity2("Example", transform)
-  .appendMesh(mesh);
+  .append(mesh);
 
 void settings() {
   size(720, 405, "camzup.pfriendly.Yup2");

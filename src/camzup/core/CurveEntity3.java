@@ -47,7 +47,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 > {
       final Curve3 ... curves ) {
 
     super(name, transform);
-    this.appendCurves(curves);
+    this.appendAll(curves);
   }
 
   /**
@@ -61,7 +61,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 > {
       final Curve3 ... curves ) {
 
     super(transform);
-    this.appendCurves(curves);
+    this.appendAll(curves);
   }
 
   /**
@@ -71,7 +71,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 > {
    * @return this curve entity
    */
   @Chainable
-  public CurveEntity3 appendCurve ( final Curve3 curve ) {
+  public CurveEntity3 append ( final Curve3 curve ) {
 
     if ( curve != null ) { this.curves.add(curve); }
     return this;
@@ -84,11 +84,11 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 > {
    * @return this curve entity
    */
   @Chainable
-  public CurveEntity3 appendCurves ( final Curve3 ... curves ) {
+  public CurveEntity3 appendAll ( final Curve3 ... curves ) {
 
     final int len = curves.length;
     for ( int i = 0; i < len; ++i ) {
-      this.appendCurve(curves[i]);
+      this.append(curves[i]);
     }
     return this;
   }
@@ -154,7 +154,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 > {
    * @param i the index
    * @return the curve.
    */
-  public Curve3 getCurve ( final int i ) {
+  public Curve3 get ( final int i ) {
 
     return this.curves.get(Utils.mod(i, this.curves.size()));
   }

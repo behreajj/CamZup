@@ -1,13 +1,11 @@
 package camzup;
 
+import java.util.ArrayList;
+
 import processing.core.PApplet;
 
-import camzup.core.IUtils;
 import camzup.core.Mesh3;
-import camzup.core.Quaternion;
 import camzup.core.Random;
-import camzup.core.Transform2;
-import camzup.core.Transform3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -18,8 +16,6 @@ import camzup.core.Vec3;
  */
 @SuppressWarnings ( "unused" )
 public class CamZup {
-
-  static final float ONE_PI = 0.31830987f;
 
   /**
    * The library's current version.
@@ -59,6 +55,56 @@ public class CamZup {
         .toString();
   }
 
+  private static int[] convertIntegers (
+      final ArrayList < Integer > integers ) {
+
+    final int[] ret = new int[integers.size()];
+    for ( int i = 0; i < ret.length; i++ ) {
+      ret[i] = integers.get(i).intValue();
+    }
+    return ret;
+  }
+
+  private static void detectbadUvs ( final Mesh3 mesh ) {
+
+    /* Cf. http://mft-dev.dk/uv-mapping-sphere/ */
+    final int[][][] faces = mesh.faces;
+    final int fsLen = faces.length;
+    final Vec2[] vts = mesh.texCoords;
+
+    final Vec2 ba = new Vec2();
+    final Vec2 ca = new Vec2();
+
+    for ( int i = 0; i < fsLen; ++i ) {
+      final int[][] face = faces[i];
+      final int fLen = face.length;
+      for ( int j = 0; j < fLen; ++j ) {
+        final int k = (j + 1) % fLen;
+        final int l = (j + 2) % fLen;
+
+        final int[] a = face[j];
+        final int[] b = face[k];
+        final int[] c = face[l];
+
+        final int ai = a[1];
+        final int bi = b[1];
+        final int ci = c[1];
+
+        final Vec2 vta = vts[ai];
+        final Vec2 vtb = vts[bi];
+        final Vec2 vtc = vts[ci];
+
+        Vec2.sub(vtb, vta, ba);
+        Vec2.sub(vtc, vta, ca);
+
+        final float nz = Vec2.cross(ba, ca);
+        if ( nz < 0.0f ) {
+          // Add, this uv is problematic...
+        }
+      }
+    }
+  }
+
   private static float[] flat ( final float[][] arr ) {
 
     final int sourceLen = arr.length;
@@ -82,10 +128,7 @@ public class CamZup {
       final Mesh3 mesh,
       final float radius ) {
 
-    final StringBuilder sb = new StringBuilder()
-        .append("float radius = ")
-        .append(radius)
-        .append("f;\n\n");
+    final StringBuilder sb = new StringBuilder();
     final int[][][] fs = mesh.faces;
     final Vec3[] vs = mesh.coords;
     final Vec2[] vts = mesh.texCoords;
@@ -123,21 +166,21 @@ public class CamZup {
         if ( v.x == 0.0f ) {
           sb.append("f, ");
         } else {
-          sb.append("f * radius, ");
+          sb.append("f , ");
         }
 
         sb.append(Utils.toFixed(v.y, 5));
         if ( v.y == 0.0f ) {
           sb.append("f, ");
         } else {
-          sb.append("f * radius, ");
+          sb.append("f , ");
         }
 
         sb.append(Utils.toFixed(v.z, 5));
         if ( v.z == 0.0f ) {
           sb.append("f,\n");
         } else {
-          sb.append("f * radius,\n");
+          sb.append("f ,\n");
         }
 
         sb.append(Utils.toFixed(vt.x, 5));
@@ -167,56 +210,17 @@ public class CamZup {
    */
   public static void main ( final String[] args ) {
 
-    // final Ray2 r = new Ray2();
-    // Ray2.fromPoints(new Vec2(1, 1), new Vec2(-2, 1), r);
-    // System.out.println(r);
-
-    // final Random rng = new Random();
-    //
-    // Mesh2 m = new Mesh2();
-    // Mesh2.circle(m);
-    //
-    // Vec2 lb = new Vec2(-1.0f, -1.0f);
-    // Vec2 ub = new Vec2(1.0f, 1.0f);
-    // int count = 16;
-    // for ( int i = 0; i < count; ++i ) {
-    // Vec2 p = Vec2.randomCartesian(rng, lb, ub, new Vec2());
-    // boolean eval = Mesh2.contains(m, p);
-    // if ( eval ) {
-    // System.out.println(p);
-    // System.out.println(Vec2.mag(p));
-    // }
-    // }
-
     final Random rng = new Random();
-    final Transform2 tr = new Transform2(
-        Vec2.random(rng, new Vec2()),
-        rng.uniform(IUtils.TAU),
-        Vec2.random(rng, new Vec2()));
-    System.out.println(tr);
-    final Vec2 a = Vec2.random(rng, new Vec2());
-    final Vec2 b = new Vec2();
-    final Vec2 c = new Vec2();
-    Transform2.mulPoint(tr, a, b);
-    Transform2.invMulPoint(tr, b, c);
-    System.out.println(a);
-    System.out.println(b);
-    System.out.println(c);
 
-    final Quaternion q = Quaternion.random(rng, new Quaternion());
-    final Transform3 tr3 = new Transform3(
-        Vec3.random(rng, new Vec3()),
-        q,
-        Vec3.random(rng, new Vec3()));
-    System.out.println(tr3);
-    final Vec3 a3 = Vec3.random(rng, new Vec3());
-    final Vec3 b3 = new Vec3();
-    final Vec3 c3 = new Vec3();
-    Transform3.mulPoint(tr3, a3, b3);
-    Transform3.invMulPoint(tr3, b3, c3);
-    System.out.println(a3.toString(7));
-    System.out.println(b3);
-    System.out.println(c3.toString(7));
+    // final Mesh3 mesh3 = new Mesh3();
+    // Mesh3.uvSphere(8, 4, mesh3);
+    // final MeshEntity3 entity3 = new MeshEntity3();
+
+    // entity3.append(mesh3);
+    // String str = entity3.toBlenderCode();
+    // System.out.println(str);
+    // System.out.println(mesh3.toString());
+    // System.out.println(toHardCode(mesh3, 4));
   }
 
   /**

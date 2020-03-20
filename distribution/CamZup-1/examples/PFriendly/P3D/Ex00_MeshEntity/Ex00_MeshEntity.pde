@@ -25,19 +25,19 @@ void setup() {
 
   entities = new MeshEntity3[] {
     new MeshEntity3()
-    .appendMesh(Mesh3.tetrahedron(new Mesh3())), 
+    .append(Mesh3.tetrahedron(new Mesh3())), 
 
     new MeshEntity3()
-    .appendMesh(Mesh3.cube(new Mesh3())), 
+    .append(Mesh3.cube(new Mesh3())), 
 
     new MeshEntity3()
-    .appendMesh(Mesh3.octahedron(new Mesh3())), 
+    .append(Mesh3.octahedron(new Mesh3())), 
 
     new MeshEntity3()
-    .appendMesh(Mesh3.dodecahedron(new Mesh3())), 
+    .append(Mesh3.dodecahedron(new Mesh3())), 
 
     new MeshEntity3()
-    .appendMesh(Mesh3.icosahedron(new Mesh3()))
+    .append(Mesh3.icosahedron(new Mesh3()))
   };
 
   Vec3 lb = new Vec3(-width * 0.4, 0.0, 0.0);
@@ -50,7 +50,7 @@ void setup() {
     MeshEntity3 me3 = entities[i];
     me3.scaleTo(scl);
     me3.moveTo(v);
-    me3.getMesh(0).setMaterialIndex(i);
+    me3.get(0).setMaterialIndex(i);
   }
 }
 

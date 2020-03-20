@@ -211,13 +211,11 @@ public class Yup3 extends Up3 {
 
     // TEST Is it problematic when the camera's look direction
     // is co-linear with the world up direction?
-    // if ( Vec3.areParallel(lookDir, refUp) ) {
-    // this.lookDir.set(
-    // refUp.x + Utils.EPSILON,
-    // refUp.y - Utils.EPSILON,
-    // refUp.z - Utils.EPSILON);
-    // return;
-    // }
+    if ( Vec3.areParallel(this.lookDir, this.refUp) ) {
+      final float temp = this.refUp.y;
+      this.refUp.y = this.refUp.z;
+      this.refUp.z = temp;
+    }
 
     this.cameraX = xEye;
     this.cameraY = yEye;

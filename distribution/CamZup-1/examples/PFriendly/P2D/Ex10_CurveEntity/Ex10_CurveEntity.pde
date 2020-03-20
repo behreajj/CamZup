@@ -14,7 +14,7 @@ Curve2 curve = Curve2.rect(
 
 CurveEntity2 entity = new CurveEntity2(
   "Example", transform)
-  .appendCurve(curve);
+  .append(curve);
 
 MaterialSolid mat = new MaterialSolid()
   .setFill(false)

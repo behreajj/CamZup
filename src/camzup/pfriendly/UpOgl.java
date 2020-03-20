@@ -1301,7 +1301,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * @param desiredTextureWrap the texture wrap, CLAMP or REPEAT
    * @see Utils#div(float, float)
    * @see Utils#clamp01(float)
-   * @see Utils#mod1(float)
    */
   protected void vertexTexture (
       final float u,
