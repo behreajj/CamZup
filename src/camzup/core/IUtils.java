@@ -79,7 +79,7 @@ public interface IUtils {
 
   /**
    * One-255th, 1.0 / 255.0 . Useful when converting a color with
-   * channels in the range [0, 255] to a color in the range [0, 1] .
+   * channels in the range [0, 255] to a color in the range [0.0, 1.0] .
    * Approximately 0.003921569 .
    */
   float ONE_255 = 0.003921569f;
@@ -99,15 +99,15 @@ public interface IUtils {
   float ONE_360 = 0.0027777778f;
 
   /**
-   * One divided by 360 degrees, 1.0 / 360 ; approximately
+   * One divided by 360 degrees, 1.0 / 360.0 ; approximately
    * 0.002777777777777778 . Useful for converting an index in a for-loop
    * to an angle in degrees.
    */
   double ONE_360_D = 0.002777777777777778d;
 
   /**
-   * One divided by \u03c0 . Useful when converting inclinations to
-   * linear ranges. Approximately 0.31830987 .
+   * One divided by \u03c0 . Useful when converting inclinations to the
+   * range [0.0, 1.0] . Approximately 0.31830987 .
    */
   float ONE_PI = 0.31830987f;
 
@@ -247,25 +247,25 @@ public interface IUtils {
   double SQRT_3_D = 1.7320508075688772d;
 
   /**
-   * An approximation of \u03c4 . Equal to 2.0 \u03c0, or 6.2831853 .
+   * An approximation of \u03c4 , 6.2831855 . Equal to 2.0 \u03c0 .
    */
   float TAU = 6.2831855f;
 
   /**
-   * An approximation of \u03c4 . Equal to 2.0 \u03c0, or
-   * 6.283185307179586 .
+   * An approximation of \u03c4 , 6.283185307179586 . Equal to 2.0
+   * \u03c0 .
    */
   double TAU_D = 6.283185307179586d;
 
   /**
-   * An approximation of \u03c0 / 3.0 , 1.0471976 . Useful for
-   * describing the field of view in a perspective camera.
+   * \u03c0 divided by three, 1.0471976 . Useful for describing the
+   * field of view in a perspective camera.
    */
   float THIRD_PI = 1.0471976f;
 
   /**
-   * An approximation of \u03c0 / 3.0 , 1.0471975511965976 . Useful for
-   * describing the field of view in a perspective camera.
+   * \u03c0 divided by three, 1.0471975511965976 . Useful for describing
+   * the field of view in a perspective camera.
    */
   double THIRD_PI_D = 1.0471975511965976d;
 

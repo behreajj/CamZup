@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import processing.core.PApplet;
 
 import camzup.core.Mesh3;
+import camzup.core.MeshEntity3;
 import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -212,14 +213,31 @@ public class CamZup {
 
     final Random rng = new Random();
 
-    // final Mesh3 mesh3 = new Mesh3();
-    // Mesh3.uvSphere(8, 4, mesh3);
-    // final MeshEntity3 entity3 = new MeshEntity3();
+    final Mesh3 mesh3 = new Mesh3();
+    Mesh3.dodecahedron(mesh3);
 
-    // entity3.append(mesh3);
-    // String str = entity3.toBlenderCode();
+    int i = 0;
+    for ( Vec3 n : mesh3.normals ) {
+      Vec3.normalize(n, n);
+      System.out.println(
+          "target.normals[" +
+              i +
+              "].set(" +
+              n.x +
+              "f, " +
+              n.y +
+              "f, " +
+              n.z +
+              "f);");
+      i++;
+    }
+    // mesh3.sort();
+    // Mesh3.uvSphere(8, 4, mesh3);
+    final MeshEntity3 entity3 = new MeshEntity3();
+    entity3.append(mesh3);
+    final String str = entity3.toBlenderCode();
     // System.out.println(str);
-    // System.out.println(mesh3.toString());
+    // System.out.println(mesh3.toString(8));
     // System.out.println(toHardCode(mesh3, 4));
   }
 

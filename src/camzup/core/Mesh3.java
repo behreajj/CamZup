@@ -1460,8 +1460,6 @@ public class Mesh3 extends Mesh {
   @Chainable
   public Mesh3 set ( final Mesh3 source ) {
 
-    // TEST
-
     /* Copy coordinates. */
     final Vec3[] sourcevs = source.coords;
     final int vslen = sourcevs.length;
@@ -2505,8 +2503,8 @@ public class Mesh3 extends Mesh {
    * @param target    the output mesh
    * @return the torus
    */
-  @Experimental
-  private static Mesh3 torus (
+  @Deprecated
+  static Mesh3 torusOld (
       final float thickness,
       final int sectors,
       final int panels,
@@ -2934,18 +2932,18 @@ public class Mesh3 extends Mesh {
     target.texCoords[4].set(0.97552824f, 0.34549141f);
 
     target.normals = Vec3.resize(target.normals, 12);
-    target.normals[0].set(-0.8506509f, 0.5f, 0.16245982f);
-    target.normals[1].set(0.0f, -0.97147685f, 0.23713444f);
-    target.normals[2].set(0.0f, 0.97147685f, -0.23713444f);
-    target.normals[3].set(0.0f, -0.64655715f, -0.76286548f);
-    target.normals[4].set(0.52573115f, 0.26286551f, -0.809017f);
-    target.normals[5].set(0.0f, 0.64655715f, 0.76286548f);
-    target.normals[6].set(-0.52573121f, 0.26286554f, -0.809017f);
-    target.normals[7].set(-0.52573121f, -0.26286554f, 0.809017f);
-    target.normals[8].set(0.52573115f, -0.26286551f, 0.809017f);
-    target.normals[9].set(0.85065079f, 0.5f, 0.16245979f);
-    target.normals[10].set(0.85065079f, -0.5f, -0.16245979f);
-    target.normals[11].set(-0.8506509f, -0.5f, -0.16245982f);
+    target.normals[0].set(-0.8506508f, 0.5f, 0.16245979f);
+    target.normals[1].set(0.0f, -0.9714768f, 0.23713443f);
+    target.normals[2].set(0.0f, 0.9714768f, -0.23713443f);
+    target.normals[3].set(0.0f, -0.64655715f, -0.7628655f);
+    target.normals[4].set(0.5257311f, 0.2628655f, -0.80901694f);
+    target.normals[5].set(0.0f, 0.64655715f, 0.7628655f);
+    target.normals[6].set(-0.5257311f, 0.2628655f, -0.80901694f);
+    target.normals[7].set(-0.5257311f, -0.2628655f, 0.80901694f);
+    target.normals[8].set(0.5257311f, -0.2628655f, 0.80901694f);
+    target.normals[9].set(0.8506508f, 0.5f, 0.16245979f);
+    target.normals[10].set(0.8506508f, -0.5f, -0.16245979f);
+    target.normals[11].set(-0.8506508f, -0.5f, -0.16245979f);
 
     target.faces = new int[][][] {
         { { 2, 0, 2 }, { 10, 2, 2 }, { 0, 3, 2 },
@@ -3176,70 +3174,96 @@ public class Mesh3 extends Mesh {
    */
   public static final Mesh3 icosahedron ( final Mesh3 target ) {
 
+    /*
+     * Coordinate values result from the normalization of (1.0, PHI, 0.0)
+     * to (0.5257311121191336, 0.85065080835204, 0.0), then multiplication
+     * by a radius of 0.5: (0.2628655560595668, 0.42532540417602, 0.0).
+     */
+
     target.name = "Icosahedron";
 
     target.coords = Vec3.resize(target.coords, 12);
-    target.coords[0].set(0.0f, 0.5f, 0.0f);
-    target.coords[1].set(0.42532045f, 0.22360753f, -0.13819239f);
-    target.coords[2].set(0.00000225f, 0.22360753f, -0.44720721f);
-    target.coords[3].set(-0.42532432f, 0.22360751f, -0.13819626f);
-    target.coords[4].set(-0.26286f, 0.2236075f, 0.36179957f);
-    target.coords[5].set(0.26286399f, 0.22360750f, 0.36179706f);
-    target.coords[6].set(0.26286f, -0.22360747f, -0.36179957f);
-    target.coords[7].set(-0.26286399f, -0.22360747f, -0.36179706f);
-    target.coords[8].set(-0.42532045f, -0.2236075f, 0.13819239f);
-    target.coords[9].set(-0.00000225f, -0.2236075f, 0.44720721f);
-    target.coords[10].set(0.42532432f, -0.22360748f, 0.13819624f);
-    target.coords[11].set(0.0f, -0.5f, 0.0f);
+    target.coords[0].set(0.0f, 0.0f, -0.5f);
+    target.coords[1].set(0.26286554f, 0.3618018f, -0.22360958f);
+    target.coords[2].set(-0.4253254f, -0.13819478f, -0.22360958f);
+    target.coords[3].set(-0.26286554f, 0.3618018f, -0.22360958f);
+    target.coords[4].set(0.0f, -0.44721218f, -0.22360958f);
+    target.coords[5].set(0.4253254f, -0.13819478f, -0.22360958f);
+    target.coords[6].set(-0.4253254f, 0.13819478f, 0.22360958f);
+    target.coords[7].set(0.0f, 0.44721218f, 0.22360958f);
+    target.coords[8].set(0.26286554f, -0.3618018f, 0.22360958f);
+    target.coords[9].set(0.4253254f, 0.13819478f, 0.22360958f);
+    target.coords[10].set(-0.26286554f, -0.3618018f, 0.22360958f);
+    target.coords[11].set(0.0f, 0.0f, 0.5f);
 
-    target.texCoords = Vec2.resize(target.texCoords, 3);
-    target.texCoords[0].set(0.5f, 0.0f);
-    target.texCoords[1].set(1.0f, 1.0f);
-    target.texCoords[2].set(0.0f, 1.0f);
+    target.texCoords = Vec2.resize(target.texCoords, 22);
+    target.texCoords[0].set(0.272727f, 0.421387f);
+    target.texCoords[1].set(0.090909f, 0.421387f);
+    target.texCoords[2].set(0.454545f, 0.421387f);
+    target.texCoords[3].set(0.818182f, 0.421387f);
+    target.texCoords[4].set(0.636364f, 0.421387f);
+    target.texCoords[5].set(0.181818f, 0.264161f);
+    target.texCoords[6].set(0.363636f, 0.264161f);
+    target.texCoords[7].set(0.636364f, 0.735839f);
+    target.texCoords[8].set(0.909091f, 0.264161f);
+    target.texCoords[9].set(0.727273f, 0.264161f);
+    target.texCoords[10].set(0.0f, 0.578613f);
+    target.texCoords[11].set(0.272727f, 0.735839f);
+    target.texCoords[12].set(0.363636f, 0.578613f);
+    target.texCoords[13].set(0.181818f, 0.578613f);
+    target.texCoords[14].set(0.090909f, 0.735839f);
+    target.texCoords[15].set(0.545455f, 0.578613f);
+    target.texCoords[16].set(0.454545f, 0.735839f);
+    target.texCoords[17].set(0.909091f, 0.578613f);
+    target.texCoords[18].set(0.727273f, 0.578613f);
+    target.texCoords[19].set(0.818181f, 0.735839f);
+    target.texCoords[20].set(1.0f, 0.421387f);
+    target.texCoords[21].set(0.545455f, 0.264161f);
 
     target.normals = Vec3.resize(target.normals, 20);
-    target.normals[0].set(-0.00000468f, -0.18758917f, -0.98224759f);
-    target.normals[1].set(-0.93417150f, -0.18759677f, -0.30353081f);
-    target.normals[2].set(-0.57735437f, -0.18758921f, 0.79465222f);
-    target.normals[3].set(0.57734251f, -0.18758698f, 0.79466146f);
-    target.normals[4].set(0.57735109f, -0.79465222f, -0.18759950f);
-    target.normals[5].set(-0.57735270f, -0.79465240f, -0.18759337f);
-    target.normals[6].set(0.35682696f, 0.79465121f, -0.49112532f);
-    target.normals[7].set(-0.35681859f, 0.79465222f, -0.49112958f);
-    target.normals[8].set(-0.57735109f, 0.79465222f, 0.18759951f);
-    target.normals[9].set(0.57735270f, 0.79465240f, 0.18759339f);
-    target.normals[10].set(0.00000289f, 0.79465103f, 0.60706645f);
-    target.normals[11].set(0.93417150f, 0.18759677f, 0.30353081f);
-    target.normals[12].set(0.57735437f, 0.18758918f, -0.79465222f);
-    target.normals[13].set(-0.57734245f, 0.18758696f, -0.79466146f);
-    target.normals[14].set(-0.93417013f, 0.18758696f, 0.30354115f);
-    target.normals[15].set(0.00000468f, 0.18758917f, 0.98224759f);
-    target.normals[16].set(-0.00000289f, -0.79465103f, -0.60706645f);
-    target.normals[17].set(0.93417013f, -0.18758696f, -0.30354115f);
-    target.normals[18].set(-0.35682702f, -0.79465109f, 0.49112538f);
-    target.normals[19].set(0.35681871f, -0.79465216f, 0.49112964f);
+    target.normals[0].set(0.57735026f, -0.18759061f, 0.79465485f);
+    target.normals[1].set(-0.93417156f, -0.3035345f, 0.18759061f);
+    target.normals[2].set(0.57735026f, 0.79465485f, 0.18759061f);
+    target.normals[3].set(0.0f, -0.9822474f, 0.18759061f);
+    target.normals[4].set(0.93417156f, -0.30353174f, 0.18759061f);
+    target.normals[5].set(-0.35682407f, 0.49112114f, 0.79465485f);
+    target.normals[6].set(-0.57735026f, -0.18759061f, 0.79465485f);
+    target.normals[7].set(-0.57735026f, 0.18759061f, -0.79465485f);
+    target.normals[8].set(-0.35682407f, -0.49112114f, -0.79465485f);
+    target.normals[9].set(0.57735026f, 0.18759061f, -0.79465485f);
+    target.normals[10].set(0.0f, 0.60705924f, -0.79465485f);
+    target.normals[11].set(0.35682407f, -0.49112114f, -0.79465485f);
+    target.normals[12].set(-0.93417287f, 0.30353144f, -0.18759061f);
+    target.normals[13].set(0.0f, 0.9822474f, -0.18759061f);
+    target.normals[14].set(-0.57735026f, -0.79465485f, -0.18759061f);
+    target.normals[15].set(0.93417156f, 0.3035345f, -0.18759061f);
+    target.normals[16].set(0.57735026f, -0.79465485f, -0.18759061f);
+    target.normals[17].set(-0.57735026f, 0.79465485f, 0.18759061f);
+    target.normals[18].set(0.35682407f, 0.49112114f, 0.79465485f);
+    target.normals[19].set(0.0f, -0.60706127f, 0.79465485f);
 
     target.faces = new int[][][] {
-        { { 0, 2, 6 }, { 1, 1, 6 }, { 2, 0, 6 } },
-        { { 1, 2, 9 }, { 0, 1, 9 }, { 5, 0, 9 } },
-        { { 0, 2, 7 }, { 2, 1, 7 }, { 3, 0, 7 } },
-        { { 0, 2, 8 }, { 3, 1, 8 }, { 4, 0, 8 } },
-        { { 0, 2, 10 }, { 4, 1, 10 }, { 5, 0, 10 } },
-        { { 1, 2, 11 }, { 5, 1, 11 }, { 10, 0, 11 } },
-        { { 2, 2, 12 }, { 1, 1, 12 }, { 6, 0, 12 } },
-        { { 3, 2, 13 }, { 2, 1, 13 }, { 7, 0, 13 } },
-        { { 4, 2, 14 }, { 3, 1, 14 }, { 8, 0, 14 } },
-        { { 5, 2, 15 }, { 4, 1, 15 }, { 9, 0, 15 } },
-        { { 1, 2, 17 }, { 10, 1, 17 }, { 6, 0, 17 } },
-        { { 2, 2, 0 }, { 6, 1, 0 }, { 7, 0, 0 } },
-        { { 3, 2, 1 }, { 7, 1, 1 }, { 8, 0, 1 } },
-        { { 4, 2, 2 }, { 8, 1, 2 }, { 9, 0, 2 } },
-        { { 5, 2, 3 }, { 9, 1, 3 }, { 10, 0, 3 } },
-        { { 6, 2, 4 }, { 10, 1, 4 }, { 11, 0, 4 } },
-        { { 7, 2, 16 }, { 6, 1, 16 }, { 11, 0, 16 } },
-        { { 8, 2, 5 }, { 7, 1, 5 }, { 11, 0, 5 } },
-        { { 9, 2, 18 }, { 8, 1, 18 }, { 11, 0, 18 } },
-        { { 10, 2, 19 }, { 9, 1, 19 }, { 11, 0, 19 } } };
+        { { 2, 12, 7 }, { 3, 13, 7 }, { 0, 11, 7 } },
+        { { 3, 13, 10 }, { 1, 10, 10 }, { 0, 14, 10 } },
+        { { 4, 15, 8 }, { 2, 12, 8 }, { 0, 16, 8 } },
+        { { 1, 17, 9 }, { 5, 18, 9 }, { 0, 19, 9 } },
+        { { 5, 18, 11 }, { 4, 15, 11 }, { 0, 7, 11 } },
+        { { 6, 0, 12 }, { 3, 13, 12 }, { 2, 12, 12 } },
+        { { 7, 1, 13 }, { 1, 10, 13 }, { 3, 13, 13 } },
+        { { 10, 2, 14 }, { 2, 12, 14 }, { 4, 15, 14 } },
+        { { 9, 3, 15 }, { 5, 18, 15 }, { 1, 17, 15 } },
+        { { 8, 4, 16 }, { 4, 15, 16 }, { 5, 18, 16 } },
+        { { 6, 0, 17 }, { 7, 1, 17 }, { 3, 13, 17 } },
+        { { 10, 2, 1 }, { 6, 0, 1 }, { 2, 12, 1 } },
+        { { 7, 20, 2 }, { 9, 3, 2 }, { 1, 17, 2 } },
+        { { 8, 4, 3 }, { 10, 2, 3 }, { 4, 15, 3 } },
+        { { 9, 3, 4 }, { 8, 4, 4 }, { 5, 18, 4 } },
+        { { 11, 5, 5 }, { 7, 1, 5 }, { 6, 0, 5 } },
+        { { 11, 6, 6 }, { 6, 0, 6 }, { 10, 2, 6 } },
+        { { 11, 8, 18 }, { 9, 3, 18 }, { 7, 20, 18 } },
+        { { 11, 9, 0 }, { 8, 4, 0 }, { 9, 3, 0 } },
+        { { 11, 21, 19 }, { 10, 2, 19 }, { 8, 4, 19 } }
+    };
 
     return target;
   }
@@ -3482,6 +3506,33 @@ public class Mesh3 extends Mesh {
     target.texCoords = vts.toArray(new Vec2[vts.size()]);
     target.normals = vns.toArray(new Vec3[vns.size()]);
     target.faces = trgfs;
+    return target;
+  }
+
+  public static Mesh3 torus (
+      final float thickness,
+      final int sectors,
+      final int panels,
+      final Mesh3 target ) {
+
+    target.name = "Torus";
+    int vsect = sectors < 3 ? 3 : sectors;
+    int vsect1 = vsect + 1;
+    final float toTheta = 1.0f / vsect;
+    final float[] costs = new float[vsect];
+    final float[] sints = new float[vsect];
+    for ( int j = 0; j < vsect; ++j ) {
+      final float theta = j * toTheta;
+      costs[j] = Utils.scNorm(theta);
+      sints[j] = Utils.scNorm(theta - 0.25f);
+    }
+
+    final float[] us = new float[vsect1];
+    final float toU = 1.0f / vsect;
+    for ( int j = 0; j < vsect1; ++j ) {
+      us[j] = j * toU;
+    }
+
     return target;
   }
 

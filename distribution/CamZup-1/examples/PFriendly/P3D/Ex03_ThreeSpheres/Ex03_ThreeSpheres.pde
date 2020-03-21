@@ -20,6 +20,7 @@ MaterialSolid solid = new MaterialSolid()
 PImage txtr;
 MaterialPImage textured;
 boolean wireframe = true;
+boolean useIcosaMap = true;
 
 void settings() {
   size(720, 405, "camzup.pfriendly.Zup3");
@@ -31,7 +32,9 @@ void setup() {
   rndr.textureSampling(TextureSampling.LINEAR);
   rndr.textureWrap(REPEAT);
 
-  txtr = loadImage("diagnostic.png");
+  txtr = useIcosaMap ?
+    loadImage("icosaMap.png") :
+    loadImage("diagnostic.png");
   textured = new MaterialPImage(txtr);
 
   Mesh3.icosphere(3, icosphere);
@@ -43,13 +46,13 @@ void setup() {
   meCube.scaleTo(uniform);
   meUv.scaleTo(uniform);
 
-  meIco.moveBy(new Vec3(uniform, 0.0, 0.0));
+  meUv.moveBy(new Vec3(uniform, 0.0, 0.0));
   meCube.moveBy(new Vec3(-uniform, 0.0, 0.0));
 }
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  meIco.rotateZ(0.01);
+  meIco.rotateX(-0.01);
   meCube.rotateZ(0.01);
   meUv.rotateZ(0.01);
 
