@@ -3184,85 +3184,92 @@ public class Mesh3 extends Mesh {
 
     target.coords = Vec3.resize(target.coords, 12);
     target.coords[0].set(0.0f, 0.0f, -0.5f);
-    target.coords[1].set(0.26286554f, 0.3618018f, -0.22360958f);
+    target.coords[1].set(0.0f, -0.4472122f, -0.22360958f);
     target.coords[2].set(-0.4253254f, -0.13819478f, -0.22360958f);
-    target.coords[3].set(-0.26286554f, 0.3618018f, -0.22360958f);
-    target.coords[4].set(0.0f, -0.44721218f, -0.22360958f);
-    target.coords[5].set(0.4253254f, -0.13819478f, -0.22360958f);
-    target.coords[6].set(-0.4253254f, 0.13819478f, 0.22360958f);
-    target.coords[7].set(0.0f, 0.44721218f, 0.22360958f);
-    target.coords[8].set(0.26286554f, -0.3618018f, 0.22360958f);
+    target.coords[3].set(0.4253254f, -0.13819478f, -0.22360958f);
+    target.coords[4].set(-0.26286554f, 0.3618018f, -0.22360958f);
+    target.coords[5].set(0.26286554f, 0.3618018f, -0.22360958f);
+    target.coords[6].set(-0.26286554f, -0.3618018f, 0.22360958f);
+    target.coords[7].set(0.26286554f, -0.3618018f, 0.22360958f);
+    target.coords[8].set(-0.4253254f, 0.13819478f, 0.22360958f);
     target.coords[9].set(0.4253254f, 0.13819478f, 0.22360958f);
-    target.coords[10].set(-0.26286554f, -0.3618018f, 0.22360958f);
+    target.coords[10].set(0.0f, 0.4472122f, 0.22360958f);
     target.coords[11].set(0.0f, 0.0f, 0.5f);
 
     target.texCoords = Vec2.resize(target.texCoords, 22);
-    target.texCoords[0].set(0.272727f, 0.421387f);
+    target.texCoords[0].set(0.0f, 0.578613f);
     target.texCoords[1].set(0.090909f, 0.421387f);
-    target.texCoords[2].set(0.454545f, 0.421387f);
-    target.texCoords[3].set(0.818182f, 0.421387f);
-    target.texCoords[4].set(0.636364f, 0.421387f);
-    target.texCoords[5].set(0.181818f, 0.264161f);
-    target.texCoords[6].set(0.363636f, 0.264161f);
-    target.texCoords[7].set(0.636364f, 0.735839f);
-    target.texCoords[8].set(0.909091f, 0.264161f);
-    target.texCoords[9].set(0.727273f, 0.264161f);
-    target.texCoords[10].set(0.0f, 0.578613f);
-    target.texCoords[11].set(0.272727f, 0.735839f);
-    target.texCoords[12].set(0.363636f, 0.578613f);
-    target.texCoords[13].set(0.181818f, 0.578613f);
-    target.texCoords[14].set(0.090909f, 0.735839f);
-    target.texCoords[15].set(0.545455f, 0.578613f);
-    target.texCoords[16].set(0.454545f, 0.735839f);
-    target.texCoords[17].set(0.909091f, 0.578613f);
-    target.texCoords[18].set(0.727273f, 0.578613f);
-    target.texCoords[19].set(0.818181f, 0.735839f);
-    target.texCoords[20].set(1.0f, 0.421387f);
-    target.texCoords[21].set(0.545455f, 0.264161f);
+    target.texCoords[2].set(0.090909f, 0.735839f);
+    target.texCoords[3].set(0.181818f, 0.264161f);
+    target.texCoords[4].set(0.181818f, 0.578613f);
+    target.texCoords[5].set(0.272727f, 0.421387f);
+    target.texCoords[6].set(0.272727f, 0.735839f);
+    target.texCoords[7].set(0.363636f, 0.264161f);
+    target.texCoords[8].set(0.363636f, 0.578613f);
+    target.texCoords[9].set(0.454545f, 0.421387f);
+    target.texCoords[10].set(0.454545f, 0.735839f);
+    target.texCoords[11].set(0.545455f, 0.264161f);
+    target.texCoords[12].set(0.545455f, 0.578613f);
+    target.texCoords[13].set(0.636364f, 0.421387f);
+    target.texCoords[14].set(0.636364f, 0.735839f);
+    target.texCoords[15].set(0.727273f, 0.264161f);
+    target.texCoords[16].set(0.727273f, 0.578613f);
+    target.texCoords[17].set(0.818182f, 0.421387f);
+    target.texCoords[18].set(0.818182f, 0.735839f);
+    target.texCoords[19].set(0.909091f, 0.264161f);
+    target.texCoords[20].set(0.909091f, 0.578613f);
+    target.texCoords[21].set(1.0f, 0.421387f);
 
     target.normals = Vec3.resize(target.normals, 20);
-    target.normals[0].set(0.57735026f, -0.18759061f, 0.79465485f);
-    target.normals[1].set(-0.93417156f, -0.3035345f, 0.18759061f);
-    target.normals[2].set(0.57735026f, 0.79465485f, 0.18759061f);
-    target.normals[3].set(0.0f, -0.9822474f, 0.18759061f);
-    target.normals[4].set(0.93417156f, -0.30353174f, 0.18759061f);
-    target.normals[5].set(-0.35682407f, 0.49112114f, 0.79465485f);
-    target.normals[6].set(-0.57735026f, -0.18759061f, 0.79465485f);
-    target.normals[7].set(-0.57735026f, 0.18759061f, -0.79465485f);
-    target.normals[8].set(-0.35682407f, -0.49112114f, -0.79465485f);
-    target.normals[9].set(0.57735026f, 0.18759061f, -0.79465485f);
-    target.normals[10].set(0.0f, 0.60705924f, -0.79465485f);
-    target.normals[11].set(0.35682407f, -0.49112114f, -0.79465485f);
-    target.normals[12].set(-0.93417287f, 0.30353144f, -0.18759061f);
-    target.normals[13].set(0.0f, 0.9822474f, -0.18759061f);
-    target.normals[14].set(-0.57735026f, -0.79465485f, -0.18759061f);
-    target.normals[15].set(0.93417156f, 0.3035345f, -0.18759061f);
-    target.normals[16].set(0.57735026f, -0.79465485f, -0.18759061f);
-    target.normals[17].set(-0.57735026f, 0.79465485f, 0.18759061f);
-    target.normals[18].set(0.35682407f, 0.49112114f, 0.79465485f);
-    target.normals[19].set(0.0f, -0.60706127f, 0.79465485f);
+    target.normals[0].set(-0.35682407f, -0.49112114f, -0.79465485f);
+    target.normals[1].set(0.35682407f, -0.49112114f, -0.79465485f);
+    target.normals[2].set(-0.57735026f, 0.18759061f, -0.79465485f);
+    target.normals[3].set(0.57735026f, 0.18759061f, -0.79465485f);
+    target.normals[4].set(0.0f, 0.60705924f, -0.79465485f);
+    target.normals[5].set(-0.57735026f, -0.79465485f, -0.18759061f);
+    target.normals[6].set(0.57735026f, -0.79465485f, -0.18759061f);
+    target.normals[7].set(-0.93417287f, 0.30353144f, -0.18759061f);
+    target.normals[8].set(0.93417156f, 0.3035345f, -0.18759061f);
+    target.normals[9].set(0.0f, 0.9822474f, -0.18759061f);
+    target.normals[10].set(0.0f, -0.9822474f, 0.18759061f);
+    target.normals[11].set(-0.93417156f, -0.3035345f, 0.18759061f);
+    target.normals[12].set(0.93417156f, -0.30353174f, 0.18759061f);
+    target.normals[13].set(-0.57735026f, 0.79465485f, 0.18759061f);
+    target.normals[14].set(0.57735026f, 0.79465485f, 0.18759061f);
+    target.normals[15].set(0.0f, -0.60706127f, 0.79465485f);
+    target.normals[16].set(-0.57735026f, -0.18759061f, 0.79465485f);
+    target.normals[17].set(0.57735026f, -0.18759061f, 0.79465485f);
+    target.normals[18].set(-0.35682407f, 0.49112114f, 0.79465485f);
+    target.normals[19].set(0.35682407f, 0.49112114f, 0.79465485f);
 
     target.faces = new int[][][] {
-        { { 2, 12, 7 }, { 3, 13, 7 }, { 0, 11, 7 } },
-        { { 3, 13, 10 }, { 1, 10, 10 }, { 0, 14, 10 } },
-        { { 4, 15, 8 }, { 2, 12, 8 }, { 0, 16, 8 } },
-        { { 1, 17, 9 }, { 5, 18, 9 }, { 0, 19, 9 } },
-        { { 5, 18, 11 }, { 4, 15, 11 }, { 0, 7, 11 } },
-        { { 6, 0, 12 }, { 3, 13, 12 }, { 2, 12, 12 } },
-        { { 7, 1, 13 }, { 1, 10, 13 }, { 3, 13, 13 } },
-        { { 10, 2, 14 }, { 2, 12, 14 }, { 4, 15, 14 } },
-        { { 9, 3, 15 }, { 5, 18, 15 }, { 1, 17, 15 } },
-        { { 8, 4, 16 }, { 4, 15, 16 }, { 5, 18, 16 } },
-        { { 6, 0, 17 }, { 7, 1, 17 }, { 3, 13, 17 } },
-        { { 10, 2, 1 }, { 6, 0, 1 }, { 2, 12, 1 } },
-        { { 7, 20, 2 }, { 9, 3, 2 }, { 1, 17, 2 } },
-        { { 8, 4, 3 }, { 10, 2, 3 }, { 4, 15, 3 } },
-        { { 9, 3, 4 }, { 8, 4, 4 }, { 5, 18, 4 } },
-        { { 11, 5, 5 }, { 7, 1, 5 }, { 6, 0, 5 } },
-        { { 11, 6, 6 }, { 6, 0, 6 }, { 10, 2, 6 } },
-        { { 11, 8, 18 }, { 9, 3, 18 }, { 7, 20, 18 } },
-        { { 11, 9, 0 }, { 8, 4, 0 }, { 9, 3, 0 } },
-        { { 11, 21, 19 }, { 10, 2, 19 }, { 8, 4, 19 } }
+        /* Bottom cap. */
+        { { 0, 2, 4 }, { 4, 4, 4 }, { 5, 0, 4 } },
+        { { 0, 6, 2 }, { 2, 8, 2 }, { 4, 4, 2 } },
+        { { 0, 10, 0 }, { 1, 12, 0 }, { 2, 8, 0 } },
+        { { 0, 14, 1 }, { 3, 16, 1 }, { 1, 12, 1 } },
+        { { 0, 18, 3 }, { 5, 20, 3 }, { 3, 16, 3 } },
+
+        /* Middle triangle bottom. */
+        { { 10, 1, 9 }, { 5, 0, 9 }, { 4, 4, 9 } },
+        { { 8, 5, 13 }, { 10, 1, 13 }, { 4, 4, 13 } },
+        { { 8, 5, 7 }, { 4, 4, 7 }, { 2, 8, 7 } },
+        { { 6, 9, 11 }, { 8, 5, 11 }, { 2, 8, 11 } },
+        { { 6, 9, 5 }, { 2, 8, 5 }, { 1, 12, 5 } },
+
+        /* Middle triangle top. */
+        { { 7, 13, 10 }, { 6, 9, 10 }, { 1, 12, 10 } },
+        { { 7, 13, 6 }, { 1, 12, 6 }, { 3, 16, 6 } },
+        { { 9, 17, 12 }, { 7, 13, 12 }, { 3, 16, 12 } },
+        { { 9, 17, 8 }, { 3, 16, 8 }, { 5, 20, 8 } },
+        { { 10, 21, 14 }, { 9, 17, 14 }, { 5, 20, 14 } },
+
+        /* Top cap. */
+        { { 11, 19, 19 }, { 9, 17, 19 }, { 10, 21, 19 } },
+        { { 11, 3, 18 }, { 10, 1, 18 }, { 8, 5, 18 } },
+        { { 11, 7, 16 }, { 8, 5, 16 }, { 6, 9, 16 } },
+        { { 11, 11, 15 }, { 6, 9, 15 }, { 7, 13, 15 } },
+        { { 11, 15, 17 }, { 7, 13, 17 }, { 9, 17, 17 } }
     };
 
     return target;
@@ -3297,16 +3304,10 @@ public class Mesh3 extends Mesh {
 
     target.calcNormals();
 
-    /* Cf. https://github.com/cinder/Cinder/issues/1083 */
     /*
-     * target.texCoords = Vec2.resize(target.texCoords, vsLen); final
-     * float onePi = 0.31830987f; for ( int i = 0; i < vsLen; ++i ) {
-     * final Vec3 normal = target.normals[i]; final float u = 0.5f - 0.5f
-     * * Utils.atan2(normal.x, normal.y) * onePi; final float v =
-     * Utils.acos(normal.z) * onePi; target.texCoords[i].set(u, v); } for
-     * ( int i = 0; i < target.faces.length; ++i ) { for ( int j = 0; j <
-     * target.faces[i].length; ++j ) { target.faces[i][j][1] =
-     * target.faces[i][j][2]; } }
+     * Spherical coordinates research:
+     * https://github.com/cinder/Cinder/issues/1083
+     * https://mft-dev.dk/uv-mapping-sphere/
      */
 
     target.name = "Icosphere";
@@ -3456,6 +3457,192 @@ public class Mesh3 extends Mesh {
   }
 
   /**
+   * Creates a torus, or doughnut. The hole opens onto the y axis.
+   * 
+   * @param thickness tube thickness
+   * @param sectors   number of sectors
+   * @param panels    number of panels
+   * @param target    the output mesh
+   * @return the torus
+   */
+  @Experimental
+  public static Mesh3 torus (
+      final float thickness,
+      final int sectors,
+      final int panels,
+      final Mesh3 target ) {
+
+    target.name = "Torus";
+
+    /* Validate arguments. */
+    final int vsect = sectors < 3 ? 3 : sectors;
+    final int vpanl = panels < 3 ? 3 : panels;
+    final float rho0 = 0.5f;
+    final float rho1 = rho0 * Utils.clamp(thickness,
+        IUtils.DEFAULT_EPSILON, 1.0f - IUtils.DEFAULT_EPSILON);
+
+    /* Values for array accesses. */
+    final int vsect1 = vsect + 1;
+    final int vpanl1 = vpanl + 1;
+    final int len0 = vpanl * vsect;
+    final int len1 = vpanl1 * vsect1;
+
+    /* Reallocate arrays. */
+    target.coords = Vec3.resize(target.coords, len0);
+    target.texCoords = Vec2.resize(target.texCoords, len1);
+    target.normals = Vec3.resize(target.normals, len0);
+    target.faces = new int[len0 + len0][3][3];
+
+    /* Cache shortcuts. */
+    final Vec3[] vs = target.coords;
+    final Vec2[] vts = target.texCoords;
+    final Vec3[] vns = target.normals;
+    final int[][][] fs = target.faces;
+
+    /* Calculate number of sectors in a ring. */
+    final float toTheta = 1.0f / vsect;
+    final float[] costs = new float[vsect];
+    final float[] sints = new float[vsect];
+    for ( int j = 0; j < vsect; ++j ) {
+      final float theta = j * toTheta;
+      costs[j] = Utils.scNorm(theta);
+      sints[j] = Utils.scNorm(theta - 0.25f);
+    }
+
+    /* Calculate number of side panels in a sector. */
+    final float toPhi = 1.0f / vpanl;
+    final float[] cosps = new float[vpanl];
+    final float[] sinps = new float[vpanl];
+    for ( int i = 0; i < vpanl; ++i ) {
+      final float phi = -0.5f + i * toPhi;
+      cosps[i] = Utils.scNorm(phi);
+      sinps[i] = Utils.scNorm(phi - 0.25f);
+    }
+
+    /* Calculate coordinates and normals. */
+    for ( int k = 0, i = 0; i < vpanl; ++i ) {
+      final float cosPhi = cosps[i];
+      final float sinPhi = sinps[i];
+
+      final float rhoCosPhi = rho0 + rho1 * cosPhi;
+      final float rhoSinPhi = rho1 * sinPhi;
+
+      for ( int j = 0; j < vsect; ++j, ++k ) {
+        final float cosTheta = costs[j];
+        final float sinTheta = sints[j];
+
+        vs[k].set(
+            rhoCosPhi * cosTheta,
+            -rhoSinPhi,
+            rhoCosPhi * sinTheta);
+
+        vns[k].set(
+            cosPhi * cosTheta,
+            -sinPhi,
+            cosPhi * sinTheta);
+      }
+    }
+
+    /* Calculate texture coordinates u separately. */
+    final float[] uvxs = new float[vsect1];
+    final float toU = 1.0f / vsect;
+    for ( int j = 0; j < vsect1; ++j ) {
+      uvxs[j] = j * toU;
+    }
+
+    /* Calculate texture coordinates v separately. */
+    final float[] uvys = new float[vpanl1];
+    final float toV = 1.0f / vpanl;
+    for ( int i = 0; i < vpanl1; ++i ) {
+      uvys[i] = i * toV;
+    }
+
+    /* Combine into texture coordinates. */
+    for ( int k = 0, i = 0; i < vpanl1; ++i ) {
+      final float y = uvys[i];
+      for ( int j = 0; j < vsect1; ++j, ++k ) {
+        vts[k].set(uvxs[j], y);
+      }
+    }
+
+    /* Set faces. */
+    for ( int k = 0, m = 1, i = 0; i < vpanl; ++i ) {
+      final int iVtNext = i + 1;
+      final int iVNext = iVtNext % vpanl;
+
+      /* For converting from 2D to 1D array (idx = y * width + x) . */
+      final int vOffCurr = i * vsect;
+      final int vOffNext = iVNext * vsect;
+
+      final int vtOffCurr = i * vsect1;
+      final int vtOffNext = iVtNext * vsect1;
+
+      for ( int j = 0; j < vsect; ++j, k += 2, m += 2 ) {
+        final int jVtNext = j + 1;
+        final int jVNext = jVtNext % vsect;
+
+        /* Coordinate and normal indices. */
+        final int v00 = vOffCurr + j;
+        final int v10 = vOffCurr + jVNext;
+        final int v11 = vOffNext + jVNext;
+        final int v01 = vOffNext + j;
+
+        /* Texture coordinate indices. */
+        final int vt00 = vtOffCurr + j;
+        final int vt10 = vtOffCurr + jVtNext;
+        final int vt11 = vtOffNext + jVtNext;
+        final int vt01 = vtOffNext + j;
+
+        /* Triangle 0 */
+        final int[][] tri0 = fs[k];
+        final int[] a0 = tri0[0];
+        final int[] b0 = tri0[1];
+        final int[] c0 = tri0[2];
+
+        /* Triangle 1 */
+        final int[][] tri1 = fs[m];
+        final int[] a1 = tri1[0];
+        final int[] b1 = tri1[1];
+        final int[] c1 = tri1[2];
+
+        a0[0] = v00;
+        a0[1] = vt00;
+        a0[2] = v00;
+
+        b0[0] = v10;
+        b0[1] = vt10;
+        b0[2] = v10;
+
+        c0[0] = v11;
+        c0[1] = vt11;
+        c0[2] = v11;
+
+        a1[0] = v00;
+        a1[1] = vt00;
+        a1[2] = v00;
+
+        b1[0] = v11;
+        b1[1] = vt11;
+        b1[2] = v11;
+
+        c1[0] = v01;
+        c1[1] = vt01;
+        c1[2] = v01;
+      }
+    }
+
+    return target;
+  }
+
+  public static Mesh3 torus ( final Mesh3 target ) {
+
+    return Mesh3.torus(0.25f,
+        IMesh.DEFAULT_CIRCLE_SECTORS,
+        IMesh.DEFAULT_CIRCLE_SECTORS >> 1,
+        target);
+  }
+
+  /**
    * Restructures the mesh so that each face index refers to unique
    * data, indifferent to redundancies. As a consequence, coordinates
    * and texture coordinate are of equal length and face indices are
@@ -3506,33 +3693,6 @@ public class Mesh3 extends Mesh {
     target.texCoords = vts.toArray(new Vec2[vts.size()]);
     target.normals = vns.toArray(new Vec3[vns.size()]);
     target.faces = trgfs;
-    return target;
-  }
-
-  public static Mesh3 torus (
-      final float thickness,
-      final int sectors,
-      final int panels,
-      final Mesh3 target ) {
-
-    target.name = "Torus";
-    int vsect = sectors < 3 ? 3 : sectors;
-    int vsect1 = vsect + 1;
-    final float toTheta = 1.0f / vsect;
-    final float[] costs = new float[vsect];
-    final float[] sints = new float[vsect];
-    for ( int j = 0; j < vsect; ++j ) {
-      final float theta = j * toTheta;
-      costs[j] = Utils.scNorm(theta);
-      sints[j] = Utils.scNorm(theta - 0.25f);
-    }
-
-    final float[] us = new float[vsect1];
-    final float toU = 1.0f / vsect;
-    for ( int j = 0; j < vsect1; ++j ) {
-      us[j] = j * toU;
-    }
-
     return target;
   }
 
@@ -3684,14 +3844,14 @@ public class Mesh3 extends Mesh {
         /* Coordinate and normal indices. */
         final int v00 = currentLat0 + currLon0;
         final int v10 = currentLat0 + nextLon0;
-        final int v01 = nextLat0 + currLon0;
         final int v11 = nextLat0 + nextLon0;
+        final int v01 = nextLat0 + currLon0;
 
         /* Texture coordinate indices. */
         final int vt00 = currentLat1 + j;
         final int vt10 = currentLat1 + k;
-        final int vt01 = nextLat1 + j;
         final int vt11 = nextLat1 + k;
+        final int vt01 = nextLat1 + j;
 
         final int[][] tri0 = fs[idx++];
         final int[] a0 = tri0[0];

@@ -20,7 +20,7 @@ MaterialSolid solid = new MaterialSolid()
 PImage txtr;
 MaterialPImage textured;
 boolean wireframe = true;
-boolean useIcosaMap = false;
+boolean useIcosaMap = true;
 
 void settings() {
   size(720, 405, "camzup.pfriendly.Zup3");
@@ -32,7 +32,7 @@ void setup() {
   rndr.textureWrap(REPEAT);
 
   txtr = useIcosaMap ?
-    loadImage("icosaMap.png") :
+    loadImage("icosanet.png") :
     loadImage("diagnostic.png");
   textured = new MaterialPImage(txtr);
 

@@ -2373,11 +2373,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
   /**
    * Sets the renderer's stroke, stroke weight and fill to the
-   * material's.
+   * material's. Also sets whether or not to use fill and stroke.
    *
    * @param material the material
    */
   public void material ( final MaterialSolid material ) {
+
+    this.stroke = material.useStroke;
+    this.fill = material.useFill;
 
     if ( material.useStroke ) {
       this.strokeWeight(material.strokeWeight);
@@ -2387,8 +2390,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
           coreStr.y,
           coreStr.z,
           coreStr.w);
-    } else {
-      this.noStroke();
     }
 
     if ( material.useFill ) {
@@ -2398,8 +2399,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
           coreFll.y,
           coreFll.z,
           coreFll.w);
-    } else {
-      this.noFill();
     }
   }
 

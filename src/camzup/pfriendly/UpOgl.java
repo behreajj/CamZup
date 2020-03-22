@@ -2144,18 +2144,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float x1, final float y1,
       final float x2, final float y2 ) {
 
-    float vtx = 1.0f;
-    float vty = 1.0f;
-
-    if ( this.textureMode == PConstants.IMAGE ) {
-      vtx = img.width;
-      vty = img.height;
-    }
-
+    final boolean useImg = textureMode == PConstants.IMAGE;
     this.imageImpl(img,
         x1, y1, x2, y2,
         0.0f,
-        0.0f, 0.0f, vtx, vty);
+        0.0f, 0.0f,
+        useImg ? img.width : 1.0f,
+        useImg ? img.height : 1.0f);
   }
 
   /**
@@ -2357,24 +2352,21 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
   /**
    * Sets the renderer's stroke, stroke weight and fill to the
-   * material's.
+   * material's. Also sets whether or not to use fill and stroke.
    *
    * @param material the material
    */
   public void material ( final MaterialSolid material ) {
 
+    this.stroke = material.useStroke;
+    this.fill = material.useFill;
+
     if ( material.useStroke ) {
       this.strokeWeight(material.strokeWeight);
       this.stroke(material.stroke);
-    } else {
-      this.noStroke();
     }
 
-    if ( material.useFill ) {
-      this.fill(material.fill);
-    } else {
-      this.noFill();
-    }
+    if ( material.useFill ) { this.fill(material.fill); }
   }
 
   /**
@@ -2803,6 +2795,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     final float normRad = radians * IUtils.ONE_TAU;
     final float c = Utils.scNorm(normRad);
     final float s = Utils.scNorm(normRad - 0.25f);
+
     PMatAux.rotateX(c, s, this.modelview);
     PMatAux.invRotateX(c, s, this.modelviewInv);
     PMatAux.mul(
@@ -2827,6 +2820,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     final float normRad = radians * IUtils.ONE_TAU;
     final float c = Utils.scNorm(normRad);
     final float s = Utils.scNorm(normRad - 0.25f);
+
     PMatAux.rotateY(c, s, this.modelview);
     PMatAux.invRotateY(c, s, this.modelviewInv);
     PMatAux.mul(

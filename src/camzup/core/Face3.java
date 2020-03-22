@@ -45,6 +45,7 @@ public class Face3 implements Comparable < Face3 > {
     Vec3 c;
     Vec3 n;
 
+    // Need to account for when up and forward are parallel...
     final Vec3 refUp = Vec3.up(new Vec3());
     final Vec3 i = new Vec3();
     final Vec3 j = new Vec3();
@@ -58,6 +59,7 @@ public class Face3 implements Comparable < Face3 > {
       vert = this.vertices[q];
       c = vert.coord;
       n = vert.normal;
+
 
       Vec3.normalize(n, k);
       Vec3.crossNorm(refUp, k, i);

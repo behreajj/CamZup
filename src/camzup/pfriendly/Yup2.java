@@ -63,10 +63,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   /**
    * The default constructor.
    */
-  public Yup2 ( ) {
-
-    super();
-  }
+  public Yup2 ( ) { super(); }
 
   /**
    * A constructor for manually initializing the renderer.
@@ -126,82 +123,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     this.pgl.disable(PGL.DEPTH_TEST);
     this.pgl.depthMask(false);
     this.isDepthSortingEnabled = false;
-  }
-
-  /**
-   * Draws a 2D curve entity.
-   *
-   * @param entity the curve entity
-   */
-  @Deprecated
-  protected void shapeOld ( final CurveEntity2 entity ) {
-
-    // final List < MaterialSolid > materials = entity.materials;
-    // final boolean useMaterial = !materials.isEmpty();
-    final Iterator < Curve2 > curveItr = entity.curves.iterator();
-    Iterator < Knot2 > knItr;
-
-    Knot2 currKnot;
-    Knot2 prevKnot;
-    Vec2 coord;
-    Vec2 foreHandle;
-    Vec2 rearHandle;
-
-    this.pushMatrix();
-    this.transform(entity.transform);
-
-    while ( curveItr.hasNext() ) {
-      final Curve2 curve = curveItr.next();
-
-      // if ( useMaterial ) {
-      // this.pushStyle();
-      // this.material(materials.get(
-      // curve.materialIndex));
-      // }
-
-      knItr = curve.iterator();
-      prevKnot = knItr.next();
-      coord = prevKnot.coord;
-
-      this.beginShape();
-      this.vertexImpl(
-          coord.x, coord.y, 0.0f,
-          this.textureU,
-          this.textureV);
-
-      while ( knItr.hasNext() ) {
-        currKnot = knItr.next();
-        foreHandle = prevKnot.foreHandle;
-        rearHandle = currKnot.rearHandle;
-        coord = currKnot.coord;
-
-        this.bezierVertexImpl(
-            foreHandle.x, foreHandle.y, 0.0f,
-            rearHandle.x, rearHandle.y, 0.0f,
-            coord.x, coord.y, 0.0f);
-
-        prevKnot = currKnot;
-      }
-
-      if ( curve.closedLoop ) {
-        currKnot = curve.getFirst();
-        foreHandle = prevKnot.foreHandle;
-        rearHandle = currKnot.rearHandle;
-        coord = currKnot.coord;
-
-        this.bezierVertexImpl(
-            foreHandle.x, foreHandle.y, 0.0f,
-            rearHandle.x, rearHandle.y, 0.0f,
-            coord.x, coord.y, 0.0f);
-        this.endShape(PConstants.CLOSE);
-      } else {
-        this.endShape(PConstants.OPEN);
-      }
-
-      // if ( useMaterial ) { this.popStyle(); }
-    }
-
-    this.popMatrix();
   }
 
   /**
@@ -441,8 +362,10 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    */
   @Override
   public void curve (
-      final Vec2 a, final Vec2 b,
-      final Vec2 c, final Vec2 d ) {
+      final Vec2 a,
+      final Vec2 b,
+      final Vec2 c,
+      final Vec2 d ) {
 
     this.curve(
         a.x, a.y,
@@ -735,7 +658,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
         this.colorModeX * IUpOgl.DEFAULT_LIGHT_R,
         this.colorModeY * IUpOgl.DEFAULT_LIGHT_G,
         this.colorModeZ * IUpOgl.DEFAULT_LIGHT_B,
-
         0.0f, 0.0f, -1.0f);
 
     this.colorMode = colorModeSaved;
@@ -854,8 +776,10 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    */
   @Override
   public void quad (
-      final Vec2 a, final Vec2 b,
-      final Vec2 c, final Vec2 d ) {
+      final Vec2 a,
+      final Vec2 b,
+      final Vec2 c,
+      final Vec2 d ) {
 
     this.quad(
         a.x, a.y,
@@ -1361,7 +1285,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   @Override
   public void vertex ( final Vec2 v ) {
 
-    this.vertexImpl(v.x, v.y, 0.0f,
+    this.vertexImpl(
+        v.x, v.y, 0.0f,
         this.textureU, this.textureV);
   }
 

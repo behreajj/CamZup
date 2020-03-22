@@ -24,7 +24,6 @@ boolean useIcosaMap = true;
 
 void settings() {
   size(720, 405, "camzup.pfriendly.Zup3");
-  //smooth(8);
 }
 
 void setup() {
@@ -33,7 +32,7 @@ void setup() {
   rndr.textureWrap(REPEAT);
 
   txtr = useIcosaMap ?
-    loadImage("icosaMap.png") :
+    loadImage("icosanet.png") :
     loadImage("diagnostic.png");
   textured = new MaterialPImage(txtr);
 

@@ -411,6 +411,8 @@ public class Mesh2 extends Mesh {
   @Chainable
   public Mesh2 calcUvs ( ) {
 
+    // TODO: Assumes real world coordinates are in [-0.5, 0.5] .
+
     final Vec2 dim = Mesh2.calcDimensions(this,
         new Vec2(), new Vec2(), new Vec2());
     dim.x = dim.x == 0.0f ? IUtils.DEFAULT_EPSILON : 1.0f / dim.x;

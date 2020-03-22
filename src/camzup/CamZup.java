@@ -213,31 +213,135 @@ public class CamZup {
 
     final Random rng = new Random();
 
-    final Mesh3 mesh3 = new Mesh3();
-    Mesh3.dodecahedron(mesh3);
+    // Vec2[] coordsSort = {
+    // new Vec2(-0.409091f, -0.23583901f),
+    // new Vec2(-0.22727299f, -0.23583901f),
+    // new Vec2(-0.04545501f, -0.23583901f),
+    // new Vec2(0.13636398f, -0.23583901f),
+    // new Vec2(0.31818098f, -0.23583901f),
+    // new Vec2(-0.5f, -0.07861298f),
+    // new Vec2(-0.318182f, -0.07861298f),
+    // new Vec2(-0.13636401f, -0.07861298f),
+    // new Vec2(0.04545498f, -0.07861298f),
+    // new Vec2(0.22727299f, -0.07861298f),
+    // new Vec2(0.409091f, -0.07861298f),
+    // new Vec2(-0.409091f, 0.07861301f),
+    // new Vec2(-0.22727299f, 0.07861301f),
+    // new Vec2(-0.04545501f, 0.07861301f),
+    // new Vec2(0.13636398f, 0.07861301f),
+    // new Vec2(0.318182f, 0.07861301f),
+    // new Vec2(0.5f, 0.07861301f),
+    // new Vec2(-0.318182f, 0.23583901f),
+    // new Vec2(-0.13636401f, 0.23583901f),
+    // new Vec2(0.04545498f, 0.23583901f),
+    // new Vec2(0.22727299f, 0.23583901f),
+    // new Vec2(0.409091f, 0.23583901f)
+    // };
 
-    int i = 0;
-    for ( Vec3 n : mesh3.normals ) {
-      Vec3.normalize(n, n);
-      System.out.println(
-          "target.normals[" +
-              i +
-              "].set(" +
-              n.x +
-              "f, " +
-              n.y +
-              "f, " +
-              n.z +
-              "f);");
-      i++;
-    }
+    // Vec2[] texCoordsSort = {
+    // new Vec2(0.090909f, 1.0f),
+    // new Vec2(0.272727f, 1.0f),
+    // new Vec2(0.454545f, 1.0f),
+    // new Vec2(0.636364f, 1.0f),
+    // new Vec2(0.818181f, 1.0f),
+    // new Vec2(0.0f, 0.66666667f),
+    // new Vec2(0.181818f, 0.66666667f),
+    // new Vec2(0.363636f, 0.66666667f),
+    // new Vec2(0.545455f, 0.66666667f),
+    // new Vec2(0.727273f, 0.66666667f),
+    // new Vec2(0.909091f, 0.66666667f),
+    // new Vec2(0.090909f, 0.3333334f),
+    // new Vec2(0.272727f, 0.3333334f),
+    // new Vec2(0.454545f, 0.3333334f),
+    // new Vec2(0.636364f, 0.3333334f),
+    // new Vec2(0.818182f, 0.3333334f),
+    // new Vec2(1.0f, 0.3333334f),
+    // new Vec2(0.181818f, 0.0f),
+    // new Vec2(0.363636f, 0.0f),
+    // new Vec2(0.545455f, 0.0f),
+    // new Vec2(0.727273f, 0.0f),
+    // new Vec2(0.909091f, 0.0f)
+    // };
+
+    // int[][][] facesSort = {
+    // { { 0, 0 }, { 6, 6 }, { 5, 5 } },
+    // { { 1, 1 }, { 7, 7 }, { 6, 6 } },
+    // { { 2, 2 }, { 8, 8 }, { 7, 7 } },
+    // { { 3, 3 }, { 9, 9 }, { 8, 8 } },
+    // { { 4, 4 }, { 10, 10 }, { 9, 9 } },
+    // { { 6, 6 }, { 11, 11 }, { 5, 5 } },
+    // { { 7, 7 }, { 12, 12 }, { 6, 6 } },
+    // { { 8, 8 }, { 13, 13 }, { 7, 7 } },
+    // { { 9, 9 }, { 14, 14 }, { 8, 8 } },
+    // { { 10, 10 }, { 15, 15 }, { 9, 9 } },
+    // { { 6, 6 }, { 12, 12 }, { 11, 11 } },
+    // { { 7, 7 }, { 13, 13 }, { 12, 12 } },
+    // { { 8, 8 }, { 14, 14 }, { 13, 13 } },
+    // { { 9, 9 }, { 15, 15 }, { 14, 14 } },
+    // { { 10, 10 }, { 16, 16 }, { 15, 15 } },
+    // { { 12, 12 }, { 17, 17 }, { 11, 11 } },
+    // { { 13, 13 }, { 18, 18 }, { 12, 12 } },
+    // { { 14, 14 }, { 19, 19 }, { 13, 13 } },
+    // { { 15, 15 }, { 20, 20 }, { 14, 14 } },
+    // { { 16, 16 }, { 21, 21 }, { 15, 15 } }
+    // };
+
+    // Mesh2 icosaMap = new Mesh2(facesSort, coordsSort, texCoordsSort);
+    // icosaMap.sort();
+    // final MeshEntity2 entity2 = new MeshEntity2();
+    // entity2.append(icosaMap);
+    // final String str2 = entity2.toBlenderCode();
+    // System.out.println(str2);
+    // System.out.println(mesh3.toString(8));
+
+    final Mesh3 mesh3 = new Mesh3();
+    Mesh3.icosahedron(mesh3);
     // mesh3.sort();
-    // Mesh3.uvSphere(8, 4, mesh3);
+
+    // for ( int i = 0; i < mesh3.coords.length; ++i ) {
+    // Vec3 co = mesh3.coords[i];
+    // System.out.println("target.coords[" + i + "].set(" + co.x + "f, " +
+    // co.y
+    // + "f, " + co.z + "f);");
+    // }
+    //
+    // System.out.println("");
+    // for ( int i = 0; i < mesh3.texCoords.length; ++i ) {
+    // Vec2 st = mesh3.texCoords[i];
+    // System.out
+    // .println("target.texCoords[" + i + "].set(" + st.x + "f, " + st.y
+    // + "f);");
+    // }
+    //
+    // System.out.println("");
+    // for ( int i = 0; i < mesh3.normals.length; ++i ) {
+    // Vec3 nm = mesh3.normals[i];
+    // System.out.println("target.normals[" + i + "].set(" + nm.x + "f, "
+    // + nm.y
+    // + "f, " + nm.z + "f);");
+    // }
+    //
+    // System.out.println("");
+    // for ( int i = 0; i < mesh3.faces.length; ++i ) {
+    // System.out.print("{ ");
+    // for ( int j = 0; j < mesh3.faces[i].length; ++j ) {
+    // System.out.print("{ ");
+    // System.out.print(mesh3.faces[i][j][0]);
+    // System.out.print(", ");
+    // System.out.print(mesh3.faces[i][j][1]);
+    // System.out.print(", ");
+    // System.out.print(mesh3.faces[i][j][2]);
+    // System.out.print(" }");
+    // if ( j < mesh3.faces[i].length - 1 ) { System.out.print(", "); }
+    // }
+    // System.out.println(" },");
+    // }
+
     final MeshEntity3 entity3 = new MeshEntity3();
     entity3.append(mesh3);
-    final String str = entity3.toBlenderCode();
-    // System.out.println(str);
-    // System.out.println(mesh3.toString(8));
+    final String str3 = entity3.toBlenderCode();
+    // System.out.println(str3);
+
     // System.out.println(toHardCode(mesh3, 4));
   }
 
