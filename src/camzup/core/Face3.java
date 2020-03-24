@@ -34,49 +34,6 @@ public class Face3 implements Comparable < Face3 > {
     this.set(vertices);
   }
 
-  @Experimental
-  @Chainable
-  Face3 translateLocal ( final Vec3 v ) {
-
-    final Vec3 centroid = new Vec3();
-    Face3.centroid(this, centroid);
-
-    Vert3 vert;
-    Vec3 c;
-    Vec3 n;
-
-    // Need to account for when up and forward are parallel...
-    final Vec3 refUp = Vec3.up(new Vec3());
-    final Vec3 i = new Vec3();
-    final Vec3 j = new Vec3();
-    final Vec3 k = new Vec3();
-    final Quaternion rot = new Quaternion();
-    final Vec3 rotv = new Vec3();
-
-    // TODO: Easiest way to make a look at matrix?
-    final int len = this.vertices.length;
-    for ( int q = 0; q < len; ++q ) {
-      vert = this.vertices[q];
-      c = vert.coord;
-      n = vert.normal;
-
-
-      Vec3.normalize(n, k);
-      Vec3.crossNorm(refUp, k, i);
-      Vec3.crossNorm(k, i, j);
-      Quaternion.fromAxes(i, j, k, rot);
-      // Quaternion.fromAxes(i, k, j, rot);
-      Quaternion.mulVector(rot, v, rotv);
-      // Vec3.crossNorm(a, b, target);
-
-      Vec3.sub(c, centroid, c);
-      Vec3.add(c, rotv, c);
-      Vec3.add(c, centroid, c);
-    }
-
-    return this;
-  }
-
   /**
    * Compares this face to another by hash code.
    *
@@ -499,5 +456,78 @@ public class Face3 implements Comparable < Face3 > {
       Vec3.add(target, verts[i].coord, target);
     }
     return Vec3.div(target, len, target);
+  }
+
+  /**
+   * Finds the normal of a face by averaging all the normals in its list
+   * of vertices, then normalizing the average.
+   *
+   * @param face   the face
+   * @param target the output vector
+   * @return the normal
+   */
+  @Experimental
+  public static Vec3 normal (
+      final Face3 face,
+      final Vec3 target ) {
+
+    // RESEARCH: Should this not depend on the pre-calculated normals?
+    // Instead calculate upon request?
+
+    target.reset();
+    final Vert3[] verts = face.vertices;
+    final int len = verts.length;
+    for ( int i = 0; i < len; ++i ) {
+      Vec3.add(target, verts[i].normal, target);
+    }
+    Vec3.div(target, len, target);
+    return Vec3.normalize(target, target);
+  }
+
+  @Experimental
+  public static Quaternion orientation (
+      final Face3 face,
+      final Quaternion target ) {
+
+    /*
+     * Use the quaternion imaginary as a temporary placeholder to hold the
+     * average of the face's normals.
+     */
+    final Vec3 imag = target.imag;
+    Face3.normal(face, imag);
+    return Quaternion.fromDir(imag, target);
+  }
+
+  @Experimental
+  public static Transform3 orientation (
+      final Face3 face,
+      final Transform3 target ) {
+
+    final Quaternion rot = target.rotation;
+    target.locPrev.set(target.location);
+    target.rotPrev.set(rot);
+    target.scalePrev.set(target.scale);
+    Vec3.one(target.scale);
+
+    Face3.normal(face, target.forward);
+    Quaternion.fromDir(
+        target.forward,
+        rot,
+        target.right,
+        target.forward,
+        target.up);
+    Face3.centroid(face, target.location);
+
+    // if ( target.location.z < 0.0f ) {
+    // Vec3.negate(target.up, target.up);
+    // Vec3.negate(target.right, target.right);
+    // Quaternion.fromAxes(
+    // target.right,
+    // target.forward,
+    // target.up,
+    // target.rotation);
+    // }
+
+    return target;
   }
 }

@@ -377,8 +377,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
   /**
    * Returns a String of Python code targeted toward the Blender 2.8x
    * API. This code is brittle and is used for internal testing
-   * purposes, i.e., to compare how transforms look in Blender (the
-   * control) versus in the library (the test).
+   * purposes.
    *
    * This is formatted as a three-tuple.
    *
@@ -1298,9 +1297,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 target ) {
 
     return target.set(
-        Math.copySign(magnitude.x, sign.x),
-        Math.copySign(magnitude.y, sign.y),
-        Math.copySign(magnitude.z, sign.z));
+        Utils.copySign(magnitude.x, sign.x),
+        Utils.copySign(magnitude.y, sign.y),
+        Utils.copySign(magnitude.z, sign.z));
   }
 
   /**
@@ -2909,7 +2908,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * Projects one vector onto another. Defined as<br>
    * <br>
    * proj ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> \u00b7
-   * <em>b</em> / <em>b</em> \u00b7 <em>b</em> )
+   * <em>b</em> / <em>b</em> \u00b7 <em>b</em> )<br>
+   * <br>
+   * Returns a zero vector if the right operand, <em>b</em>, has zero
+   * magnitude.
    *
    * @param a      left operand
    * @param b      right operand
@@ -3121,6 +3123,62 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
         eta * incident.x - normal.x * scalar,
         eta * incident.y - normal.y * scalar,
         eta * incident.z - normal.z * scalar);
+  }
+
+  /**
+   * Finds the rejection of <em>b</em> from <em>a</em>. Defined as<br>
+   * <br>
+   * reject ( <em>a</em> , <em>b</em> ) := a - proj ( <em>a</em>,
+   * <em>b</em> )<br>
+   * <br>
+   * the subtraction of the projection of <em>a</em> onto <em>b</em>
+   * from <em>a</em>. If <em>b</em> is zero, returns <em>a</em>.
+   *
+   * @param a      left operand
+   * @param b      right operand
+   * @param target the output vector
+   * @return the rejection
+   * @see Vec3#magSq(Vec3)
+   * @see Vec3#dot(Vec3, Vec3)
+   */
+  public static Vec3 reject (
+      final Vec3 a,
+      final Vec3 b,
+      final Vec3 target ) {
+
+    final float bSq = Vec3.magSq(b);
+    if ( bSq == 0.0f ) { return target.set(a); }
+    final float scprj = Vec3.dot(a, b) / bSq;
+    return target.set(
+        a.x - b.x * scprj,
+        a.y - b.y * scprj,
+        a.z - b.z * scprj);
+  }
+
+  /**
+   * Finds the rejection of <em>b</em> from <em>a</em>. Defined as<br>
+   * <br>
+   * reject ( <em>a</em> , <em>b</em> ) := a - proj ( <em>a</em>,
+   * <em>b</em> )<br>
+   * <br>
+   * the subtraction of the projection of <em>a</em> onto <em>b</em>
+   * from <em>a</em>. Emits the projection as an output.
+   *
+   * @param a          left operand
+   * @param b          right operand
+   * @param target     the output vector
+   * @param projection the projection
+   * @return the rejection
+   * @see Vec3#sub(Vec3, Vec3, Vec3)
+   * @see Vec3#projectVector(Vec3, Vec3, Vec3)
+   */
+  public static Vec3 reject (
+      final Vec3 a,
+      final Vec3 b,
+      final Vec3 target,
+      final Vec3 projection ) {
+
+    return Vec3.sub(a, Vec3.projectVector(a, b, projection), target);
   }
 
   /**

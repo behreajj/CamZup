@@ -424,8 +424,8 @@ abstract class SVGParser {
             knots.add(curr);
             coord.set(cox, coy);
 
-            xOff = Math.copySign(IUtils.DEFAULT_EPSILON, coord.x);
-            yOff = Math.copySign(IUtils.DEFAULT_EPSILON, coord.y);
+            xOff = Utils.copySign(IUtils.DEFAULT_EPSILON, coord.x);
+            yOff = Utils.copySign(IUtils.DEFAULT_EPSILON, coord.y);
 
             curr.foreHandle.set(
                 coord.x + xOff,

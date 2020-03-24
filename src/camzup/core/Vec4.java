@@ -359,6 +359,31 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
   }
 
   /**
+   * Returns a String of Python code targeted toward the Blender 2.8x
+   * API. This code is brittle and is used for internal testing
+   * purposes.
+   *
+   * This is formatted as a three-tuple.
+   *
+   * @return the string
+   */
+  @Experimental
+  String toBlenderCode ( ) {
+
+    return new StringBuilder(96)
+        .append('(')
+        .append(Utils.toFixed(this.x, 6))
+        .append(',').append(' ')
+        .append(Utils.toFixed(this.y, 6))
+        .append(',').append(' ')
+        .append(Utils.toFixed(this.z, 6))
+        .append(',').append(' ')
+        .append(Utils.toFixed(this.w, 6))
+        .append(')')
+        .toString();
+  }
+
+  /**
    * Returns a new vector with this vector's components. Java's
    * cloneable interface is problematic; use set or a copy constructor
    * instead.
@@ -939,10 +964,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
       final Vec4 target ) {
 
     return target.set(
-        Math.copySign(magnitude.x, sign.x),
-        Math.copySign(magnitude.y, sign.y),
-        Math.copySign(magnitude.z, sign.z),
-        Math.copySign(magnitude.w, sign.w));
+        Utils.copySign(magnitude.x, sign.x),
+        Utils.copySign(magnitude.y, sign.y),
+        Utils.copySign(magnitude.z, sign.z),
+        Utils.copySign(magnitude.w, sign.w));
   }
 
   /**

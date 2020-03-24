@@ -277,7 +277,7 @@ public abstract class Sdf {
     final float px1 = px0 + dotkp2 * IUtils.SQRT_3_2;
     final float limit = 0.5f * bounds;
     final float py2 = py0 - dotkp2 * IUtils.ONE_SQRT_3 - bounds;
-    return Math.copySign(Utils.hypot(
+    return Utils.copySign(Utils.hypot(
         px1 - Utils.clamp(px1, -limit, limit), py2), py2);
   }
 

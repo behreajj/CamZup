@@ -794,8 +794,7 @@ public class Mesh3 extends Mesh {
       final int j,
       final Edge3 target ) {
 
-    final int[][] f0 = this.faces[Math.floorMod(
-        i, this.faces.length)];
+    final int[][] f0 = this.faces[Utils.mod(i, this.faces.length)];
     final int f0len = f0.length;
     final int[] f1 = f0[Utils.mod(j, f0len)];
     final int[] f2 = f0[Utils.mod(j + 1, f0len)];
@@ -2494,93 +2493,6 @@ public class Mesh3 extends Mesh {
   }
 
   /**
-   * Creates a torus. The torus has a seam on the right axis and on its
-   * median.
-   *
-   * @param thickness thickness ratio to radius
-   * @param sectors   sector count
-   * @param panels    side panel count
-   * @param target    the output mesh
-   * @return the torus
-   */
-  @Deprecated
-  static Mesh3 torusOld (
-      final float thickness,
-      final int sectors,
-      final int panels,
-      final Mesh3 target ) {
-
-    target.name = "Torus";
-
-    final int vsect = sectors < 3 ? 3 : sectors;
-    final int vpanl = panels < 3 ? 3 : panels;
-
-    final int panels1 = vpanl + 1;
-    final int sectors1 = vsect + 1;
-    final int len = panels1 * sectors1;
-
-    final Vec3[] vs = target.coords = Vec3.resize(target.coords, len);
-    final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords, len);
-    final Vec3[] vns = target.normals = Vec3.resize(target.normals, len);
-
-    final float toU = 1.0f / vsect;
-    final float toV = 1.0f / vpanl;
-
-    final float toTheta = 1.0f / vsect;
-    final float toPhi = 1.0f / vpanl;
-
-    final float vtrad = 0.5f * Utils.max(IUtils.DEFAULT_EPSILON, thickness);
-    final float ratio = vtrad + vtrad;
-
-    for ( int k = 0, i = 0; i < panels1; ++i ) {
-
-      final float v = i * toV;
-      final float phi = i * toPhi;
-      final float cosPhi = Utils.scNorm(phi);
-      final float sinPhi = Utils.scNorm(phi - 0.25f);
-
-      final float r = 1.0f + ratio * cosPhi;
-
-      for ( int j = 0; j < sectors1; ++j, ++k ) {
-
-        final float u = j * toU;
-        final float theta = j * toTheta;
-        final float cosTheta = Utils.scNorm(theta);
-        final float sinTheta = Utils.scNorm(theta - 0.25f);
-
-        vs[k].set(r * cosTheta, r * sinTheta, ratio * sinPhi);
-        vts[k].set(u, v);
-        vns[k].set(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
-      }
-    }
-
-    final int[][][] fs = new int[2 * vsect * vpanl][3][3];
-    final int sliceCount = vsect + 1;
-    int e = 0;
-    int f = sliceCount;
-    for ( int k = 0, i = 0; i < vpanl; ++i ) {
-      for ( int j = 0; j < vsect; ++j, k += 2 ) {
-        final int a = e + j;
-        final int b = a + 1;
-        final int d = f + j;
-        final int c = d + 1;
-
-        fs[k] = new int[][] {
-            { a, a, a }, { b, b, b }, { d, d, d } };
-
-        fs[k + 1] = new int[][] {
-            { d, d, d }, { b, b, b }, { c, c, c } };
-      }
-
-      e += sliceCount;
-      f += sliceCount;
-    }
-
-    target.faces = fs;
-    return target;
-  }
-
-  /**
    * Calculates the dimensions of an Axis-Aligned Bounding Box (AABB)
    * encompassing the mesh.
    *
@@ -3221,55 +3133,49 @@ public class Mesh3 extends Mesh {
     target.texCoords[21].set(1.0f, 0.421387f);
 
     target.normals = Vec3.resize(target.normals, 20);
-    target.normals[0].set(-0.35682407f, -0.49112114f, -0.79465485f);
-    target.normals[1].set(0.35682407f, -0.49112114f, -0.79465485f);
-    target.normals[2].set(-0.57735026f, 0.18759061f, -0.79465485f);
-    target.normals[3].set(0.57735026f, 0.18759061f, -0.79465485f);
-    target.normals[4].set(0.0f, 0.60705924f, -0.79465485f);
-    target.normals[5].set(-0.57735026f, -0.79465485f, -0.18759061f);
-    target.normals[6].set(0.57735026f, -0.79465485f, -0.18759061f);
-    target.normals[7].set(-0.93417287f, 0.30353144f, -0.18759061f);
-    target.normals[8].set(0.93417156f, 0.3035345f, -0.18759061f);
-    target.normals[9].set(0.0f, 0.9822474f, -0.18759061f);
-    target.normals[10].set(0.0f, -0.9822474f, 0.18759061f);
-    target.normals[11].set(-0.93417156f, -0.3035345f, 0.18759061f);
-    target.normals[12].set(0.93417156f, -0.30353174f, 0.18759061f);
-    target.normals[13].set(-0.57735026f, 0.79465485f, 0.18759061f);
-    target.normals[14].set(0.57735026f, 0.79465485f, 0.18759061f);
-    target.normals[15].set(0.0f, -0.60706127f, 0.79465485f);
-    target.normals[16].set(-0.57735026f, -0.18759061f, 0.79465485f);
-    target.normals[17].set(0.57735026f, -0.18759061f, 0.79465485f);
-    target.normals[18].set(-0.35682407f, 0.49112114f, 0.79465485f);
-    target.normals[19].set(0.35682407f, 0.49112114f, 0.79465485f);
+
+    target.normals[0].set(0.0f, -0.60706145f, 0.79465485f);
+    target.normals[1].set(0.57735217f, -0.7946537f, -0.18758972f);
+    target.normals[2].set(0.934172f, -0.30353418f, 0.18758905f);
+    target.normals[3].set(0.934172f, 0.30353418f, -0.18758905f);
+    target.normals[4].set(0.57735217f, 0.7946537f, 0.18758972f);
+    target.normals[5].set(0.35682237f, 0.4911218f, 0.79465526f);
+    target.normals[6].set(-0.35682237f, 0.4911218f, 0.79465526f);
+    target.normals[7].set(0.0f, 0.60706145f, -0.79465485f);
+    target.normals[8].set(-0.35682237f, -0.4911218f, -0.79465526f);
+    target.normals[9].set(0.35682237f, -0.4911218f, -0.79465526f);
+    target.normals[10].set(-0.57734716f, 0.18759352f, -0.7946564f);
+    target.normals[11].set(0.5773471f, 0.18759349f, -0.7946564f);
+    target.normals[12].set(0.0f, 0.98224694f, -0.1875924f);
+    target.normals[13].set(-0.57735217f, 0.7946537f, 0.18758972f);
+    target.normals[14].set(-0.934172f, 0.30353418f, -0.18758905f);
+    target.normals[15].set(-0.934172f, -0.30353418f, 0.18758905f);
+    target.normals[16].set(-0.57735217f, -0.7946537f, -0.18758972f);
+    target.normals[17].set(0.0f, -0.98224694f, 0.1875924f);
+    target.normals[18].set(-0.57734716f, -0.18759352f, 0.7946564f);
+    target.normals[19].set(0.5773471f, -0.18759349f, 0.7946564f);
 
     target.faces = new int[][][] {
-        /* Bottom cap. */
-        { { 0, 2, 4 }, { 4, 4, 4 }, { 5, 0, 4 } },
-        { { 0, 6, 2 }, { 2, 8, 2 }, { 4, 4, 2 } },
-        { { 0, 10, 0 }, { 1, 12, 0 }, { 2, 8, 0 } },
-        { { 0, 14, 1 }, { 3, 16, 1 }, { 1, 12, 1 } },
-        { { 0, 18, 3 }, { 5, 20, 3 }, { 3, 16, 3 } },
-
-        /* Middle triangle bottom. */
-        { { 10, 1, 9 }, { 5, 0, 9 }, { 4, 4, 9 } },
+        { { 0, 2, 7 }, { 4, 4, 7 }, { 5, 0, 7 } },
+        { { 0, 6, 10 }, { 2, 8, 10 }, { 4, 4, 10 } },
+        { { 0, 10, 8 }, { 1, 12, 8 }, { 2, 8, 8 } },
+        { { 0, 14, 9 }, { 3, 16, 9 }, { 1, 12, 9 } },
+        { { 0, 18, 11 }, { 5, 20, 11 }, { 3, 16, 11 } },
+        { { 10, 1, 12 }, { 5, 0, 12 }, { 4, 4, 12 } },
         { { 8, 5, 13 }, { 10, 1, 13 }, { 4, 4, 13 } },
-        { { 8, 5, 7 }, { 4, 4, 7 }, { 2, 8, 7 } },
-        { { 6, 9, 11 }, { 8, 5, 11 }, { 2, 8, 11 } },
-        { { 6, 9, 5 }, { 2, 8, 5 }, { 1, 12, 5 } },
-
-        /* Middle triangle top. */
-        { { 7, 13, 10 }, { 6, 9, 10 }, { 1, 12, 10 } },
-        { { 7, 13, 6 }, { 1, 12, 6 }, { 3, 16, 6 } },
-        { { 9, 17, 12 }, { 7, 13, 12 }, { 3, 16, 12 } },
-        { { 9, 17, 8 }, { 3, 16, 8 }, { 5, 20, 8 } },
-        { { 10, 21, 14 }, { 9, 17, 14 }, { 5, 20, 14 } },
-
-        /* Top cap. */
-        { { 11, 19, 19 }, { 9, 17, 19 }, { 10, 21, 19 } },
-        { { 11, 3, 18 }, { 10, 1, 18 }, { 8, 5, 18 } },
-        { { 11, 7, 16 }, { 8, 5, 16 }, { 6, 9, 16 } },
-        { { 11, 11, 15 }, { 6, 9, 15 }, { 7, 13, 15 } },
-        { { 11, 15, 17 }, { 7, 13, 17 }, { 9, 17, 17 } }
+        { { 8, 5, 14 }, { 4, 4, 14 }, { 2, 8, 14 } },
+        { { 6, 9, 15 }, { 8, 5, 15 }, { 2, 8, 15 } },
+        { { 6, 9, 16 }, { 2, 8, 16 }, { 1, 12, 16 } },
+        { { 7, 13, 17 }, { 6, 9, 17 }, { 1, 12, 17 } },
+        { { 7, 13, 1 }, { 1, 12, 1 }, { 3, 16, 1 } },
+        { { 9, 17, 2 }, { 7, 13, 2 }, { 3, 16, 2 } },
+        { { 9, 17, 3 }, { 3, 16, 3 }, { 5, 20, 3 } },
+        { { 10, 21, 4 }, { 9, 17, 4 }, { 5, 20, 4 } },
+        { { 11, 19, 5 }, { 9, 17, 5 }, { 10, 21, 5 } },
+        { { 11, 3, 6 }, { 10, 1, 6 }, { 8, 5, 6 } },
+        { { 11, 7, 18 }, { 8, 5, 18 }, { 6, 9, 18 } },
+        { { 11, 11, 0 }, { 6, 9, 0 }, { 7, 13, 0 } },
+        { { 11, 15, 19 }, { 7, 13, 19 }, { 9, 17, 19 } }
     };
 
     return target;
@@ -3458,7 +3364,7 @@ public class Mesh3 extends Mesh {
 
   /**
    * Creates a torus, or doughnut. The hole opens onto the y axis.
-   * 
+   *
    * @param thickness tube thickness
    * @param sectors   number of sectors
    * @param panels    number of panels
@@ -3511,18 +3417,21 @@ public class Mesh3 extends Mesh {
 
     /* Calculate number of side panels in a sector. */
     final float toPhi = 1.0f / vpanl;
-    final float[] cosps = new float[vpanl];
-    final float[] sinps = new float[vpanl];
-    for ( int i = 0; i < vpanl; ++i ) {
-      final float phi = -0.5f + i * toPhi;
-      cosps[i] = Utils.scNorm(phi);
-      sinps[i] = Utils.scNorm(phi - 0.25f);
-    }
+    // final float[] cosps = new float[vpanl];
+    // final float[] sinps = new float[vpanl];
+    // for ( int i = 0; i < vpanl; ++i ) {
+    // final float phi = -0.5f + i * toPhi;
+    // cosps[i] = Utils.scNorm(phi);
+    // sinps[i] = Utils.scNorm(phi - 0.25f);
+    // }
 
     /* Calculate coordinates and normals. */
     for ( int k = 0, i = 0; i < vpanl; ++i ) {
-      final float cosPhi = cosps[i];
-      final float sinPhi = sinps[i];
+      // final float cosPhi = cosps[i];
+      // final float sinPhi = sinps[i];
+      final float phi = -0.5f + i * toPhi;
+      final float cosPhi = Utils.scNorm(phi);
+      final float sinPhi = Utils.scNorm(phi - 0.25f);
 
       final float rhoCosPhi = rho0 + rho1 * cosPhi;
       final float rhoSinPhi = rho1 * sinPhi;
@@ -3551,15 +3460,16 @@ public class Mesh3 extends Mesh {
     }
 
     /* Calculate texture coordinates v separately. */
-    final float[] uvys = new float[vpanl1];
+    // final float[] uvys = new float[vpanl1];
     final float toV = 1.0f / vpanl;
-    for ( int i = 0; i < vpanl1; ++i ) {
-      uvys[i] = i * toV;
-    }
+    // for ( int i = 0; i < vpanl1; ++i ) {
+    // uvys[i] = i * toV;
+    // }
 
     /* Combine into texture coordinates. */
     for ( int k = 0, i = 0; i < vpanl1; ++i ) {
-      final float y = uvys[i];
+      // final float y = uvys[i];
+      final float y = i * toV;
       for ( int j = 0; j < vsect1; ++j, ++k ) {
         vts[k].set(uvxs[j], y);
       }
@@ -3634,6 +3544,12 @@ public class Mesh3 extends Mesh {
     return target;
   }
 
+  /**
+   * Creates a torus, or doughnut. The hole opens onto the y axis.
+   *
+   * @param target the output mesh
+   * @return the torus
+   */
   public static Mesh3 torus ( final Mesh3 target ) {
 
     return Mesh3.torus(0.25f,

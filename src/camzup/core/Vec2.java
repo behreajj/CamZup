@@ -341,8 +341,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
   /**
    * Returns a String of Python code targeted toward the Blender 2.8x
    * API. This code is brittle and is used for internal testing
-   * purposes, i.e., to compare how transforms look in Blender (the
-   * control) versus in the library (the test).
+   * purposes.
    *
    * This is formatted as a three-tuple.
    *
@@ -351,7 +350,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
   @Experimental
   String toBlenderCode ( final float z ) {
 
-    return new StringBuilder(96)
+    return new StringBuilder(64)
         .append('(')
         .append(Utils.toFixed(this.x, 6))
         .append(',').append(' ')
@@ -1140,8 +1139,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 target ) {
 
     return target.set(
-        Math.copySign(magnitude.x, sign.x),
-        Math.copySign(magnitude.y, sign.y));
+        Utils.copySign(magnitude.x, sign.x),
+        Utils.copySign(magnitude.y, sign.y));
   }
 
   /**

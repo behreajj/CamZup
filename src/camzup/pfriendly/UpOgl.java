@@ -2144,7 +2144,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float x1, final float y1,
       final float x2, final float y2 ) {
 
-    final boolean useImg = textureMode == PConstants.IMAGE;
+    final boolean useImg = this.textureMode == PConstants.IMAGE;
     this.imageImpl(img,
         x1, y1, x2, y2,
         0.0f,

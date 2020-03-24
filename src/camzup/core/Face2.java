@@ -174,8 +174,6 @@ public class Face2 implements Comparable < Face2 > {
   @Chainable
   public Face2 rotateZLocal ( final float radians ) {
 
-    // TEST
-
     final Vec2 centroid = new Vec2();
     Face2.centroid(this, centroid);
 

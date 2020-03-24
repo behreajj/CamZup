@@ -524,7 +524,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
   String toBlenderCode ( ) {
 
     final Vec3 i = this.imag;
-    return new StringBuilder()
+    return new StringBuilder(96)
         .append('(')
         .append(Utils.toFixed(this.real, 6))
         .append(',').append(' ')
@@ -1525,54 +1525,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    * @see Math#copySign(float, float)
    * @see Math#sqrt(double)
    */
-  @Experimental
-  public static Quaternion fromAxes (
-      final double xRight,
-      final double yForward,
-      final double zUp,
-      final double zForward,
-      final double yUp,
-      final double xUp,
-      final double zRight,
-      final double yRight,
-      final double xForward,
-      final Quaternion target ) {
-
-    final double w = 0.5d * Math.sqrt(
-        Math.max(0.0d, 1.0d + xRight + yForward + zUp));
-
-    final double x = 0.5d * Math.sqrt(
-        Math.max(0.0d, 1.0d + xRight - yForward - zUp));
-    final double y = 0.5d * Math.sqrt(
-        Math.max(0.0d, 1.0d - xRight + yForward - zUp));
-    final double z = 0.5d * Math.sqrt(
-        Math.max(0.0d, 1.0d - xRight - yForward + zUp));
-
-    return target.set((float) w,
-        (float) Math.copySign(x, zForward - yUp),
-        (float) Math.copySign(y, xUp - zRight),
-        (float) Math.copySign(z, yRight - xForward));
-  }
-
-  /**
-   * Creates a quaternion from three axes - either separate vectors or
-   * the columns of a matrix. This is an internal helper function which
-   * uses only the relevant information to create a quaternion.
-   *
-   * @param xRight   m00 : right x
-   * @param yForward m11 : forward y
-   * @param zUp      m22 : up z
-   * @param zForward m21 : forward z
-   * @param yUp      m12 : up y
-   * @param xUp      m02 : up x
-   * @param zRight   m20 : right z
-   * @param yRight   m10 : right y
-   * @param xForward m01 : forward x
-   * @param target   the output quaternion
-   * @return the quaternion
-   * @see Math#copySign(float, float)
-   * @see Math#sqrt(double)
-   */
   public static Quaternion fromAxes (
       final float xRight,
       final float yForward,
@@ -1585,16 +1537,22 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float xForward,
       final Quaternion target ) {
 
-    /* Square-root already checks that input is greater than 0. */
-    final float w = 0.5f * Utils.sqrt(1.0f + xRight + yForward + zUp);
-    final float x = 0.5f * Utils.sqrt(1.0f + xRight - yForward - zUp);
-    final float y = 0.5f * Utils.sqrt(1.0f - xRight + yForward - zUp);
-    final float z = 0.5f * Utils.sqrt(1.0f - xRight - yForward + zUp);
-
-    return target.set(w,
-        Math.copySign(x, zForward - yUp),
-        Math.copySign(y, xUp - zRight),
-        Math.copySign(z, yRight - xForward));
+    /*
+     * Utilities square-root checks that input is greater than 0.
+     * Double-precision functions do NOT seem to produce a more accurate
+     * quaternion.
+     */
+    return target.set(
+        0.5f * Utils.sqrt(1.0f + xRight + yForward + zUp),
+        Utils.copySign(
+            0.5f * Utils.sqrt(1.0f + xRight - yForward - zUp),
+            zForward - yUp),
+        Utils.copySign(
+            0.5f * Utils.sqrt(1.0f - xRight + yForward - zUp),
+            xUp - zRight),
+        Utils.copySign(
+            0.5f * Utils.sqrt(1.0f - xRight - yForward + zUp),
+            yRight - xForward));
   }
 
   /**
@@ -1604,8 +1562,34 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    * match a pure rotation matrix.
    *
    * @param right   the right axis
-   * @param up      the forward axis
-   * @param forward the up axis
+   * @param forward the forward axis
+   * @param target  the output quaternion
+   * @return the quaternion
+   * @see Quaternion#fromAxes(float, float, float, float, float, float,
+   *      float, float, float, Quaternion)
+   */
+  public static Quaternion fromAxes (
+      final Vec2 right,
+      final Vec2 forward,
+      final Quaternion target ) {
+
+    return Quaternion.fromAxes(
+        right.x, forward.y, 1.0f,
+        0.0f, 0.0f,
+        0.0f, 0.0f,
+        right.y, forward.x,
+        target);
+  }
+
+  /**
+   * Creates a quaternion from three axes.
+   *
+   * The axes should already be normalized; in other words, they should
+   * match a pure rotation matrix.
+   *
+   * @param right   the right axis
+   * @param forward the forward axis
+   * @param up      the up axis
    * @param target  the output quaternion
    * @return the quaternion
    * @see Quaternion#fromAxes(float, float, float, float, float, float,
@@ -1668,10 +1652,156 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
   }
 
   /**
-   * Creates a quaternion with reference to two vectors. This function
-   * creates normalized copies of the vectors. Uses the formula:<br>
+   * Creates a quaternion from a direction. First, uses (0.0, 0.0, -1.0)
+   * as a reference for world up:<br>
    * <br>
-   * fromTo (a, b) := { a \u00b7 b, a \u00d7 b }
+   * <em>right</em> := <em>ref</em> x <em>dir</em><br>
+   * <em>up</em> := <em>right</em> x <em>dir</em><br>
+   * <br>
+   * If the direction and reference are parallel, the reference is
+   * swapped to (0.0, -1.0, 0.0) and the crossing pattern becomes:<br>
+   * <br>
+   * <em>right</em> := <em>dir</em> x <em>ref</em><br>
+   * <em>up</em> := <em>dir</em> x <em>right</em><br>
+   * <br>
+   * Normalizes the input direction. Also known as a 'lookAt' or
+   * 'toTracking' function.
+   *
+   * @param dir    the direction
+   * @param target the output quaternion
+   * @return the quaternion
+   * @see Utils#invSqrtUnchecked(float)
+   * @see Utils#invHypot(float, float, float)
+   * @see Quaternion#fromAxes(float, float, float, float, float, float,
+   *      float, float, float, Quaternion)
+   */
+  @Experimental
+  public static Quaternion fromDir (
+      final Vec3 dir,
+      final Quaternion target ) {
+
+    // TEST
+
+    final float mSq0 = dir.x * dir.x + dir.y * dir.y + dir.z * dir.z;
+    if ( mSq0 == 0.0f ) { return target.reset(); }
+    final float mInv0 = Utils.invSqrtUnchecked(mSq0);
+    final float jx = dir.x * mInv0;
+    final float jy = dir.y * mInv0;
+    final float jz = dir.z * mInv0;
+
+    /*
+     * float refx = 0.0f; float refy = 0.0f; float refz = -1.0f; float x1
+     * = refy * jz - refz * jy; float y1 = refz * jx - refx * jz; float z1
+     * = refx * jy - refy * jx; final boolean parallel = x1 == 0.0f && y1
+     * == 0.0f && z1 == 0.0f; if ( parallel ) { refx = 0.0f; refy = -1.0f;
+     * refz = 0.0f; x1 = jy * refz - jz * refy; y1 = jz * refx - jx *
+     * refz; z1 = jx * refy - jy * refx; }
+     */
+
+    /* Truncation of cross product with reference up. */
+    float x1 = jy;
+    float y1 = -jx;
+    float z1 = 0.0f;
+
+    final boolean parallel = x1 == 0.0f && y1 == 0.0f;
+    if ( parallel ) {
+      final float sgn = Utils.sign(jy);
+      // x1 = jz;
+      // x1 = -sgn * jz;
+      x1 = sgn * jz;
+      y1 = 0.0f;
+      z1 = sgn * -jx;
+    }
+
+    /* Normalize right. */
+    final float mInv1 = Utils.invHypot(x1, y1, z1);
+    final float ix = x1 * mInv1;
+    final float iy = y1 * mInv1;
+    final float iz = z1 * mInv1;
+
+    float x2;
+    float y2;
+    float z2;
+
+    if ( parallel ) {
+      x2 = jy * iz - jz * iy;
+      y2 = jz * ix - jx * iz;
+      z2 = jx * iy - jy * ix;
+    } else {
+      x2 = iy * jz - iz * jy;
+      y2 = iz * jx - ix * jz;
+      z2 = ix * jy - iy * jx;
+    }
+
+    /* Normalize forward. */
+    final float mInv2 = Utils.invHypot(x2, y2, z2);
+    final float kx = x2 * mInv2;
+    final float ky = y2 * mInv2;
+    final float kz = z2 * mInv2;
+
+    return Quaternion.fromAxes(
+        ix, jy, kz,
+        jz, ky, kx,
+        iz, iy, jx,
+        target);
+  }
+
+  /**
+   * Creates a quaternion from a direction. Switches reference up if
+   * forward and reference up are parallel. Emits the right, forward and
+   * up axes as a byproduct of the function's calculations.
+   *
+   * @param dir     the direction
+   * @param target  the output quaternion
+   * @param right   the output right axis
+   * @param forward the output forward axis
+   * @param up      the output up axis
+   * @return the quaternion
+   * @see Vec3#none(Vec3)
+   * @see Vec3#normalize(Vec3, Vec3)
+   * @see Vec3#crossNorm(Vec3, Vec3, Vec3)
+   * @see Quaternion#fromAxes(Vec3, Vec3, Vec3, Quaternion)
+   */
+  @Experimental
+  public static Quaternion fromDir (
+      final Vec3 dir,
+      final Quaternion target,
+      final Vec3 right,
+      final Vec3 forward,
+      final Vec3 up ) {
+
+    if ( Vec3.none(dir) ) { return target.reset(); }
+    Vec3.normalize(dir, forward);
+
+    right.set(forward.y, -forward.x, 0.0f);
+
+    final boolean parallel = right.x == 0.0f && right.y == 0.0f;
+    if ( parallel ) {
+      final float sgn = Utils.sign(forward.y);
+      // right.set(forward.z, 0.0f, sgn * -forward.x);
+      // right.set(-sgn * forward.z, 0.0f, sgn * -forward.x);
+      right.set(sgn * forward.z, 0.0f, sgn * -forward.x);
+    }
+    Vec3.normalize(right, right);
+
+    if ( parallel ) {
+      Vec3.crossNorm(forward, right, up);
+    } else {
+      Vec3.crossNorm(right, forward, up);
+    }
+
+    return Quaternion.fromAxes(right, forward, up, target);
+  }
+
+  /**
+   * Creates a quaternion with reference to two vectors. This function
+   * creates normalized copies of the vectors.<br>
+   * <br>
+   * fromTo ( <em>a</em>, <em>b</em> ) := { <em>a</em> \u00b7
+   * <em>b</em>, <em>a</em> x <em>b</em> }<br>
+   * <br>
+   * The real component is the dot product of the vectors; the imaginary
+   * component is their cross product.
    *
    * @param origin the origin vector
    * @param dest   the destination vector
@@ -2492,10 +2622,11 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
   /**
    * Converts a quaternion to three axes, which in turn may constitute a
-   * rotation matrix.
-   *
-   * Use this instead of getRight, getForward and getUp if all three
-   * axes are needed.
+   * rotation matrix. Use this instead of
+   * {@link Quaternion#getRight(Quaternion, Vec3)} ,
+   * {@link Quaternion#getForward(Quaternion, Vec3)} and
+   * {@link Quaternion#getUp(Quaternion, Vec3)} if all three axes are
+   * needed.
    *
    * @param q       the quaternion
    * @param right   the right axis
@@ -2565,49 +2696,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
   public static float toAxisAngle (
       final Quaternion q,
       final Vec3 axis ) {
-
-    // final float mSq = Quaternion.magSq(q);
-    // if (mSq == 0.0f) {
-    // Vec3.forward(axis);
-    // return 0.0f;
-    // }
-    // double wNorm;
-    // final Vec3 i = q.imag;
-    // if (Math.abs(1.0d - mSq) < Utils.EPSILON) {
-    // wNorm = q.real;
-    // } else {
-    // final double mInv = 1.0d / Math.sqrt(mSq);
-    // wNorm = q.real * mInv;
-    // }
-    // final double angle = wNorm <= -1.0d ? IUtils.TAU_D
-    // : wNorm >= 1.0d ? 0.0d : 2.0d * Math.acos(wNorm);
-    // final double wAsin = IUtils.TAU_D - angle;
-    // if (wAsin == 0.0d) {
-    // Vec3.forward(axis);
-    // return (float) angle;
-    // }
-    // final double sInv = 1.0d / wAsin;
-    // final double ax = i.x * sInv;
-    // final double ay = i.y * sInv;
-    // final double az = i.z * sInv;
-    // final double amSq = ax * ax + ay * ay + az * az;
-    // if (amSq == 0.0d) {
-    // Vec3.forward(axis);
-    // return (float) angle;
-    // }
-    // if (Math.abs(1.0d - amSq) < Utils.EPSILON) {
-    // axis.set(
-    // (float) ax,
-    // (float) ay,
-    // (float) az);
-    // return (float) angle;
-    // }
-    // final double mInv = 1.0d / Math.sqrt(amSq);
-    // axis.set(
-    // (float) (ax * mInv),
-    // (float) (ay * mInv),
-    // (float) (az * mInv));
-    // return (float) angle;
 
     final float mSq = Quaternion.magSq(q);
 

@@ -590,6 +590,27 @@ public class Transform2 extends Transform {
   }
 
   /**
+   * Orient the transform to look at a target point. If the point equals
+   * the transform's location, the function returns early.
+   *
+   * @param target the target point
+   * @return this transform
+   */
+  @Chainable
+  public Transform2 lookAt ( final Vec2 target ) {
+
+    Vec2.sub(target, this.location, this.forward);
+    if ( Vec2.none(this.forward) ) { return this; }
+    Vec2.normalize(this.forward, this.forward);
+    Vec2.perpendicularCW(this.forward, this.right);
+
+    this.rotPrev = this.rotation;
+    this.rotation = Vec2.headingSigned(this.right);
+
+    return this;
+  }
+
+  /**
    * Moves the transform by a direction to a new location.
    *
    * @param dir the direction
@@ -984,12 +1005,6 @@ public class Transform2 extends Transform {
     this.rotPrev = this.rotation;
     this.rotation = Vec2.headingSigned(this.right);
 
-    // target.locPrev.set(target.location);
-    // target.location.reset();
-    //
-    // target.scalePrev.set(target.scale);
-    // Vec2.one(target.scale);
-
     return this;
   }
 
@@ -1066,6 +1081,98 @@ public class Transform2 extends Transform {
     this.locPrev.set(this.location);
     Vec2.wrap(this.locPrev, lb, ub, this.location);
     return this;
+  }
+
+  /**
+   * Creates a transform from axes: either separate vectors or the
+   * columns of a matrix. This is an internal helper function. The
+   * transform's translation is set to zero; its scale, to one.
+   *
+   * @param xRight   m00 : right x
+   * @param yForward m11 : forward y
+   * @param yRight   m10 : right y
+   * @param xForward m01 : forward x
+   * @param target   the output transform
+   * @return the transform
+   */
+  public static Transform2 fromAxes (
+      final float xRight,
+      final float yForward,
+      final float yRight,
+      final float xForward,
+      final Transform2 target ) {
+
+    target.right.set(xRight, yRight);
+    target.forward.set(xForward, yForward);
+
+    Vec2.normalize(target.right, target.right);
+    Vec2.normalize(target.forward, target.forward);
+
+    target.rotPrev = target.rotation;
+    target.rotation = Vec2.headingSigned(target.right);
+
+    // target.locPrev.reset();
+    target.locPrev.set(target.location);
+    target.location.reset();
+
+    // Vec2.one(target.scalePrev);
+    target.scalePrev.set(target.scale);
+    Vec2.one(target.scale);
+
+    return target;
+  }
+
+  /**
+   * Creates a transform from axes. The transform's translation is set
+   * to zero; its scale, to one.
+   *
+   * @param right   the right axis
+   * @param forward the forward axis
+   * @param target  the output transform
+   * @return the transform
+   */
+  public static Transform2 fromAxes (
+      final Vec2 right,
+      final Vec2 forward,
+      final Transform2 target ) {
+
+    return Transform2.fromAxes(
+        right.x, forward.y,
+        right.y, forward.x,
+        target);
+  }
+
+  /**
+   * Creates a transform from a direction. The transform's translation
+   * is set to zero; its scale, to one.
+   *
+   * @param dir    the direction
+   * @param target the output transform
+   * @return the transform
+   */
+  public static Transform2 fromDir (
+      final Vec2 dir,
+      final Transform2 target ) {
+
+    if ( Vec2.none(dir) ) {
+      Vec2.forward(target.forward);
+    } else {
+      Vec2.normalize(dir, target.forward);
+    }
+    Vec2.perpendicularCW(target.forward, target.right);
+
+    target.rotPrev = target.rotation;
+    target.rotation = Vec2.headingSigned(target.right);
+
+    // target.locPrev.reset();
+    target.locPrev.set(target.location);
+    target.location.reset();
+
+    // Vec2.one(target.scalePrev);
+    target.scalePrev.set(target.scale);
+    Vec2.one(target.scale);
+
+    return target;
   }
 
   /**

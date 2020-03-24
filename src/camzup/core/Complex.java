@@ -183,6 +183,26 @@ public class Complex implements Comparable < Complex >, Cloneable,
   }
 
   /**
+   * Returns a String of Python code targeted toward the Blender 2.8x
+   * API. This code is brittle and is used for internal testing
+   * purposes.
+   *
+   * @return the string
+   */
+  @Experimental
+  String toBlenderCode ( ) {
+
+    return new StringBuilder(64)
+        .append('(')
+        .append(Utils.toFixed(this.real, 6))
+        .append(Utils.sign(this.imag) < 0 ? '-' : '+')
+        .append(Utils.toFixed(Utils.abs(this.imag), 6))
+        .append('j')
+        .append(')')
+        .toString();
+  }
+
+  /**
    * Returns a new complex number with this complex number's components.
    * Java's cloneable interface is problematic; use set or a copy
    * constructor instead.

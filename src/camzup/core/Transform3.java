@@ -628,18 +628,26 @@ public class Transform3 extends Transform {
   }
 
   /**
-   * Moves the transform by a direction to a new location.
+   * Orient the transform to look at a target point. If the point equals
+   * the transform's location, the function returns early.
    *
-   * @param dir the direction
+   * @param target the target point
    * @return this transform
-   * @see Vec3#add(Vec3, Vec3, Vec3)
+   * @see Vec3#sub(Vec3, Vec3, Vec3)
+   * @see Quaternion#fromDir(Vec3, Quaternion, Vec3, Vec3, Vec3)
    */
   @Chainable
-  public Transform3 moveBy ( final Vec2 dir ) {
+  @Experimental
+  public Transform3 lookAt ( final Vec3 target ) {
 
-    this.locPrev.set(this.location);
-    this.location.set(dir, 0.0f);
-    Vec3.add(this.locPrev, this.location, this.location);
+    this.rotPrev.set(this.rotation);
+    Vec3.sub(target, this.location, this.forward);
+    Quaternion.fromDir(
+        this.forward,
+        this.rotation,
+        this.right,
+        this.forward,
+        this.up);
     return this;
   }
 
@@ -687,42 +695,6 @@ public class Transform3 extends Transform {
     Quaternion.mulVector(this.rotation, dir, this.location);
     Vec3.mul(this.location, this.scale, this.location);
     Vec3.add(this.locPrev, this.location, this.location);
-    return this;
-  }
-
-  /**
-   * Sets the transforms' location.
-   *
-   * @param locNew the new location
-   * @return this transform
-   */
-  @Chainable
-  public Transform3 moveTo ( final Vec2 locNew ) {
-
-    this.locPrev.set(this.location);
-    this.location.set(locNew, 0.0f);
-    return this;
-  }
-
-  /**
-   * Eases the transform to a location by a step. The kind of easing is
-   * specified by a Vec3 easing function.
-   *
-   * @param locNew     the new location
-   * @param step       the step in [0.0, 1.0]
-   * @param easingFunc the easing function
-   * @return this transform
-   * @see Vec3.AbstrEasing#apply(Vec3, Vec3, Float, Vec3)
-   */
-  @Chainable
-  public Transform3 moveTo (
-      final Vec2 locNew,
-      final float step,
-      final Vec3.AbstrEasing easingFunc ) {
-
-    this.locPrev.set(this.location);
-    this.location.set(locNew, 0.0f);
-    easingFunc.apply(this.locPrev, this.location, step, this.location);
     return this;
   }
 
@@ -976,25 +948,6 @@ public class Transform3 extends Transform {
    *
    * @param nonUniformScale the scale
    * @return this transform
-   * @see Vec2#all(Vec2)
-   * @see Vec3#mul(Vec3, Vec3, Vec3)
-   */
-  @Chainable
-  public Transform3 scaleBy ( final Vec2 nonUniformScale ) {
-
-    if ( Vec2.all(nonUniformScale) ) {
-      this.scalePrev.set(this.scale);
-      this.scale.set(nonUniformScale, 1.0f);
-      Vec3.mul(this.scalePrev, this.scale, this.scale);
-    }
-    return this;
-  }
-
-  /**
-   * Scales the transform by a non-uniform scalar.
-   *
-   * @param nonUniformScale the scale
-   * @return this transform
    * @see Vec3#all(Vec3)
    * @see Vec3#mul(Vec3, Vec3, Vec3)
    */
@@ -1193,6 +1146,8 @@ public class Transform3 extends Transform {
    * @param yRight   m10 : right y
    * @param xForward m01 : forward x
    * @return the transform
+   * @see Quaternion#fromAxes(float, float, float, float, float, float,
+   *      float, float, float, Quaternion)
    */
   public Transform3 setAxes (
       final float xRight,
@@ -1212,12 +1167,6 @@ public class Transform3 extends Transform {
         zRight, yRight, xForward,
         this.rotation);
     this.updateAxes();
-
-    // target.location.reset();
-    // target.locPrev.reset();
-    //
-    // target.scalePrev.set(target.scale);
-    // Vec3.one(target.scale);
 
     return this;
   }
@@ -1293,6 +1242,111 @@ public class Transform3 extends Transform {
     this.locPrev.set(this.location);
     Vec3.wrap(this.locPrev, lb, ub, this.location);
     return this;
+  }
+
+  /**
+   * Creates a transform from axes: either separate vectors or the
+   * columns of a matrix. This is an internal helper function. The
+   * transform's translation is set to zero; its scale, to one.
+   *
+   * @param xRight   m00 : right x
+   * @param yForward m11 : forward y
+   * @param zUp      m22 : up z
+   * @param zForward m21 : forward z
+   * @param yUp      m12 : up y
+   * @param xUp      m02 : up x
+   * @param zRight   m20 : right z
+   * @param yRight   m10 : right y
+   * @param xForward m01 : forward
+   * @param target   the output transform
+   * @return the transform
+   * @see Quaternion#fromAxes(float, float, float, float, float, float,
+   *      float, float, float, Quaternion)
+   */
+  public static Transform3 fromAxes (
+      final float xRight,
+      final float yForward,
+      final float zUp,
+      final float zForward,
+      final float yUp,
+      final float xUp,
+      final float zRight,
+      final float yRight,
+      final float xForward,
+      final Transform3 target ) {
+
+    target.rotPrev.set(target.rotation);
+    Quaternion.fromAxes(
+        xRight, yForward, zUp,
+        zForward, yUp, xUp,
+        zRight, yRight, xForward,
+        target.rotation);
+    target.updateAxes();
+
+    // target.locPrev.reset();
+    target.locPrev.set(target.location);
+    target.location.reset();
+
+    // Vec3.one(target.scalePrev);
+    target.scalePrev.set(target.scale);
+    Vec3.one(target.scale);
+
+    return target;
+  }
+
+  /**
+   * Creates a transform from axes. The transform's translation is set
+   * to zero; its scale, to one.
+   *
+   * @param right   the right axis
+   * @param forward the forward axis
+   * @param up      the up axis
+   * @param target  the output transform
+   * @return the transform
+   */
+  public static Transform3 fromAxes (
+      final Vec3 right,
+      final Vec3 forward,
+      final Vec3 up,
+      final Transform3 target ) {
+
+    return Transform3.fromAxes(
+        right.x, forward.y, up.z,
+        forward.z, up.y,
+        up.x, right.z,
+        right.y, forward.x, target);
+  }
+
+  /**
+   * Creates a transform from a direction. The transform's translation
+   * is set to zero; its scale, to one.
+   *
+   * @param dir    the direction
+   * @param target the output transform
+   * @return the transform
+   * @see Quaternion#fromDir(Vec3, Quaternion, Vec3, Vec3, Vec3)
+   */
+  public static Transform3 fromDir (
+      final Vec3 dir,
+      final Transform3 target ) {
+
+    target.rotPrev.set(target.rotation);
+    Quaternion.fromDir(
+        target.forward,
+        target.rotation,
+        target.right,
+        target.forward,
+        target.up);
+
+    // target.locPrev.reset();
+    target.locPrev.set(target.location);
+    target.location.reset();
+
+    // Vec3.one(target.scalePrev);
+    target.scalePrev.set(target.scale);
+    Vec3.one(target.scale);
+
+    return target;
   }
 
   /**

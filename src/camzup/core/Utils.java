@@ -898,6 +898,25 @@ public abstract class Utils implements IUtils {
   }
 
   /**
+   * Returns the first floating-point argument with the sign of the
+   * second floating-point argument. An alias of
+   * {@link Math#copySign(float, float)} .
+   *
+   * @param magnitude the magnitude
+   * @param sign      the sign
+   * @return the magnified sign
+   */
+  public static float copySign (
+      final float magnitude,
+      final float sign ) {
+
+    return Float.intBitsToFloat(
+        Float.floatToRawIntBits(sign) & 0x80000000
+            | Float.floatToRawIntBits(magnitude)
+                & 2147483647);
+  }
+
+  /**
    * Finds the approximate cosine of an angle in radians. Returns a
    * value in the range [-1.0, 1.0] .
    *
@@ -2027,10 +2046,8 @@ public abstract class Utils implements IUtils {
    *
    * Converts a signed byte in the range [-127, 128] to an unsigned byte
    * in the range [0, 255], promoted to an int. Useful when working with
-   * colors.
-   *
-   * Defined for cross-language comparison with C#, which uses signed
-   * and unsigned versions of primitive data types.
+   * colors. Defined for cross-language comparison with C#, which uses
+   * signed and unsigned versions of primitive data types.
    *
    * @param a the signed byte
    * @return the unsigned byte, promoted
@@ -2046,10 +2063,9 @@ public abstract class Utils implements IUtils {
    *
    * Converts a signed integer in the range [-2147483648 , 2147483647]
    * to an unsigned integer in the range [0, 4294967295], promoted to a
-   * long. Useful when working with colors.
-   *
-   * Defined for cross-language comparison with C#, which uses signed
-   * and unsigned versions of primitive data types.
+   * long. Useful when working with colors. Defined for cross-language
+   * comparison with C#, which uses signed and unsigned versions of
+   * primitive data types.
    *
    * @param a the signed integer
    * @return the unsigned integer, promoted
