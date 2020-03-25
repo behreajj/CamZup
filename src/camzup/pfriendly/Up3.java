@@ -115,10 +115,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   /**
    * The default constructor.
    */
-  public Up3 ( ) {
-
-    super();
-  }
+  public Up3 ( ) { super(); }
 
   /**
    * A constructor for manually initializing the renderer.
@@ -374,16 +371,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   }
 
   /**
-   * Gets whether or not depth sorting is enabled.
-   *
-   * @return the depth sorting
-   */
-  public boolean getDepthSorting ( ) {
-
-    return this.isDepthSortingEnabled;
-  }
-
-  /**
    * Gets the eye distance of the camera.
    *
    * @return the eye distance
@@ -396,10 +383,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    * @param target the output vector
    * @return the x axis
    */
-  public Vec3 getI ( final Vec3 target ) {
-
-    return target.set(this.i);
-  }
+  public Vec3 getI ( final Vec3 target ) { return target.set(this.i); }
 
   /**
    * Gets the y axis of the camera transform.
@@ -407,10 +391,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    * @param target the output vector
    * @return the y axis
    */
-  public Vec3 getJ ( final Vec3 target ) {
-
-    return target.set(this.j);
-  }
+  public Vec3 getJ ( final Vec3 target ) { return target.set(this.j); }
 
   /**
    * Gets the z axis of the camera transform.
@@ -418,10 +399,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    * @param target the output vector
    * @return the z axis
    */
-  public Vec3 getK ( final Vec3 target ) {
-
-    return target.set(this.k);
-  }
+  public Vec3 getK ( final Vec3 target ) { return target.set(this.k); }
 
   /**
    * Gets the renderer camera's 3D location.
@@ -634,6 +612,13 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    */
   @Override
   public boolean is3D ( ) { return true; }
+
+  /**
+   * Gets whether or not depth sorting is enabled.
+   *
+   * @return the depth sorting
+   */
+  public boolean isDepthSorted ( ) { return this.isDepthSortingEnabled; }
 
   /**
    * Draws a line between two coordinates.
@@ -878,10 +863,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    *
    * @param ed the eye distance
    */
-  public void setEyeDist ( final float ed ) {
-
-    this.eyeDist = ed;
-  }
+  public void setEyeDist ( final float ed ) { this.eyeDist = ed; }
 
   /**
    * Sets the renderer camera's 3D location.
@@ -1230,10 +1212,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return "camzup.pfriendly.Up3";
-  }
+  public String toString ( ) { return "camzup.pfriendly.Up3"; }
 
   /**
    * Applies a transform to the renderer's matrix.
@@ -1342,9 +1321,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    * @param v  the coordinate
    * @param vt the texture coordinate
    */
-  public void vertex (
-      final Vec3 v,
-      final Vec2 vt ) {
+  public void vertex ( final Vec3 v, final Vec2 vt ) {
 
     this.vertexImpl(v.x, v.y, v.z, vt.x, vt.y);
   }

@@ -176,10 +176,7 @@ public interface IUp3 extends IUp {
    *
    * @param v the coordinate
    */
-  default void point ( final Vec3 v ) {
-
-    this.point(v.x, v.y, v.z);
-  }
+  default void point ( final Vec3 v ) { this.point(v.x, v.y, v.z); }
 
   /**
    * Pop the last style off the end of the stack.

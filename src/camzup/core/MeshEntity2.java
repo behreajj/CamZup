@@ -120,6 +120,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
    *
    * @param i the index
    * @return the mesh
+   * @see Utils#mod(int, int)
    */
   public Mesh2 get ( final int i ) {
 
@@ -390,7 +391,8 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
 
   /**
    * Creates a string representing a group node in the SVG format. This
-   * SVG is designed for Processing compatibility, not for efficiency.
+   * SVG is designed for compatibility with Processing, not for
+   * efficiency.
    *
    * @param materials the materials to use
    * @return the string
@@ -412,7 +414,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
       includesMats = matLen > 0;
     }
 
-    /* If no materials are present, use a default one instead. */
+    /* If no materials are present, use a default instead. */
     if ( !includesMats ) {
       result.append(MaterialSolid.defaultSvgMaterial(scale));
     }
@@ -436,7 +438,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
             .append(">\n");
       }
 
-      result.append(mesh.toSvgString()).append('\n');
+      result.append(mesh.toSvgPath()).append('\n');
 
       /* Close out material group. */
       if ( includesMats ) { result.append("</g>\n"); }
@@ -447,5 +449,29 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
 
     result.append("</g>");
     return result.toString();
+  }
+
+  @Experimental
+  public static boolean contains (
+      final MeshEntity2 me,
+      final Vec2 pointLocal ) {
+
+    final Iterator < Mesh2 > meshItr = me.meshes.iterator();
+    while ( meshItr.hasNext() ) {
+      final Mesh2 mesh = meshItr.next();
+      if ( Mesh2.contains(mesh, pointLocal) ) { return true; }
+    }
+    return false;
+  }
+
+  @Experimental
+  public static boolean contains (
+      final MeshEntity2 me,
+      final Vec2 pointGlobal,
+      final Vec2 pointLocal ) {
+
+    // TEST
+    Transform2.invMulPoint(me.transform, pointGlobal, pointLocal);
+    return MeshEntity2.contains(me, pointLocal);
   }
 }

@@ -123,10 +123,7 @@ public class ZImage extends PImage {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return ZImage.toString(this);
-  }
+  public String toString ( ) { return ZImage.toString(this); }
 
   /**
    * Update the pixels[] buffer to the PImage.

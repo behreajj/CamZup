@@ -229,10 +229,7 @@ public class MaterialSolid extends Material {
    * @see Utils#clamp01(float)
    * @see Color#toHexWeb(Color)
    */
-  String toSvgString ( ) {
-
-    return this.toSvgString(1.0f);
-  }
+  String toSvgString ( ) { return this.toSvgString(1.0f); }
 
   /**
    * Returns an SVG snippet as a string.
@@ -500,10 +497,7 @@ public class MaterialSolid extends Material {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of this material.
@@ -560,7 +554,7 @@ public class MaterialSolid extends Material {
    * weight is impacted by transforms, so the stroke weight is divided
    * by the scale.
    *
-   * This opens a group node, so it should be closed elsewhere.
+   * This opens a group node, which should be closed elsewhere.
    *
    * @param scale the transform scale
    * @return the string

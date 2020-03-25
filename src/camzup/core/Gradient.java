@@ -357,10 +357,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    * @return the clone
    */
   @Override
-  public Gradient clone ( ) {
-
-    return new Gradient(this);
-  }
+  public Gradient clone ( ) { return new Gradient(this); }
 
   /**
    * Checks to see if this gradient contains a specified key.
@@ -573,20 +570,14 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    *
    * @return the first key
    */
-  public ColorKey getFirst ( ) {
-
-    return this.keys.first();
-  }
+  public ColorKey getFirst ( ) { return this.keys.first(); }
 
   /**
    * Retrieves the last key in this gradient.
    *
    * @return the last key
    */
-  public ColorKey getLast ( ) {
-
-    return this.keys.last();
-  }
+  public ColorKey getLast ( ) { return this.keys.last(); }
 
   /**
    * Returns a hash code for this gradient based on its list of keys.
@@ -657,10 +648,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    * @return the key count
    * @see TreeSet#size()
    */
-  public int length ( ) {
-
-    return this.keys.size();
-  }
+  public int length ( ) { return this.keys.size(); }
 
   /**
    * Prepends a color at step 0.0 . Compresses existing keys to the
@@ -832,10 +820,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    * @return the key
    * @see TreeSet#pollFirst()
    */
-  public ColorKey removeFirst ( ) {
-
-    return this.keys.pollFirst();
-  }
+  public ColorKey removeFirst ( ) { return this.keys.pollFirst(); }
 
   /**
    * Removes the last key from the gradient.
@@ -843,10 +828,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    * @return the key
    * @see TreeSet#pollLast()
    */
-  public ColorKey removeLast ( ) {
-
-    return this.keys.pollLast();
-  }
+  public ColorKey removeLast ( ) { return this.keys.pollLast(); }
 
   /**
    * Resets this gradient to an initial state, with two color keys:
@@ -923,10 +905,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    *
    * @return the gradient
    */
-  public Gradient sort ( ) {
-
-    return this.sort(null);
-  }
+  public Gradient sort ( ) { return this.sort(null); }
 
   /**
    * Sorts the gradient according to a property of the colors in each
@@ -1155,7 +1134,6 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     }
 
     final Iterator < ColorKey > itr = this.keys.iterator();
-
     ColorKey curr = itr.next();
     float prevStep = curr.step;
     String prevClrStr = curr.clr.toGgrString();
@@ -1268,10 +1246,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of this gradient.
@@ -1513,13 +1488,16 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
         continue sampling;
       }
 
-      /*
-       * Search for segment within which the step falls. *0/ segSearch : for
-       * ( int m = 0; m < keyLen; ++m ) { seg = keyArr[m]; if ( seg[0] <=
-       * step && step <= seg[2] ) { break segSearch; } }
-       *
-       * Cache the segment's left, mid and right steps.
-       */
+      /* Search for segment within which the step falls. */
+
+      // TODO: Why was this commented out?? Test again to see if it was a
+      // typo...
+      segSearch : for ( int m = 0; m < keyLen; ++m ) {
+        seg = keyArr[m];
+        if ( seg[0] <= step && step <= seg[2] ) { break segSearch; }
+      }
+
+      /* Cache the segment's left, mid and right steps. */
       final float segl = seg[0];
       final float segm = seg[1];
       final float segr = seg[2];
@@ -1789,7 +1767,6 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    * @param target the output gradient
    * @return the gradient
    */
-  @Experimental
   public static Gradient paletteTemperature ( final Gradient target ) {
 
     final TreeSet < ColorKey > keys = target.keys;

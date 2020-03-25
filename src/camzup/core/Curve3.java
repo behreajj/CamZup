@@ -906,10 +906,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of the curve.

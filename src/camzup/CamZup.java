@@ -2,8 +2,8 @@ package camzup;
 
 import processing.core.PApplet;
 
+import camzup.core.Curve2;
 import camzup.core.Mesh3;
-import camzup.core.Quaternion;
 import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -160,18 +160,14 @@ public class CamZup {
   public static void main ( final String[] args ) {
 
     final Random rng = new Random();
+    // Mesh2 mesh = new Mesh2();
+    // Mesh2.polygon(5, Mesh2.PolyType.TRI, mesh);
+    // String str = mesh.toSvgString();
 
-    // Mat4 target = new Mat4();
-    final Vec3 right = Vec3.right(new Vec3());
-    final Vec3 forward = Vec3.forward(new Vec3());
-    final Vec3 up = Vec3.up(new Vec3());
-
-    final Quaternion q = new Quaternion();
-
-    final Vec3 rnd = new Vec3();
-    Vec3.random(rng, rnd);
-
-    Quaternion.fromDir(rnd, q, right, forward, up);
+    final Curve2 curve = new Curve2();
+    Curve2.circle(curve);
+    final String str = curve.toSvgString(0.0f, 0.0f, 1.0f, 1.0f);
+    System.out.println(str);
   }
 
   /**

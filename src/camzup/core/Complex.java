@@ -80,10 +80,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
      * @return the evaluation
      */
     @Override
-    public boolean hasNext ( ) {
-
-      return this.index < this.z.length();
-    }
+    public boolean hasNext ( ) { return this.index < this.z.length(); }
 
     /**
      * Gets the next value in the iterator
@@ -92,10 +89,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
      * @see Complex#get(int)
      */
     @Override
-    public Float next ( ) {
-
-      return this.z.get(this.index++);
-    }
+    public Float next ( ) { return this.z.get(this.index++); }
 
     /**
      * Returns the simple name of this class.
@@ -308,10 +302,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
    * @return this complex number
    */
   @Chainable
-  public Complex reset ( ) {
-
-    return this.set(0.0f, 0.0f);
-  }
+  public Complex reset ( ) { return this.set(0.0f, 0.0f); }
 
   /**
    * Copies the components of the input complex number to this complex
@@ -396,10 +387,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of this complex number.

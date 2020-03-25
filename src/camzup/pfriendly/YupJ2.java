@@ -22,6 +22,7 @@ import processing.core.PShape;
 import camzup.core.Color;
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
+import camzup.core.Experimental;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
 import camzup.core.Mat3;
@@ -172,10 +173,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
   /**
    * The default constructor.
    */
-  public YupJ2 ( ) {
-
-    super();
-  }
+  public YupJ2 ( ) { super(); }
 
   /**
    * A constructor for manually initializing the renderer.
@@ -231,7 +229,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
      * of whether the "Float" version is used or not. So if nothing else,
      * using doubles spares (float) casts.
      */
-
     final double a = 1.0d - Utils.mod1(startAngle * IUtils.ONE_TAU_D);
     final double b = 1.0d - Utils.mod1(stopAngle * IUtils.ONE_TAU_D);
     final double c = 360.0d * b;
@@ -492,14 +489,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     this.splineForward(this.curveDetail, this.curveDrawMatrix);
 
     if ( this.bezierBasisInverse == null ) {
-      this.bezierBasisInverse = new PMatrix3D(this.bezierBasisMatrix);
-      this.bezierBasisInverse.invert();
+      this.bezierBasisInverse = new PMatrix3D();
+      PMatAux.inverse(this.bezierBasisMatrix, this.bezierBasisInverse);
       this.curveToBezierMatrix = new PMatrix3D();
     }
 
-    this.curveToBezierMatrix.set(this.curveBasisMatrix);
-    this.curveToBezierMatrix.preApply(this.bezierBasisInverse);
-    this.curveDrawMatrix.apply(this.curveBasisMatrix);
+    PMatAux.mul(
+        this.bezierBasisInverse,
+        this.curveBasisMatrix,
+        this.curveToBezierMatrix);
+    PMatAux.mul(
+        this.curveDrawMatrix,
+        this.curveBasisMatrix,
+        this.curveDrawMatrix);
   }
 
   /**
@@ -687,83 +689,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
      * The lower bound of the stroke weight has to be < 1.0 because of
      * stroke scaling issues.
      */
-
     this.strokeWeight = Utils.max(IUtils.DEFAULT_EPSILON, strokeWeight);
     this.chooseStrokeCap(strokeCap);
     this.chooseStrokeJoin(strokeJoin);
     this.strokeImpl();
-  }
-
-  /**
-   * Draws a 2D curve entity.
-   *
-   * @param entity the curve entity
-   */
-  @Deprecated
-  protected void shapeOld ( final CurveEntity2 entity ) {
-
-    this.pushMatrix();
-    this.transform(entity.transform);
-
-    // final List < MaterialSolid > materials = entity.materials;
-    // final boolean useMaterial = !materials.isEmpty();
-    final Iterator < Curve2 > curveItr = entity.curves.iterator();
-    Iterator < Knot2 > knItr;
-
-    Knot2 currKnot = null;
-    Knot2 prevKnot = null;
-    Vec2 coord = null;
-    Vec2 foreHandle = null;
-    Vec2 rearHandle = null;
-
-    while ( curveItr.hasNext() ) {
-      final Curve2 curve = curveItr.next();
-
-      // if ( useMaterial ) {
-      // this.pushStyle();
-      // this.material(materials.get(curve.materialIndex));
-      // }
-
-      knItr = curve.iterator();
-      prevKnot = knItr.next();
-      coord = prevKnot.coord;
-
-      this.gp.reset();
-      this.gp.moveTo(coord.x, coord.y);
-
-      while ( knItr.hasNext() ) {
-        currKnot = knItr.next();
-        foreHandle = prevKnot.foreHandle;
-        rearHandle = currKnot.rearHandle;
-        coord = currKnot.coord;
-
-        this.gp.curveTo(
-            foreHandle.x, foreHandle.y,
-            rearHandle.x, rearHandle.y,
-            coord.x, coord.y);
-
-        prevKnot = currKnot;
-      }
-
-      if ( curve.closedLoop ) {
-        currKnot = curve.getFirst();
-        foreHandle = prevKnot.foreHandle;
-        rearHandle = currKnot.rearHandle;
-        coord = currKnot.coord;
-
-        this.gp.curveTo(
-            foreHandle.x, foreHandle.y,
-            rearHandle.x, rearHandle.y,
-            coord.x, coord.y);
-        this.gp.closePath();
-      }
-
-      this.drawShapeSolid(this.gp);
-
-      // if ( useMaterial ) { this.popStyle(); }
-    }
-
-    this.popMatrix();
   }
 
   /**
@@ -944,10 +873,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       final float m12 ) {
 
     /*
-     * Beware of unconventional method signature:
-     *
-     * m00: scale x, m10: shear y, m01: shear x, m11: scale y, m02:
-     * translation x, m12: translation y .
+     * Method signature: m00: scale x, m10: shear y, m01: shear x, m11:
+     * scale y, m02: translation x, m12: translation y .
      */
     this.affineNative.setTransform(
         m00, m10,
@@ -1205,6 +1132,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
   }
 
   /**
+   * Sets the camera to the Processing default, where the origin is in
+   * the top left corner of the sketch and the y axis points downward.
+   */
+  public void camDown ( ) {
+
+    this.camera(this.width * 0.5f, this.height * 0.5f, 0.0f, 1.0f, -1.0f);
+  }
+
+  /**
    * Sets the camera to the renderer defaults.
    */
   @Override
@@ -1222,9 +1158,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @param x the location x component
    * @param y the location y component
    */
-  public void camera (
-      final float x,
-      final float y ) {
+  public void camera ( final float x, final float y ) {
 
     this.camera(x, y,
         YupJ2.DEFAULT_ROT,
@@ -1269,8 +1203,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     this.cameraX = x;
     this.cameraY = y;
     this.cameraRot = radians;
-    this.cameraZoomX = zx < IUtils.DEFAULT_EPSILON ? 1.0f : zx;
-    this.cameraZoomY = zy < IUtils.DEFAULT_EPSILON ? 1.0f : zy;
+    this.cameraZoomX = Utils.abs(zx) < IUtils.DEFAULT_EPSILON ? 1.0f : zx;
+    this.cameraZoomY = Utils.abs(zy) < IUtils.DEFAULT_EPSILON ? 1.0f : zy;
 
     final double c = Math.cos(-radians);
     final double s = Math.sin(-radians);
@@ -1347,9 +1281,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @param size  the size
    */
   @Override
-  public void circle (
-      final Vec2 coord,
-      final float size ) {
+  public void circle ( final Vec2 coord, final float size ) {
 
     this.ellipse(coord.x, coord.y, size, size);
   }
@@ -1382,7 +1314,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
      * Cache the inverse of the color maximums so that color channels can
      * be scaled to the range [0.0, 1.0] later .
      */
-
     this.invColorModeX = 1.0f / this.colorModeX;
     this.invColorModeY = 1.0f / this.colorModeY;
     this.invColorModeZ = 1.0f / this.colorModeZ;
@@ -1415,10 +1346,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @param a the coordinate
    */
   @Override
-  public void curveVertex ( final Vec2 a ) {
-
-    this.curveVertex(a.x, a.y);
-  }
+  public void curveVertex ( final Vec2 a ) { this.curveVertex(a.x, a.y); }
 
   /**
    * Draws an ellipse. The parameters meanings are determined by the
@@ -1446,7 +1374,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
      * Does not defer to ellipseImpl . Instead, approximates a circle with
      * four Bezier curves.
      */
-
     float extapw = 0.0f;
     float extaph = 0.0f;
     float extcpw = 0.0f;
@@ -1576,10 +1503,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @return the background color
    */
   @Override
-  public int getBackground ( ) {
-
-    return this.backgroundColor;
-  }
+  public int getBackground ( ) { return this.backgroundColor; }
 
   /**
    * Gets this renderer's background color.
@@ -1599,10 +1523,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @return the height
    */
   @Override
-  public float getHeight ( ) {
-
-    return this.height;
-  }
+  public float getHeight ( ) { return this.height; }
 
   /**
    * Gets the renderer camera's location.
@@ -1622,10 +1543,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @return the x location
    */
   @Override
-  public float getLocX ( ) {
-
-    return this.cameraX;
-  }
+  public float getLocX ( ) { return this.cameraX; }
 
   /**
    * Gets the renderer camera's location on the y axis.
@@ -1633,10 +1551,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @return the y location
    */
   @Override
-  public float getLocY ( ) {
-
-    return this.cameraY;
-  }
+  public float getLocY ( ) { return this.cameraY; }
 
   /**
    * Retrieves the renderer's matrix.
@@ -1724,10 +1639,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @return the applet
    */
   @Override
-  public PApplet getParent ( ) {
-
-    return this.parent;
-  }
+  public PApplet getParent ( ) { return this.parent; }
 
   /**
    * Gets the renderer camera's rotation.
@@ -1735,10 +1647,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @return the rotation
    */
   @Override
-  public float getRot ( ) {
-
-    return this.cameraRot;
-  }
+  public float getRot ( ) { return this.cameraRot; }
 
   /**
    * Gets the renderer's size.
@@ -1758,10 +1667,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @return the width
    */
   @Override
-  public float getWidth ( ) {
-
-    return this.width;
-  }
+  public float getWidth ( ) { return this.width; }
 
   /**
    * Gets the renderer's zoom.
@@ -1781,10 +1687,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @return the zoom on the horizontal axis
    */
   @Override
-  public float getZoomX ( ) {
-
-    return this.cameraZoomX;
-  }
+  public float getZoomX ( ) { return this.cameraZoomX; }
 
   /**
    * Gets the renderer's vertical zoom.
@@ -1792,10 +1695,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @return the zoom on the vertical axis
    */
   @Override
-  public float getZoomY ( ) {
-
-    return this.cameraZoomY;
-  }
+  public float getZoomY ( ) { return this.cameraZoomY; }
 
   /**
    * Draws a diagnostic grid out of points. Overrides the default
@@ -1845,8 +1745,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
         final float x = xs[j];
 
         /*
-         * Draw a point. Epsilon is added to y instead of x to minimize a
-         * calculation. Color is set directly with an object instead of
+         * Draw a point. Epsilon is added to y instead of x to minimize
+         * calculations. Color is set directly with an object instead of
          * through colorCalc.
          */
         this.gp.reset();
@@ -2364,9 +2264,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @param dest   the destination coordinate
    */
   @Override
-  public void line (
-      final Vec2 origin,
-      final Vec2 dest ) {
+  public void line ( final Vec2 origin, final Vec2 dest ) {
 
     this.line(origin.x, origin.y, dest.x, dest.y);
   }
@@ -2401,6 +2299,116 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
           coreFll.w);
     }
   }
+
+  /**
+   * Finds the model view position of a point.<br>
+   * <br>
+   * More efficient than calling
+   * {@link PApplet#modelX(float, float, float)} and
+   * {@link PApplet#modelY(float, float, float)} separately. However, it
+   * is advisable to work with the renderer matrices directly.
+   *
+   * @param source the point
+   * @param target the output vector
+   * @return the model point
+   */
+  // @Experimental
+  // public Vec2 model ( final Vec2 source, final Vec2 target ) {
+  //
+  // // TODO: Implement.
+  //
+  // final AffineTransform tr = this.g2.getTransform();
+  //
+  // double ax = tr.getScaleX() * source.x +
+  // tr.getShearX() * source.y +
+  // tr.getTranslateX();
+  // double ay = tr.getShearY() * source.x +
+  // tr.getScaleY() * source.y +
+  // tr.getTranslateY();
+  //
+  // ax *= cameraZoomX;
+  // ay *= cameraZoomY;
+  //
+  // final double c = Math.cos(this.cameraRot);
+  // final double s = Math.sin(this.cameraRot);
+  // final double tempx = ax;
+  // ax = c * ax - s * ay;
+  // ay = c * ay + s * tempx;
+  //
+  // ax += cameraX;
+  // ay += cameraY;
+  //
+  // ax -= width * 0.5d;
+  // ay -= height * 0.5d;
+  //
+  // return target.set((float) ax, (float) ay);
+  // }
+
+  /**
+   * Takes a two-dimensional x, y position and returns the x value for
+   * where it will appear on a model view. This is inefficient, use
+   * {@link IYup2#model(Vec2, Vec2)} instead.
+   *
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return the model x coordinate
+   */
+  // @Experimental
+  // public float modelX ( final float x, final float y ) {
+  //
+  // // TODO: Implement.
+  // return 0.0f;
+  // }
+
+  /**
+   * Takes a two-dimensional x, y position and returns the x value for
+   * where it will appear on a model view. This is inefficient, use
+   * {@link IYup2#model(Vec2, Vec2)} instead.
+   *
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @param z the z coordinate
+   * @return the model x coordinate
+   */
+  // public float modelX ( final float x, final float y, final float z )
+  // {
+  //
+  // PGraphics.showDepthWarningXYZ("modelX");
+  // return this.modelX(x, y);
+  // }
+
+  /**
+   * Takes a two-dimensional x, y position and returns the y value for
+   * where it will appear on a model view. This is inefficient, use
+   * {@link IYup2#model(Vec2, Vec2)} instead.
+   *
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return the model y coordinate
+   */
+  @Experimental
+  // public float modelY ( final float x, final float y ) {
+  //
+  // // TODO: Implement.
+  // return 0.0f;
+  // }
+
+  /**
+   * Takes a two-dimensional x, y position and returns the y value for
+   * where it will appear on a model view. This is inefficient, use
+   * {@link IYup2#model(Vec2, Vec2)} instead.
+   *
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @param z the z coordinate
+   * @return the model y coordinate
+   */
+  // public float modelY ( final float x, final float y, final float z )
+  // {
+  //
+  // PGraphics.showDepthWarningXYZ("modelY");
+  // return this.modelY(x, y);
+  // }
 
   /**
    * Draws the world origin.
@@ -2568,14 +2576,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * Prints the renderer matrix. Follows the Processing convention of a
    * row-major 3 x 2 matrix, not the Java AWT convention.<br>
    * <br>
-   *
    * <code>[ m00, m01, m02,<br>
    * m10, m11, m12 ]</code><br>
    * <br>
-   *
    * is equivalent to<br>
    * <br>
-   *
    * <code>[ scaleX, shearX, translateX,<br>
    * shearY, scaleY, translateY ]</code>
    *
@@ -2753,7 +2758,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
      * It is simpler to draw straight lines than to defer to the
      * rounded-corner rectImpl.
      */
-
     float x0 = 0.0f;
     float y0 = 0.0f;
     float x1 = 0.0f;
@@ -2925,10 +2929,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @see Graphics2D#rotate(double)
    */
   @Override
-  public void rotate ( final float angle ) {
-
-    this.g2.rotate(angle);
-  }
+  public void rotate ( final float angle ) { this.g2.rotate(angle); }
 
   /**
    * Rotates the sketch by an angle in radians around the x axis. For
@@ -2967,10 +2968,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @see Graphics2D#rotate(double)
    */
   @Override
-  public void rotateZ ( final float angle ) {
-
-    this.g2.rotate(angle);
-  }
+  public void rotateZ ( final float angle ) { this.g2.rotate(angle); }
 
   /**
    * Scales the renderer by a dimension.
@@ -2978,19 +2976,22 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @param dim the dimensions
    * @see Graphics2D#scale(double, double)
    */
-  public void scale ( final Vec2 dim ) {
-
-    this.g2.scale(dim.x, dim.y);
-  }
+  public void scale ( final Vec2 dim ) { this.g2.scale(dim.x, dim.y); }
 
   /**
-   * Takes a two-dimensional x, y position and returns the coordinate
-   * for where it will appear on a two-dimensional screen.
+   * Finds the screen position of a point in the world. <br>
+   * <br>
+   * More efficient than calling
+   * {@link PApplet#screenX(float, float, float)} and
+   * {@link PApplet#screenY(float, float, float)} separately. However,
+   * it is advisable to work with the renderer matrix directly.
    *
    * @param source the source coordinate
    * @param target the target coordinate
    * @return the screen coordinate
    */
+  @Override
+  @Experimental
   public Vec2 screen (
       final Vec2 source,
       final Vec2 target ) {
@@ -3008,15 +3009,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
   /**
    * Takes a two-dimensional x, y position and returns the x value for
-   * where it will appear on a two-dimensional screen.
-   *
-   * This is inefficient, use screen with Vec2 instead.
+   * where it will appear on a two-dimensional screen. This is
+   * inefficient, use {@link YupJ2#screen(Vec2, Vec2)} instead.
    *
    * @param x the x coordinate
    * @param y the y coordinate
    * @return the screen x coordinate
    */
   @Override
+  @Experimental
   public float screenX (
       final float x,
       final float y ) {
@@ -3028,10 +3029,25 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
   }
 
   /**
-   * Takes a two-dimensional x, y position and returns the y value for
-   * where it will appear on a two-dimensional screen.
+   * Takes a two-dimensional x, y position and returns the x value for
+   * where it will appear on a two-dimensional screen. This is
+   * inefficient, use {@link YupJ2#screen(Vec2, Vec2)} instead.
    *
-   * This is inefficient, use screen with a Vec2 instead.
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return the screen x coordinate
+   */
+  @Override
+  public float screenX ( final float x, final float y, final float z ) {
+
+    PGraphics.showDepthWarningXYZ("screenX");
+    return this.screenX(x, y);
+  }
+
+  /**
+   * Takes a two-dimensional x, y position and returns the y value for
+   * where it will appear on a two-dimensional screen. This is
+   * inefficient, use {@link YupJ2#screen(Vec2, Vec2)} instead.
    *
    * @param x the x coordinate
    * @param y the y coordinate
@@ -3039,6 +3055,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @see YupJ2#screen(Vec2, Vec2)
    */
   @Override
+  @Experimental
   public float screenY (
       final float x,
       final float y ) {
@@ -3047,6 +3064,23 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     return (float) (tr.getShearY() * x +
         tr.getScaleY() * y +
         tr.getTranslateY());
+  }
+
+  /**
+   * Takes a two-dimensional x, y position and returns the y value for
+   * where it will appear on a two-dimensional screen. This is
+   * inefficient, use {@link YupJ2#screen(Vec2, Vec2)} instead.
+   *
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return the screen y coordinate
+   * @see YupJ2#screen(Vec2, Vec2)
+   */
+  @Override
+  public float screenY ( final float x, final float y, final float z ) {
+
+    PGraphics.showDepthWarningXYZ("screenY");
+    return this.screenY(x, y);
   }
 
   /**
@@ -3076,10 +3110,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       final float m10, final float m11, final float m12 ) {
 
     /*
-     * Beware of unconventional method signature:
-     *
-     * m00: scale x, m10: shear y, m01: shear x, m11: scale y, m02:
-     * translation x, m12: translation y .
+     * Method signature: m00: scale x, m10: shear y, m01: shear x, m11:
+     * scale y, m02: translation x, m12: translation y .
      */
     this.affineNative.setTransform(
         m00, m10,
@@ -3135,10 +3167,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     this.height = height;
 
     /*
-     * Beware of unconventional method signature:
-     *
-     * m00: scale x, m10: shear y, m01: shear x, m11: scale y, m02:
-     * translation x, m12: translation y .
+     * Method signature: m00: scale x, m10: shear y, m01: shear x, m11:
+     * scale y, m02: translation x, m12: translation y .
      */
     this.affineNative.setTransform(
         1.0d, 0.0d,
@@ -3910,10 +3940,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return "camzup.pfriendly.YupJ2";
-  }
+  public String toString ( ) { return "camzup.pfriendly.YupJ2"; }
 
   /**
    * Applies a transform to the renderer's matrix.

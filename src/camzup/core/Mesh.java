@@ -275,10 +275,7 @@ public abstract class Mesh extends EntityData implements IMesh {
    *
    * @return the material index
    */
-  public int getMaterialIndex ( ) {
-
-    return this.materialIndex;
-  }
+  public int getMaterialIndex ( ) { return this.materialIndex; }
 
   /**
    * Sets this mesh's material index.

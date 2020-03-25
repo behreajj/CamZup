@@ -16,7 +16,7 @@ import camzup.core.Vec2;
  * based on its transform.
  */
 @Experimental
-public class Cam2 extends Entity2 {
+class Cam2 extends Entity2 {
 
   /**
    * An internal vector to hold the right axis retrieved from the

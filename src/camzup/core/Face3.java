@@ -39,6 +39,7 @@ public class Face3 implements Comparable < Face3 > {
    *
    * @param face the comparisand
    * @return the comparison
+   * @see Face3#centroid(Face3, Vec3)
    */
   @Override
   public int compareTo ( final Face3 face ) {
@@ -71,6 +72,7 @@ public class Face3 implements Comparable < Face3 > {
    * @param i      index
    * @param target output edge
    * @return the edge
+   * @see Utils#mod(int, int)
    */
   @Experimental
   public Edge3 getEdge (
@@ -133,6 +135,8 @@ public class Face3 implements Comparable < Face3 > {
    * @param radians the angle in radians
    * @param axis    the axis of rotation
    * @return this mesh
+   * @see Utils#cos(float)
+   * @see Utils#sin(float)
    * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
    */
   @Chainable
@@ -158,6 +162,7 @@ public class Face3 implements Comparable < Face3 > {
    *
    * @param q the quaternion
    * @return the mesh
+   * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
    */
   @Chainable
   public Face3 rotate ( final Quaternion q ) {
@@ -177,6 +182,8 @@ public class Face3 implements Comparable < Face3 > {
    *
    * @param radians the angle in radians
    * @return this mesh
+   * @see Utils#cos(float)
+   * @see Utils#sin(float)
    * @see Vec3#rotateX(Vec3, float, Vec3)
    */
   @Chainable
@@ -200,6 +207,8 @@ public class Face3 implements Comparable < Face3 > {
    *
    * @param radians the angle in radians
    * @return this mesh
+   * @see Utils#cos(float)
+   * @see Utils#sin(float)
    * @see Vec3#rotateY(Vec3, float, Vec3)
    */
   @Chainable
@@ -223,6 +232,8 @@ public class Face3 implements Comparable < Face3 > {
    *
    * @param radians the angle in radians
    * @return this mesh
+   * @see Utils#cos(float)
+   * @see Utils#sin(float)
    * @see Vec3#rotateZ(Vec3, float, Vec3)
    */
   @Chainable
@@ -255,7 +266,10 @@ public class Face3 implements Comparable < Face3 > {
   }
 
   /**
-   * Scales all coordinates in the face by a scalar.
+   * Scales all coordinates in the face by a scalar.<br>
+   * <br>
+   * Beware, non-uniform scaling requires that normals be recalculated
+   * for correct shading.
    *
    * @param scale the nonuniform scalar
    * @return this face
@@ -273,6 +287,7 @@ public class Face3 implements Comparable < Face3 > {
    *
    * @param scale the scalar
    * @return this face
+   * @see Vec3#mul(Vec3, float, Vec3)
    */
   @Chainable
   public Face3 scaleGlobal ( final float scale ) {
@@ -290,10 +305,14 @@ public class Face3 implements Comparable < Face3 > {
 
   /**
    * Scales all coordinates in the face by a scalar; uses global
-   * coordinates, i.e., doesn't consider the face's position.
+   * coordinates, i.e., doesn't consider the face's position. <br>
+   * <br>
+   * Beware, non-uniform scaling requires that normals be recalculated
+   * for correct shading.
    *
    * @param scale the nonuniform scalar
    * @return this face
+   * @see Vec3#mul(Vec3, Vec3, Vec3)
    */
   @Chainable
   public Face3 scaleGlobal ( final Vec3 scale ) {
@@ -315,6 +334,10 @@ public class Face3 implements Comparable < Face3 > {
    *
    * @param scale the scalar
    * @return this face
+   * @see Face3#centroid(Face3, Vec3)
+   * @see Vec3#sub(Vec3, Vec3, Vec3)
+   * @see Vec3#mul(Vec3, float, Vec3)
+   * @see Vec3#add(Vec3, Vec3, Vec3)
    */
   @Chainable
   public Face3 scaleLocal ( final float scale ) {
@@ -337,10 +360,18 @@ public class Face3 implements Comparable < Face3 > {
 
   /**
    * Scales all coordinates in the face by a scalar; subtracts the
-   * face's centroid from each vertex, scales, then adds the centroid.
+   * face's centroid from each vertex, scales, then adds the
+   * centroid.<br>
+   * <br>
+   * Beware, non-uniform scaling requires that normals be recalculated
+   * for correct shading.
    *
    * @param scale the nonuniform scalar
    * @return this face
+   * @see Face3#centroid(Face3, Vec3)
+   * @see Vec3#sub(Vec3, Vec3, Vec3)
+   * @see Vec3#mul(Vec3, Vec3, Vec3)
+   * @see Vec3#add(Vec3, Vec3, Vec3)
    */
   @Chainable
   public Face3 scaleLocal ( final Vec3 scale ) {
@@ -423,7 +454,8 @@ public class Face3 implements Comparable < Face3 > {
    * coordinates, i.e., doesn't consider the face's orientation.
    *
    * @param v the vector
-   * @return this face.
+   * @return this face
+   * @see Vec3#add(Vec3, Vec3, Vec3)
    */
   @Chainable
   public Face3 translateGlobal ( final Vec3 v ) {
@@ -444,6 +476,8 @@ public class Face3 implements Comparable < Face3 > {
    * @param face   the face
    * @param target the output vector
    * @return the centroid
+   * @see Vec3#add(Vec3, Vec3, Vec3)
+   * @see Vec3#div(Vec3, Vec3, Vec3)
    */
   public static Vec3 centroid (
       final Face3 face,
@@ -465,14 +499,17 @@ public class Face3 implements Comparable < Face3 > {
    * @param face   the face
    * @param target the output vector
    * @return the normal
+   * @see Vec3#add(Vec3, Vec3, Vec3)
+   * @see Vec3#div(Vec3, Vec3, Vec3)
+   * @see Vec3#normalize(Vec3, Vec3)
    */
   @Experimental
   public static Vec3 normal (
       final Face3 face,
       final Vec3 target ) {
 
-    // RESEARCH: Should this not depend on the pre-calculated normals?
-    // Instead calculate upon request?
+    // RESEARCH: Should this depend not on the pre-calculated normals but
+    // instead calculate upon request?
 
     target.reset();
     final Vert3[] verts = face.vertices;
@@ -490,8 +527,8 @@ public class Face3 implements Comparable < Face3 > {
       final Quaternion target ) {
 
     /*
-     * Use the quaternion imaginary as a temporary placeholder to hold the
-     * average of the face's normals.
+     * Use quaternion imaginary as a placeholder to hold the average of
+     * the face's normals.
      */
     final Vec3 imag = target.imag;
     Face3.normal(face, imag);

@@ -214,10 +214,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
      * @return the evaluation
      */
     @Override
-    public boolean hasNext ( ) {
-
-      return this.index < this.vec.length();
-    }
+    public boolean hasNext ( ) { return this.index < this.vec.length(); }
 
     /**
      * Gets the next value in the iterator.
@@ -226,10 +223,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
      * @see Vec2#get(int)
      */
     @Override
-    public Float next ( ) {
-
-      return this.vec.get(this.index++);
-    }
+    public Float next ( ) { return this.vec.get(this.index++); }
 
     /**
      * Returns the simple name of this class.
@@ -489,10 +483,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    * @return this vector
    */
   @Chainable
-  public Vec2 reset ( ) {
-
-    return this.set(0.0f, 0.0f);
-  }
+  public Vec2 reset ( ) { return this.set(0.0f, 0.0f); }
 
   /**
    * Sets the components of this vector from booleans, where false is
@@ -612,10 +603,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of this vector.

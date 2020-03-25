@@ -153,6 +153,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
    *
    * @param i the index
    * @return the curve.
+   * @see Utils#mod(int, int)
    */
   public Curve2 get ( final int i ) {
 
@@ -359,7 +360,8 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
 
   /**
    * Creates a string representing a group node in the SVG format. This
-   * SVG is designed for Processing compatibility, not for efficiency.
+   * SVG is designed for compatibility with Processing, not for
+   * efficiency.
    *
    * @param materials the array of materials
    * @return the string
@@ -383,7 +385,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 > {
       includesMats = matLen > 0;
     }
 
-    /* If no materials are present, use a default one instead. */
+    /* If no materials are present, use a default instead. */
     if ( !includesMats ) {
       result.append(MaterialSolid.defaultSvgMaterial(scale));
     }

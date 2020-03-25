@@ -209,9 +209,8 @@ public class Yup3 extends Up3 {
       return;
     }
 
-    // TEST Is it problematic when the camera's look direction
-    // is co-linear with the world up direction?
     if ( Vec3.areParallel(this.lookDir, this.refUp) ) {
+      // TEST Compare against oriented cylinder and Quaternion fromDir
       final float temp = this.refUp.y;
       this.refUp.y = this.refUp.z;
       this.refUp.z = temp;
@@ -251,7 +250,6 @@ public class Yup3 extends Up3 {
     this.camera(
         eye.x, eye.y, eye.z,
         center.x, center.y, center.z,
-
         Yup3.DEFAULT_REF_X,
         Yup3.DEFAULT_REF_Y,
         Yup3.DEFAULT_REF_Z);
@@ -289,7 +287,6 @@ public class Yup3 extends Up3 {
         this.colorModeX * IUpOgl.DEFAULT_LIGHT_R,
         this.colorModeY * IUpOgl.DEFAULT_LIGHT_G,
         this.colorModeZ * IUpOgl.DEFAULT_LIGHT_B,
-
         Yup3.DEFAULT_LIGHT_X,
         Yup3.DEFAULT_LIGHT_Y,
         Yup3.DEFAULT_LIGHT_Z);
@@ -319,8 +316,5 @@ public class Yup3 extends Up3 {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return "camzup.pfriendly.Yup3";
-  }
+  public String toString ( ) { return "camzup.pfriendly.Yup3"; }
 }

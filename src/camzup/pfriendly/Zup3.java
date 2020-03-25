@@ -257,9 +257,8 @@ public class Zup3 extends Up3 {
       return;
     }
 
-    // TEST Is it problematic when the camera's look direction
-    // is co-linear with the world up direction?
     if ( Vec3.areParallel(this.lookDir, this.refUp) ) {
+      // TEST Compare against oriented cylinder and Quaternion fromDir
       final float temp = this.refUp.y;
       this.refUp.y = this.refUp.z;
       this.refUp.z = temp;
@@ -380,15 +379,13 @@ public class Zup3 extends Up3 {
    * Therefore, any additional values that need initialization can be
    * attempted here.
    *
-   * @param iwidth  the width in pixels
-   * @param iheight the height in pixels
+   * @param width  the width in pixels
+   * @param height the height in pixels
    */
   @Override
-  public void setSize (
-      final int iwidth,
-      final int iheight ) {
+  public void setSize ( final int width, final int height ) {
 
-    super.setSize(iwidth, iheight);
+    super.setSize(width, height);
     this.ortho();
     this.camera();
   }
@@ -399,8 +396,5 @@ public class Zup3 extends Up3 {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return "camzup.pfriendly.Zup3";
-  }
+  public String toString ( ) { return "camzup.pfriendly.Zup3"; }
 }

@@ -1945,67 +1945,78 @@ public class Mesh3 extends Mesh {
     final int texCoordsLen = this.texCoords.length;
     final int normalsLen = this.normals.length;
     final int facesLen = this.faces.length;
-    final StringBuilder result = new StringBuilder(2048);
+    final StringBuilder objs = new StringBuilder(2048);
 
     /*
      * Append a comment listing the number of coordinates, texture
      * coordinates, normals and faces.
      */
-    result.append("# v: ").append(coordsLen)
-        .append(", vt: ").append(texCoordsLen)
-        .append(", vn: ").append(normalsLen)
-        .append(", f: ").append(facesLen)
-        .append('\n').append('\n');
+    objs.append("# v: ")
+        .append(coordsLen)
+        .append(", vt: ")
+        .append(texCoordsLen)
+        .append(", vn: ")
+        .append(normalsLen)
+        .append(", f: ")
+        .append(facesLen)
+        .append('\n')
+        .append('\n');
 
-    result.append('o').append(' ').append(this.name)
-        .append('\n').append('\n');
+    /* Append name. */
+    objs.append('o')
+        .append(' ')
+        .append(this.name)
+        .append('\n')
+        .append('\n');
 
     /* Write coordinates. */
     for ( final Vec3 coord : this.coords ) {
-      result.append('v').append(' ')
+      objs.append('v')
+          .append(' ')
           .append(coord.toObjString())
           .append('\n');
     }
-    result.append('\n');
+    objs.append('\n');
 
     /* Write texture coordinates. */
     for ( final Vec2 texCoord : this.texCoords ) {
-      result.append("vt ")
+      objs.append("vt ")
           .append(texCoord.toObjString())
           .append('\n');
     }
-    result.append('\n');
+    objs.append('\n');
 
     /* Write normals. */
     for ( final Vec3 normal : this.normals ) {
-      result.append("vn ")
+      objs.append("vn ")
           .append(normal.toObjString())
           .append('\n');
     }
-    result.append('\n');
+    objs.append('\n');
 
     for ( int i = 0; i < facesLen; ++i ) {
 
       final int[][] face = this.faces[i];
       final int vLen = face.length;
-      result.append('f').append(' ');
+      objs.append('f')
+          .append(' ');
 
       for ( int j = 0; j < vLen; ++j ) {
 
         /* Indices in an .obj file start at 1, not 0. */
         final int[] vert = face[j];
-        result.append(vert[0] + 1)
+        objs.append(vert[0] + 1)
             .append('/')
             .append(vert[1] + 1)
             .append('/')
-            .append(vert[2] + 1);
+            .append(vert[2] + 1)
+            .append(' ');
       }
 
-      result.append('\n');
+      objs.append('\n');
     }
 
-    result.append('\n');
-    return result.toString();
+    return objs.toString();
   }
 
   /**
@@ -2037,10 +2048,7 @@ public class Mesh3 extends Mesh {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of the mesh.
@@ -2074,7 +2082,8 @@ public class Mesh3 extends Mesh {
 
     if ( this.coords != null ) {
       // sb.append('\n');
-      final int len = Math.min(this.coords.length, truncate);
+      final int len = (this.coords.length <= truncate) ? this.coords.length
+          : truncate;
       final int last = len - 1;
       for ( int i = 0; i < len; ++i ) {
         sb.append(this.coords[i].toString(places));
@@ -2095,7 +2104,9 @@ public class Mesh3 extends Mesh {
     sb.append("texCoords: [ ");
     if ( this.texCoords != null ) {
       // sb.append('\n');
-      final int len = Math.min(this.texCoords.length, truncate);
+      final int len = (this.texCoords.length <= truncate)
+          ? this.texCoords.length
+          : truncate;
       final int last = len - 1;
       for ( int i = 0; i < len; ++i ) {
         sb.append(this.texCoords[i].toString(places));
@@ -2116,7 +2127,8 @@ public class Mesh3 extends Mesh {
     sb.append("normals: [ ");
     if ( this.normals != null ) {
       // sb.append('\n');
-      final int len = Math.min(this.normals.length, truncate);
+      final int len = (this.normals.length <= truncate) ? this.normals.length
+          : truncate;
       final int last = len - 1;
       for ( int i = 0; i < len; ++i ) {
         sb.append(this.normals[i].toString(places));
@@ -2137,7 +2149,8 @@ public class Mesh3 extends Mesh {
     sb.append("faces: [ ");
     if ( this.faces != null ) {
       // sb.append('\n');
-      final int facesLen = Math.min(this.faces.length, truncate);
+      final int facesLen = (this.faces.length <= truncate) ? this.faces.length
+          : truncate;
       final int facesLast = facesLen - 1;
 
       for ( int i = 0; i < facesLen; ++i ) {
@@ -3133,7 +3146,6 @@ public class Mesh3 extends Mesh {
     target.texCoords[21].set(1.0f, 0.421387f);
 
     target.normals = Vec3.resize(target.normals, 20);
-
     target.normals[0].set(0.0f, -0.60706145f, 0.79465485f);
     target.normals[1].set(0.57735217f, -0.7946537f, -0.18758972f);
     target.normals[2].set(0.934172f, -0.30353418f, 0.18758905f);

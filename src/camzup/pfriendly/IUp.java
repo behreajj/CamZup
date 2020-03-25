@@ -199,10 +199,7 @@ public interface IUp {
   /**
    * Uses the renderer's default background color.
    */
-  default void background ( ) {
-
-    this.background(IUp.DEFAULT_BKG_COLOR);
-  }
+  default void background ( ) { this.background(IUp.DEFAULT_BKG_COLOR); }
 
   /**
    * Set the renderer's background color.
@@ -229,20 +226,14 @@ public interface IUp {
   /**
    * Uses the renderer's default fill color.
    */
-  default void fill ( ) {
-
-    this.fill(IUp.DEFAULT_FILL_COLOR);
-  }
+  default void fill ( ) { this.fill(IUp.DEFAULT_FILL_COLOR); }
 
   /**
    * Sets the renderer's current fill to the color.
    *
    * @param c the color
    */
-  default void fill ( final Color c ) {
-
-    this.fill(Color.toHexInt(c));
-  }
+  default void fill ( final Color c ) { this.fill(Color.toHexInt(c)); }
 
   /**
    * Sets the renderer's current fill to the hexadecimal value.
@@ -356,20 +347,14 @@ public interface IUp {
   /**
    * Uses the renderer's default stroke color.
    */
-  default void stroke ( ) {
-
-    this.stroke(IUp.DEFAULT_STROKE_COLOR);
-  }
+  default void stroke ( ) { this.stroke(IUp.DEFAULT_STROKE_COLOR); }
 
   /**
    * Sets the renderer's current stroke to the color.
    *
    * @param c the color
    */
-  default void stroke ( final Color c ) {
-
-    this.stroke(Color.toHexInt(c));
-  }
+  default void stroke ( final Color c ) { this.stroke(Color.toHexInt(c)); }
 
   /**
    * Sets the renderer's current stroke to the hexadecimal value.
@@ -398,10 +383,7 @@ public interface IUp {
    *
    * @param c the color
    */
-  default void tint ( final Color c ) {
-
-    this.tint(Color.toHexInt(c));
-  }
+  default void tint ( final Color c ) { this.tint(Color.toHexInt(c)); }
 
   /**
    * Sets the renderer's current tint to the hexadecimal value.
@@ -454,7 +436,7 @@ public interface IUp {
      * curved line with different fore- and rear-handles; the pen lifts
      * and stops drawing.
      */
-    final PathIterator iter = detail == 0 ? shp.getPathIterator(transform)
+    final PathIterator itr = detail == 0 ? shp.getPathIterator(transform)
         : shp.getPathIterator(transform, detail);
 
     /*
@@ -469,13 +451,13 @@ public interface IUp {
     Knot2 prevKnot = null;
     Knot2 currKnot = null;
 
-    while ( !iter.isDone() ) {
+    while ( !itr.isDone() ) {
 
       /*
        * y-axis is flipped in all cases, for y-up.
        */
 
-      final int segType = iter.currentSegment(itrpts);
+      final int segType = itr.currentSegment(itrpts);
       switch ( segType ) {
         case PathIterator.SEG_MOVETO:
 
@@ -620,7 +602,7 @@ public interface IUp {
 
       }
 
-      iter.next();
+      itr.next();
     }
 
     return curves;

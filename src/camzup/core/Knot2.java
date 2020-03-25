@@ -1003,10 +1003,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of this knot.

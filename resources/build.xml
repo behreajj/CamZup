@@ -58,8 +58,7 @@
 
 
 	<tstamp>
-		<format property="date" pattern="MM/dd/yyyy" offset="0"
-			unit="hour" />
+		<format property="date" pattern="MM/dd/yyyy" offset="0" unit="hour" />
 	</tstamp>
 
 	<target name="init">

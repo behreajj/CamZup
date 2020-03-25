@@ -13,6 +13,7 @@ import processing.opengl.PGraphicsOpenGL;
 
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
+import camzup.core.Experimental;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
 import camzup.core.Mat3;
@@ -22,6 +23,7 @@ import camzup.core.MeshEntity2;
 import camzup.core.Transform2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
+import camzup.core.Vec4;
 
 /**
  * A 2.5D renderer based on OpenGL. Supposes that the the camera is
@@ -190,6 +192,15 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   }
 
   /**
+   * Sets the camera to the Processing default, where the origin is in
+   * the top left corner of the sketch and the y axis points downward.
+   */
+  public void camDown ( ) {
+
+    this.camera(this.width * 0.5f, this.height * 0.5f, 0.0f, 1.0f, -1.0f);
+  }
+
+  /**
    * Sets the camera to the renderer defaults.
    */
   @Override
@@ -209,9 +220,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    * @param x the location x component
    * @param y the location y component
    */
-  public void camera (
-      final float x,
-      final float y ) {
+  public void camera ( final float x, final float y ) {
 
     this.camera(x, y, Yup2.DEFAULT_ROT,
         Yup2.DEFAULT_ZOOM_X,
@@ -255,8 +264,8 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     this.cameraX = x;
     this.cameraY = y;
     this.cameraRot = radians;
-    this.cameraZoomX = zx < IUtils.DEFAULT_EPSILON ? 1.0f : zx;
-    this.cameraZoomY = zy < IUtils.DEFAULT_EPSILON ? 1.0f : zy;
+    this.cameraZoomX = Utils.abs(zx) < IUtils.DEFAULT_EPSILON ? 1.0f : zx;
+    this.cameraZoomY = Utils.abs(zy) < IUtils.DEFAULT_EPSILON ? 1.0f : zy;
     final float zDist = this.height < 128 ? 128 : this.height;
 
     /*
@@ -452,9 +461,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   @Override
   public Vec2 getZoom ( final Vec2 target ) {
 
-    return target.set(
-        this.cameraZoomX,
-        this.cameraZoomY);
+    return target.set(this.cameraZoomX, this.cameraZoomY);
   }
 
   /**
@@ -478,10 +485,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    *
    * @param ce the curve entity
    */
-  public void handles ( final CurveEntity2 ce ) {
-
-    this.handles(ce, 1.0f);
-  }
+  public void handles ( final CurveEntity2 ce ) { this.handles(ce, 1.0f); }
 
   /**
    * Displays the handles of a curve entity.
@@ -579,10 +583,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    * @param img the image
    */
   @Override
-  public void image ( final PImage img ) {
-
-    this.image(img, 0.0f, 0.0f);
-  }
+  public void image ( final PImage img ) { this.image(img, 0.0f, 0.0f); }
 
   /**
    * Draws an image at a given coordinate.
@@ -670,13 +671,113 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    * @param dest   the destination coordinate
    */
   @Override
-  public void line (
-      final Vec2 origin,
-      final Vec2 dest ) {
+  public void line ( final Vec2 origin, final Vec2 dest ) {
 
     this.lineImpl(
         origin.x, origin.y, 0.0f,
         dest.x, dest.y, 0.0f);
+  }
+
+  /**
+   * Finds the model view position of a point.<br>
+   * <br>
+   * More efficient than calling
+   * {@link PApplet#modelX(float, float, float)} and
+   * {@link PApplet#modelY(float, float, float)} separately. However, it
+   * is advisable to work with the renderer matrices directly.
+   *
+   * @param source the point
+   * @param target the output vector
+   * @return the model point
+   */
+  @Override
+  public Vec2 model (
+      final Vec2 source,
+      final Vec2 target ) {
+
+    /* Multiply point by model-view matrix. */
+    final float aw = this.modelview.m30 * source.x +
+        this.modelview.m31 * source.y +
+        this.modelview.m33;
+
+    final float ax = this.modelview.m00 * source.x +
+        this.modelview.m01 * source.y +
+        this.modelview.m03;
+
+    final float ay = this.modelview.m10 * source.x +
+        this.modelview.m11 * source.y +
+        this.modelview.m13;
+
+    final float az = this.modelview.m20 * source.x +
+        this.modelview.m21 * source.y +
+        this.modelview.m23;
+
+    /* Multiply point by inverse of camera matrix. */
+    final float bw = this.cameraInv.m30 * ax +
+        this.cameraInv.m31 * ay +
+        this.cameraInv.m32 * az +
+        this.cameraInv.m33 * aw;
+
+    if ( bw == 0.0f ) { return target.reset(); }
+
+    final float bx = this.cameraInv.m00 * ax +
+        this.cameraInv.m01 * ay +
+        this.cameraInv.m02 * az +
+        this.cameraInv.m03 * aw;
+
+    final float by = this.cameraInv.m10 * ax +
+        this.cameraInv.m11 * ay +
+        this.cameraInv.m12 * az +
+        this.cameraInv.m13 * aw;
+
+    /* Convert from homogeneous coordinate to point by dividing by w. */
+    if ( bw == 1.0f ) { return target.set(bx, by); }
+    final float wInv = 1.0f / bw;
+    return target.set(bx * wInv, by * wInv);
+  }
+
+  /**
+   * Takes a two-dimensional x, y position and returns the x value for
+   * where it will appear on a model view. This is inefficient, use
+   * {@link IYup2#model(Vec2, Vec2)} instead.
+   *
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return the model x coordinate
+   */
+  @Override
+  public float modelX ( final float x, final float y ) {
+
+    return this.modelX(x, y, 0.0f);
+  }
+
+  /**
+   * Takes a two-dimensional x, y position and returns the y value for
+   * where it will appear on a model view. This is inefficient, use
+   * {@link IYup2#model(Vec2, Vec2)} instead.
+   *
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return the model y coordinate
+   */
+  @Override
+  public float modelY ( final float x, final float y ) {
+
+    return this.modelY(x, y, 0.0f);
+  }
+
+  /**
+   * Takes a two-dimensional x, y position and returns the z value for
+   * where it will appear on a model view. This is inefficient, use
+   * {@link IYup2#model(Vec2, Vec2)} instead.
+   *
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return the model z coordinate
+   */
+  public float modelZ ( final float x, final float y ) {
+
+    return this.modelZ(x, y, 0.0f);
   }
 
   /**
@@ -763,7 +864,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   @Override
   public void point ( final Vec2 coord ) {
 
-    this.point(coord.x, coord.y, 0.0f);
+    this.pointImpl(coord.x, coord.y, 0.0f);
   }
 
   /**
@@ -815,9 +916,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   @Override
   public void rect ( final Vec2 a, final Vec2 b ) {
 
-    this.rectImpl(
-        a.x, a.y,
-        b.x, b.y);
+    this.rectImpl(a.x, a.y, b.x, b.y);
   }
 
   /**
@@ -890,9 +989,73 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    *
    * @param v the vector
    */
-  public void scale ( final Vec2 v ) {
+  public void scale ( final Vec2 v ) { this.scaleImpl(v.x, v.y, 1.0f); }
 
-    this.scaleImpl(v.x, v.y, 1.0f);
+  /**
+   * Finds the screen position of a point in the world.<br>
+   * <br>
+   * More efficient than calling
+   * {@link PApplet#screenX(float, float, float)} ,
+   * {@link PApplet#screenY(float, float, float)} , and
+   * {@link PApplet#screenZ(float, float, float)} separately. However,
+   * it is advisable to work with {@link Vec4}s and the renderer
+   * matrices directly.
+   *
+   * @param source the point
+   * @param target the output vector
+   * @return the screen point
+   */
+  @Override
+  @Experimental
+  public Vec2 screen ( final Vec2 source, final Vec2 target ) {
+
+    /* Multiply point by model-view matrix. */
+    final float aw = this.modelview.m30 * source.x +
+        this.modelview.m31 * source.y +
+        this.modelview.m33;
+
+    final float ax = this.modelview.m00 * source.x +
+        this.modelview.m01 * source.y +
+        this.modelview.m03;
+
+    final float ay = this.modelview.m10 * source.x +
+        this.modelview.m11 * source.y +
+        this.modelview.m13;
+
+    final float az = this.modelview.m20 * source.x +
+        this.modelview.m21 * source.y +
+        this.modelview.m23;
+
+    /* Multiply new point by projection. */
+    final float bw = this.projection.m30 * ax +
+        this.projection.m31 * ay +
+        this.projection.m32 * az +
+        this.projection.m33 * aw;
+
+    if ( bw == 0.0f ) { return target.reset(); }
+
+    float bx = this.projection.m00 * ax +
+        this.projection.m01 * ay +
+        this.projection.m02 * az +
+        this.projection.m03 * aw;
+
+    float by = this.projection.m10 * ax +
+        this.projection.m11 * ay +
+        this.projection.m12 * az +
+        this.projection.m13 * aw;
+
+    if ( bw != 1.0f ) {
+      final float wInv = 1.0f / bw;
+      bx *= wInv;
+      by *= wInv;
+    }
+
+    // return target.set(
+    // this.width * (1.0f + bx) * 0.5f,
+    // this.height * (1.0f + by) * 0.5f);
+    return target.set(
+        this.width * (1.0f + bx) * 0.5f,
+        this.height * (1.0f - (1.0f + by) * 0.5f));
   }
 
   /**
@@ -913,11 +1076,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    * attempted here.
    */
   @Override
-  public void setSize (
-      final int iwidth,
-      final int iheight ) {
+  public void setSize ( final int width, final int height ) {
 
-    super.setSize(iwidth, iheight);
+    super.setSize(width, height);
     this.ortho();
     this.camera();
   }
@@ -1242,10 +1403,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return "camzup.pfriendly.Yup2";
-  }
+  public String toString ( ) { return "camzup.pfriendly.Yup2"; }
 
   /**
    * Translate the renderer by a vector.
@@ -1285,9 +1443,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   @Override
   public void vertex ( final Vec2 v ) {
 
-    this.vertexImpl(
-        v.x, v.y, 0.0f,
-        this.textureU, this.textureV);
+    this.vertexImpl(v.x, v.y, 0.0f, this.textureU, this.textureV);
   }
 
   /**

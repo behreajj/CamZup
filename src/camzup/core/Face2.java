@@ -39,6 +39,7 @@ public class Face2 implements Comparable < Face2 > {
    *
    * @param face the comparisand
    * @return the comparison
+   * @see Face2#centroid(Face2, Vec2)
    */
   @Override
   public int compareTo ( final Face2 face ) {
@@ -72,6 +73,7 @@ public class Face2 implements Comparable < Face2 > {
    * @param i      index
    * @param target output edge
    * @return the edge
+   * @see Utils#mod(int, int)
    */
   @Experimental
   public Edge2 getEdge (
@@ -169,7 +171,12 @@ public class Face2 implements Comparable < Face2 > {
    *
    * @param radians the angle in radians
    * @return this mesh
+   * @see Face2#centroid(Face2, Vec2)
+   * @see Utils#cos(float)
+   * @see Utils#sin(float)
+   * @see Vec2#sub(Vec2, Vec2, Vec2)
    * @see Vec2#rotateZ(Vec2, float, Vec2)
+   * @see Vec2#add(Vec2, Vec2, Vec2)
    */
   @Chainable
   public Face2 rotateZLocal ( final float radians ) {
@@ -222,6 +229,7 @@ public class Face2 implements Comparable < Face2 > {
    *
    * @param scale the scalar
    * @return this face
+   * @see Vec2#mul(Vec2, float, Vec2)
    */
   @Chainable
   public Face2 scaleGlobal ( final float scale ) {
@@ -243,6 +251,8 @@ public class Face2 implements Comparable < Face2 > {
    *
    * @param scale the nonuniform scalar
    * @return this face
+   * @see Vec2#none(Vec2)
+   * @see Vec2#mul(Vec2, Vec2, Vec2)
    */
   @Chainable
   public Face2 scaleGlobal ( final Vec2 scale ) {
@@ -264,6 +274,10 @@ public class Face2 implements Comparable < Face2 > {
    *
    * @param scale the scalar
    * @return this face
+   * @see Face2#centroid(Face2, Vec2)
+   * @see Vec2#sub(Vec2, Vec2, Vec2)
+   * @see Vec2#mul(Vec2, float, Vec2)
+   * @see Vec2#add(Vec2, Vec2, Vec2)
    */
   @Chainable
   public Face2 scaleLocal ( final float scale ) {
@@ -290,6 +304,11 @@ public class Face2 implements Comparable < Face2 > {
    *
    * @param scale the nonuniform scalar
    * @return this face
+   * @see Vec2#none(Vec2)
+   * @see Face2#centroid(Face2, Vec2)
+   * @see Vec2#sub(Vec2, Vec2, Vec2)
+   * @see Vec2#mul(Vec2, Vec2, Vec2)
+   * @see Vec2#add(Vec2, Vec2, Vec2)
    */
   @Chainable
   public Face2 scaleLocal ( final Vec2 scale ) {
@@ -394,6 +413,8 @@ public class Face2 implements Comparable < Face2 > {
    * @param face   the face
    * @param target the output vector
    * @return the centroid
+   * @see Vec2#add(Vec2, Vec2, Vec2)
+   * @see Vec2#div(Vec2, float, Vec2)
    */
   public static Vec2 centroid (
       final Face2 face,
@@ -408,6 +429,13 @@ public class Face2 implements Comparable < Face2 > {
     return Vec2.div(target, len, target);
   }
 
+  /**
+   * Evaluates whether the face contains a point.
+   *
+   * @param face  the face
+   * @param point the point
+   * @return the evaluation
+   */
   @Experimental
   public static boolean contains (
       final Face2 face,

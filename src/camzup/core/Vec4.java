@@ -171,10 +171,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
      *
      * @param vec the vector to iterate
      */
-    public V4Iterator ( final Vec4 vec ) {
-
-      this.vec = vec;
-    }
+    public V4Iterator ( final Vec4 vec ) { this.vec = vec; }
 
     /**
      * Tests to see if the iterator has another value.
@@ -182,10 +179,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
      * @return the evaluation
      */
     @Override
-    public boolean hasNext ( ) {
-
-      return this.index < this.vec.length();
-    }
+    public boolean hasNext ( ) { return this.index < this.vec.length(); }
 
     /**
      * Gets the next value in the iterator.
@@ -194,10 +188,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
      * @return the value
      */
     @Override
-    public Float next ( ) {
-
-      return this.vec.get(this.index++);
-    }
+    public Float next ( ) { return this.vec.get(this.index++); }
 
     /**
      * Returns the simple name of this class.
@@ -687,10 +678,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of this vector.

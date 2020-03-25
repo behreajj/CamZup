@@ -722,10 +722,7 @@ public class Color extends Vec4 {
   /**
    * The default constructor. Creates a white color.
    */
-  public Color ( ) {
-
-    super(1.0f, 1.0f, 1.0f, 1.0f);
-  }
+  public Color ( ) { super(1.0f, 1.0f, 1.0f, 1.0f); }
 
   /**
    * Creates a color from bytes. In Java, bytes are signed, within the
@@ -828,6 +825,7 @@ public class Color extends Vec4 {
    *
    * @return the string
    */
+  @Override
   String toBlenderCode ( ) {
 
     return this.toBlenderCode(1.0f, true);
@@ -1130,10 +1128,7 @@ public class Color extends Vec4 {
    * @see Float#floatToIntBits(float)
    */
   @Override
-  public int hashCode ( ) {
-
-    return Color.toHexInt(this);
-  }
+  public int hashCode ( ) { return Color.toHexInt(this); }
 
   /**
    * Gets the red channel.

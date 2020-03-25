@@ -98,10 +98,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
   /**
    * The default constructor.
    */
-  public UpOgl ( ) {
-
-    super();
-  }
+  public UpOgl ( ) { super(); }
 
   /**
    * A constructor for manually initializing the renderer.
@@ -157,9 +154,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         n10, n11, n12, n13,
         n20, n21, n22, n23,
         n30, n31, n32, n33);
-
     PMatAux.inverse(this.modelview, this.modelviewInv);
-
     this.projmodelview.apply(
         n00, n01, n02, n03,
         n10, n11, n12, n13,
@@ -597,7 +592,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * AWT?). All image functions should flow into this, but instead this
      * flows into a public image implementation.
      */
-
     final int savedTextureMode = this.textureMode;
     this.textureMode = PConstants.IMAGE;
 
@@ -807,6 +801,93 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     final int num2 = num + num;
     this.lightSpotParameters[num2] = Utils.max(0.0f, Utils.cos(radians));
     this.lightSpotParameters[num2 + 1] = exponent;
+  }
+
+  /**
+   * Internal helper to public functions for 2.5D and 3D. Finds the
+   * position of a point in the model view. Does so by
+   * <ol>
+   * <li>promoting the point to a vector 4, where its w component is 1.0
+   * .</li>
+   * <li>multiplying the vector 4 by the model view matrix;</li>
+   * <li>multiplying the product by the camera inverse;</li>
+   * <li>demoting the vector 4 to a point 3 by dividing the x, y and z
+   * components by w.</li>
+   * </ol>
+   * More efficient than calling
+   * {@link PApplet#modelX(float, float, float)} ,
+   * {@link PApplet#modelY(float, float, float)} and
+   * {@link PApplet#modelZ(float, float, float)} separately. However, it
+   * is advisable to work with {@link Vec4}s and the renderer matrices
+   * directly.
+   *
+   * @param xSource the source x
+   * @param ySource the source y
+   * @param zSource the source z
+   * @param target  the output point
+   * @return the model space point
+   */
+  protected Vec3 model (
+      final float xSource,
+      final float ySource,
+      final float zSource,
+      final Vec3 target ) {
+
+    /* Multiply point by model-view matrix. */
+    final float aw = this.modelview.m30 * xSource +
+        this.modelview.m31 * ySource +
+        this.modelview.m32 * zSource +
+        this.modelview.m33;
+
+    final float ax = this.modelview.m00 * xSource +
+        this.modelview.m01 * ySource +
+        this.modelview.m02 * zSource +
+        this.modelview.m03;
+
+    final float ay = this.modelview.m10 * xSource +
+        this.modelview.m11 * ySource +
+        this.modelview.m12 * zSource +
+        this.modelview.m13;
+
+    final float az = this.modelview.m20 * xSource +
+        this.modelview.m21 * ySource +
+        this.modelview.m22 * zSource +
+        this.modelview.m23;
+
+    /* Multiply point by inverse of camera matrix. */
+    final float bw = this.cameraInv.m30 * ax +
+        this.cameraInv.m31 * ay +
+        this.cameraInv.m32 * az +
+        this.cameraInv.m33 * aw;
+
+    if ( bw == 0.0f ) { return target.reset(); }
+
+    final float bx = this.cameraInv.m00 * ax +
+        this.cameraInv.m01 * ay +
+        this.cameraInv.m02 * az +
+        this.cameraInv.m03 * aw;
+
+    final float by = this.cameraInv.m10 * ax +
+        this.cameraInv.m11 * ay +
+        this.cameraInv.m12 * az +
+        this.cameraInv.m13 * aw;
+
+    final float bz = this.cameraInv.m20 * ax +
+        this.cameraInv.m21 * ay +
+        this.cameraInv.m22 * az +
+        this.cameraInv.m23 * aw;
+
+    if ( bw == 1.0f ) { return target.set(bx, by, bz); }
+
+    /*
+     * Convert from homogeneous coordinate to point by dividing by fourth
+     * component, w.
+     */
+    final float wInv = 1.0f / bw;
+    return target.set(
+        bx * wInv,
+        by * wInv,
+        bz * wInv);
   }
 
   /**
@@ -1063,6 +1144,97 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
   }
 
   /**
+   * Internal helper to public functions for 2.5D and 3D. Finds the
+   * screen position of a point in the world. Does so by
+   * <ol>
+   * <li>promoting the point to a vector 4, where its w component is 1.0
+   * .</li>
+   * <li>multiplying the vector 4 by the model view matrix;</li>
+   * <li>multiplying the product by the projection;</li>
+   * <li>demoting the vector 4 to a point 3 by dividing the x, y and z
+   * components by w;</li>
+   * <li>shifting the range from [-1.0, 1.0] to [(0.0, 0.0), (width,
+   * height)] .</li>
+   * </ol>
+   *
+   * More efficient than calling
+   * {@link PApplet#screenX(float, float, float)} ,
+   * {@link PApplet#screenY(float, float, float)} , and
+   * {@link PApplet#screenZ(float, float, float)} separately. However,
+   * it is advisable to work with {@link Vec4}s and the renderer
+   * matrices directly.
+   *
+   * @param xSource the source x
+   * @param ySource the source y
+   * @param zSource the source z
+   * @param target  the output vector
+   * @return the screen point
+   */
+  protected Vec3 screen (
+      final float xSource,
+      final float ySource,
+      final float zSource,
+      final Vec3 target ) {
+
+    /* Multiply point by model-view matrix. */
+    final float aw = this.modelview.m30 * xSource +
+        this.modelview.m31 * ySource +
+        this.modelview.m32 * zSource +
+        this.modelview.m33;
+
+    final float ax = this.modelview.m00 * xSource +
+        this.modelview.m01 * ySource +
+        this.modelview.m02 * zSource +
+        this.modelview.m03;
+
+    final float ay = this.modelview.m10 * xSource +
+        this.modelview.m11 * ySource +
+        this.modelview.m12 * zSource +
+        this.modelview.m13;
+
+    final float az = this.modelview.m20 * xSource +
+        this.modelview.m21 * ySource +
+        this.modelview.m22 * zSource +
+        this.modelview.m23;
+
+    /* Multiply new point by projection. */
+    final float bw = this.projection.m30 * ax +
+        this.projection.m31 * ay +
+        this.projection.m32 * az +
+        this.projection.m33 * aw;
+
+    if ( bw == 0.0f ) { return target.reset(); }
+
+    float bx = this.projection.m00 * ax +
+        this.projection.m01 * ay +
+        this.projection.m02 * az +
+        this.projection.m03 * aw;
+
+    float by = this.projection.m10 * ax +
+        this.projection.m11 * ay +
+        this.projection.m12 * az +
+        this.projection.m13 * aw;
+
+    float bz = this.projection.m20 * ax +
+        this.projection.m21 * ay +
+        this.projection.m22 * az +
+        this.projection.m23 * aw;
+
+    /* Convert homogeneous coordinate. */
+    if ( bw != 1.0f ) {
+      final float wInv = 1.0f / bw;
+      bx *= wInv;
+      by *= wInv;
+      bz *= wInv;
+    }
+
+    return target.set(
+        this.width * (1.0f + bx) * 0.5f,
+        this.height * (1.0f - (1.0f + by) * 0.5f),
+        (1.0f + bz) * 0.5f);
+  }
+
+  /**
    * Draws a character depending on the text mode.
    *
    * @param ch the character
@@ -1282,9 +1454,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * @param v the t or v coordinate
    */
   @Override
-  protected void vertexTexture (
-      final float u,
-      final float v ) {
+  protected void vertexTexture ( final float u, final float v ) {
 
     this.vertexTexture(u, v, this.textureMode, this.textureWrap);
   }
@@ -2106,10 +2276,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    *
    * @param img the image
    */
-  public void image ( final PImage img ) {
-
-    this.image(img, 0.0f, 0.0f);
-  }
+  public void image ( final PImage img ) { this.image(img, 0.0f, 0.0f); }
 
   /**
    * Displays a PImage at a location. Uses the image's width and height
@@ -2370,74 +2537,45 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
   }
 
   /**
-   * Processing's modelX, modelY and modelZ functions are very
-   * inefficient, as each one calculates the product of the model view
-   * and the point. This function groups all three model functions into
-   * one.
+   * Finds the model view position of a point.<br>
+   * <br>
+   * More efficient than calling
+   * {@link PApplet#modelX(float, float, float)} ,
+   * {@link PApplet#modelY(float, float, float)} and
+   * {@link PApplet#modelZ(float, float, float)} separately. However, it
+   * is advisable to work with {@link Vec4}s and the renderer matrices
+   * directly.
    *
-   * @param point  the input point
-   * @param target the output point
-   * @return the model space point
+   * @param source the point
+   * @param target the output vector
+   * @return the screen point
    */
   public Vec3 model (
-      final Vec3 point,
+      final Vec2 source,
       final Vec3 target ) {
 
-    /* Multiply point by model-view matrix. */
-    final float aw = this.modelview.m30 * point.x +
-        this.modelview.m31 * point.y +
-        this.modelview.m32 * point.z +
-        this.modelview.m33;
+    return this.model(source.x, source.y, 0.0f, target);
+  }
 
-    final float ax = this.modelview.m00 * point.x +
-        this.modelview.m01 * point.y +
-        this.modelview.m02 * point.z +
-        this.modelview.m03;
+  /**
+   * Finds the model view position of a point.<br>
+   * <br>
+   * More efficient than calling
+   * {@link PApplet#modelX(float, float, float)} ,
+   * {@link PApplet#modelY(float, float, float)} and
+   * {@link PApplet#modelZ(float, float, float)} separately. However, it
+   * is advisable to work with {@link Vec4}s and the renderer matrices
+   * directly.
+   *
+   * @param source the point
+   * @param target the output vector
+   * @return the screen point
+   */
+  public Vec3 model (
+      final Vec3 source,
+      final Vec3 target ) {
 
-    final float ay = this.modelview.m10 * point.x +
-        this.modelview.m11 * point.y +
-        this.modelview.m12 * point.z +
-        this.modelview.m13;
-
-    final float az = this.modelview.m20 * point.x +
-        this.modelview.m21 * point.y +
-        this.modelview.m22 * point.z +
-        this.modelview.m23;
-
-    /* Multiply point by inverse of camera matrix. */
-    final float bw = this.cameraInv.m30 * ax +
-        this.cameraInv.m31 * ay +
-        this.cameraInv.m32 * az +
-        this.cameraInv.m33 * aw;
-
-    if ( bw == 0.0f ) { return target.reset(); }
-
-    final float bx = this.cameraInv.m00 * ax +
-        this.cameraInv.m01 * ay +
-        this.cameraInv.m02 * az +
-        this.cameraInv.m03 * aw;
-
-    final float by = this.cameraInv.m10 * ax +
-        this.cameraInv.m11 * ay +
-        this.cameraInv.m12 * az +
-        this.cameraInv.m13 * aw;
-
-    final float bz = this.cameraInv.m20 * ax +
-        this.cameraInv.m21 * ay +
-        this.cameraInv.m22 * az +
-        this.cameraInv.m23 * aw;
-
-    if ( bw == 1.0f ) { return target.set(bx, by, bz); }
-
-    /*
-     * Convert from homogeneous coordinate to point by dividing by fourth
-     * component, w.
-     */
-    final float wInv = 1.0f / bw;
-    return target.set(
-        bx * wInv,
-        by * wInv,
-        bz * wInv);
+    return this.model(source.x, source.y, source.z, target);
   }
 
   /**
@@ -2774,10 +2912,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * @param radians the angle in radians
    */
   @Override
-  public void rotate ( final float radians ) {
-
-    this.rotateZ(radians);
-  }
+  public void rotate ( final float radians ) { this.rotateZ(radians); }
 
   /**
    * Rotates the sketch by an angle in radians around the x axis.
@@ -2855,19 +2990,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
   }
 
   /**
-   * Attempts to find the screen position of a point in the world. Does
-   * so by
-   * <ol>
-   * <li>promoting the point to a vector 4, where its w component is 1.0
-   * .</li>
-   * <li>multiplying the vector 4 by the model view matrix;</li>
-   * <li>multiplying the product by the projection;</li>
-   * <li>demoting the vector 4 to a point 3 by dividing the x, y and z
-   * components by w;</li>
-   * <li>shifting the range from [-1.0, 1.0] to [(0.0, 0.0), (width,
-   * height)] .</li>
-   * </ol>
-   *
+   * Finds the screen position of a point in the world.<br>
+   * <br>
    * More efficient than calling
    * {@link PApplet#screenX(float, float, float)} ,
    * {@link PApplet#screenY(float, float, float)} , and
@@ -2875,69 +2999,32 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * it is advisable to work with {@link Vec4}s and the renderer
    * matrices directly.
    *
-   * @param v      the point
+   * @param source the point
    * @param target the output vector
    * @return the screen point
    */
-  public Vec3 screen (
-      final Vec3 v,
-      final Vec3 target ) {
+  public Vec3 screen ( final Vec2 source, final Vec3 target ) {
 
-    /* Multiply point by model-view matrix. */
-    final float aw = this.modelview.m30 * v.x +
-        this.modelview.m31 * v.y +
-        this.modelview.m32 * v.z +
-        this.modelview.m33;
+    return this.screen(source.x, source.y, 0.0f, target);
+  }
 
-    final float ax = this.modelview.m00 * v.x +
-        this.modelview.m01 * v.y +
-        this.modelview.m02 * v.z +
-        this.modelview.m03;
+  /**
+   * Finds the screen position of a point in the world.<br>
+   * <br>
+   * More efficient than calling
+   * {@link PApplet#screenX(float, float, float)} ,
+   * {@link PApplet#screenY(float, float, float)} , and
+   * {@link PApplet#screenZ(float, float, float)} separately. However,
+   * it is advisable to work with {@link Vec4}s and the renderer
+   * matrices directly.
+   *
+   * @param source the point
+   * @param target the output vector
+   * @return the screen point
+   */
+  public Vec3 screen ( final Vec3 source, final Vec3 target ) {
 
-    final float ay = this.modelview.m10 * v.x +
-        this.modelview.m11 * v.y +
-        this.modelview.m12 * v.z +
-        this.modelview.m13;
-
-    final float az = this.modelview.m20 * v.x +
-        this.modelview.m21 * v.y +
-        this.modelview.m22 * v.z +
-        this.modelview.m23;
-
-    /* Multiply new point by projection. */
-    final float bw = this.projection.m30 * ax +
-        this.projection.m31 * ay +
-        this.projection.m32 * az +
-        this.projection.m33 * aw;
-
-    if ( bw == 0.0f ) { return target.reset(); }
-
-    float bx = this.projection.m00 * ax +
-        this.projection.m01 * ay +
-        this.projection.m02 * az +
-        this.projection.m03 * aw;
-
-    float by = this.projection.m10 * ax +
-        this.projection.m11 * ay +
-        this.projection.m12 * az +
-        this.projection.m13 * aw;
-
-    float bz = this.projection.m20 * ax +
-        this.projection.m21 * ay +
-        this.projection.m22 * az +
-        this.projection.m23 * aw;
-
-    if ( bw != 1.0f ) {
-      final float wInv = 1.0f / bw;
-      bx *= wInv;
-      by *= wInv;
-      bz *= wInv;
-    }
-
-    return target.set(
-        this.width * (1.0f + bx) * 0.5f,
-        this.height * (1.0f + by) * 0.5f,
-        (bz + 1.0f) * 0.5f);
+    return this.screen(source.x, source.y, source.z, target);
   }
 
   /**
@@ -3502,10 +3589,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return "camzup.pfriendly.UpOgl";
-  }
+  public String toString ( ) { return "camzup.pfriendly.UpOgl"; }
 
   /**
    * Applies a transform to the renderer's matrix.
@@ -3934,9 +4018,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * @param y the y coordinate
    */
   @Override
-  public void vertex (
-      final float x,
-      final float y ) {
+  public void vertex ( final float x, final float y ) {
 
     this.vertexImpl(x, y, 0.0f, this.textureU, this.textureV);
   }

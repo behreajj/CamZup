@@ -62,10 +62,7 @@ public class MaterialPImage extends MaterialUv {
    *
    * @return the texture
    */
-  public PImage getTexture ( ) {
-
-    return this.texture;
-  }
+  public PImage getTexture ( ) { return this.texture; }
 
   /**
    * Sets the material's texture. If the supplied texture is null, then

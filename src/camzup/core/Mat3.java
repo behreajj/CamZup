@@ -41,10 +41,7 @@ public class Mat3 extends Matrix {
      * @return the evaluation
      */
     @Override
-    public boolean hasNext ( ) {
-
-      return this.index < this.mtx.length();
-    }
+    public boolean hasNext ( ) { return this.index < this.mtx.length(); }
 
     /**
      * Gets the next value in the iterator.
@@ -53,10 +50,7 @@ public class Mat3 extends Matrix {
      * @see Mat3#get(int)
      */
     @Override
-    public Float next ( ) {
-
-      return this.mtx.get(this.index++);
-    }
+    public Float next ( ) { return this.mtx.get(this.index++); }
 
     /**
      * Returns the simple name of this class.
@@ -789,10 +783,7 @@ public class Mat3 extends Matrix {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of this matrix.
@@ -835,10 +826,7 @@ public class Mat3 extends Matrix {
    *
    * @return the string
    */
-  public String toStringCol ( ) {
-
-    return this.toStringCol(4);
-  }
+  public String toStringCol ( ) { return this.toStringCol(4); }
 
   /**
    * Returns a string representation of this matrix intended for display

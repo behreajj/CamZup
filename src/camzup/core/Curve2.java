@@ -352,26 +352,21 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
    */
   String toSvgPath ( ) {
 
-    // TODO: Create internal and external toSvgStrings so that
-    // you can create a SVG from a mesh and mesh entity
-    // independently of the renderer. Make this one
-    // toSvgStringInternal with package level access.
-
     final int knotLength = this.knots.size();
     if ( knotLength < 2 ) { return ""; }
+    final StringBuilder svgp = new StringBuilder(
+        32 + 64 * (this.closedLoop ? knotLength + 1 : knotLength));
 
     final Iterator < Knot2 > itr = this.knots.iterator();
     Knot2 prevKnot = itr.next();
-    final StringBuilder result = new StringBuilder(
-        32 + 64 * (this.closedLoop ? knotLength + 1 : knotLength))
-            .append("<path d=\"M ")
-            .append(prevKnot.coord.toSvgString());
+    svgp.append("<path d=\"M ")
+        .append(prevKnot.coord.toSvgString());
 
     Knot2 currKnot = null;
     while ( itr.hasNext() ) {
       currKnot = itr.next();
 
-      result.append(' ')
+      svgp.append(' ')
           .append('C')
           .append(' ')
           .append(prevKnot.foreHandle.toSvgString())
@@ -385,7 +380,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
 
     if ( this.closedLoop ) {
       currKnot = this.knots.get(0);
-      result.append(' ')
+      svgp.append(' ')
           .append('C')
           .append(' ')
           .append(prevKnot.foreHandle.toSvgString())
@@ -397,7 +392,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
           .append('Z');
     }
 
-    return result.append("\"></path>").toString();
+    svgp.append("\"></path>");
+    return svgp.toString();
   }
 
   /**
@@ -836,10 +832,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of the curve.
@@ -865,6 +858,90 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
 
     sb.append(" ] }");
     return sb.toString();
+  }
+
+  /**
+   * Renders this curve as an SVG string. A default material renders the
+   * mesh's fill and stroke. The background of the SVG is transparent.
+   *
+   * @return the SVG string
+   */
+  public String toSvgString ( ) {
+
+    return this.toSvgString(0.5f, 0.5f, 512.0f, 512.0f);
+  }
+
+  /**
+   * Renders this curve as an SVG string. A default material renders the
+   * mesh's fill and stroke. The background of the SVG is transparent.
+   * The width and height supplied form both the view box dimensions,
+   * the translation and the scale of the shape. The origin is expected
+   * to be in unit coordinates, [0.0, 1.0] .
+   *
+   * @param xOrigin the origin x
+   * @param yOrigin the origin y
+   * @param width   the width
+   * @param height  the height
+   * @return the SVG string
+   */
+  public String toSvgString (
+      final float xOrigin,
+      final float yOrigin,
+      final float width,
+      final float height ) {
+
+    final float vw = Utils.max(IUtils.DEFAULT_EPSILON, width);
+    final float vh = Utils.max(IUtils.DEFAULT_EPSILON, height);
+    final float x = Utils.clamp01(xOrigin);
+    final float y = Utils.clamp01(yOrigin);
+
+    final String vwStr = Utils.toFixed(vw, 6);
+    final String vhStr = Utils.toFixed(vh, 6);
+    final String sclStr = Utils.toFixed(Utils.min(vw, vh), 6);
+
+    final StringBuilder svgp = new StringBuilder(128);
+    svgp.append("<svg ")
+        .append("xmlns=\"http://www.w3.org/2000/svg\" ")
+        .append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ")
+        .append("viewBox=\"0 0 ")
+        .append(vwStr)
+        .append(' ')
+        .append(vhStr)
+        .append("\">\n")
+        .append("<g transform=\"translate(")
+        .append(Utils.toFixed(vw * x, 6))
+        .append(',')
+        .append(' ')
+        .append(Utils.toFixed(vh * y, 6))
+        .append(") scale(")
+        .append(sclStr)
+        .append(", -")
+        .append(sclStr)
+        .append(")\">\n")
+        .append(MaterialSolid.defaultSvgMaterial(Utils.max(vw, vh)))
+        .append(this.toSvgPath())
+        .append("</g>\n</g>\n</svg>");
+
+    return svgp.toString();
+  }
+
+  /**
+   * Renders this curve as an SVG string. A default material renders the
+   * mesh's fill and stroke. The background of the SVG is transparent.
+   * The width and height supplied form both the view box dimensions,
+   * the translation and the scale of the shape.
+   *
+   * @param origin the origin
+   * @param dim    the dimensions
+   * @return the SVG string
+   */
+  public String toSvgString (
+      final Vec2 origin,
+      final Vec2 dim ) {
+
+    return this.toSvgString(
+        origin.x, origin.y,
+        dim.x, dim.y);
   }
 
   /**

@@ -367,28 +367,24 @@ public class Mesh2 extends Mesh {
    *
    * @return the string
    */
-  String toSvgString ( ) {
-
-    // TODO: Create internal and external toSvgStrings so that
-    // you can create a SVG from a mesh and mesh entity
-    // independently of the renderer. Make this one
-    // toSvgStringInternal with package level access.
+  String toSvgPath ( ) {
 
     final StringBuilder svgp = new StringBuilder(1024);
 
     final int[][][] fs = this.faces;
     final Vec2[] vs = this.coords;
-    final int flen0 = fs.length;
-    for ( int i = 0; i < flen0; ++i ) {
+    final int fsLen = fs.length;
+    for ( int i = 0; i < fsLen; ++i ) {
       final int[][] f = fs[i];
-      final int flen1 = f.length;
+      final int fLen = f.length;
 
       svgp.append("<path d=\"M ")
           .append(vs[f[0][0]].toSvgString())
           .append(' ');
 
-      for ( int j = 1; j < flen1; ++j ) {
-        svgp.append('L').append(' ')
+      for ( int j = 1; j < fLen; ++j ) {
+        svgp.append('L')
+            .append(' ')
             .append(vs[f[j][0]].toSvgString())
             .append(' ');
       }
@@ -411,21 +407,22 @@ public class Mesh2 extends Mesh {
   @Chainable
   public Mesh2 calcUvs ( ) {
 
-    // TODO: Assumes real world coordinates are in [-0.5, 0.5] .
-
-    final Vec2 dim = Mesh2.calcDimensions(this,
-        new Vec2(), new Vec2(), new Vec2());
-    dim.x = dim.x == 0.0f ? IUtils.DEFAULT_EPSILON : 1.0f / dim.x;
-    dim.y = dim.y == 0.0f ? IUtils.DEFAULT_EPSILON : 1.0f / dim.y;
+    final Vec2 dim = new Vec2();
+    final Vec2 lb = new Vec2();
+    final Vec2 ub = new Vec2();
+    Mesh2.calcDimensions(this, dim, lb, ub);
 
     final int len = this.coords.length;
     this.texCoords = Vec2.resize(this.texCoords, len);
 
+    final float xInv = dim.x == 0.0f ? IUtils.DEFAULT_EPSILON : 1.0f / dim.x;
+    final float yInv = dim.y == 0.0f ? IUtils.DEFAULT_EPSILON : 1.0f / dim.y;
+
     for ( int i = 0; i < len; ++i ) {
       final Vec2 v = this.coords[i];
       final Vec2 vt = this.texCoords[i];
-      vt.x = v.x * dim.x + 0.5f;
-      vt.y = 0.5f - v.y * dim.y;
+      vt.x = (v.x - lb.x) * xInv;
+      vt.y = 1.0f - (v.y - lb.y) * yInv;
     }
 
     return this;
@@ -1106,6 +1103,8 @@ public class Mesh2 extends Mesh {
    *
    * @param tolerance the quantization tolerance
    * @return this mesh
+   * @see System#arraycopy(Object, int, Object, int, int)
+   * @see Arrays#binarySearch(Object[], Object, Comparator)
    */
   @Experimental
   @Chainable
@@ -1167,7 +1166,6 @@ public class Mesh2 extends Mesh {
    * @param faceIdx the face index
    * @return the new face indices
    */
-  @Experimental
   public int[][][] subdivFace ( final int faceIdx ) {
 
     return this.subdivFaceCentroid(faceIdx);
@@ -1184,8 +1182,6 @@ public class Mesh2 extends Mesh {
    */
   @Experimental
   public int[][][] subdivFaceCentroid ( final int faceIdx ) {
-
-    // RESEARCH Make these functional interfaces?
 
     /* Validate face index, find face. */
     final int facesLen = this.faces.length;
@@ -1465,67 +1461,72 @@ public class Mesh2 extends Mesh {
   @Experimental
   public String toObjString ( ) {
 
-    // TEST
-
     final int coordsLen = this.coords.length;
     final int texCoordsLen = this.texCoords.length;
     final int facesLen = this.faces.length;
-    final StringBuilder result = new StringBuilder(2048);
+    final StringBuilder objs = new StringBuilder(2048);
 
     /*
      * Append a comment listing the number of coordinates, texture
      * coordinates and faces.
      */
-    result.append("# v: ").append(coordsLen)
-        .append(", vt: ").append(texCoordsLen)
-        .append(", vn: 1, f: ").append(facesLen)
-        .append('\n').append('\n');
+    objs.append("# v: ")
+        .append(coordsLen)
+        .append(", vt: ")
+        .append(texCoordsLen)
+        .append(", vn: 1, f: ")
+        .append(facesLen)
+        .append('\n')
+        .append('\n');
 
     /* Append name. */
-    result.append('o').append(' ').append(this.name)
-        .append('\n').append('\n');
+    objs.append('o')
+        .append(' ')
+        .append(this.name)
+        .append('\n')
+        .append('\n');
 
     /* Append coordinates. */
     for ( final Vec2 coord : this.coords ) {
-      result.append('v').append(' ')
+      objs.append('v').append(' ')
           .append(coord.toObjString())
           .append(" 0.0 \n");
     }
-    result.append('\n');
+    objs.append('\n');
 
     /* Append a texture coordinates. */
     for ( final Vec2 texCoord : this.texCoords ) {
-      result.append("vt ")
+      objs.append("vt ")
           .append(texCoord.toObjString())
           .append('\n');
     }
 
     /* Append a single normal. */
-    result.append("\nvn 0.0 0.0 1.0\n");
+    objs.append("\nvn 0.0 0.0 1.0\n\n");
 
     /* Append face indices. */
     for ( int i = 0; i < facesLen; ++i ) {
 
       final int[][] face = this.faces[i];
       final int vLen = face.length;
-      result.append('f').append(' ');
+      objs.append('f').append(' ');
 
       for ( int j = 0; j < vLen; ++j ) {
 
         /* Indices in an .obj file start at 1, not 0. */
         final int[] vert = face[j];
-        result.append(vert[0] + 1)
+        objs.append(vert[0] + 1)
             .append('/')
             .append(vert[1] + 1)
             .append('/')
-            .append('1');
+            .append('1')
+            .append(' ');
       }
 
-      result.append('\n');
+      objs.append('\n');
     }
 
-    result.append('\n');
-    return result.toString();
+    return objs.toString();
   }
 
   /**
@@ -1556,10 +1557,7 @@ public class Mesh2 extends Mesh {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4, Integer.MAX_VALUE);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of the mesh.
@@ -1593,7 +1591,8 @@ public class Mesh2 extends Mesh {
 
     if ( this.coords != null ) {
       // sb.append('\n');
-      final int len = Math.min(this.coords.length, truncate);
+      final int len = (this.coords.length <= truncate) ? this.coords.length
+          : truncate;
       final int last = len - 1;
       for ( int i = 0; i < len; ++i ) {
         sb.append(this.coords[i].toString(places));
@@ -1614,7 +1613,9 @@ public class Mesh2 extends Mesh {
     sb.append("texCoords: [ ");
     if ( this.texCoords != null ) {
       // sb.append('\n');
-      final int len = Math.min(this.texCoords.length, truncate);
+      final int len = (this.texCoords.length <= truncate)
+          ? this.texCoords.length
+          : truncate;
       final int last = len - 1;
       for ( int i = 0; i < len; ++i ) {
         sb.append(this.texCoords[i].toString(places));
@@ -1635,7 +1636,8 @@ public class Mesh2 extends Mesh {
     sb.append("faces: [ ");
     if ( this.faces != null ) {
       // sb.append('\n');
-      final int facesLen = Math.min(this.faces.length, truncate);
+      final int facesLen = (this.faces.length <= truncate) ? this.faces.length
+          : truncate;
       final int facesLast = facesLen - 1;
 
       for ( int i = 0; i < facesLen; ++i ) {
@@ -1675,6 +1677,90 @@ public class Mesh2 extends Mesh {
 
     sb.append(" ] }");
     return sb.toString();
+  }
+
+  /**
+   * Renders this mesh as an SVG string. A default material renders the
+   * mesh's fill and stroke. The background of the SVG is transparent.
+   *
+   * @return the SVG string
+   */
+  public String toSvgString ( ) {
+
+    return this.toSvgString(0.5f, 0.5f, 512.0f, 512.0f);
+  }
+
+  /**
+   * Renders this mesh as an SVG string. A default material renders the
+   * mesh's fill and stroke. The background of the SVG is transparent.
+   * The width and height supplied form both the view box dimensions,
+   * the translation and the scale of the shape. The origin is expected
+   * to be in unit coordinates, [0.0, 1.0] .
+   *
+   * @param xOrigin the origin x
+   * @param yOrigin the origin y
+   * @param width   the width
+   * @param height  the height
+   * @return the SVG string
+   */
+  public String toSvgString (
+      final float xOrigin,
+      final float yOrigin,
+      final float width,
+      final float height ) {
+
+    final float vw = Utils.max(IUtils.DEFAULT_EPSILON, width);
+    final float vh = Utils.max(IUtils.DEFAULT_EPSILON, height);
+    final float x = Utils.clamp01(xOrigin);
+    final float y = Utils.clamp01(yOrigin);
+
+    final String vwStr = Utils.toFixed(vw, 6);
+    final String vhStr = Utils.toFixed(vh, 6);
+    final String sclStr = Utils.toFixed(Utils.min(vw, vh), 6);
+
+    final StringBuilder svgp = new StringBuilder(128);
+    svgp.append("<svg ")
+        .append("xmlns=\"http://www.w3.org/2000/svg\" ")
+        .append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ")
+        .append("viewBox=\"0 0 ")
+        .append(vwStr)
+        .append(' ')
+        .append(vhStr)
+        .append("\">\n")
+        .append("<g transform=\"translate(")
+        .append(Utils.toFixed(vw * x, 6))
+        .append(',')
+        .append(' ')
+        .append(Utils.toFixed(vh * y, 6))
+        .append(") scale(")
+        .append(sclStr)
+        .append(", -")
+        .append(sclStr)
+        .append(")\">\n")
+        .append(MaterialSolid.defaultSvgMaterial(Utils.max(vw, vh)))
+        .append(this.toSvgPath())
+        .append("</g>\n</g>\n</svg>");
+
+    return svgp.toString();
+  }
+
+  /**
+   * Renders this mesh as an SVG string. A default material renders the
+   * mesh's fill and stroke. The background of the SVG is transparent.
+   * The width and height supplied form both the view box dimensions,
+   * the translation and the scale of the shape.
+   *
+   * @param origin the origin
+   * @param dim    the dimensions
+   * @return the SVG string
+   */
+  public String toSvgString (
+      final Vec2 origin,
+      final Vec2 dim ) {
+
+    return this.toSvgString(
+        origin.x, origin.y,
+        dim.x, dim.y);
   }
 
   /**
@@ -2007,6 +2093,13 @@ public class Mesh2 extends Mesh {
         poly, target);
   }
 
+  /**
+   * Evaluates whether the mesh contains a point.
+   *
+   * @param mesh  the mesh
+   * @param point the point
+   * @return the evaluation
+   */
   @Experimental
   public static boolean contains (
       final Mesh2 mesh,

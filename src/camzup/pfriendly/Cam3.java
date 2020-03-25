@@ -12,7 +12,7 @@ import camzup.core.Vec3;
  * An entity-based camera class which updates a renderer's camera.
  */
 @Experimental
-public class Cam3 extends Entity3 {
+class Cam3 extends Entity3 {
 
   /**
    * An internal vector to hold the location retrieved from the

@@ -290,6 +290,64 @@ public interface IYup2 extends IUp {
   void line ( final Vec2 origin, final Vec2 dest );
 
   /**
+   * Finds the model view position of a point.<br>
+   * <br>
+   * More efficient than calling
+   * {@link PApplet#modelX(float, float, float)} and
+   * {@link PApplet#modelY(float, float, float)} separately. However, it
+   * is advisable to work with the renderer matrices directly.
+   *
+   * @param source the point
+   * @param target the output vector
+   * @return the model point
+   */
+  // Vec2 model ( final Vec2 source, final Vec2 target );
+
+  /**
+   * Takes a two-dimensional x, y position and returns the x value for
+   * where it will appear on a model view. This is inefficient, use
+   * {@link IYup2#model(Vec2, Vec2)} instead.
+   *
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return the model x coordinate
+   */
+  // float modelX ( final float x, final float y );
+
+  /**
+   * Takes a two-dimensional x, y position and returns the x value for
+   * where it will appear on a model view. This is inefficient, use
+   * {@link IYup2#model(Vec2, Vec2)} instead.
+   *
+   * @param v the point
+   * @return the model x coordinate
+   */
+  // default float modelX ( final Vec2 v ) { return this.modelX(v.x,
+  // v.y); }
+
+  /**
+   * Takes a two-dimensional x, y position and returns the y value for
+   * where it will appear on a model view. This is inefficient, use
+   * {@link IYup2#model(Vec2, Vec2)} instead.
+   *
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return the model y coordinate
+   */
+  // float modelY ( final float x, final float y );
+
+  /**
+   * Takes a two-dimensional x, y position and returns the y value for
+   * where it will appear on a model view. This is inefficient, use
+   * {@link IYup2#model(Vec2, Vec2)} instead.
+   *
+   * @param v the point
+   * @return the model y coordinate
+   */
+  // default float modelY ( final Vec2 v ) { return this.modelY(v.x,
+  // v.y); }
+
+  /**
    * Finds the mouse's location in world coordinates relative to the
    * renderer's camera.
    *
@@ -485,6 +543,65 @@ public interface IYup2 extends IUp {
    * @param rounding the corner rounding
    */
   void rect ( final Vec2 a, final Vec2 b, final float rounding );
+
+  /**
+   * Finds the screen position of a point in the world. <br>
+   * <br>
+   * More efficient than calling
+   * {@link PApplet#screenX(float, float, float)} and
+   * {@link PApplet#screenY(float, float, float)} separately. However,
+   * it is advisable to work with the renderer matrix directly.
+   *
+   * @param source the source coordinate
+   * @param target the target coordinate
+   * @return the screen coordinate
+   */
+  Vec2 screen ( final Vec2 source, final Vec2 target );
+
+  /**
+   * Takes a two-dimensional x, y position and returns the x value for
+   * where it will appear on a two-dimensional screen. This is
+   * inefficient, use {@link IYup2#screen(Vec2, Vec2)} instead.
+   *
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return the screen x coordinate
+   */
+  float screenX ( final float x, final float y );
+
+  /**
+   * Takes a two-dimensional position and returns the x value for where
+   * it will appear on a two-dimensional screen. This is inefficient,
+   * use {@link IYup2#screen(Vec2, Vec2)} instead.
+   *
+   * @param v the position
+   * @return the screen y coordinate
+   * @see YupJ2#screen(Vec2, Vec2)
+   */
+  default float screenX ( final Vec2 v ) { return this.screenX(v.x, v.y); }
+
+  /**
+   * Takes a two-dimensional x, y position and returns the y value for
+   * where it will appear on a two-dimensional screen. This is
+   * inefficient, use {@link IYup2#screen(Vec2, Vec2)} instead.
+   *
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return the screen y coordinate
+   * @see YupJ2#screen(Vec2, Vec2)
+   */
+  float screenY ( final float x, final float y );
+
+  /**
+   * Takes a two-dimensional position and returns the y value for where
+   * it will appear on a two-dimensional screen. This is inefficient,
+   * use {@link IYup2#screen(Vec2, Vec2)} instead.
+   *
+   * @param v the position
+   * @return the screen y coordinate
+   * @see YupJ2#screen(Vec2, Vec2)
+   */
+  default float screenY ( final Vec2 v ) { return this.screenY(v.x, v.y); }
 
   /**
    * Applies a shear transform to the renderer.
@@ -760,6 +877,8 @@ public interface IYup2 extends IUp {
    * @param renderer the renderer
    * @param target   the output vector
    * @return the mouse coordinate
+   * @see Utils#div(float, float)
+   * @see Utils#scNorm(float)
    */
   static Vec2 mouse (
       final PApplet parent,
@@ -775,9 +894,6 @@ public interface IYup2 extends IUp {
     my *= Utils.div(renderer.getHeight(), renderer.getZoomY());
 
     /* Rotate. */
-    // final float angle = renderer.getRot();
-    // final float cosa = Utils.cos(angle);
-    // final float sina = Utils.sin(angle);
     final float angle = renderer.getRot() * IUtils.ONE_TAU;
     final float cosa = Utils.scNorm(angle);
     final float sina = Utils.scNorm(angle - 0.25f);
@@ -802,6 +918,7 @@ public interface IYup2 extends IUp {
    * @param renderer the renderer
    * @param target   the output vector
    * @return the mouse
+   * @see Utils#clamp01(float)
    */
   static Vec2 mouse1 (
       final PApplet parent,

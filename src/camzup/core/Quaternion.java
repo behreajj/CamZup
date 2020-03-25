@@ -138,10 +138,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
      * @return the value
      */
     @Override
-    public Float next ( ) {
-
-      return this.quat.getWFirst(this.index++);
-    }
+    public Float next ( ) { return this.quat.getWFirst(this.index++); }
   }
 
   /**
@@ -163,10 +160,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
      * @return the value
      */
     @Override
-    public Float next ( ) {
-
-      return this.quat.getWLast(this.index++);
-    }
+    public Float next ( ) { return this.quat.getWLast(this.index++); }
   }
 
   /**
@@ -262,10 +256,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
      * @return the evaluation
      */
     @Override
-    public boolean hasNext ( ) {
-
-      return this.index < this.quat.length();
-    }
+    public boolean hasNext ( ) { return this.index < this.quat.length(); }
 
     /**
      * Gets the next value in the iterator.
@@ -689,7 +680,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
   @Chainable
   public Quaternion reset ( ) {
 
-    return Quaternion.identity(this);
+    this.real = 1.0f;
+    this.imag.set(0.0f, 0.0f, 0.0f);
+    return this;
   }
 
   /**
@@ -818,10 +811,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of this quaternion.
