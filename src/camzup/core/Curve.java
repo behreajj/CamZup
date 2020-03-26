@@ -65,10 +65,7 @@ public abstract class Curve extends EntityData implements ICurve {
    *
    * @return the material index
    */
-  public int getMaterialIndex ( ) {
-
-    return this.materialIndex;
-  }
+  public int getMaterialIndex ( ) { return this.materialIndex; }
 
   /**
    * Sets this curve's material index.

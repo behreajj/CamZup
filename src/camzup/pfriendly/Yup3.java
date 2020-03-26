@@ -106,10 +106,9 @@ public class Yup3 extends Up3 {
   public void camera ( ) {
 
     /*
-     * CAUTION: Never use defCameraXXX values. They are not actual
-     * constants and may not have been initialized.
+     * Never use defCameraXXX values. They are not actual constants and
+     * may not have been initialized.
      */
-
     float x = Yup3.DEFAULT_LOC_X;
     float y = Yup3.DEFAULT_LOC_Y;
     float z = Yup3.DEFAULT_LOC_Z;
@@ -151,10 +150,9 @@ public class Yup3 extends Up3 {
       final float zCenter ) {
 
     /*
-     * CAUTION: Never use defCameraXXX values. They are not actual
-     * constants and may not have been initialized.
+     * Never use defCameraXXX values. They are not actual constants and
+     * may not have been initialized.
      */
-
     this.camera(
         xEye, yEye, zEye,
         xCenter, yCenter, zCenter,

@@ -404,10 +404,7 @@ public class Edge3 implements Comparable < Edge3 > {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of this edge.
@@ -469,7 +466,6 @@ public class Edge3 implements Comparable < Edge3 > {
    * @param target the output vector
    * @return the point
    */
-  @Experimental
   public static Vec3 eval (
       final Edge3 edge,
       final float step,

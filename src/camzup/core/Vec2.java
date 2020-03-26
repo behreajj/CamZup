@@ -337,6 +337,37 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    * API. This code is brittle and is used for internal testing
    * purposes.
    *
+   * @return the string
+   */
+  @Experimental
+  String toBlenderCode ( ) { return this.toBlenderCode(true); }
+
+  /**
+   * Returns a String of Python code targeted toward the Blender 2.8x
+   * API. This code is brittle and is used for internal testing
+   * purposes. This is formatted as a two-tuple. If this is a UV
+   * coordinate, provides the option to flip the v coordinate.
+   *
+   * @param flipv whether to subtract y from 1.0
+   * @return the string
+   */
+  @Experimental
+  String toBlenderCode ( final boolean flipv ) {
+
+    return new StringBuilder(32)
+        .append('(')
+        .append(Utils.toFixed(this.x, 6))
+        .append(',').append(' ')
+        .append(Utils.toFixed(flipv ? 1.0f - this.y : this.y, 6))
+        .append(')')
+        .toString();
+  }
+
+  /**
+   * Returns a String of Python code targeted toward the Blender 2.8x
+   * API. This code is brittle and is used for internal testing
+   * purposes.
+   *
    * This is formatted as a three-tuple.
    *
    * @return the string

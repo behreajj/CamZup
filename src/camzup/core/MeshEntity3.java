@@ -8,7 +8,8 @@ import java.util.List;
  * An entity which contains a transform that is applied to a list of
  * meshes. The meshes may references a list of materials by index.
  */
-public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
+public class MeshEntity3 extends Entity3
+    implements Iterable < Mesh3 >, IVolume3 {
 
   /**
    * The list of meshes held by the entity.
@@ -140,6 +141,79 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
   }
 
   /**
+   * Scales the entity by a scalar.
+   *
+   * @param scalar the scalar
+   * @return this entity
+   */
+  @Override
+  @Chainable
+  public MeshEntity3 scaleBy ( final float scalar ) {
+
+    this.transform.scaleBy(scalar);
+    return this;
+  }
+
+  /**
+   * Scales the entity by a non-uniform scalar.
+   *
+   * @param scalar the scalar
+   * @return the entity
+   */
+  @Override
+  @Chainable
+  public MeshEntity3 scaleBy ( final Vec3 scalar ) {
+
+    this.transform.scaleBy(scalar);
+    return this;
+  }
+
+  /**
+   * Scales the entity to a uniform size.
+   *
+   * @param scalar the size
+   * @return this entity
+   */
+  @Override
+  @Chainable
+  public MeshEntity3 scaleTo ( final float scalar ) {
+
+    this.transform.scaleTo(scalar);
+    return this;
+  }
+
+  /**
+   * Scales the entity to a non-uniform size.
+   *
+   * @param scalar the size
+   * @return this entity
+   */
+  @Override
+  @Chainable
+  public MeshEntity3 scaleTo ( final Vec3 scalar ) {
+
+    this.transform.scaleTo(scalar);
+    return this;
+  }
+
+  /**
+   * Eases the entity to a scale by a step over time.
+   *
+   * @param scalar the scalar
+   * @param step   the step
+   * @return this entity
+   */
+  @Override
+  @Chainable
+  public MeshEntity3 scaleTo (
+      final Vec3 scalar,
+      final float step ) {
+
+    this.transform.scaleTo(scalar, step);
+    return this;
+  }
+
+  /**
    * Returns a String of Python code targeted toward the Blender 2.8x
    * API. This code is brittle and is used for internal testing
    * purposes, i.e., to compare how curve geometry looks in Blender (the
@@ -182,9 +256,14 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
     final boolean autoSmoothNormals = true;
     final boolean addVertGroups = true;
     final boolean includeNormals = false;
+    final boolean includeUvs = true;
+    final boolean useBMesh = includeUvs;
     final boolean useMaterials = materials != null && materials.length > 0;
 
     final StringBuilder pyCd = new StringBuilder(2048);
+
+    if ( useBMesh ) { pyCd.append("import bmesh\n"); }
+
     pyCd.append("from bpy import data as D, context as C\n\n")
         .append("mesh_entity = {\"name\": \"")
         .append(this.name)
@@ -196,7 +275,9 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
     final int meshLast = meshLen - 1;
     final Iterator < Mesh3 > meshItr = this.meshes.iterator();
     while ( meshItr.hasNext() ) {
-      pyCd.append(meshItr.next().toBlenderCode(includeNormals));
+      pyCd.append(meshItr.next().toBlenderCode(
+          includeUvs,
+          includeNormals));
       if ( meshIndex < meshLast ) { pyCd.append(',').append(' '); }
       meshIndex++;
     }
@@ -264,7 +345,32 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
         .append("    fc_idcs = mesh[\"faces\"]\n")
         .append("    mesh_data = d_meshes.new(name)\n")
         .append("    mesh_data.from_pydata(vert_dat, [], fc_idcs)\n");
-    pyCd.append("    mesh_data.validate()\n");
+    pyCd.append("    mesh_data.validate()\n\n");
+
+    if ( useBMesh ) {
+      pyCd.append("    bm = bmesh.new()\n")
+          .append("    bm.from_mesh(mesh_data)\n");
+
+      if ( includeUvs ) {
+        pyCd.append("    uv_dat = mesh[\"uvs\"]\n")
+            .append("    uv_idcs = mesh[\"uv_indices\"]\n")
+            .append("    uv_layer = bm.loops.layers.uv.verify()\n")
+            .append("    for face in bm.faces:\n")
+            .append("        bmfcidx = face.index\n")
+            .append("        faceuvidcs = uv_idcs[bmfcidx]\n")
+            .append("        curr_loop = 0\n")
+            .append("        for loop in face.loops:\n")
+            .append("            vert = loop.vert\n")
+            .append("            bmvt = loop[uv_layer]\n")
+            .append("            uv_idx = faceuvidcs[curr_loop]\n")
+            .append("            uv_co = uv_dat[uv_idx]\n")
+            .append("            bmvt.uv = uv_co\n")
+            .append("            curr_loop = curr_loop + 1\n");
+      }
+
+      pyCd.append("    bm.to_mesh(mesh_data)\n")
+          .append("    bm.free()\n\n");
+    }
 
     if ( autoSmoothNormals ) {
       pyCd.append("    mesh_data.use_auto_smooth = True\n")
@@ -299,7 +405,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 > {
           .append("    for i in fc_itr:\n")
           .append("        fc_idx = fc_idcs[i]\n")
           .append("        weight = i * to_weight\n")
-          .append("        vert_group.add(fc_idx, weight, \"ADD\")\n");
+          .append("        vert_group.add(fc_idx, weight, \"REPLACE\")\n");
     }
 
     return pyCd.toString();

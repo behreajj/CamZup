@@ -30,6 +30,7 @@ void setup() {
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
+  entity.rotateZ(0.01);
 
   float t = mouseX / (float)width;
   Vec3 pt = new Vec3();
@@ -42,7 +43,7 @@ void draw() {
   graphics3.origin();
   
   graphics3.shape(entity, mat);
-  graphics3.handles(entity, 0.005);
+  graphics3.handles(entity, 1.25);
 
   graphics3.strokeWeight(10.0);
   graphics3.stroke(#202020);

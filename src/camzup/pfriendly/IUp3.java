@@ -13,12 +13,6 @@ import camzup.core.Vec3;
 public interface IUp3 extends IUp {
 
   /**
-   * Default sphere detail called by sphere when cached coordinates have
-   * not been properly initialized.
-   */
-  int DEFAULT_SPHERE_DETAIL = 30;
-
-  /**
    * Factor by which a grid's count is scaled when dimensions are not
    * supplied.
    */

@@ -850,6 +850,48 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
   }
 
   /**
+   * Finds the model view position of a point.<br>
+   * <br>
+   * More efficient than calling
+   * {@link PApplet#modelX(float, float, float)} and
+   * {@link PApplet#modelY(float, float, float)} separately. However, it
+   * is advisable to work with the renderer matrices directly.
+   *
+   * @param source the point
+   * @param target the output vector
+   * @return the model point
+   */
+  @Experimental
+  Vec2 model ( final Vec2 source, final Vec2 target ) {
+
+    // TODO: Implement.
+
+    final AffineTransform tr = this.g2.getTransform();
+
+    final double ax = tr.getScaleX() * source.x +
+        tr.getShearX() * source.y +
+        tr.getTranslateX();
+    final double ay = tr.getShearY() * source.x +
+        tr.getScaleY() * source.y +
+        tr.getTranslateY();
+
+    // final double c = Math.cos(-cameraRot);
+    // final double s = Math.sin(-cameraRot);
+
+    final double m00 = 1.0d;
+    final double m01 = 0.0d;
+    final double m02 = 0.0d;
+
+    final double m10 = 0.0d;
+    final double m11 = -1.0d;
+    final double m12 = 0.0d;
+
+    return target.set(
+        (float) (m00 * ax + m01 * ay + m02),
+        (float) (m10 * ax + m11 * ay + m12));
+  }
+
+  /**
    * Applies an affine transform matrix to the current renderer
    * transform.
    *
@@ -1805,9 +1847,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       final int foreColor,
       final int coordColor ) {
 
-    // TODO: Does this use pushMatrix because of an old glitch in
-    // Transform2 which prevented rotations from working?
-
     /* Cache stroke colors. */
     final java.awt.Color lineClrAwt = new java.awt.Color(lineColor, true);
     final java.awt.Color rearClrAwt = new java.awt.Color(rearColor, true);
@@ -1824,70 +1863,62 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     final BasicStroke swCoord = new BasicStroke(strokeWeight * 6.25f,
         BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
+    final Transform2 tr = ce.transform;
     final List < Curve2 > curves = ce.curves;
     final Iterator < Curve2 > curveItr = curves.iterator();
-    Iterator < Knot2 > knItr = null;
+
+    final Vec2 rh = new Vec2();
+    final Vec2 co = new Vec2();
+    final Vec2 fh = new Vec2();
 
     this.pushStyle();
-    this.pushMatrix();
-    this.transform(ce.transform);
 
     while ( curveItr.hasNext() ) {
       final Curve2 curve = curveItr.next();
-      knItr = curve.iterator();
+      final Iterator < Knot2 > knItr = curve.iterator();
 
       while ( knItr.hasNext() ) {
         final Knot2 knot = knItr.next();
 
-        final Vec2 coord = knot.coord;
-        final Vec2 foreHandle = knot.foreHandle;
-        final Vec2 rearHandle = knot.rearHandle;
-
-        final float rhx = rearHandle.x;
-        final float rhy = rearHandle.y;
-
-        final float cox = coord.x;
-        final float coy = coord.y;
-
-        final float fhx = foreHandle.x;
-        final float fhy = foreHandle.y;
+        Transform2.mulPoint(tr, knot.rearHandle, rh);
+        Transform2.mulPoint(tr, knot.coord, co);
+        Transform2.mulPoint(tr, knot.foreHandle, fh);
 
         /* Draw handle bars. */
         this.gp.reset();
-        this.gp.moveTo(rhx, rhy);
-        this.gp.lineTo(cox, coy);
-        this.gp.lineTo(fhx, fhy);
+        this.gp.moveTo(rh.x, rh.y);
+        this.gp.lineTo(co.x, co.y);
+        this.gp.lineTo(fh.x, fh.y);
         this.g2.setStroke(sw);
         this.g2.setColor(lineClrAwt);
         this.g2.draw(this.gp);
 
         /* Draw rear handle. */
         this.gp.reset();
-        this.gp.moveTo(rhx + PConstants.EPSILON, rhy);
-        this.gp.lineTo(rhx, rhy);
+        this.gp.moveTo(rh.x + PConstants.EPSILON, rh.y);
+        this.gp.lineTo(rh.x, rh.y);
         this.g2.setStroke(swRear);
         this.g2.setColor(rearClrAwt);
         this.g2.draw(this.gp);
 
         /* Draw coordinate. */
         this.gp.reset();
-        this.gp.moveTo(cox + PConstants.EPSILON, coy);
-        this.gp.lineTo(cox, coy);
+        this.gp.moveTo(co.x + PConstants.EPSILON, co.y);
+        this.gp.lineTo(co.x, co.y);
         this.g2.setStroke(swCoord);
         this.g2.setColor(crdClrAwt);
         this.g2.draw(this.gp);
 
         /* Draw fore handle. */
         this.gp.reset();
-        this.gp.moveTo(fhx + PConstants.EPSILON, fhy);
-        this.gp.lineTo(fhx, fhy);
+        this.gp.moveTo(fh.x + PConstants.EPSILON, fh.y);
+        this.gp.lineTo(fh.x, fh.y);
         this.g2.setStroke(swFore);
         this.g2.setColor(foreClrAwt);
         this.g2.draw(this.gp);
       }
     }
 
-    this.popMatrix();
     this.popStyle();
   }
 
@@ -2299,116 +2330,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
           coreFll.w);
     }
   }
-
-  /**
-   * Finds the model view position of a point.<br>
-   * <br>
-   * More efficient than calling
-   * {@link PApplet#modelX(float, float, float)} and
-   * {@link PApplet#modelY(float, float, float)} separately. However, it
-   * is advisable to work with the renderer matrices directly.
-   *
-   * @param source the point
-   * @param target the output vector
-   * @return the model point
-   */
-  // @Experimental
-  // public Vec2 model ( final Vec2 source, final Vec2 target ) {
-  //
-  // // TODO: Implement.
-  //
-  // final AffineTransform tr = this.g2.getTransform();
-  //
-  // double ax = tr.getScaleX() * source.x +
-  // tr.getShearX() * source.y +
-  // tr.getTranslateX();
-  // double ay = tr.getShearY() * source.x +
-  // tr.getScaleY() * source.y +
-  // tr.getTranslateY();
-  //
-  // ax *= cameraZoomX;
-  // ay *= cameraZoomY;
-  //
-  // final double c = Math.cos(this.cameraRot);
-  // final double s = Math.sin(this.cameraRot);
-  // final double tempx = ax;
-  // ax = c * ax - s * ay;
-  // ay = c * ay + s * tempx;
-  //
-  // ax += cameraX;
-  // ay += cameraY;
-  //
-  // ax -= width * 0.5d;
-  // ay -= height * 0.5d;
-  //
-  // return target.set((float) ax, (float) ay);
-  // }
-
-  /**
-   * Takes a two-dimensional x, y position and returns the x value for
-   * where it will appear on a model view. This is inefficient, use
-   * {@link IYup2#model(Vec2, Vec2)} instead.
-   *
-   * @param x the x coordinate
-   * @param y the y coordinate
-   * @return the model x coordinate
-   */
-  // @Experimental
-  // public float modelX ( final float x, final float y ) {
-  //
-  // // TODO: Implement.
-  // return 0.0f;
-  // }
-
-  /**
-   * Takes a two-dimensional x, y position and returns the x value for
-   * where it will appear on a model view. This is inefficient, use
-   * {@link IYup2#model(Vec2, Vec2)} instead.
-   *
-   * @param x the x coordinate
-   * @param y the y coordinate
-   * @param z the z coordinate
-   * @return the model x coordinate
-   */
-  // public float modelX ( final float x, final float y, final float z )
-  // {
-  //
-  // PGraphics.showDepthWarningXYZ("modelX");
-  // return this.modelX(x, y);
-  // }
-
-  /**
-   * Takes a two-dimensional x, y position and returns the y value for
-   * where it will appear on a model view. This is inefficient, use
-   * {@link IYup2#model(Vec2, Vec2)} instead.
-   *
-   * @param x the x coordinate
-   * @param y the y coordinate
-   * @return the model y coordinate
-   */
-  @Experimental
-  // public float modelY ( final float x, final float y ) {
-  //
-  // // TODO: Implement.
-  // return 0.0f;
-  // }
-
-  /**
-   * Takes a two-dimensional x, y position and returns the y value for
-   * where it will appear on a model view. This is inefficient, use
-   * {@link IYup2#model(Vec2, Vec2)} instead.
-   *
-   * @param x the x coordinate
-   * @param y the y coordinate
-   * @param z the z coordinate
-   * @return the model y coordinate
-   */
-  // public float modelY ( final float x, final float y, final float z )
-  // {
-  //
-  // PGraphics.showDepthWarningXYZ("modelY");
-  // return this.modelY(x, y);
-  // }
 
   /**
    * Draws the world origin.

@@ -340,9 +340,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final float tiltStart,
       final float tiltEnd ) {
 
-    final StringBuilder sb = new StringBuilder(
+    final StringBuilder pyCd = new StringBuilder(
         64 + 256 * this.knots.size());
-    sb.append("{\"closed_loop\": ")
+    pyCd.append("{\"closed_loop\": ")
         .append(this.closedLoop ? "True" : "False")
         .append(", \"resolution_u\": ")
         .append(uRes)
@@ -356,13 +356,13 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     while ( itr.hasNext() ) {
       final float ang = Utils.lerpUnclamped(
           tiltStart, tiltEnd, i * toPercent);
-      sb.append(itr.next().toBlenderCode(1.0f, 1.0f, ang));
-      if ( i < last ) { sb.append(',').append(' '); }
+      pyCd.append(itr.next().toBlenderCode(1.0f, 1.0f, ang));
+      if ( i < last ) { pyCd.append(',').append(' '); }
       i++;
     }
 
-    sb.append(']').append('}');
-    return sb.toString();
+    pyCd.append(']').append('}');
+    return pyCd.toString();
   }
 
   /**
@@ -460,10 +460,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    * @return the knot
    * @see LinkedList#getFirst()
    */
-  public Knot3 getFirst ( ) {
-
-    return this.knots.get(0);
-  }
+  public Knot3 getFirst ( ) { return this.knots.get(0); }
 
   /**
    * Gets the last knot in the curve.
@@ -559,10 +556,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    * @see LinkedList#size()
    */
   @Override
-  public int length ( ) {
-
-    return this.knots.size();
-  }
+  public int length ( ) { return this.knots.size(); }
 
   /**
    * Prepend a knot to the curve's list of knots.
@@ -638,10 +632,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    * @return the knot
    * @see LinkedList#removeFirst()
    */
-  public Knot3 removeFirst ( ) {
-
-    return this.knots.remove(0);
-  }
+  public Knot3 removeFirst ( ) { return this.knots.remove(0); }
 
   /**
    * Removes and returns the last knot in the curve.
@@ -1166,7 +1157,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     target.closedLoop = arcMode != ArcMode.OPEN;
     if ( target.closedLoop ) {
       final Knot3 first = knots.get(0);
-      final Knot3 last = knots.get(knots.size() - 1);
+      final Knot3 last = knots.get(knotCount - 1);
 
       if ( arcMode == ArcMode.CHORD ) {
 
@@ -1197,8 +1188,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    * @param target the output curve
    * @return the circle
    */
-  public static Curve3 circle (
-      final Curve3 target ) {
+  public static Curve3 circle ( final Curve3 target ) {
 
     return Curve3.circle(0.0f, 0.5f, 4, target);
   }

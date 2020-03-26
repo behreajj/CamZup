@@ -449,8 +449,6 @@ public abstract class Convert {
     result.setStroke(IUp.DEFAULT_STROKE_COLOR);
     result.setStrokeWeight(IUp.DEFAULT_STROKE_WEIGHT);
 
-    result.disableStyle();
-
     return result;
   }
 

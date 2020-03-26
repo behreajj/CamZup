@@ -8,7 +8,8 @@ import java.util.List;
  * An entity which contains a transform that is applied to a list of
  * curves. The curves may references a list of materials by index.
  */
-public class CurveEntity3 extends Entity3 implements Iterable < Curve3 > {
+public class CurveEntity3 extends Entity3
+    implements Iterable < Curve3 >, IVolume3 {
 
   /**
    * The list of curves held by the entity.
@@ -29,10 +30,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 > {
    *
    * @param name the name
    */
-  public CurveEntity3 ( final String name ) {
-
-    super(name);
-  }
+  public CurveEntity3 ( final String name ) { super(name); }
 
   /**
    * Creates a curve entity from a name, transform and list of curves.
@@ -170,6 +168,79 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 > {
   public Iterator < Curve3 > iterator ( ) {
 
     return this.curves.iterator();
+  }
+
+  /**
+   * Scales the entity by a scalar.
+   *
+   * @param scalar the scalar
+   * @return this entity
+   */
+  @Override
+  @Chainable
+  public CurveEntity3 scaleBy ( final float scalar ) {
+
+    this.transform.scaleBy(scalar);
+    return this;
+  }
+
+  /**
+   * Scales the entity by a non-uniform scalar.
+   *
+   * @param scalar the scalar
+   * @return the entity
+   */
+  @Override
+  @Chainable
+  public CurveEntity3 scaleBy ( final Vec3 scalar ) {
+
+    this.transform.scaleBy(scalar);
+    return this;
+  }
+
+  /**
+   * Scales the entity to a uniform size.
+   *
+   * @param scalar the size
+   * @return this entity
+   */
+  @Override
+  @Chainable
+  public CurveEntity3 scaleTo ( final float scalar ) {
+
+    this.transform.scaleTo(scalar);
+    return this;
+  }
+
+  /**
+   * Scales the entity to a non-uniform size.
+   *
+   * @param scalar the size
+   * @return this entity
+   */
+  @Override
+  @Chainable
+  public CurveEntity3 scaleTo ( final Vec3 scalar ) {
+
+    this.transform.scaleTo(scalar);
+    return this;
+  }
+
+  /**
+   * Eases the entity to a scale by a step over time.
+   *
+   * @param scalar the scalar
+   * @param step   the step
+   * @return this entity
+   */
+  @Override
+  @Chainable
+  public CurveEntity3 scaleTo (
+      final Vec3 scalar,
+      final float step ) {
+
+    this.transform.scaleTo(scalar, step);
+    return this;
   }
 
   /**

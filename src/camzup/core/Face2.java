@@ -436,12 +436,9 @@ public class Face2 implements Comparable < Face2 > {
    * @param point the point
    * @return the evaluation
    */
-  @Experimental
   public static boolean contains (
       final Face2 face,
       final Vec2 point ) {
-
-    // TEST
 
     int wn = 0;
     final Vert2[] verts = face.vertices;
@@ -469,5 +466,26 @@ public class Face2 implements Comparable < Face2 > {
     }
 
     return wn > 0;
+  }
+
+  /**
+   * Calculates the perimeter of a face by summing the Euclidean
+   * distance between vertices.
+   *
+   * @param face the face
+   * @return the perimeter
+   */
+  public static float perimeter ( final Face2 face ) {
+
+    float sum = 0.0f;
+    final Vert2[] verts = face.vertices;
+    final int len = verts.length;
+    Vec2 prev = verts[len - 1].coord;
+    for ( int i = 0; i < len; ++i ) {
+      final Vec2 curr = verts[i].coord;
+      sum += Vec2.distEuclidean(prev, curr);
+      prev = curr;
+    }
+    return sum;
   }
 }

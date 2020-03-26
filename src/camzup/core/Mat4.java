@@ -1595,6 +1595,7 @@ public class Mat4 extends Matrix {
     // Utils.cos(radians),
     // Utils.sin(radians),
     // target);
+
     final float norm = radians * IUtils.ONE_TAU;
     return Mat4.fromRotY(
         Utils.scNorm(norm),
@@ -1870,6 +1871,70 @@ public class Mat4 extends Matrix {
   }
 
   /**
+   * Multiplies each component in a matrix by a scalar.
+   *
+   * @param a      the left operand
+   * @param b      the right operand
+   * @param target the output matrix
+   * @return the product
+   */
+  public static Mat4 mul (
+      final float a,
+      final Mat4 b,
+      final Mat4 target ) {
+
+    return target.set(
+        a * b.m00,
+        a * b.m01,
+        a * b.m02,
+        a * b.m03,
+        a * b.m10,
+        a * b.m11,
+        a * b.m12,
+        a * b.m13,
+        a * b.m20,
+        a * b.m21,
+        a * b.m22,
+        a * b.m23,
+        a * b.m30,
+        a * b.m31,
+        a * b.m32,
+        a * b.m33);
+  }
+
+  /**
+   * Multiplies each component in a matrix by a scalar.
+   *
+   * @param a      the left operand
+   * @param b      the right operand
+   * @param target the output matrix
+   * @return the product
+   */
+  public static Mat4 mul (
+      final Mat4 a,
+      final float b,
+      final Mat4 target ) {
+
+    return target.set(
+        a.m00 * b,
+        a.m01 * b,
+        a.m02 * b,
+        a.m03 * b,
+        a.m10 * b,
+        a.m11 * b,
+        a.m12 * b,
+        a.m13 * b,
+        a.m20 * b,
+        a.m21 * b,
+        a.m22 * b,
+        a.m23 * b,
+        a.m30 * b,
+        a.m31 * b,
+        a.m32 * b,
+        a.m33 * b);
+  }
+
+  /**
    * Multiplies two matrices by component.
    *
    * @param a      the left operand
@@ -2063,11 +2128,6 @@ public class Mat4 extends Matrix {
 
     // TEST
 
-    // return target.set(
-    // a.m00 * b.x + a.m01 * b.y + a.m03,
-    // a.m10 * b.x + a.m11 * b.y + a.m13,
-    // a.m20 * b.x + a.m21 * b.y + a.m23);
-
     final float w = a.m30 * b.x + a.m31 * b.y + a.m33;
     if ( w == 0.0f ) { return target.reset(); }
     final float wInv = 1.0f / w;
@@ -2095,22 +2155,6 @@ public class Mat4 extends Matrix {
       final Vec3 target ) {
 
     // TEST
-
-    // return target.set(
-    // a.m00 * b.x +
-    // a.m01 * b.y +
-    // a.m02 * b.z +
-    // a.m03,
-    //
-    // a.m10 * b.x +
-    // a.m11 * b.y +
-    // a.m12 * b.z +
-    // a.m13,
-    //
-    // a.m20 * b.x +
-    // a.m21 * b.y +
-    // a.m22 * b.z +
-    // a.m23);
 
     final float w = a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33;
     if ( w == 0.0f ) { return target.reset(); }
@@ -2140,11 +2184,6 @@ public class Mat4 extends Matrix {
 
     // TEST
 
-    // return target.set(
-    // a.m00 * b.x + a.m01 * b.y,
-    // a.m10 * b.x + a.m11 * b.y,
-    // a.m20 * b.x + a.m21 * b.y);
-
     final float w = a.m30 * b.x + a.m31 * b.y + a.m33;
     if ( w == 0.0f ) { return target.reset(); }
     final float wInv = 1.0f / w;
@@ -2172,19 +2211,6 @@ public class Mat4 extends Matrix {
       final Vec3 target ) {
 
     // TEST
-
-    // return target.set(
-    // a.m00 * b.x +
-    // a.m01 * b.y +
-    // a.m02 * b.z,
-    //
-    // a.m10 * b.x +
-    // a.m11 * b.y +
-    // a.m12 * b.z,
-    //
-    // a.m20 * b.x +
-    // a.m21 * b.y +
-    // a.m22 * b.z);
 
     final float w = a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33;
     if ( w == 0.0f ) { return target.reset(); }

@@ -2,7 +2,6 @@ package camzup;
 
 import processing.core.PApplet;
 
-import camzup.core.Curve2;
 import camzup.core.Mesh3;
 import camzup.core.Random;
 import camzup.core.Utils;
@@ -160,14 +159,16 @@ public class CamZup {
   public static void main ( final String[] args ) {
 
     final Random rng = new Random();
-    // Mesh2 mesh = new Mesh2();
-    // Mesh2.polygon(5, Mesh2.PolyType.TRI, mesh);
-    // String str = mesh.toSvgString();
-
-    final Curve2 curve = new Curve2();
-    Curve2.circle(curve);
-    final String str = curve.toSvgString(0.0f, 0.0f, 1.0f, 1.0f);
-    System.out.println(str);
+    // final Mesh2 mesh2 = new Mesh2();
+    // Mesh2.polygon(4, Mesh2.PolyType.TRI, mesh);
+    // Mesh2.square(Mesh2.PolyType.NGON, mesh2);
+    //
+    // final Mesh3 mesh3 = new Mesh3();
+    // Mesh3.torus(0.25f, 8, 4, mesh3);
+    // Mesh3.uniformData(mesh3, mesh3);
+    // final MeshEntity3 me3 = new MeshEntity3();
+    // me3.append(mesh3);
+    // System.out.println(me3.toBlenderCode());
   }
 
   /**

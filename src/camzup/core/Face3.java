@@ -567,4 +567,25 @@ public class Face3 implements Comparable < Face3 > {
 
     return target;
   }
+
+  /**
+   * Calculates the perimeter of a face by summing the Euclidean
+   * distance between vertices.
+   *
+   * @param face the face
+   * @return the perimeter
+   */
+  public static float perimeter ( final Face3 face ) {
+
+    float sum = 0.0f;
+    final Vert3[] verts = face.vertices;
+    final int len = verts.length;
+    Vec3 prev = verts[len - 1].coord;
+    for ( int i = 0; i < len; ++i ) {
+      final Vec3 curr = verts[i].coord;
+      sum += Vec3.distEuclidean(prev, curr);
+      prev = curr;
+    }
+    return sum;
+  }
 }

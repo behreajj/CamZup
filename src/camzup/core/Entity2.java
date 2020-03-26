@@ -5,7 +5,7 @@ package camzup.core;
  * transform, but contains no other data. Useful when a 'target'
  * entity is needed.
  */
-public class Entity2 extends Entity {
+public class Entity2 extends Entity implements ISpatial2 {
 
   /**
    * The entity's transform.
@@ -110,6 +110,7 @@ public class Entity2 extends Entity {
    * @param dir the vector
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity2 moveBy ( final Vec2 dir ) {
 
@@ -123,6 +124,7 @@ public class Entity2 extends Entity {
    * @param locNew the location
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity2 moveTo ( final Vec2 locNew ) {
 
@@ -137,6 +139,7 @@ public class Entity2 extends Entity {
    * @param step   the step
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity2 moveTo (
       final Vec2 locNew,
@@ -152,6 +155,7 @@ public class Entity2 extends Entity {
    * @param rotNew the rotation
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity2 rotateTo ( final float rotNew ) {
 
@@ -162,16 +166,17 @@ public class Entity2 extends Entity {
   /**
    * Rotates this entity to an angle over a step in time.
    *
-   * @param radians the angle
-   * @param step    the step
+   * @param rotNew the angle
+   * @param step   the step
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity2 rotateTo (
-      final float radians,
+      final float rotNew,
       final float step ) {
 
-    this.transform.rotateTo(radians, step);
+    this.transform.rotateTo(rotNew, step);
     return this;
   }
 
@@ -181,78 +186,11 @@ public class Entity2 extends Entity {
    * @param radians the angle
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity2 rotateZ ( final float radians ) {
 
     this.transform.rotateZ(radians);
-    return this;
-  }
-
-  /**
-   * Scales the entity by a scalar.
-   *
-   * @param scalar the scalar
-   * @return this entity
-   */
-  @Chainable
-  public Entity2 scaleBy ( final float scalar ) {
-
-    this.transform.scaleBy(scalar);
-    return this;
-  }
-
-  /**
-   * Scales the entity by a non-uniform scalar.
-   *
-   * @param scalar the scalar
-   * @return the entity
-   */
-  @Chainable
-  public Entity2 scaleBy ( final Vec2 scalar ) {
-
-    this.transform.scaleBy(scalar);
-    return this;
-  }
-
-  /**
-   * Scales the entity to a uniform size.
-   *
-   * @param scalar the size
-   * @return this entity
-   */
-  @Chainable
-  public Entity2 scaleTo ( final float scalar ) {
-
-    this.transform.scaleTo(scalar);
-    return this;
-  }
-
-  /**
-   * Scales the entity to a non-uniform size.
-   *
-   * @param scalar the size
-   * @return this entity
-   */
-  @Chainable
-  public Entity2 scaleTo ( final Vec2 scalar ) {
-
-    this.transform.scaleTo(scalar);
-    return this;
-  }
-
-  /**
-   * Eases the entity to a scale by a step over time.
-   *
-   * @param scalar the scalar
-   * @param step   the step
-   * @return this entity
-   */
-  @Chainable
-  public Entity2 scaleTo (
-      final Vec2 scalar,
-      final float step ) {
-
-    this.transform.scaleTo(scalar, step);
     return this;
   }
 

@@ -4,8 +4,8 @@ package camzup.core;
  * A material which holds data to display textured materials. Holds a
  * transform that may be applied to UV coordinates.
  */
-@Experimental
-public abstract class MaterialUv extends Material {
+public abstract class MaterialUv extends Material
+    implements ISpatial2, IVolume2 {
 
   /**
    * The texture tint.
@@ -35,7 +35,20 @@ public abstract class MaterialUv extends Material {
 
     super(name);
     this.transform = new Transform2();
-    this.tint.set(this.tint);
+  }
+
+  /**
+   * Creates a named texture with a transform.
+   *
+   * @param name      the name
+   * @param transform the UV transform
+   */
+  public MaterialUv (
+      final String name,
+      final Transform2 transform ) {
+
+    super(name);
+    this.transform = transform;
   }
 
   /**
@@ -61,6 +74,7 @@ public abstract class MaterialUv extends Material {
    * @param dir the vector
    * @return this material
    */
+  @Override
   @Chainable
   public MaterialUv moveBy ( final Vec2 dir ) {
 
@@ -74,6 +88,7 @@ public abstract class MaterialUv extends Material {
    * @param locNew the location
    * @return this material
    */
+  @Override
   @Chainable
   public MaterialUv moveTo ( final Vec2 locNew ) {
 
@@ -88,6 +103,7 @@ public abstract class MaterialUv extends Material {
    * @param step   the step
    * @return this material
    */
+  @Override
   @Chainable
   public MaterialUv moveTo (
       final Vec2 locNew,
@@ -103,6 +119,7 @@ public abstract class MaterialUv extends Material {
    * @param rotNew the rotation
    * @return this material
    */
+  @Override
   @Chainable
   public MaterialUv rotateTo ( final float rotNew ) {
 
@@ -113,16 +130,17 @@ public abstract class MaterialUv extends Material {
   /**
    * Rotates this material to an angle over a step in time.
    *
-   * @param radians the angle
-   * @param step    the step
+   * @param rotNew the angle
+   * @param step   the step
    * @return this material
    */
+  @Override
   @Chainable
   public MaterialUv rotateTo (
-      final float radians,
+      final float rotNew,
       final float step ) {
 
-    this.transform.rotateTo(radians, step);
+    this.transform.rotateTo(rotNew, step);
     return this;
   }
 
@@ -132,6 +150,7 @@ public abstract class MaterialUv extends Material {
    * @param radians the angle
    * @return this material
    */
+  @Override
   @Chainable
   public MaterialUv rotateZ ( final float radians ) {
 
@@ -145,6 +164,7 @@ public abstract class MaterialUv extends Material {
    * @param scalar the scalar
    * @return this material
    */
+  @Override
   @Chainable
   public MaterialUv scaleBy ( final float scalar ) {
 
@@ -158,6 +178,7 @@ public abstract class MaterialUv extends Material {
    * @param scalar the scalar
    * @return the material
    */
+  @Override
   @Chainable
   public MaterialUv scaleBy ( final Vec2 scalar ) {
 
@@ -171,6 +192,7 @@ public abstract class MaterialUv extends Material {
    * @param scalar the size
    * @return this material
    */
+  @Override
   @Chainable
   public MaterialUv scaleTo ( final float scalar ) {
 
@@ -184,6 +206,7 @@ public abstract class MaterialUv extends Material {
    * @param scalar the size
    * @return this material
    */
+  @Override
   @Chainable
   public MaterialUv scaleTo ( final Vec2 scalar ) {
 
@@ -198,6 +221,7 @@ public abstract class MaterialUv extends Material {
    * @param step   the step
    * @return this material
    */
+  @Override
   @Chainable
   public MaterialUv scaleTo (
       final Vec2 scalar,

@@ -358,6 +358,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     this.blendMode(PConstants.BLEND);
 
     this.textureMode = PConstants.NORMAL;
+    this.textureWrap = PConstants.REPEAT;
+
     this.ambient(
         this.colorModeX * IUpOgl.DEFAULT_AMB_R,
         this.colorModeY * IUpOgl.DEFAULT_AMB_G,

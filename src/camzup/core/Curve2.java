@@ -591,10 +591,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
    * @see List#size()
    */
   @Override
-  public int length ( ) {
-
-    return this.knots.size();
-  }
+  public int length ( ) { return this.knots.size(); }
 
   /**
    * Prepend a knot to the curve's list of knots.
@@ -670,10 +667,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
    * @return the knot
    * @see List#remove(int)
    */
-  public Knot2 removeFirst ( ) {
-
-    return this.knots.remove(0);
-  }
+  public Knot2 removeFirst ( ) { return this.knots.remove(0); }
 
   /**
    * Removes and returns the last knot in the curve.
@@ -1244,7 +1238,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
     if ( target.closedLoop ) {
 
       final Knot2 first = knots.get(0);
-      final Knot2 last = knots.get(knots.size() - 1);
+      final Knot2 last = knots.get(knotCount - 1);
 
       final Vec2 coLast = last.coord;
       final Vec2 coFirst = first.coord;
@@ -1318,8 +1312,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
    * @param target the output curve
    * @return the circle
    */
-  public static Curve2 circle (
-      final Curve2 target ) {
+  public static Curve2 circle ( final Curve2 target ) {
 
     return Curve2.circle(0.0f, 0.5f, 4, target);
   }

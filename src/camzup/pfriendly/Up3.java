@@ -527,6 +527,18 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final int foreColor,
       final int coordColor ) {
 
+    final float swRear = strokeWeight * 4.0f;
+    final float swFore = swRear * 1.25f;
+    final float swCoord = swFore * 1.25f;
+
+    final Transform3 tr = ce.transform;
+    final List < Curve3 > curves = ce.curves;
+    final Iterator < Curve3 > curveItr = curves.iterator();
+
+    final Vec3 rh = new Vec3();
+    final Vec3 co = new Vec3();
+    final Vec3 fh = new Vec3();
+
     // this.flush();
     // this.pgl.disable(PGL.DEPTH_TEST);
     // this.pgl.depthMask(false);
@@ -536,59 +548,46 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     this.hint(PConstants.DISABLE_DEPTH_SORT);
 
     this.pushStyle();
-    this.pushMatrix();
-
-    // TODO: Is this the way it is because it had to match 2D handles
-    // which had a rotation glitch?
-    this.transform(ce.transform);
-
-    final float swRear = strokeWeight * 4.0f;
-    final float swFore = swRear * 1.25f;
-    final float swCoord = swFore * 1.25f;
-
-    final List < Curve3 > curves = ce.curves;
-    final Iterator < Curve3 > curveItr = curves.iterator();
-    Iterator < Knot3 > knItr = null;
 
     while ( curveItr.hasNext() ) {
       final Curve3 curve = curveItr.next();
-      knItr = curve.iterator();
+      final Iterator < Knot3 > knItr = curve.iterator();
 
       while ( knItr.hasNext() ) {
         final Knot3 knot = knItr.next();
 
-        final Vec3 coord = knot.coord;
-        final Vec3 foreHandle = knot.foreHandle;
-        final Vec3 rearHandle = knot.rearHandle;
+        Transform3.mulPoint(tr, knot.rearHandle, rh);
+        Transform3.mulPoint(tr, knot.coord, co);
+        Transform3.mulPoint(tr, knot.foreHandle, fh);
 
         this.strokeWeight(strokeWeight);
         this.stroke(lineColor);
 
         this.lineImpl(
-            rearHandle.x, rearHandle.y, rearHandle.z,
-            coord.x, coord.y, coord.z);
+            rh.x, rh.y, rh.z,
+            co.x, co.y, co.z);
 
         this.lineImpl(
-            coord.x, coord.y, coord.z,
-            foreHandle.x, foreHandle.y, foreHandle.z);
+            co.x, co.y, co.z,
+            fh.x, fh.y, fh.z);
 
         this.strokeWeight(swRear);
         this.stroke(rearColor);
         this.pointImpl(
-            rearHandle.x, rearHandle.y, rearHandle.z);
+            rh.x, rh.y, rh.z);
 
         this.strokeWeight(swCoord);
         this.stroke(coordColor);
         this.pointImpl(
-            coord.x, coord.y, coord.z);
+            co.x, co.y, co.z);
 
         this.strokeWeight(swFore);
         this.stroke(foreColor);
         this.pointImpl(
-            foreHandle.x, foreHandle.y, foreHandle.z);
+            fh.x, fh.y, fh.z);
       }
     }
-    this.popMatrix();
+
     this.popStyle();
 
     // Trying to shortcut this leads to an error.

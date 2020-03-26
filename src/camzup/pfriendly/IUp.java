@@ -453,9 +453,7 @@ public interface IUp {
 
     while ( !itr.isDone() ) {
 
-      /*
-       * y-axis is flipped in all cases, for y-up.
-       */
+      /* y-axis is flipped in all cases, for y-up. */
 
       final int segType = itr.currentSegment(itrpts);
       switch ( segType ) {

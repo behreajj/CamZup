@@ -534,20 +534,14 @@ public class Transform2 extends Transform {
    *
    * @return the rotation
    */
-  public float getRotation ( ) {
-
-    return this.rotation;
-  }
+  public float getRotation ( ) { return this.rotation; }
 
   /**
    * Gets the transform's previous rotation.
    *
    * @return the previous rotation
    */
-  public float getRotPrev ( ) {
-
-    return this.rotPrev;
-  }
+  public float getRotPrev ( ) { return this.rotPrev; }
 
   /**
    * Gets the transform's scale.
@@ -1388,13 +1382,12 @@ public class Transform2 extends Transform {
       final Vec2 source,
       final Vec2 target ) {
 
-    target.x = source.x - 0.5f;
-    target.y = source.y - 0.5f;
+    target.x = source.x - t.location.x - 0.5f;
+    target.y = source.y - t.location.y - 0.5f;
     Vec2.rotateZ(target, t.right.x, -t.right.y, target);
     target.x += 0.5f;
     target.y += 0.5f;
-    Vec2.mul(target, t.scale, target);
-    Vec2.sub(target, t.location, target);
+    Vec2.div(target, t.scale, target);
     return target;
   }
 

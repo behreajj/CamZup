@@ -372,13 +372,12 @@ public class Mesh3 extends Mesh {
   /**
    * Returns a String of Python code targeted toward the Blender 2.8x
    * API. This code is brittle and is used for internal testing
-   * purposes, i.e., to compare how mesh geometry looks in Blender (the
-   * control) versus in the library (the test).
+   * purposes.
    *
    * @return the string
    */
   @Experimental
-  String toBlenderCode ( ) { return this.toBlenderCode(false); }
+  String toBlenderCode ( ) { return this.toBlenderCode(false, false); }
 
   /**
    * Returns a String of Python code targeted toward the Blender 2.8x
@@ -386,11 +385,14 @@ public class Mesh3 extends Mesh {
    * purposes, i.e., to compare how mesh geometry looks in Blender (the
    * control) versus in the library (the test).
    *
+   * @param includeUvs     whether or not to include UVs
    * @param includeNormals whether or not to include normals
    * @return the string
    */
   @Experimental
-  String toBlenderCode ( final boolean includeNormals ) {
+  String toBlenderCode (
+      final boolean includeUvs,
+      final boolean includeNormals ) {
 
     final StringBuilder pyCd = new StringBuilder(1024);
     pyCd.append("{\"name\": \"")
@@ -408,9 +410,9 @@ public class Mesh3 extends Mesh {
 
     pyCd.append("], \"faces\": [");
 
-    final int flen = this.faces.length;
-    final int flast = flen - 1;
-    for ( int j = 0; j < flen; ++j ) {
+    final int fsLen = this.faces.length;
+    final int flast = fsLen - 1;
+    for ( int j = 0; j < fsLen; ++j ) {
       final int[][] vrtInd = this.faces[j];
       final int vrtIndLen = vrtInd.length;
       final int vrtLast = vrtIndLen - 1;
@@ -425,6 +427,32 @@ public class Mesh3 extends Mesh {
       if ( j < flast ) { pyCd.append(',').append(' '); }
     }
 
+    if ( includeUvs ) {
+      pyCd.append("], \"uvs\": [");
+      final int vtlen = this.texCoords.length;
+      final int vtlast = vtlen - 1;
+      for ( int h = 0; h < vtlen; ++h ) {
+        pyCd.append(this.texCoords[h].toBlenderCode(false));
+        if ( h < vtlast ) { pyCd.append(',').append(' '); }
+      }
+
+      pyCd.append("], \"uv_indices\": [");
+      for ( int j = 0; j < fsLen; ++j ) {
+        final int[][] vrtInd = this.faces[j];
+        final int vrtIndLen = vrtInd.length;
+        final int vrtLast = vrtIndLen - 1;
+
+        pyCd.append('(');
+        for ( int k = 0; k < vrtIndLen; ++k ) {
+          pyCd.append(vrtInd[k][1]);
+          if ( k < vrtLast ) { pyCd.append(',').append(' '); }
+        }
+        pyCd.append(')');
+
+        if ( j < flast ) { pyCd.append(',').append(' '); }
+      }
+    }
+
     if ( includeNormals ) {
       pyCd.append("], \"normals\": [");
       final int nlen = this.normals.length;
@@ -432,6 +460,22 @@ public class Mesh3 extends Mesh {
       for ( int h = 0; h < nlen; ++h ) {
         pyCd.append(this.normals[h].toBlenderCode());
         if ( h < nlast ) { pyCd.append(',').append(' '); }
+      }
+
+      pyCd.append("], \"normal_indices\": [");
+      for ( int j = 0; j < fsLen; ++j ) {
+        final int[][] vrtInd = this.faces[j];
+        final int vrtIndLen = vrtInd.length;
+        final int vrtLast = vrtIndLen - 1;
+
+        pyCd.append('(');
+        for ( int k = 0; k < vrtIndLen; ++k ) {
+          pyCd.append(vrtInd[k][2]);
+          if ( k < vrtLast ) { pyCd.append(',').append(' '); }
+        }
+        pyCd.append(')');
+
+        if ( j < flast ) { pyCd.append(',').append(' '); }
       }
     }
 
@@ -633,8 +677,6 @@ public class Mesh3 extends Mesh {
       final int faceIdx,
       final float amt ) {
 
-    // TEST
-
     // TODO: Extrude by vertex normal, not by calculating centroid normal?
 
     if ( amt == 0.0f ) { return new int[0][0][0]; }
@@ -770,8 +812,6 @@ public class Mesh3 extends Mesh {
   @Experimental
   public Mesh3 extrudeFaces ( final float amt ) {
 
-    // TEST
-
     final int facesLen = this.faces.length;
     for ( int i = 0, k = 0; i < facesLen; ++i ) {
       final int faceLen = this.faces[k].length;
@@ -816,18 +856,18 @@ public class Mesh3 extends Mesh {
   public Edge3[] getEdges ( ) {
 
     Edge3 trial = new Edge3();
-    final int len0 = this.faces.length;
-    final ArrayList < Edge3 > result = new ArrayList <>(len0 * 4);
+    final int fsLen = this.faces.length;
+    final ArrayList < Edge3 > result = new ArrayList <>(fsLen * 4);
 
-    for ( int i = 0; i < len0; ++i ) {
+    for ( int i = 0; i < fsLen; ++i ) {
 
-      final int[][] fs = this.faces[i];
-      final int len1 = fs.length;
+      final int[][] f = this.faces[i];
+      final int fLen = f.length;
 
-      for ( int j = 0; j < len1; ++j ) {
+      for ( int j = 0; j < fLen; ++j ) {
 
-        final int[] fOrigin = fs[j];
-        final int[] fDest = fs[(j + 1) % len1];
+        final int[] fOrigin = f[j];
+        final int[] fDest = f[(j + 1) % fLen];
 
         trial.set(
             this.coords[fOrigin[0]],
@@ -1970,26 +2010,26 @@ public class Mesh3 extends Mesh {
         .append('\n');
 
     /* Write coordinates. */
-    for ( final Vec3 coord : this.coords ) {
+    for ( int i = 0; i < coordsLen; ++i ) {
       objs.append('v')
           .append(' ')
-          .append(coord.toObjString())
+          .append(this.coords[i].toObjString())
           .append('\n');
     }
     objs.append('\n');
 
     /* Write texture coordinates. */
-    for ( final Vec2 texCoord : this.texCoords ) {
+    for ( int i = 0; i < texCoordsLen; ++i ) {
       objs.append("vt ")
-          .append(texCoord.toObjString())
+          .append(this.texCoords[i].toObjString())
           .append('\n');
     }
     objs.append('\n');
 
     /* Write normals. */
-    for ( final Vec3 normal : this.normals ) {
+    for ( int i = 0; i < normalsLen; ++i ) {
       objs.append("vn ")
-          .append(normal.toObjString())
+          .append(this.normals[i].toObjString())
           .append('\n');
     }
     objs.append('\n');
@@ -2082,7 +2122,7 @@ public class Mesh3 extends Mesh {
 
     if ( this.coords != null ) {
       // sb.append('\n');
-      final int len = (this.coords.length <= truncate) ? this.coords.length
+      final int len = this.coords.length <= truncate ? this.coords.length
           : truncate;
       final int last = len - 1;
       for ( int i = 0; i < len; ++i ) {
@@ -2104,7 +2144,7 @@ public class Mesh3 extends Mesh {
     sb.append("texCoords: [ ");
     if ( this.texCoords != null ) {
       // sb.append('\n');
-      final int len = (this.texCoords.length <= truncate)
+      final int len = this.texCoords.length <= truncate
           ? this.texCoords.length
           : truncate;
       final int last = len - 1;
@@ -2127,7 +2167,7 @@ public class Mesh3 extends Mesh {
     sb.append("normals: [ ");
     if ( this.normals != null ) {
       // sb.append('\n');
-      final int len = (this.normals.length <= truncate) ? this.normals.length
+      final int len = this.normals.length <= truncate ? this.normals.length
           : truncate;
       final int last = len - 1;
       for ( int i = 0; i < len; ++i ) {
@@ -2149,7 +2189,7 @@ public class Mesh3 extends Mesh {
     sb.append("faces: [ ");
     if ( this.faces != null ) {
       // sb.append('\n');
-      final int facesLen = (this.faces.length <= truncate) ? this.faces.length
+      final int facesLen = this.faces.length <= truncate ? this.faces.length
           : truncate;
       final int facesLast = facesLen - 1;
 
@@ -2252,7 +2292,7 @@ public class Mesh3 extends Mesh {
 
     target.name = "Cylinder";
 
-    /* Validate parameters. */
+    /* Validate arguments. */
     final int sec = sectors < 3 ? 3 : sectors;
     final float rad = radius < IUtils.DEFAULT_EPSILON ? IUtils.DEFAULT_EPSILON
         : radius;
@@ -3383,7 +3423,6 @@ public class Mesh3 extends Mesh {
    * @param target    the output mesh
    * @return the torus
    */
-  @Experimental
   public static Mesh3 torus (
       final float thickness,
       final int sectors,
@@ -3559,12 +3598,47 @@ public class Mesh3 extends Mesh {
   /**
    * Creates a torus, or doughnut. The hole opens onto the y axis.
    *
+   * @param thickness tube thickness
+   * @param target    the output mesh
+   * @return the torus
+   */
+  public static Mesh3 torus (
+      final float thickness,
+      final Mesh3 target ) {
+
+    return Mesh3.torus(
+        thickness,
+        IMesh.DEFAULT_CIRCLE_SECTORS,
+        IMesh.DEFAULT_CIRCLE_SECTORS >> 1,
+        target);
+  }
+
+  /**
+   * Creates a torus, or doughnut. The hole opens onto the y axis.
+   *
+   * @param sectors number of sectors
+   * @param panels  number of panels
+   * @param target  the output mesh
+   * @return the torus
+   */
+  public static Mesh3 torus (
+      final int sectors,
+      final int panels,
+      final Mesh3 target ) {
+
+    return Mesh3.torus(IMesh.DEFAULT_OCULUS, sectors, panels, target);
+  }
+
+  /**
+   * Creates a torus, or doughnut. The hole opens onto the y axis.
+   *
    * @param target the output mesh
    * @return the torus
    */
   public static Mesh3 torus ( final Mesh3 target ) {
 
-    return Mesh3.torus(0.25f,
+    return Mesh3.torus(
+        IMesh.DEFAULT_OCULUS,
         IMesh.DEFAULT_CIRCLE_SECTORS,
         IMesh.DEFAULT_CIRCLE_SECTORS >> 1,
         target);

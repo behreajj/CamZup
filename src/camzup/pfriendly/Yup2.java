@@ -522,58 +522,56 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       final int foreColor,
       final int coordColor ) {
 
-    // TODO: Does this use pushMatrix because of an old glitch in
-    // Transform2 which prevented rotations from working?
-
     final float swRear = strokeWeight * 4.0f;
     final float swFore = swRear * 1.25f;
     final float swCoord = swFore * 1.25f;
 
+    final Transform2 tr = ce.transform;
     final List < Curve2 > curves = ce.curves;
     final Iterator < Curve2 > curveItr = curves.iterator();
-    Iterator < Knot2 > knItr = null;
+
+    final Vec2 rh = new Vec2();
+    final Vec2 co = new Vec2();
+    final Vec2 fh = new Vec2();
 
     this.pushStyle();
-    this.pushMatrix();
-    this.transform(ce.transform);
 
     while ( curveItr.hasNext() ) {
       final Curve2 curve = curveItr.next();
-      knItr = curve.iterator();
+      final Iterator < Knot2 > knItr = curve.iterator();
 
       while ( knItr.hasNext() ) {
         final Knot2 knot = knItr.next();
 
-        final Vec2 coord = knot.coord;
-        final Vec2 foreHandle = knot.foreHandle;
-        final Vec2 rearHandle = knot.rearHandle;
+        Transform2.mulPoint(tr, knot.rearHandle, rh);
+        Transform2.mulPoint(tr, knot.coord, co);
+        Transform2.mulPoint(tr, knot.foreHandle, fh);
 
         this.strokeWeight(strokeWeight);
         this.stroke(lineColor);
 
         this.lineImpl(
-            rearHandle.x, rearHandle.y, 0.0f,
-            coord.x, coord.y, 0.0f);
+            rh.x, rh.y, 0.0f,
+            co.x, co.y, 0.0f);
 
         this.lineImpl(
-            coord.x, coord.y, 0.0f,
-            foreHandle.x, foreHandle.y, 0.0f);
+            co.x, co.y, 0.0f,
+            fh.x, fh.y, 0.0f);
 
         this.strokeWeight(swRear);
         this.stroke(rearColor);
-        this.pointImpl(rearHandle.x, rearHandle.y, 0.0f);
+        this.pointImpl(rh.x, rh.y, 0.0f);
 
         this.strokeWeight(swCoord);
         this.stroke(coordColor);
-        this.pointImpl(coord.x, coord.y, 0.0f);
+        this.pointImpl(co.x, co.y, 0.0f);
 
         this.strokeWeight(swFore);
         this.stroke(foreColor);
-        this.pointImpl(foreHandle.x, foreHandle.y, 0.0f);
+        this.pointImpl(fh.x, fh.y, 0.0f);
       }
     }
 
-    this.popMatrix();
     this.popStyle();
   }
 
@@ -690,7 +688,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    * @param target the output vector
    * @return the model point
    */
-  @Override
   public Vec2 model (
       final Vec2 source,
       final Vec2 target ) {
@@ -739,13 +736,12 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   /**
    * Takes a two-dimensional x, y position and returns the x value for
    * where it will appear on a model view. This is inefficient, use
-   * {@link IYup2#model(Vec2, Vec2)} instead.
+   * {@link Yup2#model(Vec2, Vec2)} instead.
    *
    * @param x the x coordinate
    * @param y the y coordinate
    * @return the model x coordinate
    */
-  @Override
   public float modelX ( final float x, final float y ) {
 
     return this.modelX(x, y, 0.0f);
@@ -754,13 +750,12 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   /**
    * Takes a two-dimensional x, y position and returns the y value for
    * where it will appear on a model view. This is inefficient, use
-   * {@link IYup2#model(Vec2, Vec2)} instead.
+   * {@link Yup2#model(Vec2, Vec2)} instead.
    *
    * @param x the x coordinate
    * @param y the y coordinate
    * @return the model y coordinate
    */
-  @Override
   public float modelY ( final float x, final float y ) {
 
     return this.modelY(x, y, 0.0f);
@@ -769,7 +764,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   /**
    * Takes a two-dimensional x, y position and returns the z value for
    * where it will appear on a model view. This is inefficient, use
-   * {@link IYup2#model(Vec2, Vec2)} instead.
+   * {@link Yup2#model(Vec2, Vec2)} instead.
    *
    * @param x the x coordinate
    * @param y the y coordinate

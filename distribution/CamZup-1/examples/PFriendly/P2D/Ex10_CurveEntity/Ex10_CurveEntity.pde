@@ -41,7 +41,7 @@ void draw() {
   graphics.noFill();
   graphics.strokeWeight(1.0);
   graphics.shape(entity, mats);
-  graphics.handles(entity, 0.0075);
+  graphics.handles(entity, 1.25);
 }
 
 void mouseReleased() {

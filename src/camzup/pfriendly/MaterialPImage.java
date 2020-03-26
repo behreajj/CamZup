@@ -44,14 +44,30 @@ public class MaterialPImage extends MaterialUv {
    *
    * @param name      the name
    * @param transform the UV transform
-   * @param tint      the fill or tint
    * @param texture   the texture
    */
   public MaterialPImage (
       final String name,
       final Transform2 transform,
-      final Color tint,
       final PImage texture ) {
+
+    super(name, transform);
+    this.setTexture(texture);
+  }
+
+  /**
+   * Constructs a name material with a texture.
+   *
+   * @param name      the name
+   * @param transform the UV transform
+   * @param texture   the texture
+   * @param tint      the fill or tint
+   */
+  public MaterialPImage (
+      final String name,
+      final Transform2 transform,
+      final PImage texture,
+      final Color tint ) {
 
     super(name, transform, tint);
     this.setTexture(texture);
@@ -89,10 +105,7 @@ public class MaterialPImage extends MaterialUv {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of this material.

@@ -1189,6 +1189,56 @@ public class Mat3 extends Matrix {
   }
 
   /**
+   * Multiplies each component in a matrix by a scalar.
+   *
+   * @param a      the left operand
+   * @param b      the right operand
+   * @param target the output matrix
+   * @return the product
+   */
+  public static Mat3 mul (
+      final float a,
+      final Mat3 b,
+      final Mat3 target ) {
+
+    return target.set(
+        a * b.m00,
+        a * b.m01,
+        a * b.m02,
+        a * b.m10,
+        a * b.m11,
+        a * b.m12,
+        a * b.m20,
+        a * b.m21,
+        a * b.m22);
+  }
+
+  /**
+   * Multiplies each component in a matrix by a scalar.
+   *
+   * @param a      the left operand
+   * @param b      the right operand
+   * @param target the output matrix
+   * @return the product
+   */
+  public static Mat3 mul (
+      final Mat3 a,
+      final float b,
+      final Mat3 target ) {
+
+    return target.set(
+        a.m00 * b,
+        a.m01 * b,
+        a.m02 * b,
+        a.m10 * b,
+        a.m11 * b,
+        a.m12 * b,
+        a.m20 * b,
+        a.m21 * b,
+        a.m22 * b);
+  }
+
+  /**
    * Multiplies two matrices by component.
    *
    * @param a      the left operand

@@ -2176,7 +2176,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
   }
 
   /**
-   * Multiplies a scalar and quaternion.
+   * Multiplies a quaternion and scalar.
    *
    * @param a      the quaternion
    * @param b      the scalar

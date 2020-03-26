@@ -256,7 +256,6 @@ public class Edge2 implements Comparable < Edge2 > {
    * @return this edge
    */
   @Chainable
-  @Experimental
   public Edge2 scaleLocal ( final float scalar ) {
 
     if ( scalar == 0.0f ) { return this; }
@@ -356,10 +355,7 @@ public class Edge2 implements Comparable < Edge2 > {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of this edge.

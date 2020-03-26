@@ -8,7 +8,8 @@ import java.util.List;
  * An entity which contains a transform that is applied to a list of
  * meshes. The meshes may references a list of materials by index.
  */
-public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
+public class MeshEntity2 extends Entity2
+    implements Iterable < Mesh2 >, IVolume2 {
 
   /**
    * The list of meshes held by the entity.
@@ -138,6 +139,79 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
   public Iterator < Mesh2 > iterator ( ) {
 
     return this.meshes.iterator();
+  }
+
+  /**
+   * Scales the entity by a scalar.
+   *
+   * @param scalar the scalar
+   * @return this entity
+   */
+  @Override
+  @Chainable
+  public MeshEntity2 scaleBy ( final float scalar ) {
+
+    this.transform.scaleBy(scalar);
+    return this;
+  }
+
+  /**
+   * Scales the entity by a non-uniform scalar.
+   *
+   * @param scalar the scalar
+   * @return the entity
+   */
+  @Override
+  @Chainable
+  public MeshEntity2 scaleBy ( final Vec2 scalar ) {
+
+    this.transform.scaleBy(scalar);
+    return this;
+  }
+
+  /**
+   * Scales the entity to a uniform size.
+   *
+   * @param scalar the size
+   * @return this entity
+   */
+  @Override
+  @Chainable
+  public MeshEntity2 scaleTo ( final float scalar ) {
+
+    this.transform.scaleTo(scalar);
+    return this;
+  }
+
+  /**
+   * Scales the entity to a non-uniform size.
+   *
+   * @param scalar the size
+   * @return this entity
+   */
+  @Override
+  @Chainable
+  public MeshEntity2 scaleTo ( final Vec2 scalar ) {
+
+    this.transform.scaleTo(scalar);
+    return this;
+  }
+
+  /**
+   * Eases the entity to a scale by a step over time.
+   *
+   * @param scalar the scalar
+   * @param step   the step
+   * @return this entity
+   */
+  @Override
+  @Chainable
+  public MeshEntity2 scaleTo (
+      final Vec2 scalar,
+      final float step ) {
+
+    this.transform.scaleTo(scalar, step);
+    return this;
   }
 
   /**
@@ -305,7 +379,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 > {
           .append("    for i in fc_itr:\n")
           .append("        fc_idx = fc_idcs[i]\n")
           .append("        weight = i * to_weight\n")
-          .append("        vert_group.add(fc_idx, weight, \"ADD\")\n\n");
+          .append("        vert_group.add(fc_idx, weight, \"REPLACE\")\n\n");
     }
 
     if ( extrude > 0.0f ) {

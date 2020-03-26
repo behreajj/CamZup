@@ -851,7 +851,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
 
   /**
    * Tests to see if all the vector's components are non-zero. Useful
-   * when testing valid dimensions (width and depth) stored in vectors.
+   * when testing valid dimensions (width, depth and height) stored in
+   * vectors.
    *
    * @param v the input vector
    * @return the evaluation

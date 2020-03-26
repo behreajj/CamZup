@@ -1969,8 +1969,7 @@ public abstract class Utils implements IUtils {
     final int last = len - 1;
 
     final StringBuilder sb = new StringBuilder(len * 32)
-        .append('[')
-        .append(' ');
+        .append('[').append(' ');
     for ( int i = 0; i < arr.length; ++i ) {
       sb.append(arr[i].toString());
       if ( i < last ) { sb.append(',').append(' '); }
@@ -1993,8 +1992,7 @@ public abstract class Utils implements IUtils {
     final int last = len - 1;
 
     final StringBuilder sb = new StringBuilder(len * 128)
-        .append('[')
-        .append(' ');
+        .append('[').append(' ');
     for ( int i = 0; i < arr.length; ++i ) {
       sb.append(Utils.toString(arr[i]));
       if ( i < last ) { sb.append(',').append(' '); }
@@ -2017,8 +2015,7 @@ public abstract class Utils implements IUtils {
     final int last = len - 1;
 
     final StringBuilder sb = new StringBuilder(len * 512)
-        .append('[')
-        .append(' ');
+        .append('[').append(' ');
     for ( int i = 0; i < arr.length; ++i ) {
       sb.append(Utils.toString(arr[i]));
       if ( i < last ) { sb.append(',').append(' '); }

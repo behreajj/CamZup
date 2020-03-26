@@ -12,5 +12,10 @@ public interface ICurve extends Cloneable, IEntityData {
    */
   int length ( );
 
+  /**
+   * Toggles whether or not this is a closed loop.
+   *
+   * @return this curve
+   */
   ICurve toggleLoop ( );
 }
