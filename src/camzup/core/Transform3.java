@@ -555,6 +555,7 @@ public class Transform3 extends Transform {
    *
    * @param target the output quaternion
    * @return the inverse rotation
+   * @see Quaternion#inverse(Quaternion, Quaternion)
    */
   public Quaternion getRotInverse ( final Quaternion target ) {
 
@@ -600,10 +601,7 @@ public class Transform3 extends Transform {
    * @param target the output vector
    * @return the up axis
    */
-  public Vec3 getUp ( final Vec3 target ) {
-
-    return target.set(this.up);
-  }
+  public Vec3 getUp ( final Vec3 target ) { return target.set(this.up); }
 
   /**
    * Returns a hash code for this transform based on its location,
@@ -648,6 +646,7 @@ public class Transform3 extends Transform {
         this.right,
         this.forward,
         this.up);
+
     return this;
   }
 
@@ -656,7 +655,7 @@ public class Transform3 extends Transform {
    *
    * @param dir the direction
    * @return this transform
-   * @see Vec3#add(Vec3, Vec3, Vec3)
+   * @see Transform3#moveByGlobal(Vec3)
    */
   @Chainable
   public Transform3 moveBy ( final Vec3 dir ) {
@@ -676,6 +675,7 @@ public class Transform3 extends Transform {
 
     this.locPrev.set(this.location);
     Vec3.add(this.locPrev, dir, this.location);
+
     return this;
   }
 
@@ -686,6 +686,7 @@ public class Transform3 extends Transform {
    * @param dir the direction
    * @return this transform
    * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
+   * @see Vec3#mul(Vec3, Vec3, Vec3)
    * @see Vec3#add(Vec3, Vec3, Vec3)
    */
   @Chainable
@@ -695,6 +696,7 @@ public class Transform3 extends Transform {
     Quaternion.mulVector(this.rotation, dir, this.location);
     Vec3.mul(this.location, this.scale, this.location);
     Vec3.add(this.locPrev, this.location, this.location);
+
     return this;
   }
 
@@ -709,6 +711,7 @@ public class Transform3 extends Transform {
 
     this.locPrev.set(this.location);
     this.location.set(locNew);
+
     return this;
   }
 
@@ -750,20 +753,24 @@ public class Transform3 extends Transform {
   }
 
   /**
-   * Resets this transform to the identity.
+   * Resets this transform to the identity. This also resets the fields
+   * which store the previous location, rotation and scale.
    *
    * @return this transform
+   * @see Vec3#one(Vec3)
+   * @see Vec3#right(Vec3)
+   * @see Vec3#forward(Vec3)
+   * @see Vec3#up(Vec3)
    */
   @Chainable
   public Transform3 reset ( ) {
 
     this.locPrev.reset();
-    this.location.reset();
-
     this.rotPrev.reset();
-    this.rotation.reset();
-
     Vec3.one(this.scalePrev);
+
+    this.location.reset();
+    this.rotation.reset();
     Vec3.one(this.scale);
 
     Vec3.right(this.right);
@@ -783,6 +790,7 @@ public class Transform3 extends Transform {
    * @see Transform3#updateAxes()
    */
   @Chainable
+  @Experimental
   public Transform3 rotateBy (
       final float radians,
       final Vec3 axis ) {
@@ -790,6 +798,7 @@ public class Transform3 extends Transform {
     this.rotPrev.set(this.rotation);
     Quaternion.rotate(this.rotPrev, radians, axis, this.rotation);
     this.updateAxes();
+
     return this;
   }
 
@@ -1070,11 +1079,19 @@ public class Transform3 extends Transform {
     this.locPrev.set(this.location);
     this.location.set(xLoc, yLoc, zLoc);
 
-    this.rotPrev.set(this.rotation);
-    this.rotation.set(real, xImag, yImag, zImag);
+    if ( real != 0.0f ||
+        xImag != 0.0f ||
+        yImag != 0.0f ||
+        zImag != 0.0f ) {
+      this.rotPrev.set(this.rotation);
+      this.rotation.set(real, xImag, yImag, zImag);
+      this.updateAxes();
+    }
 
     this.scalePrev.set(this.scale);
-    this.scale.set(xScale, yScale, zScale);
+    if ( xScale != 0.0f ) { this.scale.x = xScale; }
+    if ( yScale != 0.0f ) { this.scale.y = yScale; }
+    if ( zScale != 0.0f ) { this.scale.z = zScale; }
 
     return this;
   }
@@ -1084,6 +1101,7 @@ public class Transform3 extends Transform {
    *
    * @param source the source transform
    * @return this transform
+   * @see Quaternion#fromAngle(float, Quaternion)
    */
   @Chainable
   public Transform3 set ( final Transform2 source ) {
@@ -1166,6 +1184,8 @@ public class Transform3 extends Transform {
         zForward, yUp, xUp,
         zRight, yRight, xForward,
         this.rotation);
+
+    /* Update needed because the loose floats may not be normalized. */
     this.updateAxes();
 
     return this;
@@ -1199,10 +1219,7 @@ public class Transform3 extends Transform {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of this transform according to its
@@ -1244,6 +1261,45 @@ public class Transform3 extends Transform {
     return this;
   }
 
+  @Experimental
+  static Transform3 mul (
+      final Transform3 a,
+      final Transform3 b,
+      final Transform3 target ) {
+
+    // TEST
+
+    // target.rotPrev.reset();
+    // target.locPrev.reset();
+    // Vec3.one(target.scalePrev);
+
+    target.locPrev.set(target.location);
+    target.rotPrev.set(target.rotation);
+    target.scalePrev.set(target.scale);
+
+    target.location.reset();
+
+    Quaternion.mul(a.rotation, b.rotation, target.rotation);
+    Vec3.mul(a.scale, b.scale, target.scale);
+
+    // This doesn't work...
+    // Vec3 v2 = Quaternion.mulVector(b.rotation, a.location, new Vec3());
+    // Vec3 v3 = Vec3.mul(b.scale, v2, new Vec3());
+
+    // Vec3 v0 = Quaternion.mulVector(target.rotation, b.location, new
+    // Vec3());
+    // Vec3 v1 = Vec3.mul(target.scale, v0, new Vec3());
+
+    Vec3.add(
+        Transform3.mulPoint(target, b.location, new Vec3()),
+        Transform3.invMulPoint(target, a.location, new Vec3()),
+        target.location);
+
+    target.updateAxes();
+
+    return target;
+  }
+
   /**
    * Creates a transform from axes: either separate vectors or the
    * columns of a matrix. This is an internal helper function. The
@@ -1262,6 +1318,7 @@ public class Transform3 extends Transform {
    * @return the transform
    * @see Quaternion#fromAxes(float, float, float, float, float, float,
    *      float, float, float, Quaternion)
+   * @see Vec3#one(Vec3)
    */
   public static Transform3 fromAxes (
       final float xRight,
@@ -1275,23 +1332,48 @@ public class Transform3 extends Transform {
       final float xForward,
       final Transform3 target ) {
 
+    // target.locPrev.reset();
+    // target.rotPrev.reset();
+    // Vec3.one(target.scalePrev);
+
+    target.scalePrev.set(target.scale);
+    target.locPrev.set(target.location);
     target.rotPrev.set(target.rotation);
+
     Quaternion.fromAxes(
         xRight, yForward, zUp,
         zForward, yUp, xUp,
         zRight, yRight, xForward,
         target.rotation);
+
+    /* Update needed because the loose floats may not be normalized. */
     target.updateAxes();
 
-    // target.locPrev.reset();
-    target.locPrev.set(target.location);
     target.location.reset();
-
-    // Vec3.one(target.scalePrev);
-    target.scalePrev.set(target.scale);
     Vec3.one(target.scale);
 
     return target;
+  }
+
+  /**
+   * Creates a transform from the axes of a matrix, which is assumed to
+   * represent a rotation only (i.e., does not include translation or
+   * scale). The transform's translation is set to zero; its scale, to
+   * one.
+   *
+   * @param m      the matrix
+   * @param target the output transform
+   * @return the transform
+   */
+  public static Transform3 fromAxes (
+      final Mat4 m,
+      final Transform3 target ) {
+
+    return Transform3.fromAxes(
+        m.m00, m.m11, m.m22,
+        m.m21, m.m12, m.m02,
+        m.m20, m.m10, m.m01,
+        target);
   }
 
   /**
@@ -1303,6 +1385,8 @@ public class Transform3 extends Transform {
    * @param up      the up axis
    * @param target  the output transform
    * @return the transform
+   * @see Transform3#fromAxes(float, float, float, float, float, float,
+   *      float, float, float, Transform3)
    */
   public static Transform3 fromAxes (
       final Vec3 right,
@@ -1330,20 +1414,22 @@ public class Transform3 extends Transform {
       final Vec3 dir,
       final Transform3 target ) {
 
+    // target.locPrev.reset();
+    // target.rotPrev.reset();
+    // Vec3.one(target.scalePrev);
+
+    target.locPrev.set(target.location);
     target.rotPrev.set(target.rotation);
+    target.scalePrev.set(target.scale);
+
     Quaternion.fromDir(
-        target.forward,
+        dir,
         target.rotation,
         target.right,
         target.forward,
         target.up);
 
-    // target.locPrev.reset();
-    target.locPrev.set(target.location);
     target.location.reset();
-
-    // Vec3.one(target.scalePrev);
-    target.scalePrev.set(target.scale);
     Vec3.one(target.scale);
 
     return target;
@@ -1360,20 +1446,27 @@ public class Transform3 extends Transform {
   }
 
   /**
-   * Sets the transform to an identity configuration.
+   * Sets the transform to the identity.
    *
    * @param target the output transform
    * @return the identity
+   * @see Vec3#one(Vec3)
+   * @see Vec3#right(Vec3)
+   * @see Vec3#forward(Vec3)
+   * @see Vec3#up(Vec3)
    */
   public static Transform3 identity ( final Transform3 target ) {
 
+    // target.locPrev.reset();
+    // target.rotPrev.reset();
+    // Vec3.one(target.scalePrev);
+
     target.locPrev.set(target.location);
-    target.location.reset();
-
     target.rotPrev.set(target.rotation);
-    target.rotation.reset();
-
     target.scalePrev.set(target.scale);
+
+    target.location.reset();
+    target.rotation.reset();
     Vec3.one(target.scale);
 
     Vec3.right(target.right);
@@ -1399,6 +1492,7 @@ public class Transform3 extends Transform {
       final Vec3 target ) {
 
     Quaternion.invMulVector(t.rotation, source, target);
+
     return target;
   }
 
@@ -1423,6 +1517,7 @@ public class Transform3 extends Transform {
     Vec3.sub(source, t.location, target);
     Vec3.div(target, t.scale, target);
     Quaternion.invMulVector(t.rotation, target, target);
+
     return target;
   }
 
@@ -1444,6 +1539,7 @@ public class Transform3 extends Transform {
 
     Vec3.div(source, t.scale, target);
     Quaternion.invMulVector(t.rotation, target, target);
+
     return target;
   }
 

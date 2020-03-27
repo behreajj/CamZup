@@ -322,10 +322,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    *
    * @param v2 the vector
    */
-  public Vec3 ( final Vec2 v2 ) {
-
-    this.set(v2);
-  }
+  public Vec3 ( final Vec2 v2 ) { this.set(v2); }
 
   /**
    * Promotes a Vec2 to a Vec3 with an extra component.
@@ -345,10 +342,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    *
    * @param source the source vector
    */
-  public Vec3 ( final Vec3 source ) {
-
-    this.set(source);
-  }
+  public Vec3 ( final Vec3 source ) { this.set(source); }
 
   /**
    * Tests equivalence between this and another vector. For rough
@@ -493,7 +487,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
   }
 
   /**
-   * Gets the number of components held by the vector.
+   * Gets the number of components held by this vector.
    *
    * @return the length
    */
@@ -1488,6 +1482,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @return the Minkowski distance
    * @see Vec3#distEuclidean(Vec3, Vec3)
    * @see Vec3#distManhattan(Vec3, Vec3)
+   * @see Math#pow(double, double)
+   * @see Utils#diff(float, float)
    */
   public static float distMinkowski (
       final Vec3 a,
@@ -1500,7 +1496,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
         Math.pow(Utils.diff(a.x, b.x), c)
             + Math.pow(Utils.diff(a.y, b.y), c)
             + Math.pow(Utils.diff(a.z, b.z), c),
-        1.0f / c);
+        1.0d / c);
   }
 
   /**
@@ -2805,7 +2801,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param b      right operand
    * @param target the output vector
    * @return the result
-   * @see Math#pow(double, double)
+   * @see Utils#pow(float, float)
    */
   public static Vec3 pow (
       final float a,
@@ -2813,9 +2809,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 target ) {
 
     return target.set(
-        (float) Math.pow(a, b.x),
-        (float) Math.pow(a, b.y),
-        (float) Math.pow(a, b.z));
+        Utils.pow(a, b.x),
+        Utils.pow(a, b.y),
+        Utils.pow(a, b.z));
   }
 
   /**
@@ -2825,7 +2821,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param b      right operand
    * @param target the output vector
    * @return the result
-   * @see Math#pow(double, double)
+   * @see Utils#pow(float, float)
    */
   public static Vec3 pow (
       final Vec3 a,
@@ -2833,9 +2829,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 target ) {
 
     return target.set(
-        (float) Math.pow(a.x, b),
-        (float) Math.pow(a.y, b),
-        (float) Math.pow(a.z, b));
+        Utils.pow(a.x, b),
+        Utils.pow(a.y, b),
+        Utils.pow(a.z, b));
   }
 
   /**
@@ -2845,7 +2841,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param b      right operand
    * @param target the output vector
    * @return the result
-   * @see Math#pow(double, double)
+   * @see Utils#pow(float, float)
    */
   public static Vec3 pow (
       final Vec3 a,
@@ -2853,9 +2849,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 target ) {
 
     return target.set(
-        (float) Math.pow(a.x, b.x),
-        (float) Math.pow(a.y, b.y),
-        (float) Math.pow(a.z, b.z));
+        Utils.pow(a.x, b.x),
+        Utils.pow(a.y, b.y),
+        Utils.pow(a.z, b.z));
   }
 
   /**

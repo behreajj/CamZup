@@ -35,9 +35,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
      *
      */
     @Override
-    public abstract int compare (
-        final Complex a,
-        final Complex b );
+    public abstract int compare ( final Complex a, final Complex b );
 
     /**
      * Returns the simple name of this class.

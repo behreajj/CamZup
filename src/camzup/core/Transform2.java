@@ -302,6 +302,9 @@ public class Transform2 extends Transform {
 
   /**
    * Updates the local axes of the transform based on its rotation.
+   *
+   * @see Vec2#fromPolar(float, Vec2)
+   * @see Vec2#perpendicularCCW(Vec2, Vec2)
    */
   @Override
   protected void updateAxes ( ) {
@@ -359,6 +362,8 @@ public class Transform2 extends Transform {
    * control) versus in the library (the test).
    *
    * @return the string
+   * @see Utils#cos(float)
+   * @see Utils#sin(float)
    */
   @Experimental
   String toBlenderCode ( ) {
@@ -369,7 +374,7 @@ public class Transform2 extends Transform {
      * proportional in Blender when it is extruded.
      */
     final String rotationMode = "\"QUATERNION\"";
-    final double halfRad = this.rotation * 0.5d;
+    final float halfRad = this.rotation * 0.5f;
 
     return new StringBuilder(256)
         .append("{\"location\": ")
@@ -377,9 +382,9 @@ public class Transform2 extends Transform {
         .append(", \"rotation_mode\": ")
         .append(rotationMode)
         .append(", \"rotation_quaternion\": (")
-        .append(Math.cos(halfRad))
+        .append(Utils.toFixed(Utils.cos(halfRad), 6))
         .append(", 0.0, 0.0, ")
-        .append(Math.sin(halfRad))
+        .append(Utils.toFixed(Utils.sin(halfRad), 6))
         .append("), \"scale\": ")
         .append(this.scale.toBlenderCode(
             (this.scale.x + this.scale.y) * 0.5f))
@@ -589,6 +594,11 @@ public class Transform2 extends Transform {
    *
    * @param target the target point
    * @return this transform
+   * @see Vec2#sub(Vec2, Vec2, Vec2)
+   * @see Vec2#none(Vec2)
+   * @see Vec2#normalize(Vec2, Vec2)
+   * @see Vec2#perpendicularCW(Vec2, Vec2)
+   * @see Vec2#headingSigned(Vec2)
    */
   @Chainable
   public Transform2 lookAt ( final Vec2 target ) {
@@ -609,7 +619,7 @@ public class Transform2 extends Transform {
    *
    * @param dir the direction
    * @return this transform
-   * @see Vec2#add(Vec2, Vec2, Vec2)
+   * @see Transform2#moveByGlobal(Vec2)
    */
   @Chainable
   public Transform2 moveBy ( final Vec2 dir ) {
@@ -629,6 +639,7 @@ public class Transform2 extends Transform {
 
     this.locPrev.set(this.location);
     Vec2.add(this.locPrev, dir, this.location);
+
     return this;
   }
 
@@ -639,17 +650,17 @@ public class Transform2 extends Transform {
    * @param dir the direction
    * @return this transform
    * @see Vec2#rotateZ(Vec2, float, float, Vec2)
+   * @see Vec2#mul(Vec2, Vec2, Vec2)
    * @see Vec2#add(Vec2, Vec2, Vec2)
    */
   @Chainable
   public Transform2 moveByLocal ( final Vec2 dir ) {
 
-    // TEST
-
     this.locPrev.set(this.location);
     Vec2.rotateZ(dir, this.right.x, this.right.y, this.location);
     Vec2.mul(this.location, this.scale, this.location);
     Vec2.add(this.locPrev, this.location, this.location);
+
     return this;
   }
 
@@ -664,6 +675,7 @@ public class Transform2 extends Transform {
 
     this.locPrev.set(this.location);
     this.location.set(locNew);
+
     return this;
   }
 
@@ -701,11 +713,13 @@ public class Transform2 extends Transform {
 
     this.locPrev.set(this.location);
     easingFunc.apply(this.locPrev, locNew, step, this.location);
+
     return this;
   }
 
   /**
-   * Resets this transform to the identity.
+   * Resets this transform to the identity. This also resets the fields
+   * which store the previous location, rotation and scale.
    *
    * @return this transform
    */
@@ -713,12 +727,11 @@ public class Transform2 extends Transform {
   public Transform2 reset ( ) {
 
     this.locPrev.reset();
-    this.location.reset();
-
     this.rotPrev = 0.0f;
-    this.rotation = 0.0f;
-
     Vec2.one(this.scalePrev);
+
+    this.location.reset();
+    this.rotation = 0.0f;
     Vec2.one(this.scale);
 
     Vec2.right(this.right);
@@ -739,6 +752,7 @@ public class Transform2 extends Transform {
     this.rotPrev = this.rotation;
     this.rotation = rotNew;
     this.updateAxes();
+
     return this;
   }
 
@@ -775,6 +789,7 @@ public class Transform2 extends Transform {
     this.rotPrev = this.rotation;
     this.rotation = easingFunc.apply(this.rotPrev, radians, step);
     this.updateAxes();
+
     return this;
   }
 
@@ -930,7 +945,8 @@ public class Transform2 extends Transform {
     this.rotateTo(radians);
 
     this.scalePrev.set(this.scale);
-    this.scale.set(xScale, yScale);
+    if ( xScale != 0.0f ) { this.scale.x = xScale; }
+    if ( yScale != 0.0f ) { this.scale.y = yScale; }
 
     return this;
   }
@@ -1030,10 +1046,7 @@ public class Transform2 extends Transform {
    * @see IUtils#RAD_TO_DEG
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of this transform according to its
@@ -1096,24 +1109,46 @@ public class Transform2 extends Transform {
       final float xForward,
       final Transform2 target ) {
 
+    // target.locPrev.reset();
+    // target.rotPrev = 0.0f;
+    // Vec2.one(target.scalePrev);
+
+    target.locPrev.set(target.location);
+    target.rotPrev = target.rotation;
+    target.scalePrev.set(target.scale);
+
     target.right.set(xRight, yRight);
     target.forward.set(xForward, yForward);
 
     Vec2.normalize(target.right, target.right);
     Vec2.normalize(target.forward, target.forward);
 
-    target.rotPrev = target.rotation;
-    target.rotation = Vec2.headingSigned(target.right);
-
-    // target.locPrev.reset();
-    target.locPrev.set(target.location);
     target.location.reset();
-
-    // Vec2.one(target.scalePrev);
-    target.scalePrev.set(target.scale);
+    target.rotation = Vec2.headingSigned(target.right);
     Vec2.one(target.scale);
 
     return target;
+  }
+
+  /**
+   * Creates a transform from the axes of a matrix, which is assumed to
+   * represent a rotation only (i.e., does not include translation or
+   * scale). The transform's translation is set to zero; its scale, to
+   * one.
+   *
+   * @param m      the matrix
+   * @param target the output transform
+   * @return the transform
+   * @see Transform2#fromAxes(float, float, float, float, Transform2)
+   */
+  public static Transform2 fromAxes (
+      final Mat3 m,
+      final Transform2 target ) {
+
+    return Transform2.fromAxes(
+        m.m00, m.m11,
+        m.m10, m.m01,
+        target);
   }
 
   /**
@@ -1143,10 +1178,23 @@ public class Transform2 extends Transform {
    * @param dir    the direction
    * @param target the output transform
    * @return the transform
+   * @see Vec2#none(Vec2)
+   * @see Vec2#normalize(Vec2, Vec2)
+   * @see Vec2#perpendicularCW(Vec2, Vec2)
+   * @see Vec2#headingSigned(Vec2)
+   * @see Vec2#one(Vec2)
    */
   public static Transform2 fromDir (
       final Vec2 dir,
       final Transform2 target ) {
+
+    // target.locPrev.reset();
+    // target.rotPrev = 0.0f;
+    // Vec2.one(target.scalePrev);
+
+    target.locPrev.set(target.location);
+    target.rotPrev = target.rotation;
+    target.scalePrev.set(target.scale);
 
     if ( Vec2.none(dir) ) {
       Vec2.forward(target.forward);
@@ -1155,15 +1203,8 @@ public class Transform2 extends Transform {
     }
     Vec2.perpendicularCW(target.forward, target.right);
 
-    target.rotPrev = target.rotation;
     target.rotation = Vec2.headingSigned(target.right);
-
-    // target.locPrev.reset();
-    target.locPrev.set(target.location);
     target.location.reset();
-
-    // Vec2.one(target.scalePrev);
-    target.scalePrev.set(target.scale);
     Vec2.one(target.scale);
 
     return target;
@@ -1180,20 +1221,26 @@ public class Transform2 extends Transform {
   }
 
   /**
-   * Sets the transform to an identity configuration.
+   * Sets the transform to the identity.
    *
    * @param target the output transform
    * @return the identity
+   * @see Vec2#one(Vec2)
+   * @see Vec2#right(Vec2)
+   * @see Vec2#forward(Vec2)
    */
   public static Transform2 identity ( final Transform2 target ) {
 
+    // target.locPrev.reset();
+    // target.rotPrev = 0.0f;
+    // Vec2.one(target.scalePrev);
+
     target.locPrev.set(target.location);
-    target.location.reset();
-
     target.rotPrev = target.rotation;
-    target.rotation = 0.0f;
-
     target.scalePrev.set(target.scale);
+
+    target.location.reset();
+    target.rotation = 0.0f;
     Vec2.one(target.scale);
 
     Vec2.right(target.right);

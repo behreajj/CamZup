@@ -253,7 +253,7 @@ public class MeshEntity3 extends Entity3
       final float clearcoatRough ) {
 
     final int meshLen = this.meshes.size();
-    final boolean autoSmoothNormals = true;
+    // final boolean autoSmoothNormals = true;
     final boolean addVertGroups = true;
     final boolean includeNormals = false;
     final boolean includeUvs = true;
@@ -368,11 +368,16 @@ public class MeshEntity3 extends Entity3
             .append("            curr_loop = curr_loop + 1\n");
       }
 
+      if ( includeNormals ) {
+        pyCd.append("    nrm_dat = mesh[\"normals\"]\n");
+        pyCd.append("    nrm_idcs = mesh[\"normal_indices\"]\n");
+      }
+
       pyCd.append("    bm.to_mesh(mesh_data)\n")
           .append("    bm.free()\n\n");
     }
 
-    if ( autoSmoothNormals ) {
+    if ( !includeNormals ) {
       pyCd.append("    mesh_data.use_auto_smooth = True\n")
           .append("    polys = mesh_data.polygons\n")
           .append("    for poly in polys:\n")

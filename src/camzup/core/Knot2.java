@@ -212,10 +212,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    *
    * @param source the source
    */
-  public Knot2 ( final Knot2 source ) {
-
-    this.set(source);
-  }
+  public Knot2 ( final Knot2 source ) { this.set(source); }
 
   /**
    * Attempts to create a knot from Strings.
@@ -246,10 +243,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    *
    * @param coord the coordinate
    */
-  public Knot2 ( final Vec2 coord ) {
-
-    this.set(coord);
-  }
+  public Knot2 ( final Vec2 coord ) { this.set(coord); }
 
   /**
    * Creates a knot from a coordinate and fore handle. The rear handle
@@ -333,10 +327,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    * @see Knot2#alignHandlesForward()
    */
   @Chainable
-  public Knot2 alignHandles ( ) {
-
-    return this.alignHandlesForward();
-  }
+  public Knot2 alignHandles ( ) { return this.alignHandlesForward(); }
 
   /**
    * Aligns this knot's fore handle to its rear handle while preserving
@@ -482,10 +473,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    * @see Knot2#mirrorHandlesForward()
    */
   @Chainable
-  public Knot2 mirrorHandles ( ) {
-
-    return this.mirrorHandlesForward();
-  }
+  public Knot2 mirrorHandles ( ) { return this.mirrorHandlesForward(); }
 
   /**
    * Sets the forward-facing handle to mirror the rear-facing handle:

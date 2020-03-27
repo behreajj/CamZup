@@ -159,16 +159,17 @@ public class CamZup {
   public static void main ( final String[] args ) {
 
     final Random rng = new Random();
-    // final Mesh2 mesh2 = new Mesh2();
-    // Mesh2.polygon(4, Mesh2.PolyType.TRI, mesh);
-    // Mesh2.square(Mesh2.PolyType.NGON, mesh2);
-    //
-    // final Mesh3 mesh3 = new Mesh3();
-    // Mesh3.torus(0.25f, 8, 4, mesh3);
-    // Mesh3.uniformData(mesh3, mesh3);
+
+    // final Mesh3 m3 = new Mesh3();
+    // Mesh3.dodecahedron(m3);
+    // m3.subdivFaces(1);
+    // CamZup.toSphere(m3);
     // final MeshEntity3 me3 = new MeshEntity3();
-    // me3.append(mesh3);
-    // System.out.println(me3.toBlenderCode());
+    // me3.append(m3);
+    // final CurveEntity3 ce3 = new CurveEntity3();
+    // CurveEntity3.fromMeshEntity(me3, ce3);
+    // final String str = ce3.toBlenderCode();
+    // System.out.println(str);
   }
 
   /**

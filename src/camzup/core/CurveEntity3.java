@@ -92,61 +92,6 @@ public class CurveEntity3 extends Entity3
   }
 
   /**
-   * Evaluates a step in the range [0.0, 1.0] for curve, returning a
-   * coordinate on the curve and a tangent. The tangent will be
-   * normalized, to be of unit length.
-   *
-   * @param curveIndex the curve index
-   * @param step       the step in [0.0, 1.0]
-   * @param coordWorld the output world coordinate
-   * @param tanWorld   the output world tangent
-   * @return the world coordinate
-   * @see CurveEntity3#eval(int, float, Vec3, Vec3, Vec3, Vec3)
-   */
-  public Vec3 eval (
-      final int curveIndex,
-      final float step,
-      final Vec3 coordWorld,
-      final Vec3 tanWorld ) {
-
-    return this.eval(curveIndex, step,
-        coordWorld, tanWorld,
-        new Vec3(), new Vec3());
-  }
-
-  /**
-   * Evaluates a step in the range [0.0, 1.0] for curve, returning a
-   * coordinate on the curve and a tangent. The tangent will be
-   * normalized, to be of unit length.
-   *
-   * @param curveIndex the curve index
-   * @param step       the step in [0.0, 1.0]
-   * @param coordWorld the output world coordinate
-   * @param tanWorld   the output world tangent
-   * @param coordLocal the output local coordinate
-   * @param tanLocal   the output local tangent
-   * @return the world coordinate
-   * @see Curve3#eval(Curve3, float, Vec3, Vec3)
-   * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
-   * @see Transform3#mulDir(Transform3, Vec3, Vec3)
-   */
-  public Vec3 eval (
-      final int curveIndex,
-      final float step,
-      final Vec3 coordWorld,
-      final Vec3 tanWorld,
-      final Vec3 coordLocal,
-      final Vec3 tanLocal ) {
-
-    Curve3.eval(
-        this.curves.get(curveIndex),
-        step, coordLocal, tanLocal);
-    Transform3.mulPoint(this.transform, coordLocal, coordWorld);
-    Transform3.mulDir(this.transform, tanLocal, tanWorld);
-    return coordWorld;
-  }
-
-  /**
    * Gets a curve from this curve entity.
    *
    * @param i the index
@@ -410,5 +355,97 @@ public class CurveEntity3 extends Entity3
     }
 
     return obj.toString();
+  }
+
+  /**
+   * Evaluates a step in the range [0.0, 1.0] for curve, returning a
+   * coordinate on the curve and a tangent. The tangent will be
+   * normalized, to be of unit length.
+   *
+   * @param ce         the curve entity
+   * @param curveIndex the curve index
+   * @param step       the step in [0.0, 1.0]
+   * @param coordWorld the output world coordinate
+   * @param tanWorld   the output world tangent
+   * @return the world coordinate
+   * @see CurveEntity3#eval(CurveEntity3, int, float, Vec3, Vec3, Vec3,
+   *      Vec3)
+   */
+  public static Vec3 eval (
+      final CurveEntity3 ce,
+      final int curveIndex,
+      final float step,
+      final Vec3 coordWorld,
+      final Vec3 tanWorld ) {
+
+    return CurveEntity3.eval(
+        ce, curveIndex, step,
+        coordWorld, tanWorld,
+        new Vec3(), new Vec3());
+  }
+
+  /**
+   * Evaluates a step in the range [0.0, 1.0] for curve, returning a
+   * coordinate on the curve and a tangent. The tangent will be
+   * normalized, to be of unit length.
+   *
+   * @param ce         the curve entity
+   * @param curveIndex the curve index
+   * @param step       the step in [0.0, 1.0]
+   * @param coordWorld the output world coordinate
+   * @param tanWorld   the output world tangent
+   * @param coordLocal the output local coordinate
+   * @param tanLocal   the output local tangent
+   * @return the world coordinate
+   * @see Curve3#eval(Curve3, float, Vec3, Vec3)
+   * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
+   * @see Transform3#mulDir(Transform3, Vec3, Vec3)
+   */
+  public static Vec3 eval (
+      final CurveEntity3 ce,
+      final int curveIndex,
+      final float step,
+      final Vec3 coordWorld,
+      final Vec3 tanWorld,
+      final Vec3 coordLocal,
+      final Vec3 tanLocal ) {
+
+    Curve3.eval(
+        ce.curves.get(curveIndex),
+        step, coordLocal, tanLocal);
+    Transform3.mulPoint(ce.transform, coordLocal, coordWorld);
+    Transform3.mulDir(ce.transform, tanLocal, tanWorld);
+    return coordWorld;
+  }
+
+  /**
+   * Creates a curve entity from a mesh entity.
+   *
+   * @param me     the source mesh
+   * @param target the output curve
+   * @return the curve
+   */
+  public static CurveEntity3 fromMeshEntity (
+      final MeshEntity3 me,
+      final CurveEntity3 target ) {
+
+    target.name = me.name;
+    target.transform.set(me.transform);
+
+    final Iterator < Mesh3 > meshItr = me.meshes.iterator();
+    final List < Curve3 > curves = target.curves;
+    curves.clear();
+
+    while ( meshItr.hasNext() ) {
+      final Mesh3 mesh = meshItr.next();
+      final int facesLen = mesh.faces.length;
+      for ( int i = 0; i < facesLen; ++i ) {
+        final Curve3 curve = new Curve3();
+        Curve3.fromMeshFace(i, mesh, curve);
+        curves.add(curve);
+      }
+    }
+
+    return target;
   }
 }

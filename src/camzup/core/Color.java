@@ -837,9 +837,10 @@ public class Color extends Vec4 {
    * purposes, i.e., to compare how curve geometry looks in Blender (the
    * control) versus in the library (the test).<br>
    * <br>
-   * Formatted as a tuple where red, green and blue channels have been
-   * raised to the power of gamma, usually 2.2. If include alpha is
-   * true, then the alpha is also included.
+   * This is formatted as a tuple where red, green and blue channels
+   * have been raised to the power of gamma (usually 2.2, Blender's
+   * default sRGB color management setting). If include alpha is true,
+   * then the alpha is also included.
    *
    * @param gamma     the exponent
    * @param inclAlpha include the alpha channel
@@ -849,22 +850,22 @@ public class Color extends Vec4 {
       final float gamma,
       final boolean inclAlpha ) {
 
-    final StringBuilder sb = new StringBuilder(96)
+    final StringBuilder pyCd = new StringBuilder(96)
         .append('(')
-        .append(Utils.toFixed((float) Math.pow(this.x, gamma), 6))
+        .append(Utils.toFixed(Utils.pow(this.x, gamma), 6))
         .append(',').append(' ')
-        .append(Utils.toFixed((float) Math.pow(this.y, gamma), 6))
+        .append(Utils.toFixed(Utils.pow(this.y, gamma), 6))
         .append(',').append(' ')
-        .append(Utils.toFixed((float) Math.pow(this.z, gamma), 6));
+        .append(Utils.toFixed(Utils.pow(this.z, gamma), 6));
 
     if ( inclAlpha ) {
-      sb.append(',')
+      pyCd.append(',')
           .append(' ')
           .append(Utils.toFixed(this.w, 6));
     }
 
-    sb.append(')');
-    return sb.toString();
+    pyCd.append(')');
+    return pyCd.toString();
   }
 
   /**

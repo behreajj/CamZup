@@ -23,10 +23,7 @@ public class Random extends java.util.Random implements IUtils {
    *
    * @see System#currentTimeMillis()
    */
-  public Random ( ) {
-
-    this(System.currentTimeMillis());
-  }
+  public Random ( ) { this(System.currentTimeMillis()); }
 
   /**
    * Creates a new generator with a seed value.
@@ -44,10 +41,7 @@ public class Random extends java.util.Random implements IUtils {
    *
    * @return the seed
    */
-  public long getSeed ( ) {
-
-    return this.seed;
-  }
+  public long getSeed ( ) { return this.seed; }
 
   /**
    * Set the generator's seed.
@@ -57,6 +51,8 @@ public class Random extends java.util.Random implements IUtils {
   @Override
   public void setSeed ( final long seed ) {
 
+    // TODO: Test that these actually match? Or do you need to follow the
+    // hashing description laid out in setSeed ?
     super.setSeed(seed);
     this.seed = seed;
   }

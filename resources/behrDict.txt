@@ -101,3 +101,4 @@ william
 redo
 bitangent
 perimeter
+lemniscate

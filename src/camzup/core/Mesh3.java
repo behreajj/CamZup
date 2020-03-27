@@ -3,6 +3,7 @@ package camzup.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -13,7 +14,7 @@ import java.util.TreeSet;
  * texture coordinates and indices). These are not final, and so can
  * be reassigned.
  */
-public class Mesh3 extends Mesh {
+public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
   /**
    * Compares two face indices (an array of vertex indices) by averaging
@@ -83,6 +84,73 @@ public class Mesh3 extends Mesh {
       Vec3.div(this.bAvg, bLen, this.bAvg);
 
       return this.aAvg.compareTo(this.bAvg);
+    }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * An iterator, which allows a mesh's faces to be accessed in an
+   * enhanced for loop.
+   */
+  public static final class Face3Iterator implements Iterator < Face3 > {
+
+    /**
+     * The current index.
+     */
+    private int index = 0;
+
+    /**
+     * The mesh being iterated over.
+     */
+    private final Mesh3 mesh;
+
+    /**
+     * The default constructor.
+     *
+     * @param mesh the mesh to iterate
+     */
+    public Face3Iterator ( final Mesh3 mesh ) { this.mesh = mesh; }
+
+    /**
+     * Tests to see if the iterator has another value.
+     *
+     * @return the evaluation
+     */
+    @Override
+    public boolean hasNext ( ) { return this.index < this.mesh.length(); }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @return the value
+     * @see Mesh3#getFace(int, Face3)
+     */
+    @Override
+    public Face3 next ( ) {
+
+      return this.mesh.getFace(this.index++, new Face3());
+    }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @param target the output face
+     * @return the value
+     * @see Mesh3#getFace(int, Face3)
+     */
+    public Face3 next ( final Face3 target ) {
+
+      return this.mesh.getFace(this.index++, target);
     }
 
     /**
@@ -542,7 +610,13 @@ public class Mesh3 extends Mesh {
    * @return the cloned mesh
    */
   @Override
-  public Mesh3 clone ( ) { return new Mesh3(this); }
+  public Mesh3 clone ( ) {
+
+    final Mesh3 m = new Mesh3(this);
+    m.name = this.name;
+    m.materialIndex = this.materialIndex;
+    return m;
+  }
 
   /**
    * Tests this mesh for equivalence with an object.
@@ -1178,6 +1252,22 @@ public class Mesh3 extends Mesh {
     }
     return this;
   }
+
+  /**
+   * Returns an iterator for this mesh, which allows its faces to be
+   * accessed in an enhanced for-loop.
+   *
+   * @return the iterator
+   */
+  @Override
+  public Face3Iterator iterator ( ) { return new Face3Iterator(this); }
+
+  /**
+   * Gets the number of faces held by this mesh.
+   *
+   * @return the length
+   */
+  public int length ( ) { return this.faces.length; }
 
   /**
    * Centers the mesh about the origin, (0.0, 0.0) and re-scales it to
@@ -2384,8 +2474,8 @@ public class Mesh3 extends Mesh {
     for ( int i = 0, j = sec1; i < sec1; ++i, ++j ) {
       // final float u = i * toTheta;
       final float u = 1.0f - i * toTheta;
-      vts[i] = new Vec2(u, 1.0f);
-      vts[j] = new Vec2(u, 0.0f);
+      vts[i].set(u, 1.0f);
+      vts[j].set(u, 0.0f);
     }
 
     /* Side panel vertices and normals. */
@@ -2401,7 +2491,7 @@ public class Mesh3 extends Mesh {
        *
        * It should not be necessary to normalize the normal.
        */
-      final Vec3 vn = vns[i] = new Vec3(
+      final Vec3 vn = vns[i].set(
           ix * cosa + jx * sina,
           iy * cosa + jy * sina,
           iz * cosa + jz * sina);
@@ -2410,12 +2500,12 @@ public class Mesh3 extends Mesh {
        * Keep separate in case you want to try tapering the cylinder by
        * providing two radii.
        */
-      final Vec3 v0 = vs[i] = Vec3.mul(vn, rad, new Vec3());
+      final Vec3 v0 = Vec3.mul(vn, rad, vs[i]);
       v0.x += xOrigin;
       v0.y += yOrigin;
       v0.z += zOrigin;
 
-      final Vec3 v1 = vs[j] = Vec3.mul(vn, rad, new Vec3());
+      final Vec3 v1 = Vec3.mul(vn, rad, vs[j]);
       v1.x += xDest;
       v1.y += yDest;
       v1.z += zDest;
@@ -2466,7 +2556,7 @@ public class Mesh3 extends Mesh {
 
       /* If needed, find end cap texture coordinates. */
       if ( includeCaps ) {
-        vts[vtLen + i] = new Vec2(
+        vts[vtLen + i].set(
             cosa * 0.5f + 0.5f,
             sina * 0.5f + 0.5f);
       }
@@ -2478,15 +2568,15 @@ public class Mesh3 extends Mesh {
       final int vtCenterIdx = vts.length - 1;
 
       /* Convert origin, destination loose floats to vectors. */
-      vs[vLen] = new Vec3(xOrigin, yOrigin, zOrigin);
-      vs[len1] = new Vec3(xDest, yDest, zDest);
+      vs[vLen].set(xOrigin, yOrigin, zOrigin);
+      vs[len1].set(xDest, yDest, zDest);
 
       /* Set UV Center. */
-      vts[vtCenterIdx] = Vec2.uvCenter(new Vec2());
+      Vec2.uvCenter(vts[vtCenterIdx]);
 
       /* Set normals. */
-      vns[sec] = new Vec3(-kx, -ky, -kz);
-      vns[sec1] = new Vec3(-kx, -ky, -kz);
+      vns[sec].set(-kx, -ky, -kz);
+      vns[sec1].set(-kx, -ky, -kz);
 
       /* Set faces. */
       for ( int i = 0, j = sec; i < sec; ++i, ++j ) {
@@ -2682,6 +2772,7 @@ public class Mesh3 extends Mesh {
       Vec3.rescale(v, 0.5f, v);
     }
 
+    target.triangulate();
     target.calcNormals();
     target.name = "Sphere";
     return target;
@@ -2749,10 +2840,7 @@ public class Mesh3 extends Mesh {
       final boolean includeCaps,
       final Mesh3 target ) {
 
-    final float radius = 0.5f * Utils.hypot(
-        dest.x - origin.x,
-        dest.y - origin.y,
-        dest.z - origin.z);
+    final float radius = 0.25f * Vec3.dist(origin, dest);
 
     return Mesh3.cylinder(
         origin.x, origin.y, origin.z,

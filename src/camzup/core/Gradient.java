@@ -1403,6 +1403,11 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    * @param target  output gradient
    * @return the gradient
    * @author Ned Batchelder
+   * @see Math#pow(double, double)
+   * @see Math#log(double)
+   * @see Utils#div(float, float)
+   * @see Utils#sin(float)
+   * @see Utils#sqrt(float)
    */
   @Experimental
   public static Gradient fromGgr (

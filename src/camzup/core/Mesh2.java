@@ -3,6 +3,7 @@ package camzup.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -13,7 +14,7 @@ import java.util.TreeSet;
  * texture coordinates and indices). These are not final, and so can
  * be reassigned.
  */
-public class Mesh2 extends Mesh {
+public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
   /**
    * Compares two face indices (an array of vertex indices) by averaging
@@ -83,6 +84,73 @@ public class Mesh2 extends Mesh {
       Vec2.div(this.bAvg, bLen, this.bAvg);
 
       return this.aAvg.compareTo(this.bAvg);
+    }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * An iterator, which allows a mesh's faces to be accessed in an
+   * enhanced for loop.
+   */
+  public static final class Face2Iterator implements Iterator < Face2 > {
+
+    /**
+     * The current index.
+     */
+    private int index = 0;
+
+    /**
+     * The mesh being iterated over.
+     */
+    private final Mesh2 mesh;
+
+    /**
+     * The default constructor.
+     *
+     * @param mesh the mesh to iterate
+     */
+    public Face2Iterator ( final Mesh2 mesh ) { this.mesh = mesh; }
+
+    /**
+     * Tests to see if the iterator has another value.
+     *
+     * @return the evaluation
+     */
+    @Override
+    public boolean hasNext ( ) { return this.index < this.mesh.length(); }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @return the value
+     * @see Mesh2#getFace(int, Face2)
+     */
+    @Override
+    public Face2 next ( ) {
+
+      return this.mesh.getFace(this.index++, new Face2());
+    }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @param target the output face
+     * @return the value
+     * @see Mesh2#getFace(int, Face2)
+     */
+    public Face2 next ( final Face2 target ) {
+
+      return this.mesh.getFace(this.index++, target);
     }
 
     /**
@@ -394,39 +462,6 @@ public class Mesh2 extends Mesh {
   }
 
   /**
-   * Renders the mesh as a string following the SVG file format.
-   *
-   * @return the string
-   */
-  String toSvgPath ( ) {
-
-    final StringBuilder svgp = new StringBuilder(1024);
-
-    final int[][][] fs = this.faces;
-    final Vec2[] vs = this.coords;
-    final int fsLen = fs.length;
-    for ( int i = 0; i < fsLen; ++i ) {
-      final int[][] f = fs[i];
-      final int fLen = f.length;
-
-      svgp.append("<path d=\"M ")
-          .append(vs[f[0][0]].toSvgString())
-          .append(' ');
-
-      for ( int j = 1; j < fLen; ++j ) {
-        svgp.append('L')
-            .append(' ')
-            .append(vs[f[j][0]].toSvgString())
-            .append(' ');
-      }
-
-      svgp.append("Z\"></path>\n");
-    }
-
-    return svgp.toString();
-  }
-
-  /**
    * Attempts to calculate texture coordinates (UVs) for a mesh. Does
    * this by calculating the object-space dimensions of each coordinate,
    * then using the frame as a reference for new UVs.
@@ -465,7 +500,13 @@ public class Mesh2 extends Mesh {
    * @return the cloned mesh
    */
   @Override
-  public Mesh2 clone ( ) { return new Mesh2(this); }
+  public Mesh2 clone ( ) {
+
+    final Mesh2 m = new Mesh2(this);
+    m.name = this.name;
+    m.materialIndex = this.materialIndex;
+    return m;
+  }
 
   /**
    * Tests this mesh for equivalence with an object.
@@ -899,6 +940,22 @@ public class Mesh2 extends Mesh {
     }
     return this;
   }
+
+  /**
+   * Returns an iterator for this mesh, which allows its faces to be
+   * accessed in an enhanced for-loop.
+   *
+   * @return the iterator
+   */
+  @Override
+  public Face2Iterator iterator ( ) { return new Face2Iterator(this); }
+
+  /**
+   * Gets the number of faces held by this mesh.
+   *
+   * @return the length
+   */
+  public int length ( ) { return this.faces.length; }
 
   /**
    * Centers the mesh about the origin, (0.0, 0.0) and rescales it to
@@ -1713,87 +1770,37 @@ public class Mesh2 extends Mesh {
   }
 
   /**
-   * Renders this mesh as an SVG string. A default material renders the
-   * mesh's fill and stroke. The background of the SVG is transparent.
+   * Renders the mesh as a string following the SVG file format.
    *
-   * @return the SVG string
+   * @return the string
    */
-  public String toSvgString ( ) {
+  @Override
+  public String toSvgElm ( ) {
 
-    return this.toSvgString(0.5f, 0.5f, 512.0f, 512.0f);
-  }
+    final StringBuilder svgp = new StringBuilder(1024);
 
-  /**
-   * Renders this mesh as an SVG string. A default material renders the
-   * mesh's fill and stroke. The background of the SVG is transparent.
-   * The width and height supplied form both the view box dimensions,
-   * the translation and the scale of the shape. The origin is expected
-   * to be in unit coordinates, [0.0, 1.0] .
-   *
-   * @param xOrigin the origin x
-   * @param yOrigin the origin y
-   * @param width   the width
-   * @param height  the height
-   * @return the SVG string
-   */
-  public String toSvgString (
-      final float xOrigin,
-      final float yOrigin,
-      final float width,
-      final float height ) {
+    final int[][][] fs = this.faces;
+    final Vec2[] vs = this.coords;
+    final int fsLen = fs.length;
+    for ( int i = 0; i < fsLen; ++i ) {
+      final int[][] f = fs[i];
+      final int fLen = f.length;
 
-    final float vw = Utils.max(IUtils.DEFAULT_EPSILON, width);
-    final float vh = Utils.max(IUtils.DEFAULT_EPSILON, height);
-    final float x = Utils.clamp01(xOrigin);
-    final float y = Utils.clamp01(yOrigin);
+      svgp.append("<path d=\"M ")
+          .append(vs[f[0][0]].toSvgString())
+          .append(' ');
 
-    final String vwStr = Utils.toFixed(vw, 6);
-    final String vhStr = Utils.toFixed(vh, 6);
-    final String sclStr = Utils.toFixed(Utils.min(vw, vh), 6);
+      for ( int j = 1; j < fLen; ++j ) {
+        svgp.append('L')
+            .append(' ')
+            .append(vs[f[j][0]].toSvgString())
+            .append(' ');
+      }
 
-    final StringBuilder svgp = new StringBuilder(128);
-    svgp.append("<svg ")
-        .append("xmlns=\"http://www.w3.org/2000/svg\" ")
-        .append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ")
-        .append("viewBox=\"0 0 ")
-        .append(vwStr)
-        .append(' ')
-        .append(vhStr)
-        .append("\">\n")
-        .append("<g transform=\"translate(")
-        .append(Utils.toFixed(vw * x, 6))
-        .append(',')
-        .append(' ')
-        .append(Utils.toFixed(vh * y, 6))
-        .append(") scale(")
-        .append(sclStr)
-        .append(", -")
-        .append(sclStr)
-        .append(")\">\n")
-        .append(MaterialSolid.defaultSvgMaterial(Utils.max(vw, vh)))
-        .append(this.toSvgPath())
-        .append("</g>\n</g>\n</svg>");
+      svgp.append("Z\"></path>\n");
+    }
 
     return svgp.toString();
-  }
-
-  /**
-   * Renders this mesh as an SVG string. A default material renders the
-   * mesh's fill and stroke. The background of the SVG is transparent.
-   * The width and height supplied form both the view box dimensions,
-   * the translation and the scale of the shape.
-   *
-   * @param origin the origin
-   * @param dim    the dimensions
-   * @return the SVG string
-   */
-  public String toSvgString (
-      final Vec2 origin,
-      final Vec2 dim ) {
-
-    return this.toSvgString(
-        origin.x, origin.y,
-        dim.x, dim.y);
   }
 
   /**

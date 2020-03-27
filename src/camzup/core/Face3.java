@@ -1,6 +1,7 @@
 package camzup.core;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * Organizes components of a 3D mesh into a list of vertices that form
@@ -9,7 +10,58 @@ import java.util.Arrays;
  * This is not used by a mesh internally; it is created upon retrieval
  * from a mesh.
  */
-public class Face3 implements Comparable < Face3 > {
+public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
+
+  /**
+   * An iterator, which allows a face's vertices to be accessed in an
+   * enhanced for loop.
+   */
+  public static final class Vert3Iterator implements Iterator < Vert3 > {
+
+    /**
+     * The face being iterated over.
+     */
+    private final Face3 face;
+
+    /**
+     * The current index.
+     */
+    private int index = 0;
+
+    /**
+     * The default constructor.
+     *
+     * @param face the face to iterate
+     */
+    public Vert3Iterator ( final Face3 face ) { this.face = face; }
+
+    /**
+     * Tests to see if the iterator has another value.
+     *
+     * @return the evaluation
+     */
+    @Override
+    public boolean hasNext ( ) { return this.index < this.face.length(); }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @return the value
+     */
+    @Override
+    public Vert3 next ( ) { return this.face.vertices[this.index++]; }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
 
   /**
    * The array of vertices in a face.
@@ -19,19 +71,32 @@ public class Face3 implements Comparable < Face3 > {
   /**
    * The default constructor. When used, initializes an empty array.
    */
-  public Face3 ( ) {
-
-    this.vertices = new Vert3[] {};
-  }
+  public Face3 ( ) { this.vertices = new Vert3[] {}; }
 
   /**
    * Creates a face from an array of vertices.
    *
    * @param vertices the vertices
    */
-  public Face3 ( final Vert3 ... vertices ) {
+  public Face3 ( final Vert3 ... vertices ) { this.set(vertices); }
 
-    this.set(vertices);
+  @Experimental
+  Face3 translateLocal ( final Vec3 v ) {
+
+    // TEST
+
+    final Transform3 tr = Face3.orientation(this, new Transform3());
+    final Vec3 vLocal = Transform3.mulDir(tr, v, new Vec3());
+
+    final int len = this.vertices.length;
+    for ( int i = 0; i < len; ++i ) {
+      final Vec3 c = this.vertices[i].coord;
+      Vec3.sub(c, tr.location, c);
+      Vec3.add(c, vLocal, c);
+      Vec3.add(c, tr.location, c);
+    }
+
+    return this;
   }
 
   /**
@@ -113,20 +178,23 @@ public class Face3 implements Comparable < Face3 > {
    * @return the hash
    */
   @Override
-  public int hashCode ( ) {
+  public int hashCode ( ) { return Arrays.hashCode(this.vertices); }
 
-    return Arrays.hashCode(this.vertices);
-  }
+  /**
+   * Returns an iterator for this face, which allows its vertices to be
+   * accessed in an enhanced for-loop.
+   *
+   * @return the iterator
+   */
+  @Override
+  public Vert3Iterator iterator ( ) { return new Vert3Iterator(this); }
 
   /**
    * Returns the number of vertices in this face.
    *
    * @return the vertex count
    */
-  public int length ( ) {
-
-    return this.vertices.length;
-  }
+  public int length ( ) { return this.vertices.length; }
 
   /**
    * Rotates all coordinates in the mesh by an angle around an arbitrary
@@ -411,10 +479,7 @@ public class Face3 implements Comparable < Face3 > {
    * @return the string
    */
   @Override
-  public String toString ( ) {
-
-    return this.toString(4);
-  }
+  public String toString ( ) { return this.toString(4); }
 
   /**
    * Returns a string representation of this face.
@@ -427,10 +492,13 @@ public class Face3 implements Comparable < Face3 > {
     final int len = this.vertices.length;
     final int last = len - 1;
     final StringBuilder sb = new StringBuilder(len * 512)
-        .append("{ vertices: [ \n");
+        .append("{ vertices: [ ");
     for ( int i = 0; i < len; ++i ) {
       sb.append(this.vertices[i].toString(places));
-      if ( i < last ) { sb.append(',').append('\n'); }
+      if ( i < last ) {
+        sb.append(',').append(' ');
+        // sb.append('\n');
+      }
     }
     sb.append(" ] }");
     return sb.toString();
@@ -546,6 +614,7 @@ public class Face3 implements Comparable < Face3 > {
     target.scalePrev.set(target.scale);
     Vec3.one(target.scale);
 
+    // TODO: Why not use Transform3 fromDir?
     Face3.normal(face, target.forward);
     Quaternion.fromDir(
         target.forward,

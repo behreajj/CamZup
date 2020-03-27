@@ -502,7 +502,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
   }
 
   /**
-   * Gets the number of components held by the vector.
+   * Gets the number of components held by this vector.
    *
    * @return the length
    */
@@ -1279,6 +1279,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    * @see Vec2#distEuclidean(Vec2, Vec2)
    * @see Vec2#distManhattan(Vec2, Vec2)
    * @see Math#pow(double, double)
+   * @see Utils#diff(float, float)
    */
   public static float distMinkowski (
       final Vec2 a,
@@ -2576,7 +2577,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    * @param b      right operand
    * @param target the output vector
    * @return the result
-   * @see Math#pow(double, double)
+   * @see Utils#pow(float, float)
    */
   public static Vec2 pow (
       final float a,
@@ -2584,8 +2585,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 target ) {
 
     return target.set(
-        (float) Math.pow(a, b.x),
-        (float) Math.pow(a, b.y));
+        Utils.pow(a, b.x),
+        Utils.pow(a, b.y));
   }
 
   /**
@@ -2595,7 +2596,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    * @param b      right operand
    * @param target the output vector
    * @return the result
-   * @see Math#pow(double, double)
+   * @see Utils#pow(float, float)
    */
   public static Vec2 pow (
       final Vec2 a,
@@ -2603,8 +2604,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 target ) {
 
     return target.set(
-        (float) Math.pow(a.x, b),
-        (float) Math.pow(a.y, b));
+        Utils.pow(a.x, b),
+        Utils.pow(a.y, b));
   }
 
   /**
@@ -2614,7 +2615,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    * @param b      right operand
    * @param target the output vector
    * @return the result
-   * @see Math#pow(double, double)
+   * @see Utils#pow(float, float)
    */
   public static Vec2 pow (
       final Vec2 a,
@@ -2622,8 +2623,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 target ) {
 
     return target.set(
-        (float) Math.pow(a.x, b.x),
-        (float) Math.pow(a.y, b.y));
+        Utils.pow(a.x, b.x),
+        Utils.pow(a.y, b.y));
   }
 
   /**

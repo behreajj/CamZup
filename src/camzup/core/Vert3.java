@@ -148,4 +148,40 @@ public class Vert3 implements Comparable < Vert3 > {
         .append(' ').append('}')
         .toString();
   }
+
+  /**
+   * Returns the orientation of the vertex as a quaternion based on its
+   * normal.
+   *
+   * @param vert   the vertex
+   * @param target the output quaternion
+   * @return the orientation
+   * @see Quaternion#fromDir(Vec3, Quaternion)
+   */
+  @Experimental
+  public static Quaternion orientation (
+      final Vert3 vert,
+      final Quaternion target ) {
+
+    return Quaternion.fromDir(vert.normal, target);
+  }
+
+  /**
+   * Returns the orientation of the vertex as a quaternion based on its
+   * normal.
+   *
+   * @param vert   the vertex
+   * @param target the output transform
+   * @return the orientation
+   * @see Transform3#fromDir(Vec3, Transform3)
+   */
+  @Experimental
+  public static Transform3 orientation (
+      final Vert3 vert,
+      final Transform3 target ) {
+
+    Transform3.fromDir(vert.normal, target);
+    target.moveTo(vert.coord);
+    return target;
+  }
 }

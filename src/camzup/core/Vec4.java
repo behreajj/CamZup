@@ -354,7 +354,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    * API. This code is brittle and is used for internal testing
    * purposes.
    *
-   * This is formatted as a three-tuple.
+   * This is formatted as a four-tuple.
    *
    * @return the string
    */
@@ -486,7 +486,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
   }
 
   /**
-   * Gets the number of components held by the vector.
+   * Gets the number of components held by this vector.
    *
    * @return the length
    */
@@ -1063,6 +1063,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    * @return the Minkowski distance
    * @see Vec4#distEuclidean(Vec4, Vec4)
    * @see Vec4#distManhattan(Vec4, Vec4)
+   * @see Math#pow(double, double)
+   * @see Utils#diff(float, float)
    */
   public static float distMinkowski (
       final Vec4 a,
@@ -1076,7 +1078,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
             + Math.pow(Utils.diff(a.y, b.y), c)
             + Math.pow(Utils.diff(a.z, b.z), c)
             + Math.pow(Utils.diff(a.w, b.w), c),
-        1.0f / c);
+        1.0d / c);
   }
 
   /**
@@ -1967,7 +1969,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    * @param b      right operand
    * @param target the output vector
    * @return the result
-   * @see Math#pow(double, double)
+   * @see Utils#pow(float, float)
    */
   public static Vec4 pow (
       final float a,
@@ -1975,10 +1977,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
       final Vec4 target ) {
 
     return target.set(
-        (float) Math.pow(a, b.x),
-        (float) Math.pow(a, b.y),
-        (float) Math.pow(a, b.z),
-        (float) Math.pow(a, b.w));
+        Utils.pow(a, b.x),
+        Utils.pow(a, b.y),
+        Utils.pow(a, b.z),
+        Utils.pow(a, b.w));
   }
 
   /**
@@ -1988,7 +1990,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    * @param b      right operand
    * @param target the output vector
    * @return the result
-   * @see Math#pow(double, double)
+   * @see Utils#pow(float, float)
    */
   public static Vec4 pow (
       final Vec4 a,
@@ -1996,10 +1998,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
       final Vec4 target ) {
 
     return target.set(
-        (float) Math.pow(a.x, b),
-        (float) Math.pow(a.y, b),
-        (float) Math.pow(a.z, b),
-        (float) Math.pow(a.w, b));
+        Utils.pow(a.x, b),
+        Utils.pow(a.y, b),
+        Utils.pow(a.z, b),
+        Utils.pow(a.w, b));
   }
 
   /**
@@ -2009,7 +2011,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    * @param b      right operand
    * @param target the output vector
    * @return the result
-   * @see Math#pow(double, double)
+   * @see Utils#pow(float, float)
    */
   public static Vec4 pow (
       final Vec4 a,
@@ -2017,10 +2019,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
       final Vec4 target ) {
 
     return target.set(
-        (float) Math.pow(a.x, b.x),
-        (float) Math.pow(a.y, b.y),
-        (float) Math.pow(a.z, b.z),
-        (float) Math.pow(a.w, b.w));
+        Utils.pow(a.x, b.x),
+        Utils.pow(a.y, b.y),
+        Utils.pow(a.z, b.z),
+        Utils.pow(a.w, b.w));
   }
 
   /**

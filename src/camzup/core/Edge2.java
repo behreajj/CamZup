@@ -126,6 +126,7 @@ public class Edge2 implements Comparable < Edge2 > {
    *
    * @param radians angle
    * @return this edge
+   * @see Edge2#rotateZGlobal(float)
    */
   @Chainable
   public Edge2 rotateZ ( final float radians ) {
@@ -192,6 +193,7 @@ public class Edge2 implements Comparable < Edge2 > {
    *
    * @param scale uniform scalar
    * @return this edge
+   * @see Edge2#scaleGlobal(float)
    */
   @Chainable
   public Edge2 scale ( final float scale ) {
@@ -205,6 +207,7 @@ public class Edge2 implements Comparable < Edge2 > {
    *
    * @param scalar non uniform scalar
    * @return this edge
+   * @see Edge2#scaleGlobal(Vec2)
    */
   @Chainable
   public Edge2 scale ( final Vec2 scalar ) {
@@ -219,6 +222,7 @@ public class Edge2 implements Comparable < Edge2 > {
    *
    * @param scalar the scalar
    * @return this edge
+   * @see Vec2#mul(Vec2, float, Vec2)
    */
   @Chainable
   public Edge2 scaleGlobal ( final float scalar ) {
@@ -237,6 +241,7 @@ public class Edge2 implements Comparable < Edge2 > {
    *
    * @param scalar the nonuniform scalar
    * @return this edge
+   * @see Vec2#mul(Vec2, Vec2, Vec2)
    */
   @Chainable
   public Edge2 scaleGlobal ( final Vec2 scalar ) {
@@ -254,6 +259,9 @@ public class Edge2 implements Comparable < Edge2 > {
    *
    * @param scalar the uniform scalar
    * @return this edge
+   * @see Vec2#sub(Vec2, Vec2, Vec2)
+   * @see Vec2#mul(Vec2, float, Vec2)
+   * @see Vec2#add(Vec2, Vec2, Vec2)
    */
   @Chainable
   public Edge2 scaleLocal ( final float scalar ) {
@@ -284,6 +292,10 @@ public class Edge2 implements Comparable < Edge2 > {
    *
    * @param scalar the nonuniform scalar
    * @return this edge
+   * @see Vec2#none(Vec2)
+   * @see Vec2#sub(Vec2, Vec2, Vec2)
+   * @see Vec2#mul(Vec2, Vec2, Vec2)
+   * @see Vec2#add(Vec2, Vec2, Vec2)
    */
   @Chainable
   @Experimental
@@ -381,6 +393,7 @@ public class Edge2 implements Comparable < Edge2 > {
    *
    * @param v translation
    * @return this edge
+   * @see Vec2#add(Vec2, Vec2, Vec2)
    */
   @Chainable
   public Edge2 translate ( final Vec2 v ) {

@@ -14,7 +14,7 @@ import camzup.core.Utils.EasingFuncObj;
  * to retrieve a point and tangent on a curve from a step in the range
  * [0.0, 1.0].
  */
-public class Curve2 extends Curve implements Iterable < Knot2 > {
+public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
   /**
    * An easing function to facilitate animation between multiple curves.
@@ -346,57 +346,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
   }
 
   /**
-   * Renders the curve as a string containing an SVG path.
-   *
-   * @return the SVG string
-   */
-  String toSvgPath ( ) {
-
-    final int knotLength = this.knots.size();
-    if ( knotLength < 2 ) { return ""; }
-    final StringBuilder svgp = new StringBuilder(
-        32 + 64 * (this.closedLoop ? knotLength + 1 : knotLength));
-
-    final Iterator < Knot2 > itr = this.knots.iterator();
-    Knot2 prevKnot = itr.next();
-    svgp.append("<path d=\"M ")
-        .append(prevKnot.coord.toSvgString());
-
-    Knot2 currKnot = null;
-    while ( itr.hasNext() ) {
-      currKnot = itr.next();
-
-      svgp.append(' ')
-          .append('C')
-          .append(' ')
-          .append(prevKnot.foreHandle.toSvgString())
-          .append(',')
-          .append(currKnot.rearHandle.toSvgString())
-          .append(',')
-          .append(currKnot.coord.toSvgString());
-
-      prevKnot = currKnot;
-    }
-
-    if ( this.closedLoop ) {
-      currKnot = this.knots.get(0);
-      svgp.append(' ')
-          .append('C')
-          .append(' ')
-          .append(prevKnot.foreHandle.toSvgString())
-          .append(',')
-          .append(currKnot.rearHandle.toSvgString())
-          .append(',')
-          .append(currKnot.coord.toSvgString())
-          .append(' ')
-          .append('Z');
-    }
-
-    svgp.append("\"></path>");
-    return svgp.toString();
-  }
-
-  /**
    * Append a knot to the curve's list of knots.
    *
    * @param knot the knot
@@ -453,6 +402,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
 
     final Curve2 c = new Curve2(this);
     c.name = this.name;
+    c.materialIndex = this.materialIndex;
     return c;
   }
 
@@ -492,10 +442,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
    * @return the knot
    * @see List#get(int)
    */
-  public Knot2 getFirst ( ) {
-
-    return this.knots.get(0);
-  }
+  public Knot2 getFirst ( ) { return this.knots.get(0); }
 
   /**
    * Gets the last knot in the curve.
@@ -688,20 +635,20 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
   @Chainable
   public Curve2 reset ( ) {
 
-    this.knots.clear();
-    this.knots.add(
-        new Knot2(
-            -0.5f, 0.0f,
-            -0.25f, 0.25f,
-            -0.75f, -0.25f));
-    this.knots.add(
-        new Knot2(
-            0.5f, 0.0f,
-            1.0f, 0.0f,
-            0.0f, 0.0f));
+    this.resize(2);
+    this.knots.get(0).set(
+        -0.5f, 0.0f,
+        -0.25f, 0.25f,
+        -0.75f, -0.25f);
+    this.knots.get(1).set(
+        0.5f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f);
 
     this.closedLoop = false;
+    this.materialIndex = 0;
     this.name = this.hashIdentityString();
+
     return this;
   }
 
@@ -840,14 +787,18 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
         64 + 256 * this.knots.size())
             .append("{ name: \"")
             .append(this.name)
-            .append("\", \n  closedLoop: ")
+            .append("\", closedLoop: ")
             .append(this.closedLoop)
-            .append(", \n  knots: [ \n");
+            .append(", knots: [ ");
 
     final Iterator < Knot2 > itr = this.knots.iterator();
     while ( itr.hasNext() ) {
       sb.append(itr.next().toString(places));
-      if ( itr.hasNext() ) { sb.append(',').append('\n'); }
+      if ( itr.hasNext() ) {
+        sb.append(',')
+            .append(' ');
+        // sb.append('\n');
+      }
     }
 
     sb.append(" ] }");
@@ -855,87 +806,55 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
   }
 
   /**
-   * Renders this curve as an SVG string. A default material renders the
-   * mesh's fill and stroke. The background of the SVG is transparent.
+   * Renders the curve as a string containing an SVG element.
    *
    * @return the SVG string
    */
-  public String toSvgString ( ) {
+  @Override
+  public String toSvgElm ( ) {
 
-    return this.toSvgString(0.5f, 0.5f, 512.0f, 512.0f);
-  }
+    final int knotLength = this.knots.size();
+    if ( knotLength < 2 ) { return ""; }
+    final StringBuilder svgp = new StringBuilder(
+        32 + 64 * (this.closedLoop ? knotLength + 1 : knotLength));
 
-  /**
-   * Renders this curve as an SVG string. A default material renders the
-   * mesh's fill and stroke. The background of the SVG is transparent.
-   * The width and height supplied form both the view box dimensions,
-   * the translation and the scale of the shape. The origin is expected
-   * to be in unit coordinates, [0.0, 1.0] .
-   *
-   * @param xOrigin the origin x
-   * @param yOrigin the origin y
-   * @param width   the width
-   * @param height  the height
-   * @return the SVG string
-   */
-  public String toSvgString (
-      final float xOrigin,
-      final float yOrigin,
-      final float width,
-      final float height ) {
+    final Iterator < Knot2 > itr = this.knots.iterator();
+    Knot2 prevKnot = itr.next();
+    svgp.append("<path d=\"M ")
+        .append(prevKnot.coord.toSvgString());
 
-    final float vw = Utils.max(IUtils.DEFAULT_EPSILON, width);
-    final float vh = Utils.max(IUtils.DEFAULT_EPSILON, height);
-    final float x = Utils.clamp01(xOrigin);
-    final float y = Utils.clamp01(yOrigin);
+    Knot2 currKnot = null;
+    while ( itr.hasNext() ) {
+      currKnot = itr.next();
 
-    final String vwStr = Utils.toFixed(vw, 6);
-    final String vhStr = Utils.toFixed(vh, 6);
-    final String sclStr = Utils.toFixed(Utils.min(vw, vh), 6);
+      svgp.append(' ')
+          .append('C')
+          .append(' ')
+          .append(prevKnot.foreHandle.toSvgString())
+          .append(',')
+          .append(currKnot.rearHandle.toSvgString())
+          .append(',')
+          .append(currKnot.coord.toSvgString());
 
-    final StringBuilder svgp = new StringBuilder(128);
-    svgp.append("<svg ")
-        .append("xmlns=\"http://www.w3.org/2000/svg\" ")
-        .append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ")
-        .append("viewBox=\"0 0 ")
-        .append(vwStr)
-        .append(' ')
-        .append(vhStr)
-        .append("\">\n")
-        .append("<g transform=\"translate(")
-        .append(Utils.toFixed(vw * x, 6))
-        .append(',')
-        .append(' ')
-        .append(Utils.toFixed(vh * y, 6))
-        .append(") scale(")
-        .append(sclStr)
-        .append(", -")
-        .append(sclStr)
-        .append(")\">\n")
-        .append(MaterialSolid.defaultSvgMaterial(Utils.max(vw, vh)))
-        .append(this.toSvgPath())
-        .append("</g>\n</g>\n</svg>");
+      prevKnot = currKnot;
+    }
 
+    if ( this.closedLoop ) {
+      currKnot = this.knots.get(0);
+      svgp.append(' ')
+          .append('C')
+          .append(' ')
+          .append(prevKnot.foreHandle.toSvgString())
+          .append(',')
+          .append(currKnot.rearHandle.toSvgString())
+          .append(',')
+          .append(currKnot.coord.toSvgString())
+          .append(' ')
+          .append('Z');
+    }
+
+    svgp.append("\"></path>");
     return svgp.toString();
-  }
-
-  /**
-   * Renders this curve as an SVG string. A default material renders the
-   * mesh's fill and stroke. The background of the SVG is transparent.
-   * The width and height supplied form both the view box dimensions,
-   * the translation and the scale of the shape.
-   *
-   * @param origin the origin
-   * @param dim    the dimensions
-   * @return the SVG string
-   */
-  public String toSvgString (
-      final Vec2 origin,
-      final Vec2 dim ) {
-
-    return this.toSvgString(
-        origin.x, origin.y,
-        dim.x, dim.y);
   }
 
   /**
@@ -1551,10 +1470,48 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
   /**
    * Creates a curve from a face in a mesh.
    *
+   * @param face   the mesh face
+   * @param target the output curve
+   * @return the curve
+   * @see Utils#mod(int, int)
+   * @see Curve2#lerp13(Vec2, Vec2, Vec2)
+   */
+  public static Curve2 fromMeshFace (
+      final Face2 face,
+      final Curve2 target ) {
+
+    // TEST
+
+    target.closedLoop = true;
+    target.name = "Face";
+
+    final Vert2[] verts = face.vertices;
+    final int vertsLen = verts.length;
+    target.resize(vertsLen);
+    final Iterator < Knot2 > itr = target.knots.iterator();
+
+    for ( int i = 0; i < vertsLen; ++i ) {
+      final int h = Utils.mod(i - 1, vertsLen);
+      final int j = (i + 1) % vertsLen;
+      final Vec2 v1 = verts[i].coord;
+      final Knot2 knot = itr.next();
+      Curve2.lerp13(v1, verts[h].coord, knot.rearHandle);
+      Curve2.lerp13(v1, verts[j].coord, knot.foreHandle);
+      knot.coord.set(v1);
+    }
+
+    return target;
+  }
+
+  /**
+   * Creates a curve from a face in a mesh.
+   *
    * @param faceIdx the face index
    * @param mesh    the mesh
    * @param target  the output curve
    * @return the curve
+   * @see Utils#mod(int, int)
+   * @see Curve2#lerp13(Vec2, Vec2, Vec2)
    */
   public static Curve2 fromMeshFace (
       final int faceIdx,
@@ -1573,20 +1530,17 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
         .append('.')
         .append(i)
         .toString();
+    target.materialIndex = mesh.materialIndex;
     target.resize(vertsLen);
-    final Iterator < Knot2 > itr = target.knots.iterator();
 
+    final Iterator < Knot2 > itr = target.knots.iterator();
     for ( int j = 0; j < vertsLen; ++j ) {
       final int h = Utils.mod(j - 1, vertsLen);
       final int k = (j + 1) % vertsLen;
 
-      final int vIdx0 = face[h][0];
-      final int vIdx1 = face[j][0];
-      final int vIdx2 = face[k][0];
-
-      final Vec2 v0 = vs[vIdx0];
-      final Vec2 v1 = vs[vIdx1];
-      final Vec2 v2 = vs[vIdx2];
+      final Vec2 v0 = vs[face[h][0]];
+      final Vec2 v1 = vs[face[j][0]];
+      final Vec2 v2 = vs[face[k][0]];
 
       final Knot2 knot = itr.next();
       Curve2.lerp13(v1, v0, knot.rearHandle);
@@ -1624,6 +1578,56 @@ public class Curve2 extends Curve implements Iterable < Knot2 > {
     }
 
     return Curve2.smoothHandles(target);
+  }
+
+  /**
+   * Creates a curve that approximates Bernoulli's lemniscate, which
+   * resembles an infinity loop (with equally proportioned lobes).<br>
+   * <br>
+   * The curve is set as a closed loop; however, it intersects itself,
+   * and so may lead to rendering issues when used with a fill.
+   *
+   * @param target the output curve
+   * @return the lemniscate
+   */
+  public static Curve2 infinity ( final Curve2 target ) {
+
+    target.name = "Infinity";
+    target.closedLoop = true;
+    target.resize(6);
+    final Iterator < Knot2 > itr = target.knots.iterator();
+
+    itr.next().set(
+        0.5f, 0.0f,
+        0.5f, 0.1309615f,
+        0.5f, -0.1309615f);
+
+    itr.next().set(
+        0.235709f, 0.166627f,
+        0.0505335f, 0.114256f,
+        0.361728f, 0.2022675f);
+
+    itr.next().set(
+        -0.235709f, -0.166627f,
+        -0.361728f, -0.2022675f,
+        -0.0505335f, -0.114256f);
+
+    itr.next().set(
+        -0.5f, 0.0f,
+        -0.5f, 0.1309615f,
+        -0.5f, -0.1309615f);
+
+    itr.next().set(
+        -0.235709f, 0.166627f,
+        -0.0505335f, 0.114256f,
+        -0.361728f, 0.2022675f);
+
+    itr.next().set(
+        0.235709f, -0.166627f,
+        0.361728f, -0.2022675f,
+        0.0505335f, -0.114256f);
+
+    return target;
   }
 
   /**

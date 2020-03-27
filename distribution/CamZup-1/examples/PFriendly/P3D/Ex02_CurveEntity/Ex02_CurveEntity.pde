@@ -35,7 +35,7 @@ void draw() {
   float t = mouseX / (float)width;
   Vec3 pt = new Vec3();
   Vec3 tn = new Vec3();
-  entity.eval(0, t, pt, tn);
+  CurveEntity3.eval(entity, 0, t, pt, tn);
   Vec3 tnpt = Vec3.add(pt, 
     Vec3.mul(tn, 50.0, new Vec3()), new Vec3());
 

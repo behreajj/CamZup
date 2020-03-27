@@ -917,11 +917,12 @@ public abstract class Utils implements IUtils {
   }
 
   /**
-   * Finds the approximate cosine of an angle in radians. Returns a
+   * Finds the single-precision cosine of an angle in radians. Returns a
    * value in the range [-1.0, 1.0] .
    *
    * @param radians the angle in radians
    * @return the cosine of the angle
+   * @see Math#cos(double)
    */
   public static float cos ( final float radians ) {
 
@@ -964,7 +965,8 @@ public abstract class Utils implements IUtils {
    */
   public static float diff ( final float a, final float b ) {
 
-    return Utils.abs(a - b);
+    // return Utils.abs(a - b);
+    return Float.intBitsToFloat(0x7fffffff & Float.floatToRawIntBits(a - b));
   }
 
   /**
@@ -1597,6 +1599,20 @@ public abstract class Utils implements IUtils {
   }
 
   /**
+   * Finds the single-precision of a number raised to the power of
+   * another.
+   *
+   * @param a left operand
+   * @param b right operand
+   * @return the power
+   * @see Math#pow(double, double)
+   */
+  public static float pow ( final float a, final float b ) {
+
+    return (float) Math.pow(a, b);
+  }
+
+  /**
    * Reduces the signal, or granularity, of a value. Applied to a color,
    * this yields the 'posterization' effect. Applied to a vector, this
    * yields a crenelated effect.
@@ -1671,6 +1687,10 @@ public abstract class Utils implements IUtils {
     for ( int i = 1; i < places; ++i ) {
       n *= 10;
     }
+
+    // RESEARCH: Isn't there a rounding function at Stack Overflow,
+    // implemented in JavaScript, which yields a higher accuracy by making
+    // two divisions?
     return Utils.round(value * n) / (float) n;
   }
 
@@ -1746,11 +1766,12 @@ public abstract class Utils implements IUtils {
   }
 
   /**
-   * Finds the approximate sine of an angle in radians. Returns a value
-   * in the range [-1.0, 1.0] .
+   * Finds the single precision sine of an angle in radians. Returns a
+   * value in the range [-1.0, 1.0] .
    *
    * @param radians the angle in radians
    * @return the sine of the angle
+   * @see Math#sin(double)
    */
   public static float sin ( final float radians ) {
 

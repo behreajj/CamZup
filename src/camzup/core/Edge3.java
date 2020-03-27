@@ -131,6 +131,7 @@ public class Edge3 implements Comparable < Edge3 > {
    * @param radians angle
    * @param axis    axis
    * @return this edge
+   * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
    */
   @Chainable
   public Edge3 rotate (
@@ -154,6 +155,7 @@ public class Edge3 implements Comparable < Edge3 > {
    *
    * @param q the quaternion
    * @return this edge
+   * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
    */
   @Chainable
   public Edge3 rotate ( final Quaternion q ) {
@@ -170,6 +172,7 @@ public class Edge3 implements Comparable < Edge3 > {
    *
    * @param radians angle
    * @return this edge
+   * @see Vec3#rotateX(Vec3, float, float, Vec3)
    */
   @Chainable
   public Edge3 rotateX ( final float radians ) {
@@ -191,6 +194,7 @@ public class Edge3 implements Comparable < Edge3 > {
    *
    * @param radians angle
    * @return this edge
+   * @see Vec3#rotateY(Vec3, float, float, Vec3)
    */
   @Chainable
   public Edge3 rotateY ( final float radians ) {
@@ -212,6 +216,7 @@ public class Edge3 implements Comparable < Edge3 > {
    *
    * @param radians angle
    * @return this edge
+   * @see Vec3#rotateZ(Vec3, float, float, Vec3)
    */
   @Chainable
   public Edge3 rotateZ ( final float radians ) {
@@ -233,6 +238,7 @@ public class Edge3 implements Comparable < Edge3 > {
    *
    * @param scalar uniform scalar
    * @return this edge
+   * @see Edge3#scaleGlobal(float)
    */
   @Chainable
   public Edge3 scale ( final float scalar ) {
@@ -246,6 +252,7 @@ public class Edge3 implements Comparable < Edge3 > {
    *
    * @param scalar non uniform scalar
    * @return this edge
+   * @see Edge3#scaleGlobal(Vec3)
    */
   @Chainable
   public Edge3 scale ( final Vec3 scalar ) {
@@ -260,6 +267,7 @@ public class Edge3 implements Comparable < Edge3 > {
    *
    * @param scalar the scalar
    * @return this edge
+   * @see Vec3#mul(Vec3, float, Vec3)
    */
   @Chainable
   public Edge3 scaleGlobal ( final float scalar ) {
@@ -278,6 +286,7 @@ public class Edge3 implements Comparable < Edge3 > {
    *
    * @param scalar the nonuniform scalar
    * @return this edge
+   * @see Vec3#mul(Vec3, Vec3, Vec3)
    */
   @Chainable
   public Edge3 scaleGlobal ( final Vec3 scalar ) {
@@ -295,6 +304,9 @@ public class Edge3 implements Comparable < Edge3 > {
    *
    * @param scalar the uniform scalar
    * @return this edge
+   * @see Vec3#sub(Vec3, Vec3, Vec3)
+   * @see Vec3#mul(Vec3, float, Vec3)
+   * @see Vec3#add(Vec3, Vec3, Vec3)
    */
   @Chainable
   public Edge3 scaleLocal ( final float scalar ) {
@@ -328,6 +340,10 @@ public class Edge3 implements Comparable < Edge3 > {
    *
    * @param scalar the nonuniform scalar
    * @return this edge
+   * @see Vec3#none(Vec3)
+   * @see Vec3#sub(Vec3, Vec3, Vec3)
+   * @see Vec3#mul(Vec3, Vec3, Vec3)
+   * @see Vec3#add(Vec3, Vec3, Vec3)
    */
   @Chainable
   public Edge3 scaleLocal ( final Vec3 scalar ) {
@@ -378,6 +394,7 @@ public class Edge3 implements Comparable < Edge3 > {
 
     this.origin.set(coOrigin, txOrigin, nmOrigin);
     this.dest.set(coDest, txDest, nmDest);
+
     return this;
   }
 
@@ -430,6 +447,7 @@ public class Edge3 implements Comparable < Edge3 > {
    *
    * @param v translation
    * @return this edge
+   * @see Vec3#add(Vec3, Vec3, Vec3)
    */
   @Chainable
   public Edge3 translate ( final Vec3 v ) {

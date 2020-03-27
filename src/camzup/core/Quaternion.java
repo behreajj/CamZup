@@ -1546,6 +1546,28 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
   }
 
   /**
+   * Creates a quaternion from the axes of a matrix, which is assumed to
+   * represent a rotation only (i.e., does not include translation or
+   * scale).
+   *
+   * @param m      the matrix
+   * @param target the output quaternion
+   * @return the quaternion
+   * @see Quaternion#fromAxes(float, float, float, float, float, float,
+   *      float, float, float, Quaternion)
+   */
+  public static Quaternion fromAxes (
+      final Mat4 m,
+      final Quaternion target ) {
+
+    return Quaternion.fromAxes(
+        m.m00, m.m11, m.m22,
+        m.m21, m.m12, m.m02,
+        m.m20, m.m10, m.m01,
+        target);
+  }
+
+  /**
    * Creates a quaternion from three axes.
    *
    * The axes should already be normalized; in other words, they should
@@ -1760,11 +1782,15 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Vec3 forward,
       final Vec3 up ) {
 
-    if ( Vec3.none(dir) ) { return target.reset(); }
+    if ( Vec3.none(dir) ) {
+      Vec3.right(right);
+      Vec3.forward(forward);
+      Vec3.up(up);
+      return target.reset();
+    }
+
     Vec3.normalize(dir, forward);
-
     right.set(forward.y, -forward.x, 0.0f);
-
     final boolean parallel = right.x == 0.0f && right.y == 0.0f;
     if ( parallel ) {
       final float sgn = Utils.sign(forward.y);
@@ -2352,11 +2378,12 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    * @param target  the output quaternion
    * @return the rotated quaternion
    * @see Quaternion#magSq(Quaternion)
-   * @see Math#sqrt(double)
+   * @see Utils#invSqrtUnchecked(float)
    * @see Utils#acos(float)
    * @see Utils#modRadians(float)
    * @see Quaternion#fromAxisAngle(float, Vec3, Quaternion)
    */
+  @Experimental
   public static Quaternion rotate (
       final Quaternion q,
       final float radians,
@@ -2372,6 +2399,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     final float wNorm = q.real * Utils.invSqrtUnchecked(mSq);
     final float halfAngle = Utils.acos(wNorm);
 
+    // TODO: Seems to routinely return a quaternion with one of its
+    // components set to zero.
     return Quaternion.fromAxisAngle(
         Utils.modRadians(
             halfAngle + halfAngle + radians),
@@ -2723,7 +2752,10 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     }
 
     final float mInv = Utils.invSqrtUnchecked(amSq);
-    axis.set(ax * mInv, ay * mInv, az * mInv);
+    axis.set(
+        ax * mInv,
+        ay * mInv,
+        az * mInv);
     return angle;
   }
 }

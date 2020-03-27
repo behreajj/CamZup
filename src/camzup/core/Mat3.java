@@ -1189,7 +1189,8 @@ public class Mat3 extends Matrix {
   }
 
   /**
-   * Multiplies each component in a matrix by a scalar.
+   * Multiplies each component in a matrix by a scalar. Not to be
+   * confused with scaling affine transform matrix.
    *
    * @param a      the left operand
    * @param b      the right operand
@@ -1214,7 +1215,8 @@ public class Mat3 extends Matrix {
   }
 
   /**
-   * Multiplies each component in a matrix by a scalar.
+   * Multiplies each component in a matrix by a scalar. Not to be
+   * confused with scaling affine transform matrix.
    *
    * @param a      the left operand
    * @param b      the right operand

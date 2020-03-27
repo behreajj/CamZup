@@ -422,6 +422,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
     final Curve3 c = new Curve3(this);
     c.name = this.name;
+    c.materialIndex = this.materialIndex;
     return c;
   }
 
@@ -652,20 +653,20 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
   @Chainable
   public Curve3 reset ( ) {
 
-    this.knots.clear();
-    this.knots.add(
-        new Knot3(
-            -0.5f, 0.0f, 0.0f,
-            -0.25f, 0.25f, 0.0f,
-            -0.75f, -0.25f, 0.0f));
-    this.knots.add(
-        new Knot3(
-            0.5f, 0.0f, 0.0f,
-            1.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 0.0f));
+    this.resize(2);
+    this.knots.get(0).set(
+        -0.5f, 0.0f, 0.0f,
+        -0.25f, 0.25f, 0.0f,
+        -0.75f, -0.25f, 0.0f);
+    this.knots.get(1).set(
+        0.5f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f);
 
     this.closedLoop = false;
+    this.materialIndex = 0;
     this.name = this.hashIdentityString();
+
     return this;
   }
 
@@ -724,6 +725,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     while ( itr.hasNext() ) {
       itr.next().rotate(q);
     }
+
     return this;
   }
 
@@ -745,6 +747,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     while ( itr.hasNext() ) {
       itr.next().rotateX(cosa, sina);
     }
+
     return this;
   }
 
@@ -766,6 +769,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     while ( itr.hasNext() ) {
       itr.next().rotateY(cosa, sina);
     }
+
     return this;
   }
 
@@ -787,6 +791,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     while ( itr.hasNext() ) {
       itr.next().rotateZ(cosa, sina);
     }
+
     return this;
   }
 
@@ -806,6 +811,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     while ( itr.hasNext() ) {
       itr.next().scale(scale);
     }
+
     return this;
   }
 
@@ -814,6 +820,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    *
    * @param scale the scale
    * @return this curve
+   * @see Vec3#none(Vec3)
    * @see Knot3#scale(Vec3)
    */
   @Chainable
@@ -825,6 +832,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     while ( itr.hasNext() ) {
       itr.next().scale(scale);
     }
+
     return this;
   }
 
@@ -848,6 +856,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
     this.closedLoop = source.closedLoop;
     this.materialIndex = source.materialIndex;
+
     return this;
   }
 
@@ -911,14 +920,18 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
         64 + 256 * this.knots.size())
             .append("{ name: \"")
             .append(this.name)
-            .append("\", \n  closedLoop: ")
+            .append("\", closedLoop: ")
             .append(this.closedLoop)
-            .append(", \n  knots: [ \n");
+            .append(", knots: [ ");
 
     final Iterator < Knot3 > itr = this.knots.iterator();
     while ( itr.hasNext() ) {
       sb.append(itr.next().toString(places));
-      if ( itr.hasNext() ) { sb.append(',').append('\n'); }
+      if ( itr.hasNext() ) {
+        sb.append(',')
+            .append(' ');
+        // sb.append('\n');
+      }
     }
 
     sb.append(" ] }");
@@ -1425,6 +1438,92 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
   }
 
   /**
+   * Creates a curve from a face in a mesh.
+   *
+   * @param face   the mesh face
+   * @param target the output curve
+   * @return the curve
+   * @see Utils#mod(int, int)
+   * @see Curve3#lerp13(Vec3, Vec3, Vec3)
+   */
+  public static Curve3 fromMeshFace (
+      final Face3 face,
+      final Curve3 target ) {
+
+    // TEST
+
+    target.closedLoop = true;
+    target.name = "Face";
+
+    final Vert3[] verts = face.vertices;
+    final int vertsLen = verts.length;
+    target.resize(vertsLen);
+    final Iterator < Knot3 > itr = target.knots.iterator();
+
+    for ( int i = 0; i < vertsLen; ++i ) {
+      final int h = Utils.mod(i - 1, vertsLen);
+      final int j = (i + 1) % vertsLen;
+      final Vec3 v1 = verts[i].coord;
+      final Knot3 knot = itr.next();
+      Curve3.lerp13(v1, verts[h].coord, knot.rearHandle);
+      Curve3.lerp13(v1, verts[j].coord, knot.foreHandle);
+      knot.coord.set(v1);
+    }
+
+    return target;
+  }
+
+  /**
+   * Creates a curve from a face in a mesh.
+   *
+   * @param faceIdx the face index
+   * @param mesh    the mesh
+   * @param target  the output curve
+   * @return the curve
+   * @see Utils#mod(int, int)
+   * @see Curve3#lerp13(Vec3, Vec3, Vec3)
+   */
+  public static Curve3 fromMeshFace (
+      final int faceIdx,
+      final Mesh3 mesh,
+      final Curve3 target ) {
+
+    // TEST
+
+    final int facesLen = mesh.faces.length;
+    final int i = Utils.mod(faceIdx, facesLen);
+    final int[][] face = mesh.faces[i];
+    final int vertsLen = face.length;
+    final Vec3[] vs = mesh.coords;
+
+    target.closedLoop = true;
+    target.name = new StringBuilder(64)
+        .append(mesh.name)
+        .append('.')
+        .append(i)
+        .toString();
+    target.materialIndex = mesh.materialIndex;
+    target.resize(vertsLen);
+
+    final Iterator < Knot3 > itr = target.knots.iterator();
+    for ( int j = 0; j < vertsLen; ++j ) {
+      final int h = Utils.mod(j - 1, vertsLen);
+      final int k = (j + 1) % vertsLen;
+
+      final Vec3 v0 = vs[face[h][0]];
+      final Vec3 v1 = vs[face[j][0]];
+      final Vec3 v2 = vs[face[k][0]];
+
+      final Knot3 knot = itr.next();
+      Curve3.lerp13(v1, v0, knot.rearHandle);
+      Curve3.lerp13(v1, v2, knot.foreHandle);
+      knot.coord.set(v1);
+    }
+
+    return target;
+  }
+
+  /**
    * Creates a curve from a series of points. Smoothes the fore- and
    * rear-handles of each knot.
    *
@@ -1451,6 +1550,53 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     }
 
     return Curve3.smoothHandles(target);
+  }
+
+  /**
+   * Creates a curve that approximates Bernoulli's lemniscate, which
+   * resembles an infinity loop (with equally proportioned lobes).
+   *
+   * @param target the output curve
+   * @return the lemniscate
+   */
+  public static Curve3 infinity ( final Curve3 target ) {
+
+    target.name = "Infinity";
+    target.closedLoop = true;
+    target.resize(6);
+    final Iterator < Knot3 > itr = target.knots.iterator();
+
+    itr.next().set(
+        0.5f, 0.0f, 0.0f,
+        0.5f, 0.1309615f, 0.0f,
+        0.5f, -0.1309615f, 0.0f);
+
+    itr.next().set(
+        0.235709f, 0.166627f, 0.0f,
+        0.0505335f, 0.114256f, 0.0f,
+        0.361728f, 0.2022675f, 0.0f);
+
+    itr.next().set(
+        -0.235709f, -0.166627f, 0.0f,
+        -0.361728f, -0.2022675f, 0.0f,
+        -0.0505335f, -0.114256f, 0.0f);
+
+    itr.next().set(
+        -0.5f, 0.0f, 0.0f,
+        -0.5f, 0.1309615f, 0.0f,
+        -0.5f, -0.1309615f, 0.0f);
+
+    itr.next().set(
+        -0.235709f, 0.166627f, 0.0f,
+        -0.0505335f, 0.114256f, 0.0f,
+        -0.361728f, 0.2022675f, 0.0f);
+
+    itr.next().set(
+        0.235709f, -0.166627f, 0.0f,
+        0.361728f, -0.2022675f, 0.0f,
+        0.0505335f, -0.114256f, 0.0f);
+
+    return target;
   }
 
   /**
@@ -1643,6 +1789,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    *
    * @param target the output curve
    * @return the curve
+   * @see Curve3#lerp13(Vec3, Vec3, Vec3)
    */
   public static Curve3 straightenHandles ( final Curve3 target ) {
 

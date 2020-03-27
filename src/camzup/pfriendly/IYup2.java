@@ -970,7 +970,7 @@ public interface IYup2 extends IUp {
 
     final int len = ces.length;
     for ( int i = 0; i < len; ++i ) {
-      result.append(ces[i].toSvgGroup(mats)).append('\n');
+      result.append(ces[i].toSvgElm(mats)).append('\n');
     }
 
     return result.append("</g>\n</svg>").toString();
@@ -996,7 +996,7 @@ public interface IYup2 extends IUp {
 
     final int len = mes.length;
     for ( int i = 0; i < len; ++i ) {
-      result.append(mes[i].toSvgGroup(mats)).append('\n');
+      result.append(mes[i].toSvgElm(mats)).append('\n');
     }
 
     return result.append("</g>\n</svg>").toString();

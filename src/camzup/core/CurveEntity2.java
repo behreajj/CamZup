@@ -9,7 +9,7 @@ import java.util.List;
  * curves. The curves may references a list of materials by index.
  */
 public class CurveEntity2 extends Entity2
-    implements Iterable < Curve2 >, IVolume2 {
+    implements Iterable < Curve2 >, IVolume2, ISvgWritable {
 
   /**
    * The list of curves held by the entity.
@@ -89,61 +89,6 @@ public class CurveEntity2 extends Entity2
       this.append(curves[i]);
     }
     return this;
-  }
-
-  /**
-   * Evaluates a step in the range [0.0, 1.0] for curve, returning a
-   * coordinate on the curve and a tangent. The tangent will be
-   * normalized, to be of unit length.
-   *
-   * @param curveIndex the curve index
-   * @param step       the step in [0.0, 1.0]
-   * @param coordWorld the output world coordinate
-   * @param tanWorld   the output world tangent
-   * @return the world coordinate
-   * @see CurveEntity2#eval(int, float, Vec2, Vec2, Vec2, Vec2)
-   */
-  public Vec2 eval (
-      final int curveIndex,
-      final float step,
-      final Vec2 coordWorld,
-      final Vec2 tanWorld ) {
-
-    return this.eval(curveIndex, step,
-        coordWorld, tanWorld,
-        new Vec2(), new Vec2());
-  }
-
-  /**
-   * Evaluates a step in the range [0.0, 1.0] for curve, returning a
-   * coordinate on the curve and a tangent. The tangent will be
-   * normalized, to be of unit length.
-   *
-   * @param curveIndex the curve index
-   * @param step       the step in [0.0, 1.0]
-   * @param coordWorld the output world coordinate
-   * @param tanWorld   the output world tangent
-   * @param coordLocal the output local coordinate
-   * @param tanLocal   the output local tangent
-   * @return the world coordinate
-   * @see Curve2#eval(Curve2, float, Vec2, Vec2)
-   * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
-   * @see Transform2#mulDir(Transform2, Vec2, Vec2)
-   */
-  public Vec2 eval (
-      final int curveIndex,
-      final float step,
-      final Vec2 coordWorld,
-      final Vec2 tanWorld,
-      final Vec2 coordLocal,
-      final Vec2 tanLocal ) {
-
-    Curve2.eval(
-        this.curves.get(curveIndex),
-        step, coordLocal, tanLocal);
-    Transform2.mulPoint(this.transform, coordLocal, coordWorld);
-    Transform2.mulDir(this.transform, tanLocal, tanWorld);
-    return coordWorld;
   }
 
   /**
@@ -413,9 +358,10 @@ public class CurveEntity2 extends Entity2
    *
    * @return the string
    */
-  public String toSvgGroup ( ) {
+  @Override
+  public String toSvgElm ( ) {
 
-    return this.toSvgGroup(new MaterialSolid[] {});
+    return this.toSvgElm(new MaterialSolid[] {});
   }
 
   /**
@@ -424,9 +370,9 @@ public class CurveEntity2 extends Entity2
    * @param material the material to use
    * @return the string
    */
-  public String toSvgGroup ( final MaterialSolid material ) {
+  public String toSvgElm ( final MaterialSolid material ) {
 
-    return this.toSvgGroup(new MaterialSolid[] { material });
+    return this.toSvgElm(new MaterialSolid[] { material });
   }
 
   /**
@@ -437,7 +383,10 @@ public class CurveEntity2 extends Entity2
    * @param materials the array of materials
    * @return the string
    */
-  public String toSvgGroup ( final MaterialSolid[] materials ) {
+  public String toSvgElm ( final MaterialSolid[] materials ) {
+
+    // TODO: Include camera zoom (max(zoomx, zoomy), which is in turn
+    // combined with transform's min dimension?
 
     final StringBuilder result = new StringBuilder(1024)
         .append("<g id=\"")
@@ -474,7 +423,7 @@ public class CurveEntity2 extends Entity2
             .append('\n');
       }
 
-      result.append(curve.toSvgPath()).append('\n');
+      result.append(curve.toSvgElm()).append('\n');
 
       /* Close out material group. */
       if ( includesMats ) { result.append("</g>\n"); }
@@ -488,22 +437,83 @@ public class CurveEntity2 extends Entity2
   }
 
   /**
+   * Evaluates a step in the range [0.0, 1.0] for curve, returning a
+   * coordinate on the curve and a tangent. The tangent will be
+   * normalized, to be of unit length.
+   *
+   * @param ce         the curve entity
+   * @param curveIndex the curve index
+   * @param step       the step in [0.0, 1.0]
+   * @param coordWorld the output world coordinate
+   * @param tanWorld   the output world tangent
+   * @return the world coordinate
+   * @see CurveEntity2#eval(CurveEntity2, int, float, Vec2, Vec2, Vec2,
+   *      Vec2)
+   */
+  public static Vec2 eval (
+      final CurveEntity2 ce,
+      final int curveIndex,
+      final float step,
+      final Vec2 coordWorld,
+      final Vec2 tanWorld ) {
+
+    return CurveEntity2.eval(
+        ce, curveIndex, step,
+        coordWorld, tanWorld,
+        new Vec2(), new Vec2());
+  }
+
+  /**
+   * Evaluates a step in the range [0.0, 1.0] for curve, returning a
+   * coordinate on the curve and a tangent. The tangent will be
+   * normalized, to be of unit length.
+   *
+   * @param ce         the curve entity
+   * @param curveIndex the curve index
+   * @param step       the step in [0.0, 1.0]
+   * @param coordWorld the output world coordinate
+   * @param tanWorld   the output world tangent
+   * @param coordLocal the output local coordinate
+   * @param tanLocal   the output local tangent
+   * @return the world coordinate
+   * @see Curve2#eval(Curve2, float, Vec2, Vec2)
+   * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
+   * @see Transform2#mulDir(Transform2, Vec2, Vec2)
+   */
+  public static Vec2 eval (
+      final CurveEntity2 ce,
+      final int curveIndex,
+      final float step,
+      final Vec2 coordWorld,
+      final Vec2 tanWorld,
+      final Vec2 coordLocal,
+      final Vec2 tanLocal ) {
+
+    Curve2.eval(
+        ce.curves.get(curveIndex),
+        step, coordLocal, tanLocal);
+    Transform2.mulPoint(ce.transform, coordLocal, coordWorld);
+    Transform2.mulDir(ce.transform, tanLocal, tanWorld);
+    return coordWorld;
+  }
+
+  /**
    * Creates a curve entity from a mesh entity.
    *
-   * @param meshEntity the source mesh
-   * @param target     the output curve
+   * @param me     the source mesh
+   * @param target the output curve
    * @return the curve
    */
   public static CurveEntity2 fromMeshEntity (
-      final MeshEntity2 meshEntity,
+      final MeshEntity2 me,
       final CurveEntity2 target ) {
 
-    final List < Mesh2 > meshes = meshEntity.meshes;
-    final Iterator < Mesh2 > meshItr = meshes.iterator();
+    target.name = me.name;
+    target.transform.set(me.transform);
 
+    final Iterator < Mesh2 > meshItr = me.meshes.iterator();
     final List < Curve2 > curves = target.curves;
     curves.clear();
-    target.name = meshEntity.name;
 
     while ( meshItr.hasNext() ) {
       final Mesh2 mesh = meshItr.next();

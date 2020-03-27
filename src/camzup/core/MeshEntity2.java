@@ -9,7 +9,7 @@ import java.util.List;
  * meshes. The meshes may references a list of materials by index.
  */
 public class MeshEntity2 extends Entity2
-    implements Iterable < Mesh2 >, IVolume2 {
+    implements Iterable < Mesh2 >, IVolume2, ISvgWritable {
 
   /**
    * The list of meshes held by the entity.
@@ -447,9 +447,10 @@ public class MeshEntity2 extends Entity2
    *
    * @return the string
    */
-  public String toSvgGroup ( ) {
+  @Override
+  public String toSvgElm ( ) {
 
-    return this.toSvgGroup(new MaterialSolid[] {});
+    return this.toSvgElm(new MaterialSolid[] {});
   }
 
   /**
@@ -458,9 +459,9 @@ public class MeshEntity2 extends Entity2
    * @param material the material to use
    * @return the string
    */
-  public String toSvgGroup ( final MaterialSolid material ) {
+  public String toSvgElm ( final MaterialSolid material ) {
 
-    return this.toSvgGroup(new MaterialSolid[] { material });
+    return this.toSvgElm(new MaterialSolid[] { material });
   }
 
   /**
@@ -471,7 +472,10 @@ public class MeshEntity2 extends Entity2
    * @param materials the materials to use
    * @return the string
    */
-  public String toSvgGroup ( final MaterialSolid[] materials ) {
+  public String toSvgElm ( final MaterialSolid[] materials ) {
+
+    // TODO: Include camera zoom (max(zoomx, zoomy), which is in turn
+    // combined with transform's min dimension?
 
     final StringBuilder result = new StringBuilder(1024)
         .append("<g id=\"")
@@ -512,7 +516,7 @@ public class MeshEntity2 extends Entity2
             .append(">\n");
       }
 
-      result.append(mesh.toSvgPath()).append('\n');
+      result.append(mesh.toSvgElm()).append('\n');
 
       /* Close out material group. */
       if ( includesMats ) { result.append("</g>\n"); }
@@ -525,7 +529,13 @@ public class MeshEntity2 extends Entity2
     return result.toString();
   }
 
-  @Experimental
+  /**
+   * Evaluates whether the mesh entity contains a point in local space.
+   *
+   * @param me         the mesh entity
+   * @param pointLocal the point in local space
+   * @return the evaluation
+   */
   public static boolean contains (
       final MeshEntity2 me,
       final Vec2 pointLocal ) {
@@ -538,13 +548,22 @@ public class MeshEntity2 extends Entity2
     return false;
   }
 
-  @Experimental
+  /**
+   * Evaluates whether the mesh entity contains a point. Multiplies the
+   * global point by the transform's inverse to produce the point in
+   * local space.
+   *
+   * @param me          the mesh entity
+   * @param pointGlobal the point in global space
+   * @param pointLocal  the point in local space
+   * @return the evaluation
+   * @see MeshEntity2#contains(MeshEntity2, Vec2)
+   */
   public static boolean contains (
       final MeshEntity2 me,
       final Vec2 pointGlobal,
       final Vec2 pointLocal ) {
 
-    // TEST
     Transform2.invMulPoint(me.transform, pointGlobal, pointLocal);
     return MeshEntity2.contains(me, pointLocal);
   }
