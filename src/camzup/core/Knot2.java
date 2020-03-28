@@ -1030,6 +1030,19 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
   }
 
   /**
+   * Returns the magnitude of the knot's fore handle, i.e., the
+   * Euclidean distance between the fore handle and the coordinate.
+   *
+   * @param knot the knot
+   * @return the magnitude
+   * @see Vec2#distEuclidean(Vec2, Vec2)
+   */
+  public static float foreHandleMag ( final Knot2 knot ) {
+
+    return Vec2.distEuclidean(knot.coord, knot.foreHandle);
+  }
+
+  /**
    * Creates a knot from polar coordinates, where the knot's fore handle
    * is tangent to the radius.
    *
@@ -1106,5 +1119,18 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final AbstrEasing easingFunc ) {
 
     return easingFunc.apply(origin, dest, step, target);
+  }
+
+  /**
+   * Returns the magnitude of the knot's rear handle, i.e., the
+   * Euclidean distance between the rear handle and the coordinate.
+   *
+   * @param knot the knot
+   * @return the magnitude
+   * @see Vec2#distEuclidean(Vec2, Vec2)
+   */
+  public static float rearHandleMag ( final Knot2 knot ) {
+
+    return Vec2.distEuclidean(knot.coord, knot.rearHandle);
   }
 }

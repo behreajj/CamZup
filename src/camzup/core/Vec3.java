@@ -3224,9 +3224,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * input array is returned.<br>
    * <br>
    * This does <em>not</em> use
-   * {@link System#arraycopy(Object, int, Object, int, int)} at the
-   * moment because it iterates through the entire array checking for
-   * null entries.
+   * {@link System#arraycopy(Object, int, Object, int, int)} because it
+   * iterates through the entire array checking for null entries.
    *
    * @param arr the array
    * @param sz  the new size

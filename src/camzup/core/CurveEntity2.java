@@ -201,7 +201,7 @@ public class CurveEntity2 extends Entity2
   @Experimental
   public String toBlenderCode ( ) {
 
-    return this.toBlenderCode(12, "FULL", 0.0f, 0.0f);
+    return this.toBlenderCode(12, "BOTH", 0.0f, 0.0f);
   }
 
   /**
@@ -211,7 +211,7 @@ public class CurveEntity2 extends Entity2
    * control) versus in the library (the test).
    *
    * @param uRes       the resolution u
-   * @param fillMode   the fill mode: "FULL", "BACK", "FRONT", "HALF"
+   * @param fillMode   the fill mode: "BACK", "BOTH", "FRONT", "NONE"
    * @param extrude    geometry extrusion amount
    * @param bevelDepth depth of geometry extrusion bevel
    * @return the string
@@ -287,108 +287,53 @@ public class CurveEntity2 extends Entity2
   }
 
   /**
-   * Creates a string representing a Wavefront OBJ file. Renders the
-   * curve as a series of line segments. Points are <em>not</em> equally
-   * distributed along the curve.
+   * Creates a string representing a group node in the SVG format.<br>
+   * <br>
+   * Stroke weight is impacted by scaling in transforms, so zoom is a
+   * parameter. If nonuniform zooming is used, zoom can be an average of
+   * width and height or the maximum dimension.
    *
-   * @param precision the decimal place precision
-   * @return the string
-   */
-  public String toObjString ( final int precision ) {
-
-    final StringBuilder obj = new StringBuilder(2048);
-
-    obj.append('o')
-        .append(' ')
-        .append(this.name)
-        .append('\n')
-        .append('\n');
-
-    int offset = 0;
-
-    final Iterator < Curve2 > itr = this.curves.iterator();
-    while ( itr.hasNext() ) {
-      final Curve2 curve = itr.next();
-      final Vec2[][] segments = Curve2.evalRange(curve, precision);
-      final int len = segments.length;
-
-      obj.append('g')
-          .append(' ')
-          .append(curve.name)
-          .append('\n')
-          .append('\n');
-
-      for ( int i = 0; i < len; ++i ) {
-        final Vec2 coord = segments[i][0];
-        obj.append('v')
-            .append(' ')
-            .append(coord.toObjString())
-            .append('\n');
-      }
-
-      obj.append('\n');
-
-      for ( int i = 1, j = 2; i < len; ++i, ++j ) {
-        obj.append('l')
-            .append(' ')
-            .append(offset + i)
-            .append(' ')
-            .append(offset + j)
-            .append('\n');
-      }
-
-      if ( curve.closedLoop ) {
-        obj.append('l')
-            .append(' ')
-            .append(offset + len)
-            .append(' ')
-            .append(offset + 1)
-            .append('\n');
-      }
-
-      offset += len;
-      obj.append('\n');
-    }
-
-    return obj.toString();
-  }
-
-  /**
-   * Creates a string representing a group node in the SVG format.
-   *
+   * @param zoom scaling from external transforms
    * @return the string
    */
   @Override
-  public String toSvgElm ( ) {
+  public String toSvgElm ( final float zoom ) {
 
-    return this.toSvgElm(new MaterialSolid[] {});
+    return this.toSvgElm(zoom, new MaterialSolid[] {});
   }
 
   /**
    * Creates a string representing a group node in the SVG format.
    *
+   * @param zoom     scaling from external transforms
    * @param material the material to use
    * @return the string
    */
-  public String toSvgElm ( final MaterialSolid material ) {
+  public String toSvgElm (
+      final float zoom,
+      final MaterialSolid material ) {
 
-    return this.toSvgElm(new MaterialSolid[] { material });
+    return this.toSvgElm(zoom, new MaterialSolid[] { material });
   }
 
   /**
    * Creates a string representing a group node in the SVG format. This
    * SVG is designed for compatibility with Processing, not for
-   * efficiency.
+   * efficiency.<br>
+   * <br>
+   * Stroke weight is impacted by scaling in transforms, so zoom is a
+   * parameter. If nonuniform zooming is used, zoom can be an average of
+   * width and height or the maximum dimension.
    *
+   * @param zoom      scaling from external transforms
    * @param materials the array of materials
    * @return the string
    */
-  public String toSvgElm ( final MaterialSolid[] materials ) {
+  public String toSvgElm (
+      final float zoom,
+      final MaterialSolid[] materials ) {
 
-    // TODO: Include camera zoom (max(zoomx, zoomy), which is in turn
-    // combined with transform's min dimension?
-
-    final StringBuilder result = new StringBuilder(1024)
+    final StringBuilder svgp = new StringBuilder(1024)
         .append("<g id=\"")
         .append(this.name.toLowerCase())
         .append('\"')
@@ -397,7 +342,7 @@ public class CurveEntity2 extends Entity2
         .append('>')
         .append('\n');
 
-    final float scale = Transform2.minDimension(this.transform);
+    final float scale = zoom * Transform2.minDimension(this.transform);
     int matLen = 0;
     boolean includesMats = false;
     if ( materials != null ) {
@@ -407,33 +352,72 @@ public class CurveEntity2 extends Entity2
 
     /* If no materials are present, use a default instead. */
     if ( !includesMats ) {
-      result.append(MaterialSolid.defaultSvgMaterial(scale));
+      svgp.append(MaterialSolid.defaultSvgMaterial(scale));
     }
 
     final Iterator < Curve2 > curveItr = this.curves.iterator();
     while ( curveItr.hasNext() ) {
       final Curve2 curve = curveItr.next();
 
+      /*
+       * It'd be more efficient to create a definitions block that contains
+       * the data for each material, which is then used by a mesh element
+       * with xlink. However, such tags are ignored when Processing imports
+       * an SVG with loadShape.
+       */
       if ( includesMats ) {
-        final int vmatidx = Utils.mod(curve.materialIndex, matLen);
-        final MaterialSolid material = materials[vmatidx];
-        result.append("<g ")
+
+        final int vMatIdx = Utils.mod(curve.materialIndex, matLen);
+        final MaterialSolid material = materials[vMatIdx];
+        svgp.append("<g ")
             .append(material.toSvgString(scale))
             .append('>')
             .append('\n');
       }
 
-      result.append(curve.toSvgElm()).append('\n');
+      svgp.append(curve.toSvgPath());
 
       /* Close out material group. */
-      if ( includesMats ) { result.append("</g>\n"); }
+      if ( includesMats ) { svgp.append("</g>\n"); }
     }
 
     /* Close out default material. */
-    if ( !includesMats ) { result.append("</g>\n"); }
+    if ( !includesMats ) { svgp.append("</g>\n"); }
 
-    result.append("</g>");
-    return result.toString();
+    svgp.append("</g>\n");
+    return svgp.toString();
+  }
+
+  /**
+   * Evaluates a step in the range [0.0, 1.0] for curve, returning a
+   * knot.
+   *
+   * @param ce         the curve entity
+   * @param curveIndex the curve index
+   * @param step       the step
+   * @param knWorld    the knot in world space
+   * @param knLocal    the knot in local space
+   * @return the world coordinate
+   * @see Curve2#eval(Curve2, float, Vec2, Vec2)
+   * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
+   * @see Transform2#mulDir(Transform2, Vec2, Vec2)
+   */
+  @Experimental
+  public static Knot2 eval (
+      final CurveEntity2 ce,
+      final int curveIndex,
+      final float step,
+      final Knot2 knWorld,
+      final Knot2 knLocal ) {
+
+    final Transform2 tr = ce.transform;
+    Curve2.eval(ce.get(curveIndex), step, knLocal);
+
+    Transform2.mulPoint(tr, knLocal.coord, knWorld.coord);
+    Transform2.mulPoint(tr, knLocal.foreHandle, knWorld.foreHandle);
+    Transform2.mulPoint(tr, knLocal.rearHandle, knWorld.rearHandle);
+
+    return knWorld;
   }
 
   /**
@@ -443,24 +427,25 @@ public class CurveEntity2 extends Entity2
    *
    * @param ce         the curve entity
    * @param curveIndex the curve index
-   * @param step       the step in [0.0, 1.0]
-   * @param coordWorld the output world coordinate
-   * @param tanWorld   the output world tangent
+   * @param step       the step
+   * @param rayWorld   the output world ray
+   * @param rayLocal   the output local ray
    * @return the world coordinate
    * @see CurveEntity2#eval(CurveEntity2, int, float, Vec2, Vec2, Vec2,
    *      Vec2)
    */
-  public static Vec2 eval (
+  public static Ray2 eval (
       final CurveEntity2 ce,
       final int curveIndex,
       final float step,
-      final Vec2 coordWorld,
-      final Vec2 tanWorld ) {
+      final Ray2 rayWorld,
+      final Ray2 rayLocal ) {
 
-    return CurveEntity2.eval(
+    CurveEntity2.eval(
         ce, curveIndex, step,
-        coordWorld, tanWorld,
-        new Vec2(), new Vec2());
+        rayWorld.origin, rayWorld.dir,
+        rayLocal.origin, rayLocal.dir);
+    return rayWorld;
   }
 
   /**
@@ -470,11 +455,11 @@ public class CurveEntity2 extends Entity2
    *
    * @param ce         the curve entity
    * @param curveIndex the curve index
-   * @param step       the step in [0.0, 1.0]
-   * @param coordWorld the output world coordinate
-   * @param tanWorld   the output world tangent
-   * @param coordLocal the output local coordinate
-   * @param tanLocal   the output local tangent
+   * @param step       the step
+   * @param coWorld    the output world coordinate
+   * @param tnWorld    the output world tangent
+   * @param coLocal    the output local coordinate
+   * @param tnLocal    the output local tangent
    * @return the world coordinate
    * @see Curve2#eval(Curve2, float, Vec2, Vec2)
    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
@@ -484,17 +469,17 @@ public class CurveEntity2 extends Entity2
       final CurveEntity2 ce,
       final int curveIndex,
       final float step,
-      final Vec2 coordWorld,
-      final Vec2 tanWorld,
-      final Vec2 coordLocal,
-      final Vec2 tanLocal ) {
+      final Vec2 coWorld,
+      final Vec2 tnWorld,
+      final Vec2 coLocal,
+      final Vec2 tnLocal ) {
 
     Curve2.eval(
-        ce.curves.get(curveIndex),
-        step, coordLocal, tanLocal);
-    Transform2.mulPoint(ce.transform, coordLocal, coordWorld);
-    Transform2.mulDir(ce.transform, tanLocal, tanWorld);
-    return coordWorld;
+        ce.get(curveIndex),
+        step, coLocal, tnLocal);
+    Transform2.mulPoint(ce.transform, coLocal, coWorld);
+    Transform2.mulDir(ce.transform, tnLocal, tnWorld);
+    return coWorld;
   }
 
   /**

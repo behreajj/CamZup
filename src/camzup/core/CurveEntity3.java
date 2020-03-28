@@ -247,7 +247,7 @@ public class CurveEntity3 extends Entity3
         .append(", \"CURVE\")\n")
         .append("crv_data.dimensions = \"3D\"\n")
         .append("crv_data.fill_mode = \"")
-        .append(fillMode)
+        .append(fillMode.toUpperCase())
         .append("\"\n")
         .append("crv_data.extrude = ")
         .append(Utils.toFixed(extrude, 6))
@@ -291,70 +291,35 @@ public class CurveEntity3 extends Entity3
   }
 
   /**
-   * Creates a string representing a Wavefront OBJ file. Renders the
-   * curve as a series of line segments; points are <em>not</em> equally
-   * distributed along the curve.
+   * Evaluates a step in the range [0.0, 1.0] for curve, returning a
+   * knot.
    *
-   * @param precision the decimal place precision
-   * @return the string
+   * @param ce         the curve entity
+   * @param curveIndex the curve index
+   * @param step       the step
+   * @param knWorld    the knot in world space
+   * @param knLocal    the knot in local space
+   * @return the world coordinate
+   * @see Curve3#eval(Curve3, float, Vec3, Vec3)
+   * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
+   * @see Transform3#mulDir(Transform3, Vec3, Vec3)
    */
-  public String toObjString ( final int precision ) {
+  @Experimental
+  public static Knot3 eval (
+      final CurveEntity3 ce,
+      final int curveIndex,
+      final float step,
+      final Knot3 knWorld,
+      final Knot3 knLocal ) {
 
-    final StringBuilder obj = new StringBuilder(2048);
+    final Transform3 tr = ce.transform;
+    Curve3.eval(ce.get(curveIndex), step, knLocal);
 
-    obj.append('o')
-        .append(' ')
-        .append(this.name)
-        .append('\n')
-        .append('\n');
+    Transform3.mulPoint(tr, knLocal.coord, knWorld.coord);
+    Transform3.mulPoint(tr, knLocal.foreHandle, knWorld.foreHandle);
+    Transform3.mulPoint(tr, knLocal.rearHandle, knWorld.rearHandle);
 
-    int offset = 0;
-
-    final Iterator < Curve3 > itr = this.curves.iterator();
-    while ( itr.hasNext() ) {
-      final Curve3 curve = itr.next();
-      final Vec3[][] segments = Curve3.evalRange(curve, precision);
-      final int len = segments.length;
-
-      obj.append('g')
-          .append(' ')
-          .append(curve.name)
-          .append('\n')
-          .append('\n');
-
-      for ( int i = 0; i < len; ++i ) {
-        final Vec3 coord = segments[i][0];
-        obj.append('v')
-            .append(' ')
-            .append(coord.toObjString())
-            .append('\n');
-      }
-
-      obj.append('\n');
-
-      for ( int i = 1, j = 2; i < len; ++i, ++j ) {
-        obj.append('l')
-            .append(' ')
-            .append(offset + i)
-            .append(' ')
-            .append(offset + j)
-            .append('\n');
-      }
-
-      if ( curve.closedLoop ) {
-        obj.append('l')
-            .append(' ')
-            .append(offset + len)
-            .append(' ')
-            .append(offset + 1)
-            .append('\n');
-      }
-
-      offset += len;
-      obj.append('\n');
-    }
-
-    return obj.toString();
+    return knWorld;
   }
 
   /**
@@ -364,24 +329,25 @@ public class CurveEntity3 extends Entity3
    *
    * @param ce         the curve entity
    * @param curveIndex the curve index
-   * @param step       the step in [0.0, 1.0]
-   * @param coordWorld the output world coordinate
-   * @param tanWorld   the output world tangent
+   * @param step       the step
+   * @param rayWorld   the output world ray
+   * @param rayLocal   the output local ray
    * @return the world coordinate
    * @see CurveEntity3#eval(CurveEntity3, int, float, Vec3, Vec3, Vec3,
    *      Vec3)
    */
-  public static Vec3 eval (
+  public static Ray3 eval (
       final CurveEntity3 ce,
       final int curveIndex,
       final float step,
-      final Vec3 coordWorld,
-      final Vec3 tanWorld ) {
+      final Ray3 rayWorld,
+      final Ray3 rayLocal ) {
 
-    return CurveEntity3.eval(
+    CurveEntity3.eval(
         ce, curveIndex, step,
-        coordWorld, tanWorld,
-        new Vec3(), new Vec3());
+        rayWorld.origin, rayWorld.dir,
+        rayLocal.origin, rayLocal.dir);
+    return rayWorld;
   }
 
   /**
@@ -391,11 +357,11 @@ public class CurveEntity3 extends Entity3
    *
    * @param ce         the curve entity
    * @param curveIndex the curve index
-   * @param step       the step in [0.0, 1.0]
-   * @param coordWorld the output world coordinate
-   * @param tanWorld   the output world tangent
-   * @param coordLocal the output local coordinate
-   * @param tanLocal   the output local tangent
+   * @param step       the step
+   * @param coWorld    the output world coordinate
+   * @param tnWorld    the output world tangent
+   * @param coLocal    the output local coordinate
+   * @param tnLocal    the output local tangent
    * @return the world coordinate
    * @see Curve3#eval(Curve3, float, Vec3, Vec3)
    * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
@@ -405,17 +371,17 @@ public class CurveEntity3 extends Entity3
       final CurveEntity3 ce,
       final int curveIndex,
       final float step,
-      final Vec3 coordWorld,
-      final Vec3 tanWorld,
-      final Vec3 coordLocal,
-      final Vec3 tanLocal ) {
+      final Vec3 coWorld,
+      final Vec3 tnWorld,
+      final Vec3 coLocal,
+      final Vec3 tnLocal ) {
 
     Curve3.eval(
-        ce.curves.get(curveIndex),
-        step, coordLocal, tanLocal);
-    Transform3.mulPoint(ce.transform, coordLocal, coordWorld);
-    Transform3.mulDir(ce.transform, tanLocal, tanWorld);
-    return coordWorld;
+        ce.get(curveIndex),
+        step, coLocal, tnLocal);
+    Transform3.mulPoint(ce.transform, coLocal, coWorld);
+    Transform3.mulDir(ce.transform, tnLocal, tnWorld);
+    return coWorld;
   }
 
   /**

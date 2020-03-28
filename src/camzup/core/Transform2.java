@@ -1172,6 +1172,41 @@ public class Transform2 extends Transform {
   }
 
   /**
+   * Creates a transform from a ray. The transform's translation is set
+   * to the ray's origin; its scale, to one.
+   *
+   * @param ray    the direction
+   * @param target the output transform
+   * @return the transform
+   * @see Quaternion#fromDir(Vec3, Quaternion, Vec3, Vec3, Vec3)
+   */
+  public static Transform2 fromDir (
+      final Ray2 ray,
+      final Transform2 target ) {
+
+    // target.locPrev.reset();
+    // target.rotPrev.reset();
+    // Vec3.one(target.scalePrev);
+
+    target.locPrev.set(target.location);
+    target.rotPrev = target.rotation;
+    target.scalePrev.set(target.scale);
+
+    if ( Vec2.none(ray.dir) ) {
+      Vec2.forward(target.forward);
+    } else {
+      Vec2.normalize(ray.dir, target.forward);
+    }
+    Vec2.perpendicularCW(target.forward, target.right);
+
+    target.rotation = Vec2.headingSigned(target.right);
+    target.location.reset();
+    Vec2.one(target.scale);
+
+    return target;
+  }
+
+  /**
    * Creates a transform from a direction. The transform's translation
    * is set to zero; its scale, to one.
    *

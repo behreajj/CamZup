@@ -1770,12 +1770,27 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
   }
 
   /**
-   * Renders the mesh as a string following the SVG file format.
+   * Renders the curve as a string containing an SVG element.
    *
-   * @return the string
+   * @param zoom scaling transform
+   * @return the SVG string
    */
   @Override
-  public String toSvgElm ( ) {
+  public String toSvgElm ( final float zoom ) {
+
+    final StringBuilder svgp = new StringBuilder(1024)
+        .append(MaterialSolid.defaultSvgMaterial(zoom))
+        .append(this.toSvgPath())
+        .append("</g>\n");
+    return svgp.toString();
+  }
+
+  /**
+   * Renders the mesh path as a string containing an SVG element.
+   *
+   * @return the SVG string
+   */
+  public String toSvgPath ( ) {
 
     final StringBuilder svgp = new StringBuilder(1024);
 

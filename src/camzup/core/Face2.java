@@ -519,11 +519,43 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
   }
 
   /**
+   * Finds a point on the face's perimeter given a step in the range
+   * [0.0, 1.0] .
+   *
+   * @param face   the face
+   * @param step   the step
+   * @param target the output vector
+   * @return the vector
+   */
+  @Experimental
+  public static Vec2 eval (
+      final Face2 face,
+      final float step,
+      final Vec2 target ) {
+
+    // TEST
+
+    final Vert2[] verts = face.vertices;
+    final int len = verts.length;
+    final float tScaled = len * Utils.mod1(step);
+    final int i = (int) tScaled;
+    final Vec2 a = verts[i].coord;
+    final Vec2 b = verts[(i + 1) % len].coord;
+
+    final float t = tScaled - i;
+    final float u = 1.0f - t;
+    return target.set(
+        u * a.x + t * b.x,
+        u * a.y + t * b.y);
+  }
+
+  /**
    * Calculates the perimeter of a face by summing the Euclidean
    * distance between vertices.
    *
    * @param face the face
    * @return the perimeter
+   * @see Vec2#distEuclidean(Vec2, Vec2)
    */
   public static float perimeter ( final Face2 face ) {
 

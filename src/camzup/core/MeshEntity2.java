@@ -445,46 +445,54 @@ public class MeshEntity2 extends Entity2
   /**
    * Creates a string representing a group node in the SVG format.
    *
+   * @param zoom scaling from external transforms
    * @return the string
    */
   @Override
-  public String toSvgElm ( ) {
+  public String toSvgElm ( final float zoom ) {
 
-    return this.toSvgElm(new MaterialSolid[] {});
+    return this.toSvgElm(zoom, new MaterialSolid[] {});
   }
 
   /**
    * Creates a string representing a group node in the SVG format.
    *
+   * @param zoom     scaling from external transforms
    * @param material the material to use
    * @return the string
    */
-  public String toSvgElm ( final MaterialSolid material ) {
+  public String toSvgElm (
+      final float zoom,
+      final MaterialSolid material ) {
 
-    return this.toSvgElm(new MaterialSolid[] { material });
+    return this.toSvgElm(zoom, new MaterialSolid[] { material });
   }
 
   /**
    * Creates a string representing a group node in the SVG format. This
    * SVG is designed for compatibility with Processing, not for
-   * efficiency.
+   * efficiency.<br>
+   * <br>
+   * Stroke weight is impacted by scaling in transforms, so zoom is a
+   * parameter. If nonuniform zooming is used, zoom can be an average of
+   * width and height or the maximum dimension.
    *
+   * @param zoom      scaling from external transforms
    * @param materials the materials to use
    * @return the string
    */
-  public String toSvgElm ( final MaterialSolid[] materials ) {
+  public String toSvgElm (
+      final float zoom,
+      final MaterialSolid[] materials ) {
 
-    // TODO: Include camera zoom (max(zoomx, zoomy), which is in turn
-    // combined with transform's min dimension?
-
-    final StringBuilder result = new StringBuilder(1024)
+    final StringBuilder svgp = new StringBuilder(1024)
         .append("<g id=\"")
         .append(this.name.toLowerCase())
         .append("\" ")
         .append(this.transform.toSvgString())
         .append(">\n");
 
-    final float scale = Transform2.minDimension(this.transform);
+    final float scale = zoom * Transform2.minDimension(this.transform);
     int matLen = 0;
     boolean includesMats = false;
     if ( materials != null ) {
@@ -494,7 +502,7 @@ public class MeshEntity2 extends Entity2
 
     /* If no materials are present, use a default instead. */
     if ( !includesMats ) {
-      result.append(MaterialSolid.defaultSvgMaterial(scale));
+      svgp.append(MaterialSolid.defaultSvgMaterial(scale));
     }
 
     final Iterator < Mesh2 > meshItr = this.meshes.iterator();
@@ -502,31 +510,31 @@ public class MeshEntity2 extends Entity2
       final Mesh2 mesh = meshItr.next();
 
       /*
-       * It would be more efficient to create a defs block that contains the
-       * data for each material, which is then used by a mesh element with
-       * xlink, but such tags are ignored when Processing imports an SVG
-       * with loadShape.
+       * It'd be more efficient to create a definitions block that contains
+       * the data for each material, which is then used by a mesh element
+       * with xlink. However, such tags are ignored when Processing imports
+       * an SVG with loadShape.
        */
       if ( includesMats ) {
 
-        final int vmatidx = Utils.mod(mesh.materialIndex, matLen);
-        final MaterialSolid material = materials[vmatidx];
-        result.append("<g ")
+        final int vMatIdx = Utils.mod(mesh.materialIndex, matLen);
+        final MaterialSolid material = materials[vMatIdx];
+        svgp.append("<g ")
             .append(material.toSvgString(scale))
             .append(">\n");
       }
 
-      result.append(mesh.toSvgElm()).append('\n');
+      svgp.append(mesh.toSvgPath());
 
       /* Close out material group. */
-      if ( includesMats ) { result.append("</g>\n"); }
+      if ( includesMats ) { svgp.append("</g>\n"); }
     }
 
     /* Close out default material group. */
-    if ( !includesMats ) { result.append("</g>\n"); }
+    if ( !includesMats ) { svgp.append("</g>\n"); }
 
-    result.append("</g>");
-    return result.toString();
+    svgp.append("</g>\n");
+    return svgp.toString();
   }
 
   /**

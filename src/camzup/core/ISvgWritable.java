@@ -27,7 +27,19 @@ public interface ISvgWritable {
    *
    * @return the SVG string
    */
-  String toSvgElm ( );
+  default String toSvgElm ( ) { return this.toSvgElm(1.0f); }
+
+  /**
+   * Renders the curve as a string containing an SVG element.<br>
+   * <br>
+   * Stroke weight is impacted by scaling in transforms, so zoom is a
+   * parameter. If nonuniform zooming is used, zoom can be an average of
+   * width and height or the maximum dimension.
+   *
+   * @param zoom scaling from external transforms
+   * @return the SVG string
+   */
+  String toSvgElm ( final float zoom );
 
   /**
    * Renders this object as an SVG string. A default material renders
@@ -46,9 +58,10 @@ public interface ISvgWritable {
   /**
    * Renders this object as an SVG string. A default material renders
    * the mesh's fill and stroke. The background of the SVG is
-   * transparent. The width and height supplied form both the view box
-   * dimensions, the translation and the scale of the shape. The origin
-   * is expected to be in unit coordinates, [0.0, 1.0] .
+   * transparent. The width and height inform the view box dimensions.
+   * The origin is expected to be in unit coordinates, [0.0, 1.0] ; it
+   * is multiplied by the view box dimensions. The camera scale is set
+   * to the shorter edge of the view box, so as to contain the shape.
    *
    * @param xOrigin the origin x
    * @param yOrigin the origin y
@@ -67,18 +80,17 @@ public interface ISvgWritable {
     final float x = Utils.clamp01(xOrigin);
     final float y = Utils.clamp01(yOrigin);
 
-    final String vwStr = Utils.toFixed(vw, 6);
-    final String vhStr = Utils.toFixed(vh, 6);
-    final String sclStr = Utils.toFixed(Utils.min(vw, vh), 6);
+    final float scl = Utils.min(vw, vh);
+    final String sclStr = Utils.toFixed(scl, 6);
 
     final StringBuilder svgp = new StringBuilder(128);
     svgp.append("<svg ")
         .append("xmlns=\"http://www.w3.org/2000/svg\" ")
         .append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ")
         .append("viewBox=\"0 0 ")
-        .append(vwStr)
+        .append(Utils.toFixed(vw, 6))
         .append(' ')
-        .append(vhStr)
+        .append(Utils.toFixed(vh, 6))
         .append("\">\n")
         .append("<g transform=\"translate(")
         .append(Utils.toFixed(vw * x, 6))
@@ -90,7 +102,7 @@ public interface ISvgWritable {
         .append(", -")
         .append(sclStr)
         .append(")\">\n")
-        .append(this.toSvgElm())
+        .append(this.toSvgElm(scl))
         .append("</g>\n")
         .append("</svg>");
 

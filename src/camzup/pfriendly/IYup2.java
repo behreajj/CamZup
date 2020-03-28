@@ -960,20 +960,25 @@ public interface IYup2 extends IUp {
       final CurveEntity2[] ces,
       final MaterialSolid[] mats ) {
 
-    final StringBuilder result = new StringBuilder(1024);
-    result.append(IYup2.svgHeader(renderer)).append('\n');
-    result.append(IYup2.svgBackground(renderer)).append('\n');
-    result.append("<g ")
+    final StringBuilder svgp = new StringBuilder(1024);
+    svgp.append(IYup2.svgHeader(renderer)).append('\n');
+    svgp.append(IYup2.svgBackground(renderer)).append('\n');
+    svgp.append("<g ")
         .append(IYup2.svgCamera(renderer))
         .append('>')
         .append('\n');
 
     final int len = ces.length;
+    final float zoom = Utils.max(
+        renderer.getZoomX(),
+        renderer.getZoomY());
     for ( int i = 0; i < len; ++i ) {
-      result.append(ces[i].toSvgElm(mats)).append('\n');
+      svgp.append(ces[i].toSvgElm(zoom, mats))
+          .append('\n');
     }
 
-    return result.append("</g>\n</svg>").toString();
+    svgp.append("</g>\n</svg>");
+    return svgp.toString();
   }
 
   /**
@@ -989,16 +994,21 @@ public interface IYup2 extends IUp {
       final MeshEntity2[] mes,
       final MaterialSolid[] mats ) {
 
-    final StringBuilder result = new StringBuilder(1024)
+    final StringBuilder svgp = new StringBuilder(1024)
         .append(IYup2.svgHeader(renderer)).append('\n')
         .append(IYup2.svgBackground(renderer)).append('\n').append("<g ")
         .append(IYup2.svgCamera(renderer)).append('>').append('\n');
 
     final int len = mes.length;
+    final float zoom = Utils.max(
+        renderer.getZoomX(),
+        renderer.getZoomY());
     for ( int i = 0; i < len; ++i ) {
-      result.append(mes[i].toSvgElm(mats)).append('\n');
+      svgp.append(mes[i].toSvgElm(zoom, mats))
+          .append('\n');
     }
 
-    return result.append("</g>\n</svg>").toString();
+    svgp.append("</g>\n</svg>");
+    return svgp.toString();
   }
 }

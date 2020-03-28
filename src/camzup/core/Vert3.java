@@ -167,7 +167,24 @@ public class Vert3 implements Comparable < Vert3 > {
   }
 
   /**
-   * Returns the orientation of the vertex as a quaternion based on its
+   * Returns the orientation of the vertex as a ray based on its normal
+   * and coordinate.
+   *
+   * @param vert   the vertex
+   * @param target the output transform
+   * @return the orientation
+   * @see Transform3#fromDir(Vec3, Transform3)
+   */
+  @Experimental
+  public static Ray3 orientation (
+      final Vert3 vert,
+      final Ray3 target ) {
+
+    return target.set(vert.coord, vert.normal);
+  }
+
+  /**
+   * Returns the orientation of the vertex as a transform based on its
    * normal.
    *
    * @param vert   the vertex

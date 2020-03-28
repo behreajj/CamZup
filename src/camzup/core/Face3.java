@@ -561,6 +561,38 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
   }
 
   /**
+   * Finds a point on the face's perimeter given a step in the range
+   * [0.0, 1.0] .
+   *
+   * @param face   the face
+   * @param step   the step
+   * @param target the output vector
+   * @return the vector
+   */
+  @Experimental
+  public static Vec3 eval (
+      final Face3 face,
+      final float step,
+      final Vec3 target ) {
+
+    // TEST
+
+    final Vert3[] verts = face.vertices;
+    final int len = verts.length;
+    final float tScaled = len * Utils.mod1(step);
+    final int i = (int) tScaled;
+    final Vec3 a = verts[i].coord;
+    final Vec3 b = verts[(i + 1) % len].coord;
+
+    final float t = tScaled - i;
+    final float u = 1.0f - t;
+    return target.set(
+        u * a.x + t * b.x,
+        u * a.y + t * b.y,
+        u * a.z + t * b.z);
+  }
+
+  /**
    * Finds the normal of a face by averaging all the normals in its list
    * of vertices, then normalizing the average.
    *
@@ -595,12 +627,22 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
       final Quaternion target ) {
 
     /*
-     * Use quaternion imaginary as a placeholder to hold the average of
+     * Use quaternion imaginary as a temporary holder for the average of
      * the face's normals.
      */
     final Vec3 imag = target.imag;
     Face3.normal(face, imag);
     return Quaternion.fromDir(imag, target);
+  }
+
+  @Experimental
+  public static Ray3 orientation (
+      final Face3 face,
+      final Ray3 target ) {
+
+    Face3.centroid(face, target.origin);
+    Face3.normal(face, target.dir);
+    return target;
   }
 
   @Experimental
@@ -614,7 +656,6 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
     target.scalePrev.set(target.scale);
     Vec3.one(target.scale);
 
-    // TODO: Why not use Transform3 fromDir?
     Face3.normal(face, target.forward);
     Quaternion.fromDir(
         target.forward,
@@ -643,6 +684,7 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
    *
    * @param face the face
    * @return the perimeter
+   * @see Vec3#distEuclidean(Vec3, Vec3)
    */
   public static float perimeter ( final Face3 face ) {
 

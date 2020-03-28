@@ -9,7 +9,7 @@ Transform3 transform = new Transform3()
   .moveTo(new Vec3(0.0, 0.0, 0.0))
   .scaleTo(256.0);
 
-Curve3 curve = Curve3.circle(0.0, 0.5, 4, new Curve3());
+Curve3 curve = Curve3.infinity(new Curve3());
 CurveEntity3 entity = new CurveEntity3("Example", transform)
   .append(curve);
 
@@ -33,29 +33,31 @@ void draw() {
   entity.rotateZ(0.01);
 
   float t = mouseX / (float)width;
-  Vec3 pt = new Vec3();
-  Vec3 tn = new Vec3();
-  CurveEntity3.eval(entity, 0, t, pt, tn);
-  Vec3 tnpt = Vec3.add(pt, 
-    Vec3.mul(tn, 50.0, new Vec3()), new Vec3());
+
+  Knot3 knWd = new Knot3();
+  Knot3 knLc = new Knot3();
+  CurveEntity3.eval(entity, 0, t, knWd, knLc);
 
   graphics3.background();
   graphics3.origin();
-  
+
   graphics3.shape(entity, mat);
   graphics3.handles(entity, 1.25);
 
-  graphics3.strokeWeight(10.0);
   graphics3.stroke(#202020);
-  graphics3.point(pt);
-  
+
+  graphics3.strokeWeight(10.0);
+  graphics3.point(knWd.coord);
+
   graphics3.strokeWeight(5.0);
-  graphics3.stroke(#101010);
-  graphics3.point(tnpt);
+  graphics3.point(knWd.rearHandle);
+
+  graphics3.strokeWeight(7.5);
+  graphics3.point(knWd.foreHandle);
 }
 
 void mouseReleased() {
-  Curve3.random(rng, 7, 
-    -0.5, 0.5, 
-    true, curve);
+  Curve3.random(rng, 7,
+    -0.5, 0.5,
+    false, curve);
 }

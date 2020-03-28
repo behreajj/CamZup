@@ -1402,6 +1402,40 @@ public class Transform3 extends Transform {
   }
 
   /**
+   * Creates a transform from a ray. The transform's translation is set
+   * to the ray's origin; its scale, to one.
+   *
+   * @param ray    the direction
+   * @param target the output transform
+   * @return the transform
+   * @see Quaternion#fromDir(Vec3, Quaternion, Vec3, Vec3, Vec3)
+   */
+  public static Transform3 fromDir (
+      final Ray3 ray,
+      final Transform3 target ) {
+
+    // target.locPrev.reset();
+    // target.rotPrev.reset();
+    // Vec3.one(target.scalePrev);
+
+    target.locPrev.set(target.location);
+    target.rotPrev.set(target.rotation);
+    target.scalePrev.set(target.scale);
+
+    Quaternion.fromDir(
+        ray.dir,
+        target.rotation,
+        target.right,
+        target.forward,
+        target.up);
+
+    target.location.set(ray.origin);
+    Vec3.one(target.scale);
+
+    return target;
+  }
+
+  /**
    * Creates a transform from a direction. The transform's translation
    * is set to zero; its scale, to one.
    *

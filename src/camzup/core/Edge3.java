@@ -475,7 +475,7 @@ public class Edge3 implements Comparable < Edge3 > {
   }
 
   /**
-   * Finds a point on the edge given a factor in the range [0.0, 1.0] .
+   * Finds a point on the edge given a step in the range [0.0, 1.0] .
    * Uses linear interpolation from the origin coordinate to that of the
    * destination.
    *
