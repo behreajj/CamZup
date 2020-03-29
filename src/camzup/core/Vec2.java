@@ -932,7 +932,24 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 a,
       final Vec2 b ) {
 
-    return a.x * b.y - a.y * b.x == 0.0f;
+    return Vec2.areParallel(a, b, IUtils.DEFAULT_EPSILON);
+  }
+
+  /**
+   * Tests to see if two vectors are parallel. Does so by evaluating
+   * whether the cross product of the two approximates zero.
+   *
+   * @param a         the left comparisand
+   * @param b         the right comparisand
+   * @param tolerance the tolerance
+   * @return the evaluation
+   */
+  public static boolean areParallel (
+      final Vec2 a,
+      final Vec2 b,
+      final float tolerance ) {
+
+    return Utils.abs(a.x * b.y - a.y * b.x) < tolerance;
   }
 
   /**

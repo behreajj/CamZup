@@ -87,7 +87,7 @@ public interface IUp3 extends IUp {
    * @param target the output vector
    * @return the location
    */
-  Vec3 getLoc ( Vec3 target );
+  Vec3 getLocation ( Vec3 target );
 
   /**
    * Gets the renderer's camera location on the x axis.

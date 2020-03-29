@@ -527,13 +527,10 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
    * @param target the output vector
    * @return the vector
    */
-  @Experimental
   public static Vec2 eval (
       final Face2 face,
       final float step,
       final Vec2 target ) {
-
-    // TEST
 
     final Vert2[] verts = face.vertices;
     final int len = verts.length;

@@ -11,6 +11,7 @@ import processing.opengl.PGraphicsOpenGL;
 import camzup.core.Color;
 import camzup.core.Curve3;
 import camzup.core.CurveEntity3;
+import camzup.core.Experimental;
 import camzup.core.IUtils;
 import camzup.core.Knot3;
 import camzup.core.MaterialSolid;
@@ -43,6 +44,17 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    * Default look at target z component.
    */
   public static final float DEFAULT_TARGET_Z = 0.0f;
+
+  /**
+   * The path string for this renderer.
+   */
+  public static final String PATH_STR = "camzup.pfriendly.Up3";
+
+  /**
+   * Tolerance beneath which the camera's forward direction will be
+   * considered the world, or reference, up direction.
+   */
+  public final static float POLARITY_TOLERANCE = 0.01f;
 
   /**
    * A vector to store the x axis (first column) when creating a camera
@@ -79,37 +91,21 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    */
   protected final Vec3 refUp;
 
-  /**
-   * A temporary point used when converting a transform's location to a
-   * PMatrix3D.
-   */
-  protected final Vec3 tr3Loc;
-
-  /**
-   * A temporary quaternion used when converting a transform's rotation
-   * to a PMatrix3D.
-   */
-  protected final Quaternion tr3Rot;
-
-  /**
-   * A temporary non-uniform dimension used when converting a
-   * transform's scale to a PMatrix3D.
-   */
-  protected final Vec3 tr3Scale;
-
   {
-    this.i = new Vec3();
-    this.j = new Vec3();
-    this.k = new Vec3();
-    this.lookDir = new Vec3();
+    this.i = Vec3.right(new Vec3());
+    this.j = Vec3.forward(new Vec3());
+    this.k = Vec3.up(new Vec3());
+    this.lookDir = Vec3.up(new Vec3());
     this.lookTarget = new Vec3();
-    this.refUp = new Vec3(
-        Yup3.DEFAULT_REF_X,
-        Yup3.DEFAULT_REF_Y,
-        Yup3.DEFAULT_REF_Z);
-    this.tr3Loc = new Vec3();
-    this.tr3Rot = new Quaternion();
-    this.tr3Scale = new Vec3();
+    this.refUp = Vec3.up(new Vec3());
+
+    // protected final Vec3 tr3Loc;
+    // protected final Quaternion tr3Rot;
+    // protected final Vec3 tr3Scale;
+
+    // tr3Loc = new Vec3();
+    // tr3Rot = new Quaternion();
+    // tr3Scale = Vec3.one(new Vec3());
   }
 
   /**
@@ -147,10 +143,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   @Override
   protected void defaultPerspective ( ) {
 
-    this.defCameraAspect = IUp.DEFAULT_ASPECT;
-    this.defCameraFOV = IUp.DEFAULT_FOV;
-    this.defCameraNear = PConstants.EPSILON;
-    this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
+    this.cameraAspect = this.defCameraAspect = IUp.DEFAULT_ASPECT;
+    this.cameraFOV = this.defCameraFOV = IUp.DEFAULT_FOV;
+    this.cameraNear = this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
+    this.cameraFar = this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
 
     this.ortho();
   }
@@ -197,8 +193,98 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     /* Set model view to camera. */
     this.modelview.set(this.camera);
     this.modelviewInv.set(this.cameraInv);
+    PMatAux.mul(this.projection, this.modelview, this.projmodelview);
+  }
 
-    this.updateProjmodelview();
+  /**
+   * Sets the camera to the Processing default, where the origin is in
+   * the top left corner of the sketch and the y axis points downward.
+   */
+  void camDown ( ) {
+
+    // TEST: Doesn't work.
+
+    final float wh = this.width * 0.5f;
+    final float hh = this.height * 0.5f;
+    super.camera(
+        wh, hh, this.height * IUtils.SQRT_3_2,
+        wh, hh, 0.0f,
+        0.0f, -1.0f, 0.0f);
+  }
+
+  @Experimental
+  void pan ( final float radians ) {
+
+    final float nrm = radians * IUtils.ONE_TAU;
+    final float cosa = Utils.scNorm(nrm);
+    final float sina = Utils.scNorm(nrm - 0.25f);
+
+    float xn = this.lookTarget.x - this.cameraX;
+    // float yn = this.lookTarget.y - this.cameraY;
+    float zn = this.lookTarget.z - this.cameraZ;
+
+    final float temp = xn;
+    xn = cosa * xn + sina * zn;
+    zn = cosa * zn - sina * temp;
+
+    xn += this.cameraX;
+    // yn += this.cameraY;
+    zn += this.cameraZ;
+
+    this.camera(
+        this.cameraX, this.cameraY, this.cameraZ,
+        xn, this.lookTarget.y, zn,
+        this.refUp.x, this.refUp.y, this.refUp.z);
+  }
+
+  @Experimental
+  void roll ( final float radians ) {
+
+    final float nrm = radians * IUtils.ONE_TAU;
+    final float cosa = Utils.scNorm(nrm);
+    final float sina = Utils.scNorm(nrm - 0.25f);
+
+    float xn = this.lookTarget.x - this.cameraX;
+    float yn = this.lookTarget.y - this.cameraY;
+    // float zn = this.lookTarget.z - this.cameraZ;
+
+    final float temp = xn;
+    xn = cosa * xn - sina * yn;
+    yn = cosa * yn + sina * temp;
+
+    xn += this.cameraX;
+    yn += this.cameraY;
+    // zn += this.cameraZ;
+
+    this.camera(
+        this.cameraX, this.cameraY, this.cameraZ,
+        xn, yn, this.lookTarget.z,
+        this.refUp.x, this.refUp.y, this.refUp.z);
+  }
+
+  @Experimental
+  void tilt ( final float radians ) {
+
+    final float nrm = radians * IUtils.ONE_TAU;
+    final float cosa = Utils.scNorm(nrm);
+    final float sina = Utils.scNorm(nrm - 0.25f);
+
+    // float xn = this.lookTarget.x - this.cameraX;
+    float yn = this.lookTarget.y - this.cameraY;
+    float zn = this.lookTarget.z - this.cameraZ;
+
+    final float temp = yn;
+    yn = cosa * yn - sina * zn;
+    zn = cosa * zn + sina * temp;
+
+    // xn += this.cameraX;
+    yn += this.cameraY;
+    zn += this.cameraZ;
+
+    this.camera(
+        this.cameraX, this.cameraY, this.cameraZ,
+        this.lookTarget.x, yn, zn,
+        this.refUp.x, this.refUp.y, this.refUp.z);
   }
 
   /**
@@ -371,6 +457,33 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   }
 
   /**
+   * Dollies the camera, moving it on its local z axis, backward or
+   * forward. This is done by multiplying the z magnitude by the camera
+   * inverse, then adding the local coordinates to both the camera
+   * location and look target.
+   *
+   * @param z the z magnitude
+   */
+  public void dolly ( final float z ) {
+
+    final float w = this.cameraInv.m32 * z + this.cameraInv.m33;
+    if ( w != 0.0f ) {
+      final float wInv = 1.0f / w;
+      final float xLocal = this.cameraInv.m02 * z * wInv;
+      final float yLocal = this.cameraInv.m12 * z * wInv;
+      final float zLocal = this.cameraInv.m22 * z * wInv;
+
+      this.cameraX += xLocal;
+      this.cameraY += yLocal;
+      this.cameraZ += zLocal;
+
+      this.lookTarget.x += xLocal;
+      this.lookTarget.y += yLocal;
+      this.lookTarget.z += zLocal;
+    }
+  }
+
+  /**
    * Gets the eye distance of the camera.
    *
    * @return the eye distance
@@ -408,7 +521,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    * @return the location
    */
   @Override
-  public Vec3 getLoc ( final Vec3 target ) {
+  public Vec3 getLocation ( final Vec3 target ) {
 
     return target.set(
         this.cameraX,
@@ -487,10 +600,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    *
    * @param ce the curve entity
    */
-  public void handles ( final CurveEntity3 ce ) {
-
-    this.handles(ce, 1.0f);
-  }
+  public void handles ( final CurveEntity3 ce ) { this.handles(ce, 1.0f); }
 
   /**
    * Displays the handles of a curve entity.
@@ -663,6 +773,161 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   }
 
   /**
+   * Moves the renderer's camera location.
+   *
+   * @param x the vector x
+   * @param y the vector y
+   * @param z the vector z
+   */
+  public void moveBy (
+      final float x,
+      final float y,
+      final float z ) {
+
+    this.moveByLocal(x, y, z);
+  }
+
+  /**
+   * Moves the renderer's camera location.
+   *
+   * @param v the vector
+   */
+  public void moveBy ( final Vec3 v ) {
+
+    this.moveByLocal(v.x, v.y, v.z);
+  }
+
+  /**
+   * Moves the renderer's camera by a vector. Does <em>not</em> update
+   * the camera's look target, and so will result in tangential motion.
+   *
+   * @param x the vector x
+   * @param y the vector y
+   * @param z the vector z
+   * @see Vec3#areParallel(Vec3, Vec3, float)
+   */
+  public void moveByGlobal (
+      final float x,
+      final float y,
+      final float z ) {
+
+    if ( Vec3.areParallel(this.k, this.refUp, Up3.POLARITY_TOLERANCE) ) {
+      return;
+    }
+
+    this.cameraX += x;
+    this.cameraY += y;
+    this.cameraZ += z;
+  }
+
+  /**
+   * Moves the renderer's camera by a vector. Does <em>not</em> update
+   * the camera's look target, and so will result in tangential motion.
+   *
+   * @param v the vector
+   */
+  public void moveByGlobal ( final Vec3 v ) {
+
+    this.moveByGlobal(v.x, v.y, v.z);
+  }
+
+  /**
+   * Moves the renderer's camera by a vector relative to its
+   * orientation; causes the camera to orbit around the locus at which
+   * it is looking.
+   *
+   * @param x the vector x
+   * @param y the vector y
+   * @param z the vector z
+   */
+  public void moveByLocal (
+      final float x,
+      final float y,
+      final float z ) {
+
+    if ( Vec3.areParallel(this.k, this.refUp, Up3.POLARITY_TOLERANCE) ) {
+      return;
+    }
+
+    final PMatrix3D ci = this.cameraInv;
+    final float w = ci.m30 * x + ci.m31 * y + ci.m32 * z + ci.m33;
+    if ( w != 0.0f ) {
+      final float wInv = 1.0f / w;
+      final float xLocal = (ci.m00 * x + ci.m01 * y + ci.m02 * z) * wInv;
+      final float yLocal = (ci.m10 * x + ci.m11 * y + ci.m12 * z) * wInv;
+      final float zLocal = (ci.m20 * x + ci.m21 * y + ci.m22 * z) * wInv;
+      this.cameraX += xLocal;
+      this.cameraY += yLocal;
+      this.cameraZ += zLocal;
+    }
+  }
+
+  /**
+   * Moves the renderer's camera by a vector relative to its
+   * orientation; causes the camera to orbit around the locus at which
+   * it is looking.
+   *
+   * @param v the vector
+   */
+  public void moveByLocal ( final Vec3 v ) {
+
+    this.moveByLocal(v.x, v.y, v.z);
+  }
+
+  /**
+   * Sets the renderer camera's location.
+   *
+   * @param x the x location
+   * @param y the y location
+   * @param z the z location
+   */
+  public void moveTo (
+      final float x,
+      final float y,
+      final float z ) {
+
+    this.cameraX = x;
+    this.cameraY = y;
+    this.cameraZ = z;
+  }
+
+  /**
+   * Sets the renderer camera's location.
+   *
+   * @param locNew the new location
+   */
+  public void moveTo ( final Vec3 locNew ) {
+
+    this.cameraX = locNew.x;
+    this.cameraY = locNew.y;
+    this.cameraZ = locNew.z;
+  }
+
+  /**
+   * Eases the renderer camera's location to the destination over a step
+   * in [0.0, 1.0] .
+   *
+   * @param locNew the new location
+   * @param step   the step
+   */
+  public void moveTo (
+      final Vec3 locNew,
+      final float step ) {
+
+    if ( step <= 0.0f ) { return; }
+    if ( step >= 1.0f ) {
+      this.moveTo(locNew.x, locNew.y, locNew.z);
+      return;
+    }
+
+    final float u = 1.0f - step;
+    this.moveTo(
+        u * this.cameraX + step * locNew.x,
+        u * this.cameraY + step * locNew.y,
+        u * this.cameraZ + step * locNew.z);
+  }
+
+  /**
    * Draws the world origin.
    */
   @Override
@@ -763,15 +1028,40 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   }
 
   /**
+   * Boom or pedestal the camera, moving it on its local y axis, up or
+   * down. This is done by multiplying the y magnitude by the camera
+   * inverse, then adding the local coordinates to both the camera
+   * location and look target.
+   *
+   * @param y the y magnitude
+   */
+  public void pedestal ( final float y ) {
+
+    final PMatrix3D ci = this.cameraInv;
+    final float w = ci.m31 * y + ci.m33;
+    if ( w != 0.0f ) {
+      final float wInv = 1.0f / w;
+      final float xLocal = ci.m01 * y * wInv;
+      final float yLocal = ci.m11 * y * wInv;
+      final float zLocal = ci.m21 * y * wInv;
+
+      this.cameraX += xLocal;
+      this.cameraY += yLocal;
+      this.cameraZ += zLocal;
+
+      this.lookTarget.x += xLocal;
+      this.lookTarget.y += yLocal;
+      this.lookTarget.z += zLocal;
+    }
+  }
+
+  /**
    * Draws a point at a given coordinate
    *
    * @param v the coordinate
    */
   @Override
-  public void point ( final Vec3 v ) {
-
-    this.pointImpl(v.x, v.y, v.z);
-  }
+  public void point ( final Vec3 v ) { this.pointImpl(v.x, v.y, v.z); }
 
   /**
    * Draws a quadratic Bezier curve segment to the next anchor point;
@@ -865,28 +1155,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   public void setEyeDist ( final float ed ) { this.eyeDist = ed; }
 
   /**
-   * Sets the renderer camera's 3D location.
-   *
-   * @param v the vector
-   */
-  public void setLoc ( final Vec3 v ) {
-
-    this.cameraX = v.x;
-    this.cameraY = v.y;
-    this.cameraZ = v.z;
-  }
-
-  /**
    * Draws a 3D curve entity.
    *
-   * @param entity   the curve entity
-   * @param material the material
+   * @param entity the curve entity
    */
-  public void shape (
-      final CurveEntity3 entity,
-      final MaterialSolid material ) {
-
-    // TODO: shape function with curveentity3 but no material.
+  public void shape ( final CurveEntity3 entity ) {
 
     final Transform3 tr = entity.transform;
     final List < Curve3 > curves = entity.curves;
@@ -902,9 +1175,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     Vec3 foreHandle = null;
     Vec3 rearHandle = null;
 
-    this.pushStyle();
-    this.material(material);
     while ( curveItr.hasNext() ) {
+
       final Curve3 curve = curveItr.next();
       final Iterator < Knot3 > knItr = curve.iterator();
       prevKnot = knItr.next();
@@ -955,6 +1227,21 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
         this.endShape(PConstants.OPEN);
       }
     }
+  }
+
+  /**
+   * Draws a 3D curve entity.
+   *
+   * @param entity   the curve entity
+   * @param material the material
+   */
+  public void shape (
+      final CurveEntity3 entity,
+      final MaterialSolid material ) {
+
+    this.pushStyle();
+    this.material(material);
+    this.shape(entity);
     this.popStyle();
   }
 
@@ -1123,18 +1410,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final MeshEntity3 entity,
       final MaterialSolid material ) {
 
-    final Transform3 tr = entity.transform;
-    final List < Mesh3 > meshes = entity.meshes;
-    final Iterator < Mesh3 > meshItr = meshes.iterator();
-
-    final Vec3 v = new Vec3();
-    final Vec3 vn = new Vec3();
-
     this.pushStyle();
     this.material(material);
-    while ( meshItr.hasNext() ) {
-      this.drawMesh3(meshItr.next(), tr, v, vn);
-    }
+    this.shape(entity);
     this.popStyle();
   }
 
@@ -1211,7 +1489,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    * @return the string
    */
   @Override
-  public String toString ( ) { return "camzup.pfriendly.Up3"; }
+  public String toString ( ) { return Up3.PATH_STR; }
 
   /**
    * Applies a transform to the renderer's matrix.
@@ -1233,49 +1511,49 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final Transform3 tr3,
       final TransformOrder order ) {
 
-    tr3.getScale(this.tr3Scale);
-    tr3.getLocation(this.tr3Loc);
-    tr3.getRotation(this.tr3Rot);
+    final Vec3 tr3Scl = tr3.getScale(new Vec3());
+    final Vec3 tr3Loc = tr3.getLocation(new Vec3());
+    final Quaternion tr3Rot = tr3.getRotation(new Quaternion());
 
     switch ( order ) {
 
       case RST:
 
-        this.rotate(this.tr3Rot);
-        this.scaleImpl(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
-        this.translateImpl(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
+        this.rotate(tr3Rot);
+        this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
+        this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
 
         return;
 
       case RTS:
 
-        this.rotate(this.tr3Rot);
-        this.translateImpl(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
-        this.scaleImpl(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
+        this.rotate(tr3Rot);
+        this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
+        this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
 
         return;
 
       case SRT:
 
-        this.scaleImpl(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
-        this.rotate(this.tr3Rot);
-        this.translateImpl(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
+        this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
+        this.rotate(tr3Rot);
+        this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
 
         return;
 
       case STR:
 
-        this.scaleImpl(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
-        this.translateImpl(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
-        this.rotate(this.tr3Rot);
+        this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
+        this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
+        this.rotate(tr3Rot);
 
         return;
 
       case TSR:
 
-        this.translateImpl(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
-        this.scaleImpl(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
-        this.rotate(this.tr3Rot);
+        this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
+        this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
+        this.rotate(tr3Rot);
 
         return;
 
@@ -1283,9 +1561,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
       default:
 
-        this.translateImpl(this.tr3Loc.x, this.tr3Loc.y, this.tr3Loc.z);
-        this.rotate(this.tr3Rot);
-        this.scaleImpl(this.tr3Scale.x, this.tr3Scale.y, this.tr3Scale.z);
+        this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
+        this.rotate(tr3Rot);
+        this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
 
         return;
     }
@@ -1299,6 +1577,33 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   public void translate ( final Vec3 v ) {
 
     this.translateImpl(v.x, v.y, v.z);
+  }
+
+  /**
+   * Trucks the camera, moving it on its local x axis, left or right.
+   * This is done by multiplying the x magnitude by the camera inverse,
+   * then adding the local coordinates to both the camera location and
+   * look target.
+   *
+   * @param x the x magnitude
+   */
+  public void truck ( final float x ) {
+
+    final float w = this.cameraInv.m30 * x + this.cameraInv.m33;
+    if ( w != 0.0f ) {
+      final float wInv = 1.0f / w;
+      final float xLocal = this.cameraInv.m00 * x * wInv;
+      final float yLocal = this.cameraInv.m10 * x * wInv;
+      final float zLocal = this.cameraInv.m20 * x * wInv;
+
+      this.cameraX += xLocal;
+      this.cameraY += yLocal;
+      this.cameraZ += zLocal;
+
+      this.lookTarget.x += xLocal;
+      this.lookTarget.y += yLocal;
+      this.lookTarget.z += zLocal;
+    }
   }
 
   /**

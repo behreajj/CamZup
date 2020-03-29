@@ -25,7 +25,7 @@ MaterialSolid mat = new MaterialSolid()
 MaterialSolid[] mats = { mat };
 
 void settings() {
-  size(720, 405, "camzup.pfriendly.Yup2");
+  size(720, 405, Yup2.PATH_STR);
 }
 
 void setup() {

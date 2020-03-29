@@ -43,19 +43,9 @@ import camzup.core.Vec2;
 public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
   /**
-   * The default camera rotation in radians.
+   * The path string for this renderer.
    */
-  public static final float DEFAULT_ROT = 0.0f;
-
-  /**
-   * The default camera zoom horizontal.
-   */
-  public static final float DEFAULT_ZOOM_X = 1.0f;
-
-  /**
-   * The default camera vertical zoom.
-   */
-  public static final float DEFAULT_ZOOM_Y = 1.0f;
+  public static final String PATH_STR = "camzup.pfriendly.YupJ2";
 
   /**
    * A Java AWT affine transform object. This is cached so a new object
@@ -84,6 +74,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
   /**
    * Representation of a stroke cap in the native AWT library.
+   *
+   * @see BasicStroke
    */
   protected int capNative = BasicStroke.CAP_ROUND;
 
@@ -143,27 +135,27 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
   /**
    * The camera rotation in radians.
    */
-  public float cameraRot = 0.0f;
+  public float cameraRot = IYup2.DEFAULT_ROT;
 
   /**
    * The camera's location on the x axis.
    */
-  public float cameraX = 0.0f;
+  public float cameraX = IUp.DEFAULT_LOC_X;
 
   /**
    * The camera's location on the y axis.
    */
-  public float cameraY = 0.0f;
+  public float cameraY = IUp.DEFAULT_LOC_Y;
 
   /**
    * The camera horizontal zoom.
    */
-  public float cameraZoomX = 1.0f;
+  public float cameraZoomX = IYup2.DEFAULT_ZOOM_X;
 
   /**
    * The camera vertical zoom.
    */
-  public float cameraZoomY = 1.0f;
+  public float cameraZoomY = IYup2.DEFAULT_ZOOM_Y;
 
   /**
    * The miter limit supplied to the basic stroke.
@@ -270,6 +262,30 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       this.g2.setColor(this.strokeColorObject);
       this.g2.draw(this.arc);
     }
+  }
+
+  /**
+   * Sets background color channels in both single precision real number
+   * [0.0, 1.0], in byte [0, 255] and in a composite color. Calls
+   * {@link PGraphicsJava2D#backgroundImpl()} .
+   */
+  @Override
+  protected void backgroundFromCalc ( ) {
+
+    this.backgroundR = this.calcR;
+    this.backgroundG = this.calcG;
+    this.backgroundB = this.calcB;
+    this.backgroundA = this.format == PConstants.RGB ? 1.0f : this.calcA;
+
+    this.backgroundRi = this.calcRi;
+    this.backgroundGi = this.calcGi;
+    this.backgroundBi = this.calcBi;
+    this.backgroundAi = this.format == PConstants.RGB ? 255 : this.calcAi;
+    this.backgroundAlpha = this.format == PConstants.RGB ? false
+        : this.calcAlpha;
+    this.backgroundColor = this.calcColor;
+
+    this.backgroundImpl();
   }
 
   /**
@@ -1179,7 +1195,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    */
   public void camDown ( ) {
 
-    this.camera(this.width * 0.5f, this.height * 0.5f, 0.0f, 1.0f, -1.0f);
+    this.camera(
+        this.width * 0.5f, this.height * 0.5f,
+        0.0f,
+        1.0f, -1.0f);
   }
 
   /**
@@ -1189,40 +1208,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
   public void camera ( ) {
 
     this.camera(
-        IUp.DEFAULT_LOC_X, IUp.DEFAULT_LOC_Y,
-        YupJ2.DEFAULT_ROT,
-        YupJ2.DEFAULT_ZOOM_X, YupJ2.DEFAULT_ZOOM_Y);
-  }
-
-  /**
-   * Sets the camera to a location.
-   *
-   * @param x the location x component
-   * @param y the location y component
-   */
-  public void camera ( final float x, final float y ) {
-
-    this.camera(x, y,
-        YupJ2.DEFAULT_ROT,
-        YupJ2.DEFAULT_ZOOM_X,
-        YupJ2.DEFAULT_ZOOM_Y);
-  }
-
-  /**
-   * Sets the camera to a location, at an angle of rotation.
-   *
-   * @param x       the location x component
-   * @param y       the location y component
-   * @param radians the rotation
-   */
-  public void camera (
-      final float x,
-      final float y,
-      final float radians ) {
-
-    this.camera(x, y, radians,
-        YupJ2.DEFAULT_ZOOM_X,
-        YupJ2.DEFAULT_ZOOM_Y);
+        this.cameraX, this.cameraY,
+        this.cameraRot,
+        this.cameraZoomX, this.cameraZoomY);
   }
 
   /**
@@ -1268,34 +1256,38 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
   }
 
   /**
-   * Sets the camera to a location.
+   * This version of camera is not supported by this renderer. Calls the
+   * supported version of camera.
    *
-   * @param loc the location
+   * @param xEye    camera location x
+   * @param yEye    camera location y
+   * @param zEye    camera location z
+   * @param xCenter target location x
+   * @param yCenter target location y
+   * @param zCenter target location z
+   * @param xUp     world up axis x
+   * @param yUp     world up axis y
+   * @param zUp     world up axis z
    */
-  public void camera ( final Vec2 loc ) {
-
-    this.camera(
-        loc.x, loc.y,
-        YupJ2.DEFAULT_ROT,
-        YupJ2.DEFAULT_ZOOM_X,
-        YupJ2.DEFAULT_ZOOM_Y);
-  }
-
-  /**
-   * Sets the camera to a location, at an angle of rotation.
-   *
-   * @param loc     the location
-   * @param radians the angle
-   */
+  @Override
   public void camera (
-      final Vec2 loc,
-      final float radians ) {
+      final float xEye,
+      final float yEye,
+      final float zEye,
+      final float xCenter,
+      final float yCenter,
+      final float zCenter,
+      final float xUp,
+      final float yUp,
+      final float zUp ) {
+
+    PApplet.showMissingWarning("camera");
 
     this.camera(
-        loc.x, loc.y,
-        radians,
-        YupJ2.DEFAULT_ZOOM_X,
-        YupJ2.DEFAULT_ZOOM_Y);
+        xEye, yEye,
+        Utils.atan2(yUp, xUp),
+        this.cameraZoomX,
+        this.cameraZoomY);
   }
 
   /**
@@ -1389,6 +1381,22 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    */
   @Override
   public void curveVertex ( final Vec2 a ) { this.curveVertex(a.x, a.y); }
+
+  /**
+   * Sets default camera and calls the camera function. This is for
+   * parity with OpenGL renderers.
+   */
+  @Override
+  public void defaultCamera ( ) {
+
+    this.cameraX = IUp.DEFAULT_LOC_X;
+    this.cameraY = IUp.DEFAULT_LOC_Y;
+    this.cameraZoomX = IYup2.DEFAULT_ZOOM_X;
+    this.cameraZoomY = IYup2.DEFAULT_ZOOM_Y;
+    this.cameraRot = IYup2.DEFAULT_ROT;
+
+    this.camera();
+  }
 
   /**
    * Draws an ellipse. The parameters meanings are determined by the
@@ -1574,7 +1582,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @return the location
    */
   @Override
-  public Vec2 getLoc ( final Vec2 target ) {
+  public Vec2 getLocation ( final Vec2 target ) {
 
     return target.set(this.cameraX, this.cameraY);
   }
@@ -1807,10 +1815,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    *
    * @param ce the curve entity
    */
-  public void handles ( final CurveEntity2 ce ) {
-
-    this.handles(ce, 1.0f);
-  }
+  public void handles ( final CurveEntity2 ce ) { this.handles(ce, 1.0f); }
 
   /**
    * Displays the handles of a curve entity.
@@ -2066,14 +2071,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
       final float x, final float y,
       final float u, final float v ) {
 
-    int vtx = 1;
-    int vty = 1;
-    if ( this.textureMode == PConstants.IMAGE ) {
-      vtx = img.width;
-      vty = img.height;
-    }
-
-    this.image(img, x, y, u, v, 0, 0, vtx, vty);
+    final boolean isImg = this.textureMode == PConstants.IMAGE;
+    this.image(img, x, y, u, v, 0, 0,
+        isImg ? img.width : 1,
+        isImg ? img.height : 1);
   }
 
   /**
@@ -2329,6 +2330,145 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
           coreFll.z,
           coreFll.w);
     }
+  }
+
+  /**
+   * Moves the renderer's camera location. Does not update the camera
+   * matrix; use in conjunction with {@link IYup2#camera()} .
+   *
+   * @param x the vector x
+   * @param y the vector y
+   */
+  public void moveBy ( final float x, final float y ) {
+
+    this.moveByLocal(x, y);
+  }
+
+  /**
+   * Moves the renderer's camera location. Does not update the camera
+   * matrix; use in conjunction with {@link IYup2#camera()} .
+   *
+   * @param v the vector
+   */
+  public void moveBy ( final Vec2 v ) {
+
+    this.moveByLocal(v.x, v.y);
+  }
+
+  /**
+   * Moves the renderer's camera by a vector.
+   *
+   * @param x the vector x
+   * @param y the vector y
+   */
+  public void moveByGlobal ( final float x, final float y ) {
+
+    this.cameraX += x;
+    this.cameraY += y;
+
+    this.camera(
+        this.cameraX,
+        this.cameraY,
+        this.cameraRot,
+        this.cameraZoomX,
+        this.cameraZoomY);
+  }
+
+  /**
+   * Moves the renderer's camera by a vector.
+   *
+   * @param v the vector
+   */
+  public void moveByGlobal ( final Vec2 v ) {
+
+    this.moveByGlobal(v.x, v.y);
+  }
+
+  /**
+   * Moves the renderer's camera location by a vector relative to its
+   * orientation.
+   *
+   * @param x the vector x
+   * @param y the vector y
+   */
+  public void moveByLocal ( final float x, final float y ) {
+
+    final float nrm = this.cameraRot * IUtils.ONE_TAU;
+    final float cosa = Utils.scNorm(nrm);
+    final float sina = Utils.scNorm(nrm - 0.25f);
+
+    this.cameraX += cosa * x - sina * y;
+    this.cameraY += cosa * y + sina * x;
+
+    this.camera(
+        this.cameraX,
+        this.cameraY,
+        this.cameraRot,
+        this.cameraZoomX,
+        this.cameraZoomY);
+  }
+
+  /**
+   * Moves the renderer's camera by a vector relative to its
+   * orientation.
+   *
+   * @param v the vector
+   */
+  public void moveByLocal ( final Vec2 v ) {
+
+    this.moveByLocal(v.x, v.y);
+  }
+
+  /**
+   * Sets the renderer camera's location.
+   *
+   * @param x the x location
+   * @param y the y location
+   */
+  public void moveTo ( final float x, final float y ) {
+
+    this.cameraX = x;
+    this.cameraY = y;
+
+    this.camera(
+        this.cameraX,
+        this.cameraY,
+        this.cameraRot,
+        this.cameraZoomX,
+        this.cameraZoomY);
+  }
+
+  /**
+   * Sets the renderer camera's location.
+   *
+   * @param locNew the new location
+   */
+  public void moveTo ( final Vec2 locNew ) {
+
+    this.moveTo(locNew.x, locNew.y);
+  }
+
+  /**
+   * Eases the renderer camera's location to the destination over a step
+   * in [0.0, 1.0] .
+   *
+   * @param locNew the new location
+   * @param step   the step
+   */
+  public void moveTo (
+      final Vec2 locNew,
+      final float step ) {
+
+    if ( step <= 0.0f ) { return; }
+    if ( step >= 1.0f ) {
+      this.moveTo(locNew.x, locNew.y);
+      return;
+    }
+
+    final float u = 1.0f - step;
+    this.moveTo(
+        u * this.cameraX + step * locNew.x,
+        u * this.cameraY + step * locNew.y);
   }
 
   /**
@@ -3106,12 +3246,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
   /**
    * Draws a 2D curve entity.
    *
-   * @param entity   the curve entity
-   * @param material the material
+   * @param entity the curve entity
    */
-  public void shape (
-      final CurveEntity2 entity,
-      final MaterialSolid material ) {
+  public void shape ( final CurveEntity2 entity ) {
 
     final Transform2 tr = entity.transform;
     final List < Curve2 > curves = entity.curves;
@@ -3127,8 +3264,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     Vec2 foreHandle = null;
     Vec2 rearHandle = null;
 
-    this.pushStyle();
-    this.material(material);
     while ( curveItr.hasNext() ) {
       final Curve2 curve = curveItr.next();
       final Iterator < Knot2 > knItr = curve.iterator();
@@ -3177,6 +3312,21 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
       this.drawShapeSolid(this.gp);
     }
+  }
+
+  /**
+   * Draws a 2D curve entity.
+   *
+   * @param entity   the curve entity
+   * @param material the material
+   */
+  public void shape (
+      final CurveEntity2 entity,
+      final MaterialSolid material ) {
+
+    this.pushStyle();
+    this.material(material);
+    this.shape(entity);
     this.popStyle();
   }
 
@@ -3315,39 +3465,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
     this.pushStyle();
     this.material(material);
-
-    final Transform2 tr = entity.transform;
-    final List < Mesh2 > meshes = entity.meshes;
-    final Iterator < Mesh2 > meshItr = meshes.iterator();
-
-    final Vec2 v = new Vec2();
-
-    while ( meshItr.hasNext() ) {
-      final Mesh2 mesh = meshItr.next();
-      final Vec2[] vs = mesh.coords;
-      final int[][][] fs = mesh.faces;
-      final int flen0 = fs.length;
-
-      for ( int i = 0; i < flen0; ++i ) {
-        final int[][] f = fs[i];
-        final int flen1 = f.length;
-
-        Transform2.mulPoint(tr, vs[f[0][0]], v);
-        this.gp.reset();
-        this.gp.moveTo(v.x, v.y);
-
-        for ( int j = 1; j < flen1; ++j ) {
-
-          Transform2.mulPoint(tr, vs[f[j][0]], v);
-          this.gp.lineTo(v.x, v.y);
-
-        }
-
-        this.gp.closePath();
-        this.drawShapeSolid(this.gp);
-      }
-    }
-
+    this.shape(entity);
     this.popStyle();
   }
 
@@ -3861,7 +3979,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @return the string
    */
   @Override
-  public String toString ( ) { return "camzup.pfriendly.YupJ2"; }
+  public String toString ( ) { return YupJ2.PATH_STR; }
 
   /**
    * Applies a transform to the renderer's matrix.

@@ -7,7 +7,7 @@ Mesh2 plane2 = Mesh2.plane(64, new Mesh2());
 Mesh3 plane3 = new Mesh3(plane2);
 
 MeshEntity3 entity = new MeshEntity3()
-  .appendMesh(plane3);
+  .append(plane3);
 
 boolean wireframe = true;
 
@@ -20,7 +20,7 @@ MaterialSolid stroke = new MaterialSolid()
   .setStroke(#202020);
 
 void settings() {
-  size(720, 405, "camzup.pfriendly.Zup3");
+  size(720, 405, Zup3.PATH_STR);
 }
 
 void setup() {
@@ -36,7 +36,6 @@ void setup() {
     float fac1 = Simplex.fbm(
       noiseIn, Simplex.DEFAULT_SEED,
       16, 1.0, 0.25);
-    //fac1 = Utils.quantize(fac1, 8);
     co.z = elev * fac1;
   }
 

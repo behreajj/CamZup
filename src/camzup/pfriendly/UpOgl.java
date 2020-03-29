@@ -36,6 +36,11 @@ import camzup.core.Vec4;
 public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
   /**
+   * The path string for this renderer.
+   */
+  public static final String PATH_STR = "camzup.pfriendly.UpOgl";
+
+  /**
    * A curve to hold the arc data.
    */
   protected final Curve2 arc = new Curve2();
@@ -1776,10 +1781,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * @param size the size
    */
   @Override
-  public void box ( final float size ) {
-
-    PApplet.showMethodWarning("box");
-  }
+  public void box ( final float size ) { PApplet.showMethodWarning("box"); }
 
   /**
    * Unsupported by this renderer. Use a MeshEntity and Mesh instead.
@@ -2029,6 +2031,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     this.curveVertexImpl(x4, y4, z4);
     this.endShape(PConstants.OPEN);
   }
+
+  /**
+   * Sets default camera and calls the camera function.
+   */
+  @Override
+  public abstract void defaultCamera ( );
 
   /**
    * Sets the renderer's current fill to the color.
@@ -2409,6 +2417,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     this.pushStyle();
     this.noStroke();
 
+    /* With REPEAT, artifacts appear at the edge of images. */
+    this.textureWrap(PConstants.CLAMP);
+    final int oldWrapMode = this.textureWrap;
+
     this.beginShape(PConstants.POLYGON);
     this.normal(0.0f, 0.0f, 1.0f);
     this.texture(img);
@@ -2446,6 +2458,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     }
 
     this.endShape(PConstants.CLOSE);
+    this.textureWrap(oldWrapMode);
     this.popStyle();
   }
 
@@ -2644,6 +2657,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float left, final float right,
       final float bottom, final float top,
       final float near, final float far ) {
+
+    this.cameraNear = near;
+    this.cameraFar = far;
 
     PMatAux.orthographic(
         left, right,
@@ -3344,6 +3360,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float x,
       final float y ) {
 
+    /* With REPEAT, significant artifacts appear at the edge of images. */
+    final int oldWrapMode = this.textureWrap;
+    this.textureWrap(PConstants.CLAMP);
+
     float yMut = y;
     int stMut = start;
     float high = 0;
@@ -3386,6 +3406,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     if ( stMut < stop ) {
       this.textLineAlignImpl(chars, stMut, index, x, yMut);
     }
+
+    this.textureWrap(oldWrapMode);
   }
 
   /**
@@ -3591,7 +3613,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * @return the string
    */
   @Override
-  public String toString ( ) { return "camzup.pfriendly.UpOgl"; }
+  public String toString ( ) { return UpOgl.PATH_STR; }
 
   /**
    * Applies a transform to the renderer's matrix.

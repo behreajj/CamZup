@@ -986,7 +986,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
 
   /**
    * Tests to see if two vectors are parallel. Does so by evaluating
-   * whether the cross product of the two equals zero.
+   * whether the cross product of the two approximate zero.
    *
    * @param a the left comparisand
    * @param b the right comparisand
@@ -996,18 +996,36 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 a,
       final Vec3 b ) {
 
-    return a.y * b.z - a.z * b.y == 0.0f &&
-        a.z * b.x - a.x * b.z == 0.0f &&
-        a.x * b.y - a.y * b.x == 0.0f;
+    return Vec3.areParallel(a, b, IUtils.DEFAULT_EPSILON);
+  }
+
+  /**
+   * Tests to see if two vectors are parallel. Does so by evaluating
+   * whether the cross product of the two approximates zero.
+   *
+   * @param a         the left comparisand
+   * @param b         the right comparisand
+   * @param tolerance the tolerance
+   * @return the evaluation
+   */
+  public static boolean areParallel (
+      final Vec3 a,
+      final Vec3 b,
+      final float tolerance ) {
+
+    return Utils.abs(a.y * b.z - a.z * b.y) < tolerance &&
+        Utils.abs(a.z * b.x - a.x * b.z) < tolerance &&
+        Utils.abs(a.x * b.y - a.y * b.x) < tolerance;
   }
 
   /**
    * Tests to see if two vectors are parallel. Does so by evaluating
    * whether the cross product of the two equals zero.
    *
-   * @param a     the left comparisand
-   * @param b     the right comparisand
-   * @param cross the cross product
+   * @param a         the left comparisand
+   * @param b         the right comparisand
+   * @param tolerance the tolerance
+   * @param cross     the cross product
    * @return the evaluation
    * @see Vec3#cross(Vec3, Vec3, Vec3)
    * @see Vec3#none(Vec3)
@@ -1015,9 +1033,13 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
   public static boolean areParallel (
       final Vec3 a,
       final Vec3 b,
+      final float tolerance,
       final Vec3 cross ) {
 
-    return Vec3.none(Vec3.cross(a, b, cross));
+    Vec3.cross(a, b, cross);
+    return Utils.abs(a.x) < tolerance &&
+        Utils.abs(a.y) < tolerance &&
+        Utils.abs(a.z) < tolerance;
   }
 
   /**

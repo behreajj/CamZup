@@ -5,7 +5,6 @@ import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.opengl.PGraphicsOpenGL;
 
-import camzup.core.IUtils;
 import camzup.core.Utils;
 import camzup.core.Vec3;
 
@@ -60,6 +59,11 @@ public class Zup3 extends Up3 {
   public static final float DEFAULT_REF_Z = 1.0f;
 
   /**
+   * The path string for this renderer.
+   */
+  public static final String PATH_STR = "camzup.pfriendly.Zup3";
+
+  /**
    * The default constructor.
    */
   public Zup3 ( ) { super(); }
@@ -81,23 +85,6 @@ public class Zup3 extends Up3 {
       final boolean isPrimary ) {
 
     super(width, height, parent, path, isPrimary);
-  }
-
-  /**
-   * Sets default camera location and calls the camera function.
-   *
-   * @see PGraphicsOpenGL#defCameraX
-   * @see PGraphicsOpenGL#defCameraY
-   * @see PGraphicsOpenGL#defCameraZ
-   */
-  @Override
-  protected void defaultCamera ( ) {
-
-    this.defCameraX = Zup3.DEFAULT_LOC_X;
-    this.defCameraY = Zup3.DEFAULT_LOC_Y;
-    this.defCameraZ = Zup3.DEFAULT_LOC_Z;
-
-    this.camera();
   }
 
   /**
@@ -154,25 +141,16 @@ public class Zup3 extends Up3 {
   public void camera ( ) {
 
     /*
-     * CAUTION: Never use defCameraXXX values. They are not actual
-     * constants and may not have been initialized.
+     * Never use defCameraXXX values. They are not actual constants and
+     * may not have been initialized.
      */
-
-    float x = Zup3.DEFAULT_LOC_X;
-    float y = Zup3.DEFAULT_LOC_Y;
-    float z = Zup3.DEFAULT_LOC_Z;
-    if ( this.width > 128 && this.height > 128 ) {
-      final float distance = this.height * IUp.DEFAULT_CAM_DIST_FAC;
-      x = distance;
-      y = -distance;
-      z = distance;
-    }
-
     this.camera(
-        x, y, z,
-        Up3.DEFAULT_TARGET_X,
-        Up3.DEFAULT_TARGET_Y,
-        Up3.DEFAULT_TARGET_Z);
+        this.cameraX,
+        this.cameraY,
+        this.cameraZ,
+        this.lookTarget.x,
+        this.lookTarget.y,
+        this.lookTarget.z);
   }
 
   /**
@@ -199,16 +177,20 @@ public class Zup3 extends Up3 {
       final float zCenter ) {
 
     /*
-     * CAUTION: Never use defCameraXXX values. They are not actual
-     * constants and may not have been initialized.
+     * Never use defCameraXXX values. They are not actual constants and
+     * may not have been initialized.
      */
+    // this.camera(
+    // xEye, yEye, zEye,
+    // xCenter, yCenter, zCenter,
+    // Zup3.DEFAULT_REF_X,
+    // Zup3.DEFAULT_REF_Y,
+    // Zup3.DEFAULT_REF_Z);
 
     this.camera(
         xEye, yEye, zEye,
         xCenter, yCenter, zCenter,
-        Zup3.DEFAULT_REF_X,
-        Zup3.DEFAULT_REF_Y,
-        Zup3.DEFAULT_REF_Z);
+        this.refUp.x, this.refUp.y, this.refUp.z);
   }
 
   /**
@@ -238,11 +220,11 @@ public class Zup3 extends Up3 {
       final float zUp ) {
 
     this.refUp.set(xUp, yUp, zUp);
-    if ( Vec3.magSq(this.refUp) < PConstants.EPSILON ) {
+    if ( Vec3.magSq(this.refUp) < Up3.POLARITY_TOLERANCE ) {
       this.refUp.set(
-          Yup3.DEFAULT_REF_X,
-          Yup3.DEFAULT_REF_Y,
-          Yup3.DEFAULT_REF_Z);
+          Zup3.DEFAULT_REF_X,
+          Zup3.DEFAULT_REF_Y,
+          Zup3.DEFAULT_REF_Z);
       return;
     }
 
@@ -250,34 +232,36 @@ public class Zup3 extends Up3 {
         xEye - xCenter,
         yEye - yCenter,
         zEye - zCenter);
+    Vec3.normalize(this.lookDir, this.k);
 
-    final float lookDist = Vec3.magSq(this.lookDir);
-    if ( lookDist < IUtils.DEFAULT_EPSILON ) {
-      this.lookDir.set(0.0f, 0.0f, -1.0f);
+    if ( Vec3.areParallel(this.k, this.refUp,
+        Up3.POLARITY_TOLERANCE) ) {
+
+      this.lookDir.set(
+          Zup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
+          Zup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
+          Zup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
+
+      Vec3.forward(this.k);
+      Vec3.up(this.j);
+      Vec3.right(this.i);
+
+      this.refUp.set(
+          Zup3.DEFAULT_REF_X,
+          Zup3.DEFAULT_REF_Y,
+          Zup3.DEFAULT_REF_Z);
+
       return;
     }
 
-    if ( Vec3.areParallel(this.lookDir, this.refUp) ) {
-      // TEST Compare against oriented cylinder and Quaternion fromDir
-      final float temp = this.refUp.y;
-      this.refUp.y = this.refUp.z;
-      this.refUp.z = temp;
-    }
+    Vec3.crossNorm(this.refUp, this.k, this.i);
+    Vec3.crossNorm(this.k, this.i, this.j);
 
     this.cameraX = xEye;
     this.cameraY = yEye;
     this.cameraZ = zEye;
-
     this.lookTarget.set(xCenter, yCenter, zCenter);
-
-    this.eyeDist = Utils.sqrt(lookDist);
-
-    /* Create three axes through cross normalize. */
-    Vec3.normalize(this.lookDir, this.k);
-    Vec3.crossNorm(this.refUp, this.k, this.i);
-    Vec3.crossNorm(this.k, this.i, this.j);
-    // Vec3.crossNorm(this.k, this.refUp, this.i);
-    // Vec3.crossNorm(this.i, this.k, this.j);
+    this.eyeDist = Vec3.mag(this.lookDir);
 
     this.updateCamera();
   }
@@ -288,19 +272,49 @@ public class Zup3 extends Up3 {
    *
    * @param eye    the camera's location
    * @param center the point to look at
-   * @see Zup3#DEFAULT_REF_X
-   * @see Zup3#DEFAULT_REF_Y
-   * @see Zup3#DEFAULT_REF_Z
    */
   @Override
-  public void camera ( final Vec3 eye, final Vec3 center ) {
+  public void camera (
+      final Vec3 eye,
+      final Vec3 center ) {
 
     this.camera(
         eye.x, eye.y, eye.z,
-        center.x, center.y, center.z,
+        center.x, center.y, center.z);
+  }
+
+  /**
+   * Sets default camera and calls the camera function.
+   *
+   * @see PGraphicsOpenGL#defCameraX
+   * @see PGraphicsOpenGL#defCameraY
+   * @see PGraphicsOpenGL#defCameraZ
+   */
+  @Override
+  public void defaultCamera ( ) {
+
+    this.cameraX = this.defCameraX = Zup3.DEFAULT_LOC_X;
+    this.cameraY = this.defCameraY = Zup3.DEFAULT_LOC_Y;
+    this.cameraZ = this.defCameraZ = Zup3.DEFAULT_LOC_Z;
+
+    this.refUp.set(
         Zup3.DEFAULT_REF_X,
         Zup3.DEFAULT_REF_Y,
         Zup3.DEFAULT_REF_Z);
+
+    this.lookTarget.set(
+        Up3.DEFAULT_TARGET_X,
+        Up3.DEFAULT_TARGET_Y,
+        Up3.DEFAULT_TARGET_Z);
+
+    this.lookDir.set(
+        Zup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
+        Zup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
+        Zup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
+
+    this.eyeDist = Vec3.mag(this.lookDir);
+
+    this.camera();
   }
 
   /**
@@ -387,7 +401,7 @@ public class Zup3 extends Up3 {
 
     super.setSize(width, height);
     this.ortho();
-    this.camera();
+    this.defaultCamera();
   }
 
   /**
@@ -396,5 +410,5 @@ public class Zup3 extends Up3 {
    * @return the string
    */
   @Override
-  public String toString ( ) { return "camzup.pfriendly.Zup3"; }
+  public String toString ( ) { return Zup3.PATH_STR; }
 }

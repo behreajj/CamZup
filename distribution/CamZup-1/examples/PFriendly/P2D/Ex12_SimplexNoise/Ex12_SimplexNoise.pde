@@ -11,7 +11,7 @@ Vec3 deriv = new Vec3();
 Color clr = new Color();
 
 void settings() {
-  size(384, 384, "camzup.pfriendly.Yup2");
+  size(384, 384, Yup2.PATH_STR);
 }
 
 void setup() {

@@ -1349,10 +1349,10 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     Knot3 a = null;
     Knot3 b = null;
     if ( curve.closedLoop ) {
-      tScaled = knotLength * Utils.mod1(step);
+      tScaled = Utils.mod1(step) * knotLength;
       i = (int) tScaled;
-      a = knots.get(i);
-      b = knots.get((i + 1) % knotLength);
+      a = knots.get(Utils.mod(i, knotLength));
+      b = knots.get(Utils.mod(i + 1, knotLength));
     } else {
       if ( knotLength == 1 || step <= 0.0f ) {
         Curve3.evalFirst(curve, target);
@@ -1434,10 +1434,10 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     Knot3 a = null;
     Knot3 b = null;
     if ( curve.closedLoop ) {
-      tScaled = knotLength * Utils.mod1(step);
+      tScaled = Utils.mod1(step) * knotLength;
       i = (int) tScaled;
-      a = knots.get(i);
-      b = knots.get((i + 1) % knotLength);
+      a = knots.get(Utils.mod(i, knotLength));
+      b = knots.get(Utils.mod(i + 1, knotLength));
     } else {
       if ( knotLength == 1 || step <= 0.0f ) {
         return Curve3.evalFirst(curve, coord, tangent);

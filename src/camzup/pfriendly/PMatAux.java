@@ -2,7 +2,6 @@ package camzup.pfriendly;
 
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
-import processing.core.PVector;
 
 import camzup.core.IUtils;
 import camzup.core.Quaternion;
@@ -802,63 +801,93 @@ public abstract class PMatAux {
    * Multiplies a matrix with a three dimensional point, where its
    * implicit fourth coordinate, w, is 1.0 .
    *
-   * @param m the matrix
-   * @param v the input vector
-   * @return the product
-   */
-  public static PVector mulPoint (
-      final PMatrix3D m,
-      final PVector v ) {
-
-    return PMatAux.mulPoint(m, v, (PVector) null);
-  }
-
-  /**
-   * Multiplies a matrix with a three dimensional point, where its
-   * implicit fourth coordinate, w, is 1.0 .
-   *
    * @param m      the matrix
-   * @param v      the input vector
-   * @param target the output vector
-   * @return the product
-   */
-  public static PVector mulPoint (
-      final PMatrix3D m,
-      final PVector v,
-      PVector target ) {
-
-    if ( target == null ) { target = new PVector(); }
-
-    final float w = m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33;
-    if ( w == 0.0f ) { return target.set(0.0f, 0.0f, 0.0f); }
-    final float wInv = 1.0f / w;
-    return target.set(
-        (m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03) * wInv,
-        (m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13) * wInv,
-        (m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m23) * wInv);
-  }
-
-  /**
-   * Multiplies a matrix with a three dimensional point, where its
-   * implicit fourth coordinate, w, is 1.0 .
-   *
-   * @param m      the matrix
-   * @param v      the input vector
+   * @param px     the point x
+   * @param py     the point y
+   * @param pz     the point z
    * @param target the output vector
    * @return the product
    */
   public static Vec3 mulPoint (
       final PMatrix3D m,
+      final float px,
+      final float py,
+      final float pz,
+      final Vec3 target ) {
+
+    final float w = m.m30 * px + m.m31 * py + m.m32 * pz + m.m33;
+    if ( w != 0.0f ) {
+      final float wInv = 1.0f / w;
+      return target.set(
+          (m.m00 * px + m.m01 * py + m.m02 * pz + m.m03) * wInv,
+          (m.m10 * px + m.m11 * py + m.m12 * pz + m.m13) * wInv,
+          (m.m20 * px + m.m21 * py + m.m22 * pz + m.m23) * wInv);
+
+    }
+    return target.reset();
+  }
+
+  /**
+   * Multiplies a matrix with a three dimensional point, where its
+   * implicit fourth coordinate, w, is 1.0 .
+   *
+   * @param m      the matrix
+   * @param p      the input vector
+   * @param target the output vector
+   * @return the product
+   */
+  public static Vec3 mulPoint (
+      final PMatrix3D m,
+      final Vec3 p,
+      final Vec3 target ) {
+
+    return PMatAux.mulPoint(m, p.x, p.y, p.z, target);
+  }
+
+  /**
+   * Multiplies a matrix with a three dimensional vector, where its
+   * implicit fourth coordinate, w, is 0.0 .
+   *
+   * @param m      the matrix
+   * @param vx     the vector x
+   * @param vy     the vector y
+   * @param vz     the vector z
+   * @param target the output vector
+   * @return the product
+   */
+  public static Vec3 mulVector (
+      final PMatrix3D m,
+      final float vx,
+      final float vy,
+      final float vz,
+      final Vec3 target ) {
+
+    final float w = m.m30 * vx + m.m31 * vy + m.m32 * vz + m.m33;
+    if ( w != 0.0f ) {
+      final float wInv = 1.0f / w;
+      return target.set(
+          (m.m00 * vx + m.m01 * vy + m.m02 * vz) * wInv,
+          (m.m10 * vx + m.m11 * vy + m.m12 * vz) * wInv,
+          (m.m20 * vx + m.m21 * vy + m.m22 * vz) * wInv);
+    }
+    return target.reset();
+  }
+
+  /**
+   * Multiplies a matrix with a three dimensional vector, where its
+   * implicit fourth coordinate, w, is 0.0 .
+   *
+   * @param m      the matrix
+   * @param v      the vector
+   * @param target the output vector
+   * @return the product
+   */
+  public static Vec3 mulVector (
+      final PMatrix3D m,
       final Vec3 v,
       final Vec3 target ) {
 
-    final float w = m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33;
-    if ( w == 0.0f ) { return target.reset(); }
-    final float wInv = 1.0f / w;
-    return target.set(
-        (m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03) * wInv,
-        (m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13) * wInv,
-        (m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m23) * wInv);
+    return PMatAux.mulVector(m, v.x, v.y, v.z, target);
   }
 
   /**

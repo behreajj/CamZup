@@ -9,7 +9,7 @@ float angle = 0.0;
 float scale = 1.0;
 
 void settings() {
-  size(720, 405, "camzup.pfriendly.Yup2");
+  size(720, 405, Yup2.PATH_STR);
 }
 
 void setup() {

@@ -9,7 +9,7 @@ MaterialSolid[] materials;
 MeshEntity3[] entities;
 
 void settings() {
-  size(720, 405, "camzup.pfriendly.Zup3");
+  size(720, 405, Zup3.PATH_STR);
 }
 
 void setup() {
@@ -40,8 +40,8 @@ void setup() {
     .append(Mesh3.icosahedron(new Mesh3()))
   };
 
-  Vec3 lb = new Vec3(-width * 0.4, 0.0, 0.0);
   Vec3 ub = new Vec3(width * 0.4, 0.0, 0.0);
+  Vec3 lb = Vec3.negate(ub, new Vec3());
   float scl = min(width, height) * 0.25;
   int len = entities.length;
   for (int i = 0; i < len; ++i) {

@@ -158,7 +158,7 @@ public interface IUp {
    * Default near-clip when orthographic or perspective functions are
    * called without the near and far arguments. 0.01 .
    */
-  float DEFAULT_NEAR_CLIP = 0.01f;
+  float DEFAULT_NEAR_CLIP = 0.005f;
 
   /**
    * Default transform order when converting a transform to a matrix.
@@ -222,6 +222,11 @@ public interface IUp {
    * Sets the renderer's camera with default parameters.
    */
   void camera ( );
+
+  /**
+   * Sets the camera to the renderer defaults.
+   */
+  void defaultCamera ( );
 
   /**
    * Uses the renderer's default fill color.

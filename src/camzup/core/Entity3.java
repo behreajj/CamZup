@@ -5,7 +5,7 @@ package camzup.core;
  * a transform, but contains no other data. Useful when a 'target'
  * entity is needed.
  */
-public class Entity3 extends Entity {
+public class Entity3 extends Entity implements ISpatial3 {
 
   /**
    * The entity's transform.
@@ -110,6 +110,7 @@ public class Entity3 extends Entity {
    * @param dir the vector
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity3 moveBy ( final Vec3 dir ) {
 
@@ -123,6 +124,7 @@ public class Entity3 extends Entity {
    * @param locNew the location
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity3 moveTo ( final Vec3 locNew ) {
 
@@ -137,6 +139,7 @@ public class Entity3 extends Entity {
    * @param step   the step
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity3 moveTo (
       final Vec3 locNew,
@@ -147,12 +150,13 @@ public class Entity3 extends Entity {
   }
 
   /**
-   * Rotates the transform by an axis and angle in radians.
+   * Rotates this entity by an axis and angle in radians.
    *
    * @param radians the angle in radians
    * @param axis    the axis
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity3 rotateBy (
       final float radians,
@@ -168,6 +172,7 @@ public class Entity3 extends Entity {
    * @param rot the quaternion
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity3 rotateBy ( final Quaternion rot ) {
 
@@ -181,6 +186,7 @@ public class Entity3 extends Entity {
    * @param rotNew the new rotation
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity3 rotateTo ( final Quaternion rotNew ) {
 
@@ -195,6 +201,7 @@ public class Entity3 extends Entity {
    * @param step   the step
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity3 rotateTo (
       final Quaternion rotNew,
@@ -210,6 +217,7 @@ public class Entity3 extends Entity {
    * @param radians the angle
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity3 rotateX ( final float radians ) {
 
@@ -223,6 +231,7 @@ public class Entity3 extends Entity {
    * @param radians the angle
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity3 rotateY ( final float radians ) {
 
@@ -236,6 +245,7 @@ public class Entity3 extends Entity {
    * @param radians the angle
    * @return this entity
    */
+  @Override
   @Chainable
   public Entity3 rotateZ ( final float radians ) {
 

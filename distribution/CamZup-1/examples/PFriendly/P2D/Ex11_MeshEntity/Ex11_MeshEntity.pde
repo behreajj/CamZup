@@ -5,9 +5,9 @@ Yup2 graphics2;
 
 MaterialSolid material = new MaterialSolid()
   .setStroke(true)
-  .setStroke(#1f7fff)
+  .setStroke(#202020)
   .setFill(true)
-  .setFill(#303030)
+  .setFill(#007fff)
   .setStrokeWeight(1.0);
 
 Transform2 transform = new Transform2()
@@ -20,7 +20,7 @@ MeshEntity2 entity = new MeshEntity2("Example", transform)
   .append(mesh);
 
 void settings() {
-  size(720, 405, "camzup.pfriendly.Yup2");
+  size(720, 405, Yup2.PATH_STR);
   smooth(8);
 }
 
@@ -34,7 +34,7 @@ void draw() {
   entity.transform.moveByLocal(new Vec2(0.005, 0.0));
   graphics2.background();
   graphics2.origin();
-  graphics2.shape(entity, new MaterialSolid[] { material });
+  graphics2.shape(entity, material);
 }
 
 void mouseReleased() {

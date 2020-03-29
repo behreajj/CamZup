@@ -6,7 +6,7 @@ Zup3 graphics3;
 Random rng = new Random();
 
 Transform3 transform = new Transform3()
-  .moveTo(new Vec3(0.0, 0.0, 0.0))
+  .moveTo(new Vec3())
   .scaleTo(256.0);
 
 Curve3 curve = Curve3.infinity(new Curve3());
@@ -20,7 +20,7 @@ MaterialSolid mat = new MaterialSolid()
   .setStrokeWeight(1.0);
 
 void settings() {
-  size(720, 405, "camzup.pfriendly.Zup3");
+  size(720, 405, Zup3.PATH_STR);
   smooth(8);
 }
 
@@ -30,9 +30,9 @@ void setup() {
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  entity.rotateZ(0.01);
+  entity.rotateZ(0.0075);
 
-  float t = mouseX / (float)width;
+  float t = frameCount * 0.005;
 
   Knot3 knWd = new Knot3();
   Knot3 knLc = new Knot3();
@@ -59,5 +59,5 @@ void draw() {
 void mouseReleased() {
   Curve3.random(rng, 7,
     -0.5, 0.5,
-    false, curve);
+    true, curve);
 }

@@ -20,6 +20,21 @@ import camzup.core.Vec2;
 public interface IYup2 extends IUp {
 
   /**
+   * The default camera rotation in radians.
+   */
+  float DEFAULT_ROT = 0.0f;
+
+  /**
+   * The default camera horizontal zoom.
+   */
+  float DEFAULT_ZOOM_X = 1.0f;
+
+  /**
+   * The default camera vertical zoom.
+   */
+  float DEFAULT_ZOOM_Y = 1.0f;
+
+  /**
    * Factor by which a grid's count is scaled when dimensions are not
    * supplied.
    */
@@ -128,7 +143,7 @@ public interface IYup2 extends IUp {
    * @param target the output vector
    * @return the location
    */
-  Vec2 getLoc ( Vec2 target );
+  Vec2 getLocation ( Vec2 target );
 
   /**
    * Gets the renderer's camera location on the x axis.

@@ -8,7 +8,7 @@ int index;
 int[] modes = { CENTER, CORNERS, CORNER };
 
 void settings() {
-  size(720, 405, "camzup.pfriendly.Yup2");
+  size(720, 405, Yup2.PATH_STR);
 }
 
 void setup() {
@@ -16,7 +16,7 @@ void setup() {
   img = loadImage("diagnostic.png");
 
   // For Yup2.
-  //graphics.textureSampling(IUpOgl.Sampling.TRILINEAR);
+  //graphics.textureSampling(TextureSampling.TRILINEAR);
 }
 
 void draw() {

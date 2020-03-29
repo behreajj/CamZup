@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 720 405">
 <rect x="0" y="0" width="720.0" height="405.0" stroke="none" fill="#FFF7D5"></rect>
 <g transform="translate(360.000000, 202.500000) scale(1.000000, -1.000000) rotate(-0.00) translate(-0.000000, -0.000000)">
-<g id="example" transform="translate(-57.717670, -36.688549) rotate(34.0) scale(150.000000, 150.000000)">
+<g id="example" transform="translate(-28.008403, 5.298432) rotate(74.0) scale(150.000000, 150.000000)">
 <g stroke-width="0.007499" stroke-opacity="1.0" stroke="#202020" fill-opacity="1.0" fill="#9ad8e2" stroke-linejoin="round" stroke-linecap="round">
 <path d="M 0.500000 0.000000 L -0.250000 0.433012 L 0.250000 0.000000 Z"></path>
 <path d="M -0.250000 0.433012 L -0.125000 0.216506 L 0.250000 0.000000 Z"></path>
@@ -9,8 +9,8 @@
 <path d="M -0.250000 -0.433012 L -0.125000 -0.216506 L -0.125000 0.216506 Z"></path>
 <path d="M -0.250000 -0.433012 L 0.500000 0.000000 L -0.125000 -0.216506 Z"></path>
 <path d="M 0.500000 0.000000 L 0.250000 0.000000 L -0.125000 -0.216506 Z"></path>
+</g>
+</g>
 
-</g>
-</g>
 </g>
 </svg>

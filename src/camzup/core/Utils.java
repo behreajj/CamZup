@@ -1097,8 +1097,8 @@ public abstract class Utils implements IUtils {
    */
   public static float fmod ( final float a, final float b ) {
 
-    if ( b == 0.0f ) { return a; }
-    return a % b;
+    if ( b != 0.0f ) { return a % b; }
+    return 0.0f;
   }
 
   /**
@@ -1333,6 +1333,24 @@ public abstract class Utils implements IUtils {
   }
 
   /**
+   * Finds the logarithm of a value in an arbitrary base. Equivalent to
+   * finding the natural logarithm of a value, then dividing it by the
+   * logarithm of the base. Returns zero if the base is less than or
+   * equal to zero.
+   *
+   * @param a    the value
+   * @param base the base
+   * @return the evaluation
+   */
+  public static float log ( final float a, final float base ) {
+
+    if ( a > 0.0f && base > 0.0f ) {
+      return (float) (Math.log(a) / Math.log(base));
+    }
+    return 0.0f;
+  }
+
+  /**
    * Maps an input value from an original range to a target range. If
    * the upper and lower bound of the original range are equal, will
    * return the lower bound of the destination range.
@@ -1470,10 +1488,12 @@ public abstract class Utils implements IUtils {
    */
   public static float mod ( final float a, final float b ) {
 
-    if ( b == 0.0f ) { return a; }
-    final float value = a / b;
-    return a - b * (value > 0.0f ? (int) value
-        : value < 0.0f ? (int) value - 1.0f : 0.0f);
+    if ( b != 0.0f ) {
+      final float value = a / b;
+      return a - b * (value > 0.0f ? (int) value
+          : value < 0.0f ? (int) value - 1.0f : 0.0f);
+    }
+    return a;
   }
 
   /**
@@ -1487,9 +1507,11 @@ public abstract class Utils implements IUtils {
    */
   public static int mod ( final int a, final int b ) {
 
-    if ( b == 0 ) { return a; }
-    final int result = a - b * (a / b);
-    return result < 0 ? result + b : result;
+    if ( b != 0 ) {
+      final int result = a - b * (a / b);
+      return result < 0 ? result + b : result;
+    }
+    return a;
   }
 
   /**
@@ -1516,6 +1538,8 @@ public abstract class Utils implements IUtils {
 
     return value > 0.0f ? value - (int) value
         : value < 0.0f ? value - ((int) value - 1.0f) : 0.0f;
+
+    // return value - Utils.floor(value);
   }
 
   /**
@@ -1596,6 +1620,34 @@ public abstract class Utils implements IUtils {
   public static int or ( final float a, final float b ) {
 
     return Utils.toInt(Utils.toBool(a) | Utils.toBool(b));
+  }
+
+  /**
+   * Oscillates between [0.0, 1.0] based on an input step.
+   *
+   * @param step the step
+   * @return the oscillation
+   */
+  public static float pingPong ( final float step ) {
+
+    return 0.5f + 0.5f * Utils.scNorm(step);
+  }
+
+  /**
+   * Oscillates between a lower and upper bound based on an input step.
+   *
+   * @param lb   the lower bound
+   * @param ub   the upper bound
+   * @param step the step
+   * @return the oscillation
+   */
+  public static float pingPong (
+      final float lb,
+      final float ub,
+      final float step ) {
+
+    final float t = 0.5f + 0.5f * Utils.scNorm(step);
+    return (1.0f - t) * lb + t * ub;
   }
 
   /**
@@ -2112,10 +2164,10 @@ public abstract class Utils implements IUtils {
       final float lb,
       final float ub ) {
 
-    float lbc = 0.0f;
-    float ubc = 0.0f;
     final float span = ub - lb;
 
+    float lbc = 0.0f;
+    float ubc = 0.0f;
     if ( span < 0.0f ) {
       lbc = ub;
       ubc = lb;

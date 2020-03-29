@@ -380,8 +380,6 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    */
   public Gradient cycle ( final int places ) {
 
-    // TODO: Make this static?
-
     final int len = this.keys.size();
     final Iterator < ColorKey > itr = this.keys.iterator();
     final ColorKey[] arr = new ColorKey[len];
@@ -861,8 +859,6 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    * @see Collections#reverse(java.util.List)
    */
   public Gradient reverse ( ) {
-
-    // TODO: Make this static?
 
     final int len = this.keys.size();
     final Iterator < ColorKey > itr = this.keys.iterator();
@@ -1495,8 +1491,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
       /* Search for segment within which the step falls. */
 
-      // TODO: Why was this commented out?? Test again to see if it was a
-      // typo...
+      // TEST Why was this commented out??
       segSearch : for ( int m = 0; m < keyLen; ++m ) {
         seg = keyArr[m];
         if ( seg[0] <= step && step <= seg[2] ) { break segSearch; }
@@ -1529,7 +1524,6 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
         /* Curved */
         case 1:
-
           f = (float) Math.pow(pos, Math.log(0.5d) / Math.log(mid));
 
           break;

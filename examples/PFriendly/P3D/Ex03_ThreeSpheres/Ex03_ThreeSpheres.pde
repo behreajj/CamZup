@@ -20,10 +20,10 @@ MaterialSolid solid = new MaterialSolid()
 PImage txtr;
 MaterialPImage textured;
 boolean wireframe = true;
-boolean useIcosaMap = true;
+boolean useIcosaMap = false;
 
 void settings() {
-  size(720, 405, "camzup.pfriendly.Zup3");
+  size(720, 405, Zup3.PATH_STR);
 }
 
 void setup() {
@@ -40,7 +40,7 @@ void setup() {
   Mesh3.cubeSphere(3, cubesphere);
   Mesh3.uvSphere(32, 16, uvsphere);
 
-  float uniform = Utils.min(rndr.width, rndr.height) * 0.75;
+  float uniform = Utils.min(rndr.width, rndr.height) * 1.25;
   meIco.scaleTo(uniform);
   meCube.scaleTo(uniform);
   meUv.scaleTo(uniform);

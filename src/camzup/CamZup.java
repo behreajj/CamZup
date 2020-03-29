@@ -159,6 +159,37 @@ public class CamZup {
   public static void main ( final String[] args ) {
 
     final Random rng = new Random();
+
+    // CurveEntity3 ce3 = new CurveEntity3();
+    // Curve3 c3 = new Curve3();
+    // ce3.append(c3);
+    // Curve3.infinity(c3);
+    // Collection < Knot3 > result = new ArrayList < Knot3 >();
+    // CurveEntity3.evalRangeKnot(ce3, 0, 10, result);
+    // Curve3 subdiv = new Curve3();
+    // subdiv.closedLoop = true;
+    // subdiv.appendAll(result);
+    // ce3.append(subdiv);
+    // String str = ce3.toBlenderCode();
+    // System.out.println(str);
+
+    // final Quaternion q = new Quaternion();
+    // final Quaternion r = new Quaternion();
+    // float ang = rng.uniform(-IUtils.PI, IUtils.PI);
+    // final Vec3 axis = new Vec3();
+    // Vec3.random(rng, axis);
+    //
+    // System.out.println(ang);
+    // System.out.println(axis);
+    //
+    // Quaternion.rotate(q, ang, axis, r);
+    // System.out.println(r);
+    //
+    // ang = Quaternion.toAxisAngle(r, axis);
+    // System.out.println(ang);
+    // System.out.println(axis);
+
+    System.out.println(Utils.log(-5.0f, 2.0f));
   }
 
   /**

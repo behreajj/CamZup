@@ -1715,6 +1715,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     float y1 = -jx;
     float z1 = 0.0f;
 
+    // TODO: Update this with approx polarity check?
     final boolean parallel = x1 == 0.0f && y1 == 0.0f;
     if ( parallel ) {
       final float sgn = Utils.sign(jy);
@@ -1791,6 +1792,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
     Vec3.normalize(dir, forward);
     right.set(forward.y, -forward.x, 0.0f);
+
+    // TODO: Update this using approximate polarity check?
     final boolean parallel = right.x == 0.0f && right.y == 0.0f;
     if ( parallel ) {
       final float sgn = Utils.sign(forward.y);
@@ -2401,9 +2404,16 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
     // TODO: Seems to routinely return a quaternion with one of its
     // components set to zero.
+
+    // return Quaternion.fromAxisAngle(
+    // Utils.modRadians(
+    // halfAngle + halfAngle + radians),
+    // axis, target);
+
+    // TEST
+
     return Quaternion.fromAxisAngle(
-        Utils.modRadians(
-            halfAngle + halfAngle + radians),
+        (halfAngle + halfAngle + radians) % IUtils.TAU,
         axis, target);
   }
 
@@ -2727,7 +2737,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
         : q.real * Utils.invSqrtUnchecked(mSq);
 
     final float angle = 2.0f * Utils.acos(wNorm);
-    final float wAsin = IUtils.TAU - angle;
+    // final float wAsin = IUtils.TAU - angle;
+    final float wAsin = IUtils.PI - angle;
     if ( wAsin == 0.0f ) {
       Vec3.forward(axis);
       return angle;

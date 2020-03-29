@@ -361,7 +361,8 @@ public class MeshEntity2 extends Entity2
       pyCd.append("    mesh_data.materials.append(d_mats[0])\n");
     }
 
-    pyCd.append("    mesh_obj = d_objs.new(name, mesh_data)\n")
+    pyCd.append("    mesh_data.calc_tangents()\n")
+        .append("    mesh_obj = d_objs.new(name, mesh_data)\n")
         .append("    mesh_obj.rotation_mode = \"QUATERNION\"\n")
         .append("    mesh_obj.parent = parent_obj\n")
         .append("    scene_objs.link(mesh_obj)\n\n");

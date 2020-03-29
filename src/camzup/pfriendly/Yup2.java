@@ -33,34 +33,24 @@ import camzup.core.Vec4;
 public class Yup2 extends UpOgl implements IYup2, IUpOgl {
 
   /**
-   * The default camera rotation in radians.
+   * The path string for this renderer.
    */
-  public static final float DEFAULT_ROT = 0.0f;
-
-  /**
-   * The default camera horizontal zoom.
-   */
-  public static final float DEFAULT_ZOOM_X = 1.0f;
-
-  /**
-   * The default camera vertical zoom.
-   */
-  public static final float DEFAULT_ZOOM_Y = 1.0f;
+  public static final String PATH_STR = "camzup.pfriendly.Yup2";
 
   /**
    * The camera rotation in radians.
    */
-  public float cameraRot = 0.0f;
+  public float cameraRot = IYup2.DEFAULT_ROT;
 
   /**
    * The camera horizontal zoom.
    */
-  public float cameraZoomX = 1.0f;
+  public float cameraZoomX = IYup2.DEFAULT_ZOOM_X;
 
   /**
    * The camera vertical zoom.
    */
-  public float cameraZoomY = 1.0f;
+  public float cameraZoomY = IYup2.DEFAULT_ZOOM_Y;
 
   /**
    * The default constructor.
@@ -87,27 +77,16 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   }
 
   /**
-   * Sets the renderer's default camera.
-   */
-  @Override
-  protected void defaultCamera ( ) {
-
-    this.defCameraX = IUp.DEFAULT_LOC_X;
-    this.defCameraY = IUp.DEFAULT_LOC_Y;
-    this.defCameraZ = IUp.DEFAULT_LOC_Z;
-    this.camera();
-  }
-
-  /**
    * Sets the renderer's default perspective.
    */
   @Override
   protected void defaultPerspective ( ) {
 
-    this.defCameraAspect = IUp.DEFAULT_ASPECT;
-    this.defCameraFOV = IUp.DEFAULT_FOV;
-    this.defCameraNear = PConstants.EPSILON;
-    this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
+    this.cameraAspect = this.defCameraAspect = IUp.DEFAULT_ASPECT;
+    this.cameraFOV = this.defCameraFOV = IUp.DEFAULT_FOV;
+    this.cameraNear = this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
+    this.cameraFar = this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
+
     this.ortho();
   }
 
@@ -197,7 +176,10 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    */
   public void camDown ( ) {
 
-    this.camera(this.width * 0.5f, this.height * 0.5f, 0.0f, 1.0f, -1.0f);
+    this.camera(
+        this.width * 0.5f, this.height * 0.5f,
+        0.0f,
+        1.0f, -1.0f);
   }
 
   /**
@@ -207,40 +189,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   public void camera ( ) {
 
     this.camera(
-        IUp.DEFAULT_LOC_X,
-        IUp.DEFAULT_LOC_Y,
-        Yup2.DEFAULT_ROT,
-        Yup2.DEFAULT_ZOOM_X,
-        Yup2.DEFAULT_ZOOM_Y);
-  }
-
-  /**
-   * Sets the camera to a location.
-   *
-   * @param x the location x component
-   * @param y the location y component
-   */
-  public void camera ( final float x, final float y ) {
-
-    this.camera(x, y, Yup2.DEFAULT_ROT,
-        Yup2.DEFAULT_ZOOM_X,
-        Yup2.DEFAULT_ZOOM_Y);
-  }
-
-  /**
-   * Sets the camera to a location, at an angle of rotation.
-   *
-   * @param x       the location x component
-   * @param y       the location y component
-   * @param radians the rotation
-   */
-  public void camera (
-      final float x,
-      final float y,
-      final float radians ) {
-
-    this.camera(x, y, radians,
-        Yup2.DEFAULT_ZOOM_X, Yup2.DEFAULT_ZOOM_Y);
+        this.cameraX, this.cameraY,
+        this.cameraRot,
+        this.cameraZoomX, this.cameraZoomY);
   }
 
   /**
@@ -302,31 +253,38 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   }
 
   /**
-   * Sets the camera to a location.
+   * This version of camera is not supported by this renderer. Calls the
+   * supported version of camera.
    *
-   * @param loc the location
+   * @param xEye    camera location x
+   * @param yEye    camera location y
+   * @param zEye    camera location z
+   * @param xCenter target location x
+   * @param yCenter target location y
+   * @param zCenter target location z
+   * @param xUp     world up axis x
+   * @param yUp     world up axis y
+   * @param zUp     world up axis z
    */
-  public void camera ( final Vec2 loc ) {
-
-    this.camera(loc.x, loc.y,
-        YupJ2.DEFAULT_ROT,
-        YupJ2.DEFAULT_ZOOM_X,
-        YupJ2.DEFAULT_ZOOM_Y);
-  }
-
-  /**
-   * Sets the camera to a location, at an angle of rotation.
-   *
-   * @param loc     the location
-   * @param radians the angle
-   */
+  @Override
   public void camera (
-      final Vec2 loc,
-      final float radians ) {
+      final float xEye,
+      final float yEye,
+      final float zEye,
+      final float xCenter,
+      final float yCenter,
+      final float zCenter,
+      final float xUp,
+      final float yUp,
+      final float zUp ) {
 
-    this.camera(loc.x, loc.y, radians,
-        YupJ2.DEFAULT_ZOOM_X,
-        YupJ2.DEFAULT_ZOOM_Y);
+    PApplet.showMissingWarning("camera");
+
+    this.camera(
+        xEye, yEye,
+        Utils.atan2(yUp, xUp),
+        this.cameraZoomX,
+        this.cameraZoomY);
   }
 
   /**
@@ -395,6 +353,23 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   }
 
   /**
+   * Sets default camera and calls the camera function.
+   */
+  @Override
+  public void defaultCamera ( ) {
+
+    this.cameraX = this.defCameraX = IUp.DEFAULT_LOC_X;
+    this.cameraY = this.defCameraY = IUp.DEFAULT_LOC_Y;
+    this.cameraZ = this.defCameraZ = IUp.DEFAULT_LOC_Z;
+
+    this.cameraZoomX = IYup2.DEFAULT_ZOOM_X;
+    this.cameraZoomY = IYup2.DEFAULT_ZOOM_Y;
+    this.cameraRot = IYup2.DEFAULT_ROT;
+
+    this.camera();
+  }
+
+  /**
    * Draws an ellipse; the meaning of the two parameters depends on the
    * renderer's ellipseMode.
    *
@@ -414,7 +389,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    * @return the location
    */
   @Override
-  public Vec2 getLoc ( final Vec2 target ) {
+  public Vec2 getLocation ( final Vec2 target ) {
 
     return target.set(this.cameraX, this.cameraY);
   }
@@ -776,6 +751,145 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   }
 
   /**
+   * Moves the renderer's camera location. Does not update the camera
+   * matrix; use in conjunction with {@link IYup2#camera()} .
+   *
+   * @param x the vector x
+   * @param y the vector y
+   */
+  public void moveBy ( final float x, final float y ) {
+
+    this.moveByLocal(x, y);
+  }
+
+  /**
+   * Moves the renderer's camera location. Does not update the camera
+   * matrix; use in conjunction with {@link IYup2#camera()} .
+   *
+   * @param v the vector
+   */
+  public void moveBy ( final Vec2 v ) {
+
+    this.moveByLocal(v.x, v.y);
+  }
+
+  /**
+   * Moves the renderer's camera by a vector.
+   *
+   * @param x the vector x
+   * @param y the vector y
+   */
+  public void moveByGlobal ( final float x, final float y ) {
+
+    this.cameraX += x;
+    this.cameraY += y;
+
+    this.camera(
+        this.cameraX,
+        this.cameraY,
+        this.cameraRot,
+        this.cameraZoomX,
+        this.cameraZoomY);
+  }
+
+  /**
+   * Moves the renderer's camera by a vector.
+   *
+   * @param v the vector
+   */
+  public void moveByGlobal ( final Vec2 v ) {
+
+    this.moveByGlobal(v.x, v.y);
+  }
+
+  /**
+   * Moves the renderer's camera location by a vector relative to its
+   * orientation.
+   *
+   * @param x the vector x
+   * @param y the vector y
+   */
+  public void moveByLocal ( final float x, final float y ) {
+
+    final float nrm = this.cameraRot * IUtils.ONE_TAU;
+    final float cosa = Utils.scNorm(nrm);
+    final float sina = Utils.scNorm(nrm - 0.25f);
+
+    this.cameraX += cosa * x - sina * y;
+    this.cameraY += cosa * y + sina * x;
+
+    this.camera(
+        this.cameraX,
+        this.cameraY,
+        this.cameraRot,
+        this.cameraZoomX,
+        this.cameraZoomY);
+  }
+
+  /**
+   * Moves the renderer's camera by a vector relative to its
+   * orientation.
+   *
+   * @param v the vector
+   */
+  public void moveByLocal ( final Vec2 v ) {
+
+    this.moveByLocal(v.x, v.y);
+  }
+
+  /**
+   * Sets the renderer camera's location.
+   *
+   * @param x the x location
+   * @param y the y location
+   */
+  public void moveTo ( final float x, final float y ) {
+
+    this.cameraX = x;
+    this.cameraY = y;
+
+    this.camera(
+        this.cameraX,
+        this.cameraY,
+        this.cameraRot,
+        this.cameraZoomX,
+        this.cameraZoomY);
+  }
+
+  /**
+   * Sets the renderer camera's location.
+   *
+   * @param locNew the new location
+   */
+  public void moveTo ( final Vec2 locNew ) {
+
+    this.moveTo(locNew.x, locNew.y);
+  }
+
+  /**
+   * Eases the renderer camera's location to the destination over a step
+   * in [0.0, 1.0] .
+   *
+   * @param locNew the new location
+   * @param step   the step
+   */
+  public void moveTo (
+      final Vec2 locNew,
+      final float step ) {
+
+    if ( step <= 0.0f ) { return; }
+    if ( step >= 1.0f ) {
+      this.moveTo(locNew.x, locNew.y);
+      return;
+    }
+
+    final float u = 1.0f - step;
+    this.moveTo(
+        u * this.cameraX + step * locNew.x,
+        u * this.cameraY + step * locNew.y);
+  }
+
+  /**
    * Draws the world origin.
    */
   @Override
@@ -1054,17 +1168,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   }
 
   /**
-   * Sets the renderer camera's location.
-   *
-   * @param v the vector
-   */
-  public void setLoc ( final Vec2 v ) {
-
-    this.cameraX = v.x;
-    this.cameraY = v.y;
-  }
-
-  /**
    * Set size is the last function called by size, createGraphics,
    * makeGraphics, etc. when initializing the graphics renderer.
    * Therefore, any additional values that need initialization can be
@@ -1081,12 +1184,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   /**
    * Draws a 2D curve entity.
    *
-   * @param entity   the curve entity
-   * @param material the material
+   * @param entity the curve entity
    */
-  public void shape (
-      final CurveEntity2 entity,
-      final MaterialSolid material ) {
+  public void shape ( final CurveEntity2 entity ) {
 
     final Transform2 tr = entity.transform;
     final List < Curve2 > curves = entity.curves;
@@ -1102,7 +1202,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
     Vec2 foreHandle = null;
     Vec2 rearHandle = null;
 
-    this.material(material);
     while ( curveItr.hasNext() ) {
       final Curve2 curve = curveItr.next();
       final Iterator < Knot2 > knItr = curve.iterator();
@@ -1154,6 +1253,21 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
         this.endShape(PConstants.OPEN);
       }
     }
+  }
+
+  /**
+   * Draws a 2D curve entity.
+   *
+   * @param entity   the curve entity
+   * @param material the material
+   */
+  public void shape (
+      final CurveEntity2 entity,
+      final MaterialSolid material ) {
+
+    this.pushStyle();
+    this.material(material);
+    this.shape(entity);
     this.popStyle();
   }
 
@@ -1325,16 +1439,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       final MeshEntity2 entity,
       final MaterialSolid material ) {
 
-    final Transform2 tr = entity.transform;
-    final List < Mesh2 > meshes = entity.meshes;
-    final Iterator < Mesh2 > meshItr = meshes.iterator();
-    final Vec2 v = new Vec2();
-
     this.pushStyle();
     this.material(material);
-    while ( meshItr.hasNext() ) {
-      this.drawMesh2(meshItr.next(), tr, v);
-    }
+    this.shape(entity);
     this.popStyle();
   }
 
@@ -1398,7 +1505,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    * @return the string
    */
   @Override
-  public String toString ( ) { return "camzup.pfriendly.Yup2"; }
+  public String toString ( ) { return Yup2.PATH_STR; }
 
   /**
    * Translate the renderer by a vector.

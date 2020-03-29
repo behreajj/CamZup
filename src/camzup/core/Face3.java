@@ -569,13 +569,10 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
    * @param target the output vector
    * @return the vector
    */
-  @Experimental
   public static Vec3 eval (
       final Face3 face,
       final float step,
       final Vec3 target ) {
-
-    // TEST
 
     final Vert3[] verts = face.vertices;
     final int len = verts.length;

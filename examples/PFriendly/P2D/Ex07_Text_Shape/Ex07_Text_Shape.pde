@@ -1,17 +1,17 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-YupJ2 graphics2;
+Yup2 graphics2;
 CurveEntity2[] glyphs;
 
 PFont font;
 
 void settings() {
-  size(720, 405, "camzup.pfriendly.YupJ2");
+  size(720, 405, Yup2.PATH_STR);
 }
 
 void setup() {
-  graphics2 = (YupJ2)getGraphics();
+  graphics2 = (Yup2)getGraphics();
 
   textMode(SHAPE);
   font = createFont("Garamond", 160);

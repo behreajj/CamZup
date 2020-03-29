@@ -4,7 +4,6 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.opengl.PGraphicsOpenGL;
 
-import camzup.core.Utils;
 import camzup.core.Vec3;
 
 /**
@@ -58,6 +57,11 @@ public class Yup3 extends Up3 {
   public static final float DEFAULT_REF_Z = 0.0f;
 
   /**
+   * The path string for this renderer.
+   */
+  public static final String PATH_STR = "camzup.pfriendly.Yup3";
+
+  /**
    * The default constructor.
    */
   public Yup3 ( ) { super(); }
@@ -82,23 +86,6 @@ public class Yup3 extends Up3 {
   }
 
   /**
-   * Sets default camera location and calls the camera function.
-   *
-   * @see PGraphicsOpenGL#defCameraX
-   * @see PGraphicsOpenGL#defCameraY
-   * @see PGraphicsOpenGL#defCameraZ
-   */
-  @Override
-  protected void defaultCamera ( ) {
-
-    this.defCameraX = Yup3.DEFAULT_LOC_X;
-    this.defCameraY = Yup3.DEFAULT_LOC_Y;
-    this.defCameraZ = Yup3.DEFAULT_LOC_Z;
-
-    this.camera();
-  }
-
-  /**
    * Creates a camera that looks at a default location and a vantage
    * point based on the renderer's height.
    */
@@ -109,21 +96,13 @@ public class Yup3 extends Up3 {
      * Never use defCameraXXX values. They are not actual constants and
      * may not have been initialized.
      */
-    float x = Yup3.DEFAULT_LOC_X;
-    float y = Yup3.DEFAULT_LOC_Y;
-    float z = Yup3.DEFAULT_LOC_Z;
-    if ( this.width > 128 && this.height > 128 ) {
-      final float distance = this.height * IUp.DEFAULT_CAM_DIST_FAC;
-      x = distance;
-      y = distance;
-      z = -distance;
-    }
-
     this.camera(
-        x, y, z,
-        Up3.DEFAULT_TARGET_X,
-        Up3.DEFAULT_TARGET_Y,
-        Up3.DEFAULT_TARGET_Z);
+        this.cameraX,
+        this.cameraY,
+        this.cameraZ,
+        this.lookTarget.x,
+        this.lookTarget.y,
+        this.lookTarget.z);
   }
 
   /**
@@ -153,12 +132,18 @@ public class Yup3 extends Up3 {
      * Never use defCameraXXX values. They are not actual constants and
      * may not have been initialized.
      */
+
+    // this.camera(
+    // xEye, yEye, zEye,
+    // xCenter, yCenter, zCenter,
+    // Yup3.DEFAULT_REF_X,
+    // Yup3.DEFAULT_REF_Y,
+    // Yup3.DEFAULT_REF_Z);
+
     this.camera(
         xEye, yEye, zEye,
         xCenter, yCenter, zCenter,
-        Yup3.DEFAULT_REF_X,
-        Yup3.DEFAULT_REF_Y,
-        Yup3.DEFAULT_REF_Z);
+        this.refUp.x, this.refUp.y, this.refUp.z);
   }
 
   /**
@@ -188,7 +173,7 @@ public class Yup3 extends Up3 {
       final float zUp ) {
 
     this.refUp.set(xUp, yUp, zUp);
-    if ( Vec3.magSq(this.refUp) < PConstants.EPSILON ) {
+    if ( Vec3.magSq(this.refUp) < Up3.POLARITY_TOLERANCE ) {
       this.refUp.set(
           Yup3.DEFAULT_REF_X,
           Yup3.DEFAULT_REF_Y,
@@ -200,32 +185,39 @@ public class Yup3 extends Up3 {
         xEye - xCenter,
         yEye - yCenter,
         zEye - zCenter);
+    Vec3.normalize(this.lookDir, this.k);
 
-    final float lookDist = Vec3.magSq(this.lookDir);
-    if ( lookDist < PConstants.EPSILON ) {
-      this.lookDir.set(0.0f, 0.0f, -1.0f);
+    if ( Vec3.areParallel(this.k, this.refUp,
+        Up3.POLARITY_TOLERANCE) ) {
+
+      this.lookDir.set(
+          Yup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
+          Yup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
+          Yup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
+
+      Vec3.up(this.k);
+      Vec3.forward(this.j);
+      Vec3.right(this.i);
+
+      this.refUp.set(
+          Yup3.DEFAULT_REF_X,
+          Yup3.DEFAULT_REF_Y,
+          Yup3.DEFAULT_REF_Z);
+
       return;
     }
 
-    if ( Vec3.areParallel(this.lookDir, this.refUp) ) {
-      // TEST Compare against oriented cylinder and Quaternion fromDir
-      final float temp = this.refUp.y;
-      this.refUp.y = this.refUp.z;
-      this.refUp.z = temp;
-    }
+    /* Create three axes. Handedness will change by renderer. */
+    Vec3.crossNorm(this.k, this.refUp, this.i);
+    Vec3.crossNorm(this.i, this.k, this.j);
+    // Vec3.crossNorm(this.refUp, this.k, this.i);
+    // Vec3.crossNorm(this.k, this.i, this.j);
 
     this.cameraX = xEye;
     this.cameraY = yEye;
     this.cameraZ = zEye;
-
     this.lookTarget.set(xCenter, yCenter, zCenter);
-
-    this.eyeDist = Utils.sqrt(lookDist);
-
-    /* Create three axes. Handedness will change by renderer. */
-    Vec3.normalize(this.lookDir, this.k);
-    Vec3.crossNorm(this.k, this.refUp, this.i);
-    Vec3.crossNorm(this.i, this.k, this.j);
+    this.eyeDist = Vec3.mag(this.lookDir);
 
     this.updateCamera();
   }
@@ -247,10 +239,41 @@ public class Yup3 extends Up3 {
 
     this.camera(
         eye.x, eye.y, eye.z,
-        center.x, center.y, center.z,
+        center.x, center.y, center.z);
+  }
+
+  /**
+   * Sets default camera and calls the camera function.
+   *
+   * @see PGraphicsOpenGL#defCameraX
+   * @see PGraphicsOpenGL#defCameraY
+   * @see PGraphicsOpenGL#defCameraZ
+   */
+  @Override
+  public void defaultCamera ( ) {
+
+    this.cameraX = this.defCameraX = Yup3.DEFAULT_LOC_X;
+    this.cameraY = this.defCameraY = Yup3.DEFAULT_LOC_Y;
+    this.cameraZ = this.defCameraZ = Yup3.DEFAULT_LOC_Z;
+
+    this.refUp.set(
         Yup3.DEFAULT_REF_X,
         Yup3.DEFAULT_REF_Y,
         Yup3.DEFAULT_REF_Z);
+
+    this.lookTarget.set(
+        Up3.DEFAULT_TARGET_X,
+        Up3.DEFAULT_TARGET_Y,
+        Up3.DEFAULT_TARGET_Z);
+
+    this.lookDir.set(
+        Yup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
+        Yup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
+        Yup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
+
+    this.eyeDist = Vec3.mag(this.lookDir);
+
+    this.camera();
   }
 
   /**
@@ -293,6 +316,33 @@ public class Yup3 extends Up3 {
   }
 
   /**
+   * Sets the renderer projection to a perspective, where objects nearer
+   * to the camera appear larger than objects distant from the camera.
+   *
+   * @param fov    the field of view
+   * @param aspect the aspect ratio, width over height
+   */
+  @Override
+  public void perspective (
+      final float fov,
+      final float aspect ) {
+
+    /*
+     * Not sure why this needs to be overridden and swapped, but it seems
+     * to fix issues with near far clip planes.
+     */
+
+    float near = IUp.DEFAULT_NEAR_CLIP;
+    float far = IUp.DEFAULT_FAR_CLIP;
+    if ( this.cameraY != 0.0f ) {
+      near *= this.cameraY;
+      far *= this.cameraY;
+    }
+
+    this.perspective(fov, aspect, near, far);
+  }
+
+  /**
    * Set size is the last function called by size, createGraphics,
    * makeGraphics, etc. when initializing the graphics renderer.
    * Therefore, any additional values that need initialization can be
@@ -305,7 +355,7 @@ public class Yup3 extends Up3 {
 
     super.setSize(iwidth, iheight);
     this.ortho();
-    this.camera();
+    this.defaultCamera();
   }
 
   /**
@@ -314,5 +364,6 @@ public class Yup3 extends Up3 {
    * @return the string
    */
   @Override
-  public String toString ( ) { return "camzup.pfriendly.Yup3"; }
+  public String toString ( ) { return Yup3.PATH_STR; }
+
 }
