@@ -32,7 +32,7 @@ void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
   entity.rotateZ(0.0075);
 
-  float t = frameCount * 0.005;
+  float t = Utils.mod1(frameCount * 0.005);
 
   Knot3 knWd = new Knot3();
   Knot3 knLc = new Knot3();
@@ -59,5 +59,5 @@ void draw() {
 void mouseReleased() {
   Curve3.random(rng, 7,
     -0.5, 0.5,
-    true, curve);
+    false, curve);
 }

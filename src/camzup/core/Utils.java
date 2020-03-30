@@ -7,577 +7,6 @@ package camzup.core;
 public abstract class Utils implements IUtils {
 
   /**
-   * A functional interface for an easing function which interpolates an
-   * an array.
-   *
-   * @param <T> the parameter type
-   */
-  @FunctionalInterface
-  public interface EasingFuncArr < T > {
-
-    /**
-     * Apply the function.
-     *
-     * @param arr    the array
-     * @param step   the step
-     * @param target the target object
-     * @return the eased object
-     */
-    T apply ( final T[] arr, Float step, T target );
-  }
-
-  /**
-   * A functional interface for an easing function which interpolates an
-   * object from an origin to a destination by a float, with a final
-   * output parameter.
-   *
-   * @param <T> the parameter type
-   */
-  @FunctionalInterface
-  public interface EasingFuncObj < T >
-      extends QuadFunction < T, T, Float, T, T > {
-
-    /**
-     * Apply the function.
-     *
-     * @param origin the origin
-     * @param dest   the destination
-     * @param step   the step
-     * @param target the target object
-     * @return the eased object
-     */
-    @Override
-    T apply (
-        final T origin,
-        final T dest,
-        final Float step,
-        T target );
-  }
-
-  /**
-   * A functional interface for an easing function which interpolates a
-   * primitive data type from an origin to a destination by a float.
-   *
-   * @param <T> the parameter type
-   */
-  @FunctionalInterface
-  public interface EasingFuncPrimitive < T >
-      extends TriFunction < T, T, Float, T > {
-
-    /**
-     * Apply the function.
-     *
-     * @param origin the origin
-     * @param dest   the destination
-     * @param step   the step
-     * @return the eased object
-     */
-    @Override
-    T apply (
-        final T origin,
-        final T dest,
-        final Float step );
-  }
-
-  /**
-   * Linear interpolation for a value.
-   */
-  public static class Lerp extends LerpUnclamped {
-
-    /**
-     * The default constructor.
-     */
-    Lerp ( ) { super(); }
-
-    /**
-     * Applies the linear interpolation.
-     *
-     * @param origin the origin
-     * @param dest   the destination
-     * @param step   the step
-     */
-    @Override
-    public Float apply (
-        final Float origin,
-        final Float dest,
-        final Float step ) {
-
-      if ( step <= 0.0f ) { return origin; }
-      if ( step >= 1.0f ) { return dest; }
-      return super.apply(origin, dest, step);
-    }
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * Linear interpolation for a periodic value in the counter-clockwise
-   * direction.
-   */
-  public static class LerpCCW extends PeriodicEasing {
-
-    /**
-     * Constructs the lerp CCW functional object with a default range,
-     * TAU.
-     */
-    public LerpCCW ( ) { super(); }
-
-    /**
-     * Constructs the lerp CCW functional object with a specified range.
-     *
-     * @param range the range of the period
-     */
-    public LerpCCW ( final float range ) { super(range); }
-
-    /**
-     * Applies the lerp CCW function.
-     *
-     * @param origin the origin
-     * @param dest   the destination
-     * @param step   the step
-     * @return the eased value
-     * @see Utils#lerpUnclamped(float, float, float)
-     * @see Utils#modUnchecked(float, float)
-     */
-    @Override
-    public float applyUnclamped (
-        final float origin,
-        final float dest,
-        final float step ) {
-
-      if ( this.aGtb ) {
-        this.b = this.b + this.range;
-        this.modResult = true;
-      }
-
-      final float fac = (1.0f - step) * this.a + step * this.b;
-      if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
-      return fac;
-    }
-  }
-
-  /**
-   * Linear interpolation for a periodic value in the clockwise
-   * direction.
-   */
-  public static class LerpCW extends PeriodicEasing {
-
-    /**
-     * Constructs the lerp CW functional object with a default range, TAU.
-     */
-    public LerpCW ( ) { super(); }
-
-    /**
-     * Constructs the lerp CW functional object with a specified range.
-     *
-     * @param range the range of the period
-     */
-    public LerpCW ( final float range ) { super(range); }
-
-    /**
-     * Applies the lerp CW function.
-     *
-     * @param origin the origin
-     * @param dest   the destination
-     * @param step   the step
-     * @return the eased value
-     * @see Utils#lerpUnclamped(float, float, float)
-     * @see Utils#modUnchecked(float, float)
-     */
-    @Override
-    public float applyUnclamped (
-        final float origin,
-        final float dest,
-        final float step ) {
-
-      if ( this.aLtb ) {
-        this.a = this.a + this.range;
-        this.modResult = true;
-      }
-
-      final float fac = (1.0f - step) * this.a + step * this.b;
-      if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
-      return fac;
-    }
-  }
-
-  /**
-   * Linear interpolation for a periodic value in the farthest
-   * direction.
-   */
-  public static class LerpFar extends PeriodicEasing {
-
-    /**
-     * Constructs the lerp far functional object with a default range,
-     * TAU.
-     */
-    public LerpFar ( ) { super(); }
-
-    /**
-     * Constructs the lerp far functional object with a specified range.
-     *
-     * @param range the range of the period
-     */
-    public LerpFar ( final float range ) { super(range); }
-
-    /**
-     * Applies the lerp far function.
-     *
-     * @param origin the origin
-     * @param dest   the destination
-     * @param step   the step
-     * @return the eased value
-     * @see Utils#lerpUnclamped(float, float, float)
-     * @see Utils#modUnchecked(float, float)
-     */
-    @Override
-    public float applyUnclamped (
-        final float origin,
-        final float dest,
-        final float step ) {
-
-      if ( this.aLtb && this.diff < this.halfRange ) {
-        this.a = this.a + this.range;
-        this.modResult = true;
-      } else if ( this.aGtb && this.diff > -this.halfRange ) {
-        this.b = this.b + this.range;
-        this.modResult = true;
-      }
-
-      final float fac = (1.0f - step) * this.a + step * this.b;
-      if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
-      return fac;
-    }
-  }
-
-  /**
-   * Linear interpolation for a periodic value in the nearest direction.
-   */
-  public static class LerpNear extends PeriodicEasing {
-
-    /**
-     * Constructs the lerp near functional object with a default range,
-     * TAU.
-     */
-    public LerpNear ( ) { super(); }
-
-    /**
-     * Constructs the lerp near functional object with a specified range.
-     *
-     * @param range the range of the period
-     */
-    public LerpNear ( final float range ) { super(range); }
-
-    /**
-     * Applies the lerp near function.
-     *
-     * @param origin the origin
-     * @param dest   the destination
-     * @param step   the step
-     * @return the eased value
-     * @see Utils#lerpUnclamped(float, float, float)
-     * @see Utils#modUnchecked(float, float)
-     */
-    @Override
-    public float applyUnclamped (
-        final float origin,
-        final float dest,
-        final float step ) {
-
-      if ( this.aLtb && this.diff > this.halfRange ) {
-        this.a = this.a + this.range;
-        this.modResult = true;
-      } else if ( this.aGtb && this.diff < -this.halfRange ) {
-        this.b = this.b + this.range;
-        this.modResult = true;
-      }
-
-      final float fac = (1.0f - step) * this.a + step * this.b;
-      if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
-      return fac;
-    }
-  }
-
-  /**
-   * Linear interpolation, not clamped, for a value.
-   *
-   * Note that there is an added cost to boxing and unboxing a primitive
-   * float to and from a Float object.
-   */
-  public static class LerpUnclamped implements EasingFuncPrimitive < Float > {
-
-    /**
-     * The default constructor.
-     */
-    LerpUnclamped ( ) {}
-
-    /**
-     * Applies the unclamped lerp function.
-     *
-     * @param origin the origin
-     * @param dest   the destination
-     * @param step   the step
-     * @return the eased value
-     */
-    @Override
-    public Float apply (
-        final Float origin,
-        final Float dest,
-        final Float step ) {
-
-      final double td = step;
-      return (float) ((1.0d - td) * origin + td * dest);
-    }
-  }
-
-  /**
-   * An abstract class to cover the easing periodic of values, such as
-   * angles and hues in HSV color space. Allows the range to be set to,
-   * for example, TAU radians, 360.0 degrees or 1.0 color channel.
-   */
-  public static abstract class PeriodicEasing
-      implements Utils.EasingFuncPrimitive < Float > {
-
-    /**
-     * The default range of the period, \u03c4.
-     */
-    public static final float DEFAULT_RANGE = IUtils.TAU;
-
-    /**
-     * The start angle, modulated by the range.
-     */
-    protected transient float a = 0.0f;
-
-    /**
-     * Whether or not the start angle is greater than the stop angle.
-     */
-    protected transient boolean aGtb = false;
-
-    /**
-     * Whether or not the start angle is less than the stop angle.
-     */
-    protected transient boolean aLtb = false;
-
-    /**
-     * The stop angle, modulated by the range.
-     */
-    protected transient float b = 0.0f;
-
-    /**
-     * The difference between the stop and start angle.
-     */
-    protected transient float diff = 0.0f;
-
-    /**
-     * One-half of the range of the period.
-     */
-    protected transient float halfRange = 0.5f;
-
-    /**
-     * Whether or not to floor wrap the result of the easing function.
-     */
-    protected transient boolean modResult = false;
-
-    /**
-     * The range of the period.
-     */
-    protected float range = 1.0f;
-
-    /**
-     * Constructs the easing functional object with a default range, TAU.
-     */
-    public PeriodicEasing ( ) {
-
-      this.setRange(PeriodicEasing.DEFAULT_RANGE);
-    }
-
-    /**
-     * Constructs the easing functional object with a specified range.
-     *
-     * @param range the range of the period
-     */
-    public PeriodicEasing ( final float range ) {
-
-      this.setRange(range);
-    }
-
-    /**
-     * A helper function which mutates protected fields a, b, diff, aLtb
-     * and aGtb. This mods the origin (a) and destination (b) by the
-     * range. It then finds the signed distance between the mod origin and
-     * destination (diff). Lastly, it evaluates which of the two is
-     * greater than the other, (aLtb) and (aGtb).
-     *
-     * @param origin origin value
-     * @param dest   destination value
-     * @see Utils#modUnchecked(float, float)
-     */
-    protected void eval ( final float origin, final float dest ) {
-
-      this.a = Utils.modUnchecked(origin, this.range);
-      this.b = Utils.modUnchecked(dest, this.range);
-      this.diff = this.b - this.a;
-      this.aLtb = this.a < this.b;
-      this.aGtb = this.a > this.b;
-    }
-
-    /**
-     * Applies the easing function. The abstract class's implementation
-     * check to see if the step is out of bounds, [0.0, 1.0] and if
-     * mod(origin, range) is equal to mod(dest, range). The origin is
-     * returned when the step is less than 0.0; the destination, when the
-     * step is greater than 1.0.
-     *
-     * @see PeriodicEasing#eval(float, float)
-     */
-    @Override
-    public Float apply (
-        final Float origin,
-        final Float dest,
-        final Float step ) {
-
-      this.eval(origin, dest);
-
-      if ( step <= 0.0f || this.diff == 0.0f ) { return this.a; }
-      if ( step >= 1.0f ) { return this.b; }
-      return this.applyUnclamped(origin, dest, step);
-    }
-
-    /**
-     * Applies the easing function without checked whether the step is out
-     * of bounds, [0.0, 1.0].
-     *
-     * @param origin the origin value
-     * @param dest   the destination value
-     * @param step   the step
-     * @return the interpolated value
-     */
-    public abstract float applyUnclamped (
-        final float origin,
-        final float dest,
-        final float step );
-
-    /**
-     * Gets the range of the easing function.
-     *
-     * @return the range
-     */
-    public float getRange ( ) {
-
-      return this.range;
-    }
-
-    /**
-     * Sets the range of the easing function. The range should be a
-     * positive non-zero value.
-     *
-     * @param range the range
-     */
-    public void setRange ( final float range ) {
-
-      this.range = Utils.max(Utils.abs(range), IUtils.DEFAULT_EPSILON);
-      this.halfRange = range * 0.5f;
-    }
-
-    /**
-     * Returns the simple name of this class, allowing the functional
-     * interface to be identified without being directly accessible.
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * A functional interface for functions with four input parameters.
-   *
-   * @param <T> first parameter
-   * @param <U> second parameter
-   * @param <V> third parameter
-   * @param <W> fourth parameter
-   * @param <R> return type
-   */
-  @FunctionalInterface
-  public interface QuadFunction < T, U, V, W, R > {
-
-    /**
-     * Apply the function.
-     *
-     * @param t first parameter
-     * @param u second parameter
-     * @param v third parameter
-     * @param w fourth parameter
-     * @return return type
-     */
-    R apply ( T t, U u, V v, W w );
-  }
-
-  /**
-   * Eases between two values by a smooth step.
-   */
-  public static class SmoothStep extends LerpUnclamped {
-
-    /**
-     * The default constructor.
-     */
-    SmoothStep ( ) { super(); }
-
-    /**
-     * Applies the unclamped smooth step function.
-     *
-     * @param origin the origin
-     * @param dest   the destination
-     * @param step   the step
-     * @return the eased value
-     */
-    @Override
-    public Float apply (
-        final Float origin,
-        final Float dest,
-        final Float step ) {
-
-      if ( step <= 0.0f ) { return origin; }
-      if ( step >= 1.0f ) { return dest; }
-      final double td = step;
-      final float ts = (float) (td * td * (3.0d - (td + td)));
-      return super.apply(origin, dest, ts);
-    }
-  }
-
-  /**
-   * A functional interface for functions with three input parameters.
-   *
-   * @param <T> first parameter
-   * @param <U> second parameter
-   * @param <V> third parameter
-   * @param <R> return type
-   */
-  @FunctionalInterface
-  public interface TriFunction < T, U, V, R > {
-
-    /**
-     * Apply the function.
-     *
-     * @param t first parameter
-     * @param u second parameter
-     * @param v third parameter
-     * @return result
-     */
-    R apply ( T t, U u, V v );
-  }
-
-  /**
    * The epsilon, \u03b5, provided to approximation functions when none
    * is specified by the user.
    */
@@ -1740,9 +1169,6 @@ public abstract class Utils implements IUtils {
       n *= 10;
     }
 
-    // RESEARCH: Isn't there a rounding function at Stack Overflow,
-    // implemented in JavaScript, which yields a higher accuracy by making
-    // two divisions?
     return Utils.round(value * n) / (float) n;
   }
 
@@ -2197,5 +1623,576 @@ public abstract class Utils implements IUtils {
   public static int xor ( final float a, final float b ) {
 
     return Utils.toInt(Utils.toBool(a) ^ Utils.toBool(b));
+  }
+
+  /**
+   * A functional interface for an easing function which interpolates an
+   * an array.
+   *
+   * @param <T> the parameter type
+   */
+  @FunctionalInterface
+  public interface EasingFuncArr < T > {
+
+    /**
+     * Apply the function.
+     *
+     * @param arr    the array
+     * @param step   the step
+     * @param target the target object
+     * @return the eased object
+     */
+    T apply ( final T[] arr, Float step, T target );
+  }
+
+  /**
+   * A functional interface for an easing function which interpolates an
+   * object from an origin to a destination by a float, with a final
+   * output parameter.
+   *
+   * @param <T> the parameter type
+   */
+  @FunctionalInterface
+  public interface EasingFuncObj < T >
+      extends QuadFunction < T, T, Float, T, T > {
+
+    /**
+     * Apply the function.
+     *
+     * @param origin the origin
+     * @param dest   the destination
+     * @param step   the step
+     * @param target the target object
+     * @return the eased object
+     */
+    @Override
+    T apply (
+        final T origin,
+        final T dest,
+        final Float step,
+        T target );
+  }
+
+  /**
+   * A functional interface for an easing function which interpolates a
+   * primitive data type from an origin to a destination by a float.
+   *
+   * @param <T> the parameter type
+   */
+  @FunctionalInterface
+  public interface EasingFuncPrimitive < T >
+      extends TriFunction < T, T, Float, T > {
+
+    /**
+     * Apply the function.
+     *
+     * @param origin the origin
+     * @param dest   the destination
+     * @param step   the step
+     * @return the eased object
+     */
+    @Override
+    T apply (
+        final T origin,
+        final T dest,
+        final Float step );
+  }
+
+  /**
+   * Linear interpolation for a value.
+   */
+  public static class Lerp extends LerpUnclamped {
+
+    /**
+     * The default constructor.
+     */
+    Lerp ( ) { super(); }
+
+    /**
+     * Applies the linear interpolation.
+     *
+     * @param origin the origin
+     * @param dest   the destination
+     * @param step   the step
+     */
+    @Override
+    public Float apply (
+        final Float origin,
+        final Float dest,
+        final Float step ) {
+
+      if ( step <= 0.0f ) { return origin; }
+      if ( step >= 1.0f ) { return dest; }
+      return super.apply(origin, dest, step);
+    }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * Linear interpolation for a periodic value in the counter-clockwise
+   * direction.
+   */
+  public static class LerpCCW extends PeriodicEasing {
+
+    /**
+     * Constructs the lerp CCW functional object with a default range,
+     * TAU.
+     */
+    public LerpCCW ( ) { super(); }
+
+    /**
+     * Constructs the lerp CCW functional object with a specified range.
+     *
+     * @param range the range of the period
+     */
+    public LerpCCW ( final float range ) { super(range); }
+
+    /**
+     * Applies the lerp CCW function.
+     *
+     * @param origin the origin
+     * @param dest   the destination
+     * @param step   the step
+     * @return the eased value
+     * @see Utils#lerpUnclamped(float, float, float)
+     * @see Utils#modUnchecked(float, float)
+     */
+    @Override
+    public float applyUnclamped (
+        final float origin,
+        final float dest,
+        final float step ) {
+
+      if ( this.aGtb ) {
+        this.b = this.b + this.range;
+        this.modResult = true;
+      }
+
+      final float fac = (1.0f - step) * this.a + step * this.b;
+      if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
+      return fac;
+    }
+  }
+
+  /**
+   * Linear interpolation for a periodic value in the clockwise
+   * direction.
+   */
+  public static class LerpCW extends PeriodicEasing {
+
+    /**
+     * Constructs the lerp CW functional object with a default range, TAU.
+     */
+    public LerpCW ( ) { super(); }
+
+    /**
+     * Constructs the lerp CW functional object with a specified range.
+     *
+     * @param range the range of the period
+     */
+    public LerpCW ( final float range ) { super(range); }
+
+    /**
+     * Applies the lerp CW function.
+     *
+     * @param origin the origin
+     * @param dest   the destination
+     * @param step   the step
+     * @return the eased value
+     * @see Utils#lerpUnclamped(float, float, float)
+     * @see Utils#modUnchecked(float, float)
+     */
+    @Override
+    public float applyUnclamped (
+        final float origin,
+        final float dest,
+        final float step ) {
+
+      if ( this.aLtb ) {
+        this.a = this.a + this.range;
+        this.modResult = true;
+      }
+
+      final float fac = (1.0f - step) * this.a + step * this.b;
+      if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
+      return fac;
+    }
+  }
+
+  /**
+   * Linear interpolation for a periodic value in the farthest
+   * direction.
+   */
+  public static class LerpFar extends PeriodicEasing {
+
+    /**
+     * Constructs the lerp far functional object with a default range,
+     * TAU.
+     */
+    public LerpFar ( ) { super(); }
+
+    /**
+     * Constructs the lerp far functional object with a specified range.
+     *
+     * @param range the range of the period
+     */
+    public LerpFar ( final float range ) { super(range); }
+
+    /**
+     * Applies the lerp far function.
+     *
+     * @param origin the origin
+     * @param dest   the destination
+     * @param step   the step
+     * @return the eased value
+     * @see Utils#lerpUnclamped(float, float, float)
+     * @see Utils#modUnchecked(float, float)
+     */
+    @Override
+    public float applyUnclamped (
+        final float origin,
+        final float dest,
+        final float step ) {
+
+      if ( this.aLtb && this.diff < this.halfRange ) {
+        this.a = this.a + this.range;
+        this.modResult = true;
+      } else if ( this.aGtb && this.diff > -this.halfRange ) {
+        this.b = this.b + this.range;
+        this.modResult = true;
+      }
+
+      final float fac = (1.0f - step) * this.a + step * this.b;
+      if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
+      return fac;
+    }
+  }
+
+  /**
+   * Linear interpolation for a periodic value in the nearest direction.
+   */
+  public static class LerpNear extends PeriodicEasing {
+
+    /**
+     * Constructs the lerp near functional object with a default range,
+     * TAU.
+     */
+    public LerpNear ( ) { super(); }
+
+    /**
+     * Constructs the lerp near functional object with a specified range.
+     *
+     * @param range the range of the period
+     */
+    public LerpNear ( final float range ) { super(range); }
+
+    /**
+     * Applies the lerp near function.
+     *
+     * @param origin the origin
+     * @param dest   the destination
+     * @param step   the step
+     * @return the eased value
+     * @see Utils#lerpUnclamped(float, float, float)
+     * @see Utils#modUnchecked(float, float)
+     */
+    @Override
+    public float applyUnclamped (
+        final float origin,
+        final float dest,
+        final float step ) {
+
+      if ( this.aLtb && this.diff > this.halfRange ) {
+        this.a = this.a + this.range;
+        this.modResult = true;
+      } else if ( this.aGtb && this.diff < -this.halfRange ) {
+        this.b = this.b + this.range;
+        this.modResult = true;
+      }
+
+      final float fac = (1.0f - step) * this.a + step * this.b;
+      if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
+      return fac;
+    }
+  }
+
+  /**
+   * Linear interpolation, not clamped, for a value.
+   *
+   * Note that there is an added cost to boxing and unboxing a primitive
+   * float to and from a Float object.
+   */
+  public static class LerpUnclamped implements EasingFuncPrimitive < Float > {
+
+    /**
+     * The default constructor.
+     */
+    LerpUnclamped ( ) {}
+
+    /**
+     * Applies the unclamped lerp function.
+     *
+     * @param origin the origin
+     * @param dest   the destination
+     * @param step   the step
+     * @return the eased value
+     */
+    @Override
+    public Float apply (
+        final Float origin,
+        final Float dest,
+        final Float step ) {
+
+      final double td = step;
+      return (float) ((1.0d - td) * origin + td * dest);
+    }
+  }
+
+  /**
+   * An abstract class to cover the easing periodic of values, such as
+   * angles and hues in HSV color space. Allows the range to be set to,
+   * for example, TAU radians, 360.0 degrees or 1.0 color channel.
+   */
+  public static abstract class PeriodicEasing
+      implements Utils.EasingFuncPrimitive < Float > {
+
+    /**
+     * The start angle, modulated by the range.
+     */
+    protected transient float a = 0.0f;
+
+    /**
+     * Whether or not the start angle is greater than the stop angle.
+     */
+    protected transient boolean aGtb = false;
+
+    /**
+     * Whether or not the start angle is less than the stop angle.
+     */
+    protected transient boolean aLtb = false;
+
+    /**
+     * The stop angle, modulated by the range.
+     */
+    protected transient float b = 0.0f;
+
+    /**
+     * The difference between the stop and start angle.
+     */
+    protected transient float diff = 0.0f;
+
+    /**
+     * One-half of the range of the period.
+     */
+    protected transient float halfRange = 0.5f;
+
+    /**
+     * Whether or not to floor wrap the result of the easing function.
+     */
+    protected transient boolean modResult = false;
+
+    /**
+     * The range of the period.
+     */
+    protected float range = 1.0f;
+
+    /**
+     * Constructs the easing functional object with a default range, TAU.
+     */
+    public PeriodicEasing ( ) {
+
+      this.setRange(PeriodicEasing.DEFAULT_RANGE);
+    }
+
+    /**
+     * Constructs the easing functional object with a specified range.
+     *
+     * @param range the range of the period
+     */
+    public PeriodicEasing ( final float range ) {
+
+      this.setRange(range);
+    }
+
+    /**
+     * A helper function which mutates protected fields a, b, diff, aLtb
+     * and aGtb. This mods the origin (a) and destination (b) by the
+     * range. It then finds the signed distance between the mod origin and
+     * destination (diff). Lastly, it evaluates which of the two is
+     * greater than the other, (aLtb) and (aGtb).
+     *
+     * @param origin origin value
+     * @param dest   destination value
+     * @see Utils#modUnchecked(float, float)
+     */
+    protected void eval ( final float origin, final float dest ) {
+
+      this.a = Utils.modUnchecked(origin, this.range);
+      this.b = Utils.modUnchecked(dest, this.range);
+      this.diff = this.b - this.a;
+      this.aLtb = this.a < this.b;
+      this.aGtb = this.a > this.b;
+    }
+
+    /**
+     * Applies the easing function. The abstract class's implementation
+     * check to see if the step is out of bounds, [0.0, 1.0] and if
+     * mod(origin, range) is equal to mod(dest, range). The origin is
+     * returned when the step is less than 0.0; the destination, when the
+     * step is greater than 1.0.
+     *
+     * @see PeriodicEasing#eval(float, float)
+     */
+    @Override
+    public Float apply (
+        final Float origin,
+        final Float dest,
+        final Float step ) {
+
+      this.eval(origin, dest);
+
+      if ( step <= 0.0f || this.diff == 0.0f ) { return this.a; }
+      if ( step >= 1.0f ) { return this.b; }
+      return this.applyUnclamped(origin, dest, step);
+    }
+
+    /**
+     * Applies the easing function without checked whether the step is out
+     * of bounds, [0.0, 1.0].
+     *
+     * @param origin the origin value
+     * @param dest   the destination value
+     * @param step   the step
+     * @return the interpolated value
+     */
+    public abstract float applyUnclamped (
+        final float origin,
+        final float dest,
+        final float step );
+
+    /**
+     * Gets the range of the easing function.
+     *
+     * @return the range
+     */
+    public float getRange ( ) {
+
+      return this.range;
+    }
+
+    /**
+     * Sets the range of the easing function. The range should be a
+     * positive non-zero value.
+     *
+     * @param range the range
+     */
+    public void setRange ( final float range ) {
+
+      this.range = Utils.max(Utils.abs(range), IUtils.DEFAULT_EPSILON);
+      this.halfRange = range * 0.5f;
+    }
+
+    /**
+     * Returns the simple name of this class, allowing the functional
+     * interface to be identified without being directly accessible.
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+
+    /**
+     * The default range of the period, \u03c4.
+     */
+    public static final float DEFAULT_RANGE = IUtils.TAU;
+  }
+
+  /**
+   * A functional interface for functions with four input parameters.
+   *
+   * @param <T> first parameter
+   * @param <U> second parameter
+   * @param <V> third parameter
+   * @param <W> fourth parameter
+   * @param <R> return type
+   */
+  @FunctionalInterface
+  public interface QuadFunction < T, U, V, W, R > {
+
+    /**
+     * Apply the function.
+     *
+     * @param t first parameter
+     * @param u second parameter
+     * @param v third parameter
+     * @param w fourth parameter
+     * @return return type
+     */
+    R apply ( T t, U u, V v, W w );
+  }
+
+  /**
+   * Eases between two values by a smooth step.
+   */
+  public static class SmoothStep extends LerpUnclamped {
+
+    /**
+     * The default constructor.
+     */
+    SmoothStep ( ) { super(); }
+
+    /**
+     * Applies the unclamped smooth step function.
+     *
+     * @param origin the origin
+     * @param dest   the destination
+     * @param step   the step
+     * @return the eased value
+     */
+    @Override
+    public Float apply (
+        final Float origin,
+        final Float dest,
+        final Float step ) {
+
+      if ( step <= 0.0f ) { return origin; }
+      if ( step >= 1.0f ) { return dest; }
+      final double td = step;
+      final float ts = (float) (td * td * (3.0d - (td + td)));
+      return super.apply(origin, dest, ts);
+    }
+  }
+
+  /**
+   * A functional interface for functions with three input parameters.
+   *
+   * @param <T> first parameter
+   * @param <U> second parameter
+   * @param <V> third parameter
+   * @param <R> return type
+   */
+  @FunctionalInterface
+  public interface TriFunction < T, U, V, R > {
+
+    /**
+     * Apply the function.
+     *
+     * @param t first parameter
+     * @param u second parameter
+     * @param v third parameter
+     * @return result
+     */
+    R apply ( T t, U u, V v );
   }
 }

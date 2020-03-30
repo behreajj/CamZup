@@ -17,162 +17,6 @@ import java.util.TreeSet;
 public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
   /**
-   * Compares two face indices (an array of vertex indices) by averaging
-   * the vectors referenced by them, then comparing the averages.
-   */
-  protected static final class SortIndices3 implements Comparator < int[][] > {
-
-    /**
-     * Internal vector used to store the average coordinate for the left
-     * comparisand.
-     */
-    protected final Vec3 aAvg;
-
-    /**
-     * Internal vector used to store the average coordinate for the right
-     * comparisand.
-     */
-    protected final Vec3 bAvg;
-
-    /**
-     * The coordinates array.
-     */
-    final Vec3[] coords;
-
-    {
-      this.aAvg = new Vec3();
-      this.bAvg = new Vec3();
-    }
-
-    /**
-     * The default constructor.
-     *
-     * @param coords the coordinate array.
-     */
-    protected SortIndices3 ( final Vec3[] coords ) {
-
-      this.coords = coords;
-    }
-
-    /**
-     * Compares two faces indices.
-     *
-     * @param a the left comparisand
-     * @param b the right comparisandS
-     */
-    @Override
-    public int compare ( final int[][] a, final int[][] b ) {
-
-      this.aAvg.reset();
-      final int aLen = a.length;
-      for ( int i = 0; i < aLen; ++i ) {
-        Vec3.add(
-            this.aAvg,
-            this.coords[a[i][0]],
-            this.aAvg);
-      }
-      Vec3.div(this.aAvg, aLen, this.aAvg);
-
-      this.bAvg.reset();
-      final int bLen = b.length;
-      for ( int i = 0; i < bLen; ++i ) {
-        Vec3.add(
-            this.bAvg,
-            this.coords[b[i][0]],
-            this.bAvg);
-      }
-      Vec3.div(this.bAvg, bLen, this.bAvg);
-
-      return this.aAvg.compareTo(this.bAvg);
-    }
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * An iterator, which allows a mesh's faces to be accessed in an
-   * enhanced for loop.
-   */
-  public static final class Face3Iterator implements Iterator < Face3 > {
-
-    /**
-     * The current index.
-     */
-    private int index = 0;
-
-    /**
-     * The mesh being iterated over.
-     */
-    private final Mesh3 mesh;
-
-    /**
-     * The default constructor.
-     *
-     * @param mesh the mesh to iterate
-     */
-    public Face3Iterator ( final Mesh3 mesh ) { this.mesh = mesh; }
-
-    /**
-     * Tests to see if the iterator has another value.
-     *
-     * @return the evaluation
-     */
-    @Override
-    public boolean hasNext ( ) { return this.index < this.mesh.length(); }
-
-    /**
-     * Gets the next value in the iterator.
-     *
-     * @return the value
-     * @see Mesh3#getFace(int, Face3)
-     */
-    @Override
-    public Face3 next ( ) {
-
-      return this.mesh.getFace(this.index++, new Face3());
-    }
-
-    /**
-     * Gets the next value in the iterator.
-     *
-     * @param target the output face
-     * @return the value
-     * @see Mesh3#getFace(int, Face3)
-     */
-    public Face3 next ( final Face3 target ) {
-
-      return this.mesh.getFace(this.index++, target);
-    }
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * Default cube size, such that it will match the dimensions of other
-   * Platonic solids; <code>0.5 / Math.sqrt(2.0)</code> , approximately
-   * 0.35355338 .
-   */
-  public static final float DEFAULT_CUBE_SIZE = 0.35355338f;
-
-  /**
    * An array of coordinates in the mesh.
    */
   public Vec3[] coords;
@@ -1297,6 +1141,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       Vec3.mul(c, scl, c);
     }
 
+    // TODO: Consider emitting an output transform so that the original
+    // offset and scale of the mesh can be retrained. (Same with
+    // toOrigin). (same with toOrigin or just use one vector).
+
     return this;
   }
 
@@ -2339,6 +2187,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     }
     return this;
   }
+
+  /**
+   * Default cube size, such that it will match the dimensions of other
+   * Platonic solids; <code>0.5 / Math.sqrt(2.0)</code> , approximately
+   * 0.35355338 .
+   */
+  public static final float DEFAULT_CUBE_SIZE = 0.35355338f;
 
   /**
    * Draws a cylinder from an origin point toward a destination point.
@@ -4020,5 +3875,154 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
         IMesh.DEFAULT_CIRCLE_SECTORS,
         IMesh.DEFAULT_CIRCLE_SECTORS >> 1,
         target);
+  }
+
+  /**
+   * Compares two face indices (an array of vertex indices) by averaging
+   * the vectors referenced by them, then comparing the averages.
+   */
+  protected static final class SortIndices3 implements Comparator < int[][] > {
+
+    /**
+     * Internal vector used to store the average coordinate for the left
+     * comparisand.
+     */
+    protected final Vec3 aAvg;
+
+    /**
+     * Internal vector used to store the average coordinate for the right
+     * comparisand.
+     */
+    protected final Vec3 bAvg;
+
+    /**
+     * The coordinates array.
+     */
+    final Vec3[] coords;
+
+    {
+      this.aAvg = new Vec3();
+      this.bAvg = new Vec3();
+    }
+
+    /**
+     * The default constructor.
+     *
+     * @param coords the coordinate array.
+     */
+    protected SortIndices3 ( final Vec3[] coords ) {
+
+      this.coords = coords;
+    }
+
+    /**
+     * Compares two faces indices.
+     *
+     * @param a the left comparisand
+     * @param b the right comparisandS
+     */
+    @Override
+    public int compare ( final int[][] a, final int[][] b ) {
+
+      this.aAvg.reset();
+      final int aLen = a.length;
+      for ( int i = 0; i < aLen; ++i ) {
+        Vec3.add(
+            this.aAvg,
+            this.coords[a[i][0]],
+            this.aAvg);
+      }
+      Vec3.div(this.aAvg, aLen, this.aAvg);
+
+      this.bAvg.reset();
+      final int bLen = b.length;
+      for ( int i = 0; i < bLen; ++i ) {
+        Vec3.add(
+            this.bAvg,
+            this.coords[b[i][0]],
+            this.bAvg);
+      }
+      Vec3.div(this.bAvg, bLen, this.bAvg);
+
+      return this.aAvg.compareTo(this.bAvg);
+    }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * An iterator, which allows a mesh's faces to be accessed in an
+   * enhanced for loop.
+   */
+  public static final class Face3Iterator implements Iterator < Face3 > {
+
+    /**
+     * The current index.
+     */
+    private int index = 0;
+
+    /**
+     * The mesh being iterated over.
+     */
+    private final Mesh3 mesh;
+
+    /**
+     * The default constructor.
+     *
+     * @param mesh the mesh to iterate
+     */
+    public Face3Iterator ( final Mesh3 mesh ) { this.mesh = mesh; }
+
+    /**
+     * Tests to see if the iterator has another value.
+     *
+     * @return the evaluation
+     */
+    @Override
+    public boolean hasNext ( ) { return this.index < this.mesh.length(); }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @return the value
+     * @see Mesh3#getFace(int, Face3)
+     */
+    @Override
+    public Face3 next ( ) {
+
+      return this.mesh.getFace(this.index++, new Face3());
+    }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @param target the output face
+     * @return the value
+     * @see Mesh3#getFace(int, Face3)
+     */
+    public Face3 next ( final Face3 target ) {
+
+      return this.mesh.getFace(this.index++, target);
+    }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
   }
 }

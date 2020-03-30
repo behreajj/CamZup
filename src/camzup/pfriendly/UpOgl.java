@@ -36,11 +36,6 @@ import camzup.core.Vec4;
 public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
   /**
-   * The path string for this renderer.
-   */
-  public static final String PATH_STR = "camzup.pfriendly.UpOgl";
-
-  /**
    * A curve to hold the arc data.
    */
   protected final Curve2 arc = new Curve2();
@@ -327,61 +322,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         this.curveDrawMatrix,
         this.curveBasisMatrix,
         this.curveDrawMatrix);
-  }
-
-  /**
-   * Sets the renderer's default styling.
-   */
-  @Override
-  protected void defaultSettings ( ) {
-
-    this.colorMode(PConstants.RGB, IUp.DEFAULT_COLOR_MAX);
-    this.fill(IUp.DEFAULT_FILL_COLOR);
-
-    this.stroke(IUp.DEFAULT_STROKE_COLOR);
-    this.strokeWeight(IUp.DEFAULT_STROKE_WEIGHT);
-    this.strokeJoin(PConstants.ROUND);
-    this.strokeCap(PConstants.ROUND);
-    this.stroke = true;
-
-    this.shape = 0;
-    this.rectMode(PConstants.CENTER);
-    this.ellipseMode(PConstants.CENTER);
-    this.imageMode(PConstants.CENTER);
-    this.shapeMode(PConstants.CENTER);
-    this.autoNormal = true;
-
-    this.textFont = null;
-    this.textSize = IUp.DEFAULT_TEXT_SIZE;
-    this.textLeading = IUp.DEFAULT_TEXT_LEADING;
-    this.textAlign = PConstants.CENTER;
-    this.textAlignY = PConstants.CENTER;
-    this.textMode = PConstants.MODEL;
-
-    if ( this.primaryGraphics ) { this.background(IUp.DEFAULT_BKG_COLOR); }
-
-    this.blendMode(PConstants.BLEND);
-
-    this.textureMode = PConstants.NORMAL;
-    this.textureWrap = PConstants.REPEAT;
-
-    this.ambient(
-        this.colorModeX * IUpOgl.DEFAULT_AMB_R,
-        this.colorModeY * IUpOgl.DEFAULT_AMB_G,
-        this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
-    this.specular(
-        this.colorModeX * IUpOgl.DEFAULT_SPEC_R,
-        this.colorModeY * IUpOgl.DEFAULT_SPEC_G,
-        this.colorModeZ * IUpOgl.DEFAULT_SPEC_B);
-    this.emissive(0.0f, 0.0f, 0.0f);
-    this.shininess(0.0f);
-
-    this.setAmbient = false;
-    this.manipulatingCamera = false;
-    this.settingsInited = true;
-    this.reapplySettings = false;
-
-    this.hint(PConstants.DISABLE_OPENGL_ERRORS);
   }
 
   /**
@@ -2039,6 +1979,72 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
   public abstract void defaultCamera ( );
 
   /**
+   * Sets default perspective and calls a perspective function.
+   */
+  @Override
+  public abstract void defaultPerspective ( );
+
+  /**
+   * Sets the renderer's default styling.
+   */
+  @Override
+  public void defaultSettings ( ) {
+
+    this.colorMode(PConstants.RGB, IUp.DEFAULT_COLOR_MAX);
+    this.fill(IUp.DEFAULT_FILL_COLOR);
+
+    this.stroke(IUp.DEFAULT_STROKE_COLOR);
+    this.strokeWeight(IUp.DEFAULT_STROKE_WEIGHT);
+    this.strokeJoin(PConstants.ROUND);
+    this.strokeCap(PConstants.ROUND);
+    this.stroke = true;
+
+    this.shape = 0;
+    this.rectMode(PConstants.CENTER);
+    this.ellipseMode(PConstants.CENTER);
+    this.imageMode(PConstants.CENTER);
+    this.shapeMode(PConstants.CENTER);
+    this.autoNormal = true;
+
+    this.textFont = null;
+    this.textSize = IUp.DEFAULT_TEXT_SIZE;
+    this.textLeading = IUp.DEFAULT_TEXT_LEADING;
+    this.textAlign = PConstants.CENTER;
+    this.textAlignY = PConstants.CENTER;
+    this.textMode = PConstants.MODEL;
+
+    if ( this.primaryGraphics ) { this.background(IUp.DEFAULT_BKG_COLOR); }
+
+    this.blendMode(PConstants.BLEND);
+
+    this.textureMode = PConstants.NORMAL;
+    this.textureWrap = PConstants.REPEAT;
+
+    this.ambient(
+        this.colorModeX * IUpOgl.DEFAULT_AMB_R,
+        this.colorModeY * IUpOgl.DEFAULT_AMB_G,
+        this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
+    this.specular(
+        this.colorModeX * IUpOgl.DEFAULT_SPEC_R,
+        this.colorModeY * IUpOgl.DEFAULT_SPEC_G,
+        this.colorModeZ * IUpOgl.DEFAULT_SPEC_B);
+    this.emissive(0.0f, 0.0f, 0.0f);
+    this.shininess(0.0f);
+
+    this.cameraAspect = this.defCameraAspect = IUp.DEFAULT_ASPECT;
+    this.cameraFOV = this.defCameraFOV = IUp.DEFAULT_FOV;
+    this.cameraNear = this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
+    this.cameraFar = this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
+
+    this.setAmbient = false;
+    this.manipulatingCamera = false;
+    this.settingsInited = true;
+    this.reapplySettings = false;
+
+    this.hint(PConstants.DISABLE_OPENGL_ERRORS);
+  }
+
+  /**
    * Sets the renderer's current fill to the color.
    *
    * @param c the color
@@ -2705,12 +2711,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float fov,
       final float aspect ) {
 
-    float near = IUp.DEFAULT_NEAR_CLIP;
+    final float near = IUp.DEFAULT_NEAR_CLIP;
     float far = IUp.DEFAULT_FAR_CLIP;
-    if ( this.cameraZ != 0.0f ) {
-      near *= this.cameraZ;
-      far *= this.cameraZ;
-    }
+
+    // far *= Utils.max(this.cameraX, this.cameraY, this.cameraZ);
+    far *= this.eyeDist;
 
     this.perspective(fov, aspect, near, far);
   }
@@ -2747,6 +2752,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
   public void printCamera ( ) {
 
     System.out.println(PMatAux.toString(this.camera, 4));
+  }
+
+  /**
+   * Prints the camera inverse matrix in columns, for easier viewing in
+   * the console.
+   */
+  public void printCameraInv ( ) {
+
+    System.out.println(PMatAux.toString(this.cameraInv, 4));
   }
 
   /**
@@ -4117,4 +4131,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
     this.vertexTexture(vt.x, vt.y);
   }
+
+  /**
+   * The path string for this renderer.
+   */
+  public static final String PATH_STR = "camzup.pfriendly.UpOgl";
 }

@@ -13,57 +13,6 @@ import java.util.Iterator;
 public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
 
   /**
-   * An iterator, which allows a face's vertices to be accessed in an
-   * enhanced for loop.
-   */
-  public static final class Vert2Iterator implements Iterator < Vert2 > {
-
-    /**
-     * The face being iterated over.
-     */
-    private final Face2 face;
-
-    /**
-     * The current index.
-     */
-    private int index = 0;
-
-    /**
-     * The default constructor.
-     *
-     * @param face the face to iterate
-     */
-    public Vert2Iterator ( final Face2 face ) { this.face = face; }
-
-    /**
-     * Tests to see if the iterator has another value.
-     *
-     * @return the evaluation
-     */
-    @Override
-    public boolean hasNext ( ) { return this.index < this.face.length(); }
-
-    /**
-     * Gets the next value in the iterator.
-     *
-     * @return the value
-     */
-    @Override
-    public Vert2 next ( ) { return this.face.vertices[this.index++]; }
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
    * The array of vertices in a face.
    */
   public Vert2[] vertices;
@@ -566,5 +515,56 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
       prev = curr;
     }
     return sum;
+  }
+
+  /**
+   * An iterator, which allows a face's vertices to be accessed in an
+   * enhanced for loop.
+   */
+  public static final class Vert2Iterator implements Iterator < Vert2 > {
+
+    /**
+     * The face being iterated over.
+     */
+    private final Face2 face;
+
+    /**
+     * The current index.
+     */
+    private int index = 0;
+
+    /**
+     * The default constructor.
+     *
+     * @param face the face to iterate
+     */
+    public Vert2Iterator ( final Face2 face ) { this.face = face; }
+
+    /**
+     * Tests to see if the iterator has another value.
+     *
+     * @return the evaluation
+     */
+    @Override
+    public boolean hasNext ( ) { return this.index < this.face.length(); }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @return the value
+     */
+    @Override
+    public Vert2 next ( ) { return this.face.vertices[this.index++]; }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
   }
 }

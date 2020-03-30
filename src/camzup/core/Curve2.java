@@ -17,134 +17,6 @@ import camzup.core.Utils.EasingFuncObj;
 public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
   /**
-   * An easing function to facilitate animation between multiple curves.
-   */
-  public static class Easing implements EasingFuncArr < Curve2 >,
-      EasingFuncObj < Curve2 > {
-
-    /**
-     * The knot easing function.
-     */
-    public final Knot2.AbstrEasing easingFunc;
-
-    /**
-     * The default constructor.
-     */
-    public Easing ( ) {
-
-      this.easingFunc = new Knot2.Lerp();
-    }
-
-    /**
-     * The easing constructor
-     *
-     * @param easingFunc the knot easing function
-     */
-    public Easing ( final Knot2.AbstrEasing easingFunc ) {
-
-      this.easingFunc = easingFunc;
-    }
-
-    /**
-     * Eases between an origin and destination curve by a step in [0.0,
-     * 1.0].
-     *
-     * @param origin the origin
-     * @param dest   the destination
-     * @param step   the step
-     * @param target the output curve
-     * @return the eased curve
-     */
-    @Override
-    public Curve2 apply (
-        final Curve2 origin,
-        final Curve2 dest,
-        final Float step,
-        final Curve2 target ) {
-
-      if ( step <= 0.0f ) { return target.set(origin); }
-      if ( step >= 1.0f ) { return target.set(dest); }
-      return this.applyUnclamped(origin, dest, step, target);
-    }
-
-    /**
-     * Eases between curves in an array by a step in the range [0.0, 1.0].
-     *
-     * @param arr    the curve array
-     * @param step   the step
-     * @param target the output curve
-     */
-    @Override
-    public Curve2 apply (
-        final Curve2[] arr,
-        final Float step,
-        final Curve2 target ) {
-
-      final int len = arr.length;
-      if ( len == 1 || step <= 0.0f ) { return target.set(arr[0]); }
-      if ( step >= 1.0f ) { return target.set(arr[len - 1]); }
-
-      final float scaledStep = step * (len - 1);
-      final int i = (int) scaledStep;
-      return this.applyUnclamped(
-          arr[i], arr[i + 1],
-          scaledStep - i, target);
-    }
-
-    /**
-     * Eases between an origin and destination transform by a step in
-     * [0.0, 1.0] . Curves must have the same number of knots and must
-     * match as to whether they are closed loops or open.
-     *
-     * @param origin the origin
-     * @param dest   the destination
-     * @param step   the step
-     * @param target the output curve
-     * @return the easing curve
-     */
-    public Curve2 applyUnclamped (
-        final Curve2 origin,
-        final Curve2 dest,
-        final float step,
-        final Curve2 target ) {
-
-      final List < Knot2 > orKn = origin.knots;
-      final List < Knot2 > dsKn = dest.knots;
-
-      if ( orKn.size() == dsKn.size() &&
-          origin.closedLoop == dest.closedLoop ) {
-
-        target.closedLoop = origin.closedLoop;
-        target.resize(orKn.size());
-
-        final Iterator < Knot2 > orItr = orKn.iterator();
-        final Iterator < Knot2 > dsItr = dsKn.iterator();
-        final Iterator < Knot2 > tgItr = target.knots.iterator();
-        while ( orItr.hasNext() && dsItr.hasNext() ) {
-          this.easingFunc.apply(
-              orItr.next(),
-              dsItr.next(),
-              step,
-              tgItr.next());
-        }
-      }
-
-      return target;
-    }
-
-    /**
-     * Returns a string representation of this easing function.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
    * The list of knots contained by the curve.
    */
   private final List < Knot2 > knots;
@@ -2096,11 +1968,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    *
    * @param target the output curve
    * @return the curve
-   * @see Vec2#sub(Vec2, Vec2, Vec2)
-   * @see Vec2#normalize(Vec2, Vec2)
-   * @see Vec2#add(Vec2, Vec2, Vec2)
-   * @see Vec2#mul(Vec2, float, Vec2)
-   * @see Vec2#rescale(Vec2, float, Vec2)
+   * @see Knot2#smoothHandles(Knot2, Knot2, Knot2, Vec2)
+   * @see Knot2#smoothHandlesFinal(Knot2, Knot2, Vec2)
+   * @see Knot2#smoothHandlesInitial(Knot2, Knot2, Vec2)
    */
   public static Curve2 smoothHandles ( final Curve2 target ) {
 
@@ -2108,80 +1978,42 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     final int knotLength = knots.size();
     if ( knotLength < 3 ) { return target; }
 
-    final Vec2 back = new Vec2();
-    final Vec2 forward = new Vec2();
-    final Vec2 dir0 = new Vec2();
-    final Vec2 dir1 = new Vec2();
-    final Vec2 dir2 = new Vec2();
+    final int knotLast = knotLength - 1;
+    final Vec2 dir = new Vec2();
 
-    final boolean closedLoop = target.closedLoop;
+    if ( target.closedLoop ) {
 
-    for ( int i = 0; i < knotLength; ++i ) {
-      final Knot2 knot = knots.get(i);
-      final Vec2 currCoord = knot.coord;
+      final Iterator < Knot2 > itr = knots.iterator();
+      final Knot2 first = itr.next();
+      Knot2 prev = knots.get(knotLast);
+      Knot2 curr = first;
+      while ( itr.hasNext() ) {
+        final Knot2 next = itr.next();
+        Knot2.smoothHandles(prev, curr, next, dir);
+        prev = curr;
+        curr = next;
+      }
+      Knot2.smoothHandles(prev, curr, first, dir);
 
-      float backDist = 0.0f;
-      float foreDist = 0.0f;
+    } else {
 
-      if ( closedLoop ) {
+      Knot2 prev = knots.get(0);
+      Knot2 curr = knots.get(1);
+      Knot2.smoothHandlesInitial(prev, curr, dir)
+          .mirrorHandlesForward();
 
-        final Knot2 prev = knots.get(
-            Utils.mod(i - 1, knotLength));
-
-        Vec2.sub(prev.coord, currCoord, back);
-        backDist = Vec2.mag(back);
-        Vec2.normalize(back, back);
-        Vec2.add(dir0, back, dir1);
-
-        final Knot2 next = knots.get(
-            (i + 1) % knotLength);
-
-        Vec2.sub(next.coord, currCoord, forward);
-        foreDist = -Vec2.mag(forward);
-        Vec2.normalize(forward, forward);
-        Vec2.sub(dir1, forward, dir2);
-
-      } else {
-
-        final int prevIndex = i - 1;
-        if ( prevIndex > -1 ) {
-          final Knot2 prev = knots.get(prevIndex);
-
-          Vec2.sub(prev.coord, currCoord, back);
-          backDist = Vec2.mag(back);
-          Vec2.normalize(back, back);
-          Vec2.add(dir0, back, dir1);
-        }
-
-        final int nextIndex = i + 1;
-        if ( nextIndex < knotLength ) {
-          final Knot2 next = knots.get(nextIndex);
-
-          Vec2.sub(next.coord, currCoord, forward);
-          foreDist = -Vec2.mag(forward);
-          Vec2.normalize(forward, forward);
-          Vec2.sub(dir1, forward, dir2);
-        }
+      for ( int i = 2; i < knotLength; ++i ) {
+        final Knot2 next = knots.get(i);
+        Knot2.smoothHandles(prev, curr, next, dir);
+        prev = curr;
+        curr = next;
       }
 
-      Vec2.rescale(dir2, IUtils.ONE_THIRD, dir0);
+      Knot2.smoothHandlesFinal(
+          knots.get(knotLength - 2),
+          knots.get(knotLast), dir)
+          .mirrorHandlesBackward();
 
-      final Vec2 rh = knot.rearHandle;
-      Vec2.mul(dir0, backDist, rh);
-      Vec2.add(rh, currCoord, rh);
-
-      final Vec2 fh = knot.foreHandle;
-      Vec2.mul(dir0, foreDist, fh);
-      Vec2.add(fh, currCoord, fh);
-    }
-
-    /*
-     * Match fore and rear handles of first and last knots if the curve is
-     * not closed.
-     */
-    if ( !closedLoop ) {
-      knots.get(0).mirrorHandlesForward();
-      knots.get(knotLength - 1).mirrorHandlesBackward();
     }
 
     return target;
@@ -2233,5 +2065,133 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     }
 
     return target;
+  }
+
+  /**
+   * An easing function to facilitate animation between multiple curves.
+   */
+  public static class Easing implements EasingFuncArr < Curve2 >,
+      EasingFuncObj < Curve2 > {
+
+    /**
+     * The knot easing function.
+     */
+    public final Knot2.AbstrEasing easingFunc;
+
+    /**
+     * The default constructor.
+     */
+    public Easing ( ) {
+
+      this.easingFunc = new Knot2.Lerp();
+    }
+
+    /**
+     * The easing constructor
+     *
+     * @param easingFunc the knot easing function
+     */
+    public Easing ( final Knot2.AbstrEasing easingFunc ) {
+
+      this.easingFunc = easingFunc;
+    }
+
+    /**
+     * Eases between an origin and destination curve by a step in [0.0,
+     * 1.0].
+     *
+     * @param origin the origin
+     * @param dest   the destination
+     * @param step   the step
+     * @param target the output curve
+     * @return the eased curve
+     */
+    @Override
+    public Curve2 apply (
+        final Curve2 origin,
+        final Curve2 dest,
+        final Float step,
+        final Curve2 target ) {
+
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
+      return this.applyUnclamped(origin, dest, step, target);
+    }
+
+    /**
+     * Eases between curves in an array by a step in the range [0.0, 1.0].
+     *
+     * @param arr    the curve array
+     * @param step   the step
+     * @param target the output curve
+     */
+    @Override
+    public Curve2 apply (
+        final Curve2[] arr,
+        final Float step,
+        final Curve2 target ) {
+
+      final int len = arr.length;
+      if ( len == 1 || step <= 0.0f ) { return target.set(arr[0]); }
+      if ( step >= 1.0f ) { return target.set(arr[len - 1]); }
+
+      final float scaledStep = step * (len - 1);
+      final int i = (int) scaledStep;
+      return this.applyUnclamped(
+          arr[i], arr[i + 1],
+          scaledStep - i, target);
+    }
+
+    /**
+     * Eases between an origin and destination transform by a step in
+     * [0.0, 1.0] . Curves must have the same number of knots and must
+     * match as to whether they are closed loops or open.
+     *
+     * @param origin the origin
+     * @param dest   the destination
+     * @param step   the step
+     * @param target the output curve
+     * @return the easing curve
+     */
+    public Curve2 applyUnclamped (
+        final Curve2 origin,
+        final Curve2 dest,
+        final float step,
+        final Curve2 target ) {
+
+      final List < Knot2 > orKn = origin.knots;
+      final List < Knot2 > dsKn = dest.knots;
+
+      if ( orKn.size() == dsKn.size() &&
+          origin.closedLoop == dest.closedLoop ) {
+
+        target.closedLoop = origin.closedLoop;
+        target.resize(orKn.size());
+
+        final Iterator < Knot2 > orItr = orKn.iterator();
+        final Iterator < Knot2 > dsItr = dsKn.iterator();
+        final Iterator < Knot2 > tgItr = target.knots.iterator();
+        while ( orItr.hasNext() && dsItr.hasNext() ) {
+          this.easingFunc.apply(
+              orItr.next(),
+              dsItr.next(),
+              step,
+              tgItr.next());
+        }
+      }
+
+      return target;
+    }
+
+    /**
+     * Returns a string representation of this easing function.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
   }
 }

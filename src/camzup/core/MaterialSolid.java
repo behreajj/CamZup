@@ -10,16 +10,6 @@ import camzup.pfriendly.IUp;
 public class MaterialSolid extends Material {
 
   /**
-   * Default stroke cap to use when rendering to an SVG.
-   */
-  public static final String DEFAULT_SVG_STR_CAP = "round";
-
-  /**
-   * Default stroke join to use when rendering to an SVG.
-   */
-  public static final String DEFAULT_SVG_STR_JOIN = "round";
-
-  /**
    * The fill color.
    */
   public final Color fill;
@@ -524,6 +514,16 @@ public class MaterialSolid extends Material {
         .append(' ').append('}')
         .toString();
   }
+
+  /**
+   * Default stroke cap to use when rendering to an SVG.
+   */
+  public static final String DEFAULT_SVG_STR_CAP = "round";
+
+  /**
+   * Default stroke join to use when rendering to an SVG.
+   */
+  public static final String DEFAULT_SVG_STR_JOIN = "round";
 
   /**
    * Default material to use when an entity does not have one.

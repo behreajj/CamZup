@@ -3,26 +3,6 @@ package camzup.core;
 public interface ISvgWritable {
 
   /**
-   * Default height of an SVG view box.
-   */
-  float DEFAULT_SVG_HEIGHT = 512.0f;
-
-  /**
-   * Default width of an SVG view box.
-   */
-  float DEFAULT_SVG_WIDTH = 512.0f;
-
-  /**
-   * Default origin x of a 'camera' transform in an SVG.
-   */
-  float DEFAULT_SVG_X_ORIGIN = 0.5f;
-
-  /**
-   * Default origin y of a 'camera' transform in an SVG.
-   */
-  float DEFAULT_SVG_Y_ORIGIN = 0.5f;
-
-  /**
    * Renders the curve as a string containing an SVG element.
    *
    * @return the SVG string
@@ -127,4 +107,24 @@ public interface ISvgWritable {
         origin.x, origin.y,
         dim.x, dim.y);
   }
+
+  /**
+   * Default height of an SVG view box.
+   */
+  float DEFAULT_SVG_HEIGHT = 512.0f;
+
+  /**
+   * Default width of an SVG view box.
+   */
+  float DEFAULT_SVG_WIDTH = 512.0f;
+
+  /**
+   * Default origin x of a 'camera' transform in an SVG.
+   */
+  float DEFAULT_SVG_X_ORIGIN = 0.5f;
+
+  /**
+   * Default origin y of a 'camera' transform in an SVG.
+   */
+  float DEFAULT_SVG_Y_ORIGIN = 0.5f;
 }

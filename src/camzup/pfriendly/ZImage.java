@@ -22,12 +22,6 @@ import camzup.core.Vec2;
 public class ZImage extends PImage {
 
   /**
-   * A temporary color used for converting color data to and from
-   * hexadecimal values.
-   */
-  private static final Color clr = new Color();
-
-  /**
    * The default constructor.
    */
   protected ZImage ( ) { super(); }
@@ -164,6 +158,12 @@ public class ZImage extends PImage {
       if ( this.pixelHeight > this.my2 ) { this.my2 = this.pixelHeight; }
     }
   }
+
+  /**
+   * A temporary color used for converting color data to and from
+   * hexadecimal values.
+   */
+  private static final Color clr = new Color();
 
   /**
    * Generates a conic gradient, where the factor rotates on the z axis

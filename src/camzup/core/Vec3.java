@@ -15,241 +15,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
     Serializable {
 
   /**
-   * An abstract class that may serve as an umbrella for any custom
-   * comparators of Vec3 s.
-   */
-  public static abstract class AbstrComparator implements Comparator < Vec3 > {
-
-    /**
-     * The default constructor.
-     */
-    public AbstrComparator ( ) {}
-
-    /**
-     * The compare function which must be implemented by sub- (child)
-     * classes of this class. Negative one should be returned when the
-     * left comparisand, a, is less than the right comparisand, b, by a
-     * measure. One should be returned when it is greater. Zero should be
-     * returned as a last resort, when a and b are equal or incomparable.
-     *
-     * @param a the left comparisand
-     * @param b the right comparisand
-     * @return the comparison
-     *
-     */
-    @Override
-    public abstract int compare ( final Vec3 a, final Vec3 b );
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * An abstract class to facilitate the creation of vector easing
-   * functions.
-   */
-  public static abstract class AbstrEasing
-      implements Utils.EasingFuncObj < Vec3 > {
-
-    /**
-     * The default constructor.
-     */
-    public AbstrEasing ( ) {}
-
-    /**
-     * A clamped interpolation between the origin and destination. Defers
-     * to an unclamped interpolation, which is to be defined by
-     * sub-classes of this class.
-     *
-     * @param origin the origin vector
-     * @param dest   the destination vector
-     * @param step   a factor in [0.0, 1.0]
-     * @param target the output vector
-     * @return the eased vector
-     */
-    @Override
-    public Vec3 apply (
-        final Vec3 origin,
-        final Vec3 dest,
-        final Float step,
-        final Vec3 target ) {
-
-      if ( step <= 0.0f ) { return target.set(origin); }
-      if ( step >= 1.0f ) { return target.set(dest); }
-      return this.applyUnclamped(origin, dest, step, target);
-    }
-
-    /**
-     * The interpolation to be defined by subclasses.
-     *
-     * @param origin the origin vector
-     * @param dest   the destination vector
-     * @param step   a factor in [0.0, 1.0]
-     * @param target the output vector
-     * @return the eased vector
-     */
-    public abstract Vec3 applyUnclamped (
-        final Vec3 origin,
-        final Vec3 dest,
-        final float step,
-        final Vec3 target );
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * A linear interpolation functional class.
-   */
-  public static class Lerp extends AbstrEasing {
-
-    /**
-     * The default constructor.
-     */
-    public Lerp ( ) { super(); }
-
-    /**
-     * Eases between two vectors by a step using the formula (1.0 - t) * a
-     * + b . Promotes the step from a float to a double.
-     *
-     * @param origin the origin vector
-     * @param dest   the destination vector
-     * @param step   the step
-     * @param target the output vector
-     * @return the result
-     */
-    @Override
-    public Vec3 applyUnclamped (
-        final Vec3 origin,
-        final Vec3 dest,
-        final float step,
-        final Vec3 target ) {
-
-      final double td = step;
-      final double ud = 1.0d - td;
-      return target.set(
-          (float) (ud * origin.x + td * dest.x),
-          (float) (ud * origin.y + td * dest.y),
-          (float) (ud * origin.z + td * dest.z));
-    }
-  }
-
-  /**
-   * Eases between two vectors with the smooth step formula:
-   * <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> ) .
-   */
-  public static class SmoothStep extends AbstrEasing {
-
-    /**
-     * The default constructor.
-     */
-    public SmoothStep ( ) { super(); }
-
-    /**
-     * Applies the function.
-     *
-     * @param origin the origin vector
-     * @param dest   the destination vector
-     * @param step   the step in a range 0 to 1
-     * @param target the output vector
-     * @return the smoothed vector
-     */
-    @Override
-    public Vec3 applyUnclamped (
-        final Vec3 origin,
-        final Vec3 dest,
-        final float step,
-        final Vec3 target ) {
-
-      final double td = step;
-      final double ts = td * td * (3.0d - (td + td));
-      final double us = 1.0d - ts;
-      return target.set(
-          (float) (us * origin.x + ts * dest.x),
-          (float) (us * origin.y + ts * dest.y),
-          (float) (us * origin.z + ts * dest.z));
-    }
-  }
-
-  /**
-   * An iterator, which allows a vector's components to be accessed in
-   * an enhanced for loop.
-   */
-  public static final class V3Iterator implements Iterator < Float > {
-
-    /**
-     * The current index.
-     */
-    private int index = 0;
-
-    /**
-     * The vector being iterated over.
-     */
-    private final Vec3 vec;
-
-    /**
-     * The default constructor.
-     *
-     * @param vec the vector to iterate
-     */
-    public V3Iterator ( final Vec3 vec ) { this.vec = vec; }
-
-    /**
-     * Tests to see if the iterator has another value.
-     *
-     * @return the evaluation
-     */
-    @Override
-    public boolean hasNext ( ) { return this.index < this.vec.length(); }
-
-    /**
-     * Gets the next value in the iterator.
-     *
-     * @return the value
-     * @see Vec3#get(int)
-     */
-    @Override
-    public Float next ( ) { return this.vec.get(this.index++); }
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * The default easing function, lerp.
-   */
-  private static transient AbstrEasing EASING = new Lerp();
-
-  /**
-   * The unique identification for serialized classes.
-   */
-  private static final long serialVersionUID = -7814214074840696365L;
-
-  /**
    * Component on the x axis in the Cartesian coordinate system.
    */
   public float x = 0.0f;
@@ -685,6 +450,16 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
   }
 
   /**
+   * The default easing function, lerp.
+   */
+  private static transient AbstrEasing EASING = new Lerp();
+
+  /**
+   * The unique identification for serialized classes.
+   */
+  private static final long serialVersionUID = -7814214074840696365L;
+
+  /**
    * Generates a 3D array of vectors. The result is in layer-row-major
    * order, but the parameters are supplied in reverse: columns first,
    * then rows, then layers.<br>
@@ -1016,30 +791,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
     return Utils.abs(a.y * b.z - a.z * b.y) < tolerance &&
         Utils.abs(a.z * b.x - a.x * b.z) < tolerance &&
         Utils.abs(a.x * b.y - a.y * b.x) < tolerance;
-  }
-
-  /**
-   * Tests to see if two vectors are parallel. Does so by evaluating
-   * whether the cross product of the two equals zero.
-   *
-   * @param a         the left comparisand
-   * @param b         the right comparisand
-   * @param tolerance the tolerance
-   * @param cross     the cross product
-   * @return the evaluation
-   * @see Vec3#cross(Vec3, Vec3, Vec3)
-   * @see Vec3#none(Vec3)
-   */
-  public static boolean areParallel (
-      final Vec3 a,
-      final Vec3 b,
-      final float tolerance,
-      final Vec3 cross ) {
-
-    Vec3.cross(a, b, cross);
-    return Utils.abs(a.x) < tolerance &&
-        Utils.abs(a.y) < tolerance &&
-        Utils.abs(a.z) < tolerance;
   }
 
   /**
@@ -2526,8 +2277,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
   }
 
   /**
-   * Mixes two vectors together by a step in [0.0, 1.0]. Uses the easing
-   * function that is a static field belonging to the Vec3 class.
+   * Mixes two vectors together by a step in [0.0, 1.0] .
    *
    * @param origin the original vector
    * @param dest   the destination vector
@@ -2542,7 +2292,16 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final float step,
       final Vec3 target ) {
 
-    return Vec3.EASING.apply(origin, dest, step, target);
+    // return Vec3.EASING.apply(origin, dest, step, target);
+
+    if ( step <= 0.0f ) { return target.set(origin); }
+    if ( step >= 1.0f ) { return target.set(dest); }
+
+    final float u = 1.0f - step;
+    return target.set(
+        u * origin.x + step * dest.x,
+        u * origin.y + step * dest.y,
+        u * origin.z + step * dest.z);
   }
 
   /**
@@ -3343,8 +3102,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param axis    the axis of rotation
    * @param target  the output vector
    * @return the rotated vector
-   * @see Math#cos(double)
-   * @see Math#sin(double)
    */
   public static Vec3 rotate (
       final Vec3 v,
@@ -3352,7 +3109,14 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 axis,
       final Vec3 target ) {
 
-    return Vec3.rotate(v, Utils.cos(radians), Utils.sin(radians), axis, target);
+    // final float c = Utils.cos(radians);
+    // final float s = Utils.sin(radians);
+
+    final float n = radians * IUtils.ONE_TAU;
+    final float c = Utils.scNorm(n);
+    final float s = Utils.scNorm(n - 0.25f);
+
+    return Vec3.rotate(v, c, s, axis, target);
   }
 
   /**
@@ -3389,8 +3153,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param radians the angle in radians
    * @param target  the output vector
    * @return the rotated vector
-   * @see Math#cos(double)
-   * @see Math#sin(double)
    * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
    */
   public static Vec3 rotateX (
@@ -3398,7 +3160,14 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final float radians,
       final Vec3 target ) {
 
-    return Vec3.rotateX(v, Utils.cos(radians), Utils.sin(radians), target);
+    // final float c = Utils.cos(radians);
+    // final float s = Utils.sin(radians);
+
+    final float n = radians * IUtils.ONE_TAU;
+    final float c = Utils.scNorm(n);
+    final float s = Utils.scNorm(n - 0.25f);
+
+    return Vec3.rotateX(v, c, s, target);
   }
 
   /**
@@ -3435,8 +3204,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param radians the angle in radians
    * @param target  the output vector
    * @return the rotated vector
-   * @see Math#cos(double)
-   * @see Math#sin(double)
    * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
    */
   public static Vec3 rotateY (
@@ -3444,7 +3211,14 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final float radians,
       final Vec3 target ) {
 
-    return Vec3.rotateY(v, Utils.cos(radians), Utils.sin(radians), target);
+    // final float c = Utils.cos(radians);
+    // final float s = Utils.sin(radians);
+
+    final float n = radians * IUtils.ONE_TAU;
+    final float c = Utils.scNorm(n);
+    final float s = Utils.scNorm(n - 0.25f);
+
+    return Vec3.rotateY(v, c, s, target);
   }
 
   /**
@@ -3488,7 +3262,14 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final float radians,
       final Vec3 target ) {
 
-    return Vec3.rotateZ(v, Utils.cos(radians), Utils.sin(radians), target);
+    // final float c = Utils.cos(radians);
+    // final float s = Utils.sin(radians);
+
+    final float n = radians * IUtils.ONE_TAU;
+    final float c = Utils.scNorm(n);
+    final float s = Utils.scNorm(n - 0.25f);
+
+    return Vec3.rotateZ(v, c, s, target);
   }
 
   /**
@@ -3721,5 +3502,230 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
   public static Vec3 zero ( final Vec3 target ) {
 
     return target.set(0.0f, 0.0f, 0.0f);
+  }
+
+  /**
+   * An abstract class that may serve as an umbrella for any custom
+   * comparators of Vec3 s.
+   */
+  public static abstract class AbstrComparator implements Comparator < Vec3 > {
+
+    /**
+     * The default constructor.
+     */
+    public AbstrComparator ( ) {}
+
+    /**
+     * The compare function which must be implemented by sub- (child)
+     * classes of this class. Negative one should be returned when the
+     * left comparisand, a, is less than the right comparisand, b, by a
+     * measure. One should be returned when it is greater. Zero should be
+     * returned as a last resort, when a and b are equal or incomparable.
+     *
+     * @param a the left comparisand
+     * @param b the right comparisand
+     * @return the comparison
+     *
+     */
+    @Override
+    public abstract int compare ( final Vec3 a, final Vec3 b );
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * An abstract class to facilitate the creation of vector easing
+   * functions.
+   */
+  public static abstract class AbstrEasing
+      implements Utils.EasingFuncObj < Vec3 > {
+
+    /**
+     * The default constructor.
+     */
+    public AbstrEasing ( ) {}
+
+    /**
+     * A clamped interpolation between the origin and destination. Defers
+     * to an unclamped interpolation, which is to be defined by
+     * sub-classes of this class.
+     *
+     * @param origin the origin vector
+     * @param dest   the destination vector
+     * @param step   a factor in [0.0, 1.0]
+     * @param target the output vector
+     * @return the eased vector
+     */
+    @Override
+    public Vec3 apply (
+        final Vec3 origin,
+        final Vec3 dest,
+        final Float step,
+        final Vec3 target ) {
+
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
+      return this.applyUnclamped(origin, dest, step, target);
+    }
+
+    /**
+     * The interpolation to be defined by subclasses.
+     *
+     * @param origin the origin vector
+     * @param dest   the destination vector
+     * @param step   a factor in [0.0, 1.0]
+     * @param target the output vector
+     * @return the eased vector
+     */
+    public abstract Vec3 applyUnclamped (
+        final Vec3 origin,
+        final Vec3 dest,
+        final float step,
+        final Vec3 target );
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * A linear interpolation functional class.
+   */
+  public static class Lerp extends AbstrEasing {
+
+    /**
+     * The default constructor.
+     */
+    public Lerp ( ) { super(); }
+
+    /**
+     * Eases between two vectors by a step using the formula (1.0 - t) * a
+     * + b . Promotes the step from a float to a double.
+     *
+     * @param origin the origin vector
+     * @param dest   the destination vector
+     * @param step   the step
+     * @param target the output vector
+     * @return the result
+     */
+    @Override
+    public Vec3 applyUnclamped (
+        final Vec3 origin,
+        final Vec3 dest,
+        final float step,
+        final Vec3 target ) {
+
+      final double td = step;
+      final double ud = 1.0d - td;
+      return target.set(
+          (float) (ud * origin.x + td * dest.x),
+          (float) (ud * origin.y + td * dest.y),
+          (float) (ud * origin.z + td * dest.z));
+    }
+  }
+
+  /**
+   * Eases between two vectors with the smooth step formula:
+   * <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> ) .
+   */
+  public static class SmoothStep extends AbstrEasing {
+
+    /**
+     * The default constructor.
+     */
+    public SmoothStep ( ) { super(); }
+
+    /**
+     * Applies the function.
+     *
+     * @param origin the origin vector
+     * @param dest   the destination vector
+     * @param step   the step in a range 0 to 1
+     * @param target the output vector
+     * @return the smoothed vector
+     */
+    @Override
+    public Vec3 applyUnclamped (
+        final Vec3 origin,
+        final Vec3 dest,
+        final float step,
+        final Vec3 target ) {
+
+      final double td = step;
+      final double ts = td * td * (3.0d - (td + td));
+      final double us = 1.0d - ts;
+      return target.set(
+          (float) (us * origin.x + ts * dest.x),
+          (float) (us * origin.y + ts * dest.y),
+          (float) (us * origin.z + ts * dest.z));
+    }
+  }
+
+  /**
+   * An iterator, which allows a vector's components to be accessed in
+   * an enhanced for loop.
+   */
+  public static final class V3Iterator implements Iterator < Float > {
+
+    /**
+     * The current index.
+     */
+    private int index = 0;
+
+    /**
+     * The vector being iterated over.
+     */
+    private final Vec3 vec;
+
+    /**
+     * The default constructor.
+     *
+     * @param vec the vector to iterate
+     */
+    public V3Iterator ( final Vec3 vec ) { this.vec = vec; }
+
+    /**
+     * Tests to see if the iterator has another value.
+     *
+     * @return the evaluation
+     */
+    @Override
+    public boolean hasNext ( ) { return this.index < this.vec.length(); }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @return the value
+     * @see Vec3#get(int)
+     */
+    @Override
+    public Float next ( ) { return this.vec.get(this.index++); }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
   }
 }

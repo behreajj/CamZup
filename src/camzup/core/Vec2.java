@@ -15,240 +15,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     Serializable {
 
   /**
-   * An abstract class that may serve as an umbrella for any custom
-   * comparators of Vec2 s.
-   */
-  public static abstract class AbstrComparator implements Comparator < Vec2 > {
-
-    /**
-     * The default constructor.
-     */
-    public AbstrComparator ( ) {}
-
-    /**
-     * The compare function which must be implemented by sub- (child)
-     * classes of this class. Negative one should be returned when the
-     * left comparisand, a, is less than the right comparisand, b, by a
-     * measure. One should be returned when it is greater. Zero should be
-     * returned as a last resort, when a and b are equal or incomparable.
-     *
-     * @param a the left comparisand
-     * @param b the right comparisand
-     * @return the comparison
-     *
-     */
-    @Override
-    public abstract int compare ( final Vec2 a, final Vec2 b );
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * An abstract class to facilitate the creation of vector easing
-   * functions.
-   */
-  public static abstract class AbstrEasing
-      implements Utils.EasingFuncObj < Vec2 > {
-
-    /**
-     * The default constructor.
-     */
-    public AbstrEasing ( ) {}
-
-    /**
-     * A clamped interpolation between the origin and destination. Defers
-     * to an unclamped interpolation, which is to be defined by
-     * sub-classes of this class.
-     *
-     * @param origin the origin vector
-     * @param dest   the destination vector
-     * @param step   a factor in [0.0, 1.0]
-     * @param target the output vector
-     * @return the eased vector
-     */
-    @Override
-    public Vec2 apply (
-        final Vec2 origin,
-        final Vec2 dest,
-        final Float step,
-        final Vec2 target ) {
-
-      if ( step <= 0.0f ) { return target.set(origin); }
-      if ( step >= 1.0f ) { return target.set(dest); }
-      return this.applyUnclamped(origin, dest, step, target);
-    }
-
-    /**
-     * The interpolation to be defined by subclasses.
-     *
-     * @param origin the origin vector
-     * @param dest   the destination vector
-     * @param step   a factor in [0.0, 1.0]
-     * @param target the output vector
-     * @return the eased vector
-     */
-    public abstract Vec2 applyUnclamped (
-        final Vec2 origin,
-        final Vec2 dest,
-        final float step,
-        final Vec2 target );
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * A linear interpolation functional class.
-   */
-  public static class Lerp extends AbstrEasing {
-
-    /**
-     * The default constructor.
-     */
-    public Lerp ( ) { super(); }
-
-    /**
-     * Eases between two vectors by a step using the formula (1 - t) * a +
-     * b . Promotes the step from a float to a double.
-     *
-     * @param origin the origin vector
-     * @param dest   the destination vector
-     * @param step   the step
-     * @param target the output vector
-     * @return the eased vector
-     */
-    @Override
-    public Vec2 applyUnclamped (
-        final Vec2 origin,
-        final Vec2 dest,
-        final float step,
-        final Vec2 target ) {
-
-      final double td = step;
-      final double ud = 1.0d - td;
-      return target.set(
-          (float) (ud * origin.x + td * dest.x),
-          (float) (ud * origin.y + td * dest.y));
-    }
-  }
-
-  /**
-   * Eases between two vectors with the smooth step formula:
-   * <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> ) .
-   */
-  public static class SmoothStep extends AbstrEasing {
-
-    /**
-     * The default constructor.
-     */
-    public SmoothStep ( ) { super(); }
-
-    /**
-     * Applies the function.
-     *
-     * @param origin the origin vector
-     * @param dest   the destination vector
-     * @param step   the step in a range 0 to 1
-     * @param target the output vector
-     * @return the smoothed vector
-     */
-    @Override
-    public Vec2 applyUnclamped (
-        final Vec2 origin,
-        final Vec2 dest,
-        final float step,
-        final Vec2 target ) {
-
-      final double td = step;
-      final double ts = td * td * (3.0d - (td + td));
-      final double us = 1.0d - ts;
-      return target.set(
-          (float) (us * origin.x + ts * dest.x),
-          (float) (us * origin.y + ts * dest.y));
-    }
-  }
-
-  /**
-   * An iterator, which allows a vector's components to be accessed in
-   * an enhanced for loop.
-   */
-  public static final class V2Iterator implements Iterator < Float > {
-
-    /**
-     * The current index.
-     */
-    private int index = 0;
-
-    /**
-     * The vector being iterated over.
-     */
-    private final Vec2 vec;
-
-    /**
-     * The default constructor.
-     *
-     * @param vec the vector to iterate
-     */
-    public V2Iterator ( final Vec2 vec ) { this.vec = vec; }
-
-    /**
-     * Tests to see if the iterator has another value.
-     *
-     * @return the evaluation
-     */
-    @Override
-    public boolean hasNext ( ) { return this.index < this.vec.length(); }
-
-    /**
-     * Gets the next value in the iterator.
-     *
-     * @return the value
-     * @see Vec2#get(int)
-     */
-    @Override
-    public Float next ( ) { return this.vec.get(this.index++); }
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-
-  }
-
-  /**
-   * The default easing function, lerp.
-   */
-  private static AbstrEasing EASING = new Lerp();
-
-  /**
-   * The unique identification for serialized classes.
-   */
-  private static final long serialVersionUID = 8867395334130420105L;
-
-  /**
    * Component on the x axis in the Cartesian coordinate system.
    */
   public float x = 0.0f;
@@ -653,6 +419,16 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
         .append('}')
         .toString();
   }
+
+  /**
+   * The default easing function, lerp.
+   */
+  private static AbstrEasing EASING = new Lerp();
+
+  /**
+   * The unique identification for serialized classes.
+   */
+  private static final long serialVersionUID = 8867395334130420105L;
 
   /**
    * Internal function for generating 2D array of vectors. The result is
@@ -2230,8 +2006,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
   }
 
   /**
-   * Mixes two vectors together by a step in [0.0, 1.0] . Uses the
-   * easing function that is a static field belonging to the Vec2 class.
+   * Mixes two vectors together by a step in [0.0, 1.0] .
    *
    * @param origin the original vector
    * @param dest   the destination vector
@@ -2246,7 +2021,15 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float step,
       final Vec2 target ) {
 
-    return Vec2.EASING.apply(origin, dest, step, target);
+    // return Vec2.EASING.apply(origin, dest, step, target);
+
+    if ( step <= 0.0f ) { return target.set(origin); }
+    if ( step >= 1.0f ) { return target.set(dest); }
+
+    final float u = 1.0f - step;
+    return target.set(
+        u * origin.x + step * dest.x,
+        u * origin.y + step * dest.y);
   }
 
   /**
@@ -3296,5 +3079,229 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
   public static Vec2 zero ( final Vec2 target ) {
 
     return target.set(0.0f, 0.0f);
+  }
+
+  /**
+   * An abstract class that may serve as an umbrella for any custom
+   * comparators of Vec2 s.
+   */
+  public static abstract class AbstrComparator implements Comparator < Vec2 > {
+
+    /**
+     * The default constructor.
+     */
+    public AbstrComparator ( ) {}
+
+    /**
+     * The compare function which must be implemented by sub- (child)
+     * classes of this class. Negative one should be returned when the
+     * left comparisand, a, is less than the right comparisand, b, by a
+     * measure. One should be returned when it is greater. Zero should be
+     * returned as a last resort, when a and b are equal or incomparable.
+     *
+     * @param a the left comparisand
+     * @param b the right comparisand
+     * @return the comparison
+     *
+     */
+    @Override
+    public abstract int compare ( final Vec2 a, final Vec2 b );
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * An abstract class to facilitate the creation of vector easing
+   * functions.
+   */
+  public static abstract class AbstrEasing
+      implements Utils.EasingFuncObj < Vec2 > {
+
+    /**
+     * The default constructor.
+     */
+    public AbstrEasing ( ) {}
+
+    /**
+     * A clamped interpolation between the origin and destination. Defers
+     * to an unclamped interpolation, which is to be defined by
+     * sub-classes of this class.
+     *
+     * @param origin the origin vector
+     * @param dest   the destination vector
+     * @param step   a factor in [0.0, 1.0]
+     * @param target the output vector
+     * @return the eased vector
+     */
+    @Override
+    public Vec2 apply (
+        final Vec2 origin,
+        final Vec2 dest,
+        final Float step,
+        final Vec2 target ) {
+
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
+      return this.applyUnclamped(origin, dest, step, target);
+    }
+
+    /**
+     * The interpolation to be defined by subclasses.
+     *
+     * @param origin the origin vector
+     * @param dest   the destination vector
+     * @param step   a factor in [0.0, 1.0]
+     * @param target the output vector
+     * @return the eased vector
+     */
+    public abstract Vec2 applyUnclamped (
+        final Vec2 origin,
+        final Vec2 dest,
+        final float step,
+        final Vec2 target );
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * A linear interpolation functional class.
+   */
+  public static class Lerp extends AbstrEasing {
+
+    /**
+     * The default constructor.
+     */
+    public Lerp ( ) { super(); }
+
+    /**
+     * Eases between two vectors by a step using the formula (1 - t) * a +
+     * b . Promotes the step from a float to a double.
+     *
+     * @param origin the origin vector
+     * @param dest   the destination vector
+     * @param step   the step
+     * @param target the output vector
+     * @return the eased vector
+     */
+    @Override
+    public Vec2 applyUnclamped (
+        final Vec2 origin,
+        final Vec2 dest,
+        final float step,
+        final Vec2 target ) {
+
+      final double td = step;
+      final double ud = 1.0d - td;
+      return target.set(
+          (float) (ud * origin.x + td * dest.x),
+          (float) (ud * origin.y + td * dest.y));
+    }
+  }
+
+  /**
+   * Eases between two vectors with the smooth step formula:
+   * <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> ) .
+   */
+  public static class SmoothStep extends AbstrEasing {
+
+    /**
+     * The default constructor.
+     */
+    public SmoothStep ( ) { super(); }
+
+    /**
+     * Applies the function.
+     *
+     * @param origin the origin vector
+     * @param dest   the destination vector
+     * @param step   the step in a range 0 to 1
+     * @param target the output vector
+     * @return the smoothed vector
+     */
+    @Override
+    public Vec2 applyUnclamped (
+        final Vec2 origin,
+        final Vec2 dest,
+        final float step,
+        final Vec2 target ) {
+
+      final double td = step;
+      final double ts = td * td * (3.0d - (td + td));
+      final double us = 1.0d - ts;
+      return target.set(
+          (float) (us * origin.x + ts * dest.x),
+          (float) (us * origin.y + ts * dest.y));
+    }
+  }
+
+  /**
+   * An iterator, which allows a vector's components to be accessed in
+   * an enhanced for loop.
+   */
+  public static final class V2Iterator implements Iterator < Float > {
+
+    /**
+     * The current index.
+     */
+    private int index = 0;
+
+    /**
+     * The vector being iterated over.
+     */
+    private final Vec2 vec;
+
+    /**
+     * The default constructor.
+     *
+     * @param vec the vector to iterate
+     */
+    public V2Iterator ( final Vec2 vec ) { this.vec = vec; }
+
+    /**
+     * Tests to see if the iterator has another value.
+     *
+     * @return the evaluation
+     */
+    @Override
+    public boolean hasNext ( ) { return this.index < this.vec.length(); }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @return the value
+     * @see Vec2#get(int)
+     */
+    @Override
+    public Float next ( ) { return this.vec.get(this.index++); }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+
   }
 }

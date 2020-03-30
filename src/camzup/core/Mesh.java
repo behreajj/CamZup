@@ -8,165 +8,6 @@ import java.util.Comparator;
 public abstract class Mesh extends EntityData implements IMesh {
 
   /**
-   * Compares two vectors by their quantized y component, then by their
-   * x component.
-   */
-  public static final class SortQuantized2 implements Comparator < Vec2 > {
-
-    /**
-     * Internal vector to hold quantized left operand.
-     */
-    final private Vec2 qa;
-
-    /**
-     * Internal vector to hold quantized right operand.
-     */
-    final private Vec2 qb;
-
-    /**
-     * Quantization level.
-     */
-    final public int levels;
-
-    {
-      this.qa = new Vec2();
-      this.qb = new Vec2();
-    }
-
-    /**
-     * The default constructor.
-     */
-    public SortQuantized2 ( ) {
-
-      this((int) (1.0f / IUtils.DEFAULT_EPSILON));
-    }
-
-    /**
-     * Creates a quantized sorter with the specified number of levels.
-     *
-     * @param levels quantization levels
-     */
-    public SortQuantized2 ( final int levels ) {
-
-      this.levels = levels;
-    }
-
-    /**
-     * Compares the quantized y and x components of the comparisand
-     * vectors.
-     *
-     * @param a the left comparisand
-     * @param b the right comparisand
-     * @return the evaluation
-     */
-    @Override
-    public int compare ( final Vec2 a, final Vec2 b ) {
-
-      Vec2.quantize(a, this.levels, this.qa);
-      Vec2.quantize(b, this.levels, this.qb);
-      return this.qa.compareTo(this.qb);
-    }
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * Compares two vectors by their quantized z component, y component,
-   * then by their quantized x component.
-   */
-  public static final class SortQuantized3 implements Comparator < Vec3 > {
-
-    /**
-     * Internal vector to hold quantized left operand.
-     */
-    final private Vec3 qa;
-
-    /**
-     * Internal vector to hold quantized right operand.
-     */
-    final private Vec3 qb;
-
-    /**
-     * Quantization level.
-     */
-    final public int levels;
-
-    {
-      this.qa = new Vec3();
-      this.qb = new Vec3();
-    }
-
-    /**
-     * The default constructor.
-     */
-    public SortQuantized3 ( ) {
-
-      this((int) (1.0f / IUtils.DEFAULT_EPSILON));
-    }
-
-    /**
-     * Creates a quantized sorter with the specified number of levels.
-     *
-     * @param levels quantization levels
-     */
-    public SortQuantized3 ( final int levels ) {
-
-      this.levels = levels;
-    }
-
-    /**
-     * Compares the quantized z, y and x components of the comparisand
-     * vectors.
-     *
-     * @param a the left comparisand
-     * @param b the right comparisand
-     * @return the evaluation
-     */
-    @Override
-    public int compare ( final Vec3 a, final Vec3 b ) {
-
-      Vec3.quantize(a, this.levels, this.qa);
-      Vec3.quantize(b, this.levels, this.qb);
-      return this.qa.compareTo(this.qb);
-    }
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * The default sorter for 2 meshes.
-   */
-  protected static final Comparator < Vec2 > SORT_2;
-
-  /**
-   * The default sorter for 3D meshes.
-   */
-  protected static final Comparator < Vec3 > SORT_3;
-
-  static {
-    SORT_2 = new SortQuantized2();
-    SORT_3 = new SortQuantized3();
-  }
-
-  /**
    * The faces array does not include face data itself, but rather
    * indices to other arrays which contain vertex data. It is a
    * three-dimensional array organized by
@@ -348,6 +189,21 @@ public abstract class Mesh extends EntityData implements IMesh {
   }
 
   /**
+   * The default sorter for 2 meshes.
+   */
+  protected static final Comparator < Vec2 > SORT_2;
+
+  /**
+   * The default sorter for 3D meshes.
+   */
+  protected static final Comparator < Vec3 > SORT_3;
+
+  static {
+    SORT_2 = new SortQuantized2();
+    SORT_3 = new SortQuantized3();
+  }
+
+  /**
    * Inserts a 2D array in the midst of another. For use by edge
    * subdivision functions.
    *
@@ -473,5 +329,149 @@ public abstract class Mesh extends EntityData implements IMesh {
     System.arraycopy(insert, 0, result, valIdx, blen);
     System.arraycopy(arr, idxOff, result, valIdx + blen, alen - idxOff);
     return result;
+  }
+
+  /**
+   * Compares two vectors by their quantized y component, then by their
+   * x component.
+   */
+  public static final class SortQuantized2 implements Comparator < Vec2 > {
+
+    /**
+     * Internal vector to hold quantized left operand.
+     */
+    final private Vec2 qa;
+
+    /**
+     * Internal vector to hold quantized right operand.
+     */
+    final private Vec2 qb;
+
+    /**
+     * Quantization level.
+     */
+    final public int levels;
+
+    {
+      this.qa = new Vec2();
+      this.qb = new Vec2();
+    }
+
+    /**
+     * The default constructor.
+     */
+    public SortQuantized2 ( ) {
+
+      this((int) (1.0f / IUtils.DEFAULT_EPSILON));
+    }
+
+    /**
+     * Creates a quantized sorter with the specified number of levels.
+     *
+     * @param levels quantization levels
+     */
+    public SortQuantized2 ( final int levels ) {
+
+      this.levels = levels;
+    }
+
+    /**
+     * Compares the quantized y and x components of the comparisand
+     * vectors.
+     *
+     * @param a the left comparisand
+     * @param b the right comparisand
+     * @return the evaluation
+     */
+    @Override
+    public int compare ( final Vec2 a, final Vec2 b ) {
+
+      Vec2.quantize(a, this.levels, this.qa);
+      Vec2.quantize(b, this.levels, this.qb);
+      return this.qa.compareTo(this.qb);
+    }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * Compares two vectors by their quantized z component, y component,
+   * then by their quantized x component.
+   */
+  public static final class SortQuantized3 implements Comparator < Vec3 > {
+
+    /**
+     * Internal vector to hold quantized left operand.
+     */
+    final private Vec3 qa;
+
+    /**
+     * Internal vector to hold quantized right operand.
+     */
+    final private Vec3 qb;
+
+    /**
+     * Quantization level.
+     */
+    final public int levels;
+
+    {
+      this.qa = new Vec3();
+      this.qb = new Vec3();
+    }
+
+    /**
+     * The default constructor.
+     */
+    public SortQuantized3 ( ) {
+
+      this((int) (1.0f / IUtils.DEFAULT_EPSILON));
+    }
+
+    /**
+     * Creates a quantized sorter with the specified number of levels.
+     *
+     * @param levels quantization levels
+     */
+    public SortQuantized3 ( final int levels ) {
+
+      this.levels = levels;
+    }
+
+    /**
+     * Compares the quantized z, y and x components of the comparisand
+     * vectors.
+     *
+     * @param a the left comparisand
+     * @param b the right comparisand
+     * @return the evaluation
+     */
+    @Override
+    public int compare ( final Vec3 a, final Vec3 b ) {
+
+      Vec3.quantize(a, this.levels, this.qa);
+      Vec3.quantize(b, this.levels, this.qb);
+      return this.qa.compareTo(this.qb);
+    }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
   }
 }

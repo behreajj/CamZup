@@ -8,49 +8,6 @@ import java.util.Comparator;
 public class Ray3 extends Ray {
 
   /**
-   * An abstract class that may serve as an umbrella for any custom
-   * comparators of Ray2 s.
-   */
-  public static abstract class AbstrComparator implements Comparator < Ray3 > {
-
-    /**
-     * The default constructor.
-     */
-    public AbstrComparator ( ) {}
-
-    /**
-     * The compare function which must be implemented by sub- (child)
-     * classes of this class. Negative one should be returned when the
-     * left comparisand, a, is less than the right comparisand, b, by a
-     * measure. One should be returned when it is greater. Zero should be
-     * returned as a last resort, when a and b are equal or incomparable.
-     *
-     * @param a the left comparisand
-     * @param b the right comparisand
-     * @return the comparison
-     *
-     */
-    @Override
-    public abstract int compare ( final Ray3 a, final Ray3 b );
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * The unique identification for serialized classes.
-   */
-  private static final long serialVersionUID = -8386381837024621749L;
-
-  /**
    * The ray's direction.
    */
   public final Vec3 dir;
@@ -242,6 +199,11 @@ public class Ray3 extends Ray {
   }
 
   /**
+   * The unique identification for serialized classes.
+   */
+  private static final long serialVersionUID = -8386381837024621749L;
+
+  /**
    * Finds the point at a given time on a ray.
    *
    * @param ray    the ray
@@ -290,6 +252,44 @@ public class Ray3 extends Ray {
     target.origin.set(origin);
     Vec3.subNorm(dest, origin, target.dir);
     return target;
+  }
+
+  /**
+   * An abstract class that may serve as an umbrella for any custom
+   * comparators of Ray2 s.
+   */
+  public static abstract class AbstrComparator implements Comparator < Ray3 > {
+
+    /**
+     * The default constructor.
+     */
+    public AbstrComparator ( ) {}
+
+    /**
+     * The compare function which must be implemented by sub- (child)
+     * classes of this class. Negative one should be returned when the
+     * left comparisand, a, is less than the right comparisand, b, by a
+     * measure. One should be returned when it is greater. Zero should be
+     * returned as a last resort, when a and b are equal or incomparable.
+     *
+     * @param a the left comparisand
+     * @param b the right comparisand
+     * @return the comparison
+     *
+     */
+    @Override
+    public abstract int compare ( final Ray3 a, final Ray3 b );
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
   }
 
   // @Experimental

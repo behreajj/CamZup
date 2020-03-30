@@ -46,7 +46,7 @@ void draw() {
 
 void mouseReleased() {
   if (mouseButton == LEFT) {
-    Curve2.random(rng, 6,
+    Curve2.random(rng, 8,
       -0.75, 0.75, false, curve);
   } else if (mouseButton == RIGHT) {
     String result = graphics.toSvgString(entity, mats);

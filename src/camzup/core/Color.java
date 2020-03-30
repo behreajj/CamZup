@@ -10,716 +10,6 @@ import java.util.Comparator;
 public class Color extends Vec4 {
 
   /**
-   * An abstract class to facilitate the creation of color easing
-   * functions.
-   */
-  public static abstract class AbstrEasing
-      implements Utils.EasingFuncObj < Color > {
-
-    /**
-     * The default constructor.
-     */
-    public AbstrEasing ( ) { super(); }
-
-    /**
-     * A clamped interpolation between the origin and destination. Defers
-     * to an unclamped interpolation, which is to be defined by
-     * sub-classes of this class.
-     *
-     * @param origin the origin color
-     * @param dest   the destination color
-     * @param step   a factor in [0, 1]
-     * @param target the output color
-     * @return the eased color
-     */
-    @Override
-    public Color apply (
-        final Color origin,
-        final Color dest,
-        final Float step,
-        final Color target ) {
-
-      if ( step <= 0.0f ) { return target.set(origin); }
-      if ( step >= 1.0f ) { return target.set(dest); }
-      return this.applyUnclamped(origin, dest, step, target);
-    }
-
-    /**
-     * The interpolation to be defined by subclasses.
-     *
-     * @param origin the origin color
-     * @param dest   the destination color
-     * @param step   a factor in [0, 1]
-     * @param target the output color
-     * @return the eased color
-     */
-    public abstract Color applyUnclamped (
-        final Color origin,
-        final Color dest,
-        final float step,
-        final Color target );
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * Compares two colors by brightness.
-   */
-  public static class ComparatorBri extends ComparatorHsb {
-
-    /**
-     * The default constructor.
-     */
-    public ComparatorBri ( ) { super(); }
-
-    /**
-     * The comparison function.
-     *
-     * @param a the left comparisand
-     * @param b the right comparisand
-     * @return the comparison
-     * @see Color#rgbaToHsba(Color, Vec4)
-     * @see Float#compare(float, float)
-     */
-    @Override
-    public int compare (
-        final Color a,
-        final Color b ) {
-
-      Color.rgbaToHsba(a, this.aHsb);
-      Color.rgbaToHsba(b, this.bHsb);
-
-      return this.aHsb.z < this.bHsb.z ? -1
-          : this.aHsb.z > this.bHsb.z ? 1 : 0;
-    }
-  }
-
-  /**
-   * An abstract class to facilitate the creation of HSB comparators.
-   */
-  public static abstract class ComparatorHsb implements Comparator < Color > {
-
-    /**
-     * Holds the HSB conversion of the left comparisand.
-     */
-    protected final Vec4 aHsb = new Vec4();
-
-    /**
-     * Holds the HSB conversion of the right comparisand.
-     */
-    protected final Vec4 bHsb = new Vec4();
-
-    /**
-     * The default constructor.
-     */
-    public ComparatorHsb ( ) { super(); }
-
-    /**
-     * The comparison function.
-     *
-     * @param a the left comparisand
-     * @param b the right comparisand
-     * @return the comparison
-     */
-    @Override
-    public abstract int compare ( final Color a, final Color b );
-
-    /**
-     * Returns this class's simple name as a string
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * Compares two colors by hue.
-   */
-  public static class ComparatorHue extends ComparatorHsb {
-
-    /**
-     * The default constructor.
-     */
-    public ComparatorHue ( ) { super(); }
-
-    /**
-     * Executes the comparison.
-     *
-     * @param a the left comparisand
-     * @param b the right comparisand
-     * @return the comparison
-     * @see Color#rgbaToHsba(Color, Vec4)
-     * @see Float#compare(float, float)
-     */
-    @Override
-    public int compare ( final Color a, final Color b ) {
-
-      Color.rgbaToHsba(a, this.aHsb);
-      Color.rgbaToHsba(b, this.bHsb);
-
-      return this.aHsb.x < this.bHsb.x ? -1
-          : this.aHsb.x > this.bHsb.x ? 1 : 0;
-    }
-  }
-
-  /**
-   * Compares two colors by saturation.
-   */
-  public static class ComparatorSat extends ComparatorHsb {
-
-    /**
-     * The default constructor.
-     */
-    public ComparatorSat ( ) { super(); }
-
-    /**
-     * Executes the comparison.
-     *
-     * @param a the left comparisand
-     * @param b the right comparisand
-     * @return the comparison
-     * @see Color#rgbaToHsba(Color, Vec4)
-     * @see Float#compare(float, float)
-     */
-    @Override
-    public int compare ( final Color a, final Color b ) {
-
-      Color.rgbaToHsba(a, this.aHsb);
-      Color.rgbaToHsba(b, this.bHsb);
-
-      return this.aHsb.y < this.bHsb.y ? -1
-          : this.aHsb.y > this.bHsb.y ? 1 : 0;
-    }
-  }
-
-  /**
-   * Eases the hue in the counter-clockwise direction.
-   */
-  public static class HueCCW extends HueEasing {
-
-    /**
-     * The default constructor.
-     */
-    public HueCCW ( ) { super(); }
-
-    /**
-     * Applies the function.
-     *
-     * @param origin the origin hue
-     * @param dest   the destination hue
-     * @param step   the step in a range 0 to 1
-     * @return the eased hue
-     * @see Utils#lerpUnclamped(float, float, float)
-     * @see Utils#mod1(float)
-     */
-    @Override
-    public float applyUnclamped (
-        final float origin,
-        final float dest,
-        final float step ) {
-
-      if ( this.aLtb ) {
-        this.a = this.a + 1.0f;
-        this.modResult = true;
-      }
-
-      final float fac = Utils.lerpUnclamped(this.a, this.b, step);
-      if ( this.modResult ) { return Utils.mod1(fac); }
-      return fac;
-    }
-  }
-
-  /**
-   * Eases between hues in the clockwise direction.
-   */
-  public static class HueCW extends HueEasing {
-
-    /**
-     * The default constructor.
-     */
-    public HueCW ( ) { super(); }
-
-    /**
-     * Applies the function.
-     *
-     * @param origin the origin hue
-     * @param dest   the destination hue
-     * @param step   the step in a range 0 to 1
-     * @return the eased hue
-     * @see Utils#lerpUnclamped(float, float, float)
-     * @see Utils#mod1(float)
-     */
-    @Override
-    public float applyUnclamped (
-        final float origin,
-        final float dest,
-        final float step ) {
-
-      if ( this.aGtb ) {
-        this.b = this.b + 1.0f;
-        this.modResult = true;
-      }
-
-      final float fac = Utils.lerpUnclamped(this.a, this.b, step);
-      if ( this.modResult ) { return Utils.mod1(fac); }
-      return fac;
-    }
-  }
-
-  /**
-   * An abstract parent class for hue easing functions.
-   */
-  public static abstract class HueEasing
-      implements Utils.EasingFuncPrimitive < Float > {
-
-    /**
-     * The modulated origin hue.
-     */
-    protected float a = 0.0f;
-
-    /**
-     * Whether or not a is greater than b.
-     */
-    protected boolean aGtb = false;
-
-    /**
-     * Whether or not a is less than b.
-     */
-    protected boolean aLtb = false;
-
-    /**
-     * The modulated destination hue.
-     */
-    protected float b = 0.0f;
-
-    /**
-     * The difference between the stop and start hue.
-     */
-    protected float diff = 0.0f;
-
-    /**
-     * Whether or not the result of the easing function needs to be
-     * subjected to floor modulo.
-     */
-    protected boolean modResult = false;
-
-    /**
-     * The default constructor.
-     */
-    public HueEasing ( ) { super(); }
-
-    /**
-     * A helper function to pass on to sub-classes of this class. Mutates
-     * the fields a, b, diff, aLtb and aGtb.
-     *
-     * @param origin the origin hue
-     * @param dest   the destination hue
-     * @see Utils#mod1(float)
-     */
-    protected void eval (
-        final float origin,
-        final float dest ) {
-
-      this.a = Utils.mod1(origin);
-      this.b = Utils.mod1(dest);
-      this.diff = this.b - this.a;
-      this.aLtb = this.a < this.b;
-      this.aGtb = this.a > this.b;
-    }
-
-    /**
-     * The clamped easing function.
-     *
-     * @param origin the origin hue
-     * @param dest   the destination hue
-     * @param step   the step in range 0 to 1
-     * @return the eased hue
-     */
-    @Override
-    public Float apply (
-        final Float origin,
-        final Float dest,
-        final Float step ) {
-
-      this.eval(origin, dest);
-
-      if ( step <= 0.0f || this.diff == 0.0f ) { return this.a; }
-      if ( step >= 1.0f ) { return this.b; }
-      return this.applyUnclamped(origin, dest, step);
-    }
-
-    /**
-     * The application function to be defined by sub-classes of this
-     * class.
-     *
-     * @param origin the origin hue
-     * @param dest   the destination hue
-     * @param step   the step
-     * @return the eased hue
-     */
-    public abstract float applyUnclamped (
-        final float origin,
-        final float dest,
-        final float step );
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * Eases between hues by the farthest clockwise direction.
-   */
-  public static class HueFar extends HueEasing {
-
-    /**
-     * The default constructor.
-     */
-    public HueFar ( ) { super(); }
-
-    /**
-     * Applies the function.
-     *
-     * @param origin the origin hue
-     * @param dest   the destination hue
-     * @param step   the step in a range 0 to 1
-     * @return the eased hue
-     * @see Utils#lerpUnclamped(float, float, float)
-     * @see Utils#mod1(float)
-     */
-    @Override
-    public float applyUnclamped (
-        final float origin,
-        final float dest,
-        final float step ) {
-
-      if ( this.aLtb && this.diff < 0.5f ) {
-        this.a = this.a + 1.0f;
-        this.modResult = true;
-      } else if ( this.aGtb && this.diff > -0.5f ) {
-        this.b = this.b + 1.0f;
-        this.modResult = true;
-      }
-
-      final float fac = Utils.lerpUnclamped(this.a, this.b, step);
-      if ( this.modResult ) { return Utils.mod1(fac); }
-      return fac;
-    }
-  }
-
-  /**
-   * Eases between hues by the nearest clockwise direction.
-   */
-  public static class HueNear extends HueEasing {
-
-    /**
-     * The default constructor.
-     */
-    public HueNear ( ) { super(); }
-
-    /**
-     * Applies the function.
-     *
-     * @param origin the origin hue
-     * @param dest   the destination hue
-     * @param step   the step in a range 0 to 1
-     * @return the eased hue
-     * @see Utils#lerpUnclamped(float, float, float)
-     * @see Utils#mod1(float)
-     */
-    @Override
-    public float applyUnclamped (
-        final float origin,
-        final float dest,
-        final float step ) {
-
-      if ( this.aLtb && this.diff > 0.5f ) {
-        this.a = this.a + 1.0f;
-        this.modResult = true;
-      } else if ( this.aGtb && this.diff < -0.5f ) {
-        this.b = this.b + 1.0f;
-        this.modResult = true;
-      }
-
-      final float fac = Utils.lerpUnclamped(this.a, this.b, step);
-      if ( this.modResult ) { return Utils.mod1(fac); }
-      return fac;
-    }
-  }
-
-  /**
-   * Eases between two colors.
-   */
-  public static class LerpRgba extends AbstrEasing {
-
-    /**
-     * The default constructor.
-     */
-    public LerpRgba ( ) { super(); }
-
-    /**
-     * Applies the function.
-     *
-     * @param origin the origin color
-     * @param dest   the destination color
-     * @param step   the step in a range 0 to 1
-     * @param target the output color
-     * @return the eased color
-     */
-    @Override
-    public Color applyUnclamped (
-        final Color origin,
-        final Color dest,
-        final float step,
-        final Color target ) {
-
-      /* This should remain as double precision! */
-      final double td = step;
-      final double ud = 1.0d - td;
-      return target.set(
-          (float) (ud * origin.x + td * dest.x),
-          (float) (ud * origin.y + td * dest.y),
-          (float) (ud * origin.z + td * dest.z),
-          (float) (ud * origin.w + td * dest.w));
-    }
-  }
-
-  /**
-   * Eases between colors by hue, saturation and brightness.
-   */
-  public static class MixHsba extends AbstrEasing {
-
-    /**
-     * The brightness easing function.
-     */
-    protected Utils.LerpUnclamped briFunc;
-
-    /**
-     * The destination color in HSBA.
-     */
-    protected final Vec4 hsbaDest = new Vec4();
-
-    /**
-     * The new HSBA color.
-     */
-    protected final Vec4 hsbaNew = new Vec4();
-
-    /**
-     * The origin color in HSBA.
-     */
-    protected final Vec4 hsbaOrigin = new Vec4();
-
-    /**
-     * The hue easing function.
-     */
-    protected HueEasing hueFunc;
-
-    /**
-     * The saturation easing function.
-     */
-    protected Utils.LerpUnclamped satFunc;
-
-    /**
-     * The default constructor. Creates a mixer with nearest hue
-     * interpolation and linear interpolation for saturation and
-     * brightness.
-     */
-    public MixHsba ( ) {
-
-      this(new HueNear());
-    }
-
-    /**
-     * Creates a color HSBA mixing function with the given hue easing
-     * function. Saturation and brightness are governed by linear
-     * interpolation.
-     *
-     * @param hueFunc the hue easing function
-     */
-    public MixHsba ( final HueEasing hueFunc ) {
-
-      this(hueFunc, new Utils.Lerp(), new Utils.Lerp());
-    }
-
-    /**
-     * Creates a color HSBA mixing function with the given easing
-     * functions for hue, saturation and brightness.
-     *
-     * @param hueFunc the hue easing function
-     * @param satFunc the saturation easing function
-     * @param briFunc the brightness easing function
-     */
-    public MixHsba (
-        final HueEasing hueFunc,
-        final Utils.LerpUnclamped satFunc,
-        final Utils.LerpUnclamped briFunc ) {
-
-      super();
-      this.hueFunc = hueFunc;
-      this.satFunc = satFunc;
-      this.briFunc = briFunc;
-    }
-
-    /**
-     * Applies the function.
-     *
-     * @param origin the origin color
-     * @param dest   the destination color
-     * @param step   the step in a range 0 to 1
-     * @param target the output color
-     * @return the eased color
-     * @see Color#rgbaToHsba(Color, Vec4)
-     */
-    @Override
-    public Color applyUnclamped (
-        final Color origin,
-        final Color dest,
-        final float step,
-        final Color target ) {
-
-      Color.rgbaToHsba(origin, this.hsbaOrigin);
-      Color.rgbaToHsba(dest, this.hsbaDest);
-
-      this.hsbaNew.set(
-          this.hueFunc.apply(this.hsbaOrigin.x, this.hsbaDest.x, step),
-          this.satFunc.apply(this.hsbaOrigin.y, this.hsbaDest.y, step),
-          this.briFunc.apply(this.hsbaOrigin.z, this.hsbaDest.z, step),
-          (1.0f - step) * this.hsbaOrigin.w + step * this.hsbaDest.w);
-
-      return Color.hsbaToRgba(this.hsbaNew, target);
-    }
-
-    /**
-     * Gets the string identifier for the brightness easing function.
-     *
-     * @return the string
-     */
-    public String getBriFuncString ( ) {
-
-      return this.briFunc.toString();
-    }
-
-    /**
-     * Gets the string identifier for the hue easing function.
-     *
-     * @return the string
-     */
-    public String getHueFuncString ( ) {
-
-      return this.hueFunc.toString();
-    }
-
-    /**
-     * Gets the string identifier for the saturation easing function.
-     *
-     * @return the string
-     */
-    public String getSatFuncString ( ) {
-
-      return this.satFunc.toString();
-    }
-
-    /**
-     * Sets the brightness easing function.
-     *
-     * @param briFunc the easing function
-     */
-    public void setBriFunc ( final Utils.LerpUnclamped briFunc ) {
-
-      if ( briFunc != null ) { this.briFunc = briFunc; }
-    }
-
-    /**
-     * Sets the hue easing function.
-     *
-     * @param hueFunc the easing function
-     */
-    public void setHueFunc ( final HueEasing hueFunc ) {
-
-      if ( hueFunc != null ) { this.hueFunc = hueFunc; }
-    }
-
-    /**
-     * Sets the saturation easing function.
-     *
-     * @param satFunc the saturation function
-     */
-    public void setSatFunc ( final Utils.LerpUnclamped satFunc ) {
-
-      if ( satFunc != null ) { this.satFunc = satFunc; }
-    }
-  }
-
-  /**
-   * Eases between two colors with the smooth step formula:
-   * <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> ) .
-   */
-  public static class SmoothStepRgba extends AbstrEasing {
-
-    /**
-     * The default constructor.
-     */
-    public SmoothStepRgba ( ) { super(); }
-
-    /**
-     * Applies the function.
-     *
-     * @param origin the origin color
-     * @param dest   the destination color
-     * @param step   the step in a range 0 to 1
-     * @param target the output color
-     * @return the eased color
-     */
-    @Override
-    public Color applyUnclamped (
-        final Color origin,
-        final Color dest,
-        final float step,
-        final Color target ) {
-
-      /* This should remain as double-precision! */
-      final double td = step;
-      final double ts = td * td * (3.0d - (td + td));
-      final double us = 1.0d - ts;
-      return target.set(
-          (float) (us * origin.x + ts * dest.x),
-          (float) (us * origin.y + ts * dest.y),
-          (float) (us * origin.z + ts * dest.z),
-          (float) (us * origin.w + ts * dest.w));
-    }
-  }
-
-  /**
-   * The default easing function, smooth step RGBA.
-   */
-  private static AbstrEasing EASING = new SmoothStepRgba();
-
-  /**
-   * The unique identification for serialized classes.
-   */
-  private static final long serialVersionUID = 3863260730744999721L;
-
-  /**
    * The default constructor. Creates a white color.
    */
   public Color ( ) { super(1.0f, 1.0f, 1.0f, 1.0f); }
@@ -1297,6 +587,16 @@ public class Color extends Vec4 {
         .append(' ').append('}')
         .toString();
   }
+
+  /**
+   * The default easing function, smooth step RGBA.
+   */
+  private static AbstrEasing EASING = new SmoothStepRgba();
+
+  /**
+   * The unique identification for serialized classes.
+   */
+  private static final long serialVersionUID = 3863260730744999721L;
 
   /**
    * Adds the left and right operand, except for the alpha channel, then
@@ -2807,5 +2107,705 @@ public class Color extends Vec4 {
   public static Color yellow ( final Color target ) {
 
     return target.set(1.0f, 1.0f, 0.0f, 1.0f);
+  }
+
+  /**
+   * An abstract class to facilitate the creation of color easing
+   * functions.
+   */
+  public static abstract class AbstrEasing
+      implements Utils.EasingFuncObj < Color > {
+
+    /**
+     * The default constructor.
+     */
+    public AbstrEasing ( ) { super(); }
+
+    /**
+     * A clamped interpolation between the origin and destination. Defers
+     * to an unclamped interpolation, which is to be defined by
+     * sub-classes of this class.
+     *
+     * @param origin the origin color
+     * @param dest   the destination color
+     * @param step   a factor in [0, 1]
+     * @param target the output color
+     * @return the eased color
+     */
+    @Override
+    public Color apply (
+        final Color origin,
+        final Color dest,
+        final Float step,
+        final Color target ) {
+
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
+      return this.applyUnclamped(origin, dest, step, target);
+    }
+
+    /**
+     * The interpolation to be defined by subclasses.
+     *
+     * @param origin the origin color
+     * @param dest   the destination color
+     * @param step   a factor in [0, 1]
+     * @param target the output color
+     * @return the eased color
+     */
+    public abstract Color applyUnclamped (
+        final Color origin,
+        final Color dest,
+        final float step,
+        final Color target );
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * Compares two colors by brightness.
+   */
+  public static class ComparatorBri extends ComparatorHsb {
+
+    /**
+     * The default constructor.
+     */
+    public ComparatorBri ( ) { super(); }
+
+    /**
+     * The comparison function.
+     *
+     * @param a the left comparisand
+     * @param b the right comparisand
+     * @return the comparison
+     * @see Color#rgbaToHsba(Color, Vec4)
+     * @see Float#compare(float, float)
+     */
+    @Override
+    public int compare (
+        final Color a,
+        final Color b ) {
+
+      Color.rgbaToHsba(a, this.aHsb);
+      Color.rgbaToHsba(b, this.bHsb);
+
+      return this.aHsb.z < this.bHsb.z ? -1
+          : this.aHsb.z > this.bHsb.z ? 1 : 0;
+    }
+  }
+
+  /**
+   * An abstract class to facilitate the creation of HSB comparators.
+   */
+  public static abstract class ComparatorHsb implements Comparator < Color > {
+
+    /**
+     * Holds the HSB conversion of the left comparisand.
+     */
+    protected final Vec4 aHsb = new Vec4();
+
+    /**
+     * Holds the HSB conversion of the right comparisand.
+     */
+    protected final Vec4 bHsb = new Vec4();
+
+    /**
+     * The default constructor.
+     */
+    public ComparatorHsb ( ) { super(); }
+
+    /**
+     * The comparison function.
+     *
+     * @param a the left comparisand
+     * @param b the right comparisand
+     * @return the comparison
+     */
+    @Override
+    public abstract int compare ( final Color a, final Color b );
+
+    /**
+     * Returns this class's simple name as a string
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * Compares two colors by hue.
+   */
+  public static class ComparatorHue extends ComparatorHsb {
+
+    /**
+     * The default constructor.
+     */
+    public ComparatorHue ( ) { super(); }
+
+    /**
+     * Executes the comparison.
+     *
+     * @param a the left comparisand
+     * @param b the right comparisand
+     * @return the comparison
+     * @see Color#rgbaToHsba(Color, Vec4)
+     * @see Float#compare(float, float)
+     */
+    @Override
+    public int compare ( final Color a, final Color b ) {
+
+      Color.rgbaToHsba(a, this.aHsb);
+      Color.rgbaToHsba(b, this.bHsb);
+
+      return this.aHsb.x < this.bHsb.x ? -1
+          : this.aHsb.x > this.bHsb.x ? 1 : 0;
+    }
+  }
+
+  /**
+   * Compares two colors by saturation.
+   */
+  public static class ComparatorSat extends ComparatorHsb {
+
+    /**
+     * The default constructor.
+     */
+    public ComparatorSat ( ) { super(); }
+
+    /**
+     * Executes the comparison.
+     *
+     * @param a the left comparisand
+     * @param b the right comparisand
+     * @return the comparison
+     * @see Color#rgbaToHsba(Color, Vec4)
+     * @see Float#compare(float, float)
+     */
+    @Override
+    public int compare ( final Color a, final Color b ) {
+
+      Color.rgbaToHsba(a, this.aHsb);
+      Color.rgbaToHsba(b, this.bHsb);
+
+      return this.aHsb.y < this.bHsb.y ? -1
+          : this.aHsb.y > this.bHsb.y ? 1 : 0;
+    }
+  }
+
+  /**
+   * Eases the hue in the counter-clockwise direction.
+   */
+  public static class HueCCW extends HueEasing {
+
+    /**
+     * The default constructor.
+     */
+    public HueCCW ( ) { super(); }
+
+    /**
+     * Applies the function.
+     *
+     * @param origin the origin hue
+     * @param dest   the destination hue
+     * @param step   the step in a range 0 to 1
+     * @return the eased hue
+     * @see Utils#lerpUnclamped(float, float, float)
+     * @see Utils#mod1(float)
+     */
+    @Override
+    public float applyUnclamped (
+        final float origin,
+        final float dest,
+        final float step ) {
+
+      if ( this.aLtb ) {
+        this.a = this.a + 1.0f;
+        this.modResult = true;
+      }
+
+      final float fac = Utils.lerpUnclamped(this.a, this.b, step);
+      if ( this.modResult ) { return Utils.mod1(fac); }
+      return fac;
+    }
+  }
+
+  /**
+   * Eases between hues in the clockwise direction.
+   */
+  public static class HueCW extends HueEasing {
+
+    /**
+     * The default constructor.
+     */
+    public HueCW ( ) { super(); }
+
+    /**
+     * Applies the function.
+     *
+     * @param origin the origin hue
+     * @param dest   the destination hue
+     * @param step   the step in a range 0 to 1
+     * @return the eased hue
+     * @see Utils#lerpUnclamped(float, float, float)
+     * @see Utils#mod1(float)
+     */
+    @Override
+    public float applyUnclamped (
+        final float origin,
+        final float dest,
+        final float step ) {
+
+      if ( this.aGtb ) {
+        this.b = this.b + 1.0f;
+        this.modResult = true;
+      }
+
+      final float fac = Utils.lerpUnclamped(this.a, this.b, step);
+      if ( this.modResult ) { return Utils.mod1(fac); }
+      return fac;
+    }
+  }
+
+  /**
+   * An abstract parent class for hue easing functions.
+   */
+  public static abstract class HueEasing
+      implements Utils.EasingFuncPrimitive < Float > {
+
+    /**
+     * The modulated origin hue.
+     */
+    protected float a = 0.0f;
+
+    /**
+     * Whether or not a is greater than b.
+     */
+    protected boolean aGtb = false;
+
+    /**
+     * Whether or not a is less than b.
+     */
+    protected boolean aLtb = false;
+
+    /**
+     * The modulated destination hue.
+     */
+    protected float b = 0.0f;
+
+    /**
+     * The difference between the stop and start hue.
+     */
+    protected float diff = 0.0f;
+
+    /**
+     * Whether or not the result of the easing function needs to be
+     * subjected to floor modulo.
+     */
+    protected boolean modResult = false;
+
+    /**
+     * The default constructor.
+     */
+    public HueEasing ( ) { super(); }
+
+    /**
+     * A helper function to pass on to sub-classes of this class. Mutates
+     * the fields a, b, diff, aLtb and aGtb.
+     *
+     * @param origin the origin hue
+     * @param dest   the destination hue
+     * @see Utils#mod1(float)
+     */
+    protected void eval (
+        final float origin,
+        final float dest ) {
+
+      this.a = Utils.mod1(origin);
+      this.b = Utils.mod1(dest);
+      this.diff = this.b - this.a;
+      this.aLtb = this.a < this.b;
+      this.aGtb = this.a > this.b;
+    }
+
+    /**
+     * The clamped easing function.
+     *
+     * @param origin the origin hue
+     * @param dest   the destination hue
+     * @param step   the step in range 0 to 1
+     * @return the eased hue
+     */
+    @Override
+    public Float apply (
+        final Float origin,
+        final Float dest,
+        final Float step ) {
+
+      this.eval(origin, dest);
+
+      if ( step <= 0.0f || this.diff == 0.0f ) { return this.a; }
+      if ( step >= 1.0f ) { return this.b; }
+      return this.applyUnclamped(origin, dest, step);
+    }
+
+    /**
+     * The application function to be defined by sub-classes of this
+     * class.
+     *
+     * @param origin the origin hue
+     * @param dest   the destination hue
+     * @param step   the step
+     * @return the eased hue
+     */
+    public abstract float applyUnclamped (
+        final float origin,
+        final float dest,
+        final float step );
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * Eases between hues by the farthest clockwise direction.
+   */
+  public static class HueFar extends HueEasing {
+
+    /**
+     * The default constructor.
+     */
+    public HueFar ( ) { super(); }
+
+    /**
+     * Applies the function.
+     *
+     * @param origin the origin hue
+     * @param dest   the destination hue
+     * @param step   the step in a range 0 to 1
+     * @return the eased hue
+     * @see Utils#lerpUnclamped(float, float, float)
+     * @see Utils#mod1(float)
+     */
+    @Override
+    public float applyUnclamped (
+        final float origin,
+        final float dest,
+        final float step ) {
+
+      if ( this.aLtb && this.diff < 0.5f ) {
+        this.a = this.a + 1.0f;
+        this.modResult = true;
+      } else if ( this.aGtb && this.diff > -0.5f ) {
+        this.b = this.b + 1.0f;
+        this.modResult = true;
+      }
+
+      final float fac = Utils.lerpUnclamped(this.a, this.b, step);
+      if ( this.modResult ) { return Utils.mod1(fac); }
+      return fac;
+    }
+  }
+
+  /**
+   * Eases between hues by the nearest clockwise direction.
+   */
+  public static class HueNear extends HueEasing {
+
+    /**
+     * The default constructor.
+     */
+    public HueNear ( ) { super(); }
+
+    /**
+     * Applies the function.
+     *
+     * @param origin the origin hue
+     * @param dest   the destination hue
+     * @param step   the step in a range 0 to 1
+     * @return the eased hue
+     * @see Utils#lerpUnclamped(float, float, float)
+     * @see Utils#mod1(float)
+     */
+    @Override
+    public float applyUnclamped (
+        final float origin,
+        final float dest,
+        final float step ) {
+
+      if ( this.aLtb && this.diff > 0.5f ) {
+        this.a = this.a + 1.0f;
+        this.modResult = true;
+      } else if ( this.aGtb && this.diff < -0.5f ) {
+        this.b = this.b + 1.0f;
+        this.modResult = true;
+      }
+
+      final float fac = Utils.lerpUnclamped(this.a, this.b, step);
+      if ( this.modResult ) { return Utils.mod1(fac); }
+      return fac;
+    }
+  }
+
+  /**
+   * Eases between two colors.
+   */
+  public static class LerpRgba extends AbstrEasing {
+
+    /**
+     * The default constructor.
+     */
+    public LerpRgba ( ) { super(); }
+
+    /**
+     * Applies the function.
+     *
+     * @param origin the origin color
+     * @param dest   the destination color
+     * @param step   the step in a range 0 to 1
+     * @param target the output color
+     * @return the eased color
+     */
+    @Override
+    public Color applyUnclamped (
+        final Color origin,
+        final Color dest,
+        final float step,
+        final Color target ) {
+
+      /* This should remain as double precision! */
+      final double td = step;
+      final double ud = 1.0d - td;
+      return target.set(
+          (float) (ud * origin.x + td * dest.x),
+          (float) (ud * origin.y + td * dest.y),
+          (float) (ud * origin.z + td * dest.z),
+          (float) (ud * origin.w + td * dest.w));
+    }
+  }
+
+  /**
+   * Eases between colors by hue, saturation and brightness.
+   */
+  public static class MixHsba extends AbstrEasing {
+
+    /**
+     * The brightness easing function.
+     */
+    protected Utils.LerpUnclamped briFunc;
+
+    /**
+     * The destination color in HSBA.
+     */
+    protected final Vec4 hsbaDest = new Vec4();
+
+    /**
+     * The new HSBA color.
+     */
+    protected final Vec4 hsbaNew = new Vec4();
+
+    /**
+     * The origin color in HSBA.
+     */
+    protected final Vec4 hsbaOrigin = new Vec4();
+
+    /**
+     * The hue easing function.
+     */
+    protected HueEasing hueFunc;
+
+    /**
+     * The saturation easing function.
+     */
+    protected Utils.LerpUnclamped satFunc;
+
+    /**
+     * The default constructor. Creates a mixer with nearest hue
+     * interpolation and linear interpolation for saturation and
+     * brightness.
+     */
+    public MixHsba ( ) {
+
+      this(new HueNear());
+    }
+
+    /**
+     * Creates a color HSBA mixing function with the given hue easing
+     * function. Saturation and brightness are governed by linear
+     * interpolation.
+     *
+     * @param hueFunc the hue easing function
+     */
+    public MixHsba ( final HueEasing hueFunc ) {
+
+      this(hueFunc, new Utils.Lerp(), new Utils.Lerp());
+    }
+
+    /**
+     * Creates a color HSBA mixing function with the given easing
+     * functions for hue, saturation and brightness.
+     *
+     * @param hueFunc the hue easing function
+     * @param satFunc the saturation easing function
+     * @param briFunc the brightness easing function
+     */
+    public MixHsba (
+        final HueEasing hueFunc,
+        final Utils.LerpUnclamped satFunc,
+        final Utils.LerpUnclamped briFunc ) {
+
+      super();
+      this.hueFunc = hueFunc;
+      this.satFunc = satFunc;
+      this.briFunc = briFunc;
+    }
+
+    /**
+     * Applies the function.
+     *
+     * @param origin the origin color
+     * @param dest   the destination color
+     * @param step   the step in a range 0 to 1
+     * @param target the output color
+     * @return the eased color
+     * @see Color#rgbaToHsba(Color, Vec4)
+     */
+    @Override
+    public Color applyUnclamped (
+        final Color origin,
+        final Color dest,
+        final float step,
+        final Color target ) {
+
+      Color.rgbaToHsba(origin, this.hsbaOrigin);
+      Color.rgbaToHsba(dest, this.hsbaDest);
+
+      this.hsbaNew.set(
+          this.hueFunc.apply(this.hsbaOrigin.x, this.hsbaDest.x, step),
+          this.satFunc.apply(this.hsbaOrigin.y, this.hsbaDest.y, step),
+          this.briFunc.apply(this.hsbaOrigin.z, this.hsbaDest.z, step),
+          (1.0f - step) * this.hsbaOrigin.w + step * this.hsbaDest.w);
+
+      return Color.hsbaToRgba(this.hsbaNew, target);
+    }
+
+    /**
+     * Gets the string identifier for the brightness easing function.
+     *
+     * @return the string
+     */
+    public String getBriFuncString ( ) {
+
+      return this.briFunc.toString();
+    }
+
+    /**
+     * Gets the string identifier for the hue easing function.
+     *
+     * @return the string
+     */
+    public String getHueFuncString ( ) {
+
+      return this.hueFunc.toString();
+    }
+
+    /**
+     * Gets the string identifier for the saturation easing function.
+     *
+     * @return the string
+     */
+    public String getSatFuncString ( ) {
+
+      return this.satFunc.toString();
+    }
+
+    /**
+     * Sets the brightness easing function.
+     *
+     * @param briFunc the easing function
+     */
+    public void setBriFunc ( final Utils.LerpUnclamped briFunc ) {
+
+      if ( briFunc != null ) { this.briFunc = briFunc; }
+    }
+
+    /**
+     * Sets the hue easing function.
+     *
+     * @param hueFunc the easing function
+     */
+    public void setHueFunc ( final HueEasing hueFunc ) {
+
+      if ( hueFunc != null ) { this.hueFunc = hueFunc; }
+    }
+
+    /**
+     * Sets the saturation easing function.
+     *
+     * @param satFunc the saturation function
+     */
+    public void setSatFunc ( final Utils.LerpUnclamped satFunc ) {
+
+      if ( satFunc != null ) { this.satFunc = satFunc; }
+    }
+  }
+
+  /**
+   * Eases between two colors with the smooth step formula:
+   * <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> ) .
+   */
+  public static class SmoothStepRgba extends AbstrEasing {
+
+    /**
+     * The default constructor.
+     */
+    public SmoothStepRgba ( ) { super(); }
+
+    /**
+     * Applies the function.
+     *
+     * @param origin the origin color
+     * @param dest   the destination color
+     * @param step   the step in a range 0 to 1
+     * @param target the output color
+     * @return the eased color
+     */
+    @Override
+    public Color applyUnclamped (
+        final Color origin,
+        final Color dest,
+        final float step,
+        final Color target ) {
+
+      /* This should remain as double-precision! */
+      final double td = step;
+      final double ts = td * td * (3.0d - (td + td));
+      final double us = 1.0d - ts;
+      return target.set(
+          (float) (us * origin.x + ts * dest.x),
+          (float) (us * origin.y + ts * dest.y),
+          (float) (us * origin.z + ts * dest.z),
+          (float) (us * origin.w + ts * dest.w));
+    }
   }
 }

@@ -31,32 +31,6 @@ import camzup.core.Vec4;
 public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
   /**
-   * Default look at target x component.
-   */
-  public static final float DEFAULT_TARGET_X = 0.0f;
-
-  /**
-   * Default look at target y component.
-   */
-  public static final float DEFAULT_TARGET_Y = 0.0f;
-
-  /**
-   * Default look at target z component.
-   */
-  public static final float DEFAULT_TARGET_Z = 0.0f;
-
-  /**
-   * The path string for this renderer.
-   */
-  public static final String PATH_STR = "camzup.pfriendly.Up3";
-
-  /**
-   * Tolerance beneath which the camera's forward direction will be
-   * considered the world, or reference, up direction.
-   */
-  public final static float POLARITY_TOLERANCE = 0.01f;
-
-  /**
    * A vector to store the x axis (first column) when creating a camera
    * look-at matrix.
    */
@@ -98,14 +72,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     this.lookDir = Vec3.up(new Vec3());
     this.lookTarget = new Vec3();
     this.refUp = Vec3.up(new Vec3());
-
-    // protected final Vec3 tr3Loc;
-    // protected final Quaternion tr3Rot;
-    // protected final Vec3 tr3Scale;
-
-    // tr3Loc = new Vec3();
-    // tr3Rot = new Quaternion();
-    // tr3Scale = Vec3.one(new Vec3());
   }
 
   /**
@@ -130,25 +96,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final boolean isPrimary ) {
 
     super(width, height, parent, path, isPrimary);
-  }
-
-  /**
-   * Establishes the default perspective arguments.
-   *
-   * @see PGraphicsOpenGL#defCameraAspect
-   * @see PGraphicsOpenGL#defCameraFOV
-   * @see PGraphicsOpenGL#defCameraNear
-   * @see PGraphicsOpenGL#defCameraFar
-   */
-  @Override
-  protected void defaultPerspective ( ) {
-
-    this.cameraAspect = this.defCameraAspect = IUp.DEFAULT_ASPECT;
-    this.cameraFOV = this.defCameraFOV = IUp.DEFAULT_FOV;
-    this.cameraNear = this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
-    this.cameraFar = this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
-
-    this.ortho();
   }
 
   /**
@@ -210,81 +157,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
         wh, hh, this.height * IUtils.SQRT_3_2,
         wh, hh, 0.0f,
         0.0f, -1.0f, 0.0f);
-  }
-
-  @Experimental
-  void pan ( final float radians ) {
-
-    final float nrm = radians * IUtils.ONE_TAU;
-    final float cosa = Utils.scNorm(nrm);
-    final float sina = Utils.scNorm(nrm - 0.25f);
-
-    float xn = this.lookTarget.x - this.cameraX;
-    // float yn = this.lookTarget.y - this.cameraY;
-    float zn = this.lookTarget.z - this.cameraZ;
-
-    final float temp = xn;
-    xn = cosa * xn + sina * zn;
-    zn = cosa * zn - sina * temp;
-
-    xn += this.cameraX;
-    // yn += this.cameraY;
-    zn += this.cameraZ;
-
-    this.camera(
-        this.cameraX, this.cameraY, this.cameraZ,
-        xn, this.lookTarget.y, zn,
-        this.refUp.x, this.refUp.y, this.refUp.z);
-  }
-
-  @Experimental
-  void roll ( final float radians ) {
-
-    final float nrm = radians * IUtils.ONE_TAU;
-    final float cosa = Utils.scNorm(nrm);
-    final float sina = Utils.scNorm(nrm - 0.25f);
-
-    float xn = this.lookTarget.x - this.cameraX;
-    float yn = this.lookTarget.y - this.cameraY;
-    // float zn = this.lookTarget.z - this.cameraZ;
-
-    final float temp = xn;
-    xn = cosa * xn - sina * yn;
-    yn = cosa * yn + sina * temp;
-
-    xn += this.cameraX;
-    yn += this.cameraY;
-    // zn += this.cameraZ;
-
-    this.camera(
-        this.cameraX, this.cameraY, this.cameraZ,
-        xn, yn, this.lookTarget.z,
-        this.refUp.x, this.refUp.y, this.refUp.z);
-  }
-
-  @Experimental
-  void tilt ( final float radians ) {
-
-    final float nrm = radians * IUtils.ONE_TAU;
-    final float cosa = Utils.scNorm(nrm);
-    final float sina = Utils.scNorm(nrm - 0.25f);
-
-    // float xn = this.lookTarget.x - this.cameraX;
-    float yn = this.lookTarget.y - this.cameraY;
-    float zn = this.lookTarget.z - this.cameraZ;
-
-    final float temp = yn;
-    yn = cosa * yn - sina * zn;
-    zn = cosa * zn + sina * temp;
-
-    // xn += this.cameraX;
-    yn += this.cameraY;
-    zn += this.cameraZ;
-
-    this.camera(
-        this.cameraX, this.cameraY, this.cameraZ,
-        this.lookTarget.x, yn, zn,
-        this.refUp.x, this.refUp.y, this.refUp.z);
   }
 
   /**
@@ -358,8 +230,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    * @param d the fourth vector
    */
   public void curve (
-      final Vec3 a, final Vec3 b,
-      final Vec3 c, final Vec3 d ) {
+      final Vec3 a,
+      final Vec3 b,
+      final Vec3 c,
+      final Vec3 d ) {
 
     this.curve(
         a.x, a.y, a.z,
@@ -376,6 +250,25 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   public void curveVertex ( final Vec3 a ) {
 
     this.curveVertex(a.x, a.y, a.z);
+  }
+
+  /**
+   * Establishes the default perspective arguments.
+   *
+   * @see PGraphicsOpenGL#defCameraAspect
+   * @see PGraphicsOpenGL#defCameraFOV
+   * @see PGraphicsOpenGL#defCameraNear
+   * @see PGraphicsOpenGL#defCameraFar
+   */
+  @Override
+  public void defaultPerspective ( ) {
+
+    this.cameraAspect = this.defCameraAspect = IUp.DEFAULT_ASPECT;
+    this.cameraFOV = this.defCameraFOV = IUp.DEFAULT_FOV;
+    this.cameraNear = this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
+    this.cameraFar = this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
+
+    this.ortho();
   }
 
   /**
@@ -464,6 +357,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    *
    * @param z the z magnitude
    */
+  @Override
+  @Experimental
   public void dolly ( final float z ) {
 
     final float w = this.cameraInv.m32 * z + this.cameraInv.m33;
@@ -473,13 +368,24 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final float yLocal = this.cameraInv.m12 * z * wInv;
       final float zLocal = this.cameraInv.m22 * z * wInv;
 
-      this.cameraX += xLocal;
-      this.cameraY += yLocal;
-      this.cameraZ += zLocal;
+      // this.cameraX += xLocal;
+      // this.cameraY += yLocal;
+      // this.cameraZ += zLocal;
 
-      this.lookTarget.x += xLocal;
-      this.lookTarget.y += yLocal;
-      this.lookTarget.z += zLocal;
+      // this.lookTarget.x += xLocal;
+      // this.lookTarget.y += yLocal;
+      // this.lookTarget.z += zLocal;
+
+      this.camera(
+          this.cameraX + xLocal,
+          this.cameraY + yLocal,
+          this.cameraZ + zLocal,
+          this.lookTarget.x + xLocal,
+          this.lookTarget.y + yLocal,
+          this.lookTarget.z + zLocal,
+          this.refUp.x,
+          this.refUp.y,
+          this.refUp.z);
     }
   }
 
@@ -549,6 +455,39 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   public Vec3 getLookTarget ( final Vec3 target ) {
 
     return target.set(this.lookTarget);
+  }
+
+  /**
+   * Gets the camera's look target x.
+   *
+   * @return the look target x
+   */
+  @Override
+  public float getLookTargetX ( ) {
+
+    return this.lookTarget.x;
+  }
+
+  /**
+   * Gets the camera's look target y.
+   *
+   * @return the look target y
+   */
+  @Override
+  public float getLookTargetY ( ) {
+
+    return this.lookTarget.y;
+  }
+
+  /**
+   * Gets the camera's look target z.
+   *
+   * @return the look target z
+   */
+  @Override
+  public float getLookTargetZ ( ) {
+
+    return this.lookTarget.z;
   }
 
   /**
@@ -773,65 +712,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   }
 
   /**
-   * Moves the renderer's camera location.
-   *
-   * @param x the vector x
-   * @param y the vector y
-   * @param z the vector z
-   */
-  public void moveBy (
-      final float x,
-      final float y,
-      final float z ) {
-
-    this.moveByLocal(x, y, z);
-  }
-
-  /**
-   * Moves the renderer's camera location.
-   *
-   * @param v the vector
-   */
-  public void moveBy ( final Vec3 v ) {
-
-    this.moveByLocal(v.x, v.y, v.z);
-  }
-
-  /**
-   * Moves the renderer's camera by a vector. Does <em>not</em> update
-   * the camera's look target, and so will result in tangential motion.
-   *
-   * @param x the vector x
-   * @param y the vector y
-   * @param z the vector z
-   * @see Vec3#areParallel(Vec3, Vec3, float)
-   */
-  public void moveByGlobal (
-      final float x,
-      final float y,
-      final float z ) {
-
-    if ( Vec3.areParallel(this.k, this.refUp, Up3.POLARITY_TOLERANCE) ) {
-      return;
-    }
-
-    this.cameraX += x;
-    this.cameraY += y;
-    this.cameraZ += z;
-  }
-
-  /**
-   * Moves the renderer's camera by a vector. Does <em>not</em> update
-   * the camera's look target, and so will result in tangential motion.
-   *
-   * @param v the vector
-   */
-  public void moveByGlobal ( final Vec3 v ) {
-
-    this.moveByGlobal(v.x, v.y, v.z);
-  }
-
-  /**
    * Moves the renderer's camera by a vector relative to its
    * orientation; causes the camera to orbit around the locus at which
    * it is looking.
@@ -840,14 +720,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    * @param y the vector y
    * @param z the vector z
    */
+  @Experimental
   public void moveByLocal (
       final float x,
       final float y,
       final float z ) {
-
-    if ( Vec3.areParallel(this.k, this.refUp, Up3.POLARITY_TOLERANCE) ) {
-      return;
-    }
 
     final PMatrix3D ci = this.cameraInv;
     final float w = ci.m30 * x + ci.m31 * y + ci.m32 * z + ci.m33;
@@ -856,75 +733,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final float xLocal = (ci.m00 * x + ci.m01 * y + ci.m02 * z) * wInv;
       final float yLocal = (ci.m10 * x + ci.m11 * y + ci.m12 * z) * wInv;
       final float zLocal = (ci.m20 * x + ci.m21 * y + ci.m22 * z) * wInv;
-      this.cameraX += xLocal;
-      this.cameraY += yLocal;
-      this.cameraZ += zLocal;
+
+      this.moveTo(
+          this.cameraX + xLocal,
+          this.cameraY + yLocal,
+          this.cameraZ + zLocal);
     }
-  }
-
-  /**
-   * Moves the renderer's camera by a vector relative to its
-   * orientation; causes the camera to orbit around the locus at which
-   * it is looking.
-   *
-   * @param v the vector
-   */
-  public void moveByLocal ( final Vec3 v ) {
-
-    this.moveByLocal(v.x, v.y, v.z);
-  }
-
-  /**
-   * Sets the renderer camera's location.
-   *
-   * @param x the x location
-   * @param y the y location
-   * @param z the z location
-   */
-  public void moveTo (
-      final float x,
-      final float y,
-      final float z ) {
-
-    this.cameraX = x;
-    this.cameraY = y;
-    this.cameraZ = z;
-  }
-
-  /**
-   * Sets the renderer camera's location.
-   *
-   * @param locNew the new location
-   */
-  public void moveTo ( final Vec3 locNew ) {
-
-    this.cameraX = locNew.x;
-    this.cameraY = locNew.y;
-    this.cameraZ = locNew.z;
-  }
-
-  /**
-   * Eases the renderer camera's location to the destination over a step
-   * in [0.0, 1.0] .
-   *
-   * @param locNew the new location
-   * @param step   the step
-   */
-  public void moveTo (
-      final Vec3 locNew,
-      final float step ) {
-
-    if ( step <= 0.0f ) { return; }
-    if ( step >= 1.0f ) {
-      this.moveTo(locNew.x, locNew.y, locNew.z);
-      return;
-    }
-
-    final float u = 1.0f - step;
-    this.moveTo(
-        u * this.cameraX + step * locNew.x,
-        u * this.cameraY + step * locNew.y,
-        u * this.cameraZ + step * locNew.z);
   }
 
   /**
@@ -1035,6 +849,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    *
    * @param y the y magnitude
    */
+  @Override
+  @Experimental
   public void pedestal ( final float y ) {
 
     final PMatrix3D ci = this.cameraInv;
@@ -1045,13 +861,24 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final float yLocal = ci.m11 * y * wInv;
       final float zLocal = ci.m21 * y * wInv;
 
-      this.cameraX += xLocal;
-      this.cameraY += yLocal;
-      this.cameraZ += zLocal;
+      // this.cameraX += xLocal;
+      // this.cameraY += yLocal;
+      // this.cameraZ += zLocal;
 
-      this.lookTarget.x += xLocal;
-      this.lookTarget.y += yLocal;
-      this.lookTarget.z += zLocal;
+      // this.lookTarget.x += xLocal;
+      // this.lookTarget.y += yLocal;
+      // this.lookTarget.z += zLocal;
+
+      this.camera(
+          this.cameraX + xLocal,
+          this.cameraY + yLocal,
+          this.cameraZ + zLocal,
+          this.lookTarget.x + xLocal,
+          this.lookTarget.y + yLocal,
+          this.lookTarget.z + zLocal,
+          this.refUp.x,
+          this.refUp.y,
+          this.refUp.z);
     }
   }
 
@@ -1443,10 +1270,53 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   }
 
   /**
+   * Moves the renderer's camera and its look target by a vector
+   * relative to its orientation.
+   *
+   * @param x the vector x
+   * @param y the vector y
+   * @param z the vector z
+   */
+  public void strafe (
+      final float x,
+      final float y,
+      final float z ) {
+
+    final PMatrix3D ci = this.cameraInv;
+    final float w = ci.m30 * x + ci.m31 * y + ci.m32 * z + ci.m33;
+    if ( w != 0.0f ) {
+      final float wInv = 1.0f / w;
+      final float xLocal = (ci.m00 * x + ci.m01 * y + ci.m02 * z) * wInv;
+      final float yLocal = (ci.m10 * x + ci.m11 * y + ci.m12 * z) * wInv;
+      final float zLocal = (ci.m20 * x + ci.m21 * y + ci.m22 * z) * wInv;
+
+      this.camera(
+          this.cameraX + xLocal,
+          this.cameraY + yLocal,
+          this.cameraZ + zLocal,
+          this.lookTarget.x + xLocal,
+          this.lookTarget.y + yLocal,
+          this.lookTarget.z + zLocal,
+          this.refUp.x,
+          this.refUp.y,
+          this.refUp.z);
+    }
+  }
+
+  /**
+   * Moves the renderer's camera and its look target by a vector
+   * relative to its orientation.
+   *
+   * @param v the vector
+   */
+  public void strafe ( final Vec3 v ) { this.strafe(v.x, v.y, v.z); }
+
+  /**
    * This parent function attempts to translate the text and then undo
    * the translation. It's better to acknowledge that text is 2D, not
    * 3D, in nature.
    */
+  @SuppressWarnings ( "unused" )
   @Override
   public void text (
       final char[] chars,
@@ -1464,6 +1334,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    * the translation. It's better to acknowledge that text is 2D, not
    * 3D, in nature.
    */
+  @SuppressWarnings ( "unused" )
   @Override
   public void text (
       final String str,
@@ -1587,6 +1458,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    *
    * @param x the x magnitude
    */
+  @Override
+  @Experimental
   public void truck ( final float x ) {
 
     final float w = this.cameraInv.m30 * x + this.cameraInv.m33;
@@ -1596,13 +1469,24 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final float yLocal = this.cameraInv.m10 * x * wInv;
       final float zLocal = this.cameraInv.m20 * x * wInv;
 
-      this.cameraX += xLocal;
-      this.cameraY += yLocal;
-      this.cameraZ += zLocal;
+      // this.cameraX += xLocal;
+      // this.cameraY += yLocal;
+      // this.cameraZ += zLocal;
 
-      this.lookTarget.x += xLocal;
-      this.lookTarget.y += yLocal;
-      this.lookTarget.z += zLocal;
+      // this.lookTarget.x += xLocal;
+      // this.lookTarget.y += yLocal;
+      // this.lookTarget.z += zLocal;
+
+      this.camera(
+          this.cameraX + xLocal,
+          this.cameraY + yLocal,
+          this.cameraZ + zLocal,
+          this.lookTarget.x + xLocal,
+          this.lookTarget.y + yLocal,
+          this.lookTarget.z + zLocal,
+          this.refUp.x,
+          this.refUp.y,
+          this.refUp.z);
     }
   }
 
@@ -1629,4 +1513,24 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
 
     this.vertexImpl(v.x, v.y, v.z, vt.x, vt.y);
   }
+
+  /**
+   * Default look at target x component.
+   */
+  public static final float DEFAULT_TARGET_X = 0.0f;
+
+  /**
+   * Default look at target y component.
+   */
+  public static final float DEFAULT_TARGET_Y = 0.0f;
+
+  /**
+   * Default look at target z component.
+   */
+  public static final float DEFAULT_TARGET_Z = 0.0f;
+
+  /**
+   * The path string for this renderer.
+   */
+  public static final String PATH_STR = "camzup.pfriendly.Up3";
 }

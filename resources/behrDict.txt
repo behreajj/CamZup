@@ -102,3 +102,5 @@ redo
 bitangent
 perimeter
 lemniscate
+kerning
+emitting

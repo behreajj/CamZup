@@ -8,122 +8,6 @@ package camzup.core;
 public class Knot2 implements Cloneable, Comparable < Knot2 > {
 
   /**
-   * An abstract class to facilitate the creation of knot easing
-   * functions.
-   */
-  public static abstract class AbstrEasing
-      implements Utils.EasingFuncObj < Knot2 > {
-
-    /**
-     * The default constructor.
-     */
-    public AbstrEasing ( ) { super(); }
-
-    /**
-     * A clamped interpolation between the origin and destination. Defers
-     * to an unclamped interpolation, which is to be defined by
-     * sub-classes of this class.
-     *
-     * @param origin the origin knot
-     * @param dest   the destination knot
-     * @param step   a factor in [0.0, 1.0]
-     * @param target the output knot
-     * @return the eased knot
-     */
-    @Override
-    public Knot2 apply (
-        final Knot2 origin,
-        final Knot2 dest,
-        final Float step,
-        final Knot2 target ) {
-
-      if ( step <= 0.0f ) { return target.set(origin); }
-      if ( step >= 1.0f ) { return target.set(dest); }
-      return this.applyUnclamped(origin, dest, step, target);
-    }
-
-    /**
-     * The interpolation to be defined by subclasses.
-     *
-     * @param origin the origin knot
-     * @param dest   the destination knot
-     * @param step   a factor in [0.0, 1.0]
-     * @param target the output knot
-     * @return the eased knot
-     */
-    public abstract Knot2 applyUnclamped (
-        final Knot2 origin,
-        final Knot2 dest,
-        final float step,
-        final Knot2 target );
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * A functional class to ease between two knots with linear
-   * interpolation.
-   */
-  public static class Lerp extends AbstrEasing {
-
-    /**
-     * The default constructor.
-     */
-    public Lerp ( ) { super(); }
-
-    /**
-     * Eases between two knots by a step using the formula (1.0 - t) * a +
-     * b .
-     *
-     * @param origin the origin knot
-     * @param dest   the destination knot
-     * @param step   the step
-     * @param target the output knot
-     * @return the eased knot
-     */
-    @Override
-    public Knot2 applyUnclamped (
-        final Knot2 origin,
-        final Knot2 dest,
-        final float step,
-        final Knot2 target ) {
-
-      final float u = 1.0f - step;
-
-      final Vec2 orCo = origin.coord;
-      final Vec2 orFh = origin.foreHandle;
-      final Vec2 orRh = origin.rearHandle;
-
-      final Vec2 deCo = dest.coord;
-      final Vec2 deFh = dest.foreHandle;
-      final Vec2 deRh = dest.rearHandle;
-
-      target.coord.set(
-          u * orCo.x + step * deCo.x,
-          u * orCo.y + step * deCo.y);
-
-      target.foreHandle.set(
-          u * orFh.x + step * deFh.x,
-          u * orFh.y + step * deFh.y);
-
-      target.rearHandle.set(
-          u * orRh.x + step * deRh.x,
-          u * orRh.y + step * deRh.y);
-
-      return target;
-    }
-  }
-
-  /**
    * The spatial coordinate of the knot.
    */
   public final Vec2 coord;
@@ -1101,6 +985,196 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
   }
 
   /**
+   * Sets two knots from a segment of the cubic curve. Assumes that that
+   * the previous knot's coordinate is set to the first anchor point.
+   * The previous knot's fore handle, the next knot's rear handle and
+   * the next knot's coordinate are set by this function.
+   *
+   * @param xPrevControl the previous control point x
+   * @param yPrevControl the previous control point y
+   * @param xNextControl the next control point x
+   * @param yNextControl the next control point y
+   * @param xNextAnchor  the next anchor x
+   * @param yNextAnchor  the next anchor y
+   * @param prevKnot     the previous knot
+   * @param nextKnot     the next knot
+   * @return next knot
+   */
+  public static Knot2 fromSegCubic (
+      final float xPrevControl,
+      final float yPrevControl,
+      final float xNextControl,
+      final float yNextControl,
+      final float xNextAnchor,
+      final float yNextAnchor,
+      final Knot2 prevKnot,
+      final Knot2 nextKnot ) {
+
+    prevKnot.foreHandle.set(
+        xPrevControl,
+        yPrevControl);
+
+    nextKnot.rearHandle.set(
+        xNextControl,
+        yNextControl);
+
+    nextKnot.coord.set(
+        xNextAnchor,
+        yNextAnchor);
+
+    return nextKnot;
+  }
+
+  /**
+   * Sets two knots from a segment of the cubic curve. Assumes that that
+   * the previous knot's coordinate is set to the first anchor point.
+   * The previous knot's fore handle, the next knot's rear handle and
+   * the next knot's coordinate are set by this function.
+   *
+   * @param prevControl the previous control point
+   * @param nextControl the next control point
+   * @param nextAnchor  the next anchor point
+   * @param prevKnot    the previous knot
+   * @param nextKnot    the next knot
+   * @return the next knot
+   */
+  public static Knot2 fromSegCubic (
+      final Vec2 prevControl,
+      final Vec2 nextControl,
+      final Vec2 nextAnchor,
+      final Knot2 prevKnot,
+      final Knot2 nextKnot ) {
+
+    return Knot2.fromSegCubic(
+        prevControl.x, prevControl.y,
+        nextControl.x, nextControl.y,
+        nextAnchor.x, nextAnchor.y,
+        prevKnot, nextKnot);
+  }
+
+  /**
+   * Sets a knot from line segment. Assumes that that the previous
+   * knot's coordinate is set to the first anchor point. The previous
+   * knot's fore handle, the next knot's rear handle and the next knot's
+   * coordinate are set by this function.
+   *
+   * @param xNextAnchor the next anchor x
+   * @param yNextAnchor the next anchor y
+   * @param prev        the previous knot
+   * @param next        the next knot
+   * @return the next knot
+   */
+  public static Knot2 fromSegLinear (
+      final float xNextAnchor,
+      final float yNextAnchor,
+      final Knot2 prev,
+      final Knot2 next ) {
+
+    next.coord.set(
+        xNextAnchor,
+        yNextAnchor);
+
+    Vec2.mix(prev.coord,
+        next.coord,
+        IUtils.ONE_THIRD,
+        prev.foreHandle);
+
+    Vec2.mix(next.coord,
+        prev.coord,
+        IUtils.ONE_THIRD,
+        next.rearHandle);
+
+    return next;
+  }
+
+  /**
+   * Sets a knot from line segment. Assumes that that the previous
+   * knot's coordinate is set to the first anchor point. The previous
+   * knot's fore handle, the next knot's rear handle and the next knot's
+   * coordinate are set by this function.
+   *
+   * @param nextAnchor the next anchor
+   * @param prev       the previous knot
+   * @param next       the next knot
+   * @return the next knot
+   */
+  public static Knot2 fromSegLinear (
+      final Vec2 nextAnchor,
+      final Knot2 prev,
+      final Knot2 next ) {
+
+    return Knot2.fromSegLinear(
+        nextAnchor.x, nextAnchor.y,
+        prev, next);
+  }
+
+  /**
+   * Sets two knots from a segment of the quadratic curve. Assumes that
+   * that the previous knot's coordinate is set to the first anchor
+   * point. The previous knot's fore handle, the next knot's rear handle
+   * and the next knot's coordinate are set by this function.
+   *
+   * @param xControl    the control point x
+   * @param yControl    the control point y
+   * @param xNextAnchor the next anchor x
+   * @param yNextAnchor the next anchor y
+   * @param prevKnot    the previous knot
+   * @param next        the next knot
+   * @return the next knot
+   */
+  public static Knot2 fromSegQuadratic (
+      final float xControl,
+      final float yControl,
+      final float xNextAnchor,
+      final float yNextAnchor,
+      final Knot2 prevKnot,
+      final Knot2 next ) {
+
+    final Vec2 prevCo = prevKnot.coord;
+
+    final float midpt23x = xControl * 0.6666666f;
+    final float midpt23y = yControl * 0.6666666f;
+
+    prevKnot.foreHandle.set(
+        midpt23x + IUtils.ONE_THIRD * prevCo.x,
+        midpt23y + IUtils.ONE_THIRD * prevCo.y);
+
+    next.rearHandle.set(
+        midpt23x + IUtils.ONE_THIRD * xNextAnchor,
+        midpt23y + IUtils.ONE_THIRD * yNextAnchor);
+
+    next.coord.set(
+        xNextAnchor,
+        yNextAnchor);
+
+    return next;
+  }
+
+  /**
+   * Sets two knots from a segment of the quadratic curve. Assumes that
+   * that the previous knot's coordinate is set to the first anchor
+   * point. The previous knot's fore handle, the next knot's rear handle
+   * and the next knot's coordinate are set by this function.
+   *
+   * @param control    the control point
+   * @param nextAnchor the next anchor point
+   * @param prevKnot   the previous knot
+   * @param nextKnot   the next knot
+   * @return the next knot
+   */
+  public static Knot2 fromSegQuadratic (
+      final Vec2 control,
+      final Vec2 nextAnchor,
+      final Knot2 prevKnot,
+      final Knot2 nextKnot ) {
+
+    return Knot2.fromSegQuadratic(
+        control.x, control.y,
+        nextAnchor.x, nextAnchor.y,
+        prevKnot, nextKnot);
+  }
+
+  /**
    * Mixes two knots together by a step in [0.0, 1.0] with the help of
    * an easing function.
    *
@@ -1132,5 +1206,277 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
   public static float rearHandleMag ( final Knot2 knot ) {
 
     return Vec2.distEuclidean(knot.coord, knot.rearHandle);
+  }
+
+  /**
+   * Smoothes the handles of a knot with reference to a previous and
+   * next knot. A helper function to
+   * {@link Curve2#smoothHandles(Curve2)} .
+   *
+   * @param prev the previous knot
+   * @param curr the current knot
+   * @param next the next knot
+   * @param dir  a temporary vector
+   * @return the current knot
+   */
+  public static Knot2 smoothHandles (
+      final Knot2 prev,
+      final Knot2 curr,
+      final Knot2 next,
+      final Vec2 dir ) {
+
+    final Vec2 coCurr = curr.coord;
+    final Vec2 coPrev = prev.coord;
+    final Vec2 coNext = next.coord;
+
+    final float backx = coPrev.x - coCurr.x;
+    final float backy = coPrev.y - coCurr.y;
+
+    final float forex = coNext.x - coCurr.x;
+    final float forey = coNext.y - coCurr.y;
+
+    final float bmSq = backx * backx + backy * backy;
+    final float bmInv = Utils.invSqrt(bmSq);
+
+    final float fmSq = forex * forex + forey * forey;
+    final float fmInv = Utils.invSqrt(fmSq);
+
+    final float dir2x = dir.x + backx * bmInv - forex * fmInv;
+    final float dir2y = dir.y + backy * bmInv - forey * fmInv;
+
+    final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(
+        dir2x * dir2x + dir2y * dir2y);
+    dir.x = dir2x * rescl;
+    dir.y = dir2y * rescl;
+
+    final float bMag = bmSq * bmInv;
+    curr.rearHandle.set(
+        coCurr.x + bMag * dir.x,
+        coCurr.y + bMag * dir.y);
+
+    final float fMag = fmSq * fmInv;
+    curr.foreHandle.set(
+        coCurr.x - fMag * dir.x,
+        coCurr.y - fMag * dir.y);
+
+    return curr;
+  }
+
+  /**
+   * Smoothes the rear handle of the last knot in an open curve. A
+   * helper function to {@link Curve2#smoothHandles(Curve2)} .
+   *
+   * @param prev the previous knot
+   * @param curr the current knot
+   * @param dir  a temporary vector
+   * @return the current knot
+   */
+  public static Knot2 smoothHandlesFinal (
+      final Knot2 prev,
+      final Knot2 curr,
+      final Vec2 dir ) {
+
+    final Vec2 coCurr = curr.coord;
+    final Vec2 coPrev = prev.coord;
+
+    final float backx = coPrev.x - coCurr.x;
+    final float backy = coPrev.y - coCurr.y;
+
+    final float forex = -coCurr.x;
+    final float forey = -coCurr.y;
+
+    final float bmSq = backx * backx + backy * backy;
+    final float bmInv = Utils.invSqrt(bmSq);
+    final float bMag = bmSq * bmInv;
+
+    final float fmSq = forex * forex + forey * forey;
+    final float fmInv = Utils.invSqrt(fmSq);
+
+    final float dir2x = dir.x + backx * bmInv - forex * fmInv;
+    final float dir2y = dir.y + backy * bmInv - forey * fmInv;
+
+    final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(
+        dir2x * dir2x + dir2y * dir2y);
+    dir.x = dir2x * rescl;
+    dir.y = dir2y * rescl;
+
+    curr.rearHandle.set(
+        coCurr.x + bMag * dir.x,
+        coCurr.y + bMag * dir.y);
+
+    // Should this just be a mirror of the rear handle instead?
+    // final float fMag = fmSq * fmInv;
+    // currKnot.foreHandle.set(
+    // coCurr.x - fMag * dir.x,
+    // coCurr.y - fMag * dir.y);
+
+    return curr;
+  }
+
+  /**
+   * Smoothes the fore handle of the first knot in an open curve. A
+   * helper function to {@link Curve2#smoothHandles(Curve2)} .
+   *
+   * @param curr the current knot
+   * @param next the next knot
+   * @param dir  a temporary vector
+   * @return the current knot
+   */
+  public static Knot2 smoothHandlesInitial (
+      final Knot2 curr,
+      final Knot2 next,
+      final Vec2 dir ) {
+
+    final Vec2 coCurr = curr.coord;
+    final Vec2 coNext = next.coord;
+
+    final float backx = -coCurr.x;
+    final float backy = -coCurr.y;
+
+    final float forex = coNext.x - coCurr.x;
+    final float forey = coNext.y - coCurr.y;
+
+    final float bmSq = backx * backx + backy * backy;
+    final float bmInv = Utils.invSqrt(bmSq);
+
+    final float fmSq = forex * forex + forey * forey;
+    final float fmInv = Utils.invSqrt(fmSq);
+    final float fMag = fmSq * fmInv;
+
+    final float dir2x = dir.x + backx * bmInv - forex * fmInv;
+    final float dir2y = dir.y + backy * bmInv - forey * fmInv;
+
+    final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(
+        dir2x * dir2x + dir2y * dir2y);
+    dir.x = dir2x * rescl;
+    dir.y = dir2y * rescl;
+
+    // Should this just be a mirror of the fore handle instead?
+    // final float bMag = bmSq * bmInv;
+    // currKnot.rearHandle.set(
+    // coCurr.x + bMag * dir.x,
+    // coCurr.y + bMag * dir.y);
+
+    curr.foreHandle.set(
+        coCurr.x - fMag * dir.x,
+        coCurr.y - fMag * dir.y);
+
+    return curr;
+  }
+
+  /**
+   * An abstract class to facilitate the creation of knot easing
+   * functions.
+   */
+  public static abstract class AbstrEasing
+      implements Utils.EasingFuncObj < Knot2 > {
+
+    /**
+     * The default constructor.
+     */
+    public AbstrEasing ( ) { super(); }
+
+    /**
+     * A clamped interpolation between the origin and destination. Defers
+     * to an unclamped interpolation, which is to be defined by
+     * sub-classes of this class.
+     *
+     * @param origin the origin knot
+     * @param dest   the destination knot
+     * @param step   a factor in [0.0, 1.0]
+     * @param target the output knot
+     * @return the eased knot
+     */
+    @Override
+    public Knot2 apply (
+        final Knot2 origin,
+        final Knot2 dest,
+        final Float step,
+        final Knot2 target ) {
+
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
+      return this.applyUnclamped(origin, dest, step, target);
+    }
+
+    /**
+     * The interpolation to be defined by subclasses.
+     *
+     * @param origin the origin knot
+     * @param dest   the destination knot
+     * @param step   a factor in [0.0, 1.0]
+     * @param target the output knot
+     * @return the eased knot
+     */
+    public abstract Knot2 applyUnclamped (
+        final Knot2 origin,
+        final Knot2 dest,
+        final float step,
+        final Knot2 target );
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * A functional class to ease between two knots with linear
+   * interpolation.
+   */
+  public static class Lerp extends AbstrEasing {
+
+    /**
+     * The default constructor.
+     */
+    public Lerp ( ) { super(); }
+
+    /**
+     * Eases between two knots by a step using the formula (1.0 - t) * a +
+     * b .
+     *
+     * @param origin the origin knot
+     * @param dest   the destination knot
+     * @param step   the step
+     * @param target the output knot
+     * @return the eased knot
+     */
+    @Override
+    public Knot2 applyUnclamped (
+        final Knot2 origin,
+        final Knot2 dest,
+        final float step,
+        final Knot2 target ) {
+
+      final float u = 1.0f - step;
+
+      final Vec2 orCo = origin.coord;
+      final Vec2 orFh = origin.foreHandle;
+      final Vec2 orRh = origin.rearHandle;
+
+      final Vec2 deCo = dest.coord;
+      final Vec2 deFh = dest.foreHandle;
+      final Vec2 deRh = dest.rearHandle;
+
+      target.coord.set(
+          u * orCo.x + step * deCo.x,
+          u * orCo.y + step * deCo.y);
+
+      target.foreHandle.set(
+          u * orFh.x + step * deFh.x,
+          u * orFh.y + step * deFh.y);
+
+      target.rearHandle.set(
+          u * orRh.x + step * deRh.x,
+          u * orRh.y + step * deRh.y);
+
+      return target;
+    }
   }
 }

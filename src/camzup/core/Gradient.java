@@ -16,11 +16,6 @@ import java.util.TreeSet;
 public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
   /**
-   * The default easing function, lerp RGBA.
-   */
-  private static Color.AbstrEasing EASING = new Color.LerpRgba();
-
-  /**
    * A temporary variable to hold queries in evaluation functions.
    */
   protected final ColorKey query = new ColorKey();
@@ -1317,6 +1312,11 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     sb.append("</linearGradient>");
     return sb.toString();
   }
+
+  /**
+   * The default easing function, lerp RGBA.
+   */
+  private static Color.AbstrEasing EASING = new Color.LerpRgba();
 
   /**
    * A helper function for parsing an OBJ file. Attempts to convert a

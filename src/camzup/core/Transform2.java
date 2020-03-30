@@ -9,165 +9,6 @@ import camzup.core.Utils.EasingFuncObj;
 public class Transform2 extends Transform {
 
   /**
-   * An easing function to facilitate animating multiple transforms.
-   */
-  public static class Easing implements EasingFuncArr < Transform2 >,
-      EasingFuncObj < Transform2 > {
-
-    /**
-     * The location easing function.
-     */
-    public final Vec2.AbstrEasing loc;
-
-    /**
-     * The rotation easing function.
-     */
-    public final Utils.PeriodicEasing rot;
-
-    /**
-     * The scale easing function.
-     */
-    public final Vec2.AbstrEasing scale;
-
-    /**
-     * The default constructor.
-     */
-    public Easing ( ) {
-
-      this.loc = new Vec2.Lerp();
-      this.rot = new Utils.LerpNear(IUtils.TAU);
-      this.scale = new Vec2.SmoothStep();
-    }
-
-    /**
-     * The easing constructor.
-     *
-     * @param locEasing   the location easing function
-     * @param rotEasing   the rotation easing function
-     * @param scaleEasing the scale easing function
-     */
-    public Easing (
-        final Vec2.AbstrEasing locEasing,
-        final Utils.PeriodicEasing rotEasing,
-        final Vec2.AbstrEasing scaleEasing ) {
-
-      this.loc = locEasing;
-      this.rot = rotEasing;
-      this.scale = scaleEasing;
-    }
-
-    /**
-     * Eases between an origin and destination transform by a step in
-     * [0.0, 1.0].
-     *
-     * @param origin the origin
-     * @param dest   the destination
-     * @param step   the step
-     * @param target the output transform
-     * @return the eased transform
-     */
-    @Override
-    public Transform2 apply (
-        final Transform2 origin,
-        final Transform2 dest,
-        final Float step,
-        final Transform2 target ) {
-
-      if ( step <= 0.0f ) { return target.set(origin); }
-      if ( step >= 1.0f ) { return target.set(dest); }
-      return this.applyUnclamped(origin, dest, step, target);
-    }
-
-    /**
-     * Eases between transforms in an array by a step in the range [0.0,
-     * 1.0].
-     *
-     * @param arr    the transform array
-     * @param step   the step
-     * @param target the output transform
-     */
-    @Override
-    public Transform2 apply (
-        final Transform2[] arr,
-        final Float step,
-        final Transform2 target ) {
-
-      final int len = arr.length;
-      if ( len == 1 || step <= 0.0f ) { return target.set(arr[0]); }
-
-      if ( step >= 1.0f ) { return target.set(arr[len - 1]); }
-
-      final float scaledStep = step * (len - 1);
-      final int i = (int) scaledStep;
-      final float nextStep = scaledStep - i;
-      return this.applyUnclamped(
-          arr[i], arr[i + 1],
-          nextStep,
-          target);
-    }
-
-    /**
-     * Eases between an origin and destination transform by a step in
-     * [0.0, 1.0].
-     *
-     * @param origin the origin
-     * @param dest   the destination
-     * @param step   the step
-     * @param target the output transform
-     * @return the eased transform
-     */
-    public Transform2 applyUnclamped (
-        final Transform2 origin,
-        final Transform2 dest,
-        final float step,
-        final Transform2 target ) {
-
-      target.locPrev.set(target.location);
-      this.loc.applyUnclamped(
-          origin.location,
-          dest.location,
-          step,
-          target.location);
-
-      target.rotPrev = target.rotation;
-      target.rotation = this.rot.applyUnclamped(
-          origin.rotation,
-          dest.rotation,
-          step);
-
-      target.scalePrev.set(target.scale);
-      this.loc.applyUnclamped(
-          origin.scale,
-          dest.scale,
-          step,
-          target.scale);
-
-      return target;
-    }
-
-    /**
-     * Returns a string representation of this easing function.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * The default easing function.
-   */
-  private static Easing EASING = new Easing();
-
-  /**
-   * The unique identification for serialized classes.
-   */
-  private static final long serialVersionUID = -4460673884822918485l;
-
-  /**
    * The transform's forward axis.
    */
   protected final Vec2 forward;
@@ -1091,6 +932,16 @@ public class Transform2 extends Transform {
   }
 
   /**
+   * The default easing function.
+   */
+  private static Easing EASING = new Easing();
+
+  /**
+   * The unique identification for serialized classes.
+   */
+  private static final long serialVersionUID = -4460673884822918485l;
+
+  /**
    * Creates a transform from axes: either separate vectors or the
    * columns of a matrix. This is an internal helper function. The
    * transform's translation is set to zero; its scale, to one.
@@ -1531,5 +1382,154 @@ public class Transform2 extends Transform {
   public static void setEasing ( final Transform2.Easing easing ) {
 
     if ( easing != null ) { Transform2.EASING = easing; }
+  }
+
+  /**
+   * An easing function to facilitate animating multiple transforms.
+   */
+  public static class Easing implements EasingFuncArr < Transform2 >,
+      EasingFuncObj < Transform2 > {
+
+    /**
+     * The location easing function.
+     */
+    public final Vec2.AbstrEasing loc;
+
+    /**
+     * The rotation easing function.
+     */
+    public final Utils.PeriodicEasing rot;
+
+    /**
+     * The scale easing function.
+     */
+    public final Vec2.AbstrEasing scale;
+
+    /**
+     * The default constructor.
+     */
+    public Easing ( ) {
+
+      this.loc = new Vec2.Lerp();
+      this.rot = new Utils.LerpNear(IUtils.TAU);
+      this.scale = new Vec2.SmoothStep();
+    }
+
+    /**
+     * The easing constructor.
+     *
+     * @param locEasing   the location easing function
+     * @param rotEasing   the rotation easing function
+     * @param scaleEasing the scale easing function
+     */
+    public Easing (
+        final Vec2.AbstrEasing locEasing,
+        final Utils.PeriodicEasing rotEasing,
+        final Vec2.AbstrEasing scaleEasing ) {
+
+      this.loc = locEasing;
+      this.rot = rotEasing;
+      this.scale = scaleEasing;
+    }
+
+    /**
+     * Eases between an origin and destination transform by a step in
+     * [0.0, 1.0].
+     *
+     * @param origin the origin
+     * @param dest   the destination
+     * @param step   the step
+     * @param target the output transform
+     * @return the eased transform
+     */
+    @Override
+    public Transform2 apply (
+        final Transform2 origin,
+        final Transform2 dest,
+        final Float step,
+        final Transform2 target ) {
+
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
+      return this.applyUnclamped(origin, dest, step, target);
+    }
+
+    /**
+     * Eases between transforms in an array by a step in the range [0.0,
+     * 1.0].
+     *
+     * @param arr    the transform array
+     * @param step   the step
+     * @param target the output transform
+     */
+    @Override
+    public Transform2 apply (
+        final Transform2[] arr,
+        final Float step,
+        final Transform2 target ) {
+
+      final int len = arr.length;
+      if ( len == 1 || step <= 0.0f ) { return target.set(arr[0]); }
+
+      if ( step >= 1.0f ) { return target.set(arr[len - 1]); }
+
+      final float scaledStep = step * (len - 1);
+      final int i = (int) scaledStep;
+      final float nextStep = scaledStep - i;
+      return this.applyUnclamped(
+          arr[i], arr[i + 1],
+          nextStep,
+          target);
+    }
+
+    /**
+     * Eases between an origin and destination transform by a step in
+     * [0.0, 1.0].
+     *
+     * @param origin the origin
+     * @param dest   the destination
+     * @param step   the step
+     * @param target the output transform
+     * @return the eased transform
+     */
+    public Transform2 applyUnclamped (
+        final Transform2 origin,
+        final Transform2 dest,
+        final float step,
+        final Transform2 target ) {
+
+      target.locPrev.set(target.location);
+      this.loc.applyUnclamped(
+          origin.location,
+          dest.location,
+          step,
+          target.location);
+
+      target.rotPrev = target.rotation;
+      target.rotation = this.rot.applyUnclamped(
+          origin.rotation,
+          dest.rotation,
+          step);
+
+      target.scalePrev.set(target.scale);
+      this.loc.applyUnclamped(
+          origin.scale,
+          dest.scale,
+          step,
+          target.scale);
+
+      return target;
+    }
+
+    /**
+     * Returns a string representation of this easing function.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
   }
 }

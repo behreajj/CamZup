@@ -8,6 +8,36 @@ package camzup.core;
 public interface IUtils {
 
   /**
+   * Returns an object's identity hash code.
+   *
+   * @return the identity hash
+   */
+  default int hashIdentity ( ) {
+
+    return System.identityHashCode(this);
+  }
+
+  /**
+   * Returns an object's identity hash code as a String.
+   *
+   * @return the identity hash string
+   */
+  default String hashIdentityString ( ) {
+
+    return Integer.toHexString(this.hashIdentity());
+  }
+
+  /**
+   * Returns an object's hash code as a String.
+   *
+   * @return the hash string
+   */
+  default String hashString ( ) {
+
+    return Integer.toHexString(this.hashCode());
+  }
+
+  /**
    * The smallest positive non-zero value, \u03b5. Useful for testing
    * approximation between two floats. Set to 0.000001 .
    *
@@ -268,34 +298,4 @@ public interface IUtils {
    * the field of view in a perspective camera.
    */
   double THIRD_PI_D = 1.0471975511965976d;
-
-  /**
-   * Returns an object's identity hash code.
-   *
-   * @return the identity hash
-   */
-  default int hashIdentity ( ) {
-
-    return System.identityHashCode(this);
-  }
-
-  /**
-   * Returns an object's identity hash code as a String.
-   *
-   * @return the identity hash string
-   */
-  default String hashIdentityString ( ) {
-
-    return Integer.toHexString(this.hashIdentity());
-  }
-
-  /**
-   * Returns an object's hash code as a String.
-   *
-   * @return the hash string
-   */
-  default String hashString ( ) {
-
-    return Integer.toHexString(this.hashCode());
-  }
 }

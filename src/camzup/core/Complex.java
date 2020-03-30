@@ -11,102 +11,6 @@ public class Complex implements Comparable < Complex >, Cloneable,
     Iterable < Float >, Serializable {
 
   /**
-   * An abstract class that may serve as an umbrella for any custom
-   * comparators of complex numbers.
-   */
-  public static abstract class AbstrComparator
-      implements Comparator < Complex > {
-
-    /**
-     * The default constructor.
-     */
-    public AbstrComparator ( ) {}
-
-    /**
-     * The compare function which must be implemented by sub- (child)
-     * classes of this class. Negative one should be returned when the
-     * left comparisand, a, is less than the right comparisand, b, by a
-     * measure. One should be returned when it is greater. Zero should be
-     * returned as a last resort, when a and b are equal or incomparable.
-     *
-     * @param a the left comparisand
-     * @param b the right comparisand
-     * @return the comparison
-     *
-     */
-    @Override
-    public abstract int compare ( final Complex a, final Complex b );
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * An iterator, which allows a complex number's components to be
-   * accessed in an enhanced for loop.
-   */
-  public final class CIterator implements Iterator < Float > {
-
-    /**
-     * The current index.
-     */
-    private int index = 0;
-
-    /**
-     * The complex number being iterated over.
-     */
-    private final Complex z;
-
-    /**
-     * The default constructor.
-     *
-     * @param z the complex number to iterator
-     */
-    public CIterator ( final Complex z ) { this.z = z; }
-
-    /**
-     * Tests to see if the iterator has another value.
-     *
-     * @return the evaluation
-     */
-    @Override
-    public boolean hasNext ( ) { return this.index < this.z.length(); }
-
-    /**
-     * Gets the next value in the iterator
-     *
-     * @return the value
-     * @see Complex#get(int)
-     */
-    @Override
-    public Float next ( ) { return this.z.get(this.index++); }
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * The unique identification for serialized classes.
-   */
-  private static final long serialVersionUID = 1389157472482304159L;
-
-  /**
    * The coefficient of the imaginary component <em>i</em>.
    */
   public float imag = 0.0f;
@@ -405,6 +309,11 @@ public class Complex implements Comparable < Complex >, Cloneable,
         .append('}')
         .toString();
   }
+
+  /**
+   * The unique identification for serialized classes.
+   */
+  private static final long serialVersionUID = 1389157472482304159L;
 
   /**
    * Finds the absolute of a complex number. Similar to a vector's
@@ -1132,5 +1041,96 @@ public class Complex implements Comparable < Complex >, Cloneable,
   public static Complex zero ( final Complex target ) {
 
     return target.set(0.0f, 0.0f);
+  }
+
+  /**
+   * An abstract class that may serve as an umbrella for any custom
+   * comparators of complex numbers.
+   */
+  public static abstract class AbstrComparator
+      implements Comparator < Complex > {
+
+    /**
+     * The default constructor.
+     */
+    public AbstrComparator ( ) {}
+
+    /**
+     * The compare function which must be implemented by sub- (child)
+     * classes of this class. Negative one should be returned when the
+     * left comparisand, a, is less than the right comparisand, b, by a
+     * measure. One should be returned when it is greater. Zero should be
+     * returned as a last resort, when a and b are equal or incomparable.
+     *
+     * @param a the left comparisand
+     * @param b the right comparisand
+     * @return the comparison
+     *
+     */
+    @Override
+    public abstract int compare ( final Complex a, final Complex b );
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * An iterator, which allows a complex number's components to be
+   * accessed in an enhanced for loop.
+   */
+  public final class CIterator implements Iterator < Float > {
+
+    /**
+     * The current index.
+     */
+    private int index = 0;
+
+    /**
+     * The complex number being iterated over.
+     */
+    private final Complex z;
+
+    /**
+     * The default constructor.
+     *
+     * @param z the complex number to iterator
+     */
+    public CIterator ( final Complex z ) { this.z = z; }
+
+    /**
+     * Tests to see if the iterator has another value.
+     *
+     * @return the evaluation
+     */
+    @Override
+    public boolean hasNext ( ) { return this.index < this.z.length(); }
+
+    /**
+     * Gets the next value in the iterator
+     *
+     * @return the value
+     * @see Complex#get(int)
+     */
+    @Override
+    public Float next ( ) { return this.z.get(this.index++); }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
   }
 }

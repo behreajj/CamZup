@@ -17,182 +17,6 @@ import java.util.TreeSet;
 public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
   /**
-   * Compares two face indices (an array of vertex indices) by averaging
-   * the vectors referenced by them, then comparing the averages.
-   */
-  protected static final class SortIndices2 implements Comparator < int[][] > {
-
-    /**
-     * Internal vector used to store the average coordinate for the left
-     * comparisand.
-     */
-    protected final Vec2 aAvg;
-
-    /**
-     * Internal vector used to store the average coordinate for the right
-     * comparisand.
-     */
-    protected final Vec2 bAvg;
-
-    /**
-     * The coordinates array.
-     */
-    final Vec2[] coords;
-
-    {
-      this.aAvg = new Vec2();
-      this.bAvg = new Vec2();
-    }
-
-    /**
-     * The default constructor.
-     *
-     * @param coords the coordinate array.
-     */
-    protected SortIndices2 ( final Vec2[] coords ) {
-
-      this.coords = coords;
-    }
-
-    /**
-     * Compares two faces indices.
-     *
-     * @param a the left comparisand
-     * @param b the right comparisandS
-     */
-    @Override
-    public int compare ( final int[][] a, final int[][] b ) {
-
-      this.aAvg.reset();
-      final int aLen = a.length;
-      for ( int i = 0; i < aLen; ++i ) {
-        Vec2.add(
-            this.aAvg,
-            this.coords[a[i][0]],
-            this.aAvg);
-      }
-      Vec2.div(this.aAvg, aLen, this.aAvg);
-
-      this.bAvg.reset();
-      final int bLen = b.length;
-      for ( int i = 0; i < bLen; ++i ) {
-        Vec2.add(
-            this.bAvg,
-            this.coords[b[i][0]],
-            this.bAvg);
-      }
-      Vec2.div(this.bAvg, bLen, this.bAvg);
-
-      return this.aAvg.compareTo(this.bAvg);
-    }
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * An iterator, which allows a mesh's faces to be accessed in an
-   * enhanced for loop.
-   */
-  public static final class Face2Iterator implements Iterator < Face2 > {
-
-    /**
-     * The current index.
-     */
-    private int index = 0;
-
-    /**
-     * The mesh being iterated over.
-     */
-    private final Mesh2 mesh;
-
-    /**
-     * The default constructor.
-     *
-     * @param mesh the mesh to iterate
-     */
-    public Face2Iterator ( final Mesh2 mesh ) { this.mesh = mesh; }
-
-    /**
-     * Tests to see if the iterator has another value.
-     *
-     * @return the evaluation
-     */
-    @Override
-    public boolean hasNext ( ) { return this.index < this.mesh.length(); }
-
-    /**
-     * Gets the next value in the iterator.
-     *
-     * @return the value
-     * @see Mesh2#getFace(int, Face2)
-     */
-    @Override
-    public Face2 next ( ) {
-
-      return this.mesh.getFace(this.index++, new Face2());
-    }
-
-    /**
-     * Gets the next value in the iterator.
-     *
-     * @param target the output face
-     * @return the value
-     * @see Mesh2#getFace(int, Face2)
-     */
-    public Face2 next ( final Face2 target ) {
-
-      return this.mesh.getFace(this.index++, target);
-    }
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * The type of polygon produced by the static polygon function.
-   */
-  public enum PolyType {
-
-    /**
-     * Create an n-sided polygon.
-     */
-    NGON ( ),
-
-    /**
-     * Create a triangle-based polygon.
-     */
-    TRI ( );
-
-    /**
-     * The default constructor.
-     */
-    private PolyType ( ) {}
-  }
-
-  /**
-   * Type of polygon to draw when it is not supplied to the polygon
-   * function.
-   */
-  public static final PolyType DEFAULT_POLY_TYPE = PolyType.NGON;
-
-  /**
    * An array of coordinates in the mesh.
    */
   public Vec2[] coords;
@@ -481,14 +305,29 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     final int len = this.coords.length;
     this.texCoords = Vec2.resize(this.texCoords, len);
 
-    final float xInv = dim.x == 0.0f ? IUtils.DEFAULT_EPSILON : 1.0f / dim.x;
-    final float yInv = dim.y == 0.0f ? IUtils.DEFAULT_EPSILON : 1.0f / dim.y;
+    if ( dim.x == 0.0f || dim.y == 0.0f ) { return this; }
+    final float xInv = 1.0f / dim.x;
+    final float yInv = 1.0f / dim.y;
 
     for ( int i = 0; i < len; ++i ) {
       final Vec2 v = this.coords[i];
       final Vec2 vt = this.texCoords[i];
       vt.x = (v.x - lb.x) * xInv;
       vt.y = 1.0f - (v.y - lb.y) * yInv;
+    }
+
+    // TEST
+
+    /* Assign coordinate index to UV index. */
+    final int[][][] fs = this.faces;
+    final int fsLen = fs.length;
+    for ( int i = 0; i < fsLen; ++i ) {
+      final int[][] f = fs[i];
+      final int fLen = f.length;
+      for ( int j = 0; j < fLen; ++j ) {
+        final int[] vert = f[j];
+        vert[1] = vert[0];
+      }
     }
 
     return this;
@@ -982,6 +821,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       Vec2.add(c, lb, c);
       Vec2.mul(c, scl, c);
     }
+
+    // TODO: Consider emitting an output transform so that the original
+    // offset and scale of the mesh can be retrained. (Same with
+    // toOrigin). (same with toOrigin or just use one vector).
 
     return this;
   }
@@ -1836,6 +1679,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
     return this;
   }
+
+  /**
+   * Type of polygon to draw when it is not supplied to the polygon
+   * function.
+   */
+  public static final PolyType DEFAULT_POLY_TYPE = PolyType.NGON;
 
   /**
    * Creates an arc from a start and stop angle.
@@ -2807,5 +2656,175 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     target.texCoords = vts.toArray(new Vec2[vts.size()]);
     target.faces = trgfs;
     return target;
+  }
+
+  /**
+   * Compares two face indices (an array of vertex indices) by averaging
+   * the vectors referenced by them, then comparing the averages.
+   */
+  protected static final class SortIndices2 implements Comparator < int[][] > {
+
+    /**
+     * Internal vector used to store the average coordinate for the left
+     * comparisand.
+     */
+    protected final Vec2 aAvg;
+
+    /**
+     * Internal vector used to store the average coordinate for the right
+     * comparisand.
+     */
+    protected final Vec2 bAvg;
+
+    /**
+     * The coordinates array.
+     */
+    final Vec2[] coords;
+
+    {
+      this.aAvg = new Vec2();
+      this.bAvg = new Vec2();
+    }
+
+    /**
+     * The default constructor.
+     *
+     * @param coords the coordinate array.
+     */
+    protected SortIndices2 ( final Vec2[] coords ) {
+
+      this.coords = coords;
+    }
+
+    /**
+     * Compares two faces indices.
+     *
+     * @param a the left comparisand
+     * @param b the right comparisandS
+     */
+    @Override
+    public int compare ( final int[][] a, final int[][] b ) {
+
+      this.aAvg.reset();
+      final int aLen = a.length;
+      for ( int i = 0; i < aLen; ++i ) {
+        Vec2.add(
+            this.aAvg,
+            this.coords[a[i][0]],
+            this.aAvg);
+      }
+      Vec2.div(this.aAvg, aLen, this.aAvg);
+
+      this.bAvg.reset();
+      final int bLen = b.length;
+      for ( int i = 0; i < bLen; ++i ) {
+        Vec2.add(
+            this.bAvg,
+            this.coords[b[i][0]],
+            this.bAvg);
+      }
+      Vec2.div(this.bAvg, bLen, this.bAvg);
+
+      return this.aAvg.compareTo(this.bAvg);
+    }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * An iterator, which allows a mesh's faces to be accessed in an
+   * enhanced for loop.
+   */
+  public static final class Face2Iterator implements Iterator < Face2 > {
+
+    /**
+     * The current index.
+     */
+    private int index = 0;
+
+    /**
+     * The mesh being iterated over.
+     */
+    private final Mesh2 mesh;
+
+    /**
+     * The default constructor.
+     *
+     * @param mesh the mesh to iterate
+     */
+    public Face2Iterator ( final Mesh2 mesh ) { this.mesh = mesh; }
+
+    /**
+     * Tests to see if the iterator has another value.
+     *
+     * @return the evaluation
+     */
+    @Override
+    public boolean hasNext ( ) { return this.index < this.mesh.length(); }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @return the value
+     * @see Mesh2#getFace(int, Face2)
+     */
+    @Override
+    public Face2 next ( ) {
+
+      return this.mesh.getFace(this.index++, new Face2());
+    }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @param target the output face
+     * @return the value
+     * @see Mesh2#getFace(int, Face2)
+     */
+    public Face2 next ( final Face2 target ) {
+
+      return this.mesh.getFace(this.index++, target);
+    }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * The type of polygon produced by the static polygon function.
+   */
+  public enum PolyType {
+
+    /**
+     * Create an n-sided polygon.
+     */
+    NGON ( ),
+
+    /**
+     * Create a triangle-based polygon.
+     */
+    TRI ( );
+
+    /**
+     * The default constructor.
+     */
+    private PolyType ( ) {}
   }
 }

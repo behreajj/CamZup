@@ -2,7 +2,20 @@ import camzup.pfriendly.*;
 import camzup.core.*;
 
 Yup2 graphics2;
-CurveEntity2[] glyphs;
+CurveEntity2[] glyCrv;
+MeshEntity2[] glyMsh;
+
+String str = "Qualia";
+boolean toggle = false;
+boolean showHandles = true;
+
+MaterialSolid matCrv = new MaterialSolid()
+  .setFill(false)
+  .setStroke(true)
+  .setStroke(#fff7d5)
+  .setStrokeWeight(1.0);
+
+MaterialPImage matMsh;
 
 PFont font;
 
@@ -13,30 +26,59 @@ void settings() {
 void setup() {
   graphics2 = (Yup2)getGraphics();
 
+  PImage txtr = createImage(512, 512, ARGB);
+  ZImage.rgb(txtr);
+  matMsh = new MaterialPImage(txtr);
+
   textMode(SHAPE);
-  font = createFont("Garamond", 160);
-  glyphs = graphics2.glyph(font, 0.02, "Qualia");
+  font = createFont("Arial", 64);
+  glyCrv = TextShape.glyphCurve(font, 0.0, false, str);
+  glyMsh = TextShape.glyphMesh(font, 100.0, false, str);
 
-  int len = glyphs.length;
-  float toPercent = 1.0 / len;
-  Vec2 right = new Vec2(width * 0.5, 0.0);
-  Vec2 left = Vec2.negate(right, new Vec2());
-  for (int i = 0; i < len; ++i) {
-    CurveEntity2 glyph = glyphs[i];
-    glyph.scaleTo(160);
-
-    float percent = i * toPercent;
-    Vec2 pos = Vec2.mix(left, right, percent, new Vec2());
-    glyph.moveTo(pos);
+  float scl = width * 0.4;
+  int len0 = glyCrv.length;
+  for (int i = 0; i < len0; ++i) {
+    CurveEntity2 glyph = glyCrv[i];
+    glyph.scaleTo(scl);
   }
+
+  int len1 = glyMsh.length;
+  for (int j = 0; j < len1; ++j) {
+    MeshEntity2 glyph = glyMsh[j];
+    glyph.scaleTo(scl);
+  }
+
+  graphics2.moveTo(width * 0.45, height * 0.25);
 }
 
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  graphics2.background();
-  graphics2.noFill();
-  for (CurveEntity2 glyph : glyphs) {
-    graphics2.shape(glyph);
+  graphics2.background(#202020);
+  graphics2.moveBy(1.0, 0.0);
+  graphics2.origin();
+
+
+  if (toggle) {
+    for (MeshEntity2 glyph : glyMsh) {
+      graphics2.shape(glyph, matMsh);
+    }
+  } else {
+    for (CurveEntity2 glyph : glyCrv) {
+      graphics2.shape(glyph, matCrv);
+      if (showHandles) {
+        graphics2.handles(glyph);
+      }
+    }
   }
+}
+
+void mouseReleased() {
+  if (mouseButton == LEFT) {
+    toggle = !toggle;
+  }
+}
+
+void keyReleased() {
+  showHandles = !showHandles;
 }

@@ -7,6 +7,45 @@ package camzup.pfriendly;
 public interface IUpOgl extends IUp {
 
   /**
+   * Sets default perspective and calls a perspective function.
+   */
+  void defaultPerspective ( );
+
+  /**
+   * Returns whether or not the renderer is 2D.
+   *
+   * @return the evaluation
+   */
+  boolean is2D ( );
+
+  /**
+   * Returns whether or not the renderer is 3D.
+   *
+   * @return the evaluation
+   */
+  boolean is3D ( );
+
+  /**
+   * Draws the world origin.
+   */
+  @Override
+  void origin ( );
+
+  /**
+   * Gets the renderer's texture sampling.
+   *
+   * @return the texture sampling
+   */
+  TextureSampling textureSampling ( );
+
+  /**
+   * Sets the renderer's texture sampling.
+   *
+   * @param sampleType the sampling type
+   */
+  void textureSampling ( TextureSampling sampleType );
+
+  /**
    * Default ambient light blue channel.
    */
   float DEFAULT_AMB_B = 0.2f;
@@ -50,38 +89,4 @@ public interface IUpOgl extends IUp {
    * Default specular light red channel.
    */
   float DEFAULT_SPEC_R = 0.375f;
-
-  /**
-   * Returns whether or not the renderer is 2D.
-   *
-   * @return the evaluation
-   */
-  boolean is2D ( );
-
-  /**
-   * Returns whether or not the renderer is 3D.
-   *
-   * @return the evaluation
-   */
-  boolean is3D ( );
-
-  /**
-   * Draws the world origin.
-   */
-  @Override
-  void origin ( );
-
-  /**
-   * Gets the renderer's texture sampling.
-   *
-   * @return the texture sampling
-   */
-  TextureSampling textureSampling ( );
-
-  /**
-   * Sets the renderer's texture sampling.
-   *
-   * @param sampleType the sampling type
-   */
-  void textureSampling ( TextureSampling sampleType );
 }

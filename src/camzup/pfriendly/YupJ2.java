@@ -43,11 +43,6 @@ import camzup.core.Vec2;
 public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
   /**
-   * The path string for this renderer.
-   */
-  public static final String PATH_STR = "camzup.pfriendly.YupJ2";
-
-  /**
    * A Java AWT affine transform object. This is cached so a new object
    * is not created when accessing or mutating the renderer matrix.
    */
@@ -518,46 +513,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
         this.curveDrawMatrix,
         this.curveBasisMatrix,
         this.curveDrawMatrix);
-  }
-
-  /**
-   * Sets the renderer's default styling.
-   */
-  @Override
-  protected void defaultSettings ( ) {
-
-    super.defaultSettings();
-    this.colorMode(PConstants.RGB, IUp.DEFAULT_COLOR_MAX);
-    this.fill(IUp.DEFAULT_FILL_COLOR);
-    this.stroke(IUp.DEFAULT_STROKE_COLOR);
-
-    this.setStrokeAwt(
-        PConstants.ROUND,
-        PConstants.ROUND,
-        IUp.DEFAULT_STROKE_WEIGHT);
-    this.stroke = true;
-
-    this.shape = 0;
-
-    this.rectMode(PConstants.CENTER);
-    this.ellipseMode(PConstants.CENTER);
-    this.imageMode(PConstants.CENTER);
-    this.shapeMode(PConstants.CENTER);
-
-    this.autoNormal = true;
-    this.textFont = null;
-    this.textSize = IUp.DEFAULT_TEXT_SIZE;
-    this.textLeading = IUp.DEFAULT_TEXT_LEADING;
-    this.textAlign = PConstants.CENTER;
-    this.textAlignY = PConstants.CENTER;
-    this.textMode = PConstants.MODEL;
-
-    if ( this.primaryGraphics ) { this.background(IUp.DEFAULT_BKG_COLOR); }
-
-    this.blendMode(PConstants.BLEND);
-
-    this.settingsInited = true;
-    this.reapplySettings = false;
   }
 
   /**
@@ -1223,6 +1178,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @param zy      the zoom y
    * @see Utils#modRadians(float)
    */
+  @Override
   public void camera (
       final float x,
       final float y,
@@ -1396,6 +1352,52 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     this.cameraRot = IYup2.DEFAULT_ROT;
 
     this.camera();
+  }
+
+  /**
+   * Sets the renderer's default styling.
+   */
+  @Override
+  public void defaultSettings ( ) {
+
+    super.defaultSettings();
+    this.colorMode(PConstants.RGB, IUp.DEFAULT_COLOR_MAX);
+    this.fill(IUp.DEFAULT_FILL_COLOR);
+    this.stroke(IUp.DEFAULT_STROKE_COLOR);
+
+    this.setStrokeAwt(
+        PConstants.ROUND,
+        PConstants.ROUND,
+        IUp.DEFAULT_STROKE_WEIGHT);
+    this.stroke = true;
+
+    this.shape = 0;
+
+    this.rectMode(PConstants.CENTER);
+    this.ellipseMode(PConstants.CENTER);
+    this.imageMode(PConstants.CENTER);
+    this.shapeMode(PConstants.CENTER);
+
+    this.autoNormal = true;
+    this.textFont = null;
+    this.textSize = IUp.DEFAULT_TEXT_SIZE;
+    this.textLeading = IUp.DEFAULT_TEXT_LEADING;
+    this.textAlign = PConstants.CENTER;
+    this.textAlignY = PConstants.CENTER;
+    this.textMode = PConstants.MODEL;
+
+    if ( this.primaryGraphics ) { this.background(IUp.DEFAULT_BKG_COLOR); }
+
+    this.blendMode(PConstants.BLEND);
+
+    this.settingsInited = true;
+    this.reapplySettings = false;
+
+    this.cameraX = IUp.DEFAULT_LOC_X;
+    this.cameraY = IUp.DEFAULT_LOC_Y;
+    this.cameraZoomX = IYup2.DEFAULT_ZOOM_X;
+    this.cameraZoomY = IYup2.DEFAULT_ZOOM_Y;
+    this.cameraRot = IYup2.DEFAULT_ROT;
   }
 
   /**
@@ -1697,7 +1699,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @return the rotation
    */
   @Override
-  public float getRot ( ) { return this.cameraRot; }
+  public float getRoll ( ) { return this.cameraRot; }
 
   /**
    * Gets the renderer's size.
@@ -2109,6 +2111,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     float hHalf = 0.0f;
 
     switch ( this.imageMode ) {
+
       case CORNERS:
 
         xTopLeft = Utils.min(a, c);
@@ -2146,6 +2149,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
         break;
 
       case CORNER:
+
       default:
 
         xTopLeft = a;
@@ -2153,6 +2157,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
         yTopLeft = b;
         yBottomRight = b - Utils.abs(d);
+
     }
 
     this.imageImpl(img,
@@ -2330,145 +2335,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
           coreFll.z,
           coreFll.w);
     }
-  }
-
-  /**
-   * Moves the renderer's camera location. Does not update the camera
-   * matrix; use in conjunction with {@link IYup2#camera()} .
-   *
-   * @param x the vector x
-   * @param y the vector y
-   */
-  public void moveBy ( final float x, final float y ) {
-
-    this.moveByLocal(x, y);
-  }
-
-  /**
-   * Moves the renderer's camera location. Does not update the camera
-   * matrix; use in conjunction with {@link IYup2#camera()} .
-   *
-   * @param v the vector
-   */
-  public void moveBy ( final Vec2 v ) {
-
-    this.moveByLocal(v.x, v.y);
-  }
-
-  /**
-   * Moves the renderer's camera by a vector.
-   *
-   * @param x the vector x
-   * @param y the vector y
-   */
-  public void moveByGlobal ( final float x, final float y ) {
-
-    this.cameraX += x;
-    this.cameraY += y;
-
-    this.camera(
-        this.cameraX,
-        this.cameraY,
-        this.cameraRot,
-        this.cameraZoomX,
-        this.cameraZoomY);
-  }
-
-  /**
-   * Moves the renderer's camera by a vector.
-   *
-   * @param v the vector
-   */
-  public void moveByGlobal ( final Vec2 v ) {
-
-    this.moveByGlobal(v.x, v.y);
-  }
-
-  /**
-   * Moves the renderer's camera location by a vector relative to its
-   * orientation.
-   *
-   * @param x the vector x
-   * @param y the vector y
-   */
-  public void moveByLocal ( final float x, final float y ) {
-
-    final float nrm = this.cameraRot * IUtils.ONE_TAU;
-    final float cosa = Utils.scNorm(nrm);
-    final float sina = Utils.scNorm(nrm - 0.25f);
-
-    this.cameraX += cosa * x - sina * y;
-    this.cameraY += cosa * y + sina * x;
-
-    this.camera(
-        this.cameraX,
-        this.cameraY,
-        this.cameraRot,
-        this.cameraZoomX,
-        this.cameraZoomY);
-  }
-
-  /**
-   * Moves the renderer's camera by a vector relative to its
-   * orientation.
-   *
-   * @param v the vector
-   */
-  public void moveByLocal ( final Vec2 v ) {
-
-    this.moveByLocal(v.x, v.y);
-  }
-
-  /**
-   * Sets the renderer camera's location.
-   *
-   * @param x the x location
-   * @param y the y location
-   */
-  public void moveTo ( final float x, final float y ) {
-
-    this.cameraX = x;
-    this.cameraY = y;
-
-    this.camera(
-        this.cameraX,
-        this.cameraY,
-        this.cameraRot,
-        this.cameraZoomX,
-        this.cameraZoomY);
-  }
-
-  /**
-   * Sets the renderer camera's location.
-   *
-   * @param locNew the new location
-   */
-  public void moveTo ( final Vec2 locNew ) {
-
-    this.moveTo(locNew.x, locNew.y);
-  }
-
-  /**
-   * Eases the renderer camera's location to the destination over a step
-   * in [0.0, 1.0] .
-   *
-   * @param locNew the new location
-   * @param step   the step
-   */
-  public void moveTo (
-      final Vec2 locNew,
-      final float step ) {
-
-    if ( step <= 0.0f ) { return; }
-    if ( step >= 1.0f ) {
-      this.moveTo(locNew.x, locNew.y);
-      return;
-    }
-
-    final float u = 1.0f - step;
-    this.moveTo(
-        u * this.cameraX + step * locNew.x,
-        u * this.cameraY + step * locNew.y);
   }
 
   /**
@@ -3098,6 +2964,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @param y the y coordinate
    * @return the screen x coordinate
    */
+  @SuppressWarnings ( "unused" )
   @Override
   public float screenX ( final float x, final float y, final float z ) {
 
@@ -3137,6 +3004,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * @return the screen y coordinate
    * @see YupJ2#screen(Vec2, Vec2)
    */
+  @SuppressWarnings ( "unused" )
   @Override
   public float screenY ( final float x, final float y, final float z ) {
 
@@ -4152,4 +4020,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
 
     this.vertex(v.x, v.y);
   }
+
+  /**
+   * The path string for this renderer.
+   */
+  public static final String PATH_STR = "camzup.pfriendly.YupJ2";
 }

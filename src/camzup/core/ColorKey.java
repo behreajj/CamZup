@@ -11,16 +11,6 @@ public class ColorKey
     implements Comparable < ColorKey >, Cloneable, Serializable {
 
   /**
-   * The unique identification for serialized classes.
-   */
-  private static final long serialVersionUID = -8845265266942414598L;
-
-  /**
-   * The default tolerance used when comparing color keys.
-   */
-  public static final float DEFAULT_TOLERANCE = 0.0005f;
-
-  /**
    * The key's color. Abbreviated to 'clr' because 'color' is a data
    * type in Processing IDE.
    */
@@ -385,6 +375,16 @@ public class ColorKey
         .append("\"/>")
         .toString();
   }
+
+  /**
+   * The unique identification for serialized classes.
+   */
+  private static final long serialVersionUID = -8845265266942414598L;
+
+  /**
+   * The default tolerance used when comparing color keys.
+   */
+  public static final float DEFAULT_TOLERANCE = 0.0005f;
 
   /**
    * Tests to see if two keys have approximately the same step.

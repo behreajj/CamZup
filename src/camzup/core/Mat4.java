@@ -13,64 +13,6 @@ import java.util.Iterator;
 public class Mat4 extends Matrix {
 
   /**
-   * An iterator, which allows a matrix's components to be accessed in
-   * an enhanced for loop.
-   */
-  public static final class M4Iterator implements Iterator < Float > {
-
-    /**
-     * The current index.
-     */
-    private int index = 0;
-
-    /**
-     * The matrix being iterated over.
-     */
-    private final Mat4 mtx;
-
-    /**
-     * The default constructor.
-     *
-     * @param mtx the matrix to iterate
-     */
-    public M4Iterator ( final Mat4 mtx ) { this.mtx = mtx; }
-
-    /**
-     * Tests to see if the iterator has another value.
-     *
-     * @return the evaluation
-     */
-    @Override
-    public boolean hasNext ( ) { return this.index < this.mtx.length(); }
-
-    /**
-     * Gets the next value in the iterator.
-     *
-     * @return the value
-     * @see Mat4#get(int)
-     */
-    @Override
-    public Float next ( ) { return this.mtx.get(this.index++); }
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-
-  }
-
-  /**
-   * The unique identification for serialized classes.
-   */
-  private static final long serialVersionUID = 4394235117465746059L;
-
-  /**
    * Component in row 0, column 0. The right axis x component.
    */
   public float m00 = 1.0f;
@@ -1130,6 +1072,11 @@ public class Mat4 extends Matrix {
         .append('\n')
         .toString();
   }
+
+  /**
+   * The unique identification for serialized classes.
+   */
+  private static final long serialVersionUID = 4394235117465746059L;
 
   /**
    * Adds two matrices together.
@@ -2321,5 +2268,58 @@ public class Mat4 extends Matrix {
         m.m01, m.m11, m.m21, m.m31,
         m.m02, m.m12, m.m22, m.m32,
         m.m03, m.m13, m.m23, m.m33);
+  }
+
+  /**
+   * An iterator, which allows a matrix's components to be accessed in
+   * an enhanced for loop.
+   */
+  public static final class M4Iterator implements Iterator < Float > {
+
+    /**
+     * The current index.
+     */
+    private int index = 0;
+
+    /**
+     * The matrix being iterated over.
+     */
+    private final Mat4 mtx;
+
+    /**
+     * The default constructor.
+     *
+     * @param mtx the matrix to iterate
+     */
+    public M4Iterator ( final Mat4 mtx ) { this.mtx = mtx; }
+
+    /**
+     * Tests to see if the iterator has another value.
+     *
+     * @return the evaluation
+     */
+    @Override
+    public boolean hasNext ( ) { return this.index < this.mtx.length(); }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @return the value
+     * @see Mat4#get(int)
+     */
+    @Override
+    public Float next ( ) { return this.mtx.get(this.index++); }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+
   }
 }

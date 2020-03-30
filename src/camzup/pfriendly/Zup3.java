@@ -14,56 +14,6 @@ import camzup.core.Vec3;
 public class Zup3 extends Up3 {
 
   /**
-   * Default lighting directional light axis x component.
-   */
-  public static final float DEFAULT_LIGHT_X = -0.18490006f;
-
-  /**
-   * Default lighting directional light axis y component.
-   */
-  public static final float DEFAULT_LIGHT_Y = -0.6471502f;
-
-  /**
-   * Default lighting directional light axis z component.
-   */
-  public static final float DEFAULT_LIGHT_Z = -0.73960024f;
-
-  /**
-   * Default camera location x component.
-   */
-  public static final float DEFAULT_LOC_X = 623.53827f;
-
-  /**
-   * Default camera location y component.
-   */
-  public static final float DEFAULT_LOC_Y = -623.53827f;
-
-  /**
-   * Default camera location z component.
-   */
-  public static final float DEFAULT_LOC_Z = 623.53827f;
-
-  /**
-   * Default world up x component.
-   */
-  public static final float DEFAULT_REF_X = 0.0f;
-
-  /**
-   * Default world up y component.
-   */
-  public static final float DEFAULT_REF_Y = 0.0f;
-
-  /**
-   * Default world up z component.
-   */
-  public static final float DEFAULT_REF_Z = 1.0f;
-
-  /**
-   * The path string for this renderer.
-   */
-  public static final String PATH_STR = "camzup.pfriendly.Zup3";
-
-  /**
    * The default constructor.
    */
   public Zup3 ( ) { super(); }
@@ -180,12 +130,6 @@ public class Zup3 extends Up3 {
      * Never use defCameraXXX values. They are not actual constants and
      * may not have been initialized.
      */
-    // this.camera(
-    // xEye, yEye, zEye,
-    // xCenter, yCenter, zCenter,
-    // Zup3.DEFAULT_REF_X,
-    // Zup3.DEFAULT_REF_Y,
-    // Zup3.DEFAULT_REF_Z);
 
     this.camera(
         xEye, yEye, zEye,
@@ -220,39 +164,17 @@ public class Zup3 extends Up3 {
       final float zUp ) {
 
     this.refUp.set(xUp, yUp, zUp);
-    if ( Vec3.magSq(this.refUp) < Up3.POLARITY_TOLERANCE ) {
-      this.refUp.set(
-          Zup3.DEFAULT_REF_X,
-          Zup3.DEFAULT_REF_Y,
-          Zup3.DEFAULT_REF_Z);
-      return;
-    }
 
     this.lookDir.set(
-        xEye - xCenter,
-        yEye - yCenter,
-        zEye - zCenter);
+        xEye - this.lookTarget.x,
+        yEye - this.lookTarget.y,
+        zEye - this.lookTarget.z);
+
     Vec3.normalize(this.lookDir, this.k);
 
-    if ( Vec3.areParallel(this.k, this.refUp,
-        Up3.POLARITY_TOLERANCE) ) {
-
-      this.lookDir.set(
-          Zup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
-          Zup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
-          Zup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
-
-      Vec3.forward(this.k);
-      Vec3.up(this.j);
-      Vec3.right(this.i);
-
-      this.refUp.set(
-          Zup3.DEFAULT_REF_X,
-          Zup3.DEFAULT_REF_Y,
-          Zup3.DEFAULT_REF_Z);
-
-      return;
-    }
+    final float dotp = Vec3.dot(this.k, this.refUp);
+    final float tol = 1.0f - IUp3.POLARITY_TOLERANCE;
+    if ( dotp < -tol || dotp > tol ) { return; }
 
     Vec3.crossNorm(this.refUp, this.k, this.i);
     Vec3.crossNorm(this.k, this.i, this.j);
@@ -260,8 +182,8 @@ public class Zup3 extends Up3 {
     this.cameraX = xEye;
     this.cameraY = yEye;
     this.cameraZ = zEye;
-    this.lookTarget.set(xCenter, yCenter, zCenter);
     this.eyeDist = Vec3.mag(this.lookDir);
+    this.lookTarget.set(xCenter, yCenter, zCenter);
 
     this.updateCamera();
   }
@@ -315,6 +237,40 @@ public class Zup3 extends Up3 {
     this.eyeDist = Vec3.mag(this.lookDir);
 
     this.camera();
+  }
+
+  /**
+   * Sets the renderer's default styling.
+   */
+  @Override
+  public void defaultSettings ( ) {
+
+    super.defaultSettings();
+
+    this.cameraX = this.defCameraX = Zup3.DEFAULT_LOC_X;
+    this.cameraY = this.defCameraY = Zup3.DEFAULT_LOC_Y;
+    this.cameraZ = this.defCameraZ = Zup3.DEFAULT_LOC_Z;
+
+    this.refUp.set(
+        Zup3.DEFAULT_REF_X,
+        Zup3.DEFAULT_REF_Y,
+        Zup3.DEFAULT_REF_Z);
+
+    this.lookTarget.set(
+        Up3.DEFAULT_TARGET_X,
+        Up3.DEFAULT_TARGET_Y,
+        Up3.DEFAULT_TARGET_Z);
+
+    this.lookDir.set(
+        Zup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
+        Zup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
+        Zup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
+
+    this.eyeDist = Vec3.mag(this.lookDir);
+
+    Vec3.right(this.i);
+    Vec3.forward(this.j);
+    Vec3.up(this.k);
   }
 
   /**
@@ -411,4 +367,54 @@ public class Zup3 extends Up3 {
    */
   @Override
   public String toString ( ) { return Zup3.PATH_STR; }
+
+  /**
+   * Default lighting directional light axis x component.
+   */
+  public static final float DEFAULT_LIGHT_X = -0.18490006f;
+
+  /**
+   * Default lighting directional light axis y component.
+   */
+  public static final float DEFAULT_LIGHT_Y = -0.6471502f;
+
+  /**
+   * Default lighting directional light axis z component.
+   */
+  public static final float DEFAULT_LIGHT_Z = -0.73960024f;
+
+  /**
+   * Default camera location x component.
+   */
+  public static final float DEFAULT_LOC_X = 623.53827f;
+
+  /**
+   * Default camera location y component.
+   */
+  public static final float DEFAULT_LOC_Y = -623.53827f;
+
+  /**
+   * Default camera location z component.
+   */
+  public static final float DEFAULT_LOC_Z = 623.53827f;
+
+  /**
+   * Default world up x component.
+   */
+  public static final float DEFAULT_REF_X = 0.0f;
+
+  /**
+   * Default world up y component.
+   */
+  public static final float DEFAULT_REF_Y = 0.0f;
+
+  /**
+   * Default world up z component.
+   */
+  public static final float DEFAULT_REF_Z = 1.0f;
+
+  /**
+   * The path string for this renderer.
+   */
+  public static final String PATH_STR = "camzup.pfriendly.Zup3";
 }

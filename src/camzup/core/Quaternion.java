@@ -18,391 +18,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     Iterable < Float >, Serializable {
 
   /**
-   * An abstract class that may serve as an umbrella for any custom
-   * comparators of Quaternions.
-   */
-  public static abstract class AbstrComparator
-      implements Comparator < Quaternion > {
-
-    /**
-     * The default constructor.
-     */
-    public AbstrComparator ( ) { super(); }
-
-    /**
-     * The compare function which must be implemented by sub- (child)
-     * classes of this class. Negative one should be returned when the
-     * left comparisand, a, is less than the right comparisand, b, by a
-     * measure. One should be returned when it is greater. Zero should be
-     * returned as a last resort, when a and b are equal or incomparable.
-     *
-     * @param a the left comparisand
-     * @param b the right comparisand
-     * @return the comparison
-     *
-     */
-    @Override
-    public abstract int compare ( final Quaternion a, final Quaternion b );
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * An abstract class to facilitate the creation of quaternion easing
-   * functions.
-   */
-  public static abstract class AbstrEasing
-      implements Utils.EasingFuncObj < Quaternion > {
-
-    /**
-     * The default constructor.
-     */
-    public AbstrEasing ( ) { super(); }
-
-    /**
-     * A clamped interpolation between the origin and destination.
-     * Normalizes the result even when the step is out of bounds. Defers
-     * to an unclamped interpolation, which is to be defined by
-     * sub-classes of this class.
-     *
-     * @param origin the origin quaternion
-     * @param dest   the destination quaternion
-     * @param step   a factor in [0.0, 1.0]
-     * @param target the output quaternion
-     * @return the eased quaternion
-     */
-    @Override
-    public Quaternion apply (
-        final Quaternion origin,
-        final Quaternion dest,
-        final Float step,
-        final Quaternion target ) {
-
-      if ( step <= 0.0f ) { return Quaternion.normalize(origin, target); }
-      if ( step >= 1.0f ) { return Quaternion.normalize(dest, target); }
-      return this.applyUnclamped(origin, dest, step, target);
-    }
-
-    /**
-     * The interpolation to be defined by subclasses.
-     *
-     * @param origin the origin quaternion
-     * @param dest   the destination quaternion
-     * @param step   a factor in [0.0, 1.0]
-     * @param target the output quaternion
-     * @return the eased quaternion
-     */
-    public abstract Quaternion applyUnclamped (
-        final Quaternion origin,
-        final Quaternion dest,
-        final float step,
-        final Quaternion target );
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * An iterator, which allows a quaternion's components to be accessed
-   * in an enhanced for loop. The 'w' component is listed first.
-   */
-  public static final class IteratorWFirst extends QIterator {
-
-    /**
-     * The default constructor.
-     *
-     * @param q the quaternion to iterate
-     */
-    public IteratorWFirst ( final Quaternion q ) { super(q); }
-
-    /**
-     * Gets the next value in the iterator.
-     *
-     * @return the value
-     */
-    @Override
-    public Float next ( ) { return this.quat.getWFirst(this.index++); }
-  }
-
-  /**
-   * An iterator, which allows a quaternion's components to be accessed
-   * in an enhanced for loop. The 'w' component is listed last.
-   */
-  public static final class IteratorWLast extends QIterator {
-
-    /**
-     * The default constructor.
-     *
-     * @param q the quaternion to iterate
-     */
-    public IteratorWLast ( final Quaternion q ) { super(q); }
-
-    /**
-     * Gets the next value in the iterator.
-     *
-     * @return the value
-     */
-    @Override
-    public Float next ( ) { return this.quat.getWLast(this.index++); }
-  }
-
-  /**
-   * A functional class to ease between two quaternions by linear
-   * interpolation (lerp).
-   */
-  public static class Lerp extends AbstrEasing {
-
-    /**
-     * The default constructor.
-     */
-    public Lerp ( ) { super(); }
-
-    /**
-     * Eases between the origin and destination quaternion by a step.
-     * Normalizes the result.
-     *
-     * @param origin the origin quaternion
-     * @param dest   the destination quaternion
-     * @param step   a factor in [0.0, 1.0]
-     * @param target the output quaternion
-     * @return the eased quaternion
-     * @see Math#abs(double)
-     * @see Math#sqrt(double)
-     */
-    @Override
-    public Quaternion applyUnclamped (
-        final Quaternion origin,
-        final Quaternion dest,
-        final float step,
-        final Quaternion target ) {
-
-      final double u = step;
-      final double v = 1.0d - u;
-
-      final Vec3 a = origin.imag;
-      final Vec3 b = dest.imag;
-
-      final double cw = u * origin.real + v * dest.real;
-      final double cx = u * a.x + v * b.x;
-      final double cy = u * a.y + v * b.y;
-      final double cz = u * a.z + v * b.z;
-
-      /* Normalize. */
-      final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
-
-      if ( Math.abs(mSq) < IUtils.DEFAULT_EPSILON ) { return target.reset(); }
-
-      if ( Math.abs(1.0d - mSq) < IUtils.DEFAULT_EPSILON ) {
-        return target.set(
-            (float) cw,
-            (float) cx,
-            (float) cy,
-            (float) cz);
-      }
-
-      final double mInv = 1.0d / Math.sqrt(mSq);
-      return target.set(
-          (float) (cw * mInv),
-          (float) (cx * mInv),
-          (float) (cy * mInv),
-          (float) (cz * mInv));
-    }
-  }
-
-  /**
-   * An iterator, which allows a quaternion's components to be accessed
-   * in an enhanced for loop. This class is abstract, and serves as a
-   * parent for other, more specific iterators.
-   */
-  public static abstract class QIterator implements Iterator < Float > {
-
-    /**
-     * The current index.
-     */
-    protected int index = 0;
-
-    /**
-     * The quaternion being iterated over.
-     */
-    protected final Quaternion quat;
-
-    /**
-     * The default constructor.
-     *
-     * @param q the quaternion to iterate
-     */
-    public QIterator ( final Quaternion q ) { this.quat = q; }
-
-    /**
-     * Tests to see if the iterator has another value.
-     *
-     * @return the evaluation
-     */
-    @Override
-    public boolean hasNext ( ) { return this.index < this.quat.length(); }
-
-    /**
-     * Gets the next value in the iterator.
-     *
-     * @return the value
-     */
-    @Override
-    public abstract Float next ( );
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * A functional class to ease between two quaternions by spherical
-   * linear interpolation (slerp). This chooses the shortest path
-   * between two orientations and maintains constant speed for a step
-   * given in [0.0, 1.0] .
-   */
-  public static class Slerp extends AbstrEasing {
-
-    /**
-     * The default constructor.
-     */
-    public Slerp ( ) { super(); }
-
-    /**
-     * Eases between two quaternions by a step.
-     *
-     * @param origin the origin quaternion
-     * @param dest   the destination quaternion
-     * @param step   a factor in [0.0, 1.0]
-     * @param target the output quaternion
-     * @return the eased quaternion
-     * @see Utils#clamp(float, float, float)
-     * @see Math#acos(double)
-     * @see Math#sqrt(double)
-     * @see Math#sin(double)
-     * @see Math#abs(double)
-     */
-    @Override
-    public Quaternion applyUnclamped (
-        final Quaternion origin,
-        final Quaternion dest,
-        final float step,
-        final Quaternion target ) {
-
-      /* Decompose origin vector. */
-      final Vec3 ai = origin.imag;
-      final float aw = origin.real;
-      final float ax = ai.x;
-      final float ay = ai.y;
-      final float az = ai.z;
-
-      /* Decompose destination vector. */
-      final Vec3 bi = dest.imag;
-      float bw = dest.real;
-      float bx = bi.x;
-      float by = bi.y;
-      float bz = bi.z;
-
-      /* Clamp the dot product here! */
-      float dotp = Utils.clamp(aw * bw +
-          ax * bx +
-          ay * by +
-          az * bz,
-          -1.0f, 1.0f);
-
-      /* Flip values if the orientation is negative. */
-      if ( dotp < 0.0f ) {
-        bw = -bw;
-        bx = -bx;
-        by = -by;
-        bz = -bz;
-        dotp = -dotp;
-      }
-
-      /*
-       * Java Math functions will promote values into doubles, so for
-       * precision, they'll be used until function close.
-       */
-      final double theta = Math.acos(dotp);
-      final double sinTheta = Math.sqrt(1.0d - dotp * dotp);
-
-      /* The complementary step, i.e., 1.0 - step. */
-      double u = 1.0d;
-
-      /* The step. */
-      double v = 0.0d;
-
-      if ( sinTheta > IUtils.DEFAULT_EPSILON ) {
-        final double sInv = 1.0d / sinTheta;
-        u = Math.sin((1.0f - step) * theta) * sInv;
-        v = Math.sin(step * theta) * sInv;
-      } else {
-        u = 1.0d - step;
-        v = step;
-      }
-
-      /* Unclamped linear interpolation. */
-      final double cw = u * aw + v * bw;
-      final double cx = u * ax + v * bx;
-      final double cy = u * ay + v * by;
-      final double cz = u * az + v * bz;
-
-      /* Normalize. */
-      final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
-
-      if ( Math.abs(mSq) < IUtils.DEFAULT_EPSILON ) { return target.reset(); }
-
-      if ( Math.abs(1.0d - mSq) < IUtils.DEFAULT_EPSILON ) {
-        return target.set(
-            (float) cw,
-            (float) cx,
-            (float) cy,
-            (float) cz);
-      }
-
-      final double mInv = 1.0d / Math.sqrt(mSq);
-      return target.set(
-          (float) (cw * mInv),
-          (float) (cx * mInv),
-          (float) (cy * mInv),
-          (float) (cz * mInv));
-    }
-  }
-
-  /**
-   * The default easing function.
-   */
-  private static AbstrEasing EASING = new Slerp();
-
-  /**
-   * The unique identification for serialized classes.
-   */
-  private static final long serialVersionUID = -7363582058797081319L;
-
-  /**
    * The coefficients of the imaginary components <em>i</em>, <em>j</em>
    * and <em>k</em>.
    */
@@ -907,6 +522,16 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     this.imag.z = z;
     return this;
   }
+
+  /**
+   * The default easing function.
+   */
+  private static AbstrEasing EASING = new Slerp();
+
+  /**
+   * The unique identification for serialized classes.
+   */
+  private static final long serialVersionUID = -7363582058797081319L;
 
   /**
    * Finds the value of Euler's number <em>e</em> raised to the power of
@@ -2768,5 +2393,380 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
         ay * mInv,
         az * mInv);
     return angle;
+  }
+
+  /**
+   * An abstract class that may serve as an umbrella for any custom
+   * comparators of Quaternions.
+   */
+  public static abstract class AbstrComparator
+      implements Comparator < Quaternion > {
+
+    /**
+     * The default constructor.
+     */
+    public AbstrComparator ( ) { super(); }
+
+    /**
+     * The compare function which must be implemented by sub- (child)
+     * classes of this class. Negative one should be returned when the
+     * left comparisand, a, is less than the right comparisand, b, by a
+     * measure. One should be returned when it is greater. Zero should be
+     * returned as a last resort, when a and b are equal or incomparable.
+     *
+     * @param a the left comparisand
+     * @param b the right comparisand
+     * @return the comparison
+     *
+     */
+    @Override
+    public abstract int compare ( final Quaternion a, final Quaternion b );
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * An abstract class to facilitate the creation of quaternion easing
+   * functions.
+   */
+  public static abstract class AbstrEasing
+      implements Utils.EasingFuncObj < Quaternion > {
+
+    /**
+     * The default constructor.
+     */
+    public AbstrEasing ( ) { super(); }
+
+    /**
+     * A clamped interpolation between the origin and destination.
+     * Normalizes the result even when the step is out of bounds. Defers
+     * to an unclamped interpolation, which is to be defined by
+     * sub-classes of this class.
+     *
+     * @param origin the origin quaternion
+     * @param dest   the destination quaternion
+     * @param step   a factor in [0.0, 1.0]
+     * @param target the output quaternion
+     * @return the eased quaternion
+     */
+    @Override
+    public Quaternion apply (
+        final Quaternion origin,
+        final Quaternion dest,
+        final Float step,
+        final Quaternion target ) {
+
+      if ( step <= 0.0f ) { return Quaternion.normalize(origin, target); }
+      if ( step >= 1.0f ) { return Quaternion.normalize(dest, target); }
+      return this.applyUnclamped(origin, dest, step, target);
+    }
+
+    /**
+     * The interpolation to be defined by subclasses.
+     *
+     * @param origin the origin quaternion
+     * @param dest   the destination quaternion
+     * @param step   a factor in [0.0, 1.0]
+     * @param target the output quaternion
+     * @return the eased quaternion
+     */
+    public abstract Quaternion applyUnclamped (
+        final Quaternion origin,
+        final Quaternion dest,
+        final float step,
+        final Quaternion target );
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * An iterator, which allows a quaternion's components to be accessed
+   * in an enhanced for loop. The 'w' component is listed first.
+   */
+  public static final class IteratorWFirst extends QIterator {
+
+    /**
+     * The default constructor.
+     *
+     * @param q the quaternion to iterate
+     */
+    public IteratorWFirst ( final Quaternion q ) { super(q); }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @return the value
+     */
+    @Override
+    public Float next ( ) { return this.quat.getWFirst(this.index++); }
+  }
+
+  /**
+   * An iterator, which allows a quaternion's components to be accessed
+   * in an enhanced for loop. The 'w' component is listed last.
+   */
+  public static final class IteratorWLast extends QIterator {
+
+    /**
+     * The default constructor.
+     *
+     * @param q the quaternion to iterate
+     */
+    public IteratorWLast ( final Quaternion q ) { super(q); }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @return the value
+     */
+    @Override
+    public Float next ( ) { return this.quat.getWLast(this.index++); }
+  }
+
+  /**
+   * A functional class to ease between two quaternions by linear
+   * interpolation (lerp).
+   */
+  public static class Lerp extends AbstrEasing {
+
+    /**
+     * The default constructor.
+     */
+    public Lerp ( ) { super(); }
+
+    /**
+     * Eases between the origin and destination quaternion by a step.
+     * Normalizes the result.
+     *
+     * @param origin the origin quaternion
+     * @param dest   the destination quaternion
+     * @param step   a factor in [0.0, 1.0]
+     * @param target the output quaternion
+     * @return the eased quaternion
+     * @see Math#abs(double)
+     * @see Math#sqrt(double)
+     */
+    @Override
+    public Quaternion applyUnclamped (
+        final Quaternion origin,
+        final Quaternion dest,
+        final float step,
+        final Quaternion target ) {
+
+      final double u = step;
+      final double v = 1.0d - u;
+
+      final Vec3 a = origin.imag;
+      final Vec3 b = dest.imag;
+
+      final double cw = u * origin.real + v * dest.real;
+      final double cx = u * a.x + v * b.x;
+      final double cy = u * a.y + v * b.y;
+      final double cz = u * a.z + v * b.z;
+
+      /* Normalize. */
+      final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
+
+      if ( Math.abs(mSq) < IUtils.DEFAULT_EPSILON ) { return target.reset(); }
+
+      if ( Math.abs(1.0d - mSq) < IUtils.DEFAULT_EPSILON ) {
+        return target.set(
+            (float) cw,
+            (float) cx,
+            (float) cy,
+            (float) cz);
+      }
+
+      final double mInv = 1.0d / Math.sqrt(mSq);
+      return target.set(
+          (float) (cw * mInv),
+          (float) (cx * mInv),
+          (float) (cy * mInv),
+          (float) (cz * mInv));
+    }
+  }
+
+  /**
+   * An iterator, which allows a quaternion's components to be accessed
+   * in an enhanced for loop. This class is abstract, and serves as a
+   * parent for other, more specific iterators.
+   */
+  public static abstract class QIterator implements Iterator < Float > {
+
+    /**
+     * The current index.
+     */
+    protected int index = 0;
+
+    /**
+     * The quaternion being iterated over.
+     */
+    protected final Quaternion quat;
+
+    /**
+     * The default constructor.
+     *
+     * @param q the quaternion to iterate
+     */
+    public QIterator ( final Quaternion q ) { this.quat = q; }
+
+    /**
+     * Tests to see if the iterator has another value.
+     *
+     * @return the evaluation
+     */
+    @Override
+    public boolean hasNext ( ) { return this.index < this.quat.length(); }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @return the value
+     */
+    @Override
+    public abstract Float next ( );
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * A functional class to ease between two quaternions by spherical
+   * linear interpolation (slerp). This chooses the shortest path
+   * between two orientations and maintains constant speed for a step
+   * given in [0.0, 1.0] .
+   */
+  public static class Slerp extends AbstrEasing {
+
+    /**
+     * The default constructor.
+     */
+    public Slerp ( ) { super(); }
+
+    /**
+     * Eases between two quaternions by a step.
+     *
+     * @param origin the origin quaternion
+     * @param dest   the destination quaternion
+     * @param step   a factor in [0.0, 1.0]
+     * @param target the output quaternion
+     * @return the eased quaternion
+     * @see Utils#clamp(float, float, float)
+     * @see Math#acos(double)
+     * @see Math#sqrt(double)
+     * @see Math#sin(double)
+     * @see Math#abs(double)
+     */
+    @Override
+    public Quaternion applyUnclamped (
+        final Quaternion origin,
+        final Quaternion dest,
+        final float step,
+        final Quaternion target ) {
+
+      /* Decompose origin vector. */
+      final Vec3 ai = origin.imag;
+      final float aw = origin.real;
+      final float ax = ai.x;
+      final float ay = ai.y;
+      final float az = ai.z;
+
+      /* Decompose destination vector. */
+      final Vec3 bi = dest.imag;
+      float bw = dest.real;
+      float bx = bi.x;
+      float by = bi.y;
+      float bz = bi.z;
+
+      /* Clamp the dot product here! */
+      float dotp = Utils.clamp(aw * bw +
+          ax * bx +
+          ay * by +
+          az * bz,
+          -1.0f, 1.0f);
+
+      /* Flip values if the orientation is negative. */
+      if ( dotp < 0.0f ) {
+        bw = -bw;
+        bx = -bx;
+        by = -by;
+        bz = -bz;
+        dotp = -dotp;
+      }
+
+      /*
+       * Java Math functions will promote values into doubles, so for
+       * precision, they'll be used until function close.
+       */
+      final double theta = Math.acos(dotp);
+      final double sinTheta = Math.sqrt(1.0d - dotp * dotp);
+
+      /* The complementary step, i.e., 1.0 - step. */
+      double u = 1.0d;
+
+      /* The step. */
+      double v = 0.0d;
+
+      if ( sinTheta > IUtils.DEFAULT_EPSILON ) {
+        final double sInv = 1.0d / sinTheta;
+        u = Math.sin((1.0f - step) * theta) * sInv;
+        v = Math.sin(step * theta) * sInv;
+      } else {
+        u = 1.0d - step;
+        v = step;
+      }
+
+      /* Unclamped linear interpolation. */
+      final double cw = u * aw + v * bw;
+      final double cx = u * ax + v * bx;
+      final double cy = u * ay + v * by;
+      final double cz = u * az + v * bz;
+
+      /* Normalize. */
+      final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
+
+      if ( Math.abs(mSq) < IUtils.DEFAULT_EPSILON ) { return target.reset(); }
+
+      if ( Math.abs(1.0d - mSq) < IUtils.DEFAULT_EPSILON ) {
+        return target.set(
+            (float) cw,
+            (float) cx,
+            (float) cy,
+            (float) cz);
+      }
+
+      final double mInv = 1.0d / Math.sqrt(mSq);
+      return target.set(
+          (float) (cw * mInv),
+          (float) (cx * mInv),
+          (float) (cy * mInv),
+          (float) (cz * mInv));
+    }
   }
 }

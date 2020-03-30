@@ -14,205 +14,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
     Serializable {
 
   /**
-   * An abstract class that may serve as an umbrella for any custom
-   * comparators of Vec4 s.
-   */
-  public static abstract class AbstrComparator implements Comparator < Vec4 > {
-
-    /**
-     * The default constructor.
-     */
-    public AbstrComparator ( ) {}
-
-    /**
-     * The compare function which must be implemented by sub- (child)
-     * classes of this class. Negative one should be returned when the
-     * left comparisand, a, is less than the right comparisand, b, by a
-     * measure. One should be returned when it is greater. Zero should be
-     * returned as a last resort, when a and b are equal or incomparable.
-     *
-     * @param a the left comparisand
-     * @param b the right comparisand
-     * @return the comparison
-     *
-     */
-    @Override
-    public abstract int compare ( final Vec4 a, final Vec4 b );
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * An abstract class to facilitate the creation of vector easing
-   * functions.
-   */
-  public static abstract class AbstrEasing
-      implements Utils.EasingFuncObj < Vec4 > {
-
-    /**
-     * The default constructor.
-     */
-    public AbstrEasing ( ) {}
-
-    /**
-     * A clamped interpolation between the origin and destination. Defers
-     * to an unclamped interpolation, which is to be defined by
-     * sub-classes of this class.
-     *
-     * @param origin the origin vector
-     * @param dest   the destination vector
-     * @param step   a factor in [0.0, 1.0]
-     * @param target the output vector
-     * @return the eased vector
-     */
-    @Override
-    public Vec4 apply (
-        final Vec4 origin,
-        final Vec4 dest,
-        final Float step,
-        final Vec4 target ) {
-
-      if ( step <= 0.0f ) { return target.set(origin); }
-      if ( step >= 1.0f ) { return target.set(dest); }
-      return this.applyUnclamped(origin, dest, step, target);
-    }
-
-    /**
-     * The interpolation to be defined by subclasses.
-     *
-     * @param origin the origin vector
-     * @param dest   the destination vector
-     * @param step   a factor in [0.0, 1.0]
-     * @param target the output vector
-     * @return the eased vector
-     */
-    public abstract Vec4 applyUnclamped (
-        final Vec4 origin,
-        final Vec4 dest,
-        final float step,
-        Vec4 target );
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * A linear interpolation functional class.
-   */
-  public static class Lerp extends AbstrEasing {
-
-    /**
-     * The default constructor.
-     */
-    public Lerp ( ) { super(); }
-
-    /**
-     * Eases between two vectors by a step using the formula (1.0 - t) * a
-     * + b . Promotes the step from a float to a double.
-     *
-     * @param origin the origin vector
-     * @param dest   the destination vector
-     * @param step   the step
-     * @param target the output vector
-     * @return the result
-     */
-    @Override
-    public Vec4 applyUnclamped (
-        final Vec4 origin,
-        final Vec4 dest,
-        final float step,
-        final Vec4 target ) {
-
-      final double td = step;
-      final double ud = 1.0d - td;
-      return target.set(
-          (float) (ud * origin.x + td * dest.x),
-          (float) (ud * origin.y + td * dest.y),
-          (float) (ud * origin.z + td * dest.z),
-          (float) (ud * origin.w + td * dest.w));
-    }
-  }
-
-  /**
-   * An iterator, which allows a vector's components to be accessed in
-   * an enhanced for loop.
-   */
-  public static final class V4Iterator implements Iterator < Float > {
-
-    /**
-     * The current index.
-     */
-    private int index = 0;
-
-    /**
-     * The vector being iterated over.
-     */
-    private final Vec4 vec;
-
-    /**
-     * The default constructor.
-     *
-     * @param vec the vector to iterate
-     */
-    public V4Iterator ( final Vec4 vec ) { this.vec = vec; }
-
-    /**
-     * Tests to see if the iterator has another value.
-     *
-     * @return the evaluation
-     */
-    @Override
-    public boolean hasNext ( ) { return this.index < this.vec.length(); }
-
-    /**
-     * Gets the next value in the iterator.
-     *
-     * @see Vec4#get(int)
-     * @return the value
-     */
-    @Override
-    public Float next ( ) { return this.vec.get(this.index++); }
-
-    /**
-     * Returns the simple name of this class.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-    }
-  }
-
-  /**
-   * The default easing function, lerp.
-   */
-  private static transient AbstrEasing EASING = new Lerp();
-
-  /**
-   * The unique identification for serialized classes.
-   */
-  private static final long serialVersionUID = -7601802836396728054L;
-
-  /**
    * Component on the w axis. Commonly used to store 1.0 for points and
    * 0.0 for vectors when multiplying with a 4 x 4 matrix. Also used to
    * store alpha (transparency) for colors.
@@ -700,6 +501,16 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
         .append(' ').append('}')
         .toString();
   }
+
+  /**
+   * The default easing function, lerp.
+   */
+  private static transient AbstrEasing EASING = new Lerp();
+
+  /**
+   * The unique identification for serialized classes.
+   */
+  private static final long serialVersionUID = -7601802836396728054L;
 
   /**
    * Finds the absolute value of each vector component.
@@ -1664,8 +1475,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
   }
 
   /**
-   * Mixes two vectors together by a step in [0.0, 1.0]. Uses the easing
-   * function that is a static field belonging to the Vec3 class.
+   * Mixes two vectors together by a step in [0.0, 1.0] .
    *
    * @param origin the original vector
    * @param dest   the destination vector
@@ -1680,7 +1490,17 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
       final float step,
       final Vec4 target ) {
 
-    return Vec4.EASING.apply(origin, dest, step, target);
+    // return Vec4.EASING.apply(origin, dest, step, target);
+
+    if ( step <= 0.0f ) { return target.set(origin); }
+    if ( step >= 1.0f ) { return target.set(dest); }
+
+    final float u = 1.0f - step;
+    return target.set(
+        u * origin.x + step * dest.x,
+        u * origin.y + step * dest.y,
+        u * origin.z + step * dest.z,
+        u * origin.w + step * dest.w);
   }
 
   /**
@@ -2224,101 +2044,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
     return target.set(1.0f, 0.0f, 0.0f, 0.0f);
   }
 
-  @Experimental
-  public static Vec4 rotateXW (
-      final Vec4 v,
-      final float cosa,
-      final float sina,
-      final Vec4 target ) {
-
-    // TEST
-
-    return target.set(
-        v.x,
-        cosa * v.y - sina * v.z,
-        cosa * v.z + sina * v.y,
-        v.w);
-  }
-
-  @Experimental
-  public static Vec4 rotateXY (
-      final Vec4 v,
-      final float cosa,
-      final float sina,
-      final Vec4 target ) {
-
-    // TEST
-
-    return target.set(
-        v.x,
-        v.y,
-        cosa * v.z - sina * v.w,
-        cosa * v.w + sina * v.z);
-  }
-
-  @Experimental
-  public static Vec4 rotateXZ (
-      final Vec4 v,
-      final float cosa,
-      final float sina,
-      final Vec4 target ) {
-
-    // TEST
-
-    return target.set(
-        v.x,
-        cosa * v.y - sina * v.w,
-        v.z,
-        cosa * v.w + sina * v.y);
-  }
-
-  @Experimental
-  public static Vec4 rotateYW (
-      final Vec4 v,
-      final float cosa,
-      final float sina,
-      final Vec4 target ) {
-
-    // TEST
-
-    return target.set(
-        cosa * v.x - sina * v.z,
-        v.y,
-        cosa * v.z + sina * v.x,
-        v.w);
-  }
-
-  @Experimental
-  public static Vec4 rotateYZ (
-      final Vec4 v,
-      final float cosa,
-      final float sina,
-      final Vec4 target ) {
-
-    // TEST
-
-    return target.set(
-        cosa * v.x - sina * v.w,
-        v.y,
-        v.z,
-        cosa * v.w + sina * v.x);
-  }
-
-  @Experimental
-  public static Vec4 rotateZW (
-      final Vec4 v,
-      final float cosa,
-      final float sina,
-      final Vec4 target ) {
-
-    // TEST
-
-    return target.set(
-        cosa * v.x - sina * v.y,
-        cosa * v.y + sina * v.x,
-        v.z, v.w);
-  }
-
   /**
    * Rounds each component of the vector to a given number of places
    * right of the decimal point.
@@ -2508,5 +2233,194 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
   public static Vec4 zero ( final Vec4 target ) {
 
     return target.set(0.0f, 0.0f, 0.0f, 0.0f);
+  }
+
+  /**
+   * An abstract class that may serve as an umbrella for any custom
+   * comparators of Vec4 s.
+   */
+  public static abstract class AbstrComparator implements Comparator < Vec4 > {
+
+    /**
+     * The default constructor.
+     */
+    public AbstrComparator ( ) {}
+
+    /**
+     * The compare function which must be implemented by sub- (child)
+     * classes of this class. Negative one should be returned when the
+     * left comparisand, a, is less than the right comparisand, b, by a
+     * measure. One should be returned when it is greater. Zero should be
+     * returned as a last resort, when a and b are equal or incomparable.
+     *
+     * @param a the left comparisand
+     * @param b the right comparisand
+     * @return the comparison
+     *
+     */
+    @Override
+    public abstract int compare ( final Vec4 a, final Vec4 b );
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * An abstract class to facilitate the creation of vector easing
+   * functions.
+   */
+  public static abstract class AbstrEasing
+      implements Utils.EasingFuncObj < Vec4 > {
+
+    /**
+     * The default constructor.
+     */
+    public AbstrEasing ( ) {}
+
+    /**
+     * A clamped interpolation between the origin and destination. Defers
+     * to an unclamped interpolation, which is to be defined by
+     * sub-classes of this class.
+     *
+     * @param origin the origin vector
+     * @param dest   the destination vector
+     * @param step   a factor in [0.0, 1.0]
+     * @param target the output vector
+     * @return the eased vector
+     */
+    @Override
+    public Vec4 apply (
+        final Vec4 origin,
+        final Vec4 dest,
+        final Float step,
+        final Vec4 target ) {
+
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
+      return this.applyUnclamped(origin, dest, step, target);
+    }
+
+    /**
+     * The interpolation to be defined by subclasses.
+     *
+     * @param origin the origin vector
+     * @param dest   the destination vector
+     * @param step   a factor in [0.0, 1.0]
+     * @param target the output vector
+     * @return the eased vector
+     */
+    public abstract Vec4 applyUnclamped (
+        final Vec4 origin,
+        final Vec4 dest,
+        final float step,
+        Vec4 target );
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
+
+  /**
+   * A linear interpolation functional class.
+   */
+  public static class Lerp extends AbstrEasing {
+
+    /**
+     * The default constructor.
+     */
+    public Lerp ( ) { super(); }
+
+    /**
+     * Eases between two vectors by a step using the formula (1.0 - t) * a
+     * + b . Promotes the step from a float to a double.
+     *
+     * @param origin the origin vector
+     * @param dest   the destination vector
+     * @param step   the step
+     * @param target the output vector
+     * @return the result
+     */
+    @Override
+    public Vec4 applyUnclamped (
+        final Vec4 origin,
+        final Vec4 dest,
+        final float step,
+        final Vec4 target ) {
+
+      final double td = step;
+      final double ud = 1.0d - td;
+      return target.set(
+          (float) (ud * origin.x + td * dest.x),
+          (float) (ud * origin.y + td * dest.y),
+          (float) (ud * origin.z + td * dest.z),
+          (float) (ud * origin.w + td * dest.w));
+    }
+  }
+
+  /**
+   * An iterator, which allows a vector's components to be accessed in
+   * an enhanced for loop.
+   */
+  public static final class V4Iterator implements Iterator < Float > {
+
+    /**
+     * The current index.
+     */
+    private int index = 0;
+
+    /**
+     * The vector being iterated over.
+     */
+    private final Vec4 vec;
+
+    /**
+     * The default constructor.
+     *
+     * @param vec the vector to iterate
+     */
+    public V4Iterator ( final Vec4 vec ) { this.vec = vec; }
+
+    /**
+     * Tests to see if the iterator has another value.
+     *
+     * @return the evaluation
+     */
+    @Override
+    public boolean hasNext ( ) { return this.index < this.vec.length(); }
+
+    /**
+     * Gets the next value in the iterator.
+     *
+     * @see Vec4#get(int)
+     * @return the value
+     */
+    @Override
+    public Float next ( ) { return this.vec.get(this.index++); }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
   }
 }

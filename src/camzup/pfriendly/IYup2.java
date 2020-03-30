@@ -20,27 +20,6 @@ import camzup.core.Vec2;
 public interface IYup2 extends IUp {
 
   /**
-   * The default camera rotation in radians.
-   */
-  float DEFAULT_ROT = 0.0f;
-
-  /**
-   * The default camera horizontal zoom.
-   */
-  float DEFAULT_ZOOM_X = 1.0f;
-
-  /**
-   * The default camera vertical zoom.
-   */
-  float DEFAULT_ZOOM_Y = 1.0f;
-
-  /**
-   * Factor by which a grid's count is scaled when dimensions are not
-   * supplied.
-   */
-  float GRID_FAC = 32.0f;
-
-  /**
    * Draws an arc at a location from a start angle to a stop angle.
    *
    * @param v     the location
@@ -83,6 +62,23 @@ public interface IYup2 extends IUp {
       final Vec2 cp0,
       final Vec2 cp1,
       final Vec2 ap1 );
+
+  /**
+   * Sets the camera to a location, rotation and zoom level.
+   *
+   * @param x       the translation x
+   * @param y       the translation y
+   * @param radians the angle in radians
+   * @param zx      the zoom x
+   * @param zy      the zoom y
+   * @see Utils#modRadians(float)
+   */
+  void camera (
+      final float x,
+      final float y,
+      final float radians,
+      final float zx,
+      final float zy );
 
   /**
    * Draws a circle at a location
@@ -164,7 +160,7 @@ public interface IYup2 extends IUp {
    *
    * @return the rotation
    */
-  float getRot ( );
+  float getRoll ( );
 
   /**
    * Gets the renderer's camera zoom.
@@ -326,6 +322,147 @@ public interface IYup2 extends IUp {
   default Vec2 mouse1 ( final Vec2 target ) {
 
     return IYup2.mouse1(this.getParent(), this, target);
+  }
+
+  /**
+   * Moves the camera by the given vector then updates the camera.
+   *
+   * @param x the vector x
+   * @param y the vector y
+   * @see IYup2#moveTo(float, float)
+   */
+  default void moveBy ( final float x, final float y ) {
+
+    this.moveByLocal(x, y);
+  }
+
+  /**
+   * Moves the camera by the given vector then updates the camera.
+   *
+   * @param v the vector
+   * @see IYup2#moveByGlobal(float, float)
+   */
+  default void moveBy ( final Vec2 v ) {
+
+    this.moveByLocal(v.x, v.y);
+  }
+
+  /**
+   * Moves the camera by the given vector in global space, then updates
+   * the camera.
+   *
+   * @param x the vector x
+   * @param y the vector y
+   * @see IYup2#moveTo(float, float)
+   */
+  default void moveByGlobal ( final float x, final float y ) {
+
+    this.moveTo(
+        this.getLocX() + x,
+        this.getLocY() + y);
+  }
+
+  /**
+   * Moves the camera by the given vector in global space, then updates
+   * the camera.
+   *
+   * @param v the vector
+   * @see IYup2#moveByGlobal(float, float)
+   */
+  default void moveByGlobal ( final Vec2 v ) {
+
+    this.moveByGlobal(v.x, v.y);
+  }
+
+  /**
+   * Moves the camera by the given vector according to the camera's
+   * roll, then updates the camera.
+   *
+   * @param x the vector x
+   * @param y the vector y
+   * @see IYup2#getRoll()
+   * @see IYup2#moveTo(float, float)
+   */
+  default void moveByLocal ( final float x, final float y ) {
+
+    final float nrm = this.getRoll() * IUtils.ONE_TAU;
+    final float cosa = Utils.scNorm(nrm);
+    final float sina = Utils.scNorm(nrm - 0.25f);
+
+    this.moveTo(
+        this.getLocX() + cosa * x - sina * y,
+        this.getLocY() + cosa * y + sina * x);
+  }
+
+  /**
+   * Moves the camera by the given vector according to the camera's
+   * roll, then updates the camera.
+   *
+   * @param v the vector
+   * @see IYup2#moveByLocal(float, float)
+   */
+  default void moveByLocal ( final Vec2 v ) {
+
+    this.moveByLocal(v.x, v.y);
+  }
+
+  /**
+   * Moves the renderer's camera to the given location, then updates the
+   * camera.
+   *
+   * @param x the location x
+   * @param y the location y
+   * @see IYup2#getRoll()
+   * @see IYup2#getZoomX()
+   * @see IYup2#getZoomY()
+   * @see IYup2#camera(float, float, float, float, float)
+   */
+  default void moveTo ( final float x, final float y ) {
+
+    this.camera(
+        x, y,
+        this.getRoll(),
+        this.getZoomX(),
+        this.getZoomY());
+  }
+
+  /**
+   * Moves the renderer's camera to the given location, then updates the
+   * camera.
+   *
+   * @param locNew the new location
+   * @see IYup2#moveTo(float, float)
+   */
+  default void moveTo ( final Vec2 locNew ) {
+
+    this.moveTo(locNew.x, locNew.y);
+  }
+
+  /**
+   * Moves the renderer's camera to a given location and updates the
+   * camera. Uses clamped linear interpolation, so the step should be
+   * smoothed prior to calling this function.
+   *
+   * @param locNew the new location
+   * @param step   the step
+   * @see IYup2#getLocX()
+   * @see IYup2#getLocY()
+   * @see IYup2#moveTo(float, float)
+   */
+  default void moveTo (
+      final Vec2 locNew,
+      final float step ) {
+
+    if ( step <= 0.0f ) { return; }
+    if ( step >= 1.0f ) {
+      this.moveTo(locNew.x, locNew.y);
+      return;
+    }
+
+    final float u = 1.0f - step;
+    this.moveTo(
+        u * this.getLocX() + step * locNew.x,
+        u * this.getLocY() + step * locNew.y);
   }
 
   /**
@@ -500,6 +637,73 @@ public interface IYup2 extends IUp {
    * @param rounding the corner rounding
    */
   void rect ( final Vec2 a, final Vec2 b, final float rounding );
+
+  /**
+   * Increases the camera's roll by an angle in radians, then updates
+   * the camera.
+   *
+   * @param radians the angle in radians
+   * @see IYup2#rollTo(float)
+   */
+  default void rollBy ( final float radians ) {
+
+    this.rollTo(this.getRoll() + radians);
+  }
+
+  /**
+   * Sets the camera's roll to an angle in radians, then updates the
+   * camera.
+   *
+   * @param radians the angle in radians
+   * @see IYup2#getLocX()
+   * @see IYup2#getLocY()
+   * @see IYup2#getZoomX()
+   * @see IYup2#getZoomY()
+   * @see IYup2#camera(float, float, float, float, float)
+   */
+  default void rollTo ( final float radians ) {
+
+    this.camera(
+        this.getLocX(),
+        this.getLocY(),
+        radians,
+        this.getZoomX(),
+        this.getZoomY());
+  }
+
+  /**
+   * Eases the renderer camera to a roll angle by a step in [0.0, 1.0] .
+   * Updates the camera. Uses clamped interpolation to the nearest
+   * angle.
+   *
+   * @param radians the angle in radians
+   * @param step    the step
+   * @see Utils#modRadians(float)
+   * @see IYup2#rollTo(float)
+   */
+  default void rollTo ( final float radians, final float step ) {
+
+    if ( step <= 0.0f ) { return; }
+    if ( step >= 1.0f ) {
+      this.rollTo(radians);
+      return;
+    }
+
+    float a = Utils.modRadians(this.getRoll());
+    float b = Utils.modRadians(radians);
+    final float diff = b - a;
+    boolean modResult = false;
+    if ( a < b && diff > IUtils.PI ) {
+      a = a + IUtils.PI;
+      modResult = true;
+    } else if ( a > b && diff < -IUtils.PI ) {
+      b = b + IUtils.PI;
+      modResult = true;
+    }
+
+    final float fac = (1.0f - step) * a + step * b;
+    this.rollTo(modResult ? Utils.modRadians(fac) : fac);
+  }
 
   /**
    * Finds the screen position of a point in the world. <br>
@@ -827,6 +1031,127 @@ public interface IYup2 extends IUp {
   void vertex ( final Vec2 v );
 
   /**
+   * Increases the renderer's zoom by a scalar, then updates the camera.
+   *
+   * @param s the scalar
+   * @see IYup2#zoomTo(float, float)
+   */
+  default void zoomBy ( final float s ) { this.zoomBy(s, s); }
+
+  /**
+   * Increases the renderer's zoom by a horizontal and vertical scalar,
+   * then updates the camera.
+   *
+   * @param w the width
+   * @param h the height
+   * @see IYup2#zoomTo(float, float)
+   */
+  default void zoomBy ( final float w, final float h ) {
+
+    this.zoomTo(this.getZoomX() + w, this.getZoomY() + h);
+  }
+
+  /**
+   * Increases the renderer's zoom by the vector, then updates the
+   * camera.
+   *
+   * @param v the vector
+   * @see IYup2#zoomTo(float, float)
+   */
+  default void zoomBy ( final Vec2 v ) { this.zoomBy(v.x, v.y); }
+
+  /**
+   * Zooms the renderer's camera to a target scale and updates the
+   * camera.
+   *
+   * @param s the scale
+   * @see IYup2#zoomTo(float, float)
+   */
+  default void zoomTo ( final float s ) { this.zoomTo(s, s); }
+
+  /**
+   * Zooms the renderer's camera to a target scale and updates the
+   * camera. Neither width nor height should be zero.
+   *
+   * @param w the width
+   * @param h the height
+   * @see IYup2#getLocX()
+   * @see IYup2#getLocY()
+   * @see IYup2#getRoll()
+   * @see IYup2#camera(float, float, float, float, float)
+   */
+  default void zoomTo ( final float w, final float h ) {
+
+    if ( w != 0.0f && h != 0.0f ) {
+      this.camera(
+          this.getLocX(), this.getLocY(),
+          this.getRoll(),
+          w, h);
+    }
+  }
+
+  /**
+   * Zooms the renderer's camera to a target scale and updates the
+   * camera. Neither width nor height should be zero.
+   *
+   * @param scaleNew the new scale
+   * @see IYup2#zoomTo(float, float)
+   */
+  default void zoomTo ( final Vec2 scaleNew ) {
+
+    this.zoomTo(scaleNew.x, scaleNew.y);
+  }
+
+  /**
+   * Zooms the renderer's camera to a target scale and updates the
+   * camera. Neither width nor height should be zero. Uses clamped
+   * linear interpolation, so the step should be smoothed prior to
+   * calling this function.
+   *
+   * @param scaleNew the new scale
+   * @param step     the step
+   * @see IYup2#getZoomX()
+   * @see IYup2#getZoomY()
+   * @see IYup2#zoomTo(float, float)
+   */
+  default void zoomTo (
+      final Vec2 scaleNew,
+      final float step ) {
+
+    if ( step <= 0.0f ) { return; }
+    if ( step >= 1.0f ) {
+      this.zoomTo(scaleNew.x, scaleNew.y);
+      return;
+    }
+
+    final float u = 1.0f - step;
+    this.zoomTo(
+        u * this.getZoomX() + step * scaleNew.x,
+        u * this.getZoomY() + step * scaleNew.y);
+  }
+
+  /**
+   * The default camera rotation in radians.
+   */
+  float DEFAULT_ROT = 0.0f;
+
+  /**
+   * The default camera horizontal zoom.
+   */
+  float DEFAULT_ZOOM_X = 1.0f;
+
+  /**
+   * The default camera vertical zoom.
+   */
+  float DEFAULT_ZOOM_Y = 1.0f;
+
+  /**
+   * Factor by which a grid's count is scaled when dimensions are not
+   * supplied.
+   */
+  float GRID_FAC = 32.0f;
+
+  /**
    * Finds the mouse's location in world coordinates relative to the
    * renderer's camera.
    *
@@ -851,7 +1176,7 @@ public interface IYup2 extends IUp {
     my *= Utils.div(renderer.getHeight(), renderer.getZoomY());
 
     /* Rotate. */
-    final float angle = renderer.getRot() * IUtils.ONE_TAU;
+    final float angle = renderer.getRoll() * IUtils.ONE_TAU;
     final float cosa = Utils.scNorm(angle);
     final float sina = Utils.scNorm(angle - 0.25f);
 
@@ -881,6 +1206,8 @@ public interface IYup2 extends IUp {
       final PApplet parent,
       final IYup2 renderer,
       final Vec2 target ) {
+
+    // TODO: Update this API to mouse1u and mouse1s?
 
     final float mx = Utils.clamp01(
         parent.mouseX / (float) parent.width);
@@ -932,7 +1259,7 @@ public interface IYup2 extends IUp {
         .append(',').append(' ')
         .append(Utils.toFixed(-renderer.getZoomY(), 6))
         .append(") rotate(")
-        .append(Utils.toFixed(-renderer.getRot() * IUtils.RAD_TO_DEG, 2))
+        .append(Utils.toFixed(-renderer.getRoll() * IUtils.RAD_TO_DEG, 2))
         .append(") translate(")
         .append(Utils.toFixed(-renderer.getLocX(), 6))
         .append(',').append(' ')

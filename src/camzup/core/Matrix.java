@@ -7,11 +7,6 @@ package camzup.core;
 public abstract class Matrix implements IMatrix {
 
   /**
-   * The unique identification for serialized classes.
-   */
-  private static final long serialVersionUID = -6995930494443674601L;
-
-  /**
    * The number of elements in the matrix.
    */
   protected final int length;
@@ -30,4 +25,9 @@ public abstract class Matrix implements IMatrix {
    */
   @Override
   public int length ( ) { return this.length; }
+
+  /**
+   * The unique identification for serialized classes.
+   */
+  private static final long serialVersionUID = -6995930494443674601L;
 }

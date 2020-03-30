@@ -12,217 +12,9 @@ import org.w3c.dom.Node;
 @Experimental
 abstract class SVGParser {
 
-  /**
-   * Command found in the "d" attribute of an SVG's path element.
-   */
-  public enum PathCommand {
-
-    /**
-     * Arc absolute.
-     */
-    ArcToAbs ( 'A', false, 7 ),
-
-    /**
-     * Arc relative.
-     */
-    ArcToRel ( 'a', true, 7 ),
-
-    /**
-     * Close path.
-     */
-    ClosePath ( 'Z', false, 0 ),
-
-    /**
-     * Cubic Bezier Curve absolute.
-     */
-    CubicToAbs ( 'C', false, 6 ),
-
-    /**
-     * Cubic Bezier Curve relative.
-     */
-    CubicToRel ( 'c', true, 6 ),
-
-    /**
-     * Horizontal line absolute.
-     */
-    HorizAbs ( 'H', false, 1 ),
-
-    /**
-     * Horizontal line relative.
-     */
-    HorizRel ( 'h', true, 1 ),
-
-    /**
-     * Line to absolute.
-     */
-    LineToAbs ( 'L', false, 2 ),
-
-    /**
-     * Line to relative.
-     */
-    LineToRel ( 'l', true, 2 ),
-
-    /**
-     * Move to absolute.
-     */
-    MoveToAbs ( 'M', false, 2 ),
-
-    /**
-     * Move to relative.
-     */
-    MoveToRel ( 'm', true, 2 ),
-
-    /**
-     * Quadratic Bezier curve absolute.
-     */
-    QuadraticToAbs ( 'Q', false, 4 ),
-
-    /**
-     * Quadratic Bezier curve relative.
-     */
-    QuadraticToRel ( 'q', true, 4 ),
-
-    /**
-     * Reflect cubic Bezier curve absolute.
-     */
-    ReflectCubicAbs ( 'S', false, 4 ),
-
-    /**
-     * Reflect cubic Bezier curve relative.
-     */
-    ReflectCubicRel ( 's', true, 4 ),
-
-    /**
-     * Reflect quadratic Bezier curve absolute.
-     */
-    ReflectQuadraticAbs ( 'T', false, 2 ),
-
-    /**
-     * Reflect quadratic Bezier curve relative.
-     */
-    ReflectQuadraticRel ( 't', true, 2 ),
-
-    /**
-     * Vertical line absolute.
-     */
-    VertAbs ( 'V', false, 1 ),
-
-    /**
-     * Vertical line to relative.
-     */
-    VertRel ( 'v', true, 1 );
-
-    /**
-     * The single character code.
-     */
-    private final char code;
-
-    /**
-     * Number of parameters for a given code.
-     */
-    private final int dataCount;
-
-    /**
-     * Is the command in absolute coordinates, or relative to previously
-     * specified coordinates.
-     */
-    private final boolean isRelative;
-
-    /**
-     * The enumeration constant constructor.
-     *
-     * @param code       the character code
-     * @param isRelative is the command relative
-     * @param dataCount  the parameter count
-     */
-    private PathCommand (
-        final char code,
-        final boolean isRelative,
-        final int dataCount ) {
-
-      this.code = code;
-      this.isRelative = isRelative;
-      this.dataCount = dataCount;
-    }
-
-    /**
-     * Gets the command's character code.
-     *
-     * @return the character
-     */
-    public char getCode ( ) { return this.code; }
-
-    /**
-     * Gets the number of parameters.
-     *
-     * @return the parameter number.
-     */
-    public int getDataCount ( ) { return this.dataCount; }
-
-    /**
-     * Is the command relative (true) or absolute (false).
-     *
-     * @return the boolean
-     */
-    public boolean isRelative ( ) { return this.isRelative; }
-
-    /**
-     * Returns a path command given a character. In cases where the
-     * character is not a command, returns close path by default.
-     *
-     * @param c the character
-     * @return the path command
-     */
-    public static PathCommand fromChar ( final char c ) {
-
-      switch ( c ) {
-        case 'A':
-          return ArcToAbs;
-        case 'a':
-          return ArcToRel;
-        case 'C':
-          return CubicToAbs;
-        case 'c':
-          return CubicToRel;
-        case 'H':
-          return HorizAbs;
-        case 'h':
-          return HorizRel;
-        case 'L':
-          return LineToAbs;
-        case 'l':
-          return LineToRel;
-        case 'M':
-          return MoveToAbs;
-        case 'm':
-          return MoveToRel;
-        case 'Q':
-          return QuadraticToAbs;
-        case 'q':
-          return QuadraticToRel;
-        case 'S':
-          return ReflectCubicAbs;
-        case 's':
-          return ReflectCubicRel;
-        case 'T':
-          return ReflectQuadraticAbs;
-        case 't':
-          return ReflectQuadraticRel;
-        case 'Z':
-        case 'z':
-        default:
-          return ClosePath;
-      }
-    }
-  }
-
   private static final String CMD_PATTERN = "[^A|a|C|c|H|h|L|l|M|m|Q|q|S|sT|t|V|v|Z|z]++";
 
   private static final String DATA_PATTERN = "[A|a|C|c|H|h|L|l|M|m|Q|q|S|sT|t|V|v|Z|z|,|\u0020]";
-
-  // private static final DocumentBuilderFactory dbf =
-  // DocumentBuilderFactory
-  // .newDefaultInstance();
 
   static float parseFloat ( final String v, final float def ) {
 
@@ -236,6 +28,10 @@ abstract class SVGParser {
     }
     return x;
   }
+
+  // private static final DocumentBuilderFactory dbf =
+  // DocumentBuilderFactory
+  // .newDefaultInstance();
 
   static Curve2 parsePath ( final Node path ) {
 
@@ -671,4 +467,208 @@ abstract class SVGParser {
   //
   // return result;
   // }
+
+  /**
+   * Command found in the "d" attribute of an SVG's path element.
+   */
+  public enum PathCommand {
+
+    /**
+     * Arc absolute.
+     */
+    ArcToAbs ( 'A', false, 7 ),
+
+    /**
+     * Arc relative.
+     */
+    ArcToRel ( 'a', true, 7 ),
+
+    /**
+     * Close path.
+     */
+    ClosePath ( 'Z', false, 0 ),
+
+    /**
+     * Cubic Bezier Curve absolute.
+     */
+    CubicToAbs ( 'C', false, 6 ),
+
+    /**
+     * Cubic Bezier Curve relative.
+     */
+    CubicToRel ( 'c', true, 6 ),
+
+    /**
+     * Horizontal line absolute.
+     */
+    HorizAbs ( 'H', false, 1 ),
+
+    /**
+     * Horizontal line relative.
+     */
+    HorizRel ( 'h', true, 1 ),
+
+    /**
+     * Line to absolute.
+     */
+    LineToAbs ( 'L', false, 2 ),
+
+    /**
+     * Line to relative.
+     */
+    LineToRel ( 'l', true, 2 ),
+
+    /**
+     * Move to absolute.
+     */
+    MoveToAbs ( 'M', false, 2 ),
+
+    /**
+     * Move to relative.
+     */
+    MoveToRel ( 'm', true, 2 ),
+
+    /**
+     * Quadratic Bezier curve absolute.
+     */
+    QuadraticToAbs ( 'Q', false, 4 ),
+
+    /**
+     * Quadratic Bezier curve relative.
+     */
+    QuadraticToRel ( 'q', true, 4 ),
+
+    /**
+     * Reflect cubic Bezier curve absolute.
+     */
+    ReflectCubicAbs ( 'S', false, 4 ),
+
+    /**
+     * Reflect cubic Bezier curve relative.
+     */
+    ReflectCubicRel ( 's', true, 4 ),
+
+    /**
+     * Reflect quadratic Bezier curve absolute.
+     */
+    ReflectQuadraticAbs ( 'T', false, 2 ),
+
+    /**
+     * Reflect quadratic Bezier curve relative.
+     */
+    ReflectQuadraticRel ( 't', true, 2 ),
+
+    /**
+     * Vertical line absolute.
+     */
+    VertAbs ( 'V', false, 1 ),
+
+    /**
+     * Vertical line to relative.
+     */
+    VertRel ( 'v', true, 1 );
+
+    /**
+     * The single character code.
+     */
+    private final char code;
+
+    /**
+     * Number of parameters for a given code.
+     */
+    private final int dataCount;
+
+    /**
+     * Is the command in absolute coordinates, or relative to previously
+     * specified coordinates.
+     */
+    private final boolean isRelative;
+
+    /**
+     * The enumeration constant constructor.
+     *
+     * @param code       the character code
+     * @param isRelative is the command relative
+     * @param dataCount  the parameter count
+     */
+    private PathCommand (
+        final char code,
+        final boolean isRelative,
+        final int dataCount ) {
+
+      this.code = code;
+      this.isRelative = isRelative;
+      this.dataCount = dataCount;
+    }
+
+    /**
+     * Gets the command's character code.
+     *
+     * @return the character
+     */
+    public char getCode ( ) { return this.code; }
+
+    /**
+     * Gets the number of parameters.
+     *
+     * @return the parameter number.
+     */
+    public int getDataCount ( ) { return this.dataCount; }
+
+    /**
+     * Is the command relative (true) or absolute (false).
+     *
+     * @return the boolean
+     */
+    public boolean isRelative ( ) { return this.isRelative; }
+
+    /**
+     * Returns a path command given a character. In cases where the
+     * character is not a command, returns close path by default.
+     *
+     * @param c the character
+     * @return the path command
+     */
+    public static PathCommand fromChar ( final char c ) {
+
+      switch ( c ) {
+        case 'A':
+          return ArcToAbs;
+        case 'a':
+          return ArcToRel;
+        case 'C':
+          return CubicToAbs;
+        case 'c':
+          return CubicToRel;
+        case 'H':
+          return HorizAbs;
+        case 'h':
+          return HorizRel;
+        case 'L':
+          return LineToAbs;
+        case 'l':
+          return LineToRel;
+        case 'M':
+          return MoveToAbs;
+        case 'm':
+          return MoveToRel;
+        case 'Q':
+          return QuadraticToAbs;
+        case 'q':
+          return QuadraticToRel;
+        case 'S':
+          return ReflectCubicAbs;
+        case 's':
+          return ReflectCubicRel;
+        case 'T':
+          return ReflectQuadraticAbs;
+        case 't':
+          return ReflectQuadraticRel;
+        case 'Z':
+        case 'z':
+        default:
+          return ClosePath;
+      }
+    }
+  }
 }

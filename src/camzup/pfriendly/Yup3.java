@@ -4,62 +4,13 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.opengl.PGraphicsOpenGL;
 
+import camzup.core.Utils;
 import camzup.core.Vec3;
 
 /**
  * A 3D renderer where (0.0, 1.0, 0.0) is the default world up axis.
  */
 public class Yup3 extends Up3 {
-
-  /**
-   * Default lighting directional light axis x component.
-   */
-  public static final float DEFAULT_LIGHT_X = -0.18490006f;
-
-  /**
-   * Default lighting directional light axis y component.
-   */
-  public static final float DEFAULT_LIGHT_Y = -0.73960024f;
-
-  /**
-   * Default lighting directional light axis z component.
-   */
-  public static final float DEFAULT_LIGHT_Z = 0.6471502f;
-
-  /**
-   * Default camera location x component.
-   */
-  public static final float DEFAULT_LOC_X = 623.53827f;
-
-  /**
-   * Default camera location y component.
-   */
-  public static final float DEFAULT_LOC_Y = 623.53827f;
-
-  /**
-   * Default camera location z component.
-   */
-  public static final float DEFAULT_LOC_Z = -623.53827f;
-
-  /**
-   * Default world up x component.
-   */
-  public static final float DEFAULT_REF_X = 0.0f;
-
-  /**
-   * Default world up y component.
-   */
-  public static final float DEFAULT_REF_Y = 1.0f;
-
-  /**
-   * Default world up z component.
-   */
-  public static final float DEFAULT_REF_Z = 0.0f;
-
-  /**
-   * The path string for this renderer.
-   */
-  public static final String PATH_STR = "camzup.pfriendly.Yup3";
 
   /**
    * The default constructor.
@@ -133,13 +84,6 @@ public class Yup3 extends Up3 {
      * may not have been initialized.
      */
 
-    // this.camera(
-    // xEye, yEye, zEye,
-    // xCenter, yCenter, zCenter,
-    // Yup3.DEFAULT_REF_X,
-    // Yup3.DEFAULT_REF_Y,
-    // Yup3.DEFAULT_REF_Z);
-
     this.camera(
         xEye, yEye, zEye,
         xCenter, yCenter, zCenter,
@@ -173,51 +117,26 @@ public class Yup3 extends Up3 {
       final float zUp ) {
 
     this.refUp.set(xUp, yUp, zUp);
-    if ( Vec3.magSq(this.refUp) < Up3.POLARITY_TOLERANCE ) {
-      this.refUp.set(
-          Yup3.DEFAULT_REF_X,
-          Yup3.DEFAULT_REF_Y,
-          Yup3.DEFAULT_REF_Z);
-      return;
-    }
 
     this.lookDir.set(
-        xEye - xCenter,
-        yEye - yCenter,
-        zEye - zCenter);
+        xEye - this.lookTarget.x,
+        yEye - this.lookTarget.y,
+        zEye - this.lookTarget.z);
+
     Vec3.normalize(this.lookDir, this.k);
 
-    if ( Vec3.areParallel(this.k, this.refUp,
-        Up3.POLARITY_TOLERANCE) ) {
+    final float dotp = Vec3.dot(this.k, this.refUp);
+    final float tol = 1.0f - IUp3.POLARITY_TOLERANCE;
+    if ( dotp < -tol || dotp > tol ) { return; }
 
-      this.lookDir.set(
-          Yup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
-          Yup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
-          Yup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
-
-      Vec3.up(this.k);
-      Vec3.forward(this.j);
-      Vec3.right(this.i);
-
-      this.refUp.set(
-          Yup3.DEFAULT_REF_X,
-          Yup3.DEFAULT_REF_Y,
-          Yup3.DEFAULT_REF_Z);
-
-      return;
-    }
-
-    /* Create three axes. Handedness will change by renderer. */
     Vec3.crossNorm(this.k, this.refUp, this.i);
     Vec3.crossNorm(this.i, this.k, this.j);
-    // Vec3.crossNorm(this.refUp, this.k, this.i);
-    // Vec3.crossNorm(this.k, this.i, this.j);
 
     this.cameraX = xEye;
     this.cameraY = yEye;
     this.cameraZ = zEye;
-    this.lookTarget.set(xCenter, yCenter, zCenter);
     this.eyeDist = Vec3.mag(this.lookDir);
+    this.lookTarget.set(xCenter, yCenter, zCenter);
 
     this.updateCamera();
   }
@@ -277,6 +196,40 @@ public class Yup3 extends Up3 {
   }
 
   /**
+   * Sets the renderer's default styling.
+   */
+  @Override
+  public void defaultSettings ( ) {
+
+    super.defaultSettings();
+
+    this.cameraX = this.defCameraX = Yup3.DEFAULT_LOC_X;
+    this.cameraY = this.defCameraY = Yup3.DEFAULT_LOC_Y;
+    this.cameraZ = this.defCameraZ = Yup3.DEFAULT_LOC_Z;
+
+    this.refUp.set(
+        Yup3.DEFAULT_REF_X,
+        Yup3.DEFAULT_REF_Y,
+        Yup3.DEFAULT_REF_Z);
+
+    this.lookTarget.set(
+        Up3.DEFAULT_TARGET_X,
+        Up3.DEFAULT_TARGET_Y,
+        Up3.DEFAULT_TARGET_Z);
+
+    this.lookDir.set(
+        Yup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
+        Yup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
+        Yup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
+
+    this.eyeDist = Vec3.mag(this.lookDir);
+
+    Vec3.right(this.i);
+    Vec3.up(this.j);
+    Vec3.forward(this.k);
+  }
+
+  /**
    * Enable lighting and use default lights, typically an ambient light
    * and a directional light.
    *
@@ -332,12 +285,9 @@ public class Yup3 extends Up3 {
      * to fix issues with near far clip planes.
      */
 
-    float near = IUp.DEFAULT_NEAR_CLIP;
+    final float near = IUp.DEFAULT_NEAR_CLIP;
     float far = IUp.DEFAULT_FAR_CLIP;
-    if ( this.cameraY != 0.0f ) {
-      near *= this.cameraY;
-      far *= this.cameraY;
-    }
+    far *= Utils.max(this.cameraX, this.cameraY, this.cameraZ);
 
     this.perspective(fov, aspect, near, far);
   }
@@ -365,5 +315,55 @@ public class Yup3 extends Up3 {
    */
   @Override
   public String toString ( ) { return Yup3.PATH_STR; }
+
+  /**
+   * Default lighting directional light axis x component.
+   */
+  public static final float DEFAULT_LIGHT_X = -0.18490006f;
+
+  /**
+   * Default lighting directional light axis y component.
+   */
+  public static final float DEFAULT_LIGHT_Y = -0.73960024f;
+
+  /**
+   * Default lighting directional light axis z component.
+   */
+  public static final float DEFAULT_LIGHT_Z = 0.6471502f;
+
+  /**
+   * Default camera location x component.
+   */
+  public static final float DEFAULT_LOC_X = 623.53827f;
+
+  /**
+   * Default camera location y component.
+   */
+  public static final float DEFAULT_LOC_Y = 623.53827f;
+
+  /**
+   * Default camera location z component.
+   */
+  public static final float DEFAULT_LOC_Z = -623.53827f;
+
+  /**
+   * Default world up x component.
+   */
+  public static final float DEFAULT_REF_X = 0.0f;
+
+  /**
+   * Default world up y component.
+   */
+  public static final float DEFAULT_REF_Y = 1.0f;
+
+  /**
+   * Default world up z component.
+   */
+  public static final float DEFAULT_REF_Z = 0.0f;
+
+  /**
+   * The path string for this renderer.
+   */
+  public static final String PATH_STR = "camzup.pfriendly.Yup3";
 
 }

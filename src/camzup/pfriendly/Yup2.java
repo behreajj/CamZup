@@ -33,11 +33,6 @@ import camzup.core.Vec4;
 public class Yup2 extends UpOgl implements IYup2, IUpOgl {
 
   /**
-   * The path string for this renderer.
-   */
-  public static final String PATH_STR = "camzup.pfriendly.Yup2";
-
-  /**
    * The camera rotation in radians.
    */
   public float cameraRot = IYup2.DEFAULT_ROT;
@@ -74,36 +69,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
       final boolean isPrimary ) {
 
     super(width, height, parent, path, isPrimary);
-  }
-
-  /**
-   * Sets the renderer's default perspective.
-   */
-  @Override
-  protected void defaultPerspective ( ) {
-
-    this.cameraAspect = this.defCameraAspect = IUp.DEFAULT_ASPECT;
-    this.cameraFOV = this.defCameraFOV = IUp.DEFAULT_FOV;
-    this.cameraNear = this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
-    this.cameraFar = this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
-
-    this.ortho();
-  }
-
-  @Override
-  protected void defaultSettings ( ) {
-
-    super.defaultSettings();
-    this.noLights();
-
-    /*
-     * Ensure depth-related features are turned off. These summarize the
-     * hint system.
-     */
-    this.flush();
-    this.pgl.disable(PGL.DEPTH_TEST);
-    this.pgl.depthMask(false);
-    this.isDepthSortingEnabled = false;
   }
 
   /**
@@ -205,6 +170,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    * @see Utils#min(float, float)
    * @see Utils#modRadians(float)
    */
+  @Override
   public void camera (
       final float x,
       final float y,
@@ -370,6 +336,47 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   }
 
   /**
+   * Sets the renderer's default perspective.
+   */
+  @Override
+  public void defaultPerspective ( ) {
+
+    this.cameraAspect = this.defCameraAspect = IUp.DEFAULT_ASPECT;
+    this.cameraFOV = this.defCameraFOV = IUp.DEFAULT_FOV;
+    this.cameraNear = this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
+    this.cameraFar = this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
+
+    this.ortho();
+  }
+
+  @Override
+  public void defaultSettings ( ) {
+
+    super.defaultSettings();
+    this.noLights();
+
+    this.cameraX = IUp.DEFAULT_LOC_X;
+    this.cameraY = IUp.DEFAULT_LOC_Y;
+    this.cameraZoomX = IYup2.DEFAULT_ZOOM_X;
+    this.cameraZoomY = IYup2.DEFAULT_ZOOM_Y;
+    this.cameraRot = IYup2.DEFAULT_ROT;
+
+    this.cameraAspect = this.defCameraAspect = IUp.DEFAULT_ASPECT;
+    this.cameraFOV = this.defCameraFOV = IUp.DEFAULT_FOV;
+    this.cameraNear = this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
+    this.cameraFar = this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
+
+    /*
+     * Ensure depth-related features are turned off. These summarize the
+     * hint system.
+     */
+    this.flush();
+    this.pgl.disable(PGL.DEPTH_TEST);
+    this.pgl.depthMask(false);
+    this.isDepthSortingEnabled = false;
+  }
+
+  /**
    * Draws an ellipse; the meaning of the two parameters depends on the
    * renderer's ellipseMode.
    *
@@ -425,7 +432,7 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
    * @return the rotation
    */
   @Override
-  public float getRot ( ) { return this.cameraRot; }
+  public float getRoll ( ) { return this.cameraRot; }
 
   /**
    * Gets the renderer's zoom.
@@ -748,145 +755,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
   public float modelZ ( final float x, final float y ) {
 
     return this.modelZ(x, y, 0.0f);
-  }
-
-  /**
-   * Moves the renderer's camera location. Does not update the camera
-   * matrix; use in conjunction with {@link IYup2#camera()} .
-   *
-   * @param x the vector x
-   * @param y the vector y
-   */
-  public void moveBy ( final float x, final float y ) {
-
-    this.moveByLocal(x, y);
-  }
-
-  /**
-   * Moves the renderer's camera location. Does not update the camera
-   * matrix; use in conjunction with {@link IYup2#camera()} .
-   *
-   * @param v the vector
-   */
-  public void moveBy ( final Vec2 v ) {
-
-    this.moveByLocal(v.x, v.y);
-  }
-
-  /**
-   * Moves the renderer's camera by a vector.
-   *
-   * @param x the vector x
-   * @param y the vector y
-   */
-  public void moveByGlobal ( final float x, final float y ) {
-
-    this.cameraX += x;
-    this.cameraY += y;
-
-    this.camera(
-        this.cameraX,
-        this.cameraY,
-        this.cameraRot,
-        this.cameraZoomX,
-        this.cameraZoomY);
-  }
-
-  /**
-   * Moves the renderer's camera by a vector.
-   *
-   * @param v the vector
-   */
-  public void moveByGlobal ( final Vec2 v ) {
-
-    this.moveByGlobal(v.x, v.y);
-  }
-
-  /**
-   * Moves the renderer's camera location by a vector relative to its
-   * orientation.
-   *
-   * @param x the vector x
-   * @param y the vector y
-   */
-  public void moveByLocal ( final float x, final float y ) {
-
-    final float nrm = this.cameraRot * IUtils.ONE_TAU;
-    final float cosa = Utils.scNorm(nrm);
-    final float sina = Utils.scNorm(nrm - 0.25f);
-
-    this.cameraX += cosa * x - sina * y;
-    this.cameraY += cosa * y + sina * x;
-
-    this.camera(
-        this.cameraX,
-        this.cameraY,
-        this.cameraRot,
-        this.cameraZoomX,
-        this.cameraZoomY);
-  }
-
-  /**
-   * Moves the renderer's camera by a vector relative to its
-   * orientation.
-   *
-   * @param v the vector
-   */
-  public void moveByLocal ( final Vec2 v ) {
-
-    this.moveByLocal(v.x, v.y);
-  }
-
-  /**
-   * Sets the renderer camera's location.
-   *
-   * @param x the x location
-   * @param y the y location
-   */
-  public void moveTo ( final float x, final float y ) {
-
-    this.cameraX = x;
-    this.cameraY = y;
-
-    this.camera(
-        this.cameraX,
-        this.cameraY,
-        this.cameraRot,
-        this.cameraZoomX,
-        this.cameraZoomY);
-  }
-
-  /**
-   * Sets the renderer camera's location.
-   *
-   * @param locNew the new location
-   */
-  public void moveTo ( final Vec2 locNew ) {
-
-    this.moveTo(locNew.x, locNew.y);
-  }
-
-  /**
-   * Eases the renderer camera's location to the destination over a step
-   * in [0.0, 1.0] .
-   *
-   * @param locNew the new location
-   * @param step   the step
-   */
-  public void moveTo (
-      final Vec2 locNew,
-      final float step ) {
-
-    if ( step <= 0.0f ) { return; }
-    if ( step >= 1.0f ) {
-      this.moveTo(locNew.x, locNew.y);
-      return;
-    }
-
-    final float u = 1.0f - step;
-    this.moveTo(
-        u * this.cameraX + step * locNew.x,
-        u * this.cameraY + step * locNew.y);
   }
 
   /**
@@ -1559,4 +1427,9 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
 
     this.vertexImpl(v.x, v.y, 0.0f, vt.x, vt.y);
   }
+
+  /**
+   * The path string for this renderer.
+   */
+  public static final String PATH_STR = "camzup.pfriendly.Yup2";
 }

@@ -8,11 +8,6 @@ package camzup.core;
 public class Random extends java.util.Random implements IUtils {
 
   /**
-   * The unique identification for serialized classes.
-   */
-  private static final long serialVersionUID = 259933270658058430L;
-
-  /**
    * The generator's seed value.
    */
   protected long seed = 0l;
@@ -121,4 +116,9 @@ public class Random extends java.util.Random implements IUtils {
     final float r = this.nextFloat();
     return (1.0f - r) * lower + r * upper;
   }
+
+  /**
+   * The unique identification for serialized classes.
+   */
+  private static final long serialVersionUID = 259933270658058430L;
 }

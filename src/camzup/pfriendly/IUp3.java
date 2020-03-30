@@ -13,12 +13,6 @@ import camzup.core.Vec3;
 public interface IUp3 extends IUp {
 
   /**
-   * Factor by which a grid's count is scaled when dimensions are not
-   * supplied.
-   */
-  float GRID_FAC = 32.0f;
-
-  /**
    * Draws a cubic Bezier curve between two anchor points, where the
    * control points shape the curve.
    *
@@ -81,6 +75,8 @@ public interface IUp3 extends IUp {
         center.x, center.y, center.z);
   }
 
+  void dolly ( final float z );
+
   /**
    * Gets the renderer's camera location.
    *
@@ -109,6 +105,12 @@ public interface IUp3 extends IUp {
    * @return the camera z
    */
   float getLocZ ( );
+
+  float getLookTargetX ( );
+
+  float getLookTargetY ( );
+
+  float getLookTargetZ ( );
 
   /**
    * Sets a rendering hint in the OpenGL renderer.
@@ -155,6 +157,71 @@ public interface IUp3 extends IUp {
 
     return IUp3.mouse1(this.getParent(), this, target);
   }
+
+  default void moveBy (
+      final float x,
+      final float y,
+      final float z ) {
+
+    this.moveByGlobal(x, y, z);
+  }
+
+  default void moveBy ( final Vec3 v ) {
+
+    this.moveByGlobal(v.x, v.y, v.z);
+  }
+
+  default void moveByGlobal (
+      final float x,
+      final float y,
+      final float z ) {
+
+    this.moveTo(
+        this.getLocX() + x,
+        this.getLocY() + y,
+        this.getLocZ() + z);
+  }
+
+  default void moveByGlobal ( final Vec3 v ) {
+
+    this.moveByGlobal(v.x, v.y, v.z);
+  }
+
+  default void moveTo (
+      final float x,
+      final float y,
+      final float z ) {
+
+    this.camera(
+        x, y, z,
+        this.getLookTargetX(),
+        this.getLookTargetY(),
+        this.getLookTargetZ());
+  }
+
+  default void moveTo ( final Vec3 locNew ) {
+
+    this.moveTo(locNew.x, locNew.y, locNew.z);
+  }
+
+  default void moveTo (
+      final Vec3 locNew,
+      final float step ) {
+
+    if ( step <= 0.0f ) { return; }
+    if ( step >= 1.0f ) {
+      this.moveTo(locNew.x, locNew.y, locNew.z);
+      return;
+    }
+
+    final float u = 1.0f - step;
+    this.moveTo(
+        u * this.getLocX() + step * locNew.x,
+        u * this.getLocY() + step * locNew.y,
+        u * this.getLocZ() + step * locNew.z);
+  }
+
+  void pedestal ( final float y );
 
   /**
    * Draws a 3D point.
@@ -342,6 +409,8 @@ public interface IUp3 extends IUp {
   @Override
   void strokeWeight ( final float sw );
 
+  void truck ( final float x );
+
   /**
    * Adds another vertex to a shape between the beginShape and endShape
    * commands.
@@ -349,6 +418,18 @@ public interface IUp3 extends IUp {
    * @param v the coordinate
    */
   void vertex ( final Vec3 v );
+
+  /**
+   * Factor by which a grid's count is scaled when dimensions are not
+   * supplied.
+   */
+  float GRID_FAC = 32.0f;
+
+  /**
+   * Tolerance beneath which the camera's forward direction will be
+   * considered the world, or reference, up direction.
+   */
+  float POLARITY_TOLERANCE = 0.001f;
 
   /**
    * Gets a mouse within a unit square, where either component may be in
@@ -365,6 +446,8 @@ public interface IUp3 extends IUp {
       final PApplet parent,
       final IUp3 renderer,
       final Vec3 target ) {
+
+    // TODO: Update this API to mouse1u and mouse1s?
 
     final float mx = Utils.clamp01(
         parent.mouseX / (float) parent.width);
