@@ -262,10 +262,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    * @return the iterator
    */
   @Override
-  public V2Iterator iterator ( ) {
-
-    return new V2Iterator(this);
-  }
+  public V2Iterator iterator ( ) { return new V2Iterator(this); }
 
   /**
    * Gets the number of components held by this vector.
@@ -374,10 +371,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    *
    * @return the array
    */
-  public float[] toArray ( ) {
-
-    return new float[] { this.x, this.y };
-  }
+  public float[] toArray ( ) { return new float[] { this.x, this.y }; }
 
   /**
    * Returns a string representation of this vector as a space separated
@@ -1500,8 +1494,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 lowerBound,
       final Vec2 upperBound ) {
 
-    // TEST
-
     final int vcnt = count < 3 ? 3 : count;
     final float toStep = 1.0f / (vcnt - 1.0f);
 
@@ -1514,7 +1506,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
      * negative.
      */
     final float w = 0.21650635f * Utils.abs(
-        upperBound.x - lowerBound.x) / vcnt;
+        upperBound.x - lowerBound.x) / (vcnt - 1.0f);
 
     /*
      * Multiply x values by Math.sqrt(3.0d) / 2.0d . Multiply y by 0.75 --
@@ -1525,12 +1517,10 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     final float lb75 = 0.75f * lowerBound.y;
     final float ub75 = 0.75f * upperBound.y;
 
+    /* Calculate inner loop in advance. */
     final float[] xs = new float[vcnt];
     for ( int j = 0; j < vcnt; ++j ) {
-
       final float step = j * toStep;
-      // xs[j] = IUtils.SQRT_3_2
-      // * ((1.0f - step) * lowerBound.x + step * upperBound.x);
       xs[j] = (1.0f - step) * lb32 + step * ub32;
     }
 
@@ -1539,8 +1529,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2[] row = result[i];
 
       final float step = i * toStep;
-      // final float y = 0.75f
-      // * ((1.0f - step) * lowerBound.y + step * upperBound.y);
       final float y = (1.0f - step) * lb75 + step * ub75;
 
       /* Shift alternating cells by positive or negative offset. */
@@ -1649,7 +1637,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
 
     final int ringLen = includeCenter ? rings + 1 : rings;
     final Vec2[][] result = new Vec2[ringLen][vsect];
-    if ( includeCenter ) { result[0] = new Vec2[] { new Vec2(0.0f, 0.0f) }; }
+    if ( includeCenter ) { result[0] = new Vec2[] { new Vec2() }; }
 
     final float toPrc = oneRing ? 1.0f : 1.0f / (vring - 1.0f);
     final float toTheta = 1.0f / vsect;
@@ -2013,7 +2001,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    * @param step   the step
    * @param target the output vector
    * @return the mix
-   * @see Vec2#EASING
    */
   public static Vec2 mix (
       final Vec2 origin,
@@ -2513,10 +2500,10 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    * @param rng    the random number generator
    * @param target the output vector
    * @return the random vector
-   * @see Vec2#randomPolar(Random, float, float, Vec2)
+   * @see Vec2#randomPolar(java.util.Random, float, float, Vec2)
    */
   public static Vec2 random (
-      final Random rng,
+      final java.util.Random rng,
       final Vec2 target ) {
 
     return Vec2.randomPolar(rng, 1.0f, 1.0f, target);
@@ -2531,17 +2518,18 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    * @param upperBound the upper bound
    * @param target     the output vector
    * @return the random vector
-   * @see Random#uniform(float, float)
    */
   public static Vec2 randomCartesian (
-      final Random rng,
+      final java.util.Random rng,
       final float lowerBound,
       final float upperBound,
       final Vec2 target ) {
 
+    final float rx = rng.nextFloat();
+    final float ry = rng.nextFloat();
     return target.set(
-        rng.uniform(lowerBound, upperBound),
-        rng.uniform(lowerBound, upperBound));
+        (1.0f - rx) * lowerBound + rx * upperBound,
+        (1.0f - ry) * lowerBound + ry * upperBound);
   }
 
   /**
@@ -2553,17 +2541,18 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    * @param upperBound the upper bound
    * @param target     the output vector
    * @return the random vector
-   * @see Random#uniform(float, float)
    */
   public static Vec2 randomCartesian (
-      final Random rng,
+      final java.util.Random rng,
       final Vec2 lowerBound,
       final Vec2 upperBound,
       final Vec2 target ) {
 
+    final float rx = rng.nextFloat();
+    final float ry = rng.nextFloat();
     return target.set(
-        rng.uniform(lowerBound.x, upperBound.x),
-        rng.uniform(lowerBound.y, upperBound.y));
+        (1.0f - rx) * lowerBound.x + rx * upperBound.x,
+        (1.0f - ry) * lowerBound.y + ry * upperBound.y);
   }
 
   /**
@@ -2574,18 +2563,19 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    * @param rhoMax the maximum radius
    * @param target the output vector
    * @return the random vector
-   * @see Random#uniform(float, float)
    * @see Vec2#fromPolar(float, float, Vec2)
    */
   public static Vec2 randomPolar (
-      final Random rng,
+      final java.util.Random rng,
       final float rhoMin,
       final float rhoMax,
       final Vec2 target ) {
 
+    final float rt = rng.nextFloat();
+    final float rr = rng.nextFloat();
     return Vec2.fromPolar(
-        rng.uniform(-IUtils.PI, IUtils.PI),
-        rng.uniform(rhoMin, rhoMax),
+        (1.0f - rt) * -IUtils.PI + rt * IUtils.PI,
+        (1.0f - rr) * rhoMin + rr * rhoMax,
         target);
   }
 
@@ -2596,10 +2586,10 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    * @param rng    the random number generator
    * @param target the output vector
    * @return the random vector
-   * @see Vec2#randomPolar(Random, float, float, Vec2)
+   * @see Vec2#randomPolar(java.util.Random, float, float, Vec2)
    */
   public static Vec2 randomPolar (
-      final Random rng,
+      final java.util.Random rng,
       final Vec2 target ) {
 
     return Vec2.randomPolar(rng, 1.0f, 1.0f, target);
@@ -2907,7 +2897,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
   }
 
   /**
-   * Sets the easing function by which vectors are interpolated.
+   * Sets the default easing function.
    *
    * @param easing the easing function
    */

@@ -5,7 +5,7 @@ Yup2 graphics2;
 CurveEntity2[] glyCrv;
 MeshEntity2[] glyMsh;
 
-String str = "Quick Brown Fox";
+String str = "Quigley";
 boolean toggle = false;
 boolean showHandles = true;
 
@@ -31,9 +31,9 @@ void setup() {
   matMsh = new MaterialPImage(txtr);
 
   textMode(SHAPE);
-  font = createFont("Arial", 64);
+  font = createFont("Cambria", 64);
   glyCrv = TextShape.glyphCurve(font, 0.0, false, str);
-  glyMsh = TextShape.glyphMesh(font, 1.0, false, str);
+  glyMsh = TextShape.glyphMesh(font, 15.0, false, str);
 
   float scl = width * 0.4;
   int len0 = glyCrv.length;
@@ -45,6 +45,7 @@ void setup() {
   int len1 = glyMsh.length;
   for (int j = 0; j < len1; ++j) {
     MeshEntity2 glyph = glyMsh[j];
+
     glyph.scaleTo(scl);
   }
 
@@ -77,6 +78,11 @@ void mouseReleased() {
   if (mouseButton == LEFT) {
     toggle = !toggle;
   }
+}
+
+void mouseWheel(MouseEvent e) {
+  float mWheel = e.getCount();
+  graphics2.zoomBy(-mWheel * 0.05);
 }
 
 void keyReleased() {

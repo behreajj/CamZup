@@ -585,7 +585,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
   @Chainable
   public Knot2 scaleForeHandleBy ( final float scalar ) {
 
-    /* fh = co + scalar * (fh - co) */
     this.foreHandle.x = this.coord.x
         + scalar * (this.foreHandle.x - this.coord.x);
     this.foreHandle.y = this.coord.y
@@ -651,7 +650,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
   @Chainable
   public Knot2 scaleRearHandleBy ( final float scalar ) {
 
-    /* rh = co + scalar * (rh - co) */
     this.rearHandle.x = this.coord.x
         + scalar * (this.rearHandle.x - this.coord.x);
     this.rearHandle.y = this.coord.y

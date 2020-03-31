@@ -95,12 +95,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param v2 the vector
    * @param z  the z component
    */
-  public Vec3 (
-      final Vec2 v2,
-      final float z ) {
-
-    this.set(v2, z);
-  }
+  public Vec3 ( final Vec2 v2, final float z ) { this.set(v2, z); }
 
   /**
    * Constructs a vector from a source vector's components.
@@ -160,10 +155,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @see Vec3#Vec3(Vec3)
    */
   @Override
-  public Vec3 clone ( ) {
-
-    return new Vec3(this.x, this.y, this.z);
-  }
+  public Vec3 clone ( ) { return new Vec3(this.x, this.y, this.z); }
 
   /**
    * Returns -1 when this vector is less than the comparisand; 1 when it
@@ -246,10 +238,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @return the iterator
    */
   @Override
-  public V3Iterator iterator ( ) {
-
-    return new V3Iterator(this);
-  }
+  public V3Iterator iterator ( ) { return new V3Iterator(this); }
 
   /**
    * Gets the number of components held by this vector.
@@ -2284,7 +2273,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param step   the step
    * @param target the output vector
    * @return the mix
-   * @see Vec3#EASING
    */
   public static Vec3 mix (
       final Vec3 origin,
@@ -2725,10 +2713,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param rng    the random number generator
    * @param target the output vector
    * @return the random vector
-   * @see Vec3#randomSpherical(Random, float, float, Vec3)
+   * @see Vec3#randomSpherical(java.util.Random, float, float, Vec3)
    */
   public static Vec3 random (
-      final Random rng,
+      final java.util.Random rng,
       final Vec3 target ) {
 
     return Vec3.randomSpherical(rng, 1.0f, 1.0f, target);
@@ -2743,18 +2731,20 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param upperBound the upper bound
    * @param target     the output vector
    * @return the random vector
-   * @see Random#uniform(float, float)
    */
   public static Vec3 randomCartesian (
-      final Random rng,
+      final java.util.Random rng,
       final float lowerBound,
       final float upperBound,
       final Vec3 target ) {
 
+    final float rx = rng.nextFloat();
+    final float ry = rng.nextFloat();
+    final float rz = rng.nextFloat();
     return target.set(
-        rng.uniform(lowerBound, upperBound),
-        rng.uniform(lowerBound, upperBound),
-        rng.uniform(lowerBound, upperBound));
+        (1.0f - rx) * lowerBound + rx * upperBound,
+        (1.0f - ry) * lowerBound + ry * upperBound,
+        (1.0f - rz) * lowerBound + rz * upperBound);
   }
 
   /**
@@ -2766,18 +2756,22 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param upperBound the upper bound
    * @param target     the output vector
    * @return the random vector
-   * @see Random#uniform(float, float)
    */
   public static Vec3 randomCartesian (
-      final Random rng,
+      final java.util.Random rng,
       final Vec3 lowerBound,
       final Vec3 upperBound,
       final Vec3 target ) {
 
+    // TODO: Switch to specifying java.util.Random across the board?
+
+    final float rx = rng.nextFloat();
+    final float ry = rng.nextFloat();
+    final float rz = rng.nextFloat();
     return target.set(
-        rng.uniform(lowerBound.x, upperBound.x),
-        rng.uniform(lowerBound.y, upperBound.y),
-        rng.uniform(lowerBound.z, upperBound.z));
+        (1.0f - rx) * lowerBound.x + rx * upperBound.x,
+        (1.0f - ry) * lowerBound.y + ry * upperBound.y,
+        (1.0f - rz) * lowerBound.z + rz * upperBound.z);
   }
 
   /**
@@ -2788,19 +2782,21 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param rhoMax the maximum radius
    * @param target the output vector
    * @return the random vector
-   * @see Random#uniform(float, float)
-   * @see Math#sqrt(double)
    */
   public static Vec3 randomSpherical (
-      final Random rng,
+      final java.util.Random rng,
       final float rhoMin,
       final float rhoMax,
       final Vec3 target ) {
 
+    final float rt = rng.nextFloat();
+    final float rp = rng.nextFloat();
+    final float rr = rng.nextFloat();
     return Vec3.fromSpherical(
-        rng.uniform(-IUtils.PI, IUtils.PI),
-        rng.uniform(-IUtils.HALF_PI, IUtils.HALF_PI),
-        rng.uniform(rhoMin, rhoMax), target);
+        (1.0f - rt) * -IUtils.PI + rt * IUtils.PI,
+        (1.0f - rp) * -IUtils.HALF_PI + rp * IUtils.HALF_PI,
+        (1.0f - rr) * rhoMin + rr * rhoMax,
+        target);
   }
 
   /**
@@ -2810,10 +2806,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param rng    the random number generator
    * @param target the output vector
    * @return the random vector
-   * @see Vec3#randomSpherical(Random, float, float, Vec3)
+   * @see Vec3#randomSpherical(java.util.Random, float, float, Vec3)
    */
   public static Vec3 randomSpherical (
-      final Random rng,
+      final java.util.Random rng,
       final Vec3 target ) {
 
     return Vec3.randomSpherical(rng, 1.0f, 1.0f, target);
@@ -3323,7 +3319,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
   }
 
   /**
-   * Sets the easing function by which vectors are interpolated.
+   * Sets the default easing function.
    *
    * @param easing the easing function
    */
@@ -3449,7 +3445,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * Wraps a vector around a periodic range as defined by an upper and
    * lower bound: lower bounds inclusive; upper bounds exclusive.
    *
-   * In cases where the lower bound is (0.0, 0.0) , use
+   * In cases where the lower bound is (0.0, 0.0, 0.0) , use
    * {@link Vec3#mod(Vec3, Vec3, Vec3)} .
    *
    * @param v      the vector

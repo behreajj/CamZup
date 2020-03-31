@@ -140,10 +140,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
           (IUtils.HALF_PI - incl) * IUtils.ONE_PI);
     }
 
-    /*
-     * Update indices by assigning same coordinate index to texture
-     * coordinate index.
-     */
+    /* Assign coordinate index to UV index. */
     final int facesLen = this.faces.length;
     for ( int i = 0; i < facesLen; ++i ) {
       final int[][] verts = this.faces[i];
@@ -185,6 +182,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    * @param edgeIndex the edge index
    * @param cuts      number of cuts
    * @return this mesh
+   * @see Vec3#normalize(Vec3, Vec3)
    */
   @Experimental
   @Chainable
@@ -344,7 +342,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int vtlen = this.texCoords.length;
       final int vtlast = vtlen - 1;
       for ( int h = 0; h < vtlen; ++h ) {
-        pyCd.append(this.texCoords[h].toBlenderCode(false));
+        pyCd.append(this.texCoords[h].toBlenderCode(true));
         if ( h < vtlast ) { pyCd.append(',').append(' '); }
       }
 
@@ -595,7 +593,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int faceIdx,
       final float amt ) {
 
-    // TODO: Extrude by vertex normal, not by calculating centroid normal?
+    // TODO: Extrude by vertex normal, not by calculating center normal?
 
     if ( amt == 0.0f ) { return new int[0][0][0]; }
 
@@ -606,17 +604,17 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     final int faceLen = face.length;
 
     /*
-     * Find centroid for coordinate and normal. The extrusion is the
-     * multiplication of the centroid normal by the amount.
+     * Find center for coordinate and normal. The extrusion is the
+     * multiplication of the center normal by the amount.
      */
-    final Vec3 centroid = new Vec3();
+    final Vec3 center = new Vec3();
     final Vec3 extrusion = new Vec3();
     for ( int j = 0; j < faceLen; ++j ) {
       final int[] vert = face[j];
-      Vec3.add(centroid, this.coords[vert[0]], centroid);
+      Vec3.add(center, this.coords[vert[0]], center);
       Vec3.add(extrusion, this.normals[vert[2]], extrusion);
     }
-    Vec3.div(centroid, faceLen, centroid);
+    Vec3.div(center, faceLen, center);
     Vec3.rescale(extrusion, amt, extrusion);
 
     /* Cache the vertices and normals which form the original face. */
@@ -663,9 +661,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       vnsExtruded[j] = new Vec3(vn);
 
       /* Extrude the vertex coordinate. */
-      Vec3.sub(vBase, centroid, vExtruded);
+      Vec3.sub(vBase, center, vExtruded);
       Vec3.add(vExtruded, extrusion, vExtruded);
-      Vec3.add(vExtruded, centroid, vExtruded);
+      Vec3.add(vExtruded, center, vExtruded);
 
       /* Calculate the normal for the face's side. */
       final Vec3 vnSide = vnsExtruded[faceLen + j] = new Vec3();
@@ -864,7 +862,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
   }
 
   /**
-   * Get a vertex from the mesh.
+   * Gets a vertex from the mesh.
    *
    * @param i      primary index
    * @param j      secondary index
@@ -886,7 +884,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
   }
 
   /**
-   * Get an array of vertices from the mesh.
+   * Gets an array of vertices from the mesh.
    *
    * @return the vertices
    */
@@ -935,8 +933,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
   }
 
   /**
-   * Insets a face by calculating its centroid then easing from the
-   * face's vertices toward the centroid by 0.5.
+   * Insets a face by calculating its center then easing from the face's
+   * vertices toward the center by 0.5.
    *
    * @param faceIdx the face index
    * @return the new face indices
@@ -947,11 +945,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
   }
 
   /**
-   * Insets a face by calculating its centroid then easing from the
-   * face's vertices toward the centroid by the amount, expected to be
-   * in the range [0.0, 1.0] . When the amount is less than 0.0, the
-   * face remains unchanged; when the amount is greater than 1.0, then
-   * the face is subdivided by centroid.
+   * Insets a face by calculating its center then easing from the face's
+   * vertices toward the center by the amount, expected to be in the
+   * range [0.0, 1.0] . When the amount is less than 0.0, the face
+   * remains unchanged; when the amount is greater than 1.0, then the
+   * face is subdivided by center.
    *
    * @param faceIdx the face index
    * @param fac     the inset amount
@@ -978,25 +976,25 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     final int[][][] fsNew = new int[faceLen + 1][][];
     final int[][] centerFace = fsNew[faceLen] = new int[faceLen][3];
 
-    final Vec3 vCentroid = new Vec3();
-    final Vec2 vtCentroid = new Vec2();
-    final Vec3 vnCentroid = new Vec3();
+    final Vec3 vCenter = new Vec3();
+    final Vec2 vtCenter = new Vec2();
+    final Vec3 vnCenter = new Vec3();
 
-    /* Find centroid. */
+    /* Find center. */
     for ( int j = 0; j < faceLen; ++j ) {
       final int[] vertCurr = face[j];
       final Vec3 vCurr = this.coords[vertCurr[0]];
       final Vec2 vtCurr = this.texCoords[vertCurr[1]];
       final Vec3 vnCurr = this.normals[vertCurr[2]];
 
-      Vec3.add(vCentroid, vCurr, vCentroid);
-      Vec2.add(vtCentroid, vtCurr, vtCentroid);
-      Vec3.add(vnCentroid, vnCurr, vnCentroid);
+      Vec3.add(vCenter, vCurr, vCenter);
+      Vec2.add(vtCenter, vtCurr, vtCenter);
+      Vec3.add(vnCenter, vnCurr, vnCenter);
     }
-    Vec3.div(vCentroid, faceLen, vCentroid);
-    Vec2.div(vtCentroid, faceLen, vtCentroid);
-    Vec3.div(vnCentroid, faceLen, vnCentroid);
-    Vec3.normalize(vnCentroid, vnCentroid);
+    Vec3.div(vCenter, faceLen, vCenter);
+    Vec2.div(vtCenter, faceLen, vtCenter);
+    Vec3.div(vnCenter, faceLen, vnCenter);
+    Vec3.normalize(vnCenter, vnCenter);
 
     final Vec3[] vsNew = new Vec3[faceLen];
     final Vec2[] vtsNew = new Vec2[faceLen];
@@ -1019,18 +1017,18 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec3 vnCurr = this.normals[vnCornerIdx];
 
       vsNew[j] = new Vec3(
-          u * vCurr.x + fac * vCentroid.x,
-          u * vCurr.y + fac * vCentroid.y,
-          u * vCurr.z + fac * vCentroid.z);
+          u * vCurr.x + fac * vCenter.x,
+          u * vCurr.y + fac * vCenter.y,
+          u * vCurr.z + fac * vCenter.z);
 
       vtsNew[j] = new Vec2(
-          u * vtCurr.x + fac * vtCentroid.x,
-          u * vtCurr.y + fac * vtCentroid.y);
+          u * vtCurr.x + fac * vtCenter.x,
+          u * vtCurr.y + fac * vtCenter.y);
 
       vnsNew[j] = new Vec3(
-          u * vnCurr.x + fac * vnCentroid.x,
-          u * vnCurr.y + fac * vnCentroid.y,
-          u * vnCurr.z + fac * vnCentroid.z);
+          u * vnCurr.x + fac * vnCenter.x,
+          u * vnCurr.y + fac * vnCenter.y,
+          u * vnCurr.z + fac * vnCenter.z);
 
       final int vSubdivIdx = vsOldLen + j;
       final int vtSubdivIdx = vtsOldLen + j;
@@ -1060,14 +1058,17 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    *
    * @return this mesh
    */
+  @Chainable
   public Mesh3 insetFaces ( ) { return this.insetFaces(1); }
 
   /**
-   * Insets all faces in the mesh for a given number of iterations.
+   * Insets all faces in the mesh for a given number of iterations by a
+   * factor of 0.5 .
    *
    * @param itr the iterations
    * @return this mesh
    */
+  @Chainable
   public Mesh3 insetFaces ( final int itr ) {
 
     return this.insetFaces(itr, 0.5f);
@@ -1114,36 +1115,39 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
   public int length ( ) { return this.faces.length; }
 
   /**
-   * Centers the mesh about the origin, (0.0, 0.0) and re-scales it to
-   * the range [-0.5, 0.5]. Parallel to p5.Geometry's normalize method.
+   * Centers the mesh about the origin, (0.0, 0.0) and rescales it to
+   * the range [-0.5, 0.5]. Emits a transform which records the mesh's
+   * center point and original dimension. The transform's rotation is
+   * reset.
    *
+   * @param tr the output transform
    * @return this mesh
    * @see Mesh3#calcDimensions(Mesh3, Vec3, Vec3, Vec3)
    */
   @Chainable
-  public Mesh3 reframe ( ) {
+  public Mesh3 reframe ( final Transform3 tr ) {
 
-    final Vec3 dim = new Vec3();
-    final Vec3 lb = new Vec3();
+    final Vec3 dim = tr.scale;
+    final Vec3 lb = tr.location;
     final Vec3 ub = new Vec3();
     Mesh3.calcDimensions(this, dim, lb, ub);
 
-    lb.x = -0.5f * (lb.x + ub.x);
-    lb.y = -0.5f * (lb.y + ub.y);
-    lb.z = -0.5f * (lb.z + ub.z);
+    lb.x = 0.5f * (lb.x + ub.x);
+    lb.y = 0.5f * (lb.y + ub.y);
+    lb.z = 0.5f * (lb.z + ub.z);
     final float scl = Utils.div(1.0f,
         Utils.max(dim.x, dim.y, dim.z));
 
     final int len = this.coords.length;
     for ( int i = 0; i < len; ++i ) {
       final Vec3 c = this.coords[i];
-      Vec3.add(c, lb, c);
+      Vec3.sub(c, lb, c);
       Vec3.mul(c, scl, c);
     }
 
-    // TODO: Consider emitting an output transform so that the original
-    // offset and scale of the mesh can be retrained. (Same with
-    // toOrigin). (same with toOrigin or just use one vector).
+    tr.rotPrev.set(tr.rotation);
+    tr.rotation.reset();
+    tr.updateAxes();
 
     return this;
   }
@@ -1164,14 +1168,17 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     final int len = face.length;
     final int jOrigin = Utils.mod(j, len);
     final int jDest = Utils.mod(j + 1, len);
+
     final int[] temp = face[jOrigin];
     face[jOrigin] = face[jDest];
     face[jDest] = temp;
+
     return this;
   }
 
   /**
-   * Flips the indices which specify a face.
+   * Flips the indices which specify a face. Changes the winding of a
+   * face from counter-clockwise (CCW) to clockwise (CW) or vice versa.
    *
    * @param i face index
    * @return this mesh
@@ -1302,7 +1309,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
   }
 
   /**
-   * Scales all coordinates in the mesh by a scalar.
+   * Scales all coordinates in the mesh by a uniform scalar.
    *
    * @param scale the scalar
    * @return this mesh
@@ -1323,10 +1330,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
   }
 
   /**
-   * Scales all coordinates in the mesh by a vector.
+   * Scales all coordinates in the mesh by a non-uniform scalar.
    *
    * @param scale the vector
    * @return this mesh
+   * @see Vec3#none(Vec3)
    * @see Vec3#mul(Vec3, Vec3, Vec3)
    */
   @Chainable
@@ -1392,7 +1400,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       this.texCoords[j].set(sourcevts[j]);
     }
 
-    /* Copy normals. */
+    /* Append one normal. */
     this.normals = new Vec3[] { Vec3.up(new Vec3()) };
 
     /* Copy faces. */
@@ -1498,10 +1506,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    * @return this mesh
    */
   @Chainable
-  public Mesh3 sort ( ) {
-
-    return this.sort(IUtils.DEFAULT_EPSILON);
-  }
+  public Mesh3 sort ( ) { return this.sort(IUtils.DEFAULT_EPSILON); }
 
   /**
    * Sorts the coordinates texture coordinates, and normals of a mesh,
@@ -1569,14 +1574,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
     }
 
-    /* Sort faces by centroid. */
+    /* Sort faces by center. */
     Arrays.sort(this.faces, new Mesh3.SortIndices3(this.coords));
 
     return this;
   }
 
   /**
-   * Subdivides a convex face. Defaults to centroid-based subdivision.
+   * Subdivides a convex face. Defaults to center-based subdivision.
    *
    * @param faceIdx the face index
    * @return the new face indices
@@ -1588,9 +1593,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
   }
 
   /**
-   * Subdivides a convex face by calculating its centroid, subdividing
+   * Subdivides a convex face by calculating its center, subdividing
    * each of its edges with one cut to create a midpoint, then
-   * connecting the midpoints to the centroid. This generates a
+   * connecting the midpoints to the center. This generates a
    * quadrilateral for the number of edges in the face.
    *
    * @param faceIdx the face index
@@ -1638,7 +1643,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec2 vtCurr = this.texCoords[vertCurr[1]];
       final Vec3 vnCurr = this.normals[vertCurr[2]];
 
-      /* Sum vertex for centroid. */
+      /* Sum vertex for center. */
       Vec3.add(vCentroid, vCurr, vCentroid);
       Vec2.add(vtCentroid, vtCurr, vtCentroid);
       Vec3.add(vnCentroid, vnCurr, vnCentroid);
@@ -1685,9 +1690,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
   }
 
   /**
-   * Subdivides a convex face by calculating its centroid, then
-   * connecting its vertices to the centroid. This generates a triangle
-   * for the number of edges in the face.
+   * Subdivides a convex face by calculating its center, then connecting
+   * its vertices to the center. This generates a triangle for the
+   * number of edges in the face.
    *
    * @param faceIdx the face index
    * @return the new face indices
@@ -1723,7 +1728,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec2 vtCurr = this.texCoords[vtCurrIdx];
       final Vec3 vnCurr = this.normals[vnCurrIdx];
 
-      /* Sum vertex for centroid. */
+      /* Sum vertex for center. */
       Vec3.add(vCentroid, vCurr, vCentroid);
       Vec2.add(vtCentroid, vtCurr, vtCentroid);
       Vec3.add(vnCentroid, vnCurr, vnCentroid);
@@ -1847,7 +1852,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
   /**
    * Subdivides all faces in the mesh by a number of iterations. Uses
-   * the centroid method.
+   * the center method.
    *
    * @param itr iterations
    * @return this mesh
@@ -1981,7 +1986,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       for ( int j = 0; j < vLen; ++j ) {
 
-        /* Indices in an .obj file start at 1, not 0. */
+        /* Indices start at 1, not 0. */
         final int[] vert = face[j];
         objs.append(vert[0] + 1)
             .append('/')
@@ -1999,14 +2004,17 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
   /**
    * Centers the mesh about the origin, (0.0, 0.0), by calculating its
-   * dimensions then subtracting the center point.
+   * dimensions then subtracting the center point. Emits a transform
+   * which records the mesh's center point. The transform's rotation and
+   * scale are reset.
    *
+   * @param tr the output transform
    * @return this mesh
    * @see Mesh3#calcDimensions(Mesh3, Vec3, Vec3, Vec3)
    * @see Mesh3#translate(Vec3)
    */
   @Chainable
-  public Mesh3 toOrigin ( ) {
+  public Mesh3 toOrigin ( final Transform3 tr ) {
 
     final Vec3 lb = new Vec3();
     final Vec3 ub = new Vec3();
@@ -2016,6 +2024,15 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     lb.y = -0.5f * (lb.y + ub.y);
     lb.z = -0.5f * (lb.z + ub.z);
     this.translate(lb);
+
+    tr.locPrev.set(tr.location);
+    Vec3.negate(lb, tr.location);
+
+    tr.scaleTo(1.0f);
+
+    tr.rotPrev.set(tr.rotation);
+    tr.rotation.reset();
+    tr.updateAxes();
 
     return this;
   }
@@ -2053,8 +2070,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
     final StringBuilder sb = new StringBuilder(2048);
 
-    sb.append("{ name: \"").append(this.name).append('\"')
-        .append(',').append(' ')
+    sb.append("{ name: \"")
+        .append(this.name)
+        .append('\"')
+        .append(',')
+        .append(' ')
         // .append('\n')
         .append("coords: [ ");
 
@@ -2259,7 +2279,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     float z1 = refx * ky - refy * kx;
 
     /* Forward and up are parallel if the cross product is zero. */
-    if ( x1 == 0.0f && y1 == 0.0f && z1 == 0.0f ) {
+    if ( Utils.approx(x1, 0.0f) &&
+        Utils.approx(y1, 0.0f) &&
+        Utils.approx(z1, 0.0f) ) {
 
       /*
        * If forward and up are parallel, assume that the world's up
@@ -2602,12 +2624,15 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
   }
 
   /**
-   * Creates a cube, subdivides, then casts the vertices to a sphere.
-   * The higher the iteration, the more sphere-like the result.
+   * Creates a cube, subdivides, casts the vertices to a sphere, then
+   * triangulates its faces. The higher the iteration, the more
+   * spherical the result, at the cost of speed.
    *
    * @param itrs   iterations
    * @param target the output mesh
    * @return the cube sphere
+   * @see Mesh3#triangulate()
+   * @see Mesh3#calcNormals()
    */
   public static Mesh3 cubeSphere (
       final int itrs,
@@ -2754,7 +2779,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    * @param source the source mesh
    * @return the mesh array
    */
-  @Experimental
   public static Mesh3[] detachFaces ( final Mesh3 source ) {
 
     final int[][][] fsSrc = source.faces;
@@ -3592,8 +3616,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    * data, indifferent to redundancies. As a consequence, coordinates
    * and texture coordinate are of equal length and face indices are
    * easier to read and understand. Useful for making a mesh similar to
-   * those in Unity. Similar to 'ripping' vertices or 'tearing' edges in
-   * Blender.
+   * those in Unity or p5js . Similar to 'ripping' vertices or 'tearing'
+   * edges in Blender.
    *
    * @param source the source mesh
    * @param target the target mesh

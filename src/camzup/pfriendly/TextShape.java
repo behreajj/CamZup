@@ -106,11 +106,6 @@ public abstract class TextShape {
     final Font font = (Font) pfont.getNative();
     if ( font != null ) {
 
-      /*
-       * To avoid having to get an AWT graphics context, the deprecated
-       * method is used.
-       */
-
       @SuppressWarnings ( "deprecation" )
       final FontRenderContext frc = Toolkit.getDefaultToolkit()
           .getFontMetrics(font).getFontRenderContext();
@@ -222,12 +217,10 @@ public abstract class TextShape {
      * currentSegment is called. A single precision array can also be
      * used.
      */
-    // final float[] itrpts = new float[6];
     final double[] itrpts = new double[6];
+    // final float[] itrpts = new float[6];
 
-    /*
-     * Neutralize the font size so output curves are closed to unit scale.
-     */
+    /* Neutralize the font size so output is close to unit scale. */
     final float fontSize = font.getSize2D();
     final double invScalar = fontSize == 0.0f ? 1.0d : 1.0d / fontSize;
 
@@ -237,7 +230,7 @@ public abstract class TextShape {
 
     while ( !itr.isDone() ) {
 
-      /* y-axis is flipped in all cases, for y-up. */
+      /* The y-axis is flipped in all cases, for y-up. */
 
       final int segType = itr.currentSegment(itrpts);
       switch ( segType ) {
@@ -245,10 +238,11 @@ public abstract class TextShape {
         case PathIterator.SEG_MOVETO:
 
           /*
-           * Create a new curve, then move to a point. The first three or so
+           * Create a new curve, then move to a point. The first two or so
            * points from this PathIterator seem to be garbage (i.e., they linger
-           * at the origin). The only reason the knot is created is to avoid
-           * null pointers for currKnot and prevKnot.
+           * at the origin). The first knot of a shape apparently duplicates the
+           * last; its foreHandle will be copied to the last knot and then it
+           * will be removed.
            */
 
           currCurve = new Curve2();
@@ -266,10 +260,10 @@ public abstract class TextShape {
         case PathIterator.SEG_LINETO:
 
           /*
-           * For straight lines, create a new knot from just a point. The
-           * handles will have no influence, so the previous knot's forehandle
-           * and the current knot's rear handle should lie on the straight line
-           * between them.
+           * For straight lines, create a new knot from a point. The handles
+           * will have no influence, so the previous knot's forehandle and the
+           * current knot's rear handle should lie on the straight line between
+           * them.
            */
 
           final double linex = itrpts[0] * invScalar;
@@ -288,11 +282,11 @@ public abstract class TextShape {
         case PathIterator.SEG_QUADTO:
 
           /*
-           * The ordering of the quadratic curve is (1) a shared handle, or
-           * quadratic control point, between the previous and next coordinate;
-           * (2) the next coordinate. To convert to two cubic control points,
-           * interpolate from the quadratic control point to the anchor point by
-           * one third.
+           * The order of a quadratic curve is: (0, 1) a shared handle, or
+           * control point, between the previous and next coordinate; (2, 3) the
+           * next coordinate. To convert to two cubic control points,
+           * interpolate from the quadratic control point to the respective
+           * anchor point by one third.
            */
 
           final double qmidx = itrpts[0] * invScalar;
@@ -314,8 +308,8 @@ public abstract class TextShape {
         case PathIterator.SEG_CUBICTO:
 
           /*
-           * The order of a cubic curve is (1) previous knot fore handle; (2)
-           * current knot rear handle; (3) current knot point.
+           * The order of a cubic curve is: (0, 1) previous knot fore handle;
+           * (2, 3) current knot rear handle; (4, 5) current knot point.
            */
 
           final double cforex = itrpts[0] * invScalar;
@@ -345,10 +339,12 @@ public abstract class TextShape {
           currCurve.removeAt(0);
           currCurve.removeAt(0);
 
-          /* The knot appended at move duplicates the last knot. */
+          /* The knot appended at move-to duplicates the last knot. */
           currKnot = currCurve.removeAt(0);
           prevKnot.foreHandle.set(currKnot.foreHandle);
 
+          /* The y-down to y-up flips the proper winding order (CCW). */
+          currCurve.reverse();
           currCurve.closedLoop = true;
           curves.add(currCurve);
 
@@ -514,6 +510,7 @@ public abstract class TextShape {
           final float xInv = dimx == 0.0f ? 1.0f : 1.0f / dimx;
           final float yInv = dimy == 0.0f ? 1.0f : 1.0f / dimy;
 
+          /* Calculate UVs as between lower and upper bound. */
           for ( int i = 0; i < len; ++i ) {
             f[i][0] = i;
             f[i][1] = i;
@@ -526,8 +523,13 @@ public abstract class TextShape {
           f[len][1] = 0;
 
           currMesh.set(fs, vs, vts);
+          currMesh.reverseFace(0);
           meshes.add(currMesh);
 
+          /*
+           * Clear array list and reset lower and upper bound so that UV
+           * coordinates can be calculated for the next mesh.
+           */
           currMeshPts.clear();
           lbx = Float.MAX_VALUE;
           lby = Float.MAX_VALUE;

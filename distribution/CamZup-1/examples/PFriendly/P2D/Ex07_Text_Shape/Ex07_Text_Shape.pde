@@ -5,7 +5,7 @@ Yup2 graphics2;
 CurveEntity2[] glyCrv;
 MeshEntity2[] glyMsh;
 
-String str = "Qualia";
+String str = "Quigley";
 boolean toggle = false;
 boolean showHandles = true;
 
@@ -31,9 +31,9 @@ void setup() {
   matMsh = new MaterialPImage(txtr);
 
   textMode(SHAPE);
-  font = createFont("Arial", 64);
+  font = createFont("Cambria", 64);
   glyCrv = TextShape.glyphCurve(font, 0.0, false, str);
-  glyMsh = TextShape.glyphMesh(font, 100.0, false, str);
+  glyMsh = TextShape.glyphMesh(font, 15.0, false, str);
 
   float scl = width * 0.4;
   int len0 = glyCrv.length;
@@ -45,6 +45,7 @@ void setup() {
   int len1 = glyMsh.length;
   for (int j = 0; j < len1; ++j) {
     MeshEntity2 glyph = glyMsh[j];
+
     glyph.scaleTo(scl);
   }
 
@@ -55,9 +56,9 @@ void setup() {
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
   graphics2.background(#202020);
-  graphics2.moveBy(1.0, 0.0);
-  graphics2.origin();
-
+  Vec2 m = graphics2.mouse1(new Vec2());
+  Vec2.mul(m, 5.0, m);
+  graphics2.moveBy(m);
 
   if (toggle) {
     for (MeshEntity2 glyph : glyMsh) {
@@ -77,6 +78,11 @@ void mouseReleased() {
   if (mouseButton == LEFT) {
     toggle = !toggle;
   }
+}
+
+void mouseWheel(MouseEvent e) {
+  float mWheel = e.getCount();
+  graphics2.zoomBy(-mWheel * 0.05);
 }
 
 void keyReleased() {

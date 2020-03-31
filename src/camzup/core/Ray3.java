@@ -158,11 +158,13 @@ public class Ray3 extends Ray {
   }
 
   /**
-   * Sets the origin and direction of this ray.
+   * Sets the origin and direction of this ray. Normalizes the
+   * direction.
    *
    * @param origin the origin
    * @param dir    the direction
    * @return this ray
+   * @see Vec3#normalize(Vec3, Vec3)
    */
   public Ray3 set (
       final Vec3 origin,
@@ -210,6 +212,7 @@ public class Ray3 extends Ray {
    * @param time   the time step
    * @param target the output vector
    * @return the point
+   * @see Vec3#magSq(Vec3)
    */
   public static Vec3 eval (
       final Ray3 ray,
@@ -243,6 +246,7 @@ public class Ray3 extends Ray {
    * @param dest   the destination
    * @param target the output ray
    * @return the ray
+   * @see Vec3#subNorm(Vec3, Vec3, Vec3)
    */
   public static Ray3 fromPoints (
       final Vec3 origin,

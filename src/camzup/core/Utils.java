@@ -216,8 +216,8 @@ public abstract class Utils implements IUtils {
 
   /**
    * Converts a float to a boolean, then to an integer. In effect, this
-   * asks if the value is true, or is the case.
-   *
+   * asks if the value is true, or is the case.<br>
+   * <br>
    * Used in conjunction with float-based boolean operators: or, and,
    * etc.
    *
@@ -235,8 +235,8 @@ public abstract class Utils implements IUtils {
 
   /**
    * Converts an integer to a boolean, then back to a float. In effect,
-   * this asks if the value is true, or is the case.
-   *
+   * this asks if the value is true, or is the case.<br>
+   * <br>
    * Used in conjunction with integer-based boolean operators: or, and,
    * etc.
    *
@@ -252,9 +252,8 @@ public abstract class Utils implements IUtils {
   }
 
   /**
-   * An alternative to {@link Math#ceil(double)} .
-   * <code>ceil ( x ) = -floor (
-   * -x ) .</code>
+   * An alternative to {@link Math#ceil(double)} . ceil ( x ) = - floor
+   * ( -x ) .
    *
    * @param value the input value
    * @return the raised value.
@@ -359,9 +358,9 @@ public abstract class Utils implements IUtils {
   }
 
   /**
-   * Equivalent to dividing the cosine of the angle by the sine, or to
-   * 1.0 / tan ( a ) . Finds the approximate cotangent of an angle in
-   * radians.
+   * Finds the approximate cotangent of the angle in radians. Equivalent
+   * to dividing the cosine of the angle by the sine, or to 1.0 / tan (
+   * a ) .
    *
    * @param radians the radians
    * @return the cotangent
@@ -505,15 +504,16 @@ public abstract class Utils implements IUtils {
 
   /**
    * Applies the modulo operator (%) to the operands, which implicitly
-   * uses the formula fmod ( a, b ) := a - b trunc ( a / b ) .
-   *
+   * uses the formula fmod ( a, b ) := a - b trunc ( a / b ) .<br>
+   * <br>
    * When the left operand is negative and the right operand is
    * positive, the result will be negative. For periodic values, such as
    * an angle, where the direction of change could be either clockwise
-   * or counterclockwise, use mod.
-   *
-   * If the right operand is one, use fract(a) or a - trunc(a) instead.
-   *
+   * or counterclockwise, use mod.<br>
+   * <br>
+   * If the right operand is one, use fract ( a ) or a - trunc ( a )
+   * instead.<br>
+   * <br>
    * If the right operand is zero or NaN, returns the left operand.
    *
    * @param a the left operand
@@ -533,9 +533,9 @@ public abstract class Utils implements IUtils {
   /**
    * Finds the fractional portion of the input value by subtracting the
    * value's truncation from the value, i.e., fract ( a ) := a - trunc (
-   * a ) . Returns 1.0 if the input value is NaN.
-   *
-   * Use this instead of fmod ( a, 1.0 ) or a % 1.0.
+   * a ) . Returns 1.0 if the input value is NaN.<br>
+   * <br>
+   * Use this instead of fmod ( a, 1.0 ) or a % 1.0 .
    *
    * @param value the input value
    * @return the fractional portion
@@ -767,15 +767,13 @@ public abstract class Utils implements IUtils {
    * logarithm of the base. Returns zero if the base is less than or
    * equal to zero.
    *
-   * @param a    the value
-   * @param base the base
+   * @param a the value
+   * @param b the base
    * @return the evaluation
    */
-  public static float log ( final float a, final float base ) {
+  public static float log ( final float a, final float b ) {
 
-    if ( a > 0.0f && base > 0.0f ) {
-      return (float) (Math.log(a) / Math.log(base));
-    }
+    if ( a > 0.0f && b > 0.0f ) { return (float) (Math.log(a) / Math.log(b)); }
     return 0.0f;
   }
 
@@ -1105,9 +1103,7 @@ public abstract class Utils implements IUtils {
    * @return the quantized value
    * @see Utils#floor(float)
    */
-  public static float quantize (
-      final float value,
-      final int levels ) {
+  public static float quantize ( final float value, final int levels ) {
 
     /*
      * The method used to describe posterize in the Blender manual,

@@ -789,7 +789,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
   @Chainable
   public Knot3 scaleRearHandleBy ( final float scalar ) {
 
-    /* rearhandle = coordinate + scalar * (rearhandle - coordinate) */
     this.rearHandle.x = this.coord.x
         + scalar * (this.rearHandle.x - this.coord.x);
     this.rearHandle.y = this.coord.y

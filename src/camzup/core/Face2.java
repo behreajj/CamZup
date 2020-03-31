@@ -34,13 +34,13 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
    *
    * @param face the comparisand
    * @return the comparison
-   * @see Face2#centroid(Face2, Vec2)
+   * @see Face2#centerMean(Face2, Vec2)
    */
   @Override
   public int compareTo ( final Face2 face ) {
 
-    return Face2.centroid(this, new Vec2()).compareTo(
-        Face2.centroid(face, new Vec2()));
+    return Face2.centerMean(this, new Vec2()).compareTo(
+        Face2.centerMean(face, new Vec2()));
   }
 
   /**
@@ -165,11 +165,11 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
 
   /**
    * Rotates all coordinates in the face by an angle around the z axis.
-   * The face's centroid is used as the pivot point.
+   * The face's mean center is used as the pivot point.
    *
    * @param radians the angle in radians
    * @return this mesh
-   * @see Face2#centroid(Face2, Vec2)
+   * @see Face2#centerMean(Face2, Vec2)
    * @see Utils#cos(float)
    * @see Utils#sin(float)
    * @see Vec2#sub(Vec2, Vec2, Vec2)
@@ -179,8 +179,8 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
   @Chainable
   public Face2 rotateZLocal ( final float radians ) {
 
-    final Vec2 centroid = new Vec2();
-    Face2.centroid(this, centroid);
+    final Vec2 center = new Vec2();
+    Face2.centerMean(this, center);
 
     final float cosa = Utils.cos(radians);
     final float sina = Utils.sin(radians);
@@ -188,9 +188,9 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
     final int len = this.vertices.length;
     for ( int i = 0; i < len; ++i ) {
       final Vec2 c = this.vertices[i].coord;
-      Vec2.sub(c, centroid, c);
+      Vec2.sub(c, center, c);
       Vec2.rotateZ(c, cosa, sina, c);
-      Vec2.add(c, centroid, c);
+      Vec2.add(c, center, c);
     }
 
     return this;
@@ -268,11 +268,11 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
 
   /**
    * Scales all coordinates in the face by a scalar; subtracts the
-   * face's centroid from each vertex, scales, then adds the centroid.
+   * face's center from each vertex, scales, then adds the center.
    *
    * @param scale the scalar
    * @return this face
-   * @see Face2#centroid(Face2, Vec2)
+   * @see Face2#centerMean(Face2, Vec2)
    * @see Vec2#sub(Vec2, Vec2, Vec2)
    * @see Vec2#mul(Vec2, float, Vec2)
    * @see Vec2#add(Vec2, Vec2, Vec2)
@@ -282,15 +282,15 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
 
     if ( scale == 0.0f ) { return this; }
 
-    final Vec2 centroid = new Vec2();
-    Face2.centroid(this, centroid);
+    final Vec2 center = new Vec2();
+    Face2.centerMean(this, center);
 
     final int len = this.vertices.length;
     for ( int i = 0; i < len; ++i ) {
       final Vec2 c = this.vertices[i].coord;
-      Vec2.sub(c, centroid, c);
+      Vec2.sub(c, center, c);
       Vec2.mul(c, scale, c);
-      Vec2.add(c, centroid, c);
+      Vec2.add(c, center, c);
     }
 
     return this;
@@ -298,12 +298,12 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
 
   /**
    * Scales all coordinates in the face by a scalar; subtracts the
-   * face's centroid from each vertex, scales, then adds the centroid.
+   * face's center from each vertex, scales, then adds the center.
    *
    * @param scale the nonuniform scalar
    * @return this face
    * @see Vec2#none(Vec2)
-   * @see Face2#centroid(Face2, Vec2)
+   * @see Face2#centerMean(Face2, Vec2)
    * @see Vec2#sub(Vec2, Vec2, Vec2)
    * @see Vec2#mul(Vec2, Vec2, Vec2)
    * @see Vec2#add(Vec2, Vec2, Vec2)
@@ -313,15 +313,15 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
 
     if ( Vec2.none(scale) ) { return this; }
 
-    final Vec2 centroid = new Vec2();
-    Face2.centroid(this, centroid);
+    final Vec2 center = new Vec2();
+    Face2.centerMean(this, center);
 
     final int len = this.vertices.length;
     for ( int i = 0; i < len; ++i ) {
       final Vec2 c = this.vertices[i].coord;
-      Vec2.sub(c, centroid, c);
+      Vec2.sub(c, center, c);
       Vec2.mul(c, scale, c);
-      Vec2.add(c, centroid, c);
+      Vec2.add(c, center, c);
     }
 
     return this;
@@ -406,16 +406,16 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
   }
 
   /**
-   * Finds the centroid of a face by averaging all the coordinates in
-   * its list of vertices.
+   * Finds the center of a face by averaging all the coordinates in its
+   * list of vertices.
    *
    * @param face   the face
    * @param target the output vector
-   * @return the centroid
+   * @return the center
    * @see Vec2#add(Vec2, Vec2, Vec2)
    * @see Vec2#div(Vec2, float, Vec2)
    */
-  public static Vec2 centroid (
+  public static Vec2 centerMean (
       final Face2 face,
       final Vec2 target ) {
 
@@ -429,7 +429,8 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
   }
 
   /**
-   * Evaluates whether the face contains a point.
+   * Evaluates whether the face contains a point. Uses vertex winding
+   * (as opposed to casting a ray).
    *
    * @param face  the face
    * @param point the point
@@ -445,9 +446,8 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
 
     for ( int i = 0; i < len; ++i ) {
 
-      final int j = (i + 1) % len;
       final Vec2 curr = verts[i].coord;
-      final Vec2 next = verts[j].coord;
+      final Vec2 next = verts[(i + 1) % len].coord;
 
       if ( curr.y <= point.y && next.y > point.y ) {
 
@@ -496,6 +496,32 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
   }
 
   /**
+   * Returns whether a face is wound in the counter-clockwise direction,
+   * i.e., if its winding number is greater than zero.
+   *
+   * @param face the face
+   * @return the evaluation
+   * @see Face2#winding(Face2)
+   */
+  public static boolean isCCW ( final Face2 face ) {
+
+    return Face2.winding(face) > 0.0f;
+  }
+
+  /**
+   * Returns whether a face is wound in the clockwise direction, i.e.,
+   * if its winding number is less than zero.
+   *
+   * @param face the face
+   * @return the evaluation
+   * @see Face2#winding(Face2)
+   */
+  public static boolean isCW ( final Face2 face ) {
+
+    return Face2.winding(face) < 0.0f;
+  }
+
+  /**
    * Calculates the perimeter of a face by summing the Euclidean
    * distance between vertices.
    *
@@ -515,6 +541,34 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
       prev = curr;
     }
     return sum;
+  }
+
+  /**
+   * Calculates the winding number of the face by summing the cross
+   * products of any two pair of edges.
+   *
+   * @param face the face
+   * @return the winding number
+   */
+  @Chainable
+  public static float winding ( final Face2 face ) {
+
+    float wn = 0.0f;
+    final Vert2[] verts = face.vertices;
+    final int len = verts.length;
+    Vec2 prev = verts[len - 1].coord;
+    Vec2 curr = verts[0].coord;
+    for ( int i = 0; i < len; ++i ) {
+      final Vec2 next = verts[(i + 1) % len].coord;
+      final float edge0x = curr.x - prev.x;
+      final float edge0y = curr.y - prev.y;
+      final float edge1x = next.x - curr.x;
+      final float edge1y = next.y - curr.y;
+      wn += edge0x * edge1y - edge0y * edge1x;
+      prev = curr;
+      curr = next;
+    }
+    return wn;
   }
 
   /**

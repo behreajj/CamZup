@@ -262,9 +262,14 @@ public class MeshEntity2 extends Entity2
     final int meshLen = this.meshes.size();
     final boolean autoSmoothNormals = true;
     final boolean addVertGroups = true;
+    final boolean includeUvs = true;
+    final boolean calcTangents = false;
     final boolean useMaterials = materials != null && materials.length > 0;
 
     final StringBuilder pyCd = new StringBuilder(2048);
+
+    if ( includeUvs ) { pyCd.append("import bmesh\n"); }
+
     pyCd.append("from bpy import data as D, context as C\n\n")
         .append("mesh_entity = {\"name\": \"")
         .append(this.name)
@@ -276,7 +281,7 @@ public class MeshEntity2 extends Entity2
     final int meshLast = meshLen - 1;
     final Iterator < Mesh2 > meshItr = this.meshes.iterator();
     while ( meshItr.hasNext() ) {
-      pyCd.append(meshItr.next().toBlenderCode());
+      pyCd.append(meshItr.next().toBlenderCode(includeUvs));
       if ( meshIndex < meshLast ) { pyCd.append(',').append(' '); }
       meshIndex++;
     }
@@ -353,6 +358,36 @@ public class MeshEntity2 extends Entity2
           .append("        poly.use_smooth = True\n");
     }
 
+    if ( includeUvs ) {
+      pyCd.append("    bm = bmesh.new()\n")
+          .append("    bm.from_mesh(mesh_data)\n");
+
+      pyCd.append("    uv_dat = mesh[\"uvs\"]\n")
+          .append("    uv_idcs = mesh[\"uv_indices\"]\n")
+          .append("    uv_layer = bm.loops.layers.uv.verify()\n")
+          .append("    for face in bm.faces:\n")
+          .append("        bmfcidx = face.index\n")
+          .append("        faceuvidcs = uv_idcs[bmfcidx]\n")
+          .append("        curr_loop = 0\n")
+          .append("        for loop in face.loops:\n")
+          .append("            vert = loop.vert\n")
+          .append("            bmvt = loop[uv_layer]\n")
+          .append("            uv_idx = faceuvidcs[curr_loop]\n")
+          .append("            uv_co = uv_dat[uv_idx]\n")
+          .append("            bmvt.uv = uv_co\n")
+          .append("            curr_loop = curr_loop + 1\n");
+
+      if ( calcTangents ) {
+        pyCd.append("    bmesh.ops.triangulate(bm, faces=bm.faces,")
+            .append(" quad_method=\"SHORT_EDGE\",")
+            .append(" ngon_method=\"EAR_CLIP\")\n");
+      }
+      pyCd.append("    bm.to_mesh(mesh_data)\n")
+          .append("    bm.free()\n\n");
+
+      pyCd.append("    mesh_data.calc_tangents()\n");
+    }
+
     if ( useMaterials ) {
       pyCd.append("    idx = mesh[\"material_index\"]\n")
           .append("    mat_name = materials[idx][\"name\"]\n")
@@ -361,8 +396,7 @@ public class MeshEntity2 extends Entity2
       pyCd.append("    mesh_data.materials.append(d_mats[0])\n");
     }
 
-    pyCd.append("    mesh_data.calc_tangents()\n")
-        .append("    mesh_obj = d_objs.new(name, mesh_data)\n")
+    pyCd.append("    mesh_obj = d_objs.new(name, mesh_data)\n")
         .append("    mesh_obj.rotation_mode = \"QUATERNION\"\n")
         .append("    mesh_obj.parent = parent_obj\n")
         .append("    scene_objs.link(mesh_obj)\n\n");

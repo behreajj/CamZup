@@ -299,8 +299,8 @@ public class Edge3 implements Comparable < Edge3 > {
   }
 
   /**
-   * Scales the coordinates of this edge. Subtracts the edge's centroid
-   * from each vertex, scales, then adds the centroid.
+   * Scales the coordinates of this edge. Subtracts the edge's mean
+   * center from each vertex, scales, then adds the mean center.
    *
    * @param scalar the uniform scalar
    * @return this edge
@@ -335,8 +335,8 @@ public class Edge3 implements Comparable < Edge3 > {
   }
 
   /**
-   * Scales the coordinates of this edge. Subtracts the edge's centroid
-   * from each vertex, scales, then adds the centroid.
+   * Scales the coordinates of this edge. Subtracts the edge's mean
+   * center from each vertex, scales, then adds the mean center.
    *
    * @param scalar the nonuniform scalar
    * @return this edge

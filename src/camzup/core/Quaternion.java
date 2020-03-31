@@ -1396,6 +1396,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    * @param up      the output up axis
    * @return the quaternion
    * @see Vec3#none(Vec3)
+   * @see Vec3#right(Vec3)
+   * @see Vec3#forward(Vec3)
+   * @see Vec3#up(Vec3)
    * @see Vec3#normalize(Vec3, Vec3)
    * @see Vec3#crossNorm(Vec3, Vec3, Vec3)
    * @see Quaternion#fromAxes(Vec3, Vec3, Vec3, Quaternion)
@@ -1418,7 +1421,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     Vec3.normalize(dir, forward);
     right.set(forward.y, -forward.x, 0.0f);
 
-    // TODO: Update this using approximate polarity check?
     final boolean parallel = right.x == 0.0f && right.y == 0.0f;
     if ( parallel ) {
       final float sgn = Utils.sign(forward.y);
@@ -2034,8 +2036,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     // Utils.modRadians(
     // halfAngle + halfAngle + radians),
     // axis, target);
-
-    // TEST
 
     return Quaternion.fromAxisAngle(
         (halfAngle + halfAngle + radians) % IUtils.TAU,

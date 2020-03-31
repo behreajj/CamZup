@@ -53,13 +53,13 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
    *
    * @param face the comparisand
    * @return the comparison
-   * @see Face3#centroid(Face3, Vec3)
+   * @see Face3#centerMean(Face3, Vec3)
    */
   @Override
   public int compareTo ( final Face3 face ) {
 
-    return Face3.centroid(this, new Vec3()).compareTo(
-        Face3.centroid(face, new Vec3()));
+    return Face3.centerMean(this, new Vec3()).compareTo(
+        Face3.centerMean(face, new Vec3()));
   }
 
   /**
@@ -347,11 +347,11 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
 
   /**
    * Scales all coordinates in the face by a scalar; subtracts the
-   * face's centroid from each vertex, scales, then adds the centroid.
+   * face's center from each vertex, scales, then adds the center.
    *
    * @param scale the scalar
    * @return this face
-   * @see Face3#centroid(Face3, Vec3)
+   * @see Face3#centerMean(Face3, Vec3)
    * @see Vec3#sub(Vec3, Vec3, Vec3)
    * @see Vec3#mul(Vec3, float, Vec3)
    * @see Vec3#add(Vec3, Vec3, Vec3)
@@ -361,15 +361,15 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
 
     if ( scale == 0.0f ) { return this; }
 
-    final Vec3 centroid = new Vec3();
-    Face3.centroid(this, centroid);
+    final Vec3 center = new Vec3();
+    Face3.centerMean(this, center);
 
     final int len = this.vertices.length;
     for ( int i = 0; i < len; ++i ) {
       final Vec3 c = this.vertices[i].coord;
-      Vec3.sub(c, centroid, c);
+      Vec3.sub(c, center, c);
       Vec3.mul(c, scale, c);
-      Vec3.add(c, centroid, c);
+      Vec3.add(c, center, c);
     }
 
     return this;
@@ -377,15 +377,14 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
 
   /**
    * Scales all coordinates in the face by a scalar; subtracts the
-   * face's centroid from each vertex, scales, then adds the
-   * centroid.<br>
+   * face's center from each vertex, scales, then adds the center.<br>
    * <br>
    * Beware, non-uniform scaling requires that normals be recalculated
    * for correct shading.
    *
    * @param scale the nonuniform scalar
    * @return this face
-   * @see Face3#centroid(Face3, Vec3)
+   * @see Face3#centerMean(Face3, Vec3)
    * @see Vec3#sub(Vec3, Vec3, Vec3)
    * @see Vec3#mul(Vec3, Vec3, Vec3)
    * @see Vec3#add(Vec3, Vec3, Vec3)
@@ -395,15 +394,15 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
 
     if ( Vec3.none(scale) ) { return this; }
 
-    final Vec3 centroid = new Vec3();
-    Face3.centroid(this, centroid);
+    final Vec3 center = new Vec3();
+    Face3.centerMean(this, center);
 
     final int len = this.vertices.length;
     for ( int i = 0; i < len; ++i ) {
       final Vec3 c = this.vertices[i].coord;
-      Vec3.sub(c, centroid, c);
+      Vec3.sub(c, center, c);
       Vec3.mul(c, scale, c);
-      Vec3.add(c, centroid, c);
+      Vec3.add(c, center, c);
     }
 
     return this;
@@ -487,16 +486,16 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
   }
 
   /**
-   * Finds the centroid of a face by averaging all the coordinates in
-   * its list of vertices.
+   * Finds the center of a face by averaging all the coordinates in its
+   * list of vertices.
    *
    * @param face   the face
    * @param target the output vector
-   * @return the centroid
+   * @return the center
    * @see Vec3#add(Vec3, Vec3, Vec3)
    * @see Vec3#div(Vec3, Vec3, Vec3)
    */
-  public static Vec3 centroid (
+  public static Vec3 centerMean (
       final Face3 face,
       final Vec3 target ) {
 
@@ -586,7 +585,7 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
       final Face3 face,
       final Ray3 target ) {
 
-    Face3.centroid(face, target.origin);
+    Face3.centerMean(face, target.origin);
     Face3.normal(face, target.dir);
     return target;
   }
@@ -609,7 +608,7 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
         target.right,
         target.forward,
         target.up);
-    Face3.centroid(face, target.location);
+    Face3.centerMean(face, target.location);
 
     // if ( target.location.z < 0.0f ) {
     // Vec3.negate(target.up, target.up);

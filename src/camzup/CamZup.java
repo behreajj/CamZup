@@ -2,7 +2,9 @@ package camzup;
 
 import processing.core.PApplet;
 
+import camzup.core.Mesh2;
 import camzup.core.Mesh3;
+import camzup.core.MeshEntity2;
 import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -159,7 +161,24 @@ public class CamZup {
   public static void main ( final String[] args ) {
 
     final Random rng = new Random();
-    System.out.println(Utils.invSqrtUnchecked(0.0f));
+
+    final Mesh2 mesh2 = new Mesh2();
+    final MeshEntity2 me2 = new MeshEntity2();
+    me2.append(mesh2);
+
+    System.out.println(0.5d * Math.sqrt(3.0d) / 2.0d);
+    System.out.println((float) (0.5d * Math.sqrt(3.0d) / 2.0d));
+
+    // Mesh2.gridHex(16,
+    // Vec2.mul(0.5f, Vec2.negOne(new Vec2()), new Vec2()),
+    // Vec2.mul(0.5f, Vec2.one(new Vec2()), new Vec2()),
+    // PolyType.NGON, mesh2);
+
+    // final Mesh3 mesh3 = new Mesh3();
+    // final MeshEntity3 me3 = new MeshEntity3();
+    // me3.append(mesh3);
+    // Mesh3.cube(mesh3);
+    // System.out.println(me2.toBlenderCode());
   }
 
   /**

@@ -136,6 +136,8 @@ public class Ray2 extends Ray {
    * Resets this ray to a default.
    *
    * @return this ray
+   * @see Vec2#zero(Vec2)
+   * @see Vec2#forward(Vec2)
    */
   public Ray2 reset ( ) {
 
@@ -156,11 +158,13 @@ public class Ray2 extends Ray {
   }
 
   /**
-   * Sets the origin and direction of this ray.
+   * Sets the origin and direction of this ray. Normalizes the
+   * direction.
    *
    * @param origin the origin
    * @param dir    the direction
    * @return this ray
+   * @see Vec2#normalize(Vec2, Vec2)
    */
   public Ray2 set (
       final Vec2 origin,

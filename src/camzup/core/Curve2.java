@@ -1631,6 +1631,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
           lowerBound, upperBound,
           new Vec2());
     }
+
     return Curve2.fromPoints(closedLoop, points, target);
   }
 
@@ -2065,6 +2066,32 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     }
 
     return target;
+  }
+
+  @Experimental
+  public static float winding ( final Curve2 curve ) {
+
+    // TODO: Might be over-simplistic mathematically.
+    if ( !curve.closedLoop ) { return 0.0f; }
+
+    float wn = 0.0f;
+    final List < Knot2 > knots = curve.knots;
+    final Iterator < Knot2 > itr = knots.iterator();
+
+    Knot2 prev = itr.next();
+    Knot2 curr = null;
+
+    final Vec2 tan0 = new Vec2();
+    final Vec2 tan1 = new Vec2();
+    while ( itr.hasNext() ) {
+      curr = itr.next();
+      Vec2.sub(prev.foreHandle, prev.coord, tan0);
+      Vec2.sub(curr.coord, curr.rearHandle, tan1);
+      wn += Vec2.cross(tan0, tan1);
+      prev = curr;
+    }
+
+    return wn;
   }
 
   /**

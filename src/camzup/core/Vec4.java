@@ -281,10 +281,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    * @return the iterator
    */
   @Override
-  public V4Iterator iterator ( ) {
-
-    return new V4Iterator(this);
-  }
+  public V4Iterator iterator ( ) { return new V4Iterator(this); }
 
   /**
    * Gets the number of components held by this vector.
@@ -299,10 +296,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    * @return this vector
    */
   @Chainable
-  public Vec4 reset ( ) {
-
-    return this.set(0.0f, 0.0f, 0.0f, 0.0f);
-  }
+  public Vec4 reset ( ) { return this.set(0.0f, 0.0f, 0.0f, 0.0f); }
 
   /**
    * Sets the components of this vector from booleans, where false is
@@ -1482,7 +1476,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    * @param step   the step
    * @param target the output vector
    * @return the mix
-   * @see Vec3#EASING
    */
   public static Vec4 mix (
       final Vec4 origin,
@@ -2096,7 +2089,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
   }
 
   /**
-   * Sets the easing function by which vectors are interpolated.
+   * Sets the default easing function.
    *
    * @param easing the easing function
    */
@@ -2178,7 +2171,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    * Wraps a vector around a periodic range as defined by an upper and
    * lower bound: lower bounds inclusive; upper bounds exclusive.
    *
-   * In cases where the lower bound is (0.0, 0.0) , use
+   * In cases where the lower bound is (0.0, 0.0, 0.0, 0.0) , use
    * {@link Vec4#mod(Vec4, Vec4, Vec4)} .
    *
    * @param v      the vector

@@ -155,48 +155,6 @@ public class Transform2 extends Transform {
   }
 
   /**
-   * Gets the transform's location x. A convenience to ease interaction
-   * between a transform and a renderer's camera matrix.
-   *
-   * @return the location x
-   */
-  float getLocX ( ) { return this.location.x; }
-
-  /**
-   * Gets the transform's location y. A convenience to ease interaction
-   * between a transform and a renderer's camera matrix.
-   *
-   * @return the location y
-   */
-  float getLocY ( ) { return this.location.y; }
-
-  /**
-   * Sets the transform's location x. A convenience to ease interaction
-   * between a transform and a renderer's camera matrix.
-   *
-   * @param x the x coordinate
-   * @return this transform
-   */
-  Transform2 setLocX ( final float x ) {
-
-    this.location.x = x;
-    return this;
-  }
-
-  /**
-   * Sets the transform's location y. A convenience to ease interaction
-   * between a transform and a renderer's camera matrix.
-   *
-   * @param y the y coordinate
-   * @return this transform
-   */
-  Transform2 setLocY ( final float y ) {
-
-    this.location.y = y;
-    return this;
-  }
-
-  /**
    * Returns a String of Python code targeted toward the Blender 2.8x
    * API. This code is brittle and is used for internal testing
    * purposes, i.e., to compare how transforms look in Blender (the
@@ -234,12 +192,12 @@ public class Transform2 extends Transform {
   }
 
   /**
-   * Returns a string representation of this transform in SVG syntax.
-   *
+   * Returns a string representation of this transform in SVG
+   * syntax.<br>
+   * <br>
    * The angle is converted from radians to degrees.
    *
    * @return the SVG string
-   * @see IUtils#RAD_TO_DEG
    */
   String toSvgString ( ) {
 
@@ -290,7 +248,8 @@ public class Transform2 extends Transform {
   }
 
   /**
-   * Flips the transform's scale on the horizontal axis.
+   * Flips the transform's scale on the horizontal axis, i.e., negates
+   * the scale's x component.
    *
    * @return this transform
    */
@@ -303,7 +262,8 @@ public class Transform2 extends Transform {
   }
 
   /**
-   * Flips the transform's scale on the vertical axis.
+   * Flips the transform's scale on the vertical axis, i.e., negates the
+   * scale's y component.
    *
    * @return this transform
    */
@@ -316,7 +276,7 @@ public class Transform2 extends Transform {
   }
 
   /**
-   * Get the transform's axes.
+   * Gets the transform's axes.
    *
    * @param right   the right axis
    * @param forward the forward axis
@@ -431,7 +391,7 @@ public class Transform2 extends Transform {
 
   /**
    * Orient the transform to look at a target point. If the point equals
-   * the transform's location, the function returns early.
+   * the transform's location, returns to default orientation.
    *
    * @param target the target point
    * @return this transform
@@ -440,14 +400,20 @@ public class Transform2 extends Transform {
    * @see Vec2#normalize(Vec2, Vec2)
    * @see Vec2#perpendicularCW(Vec2, Vec2)
    * @see Vec2#headingSigned(Vec2)
+   * @see Vec2#forward(Vec2)
+   * @see Vec2#right(Vec2)
    */
   @Chainable
   public Transform2 lookAt ( final Vec2 target ) {
 
     Vec2.sub(target, this.location, this.forward);
-    if ( Vec2.none(this.forward) ) { return this; }
-    Vec2.normalize(this.forward, this.forward);
-    Vec2.perpendicularCW(this.forward, this.right);
+    if ( Vec2.none(this.forward) ) {
+      Vec2.forward(this.forward);
+      Vec2.right(this.right);
+    } else {
+      Vec2.normalize(this.forward, this.forward);
+      Vec2.perpendicularCW(this.forward, this.right);
+    }
 
     this.rotPrev = this.rotation;
     this.rotation = Vec2.headingSigned(this.right);
@@ -486,7 +452,10 @@ public class Transform2 extends Transform {
 
   /**
    * Moves the transform by a direction multiplied by the transform's
-   * rotation. In effect, moves the transform by where it's facing.
+   * rotation. Uses the formula:<br>
+   * <br>
+   * move ( dir ) := location + ( scale * ( rotatez ( dir , rotation ) )
+   * )
    *
    * @param dir the direction
    * @return this transform
@@ -582,10 +551,12 @@ public class Transform2 extends Transform {
   }
 
   /**
-   * Rotates the transform to an angle in radians.
+   * Rotates the transform to an angle in radians, then updates its
+   * axes.
    *
    * @param rotNew the new angle
    * @return this transform
+   * @see Transform2#updateAxes()
    */
   @Chainable
   public Transform2 rotateTo ( final float rotNew ) {
@@ -614,12 +585,13 @@ public class Transform2 extends Transform {
 
   /**
    * Rotates the transform to a new orientation by a step in [0.0, 1.0]
-   * using the specified easing function.
+   * using the specified easing function. Updates the transform's axes.
    *
    * @param radians    the angle
    * @param step       the step
    * @param easingFunc the easing function
    * @return this transform
+   * @see Transform2#updateAxes()
    */
   @Chainable
   public Transform2 rotateTo (
@@ -635,10 +607,12 @@ public class Transform2 extends Transform {
   }
 
   /**
-   * Rotates this transform around the z axis by an angle in radians.
+   * Rotates this transform around the z axis by an angle in radians,
+   * then updates the transform's axes.
    *
    * @param radians the angle
    * @return this transform
+   * @see Transform2#updateAxes()
    */
   @Chainable
   public Transform2 rotateZ ( final float radians ) {
@@ -771,6 +745,7 @@ public class Transform2 extends Transform {
    * @param xScale  the scale x
    * @param yScale  the scale y
    * @return this transform
+   * @see Transform2#rotateTo(float)
    */
   @Chainable
   public Transform2 set (
@@ -829,9 +804,9 @@ public class Transform2 extends Transform {
   }
 
   /**
-   * Sets the transform by axes: either separate vectors or the columns
-   * of a matrix. This is an internal helper function. The transform's
-   * location and scale remain unchanged.
+   * A helper function to set the transform's from either separate
+   * vectors or from the columns of a matrix. The transform's location
+   * and scale remain unchanged.
    *
    * @param xRight   m00 : right x
    * @param yForward m11 : forward y
@@ -839,7 +814,7 @@ public class Transform2 extends Transform {
    * @param xForward m01 : forward x
    * @return the transform
    * @see Vec2#normalize(Vec2, Vec2)
-   * @see Utils#atan2(float, float)
+   * @see Vec2#headingSigned(Vec2)
    */
   public Transform2 setAxes (
       final float xRight,
@@ -893,9 +868,6 @@ public class Transform2 extends Transform {
    * Returns a string representation of this transform according to its
    * string format.
    *
-   * For display purposes, the angle is converted from radians to
-   * degrees.
-   *
    * @param places the number of places
    * @return the string
    */
@@ -942,9 +914,9 @@ public class Transform2 extends Transform {
   private static final long serialVersionUID = -4460673884822918485l;
 
   /**
-   * Creates a transform from axes: either separate vectors or the
-   * columns of a matrix. This is an internal helper function. The
-   * transform's translation is set to zero; its scale, to one.
+   * A helper function to set the transform's from either separate
+   * vectors or from the columns of a matrix. The transform's
+   * translation is set to zero; its scale, to one.
    *
    * @param xRight   m00 : right x
    * @param yForward m11 : forward y
@@ -952,6 +924,9 @@ public class Transform2 extends Transform {
    * @param xForward m01 : forward x
    * @param target   the output transform
    * @return the transform
+   * @see Vec2#normalize(Vec2, Vec2)
+   * @see Vec2#headingSigned(Vec2)
+   * @see Vec2#one(Vec2)
    */
   public static Transform2 fromAxes (
       final float xRight,
@@ -982,27 +957,6 @@ public class Transform2 extends Transform {
   }
 
   /**
-   * Creates a transform from the axes of a matrix, which is assumed to
-   * represent a rotation only (i.e., does not include translation or
-   * scale). The transform's translation is set to zero; its scale, to
-   * one.
-   *
-   * @param m      the matrix
-   * @param target the output transform
-   * @return the transform
-   * @see Transform2#fromAxes(float, float, float, float, Transform2)
-   */
-  public static Transform2 fromAxes (
-      final Mat3 m,
-      final Transform2 target ) {
-
-    return Transform2.fromAxes(
-        m.m00, m.m11,
-        m.m10, m.m01,
-        target);
-  }
-
-  /**
    * Creates a transform from axes. The transform's translation is set
    * to zero; its scale, to one.
    *
@@ -1030,6 +984,12 @@ public class Transform2 extends Transform {
    * @param target the output transform
    * @return the transform
    * @see Quaternion#fromDir(Vec3, Quaternion, Vec3, Vec3, Vec3)
+   * @see Vec2#none(Vec2)
+   * @see Vec2#forward(Vec2)
+   * @see Vec2#normalize(Vec2, Vec2)
+   * @see Vec2#perpendicularCW(Vec2, Vec2)
+   * @see Vec2#headingSigned(Vec2)
+   * @see Vec2#one(Vec2)
    */
   public static Transform2 fromDir (
       final Ray2 ray,

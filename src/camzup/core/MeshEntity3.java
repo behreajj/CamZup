@@ -155,7 +155,10 @@ public class MeshEntity3 extends Entity3
   }
 
   /**
-   * Scales the entity by a non-uniform scalar.
+   * Scales the entity by a non-uniform scalar.<br>
+   * <br>
+   * Beware that non-uniform scaling may lead to improper shading of a
+   * mesh when lit.
    *
    * @param scalar the scalar
    * @return the entity
@@ -171,33 +174,39 @@ public class MeshEntity3 extends Entity3
   /**
    * Scales the entity to a uniform size.
    *
-   * @param scalar the size
+   * @param scaleNew the size
    * @return this entity
    */
   @Override
   @Chainable
-  public MeshEntity3 scaleTo ( final float scalar ) {
+  public MeshEntity3 scaleTo ( final float scaleNew ) {
 
-    this.transform.scaleTo(scalar);
+    this.transform.scaleTo(scaleNew);
     return this;
   }
 
   /**
-   * Scales the entity to a non-uniform size.
+   * Scales the entity to a non-uniform size.<br>
+   * <br>
+   * Beware that non-uniform scaling may lead to improper shading of a
+   * mesh when lit.
    *
-   * @param scalar the size
+   * @param scaleNew the size
    * @return this entity
    */
   @Override
   @Chainable
-  public MeshEntity3 scaleTo ( final Vec3 scalar ) {
+  public MeshEntity3 scaleTo ( final Vec3 scaleNew ) {
 
-    this.transform.scaleTo(scalar);
+    this.transform.scaleTo(scaleNew);
     return this;
   }
 
   /**
-   * Eases the entity to a scale by a step over time.
+   * Eases the entity to a scale by a step over time.<br>
+   * <br>
+   * Beware that non-uniform scaling may lead to improper shading of a
+   * mesh when lit.
    *
    * @param scalar the scalar
    * @param step   the step
@@ -255,8 +264,9 @@ public class MeshEntity3 extends Entity3
     final int meshLen = this.meshes.size();
     // final boolean autoSmoothNormals = true;
     final boolean addVertGroups = true;
-    final boolean includeNormals = false;
+    final boolean includeNormals = true;
     final boolean includeUvs = true;
+    final boolean calcTangents = true;
     final boolean useBMesh = includeUvs;
     final boolean useMaterials = materials != null && materials.length > 0;
 
@@ -348,11 +358,11 @@ public class MeshEntity3 extends Entity3
     pyCd.append("    mesh_data.validate()\n\n");
 
     if ( useBMesh ) {
+
       pyCd.append("    bm = bmesh.new()\n")
           .append("    bm.from_mesh(mesh_data)\n");
 
       if ( includeUvs ) {
-        // Add calculate tangents?
 
         pyCd.append("    uv_dat = mesh[\"uvs\"]\n")
             .append("    uv_idcs = mesh[\"uv_indices\"]\n")
@@ -375,6 +385,11 @@ public class MeshEntity3 extends Entity3
         // pyCd.append(" nrm_idcs = mesh[\"normal_indices\"]\n");
       }
 
+      if ( calcTangents ) {
+        pyCd.append("    bmesh.ops.triangulate(bm, faces=bm.faces,")
+            .append(" quad_method=\"SHORT_EDGE\",")
+            .append(" ngon_method=\"EAR_CLIP\")\n");
+      }
       pyCd.append("    bm.to_mesh(mesh_data)\n")
           .append("    bm.free()\n\n");
     }
@@ -386,6 +401,10 @@ public class MeshEntity3 extends Entity3
           .append("        poly.use_smooth = True\n");
     }
 
+    if ( includeUvs && calcTangents ) {
+      pyCd.append("    mesh_data.calc_tangents()\n");
+    }
+
     if ( useMaterials ) {
       pyCd.append("    idx = mesh[\"material_index\"]\n")
           .append("    mat_name = materials[idx][\"name\"]\n")
@@ -394,8 +413,7 @@ public class MeshEntity3 extends Entity3
       pyCd.append("    mesh_data.materials.append(d_mats[0])\n");
     }
 
-    pyCd.append("    mesh_data.calc_tangents()\n")
-        .append("    mesh_obj = d_objs.new(name, mesh_data)\n")
+    pyCd.append("    mesh_obj = d_objs.new(name, mesh_data)\n")
         .append("    mesh_obj.rotation_mode = \"QUATERNION\"\n")
         .append("    mesh_obj.parent = parent_obj\n")
         .append("    scene_objs.link(mesh_obj)\n\n");

@@ -7,9 +7,24 @@ package camzup.core;
 public enum TransformOrder {
 
   /**
+   * Rotation
+   */
+  R ( "[ \"ROTATION\" ]" ),
+
+  /**
+   * Rotation, Scale
+   */
+  RS ( "[ \"ROTATION\", \"SCALE\" ]" ),
+
+  /**
    * Rotation, Scale, Translation
    */
   RST ( "[ \"ROTATION\", \"SCALE\", \"TRANSLATION\" ]" ),
+
+  /**
+   * Rotation, Translation
+   */
+  RT ( "[ \"ROTATION\", \"TRANSLATION\" ]" ),
 
   /**
    * Rotation, Translation, Scale
@@ -17,9 +32,24 @@ public enum TransformOrder {
   RTS ( "[ \"ROTATION\", \"TRANSLATION\", \"SCALE\" ]" ),
 
   /**
+   * Scale
+   */
+  S ( "[ \"SCALE\" ]" ),
+
+  /**
+   * Scale, Rotation
+   */
+  SR ( "[ \"SCALE\", \"ROTATION\" ]" ),
+
+  /**
    * Scale, Rotation, Translation
    */
   SRT ( "[ \"SCALE\", \"ROTATION\", \"TRANSLATION\" ]" ),
+
+  /**
+   * Scale, Translation
+   */
+  ST ( "[ \"SCALE\", \"TRANSLATION\" ]" ),
 
   /**
    * Scale, Translation, Rotation
@@ -27,9 +57,24 @@ public enum TransformOrder {
   STR ( "[ \"SCALE\", \"TRANSLATION\", \"ROTATION\" ]" ),
 
   /**
+   * Translation
+   */
+  T ( "[ \"TRANSLATION\" ]" ),
+
+  /**
+   * Translation, Rotation
+   */
+  TR ( "[ \"TRANSLATION\", \"ROTATION\" ]" ),
+
+  /**
    * Translation, Rotation, Scale
    */
   TRS ( "[ \"TRANSLATION\", \"ROTATION\", \"SCALE\" ]" ),
+
+  /**
+   * Translation, Scale
+   */
+  TS ( "[ \"TRANSLATION\", \"SCALE\" ]" ),
 
   /**
    * Translation, Scale, Rotation
@@ -64,6 +109,24 @@ public enum TransformOrder {
   public static TransformOrder reverse ( final TransformOrder order ) {
 
     switch ( order ) {
+      case R:
+        return TransformOrder.R;
+      case S:
+        return TransformOrder.S;
+      case T:
+        return TransformOrder.T;
+      case RS:
+        return TransformOrder.SR;
+      case RT:
+        return TransformOrder.TR;
+      case SR:
+        return TransformOrder.RS;
+      case ST:
+        return TransformOrder.TS;
+      case TR:
+        return TransformOrder.RT;
+      case TS:
+        return TransformOrder.ST;
       case RST:
         return TransformOrder.TSR;
       case RTS:
