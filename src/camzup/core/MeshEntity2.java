@@ -385,7 +385,7 @@ public class MeshEntity2 extends Entity2
       pyCd.append("    bm.to_mesh(mesh_data)\n")
           .append("    bm.free()\n\n");
 
-      pyCd.append("    mesh_data.calc_tangents()\n");
+      if ( calcTangents ) { pyCd.append("    mesh_data.calc_tangents()\n"); }
     }
 
     if ( useMaterials ) {

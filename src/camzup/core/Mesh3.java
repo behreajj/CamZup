@@ -2247,13 +2247,18 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Mesh3 target ) {
 
     /* Find difference between destination and origin. */
-    final float x0 = xDest - xOrigin;
-    final float y0 = yDest - yOrigin;
-    final float z0 = zDest - zOrigin;
+    float x0 = xDest - xOrigin;
+    float y0 = yDest - yOrigin;
+    float z0 = zDest - zOrigin;
 
     /* If difference's length is zero, invalid inputs. */
     final float m0 = x0 * x0 + y0 * y0 + z0 * z0;
-    if ( m0 == 0.0f ) { return target; }
+    if ( Utils.approx(m0, 0.0f) ) {
+
+      x0 = IUtils.DEFAULT_EPSILON * 2.0f;
+      y0 = x0;
+      z0 = x0;
+    }
 
     target.name = "Cylinder";
 

@@ -8,11 +8,6 @@ package camzup.core;
 public class Random extends java.util.Random implements IUtils {
 
   /**
-   * The generator's seed value.
-   */
-  protected long seed = 0l;
-
-  /**
    * The default constructor. Sets the seed to the system's current time
    * in milliseconds.
    *
@@ -28,28 +23,6 @@ public class Random extends java.util.Random implements IUtils {
   public Random ( final long seed ) {
 
     super(seed);
-    this.seed = seed;
-  }
-
-  /**
-   * Get the generator's seed.
-   *
-   * @return the seed
-   */
-  public long getSeed ( ) { return this.seed; }
-
-  /**
-   * Set the generator's seed.
-   *
-   * @param seed the seed
-   */
-  @Override
-  public void setSeed ( final long seed ) {
-
-    // TODO: Test that these actually match? Or do you need to follow the
-    // hashing description laid out in setSeed ?
-    super.setSeed(seed);
-    this.seed = seed;
   }
 
   /**
@@ -58,7 +31,7 @@ public class Random extends java.util.Random implements IUtils {
   @Override
   public String toString ( ) {
 
-    return Long.toHexString(this.seed);
+    return this.getClass().getSimpleName();
   }
 
   /**

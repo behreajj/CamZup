@@ -122,7 +122,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
 
     return new StringBuilder(32)
         .append('(')
-        .append(Utils.toFixed(this.x, 6))
+        .append(Utils.toFixed(flipv ? this.x : 1.0f - this.x, 6))
         .append(',').append(' ')
         .append(Utils.toFixed(flipv ? 1.0f - this.y : this.y, 6))
         .append(')')

@@ -104,3 +104,4 @@ perimeter
 lemniscate
 kerning
 emitting
+chirality

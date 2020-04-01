@@ -2763,8 +2763,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 upperBound,
       final Vec3 target ) {
 
-    // TODO: Switch to specifying java.util.Random across the board?
-
     final float rx = rng.nextFloat();
     final float ry = rng.nextFloat();
     final float rz = rng.nextFloat();

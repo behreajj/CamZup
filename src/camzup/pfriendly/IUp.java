@@ -70,6 +70,21 @@ public interface IUp {
   void fill ( final int c );
 
   /**
+   * Gets the renderer's background color as an integer.
+   *
+   * @return the color
+   */
+  int getBackground ( );
+
+  /**
+   * Gets the renderer's background color.
+   *
+   * @param target the output color
+   * @return the background
+   */
+  Color getBackground ( Color target );
+
+  /**
    * Gets the renderer's height.
    *
    * @return the height
@@ -131,6 +146,16 @@ public interface IUp {
    * Draws the world origin.
    */
   void origin ( );
+
+  /**
+   * Pop the last style off the end of the stack.
+   */
+  void popStyle ( );
+
+  /**
+   * Push a style onto the end of the stack.
+   */
+  void pushStyle ( );
 
   /**
    * Uses the renderer's default stroke color.
@@ -206,7 +231,7 @@ public interface IUp {
    * Default far-clip when orthographic or perspective functions are
    * called without the near and far arguments. 1000.0 .
    */
-  float DEFAULT_FAR_CLIP = 1000.0f;
+  float DEFAULT_FAR_CLIP = 1500.0f;
 
   /**
    * Default fill color, a light blue.
@@ -310,7 +335,7 @@ public interface IUp {
    * Default near-clip when orthographic or perspective functions are
    * called without the near and far arguments. 0.01 .
    */
-  float DEFAULT_NEAR_CLIP = 0.001f;
+  float DEFAULT_NEAR_CLIP = 0.015f;
 
   /**
    * Default transform order when converting a transform to a matrix.

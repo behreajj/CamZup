@@ -30,7 +30,7 @@ import camzup.core.Vec4;
  * looking down on a 2D plane from the z axis, making (0.0, 1.0) the
  * forward -- or up -- axis.
  */
-public class Yup2 extends UpOgl implements IYup2, IUpOgl {
+public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
 
   /**
    * The camera rotation in radians.
@@ -133,18 +133,6 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
         cp0.x, cp0.y, 0.0f,
         cp1.x, cp1.y, 0.0f,
         ap1.x, ap1.y, 0.0f);
-  }
-
-  /**
-   * Sets the camera to the Processing default, where the origin is in
-   * the top left corner of the sketch and the y axis points downward.
-   */
-  public void camDown ( ) {
-
-    this.camera(
-        this.width * 0.5f, this.height * 0.5f,
-        0.0f,
-        1.0f, -1.0f);
   }
 
   /**
@@ -269,6 +257,18 @@ public class Yup2 extends UpOgl implements IYup2, IUpOgl {
         loc.x, loc.y,
         radians,
         zoom.x, zoom.y);
+  }
+
+  /**
+   * Sets the camera to the Processing default, where the origin is in
+   * the top left corner of the sketch and the y axis points downward.
+   */
+  public void camFlipped ( ) {
+
+    this.camera(
+        this.width * 0.5f, this.height * 0.5f,
+        0.0f,
+        1.0f, -1.0f);
   }
 
   /**

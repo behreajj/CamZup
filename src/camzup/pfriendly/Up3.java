@@ -12,6 +12,7 @@ import camzup.core.Color;
 import camzup.core.Curve3;
 import camzup.core.CurveEntity3;
 import camzup.core.Experimental;
+import camzup.core.Handedness;
 import camzup.core.IUtils;
 import camzup.core.Knot3;
 import camzup.core.MaterialSolid;
@@ -28,7 +29,7 @@ import camzup.core.Vec4;
 /**
  * An abstract parent class for 3D renderers.
  */
-public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
+public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
   /**
    * A vector to store the x axis (first column) when creating a camera
@@ -103,7 +104,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    * matrix, its inverse, the model view and its inverse, and updates
    * the project model view.
    */
-  protected void updateCamera ( ) {
+  protected void updateCameraInv ( ) {
 
     final float m00 = this.i.x;
     final float m01 = this.i.y;
@@ -116,6 +117,13 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     final float m20 = this.k.x;
     final float m21 = this.k.y;
     final float m22 = this.k.z;
+
+    /* Set inverse by column. */
+    this.cameraInv.set(
+        m00, m10, m20, this.cameraX,
+        m01, m11, m21, this.cameraY,
+        m02, m12, m22, this.cameraZ,
+        0.0f, 0.0f, 0.0f, 1.0f);
 
     /*
      * Set matrix to axes by row. Translate by a negative location after
@@ -130,33 +138,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
         -this.cameraX * m20 - this.cameraY * m21 - this.cameraZ * m22,
         0.0f, 0.0f, 0.0f, 1.0f);
 
-    /* Set inverse by column. */
-    this.cameraInv.set(
-        m00, m10, m20, this.cameraX,
-        m01, m11, m21, this.cameraY,
-        m02, m12, m22, this.cameraZ,
-        0.0f, 0.0f, 0.0f, 1.0f);
-
     /* Set model view to camera. */
     this.modelview.set(this.camera);
     this.modelviewInv.set(this.cameraInv);
     PMatAux.mul(this.projection, this.modelview, this.projmodelview);
-  }
-
-  /**
-   * Sets the camera to the Processing default, where the origin is in
-   * the top left corner of the sketch and the y axis points downward.
-   */
-  void camDown ( ) {
-
-    // TEST: Doesn't work.
-
-    final float wh = this.width * 0.5f;
-    final float hh = this.height * 0.5f;
-    super.camera(
-        wh, hh, this.height * IUtils.SQRT_3_2,
-        wh, hh, 0.0f,
-        0.0f, -1.0f, 0.0f);
   }
 
   /**
@@ -203,6 +188,173 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   }
 
   /**
+   * Places the camera on the negative y axis, such that it is looking
+   * up toward the world origin.
+   */
+  public abstract void camBottom ( );
+
+  /**
+   * Places the camera on the negative x axis, such that it is looking
+   * East toward the world origin.
+   */
+  public abstract void camEast ( );
+
+  /**
+   * Looks at the center point from the eye point, using the world up
+   * axis as a reference. Uses the default handedness.
+   *
+   * @param xEye    camera location x
+   * @param yEye    camera location y
+   * @param zEye    camera location z
+   * @param xCenter target location x
+   * @param yCenter target location y
+   * @param zCenter target location z
+   * @param xUp     world up axis x
+   * @param yUp     world up axis y
+   * @param zUp     world up axis z
+   */
+  @Override
+  public void camera (
+      final float xEye,
+      final float yEye,
+      final float zEye,
+      final float xCenter,
+      final float yCenter,
+      final float zCenter,
+      final float xUp,
+      final float yUp,
+      final float zUp ) {
+
+    this.camera(
+        xEye, yEye, zEye,
+        xCenter, yCenter, zCenter,
+        xUp, yUp, zUp,
+        IUp3.DEFAULT_HANDEDNESS);
+  }
+
+  /**
+   * Looks at the center point from the eye point, using the world up
+   * axis as a reference. The handedness will dictate the order in which
+   * parameters are supplied to the cross product.
+   *
+   * @param xEye       camera location x
+   * @param yEye       camera location y
+   * @param zEye       camera location z
+   * @param xCenter    target location x
+   * @param yCenter    target location y
+   * @param zCenter    target location z
+   * @param xUp        world up axis x
+   * @param yUp        world up axis y
+   * @param zUp        world up axis z
+   * @param handedness the handedness
+   */
+  @Experimental
+  public void camera (
+      final float xEye,
+      final float yEye,
+      final float zEye,
+      final float xCenter,
+      final float yCenter,
+      final float zCenter,
+      final float xUp,
+      final float yUp,
+      final float zUp,
+      final Handedness handedness ) {
+
+    final float tol = 1.0f - IUp3.POLARITY_TOLERANCE;
+    final Handedness h = handedness;
+
+    this.refUp.set(xUp, yUp, zUp);
+
+    this.cameraX = xEye;
+    this.cameraY = yEye;
+    this.cameraZ = zEye;
+
+    this.lookDir.set(
+        this.cameraX - this.lookTarget.x,
+        this.cameraY - this.lookTarget.y,
+        this.cameraZ - this.lookTarget.z);
+
+    Vec3.normalize(this.lookDir, this.k);
+
+    float dotp = Vec3.dot(this.k, this.refUp);
+    if ( dotp < -tol || dotp > tol ) {
+
+      // float temp = refUp.z;
+      // refUp.z = Utils.sign(k.z) * refUp.y;
+      // refUp.y = Utils.sign(k.z) * temp;
+
+      return;
+    }
+
+    /*
+     * The camera function sets the camera INVERSE, not the camera, so
+     * everything is backwards.
+     */
+    switch ( h ) {
+
+      case LEFT:
+
+        Vec3.crossNorm(this.k, this.refUp, this.i);
+
+        break;
+
+      case RIGHT:
+
+      default:
+
+        Vec3.crossNorm(this.refUp, this.k, this.i);
+
+    }
+
+    dotp = Vec3.dot(this.k, this.i);
+    if ( dotp < -tol || dotp > tol ) {
+      // float temp = i.x;
+      // i.z = i.x;
+      // i.x = temp;
+
+      // float temp = i.x;
+      // i.z = Utils.sign(k.z) * i.x;
+      // i.x = Utils.sign(k.z) * temp;
+
+      return;
+    }
+
+    switch ( h ) {
+
+      case LEFT:
+
+        Vec3.crossNorm(this.i, this.k, this.j);
+
+        break;
+
+      case RIGHT:
+
+      default:
+
+        Vec3.crossNorm(this.k, this.i, this.j);
+
+    }
+
+    dotp = Vec3.dot(this.k, this.j);
+    if ( dotp < -tol || dotp > tol ) {
+      // float temp = j.y;
+      // j.z = j.y;
+      // j.y = temp;
+      //
+      // float temp = j.y;
+      // j.z = Utils.sign(k.z) * j.y;
+      // j.y = Utils.sign(k.z) * temp;
+      return;
+    }
+
+    this.eyeDist = Vec3.mag(this.lookDir);
+    this.lookTarget.set(xCenter, yCenter, zCenter);
+
+    this.updateCameraInv();
+  }
+
+  /**
    * Sets the camera to a location, looking at a center, with a
    * reference up direction.
    *
@@ -220,6 +372,30 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
         center.x, center.y, center.z,
         up.x, up.y, up.z);
   }
+
+  /**
+   * Places camera on the axis perpendicular to its world up axis such
+   * that it is looking North toward the world origin.
+   */
+  public abstract void camNorth ( );
+
+  /**
+   * Places camera on the axis perpendicular to its world up axis such
+   * that it is looking South toward the world origin.
+   */
+  public abstract void camSouth ( );
+
+  /**
+   * Places the camera on the positive y axis, such that it is looking
+   * down toward the world origin.
+   */
+  public abstract void camTop ( );
+
+  /**
+   * Places the camera on the positive x axis, such that it is looking
+   * West toward the world origin.
+   */
+  public abstract void camWest ( );
 
   /**
    * Draws a curve between four vectors.
@@ -352,8 +528,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
   /**
    * Dollies the camera, moving it on its local z axis, backward or
    * forward. This is done by multiplying the z magnitude by the camera
-   * inverse, then adding the local coordinates to both the camera
-   * location and look target.
+   * inverse, then adding the local coordinates to the camera location
+   * and look target.
    *
    * @param z the z magnitude
    */
@@ -368,14 +544,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final float yLocal = this.cameraInv.m12 * z * wInv;
       final float zLocal = this.cameraInv.m22 * z * wInv;
 
-      // this.cameraX += xLocal;
-      // this.cameraY += yLocal;
-      // this.cameraZ += zLocal;
-
-      // this.lookTarget.x += xLocal;
-      // this.lookTarget.y += yLocal;
-      // this.lookTarget.z += zLocal;
-
       this.camera(
           this.cameraX + xLocal,
           this.cameraY + yLocal,
@@ -383,6 +551,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
           this.lookTarget.x + xLocal,
           this.lookTarget.y + yLocal,
           this.lookTarget.z + zLocal,
+          // this.lookTarget.x,
+          // this.lookTarget.y,
+          // this.lookTarget.z,
           this.refUp.x,
           this.refUp.y,
           this.refUp.z);
@@ -726,19 +897,32 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final float y,
       final float z ) {
 
-    final PMatrix3D ci = this.cameraInv;
-    final float w = ci.m30 * x + ci.m31 * y + ci.m32 * z + ci.m33;
+    // final PMatrix3D m = this.camera;
+    final PMatrix3D m = this.cameraInv;
+    final float w = m.m30 * x + m.m31 * y + m.m32 * z + m.m33;
     if ( w != 0.0f ) {
       final float wInv = 1.0f / w;
-      final float xLocal = (ci.m00 * x + ci.m01 * y + ci.m02 * z) * wInv;
-      final float yLocal = (ci.m10 * x + ci.m11 * y + ci.m12 * z) * wInv;
-      final float zLocal = (ci.m20 * x + ci.m21 * y + ci.m22 * z) * wInv;
+      final float xLocal = (m.m00 * x + m.m01 * y + m.m02 * z) * wInv;
+      final float yLocal = (m.m10 * x + m.m11 * y + m.m12 * z) * wInv;
+      final float zLocal = (m.m20 * x + m.m21 * y + m.m22 * z) * wInv;
 
       this.moveTo(
           this.cameraX + xLocal,
           this.cameraY + yLocal,
           this.cameraZ + zLocal);
     }
+  }
+
+  /**
+   * Moves the renderer's camera by a vector relative to its
+   * orientation; causes the camera to orbit around the locus at which
+   * it is looking.
+   *
+   * @param v the vector
+   */
+  public void moveByLocal ( final Vec3 v ) {
+
+    this.moveByLocal(v.x, v.y, v.z);
   }
 
   /**
@@ -850,7 +1034,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    * @param y the y magnitude
    */
   @Override
-  @Experimental
   public void pedestal ( final float y ) {
 
     final PMatrix3D ci = this.cameraInv;
@@ -860,14 +1043,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final float xLocal = ci.m01 * y * wInv;
       final float yLocal = ci.m11 * y * wInv;
       final float zLocal = ci.m21 * y * wInv;
-
-      // this.cameraX += xLocal;
-      // this.cameraY += yLocal;
-      // this.cameraZ += zLocal;
-
-      // this.lookTarget.x += xLocal;
-      // this.lookTarget.y += yLocal;
-      // this.lookTarget.z += zLocal;
 
       this.camera(
           this.cameraX + xLocal,
@@ -1168,9 +1343,16 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
     final Vec3 v = new Vec3();
     final Vec3 vn = new Vec3();
 
+    /*
+     * With perspective projection, using stroke and fill together leads
+     * to flickering issues.
+     */
+    final boolean oldStroke = this.stroke;
+    if ( this.fill ) { this.stroke = false; }
     while ( meshItr.hasNext() ) {
       this.drawMesh3(meshItr.next(), tr, v, vn);
     }
+    this.stroke = oldStroke;
   }
 
   /**
@@ -1459,7 +1641,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
    * @param x the x magnitude
    */
   @Override
-  @Experimental
   public void truck ( final float x ) {
 
     final float w = this.cameraInv.m30 * x + this.cameraInv.m33;
@@ -1468,14 +1649,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3 {
       final float xLocal = this.cameraInv.m00 * x * wInv;
       final float yLocal = this.cameraInv.m10 * x * wInv;
       final float zLocal = this.cameraInv.m20 * x * wInv;
-
-      // this.cameraX += xLocal;
-      // this.cameraY += yLocal;
-      // this.cameraZ += zLocal;
-
-      // this.lookTarget.x += xLocal;
-      // this.lookTarget.y += yLocal;
-      // this.lookTarget.z += zLocal;
 
       this.camera(
           this.cameraX + xLocal,

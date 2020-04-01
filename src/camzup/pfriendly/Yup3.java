@@ -4,6 +4,7 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.opengl.PGraphicsOpenGL;
 
+import camzup.core.Handedness;
 import camzup.core.Utils;
 import camzup.core.Vec3;
 
@@ -34,6 +35,47 @@ public class Yup3 extends Up3 {
       final boolean isPrimary ) {
 
     super(width, height, parent, path, isPrimary);
+  }
+
+  /**
+   * Places the camera on the negative y axis, such that it is looking
+   * up toward the world origin.<br>
+   * <br>
+   * Because an exact position on the z axis would interfere with the
+   * camera look at function based on the reference or world up, a small
+   * value is added to the camera's y position.
+   */
+  @Override
+  public void camBottom ( ) {
+
+    final float y = this.eyeDist < 128 ? -Yup3.DEFAULT_LOC_Y
+        : this.eyeDist;
+    final float z = -y * 0.1f;
+
+    this.camera(
+        0.0f, y, z,
+        0.0f, 0.0f, 0.0f,
+        Yup3.DEFAULT_REF_X,
+        Yup3.DEFAULT_REF_Y,
+        Yup3.DEFAULT_REF_Z);
+  }
+
+  /**
+   * Places the camera on the negative x axis, such that it is looking
+   * East toward the world origin.
+   */
+  @Override
+  public void camEast ( ) {
+
+    final float x = this.eyeDist < 128 ? -Yup3.DEFAULT_LOC_X
+        : -this.eyeDist;
+
+    this.camera(
+        x, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f,
+        Yup3.DEFAULT_REF_X,
+        Yup3.DEFAULT_REF_Y,
+        Yup3.DEFAULT_REF_Z);
   }
 
   /**
@@ -138,7 +180,7 @@ public class Yup3 extends Up3 {
     this.eyeDist = Vec3.mag(this.lookDir);
     this.lookTarget.set(xCenter, yCenter, zCenter);
 
-    this.updateCamera();
+    this.updateCameraInv();
   }
 
   /**
@@ -159,6 +201,82 @@ public class Yup3 extends Up3 {
     this.camera(
         eye.x, eye.y, eye.z,
         center.x, center.y, center.z);
+  }
+
+  /**
+   * Places the camera on the negative z axis, such that it is looking
+   * North toward the world origin.
+   */
+  @Override
+  public void camNorth ( ) {
+
+    final float z = this.eyeDist < 128 ? Yup3.DEFAULT_LOC_Z
+        : -this.eyeDist;
+
+    this.camera(
+        0.0f, 0.0f, z,
+        0.0f, 0.0f, 0.0f,
+        Yup3.DEFAULT_REF_X,
+        Yup3.DEFAULT_REF_Y,
+        Yup3.DEFAULT_REF_Z);
+  }
+
+  /**
+   * Places the camera on the positive z axis, such that it is looking
+   * South toward the world origin.
+   */
+  @Override
+  public void camSouth ( ) {
+
+    final float z = this.eyeDist < 128 ? -Yup3.DEFAULT_LOC_Z
+        : this.eyeDist;
+
+    this.camera(
+        0.0f, 0.0f, z,
+        0.0f, 0.0f, 0.0f,
+        Yup3.DEFAULT_REF_X,
+        Yup3.DEFAULT_REF_Y,
+        Yup3.DEFAULT_REF_Z);
+  }
+
+  /**
+   * Places the camera on the positive y axis, such that it is looking
+   * down toward the world origin.<br>
+   * <br>
+   * Because an exact position on the z axis would interfere with the
+   * camera look at function based on the reference or world up, a small
+   * value is added to the camera's y position.
+   */
+  @Override
+  public void camTop ( ) {
+
+    final float y = this.eyeDist < 128 ? Yup3.DEFAULT_LOC_Y
+        : this.eyeDist;
+    final float z = -y * 0.1f;
+    this.camera(
+        0.0f, y, z,
+        0.0f, 0.0f, 0.0f,
+        Yup3.DEFAULT_REF_X,
+        Yup3.DEFAULT_REF_Y,
+        Yup3.DEFAULT_REF_Z);
+  }
+
+  /**
+   * Places the camera on the positive x axis, such that it is looking
+   * West toward the world origin.
+   */
+  @Override
+  public void camWest ( ) {
+
+    final float x = this.eyeDist < 128 ? Yup3.DEFAULT_LOC_X
+        : this.eyeDist;
+
+    this.camera(
+        x, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f,
+        Yup3.DEFAULT_REF_X,
+        Yup3.DEFAULT_REF_Y,
+        Yup3.DEFAULT_REF_Z);
   }
 
   /**
@@ -228,6 +346,12 @@ public class Yup3 extends Up3 {
     Vec3.up(this.j);
     Vec3.forward(this.k);
   }
+
+  /**
+   * Returns the handedness of the renderer.
+   */
+  @Override
+  public Handedness handedness ( ) { return Handedness.LEFT; }
 
   /**
    * Enable lighting and use default lights, typically an ambient light

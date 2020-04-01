@@ -5,6 +5,7 @@ import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.opengl.PGraphicsOpenGL;
 
+import camzup.core.Handedness;
 import camzup.core.Utils;
 import camzup.core.Vec3;
 
@@ -84,6 +85,47 @@ public class Zup3 extends Up3 {
   }
 
   /**
+   * Places the camera on the negative z axis, such that it is looking
+   * up toward the world origin.<br>
+   * <br>
+   * Because an exact position on the z axis would interfere with the
+   * camera look at function based on the reference or world up, a small
+   * value is added to the camera's y position.
+   */
+  @Override
+  public void camBottom ( ) {
+
+    final float z = this.eyeDist < 128 ? -Zup3.DEFAULT_LOC_Z
+        : -this.eyeDist;
+    final float y = -z * 0.1f;
+
+    this.camera(
+        0.0f, y, z,
+        0.0f, 0.0f, 0.0f,
+        Zup3.DEFAULT_REF_X,
+        Zup3.DEFAULT_REF_Y,
+        Zup3.DEFAULT_REF_Z);
+  }
+
+  /**
+   * Places the camera on the negative x axis, such that it is looking
+   * East toward the world origin.
+   */
+  @Override
+  public void camEast ( ) {
+
+    final float x = this.eyeDist < 128 ? -Zup3.DEFAULT_LOC_X
+        : -this.eyeDist;
+
+    this.camera(
+        x, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f,
+        Zup3.DEFAULT_REF_X,
+        Zup3.DEFAULT_REF_Y,
+        Zup3.DEFAULT_REF_Z);
+  }
+
+  /**
    * Creates a camera that looks at a default location and a vantage
    * point based on the renderer's height.
    */
@@ -94,6 +136,7 @@ public class Zup3 extends Up3 {
      * Never use defCameraXXX values. They are not actual constants and
      * may not have been initialized.
      */
+
     this.camera(
         this.cameraX,
         this.cameraY,
@@ -185,7 +228,7 @@ public class Zup3 extends Up3 {
     this.eyeDist = Vec3.mag(this.lookDir);
     this.lookTarget.set(xCenter, yCenter, zCenter);
 
-    this.updateCamera();
+    this.updateCameraInv();
   }
 
   /**
@@ -203,6 +246,83 @@ public class Zup3 extends Up3 {
     this.camera(
         eye.x, eye.y, eye.z,
         center.x, center.y, center.z);
+  }
+
+  /**
+   * Places the camera on the negative y axis, such that it is looking
+   * North toward the world origin.
+   */
+  @Override
+  public void camNorth ( ) {
+
+    final float y = this.eyeDist < 128 ? Zup3.DEFAULT_LOC_Y
+        : -this.eyeDist;
+
+    this.camera(
+        0.0f, y, 0.0f,
+        0.0f, 0.0f, 0.0f,
+        Zup3.DEFAULT_REF_X,
+        Zup3.DEFAULT_REF_Y,
+        Zup3.DEFAULT_REF_Z);
+  }
+
+  /**
+   * Places the camera on the positive y axis, such that it is looking
+   * South toward the world origin.
+   */
+  @Override
+  public void camSouth ( ) {
+
+    final float y = this.eyeDist < 128 ? -Zup3.DEFAULT_LOC_Y
+        : this.eyeDist;
+
+    this.camera(
+        0.0f, y, 0.0f,
+        0.0f, 0.0f, 0.0f,
+        Zup3.DEFAULT_REF_X,
+        Zup3.DEFAULT_REF_Y,
+        Zup3.DEFAULT_REF_Z);
+  }
+
+  /**
+   * Places the camera on the positive z axis, such that it is looking
+   * down toward the world origin.<br>
+   * <br>
+   * Because an exact position on the z axis would interfere with the
+   * camera look at function based on the reference or world up, a small
+   * value is added to the camera's y position.
+   */
+  @Override
+  public void camTop ( ) {
+
+    final float z = this.eyeDist < 128 ? Zup3.DEFAULT_LOC_Z
+        : this.eyeDist;
+    final float y = -z * 0.1f;
+
+    this.camera(
+        0.0f, y, z,
+        0.0f, 0.0f, 0.0f,
+        Zup3.DEFAULT_REF_X,
+        Zup3.DEFAULT_REF_Y,
+        Zup3.DEFAULT_REF_Z);
+  }
+
+  /**
+   * Places the camera on the positive x axis, such that it is looking
+   * West toward the world origin.
+   */
+  @Override
+  public void camWest ( ) {
+
+    final float x = this.eyeDist < 128 ? Zup3.DEFAULT_LOC_X
+        : this.eyeDist;
+
+    this.camera(
+        x, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f,
+        Zup3.DEFAULT_REF_X,
+        Zup3.DEFAULT_REF_Y,
+        Zup3.DEFAULT_REF_Z);
   }
 
   /**
@@ -274,6 +394,12 @@ public class Zup3 extends Up3 {
   }
 
   /**
+   * Returns the handedness of the renderer.
+   */
+  @Override
+  public Handedness handedness ( ) { return Handedness.RIGHT; }
+
+  /**
    * Enable lighting and use default lights, typically an ambient light
    * and a directional light.
    *
@@ -333,11 +459,11 @@ public class Zup3 extends Up3 {
     if ( this.shape != 0 ) {
       if ( this.normalMode == PGraphics.NORMAL_MODE_AUTO ) {
 
-        /* One normal per begin/end shape */
+        /* One normal per begin/end shape. */
         this.normalMode = PGraphics.NORMAL_MODE_SHAPE;
       } else if ( this.normalMode == PGraphics.NORMAL_MODE_SHAPE ) {
 
-        /* a separate normal for each vertex */
+        /* A separate normal for each vertex. */
         this.normalMode = PGraphics.NORMAL_MODE_VERTEX;
       }
     }

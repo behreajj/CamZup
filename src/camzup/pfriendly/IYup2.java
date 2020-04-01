@@ -119,21 +119,6 @@ public interface IYup2 extends IUp {
   void ellipse ( final Vec2 a, final Vec2 b );
 
   /**
-   * Gets the renderer's background color as an integer.
-   *
-   * @return the color
-   */
-  int getBackground ( );
-
-  /**
-   * Gets the renderer's background color.
-   *
-   * @param target the output color
-   * @return the background
-   */
-  Color getBackground ( Color target );
-
-  /**
    * Gets the renderer's camera location.
    *
    * @param target the output vector
@@ -187,6 +172,16 @@ public interface IYup2 extends IUp {
   /**
    * Draws a diagnostic grid out of points.
    *
+   * @param count number of points
+   */
+  default void grid ( final int count ) {
+
+    this.grid(count, IUp.DEFAULT_STROKE_WEIGHT + IUp.DEFAULT_STROKE_WEIGHT);
+  }
+
+  /**
+   * Draws a diagnostic grid out of points.
+   *
    * @param count        number of points
    * @param strokeWeight stroke weight
    */
@@ -212,19 +207,21 @@ public interface IYup2 extends IUp {
     this.pushStyle();
     this.strokeWeight(strokeWeight);
 
+    /*
+     * In case dimensions are not uniform, right and top duplicate the
+     * calculation of half dimension.
+     */
     final float right = dim * 0.5f;
     final float left = -right;
     final float top = dim * 0.5f;
     final float bottom = -top;
 
-    final float toPercent = 1.0f / count;
-    final int last = count + 1;
-
+    final int vcount = count < 3 ? 3 : count;
+    final float toPercent = 1.0f / vcount;
+    final int last = vcount + 1;
     final int ab = 0xff000080;
 
-    /*
-     * Calculate values for inner loop.
-     */
+    /* Calculate values for inner loop. */
     final float[] xs = new float[last];
     final int[] reds = new int[last];
     for ( int j = 0; j < last; ++j ) {
@@ -313,15 +310,35 @@ public interface IYup2 extends IUp {
   }
 
   /**
+   * Gets a mouse within unit coordinates.
+   *
+   * @param target the output vector
+   * @return the mouse
+   */
+  default Vec2 mouse1 ( final Vec2 target ) { return this.mouse1s(target); }
+
+  /**
    * Gets a mouse within a unit square, where either component may be in
    * the range [-1.0, 1.0]. (This is not a normalized vector.)
    *
    * @param target the output vector
    * @return the mouse
    */
-  default Vec2 mouse1 ( final Vec2 target ) {
+  default Vec2 mouse1s ( final Vec2 target ) {
 
-    return IYup2.mouse1(this.getParent(), this, target);
+    return IYup2.mouse1s(this.getParent(), target);
+  }
+
+  /**
+   * Gets a mouse within the range [0.0, 1.0]. The mouse's y coordinate
+   * is flipped.
+   *
+   * @param target the output vector
+   * @return the mouse
+   */
+  default Vec2 mouse1u ( final Vec2 target ) {
+
+    return IYup2.mouse1u(this.getParent(), target);
   }
 
   /**
@@ -482,16 +499,6 @@ public interface IYup2 extends IUp {
 
     this.point(v.x, v.y);
   }
-
-  /**
-   * Pop the last style off the end of the stack.
-   */
-  void popStyle ( );
-
-  /**
-   * Push a style onto the end of the stack.
-   */
-  void pushStyle ( );
 
   /**
    * Draws a quadrilateral between four points.
@@ -1196,18 +1203,14 @@ public interface IYup2 extends IUp {
    * the range [-1.0, 1.0]. The mouse's y coordinate is flipped. (This
    * is not a normalized vector.)
    *
-   * @param parent   the parent applet
-   * @param renderer the renderer
-   * @param target   the output vector
+   * @param parent the parent applet
+   * @param target the output vector
    * @return the mouse
    * @see Utils#clamp01(float)
    */
-  static Vec2 mouse1 (
+  static Vec2 mouse1s (
       final PApplet parent,
-      final IYup2 renderer,
       final Vec2 target ) {
-
-    // TODO: Update this API to mouse1u and mouse1s?
 
     final float mx = Utils.clamp01(
         parent.mouseX / (float) parent.width);
@@ -1217,6 +1220,26 @@ public interface IYup2 extends IUp {
     return target.set(
         mx + mx - 1.0f,
         1.0f - (my + my));
+  }
+
+  /**
+   * Gets a mouse within the range [0.0, 1.0]. The mouse's y coordinate
+   * is flipped.
+   *
+   * @param parent the parent applet
+   * @param target the output vector
+   * @return the mouse
+   */
+  static Vec2 mouse1u (
+      final PApplet parent,
+      final Vec2 target ) {
+
+    final float mx = Utils.clamp01(
+        parent.mouseX / (float) parent.width);
+    final float my = Utils.clamp01(
+        parent.mouseY / (float) parent.height);
+
+    return target.set(mx, 1.0f - my);
   }
 
   /**

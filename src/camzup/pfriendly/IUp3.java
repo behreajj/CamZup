@@ -1,7 +1,9 @@
 package camzup.pfriendly;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 
+import camzup.core.Handedness;
 import camzup.core.Ray3;
 import camzup.core.Utils;
 import camzup.core.Vec3;
@@ -75,6 +77,14 @@ public interface IUp3 extends IUp {
         center.x, center.y, center.z);
   }
 
+  /**
+   * Dollies the camera, moving it on its local z axis, backward or
+   * forward. This is done by multiplying the z magnitude by the camera
+   * inverse, then adding the local coordinates to the camera location
+   * and look target.
+   *
+   * @param z the z magnitude
+   */
   void dolly ( final float z );
 
   /**
@@ -106,11 +116,184 @@ public interface IUp3 extends IUp {
    */
   float getLocZ ( );
 
+  /**
+   * Gets the x component of the location at which the camera is
+   * looking.
+   *
+   * @return the location x
+   */
   float getLookTargetX ( );
+
+  /**
+   * Gets the y component of the location at which the camera is
+   * looking.
+   *
+   * @return the location y
+   */
 
   float getLookTargetY ( );
 
+  /**
+   * Gets the z component of the location at which the camera is
+   * looking.
+   *
+   * @return the location z
+   */
+
   float getLookTargetZ ( );
+
+  /**
+   * Draws a diagnostic grid out of points.
+   *
+   * @param count number of points
+   */
+  default void grid ( final int count ) {
+
+    this.grid(count, IUp.DEFAULT_STROKE_WEIGHT * 1.5f);
+  }
+
+  /**
+   * Draws a diagnostic grid out of points.
+   *
+   * @param count        number of points
+   * @param strokeWeight stroke weight
+   */
+  default void grid (
+      final int count,
+      final float strokeWeight ) {
+
+    this.grid(count, strokeWeight, IUp.DEFAULT_STROKE_COLOR);
+  }
+
+  /**
+   * Draws a diagnostic grid out of points.
+   *
+   * @param count        number of points
+   * @param strokeWeight stroke weight
+   * @param strokeColor  the stroke color
+   */
+  default void grid (
+      final int count,
+      final float strokeWeight,
+      final int strokeColor ) {
+
+    this.grid(count, strokeWeight, strokeColor, count * IYup2.GRID_FAC);
+  }
+
+  /**
+   * Draws a diagnostic grid out of points.
+   *
+   * @param count        number of points
+   * @param strokeWeight stroke weight
+   * @param strokeColor  the stroke color
+   * @param dim          the grid dimension
+   */
+  default void grid (
+      final int count,
+      final float strokeWeight,
+      final int strokeColor,
+      final float dim ) {
+
+    final float xHalfDim = dim * 0.5f;
+    final float yHalfDim = xHalfDim;
+    final float zHalfDim = xHalfDim;
+    final int sign = this.handedness().getSign();
+    // final float ltx = this.getLookTargetX();
+    // final float lty = this.getLookTargetY();
+    // final float ltz = this.getLookTargetZ();
+    // final float right = ltx + xHalfDim;
+    // final float left = ltx - xHalfDim;
+    // final float top = lty - sign * yHalfDim;
+    // final float bottom = lty + sign * yHalfDim;
+    // final float far = ltz - sign * zHalfDim;
+    // final float near = ltz + sign * zHalfDim;
+
+    final float right = xHalfDim;
+    final float left = -xHalfDim;
+    final float top = -sign * yHalfDim;
+    final float bottom = sign * yHalfDim;
+    final float far = -sign * zHalfDim;
+    final float near = sign * zHalfDim;
+
+    final int vcount = count < 3 ? 3 : count;
+    final float toPercent = 1.0f / (vcount + 1.0f);
+    final float[] xs = new float[vcount];
+    final float[] ys = new float[vcount];
+    final float[] zs = new float[vcount];
+
+    this.hint(PConstants.DISABLE_DEPTH_TEST);
+    this.hint(PConstants.DISABLE_DEPTH_MASK);
+    this.hint(PConstants.DISABLE_DEPTH_SORT);
+
+    this.pushStyle();
+    this.strokeWeight(strokeWeight * 1.5f);
+    this.stroke(0xffffffff);
+    this.point(left, bottom, far);
+    this.strokeWeight(strokeWeight * 1.375f);
+
+    for ( int j = 0; j < vcount; ++j ) {
+      final float jPercent = (1 + j) * toPercent;
+      final float x = (1.0f - jPercent) * right + jPercent * left;
+      xs[j] = x;
+      this.stroke(IUp.DEFAULT_I_COLOR);
+      this.point(x, bottom, far);
+    }
+
+    for ( int i = 0; i < vcount; ++i ) {
+      final float iPercent = (1 + i) * toPercent;
+      final float y = (1.0f - iPercent) * top + iPercent * bottom;
+      ys[i] = y;
+      this.stroke(IUp.DEFAULT_J_COLOR);
+      this.point(left, y, far);
+    }
+
+    for ( int h = 0; h < vcount; ++h ) {
+      final float hPercent = (1 + h) * toPercent;
+      final float z = (1.0f - hPercent) * near + hPercent * far;
+      zs[h] = z;
+      this.stroke(IUp.DEFAULT_K_COLOR);
+      this.point(left, bottom, z);
+    }
+
+    this.strokeWeight(strokeWeight);
+    this.stroke(strokeColor);
+
+    /* x plane (y and z vary, x is constant). */
+    for ( int h = 0; h < vcount; ++h ) {
+      final float z = zs[h];
+      for ( int i = 0; i < vcount; ++i ) {
+        this.point(left, ys[i], z);
+      }
+    }
+
+    /* y plane (x and z vary, y is constant). */
+    for ( int h = 0; h < vcount; ++h ) {
+      final float z = zs[h];
+      for ( int j = 0; j < vcount; ++j ) {
+        this.point(xs[j], bottom, z);
+      }
+    }
+
+    /* z plane (x and y vary, z is constant). */
+    for ( int i = 0; i < vcount; ++i ) {
+      final float y = ys[i];
+      for ( int j = 0; j < vcount; ++j ) {
+        this.point(xs[j], y, far);
+      }
+    }
+
+    this.popStyle();
+    this.hint(PConstants.ENABLE_DEPTH_TEST);
+    this.hint(PConstants.ENABLE_DEPTH_MASK);
+    this.hint(PConstants.ENABLE_DEPTH_SORT);
+  }
+
+  /**
+   * Returns the handedness of the renderer.
+   *
+   * @return the handedness
+   */
+  Handedness handedness ( );
 
   /**
    * Sets a rendering hint in the OpenGL renderer.
@@ -146,16 +329,35 @@ public interface IUp3 extends IUp {
   void line ( final Vec3 origin, final Vec3 dest );
 
   /**
-   * Gets a mouse within a unit square, where either component may be in
-   * the range [-1.0, 1.0]. the mouse's y component is assigned to the
-   * vector's y component. (This is not a normalized vector.)
+   * Gets a mouse within unit coordinates.
    *
    * @param target the output vector
    * @return the mouse
    */
-  default Vec3 mouse1 ( final Vec3 target ) {
+  default Vec3 mouse1 ( final Vec3 target ) { return this.mouse1s(target); }
 
-    return IUp3.mouse1(this.getParent(), this, target);
+  /**
+   * Gets a mouse within a unit square, where either component may be in
+   * the range [-1.0, 1.0]. (This is not a normalized vector.)
+   *
+   * @param target the output vector
+   * @return the mouse
+   */
+  default Vec3 mouse1s ( final Vec3 target ) {
+
+    return IUp3.mouse1s(this.getParent(), target);
+  }
+
+  /**
+   * Gets a mouse within the range [0.0, 1.0]. The mouse's y coordinate
+   * is flipped.
+   *
+   * @param target the output vector
+   * @return the mouse
+   */
+  default Vec3 mouse1u ( final Vec3 target ) {
+
+    return IUp3.mouse1u(this.getParent(), target);
   }
 
   default void moveBy (
@@ -221,6 +423,14 @@ public interface IUp3 extends IUp {
         u * this.getLocZ() + step * locNew.z);
   }
 
+  /**
+   * Boom or pedestal the camera, moving it on its local y axis, up or
+   * down. This is done by multiplying the y magnitude by the camera
+   * inverse, then adding the local coordinates to both the camera
+   * location and look target.
+   *
+   * @param y the y magnitude
+   */
   void pedestal ( final float y );
 
   /**
@@ -242,11 +452,13 @@ public interface IUp3 extends IUp {
   /**
    * Pop the last style off the end of the stack.
    */
+  @Override
   void popStyle ( );
 
   /**
    * Push a style onto the end of the stack.
    */
+  @Override
   void pushStyle ( );
 
   /**
@@ -409,6 +621,14 @@ public interface IUp3 extends IUp {
   @Override
   void strokeWeight ( final float sw );
 
+  /**
+   * Trucks the camera, moving it on its local x axis, left or right.
+   * This is done by multiplying the x magnitude by the camera inverse,
+   * then adding the local coordinates to both the camera location and
+   * look target.
+   *
+   * @param x the x magnitude
+   */
   void truck ( final float x );
 
   /**
@@ -418,6 +638,11 @@ public interface IUp3 extends IUp {
    * @param v the coordinate
    */
   void vertex ( final Vec3 v );
+
+  /**
+   * The default renderer handedness.
+   */
+  Handedness DEFAULT_HANDEDNESS = Handedness.RIGHT;
 
   /**
    * Factor by which a grid's count is scaled when dimensions are not
@@ -437,17 +662,13 @@ public interface IUp3 extends IUp {
    * assigned to the vector's y component. (This is not a normalized
    * vector.)
    *
-   * @param parent   the parent applet
-   * @param renderer the renderer
-   * @param target   the output vector
+   * @param parent the parent applet
+   * @param target the output vector
    * @return the mouse
    */
-  static Vec3 mouse1 (
+  static Vec3 mouse1s (
       final PApplet parent,
-      final IUp3 renderer,
       final Vec3 target ) {
-
-    // TODO: Update this API to mouse1u and mouse1s?
 
     final float mx = Utils.clamp01(
         parent.mouseX / (float) parent.width);
@@ -457,5 +678,24 @@ public interface IUp3 extends IUp {
         mx + mx - 1.0f,
         1.0f - (my + my),
         0.0f);
+  }
+
+  /**
+   * Gets a mouse within the range [0.0, 1.0]. The mouse's y coordinate
+   * is flipped.
+   *
+   * @param parent the parent applet
+   * @param target the output vector
+   * @return the mouse
+   */
+  static Vec3 mouse1u (
+      final PApplet parent,
+      final Vec3 target ) {
+
+    final float mx = Utils.clamp01(
+        parent.mouseX / (float) parent.width);
+    final float my = Utils.clamp01(
+        parent.mouseY / (float) parent.height);
+    return target.set(mx, 1.0f - my, 0.0f);
   }
 }

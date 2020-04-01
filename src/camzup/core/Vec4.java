@@ -1920,8 +1920,22 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
   }
 
   /**
-   * Creates a random point in the Cartesian coordinate system given a
-   * lower and an upper bound.
+   * Generates a random vector.
+   *
+   * @param rng    the random number generator
+   * @param target the output vector
+   * @return the vector
+   */
+  public static Vec4 random (
+      final java.util.Random rng,
+      final Vec4 target ) {
+
+    return Vec4.randomSpherical(rng, 1.0f, 1.0f, target);
+  }
+
+  /**
+   * Generates a random vector in a rectilinear coordinate system given
+   * a lower and an upper bound.
    *
    * @param rng        the random number generator
    * @param lowerBound the lower bound
@@ -1931,16 +1945,20 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    * @see Random#uniform(float, float)
    */
   public static Vec4 randomCartesian (
-      final Random rng,
+      final java.util.Random rng,
       final Vec4 lowerBound,
       final Vec4 upperBound,
       final Vec4 target ) {
 
+    final float rx = rng.nextFloat();
+    final float ry = rng.nextFloat();
+    final float rz = rng.nextFloat();
+    final float rw = rng.nextFloat();
     return target.set(
-        rng.uniform(lowerBound.x, upperBound.x),
-        rng.uniform(lowerBound.y, upperBound.y),
-        rng.uniform(lowerBound.z, upperBound.z),
-        rng.uniform(lowerBound.w, upperBound.w));
+        (1.0f - rx) * lowerBound.x + rx * upperBound.x,
+        (1.0f - ry) * lowerBound.y + ry * upperBound.y,
+        (1.0f - rz) * lowerBound.z + rz * upperBound.z,
+        (1.0f - rw) * lowerBound.w + rw * upperBound.w);
   }
 
   /**
@@ -1952,15 +1970,16 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    * @param rhoMax the maximum radius
    * @param target the output vector
    * @return the vector
-   * @see Quaternion#random(Random, Quaternion)
+   * @see Quaternion#random(java.util.Random, Quaternion)
    */
   public static Vec4 randomSpherical (
-      final Random rng,
+      final java.util.Random rng,
       final float rhoMin,
       final float rhoMax,
       final Vec4 target ) {
 
-    final float rho = rng.uniform(rhoMin, rhoMax);
+    final float rr = rng.nextFloat();
+    final float rho = (1.0f - rr) * rhoMin + rr * rhoMax;
     final float t0 = IUtils.TAU * rng.nextFloat();
     final float t1 = IUtils.TAU * rng.nextFloat();
     final float r1 = rng.nextFloat();

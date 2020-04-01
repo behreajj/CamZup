@@ -1340,8 +1340,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     float y1 = -jx;
     float z1 = 0.0f;
 
-    // TODO: Update this with approx polarity check?
-    final boolean parallel = x1 == 0.0f && y1 == 0.0f;
+    final boolean parallel = Utils.approx(x1, 0.0f) && Utils.approx(y1, 0.0f);
     if ( parallel ) {
       final float sgn = Utils.sign(jy);
       // x1 = jz;
@@ -1978,13 +1977,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    * @param target the output quaternion
    * @return the random quaternion
    * @author Ken Shoemake
-   * @see Random#nextDouble()
-   * @see Math#sqrt(double)
-   * @see Math#sin(double)
-   * @see Math#cos(double)
    */
   public static Quaternion random (
-      final Random rng,
+      final java.util.Random rng,
       final Quaternion target ) {
 
     final float t0 = IUtils.TAU * rng.nextFloat();

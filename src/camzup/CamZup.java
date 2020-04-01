@@ -1,7 +1,12 @@
 package camzup;
 
+import java.util.Comparator;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import processing.core.PApplet;
 
+import camzup.core.IUtils;
 import camzup.core.Mesh2;
 import camzup.core.Mesh3;
 import camzup.core.MeshEntity2;
@@ -153,6 +158,16 @@ public class CamZup {
     return m;
   }
 
+  private static Vec2[] unique ( final Vec2[] v ) {
+
+    final SortedSet < Vec2 > vsUnique = new TreeSet <>(new SortQuantized2());
+    final int vlen = v.length;
+    for ( int i = 0; i < vlen; ++i ) {
+      vsUnique.add(v[i]);
+    }
+    return vsUnique.toArray(new Vec2[vsUnique.size()]);
+  }
+
   /**
    * The main function.
    *
@@ -161,24 +176,21 @@ public class CamZup {
   public static void main ( final String[] args ) {
 
     final Random rng = new Random();
+    // Vec2[] x = new Vec2[] {
+    // Vec2.random(rng, new Vec2()),
+    // Vec2.right(new Vec2()),
+    // Vec2.right(new Vec2()),
+    // Vec2.random(rng, new Vec2()) };
+    // System.out.println(Utils.toString(x));
+    // x = CamZup.unique(x);
+    // System.out.println(Utils.toString(x));
 
-    final Mesh2 mesh2 = new Mesh2();
+    final Mesh2 polygon = new Mesh2();
+    Mesh2.polygon(6, polygon);
     final MeshEntity2 me2 = new MeshEntity2();
-    me2.append(mesh2);
-
-    System.out.println(0.5d * Math.sqrt(3.0d) / 2.0d);
-    System.out.println((float) (0.5d * Math.sqrt(3.0d) / 2.0d));
-
-    // Mesh2.gridHex(16,
-    // Vec2.mul(0.5f, Vec2.negOne(new Vec2()), new Vec2()),
-    // Vec2.mul(0.5f, Vec2.one(new Vec2()), new Vec2()),
-    // PolyType.NGON, mesh2);
-
-    // final Mesh3 mesh3 = new Mesh3();
-    // final MeshEntity3 me3 = new MeshEntity3();
-    // me3.append(mesh3);
-    // Mesh3.cube(mesh3);
-    // System.out.println(me2.toBlenderCode());
+    me2.append(polygon);
+    final String str = me2.toBlenderCode();
+    System.out.println(str);
   }
 
   /**
@@ -187,4 +199,76 @@ public class CamZup {
    * @return the version
    */
   public static String version ( ) { return CamZup.VERSION; }
+
+  /**
+   * Compares two vectors by their quantized y component, then by their
+   * x component.
+   */
+  private static final class SortQuantized2 implements Comparator < Vec2 > {
+
+    /**
+     * Internal vector to hold quantized left operand.
+     */
+    final private Vec2 qa;
+
+    /**
+     * Internal vector to hold quantized right operand.
+     */
+    final private Vec2 qb;
+
+    /**
+     * Quantization level.
+     */
+    final public int levels;
+
+    {
+      this.qa = new Vec2();
+      this.qb = new Vec2();
+    }
+
+    /**
+     * The default constructor.
+     */
+    public SortQuantized2 ( ) {
+
+      this((int) (1.0f / IUtils.DEFAULT_EPSILON));
+    }
+
+    /**
+     * Creates a quantized sorter with the specified number of levels.
+     *
+     * @param levels quantization levels
+     */
+    public SortQuantized2 ( final int levels ) {
+
+      this.levels = levels;
+    }
+
+    /**
+     * Compares the quantized y and x components of the comparisand
+     * vectors.
+     *
+     * @param a the left comparisand
+     * @param b the right comparisand
+     * @return the evaluation
+     */
+    @Override
+    public int compare ( final Vec2 a, final Vec2 b ) {
+
+      Vec2.quantize(a, this.levels, this.qa);
+      Vec2.quantize(b, this.levels, this.qb);
+      return this.qa.compareTo(this.qb);
+    }
+
+    /**
+     * Returns the simple name of this class.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString ( ) {
+
+      return this.getClass().getSimpleName();
+    }
+  }
 }

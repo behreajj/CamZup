@@ -40,7 +40,7 @@ import camzup.core.Vec2;
  * Supposes that the the camera is looking down on a 2D plane from the
  * z axis, making (0.0, 1.0) the forward -- or up -- axis.
  */
-public class YupJ2 extends PGraphicsJava2D implements IYup2 {
+public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
   /**
    * A Java AWT affine transform object. This is cached so a new object
@@ -2494,10 +2494,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
    * row-major 3 x 2 matrix, not the Java AWT convention.
    */
   @Override
-  public void printMatrix ( ) {
-
-    this.printMatrix(4);
-  }
+  public void printMatrix ( ) { this.printMatrix(4); }
 
   /**
    * Prints the renderer matrix. Follows the Processing convention of a
@@ -3575,40 +3572,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
   }
 
   /**
-   * Displays a character at a 2D location, ignoring the z coordinate.
-   *
-   * @param character the character
-   * @param x         the x coordinate
-   * @param y         the y coordinate
-   * @param z         the z coordinate
-   */
-  @Override
-  public void text (
-      final char character,
-      final float x,
-      final float y,
-      final float z ) {
-
-    PGraphics.showDepthWarningXYZ("text");
-    this.text(character, x, y);
-  }
-
-  /**
-   * Displays an array of characters at a location.
-   *
-   * @param chars the array of characters.
-   * @param x     the x coordinate
-   * @param y     the y coordinate
-   */
-  public void text (
-      final char[] chars,
-      final float x,
-      final float y ) {
-
-    this.text(chars, 0, chars.length, x, y);
-  }
-
-  /**
    * Displays an array of characters at a location.
    *
    * @param chars the array of characters
@@ -3666,141 +3629,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2 {
     if ( stMut < stop ) {
       this.textLineAlignImpl(chars, stMut, index, x, yMut);
     }
-  }
-
-  /**
-   * Displays an array of characters at a 2D location. Ignores the z
-   * coordinate.
-   *
-   * @param chars the array of characters
-   * @param start the start place, inclusive
-   * @param stop  the stop place, exclusive
-   * @param x     the x coordinate
-   * @param y     the y coordinate
-   * @param z     the z coordinate
-   */
-  @Override
-  public void text (
-      final char[] chars,
-      final int start, final int stop,
-      final float x,
-      final float y,
-      final float z ) {
-
-    PApplet.showDepthWarningXYZ("text");
-    this.text(chars, start, stop, x, y);
-  }
-
-  /**
-   * Displays a real number at a 2D location. Fixes the number display
-   * to four decimal places.
-   *
-   * @param num the number
-   * @param x   the x coordinate
-   * @param y   the y coordinate
-   * @see Utils#toFixed(float, int)
-   */
-  @Override
-  public void text (
-      final float num,
-      final float x,
-      final float y ) {
-
-    this.text(Utils.toFixed(num, 4), x, y);
-  }
-
-  /**
-   * Displays a real number at a 2D location, ignoring the z coordinate.
-   *
-   * @param num the number
-   * @param x   the x coordinate
-   * @param y   the y coordinate
-   * @param z   the z coordinate
-   */
-  @Override
-  public void text (
-      final float num,
-      final float x,
-      final float y,
-      final float z ) {
-
-    PGraphics.showDepthWarningXYZ("text");
-    this.text(num, x, y);
-  }
-
-  /**
-   * Displays an integer at a 2D location, ignoring the z coordinate.
-   *
-   * @param num the number
-   * @param x   the x coordinate
-   * @param y   the y coordinate
-   * @param z   the z coordinate
-   */
-  @Override
-  public void text (
-      final int num,
-      final float x,
-      final float y,
-      final float z ) {
-
-    PGraphics.showDepthWarningXYZ("text");
-    this.text(num, x, y);
-  }
-
-  /**
-   * Displays a string at a coordinate.
-   *
-   * @param str the string
-   * @param x   the x coordinate
-   * @param y   the y coordinate
-   */
-  @Override
-  public void text (
-      final String str,
-      final float x,
-      final float y ) {
-
-    this.text(str.toCharArray(), x, y);
-  }
-
-  /**
-   * Displays a string of text at a 2D location, ignoring the z
-   * coordinate.
-   *
-   * @param str the string
-   * @param x   the x coordinate
-   * @param y   the y coordinate
-   * @param z   the z coordinate
-   */
-  @Override
-  public void text (
-      final String str,
-      final float x,
-      final float y,
-      final float z ) {
-
-    PGraphics.showDepthWarningXYZ("text");
-    this.text(str, x, y);
-  }
-
-  /**
-   * Displaying a string of text in a box is not supported by this
-   * renderer. Defaults to another text function.
-   *
-   * @param str the string
-   * @param x1  the first x coordinate.
-   * @param y1  the first y coordinate.
-   * @param x2  the second x coordinate.
-   * @param y2  the second y coordinate.
-   */
-  @Override
-  public void text (
-      final String str,
-      final float x1, final float y1,
-      final float x2, final float y2 ) {
-
-    PApplet.showMissingWarning("text");
-    this.text(str, x1, y1);
   }
 
   /**

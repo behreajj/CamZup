@@ -1508,6 +1508,20 @@ public class Color extends Vec4 {
   }
 
   /**
+   * Creates a random color. Defaults to a random RGB channel.
+   *
+   * @param rng    the random number generator
+   * @param target the output color
+   * @return the color
+   */
+  public static Color random (
+      final java.util.Random rng,
+      final Color target ) {
+
+    return Color.randomRgb(rng, target);
+  }
+
+  /**
    * Creates a random HSBA vector, then converts it to an RGBA color.
    * The alpha channel is not randomized.
    *
@@ -1519,7 +1533,7 @@ public class Color extends Vec4 {
    * @see Color#hsbaToRgba(Vec4, Color)
    */
   public static Color randomHsb (
-      final Random rng,
+      final java.util.Random rng,
       final Color target,
       final Vec4 hsba ) {
 
@@ -1545,16 +1559,19 @@ public class Color extends Vec4 {
    * @see Color#hsbaToRgba(Vec4, Color)
    */
   public static Color randomHsb (
-      final Random rng,
+      final java.util.Random rng,
       final Vec4 lowerBound,
       final Vec4 upperBound,
       final Color target,
       final Vec4 hsba ) {
 
+    final float rx = rng.nextFloat();
+    final float ry = rng.nextFloat();
+    final float rz = rng.nextFloat();
     hsba.set(
-        rng.uniform(lowerBound.x, upperBound.x),
-        rng.uniform(lowerBound.y, upperBound.y),
-        rng.uniform(lowerBound.z, upperBound.z),
+        (1.0f - rx) * lowerBound.x + rx * upperBound.x,
+        (1.0f - ry) * lowerBound.y + ry * upperBound.y,
+        (1.0f - rz) * lowerBound.z + rz * upperBound.z,
         1.0f);
     return Color.hsbaToRgba(hsba, target);
   }
@@ -1571,7 +1588,7 @@ public class Color extends Vec4 {
    * @see Color#hsbaToRgba(Vec4, Color)
    */
   public static Color randomHsba (
-      final Random rng,
+      final java.util.Random rng,
       final Color target,
       final Vec4 hsba ) {
 
@@ -1597,17 +1614,13 @@ public class Color extends Vec4 {
    * @see Color#hsbaToRgba(Vec4, Color)
    */
   public static Color randomHsba (
-      final Random rng,
+      final java.util.Random rng,
       final Vec4 lowerBound,
       final Vec4 upperBound,
       final Color target,
       final Vec4 hsba ) {
 
-    hsba.set(
-        rng.uniform(lowerBound.x, upperBound.x),
-        rng.uniform(lowerBound.y, upperBound.y),
-        rng.uniform(lowerBound.z, upperBound.z),
-        rng.uniform(lowerBound.w, upperBound.w));
+    Vec4.randomCartesian(rng, lowerBound, upperBound, hsba);
     return Color.hsbaToRgba(hsba, target);
   }
 
@@ -1618,10 +1631,10 @@ public class Color extends Vec4 {
    * @param rng    the random number generator
    * @param target the output color
    * @return the color
-   * @see Random#nextFloat()
+   * @see java.util.Random#nextFloat()
    */
   public static Color randomRgb (
-      final Random rng,
+      final java.util.Random rng,
       final Color target ) {
 
     return target.set(
@@ -1643,15 +1656,18 @@ public class Color extends Vec4 {
    * @see Random#uniform(float, float)
    */
   public static Color randomRgb (
-      final Random rng,
+      final java.util.Random rng,
       final Color lowerBound,
       final Color upperBound,
       final Color target ) {
 
+    final float rx = rng.nextFloat();
+    final float ry = rng.nextFloat();
+    final float rz = rng.nextFloat();
     return target.set(
-        rng.uniform(lowerBound.x, upperBound.x),
-        rng.uniform(lowerBound.y, upperBound.y),
-        rng.uniform(lowerBound.z, upperBound.z),
+        (1.0f - rx) * lowerBound.x + rx * upperBound.x,
+        (1.0f - ry) * lowerBound.y + ry * upperBound.y,
+        (1.0f - rz) * lowerBound.z + rz * upperBound.z,
         1.0f);
   }
 
@@ -1664,7 +1680,7 @@ public class Color extends Vec4 {
    * @see Random#nextFloat()
    */
   public static Color randomRgba (
-      final Random rng,
+      final java.util.Random rng,
       final Color target ) {
 
     return target.set(
@@ -1685,16 +1701,20 @@ public class Color extends Vec4 {
    * @see Random#uniform(float, float)
    */
   public static Color randomRgba (
-      final Random rng,
+      final java.util.Random rng,
       final Color lowerBound,
       final Color upperBound,
       final Color target ) {
 
+    final float rx = rng.nextFloat();
+    final float ry = rng.nextFloat();
+    final float rz = rng.nextFloat();
+    final float rw = rng.nextFloat();
     return target.set(
-        rng.uniform(lowerBound.x, upperBound.x),
-        rng.uniform(lowerBound.y, upperBound.y),
-        rng.uniform(lowerBound.z, upperBound.z),
-        rng.uniform(lowerBound.w, upperBound.w));
+        (1.0f - rx) * lowerBound.x + rx * upperBound.x,
+        (1.0f - ry) * lowerBound.y + ry * upperBound.y,
+        (1.0f - rz) * lowerBound.z + rz * upperBound.z,
+        (1.0f - rw) * lowerBound.w + rw * upperBound.w);
   }
 
   /**

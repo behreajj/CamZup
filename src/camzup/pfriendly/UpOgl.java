@@ -33,7 +33,8 @@ import camzup.core.Vec4;
 /**
  * An abstract parent class for Processing renderers based on OpenGL.
  */
-public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
+public abstract class UpOgl extends PGraphicsOpenGL
+    implements IUpOgl {
 
   /**
    * A curve to hold the arc data.
@@ -1123,6 +1124,29 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float zSource,
       final Vec3 target ) {
 
+    this.screen1s(xSource, ySource, zSource, target);
+    return target.set(
+        this.width * (1.0f + target.x) * 0.5f,
+        this.height * (1.0f - (1.0f + target.y) * 0.5f),
+        (1.0f + target.z) * 0.5f);
+  }
+
+  /**
+   * An internal helper function that multiplies the input point by the
+   * model view, then by the projection.
+   *
+   * @param xSource the source x
+   * @param ySource the source y
+   * @param zSource the source z
+   * @param target  the output vector
+   * @return the screen point
+   */
+  protected Vec3 screen1s (
+      final float xSource,
+      final float ySource,
+      final float zSource,
+      final Vec3 target ) {
+
     /* Multiply point by model-view matrix. */
     final float aw = this.modelview.m30 * xSource +
         this.modelview.m31 * ySource +
@@ -1152,17 +1176,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
     if ( bw == 0.0f ) { return target.reset(); }
 
-    float bx = this.projection.m00 * ax +
+    final float bx = this.projection.m00 * ax +
         this.projection.m01 * ay +
         this.projection.m02 * az +
         this.projection.m03 * aw;
 
-    float by = this.projection.m10 * ax +
+    final float by = this.projection.m10 * ax +
         this.projection.m11 * ay +
         this.projection.m12 * az +
         this.projection.m13 * aw;
 
-    float bz = this.projection.m20 * ax +
+    final float bz = this.projection.m20 * ax +
         this.projection.m21 * ay +
         this.projection.m22 * az +
         this.projection.m23 * aw;
@@ -1170,15 +1194,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     /* Convert homogeneous coordinate. */
     if ( bw != 1.0f ) {
       final float wInv = 1.0f / bw;
-      bx *= wInv;
-      by *= wInv;
-      bz *= wInv;
+      return target.set(bx * wInv, by * wInv, bz * wInv);
     }
 
-    return target.set(
-        this.width * (1.0f + bx) * 0.5f,
-        this.height * (1.0f - (1.0f + by) * 0.5f),
-        (1.0f + bz) * 0.5f);
+    return target.set(bx, by, bz);
   }
 
   /**
@@ -1206,7 +1225,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       default:
 
-        this.textCharModelImpl(ch, x, y);
+        this.textCharModelImpl(ch, x, y, 0.0f);
     }
   }
 
@@ -1217,13 +1236,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * @param ch the character
    * @param x  the x coordinate
    * @param y  the y coordinate
+   * @param z  the z coordinate
    * @see PFont#getGlyph(char)
    * @see PFont#getSize()
    */
   protected void textCharModelImpl (
       final char ch,
       final float x,
-      final float y ) {
+      final float y,
+      final float z ) {
 
     /*
      * FontTexture.TextureInfo is a static inner class, and so cannot be
@@ -1244,8 +1265,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float y0 = y + textent * this.textSize;
       final float y1 = y0 - hGlyph * this.textSize;
 
-      final PImage texture = glyph.image;
-
+      /* Cache prior styles. */
       final boolean savedTint = this.tint;
       final int savedTintColor = this.tintColor;
       final float savedTintR = this.tintR;
@@ -1254,6 +1274,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float savedTintA = this.tintA;
       final boolean savedTintAlpha = this.tintAlpha;
 
+      /* Font color is accomplished through tinting. */
       this.tint = true;
       this.tintColor = this.fillColor;
       this.tintR = this.fillR;
@@ -1262,15 +1283,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.tintA = this.fillA;
       this.tintAlpha = this.fillAlpha;
 
+      /* Draw polygon. */
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
-      this.texture(texture);
-      this.vertexImpl(x0, y0, 0.0f, 0.0f, 0.0f);
-      this.vertexImpl(x1, y0, 0.0f, 1.0f, 0.0f);
-      this.vertexImpl(x1, y1, 0.0f, 1.0f, 1.0f);
-      this.vertexImpl(x0, y1, 0.0f, 0.0f, 1.0f);
+      this.texture(glyph.image);
+      this.vertexImpl(x0, y0, z, 0.0f, 0.0f);
+      this.vertexImpl(x1, y0, z, 1.0f, 0.0f);
+      this.vertexImpl(x1, y1, z, 1.0f, 1.0f);
+      this.vertexImpl(x0, y1, z, 0.0f, 1.0f);
       this.endShape(PConstants.CLOSE);
 
+      /* Restore prior style settings. */
       this.tint = savedTint;
       this.tintColor = savedTintColor;
       this.tintR = savedTintR;
@@ -1973,13 +1996,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
   }
 
   /**
-   * Sets default camera and calls the camera function.
+   * Sets default camera and calls the camera function. Exposes the
+   * protected Processing function to public usage.
    */
   @Override
   public abstract void defaultCamera ( );
 
   /**
-   * Sets default perspective and calls a perspective function.
+   * Sets default perspective and calls a perspective function. Exposes
+   * the protected Processing function to public usage.
    */
   @Override
   public abstract void defaultPerspective ( );
@@ -2090,6 +2115,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    *
    * @return the background color
    */
+  @Override
   public int getBackground ( ) { return this.backgroundColor; }
 
   /**
@@ -2098,6 +2124,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * @param target the output color
    * @return the background color
    */
+  @Override
   public Color getBackground ( final Color target ) {
 
     return Color.fromHex(this.backgroundColor, target);
@@ -2612,15 +2639,28 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
   @Override
   public void ortho ( ) {
 
+    this.ortho(1.0f);
+  }
+
+  /**
+   * Sets the renderer projection to orthographic, where objects
+   * maintain their size regardless of distance from the camera.
+   *
+   * @param zoom the zoom level
+   */
+  public void ortho ( final float zoom ) {
+
     /* Never use defCameraXXX values. They are not actual constants. */
+
+    final float zoomInv = zoom == 0.0f ? 1.0f : 1.0f / zoom;
     final float right = this.width < 128
         ? IUp.DEFAULT_HALF_WIDTH
-        : this.width * 0.5f;
+        : zoomInv * this.width * 0.5f;
     final float left = -right;
 
     final float top = this.height < 128
         ? IUp.DEFAULT_HALF_HEIGHT
-        : this.height * 0.5f;
+        : zoomInv * this.height * 0.5f;
     final float bottom = -top;
 
     this.ortho(left, right, bottom, top);
@@ -2711,11 +2751,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float fov,
       final float aspect ) {
 
+    final float offset = Utils.sqrt(
+        this.cameraX * this.cameraX +
+            this.cameraY * this.cameraY +
+            this.cameraZ * this.cameraZ);
     final float near = IUp.DEFAULT_NEAR_CLIP;
-    float far = IUp.DEFAULT_FAR_CLIP;
+    final float far = offset + this.eyeDist * IUp.DEFAULT_FAR_CLIP;
 
     // far *= Utils.max(this.cameraX, this.cameraY, this.cameraZ);
-    far *= this.eyeDist;
+    // far *= this.eyeDist * 1.01f;
 
     this.perspective(fov, aspect, near, far);
   }
@@ -2749,18 +2793,34 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * console.
    */
   @Override
-  public void printCamera ( ) {
+  public void printCamera ( ) { this.printCamera(4); }
 
-    System.out.println(PMatAux.toString(this.camera, 4));
+  /**
+   * Prints the camera matrix in columns, for easier viewing in the
+   * console.
+   *
+   * @param places number of decimal places
+   */
+  public void printCamera ( final int places ) {
+
+    System.out.println(PMatAux.toString(this.camera, places));
   }
 
   /**
    * Prints the camera inverse matrix in columns, for easier viewing in
    * the console.
    */
-  public void printCameraInv ( ) {
+  public void printCameraInv ( ) { this.printCameraInv(4); }
 
-    System.out.println(PMatAux.toString(this.cameraInv, 4));
+  /**
+   * Prints the camera inverse matrix in columns, for easier viewing in
+   * the console.
+   *
+   * @param places number of decimal places
+   */
+  public void printCameraInv ( final int places ) {
+
+    System.out.println(PMatAux.toString(this.cameraInv, places));
   }
 
   /**
@@ -2768,9 +2828,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * console.
    */
   @Override
-  public void printMatrix ( ) {
+  public void printMatrix ( ) { this.printMatrix(4); }
 
-    System.out.println(PMatAux.toString(this.modelview, 4));
+  /**
+   * Prints the model view matrix in columns, for easier viewing in the
+   * console.
+   *
+   * @param places number of decimal places
+   */
+  public void printMatrix ( final int places ) {
+
+    System.out.println(PMatAux.toString(this.modelview, places));
   }
 
   /**
@@ -2778,9 +2846,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    * console.
    */
   @Override
-  public void printProjection ( ) {
+  public void printProjection ( ) { this.printProjection(4); }
 
-    System.out.println(PMatAux.toString(this.projection, 4));
+  /**
+   * Prints the projection matrix in columns, for easier viewing in the
+   * console.
+   *
+   * @param places number of decimal places
+   */
+  public void printProjection ( final int places ) {
+
+    System.out.println(PMatAux.toString(this.projection, places));
   }
 
   /**
@@ -3060,6 +3136,19 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
   }
 
   /**
+   * Returns the product of the source point with the model view matrix,
+   * and then with the projection matrix.
+   *
+   * @param source the source point
+   * @param target the output vector
+   * @return the vector
+   */
+  public Vec3 screen1s ( final Vec3 source, final Vec3 target ) {
+
+    return this.screen1s(source.x, source.y, source.z, target);
+  }
+
+  /**
    * Sets the renderer matrix to the source.
    *
    * @param source the source matrix
@@ -3325,40 +3414,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
   }
 
   /**
-   * Displays a character as text at a given coordinate.
-   *
-   * @param c the character
-   * @param x the x coordinate
-   * @param y the y coordinate
-   * @param z the z coordinate
-   */
-  @Override
-  public void text (
-      final char c,
-      final float x,
-      final float y,
-      final float z ) {
-
-    this.text(c, x, y);
-  }
-
-  /**
-   * Displays an array of characters as text at a given coordinate.
-   *
-   * @param chars the character array
-   * @param x     the x coordinate
-   * @param y     the y coordinate
-   */
-  public void text (
-      final char[] chars,
-      final float x,
-      final float y ) {
-
-    this.text(chars, 0, chars.length, x, y);
-  }
-
-  /**
-   * Displays an array of characters as text at a given coordinate.
+   * Displays an array of characters as text at a location.
    *
    * @param chars the character array
    * @param start the start index, inclusive
@@ -3422,137 +3478,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     }
 
     this.textureWrap(oldWrapMode);
-  }
-
-  /**
-   * Displays an array of characters as text at a given coordinate.
-   *
-   * @param chars the character array
-   * @param start the start index, inclusive
-   * @param stop  the stop index, exclusive
-   * @param x     the x coordinate
-   * @param y     the y coordinate
-   * @param z     the z coordinate
-   */
-  @Override
-  public void text (
-      final char[] chars,
-      final int start,
-      final int stop,
-      final float x,
-      final float y,
-      final float z ) {
-
-    this.text(chars, start, stop, x, y);
-  }
-
-  /**
-   * Displays a number as text. Registers up to four decimal places.
-   *
-   * @param num the number
-   * @param x   the x coordinate
-   * @param y   the y coordinate
-   * @see Utils#toFixed(float, int)
-   */
-  @Override
-  public void text (
-      final float num,
-      final float x,
-      final float y ) {
-
-    this.text(Utils.toFixed(num, 4), x, y);
-  }
-
-  /**
-   * Displays a real number as text. Registers up to four decimal
-   * places.
-   *
-   * @param num the number
-   * @param x   the x coordinate
-   * @param y   the y coordinate
-   * @param z   the z coordinate
-   * @see Utils#toFixed(float, int)
-   */
-  @Override
-  public void text (
-      final float num,
-      final float x,
-      final float y,
-      final float z ) {
-
-    this.text(num, x, y);
-  }
-
-  /**
-   * Displays a number as text.
-   *
-   * @param num the number
-   * @param x   the x coordinate
-   * @param y   the y coordinate
-   * @param z   the z coordinate
-   */
-  @Override
-  public void text (
-      final int num,
-      final float x,
-      final float y,
-      final float z ) {
-
-    this.text(num, x, y);
-  }
-
-  /**
-   * Displays a string at a coordinate.
-   *
-   * @param str the string
-   * @param x   the x coordinate
-   * @param y   the y coordinate
-   */
-  @Override
-  public void text (
-      final String str,
-      final float x,
-      final float y ) {
-
-    this.text(str.toCharArray(), x, y);
-  }
-
-  /**
-   * Displays a string at a coordinate.
-   *
-   * @param str the string
-   * @param x   the x coordinate
-   * @param y   the y coordinate
-   * @param z   the z coordinate
-   */
-  @Override
-  public void text (
-      final String str,
-      final float x,
-      final float y,
-      final float z ) {
-
-    this.text(str, x, y);
-  }
-
-  /**
-   * Displays a string at a coordinate. This version of text is not
-   * supported, so only x1 and y1 are used.
-   *
-   * @param str the string
-   * @param x1  the x coordinate
-   * @param y1  the y coordinate
-   * @param x2  the second x coordinate
-   * @param y2  the second y coordinate
-   */
-  @Override
-  public void text (
-      final String str,
-      final float x1, final float y1,
-      final float x2, final float y2 ) {
-
-    PApplet.showMissingWarning("text");
-    this.text(str, x1, y1);
   }
 
   /**
