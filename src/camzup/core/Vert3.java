@@ -96,10 +96,7 @@ public class Vert3 implements Comparable < Vert3 > {
    * @return the hash
    */
   @Override
-  public int hashCode ( ) {
-
-    return this.coord.hashCode();
-  }
+  public int hashCode ( ) { return this.coord.hashCode(); }
 
   /**
    * Sets the coordinate, texture coordinate and normal of the vertex by
@@ -150,30 +147,52 @@ public class Vert3 implements Comparable < Vert3 > {
   }
 
   /**
-   * Returns the orientation of the vertex as a quaternion based on its
-   * normal.
+   * Returns the orientation of the vertex as a quaternion based on the
+   * vertex's normal.
    *
-   * @param vert   the vertex
-   * @param target the output quaternion
+   * @param vert       the vertex
+   * @param handedness the handedness
+   * @param target     the output quaternion
    * @return the orientation
-   * @see Quaternion#fromDir(Vec3, Quaternion)
+   * @see Quaternion#fromDir(Vec3, Handedness, Quaternion)
    */
   @Experimental
   public static Quaternion orientation (
       final Vert3 vert,
+      final Handedness handedness,
       final Quaternion target ) {
 
-    return Quaternion.fromDir(vert.normal, target);
+    return Quaternion.fromDir(vert.normal, handedness, target);
   }
 
   /**
-   * Returns the orientation of the vertex as a ray based on its normal
-   * and coordinate.
+   * Returns the orientation of the vertex as a transform based on the
+   * vertex's normal.
+   *
+   * @param vert       the vertex
+   * @param handedness the handedness
+   * @param target     the output transform
+   * @return the orientation
+   * @see Transform3#fromDir(Vec3, Handedness, Transform3)
+   */
+  @Experimental
+  public static Transform3 orientation (
+      final Vert3 vert,
+      final Handedness handedness,
+      final Transform3 target ) {
+
+    Transform3.fromDir(vert.normal, handedness, target);
+    target.moveTo(vert.coord);
+    return target;
+  }
+
+  /**
+   * Returns the orientation of the vertex as a ray based on the
+   * vertex's normal and coordinate.
    *
    * @param vert   the vertex
    * @param target the output transform
    * @return the orientation
-   * @see Transform3#fromDir(Vec3, Transform3)
    */
   @Experimental
   public static Ray3 orientation (
@@ -181,24 +200,5 @@ public class Vert3 implements Comparable < Vert3 > {
       final Ray3 target ) {
 
     return target.set(vert.coord, vert.normal);
-  }
-
-  /**
-   * Returns the orientation of the vertex as a transform based on its
-   * normal.
-   *
-   * @param vert   the vertex
-   * @param target the output transform
-   * @return the orientation
-   * @see Transform3#fromDir(Vec3, Transform3)
-   */
-  @Experimental
-  public static Transform3 orientation (
-      final Vert3 vert,
-      final Transform3 target ) {
-
-    Transform3.fromDir(vert.normal, target);
-    target.moveTo(vert.coord);
-    return target;
   }
 }

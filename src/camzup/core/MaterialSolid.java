@@ -238,11 +238,15 @@ public class MaterialSolid extends Material {
     final String strokeStr = Utils.toFixed(Utils.max(
         IUtils.DEFAULT_EPSILON,
         Utils.div(this.strokeWeight, scale)), 6);
-    final StringBuilder result = new StringBuilder(256);
+    final StringBuilder svgp = new StringBuilder(256)
+        .append("id=\"")
+        .append(this.name)
+        .append('\"')
+        .append(' ');
 
     /* Stroke style. */
     if ( this.useStroke ) {
-      result.append("stroke-width=\"")
+      svgp.append("stroke-width=\"")
           .append(strokeStr)
           .append("\" stroke-opacity=\"")
           .append(Utils.toFixed(Utils.clamp01(this.stroke.w), 6))
@@ -255,20 +259,20 @@ public class MaterialSolid extends Material {
           .append('\"')
           .append(' ');
     } else {
-      result.append("stroke=\"none\" ");
+      svgp.append("stroke=\"none\" ");
     }
 
     /* Fill style. */
     if ( this.useFill ) {
-      result.append("fill-opacity=\"")
+      svgp.append("fill-opacity=\"")
           .append(Utils.toFixed(Utils.clamp01(this.fill.w), 6))
           .append("\" fill=\"")
           .append(Color.toHexWeb(this.fill))
           .append('\"');
     } else {
-      result.append("fill=\"none\"");
+      svgp.append("fill=\"none\"");
     }
-    return result.toString();
+    return svgp.toString();
   }
 
   /**
@@ -571,7 +575,7 @@ public class MaterialSolid extends Material {
         6);
 
     return new StringBuilder(256)
-        .append("<g stroke-width=\"")
+        .append("<g id=\"material\" stroke-width=\"")
         .append(strokeStr)
         .append("\" stroke-opacity=\"1.0\" stroke=\"#")
         .append(Integer.toHexString(

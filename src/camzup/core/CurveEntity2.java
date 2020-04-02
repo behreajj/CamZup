@@ -293,27 +293,32 @@ public class CurveEntity2 extends Entity2
    * parameter. If nonuniform zooming is used, zoom can be an average of
    * width and height or the maximum dimension.
    *
+   * @param id   the curve id prefix
    * @param zoom scaling from external transforms
    * @return the string
    */
   @Override
-  public String toSvgElm ( final float zoom ) {
+  public String toSvgElm (
+      final String id,
+      final float zoom ) {
 
-    return this.toSvgElm(zoom, new MaterialSolid[] {});
+    return this.toSvgElm(id, zoom, new MaterialSolid[] {});
   }
 
   /**
    * Creates a string representing a group node in the SVG format.
    *
+   * @param id       the curve id prefix
    * @param zoom     scaling from external transforms
    * @param material the material to use
    * @return the string
    */
   public String toSvgElm (
+      final String id,
       final float zoom,
       final MaterialSolid material ) {
 
-    return this.toSvgElm(zoom, new MaterialSolid[] { material });
+    return this.toSvgElm(id, zoom, new MaterialSolid[] { material });
   }
 
   /**
@@ -325,11 +330,13 @@ public class CurveEntity2 extends Entity2
    * parameter. If nonuniform zooming is used, zoom can be an average of
    * width and height or the maximum dimension.
    *
+   * @param id        the curve id prefix
    * @param zoom      scaling from external transforms
    * @param materials the array of materials
    * @return the string
    */
   public String toSvgElm (
+      final String id,
       final float zoom,
       final MaterialSolid[] materials ) {
 
@@ -355,6 +362,8 @@ public class CurveEntity2 extends Entity2
       svgp.append(MaterialSolid.defaultSvgMaterial(scale));
     }
 
+    int i = 0;
+    final String iddot = id + ".";
     final Iterator < Curve2 > curveItr = this.curves.iterator();
     while ( curveItr.hasNext() ) {
       final Curve2 curve = curveItr.next();
@@ -375,7 +384,8 @@ public class CurveEntity2 extends Entity2
             .append('\n');
       }
 
-      svgp.append(curve.toSvgPath());
+      svgp.append(curve.toSvgPath(iddot + Utils.toPadded(i, 4)));
+      i++;
 
       /* Close out material group. */
       if ( includesMats ) { svgp.append("</g>\n"); }

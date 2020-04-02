@@ -640,7 +640,8 @@ public abstract class Utils implements IUtils {
    * times with the Newton-Raphson method.<br>
    * <br>
    * Useful when normalizing vectors or quaternions. Give this
-   * preference over {@link Utils#sqrt(float)} when normalizing.
+   * preference over {@link Utils#sqrt(float)}, which <em>depends</em>
+   * on this function.
    *
    * @param value the value
    * @return the inverse square root
@@ -963,10 +964,10 @@ public abstract class Utils implements IUtils {
    */
   public static float mod1 ( final float value ) {
 
+    // return value - Utils.floor(value);
+
     return value > 0.0f ? value - (int) value
         : value < 0.0f ? value - ((int) value - 1.0f) : 0.0f;
-
-    // return value - Utils.floor(value);
   }
 
   /**
@@ -1050,7 +1051,10 @@ public abstract class Utils implements IUtils {
   }
 
   /**
-   * Oscillates between [0.0, 1.0] based on an input step.
+   * Oscillates between [0.0, 1.0] based on an input step.<br>
+   * <br>
+   * Uses a different formula than the Unity math function of the same
+   * name. Equivalent to 0.5 + 0.5 * cos ( step / TAU ) .
    *
    * @param step the step
    * @return the oscillation
@@ -1061,7 +1065,11 @@ public abstract class Utils implements IUtils {
   }
 
   /**
-   * Oscillates between a lower and upper bound based on an input step.
+   * Oscillates between a lower and upper bound based on an input
+   * step.<br>
+   * <br>
+   * Uses a different formula than the Unity math function of the same
+   * name.
    *
    * @param lb   the lower bound
    * @param ub   the upper bound
@@ -1079,7 +1087,7 @@ public abstract class Utils implements IUtils {
 
   /**
    * Finds the single-precision of a number raised to the power of
-   * another.
+   * another. Wraps {@link Math#pow(double, double)} .
    *
    * @param a left operand
    * @param b right operand
@@ -1228,7 +1236,9 @@ public abstract class Utils implements IUtils {
   }
 
   /**
-   * An alternative to the {@link Math#signum(float)} function.
+   * An alternative to the {@link Math#signum(float)} function. Returns
+   * the integer 0 for both -0.0 (signed negative zero) and 0.0 (signed
+   * positive zero).
    *
    * @param value the input value
    * @return the sign
@@ -1236,7 +1246,7 @@ public abstract class Utils implements IUtils {
    */
   public static int sign ( final float value ) {
 
-    return value < 0.0f ? -1 : value > 0.0f ? 1 : 0;
+    return value < -0.0f ? -1 : value > 0.0f ? 1 : 0;
   }
 
   /**
@@ -1350,8 +1360,10 @@ public abstract class Utils implements IUtils {
    * of the truncated value.</li>
    * <li>When the value is not a number ( {@link Float#NaN} ), returns
    * "0.0".</li>
-   * <li>When the value exceeds {@link Float#MAX_VALUE}, defers to
-   * {@link Float#toString(float)} .</li>
+   * <li>When the value is greater than {@link Float#MAX_VALUE}, returns
+   * the max value; when less than {@link Float#MIN_VALUE}, the minimum
+   * value. This truncates positive and negative infinities to these
+   * bounds.</li>
    * <li>When the length of the integral exceeds a limit beyond which
    * accurate representation is unlikely, such as with scientific
    * notation, defers to {@link Float#toString(float)} .</li>
@@ -1376,9 +1388,8 @@ public abstract class Utils implements IUtils {
     if ( places < 1 ) { return Float.toString((int) value); }
 
     /* Value is too big. */
-    if ( value <= -3.4028235E38f || value >= 3.4028235E38f ) {
-      return Float.toString(value);
-    }
+    if ( value <= Float.MIN_VALUE ) { return "1.4E-45"; }
+    if ( value >= Float.MAX_VALUE ) { return "3.4028235E38"; }
 
     /*
      * Hard-coded values from jdk.internal.math.FloatConsts class for fast
@@ -1449,6 +1460,45 @@ public abstract class Utils implements IUtils {
   public static int toInt ( final boolean bool ) {
 
     return bool ? 1 : 0;
+  }
+
+  /**
+   * Returns an integer formatted as a string padded by initial zeroes.
+   *
+   * @param value  the integer
+   * @param places the number of places
+   * @return the string
+   */
+  public static String toPadded (
+      final int value,
+      final int places ) {
+
+    /*
+     * Double precision is needed to preserve accuracy. The max integer
+     * value is 2147483647, which is 10 digits long. The sign needs to be
+     * flipped because working with positive absolute value would allow
+     * Integer#MIN_VALUE to overflow to zero.
+     */
+
+    final boolean isNeg = value < 0;
+    int nabsval = isNeg ? value : -value;
+
+    final int[] digits = new int[10];
+    int filled = 0;
+    while ( nabsval < 0 ) {
+      final double y = nabsval * 0.1d;
+      nabsval = (int) y;
+      digits[filled++] = -(int) ((y - nabsval) * 10.0d - 0.5d);
+    }
+
+    final StringBuilder sb = new StringBuilder(16);
+    if ( isNeg ) { sb.append('-'); }
+    final int vplaces = filled > places ? filled : places;
+    for ( int n = vplaces - 1; n > -1; --n ) {
+      sb.append(digits[n]);
+    }
+
+    return sb.toString();
   }
 
   /**
@@ -1600,9 +1650,8 @@ public abstract class Utils implements IUtils {
       return 0.0f;
     }
 
-    if ( value < lbc ) {
-      return ubc - (lbc - value) % span;
-    } else if ( value >= ubc ) { return lbc + (value - lbc) % span; }
+    if ( value < lbc ) { return ubc - (lbc - value) % span; }
+    if ( value >= ubc ) { return lbc + (value - lbc) % span; }
     return value;
   }
 

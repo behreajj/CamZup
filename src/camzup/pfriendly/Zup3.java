@@ -77,6 +77,10 @@ public class Zup3 extends Up3 {
       this.lightNormal[num3] = mInv * -nx;
       this.lightNormal[num3 + 1] = mInv * nz;
       this.lightNormal[num3 + 2] = mInv * -ny;
+
+      // this.lightNormal[num3] = mInv * nx;
+      // this.lightNormal[num3 + 1] = mInv * ny;
+      // this.lightNormal[num3 + 2] = mInv * nz;
     } else {
       this.lightNormal[num3] = 0.0f;
       this.lightNormal[num3 + 1] = 0.0f;
@@ -502,7 +506,7 @@ public class Zup3 extends Up3 {
   /**
    * Default lighting directional light axis y component.
    */
-  public static final float DEFAULT_LIGHT_Y = -0.6471502f;
+  public static final float DEFAULT_LIGHT_Y = 0.6471502f;
 
   /**
    * Default lighting directional light axis z component.

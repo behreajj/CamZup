@@ -360,6 +360,14 @@ public interface IUp3 extends IUp {
     return IUp3.mouse1u(this.getParent(), target);
   }
 
+  /**
+   * Moves the camera by the given vector then updates the camera.
+   *
+   * @param x the vector x
+   * @param y the vector y
+   * @param z the vector z
+   * @see IUp3#moveTo(float, float, float)
+   */
   default void moveBy (
       final float x,
       final float y,
@@ -368,11 +376,29 @@ public interface IUp3 extends IUp {
     this.moveByGlobal(x, y, z);
   }
 
+  /**
+   * Moves the camera by the given vector then updates the camera.
+   *
+   * @param v the vector
+   * @see IUp3#moveByGlobal(float, float, float)
+   */
   default void moveBy ( final Vec3 v ) {
 
     this.moveByGlobal(v.x, v.y, v.z);
   }
 
+  /**
+   * Moves the camera by the given vector in global space, then updates
+   * the camera.
+   *
+   * @param x the vector x
+   * @param y the vector y
+   * @param z the vector z
+   * @see IUp3#moveTo(float, float, float)
+   * @see IUp3#getLocX()
+   * @see IUp3#getLocY()
+   * @see IUp3#getLocZ()
+   */
   default void moveByGlobal (
       final float x,
       final float y,
@@ -384,11 +410,29 @@ public interface IUp3 extends IUp {
         this.getLocZ() + z);
   }
 
+  /**
+   * Moves the camera by the given vector in global space, then updates
+   * the camera.
+   *
+   * @param v the vector
+   * @see IUp3#moveByGlobal(float, float, float)
+   */
   default void moveByGlobal ( final Vec3 v ) {
 
     this.moveByGlobal(v.x, v.y, v.z);
   }
 
+  /**
+   * Moves the renderer's camera to the given location, then updates the
+   * camera.
+   *
+   * @param x the location x
+   * @param y the location y
+   * @param z the location z
+   * @see IUp3#getLookTargetX()
+   * @see IUp3#getLookTargetY()
+   * @see IUp3#getLookTargetZ()
+   */
   default void moveTo (
       final float x,
       final float y,
@@ -401,11 +445,30 @@ public interface IUp3 extends IUp {
         this.getLookTargetZ());
   }
 
+  /**
+   * Moves the renderer's camera to the given location, then updates the
+   * camera.
+   *
+   * @param locNew the new location
+   * @see IUp3#moveTo(float, float, float)
+   */
   default void moveTo ( final Vec3 locNew ) {
 
     this.moveTo(locNew.x, locNew.y, locNew.z);
   }
 
+  /**
+   * Moves the renderer's camera to a given location and updates the
+   * camera. Uses clamped linear interpolation, so the step should be
+   * smoothed prior to calling this function.
+   *
+   * @param locNew the new location
+   * @param step   the step
+   * @see IUp3#getLocX()
+   * @see IUp3#getLocY()
+   * @see IUp3#getLocZ()
+   * @see IUp3#moveTo(float, float, float)
+   */
   default void moveTo (
       final Vec3 locNew,
       final float step ) {

@@ -19,10 +19,8 @@ CurveEntity2 entity = new CurveEntity2(
 MaterialSolid mat = new MaterialSolid()
   .setFill(false)
   .setStroke(true)
-  .setStroke(#202020)
-  .setStrokeWeight(1.0);
-
-MaterialSolid[] mats = { mat };
+  .setStroke(0x7f404040)
+  .setStrokeWeight(7.5);
 
 void settings() {
   size(720, 405, Yup2.PATH_STR);
@@ -40,7 +38,7 @@ void draw() {
   graphics.origin();
   graphics.noFill();
   graphics.strokeWeight(1.0);
-  graphics.shape(entity, mats);
+  graphics.shape(entity, mat);
   graphics.handles(entity, 1.25);
 }
 
@@ -49,7 +47,7 @@ void mouseReleased() {
     Curve2.random(rng, 8,
       -0.75, 0.75, false, curve);
   } else if (mouseButton == RIGHT) {
-    String result = graphics.toSvgString(entity, mats);
+    String result = graphics.toSvgString(entity, mat);
     saveStrings("data/curve.svg", new String[] { result });
     println("Saved to svg.");
   }

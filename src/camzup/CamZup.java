@@ -7,9 +7,7 @@ import java.util.TreeSet;
 import processing.core.PApplet;
 
 import camzup.core.IUtils;
-import camzup.core.Mesh2;
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity2;
 import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -176,21 +174,12 @@ public class CamZup {
   public static void main ( final String[] args ) {
 
     final Random rng = new Random();
-    // Vec2[] x = new Vec2[] {
-    // Vec2.random(rng, new Vec2()),
-    // Vec2.right(new Vec2()),
-    // Vec2.right(new Vec2()),
-    // Vec2.random(rng, new Vec2()) };
-    // System.out.println(Utils.toString(x));
-    // x = CamZup.unique(x);
-    // System.out.println(Utils.toString(x));
-
-    final Mesh2 polygon = new Mesh2();
-    Mesh2.polygon(6, polygon);
-    final MeshEntity2 me2 = new MeshEntity2();
-    me2.append(polygon);
-    final String str = me2.toBlenderCode();
-    System.out.println(str);
+    // final Mesh2 polygon = new Mesh2();
+    // Mesh2.polygon(6, polygon);
+    // final MeshEntity2 me2 = new MeshEntity2();
+    // me2.append(polygon);
+    // final String str = me2.toBlenderCode();
+    // System.out.println(str);
   }
 
   /**

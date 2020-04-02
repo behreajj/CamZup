@@ -480,27 +480,32 @@ public class MeshEntity2 extends Entity2
   /**
    * Creates a string representing a group node in the SVG format.
    *
+   * @param id   the path id prefix
    * @param zoom scaling from external transforms
    * @return the string
    */
   @Override
-  public String toSvgElm ( final float zoom ) {
+  public String toSvgElm (
+      final String id,
+      final float zoom ) {
 
-    return this.toSvgElm(zoom, new MaterialSolid[] {});
+    return this.toSvgElm(id, zoom, new MaterialSolid[] {});
   }
 
   /**
    * Creates a string representing a group node in the SVG format.
    *
+   * @param id       the path id prefix
    * @param zoom     scaling from external transforms
    * @param material the material to use
    * @return the string
    */
   public String toSvgElm (
+      final String id,
       final float zoom,
       final MaterialSolid material ) {
 
-    return this.toSvgElm(zoom, new MaterialSolid[] { material });
+    return this.toSvgElm(id, zoom, new MaterialSolid[] { material });
   }
 
   /**
@@ -512,11 +517,13 @@ public class MeshEntity2 extends Entity2
    * parameter. If nonuniform zooming is used, zoom can be an average of
    * width and height or the maximum dimension.
    *
+   * @param id        the path id prefix
    * @param zoom      scaling from external transforms
    * @param materials the materials to use
    * @return the string
    */
   public String toSvgElm (
+      final String id,
       final float zoom,
       final MaterialSolid[] materials ) {
 
@@ -559,7 +566,7 @@ public class MeshEntity2 extends Entity2
             .append(">\n");
       }
 
-      svgp.append(mesh.toSvgPath());
+      svgp.append(mesh.toSvgPath(id));
 
       /* Close out material group. */
       if ( includesMats ) { svgp.append("</g>\n"); }

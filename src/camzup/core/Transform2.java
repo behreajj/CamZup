@@ -390,28 +390,54 @@ public class Transform2 extends Transform {
   }
 
   /**
-   * Orient the transform to look at a target point. If the point equals
-   * the transform's location, returns to default orientation.
+   * Orients the transform to look at a target point. If the distance
+   * between the target and the transform's location is zero, resets the
+   * transform. Uses unclamped linear interpolation given a step in the
+   * range [0.0, 1.0] . The result is then normalized.
    *
-   * @param target the target point
+   * @param point      the target point
+   * @param step       the step
+   * @param handedness the handedness
    * @return this transform
    * @see Vec2#sub(Vec2, Vec2, Vec2)
    * @see Vec2#none(Vec2)
-   * @see Vec2#normalize(Vec2, Vec2)
-   * @see Vec2#perpendicularCW(Vec2, Vec2)
-   * @see Vec2#headingSigned(Vec2)
    * @see Vec2#forward(Vec2)
    * @see Vec2#right(Vec2)
+   * @see Vec2#normalize(Vec2, Vec2)
+   * @see Vec2#perpendicularCCW(Vec2, Vec2)
+   * @see Vec2#perpendicularCW(Vec2, Vec2)
+   * @see Vec2#headingSigned(Vec2)
    */
-  @Chainable
-  public Transform2 lookAt ( final Vec2 target ) {
+  public Transform2 lookAt (
+      final Vec2 point,
+      final float step,
+      final Handedness handedness ) {
 
-    Vec2.sub(target, this.location, this.forward);
-    if ( Vec2.none(this.forward) ) {
+    /* The right axis is used as a temporary container. */
+    Vec2.sub(point, this.location, this.right);
+    if ( Vec2.none(this.right) ) {
       Vec2.forward(this.forward);
       Vec2.right(this.right);
+      this.rotPrev = this.rotation;
+      this.rotation = 0.0f;
+      return this;
+    }
+
+    /* Normalized lerp. */
+    Vec2.normalize(this.right, this.right);
+    final float u = 1.0f - step;
+    this.forward.set(
+        u * this.forward.x + step * this.right.x,
+        u * this.forward.y + step * this.right.y);
+    Vec2.normalize(this.forward, this.forward);
+
+    /*
+     * The rotation describes the right axis, but forward is treated as
+     * the 'look direction' of the transform.
+     */
+    if ( handedness == Handedness.LEFT ) {
+      Vec2.perpendicularCCW(this.forward, this.right);
     } else {
-      Vec2.normalize(this.forward, this.forward);
       Vec2.perpendicularCW(this.forward, this.right);
     }
 
@@ -980,40 +1006,20 @@ public class Transform2 extends Transform {
    * Creates a transform from a ray. The transform's translation is set
    * to the ray's origin; its scale, to one.
    *
-   * @param ray    the direction
-   * @param target the output transform
+   * @param ray        the direction
+   * @param handedness the handedness
+   * @param target     the output transform
    * @return the transform
-   * @see Quaternion#fromDir(Vec3, Quaternion, Vec3, Vec3, Vec3)
-   * @see Vec2#none(Vec2)
-   * @see Vec2#forward(Vec2)
-   * @see Vec2#normalize(Vec2, Vec2)
-   * @see Vec2#perpendicularCW(Vec2, Vec2)
-   * @see Vec2#headingSigned(Vec2)
-   * @see Vec2#one(Vec2)
+   * @see Transform2#fromDir(Vec2, Handedness, Transform2)
+   * @see Transform2#moveTo(Vec2)
    */
   public static Transform2 fromDir (
       final Ray2 ray,
+      final Handedness handedness,
       final Transform2 target ) {
 
-    // target.locPrev.reset();
-    // target.rotPrev.reset();
-    // Vec3.one(target.scalePrev);
-
-    target.locPrev.set(target.location);
-    target.rotPrev = target.rotation;
-    target.scalePrev.set(target.scale);
-
-    if ( Vec2.none(ray.dir) ) {
-      Vec2.forward(target.forward);
-    } else {
-      Vec2.normalize(ray.dir, target.forward);
-    }
-    Vec2.perpendicularCW(target.forward, target.right);
-
-    target.rotation = Vec2.headingSigned(target.right);
-    target.location.reset();
-    Vec2.one(target.scale);
-
+    Transform2.fromDir(ray.dir, handedness, target);
+    target.moveTo(ray.origin);
     return target;
   }
 
@@ -1021,8 +1027,9 @@ public class Transform2 extends Transform {
    * Creates a transform from a direction. The transform's translation
    * is set to zero; its scale, to one.
    *
-   * @param dir    the direction
-   * @param target the output transform
+   * @param dir        the direction
+   * @param handedness the handedness
+   * @param target     the output transform
    * @return the transform
    * @see Vec2#none(Vec2)
    * @see Vec2#normalize(Vec2, Vec2)
@@ -1032,6 +1039,7 @@ public class Transform2 extends Transform {
    */
   public static Transform2 fromDir (
       final Vec2 dir,
+      final Handedness handedness,
       final Transform2 target ) {
 
     // target.locPrev.reset();
@@ -1044,10 +1052,14 @@ public class Transform2 extends Transform {
 
     if ( Vec2.none(dir) ) {
       Vec2.forward(target.forward);
+      Vec2.right(target.right);
+    } else if ( handedness == Handedness.LEFT ) {
+      Vec2.normalize(dir, target.forward);
+      Vec2.perpendicularCCW(target.forward, target.right);
     } else {
       Vec2.normalize(dir, target.forward);
+      Vec2.perpendicularCW(target.forward, target.right);
     }
-    Vec2.perpendicularCW(target.forward, target.right);
 
     target.rotation = Vec2.headingSigned(target.right);
     target.location.reset();

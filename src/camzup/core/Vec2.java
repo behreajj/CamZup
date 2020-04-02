@@ -415,11 +415,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
   }
 
   /**
-   * The default easing function, lerp.
-   */
-  private static AbstrEasing EASING = new Lerp();
-
-  /**
    * The unique identification for serialized classes.
    */
   private static final long serialVersionUID = 8867395334130420105L;
@@ -1392,16 +1387,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     return target.set(
         Utils.scNorm(nrm),
         Utils.scNorm(nrm - 0.25f));
-  }
-
-  /**
-   * Gets the string representation of the default Vec2 easing function.
-   *
-   * @return the string
-   */
-  public static String getEasingString ( ) {
-
-    return Vec2.EASING.toString();
   }
 
   /**
@@ -2894,16 +2879,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     return target.set(
         Utils.round(v.x),
         Utils.round(v.y));
-  }
-
-  /**
-   * Sets the default easing function.
-   *
-   * @param easing the easing function
-   */
-  public static void setEasing ( final AbstrEasing easing ) {
-
-    if ( easing != null ) { Vec2.EASING = easing; }
   }
 
   /**

@@ -91,6 +91,22 @@ public class Random extends java.util.Random implements IUtils {
   }
 
   /**
+   * Returns an integer within the lower and upper bound: lower bound
+   * inclusive, upper bound exclusive.
+   *
+   * @param lower the lower bound
+   * @param upper the upper bound
+   * @return the random number
+   */
+  public int uniform (
+      final int lower,
+      final int upper ) {
+
+    final float r = this.nextFloat();
+    return Utils.floorToInt((1.0f - r) * lower + r * upper);
+  }
+
+  /**
    * The unique identification for serialized classes.
    */
   private static final long serialVersionUID = 259933270658058430L;

@@ -3133,6 +3133,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     target.coords[10].set(0.0f, 0.4472122f, 0.22360958f);
     target.coords[11].set(0.0f, 0.0f, 0.5f);
 
+    /*
+     * Follows an icosahedron's net, wherein four skewed rows of triangles
+     * proceed from the left edge of the UV map to the right.
+     */
+
     target.texCoords = Vec2.resize(target.texCoords, 22);
     target.texCoords[0].set(0.0f, 0.578613f);
     target.texCoords[1].set(0.090909f, 0.421387f);
@@ -3233,13 +3238,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     }
 
     target.calcNormals();
-
-    /*
-     * Spherical coordinates research:
-     * https://github.com/cinder/Cinder/issues/1083
-     * https://mft-dev.dk/uv-mapping-sphere/
-     */
-
     target.name = "Icosphere";
     return target;
   }

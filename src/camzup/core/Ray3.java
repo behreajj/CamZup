@@ -84,10 +84,7 @@ public class Ray3 extends Ray {
    * @see Ray3#Ray3(Ray3)
    */
   @Override
-  public Ray3 clone ( ) {
-
-    return new Ray3(this.origin, this.dir);
-  }
+  public Ray3 clone ( ) { return new Ray3(this.origin, this.dir); }
 
   /**
    * Tests this ray for equivalence with another object.

@@ -439,11 +439,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
   }
 
   /**
-   * The default easing function, lerp.
-   */
-  private static transient AbstrEasing EASING = new Lerp();
-
-  /**
    * The unique identification for serialized classes.
    */
   private static final long serialVersionUID = -7814214074840696365L;
@@ -1382,7 +1377,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param target the output vector
    * @return epsilon
    */
-  @Experimental
   public static Vec3 epsilon ( final Vec3 target ) {
 
     return target.set(
@@ -1686,16 +1680,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
   }
 
   /**
-   * Gets the string representation of the default Vec2 easing function.
-   *
-   * @return the string
-   */
-  public static String getEasingString ( ) {
-
-    return Vec3.EASING.toString();
-  }
-
-  /**
    * Generates a 3D array of vectors. Defaults to the coordinate range
    * of [-0.5, 0.5] .
    *
@@ -1926,7 +1910,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param target the output vector
    * @return the evaluation
    */
-  @Experimental
   public static Vec3 gt (
       final Vec3 a,
       final Vec3 b,
@@ -1947,7 +1930,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param target the output vector
    * @return the evaluation
    */
-  @Experimental
   public static Vec3 gtEq (
       final Vec3 a,
       final Vec3 b,
@@ -2090,7 +2072,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param target the output vector
    * @return the evaluation
    */
-  @Experimental
   public static Vec3 lt (
       final Vec3 a,
       final Vec3 b,
@@ -2111,7 +2092,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    * @param target the output vector
    * @return the evaluation
    */
-  @Experimental
   public static Vec3 ltEq (
       final Vec3 a,
       final Vec3 b,
@@ -3314,16 +3294,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
         Utils.round(v.x),
         Utils.round(v.y),
         Utils.round(v.z));
-  }
-
-  /**
-   * Sets the default easing function.
-   *
-   * @param easing the easing function
-   */
-  public static void setEasing ( final AbstrEasing easing ) {
-
-    if ( easing != null ) { Vec3.EASING = easing; }
   }
 
   /**

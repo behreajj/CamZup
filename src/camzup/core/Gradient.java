@@ -1384,7 +1384,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
   }
 
   /**
-   * Attempts to parse a .ggr file containing a GIMP gradient. Given the
+   * Parses a .ggr file containing a GIMP gradient. Given the
    * differences between the two implementations, this may not always
    * return a matching result, for example, when the source file
    * contains only one key.<br>
@@ -1556,10 +1556,6 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final int clrSpc = (int) seg[12];
       if ( clrSpc == 1 || clrSpc == 2 ) {
         /* HSB */
-
-        // RESEARCH Would matching this more closely to the original
-        // Python allow it to handle a single key HSB gradient
-        // better ?
         final Color.HueEasing hueFunc = clrSpc == 2 ? new Color.HueCW()
             : new Color.HueCCW();
         mixer = new Color.MixHsba(hueFunc);

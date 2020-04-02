@@ -1,5 +1,9 @@
 package camzup.core;
 
+/**
+ * Maintains consistent behavior between classes which support
+ * creation of an SVG file.
+ */
 public interface ISvgWritable {
 
   /**
@@ -7,7 +11,22 @@ public interface ISvgWritable {
    *
    * @return the SVG string
    */
-  default String toSvgElm ( ) { return this.toSvgElm(1.0f); }
+  default String toSvgElm ( ) {
+
+    return this.toSvgElm(Integer.toHexString(
+        System.identityHashCode(this)));
+  }
+
+  /**
+   * Renders the curve as a string containing an SVG element.
+   *
+   * @param id the path id
+   * @return the SVG string
+   */
+  default String toSvgElm ( final String id ) {
+
+    return this.toSvgElm(id, 1.0f);
+  }
 
   /**
    * Renders the curve as a string containing an SVG element.<br>
@@ -16,10 +35,11 @@ public interface ISvgWritable {
    * parameter. If nonuniform zooming is used, zoom can be an average of
    * width and height or the maximum dimension.
    *
+   * @param id   the path id
    * @param zoom scaling from external transforms
    * @return the SVG string
    */
-  String toSvgElm ( final float zoom );
+  String toSvgElm ( final String id, final float zoom );
 
   /**
    * Renders this object as an SVG string. A default material renders
@@ -31,8 +51,11 @@ public interface ISvgWritable {
   default String toSvgString ( ) {
 
     return this.toSvgString(
-        ISvgWritable.DEFAULT_SVG_X_ORIGIN, ISvgWritable.DEFAULT_SVG_Y_ORIGIN,
-        ISvgWritable.DEFAULT_SVG_WIDTH, ISvgWritable.DEFAULT_SVG_HEIGHT);
+        Integer.toHexString(System.identityHashCode(this)),
+        ISvgWritable.DEFAULT_SVG_X_ORIGIN,
+        ISvgWritable.DEFAULT_SVG_Y_ORIGIN,
+        ISvgWritable.DEFAULT_SVG_WIDTH,
+        ISvgWritable.DEFAULT_SVG_HEIGHT);
   }
 
   /**
@@ -43,6 +66,7 @@ public interface ISvgWritable {
    * is multiplied by the view box dimensions. The camera scale is set
    * to the shorter edge of the view box, so as to contain the shape.
    *
+   * @param id      the element id
    * @param xOrigin the origin x
    * @param yOrigin the origin y
    * @param width   the width
@@ -50,6 +74,7 @@ public interface ISvgWritable {
    * @return the SVG string
    */
   default String toSvgString (
+      final String id,
       final float xOrigin,
       final float yOrigin,
       final float width,
@@ -82,7 +107,7 @@ public interface ISvgWritable {
         .append(", -")
         .append(sclStr)
         .append(")\">\n")
-        .append(this.toSvgElm(scl))
+        .append(this.toSvgElm(id, scl))
         .append("</g>\n")
         .append("</svg>");
 
@@ -95,15 +120,18 @@ public interface ISvgWritable {
    * The width and height supplied form both the view box dimensions,
    * the translation and the scale of the shape.
    *
+   * @param id     the element id
    * @param origin the origin
    * @param dim    the dimensions
    * @return the SVG string
    */
   default String toSvgString (
+      final String id,
       final Vec2 origin,
       final Vec2 dim ) {
 
     return this.toSvgString(
+        id,
         origin.x, origin.y,
         dim.x, dim.y);
   }

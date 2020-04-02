@@ -5,16 +5,16 @@ Yup2 graphics2;
 
 MaterialSolid material = new MaterialSolid()
   .setStroke(true)
-  .setStroke(#202020)
+  .setStroke(#817d6c)
   .setFill(true)
-  .setFill(#007fff)
+  .setFill(#202020)
   .setStrokeWeight(1.0);
 
 Transform2 transform = new Transform2()
   .moveTo(new Vec2(-100.0, -50.0))
   .scaleTo(150.0);
 
-Mesh2 mesh = Mesh2.ring(0.5, 3, Mesh2.PolyType.TRI, new Mesh2());
+Mesh2 mesh = Mesh2.ring(0.5, 6, Mesh2.PolyType.TRI, new Mesh2());
 
 MeshEntity2 entity = new MeshEntity2("Example", transform)
   .append(mesh);
@@ -38,7 +38,7 @@ void draw() {
 }
 
 void mouseReleased() {
-  String result = graphics2.toSvgString(entity);
+  String result = graphics2.toSvgString(entity, material);
   saveStrings("data/mesh.svg", new String[] { result });
   println("Saved to svg.");
 }

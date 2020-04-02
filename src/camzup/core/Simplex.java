@@ -551,6 +551,9 @@ public abstract class Simplex {
       final int seed,
       final Vec4 deriv ) {
 
+    // TEST If any problems with 4d noise in a given quadrant persists,
+    // this may have to be rolled back to catch the error.
+
     final float s = (x + y + z + w) * Simplex.F4;
     final int i = Utils.floorToInt(x + s);
     final int j = Utils.floorToInt(y + s);

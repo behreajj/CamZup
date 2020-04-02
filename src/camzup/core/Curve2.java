@@ -711,15 +711,16 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
   /**
    * Renders the curve as a string containing an SVG element.
    *
+   * @param id   the element id
    * @param zoom scaling transform
    * @return the SVG string
    */
   @Override
-  public String toSvgElm ( final float zoom ) {
+  public String toSvgElm ( final String id, final float zoom ) {
 
     final StringBuilder svgp = new StringBuilder(1024)
         .append(MaterialSolid.defaultSvgMaterial(zoom))
-        .append(this.toSvgPath())
+        .append(this.toSvgPath(id))
         .append("</g>\n");
     return svgp.toString();
   }
@@ -727,9 +728,10 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
   /**
    * Renders the curve path as a string containing an SVG element.
    *
+   * @param id the path id
    * @return the SVG string
    */
-  public String toSvgPath ( ) {
+  public String toSvgPath ( final String id ) {
 
     final int knotLength = this.knots.size();
     if ( knotLength < 2 ) { return ""; }
@@ -738,7 +740,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
     final Iterator < Knot2 > itr = this.knots.iterator();
     Knot2 prevKnot = itr.next();
-    svgp.append("<path d=\"M ")
+    svgp.append("<path id=\"")
+        .append(id)
+        .append("\" d=\"M ")
         .append(prevKnot.coord.toSvgString());
 
     Knot2 currKnot = null;

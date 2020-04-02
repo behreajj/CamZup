@@ -29,12 +29,26 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
    */
   public Face3 ( final Vert3 ... vertices ) { this.set(vertices); }
 
+  /**
+   * Translates the face in local space. This is done by (1) finding the
+   * orientation of the face; (2) multiplying the input vector by the
+   * orientation; (3) subtracting the face's center point from the
+   * face's vertices; (4) adding the local vector; (5) then adding the
+   * center point.
+   *
+   * @param v          the vector
+   * @param handedness the handedness
+   * @return the face
+   */
   @Experimental
-  Face3 translateLocal ( final Vec3 v ) {
+  Face3 translateLocal (
+      final Vec3 v,
+      final Handedness handedness ) {
 
     // TEST
 
-    final Transform3 tr = Face3.orientation(this, new Transform3());
+    final Transform3 tr = Face3.orientation(
+        this, handedness, new Transform3());
     final Vec3 vLocal = Transform3.mulDir(tr, v, new Vec3());
 
     final int len = this.vertices.length;
@@ -88,7 +102,6 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
    * @return the edge
    * @see Utils#mod(int, int)
    */
-  @Experimental
   public Edge3 getEdge (
       final int i,
       final Edge3 target ) {
@@ -104,7 +117,6 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
    *
    * @return the edges
    */
-  @Experimental
   public Edge3[] getEdges ( ) {
 
     final int len = this.vertices.length;
@@ -566,9 +578,19 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
     return Vec3.normalize(target, target);
   }
 
+  /**
+   * Returns the orientation of the vertex as a quaternion based on the
+   * face's normal.
+   *
+   * @param face       the face
+   * @param handedness the handedness
+   * @param target     the output transform
+   * @return the transform
+   */
   @Experimental
   public static Quaternion orientation (
       final Face3 face,
+      final Handedness handedness,
       final Quaternion target ) {
 
     /*
@@ -577,22 +599,22 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
      */
     final Vec3 imag = target.imag;
     Face3.normal(face, imag);
-    return Quaternion.fromDir(imag, target);
+    return Quaternion.fromDir(imag, handedness, target);
   }
 
-  @Experimental
-  public static Ray3 orientation (
-      final Face3 face,
-      final Ray3 target ) {
-
-    Face3.centerMean(face, target.origin);
-    Face3.normal(face, target.dir);
-    return target;
-  }
-
+  /**
+   * Returns the orientation of the vertex as a transform based on the
+   * face's normal.
+   *
+   * @param face       the face
+   * @param handedness the handedness
+   * @param target     the output transform
+   * @return the transform
+   */
   @Experimental
   public static Transform3 orientation (
       final Face3 face,
+      final Handedness handedness,
       final Transform3 target ) {
 
     final Quaternion rot = target.rotation;
@@ -604,6 +626,7 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
     Face3.normal(face, target.forward);
     Quaternion.fromDir(
         target.forward,
+        handedness,
         rot,
         target.right,
         target.forward,
@@ -620,6 +643,24 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
     // target.rotation);
     // }
 
+    return target;
+  }
+
+  /**
+   * Returns the orientation of the vertex as a ray based on the face's
+   * normal.
+   *
+   * @param face   the face
+   * @param target the output transform
+   * @return the transform
+   */
+  @Experimental
+  public static Ray3 orientation (
+      final Face3 face,
+      final Ray3 target ) {
+
+    Face3.centerMean(face, target.origin);
+    Face3.normal(face, target.dir);
     return target;
   }
 

@@ -3844,10 +3844,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    * @param v the coordinate
    */
   @Override
-  public void vertex ( final Vec2 v ) {
-
-    this.vertex(v.x, v.y);
-  }
+  public void vertex ( final Vec2 v ) { this.vertex(v.x, v.y); }
 
   /**
    * The path string for this renderer.

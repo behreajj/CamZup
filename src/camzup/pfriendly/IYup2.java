@@ -371,6 +371,8 @@ public interface IYup2 extends IUp {
    * @param x the vector x
    * @param y the vector y
    * @see IYup2#moveTo(float, float)
+   * @see IYup2#getLocX()
+   * @see IYup2#getLocY()
    */
   default void moveByGlobal ( final float x, final float y ) {
 
@@ -880,13 +882,27 @@ public interface IYup2 extends IUp {
    */
   default String toSvgString ( final CurveEntity2 ce ) {
 
-    return IYup2.toSvgString(this,
-        new CurveEntity2[] { ce },
+    return IYup2.toSvgString(this, new CurveEntity2[] { ce },
         new MaterialSolid[] {});
   }
 
   /**
    * Generates an SVG string from a 2D curve entity.
+   *
+   * @param ce  the curve entity
+   * @param mat the material
+   * @return the string
+   */
+  default String toSvgString (
+      final CurveEntity2 ce,
+      final MaterialSolid mat ) {
+
+    return IYup2.toSvgString(this, new CurveEntity2[] { ce },
+        new MaterialSolid[] { mat });
+  }
+
+  /**
+   * Generates an SVG string from a curve entity.
    *
    * @param ce   the curve entity
    * @param mats the materials
@@ -900,7 +916,7 @@ public interface IYup2 extends IUp {
   }
 
   /**
-   * Generates an SVG string from several 2D curve entities.
+   * Generates an SVG string from several curve entities.
    *
    * @param ces the curve entities
    * @return the string
@@ -911,7 +927,7 @@ public interface IYup2 extends IUp {
   }
 
   /**
-   * Generates an SVG string from several 2D curve entities.
+   * Generates an SVG string from several curve entities.
    *
    * @param ces the curve entities
    * @param mat the material
@@ -925,7 +941,7 @@ public interface IYup2 extends IUp {
   }
 
   /**
-   * Generates an SVG string from several 2D curve entities.
+   * Generates an SVG string from several curve entities.
    *
    * @param ces  the curve entities
    * @param mats the materials
@@ -939,7 +955,7 @@ public interface IYup2 extends IUp {
   }
 
   /**
-   * Generates an SVG string from a 2D mesh entity.
+   * Generates an SVG string from a mesh entity.
    *
    * @param me the mesh entity
    * @return the string
@@ -1167,7 +1183,8 @@ public interface IYup2 extends IUp {
    * @param target   the output vector
    * @return the mouse coordinate
    * @see Utils#div(float, float)
-   * @see Utils#scNorm(float)
+   * @see IYup2#getLocX()
+   * @see IYup2#getLocY()
    */
   static Vec2 mouse (
       final PApplet parent,
@@ -1249,11 +1266,15 @@ public interface IYup2 extends IUp {
    *
    * @param renderer the renderer
    * @return the string
+   * @see IYup2#getWidth()
+   * @see IYup2#getHeight()
+   * @see Color#toHexWeb(int)
+   * @see IYup2#getBackground()
    */
   static String svgBackground ( final IYup2 renderer ) {
 
     return new StringBuilder(128)
-        .append("<rect x=\"0\" y=\"0\" width=\"")
+        .append("<rect id=\"background\" x=\"0\" y=\"0\" width=\"")
         .append(renderer.getWidth())
         .append("\" height=\"")
         .append(renderer.getHeight())
@@ -1297,6 +1318,8 @@ public interface IYup2 extends IUp {
    *
    * @param renderer the renderer
    * @return the String
+   * @see IYup2#getWidth()
+   * @see IYup2#getHeight()
    */
   static String svgHeader ( final IYup2 renderer ) {
 
@@ -1328,7 +1351,7 @@ public interface IYup2 extends IUp {
     final StringBuilder svgp = new StringBuilder(1024);
     svgp.append(IYup2.svgHeader(renderer)).append('\n');
     svgp.append(IYup2.svgBackground(renderer)).append('\n');
-    svgp.append("<g ")
+    svgp.append("<g id=\"camera\" ")
         .append(IYup2.svgCamera(renderer))
         .append('>')
         .append('\n');
@@ -1338,7 +1361,7 @@ public interface IYup2 extends IUp {
         renderer.getZoomX(),
         renderer.getZoomY());
     for ( int i = 0; i < len; ++i ) {
-      svgp.append(ces[i].toSvgElm(zoom, mats))
+      svgp.append(ces[i].toSvgElm("curve", zoom, mats))
           .append('\n');
     }
 
@@ -1369,8 +1392,7 @@ public interface IYup2 extends IUp {
         renderer.getZoomX(),
         renderer.getZoomY());
     for ( int i = 0; i < len; ++i ) {
-      svgp.append(mes[i].toSvgElm(zoom, mats))
-          .append('\n');
+      svgp.append(mes[i].toSvgElm("face", zoom, mats)).append('\n');
     }
 
     svgp.append("</g>\n</svg>");

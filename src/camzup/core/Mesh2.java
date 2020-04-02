@@ -286,9 +286,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
   }
 
   /**
-   * Attempts to calculate texture coordinates (UVs) for a mesh. Does
-   * this by calculating the object-space dimensions of each coordinate,
-   * then using the frame as a reference for new UVs.
+   * Calculates texture coordinates (UVs) for this mesh. Finds the
+   * object-space dimensions of each coordinate, then using the frame as
+   * a reference for new UVs, such that the shape acts as a mask for the
+   * texture (or, the texture fills the shape without repeating).
    *
    * @return this mesh
    * @see Mesh2#calcDimensions(Mesh2, Vec2, Vec2, Vec2)
@@ -924,6 +925,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    *
    * @param scale the vector
    * @return this mesh
+   * @see Vec2#none(Vec2)
    * @see Vec2#mul(Vec2, Vec2, Vec2)
    */
   @Chainable
@@ -1623,15 +1625,18 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
   /**
    * Renders the curve as a string containing an SVG element.
    *
+   * @param id   the element id
    * @param zoom scaling transform
    * @return the SVG string
    */
   @Override
-  public String toSvgElm ( final float zoom ) {
+  public String toSvgElm (
+      final String id,
+      final float zoom ) {
 
     final StringBuilder svgp = new StringBuilder(1024)
         .append(MaterialSolid.defaultSvgMaterial(zoom))
-        .append(this.toSvgPath())
+        .append(this.toSvgPath(id))
         .append("</g>\n");
     return svgp.toString();
   }
@@ -1639,20 +1644,24 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
   /**
    * Renders the mesh path as a string containing an SVG element.
    *
+   * @param id the path id
    * @return the SVG string
    */
-  public String toSvgPath ( ) {
+  public String toSvgPath ( final String id ) {
 
     final StringBuilder svgp = new StringBuilder(1024);
 
     final int[][][] fs = this.faces;
     final Vec2[] vs = this.coords;
     final int fsLen = fs.length;
+    final String iddot = id + ".";
     for ( int i = 0; i < fsLen; ++i ) {
       final int[][] f = fs[i];
       final int fLen = f.length;
 
-      svgp.append("<path d=\"M ")
+      svgp.append("<path id=\"")
+          .append(iddot + Utils.toPadded(i, 4))
+          .append("\" d=\"M ")
           .append(vs[f[0][0]].toSvgString())
           .append(' ');
 
@@ -1693,90 +1702,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    * function.
    */
   public static final PolyType DEFAULT_POLY_TYPE = PolyType.NGON;
-
-  @Experimental
-  @Deprecated
-  static Mesh2 gridHexOld (
-      final int count,
-      final Vec2 lowerBound,
-      final Vec2 upperBound,
-      final PolyType poly,
-      final Mesh2 target ) {
-
-    // TODO: REFACTOR.
-
-    target.name = "Hex Grid";
-
-    /*
-     * Set texture coordinates to six corners of the hexagon, multiplied
-     * by 0.5, then added to 0.5 .
-     */
-
-    final boolean triFan = poly == PolyType.TRI;
-    final int vertsPerCell = triFan ? 7 : 6;
-
-    target.texCoords = Vec2.resize(target.texCoords, vertsPerCell);
-    target.texCoords[0].set(0.5f, 1.0f);
-    target.texCoords[1].set(0.066987306f, 0.75f);
-    target.texCoords[2].set(0.066987306f, 0.25f);
-    target.texCoords[3].set(0.5f, 0.0f);
-    target.texCoords[4].set(0.9330127f, 0.25f);
-    target.texCoords[5].set(0.9330127f, 0.75f);
-    if ( triFan ) { target.texCoords[6].set(0.5f, 0.5f); }
-
-    final Vec2[][] centers = Vec2.gridHex(count, lowerBound, upperBound);
-
-    final int vcnt = count < 3 ? 3 : count;
-    final int celltotal = vcnt * vcnt;
-    final int len = celltotal * vertsPerCell;
-
-    final float sz = IUtils.ONE_SQRT_3
-        * Vec2.dist(centers[0][1], centers[0][0]);
-
-    final float halfsz = 0.5f * sz;
-    final float szrt32 = IUtils.SQRT_3_2 * sz;
-
-    final Vec2[] vs = target.coords = Vec2.resize(target.coords, len);
-    final Vec2[] corners = {
-        new Vec2(0.0f, sz),
-        new Vec2(-szrt32, halfsz),
-        new Vec2(-szrt32, -halfsz),
-        new Vec2(0.0f, -sz),
-        new Vec2(szrt32, -halfsz),
-        new Vec2(szrt32, halfsz)
-    };
-
-    final int facesLen = triFan ? celltotal * 6 : celltotal;
-    final int vertsPerFace = triFan ? 3 : 6;
-    target.faces = new int[facesLen][vertsPerFace][2];
-
-    final int len0 = centers.length;
-    for ( int g = 0, k = 0, i = 0; i < len0; ++i ) {
-      final Vec2[] row = centers[i];
-      final int len1 = row.length;
-      for ( int j = 0; j < len1; ++j, ++g, k += vertsPerCell ) {
-        final Vec2 cell = row[j];
-
-        for ( int h = 0; h < vertsPerCell; ++h ) {
-          Vec2.add(cell, corners[h], vs[k + h]);
-        }
-
-        if ( triFan ) {
-          // TODO: SET FACES FOR TRI FAN
-          final int centerIdx = k + vertsPerCell - 1;
-          vs[centerIdx].set(cell);
-        } else {
-          final int[][] f = target.faces[g];
-          for ( int h = 0; h < vertsPerCell; ++h ) {
-            f[h][0] = k + h;
-            f[h][1] = h;
-          }
-        }
-      }
-    }
-
-    return target;
-  }
 
   /**
    * Creates an arc from a start and stop angle.
@@ -2121,6 +2046,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
         final Vec2 curr = vs[vert0[0]];
         final Vec2 next = vs[vert1[0]];
 
+        /*
+         * Evaluate the sign of the cross product of the differences between
+         * next, current, point.
+         */
         if ( curr.y <= point.y && next.y > point.y ) {
 
           final float eval = (next.x - curr.x) * (point.y - curr.y)

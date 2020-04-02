@@ -1289,23 +1289,13 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
   }
 
   /**
-   * Creates a quaternion from a direction. First, uses (0.0, 0.0, -1.0)
-   * as a reference for world up:<br>
-   * <br>
-   * <em>right</em> := <em>ref</em> x <em>dir</em><br>
-   * <em>up</em> := <em>right</em> x <em>dir</em><br>
-   * <br>
-   * If the direction and reference are parallel, the reference is
-   * swapped to (0.0, -1.0, 0.0) and the crossing pattern becomes:<br>
-   * <br>
-   * <em>right</em> := <em>dir</em> x <em>ref</em><br>
-   * <em>up</em> := <em>dir</em> x <em>right</em><br>
-   * <br>
+   * Creates a quaternion from a direction given a handedness.
    * Normalizes the input direction. Also known as a 'lookAt' or
    * 'toTracking' function.
    *
-   * @param dir    the direction
-   * @param target the output quaternion
+   * @param dir        the direction
+   * @param handedness the handedness
+   * @param target     the output quaternion
    * @return the quaternion
    * @see Utils#invSqrtUnchecked(float)
    * @see Utils#invHypot(float, float, float)
@@ -1315,71 +1305,95 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
   @Experimental
   public static Quaternion fromDir (
       final Vec3 dir,
+      final Handedness handedness,
       final Quaternion target ) {
 
     // TEST
 
     final float mSq0 = dir.x * dir.x + dir.y * dir.y + dir.z * dir.z;
     if ( mSq0 == 0.0f ) { return target.reset(); }
+
     final float mInv0 = Utils.invSqrtUnchecked(mSq0);
-    final float jx = dir.x * mInv0;
-    final float jy = dir.y * mInv0;
-    final float jz = dir.z * mInv0;
+    final float xForward = dir.x * mInv0;
+    final float yForward = dir.y * mInv0;
+    final float zForward = dir.z * mInv0;
 
-    /*
-     * float refx = 0.0f; float refy = 0.0f; float refz = -1.0f; float x1
-     * = refy * jz - refz * jy; float y1 = refz * jx - refx * jz; float z1
-     * = refx * jy - refy * jx; final boolean parallel = x1 == 0.0f && y1
-     * == 0.0f && z1 == 0.0f; if ( parallel ) { refx = 0.0f; refy = -1.0f;
-     * refz = 0.0f; x1 = jy * refz - jz * refy; y1 = jz * refx - jx *
-     * refz; z1 = jx * refy - jy * refx; }
-     */
-
-    /* Truncation of cross product with reference up. */
-    float x1 = jy;
-    float y1 = -jx;
+    float x1 = 0.0f;
+    float y1 = 0.0f;
     float z1 = 0.0f;
 
-    final boolean parallel = Utils.approx(x1, 0.0f) && Utils.approx(y1, 0.0f);
+    switch ( handedness ) {
+
+      case LEFT:
+
+        /* Cross (0.0, -1.0, 0.0) and forward. */
+        x1 = -zForward;
+        y1 = 0.0f;
+        z1 = xForward;
+
+        break;
+
+      case RIGHT:
+
+      default:
+
+        /* Cross (0.0, 0.0, -1.0) and forward. */
+        x1 = yForward;
+        y1 = -xForward;
+        z1 = 0.0f;
+
+    }
+
+    final boolean parallel = Utils.approx(x1, 0.0f)
+        && Utils.approx(y1, 0.0f)
+        && Utils.approx(z1, 0.0f);
     if ( parallel ) {
-      final float sgn = Utils.sign(jy);
-      // x1 = jz;
-      // x1 = -sgn * jz;
-      x1 = sgn * jz;
-      y1 = 0.0f;
-      z1 = sgn * -jx;
+      // TODO: Flesh this out to match above.
+      return target.reset();
     }
 
     /* Normalize right. */
     final float mInv1 = Utils.invHypot(x1, y1, z1);
-    final float ix = x1 * mInv1;
-    final float iy = y1 * mInv1;
-    final float iz = z1 * mInv1;
+    final float xRight = x1 * mInv1;
+    final float yRight = y1 * mInv1;
+    final float zRight = z1 * mInv1;
 
-    float x2;
-    float y2;
-    float z2;
+    float x2 = 0.0f;
+    float y2 = 0.0f;
+    float z2 = 0.0f;
 
-    if ( parallel ) {
-      x2 = jy * iz - jz * iy;
-      y2 = jz * ix - jx * iz;
-      z2 = jx * iy - jy * ix;
-    } else {
-      x2 = iy * jz - iz * jy;
-      y2 = iz * jx - ix * jz;
-      z2 = ix * jy - iy * jx;
+    switch ( handedness ) {
+
+      case LEFT:
+
+        // Shouldn't left and right match?
+
+        x2 = yForward * zRight - zForward * yRight;
+        y2 = zForward * xRight - xForward * zRight;
+        z2 = xForward * yRight - yForward * xRight;
+
+        break;
+
+      case RIGHT:
+
+      default:
+
+        x2 = yRight * zForward - zRight * yForward;
+        y2 = zRight * xForward - xRight * zForward;
+        z2 = xRight * yForward - yRight * xForward;
+
     }
 
     /* Normalize forward. */
     final float mInv2 = Utils.invHypot(x2, y2, z2);
-    final float kx = x2 * mInv2;
-    final float ky = y2 * mInv2;
-    final float kz = z2 * mInv2;
+    final float xUp = x2 * mInv2;
+    final float yUp = y2 * mInv2;
+    final float zUp = z2 * mInv2;
 
     return Quaternion.fromAxes(
-        ix, jy, kz,
-        jz, ky, kx,
-        iz, iy, jx,
+        xRight, yForward, zUp,
+        zForward, yUp, xUp,
+        zRight, yRight, xForward,
         target);
   }
 
@@ -1388,11 +1402,12 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    * forward and reference up are parallel. Emits the right, forward and
    * up axes as a byproduct of the function's calculations.
    *
-   * @param dir     the direction
-   * @param target  the output quaternion
-   * @param right   the output right axis
-   * @param forward the output forward axis
-   * @param up      the output up axis
+   * @param dir        the direction
+   * @param handedness the handedness
+   * @param target     the output quaternion
+   * @param right      the output right axis
+   * @param forward    the output forward axis
+   * @param up         the output up axis
    * @return the quaternion
    * @see Vec3#none(Vec3)
    * @see Vec3#right(Vec3)
@@ -1402,9 +1417,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    * @see Vec3#crossNorm(Vec3, Vec3, Vec3)
    * @see Quaternion#fromAxes(Vec3, Vec3, Vec3, Quaternion)
    */
-  @Experimental
   public static Quaternion fromDir (
       final Vec3 dir,
+      final Handedness handedness,
       final Quaternion target,
       final Vec3 right,
       final Vec3 forward,
@@ -1417,21 +1432,72 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       return target.reset();
     }
 
+    final boolean isRight = handedness == Handedness.RIGHT;
     Vec3.normalize(dir, forward);
-    right.set(forward.y, -forward.x, 0.0f);
 
-    final boolean parallel = right.x == 0.0f && right.y == 0.0f;
-    if ( parallel ) {
-      final float sgn = Utils.sign(forward.y);
-      // right.set(forward.z, 0.0f, sgn * -forward.x);
-      // right.set(-sgn * forward.z, 0.0f, sgn * -forward.x);
-      right.set(sgn * forward.z, 0.0f, sgn * -forward.x);
+    if ( isRight ) {
+      right.set(forward.y, -forward.x, 0.0f);
+    } else {
+      right.set(-forward.z, 0.0f, forward.x);
     }
+
+    /* Polarity: an infinite number of orientations is possible. */
+    if ( Vec3.approxMag(right, 0.0f) ) {
+
+      if ( isRight ) {
+
+        /*
+         * In a right-handed coordinate system, the forward axis is either
+         * (0.0, 0.0, 1.0) or (0.0, 0.0, -1.0) .
+         */
+        if ( forward.z > 0.0f ) {
+
+          Vec3.right(right);
+          Vec3.up(forward);
+          Vec3.back(up);
+          return target.set(IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f, 0.0f);
+
+        } else if ( forward.z < 0.0f ) {
+
+          Vec3.right(right);
+          Vec3.down(forward);
+          Vec3.forward(up);
+          return target.set(-IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f, 0.0f);
+
+        }
+
+      } else {
+
+        /*
+         * In a left-handed coordinate system, the forward axis is either
+         * (0.0, 1.0, 0.0) or (0.0, -1.0, 0.0) .
+         */
+        if ( forward.y > 0.0f ) {
+
+          Vec3.left(right);
+          Vec3.forward(forward);
+          Vec3.down(up);
+          return target.set(0.0f, 0.0f, 1.0f, 0.0f);
+
+        } else if ( forward.y < 0.0f ) {
+
+          Vec3.left(right);
+          Vec3.back(forward);
+          Vec3.up(up);
+          return target.set(0.0f, 0.0f, 0.0f, 1.0f);
+
+        }
+
+      }
+
+    }
+
     Vec3.normalize(right, right);
 
-    if ( parallel ) {
-      Vec3.crossNorm(forward, right, up);
+    if ( isRight ) {
+      Vec3.crossNorm(right, forward, up);
     } else {
+      // Vec3.crossNorm(forward, right, up);
       Vec3.crossNorm(right, forward, up);
     }
 

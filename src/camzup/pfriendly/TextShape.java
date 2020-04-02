@@ -25,7 +25,7 @@ import camzup.core.Utils;
 import camzup.core.Vec2;
 
 /**
- * Converts AWT font glyphs to curves.
+ * Converts AWT font glyphs to curves or meshes.
  */
 public abstract class TextShape {
 

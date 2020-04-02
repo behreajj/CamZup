@@ -3,6 +3,10 @@ package camzup.pfriendly;
 import camzup.core.Utils;
 import camzup.core.Vec3;
 
+/**
+ * Maintains consistent behavior between 3D renderers which display
+ * text to the screen.
+ */
 public interface ITextDisplay3 extends ITextDisplay {
 
   /**

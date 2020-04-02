@@ -1350,9 +1350,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
 
     final Vec3 prevCo = prev.coord;
 
-    final float midpt23x = xControl * 0.6666667f;
-    final float midpt23y = yControl * 0.6666667f;
-    final float midpt23z = zControl * 0.6666667f;
+    final float midpt23x = xControl * 0.6666666f;
+    final float midpt23y = yControl * 0.6666666f;
+    final float midpt23z = zControl * 0.6666666f;
 
     prev.foreHandle.set(
         midpt23x + IUtils.ONE_THIRD * prevCo.x,

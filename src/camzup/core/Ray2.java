@@ -23,6 +23,9 @@ public class Ray2 extends Ray {
     this.dir = Vec2.forward(new Vec2());
   }
 
+  /**
+   * The default constructor.
+   */
   public Ray2 ( ) { super(); }
 
   /**

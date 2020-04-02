@@ -20,5 +20,5 @@ public interface IMaterial extends IUtils {
   /**
    * The default stroke weight used when none is specified.
    */
-  float DEFAULT_STROKE_WEIGHT = 0.8f;
+  float DEFAULT_STROKE_WEIGHT = 1.0f;
 }

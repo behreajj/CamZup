@@ -405,26 +405,45 @@ public class Transform3 extends Transform {
   }
 
   /**
-   * Orient the transform to look at a target point. If the point equals
-   * the transform's location, the function returns early.
+   * Orients the transform to look at a target point.<br>
+   * <br>
+   * The transform eases toward the look at rotation because
+   * discontinuities arise with using a look at matrix when a
+   * transform's look direction is parallel with the world up axis.
    *
-   * @param target the target point
+   * @param point      the target point
+   * @param step       the step
+   * @param handedness the handedness
    * @return this transform
    * @see Vec3#sub(Vec3, Vec3, Vec3)
-   * @see Quaternion#fromDir(Vec3, Quaternion, Vec3, Vec3, Vec3)
+   * @see Quaternion#fromDir(Vec3, Handedness, Quaternion, Vec3, Vec3,
+   *      Vec3)
+   * @see Quaternion#mix(Quaternion, Quaternion, float, Quaternion)
    */
   @Chainable
-  @Experimental
-  public Transform3 lookAt ( final Vec3 target ) {
+  public Transform3 lookAt (
+      final Vec3 point,
+      final float step,
+      final Handedness handedness ) {
 
     this.rotPrev.set(this.rotation);
-    Vec3.sub(target, this.location, this.forward);
+    Vec3.sub(point, this.location, this.forward);
+
     Quaternion.fromDir(
         this.forward,
+        handedness,
         this.rotation,
         this.right,
         this.forward,
         this.up);
+
+    Quaternion.mix(
+        this.rotPrev,
+        this.rotation,
+        step,
+        this.rotation);
+
+    this.updateAxes();
 
     return this;
   }
@@ -1077,45 +1096,6 @@ public class Transform3 extends Transform {
    */
   private static final long serialVersionUID = 6128601941848021668L;
 
-  @Experimental
-  static Transform3 mul (
-      final Transform3 a,
-      final Transform3 b,
-      final Transform3 target ) {
-
-    // TEST
-
-    // target.rotPrev.reset();
-    // target.locPrev.reset();
-    // Vec3.one(target.scalePrev);
-
-    target.locPrev.set(target.location);
-    target.rotPrev.set(target.rotation);
-    target.scalePrev.set(target.scale);
-
-    target.location.reset();
-
-    Quaternion.mul(a.rotation, b.rotation, target.rotation);
-    Vec3.mul(a.scale, b.scale, target.scale);
-
-    // This doesn't work...
-    // Vec3 v2 = Quaternion.mulVector(b.rotation, a.location, new Vec3());
-    // Vec3 v3 = Vec3.mul(b.scale, v2, new Vec3());
-
-    // Vec3 v0 = Quaternion.mulVector(target.rotation, b.location, new
-    // Vec3());
-    // Vec3 v1 = Vec3.mul(target.scale, v0, new Vec3());
-
-    Vec3.add(
-        Transform3.mulPoint(target, b.location, new Vec3()),
-        Transform3.invMulPoint(target, a.location, new Vec3()),
-        target.location);
-
-    target.updateAxes();
-
-    return target;
-  }
-
   /**
    * A helper function to set the transform's from either separate
    * vectors or from the columns of a matrix. The transform's
@@ -1198,55 +1178,50 @@ public class Transform3 extends Transform {
 
   /**
    * Creates a transform from a ray. The transform's translation is set
-   * to the ray's origin; its scale, to one.
+   * to the ray's origin; its scale, to one.<br>
+   * <br>
+   * Discontinuities arise when using a look at matrix when a
+   * transform's look direction is parallel with the world up axis. To
+   * animate a transform use the instance method
+   * {@link Transform3#lookAt(Vec3, float, Handedness)} .
    *
-   * @param ray    the direction
-   * @param target the output transform
+   * @param ray        the direction
+   * @param handedness the handedness
+   * @param target     the output transform
    * @return the transform
-   * @see Quaternion#fromDir(Vec3, Quaternion, Vec3, Vec3, Vec3)
-   * @see Vec3#one(Vec3)
+   * @see Transform3#fromDir(Vec3, Handedness, Transform3)
+   * @see Transform3#moveTo(Vec3)
    */
   public static Transform3 fromDir (
       final Ray3 ray,
+      final Handedness handedness,
       final Transform3 target ) {
 
-    // target.locPrev.reset();
-    // target.rotPrev.reset();
-    // Vec3.one(target.scalePrev);
-
-    target.locPrev.set(target.location);
-    target.rotPrev.set(target.rotation);
-    target.scalePrev.set(target.scale);
-
-    Quaternion.fromDir(
-        ray.dir,
-        target.rotation,
-        target.right,
-        target.forward,
-        target.up);
-
-    target.location.set(ray.origin);
-    Vec3.one(target.scale);
-
+    Transform3.fromDir(ray.dir, handedness, target);
+    target.moveTo(ray.origin);
     return target;
   }
 
   /**
    * Creates a transform from a direction. The transform's translation
-   * is set to zero; its scale, to one.
+   * is set to zero; its scale, to one.<br>
+   * <br>
+   * Discontinuities arise when using a look at matrix when a
+   * transform's look direction is parallel with the world up axis. To
+   * animate a transform use the instance method
+   * {@link Transform3#lookAt(Vec3, float, Handedness)} .
    *
-   * @param dir    the direction
-   * @param target the output transform
+   * @param dir        the direction
+   * @param handedness handedness
+   * @param target     the output transform
    * @return the transform
-   * @see Quaternion#fromDir(Vec3, Quaternion, Vec3, Vec3, Vec3)
+   * @see Quaternion#fromDir(Vec3, Handedness, Quaternion, Vec3, Vec3,
+   *      Vec3)
    */
   public static Transform3 fromDir (
       final Vec3 dir,
+      final Handedness handedness,
       final Transform3 target ) {
-
-    // target.locPrev.reset();
-    // target.rotPrev.reset();
-    // Vec3.one(target.scalePrev);
 
     target.locPrev.set(target.location);
     target.rotPrev.set(target.rotation);
@@ -1254,6 +1229,7 @@ public class Transform3 extends Transform {
 
     Quaternion.fromDir(
         dir,
+        handedness,
         target.rotation,
         target.right,
         target.forward,

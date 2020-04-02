@@ -86,10 +86,7 @@ public class Vert2 implements Comparable < Vert2 > {
    * @return the hash
    */
   @Override
-  public int hashCode ( ) {
-
-    return this.coord.hashCode();
-  }
+  public int hashCode ( ) { return this.coord.hashCode(); }
 
   /**
    * Sets the coordinate and texture coordinate of the vertex by

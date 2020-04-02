@@ -289,9 +289,10 @@ public abstract class Mesh extends EntityData implements IMesh {
   }
 
   /**
-   * Splices a 3D array in the midst of another. For use by subdivision
-   * functions. If the number of deletions exceeds the length of the
-   * target array, then a copy of the insert array is returned.
+   * Splices a 3D array of integers into the midst of another. For use
+   * by subdivision functions. If the number of deletions exceeds the
+   * length of the target array, then a copy of the insert array is
+   * returned.
    *
    * @param arr       the array
    * @param index     the insertion point

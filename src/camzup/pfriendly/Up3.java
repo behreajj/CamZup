@@ -883,6 +883,35 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
   }
 
   /**
+   * Moves the camera by the given vector then updates the camera.
+   *
+   * @param x the vector x
+   * @param y the vector y
+   * @param z the vector z
+   * @see IUp3#moveTo(float, float, float)
+   */
+  @Override
+  public void moveBy (
+      final float x,
+      final float y,
+      final float z ) {
+
+    this.moveByLocal(x, y, z);
+  }
+
+  /**
+   * Moves the camera by the given vector then updates the camera.
+   *
+   * @param v the vector
+   * @see IUp3#moveByGlobal(float, float, float)
+   */
+  @Override
+  public void moveBy ( final Vec3 v ) {
+
+    this.moveByLocal(v.x, v.y, v.z);
+  }
+
+  /**
    * Moves the renderer's camera by a vector relative to its
    * orientation; causes the camera to orbit around the locus at which
    * it is looking.
@@ -897,7 +926,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final float y,
       final float z ) {
 
-    // final PMatrix3D m = this.camera;
     final PMatrix3D m = this.cameraInv;
     final float w = m.m30 * x + m.m31 * y + m.m32 * z + m.m33;
     if ( w != 0.0f ) {

@@ -99,20 +99,14 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    *
    * @param v2 the vector
    */
-  public Vec4 ( final Vec2 v2 ) {
-
-    this.set(v2);
-  }
+  public Vec4 ( final Vec2 v2 ) { this.set(v2); }
 
   /**
    * Promotes a Vec3 to a Vec4.
    *
    * @param v3 the vector
    */
-  public Vec4 ( final Vec3 v3 ) {
-
-    this.set(v3);
-  }
+  public Vec4 ( final Vec3 v3 ) { this.set(v3); }
 
   /**
    * Promotes a Vec3 to a Vec4 with an extra component.
@@ -120,20 +114,14 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    * @param v3 the vector
    * @param w  the w component
    */
-  public Vec4 ( final Vec3 v3, final float w ) {
-
-    this.set(v3, w);
-  }
+  public Vec4 ( final Vec3 v3, final float w ) { this.set(v3, w); }
 
   /**
    * Constructs a vector from a source vector's components.
    *
    * @param source the source vector
    */
-  public Vec4 ( final Vec4 source ) {
-
-    this.set(source);
-  }
+  public Vec4 ( final Vec4 source ) { this.set(source); }
 
   /**
    * Tests equivalence between this and another vector.
@@ -495,11 +483,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
         .append(' ').append('}')
         .toString();
   }
-
-  /**
-   * The default easing function, lerp.
-   */
-  private static transient AbstrEasing EASING = new Lerp();
 
   /**
    * The unique identification for serialized classes.
@@ -1168,16 +1151,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
   }
 
   /**
-   * Gets the string representation of the default Vec2 easing function.
-   *
-   * @return the string
-   */
-  public static String getEasingString ( ) {
-
-    return Vec4.EASING.toString();
-  }
-
-  /**
    * Evaluates whether the left comparisand is greater than the right
    * comparisand.
    *
@@ -1283,7 +1256,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    * @param target the output vector
    * @return the evaluation
    */
-  @Experimental
   public static Vec4 lt (
       final Vec4 a,
       final Vec4 b,
@@ -1305,7 +1277,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    * @param target the output vector
    * @return the evaluation
    */
-  @Experimental
   public static Vec4 ltEq (
       final Vec4 a,
       final Vec4 b,
@@ -2105,16 +2076,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
         Utils.round(v.y),
         Utils.round(v.z),
         Utils.round(v.w));
-  }
-
-  /**
-   * Sets the default easing function.
-   *
-   * @param easing the easing function
-   */
-  public static void setEasing ( final AbstrEasing easing ) {
-
-    if ( easing != null ) { Vec4.EASING = easing; }
   }
 
   /**
