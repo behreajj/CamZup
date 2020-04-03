@@ -3,37 +3,32 @@ package camzup.core;
 /**
  * A simplex noise class created with reference to "<a href=
  * "http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf">Simplex
- * noise demystified</a>" by Stefan Gustavson. Hashing functions are
- * based on Bob Jenkins lookup3 script, <a href=
+ * noise demystified</a>" by Stefan Gustavson. Hashing functions are based on
+ * Bob Jenkins lookup3 script, <a href=
  * "http://burtleburtle.net/bob/c/lookup3.c">http://burtleburtle.net/bob/c/lookup3.c</a>.
  * Flow implementations written with reference to Simon Geilfus's
- * <a href=
- * "https://github.com/simongeilfus/SimplexNoise">library</a>, which
- * in turn references the work of
- * <a href="https://www.cs.ubc.ca/~rbridson/">Robert Bridson</a>.<br>
+ * <a href= "https://github.com/simongeilfus/SimplexNoise">library</a>, which in
+ * turn references the work of <a href="https://www.cs.ubc.ca/~rbridson/">Robert
+ * Bridson</a>.<br>
  * <br>
  * This class uses the following variations:
  * <ul>
- * <li>stores stretch constants multiplied by their coefficients in
- * constants (e.g., G2_2);</li>
+ * <li>stores stretch constants multiplied by their coefficients in constants
+ * (e.g., G2_2);</li>
  * <li>sets a DEFAULT_SEED to the current time in milliseconds;</li>
- * <li>does not combine scalars with derivatives into a vector one
- * dimension higher than the input (output parameters are used
- * instead);</li>
- * <li>initializes mutable integer offsets i, j, k to zero, then
- * changes them only if appropriate conditions are met;</li>
- * <li>changes where n and t factors are multiplied in evaluate
- * function so that a calculation does not need to be redone for
- * derivatives;</li>
- * <li>attempts to match the offset step in noise functions to the
- * magnitude of the input vector rather than using an arbitrary one
- * (123.456, etc.).</li>
+ * <li>does not combine scalars with derivatives into a vector one dimension
+ * higher than the input (output parameters are used instead);</li>
+ * <li>initializes mutable integer offsets i, j, k to zero, then changes them
+ * only if appropriate conditions are met;</li>
+ * <li>changes where n and t factors are multiplied in evaluate function so that
+ * a calculation does not need to be redone for derivatives;</li>
+ * <li>attempts to match the offset step in noise functions to the magnitude of
+ * the input vector rather than using an arbitrary one (123.456, etc.).</li>
  * </ul>
- *
- * Most simplex functions scale the sum of noise contributions by a
- * magic number to bring it into range. There is little explanation
- * for how these numbers are arrived at. Although the range is
- * expected to be within [-1.0, 1.0], it is not guaranteed.
+ * Most simplex functions scale the sum of noise contributions by a magic number
+ * to bring it into range. There is little explanation for how these numbers are
+ * arrived at. Although the range is expected to be within [-1.0, 1.0], it is
+ * not guaranteed.
  *
  * @author Robert Bridson
  * @author Simon Geilfus
@@ -42,508 +37,350 @@ package camzup.core;
  */
 public abstract class Simplex {
 
-  /**
-   * Squish constant 2D <code>(Math.sqrt(3.0) - 1.0) / 2.0</code>;
-   * approximately 0.36602542 .
-   */
-  private static final float F2 = 0.36602542f;
+   /**
+    * A default seed set to the system current time in milliseconds.
+    */
+   public static final int DEFAULT_SEED;
 
-  /**
-   * Squish constant 3D <code>(Math.sqrt(4.0) - 1.0) / 3.0</code>;
-   * approximately 0.33333334 .
-   */
-  private static final float F3 = IUtils.ONE_THIRD;
+   /**
+    * Squish constant 2D <code>(Math.sqrt(3.0) - 1.0) / 2.0</code>;
+    * approximately 0.36602542 .
+    */
+   private static final float F2 = 0.36602542f;
 
-  /**
-   * Squish constant 4D <code>(Math.sqrt(5.0) - 1.0) / 4.0</code>;
-   * approximately 0.309017 .
-   */
-  private static final float F4 = 0.309017f;
+   /**
+    * Squish constant 3D <code>(Math.sqrt(4.0) - 1.0) / 3.0</code>;
+    * approximately 0.33333334 .
+    */
+   private static final float F3 = IUtils.ONE_THIRD;
 
-  /**
-   * Stretch constant 2D <code>(1.0 / Math.sqrt(3.0) - 1.0) /
-   * 2.0</code>; approximately 0.21132487 .
-   */
-  private static final float G2 = 0.21132487f;
+   /**
+    * Squish constant 4D <code>(Math.sqrt(5.0) - 1.0) / 4.0</code>;
+    * approximately 0.309017 .
+    */
+   private static final float F4 = 0.309017f;
 
-  /**
-   * 2x stretch constant 2D. Approximately 0.42264974 .
-   */
-  private static final float G2_2 = 0.42264974f;
+   /**
+    * Stretch constant 2D <code>(1.0 / Math.sqrt(3.0) - 1.0) /
+    * 2.0</code>; approximately 0.21132487 .
+    */
+   private static final float G2 = 0.21132487f;
 
-  /**
-   * Stretch constant 3D.
-   */
-  private static final float G3 = IUtils.ONE_SIX;
+   /**
+    * 2x stretch constant 2D. Approximately 0.42264974 .
+    */
+   private static final float G2_2 = 0.42264974f;
 
-  /**
-   * 2x stretch constant 3D.
-   */
-  private static final float G3_2 = IUtils.ONE_THIRD;
+   /**
+    * Stretch constant 3D.
+    */
+   private static final float G3 = IUtils.ONE_SIX;
 
-  /**
-   * 3x stretch constant 3D. 0.5 .
-   */
-  private static final float G3_3 = 0.5f;
+   /**
+    * 2x stretch constant 3D.
+    */
+   private static final float G3_2 = IUtils.ONE_THIRD;
 
-  /**
-   * Stretch constant 4D (<code>1.0 / Math.sqrt(5.0) - 1.0) /
-   * 4.0</code>; approximately 0.1381966 .
-   */
-  private static final float G4 = 0.1381966f;
+   /**
+    * 3x stretch constant 3D. 0.5 .
+    */
+   private static final float G3_3 = 0.5f;
 
-  /**
-   * 2x stretch constant 4D. Approximately 0.2763932 .
-   */
-  private static final float G4_2 = 0.2763932f;
+   /**
+    * Stretch constant 4D (<code>1.0 / Math.sqrt(5.0) - 1.0) /
+    * 4.0</code>; approximately 0.1381966 .
+    */
+   private static final float G4 = 0.1381966f;
 
-  /**
-   * 3x stretch constant 4D. Approximately 0.4145898 .
-   */
-  private static final float G4_3 = 0.4145898f;
+   /**
+    * 2x stretch constant 4D. Approximately 0.2763932 .
+    */
+   private static final float G4_2 = 0.2763932f;
 
-  /**
-   * 4x stretch constant 4D. Approximately 0.5527864 .
-   */
-  private static final float G4_4 = 0.4145898f;
+   /**
+    * 3x stretch constant 4D. Approximately 0.4145898 .
+    */
+   private static final float G4_3 = 0.4145898f;
 
-  /**
-   * 2D simplex gradient look-up table.
-   */
-  private static final Vec2[] GRAD_2_LUT;
+   /**
+    * 4x stretch constant 4D. Approximately 0.5527864 .
+    */
+   private static final float G4_4 = 0.4145898f;
 
-  /**
-   * 3D simplex gradient look-up table.
-   */
-  private static final Vec3[] GRAD_3_LUT;
+   /**
+    * 2D simplex gradient look-up table.
+    */
+   private static final Vec2[] GRAD_2_LUT;
 
-  /**
-   * 4D simplex gradient look-up table.
-   */
-  private static final Vec4[] GRAD_4_LUT;
+   /**
+    * 3D simplex gradient look-up table.
+    */
+   private static final Vec3[] GRAD_3_LUT;
 
-  /**
-   * Table for 3D rotations, u. Multiplied by the cosine of an angle in
-   * 3D gradient rotations.
-   */
-  private static final Vec3[] GRAD3_U;
+   /**
+    * 4D simplex gradient look-up table.
+    */
+   private static final Vec4[] GRAD_4_LUT;
 
-  /**
-   * Table for 3D rotations, v. Multiplied by the sine of an angle in 3D
-   * gradient rotations.
-   */
-  private static final Vec3[] GRAD3_V;
+   /**
+    * Table for 3D rotations, u. Multiplied by the cosine of an angle in 3D
+    * gradient rotations.
+    */
+   private static final Vec3[] GRAD3_U;
 
-  /**
-   * Permutation table for 4D noise.
-   */
-  private static final int[][] PERMUTE;
+   /**
+    * Table for 3D rotations, v. Multiplied by the sine of an angle in 3D
+    * gradient rotations.
+    */
+   private static final Vec3[] GRAD3_V;
 
-  /**
-   * Temporary vector used by gradRot2.
-   */
-  private static final transient Vec2 ROT_2;
+   /**
+    * Permutation table for 4D noise.
+    */
+   private static final int[][] PERMUTE;
 
-  /**
-   * Temporary vector used by gradRot3.
-   */
-  private static final transient Vec3 ROT_3;
+   /**
+    * Temporary vector used by gradRot2.
+    */
+   private static final transient Vec2 ROT_2;
 
-  /**
-   * <code>Math.sqrt(2.0) / Math.sqrt(3.0)</code>. Used by rotation look
-   * up tables. Approximately 0.8164966 .
-   */
-  private static final float RT2_RT3 = 0.8164966f;
+   /**
+    * Temporary vector used by gradRot3.
+    */
+   private static final transient Vec3 ROT_3;
 
-  /**
-   * Factor by which 2D noise is scaled prior to return.
-   */
-  private static final float SCALE_2 = 64.0f;
+   /**
+    * <code>Math.sqrt(2.0) / Math.sqrt(3.0)</code>. Used by rotation look up
+    * tables. Approximately 0.8164966 .
+    */
+   private static final float RT2_RT3 = 0.8164966f;
 
-  /**
-   * Factor by which 3D noise is scaled prior to return.
-   */
-  private static final float SCALE_3 = 68.0f;
+   /**
+    * Factor by which 2D noise is scaled prior to return.
+    */
+   private static final float SCALE_2 = 64.0f;
 
-  /**
-   * Factor by which 4D noise is scaled prior to return.
-   */
-  private static final float SCALE_4 = 54.0f;
+   /**
+    * Factor by which 3D noise is scaled prior to return.
+    */
+   private static final float SCALE_3 = 68.0f;
 
-  /**
-   * Factor added to 2D noise when returning a Vec2. <code>1.0 /
-   * Math.sqrt(2.0)</code>; approximately 0.70710677 .
-   */
-  private final static float STEP_2 = IUtils.ONE_SQRT_2;
+   /**
+    * Factor by which 4D noise is scaled prior to return.
+    */
+   private static final float SCALE_4 = 54.0f;
 
-  /**
-   * Factor added to 3D noise when returning a Vec3. <code>1.0 /
-   * Math.sqrt(3.0)</code>; approximately 0.57735026 .
-   */
-  private final static float STEP_3 = IUtils.ONE_SQRT_3;
+   /**
+    * Factor added to 2D noise when returning a Vec2. <code>1.0 /
+    * Math.sqrt(2.0)</code>; approximately 0.70710677 .
+    */
+   private final static float STEP_2 = IUtils.ONE_SQRT_2;
 
-  /**
-   * Factor added to 4D noise when returning a Vec4. <code>1.0 /
-   * Math.sqrt(4.0)</code>; 0.5 .
-   */
-  private final static float STEP_4 = 0.5f;
+   /**
+    * Factor added to 3D noise when returning a Vec3. <code>1.0 /
+    * Math.sqrt(3.0)</code>; approximately 0.57735026 .
+    */
+   private final static float STEP_3 = IUtils.ONE_SQRT_3;
 
-  /**
-   * Initial state to which a 2D noise contribution is set. Prevents
-   * compiler complaint that variables may not have been initialized.
-   */
-  private static final Vec2 ZERO_2;
+   /**
+    * Factor added to 4D noise when returning a Vec4. <code>1.0 /
+    * Math.sqrt(4.0)</code>; 0.5 .
+    */
+   private final static float STEP_4 = 0.5f;
 
-  /**
-   * Initial state to which a 3D noise contribution is set. Prevents
-   * compiler complaint that variables may not have been initialized.
-   */
-  private static final Vec3 ZERO_3;
+   /**
+    * Initial state to which a 2D noise contribution is set. Prevents compiler
+    * complaint that variables may not have been initialized.
+    */
+   private static final Vec2 ZERO_2;
 
-  /**
-   * Initial state to which a 4D noise contribution is set. Prevents
-   * compiler complaint that variables may not have been initialized.
-   */
-  private static final Vec4 ZERO_4;
+   /**
+    * Initial state to which a 3D noise contribution is set. Prevents compiler
+    * complaint that variables may not have been initialized.
+    */
+   private static final Vec3 ZERO_3;
 
-  /**
-   * A default seed set to the system current time in milliseconds.
-   */
-  public static final int DEFAULT_SEED;
+   /**
+    * Initial state to which a 4D noise contribution is set. Prevents compiler
+    * complaint that variables may not have been initialized.
+    */
+   private static final Vec4 ZERO_4;
 
-  static {
-    DEFAULT_SEED = (int) System.currentTimeMillis();
+   static {
+      DEFAULT_SEED = ( int ) System.currentTimeMillis();
 
-    GRAD_2_LUT = new Vec2[] {
-        new Vec2(-1.0f, -1.0f),
-        new Vec2(1.0f, 0.0f),
-        new Vec2(-1.0f, 0.0f),
-        new Vec2(1.0f, 1.0f),
-        new Vec2(-1.0f, 1.0f),
-        new Vec2(0.0f, -1.0f),
-        new Vec2(0.0f, 1.0f),
-        new Vec2(1.0f, -1.0f) };
+      GRAD_2_LUT = new Vec2[] {
+         new Vec2(-1.0f, -1.0f),
+         new Vec2(1.0f, 0.0f),
+         new Vec2(-1.0f, 0.0f),
+         new Vec2(1.0f, 1.0f),
+         new Vec2(-1.0f, 1.0f),
+         new Vec2(0.0f, -1.0f),
+         new Vec2(0.0f, 1.0f),
+         new Vec2(1.0f, -1.0f) };
 
-    GRAD_3_LUT = new Vec3[] {
-        new Vec3(1.0f, 0.0f, 1.0f),
-        new Vec3(0.0f, 1.0f, 1.0f),
-        new Vec3(-1.0f, 0.0f, 1.0f),
-        new Vec3(0.0f, -1.0f, 1.0f),
-        new Vec3(1.0f, 0.0f, -1.0f),
-        new Vec3(0.0f, 1.0f, -1.0f),
-        new Vec3(-1.0f, 0.0f, -1.0f),
-        new Vec3(0.0f, -1.0f, -1.0f),
-        new Vec3(1.0f, -1.0f, 0.0f),
-        new Vec3(1.0f, 1.0f, 0.0f),
-        new Vec3(-1.0f, 1.0f, 0.0f),
-        new Vec3(-1.0f, -1.0f, 0.0f),
-        new Vec3(1.0f, 0.0f, 1.0f),
-        new Vec3(-1.0f, 0.0f, 1.0f),
-        new Vec3(0.0f, 1.0f, -1.0f),
-        new Vec3(0.0f, -1.0f, -1.0f) };
+      GRAD_3_LUT = new Vec3[] {
+         new Vec3(1.0f, 0.0f, 1.0f),
+         new Vec3(0.0f, 1.0f, 1.0f),
+         new Vec3(-1.0f, 0.0f, 1.0f),
+         new Vec3(0.0f, -1.0f, 1.0f),
+         new Vec3(1.0f, 0.0f, -1.0f),
+         new Vec3(0.0f, 1.0f, -1.0f),
+         new Vec3(-1.0f, 0.0f, -1.0f),
+         new Vec3(0.0f, -1.0f, -1.0f),
+         new Vec3(1.0f, -1.0f, 0.0f),
+         new Vec3(1.0f, 1.0f, 0.0f),
+         new Vec3(-1.0f, 1.0f, 0.0f),
+         new Vec3(-1.0f, -1.0f, 0.0f),
+         new Vec3(1.0f, 0.0f, 1.0f),
+         new Vec3(-1.0f, 0.0f, 1.0f),
+         new Vec3(0.0f, 1.0f, -1.0f),
+         new Vec3(0.0f, -1.0f, -1.0f) };
 
-    GRAD_4_LUT = new Vec4[] {
-        new Vec4(0.0f, 1.0f, 1.0f, 1.0f),
-        new Vec4(0.0f, 1.0f, 1.0f, -1.0f),
-        new Vec4(0.0f, 1.0f, -1.0f, 1.0f),
-        new Vec4(0.0f, 1.0f, -1.0f, -1.0f),
-        new Vec4(0.0f, -1.0f, 1.0f, 1.0f),
-        new Vec4(0.0f, -1.0f, 1.0f, -1.0f),
-        new Vec4(0.0f, -1.0f, -1.0f, 1.0f),
-        new Vec4(0.0f, -1.0f, -1.0f, -1.0f),
-        new Vec4(1.0f, 0.0f, 1.0f, 1.0f),
-        new Vec4(1.0f, 0.0f, 1.0f, -1.0f),
-        new Vec4(1.0f, 0.0f, -1.0f, 1.0f),
-        new Vec4(1.0f, 0.0f, -1.0f, -1.0f),
-        new Vec4(-1.0f, 0.0f, 1.0f, 1.0f),
-        new Vec4(-1.0f, 0.0f, 1.0f, -1.0f),
-        new Vec4(-1.0f, 0.0f, -1.0f, 1.0f),
-        new Vec4(-1.0f, 0.0f, -1.0f, -1.0f),
-        new Vec4(1.0f, 1.0f, 0.0f, 1.0f),
-        new Vec4(1.0f, 1.0f, 0.0f, -1.0f),
-        new Vec4(1.0f, -1.0f, 0.0f, 1.0f),
-        new Vec4(1.0f, -1.0f, 0.0f, -1.0f),
-        new Vec4(-1.0f, 1.0f, 0.0f, 1.0f),
-        new Vec4(-1.0f, 1.0f, 0.0f, -1.0f),
-        new Vec4(-1.0f, -1.0f, 0.0f, 1.0f),
-        new Vec4(-1.0f, -1.0f, 0.0f, -1.0f),
-        new Vec4(1.0f, 1.0f, 1.0f, 0.0f),
-        new Vec4(1.0f, 1.0f, -1.0f, 0.0f),
-        new Vec4(1.0f, -1.0f, 1.0f, 0.0f),
-        new Vec4(1.0f, -1.0f, -1.0f, 0.0f),
-        new Vec4(-1.0f, 1.0f, 1.0f, 0.0f),
-        new Vec4(-1.0f, 1.0f, -1.0f, 0.0f),
-        new Vec4(-1.0f, -1.0f, 1.0f, 0.0f),
-        new Vec4(-1.0f, -1.0f, -1.0f, 0.0f) };
+      GRAD_4_LUT = new Vec4[] {
+         new Vec4(0.0f, 1.0f, 1.0f, 1.0f),
+         new Vec4(0.0f, 1.0f, 1.0f, -1.0f),
+         new Vec4(0.0f, 1.0f, -1.0f, 1.0f),
+         new Vec4(0.0f, 1.0f, -1.0f, -1.0f),
+         new Vec4(0.0f, -1.0f, 1.0f, 1.0f),
+         new Vec4(0.0f, -1.0f, 1.0f, -1.0f),
+         new Vec4(0.0f, -1.0f, -1.0f, 1.0f),
+         new Vec4(0.0f, -1.0f, -1.0f, -1.0f),
+         new Vec4(1.0f, 0.0f, 1.0f, 1.0f),
+         new Vec4(1.0f, 0.0f, 1.0f, -1.0f),
+         new Vec4(1.0f, 0.0f, -1.0f, 1.0f),
+         new Vec4(1.0f, 0.0f, -1.0f, -1.0f),
+         new Vec4(-1.0f, 0.0f, 1.0f, 1.0f),
+         new Vec4(-1.0f, 0.0f, 1.0f, -1.0f),
+         new Vec4(-1.0f, 0.0f, -1.0f, 1.0f),
+         new Vec4(-1.0f, 0.0f, -1.0f, -1.0f),
+         new Vec4(1.0f, 1.0f, 0.0f, 1.0f),
+         new Vec4(1.0f, 1.0f, 0.0f, -1.0f),
+         new Vec4(1.0f, -1.0f, 0.0f, 1.0f),
+         new Vec4(1.0f, -1.0f, 0.0f, -1.0f),
+         new Vec4(-1.0f, 1.0f, 0.0f, 1.0f),
+         new Vec4(-1.0f, 1.0f, 0.0f, -1.0f),
+         new Vec4(-1.0f, -1.0f, 0.0f, 1.0f),
+         new Vec4(-1.0f, -1.0f, 0.0f, -1.0f),
+         new Vec4(1.0f, 1.0f, 1.0f, 0.0f),
+         new Vec4(1.0f, 1.0f, -1.0f, 0.0f),
+         new Vec4(1.0f, -1.0f, 1.0f, 0.0f),
+         new Vec4(1.0f, -1.0f, -1.0f, 0.0f),
+         new Vec4(-1.0f, 1.0f, 1.0f, 0.0f),
+         new Vec4(-1.0f, 1.0f, -1.0f, 0.0f),
+         new Vec4(-1.0f, -1.0f, 1.0f, 0.0f),
+         new Vec4(-1.0f, -1.0f, -1.0f, 0.0f) };
 
-    GRAD3_U = new Vec3[] {
-        new Vec3(1.0f, 0.0f, 1.0f),
-        new Vec3(0.0f, 1.0f, 1.0f),
-        new Vec3(-1.0f, 0.0f, 1.0f),
-        new Vec3(0.0f, -1.0f, 1.0f),
-        new Vec3(1.0f, 0.0f, -1.0f),
-        new Vec3(0.0f, 1.0f, -1.0f),
-        new Vec3(-1.0f, 0.0f, -1.0f),
-        new Vec3(0.0f, -1.0f, -1.0f),
-        new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
-        new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
-        new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
-        new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
-        new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
-        new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
-        new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
-        new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3) };
+      GRAD3_U = new Vec3[] {
+         new Vec3(1.0f, 0.0f, 1.0f),
+         new Vec3(0.0f, 1.0f, 1.0f),
+         new Vec3(-1.0f, 0.0f, 1.0f),
+         new Vec3(0.0f, -1.0f, 1.0f),
+         new Vec3(1.0f, 0.0f, -1.0f),
+         new Vec3(0.0f, 1.0f, -1.0f),
+         new Vec3(-1.0f, 0.0f, -1.0f),
+         new Vec3(0.0f, -1.0f, -1.0f),
+         new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3) };
 
-    GRAD3_V = new Vec3[] {
-        new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
-        new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
-        new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
-        new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
-        new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
-        new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
-        new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
-        new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
-        new Vec3(1.0f, -1.0f, 0.0f),
-        new Vec3(1.0f, 1.0f, 0.0f),
-        new Vec3(-1.0f, 1.0f, 0.0f),
-        new Vec3(-1.0f, -1.0f, 0.0f),
-        new Vec3(1.0f, 0.0f, 1.0f),
-        new Vec3(-1.0f, 0.0f, 1.0f),
-        new Vec3(0.0f, 1.0f, -1.0f),
-        new Vec3(0.0f, -1.0f, -1.0f) };
+      GRAD3_V = new Vec3[] {
+         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(1.0f, -1.0f, 0.0f),
+         new Vec3(1.0f, 1.0f, 0.0f),
+         new Vec3(-1.0f, 1.0f, 0.0f),
+         new Vec3(-1.0f, -1.0f, 0.0f),
+         new Vec3(1.0f, 0.0f, 1.0f),
+         new Vec3(-1.0f, 0.0f, 1.0f),
+         new Vec3(0.0f, 1.0f, -1.0f),
+         new Vec3(0.0f, -1.0f, -1.0f) };
 
-    PERMUTE = new int[][] {
-        { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 },
-        { 0, 2, 3, 1 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-        { 0, 0, 0, 0 }, { 1, 2, 3, 0 }, { 0, 2, 1, 3 },
-        { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2, 1 },
-        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-        { 1, 3, 2, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-        { 1, 2, 0, 3 }, { 0, 0, 0, 0 }, { 1, 3, 0, 2 },
-        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-        { 2, 3, 0, 1 }, { 2, 3, 1, 0 }, { 1, 0, 2, 3 },
-        { 1, 0, 3, 2 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-        { 0, 0, 0, 0 }, { 2, 0, 3, 1 }, { 0, 0, 0, 0 },
-        { 2, 1, 3, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-        { 2, 0, 1, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-        { 0, 0, 0, 0 }, { 3, 0, 1, 2 }, { 3, 0, 2, 1 },
-        { 0, 0, 0, 0 }, { 3, 1, 2, 0 }, { 2, 1, 0, 3 },
-        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-        { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 },
-        { 3, 2, 1, 0 } };
+      PERMUTE = new int[][] {
+         { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 },
+         { 0, 2, 3, 1 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 0, 0, 0, 0 }, { 1, 2, 3, 0 }, { 0, 2, 1, 3 },
+         { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2, 1 },
+         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 1, 3, 2, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 1, 2, 0, 3 }, { 0, 0, 0, 0 }, { 1, 3, 0, 2 },
+         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 2, 3, 0, 1 }, { 2, 3, 1, 0 }, { 1, 0, 2, 3 },
+         { 1, 0, 3, 2 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 0, 0, 0, 0 }, { 2, 0, 3, 1 }, { 0, 0, 0, 0 },
+         { 2, 1, 3, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 2, 0, 1, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 0, 0, 0, 0 }, { 3, 0, 1, 2 }, { 3, 0, 2, 1 },
+         { 0, 0, 0, 0 }, { 3, 1, 2, 0 }, { 2, 1, 0, 3 },
+         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 },
+         { 3, 2, 1, 0 } };
 
-    ROT_2 = new Vec2();
-    ROT_3 = new Vec3();
+      ROT_2 = new Vec2();
+      ROT_3 = new Vec3();
 
-    ZERO_2 = Vec2.zero(new Vec2());
-    ZERO_3 = Vec3.zero(new Vec3());
-    ZERO_4 = Vec4.zero(new Vec4());
-  }
+      ZERO_2 = Vec2.zero(new Vec2());
+      ZERO_3 = Vec3.zero(new Vec3());
+      ZERO_4 = Vec4.zero(new Vec4());
+   }
 
-  /**
-   * Hashes the indices i and j with the seed, then returns a vector
-   * from the look up table.
-   *
-   * @param i    the first index
-   * @param j    the second index
-   * @param seed the seed
-   * @return the vector
-   * @see Simplex#hash(int, int, int)
-   * @see Simplex#GRAD_2_LUT
-   */
-  private static Vec2 gradient2 (
-      final int i,
-      final int j,
-      final int seed ) {
-
-    return Simplex.GRAD_2_LUT[Simplex.hash(i, j, seed) & 0x7];
-  }
-
-  /**
-   * Hashes the indices i, j and k with the seed, then returns a vector
-   * from the look up table.
-   *
-   * @param i    the first index
-   * @param j    the second index
-   * @param k    the third index
-   * @param seed the seed
-   * @return the vector
-   * @see Simplex#hash(int, int, int)
-   * @see Simplex#GRAD_3_LUT
-   */
-  private static Vec3 gradient3 (
-      final int i,
-      final int j,
-      final int k,
-      final int seed ) {
-
-    return Simplex.GRAD_3_LUT[Simplex.hash(i, j, Simplex.hash(k, seed, 0))
-        & 0xf];
-  }
-
-  /**
-   * Hashes the indices i, j, k and l with the seed, then returns a
-   * vector from the look up table.
-   *
-   * @param i    the first index
-   * @param j    the second index
-   * @param k    the third index
-   * @param l    the fourth index
-   * @param seed the seed
-   * @return the vector
-   * @see Simplex#hash(int, int, int)
-   * @see Simplex#GRAD_4_LUT
-   */
-  private static Vec4 gradient4 (
-      final int i,
-      final int j,
-      final int k,
-      final int l,
-      final int seed ) {
-
-    return Simplex.GRAD_4_LUT[Simplex.hash(i, j, Simplex.hash(k, l, seed))
-        & 0x1f];
-  }
-
-  /**
-   * Hashes the indices i and j with the seed, retrieves a vector from
-   * the look-up table, then rotates it by the sine and cosine of an
-   * angle.
-   *
-   * @param i      the first index
-   * @param j      the second index
-   * @param seed   the seed
-   * @param cosa   the cosine of the angle
-   * @param sina   the sine of the angle
-   * @param target the output vector
-   * @return the vector
-   * @see Vec2#rotateZ(Vec2, float, float, Vec2)
-   * @see Simplex#GRAD_2_LUT
-   * @see Simplex#hash(int, int, int)
-   * @author Simon Geilfus
-   */
-  private static Vec2 gradRot2 (
-      final int i,
-      final int j,
-      final int seed,
-      final float cosa,
-      final float sina,
-      final Vec2 target ) {
-
-    return Vec2.rotateZ(
-        Simplex.GRAD_2_LUT[Simplex.hash(i, j, seed) & 0x7],
-        cosa, sina, target);
-  }
-
-  /**
-   * Hashes the indices i, j and k with the seed. Retrieves two vectors
-   * from rotation look-up tables, then multiplies them against the sine
-   * and cosine of the angle.
-   *
-   * @param i      the first index
-   * @param j      the second index
-   * @param k      the third index
-   * @param seed   the seed
-   * @param cosa   the cosine of the angle
-   * @param sina   the sine of the angle
-   * @param target the output vector
-   * @return the vector
-   * @see Simplex#hash(int, int, int)
-   * @see Simplex#GRAD3_U
-   * @see Simplex#GRAD3_V
-   * @author Simon Geilfus
-   */
-  private static Vec3 gradRot3 (
-      final int i,
-      final int j,
-      final int k,
-      final int seed,
-      final float cosa,
-      final float sina,
-      final Vec3 target ) {
-
-    final int h = Simplex.hash(i, j, Simplex.hash(k, seed, 0)) & 0xf;
-
-    final Vec3 gu = Simplex.GRAD3_U[h];
-    final Vec3 gv = Simplex.GRAD3_V[h];
-    return target.set(
-        cosa * gu.x + sina * gv.x,
-        cosa * gu.y + sina * gv.y,
-        cosa * gu.z + sina * gv.z);
-  }
-
-  /**
-   * A helper function to the gradient functions. Performs a series of
-   * bit-shifting operations to create a hash.
-   *
-   * @param a first input
-   * @param b second input
-   * @param c third input
-   * @return the hash
-   * @author Bob Jenkins
-   */
-  private static int hash ( int a, int b, int c ) {
-
-    c ^= b;
-    c -= b << 0xe | b >> 0x20 - 0xe;
-    a ^= c;
-    a -= c << 0xb | c >> 0x20 - 0xb;
-    b ^= a;
-    b -= a << 0x19 | a >> 0x20 - 0x19;
-    c ^= b;
-    c -= b << 0x10 | b >> 0x20 - 0x10;
-    a ^= c;
-    a -= c << 0x4 | c >> 0x20 - 0x4;
-    b ^= a;
-    b -= a << 0xe | a >> 0x20 - 0xe;
-    c ^= b;
-    c -= b << 0x18 | b >> 0x20 - 0x18;
-    return c;
-  }
-
-  /**
-   * Evaluates 4D simplex noise for a given seed.
-   *
-   * @param x    the x coordinate
-   * @param y    the y coordinate
-   * @param z    the z coordinate
-   * @param w    the w coordinate
-   * @param seed the seed
-   * @return the noise value
-   */
-  public static float eval (
+   /**
+    * Evaluates 4D simplex noise for a given seed.
+    *
+    * @param x    the x coordinate
+    * @param y    the y coordinate
+    * @param z    the z coordinate
+    * @param w    the w coordinate
+    * @param seed the seed
+    *
+    * @return the noise value
+    */
+   public static float eval (
       final float x,
       final float y,
       final float z,
       final float w,
       final int seed ) {
 
-    return Simplex.eval(x, y, z, w, seed, null);
-  }
+      return Simplex.eval(x, y, z, w, seed, null);
+   }
 
-  /**
-   * Evaluates 4D simplex noise for a given seed. Calculates the
-   * derivative if the output variable is not null.
-   *
-   * @param x     the x coordinate
-   * @param y     the y coordinate
-   * @param z     the z coordinate
-   * @param w     the w coordinate
-   * @param seed  the seed
-   * @param deriv the derivative
-   * @return the noise value
-   * @see Utils#floorToInt(float)
-   * @see Simplex#F4
-   * @see Simplex#G4
-   * @see Simplex#PERMUTE
-   * @see Simplex#SCALE_4
-   * @see Simplex#gradient4(int, int, int, int, int)
-   */
-  public static float eval (
+   /**
+    * Evaluates 4D simplex noise for a given seed. Calculates the derivative if
+    * the output variable is not null.
+    *
+    * @param x     the x coordinate
+    * @param y     the y coordinate
+    * @param z     the z coordinate
+    * @param w     the w coordinate
+    * @param seed  the seed
+    * @param deriv the derivative
+    *
+    * @return the noise value
+    *
+    * @see Utils#floorToInt(float)
+    * @see Simplex#F4
+    * @see Simplex#G4
+    * @see Simplex#PERMUTE
+    * @see Simplex#SCALE_4
+    * @see Simplex#gradient4(int, int, int, int, int)
+    */
+   public static float eval (
       final float x,
       final float y,
       final float z,
@@ -551,634 +388,640 @@ public abstract class Simplex {
       final int seed,
       final Vec4 deriv ) {
 
-    // TEST If any problems with 4d noise in a given quadrant persists,
-    // this may have to be rolled back to catch the error.
+      // TEST If any problems with 4d noise in a given quadrant persists,
+      // this may have to be rolled back to catch the error.
 
-    final float s = (x + y + z + w) * Simplex.F4;
-    final int i = Utils.floorToInt(x + s);
-    final int j = Utils.floorToInt(y + s);
-    final int k = Utils.floorToInt(z + s);
-    final int l = Utils.floorToInt(w + s);
+      final float s = ( x + y + z + w ) * Simplex.F4;
+      final int i = Utils.floorToInt(x + s);
+      final int j = Utils.floorToInt(y + s);
+      final int k = Utils.floorToInt(z + s);
+      final int l = Utils.floorToInt(w + s);
 
-    final float t = (i + j + k + l) * Simplex.G4;
-    final float x0 = x - (i - t);
-    final float y0 = y - (j - t);
-    final float z0 = z - (k - t);
-    final float w0 = w - (l - t);
+      final float t = ( i + j + k + l ) * Simplex.G4;
+      final float x0 = x - ( i - t );
+      final float y0 = y - ( j - t );
+      final float z0 = z - ( k - t );
+      final float w0 = w - ( l - t );
 
-    final int[] sc = Simplex.PERMUTE[(x0 > y0 ? 32 : 0) |
-        (x0 > z0 ? 16 : 0) |
-        (y0 > z0 ? 8 : 0) |
-        (x0 > w0 ? 4 : 0) |
-        (y0 > w0 ? 2 : 0) |
-        (z0 > w0 ? 1 : 0)];
-    final int sc0 = sc[0];
-    final int sc1 = sc[1];
-    final int sc2 = sc[2];
-    final int sc3 = sc[3];
+      final int[] sc = Simplex.PERMUTE[ ( x0 > y0 ? 32 : 0 ) | ( x0 > z0 ? 16
+         : 0 ) | ( y0 > z0 ? 8 : 0 ) | ( x0 > w0 ? 4 : 0 ) | ( y0 > w0 ? 2
+            : 0 ) | ( z0 > w0 ? 1 : 0 )];
+      final int sc0 = sc[0];
+      final int sc1 = sc[1];
+      final int sc2 = sc[2];
+      final int sc3 = sc[3];
 
-    final int i1 = sc0 >= 3 ? 1 : 0;
-    final int j1 = sc1 >= 3 ? 1 : 0;
-    final int k1 = sc2 >= 3 ? 1 : 0;
-    final int l1 = sc3 >= 3 ? 1 : 0;
-    final int i2 = sc0 >= 2 ? 1 : 0;
-    final int j2 = sc1 >= 2 ? 1 : 0;
-    final int k2 = sc2 >= 2 ? 1 : 0;
-    final int l2 = sc3 >= 2 ? 1 : 0;
-    final int i3 = sc0 >= 1 ? 1 : 0;
-    final int j3 = sc1 >= 1 ? 1 : 0;
-    final int k3 = sc2 >= 1 ? 1 : 0;
-    final int l3 = sc3 >= 1 ? 1 : 0;
+      final int i1 = sc0 >= 3 ? 1 : 0;
+      final int j1 = sc1 >= 3 ? 1 : 0;
+      final int k1 = sc2 >= 3 ? 1 : 0;
+      final int l1 = sc3 >= 3 ? 1 : 0;
+      final int i2 = sc0 >= 2 ? 1 : 0;
+      final int j2 = sc1 >= 2 ? 1 : 0;
+      final int k2 = sc2 >= 2 ? 1 : 0;
+      final int l2 = sc3 >= 2 ? 1 : 0;
+      final int i3 = sc0 >= 1 ? 1 : 0;
+      final int j3 = sc1 >= 1 ? 1 : 0;
+      final int k3 = sc2 >= 1 ? 1 : 0;
+      final int l3 = sc3 >= 1 ? 1 : 0;
 
-    final float x1 = x0 - i1 + Simplex.G4;
-    final float y1 = y0 - j1 + Simplex.G4;
-    final float z1 = z0 - k1 + Simplex.G4;
-    final float w1 = w0 - l1 + Simplex.G4;
+      final float x1 = x0 - i1 + Simplex.G4;
+      final float y1 = y0 - j1 + Simplex.G4;
+      final float z1 = z0 - k1 + Simplex.G4;
+      final float w1 = w0 - l1 + Simplex.G4;
 
-    final float x2 = x0 - i2 + Simplex.G4_2;
-    final float y2 = y0 - j2 + Simplex.G4_2;
-    final float z2 = z0 - k2 + Simplex.G4_2;
-    final float w2 = w0 - l2 + Simplex.G4_2;
+      final float x2 = x0 - i2 + Simplex.G4_2;
+      final float y2 = y0 - j2 + Simplex.G4_2;
+      final float z2 = z0 - k2 + Simplex.G4_2;
+      final float w2 = w0 - l2 + Simplex.G4_2;
 
-    final float x3 = x0 - i3 + Simplex.G4_3;
-    final float y3 = y0 - j3 + Simplex.G4_3;
-    final float z3 = z0 - k3 + Simplex.G4_3;
-    final float w3 = w0 - l3 + Simplex.G4_3;
+      final float x3 = x0 - i3 + Simplex.G4_3;
+      final float y3 = y0 - j3 + Simplex.G4_3;
+      final float z3 = z0 - k3 + Simplex.G4_3;
+      final float w3 = w0 - l3 + Simplex.G4_3;
 
-    final float x4 = x0 - 1.0f + Simplex.G4_4;
-    final float y4 = y0 - 1.0f + Simplex.G4_4;
-    final float z4 = z0 - 1.0f + Simplex.G4_4;
-    final float w4 = w0 - 1.0f + Simplex.G4_4;
+      final float x4 = x0 - 1.0f + Simplex.G4_4;
+      final float y4 = y0 - 1.0f + Simplex.G4_4;
+      final float z4 = z0 - 1.0f + Simplex.G4_4;
+      final float w4 = w0 - 1.0f + Simplex.G4_4;
 
-    float n0 = 0.0f;
-    float n1 = 0.0f;
-    float n2 = 0.0f;
-    float n3 = 0.0f;
-    float n4 = 0.0f;
+      float n0 = 0.0f;
+      float n1 = 0.0f;
+      float n2 = 0.0f;
+      float n3 = 0.0f;
+      float n4 = 0.0f;
 
-    float t20 = 0.0f;
-    float t21 = 0.0f;
-    float t22 = 0.0f;
-    float t23 = 0.0f;
-    float t24 = 0.0f;
+      float t20 = 0.0f;
+      float t21 = 0.0f;
+      float t22 = 0.0f;
+      float t23 = 0.0f;
+      float t24 = 0.0f;
 
-    float t40 = 0.0f;
-    float t41 = 0.0f;
-    float t42 = 0.0f;
-    float t43 = 0.0f;
-    float t44 = 0.0f;
+      float t40 = 0.0f;
+      float t41 = 0.0f;
+      float t42 = 0.0f;
+      float t43 = 0.0f;
+      float t44 = 0.0f;
 
-    Vec4 g0 = Simplex.ZERO_4;
-    Vec4 g1 = Simplex.ZERO_4;
-    Vec4 g2 = Simplex.ZERO_4;
-    Vec4 g3 = Simplex.ZERO_4;
-    Vec4 g4 = Simplex.ZERO_4;
+      Vec4 g0 = Simplex.ZERO_4;
+      Vec4 g1 = Simplex.ZERO_4;
+      Vec4 g2 = Simplex.ZERO_4;
+      Vec4 g3 = Simplex.ZERO_4;
+      Vec4 g4 = Simplex.ZERO_4;
 
-    final float t0 = 0.5f - (x0 * x0 + y0 * y0 + z0 * z0 + w0 * w0);
-    if ( t0 >= 0.0f ) {
-      t20 = t0 * t0;
-      t40 = t20 * t20;
-      g0 = Simplex.gradient4(i, j, k, l, seed);
-      n0 = g0.x * x0 + g0.y * y0 + g0.z * z0 + g0.w * w0;
-    }
+      final float t0 = 0.5f - ( x0 * x0 + y0 * y0 + z0 * z0 + w0 * w0 );
+      if ( t0 >= 0.0f ) {
+         t20 = t0 * t0;
+         t40 = t20 * t20;
+         g0 = Simplex.gradient4(i, j, k, l, seed);
+         n0 = g0.x * x0 + g0.y * y0 + g0.z * z0 + g0.w * w0;
+      }
 
-    final float t1 = 0.5f - (x1 * x1 + y1 * y1 + z1 * z1 + w1 * w1);
-    if ( t1 >= 0.0f ) {
-      t21 = t1 * t1;
-      t41 = t21 * t21;
-      g1 = Simplex.gradient4(i + i1, j + j1, k + k1, l + l1, seed);
-      n1 = g1.x * x1 + g1.y * y1 + g1.z * z1 + g1.w * w1;
-    }
+      final float t1 = 0.5f - ( x1 * x1 + y1 * y1 + z1 * z1 + w1 * w1 );
+      if ( t1 >= 0.0f ) {
+         t21 = t1 * t1;
+         t41 = t21 * t21;
+         g1 = Simplex.gradient4(i + i1, j + j1, k + k1, l + l1, seed);
+         n1 = g1.x * x1 + g1.y * y1 + g1.z * z1 + g1.w * w1;
+      }
 
-    final float t2 = 0.5f - (x2 * x2 + y2 * y2 + z2 * z2 + w2 * w2);
-    if ( t2 >= 0.0f ) {
-      t22 = t2 * t2;
-      t42 = t22 * t22;
-      g2 = Simplex.gradient4(i + i2, j + j2, k + k2, l + l2, seed);
-      n2 = g2.x * x2 + g2.y * y2 + g2.z * z2 + g2.w * w2;
-    }
+      final float t2 = 0.5f - ( x2 * x2 + y2 * y2 + z2 * z2 + w2 * w2 );
+      if ( t2 >= 0.0f ) {
+         t22 = t2 * t2;
+         t42 = t22 * t22;
+         g2 = Simplex.gradient4(i + i2, j + j2, k + k2, l + l2, seed);
+         n2 = g2.x * x2 + g2.y * y2 + g2.z * z2 + g2.w * w2;
+      }
 
-    final float t3 = 0.5f - (x3 * x3 + y3 * y3 + z3 * z3 + w3 * w3);
-    if ( t3 >= 0.0f ) {
-      t23 = t3 * t3;
-      t43 = t23 * t23;
-      g3 = Simplex.gradient4(i + i3, j + j3, k + k3, l + l3, seed);
-      n3 = g3.x * x3 + g3.y * y3 + g3.z * z3 + g3.w * w3;
-    }
+      final float t3 = 0.5f - ( x3 * x3 + y3 * y3 + z3 * z3 + w3 * w3 );
+      if ( t3 >= 0.0f ) {
+         t23 = t3 * t3;
+         t43 = t23 * t23;
+         g3 = Simplex.gradient4(i + i3, j + j3, k + k3, l + l3, seed);
+         n3 = g3.x * x3 + g3.y * y3 + g3.z * z3 + g3.w * w3;
+      }
 
-    final float t4 = 0.5f - (x4 * x4 + y4 * y4 + z4 * z4 + w4 * w4);
-    if ( t4 >= 0.0f ) {
-      t24 = t4 * t4;
-      t44 = t24 * t24;
-      g4 = Simplex.gradient4(i + 1, j + 1, k + 1, l + 1, seed);
-      n4 = g4.x * x4 + g4.y * y4 + g4.z * z4 + g4.w * w4;
-    }
+      final float t4 = 0.5f - ( x4 * x4 + y4 * y4 + z4 * z4 + w4 * w4 );
+      if ( t4 >= 0.0f ) {
+         t24 = t4 * t4;
+         t44 = t24 * t24;
+         g4 = Simplex.gradient4(i + 1, j + 1, k + 1, l + 1, seed);
+         n4 = g4.x * x4 + g4.y * y4 + g4.z * z4 + g4.w * w4;
+      }
 
-    if ( deriv != null ) {
+      if ( deriv != null ) {
 
-      final float tmp0 = t20 * t0 * n0;
-      deriv.x = tmp0 * x0;
-      deriv.y = tmp0 * y0;
-      deriv.z = tmp0 * z0;
-      deriv.w = tmp0 * w0;
+         final float tmp0 = t20 * t0 * n0;
+         deriv.x = tmp0 * x0;
+         deriv.y = tmp0 * y0;
+         deriv.z = tmp0 * z0;
+         deriv.w = tmp0 * w0;
 
-      final float tmp1 = t21 * t1 * n1;
-      deriv.x += tmp1 * x1;
-      deriv.y += tmp1 * y1;
-      deriv.z += tmp1 * z1;
-      deriv.w += tmp1 * w1;
+         final float tmp1 = t21 * t1 * n1;
+         deriv.x += tmp1 * x1;
+         deriv.y += tmp1 * y1;
+         deriv.z += tmp1 * z1;
+         deriv.w += tmp1 * w1;
 
-      final float tmp2 = t22 * t2 * n2;
-      deriv.x += tmp2 * x2;
-      deriv.y += tmp2 * y2;
-      deriv.z += tmp2 * z2;
-      deriv.w += tmp2 * w2;
+         final float tmp2 = t22 * t2 * n2;
+         deriv.x += tmp2 * x2;
+         deriv.y += tmp2 * y2;
+         deriv.z += tmp2 * z2;
+         deriv.w += tmp2 * w2;
 
-      final float tmp3 = t23 * t3 * n3;
-      deriv.x += tmp3 * x3;
-      deriv.y += tmp3 * y3;
-      deriv.z += tmp3 * z3;
-      deriv.w += tmp3 * w3;
+         final float tmp3 = t23 * t3 * n3;
+         deriv.x += tmp3 * x3;
+         deriv.y += tmp3 * y3;
+         deriv.z += tmp3 * z3;
+         deriv.w += tmp3 * w3;
 
-      final float tmp4 = t24 * t4 * n4;
-      deriv.x += tmp4 * x4;
-      deriv.y += tmp4 * y4;
-      deriv.z += tmp4 * z4;
-      deriv.w += tmp4 * w4;
+         final float tmp4 = t24 * t4 * n4;
+         deriv.x += tmp4 * x4;
+         deriv.y += tmp4 * y4;
+         deriv.z += tmp4 * z4;
+         deriv.w += tmp4 * w4;
 
-      deriv.x *= -8.0f;
-      deriv.y *= -8.0f;
-      deriv.z *= -8.0f;
-      deriv.w *= -8.0f;
+         deriv.x *= -8.0f;
+         deriv.y *= -8.0f;
+         deriv.z *= -8.0f;
+         deriv.w *= -8.0f;
 
-      deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x
-          + t44 * g4.x;
-      deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y
-          + t44 * g4.y;
-      deriv.z += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z
-          + t44 * g4.z;
-      deriv.w += t40 * g0.w + t41 * g1.w + t42 * g2.w + t43 * g3.w
-          + t44 * g4.w;
+         deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x + t44 * g4.x;
+         deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y + t44 * g4.y;
+         deriv.z += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z + t44 * g4.z;
+         deriv.w += t40 * g0.w + t41 * g1.w + t42 * g2.w + t43 * g3.w + t44 * g4.w;
 
-      deriv.x *= Simplex.SCALE_4;
-      deriv.y *= Simplex.SCALE_4;
-      deriv.z *= Simplex.SCALE_4;
-      deriv.w *= Simplex.SCALE_4;
-    }
+         deriv.x *= Simplex.SCALE_4;
+         deriv.y *= Simplex.SCALE_4;
+         deriv.z *= Simplex.SCALE_4;
+         deriv.w *= Simplex.SCALE_4;
+      }
 
-    return Simplex.SCALE_4
-        * (t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3 + t44 * n4);
-  }
+      return Simplex.SCALE_4 * ( t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3 + t44 * n4 );
+   }
 
-  /**
-   * Evaluates 3D simplex noise for a given seed.
-   *
-   * @param x    the x coordinate
-   * @param y    the y coordinate
-   * @param z    the z coordinate
-   * @param seed the seed
-   * @return the noise value
-   */
-  public static float eval (
+   /**
+    * Evaluates 3D simplex noise for a given seed.
+    *
+    * @param x    the x coordinate
+    * @param y    the y coordinate
+    * @param z    the z coordinate
+    * @param seed the seed
+    *
+    * @return the noise value
+    */
+   public static float eval (
       final float x,
       final float y,
       final float z,
       final int seed ) {
 
-    return Simplex.eval(x, y, z, seed, null);
-  }
+      return Simplex.eval(x, y, z, seed, null);
+   }
 
-  /**
-   * Evaluates 3D simplex noise for a given seed. Calculates the
-   * derivative if the output variable is not null.
-   *
-   * @param x     the x coordinate
-   * @param y     the y coordinate
-   * @param z     the z coordinate
-   * @param seed  the seed
-   * @param deriv the derivative
-   * @return the noise value
-   * @see Utils#floorToInt(float)
-   * @see Simplex#F3
-   * @see Simplex#G3
-   * @see Simplex#SCALE_3
-   * @see Simplex#gradient3(int, int, int, int)
-   */
-  public static float eval (
+   /**
+    * Evaluates 3D simplex noise for a given seed. Calculates the derivative if
+    * the output variable is not null.
+    *
+    * @param x     the x coordinate
+    * @param y     the y coordinate
+    * @param z     the z coordinate
+    * @param seed  the seed
+    * @param deriv the derivative
+    *
+    * @return the noise value
+    *
+    * @see Utils#floorToInt(float)
+    * @see Simplex#F3
+    * @see Simplex#G3
+    * @see Simplex#SCALE_3
+    * @see Simplex#gradient3(int, int, int, int)
+    */
+   public static float eval (
       final float x,
       final float y,
       final float z,
       final int seed,
       final Vec3 deriv ) {
 
-    final float s = (x + y + z) * Simplex.F3;
-    final int i = Utils.floorToInt(x + s);
-    final int j = Utils.floorToInt(y + s);
-    final int k = Utils.floorToInt(z + s);
+      final float s = ( x + y + z ) * Simplex.F3;
+      final int i = Utils.floorToInt(x + s);
+      final int j = Utils.floorToInt(y + s);
+      final int k = Utils.floorToInt(z + s);
 
-    final float t = (i + j + k) * Simplex.G3;
-    final float x0 = x - (i - t);
-    final float y0 = y - (j - t);
-    final float z0 = z - (k - t);
+      final float t = ( i + j + k ) * Simplex.G3;
+      final float x0 = x - ( i - t );
+      final float y0 = y - ( j - t );
+      final float z0 = z - ( k - t );
 
-    int i1 = 0;
-    int j1 = 0;
-    int k1 = 0;
+      int i1 = 0;
+      int j1 = 0;
+      int k1 = 0;
 
-    int i2 = 0;
-    int j2 = 0;
-    int k2 = 0;
+      int i2 = 0;
+      int j2 = 0;
+      int k2 = 0;
 
-    if ( x0 >= y0 ) {
-      if ( y0 >= z0 ) {
-        i1 = 1;
-        i2 = 1;
-        j2 = 1;
-      } else if ( x0 >= z0 ) {
-        i1 = 1;
-        i2 = 1;
-        k2 = 1;
+      if ( x0 >= y0 ) {
+         if ( y0 >= z0 ) {
+            i1 = 1;
+            i2 = 1;
+            j2 = 1;
+         } else if ( x0 >= z0 ) {
+            i1 = 1;
+            i2 = 1;
+            k2 = 1;
+         } else {
+            k1 = 1;
+            i2 = 1;
+            k2 = 1;
+         }
       } else {
-        k1 = 1;
-        i2 = 1;
-        k2 = 1;
+         if ( y0 < z0 ) {
+            k1 = 1;
+            j2 = 1;
+            k2 = 1;
+         } else if ( x0 < z0 ) {
+            j1 = 1;
+            j2 = 1;
+            k2 = 1;
+         } else {
+            j1 = 1;
+            i2 = 1;
+            j2 = 1;
+         }
       }
-    } else {
-      if ( y0 < z0 ) {
-        k1 = 1;
-        j2 = 1;
-        k2 = 1;
-      } else if ( x0 < z0 ) {
-        j1 = 1;
-        j2 = 1;
-        k2 = 1;
-      } else {
-        j1 = 1;
-        i2 = 1;
-        j2 = 1;
+
+      final float x1 = x0 - i1 + Simplex.G3;
+      final float y1 = y0 - j1 + Simplex.G3;
+      final float z1 = z0 - k1 + Simplex.G3;
+
+      final float x2 = x0 - i2 + Simplex.G3_2;
+      final float y2 = y0 - j2 + Simplex.G3_2;
+      final float z2 = z0 - k2 + Simplex.G3_2;
+
+      final float x3 = x0 - 1.0f + Simplex.G3_3;
+      final float y3 = y0 - 1.0f + Simplex.G3_3;
+      final float z3 = z0 - 1.0f + Simplex.G3_3;
+
+      float t20 = 0.0f;
+      float t21 = 0.0f;
+      float t22 = 0.0f;
+      float t23 = 0.0f;
+
+      float t40 = 0.0f;
+      float t41 = 0.0f;
+      float t42 = 0.0f;
+      float t43 = 0.0f;
+
+      float n0 = 0.0f;
+      float n1 = 0.0f;
+      float n2 = 0.0f;
+      float n3 = 0.0f;
+
+      Vec3 g0 = Simplex.ZERO_3;
+      Vec3 g1 = Simplex.ZERO_3;
+      Vec3 g2 = Simplex.ZERO_3;
+      Vec3 g3 = Simplex.ZERO_3;
+
+      final float t0 = 0.5f - ( x0 * x0 + y0 * y0 + z0 * z0 );
+      if ( t0 >= 0.0f ) {
+         g0 = Simplex.gradient3(i, j, k, seed);
+         t20 = t0 * t0;
+         t40 = t20 * t20;
+         n0 = g0.x * x0 + g0.y * y0 + g0.z * z0;
       }
-    }
 
-    final float x1 = x0 - i1 + Simplex.G3;
-    final float y1 = y0 - j1 + Simplex.G3;
-    final float z1 = z0 - k1 + Simplex.G3;
+      final float t1 = 0.5f - ( x1 * x1 + y1 * y1 + z1 * z1 );
+      if ( t1 >= 0.0f ) {
+         g1 = Simplex.gradient3(i + i1, j + j1, k + k1, seed);
+         t21 = t1 * t1;
+         t41 = t21 * t21;
+         n1 = g1.x * x1 + g1.y * y1 + g1.z * z1;
+      }
 
-    final float x2 = x0 - i2 + Simplex.G3_2;
-    final float y2 = y0 - j2 + Simplex.G3_2;
-    final float z2 = z0 - k2 + Simplex.G3_2;
+      final float t2 = 0.5f - ( x2 * x2 + y2 * y2 + z2 * z2 );
+      if ( t2 >= 0.0f ) {
+         g2 = Simplex.gradient3(i + i2, j + j2, k + k2, seed);
+         t22 = t2 * t2;
+         t42 = t22 * t22;
+         n2 = g2.x * x2 + g2.y * y2 + g2.z * z2;
+      }
 
-    final float x3 = x0 - 1.0f + Simplex.G3_3;
-    final float y3 = y0 - 1.0f + Simplex.G3_3;
-    final float z3 = z0 - 1.0f + Simplex.G3_3;
+      final float t3 = 0.5f - ( x3 * x3 + y3 * y3 + z3 * z3 );
+      if ( t3 >= 0.0f ) {
+         g3 = Simplex.gradient3(i + 1, j + 1, k + 1, seed);
+         t23 = t3 * t3;
+         t43 = t23 * t23;
+         n3 = g3.x * x3 + g3.y * y3 + g3.z * z3;
+      }
 
-    float t20 = 0.0f;
-    float t21 = 0.0f;
-    float t22 = 0.0f;
-    float t23 = 0.0f;
+      if ( deriv != null ) {
 
-    float t40 = 0.0f;
-    float t41 = 0.0f;
-    float t42 = 0.0f;
-    float t43 = 0.0f;
+         final float tmp0 = t20 * t0 * n0;
+         deriv.x = tmp0 * x0;
+         deriv.y = tmp0 * y0;
+         deriv.z = tmp0 * z0;
 
-    float n0 = 0.0f;
-    float n1 = 0.0f;
-    float n2 = 0.0f;
-    float n3 = 0.0f;
+         final float tmp1 = t21 * t1 * n1;
+         deriv.x += tmp1 * x1;
+         deriv.y += tmp1 * y1;
+         deriv.z += tmp1 * z1;
 
-    Vec3 g0 = Simplex.ZERO_3;
-    Vec3 g1 = Simplex.ZERO_3;
-    Vec3 g2 = Simplex.ZERO_3;
-    Vec3 g3 = Simplex.ZERO_3;
+         final float tmp2 = t22 * t2 * n2;
+         deriv.x += tmp2 * x2;
+         deriv.y += tmp2 * y2;
+         deriv.z += tmp2 * z2;
 
-    final float t0 = 0.5f - (x0 * x0 + y0 * y0 + z0 * z0);
-    if ( t0 >= 0.0f ) {
-      g0 = Simplex.gradient3(i, j, k, seed);
-      t20 = t0 * t0;
-      t40 = t20 * t20;
-      n0 = g0.x * x0 + g0.y * y0 + g0.z * z0;
-    }
+         final float tmp3 = t23 * t3 * n3;
+         deriv.x += tmp3 * x3;
+         deriv.y += tmp3 * y3;
+         deriv.z += tmp3 * z3;
 
-    final float t1 = 0.5f - (x1 * x1 + y1 * y1 + z1 * z1);
-    if ( t1 >= 0.0f ) {
-      g1 = Simplex.gradient3(i + i1, j + j1, k + k1, seed);
-      t21 = t1 * t1;
-      t41 = t21 * t21;
-      n1 = g1.x * x1 + g1.y * y1 + g1.z * z1;
-    }
+         deriv.x *= -8.0f;
+         deriv.y *= -8.0f;
+         deriv.z *= -8.0f;
 
-    final float t2 = 0.5f - (x2 * x2 + y2 * y2 + z2 * z2);
-    if ( t2 >= 0.0f ) {
-      g2 = Simplex.gradient3(i + i2, j + j2, k + k2, seed);
-      t22 = t2 * t2;
-      t42 = t22 * t22;
-      n2 = g2.x * x2 + g2.y * y2 + g2.z * z2;
-    }
+         deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x;
+         deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y;
+         deriv.z += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z;
 
-    final float t3 = 0.5f - (x3 * x3 + y3 * y3 + z3 * z3);
-    if ( t3 >= 0.0f ) {
-      g3 = Simplex.gradient3(i + 1, j + 1, k + 1, seed);
-      t23 = t3 * t3;
-      t43 = t23 * t23;
-      n3 = g3.x * x3 + g3.y * y3 + g3.z * z3;
-    }
+         deriv.x *= Simplex.SCALE_3;
+         deriv.y *= Simplex.SCALE_3;
+         deriv.z *= Simplex.SCALE_3;
+      }
 
-    if ( deriv != null ) {
+      return Simplex.SCALE_3 * ( t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3 );
+   }
 
-      final float tmp0 = t20 * t0 * n0;
-      deriv.x = tmp0 * x0;
-      deriv.y = tmp0 * y0;
-      deriv.z = tmp0 * z0;
-
-      final float tmp1 = t21 * t1 * n1;
-      deriv.x += tmp1 * x1;
-      deriv.y += tmp1 * y1;
-      deriv.z += tmp1 * z1;
-
-      final float tmp2 = t22 * t2 * n2;
-      deriv.x += tmp2 * x2;
-      deriv.y += tmp2 * y2;
-      deriv.z += tmp2 * z2;
-
-      final float tmp3 = t23 * t3 * n3;
-      deriv.x += tmp3 * x3;
-      deriv.y += tmp3 * y3;
-      deriv.z += tmp3 * z3;
-
-      deriv.x *= -8.0f;
-      deriv.y *= -8.0f;
-      deriv.z *= -8.0f;
-
-      deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x;
-      deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y;
-      deriv.z += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z;
-
-      deriv.x *= Simplex.SCALE_3;
-      deriv.y *= Simplex.SCALE_3;
-      deriv.z *= Simplex.SCALE_3;
-    }
-
-    return Simplex.SCALE_3 * (t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3);
-  }
-
-  /**
-   * Evaluates 2D simplex noise for a given seed.
-   *
-   * @param x    the x coordinate
-   * @param y    the y coordinate
-   * @param seed the seed
-   * @return the noise value
-   */
-  public static float eval (
+   /**
+    * Evaluates 2D simplex noise for a given seed.
+    *
+    * @param x    the x coordinate
+    * @param y    the y coordinate
+    * @param seed the seed
+    *
+    * @return the noise value
+    */
+   public static float eval (
       final float x,
       final float y,
       final int seed ) {
 
-    return Simplex.eval(x, y, seed, null);
-  }
+      return Simplex.eval(x, y, seed, null);
+   }
 
-  /**
-   * Evaluates 2D simplex noise for a given seed. Calculates the
-   * derivative if the output variable is not null.
-   *
-   * @param x     the x coordinate
-   * @param y     the y coordinate
-   * @param seed  the seed
-   * @param deriv the derivative
-   * @return the noise value
-   * @see Utils#floorToInt(float)
-   * @see Simplex#F2
-   * @see Simplex#G2
-   * @see Simplex#SCALE_2
-   * @see Simplex#gradient2(int, int, int)
-   */
-  public static float eval (
+   /**
+    * Evaluates 2D simplex noise for a given seed. Calculates the derivative if
+    * the output variable is not null.
+    *
+    * @param x     the x coordinate
+    * @param y     the y coordinate
+    * @param seed  the seed
+    * @param deriv the derivative
+    *
+    * @return the noise value
+    *
+    * @see Utils#floorToInt(float)
+    * @see Simplex#F2
+    * @see Simplex#G2
+    * @see Simplex#SCALE_2
+    * @see Simplex#gradient2(int, int, int)
+    */
+   public static float eval (
       final float x,
       final float y,
       final int seed,
       final Vec2 deriv ) {
 
-    final float s = (x + y) * Simplex.F2;
-    final int i = Utils.floorToInt(x + s);
-    final int j = Utils.floorToInt(y + s);
+      final float s = ( x + y ) * Simplex.F2;
+      final int i = Utils.floorToInt(x + s);
+      final int j = Utils.floorToInt(y + s);
 
-    final float t = (i + j) * Simplex.G2;
-    final float x0 = x - (i - t);
-    final float y0 = y - (j - t);
+      final float t = ( i + j ) * Simplex.G2;
+      final float x0 = x - ( i - t );
+      final float y0 = y - ( j - t );
 
-    int i1 = 0;
-    int j1 = 0;
-    if ( x0 > y0 ) {
-      i1 = 1;
-    } else {
-      j1 = 1;
-    }
+      int i1 = 0;
+      int j1 = 0;
+      if ( x0 > y0 ) {
+         i1 = 1;
+      } else {
+         j1 = 1;
+      }
 
-    final float x1 = x0 - i1 + Simplex.G2;
-    final float y1 = y0 - j1 + Simplex.G2;
+      final float x1 = x0 - i1 + Simplex.G2;
+      final float y1 = y0 - j1 + Simplex.G2;
 
-    final float x2 = x0 - 1.0f + Simplex.G2_2;
-    final float y2 = y0 - 1.0f + Simplex.G2_2;
+      final float x2 = x0 - 1.0f + Simplex.G2_2;
+      final float y2 = y0 - 1.0f + Simplex.G2_2;
 
-    float t20 = 0.0f;
-    float t21 = 0.0f;
-    float t22 = 0.0f;
+      float t20 = 0.0f;
+      float t21 = 0.0f;
+      float t22 = 0.0f;
 
-    float t40 = 0.0f;
-    float t41 = 0.0f;
-    float t42 = 0.0f;
+      float t40 = 0.0f;
+      float t41 = 0.0f;
+      float t42 = 0.0f;
 
-    float n0 = 0.0f;
-    float n1 = 0.0f;
-    float n2 = 0.0f;
+      float n0 = 0.0f;
+      float n1 = 0.0f;
+      float n2 = 0.0f;
 
-    Vec2 g0 = Simplex.ZERO_2;
-    Vec2 g1 = Simplex.ZERO_2;
-    Vec2 g2 = Simplex.ZERO_2;
+      Vec2 g0 = Simplex.ZERO_2;
+      Vec2 g1 = Simplex.ZERO_2;
+      Vec2 g2 = Simplex.ZERO_2;
 
-    final float t0 = 0.5f - (x0 * x0 + y0 * y0);
-    if ( t0 >= 0.0f ) {
-      g0 = Simplex.gradient2(i, j, seed);
-      t20 = t0 * t0;
-      t40 = t20 * t20;
-      n0 = g0.x * x0 + g0.y * y0;
-    }
+      final float t0 = 0.5f - ( x0 * x0 + y0 * y0 );
+      if ( t0 >= 0.0f ) {
+         g0 = Simplex.gradient2(i, j, seed);
+         t20 = t0 * t0;
+         t40 = t20 * t20;
+         n0 = g0.x * x0 + g0.y * y0;
+      }
 
-    final float t1 = 0.5f - (x1 * x1 + y1 * y1);
-    if ( t1 >= 0.0f ) {
-      g1 = Simplex.gradient2(i + i1, j + j1, seed);
-      t21 = t1 * t1;
-      t41 = t21 * t21;
-      n1 = g1.x * x1 + g1.y * y1;
-    }
+      final float t1 = 0.5f - ( x1 * x1 + y1 * y1 );
+      if ( t1 >= 0.0f ) {
+         g1 = Simplex.gradient2(i + i1, j + j1, seed);
+         t21 = t1 * t1;
+         t41 = t21 * t21;
+         n1 = g1.x * x1 + g1.y * y1;
+      }
 
-    final float t2 = 0.5f - (x2 * x2 + y2 * y2);
-    if ( t2 >= 0.0f ) {
-      g2 = Simplex.gradient2(i + 1, j + 1, seed);
-      t22 = t2 * t2;
-      t42 = t22 * t22;
-      n2 = g2.x * x2 + g2.y * y2;
-    }
+      final float t2 = 0.5f - ( x2 * x2 + y2 * y2 );
+      if ( t2 >= 0.0f ) {
+         g2 = Simplex.gradient2(i + 1, j + 1, seed);
+         t22 = t2 * t2;
+         t42 = t22 * t22;
+         n2 = g2.x * x2 + g2.y * y2;
+      }
 
-    if ( deriv != null ) {
+      if ( deriv != null ) {
 
-      final float tmp0 = t20 * t0 * n0;
-      deriv.x = tmp0 * x0;
-      deriv.y = tmp0 * y0;
+         final float tmp0 = t20 * t0 * n0;
+         deriv.x = tmp0 * x0;
+         deriv.y = tmp0 * y0;
 
-      final float tmp1 = t21 * t1 * n1;
-      deriv.x += tmp1 * x1;
-      deriv.y += tmp1 * y1;
+         final float tmp1 = t21 * t1 * n1;
+         deriv.x += tmp1 * x1;
+         deriv.y += tmp1 * y1;
 
-      final float tmp2 = t22 * t2 * n2;
-      deriv.x += tmp2 * x2;
-      deriv.y += tmp2 * y2;
+         final float tmp2 = t22 * t2 * n2;
+         deriv.x += tmp2 * x2;
+         deriv.y += tmp2 * y2;
 
-      deriv.x *= -8.0f;
-      deriv.y *= -8.0f;
+         deriv.x *= -8.0f;
+         deriv.y *= -8.0f;
 
-      deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x;
-      deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y;
+         deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x;
+         deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y;
 
-      deriv.x *= Simplex.SCALE_2;
-      deriv.y *= Simplex.SCALE_2;
-    }
+         deriv.x *= Simplex.SCALE_2;
+         deriv.y *= Simplex.SCALE_2;
+      }
 
-    return Simplex.SCALE_2 * (t40 * n0 + t41 * n1 + t42 * n2);
-  }
+      return Simplex.SCALE_2 * ( t40 * n0 + t41 * n1 + t42 * n2 );
+   }
 
-  /**
-   * Evaluates 2D simplex noise for a given seed.
-   *
-   * @param v    the input vector
-   * @param seed the seed
-   * @return the noise value
-   */
-  public static float eval (
+   /**
+    * Evaluates 2D simplex noise for a given seed.
+    *
+    * @param v    the input vector
+    * @param seed the seed
+    *
+    * @return the noise value
+    */
+   public static float eval (
       final Vec2 v,
       final int seed ) {
 
-    return Simplex.eval(v.x, v.y, seed, null);
-  }
+      return Simplex.eval(v.x, v.y, seed, null);
+   }
 
-  /**
-   * Evaluates 2D simplex noise for a given seed. Calculates the
-   * derivative if the output variable is not null.
-   *
-   * @param v     the input vector
-   * @param seed  the seed
-   * @param deriv the derivative
-   * @return the noise value
-   */
-  public static float eval (
+   /**
+    * Evaluates 2D simplex noise for a given seed. Calculates the derivative if
+    * the output variable is not null.
+    *
+    * @param v     the input vector
+    * @param seed  the seed
+    * @param deriv the derivative
+    *
+    * @return the noise value
+    */
+   public static float eval (
       final Vec2 v,
       final int seed,
       final Vec2 deriv ) {
 
-    return Simplex.eval(v.x, v.y, seed, deriv);
-  }
+      return Simplex.eval(v.x, v.y, seed, deriv);
+   }
 
-  /**
-   * Evaluates 3D simplex noise for a given seed.
-   *
-   * @param v    the input vector
-   * @param seed the seed
-   * @return the noise value
-   */
-  public static float eval (
+   /**
+    * Evaluates 3D simplex noise for a given seed.
+    *
+    * @param v    the input vector
+    * @param seed the seed
+    *
+    * @return the noise value
+    */
+   public static float eval (
       final Vec3 v,
       final int seed ) {
 
-    return Simplex.eval(v.x, v.y, v.z, seed, null);
-  }
+      return Simplex.eval(v.x, v.y, v.z, seed, null);
+   }
 
-  /**
-   * Evaluates 3D simplex noise for a given seed. Calculates the
-   * derivative if the output variable is not null.
-   *
-   * @param v     the input vector
-   * @param seed  the seed
-   * @param deriv the derivative
-   * @return the noise value
-   */
-  public static float eval (
+   /**
+    * Evaluates 3D simplex noise for a given seed. Calculates the derivative if
+    * the output variable is not null.
+    *
+    * @param v     the input vector
+    * @param seed  the seed
+    * @param deriv the derivative
+    *
+    * @return the noise value
+    */
+   public static float eval (
       final Vec3 v,
       final int seed,
       final Vec3 deriv ) {
 
-    return Simplex.eval(v.x, v.y, v.z, seed, deriv);
-  }
+      return Simplex.eval(v.x, v.y, v.z, seed, deriv);
+   }
 
-  /**
-   * Evaluates 4D simplex noise for a given seed.
-   *
-   * @param v    the input vector
-   * @param seed the seed
-   * @return the noise value
-   */
-  public static float eval (
+   /**
+    * Evaluates 4D simplex noise for a given seed.
+    *
+    * @param v    the input vector
+    * @param seed the seed
+    *
+    * @return the noise value
+    */
+   public static float eval (
       final Vec4 v,
       final int seed ) {
 
-    return Simplex.eval(v.x, v.y, v.z, v.w, seed, null);
-  }
+      return Simplex.eval(v.x, v.y, v.z, v.w, seed, null);
+   }
 
-  /**
-   * Evaluates 4D simplex noise for a given seed. Calculates the
-   * derivative if the output variable is not null.
-   *
-   * @param v     the input vector
-   * @param seed  the seed
-   * @param deriv the derivative
-   * @return the noise value
-   */
-  public static float eval (
+   /**
+    * Evaluates 4D simplex noise for a given seed. Calculates the derivative if
+    * the output variable is not null.
+    *
+    * @param v     the input vector
+    * @param seed  the seed
+    * @param deriv the derivative
+    *
+    * @return the noise value
+    */
+   public static float eval (
       final Vec4 v,
       final int seed,
       final Vec4 deriv ) {
 
-    return Simplex.eval(v.x, v.y, v.z, v.w, seed, deriv);
-  }
+      return Simplex.eval(v.x, v.y, v.z, v.w, seed, deriv);
+   }
 
-  /**
-   * Fractal Brownian Motion. For a given number of octaves, sums the
-   * output value of a noise function. Per each iteration, the output is
-   * multiplied by the amplitude; amplitude is multiplied by gain;
-   * frequency is multiplied by lacunarity.
-   *
-   * @param v          the input coordinate
-   * @param seed       the seed
-   * @param octaves    the number of iterations
-   * @param lacunarity the lacunarity
-   * @param gain       the gain
-   * @return the result
-   */
-  public static float fbm (
+   /**
+    * Fractal Brownian Motion. For a given number of octaves, sums the output
+    * value of a noise function. Per each iteration, the output is multiplied by
+    * the amplitude; amplitude is multiplied by gain; frequency is multiplied by
+    * lacunarity.
+    *
+    * @param v          the input coordinate
+    * @param seed       the seed
+    * @param octaves    the number of iterations
+    * @param lacunarity the lacunarity
+    * @param gain       the gain
+    *
+    * @return the result
+    */
+   public static float fbm (
       final Vec2 v,
       final int seed,
       final int octaves,
       final float lacunarity,
       final float gain ) {
 
-    return Simplex.fbm(v, seed, octaves, lacunarity, gain, null);
-  }
+      return Simplex.fbm(v, seed, octaves, lacunarity, gain, null);
+   }
 
-  /**
-   * Fractal Brownian Motion. For a given number of octaves, sums the
-   * output value of a noise function. Per each iteration, the output is
-   * multiplied by the amplitude; amplitude is multiplied by gain;
-   * frequency is multiplied by lacunarity.
-   *
-   * @param v          the input coordinate
-   * @param seed       the seed
-   * @param octaves    the number of iterations
-   * @param lacunarity the lacunarity
-   * @param gain       the gain
-   * @param deriv      the derivative
-   * @return the result
-   */
-  @SuppressWarnings ( "null" )
-  public static float fbm (
+   /**
+    * Fractal Brownian Motion. For a given number of octaves, sums the output
+    * value of a noise function. Per each iteration, the output is multiplied by
+    * the amplitude; amplitude is multiplied by gain; frequency is multiplied by
+    * lacunarity.
+    *
+    * @param v          the input coordinate
+    * @param seed       the seed
+    * @param octaves    the number of iterations
+    * @param lacunarity the lacunarity
+    * @param gain       the gain
+    * @param deriv      the derivative
+    *
+    * @return the result
+    */
+   @SuppressWarnings ( "null" )
+   public static float fbm (
       final Vec2 v,
       final int seed,
       final int octaves,
@@ -1186,68 +1029,70 @@ public abstract class Simplex {
       final float gain,
       final Vec2 deriv ) {
 
-    float freq = 1.0f;
-    float amp = 0.5f;
+      float freq = 1.0f;
+      float amp = 0.5f;
 
-    final Vec2 vin = new Vec2();
-    final Vec2 nxy = new Vec2();
+      final Vec2 vin = new Vec2();
+      final Vec2 nxy = new Vec2();
 
-    float sum = 0.0f;
-    final boolean calcDeriv = deriv != null;
-    if ( calcDeriv ) { deriv.reset(); }
+      float sum = 0.0f;
+      final boolean calcDeriv = deriv != null;
+      if ( calcDeriv ) { deriv.reset(); }
 
-    for ( int i = 0; i < octaves; ++i ) {
-      Vec2.mul(v, freq, vin);
-      sum += Simplex.eval(vin, seed, nxy) * amp;
-      Vec2.mul(nxy, amp, nxy);
+      for ( int i = 0; i < octaves; ++i ) {
+         Vec2.mul(v, freq, vin);
+         sum += Simplex.eval(vin, seed, nxy) * amp;
+         Vec2.mul(nxy, amp, nxy);
 
-      if ( calcDeriv ) { Vec2.add(deriv, nxy, deriv); }
-      freq *= lacunarity;
-      amp *= gain;
-    }
+         if ( calcDeriv ) { Vec2.add(deriv, nxy, deriv); }
+         freq *= lacunarity;
+         amp *= gain;
+      }
 
-    return sum;
-  }
+      return sum;
+   }
 
-  /**
-   * Fractal Brownian Motion. For a given number of octaves, sums the
-   * output value of a noise function. Per each iteration, the output is
-   * multiplied by the amplitude; amplitude is multiplied by gain;
-   * frequency is multiplied by lacunarity.
-   *
-   * @param v          the input coordinate
-   * @param seed       the seed
-   * @param octaves    the number of iterations
-   * @param lacunarity the lacunarity
-   * @param gain       the gain
-   * @return the result
-   */
-  public static float fbm (
+   /**
+    * Fractal Brownian Motion. For a given number of octaves, sums the output
+    * value of a noise function. Per each iteration, the output is multiplied by
+    * the amplitude; amplitude is multiplied by gain; frequency is multiplied by
+    * lacunarity.
+    *
+    * @param v          the input coordinate
+    * @param seed       the seed
+    * @param octaves    the number of iterations
+    * @param lacunarity the lacunarity
+    * @param gain       the gain
+    *
+    * @return the result
+    */
+   public static float fbm (
       final Vec3 v,
       final int seed,
       final int octaves,
       final float lacunarity,
       final float gain ) {
 
-    return Simplex.fbm(v, seed, octaves, lacunarity, gain, null);
-  }
+      return Simplex.fbm(v, seed, octaves, lacunarity, gain, null);
+   }
 
-  /**
-   * Fractal Brownian Motion. For a given number of octaves, sums the
-   * output value of a noise function. Per each iteration, the output is
-   * multiplied by the amplitude; amplitude is multiplied by gain;
-   * frequency is multiplied by lacunarity.
-   *
-   * @param v          the input coordinate
-   * @param seed       the seed
-   * @param octaves    the number of iterations
-   * @param lacunarity the lacunarity
-   * @param gain       the gain
-   * @param deriv      the derivative
-   * @return the result
-   */
-  @SuppressWarnings ( "null" )
-  public static float fbm (
+   /**
+    * Fractal Brownian Motion. For a given number of octaves, sums the output
+    * value of a noise function. Per each iteration, the output is multiplied by
+    * the amplitude; amplitude is multiplied by gain; frequency is multiplied by
+    * lacunarity.
+    *
+    * @param v          the input coordinate
+    * @param seed       the seed
+    * @param octaves    the number of iterations
+    * @param lacunarity the lacunarity
+    * @param gain       the gain
+    * @param deriv      the derivative
+    *
+    * @return the result
+    */
+   @SuppressWarnings ( "null" )
+   public static float fbm (
       final Vec3 v,
       final int seed,
       final int octaves,
@@ -1255,68 +1100,70 @@ public abstract class Simplex {
       final float gain,
       final Vec3 deriv ) {
 
-    float freq = 1.0f;
-    float amp = 0.5f;
+      float freq = 1.0f;
+      float amp = 0.5f;
 
-    final Vec3 vin = new Vec3();
-    final Vec3 nxyz = new Vec3();
+      final Vec3 vin = new Vec3();
+      final Vec3 nxyz = new Vec3();
 
-    float sum = 0.0f;
-    final boolean calcDeriv = deriv != null;
-    if ( calcDeriv ) { deriv.reset(); }
+      float sum = 0.0f;
+      final boolean calcDeriv = deriv != null;
+      if ( calcDeriv ) { deriv.reset(); }
 
-    for ( int i = 0; i < octaves; ++i ) {
-      Vec3.mul(v, freq, vin);
-      sum += Simplex.eval(vin, seed, nxyz) * amp;
-      Vec3.mul(nxyz, amp, nxyz);
+      for ( int i = 0; i < octaves; ++i ) {
+         Vec3.mul(v, freq, vin);
+         sum += Simplex.eval(vin, seed, nxyz) * amp;
+         Vec3.mul(nxyz, amp, nxyz);
 
-      if ( calcDeriv ) { Vec3.add(deriv, nxyz, deriv); }
-      freq *= lacunarity;
-      amp *= gain;
-    }
+         if ( calcDeriv ) { Vec3.add(deriv, nxyz, deriv); }
+         freq *= lacunarity;
+         amp *= gain;
+      }
 
-    return sum;
-  }
+      return sum;
+   }
 
-  /**
-   * Fractal Brownian Motion. For a given number of octaves, sums the
-   * output value of a noise function. Per each iteration, the output is
-   * multiplied by the amplitude; amplitude is multiplied by gain;
-   * frequency is multiplied by lacunarity.
-   *
-   * @param v          the input coordinate
-   * @param seed       the seed
-   * @param octaves    the number of iterations
-   * @param lacunarity the lacunarity
-   * @param gain       the gain
-   * @return the result
-   */
-  public static float fbm (
+   /**
+    * Fractal Brownian Motion. For a given number of octaves, sums the output
+    * value of a noise function. Per each iteration, the output is multiplied by
+    * the amplitude; amplitude is multiplied by gain; frequency is multiplied by
+    * lacunarity.
+    *
+    * @param v          the input coordinate
+    * @param seed       the seed
+    * @param octaves    the number of iterations
+    * @param lacunarity the lacunarity
+    * @param gain       the gain
+    *
+    * @return the result
+    */
+   public static float fbm (
       final Vec4 v,
       final int seed,
       final int octaves,
       final float lacunarity,
       final float gain ) {
 
-    return Simplex.fbm(v, seed, octaves, lacunarity, gain, null);
-  }
+      return Simplex.fbm(v, seed, octaves, lacunarity, gain, null);
+   }
 
-  /**
-   * Fractal Brownian Motion. For a given number of octaves, sums the
-   * output value of a noise function. Per each iteration, the output is
-   * multiplied by the amplitude; amplitude is multiplied by gain;
-   * frequency is multiplied by lacunarity.
-   *
-   * @param v          the input coordinate
-   * @param seed       the seed
-   * @param octaves    the number of iterations
-   * @param lacunarity the lacunarity
-   * @param gain       the gain
-   * @param deriv      the derivative
-   * @return the result
-   */
-  @SuppressWarnings ( "null" )
-  public static float fbm (
+   /**
+    * Fractal Brownian Motion. For a given number of octaves, sums the output
+    * value of a noise function. Per each iteration, the output is multiplied by
+    * the amplitude; amplitude is multiplied by gain; frequency is multiplied by
+    * lacunarity.
+    *
+    * @param v          the input coordinate
+    * @param seed       the seed
+    * @param octaves    the number of iterations
+    * @param lacunarity the lacunarity
+    * @param gain       the gain
+    * @param deriv      the derivative
+    *
+    * @return the result
+    */
+   @SuppressWarnings ( "null" )
+   public static float fbm (
       final Vec4 v,
       final int seed,
       final int octaves,
@@ -1324,42 +1171,43 @@ public abstract class Simplex {
       final float gain,
       final Vec4 deriv ) {
 
-    float freq = 1.0f;
-    float amp = 0.5f;
+      float freq = 1.0f;
+      float amp = 0.5f;
 
-    final Vec4 vin = new Vec4();
-    final Vec4 nxyzw = new Vec4();
+      final Vec4 vin = new Vec4();
+      final Vec4 nxyzw = new Vec4();
 
-    float sum = 0.0f;
-    final boolean calcDeriv = deriv != null;
-    if ( calcDeriv ) { deriv.reset(); }
+      float sum = 0.0f;
+      final boolean calcDeriv = deriv != null;
+      if ( calcDeriv ) { deriv.reset(); }
 
-    for ( int i = 0; i < octaves; ++i ) {
-      Vec4.mul(v, freq, vin);
-      sum += Simplex.eval(vin, seed, nxyzw) * amp;
-      Vec4.mul(nxyzw, amp, nxyzw);
+      for ( int i = 0; i < octaves; ++i ) {
+         Vec4.mul(v, freq, vin);
+         sum += Simplex.eval(vin, seed, nxyzw) * amp;
+         Vec4.mul(nxyzw, amp, nxyzw);
 
-      if ( calcDeriv ) { Vec4.add(deriv, nxyzw, deriv); }
-      freq *= lacunarity;
-      amp *= gain;
-    }
+         if ( calcDeriv ) { Vec4.add(deriv, nxyzw, deriv); }
+         freq *= lacunarity;
+         amp *= gain;
+      }
 
-    return sum;
-  }
+      return sum;
+   }
 
-  /**
-   * Generates 3D flow noise with three coordinates and the sine and
-   * cosine of an angle.
-   *
-   * @param x    the x coordinate
-   * @param y    the y coordinate
-   * @param z    the z coordinate
-   * @param cosa the cosine of the angle
-   * @param sina the sine of the angle
-   * @param seed the seed
-   * @return the flow noise value
-   */
-  public static float flow (
+   /**
+    * Generates 3D flow noise with three coordinates and the sine and cosine of
+    * an angle.
+    *
+    * @param x    the x coordinate
+    * @param y    the y coordinate
+    * @param z    the z coordinate
+    * @param cosa the cosine of the angle
+    * @param sina the sine of the angle
+    * @param seed the seed
+    *
+    * @return the flow noise value
+    */
+   public static float flow (
       final float x,
       final float y,
       final float z,
@@ -1367,24 +1215,26 @@ public abstract class Simplex {
       final float sina,
       final int seed ) {
 
-    return Simplex.flow(x, y, z, cosa, sina, seed, null);
-  }
+      return Simplex.flow(x, y, z, cosa, sina, seed, null);
+   }
 
-  /**
-   * Generates 3D flow noise with three coordinates and the sine and
-   * cosine of an angle. Calculates the derivative if it is not null.
-   *
-   * @param x     the x coordinate
-   * @param y     the y coordinate
-   * @param z     the z coordinate
-   * @param cosa  the cosine of the angle
-   * @param sina  the sine of the angle
-   * @param seed  the seed
-   * @param deriv the derivative
-   * @return the flow noise value
-   * @author Simon Geilfus
-   */
-  public static float flow (
+   /**
+    * Generates 3D flow noise with three coordinates and the sine and cosine of
+    * an angle. Calculates the derivative if it is not null.
+    *
+    * @param x     the x coordinate
+    * @param y     the y coordinate
+    * @param z     the z coordinate
+    * @param cosa  the cosine of the angle
+    * @param sina  the sine of the angle
+    * @param seed  the seed
+    * @param deriv the derivative
+    *
+    * @return the flow noise value
+    *
+    * @author Simon Geilfus
+    */
+   public static float flow (
       final float x,
       final float y,
       final float z,
@@ -1393,202 +1243,205 @@ public abstract class Simplex {
       final int seed,
       final Vec3 deriv ) {
 
-    final float s = (x + y + z) * Simplex.F3;
-    final int i = Utils.floorToInt(x + s);
-    final int j = Utils.floorToInt(y + s);
-    final int k = Utils.floorToInt(z + s);
+      final float s = ( x + y + z ) * Simplex.F3;
+      final int i = Utils.floorToInt(x + s);
+      final int j = Utils.floorToInt(y + s);
+      final int k = Utils.floorToInt(z + s);
 
-    final float t = (i + j + k) * Simplex.G3;
-    final float x0 = x - (i - t);
-    final float y0 = y - (j - t);
-    final float z0 = z - (k - t);
+      final float t = ( i + j + k ) * Simplex.G3;
+      final float x0 = x - ( i - t );
+      final float y0 = y - ( j - t );
+      final float z0 = z - ( k - t );
 
-    int i1 = 0;
-    int j1 = 0;
-    int k1 = 0;
+      int i1 = 0;
+      int j1 = 0;
+      int k1 = 0;
 
-    int i2 = 0;
-    int j2 = 0;
-    int k2 = 0;
+      int i2 = 0;
+      int j2 = 0;
+      int k2 = 0;
 
-    if ( x0 >= y0 ) {
-      if ( y0 >= z0 ) {
-        i1 = 1;
-        i2 = 1;
-        j2 = 1;
-      } else if ( x0 >= z0 ) {
-        i1 = 1;
-        i2 = 1;
-        k2 = 1;
+      if ( x0 >= y0 ) {
+         if ( y0 >= z0 ) {
+            i1 = 1;
+            i2 = 1;
+            j2 = 1;
+         } else if ( x0 >= z0 ) {
+            i1 = 1;
+            i2 = 1;
+            k2 = 1;
+         } else {
+            k1 = 1;
+            i2 = 1;
+            k2 = 1;
+         }
       } else {
-        k1 = 1;
-        i2 = 1;
-        k2 = 1;
+         if ( y0 < z0 ) {
+            k1 = 1;
+            j2 = 1;
+            k2 = 1;
+         } else if ( x0 < z0 ) {
+            j1 = 1;
+            j2 = 1;
+            k2 = 1;
+         } else {
+            j1 = 1;
+            i2 = 1;
+            j2 = 1;
+         }
       }
-    } else {
-      if ( y0 < z0 ) {
-        k1 = 1;
-        j2 = 1;
-        k2 = 1;
-      } else if ( x0 < z0 ) {
-        j1 = 1;
-        j2 = 1;
-        k2 = 1;
-      } else {
-        j1 = 1;
-        i2 = 1;
-        j2 = 1;
+
+      final float x1 = x0 - i1 + Simplex.G3;
+      final float y1 = y0 - j1 + Simplex.G3;
+      final float z1 = z0 - k1 + Simplex.G3;
+
+      final float x2 = x0 - i2 + Simplex.G3_2;
+      final float y2 = y0 - j2 + Simplex.G3_2;
+      final float z2 = z0 - k2 + Simplex.G3_2;
+
+      final float x3 = x0 - 1.0f + Simplex.G3_3;
+      final float y3 = y0 - 1.0f + Simplex.G3_3;
+      final float z3 = z0 - 1.0f + Simplex.G3_3;
+
+      float t20 = 0.0f;
+      float t21 = 0.0f;
+      float t22 = 0.0f;
+      float t23 = 0.0f;
+
+      float t40 = 0.0f;
+      float t41 = 0.0f;
+      float t42 = 0.0f;
+      float t43 = 0.0f;
+
+      float n0 = 0.0f;
+      float n1 = 0.0f;
+      float n2 = 0.0f;
+      float n3 = 0.0f;
+
+      Vec3 g0 = Simplex.ZERO_3;
+      Vec3 g1 = Simplex.ZERO_3;
+      Vec3 g2 = Simplex.ZERO_3;
+      Vec3 g3 = Simplex.ZERO_3;
+
+      final float t0 = 0.5f - ( x0 * x0 + y0 * y0 + z0 * z0 );
+      if ( t0 >= 0.0f ) {
+         g0 = Simplex.gradRot3(
+            i, j, k, seed,
+            cosa, sina,
+            Simplex.ROT_3);
+         t20 = t0 * t0;
+         t40 = t20 * t20;
+         n0 = g0.x * x0 + g0.y * y0 + g0.z * z0;
       }
-    }
 
-    final float x1 = x0 - i1 + Simplex.G3;
-    final float y1 = y0 - j1 + Simplex.G3;
-    final float z1 = z0 - k1 + Simplex.G3;
+      final float t1 = 0.5f - ( x1 * x1 + y1 * y1 + z1 * z1 );
+      if ( t1 >= 0.0f ) {
+         g1 = Simplex.gradRot3(
+            i + i1, j + j1, k + k1, seed,
+            cosa, sina,
+            Simplex.ROT_3);
+         t21 = t1 * t1;
+         t41 = t21 * t21;
+         n1 = g1.x * x1 + g1.y * y1 + g1.z * z1;
+      }
 
-    final float x2 = x0 - i2 + Simplex.G3_2;
-    final float y2 = y0 - j2 + Simplex.G3_2;
-    final float z2 = z0 - k2 + Simplex.G3_2;
+      final float t2 = 0.5f - ( x2 * x2 + y2 * y2 + z2 * z2 );
+      if ( t2 >= 0.0f ) {
+         g2 = Simplex.gradRot3(
+            i + i2, j + j2, k + k2, seed,
+            cosa, sina,
+            Simplex.ROT_3);
+         t22 = t2 * t2;
+         t42 = t22 * t22;
+         n2 = g2.x * x2 + g2.y * y2 + g2.z * z2;
+      }
 
-    final float x3 = x0 - 1.0f + Simplex.G3_3;
-    final float y3 = y0 - 1.0f + Simplex.G3_3;
-    final float z3 = z0 - 1.0f + Simplex.G3_3;
+      final float t3 = 0.5f - ( x3 * x3 + y3 * y3 + z3 * z3 );
+      if ( t3 >= 0.0f ) {
+         g3 = Simplex.gradRot3(
+            i + 1, j + 1, k + 1, seed,
+            cosa, sina,
+            Simplex.ROT_3);
+         t23 = t3 * t3;
+         t43 = t23 * t23;
+         n3 = g3.x * x3 + g3.y * y3 + g3.z * z3;
+      }
 
-    float t20 = 0.0f;
-    float t21 = 0.0f;
-    float t22 = 0.0f;
-    float t23 = 0.0f;
+      if ( deriv != null ) {
 
-    float t40 = 0.0f;
-    float t41 = 0.0f;
-    float t42 = 0.0f;
-    float t43 = 0.0f;
+         final float tmp0 = t20 * t0 * n0;
+         deriv.x = tmp0 * x0;
+         deriv.y = tmp0 * y0;
+         deriv.z = tmp0 * z0;
 
-    float n0 = 0.0f;
-    float n1 = 0.0f;
-    float n2 = 0.0f;
-    float n3 = 0.0f;
+         final float tmp1 = t21 * t1 * n1;
+         deriv.x += tmp1 * x1;
+         deriv.y += tmp1 * y1;
+         deriv.z += tmp1 * z1;
 
-    Vec3 g0 = Simplex.ZERO_3;
-    Vec3 g1 = Simplex.ZERO_3;
-    Vec3 g2 = Simplex.ZERO_3;
-    Vec3 g3 = Simplex.ZERO_3;
+         final float tmp2 = t22 * t2 * n2;
+         deriv.x += tmp2 * x2;
+         deriv.y += tmp2 * y2;
+         deriv.z += tmp2 * z2;
 
-    final float t0 = 0.5f - (x0 * x0 + y0 * y0 + z0 * z0);
-    if ( t0 >= 0.0f ) {
-      g0 = Simplex.gradRot3(
-          i, j, k, seed,
-          cosa, sina,
-          Simplex.ROT_3);
-      t20 = t0 * t0;
-      t40 = t20 * t20;
-      n0 = g0.x * x0 + g0.y * y0 + g0.z * z0;
-    }
+         final float tmp3 = t23 * t3 * n3;
+         deriv.x += tmp3 * x3;
+         deriv.y += tmp3 * y3;
+         deriv.z += tmp3 * z3;
 
-    final float t1 = 0.5f - (x1 * x1 + y1 * y1 + z1 * z1);
-    if ( t1 >= 0.0f ) {
-      g1 = Simplex.gradRot3(
-          i + i1, j + j1, k + k1, seed,
-          cosa, sina,
-          Simplex.ROT_3);
-      t21 = t1 * t1;
-      t41 = t21 * t21;
-      n1 = g1.x * x1 + g1.y * y1 + g1.z * z1;
-    }
+         deriv.x *= -8.0f;
+         deriv.y *= -8.0f;
+         deriv.z *= -8.0f;
 
-    final float t2 = 0.5f - (x2 * x2 + y2 * y2 + z2 * z2);
-    if ( t2 >= 0.0f ) {
-      g2 = Simplex.gradRot3(
-          i + i2, j + j2, k + k2, seed,
-          cosa, sina,
-          Simplex.ROT_3);
-      t22 = t2 * t2;
-      t42 = t22 * t22;
-      n2 = g2.x * x2 + g2.y * y2 + g2.z * z2;
-    }
+         deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x;
+         deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y;
+         deriv.z += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z;
 
-    final float t3 = 0.5f - (x3 * x3 + y3 * y3 + z3 * z3);
-    if ( t3 >= 0.0f ) {
-      g3 = Simplex.gradRot3(
-          i + 1, j + 1, k + 1, seed,
-          cosa, sina,
-          Simplex.ROT_3);
-      t23 = t3 * t3;
-      t43 = t23 * t23;
-      n3 = g3.x * x3 + g3.y * y3 + g3.z * z3;
-    }
+         deriv.x *= Simplex.SCALE_3;
+         deriv.y *= Simplex.SCALE_3;
+         deriv.z *= Simplex.SCALE_3;
+      }
 
-    if ( deriv != null ) {
+      return Simplex.SCALE_3 * ( t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3 );
+   }
 
-      final float tmp0 = t20 * t0 * n0;
-      deriv.x = tmp0 * x0;
-      deriv.y = tmp0 * y0;
-      deriv.z = tmp0 * z0;
-
-      final float tmp1 = t21 * t1 * n1;
-      deriv.x += tmp1 * x1;
-      deriv.y += tmp1 * y1;
-      deriv.z += tmp1 * z1;
-
-      final float tmp2 = t22 * t2 * n2;
-      deriv.x += tmp2 * x2;
-      deriv.y += tmp2 * y2;
-      deriv.z += tmp2 * z2;
-
-      final float tmp3 = t23 * t3 * n3;
-      deriv.x += tmp3 * x3;
-      deriv.y += tmp3 * y3;
-      deriv.z += tmp3 * z3;
-
-      deriv.x *= -8.0f;
-      deriv.y *= -8.0f;
-      deriv.z *= -8.0f;
-
-      deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x;
-      deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y;
-      deriv.z += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z;
-
-      deriv.x *= Simplex.SCALE_3;
-      deriv.y *= Simplex.SCALE_3;
-      deriv.z *= Simplex.SCALE_3;
-    }
-
-    return Simplex.SCALE_3 * (t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3);
-  }
-
-  /**
-   * Generates 3D flow noise with three coordinates and an angle.
-   *
-   * @param x       the x coordinate
-   * @param y       the y coordinate
-   * @param z       the z coordinate
-   * @param radians the angle
-   * @param seed    the seed
-   * @return the flow noise value
-   */
-  public static float flow (
+   /**
+    * Generates 3D flow noise with three coordinates and an angle.
+    *
+    * @param x       the x coordinate
+    * @param y       the y coordinate
+    * @param z       the z coordinate
+    * @param radians the angle
+    * @param seed    the seed
+    *
+    * @return the flow noise value
+    */
+   public static float flow (
       final float x,
       final float y,
       final float z,
       final float radians,
       final int seed ) {
 
-    return Simplex.flow(x, y, z, radians, seed, (Vec3) null);
-  }
+      return Simplex.flow(x, y, z, radians, seed, ( Vec3 ) null);
+   }
 
-  /**
-   * Generates 2D flow noise with two coordinates and the sine and
-   * cosine of an angle. Calculates the derivative if it is not null.
-   *
-   * @param x     the x coordinate
-   * @param y     the y coordinate
-   * @param cosa  the cosine of the angle
-   * @param sina  the sine of the angle
-   * @param seed  the seed
-   * @param deriv the derivative
-   * @return the flow noise value
-   * @author Simon Geilfus
-   */
-  public static float flow (
+   /**
+    * Generates 2D flow noise with two coordinates and the sine and cosine of an
+    * angle. Calculates the derivative if it is not null.
+    *
+    * @param x     the x coordinate
+    * @param y     the y coordinate
+    * @param cosa  the cosine of the angle
+    * @param sina  the sine of the angle
+    * @param seed  the seed
+    * @param deriv the derivative
+    *
+    * @return the flow noise value
+    *
+    * @author Simon Geilfus
+    */
+   public static float flow (
       final float x,
       final float y,
       final float cosa,
@@ -1596,108 +1449,111 @@ public abstract class Simplex {
       final int seed,
       final Vec2 deriv ) {
 
-    final float s = (x + y) * Simplex.F2;
-    final int i = Utils.floorToInt(x + s);
-    final int j = Utils.floorToInt(y + s);
+      final float s = ( x + y ) * Simplex.F2;
+      final int i = Utils.floorToInt(x + s);
+      final int j = Utils.floorToInt(y + s);
 
-    final float t = (i + j) * Simplex.G2;
-    final float x0 = x - (i - t);
-    final float y0 = y - (j - t);
+      final float t = ( i + j ) * Simplex.G2;
+      final float x0 = x - ( i - t );
+      final float y0 = y - ( j - t );
 
-    int i1 = 0;
-    int j1 = 0;
-    if ( x0 > y0 ) {
-      i1 = 1;
-    } else {
-      j1 = 1;
-    }
+      int i1 = 0;
+      int j1 = 0;
+      if ( x0 > y0 ) {
+         i1 = 1;
+      } else {
+         j1 = 1;
+      }
 
-    final float x1 = x0 - i1 + Simplex.G2;
-    final float y1 = y0 - j1 + Simplex.G2;
+      final float x1 = x0 - i1 + Simplex.G2;
+      final float y1 = y0 - j1 + Simplex.G2;
 
-    final float x2 = x0 - 1.0f + Simplex.G2_2;
-    final float y2 = y0 - 1.0f + Simplex.G2_2;
+      final float x2 = x0 - 1.0f + Simplex.G2_2;
+      final float y2 = y0 - 1.0f + Simplex.G2_2;
 
-    float t20 = 0.0f;
-    float t21 = 0.0f;
-    float t22 = 0.0f;
+      float t20 = 0.0f;
+      float t21 = 0.0f;
+      float t22 = 0.0f;
 
-    float t40 = 0.0f;
-    float t41 = 0.0f;
-    float t42 = 0.0f;
+      float t40 = 0.0f;
+      float t41 = 0.0f;
+      float t42 = 0.0f;
 
-    float n0 = 0.0f;
-    float n1 = 0.0f;
-    float n2 = 0.0f;
+      float n0 = 0.0f;
+      float n1 = 0.0f;
+      float n2 = 0.0f;
 
-    Vec2 g0 = Simplex.ZERO_2;
-    Vec2 g1 = Simplex.ZERO_2;
-    Vec2 g2 = Simplex.ZERO_2;
+      Vec2 g0 = Simplex.ZERO_2;
+      Vec2 g1 = Simplex.ZERO_2;
+      Vec2 g2 = Simplex.ZERO_2;
 
-    final float t0 = 0.5f - (x0 * x0 + y0 * y0);
-    if ( t0 >= 0.0f ) {
-      g0 = Simplex.gradRot2(i, j, seed, cosa, sina, Simplex.ROT_2);
-      t20 = t0 * t0;
-      t40 = t20 * t20;
-      n0 = g0.x * x0 + g0.y * y0;
-    }
+      final float t0 = 0.5f - ( x0 * x0 + y0 * y0 );
+      if ( t0 >= 0.0f ) {
+         g0 = Simplex.gradRot2(i, j, seed, cosa, sina, Simplex.ROT_2);
+         t20 = t0 * t0;
+         t40 = t20 * t20;
+         n0 = g0.x * x0 + g0.y * y0;
+      }
 
-    final float t1 = 0.5f - (x1 * x1 + y1 * y1);
-    if ( t1 >= 0.0f ) {
-      g1 = Simplex.gradRot2(i + i1, j + j1, seed, cosa, sina, Simplex.ROT_2);
-      t21 = t1 * t1;
-      t41 = t21 * t21;
-      n1 = g1.x * x1 + g1.y * y1;
-    }
+      final float t1 = 0.5f - ( x1 * x1 + y1 * y1 );
+      if ( t1 >= 0.0f ) {
+         g1 = Simplex.gradRot2(i + i1, j + j1, seed, cosa, sina,
+            Simplex.ROT_2);
+         t21 = t1 * t1;
+         t41 = t21 * t21;
+         n1 = g1.x * x1 + g1.y * y1;
+      }
 
-    final float t2 = 0.5f - (x2 * x2 + y2 * y2);
-    if ( t2 >= 0.0f ) {
-      g2 = Simplex.gradRot2(i + 1, j + 1, seed, cosa, sina, Simplex.ROT_2);
-      t22 = t2 * t2;
-      t42 = t22 * t22;
-      n2 = g2.x * x2 + g2.y * y2;
-    }
+      final float t2 = 0.5f - ( x2 * x2 + y2 * y2 );
+      if ( t2 >= 0.0f ) {
+         g2 = Simplex.gradRot2(i + 1, j + 1, seed, cosa, sina,
+            Simplex.ROT_2);
+         t22 = t2 * t2;
+         t42 = t22 * t22;
+         n2 = g2.x * x2 + g2.y * y2;
+      }
 
-    if ( deriv != null ) {
+      if ( deriv != null ) {
 
-      final float tmp0 = t20 * t0 * n0;
-      deriv.x = tmp0 * x0;
-      deriv.y = tmp0 * y0;
+         final float tmp0 = t20 * t0 * n0;
+         deriv.x = tmp0 * x0;
+         deriv.y = tmp0 * y0;
 
-      final float tmp1 = t21 * t1 * n1;
-      deriv.x += tmp1 * x1;
-      deriv.y += tmp1 * y1;
+         final float tmp1 = t21 * t1 * n1;
+         deriv.x += tmp1 * x1;
+         deriv.y += tmp1 * y1;
 
-      final float tmp2 = t22 * t2 * n2;
-      deriv.x += tmp2 * x2;
-      deriv.y += tmp2 * y2;
+         final float tmp2 = t22 * t2 * n2;
+         deriv.x += tmp2 * x2;
+         deriv.y += tmp2 * y2;
 
-      deriv.x *= -8.0f;
-      deriv.y *= -8.0f;
+         deriv.x *= -8.0f;
+         deriv.y *= -8.0f;
 
-      deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x;
-      deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y;
+         deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x;
+         deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y;
 
-      deriv.x *= Simplex.SCALE_2;
-      deriv.y *= Simplex.SCALE_2;
-    }
+         deriv.x *= Simplex.SCALE_2;
+         deriv.y *= Simplex.SCALE_2;
+      }
 
-    return Simplex.SCALE_2 * (t40 * n0 + t41 * n1 + t42 * n2);
-  }
+      return Simplex.SCALE_2 * ( t40 * n0 + t41 * n1 + t42 * n2 );
+   }
 
-  /**
-   * Generates 3D flow noise with three coordinates and the sine and
-   * cosine of an angle. Calculates the derivative if it is not null.
-   *
-   * @param x       the x coordinate
-   * @param y       the y coordinate
-   * @param z       the z coordinate
-   * @param radians the angle in radians
-   * @param seed    the seed
-   * @param deriv   the derivative
-   * @return the flow noise value
-   */
-  public static float flow (
+   /**
+    * Generates 3D flow noise with three coordinates and the sine and cosine of
+    * an angle. Calculates the derivative if it is not null.
+    *
+    * @param x       the x coordinate
+    * @param y       the y coordinate
+    * @param z       the z coordinate
+    * @param radians the angle in radians
+    * @param seed    the seed
+    * @param deriv   the derivative
+    *
+    * @return the flow noise value
+    */
+   public static float flow (
       final float x,
       final float y,
       final float z,
@@ -1705,410 +1561,403 @@ public abstract class Simplex {
       final int seed,
       final Vec3 deriv ) {
 
-    return Simplex.flow(x, y, z, Utils.cos(radians),
-        Utils.sin(radians), seed, deriv);
-  }
+      return Simplex.flow(x, y, z, Utils.cos(radians),
+         Utils.sin(radians), seed, deriv);
+   }
 
-  /**
-   * Generates 3D flow noise with three coordinates and an angle.
-   *
-   * @param x       the x coordinate
-   * @param y       the y coordinate
-   * @param radians the angle in radians
-   * @param seed    the seed
-   * @return the flow noise value
-   */
-  public static float flow (
+   /**
+    * Generates 3D flow noise with three coordinates and an angle.
+    *
+    * @param x       the x coordinate
+    * @param y       the y coordinate
+    * @param radians the angle in radians
+    * @param seed    the seed
+    *
+    * @return the flow noise value
+    */
+   public static float flow (
       final float x,
       final float y,
       final float radians,
       final int seed ) {
 
-    return Simplex.flow(x, y, radians, seed, (Vec2) null);
-  }
+      return Simplex.flow(x, y, radians, seed, ( Vec2 ) null);
+   }
 
-  /**
-   * Generates 3D flow noise with three coordinates and an angle.
-   * Calculates the derivative if it is not null.
-   *
-   * @param x       the x coordinate
-   * @param y       the y coordinate
-   * @param radians the angle in radians
-   * @param seed    the seed
-   * @param deriv   the derivative
-   * @return the flow noise value
-   */
-  public static float flow (
+   /**
+    * Generates 3D flow noise with three coordinates and an angle. Calculates
+    * the derivative if it is not null.
+    *
+    * @param x       the x coordinate
+    * @param y       the y coordinate
+    * @param radians the angle in radians
+    * @param seed    the seed
+    * @param deriv   the derivative
+    *
+    * @return the flow noise value
+    */
+   public static float flow (
       final float x,
       final float y,
       final float radians,
       final int seed,
       final Vec2 deriv ) {
 
-    return Simplex.flow(x, y, Utils.cos(radians),
-        Utils.sin(radians), seed, deriv);
-  }
+      return Simplex.flow(x, y, Utils.cos(radians),
+         Utils.sin(radians), seed, deriv);
+   }
 
-  /**
-   * Generates 2D flow noise with a coordinate and an angle.
-   *
-   * @param v       the coordinate
-   * @param radians the angle in radians
-   * @param seed    the seed
-   * @return the flow noise value
-   */
-  public static float flow (
+   /**
+    * Generates 2D flow noise with a coordinate and an angle.
+    *
+    * @param v       the coordinate
+    * @param radians the angle in radians
+    * @param seed    the seed
+    *
+    * @return the flow noise value
+    */
+   public static float flow (
       final Vec2 v,
       final float radians,
       final int seed ) {
 
-    return Simplex.flow(v.x, v.y, radians, seed, (Vec2) null);
-  }
+      return Simplex.flow(v.x, v.y, radians, seed, ( Vec2 ) null);
+   }
 
-  /**
-   * Generates 2D flow noise with a coordinate and an angle. Calculates
-   * the derivative if it is not null.
-   *
-   * @param v       the coordinate
-   * @param radians the angle in radians
-   * @param seed    the seed
-   * @param deriv   the derivative
-   * @return the flow noise value
-   */
-  public static float flow (
+   /**
+    * Generates 2D flow noise with a coordinate and an angle. Calculates the
+    * derivative if it is not null.
+    *
+    * @param v       the coordinate
+    * @param radians the angle in radians
+    * @param seed    the seed
+    * @param deriv   the derivative
+    *
+    * @return the flow noise value
+    */
+   public static float flow (
       final Vec2 v,
       final float radians,
       final int seed,
       final Vec2 deriv ) {
 
-    return Simplex.flow(v.x, v.y, radians, seed, deriv);
-  }
+      return Simplex.flow(v.x, v.y, radians, seed, deriv);
+   }
 
-  /**
-   * Generates 3D flow noise with a coordinate and an angle.
-   *
-   * @param v       the coordinate
-   * @param radians the angle in radians
-   * @param seed    the seed
-   * @return the flow noise value
-   */
-  public static float flow (
+   /**
+    * Generates 3D flow noise with a coordinate and an angle.
+    *
+    * @param v       the coordinate
+    * @param radians the angle in radians
+    * @param seed    the seed
+    *
+    * @return the flow noise value
+    */
+   public static float flow (
       final Vec3 v,
       final float radians,
       final int seed ) {
 
-    return Simplex.flow(v.x, v.y, v.z, radians, seed, (Vec3) null);
-  }
+      return Simplex.flow(v.x, v.y, v.z, radians, seed, ( Vec3 ) null);
+   }
 
-  /**
-   * Generates 3D flow noise with a coordinate and an angle. Calculates
-   * the derivative if it is not null.
-   *
-   * @param v       the coordinate
-   * @param radians the angle in radians
-   * @param seed    the seed
-   * @param deriv   the derivative
-   * @return the flow noise value
-   */
-  public static float flow (
+   /**
+    * Generates 3D flow noise with a coordinate and an angle. Calculates the
+    * derivative if it is not null.
+    *
+    * @param v       the coordinate
+    * @param radians the angle in radians
+    * @param seed    the seed
+    * @param deriv   the derivative
+    *
+    * @return the flow noise value
+    */
+   public static float flow (
       final Vec3 v,
       final float radians,
       final int seed,
       final Vec3 deriv ) {
 
-    return Simplex.flow(v.x, v.y, v.z, radians, seed, deriv);
-  }
+      return Simplex.flow(v.x, v.y, v.z, radians, seed, deriv);
+   }
 
-  /**
-   * Returns a signed pseudo-random number in the range [-1.0, 1.0]
-   * given a vector input and a seed, based on the vector's hash code.
-   *
-   * @param v    the input vector
-   * @param seed the seed
-   * @return a random number
-   * @see Vec2#hashCode()
-   * @see Float#intBitsToFloat(int)
-   * @see Simplex#hash(int, int, int)
-   */
-  public static float hash (
+   /**
+    * Returns a signed pseudo-random number in the range [-1.0, 1.0] given a
+    * vector input and a seed, based on the vector's hash code.
+    *
+    * @param v    the input vector
+    * @param seed the seed
+    *
+    * @return a random number
+    *
+    * @see Vec2#hashCode()
+    * @see Float#intBitsToFloat(int)
+    * @see Simplex#hash(int, int, int)
+    */
+   public static float hash (
       final Vec2 v,
       final int seed ) {
 
-    return (Float.intBitsToFloat(
-        Simplex.hash(v.hashCode(), seed, 0)
-            & 0x007fffff | 0x3f800000)
-        - 1.0f) * 2.0f - 1.0f;
-  }
+      return ( Float.intBitsToFloat(
+         Simplex.hash(v.hashCode(), seed,
+            0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f;
+   }
 
-  /**
-   * Returns a vector in the range [-1.0, 1.0] given a vector input and
-   * a seed.
-   *
-   * @param v      the input vector
-   * @param seed   the result
-   * @param target the output vector
-   * @return the vector
-   */
-  public static Vec2 hash (
+   /**
+    * Returns a vector in the range [-1.0, 1.0] given a vector input and a seed.
+    *
+    * @param v      the input vector
+    * @param seed   the result
+    * @param target the output vector
+    *
+    * @return the vector
+    */
+   public static Vec2 hash (
       final Vec2 v,
       final int seed,
       final Vec2 target ) {
 
-    final float st = Simplex.STEP_2 * Vec2.mag(v);
+      final float st = Simplex.STEP_2 * Vec2.mag(v);
 
-    final int ahash = (IUtils.MUL_BASE ^ Float.floatToIntBits(v.x + st))
-        * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y);
+      final int ahash = ( IUtils.MUL_BASE ^ Float.floatToIntBits(
+         v.x + st) ) * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y);
 
-    final int bhash = (IUtils.MUL_BASE ^ Float.floatToIntBits(v.x))
-        * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y + st);
+      final int bhash = ( IUtils.MUL_BASE ^ Float.floatToIntBits(
+         v.x) ) * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y + st);
 
-    return target.set(
-        (Float.intBitsToFloat(Simplex.hash(ahash, seed, 0)
-            & 0x007fffff | 0x3f800000) - 1.0f) * 2.0f - 1.0f,
-        (Float.intBitsToFloat(Simplex.hash(bhash, seed, 0)
-            & 0x007fffff | 0x3f800000) - 1.0f) * 2.0f - 1.0f);
-  }
+      return target.set(
+         ( Float.intBitsToFloat(Simplex.hash(ahash, seed,
+            0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
+         ( Float.intBitsToFloat(Simplex.hash(bhash, seed,
+            0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f);
+   }
 
-  /**
-   * Returns a signed pseudo-random number in the range [-1.0, 1.0]
-   * given a vector input and a seed, based on the vector's hash code.
-   *
-   * @param v    the input vector
-   * @param seed the seed
-   * @return a random number
-   * @see Vec3#hashCode()
-   * @see Float#intBitsToFloat(int)
-   * @see Simplex#hash(int, int, int)
-   */
-  public static float hash (
+   /**
+    * Returns a signed pseudo-random number in the range [-1.0, 1.0] given a
+    * vector input and a seed, based on the vector's hash code.
+    *
+    * @param v    the input vector
+    * @param seed the seed
+    *
+    * @return a random number
+    *
+    * @see Vec3#hashCode()
+    * @see Float#intBitsToFloat(int)
+    * @see Simplex#hash(int, int, int)
+    */
+   public static float hash (
       final Vec3 v,
       final int seed ) {
 
-    return (Float.intBitsToFloat(
-        Simplex.hash(v.hashCode(), seed, 0)
-            & 0x007fffff | 0x3f800000)
-        - 1.0f) * 2.0f - 1.0f;
-  }
+      return ( Float.intBitsToFloat(
+         Simplex.hash(v.hashCode(), seed,
+            0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f;
+   }
 
-  /**
-   * Returns a vector in the range [-1.0, 1.0] given a vector input and
-   * a seed.
-   *
-   * @param v      the input vector
-   * @param seed   the result
-   * @param target the output vector
-   * @return the vector
-   */
-  public static Vec3 hash (
+   /**
+    * Returns a vector in the range [-1.0, 1.0] given a vector input and a seed.
+    *
+    * @param v      the input vector
+    * @param seed   the result
+    * @param target the output vector
+    *
+    * @return the vector
+    */
+   public static Vec3 hash (
       final Vec3 v,
       final int seed,
       final Vec3 target ) {
 
-    final float st = Simplex.STEP_3 * Vec3.mag(v);
-    final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(v.x);
-    final int vybit = Float.floatToIntBits(v.y);
-    final int vzbit = Float.floatToIntBits(v.z);
+      final float st = Simplex.STEP_3 * Vec3.mag(v);
+      final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(v.x);
+      final int vybit = Float.floatToIntBits(v.y);
+      final int vzbit = Float.floatToIntBits(v.z);
 
-    final int ahash = ((IUtils.MUL_BASE ^ Float.floatToIntBits(v.x + st))
-        * IUtils.HASH_MUL ^ vybit)
-        * IUtils.HASH_MUL ^ vzbit;
+      final int ahash = ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(
+         v.x + st) ) * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ vzbit;
 
-    final int bhash = (mulvx
-        * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y + st))
-        * IUtils.HASH_MUL ^ vzbit;
+      final int bhash = ( mulvx * IUtils.HASH_MUL ^ Float.floatToIntBits(
+         v.y + st) ) * IUtils.HASH_MUL ^ vzbit;
 
-    final int chash = (mulvx
-        * IUtils.HASH_MUL ^ vybit)
-        * IUtils.HASH_MUL ^ Float.floatToIntBits(v.z + st);
+      final int chash = ( mulvx * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ Float
+         .floatToIntBits(v.z + st);
 
-    return target.set(
-        (Float.intBitsToFloat(
-            Simplex.hash(ahash, seed, 0)
-                & 0x007fffff | 0x3f800000)
-            - 1.0f) * 2.0f - 1.0f,
+      return target.set(
+         ( Float.intBitsToFloat(
+            Simplex.hash(ahash, seed,
+               0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
 
-        (Float.intBitsToFloat(
-            Simplex.hash(bhash, seed, 0)
-                & 0x007fffff | 0x3f800000)
-            - 1.0f) * 2.0f - 1.0f,
+         ( Float.intBitsToFloat(
+            Simplex.hash(bhash, seed,
+               0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
 
-        (Float.intBitsToFloat(
-            Simplex.hash(chash, seed, 0)
-                & 0x007fffff | 0x3f800000)
-            - 1.0f) * 2.0f - 1.0f);
-  }
+         ( Float.intBitsToFloat(
+            Simplex.hash(chash, seed,
+               0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f);
+   }
 
-  /**
-   * Returns a signed pseudo-random number in the range [-1.0, 1.0]
-   * given a vector input and a seed, based on the vector's hash code.
-   *
-   * @param v    the input vector
-   * @param seed the seed
-   * @return a random number
-   * @see Vec4#hashCode()
-   * @see Float#intBitsToFloat(int)
-   * @see Simplex#hash(int, int, int)
-   */
-  public static float hash (
+   /**
+    * Returns a signed pseudo-random number in the range [-1.0, 1.0] given a
+    * vector input and a seed, based on the vector's hash code.
+    *
+    * @param v    the input vector
+    * @param seed the seed
+    *
+    * @return a random number
+    *
+    * @see Vec4#hashCode()
+    * @see Float#intBitsToFloat(int)
+    * @see Simplex#hash(int, int, int)
+    */
+   public static float hash (
       final Vec4 v,
       final int seed ) {
 
-    return (Float.intBitsToFloat(
-        Simplex.hash(v.hashCode(), seed, 0)
-            & 0x007fffff | 0x3f800000)
-        - 1.0f) * 2.0f - 1.0f;
-  }
+      return ( Float.intBitsToFloat(
+         Simplex.hash(v.hashCode(), seed,
+            0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f;
+   }
 
-  /**
-   * Returns a vector in the range [-1.0, 1.0] given a vector input and
-   * a seed.
-   *
-   * @param v      the input vector
-   * @param seed   the result
-   * @param target the output vector
-   * @return the vector
-   */
-  public static Vec4 hash (
+   /**
+    * Returns a vector in the range [-1.0, 1.0] given a vector input and a seed.
+    *
+    * @param v      the input vector
+    * @param seed   the result
+    * @param target the output vector
+    *
+    * @return the vector
+    */
+   public static Vec4 hash (
       final Vec4 v,
       final int seed,
       final Vec4 target ) {
 
-    final float st = Simplex.STEP_4 * Vec4.mag(v);
-    final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(v.x);
-    final int vybit = Float.floatToIntBits(v.y);
-    final int vzbit = Float.floatToIntBits(v.z);
-    final int vwbit = Float.floatToIntBits(v.w);
+      final float st = Simplex.STEP_4 * Vec4.mag(v);
+      final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(v.x);
+      final int vybit = Float.floatToIntBits(v.y);
+      final int vzbit = Float.floatToIntBits(v.z);
+      final int vwbit = Float.floatToIntBits(v.w);
 
-    final int ahash = (((IUtils.MUL_BASE ^ Float.floatToIntBits(v.x + st))
-        * IUtils.HASH_MUL ^ vybit)
-        * IUtils.HASH_MUL ^ vzbit)
-        * IUtils.HASH_MUL ^ vwbit;
+      final int ahash = ( ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(
+         v.x + st) ) * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ vzbit ) * IUtils.HASH_MUL ^ vwbit;
 
-    final int bhash = ((mulvx
-        * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y + st))
-        * IUtils.HASH_MUL ^ vzbit)
-        * IUtils.HASH_MUL ^ vwbit;
+      final int bhash = ( ( mulvx * IUtils.HASH_MUL ^ Float.floatToIntBits(
+         v.y + st) ) * IUtils.HASH_MUL ^ vzbit ) * IUtils.HASH_MUL ^ vwbit;
 
-    final int chash = ((mulvx
-        * IUtils.HASH_MUL ^ vybit)
-        * IUtils.HASH_MUL ^ Float.floatToIntBits(v.z + st))
-        * IUtils.HASH_MUL ^ vwbit;
+      final int chash = ( ( mulvx * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ Float
+         .floatToIntBits(v.z + st) ) * IUtils.HASH_MUL ^ vwbit;
 
-    final int dhash = ((mulvx
-        * IUtils.HASH_MUL ^ vybit)
-        * IUtils.HASH_MUL ^ vzbit)
-        * IUtils.HASH_MUL ^ Float.floatToIntBits(v.w + st);
+      final int dhash = ( ( mulvx * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ vzbit ) * IUtils.HASH_MUL ^ Float
+         .floatToIntBits(v.w + st);
 
-    return target.set(
-        (Float.intBitsToFloat(
-            Simplex.hash(ahash, seed, 0)
-                & 0x007fffff | 0x3f800000)
-            - 1.0f) * 2.0f - 1.0f,
+      return target.set(
+         ( Float.intBitsToFloat(
+            Simplex.hash(ahash, seed,
+               0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
 
-        (Float.intBitsToFloat(
-            Simplex.hash(bhash, seed, 0)
-                & 0x007fffff | 0x3f800000)
-            - 1.0f) * 2.0f - 1.0f,
+         ( Float.intBitsToFloat(
+            Simplex.hash(bhash, seed,
+               0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
 
-        (Float.intBitsToFloat(
-            Simplex.hash(chash, seed, 0)
-                & 0x007fffff | 0x3f800000)
-            - 1.0f) * 2.0f - 1.0f,
+         ( Float.intBitsToFloat(
+            Simplex.hash(chash, seed,
+               0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
 
-        (Float.intBitsToFloat(
-            Simplex.hash(dhash, seed, 0)
-                & 0x007fffff | 0x3f800000)
-            - 1.0f) * 2.0f - 1.0f);
-  }
+         ( Float.intBitsToFloat(
+            Simplex.hash(dhash, seed,
+               0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f);
+   }
 
-  /**
-   * Returns a value with the same number of dimensions as the input, 2.
-   * This is done by calling
-   * {@link Simplex#eval(float, float, int, Vec2)} twice, with offset
-   * steps added to each component of the input vector.
-   *
-   * @param v      the input vector
-   * @param seed   the seed
-   * @param target the output vector
-   * @return the noise value
-   */
-  public static Vec2 noise (
+   /**
+    * Returns a value with the same number of dimensions as the input, 2. This
+    * is done by calling {@link Simplex#eval(float, float, int, Vec2)} twice,
+    * with offset steps added to each component of the input vector.
+    *
+    * @param v      the input vector
+    * @param seed   the seed
+    * @param target the output vector
+    *
+    * @return the noise value
+    */
+   public static Vec2 noise (
       final Vec2 v,
       final int seed,
       final Vec2 target ) {
 
-    return Simplex.noise(v, seed, target, null, null);
-  }
+      return Simplex.noise(v, seed, target, null, null);
+   }
 
-  /**
-   * Returns a value with the same number of dimensions as the input, 2.
-   * This is done by calling
-   * {@link Simplex#eval(float, float, int, Vec2)} twice, with offset
-   * steps added to each component of the input vector. The derivatives
-   * are calculated for the output vectors.
-   *
-   * @param v      the input vector
-   * @param seed   the seed
-   * @param target the output vector
-   * @param xDeriv the derivative for the x evaluation
-   * @param yDeriv the derivative for the y evaluation
-   * @return the noise value
-   * @see Vec2#mag(Vec2)
-   * @see Simplex#STEP_2
-   * @see Simplex#eval(float, float, int, Vec2)
-   */
-  public static Vec2 noise (
+   /**
+    * Returns a value with the same number of dimensions as the input, 2. This
+    * is done by calling {@link Simplex#eval(float, float, int, Vec2)} twice,
+    * with offset steps added to each component of the input vector. The
+    * derivatives are calculated for the output vectors.
+    *
+    * @param v      the input vector
+    * @param seed   the seed
+    * @param target the output vector
+    * @param xDeriv the derivative for the x evaluation
+    * @param yDeriv the derivative for the y evaluation
+    *
+    * @return the noise value
+    *
+    * @see Vec2#mag(Vec2)
+    * @see Simplex#STEP_2
+    * @see Simplex#eval(float, float, int, Vec2)
+    */
+   public static Vec2 noise (
       final Vec2 v,
       final int seed,
       final Vec2 target,
       final Vec2 xDeriv,
       final Vec2 yDeriv ) {
 
-    final float st = Simplex.STEP_2 * Vec2.mag(v);
+      final float st = Simplex.STEP_2 * Vec2.mag(v);
 
-    return target.set(
-        Simplex.eval(v.x + st, v.y, seed, xDeriv),
-        Simplex.eval(v.x, v.y + st, seed, yDeriv));
-  }
+      return target.set(
+         Simplex.eval(v.x + st, v.y, seed, xDeriv),
+         Simplex.eval(v.x, v.y + st, seed, yDeriv));
+   }
 
-  /**
-   * Returns a value with the same number of dimensions as the input, 3.
-   * This is done by calling
-   * {@link Simplex#eval(float, float, float, int, Vec3)} thrice, with
-   * offset steps added to each component of the input vector.
-   *
-   * @param v      the input vector
-   * @param seed   the seed
-   * @param target the output vector
-   * @return the noise value
-   */
-  public static Vec3 noise (
+   /**
+    * Returns a value with the same number of dimensions as the input, 3. This
+    * is done by calling {@link Simplex#eval(float, float, float, int, Vec3)}
+    * thrice, with offset steps added to each component of the input vector.
+    *
+    * @param v      the input vector
+    * @param seed   the seed
+    * @param target the output vector
+    *
+    * @return the noise value
+    */
+   public static Vec3 noise (
       final Vec3 v,
       final int seed,
       final Vec3 target ) {
 
-    return Simplex.noise(v, seed, target,
-        null, null, null);
-  }
+      return Simplex.noise(v, seed, target,
+         null, null, null);
+   }
 
-  /**
-   * Returns a value with the same number of dimensions as the input, 3.
-   * This is done by calling
-   * {@link Simplex#eval(float, float, float, int, Vec3)} thrice, with
-   * offset steps added to each component of the input vector. The
-   * derivatives are calculated for the output vectors.
-   *
-   * @param v      the input vector
-   * @param seed   the seed
-   * @param target the output vector
-   * @param xDeriv the derivative for the x evaluation
-   * @param yDeriv the derivative for the y evaluation
-   * @param zDeriv the derivative for the z evaluation
-   * @return the noise value
-   * @see Vec3#mag(Vec3)
-   * @see Simplex#STEP_3
-   */
-  public static Vec3 noise (
+   /**
+    * Returns a value with the same number of dimensions as the input, 3. This
+    * is done by calling {@link Simplex#eval(float, float, float, int, Vec3)}
+    * thrice, with offset steps added to each component of the input vector. The
+    * derivatives are calculated for the output vectors.
+    *
+    * @param v      the input vector
+    * @param seed   the seed
+    * @param target the output vector
+    * @param xDeriv the derivative for the x evaluation
+    * @param yDeriv the derivative for the y evaluation
+    * @param zDeriv the derivative for the z evaluation
+    *
+    * @return the noise value
+    *
+    * @see Vec3#mag(Vec3)
+    * @see Simplex#STEP_3
+    */
+   public static Vec3 noise (
       final Vec3 v,
       final int seed,
       final Vec3 target,
@@ -2116,54 +1965,56 @@ public abstract class Simplex {
       final Vec3 yDeriv,
       final Vec3 zDeriv ) {
 
-    final float st = Vec3.mag(v) * Simplex.STEP_3;
+      final float st = Vec3.mag(v) * Simplex.STEP_3;
 
-    return target.set(
-        Simplex.eval(v.x + st, v.y, v.z, seed, xDeriv),
-        Simplex.eval(v.x, v.y + st, v.z, seed, yDeriv),
-        Simplex.eval(v.x, v.y, v.z + st, seed, zDeriv));
-  }
+      return target.set(
+         Simplex.eval(v.x + st, v.y, v.z, seed, xDeriv),
+         Simplex.eval(v.x, v.y + st, v.z, seed, yDeriv),
+         Simplex.eval(v.x, v.y, v.z + st, seed, zDeriv));
+   }
 
-  /**
-   * Returns a value with the same number of dimensions as the input, 4.
-   * This is done by calling
-   * {@link Simplex#eval(float, float, float, float, int)} four times,
-   * with offset steps added to each component of the input vector.
-   *
-   * @param v      the input vector
-   * @param seed   the seed
-   * @param target the output vector
-   * @return the noise value
-   */
-  public static Vec4 noise (
+   /**
+    * Returns a value with the same number of dimensions as the input, 4. This
+    * is done by calling {@link Simplex#eval(float, float, float, float, int)}
+    * four times, with offset steps added to each component of the input vector.
+    *
+    * @param v      the input vector
+    * @param seed   the seed
+    * @param target the output vector
+    *
+    * @return the noise value
+    */
+   public static Vec4 noise (
       final Vec4 v,
       final int seed,
       final Vec4 target ) {
 
-    return Simplex.noise(v, seed, target,
-        null, null, null, null);
-  }
+      return Simplex.noise(v, seed, target,
+         null, null, null, null);
+   }
 
-  /**
-   * Returns a value with the same number of dimensions as the input, 4.
-   * This is done by calling
-   * {@link Simplex#eval(float, float, float, float, int, Vec4)} four
-   * times, with offset steps added to each component of the input
-   * vector. The derivatives are calculated for the output vectors.
-   *
-   * @param v      the input vector
-   * @param seed   the seed
-   * @param target the output vector
-   * @param xDeriv the derivative for the x evaluation
-   * @param yDeriv the derivative for the y evaluation
-   * @param zDeriv the derivative for the z evaluation
-   * @param wDeriv the derivative for the w evaluation
-   * @return the noise value
-   * @see Vec4#mag(Vec4)
-   * @see Simplex#STEP_4
-   * @see Simplex#eval(float, float, float, float, int, Vec4)
-   */
-  public static Vec4 noise (
+   /**
+    * Returns a value with the same number of dimensions as the input, 4. This
+    * is done by calling
+    * {@link Simplex#eval(float, float, float, float, int, Vec4)} four times,
+    * with offset steps added to each component of the input vector. The
+    * derivatives are calculated for the output vectors.
+    *
+    * @param v      the input vector
+    * @param seed   the seed
+    * @param target the output vector
+    * @param xDeriv the derivative for the x evaluation
+    * @param yDeriv the derivative for the y evaluation
+    * @param zDeriv the derivative for the z evaluation
+    * @param wDeriv the derivative for the w evaluation
+    *
+    * @return the noise value
+    *
+    * @see Vec4#mag(Vec4)
+    * @see Simplex#STEP_4
+    * @see Simplex#eval(float, float, float, float, int, Vec4)
+    */
+   public static Vec4 noise (
       final Vec4 v,
       final int seed,
       final Vec4 target,
@@ -2172,372 +2023,93 @@ public abstract class Simplex {
       final Vec4 zDeriv,
       final Vec4 wDeriv ) {
 
-    final float st = Vec4.mag(v) * Simplex.STEP_4;
+      final float st = Vec4.mag(v) * Simplex.STEP_4;
 
-    return target.set(
-        Simplex.eval(v.x + st, v.y, v.z, v.w, seed, xDeriv),
-        Simplex.eval(v.x, v.y + st, v.z, v.w, seed, yDeriv),
-        Simplex.eval(v.x, v.y, v.z + st, v.w, seed, zDeriv),
-        Simplex.eval(v.x, v.y, v.z, v.w + st, seed, wDeriv));
-  }
+      return target.set(
+         Simplex.eval(v.x + st, v.y, v.z, v.w, seed, xDeriv),
+         Simplex.eval(v.x, v.y + st, v.z, v.w, seed, yDeriv),
+         Simplex.eval(v.x, v.y, v.z + st, v.w, seed, zDeriv),
+         Simplex.eval(v.x, v.y, v.z, v.w + st, seed, wDeriv));
+   }
 
-  /**
-   * Generates 2D Voronoi noise. Returns the minimum Euclidean distance;
-   * the Voronoi point is stored in an output vector.
-   *
-   * @param coord  the coordinate
-   * @param seed   the seed
-   * @param scale  the scale
-   * @param target the output vector
-   * @return the distance
-   */
-  public static float voronoi (
+   /**
+    * Generates 2D Voronoi noise. Returns the minimum Euclidean distance; the
+    * Voronoi point is stored in an output vector.
+    *
+    * @param coord  the coordinate
+    * @param seed   the seed
+    * @param scale  the scale
+    * @param target the output vector
+    *
+    * @return the distance
+    */
+   public static float voronoi (
       final Vec2 coord,
       final int seed,
       final float scale,
       final Vec2 target ) {
 
-    /*
-     * As many functions as is reasonable are inlined for performance
-     * purposes (both to avoid function call overhead and to avoid
-     * creating new Vec3 s).
-     */
+      /*
+       * As many functions as is reasonable are inlined for performance purposes
+       * (both to avoid function call overhead and to avoid creating new Vec3
+       * s).
+       */
 
-    if ( scale == 0.0f ) {
-      target.reset();
-      return 0.0f;
-    }
-
-    final float scaleInv = 1.0f / scale;
-    final float scaledx = coord.x * scaleInv;
-    final float scaledy = coord.y * scaleInv;
-
-    final float cellx = scaledx > 0.0f ? (int) scaledx
-        : scaledx < 0.0f ? (int) scaledx - 1.0f : 0.0f;
-    final float celly = scaledy > 0.0f ? (int) scaledy
-        : scaledy < 0.0f ? (int) scaledy - 1.0f : 0.0f;
-
-    final float localx = scaledx - cellx;
-    final float localy = scaledy - celly;
-
-    float minDistSq = Float.MAX_VALUE;
-    float hshx = 0.0f;
-    float hshy = 0.0f;
-
-    for ( int j = -1; j < 2; ++j ) {
-
-      final float sumy = celly + j;
-      final float sumysq = sumy * sumy;
-      final int vybit = Float.floatToIntBits(sumy);
-
-      for ( int i = -1; i < 2; ++i ) {
-
-        final float sumx = cellx + i;
-        final float sumxsq = sumx * sumx;
-
-        /*
-         * Calculate an offset step for the vector. This has to be done with
-         * all three sums within the for loop.
-         */
-        final float st = Utils.sqrtUnchecked(sumxsq + sumysq)
-            * Simplex.STEP_2;
-
-        /* Create a hash for the x component. */
-        final int ahsh = (IUtils.MUL_BASE ^ Float.floatToIntBits(sumx + st))
-            * IUtils.HASH_MUL ^ vybit;
-
-        /* Create a hash for the y component. */
-        final int bhsh = (IUtils.MUL_BASE ^ Float.floatToIntBits(sumx))
-            * IUtils.HASH_MUL ^ Float.floatToIntBits(sumy + st);
-
-        /*
-         * Create a random vector in the range [0.0, 1.0] . Add the cell
-         * offset.
-         */
-        hshx = i + Float.intBitsToFloat(
-            Simplex.hash(ahsh, seed, 0)
-                & 0x007fffff | 0x3f800000)
-            - 1.0f;
-        hshy = j + Float.intBitsToFloat(
-            Simplex.hash(bhsh, seed, 0)
-                & 0x007fffff | 0x3f800000)
-            - 1.0f;
-
-        /*
-         * Find the Euclidean distance between the local coordinate and the
-         * random point.
-         */
-        final float xDist = localx - hshx;
-        final float yDist = localy - hshy;
-        final float distSq = xDist * xDist + yDist * yDist;
-
-        /* Reassign minimums. */
-        if ( distSq < minDistSq ) {
-          minDistSq = distSq;
-          target.x = hshx;
-          target.y = hshy;
-        }
+      if ( scale == 0.0f ) {
+         target.reset();
+         return 0.0f;
       }
-    }
 
-    target.x += cellx;
-    target.y += celly;
+      final float scaleInv = 1.0f / scale;
+      final float scaledx = coord.x * scaleInv;
+      final float scaledy = coord.y * scaleInv;
 
-    target.x *= scale;
-    target.y *= scale;
+      final float cellx = scaledx > 0.0f ? ( int ) scaledx
+         : scaledx < 0.0f ? ( int ) scaledx - 1.0f : 0.0f;
+      final float celly = scaledy > 0.0f ? ( int ) scaledy
+         : scaledy < 0.0f ? ( int ) scaledy - 1.0f : 0.0f;
 
-    return Utils.sqrtUnchecked(minDistSq);
-  }
+      final float localx = scaledx - cellx;
+      final float localy = scaledy - celly;
 
-  /**
-   * Generates 3D voronoi noise. Returns the minimum Euclidean distance;
-   * the voronoi point is stored in an output vector.
-   *
-   * @param coord  the coordinate
-   * @param seed   the seed
-   * @param scale  the scale
-   * @param target the output vector
-   * @return the distance
-   */
-  public static float voronoi (
-      final Vec3 coord,
-      final int seed,
-      final float scale,
-      final Vec3 target ) {
-
-    /*
-     * As many functions as is reasonable are inlined for performance
-     * purposes (both to avoid function call overhead and to avoid
-     * creating new Vec3 s).
-     */
-
-    if ( scale == 0.0f ) {
-      target.reset();
-      return 0.0f;
-    }
-
-    final float scaleInv = 1.0f / scale;
-    final float scaledx = coord.x * scaleInv;
-    final float scaledy = coord.y * scaleInv;
-    final float scaledz = coord.z * scaleInv;
-
-    final float cellx = scaledx > 0.0f ? (int) scaledx
-        : scaledx < 0.0f ? (int) scaledx - 1.0f : 0.0f;
-    final float celly = scaledy > 0.0f ? (int) scaledy
-        : scaledy < 0.0f ? (int) scaledy - 1.0f : 0.0f;
-    final float cellz = scaledz > 0.0f ? (int) scaledz
-        : scaledz < 0.0f ? (int) scaledz - 1.0f : 0.0f;
-
-    final float localx = scaledx - cellx;
-    final float localy = scaledy - celly;
-    final float localz = scaledz - cellz;
-
-    float minDistSq = Float.MAX_VALUE;
-    float hshx = 0.0f;
-    float hshy = 0.0f;
-    float hshz = 0.0f;
-
-    for ( int k = -1; k < 2; ++k ) {
-
-      final float sumz = cellz + k;
-      final float sumzsq = sumz * sumz;
-      final int vzbit = Float.floatToIntBits(sumz);
+      float minDistSq = Float.MAX_VALUE;
+      float hshx = 0.0f;
+      float hshy = 0.0f;
 
       for ( int j = -1; j < 2; ++j ) {
 
-        final float sumy = celly + j;
-        final float sumysq = sumy * sumy;
-        final int vybit = Float.floatToIntBits(sumy);
+         final float sumy = celly + j;
+         final float sumysq = sumy * sumy;
+         final int vybit = Float.floatToIntBits(sumy);
 
-        for ( int i = -1; i < 2; ++i ) {
-
-          final float sumx = cellx + i;
-          final float sumxsq = sumx * sumx;
-          final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(sumx);
-
-          /*
-           * Calculate an offset step for the vector. This has to be done with
-           * all three sums within the for loop.
-           */
-          final float st = Simplex.STEP_3 * Utils.sqrtUnchecked(
-              sumxsq + sumysq + sumzsq);
-
-          /* Create a hash for the x component. */
-          final int ahsh = ((IUtils.MUL_BASE
-              ^ Float.floatToIntBits(sumx + st))
-              * IUtils.HASH_MUL ^ vybit)
-              * IUtils.HASH_MUL ^ vzbit;
-
-          /* Create a hash for the y component. */
-          final int bhsh = (mulvx * IUtils.HASH_MUL
-              ^ Float.floatToIntBits(sumy + st))
-              * IUtils.HASH_MUL ^ vzbit;
-
-          /* Create a hash for the z component. */
-          final int chsh = (mulvx * IUtils.HASH_MUL ^ vybit)
-              * IUtils.HASH_MUL ^ Float.floatToIntBits(sumz + st);
-
-          /*
-           * Create a random vector in the range [0.0, 1.0] . Add the cell
-           * offset.
-           */
-          hshx = i + Float.intBitsToFloat(
-              Simplex.hash(ahsh, seed, 0)
-                  & 0x007fffff | 0x3f800000)
-              - 1.0f;
-          hshy = j + Float.intBitsToFloat(
-              Simplex.hash(bhsh, seed, 0)
-                  & 0x007fffff | 0x3f800000)
-              - 1.0f;
-          hshz = k + Float.intBitsToFloat(
-              Simplex.hash(chsh, seed, 0)
-                  & 0x007fffff | 0x3f800000)
-              - 1.0f;
-
-          /*
-           * Find the Euclidean distance between the local coordinate and the
-           * random point.
-           */
-          final float xDist = localx - hshx;
-          final float yDist = localy - hshy;
-          final float zDist = localz - hshz;
-          final float distSq = xDist * xDist +
-              yDist * yDist +
-              zDist * zDist;
-
-          /* Reassign minimums. */
-          if ( distSq < minDistSq ) {
-            minDistSq = distSq;
-            target.x = hshx;
-            target.y = hshy;
-            target.z = hshz;
-          }
-        }
-      }
-    }
-
-    target.x += cellx;
-    target.y += celly;
-    target.z += cellz;
-
-    target.x *= scale;
-    target.y *= scale;
-    target.z *= scale;
-
-    return Utils.sqrtUnchecked(minDistSq);
-  }
-
-  /**
-   * Generates 4D voronoi noise. Returns the minimum Euclidean distance;
-   * the voronoi point is stored in an output vector.
-   *
-   * @param coord  the coordinate
-   * @param seed   the seed
-   * @param scale  the scale
-   * @param target the output vector
-   * @return the distance
-   */
-  public static float voronoi (
-      final Vec4 coord,
-      final int seed,
-      final float scale,
-      final Vec4 target ) {
-
-    if ( scale == 0.0f ) {
-      target.reset();
-      return 0.0f;
-    }
-
-    final float scaleInv = 1.0f / scale;
-    final float scaledx = coord.x * scaleInv;
-    final float scaledy = coord.y * scaleInv;
-    final float scaledz = coord.z * scaleInv;
-    final float scaledw = coord.w * scaleInv;
-
-    final float cellx = scaledx > 0.0f ? (int) scaledx
-        : scaledx < 0.0f ? (int) scaledx - 1.0f : 0.0f;
-    final float celly = scaledy > 0.0f ? (int) scaledy
-        : scaledy < 0.0f ? (int) scaledy - 1.0f : 0.0f;
-    final float cellz = scaledz > 0.0f ? (int) scaledz
-        : scaledz < 0.0f ? (int) scaledz - 1.0f : 0.0f;
-    final float cellw = scaledw > 0.0f ? (int) scaledw
-        : scaledw < 0.0f ? (int) scaledw - 1.0f : 0.0f;
-
-    final float localx = scaledx - cellx;
-    final float localy = scaledy - celly;
-    final float localz = scaledz - cellz;
-    final float localw = scaledw - cellw;
-
-    float minDist = Float.MAX_VALUE;
-    float hshx = 0.0f;
-    float hshy = 0.0f;
-    float hshz = 0.0f;
-    float hshw = 0.0f;
-
-    for ( int m = -1; m < 2; ++m ) {
-
-      final float sumw = cellw + m;
-      final float sumwsq = sumw * sumw;
-      final int vwbit = Float.floatToIntBits(sumw);
-
-      for ( int k = -1; k < 2; ++k ) {
-
-        final float sumz = cellz + k;
-        final float sumzsq = sumz * sumz;
-        final int vzbit = Float.floatToIntBits(sumz);
-
-        for ( int j = -1; j < 2; ++j ) {
-
-          final float sumy = celly + j;
-          final float sumysq = sumy * sumy;
-          final int vybit = Float.floatToIntBits(sumy);
-
-          for ( int i = -1; i < 2; ++i ) {
+         for ( int i = -1; i < 2; ++i ) {
 
             final float sumx = cellx + i;
             final float sumxsq = sumx * sumx;
-            final int mulvx = IUtils.MUL_BASE
-                ^ Float.floatToIntBits(sumx);
 
-            /* Calculate an offset step for the vector. */
-            final float st = Simplex.STEP_4 * Utils.sqrtUnchecked(
-                sumxsq + sumysq + sumzsq + sumwsq);
+            /*
+             * Calculate an offset step for the vector. This has to be done with
+             * all three sums within the for loop.
+             */
+            final float st = Utils.sqrtUnchecked(
+               sumxsq + sumysq) * Simplex.STEP_2;
 
             /* Create a hash for the x component. */
-            final int ahsh = (((IUtils.MUL_BASE
-                ^ Float.floatToIntBits(sumx + st))
-                * IUtils.HASH_MUL ^ vybit)
-                * IUtils.HASH_MUL ^ vzbit)
-                * IUtils.HASH_MUL ^ vwbit;
+            final int ahsh = ( IUtils.MUL_BASE ^ Float.floatToIntBits(
+               sumx + st) ) * IUtils.HASH_MUL ^ vybit;
 
             /* Create a hash for the y component. */
-            final int bhsh = ((mulvx * IUtils.HASH_MUL
-                ^ Float.floatToIntBits(sumy + st))
-                * IUtils.HASH_MUL ^ vzbit)
-                * IUtils.HASH_MUL ^ vwbit;
-
-            /* Create a hash for the z component. */
-            final int chsh = ((mulvx * IUtils.HASH_MUL ^ vybit)
-                * IUtils.HASH_MUL ^ Float.floatToIntBits(sumz + st))
-                * IUtils.HASH_MUL ^ vwbit;
-
-            /* Create a hash for the w component. */
-            final int dhsh = ((mulvx * IUtils.HASH_MUL ^ vybit)
-                * IUtils.HASH_MUL ^ vzbit)
-                * IUtils.HASH_MUL ^ Float.floatToIntBits(sumw + st);
+            final int bhsh = ( IUtils.MUL_BASE ^ Float.floatToIntBits(
+               sumx) ) * IUtils.HASH_MUL ^ Float.floatToIntBits(sumy + st);
 
             /*
              * Create a random vector in the range [0.0, 1.0] . Add the cell
              * offset.
              */
-            hshx = i + Float.intBitsToFloat(Simplex.hash(ahsh, seed, 0)
-                & 0x007fffff | 0x3f800000) - 1.0f;
-            hshy = j + Float.intBitsToFloat(Simplex.hash(bhsh, seed, 0)
-                & 0x007fffff | 0x3f800000) - 1.0f;
-            hshz = k + Float.intBitsToFloat(Simplex.hash(chsh, seed, 0)
-                & 0x007fffff | 0x3f800000) - 1.0f;
-            hshw = m + Float.intBitsToFloat(Simplex.hash(dhsh, seed, 0)
-                & 0x007fffff | 0x3f800000) - 1.0f;
+            hshx = i + Float.intBitsToFloat(
+               Simplex.hash(ahsh, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f;
+            hshy = j + Float.intBitsToFloat(
+               Simplex.hash(bhsh, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f;
 
             /*
              * Find the Euclidean distance between the local coordinate and the
@@ -2545,36 +2117,473 @@ public abstract class Simplex {
              */
             final float xDist = localx - hshx;
             final float yDist = localy - hshy;
-            final float zDist = localz - hshz;
-            final float wDist = localw - hshw;
-            final float dist = xDist * xDist +
-                yDist * yDist +
-                zDist * zDist +
-                wDist * wDist;
+            final float distSq = xDist * xDist + yDist * yDist;
 
             /* Reassign minimums. */
-            if ( dist < minDist ) {
-              minDist = dist;
-              target.x = hshx;
-              target.y = hshy;
-              target.z = hshz;
-              target.w = hshw;
+            if ( distSq < minDistSq ) {
+               minDistSq = distSq;
+               target.x = hshx;
+               target.y = hshy;
             }
-          }
-        }
+         }
       }
-    }
 
-    target.x += cellx;
-    target.y += celly;
-    target.z += cellz;
-    target.w += cellw;
+      target.x += cellx;
+      target.y += celly;
 
-    target.x *= scale;
-    target.y *= scale;
-    target.z *= scale;
-    target.w *= scale;
+      target.x *= scale;
+      target.y *= scale;
 
-    return Utils.sqrtUnchecked(minDist);
-  }
+      return Utils.sqrtUnchecked(minDistSq);
+   }
+
+   /**
+    * Generates 3D voronoi noise. Returns the minimum Euclidean distance; the
+    * voronoi point is stored in an output vector.
+    *
+    * @param coord  the coordinate
+    * @param seed   the seed
+    * @param scale  the scale
+    * @param target the output vector
+    *
+    * @return the distance
+    */
+   public static float voronoi (
+      final Vec3 coord,
+      final int seed,
+      final float scale,
+      final Vec3 target ) {
+
+      /*
+       * As many functions as is reasonable are inlined for performance purposes
+       * (both to avoid function call overhead and to avoid creating new Vec3
+       * s).
+       */
+
+      if ( scale == 0.0f ) {
+         target.reset();
+         return 0.0f;
+      }
+
+      final float scaleInv = 1.0f / scale;
+      final float scaledx = coord.x * scaleInv;
+      final float scaledy = coord.y * scaleInv;
+      final float scaledz = coord.z * scaleInv;
+
+      final float cellx = scaledx > 0.0f ? ( int ) scaledx
+         : scaledx < 0.0f ? ( int ) scaledx - 1.0f : 0.0f;
+      final float celly = scaledy > 0.0f ? ( int ) scaledy
+         : scaledy < 0.0f ? ( int ) scaledy - 1.0f : 0.0f;
+      final float cellz = scaledz > 0.0f ? ( int ) scaledz
+         : scaledz < 0.0f ? ( int ) scaledz - 1.0f : 0.0f;
+
+      final float localx = scaledx - cellx;
+      final float localy = scaledy - celly;
+      final float localz = scaledz - cellz;
+
+      float minDistSq = Float.MAX_VALUE;
+      float hshx = 0.0f;
+      float hshy = 0.0f;
+      float hshz = 0.0f;
+
+      for ( int k = -1; k < 2; ++k ) {
+
+         final float sumz = cellz + k;
+         final float sumzsq = sumz * sumz;
+         final int vzbit = Float.floatToIntBits(sumz);
+
+         for ( int j = -1; j < 2; ++j ) {
+
+            final float sumy = celly + j;
+            final float sumysq = sumy * sumy;
+            final int vybit = Float.floatToIntBits(sumy);
+
+            for ( int i = -1; i < 2; ++i ) {
+
+               final float sumx = cellx + i;
+               final float sumxsq = sumx * sumx;
+               final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(sumx);
+
+               /*
+                * Calculate an offset step for the vector. This has to be done
+                * with all three sums within the for loop.
+                */
+               final float st = Simplex.STEP_3 * Utils.sqrtUnchecked(
+                  sumxsq + sumysq + sumzsq);
+
+               /* Create a hash for the x component. */
+               final int ahsh = ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(
+                  sumx + st) ) * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ vzbit;
+
+               /* Create a hash for the y component. */
+               final int bhsh = ( mulvx * IUtils.HASH_MUL ^ Float
+                  .floatToIntBits(sumy + st) ) * IUtils.HASH_MUL ^ vzbit;
+
+               /* Create a hash for the z component. */
+               final int chsh = ( mulvx * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ Float
+                  .floatToIntBits(sumz + st);
+
+               /*
+                * Create a random vector in the range [0.0, 1.0] . Add the cell
+                * offset.
+                */
+               hshx = i + Float.intBitsToFloat(
+                  Simplex.hash(ahsh, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f;
+               hshy = j + Float.intBitsToFloat(
+                  Simplex.hash(bhsh, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f;
+               hshz = k + Float.intBitsToFloat(
+                  Simplex.hash(chsh, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f;
+
+               /*
+                * Find the Euclidean distance between the local coordinate and
+                * the random point.
+                */
+               final float xDist = localx - hshx;
+               final float yDist = localy - hshy;
+               final float zDist = localz - hshz;
+               final float distSq = xDist * xDist + yDist * yDist + zDist * zDist;
+
+               /* Reassign minimums. */
+               if ( distSq < minDistSq ) {
+                  minDistSq = distSq;
+                  target.x = hshx;
+                  target.y = hshy;
+                  target.z = hshz;
+               }
+            }
+         }
+      }
+
+      target.x += cellx;
+      target.y += celly;
+      target.z += cellz;
+
+      target.x *= scale;
+      target.y *= scale;
+      target.z *= scale;
+
+      return Utils.sqrtUnchecked(minDistSq);
+   }
+
+   /**
+    * Generates 4D voronoi noise. Returns the minimum Euclidean distance; the
+    * voronoi point is stored in an output vector.
+    *
+    * @param coord  the coordinate
+    * @param seed   the seed
+    * @param scale  the scale
+    * @param target the output vector
+    *
+    * @return the distance
+    */
+   public static float voronoi (
+      final Vec4 coord,
+      final int seed,
+      final float scale,
+      final Vec4 target ) {
+
+      if ( scale == 0.0f ) {
+         target.reset();
+         return 0.0f;
+      }
+
+      final float scaleInv = 1.0f / scale;
+      final float scaledx = coord.x * scaleInv;
+      final float scaledy = coord.y * scaleInv;
+      final float scaledz = coord.z * scaleInv;
+      final float scaledw = coord.w * scaleInv;
+
+      final float cellx = scaledx > 0.0f ? ( int ) scaledx
+         : scaledx < 0.0f ? ( int ) scaledx - 1.0f : 0.0f;
+      final float celly = scaledy > 0.0f ? ( int ) scaledy
+         : scaledy < 0.0f ? ( int ) scaledy - 1.0f : 0.0f;
+      final float cellz = scaledz > 0.0f ? ( int ) scaledz
+         : scaledz < 0.0f ? ( int ) scaledz - 1.0f : 0.0f;
+      final float cellw = scaledw > 0.0f ? ( int ) scaledw
+         : scaledw < 0.0f ? ( int ) scaledw - 1.0f : 0.0f;
+
+      final float localx = scaledx - cellx;
+      final float localy = scaledy - celly;
+      final float localz = scaledz - cellz;
+      final float localw = scaledw - cellw;
+
+      float minDist = Float.MAX_VALUE;
+      float hshx = 0.0f;
+      float hshy = 0.0f;
+      float hshz = 0.0f;
+      float hshw = 0.0f;
+
+      for ( int m = -1; m < 2; ++m ) {
+
+         final float sumw = cellw + m;
+         final float sumwsq = sumw * sumw;
+         final int vwbit = Float.floatToIntBits(sumw);
+
+         for ( int k = -1; k < 2; ++k ) {
+
+            final float sumz = cellz + k;
+            final float sumzsq = sumz * sumz;
+            final int vzbit = Float.floatToIntBits(sumz);
+
+            for ( int j = -1; j < 2; ++j ) {
+
+               final float sumy = celly + j;
+               final float sumysq = sumy * sumy;
+               final int vybit = Float.floatToIntBits(sumy);
+
+               for ( int i = -1; i < 2; ++i ) {
+
+                  final float sumx = cellx + i;
+                  final float sumxsq = sumx * sumx;
+                  final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(
+                     sumx);
+
+                  /* Calculate an offset step for the vector. */
+                  final float st = Simplex.STEP_4 * Utils.sqrtUnchecked(
+                     sumxsq + sumysq + sumzsq + sumwsq);
+
+                  /* Create a hash for the x component. */
+                  final int ahsh = ( ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(
+                     sumx + st) ) * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ vzbit ) * IUtils.HASH_MUL ^ vwbit;
+
+                  /* Create a hash for the y component. */
+                  final int bhsh = ( ( mulvx * IUtils.HASH_MUL ^ Float
+                     .floatToIntBits(
+                        sumy + st) ) * IUtils.HASH_MUL ^ vzbit ) * IUtils.HASH_MUL ^ vwbit;
+
+                  /* Create a hash for the z component. */
+                  final int chsh = ( ( mulvx * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ Float
+                     .floatToIntBits(sumz + st) ) * IUtils.HASH_MUL ^ vwbit;
+
+                  /* Create a hash for the w component. */
+                  final int dhsh = ( ( mulvx * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ vzbit ) * IUtils.HASH_MUL ^ Float
+                     .floatToIntBits(sumw + st);
+
+                  /*
+                   * Create a random vector in the range [0.0, 1.0] . Add the
+                   * cell offset.
+                   */
+                  hshx = i + Float
+                     .intBitsToFloat(Simplex.hash(ahsh, seed,
+                        0) & 0x007fffff | 0x3f800000) - 1.0f;
+                  hshy = j + Float
+                     .intBitsToFloat(Simplex.hash(bhsh, seed,
+                        0) & 0x007fffff | 0x3f800000) - 1.0f;
+                  hshz = k + Float
+                     .intBitsToFloat(Simplex.hash(chsh, seed,
+                        0) & 0x007fffff | 0x3f800000) - 1.0f;
+                  hshw = m + Float
+                     .intBitsToFloat(Simplex.hash(dhsh, seed,
+                        0) & 0x007fffff | 0x3f800000) - 1.0f;
+
+                  /*
+                   * Find the Euclidean distance between the local coordinate
+                   * and the random point.
+                   */
+                  final float xDist = localx - hshx;
+                  final float yDist = localy - hshy;
+                  final float zDist = localz - hshz;
+                  final float wDist = localw - hshw;
+                  final float dist = xDist * xDist + yDist * yDist + zDist * zDist + wDist * wDist;
+
+                  /* Reassign minimums. */
+                  if ( dist < minDist ) {
+                     minDist = dist;
+                     target.x = hshx;
+                     target.y = hshy;
+                     target.z = hshz;
+                     target.w = hshw;
+                  }
+               }
+            }
+         }
+      }
+
+      target.x += cellx;
+      target.y += celly;
+      target.z += cellz;
+      target.w += cellw;
+
+      target.x *= scale;
+      target.y *= scale;
+      target.z *= scale;
+      target.w *= scale;
+
+      return Utils.sqrtUnchecked(minDist);
+   }
+
+   /**
+    * Hashes the indices i and j with the seed, then returns a vector from the
+    * look up table.
+    *
+    * @param i    the first index
+    * @param j    the second index
+    * @param seed the seed
+    *
+    * @return the vector
+    *
+    * @see Simplex#hash(int, int, int)
+    * @see Simplex#GRAD_2_LUT
+    */
+   private static Vec2 gradient2 (
+      final int i,
+      final int j,
+      final int seed ) {
+
+      return Simplex.GRAD_2_LUT[Simplex.hash(i, j, seed) & 0x7];
+   }
+
+   /**
+    * Hashes the indices i, j and k with the seed, then returns a vector from
+    * the look up table.
+    *
+    * @param i    the first index
+    * @param j    the second index
+    * @param k    the third index
+    * @param seed the seed
+    *
+    * @return the vector
+    *
+    * @see Simplex#hash(int, int, int)
+    * @see Simplex#GRAD_3_LUT
+    */
+   private static Vec3 gradient3 (
+      final int i,
+      final int j,
+      final int k,
+      final int seed ) {
+
+      return Simplex.GRAD_3_LUT[Simplex.hash(i, j, Simplex.hash(k, seed,
+         0)) & 0xf];
+   }
+
+   /**
+    * Hashes the indices i, j, k and l with the seed, then returns a vector from
+    * the look up table.
+    *
+    * @param i    the first index
+    * @param j    the second index
+    * @param k    the third index
+    * @param l    the fourth index
+    * @param seed the seed
+    *
+    * @return the vector
+    *
+    * @see Simplex#hash(int, int, int)
+    * @see Simplex#GRAD_4_LUT
+    */
+   private static Vec4 gradient4 (
+      final int i,
+      final int j,
+      final int k,
+      final int l,
+      final int seed ) {
+
+      return Simplex.GRAD_4_LUT[Simplex.hash(i, j, Simplex.hash(k, l,
+         seed)) & 0x1f];
+   }
+
+   /**
+    * Hashes the indices i and j with the seed, retrieves a vector from the
+    * look-up table, then rotates it by the sine and cosine of an angle.
+    *
+    * @param i      the first index
+    * @param j      the second index
+    * @param seed   the seed
+    * @param cosa   the cosine of the angle
+    * @param sina   the sine of the angle
+    * @param target the output vector
+    *
+    * @return the vector
+    *
+    * @see Vec2#rotateZ(Vec2, float, float, Vec2)
+    * @see Simplex#GRAD_2_LUT
+    * @see Simplex#hash(int, int, int)
+    *
+    * @author Simon Geilfus
+    */
+   private static Vec2 gradRot2 (
+      final int i,
+      final int j,
+      final int seed,
+      final float cosa,
+      final float sina,
+      final Vec2 target ) {
+
+      return Vec2.rotateZ(
+         Simplex.GRAD_2_LUT[Simplex.hash(i, j, seed) & 0x7],
+         cosa, sina, target);
+   }
+
+   /**
+    * Hashes the indices i, j and k with the seed. Retrieves two vectors from
+    * rotation look-up tables, then multiplies them against the sine and cosine
+    * of the angle.
+    *
+    * @param i      the first index
+    * @param j      the second index
+    * @param k      the third index
+    * @param seed   the seed
+    * @param cosa   the cosine of the angle
+    * @param sina   the sine of the angle
+    * @param target the output vector
+    *
+    * @return the vector
+    *
+    * @see Simplex#hash(int, int, int)
+    * @see Simplex#GRAD3_U
+    * @see Simplex#GRAD3_V
+    *
+    * @author Simon Geilfus
+    */
+   private static Vec3 gradRot3 (
+      final int i,
+      final int j,
+      final int k,
+      final int seed,
+      final float cosa,
+      final float sina,
+      final Vec3 target ) {
+
+      final int h = Simplex.hash(i, j, Simplex.hash(k, seed, 0)) & 0xf;
+
+      final Vec3 gu = Simplex.GRAD3_U[h];
+      final Vec3 gv = Simplex.GRAD3_V[h];
+      return target.set(
+         cosa * gu.x + sina * gv.x,
+         cosa * gu.y + sina * gv.y,
+         cosa * gu.z + sina * gv.z);
+   }
+
+   /**
+    * A helper function to the gradient functions. Performs a series of
+    * bit-shifting operations to create a hash.
+    *
+    * @param a first input
+    * @param b second input
+    * @param c third input
+    *
+    * @return the hash
+    *
+    * @author Bob Jenkins
+    */
+   private static int hash ( int a, int b, int c ) {
+
+      c ^= b;
+      c -= b << 0xe | b >> 0x20 - 0xe;
+      a ^= c;
+      a -= c << 0xb | c >> 0x20 - 0xb;
+      b ^= a;
+      b -= a << 0x19 | a >> 0x20 - 0x19;
+      c ^= b;
+      c -= b << 0x10 | b >> 0x20 - 0x10;
+      a ^= c;
+      a -= c << 0x4 | c >> 0x20 - 0x4;
+      b ^= a;
+      b -= a << 0xe | a >> 0x20 - 0xe;
+      c ^= b;
+      c -= b << 0x18 | b >> 0x20 - 0x18;
+      return c;
+   }
+
 }

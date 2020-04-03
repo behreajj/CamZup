@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Yup2 graphics2;
+Yup2 rndr;
 
 MaterialSolid material = new MaterialSolid()
   .setStroke(true)
@@ -25,20 +25,20 @@ void settings() {
 }
 
 void setup() {
-  graphics2 = (Yup2)getGraphics();
+  rndr = (Yup2)getGraphics();
 }
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
   entity.rotateZ(0.01);
   entity.transform.moveByLocal(new Vec2(0.005, 0.0));
-  graphics2.background();
-  graphics2.origin();
-  graphics2.shape(entity, material);
+  rndr.background();
+  rndr.origin();
+  rndr.shape(entity, material);
 }
 
 void mouseReleased() {
-  String result = graphics2.toSvgString(entity, material);
+  String result = rndr.toSvgString(entity, material);
   saveStrings("data/mesh.svg", new String[] { result });
   println("Saved to svg.");
 }

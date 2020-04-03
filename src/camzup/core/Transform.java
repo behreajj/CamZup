@@ -5,18 +5,19 @@ package camzup.core;
  */
 public abstract class Transform implements ITransform {
 
-  /**
-   * The default constructor.
-   */
-  protected Transform ( ) {}
+   /**
+    * The default constructor.
+    */
+   protected Transform ( ) {}
 
-  /**
-   * Updates the local axes of the transform based on its rotation.
-   */
-  protected abstract void updateAxes ( );
+   /**
+    * Updates the local axes of the transform based on its rotation.
+    */
+   protected abstract void updateAxes ( );
 
-  /**
-   * The unique identification for serialized classes.
-   */
-  private static final long serialVersionUID = -8374280920178305152L;
+   /**
+    * The unique identification for serialized classes.
+    */
+   private static final long serialVersionUID = -8374280920178305152L;
+
 }

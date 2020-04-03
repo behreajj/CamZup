@@ -5,25 +5,26 @@ package camzup.core;
  */
 public enum ArcMode {
 
-  /**
-   * In addition to the arc, draws a straight line from the start to the
-   * stop angle.
-   */
-  CHORD ( ),
+   /**
+    * In addition to the arc, draws a straight line from the start to the stop
+    * angle.
+    */
+   CHORD ( ),
 
-  /**
-   * Draws a stroke from the start to the stop angle.
-   */
-  OPEN ( ),
+   /**
+    * Draws a stroke from the start to the stop angle.
+    */
+   OPEN ( ),
 
-  /**
-   * In addition to the arc, draws a straight line from the start angle
-   * to the center of the arc, to the stop angle.
-   */
-  PIE ( );
+   /**
+    * In addition to the arc, draws a straight line from the start angle to the
+    * center of the arc, to the stop angle.
+    */
+   PIE ( );
 
-  /**
-   * The default constructor.
-   */
-  private ArcMode ( ) {}
+   /**
+    * The default constructor.
+    */
+   private ArcMode ( ) {}
+
 }

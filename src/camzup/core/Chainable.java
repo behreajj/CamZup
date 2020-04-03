@@ -7,8 +7,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that an instance method returns itself, such that
- * dot-method accesses can be chained together.
+ * Indicates that an instance method returns itself, such that dot-method
+ * accesses can be chained together.
  */
 @Retention ( SOURCE )
 @Target ( METHOD )

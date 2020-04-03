@@ -5,15 +5,16 @@ package camzup.core;
  */
 public abstract class Material extends EntityData implements IMaterial {
 
-  /**
-   * The default constructor.
-   */
-  public Material ( ) { super(); }
+   /**
+    * The default constructor.
+    */
+   public Material ( ) { super(); }
 
-  /**
-   * Creates a material with a name.
-   *
-   * @param name the name
-   */
-  public Material ( final String name ) { super(name); }
+   /**
+    * Creates a material with a name.
+    *
+    * @param name the name
+    */
+   public Material ( final String name ) { super(name); }
+
 }

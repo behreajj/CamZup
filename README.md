@@ -1,15 +1,21 @@
 # Welcome to Cam Z-Up
 
-Cam Z-Up is a Java-based library for the creative coding environment [Processing](https://processing.org/). The main feature of the Cam Z-Up library is that it flips Processing's default projection so that the positive z axis, (0.0, 0.0, 1.0), is the world up axis; the positive y axis, (0.0, 1.0, 0.0), is forward. This library supports two- and three-dimensional graphics. It also supports "2.5D" graphics, where a 3D renderer is configured to appear 2D. It is split into two packages: `pfriendly` and `core`. The `pfriendly` package contains code (mostly) compatible with Processing's API. Inside it, you'll find
+Cam Z-Up is a Java-based library for the creative coding environment [Processing](https://processing.org/). Cam Z-Up flips Processing's default projection so that the positive z axis, (0.0, 0.0, 1.0), is the world up axis; the positive y axis, (0.0, 1.0, 0.0), is forward. This library supports two- and three-dimensional graphics. It also supports "2.5D" graphics, where a 3D renderer is configured to appear 2D.
 
-- `Zup3`, which extends `PGraphics3D`, a.k.a. `P3D`;
-- `Yup3`, which also extends `PGraphics3D`.
+Cam Z-Up is split into two packages: `pfriendly` and `core`. The `pfriendly` package contains code (mostly) compatible with Processing's API. Inside it, you'll find
+
+- `Zup3`, which extends `PGraphicsOpenGL`, like `P3D`;
+- `Yup3`, which also extends `PGraphicsOpenGL`.
 - `YupJ2`, which extends `PGraphicsJava2D`, a.k.a. `JAVA2D`, the default Processing renderer based on the Java AWT library;
-- `Yup2`, which extends `PGraphics2D`, a.k.a. `P2D`, an OpenGL "2.5D" renderer;
+- `Yup2`, which extends `PGraphicsOpenGL`, like `P2D`, a "2.5D" renderer;
 
 The `FX2D` renderer, based on Java FX, is not supported.
 
 This library's `core` package includes basic utilities that were used to modify the Processing renderer. In this package, you'll find classes such as `Vec2`, `Vec3`, `Quaternion`.
+
+If your sketch is simple enough that you can flip the y-axis by supplying `-1` to either [scale](https://processing.org/reference/scale_.html) or [camera](https://processing.org/reference/camera_.html) without adverse effects, then you likely don't need this library. Even so, Cam Z-Up is  general purpose: its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as other, more specialized libraries. For an easy mouse-controlled orbital camera with GUI support, I would recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
+
+Cam Z-Up is tested with Processing version [4.0 alpha 1](https://github.com/processing/processing4/releases/tag/processing-1270-4.0a1).
 
 ## Getting Started
 
@@ -22,7 +28,7 @@ import camzup.pfriendly.*;
 void settings() {
   // Supply the renderer's path to size as the
   // third argument.
-  size(128, 128, "camzup.pfriendly.YupJ2");
+  size(128, 128, YupJ2.PATH_STR);
 }
 ```
 
@@ -32,21 +38,20 @@ Experienced coders may wish to use [createGraphics](https://processing.org/refer
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-String rpath = "camzup.pfriendly.YupJ2";
 YupJ2 primary;
 YupJ2 secondary;
 
 void settings() {
-  size(128, 128, rpath);
+  size(128, 128, YupJ2.PATH_STR);
 }
 
 void setup() {
-  secondary = (YupJ2)createGraphics(128, 128, rpath);
+  secondary = (YupJ2)createGraphics(128, 128, YupJ2.PATH_STR);
   primary = (YupJ2)getGraphics();
 }
 ```
 
-Both `createGraphics` and `getGraphics` return `PGraphics`, an `interface`; the result of these function calls needs to be cast to the specific renderer. The benefit of accessing these renderers directly, rather than through `PApplet` functions, is that more convenience functions are available. For example, in the following snippet,
+Both `createGraphics` and `getGraphics` return `PGraphics`, an `interface`; the result needs to be cast to the specific renderer. The benefit of accessing these renderers directly, rather than through `PApplet` functions, is that more conveniences are available. For example, in the following snippet,
 
 ```java
 secondary.beginDraw();
@@ -61,7 +66,7 @@ primary.background(0xff202020);
 primary.image(secondary, new Vec2(), new Vec2(50.0, 50.0));
 ```
 
-`background` and `stroke` use default colors, while `ellipse` and `image` support `Vec2` arguments.
+`background` and `stroke` use default color arguments, while `ellipse` and `image` support `Vec2` arguments.
 
 Please see the examples folder for more possibilities.
 
@@ -73,11 +78,10 @@ Here is a brief list of issues with this library and differences which may be un
   - Flipping the axes changes the default rotational direction of a positive angle from clockwise to counter-clockwise.
   - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter.
   - `YupJ2`'s `point` supports `strokeCap(SQUARE)` at the expense of performance.
-  - [textureMode](https://processing.org/reference/textureMode_.html) `IMAGE` is not supported; `NORMAL` is the default. This is for three reasons: (1.) the belief that `IMAGE` is _harder_, not easier, to understand; (2.) recognition that `NORMAL` is the standard; (3.) redundant operations in `PGraphicsOpenGL` that interfere with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT` and cannot be overidden by this library.
+  - [textureMode](https://processing.org/reference/textureMode_.html) `IMAGE` is not supported by OpenGL renderers; `NORMAL` is the default. This is for three reasons: (1.) the belief that `IMAGE` is _harder_, not easier, to understand; (2.) recognition that `NORMAL` is the standard; (3.) redundant operations in `PGraphicsOpenGL` that interfere with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT` and cannot be overidden by this library.
   -  In making this conversion, support for high density pixel displays may be lost; I cannot test this at the moment, so please report issues with `image`.
-  - [textMode](https://processing.org/reference/textMode_.html) `SHAPE` is not supported. However you can retrieve glyph outlines from a [PFont](https://processing.org/reference/PFont.html) with the `CurveEntity2` class from the `core` package. (Reminder: the `PFont` needs to be loaded with [createFont](https://processing.org/reference/createFont_.html)).
-  - The [PShape](https://processing.org/reference/PShape.html) interface has numerous problems stemming from both its implementation and its design. This library uses `Curve` and `Mesh` objects instead.
-  - Stroke weight is influenced by scale; for that reason, curves and meshes that use materials may require stroke weights smaller than custom.
+  - [textMode](https://processing.org/reference/textMode_.html) `SHAPE` is not supported. However you can retrieve glyph outlines from a [PFont](https://processing.org/reference/PFont.html) with the `TextShape` class from the `pfriendly` package. (Reminder: the `PFont` needs to be loaded with [createFont](https://processing.org/reference/createFont_.html)).
+  - The [PShape](https://processing.org/reference/PShape.html) interface has numerous problems stemming from both its implementation and its design. This library uses `Curve` and `Mesh` objects instead. [shapeMode](https://processing.org/reference/shapeMode_.html) is not supported.
 
 - 2D
   - The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles.
@@ -86,8 +90,8 @@ Here is a brief list of issues with this library and differences which may be un
 
 - 3D
   - A z-up axis changes the relationship between a 2D vector's polar coordinates and a 3D vector's spherical coordinates: a 3D vector's azimuth matches a 2D vector's heading.
-  - Neither 3D primitive, the `sphere` nor the `box`, are supported; use mesh entities instead.
-  - A `Mesh3` material may not have both a fill and a stroke due to flickering in `perspective` cameras.
+  - Neither 3D primitive, the [sphere](https://processing.org/reference/sphere_.html) nor the [box](https://processing.org/reference/box_.html), are supported; use mesh entities instead.
+  - A `Mesh3` material may not have both a fill and a stroke due to flickering in [perspective](https://processing.org/reference/perspective_.html) cameras.
 
 Many core Processing functions are marked `final`, meaning they cannot be extended and modified by classes in this library; similarly, many fields are marked `private` meaning they cannot be accessed and mutated. This is the one of the reasons for the differences noted above.
 
@@ -119,7 +123,7 @@ public class PVector {
 
   public static PVector add(PVector a, PVector b, PVector target) {
     // Create a new object if target is null.
-    if(target == null) target = new PVector();
+    if(target == null) { target = new PVector(); }
     return target.set(a.x + b.x, a.y + b.y, a.z + b.z);
   }
 }
@@ -199,13 +203,12 @@ if you want to add instance methods, or any other functionality.
 
 ### Math & Geometry Conventions
 
-With the exception of creating `new` objects mentioned above, the goal of this library is to create images, not throw exceptions. For that reason some liberties have been taken with mathematics.
+With the exception of creating `new` objects mentioned above, the goal of this library is to create, not throw exceptions. For that reason some liberties have been taken with mathematics.
 
-- The [linear interpolation](https://en.wikipedia.org/wiki/Linear_interpolation) (`lerp`) method in this library uses the formula `(1.0 - t) * a + t * b`, not `a + t * (b - a)`. Processing uses the latter. Furthermore, Processing's `lerp` is unclamped by default. This library Includes a clamped and unclamped version of `lerp`; clamped is assumed to be the default.
-- I break with GLSL convention when it comes to easing functions. The step provided to easing functions is always a scalar (a `float`). There are no `step`, `smoothStep` and `linearStep` functions which generate the step to be supplied to `mix`. `mix` is, however, is defined in relevant classes.
-- The formula used for [spherical coordinates](https://en.wikipedia.org/wiki/Spherical_coordinate_system) in 3D is `(rho * cos(theta) * cos(phi), rho * sin(theta) * cos(phi), -rho * sin(phi))`, such that phi, the inclination, is in the range `-PI / 2` to `PI / 2`. At an inclination of zero, a point will lie on the sphere's equator. Other implementations will use the range `0.0` to `PI` for phi, where `PI / 2` is the equator.
-- For [modulo operations](https://en.wikipedia.org/wiki/Modulo_operation), I follow the GLSL convention of distinguishing `mod` from `fmod`. `fmod` is based on `trunc`, where `fmod(a, b) := a - b * trunc(a / b)`; `mod`, on `floor`, where `mod(a, b) := a - b * floor(a / b)`. In Java, the `%`  operator uses `fmod`. The Java `Math` library supports `floorMod` for `int`s.
-- As with shader languages, I try to protect against divide-by-zero errors whenever possible. Though mathematically incorrect, `div(x, 0.0) = 0.0` ; in consequence `fmod(x, 0.0)` and `mod(x, 0.0)` return `x`.
 - Component-wise multiplication between two vectors -- again, mathematically incorrect -- is assumed to be a shorthand for the multiplication of a vector with a non-uniform scalar, which would more appropriately be stored in a matrix.
 - `Utils.acos` and `Utils.asin` clamp the input value to the range `-1.0` to `1.0` so as to avoid exceptions.
 - As with Python, JavaScript and OSL, `x != 0` is `true`; `true` is `1` and `false` is `0`.
+- For [modulo operations](https://en.wikipedia.org/wiki/Modulo_operation), I follow the GLSL convention of distinguishing `mod` from `fmod`. `fmod` is based on `trunc`, where `fmod(a, b) := a - b * trunc(a / b)`; `mod`, on `floor`, where `mod(a, b) := a - b * floor(a / b)`. In Java, the `%`  operator uses `fmod`. The Java `Math` library supports `floorMod` for `int`s.
+- As with shader languages, I try to protect against divide-by-zero errors whenever possible. Though mathematically incorrect, `div(x, 0.0) = 0.0` ; in consequence `fmod(x, 0.0)` and `mod(x, 0.0)` return `x`.
+- The [linear interpolation](https://en.wikipedia.org/wiki/Linear_interpolation) (`lerp`) method in this library uses the formula `(1.0 - t) * a + t * b`, not `a + t * (b - a)`. Processing uses the latter. Furthermore, Processing's `lerp` is unclamped by default. This library Includes a clamped and unclamped version of `lerp`; clamped is assumed to be the default.
+- I break with GLSL convention when it comes to easing functions. The step provided to easing functions is always a scalar (a `float`). There are no `step`, `smoothStep` and `linearStep` functions which generate the step to be supplied to `mix`. `mix` is, however, is defined in relevant classes.
