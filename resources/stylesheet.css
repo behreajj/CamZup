@@ -22,6 +22,19 @@ pre, code {
     text-decoration: none;
 }
 
+/* li {
+    display: inline-block;
+} */
+
+/* ul {
+    overflow: hidden;
+    white-space:nowrap;
+} */
+
+ul {
+    list-style: none;
+}
+
 a {
     color: #1b3865;
     font-style: normal;

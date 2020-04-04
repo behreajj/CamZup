@@ -585,14 +585,14 @@ public class ZImage extends PImage {
 
       for ( int i = 0, y = 0; y < hTarget; ++y ) {
 
-         // final int ny = wSource * Math.floorMod(y - dy, hSource);
+         /* final int ny = wSource * Math.floorMod(y - dy, hSource); */
          int ymod = ( y - dy ) % hSource;
          if ( ( ymod ^ hSource ) < 0 && ymod != 0 ) { ymod += hSource; }
          final int ny = wSource * ymod;
 
          for ( int x = 0; x < wTarget; ++x, ++i ) {
 
-            // target[i] = source[Math.floorMod(x + dx, wSource) + ny];
+            /* target[i] = source[Math.floorMod(x + dx, wSource) + ny]; */
             int xmod = ( x + dx ) % wSource;
             if ( ( xmod ^ wSource ) < 0 && xmod != 0 ) { xmod += wSource; }
             target[i] = source[xmod + ny];

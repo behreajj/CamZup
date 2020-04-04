@@ -679,23 +679,45 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final Vec2 source,
       final Vec2 target ) {
 
-      /* Multiply point by model-view matrix. */
-      final float aw = this.modelview.m30 * source.x + this.modelview.m31 * source.y + this.modelview.m33;
+      /*
+       * Multiply point by model-view matrix; multiply product by inverse of
+       * camera matrix.
+       */
 
-      final float ax = this.modelview.m00 * source.x + this.modelview.m01 * source.y + this.modelview.m03;
+      /* @formatter:off */
+      final float aw = this.modelview.m30 * source.x +
+                       this.modelview.m31 * source.y +
+                       this.modelview.m33;
 
-      final float ay = this.modelview.m10 * source.x + this.modelview.m11 * source.y + this.modelview.m13;
+      final float ax = this.modelview.m00 * source.x +
+                       this.modelview.m01 * source.y +
+                       this.modelview.m03;
 
-      final float az = this.modelview.m20 * source.x + this.modelview.m21 * source.y + this.modelview.m23;
+      final float ay = this.modelview.m10 * source.x +
+                       this.modelview.m11 * source.y +
+                       this.modelview.m13;
 
-      /* Multiply point by inverse of camera matrix. */
-      final float bw = this.cameraInv.m30 * ax + this.cameraInv.m31 * ay + this.cameraInv.m32 * az + this.cameraInv.m33 * aw;
+      final float az = this.modelview.m20 * source.x +
+                       this.modelview.m21 * source.y +
+                       this.modelview.m23;
+
+      final float bw = this.cameraInv.m30 * ax +
+                       this.cameraInv.m31 * ay +
+                       this.cameraInv.m32 * az +
+                       this.cameraInv.m33 * aw;
 
       if ( bw == 0.0f ) { return target.reset(); }
 
-      final float bx = this.cameraInv.m00 * ax + this.cameraInv.m01 * ay + this.cameraInv.m02 * az + this.cameraInv.m03 * aw;
+      final float bx = this.cameraInv.m00 * ax +
+                       this.cameraInv.m01 * ay +
+                       this.cameraInv.m02 * az +
+                       this.cameraInv.m03 * aw;
 
-      final float by = this.cameraInv.m10 * ax + this.cameraInv.m11 * ay + this.cameraInv.m12 * az + this.cameraInv.m13 * aw;
+      final float by = this.cameraInv.m10 * ax +
+                       this.cameraInv.m11 * ay +
+                       this.cameraInv.m12 * az +
+                       this.cameraInv.m13 * aw;
+      /* @formatter:off */
 
       /* Convert from homogeneous coordinate to point by dividing by w. */
       if ( bw == 1.0f ) { return target.set(bx, by); }
@@ -978,36 +1000,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    @Experimental
    public Vec2 screen ( final Vec2 source, final Vec2 target ) {
 
-      /* Multiply point by model-view matrix. */
-      final float aw = this.modelview.m30 * source.x + this.modelview.m31 * source.y + this.modelview.m33;
-
-      final float ax = this.modelview.m00 * source.x + this.modelview.m01 * source.y + this.modelview.m03;
-
-      final float ay = this.modelview.m10 * source.x + this.modelview.m11 * source.y + this.modelview.m13;
-
-      final float az = this.modelview.m20 * source.x + this.modelview.m21 * source.y + this.modelview.m23;
-
-      /* Multiply new point by projection. */
-      final float bw = this.projection.m30 * ax + this.projection.m31 * ay + this.projection.m32 * az + this.projection.m33 * aw;
-
-      if ( bw == 0.0f ) { return target.reset(); }
-
-      float bx = this.projection.m00 * ax + this.projection.m01 * ay + this.projection.m02 * az + this.projection.m03 * aw;
-
-      float by = this.projection.m10 * ax + this.projection.m11 * ay + this.projection.m12 * az + this.projection.m13 * aw;
-
-      if ( bw != 1.0f ) {
-         final float wInv = 1.0f / bw;
-         bx *= wInv;
-         by *= wInv;
-      }
-
-      // return target.set(
-      // this.width * (1.0f + bx) * 0.5f,
-      // this.height * (1.0f + by) * 0.5f);
+      this.screen1s(source.x, source.y, target);
       return target.set(
-         this.width * ( 1.0f + bx ) * 0.5f,
-         this.height * ( 1.0f - ( 1.0f + by ) * 0.5f ));
+         this.width * ( 1.0f + target.x ) * 0.5f,
+         this.height * ( 1.0f - ( 1.0f + target.y ) * 0.5f ));
    }
 
    /**
@@ -1313,14 +1309,14 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
 
    /**
     * shapeMode is not supported by this renderer; it defaults to CENTER. Set
-    * the scale of the shape with instance methods instead.
+    * the scale of the shape with instance methods instead.<br>
+    * <br>
+    * This will not throw a missing method warning, because it may be called by
+    * PShapes.
     */
    @Override
    @SuppressWarnings ( "unused" )
-   public void shapeMode ( final int mode ) {
-
-      PApplet.showMissingWarning("shapeMode");
-   }
+   public void shapeMode ( final int mode ) {}
 
    /**
     * Draws a square at a location.
@@ -1411,6 +1407,67 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    public void vertex ( final Vec2 v, final Vec2 vt ) {
 
       this.vertexImpl(v.x, v.y, 0.0f, vt.x, vt.y);
+   }
+
+   /**
+    * An internal helper function that multiplies the input point by the model
+    * view, then by the projection.
+    *
+    * @param xSource the source x
+    * @param ySource the source y
+    * @param target  the output vector
+    *
+    * @return the screen point
+    */
+   protected Vec2 screen1s (
+      final float xSource,
+      final float ySource,
+      final Vec2 target ) {
+
+      /* Multiply by model-view matrix; multiply product by projection. */
+
+      /* @formatter:off */
+      final float aw = this.modelview.m30 * xSource +
+                       this.modelview.m31 * ySource +
+                       this.modelview.m33;
+
+      final float ax = this.modelview.m00 * xSource +
+                       this.modelview.m01 * ySource +
+                       this.modelview.m03;
+
+      final float ay = this.modelview.m10 * xSource +
+                       this.modelview.m11 * ySource +
+                       this.modelview.m13;
+
+      final float az = this.modelview.m20 * xSource +
+                       this.modelview.m21 * ySource +
+                       this.modelview.m23;
+
+      final float bw = this.projection.m30 * ax +
+                       this.projection.m31 * ay +
+                       this.projection.m32 * az +
+                       this.projection.m33 * aw;
+
+      if ( bw == 0.0f ) { return target.reset(); }
+
+      final float bx = this.projection.m00 * ax +
+                 this.projection.m01 * ay +
+                 this.projection.m02 * az +
+                 this.projection.m03 * aw;
+
+      final float by = this.projection.m10 * ax +
+                 this.projection.m11 * ay +
+                 this.projection.m12 * az +
+                 this.projection.m13 * aw;
+      /* @formatter:on */
+
+      /* Convert homogeneous coordinate. */
+      if ( bw != 1.0f ) {
+         final float wInv = 1.0f / bw;
+         return target.set(bx * wInv, by * wInv);
+      }
+
+      return target.set(bx, by);
    }
 
    /**

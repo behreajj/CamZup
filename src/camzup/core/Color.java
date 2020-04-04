@@ -1093,12 +1093,11 @@ public class Color extends Vec4 {
       final int c,
       final Color target ) {
 
-      return target
-         .set(
-            ( c >> 0x10 & 0xff ) * IUtils.ONE_255,
-            ( c >> 0x8 & 0xff ) * IUtils.ONE_255,
-            ( c & 0xff ) * IUtils.ONE_255,
-            ( c >> 0x18 & 0xff ) * IUtils.ONE_255);
+      return target.set(
+         ( c >> 0x10 & 0xff ) * IUtils.ONE_255,
+         ( c >> 0x8 & 0xff ) * IUtils.ONE_255,
+         ( c & 0xff ) * IUtils.ONE_255,
+         ( c >> 0x18 & 0xff ) * IUtils.ONE_255);
    }
 
    /**
@@ -1348,10 +1347,10 @@ public class Color extends Vec4 {
     * https://en.wikipedia.org/wiki/Relative_luminance</a> .<br>
     * <br>
     * Colors stored as integers are less precise than those stored as floats
-    * (1.0 / 255.0 is the smallest difference between two integer colors), and
-    * because of floating point precision when multiplying small numbers (all
-    * weighting factors must be divided by 255.0 ), this will not yield the same
-    * result as {@link Color#luminance(Color)} .
+    * (1.0 / 255.0 being the smallest difference between a channel of two
+    * integer colors). Combined with single precision when multiplying small
+    * numbers (all weighting factors must be divided by 255.0 ), this will not
+    * yield the same result as {@link Color#luminance(Color)} .
     *
     * @param c the input color
     *
@@ -1367,8 +1366,8 @@ public class Color extends Vec4 {
 
       /* @formatter:off */
       return ( c >> 0x10 & 0xff ) * 0.0008337255f +
-         ( c >> 0x8 & 0xff ) * 0.0028047059f +
-         ( c & 0xff ) * 0.00028313725f;
+              ( c >> 0x8 & 0xff ) * 0.0028047059f +
+                     ( c & 0xff ) * 0.00028313725f;
       /* @formatter:on */
    }
 
@@ -1385,31 +1384,49 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Finds the maximum color channel of a color, excluding alpha.
+    * Sets the target color to the maximum components of the input colors. The
+    * maximums are then clamped to [0.0, 1.0]. Equivalent to a 'lightest' mixing
+    * function.
     *
-    * @param c the color
+    * @param a      the left operand
+    * @param b      the right operand
+    * @param target the output color
     *
-    * @return the maximum channel
-    *
-    * @see Utils#max(float, float, float)
+    * @return the maximum
     */
-   public static float maxRgb ( final Color c ) {
+   public static Color max (
+      final Color a,
+      final Color b,
+      final Color target ) {
 
-      return Utils.max(c.x, c.y, c.z);
+      return target.set(
+         Utils.clamp01(Utils.max(a.x, b.x)),
+         Utils.clamp01(Utils.max(a.y, b.y)),
+         Utils.clamp01(Utils.max(a.z, b.z)),
+         Utils.clamp01(Utils.max(a.w, b.w)));
    }
 
    /**
-    * Finds the minimum color channel of a color, excluding alpha.
+    * Sets the target color to the minimum components of the input colors. The
+    * minimums are then clamped to [0.0, 1.0]. Equivalent to a 'darkest' mixing
+    * function.
     *
-    * @param c the color
+    * @param a      the left operand
+    * @param b      the right operand
+    * @param target the output color
     *
-    * @return the minimum channel
-    *
-    * @see Utils#min(float, float, float)
+    * @return the maximum
     */
-   public static float minRgb ( final Color c ) {
+   public static Color min (
+      final Color a,
+      final Color b,
+      final Color target ) {
 
-      return Utils.min(c.x, c.y, c.z);
+      return target.set(
+         Utils.clamp01(Utils.min(a.x, b.x)),
+         Utils.clamp01(Utils.min(a.y, b.y)),
+         Utils.clamp01(Utils.min(a.z, b.z)),
+         Utils.clamp01(Utils.min(a.w, b.w)));
    }
 
    /**
@@ -1582,15 +1599,12 @@ public class Color extends Vec4 {
       final Color target ) {
 
       if ( levels < 2 || levels > 255 ) { return target.set(c); }
-
       final float delta = 1.0f / levels;
-      /* @formatter:off */
       return target.set(
          delta * Utils.floor(0.5f + c.x * levels),
          delta * Utils.floor(0.5f + c.y * levels),
          delta * Utils.floor(0.5f + c.z * levels),
          delta * Utils.floor(0.5f + c.w * levels));
-      /* @formatter:on */
    }
 
    /**
@@ -1764,9 +1778,11 @@ public class Color extends Vec4 {
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
-      return target.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
+      return target.set(
+         ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
          ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y,
-         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z, 1.0f);
+         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z,
+         1.0f);
    }
 
    /**
@@ -1950,6 +1966,34 @@ public class Color extends Vec4 {
    }
 
    /**
+    * Finds the maximum color channel of a color, excluding alpha.
+    *
+    * @param c the color
+    *
+    * @return the maximum channel
+    *
+    * @see Utils#max(float, float, float)
+    */
+   public static float rgbMax ( final Color c ) {
+
+      return Utils.max(c.x, c.y, c.z);
+   }
+
+   /**
+    * Finds the minimum color channel of a color, excluding alpha.
+    *
+    * @param c the color
+    *
+    * @return the minimum channel
+    *
+    * @see Utils#min(float, float, float)
+    */
+   public static float rgbMin ( final Color c ) {
+
+      return Utils.min(c.x, c.y, c.z);
+   }
+
+   /**
     * Sets the easing function used to mix color.
     *
     * @param easing the easing function
@@ -2111,9 +2155,9 @@ public class Color extends Vec4 {
 
       /* @formatter:off */
       return ( int ) ( c.w * 0xff + 0.5f ) << 0x18
-         | ( int ) ( c.x * 0xff + 0.5f ) << 0x10
-         | ( int ) ( c.y * 0xff + 0.5f ) << 0x8
-         | ( int ) ( c.z * 0xff + 0.5f );
+           | ( int ) ( c.x * 0xff + 0.5f ) << 0x10
+           | ( int ) ( c.y * 0xff + 0.5f ) << 0x8
+           | ( int ) ( c.z * 0xff + 0.5f );
       /* @formatter:on */
    }
 

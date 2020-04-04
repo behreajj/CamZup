@@ -324,13 +324,17 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Finds a point on a curve according to a step in the range [0.0, 1.0].
+    * Evaluates a Bezier curve at step t for points ap0, cp0, cp1 and ap1. The
+    * parameter t varies between [0.0, 1.0]; ap0 and ap1 are the curve's anchor
+    * points; cp0 and cp1 the control points. This can be done once with the x
+    * coordinates and a second time with the y coordinates to get the location
+    * of a Bezier curve at t.
     *
-    * @param ap0  the first anchor point
-    * @param cp0  the first control point
-    * @param cp1  the second control point
-    * @param ap1  the second anchor point
-    * @param step the step
+    * @param ap0 the first anchor point
+    * @param cp0 the first control point
+    * @param cp1 the second control point
+    * @param ap1 the second anchor point
+    * @param t   the step
     */
    @Override
    public float bezierPoint (
@@ -338,20 +342,25 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float cp0,
       final float cp1,
       final float ap1,
-      final float step ) {
+      final float t ) {
 
-      final float u = 1.0f - step;
-      return ( ap0 * u + cp0 * ( step + step + step ) ) * u * u + ( cp1 * ( u + u + u ) + ap1 * step ) * step * step;
+      /* @formatter:off */
+      final float u = 1.0f - t;
+      return ( ap0 * u + cp0 * ( t + t + t ) ) * u * u +
+             ( ap1 * t + cp1 * ( u + u + u ) ) * t * t;
+      /* @formatter:on */
    }
 
    /**
     * Finds a tangent on a curve according to a step in the range [0.0, 1.0].
     *
-    * @param ap0  the first anchor point
-    * @param cp0  the first control point
-    * @param cp1  the second control point
-    * @param ap1  the second anchor point
-    * @param step the step
+    * @param ap0 the first anchor point
+    * @param cp0 the first control point
+    * @param cp1 the second control point
+    * @param ap1 the second anchor point
+    * @param t   the step
+    *
+    * @return the tangent
     */
    @Override
    public float bezierTangent (
@@ -359,14 +368,17 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float cp0,
       final float cp1,
       final float ap1,
-      final float step ) {
+      final float t ) {
 
-      final float t3 = step + step + step;
+      final float t3 = t + t + t;
       final float b2 = cp0 + cp0;
       final float ac = ap0 + cp1;
       final float bna = cp0 - ap0;
 
-      return t3 * step * ( b2 + cp0 + ap1 - ( ac + cp1 + cp1 ) ) + ( t3 + t3 ) * ( ac - b2 ) + ( bna + bna + bna );
+      /* @formatter:off */
+      return t3 * t * ( b2 + cp0 + ap1 - ( ac + cp1 + cp1 ) ) +
+           ( t3 + t3 ) * ( ac - b2 ) + ( bna + bna + bna );
+      /* @formatter:on */
    }
 
    /**
@@ -409,9 +421,14 @@ public abstract class UpOgl extends PGraphicsOpenGL
       this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
       this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
       this.calcAi = ( int ) ( this.calcA * 0xff + 0.5f );
-
-      this.calcColor = this.calcAi << 0x18 | this.calcRi << 0x10 | this.calcGi << 0x8 | this.calcBi;
       this.calcAlpha = this.calcAi != 0xff;
+
+      /* @formatter:off */
+      this.calcColor = this.calcAi << 0x18
+                     | this.calcRi << 0x10
+                     | this.calcGi << 0x8
+                     | this.calcBi;
+      /* @formatter:on */
    }
 
    /**
@@ -469,7 +486,12 @@ public abstract class UpOgl extends PGraphicsOpenGL
       this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
       this.calcAi = ( int ) ( this.calcA * 0xff + 0.5f );
 
-      this.calcColor = this.calcAi << 0x18 | this.calcRi << 0x10 | this.calcGi << 0x8 | this.calcBi;
+      /* @formatter:off */
+      this.calcColor = this.calcAi << 0x18
+                     | this.calcRi << 0x10
+                     | this.calcGi << 0x8
+                     | this.calcBi;
+      /* @formatter:on */
       this.calcAlpha = this.calcAi != 0xff;
    }
 
@@ -1306,8 +1328,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    @Override
    public void ortho (
-      final float left, final float right,
-      final float bottom, final float top ) {
+      final float left,
+      final float right,
+      final float bottom,
+      final float top ) {
 
       float far = IUp.DEFAULT_FAR_CLIP;
       if ( this.eyeDist != 0.0f ) {
@@ -1329,9 +1353,12 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    @Override
    public void ortho (
-      final float left, final float right,
-      final float bottom, final float top,
-      final float near, final float far ) {
+      final float left,
+      final float right,
+      final float bottom,
+      final float top,
+      final float near,
+      final float far ) {
 
       this.cameraNear = near;
       this.cameraFar = far;
@@ -1380,8 +1407,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float fov,
       final float aspect ) {
 
-      final float offset = Utils.sqrt(
-         this.cameraX * this.cameraX + this.cameraY * this.cameraY + this.cameraZ * this.cameraZ);
+      final float xsq = this.cameraX * this.cameraX;
+      final float ysq = this.cameraY * this.cameraY;
+      final float zsq = this.cameraZ * this.cameraZ;
+      final float offset = Utils.sqrt(xsq + ysq + zsq);
       final float near = IUp.DEFAULT_NEAR_CLIP;
       final float far = offset + this.eyeDist * IUp.DEFAULT_FAR_CLIP;
 
@@ -1852,7 +1881,6 @@ public abstract class UpOgl extends PGraphicsOpenGL
       this.defCameraFOV = IUp.DEFAULT_FOV;
       this.defCameraX = 0.0f;
       this.defCameraY = 0.0f;
-
       this.defCameraZ = this.height * Utils.cot(this.defCameraFOV * 0.5f);
       this.defCameraNear = this.defCameraZ * 0.01f;
       this.defCameraFar = this.defCameraZ * 10.0f;
@@ -1942,14 +1970,14 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
    /**
     * shapeMode is not supported by this renderer; it defaults to CENTER. Set
-    * the scale of the shape with instance methods instead.
+    * the scale of the shape with instance methods instead.<br>
+    * <br>
+    * This will not throw a missing method warning, because it may be called by
+    * PShapes.
     */
    @Override
    @SuppressWarnings ( "unused" )
-   public void shapeMode ( final int mode ) {
-
-      PApplet.showMethodWarning("shapeMode");
-   }
+   public void shapeMode ( final int mode ) {}
 
    /**
     * Applies a shear transform to the renderer.
@@ -2317,8 +2345,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float m00, final float m01, final float m02, final float m03,
       final float m10, final float m11, final float m12, final float m13,
       final float m20, final float m21, final float m22, final float m23,
-      final float m30, final float m31, final float m32,
-      final float m33 ) {
+      final float m30, final float m31, final float m32, final float m33 ) {
 
       if ( this.glModelview == null ) { this.glModelview = new float[16]; }
 
@@ -2454,8 +2481,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float m00, final float m01, final float m02, final float m03,
       final float m10, final float m11, final float m12, final float m13,
       final float m20, final float m21, final float m22, final float m23,
-      final float m30, final float m31, final float m32,
-      final float m33 ) {
+      final float m30, final float m31, final float m32, final float m33 ) {
 
       if ( this.glProjection == null ) { this.glProjection = new float[16]; }
 
@@ -2532,8 +2558,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float m00, final float m01, final float m02, final float m03,
       final float m10, final float m11, final float m12, final float m13,
       final float m20, final float m21, final float m22, final float m23,
-      final float m30, final float m31, final float m32,
-      final float m33 ) {
+      final float m30, final float m31, final float m32, final float m33 ) {
 
       if ( this.glProjmodelview == null ) {
          this.glProjmodelview = new float[16];
@@ -2745,8 +2770,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float n00, final float n01, final float n02, final float n03,
       final float n10, final float n11, final float n12, final float n13,
       final float n20, final float n21, final float n22, final float n23,
-      final float n30, final float n31, final float n32,
-      final float n33 ) {
+      final float n30, final float n31, final float n32, final float n33 ) {
 
       this.modelview.apply(
          n00, n01, n02, n03,
@@ -3153,22 +3177,17 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Sets ambient lighting. Color channels will be submitted to color
-    * calculation.
+    * An internal helper function to ambientLight. Sets ambient lighting. The
+    * color will be submitted to color calculation.
     *
-    * @param num   the index
-    * @param red   the red channel
-    * @param green the green channel
-    * @param blue  the blue channel
+    * @param num the index
+    * @param clr the color
     */
-   @Override
    protected void lightAmbient (
       final int num,
-      final float red,
-      final float green,
-      final float blue ) {
+      final Color clr ) {
 
-      this.colorCalc(red, green, blue, this.colorModeA, false);
+      this.colorCalc(clr);
 
       final int num3 = num + num + num;
       this.lightAmbient[num3] = this.calcR;
@@ -3177,22 +3196,103 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Sets diffuse lighting. Color channels will be submitted to color
-    * calculation.
+    * An internal helper function to ambientLight. Sets ambient lighting. Color
+    * channels will be submitted to color calculation.
     *
-    * @param num   the index
-    * @param red   the red channel
-    * @param green the green channel
-    * @param blue  the blue channel
+    * @param num the index
+    * @param x   the first channel
+    * @param y   the second channel
+    * @param z   the third channel
+    */
+   @Override
+   protected void lightAmbient (
+      final int num,
+      final float x,
+      final float y,
+      final float z ) {
+
+      this.colorCalc(x, y, z, this.colorModeA, false);
+
+      final int num3 = num + num + num;
+      this.lightAmbient[num3] = this.calcR;
+      this.lightAmbient[num3 + 1] = this.calcG;
+      this.lightAmbient[num3 + 2] = this.calcB;
+   }
+
+   /**
+    * An internal helper function to ambientLight. Sets ambient lighting. The
+    * color will be submitted to color calculation.
+    *
+    * @param num the index
+    * @param clr the color
+    */
+   protected void lightAmbient (
+      final int num,
+      final int clr ) {
+
+      this.colorCalc(clr, this.colorModeA);
+
+      final int num3 = num + num + num;
+      this.lightAmbient[num3] = this.calcR;
+      this.lightAmbient[num3 + 1] = this.calcG;
+      this.lightAmbient[num3 + 2] = this.calcB;
+   }
+
+   /**
+    * An internal helper function to diffuseLight. Sets diffuse lighting. Color
+    * channels will be submitted to color calculation.
+    *
+    * @param num the index
+    * @param clr the color
+    */
+   protected void lightDiffuse (
+      final int num,
+      final Color clr ) {
+
+      this.colorCalc(clr);
+
+      final int num3 = num + num + num;
+      this.lightDiffuse[num3] = this.calcR;
+      this.lightDiffuse[num3 + 1] = this.calcG;
+      this.lightDiffuse[num3 + 2] = this.calcB;
+   }
+
+   /**
+    * An internal helper function to diffuseLight. Sets diffuse lighting. Color
+    * channels will be submitted to color calculation.
+    *
+    * @param num the index
+    * @param x   the first channel
+    * @param y   the second channel
+    * @param z   the third channel
     */
    @Override
    protected void lightDiffuse (
       final int num,
-      final float red,
-      final float green,
-      final float blue ) {
+      final float x,
+      final float y,
+      final float z ) {
 
-      this.colorCalc(red, green, blue, this.colorModeA, false);
+      this.colorCalc(x, y, z, this.colorModeA, false);
+
+      final int num3 = num + num + num;
+      this.lightDiffuse[num3] = this.calcR;
+      this.lightDiffuse[num3 + 1] = this.calcG;
+      this.lightDiffuse[num3 + 2] = this.calcB;
+   }
+
+   /**
+    * An internal helper function to diffuseLight. Sets diffuse lighting. Color
+    * channels will be submitted to color calculation.
+    *
+    * @param num the index
+    * @param clr the color
+    */
+   protected void lightDiffuse (
+      final int num,
+      final int clr ) {
+
+      this.colorCalc(clr, this.colorModeA);
 
       final int num3 = num + num + num;
       this.lightDiffuse[num3] = this.calcR;
@@ -3203,26 +3303,27 @@ public abstract class UpOgl extends PGraphicsOpenGL
    /**
     * Sets lighting fall-off.
     *
-    * @param num the index
-    * @param c0  the first factor
-    * @param c1  the second factor
-    * @param c2  the third factor
+    * @param num       the index
+    * @param constant  the first factor
+    * @param linear    the second factor
+    * @param quadratic the third factor
     */
    @Override
    protected void lightFalloff (
       final int num,
-      final float c0,
-      final float c1,
-      final float c2 ) {
+      final float constant,
+      final float linear,
+      final float quadratic ) {
 
       final int num3 = num + num + num;
-      this.lightFalloffCoefficients[num3] = c0;
-      this.lightFalloffCoefficients[num3 + 1] = c1;
-      this.lightFalloffCoefficients[num3 + 2] = c2;
+      this.lightFalloffCoefficients[num3] = constant;
+      this.lightFalloffCoefficients[num3 + 1] = linear;
+      this.lightFalloffCoefficients[num3 + 2] = quadratic;
    }
 
    /**
-    * Sets lighting normals.
+    * Internal helper function. Sets the light normals array at the given index.
+    * Multiplies the normal by the model view.
     *
     * @param num  the index
     * @param xDir the direction x
@@ -3240,15 +3341,24 @@ public abstract class UpOgl extends PGraphicsOpenGL
        * Applying normal matrix to the light direction vector, which is the
        * transpose of the inverse of the model view.
        */
-      final float nx = xDir * this.modelviewInv.m00 + yDir * this.modelviewInv.m10 + zDir * this.modelviewInv.m20;
 
-      final float ny = xDir * this.modelviewInv.m01 + yDir * this.modelviewInv.m11 + zDir * this.modelviewInv.m21;
+      /* @formatter:off */
+      final float nx = xDir * this.modelviewInv.m00 +
+                       yDir * this.modelviewInv.m10 +
+                       zDir * this.modelviewInv.m20;
 
-      final float nz = xDir * this.modelviewInv.m02 + yDir * this.modelviewInv.m12 + zDir * this.modelviewInv.m22;
+      final float ny = xDir * this.modelviewInv.m01 +
+                       yDir * this.modelviewInv.m11 +
+                       zDir * this.modelviewInv.m21;
+
+      final float nz = xDir * this.modelviewInv.m02 +
+                       yDir * this.modelviewInv.m12 +
+                       zDir * this.modelviewInv.m22;
+      /* @formatter:on */
 
       final float mSq = nx * nx + ny * ny + nz * nz;
       final int num3 = num + num + num;
-      if ( 0.0f < mSq ) {
+      if ( mSq > 0.0f ) {
          final float mInv = Utils.invSqrtUnchecked(mSq);
          this.lightNormal[num3] = mInv * nx;
          this.lightNormal[num3 + 1] = mInv * ny;
@@ -3261,13 +3371,28 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Sets positional lighting.
+    * Internal helper function. Sets the light normals array at the given index.
+    * Multiplies the normal by the model view.
     *
     * @param num the index
-    * @param x   the x component
-    * @param y   the y component
-    * @param z   the z component
-    * @param dir treat as a direction or point
+    * @param dir the direction
+    */
+   protected void lightNormal (
+      final int num,
+      final Vec3 dir ) {
+
+      this.lightNormal(num, dir.x, dir.y, dir.z);
+   }
+
+   /**
+    * Internal helper function. Sets positional lighting array at the given
+    * index. Multiplies each vector component by the model view.
+    *
+    * @param num   the index
+    * @param x     the x component
+    * @param y     the y component
+    * @param z     the z component
+    * @param isDir treat as a direction or point
     */
    @Override
    protected void lightPosition (
@@ -3275,21 +3400,49 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float x,
       final float y,
       final float z,
-      final boolean dir ) {
+      final boolean isDir ) {
 
       final int num4 = num + num + num + num;
 
-      this.lightPosition[num4] = x * this.modelview.m00 + y * this.modelview.m01 + z * this.modelview.m02 + this.modelview.m03;
+      /* @formatter:off */
+      this.lightPosition[num4] = x * this.modelview.m00 +
+                                 y * this.modelview.m01 +
+                                 z * this.modelview.m02 +
+                                 this.modelview.m03;
 
-      this.lightPosition[num4 + 1] = x * this.modelview.m10 + y * this.modelview.m11 + z * this.modelview.m12 + this.modelview.m13;
+      this.lightPosition[num4 + 1] = x * this.modelview.m10 +
+                                     y * this.modelview.m11 +
+                                     z * this.modelview.m12 +
+                                     this.modelview.m13;
 
-      this.lightPosition[num4 + 2] = x * this.modelview.m20 + y * this.modelview.m21 + z * this.modelview.m22 + this.modelview.m23;
+      this.lightPosition[num4 + 2] = x * this.modelview.m20 +
+                                     y * this.modelview.m21 +
+                                     z * this.modelview.m22 +
+                                     this.modelview.m23;
+      /* @formatter:on */
 
       /*
        * The w component is 0.0 when the vector represents a direction, 1.0 when
        * the vector represents a point.
        */
-      this.lightPosition[num4 + 3] = dir ? 0.0f : 1.0f;
+      this.lightPosition[num4 + 3] = isDir ? 0.0f : 1.0f;
+   }
+
+   /**
+    * Internal helper function. Sets positional lighting. Sets positional
+    * lighting array at the given index. Multiplies each vector component by the
+    * model view.
+    *
+    * @param num   the index
+    * @param vec   the vector
+    * @param isDir treat as a direction or point
+    */
+   protected void lightPosition (
+      final int num,
+      final Vec3 vec,
+      final boolean isDir ) {
+
+      this.lightPosition(num, vec.x, vec.y, vec.z, isDir);
    }
 
    /**
@@ -3360,32 +3513,57 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float zSource,
       final Vec3 target ) {
 
-      /* Multiply point by model-view matrix. */
-      final float aw = this.modelview.m30 * xSource + this.modelview.m31 * ySource + this.modelview.m32 * zSource + this.modelview.m33;
+      /*
+       * Multiply point by model-view matrix; multiply product by inverse of
+       * camera matrix.
+       */
 
-      final float ax = this.modelview.m00 * xSource + this.modelview.m01 * ySource + this.modelview.m02 * zSource + this.modelview.m03;
+      /* @formatter:off */
+      final float aw = this.modelview.m30 * xSource +
+                       this.modelview.m31 * ySource +
+                       this.modelview.m32 * zSource +
+                       this.modelview.m33;
 
-      final float ay = this.modelview.m10 * xSource + this.modelview.m11 * ySource + this.modelview.m12 * zSource + this.modelview.m13;
+      final float ax = this.modelview.m00 * xSource +
+                       this.modelview.m01 * ySource +
+                       this.modelview.m02 * zSource +
+                       this.modelview.m03;
 
-      final float az = this.modelview.m20 * xSource + this.modelview.m21 * ySource + this.modelview.m22 * zSource + this.modelview.m23;
+      final float ay = this.modelview.m10 * xSource +
+                       this.modelview.m11 * ySource +
+                       this.modelview.m12 * zSource +
+                       this.modelview.m13;
 
-      /* Multiply point by inverse of camera matrix. */
-      final float bw = this.cameraInv.m30 * ax + this.cameraInv.m31 * ay + this.cameraInv.m32 * az + this.cameraInv.m33 * aw;
+      final float az = this.modelview.m20 * xSource +
+                       this.modelview.m21 * ySource +
+                       this.modelview.m22 * zSource +
+                       this.modelview.m23;
+
+      final float bw = this.cameraInv.m30 * ax +
+                       this.cameraInv.m31 * ay +
+                       this.cameraInv.m32 * az +
+                       this.cameraInv.m33 * aw;
 
       if ( bw == 0.0f ) { return target.reset(); }
 
-      final float bx = this.cameraInv.m00 * ax + this.cameraInv.m01 * ay + this.cameraInv.m02 * az + this.cameraInv.m03 * aw;
+      final float bx = this.cameraInv.m00 * ax +
+                       this.cameraInv.m01 * ay +
+                       this.cameraInv.m02 * az +
+                       this.cameraInv.m03 * aw;
 
-      final float by = this.cameraInv.m10 * ax + this.cameraInv.m11 * ay + this.cameraInv.m12 * az + this.cameraInv.m13 * aw;
+      final float by = this.cameraInv.m10 * ax +
+                       this.cameraInv.m11 * ay +
+                       this.cameraInv.m12 * az +
+                       this.cameraInv.m13 * aw;
 
-      final float bz = this.cameraInv.m20 * ax + this.cameraInv.m21 * ay + this.cameraInv.m22 * az + this.cameraInv.m23 * aw;
+      final float bz = this.cameraInv.m20 * ax +
+                       this.cameraInv.m21 * ay +
+                       this.cameraInv.m22 * az +
+                       this.cameraInv.m23 * aw;
+      /* @formatter:off */
 
+      /* Convert from homogeneous coordinate to point by dividing by w. */
       if ( bw == 1.0f ) { return target.set(bx, by, bz); }
-
-      /*
-       * Convert from homogeneous coordinate to point by dividing by fourth
-       * component, w.
-       */
       final float wInv = 1.0f / bw;
       return target.set(
          bx * wInv,
@@ -3701,25 +3879,51 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float zSource,
       final Vec3 target ) {
 
-      /* Multiply point by model-view matrix. */
-      final float aw = this.modelview.m30 * xSource + this.modelview.m31 * ySource + this.modelview.m32 * zSource + this.modelview.m33;
+      /* Multiply by model-view matrix; multiply product by projection. */
 
-      final float ax = this.modelview.m00 * xSource + this.modelview.m01 * ySource + this.modelview.m02 * zSource + this.modelview.m03;
+      /* @formatter:off */
+      final float aw = this.modelview.m30 * xSource +
+                       this.modelview.m31 * ySource +
+                       this.modelview.m32 * zSource +
+                       this.modelview.m33;
 
-      final float ay = this.modelview.m10 * xSource + this.modelview.m11 * ySource + this.modelview.m12 * zSource + this.modelview.m13;
+      final float ax = this.modelview.m00 * xSource +
+                       this.modelview.m01 * ySource +
+                       this.modelview.m02 * zSource +
+                       this.modelview.m03;
 
-      final float az = this.modelview.m20 * xSource + this.modelview.m21 * ySource + this.modelview.m22 * zSource + this.modelview.m23;
+      final float ay = this.modelview.m10 * xSource +
+                       this.modelview.m11 * ySource +
+                       this.modelview.m12 * zSource +
+                       this.modelview.m13;
 
-      /* Multiply new point by projection. */
-      final float bw = this.projection.m30 * ax + this.projection.m31 * ay + this.projection.m32 * az + this.projection.m33 * aw;
+      final float az = this.modelview.m20 * xSource +
+                       this.modelview.m21 * ySource +
+                       this.modelview.m22 * zSource +
+                       this.modelview.m23;
+
+      final float bw = this.projection.m30 * ax +
+                       this.projection.m31 * ay +
+                       this.projection.m32 * az +
+                       this.projection.m33 * aw;
 
       if ( bw == 0.0f ) { return target.reset(); }
 
-      final float bx = this.projection.m00 * ax + this.projection.m01 * ay + this.projection.m02 * az + this.projection.m03 * aw;
+      final float bx = this.projection.m00 * ax +
+                       this.projection.m01 * ay +
+                       this.projection.m02 * az +
+                       this.projection.m03 * aw;
 
-      final float by = this.projection.m10 * ax + this.projection.m11 * ay + this.projection.m12 * az + this.projection.m13 * aw;
+      final float by = this.projection.m10 * ax +
+                       this.projection.m11 * ay +
+                       this.projection.m12 * az +
+                       this.projection.m13 * aw;
 
-      final float bz = this.projection.m20 * ax + this.projection.m21 * ay + this.projection.m22 * az + this.projection.m23 * aw;
+      final float bz = this.projection.m20 * ax +
+                       this.projection.m21 * ay +
+                       this.projection.m22 * az +
+                       this.projection.m23 * aw;
+      /* @formatter:on */
 
       /* Convert homogeneous coordinate. */
       if ( bw != 1.0f ) {
@@ -4003,7 +4207,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
          case PConstants.REPEAT:
 
             /*
-             * Problem is where in meshes which use cylindrical projection (UV
+             * Problem where in meshes that use cylindrical projection (UV
              * sphere, cylinder), u = 1.0 is returned to u = 0.0 by modulo.
              */
 

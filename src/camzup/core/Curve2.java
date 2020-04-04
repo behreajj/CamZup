@@ -345,10 +345,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @see List#iterator()
     */
    @Override
-   public Iterator < Knot2 > iterator ( ) {
-
-      return this.knots.iterator();
-   }
+   public Iterator < Knot2 > iterator ( ) { return this.knots.iterator(); }
 
    /**
     * Gets the number of knots in the curve.
@@ -2149,32 +2146,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       return target.set(
          0.6666667f * a.x + IUtils.ONE_THIRD * b.x,
          0.6666667f * a.y + IUtils.ONE_THIRD * b.y);
-   }
-
-   @Experimental
-   static float winding ( final Curve2 curve ) {
-
-      // RESEARCH Might be over-simplistic mathematically?
-      if ( !curve.closedLoop ) { return 0.0f; }
-
-      float wn = 0.0f;
-      final List < Knot2 > knots = curve.knots;
-      final Iterator < Knot2 > itr = knots.iterator();
-
-      Knot2 prev = itr.next();
-      Knot2 curr = null;
-
-      final Vec2 tan0 = new Vec2();
-      final Vec2 tan1 = new Vec2();
-      while ( itr.hasNext() ) {
-         curr = itr.next();
-         Vec2.sub(prev.foreHandle, prev.coord, tan0);
-         Vec2.sub(curr.coord, curr.rearHandle, tan1);
-         wn += Vec2.cross(tan0, tan1);
-         prev = curr;
-      }
-
-      return wn;
    }
 
    /**

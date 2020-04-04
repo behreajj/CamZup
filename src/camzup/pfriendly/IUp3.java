@@ -195,15 +195,6 @@ public interface IUp3 extends IUp {
       final float yHalfDim = xHalfDim;
       final float zHalfDim = xHalfDim;
       final int sign = this.handedness().getSign();
-      // final float ltx = this.getLookTargetX();
-      // final float lty = this.getLookTargetY();
-      // final float ltz = this.getLookTargetZ();
-      // final float right = ltx + xHalfDim;
-      // final float left = ltx - xHalfDim;
-      // final float top = lty - sign * yHalfDim;
-      // final float bottom = lty + sign * yHalfDim;
-      // final float far = ltz - sign * zHalfDim;
-      // final float near = ltz + sign * zHalfDim;
 
       final float right = xHalfDim;
       final float left = -xHalfDim;
@@ -223,39 +214,44 @@ public interface IUp3 extends IUp {
       this.hint(PConstants.DISABLE_DEPTH_SORT);
 
       this.pushStyle();
+
+      /* Draw corner. */
       this.strokeWeight(strokeWeight * 1.5f);
       this.stroke(0xffffffff);
       this.point(left, bottom, far);
       this.strokeWeight(strokeWeight * 1.375f);
 
+      /* Draw x axis. */
+      this.stroke(IUp.DEFAULT_I_COLOR);
       for ( int j = 0; j < vcount; ++j ) {
          final float jPercent = ( 1 + j ) * toPercent;
          final float x = ( 1.0f - jPercent ) * right + jPercent * left;
          xs[j] = x;
-         this.stroke(IUp.DEFAULT_I_COLOR);
          this.point(x, bottom, far);
       }
 
+      /* Draw y axis. */
+      this.stroke(IUp.DEFAULT_J_COLOR);
       for ( int i = 0; i < vcount; ++i ) {
          final float iPercent = ( 1 + i ) * toPercent;
          final float y = ( 1.0f - iPercent ) * top + iPercent * bottom;
          ys[i] = y;
-         this.stroke(IUp.DEFAULT_J_COLOR);
          this.point(left, y, far);
       }
 
+      /* Draw z axis. */
+      this.stroke(IUp.DEFAULT_K_COLOR);
       for ( int h = 0; h < vcount; ++h ) {
          final float hPercent = ( 1 + h ) * toPercent;
          final float z = ( 1.0f - hPercent ) * near + hPercent * far;
          zs[h] = z;
-         this.stroke(IUp.DEFAULT_K_COLOR);
          this.point(left, bottom, z);
       }
 
       this.strokeWeight(strokeWeight);
       this.stroke(strokeColor);
 
-      /* x plane (y and z vary, x is constant). */
+      /* Draw x plane (y and z vary, x is constant). */
       for ( int h = 0; h < vcount; ++h ) {
          final float z = zs[h];
          for ( int i = 0; i < vcount; ++i ) {
@@ -263,7 +259,7 @@ public interface IUp3 extends IUp {
          }
       }
 
-      /* y plane (x and z vary, y is constant). */
+      /* Draw y plane (x and z vary, y is constant). */
       for ( int h = 0; h < vcount; ++h ) {
          final float z = zs[h];
          for ( int j = 0; j < vcount; ++j ) {
@@ -271,7 +267,7 @@ public interface IUp3 extends IUp {
          }
       }
 
-      /* z plane (x and y vary, z is constant). */
+      /* Draw z plane (x and y vary, z is constant). */
       for ( int i = 0; i < vcount; ++i ) {
          final float y = ys[i];
          for ( int j = 0; j < vcount; ++j ) {

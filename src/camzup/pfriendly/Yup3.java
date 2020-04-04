@@ -1,7 +1,6 @@
 package camzup.pfriendly;
 
 import camzup.core.Handedness;
-import camzup.core.Utils;
 import camzup.core.Vec3;
 
 import processing.core.PApplet;
@@ -393,30 +392,6 @@ public class Yup3 extends Up3 {
          Yup3.DEFAULT_LIGHT_Z);
 
       this.colorMode = colorModeSaved;
-   }
-
-   /**
-    * Sets the renderer projection to a perspective, where objects nearer to the
-    * camera appear larger than objects distant from the camera.
-    *
-    * @param fov    the field of view
-    * @param aspect the aspect ratio, width over height
-    */
-   @Override
-   public void perspective (
-      final float fov,
-      final float aspect ) {
-
-      /*
-       * Not sure why this needs to be overridden and swapped, but it seems to
-       * fix issues with near far clip planes.
-       */
-
-      final float near = IUp.DEFAULT_NEAR_CLIP;
-      float far = IUp.DEFAULT_FAR_CLIP;
-      far *= Utils.max(this.cameraX, this.cameraY, this.cameraZ);
-
-      this.perspective(fov, aspect, near, far);
    }
 
    /**

@@ -22,6 +22,15 @@ pre, code {
     text-decoration: none;
 }
 
+li.topNav, li.bottomNav {
+    display: inline-block;
+}
+
+ul.topNav, ul.bottomNav {
+    overflow: hidden;
+    white-space:nowrap;
+}
+
 a {
     color: #1b3865;
     font-style: normal;

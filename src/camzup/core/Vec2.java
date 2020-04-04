@@ -110,10 +110,10 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    public int compareTo ( final Vec2 v ) {
 
       /* @formatter:off */
-      return this.y > v.y ? 1
-          : this.y < v.y ? -1
-          : this.x > v.x ? 1
-          : this.x < v.x ? -1 : 0;
+      return this.y > v.y ?  1
+           : this.y < v.y ? -1
+           : this.x > v.x ?  1
+           : this.x < v.x ? -1 : 0;
       /* @formatter:on */
    }
 

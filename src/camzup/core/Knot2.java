@@ -300,13 +300,14 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    @Override
    public int hashCode ( ) {
 
-      return ( ( IUtils.MUL_BASE ^ ( this.coord == null ? 0
-         : this.coord
-            .hashCode() ) ) * IUtils.HASH_MUL ^ ( this.foreHandle == null ? 0
-               : this.foreHandle
-                  .hashCode() ) ) * IUtils.HASH_MUL ^ ( this.rearHandle == null
-                     ? 0
-                     : this.rearHandle.hashCode() );
+      /* @formatter:off */
+      return ( ( IUtils.MUL_BASE ^
+             ( this.coord == null ? 0 : this.coord.hashCode() ) )
+             * IUtils.HASH_MUL ^
+             ( this.foreHandle == null ? 0 : this.foreHandle.hashCode() ) )
+             * IUtils.HASH_MUL ^
+             ( this.rearHandle == null ? 0 : this.rearHandle.hashCode() );
+      /* @formatter:on */
    }
 
    /**
@@ -1464,10 +1465,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

@@ -850,6 +850,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    @Chainable
    public Mesh3 reframe ( final Transform3 tr ) {
 
+      tr.locPrev.set(tr.location);
+      tr.scalePrev.set(tr.scale);
+
       final Vec3 dim = tr.scale;
       final Vec3 lb = tr.location;
       final Vec3 ub = new Vec3();

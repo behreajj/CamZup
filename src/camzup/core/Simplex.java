@@ -1935,8 +1935,7 @@ public abstract class Simplex {
       final int seed,
       final Vec3 target ) {
 
-      return Simplex.noise(v, seed, target,
-         null, null, null);
+      return Simplex.noise(v, seed, target, null, null, null);
    }
 
    /**

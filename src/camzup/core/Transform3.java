@@ -541,31 +541,6 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Rotates the transform by an axis and angle in radians. Updates the
-    * transform's axes.
-    *
-    * @param radians the angle
-    * @param axis    the axis
-    *
-    * @return this transform
-    *
-    * @see Quaternion#rotate(Quaternion, float, Vec3, Quaternion)
-    * @see Transform3#updateAxes()
-    */
-   @Chainable
-   @Experimental
-   public Transform3 rotateBy (
-      final float radians,
-      final Vec3 axis ) {
-
-      this.rotPrev.set(this.rotation);
-      Quaternion.rotate(this.rotPrev, radians, axis, this.rotation);
-      this.updateAxes();
-
-      return this;
-   }
-
-   /**
     * Rotates the transform by adding a rotation, then normalizing. Updates the
     * transform's axes.
     *

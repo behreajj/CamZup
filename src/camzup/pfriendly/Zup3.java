@@ -488,13 +488,14 @@ public class Zup3 extends Up3 {
       final int num3 = num + num + num;
       if ( 0.0f < mSq ) {
          final float mInv = Utils.invSqrtUnchecked(mSq);
-//         this.lightNormal[num3] = mInv * -nx;
-//         this.lightNormal[num3 + 1] = mInv * nz;
-//         this.lightNormal[num3 + 2] = mInv * -ny;
+
+//         this.lightNormal[num3] = mInv * nx;
+//         this.lightNormal[num3 + 1] = mInv * ny;
+//         this.lightNormal[num3 + 2] = mInv * nz;
 
          this.lightNormal[num3] = mInv * nx;
-         this.lightNormal[num3 + 1] = mInv * ny;
-         this.lightNormal[num3 + 2] = mInv * nz;
+         this.lightNormal[num3 + 1] = mInv * -ny;
+         this.lightNormal[num3 + 2] = mInv * -nz;
       } else {
          this.lightNormal[num3] = 0.0f;
          this.lightNormal[num3 + 1] = 0.0f;

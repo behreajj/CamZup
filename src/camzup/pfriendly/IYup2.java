@@ -1149,8 +1149,7 @@ public interface IYup2 extends IUp {
       if ( w != 0.0f && h != 0.0f ) {
          this.camera(
             this.getLocX(), this.getLocY(),
-            this.getRoll(),
-            w, h);
+            this.getRoll(), w, h);
       }
    }
 

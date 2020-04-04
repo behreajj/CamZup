@@ -128,6 +128,17 @@ public abstract class TextShape {
          str.toCharArray());
    }
 
+   /**
+    * Converts a list of characters to an array of mesh entities. The PFont
+    * should have been created with createFont, not loadFont.
+    *
+    * @param pfont      the PFont
+    * @param detail     the level of detail
+    * @param separate   separate curve per char
+    * @param characters the characters
+    *
+    * @return the array
+    */
    public static MeshEntity2[] glyphMesh (
       final PFont pfont,
       final float detail,
@@ -138,6 +149,17 @@ public abstract class TextShape {
          pfont, detail, separate, characters);
    }
 
+   /**
+    * Converts a string to a an array of mesh entities. The PFont should have
+    * been created with createFont, not loadFont.
+    *
+    * @param pfont    the PFont
+    * @param detail   the level of detail
+    * @param separate separate curve per char
+    * @param str      the string
+    *
+    * @return the array
+    */
    public static MeshEntity2[] glyphMesh (
       final PFont pfont,
       final float detail,
@@ -257,8 +279,8 @@ public abstract class TextShape {
    }
 
    /**
-    * A function to convert a character to an list of curve entities. A helper
-    * function for other variants of getGlyph.<br>
+    * Converts a character to an list of curve entities. A helper function for
+    * other variants of getGlyph.<br>
     * <br>
     * When multiple characters are provided, the kerning between characters is
     * better; when one character is supplied, glyphs with multiple curves (i, j,
@@ -290,8 +312,8 @@ public abstract class TextShape {
    }
 
    /**
-    * A function to convert a character to an list of curve entities. A helper
-    * function for other variants of getGlyph.<Br>
+    * Converts an array of characters to an list of curve entities. A helper
+    * function for other variants of getGlyph.<br>
     * <br>
     * When multiple characters are provided, the kerning between characters is
     * better; when one character is supplied, glyphs with multiple curves (i, j,
@@ -312,7 +334,6 @@ public abstract class TextShape {
     * @see Shape#getPathIterator(java.awt.geom.AffineTransform, double)
     * @see Font#getSize()
     * @see PathIterator#currentSegment(float[])
-    * @see Vec2#mix(Vec2, Vec2, float, Vec2)
     */
    @SuppressWarnings ( "null" )
    protected static List < Curve2 > processGlyphCurve (
@@ -537,6 +558,26 @@ public abstract class TextShape {
       return entities.toArray(new MeshEntity2[entities.size()]);
    }
 
+   /**
+    * Converts a character to an list of meshes. A helper function for other
+    * variants of getGlyph.<br>
+    * <br>
+    * When multiple characters are provided, the kerning between characters is
+    * better; when one character is supplied, glyphs with multiple curves (i, j,
+    * p, etc.) are easier to organize.
+    *
+    * @param font      the AWT font
+    * @param frc       the font render context
+    * @param transform the AWT affine transform
+    * @param detail    the detail
+    * @param character the character
+    * @param curves    the list of curves
+    *
+    * @return the list of curves
+    *
+    * @see TextShape#processGlyphMesh(Font, FontRenderContext, AffineTransform,
+    *      float, char[], List)
+    */
    @Experimental
    protected static List < Mesh2 > processGlyphMesh (
       final Font font,
@@ -550,6 +591,30 @@ public abstract class TextShape {
          new char[] { character }, meshes);
    }
 
+   /**
+    * Converts an array of characters to an list of meshes. A helper function
+    * for other variants of getGlyph.<br>
+    * <br>
+    * When multiple characters are provided, the kerning between characters is
+    * better; when one character is supplied, glyphs with multiple curves (i, j,
+    * p, etc.) are easier to organize.
+    *
+    * @param font       the AWT font
+    * @param frc        the font render context
+    * @param transform  the AWT affine transform
+    * @param detail     the detail
+    * @param characters the characters array
+    * @param meshes     the list of meshes
+    *
+    * @return the list of meshes
+    *
+    * @see Font#createGlyphVector(FontRenderContext, char[])
+    * @see GlyphVector#getOutline()
+    * @see Shape#getPathIterator(java.awt.geom.AffineTransform)
+    * @see Shape#getPathIterator(java.awt.geom.AffineTransform, double)
+    * @see Font#getSize()
+    * @see PathIterator#currentSegment(float[])
+    */
    @Experimental
    @SuppressWarnings ( "null" )
    protected static List < Mesh2 > processGlyphMesh (

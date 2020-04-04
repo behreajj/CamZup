@@ -1,5 +1,7 @@
 package camzup.pfriendly;
 
+import processing.opengl.PGL;
+
 /**
  * Maintains consistent behavior across OpenGL renderers, even when they are of
  * different dimensions.
@@ -89,5 +91,11 @@ public interface IUpOgl extends IUp {
     * Default specular light red channel.
     */
    float DEFAULT_SPEC_R = 0.375f;
+
+   /**
+    * Duplicate of {@link PGL#MAX_LIGHTS}. Maximum lights by default is 8, the
+    * minimum defined by OpenGL.
+    */
+   int MAX_LIGHTS = 8;
 
 }

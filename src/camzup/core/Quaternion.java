@@ -1181,47 +1181,63 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Handedness handedness,
       final Quaternion target ) {
 
-      // TEST
-
       final float mSq0 = dir.x * dir.x + dir.y * dir.y + dir.z * dir.z;
-      if ( mSq0 == 0.0f ) { return target.reset(); }
+      if ( Utils.approx(mSq0, 0.0f) ) { return target.reset(); }
 
       final float mInv0 = Utils.invSqrtUnchecked(mSq0);
       final float xForward = dir.x * mInv0;
       final float yForward = dir.y * mInv0;
       final float zForward = dir.z * mInv0;
 
-      float x1 = 0.0f;
-      float y1 = 0.0f;
-      float z1 = 0.0f;
+      /*
+       * Left handed: Cross (0.0, -1.0, 0.0) and forward. Right handed: Cross
+       * (0.0, 0.0, -1.0) and forward.
+       */
+      final boolean isRight = handedness == Handedness.RIGHT;
+      final float x1 = isRight ? yForward : -zForward;
+      final float y1 = isRight ? -xForward : 0.0f;
+      final float z1 = isRight ? 0.0f : xForward;
 
-      switch ( handedness ) {
-
-         case LEFT:
-
-            /* Cross (0.0, -1.0, 0.0) and forward. */
-            x1 = -zForward;
-            y1 = 0.0f;
-            z1 = xForward;
-
-            break;
-
-         case RIGHT:
-
-         default:
-
-            /* Cross (0.0, 0.0, -1.0) and forward. */
-            x1 = yForward;
-            y1 = -xForward;
-            z1 = 0.0f;
-
-      }
-
+      /* Polarity: an infinite number of orientations is possible. */
       final boolean parallel = Utils.approx(x1, 0.0f) && Utils.approx(y1,
          0.0f) && Utils.approx(z1, 0.0f);
+
       if ( parallel ) {
-         // TODO: Flesh this out to match above.
-         return target.reset();
+
+         if ( isRight ) {
+
+            /*
+             * In a right-handed coordinate system, the forward axis is either
+             * (0.0, 0.0, 1.0) or (0.0, 0.0, -1.0) .
+             */
+            if ( zForward >= 0.0f ) {
+
+               return target.set(IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2,
+                  0.0f, 0.0f);
+
+            } else if ( zForward < 0.0f ) {
+
+               return target.set(-IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2,
+                  0.0f, 0.0f);
+            }
+
+         } else {
+
+            /*
+             * In a left-handed coordinate system, the forward axis is either
+             * (0.0, 1.0, 0.0) or (0.0, -1.0, 0.0) .
+             */
+            if ( yForward >= 0.0f ) {
+
+               return target.set(0.0f, 0.0f, 1.0f, 0.0f);
+
+            } else if ( yForward < 0.0f ) {
+
+               return target.set(0.0f, 0.0f, 0.0f, 1.0f);
+
+            }
+         }
+
       }
 
       /* Normalize right. */
@@ -1230,31 +1246,10 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float yRight = y1 * mInv1;
       final float zRight = z1 * mInv1;
 
-      float x2 = 0.0f;
-      float y2 = 0.0f;
-      float z2 = 0.0f;
-
-      switch ( handedness ) {
-
-         case LEFT:
-
-            // Shouldn't left and right match?
-
-            x2 = yForward * zRight - zForward * yRight;
-            y2 = zForward * xRight - xForward * zRight;
-            z2 = xForward * yRight - yForward * xRight;
-
-            break;
-
-         case RIGHT:
-
-         default:
-
-            x2 = yRight * zForward - zRight * yForward;
-            y2 = zRight * xForward - xRight * zForward;
-            z2 = xRight * yForward - yRight * xForward;
-
-      }
+      /* Cross right and forward to get up. */
+      final float x2 = yRight * zForward - zRight * yForward;
+      final float y2 = zRight * xForward - xRight * zForward;
+      final float z2 = xRight * yForward - yRight * xForward;
 
       /* Normalize forward. */
       final float mInv2 = Utils.invHypot(x2, y2, z2);
@@ -1306,9 +1301,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          return target.reset();
       }
 
-      final boolean isRight = handedness == Handedness.RIGHT;
       Vec3.normalize(dir, forward);
-
+      final boolean isRight = handedness == Handedness.RIGHT;
       if ( isRight ) {
          right.set(forward.y, -forward.x, 0.0f);
       } else {
@@ -1324,7 +1318,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
              * In a right-handed coordinate system, the forward axis is either
              * (0.0, 0.0, 1.0) or (0.0, 0.0, -1.0) .
              */
-            if ( forward.z > 0.0f ) {
+            if ( forward.z >= 0.0f ) {
 
                Vec3.right(right);
                Vec3.up(forward);
@@ -1348,7 +1342,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
              * In a left-handed coordinate system, the forward axis is either
              * (0.0, 1.0, 0.0) or (0.0, -1.0, 0.0) .
              */
-            if ( forward.y > 0.0f ) {
+            if ( forward.y >= 0.0f ) {
 
                Vec3.left(right);
                Vec3.forward(forward);
@@ -1369,13 +1363,13 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       }
 
       Vec3.normalize(right, right);
+      Vec3.crossNorm(right, forward, up);
 
-      if ( isRight ) {
-         Vec3.crossNorm(right, forward, up);
-      } else {
-         // Vec3.crossNorm(forward, right, up);
-         Vec3.crossNorm(right, forward, up);
-      }
+//      if ( isRight ) {
+//         Vec3.crossNorm(right, forward, up);
+//      } else {
+//          Vec3.crossNorm(forward, right, up);
+//      }
 
       return Quaternion.fromAxes(right, forward, up, target);
    }
@@ -1981,6 +1975,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Vec3 axis,
       final Quaternion target ) {
 
+      // TODO: Seems to routinely return a quaternion with one of its
+      // components set to zero.
+
       final float mSq = Quaternion.magSq(q);
       if ( mSq == 0.0f ) {
          return Quaternion.fromAxisAngle(
@@ -1989,14 +1986,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
       final float wNorm = q.real * Utils.invSqrtUnchecked(mSq);
       final float halfAngle = Utils.acos(wNorm);
-
-      // TODO: Seems to routinely return a quaternion with one of its
-      // components set to zero.
-
-      // return Quaternion.fromAxisAngle(
-      // Utils.modRadians(
-      // halfAngle + halfAngle + radians),
-      // axis, target);
 
       return Quaternion.fromAxisAngle(
          ( halfAngle + halfAngle + radians ) % IUtils.TAU,

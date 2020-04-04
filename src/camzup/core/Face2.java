@@ -473,6 +473,7 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
       final Vert2[] verts = face.vertices;
       final int len = verts.length;
 
+      /* @formatter:off */
       for ( int i = 0; i < len; ++i ) {
 
          final Vec2 curr = verts[i].coord;
@@ -480,16 +481,19 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
 
          if ( curr.y <= point.y && next.y > point.y ) {
 
-            final float eval = ( next.x - curr.x ) * ( point.y - curr.y ) - ( point.x - curr.x ) * ( next.y - curr.y );
+            final float eval = ( next.x - curr.x ) * ( point.y - curr.y ) -
+                               ( point.x - curr.x ) * ( next.y - curr.y );
             if ( eval > 0.0f ) { ++wn; }
 
          } else if ( next.y <= point.y ) {
 
-            final float eval = ( next.x - curr.x ) * ( point.y - curr.y ) - ( point.x - curr.x ) * ( next.y - curr.y );
+            final float eval = ( next.x - curr.x ) * ( point.y - curr.y ) -
+                               ( point.x - curr.x ) * ( next.y - curr.y );
             if ( eval < 0.0f ) { --wn; }
 
          }
       }
+      /* @formatter:on */
 
       return wn > 0;
    }
@@ -651,10 +655,7 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

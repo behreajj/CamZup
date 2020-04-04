@@ -369,8 +369,6 @@ public abstract class Convert {
       shape.setName(source.name);
       shape.set3D(dim);
 
-      final Transform2 srctr = source.transform;
-      final Vec2 vTr = new Vec2();
       final Iterator < Mesh2 > itr = source.meshes.iterator();
       while ( itr.hasNext() ) {
          final Mesh2 srcMesh = itr.next();
@@ -392,10 +390,8 @@ public abstract class Convert {
 
             face.beginShape(PConstants.POLYGON);
             for ( int j = 0; j < vertsLen; ++j ) {
-               final int[] vert = verts[j];
-               final Vec2 v = vs[vert[0]];
-               Transform2.mulPoint(srctr, v, vTr);
-               face.vertex(vTr.x, vTr.y);
+               final Vec2 v = vs[verts[j][0]];
+               face.vertex(v.x, v.y);
             }
             face.endShape(PConstants.CLOSE);
             trgMesh.addChild(face);
@@ -403,13 +399,26 @@ public abstract class Convert {
          shape.addChild(trgMesh);
       }
 
+      /* Use loose float version of apply matrix to avoid PShape bug. */
+      final Transform2 srctr = source.transform;
+      final PMatrix2D m = Convert.toPMatrix2D(
+         srctr, TransformOrder.RST, new PMatrix2D());
+      shape.resetMatrix();
+      shape.applyMatrix(
+         m.m00, m.m01, m.m02,
+         m.m10, m.m11, m.m12);
+
+      /* Stroke weight is scaled with the transform above. */
+      final float maxDim = Transform2.maxDimension(srctr);
+      shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
       shape.disableStyle();
       return shape;
    }
 
    /**
-    * Converts a 2D mesh entity to a PShape. The entity's transform is converted
-    * to a matrix which is applied to the shape.
+    * Converts a 2D mesh entity to a PShapeOpenGL. Requires a PGraphicsOpenGL
+    * renderer. The entity's transform is converted to a matrix which is applied
+    * to the shape.
     *
     * @param rndr   the renderer
     * @param source the source entity
@@ -459,13 +468,14 @@ public abstract class Convert {
          shape.addChild(trgMesh);
       }
 
+      /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform2 srctr = source.transform;
+      final PMatrix2D m = Convert.toPMatrix2D(
+         srctr, TransformOrder.RST, new PMatrix2D());
       shape.resetMatrix();
       shape.applyMatrix(
-         Convert.toPMatrix2D(
-            srctr,
-            TransformOrder.RST,
-            new PMatrix2D()));
+         m.m00, m.m01, m.m02,
+         m.m10, m.m11, m.m12);
 
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
@@ -475,8 +485,9 @@ public abstract class Convert {
    }
 
    /**
-    * Converts a 2D mesh entity to a PShape. The entity's transform is converted
-    * to a matrix which is applied to the shape.
+    * Converts a 2D mesh entity to a PShapeOpenGL. Requires a PGraphicsOpenGL
+    * renderer. The entity's transform is converted to a matrix which is applied
+    * to the shape.
     *
     * @param rndr   the renderer
     * @param source the source entity
@@ -528,13 +539,16 @@ public abstract class Convert {
          shape.addChild(trgMesh);
       }
 
+      /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform3 srctr = source.transform;
+      final PMatrix3D m = Convert.toPMatrix3D(
+         srctr, TransformOrder.RST, new PMatrix3D());
       shape.resetMatrix();
       shape.applyMatrix(
-         Convert.toPMatrix3D(
-            srctr,
-            TransformOrder.RST,
-            new PMatrix3D()));
+         m.m00, m.m01, m.m02, m.m03,
+         m.m10, m.m11, m.m12, m.m13,
+         m.m20, m.m21, m.m22, m.m23,
+         m.m30, m.m31, m.m32, m.m33);
 
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform3.maxDimension(srctr);
@@ -590,32 +604,6 @@ public abstract class Convert {
     * @return the vector
     */
    public static PVector toPVector ( final Vec3 source, PVector target ) {
-
-      if ( target == null ) { target = new PVector(); }
-      return target.set(source.x, source.y, source.z);
-   }
-
-   /**
-    * Converts a Vec4 to a PVector.
-    *
-    * @param source the source vector
-    *
-    * @return the vector
-    */
-   public static PVector toPVector ( final Vec4 source ) {
-
-      return Convert.toPVector(source, ( PVector ) null);
-   }
-
-   /**
-    * Converts a Vec4 to a PVector.
-    *
-    * @param source the source vector
-    * @param target the target vector
-    *
-    * @return the vector
-    */
-   public static PVector toPVector ( final Vec4 source, PVector target ) {
 
       if ( target == null ) { target = new PVector(); }
       return target.set(source.x, source.y, source.z);

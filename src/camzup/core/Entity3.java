@@ -90,6 +90,27 @@ public class Entity3 extends Entity implements ISpatial3 {
    }
 
    /**
+    * Orients the entity to look at a target point.
+    *
+    * @param point      the target point
+    * @param step       the step
+    * @param handedness the handedness
+    *
+    * @return this transform
+    *
+    * @see Transform3#lookAt(Vec3, float, Handedness)
+    */
+   @Chainable
+   public Entity3 lookAt (
+      final Vec3 point,
+      final float step,
+      final Handedness handedness ) {
+
+      this.transform.lookAt(point, step, handedness);
+      return this;
+   }
+
+   /**
     * Moves this entity by a vector.
     *
     * @param dir the vector
@@ -134,24 +155,6 @@ public class Entity3 extends Entity implements ISpatial3 {
       final float step ) {
 
       this.transform.moveTo(locNew, step);
-      return this;
-   }
-
-   /**
-    * Rotates this entity by an axis and angle in radians.
-    *
-    * @param radians the angle in radians
-    * @param axis    the axis
-    *
-    * @return this entity
-    */
-   @Override
-   @Chainable
-   public Entity3 rotateBy (
-      final float radians,
-      final Vec3 axis ) {
-
-      this.transform.rotateBy(radians, axis);
       return this;
    }
 

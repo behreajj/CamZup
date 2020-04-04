@@ -669,16 +669,6 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
          target.up);
       Face3.centerMean(face, target.location);
 
-      // if ( target.location.z < 0.0f ) {
-      // Vec3.negate(target.up, target.up);
-      // Vec3.negate(target.right, target.right);
-      // Quaternion.fromAxes(
-      // target.right,
-      // target.forward,
-      // target.up,
-      // target.rotation);
-      // }
-
       return target;
    }
 

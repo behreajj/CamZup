@@ -70,10 +70,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * @return a new complex number
     */
    @Override
-   public Complex clone ( ) {
-
-      return new Complex(this.real, this.imag);
-   }
+   public Complex clone ( ) { return new Complex(this.real, this.imag); }
 
    /**
     * Returns -1 when this complex number is less than the comparisand; 1 when
@@ -87,10 +84,12 @@ public class Complex implements Comparable < Complex >, Cloneable,
    @Override
    public int compareTo ( final Complex z ) {
 
-      return this.imag > z.imag ? 1
-         : this.imag < z.imag ? -1
-            : this.real > z.real ? 1
-               : this.real < z.real ? -1 : 0;
+      /* @formatter:off */
+      return this.imag > z.imag ?  1
+           : this.imag < z.imag ? -1
+           : this.real > z.real ?  1
+           : this.real < z.real ? -1 : 0;
+      /* @formatter:on */
    }
 
    /**

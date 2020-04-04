@@ -107,7 +107,7 @@ public abstract class Utils implements IUtils {
    public static int and ( final float a, final float b ) {
 
       // return Utils.toInt(Utils.toBool(a) & Utils.toBool(b));
-      return a == 0.0f || b == 0.0f || a != a || b != b ? 0 : 1;
+      return a != a || b != b || a == 0.0f || b == 0.0f ? 0 : 1;
    }
 
    /**
@@ -422,7 +422,6 @@ public abstract class Utils implements IUtils {
     */
    public static float diff ( final float a, final float b ) {
 
-      // return Utils.abs(a - b);
       return Float.intBitsToFloat(0x7fffffff & Float.floatToRawIntBits(a - b));
    }
 

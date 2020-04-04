@@ -2,10 +2,7 @@ import camzup.pfriendly.*;
 import camzup.core.*;
 
 Zup3 graphics3;
-Vec3 rotAxis = new Vec3(0.0, 0.6, 0.8);
-
 MaterialSolid[] materials;
-
 MeshEntity3[] entities;
 
 void settings() {
@@ -40,9 +37,9 @@ void setup() {
     .append(Mesh3.icosahedron(new Mesh3()))
   };
 
-  Vec3 ub = new Vec3(width * 0.4, 0.0, 0.0);
+  Vec3 ub = new Vec3(width * 0.425, 0.0, 0.0);
   Vec3 lb = Vec3.negate(ub, new Vec3());
-  float scl = min(width, height) * 0.25;
+  float scl = min(width, height) * 0.3;
   int len = entities.length;
   for (int i = 0; i < len; ++i) {
     float prc = i * 0.25;
@@ -60,8 +57,9 @@ void draw() {
   graphics3.lights();
   graphics3.background();
   graphics3.origin(75.0, 1.0);
+  
   for (MeshEntity3 me3 : entities) {
-    me3.rotateBy(0.01, rotAxis);
+    me3.rotateZ(0.01);
     graphics3.shape(me3, materials);
   }
 }

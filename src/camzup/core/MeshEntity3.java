@@ -356,7 +356,6 @@ public class MeshEntity3 extends Entity3
          .append("    cr = pbr_in[\"Clearcoat Roughness\"]\n")
          .append(
             "    cr.default_value = material[\"clearcoat_roughness\"]\n")
-
          .append("meshes = mesh_entity[\"meshes\"]\n")
          .append("d_meshes = D.meshes\n")
          .append("for mesh in meshes:\n")
@@ -448,10 +447,7 @@ public class MeshEntity3 extends Entity3
     * @return the string
     */
    @Override
-   public String toString ( ) {
-
-      return this.toString(4, 8);
-   }
+   public String toString ( ) { return this.toString(4, 8); }
 
    /**
     * Returns a string representation of this mesh entity.

@@ -37,17 +37,6 @@ public interface ISpatial3 {
    ISpatial3 moveTo ( final Vec3 locNew, final float step );
 
    /**
-    * Rotates the object by an axis and angle in radians.
-    *
-    * @param radians the angle in radians
-    * @param axis    the axis
-    *
-    * @return this object
-    */
-   @Chainable
-   ISpatial3 rotateBy ( final float radians, final Vec3 axis );
-
-   /**
     * Rotates this object by a quaternion.
     *
     * @param rot the quaternion

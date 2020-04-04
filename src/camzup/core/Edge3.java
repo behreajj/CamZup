@@ -97,10 +97,12 @@ public class Edge3 implements Comparable < Edge3 > {
    @Override
    public int hashCode ( ) {
 
-      return ( IUtils.MUL_BASE ^ ( this.origin == null ? 0
-         : this.origin.hashCode() ) ) * IUtils.HASH_MUL ^ ( this.dest == null
-            ? 0
-            : this.dest.hashCode() );
+      /* @formatter:off */
+      return ( IUtils.MUL_BASE ^
+         ( this.origin == null ? 0 : this.origin.hashCode() ) ) *
+         IUtils.HASH_MUL ^
+         ( this.dest == null ? 0 : this.dest.hashCode() );
+      /* @formatter:on */
    }
 
    /**

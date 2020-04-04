@@ -391,16 +391,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Evaluates a Bezier curve at step t for points a, b, c and d. The parameter
-    * t varies between 0 and 1; a and d are points on the curve; b and c are the
-    * control points. This can be done once with the x coordinates and a second
-    * time with the y coordinates to get the location of a bezier curve at t.
+    * Evaluates a Bezier curve at step t for points ap0, cp0, cp1 and ap1. The
+    * parameter t varies between [0.0, 1.0]; ap0 and ap1 are the curve's anchor
+    * points; cp0 and cp1 the control points. This can be done once with the x
+    * coordinates and a second time with the y coordinates to get the location
+    * of a Bezier curve at t.
     *
-    * @param ap0 coordinate of first point on the curve
-    * @param cp0 coordinate of first control point
-    * @param cp1 coordinate of second control point
-    * @param ap1 coordinate of second point on the curve
-    * @param t   step in the range [0.0, 1.0]
+    * @param ap0 the first anchor point
+    * @param cp0 the first control point
+    * @param cp1 the second control point
+    * @param ap1 the second anchor point
+    * @param t   the step
     *
     * @return the evaluation
     */
@@ -412,20 +413,23 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float ap1,
       final float t ) {
 
+      /* @formatter:off */
       final float u = 1.0f - t;
-      return ( ap0 * u + cp0 * ( t + t + t ) ) * u * u + ( cp1 * ( u + u + u ) + ap1 * t ) * t * t;
+      return ( ap0 * u + cp0 * ( t + t + t ) ) * u * u +
+             ( ap1 * t + cp1 * ( u + u + u ) ) * t * t;
+      /* @formatter:on */
    }
 
    /**
     * Calculates the tangent of a point on a Bezier curve.
     *
-    * @param ap0 coordinate of first point on the curve
-    * @param cp0 coordinate of first control point
-    * @param cp1 coordinate of second control point
-    * @param ap1 coordinate of second point on the curve
-    * @param t   step in the range [0.0, 1.0]
+    * @param ap0 the first anchor point
+    * @param cp0 the first control point
+    * @param cp1 the second control point
+    * @param ap1 the second anchor point
+    * @param t   the step
     *
-    * @return the evaluation
+    * @return the tangent
     */
    @Override
    public float bezierTangent (
@@ -440,7 +444,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float ac = ap0 + cp1;
       final float bna = cp0 - ap0;
 
-      return t3 * t * ( b2 + cp0 + ap1 - ( ac + cp1 + cp1 ) ) + ( t3 + t3 ) * ( ac - b2 ) + ( bna + bna + bna );
+      /* @formatter:off */
+      return t3 * t * ( b2 + cp0 + ap1 - ( ac + cp1 + cp1 ) ) +
+         ( t3 + t3 ) * ( ac - b2 ) + ( bna + bna + bna );
+      /* @formatter:on */
    }
 
    /**
@@ -2785,14 +2792,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
    /**
     * shapeMode is not supported by this renderer; it defaults to CENTER. Set
-    * the scale of the shape with instance methods instead.
+    * the scale of the shape with instance methods instead.<br>
+    * <br>
+    * This will not throw a missing method warning, because it may be called by
+    * PShapes.
     */
    @Override
    @SuppressWarnings ( "unused" )
-   public void shapeMode ( final int mode ) {
-
-      PApplet.showMissingWarning("shapeMode");
-   }
+   public void shapeMode ( final int mode ) {}
 
    /**
     * Applies a shear transform to the renderer.
@@ -3223,88 +3230,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void vertex ( final Vec2 v ) { this.vertex(v.x, v.y); }
 
    /**
-    * Draws a rectangle. The meaning of the four parameters depends on rectMode.
-    *
-    * @param a the first x parameter
-    * @param b the first y parameter
-    * @param c the second x parameter
-    * @param d the second y parameter
-    */
-   @Deprecated
-   void rectOld (
-      final float a, final float b,
-      final float c, final float d ) {
-
-      /*
-       * It is simpler to draw straight lines than to defer to the
-       * rounded-corner rectImpl.
-       */
-      float x0 = 0.0f;
-      float y0 = 0.0f;
-      float x1 = 0.0f;
-      float y1 = 0.0f;
-
-      float w = 0.0f;
-      float h = 0.0f;
-
-      switch ( this.rectMode ) {
-
-         case CORNER:
-
-            w = Utils.abs(c);
-            h = Utils.abs(d);
-
-            x0 = a;
-            y0 = b - h;
-            x1 = a + w;
-            y1 = b;
-
-            break;
-
-         case CORNERS:
-
-            x0 = Utils.min(a, c);
-            x1 = Utils.max(a, c);
-
-            y0 = Utils.min(b, d);
-            y1 = Utils.max(b, d);
-
-            break;
-
-         case RADIUS:
-
-            w = Utils.abs(c);
-            h = Utils.abs(d);
-
-            x0 = a - w;
-            x1 = a + w;
-            y0 = b + h;
-            y1 = b - h;
-
-            break;
-
-         case CENTER:
-
-         default:
-            w = Utils.abs(c) * 0.5f;
-            h = Utils.abs(d) * 0.5f;
-
-            x0 = a - w;
-            x1 = a + w;
-            y0 = b + h;
-            y1 = b - h;
-      }
-
-      this.gp.reset();
-      this.gp.moveTo(x0, y0);
-      this.gp.lineTo(x1, y0);
-      this.gp.lineTo(x1, y1);
-      this.gp.lineTo(x0, y1);
-      this.gp.closePath();
-      this.drawShapeSolid(this.gp);
-   }
-
-   /**
     * The arc implementation. The underlying Java AWT arc asks for a start angle
     * and an arc length, not a stop angle, in degrees, not radians.
     *
@@ -3387,17 +3312,18 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    protected void backgroundFromCalc ( ) {
 
+      final boolean isRgb = this.format == PConstants.RGB;
+
       this.backgroundR = this.calcR;
       this.backgroundG = this.calcG;
       this.backgroundB = this.calcB;
-      this.backgroundA = this.format == PConstants.RGB ? 1.0f : this.calcA;
+      this.backgroundA = isRgb ? 1.0f : this.calcA;
 
       this.backgroundRi = this.calcRi;
       this.backgroundGi = this.calcGi;
       this.backgroundBi = this.calcBi;
-      this.backgroundAi = this.format == PConstants.RGB ? 255 : this.calcAi;
-      this.backgroundAlpha = this.format == PConstants.RGB ? false
-         : this.calcAlpha;
+      this.backgroundAi = isRgb ? 255 : this.calcAi;
+      this.backgroundAlpha = isRgb ? false : this.calcAlpha;
       this.backgroundColor = this.calcColor;
 
       this.backgroundImpl();
@@ -3491,9 +3417,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
       this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
       this.calcAi = ( int ) ( this.calcA * 0xff + 0.5f );
-
-      this.calcColor = this.calcAi << 0x18 | this.calcRi << 0x10 | this.calcGi << 0x8 | this.calcBi;
       this.calcAlpha = this.calcAi != 0xff;
+
+      /* @formatter:off */
+      this.calcColor = this.calcAi << 0x18
+         | this.calcRi << 0x10
+         | this.calcGi << 0x8
+         | this.calcBi;
+      /* @formatter:on */
    }
 
    /**
@@ -3552,9 +3483,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
       this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
       this.calcAi = ( int ) ( this.calcA * 0xff + 0.5f );
-
-      this.calcColor = this.calcAi << 0x18 | this.calcRi << 0x10 | this.calcGi << 0x8 | this.calcBi;
       this.calcAlpha = this.calcAi != 0xff;
+
+      /* @formatter:off */
+      this.calcColor = this.calcAi << 0x18
+         | this.calcRi << 0x10
+         | this.calcGi << 0x8
+         | this.calcBi;
+      /* @formatter:on */
    }
 
    /**

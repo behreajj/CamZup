@@ -7,7 +7,6 @@ import camzup.core.Color;
 import camzup.core.Curve3;
 import camzup.core.CurveEntity3;
 import camzup.core.Experimental;
-import camzup.core.Handedness;
 import camzup.core.IUtils;
 import camzup.core.Knot3;
 import camzup.core.MaterialSolid;
@@ -19,7 +18,6 @@ import camzup.core.TransformOrder;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
-import camzup.core.Vec4;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -101,6 +99,118 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
+    * Initializes an ambient light with the default ambient color. The camera's
+    * look target is used as the location. Ambient light illuminates an object
+    * evenly from all sides.
+    */
+   public void ambientLight ( ) {
+
+      this.aTemp.set(
+         IUpOgl.DEFAULT_AMB_R,
+         IUpOgl.DEFAULT_AMB_G,
+         IUpOgl.DEFAULT_AMB_B, 1.0f);
+      this.ambientLight(this.aTemp);
+   }
+
+   /**
+    * Initializes an ambient light with a color. The camera's look target is
+    * used as the location. Ambient light illuminates an object evenly from all
+    * sides.
+    *
+    * @param clr the color
+    */
+   public void ambientLight ( final Color clr ) {
+
+      this.ambientLight(
+         Color.toHexInt(clr),
+         this.lookTarget.x,
+         this.lookTarget.y,
+         this.lookTarget.z);
+   }
+
+   /**
+    * Initializes an ambient light with a color and location. Ambient light
+    * illuminates an object evenly from all sides.
+    *
+    * @param clr the color
+    * @param loc the location
+    */
+   public void ambientLight (
+      final Color clr,
+      final Vec3 loc ) {
+
+      this.ambientLight(Color.toHexInt(clr), loc.x, loc.y, loc.z);
+   }
+
+   /**
+    * Initializes an ambient light with a color. The camera's look target is
+    * used as the location. Ambient light illuminates an object evenly from all
+    * sides.
+    *
+    * @param clr the color
+    */
+   public void ambientLight ( final int clr ) {
+
+      this.ambientLight(
+         clr,
+         this.lookTarget.x,
+         this.lookTarget.y,
+         this.lookTarget.z);
+   }
+
+   /**
+    * Initializes an ambient light with a color and location. Ambient light
+    * illuminates an object evenly from all sides.
+    *
+    * @param clr  the color
+    * @param xLoc the location x
+    * @param yLoc the location y
+    * @param zLoc the location z
+    */
+   public void ambientLight (
+      final int clr,
+      final float xLoc,
+      final float yLoc,
+      final float zLoc ) {
+
+      // TEST
+
+      this.enableLighting();
+      if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
+
+      this.lightType[this.lightCount] = PConstants.AMBIENT;
+
+      this.lightPosition(this.lightCount, xLoc, yLoc, zLoc, false);
+      this.lightNormal(this.lightCount, 0.0f, 0.0f, 0.0f);
+
+      this.lightAmbient(this.lightCount, clr);
+      this.noLightDiffuse(this.lightCount);
+      this.noLightSpecular(this.lightCount);
+      this.noLightSpot(this.lightCount);
+      this.lightFalloff(
+         this.lightCount,
+         this.currentLightFalloffConstant,
+         this.currentLightFalloffLinear,
+         this.currentLightFalloffQuadratic);
+
+      this.lightCount++;
+   }
+
+   /**
+    * Initializes an ambient light with a color and location. Ambient light
+    * illuminates an object evenly from all sides.
+    *
+    * @param clr the color
+    * @param loc the location
+    */
+   public void ambientLight (
+      final int clr,
+      final Vec3 loc ) {
+
+      this.ambientLight(clr, loc.x, loc.y, loc.z);
+   }
+
+   /**
     * Draws a single Bezier curve.
     *
     * @param ap0 the first anchor point
@@ -153,167 +263,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * toward the world origin.
     */
    public abstract void camEast ( );
-
-   /**
-    * Looks at the center point from the eye point, using the world up axis as a
-    * reference. Uses the default handedness.
-    *
-    * @param xEye    camera location x
-    * @param yEye    camera location y
-    * @param zEye    camera location z
-    * @param xCenter target location x
-    * @param yCenter target location y
-    * @param zCenter target location z
-    * @param xUp     world up axis x
-    * @param yUp     world up axis y
-    * @param zUp     world up axis z
-    */
-   @Override
-   public void camera (
-      final float xEye,
-      final float yEye,
-      final float zEye,
-      final float xCenter,
-      final float yCenter,
-      final float zCenter,
-      final float xUp,
-      final float yUp,
-      final float zUp ) {
-
-      this.camera(
-         xEye, yEye, zEye,
-         xCenter, yCenter, zCenter,
-         xUp, yUp, zUp,
-         IUp3.DEFAULT_HANDEDNESS);
-   }
-
-   /**
-    * Looks at the center point from the eye point, using the world up axis as a
-    * reference. The handedness will dictate the order in which parameters are
-    * supplied to the cross product.
-    *
-    * @param xEye       camera location x
-    * @param yEye       camera location y
-    * @param zEye       camera location z
-    * @param xCenter    target location x
-    * @param yCenter    target location y
-    * @param zCenter    target location z
-    * @param xUp        world up axis x
-    * @param yUp        world up axis y
-    * @param zUp        world up axis z
-    * @param handedness the handedness
-    */
-   @Experimental
-   public void camera (
-      final float xEye,
-      final float yEye,
-      final float zEye,
-      final float xCenter,
-      final float yCenter,
-      final float zCenter,
-      final float xUp,
-      final float yUp,
-      final float zUp,
-      final Handedness handedness ) {
-
-      final float tol = 1.0f - IUp3.POLARITY_TOLERANCE;
-
-      this.refUp.set(xUp, yUp, zUp);
-
-      this.cameraX = xEye;
-      this.cameraY = yEye;
-      this.cameraZ = zEye;
-
-      this.lookDir.set(
-         this.cameraX - this.lookTarget.x,
-         this.cameraY - this.lookTarget.y,
-         this.cameraZ - this.lookTarget.z);
-
-      Vec3.normalize(this.lookDir, this.k);
-
-      float dotp = Vec3.dot(this.k, this.refUp);
-      if ( dotp < -tol || dotp > tol ) {
-
-         // TODO: Match with quaternion's matrix conversion at polarity.
-
-         // float temp = refUp.z;
-         // refUp.z = Utils.sign(k.z) * refUp.y;
-         // refUp.y = Utils.sign(k.z) * temp;
-
-         return;
-      }
-
-      /*
-       * The camera function sets the camera INVERSE, not the camera, so
-       * everything is backwards.
-       */
-      switch ( handedness ) {
-
-         case LEFT:
-
-            Vec3.crossNorm(this.k, this.refUp, this.i);
-
-            break;
-
-         case RIGHT:
-
-         default:
-
-            Vec3.crossNorm(this.refUp, this.k, this.i);
-
-      }
-
-      dotp = Vec3.dot(this.k, this.i);
-      if ( dotp < -tol || dotp > tol ) {
-
-         // TODO: Match with quaternion's matrix conversion at polarity.
-
-         // float temp = i.x;
-         // i.z = i.x;
-         // i.x = temp;
-
-         // float temp = i.x;
-         // i.z = Utils.sign(k.z) * i.x;
-         // i.x = Utils.sign(k.z) * temp;
-
-         return;
-      }
-
-      switch ( handedness ) {
-
-         case LEFT:
-
-            Vec3.crossNorm(this.i, this.k, this.j);
-
-            break;
-
-         case RIGHT:
-
-         default:
-
-            Vec3.crossNorm(this.k, this.i, this.j);
-
-      }
-
-      dotp = Vec3.dot(this.k, this.j);
-      if ( dotp < -tol || dotp > tol ) {
-
-         // TODO: Would this even occur?
-         // float temp = j.y;
-         // j.z = j.y;
-         // j.y = temp;
-         //
-         // float temp = j.y;
-         // j.z = Utils.sign(k.z) * j.y;
-         // j.y = Utils.sign(k.z) * temp;
-         return;
-      }
-
-      this.eyeDist = Vec3.mag(this.lookDir);
-      this.lookTarget.set(xCenter, yCenter, zCenter);
-
-      this.updateCameraInv();
-   }
 
    /**
     * Sets the camera to a location, looking at a center, with a reference up
@@ -411,79 +360,64 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Initialize a directional light with a color and a direction.
     *
-    * @param color the color
-    * @param xDir  the x direction
-    * @param yDir  the y direction
-    * @param zDir  the z direction
+    * @param clr the color
+    * @param dir the direction
     */
    public void directionalLight (
-      final int color,
+      final Color clr,
+      final Vec3 dir ) {
+
+      this.directionalLight(Color.toHexInt(clr), dir.x, dir.y, dir.z);
+   }
+
+   /**
+    * Initialize a directional light with a color and a direction.
+    *
+    * @param clr  the color
+    * @param xDir the x direction
+    * @param yDir the y direction
+    * @param zDir the z direction
+    */
+   public void directionalLight (
+      final int clr,
       final float xDir,
       final float yDir,
       final float zDir ) {
 
-      Color.fromHex(color, this.aTemp);
-      this.directionalLight(
-         this.colorModeX * this.aTemp.x,
-         this.colorModeY * this.aTemp.y,
-         this.colorModeZ * this.aTemp.z,
-         xDir, yDir, zDir);
+      // TEST
+
+      this.enableLighting();
+      if ( this.lightCount == IUpOgl.MAX_LIGHTS ) { return; }
+
+      this.lightType[this.lightCount] = PConstants.DIRECTIONAL;
+
+      this.lightPosition(this.lightCount, 0.0f, 0.0f, 0.0f, true);
+      this.lightNormal(this.lightCount, xDir, yDir, zDir);
+
+      this.noLightAmbient(this.lightCount);
+      this.lightDiffuse(this.lightCount, clr);
+      this.lightSpecular(
+         this.lightCount,
+         this.currentLightSpecular[0],
+         this.currentLightSpecular[1],
+         this.currentLightSpecular[2]);
+      this.noLightSpot(this.lightCount);
+      this.noLightFalloff(this.lightCount);
+
+      this.lightCount++;
    }
 
    /**
     * Initialize a directional light with a color and a direction.
     *
-    * @param color the color
-    * @param dir   the direction
+    * @param clr the color
+    * @param dir the direction
     */
    public void directionalLight (
-      final int color,
+      final int clr,
       final Vec3 dir ) {
 
-      Color.fromHex(color, this.aTemp);
-      this.directionalLight(
-         this.colorModeX * this.aTemp.x,
-         this.colorModeY * this.aTemp.y,
-         this.colorModeZ * this.aTemp.z,
-         dir.x, dir.y, dir.z);
-   }
-
-   /**
-    * Initialize a directional light with a color and a direction.
-    *
-    * @param color the color
-    * @param xDir  the x direction
-    * @param yDir  the y direction
-    * @param zDir  the z direction
-    */
-   public void directionalLight (
-      final Vec4 color,
-      final float xDir,
-      final float yDir,
-      final float zDir ) {
-
-      this.directionalLight(
-         this.colorModeX * color.x,
-         this.colorModeY * color.y,
-         this.colorModeZ * color.z,
-         xDir, yDir, zDir);
-   }
-
-   /**
-    * Initialize a directional light with a color and a direction.
-    *
-    * @param color the color
-    * @param dir   the direction
-    */
-   public void directionalLight (
-      final Vec4 color,
-      final Vec3 dir ) {
-
-      this.directionalLight(
-         this.colorModeX * color.x,
-         this.colorModeY * color.y,
-         this.colorModeZ * color.z,
-         dir.x, dir.y, dir.z);
+      this.directionalLight(clr, dir.x, dir.y, dir.z);
    }
 
    /**
@@ -511,9 +445,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
             this.lookTarget.x + xLocal,
             this.lookTarget.y + yLocal,
             this.lookTarget.z + zLocal,
-            // this.lookTarget.x,
-            // this.lookTarget.y,
-            // this.lookTarget.z,
             this.refUp.x,
             this.refUp.y,
             this.refUp.z);
@@ -624,10 +555,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @return the model view
     */
    @Override
-   public PMatrix3D getMatrix ( ) {
-
-      return this.getMatrix(( PMatrix3D ) null);
-   }
+   public PMatrix3D getMatrix ( ) { return this.getMatrix(( PMatrix3D ) null); }
 
    /**
     * Gets the reference up axis of the camera.
@@ -718,10 +646,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final Vec3 co = new Vec3();
       final Vec3 fh = new Vec3();
 
-      // this.flush();
-      // this.pgl.disable(PGL.DEPTH_TEST);
-      // this.pgl.depthMask(false);
-      // this.isDepthSortingEnabled = false;
       this.hint(PConstants.DISABLE_DEPTH_TEST);
       this.hint(PConstants.DISABLE_DEPTH_MASK);
       this.hint(PConstants.DISABLE_DEPTH_SORT);
@@ -768,12 +692,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       }
 
       this.popStyle();
-
-      // Trying to shortcut this leads to an error.
-      // this.flush();
-      // this.pgl.enable(PGL.DEPTH_TEST);
-      // this.pgl.depthMask(true);
-      // this.isDepthSortingEnabled = true;
       this.hint(PConstants.ENABLE_DEPTH_TEST);
       this.hint(PConstants.ENABLE_DEPTH_MASK);
       this.hint(PConstants.ENABLE_DEPTH_SORT);
@@ -866,10 +784,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @see IUp3#moveByGlobal(float, float, float)
     */
    @Override
-   public void moveBy ( final Vec3 v ) {
-
-      this.moveByLocal(v.x, v.y, v.z);
-   }
+   public void moveBy ( final Vec3 v ) { this.moveByLocal(v.x, v.y, v.z); }
 
    /**
     * Moves the renderer's camera by a vector relative to its orientation;
@@ -972,10 +887,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final int yColor,
       final int zColor ) {
 
-      // this.flush();
-      // this.pgl.disable(PGL.DEPTH_TEST);
-      // this.pgl.depthMask(false);
-      // this.isDepthSortingEnabled = false;
       this.hint(PConstants.DISABLE_DEPTH_TEST);
       this.hint(PConstants.DISABLE_DEPTH_MASK);
       this.hint(PConstants.DISABLE_DEPTH_SORT);
@@ -1001,11 +912,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          vl, 0.0f, 0.0f);
 
       this.popStyle();
-
-      // this.flush();
-      // this.pgl.enable(PGL.DEPTH_TEST);
-      // this.pgl.depthMask(true);
-      // this.isDepthSortingEnabled = true;
       this.hint(PConstants.ENABLE_DEPTH_TEST);
       this.hint(PConstants.ENABLE_DEPTH_MASK);
       this.hint(PConstants.ENABLE_DEPTH_SORT);
@@ -1049,6 +955,72 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    @Override
    public void point ( final Vec3 v ) { this.pointImpl(v.x, v.y, v.z); }
+
+   /**
+    * Initializes a point light at a location.
+    *
+    * @param clr the color
+    * @param loc the location
+    */
+   public void pointLight (
+      final Color clr,
+      final Vec3 loc ) {
+
+      this.pointLight(Color.toHexInt(clr), loc.x, loc.y, loc.z);
+   }
+
+   /**
+    * Initializes a point light at a location.
+    *
+    * @param clr  the color
+    * @param xLoc the location x
+    * @param yLoc the location y
+    * @param zLoc the location z
+    */
+   public void pointLight (
+      final int clr,
+      final float xLoc,
+      final float yLoc,
+      final float zLoc ) {
+
+      // TEST
+
+      this.enableLighting();
+      if ( this.lightCount == IUpOgl.MAX_LIGHTS ) { return; }
+
+      this.lightType[this.lightCount] = PConstants.POINT;
+
+      this.lightPosition(this.lightCount, xLoc, yLoc, zLoc, false);
+      this.lightNormal(this.lightCount, 0.0f, 0.0f, 0.0f);
+      this.noLightAmbient(this.lightCount);
+      this.lightDiffuse(this.lightCount, clr);
+      this.lightSpecular(
+         this.lightCount,
+         this.currentLightSpecular[0],
+         this.currentLightSpecular[1],
+         this.currentLightSpecular[2]);
+      this.noLightSpot(this.lightCount);
+      this.lightFalloff(
+         this.lightCount,
+         this.currentLightFalloffConstant,
+         this.currentLightFalloffLinear,
+         this.currentLightFalloffQuadratic);
+
+      this.lightCount++;
+   }
+
+   /**
+    * Initializes a point light at a location.
+    *
+    * @param clr the color
+    * @param loc the location
+    */
+   public void pointLight (
+      final int clr,
+      final Vec3 loc ) {
+
+      this.pointLight(clr, loc.x, loc.y, loc.z);
+   }
 
    /**
     * Draws a quadratic Bezier curve segment to the next anchor point; the
@@ -1434,6 +1406,111 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          this.drawMesh3(mesh, tr, v, vn);
          this.popStyle();
       }
+   }
+
+   /**
+    * Initializes a spot light. The location positions the spotlight in space
+    * while the direction determines where the light points. The angle parameter
+    * affects angle of the spotlight cone, while concentration sets the bias of
+    * light focusing toward the center of that cone.
+    *
+    * @param clr           the color
+    * @param loc           the location
+    * @param dir           the direction
+    * @param angle         the angle
+    * @param concentration cone center bias
+    */
+   public void spotLight ( final Color clr,
+      final Vec3 loc,
+      final Vec3 dir,
+      final float angle,
+      final float concentration ) {
+
+      this.spotLight(
+         Color.toHexInt(this.aTemp),
+         loc.x, loc.y, loc.z,
+         dir.x, dir.y, dir.z,
+         angle,
+         concentration);
+   }
+
+   /**
+    * Initializes a spot light. The location positions the spotlight in space
+    * while the direction determines where the light points. The angle parameter
+    * affects angle of the spotlight cone, while concentration sets the bias of
+    * light focusing toward the center of that cone.
+    *
+    * @param clr           the color
+    * @param xLoc          the location x
+    * @param yLoc          the location y
+    * @param zLoc          the location z
+    * @param xDir          the direction x
+    * @param yDir          the direction y
+    * @param zDir          the direction z
+    * @param angle         spotlight cone angle
+    * @param concentration cone center bias
+    */
+   public void spotLight (
+      final int clr,
+      final float xLoc,
+      final float yLoc,
+      final float zLoc,
+      final float xDir,
+      final float yDir,
+      final float zDir,
+      final float angle,
+      final float concentration ) {
+
+      this.enableLighting();
+      if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
+
+      this.lightType[this.lightCount] = PConstants.SPOT;
+
+      this.lightPosition(this.lightCount, xLoc, yLoc, zLoc, false);
+      this.lightNormal(this.lightCount, xDir, yDir, zDir);
+
+      this.noLightAmbient(this.lightCount);
+      this.lightDiffuse(this.lightCount, clr);
+      this.lightSpecular(
+         this.lightCount,
+         this.currentLightSpecular[0],
+         this.currentLightSpecular[1],
+         this.currentLightSpecular[2]);
+      this.lightSpot(this.lightCount, angle, concentration);
+      this.lightFalloff(
+         this.lightCount,
+         this.currentLightFalloffConstant,
+         this.currentLightFalloffLinear,
+         this.currentLightFalloffQuadratic);
+
+      this.lightCount++;
+   }
+
+   /**
+    * Initializes a spot light. The location positions the spotlight in space
+    * while the direction determines where the light points. The angle parameter
+    * affects angle of the spotlight cone, while concentration sets the bias of
+    * light focusing toward the center of that cone.
+    *
+    * @param clr           the color
+    * @param loc           the location
+    * @param dir           the direction
+    * @param angle         the angle
+    * @param concentration cone center bias
+    */
+   public void spotLight (
+      final int clr,
+      final Vec3 loc,
+      final Vec3 dir,
+      final float angle,
+      final float concentration ) {
+
+      this.spotLight(
+         clr,
+         loc.x, loc.y, loc.z,
+         dir.x, dir.y, dir.z,
+         angle,
+         concentration);
    }
 
    /**

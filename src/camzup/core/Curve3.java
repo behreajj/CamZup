@@ -147,7 +147,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public Curve3 append ( final Knot3 knot ) {
 
       if ( knot != null ) { this.knots.add(knot); }
-
       return this;
    }
 
@@ -361,10 +360,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see LinkedList#iterator()
     */
    @Override
-   public Iterator < Knot3 > iterator ( ) {
-
-      return this.knots.iterator();
-   }
+   public Iterator < Knot3 > iterator ( ) { return this.knots.iterator(); }
 
    /**
     * Gets the number of knots in the curve.

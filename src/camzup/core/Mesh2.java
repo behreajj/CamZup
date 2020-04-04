@@ -620,6 +620,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    @Chainable
    public Mesh2 reframe ( final Transform2 tr ) {
 
+      tr.locPrev.set(tr.location);
+      tr.scalePrev.set(tr.scale);
+
       final Vec2 dim = tr.scale;
       final Vec2 lb = tr.location;
       final Vec2 ub = new Vec2();
@@ -2098,17 +2101,22 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
              * Evaluate the sign of the cross product of the differences between
              * next, current, point.
              */
+
+            /* @formatter:off */
             if ( curr.y <= point.y && next.y > point.y ) {
 
-               final float eval = ( next.x - curr.x ) * ( point.y - curr.y ) - ( point.x - curr.x ) * ( next.y - curr.y );
+               final float eval = ( next.x - curr.x ) * ( point.y - curr.y ) -
+                                  ( point.x - curr.x ) * ( next.y - curr.y );
                if ( eval > 0.0f ) { ++wn; }
 
             } else if ( next.y <= point.y ) {
 
-               final float eval = ( next.x - curr.x ) * ( point.y - curr.y ) - ( point.x - curr.x ) * ( next.y - curr.y );
+               final float eval = ( next.x - curr.x ) * ( point.y - curr.y ) -
+                                  ( point.x - curr.x ) * ( next.y - curr.y );
                if ( eval < 0.0f ) { --wn; }
 
             }
+            /* @formatter:on */
          }
 
          if ( wn > 0 ) { return true; }

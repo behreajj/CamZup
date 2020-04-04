@@ -426,8 +426,8 @@ public class MeshEntity2 extends Entity2
             .append("    for i in fc_itr:\n")
             .append("        fc_idx = fc_idcs[i]\n")
             .append("        weight = i * to_weight\n")
-            .append(
-               "        vert_group.add(fc_idx, weight, \"REPLACE\")\n\n");
+            .append("        vert_group.add(fc_idx, weight,")
+            .append("\"REPLACE\")\n\n");
       }
 
       if ( extrude > 0.0f ) {
@@ -450,10 +450,7 @@ public class MeshEntity2 extends Entity2
     * @return the string
     */
    @Override
-   public String toString ( ) {
-
-      return this.toString(4, 8);
-   }
+   public String toString ( ) { return this.toString(4, 8); }
 
    /**
     * Returns a string representation of this mesh entity.
@@ -532,7 +529,7 @@ public class MeshEntity2 extends Entity2
     * parameter. If nonuniform zooming is used, zoom can be an average of width
     * and height or the maximum dimension.
     *
-    * @param id        the path id prefix
+    * @param id        the face id prefix
     * @param zoom      scaling from external transforms
     * @param materials the materials to use
     *

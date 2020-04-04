@@ -25,7 +25,6 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
-
   entity.scaleTo(Utils.min(rndr.width, rndr.height));
 
   float elev = 0.15;
