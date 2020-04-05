@@ -985,6 +985,34 @@ public class Transform2 extends Transform {
    private static final long serialVersionUID = -4460673884822918485l;
 
    /**
+    * Adds two transforms together by component. The sum of the two rotations is
+    * normalized.
+    *
+    * @param a      the left operand
+    * @param b      the right operand
+    * @param target the output transform
+    *
+    * @return the transform
+    */
+   @Experimental
+   public static Transform2 add (
+      final Transform2 a,
+      final Transform2 b,
+      final Transform2 target ) {
+
+      target.locPrev.set(target.location);
+      target.rotPrev = target.rotation;
+      target.scalePrev.set(target.scale);
+
+      Vec2.add(a.location, b.location, target.location);
+      target.rotation = a.rotation + b.rotation;
+      Vec2.add(a.scale, b.scale, target.scale);
+
+      target.updateAxes();
+      return target;
+   }
+
+   /**
     * A helper function to set the transform's from either separate vectors or
     * from the columns of a matrix. The transform's translation is set to zero;
     * its scale, to one.
@@ -1288,7 +1316,7 @@ public class Transform2 extends Transform {
     *
     * @return the mix
     *
-    * @see Transform3#EASING
+    * @see Transform2#EASING
     */
    public static Transform2 mix (
       final Transform2 origin,
@@ -1298,6 +1326,26 @@ public class Transform2 extends Transform {
 
       return Transform2.EASING.apply(
          origin, dest, step, target);
+   }
+
+   /**
+    * Eases an array through a series of transforms according to a step in [0.0,
+    * 1.0].
+    *
+    * @param frames the frames
+    * @param step   the step
+    * @param target the output transform
+    *
+    * @return the mix
+    *
+    * @see Transform2#EASING
+    */
+   public static Transform2 mix (
+      final Transform2[] frames,
+      final float step,
+      final Transform2 target ) {
+
+      return Transform2.EASING.apply(frames, step, target);
    }
 
    /**
@@ -1519,7 +1567,6 @@ public class Transform2 extends Transform {
 
          final int len = arr.length;
          if ( len == 1 || step <= 0.0f ) { return target.set(arr[0]); }
-
          if ( step >= 1.0f ) { return target.set(arr[len - 1]); }
 
          final float scaledStep = step * ( len - 1 );
@@ -1556,10 +1603,10 @@ public class Transform2 extends Transform {
             target.location);
 
          target.rotPrev = target.rotation;
-         target.rotation = this.rot.applyUnclamped(
-            origin.rotation,
-            dest.rotation,
-            step);
+
+         target.rotation = this.rot.apply(
+            origin.rotation, dest.rotation, step);
+         target.updateAxes();
 
          target.scalePrev.set(target.scale);
          this.loc.applyUnclamped(

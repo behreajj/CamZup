@@ -840,67 +840,6 @@ public interface IYup2 extends IUp {
    void strokeWeight ( final float sw );
 
    /**
-    * Displays a boolean as text at a location.
-    *
-    * @param bool the boolean
-    * @param x    the x coordinate
-    * @param y    the y coordinate
-    */
-   default void text (
-      final boolean bool,
-      final float x,
-      final float y ) {
-
-      this.text(bool ? "true" : "false", x, y);
-   }
-
-   /**
-    * Displays a real number at a 2D location. Fixes the number display to four
-    * decimal places.
-    *
-    * @param num the number
-    * @param x   the x coordinate
-    * @param y   the y coordinate
-    */
-   default void text (
-      final float num,
-      final float x,
-      final float y ) {
-
-      this.text(Utils.toFixed(num, 4), x, y);
-   }
-
-   /**
-    * Displays an object as text at a location. Calls the object's toString
-    * function.
-    *
-    * @param obj the object
-    * @param x   the x coordinate
-    * @param y   the y coordinate
-    */
-   default void text (
-      final Object obj,
-      final float x,
-      final float y ) {
-
-      final String str = obj.toString();
-      if ( str.length() > 96 ) {
-         this.text(str.substring(0, 95), x, y);
-      } else {
-         this.text(str, x, y);
-      }
-   }
-
-   /**
-    * Displays a string at a coordinate.
-    *
-    * @param str the string
-    * @param x   the x coordinate
-    * @param y   the y coordinate
-    */
-   void text ( final String str, final float x, final float y );
-
-   /**
     * Generates an SVG string from a 2D curve entity.
     *
     * @param ce the curve entity

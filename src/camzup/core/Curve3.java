@@ -1058,6 +1058,41 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
+    * Evaluates a step in the range [0.0, 1.0], returning a transform. The
+    * transform's scale is unaffected by the evaluation.
+    *
+    * @param curve      the curve
+    * @param step       the step
+    * @param handedness the handedness
+    * @param target     the target
+    *
+    * @return the transform
+    *
+    * @see Curve3#eval(Curve3, float, Vec3, Vec3)
+    */
+   @Experimental
+   public static Transform3 eval (
+      final Curve3 curve,
+      final float step,
+      final Handedness handedness,
+      final Transform3 target ) {
+
+      target.locPrev.set(target.location);
+      target.rotPrev.set(target.rotation);
+      Curve3.eval(curve, step, target.location, target.forward);
+
+      Quaternion.fromDir(
+         target.forward,
+         handedness,
+         target.rotation,
+         target.right,
+         target.forward,
+         target.up);
+
+      return target;
+   }
+
+   /**
     * Evaluates a step in the range [0.0, 1.0], returning a knot on the curve.
     *
     * @param curve  the curve
@@ -1119,8 +1154,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Evaluates a step in the range [0.0, 1.0], returning a coordinate on the
-    * curve and a tangent. The tangent will be normalized, to be of unit length.
+    * Evaluates a step in the range [0.0, 1.0], returning a ray. The ray's
+    * origin will be a coordinate on the curve while its direction will be a
+    * normalized tangent.
     *
     * @param curve the curve
     * @param step  the step
@@ -1193,6 +1229,38 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    /**
     * Evaluates the first knot in the curve.
     *
+    * @param curve      the curve
+    * @param handedness the handedness
+    * @param target     the output transform
+    *
+    * @return the coordinate
+    *
+    * @see Curve3#evalFirst(Curve3, Vec3, Vec3)
+    * @see Quaternion#fromDir(Vec3, Handedness, Quaternion, Vec3, Vec3, Vec3)
+    */
+   public static Transform3 evalFirst (
+      final Curve3 curve,
+      final Handedness handedness,
+      final Transform3 target ) {
+
+      target.locPrev.set(target.location);
+      target.rotPrev.set(target.rotation);
+      Curve3.evalFirst(curve, target.location, target.forward);
+
+      Quaternion.fromDir(
+         target.forward,
+         handedness,
+         target.rotation,
+         target.right,
+         target.forward,
+         target.up);
+
+      return target;
+   }
+
+   /**
+    * Evaluates the first knot in the curve.
+    *
     * @param curve  the curve
     * @param target the output knot
     *
@@ -1207,8 +1275,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Evaluates the first knot in the curve. The tangent will be normalized, to
-    * be of unit length.
+    * Evaluates the first knot in the curve.
     *
     * @param curve the curve
     * @param ray   the output ray
@@ -1247,6 +1314,38 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       Vec3.subNorm(kFirst.foreHandle, coord, tangent);
 
       return coord;
+   }
+
+   /**
+    * Evaluates the last knot in the curve.
+    *
+    * @param curve      the curve
+    * @param handedness the handedness
+    * @param target     the output transform
+    *
+    * @return the coordinate
+    *
+    * @see Curve3#evalLast(Curve3, Vec3, Vec3)
+    * @see Quaternion#fromDir(Vec3, Handedness, Quaternion, Vec3, Vec3, Vec3)
+    */
+   public static Transform3 evalLast (
+      final Curve3 curve,
+      final Handedness handedness,
+      final Transform3 target ) {
+
+      target.locPrev.set(target.location);
+      target.rotPrev.set(target.rotation);
+      Curve3.evalLast(curve, target.location, target.forward);
+
+      Quaternion.fromDir(
+         target.forward,
+         handedness,
+         target.rotation,
+         target.right,
+         target.forward,
+         target.up);
+
+      return target;
    }
 
    /**

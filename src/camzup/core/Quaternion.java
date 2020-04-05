@@ -2639,10 +2639,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 
@@ -2848,22 +2845,23 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          final float step,
          final Quaternion target ) {
 
-         /* Decompose origin vector. */
+         /* Decompose origin quaternion. */
          final Vec3 ai = origin.imag;
          final float aw = origin.real;
          final float ax = ai.x;
          final float ay = ai.y;
          final float az = ai.z;
 
-         /* Decompose destination vector. */
+         /* Decompose destination quaternion. */
          final Vec3 bi = dest.imag;
          float bw = dest.real;
          float bx = bi.x;
          float by = bi.y;
          float bz = bi.z;
 
-         /* Clamp the dot product here! */
-         float dotp = Utils.clamp(aw * bw + ax * bx + ay * by + az * bz,
+         /* Clamp the dot product. */
+         float dotp = Utils.clamp(
+            aw * bw + ax * bx + ay * by + az * bz,
             -1.0f, 1.0f);
 
          /* Flip values if the orientation is negative. */

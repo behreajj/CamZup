@@ -12,6 +12,34 @@ import processing.core.PApplet;
 public interface ITextDisplay {
 
    /**
+    * Displays a boolean as text at a location.
+    *
+    * @param bool the boolean
+    * @param x    the x coordinate
+    * @param y    the y coordinate
+    */
+   default void text (
+      final boolean bool,
+      final float x,
+      final float y ) {
+
+      this.text(bool ? "true" : "false", x, y);
+   }
+
+   /**
+    * Displays a boolean as text at a location.
+    *
+    * @param bool the boolean
+    * @param v    the location
+    */
+   default void text (
+      final boolean bool,
+      final Vec2 v ) {
+
+      this.text(bool ? "true" : "false", v.x, v.y);
+   }
+
+   /**
     * Displays a character at a location.
     *
     * @param c the character
@@ -130,16 +158,57 @@ public interface ITextDisplay {
    }
 
    /**
+    * Displays a real number at a 2D location. Fixes the number display to four
+    * decimal places.
+    *
+    * @param integer the integer
+    * @param x       the x coordinate
+    * @param y       the y coordinate
+    *
+    * @see Utils#toPadded(int, int)
+    */
+   default void text (
+      final int integer,
+      final float x,
+      final float y ) {
+
+      this.text(Utils.toPadded(integer, 1), x, y);
+   }
+
+   /**
     * Displays an integer as text at a location.
     *
-    * @param i the integer
-    * @param v the location
+    * @param integer the integer
+    * @param v       the location
     *
-    * @see Utils#toFixed(float, int)
+    * @see Utils#toPadded(int, int)
     */
-   default void text ( final int i, final Vec2 v ) {
+   default void text (
+      final int integer,
+      final Vec2 v ) {
 
-      this.text(i, v.x, v.y);
+      this.text(Utils.toPadded(integer, 1), v.x, v.y);
+   }
+
+   /**
+    * Displays an object as text at a location. Calls the object's toString
+    * function.
+    *
+    * @param obj the object
+    * @param x   the x coordinate
+    * @param y   the y coordinate
+    */
+   default void text (
+      final Object obj,
+      final float x,
+      final float y ) {
+
+      final String str = obj.toString();
+      if ( str.length() > 96 ) {
+         this.text(str.substring(0, 95), x, y);
+      } else {
+         this.text(str, x, y);
+      }
    }
 
    /**

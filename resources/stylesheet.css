@@ -15,24 +15,17 @@ body {
 }
 
 pre, code {
-    font-family: 'Liberation Mono', 'Fira Code', 'Consolas', 'Source Code Pro', monospace;
+    font-family: 'Fira Code', 'Liberation Mono', 'Consolas', 'Source Code Pro', monospace;
     font-size: 9pt;
     font-weight: normal;
     text-align: left;
     text-decoration: none;
 }
 
-/* li {
-    display: inline-block;
-} */
-
-/* ul {
-    overflow: hidden;
-    white-space:nowrap;
-} */
-
 ul {
     list-style: none;
+    padding-top: 1pt;
+    padding-bottom: 1pt;
 }
 
 a {
@@ -42,25 +35,89 @@ a {
     text-decoration: dotted;
 }
 
-a:hover {
-    color: #6f88c4;
-}
-
 a:active {
     color: #d3dbf6;
+}
+
+a:focus {
+    color: #6dc0d1;
+}
+
+a:hover {
+    color: #6f88c4;
 }
 
 a:visited {
     color: #121528;
 }
 
-.topNav, .bottomNav {
-    background-color: #131313;
-    color: #fff7d5;
+.bottomNav {
+    clear: right;
+    float: left;
+    height: 2.8em;
+    margin-top: 10px;
+    overflow: hidden;
+    padding-top: 10px;
+    padding: 0;
+    width: 100%;
+}
+
+.bottomNav a:hover {
+    text-decoration: none;
+}
+
+.subNav {
+    border-bottom: 1px solid rgba(161, 161, 161, 0.19);
+    float: left;
+    overflow: hidden;
+    width: 100%;
+}
+
+.subNav div {
+    clear: left;
+    float: left;
+    padding: 0 0 5px 6px;
+}
+
+ul.navList {
+    float: left;
+    margin: 0 25px 0 0;
+    padding: 0;
+}
+
+ul.navList li {
+    float: left;
+    font-weight: bold;
+    list-style: none;
+    padding: 3px 6px;
+}
+
+ul.subNavList {
+    float: left;
+    margin: 0 25px 0 0;
+    padding: 0;
+}
+
+ul.subNavList li {
+    float: left;
+    font-size: 90%;
+    font-weight: bold;
+    list-style: none;
+}
+
+.topNav a:link, .topNav a:active, .topNav a:visited, .bottomNav a:link, .bottomNav a:active, .bottomNav a:visited {
+    text-decoration: none;
+}
+
+.navBarCell1Rev {
+    border-radius: 1px;
+    font-weight: bold;
+    margin: auto 5px;
 }
 
 h3 {
     font-size: 13pt;
+    font-weight: bold;
     color: #ff2828;
 }
 
@@ -72,17 +129,4 @@ thead {
 
 th {
     font-weight: normal;
-}
-
-.rowcolor {
-    background-color: #ffffff;
-}
-
-.altcolor {
-    background-color: #a6906f;
-}
-
-li.blocklist {
-    padding-top: 5;
-    padding-bottom: 5;
 }

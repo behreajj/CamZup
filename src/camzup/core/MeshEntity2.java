@@ -147,6 +147,13 @@ public class MeshEntity2 extends Entity2
    }
 
    /**
+    * Gets the number of meshes held by the entity.
+    *
+    * @return the length
+    */
+   public int length ( ) { return this.meshes.size(); }
+
+   /**
     * Scales the entity by a scalar.
     *
     * @param scalar the scalar

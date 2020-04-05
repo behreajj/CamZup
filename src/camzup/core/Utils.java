@@ -1090,6 +1090,7 @@ public abstract class Utils implements IUtils {
       final float q = a / b;
       return a - b * ( q > 0.0f ? ( int ) q
          : q < 0.0f ? ( int ) q - 1.0f : 0.0f );
+//      return a - b * Utils.floor(a / b);
    }
 
    /**
@@ -1157,6 +1158,24 @@ public abstract class Utils implements IUtils {
 
       final float t = 0.5f + 0.5f * Utils.scNorm(step);
       return ( 1.0f - t ) * lb + t * ub;
+   }
+
+   /**
+    * Oscillates between a lower and upper bound based on an input step.
+    *
+    * @param lb   the lower bound
+    * @param ub   the upper bound
+    * @param step the step
+    *
+    * @return the oscillation
+    */
+   public static int pingPong (
+      final int lb,
+      final int ub,
+      final float step ) {
+
+      final float t = 0.5f + 0.5f * Utils.scNorm(step);
+      return ( int ) ( ( 1.0f - t ) * lb + t * ub );
    }
 
    /**
@@ -1912,7 +1931,7 @@ public abstract class Utils implements IUtils {
        * @see Utils#modUnchecked(float, float)
        */
       @Override
-      public float applyUnclamped (
+      protected float applyPartial (
          final float origin,
          final float dest,
          final float step ) {
@@ -1959,7 +1978,7 @@ public abstract class Utils implements IUtils {
        * @see Utils#modUnchecked(float, float)
        */
       @Override
-      public float applyUnclamped (
+      protected float applyPartial (
          final float origin,
          final float dest,
          final float step ) {
@@ -2006,7 +2025,7 @@ public abstract class Utils implements IUtils {
        * @see Utils#modUnchecked(float, float)
        */
       @Override
-      public float applyUnclamped (
+      protected float applyPartial (
          final float origin,
          final float dest,
          final float step ) {
@@ -2056,7 +2075,7 @@ public abstract class Utils implements IUtils {
        * @see Utils#modUnchecked(float, float)
        */
       @Override
-      public float applyUnclamped (
+      protected float applyPartial (
          final float origin,
          final float dest,
          final float step ) {
@@ -2194,23 +2213,8 @@ public abstract class Utils implements IUtils {
 
          if ( step <= 0.0f || this.diff == 0.0f ) { return this.a; }
          if ( step >= 1.0f ) { return this.b; }
-         return this.applyUnclamped(origin, dest, step);
+         return this.applyPartial(origin, dest, step);
       }
-
-      /**
-       * Applies the easing function without checked whether the step is out of
-       * bounds, [0.0, 1.0].
-       *
-       * @param origin the origin value
-       * @param dest   the destination value
-       * @param step   the step
-       *
-       * @return the interpolated value
-       */
-      public abstract float applyUnclamped (
-         final float origin,
-         final float dest,
-         final float step );
 
       /**
        * Gets the range of the easing function.
@@ -2243,6 +2247,24 @@ public abstract class Utils implements IUtils {
 
          return this.getClass().getSimpleName();
       }
+
+      /**
+       * Applies the easing function without checking whether the step is out of
+       * bounds, [0.0, 1.0].<br>
+       * <br>
+       * This function needs to be protected because the public apply above
+       * verifies the data upon which applyUnclamped operates.
+       *
+       * @param origin the origin value
+       * @param dest   the destination value
+       * @param step   the step
+       *
+       * @return the interpolated value
+       */
+      protected abstract float applyPartial (
+         final float origin,
+         final float dest,
+         final float step );
 
       /**
        * A helper function which mutates protected fields a, b, diff, aLtb and

@@ -122,6 +122,13 @@ public class CurveEntity2 extends Entity2
    }
 
    /**
+    * Gets the number of curves held by the entity.
+    *
+    * @return the length
+    */
+   public int length ( ) { return this.curves.size(); }
+
+   /**
     * Scales the entity by a scalar.
     *
     * @param scalar the scalar
@@ -411,7 +418,42 @@ public class CurveEntity2 extends Entity2
    }
 
    /**
-    * Evaluates a step in the range [0.0, 1.0] for curve, returning a knot.
+    * Evaluates a step in the range [0.0, 1.0] for a curve in the entity,
+    * returning a knot.
+    *
+    * @param ce         the curve entity
+    * @param curveIndex the curve index
+    * @param step       the step
+    * @param handedness the handedness
+    * @param target     the output transform
+    *
+    * @return the transform
+    *
+    * @see Curve2#eval(Curve2, float, Vec2, Vec2)
+    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
+    * @see Transform2#rotateZ(float)
+    */
+   @Experimental
+   public static Transform2 eval (
+      final CurveEntity2 ce,
+      final int curveIndex,
+      final float step,
+      final Handedness handedness,
+      final Transform2 target ) {
+
+      // TEST
+
+      final Transform2 ctr = ce.transform;
+      Curve2.eval(ce.get(curveIndex), step, handedness, target);
+      Transform2.mulPoint(ctr, target.location, target.location);
+      target.rotateZ(ctr.rotation);
+
+      return target;
+   }
+
+   /**
+    * Evaluates a step in the range [0.0, 1.0] for a curve in the entity,
+    * returning a knot.
     *
     * @param ce         the curve entity
     * @param curveIndex the curve index
@@ -419,7 +461,7 @@ public class CurveEntity2 extends Entity2
     * @param knWorld    the knot in world space
     * @param knLocal    the knot in local space
     *
-    * @return the world coordinate
+    * @return the world knot
     *
     * @see Curve2#eval(Curve2, float, Vec2, Vec2)
     * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
@@ -444,9 +486,9 @@ public class CurveEntity2 extends Entity2
    }
 
    /**
-    * Evaluates a step in the range [0.0, 1.0] for curve, returning a coordinate
-    * on the curve and a tangent. The tangent will be normalized, to be of unit
-    * length.
+    * Evaluates a step in the range [0.0, 1.0] for a curve in the entity,
+    * returning a coordinate on the curve and a tangent. The tangent will be
+    * normalized, to be of unit length.
     *
     * @param ce         the curve entity
     * @param curveIndex the curve index
@@ -454,7 +496,7 @@ public class CurveEntity2 extends Entity2
     * @param rayWorld   the output world ray
     * @param rayLocal   the output local ray
     *
-    * @return the world coordinate
+    * @return the world ray
     *
     * @see CurveEntity2#eval(CurveEntity2, int, float, Vec2, Vec2, Vec2, Vec2)
     */
@@ -473,9 +515,9 @@ public class CurveEntity2 extends Entity2
    }
 
    /**
-    * Evaluates a step in the range [0.0, 1.0] for curve, returning a coordinate
-    * on the curve and a tangent. The tangent will be normalized, to be of unit
-    * length.
+    * Evaluates a step in the range [0.0, 1.0] for a curve in the entity,
+    * returning a coordinate on the curve and a tangent. The tangent will be
+    * normalized, to be of unit length.
     *
     * @param ce         the curve entity
     * @param curveIndex the curve index

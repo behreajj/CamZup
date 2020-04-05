@@ -1102,6 +1102,45 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
+    * Evaluates a step in the range [0.0, 1.0], returning a transform. The
+    * transform's scale is unaffected by the evaluation.
+    *
+    * @param curve      the curve
+    * @param step       the step
+    * @param handedness the handedness
+    * @param target     the target
+    *
+    * @return the transform
+    *
+    * @see Curve2#eval(Curve2, float, Vec2, Vec2)
+    */
+   @Experimental
+   public static Transform2 eval (
+      final Curve2 curve,
+      final float step,
+      final Handedness handedness,
+      final Transform2 target ) {
+
+      // TEST
+
+      target.locPrev.set(target.location);
+      target.rotPrev = target.rotation;
+
+      Curve2.eval(curve, step, target.location, target.forward);
+
+      Vec2.normalize(target.forward, target.forward);
+      if ( handedness == Handedness.LEFT ) {
+         Vec2.perpendicularCCW(target.forward, target.right);
+      } else {
+         Vec2.perpendicularCW(target.forward, target.right);
+      }
+
+      target.rotation = Vec2.headingSigned(target.right);
+
+      return target;
+   }
+
+   /**
     * Evaluates a step in the range [0.0, 1.0], returning a knot on the curve.
     * The knot's fore handle and rear handle are mirrored.
     *
@@ -1164,8 +1203,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Evaluates a step in the range [0.0, 1.0], returning a coordinate on the
-    * curve and a tangent. The tangent will be normalized, to be of unit length.
+    * Evaluates a step in the range [0.0, 1.0], returning a ray. The ray's
+    * origin will be a coordinate on the curve while its direction will be a
+    * normalized tangent.
     *
     * @param curve the curve
     * @param step  the step
@@ -1238,6 +1278,37 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Evaluates the first knot in the curve.
     *
+    * @param curve      the curve
+    * @param handedness the handedness
+    * @param target     the output transform
+    *
+    * @return the coordinate
+    *
+    * @see Curve3#evalFirst(Curve3, Vec3, Vec3)
+    */
+   public static Transform2 evalFirst (
+      final Curve2 curve,
+      final Handedness handedness,
+      final Transform2 target ) {
+
+      target.locPrev.set(target.location);
+      target.rotPrev = target.rotation;
+      Curve2.evalFirst(curve, target.location, target.forward);
+
+      Vec2.normalize(target.forward, target.forward);
+      if ( handedness == Handedness.LEFT ) {
+         Vec2.perpendicularCCW(target.forward, target.right);
+      } else {
+         Vec2.perpendicularCW(target.forward, target.right);
+      }
+
+      target.rotation = Vec2.headingSigned(target.right);
+      return target;
+   }
+
+   /**
+    * Evaluates the first knot in the curve.
+    *
     * @param curve  the curve
     * @param target the output knot
     *
@@ -1291,6 +1362,37 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       coord.set(kFirst.coord);
       Vec2.subNorm(kFirst.foreHandle, coord, tangent);
       return coord;
+   }
+
+   /**
+    * Evaluates the last knot in the curve.
+    *
+    * @param curve      the curve
+    * @param handedness the handedness
+    * @param target     the output transform
+    *
+    * @return the coordinate
+    *
+    * @see Curve3#evalLast(Curve3, Vec3, Vec3)
+    */
+   public static Transform2 evalLast (
+      final Curve2 curve,
+      final Handedness handedness,
+      final Transform2 target ) {
+
+      target.locPrev.set(target.location);
+      target.rotPrev = target.rotation;
+      Curve2.evalLast(curve, target.location, target.forward);
+
+      Vec2.normalize(target.forward, target.forward);
+      if ( handedness == Handedness.LEFT ) {
+         Vec2.perpendicularCCW(target.forward, target.right);
+      } else {
+         Vec2.perpendicularCW(target.forward, target.right);
+      }
+
+      target.rotation = Vec2.headingSigned(target.right);
+      return target;
    }
 
    /**
@@ -2271,10 +2373,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

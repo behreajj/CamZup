@@ -1125,6 +1125,34 @@ public class Transform3 extends Transform {
    private static final long serialVersionUID = 6128601941848021668L;
 
    /**
+    * Adds two transforms together by component. The sum of the two rotations is
+    * normalized.
+    *
+    * @param a      the left operand
+    * @param b      the right operand
+    * @param target the output transform
+    *
+    * @return the transform
+    */
+   @Experimental
+   public static Transform3 add (
+      final Transform3 a,
+      final Transform3 b,
+      final Transform3 target ) {
+
+      target.locPrev.set(target.location);
+      target.rotPrev.set(target.rotation);
+      target.scalePrev.set(target.scale);
+
+      Vec3.add(a.location, b.location, target.location);
+      Quaternion.addNorm(a.rotation, b.rotation, target.rotation);
+      Vec3.add(a.scale, b.scale, target.scale);
+
+      target.updateAxes();
+      return target;
+   }
+
+   /**
     * A helper function to set the transform's from either separate vectors or
     * from the columns of a matrix. The transform's translation is set to zero;
     * its scale, to one.
@@ -1458,6 +1486,26 @@ public class Transform3 extends Transform {
    }
 
    /**
+    * Eases an array through a series of transforms according to a step in [0.0,
+    * 1.0].
+    *
+    * @param frames the frames
+    * @param step   the step
+    * @param target the output transform
+    *
+    * @return the mix
+    *
+    * @see Transform3#EASING
+    */
+   public static Transform3 mix (
+      final Transform3[] frames,
+      final float step,
+      final Transform3 target ) {
+
+      return Transform3.EASING.apply(frames, step, target);
+   }
+
+   /**
     * Multiplies a direction by a transform. This rotates the direction by the
     * transform's rotation.
     *
@@ -1697,6 +1745,7 @@ public class Transform3 extends Transform {
             dest.rotation,
             step,
             target.rotation);
+         target.updateAxes();
 
          target.scalePrev.set(target.scale);
          this.loc.applyUnclamped(

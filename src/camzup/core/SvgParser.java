@@ -23,8 +23,8 @@ abstract class SvgParser {
 
    static float parseFloat ( final String v, final float def ) {
 
-      // TODO: Does this need to handle different SVG units, such
-      // as "%" for percentages, etc.
+      // Does this need to handle different SVG units?
+      // "em" | "ex" | "px" | "in" | "cm" | "mm" | "pt" | "pc" | "%"
       float x = def;
       try {
          x = Float.parseFloat(v);
