@@ -233,6 +233,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       Vec2.add(vtOrigin, vtPerp, vtNewOrigin);
       Vec2.add(vtDest, vtPerp, vtNewDest);
 
+//      Vec2.mod1(vtNewOrigin, vtNewOrigin);
+//      Vec2.mod1(vtNewDest, vtNewDest);
+
       final int[][][] faceNew = { {
          { idxV0, idxVt0 },
          { idxV1, idxVt1 },
@@ -2488,8 +2491,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final Vec2[] vs = target.coords = Vec2.resize(target.coords, seg2);
       final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
          seg2);
-      target.faces = isNgon ? new int[seg][4][2]
-         : new int[seg2][3][2];
+      target.faces = isNgon ? new int[seg][4][2] : new int[seg2][3][2];
 
       for ( int k = 0, i = 0, j = 1; k < seg; ++k, i += 2, j += 2 ) {
          final double theta = k * toTheta;
@@ -2914,10 +2916,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

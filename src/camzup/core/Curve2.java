@@ -308,6 +308,34 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
+    * Inserts a collection of knots at a given index. When the curve is a closed
+    * loop, the index wraps around; this means negative indices are accepted.
+    *
+    * @param i     the index
+    * @param knots the knots
+    *
+    * @return this curve
+    */
+   public Curve2 insertAll (
+      final int i,
+      final Collection < Knot2 > knots ) {
+
+      final int vidx = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
+         : i;
+      final Iterator < Knot2 > knItr = knots.iterator();
+      int k = vidx;
+      while ( knItr.hasNext() ) {
+         final Knot2 knot = knItr.next();
+         if ( knot != null ) {
+            this.knots.add(k, knot);
+            k++;
+         }
+      }
+
+      return this;
+   }
+
+   /**
     * Inserts a list of knots at a given index. When the curve is a closed loop,
     * the index wraps around; this means negative indices are accepted.
     *
@@ -319,8 +347,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public Curve2 insertAll (
       final int i,
       final Knot2... knots ) {
-
-      // TODO: Version for Collections?
 
       final int len = knots.length;
       final int vidx = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)

@@ -323,6 +323,34 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
+    * Inserts a collection of knots at a given index. When the curve is a closed
+    * loop, the index wraps around; this means negative indices are accepted.
+    *
+    * @param i     the index
+    * @param knots the knots
+    *
+    * @return this curve
+    */
+   public Curve3 insertAll (
+      final int i,
+      final Collection < Knot3 > knots ) {
+
+      final int vidx = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
+         : i;
+      final Iterator < Knot3 > knItr = knots.iterator();
+      int k = vidx;
+      while ( knItr.hasNext() ) {
+         final Knot3 knot = knItr.next();
+         if ( knot != null ) {
+            this.knots.add(k, knot);
+            k++;
+         }
+      }
+
+      return this;
+   }
+
+   /**
     * Inserts a list of knots at a given index. When the curve is a closed loop,
     * the index wraps around; this means negative indices are accepted.
     *
@@ -334,8 +362,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public Curve3 insertAll (
       final int i,
       final Knot3... knots ) {
-
-      // TODO: Version for Collections?
 
       final int len = knots.length;
       final int vidx = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
@@ -1898,9 +1924,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Vec3 target ) {
 
       return target.set(
-         0.6666667f * a.x + IUtils.ONE_THIRD * b.x,
-         0.6666667f * a.y + IUtils.ONE_THIRD * b.y,
-         0.6666667f * a.z + IUtils.ONE_THIRD * b.z);
+         0.6666666f * a.x + IUtils.ONE_THIRD * b.x,
+         0.6666666f * a.y + IUtils.ONE_THIRD * b.y,
+         0.6666666f * a.z + IUtils.ONE_THIRD * b.z);
    }
 
    /**

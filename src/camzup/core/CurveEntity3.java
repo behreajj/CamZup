@@ -253,7 +253,6 @@ public class CurveEntity3 extends Entity3
       final int curveLast = this.curves.size() - 1;
       final Iterator < Curve3 > curveItr = this.curves.iterator();
       while ( curveItr.hasNext() ) {
-
          pyCd.append(
             curveItr.next().toBlenderCode(uRes, tiltStart, tiltEnd));
          if ( curveIndex < curveLast ) { pyCd.append(',').append(' '); }
@@ -306,40 +305,6 @@ public class CurveEntity3 extends Entity3
          .append("C.scene.collection.objects.link(crv_obj)\n");
 
       return pyCd.toString();
-   }
-
-   /**
-    * Evaluates a step in the range [0.0, 1.0] for a curve in the entity,
-    * returning a knot.
-    *
-    * @param ce         the curve entity
-    * @param curveIndex the curve index
-    * @param step       the step
-    * @param handedness the handedness
-    * @param target     the output transform
-    *
-    * @return the transform
-    *
-    * @see Curve3#eval(Curve3, float, Handedness, Transform3)
-    * @see Transform3#invMulPoint(Transform3, Vec3, Vec3)
-    * @see Transform3#rotateBy(Quaternion)
-    */
-   @Experimental
-   public static Transform3 eval (
-      final CurveEntity3 ce,
-      final int curveIndex,
-      final float step,
-      final Handedness handedness,
-      final Transform3 target ) {
-
-      // TEST
-
-      final Transform3 ctr = ce.transform;
-      Curve3.eval(ce.get(curveIndex), step, handedness, target);
-      Transform3.mulPoint(ctr, target.location, target.location);
-      target.rotateBy(ctr.rotation);
-
-      return target;
    }
 
    /**

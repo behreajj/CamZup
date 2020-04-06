@@ -5,15 +5,15 @@ Cam Z-Up is a Java-based library for the creative coding environment [Processing
 Cam Z-Up is split into two packages: `pfriendly` and `core`. The `pfriendly` package contains code (mostly) compatible with Processing's API. Inside it, you'll find
 
 - `Zup3`, which extends `PGraphicsOpenGL`, like `P3D`;
-- `Yup3`, which also extends `PGraphicsOpenGL`.
+- `Yup3`, which also extends `PGraphicsOpenGL`;
 - `YupJ2`, which extends `PGraphicsJava2D`, a.k.a. `JAVA2D`, the default Processing renderer based on the Java AWT library;
 - `Yup2`, which extends `PGraphicsOpenGL`, like `P2D`, a "2.5D" renderer;
 
 The `FX2D` renderer, based on Java FX, is not supported.
 
-This library's `core` package includes basic utilities that were used to modify the Processing renderer. In this package, you'll find classes such as `Vec2`, `Vec3`, `Quaternion`.
+This library's `core` package includes basic utilities that were used to modify the Processing renderer. In this package, you'll find classes such as `Vec2`, `Vec3` and `Quaternion`.
 
-If your sketch is simple enough that you can flip the y-axis by supplying `-1` to either [scale](https://processing.org/reference/scale_.html) or [camera](https://processing.org/reference/camera_.html) without adverse effects, then you likely don't need this library. Even so, Cam Z-Up is  general purpose: its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as other, more specialized libraries. For an easy mouse-controlled orbital camera with GUI support, I would recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
+If your sketch is simple enough that you can flip the y-axis by supplying `-1` to either [scale](https://processing.org/reference/scale_.html) or the final parameters of [camera](https://processing.org/reference/camera_.html) without adverse effects, then you likely don't need this library. Even so, Cam Z-Up is  general purpose: its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as other, more specialized libraries. For an easy mouse-controlled orbital camera with GUI support, I would recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
 
 Cam Z-Up is tested with Processing version [4.0 alpha 1](https://github.com/processing/processing4/releases/tag/processing-1270-4.0a1).
 
@@ -167,7 +167,7 @@ public class Vec2 {
 }
 ```
 
-Public fields are mutable, but changing a vector in-place is discouraged through the absence of instance methods. `static` methods, with some exceptions, require an output argument and will not instantiate one for you. The usage pattern for classes in the `core` package generally look like
+Public fields are mutable, but changing a vector in-place is discouraged through the absence of instance methods. `static` methods, with some exceptions, require an output argument and will not instantiate one for you. The usage pattern for classes in the `core` package generally looks like
 
 ```java
 import camzup.core.*;
@@ -182,7 +182,7 @@ for(int i = 0; i < 16; ++i) {
 }
 ```
 
-where the assignee of an operation's result is declared in advance. In the above example, the cost of vector operations in a for-loop are mitigated by not having to create a `new Vec2()` for `sum` and `prod` on each iteration. You could argue that this is the worst of both worlds; in that case you're welcome to write your own library.
+where the assignee of an operation's result is declared in advance. In the above example, the cost of vector operations in a for-loop are mitigated by not having to create a `new Vec2()` for `sum` and `prod` on each iteration. You could argue that this is the worst of both worlds; in that case, you're welcome to write your own library.
 
 I have tried to make these classes as extensible as possible. This means that methods are marked neither `private` nor `final`. Primitive fields are not `final`; fields that are `Object`s are `final`. Sensitive fields are `protected`, not `private`, so they can be accessed by child classes. From within the Processing IDE, you can extend a Cam Z-Up class
 

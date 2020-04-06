@@ -424,40 +424,6 @@ public class CurveEntity2 extends Entity2
     * @param ce         the curve entity
     * @param curveIndex the curve index
     * @param step       the step
-    * @param handedness the handedness
-    * @param target     the output transform
-    *
-    * @return the transform
-    *
-    * @see Curve2#eval(Curve2, float, Vec2, Vec2)
-    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
-    * @see Transform2#rotateZ(float)
-    */
-   @Experimental
-   public static Transform2 eval (
-      final CurveEntity2 ce,
-      final int curveIndex,
-      final float step,
-      final Handedness handedness,
-      final Transform2 target ) {
-
-      // TEST
-
-      final Transform2 ctr = ce.transform;
-      Curve2.eval(ce.get(curveIndex), step, handedness, target);
-      Transform2.mulPoint(ctr, target.location, target.location);
-      target.rotateZ(ctr.rotation);
-
-      return target;
-   }
-
-   /**
-    * Evaluates a step in the range [0.0, 1.0] for a curve in the entity,
-    * returning a knot.
-    *
-    * @param ce         the curve entity
-    * @param curveIndex the curve index
-    * @param step       the step
     * @param knWorld    the knot in world space
     * @param knLocal    the knot in local space
     *

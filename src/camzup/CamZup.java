@@ -1,8 +1,6 @@
 package camzup;
 
-import camzup.core.Handedness;
 import camzup.core.Mesh3;
-import camzup.core.Quaternion;
 import camzup.core.Random;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -63,21 +61,20 @@ public class CamZup {
 
       final Random rng = new Random();
 
-      final Vec3 right = new Vec3();
-      final Vec3 forward = new Vec3();
-      final Vec3 up = new Vec3();
+      final float f = ( float ) 1.66666666666666666666d;
+      System.out.println(f);
 
-      final Vec3 dir = new Vec3(0.0f, 0.0f, -1.0f);
+//      final Vec3 right = new Vec3();
+//      final Vec3 forward = new Vec3();
+//      final Vec3 up = new Vec3();
+//      final Vec3 dir = new Vec3(0.0f, 0.0f, -1.0f);
 //      Vec3.random(rng, dir);
-
-      final Quaternion q = new Quaternion();
-      final Quaternion r = new Quaternion();
-
-      Quaternion.fromDir(dir, Handedness.RIGHT, q);
-      Quaternion.fromDir(dir, Handedness.RIGHT, r, right, forward, up);
-
-      System.out.println(q);
-      System.out.println(r);
+//      final Quaternion q = new Quaternion();
+//      final Quaternion r = new Quaternion();
+//      Quaternion.fromDir(dir, Handedness.RIGHT, q);
+//      Quaternion.fromDir(dir, Handedness.RIGHT, r, right, forward, up);
+//      System.out.println(q);
+//      System.out.println(r);
    }
 
    /**

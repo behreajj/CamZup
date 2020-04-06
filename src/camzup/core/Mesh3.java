@@ -4029,10 +4029,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 
@@ -4113,10 +4110,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

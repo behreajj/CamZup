@@ -1330,16 +1330,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
          xNextAnchor,
          yNextAnchor,
          zNextAnchor);
-
-      Vec3.mix(prev.coord,
-         next.coord,
-         IUtils.ONE_THIRD,
-         prev.foreHandle);
-
-      Vec3.mix(next.coord,
-         prev.coord,
-         IUtils.ONE_THIRD,
-         next.rearHandle);
+      Vec3.mix(prev.coord, next.coord, IUtils.ONE_THIRD, prev.foreHandle);
+      Vec3.mix(next.coord, prev.coord, IUtils.ONE_THIRD, next.rearHandle);
 
       return next;
    }

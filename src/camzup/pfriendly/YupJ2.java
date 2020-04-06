@@ -471,18 +471,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Sets the camera to the Processing default, where the origin is in the top
-    * left corner of the sketch and the y axis points downward.
-    */
-   public void camDown ( ) {
-
-      this.camera(
-         this.width * 0.5f, this.height * 0.5f,
-         0.0f,
-         1.0f, -1.0f);
-   }
-
-   /**
     * Sets the camera to the renderer defaults.
     */
    @Override
@@ -585,6 +573,18 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          loc.x, loc.y,
          radians,
          zoom.x, zoom.y);
+   }
+
+   /**
+    * Sets the camera to the Processing default, where the origin is in the top
+    * left corner of the sketch and the y axis points downward.
+    */
+   public void camFlipped ( ) {
+
+      this.camera(
+         this.width * 0.5f, this.height * 0.5f,
+         0.0f,
+         1.0f, -1.0f);
    }
 
    /**

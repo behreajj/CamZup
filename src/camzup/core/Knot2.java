@@ -1029,8 +1029,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * @param yNextControl the next control point y
     * @param xNextAnchor  the next anchor x
     * @param yNextAnchor  the next anchor y
-    * @param prevKnot     the previous knot
-    * @param nextKnot     the next knot
+    * @param prev         the previous knot
+    * @param next         the next knot
     *
     * @return next knot
     */
@@ -1041,22 +1041,14 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float yNextControl,
       final float xNextAnchor,
       final float yNextAnchor,
-      final Knot2 prevKnot,
-      final Knot2 nextKnot ) {
+      final Knot2 prev,
+      final Knot2 next ) {
 
-      prevKnot.foreHandle.set(
-         xPrevControl,
-         yPrevControl);
+      prev.foreHandle.set(xPrevControl, yPrevControl);
+      next.rearHandle.set(xNextControl, yNextControl);
+      next.coord.set(xNextAnchor, yNextAnchor);
 
-      nextKnot.rearHandle.set(
-         xNextControl,
-         yNextControl);
-
-      nextKnot.coord.set(
-         xNextAnchor,
-         yNextAnchor);
-
-      return nextKnot;
+      return next;
    }
 
    /**
@@ -1068,8 +1060,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * @param prevControl the previous control point
     * @param nextControl the next control point
     * @param nextAnchor  the next anchor point
-    * @param prevKnot    the previous knot
-    * @param nextKnot    the next knot
+    * @param prev        the previous knot
+    * @param next        the next knot
     *
     * @return the next knot
     */
@@ -1077,14 +1069,14 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final Vec2 prevControl,
       final Vec2 nextControl,
       final Vec2 nextAnchor,
-      final Knot2 prevKnot,
-      final Knot2 nextKnot ) {
+      final Knot2 prev,
+      final Knot2 next ) {
 
       return Knot2.fromSegCubic(
          prevControl.x, prevControl.y,
          nextControl.x, nextControl.y,
          nextAnchor.x, nextAnchor.y,
-         prevKnot, nextKnot);
+         prev, next);
    }
 
    /**
@@ -1106,20 +1098,9 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final Knot2 prev,
       final Knot2 next ) {
 
-      next.coord.set(
-         xNextAnchor,
-         yNextAnchor);
-
-      Vec2.mix(prev.coord,
-         next.coord,
-         IUtils.ONE_THIRD,
-         prev.foreHandle);
-
-      Vec2.mix(next.coord,
-         prev.coord,
-         IUtils.ONE_THIRD,
-         next.rearHandle);
-
+      next.coord.set(xNextAnchor, yNextAnchor);
+      Vec2.mix(prev.coord, next.coord, IUtils.ONE_THIRD, prev.foreHandle);
+      Vec2.mix(next.coord, prev.coord, IUtils.ONE_THIRD, next.rearHandle);
       return next;
    }
 
@@ -1155,7 +1136,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * @param yControl    the control point y
     * @param xNextAnchor the next anchor x
     * @param yNextAnchor the next anchor y
-    * @param prevKnot    the previous knot
+    * @param prev        the previous knot
     * @param next        the next knot
     *
     * @return the next knot
@@ -1165,17 +1146,18 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float yControl,
       final float xNextAnchor,
       final float yNextAnchor,
-      final Knot2 prevKnot,
+      final Knot2 prev,
       final Knot2 next ) {
 
-      final Vec2 prevCo = prevKnot.coord;
+      final Vec2 prevCo = prev.coord;
 
       final float midpt23x = xControl * 0.6666666f;
       final float midpt23y = yControl * 0.6666666f;
 
-      prevKnot.foreHandle.set(
-         midpt23x + IUtils.ONE_THIRD * prevCo.x,
-         midpt23y + IUtils.ONE_THIRD * prevCo.y);
+      prev.foreHandle
+         .set(
+            midpt23x + IUtils.ONE_THIRD * prevCo.x,
+            midpt23y + IUtils.ONE_THIRD * prevCo.y);
 
       next.rearHandle.set(
          midpt23x + IUtils.ONE_THIRD * xNextAnchor,
@@ -1196,21 +1178,21 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @param control    the control point
     * @param nextAnchor the next anchor point
-    * @param prevKnot   the previous knot
-    * @param nextKnot   the next knot
+    * @param prev       the previous knot
+    * @param next       the next knot
     *
     * @return the next knot
     */
    public static Knot2 fromSegQuadratic (
       final Vec2 control,
       final Vec2 nextAnchor,
-      final Knot2 prevKnot,
-      final Knot2 nextKnot ) {
+      final Knot2 prev,
+      final Knot2 next ) {
 
       return Knot2.fromSegQuadratic(
          control.x, control.y,
          nextAnchor.x, nextAnchor.y,
-         prevKnot, nextKnot);
+         prev, next);
    }
 
    /**
