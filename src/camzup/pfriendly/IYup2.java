@@ -83,10 +83,12 @@ public interface IYup2 extends IUp {
    /**
     * Draws a circle at a location
     *
-    * @param a the coordinate
-    * @param b the size
+    * @param coord the coordinate
+    * @param size  the size
     */
-   void circle ( final Vec2 a, final float b );
+   void circle (
+      final Vec2 coord,
+      final float size );
 
    /**
     * Draws a curve between four points.
@@ -116,7 +118,9 @@ public interface IYup2 extends IUp {
     * @param a the first parameter
     * @param b the second parameter
     */
-   void ellipse ( final Vec2 a, final Vec2 b );
+   void ellipse (
+      final Vec2 a,
+      final Vec2 b );
 
    /**
     * Gets the renderer's camera location.
@@ -259,7 +263,9 @@ public interface IYup2 extends IUp {
     * @param img   the image
     * @param coord the coordinate
     */
-   void image ( final PImage img, final Vec2 coord );
+   void image (
+      final PImage img,
+      final Vec2 coord );
 
    /**
     * Draws an image at a given coordinate and dimension.
@@ -268,7 +274,10 @@ public interface IYup2 extends IUp {
     * @param coord the coordinate
     * @param dim   the dimension
     */
-   void image ( final PImage img, final Vec2 coord, final Vec2 dim );
+   void image (
+      final PImage img,
+      final Vec2 coord,
+      final Vec2 dim );
 
    /**
     * Sets the renderer's image mode.
@@ -297,7 +306,9 @@ public interface IYup2 extends IUp {
     * @param origin the origin coordinate
     * @param dest   the destination coordinate
     */
-   void line ( final Vec2 origin, final Vec2 dest );
+   void line (
+      final Vec2 origin,
+      final Vec2 dest );
 
    /**
     * Finds the mouse's location in world coordinates relative to the renderer's
@@ -358,7 +369,9 @@ public interface IYup2 extends IUp {
     *
     * @see IYup2#moveTo(float, float)
     */
-   default void moveBy ( final float x, final float y ) {
+   default void moveBy (
+      final float x,
+      final float y ) {
 
       this.moveByLocal(x, y);
    }
@@ -386,7 +399,9 @@ public interface IYup2 extends IUp {
     * @see IYup2#getLocX()
     * @see IYup2#getLocY()
     */
-   default void moveByGlobal ( final float x, final float y ) {
+   default void moveByGlobal (
+      final float x,
+      final float y ) {
 
       this.moveTo(
          this.getLocX() + x,
@@ -416,7 +431,9 @@ public interface IYup2 extends IUp {
     * @see IYup2#getRoll()
     * @see IYup2#moveTo(float, float)
     */
-   default void moveByLocal ( final float x, final float y ) {
+   default void moveByLocal (
+      final float x,
+      final float y ) {
 
       final float nrm = this.getRoll() * IUtils.ONE_TAU;
       final float cosa = Utils.scNorm(nrm);
@@ -452,7 +469,9 @@ public interface IYup2 extends IUp {
     * @see IYup2#getZoomY()
     * @see IYup2#camera(float, float, float, float, float)
     */
-   default void moveTo ( final float x, final float y ) {
+   default void moveTo (
+      final float x,
+      final float y ) {
 
       this.camera(
          x, y,
@@ -508,7 +527,9 @@ public interface IYup2 extends IUp {
     * @param x the x coordinate
     * @param y the y coordinate
     */
-   void point ( final float x, final float y );
+   void point (
+      final float x,
+      final float y );
 
    /**
     * Draws a point at a given coordinate
@@ -529,8 +550,10 @@ public interface IYup2 extends IUp {
     * @param d the fourth point
     */
    void quad (
-      final Vec2 a, final Vec2 b,
-      final Vec2 c, final Vec2 d );
+      final Vec2 a,
+      final Vec2 b,
+      final Vec2 c,
+      final Vec2 d );
 
    /**
     * Draws a quadratic Bezier curve segment to the next anchor point; the
@@ -539,7 +562,9 @@ public interface IYup2 extends IUp {
     * @param cp  the control point
     * @param ap1 the next anchor point
     */
-   void quadraticVertex ( final Vec2 cp, final Vec2 ap1 );
+   void quadraticVertex (
+      final Vec2 cp,
+      final Vec2 ap1 );
 
    /**
     * Displays a ray, i.e., an origin point and a direction. The display length
@@ -653,7 +678,9 @@ public interface IYup2 extends IUp {
     * @param a the first parameter
     * @param b the second parameter
     */
-   void rect ( final Vec2 a, final Vec2 b );
+   void rect (
+      final Vec2 a,
+      final Vec2 b );
 
    /**
     * Draws a rounded rectangle; the meaning of the first two parameters depends
@@ -663,7 +690,10 @@ public interface IYup2 extends IUp {
     * @param b        the second parameter
     * @param rounding the corner rounding
     */
-   void rect ( final Vec2 a, final Vec2 b, final float rounding );
+   void rect (
+      final Vec2 a,
+      final Vec2 b,
+      final float rounding );
 
    /**
     * Increases the camera's roll by an angle in radians, then updates the
@@ -709,7 +739,9 @@ public interface IYup2 extends IUp {
     * @see Utils#modRadians(float)
     * @see IYup2#rollTo(float)
     */
-   default void rollTo ( final float radians, final float step ) {
+   default void rollTo (
+      final float radians,
+      final float step ) {
 
       if ( step <= 0.0f ) { return; }
       if ( step >= 1.0f ) {
@@ -745,7 +777,9 @@ public interface IYup2 extends IUp {
     *
     * @return the screen coordinate
     */
-   Vec2 screen ( final Vec2 source, final Vec2 target );
+   Vec2 screen (
+      final Vec2 source,
+      final Vec2 target );
 
    /**
     * Takes a two-dimensional x, y position and returns the x value for where it
@@ -757,7 +791,9 @@ public interface IYup2 extends IUp {
     *
     * @return the screen x coordinate
     */
-   float screenX ( final float x, final float y );
+   float screenX (
+      final float x,
+      final float y );
 
    /**
     * Takes a two-dimensional position and returns the x value for where it will
@@ -784,7 +820,9 @@ public interface IYup2 extends IUp {
     *
     * @see YupJ2#screen(Vec2, Vec2)
     */
-   float screenY ( final float x, final float y );
+   float screenY (
+      final float x,
+      final float y );
 
    /**
     * Takes a two-dimensional position and returns the y value for where it will
@@ -812,7 +850,9 @@ public interface IYup2 extends IUp {
     * @param a the location
     * @param b the size
     */
-   void square ( final Vec2 a, final float b );
+   void square (
+      final Vec2 a,
+      final float b );
 
    /**
     * Draws a rounded square.
@@ -821,7 +861,10 @@ public interface IYup2 extends IUp {
     * @param b        the size
     * @param rounding the corner rounding
     */
-   void square ( final Vec2 a, final float b, final float rounding );
+   void square (
+      final Vec2 a,
+      final float b,
+      final float rounding );
 
    /**
     * Sets the renderer's stroke color.
@@ -1020,7 +1063,10 @@ public interface IYup2 extends IUp {
     * @param b the second point
     * @param c the third point
     */
-   void triangle ( final Vec2 a, final Vec2 b, final Vec2 c );
+   void triangle (
+      final Vec2 a,
+      final Vec2 b,
+      final Vec2 c );
 
    /**
     * Adds another vertex to a shape between the beginShape and endShape
@@ -1048,7 +1094,9 @@ public interface IYup2 extends IUp {
     *
     * @see IYup2#zoomTo(float, float)
     */
-   default void zoomBy ( final float w, final float h ) {
+   default void zoomBy (
+      final float w,
+      final float h ) {
 
       this.zoomTo(this.getZoomX() + w, this.getZoomY() + h);
    }
@@ -1083,7 +1131,9 @@ public interface IYup2 extends IUp {
     * @see IYup2#getRoll()
     * @see IYup2#camera(float, float, float, float, float)
     */
-   default void zoomTo ( final float w, final float h ) {
+   default void zoomTo (
+      final float w,
+      final float h ) {
 
       if ( w != 0.0f && h != 0.0f ) {
          this.camera(

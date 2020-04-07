@@ -179,7 +179,9 @@ public interface ITextDisplay3 extends ITextDisplay {
     *
     * @see Utils#toFixed(float, int)
     */
-   default void text ( final int i, final Vec3 v ) {
+   default void text (
+      final int i,
+      final Vec3 v ) {
 
       this.text(i, v.x, v.y, v.z);
    }

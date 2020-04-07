@@ -3238,10 +3238,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 
@@ -3302,10 +3299,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 
@@ -3431,10 +3425,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

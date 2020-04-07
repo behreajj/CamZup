@@ -106,8 +106,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     */
    @Override
    public void bezier (
-      final Vec2 ap0, final Vec2 cp0,
-      final Vec2 cp1, final Vec2 ap1 ) {
+      final Vec2 ap0,
+      final Vec2 cp0,
+      final Vec2 cp1,
+      final Vec2 ap1 ) {
 
       this.bezier(
          ap0.x, ap0.y,
@@ -656,7 +658,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param dest   the destination coordinate
     */
    @Override
-   public void line ( final Vec2 origin, final Vec2 dest ) {
+   public void line (
+      final Vec2 origin,
+      final Vec2 dest ) {
 
       this.lineImpl(
          origin.x, origin.y, 0.0f,
@@ -735,7 +739,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     *
     * @return the model x coordinate
     */
-   public float modelX ( final float x, final float y ) {
+   public float modelX ( 
+      final float x, 
+      final float y ) {
 
       return this.modelX(x, y, 0.0f);
    }
@@ -750,7 +756,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     *
     * @return the model y coordinate
     */
-   public float modelY ( final float x, final float y ) {
+   public float modelY ( 
+      final float x, 
+      final float y ) {
 
       return this.modelY(x, y, 0.0f);
    }
@@ -765,7 +773,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     *
     * @return the model z coordinate
     */
-   public float modelZ ( final float x, final float y ) {
+   public float modelZ ( 
+      final float x, 
+      final float y ) {
 
       return this.modelZ(x, y, 0.0f);
    }
@@ -904,7 +914,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param b the second parameter
     */
    @Override
-   public void rect ( final Vec2 a, final Vec2 b ) {
+   public void rect ( 
+      final Vec2 a, 
+      final Vec2 b ) {
 
       this.rectImpl(a.x, a.y, b.x, b.y);
    }
@@ -998,7 +1010,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     */
    @Override
    @Experimental
-   public Vec2 screen ( final Vec2 source, final Vec2 target ) {
+   public Vec2 screen ( 
+      final Vec2 source,
+      final Vec2 target ) {
 
       this.screen1s(source.x, source.y, target);
       return target.set(
@@ -1012,7 +1026,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * additional values that need initialization can be attempted here.
     */
    @Override
-   public void setSize ( final int width, final int height ) {
+   public void setSize ( 
+      final int width, 
+      final int height ) {
 
       super.setSize(width, height);
       this.ortho();
@@ -1404,7 +1420,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param v  the coordinate
     * @param vt the texture coordinate
     */
-   public void vertex ( final Vec2 v, final Vec2 vt ) {
+   public void vertex ( 
+      final Vec2 v, 
+      final Vec2 vt ) {
 
       this.vertexImpl(v.x, v.y, 0.0f, vt.x, vt.y);
    }

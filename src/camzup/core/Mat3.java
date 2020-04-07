@@ -1184,7 +1184,11 @@ public class Mat3 extends Matrix {
     */
    public static boolean isIdentity ( final Mat3 m ) {
 
-      return m.m22 == 1.0f && m.m11 == 1.0f && m.m00 == 1.0f && m.m01 == 0.0f && m.m02 == 0.0f && m.m10 == 0.0f && m.m12 == 0.0f && m.m20 == 0.0f && m.m21 == 0.0f;
+      /* @formatter:off */
+      return m.m22 == 1.0f && m.m11 == 1.0f && m.m00 == 1.0f
+          && m.m01 == 0.0f && m.m02 == 0.0f && m.m10 == 0.0f
+          && m.m12 == 0.0f && m.m20 == 0.0f && m.m21 == 0.0f;
+      /* @formatter:on */
    }
 
    /**
@@ -1467,10 +1471,7 @@ public class Mat3 extends Matrix {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

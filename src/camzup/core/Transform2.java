@@ -1324,8 +1324,7 @@ public class Transform2 extends Transform {
       final float step,
       final Transform2 target ) {
 
-      return Transform2.EASING.apply(
-         origin, dest, step, target);
+      return Transform2.EASING.apply(origin, dest, step, target);
    }
 
    /**

@@ -8,8 +8,8 @@ import java.util.List;
  * An entity which contains a transform that is applied to a list of meshes. The
  * meshes may references a list of materials by index.
  */
-public class MeshEntity3 extends Entity3
-   implements Iterable < Mesh3 >, IVolume3 {
+public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
+   IVolume3 {
 
    /**
     * The list of meshes held by the entity.

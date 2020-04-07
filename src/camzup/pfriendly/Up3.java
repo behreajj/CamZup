@@ -387,7 +387,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       // TEST
 
       this.enableLighting();
-      if ( this.lightCount == IUpOgl.MAX_LIGHTS ) { return; }
+      if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
 
       this.lightType[this.lightCount] = PConstants.DIRECTIONAL;
 
@@ -428,7 +428,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param z the z magnitude
     */
    @Override
-   @Experimental
    public void dolly ( final float z ) {
 
       final float w = this.cameraInv.m32 * z + this.cameraInv.m33;
@@ -986,7 +985,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       // TEST
 
       this.enableLighting();
-      if ( this.lightCount == IUpOgl.MAX_LIGHTS ) { return; }
+      if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
 
       this.lightType[this.lightCount] = PConstants.POINT;
 
@@ -1420,7 +1419,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param angle         the angle
     * @param concentration cone center bias
     */
-   public void spotLight ( final Color clr,
+   public void spotLight (
+      final Color clr,
       final Vec3 loc,
       final Vec3 dir,
       final float angle,
@@ -1743,7 +1743,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param v  the coordinate
     * @param vt the texture coordinate
     */
-   public void vertex ( final Vec3 v, final Vec2 vt ) {
+   public void vertex (
+      final Vec3 v,
+      final Vec2 vt ) {
 
       this.vertexImpl(v.x, v.y, v.z, vt.x, vt.y);
    }

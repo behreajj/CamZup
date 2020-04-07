@@ -11,7 +11,9 @@ MeshEntity3 entity = new MeshEntity3()
 
 boolean wireframe = true;
 
-MaterialSolid fill = new MaterialSolid();
+MaterialSolid fill = new MaterialSolid()
+  .setStroke(false)
+  .setFill(#007fff);
 
 MaterialSolid stroke = new MaterialSolid()
   .setFill(false)

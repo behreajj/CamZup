@@ -57,7 +57,9 @@ public interface ITextDisplay {
     * @param c the character
     * @param v the location
     */
-   default void text ( final char c, final Vec2 v ) {
+   default void text (
+      final char c,
+      final Vec2 v ) {
 
       this.text(c, v.x, v.y);
    }
@@ -238,8 +240,10 @@ public interface ITextDisplay {
     */
    default void text (
       final String str,
-      final float x1, final float y1,
-      final float x2, final float y2 ) {
+      final float x1,
+      final float y1,
+      final float x2,
+      final float y2 ) {
 
       PApplet.showMissingWarning("text");
       this.text(str, x1, y1);

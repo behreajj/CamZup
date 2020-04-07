@@ -16,7 +16,7 @@ public class Color extends Vec4 {
 
    /**
     * Creates a color from bytes. In Java, bytes are signed, within the range
-    * [-128, 127] .
+    * [-128, 127].
     *
     * @param red   the red channel
     * @param green the green channel
@@ -33,7 +33,7 @@ public class Color extends Vec4 {
 
    /**
     * Creates a color from bytes. In Java, bytes are signed, within the range
-    * [-128, 127] .
+    * [-128, 127].
     *
     * @param red   the red channel
     * @param green the green channel
@@ -390,7 +390,7 @@ public class Color extends Vec4 {
 
    /**
     * Sets a color with bytes. In Java, bytes are signed, within the range
-    * [-128, 127] .
+    * [-128, 127].
     *
     * @param red   the red channel
     * @param green the green channel
@@ -529,10 +529,7 @@ public class Color extends Vec4 {
     * @return the string
     */
    @Override
-   String toBlenderCode ( ) {
-
-      return this.toBlenderCode(1.0f, true);
-   }
+   String toBlenderCode ( ) { return this.toBlenderCode(1.0f, true); }
 
    /**
     * Returns a String of Python code targeted toward the Blender 2.8x API. This
@@ -1551,10 +1548,7 @@ public class Color extends Vec4 {
     *
     * @return the evaluation
     */
-   public static boolean none ( final Color c ) {
-
-      return c.w <= 0.0f;
-   }
+   public static boolean none ( final Color c ) { return c.w <= 0.0f; }
 
    /**
     * Multiplies the red, green and blue color channels of a color by the alpha
@@ -1962,7 +1956,8 @@ public class Color extends Vec4 {
       return target.set(
          0.412453f * r + 0.357580f * g + 0.180423f * b,
          0.212671f * r + 0.715160f * g + 0.072169f * b,
-         0.019334f * r + 0.119193f * g + 0.950227f * b, a);
+         0.019334f * r + 0.119193f * g + 0.950227f * b,
+         a);
    }
 
    /**
@@ -2231,7 +2226,7 @@ public class Color extends Vec4 {
 
       final String hexStr = Integer.toHexString(c);
       if ( hexStr.length() < 3 ) { return "#000000"; }
-      return "#" + hexStr.substring(2).toUpperCase();
+      return "#" + hexStr.substring(2);
    }
 
    /**
@@ -2269,7 +2264,8 @@ public class Color extends Vec4 {
       return target.set(
          3.240479f * x - 1.537150f * y - 0.498535f * z,
          -0.969256f * x + 1.875991f * y + 0.041556f * z,
-         0.055648f * x - 0.204043f * y + 1.057311f * z, a);
+         0.055648f * x - 0.204043f * y + 1.057311f * z,
+         a);
    }
 
    /**
@@ -2356,10 +2352,7 @@ public class Color extends Vec4 {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 
@@ -2435,10 +2428,7 @@ public class Color extends Vec4 {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 
@@ -2531,7 +2521,7 @@ public class Color extends Vec4 {
        * @see Utils#mod1(float)
        */
       @Override
-      public float applyUnclamped (
+      protected float applyPartial (
          final float origin,
          final float dest,
          final float step ) {
@@ -2571,7 +2561,7 @@ public class Color extends Vec4 {
        * @see Utils#mod1(float)
        */
       @Override
-      public float applyUnclamped (
+      protected float applyPartial (
          final float origin,
          final float dest,
          final float step ) {
@@ -2649,8 +2639,16 @@ public class Color extends Vec4 {
 
          if ( step <= 0.0f || this.diff == 0.0f ) { return this.a; }
          if ( step >= 1.0f ) { return this.b; }
-         return this.applyUnclamped(origin, dest, step);
+         return this.applyPartial(origin, dest, step);
       }
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
       /**
        * The application function to be defined by sub-classes of this class.
@@ -2661,25 +2659,14 @@ public class Color extends Vec4 {
        *
        * @return the eased hue
        */
-      public abstract float applyUnclamped (
+      protected abstract float applyPartial (
          final float origin,
          final float dest,
          final float step );
 
       /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
-
-      /**
        * A helper function to pass on to sub-classes of this class. Mutates the
-       * fields a, b, diff, aLtb and aGtb.
+       * fields a, b, differance, aLtb and aGtb.
        *
        * @param origin the origin hue
        * @param dest   the destination hue
@@ -2722,7 +2709,7 @@ public class Color extends Vec4 {
        * @see Utils#mod1(float)
        */
       @Override
-      public float applyUnclamped (
+      protected float applyPartial (
          final float origin,
          final float dest,
          final float step ) {
@@ -2765,7 +2752,7 @@ public class Color extends Vec4 {
        * @see Utils#mod1(float)
        */
       @Override
-      public float applyUnclamped (
+      protected float applyPartial (
          final float origin,
          final float dest,
          final float step ) {
@@ -2815,7 +2802,8 @@ public class Color extends Vec4 {
          /* This should remain as double precision! */
          final double td = step;
          final double ud = 1.0d - td;
-         return target.set(( float ) ( ud * origin.x + td * dest.x ),
+         return target.set(
+            ( float ) ( ud * origin.x + td * dest.x ),
             ( float ) ( ud * origin.y + td * dest.y ),
             ( float ) ( ud * origin.z + td * dest.z ),
             ( float ) ( ud * origin.w + td * dest.w ));
@@ -2862,10 +2850,7 @@ public class Color extends Vec4 {
        * The default constructor. Creates a mixer with nearest hue interpolation
        * and linear interpolation for saturation and brightness.
        */
-      public MixHsba ( ) {
-
-         this(new HueNear());
-      }
+      public MixHsba ( ) { this(new HueNear()); }
 
       /**
        * Creates a color HSBA mixing function with the given hue easing
@@ -2920,21 +2905,12 @@ public class Color extends Vec4 {
          Color.rgbaToHsba(origin, this.aHsb);
          Color.rgbaToHsba(dest, this.bHsb);
 
-         final float x = this.hueFunc.apply(
-            this.aHsb.x,
-            this.bHsb.x,
-            step);
-         final float y = this.satFunc.apply(
-            this.aHsb.y,
-            this.bHsb.y,
-            step);
-         final float z = this.briFunc.apply(
-            this.aHsb.z,
-            this.bHsb.z,
-            step);
-         final float a = ( 1.0f - step ) * this.aHsb.w + step * this.bHsb.w;
+         this.hsbaNew.set(
+            this.hueFunc.apply(this.aHsb.x, this.bHsb.x, step),
+            this.satFunc.apply(this.aHsb.y, this.bHsb.y, step),
+            this.briFunc.apply(this.aHsb.z, this.bHsb.z, step),
+            ( 1.0f - step ) * this.aHsb.w + step * this.bHsb.w);
 
-         this.hsbaNew.set(x, y, z, a);
          return Color.hsbaToRgba(this.hsbaNew, target);
       }
 
@@ -2943,30 +2919,21 @@ public class Color extends Vec4 {
        *
        * @return the string
        */
-      public String getBriFuncString ( ) {
-
-         return this.briFunc.toString();
-      }
+      public String getBriFuncString ( ) { return this.briFunc.toString(); }
 
       /**
        * Gets the string identifier for the hue easing function.
        *
        * @return the string
        */
-      public String getHueFuncString ( ) {
-
-         return this.hueFunc.toString();
-      }
+      public String getHueFuncString ( ) { return this.hueFunc.toString(); }
 
       /**
        * Gets the string identifier for the saturation easing function.
        *
        * @return the string
        */
-      public String getSatFuncString ( ) {
-
-         return this.satFunc.toString();
-      }
+      public String getSatFuncString ( ) { return this.satFunc.toString(); }
 
       /**
        * Sets the brightness easing function.

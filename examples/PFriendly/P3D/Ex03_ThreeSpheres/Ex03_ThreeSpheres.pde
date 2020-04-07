@@ -13,7 +13,7 @@ MeshEntity3 meUv = new MeshEntity3().append(uvsphere);
 
 MaterialSolid solid = new MaterialSolid()
   .setStroke(true)
-  .setStroke(#2856ff)
+  .setStroke(#202020)
   .setStrokeWeight(1.025)
   .setFill(false);
 

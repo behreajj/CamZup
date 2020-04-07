@@ -180,9 +180,12 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    @Override
    public void arc (
-      final float x0, final float y0,
-      final float x1, final float y1,
-      final float start, final float stop,
+      final float x0,
+      final float y0,
+      final float x1,
+      final float y1,
+      final float start,
+      final float stop,
       final int mode ) {
 
       float x = x0;
@@ -271,10 +274,14 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    @Override
    public void bezier (
-      final float ap0x, final float ap0y,
-      final float cp0x, final float cp0y,
-      final float cp1x, final float cp1y,
-      final float ap1x, final float ap1y ) {
+      final float ap0x,
+      final float ap0y,
+      final float cp0x,
+      final float cp0y,
+      final float cp1x,
+      final float cp1y,
+      final float ap1x,
+      final float ap1y ) {
 
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
@@ -306,10 +313,18 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    @Override
    public void bezier (
-      final float ap0x, final float ap0y, final float ap0z,
-      final float cp0x, final float cp0y, final float cp0z,
-      final float cp1x, final float cp1y, final float cp1z,
-      final float ap1x, final float ap1y, final float ap1z ) {
+      final float ap0x,
+      final float ap0y,
+      final float ap0z,
+      final float cp0x,
+      final float cp0y,
+      final float cp0z,
+      final float cp1x,
+      final float cp1y,
+      final float cp1z,
+      final float ap1x,
+      final float ap1y,
+      final float ap1z ) {
 
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
@@ -740,9 +755,12 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    @Override
    public void frustum (
-      final float left, final float right,
-      final float bottom, final float top,
-      final float near, final float far ) {
+      final float left,
+      final float right,
+      final float bottom,
+      final float top,
+      final float near,
+      final float far ) {
 
       // this.cameraFOV = fov;
       // this.cameraAspect = aspect;
@@ -927,8 +945,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void image (
       final PGraphicsOpenGL buff,
-      final float x1, final float y1,
-      final float x2, final float y2 ) {
+      final float x1,
+      final float y1,
+      final float x2,
+      final float y2 ) {
 
       if ( buff.pgl.threadIsCurrent() ) {
          this.image(( PImage ) buff, x1, y1, x2, y2);
@@ -952,16 +972,17 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void image (
       final PGraphicsOpenGL buff,
-      final float x1, final float y1,
-      final float x2, final float y2,
-      final int u1, final int v1,
-      final int u2, final int v2 ) {
+      final float x1,
+      final float y1,
+      final float x2,
+      final float y2,
+      final int u1,
+      final int v1,
+      final int u2,
+      final int v2 ) {
 
       if ( buff.pgl.threadIsCurrent() ) {
-         this.image(
-            ( PImage ) buff,
-            x1, y1, x2, y2,
-            u1, v1, u2, v2);
+         this.image(( PImage ) buff, x1, y1, x2, y2, u1, v1, u2, v2);
       }
    }
 
@@ -1002,16 +1023,14 @@ public abstract class UpOgl extends PGraphicsOpenGL
    @Override
    public void image (
       final PImage img,
-      final float x1, final float y1,
-      final float x2, final float y2 ) {
+      final float x1,
+      final float y1,
+      final float x2,
+      final float y2 ) {
 
       final boolean useImg = this.textureMode == PConstants.IMAGE;
-      this.imageImpl(img,
-         x1, y1, x2, y2,
-         0.0f,
-         0.0f, 0.0f,
-         useImg ? img.width : 1.0f,
-         useImg ? img.height : 1.0f);
+      this.imageImpl(img, x1, y1, x2, y2, 0.0f, 0.0f,
+         0.0f, useImg ? img.width : 1.0f, useImg ? img.height : 1.0f);
    }
 
    /**
@@ -1032,15 +1051,16 @@ public abstract class UpOgl extends PGraphicsOpenGL
    @Override
    public void image (
       final PImage img,
-      final float x1, final float y1,
-      final float x2, final float y2,
-      final int u1, final int v1,
-      final int u2, final int v2 ) {
+      final float x1,
+      final float y1,
+      final float x2,
+      final float y2,
+      final int u1,
+      final int v1,
+      final int u2,
+      final int v2 ) {
 
-      this.imageImpl(img,
-         x1, y1, x2, y2, 0.0f,
-         u1, v1,
-         u2, v2);
+      this.imageImpl(img, x1, y1, x2, y2, 0.0f, u1, v1, u2, v2);
    }
 
    /**
@@ -1060,15 +1080,17 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void imageImpl (
       final PGraphicsOpenGL buff,
-      final float x1, final float y1,
-      final float x2, final float y2,
-      final float u1, final float v1,
-      final float u2, final float v2 ) {
+      final float x1,
+      final float y1,
+      final float x2,
+      final float y2,
+      final float u1,
+      final float v1,
+      final float u2,
+      final float v2 ) {
 
       if ( buff.pgl.threadIsCurrent() ) {
-         this.imageImpl(buff,
-            x1, y1, x2, y2, 0.0f,
-            u1, v1, u2, v2);
+         this.imageImpl(buff, x1, y1, x2, y2, 0.0f, u1, v1, u2, v2);
       }
    }
 
@@ -1288,10 +1310,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
     * size regardless of distance from the camera.
     */
    @Override
-   public void ortho ( ) {
-
-      this.ortho(1.0f);
-   }
+   public void ortho ( ) { this.ortho(1.0f); }
 
    /**
     * Sets the renderer projection to orthographic, where objects maintain their
@@ -1516,28 +1535,32 @@ public abstract class UpOgl extends PGraphicsOpenGL
    /**
     * Draws a quadrilateral between four points.
     *
-    * @param x0 the first point x
-    * @param y0 the first point y
-    * @param x1 the second point x
-    * @param y1 the second point y
-    * @param x2 the third point x
-    * @param y2 the third point y
-    * @param x3 the fourth point x
-    * @param y3 the fourth point y
+    * @param ax the first point x
+    * @param ay the first point y
+    * @param bx the second point x
+    * @param by the second point y
+    * @param cx the third point x
+    * @param cy the third point y
+    * @param dx the fourth point x
+    * @param dy the fourth point y
     */
    @Override
    public void quad (
-      final float x0, final float y0,
-      final float x1, final float y1,
-      final float x2, final float y2,
-      final float x3, final float y3 ) {
+      final float ax,
+      final float ay,
+      final float bx,
+      final float by,
+      final float cx,
+      final float cy,
+      final float dx,
+      final float dy ) {
 
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
-      this.vertexImpl(x0, y0, 0.0f, 0.0f, 0.0f);
-      this.vertexImpl(x1, y1, 0.0f, 1.0f, 0.0f);
-      this.vertexImpl(x2, y2, 0.0f, 1.0f, 1.0f);
-      this.vertexImpl(x3, y3, 0.0f, 0.0f, 1.0f);
+      this.vertexImpl(ax, ay, 0.0f, 0.0f, 0.0f);
+      this.vertexImpl(bx, by, 0.0f, 1.0f, 0.0f);
+      this.vertexImpl(cx, cy, 0.0f, 1.0f, 1.0f);
+      this.vertexImpl(dx, dy, 0.0f, 0.0f, 1.0f);
       this.endShape(PConstants.CLOSE);
    }
 
@@ -1551,8 +1574,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    @Override
    public void rect (
-      final float x1, final float y1,
-      final float x2, final float y2 ) {
+      final float x1,
+      final float y1,
+      final float x2,
+      final float y2 ) {
 
       float a0 = 0.0f;
       float b0 = 0.0f;
@@ -1632,13 +1657,13 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    @Override
    public void rect (
-      final float x1, final float y1,
-      final float x2, final float y2,
+      final float x1,
+      final float y1,
+      final float x2,
+      final float y2,
       final float r ) {
 
-      this.rectImpl(
-         x1, y1, x2, y2,
-         r, r, r, r);
+      this.rectImpl(x1, y1, x2, y2, r, r, r, r);
    }
 
    /**
@@ -1656,14 +1681,16 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    @Override
    public void rect (
-      final float x1, final float y1,
-      final float x2, final float y2,
-      final float tl, final float tr,
-      final float br, final float bl ) {
+      final float x1,
+      final float y1,
+      final float x2,
+      final float y2,
+      final float tl,
+      final float tr,
+      final float br,
+      final float bl ) {
 
-      this.rectImpl(
-         x1, y1, x2, y2,
-         tl, tr, br, bl);
+      this.rectImpl(x1, y1, x2, y2, tl, tr, br, bl);
    }
 
    /**
@@ -1759,7 +1786,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
     *
     * @return the screen point
     */
-   public Vec3 screen ( final Vec2 source, final Vec3 target ) {
+   public Vec3 screen (
+      final Vec2 source,
+      final Vec3 target ) {
 
       return this.screen(source.x, source.y, 0.0f, target);
    }
@@ -1777,7 +1806,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
     *
     * @return the screen point
     */
-   public Vec3 screen ( final Vec3 source, final Vec3 target ) {
+   public Vec3 screen (
+      final Vec3 source,
+      final Vec3 target ) {
 
       return this.screen(source.x, source.y, source.z, target);
    }
@@ -1791,7 +1822,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
     *
     * @return the vector
     */
-   public Vec3 screen1s ( final Vec3 source, final Vec3 target ) {
+   public Vec3 screen1s (
+      final Vec3 source,
+      final Vec3 target ) {
 
       return this.screen1s(source.x, source.y, source.z, target);
    }
@@ -2669,7 +2702,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
     * @param y the y coordinate
     */
    @Override
-   public void vertex ( final float x, final float y ) {
+   public void vertex (
+      final float x,
+      final float y ) {
 
       this.vertexImpl(x, y, 0.0f, this.textureU, this.textureV);
    }
@@ -3149,10 +3184,14 @@ public abstract class UpOgl extends PGraphicsOpenGL
    @Override
    protected void imageImpl (
       final PImage img,
-      final float x1, final float y1,
-      final float x2, final float y2,
-      final int u1, final int v1,
-      final int u2, final int v2 ) {
+      final float x1,
+      final float y1,
+      final float x2,
+      final float y2,
+      final int u1,
+      final int v1,
+      final int u2,
+      final int v2 ) {
 
       /*
        * This is backwards due to Processing's insistence on specifying UV
@@ -3660,10 +3699,14 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    @Override
    protected void rectImpl (
-      final float a, final float b,
-      final float c, final float d,
-      float tl, float tr,
-      float br, float bl ) {
+      final float a,
+      final float b,
+      final float c,
+      final float d,
+      float tl,
+      float tr,
+      float br,
+      float bl ) {
 
       float x1 = 0.0f;
       float y1 = 0.0f;

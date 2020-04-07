@@ -238,9 +238,12 @@ public abstract class PMatAux {
     * @return the view frustum
     */
    public static PMatrix3D frustum (
-      final float left, final float right,
-      final float bottom, final float top,
-      final float near, final float far,
+      final float left,
+      final float right,
+      final float bottom,
+      final float top,
+      final float near,
+      final float far,
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
@@ -962,9 +965,12 @@ public abstract class PMatAux {
     * @return the orthographic projection
     */
    public static PMatrix3D orthographic (
-      final float left, final float right,
-      final float bottom, final float top,
-      final float near, final float far,
+      final float left,
+      final float right,
+      final float bottom,
+      final float top,
+      final float near,
+      final float far,
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
@@ -1493,20 +1499,17 @@ public abstract class PMatAux {
 
       return new StringBuilder(320)
          .append('\n').append('[').append(' ')
-
          .append(Utils.toFixed(m.m00, places))
          .append(',').append(' ')
          .append(Utils.toFixed(m.m01, places))
          .append(',').append(' ')
          .append(Utils.toFixed(m.m02, places))
          .append(',').append(' ').append('\n')
-
          .append(Utils.toFixed(m.m10, places))
          .append(',').append(' ')
          .append(Utils.toFixed(m.m11, places))
          .append(',').append(' ')
          .append(Utils.toFixed(m.m12, places))
-
          .append(' ').append(']').append('\n')
          .toString();
    }

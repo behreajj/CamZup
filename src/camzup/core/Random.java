@@ -19,10 +19,7 @@ public class Random extends java.util.Random implements IUtils {
     *
     * @param seed the seed
     */
-   public Random ( final long seed ) {
-
-      super(seed);
-   }
+   public Random ( final long seed ) { super(seed); }
 
    /**
     * Returns this random number generator's seed as a hash string.

@@ -140,8 +140,7 @@ public class Mat4 extends Matrix {
    public Mat4 (
       final float m00, final float m01, final float m02, final float m03,
       final float m10, final float m11, final float m12, final float m13,
-      final float m20, final float m21, final float m22,
-      final float m23 ) {
+      final float m20, final float m21, final float m22, final float m23 ) {
 
       super(16);
       this.set(
@@ -174,8 +173,7 @@ public class Mat4 extends Matrix {
       final float m00, final float m01, final float m02, final float m03,
       final float m10, final float m11, final float m12, final float m13,
       final float m20, final float m21, final float m22, final float m23,
-      final float m30, final float m31, final float m32,
-      final float m33 ) {
+      final float m30, final float m31, final float m32, final float m33 ) {
 
       super(16);
       this.set(
@@ -625,8 +623,7 @@ public class Mat4 extends Matrix {
    public Mat4 set (
       final float m00, final float m01, final float m02, final float m03,
       final float m10, final float m11, final float m12, final float m13,
-      final float m20, final float m21, final float m22,
-      final float m23 ) {
+      final float m20, final float m21, final float m22, final float m23 ) {
 
       return this.set(
          m00, m01, m02, m03,
@@ -662,8 +659,7 @@ public class Mat4 extends Matrix {
       final float m00, final float m01, final float m02, final float m03,
       final float m10, final float m11, final float m12, final float m13,
       final float m20, final float m21, final float m22, final float m23,
-      final float m30, final float m31, final float m32,
-      final float m33 ) {
+      final float m30, final float m31, final float m32, final float m33 ) {
 
       /* @formatter:off */
       this.m00 = m00; this.m10 = m10; this.m20 = m20; this.m30 = m30;
@@ -1785,9 +1781,12 @@ public class Mat4 extends Matrix {
     * @return the view frustum
     */
    public static Mat4 frustum (
-      final float left, final float right,
-      final float bottom, final float top,
-      final float near, final float far,
+      final float left,
+      final float right,
+      final float bottom,
+      final float top,
+      final float near,
+      final float far,
       final Mat4 target ) {
 
       final float n2 = near + near;
@@ -1884,7 +1883,12 @@ public class Mat4 extends Matrix {
     */
    public static boolean isIdentity ( final Mat4 m ) {
 
-      return m.m33 == 1.0f && m.m22 == 1.0f && m.m11 == 1.0f && m.m00 == 1.0f && m.m01 == 0.0f && m.m02 == 0.0f && m.m03 == 0.0f && m.m10 == 0.0f && m.m12 == 0.0f && m.m13 == 0.0f && m.m20 == 0.0f && m.m21 == 0.0f && m.m23 == 0.0f && m.m30 == 0.0f && m.m31 == 0.0f && m.m32 == 0.0f;
+      /* @formatter:off */
+      return m.m33 == 1.0f && m.m22 == 1.0f && m.m11 == 1.0f && m.m00 == 1.0f
+          && m.m01 == 0.0f && m.m02 == 0.0f && m.m03 == 0.0f && m.m10 == 0.0f
+          && m.m12 == 0.0f && m.m13 == 0.0f && m.m20 == 0.0f && m.m21 == 0.0f
+          && m.m23 == 0.0f && m.m30 == 0.0f && m.m31 == 0.0f && m.m32 == 0.0f;
+      /* @formatter:on */
    }
 
    /**
@@ -2176,9 +2180,12 @@ public class Mat4 extends Matrix {
     * @return the orthographic projection
     */
    public static Mat4 orthographic (
-      final float left, final float right,
-      final float bottom, final float top,
-      final float near, final float far,
+      final float left,
+      final float right,
+      final float bottom,
+      final float top,
+      final float near,
+      final float far,
       final Mat4 target ) {
 
       float w = right - left;
@@ -2311,10 +2318,7 @@ public class Mat4 extends Matrix {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

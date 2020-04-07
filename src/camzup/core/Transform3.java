@@ -711,8 +711,7 @@ public class Transform3 extends Transform {
    /**
     * Scales the transform by a non-uniform scalar.<br>
     * <br>
-    * Beware that non-uniform scaling may lead to improper shading of a mesh
-    * when lit.
+    * Non-uniform scaling may lead to improper shading of a mesh when lit.
     *
     * @param nonUniformScale the scale
     *
@@ -751,8 +750,7 @@ public class Transform3 extends Transform {
    /**
     * Scales the transform to a non-uniform size.<br>
     * <br>
-    * Beware that non-uniform scaling may lead to improper shading of a mesh
-    * when lit.
+    * Non-uniform scaling may lead to improper shading of a mesh when lit.
     *
     * @param scaleNew the new scale
     *
@@ -774,8 +772,7 @@ public class Transform3 extends Transform {
     * Eases the transform to a scale by a step. The static easing function is
     * used.<br>
     * <br>
-    * Beware that non-uniform scaling may lead to improper shading of a mesh
-    * when lit.
+    * Non-uniform scaling may lead to improper shading of a mesh when lit.
     *
     * @param scaleNew the new scale
     * @param step     the step in [0.0, 1.0]
@@ -800,8 +797,7 @@ public class Transform3 extends Transform {
     * Eases the transform to a scale by a step. The kind of easing is specified
     * by a Vec3 easing function.<br>
     * <br>
-    * Beware that non-uniform scaling may lead to improper shading of a mesh
-    * when lit.
+    * Non-uniform scaling may lead to improper shading of a mesh when lit.
     *
     * @param scaleNew   the new scale
     * @param step       the step in [0.0, 1.0]
@@ -1763,10 +1759,7 @@ public class Transform3 extends Transform {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

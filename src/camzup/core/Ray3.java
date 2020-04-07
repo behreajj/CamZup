@@ -301,49 +301,8 @@ public class Ray3 extends Ray {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 
-   // @Experimental
-   // public static float intersectSphere (
-   // final Ray3 ray,
-   // final Vec3 center,
-   // final float radius ) {
-   //
-   // final Vec3 oc = Vec3.sub(ray.origin, center, new Vec3());
-   // final float a = Vec3.dot(ray.dir, ray.dir);
-   // final float b = 2.0f * Vec3.dot(oc, ray.dir);
-   // final float c = Vec3.dot(oc, oc) - radius * radius;
-   // final float discriminant = b * b - 4.0f * a * c;
-   // if ( discriminant < 0.0f ) { return -1.0f; }
-   // final float rootdiscr = Utils.sqrt(discriminant);
-   // float numerator = -b - rootdiscr;
-   // if ( numerator > 0.0f ) { return numerator / (2.0f * a); }
-   //
-   // numerator = -b + rootdiscr;
-   // if ( numerator > 0.0f ) { return numerator / (2.0f * a); }
-   //
-   // return -1.0f;
-   // }
-
-   // public static float intersectSphere ( Ray3 ray, Vec3 c, float r ) {
-   //
-   // Vec3 p = Vec3.sub(ray.origin, c, new Vec3());
-   // float rSq = r * r;
-   // Vec3 d = ray.dir;
-   // float pd = Vec3.dot(p, d);
-   // if ( pd > 0.0f || Vec3.dot(p, p) < rSq ) { return -1.0f; }
-   // Vec3 a = Vec3.sub(p, Vec3.mul(d, pd, new Vec3()), new Vec3());
-   // float aSq = Vec3.dot(a, a);
-   // if ( aSq > rSq ) { return -1.0f; }
-   // float h = Utils.sqrt(rSq - aSq);
-   // Vec3 i = Vec3.sub(a, Vec3.mul(h, d, new Vec3()), new Vec3());
-   // Vec3 intersection = Vec3.add(c, i, new Vec3());
-   // Vec3 normal = Vec3.div(i, r, new Vec3());
-   // return intersection;
-   // }
 }

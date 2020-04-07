@@ -44,7 +44,7 @@ a[name]:hover {
   text-decoration: none;
 }
 
-pre {
+pre, code {
   font-size: 10pt;
   font-family: 'Fira Code', 'Liberation Mono', 'Consolas', 'Source Code Pro', monospace;
   text-align: left;
@@ -76,12 +76,6 @@ h6 {
 
 ul {
   list-style-type: disc;
-}
-
-code {
-  font-size: 10pt;
-  font-family: 'Fira Code', 'Liberation Mono', 'Consolas', 'Source Code Pro', monospace;
-  text-align: left;
 }
 
 tt {
@@ -421,7 +415,6 @@ ul.blockList ul.blockListLast li.blocklist {
 .contentContainer .description dl dt {
   color: #0084bb;
   font-size: 1.1em;
-  font-weight: bold;
   margin: 10px 0 0 0;
 }
 
@@ -436,7 +429,6 @@ ul.blockList ul.blockListLast li.blocklist {
 .contentContainer .details dl dt {
   color: #0084bb;
   font-size: 1.1em;
-  font-weight: bold;
   margin: 10px 0 0 0;
 }
 
@@ -460,7 +452,6 @@ ul.blockList ul.blockListLast li.blocklist {
 .serializedFormContainer dl dt {
   color: #0084bb;
   font-size: 1.1em;
-  font-weight: bold;
   margin: 10px 0 0 0;
 }
 
@@ -471,7 +462,6 @@ ul.blockList ul.blockListLast li.blocklist {
 .serializedFormContainer dl.nameValue dt {
   display: inline;
   font-size: 1.1em;
-  font-weight: bold;
   margin-left: 1px;
 }
 

@@ -6,7 +6,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 /**
- * A two-dimensional complex number.
+ * A two-dimensional complex number. The <code>imag</code> component is a
+ * coefficient of <em>i</em>, or the square-root of negative one.
  */
 public class Complex implements Comparable < Complex >, Cloneable,
    Iterable < Float >, Serializable {
@@ -155,10 +156,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * @return the iterator
     */
    @Override
-   public CIterator iterator ( ) {
-
-      return new CIterator(this);
-   }
+   public CIterator iterator ( ) { return new CIterator(this); }
 
    /**
     * Gets the number of components held by the complex number.
@@ -753,7 +751,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final float czdi = c.real * z.imag + c.imag * z.real + d.imag;
       final float mSq = czdr * czdr + czdi * czdi;
 
-      if ( mSq < Utils.EPSILON ) { return target.reset(); }
+      if ( mSq < Utils.DEFAULT_EPSILON ) { return target.reset(); }
 
       /* az + b -- the numerator -- second. */
       final float azbr = a.real * z.real - a.imag * z.imag + b.real;
@@ -1139,10 +1137,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 
@@ -1193,10 +1188,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

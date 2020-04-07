@@ -578,7 +578,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @return this mesh
     */
    @Chainable
-   @Experimental
    public Mesh2 insetFaces ( final int itr, final float fac ) {
 
       final int vitr = itr < 1 ? 1 : itr;

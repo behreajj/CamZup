@@ -41,7 +41,9 @@ public abstract class Convert {
     *
     * @return the matrix
     */
-   public static Mat3 toMat3 ( final PMatrix2D source, final Mat3 target ) {
+   public static Mat3 toMat3 (
+      final PMatrix2D source,
+      final Mat3 target ) {
 
       return target.set(
          source.m00, source.m01, source.m02,
@@ -57,7 +59,9 @@ public abstract class Convert {
     *
     * @return the matrix
     */
-   public static Mat4 toMat4 ( final PMatrix2D source, final Mat4 target ) {
+   public static Mat4 toMat4 (
+      final PMatrix2D source,
+      final Mat4 target ) {
 
       return target.set(
          source.m00, source.m01, 0.0f, source.m02,
@@ -74,7 +78,9 @@ public abstract class Convert {
     *
     * @return the matrix
     */
-   public static Mat4 toMat4 ( final PMatrix3D source, final Mat4 target ) {
+   public static Mat4 toMat4 (
+      final PMatrix3D source,
+      final Mat4 target ) {
 
       return target.set(
          source.m00, source.m01, source.m02, source.m03,
@@ -577,7 +583,9 @@ public abstract class Convert {
     *
     * @return the vector
     */
-   public static PVector toPVector ( final Vec2 source, PVector target ) {
+   public static PVector toPVector (
+      final Vec2 source,
+      PVector target ) {
 
       if ( target == null ) { target = new PVector(); }
       return target.set(source.x, source.y, 0.0f);
@@ -603,7 +611,9 @@ public abstract class Convert {
     *
     * @return the vector
     */
-   public static PVector toPVector ( final Vec3 source, PVector target ) {
+   public static PVector toPVector (
+      final Vec3 source,
+      PVector target ) {
 
       if ( target == null ) { target = new PVector(); }
       return target.set(source.x, source.y, source.z);
@@ -617,7 +627,9 @@ public abstract class Convert {
     *
     * @return the vector
     */
-   public static Vec2 toVec2 ( final PVector source, final Vec2 target ) {
+   public static Vec2 toVec2 (
+      final PVector source,
+      final Vec2 target ) {
 
       return target.set(source.x, source.y);
    }
@@ -630,7 +642,9 @@ public abstract class Convert {
     *
     * @return the vector
     */
-   public static Vec3 toVec3 ( final PVector source, final Vec3 target ) {
+   public static Vec3 toVec3 (
+      final PVector source,
+      final Vec3 target ) {
 
       return target.set(source.x, source.y, source.z);
    }
@@ -643,7 +657,9 @@ public abstract class Convert {
     *
     * @return the vector
     */
-   public static Vec4 toVec4 ( final PVector source, final Vec4 target ) {
+   public static Vec4 toVec4 (
+      final PVector source,
+      final Vec4 target ) {
 
       return target.set(source.x, source.y, source.z, 0.0f);
    }

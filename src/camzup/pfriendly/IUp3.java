@@ -319,7 +319,9 @@ public interface IUp3 extends IUp {
     * @param origin the origin coordinate
     * @param dest   the destination coordinate
     */
-   void line ( final Vec3 origin, final Vec3 dest );
+   void line (
+      final Vec3 origin,
+      final Vec3 dest );
 
    /**
     * Gets a mouse within unit coordinates.
@@ -508,7 +510,10 @@ public interface IUp3 extends IUp {
     * @param y the y coordinate
     * @param z the z coordinate
     */
-   void point ( final float x, final float y, final float z );
+   void point (
+      final float x,
+      final float y,
+      final float z );
 
    /**
     * Draws a point at a given coordinate
@@ -536,7 +541,9 @@ public interface IUp3 extends IUp {
     * @param cp  the control point
     * @param ap1 the next anchor point
     */
-   void quadraticVertex ( final Vec3 cp, final Vec3 ap1 );
+   void quadraticVertex (
+      final Vec3 cp,
+      final Vec3 ap1 );
 
    /**
     * Displays a ray, i.e., an origin point and a direction. The display length

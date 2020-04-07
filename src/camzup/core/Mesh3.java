@@ -2502,10 +2502,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int sectors,
       final Mesh3 target ) {
 
-      return Mesh3.cylinder(
-         origin, dest,
-         IMesh.DEFAULT_CIRCLE_SECTORS,
-         true, target);
+      return Mesh3.cylinder(origin, dest,
+         IMesh.DEFAULT_CIRCLE_SECTORS, true, target);
    }
 
    /**
@@ -2523,10 +2521,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec3 dest,
       final Mesh3 target ) {
 
-      return Mesh3.cylinder(
-         origin, dest,
-         IMesh.DEFAULT_CIRCLE_SECTORS,
-         target);
+      return Mesh3.cylinder(origin, dest,
+         IMesh.DEFAULT_CIRCLE_SECTORS, target);
    }
 
    /**
