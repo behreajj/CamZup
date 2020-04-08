@@ -759,10 +759,7 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

@@ -217,7 +217,6 @@ ul.navList {
 
 ul.navList li {
   float: left;
-  font-weight: bold;
   list-style: none;
   padding: 3px 6px;
 }
@@ -231,7 +230,6 @@ ul.subNavList {
 ul.subNavList li {
   float: left;
   font-size: 90%;
-  font-weight: bold;
   list-style: none;
 }
 
@@ -244,7 +242,6 @@ ul.subNavList li {
   background-color: rgba(44, 69, 87, 0.44);
   border-radius: 1px;
   color: #fff7d5;
-  font-weight: bold;
   margin: auto 5px;
 }
 
@@ -533,7 +530,6 @@ ul.blockListLast li.blocklist {
   background-repeat: no-repeat;
   clear: none;
   color: #fff7d5;
-  font-weight: bold;
   margin: 0px;
   overflow: hidden;
   padding: 0px;
@@ -592,7 +588,7 @@ th.colFirst, th.colLast, th.colOne, .constantValuesContainer th {
 }
 
 td.colOne a:link, td.colOne a:active, td.colOne a:visited, td.colOne a:hover, td.colFirst a:link, td.colFirst a:active, td.colFirst a:visited, td.colFirst a:hover, td.colLast a:link, td.colLast a:active, td.colLast a:visited, td.colLast a:hover, .constantValuesContainer td a:link, .constantValuesContainer td a:active, .constantValuesContainer td a:visited, .constantValuesContainer td a:hover {
-  font-weight: bold;
+  font-weight: normal;
 }
 
 td.colFirst {
@@ -673,5 +669,5 @@ h1.hidden {
 }
 
 .strong {
-  font-weight: bold;
+  font-weight: normal;
 }

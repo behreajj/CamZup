@@ -69,20 +69,14 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     *
     * @param colors the colors
     */
-   public Gradient ( final Color... colors ) {
-
-      this.appendAll(colors);
-   }
+   public Gradient ( final Color... colors ) { this.appendAll(colors); }
 
    /**
     * Creates a gradient from color keys.
     *
     * @param keys the color keys
     */
-   public Gradient ( final ColorKey... keys ) {
-
-      this.insertAll(keys);
-   }
+   public Gradient ( final ColorKey... keys ) { this.insertAll(keys); }
 
    /**
     * Creates a gradient from a list of scalars; the resultant keys are evenly
@@ -90,20 +84,14 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     *
     * @param scalars the scalars
     */
-   public Gradient ( final float... scalars ) {
-
-      this.appendAll(scalars);
-   }
+   public Gradient ( final float... scalars ) { this.appendAll(scalars); }
 
    /**
     * Constructs a copy of a source gradient.
     *
     * @param source the source
     */
-   public Gradient ( final Gradient source ) {
-
-      this.set(source);
-   }
+   public Gradient ( final Gradient source ) { this.set(source); }
 
    /**
     * Creates a gradient from a color integer; an additional color key, white at
@@ -125,10 +113,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     *
     * @param colors the colors
     */
-   public Gradient ( final int... colors ) {
-
-      this.appendAll(colors);
-   }
+   public Gradient ( final int... colors ) { this.appendAll(colors); }
 
    /**
     * Appends a color at step 1.0 . Compresses existing keys to the left.
@@ -606,10 +591,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see TreeSet#iterator()
     */
    @Override
-   public Iterator < ColorKey > iterator ( ) {
-
-      return this.keys.iterator();
-   }
+   public Iterator < ColorKey > iterator ( ) { return this.keys.iterator(); }
 
    /**
     * Returns the number of keys in this gradient.
@@ -918,9 +900,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
          clrList.add(key.clr);
       }
 
-      /*
-       * Clear out the gradient's key set now that the separation is complete.
-       */
+      /* Clear out the gradient's key set now that separation is complete. */
       this.keys.clear();
 
       /* Sort the colors. */

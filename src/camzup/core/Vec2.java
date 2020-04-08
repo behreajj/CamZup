@@ -3209,8 +3209,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     * An abstract class that may serve as an umbrella for any custom comparators
     * of Vec2 s.
     */
-   public static abstract class AbstrComparator
-      implements Comparator < Vec2 > {
+   public static abstract class AbstrComparator implements Comparator < Vec2 > {
 
       /**
        * The default constructor.

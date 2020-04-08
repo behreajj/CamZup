@@ -25,7 +25,7 @@ public class ZShader extends PShader {
 
    /**
     * Constructs a shader with a parent applet reference
-    * 
+    *
     * @param parent the parent
     */
    public ZShader ( final PApplet parent ) { super(parent); }
@@ -33,7 +33,7 @@ public class ZShader extends PShader {
    /**
     * Constructs a shader with file name references to a vertex and fragment
     * shader.
-    * 
+    *
     * @param parent       the parent applet
     * @param vertFileName the vertex shader file name
     * @param fragFileName the fragment shader file name
@@ -48,7 +48,7 @@ public class ZShader extends PShader {
 
    /**
     * Constructs a shader from source strings for a vertex and fragment shader.
-    * 
+    *
     * @param parent     the parent applet
     * @param vertSource the vertex shader source code
     * @param fragSource the fragment shader source code
@@ -63,7 +63,7 @@ public class ZShader extends PShader {
 
    /**
     * Constructs a shader with URL references to a vertex and fragment shader.
-    * 
+    *
     * @param parent  the parent applet
     * @param vertURL the vertex shader URL
     * @param fragURL the fragment shader URL
@@ -77,57 +77,58 @@ public class ZShader extends PShader {
    }
 
    /**
-    * Sets a uniform to a vector.
-    * 
+    * Sets a uniform to a matrix.
+    *
     * @param name the uniform name
-    * @param v    the value
+    * @param m    the matrix
     */
-   public void set ( String name, Vec2 v ) {
+   public void set ( final String name, final Mat3 m ) {
 
-      setUniformImpl(name, 13, v.toArray());
-   }
-
-   /**
-    * Sets a uniform to a vector.
-    * 
-    * @param name the uniform name
-    * @param v    the value
-    */
-   public void set ( String name, Vec3 v ) {
-
-      setUniformImpl(name, 14, v.toArray());
-   }
-
-   /**
-    * Sets a uniform to a vector.
-    * 
-    * @param name the uniform name
-    * @param v    the value
-    */
-   public void set ( String name, Vec4 v ) {
-
-      setUniformImpl(name, 15, v.toArray());
+      this.setUniformImpl(name, 17, m.toArray());
    }
 
    /**
     * Sets a uniform to a matrix.
-    * 
+    *
     * @param name the uniform name
     * @param m    the matrix
     */
-   public void set ( String name, Mat3 m ) {
+   public void set ( final String name, final Mat4 m ) {
 
-      setUniformImpl(name, 17, m.toArray());
+      this.setUniformImpl(name, 18, m.toArray());
    }
 
    /**
-    * Sets a uniform to a matrix.
-    * 
+    * Sets a uniform to a vector.
+    *
     * @param name the uniform name
-    * @param m    the matrix
+    * @param v    the value
     */
-   public void set ( String name, Mat4 m ) {
+   public void set ( final String name, final Vec2 v ) {
 
-      setUniformImpl(name, 18, m.toArray());
+      this.setUniformImpl(name, 13, v.toArray());
    }
+
+   /**
+    * Sets a uniform to a vector.
+    *
+    * @param name the uniform name
+    * @param v    the value
+    */
+   public void set ( final String name, final Vec3 v ) {
+
+      this.setUniformImpl(name, 14, v.toArray());
+   }
+
+   /**
+    * Sets a uniform to a vector.
+    *
+    * @param name the uniform name
+    * @param v    the value
+    */
+   public void set ( final String name, final Vec4 v ) {
+
+      this.setUniformImpl(name, 15, v.toArray());
+   }
+
 }

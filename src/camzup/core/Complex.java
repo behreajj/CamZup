@@ -751,7 +751,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final float czdi = c.real * z.imag + c.imag * z.real + d.imag;
       final float mSq = czdr * czdr + czdi * czdi;
 
-      if ( mSq < Utils.DEFAULT_EPSILON ) { return target.reset(); }
+      if ( mSq < IUtils.DEFAULT_EPSILON ) { return target.reset(); }
 
       /* az + b -- the numerator -- second. */
       final float azbr = a.real * z.real - a.imag * z.imag + b.real;

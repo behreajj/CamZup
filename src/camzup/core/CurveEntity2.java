@@ -304,6 +304,48 @@ public class CurveEntity2 extends Entity2
    }
 
    /**
+    * Returns a string representation of this curve entity.
+    *
+    * @return the string
+    */
+   @Override
+   public String toString ( ) { return this.toString(4); }
+
+   /**
+    * Returns a string representation of this curve entity.
+    *
+    * @param places number of places
+    *
+    * @return the string
+    */
+   @Override
+   public String toString ( final int places ) {
+
+      final StringBuilder sb = new StringBuilder(1024)
+         .append("{ name: \"")
+         .append(this.name)
+         .append('\"')
+         .append(", transform: ")
+         .append(this.transform.toString(places))
+         .append(", curves: [ ");
+
+      int i = 0;
+      final Iterator < Curve2 > itr = this.curves.iterator();
+      final int last = this.curves.size() - 1;
+      while ( itr.hasNext() ) {
+         sb.append(itr.next().toString(places));
+         if ( i < last ) {
+            sb.append(',').append(' ');
+            // sb.append('\n');
+         }
+         i++;
+      }
+
+      sb.append(" ] }");
+      return sb.toString();
+   }
+
+   /**
     * Creates a string representing a group node in the SVG format.<br>
     * <br>
     * Stroke weight is impacted by scaling in transforms, so zoom is a

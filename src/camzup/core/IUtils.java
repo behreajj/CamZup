@@ -12,10 +12,7 @@ public interface IUtils {
     *
     * @return the identity hash
     */
-   default int hashIdentity ( ) {
-
-      return System.identityHashCode(this);
-   }
+   default int hashIdentity ( ) { return System.identityHashCode(this); }
 
    /**
     * Returns an object's identity hash code as a String.

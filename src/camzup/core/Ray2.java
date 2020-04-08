@@ -271,6 +271,16 @@ public class Ray2 extends Ray {
       return target;
    }
 
+   /**
+    * Finds an intersection between a ray and an edge.
+    *
+    * @param ray  the ray
+    * @param edge the edge
+    *
+    * @return the list of points
+    *
+    * @see Ray2#intersectLineSeg(Ray2, Vec2, Vec2)
+    */
    @Experimental
    public static float intersectEdge (
       final Ray2 ray,
@@ -282,11 +292,22 @@ public class Ray2 extends Ray {
          edge.dest.coord);
    }
 
+   /**
+    * Finds an intersection between a ray and an face.
+    *
+    * @param ray  the ray
+    * @param face the face
+    * @param hits the list of points
+    *
+    * @return the list of points
+    */
    @Experimental
    public static float intersectFace (
       final Ray2 ray,
       final Face2 face,
       final List < Vec2 > hits ) {
+
+      // TEST
 
       final Vec2 v1 = new Vec2();
       final Vec2 v2 = new Vec2();
@@ -322,6 +343,16 @@ public class Ray2 extends Ray {
       return minDist;
    }
 
+   /**
+    * Finds an intersection between a ray and a line segment. Returns -1.0 if
+    * there is no intersection. Otherwise, returns a value in [0.0, 1.0] .
+    *
+    * @param ray    the ray
+    * @param origin the origin
+    * @param dest   the destination
+    *
+    * @return the list of points
+    */
    @Experimental
    public static float intersectLineSeg (
       final Ray2 ray,
@@ -343,11 +374,22 @@ public class Ray2 extends Ray {
       return -1.0f;
    }
 
+   /**
+    * Finds the intersection points between a ray and a mesh.
+    *
+    * @param ray  the ray
+    * @param mesh the mesh
+    * @param hits the list of points
+    *
+    * @return the list of points
+    */
    @Experimental
    public static float intersectMesh (
       final Ray2 ray,
       final Mesh2 mesh,
       final List < Vec2 > hits ) {
+
+      // TEST
 
       float minDist = -1.0f;
 
@@ -394,8 +436,7 @@ public class Ray2 extends Ray {
     * An abstract class that may serve as an umbrella for any custom comparators
     * of Ray2 s.
     */
-   public static abstract class AbstrComparator
-      implements Comparator < Ray2 > {
+   public static abstract class AbstrComparator implements Comparator < Ray2 > {
 
       /**
        * The default constructor.

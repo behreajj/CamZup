@@ -25,10 +25,7 @@ public class Random extends java.util.Random implements IUtils {
     * Returns this random number generator's seed as a hash string.
     */
    @Override
-   public String toString ( ) {
-
-      return this.getClass().getSimpleName();
-   }
+   public String toString ( ) { return this.getClass().getSimpleName(); }
 
    /**
     * Returns a double precision real number between 0.0 and the upper bound.

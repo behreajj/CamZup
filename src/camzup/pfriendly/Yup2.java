@@ -739,8 +739,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     *
     * @return the model x coordinate
     */
-   public float modelX ( 
-      final float x, 
+   public float modelX (
+      final float x,
       final float y ) {
 
       return this.modelX(x, y, 0.0f);
@@ -756,8 +756,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     *
     * @return the model y coordinate
     */
-   public float modelY ( 
-      final float x, 
+   public float modelY (
+      final float x,
       final float y ) {
 
       return this.modelY(x, y, 0.0f);
@@ -773,8 +773,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     *
     * @return the model z coordinate
     */
-   public float modelZ ( 
-      final float x, 
+   public float modelZ (
+      final float x,
       final float y ) {
 
       return this.modelZ(x, y, 0.0f);
@@ -914,8 +914,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param b the second parameter
     */
    @Override
-   public void rect ( 
-      final Vec2 a, 
+   public void rect (
+      final Vec2 a,
       final Vec2 b ) {
 
       this.rectImpl(a.x, a.y, b.x, b.y);
@@ -1010,7 +1010,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     */
    @Override
    @Experimental
-   public Vec2 screen ( 
+   public Vec2 screen (
       final Vec2 source,
       final Vec2 target ) {
 
@@ -1026,8 +1026,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * additional values that need initialization can be attempted here.
     */
    @Override
-   public void setSize ( 
-      final int width, 
+   public void setSize (
+      final int width,
       final int height ) {
 
       super.setSize(width, height);
@@ -1420,8 +1420,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param v  the coordinate
     * @param vt the texture coordinate
     */
-   public void vertex ( 
-      final Vec2 v, 
+   public void vertex (
+      final Vec2 v,
       final Vec2 vt ) {
 
       this.vertexImpl(v.x, v.y, 0.0f, vt.x, vt.y);

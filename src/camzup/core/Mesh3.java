@@ -4033,8 +4033,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * Compares two face indices (an array of vertex indices) by averaging the
     * vectors referenced by them, then comparing the averages.
     */
-   protected static final class SortIndices3
-      implements Comparator < int[][] > {
+   protected static final class SortIndices3 implements Comparator < int[][] > {
 
       /**
        * The coordinates array.

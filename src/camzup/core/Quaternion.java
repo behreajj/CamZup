@@ -2574,10 +2574,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 
@@ -2803,10 +2800,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

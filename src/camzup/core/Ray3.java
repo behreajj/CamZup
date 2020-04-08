@@ -272,8 +272,7 @@ public class Ray3 extends Ray {
     * An abstract class that may serve as an umbrella for any custom comparators
     * of Ray2 s.
     */
-   public static abstract class AbstrComparator
-      implements Comparator < Ray3 > {
+   public static abstract class AbstrComparator implements Comparator < Ray3 > {
 
       /**
        * The default constructor.

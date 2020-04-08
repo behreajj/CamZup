@@ -294,6 +294,50 @@ public abstract class Mesh extends EntityData implements IMesh {
    }
 
    /**
+    * Splices a 2D array of integers into the midst of another. For use by
+    * subdivision functions. If the number of deletions exceeds the length of
+    * the target array, then a copy of the insert array is returned.
+    *
+    * @param arr       the array
+    * @param index     the insertion point
+    * @param deletions deletion count
+    * @param insert    the insert
+    *
+    * @return the spliced array
+    */
+   protected static int[][] splice (
+      final int[][] arr,
+      final int index,
+      final int deletions,
+      final int[][] insert ) {
+
+      final int alen = arr.length;
+
+      if ( deletions >= alen ) {
+         final int[][] result = new int[insert.length][];
+         System.arraycopy(insert, 0, result, 0, insert.length);
+         return result;
+      }
+
+      final int blen = insert.length;
+      final int valIdx = Utils.mod(index, alen + 1);
+      if ( deletions < 1 ) {
+         final int[][] result = new int[alen + blen][];
+         System.arraycopy(arr, 0, result, 0, valIdx);
+         System.arraycopy(insert, 0, result, valIdx, blen);
+         System.arraycopy(arr, valIdx, result, valIdx + blen, alen - valIdx);
+         return result;
+      }
+
+      final int idxOff = valIdx + deletions;
+      final int[][] result = new int[alen + blen - deletions][];
+      System.arraycopy(arr, 0, result, 0, valIdx);
+      System.arraycopy(insert, 0, result, valIdx, blen);
+      System.arraycopy(arr, idxOff, result, valIdx + blen, alen - idxOff);
+      return result;
+   }
+
+   /**
     * Splices a 3D array of integers into the midst of another. For use by
     * subdivision functions. If the number of deletions exceeds the length of
     * the target array, then a copy of the insert array is returned.
@@ -403,10 +447,7 @@ public abstract class Mesh extends EntityData implements IMesh {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 
@@ -477,10 +518,7 @@ public abstract class Mesh extends EntityData implements IMesh {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 
