@@ -699,7 +699,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Quaternion b,
       final float tolerance ) {
 
-      return Utils.approx(a.real, b.real, tolerance) && Vec3.approx(a.imag,
+      return Utils.approx(a.real, b.real, tolerance) && Vec3.approx(
+         a.imag,
          b.imag, tolerance);
    }
 
@@ -1199,7 +1200,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float z1 = isRight ? 0.0f : xForward;
 
       /* Polarity: an infinite number of orientations is possible. */
-      final boolean parallel = Utils.approx(x1, 0.0f) && Utils.approx(y1,
+      final boolean parallel = Utils.approx(x1, 0.0f) && Utils.approx(
+         y1,
          0.0f) && Utils.approx(z1, 0.0f);
 
       if ( parallel ) {
@@ -1212,12 +1214,14 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
              */
             if ( zForward >= 0.0f ) {
 
-               return target.set(IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2,
+               return target.set(
+                  IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2,
                   0.0f, 0.0f);
 
             } else if ( zForward < 0.0f ) {
 
-               return target.set(-IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2,
+               return target.set(
+                  -IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2,
                   0.0f, 0.0f);
             }
 
@@ -1323,7 +1327,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
                Vec3.right(right);
                Vec3.up(forward);
                Vec3.back(up);
-               return target.set(IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2,
+               return target.set(
+                  IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2,
                   0.0f, 0.0f);
 
             } else if ( forward.z < 0.0f ) {
@@ -1331,7 +1336,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
                Vec3.right(right);
                Vec3.down(forward);
                Vec3.forward(up);
-               return target.set(-IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2,
+               return target.set(
+                  -IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2,
                   0.0f, 0.0f);
 
             }
@@ -2038,7 +2044,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Quaternion target ) {
 
       final float halfAngle = radians * 0.5f;
-      return Quaternion.rotateX(q, Utils.cos(halfAngle),
+      return Quaternion.rotateX(
+         q, Utils.cos(halfAngle),
          Utils.sin(halfAngle), target);
    }
 
@@ -2089,7 +2096,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Quaternion target ) {
 
       final float halfAngle = radians * 0.5f;
-      return Quaternion.rotateY(q, Utils.cos(halfAngle),
+      return Quaternion.rotateY(
+         q, Utils.cos(halfAngle),
          Utils.sin(halfAngle), target);
    }
 
@@ -2139,7 +2147,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Quaternion target ) {
 
       final float halfAngle = radians * 0.5f;
-      return Quaternion.rotateZ(q, Utils.cos(halfAngle),
+      return Quaternion.rotateZ(
+         q, Utils.cos(halfAngle),
          Utils.sin(halfAngle), target);
    }
 

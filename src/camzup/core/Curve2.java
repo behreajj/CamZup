@@ -10,8 +10,8 @@ import camzup.core.Utils.EasingFuncArr;
 import camzup.core.Utils.EasingFuncObj;
 
 /**
- * Organizes a Bezier curve into a list of knots. Provides a function to
- * retrieve a point and tangent on a curve from a step in the range [0.0, 1.0].
+ * Organizes a 2D Bezier curve into a list of knots. Provides a function to
+ * retrieve a point and tangent on a curve from a step in the range [0.0, 1.0] .
  */
 public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
@@ -234,10 +234,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @see List#get(int)
     */
-   public Knot2 getLast ( ) {
-
-      return this.knots.get(this.knots.size() - 1);
-   }
+   public Knot2 getLast ( ) { return this.knots.get(this.knots.size() - 1); }
 
    /**
     * Gets a segment with two knots from this curve.
@@ -256,10 +253,12 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       if ( this.closedLoop ) {
          target.closedLoop = false;
          target.knots.clear();
-         target.knots.add(new Knot2(
-            this.knots.get(Utils.mod(i, len))));
-         target.knots.add(new Knot2(
-            this.knots.get(Utils.mod(i + 1, len))));
+         target.knots.add(
+            new Knot2(
+               this.knots.get(Utils.mod(i, len))));
+         target.knots.add(
+            new Knot2(
+               this.knots.get(Utils.mod(i + 1, len))));
       } else if ( i > -1 && i < len - 1 ) {
          target.closedLoop = false;
          target.knots.clear();
@@ -979,12 +978,12 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
             /* Flatten the first to last handles. */
             last.foreHandle.set(
-               0.6666667f * coLast.x + 0.33333334f * coFirst.x,
-               0.6666667f * coLast.y + 0.33333334f * coFirst.y);
+               0.6666666f * coLast.x + 0.33333334f * coFirst.x,
+               0.6666666f * coLast.y + 0.33333334f * coFirst.y);
 
             first.rearHandle.set(
-               0.6666667f * coFirst.x + 0.33333334f * coLast.x,
-               0.6666667f * coFirst.y + 0.33333334f * coLast.y);
+               0.6666666f * coFirst.x + 0.33333334f * coLast.x,
+               0.6666666f * coFirst.y + 0.33333334f * coLast.y);
 
          } else if ( arcMode == ArcMode.PIE ) {
 
@@ -995,16 +994,16 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
             /* Flatten center handles. */
             center.rearHandle.set(
-               0.6666667f * coCenter.x + 0.33333334f * coLast.x,
-               0.6666667f * coCenter.y + 0.33333334f * coLast.y);
+               0.6666666f * coCenter.x + 0.33333334f * coLast.x,
+               0.6666666f * coCenter.y + 0.33333334f * coLast.y);
             center.foreHandle.set(
-               0.6666667f * coCenter.x + 0.33333334f * coFirst.x,
-               0.6666667f * coCenter.y + 0.33333334f * coFirst.y);
+               0.6666666f * coCenter.x + 0.33333334f * coFirst.x,
+               0.6666666f * coCenter.y + 0.33333334f * coFirst.y);
 
             /* Flatten handle from first to center. */
             first.rearHandle.set(
-               0.6666667f * coFirst.x + 0.33333334f * coCenter.x,
-               0.6666667f * coFirst.y + 0.33333334f * coCenter.y);
+               0.6666666f * coFirst.x + 0.33333334f * coCenter.x,
+               0.6666666f * coFirst.y + 0.33333334f * coCenter.y);
 
             /* Flatten handle from last to center. */
             last.foreHandle.set(
@@ -1544,7 +1543,10 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       target.name = new StringBuilder(64)
          .append(mesh.name)
          .append('.')
-         .append(i)
+         .append(
+            Utils.toPadded(
+               i,
+               4))
          .toString();
       target.materialIndex = mesh.materialIndex;
       target.resize(vertsLen);
@@ -1697,7 +1699,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final int valCount = count < 3 ? 3 : count;
       final Vec2[] points = new Vec2[valCount];
       for ( int i = 0; i < valCount; ++i ) {
-         points[i] = Vec2.randomCartesian(rng,
+         points[i] = Vec2.randomCartesian(
+            rng,
             lowerBound, upperBound,
             new Vec2());
       }
@@ -1729,7 +1732,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final int valCount = count < 3 ? 3 : count;
       final Vec2[] points = new Vec2[valCount];
       for ( int i = 0; i < valCount; ++i ) {
-         points[i] = Vec2.randomCartesian(rng,
+         points[i] = Vec2.randomCartesian(
+            rng,
             lowerBound, upperBound, new Vec2());
       }
 
@@ -2290,10 +2294,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       /**
        * The default constructor.
        */
-      public Easing ( ) {
-
-         this.easingFunc = new Knot2.Lerp();
-      }
+      public Easing ( ) { this.easingFunc = new Knot2.Lerp(); }
 
       /**
        * The easing constructor

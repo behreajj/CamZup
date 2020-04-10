@@ -787,7 +787,8 @@ public class Transform3 extends Transform {
       final float step ) {
 
       if ( Vec3.all(scaleNew) ) {
-         return this.scaleTo(scaleNew, step,
+         return this.scaleTo(
+            scaleNew, step,
             Transform3.EASING.scale);
       }
       return this;

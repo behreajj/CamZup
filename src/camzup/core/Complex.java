@@ -462,7 +462,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex b,
       final float tolerance ) {
 
-      return Utils.approx(a.imag, b.imag, tolerance) && Utils.approx(a.real,
+      return Utils.approx(a.imag, b.imag, tolerance) && Utils.approx(
+         a.real,
          b.real, tolerance);
    }
 
@@ -864,8 +865,9 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex b,
       final Complex target ) {
 
-      final double logReal = Math.log(Math.sqrt(
-         a.real * a.real + a.imag * a.imag));
+      final double logReal = Math.log(
+         Math.sqrt(
+            a.real * a.real + a.imag * a.imag));
       final double logImag = Math.atan2(a.imag, a.real);
       final double phi = b.real * logImag + b.imag * logReal;
       final double r = Math.exp(b.real * logReal - b.imag * logImag);
@@ -920,8 +922,9 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final float b,
       final Complex target ) {
 
-      final double logReal = Math.log(Math.sqrt(
-         a.real * a.real + a.imag * a.imag));
+      final double logReal = Math.log(
+         Math.sqrt(
+            a.real * a.real + a.imag * a.imag));
       final double logImag = Math.atan2(a.imag, a.real);
       final double phi = b * logImag;
       final double r = Math.exp(b * logReal);
@@ -1108,8 +1111,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * An abstract class that may serve as an umbrella for any custom comparators
     * of complex numbers.
     */
-   public static abstract class AbstrComparator
-      implements Comparator < Complex > {
+   public static abstract class AbstrComparator implements
+      Comparator < Complex > {
 
       /**
        * The default constructor.

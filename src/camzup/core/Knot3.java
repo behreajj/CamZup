@@ -233,7 +233,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float foreDiry = this.foreHandle.y - coy;
       final float foreDirz = this.foreHandle.z - coz;
 
-      final float flipRescale = -Utils.hypot(foreDirx, foreDiry,
+      final float flipRescale = -Utils.hypot(
+         foreDirx, foreDiry,
          foreDirz) * Utils.invHypot(rearDirx, rearDiry, rearDirz);
 
       this.foreHandle.x = rearDirx * flipRescale + cox;
@@ -267,7 +268,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float foreDiry = this.foreHandle.y - coy;
       final float foreDirz = this.foreHandle.z - coz;
 
-      final float flipRescale = -Utils.hypot(rearDirx, rearDiry,
+      final float flipRescale = -Utils.hypot(
+         rearDirx, rearDiry,
          rearDirz) * Utils.invHypot(foreDirx, foreDiry, foreDirz);
 
       this.rearHandle.x = foreDirx * flipRescale + cox;
@@ -1717,8 +1719,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       public Lerp ( ) { super(); }
 
       /**
-       * Eases between two knots by a step using the formula (1 - t) * a + b .
-       * Promotes the step from a float to a double.
+       * Eases between two knots by a step using the formula (1.0 - t) * a + t *
+       * b . Promotes the step from a float to a double.
        *
        * @param origin the origin knot
        * @param dest   the destination knot

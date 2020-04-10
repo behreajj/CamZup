@@ -3,6 +3,7 @@ package camzup.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -131,7 +132,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final Vec2 vt0New = vtsNew[0] = new Vec2();
       final Vec2 vt1New = vtsNew[1] = new Vec2();
 
-      final float t = 0.5f * Utils.clamp(fac,
+      final float t = 0.5f * Utils.clamp(
+         fac,
          IUtils.DEFAULT_EPSILON,
          1.0f - IUtils.DEFAULT_EPSILON);
       final float u = 1.0f - t;
@@ -181,6 +183,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int faceIdx,
       final float fac ) {
 
+      // TODO: How undesirable is the behavior when edges are of unequal length,
+      // and therefore the interpolation leads to non-square corners? Maybe find
+      // aspect ratio by dividing mag(edge0) / mag(edge1) .
+
       final int facesLen = this.faces.length;
       final int i = Utils.mod(faceIdx, facesLen);
       final int[][] faceOld = this.faces[i];
@@ -190,7 +196,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final Vec2[] vsNew = new Vec2[len2];
       final Vec2[] vtsNew = new Vec2[len2];
 
-      final float t = 0.5f * Utils.clamp(fac,
+      final float t = 0.5f * Utils.clamp(
+         fac,
          IUtils.DEFAULT_EPSILON,
          1.0f - IUtils.DEFAULT_EPSILON);
       final float u = 1.0f - t;
@@ -292,6 +299,77 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             verts[j][1] = verts[j][0];
          }
       }
+
+      return this;
+   }
+
+   /**
+    * Removes elements from the coordinate, texture coordinate and normal arrays
+    * of the mesh which are not visited by the face indices.
+    *
+    * @return this mesh
+    */
+   @Experimental
+   @Chainable
+   public Mesh2 clean ( ) {
+
+      // TODO: Replace sort with this function.
+
+      final HashMap < Integer, Vec2 > usedCoords = new HashMap <>();
+      final HashMap < Integer, Vec2 > usedTexCoords = new HashMap <>();
+
+      final int facesLen = this.faces.length;
+      for ( int i = 0; i < facesLen; ++i ) {
+         final int[][] verts = this.faces[i];
+         final int vertsLen = verts.length;
+         for ( int j = 0; j < vertsLen; ++j ) {
+            final int[] vert = verts[j];
+            final int vIdx = vert[0];
+            final int vtIdx = vert[1];
+
+            usedCoords.put(vIdx, this.coords[vIdx]);
+            usedTexCoords.put(vtIdx, this.texCoords[vtIdx]);
+         }
+      }
+
+//      final Vec2[] newCoords = usedCoords.values()
+//         .toArray(new Vec2[usedCoords.size()]);
+//      final Vec2[] newTexCoords = usedTexCoords.values()
+//         .toArray(new Vec2[usedTexCoords.size()]);
+
+//      Arrays.sort(newCoords, Mesh.SORT_2);
+//      Arrays.sort(newTexCoords, Mesh.SORT_2);
+
+      final SortedSet < Vec2 > coordsTree = new TreeSet <>(Mesh.SORT_2);
+      final SortedSet < Vec2 > texCoordsTree = new TreeSet <>(Mesh.SORT_2);
+
+      coordsTree.addAll(usedCoords.values());
+      texCoordsTree.addAll(usedTexCoords.values());
+
+      final Vec2[] newCoords = coordsTree
+         .toArray(new Vec2[coordsTree.size()]);
+      final Vec2[] newTexCoords = texCoordsTree
+         .toArray(new Vec2[texCoordsTree.size()]);
+
+      for ( int i = 0; i < facesLen; ++i ) {
+         final int[][] verts = this.faces[i];
+         final int vertsLen = verts.length;
+         for ( int j = 0; j < vertsLen; ++j ) {
+            final int[] vert = verts[j];
+            vert[0] = Arrays.binarySearch(
+               newCoords,
+               this.coords[vert[0]],
+               Mesh.SORT_2);
+            vert[1] = Arrays.binarySearch(
+               newTexCoords,
+               this.texCoords[vert[1]],
+               Mesh.SORT_2);
+         }
+      }
+
+      this.coords = newCoords;
+      this.texCoords = newTexCoords;
+      Arrays.sort(this.faces, new Mesh2.SortIndices2(this.coords));
 
       return this;
    }
@@ -401,9 +479,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          { idxV2, idxVt2 },
          { idxV3, idxVt3 } } };
 
-      this.coords = Vec2.concat(this.coords,
+      this.coords = Vec2.concat(
+         this.coords,
          new Vec2[] { vNewOrigin, vNewDest });
-      this.texCoords = Vec2.concat(this.texCoords,
+      this.texCoords = Vec2.concat(
+         this.texCoords,
          new Vec2[] { vtNewOrigin, vtNewDest });
       this.faces = Mesh.splice(this.faces, i + 1, 0, faceNew);
 
@@ -1010,23 +1090,13 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * indices in the face.
     *
     * @return this mesh
-    */
-   public Mesh2 sort ( ) { return this.sort(IUtils.DEFAULT_EPSILON); }
-
-   /**
-    * Sorts the coordinates and texture coordinates of a mesh, then reassigns
-    * indices in the face.
-    *
-    * @param tolerance the quantization tolerance
-    *
-    * @return this mesh
     *
     * @see System#arraycopy(Object, int, Object, int, int)
     * @see Arrays#binarySearch(Object[], Object, Comparator)
     */
    @Experimental
    @Chainable
-   public Mesh2 sort ( final float tolerance ) {
+   public Mesh2 sort ( ) {
 
       /*
        * Sort coordinates: copy old indices, load into sorted set to both remove
@@ -1810,7 +1880,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * elsewhere, and border edges; for that reason this works best with
     * NGONs.<br>
     * <br>
-    * This is protected because it tends to create faces harder to triangulate.
+    * This is protected because it tends to make faces harder to triangulate.
     *
     * @param faceIndex the face index
     * @param edgeIndex the edge index
@@ -1823,10 +1893,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int faceIndex,
       final int edgeIndex,
       final int cuts ) {
-
-      // RESEARCH: Is there any way to search for interior half-edge which
-      // travels in the opposite direction?
-      // search for face[j1][n], face[j0][n]
 
       if ( cuts < 1 ) { return new int[0][0]; }
 
@@ -1967,11 +2033,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          1 + ( sectors < 3 ? 3 : sectors ) * ( float ) arcLen1);
       final int sctCount2 = sctCount + sctCount;
       final Vec2[] vs = target.coords = Vec2.resize(target.coords, sctCount2);
-      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
+      final Vec2[] vts = target.texCoords = Vec2.resize(
+         target.texCoords,
          sctCount2);
 
-      final float annul = Utils.clamp(oculus,
-         IUtils.DEFAULT_EPSILON, 1.0f - IUtils.DEFAULT_EPSILON);
+      final float annul = Utils.clamp(oculus, IUtils.DEFAULT_EPSILON,
+         1.0f - IUtils.DEFAULT_EPSILON);
       final double annRad = annul * 0.5d;
 
       final double toStep = 1.0d / ( sctCount - 1.0d );
@@ -2536,7 +2603,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final double toTheta = IUtils.TAU_D / seg;
 
       final Vec2[] vs = target.coords = Vec2.resize(target.coords, newLen);
-      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
+      final Vec2[] vts = target.texCoords = Vec2.resize(
+         target.texCoords,
          newLen);
 
       switch ( poly ) {
@@ -2641,14 +2709,16 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final boolean isNgon = poly == PolyType.NGON;
       final int seg = sectors < 3 ? 3 : sectors;
       final int seg2 = seg + seg;
-      final float annul = Utils.clamp(oculus,
+      final float annul = Utils.clamp(
+         oculus,
          IUtils.DEFAULT_EPSILON, 1.0f - IUtils.DEFAULT_EPSILON);
 
       final double toTheta = IUtils.TAU_D / seg;
       final double annRad = annul * 0.5d;
 
       final Vec2[] vs = target.coords = Vec2.resize(target.coords, seg2);
-      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
+      final Vec2[] vts = target.texCoords = Vec2.resize(
+         target.texCoords,
          seg2);
       target.faces = isNgon ? new int[seg][4][2] : new int[seg2][3][2];
 

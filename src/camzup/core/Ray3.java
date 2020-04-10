@@ -90,6 +90,11 @@ public class Ray3 extends Ray {
    @Override
    public int hashCode ( ) {
 
+      /*
+       * The hash code includes only the ray's origin so that, in a flow field,
+       * a ray can be retrieved using its origin as a key.
+       */
+
       int hash = IUtils.HASH_BASE;
       hash = hash * IUtils.HASH_MUL ^ ( this.origin == null ? 0
          : this.origin.hashCode() );

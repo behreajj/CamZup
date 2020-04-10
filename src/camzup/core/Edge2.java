@@ -132,9 +132,11 @@ public class Edge2 implements Comparable < Edge2 > {
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
-      Vec2.rotateZ(this.origin.coord,
+      Vec2.rotateZ(
+         this.origin.coord,
          cosa, sina, this.origin.coord);
-      Vec2.rotateZ(this.dest.coord,
+      Vec2.rotateZ(
+         this.dest.coord,
          cosa, sina, this.dest.coord);
       return this;
    }

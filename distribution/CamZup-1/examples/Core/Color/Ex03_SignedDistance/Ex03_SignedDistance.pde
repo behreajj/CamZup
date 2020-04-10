@@ -27,7 +27,7 @@ void draw() {
       float xNorm = x * wNorm;
       st.x = xNorm + xNorm - 1.0;
 
-      float fac1 = Sdf.arc(st, ang0, ang1, 0.325, 0.2);
+      float fac1 = Sdf.arc(st, ang0, ang1, 0.25, 0.35);
       float fac2 = Sdf.polygon(st, sides, -ang0, 1.25);
       float fac = Sdf.subtract(fac1, fac2);
       gr.eval(fac, clr);

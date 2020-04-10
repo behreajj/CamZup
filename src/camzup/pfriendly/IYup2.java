@@ -891,7 +891,8 @@ public interface IYup2 extends IUp {
     */
    default String toSvgString ( final CurveEntity2 ce ) {
 
-      return IYup2.toSvgString(this, new CurveEntity2[] { ce },
+      return IYup2.toSvgString(
+         this, new CurveEntity2[] { ce },
          new MaterialSolid[] {});
    }
 
@@ -907,7 +908,8 @@ public interface IYup2 extends IUp {
       final CurveEntity2 ce,
       final MaterialSolid mat ) {
 
-      return IYup2.toSvgString(this, new CurveEntity2[] { ce },
+      return IYup2.toSvgString(
+         this, new CurveEntity2[] { ce },
          new MaterialSolid[] { mat });
    }
 
@@ -977,7 +979,8 @@ public interface IYup2 extends IUp {
     */
    default String toSvgString ( final MeshEntity2 me ) {
 
-      return IYup2.toSvgString(this,
+      return IYup2.toSvgString(
+         this,
          new MeshEntity2[] { me },
          new MaterialSolid[] {});
    }
@@ -994,7 +997,8 @@ public interface IYup2 extends IUp {
       final MeshEntity2 me,
       final MaterialSolid mat ) {
 
-      return IYup2.toSvgString(this,
+      return IYup2.toSvgString(
+         this,
          new MeshEntity2[] { me },
          new MaterialSolid[] { mat });
    }
@@ -1341,8 +1345,10 @@ public interface IYup2 extends IUp {
          .append(',').append(' ')
          .append(Utils.toFixed(-renderer.getZoomY(), 6))
          .append(") rotate(")
-         .append(Utils.toFixed(-renderer.getRoll() * IUtils.RAD_TO_DEG,
-            2))
+         .append(
+            Utils.toFixed(
+               -renderer.getRoll() * IUtils.RAD_TO_DEG,
+               2))
          .append(") translate(")
          .append(Utils.toFixed(-renderer.getLocX(), 6))
          .append(',').append(' ')

@@ -23,20 +23,64 @@ abstract class SvgParser {
 
    static float parseFloat ( final String v, final float def ) {
 
-      // Does this need to handle different SVG units?
-      // "em" | "ex" | "px" | "in" | "cm" | "mm" | "pt" | "pc" | "%"
+      // TODO: Processing doesn't include ex or em.
+      // Look up: http://www.w3.org/TR/SVG/coords.html#Units
+
       float x = def;
+      final int len = v.length() - 2;
+
       try {
-         x = Float.parseFloat(v);
+
+         if ( v.endsWith("cm") ) {
+
+            /* Centimeters. */
+            x = Float.parseFloat(v.substring(0, len)) * 35.43307f;
+
+         } else if ( v.endsWith("em") ) {
+
+            /* Not supported in original Processing code. */
+            x = Float.parseFloat(v.substring(0, len));
+
+         } else if ( v.endsWith("ex") ) {
+
+            /* Not supported in original Processing code. */
+            x = Float.parseFloat(v.substring(0, len));
+
+         } else if ( v.endsWith("in") ) {
+
+            /* Inches. */
+            x = Float.parseFloat(v.substring(0, len)) * 90.0f;
+
+         } else if ( v.endsWith("mm") ) {
+
+            /* Millimeters. */
+            x = Float.parseFloat(v.substring(0, len)) * 3.543307f;
+
+         } else if ( v.endsWith("pc") ) {
+
+            x = Float.parseFloat(v.substring(0, len)) * 15.0f;
+
+         } else if ( v.endsWith("pt") ) {
+
+            x = Float.parseFloat(v.substring(0, len)) * 1.25f;
+
+         } else if ( v.endsWith("%") ) {
+
+            /* Percentage is simplified from original. */
+            x = Float.parseFloat(v.substring(0, len + 1)) * 0.01f;
+
+         } else {
+
+            x = Float.parseFloat(v);
+
+         }
+
       } catch ( final NumberFormatException e ) {
          x = def;
       }
+
       return x;
    }
-
-   // private static final DocumentBuilderFactory dbf =
-   // DocumentBuilderFactory
-   // .newDefaultInstance();
 
    static Curve2 parsePath ( final Node path ) {
 
@@ -447,7 +491,7 @@ abstract class SvgParser {
       }
       return list.toArray(new String[list.size()]);
    }
-   //
+
    // public static CurveEntity2 parse ( final String fileName ) {
    //
    // final CurveEntity2 result = new CurveEntity2();

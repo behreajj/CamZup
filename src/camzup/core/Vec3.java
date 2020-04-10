@@ -602,8 +602,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 b ) {
 
       return Vec3.none(a) || Vec3.none(b) ? 0.0f
-         : Utils.acos(Vec3.dot(a, b) * Utils.invSqrtUnchecked(Vec3.magSq(
-            a)) * Utils.invSqrtUnchecked(Vec3.magSq(b)));
+         : Utils.acos(
+            Vec3.dot(a, b) * Utils.invSqrtUnchecked(
+               Vec3.magSq(
+                  a)) * Utils.invSqrtUnchecked(Vec3.magSq(b)));
    }
 
    /**
@@ -652,7 +654,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 b,
       final float tolerance ) {
 
-      return Utils.approx(a.z, b.z, tolerance) && Utils.approx(a.y, b.y,
+      return Utils.approx(a.z, b.z, tolerance) && Utils.approx(
+         a.y, b.y,
          tolerance) && Utils.approx(a.x, b.x, tolerance);
    }
 
@@ -1869,10 +1872,12 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final int vlayers = layers < 1 ? 1 : layers;
 
       final boolean oneLayer = vlayers == 1;
-      final float vrMax = Utils.max(IUtils.DEFAULT_EPSILON, radiusMin,
+      final float vrMax = Utils.max(
+         IUtils.DEFAULT_EPSILON, radiusMin,
          radiusMax);
       final float vrMin = oneLayer ? vrMax
-         : Utils.max(IUtils.DEFAULT_EPSILON,
+         : Utils.max(
+            IUtils.DEFAULT_EPSILON,
             Utils.min(radiusMin, radiusMax));
 
       final int latLen = includePoles ? vlats + 2 : vlats;

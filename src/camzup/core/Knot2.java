@@ -1462,7 +1462,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       public Lerp ( ) { super(); }
 
       /**
-       * Eases between two knots by a step using the formula (1.0 - t) * a + b .
+       * Eases between two knots by a step using the formula (1.0 - t) * a + t *
+       * b .
        *
        * @param origin the origin knot
        * @param dest   the destination knot

@@ -89,7 +89,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final float stop,
       final int mode ) {
 
-      this.arc(v.x, v.y,
+      this.arc(
+         v.x, v.y,
          sz, sz,
          start, stop,
          mode);
@@ -486,7 +487,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final CurveEntity2 ce,
       final float strokeWeight ) {
 
-      this.handles(ce, strokeWeight,
+      this.handles(
+         ce, strokeWeight,
          IUp.DEFAULT_HANDLE_COLOR,
          IUp.DEFAULT_HANDLE_REAR_COLOR,
          IUp.DEFAULT_HANDLE_FORE_COLOR,

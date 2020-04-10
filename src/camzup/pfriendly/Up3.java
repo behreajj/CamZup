@@ -608,7 +608,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final CurveEntity3 ce,
       final float strokeWeight ) {
 
-      this.handles(ce, strokeWeight,
+      this.handles(
+         ce, strokeWeight,
          IUp.DEFAULT_HANDLE_COLOR,
          IUp.DEFAULT_HANDLE_REAR_COLOR,
          IUp.DEFAULT_HANDLE_FORE_COLOR,
@@ -846,7 +847,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    public void origin ( final float lineLength ) {
 
-      this.origin(lineLength,
+      this.origin(
+         lineLength,
          IUp.DEFAULT_IJK_SWEIGHT,
          IUp.DEFAULT_I_COLOR,
          IUp.DEFAULT_J_COLOR,
@@ -863,7 +865,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final float lineLength,
       final float strokeWeight ) {
 
-      this.origin(lineLength,
+      this.origin(
+         lineLength,
          strokeWeight,
          IUp.DEFAULT_I_COLOR,
          IUp.DEFAULT_J_COLOR,
@@ -1303,6 +1306,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
        * With perspective projection, using stroke and fill together leads to
        * flickering issues.
        */
+
       final boolean oldStroke = this.stroke;
       if ( this.fill ) { this.stroke = false; }
       while ( meshItr.hasNext() ) {

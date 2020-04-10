@@ -703,8 +703,9 @@ public abstract class Utils implements IUtils {
    public static float invSqrtUnchecked ( final float value ) {
 
       final float vhalf = value * 0.5f;
-      float y = Float.intBitsToFloat(0x5f375a86 - ( Float.floatToIntBits(
-         value) >> 1 ));
+      float y = Float.intBitsToFloat(
+         0x5f375a86 - ( Float.floatToIntBits(
+            value) >> 1 ));
 
       y *= 1.5f - vhalf * y * y;
       y *= 1.5f - vhalf * y * y;

@@ -124,9 +124,11 @@ public class Edge3 implements Comparable < Edge3 > {
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
-      Vec3.rotate(this.origin.coord,
+      Vec3.rotate(
+         this.origin.coord,
          cosa, sina, axis, this.origin.coord);
-      Vec3.rotate(this.dest.coord,
+      Vec3.rotate(
+         this.dest.coord,
          cosa, sina, axis, this.dest.coord);
 
       return this;
@@ -167,9 +169,11 @@ public class Edge3 implements Comparable < Edge3 > {
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
-      Vec3.rotateX(this.origin.coord,
+      Vec3.rotateX(
+         this.origin.coord,
          cosa, sina, this.origin.coord);
-      Vec3.rotateX(this.dest.coord,
+      Vec3.rotateX(
+         this.dest.coord,
          cosa, sina, this.dest.coord);
 
       return this;
@@ -191,9 +195,11 @@ public class Edge3 implements Comparable < Edge3 > {
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
-      Vec3.rotateY(this.origin.coord,
+      Vec3.rotateY(
+         this.origin.coord,
          cosa, sina, this.origin.coord);
-      Vec3.rotateY(this.dest.coord,
+      Vec3.rotateY(
+         this.dest.coord,
          cosa, sina, this.dest.coord);
 
       return this;
@@ -215,9 +221,11 @@ public class Edge3 implements Comparable < Edge3 > {
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
-      Vec3.rotateZ(this.origin.coord,
+      Vec3.rotateZ(
+         this.origin.coord,
          cosa, sina, this.origin.coord);
-      Vec3.rotateZ(this.dest.coord,
+      Vec3.rotateZ(
+         this.dest.coord,
          cosa, sina, this.dest.coord);
 
       return this;

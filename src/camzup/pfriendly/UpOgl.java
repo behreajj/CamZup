@@ -528,7 +528,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float max3,
       final float aMax ) {
 
-      super.colorMode(mode,
+      super.colorMode(
+         mode,
          max1 < 1.0f ? 1.0f : max1,
          max2 < 1.0f ? 1.0f : max2,
          max3 < 1.0f ? 1.0f : max3,
@@ -1029,7 +1030,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float y2 ) {
 
       final boolean useImg = this.textureMode == PConstants.IMAGE;
-      this.imageImpl(img, x1, y1, x2, y2, 0.0f, 0.0f,
+      this.imageImpl(
+         img, x1, y1, x2, y2, 0.0f, 0.0f,
          0.0f, useImg ? img.width : 1.0f, useImg ? img.height : 1.0f);
    }
 
@@ -2113,21 +2115,15 @@ public abstract class UpOgl extends PGraphicsOpenGL
       switch ( this.textAlignY ) {
 
          case BOTTOM:
-
             yMut += this.textDescent();
-
             break;
 
          case TOP:
-
             yMut -= this.textAscent();
-
             break;
 
          case CENTER:
-
          default:
-
             yMut -= this.textAscent() * 0.5f;
       }
 
@@ -2740,9 +2736,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float u,
       final float v ) {
 
-      this.vertexTexture(u, v,
-         this.textureMode,
-         this.textureWrap);
+      this.vertexTexture(u, v, this.textureMode, this.textureWrap);
       this.vertexImpl(x, y, 0.0f, u, v);
    }
 
@@ -2763,11 +2757,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float u,
       final float v ) {
 
-      this.vertexTexture(u, v,
-         this.textureMode,
-         this.textureWrap);
-      this.vertexImpl(x, y, z,
-         this.textureU, this.textureV);
+      this.vertexTexture(u, v, this.textureMode, this.textureWrap);
+      this.vertexImpl(x, y, z, this.textureU, this.textureV);
    }
 
    /**
@@ -4034,13 +4025,13 @@ public abstract class UpOgl extends PGraphicsOpenGL
          final float invSz = 1.0f / this.textFont.getSize();
          final float wGlyph = glyph.width * invSz;
          final float hGlyph = glyph.height * invSz;
-         final float lextent = glyph.leftExtent * invSz;
-         final float textent = glyph.topExtent * invSz;
+         final float lExtent = glyph.leftExtent * invSz;
+         final float tExtent = glyph.topExtent * invSz;
 
-         final float x0 = x + lextent * this.textSize;
+         final float x0 = x + lExtent * this.textSize;
          final float x1 = x0 + wGlyph * this.textSize;
 
-         final float y0 = y + textent * this.textSize;
+         final float y0 = y + tExtent * this.textSize;
          final float y1 = y0 - hGlyph * this.textSize;
 
          /* Cache prior styles. */

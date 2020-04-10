@@ -7,7 +7,7 @@ color a = #007fff;
 color b = #ff007f;
 
 void settings() {
-  size(1024, 128, "camzup.pfriendly.Yup2");
+  size(1024, 128, Yup2.PATH_STR);
 }
 
 void setup() {
@@ -21,7 +21,8 @@ void mouseReleased() {
 }
 
 void draw() {
-  surface.setTitle(String.format("%.1f", frameRate));
+  surface.setTitle(Utils.toFixed(frameRate, 1));
+
   float toPercent = 1.0 / (float)(width - 1);
   float mouseFac = mouseX * toPercent;
   int hHalf = height / 2;

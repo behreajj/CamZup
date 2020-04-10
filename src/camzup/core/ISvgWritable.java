@@ -13,8 +13,9 @@ public interface ISvgWritable {
     */
    default String toSvgElm ( ) {
 
-      return this.toSvgElm(Integer.toHexString(
-         System.identityHashCode(this)));
+      return this.toSvgElm(
+         Integer.toHexString(
+            System.identityHashCode(this)));
    }
 
    /**

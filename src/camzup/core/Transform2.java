@@ -666,7 +666,8 @@ public class Transform2 extends Transform {
       final float step ) {
 
       if ( Vec2.all(scaleNew) ) {
-         return this.scaleTo(scaleNew, step,
+         return this.scaleTo(
+            scaleNew, step,
             Transform2.EASING.scale);
       }
       return this;
@@ -904,8 +905,9 @@ public class Transform2 extends Transform {
          .append(", 0.0, 0.0, ")
          .append(Utils.toFixed(Utils.sin(halfRad), 6))
          .append("), \"scale\": ")
-         .append(this.scale.toBlenderCode(
-            ( this.scale.x + this.scale.y ) * 0.5f))
+         .append(
+            this.scale.toBlenderCode(
+               ( this.scale.x + this.scale.y ) * 0.5f))
          .append("}")
          .toString();
    }

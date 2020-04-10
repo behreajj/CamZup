@@ -310,9 +310,10 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
          final int matLast = matLen - 1;
 
          for ( int i = 0; i < matLen; ++i ) {
-            pyCd.append(materials[i].toBlenderCode(
-               gamma, metallic, roughness,
-               specular, clearcoat, clearcoatRough));
+            pyCd.append(
+               materials[i].toBlenderCode(
+                  gamma, metallic, roughness,
+                  specular, clearcoat, clearcoatRough));
             if ( i < matLast ) { pyCd.append(',').append(' '); }
          }
       } else {

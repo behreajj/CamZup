@@ -732,9 +732,10 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
       for ( int i = 0; i < len; ++i ) {
          final float scalar = scalars[i];
-         this.keys.add(new ColorKey(
-            i * denom,
-            scalar, scalar, scalar, scalar));
+         this.keys.add(
+            new ColorKey(
+               i * denom,
+               scalar, scalar, scalar, scalar));
       }
 
       return this;

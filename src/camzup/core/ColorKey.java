@@ -27,20 +27,14 @@ public class ColorKey
    /**
     * The default constructor. Creates a clear black color at 0.0 .
     */
-   public ColorKey ( ) {
-
-      this.set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-   }
+   public ColorKey ( ) { this.set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f); }
 
    /**
     * Creates a key from a source
     *
     * @param source the source key
     */
-   public ColorKey ( final ColorKey source ) {
-
-      this.set(source);
-   }
+   public ColorKey ( final ColorKey source ) { this.set(source); }
 
    /**
     * Creates a key at a given step. All values of the color (including alpha)
@@ -129,10 +123,7 @@ public class ColorKey
     * @see ColorKey#set(ColorKey)
     */
    @Override
-   public ColorKey clone ( ) {
-
-      return new ColorKey(this.step, this.clr);
-   }
+   public ColorKey clone ( ) { return new ColorKey(this.step, this.clr); }
 
    /**
     * Returns -1 when this key is less than the comparisand; 1 when it is
@@ -177,10 +168,7 @@ public class ColorKey
     * @see Float#floatToIntBits(float)
     */
    @Override
-   public int hashCode ( ) {
-
-      return Float.floatToIntBits(this.step);
-   }
+   public int hashCode ( ) { return Float.floatToIntBits(this.step); }
 
    /**
     * Resets this key to an initial condition.

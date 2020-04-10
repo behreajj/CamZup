@@ -633,8 +633,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
       final Vec4 b,
       final float tolerance ) {
 
-      return Utils.approx(a.w, b.w, tolerance) && Utils.approx(a.z, b.z,
-         tolerance) && Utils.approx(a.y, b.y, tolerance) && Utils.approx(a.x,
+      return Utils.approx(a.w, b.w, tolerance) && Utils.approx(
+         a.z, b.z,
+         tolerance) && Utils.approx(a.y, b.y, tolerance) && Utils.approx(
+            a.x,
             b.x, tolerance);
    }
 
@@ -874,7 +876,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
       final Vec4 a,
       final Vec4 b ) {
 
-      return Utils.diff(a.x, b.x) + Utils.diff(a.y, b.y) + Utils.diff(a.z,
+      return Utils.diff(a.x, b.x) + Utils.diff(a.y, b.y) + Utils.diff(
+         a.z,
          b.z) + Utils.diff(a.w, b.w);
    }
 
@@ -903,9 +906,13 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
       if ( c == 0.0f ) { return 0.0f; }
 
       return ( float ) Math.pow(
-         Math.pow(Utils.diff(a.x, b.x), c) + Math.pow(Utils.diff(a.y, b.y),
-            c) + Math.pow(Utils.diff(a.z, b.z), c) + Math.pow(Utils.diff(a.w,
-               b.w), c),
+         Math.pow(Utils.diff(a.x, b.x), c) + Math.pow(
+            Utils.diff(a.y, b.y),
+            c) + Math.pow(Utils.diff(a.z, b.z), c) + Math.pow(
+               Utils.diff(
+                  a.w,
+                  b.w),
+               c),
          1.0d / c);
    }
 

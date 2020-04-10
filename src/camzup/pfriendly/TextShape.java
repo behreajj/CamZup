@@ -206,7 +206,8 @@ public abstract class TextShape {
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
                final CurveEntity2 entity = new CurveEntity2();
-               TextShape.processGlyphCurve(font, frc, null, detail,
+               TextShape.processGlyphCurve(
+                  font, frc, null, detail,
                   character, entity.curves);
                entities.add(entity);
                // final float w = fm.charWidth(character);
@@ -216,7 +217,8 @@ public abstract class TextShape {
          } else {
 
             final CurveEntity2 entity = new CurveEntity2();
-            TextShape.processGlyphCurve(font, frc, null, detail,
+            TextShape.processGlyphCurve(
+               font, frc, null, detail,
                characters, entity.curves);
             entities.add(entity);
          }
@@ -261,7 +263,8 @@ public abstract class TextShape {
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
                final CurveEntity2 entity = new CurveEntity2();
-               TextShape.processGlyphCurve(font, frc, null, detail,
+               TextShape.processGlyphCurve(
+                  font, frc, null, detail,
                   character, entity.curves);
                entities.add(entity);
             }
@@ -269,7 +272,8 @@ public abstract class TextShape {
          } else {
 
             final CurveEntity2 entity = new CurveEntity2();
-            TextShape.processGlyphCurve(font, frc, null, detail,
+            TextShape.processGlyphCurve(
+               font, frc, null, detail,
                characters, entity.curves);
             entities.add(entity);
 
@@ -541,7 +545,8 @@ public abstract class TextShape {
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
                final MeshEntity2 entity = new MeshEntity2();
-               TextShape.processGlyphMesh(font, frc, null, detail,
+               TextShape.processGlyphMesh(
+                  font, frc, null, detail,
                   character, entity.meshes);
                entities.add(entity);
             }
@@ -549,7 +554,8 @@ public abstract class TextShape {
          } else {
 
             final MeshEntity2 entity = new MeshEntity2();
-            TextShape.processGlyphMesh(font, frc, null, detail,
+            TextShape.processGlyphMesh(
+               font, frc, null, detail,
                characters, entity.meshes);
             entities.add(entity);
 
@@ -587,7 +593,8 @@ public abstract class TextShape {
       final char character,
       final List < Mesh2 > meshes ) {
 
-      return TextShape.processGlyphMesh(font, frc, transform, detail,
+      return TextShape.processGlyphMesh(
+         font, frc, transform, detail,
          new char[] { character }, meshes);
    }
 

@@ -3,7 +3,9 @@ package camzup.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -161,6 +163,108 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Removes elements from the coordinate, texture coordinate and normal arrays
+    * of the mesh which are not visited by the face indices.
+    *
+    * @return this mesh
+    */
+   @Experimental
+   @Chainable
+   public Mesh3 clean ( ) {
+
+      // TODO: Replace sort with this function.
+
+      /* Transfer arrays to hash maps where the face index is the key. */
+      final HashMap < Integer, Vec3 > usedCoords = new HashMap <>();
+      final HashMap < Integer, Vec2 > usedTexCoords = new HashMap <>();
+      final HashMap < Integer, Vec3 > usedNormals = new HashMap <>();
+
+      /* Visit all data arrays with the faces array. */
+      final int facesLen = this.faces.length;
+      for ( int i = 0; i < facesLen; ++i ) {
+         final int[][] verts = this.faces[i];
+         final int vertsLen = verts.length;
+         for ( int j = 0; j < vertsLen; ++j ) {
+            final int[] vert = verts[j];
+            final int vIdx = vert[0];
+            final int vtIdx = vert[1];
+            final int vnIdx = vert[2];
+
+            /* The hash map will ignore repeated visitations. */
+            usedCoords.put(vIdx, this.coords[vIdx]);
+            usedTexCoords.put(vtIdx, this.texCoords[vtIdx]);
+            usedNormals.put(vnIdx, this.normals[vnIdx]);
+         }
+      }
+
+      /* Convert the hash maps back to arrays. */
+//      final Vec3[] newCoords = usedCoords.values()
+//         .toArray(new Vec3[usedCoords.size()]);
+//      final Vec2[] newTexCoords = usedTexCoords.values()
+//         .toArray(new Vec2[usedTexCoords.size()]);
+//      final Vec3[] newNormals = usedNormals.values()
+//         .toArray(new Vec3[usedNormals.size()]);
+
+      /* Arrays should be sorted with the same comparator as binary search. */
+//      Arrays.sort(newCoords, Mesh.SORT_3);
+//      Arrays.sort(newTexCoords, Mesh.SORT_2);
+//      Arrays.sort(newNormals, Mesh.SORT_3);
+
+      /* Use a tree set to filter out redundant vectors. */
+      final SortedSet < Vec3 > coordsTree = new TreeSet <>(Mesh.SORT_3);
+      final SortedSet < Vec2 > texCoordsTree = new TreeSet <>(Mesh.SORT_2);
+      final SortedSet < Vec3 > normalsTree = new TreeSet <>(Mesh.SORT_3);
+
+      /* Dictionary's keys are no longer needed; just values. */
+      coordsTree.addAll(usedCoords.values());
+      texCoordsTree.addAll(usedTexCoords.values());
+      normalsTree.addAll(usedNormals.values());
+
+      /* Convert from sorted set to arrays. */
+      final Vec3[] newCoords = coordsTree
+         .toArray(new Vec3[coordsTree.size()]);
+      final Vec2[] newTexCoords = texCoordsTree
+         .toArray(new Vec2[texCoordsTree.size()]);
+      final Vec3[] newNormals = normalsTree
+         .toArray(new Vec3[normalsTree.size()]);
+
+      for ( int i = 0; i < facesLen; ++i ) {
+         final int[][] verts = this.faces[i];
+         final int vertsLen = verts.length;
+         for ( int j = 0; j < vertsLen; ++j ) {
+            final int[] vert = verts[j];
+
+            /*
+             * Find index of vector in new array by using indexed value from old
+             * array as a reference.
+             */
+            vert[0] = Arrays.binarySearch(
+               newCoords,
+               this.coords[vert[0]],
+               Mesh.SORT_3);
+            vert[1] = Arrays.binarySearch(
+               newTexCoords,
+               this.texCoords[vert[1]],
+               Mesh.SORT_2);
+            vert[2] = Arrays.binarySearch(
+               newNormals,
+               this.normals[vert[2]],
+               Mesh.SORT_3);
+         }
+      }
+
+      /* Replace old arrays with the new. */
+      this.coords = newCoords;
+      this.texCoords = newTexCoords;
+      this.normals = newNormals;
+
+      /* Sort faces by centroid. */
+      Arrays.sort(this.faces, new Mesh3.SortIndices3(this.coords));
+
+      return this;
+   }
+
+   /**
     * Clones this mesh.
     *
     * @return the cloned mesh
@@ -283,11 +387,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          { idxV2, idxVt2, idxVn1 },
          { idxV3, idxVt3, idxVn1 } } };
 
-      this.coords = Vec3.concat(this.coords,
+      this.coords = Vec3.concat(
+         this.coords,
          new Vec3[] { vNewOrigin, vNewDest });
-      this.texCoords = Vec2.concat(this.texCoords,
+      this.texCoords = Vec2.concat(
+         this.texCoords,
          new Vec2[] { vtNewOrigin, vtNewDest });
-      this.normals = Vec3.concat(this.normals,
+      this.normals = Vec3.concat(
+         this.normals,
          new Vec3[] { vnDiff });
       this.faces = Mesh.splice(this.faces, i + 1, 0, faceNew);
 
@@ -861,7 +968,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       lb.x = 0.5f * ( lb.x + ub.x );
       lb.y = 0.5f * ( lb.y + ub.y );
       lb.z = 0.5f * ( lb.z + ub.z );
-      final float scl = Utils.div(1.0f,
+      final float scl = Utils.div(
+         1.0f,
          Utils.max(dim.x, dim.y, dim.z));
 
       final int len = this.coords.length;
@@ -1247,20 +1355,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * reassigns indices in the face.
     *
     * @return this mesh
+    *
+    * @see System#arraycopy(Object, int, Object, int, int)
+    * @see Arrays#binarySearch(Object[], Object, Comparator)
     */
    @Chainable
-   public Mesh3 sort ( ) { return this.sort(IUtils.DEFAULT_EPSILON); }
-
-   /**
-    * Sorts the coordinates texture coordinates, and normals of a mesh, then
-    * reassigns indices in the face.
-    *
-    * @param tolerance the quantization tolerance
-    *
-    * @return this mesh
-    */
-   @Chainable
-   public Mesh3 sort ( final float tolerance ) {
+   public Mesh3 sort ( ) {
 
       /* Sort coordinates. */
       final int vlen = this.coords.length;
@@ -2103,8 +2203,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final Vec2 vt = this.texCoords[i];
 
          final float azim = Utils.atan2(v.y, v.x);
-         final float incl = Utils.asin(v.z * Utils.invSqrt(
-            v.x * v.x + v.y * v.y + v.z * v.z));
+         final float incl = Utils.asin(
+            v.z * Utils.invSqrt(
+               v.x * v.x + v.y * v.y + v.z * v.z));
 
          /* Simplification of the map function. */
          vt.set(
@@ -2148,7 +2249,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * elsewhere, and border edges; for that reason this works best with
     * NGONs.<br>
     * <br>
-    * This is protected because it tends to create faces harder to triangulate.
+    * This is protected because it tends to make faces harder to triangulate.
     *
     * @param faceIndex the face index
     * @param edgeIndex the edge index
@@ -2254,7 +2355,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * Default cube size, such that it will match the dimensions of other
-    * Platonic solids; <code>0.5 / Math.sqrt(2.0)</code> , approximately
+    * Platonic solids; <code>0.5d / Math.sqrt(2.0d)</code> , approximately
     * 0.35355338 .
     */
    public static final float DEFAULT_CUBE_SIZE = 0.35355338f;
@@ -2349,12 +2450,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals[5].set(0.0f, 1.0f, 0.0f);
 
       target.faces = new int[][][] {
-         { { 0, 2, 4 }, { 1, 3, 4 }, { 3, 0, 4 }, { 2, 1, 4 } },
-         { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 }, { 6, 1, 5 } },
          { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 }, { 4, 1, 0 } },
+         { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } },
+         { { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 }, { 0, 0,
+            2 } },
          { { 4, 2, 3 }, { 5, 3, 3 }, { 1, 0, 3 }, { 0, 1, 3 } },
-         { { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 }, { 0, 0, 2 } },
-         { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } } };
+         { { 0, 2, 4 }, { 1, 3, 4 }, { 3, 0, 4 }, { 2, 1, 4 } },
+         { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 }, { 6, 1, 5 } } };
 
       return target;
    }
@@ -2502,7 +2604,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int sectors,
       final Mesh3 target ) {
 
-      return Mesh3.cylinder(origin, dest,
+      return Mesh3.cylinder(
+         origin, dest,
          IMesh.DEFAULT_CIRCLE_SECTORS, true, target);
    }
 
@@ -2521,7 +2624,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec3 dest,
       final Mesh3 target ) {
 
-      return Mesh3.cylinder(origin, dest,
+      return Mesh3.cylinder(
+         origin, dest,
          IMesh.DEFAULT_CIRCLE_SECTORS, target);
    }
 
@@ -2632,30 +2736,22 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals[11].set(-0.8506508f, -0.5f, -0.16245979f);
 
       target.faces = new int[][][] {
-         { { 2, 0, 2 }, { 10, 2, 2 }, { 0, 3, 2 },
-            { 14, 1, 2 }, { 1, 4, 2 } },
-         { { 1, 0, 5 }, { 4, 2, 5 }, { 15, 3, 5 },
-            { 3, 1, 5 }, { 2, 4, 5 } },
-         { { 7, 0, 1 }, { 17, 2, 1 }, { 16, 3, 1 },
-            { 6, 1, 1 }, { 5, 4, 1 } },
-         { { 5, 0, 3 }, { 12, 2, 3 }, { 9, 3, 3 },
-            { 8, 1, 3 }, { 7, 4, 3 } },
-         { { 9, 0, 4 }, { 0, 2, 4 }, { 10, 3, 4 },
-            { 11, 1, 4 }, { 8, 4, 4 } },
-         { { 0, 0, 6 }, { 9, 2, 6 }, { 12, 3, 6 },
-            { 13, 1, 6 }, { 14, 4, 6 } },
-         { { 16, 0, 7 }, { 15, 2, 7 }, { 4, 3, 7 },
-            { 19, 1, 7 }, { 6, 4, 7 } },
-         { { 15, 0, 8 }, { 16, 2, 8 }, { 17, 3, 8 },
-            { 18, 1, 8 }, { 3, 4, 8 } },
-         { { 11, 0, 9 }, { 10, 2, 9 }, { 2, 3, 9 },
-            { 3, 1, 9 }, { 18, 4, 9 } },
-         { { 18, 0, 10 }, { 17, 2, 10 }, { 7, 3, 10 },
-            { 8, 1, 10 }, { 11, 4, 10 } },
-         { { 13, 0, 11 }, { 12, 2, 11 }, { 5, 3, 11 },
-            { 6, 1, 11 }, { 19, 4, 11 } },
-         { { 19, 0, 0 }, { 4, 2, 0 }, { 1, 3, 0 },
-            { 14, 1, 0 }, { 13, 4, 0 } } };
+         { { 2, 0, 2 }, { 10, 2, 2 }, { 0, 3, 2 }, { 14, 1, 2 }, { 1, 4, 2 } },
+         { { 1, 0, 5 }, { 4, 2, 5 }, { 15, 3, 5 }, { 3, 1, 5 }, { 2, 4, 5 } },
+         { { 7, 0, 1 }, { 17, 2, 1 }, { 16, 3, 1 }, { 6, 1, 1 }, { 5, 4, 1 } },
+         { { 5, 0, 3 }, { 12, 2, 3 }, { 9, 3, 3 }, { 8, 1, 3 }, { 7, 4, 3 } },
+         { { 9, 0, 4 }, { 0, 2, 4 }, { 10, 3, 4 }, { 11, 1, 4 }, { 8, 4, 4 } },
+         { { 0, 0, 6 }, { 9, 2, 6 }, { 12, 3, 6 }, { 13, 1, 6 }, { 14, 4, 6 } },
+         { { 16, 0, 7 }, { 15, 2, 7 }, { 4, 3, 7 }, { 19, 1, 7 }, { 6, 4, 7 } },
+         { { 15, 0, 8 }, { 16, 2, 8 }, { 17, 3, 8 }, { 18, 1, 8 },
+            { 3, 4, 8 } },
+         { { 11, 0, 9 }, { 10, 2, 9 }, { 2, 3, 9 }, { 3, 1, 9 }, { 18, 4, 9 } },
+         { { 18, 0, 10 }, { 17, 2, 10 }, { 7, 3, 10 }, { 8, 1, 10 },
+            { 11, 4, 10 } },
+         { { 13, 0, 11 }, { 12, 2, 11 }, { 5, 3, 11 }, { 6, 1, 11 },
+            { 19, 4, 11 } },
+         { { 19, 0, 0 }, { 4, 2, 0 }, { 1, 3, 0 }, { 14, 1, 0 },
+            { 13, 4, 0 } } };
 
       return target;
    }
@@ -2665,10 +2761,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * file.<br>
     * <br>
     * Files supplied to this parser should always include information for
-    * coordinates, texture coordinates and normals.<br>
-    * <br>
-    * Material information is not parsed from the file, as Processing would not
-    * accurately recreate it.
+    * coordinates, texture coordinates and normals. Mesh groups are not
+    * supported by this function. Material data from a .mtl file is not parsed
+    * here, and should be done separately.
     *
     * @param lines  the String tokens
     * @param target the output mesh
@@ -2694,6 +2789,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       boolean missingVts = false;
       boolean missingVns = false;
 
+      boolean usesMaterial = false;
+      String mtlFileName = "";
+      final ArrayList < String > materialNames = new ArrayList <>(8);
+
       for ( int i = 0; i < len; ++i ) {
 
          /* Split line by spaces. */
@@ -2706,6 +2805,16 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
                /* Assign name. */
                name = tokens[1];
+
+            } else if ( initialToken.equals("mtllib") ) {
+
+               usesMaterial = true;
+               mtlFileName = tokens[1];
+
+            } else if ( initialToken.equals("usemtl") ) {
+
+               usesMaterial = true;
+               materialNames.add(tokens[1]);
 
             } else if ( initialToken.equals("v") ) {
 
@@ -2736,84 +2845,38 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                   final int k = j - 1;
 
                   /* Indices in .obj file start at 1, not 0. */
-                  if ( tokenLen > 2 ) {
-
+                  if ( tokenLen > 0 ) {
                      final String vIdx = faceTokens[0];
-                     final String vtIdx = faceTokens[1];
-                     final String vnIdx = faceTokens[2];
-
                      if ( vIdx == null || vIdx.isEmpty() ) {
-                        indices[k][0] = 0;
                         missingVs = true;
                      } else {
                         indices[k][0] = Mesh3.intFromStr(vIdx) - 1;
                      }
+                  } else {
+                     missingVs = true;
+                  }
 
+                  if ( tokenLen > 1 ) {
+                     final String vtIdx = faceTokens[1];
                      if ( vtIdx == null || vtIdx.isEmpty() ) {
-                        indices[k][1] = 0;
                         missingVts = true;
                      } else {
                         indices[k][1] = Mesh3.intFromStr(vtIdx) - 1;
                      }
+                  } else {
+                     missingVts = true;
+                  }
 
+                  if ( tokenLen > 2 ) {
+                     final String vnIdx = faceTokens[2];
                      if ( vnIdx == null || vnIdx.isEmpty() ) {
-                        indices[k][2] = 0;
                         missingVns = true;
                      } else {
                         indices[k][2] = Mesh3.intFromStr(vnIdx) - 1;
                      }
-
-                  } else if ( tokenLen > 1 ) {
-
-                     final String vIdx = faceTokens[0];
-                     final String vtIdx = faceTokens[1];
-
-                     if ( vIdx == null || vIdx.isEmpty() ) {
-                        indices[k][0] = 0;
-                        missingVs = true;
-                     } else {
-                        indices[k][0] = Mesh3.intFromStr(vIdx) - 1;
-                     }
-
-                     if ( vtIdx == null || vtIdx.isEmpty() ) {
-                        indices[k][1] = 0;
-                        missingVts = true;
-                     } else {
-                        indices[k][1] = Mesh3.intFromStr(vtIdx) - 1;
-                     }
-
-                     indices[k][2] = 0;
-                     missingVns = true;
-
-                  } else if ( tokenLen > 0 ) {
-
-                     final String vIdx = faceTokens[0];
-
-                     if ( vIdx == null || vIdx.isEmpty() ) {
-                        indices[k][0] = 0;
-                        missingVs = true;
-                     } else {
-                        indices[k][0] = Mesh3.intFromStr(vIdx) - 1;
-                     }
-
-                     indices[k][1] = 0;
-                     indices[k][2] = 0;
-
-                     missingVts = true;
-                     missingVns = true;
-
                   } else {
-
-                     indices[k][0] = 0;
-                     indices[k][1] = 0;
-                     indices[k][2] = 0;
-
-                     missingVs = true;
-                     missingVts = true;
                      missingVns = true;
-
                   }
-
                }
 
                faceList.add(indices);
@@ -2848,8 +2911,283 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          normalList.toArray(normalArr);
       }
 
+      if ( usesMaterial ) {
+         final StringBuilder sb = new StringBuilder(512);
+         sb.append("The .obj file refers to the .mtl file ");
+         sb.append(mtlFileName);
+         sb.append(" , namely, the materials: ");
+
+         final Iterator < String > matNamesItr = materialNames.iterator();
+         final int last = materialNames.size() - 1;
+         int i = 0;
+         while ( matNamesItr.hasNext() ) {
+            sb.append(matNamesItr.next());
+            if ( i < last ) { sb.append(',').append(' '); }
+            i++;
+         }
+
+         sb.append(" .");
+         System.out.println(sb.toString());
+      }
+
       target.set(faceArr, coordArr, texCoordArr, normalArr);
       return target;
+   }
+
+   /**
+    * Creates a list of meshes from an array of strings representing a WaveFront
+    * obj file with groups.<br>
+    * <br>
+    * Files supplied to this parser should always include information for
+    * coordinates, texture coordinates and normals. Material data from a .mtl
+    * file is not parsed by this function, and should be done separately.<br>
+    * <br>
+    * Because vertex grouping is not supported by the Mesh3 class, an option to
+    * pool data is provided. If data is pooled between meshes, then all will
+    * references the same coordinate, texture coordinate and normal array. If
+    * not, each mesh will receive a copy of the data parsed from the .obj file;
+    * the mesh will then be cleaned to remove unused data.
+    *
+    * @param lines    the strings
+    * @param poolData whether to share data
+    *
+    * @return the array of meshes
+    */
+   @Experimental
+   public static Mesh3[] fromObjGroup (
+      final String[] lines,
+      final boolean poolData ) {
+
+      // TEST: Case when there is no group...
+
+      String[] tokens;
+      String[] faceTokens;
+      String objName = "Mesh3";
+
+      final int len = lines.length;
+      final int capacity = len == 0 ? 32 : len / 4;
+      final ArrayList < Vec3 > coordList = new ArrayList <>(capacity);
+      final ArrayList < Vec2 > texCoordList = new ArrayList <>(capacity);
+      final ArrayList < Vec3 > normalList = new ArrayList <>(capacity);
+      final HashMap < String, ArrayList < int[][] > > faceGroups = new HashMap <>();
+//      ArrayList < int[][] > currentIndices = null;
+      ArrayList < int[][] > currentIndices = new ArrayList < >();
+
+      boolean missingVs = false;
+      boolean missingVts = false;
+      boolean missingVns = false;
+      boolean missingGroups = true;
+
+      boolean usesMaterial = false;
+      String mtlFileName = "";
+      final ArrayList < String > materialNames = new ArrayList <>(8);
+
+      for ( int i = 0; i < len; ++i ) {
+         tokens = lines[i].split("\\s+");
+         if ( tokens.length > 0 ) {
+            final String initialToken = tokens[0].toLowerCase();
+            if ( initialToken.equals("o") ) {
+
+               /* Re-assign mesh name. */
+               objName = tokens[1];
+
+            } else if ( initialToken.equals("g") ) {
+
+               /* Create group name. Create (or retrieve) list of indices. */
+
+               final String name = objName + "." + tokens[1];
+               if ( !faceGroups.containsKey(name) ) {
+                  faceGroups.put(name, new ArrayList < int[][] >());
+               }
+               currentIndices = faceGroups.get(name);
+               missingGroups = false;
+
+            } else if ( initialToken.equals("mtllib") ) {
+               usesMaterial = true;
+               mtlFileName = tokens[1];
+            } else if ( initialToken.equals("usemtl") ) {
+               usesMaterial = true;
+               materialNames.add(tokens[1]);
+            } else if ( initialToken.equals("v") ) {
+               coordList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
+            } else if ( initialToken.equals("vt") ) {
+               texCoordList.add(new Vec2(tokens[1], tokens[2]));
+            } else if ( initialToken.equals("vn") ) {
+               normalList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
+            } else if ( initialToken.equals("f") ) {
+
+               if ( currentIndices != null ) {
+
+                  /* Face. */
+                  final int count = tokens.length;
+
+                  /* tokens length includes "f", and so is 1 longer. */
+                  final int[][] indices = new int[count - 1][3];
+
+                  for ( int j = 1; j < count; ++j ) {
+                     faceTokens = tokens[j].split("/");
+                     final int tokenLen = faceTokens.length;
+                     final int k = j - 1;
+
+                     /* Indices in .obj file start at 1, not 0. */
+                     if ( tokenLen > 0 ) {
+                        final String vIdx = faceTokens[0];
+                        if ( vIdx == null || vIdx.isEmpty() ) {
+                           missingVs = true;
+                        } else {
+                           indices[k][0] = Mesh3.intFromStr(vIdx) - 1;
+                        }
+                     } else {
+                        missingVs = true;
+                     }
+
+                     if ( tokenLen > 1 ) {
+                        final String vtIdx = faceTokens[1];
+                        if ( vtIdx == null || vtIdx.isEmpty() ) {
+                           missingVts = true;
+                        } else {
+                           indices[k][1] = Mesh3.intFromStr(vtIdx) - 1;
+                        }
+                     } else {
+                        missingVts = true;
+                     }
+
+                     if ( tokenLen > 2 ) {
+                        final String vnIdx = faceTokens[2];
+                        if ( vnIdx == null || vnIdx.isEmpty() ) {
+                           missingVns = true;
+                        } else {
+                           indices[k][2] = Mesh3.intFromStr(vnIdx) - 1;
+                        }
+                     } else {
+                        missingVns = true;
+                     }
+                  }
+
+                  currentIndices.add(indices);
+               }
+            }
+         }
+      }
+
+      /* Convert to fixed-sized array. */
+
+      Vec3[] coordArr = new Vec3[coordList.size()];
+      if ( missingVs && coordArr.length < 1 ) {
+         coordArr = new Vec3[] { Vec3.zero(new Vec3()) };
+      } else {
+         coordList.toArray(coordArr);
+      }
+
+      Vec2[] texCoordArr = new Vec2[texCoordList.size()];
+      if ( missingVts && texCoordArr.length < 1 ) {
+         texCoordArr = new Vec2[] { Vec2.uvCenter(new Vec2()) };
+      } else {
+         texCoordList.toArray(texCoordArr);
+      }
+
+      Vec3[] normalArr = new Vec3[normalList.size()];
+      if ( missingVns && normalArr.length < 1 ) {
+         normalArr = new Vec3[] { Vec3.up(new Vec3()) };
+      } else {
+         normalList.toArray(normalArr);
+      }
+
+      if ( usesMaterial ) {
+
+         /* Notify if material library was detected. */
+
+         final StringBuilder sb = new StringBuilder(512);
+         sb.append("The .obj file refers to the .mtl file ");
+         sb.append(mtlFileName);
+         sb.append(" , namely, the materials: ");
+
+         final Iterator < String > matNamesItr = materialNames.iterator();
+         final int last = materialNames.size() - 1;
+         int matIdx = 0;
+         while ( matNamesItr.hasNext() ) {
+            sb.append(matNamesItr.next());
+            if ( matIdx < last ) { sb.append(',').append(' '); }
+            matIdx++;
+         }
+
+         sb.append(" .");
+         System.out.println(sb.toString());
+      }
+
+      final int groupsLen = faceGroups.size() < 1 ? 1 : faceGroups.size();
+      final Mesh3[] result = new Mesh3[groupsLen];
+
+      if ( missingGroups ) {
+
+         final Mesh3 mesh = result[0] = new Mesh3();
+         mesh.name = objName;
+
+         mesh.faces = new int[currentIndices.size()][][];
+         currentIndices.toArray(mesh.faces);
+
+         mesh.coords = coordArr;
+         mesh.texCoords = texCoordArr;
+         mesh.normals = normalArr;
+
+         mesh.clean();
+
+      } else {
+
+         int meshIdx = 0;
+         final int coordLen = coordArr.length;
+         final int texCoordLen = texCoordArr.length;
+         final int normalLen = normalArr.length;
+
+         /* Convert from hash map of groups to meshes. */
+         final Iterator < Entry < String, ArrayList < int[][] > > > itr = faceGroups
+            .entrySet().iterator();
+
+         /* Loop over entries in dictionary. */
+         while ( itr.hasNext() ) {
+            final Entry < String, ArrayList < int[][] > > entry = itr.next();
+
+            final Mesh3 mesh = new Mesh3();
+            mesh.name = entry.getKey();
+
+            final ArrayList < int[][] > facesList = entry.getValue();
+            mesh.faces = new int[facesList.size()][][];
+            facesList.toArray(mesh.faces);
+
+            if ( poolData ) {
+
+               mesh.coords = coordArr;
+               mesh.texCoords = texCoordArr;
+               mesh.normals = normalArr;
+
+            } else {
+
+               /* Copy data by value, not by reference. */
+               mesh.coords = new Vec3[coordLen];
+               for ( int i = 0; i < coordLen; ++i ) {
+                  mesh.coords[i] = new Vec3(coordArr[i]);
+               }
+
+               mesh.texCoords = new Vec2[texCoordLen];
+               for ( int j = 0; j < texCoordLen; ++j ) {
+                  mesh.texCoords[j] = new Vec2(texCoordArr[j]);
+               }
+
+               mesh.normals = new Vec3[normalLen];
+               for ( int k = 0; k < normalLen; ++k ) {
+                  mesh.normals[k] = new Vec3(normalArr[k]);
+               }
+
+               /* Remove unused. */
+               mesh.clean();
+            }
+
+            result[meshIdx] = mesh;
+            meshIdx++;
+         }
+      }
+
+      return result;
    }
 
    /**
@@ -3156,7 +3494,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int vsect = sectors < 3 ? 3 : sectors;
       final int vpanl = panels < 3 ? 3 : panels;
       final float rho0 = 0.5f;
-      final float rho1 = rho0 * Utils.clamp(thickness,
+      final float rho1 = rho0 * Utils.clamp(
+         thickness,
          IUtils.DEFAULT_EPSILON, 1.0f - IUtils.DEFAULT_EPSILON);
 
       /* Values for array accesses. */
@@ -3452,7 +3791,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int len0 = lons * lats + 2;
       final int len1 = lons1 * lats + 2;
       final Vec3[] vs = target.coords = Vec3.resize(target.coords, len0);
-      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
+      final Vec2[] vts = target.texCoords = Vec2.resize(
+         target.texCoords,
          len1);
       final Vec3[] vns = target.normals = Vec3.resize(target.normals, len0);
 
@@ -3730,7 +4070,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       float z1 = refx * ky - refy * kx;
 
       /* Forward and up are parallel if the cross product is zero. */
-      if ( Utils.approx(x1, 0.0f) && Utils.approx(y1, 0.0f) && Utils.approx(z1,
+      if ( Utils.approx(x1, 0.0f) && Utils.approx(y1, 0.0f) && Utils.approx(
+         z1,
          0.0f) ) {
 
          /*

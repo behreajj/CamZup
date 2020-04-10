@@ -1,5 +1,7 @@
 package camzup.pfriendly;
 
+import java.util.ArrayList;
+
 import camzup.core.Chainable;
 import camzup.core.Color;
 import camzup.core.MaterialUv;
@@ -129,6 +131,66 @@ public class MaterialPImage extends MaterialUv {
          .append(this.transform.toString(places))
          .append(' ').append('}')
          .toString();
+   }
+
+   /**
+    * Creates a material from an array of strings representing a Wavefront .mtl
+    * file. The support for this file format is <em>very</em> minimal, as it is
+    * unlikely that its contents would be reproducible between a variety of
+    * renderers. The material's tint is set to the diffuse color. If an image
+    * file is referenced for the diffuse map, then a message is printed to the
+    * console.
+    *
+    * @param lines the String tokens
+    *
+    * @return the material
+    */
+   @SuppressWarnings ( "null" )
+   public static MaterialPImage[] fromMtl ( final String[] lines ) {
+
+      final int len = lines.length;
+      String[] tokens;
+      final ArrayList < MaterialPImage > result = new ArrayList <>();
+      MaterialPImage current = null;
+
+      String alpha = "1.0";
+
+      for ( int i = 0; i < len; ++i ) {
+
+         /* Split line by spaces. */
+         tokens = lines[i].split("\\s+");
+
+         /* Skip empty lines. */
+         if ( tokens.length > 0 ) {
+            final String initialToken = tokens[0].toLowerCase();
+
+            if ( initialToken.equals("newmtl") ) {
+
+               current = new MaterialPImage();
+               result.add(current);
+               current.name = tokens[1];
+
+            } else if ( initialToken.equals("kd") ) {
+
+               current.tint.set(tokens[1], tokens[2], tokens[3], alpha);
+
+            } else if ( initialToken.equals("d") ) {
+
+               alpha = tokens[1];
+
+            } else if ( initialToken.equals("map_kd") ) {
+
+               final StringBuilder sb = new StringBuilder(128);
+               sb.append(
+                  "The .mtl file refers to the image file ")
+                  .append(tokens[1])
+                  .append(" .");
+               System.out.println(sb.toString());
+            }
+         }
+      }
+
+      return result.toArray(new MaterialPImage[result.size()]);
    }
 
 }

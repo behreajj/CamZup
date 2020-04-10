@@ -18,7 +18,7 @@ float cwAngle = 0.0;
 float ccwAngle = 0.0;
 
 void settings() {
-  size(720, 405, "camzup.pfriendly.YupJ2");
+  size(720, 405, YupJ2.PATH_STR);
 }
 
 void setup() {

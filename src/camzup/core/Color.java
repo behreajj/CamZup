@@ -265,10 +265,7 @@ public class Color extends Vec4 {
     * @return the element
     */
    @Override
-   public float get ( final int index ) {
-
-      return this.getAlphaLast(index);
-   }
+   public float get ( final int index ) { return this.getAlphaLast(index); }
 
    /**
     * Simulates bracket access in an array. The alpha channel is treated as the
@@ -1356,9 +1353,9 @@ public class Color extends Vec4 {
    public static float luminance ( final int c ) {
 
       /*
-       * Divided 0.2126 / 255.0, 0.7152 / 255.0, 0.0722 / 255.0 Double
+       * Divide 0.2126 / 255.0, 0.7152 / 255.0, 0.0722 / 255.0 . In double
        * precision: (a) 0.0008337254901960785d ; (b) 0.002804705882352941d ; (c)
-       * 0.0002831372549019608d
+       * 0.0002831372549019608d .
        */
 
       /* @formatter:off */
@@ -2666,7 +2663,7 @@ public class Color extends Vec4 {
 
       /**
        * A helper function to pass on to sub-classes of this class. Mutates the
-       * fields a, b, differance, aLtb and aGtb.
+       * fields a, b, difference, aLtb and aGtb.
        *
        * @param origin the origin hue
        * @param dest   the destination hue
@@ -2799,7 +2796,7 @@ public class Color extends Vec4 {
          final float step,
          final Color target ) {
 
-         /* This should remain as double precision! */
+         /* This should remain as double precision. */
          final double td = step;
          final double ud = 1.0d - td;
          return target.set(

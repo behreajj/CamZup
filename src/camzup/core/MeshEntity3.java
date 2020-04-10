@@ -301,9 +301,10 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       final int meshLast = meshLen - 1;
       final Iterator < Mesh3 > meshItr = this.meshes.iterator();
       while ( meshItr.hasNext() ) {
-         pyCd.append(meshItr.next().toBlenderCode(
-            includeUvs,
-            includeNormals));
+         pyCd.append(
+            meshItr.next().toBlenderCode(
+               includeUvs,
+               includeNormals));
          if ( meshIndex < meshLast ) { pyCd.append(',').append(' '); }
          meshIndex++;
       }
@@ -314,9 +315,10 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
          final int matLast = matLen - 1;
 
          for ( int i = 0; i < matLen; ++i ) {
-            pyCd.append(materials[i].toBlenderCode(
-               gamma, metallic, roughness,
-               specular, clearcoat, clearcoatRough));
+            pyCd.append(
+               materials[i].toBlenderCode(
+                  gamma, metallic, roughness,
+                  specular, clearcoat, clearcoatRough));
             if ( i < matLast ) { pyCd.append(',').append(' '); }
          }
       } else {

@@ -1497,7 +1497,8 @@ public abstract class Simplex {
 
       final float t1 = 0.5f - ( x1 * x1 + y1 * y1 );
       if ( t1 >= 0.0f ) {
-         g1 = Simplex.gradRot2(i + i1, j + j1, seed, cosa, sina,
+         g1 = Simplex.gradRot2(
+            i + i1, j + j1, seed, cosa, sina,
             Simplex.ROT_2);
          t21 = t1 * t1;
          t41 = t21 * t21;
@@ -1506,7 +1507,8 @@ public abstract class Simplex {
 
       final float t2 = 0.5f - ( x2 * x2 + y2 * y2 );
       if ( t2 >= 0.0f ) {
-         g2 = Simplex.gradRot2(i + 1, j + 1, seed, cosa, sina,
+         g2 = Simplex.gradRot2(
+            i + 1, j + 1, seed, cosa, sina,
             Simplex.ROT_2);
          t22 = t2 * t2;
          t42 = t22 * t22;
@@ -1561,7 +1563,8 @@ public abstract class Simplex {
       final int seed,
       final Vec3 deriv ) {
 
-      return Simplex.flow(x, y, z, Utils.cos(radians),
+      return Simplex.flow(
+         x, y, z, Utils.cos(radians),
          Utils.sin(radians), seed, deriv);
    }
 
@@ -1603,7 +1606,8 @@ public abstract class Simplex {
       final int seed,
       final Vec2 deriv ) {
 
-      return Simplex.flow(x, y, Utils.cos(radians),
+      return Simplex.flow(
+         x, y, Utils.cos(radians),
          Utils.sin(radians), seed, deriv);
    }
 
@@ -1699,7 +1703,8 @@ public abstract class Simplex {
       final int seed ) {
 
       return ( Float.intBitsToFloat(
-         Simplex.hash(v.hashCode(), seed,
+         Simplex.hash(
+            v.hashCode(), seed,
             0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f;
    }
 
@@ -1726,10 +1731,14 @@ public abstract class Simplex {
          v.x) ) * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y + st);
 
       return target.set(
-         ( Float.intBitsToFloat(Simplex.hash(ahash, seed,
-            0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
-         ( Float.intBitsToFloat(Simplex.hash(bhash, seed,
-            0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f);
+         ( Float.intBitsToFloat(
+            Simplex.hash(
+               ahash, seed,
+               0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
+         ( Float.intBitsToFloat(
+            Simplex.hash(
+               bhash, seed,
+               0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f);
    }
 
    /**
@@ -1750,7 +1759,8 @@ public abstract class Simplex {
       final int seed ) {
 
       return ( Float.intBitsToFloat(
-         Simplex.hash(v.hashCode(), seed,
+         Simplex.hash(
+            v.hashCode(), seed,
             0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f;
    }
 
@@ -1784,15 +1794,18 @@ public abstract class Simplex {
 
       return target.set(
          ( Float.intBitsToFloat(
-            Simplex.hash(ahash, seed,
+            Simplex.hash(
+               ahash, seed,
                0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
 
          ( Float.intBitsToFloat(
-            Simplex.hash(bhash, seed,
+            Simplex.hash(
+               bhash, seed,
                0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
 
          ( Float.intBitsToFloat(
-            Simplex.hash(chash, seed,
+            Simplex.hash(
+               chash, seed,
                0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f);
    }
 
@@ -1814,7 +1827,8 @@ public abstract class Simplex {
       final int seed ) {
 
       return ( Float.intBitsToFloat(
-         Simplex.hash(v.hashCode(), seed,
+         Simplex.hash(
+            v.hashCode(), seed,
             0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f;
    }
 
@@ -1852,19 +1866,23 @@ public abstract class Simplex {
 
       return target.set(
          ( Float.intBitsToFloat(
-            Simplex.hash(ahash, seed,
+            Simplex.hash(
+               ahash, seed,
                0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
 
          ( Float.intBitsToFloat(
-            Simplex.hash(bhash, seed,
+            Simplex.hash(
+               bhash, seed,
                0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
 
          ( Float.intBitsToFloat(
-            Simplex.hash(chash, seed,
+            Simplex.hash(
+               chash, seed,
                0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
 
          ( Float.intBitsToFloat(
-            Simplex.hash(dhash, seed,
+            Simplex.hash(
+               dhash, seed,
                0) & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f);
    }
 
@@ -1988,7 +2006,8 @@ public abstract class Simplex {
       final int seed,
       final Vec4 target ) {
 
-      return Simplex.noise(v, seed, target,
+      return Simplex.noise(
+         v, seed, target,
          null, null, null, null);
    }
 
@@ -2363,17 +2382,25 @@ public abstract class Simplex {
                    * cell offset.
                    */
                   hshx = i + Float
-                     .intBitsToFloat(Simplex.hash(ahsh, seed,
-                        0) & 0x007fffff | 0x3f800000) - 1.0f;
+                     .intBitsToFloat(
+                        Simplex.hash(
+                           ahsh, seed,
+                           0) & 0x007fffff | 0x3f800000) - 1.0f;
                   hshy = j + Float
-                     .intBitsToFloat(Simplex.hash(bhsh, seed,
-                        0) & 0x007fffff | 0x3f800000) - 1.0f;
+                     .intBitsToFloat(
+                        Simplex.hash(
+                           bhsh, seed,
+                           0) & 0x007fffff | 0x3f800000) - 1.0f;
                   hshz = k + Float
-                     .intBitsToFloat(Simplex.hash(chsh, seed,
-                        0) & 0x007fffff | 0x3f800000) - 1.0f;
+                     .intBitsToFloat(
+                        Simplex.hash(
+                           chsh, seed,
+                           0) & 0x007fffff | 0x3f800000) - 1.0f;
                   hshw = m + Float
-                     .intBitsToFloat(Simplex.hash(dhsh, seed,
-                        0) & 0x007fffff | 0x3f800000) - 1.0f;
+                     .intBitsToFloat(
+                        Simplex.hash(
+                           dhsh, seed,
+                           0) & 0x007fffff | 0x3f800000) - 1.0f;
 
                   /*
                    * Find the Euclidean distance between the local coordinate
@@ -2452,8 +2479,10 @@ public abstract class Simplex {
       final int k,
       final int seed ) {
 
-      return Simplex.GRAD_3_LUT[Simplex.hash(i, j, Simplex.hash(k, seed,
-         0)) & 0xf];
+      return Simplex.GRAD_3_LUT[Simplex.hash(
+         i, j, Simplex.hash(
+            k, seed,
+            0)) & 0xf];
    }
 
    /**
@@ -2478,8 +2507,10 @@ public abstract class Simplex {
       final int l,
       final int seed ) {
 
-      return Simplex.GRAD_4_LUT[Simplex.hash(i, j, Simplex.hash(k, l,
-         seed)) & 0x1f];
+      return Simplex.GRAD_4_LUT[Simplex.hash(
+         i, j, Simplex.hash(
+            k, l,
+            seed)) & 0x1f];
    }
 
    /**

@@ -6,6 +6,7 @@ import java.awt.Image;
 
 import camzup.core.Chainable;
 import camzup.core.Color;
+import camzup.core.Experimental;
 import camzup.core.Gradient;
 import camzup.core.IUtils;
 import camzup.core.Sdf;
@@ -13,6 +14,7 @@ import camzup.core.Utils;
 import camzup.core.Vec2;
 
 import processing.core.PApplet;
+import processing.core.PFont;
 import processing.core.PImage;
 
 /**
@@ -385,7 +387,8 @@ public class ZImage extends PImage {
 
       final float bx = xOrigin - xDest;
       final float by = yOrigin - yDest;
-      final float bbInv = 1.0f / Utils.max(IUtils.DEFAULT_EPSILON,
+      final float bbInv = 1.0f / Utils.max(
+         IUtils.DEFAULT_EPSILON,
          bx * bx + by * by);
 
       for ( int i = 0, y = 0; y < h; ++y ) {
@@ -398,7 +401,8 @@ public class ZImage extends PImage {
             final float xn = x * wInv;
             final float ax = xOrigin - ( xn + xn - 1.0f );
 
-            grd.eval(Utils.clamp01( ( ax * bx + ay * by ) * bbInv),
+            grd.eval(
+               Utils.clamp01( ( ax * bx + ay * by ) * bbInv),
                ZImage.clr);
             pixels[i] = Color.toHexInt(ZImage.clr);
          }
@@ -668,6 +672,36 @@ public class ZImage extends PImage {
       final Vec2 d ) {
 
       return ZImage.wrap(source, target, ( int ) d.x, ( int ) d.y);
+   }
+
+   @Experimental
+   static PImage fromText (
+      final PFont font,
+      final int textSize,
+      final String str ) {
+
+      final PImage target = new PImage();
+
+      final char[] chars = str.toCharArray();
+      final int charLen = chars.length;
+      for ( int i = 0; i < charLen; ++i ) {
+         final char c = chars[i];
+         final PFont.Glyph glyph = font.getGlyph(c);
+         if ( glyph != null ) {
+//            int wGlyph = glyph.width;
+//            int hGlyph = glyph.height;
+//            int lExtent = glyph.leftExtent;
+//            int tExtent = glyph.topExtent;
+
+//            int x0 = lExtent * textSize;
+//            int x1 = x0 + wGlyph * textSize;
+//            int y0 = tExtent * textSize;
+//            int y1 = y0 - hGlyph * textSize;
+
+            final PImage img = glyph.image;
+         }
+      }
+      return target;
    }
 
 }

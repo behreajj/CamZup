@@ -114,10 +114,7 @@ public class CurveEntity3 extends Entity3
     * @see List#iterator()
     */
    @Override
-   public Iterator < Curve3 > iterator ( ) {
-
-      return this.curves.iterator();
-   }
+   public Iterator < Curve3 > iterator ( ) { return this.curves.iterator(); }
 
    /**
     * Gets the number of curves held by the entity.

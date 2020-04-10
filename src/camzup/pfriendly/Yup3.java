@@ -1,5 +1,6 @@
 package camzup.pfriendly;
 
+import camzup.core.Experimental;
 import camzup.core.Handedness;
 import camzup.core.Vec3;
 
@@ -203,6 +204,21 @@ public class Yup3 extends Up3 {
       this.camera(
          eye.x, eye.y, eye.z,
          center.x, center.y, center.z);
+   }
+
+   /**
+    * Sets the camera to the Processing default, where the origin is in the top
+    * left corner of the sketch and the y axis points downward.
+    */
+   @Experimental
+   public void camFlipped ( ) {
+
+      final float wHalf = this.width * 0.5f;
+      final float hHalf = this.height * 0.5f;
+      final float z = this.height < 128
+         ? Yup3.DEFAULT_LOC_Y
+         : this.height * IUp.DEFAULT_CAM_DIST_FAC;
+      this.camera(wHalf, hHalf, z, wHalf, hHalf, 0.0f, 0.0f, -1.0f, 0.0f);
    }
 
    /**

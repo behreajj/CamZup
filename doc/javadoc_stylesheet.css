@@ -156,7 +156,7 @@ sup {
   background-position: left top;
   background-repeat: no-repeat;
   color: #fff7d5;
-  font-weight: bold;
+  font-weight: normal;
   padding: 8px;
   width: 5em;
 }
@@ -587,7 +587,7 @@ th.colFirst, th.colLast, th.colOne, .constantValuesContainer th {
   color: #fff7d5;
 }
 
-td.colOne a:link, td.colOne a:active, td.colOne a:visited, td.colOne a:hover, td.colFirst a:link, td.colFirst a:active, td.colFirst a:visited, td.colFirst a:hover, td.colLast a:link, td.colLast a:active, td.colLast a:visited, td.colLast a:hover, .constantValuesContainer td a:link, .constantValuesContainer td a:active, .constantValuesContainer td a:visited, .constantValuesContainer td a:hover {
+th, td.colOne a:link, td.colOne a:active, td.colOne a:visited, td.colOne a:hover, td.colFirst a:link, td.colFirst a:active, td.colFirst a:visited, td.colFirst a:hover, td.colLast a:link, td.colLast a:active, td.colLast a:visited, td.colLast a:hover, .constantValuesContainer td a:link, .constantValuesContainer td a:active, .constantValuesContainer td a:visited, .constantValuesContainer td a:hover {
   font-weight: normal;
 }
 

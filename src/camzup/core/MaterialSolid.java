@@ -1,5 +1,7 @@
 package camzup.core;
 
+import java.util.ArrayList;
+
 import camzup.pfriendly.IUp;
 
 /**
@@ -74,7 +76,8 @@ public class MaterialSolid extends Material {
       final Color stroke,
       final float strokeWeight ) {
 
-      this(fill, stroke, strokeWeight,
+      this(
+         fill, stroke, strokeWeight,
          fill.w > 0.0f,
          stroke.w > 0.0f && strokeWeight > 0.0f);
    }
@@ -95,7 +98,8 @@ public class MaterialSolid extends Material {
       final boolean useFill,
       final boolean useStroke ) {
 
-      this(Color.toHexString(fill),
+      this(
+         Color.toHexString(fill),
          fill, stroke, strokeWeight,
          useFill, useStroke);
    }
@@ -137,7 +141,8 @@ public class MaterialSolid extends Material {
       final Color stroke,
       final float strokeWeight ) {
 
-      this(name, fill, stroke, strokeWeight,
+      this(
+         name, fill, stroke, strokeWeight,
          fill.w > 0.0f,
          stroke.w > 0.0f && strokeWeight > 0.0f);
    }
@@ -494,9 +499,11 @@ public class MaterialSolid extends Material {
        * This needs to be printed to a high precision because of small meshes
        * which are blown up by scale.
        */
-      final String strokeStr = Utils.toFixed(Utils.max(
-         IUtils.DEFAULT_EPSILON,
-         Utils.div(this.strokeWeight, scale)), 6);
+      final String strokeStr = Utils.toFixed(
+         Utils.max(
+            IUtils.DEFAULT_EPSILON,
+            Utils.div(this.strokeWeight, scale)),
+         6);
       final StringBuilder svgp = new StringBuilder(256)
          .append("id=\"")
          .append(this.name)
@@ -560,7 +567,8 @@ public class MaterialSolid extends Material {
        * meshes which are blown up by scale.
        */
       final String strokeStr = Utils.toFixed(
-         Utils.max(IUtils.DEFAULT_EPSILON,
+         Utils.max(
+            IUtils.DEFAULT_EPSILON,
             Utils.div(IUp.DEFAULT_STROKE_WEIGHT, scale)),
          6);
 
@@ -568,18 +576,72 @@ public class MaterialSolid extends Material {
          .append("<g id=\"material\" stroke-width=\"")
          .append(strokeStr)
          .append("\" stroke-opacity=\"1.0\" stroke=\"#")
-         .append(Integer.toHexString(
-            IUp.DEFAULT_STROKE_COLOR)
-            .substring(2))
+         .append(
+            Integer.toHexString(
+               IUp.DEFAULT_STROKE_COLOR)
+               .substring(2))
          .append("\" fill-opacity=\"1.0\" fill=\"#")
-         .append(Integer.toHexString(
-            IUp.DEFAULT_FILL_COLOR)
-            .substring(2))
+         .append(
+            Integer.toHexString(
+               IUp.DEFAULT_FILL_COLOR)
+               .substring(2))
          .append("\" stroke-linejoin=\"")
          .append(MaterialSolid.DEFAULT_SVG_STR_JOIN)
          .append("\" stroke-linecap=\"")
          .append(MaterialSolid.DEFAULT_SVG_STR_CAP)
          .append("\">\n").toString();
+   }
+
+   /**
+    * Creates a material from an array of strings representing a Wavefront .mtl
+    * file. The support for this file format is <em>very</em> minimal, as it is
+    * unlikely that its contents would be reproducible between a variety of
+    * renderers. The material's fill is set to the diffuse color.
+    *
+    * @param lines the String tokens
+    *
+    * @return the material
+    */
+   @SuppressWarnings ( "null" )
+   public static MaterialSolid[] fromMtl ( final String[] lines ) {
+
+      final int len = lines.length;
+      String[] tokens;
+      final ArrayList < MaterialSolid > result = new ArrayList <>();
+      MaterialSolid current = null;
+
+      String alpha = "1.0";
+
+      for ( int i = 0; i < len; ++i ) {
+
+         /* Split line by spaces. */
+         tokens = lines[i].split("\\s+");
+
+         /* Skip empty lines. */
+         if ( tokens.length > 0 ) {
+            final String initialToken = tokens[0].toLowerCase();
+
+            if ( initialToken.equals("newmtl") ) {
+
+               current = new MaterialSolid();
+               result.add(current);
+               current.name = tokens[1];
+               current.fill.set(0.8f, 0.8f, 0.8f, 1.0f);
+
+            } else if ( initialToken.equals("d") ) {
+
+               alpha = tokens[1];
+
+            } else if ( initialToken.equals("kd") ) {
+
+               /* Diffuse color. Default: (0.8, 0.8, 0.8) . */
+               current.fill.set(tokens[1], tokens[2], tokens[3], alpha);
+
+            }
+         }
+      }
+
+      return result.toArray(new MaterialSolid[result.size()]);
    }
 
    /**
@@ -595,9 +657,10 @@ public class MaterialSolid extends Material {
          .append("{\"name\": \"")
          .append("Material")
          .append("\", \"fill\": ")
-         .append(Color.fromHex(
-            IUp.DEFAULT_FILL_COLOR, new Color())
-            .toBlenderCode(gamma, true))
+         .append(
+            Color.fromHex(
+               IUp.DEFAULT_FILL_COLOR, new Color())
+               .toBlenderCode(gamma, true))
          .append(", \"metallic\": 0.0")
          .append(", \"roughness\": 1.0")
          .append(", \"specular\": 0.0")

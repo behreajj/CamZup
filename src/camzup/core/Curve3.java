@@ -11,8 +11,8 @@ import camzup.core.Utils.EasingFuncArr;
 import camzup.core.Utils.EasingFuncObj;
 
 /**
- * Organizes a Bezier curve into a list of knots. Provides a function to
- * retrieve a point and tangent on a curve from a step in the range [0.0, 1.0].
+ * Organizes a 3D Bezier curve into a list of knots. Provides a function to
+ * retrieve a point and tangent on a curve from a step in the range [0.0, 1.0] .
  */
 public class Curve3 extends Curve implements Iterable < Knot3 > {
 
@@ -246,10 +246,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see LinkedList#getLast()
     */
-   public Knot3 getLast ( ) {
-
-      return this.knots.get(this.knots.size() - 1);
-   }
+   public Knot3 getLast ( ) { return this.knots.get(this.knots.size() - 1); }
 
    /**
     * Gets a segment with two knots from this curve.
@@ -269,10 +266,12 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
          target.closedLoop = false;
          target.knots.clear();
-         target.knots.add(new Knot3(
-            this.knots.get(Utils.mod(i, len))));
-         target.knots.add(new Knot3(
-            this.knots.get(Utils.mod(i + 1, len))));
+         target.knots.add(
+            new Knot3(
+               this.knots.get(Utils.mod(i, len))));
+         target.knots.add(
+            new Knot3(
+               this.knots.get(Utils.mod(i + 1, len))));
 
       } else if ( i > -1 && i < len - 1 ) {
 
@@ -1496,7 +1495,10 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       target.name = new StringBuilder(64)
          .append(mesh.name)
          .append('.')
-         .append(i)
+         .append(
+            Utils.toPadded(
+               i,
+               4))
          .toString();
       target.materialIndex = mesh.materialIndex;
       target.resize(vertsLen);
@@ -1652,7 +1654,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final int valCount = count < 3 ? 3 : count;
       final Vec3[] points = new Vec3[valCount];
       for ( int i = 0; i < valCount; ++i ) {
-         points[i] = Vec3.randomCartesian(rng,
+         points[i] = Vec3.randomCartesian(
+            rng,
             lowerBound, upperBound, new Vec3());
       }
       return Curve3.fromPoints(closedLoop, points, target);
@@ -1685,8 +1688,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final int valCount = count < 3 ? 3 : count;
       final Vec3[] points = new Vec3[valCount];
       for ( int i = 0; i < valCount; ++i ) {
-         points[i] = Vec3.randomCartesian(rng,
-            lowerBound, upperBound,
+         points[i] = Vec3.randomCartesian(
+            rng, lowerBound, upperBound,
             new Vec3());
       }
 
@@ -1943,10 +1946,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       /**
        * The default constructor.
        */
-      public Easing ( ) {
-
-         this.easingFunc = new Knot3.Lerp();
-      }
+      public Easing ( ) { this.easingFunc = new Knot3.Lerp(); }
 
       /**
        * The easing constructor
@@ -2052,10 +2052,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

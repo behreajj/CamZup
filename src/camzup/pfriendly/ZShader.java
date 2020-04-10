@@ -4,6 +4,7 @@ import java.net.URL;
 
 import camzup.core.Mat3;
 import camzup.core.Mat4;
+import camzup.core.Quaternion;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
 import camzup.core.Vec4;
@@ -14,7 +15,7 @@ import processing.opengl.PShader;
 
 /**
  * Extends Processing's PShader to provide support for Cam Z-up core objects:
- * Vec2, Vec3, Vec4, Mat3, Mat4.
+ * Vec2, Vec3, Vec4, Quaternion, Mat3 and Mat4.
  */
 public class ZShader extends PShader {
 
@@ -77,58 +78,95 @@ public class ZShader extends PShader {
    }
 
    /**
-    * Sets a uniform to a matrix.
+    * Sets a GLSL mat3 uniform to a Mat3.
     *
     * @param name the uniform name
     * @param m    the matrix
     */
    public void set ( final String name, final Mat3 m ) {
 
-      this.setUniformImpl(name, 17, m.toArray());
+      this.setUniformImpl(name, ZShader.MAT3_IDX, m.toArray());
    }
 
    /**
-    * Sets a uniform to a matrix.
+    * Sets a GLSL mat4 uniform to a Mat4.
     *
     * @param name the uniform name
     * @param m    the matrix
     */
    public void set ( final String name, final Mat4 m ) {
 
-      this.setUniformImpl(name, 18, m.toArray());
+      this.setUniformImpl(name, ZShader.MAT4_IDX, m.toArray());
    }
 
    /**
-    * Sets a uniform to a vector.
+    * Sets a GLSL vec4 uniform to a Quaternion. The real component, 'w' is
+    * treated as the last component.
+    *
+    * @param name the uniform name
+    * @param q    the quaternion
+    */
+   public void set ( final String name, final Quaternion q ) {
+
+      this.setUniformImpl(name, ZShader.VEC4_IDX, q.toArray(false));
+   }
+
+   /**
+    * Sets a GLSL vec2 uniform to a Vec2.
     *
     * @param name the uniform name
     * @param v    the value
     */
    public void set ( final String name, final Vec2 v ) {
 
-      this.setUniformImpl(name, 13, v.toArray());
+      this.setUniformImpl(name, ZShader.VEC2_IDX, v.toArray());
    }
 
    /**
-    * Sets a uniform to a vector.
+    * Sets a GLSL vec3 uniform to a Vec3.
     *
     * @param name the uniform name
     * @param v    the value
     */
    public void set ( final String name, final Vec3 v ) {
 
-      this.setUniformImpl(name, 14, v.toArray());
+      this.setUniformImpl(name, ZShader.VEC3_IDX, v.toArray());
    }
 
    /**
-    * Sets a uniform to a vector.
+    * Sets a GLSL vec4 uniform to a Vec4.
     *
     * @param name the uniform name
     * @param v    the value
     */
    public void set ( final String name, final Vec4 v ) {
 
-      this.setUniformImpl(name, 15, v.toArray());
+      this.setUniformImpl(name, ZShader.VEC4_IDX, v.toArray());
    }
+
+   /**
+    * Index code for Mat3s in a PShader.
+    */
+   public static final int MAT3_IDX = 17;
+
+   /**
+    * Index code for Mat4s in a PShader.
+    */
+   public static final int MAT4_IDX = 18;
+
+   /**
+    * Index code for Vec2s in a PShader.
+    */
+   public static final int VEC2_IDX = 13;
+
+   /**
+    * Index code for Vec3s in a PShader.
+    */
+   public static final int VEC3_IDX = 14;
+
+   /**
+    * Index code for Vec4s in a PShader.
+    */
+   public static final int VEC4_IDX = 15;
 
 }

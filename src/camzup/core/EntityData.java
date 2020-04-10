@@ -14,20 +14,14 @@ public abstract class EntityData implements IEntityData {
     * The default constructor. The data's name is derived from its identity hash
     * code.
     */
-   public EntityData ( ) {
-
-      this.name = this.hashIdentityString();
-   }
+   public EntityData ( ) { this.name = this.hashIdentityString(); }
 
    /**
     * Constructs an entity data with a name.
     *
     * @param name the name
     */
-   public EntityData ( final String name ) {
-
-      this.name = name;
-   }
+   public EntityData ( final String name ) { this.name = name; }
 
    /**
     * Tests this entity data for equivalence with an object.
@@ -50,10 +44,7 @@ public abstract class EntityData implements IEntityData {
     *
     * @return the name
     */
-   public String getName ( ) {
-
-      return this.name;
-   }
+   public String getName ( ) { return this.name; }
 
    /**
     * Returns a hash code for this entity data based on its name.

@@ -567,8 +567,10 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    public static float angleBetween ( final Vec2 a, final Vec2 b ) {
 
       return Vec2.none(a) || Vec2.none(b) ? 0.0f
-         : Utils.acos(Vec2.dot(a, b) * Utils.invSqrtUnchecked(Vec2.magSq(
-            a)) * Utils.invSqrtUnchecked(Vec2.magSq(b)));
+         : Utils.acos(
+            Vec2.dot(a, b) * Utils.invSqrtUnchecked(
+               Vec2.magSq(
+                  a)) * Utils.invSqrtUnchecked(Vec2.magSq(b)));
    }
 
    /**
@@ -616,7 +618,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final float tolerance ) {
 
-      return Utils.approx(a.y, b.y, tolerance) && Utils.approx(a.x, b.x,
+      return Utils.approx(a.y, b.y, tolerance) && Utils.approx(
+         a.x, b.x,
          tolerance);
    }
 
@@ -1633,10 +1636,12 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float angNorm = Utils.mod1(angOffset * IUtils.ONE_TAU);
 
       final boolean oneRing = vring == 1;
-      final float vrMax = Utils.max(IUtils.DEFAULT_EPSILON, radiusMin,
+      final float vrMax = Utils.max(
+         IUtils.DEFAULT_EPSILON, radiusMin,
          radiusMax);
       final float vrMin = oneRing ? vrMax
-         : Utils.max(IUtils.DEFAULT_EPSILON,
+         : Utils.max(
+            IUtils.DEFAULT_EPSILON,
             Utils.min(radiusMin, radiusMax));
 
       final int ringLen = includeCenter ? rings + 1 : rings;
