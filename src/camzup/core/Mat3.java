@@ -74,9 +74,7 @@ public class Mat3 extends Matrix {
       final float m10, final float m11 ) {
 
       super(9);
-      this.set(
-         m00, m01,
-         m10, m11);
+      this.set(m00, m01, m10, m11);
    }
 
    /**
@@ -94,9 +92,7 @@ public class Mat3 extends Matrix {
       final float m10, final float m11, final float m12 ) {
 
       super(9);
-      this.set(
-         m00, m01, m02,
-         m10, m11, m12);
+      this.set(m00, m01, m02, m10, m11, m12);
    }
 
    /**
@@ -118,10 +114,7 @@ public class Mat3 extends Matrix {
       final float m20, final float m21, final float m22 ) {
 
       super(9);
-      this.set(
-         m00, m01, m02,
-         m10, m11, m12,
-         m20, m21, m22);
+      this.set(m00, m01, m02, m10, m11, m12, m20, m21, m22);
    }
 
    /**
@@ -144,10 +137,7 @@ public class Mat3 extends Matrix {
    @Override
    public Mat3 clone ( ) {
 
-      return new Mat3(
-         this.m00, this.m01, this.m02,
-         this.m10, this.m11, this.m12,
-         this.m20, this.m21, this.m22);
+      return new Mat3(this.m00, this.m01, this.m02, this.m10, this.m11, this.m12, this.m20, this.m21, this.m22);
    }
 
    /**
@@ -421,10 +411,7 @@ public class Mat3 extends Matrix {
    @Chainable
    public Mat3 reset ( ) {
 
-      return this.set(
-         1.0f, 0.0f, 0.0f,
-         0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 1.0f);
+      return this.set(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -443,10 +430,7 @@ public class Mat3 extends Matrix {
       final float m00, final float m01,
       final float m10, final float m11 ) {
 
-      return this.set(
-         m00, m01, 0.0f,
-         m10, m11, 0.0f,
-         0.0f, 0.0f, 1.0f);
+      return this.set(m00, m01, 0.0f, m10, m11, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -467,10 +451,7 @@ public class Mat3 extends Matrix {
       final float m00, final float m01, final float m02,
       final float m10, final float m11, final float m12 ) {
 
-      return this.set(
-         m00, m01, m02,
-         m10, m11, m12,
-         0.0f, 0.0f, 1.0f);
+      return this.set(m00, m01, m02, m10, m11, m12, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -513,10 +494,8 @@ public class Mat3 extends Matrix {
    @Chainable
    public Mat3 set ( final Mat3 source ) {
 
-      return this.set(
-         source.m00, source.m01, source.m02,
-         source.m10, source.m11, source.m12,
-         source.m20, source.m21, source.m22);
+      return this.set(source.m00, source.m01, source.m02, source.m10,
+         source.m11, source.m12, source.m20, source.m21, source.m22);
    }
 
    /**
@@ -727,31 +706,20 @@ public class Mat3 extends Matrix {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(128)
-         .append("{ m00: ")
-         .append(Utils.toFixed(this.m00, places))
-         .append(", m01: ")
-         .append(Utils.toFixed(this.m01, places))
-         .append(", m02: ")
-         .append(Utils.toFixed(this.m02, places))
+      return new StringBuilder(128).append("{ m00: ").append(
+         Utils.toFixed(this.m00, places)).append(", m01: ").append(
+            Utils.toFixed(this.m01, places)).append(", m02: ").append(
+               Utils.toFixed(this.m02, places))
 
-         .append(", m10: ")
-         .append(Utils.toFixed(this.m10, places))
-         .append(", m11: ")
-         .append(Utils.toFixed(this.m11, places))
-         .append(", m12: ")
-         .append(Utils.toFixed(this.m12, places))
+         .append(", m10: ").append(Utils.toFixed(this.m10, places)).append(
+            ", m11: ").append(Utils.toFixed(this.m11, places)).append(
+               ", m12: ").append(Utils.toFixed(this.m12, places))
 
-         .append(", m20: ")
-         .append(Utils.toFixed(this.m20, places))
-         .append(", m21: ")
-         .append(Utils.toFixed(this.m21, places))
-         .append(", m22: ")
-         .append(Utils.toFixed(this.m22, places))
+         .append(", m20: ").append(Utils.toFixed(this.m20, places)).append(
+            ", m21: ").append(Utils.toFixed(this.m21, places)).append(
+               ", m22: ").append(Utils.toFixed(this.m22, places))
 
-         .append(' ')
-         .append('}')
-         .toString();
+         .append(' ').append('}').toString();
    }
 
    /**
@@ -772,30 +740,22 @@ public class Mat3 extends Matrix {
     */
    public String toStringCol ( final int places ) {
 
-      return new StringBuilder(128)
-         .append('\n')
-         .append(Utils.toFixed(this.m00, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m01, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m02, places))
+      return new StringBuilder(128).append('\n').append(
+         Utils.toFixed(this.m00, places)).append(',').append(' ').append(
+            Utils.toFixed(this.m01, places)).append(',').append(' ').append(
+               Utils.toFixed(this.m02, places))
 
-         .append(',').append('\n')
-         .append(Utils.toFixed(this.m10, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m11, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m12, places))
+         .append(',').append('\n').append(
+            Utils.toFixed(this.m10, places)).append(',').append(' ').append(
+               Utils.toFixed(this.m11, places)).append(',').append(' ').append(
+                  Utils.toFixed(this.m12, places))
 
-         .append(',').append('\n')
-         .append(Utils.toFixed(this.m20, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m21, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m22, places))
+         .append(',').append('\n').append(
+            Utils.toFixed(this.m20, places)).append(',').append(' ').append(
+               Utils.toFixed(this.m21, places)).append(',').append(' ').append(
+                  Utils.toFixed(this.m22, places))
 
-         .append('\n')
-         .toString();
+         .append('\n').toString();
    }
 
    /**
@@ -861,10 +821,9 @@ public class Mat3 extends Matrix {
       final Mat3 b,
       final Mat3 target ) {
 
-      return target.set(
-         a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02,
-         a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12,
-         a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22);
+      return target.set(a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02,
+         a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12, a.m20 + b.m20,
+         a.m21 + b.m21, a.m22 + b.m22);
    }
 
    /**
@@ -947,9 +906,7 @@ public class Mat3 extends Matrix {
       final Vec2 forward,
       final Mat3 target ) {
 
-      return target.set(
-         right.x, forward.x, 0.0f,
-         right.y, forward.y, 0.0f,
+      return target.set(right.x, forward.x, 0.0f, right.y, forward.y, 0.0f,
          0.0f, 0.0f, 1.0f);
    }
 
@@ -970,10 +927,8 @@ public class Mat3 extends Matrix {
       final Vec2 translation,
       final Mat3 target ) {
 
-      return target.set(
-         right.x, forward.x, translation.x,
-         right.y, forward.y, translation.y,
-         0.0f, 0.0f, 1.0f);
+      return target.set(right.x, forward.x, translation.x, right.y, forward.y,
+         translation.y, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -991,9 +946,7 @@ public class Mat3 extends Matrix {
       final Vec3 forward,
       final Mat3 target ) {
 
-      return target.set(
-         right.x, forward.x, 0.0f,
-         right.y, forward.y, 0.0f,
+      return target.set(right.x, forward.x, 0.0f, right.y, forward.y, 0.0f,
          right.z, forward.z, 1.0f);
    }
 
@@ -1013,10 +966,8 @@ public class Mat3 extends Matrix {
       final Vec3 translation,
       final Mat3 target ) {
 
-      return target.set(
-         right.x, forward.x, translation.x,
-         right.y, forward.y, translation.y,
-         right.z, forward.z, translation.z);
+      return target.set(right.x, forward.x, translation.x, right.y, forward.y,
+         translation.y, right.z, forward.z, translation.z);
    }
 
    /**
@@ -1033,10 +984,7 @@ public class Mat3 extends Matrix {
       final float sina,
       final Mat3 target ) {
 
-      return target.set(
-         cosa, -sina, 0.0f,
-         sina, cosa, 0.0f,
-         0.0f, 0.0f, 1.0f);
+      return target.set(cosa, -sina, 0.0f, sina, cosa, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1057,9 +1005,7 @@ public class Mat3 extends Matrix {
       // target);
 
       final float norm = radians * IUtils.ONE_TAU;
-      return Mat3.fromRotZ(
-         Utils.scNorm(norm),
-         Utils.scNorm(norm - 0.25f),
+      return Mat3.fromRotZ(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
          target);
    }
 
@@ -1077,10 +1023,8 @@ public class Mat3 extends Matrix {
       final Mat3 target ) {
 
       if ( scalar != 0.0f ) {
-         return target.set(
-            scalar, 0.0f, 0.0f,
-            0.0f, scalar, 0.0f,
-            0.0f, 0.0f, 1.0f);
+         return target.set(scalar, 0.0f, 0.0f, 0.0f, scalar, 0.0f, 0.0f, 0.0f,
+            1.0f);
       }
       return target.reset();
    }
@@ -1098,10 +1042,8 @@ public class Mat3 extends Matrix {
       final Mat3 target ) {
 
       if ( Vec2.all(scalar) ) {
-         return target.set(
-            scalar.x, 0.0f, 0.0f,
-            0.0f, scalar.y, 0.0f,
-            0.0f, 0.0f, 1.0f);
+         return target.set(scalar.x, 0.0f, 0.0f, 0.0f, scalar.y, 0.0f, 0.0f,
+            0.0f, 1.0f);
       }
       return target.reset();
    }
@@ -1118,9 +1060,7 @@ public class Mat3 extends Matrix {
       final Vec2 translation,
       final Mat3 target ) {
 
-      return target.set(
-         1.0f, 0.0f, translation.x,
-         0.0f, 1.0f, translation.y,
+      return target.set(1.0f, 0.0f, translation.x, 0.0f, 1.0f, translation.y,
          0.0f, 0.0f, 1.0f);
    }
 
@@ -1137,10 +1077,7 @@ public class Mat3 extends Matrix {
     */
    public static Mat3 identity ( final Mat3 target ) {
 
-      return target.set(
-         1.0f, 0.0f, 0.0f,
-         0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 1.0f);
+      return target.set(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1161,14 +1098,11 @@ public class Mat3 extends Matrix {
 
       if ( det != 0.0f ) {
          final float detInv = 1.0f / det;
-         return target.set(
-            b01 * detInv,
+         return target.set(b01 * detInv,
             ( m.m02 * m.m21 - m.m22 * m.m01 ) * detInv,
-            ( m.m12 * m.m01 - m.m02 * m.m11 ) * detInv,
-            b11 * detInv,
+            ( m.m12 * m.m01 - m.m02 * m.m11 ) * detInv, b11 * detInv,
             ( m.m22 * m.m00 - m.m02 * m.m20 ) * detInv,
-            ( m.m02 * m.m10 - m.m12 * m.m00 ) * detInv,
-            b21 * detInv,
+            ( m.m02 * m.m10 - m.m12 * m.m00 ) * detInv, b21 * detInv,
             ( m.m01 * m.m20 - m.m21 * m.m00 ) * detInv,
             ( m.m11 * m.m00 - m.m01 * m.m10 ) * detInv);
       }
@@ -1206,10 +1140,8 @@ public class Mat3 extends Matrix {
       final Mat3 b,
       final Mat3 target ) {
 
-      return target.set(
-         a * b.m00, a * b.m01, a * b.m02,
-         a * b.m10, a * b.m11, a * b.m12,
-         a * b.m20, a * b.m21, a * b.m22);
+      return target.set(a * b.m00, a * b.m01, a * b.m02, a * b.m10, a * b.m11,
+         a * b.m12, a * b.m20, a * b.m21, a * b.m22);
    }
 
    /**
@@ -1227,10 +1159,8 @@ public class Mat3 extends Matrix {
       final float b,
       final Mat3 target ) {
 
-      return target.set(
-         a.m00 * b, a.m01 * b, a.m02 * b,
-         a.m10 * b, a.m11 * b, a.m12 * b,
-         a.m20 * b, a.m21 * b, a.m22 * b);
+      return target.set(a.m00 * b, a.m01 * b, a.m02 * b, a.m10 * b, a.m11 * b,
+         a.m12 * b, a.m20 * b, a.m21 * b, a.m22 * b);
    }
 
    /**
@@ -1247,8 +1177,7 @@ public class Mat3 extends Matrix {
       final Mat3 b,
       final Mat3 target ) {
 
-      return target.set(
-         a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20,
+      return target.set(a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20,
          a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21,
          a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22,
 
@@ -1290,8 +1219,7 @@ public class Mat3 extends Matrix {
       final float n21 = a.m20 * b.m01 + a.m21 * b.m11 + a.m22 * b.m21;
       final float n22 = a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22;
 
-      return target.set(
-         n00 * c.m00 + n01 * c.m10 + n02 * c.m20,
+      return target.set(n00 * c.m00 + n01 * c.m10 + n02 * c.m20,
          n00 * c.m01 + n01 * c.m11 + n02 * c.m21,
          n00 * c.m02 + n01 * c.m12 + n02 * c.m22,
 
@@ -1318,8 +1246,7 @@ public class Mat3 extends Matrix {
       final Vec3 b,
       final Vec3 target ) {
 
-      return target.set(
-         a.m00 * b.x + a.m01 * b.y + a.m02 * b.z,
+      return target.set(a.m00 * b.x + a.m01 * b.y + a.m02 * b.z,
          a.m10 * b.x + a.m11 * b.y + a.m12 * b.z,
          a.m20 * b.x + a.m21 * b.y + a.m22 * b.z);
    }
@@ -1350,8 +1277,7 @@ public class Mat3 extends Matrix {
       if ( w == 0.0f ) { return target.reset(); }
       final float wInv = 1.0f / w;
 
-      return target.set(
-         ( a.m00 * b.x + a.m01 * b.y + a.m02 ) * wInv,
+      return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m02 ) * wInv,
          ( a.m10 * b.x + a.m11 * b.y + a.m12 ) * wInv);
    }
 
@@ -1381,8 +1307,7 @@ public class Mat3 extends Matrix {
       if ( w == 0.0f ) { return target.reset(); }
       final float wInv = 1.0f / w;
 
-      return target.set(
-         ( a.m00 * b.x + a.m01 * b.y ) * wInv,
+      return target.set( ( a.m00 * b.x + a.m01 * b.y ) * wInv,
          ( a.m10 * b.x + a.m11 * b.y ) * wInv);
    }
 
@@ -1400,10 +1325,9 @@ public class Mat3 extends Matrix {
       final Mat3 b,
       final Mat3 target ) {
 
-      return target.set(
-         a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02,
-         a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12,
-         a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22);
+      return target.set(a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02,
+         a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12, a.m20 - b.m20,
+         a.m21 - b.m21, a.m22 - b.m22);
    }
 
    /**
@@ -1418,10 +1342,8 @@ public class Mat3 extends Matrix {
       final Mat3 m,
       final Mat3 target ) {
 
-      return target.set(
-         m.m00, m.m10, m.m20,
-         m.m01, m.m11, m.m21,
-         m.m02, m.m12, m.m22);
+      return target.set(m.m00, m.m10, m.m20, m.m01, m.m11, m.m21, m.m02, m.m12,
+         m.m22);
    }
 
    /**

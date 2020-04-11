@@ -79,13 +79,8 @@ public abstract class EntityData implements IEntityData {
    @Override
    public String toString ( ) {
 
-      return new StringBuilder(64)
-         .append("{ name: \"")
-         .append(this.name)
-         .append('\"')
-         .append(' ')
-         .append('}')
-         .toString();
+      return new StringBuilder(64).append("{ name: \"").append(
+         this.name).append('\"').append(' ').append('}').toString();
    }
 
    /**

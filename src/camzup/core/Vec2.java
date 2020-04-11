@@ -77,10 +77,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     *
     * @param v the source vector
     */
-   public Vec2 ( final Vec2 v ) {
-
-      this.set(v);
-   }
+   public Vec2 ( final Vec2 v ) { this.set(v); }
 
    /**
     * Returns a new vector with this vector's components. Java's cloneable
@@ -92,10 +89,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     * @see Vec2#Vec2(Vec2)
     */
    @Override
-   public Vec2 clone ( ) {
-
-      return new Vec2(this.x, this.y);
-   }
+   public Vec2 clone ( ) { return new Vec2(this.x, this.y); }
 
    /**
     * Returns -1 when this vector is less than the comparisand; 1 when it is
@@ -304,11 +298,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     */
    public String toObjString ( ) {
 
-      return new StringBuilder(16)
-         .append(Utils.toFixed(this.x, 6))
-         .append(' ')
-         .append(Utils.toFixed(this.y, 6))
-         .toString();
+      return new StringBuilder(16).append(Utils.toFixed(this.x, 6)).append(
+         ' ').append(Utils.toFixed(this.y, 6)).toString();
    }
 
    /**
@@ -328,14 +319,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(48)
-         .append("{ x: ")
-         .append(Utils.toFixed(this.x, places))
-         .append(", y: ")
-         .append(Utils.toFixed(this.y, places))
-         .append(' ')
-         .append('}')
-         .toString();
+      return new StringBuilder(48).append("{ x: ").append(
+         Utils.toFixed(this.x, places)).append(", y: ").append(
+            Utils.toFixed(this.y, places)).append(' ').append('}').toString();
    }
 
    /**
@@ -360,13 +346,11 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    @Experimental
    String toBlenderCode ( final boolean flipv ) {
 
-      return new StringBuilder(32)
-         .append('(')
-         .append(Utils.toFixed(flipv ? this.x : 1.0f - this.x, 6))
-         .append(',').append(' ')
-         .append(Utils.toFixed(flipv ? 1.0f - this.y : this.y, 6))
-         .append(')')
-         .toString();
+      return new StringBuilder(32).append('(').append(Utils.toFixed(flipv
+         ? this.x
+         : 1.0f - this.x, 6)).append(',').append(' ').append(Utils.toFixed(flipv
+            ? 1.0f - this.y
+            : this.y, 6)).append(')').toString();
    }
 
    /**
@@ -379,15 +363,10 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    @Experimental
    String toBlenderCode ( final float z ) {
 
-      return new StringBuilder(64)
-         .append('(')
-         .append(Utils.toFixed(this.x, 6))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.y, 6))
-         .append(',').append(' ')
-         .append(Utils.toFixed(z, 6))
-         .append(')')
-         .toString();
+      return new StringBuilder(64).append('(').append(
+         Utils.toFixed(this.x, 6)).append(',').append(' ').append(
+            Utils.toFixed(this.y, 6)).append(',').append(' ').append(
+               Utils.toFixed(z, 6)).append(')').toString();
    }
 
    /**
@@ -401,11 +380,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     */
    String toSvgString ( ) {
 
-      return new StringBuilder(16)
-         .append(Utils.toFixed(this.x, 6))
-         .append(' ')
-         .append(Utils.toFixed(this.y, 6))
-         .toString();
+      return new StringBuilder(16).append(Utils.toFixed(this.x, 6)).append(
+         ' ').append(Utils.toFixed(this.y, 6)).toString();
    }
 
    /**
@@ -423,8 +399,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     */
    protected boolean equals ( final Vec2 v ) {
 
-      return Float.floatToIntBits(this.y) == Float.floatToIntBits(v.y) && Float
-         .floatToIntBits(this.x) == Float.floatToIntBits(v.x);
+      return Float.floatToIntBits(this.y) == Float.floatToIntBits(
+         v.y) && Float.floatToIntBits(this.x) == Float.floatToIntBits(v.x);
    }
 
    /**
@@ -446,9 +422,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.abs(v.x),
-         Utils.abs(v.y));
+      return target.set(Utils.abs(v.x), Utils.abs(v.y));
    }
 
    /**
@@ -465,9 +439,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         a.x + b.x,
-         a.y + b.y);
+      return target.set(a.x + b.x, a.y + b.y);
    }
 
    /**
@@ -487,9 +459,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float dx = a.x + b.x;
       final float dy = a.y + b.y;
       final float mInv = Utils.invHypot(dx, dy);
-      return target.set(
-         dx * mInv,
-         dy * mInv);
+      return target.set(dx * mInv, dy * mInv);
    }
 
    /**
@@ -546,9 +516,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.and(a.x, b.x),
-         Utils.and(a.y, b.y));
+      return target.set(Utils.and(a.x, b.x), Utils.and(a.y, b.y));
    }
 
    /**
@@ -567,10 +535,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    public static float angleBetween ( final Vec2 a, final Vec2 b ) {
 
       return Vec2.none(a) || Vec2.none(b) ? 0.0f
-         : Utils.acos(
-            Vec2.dot(a, b) * Utils.invSqrtUnchecked(
-               Vec2.magSq(
-                  a)) * Utils.invSqrtUnchecked(Vec2.magSq(b)));
+         : Utils.acos(Vec2.dot(a, b) * Utils.invSqrtUnchecked(
+            Vec2.magSq(a)) * Utils.invSqrtUnchecked(Vec2.magSq(b)));
    }
 
    /**
@@ -618,8 +584,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final float tolerance ) {
 
-      return Utils.approx(a.y, b.y, tolerance) && Utils.approx(
-         a.x, b.x,
+      return Utils.approx(a.y, b.y, tolerance) && Utils.approx(a.x, b.x,
          tolerance);
    }
 
@@ -819,9 +784,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
 
       Vec2.bezierTangent(ap0, cp0, cp1, ap1, step, target);
       final float mInv = Utils.invHypot(target.x, target.y);
-      return target.set(
-         target.x * mInv,
-         target.y * mInv);
+      return target.set(target.x * mInv, target.y * mInv);
    }
 
    /**
@@ -838,9 +801,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.ceil(v.x),
-         Utils.ceil(v.y));
+      return target.set(Utils.ceil(v.x), Utils.ceil(v.y));
    }
 
    /**
@@ -861,8 +822,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 upperBound,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.clamp(v.x, lowerBound.x, upperBound.x),
+      return target.set(Utils.clamp(v.x, lowerBound.x, upperBound.x),
          Utils.clamp(v.x, lowerBound.y, upperBound.y));
    }
 
@@ -881,9 +841,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.clamp01(v.x),
-         Utils.clamp01(v.y));
+      return target.set(Utils.clamp01(v.x), Utils.clamp01(v.y));
    }
 
    /**
@@ -922,8 +880,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 sign,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.copySign(magnitude.x, sign.x),
+      return target.set(Utils.copySign(magnitude.x, sign.x),
          Utils.copySign(magnitude.y, sign.y));
    }
 
@@ -961,9 +918,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.diff(a.x, b.x),
-         Utils.diff(a.y, b.y));
+      return target.set(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y));
    }
 
    /**
@@ -999,9 +954,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 a,
       final Vec2 b ) {
 
-      return Utils.max(
-         Utils.diff(a.x, b.x),
-         Utils.diff(a.y, b.y));
+      return Utils.max(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y));
    }
 
    /**
@@ -1107,9 +1060,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.div(a, b.x),
-         Utils.div(a, b.y));
+      return target.set(Utils.div(a, b.x), Utils.div(a, b.y));
    }
 
    /**
@@ -1128,9 +1079,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
 
       if ( b == 0.0f ) { return target.reset(); }
       final float denom = 1.0f / b;
-      return target.set(
-         a.x * denom,
-         a.y * denom);
+      return target.set(a.x * denom, a.y * denom);
    }
 
    /**
@@ -1151,9 +1100,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.div(a.x, b.x),
-         Utils.div(a.y, b.y));
+      return target.set(Utils.div(a.x, b.x), Utils.div(a.y, b.y));
    }
 
    /**
@@ -1206,8 +1153,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 ub,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.filter(v.x, lb.x, ub.x),
+      return target.set(Utils.filter(v.x, lb.x, ub.x),
          Utils.filter(v.y, lb.y, ub.y));
    }
 
@@ -1251,9 +1197,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.floor(v.x),
-         Utils.floor(v.y));
+      return target.set(Utils.floor(v.x), Utils.floor(v.y));
    }
 
    /**
@@ -1272,9 +1216,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.fmod(a, b.x),
-         Utils.fmod(a, b.y));
+      return target.set(Utils.fmod(a, b.x), Utils.fmod(a, b.y));
    }
 
    /**
@@ -1293,9 +1235,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 target ) {
 
       if ( b == 0.0f ) { return target.set(a); }
-      return target.set(
-         a.x % b,
-         a.y % b);
+      return target.set(a.x % b, a.y % b);
    }
 
    /**
@@ -1315,9 +1255,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.fmod(a.x, b.x),
-         Utils.fmod(a.x, b.y));
+      return target.set(Utils.fmod(a.x, b.x), Utils.fmod(a.x, b.y));
    }
 
    /**
@@ -1346,9 +1284,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.fract(v.x),
-         Utils.fract(v.y));
+      return target.set(Utils.fract(v.x), Utils.fract(v.y));
    }
 
    /**
@@ -1376,8 +1312,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
        */
 
       final float nrm = heading * IUtils.ONE_TAU;
-      return target.set(
-         radius * Utils.scNorm(nrm),
+      return target.set(radius * Utils.scNorm(nrm),
          radius * Utils.scNorm(nrm - 0.25f));
    }
 
@@ -1399,9 +1334,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
        */
 
       final float nrm = heading * IUtils.ONE_TAU;
-      return target.set(
-         Utils.scNorm(nrm),
-         Utils.scNorm(nrm - 0.25f));
+      return target.set(Utils.scNorm(nrm), Utils.scNorm(nrm - 0.25f));
    }
 
    /**
@@ -1451,10 +1384,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float lowerBound,
       final float upperBound ) {
 
-      return Vec2.grid(
-         cols, rows,
-         lowerBound, lowerBound,
-         upperBound, upperBound);
+      return Vec2.grid(cols, rows, lowerBound, lowerBound, upperBound,
+         upperBound);
    }
 
    /**
@@ -1474,10 +1405,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 lowerBound,
       final Vec2 upperBound ) {
 
-      return Vec2.grid(
-         cols, rows,
-         lowerBound.x, lowerBound.y,
-         upperBound.x, upperBound.y);
+      return Vec2.grid(cols, rows, lowerBound.x, lowerBound.y, upperBound.x,
+         upperBound.y);
    }
 
    /**
@@ -1604,10 +1533,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float radiusMax,
       final float angOffset ) {
 
-      return Vec2.gridPolar(
-         sectors, rings,
-         radiusMin, radiusMax,
-         angOffset, true);
+      return Vec2.gridPolar(sectors, rings, radiusMin, radiusMax, angOffset,
+         true);
    }
 
    /**
@@ -1636,13 +1563,10 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float angNorm = Utils.mod1(angOffset * IUtils.ONE_TAU);
 
       final boolean oneRing = vring == 1;
-      final float vrMax = Utils.max(
-         IUtils.DEFAULT_EPSILON, radiusMin,
+      final float vrMax = Utils.max(IUtils.DEFAULT_EPSILON, radiusMin,
          radiusMax);
       final float vrMin = oneRing ? vrMax
-         : Utils.max(
-            IUtils.DEFAULT_EPSILON,
-            Utils.min(radiusMin, radiusMax));
+         : Utils.max(IUtils.DEFAULT_EPSILON, Utils.min(radiusMin, radiusMax));
 
       final int ringLen = includeCenter ? rings + 1 : rings;
       final Vec2[][] result = new Vec2[ringLen][vsect];
@@ -1688,9 +1612,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         a.x > b.x,
-         a.y > b.y);
+      return target.set(a.x > b.x, a.y > b.y);
    }
 
    /**
@@ -1708,9 +1630,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         a.x >= b.x,
-         a.y >= b.y);
+      return target.set(a.x >= b.x, a.y >= b.y);
    }
 
    /**
@@ -1855,9 +1775,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         a.x < b.x,
-         a.y < b.y);
+      return target.set(a.x < b.x, a.y < b.y);
    }
 
    /**
@@ -1875,9 +1793,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         a.x <= b.x,
-         a.y <= b.y);
+      return target.set(a.x <= b.x, a.y <= b.y);
    }
 
    /**
@@ -1959,9 +1875,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float upperBound,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.max(a.x, upperBound),
-         Utils.max(a.y, upperBound));
+      return target.set(Utils.max(a.x, upperBound), Utils.max(a.y, upperBound));
    }
 
    /**
@@ -1981,8 +1895,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 upperBound,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.max(a.x, upperBound.x),
+      return target.set(Utils.max(a.x, upperBound.x),
          Utils.max(a.y, upperBound.y));
    }
 
@@ -2001,9 +1914,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float lowerBound,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.min(a.x, lowerBound),
-         Utils.min(a.y, lowerBound));
+      return target.set(Utils.min(a.x, lowerBound), Utils.min(a.y, lowerBound));
    }
 
    /**
@@ -2023,8 +1934,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 lowerBound,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.min(a.x, lowerBound.x),
+      return target.set(Utils.min(a.x, lowerBound.x),
          Utils.min(a.y, lowerBound.y));
    }
 
@@ -2050,8 +1960,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       if ( step >= 1.0f ) { return target.set(dest); }
 
       final float u = 1.0f - step;
-      return target.set(
-         u * origin.x + step * dest.x,
+      return target.set(u * origin.x + step * dest.x,
          u * origin.y + step * dest.y);
    }
 
@@ -2093,9 +2002,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.mod(a, b.x),
-         Utils.mod(a, b.y));
+      return target.set(Utils.mod(a, b.x), Utils.mod(a, b.y));
    }
 
    /**
@@ -2115,9 +2022,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 target ) {
 
       if ( b == 0.0f ) { return target.set(a); }
-      return target.set(
-         Utils.modUnchecked(a.x, b),
-         Utils.modUnchecked(a.y, b));
+      return target.set(Utils.modUnchecked(a.x, b), Utils.modUnchecked(a.y, b));
    }
 
    /**
@@ -2136,9 +2041,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.mod(a.x, b.x),
-         Utils.mod(a.y, b.y));
+      return target.set(Utils.mod(a.x, b.x), Utils.mod(a.y, b.y));
    }
 
    /**
@@ -2157,9 +2060,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.mod1(v.x),
-         Utils.mod1(v.y));
+      return target.set(Utils.mod1(v.x), Utils.mod1(v.y));
    }
 
    /**
@@ -2176,9 +2077,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         a * b.x,
-         a * b.y);
+      return target.set(a * b.x, a * b.y);
    }
 
    /**
@@ -2195,9 +2094,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float b,
       final Vec2 target ) {
 
-      return target.set(
-         a.x * b,
-         a.y * b);
+      return target.set(a.x * b, a.y * b);
    }
 
    /**
@@ -2216,9 +2113,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         a.x * b.x,
-         a.y * b.y);
+      return target.set(a.x * b.x, a.y * b.y);
    }
 
    /**
@@ -2278,8 +2173,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      final float mInv = Utils.invSqrtUnchecked(
-         v.x * v.x + v.y * v.y);
+      final float mInv = Utils.invSqrtUnchecked(v.x * v.x + v.y * v.y);
       return target.set(v.x * mInv, v.y * mInv);
    }
 
@@ -2295,9 +2189,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(
-         v.x != 0.0f ? 0.0f : 1.0f,
-         v.y != 0.0f ? 0.0f : 1.0f);
+      return target.set(v.x != 0.0f ? 0.0f : 1.0f, v.y != 0.0f ? 0.0f : 1.0f);
    }
 
    /**
@@ -2328,9 +2220,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.or(a.x, b.x),
-         Utils.or(a.y, b.y));
+      return target.set(Utils.or(a.x, b.x), Utils.or(a.y, b.y));
    }
 
    /**
@@ -2422,9 +2312,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.pow(a, b.x),
-         Utils.pow(a, b.y));
+      return target.set(Utils.pow(a, b.x), Utils.pow(a, b.y));
    }
 
    /**
@@ -2443,9 +2331,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float b,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.pow(a.x, b),
-         Utils.pow(a.y, b));
+      return target.set(Utils.pow(a.x, b), Utils.pow(a.y, b));
    }
 
    /**
@@ -2464,9 +2350,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.pow(a.x, b.x),
-         Utils.pow(a.y, b.y));
+      return target.set(Utils.pow(a.x, b.x), Utils.pow(a.y, b.y));
    }
 
    /**
@@ -2551,8 +2435,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       if ( levels < 2 ) { return target.set(v); }
 
       final float delta = 1.0f / levels;
-      return target.set(
-         delta * Utils.floor(0.5f + v.x * levels),
+      return target.set(delta * Utils.floor(0.5f + v.x * levels),
          delta * Utils.floor(0.5f + v.y * levels));
    }
 
@@ -2593,8 +2476,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
 
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
-      return target.set(
-         ( 1.0f - rx ) * lowerBound + rx * upperBound,
+      return target.set( ( 1.0f - rx ) * lowerBound + rx * upperBound,
          ( 1.0f - ry ) * lowerBound + ry * upperBound);
    }
 
@@ -2617,8 +2499,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
 
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
-      return target.set(
-         ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
+      return target.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
          ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y);
    }
 
@@ -2642,10 +2523,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
 
       final float rt = rng.nextFloat();
       final float rr = rng.nextFloat();
-      return Vec2.fromPolar(
-         ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI,
-         ( 1.0f - rr ) * rhoMin + rr * rhoMax,
-         target);
+      return Vec2.fromPolar( ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI,
+         ( 1.0f - rr ) * rhoMin + rr * rhoMax, target);
    }
 
    /**
@@ -2693,8 +2572,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
 
       if ( Utils.approx(nMSq, 1.0f) ) {
          final float scalar = 2.0f * Vec2.dot(normal, incident);
-         return target.set(
-            incident.x - scalar * normal.x,
+         return target.set(incident.x - scalar * normal.x,
             incident.y - scalar * normal.y);
       }
 
@@ -2702,9 +2580,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float nx = normal.x * mInv;
       final float ny = normal.y * mInv;
       final float scalar = 2.0f * ( nx * incident.x + ny * incident.y );
-      return target.set(
-         incident.x - scalar * nx,
-         incident.y - scalar * ny);
+      return target.set(incident.x - scalar * nx, incident.y - scalar * ny);
    }
 
    /**
@@ -2732,8 +2608,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float k = 1.0f - eta * eta * ( 1.0f - nDotI * nDotI );
       if ( k <= 0.0f ) { return target.reset(); }
       final float scalar = eta * nDotI + Utils.sqrtUnchecked(k);
-      return target.set(
-         eta * incident.x - scalar * normal.x,
+      return target.set(eta * incident.x - scalar * normal.x,
          eta * incident.y - scalar * normal.y);
    }
 
@@ -2899,9 +2774,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float sina,
       final Vec2 target ) {
 
-      return target.set(
-         cosa * v.x - sina * v.y,
-         cosa * v.y + sina * v.x);
+      return target.set(cosa * v.x - sina * v.y, cosa * v.y + sina * v.x);
    }
 
    /**
@@ -2925,9 +2798,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float nrm = radians * IUtils.ONE_TAU;
       final float cosa = Utils.scNorm(nrm);
       final float sina = Utils.scNorm(nrm - 0.25f);
-      return target.set(
-         cosa * v.x - sina * v.y,
-         cosa * v.y + sina * v.x);
+      return target.set(cosa * v.x - sina * v.y, cosa * v.y + sina * v.x);
    }
 
    /**
@@ -2956,8 +2827,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
          n *= 10;
       }
       final float nInv = 1.0f / n;
-      return target.set(
-         Utils.round(v.x * n) * nInv,
+      return target.set(Utils.round(v.x * n) * nInv,
          Utils.round(v.y * n) * nInv);
    }
 
@@ -2975,9 +2845,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.round(v.x),
-         Utils.round(v.y));
+      return target.set(Utils.round(v.x), Utils.round(v.y));
    }
 
    /**
@@ -2994,9 +2862,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.sign(v.x),
-         Utils.sign(v.y));
+      return target.set(Utils.sign(v.x), Utils.sign(v.y));
    }
 
    /**
@@ -3013,9 +2879,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         a.x - b.x,
-         a.y - b.y);
+      return target.set(a.x - b.x, a.y - b.y);
    }
 
    /**
@@ -3036,9 +2900,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float dx = a.x - b.x;
       final float dy = a.y - b.y;
       final float mInv = Utils.invHypot(dx, dy);
-      return target.set(
-         dx * mInv,
-         dy * mInv);
+      return target.set(dx * mInv, dy * mInv);
    }
 
    /**
@@ -3078,9 +2940,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(
-         ( int ) v.x,
-         ( int ) v.y);
+      return target.set(( int ) v.x, ( int ) v.y);
    }
 
    /**
@@ -3117,8 +2977,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 ub,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.wrap(v.x, lb.x, ub.x),
+      return target.set(Utils.wrap(v.x, lb.x, ub.x),
          Utils.wrap(v.y, lb.y, ub.y));
    }
 
@@ -3139,9 +2998,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.xor(a.x, b.x),
-         Utils.xor(a.y, b.y));
+      return target.set(Utils.xor(a.x, b.x), Utils.xor(a.y, b.y));
    }
 
    /**
@@ -3337,8 +3194,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
 
          final double td = step;
          final double ud = 1.0d - td;
-         return target.set(
-            ( float ) ( ud * origin.x + td * dest.x ),
+         return target.set(( float ) ( ud * origin.x + td * dest.x ),
             ( float ) ( ud * origin.y + td * dest.y ));
       }
 
@@ -3375,8 +3231,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
          final double td = step;
          final double ts = td * td * ( 3.0d - ( td + td ) );
          final double us = 1.0d - ts;
-         return target.set(
-            ( float ) ( us * origin.x + ts * dest.x ),
+         return target.set(( float ) ( us * origin.x + ts * dest.x ),
             ( float ) ( us * origin.y + ts * dest.y ));
       }
 

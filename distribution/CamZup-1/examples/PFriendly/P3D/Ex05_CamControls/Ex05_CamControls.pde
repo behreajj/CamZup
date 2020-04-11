@@ -121,7 +121,6 @@ void mouseControls() {
 void mouseWheel(MouseEvent event) {
   float count = event.getCount();
   rndr.dolly(dollySpeed * count);
-  //rndr.moveBy(0.0, 0.0, -150.0 * count);
   orthoZoom -= 0.05 * count;
 }
 

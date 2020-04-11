@@ -248,13 +248,9 @@ public class ColorKey
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(96)
-         .append("{ step: ")
-         .append(Utils.toFixed(this.step, 6))
-         .append(", clr: ")
-         .append(this.clr.toString(places))
-         .append(' ').append('}')
-         .toString();
+      return new StringBuilder(96).append("{ step: ").append(
+         Utils.toFixed(this.step, 6)).append(", clr: ").append(
+            this.clr.toString(places)).append(' ').append('}').toString();
    }
 
    /**
@@ -265,15 +261,10 @@ public class ColorKey
     */
    public String toSvgString ( ) {
 
-      return new StringBuilder(96)
-         .append("<stop offset=\"")
-         .append(Utils.toFixed(this.step, 6))
-         .append("\" stop-color=\"")
-         .append(Color.toHexWeb(this.clr))
-         .append("\" stop-opacity=\"")
-         .append(Utils.toFixed(this.clr.w, 6))
-         .append("\"/>")
-         .toString();
+      return new StringBuilder(96).append("<stop offset=\"").append(
+         Utils.toFixed(this.step, 6)).append("\" stop-color=\"").append(
+            Color.toHexWeb(this.clr)).append("\" stop-opacity=\"").append(
+               Utils.toFixed(this.clr.w, 6)).append("\"/>").toString();
    }
 
    /**
@@ -350,13 +341,10 @@ public class ColorKey
    @Experimental
    String toBlenderCode ( final float gamma ) {
 
-      return new StringBuilder()
-         .append("{\"position\": ")
-         .append(Utils.toFixed(Utils.clamp01(this.step), 3))
-         .append(", \"color\": ")
-         .append(this.clr.toBlenderCode(gamma, true))
-         .append('}')
-         .toString();
+      return new StringBuilder().append("{\"position\": ").append(
+         Utils.toFixed(Utils.clamp01(this.step), 3)).append(
+            ", \"color\": ").append(this.clr.toBlenderCode(gamma, true)).append(
+               '}').toString();
    }
 
    /**
@@ -368,8 +356,7 @@ public class ColorKey
     */
    protected boolean equals ( final ColorKey key ) {
 
-      return Float.floatToIntBits(this.step) == Float
-         .floatToIntBits(key.step);
+      return Float.floatToIntBits(this.step) == Float.floatToIntBits(key.step);
    }
 
    /**

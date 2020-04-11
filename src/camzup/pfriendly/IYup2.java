@@ -403,9 +403,7 @@ public interface IYup2 extends IUp {
       final float x,
       final float y ) {
 
-      this.moveTo(
-         this.getLocX() + x,
-         this.getLocY() + y);
+      this.moveTo(this.getLocX() + x, this.getLocY() + y);
    }
 
    /**
@@ -439,8 +437,7 @@ public interface IYup2 extends IUp {
       final float cosa = Utils.scNorm(nrm);
       final float sina = Utils.scNorm(nrm - 0.25f);
 
-      this.moveTo(
-         this.getLocX() + cosa * x - sina * y,
+      this.moveTo(this.getLocX() + cosa * x - sina * y,
          this.getLocY() + cosa * y + sina * x);
    }
 
@@ -473,11 +470,7 @@ public interface IYup2 extends IUp {
       final float x,
       final float y ) {
 
-      this.camera(
-         x, y,
-         this.getRoll(),
-         this.getZoomX(),
-         this.getZoomY());
+      this.camera(x, y, this.getRoll(), this.getZoomX(), this.getZoomY());
    }
 
    /**
@@ -516,8 +509,7 @@ public interface IYup2 extends IUp {
       }
 
       final float u = 1.0f - step;
-      this.moveTo(
-         u * this.getLocX() + step * locNew.x,
+      this.moveTo(u * this.getLocX() + step * locNew.x,
          u * this.getLocY() + step * locNew.y);
    }
 
@@ -583,10 +575,7 @@ public interface IYup2 extends IUp {
       final float yDir,
       final float dLen ) {
 
-      this.ray(
-         xOrigin, yOrigin,
-         xDir, yDir,
-         dLen, 1.0f, 4.0f, 2.0f);
+      this.ray(xOrigin, yOrigin, xDir, yDir, dLen, 1.0f, 4.0f, 2.0f);
    }
 
    /**
@@ -643,9 +632,7 @@ public interface IYup2 extends IUp {
       final Ray2 ray,
       final float dLen ) {
 
-      this.ray(
-         ray.origin.x, ray.origin.y,
-         ray.dir.x, ray.dir.y, dLen);
+      this.ray(ray.origin.x, ray.origin.y, ray.dir.x, ray.dir.y, dLen);
    }
 
    /**
@@ -665,10 +652,8 @@ public interface IYup2 extends IUp {
       final float oWeight,
       final float dWeight ) {
 
-      this.ray(
-         ray.origin.x, ray.origin.y,
-         ray.dir.x, ray.dir.y,
-         dLen, lnwgt, oWeight, dWeight);
+      this.ray(ray.origin.x, ray.origin.y, ray.dir.x, ray.dir.y, dLen, lnwgt,
+         oWeight, dWeight);
    }
 
    /**
@@ -721,11 +706,7 @@ public interface IYup2 extends IUp {
     */
    default void rollTo ( final float radians ) {
 
-      this.camera(
-         this.getLocX(),
-         this.getLocY(),
-         radians,
-         this.getZoomX(),
+      this.camera(this.getLocX(), this.getLocY(), radians, this.getZoomX(),
          this.getZoomY());
    }
 
@@ -891,9 +872,8 @@ public interface IYup2 extends IUp {
     */
    default String toSvgString ( final CurveEntity2 ce ) {
 
-      return IYup2.toSvgString(
-         this, new CurveEntity2[] { ce },
-         new MaterialSolid[] {});
+      return IYup2.toSvgString(this, new CurveEntity2[] {
+         ce }, new MaterialSolid[] {});
    }
 
    /**
@@ -908,9 +888,8 @@ public interface IYup2 extends IUp {
       final CurveEntity2 ce,
       final MaterialSolid mat ) {
 
-      return IYup2.toSvgString(
-         this, new CurveEntity2[] { ce },
-         new MaterialSolid[] { mat });
+      return IYup2.toSvgString(this, new CurveEntity2[] {
+         ce }, new MaterialSolid[] { mat });
    }
 
    /**
@@ -979,10 +958,8 @@ public interface IYup2 extends IUp {
     */
    default String toSvgString ( final MeshEntity2 me ) {
 
-      return IYup2.toSvgString(
-         this,
-         new MeshEntity2[] { me },
-         new MaterialSolid[] {});
+      return IYup2.toSvgString(this, new MeshEntity2[] {
+         me }, new MaterialSolid[] {});
    }
 
    /**
@@ -997,10 +974,8 @@ public interface IYup2 extends IUp {
       final MeshEntity2 me,
       final MaterialSolid mat ) {
 
-      return IYup2.toSvgString(
-         this,
-         new MeshEntity2[] { me },
-         new MaterialSolid[] { mat });
+      return IYup2.toSvgString(this, new MeshEntity2[] {
+         me }, new MaterialSolid[] { mat });
    }
 
    /**
@@ -1140,9 +1115,7 @@ public interface IYup2 extends IUp {
       final float h ) {
 
       if ( w != 0.0f && h != 0.0f ) {
-         this.camera(
-            this.getLocX(), this.getLocY(),
-            this.getRoll(), w, h);
+         this.camera(this.getLocX(), this.getLocY(), this.getRoll(), w, h);
       }
    }
 
@@ -1183,8 +1156,7 @@ public interface IYup2 extends IUp {
       }
 
       final float u = 1.0f - step;
-      this.zoomTo(
-         u * this.getZoomX() + step * scaleNew.x,
+      this.zoomTo(u * this.getZoomX() + step * scaleNew.x,
          u * this.getZoomY() + step * scaleNew.y);
    }
 
@@ -1267,14 +1239,10 @@ public interface IYup2 extends IUp {
       final PApplet parent,
       final Vec2 target ) {
 
-      final float mx = Utils.clamp01(
-         parent.mouseX / ( float ) parent.width);
-      final float my = Utils.clamp01(
-         parent.mouseY / ( float ) parent.height);
+      final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
+      final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
 
-      return target.set(
-         mx + mx - 1.0f,
-         1.0f - ( my + my ));
+      return target.set(mx + mx - 1.0f, 1.0f - ( my + my ));
    }
 
    /**
@@ -1290,10 +1258,8 @@ public interface IYup2 extends IUp {
       final PApplet parent,
       final Vec2 target ) {
 
-      final float mx = Utils.clamp01(
-         parent.mouseX / ( float ) parent.width);
-      final float my = Utils.clamp01(
-         parent.mouseY / ( float ) parent.height);
+      final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
+      final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
 
       return target.set(mx, 1.0f - my);
    }
@@ -1314,15 +1280,13 @@ public interface IYup2 extends IUp {
     */
    static String svgBackground ( final IYup2 renderer ) {
 
-      return new StringBuilder(128)
-         .append("<rect id=\"background\" x=\"0\" y=\"0\" width=\"")
-         .append(renderer.getWidth())
-         .append("\" height=\"")
-         .append(renderer.getHeight())
-         .append("\" stroke=\"none\" fill=\"")
-         .append(Color.toHexWeb(renderer.getBackground()))
-         .append("\"></rect>")
-         .toString();
+      return new StringBuilder(128).append(
+         "<rect id=\"background\" x=\"0\" y=\"0\" width=\"").append(
+            renderer.getWidth()).append("\" height=\"").append(
+               renderer.getHeight()).append(
+                  "\" stroke=\"none\" fill=\"").append(
+                     Color.toHexWeb(renderer.getBackground())).append(
+                        "\"></rect>").toString();
    }
 
    /**
@@ -1335,26 +1299,21 @@ public interface IYup2 extends IUp {
     */
    static String svgCamera ( final IYup2 renderer ) {
 
-      return new StringBuilder(128)
-         .append("transform=\"translate(")
-         .append(Utils.toFixed(renderer.getWidth() * 0.5f, 6))
-         .append(',').append(' ')
-         .append(Utils.toFixed(renderer.getHeight() * 0.5f, 6))
-         .append(") scale(")
-         .append(Utils.toFixed(renderer.getZoomX(), 6))
-         .append(',').append(' ')
-         .append(Utils.toFixed(-renderer.getZoomY(), 6))
-         .append(") rotate(")
-         .append(
-            Utils.toFixed(
-               -renderer.getRoll() * IUtils.RAD_TO_DEG,
-               2))
-         .append(") translate(")
-         .append(Utils.toFixed(-renderer.getLocX(), 6))
-         .append(',').append(' ')
-         .append(Utils.toFixed(-renderer.getLocY(), 6))
-         .append(')').append('\"')
-         .toString();
+      return new StringBuilder(128).append("transform=\"translate(").append(
+         Utils.toFixed(renderer.getWidth() * 0.5f, 6)).append(',').append(
+            ' ').append(Utils.toFixed(renderer.getHeight() * 0.5f, 6)).append(
+               ") scale(").append(Utils.toFixed(renderer.getZoomX(), 6)).append(
+                  ',').append(' ').append(
+                     Utils.toFixed(-renderer.getZoomY(), 6)).append(
+                        ") rotate(").append(
+                           Utils.toFixed(
+                              -renderer.getRoll() * IUtils.RAD_TO_DEG,
+                              2)).append(") translate(").append(
+                                 Utils.toFixed(-renderer.getLocX(), 6)).append(
+                                    ',').append(' ').append(
+                                       Utils.toFixed(-renderer.getLocY(),
+                                          6)).append(')').append(
+                                             '\"').toString();
    }
 
    /**
@@ -1370,16 +1329,12 @@ public interface IYup2 extends IUp {
     */
    static String svgHeader ( final IYup2 renderer ) {
 
-      return new StringBuilder(128)
-         .append("<svg ")
-         .append("xmlns=\"http://www.w3.org/2000/svg\" ")
-         .append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ")
-         .append("viewBox=\"0 0 ")
-         .append(( int ) renderer.getWidth())
-         .append(' ')
-         .append(( int ) renderer.getHeight())
-         .append("\">")
-         .toString();
+      return new StringBuilder(128).append("<svg ").append(
+         "xmlns=\"http://www.w3.org/2000/svg\" ").append(
+            "xmlns:xlink=\"http://www.w3.org/1999/xlink\" ").append(
+               "viewBox=\"0 0 ").append(( int ) renderer.getWidth()).append(
+                  ' ').append(( int ) renderer.getHeight()).append(
+                     "\">").toString();
    }
 
    /**
@@ -1399,18 +1354,13 @@ public interface IYup2 extends IUp {
       final StringBuilder svgp = new StringBuilder(1024);
       svgp.append(IYup2.svgHeader(renderer)).append('\n');
       svgp.append(IYup2.svgBackground(renderer)).append('\n');
-      svgp.append("<g id=\"camera\" ")
-         .append(IYup2.svgCamera(renderer))
-         .append('>')
-         .append('\n');
+      svgp.append("<g id=\"camera\" ").append(IYup2.svgCamera(renderer)).append(
+         '>').append('\n');
 
       final int len = ces.length;
-      final float zoom = Utils.max(
-         renderer.getZoomX(),
-         renderer.getZoomY());
+      final float zoom = Utils.max(renderer.getZoomX(), renderer.getZoomY());
       for ( int i = 0; i < len; ++i ) {
-         svgp.append(ces[i].toSvgElm("curve", zoom, mats))
-            .append('\n');
+         svgp.append(ces[i].toSvgElm("curve", zoom, mats)).append('\n');
       }
 
       svgp.append("</g>\n</svg>");
@@ -1431,16 +1381,13 @@ public interface IYup2 extends IUp {
       final MeshEntity2[] mes,
       final MaterialSolid[] mats ) {
 
-      final StringBuilder svgp = new StringBuilder(1024)
-         .append(IYup2.svgHeader(renderer)).append('\n')
-         .append(IYup2.svgBackground(renderer)).append('\n')
-         .append("<g ")
-         .append(IYup2.svgCamera(renderer)).append('>').append('\n');
+      final StringBuilder svgp = new StringBuilder(1024).append(
+         IYup2.svgHeader(renderer)).append('\n').append(
+            IYup2.svgBackground(renderer)).append('\n').append("<g ").append(
+               IYup2.svgCamera(renderer)).append('>').append('\n');
 
       final int len = mes.length;
-      final float zoom = Utils.max(
-         renderer.getZoomX(),
-         renderer.getZoomY());
+      final float zoom = Utils.max(renderer.getZoomX(), renderer.getZoomY());
       for ( int i = 0; i < len; ++i ) {
          svgp.append(mes[i].toSvgElm("face", zoom, mats)).append('\n');
       }

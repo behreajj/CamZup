@@ -42,10 +42,8 @@ public abstract class Sdf {
       final float arcLen = 0.5f * Utils.mod1(b - a);
       final float arcOff = a + arcLen;
 
-      return Sdf.arc(point,
-         Utils.scNorm(arcOff), Utils.scNorm(arcOff - 0.25f),
-         Utils.scNorm(arcLen), Utils.scNorm(arcLen - 0.25f),
-         bounds, weight);
+      return Sdf.arc(point, Utils.scNorm(arcOff), Utils.scNorm(arcOff - 0.25f),
+         Utils.scNorm(arcLen), Utils.scNorm(arcLen - 0.25f), bounds, weight);
    }
 
    /**
@@ -67,8 +65,7 @@ public abstract class Sdf {
       final float qx = Utils.abs(point.x) - bounds.x;
       final float qy = Utils.abs(point.y) - bounds.y;
 
-      return Utils.hypot(
-         Utils.max(qx, 0.0f),
+      return Utils.hypot(Utils.max(qx, 0.0f),
          Utils.max(qy, 0.0f)) + Utils.min(Utils.max(qx, qy), 0.0f);
    }
 
@@ -113,9 +110,7 @@ public abstract class Sdf {
       final float qy = Utils.abs(point.y) - bounds.y;
       final float qz = Utils.abs(point.z) - bounds.z;
 
-      return Utils.hypot(
-         Utils.max(qx, 0.0f),
-         Utils.max(qy, 0.0f),
+      return Utils.hypot(Utils.max(qx, 0.0f), Utils.max(qy, 0.0f),
          Utils.max(qz, 0.0f)) + Utils.min(Utils.max(qx, qy, qz), 0.0f);
    }
 
@@ -178,9 +173,8 @@ public abstract class Sdf {
        * Math#atan2 with double precision is necessary.
        */
 
-      return Utils.mod1(
-         ( float ) ( ( Math.atan2(pointy,
-            pointx) - radians ) * IUtils.ONE_TAU_D ));
+      return Utils.mod1(( float ) ( ( Math.atan2(pointy,
+         pointx) - radians ) * IUtils.ONE_TAU_D ));
    }
 
    /**
@@ -212,16 +206,13 @@ public abstract class Sdf {
       final Vec3 point,
       final Vec3 bounds ) {
 
-      final float k1 = Utils.hypot(
-         Utils.div(point.x, bounds.x * bounds.x),
+      final float k1 = Utils.hypot(Utils.div(point.x, bounds.x * bounds.x),
          Utils.div(point.y, bounds.y * bounds.y),
          Utils.div(point.z, bounds.z * bounds.z));
       if ( k1 == 0.0f ) { return 0.0f; }
 
-      final float k0 = Utils.hypot(
-         Utils.div(point.x, bounds.x),
-         Utils.div(point.y, bounds.y),
-         Utils.div(point.z, bounds.z));
+      final float k0 = Utils.hypot(Utils.div(point.x, bounds.x),
+         Utils.div(point.y, bounds.y), Utils.div(point.z, bounds.z));
       return k0 * ( k0 - 1.0f ) / k1;
    }
 
@@ -250,8 +241,8 @@ public abstract class Sdf {
       final float px1 = px0 + dotkp2 * IUtils.SQRT_3_2;
       final float limit = 0.5f * bounds;
       final float py2 = py0 - dotkp2 * IUtils.ONE_SQRT_3 - bounds;
-      return Utils.copySign(Utils.hypot(
-         px1 - Utils.clamp(px1, -limit, limit), py2), py2);
+      return Utils.copySign(
+         Utils.hypot(px1 - Utils.clamp(px1, -limit, limit), py2), py2);
    }
 
    /**
@@ -309,8 +300,7 @@ public abstract class Sdf {
       final float b,
       final float radius ) {
 
-      return Utils.hypot(
-         Utils.max(0.0f, a + radius),
+      return Utils.hypot(Utils.max(0.0f, a + radius),
          Utils.max(0.0f, b + radius)) + Utils.min(Utils.max(a, b), -radius);
    }
 
@@ -350,9 +340,7 @@ public abstract class Sdf {
 
       /* Clamped scalar projection */
       final float h = Utils.clamp01(paba / baba);
-      return Utils.hypot(
-         pax - h * bax,
-         pay - h * bay);
+      return Utils.hypot(pax - h * bax, pay - h * bay);
    }
 
    /**
@@ -415,10 +403,7 @@ public abstract class Sdf {
 
       /* Clamped scalar projection */
       final float h = Utils.clamp01(paba / baba);
-      return Utils.hypot(
-         pax - h * bax,
-         pay - h * bay,
-         paz - h * baz);
+      return Utils.hypot(pax - h * bax, pay - h * bay, paz - h * baz);
    }
 
    /**
@@ -511,8 +496,7 @@ public abstract class Sdf {
 
          final float denom = ex * ex + ey * ey;
          final float dotp = denom == 0.0f ? 0.0f
-            : Utils.clamp01(
-               ( wx * ex + wy * ey ) / denom);
+            : Utils.clamp01( ( wx * ex + wy * ey ) / denom);
          final float bx = wx - ex * dotp;
          final float by = wy - ey * dotp;
 
@@ -673,8 +657,7 @@ public abstract class Sdf {
       final float radius ) {
 
       return Utils.max(Utils.min(a, b), radius) - Utils.hypot(
-         Utils.min(0.0f, a - radius),
-         Utils.min(0.0f, b - radius));
+         Utils.min(0.0f, a - radius), Utils.min(0.0f, b - radius));
    }
 
    /**

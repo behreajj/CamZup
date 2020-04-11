@@ -193,10 +193,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       int i = 0;
       final Iterator < Color > clrItr = colors.iterator();
       while ( clrItr.hasNext() ) {
-         this.keys.add(
-            new ColorKey(
-               ( oldLen + i ) * denom,
-               clrItr.next()));
+         this.keys.add(new ColorKey( ( oldLen + i ) * denom, clrItr.next()));
          i++;
       }
 
@@ -253,9 +250,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       for ( int i = 0; i < len; ++i ) {
          final float scalar = scalars[i];
          this.keys.add(
-            new ColorKey(
-               ( oldLen + i ) * denom,
-               scalar, scalar, scalar, scalar));
+            new ColorKey( ( oldLen + i ) * denom, scalar, scalar, scalar, scalar));
       }
 
       return this;
@@ -282,10 +277,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final float denom = 1.0f / ( oldLen + len - 1.0f );
 
       for ( int i = 0; i < len; ++i ) {
-         this.keys.add(
-            new ColorKey(
-               ( oldLen + i ) * denom,
-               colors[i]));
+         this.keys.add(new ColorKey( ( oldLen + i ) * denom, colors[i]));
       }
 
       return this;
@@ -436,11 +428,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       if ( next == null ) { return target.set(this.keys.last().clr); }
 
       /* This needs to be Utils.div to avoid returning 0x0 as a color. */
-      return easing.applyUnclamped(
-         next.clr, prev.clr,
-         Utils.div(step - next.step,
-            prev.step - next.step),
-         target);
+      return easing.applyUnclamped(next.clr, prev.clr,
+         Utils.div(step - next.step, prev.step - next.step), target);
    }
 
    /**
@@ -472,8 +461,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final Color[] result = new Color[vCount];
       final float toPercent = 1.0f / ( vCount - 1.0f );
       for ( int i = 0; i < vCount; ++i ) {
-         result[i] = this.eval(
-            i * toPercent, easing, new Color());
+         result[i] = this.eval(i * toPercent, easing, new Color());
       }
       return result;
    }
@@ -732,10 +720,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
       for ( int i = 0; i < len; ++i ) {
          final float scalar = scalars[i];
-         this.keys.add(
-            new ColorKey(
-               i * denom,
-               scalar, scalar, scalar, scalar));
+         this.keys.add(new ColorKey(i * denom, scalar, scalar, scalar, scalar));
       }
 
       return this;
@@ -972,39 +957,34 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final int last = len - 1;
       final float toPercent = 1.0f / last;
 
-      final StringBuilder pyCd = new StringBuilder(2048)
-         .append("from bpy import data as D, context as C\n\n")
-         .append("grd_data = [");
+      final StringBuilder pyCd = new StringBuilder(2048).append(
+         "from bpy import data as D, context as C\n\n").append("grd_data = [");
 
       for ( int i = 0; i < len; ++i ) {
-         pyCd.append("\n    {\"position\": ")
-            .append(Utils.toFixed(i * toPercent, 6))
-            .append(", \"color\": ")
-            .append(clrs[i].toBlenderCode(gamma, true))
-            .append('}');
+         pyCd.append("\n    {\"position\": ").append(
+            Utils.toFixed(i * toPercent, 6)).append(", \"color\": ").append(
+               clrs[i].toBlenderCode(gamma, true)).append('}');
 
          if ( i < last ) { pyCd.append(',').append(' '); }
       }
       pyCd.append(']');
 
-      pyCd.append("\n\nmaterial = D.materials.new(\"")
-         .append(name)
-         .append("\")\n")
-         .append("material.use_nodes = True\n")
-         .append("mat_node_tree = material.node_tree\n")
-         .append("mat_nodes = mat_node_tree.nodes\n")
-         .append("clr_rmp_node = mat_nodes.new(\"ShaderNodeValToRGB\")\n")
-         .append("clr_rmp_data = clr_rmp_node.color_ramp\n")
-         .append("color_keys = clr_rmp_data.elements\n\n")
-         .append("color_keys[0].position = grd_data[0][\"position\"]\n")
-         .append("color_keys[0].color = grd_data[0][\"color\"]\n\n")
-         .append("color_keys[1].position = grd_data[1][\"position\"]\n")
-         .append("color_keys[1].color = grd_data[1][\"color\"]\n\n")
-         .append("i_itr = range(2, len(grd_data))\n")
-         .append("for i in i_itr:\n")
-         .append("    datum = grd_data[i]\n")
-         .append("    new_key = color_keys.new(datum[\"position\"])\n")
-         .append("    new_key.color = datum[\"color\"]\n");
+      pyCd.append("\n\nmaterial = D.materials.new(\"").append(name).append(
+         "\")\n").append("material.use_nodes = True\n").append(
+            "mat_node_tree = material.node_tree\n").append(
+               "mat_nodes = mat_node_tree.nodes\n").append(
+                  "clr_rmp_node = mat_nodes.new(\"ShaderNodeValToRGB\")\n").append(
+                     "clr_rmp_data = clr_rmp_node.color_ramp\n").append(
+                        "color_keys = clr_rmp_data.elements\n\n").append(
+                           "color_keys[0].position = grd_data[0][\"position\"]\n").append(
+                              "color_keys[0].color = grd_data[0][\"color\"]\n\n").append(
+                                 "color_keys[1].position = grd_data[1][\"position\"]\n").append(
+                                    "color_keys[1].color = grd_data[1][\"color\"]\n\n").append(
+                                       "i_itr = range(2, len(grd_data))\n").append(
+                                          "for i in i_itr:\n").append(
+                                             "    datum = grd_data[i]\n").append(
+                                                "    new_key = color_keys.new(datum[\"position\"])\n").append(
+                                                   "    new_key.color = datum[\"color\"]\n");
       return pyCd.toString();
    }
 
@@ -1075,29 +1055,17 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       if ( nonZeroFirst ) { len++; }
       if ( nonOneLast ) { len++; }
 
-      final StringBuilder sb = new StringBuilder()
-         .append("GIMP Gradient\n")
-         .append("Name: ")
-         .append(name)
-         .append('\n')
-         .append(len)
-         .append('\n');
+      final StringBuilder sb = new StringBuilder().append(
+         "GIMP Gradient\n").append("Name: ").append(name).append('\n').append(
+            len).append('\n');
 
       if ( nonZeroFirst ) {
          final String frstClrStr = firstColor.toGgrString();
-         sb.append("0.000000 ")
-            .append(Utils.toFixed(firstStep * 0.5f, 6))
-            .append(' ')
-            .append(Utils.toFixed(firstStep, 6))
-            .append(' ')
-            .append(frstClrStr)
-            .append(' ')
-            .append(frstClrStr)
-            .append(' ')
-            .append(blendType)
-            .append(' ')
-            .append(colorType)
-            .append('\n');
+         sb.append("0.000000 ").append(
+            Utils.toFixed(firstStep * 0.5f, 6)).append(' ').append(
+               Utils.toFixed(firstStep, 6)).append(' ').append(
+                  frstClrStr).append(' ').append(frstClrStr).append(' ').append(
+                     blendType).append(' ').append(colorType).append('\n');
       }
 
       final Iterator < ColorKey > itr = this.keys.iterator();
@@ -1116,20 +1084,11 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
          final float currStep = curr.step;
          final String currClrStr = curr.clr.toGgrString();
 
-         sb.append(Utils.toFixed(prevStep, 6))
-            .append(' ')
-            .append(Utils.toFixed( ( prevStep + currStep ) * 0.5f, 6))
-            .append(' ')
-            .append(Utils.toFixed(currStep, 6))
-            .append(' ')
-            .append(prevClrStr)
-            .append(' ')
-            .append(currClrStr)
-            .append(' ')
-            .append(blendType)
-            .append(' ')
-            .append(colorType)
-            .append('\n');
+         sb.append(Utils.toFixed(prevStep, 6)).append(' ').append(
+            Utils.toFixed( ( prevStep + currStep ) * 0.5f, 6)).append(
+               ' ').append(Utils.toFixed(currStep, 6)).append(' ').append(
+                  prevClrStr).append(' ').append(currClrStr).append(' ').append(
+                     blendType).append(' ').append(colorType).append('\n');
 
          prevStep = currStep;
          prevClrStr = currClrStr;
@@ -1137,17 +1096,11 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
       if ( nonOneLast ) {
          final String lastClrStr = lastColor.toGgrString();
-         sb.append(Utils.toFixed(lastStep, 6))
-            .append(' ')
-            .append(Utils.toFixed( ( 1.0f + lastStep ) * 0.5f, 6))
-            .append(" 1.000000 ")
-            .append(lastClrStr)
-            .append(' ')
-            .append(lastClrStr)
-            .append(' ')
-            .append(blendType)
-            .append(' ')
-            .append(colorType);
+         sb.append(Utils.toFixed(lastStep, 6)).append(' ').append(
+            Utils.toFixed( ( 1.0f + lastStep ) * 0.5f, 6)).append(
+               " 1.000000 ").append(lastClrStr).append(' ').append(
+                  lastClrStr).append(' ').append(blendType).append(' ').append(
+                     colorType);
       }
 
       return sb.toString();
@@ -1192,14 +1145,9 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
       final StringBuilder sb = new StringBuilder(1024);
 
-      sb.append("GIMP Palette\n")
-         .append("Name: ")
-         .append(name)
-         .append('\n')
-         .append("Columns: ")
-         .append(displayColumns)
-         .append('\n')
-         .append("# https://github.com/behreajj/CamZup \n");
+      sb.append("GIMP Palette\n").append("Name: ").append(name).append(
+         '\n').append("Columns: ").append(displayColumns).append('\n').append(
+            "# https://github.com/behreajj/CamZup \n");
 
       final Iterator < ColorKey > itr = this.keys.iterator();
       while ( itr.hasNext() ) {
@@ -1226,9 +1174,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(
-         16 + 128 * this.keys.size())
-            .append("{ keys: [ \n");
+      final StringBuilder sb = new StringBuilder(16 + 128 * this.keys.size()).append(
+         "{ keys: [ \n");
       final Iterator < ColorKey > itr = this.keys.iterator();
       while ( itr.hasNext() ) {
          sb.append(itr.next().toString(places));
@@ -1270,18 +1217,12 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final float x2,
       final float y2 ) {
 
-      final StringBuilder sb = new StringBuilder(1024)
-         .append("<linearGradient id=\"")
-         .append(id)
-         .append("\" x1=\"")
-         .append(Utils.toFixed(x1, 6))
-         .append("\" y1=\"")
-         .append(Utils.toFixed(y1, 6))
-         .append("\" x2=\"")
-         .append(Utils.toFixed(x2, 6))
-         .append("\" y2=\"")
-         .append(Utils.toFixed(y2, 6))
-         .append("\">");
+      final StringBuilder sb = new StringBuilder(1024).append(
+         "<linearGradient id=\"").append(id).append("\" x1=\"").append(
+            Utils.toFixed(x1, 6)).append("\" y1=\"").append(
+               Utils.toFixed(y1, 6)).append("\" x2=\"").append(
+                  Utils.toFixed(x2, 6)).append("\" y2=\"").append(
+                     Utils.toFixed(y2, 6)).append("\">");
 
       final Iterator < ColorKey > itr = this.keys.iterator();
       while ( itr.hasNext() ) {
@@ -1582,11 +1523,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
                final int ri = Gradient.intFromStr(tokens[0]);
                final int gi = Gradient.intFromStr(tokens[1]);
                final int bi = Gradient.intFromStr(tokens[2]);
-               final Color clr = new Color(
-                  ri * IUtils.ONE_255,
-                  gi * IUtils.ONE_255,
-                  bi * IUtils.ONE_255,
-                  1.0f);
+               final Color clr = new Color(ri * IUtils.ONE_255, gi * IUtils.ONE_255, bi * IUtils.ONE_255, 1.0f);
                clrs.add(clr);
             }
          }

@@ -55,12 +55,8 @@ public class Zup3 extends Up3 {
          : -this.eyeDist;
       final float y = -z * IUp3.POLARITY_OFFSET;
 
-      this.camera(
-         0.0f, y, z,
-         0.0f, 0.0f, 0.0f,
-         Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y,
-         Zup3.DEFAULT_REF_Z);
+      this.camera(0.0f, y, z, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
+         Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
    }
 
    /**
@@ -73,12 +69,8 @@ public class Zup3 extends Up3 {
       final float x = this.eyeDist < 128 ? -Zup3.DEFAULT_LOC_X
          : -this.eyeDist;
 
-      this.camera(
-         x, 0.0f, 0.0f,
-         0.0f, 0.0f, 0.0f,
-         Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y,
-         Zup3.DEFAULT_REF_Z);
+      this.camera(x, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
+         Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
    }
 
    /**
@@ -93,13 +85,8 @@ public class Zup3 extends Up3 {
        * not have been initialized.
        */
 
-      this.camera(
-         this.cameraX,
-         this.cameraY,
-         this.cameraZ,
-         this.lookTarget.x,
-         this.lookTarget.y,
-         this.lookTarget.z);
+      this.camera(this.cameraX, this.cameraY, this.cameraZ, this.lookTarget.x,
+         this.lookTarget.y, this.lookTarget.z);
    }
 
    /**
@@ -131,10 +118,8 @@ public class Zup3 extends Up3 {
        * not have been initialized.
        */
 
-      this.camera(
-         xEye, yEye, zEye,
-         xCenter, yCenter, zCenter,
-         this.refUp.x, this.refUp.y, this.refUp.z);
+      this.camera(xEye, yEye, zEye, xCenter, yCenter, zCenter, this.refUp.x,
+         this.refUp.y, this.refUp.z);
    }
 
    /**
@@ -165,9 +150,7 @@ public class Zup3 extends Up3 {
 
       this.refUp.set(xUp, yUp, zUp);
 
-      this.lookDir.set(
-         xEye - this.lookTarget.x,
-         yEye - this.lookTarget.y,
+      this.lookDir.set(xEye - this.lookTarget.x, yEye - this.lookTarget.y,
          zEye - this.lookTarget.z);
 
       Vec3.normalize(this.lookDir, this.k);
@@ -200,9 +183,7 @@ public class Zup3 extends Up3 {
       final Vec3 eye,
       final Vec3 center ) {
 
-      this.camera(
-         eye.x, eye.y, eye.z,
-         center.x, center.y, center.z);
+      this.camera(eye.x, eye.y, eye.z, center.x, center.y, center.z);
    }
 
    /**
@@ -230,12 +211,8 @@ public class Zup3 extends Up3 {
       final float y = this.eyeDist < 128 ? Zup3.DEFAULT_LOC_Y
          : -this.eyeDist;
 
-      this.camera(
-         0.0f, y, 0.0f,
-         0.0f, 0.0f, 0.0f,
-         Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y,
-         Zup3.DEFAULT_REF_Z);
+      this.camera(0.0f, y, 0.0f, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
+         Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
    }
 
    /**
@@ -248,12 +225,8 @@ public class Zup3 extends Up3 {
       final float y = this.eyeDist < 128 ? -Zup3.DEFAULT_LOC_Y
          : this.eyeDist;
 
-      this.camera(
-         0.0f, y, 0.0f,
-         0.0f, 0.0f, 0.0f,
-         Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y,
-         Zup3.DEFAULT_REF_Z);
+      this.camera(0.0f, y, 0.0f, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
+         Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
    }
 
    /**
@@ -271,12 +244,8 @@ public class Zup3 extends Up3 {
          : this.eyeDist;
       final float y = -z * IUp3.POLARITY_OFFSET;
 
-      this.camera(
-         0.0f, y, z,
-         0.0f, 0.0f, 0.0f,
-         Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y,
-         Zup3.DEFAULT_REF_Z);
+      this.camera(0.0f, y, z, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
+         Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
    }
 
    /**
@@ -289,12 +258,8 @@ public class Zup3 extends Up3 {
       final float x = this.eyeDist < 128 ? Zup3.DEFAULT_LOC_X
          : this.eyeDist;
 
-      this.camera(
-         x, 0.0f, 0.0f,
-         0.0f, 0.0f, 0.0f,
-         Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y,
-         Zup3.DEFAULT_REF_Z);
+      this.camera(x, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
+         Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
    }
 
    /**
@@ -311,18 +276,13 @@ public class Zup3 extends Up3 {
       this.cameraY = this.defCameraY = Zup3.DEFAULT_LOC_Y;
       this.cameraZ = this.defCameraZ = Zup3.DEFAULT_LOC_Z;
 
-      this.refUp.set(
-         Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y,
+      this.refUp.set(Zup3.DEFAULT_REF_X, Zup3.DEFAULT_REF_Y,
          Zup3.DEFAULT_REF_Z);
 
-      this.lookTarget.set(
-         Up3.DEFAULT_TARGET_X,
-         Up3.DEFAULT_TARGET_Y,
+      this.lookTarget.set(Up3.DEFAULT_TARGET_X, Up3.DEFAULT_TARGET_Y,
          Up3.DEFAULT_TARGET_Z);
 
-      this.lookDir.set(
-         Zup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
+      this.lookDir.set(Zup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
          Zup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
          Zup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
 
@@ -343,18 +303,13 @@ public class Zup3 extends Up3 {
       this.cameraY = this.defCameraY = Zup3.DEFAULT_LOC_Y;
       this.cameraZ = this.defCameraZ = Zup3.DEFAULT_LOC_Z;
 
-      this.refUp.set(
-         Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y,
+      this.refUp.set(Zup3.DEFAULT_REF_X, Zup3.DEFAULT_REF_Y,
          Zup3.DEFAULT_REF_Z);
 
-      this.lookTarget.set(
-         Up3.DEFAULT_TARGET_X,
-         Up3.DEFAULT_TARGET_Y,
+      this.lookTarget.set(Up3.DEFAULT_TARGET_X, Up3.DEFAULT_TARGET_Y,
          Up3.DEFAULT_TARGET_Z);
 
-      this.lookDir.set(
-         Zup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
+      this.lookDir.set(Zup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
          Zup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
          Zup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
 
@@ -394,19 +349,15 @@ public class Zup3 extends Up3 {
       this.lightFalloff(1.0f, 0.0f, 0.0f);
       this.lightSpecular(0.0f, 0.0f, 0.0f);
 
-      this.ambientLight(
-         this.colorModeX * IUpOgl.DEFAULT_AMB_R,
+      this.ambientLight(this.colorModeX * IUpOgl.DEFAULT_AMB_R,
          this.colorModeY * IUpOgl.DEFAULT_AMB_G,
          this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
 
-      this.directionalLight(
-         this.colorModeX * IUpOgl.DEFAULT_LIGHT_R,
+      this.directionalLight(this.colorModeX * IUpOgl.DEFAULT_LIGHT_R,
          this.colorModeY * IUpOgl.DEFAULT_LIGHT_G,
          this.colorModeZ * IUpOgl.DEFAULT_LIGHT_B,
 
-         Zup3.DEFAULT_LIGHT_X,
-         Zup3.DEFAULT_LIGHT_Y,
-         Zup3.DEFAULT_LIGHT_Z);
+         Zup3.DEFAULT_LIGHT_X, Zup3.DEFAULT_LIGHT_Y, Zup3.DEFAULT_LIGHT_Z);
 
       this.colorMode = colorModeSaved;
    }

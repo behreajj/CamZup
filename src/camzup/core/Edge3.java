@@ -124,12 +124,8 @@ public class Edge3 implements Comparable < Edge3 > {
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
-      Vec3.rotate(
-         this.origin.coord,
-         cosa, sina, axis, this.origin.coord);
-      Vec3.rotate(
-         this.dest.coord,
-         cosa, sina, axis, this.dest.coord);
+      Vec3.rotate(this.origin.coord, cosa, sina, axis, this.origin.coord);
+      Vec3.rotate(this.dest.coord, cosa, sina, axis, this.dest.coord);
 
       return this;
    }
@@ -169,12 +165,8 @@ public class Edge3 implements Comparable < Edge3 > {
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
-      Vec3.rotateX(
-         this.origin.coord,
-         cosa, sina, this.origin.coord);
-      Vec3.rotateX(
-         this.dest.coord,
-         cosa, sina, this.dest.coord);
+      Vec3.rotateX(this.origin.coord, cosa, sina, this.origin.coord);
+      Vec3.rotateX(this.dest.coord, cosa, sina, this.dest.coord);
 
       return this;
    }
@@ -195,12 +187,8 @@ public class Edge3 implements Comparable < Edge3 > {
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
-      Vec3.rotateY(
-         this.origin.coord,
-         cosa, sina, this.origin.coord);
-      Vec3.rotateY(
-         this.dest.coord,
-         cosa, sina, this.dest.coord);
+      Vec3.rotateY(this.origin.coord, cosa, sina, this.origin.coord);
+      Vec3.rotateY(this.dest.coord, cosa, sina, this.dest.coord);
 
       return this;
    }
@@ -221,12 +209,8 @@ public class Edge3 implements Comparable < Edge3 > {
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
-      Vec3.rotateZ(
-         this.origin.coord,
-         cosa, sina, this.origin.coord);
-      Vec3.rotateZ(
-         this.dest.coord,
-         cosa, sina, this.dest.coord);
+      Vec3.rotateZ(this.origin.coord, cosa, sina, this.origin.coord);
+      Vec3.rotateZ(this.dest.coord, cosa, sina, this.dest.coord);
 
       return this;
    }
@@ -327,10 +311,7 @@ public class Edge3 implements Comparable < Edge3 > {
       final Vec3 coOrigin = this.origin.coord;
       final Vec3 coDest = this.dest.coord;
 
-      final Vec3 mp = new Vec3(
-         ( coOrigin.x + coDest.x ) * 0.5f,
-         ( coOrigin.y + coDest.y ) * 0.5f,
-         ( coOrigin.z + coDest.z ) * 0.5f);
+      final Vec3 mp = new Vec3( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y ) * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
 
       Vec3.sub(coOrigin, mp, coOrigin);
       Vec3.mul(coOrigin, scalar, coOrigin);
@@ -366,10 +347,7 @@ public class Edge3 implements Comparable < Edge3 > {
       final Vec3 coOrigin = this.origin.coord;
       final Vec3 coDest = this.dest.coord;
 
-      final Vec3 mp = new Vec3(
-         ( coOrigin.x + coDest.x ) * 0.5f,
-         ( coOrigin.y + coDest.y ) * 0.5f,
-         ( coOrigin.z + coDest.z ) * 0.5f);
+      final Vec3 mp = new Vec3( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y ) * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
 
       Vec3.sub(coOrigin, mp, coOrigin);
       Vec3.mul(coOrigin, scalar, coOrigin);
@@ -445,14 +423,9 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(1024)
-         .append("{ origin: ")
-         .append(this.origin.toString(places))
-         .append(", dest: ")
-         .append(this.dest.toString(places))
-         .append(' ')
-         .append('}')
-         .toString();
+      return new StringBuilder(1024).append("{ origin: ").append(
+         this.origin.toString(places)).append(", dest: ").append(
+            this.dest.toString(places)).append(' ').append('}').toString();
    }
 
    /**
@@ -505,9 +478,7 @@ public class Edge3 implements Comparable < Edge3 > {
 
       final Vec3 dest = edge.dest.coord;
       final Vec3 origin = edge.origin.coord;
-      return Utils.atan2(
-         dest.y - origin.y,
-         dest.x - origin.x);
+      return Utils.atan2(dest.y - origin.y, dest.x - origin.x);
    }
 
    /**
@@ -533,10 +504,8 @@ public class Edge3 implements Comparable < Edge3 > {
       if ( step >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - step;
-      return target.set(
-         u * coOrigin.x + step * coDest.x,
-         u * coOrigin.y + step * coDest.y,
-         u * coOrigin.z + step * coDest.z);
+      return target.set(u * coOrigin.x + step * coDest.x,
+         u * coOrigin.y + step * coDest.y, u * coOrigin.z + step * coDest.z);
    }
 
    /**
@@ -574,9 +543,7 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public static float mag ( final Edge3 edge ) {
 
-      return Vec3.distEuclidean(
-         edge.origin.coord,
-         edge.dest.coord);
+      return Vec3.distEuclidean(edge.origin.coord, edge.dest.coord);
    }
 
    /**
@@ -591,9 +558,7 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public static float magSq ( final Edge3 edge ) {
 
-      return Vec3.distSq(
-         edge.origin.coord,
-         edge.dest.coord);
+      return Vec3.distSq(edge.origin.coord, edge.dest.coord);
    }
 
    /**
@@ -633,10 +598,8 @@ public class Edge3 implements Comparable < Edge3 > {
       if ( fac >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - fac;
-      return target.set(
-         u * coOrigin.x + fac * coDest.x,
-         u * coOrigin.y + fac * coDest.y,
-         u * coOrigin.z + fac * coDest.z);
+      return target.set(u * coOrigin.x + fac * coDest.x,
+         u * coOrigin.y + fac * coDest.y, u * coOrigin.z + fac * coDest.z);
    }
 
 }

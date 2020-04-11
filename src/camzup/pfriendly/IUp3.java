@@ -72,9 +72,7 @@ public interface IUp3 extends IUp {
       final Vec3 eye,
       final Vec3 center ) {
 
-      this.camera(
-         eye.x, eye.y, eye.z,
-         center.x, center.y, center.z);
+      this.camera(eye.x, eye.y, eye.z, center.x, center.y, center.z);
    }
 
    /**
@@ -408,10 +406,7 @@ public interface IUp3 extends IUp {
       final float y,
       final float z ) {
 
-      this.moveTo(
-         this.getLocX() + x,
-         this.getLocY() + y,
-         this.getLocZ() + z);
+      this.moveTo(this.getLocX() + x, this.getLocY() + y, this.getLocZ() + z);
    }
 
    /**
@@ -444,10 +439,7 @@ public interface IUp3 extends IUp {
       final float y,
       final float z ) {
 
-      this.camera(
-         x, y, z,
-         this.getLookTargetX(),
-         this.getLookTargetY(),
+      this.camera(x, y, z, this.getLookTargetX(), this.getLookTargetY(),
          this.getLookTargetZ());
    }
 
@@ -566,10 +558,8 @@ public interface IUp3 extends IUp {
       final float zDir,
       final float dLen ) {
 
-      this.ray(
-         xOrigin, yOrigin, zOrigin,
-         xDir, yDir, zDir,
-         dLen, 1.0f, 4.0f, 2.0f);
+      this.ray(xOrigin, yOrigin, zOrigin, xDir, yDir, zDir, dLen, 1.0f, 4.0f,
+         2.0f);
    }
 
    /**
@@ -618,9 +608,7 @@ public interface IUp3 extends IUp {
             dx = xOrigin + xDir * dLen;
             dy = yOrigin + yDir * dLen;
             dz = zOrigin + zDir * dLen;
-            this.line(
-               xOrigin, yOrigin, zOrigin,
-               dx, dy, dz);
+            this.line(xOrigin, yOrigin, zOrigin, dx, dy, dz);
 
          } else {
 
@@ -628,9 +616,7 @@ public interface IUp3 extends IUp {
             dx = xOrigin + xDir * mInv;
             dy = yOrigin + yDir * mInv;
             dz = zOrigin + zDir * mInv;
-            this.line(
-               xOrigin, yOrigin, zOrigin,
-               dx, dy, dz);
+            this.line(xOrigin, yOrigin, zOrigin, dx, dy, dz);
 
          }
 
@@ -655,10 +641,7 @@ public interface IUp3 extends IUp {
 
       final Vec3 origin = ray.origin;
       final Vec3 dir = ray.dir;
-      this.ray(
-         origin.x, origin.y, origin.z,
-         dir.x, dir.y, dir.z,
-         dLen);
+      this.ray(origin.x, origin.y, origin.z, dir.x, dir.y, dir.z, dLen);
    }
 
    /**
@@ -680,10 +663,8 @@ public interface IUp3 extends IUp {
 
       final Vec3 origin = ray.origin;
       final Vec3 dir = ray.dir;
-      this.ray(
-         origin.x, origin.y, origin.z,
-         dir.x, dir.y, dir.z,
-         dLen, lnwgt, oWeight, dWeight);
+      this.ray(origin.x, origin.y, origin.z, dir.x, dir.y, dir.z, dLen, lnwgt,
+         oWeight, dWeight);
    }
 
    /**
@@ -751,14 +732,9 @@ public interface IUp3 extends IUp {
       final PApplet parent,
       final Vec3 target ) {
 
-      final float mx = Utils.clamp01(
-         parent.mouseX / ( float ) parent.width);
-      final float my = Utils.clamp01(
-         parent.mouseY / ( float ) parent.height);
-      return target.set(
-         mx + mx - 1.0f,
-         1.0f - ( my + my ),
-         0.0f);
+      final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
+      final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
+      return target.set(mx + mx - 1.0f, 1.0f - ( my + my ), 0.0f);
    }
 
    /**
@@ -774,10 +750,8 @@ public interface IUp3 extends IUp {
       final PApplet parent,
       final Vec3 target ) {
 
-      final float mx = Utils.clamp01(
-         parent.mouseX / ( float ) parent.width);
-      final float my = Utils.clamp01(
-         parent.mouseY / ( float ) parent.height);
+      final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
+      final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
       return target.set(mx, 1.0f - my, 0.0f);
    }
 

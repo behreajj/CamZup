@@ -76,10 +76,7 @@ public class MaterialSolid extends Material {
       final Color stroke,
       final float strokeWeight ) {
 
-      this(
-         fill, stroke, strokeWeight,
-         fill.w > 0.0f,
-         stroke.w > 0.0f && strokeWeight > 0.0f);
+      this(fill, stroke, strokeWeight, fill.w > 0.0f, stroke.w > 0.0f && strokeWeight > 0.0f);
    }
 
    /**
@@ -98,10 +95,8 @@ public class MaterialSolid extends Material {
       final boolean useFill,
       final boolean useStroke ) {
 
-      this(
-         Color.toHexString(fill),
-         fill, stroke, strokeWeight,
-         useFill, useStroke);
+      this(Color.toHexString(
+         fill), fill, stroke, strokeWeight, useFill, useStroke);
    }
 
    /**
@@ -141,10 +136,7 @@ public class MaterialSolid extends Material {
       final Color stroke,
       final float strokeWeight ) {
 
-      this(
-         name, fill, stroke, strokeWeight,
-         fill.w > 0.0f,
-         stroke.w > 0.0f && strokeWeight > 0.0f);
+      this(name, fill, stroke, strokeWeight, fill.w > 0.0f, stroke.w > 0.0f && strokeWeight > 0.0f);
    }
 
    /**
@@ -413,21 +405,14 @@ public class MaterialSolid extends Material {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(256)
-         .append("{ name: \"")
-         .append(this.name)
-         .append("\", fill: ")
-         .append(this.fill.toString(places))
-         .append(", stroke: ")
-         .append(this.stroke.toString(places))
-         .append(", strokeWeight: ")
-         .append(Utils.toFixed(this.strokeWeight, places))
-         .append(", useFill: ")
-         .append(this.useFill)
-         .append(", useStroke: ")
-         .append(this.useStroke)
-         .append(' ').append('}')
-         .toString();
+      return new StringBuilder(256).append("{ name: \"").append(
+         this.name).append("\", fill: ").append(
+            this.fill.toString(places)).append(", stroke: ").append(
+               this.stroke.toString(places)).append(", strokeWeight: ").append(
+                  Utils.toFixed(this.strokeWeight, places)).append(
+                     ", useFill: ").append(this.useFill).append(
+                        ", useStroke: ").append(this.useStroke).append(
+                           ' ').append('}').toString();
    }
 
    /**
@@ -454,23 +439,19 @@ public class MaterialSolid extends Material {
       final float clearcoat,
       final float clearcoatRough ) {
 
-      return new StringBuilder(256)
-         .append("{\"name\": \"")
-         .append(this.name)
-         .append("\", \"fill\": ")
-         .append(this.fill.toBlenderCode(gamma, true))
-         .append(", \"metallic\": ")
-         .append(Utils.toFixed(metallic, 6))
-         .append(", \"roughness\": ")
-         .append(Utils.toFixed(roughness, 6))
-         .append(", \"specular\": ")
-         .append(Utils.toFixed(specular, 6))
-         .append(", \"clearcoat\": ")
-         .append(Utils.toFixed(clearcoat, 6))
-         .append(", \"clearcoat_roughness\": ")
-         .append(Utils.toFixed(clearcoatRough, 6))
-         .append('}')
-         .toString();
+      return new StringBuilder(256).append("{\"name\": \"").append(
+         this.name).append("\", \"fill\": ").append(
+            this.fill.toBlenderCode(gamma, true)).append(
+               ", \"metallic\": ").append(Utils.toFixed(metallic, 6)).append(
+                  ", \"roughness\": ").append(
+                     Utils.toFixed(roughness, 6)).append(
+                        ", \"specular\": ").append(
+                           Utils.toFixed(specular, 6)).append(
+                              ", \"clearcoat\": ").append(
+                                 Utils.toFixed(clearcoat, 6)).append(
+                                    ", \"clearcoat_roughness\": ").append(
+                                       Utils.toFixed(clearcoatRough, 6)).append(
+                                          '}').toString();
    }
 
    /**
@@ -500,41 +481,31 @@ public class MaterialSolid extends Material {
        * which are blown up by scale.
        */
       final String strokeStr = Utils.toFixed(
-         Utils.max(
-            IUtils.DEFAULT_EPSILON,
-            Utils.div(this.strokeWeight, scale)),
+         Utils.max(IUtils.DEFAULT_EPSILON, Utils.div(this.strokeWeight, scale)),
          6);
-      final StringBuilder svgp = new StringBuilder(256)
-         .append("id=\"")
-         .append(this.name)
-         .append('\"')
-         .append(' ');
+      final StringBuilder svgp = new StringBuilder(256).append("id=\"").append(
+         this.name).append('\"').append(' ');
 
       /* Stroke style. */
       if ( this.useStroke ) {
-         svgp.append("stroke-width=\"")
-            .append(strokeStr)
-            .append("\" stroke-opacity=\"")
-            .append(Utils.toFixed(Utils.clamp01(this.stroke.w), 6))
-            .append("\" stroke=\"")
-            .append(Color.toHexWeb(this.stroke))
-            .append("\" stroke-linejoin=\"")
-            .append(MaterialSolid.DEFAULT_SVG_STR_JOIN)
-            .append("\" stroke-linecap=\"")
-            .append(MaterialSolid.DEFAULT_SVG_STR_CAP)
-            .append('\"')
-            .append(' ');
+         svgp.append("stroke-width=\"").append(strokeStr).append(
+            "\" stroke-opacity=\"").append(
+               Utils.toFixed(Utils.clamp01(this.stroke.w), 6)).append(
+                  "\" stroke=\"").append(Color.toHexWeb(this.stroke)).append(
+                     "\" stroke-linejoin=\"").append(
+                        MaterialSolid.DEFAULT_SVG_STR_JOIN).append(
+                           "\" stroke-linecap=\"").append(
+                              MaterialSolid.DEFAULT_SVG_STR_CAP).append(
+                                 '\"').append(' ');
       } else {
          svgp.append("stroke=\"none\" ");
       }
 
       /* Fill style. */
       if ( this.useFill ) {
-         svgp.append("fill-opacity=\"")
-            .append(Utils.toFixed(Utils.clamp01(this.fill.w), 6))
-            .append("\" fill=\"")
-            .append(Color.toHexWeb(this.fill))
-            .append('\"');
+         svgp.append("fill-opacity=\"").append(
+            Utils.toFixed(Utils.clamp01(this.fill.w), 6)).append(
+               "\" fill=\"").append(Color.toHexWeb(this.fill)).append('\"');
       } else {
          svgp.append("fill=\"none\"");
       }
@@ -566,30 +537,20 @@ public class MaterialSolid extends Material {
        * This needs to be printed to a higher precision, six, because of small
        * meshes which are blown up by scale.
        */
-      final String strokeStr = Utils.toFixed(
-         Utils.max(
-            IUtils.DEFAULT_EPSILON,
-            Utils.div(IUp.DEFAULT_STROKE_WEIGHT, scale)),
-         6);
+      final String strokeStr = Utils.toFixed(Utils.max(IUtils.DEFAULT_EPSILON,
+         Utils.div(IUp.DEFAULT_STROKE_WEIGHT, scale)), 6);
 
-      return new StringBuilder(256)
-         .append("<g id=\"material\" stroke-width=\"")
-         .append(strokeStr)
-         .append("\" stroke-opacity=\"1.0\" stroke=\"#")
-         .append(
-            Integer.toHexString(
-               IUp.DEFAULT_STROKE_COLOR)
-               .substring(2))
-         .append("\" fill-opacity=\"1.0\" fill=\"#")
-         .append(
-            Integer.toHexString(
-               IUp.DEFAULT_FILL_COLOR)
-               .substring(2))
-         .append("\" stroke-linejoin=\"")
-         .append(MaterialSolid.DEFAULT_SVG_STR_JOIN)
-         .append("\" stroke-linecap=\"")
-         .append(MaterialSolid.DEFAULT_SVG_STR_CAP)
-         .append("\">\n").toString();
+      return new StringBuilder(256).append(
+         "<g id=\"material\" stroke-width=\"").append(strokeStr).append(
+            "\" stroke-opacity=\"1.0\" stroke=\"#").append(
+               Integer.toHexString(IUp.DEFAULT_STROKE_COLOR).substring(
+                  2)).append("\" fill-opacity=\"1.0\" fill=\"#").append(
+                     Integer.toHexString(IUp.DEFAULT_FILL_COLOR).substring(
+                        2)).append("\" stroke-linejoin=\"").append(
+                           MaterialSolid.DEFAULT_SVG_STR_JOIN).append(
+                              "\" stroke-linecap=\"").append(
+                                 MaterialSolid.DEFAULT_SVG_STR_CAP).append(
+                                    "\">\n").toString();
    }
 
    /**
@@ -653,21 +614,14 @@ public class MaterialSolid extends Material {
     */
    static String defaultBlenderMaterial ( final float gamma ) {
 
-      return new StringBuilder(256)
-         .append("{\"name\": \"")
-         .append("Material")
-         .append("\", \"fill\": ")
-         .append(
-            Color.fromHex(
-               IUp.DEFAULT_FILL_COLOR, new Color())
-               .toBlenderCode(gamma, true))
-         .append(", \"metallic\": 0.0")
-         .append(", \"roughness\": 1.0")
-         .append(", \"specular\": 0.0")
-         .append(", \"clearcoat\": 0.0")
-         .append(", \"clearcoat_roughness\": 0.001")
-         .append('}')
-         .toString();
+      return new StringBuilder(256).append("{\"name\": \"").append(
+         "Material").append("\", \"fill\": ").append(
+            Color.fromHex(IUp.DEFAULT_FILL_COLOR, new Color()).toBlenderCode(
+               gamma, true)).append(", \"metallic\": 0.0").append(
+                  ", \"roughness\": 1.0").append(", \"specular\": 0.0").append(
+                     ", \"clearcoat\": 0.0").append(
+                        ", \"clearcoat_roughness\": 0.001").append(
+                           '}').toString();
    }
 
 }

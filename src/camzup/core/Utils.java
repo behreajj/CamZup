@@ -363,9 +363,8 @@ public abstract class Utils implements IUtils {
       final float magnitude,
       final float sign ) {
 
-      return Float.intBitsToFloat(
-         Float.floatToRawIntBits(sign) & 0x80000000 | Float.floatToRawIntBits(
-            magnitude) & 2147483647);
+      return Float.intBitsToFloat(Float.floatToRawIntBits(
+         sign) & 0x80000000 | Float.floatToRawIntBits(magnitude) & 2147483647);
    }
 
    /**
@@ -704,8 +703,7 @@ public abstract class Utils implements IUtils {
 
       final float vhalf = value * 0.5f;
       float y = Float.intBitsToFloat(
-         0x5f375a86 - ( Float.floatToIntBits(
-            value) >> 1 ));
+         0x5f375a86 - ( Float.floatToIntBits(value) >> 1 ));
 
       y *= 1.5f - vhalf * y * y;
       y *= 1.5f - vhalf * y * y;
@@ -1626,8 +1624,8 @@ public abstract class Utils implements IUtils {
       final int len = arr.length;
       final int last = len - 1;
 
-      final StringBuilder sb = new StringBuilder(len * 32)
-         .append('[').append(' ');
+      final StringBuilder sb = new StringBuilder(len * 32).append('[').append(
+         ' ');
       for ( int i = 0; i < arr.length; ++i ) {
          sb.append(arr[i].toString());
          if ( i < last ) { sb.append(',').append(' '); }
@@ -1649,8 +1647,8 @@ public abstract class Utils implements IUtils {
       final int len = arr.length;
       final int last = len - 1;
 
-      final StringBuilder sb = new StringBuilder(len * 128)
-         .append('[').append(' ');
+      final StringBuilder sb = new StringBuilder(len * 128).append('[').append(
+         ' ');
       for ( int i = 0; i < arr.length; ++i ) {
          sb.append(Utils.toString(arr[i]));
          if ( i < last ) { sb.append(',').append(' '); }
@@ -1672,8 +1670,8 @@ public abstract class Utils implements IUtils {
       final int len = arr.length;
       final int last = len - 1;
 
-      final StringBuilder sb = new StringBuilder(len * 512)
-         .append('[').append(' ');
+      final StringBuilder sb = new StringBuilder(len * 512).append('[').append(
+         ' ');
       for ( int i = 0; i < arr.length; ++i ) {
          sb.append(Utils.toString(arr[i]));
          if ( i < last ) { sb.append(',').append(' '); }

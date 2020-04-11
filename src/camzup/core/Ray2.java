@@ -185,13 +185,9 @@ public class Ray2 extends Ray {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(132)
-         .append("{ origin: ")
-         .append(this.origin.toString(places))
-         .append(", dir: ")
-         .append(this.dir.toString(places))
-         .append(' ').append('}')
-         .toString();
+      return new StringBuilder(132).append("{ origin: ").append(
+         this.origin.toString(places)).append(", dir: ").append(
+            this.dir.toString(places)).append(' ').append('}').toString();
    }
 
    /**
@@ -244,15 +240,11 @@ public class Ray2 extends Ray {
       if ( time <= 0.0f || dmSq == 0.0f ) { return target.set(origin); }
 
       if ( Utils.approx(dmSq, 1.0f) ) {
-         return target.set(
-            origin.x + dir.x * time,
-            origin.y + dir.y * time);
+         return target.set(origin.x + dir.x * time, origin.y + dir.y * time);
       }
 
       final float scalar = time * Utils.invSqrtUnchecked(dmSq);
-      return target.set(
-         origin.x + dir.x * scalar,
-         origin.y + dir.y * scalar);
+      return target.set(origin.x + dir.x * scalar, origin.y + dir.y * scalar);
    }
 
    /**
@@ -291,10 +283,7 @@ public class Ray2 extends Ray {
       final Ray2 ray,
       final Edge2 edge ) {
 
-      return Ray2.intersectLineSeg(
-         ray,
-         edge.origin.coord,
-         edge.dest.coord);
+      return Ray2.intersectLineSeg(ray, edge.origin.coord, edge.dest.coord);
    }
 
    /**

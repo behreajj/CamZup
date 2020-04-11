@@ -78,8 +78,7 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
       final Edge2 target ) {
 
       final int len = this.vertices.length;
-      return target.set(
-         this.vertices[Utils.mod(i, len)],
+      return target.set(this.vertices[Utils.mod(i, len)],
          this.vertices[Utils.mod(i + 1, len)]);
    }
 
@@ -95,13 +94,9 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
       final int last = len - 1;
       final Edge2[] result = new Edge2[len];
       for ( int i = 0; i < last; ++i ) {
-         result[i] = new Edge2(
-            this.vertices[i],
-            this.vertices[i + 1]);
+         result[i] = new Edge2(this.vertices[i], this.vertices[i + 1]);
       }
-      result[last] = new Edge2(
-         this.vertices[last],
-         this.vertices[0]);
+      result[last] = new Edge2(this.vertices[last], this.vertices[0]);
       return result;
    }
 
@@ -380,13 +375,12 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
 
       final int len = this.vertices.length;
       final int last = len - 1;
-      final StringBuilder sb = new StringBuilder(len * 256)
-         .append("{ vertices: [ ");
+      final StringBuilder sb = new StringBuilder(len * 256).append(
+         "{ vertices: [ ");
       for ( int i = 0; i < len; ++i ) {
          sb.append(this.vertices[i].toString(places));
          if ( i < last ) {
-            sb.append(',')
-               .append(' ');
+            sb.append(',').append(' ');
             // sb.append('\n');
          }
       }
@@ -522,9 +516,7 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
 
       final float t = tScaled - i;
       final float u = 1.0f - t;
-      return target.set(
-         u * a.x + t * b.x,
-         u * a.y + t * b.y);
+      return target.set(u * a.x + t * b.x, u * a.y + t * b.y);
    }
 
    /**

@@ -13,13 +13,24 @@ The `FX2D` renderer, based on Java FX, is not supported.
 
 This library's `core` package includes basic utilities that were used to modify the Processing renderer. In this package, you'll find classes such as `Vec2`, `Vec3` and `Quaternion`.
 
-If your sketch is simple enough that you can flip the y-axis by supplying `-1` to either [scale](https://processing.org/reference/scale_.html) or the final parameters of [camera](https://processing.org/reference/camera_.html) without adverse effects, then you likely don't need this library. Even so, Cam Z-Up is  general purpose: its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as other, more specialized libraries. For an easy mouse-controlled orbital camera with GUI support, I would recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
+If you can flip the y-axis by supplying `-1` to either [scale](https://processing.org/reference/scale_.html) or the final parameters of [camera](https://processing.org/reference/camera_.html) without adverse impact on your sketch, then you likely don't need this library. While Cam Z-Up may help with more complex sketches, nevertheless, it is a general purpose library: its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as other, more specialized libraries. For an easy mouse-controlled orbital camera with GUI support, I would recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
 
 Cam Z-Up is tested with Processing version [4.0 alpha 1](https://github.com/processing/processing4/releases/tag/processing-1270-4.0a1).
 
 ## Getting Started
 
-To get started with this library you can set up your Processing sketch like so:
+To install this library from Github, 
+  1. Click on the green `Clone or download` button in the upper right corner of this repository. 
+  2. Select `Download ZIP` to start the download in your browser. (If you know Git or have [Github Desktop](https://desktop.github.com/), you can do that as well.)
+  3. Unzip the download.
+  4. Navigate the directory `distribution/Camzup-1/download` until you find a `CamZup-1.zip` file.
+  5. Extract the `.zip` file to to your `Processing/libraries/` folder.
+     1. You've got the right folder if it contains the sub-folders `examples`, `library`, `reference`, `src` and the file `library.properties`.
+     2. If you don't know the location of your `Processing/libraries` folder, look up the information in the Processing IDE by going to `File > Preferences`.
+
+Alternatively, you can navigate to the the distribution `.zip` on Github and download just the file you need.
+
+With the library installed, you can set up your Processing sketch like so:
 
 ```java
 // Import the library
@@ -32,7 +43,7 @@ void settings() {
 }
 ```
 
-Experienced coders may wish to use [createGraphics](https://processing.org/reference/createGraphics_.html) and/or `getGraphics` to access the renderers directly.
+More experienced coders may wish to use [createGraphics](https://processing.org/reference/createGraphics_.html) and/or `getGraphics` to access the renderers directly.
 
 ```java
 import camzup.pfriendly.*;
@@ -51,7 +62,7 @@ void setup() {
 }
 ```
 
-Both `createGraphics` and `getGraphics` return `PGraphics`, an `interface`; the result needs to be cast to the specific renderer. The benefit of accessing these renderers directly, rather than through `PApplet` functions, is that more conveniences are available. For example, in the following snippet,
+Both `createGraphics` and `getGraphics` return `PGraphics`, an `interface`; the result needs to be cast to the specific renderer. The benefit of accessing these renderers directly, rather than through `PApplet` functions, is that the renderers offer a few more conveniences. For example, in the following snippet,
 
 ```java
 secondary.beginDraw();
@@ -62,13 +73,11 @@ secondary.endDraw();
 
 // Ensure that the secondary renderer is not supplied to 
 // to the primary until after beginDraw and endDraw are called.
-primary.background(0xff202020);
+primary.background(#202020);
 primary.image(secondary, new Vec2(), new Vec2(50.0, 50.0));
 ```
 
 `background` and `stroke` use default color arguments, while `ellipse` and `image` support `Vec2` arguments.
-
-Please see the examples folder for more possibilities.
 
 ## Differences, Issues
 
@@ -82,124 +91,19 @@ Here is a brief list of issues with this library and differences which may be un
   -  In making this conversion, support for high density pixel displays may be lost; I cannot test this at the moment, so please report issues with `image`.
   - [textMode](https://processing.org/reference/textMode_.html) `SHAPE` is not supported. However you can retrieve glyph outlines from a [PFont](https://processing.org/reference/PFont.html) with the `TextShape` class from the `pfriendly` package. (Reminder: the `PFont` needs to be loaded with [createFont](https://processing.org/reference/createFont_.html)).
   - The [PShape](https://processing.org/reference/PShape.html) interface has numerous problems stemming from both its implementation and its design. This library uses `Curve` and `Mesh` objects instead. [shapeMode](https://processing.org/reference/shapeMode_.html) is not supported.
-
+  
 - 2D
   - The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles.
   -  In OpenGL renderers, an arc will not have rounded corners, no matter which [strokeJoin](https://processing.org/reference/strokeJoin_.html) and [strokeCap](https://processing.org/reference/strokeCap_.html) methods you specify.
   - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), [ellipseMode](https://processing.org/reference/ellipseMode_.html) and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with these renderers. For that reason, `CENTER` is the default alignment.
+  - `Curve`s and `Mesh`es do not currently distinguish between an outline and contour shape.
 
 - 3D
   - A z-up axis changes the relationship between a 2D vector's polar coordinates and a 3D vector's spherical coordinates: a 3D vector's azimuth matches a 2D vector's heading.
   - Neither 3D primitive, the [sphere](https://processing.org/reference/sphere_.html) nor the [box](https://processing.org/reference/box_.html), are supported; use mesh entities instead.
   - A `Mesh3` material may not have both a fill and a stroke due to flickering in [perspective](https://processing.org/reference/perspective_.html) cameras.
 
-Many core Processing functions are marked `final`, meaning they cannot be extended and modified by classes in this library; similarly, many fields are marked `private` meaning they cannot be accessed and mutated. This is the one of the reasons for the differences noted above.
-
-## Coding Style
-
-The following explains some decisions behind how the library's code base is written.
-
-### Mutable Versus Immutable
-
-Classes in the `core` package attempt to compromise between the design of Processing classes like [PVector](https://processing.org/reference/PVector.html) --
-
-```java
-public class PVector {
-  public float x, y, z;
-
-  public PVector add(PVector b) {
-    return this.add(b.x, b.y, b.z);
-  }
-
-  public PVector add(float x, float y, float z) {
-    this.x += x; this.y += y; this.z += z;
-    return this;
-  }
-
-  // Overload static method to supply a null to target.
-  public static PVector add(PVector a, PVector b) {
-    return PVector.add(a, b, (PVector)null);
-  }
-
-  public static PVector add(PVector a, PVector b, PVector target) {
-    // Create a new object if target is null.
-    if(target == null) { target = new PVector(); }
-    return target.set(a.x + b.x, a.y + b.y, a.z + b.z);
-  }
-}
-```
-
--- and the current trend towards immutable classes --
-
-```java
-// Class is final.
-public final class Vec2 {
-
-  // Fields are private and final.
-  private final float x, y;
-
-  public Vec2(final float x, final float y) {
-    this.x = x; this.y = y;
-  }
-
-  // Public accessor methods.
-  public float x() { return x; }
-
-  public float y() { return y; }
-
-  public static Vec2 add(final Vec2 a, final Vec2 b) {
-    return new Vec2(a.x + b.x, a.y + b.y);
-  }
-}
-```
-
-Immutable classes have many benefits, but beginning programmers are unlikely to take advantage of them. On the down-side, the immutable `Vec2` is `final` and so cannot be customized with a sub-class.
-
-The mutable `PVector`, on the other hand, requires four times the maintenance for the same `add` function. The `static` version is overloaded with an out parameter pattern (or anti-pattern, depending on your opinion). This makes it easier to reuse placeholders when iterating over an array of vectors and performing multiple operations. However, it seems to me that, if a I pass a `null` vector to such a function, and the point is to learn to manage object creation, the function should _fail loudly_. For those reasons, I settled on the following:
-
-```java
-public class Vec2 {
-  public float x, y;
-
-  public static Vec2 add(final Vec2 a, final Vec2 b, final Vec2 target) {
-    return target.set(a.x + b.x, a.y + b.y);
-  }
-}
-```
-
-Public fields are mutable, but changing a vector in-place is discouraged through the absence of instance methods. `static` methods, with some exceptions, require an output argument and will not instantiate one for you. The usage pattern for classes in the `core` package generally looks like
-
-```java
-import camzup.core.*;
-
-Vec2 a = new Vec2(3.0, 4.0);
-Vec2 b = new Vec2(4.0, 5.0);
-Vec2 sum = new Vec2();
-Vec2 prod = new Vec2();
-
-for(int i = 0; i < 16; ++i) {
-    println(Vec2.mul(3.0, Vec2.add(a, b, sum), prod));
-}
-```
-
-where the assignee of an operation's result is declared in advance. In the above example, the cost of vector operations in a for-loop are mitigated by not having to create a `new Vec2()` for `sum` and `prod` on each iteration. You could argue that this is the worst of both worlds; in that case, you're welcome to write your own library.
-
-I have tried to make these classes as extensible as possible. This means that methods are marked neither `private` nor `final`. Primitive fields are not `final`; fields that are `Object`s are `final`. Sensitive fields are `protected`, not `private`, so they can be accessed by child classes. From within the Processing IDE, you can extend a Cam Z-Up class
-
-```java
-import camzup.core.*;
-
-// Classes made in the PDE should be marked static,
-// as they are actually inner classes.
-static class MyVec2 extends Vec2 {
-  MyVec2 add(float x, float y) {
-    this.x += x; this.y += y;
-    return this;
-  }
-}
-```
-
-if you want to add instance methods, or any other functionality.
+Many core Processing functions are marked `final`, meaning they cannot be extended and modified by classes in this library; many fields are marked `private` meaning they cannot be accessed and mutated. This is the one of the reasons for the differences noted above.
 
 ### Math & Geometry Conventions
 

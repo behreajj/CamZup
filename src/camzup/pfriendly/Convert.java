@@ -258,10 +258,9 @@ public abstract class Convert {
       final float wz2 = w * z2;
 
       target.set(
-         1.0f - ysq2 - zsq2, xy2 - wz2, xz2 + wy2, 0.0f,
-         xy2 + wz2, 1.0f - xsq2 - zsq2, yz2 - wx2, 0.0f,
-         xz2 - wy2, yz2 + wx2, 1.0f - xsq2 - ysq2, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+         1.0f - ysq2 - zsq2, xy2 - wz2, xz2 + wy2, 0.0f, xy2 + wz2,
+         1.0f - xsq2 - zsq2, yz2 - wx2, 0.0f, xz2 - wy2, yz2 + wx2,
+         1.0f - xsq2 - ysq2, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
       return target;
    }
 
@@ -407,12 +406,10 @@ public abstract class Convert {
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform2 srctr = source.transform;
-      final PMatrix2D m = Convert.toPMatrix2D(
-         srctr, TransformOrder.RST, new PMatrix2D());
+      final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
+         new PMatrix2D());
       shape.resetMatrix();
-      shape.applyMatrix(
-         m.m00, m.m01, m.m02,
-         m.m10, m.m11, m.m12);
+      shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
 
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
@@ -476,12 +473,10 @@ public abstract class Convert {
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform2 srctr = source.transform;
-      final PMatrix2D m = Convert.toPMatrix2D(
-         srctr, TransformOrder.RST, new PMatrix2D());
+      final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
+         new PMatrix2D());
       shape.resetMatrix();
-      shape.applyMatrix(
-         m.m00, m.m01, m.m02,
-         m.m10, m.m11, m.m12);
+      shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
 
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
@@ -547,14 +542,11 @@ public abstract class Convert {
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform3 srctr = source.transform;
-      final PMatrix3D m = Convert.toPMatrix3D(
-         srctr, TransformOrder.RST, new PMatrix3D());
+      final PMatrix3D m = Convert.toPMatrix3D(srctr, TransformOrder.RST,
+         new PMatrix3D());
       shape.resetMatrix();
-      shape.applyMatrix(
-         m.m00, m.m01, m.m02, m.m03,
-         m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23,
-         m.m30, m.m31, m.m32, m.m33);
+      shape.applyMatrix(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12, m.m13,
+         m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
 
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform3.maxDimension(srctr);

@@ -84,10 +84,7 @@ public class Transform2 extends Transform {
       final float yScale ) {
 
       super();
-      this.set(
-         xLoc, yLoc,
-         radians,
-         xScale, yScale);
+      this.set(xLoc, yLoc, radians, xScale, yScale);
    }
 
    /**
@@ -125,10 +122,7 @@ public class Transform2 extends Transform {
    @Override
    public Transform2 clone ( ) {
 
-      return new Transform2(
-         this.location,
-         this.rotation,
-         this.scale);
+      return new Transform2(this.location, this.rotation, this.scale);
    }
 
    /**
@@ -291,10 +285,10 @@ public class Transform2 extends Transform {
    public int hashCode ( ) {
 
       return ( ( IUtils.MUL_BASE ^ ( this.location == null ? 0
-         : this.location.hashCode() ) ) * IUtils.HASH_MUL ^ Float
-            .floatToIntBits(
-               this.rotation) ) * IUtils.HASH_MUL ^ ( this.scale == null ? 0
-                  : this.scale.hashCode() );
+         : this.location.hashCode() ) ) * IUtils.HASH_MUL ^ Float.floatToIntBits(
+            this.rotation) ) * IUtils.HASH_MUL ^ ( this.scale == null
+               ? 0
+               : this.scale.hashCode() );
    }
 
    /**
@@ -336,8 +330,7 @@ public class Transform2 extends Transform {
       /* Normalized lerp. */
       Vec2.normalize(this.right, this.right);
       final float u = 1.0f - step;
-      this.forward.set(
-         u * this.forward.x + step * this.right.x,
+      this.forward.set(u * this.forward.x + step * this.right.x,
          u * this.forward.y + step * this.right.y);
       Vec2.normalize(this.forward, this.forward);
 
@@ -666,9 +659,7 @@ public class Transform2 extends Transform {
       final float step ) {
 
       if ( Vec2.all(scaleNew) ) {
-         return this.scaleTo(
-            scaleNew, step,
-            Transform2.EASING.scale);
+         return this.scaleTo(scaleNew, step, Transform2.EASING.scale);
       }
       return this;
    }
@@ -742,10 +733,7 @@ public class Transform2 extends Transform {
    @Chainable
    public Transform2 set ( final Transform2 source ) {
 
-      return this.set(
-         source.location,
-         source.rotation,
-         source.scale);
+      return this.set(source.location, source.rotation, source.scale);
    }
 
    /**
@@ -816,9 +804,7 @@ public class Transform2 extends Transform {
       final Vec2 right,
       final Vec2 forward ) {
 
-      return this.setAxes(
-         right.x, forward.y,
-         right.y, forward.x);
+      return this.setAxes(right.x, forward.y, right.y, forward.x);
    }
 
    /**
@@ -843,15 +829,10 @@ public class Transform2 extends Transform {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(160)
-         .append("{ location: ")
-         .append(this.location.toString(places))
-         .append(", rotation: ")
-         .append(Utils.toFixed(this.rotation, places))
-         .append(", scale: ")
-         .append(this.scale.toString(places))
-         .append(" }")
-         .toString();
+      return new StringBuilder(160).append("{ location: ").append(
+         this.location.toString(places)).append(", rotation: ").append(
+            Utils.toFixed(this.rotation, places)).append(", scale: ").append(
+               this.scale.toString(places)).append(" }").toString();
    }
 
    /**
@@ -895,21 +876,17 @@ public class Transform2 extends Transform {
       final String rotationMode = "\"QUATERNION\"";
       final float halfRad = this.rotation * 0.5f;
 
-      return new StringBuilder(256)
-         .append("{\"location\": ")
-         .append(this.location.toBlenderCode(0.0f))
-         .append(", \"rotation_mode\": ")
-         .append(rotationMode)
-         .append(", \"rotation_quaternion\": (")
-         .append(Utils.toFixed(Utils.cos(halfRad), 6))
-         .append(", 0.0, 0.0, ")
-         .append(Utils.toFixed(Utils.sin(halfRad), 6))
-         .append("), \"scale\": ")
-         .append(
-            this.scale.toBlenderCode(
-               ( this.scale.x + this.scale.y ) * 0.5f))
-         .append("}")
-         .toString();
+      return new StringBuilder(256).append("{\"location\": ").append(
+         this.location.toBlenderCode(0.0f)).append(
+            ", \"rotation_mode\": ").append(rotationMode).append(
+               ", \"rotation_quaternion\": (").append(
+                  Utils.toFixed(Utils.cos(halfRad), 6)).append(
+                     ", 0.0, 0.0, ").append(
+                        Utils.toFixed(Utils.sin(halfRad), 6)).append(
+                           "), \"scale\": ").append(
+                              this.scale.toBlenderCode(
+                                 ( this.scale.x + this.scale.y ) * 0.5f)).append(
+                                    "}").toString();
    }
 
    /**
@@ -921,21 +898,14 @@ public class Transform2 extends Transform {
     */
    String toSvgString ( ) {
 
-      return new StringBuilder(96)
-         .append("transform=\"translate(")
-         .append(Utils.toFixed(this.location.x, 6))
-         .append(',')
-         .append(' ')
-         .append(Utils.toFixed(this.location.y, 6))
-         .append(") rotate(")
-         .append(Utils.toFixed(this.rotation * IUtils.RAD_TO_DEG, 0))
-         .append(") scale(")
-         .append(Utils.toFixed(this.scale.x, 6))
-         .append(',')
-         .append(' ')
-         .append(Utils.toFixed(this.scale.y, 6))
-         .append(")\"")
-         .toString();
+      return new StringBuilder(96).append("transform=\"translate(").append(
+         Utils.toFixed(this.location.x, 6)).append(',').append(' ').append(
+            Utils.toFixed(this.location.y, 6)).append(") rotate(").append(
+               Utils.toFixed(this.rotation * IUtils.RAD_TO_DEG, 0)).append(
+                  ") scale(").append(Utils.toFixed(this.scale.x, 6)).append(
+                     ',').append(' ').append(
+                        Utils.toFixed(this.scale.y, 6)).append(
+                           ")\"").toString();
    }
 
    /**
@@ -955,8 +925,8 @@ public class Transform2 extends Transform {
          if ( t.location != null ) { return false; }
       } else if ( !this.location.equals(t.location) ) { return false; }
 
-      if ( Float.floatToIntBits(this.rotation) != Float
-         .floatToIntBits(t.rotation) ) {
+      if ( Float.floatToIntBits(this.rotation) != Float.floatToIntBits(
+         t.rotation) ) {
          return false;
       }
 
@@ -1074,9 +1044,7 @@ public class Transform2 extends Transform {
       final Vec2 forward,
       final Transform2 target ) {
 
-      return Transform2.fromAxes(
-         right.x, forward.y,
-         right.y, forward.x,
+      return Transform2.fromAxes(right.x, forward.y, right.y, forward.x,
          target);
    }
 
@@ -1573,10 +1541,7 @@ public class Transform2 extends Transform {
          final float scaledStep = step * ( len - 1 );
          final int i = ( int ) scaledStep;
          final float nextStep = scaledStep - i;
-         return this.applyUnclamped(
-            arr[i], arr[i + 1],
-            nextStep,
-            target);
+         return this.applyUnclamped(arr[i], arr[i + 1], nextStep, target);
       }
 
       /**
@@ -1597,24 +1562,16 @@ public class Transform2 extends Transform {
          final Transform2 target ) {
 
          target.locPrev.set(target.location);
-         this.loc.applyUnclamped(
-            origin.location,
-            dest.location,
-            step,
+         this.loc.applyUnclamped(origin.location, dest.location, step,
             target.location);
 
          target.rotPrev = target.rotation;
 
-         target.rotation = this.rot.apply(
-            origin.rotation, dest.rotation, step);
+         target.rotation = this.rot.apply(origin.rotation, dest.rotation, step);
          target.updateAxes();
 
          target.scalePrev.set(target.scale);
-         this.loc.applyUnclamped(
-            origin.scale,
-            dest.scale,
-            step,
-            target.scale);
+         this.loc.applyUnclamped(origin.scale, dest.scale, step, target.scale);
 
          return target;
       }

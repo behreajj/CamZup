@@ -45,7 +45,9 @@ public interface ITextDisplay3 extends ITextDisplay {
     * @param c the character
     * @param v the location
     */
-   default void text ( final char c, final Vec3 v ) {
+   default void text (
+      final char c,
+      final Vec3 v ) {
 
       this.text(c, v.x, v.y, v.z);
    }

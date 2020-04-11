@@ -272,14 +272,10 @@ public class Complex implements Comparable < Complex >, Cloneable,
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(64)
-         .append("{ real: ")
-         .append(Utils.toFixed(this.real, places))
-         .append(", imag: ")
-         .append(Utils.toFixed(this.imag, places))
-         .append(' ')
-         .append('}')
-         .toString();
+      return new StringBuilder(64).append("{ real: ").append(
+         Utils.toFixed(this.real, places)).append(", imag: ").append(
+            Utils.toFixed(this.imag, places)).append(' ').append(
+               '}').toString();
    }
 
    /**
@@ -291,14 +287,12 @@ public class Complex implements Comparable < Complex >, Cloneable,
    @Experimental
    String toBlenderCode ( ) {
 
-      return new StringBuilder(64)
-         .append('(')
-         .append(Utils.toFixed(this.real, 6))
-         .append(Utils.sign(this.imag) < 0 ? '-' : '+')
-         .append(Utils.toFixed(Utils.abs(this.imag), 6))
-         .append('j')
-         .append(')')
-         .toString();
+      return new StringBuilder(64).append('(').append(
+         Utils.toFixed(this.real, 6)).append(
+            Utils.sign(this.imag) < 0
+               ? '-'
+               : '+').append(Utils.toFixed(Utils.abs(this.imag), 6)).append(
+                  'j').append(')').toString();
    }
 
    /**
@@ -317,8 +311,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
    protected boolean equals ( final Complex z ) {
 
       return Float.floatToIntBits(this.imag) == Float.floatToIntBits(
-         z.imag) && Float.floatToIntBits(this.real) == Float
-            .floatToIntBits(z.real);
+         z.imag) && Float.floatToIntBits(
+            this.real) == Float.floatToIntBits(z.real);
    }
 
    /**
@@ -365,9 +359,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex b,
       final Complex target ) {
 
-      return target.set(
-         a.real + b.real,
-         a.imag + b.imag);
+      return target.set(a.real + b.real, a.imag + b.imag);
    }
 
    /**
@@ -462,8 +454,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex b,
       final float tolerance ) {
 
-      return Utils.approx(a.imag, b.imag, tolerance) && Utils.approx(
-         a.real,
+      return Utils.approx(a.imag, b.imag, tolerance) && Utils.approx(a.real,
          b.real, tolerance);
    }
 
@@ -511,8 +502,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex z,
       final Complex target ) {
 
-      return target.set(
-         ( float ) ( Math.cos(z.real) * Math.cosh(z.imag) ),
+      return target.set(( float ) ( Math.cos(z.real) * Math.cosh(z.imag) ),
          ( float ) ( -Math.sin(z.real) * Math.sinh(z.imag) ));
    }
 
@@ -538,8 +528,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final float bInvAbsSq = 1.0f / bAbsSq;
       final float cReal = b.real * bInvAbsSq;
       final float cImag = -b.imag * bInvAbsSq;
-      return target.set(
-         a.real * cReal - a.imag * cImag,
+      return target.set(a.real * cReal - a.imag * cImag,
          a.real * cImag + a.imag * cReal);
    }
 
@@ -586,9 +575,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       if ( b == 0.0f ) { return target.reset(); }
 
       final float bInv = 1.0f / b;
-      return target.set(
-         a.real * bInv,
-         a.imag * bInv);
+      return target.set(a.real * bInv, a.imag * bInv);
    }
 
    /**
@@ -611,9 +598,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       if ( bAbsSq == 0.0f ) { return target.reset(); }
 
       final float abInvAbsSq = a / bAbsSq;
-      return target.set(
-         b.real * abInvAbsSq,
-         -b.imag * abInvAbsSq);
+      return target.set(b.real * abInvAbsSq, -b.imag * abInvAbsSq);
    }
 
    /**
@@ -652,9 +637,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final float absSq = Complex.absSq(z);
       if ( absSq == 0.0f ) { return target.reset(); }
       final float invAbsSq = 1.0f / absSq;
-      return target.set(
-         z.real * invAbsSq,
-         -z.imag * invAbsSq);
+      return target.set(z.real * invAbsSq, -z.imag * invAbsSq);
    }
 
    /**
@@ -678,9 +661,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       if ( absSq == 0.0f ) { return target.reset(); }
       Complex.conj(z, conj);
       final float invAbsSq = 1.0f / absSq;
-      return target.set(
-         conj.real * invAbsSq,
-         conj.imag * invAbsSq);
+      return target.set(conj.real * invAbsSq, conj.imag * invAbsSq);
    }
 
    /**
@@ -714,8 +695,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex z,
       final Complex target ) {
 
-      return target.set(
-         ( float ) Math.log(Complex.abs(z)),
+      return target.set(( float ) Math.log(Complex.abs(z)),
          ( float ) Math.atan2(z.imag, z.real));
    }
 
@@ -762,8 +742,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final float czdrInv = czdr * mSqInv;
       final float czdiInv = -czdi * mSqInv;
 
-      return target.set(
-         azbr * czdrInv - azbi * czdiInv,
+      return target.set(azbr * czdrInv - azbi * czdiInv,
          azbr * czdiInv + azbi * czdrInv);
    }
 
@@ -781,8 +760,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex b,
       final Complex target ) {
 
-      return target.set(
-         a.real * b.real - a.imag * b.imag,
+      return target.set(a.real * b.real - a.imag * b.imag,
          a.real * b.imag + a.imag * b.real);
    }
 
@@ -866,8 +844,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex target ) {
 
       final double logReal = Math.log(
-         Math.sqrt(
-            a.real * a.real + a.imag * a.imag));
+         Math.sqrt(a.real * a.real + a.imag * a.imag));
       final double logImag = Math.atan2(a.imag, a.real);
       final double phi = b.real * logImag + b.imag * logReal;
       final double r = Math.exp(b.real * logReal - b.imag * logImag);
@@ -923,8 +900,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex target ) {
 
       final double logReal = Math.log(
-         Math.sqrt(
-            a.real * a.real + a.imag * a.imag));
+         Math.sqrt(a.real * a.real + a.imag * a.imag));
       final double logImag = Math.atan2(a.imag, a.real);
       final double phi = b * logImag;
       final double r = Math.exp(b * logReal);
@@ -979,10 +955,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final float rMax,
       final Complex target ) {
 
-      return Complex.rect(
-         rng.uniform(rMin, rMax),
-         rng.uniform(-IUtils.PI, IUtils.PI),
-         target);
+      return Complex.rect(rng.uniform(rMin, rMax),
+         rng.uniform(-IUtils.PI, IUtils.PI), target);
    }
 
    /**
@@ -1002,8 +976,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final float phi,
       final Complex target ) {
 
-      return target.set(
-         ( float ) ( r * Math.cos(phi) ),
+      return target.set(( float ) ( r * Math.cos(phi) ),
          ( float ) ( r * Math.sin(phi) ));
    }
 
@@ -1019,8 +992,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex z,
       final Complex target ) {
 
-      return target.set(
-         ( float ) ( Math.sin(z.real) * Math.cosh(z.imag) ),
+      return target.set(( float ) ( Math.sin(z.real) * Math.cosh(z.imag) ),
          ( float ) ( Math.cos(z.real) * Math.sinh(z.imag) ));
    }
 
@@ -1056,9 +1028,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex b,
       final Complex target ) {
 
-      return target.set(
-         a.real - b.real,
-         a.imag - b.imag);
+      return target.set(a.real - b.real, a.imag - b.imag);
    }
 
    /**

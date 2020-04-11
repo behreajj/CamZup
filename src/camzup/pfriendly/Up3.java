@@ -105,9 +105,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    public void ambientLight ( ) {
 
-      this.aTemp.set(
-         IUpOgl.DEFAULT_AMB_R,
-         IUpOgl.DEFAULT_AMB_G,
+      this.aTemp.set(IUpOgl.DEFAULT_AMB_R, IUpOgl.DEFAULT_AMB_G,
          IUpOgl.DEFAULT_AMB_B, 1.0f);
       this.ambientLight(this.aTemp);
    }
@@ -121,11 +119,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    public void ambientLight ( final Color clr ) {
 
-      this.ambientLight(
-         Color.toHexInt(clr),
-         this.lookTarget.x,
-         this.lookTarget.y,
-         this.lookTarget.z);
+      this.ambientLight(Color.toHexInt(clr), this.lookTarget.x,
+         this.lookTarget.y, this.lookTarget.z);
    }
 
    /**
@@ -151,10 +146,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    public void ambientLight ( final int clr ) {
 
-      this.ambientLight(
-         clr,
-         this.lookTarget.x,
-         this.lookTarget.y,
+      this.ambientLight(clr, this.lookTarget.x, this.lookTarget.y,
          this.lookTarget.z);
    }
 
@@ -187,11 +179,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       this.noLightDiffuse(this.lightCount);
       this.noLightSpecular(this.lightCount);
       this.noLightSpot(this.lightCount);
-      this.lightFalloff(
-         this.lightCount,
-         this.currentLightFalloffConstant,
-         this.currentLightFalloffLinear,
-         this.currentLightFalloffQuadratic);
+      this.lightFalloff(this.lightCount, this.currentLightFalloffConstant,
+         this.currentLightFalloffLinear, this.currentLightFalloffQuadratic);
 
       this.lightCount++;
    }
@@ -396,11 +385,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
       this.noLightAmbient(this.lightCount);
       this.lightDiffuse(this.lightCount, clr);
-      this.lightSpecular(
-         this.lightCount,
-         this.currentLightSpecular[0],
-         this.currentLightSpecular[1],
-         this.currentLightSpecular[2]);
+      this.lightSpecular(this.lightCount, this.currentLightSpecular[0],
+         this.currentLightSpecular[1], this.currentLightSpecular[2]);
       this.noLightSpot(this.lightCount);
       this.noLightFalloff(this.lightCount);
 
@@ -494,10 +480,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    @Override
    public Vec3 getLocation ( final Vec3 target ) {
 
-      return target.set(
-         this.cameraX,
-         this.cameraY,
-         this.cameraZ);
+      return target.set(this.cameraX, this.cameraY, this.cameraZ);
    }
 
    /**
@@ -608,11 +591,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final CurveEntity3 ce,
       final float strokeWeight ) {
 
-      this.handles(
-         ce, strokeWeight,
-         IUp.DEFAULT_HANDLE_COLOR,
-         IUp.DEFAULT_HANDLE_REAR_COLOR,
-         IUp.DEFAULT_HANDLE_FORE_COLOR,
+      this.handles(ce, strokeWeight, IUp.DEFAULT_HANDLE_COLOR,
+         IUp.DEFAULT_HANDLE_REAR_COLOR, IUp.DEFAULT_HANDLE_FORE_COLOR,
          IUp.DEFAULT_HANDLE_COORD_COLOR);
    }
 
@@ -666,28 +646,20 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
             this.strokeWeight(strokeWeight);
             this.stroke(lineColor);
 
-            this.lineImpl(
-               rh.x, rh.y, rh.z,
-               co.x, co.y, co.z);
-
-            this.lineImpl(
-               co.x, co.y, co.z,
-               fh.x, fh.y, fh.z);
+            this.lineImpl(rh.x, rh.y, rh.z, co.x, co.y, co.z);
+            this.lineImpl(co.x, co.y, co.z, fh.x, fh.y, fh.z);
 
             this.strokeWeight(swRear);
             this.stroke(rearColor);
-            this.pointImpl(
-               rh.x, rh.y, rh.z);
+            this.pointImpl(rh.x, rh.y, rh.z);
 
             this.strokeWeight(swCoord);
             this.stroke(coordColor);
-            this.pointImpl(
-               co.x, co.y, co.z);
+            this.pointImpl(co.x, co.y, co.z);
 
             this.strokeWeight(swFore);
             this.stroke(foreColor);
-            this.pointImpl(
-               fh.x, fh.y, fh.z);
+            this.pointImpl(fh.x, fh.y, fh.z);
          }
       }
 
@@ -723,7 +695,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param dest   the destination coordinate
     */
    @Override
-   public void line ( final Vec3 origin, final Vec3 dest ) {
+   public void line (
+      final Vec3 origin,
+      final Vec3 dest ) {
 
       this.lineImpl(
          origin.x, origin.y, origin.z,
@@ -808,9 +782,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          final float yLocal = ( m.m10 * x + m.m11 * y + m.m12 * z ) * wInv;
          final float zLocal = ( m.m20 * x + m.m21 * y + m.m22 * z ) * wInv;
 
-         this.moveTo(
-            this.cameraX + xLocal,
-            this.cameraY + yLocal,
+         this.moveTo(this.cameraX + xLocal, this.cameraY + yLocal,
             this.cameraZ + zLocal);
       }
    }
@@ -832,11 +804,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    @Override
    public void origin ( ) {
 
-      this.origin(
-         IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width, this.height),
-         IUp.DEFAULT_IJK_SWEIGHT,
-         IUp.DEFAULT_I_COLOR,
-         IUp.DEFAULT_J_COLOR,
+      this.origin(IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width, this.height),
+         IUp.DEFAULT_IJK_SWEIGHT, IUp.DEFAULT_I_COLOR, IUp.DEFAULT_J_COLOR,
          IUp.DEFAULT_K_COLOR);
    }
 
@@ -847,12 +816,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    public void origin ( final float lineLength ) {
 
-      this.origin(
-         lineLength,
-         IUp.DEFAULT_IJK_SWEIGHT,
-         IUp.DEFAULT_I_COLOR,
-         IUp.DEFAULT_J_COLOR,
-         IUp.DEFAULT_K_COLOR);
+      this.origin(lineLength, IUp.DEFAULT_IJK_SWEIGHT, IUp.DEFAULT_I_COLOR,
+         IUp.DEFAULT_J_COLOR, IUp.DEFAULT_K_COLOR);
    }
 
    /**
@@ -865,12 +830,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final float lineLength,
       final float strokeWeight ) {
 
-      this.origin(
-         lineLength,
-         strokeWeight,
-         IUp.DEFAULT_I_COLOR,
-         IUp.DEFAULT_J_COLOR,
-         IUp.DEFAULT_K_COLOR);
+      this.origin(lineLength, strokeWeight, IUp.DEFAULT_I_COLOR,
+         IUp.DEFAULT_J_COLOR, IUp.DEFAULT_K_COLOR);
    }
 
    /**
@@ -899,19 +860,13 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       this.strokeWeight(strokeWeight);
 
       this.stroke(zColor);
-      this.lineImpl(
-         0.0f, 0.0f, 0.0f,
-         0.0f, 0.0f, vl);
+      this.lineImpl(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, vl);
 
       this.stroke(yColor);
-      this.lineImpl(
-         0.0f, 0.0f, 0.0f,
-         0.0f, vl, 0.0f);
+      this.lineImpl(0.0f, 0.0f, 0.0f, 0.0f, vl, 0.0f);
 
       this.stroke(xColor);
-      this.lineImpl(
-         0.0f, 0.0f, 0.0f,
-         vl, 0.0f, 0.0f);
+      this.lineImpl(0.0f, 0.0f, 0.0f, vl, 0.0f, 0.0f);
 
       this.popStyle();
       this.hint(PConstants.ENABLE_DEPTH_TEST);
@@ -996,17 +951,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       this.lightNormal(this.lightCount, 0.0f, 0.0f, 0.0f);
       this.noLightAmbient(this.lightCount);
       this.lightDiffuse(this.lightCount, clr);
-      this.lightSpecular(
-         this.lightCount,
-         this.currentLightSpecular[0],
-         this.currentLightSpecular[1],
-         this.currentLightSpecular[2]);
+      this.lightSpecular(this.lightCount, this.currentLightSpecular[0],
+         this.currentLightSpecular[1], this.currentLightSpecular[2]);
       this.noLightSpot(this.lightCount);
-      this.lightFalloff(
-         this.lightCount,
-         this.currentLightFalloffConstant,
-         this.currentLightFalloffLinear,
-         this.currentLightFalloffQuadratic);
+      this.lightFalloff(this.lightCount, this.currentLightFalloffConstant,
+         this.currentLightFalloffLinear, this.currentLightFalloffQuadratic);
 
       this.lightCount++;
    }
@@ -1036,9 +985,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final Vec3 cp,
       final Vec3 ap1 ) {
 
-      this.quadraticVertex(
-         cp.x, cp.y, cp.z,
-         ap1.x, ap1.y, ap1.z);
+      this.quadraticVertex(cp.x, cp.y, cp.z, ap1.x, ap1.y, ap1.z);
    }
 
    /**
@@ -1146,10 +1093,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          Transform3.mulPoint(tr, coord, v2);
 
          this.beginShape();
-         this.vertexImpl(
-            v2.x, v2.y, v2.z,
-            this.textureU,
-            this.textureV);
+         this.vertexImpl(v2.x, v2.y, v2.z, this.textureU, this.textureV);
 
          while ( knItr.hasNext() ) {
             currKnot = knItr.next();
@@ -1243,10 +1187,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          Transform3.mulPoint(tr, coord, v2);
 
          this.beginShape();
-         this.vertexImpl(
-            v2.x, v2.y, v2.z,
-            this.textureU,
-            this.textureV);
+         this.vertexImpl(v2.x, v2.y, v2.z, this.textureU, this.textureV);
 
          while ( knItr.hasNext() ) {
             currKnot = knItr.next();
@@ -1430,12 +1371,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final float angle,
       final float concentration ) {
 
-      this.spotLight(
-         Color.toHexInt(this.aTemp),
-         loc.x, loc.y, loc.z,
-         dir.x, dir.y, dir.z,
-         angle,
-         concentration);
+      this.spotLight(Color.toHexInt(this.aTemp), loc.x, loc.y, loc.z, dir.x,
+         dir.y, dir.z, angle, concentration);
    }
 
    /**
@@ -1475,17 +1412,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
       this.noLightAmbient(this.lightCount);
       this.lightDiffuse(this.lightCount, clr);
-      this.lightSpecular(
-         this.lightCount,
-         this.currentLightSpecular[0],
-         this.currentLightSpecular[1],
-         this.currentLightSpecular[2]);
+      this.lightSpecular(this.lightCount, this.currentLightSpecular[0],
+         this.currentLightSpecular[1], this.currentLightSpecular[2]);
       this.lightSpot(this.lightCount, angle, concentration);
-      this.lightFalloff(
-         this.lightCount,
-         this.currentLightFalloffConstant,
-         this.currentLightFalloffLinear,
-         this.currentLightFalloffQuadratic);
+      this.lightFalloff(this.lightCount, this.currentLightFalloffConstant,
+         this.currentLightFalloffLinear, this.currentLightFalloffQuadratic);
 
       this.lightCount++;
    }
@@ -1509,11 +1440,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final float angle,
       final float concentration ) {
 
-      this.spotLight(
-         clr,
-         loc.x, loc.y, loc.z,
-         dir.x, dir.y, dir.z,
-         angle,
+      this.spotLight(clr, loc.x, loc.y, loc.z, dir.x, dir.y, dir.z, angle,
          concentration);
    }
 
@@ -1561,10 +1488,15 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
    /**
     * This parent function attempts to translate the text and then undo the
-    * translation. It's better to acknowledge that text is 2D, not 3D, in
-    * nature.
+    * translation.
+    *
+    * @param chars the characters array
+    * @param start the start index
+    * @param stop  the stop index
+    * @param x     the x coordinate
+    * @param y     the y coordinate
+    * @param z     the z coordinate
     */
-   @SuppressWarnings ( "unused" )
    @Override
    public void text (
       final char[] chars,
@@ -1579,10 +1511,13 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
    /**
     * This parent function attempts to translate the text and then undo the
-    * translation. It's better to acknowledge that text is 2D, not 3D, in
-    * nature.
+    * translation.
+    *
+    * @param str the string
+    * @param x   the x coordinate
+    * @param y   the y coordinate
+    * @param z   the z coordinate
     */
-   @SuppressWarnings ( "unused" )
    @Override
    public void text (
       final String str,

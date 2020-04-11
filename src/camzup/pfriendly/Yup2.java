@@ -89,11 +89,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final float stop,
       final int mode ) {
 
-      this.arc(
-         v.x, v.y,
-         sz, sz,
-         start, stop,
-         mode);
+      this.arc(v.x, v.y, sz, sz, start, stop, mode);
    }
 
    /**
@@ -196,7 +192,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       this.modelview.set(
          m00, m01, 0.0f, -this.cameraX * m00 - this.cameraY * m01,
          m10, m11, 0.0f, -this.cameraX * m10 - this.cameraY * m11,
-         0.0f, 0.0f, 1.0f, -zDist,
+         0.0f, 0.0f, 1.0f,
+         -zDist,
          0.0f, 0.0f, 0.0f, 1.0f);
 
       /* PMatAux.invert(this.modelview, this.modelviewInv); */
@@ -242,8 +239,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       this.camera(
          xEye, yEye,
          Utils.atan2(yUp, xUp),
-         this.cameraZoomX,
-         this.cameraZoomY);
+         this.cameraZoomX, this.cameraZoomY);
    }
 
    /**
@@ -258,10 +254,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final float radians,
       final Vec2 zoom ) {
 
-      this.camera(
-         loc.x, loc.y,
-         radians,
-         zoom.x, zoom.y);
+      this.camera(loc.x, loc.y, radians, zoom.x, zoom.y);
    }
 
    /**
@@ -270,10 +263,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     */
    public void camFlipped ( ) {
 
-      this.camera(
-         this.width * 0.5f, this.height * 0.5f,
-         0.0f,
-         1.0f, -1.0f);
+      this.camera(this.width * 0.5f, this.height * 0.5f, 0.0f, 1.0f, -1.0f);
    }
 
    /**
@@ -305,11 +295,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final Vec2 c,
       final Vec2 d ) {
 
-      this.curve(
-         a.x, a.y,
-         b.x, b.y,
-         c.x, c.y,
-         d.x, d.y);
+      this.curve(a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y);
    }
 
    /**
@@ -487,11 +473,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final CurveEntity2 ce,
       final float strokeWeight ) {
 
-      this.handles(
-         ce, strokeWeight,
-         IUp.DEFAULT_HANDLE_COLOR,
-         IUp.DEFAULT_HANDLE_REAR_COLOR,
-         IUp.DEFAULT_HANDLE_FORE_COLOR,
+      this.handles(ce, strokeWeight, IUp.DEFAULT_HANDLE_COLOR,
+         IUp.DEFAULT_HANDLE_REAR_COLOR, IUp.DEFAULT_HANDLE_FORE_COLOR,
          IUp.DEFAULT_HANDLE_COORD_COLOR);
    }
 
@@ -541,13 +524,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
             this.strokeWeight(strokeWeight);
             this.stroke(lineColor);
 
-            this.lineImpl(
-               rh.x, rh.y, 0.0f,
-               co.x, co.y, 0.0f);
+            this.lineImpl(rh.x, rh.y, 0.0f, co.x, co.y, 0.0f);
 
-            this.lineImpl(
-               co.x, co.y, 0.0f,
-               fh.x, fh.y, 0.0f);
+            this.lineImpl(co.x, co.y, 0.0f, fh.x, fh.y, 0.0f);
 
             this.strokeWeight(swRear);
             this.stroke(rearColor);
@@ -639,16 +618,13 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       this.lightFalloff(1.0f, 0.0f, 0.0f);
       this.lightSpecular(0.0f, 0.0f, 0.0f);
 
-      this.ambientLight(
-         this.colorModeX * IUpOgl.DEFAULT_AMB_R,
+      this.ambientLight(this.colorModeX * IUpOgl.DEFAULT_AMB_R,
          this.colorModeY * IUpOgl.DEFAULT_AMB_G,
          this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
 
-      this.directionalLight(
-         this.colorModeX * IUpOgl.DEFAULT_LIGHT_R,
+      this.directionalLight(this.colorModeX * IUpOgl.DEFAULT_LIGHT_R,
          this.colorModeY * IUpOgl.DEFAULT_LIGHT_G,
-         this.colorModeZ * IUpOgl.DEFAULT_LIGHT_B,
-         0.0f, 0.0f, -1.0f);
+         this.colorModeZ * IUpOgl.DEFAULT_LIGHT_B, 0.0f, 0.0f, -1.0f);
 
       this.colorMode = colorModeSaved;
    }
@@ -966,28 +942,28 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * Rotates the sketch by an angle in radians around the y axis. For 2D, this
     * scales by ( 1.0, cos ( a ) ) .
     *
-    * @param angle the angle
+    * @param radians the angle
     *
     * @see PApplet#cos(float)
     */
    @Override
-   public void rotateX ( final float angle ) {
+   public void rotateX ( final float radians ) {
 
-      this.scaleImpl(1.0f, Utils.cos(angle), 1.0f);
+      this.scaleImpl(1.0f, Utils.cos(radians), 1.0f);
    }
 
    /**
     * Rotates the sketch by an angle in radians around the y axis. For 2D, this
     * scales by ( cos ( a ), 1.0 ) .
     *
-    * @param angle the angle
+    * @param radians the angle
     *
     * @see PApplet#cos(float)
     */
    @Override
-   public void rotateY ( final float angle ) {
+   public void rotateY ( final float radians ) {
 
-      this.scaleImpl(Utils.cos(angle), 1.0f, 1.0f);
+      this.scaleImpl(Utils.cos(radians), 1.0f, 1.0f);
    }
 
    /**

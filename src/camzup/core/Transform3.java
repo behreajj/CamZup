@@ -103,10 +103,8 @@ public class Transform3 extends Transform {
       final float zScale ) {
 
       super();
-      this.set(
-         xLoc, yLoc, zLoc,
-         real, xImag, yImag, zImag,
-         xScale, yScale, zScale);
+      this.set(xLoc, yLoc, zLoc, real, xImag, yImag, zImag, xScale, yScale,
+         zScale);
    }
 
    /**
@@ -155,10 +153,7 @@ public class Transform3 extends Transform {
    @Override
    public Transform3 clone ( ) {
 
-      return new Transform3(
-         this.location,
-         this.rotation,
-         this.scale);
+      return new Transform3(this.location, this.rotation, this.scale);
    }
 
    /**
@@ -345,11 +340,11 @@ public class Transform3 extends Transform {
    public int hashCode ( ) {
 
       return ( ( IUtils.MUL_BASE ^ ( this.location == null ? 0
-         : this.location
-            .hashCode() ) ) * IUtils.HASH_MUL ^ ( this.rotation == null ? 0
-               : this.rotation
-                  .hashCode() ) ) * IUtils.HASH_MUL ^ ( this.scale == null ? 0
-                     : this.scale.hashCode() );
+         : this.location.hashCode() ) ) * IUtils.HASH_MUL ^ ( this.rotation == null
+            ? 0
+            : this.rotation.hashCode() ) ) * IUtils.HASH_MUL ^ ( this.scale == null
+               ? 0
+               : this.scale.hashCode() );
    }
 
    /**
@@ -378,19 +373,10 @@ public class Transform3 extends Transform {
       this.rotPrev.set(this.rotation);
       Vec3.sub(point, this.location, this.forward);
 
-      Quaternion.fromDir(
-         this.forward,
-         handedness,
-         this.rotation,
-         this.right,
-         this.forward,
-         this.up);
+      Quaternion.fromDir(this.forward, handedness, this.rotation, this.right,
+         this.forward, this.up);
 
-      Quaternion.mix(
-         this.rotPrev,
-         this.rotation,
-         step,
-         this.rotation);
+      Quaternion.mix(this.rotPrev, this.rotation, step, this.rotation);
 
       this.updateAxes();
 
@@ -787,9 +773,7 @@ public class Transform3 extends Transform {
       final float step ) {
 
       if ( Vec3.all(scaleNew) ) {
-         return this.scaleTo(
-            scaleNew, step,
-            Transform3.EASING.scale);
+         return this.scaleTo(scaleNew, step, Transform3.EASING.scale);
       }
       return this;
    }
@@ -901,10 +885,7 @@ public class Transform3 extends Transform {
    @Chainable
    public Transform3 set ( final Transform3 source ) {
 
-      return this.set(
-         source.location,
-         source.rotation,
-         source.scale);
+      return this.set(source.location, source.rotation, source.scale);
    }
 
    /**
@@ -962,11 +943,8 @@ public class Transform3 extends Transform {
       final float xForward ) {
 
       this.rotPrev.set(this.rotation);
-      Quaternion.fromAxes(
-         xRight, yForward, zUp,
-         zForward, yUp, xUp,
-         zRight, yRight, xForward,
-         this.rotation);
+      Quaternion.fromAxes(xRight, yForward, zUp, zForward, yUp, xUp, zRight,
+         yRight, xForward, this.rotation);
 
       /* Update needed because the loose floats may not be normalized. */
       this.updateAxes();
@@ -989,11 +967,8 @@ public class Transform3 extends Transform {
       final Vec3 forward,
       final Vec3 up ) {
 
-      return this.setAxes(
-         right.x, forward.y, up.z,
-         forward.z, up.y,
-         up.x, right.z,
-         right.y, forward.x);
+      return this.setAxes(right.x, forward.y, up.z, forward.z, up.y, up.x,
+         right.z, right.y, forward.x);
    }
 
    /**
@@ -1015,16 +990,10 @@ public class Transform3 extends Transform {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(354)
-         .append("{ location: ")
-         .append(this.location.toString(places))
-         .append(", rotation: ")
-         .append(this.rotation.toString(places))
-         .append(", scale: ")
-         .append(this.scale.toString(places))
-         .append(' ')
-         .append('}')
-         .toString();
+      return new StringBuilder(354).append("{ location: ").append(
+         this.location.toString(places)).append(", rotation: ").append(
+            this.rotation.toString(places)).append(", scale: ").append(
+               this.scale.toString(places)).append(' ').append('}').toString();
    }
 
    /**
@@ -1059,17 +1028,11 @@ public class Transform3 extends Transform {
 
       final String rotationMode = "\"QUATERNION\"";
 
-      return new StringBuilder(256)
-         .append("{\"location\": ")
-         .append(this.location.toBlenderCode())
-         .append(", \"rotation_mode\": ")
-         .append(rotationMode)
-         .append(", \"rotation_quaternion\": ")
-         .append(this.rotation.toBlenderCode())
-         .append(", \"scale\": ")
-         .append(this.scale.toBlenderCode())
-         .append('}')
-         .toString();
+      return new StringBuilder(256).append("{\"location\": ").append(
+         this.location.toBlenderCode()).append(", \"rotation_mode\": ").append(
+            rotationMode).append(", \"rotation_quaternion\": ").append(
+               this.rotation.toBlenderCode()).append(", \"scale\": ").append(
+                  this.scale.toBlenderCode()).append('}').toString();
    }
 
    /**
@@ -1104,11 +1067,7 @@ public class Transform3 extends Transform {
    @Override
    protected void updateAxes ( ) {
 
-      Quaternion.toAxes(
-         this.rotation,
-         this.right,
-         this.forward,
-         this.up);
+      Quaternion.toAxes(this.rotation, this.right, this.forward, this.up);
    }
 
    /**
@@ -1191,11 +1150,8 @@ public class Transform3 extends Transform {
       target.locPrev.set(target.location);
       target.rotPrev.set(target.rotation);
 
-      Quaternion.fromAxes(
-         xRight, yForward, zUp,
-         zForward, yUp, xUp,
-         zRight, yRight, xForward,
-         target.rotation);
+      Quaternion.fromAxes(xRight, yForward, zUp, zForward, yUp, xUp, zRight,
+         yRight, xForward, target.rotation);
 
       /* Update needed because the loose floats may not be normalized. */
       target.updateAxes();
@@ -1226,11 +1182,8 @@ public class Transform3 extends Transform {
       final Vec3 up,
       final Transform3 target ) {
 
-      return Transform3.fromAxes(
-         right.x, forward.y, up.z,
-         forward.z, up.y,
-         up.x, right.z,
-         right.y, forward.x, target);
+      return Transform3.fromAxes(right.x, forward.y, up.z, forward.z, up.y,
+         up.x, right.z, right.y, forward.x, target);
    }
 
    /**
@@ -1285,13 +1238,8 @@ public class Transform3 extends Transform {
       target.rotPrev.set(target.rotation);
       target.scalePrev.set(target.scale);
 
-      Quaternion.fromDir(
-         dir,
-         handedness,
-         target.rotation,
-         target.right,
-         target.forward,
-         target.up);
+      Quaternion.fromDir(dir, handedness, target.rotation, target.right,
+         target.forward, target.up);
 
       target.location.reset();
       Vec3.one(target.scale);
@@ -1707,9 +1655,7 @@ public class Transform3 extends Transform {
 
          final float scaledStep = step * ( len - 1 );
          final int i = ( int ) scaledStep;
-         return this.applyUnclamped(
-            arr[i], arr[i + 1],
-            scaledStep - i, target);
+         return this.applyUnclamped(arr[i], arr[i + 1], scaledStep - i, target);
       }
 
       /**
@@ -1730,26 +1676,16 @@ public class Transform3 extends Transform {
          final Transform3 target ) {
 
          target.locPrev.set(target.location);
-         this.loc.applyUnclamped(
-            origin.location,
-            dest.location,
-            step,
+         this.loc.applyUnclamped(origin.location, dest.location, step,
             target.location);
 
          target.rotPrev.set(target.rotation);
-         this.rot.applyUnclamped(
-            origin.rotation,
-            dest.rotation,
-            step,
+         this.rot.applyUnclamped(origin.rotation, dest.rotation, step,
             target.rotation);
          target.updateAxes();
 
          target.scalePrev.set(target.scale);
-         this.loc.applyUnclamped(
-            origin.scale,
-            dest.scale,
-            step,
-            target.scale);
+         this.loc.applyUnclamped(origin.scale, dest.scale, step, target.scale);
 
          return target;
       }

@@ -185,14 +185,10 @@ class Indices2 implements Cloneable, Comparable < Indices2 >, Serializable {
     */
    public String toString ( final int padding ) {
 
-      return new StringBuilder(64)
-         .append("{ v: ")
-         .append(Utils.toPadded(this.v, padding))
-         .append(", vt: ")
-         .append(Utils.toPadded(this.vt, padding))
-         .append(' ')
-         .append('}')
-         .toString();
+      return new StringBuilder(64).append("{ v: ").append(
+         Utils.toPadded(this.v, padding)).append(", vt: ").append(
+            Utils.toPadded(this.vt, padding)).append(' ').append(
+               '}').toString();
    }
 
    /**

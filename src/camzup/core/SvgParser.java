@@ -272,12 +272,8 @@ abstract class SvgParser {
                   xOff = Utils.copySign(IUtils.DEFAULT_EPSILON, coord.x);
                   yOff = Utils.copySign(IUtils.DEFAULT_EPSILON, coord.y);
 
-                  curr.foreHandle.set(
-                     coord.x + xOff,
-                     coord.y + yOff);
-                  curr.rearHandle.set(
-                     coord.x - xOff,
-                     coord.y - yOff);
+                  curr.foreHandle.set(coord.x + xOff, coord.y + yOff);
+                  curr.rearHandle.set(coord.x - xOff, coord.y - yOff);
 
                   relative.set(curr.coord);
 
@@ -297,12 +293,8 @@ abstract class SvgParser {
                   xOff = Math.copySign(IUtils.DEFAULT_EPSILON, coord.x);
                   yOff = Math.copySign(IUtils.DEFAULT_EPSILON, coord.y);
 
-                  curr.foreHandle.set(
-                     coord.x + xOff,
-                     coord.y + yOff);
-                  curr.rearHandle.set(
-                     coord.x - xOff,
-                     coord.y - yOff);
+                  curr.foreHandle.set(coord.x + xOff, coord.y + yOff);
+                  curr.rearHandle.set(coord.x - xOff, coord.y - yOff);
 
                   relative.set(curr.coord);
 

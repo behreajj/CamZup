@@ -239,12 +239,10 @@ public class CurveEntity2 extends Entity2
 
       final StringBuilder pyCd = new StringBuilder(2048);
 
-      pyCd.append("from bpy import data as D, context as C\n\n")
-         .append("curve_entity = {\"name\": \"")
-         .append(this.name)
-         .append("\", \"transform\": ")
-         .append(this.transform.toBlenderCode())
-         .append(", \"curves\": [");
+      pyCd.append("from bpy import data as D, context as C\n\n").append(
+         "curve_entity = {\"name\": \"").append(this.name).append(
+            "\", \"transform\": ").append(
+               this.transform.toBlenderCode()).append(", \"curves\": [");
 
       int curveIndex = 0;
       final int curveLast = this.curves.size() - 1;
@@ -255,47 +253,42 @@ public class CurveEntity2 extends Entity2
          curveIndex++;
       }
 
-      pyCd.append("]}\n\ncrv_data = D.curves.new(")
-         .append("curve_entity[\"name\"]")
-         .append(", \"CURVE\")\n")
-         .append("crv_data.dimensions = \"2D\"\n")
-         .append("crv_data.fill_mode = \"")
-         .append(fillMode)
-         .append("\"\n")
-         .append("crv_data.extrude = ")
-         .append(Utils.toFixed(extrude, 6))
-         .append('\n')
-         .append("crv_data.bevel_depth = ")
-         .append(Utils.toFixed(bevelDepth, 6))
-         .append('\n')
-         .append("crv_splines = crv_data.splines\n")
-         .append("crv_index = 0\n")
-         .append("splines_raw = curve_entity[\"curves\"]\n")
-         .append("for spline_raw in splines_raw:\n")
-         .append("    spline = crv_splines.new(\"BEZIER\")\n")
-         .append("    spline.use_cyclic_u = spline_raw[\"closed_loop\"]\n")
-         .append("    spline.resolution_u = spline_raw[\"resolution_u\"]\n")
-         .append("    knots_raw = spline_raw[\"knots\"]\n")
-         .append("    knt_index = 0\n")
-         .append("    bz_pts = spline.bezier_points\n")
-         .append("    bz_pts.add(len(knots_raw) - 1)\n")
-         .append("    for knot in bz_pts:\n")
-         .append("        knot_raw = knots_raw[knt_index]\n")
-         .append("        knot.handle_left_type = \"FREE\"\n")
-         .append("        knot.handle_right_type = \"FREE\"\n")
-         .append("        knot.co = knot_raw[\"co\"]\n")
-         .append("        knot.handle_left = knot_raw[\"handle_left\"]\n")
-         .append("        knot.handle_right = knot_raw[\"handle_right\"]\n")
-         .append("        knt_index = knt_index + 1\n")
-         .append("    crv_index = crv_index + 1\n\n")
-         .append("crv_obj = D.objects.new(crv_data.name, crv_data)\n")
-         .append("tr = curve_entity[\"transform\"]\n")
-         .append("crv_obj.location = tr[\"location\"]\n")
-         .append("crv_obj.rotation_mode = tr[\"rotation_mode\"]\n")
-         .append("crv_obj.rotation_quaternion = ")
-         .append("tr[\"rotation_quaternion\"]\n")
-         .append("crv_obj.scale = tr[\"scale\"]\n")
-         .append("C.scene.collection.objects.link(crv_obj)\n");
+      pyCd.append("]}\n\ncrv_data = D.curves.new(").append(
+         "curve_entity[\"name\"]").append(", \"CURVE\")\n").append(
+            "crv_data.dimensions = \"2D\"\n").append(
+               "crv_data.fill_mode = \"").append(fillMode).append(
+                  "\"\n").append("crv_data.extrude = ").append(
+                     Utils.toFixed(extrude, 6)).append('\n').append(
+                        "crv_data.bevel_depth = ").append(
+                           Utils.toFixed(bevelDepth, 6)).append('\n').append(
+                              "crv_splines = crv_data.splines\n").append(
+                                 "crv_index = 0\n").append(
+                                    "splines_raw = curve_entity[\"curves\"]\n").append(
+                                       "for spline_raw in splines_raw:\n").append(
+                                          "    spline = crv_splines.new(\"BEZIER\")\n").append(
+                                             "    spline.use_cyclic_u = spline_raw[\"closed_loop\"]\n").append(
+                                                "    spline.resolution_u = spline_raw[\"resolution_u\"]\n").append(
+                                                   "    knots_raw = spline_raw[\"knots\"]\n").append(
+                                                      "    knt_index = 0\n").append(
+                                                         "    bz_pts = spline.bezier_points\n").append(
+                                                            "    bz_pts.add(len(knots_raw) - 1)\n").append(
+                                                               "    for knot in bz_pts:\n").append(
+                                                                  "        knot_raw = knots_raw[knt_index]\n").append(
+                                                                     "        knot.handle_left_type = \"FREE\"\n").append(
+                                                                        "        knot.handle_right_type = \"FREE\"\n").append(
+                                                                           "        knot.co = knot_raw[\"co\"]\n").append(
+                                                                              "        knot.handle_left = knot_raw[\"handle_left\"]\n").append(
+                                                                                 "        knot.handle_right = knot_raw[\"handle_right\"]\n").append(
+                                                                                    "        knt_index = knt_index + 1\n").append(
+                                                                                       "    crv_index = crv_index + 1\n\n").append(
+                                                                                          "crv_obj = D.objects.new(crv_data.name, crv_data)\n").append(
+                                                                                             "tr = curve_entity[\"transform\"]\n").append(
+                                                                                                "crv_obj.location = tr[\"location\"]\n").append(
+                                                                                                   "crv_obj.rotation_mode = tr[\"rotation_mode\"]\n").append(
+                                                                                                      "crv_obj.rotation_quaternion = ").append(
+                                                                                                         "tr[\"rotation_quaternion\"]\n").append(
+                                                                                                            "crv_obj.scale = tr[\"scale\"]\n").append(
+                                                                                                               "C.scene.collection.objects.link(crv_obj)\n");
 
       return pyCd.toString();
    }
@@ -318,13 +311,10 @@ public class CurveEntity2 extends Entity2
    @Override
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(1024)
-         .append("{ name: \"")
-         .append(this.name)
-         .append('\"')
-         .append(", transform: ")
-         .append(this.transform.toString(places))
-         .append(", curves: [ ");
+      final StringBuilder sb = new StringBuilder(1024).append(
+         "{ name: \"").append(this.name).append('\"').append(
+            ", transform: ").append(this.transform.toString(places)).append(
+               ", curves: [ ");
 
       int i = 0;
       final Iterator < Curve2 > itr = this.curves.iterator();
@@ -398,14 +388,9 @@ public class CurveEntity2 extends Entity2
       final float zoom,
       final MaterialSolid[] materials ) {
 
-      final StringBuilder svgp = new StringBuilder(1024)
-         .append("<g id=\"")
-         .append(this.name.toLowerCase())
-         .append('\"')
-         .append(' ')
-         .append(this.transform.toSvgString())
-         .append('>')
-         .append('\n');
+      final StringBuilder svgp = new StringBuilder(1024).append(
+         "<g id=\"").append(this.name.toLowerCase()).append('\"').append(
+            ' ').append(this.transform.toSvgString()).append('>').append('\n');
 
       final float scale = zoom * Transform2.minDimension(this.transform);
       int matLen = 0;
@@ -436,10 +421,8 @@ public class CurveEntity2 extends Entity2
 
             final int vMatIdx = Utils.mod(curve.materialIndex, matLen);
             final MaterialSolid material = materials[vMatIdx];
-            svgp.append("<g ")
-               .append(material.toSvgString(scale))
-               .append('>')
-               .append('\n');
+            svgp.append("<g ").append(material.toSvgString(scale)).append(
+               '>').append('\n');
          }
 
          svgp.append(curve.toSvgPath(iddot + Utils.toPadded(i, 4)));
@@ -512,9 +495,7 @@ public class CurveEntity2 extends Entity2
       final Ray2 rayWorld,
       final Ray2 rayLocal ) {
 
-      CurveEntity2.eval(
-         ce, curveIndex, step,
-         rayWorld.origin, rayWorld.dir,
+      CurveEntity2.eval(ce, curveIndex, step, rayWorld.origin, rayWorld.dir,
          rayLocal.origin, rayLocal.dir);
       return rayWorld;
    }
@@ -547,9 +528,7 @@ public class CurveEntity2 extends Entity2
       final Vec2 coLocal,
       final Vec2 tnLocal ) {
 
-      Curve2.eval(
-         ce.get(curveIndex),
-         step, coLocal, tnLocal);
+      Curve2.eval(ce.get(curveIndex), step, coLocal, tnLocal);
       Transform2.mulPoint(ce.transform, coLocal, coWorld);
       Transform2.mulDir(ce.transform, tnLocal, tnWorld);
       return coWorld;

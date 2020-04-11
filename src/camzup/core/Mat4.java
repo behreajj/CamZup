@@ -115,10 +115,7 @@ public class Mat4 extends Matrix {
       final float m20, final float m21, final float m22 ) {
 
       super(16);
-      this.set(
-         m00, m01, m02,
-         m10, m11, m12,
-         m20, m21, m22);
+      this.set(m00, m01, m02, m10, m11, m12, m20, m21, m22);
    }
 
    /**
@@ -143,10 +140,7 @@ public class Mat4 extends Matrix {
       final float m20, final float m21, final float m22, final float m23 ) {
 
       super(16);
-      this.set(
-         m00, m01, m02, m03,
-         m10, m11, m12, m13,
-         m20, m21, m22, m23);
+      this.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23);
    }
 
    /**
@@ -176,11 +170,8 @@ public class Mat4 extends Matrix {
       final float m30, final float m31, final float m32, final float m33 ) {
 
       super(16);
-      this.set(
-         m00, m01, m02, m03,
-         m10, m11, m12, m13,
-         m20, m21, m22, m23,
-         m30, m31, m32, m33);
+      this.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30,
+         m31, m32, m33);
    }
 
    /**
@@ -203,11 +194,7 @@ public class Mat4 extends Matrix {
    @Override
    public Mat4 clone ( ) {
 
-      return new Mat4(
-         this.m00, this.m01, this.m02, this.m03,
-         this.m10, this.m11, this.m12, this.m13,
-         this.m20, this.m21, this.m22, this.m23,
-         this.m30, this.m31, this.m32, this.m33);
+      return new Mat4(this.m00, this.m01, this.m02, this.m03, this.m10, this.m11, this.m12, this.m13, this.m20, this.m21, this.m22, this.m23, this.m30, this.m31, this.m32, this.m33);
    }
 
    /**
@@ -564,11 +551,8 @@ public class Mat4 extends Matrix {
    @Chainable
    public Mat4 reset ( ) {
 
-      return this.set(
-         1.0f, 0.0f, 0.0f, 0.0f,
-         0.0f, 1.0f, 0.0f, 0.0f,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return this.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -593,11 +577,8 @@ public class Mat4 extends Matrix {
       final float m10, final float m11, final float m12,
       final float m20, final float m21, final float m22 ) {
 
-      return this.set(
-         m00, m01, m02, 0.0f,
-         m10, m11, m12, 0.0f,
-         m20, m21, m22, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return this.set(m00, m01, m02, 0.0f, m10, m11, m12, 0.0f, m20, m21, m22,
+         0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -625,11 +606,8 @@ public class Mat4 extends Matrix {
       final float m10, final float m11, final float m12, final float m13,
       final float m20, final float m21, final float m22, final float m23 ) {
 
-      return this.set(
-         m00, m01, m02, m03,
-         m10, m11, m12, m13,
-         m20, m21, m22, m23,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return this.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22,
+         m23, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -681,11 +659,10 @@ public class Mat4 extends Matrix {
    @Chainable
    public Mat4 set ( final Mat4 source ) {
 
-      return this.set(
-         source.m00, source.m01, source.m02, source.m03,
-         source.m10, source.m11, source.m12, source.m13,
-         source.m20, source.m21, source.m22, source.m23,
-         source.m30, source.m31, source.m32, source.m33);
+      return this.set(source.m00, source.m01, source.m02, source.m03,
+         source.m10, source.m11, source.m12, source.m13, source.m20, source.m21,
+         source.m22, source.m23, source.m30, source.m31, source.m32,
+         source.m33);
    }
 
    /**
@@ -953,46 +930,28 @@ public class Mat4 extends Matrix {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(512)
-         .append("{ m00: ")
-         .append(Utils.toFixed(this.m00, places))
-         .append(", m01: ")
-         .append(Utils.toFixed(this.m01, places))
-         .append(", m02: ")
-         .append(Utils.toFixed(this.m02, places))
-         .append(", m03: ")
-         .append(Utils.toFixed(this.m03, places))
+      return new StringBuilder(512).append("{ m00: ").append(
+         Utils.toFixed(this.m00, places)).append(", m01: ").append(
+            Utils.toFixed(this.m01, places)).append(", m02: ").append(
+               Utils.toFixed(this.m02, places)).append(", m03: ").append(
+                  Utils.toFixed(this.m03, places))
 
-         .append(", m10: ")
-         .append(Utils.toFixed(this.m10, places))
-         .append(", m11: ")
-         .append(Utils.toFixed(this.m11, places))
-         .append(", m12: ")
-         .append(Utils.toFixed(this.m12, places))
-         .append(", m13: ")
-         .append(Utils.toFixed(this.m13, places))
+         .append(", m10: ").append(Utils.toFixed(this.m10, places)).append(
+            ", m11: ").append(Utils.toFixed(this.m11, places)).append(
+               ", m12: ").append(Utils.toFixed(this.m12, places)).append(
+                  ", m13: ").append(Utils.toFixed(this.m13, places))
 
-         .append(", m20: ")
-         .append(Utils.toFixed(this.m20, places))
-         .append(", m21: ")
-         .append(Utils.toFixed(this.m21, places))
-         .append(", m22: ")
-         .append(Utils.toFixed(this.m22, places))
-         .append(", m23: ")
-         .append(Utils.toFixed(this.m23, places))
+         .append(", m20: ").append(Utils.toFixed(this.m20, places)).append(
+            ", m21: ").append(Utils.toFixed(this.m21, places)).append(
+               ", m22: ").append(Utils.toFixed(this.m22, places)).append(
+                  ", m23: ").append(Utils.toFixed(this.m23, places))
 
-         .append(", m30: ")
-         .append(Utils.toFixed(this.m30, places))
-         .append(", m31: ")
-         .append(Utils.toFixed(this.m31, places))
-         .append(", m32: ")
-         .append(Utils.toFixed(this.m32, places))
-         .append(", m33: ")
-         .append(Utils.toFixed(this.m33, places))
+         .append(", m30: ").append(Utils.toFixed(this.m30, places)).append(
+            ", m31: ").append(Utils.toFixed(this.m31, places)).append(
+               ", m32: ").append(Utils.toFixed(this.m32, places)).append(
+                  ", m33: ").append(Utils.toFixed(this.m33, places))
 
-         .append(' ')
-         .append('}')
-         .toString();
+         .append(' ').append('}').toString();
    }
 
    /**
@@ -1013,45 +972,31 @@ public class Mat4 extends Matrix {
     */
    public String toStringCol ( final int places ) {
 
-      return new StringBuilder(256)
-         .append('\n')
-         .append(Utils.toFixed(this.m00, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m01, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m02, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m03, places))
+      return new StringBuilder(256).append('\n').append(
+         Utils.toFixed(this.m00, places)).append(',').append(' ').append(
+            Utils.toFixed(this.m01, places)).append(',').append(' ').append(
+               Utils.toFixed(this.m02, places)).append(',').append(' ').append(
+                  Utils.toFixed(this.m03, places))
 
-         .append(',').append('\n')
-         .append(Utils.toFixed(this.m10, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m11, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m12, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m13, places))
+         .append(',').append('\n').append(
+            Utils.toFixed(this.m10, places)).append(',').append(' ').append(
+               Utils.toFixed(this.m11, places)).append(',').append(' ').append(
+                  Utils.toFixed(this.m12, places)).append(',').append(
+                     ' ').append(Utils.toFixed(this.m13, places))
 
-         .append(',').append('\n')
-         .append(Utils.toFixed(this.m20, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m21, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m22, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m23, places))
+         .append(',').append('\n').append(
+            Utils.toFixed(this.m20, places)).append(',').append(' ').append(
+               Utils.toFixed(this.m21, places)).append(',').append(' ').append(
+                  Utils.toFixed(this.m22, places)).append(',').append(
+                     ' ').append(Utils.toFixed(this.m23, places))
 
-         .append(',').append('\n')
-         .append(Utils.toFixed(this.m30, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m31, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m32, places))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.m33, places))
+         .append(',').append('\n').append(
+            Utils.toFixed(this.m30, places)).append(',').append(' ').append(
+               Utils.toFixed(this.m31, places)).append(',').append(' ').append(
+                  Utils.toFixed(this.m32, places)).append(',').append(
+                     ' ').append(Utils.toFixed(this.m33, places))
 
-         .append('\n')
-         .toString();
+         .append('\n').toString();
    }
 
    /**
@@ -1139,11 +1084,11 @@ public class Mat4 extends Matrix {
       final Mat4 b,
       final Mat4 target ) {
 
-      return target.set(
-         a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02, a.m03 + b.m03,
-         a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12, a.m13 + b.m13,
-         a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22, a.m23 + b.m23,
-         a.m30 + b.m30, a.m31 + b.m31, a.m32 + b.m32, a.m33 + b.m33);
+      return target.set(a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02,
+         a.m03 + b.m03, a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12,
+         a.m13 + b.m13, a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22,
+         a.m23 + b.m23, a.m30 + b.m30, a.m31 + b.m31, a.m32 + b.m32,
+         a.m33 + b.m33);
    }
 
    /**
@@ -1194,12 +1139,8 @@ public class Mat4 extends Matrix {
       final float upy = m.m12 * szInv;
       final float upz = m.m22 * szInv;
 
-      Quaternion.fromAxes(
-         rightx, forwardy, upz,
-         forwardz, upy,
-         upx, rightz,
-         righty, forwardx,
-         rot);
+      Quaternion.fromAxes(rightx, forwardy, upz, forwardz, upy, upx, rightz,
+         righty, forwardx, rot);
 
       trans.set(m.m03, m.m13, m.m23);
    }
@@ -1283,11 +1224,8 @@ public class Mat4 extends Matrix {
       final Vec2 forward,
       final Mat4 target ) {
 
-      return target.set(
-         right.x, forward.x, 0.0f, 0.0f,
-         right.y, forward.y, 0.0f, 0.0f,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(right.x, forward.x, 0.0f, 0.0f, right.y, forward.y,
+         0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1308,11 +1246,9 @@ public class Mat4 extends Matrix {
       final Vec2 translation,
       final Mat4 target ) {
 
-      return target.set(
-         right.x, forward.x, 0.0f, translation.x,
-         right.y, forward.y, 0.0f, translation.y,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(right.x, forward.x, 0.0f, translation.x, right.y,
+         forward.y, 0.0f, translation.y, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f);
    }
 
    /**
@@ -1332,11 +1268,8 @@ public class Mat4 extends Matrix {
       final Vec3 up,
       final Mat4 target ) {
 
-      return target.set(
-         right.x, forward.x, up.x, 0.0f,
-         right.y, forward.y, up.y, 0.0f,
-         right.z, forward.z, up.z, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(right.x, forward.x, up.x, 0.0f, right.y, forward.y,
+         up.y, 0.0f, right.z, forward.z, up.z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1358,11 +1291,9 @@ public class Mat4 extends Matrix {
       final Vec3 translation,
       final Mat4 target ) {
 
-      return target.set(
-         right.x, forward.x, up.x, translation.x,
-         right.y, forward.y, up.y, translation.y,
-         right.z, forward.z, up.z, translation.z,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(right.x, forward.x, up.x, translation.x, right.y,
+         forward.y, up.y, translation.y, right.z, forward.z, up.z,
+         translation.z, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1382,11 +1313,9 @@ public class Mat4 extends Matrix {
       final Vec4 up,
       final Mat4 target ) {
 
-      return target.set(
-         right.x, forward.x, up.x, 0.0f,
-         right.y, forward.y, up.y, 0.0f,
-         right.z, forward.z, up.z, 0.0f,
-         right.w, forward.w, up.w, 1.0f);
+      return target.set(right.x, forward.x, up.x, 0.0f, right.y, forward.y,
+         up.y, 0.0f, right.z, forward.z, up.z, 0.0f, right.w, forward.w, up.w,
+         1.0f);
    }
 
    /**
@@ -1407,11 +1336,9 @@ public class Mat4 extends Matrix {
       final Vec4 translation,
       final Mat4 target ) {
 
-      return target.set(
-         right.x, forward.x, up.x, translation.x,
-         right.y, forward.y, up.y, translation.y,
-         right.z, forward.z, up.z, translation.z,
-         right.w, forward.w, up.w, translation.w);
+      return target.set(right.x, forward.x, up.x, translation.x, right.y,
+         forward.y, up.y, translation.y, right.z, forward.z, up.z,
+         translation.z, right.w, forward.w, up.w, translation.w);
    }
 
    /**
@@ -1448,11 +1375,10 @@ public class Mat4 extends Matrix {
       final float axaz = x * az;
       final float ayaz = y * az;
 
-      return target.set(
-         cosa + x * ax, axay - sina * az, axaz + sina * ay, 0.0f,
+      return target.set(cosa + x * ax, axay - sina * az, axaz + sina * ay, 0.0f,
          axay + sina * az, cosa + y * ay, ayaz - sina * ax, 0.0f,
-         axaz - sina * ay, ayaz + sina * ax, cosa + z * az, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+         axaz - sina * ay, ayaz + sina * ax, cosa + z * az, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f);
    }
 
    /**
@@ -1477,11 +1403,8 @@ public class Mat4 extends Matrix {
       // target);
 
       final float norm = radians * IUtils.ONE_TAU;
-      return Mat4.fromRotation(
-         Utils.scNorm(norm),
-         Utils.scNorm(norm - 0.25f),
-         axis,
-         target);
+      return Mat4.fromRotation(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
+         axis, target);
    }
 
    /**
@@ -1515,11 +1438,9 @@ public class Mat4 extends Matrix {
       final float wy2 = w * y2;
       final float wz2 = w * z2;
 
-      return target.set(
-         1.0f - ysq2 - zsq2, xy2 - wz2, xz2 + wy2, 0.0f,
-         xy2 + wz2, 1.0f - xsq2 - zsq2, yz2 - wx2, 0.0f,
-         xz2 - wy2, yz2 + wx2, 1.0f - xsq2 - ysq2, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(1.0f - ysq2 - zsq2, xy2 - wz2, xz2 + wy2, 0.0f,
+         xy2 + wz2, 1.0f - xsq2 - zsq2, yz2 - wx2, 0.0f, xz2 - wy2, yz2 + wx2,
+         1.0f - xsq2 - ysq2, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1536,11 +1457,8 @@ public class Mat4 extends Matrix {
       final float sina,
       final Mat4 target ) {
 
-      return target.set(
-         1.0f, 0.0f, 0.0f, 0.0f,
-         0.0f, cosa, -sina, 0.0f,
-         0.0f, sina, cosa, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, cosa, -sina, 0.0f, 0.0f,
+         sina, cosa, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1561,9 +1479,7 @@ public class Mat4 extends Matrix {
       // target);
 
       final float norm = radians * IUtils.ONE_TAU;
-      return Mat4.fromRotX(
-         Utils.scNorm(norm),
-         Utils.scNorm(norm - 0.25f),
+      return Mat4.fromRotX(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
          target);
    }
 
@@ -1584,11 +1500,8 @@ public class Mat4 extends Matrix {
       // RESEARCH: Is this inconsistent when compared with 4D rotation about
       // the YW axis? Should sin(a) and -sin(a) be transposed?
 
-      return target.set(
-         cosa, 0.0f, sina, 0.0f,
-         0.0f, 1.0f, 0.0f, 0.0f,
-         -sina, 0.0f, cosa, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(cosa, 0.0f, sina, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -sina,
+         0.0f, cosa, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1609,9 +1522,7 @@ public class Mat4 extends Matrix {
       // target);
 
       final float norm = radians * IUtils.ONE_TAU;
-      return Mat4.fromRotY(
-         Utils.scNorm(norm),
-         Utils.scNorm(norm - 0.25f),
+      return Mat4.fromRotY(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
          target);
    }
 
@@ -1629,11 +1540,8 @@ public class Mat4 extends Matrix {
       final float sina,
       final Mat4 target ) {
 
-      return target.set(
-         cosa, -sina, 0.0f, 0.0f,
-         sina, cosa, 0.0f, 0.0f,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(cosa, -sina, 0.0f, 0.0f, sina, cosa, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1654,9 +1562,7 @@ public class Mat4 extends Matrix {
       // target);
 
       final float norm = radians * IUtils.ONE_TAU;
-      return Mat4.fromRotZ(
-         Utils.scNorm(norm),
-         Utils.scNorm(norm - 0.25f),
+      return Mat4.fromRotZ(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
          target);
    }
 
@@ -1674,11 +1580,8 @@ public class Mat4 extends Matrix {
       final Mat4 target ) {
 
       if ( scalar != 0.0f ) {
-         return target.set(
-            scalar, 0.0f, 0.0f, 0.0f,
-            0.0f, scalar, 0.0f, 0.0f,
-            0.0f, 0.0f, scalar, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f);
+         return target.set(scalar, 0.0f, 0.0f, 0.0f, 0.0f, scalar, 0.0f, 0.0f,
+            0.0f, 0.0f, scalar, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 
       }
       return target.reset();
@@ -1698,11 +1601,8 @@ public class Mat4 extends Matrix {
       final Mat4 target ) {
 
       if ( Vec2.all(scalar) ) {
-         return target.set(
-            scalar.x, 0.0f, 0.0f, 0.0f,
-            0.0f, scalar.y, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f);
+         return target.set(scalar.x, 0.0f, 0.0f, 0.0f, 0.0f, scalar.y, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
       }
       return target.reset();
    }
@@ -1720,11 +1620,8 @@ public class Mat4 extends Matrix {
       final Mat4 target ) {
 
       if ( Vec3.all(scalar) ) {
-         return target.set(
-            scalar.x, 0.0f, 0.0f, 0.0f,
-            0.0f, scalar.y, 0.0f, 0.0f,
-            0.0f, 0.0f, scalar.z, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f);
+         return target.set(scalar.x, 0.0f, 0.0f, 0.0f, 0.0f, scalar.y, 0.0f,
+            0.0f, 0.0f, 0.0f, scalar.z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
       }
       return target.reset();
    }
@@ -1741,11 +1638,8 @@ public class Mat4 extends Matrix {
       final Vec2 translation,
       final Mat4 target ) {
 
-      return target.set(
-         1.0f, 0.0f, 0.0f, translation.x,
-         0.0f, 1.0f, 0.0f, translation.y,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(1.0f, 0.0f, 0.0f, translation.x, 0.0f, 1.0f, 0.0f,
+         translation.y, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1760,11 +1654,9 @@ public class Mat4 extends Matrix {
       final Vec3 translation,
       final Mat4 target ) {
 
-      return target.set(
-         1.0f, 0.0f, 0.0f, translation.x,
-         0.0f, 1.0f, 0.0f, translation.y,
-         0.0f, 0.0f, 1.0f, translation.z,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(1.0f, 0.0f, 0.0f, translation.x, 0.0f, 1.0f, 0.0f,
+         translation.y, 0.0f, 0.0f, 1.0f, translation.z, 0.0f, 0.0f, 0.0f,
+         1.0f);
    }
 
    /**
@@ -1799,11 +1691,9 @@ public class Mat4 extends Matrix {
       h = h != 0.0f ? 1.0f / h : 1.0f;
       d = d != 0.0f ? 1.0f / d : 1.0f;
 
-      return target.set(
-         n2 * w, 0.0f, ( right + left ) * w, 0.0f,
-         0.0f, n2 * h, ( top + bottom ) * h, 0.0f,
-         0.0f, 0.0f, ( far + near ) * -d, n2 * far * -d,
-         0.0f, 0.0f, -1.0f, 0.0f);
+      return target.set(n2 * w, 0.0f, ( right + left ) * w, 0.0f, 0.0f, n2 * h,
+         ( top + bottom ) * h, 0.0f, 0.0f, 0.0f, ( far + near ) * -d,
+         n2 * far * -d, 0.0f, 0.0f, -1.0f, 0.0f);
    }
 
    /**
@@ -1820,11 +1710,8 @@ public class Mat4 extends Matrix {
     */
    public static Mat4 identity ( final Mat4 target ) {
 
-      return target.set(
-         1.0f, 0.0f, 0.0f, 0.0f,
-         0.0f, 1.0f, 0.0f, 0.0f,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1855,8 +1742,7 @@ public class Mat4 extends Matrix {
       if ( det == 0.0f ) { return target.reset(); }
       final float detInv = 1.0f / det;
 
-      return target.set(
-         ( m.m11 * b11 - m.m12 * b10 + m.m13 * b09 ) * detInv,
+      return target.set( ( m.m11 * b11 - m.m12 * b10 + m.m13 * b09 ) * detInv,
          ( m.m02 * b10 - m.m01 * b11 - m.m03 * b09 ) * detInv,
          ( m.m31 * b05 - m.m32 * b04 + m.m33 * b03 ) * detInv,
          ( m.m22 * b04 - m.m21 * b05 - m.m23 * b03 ) * detInv,
@@ -1906,11 +1792,9 @@ public class Mat4 extends Matrix {
       final Mat4 b,
       final Mat4 target ) {
 
-      return target.set(
-         a * b.m00, a * b.m01, a * b.m02, a * b.m03,
-         a * b.m10, a * b.m11, a * b.m12, a * b.m13,
-         a * b.m20, a * b.m21, a * b.m22, a * b.m23,
-         a * b.m30, a * b.m31, a * b.m32, a * b.m33);
+      return target.set(a * b.m00, a * b.m01, a * b.m02, a * b.m03, a * b.m10,
+         a * b.m11, a * b.m12, a * b.m13, a * b.m20, a * b.m21, a * b.m22,
+         a * b.m23, a * b.m30, a * b.m31, a * b.m32, a * b.m33);
    }
 
    /**
@@ -1928,11 +1812,9 @@ public class Mat4 extends Matrix {
       final float b,
       final Mat4 target ) {
 
-      return target.set(
-         a.m00 * b, a.m01 * b, a.m02 * b, a.m03 * b,
-         a.m10 * b, a.m11 * b, a.m12 * b, a.m13 * b,
-         a.m20 * b, a.m21 * b, a.m22 * b, a.m23 * b,
-         a.m30 * b, a.m31 * b, a.m32 * b, a.m33 * b);
+      return target.set(a.m00 * b, a.m01 * b, a.m02 * b, a.m03 * b, a.m10 * b,
+         a.m11 * b, a.m12 * b, a.m13 * b, a.m20 * b, a.m21 * b, a.m22 * b,
+         a.m23 * b, a.m30 * b, a.m31 * b, a.m32 * b, a.m33 * b);
    }
 
    /**
@@ -2008,8 +1890,7 @@ public class Mat4 extends Matrix {
       final float n32 = a.m30 * b.m02 + a.m31 * b.m12 + a.m32 * b.m22 + a.m33 * b.m32;
       final float n33 = a.m30 * b.m03 + a.m31 * b.m13 + a.m32 * b.m23 + a.m33 * b.m33;
 
-      return target.set(
-         n00 * c.m00 + n01 * c.m10 + n02 * c.m20 + n03 * c.m30,
+      return target.set(n00 * c.m00 + n01 * c.m10 + n02 * c.m20 + n03 * c.m30,
          n00 * c.m01 + n01 * c.m11 + n02 * c.m21 + n03 * c.m31,
          n00 * c.m02 + n01 * c.m12 + n02 * c.m22 + n03 * c.m32,
          n00 * c.m03 + n01 * c.m13 + n02 * c.m23 + n03 * c.m33,
@@ -2044,8 +1925,7 @@ public class Mat4 extends Matrix {
       final Vec4 b,
       final Vec4 target ) {
 
-      return target.set(
-         a.m00 * b.x + a.m01 * b.y + a.m02 * b.z + a.m03 * b.w,
+      return target.set(a.m00 * b.x + a.m01 * b.y + a.m02 * b.z + a.m03 * b.w,
          a.m10 * b.x + a.m11 * b.y + a.m12 * b.z + a.m13 * b.w,
          a.m20 * b.x + a.m21 * b.y + a.m22 * b.z + a.m23 * b.w,
          a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33 * b.w);
@@ -2074,8 +1954,7 @@ public class Mat4 extends Matrix {
       if ( w == 0.0f ) { return target.reset(); }
       final float wInv = 1.0f / w;
 
-      return target.set(
-         ( a.m00 * b.x + a.m01 * b.y + a.m03 ) * wInv,
+      return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m03 ) * wInv,
          ( a.m10 * b.x + a.m11 * b.y + a.m13 ) * wInv,
          ( a.m20 * b.x + a.m21 * b.y + a.m23 ) * wInv);
    }
@@ -2131,8 +2010,7 @@ public class Mat4 extends Matrix {
       if ( w == 0.0f ) { return target.reset(); }
       final float wInv = 1.0f / w;
 
-      return target.set(
-         ( a.m00 * b.x + a.m01 * b.y ) * wInv,
+      return target.set( ( a.m00 * b.x + a.m01 * b.y ) * wInv,
          ( a.m10 * b.x + a.m11 * b.y ) * wInv,
          ( a.m20 * b.x + a.m21 * b.y ) * wInv);
    }
@@ -2159,8 +2037,7 @@ public class Mat4 extends Matrix {
       if ( w == 0.0f ) { return target.reset(); }
       final float wInv = 1.0f / w;
 
-      return target.set(
-         ( a.m00 * b.x + a.m01 * b.y + a.m02 * b.z ) * wInv,
+      return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m02 * b.z ) * wInv,
          ( a.m10 * b.x + a.m11 * b.y + a.m12 * b.z ) * wInv,
          ( a.m20 * b.x + a.m21 * b.y + a.m22 * b.z ) * wInv);
    }
@@ -2196,11 +2073,9 @@ public class Mat4 extends Matrix {
       h = h != 0.0f ? 1.0f / h : 1.0f;
       d = d != 0.0f ? 1.0f / d : 1.0f;
 
-      return target.set(
-         w + w, 0.0f, 0.0f, w * ( left + right ),
-         0.0f, h + h, 0.0f, h * ( top + bottom ),
-         0.0f, 0.0f, - ( d + d ), -d * ( far + near ),
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(w + w, 0.0f, 0.0f, w * ( left + right ), 0.0f, h + h,
+         0.0f, h * ( top + bottom ), 0.0f, 0.0f, - ( d + d ),
+         -d * ( far + near ), 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -2224,11 +2099,9 @@ public class Mat4 extends Matrix {
 
       final float cotfov = Utils.cot(fov * 0.5f);
       final float d = Utils.div(1.0f, far - near);
-      return target.set(
-         Utils.div(cotfov, aspect), 0.0f, 0.0f, 0.0f,
-         0.0f, cotfov, 0.0f, 0.0f,
-         0.0f, 0.0f, ( far + near ) * -d, ( near + near ) * far * -d,
-         0.0f, 0.0f, -1.0f, 0.0f);
+      return target.set(Utils.div(cotfov, aspect), 0.0f, 0.0f, 0.0f, 0.0f,
+         cotfov, 0.0f, 0.0f, 0.0f, 0.0f, ( far + near ) * -d,
+         ( near + near ) * far * -d, 0.0f, 0.0f, -1.0f, 0.0f);
    }
 
    /**
@@ -2245,11 +2118,11 @@ public class Mat4 extends Matrix {
       final Mat4 b,
       final Mat4 target ) {
 
-      return target.set(
-         a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02, a.m03 - b.m03,
-         a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12, a.m13 - b.m13,
-         a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22, a.m23 - b.m23,
-         a.m30 - b.m30, a.m31 - b.m31, a.m32 - b.m32, a.m33 - b.m33);
+      return target.set(a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02,
+         a.m03 - b.m03, a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12,
+         a.m13 - b.m13, a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22,
+         a.m23 - b.m23, a.m30 - b.m30, a.m31 - b.m31, a.m32 - b.m32,
+         a.m33 - b.m33);
    }
 
    /**
@@ -2264,11 +2137,8 @@ public class Mat4 extends Matrix {
       final Mat4 m,
       final Mat4 target ) {
 
-      return target.set(
-         m.m00, m.m10, m.m20, m.m30,
-         m.m01, m.m11, m.m21, m.m31,
-         m.m02, m.m12, m.m22, m.m32,
-         m.m03, m.m13, m.m23, m.m33);
+      return target.set(m.m00, m.m10, m.m20, m.m30, m.m01, m.m11, m.m21, m.m31,
+         m.m02, m.m12, m.m22, m.m32, m.m03, m.m13, m.m23, m.m33);
    }
 
    /**

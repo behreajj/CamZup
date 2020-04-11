@@ -76,8 +76,7 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
       final Edge3 target ) {
 
       final int len = this.vertices.length;
-      return target.set(
-         this.vertices[Utils.mod(i, len)],
+      return target.set(this.vertices[Utils.mod(i, len)],
          this.vertices[Utils.mod(i + 1, len)]);
    }
 
@@ -92,13 +91,9 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
       final int last = len - 1;
       final Edge3[] result = new Edge3[len];
       for ( int i = 0; i < last; ++i ) {
-         result[i] = new Edge3(
-            this.vertices[i],
-            this.vertices[i + 1]);
+         result[i] = new Edge3(this.vertices[i], this.vertices[i + 1]);
       }
-      result[last] = new Edge3(
-         this.vertices[last],
-         this.vertices[0]);
+      result[last] = new Edge3(this.vertices[last], this.vertices[0]);
       return result;
    }
 
@@ -443,8 +438,8 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
 
       final int len = this.vertices.length;
       final int last = len - 1;
-      final StringBuilder sb = new StringBuilder(len * 512)
-         .append("{ vertices: [ ");
+      final StringBuilder sb = new StringBuilder(len * 512).append(
+         "{ vertices: [ ");
       for ( int i = 0; i < len; ++i ) {
          sb.append(this.vertices[i].toString(places));
          if ( i < last ) {
@@ -511,8 +506,8 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
 
       // TEST
 
-      final Transform3 tr = Face3.orientation(
-         this, handedness, new Transform3());
+      final Transform3 tr = Face3.orientation(this, handedness,
+         new Transform3());
       final Vec3 vLocal = Transform3.mulDir(tr, v, new Vec3());
 
       final int len = this.vertices.length;
@@ -575,9 +570,7 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
 
       final float t = tScaled - i;
       final float u = 1.0f - t;
-      return target.set(
-         u * a.x + t * b.x,
-         u * a.y + t * b.y,
+      return target.set(u * a.x + t * b.x, u * a.y + t * b.y,
          u * a.z + t * b.z);
    }
 
@@ -660,13 +653,8 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
       Vec3.one(target.scale);
 
       Face3.normal(face, target.forward);
-      Quaternion.fromDir(
-         target.forward,
-         handedness,
-         rot,
-         target.right,
-         target.forward,
-         target.up);
+      Quaternion.fromDir(target.forward, handedness, rot, target.right,
+         target.forward, target.up);
       Face3.centerMean(face, target.location);
 
       return target;

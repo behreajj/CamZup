@@ -50,8 +50,7 @@ public abstract class TextShape {
       final boolean separate,
       final char... characters ) {
 
-      return TextShape.processGlyphCe(
-         pfont, detail, separate, characters);
+      return TextShape.processGlyphCe(pfont, detail, separate, characters);
    }
 
    /**
@@ -73,8 +72,8 @@ public abstract class TextShape {
       final boolean separate,
       final String str ) {
 
-      return TextShape.processGlyphCe(
-         pfont, detail, separate, str.toCharArray());
+      return TextShape.processGlyphCe(pfont, detail, separate,
+         str.toCharArray());
    }
 
    /**
@@ -98,8 +97,8 @@ public abstract class TextShape {
       final boolean separate,
       final char... characters ) {
 
-      return TextShape.processGlyphCe(
-         rndr.g2, pfont, detail, separate, characters);
+      return TextShape.processGlyphCe(rndr.g2, pfont, detail, separate,
+         characters);
    }
 
    /**
@@ -123,8 +122,7 @@ public abstract class TextShape {
       final boolean separate,
       final String str ) {
 
-      return TextShape.processGlyphCe(
-         rndr.g2, pfont, detail, separate,
+      return TextShape.processGlyphCe(rndr.g2, pfont, detail, separate,
          str.toCharArray());
    }
 
@@ -145,8 +143,7 @@ public abstract class TextShape {
       final boolean separate,
       final char... characters ) {
 
-      return TextShape.processGlyphMe(
-         pfont, detail, separate, characters);
+      return TextShape.processGlyphMe(pfont, detail, separate, characters);
    }
 
    /**
@@ -166,8 +163,8 @@ public abstract class TextShape {
       final boolean separate,
       final String str ) {
 
-      return TextShape.processGlyphMe(
-         pfont, detail, separate, str.toCharArray());
+      return TextShape.processGlyphMe(pfont, detail, separate,
+         str.toCharArray());
    }
 
    /**
@@ -206,9 +203,8 @@ public abstract class TextShape {
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
                final CurveEntity2 entity = new CurveEntity2();
-               TextShape.processGlyphCurve(
-                  font, frc, null, detail,
-                  character, entity.curves);
+               TextShape.processGlyphCurve(font, frc, null, detail, character,
+                  entity.curves);
                entities.add(entity);
                // final float w = fm.charWidth(character);
                // xoff += w;
@@ -217,9 +213,8 @@ public abstract class TextShape {
          } else {
 
             final CurveEntity2 entity = new CurveEntity2();
-            TextShape.processGlyphCurve(
-               font, frc, null, detail,
-               characters, entity.curves);
+            TextShape.processGlyphCurve(font, frc, null, detail, characters,
+               entity.curves);
             entities.add(entity);
          }
 
@@ -253,8 +248,8 @@ public abstract class TextShape {
       if ( font != null ) {
 
          @SuppressWarnings ( "deprecation" )
-         final FontRenderContext frc = Toolkit.getDefaultToolkit()
-            .getFontMetrics(font).getFontRenderContext();
+         final FontRenderContext frc = Toolkit.getDefaultToolkit().getFontMetrics(
+            font).getFontRenderContext();
 
          if ( separate ) {
 
@@ -263,18 +258,16 @@ public abstract class TextShape {
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
                final CurveEntity2 entity = new CurveEntity2();
-               TextShape.processGlyphCurve(
-                  font, frc, null, detail,
-                  character, entity.curves);
+               TextShape.processGlyphCurve(font, frc, null, detail, character,
+                  entity.curves);
                entities.add(entity);
             }
 
          } else {
 
             final CurveEntity2 entity = new CurveEntity2();
-            TextShape.processGlyphCurve(
-               font, frc, null, detail,
-               characters, entity.curves);
+            TextShape.processGlyphCurve(font, frc, null, detail, characters,
+               entity.curves);
             entities.add(entity);
 
          }
@@ -310,9 +303,10 @@ public abstract class TextShape {
       final char character,
       final List < Curve2 > curves ) {
 
-      return TextShape.processGlyphCurve(
-         font, frc, transform, detail,
-         new char[] { character }, curves);
+      return TextShape.processGlyphCurve(font, frc, transform, detail,
+         new char[] {
+            character },
+         curves);
    }
 
    /**
@@ -419,9 +413,8 @@ public abstract class TextShape {
                final double liney = -itrpts[1] * invScalar;
 
                currKnot = new Knot2();
-               Knot2.fromSegLinear(
-                  ( float ) linex, ( float ) liney,
-                  prevKnot, currKnot);
+               Knot2.fromSegLinear(( float ) linex, ( float ) liney, prevKnot,
+                  currKnot);
 
                currCurve.append(currKnot);
                prevKnot = currKnot;
@@ -444,10 +437,8 @@ public abstract class TextShape {
                final double qcoordy = -itrpts[3] * invScalar;
 
                currKnot = new Knot2();
-               Knot2.fromSegQuadratic(
-                  ( float ) qmidx, ( float ) qmidy,
-                  ( float ) qcoordx, ( float ) qcoordy,
-                  prevKnot, currKnot);
+               Knot2.fromSegQuadratic(( float ) qmidx, ( float ) qmidy,
+                  ( float ) qcoordx, ( float ) qcoordy, prevKnot, currKnot);
 
                currCurve.append(currKnot);
                prevKnot = currKnot;
@@ -470,11 +461,9 @@ public abstract class TextShape {
                final double ccoordy = -itrpts[5] * invScalar;
 
                currKnot = new Knot2();
-               Knot2.fromSegCubic(
-                  ( float ) cforex, ( float ) cforey,
-                  ( float ) crearx, ( float ) creary,
-                  ( float ) ccoordx, ( float ) ccoordy,
-                  prevKnot, currKnot);
+               Knot2.fromSegCubic(( float ) cforex, ( float ) cforey,
+                  ( float ) crearx, ( float ) creary, ( float ) ccoordx,
+                  ( float ) ccoordy, prevKnot, currKnot);
 
                currCurve.append(currKnot);
                prevKnot = currKnot;
@@ -535,8 +524,8 @@ public abstract class TextShape {
       if ( font != null ) {
 
          @SuppressWarnings ( "deprecation" )
-         final FontRenderContext frc = Toolkit.getDefaultToolkit()
-            .getFontMetrics(font).getFontRenderContext();
+         final FontRenderContext frc = Toolkit.getDefaultToolkit().getFontMetrics(
+            font).getFontRenderContext();
 
          if ( separate ) {
 
@@ -545,18 +534,16 @@ public abstract class TextShape {
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
                final MeshEntity2 entity = new MeshEntity2();
-               TextShape.processGlyphMesh(
-                  font, frc, null, detail,
-                  character, entity.meshes);
+               TextShape.processGlyphMesh(font, frc, null, detail, character,
+                  entity.meshes);
                entities.add(entity);
             }
 
          } else {
 
             final MeshEntity2 entity = new MeshEntity2();
-            TextShape.processGlyphMesh(
-               font, frc, null, detail,
-               characters, entity.meshes);
+            TextShape.processGlyphMesh(font, frc, null, detail, characters,
+               entity.meshes);
             entities.add(entity);
 
          }
@@ -593,9 +580,10 @@ public abstract class TextShape {
       final char character,
       final List < Mesh2 > meshes ) {
 
-      return TextShape.processGlyphMesh(
-         font, frc, transform, detail,
-         new char[] { character }, meshes);
+      return TextShape.processGlyphMesh(font, frc, transform, detail,
+         new char[] {
+            character },
+         meshes);
    }
 
    /**
@@ -669,27 +657,21 @@ public abstract class TextShape {
 
             case PathIterator.SEG_CUBICTO:
 
-               currPt = new Vec2(
-                  ( float ) ( itrpts[4] * invScalar ),
-                  ( float ) ( -itrpts[5] * invScalar ));
+               currPt = new Vec2(( float ) ( itrpts[4] * invScalar ), ( float ) ( -itrpts[5] * invScalar ));
                currMeshPts.add(currPt);
 
                break;
 
             case PathIterator.SEG_QUADTO:
 
-               currPt = new Vec2(
-                  ( float ) ( itrpts[2] * invScalar ),
-                  ( float ) ( -itrpts[3] * invScalar ));
+               currPt = new Vec2(( float ) ( itrpts[2] * invScalar ), ( float ) ( -itrpts[3] * invScalar ));
                currMeshPts.add(currPt);
 
                break;
 
             case PathIterator.SEG_LINETO:
 
-               currPt = new Vec2(
-                  ( float ) ( itrpts[0] * invScalar ),
-                  ( float ) ( -itrpts[1] * invScalar ));
+               currPt = new Vec2(( float ) ( itrpts[0] * invScalar ), ( float ) ( -itrpts[1] * invScalar ));
                currMeshPts.add(currPt);
 
                break;
@@ -714,9 +696,7 @@ public abstract class TextShape {
                   f[i][0] = i;
                   f[i][1] = i;
                   final Vec2 v = vs[i];
-                  vts[i] = new Vec2(
-                     ( v.x - lbx ) * xInv,
-                     1.0f - ( v.y - lby ) * yInv);
+                  vts[i] = new Vec2( ( v.x - lbx ) * xInv, 1.0f - ( v.y - lby ) * yInv);
                }
                f[len][0] = 0;
                f[len][1] = 0;

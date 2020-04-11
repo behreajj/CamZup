@@ -13,9 +13,7 @@ public interface ISvgWritable {
     */
    default String toSvgElm ( ) {
 
-      return this.toSvgElm(
-         Integer.toHexString(
-            System.identityHashCode(this)));
+      return this.toSvgElm(Integer.toHexString(System.identityHashCode(this)));
    }
 
    /**
@@ -54,10 +52,8 @@ public interface ISvgWritable {
 
       return this.toSvgString(
          Integer.toHexString(System.identityHashCode(this)),
-         ISvgWritable.DEFAULT_SVG_X_ORIGIN,
-         ISvgWritable.DEFAULT_SVG_Y_ORIGIN,
-         ISvgWritable.DEFAULT_SVG_WIDTH,
-         ISvgWritable.DEFAULT_SVG_HEIGHT);
+         ISvgWritable.DEFAULT_SVG_X_ORIGIN, ISvgWritable.DEFAULT_SVG_Y_ORIGIN,
+         ISvgWritable.DEFAULT_SVG_WIDTH, ISvgWritable.DEFAULT_SVG_HEIGHT);
    }
 
    /**
@@ -92,27 +88,18 @@ public interface ISvgWritable {
       final String sclStr = Utils.toFixed(scl, 6);
 
       final StringBuilder svgp = new StringBuilder(128);
-      svgp.append("<svg ")
-         .append("xmlns=\"http://www.w3.org/2000/svg\" ")
-         .append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ")
-         .append("viewBox=\"0 0 ")
-         .append(Utils.toFixed(vw, 6))
-         .append(' ')
-         .append(Utils.toFixed(vh, 6))
-         .append("\">\n")
-         .append("<g transform=\"translate(")
-         .append(Utils.toFixed(vw * x, 6))
-         .append(',')
-         .append(' ')
-         .append(Utils.toFixed(vh * y, 6))
-         .append(") scale(")
-         .append(sclStr)
-         .append(", -")
-         .append(sclStr)
-         .append(")\">\n")
-         .append(this.toSvgElm(id, scl))
-         .append("</g>\n")
-         .append("</svg>");
+      svgp.append("<svg ").append(
+         "xmlns=\"http://www.w3.org/2000/svg\" ").append(
+            "xmlns:xlink=\"http://www.w3.org/1999/xlink\" ").append(
+               "viewBox=\"0 0 ").append(Utils.toFixed(vw, 6)).append(
+                  ' ').append(Utils.toFixed(vh, 6)).append("\">\n").append(
+                     "<g transform=\"translate(").append(
+                        Utils.toFixed(vw * x, 6)).append(',').append(
+                           ' ').append(Utils.toFixed(vh * y, 6)).append(
+                              ") scale(").append(sclStr).append(", -").append(
+                                 sclStr).append(")\">\n").append(
+                                    this.toSvgElm(id, scl)).append(
+                                       "</g>\n").append("</svg>");
 
       return svgp.toString();
    }
@@ -134,10 +121,7 @@ public interface ISvgWritable {
       final Vec2 origin,
       final Vec2 dim ) {
 
-      return this.toSvgString(
-         id,
-         origin.x, origin.y,
-         dim.x, dim.y);
+      return this.toSvgString(id, origin.x, origin.y, dim.x, dim.y);
    }
 
    /**

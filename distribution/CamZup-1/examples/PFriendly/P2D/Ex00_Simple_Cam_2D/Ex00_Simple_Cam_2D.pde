@@ -1,14 +1,14 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-Yup2 graphics2;
+YupJ2 graphics2;
 
 void settings() {
-  size(720, 405, Yup2.PATH_STR);
+  size(720, 405, YupJ2.PATH_STR);
 }
 
 void setup() {
-  graphics2 = (Yup2)getGraphics();
+  graphics2 = (YupJ2)getGraphics();
 }
 
 void draw() {

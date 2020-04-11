@@ -327,15 +327,11 @@ public abstract class MaterialUv extends Material
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(256)
-         .append("{ name: \"")
-         .append(this.name)
-         .append("\", tint: ")
-         .append(this.tint.toString(places))
-         .append(", transform: ")
-         .append(this.transform.toString(places))
-         .append(' ').append('}')
-         .toString();
+      return new StringBuilder(256).append("{ name: \"").append(
+         this.name).append("\", tint: ").append(
+            this.tint.toString(places)).append(", transform: ").append(
+               this.transform.toString(places)).append(' ').append(
+                  '}').toString();
    }
 
 }

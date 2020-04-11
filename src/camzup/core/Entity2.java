@@ -201,15 +201,9 @@ public class Entity2 extends Entity implements ISpatial2 {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(512)
-         .append("{ name: \"")
-         .append(this.name)
-         .append('\"')
-         .append(", transform: ")
-         .append(this.transform.toString(places))
-         .append(' ')
-         .append('}')
-         .toString();
+      return new StringBuilder(512).append("{ name: \"").append(
+         this.name).append('\"').append(", transform: ").append(
+            this.transform.toString(places)).append(' ').append('}').toString();
    }
 
    /**

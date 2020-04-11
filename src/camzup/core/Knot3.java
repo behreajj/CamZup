@@ -68,9 +68,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float yFore,
       final float zFore ) {
 
-      this.set(
-         xCoord, yCoord, zCoord,
-         xFore, yFore, zFore);
+      this.set(xCoord, yCoord, zCoord, xFore, yFore, zFore);
    }
 
    /**
@@ -97,10 +95,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float yRear,
       final float zRear ) {
 
-      this.set(
-         xCoord, yCoord, zCoord,
-         xFore, yFore, zFore,
-         xRear, yRear, zRear);
+      this.set(xCoord, yCoord, zCoord, xFore, yFore, zFore, xRear, yRear,
+         zRear);
    }
 
    /**
@@ -141,10 +137,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final String yRear,
       final String zRear ) {
 
-      this.set(
-         xCoord, yCoord, zCoord,
-         xFore, yFore, zFore,
-         xRear, yRear, zRear);
+      this.set(xCoord, yCoord, zCoord, xFore, yFore, zFore, xRear, yRear,
+         zRear);
    }
 
    /**
@@ -233,8 +227,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float foreDiry = this.foreHandle.y - coy;
       final float foreDirz = this.foreHandle.z - coz;
 
-      final float flipRescale = -Utils.hypot(
-         foreDirx, foreDiry,
+      final float flipRescale = -Utils.hypot(foreDirx, foreDiry,
          foreDirz) * Utils.invHypot(rearDirx, rearDiry, rearDirz);
 
       this.foreHandle.x = rearDirx * flipRescale + cox;
@@ -268,8 +261,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float foreDiry = this.foreHandle.y - coy;
       final float foreDirz = this.foreHandle.z - coz;
 
-      final float flipRescale = -Utils.hypot(
-         rearDirx, rearDiry,
+      final float flipRescale = -Utils.hypot(rearDirx, rearDiry,
          rearDirz) * Utils.invHypot(foreDirx, foreDiry, foreDirz);
 
       this.rearHandle.x = foreDirx * flipRescale + cox;
@@ -287,10 +279,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    @Override
    public Knot3 clone ( ) {
 
-      return new Knot3(
-         this.coord,
-         this.foreHandle,
-         this.rearHandle);
+      return new Knot3(this.coord, this.foreHandle, this.rearHandle);
    }
 
    /**
@@ -361,8 +350,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    @Chainable
    public Knot3 mirrorHandlesBackward ( ) {
 
-      this.foreHandle.set(
-         this.coord.x - ( this.rearHandle.x - this.coord.x ),
+      this.foreHandle.set(this.coord.x - ( this.rearHandle.x - this.coord.x ),
          this.coord.y - ( this.rearHandle.y - this.coord.y ),
          this.coord.z - ( this.rearHandle.z - this.coord.z ));
 
@@ -378,8 +366,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    @Chainable
    public Knot3 mirrorHandlesForward ( ) {
 
-      this.rearHandle.set(
-         this.coord.x - ( this.foreHandle.x - this.coord.x ),
+      this.rearHandle.set(this.coord.x - ( this.foreHandle.x - this.coord.x ),
          this.coord.y - ( this.foreHandle.y - this.coord.y ),
          this.coord.z - ( this.foreHandle.z - this.coord.z ));
 
@@ -443,9 +430,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float radians,
       final Vec3 axis ) {
 
-      return this.rotate(
-         Utils.cos(radians),
-         Utils.sin(radians), axis);
+      return this.rotate(Utils.cos(radians), Utils.sin(radians), axis);
    }
 
    /**
@@ -528,9 +513,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    @Chainable
    public Knot3 rotateX ( final float radians ) {
 
-      return this.rotateX(
-         Utils.cos(radians),
-         Utils.sin(radians));
+      return this.rotateX(Utils.cos(radians), Utils.sin(radians));
    }
 
    /**
@@ -565,9 +548,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    @Chainable
    public Knot3 rotateY ( final float radians ) {
 
-      return this.rotateY(
-         Utils.cos(radians),
-         Utils.sin(radians));
+      return this.rotateY(Utils.cos(radians), Utils.sin(radians));
    }
 
    /**
@@ -602,9 +583,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    @Chainable
    public Knot3 rotateZ ( final float radians ) {
 
-      return this.rotateZ(
-         Utils.cos(radians),
-         Utils.sin(radians));
+      return this.rotateZ(Utils.cos(radians), Utils.sin(radians));
    }
 
    /**
@@ -792,14 +771,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float yOff = Utils.copySign(IUtils.DEFAULT_EPSILON, yCoord);
       final float zOff = Utils.copySign(IUtils.DEFAULT_EPSILON, zCoord);
 
-      return this.set(
-         xCoord, yCoord, zCoord,
-         xCoord + xOff,
-         yCoord + yOff,
-         zCoord + zOff,
-         xCoord - xOff,
-         yCoord - yOff,
-         zCoord - zOff);
+      return this.set(xCoord, yCoord, zCoord, xCoord + xOff, yCoord + yOff,
+         zCoord + zOff, xCoord - xOff, yCoord - yOff, zCoord - zOff);
    }
 
    /**
@@ -826,10 +799,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
 
       this.coord.set(xCoord, yCoord, zCoord);
       this.foreHandle.set(xFore, yFore, zFore);
-      this.rearHandle.set(
-         xCoord - ( xFore - xCoord ),
-         yCoord - ( yFore - yCoord ),
-         zCoord - ( zFore - zCoord ));
+      this.rearHandle.set(xCoord - ( xFore - xCoord ),
+         yCoord - ( yFore - yCoord ), zCoord - ( zFore - zCoord ));
       return this;
    }
 
@@ -877,10 +848,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    @Chainable
    public Knot3 set ( final Knot2 source ) {
 
-      return this.set(
-         source.coord,
-         source.foreHandle,
-         source.rearHandle);
+      return this.set(source.coord, source.foreHandle, source.rearHandle);
    }
 
    /**
@@ -893,10 +861,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    @Chainable
    public Knot3 set ( final Knot3 source ) {
 
-      return this.set(
-         source.coord,
-         source.foreHandle,
-         source.rearHandle);
+      return this.set(source.coord, source.foreHandle, source.rearHandle);
    }
 
    /**
@@ -983,12 +948,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final Vec3 coord,
       final Vec3 foreHandle ) {
 
-      return this.set(
-         coord.x,
-         coord.y,
-         coord.z,
-         foreHandle.x,
-         foreHandle.y,
+      return this.set(coord.x, coord.y, coord.z, foreHandle.x, foreHandle.y,
          foreHandle.z);
    }
 
@@ -1047,15 +1007,11 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(320)
-         .append("{ coord: ")
-         .append(this.coord.toString(places))
-         .append(", foreHandle: ")
-         .append(this.foreHandle.toString(places))
-         .append(", rearHandle: ")
-         .append(this.rearHandle.toString(places))
-         .append(' ').append('}')
-         .toString();
+      return new StringBuilder(320).append("{ coord: ").append(
+         this.coord.toString(places)).append(", foreHandle: ").append(
+            this.foreHandle.toString(places)).append(", rearHandle: ").append(
+               this.rearHandle.toString(places)).append(' ').append(
+                  '}').toString();
    }
 
    /**
@@ -1108,21 +1064,16 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float radius,
       final float tilt ) {
 
-      return new StringBuilder(384)
-         .append("{\"co\": ")
-         .append(this.coord.toBlenderCode())
-         .append(", \"handle_right\": ")
-         .append(this.foreHandle.toBlenderCode())
-         .append(", \"handle_left\": ")
-         .append(this.rearHandle.toBlenderCode())
-         .append(", \"weight\": ")
-         .append(Utils.toFixed(weight, 6))
-         .append(", \"radius\": ")
-         .append(Utils.toFixed(radius, 6))
-         .append(", \"tilt\": ")
-         .append(Utils.toFixed(tilt, 6))
-         .append('}')
-         .toString();
+      return new StringBuilder(384).append("{\"co\": ").append(
+         this.coord.toBlenderCode()).append(", \"handle_right\": ").append(
+            this.foreHandle.toBlenderCode()).append(
+               ", \"handle_left\": ").append(
+                  this.rearHandle.toBlenderCode()).append(
+                     ", \"weight\": ").append(Utils.toFixed(weight, 6)).append(
+                        ", \"radius\": ").append(
+                           Utils.toFixed(radius, 6)).append(
+                              ", \"tilt\": ").append(
+                                 Utils.toFixed(tilt, 6)).append('}').toString();
    }
 
    /**
@@ -1184,23 +1135,14 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final Knot3 target ) {
 
       final Vec3 coord = target.coord;
-      coord.set(
-         radius * cosa,
-         radius * sina,
-         0.0f);
+      coord.set(radius * cosa, radius * sina, 0.0f);
 
       final float hmsina = sina * handleMag;
       final float hmcosa = cosa * handleMag;
 
-      target.foreHandle.set(
-         coord.x - hmsina,
-         coord.y + hmcosa,
-         coord.z);
+      target.foreHandle.set(coord.x - hmsina, coord.y + hmcosa, coord.z);
 
-      target.rearHandle.set(
-         coord.x + hmsina,
-         coord.y - hmcosa,
-         coord.z);
+      target.rearHandle.set(coord.x + hmsina, coord.y - hmcosa, coord.z);
 
       return target;
    }
@@ -1222,10 +1164,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float handleMag,
       final Knot3 target ) {
 
-      return Knot3.fromPolar(
-         Utils.cos(angle),
-         Utils.sin(angle),
-         radius, handleMag, target);
+      return Knot3.fromPolar(Utils.cos(angle), Utils.sin(angle), radius,
+         handleMag, target);
    }
 
    /**
@@ -1261,20 +1201,11 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final Knot3 prev,
       final Knot3 next ) {
 
-      prev.foreHandle.set(
-         xPrevControl,
-         yPrevControl,
-         zPrevControl);
+      prev.foreHandle.set(xPrevControl, yPrevControl, zPrevControl);
 
-      next.rearHandle.set(
-         xNextControl,
-         yNextControl,
-         zNextControl);
+      next.rearHandle.set(xNextControl, yNextControl, zNextControl);
 
-      next.coord.set(
-         xNextAnchor,
-         yNextAnchor,
-         zNextAnchor);
+      next.coord.set(xNextAnchor, yNextAnchor, zNextAnchor);
 
       return next;
    }
@@ -1300,11 +1231,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final Knot3 prev,
       final Knot3 next ) {
 
-      return Knot3.fromSegCubic(
-         prevControl.x, prevControl.y, prevControl.z,
-         nextControl.x, nextControl.y, nextControl.z,
-         nextAnchor.x, nextAnchor.y, nextAnchor.z,
-         prev, next);
+      return Knot3.fromSegCubic(prevControl.x, prevControl.y, prevControl.z,
+         nextControl.x, nextControl.y, nextControl.z, nextAnchor.x,
+         nextAnchor.y, nextAnchor.z, prev, next);
    }
 
    /**
@@ -1328,10 +1257,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final Knot3 prev,
       final Knot3 next ) {
 
-      next.coord.set(
-         xNextAnchor,
-         yNextAnchor,
-         zNextAnchor);
+      next.coord.set(xNextAnchor, yNextAnchor, zNextAnchor);
       Vec3.mix(prev.coord, next.coord, IUtils.ONE_THIRD, prev.foreHandle);
       Vec3.mix(next.coord, prev.coord, IUtils.ONE_THIRD, next.rearHandle);
 
@@ -1355,9 +1281,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final Knot3 prev,
       final Knot3 next ) {
 
-      return Knot3.fromSegLinear(
-         nextAnchor.x, nextAnchor.y, nextAnchor.z,
-         prev, next);
+      return Knot3.fromSegLinear(nextAnchor.x, nextAnchor.y, nextAnchor.z, prev,
+         next);
    }
 
    /**
@@ -1393,20 +1318,15 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float midpt23y = yControl * 0.6666666f;
       final float midpt23z = zControl * 0.6666666f;
 
-      prev.foreHandle.set(
-         midpt23x + IUtils.ONE_THIRD * prevCo.x,
+      prev.foreHandle.set(midpt23x + IUtils.ONE_THIRD * prevCo.x,
          midpt23y + IUtils.ONE_THIRD * prevCo.y,
          midpt23z + IUtils.ONE_THIRD * prevCo.z);
 
-      next.rearHandle.set(
-         midpt23x + IUtils.ONE_THIRD * xNextAnchor,
+      next.rearHandle.set(midpt23x + IUtils.ONE_THIRD * xNextAnchor,
          midpt23y + IUtils.ONE_THIRD * yNextAnchor,
          midpt23z + IUtils.ONE_THIRD * zNextAnchor);
 
-      next.coord.set(
-         xNextAnchor,
-         yNextAnchor,
-         zNextAnchor);
+      next.coord.set(xNextAnchor, yNextAnchor, zNextAnchor);
 
       return next;
    }
@@ -1430,10 +1350,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final Knot3 prev,
       final Knot3 next ) {
 
-      return Knot3.fromSegQuadratic(
-         control.x, control.y, control.z,
-         nextAnchor.x, nextAnchor.y, nextAnchor.z,
-         prev, next);
+      return Knot3.fromSegQuadratic(control.x, control.y, control.z,
+         nextAnchor.x, nextAnchor.y, nextAnchor.z, prev, next);
    }
 
    /**
@@ -1519,15 +1437,11 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       dir.z = dir2z * rescl;
 
       final float bMag = bmSq * bmInv;
-      curr.rearHandle.set(
-         coCurr.x + bMag * dir.x,
-         coCurr.y + bMag * dir.y,
+      curr.rearHandle.set(coCurr.x + bMag * dir.x, coCurr.y + bMag * dir.y,
          coCurr.z + bMag * dir.z);
 
       final float fMag = fmSq * fmInv;
-      curr.foreHandle.set(
-         coCurr.x - fMag * dir.x,
-         coCurr.y - fMag * dir.y,
+      curr.foreHandle.set(coCurr.x - fMag * dir.x, coCurr.y - fMag * dir.y,
          coCurr.z - fMag * dir.z);
 
       return curr;
@@ -1582,9 +1496,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       // coCurr.z + bMag * dir.z);
 
       final float fMag = fmSq * fmInv;
-      curr.foreHandle.set(
-         coCurr.x - fMag * dir.x,
-         coCurr.y - fMag * dir.y,
+      curr.foreHandle.set(coCurr.x - fMag * dir.x, coCurr.y - fMag * dir.y,
          coCurr.z - fMag * dir.z);
 
       return curr;
@@ -1633,9 +1545,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       dir.z = dir2z * rescl;
 
       final float bMag = bmSq * bmInv;
-      curr.rearHandle.set(
-         coCurr.x + bMag * dir.x,
-         coCurr.y + bMag * dir.y,
+      curr.rearHandle.set(coCurr.x + bMag * dir.x, coCurr.y + bMag * dir.y,
          coCurr.z + bMag * dir.z);
 
       // final float fMag = fmSq * fmInv;
@@ -1746,20 +1656,14 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
          final Vec3 deFh = dest.foreHandle;
          final Vec3 deRh = dest.rearHandle;
 
-         target.coord.set(
-            u * orCo.x + step * deCo.x,
-            u * orCo.y + step * deCo.y,
-            u * orCo.z + step * deCo.z);
+         target.coord.set(u * orCo.x + step * deCo.x,
+            u * orCo.y + step * deCo.y, u * orCo.z + step * deCo.z);
 
-         target.foreHandle.set(
-            u * orFh.x + step * deFh.x,
-            u * orFh.y + step * deFh.y,
-            u * orFh.z + step * deFh.z);
+         target.foreHandle.set(u * orFh.x + step * deFh.x,
+            u * orFh.y + step * deFh.y, u * orFh.z + step * deFh.z);
 
-         target.rearHandle.set(
-            u * orRh.x + step * deRh.x,
-            u * orRh.y + step * deRh.y,
-            u * orRh.z + step * deRh.z);
+         target.rearHandle.set(u * orRh.x + step * deRh.x,
+            u * orRh.y + step * deRh.y, u * orRh.z + step * deRh.z);
 
          return target;
       }

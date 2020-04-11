@@ -6,7 +6,6 @@ import java.awt.Image;
 
 import camzup.core.Chainable;
 import camzup.core.Color;
-import camzup.core.Experimental;
 import camzup.core.Gradient;
 import camzup.core.IUtils;
 import camzup.core.Sdf;
@@ -14,7 +13,9 @@ import camzup.core.Utils;
 import camzup.core.Vec2;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PFont;
+import processing.core.PFont.Glyph;
 import processing.core.PImage;
 
 /**
@@ -85,10 +86,7 @@ public class ZImage extends PImage {
     *
     * @return the aspect ratio
     */
-   public float aspect ( ) {
-
-      return Utils.div(this.width, this.height);
-   }
+   public float aspect ( ) { return Utils.div(this.width, this.height); }
 
    /**
     * Returns a string representation of an image, including its format, width,
@@ -229,9 +227,7 @@ public class ZImage extends PImage {
       final Gradient grd,
       final PImage target ) {
 
-      return ZImage.conic(
-         origin.x, origin.y,
-         radians, grd, target);
+      return ZImage.conic(origin.x, origin.y, radians, grd, target);
    }
 
    /**
@@ -253,9 +249,7 @@ public class ZImage extends PImage {
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-         grd.eval(
-            clrEval.apply(px[i]),
-            ZImage.clr);
+         grd.eval(clrEval.apply(px[i]), ZImage.clr);
          px[i] = Color.toHexInt(ZImage.clr);
       }
       target.updatePixels();
@@ -279,9 +273,7 @@ public class ZImage extends PImage {
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-         grd.eval(
-            Color.luminance(px[i]),
-            ZImage.clr);
+         grd.eval(Color.luminance(px[i]), ZImage.clr);
          px[i] = Color.toHexInt(ZImage.clr);
       }
       target.updatePixels();
@@ -356,6 +348,111 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Creates an image from a font, color and character. The font should have
+    * been created with {@link PApplet#loadFont(String)}. Adds the left extent
+    * and top extent of the glyph to the size of the glyph image. Converts the
+    * glyph image from {@link PConstants#ALPHA} to {@link PConstants#ARGB} and
+    * tints it with the color.
+    * 
+    * @param font      the font
+    * @param clr       the color
+    * @param character the character
+    * 
+    * @return the image
+    */
+   public static PImage fromText (
+      final PFont font,
+      final Color clr,
+      final char character ) {
+      
+      Glyph glyph = font.getGlyph(character);
+      if ( glyph == null ) { glyph = font.getGlyph('_'); }
+      
+      int w = glyph.width + glyph.leftExtent;
+      int h = glyph.height + glyph.topExtent;
+      final PImage target = new PImage(w, h, PConstants.ARGB);
+      target.set(glyph.leftExtent, glyph.topExtent, glyph.image);
+
+      /* Tint the image. */
+      target.loadPixels();
+      final int[] pixels = target.pixels;
+      final int len = pixels.length;
+      final int c = 0x00ffffff & Color.toHexInt(clr);
+      for ( int i = 0; i < len; ++i ) {
+
+         /*
+          * Glyph images use format constant 4, so they store info only in the
+          * blue channel.
+          */
+         final int srcAlpha = pixels[i] << 24;
+         pixels[i] = srcAlpha | c;
+      }
+      target.updatePixels();
+
+      return target;
+   }
+
+   public static PImage fromText (
+      final PFont font,
+      final Color clr,
+      final String msg ) {
+
+      final char[] chars = msg.toCharArray();
+      final int charLen = chars.length;
+      final Glyph[] glyphs = new Glyph[charLen];
+
+      int w = 0;
+      int hmax = Integer.MIN_VALUE;
+      final int emptySpace = font.getGlyph('_').width;
+      int h = 0;
+      for ( int i = 0; i < charLen; ++i ) {
+         final char character = chars[i];
+         final Glyph glyph = glyphs[i] = font.getGlyph(character);
+         if ( glyph != null ) {
+            w += glyph.width + glyph.leftExtent;
+            final int currhte = glyph.height + glyph.topExtent;
+            hmax = hmax < glyph.height ? glyph.height : hmax;
+            h = h < currhte ? currhte : h;
+         } else {
+            w += emptySpace;
+         }
+      }
+
+      final PImage target = new PImage(w, h, PConstants.ARGB);
+
+      int cursor = 0;
+      for ( int i = 0; i < charLen; ++i ) {
+         final Glyph glyph = glyphs[i];
+         if ( glyph != null ) {
+            final PImage source = glyph.image;
+            cursor += glyph.leftExtent;
+            target.set(cursor, hmax - glyph.topExtent, source);
+            cursor += glyph.width;
+         } else {
+            cursor += emptySpace;
+         }
+      }
+
+      /* Tint the image. */
+      target.loadPixels();
+      final int[] pixels = target.pixels;
+      final int len = pixels.length;
+      final int c = 0x00ffffff & Color.toHexInt(clr);
+      for ( int i = 0; i < len; ++i ) {
+
+         /*
+          * Glyph images use format constant 4, so they store info only in the
+          * blue channel.
+          */
+         final int srcAlpha = pixels[i] << 24;
+         pixels[i] = srcAlpha | c;
+      }
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
     * Generates a linear gradient from an origin point to a destination point.
     * The value is clamped to a range [0.0, 1.0] .
     *
@@ -387,8 +484,7 @@ public class ZImage extends PImage {
 
       final float bx = xOrigin - xDest;
       final float by = yOrigin - yDest;
-      final float bbInv = 1.0f / Utils.max(
-         IUtils.DEFAULT_EPSILON,
+      final float bbInv = 1.0f / Utils.max(IUtils.DEFAULT_EPSILON,
          bx * bx + by * by);
 
       for ( int i = 0, y = 0; y < h; ++y ) {
@@ -401,9 +497,7 @@ public class ZImage extends PImage {
             final float xn = x * wInv;
             final float ax = xOrigin - ( xn + xn - 1.0f );
 
-            grd.eval(
-               Utils.clamp01( ( ax * bx + ay * by ) * bbInv),
-               ZImage.clr);
+            grd.eval(Utils.clamp01( ( ax * bx + ay * by ) * bbInv), ZImage.clr);
             pixels[i] = Color.toHexInt(ZImage.clr);
          }
       }
@@ -429,10 +523,7 @@ public class ZImage extends PImage {
       final Gradient grd,
       final PImage target ) {
 
-      return ZImage.linear(
-         origin.x, origin.y,
-         dest.x, dest.y,
-         grd, target);
+      return ZImage.linear(origin.x, origin.y, dest.x, dest.y, grd, target);
    }
 
    /**
@@ -458,7 +549,7 @@ public class ZImage extends PImage {
 
       final int h = target.height;
       final int w = target.width;
-      final int[] pixels = target.pixels;
+      final int[] px = target.pixels;
 
       final float hInv = 1.0f / ( h - 1.0f );
       final float wInv = 1.0f / ( w - 1.0f );
@@ -478,7 +569,7 @@ public class ZImage extends PImage {
             final float ax = xOrigin - ( xn + xn - 1.0f );
 
             grd.eval(1.0f - ( ax * ax + aysq ) * invrsq, ZImage.clr);
-            pixels[i] = Color.toHexInt(ZImage.clr);
+            px[i] = Color.toHexInt(ZImage.clr);
          }
       }
 
@@ -546,17 +637,10 @@ public class ZImage extends PImage {
     */
    public static String toString ( final PImage pi ) {
 
-      return new StringBuilder(64)
-         .append("{ format: ")
-         .append(pi.format)
-         .append(", width: ")
-         .append(pi.width)
-         .append(", height: ")
-         .append(pi.height)
-         .append(", pixelDensity: ")
-         .append(pi.pixelDensity)
-         .append(' ').append('}')
-         .toString();
+      return new StringBuilder(64).append("{ format: ").append(
+         pi.format).append(", width: ").append(pi.width).append(
+            ", height: ").append(pi.height).append(", pixelDensity: ").append(
+               pi.pixelDensity).append(' ').append('}').toString();
    }
 
    /**
@@ -646,10 +730,8 @@ public class ZImage extends PImage {
 
       source.loadPixels();
       target.loadPixels();
-      ZImage.wrap(
-         source.pixels, source.width, source.height,
-         target.pixels, target.width, target.height,
-         dx, dy);
+      ZImage.wrap(source.pixels, source.width, source.height, target.pixels,
+         target.width, target.height, dx, dy);
       target.updatePixels();
       // source.updatePixels();
       return target;
@@ -672,36 +754,6 @@ public class ZImage extends PImage {
       final Vec2 d ) {
 
       return ZImage.wrap(source, target, ( int ) d.x, ( int ) d.y);
-   }
-
-   @Experimental
-   static PImage fromText (
-      final PFont font,
-      final int textSize,
-      final String str ) {
-
-      final PImage target = new PImage();
-
-      final char[] chars = str.toCharArray();
-      final int charLen = chars.length;
-      for ( int i = 0; i < charLen; ++i ) {
-         final char c = chars[i];
-         final PFont.Glyph glyph = font.getGlyph(c);
-         if ( glyph != null ) {
-//            int wGlyph = glyph.width;
-//            int hGlyph = glyph.height;
-//            int lExtent = glyph.leftExtent;
-//            int tExtent = glyph.topExtent;
-
-//            int x0 = lExtent * textSize;
-//            int x1 = x0 + wGlyph * textSize;
-//            int y0 = tExtent * textSize;
-//            int y1 = y0 - hGlyph * textSize;
-
-            final PImage img = glyph.image;
-         }
-      }
-      return target;
    }
 
 }

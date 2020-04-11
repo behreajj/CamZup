@@ -100,8 +100,7 @@ public abstract class Mesh extends EntityData implements IMesh {
       final int faceIndex,
       final int places ) {
 
-      final int[][] arr = this.faces[Utils.mod(
-         faceIndex, this.faces.length)];
+      final int[][] arr = this.faces[Utils.mod(faceIndex, this.faces.length)];
       final int len = arr.length;
       final int k = Utils.mod(places, len);
       Mesh.reverse(arr, 0, len - 1);

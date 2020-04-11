@@ -285,13 +285,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
-      this.vertexImpl(
-         ap0x, ap0y, 0.0f,
-         this.textureU, this.textureV);
-      this.bezierVertexImpl(
-         cp0x, cp0y, 0.0f,
-         cp1x, cp1y, 0.0f,
-         ap1x, ap1y, 0.0f);
+      this.vertexImpl(ap0x, ap0y, 0.0f, this.textureU, this.textureV);
+      this.bezierVertexImpl(cp0x, cp0y, 0.0f, cp1x, cp1y, 0.0f, ap1x, ap1y,
+         0.0f);
       this.endShape(PConstants.OPEN);
    }
 
@@ -328,13 +324,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
-      this.vertexImpl(
-         ap0x, ap0y, ap0z,
-         this.textureU, this.textureV);
-      this.bezierVertexImpl(
-         cp0x, cp0y, cp0z,
-         cp1x, cp1y, cp1z,
-         ap1x, ap1y, ap1z);
+      this.vertexImpl(ap0x, ap0y, ap0z, this.textureU, this.textureV);
+      this.bezierVertexImpl(cp0x, cp0y, cp0z, cp1x, cp1y, cp1z, ap1x, ap1y,
+         ap1z);
       this.endShape(PConstants.OPEN);
    }
 
@@ -528,12 +520,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float max3,
       final float aMax ) {
 
-      super.colorMode(
-         mode,
-         max1 < 1.0f ? 1.0f : max1,
-         max2 < 1.0f ? 1.0f : max2,
-         max3 < 1.0f ? 1.0f : max3,
-         aMax < 1.0f ? 1.0f : aMax);
+      super.colorMode(mode, max1 < 1.0f ? 1.0f : max1, max2 < 1.0f ? 1.0f
+         : max2, max3 < 1.0f ? 1.0f : max3, aMax < 1.0f ? 1.0f : aMax);
 
       this.invColorModeX = 1.0f / this.colorModeX;
       this.invColorModeY = 1.0f / this.colorModeY;
@@ -557,12 +545,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float z,
       final float a ) {
 
-      this.calcA = Utils.clamp01(
-         a * this.invColorModeA);
-      this.calcB = Utils.clamp01(
-         z * this.invColorModeZ);
-      this.calcG = Utils.clamp01(
-         y * this.invColorModeY);
+      this.calcA = Utils.clamp01(a * this.invColorModeA);
+      this.calcB = Utils.clamp01(z * this.invColorModeZ);
+      this.calcG = Utils.clamp01(y * this.invColorModeY);
 
       switch ( this.colorMode ) {
 
@@ -570,11 +555,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
             this.calcR = x * this.invColorModeX;
 
-            Color.hsbaToRgba(
-               this.calcR,
-               this.calcG,
-               this.calcB,
-               this.calcA,
+            Color.hsbaToRgba(this.calcR, this.calcG, this.calcB, this.calcA,
                this.aTemp);
 
             this.calcR = this.aTemp.x;
@@ -587,8 +568,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
          default:
 
-            this.calcR = Utils.clamp01(
-               x * this.invColorModeX);
+            this.calcR = Utils.clamp01(x * this.invColorModeX);
 
       }
    }
@@ -609,10 +589,14 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    @Override
    public void curve (
-      final float x1, final float y1,
-      final float x2, final float y2,
-      final float x3, final float y3,
-      final float x4, final float y4 ) {
+      final float x1,
+      final float y1,
+      final float x2,
+      final float y2,
+      final float x3,
+      final float y3,
+      final float x4,
+      final float y4 ) {
 
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
@@ -643,10 +627,18 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    @Override
    public void curve (
-      final float x1, final float y1, final float z1,
-      final float x2, final float y2, final float z2,
-      final float x3, final float y3, final float z3,
-      final float x4, final float y4, final float z4 ) {
+      final float x1,
+      final float y1,
+      final float z1,
+      final float x2,
+      final float y2,
+      final float z2,
+      final float x3,
+      final float y3,
+      final float z3,
+      final float x4,
+      final float y4,
+      final float z4 ) {
 
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
@@ -707,12 +699,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
       this.textureMode = PConstants.NORMAL;
       this.textureWrap = PConstants.REPEAT;
 
-      this.ambient(
-         this.colorModeX * IUpOgl.DEFAULT_AMB_R,
+      this.ambient(this.colorModeX * IUpOgl.DEFAULT_AMB_R,
          this.colorModeY * IUpOgl.DEFAULT_AMB_G,
          this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
-      this.specular(
-         this.colorModeX * IUpOgl.DEFAULT_SPEC_R,
+      this.specular(this.colorModeX * IUpOgl.DEFAULT_SPEC_R,
          this.colorModeY * IUpOgl.DEFAULT_SPEC_G,
          this.colorModeZ * IUpOgl.DEFAULT_SPEC_B);
       this.emissive(0.0f, 0.0f, 0.0f);
@@ -768,11 +758,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
       this.cameraNear = near;
       this.cameraFar = far;
 
-      PMatAux.frustum(
-         left, right,
-         bottom, top,
-         near, far,
-         this.projection);
+      PMatAux.frustum(left, right, bottom, top, near, far, this.projection);
    }
 
    /**
@@ -835,14 +821,14 @@ public abstract class UpOgl extends PGraphicsOpenGL
    public Mat4 getMatrix ( final Mat4 target ) {
 
       return target.set(
-         this.modelview.m00, this.modelview.m01,
-         this.modelview.m02, this.modelview.m03,
-         this.modelview.m10, this.modelview.m11,
-         this.modelview.m12, this.modelview.m13,
-         this.modelview.m20, this.modelview.m21,
-         this.modelview.m22, this.modelview.m23,
-         this.modelview.m30, this.modelview.m31,
-         this.modelview.m32, this.modelview.m33);
+         this.modelview.m00, this.modelview.m01, this.modelview.m02,
+         this.modelview.m03,
+         this.modelview.m10, this.modelview.m11, this.modelview.m12,
+         this.modelview.m13,
+         this.modelview.m20, this.modelview.m21, this.modelview.m22,
+         this.modelview.m23,
+         this.modelview.m30, this.modelview.m31, this.modelview.m32,
+         this.modelview.m33);
    }
 
    /**
@@ -856,8 +842,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
    public PMatrix2D getMatrix ( PMatrix2D target ) {
 
       if ( target == null ) { target = new PMatrix2D(); }
-      target.set(
-         this.modelview.m00, this.modelview.m01, this.modelview.m03,
+      target.set(this.modelview.m00, this.modelview.m01, this.modelview.m03,
          this.modelview.m10, this.modelview.m11, this.modelview.m13);
       return target;
    }
@@ -1030,9 +1015,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float y2 ) {
 
       final boolean useImg = this.textureMode == PConstants.IMAGE;
-      this.imageImpl(
-         img, x1, y1, x2, y2, 0.0f, 0.0f,
-         0.0f, useImg ? img.width : 1.0f, useImg ? img.height : 1.0f);
+      this.imageImpl(img, x1, y1, x2, y2, 0.0f, 0.0f, 0.0f, useImg ? img.width
+         : 1.0f, useImg ? img.height : 1.0f);
    }
 
    /**
@@ -1114,11 +1098,15 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void imageImpl (
       final PImage img,
-      final float x1, final float y1,
-      final float x2, final float y2,
+      final float x1,
+      final float y1,
+      final float x2,
+      final float y2,
       final float z,
-      final float u1, final float v1,
-      final float u2, final float v2 ) {
+      final float u1,
+      final float v1,
+      final float u2,
+      final float v2 ) {
 
       if ( img.width < 2 || img.height < 2 ) { return; }
 
@@ -1203,19 +1191,13 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
          case HSB:
 
-            return IUp.MIXER_HSB.apply(
-               origin, dest,
-               step,
-               target);
+            return IUp.MIXER_HSB.apply(origin, dest, step, target);
 
          case RGB:
 
          default:
 
-            return IUp.MIXER_RGB.apply(
-               origin, dest,
-               step,
-               target);
+            return IUp.MIXER_RGB.apply(origin, dest, step, target);
       }
    }
 
@@ -1234,12 +1216,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final int dest,
       final float step ) {
 
-      return Color.toHexInt(
-         this.lerpColor(
-            Color.fromHex(origin, this.aTemp),
-            Color.fromHex(dest, this.bTemp),
-            step,
-            this.cTemp));
+      return Color.toHexInt(this.lerpColor(Color.fromHex(origin, this.aTemp),
+         Color.fromHex(dest, this.bTemp), step, this.cTemp));
    }
 
    /**
@@ -1384,10 +1362,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
       this.cameraNear = near;
       this.cameraFar = far;
 
-      PMatAux.orthographic(
-         left, right,
-         bottom, top,
-         near, far,
+      PMatAux.orthographic(left, right, bottom, top, near, far,
          this.projection);
    }
 
@@ -1434,9 +1409,6 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float offset = Utils.sqrt(xsq + ysq + zsq);
       final float near = IUp.DEFAULT_NEAR_CLIP;
       final float far = offset + this.eyeDist * IUp.DEFAULT_FAR_CLIP;
-
-      // far *= Utils.max(this.cameraX, this.cameraY, this.cameraZ);
-      // far *= this.eyeDist * 1.01f;
 
       this.perspective(fov, aspect, near, far);
    }
@@ -1721,10 +1693,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
       PMatAux.rotateX(c, s, this.modelview);
       PMatAux.invRotateX(c, s, this.modelviewInv);
-      PMatAux.mul(
-         this.projection,
-         this.modelview,
-         this.projmodelview);
+      PMatAux.mul(this.projection, this.modelview, this.projmodelview);
    }
 
    /**
@@ -1745,10 +1714,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
       PMatAux.rotateY(c, s, this.modelview);
       PMatAux.invRotateY(c, s, this.modelviewInv);
-      PMatAux.mul(
-         this.projection,
-         this.modelview,
-         this.projmodelview);
+      PMatAux.mul(this.projection, this.modelview, this.projmodelview);
    }
 
    /**
@@ -1764,15 +1730,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
    public void rotateZ ( final float radians ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      PMatAux.compoundRotateZ(
-         Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f),
-         this.modelview,
-         this.modelviewInv);
-      PMatAux.mul(
-         this.projection,
-         this.modelview,
-         this.projmodelview);
+      PMatAux.compoundRotateZ(Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f), this.modelview, this.modelviewInv);
+      PMatAux.mul(this.projection, this.modelview, this.projmodelview);
    }
 
    /**
@@ -2406,11 +2366,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLModelview ( final Mat4 m ) {
 
-      this.updateGLModelview(
-         m.m00, m.m01, m.m02, m.m03,
-         m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23,
-         m.m30, m.m31, m.m32, m.m33);
+      this.updateGLModelview(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
+         m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2420,11 +2377,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLModelview ( final PMatrix3D m ) {
 
-      this.updateGLModelview(
-         m.m00, m.m01, m.m02, m.m03,
-         m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23,
-         m.m30, m.m31, m.m32, m.m33);
+      this.updateGLModelview(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
+         m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2467,10 +2421,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLNormal ( final Mat4 m ) {
 
-      this.updateGLNormal(
-         m.m00, m.m01, m.m02,
-         m.m10, m.m11, m.m12,
-         m.m20, m.m21, m.m22);
+      this.updateGLNormal(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12, m.m20,
+         m.m21, m.m22);
    }
 
    /**
@@ -2480,10 +2432,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLNormal ( final PMatrix3D m ) {
 
-      this.updateGLNormal(
-         m.m00, m.m01, m.m02,
-         m.m10, m.m11, m.m12,
-         m.m20, m.m21, m.m22);
+      this.updateGLNormal(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12, m.m20,
+         m.m21, m.m22);
    }
 
    /**
@@ -2542,11 +2492,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLProjection ( final Mat4 m ) {
 
-      this.updateGLProjection(
-         m.m00, m.m01, m.m02, m.m03,
-         m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23,
-         m.m30, m.m31, m.m32, m.m33);
+      this.updateGLProjection(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
+         m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2556,11 +2503,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLProjection ( final PMatrix3D m ) {
 
-      this.updateGLProjection(
-         m.m00, m.m01, m.m02, m.m03,
-         m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23,
-         m.m30, m.m31, m.m32, m.m33);
+      this.updateGLProjection(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
+         m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2621,11 +2565,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLProjmodelview ( final Mat4 m ) {
 
-      this.updateGLProjmodelview(
-         m.m00, m.m01, m.m02, m.m03,
-         m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23,
-         m.m30, m.m31, m.m32, m.m33);
+      this.updateGLProjmodelview(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11,
+         m.m12, m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2635,11 +2576,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLProjmodelview ( final PMatrix3D m ) {
 
-      this.updateGLProjmodelview(
-         m.m00, m.m01, m.m02, m.m03,
-         m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23,
-         m.m30, m.m31, m.m32, m.m33);
+      this.updateGLProjmodelview(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11,
+         m.m12, m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2798,17 +2736,11 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float n20, final float n21, final float n22, final float n23,
       final float n30, final float n31, final float n32, final float n33 ) {
 
-      this.modelview.apply(
-         n00, n01, n02, n03,
-         n10, n11, n12, n13,
-         n20, n21, n22, n23,
-         n30, n31, n32, n33);
+      this.modelview.apply(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21,
+         n22, n23, n30, n31, n32, n33);
       PMatAux.inverse(this.modelview, this.modelviewInv);
-      this.projmodelview.apply(
-         n00, n01, n02, n03,
-         n10, n11, n12, n13,
-         n20, n21, n22, n23,
-         n30, n31, n32, n33);
+      this.projmodelview.apply(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21,
+         n22, n23, n30, n31, n32, n33);
    }
 
    /**
@@ -2843,9 +2775,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
-      this.vertexImpl(
-         coord.x, coord.y, 0.0f,
-         this.textureU, this.textureV);
+      this.vertexImpl(coord.x, coord.y, 0.0f, this.textureU, this.textureV);
 
       while ( itr.hasNext() ) {
 
@@ -2854,10 +2784,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
          rearHandle = currKnot.rearHandle;
          coord = currKnot.coord;
 
-         this.bezierVertexImpl(
-            foreHandle.x, foreHandle.y, 0.0f,
-            rearHandle.x, rearHandle.y, 0.0f,
-            coord.x, coord.y, 0.0f);
+         this.bezierVertexImpl(foreHandle.x, foreHandle.y, 0.0f, rearHandle.x,
+            rearHandle.y, 0.0f, coord.x, coord.y, 0.0f);
 
          prevKnot = currKnot;
       }
@@ -2868,10 +2796,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
          rearHandle = currKnot.rearHandle;
          coord = currKnot.coord;
 
-         this.bezierVertexImpl(
-            foreHandle.x, foreHandle.y, 0.0f,
-            rearHandle.x, rearHandle.y, 0.0f,
-            coord.x, coord.y, 0.0f);
+         this.bezierVertexImpl(foreHandle.x, foreHandle.y, 0.0f, rearHandle.x,
+            rearHandle.y, 0.0f, coord.x, coord.y, 0.0f);
          this.endShape(PConstants.CLOSE);
       } else {
          this.endShape(PConstants.OPEN);
@@ -2948,11 +2874,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float t = ( s - 1.0f ) * 0.5f;
       final float u = 1.0f - s;
       final float v = u * 0.5f;
-      this.curveBasisMatrix.set(
-         t, ( s + 3.0f ) * 0.5f, ( -3.0f - s ) * 0.5f, v,
-         u, ( -5.0f - s ) * 0.5f, s + 2.0f, t,
-         t, 0.0f, v, 0.0f,
-         0.0f, 1.0f, 0.0f, 0.0f);
+      this.curveBasisMatrix.set(t, ( s + 3.0f ) * 0.5f, ( -3.0f - s ) * 0.5f, v,
+         u, ( -5.0f - s ) * 0.5f, s + 2.0f, t, t, 0.0f, v, 0.0f, 0.0f, 1.0f,
+         0.0f, 0.0f);
 
       this.splineForward(this.curveDetail, this.curveDrawMatrix);
 
@@ -2962,13 +2886,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
          this.curveToBezierMatrix = new PMatrix3D();
       }
 
-      PMatAux.mul(
-         this.bezierBasisInverse,
-         this.curveBasisMatrix,
+      PMatAux.mul(this.bezierBasisInverse, this.curveBasisMatrix,
          this.curveToBezierMatrix);
-      PMatAux.mul(
-         this.curveDrawMatrix,
-         this.curveBasisMatrix,
+      PMatAux.mul(this.curveDrawMatrix, this.curveBasisMatrix,
          this.curveDrawMatrix);
    }
 
@@ -3049,9 +2969,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
          for ( int j = 0; j < flen1; ++j ) {
             Transform2.mulPoint(tr, vs[f[j][0]], v);
-            this.vertexImpl(
-               v.x, v.y, 0.0f,
-               this.textureU, this.textureV);
+            this.vertexImpl(v.x, v.y, 0.0f, this.textureU, this.textureV);
          }
          this.endShape(PConstants.CLOSE);
       }
@@ -3149,9 +3067,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
             Transform3.mulDir(tr, vns[vnIndex], vn);
 
             this.normal(vn.x, vn.y, vn.z);
-            this.vertexImpl(
-               v.x, v.y, v.z,
-               this.textureU, this.textureV);
+            this.vertexImpl(v.x, v.y, v.z, this.textureU, this.textureV);
          }
          this.endShape(PConstants.CLOSE);
       }
@@ -3198,10 +3114,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
        * density monitor.
        */
       final int pd = img.pixelDensity;
-      this.imageImpl(
-         img,
-         x1, y1, x2, y2, 0.0f,
-         u1 * pd, v1 * pd, u2 * pd, v2 * pd);
+      this.imageImpl(img, x1, y1, x2, y2, 0.0f, u1 * pd, v1 * pd, u2 * pd,
+         v2 * pd);
 
       this.textureMode = savedTextureMode;
    }
@@ -4110,10 +4024,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
       this.tintA = this.fillA;
       this.tintAlpha = this.fillAlpha;
 
-      this.imageImpl(
-         glyph,
-         x1, y1, x2, y2, 0.0f,
-         0.0f, 0.0f, u, v);
+      this.imageImpl(glyph, x1, y1, x2, y2, 0.0f, 0.0f, 0.0f, u, v);
 
       this.tint = savedTint;
       this.tintColor = savedTintColor;
@@ -4192,7 +4103,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
     * @param v the t or v coordinate
     */
    @Override
-   protected void vertexTexture ( final float u, final float v ) {
+   protected void vertexTexture (
+      final float u,
+      final float v ) {
 
       this.vertexTexture(u, v, this.textureMode, this.textureWrap);
    }

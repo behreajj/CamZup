@@ -132,12 +132,8 @@ public class Edge2 implements Comparable < Edge2 > {
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
-      Vec2.rotateZ(
-         this.origin.coord,
-         cosa, sina, this.origin.coord);
-      Vec2.rotateZ(
-         this.dest.coord,
-         cosa, sina, this.dest.coord);
+      Vec2.rotateZ(this.origin.coord, cosa, sina, this.origin.coord);
+      Vec2.rotateZ(this.dest.coord, cosa, sina, this.dest.coord);
       return this;
    }
 
@@ -159,9 +155,7 @@ public class Edge2 implements Comparable < Edge2 > {
       final Vec2 coOrigin = this.origin.coord;
       final Vec2 coDest = this.dest.coord;
 
-      final Vec2 mp = new Vec2(
-         ( coOrigin.x + coDest.x ) * 0.5f,
-         ( coOrigin.y + coDest.y ) * 0.5f);
+      final Vec2 mp = new Vec2( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y ) * 0.5f);
 
       Vec2.sub(coOrigin, mp, coOrigin);
       Vec2.rotateZ(coOrigin, cosa, sina, coOrigin);
@@ -268,9 +262,7 @@ public class Edge2 implements Comparable < Edge2 > {
       final Vec2 coOrigin = this.origin.coord;
       final Vec2 coDest = this.dest.coord;
 
-      final Vec2 mp = new Vec2(
-         ( coOrigin.x + coDest.x ) * 0.5f,
-         ( coOrigin.y + coDest.y ) * 0.5f);
+      final Vec2 mp = new Vec2( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y ) * 0.5f);
 
       Vec2.sub(coOrigin, mp, coOrigin);
       Vec2.mul(coOrigin, scalar, coOrigin);
@@ -305,9 +297,7 @@ public class Edge2 implements Comparable < Edge2 > {
       final Vec2 coOrigin = this.origin.coord;
       final Vec2 coDest = this.dest.coord;
 
-      final Vec2 mp = new Vec2(
-         ( coOrigin.x + coDest.x ) * 0.5f,
-         ( coOrigin.y + coDest.y ) * 0.5f);
+      final Vec2 mp = new Vec2( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y ) * 0.5f);
 
       Vec2.sub(coOrigin, mp, coOrigin);
       Vec2.mul(coOrigin, scalar, coOrigin);
@@ -379,14 +369,9 @@ public class Edge2 implements Comparable < Edge2 > {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(512)
-         .append("{ origin: ")
-         .append(this.origin.toString(places))
-         .append(", dest: ")
-         .append(this.dest.toString(places))
-         .append(' ')
-         .append('}')
-         .toString();
+      return new StringBuilder(512).append("{ origin: ").append(
+         this.origin.toString(places)).append(", dest: ").append(
+            this.dest.toString(places)).append(' ').append('}').toString();
    }
 
    /**
@@ -449,8 +434,7 @@ public class Edge2 implements Comparable < Edge2 > {
       if ( step >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - step;
-      return target.set(
-         u * coOrigin.x + step * coDest.x,
+      return target.set(u * coOrigin.x + step * coDest.x,
          u * coOrigin.y + step * coDest.y);
    }
 
@@ -468,9 +452,7 @@ public class Edge2 implements Comparable < Edge2 > {
 
       final Vec2 dest = edge.dest.coord;
       final Vec2 origin = edge.origin.coord;
-      return Utils.atan2(
-         dest.y - origin.y,
-         dest.x - origin.x);
+      return Utils.atan2(dest.y - origin.y, dest.x - origin.x);
    }
 
    /**
@@ -485,9 +467,7 @@ public class Edge2 implements Comparable < Edge2 > {
     */
    public static float mag ( final Edge2 edge ) {
 
-      return Vec2.distEuclidean(
-         edge.origin.coord,
-         edge.dest.coord);
+      return Vec2.distEuclidean(edge.origin.coord, edge.dest.coord);
    }
 
    /**
@@ -502,9 +482,7 @@ public class Edge2 implements Comparable < Edge2 > {
     */
    public static float magSq ( final Edge2 edge ) {
 
-      return Vec2.distSq(
-         edge.origin.coord,
-         edge.dest.coord);
+      return Vec2.distSq(edge.origin.coord, edge.dest.coord);
    }
 
    /**
@@ -541,8 +519,7 @@ public class Edge2 implements Comparable < Edge2 > {
       if ( fac >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - fac;
-      return target.set(
-         u * coOrigin.x + fac * coDest.x,
+      return target.set(u * coOrigin.x + fac * coDest.x,
          u * coOrigin.y + fac * coDest.y);
    }
 

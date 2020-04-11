@@ -644,11 +644,8 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(a.x + b.x),
-         Utils.clamp01(a.y + b.y),
-         Utils.clamp01(a.z + b.z),
-         Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.x + b.x), Utils.clamp01(a.y + b.y),
+         Utils.clamp01(a.z + b.z), Utils.clamp01(a.w));
    }
 
    /**
@@ -866,8 +863,7 @@ public class Color extends Vec4 {
       final Color upperBound,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp(a.x, lowerBound.x, upperBound.x),
+      return target.set(Utils.clamp(a.x, lowerBound.x, upperBound.x),
          Utils.clamp(a.y, lowerBound.y, upperBound.y),
          Utils.clamp(a.z, lowerBound.z, upperBound.z),
          Utils.clamp(a.w, lowerBound.w, upperBound.w));
@@ -887,11 +883,8 @@ public class Color extends Vec4 {
       final Color a,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(a.x),
-         Utils.clamp01(a.y),
-         Utils.clamp01(a.z),
-         Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.x), Utils.clamp01(a.y),
+         Utils.clamp01(a.z), Utils.clamp01(a.w));
    }
 
    /**
@@ -946,10 +939,8 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(Utils.div(a.x, b.x)),
-         Utils.clamp01(Utils.div(a.y, b.y)),
-         Utils.clamp01(Utils.div(a.z, b.z)),
+      return target.set(Utils.clamp01(Utils.div(a.x, b.x)),
+         Utils.clamp01(Utils.div(a.y, b.y)), Utils.clamp01(Utils.div(a.z, b.z)),
          Utils.clamp01(a.w));
    }
 
@@ -973,11 +964,8 @@ public class Color extends Vec4 {
          return target.set(0.0f, 0.0f, 0.0f, Utils.clamp01(a.w));
       }
       final float bInv = 1.0f / b;
-      return target.set(
-         Utils.clamp01(a.x * bInv),
-         Utils.clamp01(a.y * bInv),
-         Utils.clamp01(a.z * bInv),
-         Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.x * bInv), Utils.clamp01(a.y * bInv),
+         Utils.clamp01(a.z * bInv), Utils.clamp01(a.w));
    }
 
    /**
@@ -996,10 +984,8 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(Utils.div(a, b.x)),
-         Utils.clamp01(Utils.div(a, b.y)),
-         Utils.clamp01(Utils.div(a, b.z)),
+      return target.set(Utils.clamp01(Utils.div(a, b.x)),
+         Utils.clamp01(Utils.div(a, b.y)), Utils.clamp01(Utils.div(a, b.z)),
          Utils.clamp01(a));
    }
 
@@ -1019,11 +1005,7 @@ public class Color extends Vec4 {
       final float mSq = Vec2.magSq(v);
       if ( mSq == 0.0f ) { return target.set(0.5f, 0.5f, 0.5f, 1.0f); }
       final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
-      return target.set(
-         v.x * mInv + 0.5f,
-         v.y * mInv + 0.5f,
-         0.5f,
-         1.0f);
+      return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, 0.5f, 1.0f);
    }
 
    /**
@@ -1042,10 +1024,7 @@ public class Color extends Vec4 {
       final float mSq = Vec3.magSq(v);
       if ( mSq == 0.0f ) { return target.set(0.5f, 0.5f, 0.5f, 1.0f); }
       final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
-      return target.set(
-         v.x * mInv + 0.5f,
-         v.y * mInv + 0.5f,
-         v.z * mInv + 0.5f,
+      return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, v.z * mInv + 0.5f,
          1.0f);
    }
 
@@ -1065,10 +1044,7 @@ public class Color extends Vec4 {
       final float mSq = Vec4.magSq(v);
       if ( mSq == 0.0f ) { return target.set(0.5f, 0.5f, 0.5f, 0.5f); }
       final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
-      return target.set(
-         v.x * mInv + 0.5f,
-         v.y * mInv + 0.5f,
-         v.z * mInv + 0.5f,
+      return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, v.z * mInv + 0.5f,
          v.w * mInv + 0.5f);
    }
 
@@ -1087,10 +1063,8 @@ public class Color extends Vec4 {
       final int c,
       final Color target ) {
 
-      return target.set(
-         ( c >> 0x10 & 0xff ) * IUtils.ONE_255,
-         ( c >> 0x8 & 0xff ) * IUtils.ONE_255,
-         ( c & 0xff ) * IUtils.ONE_255,
+      return target.set( ( c >> 0x10 & 0xff ) * IUtils.ONE_255,
+         ( c >> 0x8 & 0xff ) * IUtils.ONE_255, ( c & 0xff ) * IUtils.ONE_255,
          ( c >> 0x18 & 0xff ) * IUtils.ONE_255);
    }
 
@@ -1109,10 +1083,8 @@ public class Color extends Vec4 {
       final long c,
       final Color target ) {
 
-      return target.set(
-         ( c >> 0x10 & 0xff ) * IUtils.ONE_255,
-         ( c >> 0x8 & 0xff ) * IUtils.ONE_255,
-         ( c & 0xff ) * IUtils.ONE_255,
+      return target.set( ( c >> 0x10 & 0xff ) * IUtils.ONE_255,
+         ( c >> 0x8 & 0xff ) * IUtils.ONE_255, ( c & 0xff ) * IUtils.ONE_255,
          ( c >> 0x18 & 0xff ) * IUtils.ONE_255);
    }
 
@@ -1314,10 +1286,8 @@ public class Color extends Vec4 {
       final Color c,
       final Color target ) {
 
-      return target.set(
-         Utils.max(0.0f, 1.0f - c.x),
-         Utils.max(0.0f, 1.0f - c.y),
-         Utils.max(0.0f, 1.0f - c.z),
+      return target.set(Utils.max(0.0f, 1.0f - c.x),
+         Utils.max(0.0f, 1.0f - c.y), Utils.max(0.0f, 1.0f - c.z),
          Utils.clamp01(c.w));
    }
 
@@ -1393,10 +1363,8 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(Utils.max(a.x, b.x)),
-         Utils.clamp01(Utils.max(a.y, b.y)),
-         Utils.clamp01(Utils.max(a.z, b.z)),
+      return target.set(Utils.clamp01(Utils.max(a.x, b.x)),
+         Utils.clamp01(Utils.max(a.y, b.y)), Utils.clamp01(Utils.max(a.z, b.z)),
          Utils.clamp01(Utils.max(a.w, b.w)));
    }
 
@@ -1416,10 +1384,8 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(Utils.min(a.x, b.x)),
-         Utils.clamp01(Utils.min(a.y, b.y)),
-         Utils.clamp01(Utils.min(a.z, b.z)),
+      return target.set(Utils.clamp01(Utils.min(a.x, b.x)),
+         Utils.clamp01(Utils.min(a.y, b.y)), Utils.clamp01(Utils.min(a.z, b.z)),
          Utils.clamp01(Utils.min(a.w, b.w)));
    }
 
@@ -1482,11 +1448,8 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(a.x * b.x),
-         Utils.clamp01(a.y * b.y),
-         Utils.clamp01(a.z * b.z),
-         Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.x * b.x), Utils.clamp01(a.y * b.y),
+         Utils.clamp01(a.z * b.z), Utils.clamp01(a.w));
    }
 
    /**
@@ -1506,11 +1469,8 @@ public class Color extends Vec4 {
       final float b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(a.x * b),
-         Utils.clamp01(a.y * b),
-         Utils.clamp01(a.z * b),
-         Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.x * b), Utils.clamp01(a.y * b),
+         Utils.clamp01(a.z * b), Utils.clamp01(a.w));
    }
 
    /**
@@ -1530,11 +1490,8 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(a * b.x),
-         Utils.clamp01(a * b.y),
-         Utils.clamp01(a * b.z),
-         Utils.clamp01(a));
+      return target.set(Utils.clamp01(a * b.x), Utils.clamp01(a * b.y),
+         Utils.clamp01(a * b.z), Utils.clamp01(a));
    }
 
    /**
@@ -1564,11 +1521,7 @@ public class Color extends Vec4 {
          return target.set(0.0f, 0.0f, 0.0f, 0.0f);
       } else if ( c.w >= 1.0f ) { return target.set(c.x, c.y, c.z, 1.0f); }
 
-      return target.set(
-         c.x * c.w,
-         c.y * c.w,
-         c.z * c.w,
-         c.w);
+      return target.set(c.x * c.w, c.y * c.w, c.z * c.w, c.w);
    }
 
    /**
@@ -1591,8 +1544,7 @@ public class Color extends Vec4 {
 
       if ( levels < 2 || levels > 255 ) { return target.set(c); }
       final float delta = 1.0f / levels;
-      return target.set(
-         delta * Utils.floor(0.5f + c.x * levels),
+      return target.set(delta * Utils.floor(0.5f + c.x * levels),
          delta * Utils.floor(0.5f + c.y * levels),
          delta * Utils.floor(0.5f + c.z * levels),
          delta * Utils.floor(0.5f + c.w * levels));
@@ -1631,11 +1583,7 @@ public class Color extends Vec4 {
       final Color target,
       final Vec4 hsba ) {
 
-      hsba.set(
-         rng.nextFloat(),
-         rng.nextFloat(),
-         rng.nextFloat(),
-         1.0f);
+      hsba.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), 1.0f);
       return Color.hsbaToRgba(hsba, target);
    }
 
@@ -1665,11 +1613,9 @@ public class Color extends Vec4 {
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
 
-      hsba.set(
-         ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
+      hsba.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
          ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y,
-         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z,
-         1.0f);
+         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z, 1.0f);
       return Color.hsbaToRgba(hsba, target);
    }
 
@@ -1691,10 +1637,7 @@ public class Color extends Vec4 {
       final Color target,
       final Vec4 hsba ) {
 
-      hsba.set(
-         rng.nextFloat(),
-         rng.nextFloat(),
-         rng.nextFloat(),
+      hsba.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
          rng.nextFloat());
       return Color.hsbaToRgba(hsba, target);
    }
@@ -1740,10 +1683,7 @@ public class Color extends Vec4 {
       final java.util.Random rng,
       final Color target ) {
 
-      return target.set(
-         rng.nextFloat(),
-         rng.nextFloat(),
-         rng.nextFloat(),
+      return target.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
          1.0f);
    }
 
@@ -1769,11 +1709,9 @@ public class Color extends Vec4 {
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
-      return target.set(
-         ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
+      return target.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
          ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y,
-         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z,
-         1.0f);
+         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z, 1.0f);
    }
 
    /**
@@ -1790,10 +1728,7 @@ public class Color extends Vec4 {
       final java.util.Random rng,
       final Color target ) {
 
-      return target.set(
-         rng.nextFloat(),
-         rng.nextFloat(),
-         rng.nextFloat(),
+      return target.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
          rng.nextFloat());
    }
 
@@ -1819,8 +1754,7 @@ public class Color extends Vec4 {
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
       final float rw = rng.nextFloat();
-      return target.set(
-         ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
+      return target.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
          ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y,
          ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z,
          ( 1.0f - rw ) * lowerBound.w + rw * upperBound.w);
@@ -1950,11 +1884,9 @@ public class Color extends Vec4 {
       final float a,
       final Vec4 target ) {
 
-      return target.set(
-         0.412453f * r + 0.357580f * g + 0.180423f * b,
+      return target.set(0.412453f * r + 0.357580f * g + 0.180423f * b,
          0.212671f * r + 0.715160f * g + 0.072169f * b,
-         0.019334f * r + 0.119193f * g + 0.950227f * b,
-         a);
+         0.019334f * r + 0.119193f * g + 0.950227f * b, a);
    }
 
    /**
@@ -2128,11 +2060,8 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(a.x - b.x),
-         Utils.clamp01(a.y - b.y),
-         Utils.clamp01(a.z - b.z),
-         Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.x - b.x), Utils.clamp01(a.y - b.y),
+         Utils.clamp01(a.z - b.z), Utils.clamp01(a.w));
    }
 
    /**
@@ -2258,11 +2187,9 @@ public class Color extends Vec4 {
       final float a,
       final Color target ) {
 
-      return target.set(
-         3.240479f * x - 1.537150f * y - 0.498535f * z,
+      return target.set(3.240479f * x - 1.537150f * y - 0.498535f * z,
          -0.969256f * x + 1.875991f * y + 0.041556f * z,
-         0.055648f * x - 0.204043f * y + 1.057311f * z,
-         a);
+         0.055648f * x - 0.204043f * y + 1.057311f * z, a);
    }
 
    /**
@@ -2799,8 +2726,7 @@ public class Color extends Vec4 {
          /* This should remain as double precision. */
          final double td = step;
          final double ud = 1.0d - td;
-         return target.set(
-            ( float ) ( ud * origin.x + td * dest.x ),
+         return target.set(( float ) ( ud * origin.x + td * dest.x ),
             ( float ) ( ud * origin.y + td * dest.y ),
             ( float ) ( ud * origin.z + td * dest.z ),
             ( float ) ( ud * origin.w + td * dest.w ));
@@ -2902,8 +2828,7 @@ public class Color extends Vec4 {
          Color.rgbaToHsba(origin, this.aHsb);
          Color.rgbaToHsba(dest, this.bHsb);
 
-         this.hsbaNew.set(
-            this.hueFunc.apply(this.aHsb.x, this.bHsb.x, step),
+         this.hsbaNew.set(this.hueFunc.apply(this.aHsb.x, this.bHsb.x, step),
             this.satFunc.apply(this.aHsb.y, this.bHsb.y, step),
             this.briFunc.apply(this.aHsb.z, this.bHsb.z, step),
             ( 1.0f - step ) * this.aHsb.w + step * this.bHsb.w);
@@ -2996,8 +2921,7 @@ public class Color extends Vec4 {
          final double td = step;
          final double ts = td * td * ( 3.0d - ( td + td ) );
          final double us = 1.0d - ts;
-         return target.set(
-            ( float ) ( us * origin.x + ts * dest.x ),
+         return target.set(( float ) ( us * origin.x + ts * dest.x ),
             ( float ) ( us * origin.y + ts * dest.y ),
             ( float ) ( us * origin.z + ts * dest.z ),
             ( float ) ( us * origin.w + ts * dest.w ));
