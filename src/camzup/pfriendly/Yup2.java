@@ -546,6 +546,16 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    }
 
    /**
+    * Draws a 2D image entity.
+    *
+    * @param entity the text entity
+    */
+   public void image ( final ImageEntity2 entity ) {
+
+      this.shape(entity, entity.material);
+   }
+
+   /**
     * Draws an image at the origin.
     *
     * @param img the image
@@ -1340,6 +1350,16 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final float r ) {
 
       this.rectImpl(loc.x, loc.y, size, size, r, r, r, r);
+   }
+
+   /**
+    * Draws a 2D text entity.
+    *
+    * @param entity the text entity
+    */
+   public void text ( final TextEntity2 entity ) {
+
+      this.shape(entity, entity.material);
    }
 
    /**

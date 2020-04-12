@@ -19,8 +19,8 @@ import processing.core.PFont.Glyph;
 import processing.core.PImage;
 
 /**
- * An extension of PImage, designed primarily around static methods that
- * generate color gradients similar to those provided in HTML5 canvas and CSS.
+ * An extension of PImage, specializing in color gradients and blitting text to
+ * an image.
  */
 public class ZImage extends PImage {
 
@@ -80,13 +80,6 @@ public class ZImage extends PImage {
     * The default constructor.
     */
    protected ZImage ( ) { super(); }
-
-   /**
-    * Finds the aspect ratio of an image, it's width divided by its height.
-    *
-    * @return the aspect ratio
-    */
-   public float aspect ( ) { return Utils.div(this.width, this.height); }
 
    /**
     * Returns a string representation of an image, including its format, width,
@@ -159,10 +152,37 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Default horizontal alignment when creating an image from text.
+    */
+   public static final int DEFAULT_ALIGN = PConstants.LEFT;
+
+   /**
+    * Default spacing between characters when creating an image from text.
+    */
+   public static final int DEFAULT_KERNING = 0;
+
+   /**
+    * Default spacing between lines when creating an image from text.
+    */
+   public static final int DEFAULT_LEADING = 8;
+
+   /**
     * A temporary color used for converting color data to and from hexadecimal
     * values.
     */
    private static final Color clr = new Color();
+
+   /**
+    * Finds the aspect ratio of an image, it's width divided by its height.
+    *
+    * @param img the image
+    *
+    * @return the aspect ratio
+    */
+   public static float aspect ( final PImage img ) {
+
+      return Utils.div(img.width, img.height);
+   }
 
    /**
     * Generates a conic gradient, where the factor rotates on the z axis around
@@ -348,104 +368,427 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Creates an image from a font, color and character. The font should have
-    * been created with {@link PApplet#loadFont(String)}. Adds the left extent
-    * and top extent of the glyph to the size of the glyph image. Converts the
-    * glyph image from {@link PConstants#ALPHA} to {@link PConstants#ARGB} and
-    * tints it with the color.
-    * 
-    * @param font      the font
-    * @param clr       the color
-    * @param character the character
-    * 
-    * @return the image
+    * Blits glyph images from a {@link PFont} onto a single image. <br>
+    * Images created with this method do not have a reference to a parent
+    * PApplet. Defaults to the fill color white.
+    *
+    * @param font the Processing font
+    * @param text the string of text
+    *
+    * @return the new image
     */
    public static PImage fromText (
       final PFont font,
-      final Color clr,
-      final char character ) {
-      
-      Glyph glyph = font.getGlyph(character);
-      if ( glyph == null ) { glyph = font.getGlyph('_'); }
-      
-      int w = glyph.width + glyph.leftExtent;
-      int h = glyph.height + glyph.topExtent;
-      final PImage target = new PImage(w, h, PConstants.ARGB);
-      target.set(glyph.leftExtent, glyph.topExtent, glyph.image);
+      final String text ) {
 
-      /* Tint the image. */
-      target.loadPixels();
-      final int[] pixels = target.pixels;
-      final int len = pixels.length;
-      final int c = 0x00ffffff & Color.toHexInt(clr);
-      for ( int i = 0; i < len; ++i ) {
-
-         /*
-          * Glyph images use format constant 4, so they store info only in the
-          * blue channel.
-          */
-         final int srcAlpha = pixels[i] << 24;
-         pixels[i] = srcAlpha | c;
-      }
-      target.updatePixels();
-
-      return target;
+      return ZImage.fromText(font, text, 0xffffffff, ZImage.DEFAULT_LEADING,
+         ZImage.DEFAULT_KERNING, ZImage.DEFAULT_ALIGN);
    }
 
+   /**
+    * Blits glyph images from a {@link PFont} onto a single image. <br>
+    * Images created with this method do not have a reference to a parent
+    * PApplet.
+    *
+    * @param font the Processing font
+    * @param text the string of text
+    * @param clr  the color
+    *
+    * @return the new image
+    */
    public static PImage fromText (
       final PFont font,
+      final String text,
+      final Color clr ) {
+
+      return ZImage.fromText(font, text, Color.toHexInt(clr));
+   }
+
+   /**
+    * Blits glyph images from a {@link PFont} onto a single image. The leading
+    * and is measured in pixels; negative values are not allowed.<br>
+    * <br>
+    * Images created with this method do not have a reference to a parent
+    * PApplet.
+    *
+    * @param font    the Processing font
+    * @param text    the string of text
+    * @param clr     the color
+    * @param leading spacing between lines
+    *
+    * @return the new image
+    */
+   public static PImage fromText (
+      final PFont font,
+      final String text,
       final Color clr,
-      final String msg ) {
+      final int leading ) {
 
-      final char[] chars = msg.toCharArray();
-      final int charLen = chars.length;
-      final Glyph[] glyphs = new Glyph[charLen];
+      return ZImage.fromText(font, text, Color.toHexInt(clr), leading);
+   }
 
-      int w = 0;
-      int hmax = Integer.MIN_VALUE;
-      final int emptySpace = font.getGlyph('_').width;
-      int h = 0;
-      for ( int i = 0; i < charLen; ++i ) {
-         final char character = chars[i];
-         final Glyph glyph = glyphs[i] = font.getGlyph(character);
-         if ( glyph != null ) {
-            w += glyph.width + glyph.leftExtent;
-            final int currhte = glyph.height + glyph.topExtent;
-            hmax = hmax < glyph.height ? glyph.height : hmax;
-            h = h < currhte ? currhte : h;
-         } else {
-            w += emptySpace;
+   /**
+    * Blits glyph images from a {@link PFont} onto a single image. The leading
+    * and kerning are measured in pixels; negative values are not allowed<br>
+    * <br>
+    * Images created with this method do not have a reference to a parent
+    * PApplet.
+    *
+    * @param font    the Processing font
+    * @param text    the string of text
+    * @param clr     the color
+    * @param leading spacing between lines
+    * @param kerning spacing between characters
+    *
+    * @return the new image
+    */
+   public static PImage fromText (
+      final PFont font,
+      final String text,
+      final Color clr,
+      final int leading,
+      final int kerning ) {
+
+      return ZImage.fromText(font, text, Color.toHexInt(clr), leading, kerning);
+   }
+
+   /**
+    * Blits glyph images from a {@link PFont} onto a single image. The leading
+    * and kerning are measured in pixels; negative values are not allowed. The
+    * horizontal text alignment may be either center {@link PConstants#CENTER} (
+    * {@value PConstants#CENTER} ), right {@link PConstants#RIGHT} (
+    * {@value PConstants#RIGHT} ) or left {@link PConstants#LEFT} (
+    * {@value PConstants#LEFT} ).<br>
+    * <br>
+    * Images created with this method do not have a reference to a parent
+    * PApplet.
+    *
+    * @param font      the Processing font
+    * @param text      the string of text
+    * @param clr       the color
+    * @param leading   spacing between lines
+    * @param kerning   spacing between characters
+    * @param textAlign the horizontal alignment
+    *
+    * @return the new image
+    */
+   public static PImage fromText (
+      final PFont font,
+      final String text,
+      final Color clr,
+      final int leading,
+      final int kerning,
+      final int textAlign ) {
+
+      return ZImage.fromText(font, text, Color.toHexInt(clr), leading, kerning,
+         textAlign);
+   }
+
+   /**
+    * Blits glyph images from a {@link PFont} onto a single image. <br>
+    * Images created with this method do not have a reference to a parent
+    * PApplet.
+    *
+    * @param font the Processing font
+    * @param text the string of text
+    * @param clr  the color
+    *
+    * @return the new image
+    */
+   public static PImage fromText (
+      final PFont font,
+      final String text,
+      final int clr ) {
+
+      return ZImage.fromText(font, text, clr, ZImage.DEFAULT_LEADING,
+         ZImage.DEFAULT_KERNING, ZImage.DEFAULT_ALIGN);
+   }
+
+   /**
+    * Blits glyph images from a {@link PFont} onto a single image. The leading
+    * and is measured in pixels; negative values are not allowed.<br>
+    * <br>
+    * Images created with this method do not have a reference to a parent
+    * PApplet.
+    *
+    * @param font    the Processing font
+    * @param text    the string of text
+    * @param clr     the color
+    * @param leading spacing between lines
+    *
+    * @return the new image
+    */
+   public static PImage fromText (
+      final PFont font,
+      final String text,
+      final int clr,
+      final int leading ) {
+
+      return ZImage.fromText(font, text, clr, leading, ZImage.DEFAULT_KERNING,
+         ZImage.DEFAULT_ALIGN);
+   }
+
+   /**
+    * Blits glyph images from a {@link PFont} onto a single image. The leading
+    * and kerning are measured in pixels; negative values are not allowed<br>
+    * <br>
+    * Images created with this method do not have a reference to a parent
+    * PApplet.
+    *
+    * @param font    the Processing font
+    * @param text    the string of text
+    * @param clr     the color
+    * @param leading spacing between lines
+    * @param kerning spacing between characters
+    *
+    * @return the new image
+    */
+   public static PImage fromText (
+      final PFont font,
+      final String text,
+      final int clr,
+      final int leading,
+      final int kerning ) {
+
+      return ZImage.fromText(font, text, clr, leading, kerning,
+         ZImage.DEFAULT_ALIGN);
+   }
+
+   /**
+    * Blits glyph images from a {@link PFont} onto a single image. The leading
+    * and kerning are measured in pixels; negative values are not allowed. The
+    * horizontal text alignment may be either center {@link PConstants#CENTER} (
+    * {@value PConstants#CENTER} ), right {@link PConstants#RIGHT} (
+    * {@value PConstants#RIGHT} ) or left {@link PConstants#LEFT} (
+    * {@value PConstants#LEFT} ).<br>
+    * <br>
+    * Images created with this method do not have a reference to a parent
+    * PApplet.
+    *
+    * @param font      the Processing font
+    * @param text      the string of text
+    * @param clr       the color
+    * @param leading   spacing between lines
+    * @param kerning   spacing between characters
+    * @param textAlign the horizontal alignment
+    *
+    * @return the new image
+    */
+   public static PImage fromText (
+      final PFont font,
+      final String text,
+      final int clr,
+      final int leading,
+      final int kerning,
+      final int textAlign ) {
+
+      /*
+       * Validate inputs: colors with no alpha not allowed; negative leading and
+       * kerning not allowed; try to guard against empty Strings. Remove alpha
+       * from tint; source image alpha will be used.
+       */
+      final String vTxt = text.trim();
+      if ( vTxt.isEmpty() ) { return new PImage(32, 32, PConstants.ARGB, 1); }
+      final int vLead = leading < 0 ? 1 : leading + 1;
+      final int vKern = kerning < 0 ? 0 : kerning;
+      final int vClr = ( clr >> 0x18 & 0xff ) != 0
+         ? 0x00ffffff & clr
+         : 0x00ffffff;
+
+      /*
+       * Carriage returns, or line breaks, could come in 3 variations: \r, \n,
+       * or \r\n .
+       */
+      final String[] linesSplit = vTxt.split("\r\n|\n|\r");
+      final int lineCount = linesSplit.length;
+      final char[][][] characters = new char[lineCount][][];
+      for ( int i = 0; i < lineCount; ++i ) {
+         final String[] words = linesSplit[i].split("\\s+");
+         final int charCount = words.length;
+         final char[][] charLine = characters[i] = new char[charCount][];
+         for ( int j = 0; j < charCount; ++j ) {
+            charLine[j] = words[j].toCharArray();
          }
       }
 
-      final PImage target = new PImage(w, h, PConstants.ARGB);
+      /* Determine width of a space. */
+      final Glyph whiteSpace = font.getGlyph('-');
+      final int spaceWidth = whiteSpace != null ? whiteSpace.width
+         : ( int ) ( font.getSize() * IUtils.ONE_THIRD );
 
-      int cursor = 0;
-      for ( int i = 0; i < charLen; ++i ) {
-         final Glyph glyph = glyphs[i];
-         if ( glyph != null ) {
-            final PImage source = glyph.image;
-            cursor += glyph.leftExtent;
-            target.set(cursor, hmax - glyph.topExtent, source);
-            cursor += glyph.width;
-         } else {
-            cursor += emptySpace;
+      final Glyph[][][] glyphs = new Glyph[lineCount][][];
+
+      /*
+       * The last line's descenders are chopped off if padding isn't added to
+       * the bottom of the image.
+       */
+      int lastRowPadding = 0;
+
+      /* Total height and max width will decide the image's dimensions. */
+      final int[] lineHeights = new int[lineCount];
+      final int[] lineWidths = new int[lineCount];
+      int hTotal = 0;
+      int wMax = Integer.MIN_VALUE;
+
+      /* Loop through lines. */
+      for ( int i = 0; i < lineCount; ++i ) {
+         final char[][] charLine = characters[i];
+         final int wordCount = charLine.length;
+         final Glyph[][] glyphLine = new Glyph[wordCount][];
+         glyphs[i] = glyphLine;
+
+         int sumWidths = 0;
+         int maxHeight = Integer.MIN_VALUE;
+         int maxDescent = Integer.MIN_VALUE;
+
+         /* Loop through words. */
+         for ( int j = 0; j < wordCount; ++j ) {
+            final char[] charWord = charLine[j];
+            final int charCount = charWord.length;
+            final Glyph[] glyphWord = new Glyph[charCount];
+            glyphLine[j] = glyphWord;
+
+            /* Loop through letters. */
+            for ( int k = 0; k < charCount; ++k ) {
+               final char character = charWord[k];
+               final Glyph glyph = font.getGlyph(character);
+               glyphWord[k] = glyph;
+
+               if ( glyph != null ) {
+
+                  /*
+                   * All values are considered from the image's top-left corner.
+                   * Top extent is the amount to move down from the top edge to
+                   * find the space occupied by the glyph. Left extent is the
+                   * amount to move left from the left edge to find the glyph.
+                   * See {@link PFont} for diagram.
+                   */
+                  final int height = glyph.height + vLead;
+                  final int glyphDescent = height - glyph.topExtent;
+
+                  /*
+                   * The height of a line is determined by its tallest glyph;
+                   * the width of a line is the sum of each glyph's width, plus
+                   * kerning, plus left extents.
+                   */
+                  maxHeight = height > maxHeight ? height : maxHeight;
+                  sumWidths += glyph.width + vKern + glyph.leftExtent;
+
+                  maxDescent = glyphDescent > maxDescent ? glyphDescent
+                     : maxDescent;
+                  lastRowPadding = maxDescent;
+               }
+            }
+
+            /* Add a space between words. */
+            sumWidths += spaceWidth + vKern;
          }
+
+         lineHeights[i] = maxHeight;
+         hTotal += maxHeight;
+
+         lineWidths[i] = sumWidths;
+         wMax = sumWidths > wMax ? sumWidths : wMax;
       }
 
-      /* Tint the image. */
+      hTotal += lastRowPadding;
+
+      /*
+       * Offset the xCursor's initial position by an offset depending on
+       * horizontal alignment.
+       */
+      final int[] lineOffsets = new int[lineCount];
+      switch ( textAlign ) {
+
+         case PConstants.CENTER:
+
+            for ( int i = 0; i < lineCount; ++i ) {
+               lineOffsets[i] = ( wMax - lineWidths[i] ) / 2;
+            }
+
+            break;
+
+         case PConstants.RIGHT:
+
+            for ( int i = 0; i < lineCount; ++i ) {
+               lineOffsets[i] = wMax - lineWidths[i];
+            }
+
+            break;
+
+         case PConstants.LEFT:
+
+         default:
+
+      }
+
+      final PImage target = new PImage(wMax, hTotal, PConstants.ARGB, 1);
       target.loadPixels();
-      final int[] pixels = target.pixels;
-      final int len = pixels.length;
-      final int c = 0x00ffffff & Color.toHexInt(clr);
-      for ( int i = 0; i < len; ++i ) {
+      final int[] trgPx = target.pixels;
+      int yCursor = 0;
 
-         /*
-          * Glyph images use format constant 4, so they store info only in the
-          * blue channel.
-          */
-         final int srcAlpha = pixels[i] << 24;
-         pixels[i] = srcAlpha | c;
+      /* Loop through lines. */
+      for ( int i = 0; i < lineCount; ++i ) {
+         final Glyph[][] glyphLine = glyphs[i];
+         final int wordCount = glyphLine.length;
+         final int lineHeight = lineHeights[i];
+
+         /* Reset xCursor every carriage return. */
+         int xCursor = lineOffsets[i];
+
+         /* Loop through words. */
+         for ( int j = 0; j < wordCount; ++j ) {
+            final Glyph[] glyphWord = glyphLine[j];
+            final int charCount = glyphWord.length;
+
+            /* Loop through letters. */
+            for ( int k = 0; k < charCount; ++k ) {
+               final Glyph glyph = glyphWord[k];
+
+               if ( glyph != null ) {
+                  xCursor += glyph.leftExtent;
+                  final PImage source = glyph.image;
+
+                  if ( source != null ) {
+                     // target.loadPixels();
+                     source.loadPixels();
+
+                     /*
+                      * {@link PImage#set(int, int, PImage)} cannot be used
+                      * because glyph descenders or ascenders may overlap.
+                      */
+                     final int wSrc = source.pixelWidth;
+                     final int hSrc = source.pixelHeight;
+                     final int[] srcPx = source.pixels;
+                     final int yStart = yCursor + lineHeight - glyph.topExtent;
+
+                     /*
+                      * Loop through source image height and width. Target index
+                      * is manually calculated in the inner loop using the
+                      * formula index = x + y * width.
+                      */
+                     for ( int idxSrc = 0, ySrc = 0, yTrg = yStart; ySrc < hSrc; ++ySrc, ++yTrg ) {
+                        final int idxOffTrg = yTrg * wMax;
+                        for ( int xSrc = 0, xTrg = xCursor; xSrc < wSrc; ++xSrc, ++idxSrc, ++xTrg ) {
+                           final int idxTrg = idxOffTrg + xTrg;
+
+                           /*
+                            * Shift source image from grey scale, stored in the
+                            * blue channel, to ARGB. Composite target and
+                            * source, then composite in tint color.
+                            */
+                           trgPx[idxTrg] = trgPx[idxTrg] | srcPx[idxSrc] << 0x18 | vClr;
+                        }
+                     }
+
+                     // target.updatePixels(xCursor, yCursor, wSrc, hSrc);
+                  }
+                  xCursor += glyph.width + vKern;
+               }
+            }
+            xCursor += spaceWidth + vKern;
+         }
+         yCursor += lineHeight;
       }
       target.updatePixels();
 
@@ -631,16 +974,18 @@ public class ZImage extends PImage {
     * Returns a string representation of an image, including its format, width,
     * height and pixel density.
     *
-    * @param pi the PImage
+    * @param img the PImage
     *
     * @return the string
     */
-   public static String toString ( final PImage pi ) {
+   public static String toString ( final PImage img ) {
 
-      return new StringBuilder(64).append("{ format: ").append(
-         pi.format).append(", width: ").append(pi.width).append(
-            ", height: ").append(pi.height).append(", pixelDensity: ").append(
-               pi.pixelDensity).append(' ').append('}').toString();
+      return new StringBuilder(64).append(
+         "{ format: ").append(
+            img.format).append(", width: ").append(img.width).append(
+               ", height: ").append(img.height).append(
+                  ", pixelDensity: ").append(
+                     img.pixelDensity).append(' ').append('}').toString();
    }
 
    /**

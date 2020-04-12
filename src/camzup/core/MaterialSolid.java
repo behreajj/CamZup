@@ -8,7 +8,7 @@ import camzup.pfriendly.IUp;
  * A material which holds data to display materials with solid colors only (no
  * textures, or patterns). Contains data for a fill and/or stroke.
  */
-public class MaterialSolid extends Material {
+public class MaterialSolid extends Material implements Cloneable {
 
    /**
     * The fill color.
@@ -100,6 +100,16 @@ public class MaterialSolid extends Material {
    }
 
    /**
+    * Creates a new solid material with copied data from a source.
+    *
+    * @param source the source material
+    */
+   public MaterialSolid ( final MaterialSolid source ) {
+
+      this(source.name, source.fill, source.stroke, source.strokeWeight, source.useFill, source.useStroke);
+   }
+
+   /**
     * Creates a named solid material.
     *
     * @param name the name
@@ -163,6 +173,36 @@ public class MaterialSolid extends Material {
       this.strokeWeight = strokeWeight;
       this.useFill = useFill;
       this.useStroke = useStroke;
+   }
+
+   /**
+    * Creates a new material with the components of this material.
+    *
+    * @return the cloned material
+    */
+   @Override
+   public MaterialSolid clone ( ) {
+
+      return new MaterialSolid(this.name, this.fill, this.stroke, this.strokeWeight, this.useFill, this.useStroke);
+   }
+
+   /**
+    * Sets this material from a source.
+    *
+    * @param source the source material
+    *
+    * @return this material
+    */
+   @Chainable
+   public MaterialSolid set ( final MaterialSolid source ) {
+
+      this.name = source.name;
+      this.fill.set(source.fill);
+      this.stroke.set(source.stroke);
+      this.strokeWeight = source.strokeWeight;
+      this.useFill = source.useFill;
+      this.useStroke = source.useStroke;
+      return this;
    }
 
    /**

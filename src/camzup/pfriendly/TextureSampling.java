@@ -1,10 +1,10 @@
 package camzup.pfriendly;
 
 /**
- * An enumeration to make the texture sampling options available in Processing's
- * OpenGL renderers (P2D and P3D) clearer. The integer value of each is intended
- * to match with integer constants in Processing's Texture class. The enum's
- * ordinal should not be used.
+ * Duplicates and clarifies the texture sampling options available to
+ * Processing's OpenGL renderers (P2D and P3D). The integer value of each is
+ * intended to match with integer constants in Processing's Texture class. The
+ * enum's ordinal should not be used.
  *
  * @see processing.opengl.Texture
  */

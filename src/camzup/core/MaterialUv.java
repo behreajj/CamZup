@@ -18,6 +18,12 @@ public abstract class MaterialUv extends Material
    public final Transform2 transform;
 
    {
+      /*
+       * This doesn't implement Cloneable because all things with transforms
+       * allow it to be set by reference with their constructors, making it
+       * ambiguous what the copy functions will do!
+       */
+
       this.tint = Color.white(new Color());
    }
 

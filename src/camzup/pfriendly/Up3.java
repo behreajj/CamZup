@@ -347,66 +347,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Initialize a directional light with a color and a direction.
-    *
-    * @param clr the color
-    * @param dir the direction
-    */
-   public void directionalLight (
-      final Color clr,
-      final Vec3 dir ) {
-
-      this.directionalLight(Color.toHexInt(clr), dir.x, dir.y, dir.z);
-   }
-
-   /**
-    * Initialize a directional light with a color and a direction.
-    *
-    * @param clr  the color
-    * @param xDir the x direction
-    * @param yDir the y direction
-    * @param zDir the z direction
-    */
-   public void directionalLight (
-      final int clr,
-      final float xDir,
-      final float yDir,
-      final float zDir ) {
-
-      // TEST
-
-      this.enableLighting();
-      if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
-
-      this.lightType[this.lightCount] = PConstants.DIRECTIONAL;
-
-      this.lightPosition(this.lightCount, 0.0f, 0.0f, 0.0f, true);
-      this.lightNormal(this.lightCount, xDir, yDir, zDir);
-
-      this.noLightAmbient(this.lightCount);
-      this.lightDiffuse(this.lightCount, clr);
-      this.lightSpecular(this.lightCount, this.currentLightSpecular[0],
-         this.currentLightSpecular[1], this.currentLightSpecular[2]);
-      this.noLightSpot(this.lightCount);
-      this.noLightFalloff(this.lightCount);
-
-      this.lightCount++;
-   }
-
-   /**
-    * Initialize a directional light with a color and a direction.
-    *
-    * @param clr the color
-    * @param dir the direction
-    */
-   public void directionalLight (
-      final int clr,
-      final Vec3 dir ) {
-
-      this.directionalLight(clr, dir.x, dir.y, dir.z);
-   }
-
-   /**
     * Dollies the camera, moving it on its local z axis, backward or forward.
     * This is done by multiplying the z magnitude by the camera inverse, then
     * adding the local coordinates to the camera location and look target.
@@ -667,6 +607,16 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       this.hint(PConstants.ENABLE_DEPTH_TEST);
       this.hint(PConstants.ENABLE_DEPTH_MASK);
       this.hint(PConstants.ENABLE_DEPTH_SORT);
+   }
+
+   /**
+    * Draws a 3D image entity.
+    *
+    * @param entity the text entity
+    */
+   public void image ( final ImageEntity3 entity ) {
+
+      this.shape(entity, entity.material);
    }
 
    /**
@@ -1529,6 +1479,16 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
+    * Draws a 3D text entity.
+    *
+    * @param entity the text entity
+    */
+   public void text ( final TextEntity3 entity ) {
+
+      this.shape(entity, entity.material);
+   }
+
+   /**
     * Toggles the depth sorting boolean and flushes the geometry.
     */
    public void toggleDepthSorting ( ) {
@@ -1687,6 +1647,70 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final Vec2 vt ) {
 
       this.vertexImpl(v.x, v.y, v.z, vt.x, vt.y);
+   }
+
+   /**
+    * Initialize a directional light with a color and a direction.
+    *
+    * @param clr the color
+    * @param dir the direction
+    */
+   @Experimental
+   void directionalLight (
+      final Color clr,
+      final Vec3 dir ) {
+
+      this.directionalLight(Color.toHexInt(clr), dir.x, dir.y, dir.z);
+   }
+
+   /**
+    * Initialize a directional light with a color and a direction.
+    *
+    * @param clr  the color
+    * @param xDir the x direction
+    * @param yDir the y direction
+    * @param zDir the z direction
+    */
+   @Experimental
+   void directionalLight (
+      final int clr,
+      final float xDir,
+      final float yDir,
+      final float zDir ) {
+
+      // TEST
+      // This causes a major glitch on graphics renderer....
+
+      this.enableLighting();
+      if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
+
+      this.lightType[this.lightCount] = PConstants.DIRECTIONAL;
+
+      this.lightPosition(this.lightCount, 0.0f, 0.0f, 0.0f, true);
+      this.lightNormal(this.lightCount, xDir, yDir, zDir);
+
+      this.noLightAmbient(this.lightCount);
+      this.lightDiffuse(this.lightCount, clr);
+      this.lightSpecular(this.lightCount, this.currentLightSpecular[0],
+         this.currentLightSpecular[1], this.currentLightSpecular[2]);
+      this.noLightSpot(this.lightCount);
+      this.noLightFalloff(this.lightCount);
+
+      this.lightCount++;
+   }
+
+   /**
+    * Initialize a directional light with a color and a direction.
+    *
+    * @param clr the color
+    * @param dir the direction
+    */
+   @Experimental
+   void directionalLight (
+      final int clr,
+      final Vec3 dir ) {
+
+      this.directionalLight(clr, dir.x, dir.y, dir.z);
    }
 
    /**

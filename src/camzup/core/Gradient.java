@@ -419,6 +419,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final Color.AbstrEasing easing,
       final Color target ) {
 
+      // TODO: Make static.
+
       this.query.step = step;
 
       final ColorKey prev = this.keys.floor(this.query);

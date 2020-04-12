@@ -1,6 +1,5 @@
 package camzup;
 
-import camzup.core.Color;
 import camzup.core.Mesh2;
 import camzup.core.Mesh3;
 import camzup.core.MeshEntity2;
@@ -65,11 +64,6 @@ public class CamZup {
       me2.append(m2);
 
       Mesh2.polygon(6, m2);
-
-      Color c = Color.randomRgba(rng, new Color());
-      System.out.println(c);
-      int ci = Color.toHexInt(c);
-      System.out.println(Color.fromHex(0xff_00_00_00 & ci, new Color()));
 
 //      m2.extrudeEdge(0, 0, 1f);
 //      m2.extrudeEdge(0, 1, 1f);

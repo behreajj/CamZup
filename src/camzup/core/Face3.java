@@ -442,10 +442,7 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
          "{ vertices: [ ");
       for ( int i = 0; i < len; ++i ) {
          sb.append(this.vertices[i].toString(places));
-         if ( i < last ) {
-            sb.append(',').append(' ');
-            // sb.append('\n');
-         }
+         if ( i < last ) { sb.append(',').append(' '); }
       }
       sb.append(" ] }");
       return sb.toString();

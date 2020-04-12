@@ -7,6 +7,7 @@ import camzup.core.Color;
 import camzup.core.MaterialUv;
 import camzup.core.Transform2;
 
+import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PImage;
 
@@ -99,6 +100,21 @@ public class MaterialPImage extends MaterialUv {
          this.texture = new PImage(128, 128, PConstants.ARGB, 1);
          ZImage.fill(0xffffffff, this.texture);
       }
+      return this;
+   }
+
+   /**
+    * Sets the texture's parent applet. Useful when working with PImages created
+    * with a constructor that will be saved to file.
+    *
+    * @param parent the parent applet
+    *
+    * @return this material
+    */
+   @Chainable
+   public MaterialPImage setTextureParent ( final PApplet parent ) {
+
+      this.texture.parent = parent;
       return this;
    }
 

@@ -5,7 +5,6 @@ Zup3 rndr;
 Mesh3 diagnostic = new Mesh3();
 MeshEntity3 entity = new MeshEntity3();
 MaterialPImage mat;
-Vec3 lightDir = new Vec3();
 Vec3 mouse1 = new Vec3();
 
 void settings() {
@@ -44,13 +43,11 @@ void draw() {
 
   Vec3 cmloc = rndr.getLocation(new Vec3());
   entity.lookAt(cmloc, 0.0175, Handedness.RIGHT);
-  rndr.getK(lightDir);
-  Vec3.negate(lightDir, lightDir);
 
   rndr.background(#202020);
   rndr.perspective();
   rndr.grid(16, 2.0, #7E7A6A, 1000.0);
-  rndr.directionalLight(#fff7d5, lightDir);
+  rndr.lights();
 
   rndr.shape(entity, mat);
 }
