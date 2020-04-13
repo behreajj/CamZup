@@ -946,17 +946,19 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the random complex number
     *
-    * @see Random#uniform(float, float)
     * @see Complex#rect(float, float, Complex)
     */
    public static Complex random (
-      final Random rng,
+      final java.util.Random rng,
       final float rMin,
       final float rMax,
       final Complex target ) {
 
-      return Complex.rect(rng.uniform(rMin, rMax),
-         rng.uniform(-IUtils.PI, IUtils.PI), target);
+      final float rt = rng.nextFloat();
+      final float rr = rng.nextFloat();
+      return Complex.rect(
+         ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI,
+         ( 1.0f - rr ) * rMin + rr * rMax, target);
    }
 
    /**

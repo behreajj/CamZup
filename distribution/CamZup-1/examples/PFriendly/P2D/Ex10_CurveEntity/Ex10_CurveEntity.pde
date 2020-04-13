@@ -2,8 +2,7 @@ import camzup.core.*;
 import camzup.pfriendly.*;
 
 Yup2 graphics;
-
-Random rng = new Random();
+Rng rng = new Rng();
 
 Transform2 transform = new Transform2()
   .scaleTo(200.0);

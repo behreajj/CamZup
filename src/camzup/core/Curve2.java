@@ -887,10 +887,28 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float a1 = Utils.mod1(startAngle * IUtils.ONE_TAU);
       final float b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU);
 
-      /*
-       * Find the arc length and the destination angle from the origin (a1).
-       */
+      /* Find arc length and destination angle from the origin (a1). */
       final float arcLen1 = Utils.mod1(b1 - a1);
+
+      /* Edge case: angles are equal, return a straight line. */
+      if ( arcLen1 <= 0.00139f ) {
+
+         target.resize(2);
+         target.closedLoop = false;
+         final Knot2 prev = target.getFirst();
+         final Knot2 next = target.getLast();
+         prev.set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+         next.set(radius * Utils.scNorm(a1), radius * Utils.scNorm(a1 - 0.25f),
+            0.0f, 0.0f, 0.0f, 0.0f);
+
+         Vec2.mix(prev.coord, next.coord, IUtils.ONE_THIRD, prev.foreHandle);
+         Vec2.mix(next.coord, prev.coord, IUtils.ONE_THIRD, next.rearHandle);
+         prev.mirrorHandlesForward();
+         next.mirrorHandlesBackward();
+
+         return target;
+      }
+
       final float destAngle1 = a1 + arcLen1;
 
       /*
@@ -943,7 +961,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          if ( arcMode == ArcMode.CHORD ) {
 
             /* Flatten the first to last handles. */
-            last.foreHandle.set(0.6666666f * coLast.x + 0.33333334f * coFirst.x,
+            last.foreHandle.set(
+               0.6666666f * coLast.x + 0.33333334f * coFirst.x,
                0.6666666f * coLast.y + 0.33333334f * coFirst.y);
 
             first.rearHandle.set(
@@ -1625,7 +1644,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @return the random curve
     */
    public static Curve2 random (
-      final Random rng,
+      final java.util.Random rng,
       final int count,
       final float lowerBound,
       final float upperBound,
@@ -1656,7 +1675,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @return the random curve
     */
    public static Curve2 random (
-      final Random rng,
+      final java.util.Random rng,
       final int count,
       final Vec2 lowerBound,
       final Vec2 upperBound,
@@ -1986,7 +2005,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       if ( knotLength < 3 ) { return target; }
 
       final int knotLast = knotLength - 1;
-      final Vec2 dir = new Vec2();
+      final Vec2 carry = new Vec2();
 
       if ( target.closedLoop ) {
 
@@ -1996,27 +2015,27 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          Knot2 curr = first;
          while ( itr.hasNext() ) {
             final Knot2 next = itr.next();
-            Knot2.smoothHandles(prev, curr, next, dir);
+            Knot2.smoothHandles(prev, curr, next, carry);
             prev = curr;
             curr = next;
          }
-         Knot2.smoothHandles(prev, curr, first, dir);
+         Knot2.smoothHandles(prev, curr, first, carry);
 
       } else {
 
          Knot2 prev = knots.get(0);
          Knot2 curr = knots.get(1);
-         Knot2.smoothHandlesFirst(prev, curr, dir).mirrorHandlesForward();
+         Knot2.smoothHandlesFirst(prev, curr, carry).mirrorHandlesForward();
 
          for ( int i = 2; i < knotLength; ++i ) {
             final Knot2 next = knots.get(i);
-            Knot2.smoothHandles(prev, curr, next, dir);
+            Knot2.smoothHandles(prev, curr, next, carry);
             prev = curr;
             curr = next;
          }
 
          Knot2.smoothHandlesLast(knots.get(knotLength - 2), knots.get(knotLast),
-            dir).mirrorHandlesBackward();
+            carry).mirrorHandlesBackward();
 
       }
 
@@ -2108,7 +2127,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Vec2 tfh = target.foreHandle;
 
       Vec2.bezierPoint(aco, afh, brh, bco, step, tco);
-
       Vec2.bezierTangent(aco, afh, brh, bco, step, tfh);
 
       /* Find rear handle by reversing directions. */
@@ -2185,8 +2203,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(0.6666667f * a.x + IUtils.ONE_THIRD * b.x,
-         0.6666667f * a.y + IUtils.ONE_THIRD * b.y);
+      return target.set(0.6666666f * a.x + IUtils.ONE_THIRD * b.x,
+         0.6666666f * a.y + IUtils.ONE_THIRD * b.y);
    }
 
    /**

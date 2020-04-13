@@ -17,7 +17,7 @@ float offmax = 0.25;
 float dotmax = 25.0;
 float dotmin = 10.0;
 
-Gradient grd0 = new Gradient();
+Gradient grd = new Gradient();
 Color clr = new Color();
 Ray2 local = new Ray2();
 Ray2 world = new Ray2();
@@ -32,7 +32,7 @@ void setup() {
   Curve2.infinity(curve2);
   ce2.append(curve2);
   ce2.scaleTo((rndr.width + rndr.height) * 0.495);
-  Gradient.paletteRyb(grd0);
+  Gradient.paletteRyb(grd);
 }
 
 void draw() {
@@ -52,7 +52,7 @@ void draw() {
     float dotsiz = Utils.pingPong(dotmin, dotmax, prc);
 
     CurveEntity2.eval(ce2, 0, step + off, world, local);
-    grd0.eval(prc, clr);
+    Gradient.eval(grd, prc, clr);
     rndr.strokeWeight(dotsiz);
     rndr.stroke(Color.toHexInt(clr));
     rndr.point(world.origin);

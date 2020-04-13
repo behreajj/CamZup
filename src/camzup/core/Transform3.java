@@ -103,8 +103,10 @@ public class Transform3 extends Transform {
       final float zScale ) {
 
       super();
-      this.set(xLoc, yLoc, zLoc, real, xImag, yImag, zImag, xScale, yScale,
-         zScale);
+      this.set(
+         xLoc, yLoc, zLoc,
+         real, xImag, yImag, zImag,
+         xScale, yScale, zScale);
    }
 
    /**

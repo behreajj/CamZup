@@ -1862,8 +1862,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
     * @param target     the output vector
     *
     * @return the random vector
-    *
-    * @see Random#uniform(float, float)
     */
    public static Vec4 randomCartesian (
       final java.util.Random rng,

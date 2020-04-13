@@ -1,9 +1,7 @@
 package camzup;
 
-import camzup.core.Mesh2;
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity2;
-import camzup.core.Random;
+import camzup.core.Rng;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -57,45 +55,13 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      final Random rng = new Random();
-
-      final Mesh2 m2 = new Mesh2();
-      final MeshEntity2 me2 = new MeshEntity2();
-      me2.append(m2);
-
-      Mesh2.polygon(6, m2);
-
-//      m2.extrudeEdge(0, 0, 1f);
-//      m2.extrudeEdge(0, 1, 1f);
-//      m2.extrudeEdge(0, 2, 1f);
-//      m2.extrudeEdge(0, 3, 1f);
-//      m2.extrudeEdge(0, 4, 1f);
-//      m2.extrudeEdge(0, 5, 1f);
-
-//      m2.triangulate();
-
-//      m2.bevelCorners(0, 0.25f);
-//      m2.bevelCorners(1, 0.25f);
-//      m2.bevelCorners(2, 0.25f);
-//      m2.bevelCorners(3, 0.25f);
-//      m2.bevelCorners(4, 0.25f);
-//      m2.bevelCorners(5, 0.25f);
-//      m2.bevelCorners(6, 0.25f);
-//
-//      m2.clean();
-//
-//      final String str2 = me2.toBlenderCode();
-//      System.out.println(str2);
-
-//      final Mesh3 m3 = new Mesh3();
-//      final MeshEntity3 me3 = new MeshEntity3();
-//
-//      Mesh3.icosphere(3, m3);
-//      me3.append(m3);
-//      m3.clean();
-//
-//      final String str3 = me3.toBlenderCode();
-//      System.out.println(str3);
+      final Rng rng = new Rng();
+      System.out.println(rng);
+      long seed0 = rng.getSeed();
+      System.out.println(seed0);
+      rng.setSeed(seed0);
+      long seed1 = rng.getSeed();
+      System.out.println(seed1);
 
    }
 

@@ -1575,7 +1575,6 @@ public class Color extends Vec4 {
     *
     * @return the color
     *
-    * @see Random#nextFloat()
     * @see Color#hsbaToRgba(Vec4, Color)
     */
    public static Color randomHsb (
@@ -1599,7 +1598,6 @@ public class Color extends Vec4 {
     *
     * @return the color
     *
-    * @see Random#uniform(float, float)
     * @see Color#hsbaToRgba(Vec4, Color)
     */
    public static Color randomHsb (
@@ -1629,7 +1627,6 @@ public class Color extends Vec4 {
     *
     * @return the color
     *
-    * @see Random#nextFloat()
     * @see Color#hsbaToRgba(Vec4, Color)
     */
    public static Color randomHsba (
@@ -1654,7 +1651,6 @@ public class Color extends Vec4 {
     *
     * @return the color
     *
-    * @see Random#uniform(float, float)
     * @see Color#hsbaToRgba(Vec4, Color)
     */
    public static Color randomHsba (
@@ -1697,8 +1693,6 @@ public class Color extends Vec4 {
     * @param target     the output color
     *
     * @return the color
-    *
-    * @see Random#uniform(float, float)
     */
    public static Color randomRgb (
       final java.util.Random rng,
@@ -1721,8 +1715,6 @@ public class Color extends Vec4 {
     * @param target the output color
     *
     * @return the color
-    *
-    * @see Random#nextFloat()
     */
    public static Color randomRgba (
       final java.util.Random rng,
@@ -1741,8 +1733,6 @@ public class Color extends Vec4 {
     * @param target     the output color
     *
     * @return the color
-    *
-    * @see Random#uniform(float, float)
     */
    public static Color randomRgba (
       final java.util.Random rng,

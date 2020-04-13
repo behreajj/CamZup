@@ -1010,7 +1010,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Subtracts the floor of the input value from the value. Use this instead of
+    * Subtracts the floor of the input value from the value. Returns a positive
+    * value in the range [0.0, 1.0]. Use this instead of
     * {@link Utils#mod(int, int)} when b is 1.0 .
     *
     * @param value the input value
@@ -1024,7 +1025,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Subtracts the floor of the input value from the value. Use this instead of
+    * Subtracts the floor of the input value from the value. Returns a positive
+    * value in the range [0.0, 1.0]. Use this instead of
     * {@link Utils#mod(int, int)} when b is 1.0 .
     *
     * @param value the input value
@@ -1277,7 +1279,7 @@ public abstract class Utils implements IUtils {
     * value to return the sine instead of the cosine.<br>
     * <br>
     * Instead of a look-up table, this is based on the algorithm described at
-    * <a href= "https://developer.download.nvidia.com/cg/sin.html">Nvidia Cg 3.1
+    * <a href="https://developer.download.nvidia.com/cg/sin.html">Nvidia Cg 3.1
     * Toolkit Documentation</a> .
     *
     * @param normRad the normalized radians
@@ -1892,10 +1894,7 @@ public abstract class Utils implements IUtils {
        * @return the string
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 
@@ -2242,10 +2241,7 @@ public abstract class Utils implements IUtils {
        * interface to be identified without being directly accessible.
        */
       @Override
-      public String toString ( ) {
-
-         return this.getClass().getSimpleName();
-      }
+      public String toString ( ) { return this.getClass().getSimpleName(); }
 
       /**
        * Applies the easing function without checking whether the step is out of

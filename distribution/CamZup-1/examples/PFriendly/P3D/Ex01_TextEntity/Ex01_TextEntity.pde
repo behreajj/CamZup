@@ -13,7 +13,7 @@ void settings() {
 void setup() {
   rndr = (Zup3)getGraphics();
   PFont font = loadFont("AgencyFB-Bold-72.vlw");
-  te3 = new TextEntity3(font, msg, clr, 10, 5, CENTER);
+  te3 = new TextEntity3(font, msg, clr, 10, 5, LEFT, CENTER, 0.875);
 }
 
 void draw() {

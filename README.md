@@ -13,6 +13,8 @@ The `FX2D` renderer, based on Java FX, is not supported.
 
 This library's `core` package includes basic utilities that were used to modify the Processing renderer. In this package, you'll find classes such as `Vec2`, `Vec3` and `Quaternion`.
 
+This division is a protective measure, so that the library will retain some usefulness in `core` even as bugs in `pfriendly`, or changes to the underlying `Processing` library, cause trouble.
+
 If you can flip the y-axis by supplying `-1` to either [scale](https://processing.org/reference/scale_.html) or the final parameters of [camera](https://processing.org/reference/camera_.html) without adverse impact on your sketch, then you likely don't need this library. While Cam Z-Up may help with more complex sketches, nevertheless, it is a general purpose library: its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as other, more specialized libraries. For an easy mouse-controlled orbital camera with GUI support, I would recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
 
 Cam Z-Up is tested with Processing version [4.0 alpha 1](https://github.com/processing/processing4/releases/tag/processing-1270-4.0a1).
@@ -79,7 +81,7 @@ primary.image(secondary, new Vec2(), new Vec2(50.0, 50.0));
 
 `background` and `stroke` use default color arguments, while `ellipse` and `image` support `Vec2` arguments.
 
-## Differences, Issues
+## Differences, Problems
 
 Here is a brief list of issues with this library and differences which may be unexpected to new users. Some are unresolved bugs, some arise from the design philosophy of the library.
 

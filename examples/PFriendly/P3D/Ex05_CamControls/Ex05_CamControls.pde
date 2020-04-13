@@ -56,7 +56,7 @@ void setup() {
     me3.append(mesh);
 
     solids[i] = new MaterialSolid();
-    grd.eval(percent, solids[i].fill);
+    Gradient.eval(grd, percent, solids[i].fill);
   }
   
   me3.scaleTo(rndr.width * 0.5);

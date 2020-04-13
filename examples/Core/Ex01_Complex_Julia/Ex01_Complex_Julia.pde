@@ -10,7 +10,7 @@ Complex st = new Complex();
 Complex zn = new Complex();
 Complex seed = Complex.rect(seedr, seedphi, new Complex());
 
-Gradient gr = new Gradient(#322020, #dbcab8, #fff7d5);
+Gradient grd = new Gradient(#322020, #dbcab8, #fff7d5);
 Color clr = new Color();
 
 void settings() {
@@ -39,7 +39,7 @@ void draw() {
       st.real += st.real;
 
       float fac = julia(seed, st, exp, itr, zn);
-      gr.eval(fac, clr);
+      Gradient.eval(grd, fac, clr);
       pixels[idx] = Color.toHexInt(clr);
     }
   }

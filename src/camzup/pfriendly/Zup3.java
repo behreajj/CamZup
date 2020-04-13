@@ -457,7 +457,7 @@ public class Zup3 extends Up3 {
          /* Swap z and y components. */
          final float mInv = Utils.invSqrtUnchecked(mSq);
          this.lightNormal[num3] = mInv * nx;
-         this.lightNormal[num3 + 1] = mInv * -ny;
+         this.lightNormal[num3 + 1] = mInv * ny;
          this.lightNormal[num3 + 2] = mInv * -nz;
       } else {
          this.lightNormal[num3] = 0.0f;

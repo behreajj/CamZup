@@ -3,7 +3,7 @@ import camzup.pfriendly.*;
 
 Zup3 graphics3;
 
-Random rng = new Random();
+Rng rng = new Rng();
 
 Transform3 transform = new Transform3()
   .moveTo(new Vec3())

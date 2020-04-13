@@ -2523,7 +2523,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
 
       final float rt = rng.nextFloat();
       final float rr = rng.nextFloat();
-      return Vec2.fromPolar( ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI,
+      return Vec2.fromPolar(
+         ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI,
          ( 1.0f - rr ) * rhoMin + rr * rhoMax, target);
    }
 

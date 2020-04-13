@@ -2,6 +2,7 @@ package camzup.pfriendly;
 
 import camzup.core.Color;
 
+import processing.core.PConstants;
 import processing.core.PFont;
 
 /**
@@ -74,18 +75,20 @@ public class TextEntity2 extends ImageEntity2 {
       final int leading,
       final int kerning ) {
 
-      this(font, text, tint, leading, kerning, ZImage.DEFAULT_ALIGN);
+      this(font, text, tint, leading, kerning, ZImage.DEFAULT_ALIGN, PConstants.CENTER, 1.0f);
    }
 
    /**
     * Creates a mesh entity from a billboard with a texture that displays text.
     *
-    * @param font      the Processing font
-    * @param text      the string of text
-    * @param tint      the color
-    * @param leading   spacing between lines
-    * @param kerning   spacing between characters
-    * @param textAlign the horizontal alignment
+    * @param font       the Processing font
+    * @param text       the string of text
+    * @param tint       the color
+    * @param scale      the entity scale
+    * @param leading    spacing between lines
+    * @param kerning    spacing between characters
+    * @param alignHoriz the horizontal alignment
+    * @param alignVert  the vertical alignment
     *
     * @see ZImage#fromText(PFont, String, int, int, int, int)
     */
@@ -95,13 +98,12 @@ public class TextEntity2 extends ImageEntity2 {
       final Color tint,
       final int leading,
       final int kerning,
-      final int textAlign ) {
+      final int alignHoriz,
+      final int alignVert,
+      final float scale ) {
 
       super(text, ZImage.fromText(font, text, 0xffffffff, leading,
-         kerning, textAlign), tint);
-
-      // TODO: If a text is right aligned or left aligned, translate mesh
-      // relative to entity?
+         kerning, alignHoriz), tint, scale, alignHoriz, alignVert);
    }
 
 }

@@ -8,6 +8,7 @@ import camzup.core.Transform2;
 import camzup.core.Utils;
 import camzup.core.Vec3;
 
+import processing.core.PConstants;
 import processing.core.PImage;
 
 /**
@@ -29,7 +30,7 @@ public class ImageEntity3 extends MeshEntity3 {
     */
    public ImageEntity3 ( final PImage texture ) {
 
-      this("ImageEntity3", texture, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+      this("ImageEntity3", texture, new Color(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, PConstants.CENTER, PConstants.CENTER);
    }
 
    /**
@@ -40,7 +41,7 @@ public class ImageEntity3 extends MeshEntity3 {
     */
    public ImageEntity3 ( final PImage texture, final Color tint ) {
 
-      this("ImageEntity3", texture, tint);
+      this("ImageEntity3", texture, tint, 1.0f, PConstants.CENTER, PConstants.CENTER);
    }
 
    /**
@@ -53,21 +54,27 @@ public class ImageEntity3 extends MeshEntity3 {
       final String name,
       final PImage texture ) {
 
-      this(name, texture, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+      this(name, texture, new Color(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, PConstants.CENTER, PConstants.CENTER);
    }
 
    /**
     * Creates a named image entity from a texture. The mesh's scale matches the
     * aspect ratio; the entity's scale matches the image's longer edge.
     *
-    * @param name    the entity name
-    * @param texture the image texture
-    * @param tint    the tint
+    * @param name       the entity name
+    * @param texture    the image texture
+    * @param tint       the tint
+    * @param scale      the entity scale
+    * @param alignHoriz the horizontal alignment
+    * @param alignVert  the vertical alignment
     */
    public ImageEntity3 (
       final String name,
       final PImage texture,
-      final Color tint ) {
+      final Color tint,
+      final float scale,
+      final int alignHoriz,
+      final int alignVert ) {
 
       super(name);
 
@@ -76,13 +83,41 @@ public class ImageEntity3 extends MeshEntity3 {
       final float shortEdge = Utils.min(w, h);
       final float longEdge = Utils.max(w, h);
       final float aspectRatio = Utils.div(shortEdge, longEdge);
-      final Vec3 scalar = new Vec3(shortEdge == w
+      final Vec3 meshDim = new Vec3(shortEdge == w
          ? aspectRatio
          : 1.0f, shortEdge == h ? aspectRatio : 1.0f, 1.0f);
-      final Mesh3 mesh = Mesh3.square(new Mesh3());
-      mesh.scale(scalar);
-      this.transform.scaleTo(longEdge);
+      final Vec3 meshOff = new Vec3();
 
+      switch ( alignHoriz ) {
+         case PConstants.LEFT:
+            meshOff.x = 0.5f * meshDim.x;
+            break;
+
+         case PConstants.RIGHT:
+            meshOff.x = -0.5f * meshDim.x;
+            break;
+
+         case PConstants.CENTER:
+         default:
+      }
+
+      switch ( alignVert ) {
+         case PConstants.TOP:
+            meshOff.y = -0.5f * meshDim.y;
+            break;
+
+         case PConstants.BOTTOM:
+            meshOff.y = 0.5f * meshDim.y;
+            break;
+
+         case PConstants.CENTER:
+         default:
+      }
+
+      final Mesh3 mesh = Mesh3.square(new Mesh3());
+      mesh.scale(meshDim);
+      mesh.translate(meshOff);
+      this.transform.scaleTo(scale * longEdge);
       this.meshes.add(mesh);
       this.material = new MaterialPImage(name, new Transform2(), texture, tint);
    }

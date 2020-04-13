@@ -222,7 +222,7 @@ public class ZImage extends PImage {
             final float xn = x * wInv;
             final float s = xn + xn - xOrigin - 1.0f;
 
-            grd.eval(Sdf.conic(s, t, radians), ZImage.clr);
+            Gradient.eval(grd, Sdf.conic(s, t, radians), ZImage.clr);
             pixels[i] = Color.toHexInt(ZImage.clr);
          }
       }
@@ -269,7 +269,7 @@ public class ZImage extends PImage {
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-         grd.eval(clrEval.apply(px[i]), ZImage.clr);
+         Gradient.eval(grd, clrEval.apply(px[i]), ZImage.clr);
          px[i] = Color.toHexInt(ZImage.clr);
       }
       target.updatePixels();
@@ -293,7 +293,7 @@ public class ZImage extends PImage {
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-         grd.eval(Color.luminance(px[i]), ZImage.clr);
+         Gradient.eval(grd, Color.luminance(px[i]), ZImage.clr);
          px[i] = Color.toHexInt(ZImage.clr);
       }
       target.updatePixels();
@@ -336,7 +336,7 @@ public class ZImage extends PImage {
       final float wInv = 1.0f / ( w - 1.0f );
       for ( int i = 0, y = 0; y < h; ++y ) {
          for ( int x = 0; x < w; ++x, ++i ) {
-            grd.eval(x * wInv, ZImage.clr);
+            Gradient.eval(grd, x * wInv, ZImage.clr);
             pixels[i] = Color.toHexInt(ZImage.clr);
          }
       }
@@ -581,6 +581,12 @@ public class ZImage extends PImage {
       final int leading,
       final int kerning,
       final int textAlign ) {
+
+      /*
+       * This does not use an output target because of difficulties finding a
+       * way to resize an existing image efficiently. PImage's resize function
+       * is undefined and the issue is complicated by PImageAWT .
+       */
 
       /*
        * Validate inputs: colors with no alpha not allowed; negative leading and
@@ -840,7 +846,8 @@ public class ZImage extends PImage {
             final float xn = x * wInv;
             final float ax = xOrigin - ( xn + xn - 1.0f );
 
-            grd.eval(Utils.clamp01( ( ax * bx + ay * by ) * bbInv), ZImage.clr);
+            Gradient.eval(grd, Utils.clamp01( ( ax * bx + ay * by ) * bbInv),
+               ZImage.clr);
             pixels[i] = Color.toHexInt(ZImage.clr);
          }
       }
@@ -911,7 +918,7 @@ public class ZImage extends PImage {
             final float xn = x * wInv;
             final float ax = xOrigin - ( xn + xn - 1.0f );
 
-            grd.eval(1.0f - ( ax * ax + aysq ) * invrsq, ZImage.clr);
+            Gradient.eval(grd, 1.0f - ( ax * ax + aysq ) * invrsq, ZImage.clr);
             px[i] = Color.toHexInt(ZImage.clr);
          }
       }
@@ -980,12 +987,10 @@ public class ZImage extends PImage {
     */
    public static String toString ( final PImage img ) {
 
-      return new StringBuilder(64).append(
-         "{ format: ").append(
-            img.format).append(", width: ").append(img.width).append(
-               ", height: ").append(img.height).append(
-                  ", pixelDensity: ").append(
-                     img.pixelDensity).append(' ').append('}').toString();
+      return new StringBuilder(64).append("{ format: ").append(
+         img.format).append(", width: ").append(img.width).append(
+            ", height: ").append(img.height).append(", pixelDensity: ").append(
+               img.pixelDensity).append(' ').append('}').toString();
    }
 
    /**
