@@ -177,7 +177,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final HashMap < Integer, Vec2 > usedTexCoords = new HashMap <>();
       final HashMap < Integer, Vec3 > usedNormals = new HashMap <>();
 
-      /* Visit all data arrays with the faces array. */
+      /*
+       * Visit all data arrays with the faces array. Any data not used by any
+       * face will thus be left out.
+       */
       final int facesLen = this.faces.length;
       for ( int i = 0; i < facesLen; ++i ) {
          final int[][] verts = this.faces[i];
@@ -195,7 +198,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          }
       }
 
-      /* Use a tree set to filter out redundant vectors. */
+      /* Use a tree set to filter out similar vectors. */
       final SortedSet < Vec3 > coordsTree = new TreeSet <>(Mesh.SORT_3);
       final SortedSet < Vec2 > texCoordsTree = new TreeSet <>(Mesh.SORT_2);
       final SortedSet < Vec3 > normalsTree = new TreeSet <>(Mesh.SORT_3);
@@ -879,8 +882,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    @Experimental
    public Mesh3 insetFaces ( final int itr, final float fac ) {
 
-      final int vitr = itr < 1 ? 1 : itr;
-      for ( int i = 0; i < vitr; ++i ) {
+      for ( int i = 0; i < itr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
@@ -1384,18 +1386,28 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          Vec2.add(vtCentroid, vtCurr, vtCentroid);
          Vec3.add(vnCentroid, vnCurr, vnCentroid);
 
+         /* @formatter:off */
          final int vNextIdx = vertNext[0];
          final Vec3 vNext = this.coords[vNextIdx];
-         vsNew[j] = new Vec3( ( vCurr.x + vNext.x ) * 0.5f, ( vCurr.y + vNext.y ) * 0.5f, ( vCurr.z + vNext.z ) * 0.5f);
+         vsNew[j] = new Vec3( 
+            ( vCurr.x + vNext.x ) * 0.5f, 
+            ( vCurr.y + vNext.y ) * 0.5f, 
+            ( vCurr.z + vNext.z ) * 0.5f);
 
          final int vtNextIdx = vertNext[1];
          final Vec2 vtNext = this.texCoords[vtNextIdx];
-         vtsNew[j] = new Vec2( ( vtCurr.x + vtNext.x ) * 0.5f, ( vtCurr.y + vtNext.y ) * 0.5f);
+         vtsNew[j] = new Vec2( 
+            ( vtCurr.x + vtNext.x ) * 0.5f, 
+            ( vtCurr.y + vtNext.y ) * 0.5f);
 
          final int vnNextIdx = vertNext[2];
          final Vec3 vnNext = this.normals[vnNextIdx];
-         final Vec3 vn = vnsNew[j] = new Vec3( ( vnCurr.x + vnNext.x ) * 0.5f, ( vnCurr.y + vnNext.y ) * 0.5f, ( vnCurr.z + vnNext.z ) * 0.5f);
+         final Vec3 vn = vnsNew[j] = new Vec3( 
+            ( vnCurr.x + vnNext.x ) * 0.5f,
+            ( vnCurr.y + vnNext.y ) * 0.5f, 
+            ( vnCurr.z + vnNext.z ) * 0.5f);
          Vec3.normalize(vn, vn);
+         /* @formatter:on */
 
          fsNew[j] = new int[][] {
             { vCentroidIdx, vtCentroidIdx, vnCentroidIdx },
@@ -1596,8 +1608,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    @Chainable
    public Mesh3 subdivFacesCentroid ( final int itr ) {
 
-      final int vitr = itr < 1 ? 1 : itr;
-      for ( int i = 0; i < vitr; ++i ) {
+      for ( int i = 0; i < itr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
@@ -1619,8 +1630,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    @Chainable
    public Mesh3 subdivFacesFan ( final int itr ) {
 
-      final int vitr = itr < 1 ? 1 : itr;
-      for ( int i = 0; i < vitr; ++i ) {
+      for ( int i = 0; i < itr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
@@ -1642,8 +1652,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    @Chainable
    public Mesh3 subdivFacesInscribe ( final int itr ) {
 
-      final int vitr = itr < 1 ? 1 : itr;
-      for ( int i = 0; i < vitr; ++i ) {
+      for ( int i = 0; i < itr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;

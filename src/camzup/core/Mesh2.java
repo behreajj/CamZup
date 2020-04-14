@@ -88,7 +88,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * Bevels a corner of a face in the mesh. The factor interpolates from the
-    * corner to the midpoint of an edge.
+    * corner to the midpoint of an edge. For line segments of unequal length
+    * joined at a corner, the cut will be uneven. Uses Chaikin's corner cutting
+    * method.<br>
+    * <br>
+    * This leaves the old corner in the mesh's data in case the corner is used
+    * by other faces.
     *
     * @param faceIdx the face index
     * @param vertIdx the vertex index
@@ -129,7 +134,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       final Vec2 v0New = vsNew[0] = new Vec2();
       final Vec2 v1New = vsNew[1] = new Vec2();
-
       final Vec2 vt0New = vtsNew[0] = new Vec2();
       final Vec2 vt1New = vtsNew[1] = new Vec2();
 
@@ -158,23 +162,44 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
+    * Bevels all corners of a given face in the mesh.
+    * 
+    * @param faceIdx the face index
+    * @param fac     the factor
+    * @param itr     the number of iterations
+    *
+    * @return this mesh
+    */
+   public Mesh2 bevelCorners (
+      final int faceIdx,
+      final float fac,
+      final int itr ) {
+
+      for ( int i = 0; i < itr; ++i ) {
+         bevelCorners(faceIdx, fac);
+      }
+      return this;
+   }
+
+   /**
     * Bevels all corners of a given face in the mesh. The factor interpolates
-    * from the corner to the midpoint of an edge.
+    * from the corner to the midpoint of an edge. For line segments of unequal
+    * length joined at a corner, the cut will be uneven. Uses Chaikin's corner
+    * cutting method.<br>
+    * <br>
+    * This leaves the old corner in the mesh's data in case the corner is used
+    * by other faces.
     *
     * @param faceIdx the face index
     * @param fac     the factor
     *
-    * @return the new faces
+    * @return this mesh
     */
    @Experimental
    @Chainable
    public Mesh2 bevelCorners (
       final int faceIdx,
       final float fac ) {
-
-      // TODO: How undesirable is the behavior when edges are of unequal length,
-      // and therefore the interpolation leads to non-square corners? Maybe find
-      // aspect ratio by dividing mag(edge0) / mag(edge1) .
 
       final int facesLen = this.faces.length;
       final int i = Utils.mod(faceIdx, facesLen);
@@ -211,7 +236,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          final Vec2 v0New = vsNew[k] = new Vec2();
          final Vec2 v1New = vsNew[m] = new Vec2();
-
          final Vec2 vt0New = vtsNew[k] = new Vec2();
          final Vec2 vt1New = vtsNew[m] = new Vec2();
 
@@ -222,7 +246,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          faceNew[k][0] = vsOldLen + k;
          faceNew[k][1] = vtsOldLen + k;
-
          faceNew[m][0] = vsOldLen + m;
          faceNew[m][1] = vtsOldLen + m;
       }
@@ -290,9 +313,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    @Chainable
    public Mesh2 clean ( ) {
 
+      /* Transfer arrays to hash maps where the face index is the key. */
       final HashMap < Integer, Vec2 > usedCoords = new HashMap <>();
       final HashMap < Integer, Vec2 > usedTexCoords = new HashMap <>();
 
+      /*
+       * Visit all data arrays with the faces array. Any data not used by any
+       * face will thus be left out.
+       */
       final int facesLen = this.faces.length;
       for ( int i = 0; i < facesLen; ++i ) {
          final int[][] verts = this.faces[i];
@@ -302,17 +330,21 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             final int vIdx = vert[0];
             final int vtIdx = vert[1];
 
+            /* The hash map will ignore repeated visitations. */
             usedCoords.put(vIdx, this.coords[vIdx]);
             usedTexCoords.put(vtIdx, this.texCoords[vtIdx]);
          }
       }
 
+      /* Use a tree set to filter out similar vectors. */
       final SortedSet < Vec2 > coordsTree = new TreeSet <>(Mesh.SORT_2);
       final SortedSet < Vec2 > texCoordsTree = new TreeSet <>(Mesh.SORT_2);
 
+      /* Dictionary's keys are no longer needed; just values. */
       coordsTree.addAll(usedCoords.values());
       texCoordsTree.addAll(usedTexCoords.values());
 
+      /* Convert from sorted set to arrays. */
       final Vec2[] newCoords = coordsTree.toArray(new Vec2[coordsTree.size()]);
       final Vec2[] newTexCoords = texCoordsTree.toArray(
          new Vec2[texCoordsTree.size()]);
@@ -322,6 +354,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final int vertsLen = verts.length;
          for ( int j = 0; j < vertsLen; ++j ) {
             final int[] vert = verts[j];
+
+            /*
+             * Find index of vector in new array by using indexed value from old
+             * array as a reference.
+             */
             vert[0] = Arrays.binarySearch(newCoords, this.coords[vert[0]],
                Mesh.SORT_2);
             vert[1] = Arrays.binarySearch(newTexCoords, this.texCoords[vert[1]],
@@ -768,8 +805,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int itr,
       final float fac ) {
 
-      final int vitr = itr < 1 ? 1 : itr;
-      for ( int i = 0; i < vitr; ++i ) {
+      for ( int i = 0; i < itr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
@@ -1215,13 +1251,19 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final int k = ( j + 1 ) % faceLen;
          final int[] vertNext = face[k];
 
+         /* @formatter:off */
          final int vNextIdx = vertNext[0];
          final Vec2 vNext = this.coords[vNextIdx];
-         vsNew[j] = new Vec2( ( vCurr.x + vNext.x ) * 0.5f, ( vCurr.y + vNext.y ) * 0.5f);
+         vsNew[j] = new Vec2( 
+            ( vCurr.x + vNext.x ) * 0.5f, 
+            ( vCurr.y + vNext.y ) * 0.5f);
 
          final int vtNextIdx = vertNext[1];
          final Vec2 vtNext = this.texCoords[vtNextIdx];
-         vtsNew[j] = new Vec2( ( vtCurr.x + vtNext.x ) * 0.5f, ( vtCurr.y + vtNext.y ) * 0.5f);
+         vtsNew[j] = new Vec2( 
+            ( vtCurr.x + vtNext.x ) * 0.5f, 
+            ( vtCurr.y + vtNext.y ) * 0.5f);
+         /* @formatter:on */
 
          final int vSubdivIdx = vsOldLen + j;
          final int vtSubdivIdx = vtsOldLen + j;
@@ -1273,8 +1315,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    @Chainable
    public Mesh2 subdivFacesCenter ( final int itr ) {
 
-      final int vitr = itr < 1 ? 1 : itr;
-      for ( int i = 0; i < vitr; ++i ) {
+      for ( int i = 0; i < itr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
@@ -1569,8 +1610,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final int[][] f = fs[i];
          final int fLen = f.length;
 
-         svgp.append("<path id=\"").append(iddot + Utils.toPadded(i, 4)).append(
-            "\" d=\"M ").append(vs[f[0][0]].toSvgString()).append(' ');
+         svgp.append("<path id=\"");
+         svgp.append(iddot + Utils.toPadded(i, 4));
+         svgp.append("\" d=\"M ");
+         svgp.append(vs[f[0][0]].toSvgString());
+         svgp.append(' ');
 
          for ( int j = 1; j < fLen; ++j ) {
             svgp.append('L').append(' ').append(
@@ -1627,9 +1671,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    String toBlenderCode ( final boolean includeUvs ) {
 
       final StringBuilder pyCd = new StringBuilder(1024);
-      pyCd.append("{\"name\": \"").append(this.name).append(
-         "\", \"material_index\": ").append(this.materialIndex).append(
-            ", \"vertices\": [");
+      pyCd.append("{\"name\": \"");
+      pyCd.append(this.name);
+      pyCd.append("\", \"material_index\": ");
+      pyCd.append(this.materialIndex);
+      pyCd.append(", \"vertices\": [");
 
       final int vlen = this.coords.length;
       final int vlast = vlen - 1;
@@ -1895,6 +1941,25 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       switch ( poly ) {
 
          case NGON:
+
+            len = sctCount2;
+            target.faces = new int[1][len][2];
+
+            for ( int i = 0, j = 0; i < sctCount; ++i, j += 2 ) {
+               final int[] forward = target.faces[0][i];
+               forward[0] = j;
+               forward[1] = j;
+            }
+
+            for ( int i = sctCount, j = len - 1; i < len; ++i, j -= 2 ) {
+               final int[] backward = target.faces[0][i];
+               backward[0] = j;
+               backward[1] = j;
+            }
+
+            break;
+
+         case QUAD:
 
             len = sctCount - 1;
             target.faces = new int[len][4][2];
@@ -2274,6 +2339,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          case NGON:
 
+         case QUAD:
+
             target.faces = new int[flen][4][2];
 
             for ( int k = 0, i = 0; i < rval; ++i ) {
@@ -2400,8 +2467,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       target.name = "Polygon";
 
       final int seg = sectors < 3 ? 3 : sectors;
-      final boolean isNgon = poly == PolyType.NGON;
-      final int newLen = isNgon ? seg : seg + 1;
+      final int newLen = poly == PolyType.NGON ? seg
+         : poly == PolyType.QUAD ? seg + seg + 1 : seg + 1;
       final double toTheta = IUtils.TAU_D / seg;
 
       final Vec2[] vs = target.coords = Vec2.resize(target.coords, newLen);
@@ -2409,6 +2476,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          newLen);
 
       switch ( poly ) {
+
          case NGON:
 
             target.faces = new int[1][seg][2];
@@ -2431,11 +2499,76 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
             break;
 
+         case QUAD:
+
+            // TODO: Can this be optimized?
+            final int[][][] quadfs = target.faces = new int[seg][4][2];
+            vs[0].set(0.0f, 0.0f);
+            vts[0].set(0.5f, 0.5f);
+
+            /* Find corners. */
+            for ( int i = 0, j = 1; i < seg; ++i, j += 2 ) {
+               final double theta = i * toTheta;
+
+               final Vec2 vCorner = vs[j];
+               vCorner.set(( float ) ( 0.5d * Math.cos(
+                  theta) ),
+                  ( float ) ( 0.5d * Math.sin(theta) ));
+
+               final Vec2 vtCorner = vts[j];
+               vtCorner.x = vCorner.x + 0.5f;
+               vtCorner.y = 0.5f - vCorner.y;
+            }
+
+            /* Find midpoints. */
+            final int last = newLen - 1;
+            for ( int i = 0, j = 1, k = 2; i < seg; ++i, j += 2, k += 2 ) {
+               final int m = ( j + 2 ) % last;
+
+               final Vec2 vPrev = vs[j];
+               final Vec2 vNext = vs[m];
+
+               final Vec2 vMid = vs[k];
+               vMid.set( ( vPrev.x + vNext.x ) * 0.5f,
+                  ( vPrev.y + vNext.y ) * 0.5f);
+
+               final Vec2 vtPrev = vts[j];
+               final Vec2 vtNext = vts[m];
+
+               final Vec2 vtMid = vts[j];
+               vtMid.set( ( vtPrev.x + vtNext.x ) * 0.5f,
+                  ( vtPrev.y + vtNext.y ) * 0.5f);
+            }
+
+            /* Find faces. */
+            for ( int i = 0, j = 0; i < seg; ++i, j += 2 ) {
+               final int k = 1 + Utils.mod(j - 1, last);
+               final int m = 1 + j % last;
+               final int n = 1 + ( j + 1 ) % last;
+
+               final int[][] f = quadfs[i];
+
+               /* Should default to zero. */
+               // f[0][0] = 0;
+               // f[0][1] = 0;
+
+               f[1][0] = k;
+               f[1][1] = k;
+
+               f[2][0] = m;
+               f[2][1] = m;
+
+               f[3][0] = n;
+               f[3][1] = n;
+            }
+
+            break;
+
          case TRI:
 
          default:
 
-            final int[][][] fs = target.faces = new int[seg][3][2];
+            final int[][][] trifs = target.faces = new int[seg][3][2];
             vs[0].set(0.0f, 0.0f);
             vts[0].set(0.5f, 0.5f);
 
@@ -2451,9 +2584,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                vt.y = 0.5f - v.y;
 
                final int k = 1 + j % seg;
-               final int[][] f = fs[i];
-               f[0][0] = 0;
-               f[0][1] = 0;
+               final int[][] f = trifs[i];
+
+               /* Should default to zero. */
+               // f[0][0] = 0;
+               // f[0][1] = 0;
 
                f[1][0] = j;
                f[1][1] = j;
@@ -2488,7 +2623,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Creates a regular convex polygon with an opening in its center. The oculus
     * describes the relative size of this opening. When the polygon type is
-    * NGON, the ring will be composed of quadrilaterals; otherwise, triangles.
+    * {@link PolyType#QUAD}, the ring will be composed of quadrilaterals;
+    * otherwise, triangles.
     *
     * @param oculus  the size of the opening
     * @param sectors the number of sides
@@ -2505,7 +2641,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       target.name = "Ring";
 
-      final boolean isNgon = poly == PolyType.NGON;
+      final boolean isQuad = poly == PolyType.QUAD || poly == PolyType.NGON;
       final int seg = sectors < 3 ? 3 : sectors;
       final int seg2 = seg + seg;
       final float annul = Utils.clamp(oculus, IUtils.DEFAULT_EPSILON,
@@ -2516,7 +2652,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       final Vec2[] vs = target.coords = Vec2.resize(target.coords, seg2);
       final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords, seg2);
-      target.faces = isNgon ? new int[seg][4][2] : new int[seg2][3][2];
+      target.faces = isQuad ? new int[seg][4][2] : new int[seg2][3][2];
 
       for ( int k = 0, i = 0, j = 1; k < seg; ++k, i += 2, j += 2 ) {
          final double theta = k * toTheta;
@@ -2540,7 +2676,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final int m = ( i + 2 ) % seg2;
          final int n = ( j + 2 ) % seg2;
 
-         if ( isNgon ) {
+         if ( isQuad ) {
 
             final int[][] f = target.faces[k];
             f[0][0] = i;
@@ -2663,6 +2799,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       switch ( poly ) {
 
          case NGON:
+
+         case QUAD:
 
             target.faces = new int[][][] {
                { { 0, 0 }, { 1, 1 }, { 2, 2 }, { 3, 3 } } };
@@ -2835,6 +2973,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
        * Create an n-sided polygon.
        */
       NGON ( ),
+
+      /**
+       * Create a quadrilateral-based polygon.
+       */
+      QUAD ( ),
 
       /**
        * Create a triangle-based polygon.

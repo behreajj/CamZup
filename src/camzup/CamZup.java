@@ -1,6 +1,8 @@
 package camzup;
 
+import camzup.core.Mesh2;
 import camzup.core.Mesh3;
+import camzup.core.MeshEntity2;
 import camzup.core.Rng;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -56,13 +58,19 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       final Rng rng = new Rng();
-      System.out.println(rng);
-      long seed0 = rng.getSeed();
-      System.out.println(seed0);
-      rng.setSeed(seed0);
-      long seed1 = rng.getSeed();
-      System.out.println(seed1);
 
+      final Mesh2 m2 = new Mesh2();
+//      Mesh2.arc(0.0f, rng.nextFloat() * IUtils.TAU, 0.5f, 32, PolyType.NGON,
+//         m2);
+      Mesh2.polygon(4, Mesh2.PolyType.QUAD, m2);
+      for ( int i = 0; i < 4; ++i ) {
+         m2.bevelCorners(i, 0.25f, 3);
+      }
+
+      final MeshEntity2 me2 = new MeshEntity2();
+      me2.append(m2);
+      final String str = me2.toBlenderCode();
+      System.out.println(str);
    }
 
    /**

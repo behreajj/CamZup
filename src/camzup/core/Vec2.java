@@ -858,6 +858,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2[] a,
       final Vec2[] b ) {
 
+      // TODO: Should this check for null arrays?
+
       final int alen = a.length;
       final int blen = b.length;
       final Vec2[] result = new Vec2[alen + blen];

@@ -1,5 +1,7 @@
 package camzup.core;
 
+import java.util.Arrays;
+
 /**
  * A convenience for working in the Processing IDE: extends
  * {@link java.util.Random} so an additional import does not need to be added.
@@ -110,7 +112,11 @@ public class Rng extends java.util.Random implements IUtils {
 
    /**
     * Finds an array of random numbers that sum to a value. Due to floating
-    * point precision, the sum of the numbers may be approximate.
+    * point precision, the sum of the numbers may be approximate.<br>
+    * <br>
+    * The function first calculates a series of segment end points on a number
+    * line from 0.0 to 1.0 . The result array contains the difference between an
+    * end point and its preceding neighbor multiplied by the sum.
     *
     * @param count the number of elements
     * @param sum   the sum
@@ -119,17 +125,27 @@ public class Rng extends java.util.Random implements IUtils {
     */
    public float[] segment ( final int count, final float sum ) {
 
+      /*
+       * Doesn't have uniform distribution. final float[] result = new
+       * float[count]; float trueSum = 0.0f; for ( int i = 0; i < count; ++i ) {
+       * trueSum += result[i] = this.nextFloat(); } final float scalar =
+       * Utils.div(sum, trueSum); for ( int i = 0; i < count; ++i ) { result[i]
+       * *= scalar; }
+       */
+
+      final float[] x = new float[count + 2];
+      x[0] = 0.0f;
+      x[count] = 1.0f;
+      for ( int i = 1; i < count; ++i ) {
+         x[i] = this.nextFloat();
+      }
+
+      Arrays.sort(x);
+
       final float[] result = new float[count];
-      float trueSum = 0.0f;
-      for ( int i = 0; i < count; ++i ) {
-         trueSum += result[i] = this.nextFloat();
+      for ( int i = count - 1; i > -1; --i ) {
+         result[i] = sum * ( x[i + 2] - x[i + 1] );
       }
-
-      final float scalar = Utils.div(sum, trueSum);
-      for ( int i = 0; i < count; ++i ) {
-         result[i] *= scalar;
-      }
-
       return result;
    }
 
