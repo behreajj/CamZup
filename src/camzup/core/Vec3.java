@@ -957,7 +957,17 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3[] a,
       final Vec3[] b ) {
 
-      // TODO: Should this check for null arrays?
+      if ( a == null ) {
+         final Vec3[] result = new Vec3[b.length];
+         System.arraycopy(b, 0, result, 0, b.length);
+         return result;
+      }
+
+      if ( b == null ) {
+         final Vec3[] result = new Vec3[a.length];
+         System.arraycopy(a, 0, result, 0, a.length);
+         return result;
+      }
 
       final int alen = a.length;
       final int blen = b.length;

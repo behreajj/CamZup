@@ -146,6 +146,16 @@ public interface IYup2 extends IUp {
    float getLocY ( );
 
    /**
+    * Retrieves the renderer's fill and stroke properties packaged in a solid
+    * material.
+    *
+    * @param target the output material
+    *
+    * @return the renderer material
+    */
+   MaterialSolid getMaterial ( final MaterialSolid target );
+
+   /**
     * Gets the renderer's camera rotation in radians.
     *
     * @return the rotation
@@ -872,8 +882,8 @@ public interface IYup2 extends IUp {
     */
    default String toSvgString ( final CurveEntity2 ce ) {
 
-      return IYup2.toSvgString(this, new CurveEntity2[] {
-         ce }, new MaterialSolid[] {});
+      return IYup2.toSvgString(this, new CurveEntity2[] { ce },
+         new MaterialSolid[] { this.getMaterial(new MaterialSolid()) });
    }
 
    /**
@@ -958,8 +968,8 @@ public interface IYup2 extends IUp {
     */
    default String toSvgString ( final MeshEntity2 me ) {
 
-      return IYup2.toSvgString(this, new MeshEntity2[] {
-         me }, new MaterialSolid[] {});
+      return IYup2.toSvgString(this, new MeshEntity2[] { me },
+         new MaterialSolid[] { this.getMaterial(new MaterialSolid()) });
    }
 
    /**

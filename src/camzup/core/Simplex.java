@@ -559,186 +559,6 @@ public abstract class Simplex {
       return Simplex.SCALE_4 * ( n0 + n1 + n2 + n3 + n4 );
    }
 
-   @Deprecated
-   public static float evalOld (
-      final float x,
-      final float y,
-      final float z,
-      final float w,
-      final int seed,
-      final Vec4 deriv ) {
-
-      // TEST If any problems with 4d noise in a given quadrant persists,
-      // this may have to be rolled back to catch the error.
-
-      final float s = ( x + y + z + w ) * Simplex.F4;
-      final int i = Utils.floorToInt(x + s);
-      final int j = Utils.floorToInt(y + s);
-      final int k = Utils.floorToInt(z + s);
-      final int l = Utils.floorToInt(w + s);
-
-      final float t = ( i + j + k + l ) * Simplex.G4;
-      final float x0 = x - ( i - t );
-      final float y0 = y - ( j - t );
-      final float z0 = z - ( k - t );
-      final float w0 = w - ( l - t );
-
-      final int[] sc = Simplex.PERMUTE[ ( x0 > y0 ? 32 : 0 ) | ( x0 > z0 ? 16
-         : 0 ) | ( y0 > z0 ? 8 : 0 ) | ( x0 > w0 ? 4 : 0 ) | ( y0 > w0 ? 2
-            : 0 ) | ( z0 > w0 ? 1 : 0 )];
-      final int sc0 = sc[0];
-      final int sc1 = sc[1];
-      final int sc2 = sc[2];
-      final int sc3 = sc[3];
-
-      final int i1 = sc0 >= 3 ? 1 : 0;
-      final int j1 = sc1 >= 3 ? 1 : 0;
-      final int k1 = sc2 >= 3 ? 1 : 0;
-      final int l1 = sc3 >= 3 ? 1 : 0;
-      final int i2 = sc0 >= 2 ? 1 : 0;
-      final int j2 = sc1 >= 2 ? 1 : 0;
-      final int k2 = sc2 >= 2 ? 1 : 0;
-      final int l2 = sc3 >= 2 ? 1 : 0;
-      final int i3 = sc0 >= 1 ? 1 : 0;
-      final int j3 = sc1 >= 1 ? 1 : 0;
-      final int k3 = sc2 >= 1 ? 1 : 0;
-      final int l3 = sc3 >= 1 ? 1 : 0;
-
-      final float x1 = x0 - i1 + Simplex.G4;
-      final float y1 = y0 - j1 + Simplex.G4;
-      final float z1 = z0 - k1 + Simplex.G4;
-      final float w1 = w0 - l1 + Simplex.G4;
-
-      final float x2 = x0 - i2 + Simplex.G4_2;
-      final float y2 = y0 - j2 + Simplex.G4_2;
-      final float z2 = z0 - k2 + Simplex.G4_2;
-      final float w2 = w0 - l2 + Simplex.G4_2;
-
-      final float x3 = x0 - i3 + Simplex.G4_3;
-      final float y3 = y0 - j3 + Simplex.G4_3;
-      final float z3 = z0 - k3 + Simplex.G4_3;
-      final float w3 = w0 - l3 + Simplex.G4_3;
-
-      final float x4 = x0 - 1.0f + Simplex.G4_4;
-      final float y4 = y0 - 1.0f + Simplex.G4_4;
-      final float z4 = z0 - 1.0f + Simplex.G4_4;
-      final float w4 = w0 - 1.0f + Simplex.G4_4;
-
-      float n0 = 0.0f;
-      float n1 = 0.0f;
-      float n2 = 0.0f;
-      float n3 = 0.0f;
-      float n4 = 0.0f;
-
-      float t20 = 0.0f;
-      float t21 = 0.0f;
-      float t22 = 0.0f;
-      float t23 = 0.0f;
-      float t24 = 0.0f;
-
-      float t40 = 0.0f;
-      float t41 = 0.0f;
-      float t42 = 0.0f;
-      float t43 = 0.0f;
-      float t44 = 0.0f;
-
-      Vec4 g0 = Simplex.ZERO_4;
-      Vec4 g1 = Simplex.ZERO_4;
-      Vec4 g2 = Simplex.ZERO_4;
-      Vec4 g3 = Simplex.ZERO_4;
-      Vec4 g4 = Simplex.ZERO_4;
-
-      final float t0 = 0.5f - ( x0 * x0 + y0 * y0 + z0 * z0 + w0 * w0 );
-      if ( t0 >= 0.0f ) {
-         t20 = t0 * t0;
-         t40 = t20 * t20;
-         g0 = Simplex.gradient4(i, j, k, l, seed);
-         n0 = g0.x * x0 + g0.y * y0 + g0.z * z0 + g0.w * w0;
-      }
-
-      final float t1 = 0.5f - ( x1 * x1 + y1 * y1 + z1 * z1 + w1 * w1 );
-      if ( t1 >= 0.0f ) {
-         t21 = t1 * t1;
-         t41 = t21 * t21;
-         g1 = Simplex.gradient4(i + i1, j + j1, k + k1, l + l1, seed);
-         n1 = g1.x * x1 + g1.y * y1 + g1.z * z1 + g1.w * w1;
-      }
-
-      final float t2 = 0.5f - ( x2 * x2 + y2 * y2 + z2 * z2 + w2 * w2 );
-      if ( t2 >= 0.0f ) {
-         t22 = t2 * t2;
-         t42 = t22 * t22;
-         g2 = Simplex.gradient4(i + i2, j + j2, k + k2, l + l2, seed);
-         n2 = g2.x * x2 + g2.y * y2 + g2.z * z2 + g2.w * w2;
-      }
-
-      final float t3 = 0.5f - ( x3 * x3 + y3 * y3 + z3 * z3 + w3 * w3 );
-      if ( t3 >= 0.0f ) {
-         t23 = t3 * t3;
-         t43 = t23 * t23;
-         g3 = Simplex.gradient4(i + i3, j + j3, k + k3, l + l3, seed);
-         n3 = g3.x * x3 + g3.y * y3 + g3.z * z3 + g3.w * w3;
-      }
-
-      final float t4 = 0.5f - ( x4 * x4 + y4 * y4 + z4 * z4 + w4 * w4 );
-      if ( t4 >= 0.0f ) {
-         t24 = t4 * t4;
-         t44 = t24 * t24;
-         g4 = Simplex.gradient4(i + 1, j + 1, k + 1, l + 1, seed);
-         n4 = g4.x * x4 + g4.y * y4 + g4.z * z4 + g4.w * w4;
-      }
-
-      if ( deriv != null ) {
-
-         final float tmp0 = t20 * t0 * n0;
-         deriv.x = tmp0 * x0;
-         deriv.y = tmp0 * y0;
-         deriv.z = tmp0 * z0;
-         deriv.w = tmp0 * w0;
-
-         final float tmp1 = t21 * t1 * n1;
-         deriv.x += tmp1 * x1;
-         deriv.y += tmp1 * y1;
-         deriv.z += tmp1 * z1;
-         deriv.w += tmp1 * w1;
-
-         final float tmp2 = t22 * t2 * n2;
-         deriv.x += tmp2 * x2;
-         deriv.y += tmp2 * y2;
-         deriv.z += tmp2 * z2;
-         deriv.w += tmp2 * w2;
-
-         final float tmp3 = t23 * t3 * n3;
-         deriv.x += tmp3 * x3;
-         deriv.y += tmp3 * y3;
-         deriv.z += tmp3 * z3;
-         deriv.w += tmp3 * w3;
-
-         final float tmp4 = t24 * t4 * n4;
-         deriv.x += tmp4 * x4;
-         deriv.y += tmp4 * y4;
-         deriv.z += tmp4 * z4;
-         deriv.w += tmp4 * w4;
-
-         deriv.x *= -8.0f;
-         deriv.y *= -8.0f;
-         deriv.z *= -8.0f;
-         deriv.w *= -8.0f;
-
-         deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x + t44 * g4.x;
-         deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y + t44 * g4.y;
-         deriv.z += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z + t44 * g4.z;
-         deriv.w += t40 * g0.w + t41 * g1.w + t42 * g2.w + t43 * g3.w + t44 * g4.w;
-
-         deriv.x *= Simplex.SCALE_4;
-         deriv.y *= Simplex.SCALE_4;
-         deriv.z *= Simplex.SCALE_4;
-         deriv.w *= Simplex.SCALE_4;
-      }
-
-      return Simplex.SCALE_4 * ( t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3 + t44 * n4 );
-   }
-
    /**
     * Evaluates 3D simplex noise for a given seed.
     *
@@ -1159,6 +979,186 @@ public abstract class Simplex {
       final Vec4 deriv ) {
 
       return Simplex.eval(v.x, v.y, v.z, v.w, seed, deriv);
+   }
+
+   @Deprecated
+   public static float evalOld (
+      final float x,
+      final float y,
+      final float z,
+      final float w,
+      final int seed,
+      final Vec4 deriv ) {
+
+      // TEST If any problems with 4d noise in a given quadrant persists,
+      // this may have to be rolled back to catch the error.
+
+      final float s = ( x + y + z + w ) * Simplex.F4;
+      final int i = Utils.floorToInt(x + s);
+      final int j = Utils.floorToInt(y + s);
+      final int k = Utils.floorToInt(z + s);
+      final int l = Utils.floorToInt(w + s);
+
+      final float t = ( i + j + k + l ) * Simplex.G4;
+      final float x0 = x - ( i - t );
+      final float y0 = y - ( j - t );
+      final float z0 = z - ( k - t );
+      final float w0 = w - ( l - t );
+
+      final int[] sc = Simplex.PERMUTE[ ( x0 > y0 ? 32 : 0 ) | ( x0 > z0 ? 16
+         : 0 ) | ( y0 > z0 ? 8 : 0 ) | ( x0 > w0 ? 4 : 0 ) | ( y0 > w0 ? 2
+            : 0 ) | ( z0 > w0 ? 1 : 0 )];
+      final int sc0 = sc[0];
+      final int sc1 = sc[1];
+      final int sc2 = sc[2];
+      final int sc3 = sc[3];
+
+      final int i1 = sc0 >= 3 ? 1 : 0;
+      final int j1 = sc1 >= 3 ? 1 : 0;
+      final int k1 = sc2 >= 3 ? 1 : 0;
+      final int l1 = sc3 >= 3 ? 1 : 0;
+      final int i2 = sc0 >= 2 ? 1 : 0;
+      final int j2 = sc1 >= 2 ? 1 : 0;
+      final int k2 = sc2 >= 2 ? 1 : 0;
+      final int l2 = sc3 >= 2 ? 1 : 0;
+      final int i3 = sc0 >= 1 ? 1 : 0;
+      final int j3 = sc1 >= 1 ? 1 : 0;
+      final int k3 = sc2 >= 1 ? 1 : 0;
+      final int l3 = sc3 >= 1 ? 1 : 0;
+
+      final float x1 = x0 - i1 + Simplex.G4;
+      final float y1 = y0 - j1 + Simplex.G4;
+      final float z1 = z0 - k1 + Simplex.G4;
+      final float w1 = w0 - l1 + Simplex.G4;
+
+      final float x2 = x0 - i2 + Simplex.G4_2;
+      final float y2 = y0 - j2 + Simplex.G4_2;
+      final float z2 = z0 - k2 + Simplex.G4_2;
+      final float w2 = w0 - l2 + Simplex.G4_2;
+
+      final float x3 = x0 - i3 + Simplex.G4_3;
+      final float y3 = y0 - j3 + Simplex.G4_3;
+      final float z3 = z0 - k3 + Simplex.G4_3;
+      final float w3 = w0 - l3 + Simplex.G4_3;
+
+      final float x4 = x0 - 1.0f + Simplex.G4_4;
+      final float y4 = y0 - 1.0f + Simplex.G4_4;
+      final float z4 = z0 - 1.0f + Simplex.G4_4;
+      final float w4 = w0 - 1.0f + Simplex.G4_4;
+
+      float n0 = 0.0f;
+      float n1 = 0.0f;
+      float n2 = 0.0f;
+      float n3 = 0.0f;
+      float n4 = 0.0f;
+
+      float t20 = 0.0f;
+      float t21 = 0.0f;
+      float t22 = 0.0f;
+      float t23 = 0.0f;
+      float t24 = 0.0f;
+
+      float t40 = 0.0f;
+      float t41 = 0.0f;
+      float t42 = 0.0f;
+      float t43 = 0.0f;
+      float t44 = 0.0f;
+
+      Vec4 g0 = Simplex.ZERO_4;
+      Vec4 g1 = Simplex.ZERO_4;
+      Vec4 g2 = Simplex.ZERO_4;
+      Vec4 g3 = Simplex.ZERO_4;
+      Vec4 g4 = Simplex.ZERO_4;
+
+      final float t0 = 0.5f - ( x0 * x0 + y0 * y0 + z0 * z0 + w0 * w0 );
+      if ( t0 >= 0.0f ) {
+         t20 = t0 * t0;
+         t40 = t20 * t20;
+         g0 = Simplex.gradient4(i, j, k, l, seed);
+         n0 = g0.x * x0 + g0.y * y0 + g0.z * z0 + g0.w * w0;
+      }
+
+      final float t1 = 0.5f - ( x1 * x1 + y1 * y1 + z1 * z1 + w1 * w1 );
+      if ( t1 >= 0.0f ) {
+         t21 = t1 * t1;
+         t41 = t21 * t21;
+         g1 = Simplex.gradient4(i + i1, j + j1, k + k1, l + l1, seed);
+         n1 = g1.x * x1 + g1.y * y1 + g1.z * z1 + g1.w * w1;
+      }
+
+      final float t2 = 0.5f - ( x2 * x2 + y2 * y2 + z2 * z2 + w2 * w2 );
+      if ( t2 >= 0.0f ) {
+         t22 = t2 * t2;
+         t42 = t22 * t22;
+         g2 = Simplex.gradient4(i + i2, j + j2, k + k2, l + l2, seed);
+         n2 = g2.x * x2 + g2.y * y2 + g2.z * z2 + g2.w * w2;
+      }
+
+      final float t3 = 0.5f - ( x3 * x3 + y3 * y3 + z3 * z3 + w3 * w3 );
+      if ( t3 >= 0.0f ) {
+         t23 = t3 * t3;
+         t43 = t23 * t23;
+         g3 = Simplex.gradient4(i + i3, j + j3, k + k3, l + l3, seed);
+         n3 = g3.x * x3 + g3.y * y3 + g3.z * z3 + g3.w * w3;
+      }
+
+      final float t4 = 0.5f - ( x4 * x4 + y4 * y4 + z4 * z4 + w4 * w4 );
+      if ( t4 >= 0.0f ) {
+         t24 = t4 * t4;
+         t44 = t24 * t24;
+         g4 = Simplex.gradient4(i + 1, j + 1, k + 1, l + 1, seed);
+         n4 = g4.x * x4 + g4.y * y4 + g4.z * z4 + g4.w * w4;
+      }
+
+      if ( deriv != null ) {
+
+         final float tmp0 = t20 * t0 * n0;
+         deriv.x = tmp0 * x0;
+         deriv.y = tmp0 * y0;
+         deriv.z = tmp0 * z0;
+         deriv.w = tmp0 * w0;
+
+         final float tmp1 = t21 * t1 * n1;
+         deriv.x += tmp1 * x1;
+         deriv.y += tmp1 * y1;
+         deriv.z += tmp1 * z1;
+         deriv.w += tmp1 * w1;
+
+         final float tmp2 = t22 * t2 * n2;
+         deriv.x += tmp2 * x2;
+         deriv.y += tmp2 * y2;
+         deriv.z += tmp2 * z2;
+         deriv.w += tmp2 * w2;
+
+         final float tmp3 = t23 * t3 * n3;
+         deriv.x += tmp3 * x3;
+         deriv.y += tmp3 * y3;
+         deriv.z += tmp3 * z3;
+         deriv.w += tmp3 * w3;
+
+         final float tmp4 = t24 * t4 * n4;
+         deriv.x += tmp4 * x4;
+         deriv.y += tmp4 * y4;
+         deriv.z += tmp4 * z4;
+         deriv.w += tmp4 * w4;
+
+         deriv.x *= -8.0f;
+         deriv.y *= -8.0f;
+         deriv.z *= -8.0f;
+         deriv.w *= -8.0f;
+
+         deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x + t44 * g4.x;
+         deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y + t44 * g4.y;
+         deriv.z += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z + t44 * g4.z;
+         deriv.w += t40 * g0.w + t41 * g1.w + t42 * g2.w + t43 * g3.w + t44 * g4.w;
+
+         deriv.x *= Simplex.SCALE_4;
+         deriv.y *= Simplex.SCALE_4;
+         deriv.z *= Simplex.SCALE_4;
+         deriv.w *= Simplex.SCALE_4;
+      }
+
+      return Simplex.SCALE_4 * ( t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3 + t44 * n4 );
    }
 
    /**

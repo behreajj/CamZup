@@ -162,26 +162,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Bevels all corners of a given face in the mesh.
-    * 
-    * @param faceIdx the face index
-    * @param fac     the factor
-    * @param itr     the number of iterations
-    *
-    * @return this mesh
-    */
-   public Mesh2 bevelCorners (
-      final int faceIdx,
-      final float fac,
-      final int itr ) {
-
-      for ( int i = 0; i < itr; ++i ) {
-         bevelCorners(faceIdx, fac);
-      }
-      return this;
-   }
-
-   /**
     * Bevels all corners of a given face in the mesh. The factor interpolates
     * from the corner to the midpoint of an edge. For line segments of unequal
     * length joined at a corner, the cut will be uneven. Uses Chaikin's corner
@@ -254,6 +234,26 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       this.texCoords = Vec2.concat(this.texCoords, vtsNew);
       this.faces[i] = faceNew;
 
+      return this;
+   }
+
+   /**
+    * Bevels all corners of a given face in the mesh.
+    *
+    * @param faceIdx the face index
+    * @param fac     the factor
+    * @param itr     the number of iterations
+    *
+    * @return this mesh
+    */
+   public Mesh2 bevelCorners (
+      final int faceIdx,
+      final float fac,
+      final int itr ) {
+
+      for ( int i = 0; i < itr; ++i ) {
+         this.bevelCorners(faceIdx, fac);
+      }
       return this;
    }
 
@@ -506,7 +506,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int[] f1 = f0[Utils.mod(j, f0len)];
       final int[] f2 = f0[Utils.mod(j + 1, f0len)];
 
-      return target.set(this.coords[f1[0]], this.texCoords[f1[1]],
+      return target.set(
+         this.coords[f1[0]], this.texCoords[f1[1]],
          this.coords[f2[0]], this.texCoords[f2[1]]);
    }
 
@@ -1254,14 +1255,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          /* @formatter:off */
          final int vNextIdx = vertNext[0];
          final Vec2 vNext = this.coords[vNextIdx];
-         vsNew[j] = new Vec2( 
-            ( vCurr.x + vNext.x ) * 0.5f, 
+         vsNew[j] = new Vec2(
+            ( vCurr.x + vNext.x ) * 0.5f,
             ( vCurr.y + vNext.y ) * 0.5f);
 
          final int vtNextIdx = vertNext[1];
          final Vec2 vtNext = this.texCoords[vtNextIdx];
-         vtsNew[j] = new Vec2( 
-            ( vtCurr.x + vtNext.x ) * 0.5f, 
+         vtsNew[j] = new Vec2(
+            ( vtCurr.x + vtNext.x ) * 0.5f,
             ( vtCurr.y + vtNext.y ) * 0.5f);
          /* @formatter:on */
 

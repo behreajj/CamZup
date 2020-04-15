@@ -394,6 +394,25 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    }
 
    /**
+    * Retrieves the renderer's fill and stroke properties packaged in a solid
+    * material.
+    *
+    * @param target the output material
+    *
+    * @return the renderer material
+    */
+   @Override
+   public MaterialSolid getMaterial ( final MaterialSolid target ) {
+
+      target.setFill(this.fill);
+      target.setFill(this.fillColor);
+      target.setStroke(this.stroke);
+      target.setStroke(this.strokeColor);
+      target.setStrokeWeight(this.strokeWeight);
+      return target;
+   }
+
+   /**
     * Gets the renderer model view matrix.
     *
     * @return the model view

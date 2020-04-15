@@ -137,7 +137,12 @@ public class Mat3 extends Matrix {
    @Override
    public Mat3 clone ( ) {
 
-      return new Mat3(this.m00, this.m01, this.m02, this.m10, this.m11, this.m12, this.m20, this.m21, this.m22);
+      /* @formatter:off */
+      return new Mat3(
+         this.m00, this.m01, this.m02,
+         this.m10, this.m11, this.m12,
+         this.m20, this.m21, this.m22);
+      /* @formatter:on */
    }
 
    /**
@@ -411,7 +416,10 @@ public class Mat3 extends Matrix {
    @Chainable
    public Mat3 reset ( ) {
 
-      return this.set(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      return this.set(
+         1.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f,
+         0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -430,7 +438,10 @@ public class Mat3 extends Matrix {
       final float m00, final float m01,
       final float m10, final float m11 ) {
 
-      return this.set(m00, m01, 0.0f, m10, m11, 0.0f, 0.0f, 0.0f, 1.0f);
+      return this.set(
+         m00, m01, 0.0f,
+         m10, m11, 0.0f,
+         0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -451,7 +462,10 @@ public class Mat3 extends Matrix {
       final float m00, final float m01, final float m02,
       final float m10, final float m11, final float m12 ) {
 
-      return this.set(m00, m01, m02, m10, m11, m12, 0.0f, 0.0f, 1.0f);
+      return this.set(
+         m00, m01, m02,
+         m10, m11, m12,
+         0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -494,8 +508,10 @@ public class Mat3 extends Matrix {
    @Chainable
    public Mat3 set ( final Mat3 source ) {
 
-      return this.set(source.m00, source.m01, source.m02, source.m10,
-         source.m11, source.m12, source.m20, source.m21, source.m22);
+      return this.set(
+         source.m00, source.m01, source.m02,
+         source.m10, source.m11, source.m12,
+         source.m20, source.m21, source.m22);
    }
 
    /**
@@ -565,33 +581,27 @@ public class Mat3 extends Matrix {
          case -3:
 
             /* Right axis. */
-
             this.m00 = source.x;
             this.m10 = source.y;
             this.m20 = source.z;
-
             return this;
 
          case 1:
          case -2:
 
             /* Forward axis. */
-
             this.m01 = source.x;
             this.m11 = source.y;
             this.m21 = source.z;
-
             return this;
 
          case 2:
          case -1:
 
             /* Translation. */
-
             this.m02 = source.x;
             this.m12 = source.y;
             this.m22 = source.z;
-
             return this;
 
          default:
@@ -821,9 +831,10 @@ public class Mat3 extends Matrix {
       final Mat3 b,
       final Mat3 target ) {
 
-      return target.set(a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02,
-         a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12, a.m20 + b.m20,
-         a.m21 + b.m21, a.m22 + b.m22);
+      return target.set(
+         a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02,
+         a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12,
+         a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22);
    }
 
    /**
@@ -906,7 +917,10 @@ public class Mat3 extends Matrix {
       final Vec2 forward,
       final Mat3 target ) {
 
-      return target.set(right.x, forward.x, 0.0f, right.y, forward.y, 0.0f,
+      return target.set(
+         right.x, forward.x, 0.0f,
+         right.y, forward.y,
+         0.0f,
          0.0f, 0.0f, 1.0f);
    }
 
@@ -927,8 +941,10 @@ public class Mat3 extends Matrix {
       final Vec2 translation,
       final Mat3 target ) {
 
-      return target.set(right.x, forward.x, translation.x, right.y, forward.y,
-         translation.y, 0.0f, 0.0f, 1.0f);
+      return target.set(
+         right.x, forward.x, translation.x,
+         right.y, forward.y, translation.y,
+         0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -946,7 +962,10 @@ public class Mat3 extends Matrix {
       final Vec3 forward,
       final Mat3 target ) {
 
-      return target.set(right.x, forward.x, 0.0f, right.y, forward.y, 0.0f,
+      return target.set(
+         right.x, forward.x, 0.0f,
+         right.y, forward.y,
+         0.0f,
          right.z, forward.z, 1.0f);
    }
 
@@ -966,8 +985,10 @@ public class Mat3 extends Matrix {
       final Vec3 translation,
       final Mat3 target ) {
 
-      return target.set(right.x, forward.x, translation.x, right.y, forward.y,
-         translation.y, right.z, forward.z, translation.z);
+      return target.set(
+         right.x, forward.x, translation.x,
+         right.y, forward.y, translation.y,
+         right.z, forward.z, translation.z);
    }
 
    /**
@@ -1023,8 +1044,10 @@ public class Mat3 extends Matrix {
       final Mat3 target ) {
 
       if ( scalar != 0.0f ) {
-         return target.set(scalar, 0.0f, 0.0f, 0.0f, scalar, 0.0f, 0.0f, 0.0f,
-            1.0f);
+         return target.set(
+            scalar, 0.0f, 0.0f,
+            0.0f, scalar, 0.0f,
+            0.0f, 0.0f, 1.0f);
       }
       return target.reset();
    }
@@ -1042,8 +1065,10 @@ public class Mat3 extends Matrix {
       final Mat3 target ) {
 
       if ( Vec2.all(scalar) ) {
-         return target.set(scalar.x, 0.0f, 0.0f, 0.0f, scalar.y, 0.0f, 0.0f,
-            0.0f, 1.0f);
+         return target.set(
+            scalar.x, 0.0f, 0.0f,
+            0.0f, scalar.y, 0.0f,
+            0.0f, 0.0f, 1.0f);
       }
       return target.reset();
    }
@@ -1060,7 +1085,10 @@ public class Mat3 extends Matrix {
       final Vec2 translation,
       final Mat3 target ) {
 
-      return target.set(1.0f, 0.0f, translation.x, 0.0f, 1.0f, translation.y,
+      return target.set(
+         1.0f, 0.0f, translation.x,
+         0.0f, 1.0f,
+         translation.y,
          0.0f, 0.0f, 1.0f);
    }
 
@@ -1077,7 +1105,10 @@ public class Mat3 extends Matrix {
     */
    public static Mat3 identity ( final Mat3 target ) {
 
-      return target.set(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(
+         1.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f,
+         0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1140,8 +1171,10 @@ public class Mat3 extends Matrix {
       final Mat3 b,
       final Mat3 target ) {
 
-      return target.set(a * b.m00, a * b.m01, a * b.m02, a * b.m10, a * b.m11,
-         a * b.m12, a * b.m20, a * b.m21, a * b.m22);
+      return target.set(
+         a * b.m00, a * b.m01, a * b.m02,
+         a * b.m10, a * b.m11, a * b.m12,
+         a * b.m20, a * b.m21, a * b.m22);
    }
 
    /**
@@ -1159,8 +1192,10 @@ public class Mat3 extends Matrix {
       final float b,
       final Mat3 target ) {
 
-      return target.set(a.m00 * b, a.m01 * b, a.m02 * b, a.m10 * b, a.m11 * b,
-         a.m12 * b, a.m20 * b, a.m21 * b, a.m22 * b);
+      return target.set(
+         a.m00 * b, a.m01 * b, a.m02 * b,
+         a.m10 * b, a.m11 * b, a.m12 * b,
+         a.m20 * b, a.m21 * b, a.m22 * b);
    }
 
    /**
@@ -1177,7 +1212,8 @@ public class Mat3 extends Matrix {
       final Mat3 b,
       final Mat3 target ) {
 
-      return target.set(a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20,
+      return target.set(
+         a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20,
          a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21,
          a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22,
 
@@ -1246,7 +1282,8 @@ public class Mat3 extends Matrix {
       final Vec3 b,
       final Vec3 target ) {
 
-      return target.set(a.m00 * b.x + a.m01 * b.y + a.m02 * b.z,
+      return target.set(
+         a.m00 * b.x + a.m01 * b.y + a.m02 * b.z,
          a.m10 * b.x + a.m11 * b.y + a.m12 * b.z,
          a.m20 * b.x + a.m21 * b.y + a.m22 * b.z);
    }
@@ -1325,9 +1362,10 @@ public class Mat3 extends Matrix {
       final Mat3 b,
       final Mat3 target ) {
 
-      return target.set(a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02,
-         a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12, a.m20 - b.m20,
-         a.m21 - b.m21, a.m22 - b.m22);
+      return target.set(
+         a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02,
+         a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12,
+         a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22);
    }
 
    /**
@@ -1342,8 +1380,10 @@ public class Mat3 extends Matrix {
       final Mat3 m,
       final Mat3 target ) {
 
-      return target.set(m.m00, m.m10, m.m20, m.m01, m.m11, m.m21, m.m02, m.m12,
-         m.m22);
+      return target.set(
+         m.m00, m.m10, m.m20,
+         m.m01, m.m11, m.m21,
+         m.m02, m.m12, m.m22);
    }
 
    /**

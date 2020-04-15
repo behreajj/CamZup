@@ -1395,10 +1395,10 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * Smoothes the handles of a knot with reference to a previous and next knot.
     * A helper function to {@link Curve3#smoothHandles(Curve3)} .
     *
-    * @param prev the previous knot
-    * @param curr the current knot
-    * @param next the next knot
-    * @param dir  a temporary vector
+    * @param prev  the previous knot
+    * @param curr  the current knot
+    * @param next  the next knot
+    * @param carry a temporary vector
     *
     * @return the current knot
     */
@@ -1406,7 +1406,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final Knot3 prev,
       final Knot3 curr,
       final Knot3 next,
-      final Vec3 dir ) {
+      final Vec3 carry ) {
 
       final Vec3 coCurr = curr.coord;
       final Vec3 coPrev = prev.coord;
@@ -1426,23 +1426,27 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float fmSq = forex * forex + forey * forey + forez * forez;
       final float fmInv = Utils.invSqrt(fmSq);
 
-      final float dir2x = dir.x + backx * bmInv - forex * fmInv;
-      final float dir2y = dir.y + backy * bmInv - forey * fmInv;
-      final float dir2z = dir.z + backz * bmInv - forez * fmInv;
+      final float dirx = carry.x + backx * bmInv - forex * fmInv;
+      final float diry = carry.y + backy * bmInv - forey * fmInv;
+      final float dirz = carry.z + backz * bmInv - forez * fmInv;
 
       final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(
-         dir2x * dir2x + dir2y * dir2y + dir2z * dir2z);
-      dir.x = dir2x * rescl;
-      dir.y = dir2y * rescl;
-      dir.z = dir2z * rescl;
+         dirx * dirx + diry * diry + dirz * dirz);
+      carry.x = dirx * rescl;
+      carry.y = diry * rescl;
+      carry.z = dirz * rescl;
 
       final float bMag = bmSq * bmInv;
-      curr.rearHandle.set(coCurr.x + bMag * dir.x, coCurr.y + bMag * dir.y,
-         coCurr.z + bMag * dir.z);
+      curr.rearHandle.set(
+         coCurr.x + bMag * carry.x,
+         coCurr.y + bMag * carry.y,
+         coCurr.z + bMag * carry.z);
 
       final float fMag = fmSq * fmInv;
-      curr.foreHandle.set(coCurr.x - fMag * dir.x, coCurr.y - fMag * dir.y,
-         coCurr.z - fMag * dir.z);
+      curr.foreHandle.set(
+         coCurr.x - fMag * carry.x,
+         coCurr.y - fMag * carry.y,
+         coCurr.z - fMag * carry.z);
 
       return curr;
    }
@@ -1451,16 +1455,16 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * Smoothes the fore handle of the first knot in an open curve. A helper
     * function to {@link Curve3#smoothHandles(Curve3)} .
     *
-    * @param curr the current knot
-    * @param next the next knot
-    * @param dir  a temporary vector
+    * @param curr  the current knot
+    * @param next  the next knot
+    * @param carry a temporary vector
     *
     * @return the current knot
     */
    public static Knot3 smoothHandlesFirst (
       final Knot3 curr,
       final Knot3 next,
-      final Vec3 dir ) {
+      final Vec3 carry ) {
 
       final Vec3 coCurr = curr.coord;
       final Vec3 coNext = next.coord;
@@ -1479,15 +1483,15 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float fmSq = forex * forex + forey * forey + forez * forez;
       final float fmInv = Utils.invSqrt(fmSq);
 
-      final float dir2x = dir.x + backx * bmInv - forex * fmInv;
-      final float dir2y = dir.y + backy * bmInv - forey * fmInv;
-      final float dir2z = dir.z + backz * bmInv - forez * fmInv;
+      final float dirx = carry.x + backx * bmInv - forex * fmInv;
+      final float diry = carry.y + backy * bmInv - forey * fmInv;
+      final float dirz = carry.z + backz * bmInv - forez * fmInv;
 
       final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(
-         dir2x * dir2x + dir2y * dir2y + dir2z * dir2z);
-      dir.x = dir2x * rescl;
-      dir.y = dir2y * rescl;
-      dir.z = dir2z * rescl;
+         dirx * dirx + diry * diry + dirz * dirz);
+      carry.x = dirx * rescl;
+      carry.y = diry * rescl;
+      carry.z = dirz * rescl;
 
       // final float bMag = bmSq * bmInv;
       // curr.rearHandle.set(
@@ -1496,8 +1500,10 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       // coCurr.z + bMag * dir.z);
 
       final float fMag = fmSq * fmInv;
-      curr.foreHandle.set(coCurr.x - fMag * dir.x, coCurr.y - fMag * dir.y,
-         coCurr.z - fMag * dir.z);
+      curr.foreHandle.set(
+         coCurr.x - fMag * carry.x,
+         coCurr.y - fMag * carry.y,
+         coCurr.z - fMag * carry.z);
 
       return curr;
    }
@@ -1506,16 +1512,16 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * Smoothes the rear handle of the last knot in an open curve. A helper
     * function to {@link Curve3#smoothHandles(Curve3)} .
     *
-    * @param prev the previous knot
-    * @param curr the current knot
-    * @param dir  a temporary vector
+    * @param prev  the previous knot
+    * @param curr  the current knot
+    * @param carry a temporary vector
     *
     * @return the current knot
     */
    public static Knot3 smoothHandlesLast (
       final Knot3 prev,
       final Knot3 curr,
-      final Vec3 dir ) {
+      final Vec3 carry ) {
 
       final Vec3 coCurr = curr.coord;
       final Vec3 coPrev = prev.coord;
@@ -1534,19 +1540,21 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float fmSq = forex * forex + forey * forey + forez * forez;
       final float fmInv = Utils.invSqrt(fmSq);
 
-      final float dir2x = dir.x + backx * bmInv - forex * fmInv;
-      final float dir2y = dir.y + backy * bmInv - forey * fmInv;
-      final float dir2z = dir.z + backz * bmInv - forez * fmInv;
+      final float dirx = carry.x + backx * bmInv - forex * fmInv;
+      final float diry = carry.y + backy * bmInv - forey * fmInv;
+      final float dirz = carry.z + backz * bmInv - forez * fmInv;
 
       final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(
-         dir2x * dir2x + dir2y * dir2y + dir2z * dir2z);
-      dir.x = dir2x * rescl;
-      dir.y = dir2y * rescl;
-      dir.z = dir2z * rescl;
+         dirx * dirx + diry * diry + dirz * dirz);
+      carry.x = dirx * rescl;
+      carry.y = diry * rescl;
+      carry.z = dirz * rescl;
 
       final float bMag = bmSq * bmInv;
-      curr.rearHandle.set(coCurr.x + bMag * dir.x, coCurr.y + bMag * dir.y,
-         coCurr.z + bMag * dir.z);
+      curr.rearHandle.set(
+         coCurr.x + bMag * carry.x,
+         coCurr.y + bMag * carry.y,
+         coCurr.z + bMag * carry.z);
 
       // final float fMag = fmSq * fmInv;
       // curr.foreHandle.set(

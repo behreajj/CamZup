@@ -888,6 +888,25 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public float getLocY ( ) { return this.cameraY; }
 
    /**
+    * Retrieves the renderer's fill and stroke properties packaged in a solid
+    * material.
+    *
+    * @param target the output material
+    *
+    * @return the renderer material
+    */
+   @Override
+   public MaterialSolid getMaterial ( final MaterialSolid target ) {
+
+      target.setFill(this.fill);
+      target.setFill(this.fillColor);
+      target.setStroke(this.stroke);
+      target.setStroke(this.strokeColor);
+      target.setStrokeWeight(this.strokeWeight);
+      return target;
+   }
+
+   /**
     * Retrieves the renderer's matrix.
     */
    @Override

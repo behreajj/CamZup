@@ -1175,10 +1175,10 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * Smoothes the handles of a knot with reference to a previous and next knot.
     * A helper function to {@link Curve2#smoothHandles(Curve2)} .
     *
-    * @param prev the previous knot
-    * @param curr the current knot
-    * @param next the next knot
-    * @param dir  a temporary vector
+    * @param prev  the previous knot
+    * @param curr  the current knot
+    * @param next  the next knot
+    * @param carry a temporary vector
     *
     * @return the current knot
     */
@@ -1186,7 +1186,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final Knot2 prev,
       final Knot2 curr,
       final Knot2 next,
-      final Vec2 dir ) {
+      final Vec2 carry ) {
 
       final Vec2 coCurr = curr.coord;
       final Vec2 coPrev = prev.coord;
@@ -1204,19 +1204,23 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float fmSq = forex * forex + forey * forey;
       final float fmInv = Utils.invSqrt(fmSq);
 
-      final float dir2x = dir.x + backx * bmInv - forex * fmInv;
-      final float dir2y = dir.y + backy * bmInv - forey * fmInv;
+      final float dirx = carry.x + backx * bmInv - forex * fmInv;
+      final float diry = carry.y + backy * bmInv - forey * fmInv;
 
       final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(
-         dir2x * dir2x + dir2y * dir2y);
-      dir.x = dir2x * rescl;
-      dir.y = dir2y * rescl;
+         dirx * dirx + diry * diry);
+      carry.x = dirx * rescl;
+      carry.y = diry * rescl;
 
       final float bMag = bmSq * bmInv;
-      curr.rearHandle.set(coCurr.x + bMag * dir.x, coCurr.y + bMag * dir.y);
+      curr.rearHandle.set(
+         coCurr.x + bMag * carry.x,
+         coCurr.y + bMag * carry.y);
 
       final float fMag = fmSq * fmInv;
-      curr.foreHandle.set(coCurr.x - fMag * dir.x, coCurr.y - fMag * dir.y);
+      curr.foreHandle.set(
+         coCurr.x - fMag * carry.x,
+         coCurr.y - fMag * carry.y);
 
       return curr;
    }
@@ -1225,16 +1229,16 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * Smoothes the fore handle of the first knot in an open curve. A helper
     * function to {@link Curve2#smoothHandles(Curve2)} .
     *
-    * @param curr the current knot
-    * @param next the next knot
-    * @param dir  a temporary vector
+    * @param curr  the current knot
+    * @param next  the next knot
+    * @param carry a temporary vector
     *
     * @return the current knot
     */
    public static Knot2 smoothHandlesFirst (
       final Knot2 curr,
       final Knot2 next,
-      final Vec2 dir ) {
+      final Vec2 carry ) {
 
       final Vec2 coCurr = curr.coord;
       final Vec2 coNext = next.coord;
@@ -1252,13 +1256,13 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float fmInv = Utils.invSqrt(fmSq);
       final float fMag = fmSq * fmInv;
 
-      final float dir2x = dir.x + backx * bmInv - forex * fmInv;
-      final float dir2y = dir.y + backy * bmInv - forey * fmInv;
+      final float dirx = carry.x + backx * bmInv - forex * fmInv;
+      final float diry = carry.y + backy * bmInv - forey * fmInv;
 
       final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(
-         dir2x * dir2x + dir2y * dir2y);
-      dir.x = dir2x * rescl;
-      dir.y = dir2y * rescl;
+         dirx * dirx + diry * diry);
+      carry.x = dirx * rescl;
+      carry.y = diry * rescl;
 
       // Should this just be a mirror of the fore handle instead?
       // final float bMag = bmSq * bmInv;
@@ -1266,7 +1270,9 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       // coCurr.x + bMag * dir.x,
       // coCurr.y + bMag * dir.y);
 
-      curr.foreHandle.set(coCurr.x - fMag * dir.x, coCurr.y - fMag * dir.y);
+      curr.foreHandle.set(
+         coCurr.x - fMag * carry.x,
+         coCurr.y - fMag * carry.y);
 
       return curr;
    }
@@ -1275,16 +1281,16 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * Smoothes the rear handle of the last knot in an open curve. A helper
     * function to {@link Curve2#smoothHandles(Curve2)} .
     *
-    * @param prev the previous knot
-    * @param curr the current knot
-    * @param dir  a temporary vector
+    * @param prev  the previous knot
+    * @param curr  the current knot
+    * @param carry a temporary vector
     *
     * @return the current knot
     */
    public static Knot2 smoothHandlesLast (
       final Knot2 prev,
       final Knot2 curr,
-      final Vec2 dir ) {
+      final Vec2 carry ) {
 
       final Vec2 coCurr = curr.coord;
       final Vec2 coPrev = prev.coord;
@@ -1302,15 +1308,17 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float fmSq = forex * forex + forey * forey;
       final float fmInv = Utils.invSqrt(fmSq);
 
-      final float dir2x = dir.x + backx * bmInv - forex * fmInv;
-      final float dir2y = dir.y + backy * bmInv - forey * fmInv;
+      final float dirx = carry.x + backx * bmInv - forex * fmInv;
+      final float diry = carry.y + backy * bmInv - forey * fmInv;
 
       final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(
-         dir2x * dir2x + dir2y * dir2y);
-      dir.x = dir2x * rescl;
-      dir.y = dir2y * rescl;
+         dirx * dirx + diry * diry);
+      carry.x = dirx * rescl;
+      carry.y = diry * rescl;
 
-      curr.rearHandle.set(coCurr.x + bMag * dir.x, coCurr.y + bMag * dir.y);
+      curr.rearHandle.set(
+         coCurr.x + bMag * carry.x,
+         coCurr.y + bMag * carry.y);
 
       // Should this just be a mirror of the rear handle instead?
       // final float fMag = fmSq * fmInv;

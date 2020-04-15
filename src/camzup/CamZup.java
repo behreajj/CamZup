@@ -1,5 +1,7 @@
 package camzup;
 
+import camzup.core.IUtils;
+import camzup.core.Mat4;
 import camzup.core.Mesh2;
 import camzup.core.Mesh3;
 import camzup.core.MeshEntity2;
@@ -60,12 +62,17 @@ public class CamZup {
       final Rng rng = new Rng();
 
       final Mesh2 m2 = new Mesh2();
-//      Mesh2.arc(0.0f, rng.nextFloat() * IUtils.TAU, 0.5f, 32, PolyType.NGON,
-//         m2);
-      Mesh2.polygon(4, Mesh2.PolyType.QUAD, m2);
-      for ( int i = 0; i < 4; ++i ) {
-         m2.bevelCorners(i, 0.25f, 3);
-      }
+      final Mesh3 m3 = new Mesh3();
+      Mesh3.cube(m3);
+      m3.rotate(IUtils.THIRD_PI,
+         Vec3.normalize(Vec3.one(new Vec3()), new Vec3()));
+
+      final Mat4 proj = new Mat4();
+      final Mat4 mv = new Mat4();
+
+      Mat4.orthographic(-0.5f, 0.5f, -0.5f, 0.5f, 0.001f, 1000.0f, proj);
+
+      Mesh3.project(m3, proj, mv, m2);
 
       final MeshEntity2 me2 = new MeshEntity2();
       me2.append(m2);

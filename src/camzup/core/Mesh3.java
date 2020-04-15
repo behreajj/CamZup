@@ -558,8 +558,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int[] f1 = f0[Utils.mod(j, f0len)];
       final int[] f2 = f0[Utils.mod(j + 1, f0len)];
 
-      return target.set(this.coords[f1[0]], this.texCoords[f1[1]],
-         this.normals[f1[2]], this.coords[f2[0]], this.texCoords[f2[1]],
+      return target.set(
+         this.coords[f1[0]],
+         this.texCoords[f1[1]],
+         this.normals[f1[2]],
+         this.coords[f2[0]],
+         this.texCoords[f2[1]],
          this.normals[f2[2]]);
    }
 
@@ -642,8 +646,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          for ( int j = 0; j < len1; ++j ) {
 
+            /* @formatter:off */
             final int[] fs1 = fs0[j];
-            verts[j] = new Vert3(this.coords[fs1[0]], this.texCoords[fs1[1]], this.normals[fs1[2]]);
+            verts[j] = new Vert3(
+               this.coords[fs1[0]],
+               this.texCoords[fs1[1]],
+               this.normals[fs1[2]]);
+            /* @formatter:on */
          }
 
          result[i] = new Face3(verts);
@@ -1389,22 +1398,22 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          /* @formatter:off */
          final int vNextIdx = vertNext[0];
          final Vec3 vNext = this.coords[vNextIdx];
-         vsNew[j] = new Vec3( 
-            ( vCurr.x + vNext.x ) * 0.5f, 
-            ( vCurr.y + vNext.y ) * 0.5f, 
+         vsNew[j] = new Vec3(
+            ( vCurr.x + vNext.x ) * 0.5f,
+            ( vCurr.y + vNext.y ) * 0.5f,
             ( vCurr.z + vNext.z ) * 0.5f);
 
          final int vtNextIdx = vertNext[1];
          final Vec2 vtNext = this.texCoords[vtNextIdx];
-         vtsNew[j] = new Vec2( 
-            ( vtCurr.x + vtNext.x ) * 0.5f, 
+         vtsNew[j] = new Vec2(
+            ( vtCurr.x + vtNext.x ) * 0.5f,
             ( vtCurr.y + vtNext.y ) * 0.5f);
 
          final int vnNextIdx = vertNext[2];
          final Vec3 vnNext = this.normals[vnNextIdx];
-         final Vec3 vn = vnsNew[j] = new Vec3( 
+         final Vec3 vn = vnsNew[j] = new Vec3(
             ( vnCurr.x + vnNext.x ) * 0.5f,
-            ( vnCurr.y + vnNext.y ) * 0.5f, 
+            ( vnCurr.y + vnNext.y ) * 0.5f,
             ( vnCurr.z + vnNext.z ) * 0.5f);
          Vec3.normalize(vn, vn);
          /* @formatter:on */
@@ -3179,6 +3188,79 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          { { 3, 2, 5 }, { 1, 1, 5 }, { 5, 0, 5 } },
          { { 1, 2, 6 }, { 0, 1, 6 }, { 5, 0, 6 } },
          { { 0, 2, 7 }, { 2, 1, 7 }, { 5, 0, 7 } } };
+
+      return target;
+   }
+
+   /**
+    * Projects a 3D mesh onto a 2D surface, returning the 2D mesh projection.
+    * Occluded faces are not culled from the 2D mesh.
+    *
+    * @param source     the input mesh
+    * @param projection the projection matrix
+    * @param modelview  the model view matrix
+    * @param target     the output mesh
+    *
+    * @return the projected mesh
+    */
+   @Experimental
+   public static Mesh2 project (
+      final Mesh3 source,
+      final Mat4 projection,
+      final Mat4 modelview,
+      final Mesh2 target ) {
+
+      target.name = source.name;
+      target.materialIndex = source.materialIndex;
+
+      final Vec3[] vsSource = source.coords;
+      final Vec2[] vtsSource = source.texCoords;
+
+      final int vsLen = vsSource.length;
+      final int vtsLen = vtsSource.length;
+
+      final Vec2[] vsTarget = target.coords = Vec2.resize(target.coords, vsLen);
+      final Vec2[] vtsTarget = target.texCoords = Vec2.resize(target.texCoords,
+         vtsLen);
+
+      /* Copy texture coordinates. */
+      for ( int i = 0; i < vtsLen; ++i ) {
+         vtsTarget[i].set(vtsSource[i]);
+      }
+
+      /* Project coordinates to 2D screen. */
+      final Vec4 promoted = new Vec4();
+      for ( int i = 0; i < vsLen; ++i ) {
+
+         final Vec3 vSrc = vsSource[i];
+         promoted.set(vSrc, 1.0f);
+         Mat4.mul(modelview, promoted, promoted);
+         Mat4.mul(projection, promoted, promoted);
+
+         /* Do not flip screen y, like Processing's screen does. */
+         final float wInv = promoted.w == 0.0f ? 0.0f : 1.0f / promoted.w;
+         final Vec2 vTrg = vsTarget[i];
+         vTrg.set(
+            promoted.x * 0.5f * wInv,
+            promoted.y * 0.5f * wInv);
+      }
+
+      final int[][][] fsSource = source.faces;
+      final int facesLen = fsSource.length;
+      final int[][][] fsTarget = target.faces = new int[facesLen][][];
+
+      for ( int i = 0; i < facesLen; ++i ) {
+         final int[][] vertSource = fsSource[i];
+         final int vertsLen = vertSource.length;
+         final int[][] vertTarget = fsTarget[i] = new int[vertsLen][2];
+
+         for ( int j = 0; j < vertsLen; ++j ) {
+            vertTarget[j][0] = vertSource[j][0];
+            vertTarget[j][1] = vertSource[j][1];
+         }
+      }
+
+      Arrays.sort(fsTarget, new Mesh3.SortIndices3(vsSource));
 
       return target;
    }
