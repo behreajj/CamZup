@@ -575,15 +575,12 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
     * @param b right comparisand
     *
     * @return the evaluation
-    *
-    * @see Utils#approx(float, float)
     */
    public static boolean approx (
       final Vec4 a,
       final Vec4 b ) {
 
-      return Utils.approx(a.w, b.w) && Utils.approx(a.z,
-         b.z) && Utils.approx(a.y, b.y) && Utils.approx(a.x, b.x);
+      return Vec4.approx(a, b, IUtils.DEFAULT_EPSILON);
    }
 
    /**
@@ -602,14 +599,17 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
       final Vec4 b,
       final float tolerance ) {
 
-      return Utils.approx(a.w, b.w, tolerance) && Utils.approx(a.z, b.z,
-         tolerance) && Utils.approx(a.y, b.y,
-            tolerance) && Utils.approx(a.x, b.x, tolerance);
+      /* @formatter:off */
+      return a == b ||
+         Utils.approx(a.w, b.w, tolerance) &&
+         Utils.approx(a.z, b.z, tolerance) &&
+         Utils.approx(a.y, b.y, tolerance) &&
+         Utils.approx(a.x, b.x, tolerance);
+      /* @formatter:on */
    }
 
    /**
-    * Tests to see if a vector has, approximately, the specified magnitude
-    * according to the default EPSILON.
+    * Tests to see if a vector has, approximately, the specified magnitude.
     *
     * @param a the input vector
     * @param b the magnitude
@@ -623,7 +623,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
       final Vec4 a,
       final float b ) {
 
-      return Utils.approx(Vec4.magSq(a), b * b);
+      return Vec4.approxMag(a, b, IUtils.DEFAULT_EPSILON);
    }
 
    /**
@@ -989,8 +989,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    @Experimental
    public static Vec4 epsilon ( final Vec4 target ) {
 
-      return target.set(Utils.EPSILON, Utils.EPSILON, Utils.EPSILON,
-         Utils.EPSILON);
+      return target.set(
+         IUtils.DEFAULT_EPSILON,
+         IUtils.DEFAULT_EPSILON,
+         IUtils.DEFAULT_EPSILON,
+         IUtils.DEFAULT_EPSILON);
    }
 
    /**
@@ -1010,8 +1013,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
       final Vec4 ub,
       final Vec4 target ) {
 
-      return target.set(Utils.filter(v.x, lb.x, ub.x),
-         Utils.filter(v.y, lb.y, ub.y), Utils.filter(v.z, lb.z, ub.z),
+      return target.set(
+         Utils.filter(v.x, lb.x, ub.x),
+         Utils.filter(v.y, lb.y, ub.y),
+         Utils.filter(v.z, lb.z,
+            ub.z),
          Utils.filter(v.w, lb.w, ub.w));
    }
 

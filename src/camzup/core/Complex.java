@@ -427,14 +427,12 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * @param b the right comparisand
     *
     * @return the evaluation
-    *
-    * @see Utils#approx(float, float)
     */
    public static boolean approx (
       final Complex a,
       final Complex b ) {
 
-      return Utils.approx(a.imag, b.imag) && Utils.approx(a.real, b.real);
+      return Complex.approx(a, b, IUtils.DEFAULT_EPSILON);
    }
 
    /**
@@ -454,24 +452,11 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex b,
       final float tolerance ) {
 
-      return Utils.approx(a.imag, b.imag, tolerance) && Utils.approx(a.real,
-         b.real, tolerance);
-   }
-
-   /**
-    * Tests to see if a complex number has, approximately, the specified
-    * absolute.
-    *
-    * @param z   the complex number
-    * @param abs the absolute
-    *
-    * @return the evaluation
-    */
-   public static boolean approxAbs (
-      final Complex z,
-      final float abs ) {
-
-      return Utils.approx(Complex.absSq(z), abs * abs);
+      /* @formatter:off */
+      return a == b ||
+         Utils.approx(a.imag, b.imag, tolerance) &&
+         Utils.approx(a.real, b.real, tolerance);
+      /* @formatter:on */
    }
 
    /**

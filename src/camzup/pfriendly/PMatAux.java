@@ -67,7 +67,8 @@ public abstract class PMatAux {
       final float n12 = tay * zAxis - sax;
       final float n21 = taz * yAxis + sax;
 
-      m.set(m.m00 * n00 + m.m01 * n01 + m.m02 * n02,
+      m.set(
+         m.m00 * n00 + m.m01 * n01 + m.m02 * n02,
          m.m00 * n10 + m.m01 * n11 + m.m02 * n12,
          m.m00 * n20 + m.m01 * n21 + m.m02 * n22, m.m03,
          m.m10 * n00 + m.m11 * n01 + m.m12 * n02,
@@ -80,7 +81,8 @@ public abstract class PMatAux {
          m.m30 * n10 + m.m31 * n11 + m.m32 * n12,
          m.m30 * n20 + m.m31 * n21 + m.m32 * n22, m.m33);
 
-      mInv.set(n00 * mInv.m00 + n01 * mInv.m10 + n02 * mInv.m20,
+      mInv.set(
+         n00 * mInv.m00 + n01 * mInv.m10 + n02 * mInv.m20,
          n00 * mInv.m01 + n01 * mInv.m11 + n02 * mInv.m21,
          n00 * mInv.m02 + n01 * mInv.m12 + n02 * mInv.m22,
          n00 * mInv.m03 + n01 * mInv.m13 + n02 * mInv.m23,
@@ -91,8 +93,8 @@ public abstract class PMatAux {
          n20 * mInv.m00 + n21 * mInv.m10 + n22 * mInv.m20,
          n20 * mInv.m01 + n21 * mInv.m11 + n22 * mInv.m21,
          n20 * mInv.m02 + n21 * mInv.m12 + n22 * mInv.m22,
-         n20 * mInv.m03 + n21 * mInv.m13 + n22 * mInv.m23, mInv.m30, mInv.m31,
-         mInv.m32, mInv.m33);
+         n20 * mInv.m03 + n21 * mInv.m13 + n22 * mInv.m23,
+         mInv.m30, mInv.m31, mInv.m32, mInv.m33);
 
       return m;
    }
@@ -143,16 +145,19 @@ public abstract class PMatAux {
       if ( m == null ) { m = new PMatrix3D(); }
       if ( mInv == null ) { mInv = new PMatrix3D(); }
 
-      m.set(c * m.m00 + s * m.m01, c * m.m01 - s * m.m00, m.m02, m.m03,
+      m.set(
+         c * m.m00 + s * m.m01, c * m.m01 - s * m.m00, m.m02, m.m03,
          c * m.m10 + s * m.m11, c * m.m11 - s * m.m10, m.m12, m.m13,
          c * m.m20 + s * m.m21, c * m.m21 - s * m.m20, m.m22, m.m23,
          c * m.m30 + s * m.m31, c * m.m31 - s * m.m30, m.m32, m.m33);
 
-      mInv.set(c * mInv.m00 + s * mInv.m10, c * mInv.m01 + s * mInv.m11,
+      mInv.set(
+         c * mInv.m00 + s * mInv.m10, c * mInv.m01 + s * mInv.m11,
          c * mInv.m02 + s * mInv.m12, c * mInv.m03 + s * mInv.m13,
          c * mInv.m10 - s * mInv.m00, c * mInv.m11 - s * mInv.m01,
-         c * mInv.m12 - s * mInv.m02, c * mInv.m13 - s * mInv.m03, mInv.m20,
-         mInv.m21, mInv.m22, mInv.m23, mInv.m30, mInv.m31, mInv.m32, mInv.m33);
+         c * mInv.m12 - s * mInv.m02, c * mInv.m13 - s * mInv.m03,
+         mInv.m20, mInv.m21, mInv.m22, mInv.m23,
+         mInv.m30, mInv.m31, mInv.m32, mInv.m33);
 
       return m;
    }
@@ -240,9 +245,11 @@ public abstract class PMatAux {
       h = h != 0.0f ? 1.0f / h : 1.0f;
       d = d != 0.0f ? 1.0f / d : 1.0f;
 
-      target.set(n2 * w, 0.0f, ( right + left ) * w, 0.0f, 0.0f, n2 * h,
-         ( top + bottom ) * h, 0.0f, 0.0f, 0.0f, ( far + near ) * -d,
-         n2 * far * -d, 0.0f, 0.0f, -1.0f, 0.0f);
+      target.set(
+         n2 * w, 0.0f, ( right + left ) * w, 0.0f,
+         0.0f, n2 * h, ( top + bottom ) * h, 0.0f,
+         0.0f, 0.0f, ( far + near ) * -d, n2 * far * -d,
+         0.0f, 0.0f, -1.0f, 0.0f);
       return target;
    }
 
@@ -359,7 +366,8 @@ public abstract class PMatAux {
       final float am21 = yz2 + wx2;
       final float am22 = 1.0f - xsq2 - ysq2;
 
-      target.set(am00 * target.m00 + am01 * target.m10 + am02 * target.m20,
+      target.set(
+         am00 * target.m00 + am01 * target.m10 + am02 * target.m20,
          am00 * target.m01 + am01 * target.m11 + am02 * target.m21,
          am00 * target.m02 + am01 * target.m12 + am02 * target.m22,
          am00 * target.m03 + am01 * target.m13 + am02 * target.m23,
@@ -370,8 +378,8 @@ public abstract class PMatAux {
          am20 * target.m00 + am21 * target.m10 + am22 * target.m20,
          am20 * target.m01 + am21 * target.m11 + am22 * target.m21,
          am20 * target.m02 + am21 * target.m12 + am22 * target.m22,
-         am20 * target.m03 + am21 * target.m13 + am22 * target.m23, target.m30,
-         target.m31, target.m32, target.m33);
+         am20 * target.m03 + am21 * target.m13 + am22 * target.m23,
+         target.m30, target.m31, target.m32, target.m33);
       return target;
    }
 
@@ -404,7 +412,8 @@ public abstract class PMatAux {
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
-      target.set(target.m00, target.m01, target.m02, target.m03,
+      target.set(
+         target.m00, target.m01, target.m02, target.m03,
          c * target.m10 + s * target.m20, c * target.m11 + s * target.m21,
          c * target.m12 + s * target.m22, c * target.m13 + s * target.m23,
          c * target.m20 - s * target.m10, c * target.m21 - s * target.m11,
@@ -517,12 +526,14 @@ public abstract class PMatAux {
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
-      target.set(c * target.m00 + s * target.m10,
-         c * target.m01 + s * target.m11, c * target.m02 + s * target.m12,
-         c * target.m03 + s * target.m13, c * target.m10 - s * target.m00,
-         c * target.m11 - s * target.m01, c * target.m12 - s * target.m02,
-         c * target.m13 - s * target.m03, target.m20, target.m21, target.m22,
-         target.m23, target.m30, target.m31, target.m32, target.m33);
+
+      target.set(
+         c * target.m00 + s * target.m10, c * target.m01 + s * target.m11,
+         c * target.m02 + s * target.m12, c * target.m03 + s * target.m13,
+         c * target.m10 - s * target.m00, c * target.m11 - s * target.m01,
+         c * target.m12 - s * target.m02, c * target.m13 - s * target.m03,
+         target.m20, target.m21, target.m22, target.m23,
+         target.m30, target.m31, target.m32, target.m33);
       return target;
    }
 
@@ -568,7 +579,8 @@ public abstract class PMatAux {
       final float y = yScale != 0.0f ? 1.0f / yScale : 1.0f;
       final float z = zScale != 0.0f ? 1.0f / zScale : 1.0f;
 
-      target.set(x * target.m00, x * target.m01, x * target.m02, x * target.m03,
+      target.set(
+         x * target.m00, x * target.m01, x * target.m02, x * target.m03,
          y * target.m10, y * target.m11, y * target.m12, y * target.m13,
          z * target.m20, z * target.m21, z * target.m22, z * target.m23,
          target.m30, target.m31, target.m32, target.m33);
@@ -631,13 +643,14 @@ public abstract class PMatAux {
 
       if ( target == null ) { target = new PMatrix3D(); }
 
-      target.set(target.m00 - tx * target.m30, target.m01 - tx * target.m31,
+      target.set(
+         target.m00 - tx * target.m30, target.m01 - tx * target.m31,
          target.m02 - tx * target.m32, target.m03 - tx * target.m33,
          target.m10 - ty * target.m30, target.m11 - ty * target.m31,
          target.m12 - ty * target.m32, target.m13 - ty * target.m33,
          target.m20 - tz * target.m30, target.m21 - tz * target.m31,
-         target.m22 - tz * target.m32, target.m23 - tz * target.m33, target.m30,
-         target.m31, target.m32, target.m33);
+         target.m22 - tz * target.m32, target.m23 - tz * target.m33,
+         target.m30, target.m31, target.m32, target.m33);
       return target;
    }
 
@@ -701,7 +714,8 @@ public abstract class PMatAux {
 
       if ( target == null ) { target = new PMatrix3D(); }
 
-      target.set(a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03 * b.m30,
+      target.set(
+         a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03 * b.m30,
          a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21 + a.m03 * b.m31,
          a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22 + a.m03 * b.m32,
          a.m00 * b.m03 + a.m01 * b.m13 + a.m02 * b.m23 + a.m03 * b.m33,
@@ -739,7 +753,8 @@ public abstract class PMatAux {
       final Vec4 v,
       final Vec4 target ) {
 
-      return target.set(m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03 * v.w,
+      return target.set(
+         m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03 * v.w,
          m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13 * v.w,
          m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m23 * v.w,
          m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33 * v.w);
@@ -816,7 +831,8 @@ public abstract class PMatAux {
       final float w = m.m30 * vx + m.m31 * vy + m.m32 * vz + m.m33;
       if ( w != 0.0f ) {
          final float wInv = 1.0f / w;
-         return target.set( ( m.m00 * vx + m.m01 * vy + m.m02 * vz ) * wInv,
+         return target.set(
+            ( m.m00 * vx + m.m01 * vy + m.m02 * vz ) * wInv,
             ( m.m10 * vx + m.m11 * vy + m.m12 * vz ) * wInv,
             ( m.m20 * vx + m.m21 * vy + m.m22 * vz ) * wInv);
       }
@@ -896,8 +912,10 @@ public abstract class PMatAux {
       h = h != 0.0f ? 1.0f / h : 1.0f;
       d = d != 0.0f ? 1.0f / d : 1.0f;
 
-      target.set(w + w, 0.0f, 0.0f, w * ( left + right ), 0.0f, h + h, 0.0f,
-         h * ( top + bottom ), 0.0f, 0.0f, - ( d + d ), -d * ( far + near ),
+      target.set(
+         w + w, 0.0f, 0.0f, w * ( left + right ),
+         0.0f, h + h, 0.0f, h * ( top + bottom ),
+         0.0f, 0.0f, - ( d + d ), -d * ( far + near ),
          0.0f, 0.0f, 0.0f, 1.0f);
       return target;
    }
@@ -945,9 +963,11 @@ public abstract class PMatAux {
 
       final float cotfov = Utils.cot(fov * 0.5f);
       final float d = Utils.div(1.0f, far - near);
-      target.set(Utils.div(cotfov, aspect), 0.0f, 0.0f, 0.0f, 0.0f, cotfov,
-         0.0f, 0.0f, 0.0f, 0.0f, ( far + near ) * -d,
-         ( near + near ) * far * -d, 0.0f, 0.0f, -1.0f, 0.0f);
+      target.set(
+         Utils.div(cotfov, aspect), 0.0f, 0.0f, 0.0f,
+         0.0f, cotfov, 0.0f, 0.0f,
+         0.0f, 0.0f, ( far + near ) * -d, ( near + near ) * far * -d,
+         0.0f, 0.0f, -1.0f, 0.0f);
 
       return target;
    }

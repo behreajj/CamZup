@@ -36,7 +36,7 @@ public interface IUtils {
 
    /**
     * The smallest positive non-zero value, \u03b5. Useful for testing
-    * approximation between two floats. Set to 0.000001 .
+    * approximation between two floats. Set to {@value IUtils#DEFAULT_EPSILON} .
     *
     * @see Utils#approx(float, float)
     */
@@ -44,47 +44,49 @@ public interface IUtils {
 
    /**
     * An angle in degrees is multiplied by this constant to convert it to
-    * radians. \u03c0 / 180.0 , approximately 0.017453292 .
+    * radians. \u03c0 / 180.0 , approximately {@value IUtils#DEG_TO_RAD} .
     */
    float DEG_TO_RAD = 0.017453292f;
 
    /**
     * An angle in degrees is multiplied by this constant to convert it to
-    * radians. \u03c0 / 180.0 , approximately 0.017453292519943295 .
+    * radians. \u03c0 / 180.0 , approximately {@value IUtils#DEG_TO_RAD_D} .
     */
    double DEG_TO_RAD_D = 0.017453292519943295d;
 
    /**
-    * Four-thirds, 4.0 / 3.0 . Approximately 1.3333333 . Useful when creating a
-    * circular shape with a series of Bezier curves.
+    * Four-thirds, 4.0 / 3.0 . Approximately {@value IUtils#FOUR_THIRDS} .
+    * Useful when creating a circular shape with a series of Bezier curves.
     */
    float FOUR_THIRDS = 1.3333333f;
 
    /**
-    * Four-thirds, 4.0 / 3.0 . Approximately 1.3333333333333333 . Useful when
-    * creating a circular shape with a series of Bezier curves.
+    * Four-thirds, 4.0 / 3.0 . Approximately {@value IUtils#FOUR_THIRDS_D} .
+    * Useful when creating a circular shape with a series of Bezier curves.
     */
    double FOUR_THIRDS_D = 1.3333333333333333d;
 
    /**
-    * An approximation of \u03c4 / \u03c6<sup>2</sup> , 2.3999631 . Useful for
-    * replicating phyllotaxis. In degrees, 137.50777 .
+    * An approximation of \u03c4 / \u03c6<sup>2</sup> ,
+    * {@value IUtils#GOLDEN_ANGLE} . Useful for replicating phyllotaxis. In
+    * degrees, 137.50777 .
     */
    float GOLDEN_ANGLE = 2.3999631f;
 
    /**
-    * An approximation of \u03c4 / \u03c6<sup>2</sup> , 2.399963229728653 .
-    * Useful for replicating phyllotaxis. In degrees, 137.50776405003785 .
+    * An approximation of \u03c4 / \u03c6<sup>2</sup> ,
+    * {@value IUtils#GOLDEN_ANGLE_D} . Useful for replicating phyllotaxis. In
+    * degrees, 137.50776405003785 .
     */
    double GOLDEN_ANGLE_D = 2.399963229728653d;
 
    /**
-    * \u03c0 divided by two. Approximately 1.5707964 .
+    * \u03c0 divided by two. Approximately {@value IUtils#HALF_PI} .
     */
    float HALF_PI = 1.5707964f;
 
    /**
-    * \u03c0 divided by two. Approximately 1.5707963267948966 .
+    * \u03c0 divided by two. Approximately {@value IUtils#HALF_PI_D} .
     */
    double HALF_PI_D = 1.5707963267948966d;
 
@@ -99,196 +101,198 @@ public interface IUtils {
    int HASH_MUL = 16777619;
 
    /**
-    * The hash base multiplied by the hash multiplier.
+    * The {@link IUtils#HASH_BASE} multiplied by the {@link IUtils#HASH_MUL}.
     */
    int MUL_BASE = IUtils.HASH_BASE * IUtils.HASH_MUL;
 
    /**
     * One-255th, 1.0 / 255.0 . Useful when converting a color with channels in
     * the range [0, 255] to a color in the range [0.0, 1.0] . Approximately
-    * 0.003921569 .
+    * {@value IUtils#ONE_255} .
     */
    float ONE_255 = 0.003921569f;
 
    /**
     * One-255th, 1.0 / 255.0 . Useful when converting a color with channels in
-    * the range [0, 255] to a color in the range [0, 1]. Approximately
-    * 0.00392156862745098 .
+    * the range [0, 255] to a color in the range [0.0, 1.0] . Approximately
+    * {@value IUtils#ONE_255_D} .
     */
    double ONE_255_D = 0.00392156862745098d;
 
    /**
-    * One divided by 360 degrees, 1.0 / 360 ; approximately 0.0027777778 .
-    * Useful for converting an index in a for-loop to an angle in degrees.
+    * One divided by 360 degrees, 1.0 / 360 ; approximately
+    * {@value IUtils#ONE_360} . Useful for converting an index in a for-loop to
+    * an angle in degrees.
     */
    float ONE_360 = 0.0027777778f;
 
    /**
     * One divided by 360 degrees, 1.0 / 360.0 ; approximately
-    * 0.002777777777777778 . Useful for converting an index in a for-loop to an
-    * angle in degrees.
+    * {@value IUtils#ONE_360_D} . Useful for converting an index in a for-loop
+    * to an angle in degrees.
     */
    double ONE_360_D = 0.002777777777777778d;
 
    /**
     * One divided by \u03c0 . Useful when converting inclinations to the range
-    * [0.0, 1.0] . Approximately 0.31830987 .
+    * [0.0, 1.0] . Approximately {@value IUtils#ONE_PI} .
     */
    float ONE_PI = 0.31830987f;
 
    /**
     * One divided by \u03c0 . Useful when converting inclinations to linear
-    * ranges. Approximately 0.3183098861837907 .
+    * ranges. Approximately {@value IUtils#ONE_PI_D} .
     */
    double ONE_PI_D = 0.3183098861837907d;
 
    /**
     * One-sixth, 1.0 / 6.0 . Useful when converting a color in RGB color space
     * to one in HSB, given the six sectors formed by primary and secondary
-    * colors . Approximately 0.16666667 .
+    * colors . Approximately {@value IUtils#ONE_SIX} .
     */
    float ONE_SIX = 0.16666667f;
 
    /**
     * One-sixth, 1.0 / 6.0 . Useful when converting a color in RGB color space
     * to one in HSB, given the six sectors formed by primary and secondary
-    * colors . Approximately 0.16666666666666667 .
+    * colors . Approximately {@value IUtils#ONE_SIX_D} .
     */
    double ONE_SIX_D = 0.16666666666666667d;
 
    /**
-    * An approximation of 1.0 / ( \u221a 2.0 ), 0.70710677 .
+    * An approximation of 1.0 / ( \u221a 2.0 ), {@value IUtils#ONE_SQRT_2} .
     */
    float ONE_SQRT_2 = 0.70710677f;
 
    /**
-    * An approximation of 1.0 / ( \u221a 2.0 ), 0.7071067811865475 .
+    * An approximation of 1.0 / ( \u221a 2.0 ), {@value IUtils#ONE_SQRT_2_D} .
     */
    double ONE_SQRT_2_D = 0.7071067811865475d;
 
    /**
-    * An approximation of 1.0 / ( \u221a 3.0 ), 0.57735026 .
+    * An approximation of 1.0 / ( \u221a 3.0 ), {@value IUtils#ONE_SQRT_3} .
     */
    float ONE_SQRT_3 = 0.57735026f;
 
    /**
-    * An approximation of 1.0 / ( \u221a 3.0 ), 0.5773502691896258 .
+    * An approximation of 1.0 / ( \u221a 3.0 ), {@value IUtils#ONE_SQRT_3_D} .
     */
    double ONE_SQRT_3_D = 0.5773502691896258d;
 
    /**
     * One divided by \u03c4 . Useful for converting an index in a for-loop to an
-    * angle. Approximately 0.15915494 .
+    * angle. Approximately {@value IUtils#ONE_TAU} .
     */
    float ONE_TAU = 0.15915494f;
 
    /**
     * 1.0 / 4.0 \u03c0 . Useful when normalizing angles supplied to quaternions.
-    * Approximately 0.07957747 .
+    * Approximately {@value IUtils#ONE_TAU_2} .
     */
-   float ONE_TAU_2 = 0.07957747154594767f;
+   float ONE_TAU_2 = 0.07957747f;
 
    /**
     * 1.0 / 4.0 \u03c0 . Useful when normalizing angles supplied to quaternions.
-    * Approximately 0.07957747154594767 .
+    * Approximately {@value IUtils#ONE_TAU_2_D} .
     */
    double ONE_TAU_2_D = 0.07957747154594767d;
 
    /**
-    * One divided by \u03c4. Useful for converting an index in a for-loop to an
-    * angle. Approximately 0.15915494309189535 .
+    * One divided by \u03c4 . Useful for converting an index in a for-loop to an
+    * angle. Approximately {@value IUtils#ONE_TAU_D} .
     */
    double ONE_TAU_D = 0.15915494309189535d;
 
    /**
-    * One-third, 1.0 / 3.0 . Approximately 0.33333333 . Useful for setting
-    * handles on the knot of a Bezier curve.
+    * One-third, 1.0 / 3.0 . Approximately {@value IUtils#ONE_THIRD} . Useful
+    * for setting handles on the knot of a Bezier curve.
     */
    float ONE_THIRD = 0.33333334f;
 
    /**
-    * One-third, 1.0 / 3.0 . Approximately 0.3333333333333333 . Useful for
-    * setting handles on the knot of a Bezier curve.
+    * One-third, 1.0 / 3.0 . Approximately {@value IUtils#ONE_THIRD_D} . Useful
+    * for setting handles on the knot of a Bezier curve.
     */
    double ONE_THIRD_D = 0.3333333333333333d;
 
    /**
-    * An approximation of \u03c6, or ( 1.0 + \u221a 5.0 ) / 2.0 , 1.618034 .
+    * An approximation of \u03c6, or ( 1.0 + \u221a 5.0 ) / 2.0 ,
+    * {@value IUtils#PHI} .
     */
    float PHI = 1.618034f;
 
    /**
     * An approximation of \u03c6, or ( 1.0 + \u221a 5.0 ) / 2.0 ,
-    * 1.618033988749895 .
+    * {@value IUtils#PHI_D} .
     */
    double PHI_D = 1.618033988749895d;
 
    /**
-    * An approximation of \u03c0, 3.1415927 .
+    * An approximation of \u03c0, {@value IUtils#PI} .
     */
    float PI = 3.1415927f;
 
    /**
     * An angle in radians is multiplied by this constant to convert it to
-    * degrees. 180.0 / \u03c0, approximately 57.29578 .
+    * degrees. 180.0 / \u03c0, approximately {@value IUtils#RAD_TO_DEG} .
     */
    float RAD_TO_DEG = 57.29578f;
 
    /**
     * An angle in radians is multiplied by this constant to convert it to
-    * degrees. 180.0 / \u03c0, approximately 57.29577951308232 .
+    * degrees. 180.0 / \u03c0, approximately {@value IUtils#RAD_TO_DEG_D} .
     */
    double RAD_TO_DEG_D = 57.29577951308232d;
 
    /**
-    * An approximation of \u221a 2.0, 1.4142137 .
+    * An approximation of \u221a 2.0, {@value IUtils#SQRT_2} .
     */
    float SQRT_2 = 1.4142137f;
 
    /**
-    * An approximation of \u221a 2.0, 1.4142135623730951 .
+    * An approximation of \u221a 2.0, {@value IUtils#SQRT_2_D} .
     */
    double SQRT_2_D = 1.4142135623730951d;
 
    /**
-    * An approximation of \u221a 3.0, 1.7320508 .
+    * An approximation of \u221a 3.0, {@value IUtils#SQRT_3} .
     */
    float SQRT_3 = 1.7320508f;
 
    /**
-    * An approximation of ( \u221a 3.0 ) / 2.0 , 0.8660254 .
+    * An approximation of ( \u221a 3.0 ) / 2.0 , {@value IUtils#SQRT_3_2} .
     */
    float SQRT_3_2 = 0.8660254f;
 
    /**
-    * An approximation of ( \u221a 3.0 ) / 2.0 , 0.8660254037844386 .
+    * An approximation of ( \u221a 3.0 ) / 2.0 , {@value IUtils#SQRT_3_2_D} .
     */
    double SQRT_3_2_D = 0.8660254037844386d;
 
    /**
-    * An approximation of \u221a 3.0, 1.7320508075688772 .
+    * An approximation of \u221a 3.0, {@value IUtils#SQRT_3_D} .
     */
    double SQRT_3_D = 1.7320508075688772d;
 
    /**
-    * An approximation of \u03c4 , 6.2831855 . Equal to 2.0 \u03c0 .
+    * An approximation of \u03c4 , {@value IUtils#TAU} . Equal to 2.0 \u03c0 .
     */
    float TAU = 6.2831855f;
 
    /**
-    * An approximation of \u03c4 , 6.283185307179586 . Equal to 2.0 \u03c0 .
+    * An approximation of \u03c4 , {@value IUtils#TAU_D} . Equal to 2.0 \u03c0 .
     */
    double TAU_D = 6.283185307179586d;
 
    /**
-    * \u03c0 divided by three, 1.0471976 . Useful for describing the field of
-    * view in a perspective camera.
+    * \u03c0 divided by three, {@value IUtils#THIRD_PI} . Useful for describing
+    * the field of view in a perspective camera.
     */
    float THIRD_PI = 1.0471976f;
 
    /**
-    * \u03c0 divided by three, 1.0471975511965976 . Useful for describing the
-    * field of view in a perspective camera.
+    * \u03c0 divided by three, {@value IUtils#THIRD_PI_D} . Useful for
+    * describing the field of view in a perspective camera.
     */
    double THIRD_PI_D = 1.0471975511965976d;
 

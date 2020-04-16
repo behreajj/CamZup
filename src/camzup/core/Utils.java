@@ -7,16 +7,6 @@ package camzup.core;
 public abstract class Utils implements IUtils {
 
    /**
-    * The epsilon, \u03b5, provided to approximation functions when none is
-    * specified by the user.
-    */
-   public static float EPSILON = 0.0f;
-
-   static {
-      Utils.EPSILON = IUtils.DEFAULT_EPSILON;
-   }
-
-   /**
     * An alternative to the {@link Math#abs(double)} function. Relies on
     * bit-masking to remove the sign bit.
     *
@@ -24,8 +14,8 @@ public abstract class Utils implements IUtils {
     *
     * @return the absolute value
     *
-    * @see Math#abs(double)
     * @see Double#longBitsToDouble(long)
+    * @see Double#doubleToLongBits(double)
     */
    public static double abs ( final double value ) {
 
@@ -43,8 +33,8 @@ public abstract class Utils implements IUtils {
     *
     * @return the absolute value
     *
-    * @see Math#abs(float)
     * @see Float#intBitsToFloat(int)
+    * @see Float#floatToRawIntBits(float)
     */
    public static float abs ( final float value ) {
 
@@ -124,7 +114,7 @@ public abstract class Utils implements IUtils {
     */
    public static boolean approx ( final float a, final float b ) {
 
-      return Utils.approx(a, b, Utils.EPSILON);
+      return Utils.approx(a, b, IUtils.DEFAULT_EPSILON);
    }
 
    /**
@@ -164,8 +154,6 @@ public abstract class Utils implements IUtils {
     * @param value the input value
     *
     * @return the angle in radians
-    *
-    * @see Math#asin(double)
     *
     * @author C. Hastings, Jr.
     */
@@ -276,9 +264,6 @@ public abstract class Utils implements IUtils {
     * @param value the input value
     *
     * @return the raised value.
-    *
-    * @see Math#ceil(double)
-    * @see Float#isNaN(float)
     */
    public static float ceil ( final float value ) {
 
@@ -358,6 +343,9 @@ public abstract class Utils implements IUtils {
     * @param sign      the sign
     *
     * @return the magnified sign
+    * 
+    * @see Float#intBitsToFloat(int)
+    * @see Float#floatToRawIntBits(float)
     */
    public static float copySign (
       final float magnitude,
@@ -417,7 +405,8 @@ public abstract class Utils implements IUtils {
     *
     * @return the difference
     *
-    * @see Utils#abs(float)
+    * @see Float#intBitsToFloat(int)
+    * @see Float#floatToRawIntBits(float)
     */
    public static float diff ( final float a, final float b ) {
 
@@ -494,9 +483,6 @@ public abstract class Utils implements IUtils {
     * @param value the input value
     *
     * @return the floored value
-    *
-    * @see Double#isNaN(double)
-    * @see Math#floor(double)
     */
    public static double floor ( final double value ) {
 
@@ -511,9 +497,6 @@ public abstract class Utils implements IUtils {
     * @param value the input value
     *
     * @return the floored value.
-    *
-    * @see Float#isNaN(float)
-    * @see Math#floor(double)
     */
    public static float floor ( final float value ) {
 
@@ -557,7 +540,6 @@ public abstract class Utils implements IUtils {
     * @see Utils#mod(float, float)
     * @see Utils#fract(float)
     * @see Utils#trunc(float)
-    * @see Float#isNaN(float)
     */
    public static float fmod ( final float a, final float b ) {
 
@@ -576,7 +558,6 @@ public abstract class Utils implements IUtils {
     *
     * @return the fractional portion
     *
-    * @see Float#isNaN(float)
     * @see Utils#trunc(float)
     */
    public static float fract ( final float value ) {
@@ -864,8 +845,6 @@ public abstract class Utils implements IUtils {
     * @param fs the list of values
     *
     * @return the minimum value
-    *
-    * @see Utils#max(float, float)
     */
    public static float max ( final float... fs ) {
 
@@ -884,8 +863,6 @@ public abstract class Utils implements IUtils {
     * @param b the right operand
     *
     * @return the minimal value
-    *
-    * @see Math#max(float, float)
     */
    public static float max ( final float a, final float b ) {
 
@@ -900,8 +877,6 @@ public abstract class Utils implements IUtils {
     * @param c the third input
     *
     * @return the minimum value
-    *
-    * @see Utils#max(float, float)
     */
    public static float max (
       final float a,
@@ -918,8 +893,6 @@ public abstract class Utils implements IUtils {
     * @param fs the list of values
     *
     * @return the minimum value
-    *
-    * @see Utils#max(float, float)
     */
    public static float min ( final float... fs ) {
 
@@ -938,8 +911,6 @@ public abstract class Utils implements IUtils {
     * @param b the right operand
     *
     * @return the minimal value
-    *
-    * @see Math#min(float, float)
     */
    public static float min ( final float a, final float b ) {
 
@@ -954,8 +925,6 @@ public abstract class Utils implements IUtils {
     * @param c the third input
     *
     * @return the minimum value
-    *
-    * @see Utils#min(float, float)
     */
    public static float min (
       final float a,
@@ -997,8 +966,6 @@ public abstract class Utils implements IUtils {
     * @param b the right operand
     *
     * @return the result
-    *
-    * @see Math#floorMod(int, int)
     */
    public static int mod ( final int a, final int b ) {
 

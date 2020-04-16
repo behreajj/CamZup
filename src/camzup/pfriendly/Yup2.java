@@ -418,10 +418,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @return the model view
     */
    @Override
-   public PMatrix2D getMatrix ( ) {
-
-      return this.getMatrix(( PMatrix2D ) null);
-   }
+   public PMatrix2D getMatrix ( ) { return this.getMatrix(( PMatrix2D ) null); }
 
    /**
     * Gets the renderer model view matrix.

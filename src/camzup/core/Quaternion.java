@@ -657,15 +657,12 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @param b the right comparisand
     *
     * @return the evaluation
-    *
-    * @see Utils#approx(float, float)
-    * @see Vec3#approx(Vec3, Vec3)
     */
    public static boolean approx (
       final Quaternion a,
       final Quaternion b ) {
 
-      return Utils.approx(a.real, b.real) && Vec3.approx(a.imag, b.imag);
+      return Quaternion.approx(a, b, IUtils.DEFAULT_EPSILON);
    }
 
    /**
@@ -686,13 +683,15 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Quaternion b,
       final float tolerance ) {
 
-      return Utils.approx(a.real, b.real, tolerance) && Vec3.approx(a.imag,
-         b.imag, tolerance);
+      /* @formatter:off */
+      return a == b ||
+         Utils.approx(a.real, b.real, tolerance) &&
+         Vec3.approx(a.imag, b.imag, tolerance);
+      /* @formatter:on */
    }
 
    /**
-    * Tests to see if a quaternion has, approximately, the specified magnitude
-    * according to the default EPSILON.
+    * Tests to see if a quaternion has, approximately, the specified magnitude.
     *
     * @param a the quaternion
     * @param b the magnitude
@@ -706,7 +705,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Quaternion a,
       final float b ) {
 
-      return Utils.approx(Quaternion.magSq(a), b * b);
+      return Quaternion.approxMag(a, b, IUtils.DEFAULT_EPSILON);
    }
 
    /**

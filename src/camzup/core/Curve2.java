@@ -638,10 +638,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Iterator < Knot2 > itr = this.knots.iterator();
       while ( itr.hasNext() ) {
          sb.append(itr.next().toString(places));
-         if ( itr.hasNext() ) {
-            sb.append(',').append(' ');
-            // sb.append('\n');
-         }
+         if ( itr.hasNext() ) { sb.append(',').append(' '); }
       }
 
       sb.append(" ] }");
@@ -991,8 +988,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
             /* Flatten handle from last to center. */
             last.foreHandle.set(
-               0.6666667f * coLast.x + 0.33333334f * coCenter.x,
-               0.6666667f * coLast.y + 0.33333334f * coCenter.y);
+               0.6666666f * coLast.x + 0.33333334f * coCenter.x,
+               0.6666666f * coLast.y + 0.33333334f * coCenter.y);
          }
       }
 
@@ -1106,7 +1103,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Evaluates a step in the range [0.0, 1.0], returning a transform. The
+    * Evaluates a step in the range [0.0, 1.0] , returning a transform. The
     * transform's scale is unaffected by the evaluation.
     *
     * @param curve      the curve
@@ -1590,21 +1587,30 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       target.resize(6);
       final Iterator < Knot2 > itr = target.knots.iterator();
 
-      itr.next().set(0.5f, 0.0f, 0.5f, 0.1309615f, 0.5f, -0.1309615f);
-
-      itr.next().set(0.235709f, 0.166627f, 0.0505335f, 0.114256f, 0.361728f,
-         0.2022675f);
-
-      itr.next().set(-0.235709f, -0.166627f, -0.361728f, -0.2022675f,
+      itr.next().set(
+         0.5f, 0.0f,
+         0.5f, 0.1309615f,
+         0.5f, -0.1309615f);
+      itr.next().set(
+         0.235709f, 0.166627f,
+         0.0505335f, 0.114256f,
+         0.361728f, 0.2022675f);
+      itr.next().set(
+         -0.235709f, -0.166627f,
+         -0.361728f, -0.2022675f,
          -0.0505335f, -0.114256f);
-
-      itr.next().set(-0.5f, 0.0f, -0.5f, 0.1309615f, -0.5f, -0.1309615f);
-
-      itr.next().set(-0.235709f, 0.166627f, -0.0505335f, 0.114256f, -0.361728f,
-         0.2022675f);
-
-      itr.next().set(0.235709f, -0.166627f, 0.361728f, -0.2022675f, 0.0505335f,
-         -0.114256f);
+      itr.next().set(
+         -0.5f, 0.0f,
+         -0.5f, 0.1309615f,
+         -0.5f, -0.1309615f);
+      itr.next().set(
+         -0.235709f, 0.166627f,
+         -0.0505335f, 0.114256f,
+         -0.361728f, 0.2022675f);
+      itr.next().set(
+         0.235709f, -0.166627f,
+         0.361728f, -0.2022675f,
+         0.0505335f, -0.114256f);
 
       return target;
    }

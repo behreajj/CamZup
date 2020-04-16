@@ -909,7 +909,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the iterator
     */
    @Override
-   public Face3Iterator iterator ( ) { return new Face3Iterator(this); }
+   public Face3Iterator iterator ( ) {
+
+      // TODO: Make edge and vertex iterators as well?
+      return new Face3Iterator(this);
+   }
 
    /**
     * Gets the number of faces held by this mesh.
@@ -920,7 +924,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * Centers the mesh about the origin, (0.0, 0.0) and rescales it to the range
-    * [-0.5, 0.5]. Emits a transform which records the mesh's center point and
+    * [-0.5, 0.5] . Emits a transform which records the mesh's center point and
     * original dimension. The transform's rotation is reset.
     *
     * @param tr the output transform
@@ -2285,8 +2289,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.faces = new int[][][] {
          { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 }, { 4, 1, 0 } },
          { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } },
-         { { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 }, { 0, 0,
-            2 } },
+         { { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 }, { 0, 0, 2 } },
          { { 4, 2, 3 }, { 5, 3, 3 }, { 1, 0, 3 }, { 0, 1, 3 } },
          { { 0, 2, 4 }, { 1, 3, 4 }, { 3, 0, 4 }, { 2, 1, 4 } },
          { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 }, { 6, 1, 5 } } };
@@ -2552,23 +2555,21 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals[10].set(0.8506508f, -0.5f, -0.16245979f);
       target.normals[11].set(-0.8506508f, -0.5f, -0.16245979f);
 
+      /* @formatter:off */
       target.faces = new int[][][] {
-         { { 2, 0, 2 }, { 10, 2, 2 }, { 0, 3, 2 }, { 14, 1, 2 }, { 1, 4, 2 } },
-         { { 1, 0, 5 }, { 4, 2, 5 }, { 15, 3, 5 }, { 3, 1, 5 }, { 2, 4, 5 } },
-         { { 7, 0, 1 }, { 17, 2, 1 }, { 16, 3, 1 }, { 6, 1, 1 }, { 5, 4, 1 } },
-         { { 5, 0, 3 }, { 12, 2, 3 }, { 9, 3, 3 }, { 8, 1, 3 }, { 7, 4, 3 } },
-         { { 9, 0, 4 }, { 0, 2, 4 }, { 10, 3, 4 }, { 11, 1, 4 }, { 8, 4, 4 } },
-         { { 0, 0, 6 }, { 9, 2, 6 }, { 12, 3, 6 }, { 13, 1, 6 }, { 14, 4, 6 } },
-         { { 16, 0, 7 }, { 15, 2, 7 }, { 4, 3, 7 }, { 19, 1, 7 }, { 6, 4, 7 } },
-         { { 15, 0, 8 }, { 16, 2, 8 }, { 17, 3, 8 }, { 18, 1, 8 },
-            { 3, 4, 8 } },
-         { { 11, 0, 9 }, { 10, 2, 9 }, { 2, 3, 9 }, { 3, 1, 9 }, { 18, 4, 9 } },
-         { { 18, 0, 10 }, { 17, 2, 10 }, { 7, 3, 10 }, { 8, 1, 10 },
-            { 11, 4, 10 } },
-         { { 13, 0, 11 }, { 12, 2, 11 }, { 5, 3, 11 }, { 6, 1, 11 },
-            { 19, 4, 11 } },
-         { { 19, 0, 0 }, { 4, 2, 0 }, { 1, 3, 0 }, { 14, 1, 0 },
-            { 13, 4, 0 } } };
+         { {  2, 0,  2 }, { 10, 2,  2 }, {  0, 3,  2 }, { 14, 1,  2 }, {  1, 4,  2 } },
+         { {  1, 0,  5 }, {  4, 2,  5 }, { 15, 3,  5 }, {  3, 1,  5 }, {  2, 4,  5 } },
+         { {  7, 0,  1 }, { 17, 2,  1 }, { 16, 3,  1 }, {  6, 1,  1 }, {  5, 4,  1 } },
+         { {  5, 0,  3 }, { 12, 2,  3 }, {  9, 3,  3 }, {  8, 1,  3 }, {  7, 4,  3 } },
+         { {  9, 0,  4 }, {  0, 2,  4 }, { 10, 3,  4 }, { 11, 1,  4 }, {  8, 4,  4 } },
+         { {  0, 0,  6 }, {  9, 2,  6 }, { 12, 3,  6 }, { 13, 1,  6 }, { 14, 4,  6 } },
+         { { 16, 0,  7 }, { 15, 2,  7 }, {  4, 3,  7 }, { 19, 1,  7 }, {  6, 4,  7 } },
+         { { 15, 0,  8 }, { 16, 2,  8 }, { 17, 3,  8 }, { 18, 1,  8 }, {  3, 4,  8 } },
+         { { 11, 0,  9 }, { 10, 2,  9 }, {  2, 3,  9 }, {  3, 1,  9 }, { 18, 4,  9 } },
+         { { 18, 0, 10 }, { 17, 2, 10 }, {  7, 3, 10 }, {  8, 1, 10 }, { 11, 4, 10 } },
+         { { 13, 0, 11 }, { 12, 2, 11 }, {  5, 3, 11 }, {  6, 1, 11 }, { 19, 4, 11 } },
+         { { 19, 0,  0 }, {  4, 2,  0 }, {  1, 3,  0 }, { 14, 1,  0 }, { 13, 4,  0 } } };
+      /* @formatter:on */
 
       return target;
    }
@@ -3001,6 +3002,49 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          }
       }
 
+      return result;
+   }
+
+   /**
+    * Consolidate separate meshes with the same material into a mesh.
+    * 
+    * @param meshes the array of meshes
+    * 
+    * @return the consolidated meshes
+    */
+   public static final Mesh3[] groupByMaterial ( final Mesh3[] meshes ) {
+
+      // TEST
+
+      final HashMap < Integer, Mesh3 > dict = new HashMap <>();
+      Mesh3 current;
+
+      final int srcLen = meshes.length;
+      for ( int i = 0; i < srcLen; ++i ) {
+         final Mesh3 source = meshes[i];
+         final int matIdxPrm = source.materialIndex;
+         final Integer matIdxObj = matIdxPrm;
+
+         current = dict.get(matIdxObj);
+         if ( current == null ) {
+            current = new Mesh3(new int[0][0][3], new Vec3[0], new Vec2[0], new Vec3[0]);
+            current.materialIndex = matIdxPrm;
+            current.name = "Mesh." + Utils.toPadded(matIdxPrm, 6);
+            dict.put(matIdxObj, current);
+         }
+
+         current.coords = Vec3.concat(current.coords, source.coords);
+         current.texCoords = Vec2.concat(current.texCoords, source.texCoords);
+         current.normals = Vec3.concat(current.normals, source.normals);
+         current.faces = Mesh.splice(current.faces, 0, 0, source.faces);
+
+      }
+
+      Mesh3[] result = dict.values().toArray(new Mesh3[dict.size()]);
+      final int trgLen = result.length;
+      for ( int i = 0; i < trgLen; ++i ) {
+         result[i].clean();
+      }
       return result;
    }
 

@@ -558,14 +558,12 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     * @param b right operand
     *
     * @return the evaluation
-    *
-    * @see Utils#approx(float, float)
     */
    public static boolean approx (
       final Vec2 a,
       final Vec2 b ) {
 
-      return Utils.approx(a.y, b.y) && Utils.approx(a.x, b.x);
+      return Vec2.approx(a, b, IUtils.DEFAULT_EPSILON);
    }
 
    /**
@@ -584,13 +582,15 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final float tolerance ) {
 
-      return Utils.approx(a.y, b.y, tolerance) && Utils.approx(a.x, b.x,
-         tolerance);
+      /* @formatter:off */
+      return a == b ||
+         Utils.approx(a.y, b.y, tolerance) &&
+         Utils.approx(a.x, b.x, tolerance);
+      /* @formatter:on */
    }
 
    /**
-    * Tests to see if a vector has, approximately, the specified magnitude
-    * according to the default EPSILON.
+    * Tests to see if a vector has, approximately, the specified magnitude.
     *
     * @param a the input vector
     * @param b the magnitude
@@ -604,7 +604,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 a,
       final float b ) {
 
-      return Utils.approx(Vec2.magSq(a), b * b);
+      return Vec2.approxMag(a, b, IUtils.DEFAULT_EPSILON);
    }
 
    /**
@@ -657,7 +657,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final float tolerance ) {
 
-      return Utils.abs(a.x * b.y - a.y * b.x) < tolerance;
+      return Utils.abs(a.x * b.y - a.y * b.x) <= tolerance;
    }
 
    /**
@@ -854,17 +854,23 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     *
     * @see System#arraycopy(Object, int, Object, int, int)
     */
+   @SuppressWarnings ( "null" )
    public static Vec2[] concat (
       final Vec2[] a,
       final Vec2[] b ) {
 
-      if ( a == null ) {
+      final boolean anull = a == null;
+      final boolean bnull = b == null;
+
+      if ( anull && bnull ) { return new Vec2[] {}; }
+
+      if ( anull ) {
          final Vec2[] result = new Vec2[b.length];
          System.arraycopy(b, 0, result, 0, b.length);
          return result;
       }
 
-      if ( b == null ) {
+      if ( bnull ) {
          final Vec2[] result = new Vec2[a.length];
          System.arraycopy(a, 0, result, 0, a.length);
          return result;
@@ -1145,7 +1151,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     */
    public static Vec2 epsilon ( final Vec2 target ) {
 
-      return target.set(Utils.EPSILON, Utils.EPSILON);
+      return target.set(IUtils.DEFAULT_EPSILON, IUtils.DEFAULT_EPSILON);
    }
 
    /**

@@ -8,7 +8,7 @@ import java.util.Iterator;
  * This is not used by a mesh internally; it is created upon retrieval from a
  * mesh.
  */
-public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
+public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
    /**
     * The array of vertices in a face.
@@ -44,6 +44,14 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
    }
 
    /**
+    * Returns an edge iterator for this face, which allows its vertices to be
+    * accessed in an enhanced for-loop.
+    *
+    * @return the iterator
+    */
+   public Edge3Iterator edgeIterator ( ) { return new Edge3Iterator(this); }
+
+   /**
     * Tests this face for equivalence with another object.
     *
     * @return the evaluation
@@ -76,7 +84,8 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
       final Edge3 target ) {
 
       final int len = this.vertices.length;
-      return target.set(this.vertices[Utils.mod(i, len)],
+      return target.set(
+         this.vertices[Utils.mod(i, len)],
          this.vertices[Utils.mod(i + 1, len)]);
    }
 
@@ -106,13 +115,13 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
    public int hashCode ( ) { return Arrays.hashCode(this.vertices); }
 
    /**
-    * Returns an iterator for this face, which allows its vertices to be
+    * Returns an iterator for this face, which allows its elements to be
     * accessed in an enhanced for-loop.
     *
     * @return the iterator
     */
    @Override
-   public Vert3Iterator iterator ( ) { return new Vert3Iterator(this); }
+   public Edge3Iterator iterator ( ) { return this.edgeIterator(); }
 
    /**
     * Returns the number of vertices in this face.
@@ -264,10 +273,7 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
     * @see Vec3#mul(Vec3, float, Vec3)
     */
    @Chainable
-   public Face3 scale ( final float scale ) {
-
-      return this.scaleGlobal(scale);
-   }
+   public Face3 scale ( final float scale ) { return this.scaleGlobal(scale); }
 
    /**
     * Scales all coordinates in the face by a scalar.<br>
@@ -282,10 +288,7 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
     * @see Vec3#mul(Vec3, float, Vec3)
     */
    @Chainable
-   public Face3 scale ( final Vec3 scale ) {
-
-      return this.scaleGlobal(scale);
-   }
+   public Face3 scale ( final Vec3 scale ) { return this.scaleGlobal(scale); }
 
    /**
     * Scales all coordinates in the face by a scalar; uses global coordinates,
@@ -484,6 +487,14 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
 
       return this;
    }
+
+   /**
+    * Returns an vertex iterator for this face, which allows its vertices to be
+    * accessed in an enhanced for-loop.
+    *
+    * @return the iterator
+    */
+   public Vert3Iterator vertIterator ( ) { return new Vert3Iterator(this); }
 
    /**
     * Translates the face in local space. This is done by (1) finding the
@@ -697,6 +708,58 @@ public class Face3 implements Iterable < Vert3 >, Comparable < Face3 > {
          prev = curr;
       }
       return sum;
+   }
+
+   /**
+    * An iterator, which allows a face's edges to be accessed in an enhanced for
+    * loop.
+    */
+   public static final class Edge3Iterator implements Iterator < Edge3 > {
+
+      /**
+       * The face being iterated over.
+       */
+      private final Face3 face;
+
+      /**
+       * The current index.
+       */
+      private int index = 0;
+
+      /**
+       * The default constructor.
+       *
+       * @param face the face to iterate
+       */
+      public Edge3Iterator ( final Face3 face ) { this.face = face; }
+
+      /**
+       * Tests to see if the iterator has another value.
+       *
+       * @return the evaluation
+       */
+      @Override
+      public boolean hasNext ( ) { return this.index < this.face.length(); }
+
+      /**
+       * Gets the next value in the iterator.
+       *
+       * @return the value
+       */
+      @Override
+      public Edge3 next ( ) {
+
+         return this.face.getEdge(this.index++, new Edge3());
+      }
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
    }
 
    /**

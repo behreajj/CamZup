@@ -128,4 +128,38 @@ public class Vert2 implements Comparable < Vert2 > {
       return true;
    }
 
+   /**
+    * Tests to see if two vertices share the same coordinate according to the
+    * default tolerance, {@link IUtils#DEFAULT_EPSILON}.
+    *
+    * @param a the left comparisand
+    * @param b the right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean approxCoord (
+      final Vert2 a,
+      final Vert2 b ) {
+
+      return Vert2.approxCoord(a, b, IUtils.DEFAULT_EPSILON);
+   }
+
+   /**
+    * Tests to see if two vertices share the same coordinate according to a
+    * tolerance.
+    *
+    * @param a         the left comparisand
+    * @param b         the right comparisand
+    * @param tolerance the tolerance
+    *
+    * @return the evaluation
+    */
+   public static boolean approxCoord (
+      final Vert2 a,
+      final Vert2 b,
+      final float tolerance ) {
+
+      return a == b || Vec2.approx(a.coord, b.coord, tolerance);
+   }
+
 }

@@ -142,6 +142,40 @@ public class Vert3 implements Comparable < Vert3 > {
    }
 
    /**
+    * Tests to see if two vertices share the same coordinate according to the
+    * default tolerance, {@link IUtils#DEFAULT_EPSILON}.
+    *
+    * @param a the left comparisand
+    * @param b the right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean approxCoord (
+      final Vert3 a,
+      final Vert3 b ) {
+
+      return Vert3.approxCoord(a, b, IUtils.DEFAULT_EPSILON);
+   }
+
+   /**
+    * Tests to see if two vertices share the same coordinate according to a
+    * tolerance.
+    *
+    * @param a         the left comparisand
+    * @param b         the right comparisand
+    * @param tolerance the tolerance
+    *
+    * @return the evaluation
+    */
+   public static boolean approxCoord (
+      final Vert3 a,
+      final Vert3 b,
+      final float tolerance ) {
+
+      return a == b || Vec3.approx(a.coord, b.coord, tolerance);
+   }
+
+   /**
     * Returns the orientation of the vertex as a quaternion based on the
     * vertex's normal.
     *

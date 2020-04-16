@@ -86,7 +86,7 @@ public class Edge3 implements Comparable < Edge3 > {
       if ( this == obj ) { return true; }
       if ( obj == null ) { return false; }
       if ( this.getClass() != obj.getClass() ) { return false; }
-      return this.equals(( Edge3 ) obj);
+      return this.equalsSigned(( Edge3 ) obj);
    }
 
    /**
@@ -311,7 +311,12 @@ public class Edge3 implements Comparable < Edge3 > {
       final Vec3 coOrigin = this.origin.coord;
       final Vec3 coDest = this.dest.coord;
 
-      final Vec3 mp = new Vec3( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y ) * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
+      /* @formatter:off */
+      final Vec3 mp = new Vec3(
+         ( coOrigin.x + coDest.x ) * 0.5f,
+         ( coOrigin.y + coDest.y ) * 0.5f,
+         ( coOrigin.z + coDest.z ) * 0.5f);
+      /* @formatter:on */
 
       Vec3.sub(coOrigin, mp, coOrigin);
       Vec3.mul(coOrigin, scalar, coOrigin);
@@ -347,7 +352,12 @@ public class Edge3 implements Comparable < Edge3 > {
       final Vec3 coOrigin = this.origin.coord;
       final Vec3 coDest = this.dest.coord;
 
-      final Vec3 mp = new Vec3( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y ) * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
+      /* @formatter:off */
+      final Vec3 mp = new Vec3(
+         ( coOrigin.x + coDest.x ) * 0.5f,
+         ( coOrigin.y + coDest.y ) * 0.5f,
+         ( coOrigin.z + coDest.z ) * 0.5f);
+      /* @formatter:on */
 
       Vec3.sub(coOrigin, mp, coOrigin);
       Vec3.mul(coOrigin, scalar, coOrigin);
@@ -447,11 +457,12 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
-    * Tests this edge for equivalence with another.
+    * Tests this edge for equivalence with another. To be true the edges'
+    * origins must be equal and their destinations must be equal.
     *
     * @return the evaluation
     */
-   protected boolean equals ( final Edge3 edge3 ) {
+   protected boolean equalsSigned ( final Edge3 edge3 ) {
 
       if ( this.dest == null ) {
          if ( edge3.dest != null ) { return false; }
@@ -600,6 +611,40 @@ public class Edge3 implements Comparable < Edge3 > {
       final float u = 1.0f - fac;
       return target.set(u * coOrigin.x + fac * coDest.x,
          u * coOrigin.y + fac * coDest.y, u * coOrigin.z + fac * coDest.z);
+   }
+
+   /**
+    * Tests to see if two edges share a vertex coordinate:
+    * <ul>
+    * <li>Returns -1 when <em>a</em>'s origin is <em>b</em>'s destination.</li>
+    * <li>Returns -2 when <em>a</em>'s destination is <em>b</em>'s
+    * destination</li>
+    * <li>Returns 1 when <em>a</em>'s destination is <em>b</em>'s origin.</li>
+    * <li>Returns 2 when <em>a</em>'s origin is <em>b</em>'s origin.</li>
+    * <li>Returns 0 when none of the above conditions are met.</li>
+    * </ul>
+    * If the left and right comparisand are the same, returns 2.
+    *
+    * @param a the left comparisand
+    * @param b the right comparisand
+    *
+    * @return the evaluation
+    */
+   public static int sharedCoord (
+      final Edge3 a,
+      final Edge3 b ) {
+
+      final Vert3 aOrigin = a.origin;
+      final Vert3 aDest = a.dest;
+      final Vert3 bOrigin = b.origin;
+      final Vert3 bDest = b.dest;
+
+      if ( Vert3.approxCoord(aDest, bOrigin) ) { return 1; }
+      if ( Vert3.approxCoord(aOrigin, bOrigin) ) { return 2; }
+      if ( Vert3.approxCoord(aOrigin, bDest) ) { return -1; }
+      if ( Vert3.approxCoord(aDest, bDest) ) { return -2; }
+
+      return 0;
    }
 
 }

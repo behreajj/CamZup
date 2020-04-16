@@ -835,7 +835,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * Centers the mesh about the origin, (0.0, 0.0) and rescales it to the range
-    * [-0.5, 0.5]. Emits a transform which records the mesh's center point and
+    * [-0.5, 0.5] . Emits a transform which records the mesh's center point and
     * original dimension. The transform's rotation is reset.
     *
     * @param tr the output transform

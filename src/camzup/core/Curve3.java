@@ -774,7 +774,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          sb.append(itr.next().toString(places));
          if ( itr.hasNext() ) {
             sb.append(',').append(' ');
-            // sb.append('\n');
          }
       }
 
@@ -1539,22 +1538,29 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       target.resize(6);
       final Iterator < Knot3 > itr = target.knots.iterator();
 
-      itr.next().set(0.5f, 0.0f, 0.0f, 0.5f, 0.1309615f, 0.0f, 0.5f,
-         -0.1309615f, 0.0f);
-
-      itr.next().set(0.235709f, 0.166627f, 0.0f, 0.0505335f, 0.114256f, 0.0f,
+      itr.next().set(
+         0.5f, 0.0f, 0.0f,
+         0.5f, 0.1309615f, 0.0f,
+         0.5f, -0.1309615f, 0.0f);
+      itr.next().set(
+         0.235709f, 0.166627f, 0.0f, 
+         0.0505335f, 0.114256f, 0.0f,
          0.361728f, 0.2022675f, 0.0f);
-
-      itr.next().set(-0.235709f, -0.166627f, 0.0f, -0.361728f, -0.2022675f,
-         0.0f, -0.0505335f, -0.114256f, 0.0f);
-
-      itr.next().set(-0.5f, 0.0f, 0.0f, -0.5f, 0.1309615f, 0.0f, -0.5f,
-         -0.1309615f, 0.0f);
-
-      itr.next().set(-0.235709f, 0.166627f, 0.0f, -0.0505335f, 0.114256f, 0.0f,
+      itr.next().set(
+         -0.235709f, -0.166627f, 0.0f,
+         -0.361728f, -0.2022675f, 0.0f,
+         -0.0505335f, -0.114256f, 0.0f);
+      itr.next().set(
+         -0.5f, 0.0f, 0.0f,
+         -0.5f, 0.1309615f, 0.0f,
+         -0.5f, -0.1309615f, 0.0f);
+      itr.next().set(
+         -0.235709f, 0.166627f, 0.0f,
+         -0.0505335f, 0.114256f, 0.0f,
          -0.361728f, 0.2022675f, 0.0f);
-
-      itr.next().set(0.235709f, -0.166627f, 0.0f, 0.361728f, -0.2022675f, 0.0f,
+      itr.next().set(
+         0.235709f, -0.166627f, 0.0f,
+         0.361728f, -0.2022675f, 0.0f,
          0.0505335f, -0.114256f, 0.0f);
 
       return target;

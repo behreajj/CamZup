@@ -8,7 +8,7 @@ import java.util.Iterator;
  * This is not used by a mesh internally; it is created upon retrieval from a
  * mesh.
  */
-public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
+public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
 
    /**
     * The array of vertices in a face.
@@ -42,6 +42,14 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
       return Face2.centerMean(this, new Vec2()).compareTo(
          Face2.centerMean(face, new Vec2()));
    }
+
+   /**
+    * Returns an edge iterator for this face, which allows its vertices to be
+    * accessed in an enhanced for-loop.
+    *
+    * @return the iterator
+    */
+   public Edge2Iterator edgeIterator ( ) { return new Edge2Iterator(this); }
 
    /**
     * Tests this face for equivalence with another object.
@@ -78,7 +86,8 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
       final Edge2 target ) {
 
       final int len = this.vertices.length;
-      return target.set(this.vertices[Utils.mod(i, len)],
+      return target.set(
+         this.vertices[Utils.mod(i, len)],
          this.vertices[Utils.mod(i + 1, len)]);
    }
 
@@ -109,13 +118,13 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
    public int hashCode ( ) { return Arrays.hashCode(this.vertices); }
 
    /**
-    * Returns an iterator for this face, which allows its vertices to be
+    * Returns an iterator for this face, which allows its elements to be
     * accessed in an enhanced for-loop.
     *
     * @return the iterator
     */
    @Override
-   public Vert2Iterator iterator ( ) { return new Vert2Iterator(this); }
+   public Edge2Iterator iterator ( ) { return this.edgeIterator(); }
 
    /**
     * Returns the number of vertices in this face.
@@ -209,10 +218,7 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
     * @see Vec2#mul(Vec2, float, Vec2)
     */
    @Chainable
-   public Face2 scale ( final float scale ) {
-
-      return this.scaleGlobal(scale);
-   }
+   public Face2 scale ( final float scale ) { return this.scaleGlobal(scale); }
 
    /**
     * Scales all coordinates in the face by a vector.
@@ -426,6 +432,14 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
    }
 
    /**
+    * Returns an vertex iterator for this face, which allows its vertices to be
+    * accessed in an enhanced for-loop.
+    *
+    * @return the iterator
+    */
+   public Vert2Iterator vertIterator ( ) { return new Vert2Iterator(this); }
+
+   /**
     * Finds the center of a face by averaging all the coordinates in its list of
     * vertices.
     *
@@ -467,27 +481,23 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
       final Vert2[] verts = face.vertices;
       final int len = verts.length;
 
-      /* @formatter:off */
       for ( int i = 0; i < len; ++i ) {
 
          final Vec2 curr = verts[i].coord;
          final Vec2 next = verts[ ( i + 1 ) % len].coord;
 
          if ( curr.y <= point.y && next.y > point.y ) {
-
+            /* @formatter:off */
             final float eval = ( next.x - curr.x ) * ( point.y - curr.y ) -
                                ( point.x - curr.x ) * ( next.y - curr.y );
             if ( eval > 0.0f ) { ++wn; }
-
          } else if ( next.y <= point.y ) {
-
             final float eval = ( next.x - curr.x ) * ( point.y - curr.y ) -
                                ( point.x - curr.x ) * ( next.y - curr.y );
             if ( eval < 0.0f ) { --wn; }
-
+            /* @formatter:on */
          }
       }
-      /* @formatter:on */
 
       return wn > 0;
    }
@@ -600,6 +610,66 @@ public class Face2 implements Iterable < Vert2 >, Comparable < Face2 > {
          curr = next;
       }
       return wn;
+   }
+
+   static boolean sharedCoord ( final Face2 a, final Face2 b ) {
+
+      // TODO: Look up how to find a union of two arrays, i.e., if any element
+      // of one array is shared by another array.
+
+      return false;
+   }
+
+   /**
+    * An iterator, which allows a face's edges to be accessed in an enhanced for
+    * loop.
+    */
+   public static final class Edge2Iterator implements Iterator < Edge2 > {
+
+      /**
+       * The face being iterated over.
+       */
+      private final Face2 face;
+
+      /**
+       * The current index.
+       */
+      private int index = 0;
+
+      /**
+       * The default constructor.
+       *
+       * @param face the face to iterate
+       */
+      public Edge2Iterator ( final Face2 face ) { this.face = face; }
+
+      /**
+       * Tests to see if the iterator has another value.
+       *
+       * @return the evaluation
+       */
+      @Override
+      public boolean hasNext ( ) { return this.index < this.face.length(); }
+
+      /**
+       * Gets the next value in the iterator.
+       *
+       * @return the value
+       */
+      @Override
+      public Edge2 next ( ) {
+
+         return this.face.getEdge(this.index++, new Edge2());
+      }
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
    }
 
    /**

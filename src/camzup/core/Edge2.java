@@ -82,7 +82,7 @@ public class Edge2 implements Comparable < Edge2 > {
       if ( this == obj ) { return true; }
       if ( obj == null ) { return false; }
       if ( this.getClass() != obj.getClass() ) { return false; }
-      return this.equals(( Edge2 ) obj);
+      return this.equalsSigned(( Edge2 ) obj);
    }
 
    /**
@@ -155,7 +155,11 @@ public class Edge2 implements Comparable < Edge2 > {
       final Vec2 coOrigin = this.origin.coord;
       final Vec2 coDest = this.dest.coord;
 
-      final Vec2 mp = new Vec2( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y ) * 0.5f);
+      /* @formatter:off */
+      final Vec2 mp = new Vec2(
+         ( coOrigin.x + coDest.x ) * 0.5f,
+         ( coOrigin.y + coDest.y ) * 0.5f);
+      /* @formatter:on */
 
       Vec2.sub(coOrigin, mp, coOrigin);
       Vec2.rotateZ(coOrigin, cosa, sina, coOrigin);
@@ -262,7 +266,11 @@ public class Edge2 implements Comparable < Edge2 > {
       final Vec2 coOrigin = this.origin.coord;
       final Vec2 coDest = this.dest.coord;
 
-      final Vec2 mp = new Vec2( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y ) * 0.5f);
+      /* @formatter:off */
+      final Vec2 mp = new Vec2(
+         ( coOrigin.x + coDest.x ) * 0.5f,
+         ( coOrigin.y + coDest.y ) * 0.5f);
+      /* @formatter:on */
 
       Vec2.sub(coOrigin, mp, coOrigin);
       Vec2.mul(coOrigin, scalar, coOrigin);
@@ -297,7 +305,11 @@ public class Edge2 implements Comparable < Edge2 > {
       final Vec2 coOrigin = this.origin.coord;
       final Vec2 coDest = this.dest.coord;
 
-      final Vec2 mp = new Vec2( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y ) * 0.5f);
+      /* @formatter:off */
+      final Vec2 mp = new Vec2(
+         ( coOrigin.x + coDest.x ) * 0.5f,
+         ( coOrigin.y + coDest.y ) * 0.5f);
+      /* @formatter:on */
 
       Vec2.sub(coOrigin, mp, coOrigin);
       Vec2.mul(coOrigin, scalar, coOrigin);
@@ -394,11 +406,12 @@ public class Edge2 implements Comparable < Edge2 > {
    }
 
    /**
-    * Tests this edge for equivalence with another.
+    * Tests this edge for equivalence with another. To be true the edges'
+    * origins must be equal and their destinations must be equal.
     *
     * @return the evaluation
     */
-   protected boolean equals ( final Edge2 edge2 ) {
+   protected boolean equalsSigned ( final Edge2 edge2 ) {
 
       if ( this.dest == null ) {
          if ( edge2.dest != null ) { return false; }
@@ -521,6 +534,45 @@ public class Edge2 implements Comparable < Edge2 > {
       final float u = 1.0f - fac;
       return target.set(u * coOrigin.x + fac * coDest.x,
          u * coOrigin.y + fac * coDest.y);
+   }
+
+   /**
+    * Tests to see if two edges share a vertex coordinate:
+    * <ul>
+    * <li>Returns -1 when <em>a</em>'s origin is <em>b</em>'s destination.</li>
+    * <li>Returns -2 when <em>a</em>'s destination is <em>b</em>'s
+    * destination</li>
+    * <li>Returns 1 when <em>a</em>'s destination is <em>b</em>'s origin.</li>
+    * <li>Returns 2 when <em>a</em>'s origin is <em>b</em>'s origin.</li>
+    * <li>Returns 0 when none of the above conditions are met.</li>
+    * </ul>
+    * Assuming a mesh is properly wound, a value of 1 implies that two edges
+    * belong to the same face; of 2, different neighboring faces. A positive
+    * value implies counter-clockwise winding (CCW), or right-handedness; a
+    * negative value, clockwise winding (CW), or left-handedness.<br>
+    * <br>
+    * If the left and right comparisand are the same, returns 2.
+    *
+    * @param a the left comparisand
+    * @param b the right comparisand
+    *
+    * @return the evaluation
+    */
+   public static int sharedCoord (
+      final Edge2 a,
+      final Edge2 b ) {
+
+      final Vert2 aOrigin = a.origin;
+      final Vert2 aDest = a.dest;
+      final Vert2 bOrigin = b.origin;
+      final Vert2 bDest = b.dest;
+
+      if ( Vert2.approxCoord(aDest, bOrigin) ) { return 1; }
+      if ( Vert2.approxCoord(aOrigin, bOrigin) ) { return 2; }
+      if ( Vert2.approxCoord(aOrigin, bDest) ) { return -1; }
+      if ( Vert2.approxCoord(aDest, bDest) ) { return -2; }
+
+      return 0;
    }
 
 }
