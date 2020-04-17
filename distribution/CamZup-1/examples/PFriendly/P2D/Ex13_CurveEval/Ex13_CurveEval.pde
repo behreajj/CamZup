@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Yup2 rndr;
+YupJ2 rndr;
 Curve2 curve2 = new Curve2();
 CurveEntity2 ce2 = new CurveEntity2();
 MaterialSolid mat = new MaterialSolid()
@@ -23,11 +23,12 @@ Ray2 local = new Ray2();
 Ray2 world = new Ray2();
 
 void settings() {
-  size(720, 405, Yup2.PATH_STR);
+  size(720, 405, YupJ2.PATH_STR);
+  smooth(8);
 }
 
 void setup() {
-  rndr = (Yup2)getGraphics();
+  rndr = (YupJ2)getGraphics();
 
   Curve2.infinity(curve2);
   ce2.append(curve2);
@@ -41,7 +42,7 @@ void draw() {
   float step = frameCount * 0.0075;
   ce2.rotateZ(0.01);
 
-  rndr.background(0x1f101010);
+  rndr.background(#202020);
   if (mousePressed) {
     rndr.shape(ce2, mat);
   }

@@ -772,9 +772,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Iterator < Knot3 > itr = this.knots.iterator();
       while ( itr.hasNext() ) {
          sb.append(itr.next().toString(places));
-         if ( itr.hasNext() ) {
-            sb.append(',').append(' ');
-         }
+         if ( itr.hasNext() ) { sb.append(',').append(' '); }
       }
 
       sb.append(" ] }");
@@ -1543,7 +1541,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          0.5f, 0.1309615f, 0.0f,
          0.5f, -0.1309615f, 0.0f);
       itr.next().set(
-         0.235709f, 0.166627f, 0.0f, 
+         0.235709f, 0.166627f, 0.0f,
          0.0505335f, 0.114256f, 0.0f,
          0.361728f, 0.2022675f, 0.0f);
       itr.next().set(

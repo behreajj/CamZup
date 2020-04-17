@@ -13,14 +13,14 @@ void settings() {
 void setup() {
   rndr = (Zup3)getGraphics();
   PFont font = loadFont("AgencyFB-Bold-72.vlw");
-  te3 = new TextEntity3(font, msg, clr, 10, 5, LEFT, CENTER, 0.875);
+  te3 = new TextEntity3(font, msg, clr, 10, 5, CENTER, CENTER, 0.975);
 }
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 
   te3.rotateX(0.01);
-  te3.material.transform.moveBy(new Vec2(0.00, -0.005));
+  te3.material.transform.moveBy(new Vec2(0.0, -0.005));
   
   rndr.background(#202020);
   rndr.perspective(Utils.PI * 0.125);

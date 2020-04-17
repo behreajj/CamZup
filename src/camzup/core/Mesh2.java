@@ -2264,6 +2264,85 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
+    * Consolidates separate meshes with the same material index into a mesh.
+    * Returns a new array of meshes. Do not use if source meshes need to be
+    * transformed independently.
+    *
+    * @param meshes the array of meshes
+    *
+    * @return the consolidated meshes
+    */
+   public static final Mesh2[] groupByMaterial ( final Mesh2[] meshes ) {
+
+      final HashMap < Integer, Mesh2 > dict = new HashMap <>();
+      Mesh2 current;
+
+      final int srcLen = meshes.length;
+      for ( int i = 0; i < srcLen; ++i ) {
+         final Mesh2 source = meshes[i];
+         final int matIdxPrm = source.materialIndex;
+         final Integer matIdxObj = matIdxPrm;
+
+         /* Create a new mesh if it is not already present in dictionary. */
+         current = dict.get(matIdxObj);
+         if ( current == null ) {
+            current = new Mesh2(new int[0][0][2], new Vec2[0], new Vec2[0]);
+            current.materialIndex = matIdxPrm;
+            current.name = "Mesh." + Utils.toPadded(matIdxPrm, 6);
+            dict.put(matIdxObj, current);
+         }
+
+         /* Copy source coordinates. */
+         final Vec2[] vsSrc = source.coords;
+         final int vsLen = vsSrc.length;
+         final Vec2[] vsCopy = new Vec2[vsLen];
+         for ( int j = 0; j < vsLen; ++j ) {
+            vsCopy[j] = new Vec2(vsSrc[j]);
+         }
+
+         /* Copy source texture coordinates. */
+         final Vec2[] vtsSrc = source.texCoords;
+         final int vtsLen = vtsSrc.length;
+         final Vec2[] vtsCopy = new Vec2[vtsLen];
+         for ( int j = 0; j < vtsLen; ++j ) {
+            vtsCopy[j] = new Vec2(vtsSrc[j]);
+         }
+
+         /* Concatenated indices need to be offset by current data lengths. */
+         final int vsTrgLen = current.coords.length;
+         final int vtsTrgLen = current.texCoords.length;
+
+         /* Copy source face indices. */
+         final int[][][] fsSrc = source.faces;
+         final int fsLen = fsSrc.length;
+         final int[][][] fsCopy = new int[fsLen][][];
+         for ( int j = 0; j < fsLen; ++j ) {
+            final int[][] fSrc = fsSrc[j];
+            final int fLen = fSrc.length;
+            final int[][] fSrcCopy = fsCopy[j] = new int[fLen][2];
+            for ( int k = 0; k < fLen; ++k ) {
+               fSrcCopy[k][0] = vsTrgLen + fSrc[k][0];
+               fSrcCopy[k][1] = vtsTrgLen + fSrc[k][1];
+            }
+         }
+
+         /* Concatenate copies with current data. */
+         current.coords = Vec2.concat(current.coords, vsCopy);
+         current.texCoords = Vec2.concat(current.texCoords, vtsCopy);
+         current.faces = Mesh.splice(current.faces, current.faces.length, 0,
+            fsCopy);
+      }
+
+      /* Convert dictionary values to an array; clean meshes of excess data. */
+      final Mesh2[] result = dict.values().toArray(new Mesh2[dict.size()]);
+      final int trgLen = result.length;
+      for ( int i = 0; i < trgLen; ++i ) {
+         result[i].clean();
+      }
+      return result;
+   }
+
+   /**
     * Creates a subdivided plane. Useful for meshes which later will be
     * augmented by noise or height maps to simulate terrain.
     *
@@ -2976,12 +3055,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       NGON ( ),
 
       /**
-       * Create a quadrilateral-based polygon.
+       * Create a quadrilateral.
        */
       QUAD ( ),
 
       /**
-       * Create a triangle-based polygon.
+       * Create a triangle.
        */
       TRI ( );
 

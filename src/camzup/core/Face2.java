@@ -2,6 +2,7 @@ package camzup.core;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.TreeSet;
 
 /**
  * Organizes components of a 2D mesh into a list of vertices that form a face.
@@ -612,12 +613,29 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
       return wn;
    }
 
-   static boolean sharedCoord ( final Face2 a, final Face2 b ) {
+   static Vec2[] sharedCoords (
+      final Face2 a,
+      final Face2 b ) {
 
-      // TODO: Look up how to find a union of two arrays, i.e., if any element
-      // of one array is shared by another array.
+      // TEST
 
-      return false;
+      final TreeSet < Vec2 > aList = new TreeSet <>(Mesh.SORT_2);
+      final Vert2[] aVerts = a.vertices;
+      final int aLen = aVerts.length;
+      for ( int i = 0; i < aLen; ++i ) {
+         aList.add(aVerts[i].coord);
+      }
+
+      final TreeSet < Vec2 > bList = new TreeSet <>(Mesh.SORT_2);
+      final Vert2[] bVerts = b.vertices;
+      final int bLen = bVerts.length;
+      for ( int j = 0; j < bLen; ++j ) {
+         bList.add(bVerts[j].coord);
+      }
+
+      aList.retainAll(bList);
+
+      return aList.toArray(new Vec2[aList.size()]);
    }
 
    /**

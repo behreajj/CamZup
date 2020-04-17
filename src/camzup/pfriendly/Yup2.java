@@ -1375,6 +1375,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     */
    public void text ( final TextEntity2 entity ) {
 
+      // TODO: Is there a way to make this unlit?
       this.shape(entity, entity.material);
    }
 

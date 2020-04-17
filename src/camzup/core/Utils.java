@@ -343,7 +343,7 @@ public abstract class Utils implements IUtils {
     * @param sign      the sign
     *
     * @return the magnified sign
-    * 
+    *
     * @see Float#intBitsToFloat(int)
     * @see Float#floatToRawIntBits(float)
     */

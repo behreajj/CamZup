@@ -2646,6 +2646,22 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * See mesh and curve entities instead.
     *
     * @param shape the PShape
+    */
+   @Override
+   public void shape ( final PShape shape ) {
+
+      PApplet.showVariationWarning("shape");
+      if ( shape.isVisible() ) {
+         this.flush();
+         shape.draw(this);
+      }
+   }
+
+   /**
+    * Displays a PShape. Use of this function is discouraged by this renderer.
+    * See mesh and curve entities instead.
+    *
+    * @param shape the PShape
     * @param x     the x coordinate
     * @param y     the y coordinate
     */
@@ -2655,19 +2671,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float x,
       final float y ) {
 
-      if ( shape.isVisible() ) {
-         this.flush();
-         this.pushMatrix();
-         this.translate(x, y);
-         shape.draw(this);
-         this.popMatrix();
-      }
+      this.shape(shape);
 
    }
 
    /**
-    * Displays a PShape. Defaults to the Use of this function is discouraged by
-    * this renderer. See mesh and curve entities instead.
+    * Displays a PShape. Use of this function is discouraged by this renderer.
+    * See mesh and curve entities instead.
     *
     * @param shape the PShape
     * @param x1    the first x coordinate
@@ -2683,8 +2693,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float x2,
       final float y2 ) {
 
-      PApplet.showVariationWarning("shape");
-      this.shape(shape, x1, y1);
+      this.shape(shape);
    }
 
    /**

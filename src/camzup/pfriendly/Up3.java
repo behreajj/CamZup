@@ -1485,6 +1485,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    public void text ( final TextEntity3 entity ) {
 
+      // TODO: Is there a way to make this unlit?
       this.shape(entity, entity.material);
    }
 

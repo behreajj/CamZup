@@ -469,13 +469,13 @@ public abstract class PMatAux {
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
-      target.set(c * target.m00 - s * target.m20,
-         c * target.m01 - s * target.m21, c * target.m02 - s * target.m22,
-         c * target.m03 - s * target.m23, target.m10, target.m11, target.m12,
-         target.m13, c * target.m20 + s * target.m00,
-         c * target.m21 + s * target.m01, c * target.m22 + s * target.m02,
-         c * target.m23 + s * target.m03, target.m30, target.m31, target.m32,
-         target.m33);
+      target.set(
+         c * target.m00 - s * target.m20, c * target.m01 - s * target.m21,
+         c * target.m02 - s * target.m22, c * target.m03 - s * target.m23,
+         target.m10, target.m11, target.m12, target.m13,
+         c * target.m20 + s * target.m00, c * target.m21 + s * target.m01,
+         c * target.m22 + s * target.m02, c * target.m23 + s * target.m03,
+         target.m30, target.m31, target.m32, target.m33);
       return target;
    }
 

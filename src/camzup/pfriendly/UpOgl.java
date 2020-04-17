@@ -286,8 +286,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
       this.vertexImpl(ap0x, ap0y, 0.0f, this.textureU, this.textureV);
-      this.bezierVertexImpl(cp0x, cp0y, 0.0f, cp1x, cp1y, 0.0f, ap1x, ap1y,
-         0.0f);
+      this.bezierVertexImpl(
+         cp0x, cp0y, 0.0f,
+         cp1x, cp1y, 0.0f,
+         ap1x, ap1y, 0.0f);
       this.endShape(PConstants.OPEN);
    }
 
@@ -699,10 +701,12 @@ public abstract class UpOgl extends PGraphicsOpenGL
       this.textureMode = PConstants.NORMAL;
       this.textureWrap = PConstants.REPEAT;
 
-      this.ambient(this.colorModeX * IUpOgl.DEFAULT_AMB_R,
+      this.ambient(
+         this.colorModeX * IUpOgl.DEFAULT_AMB_R,
          this.colorModeY * IUpOgl.DEFAULT_AMB_G,
          this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
-      this.specular(this.colorModeX * IUpOgl.DEFAULT_SPEC_R,
+      this.specular(
+         this.colorModeX * IUpOgl.DEFAULT_SPEC_R,
          this.colorModeY * IUpOgl.DEFAULT_SPEC_G,
          this.colorModeZ * IUpOgl.DEFAULT_SPEC_B);
       this.emissive(0.0f, 0.0f, 0.0f);
@@ -820,15 +824,13 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public Mat4 getMatrix ( final Mat4 target ) {
 
+      /* @formatter:off */
       return target.set(
-         this.modelview.m00, this.modelview.m01, this.modelview.m02,
-         this.modelview.m03,
-         this.modelview.m10, this.modelview.m11, this.modelview.m12,
-         this.modelview.m13,
-         this.modelview.m20, this.modelview.m21, this.modelview.m22,
-         this.modelview.m23,
-         this.modelview.m30, this.modelview.m31, this.modelview.m32,
-         this.modelview.m33);
+         this.modelview.m00, this.modelview.m01, this.modelview.m02, this.modelview.m03,
+         this.modelview.m10, this.modelview.m11, this.modelview.m12, this.modelview.m13,
+         this.modelview.m20, this.modelview.m21, this.modelview.m22, this.modelview.m23,
+         this.modelview.m30, this.modelview.m31, this.modelview.m32, this.modelview.m33);
+      /* @formatter:on */
    }
 
    /**
@@ -1114,8 +1116,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
       this.noStroke();
 
       /* With REPEAT, artifacts appear at the edge of images. */
-      this.textureWrap(PConstants.CLAMP);
       final int oldWrapMode = this.textureWrap;
+      this.textureWrap(PConstants.CLAMP);
 
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
@@ -1359,6 +1361,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float near,
       final float far ) {
 
+//      this.cameraFOV = IUp.DEFAULT_FOV;
+//      this.cameraAspect = Utils.div(
+//         Utils.diff(right, left),
+//         Utils.diff(top, bottom));
       this.cameraNear = near;
       this.cameraFar = far;
 
@@ -1897,6 +1903,22 @@ public abstract class UpOgl extends PGraphicsOpenGL
     * See mesh and curve entities instead.
     *
     * @param shape the PShape
+    */
+   @Override
+   public void shape ( final PShape shape ) {
+
+      PApplet.showVariationWarning("shape");
+      if ( shape.isVisible() ) {
+         this.flush();
+         shape.draw(this);
+      }
+   }
+
+   /**
+    * Displays a PShape. Use of this function is discouraged by this renderer.
+    * See mesh and curve entities instead.
+    *
+    * @param shape the PShape
     * @param x     the x coordinate
     * @param y     the y coordinate
     */
@@ -1906,13 +1928,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float x,
       final float y ) {
 
-      if ( shape.isVisible() ) {
-         this.flush();
-         this.pushMatrix();
-         this.translate(x, y);
-         shape.draw(this);
-         this.popMatrix();
-      }
+      this.shape(shape);
    }
 
    /**
@@ -1931,13 +1947,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float y,
       final float z ) {
 
-      if ( shape.isVisible() ) {
-         this.flush();
-         this.pushMatrix();
-         this.translate(x, y, z);
-         shape.draw(this);
-         this.popMatrix();
-      }
+      this.shape(shape);
    }
 
    /**
@@ -1959,8 +1969,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float x2,
       final float y2 ) {
 
-      PApplet.showVariationWarning("shape");
-      this.shape(shape, x1, y1);
+      this.shape(shape);
    }
 
    /**
@@ -3592,10 +3601,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
     * @param b  the first y parameter
     * @param c  the second x parameter
     * @param d  the second y parameter
-    * @param tl the top-left corner rounding
-    * @param tr the top-right corner rounding
-    * @param br the bottom-right corner rounding
-    * @param bl the bottom-left corner rounding
+    * @param topLeft the top-left corner rounding
+    * @param topRight the top-right corner rounding
+    * @param bottomRight the bottom-right corner rounding
+    * @param bottomLeft the bottom-left corner rounding
     *
     * @see Utils#abs(float)
     * @see Utils#min(float, float)
@@ -3608,10 +3617,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float b,
       final float c,
       final float d,
-      float tl,
-      float tr,
-      float br,
-      float bl ) {
+      final float topLeft,
+      final float topRight,
+      final float bottomRight,
+      final float bottomLeft ) {
 
       float x1 = 0.0f;
       float y1 = 0.0f;
@@ -3673,10 +3682,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
       }
 
       final float limit = Utils.min(w, h) * 0.5f;
-      tl = Utils.clamp(tl, IUtils.DEFAULT_EPSILON, limit);
-      tr = Utils.clamp(tr, IUtils.DEFAULT_EPSILON, limit);
-      br = Utils.clamp(br, IUtils.DEFAULT_EPSILON, limit);
-      bl = Utils.clamp(bl, IUtils.DEFAULT_EPSILON, limit);
+      final float tl = Utils.clamp(topLeft, IUtils.DEFAULT_EPSILON, limit);
+      final float tr = Utils.clamp(topRight, IUtils.DEFAULT_EPSILON, limit);
+      final float br = Utils.clamp(bottomRight, IUtils.DEFAULT_EPSILON, limit);
+      final float bl = Utils.clamp(bottomLeft, IUtils.DEFAULT_EPSILON, limit);
 
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
@@ -3880,6 +3889,31 @@ public abstract class UpOgl extends PGraphicsOpenGL
       }
 
       return target.set(bx, by, bz);
+   }
+
+   /**
+    * Displays a PShape. Use of this function is discouraged by this renderer.
+    * See mesh and curve entities instead.
+    *
+    * @param shape the PShape
+    * @param x     the x coordinate
+    * @param y     the y coordinate
+    * @param z     the z coordinate
+    * @param c     the x scale
+    * @param d     the y scale
+    * @param e     the z scale
+    */
+   @Override
+   protected void shape (
+      final PShape shape,
+      final float x,
+      final float y,
+      final float z,
+      final float c,
+      final float d,
+      final float e ) {
+
+      this.shape(shape);
    }
 
    /**
