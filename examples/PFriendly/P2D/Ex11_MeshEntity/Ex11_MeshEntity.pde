@@ -21,7 +21,6 @@ MeshEntity2 entity = new MeshEntity2("Example", transform)
 
 void settings() {
   size(720, 405, Yup2.PATH_STR);
-  smooth(8);
 }
 
 void setup() {

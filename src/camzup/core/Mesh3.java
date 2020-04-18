@@ -3010,6 +3010,98 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Consolidates separate meshes with the same material index into a mesh.
+    * Returns a new array of meshes. Do not use if source meshes need to be
+    * transformed independently.
+    *
+    * @param meshes the array of meshes
+    *
+    * @return the consolidated meshes
+    */
+   public static final Mesh3[] groupByMaterial ( final Mesh3[] meshes ) {
+
+      // TEST
+
+      final HashMap < Integer, Mesh3 > dict = new HashMap <>();
+      Mesh3 current;
+
+      final int srcLen = meshes.length;
+      for ( int i = 0; i < srcLen; ++i ) {
+         final Mesh3 source = meshes[i];
+         final int matIdxPrm = source.materialIndex;
+         final Integer matIdxObj = matIdxPrm;
+
+         /* Create a new mesh if it is not already present in dictionary. */
+         current = dict.get(matIdxObj);
+         if ( current == null ) {
+            current = new Mesh3(new int[0][0][3], new Vec3[0], new Vec2[0], new Vec3[0]);
+            current.materialIndex = matIdxPrm;
+            current.name = "Mesh." + Utils.toPadded(matIdxPrm, 6);
+            dict.put(matIdxObj, current);
+         }
+
+         /* Copy source coordinates. */
+         final Vec3[] vsSrc = source.coords;
+         final int vsLen = vsSrc.length;
+         final Vec3[] vsCopy = new Vec3[vsLen];
+         for ( int j = 0; j < vsLen; ++j ) {
+            vsCopy[j] = new Vec3(vsSrc[j]);
+         }
+
+         /* Copy source texture coordinates. */
+         final Vec2[] vtsSrc = source.texCoords;
+         final int vtsLen = vtsSrc.length;
+         final Vec2[] vtsCopy = new Vec2[vtsLen];
+         for ( int j = 0; j < vtsLen; ++j ) {
+            vtsCopy[j] = new Vec2(vtsSrc[j]);
+         }
+
+         /* Copy source normals. */
+         final Vec3[] vnsSrc = source.normals;
+         final int vnsLen = vnsSrc.length;
+         final Vec3[] vnsCopy = new Vec3[vnsLen];
+         for ( int j = 0; j < vnsLen; ++j ) {
+            vnsCopy[j] = new Vec3(vnsSrc[j]);
+         }
+
+         /* Concatenated indices need to be offset by current data lengths. */
+         final int vsTrgLen = current.coords.length;
+         final int vtsTrgLen = current.texCoords.length;
+         final int vnsTrgLen = current.normals.length;
+
+         /* Copy source face indices. */
+         final int[][][] fsSrc = source.faces;
+         final int fsLen = fsSrc.length;
+         final int[][][] fsCopy = new int[fsLen][][];
+         for ( int j = 0; j < fsLen; ++j ) {
+            final int[][] fSrc = fsSrc[j];
+            final int fLen = fSrc.length;
+            final int[][] fSrcCopy = fsCopy[j] = new int[fLen][2];
+            for ( int k = 0; k < fLen; ++k ) {
+               fSrcCopy[k][0] = vsTrgLen + fSrc[k][0];
+               fSrcCopy[k][1] = vtsTrgLen + fSrc[k][1];
+               fSrcCopy[k][2] = vnsTrgLen + fSrc[k][2];
+            }
+         }
+
+         /* Concatenate copies with current data. */
+         current.coords = Vec3.concat(current.coords, vsCopy);
+         current.texCoords = Vec2.concat(current.texCoords, vtsCopy);
+         current.normals = Vec3.concat(current.normals, vnsCopy);
+         current.faces = Mesh.splice(current.faces, current.faces.length, 0,
+            fsCopy);
+      }
+
+      /* Convert dictionary values to an array; clean meshes of excess data. */
+      final Mesh3[] result = dict.values().toArray(new Mesh3[dict.size()]);
+      final int trgLen = result.length;
+      for ( int i = 0; i < trgLen; ++i ) {
+         result[i].clean();
+      }
+      return result;
+   }
+
+   /**
     * Creates an icosahedron, a Platonic solid with 20 faces and 12 coordinates.
     *
     * @param target the output mesh
@@ -3534,98 +3626,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
 
       return target;
-   }
-
-   /**
-    * Consolidates separate meshes with the same material index into a mesh.
-    * Returns a new array of meshes. Do not use if source meshes need to be
-    * transformed independently.
-    *
-    * @param meshes the array of meshes
-    *
-    * @return the consolidated meshes
-    */
-   public static final Mesh3[] groupByMaterial ( final Mesh3[] meshes ) {
-
-      // TEST
-
-      final HashMap < Integer, Mesh3 > dict = new HashMap <>();
-      Mesh3 current;
-
-      final int srcLen = meshes.length;
-      for ( int i = 0; i < srcLen; ++i ) {
-         final Mesh3 source = meshes[i];
-         final int matIdxPrm = source.materialIndex;
-         final Integer matIdxObj = matIdxPrm;
-
-         /* Create a new mesh if it is not already present in dictionary. */
-         current = dict.get(matIdxObj);
-         if ( current == null ) {
-            current = new Mesh3(new int[0][0][3], new Vec3[0], new Vec2[0], new Vec3[0]);
-            current.materialIndex = matIdxPrm;
-            current.name = "Mesh." + Utils.toPadded(matIdxPrm, 6);
-            dict.put(matIdxObj, current);
-         }
-
-         /* Copy source coordinates. */
-         final Vec3[] vsSrc = source.coords;
-         final int vsLen = vsSrc.length;
-         final Vec3[] vsCopy = new Vec3[vsLen];
-         for ( int j = 0; j < vsLen; ++j ) {
-            vsCopy[j] = new Vec3(vsSrc[j]);
-         }
-
-         /* Copy source texture coordinates. */
-         final Vec2[] vtsSrc = source.texCoords;
-         final int vtsLen = vtsSrc.length;
-         final Vec2[] vtsCopy = new Vec2[vtsLen];
-         for ( int j = 0; j < vtsLen; ++j ) {
-            vtsCopy[j] = new Vec2(vtsSrc[j]);
-         }
-
-         /* Copy source normals. */
-         final Vec3[] vnsSrc = source.normals;
-         final int vnsLen = vnsSrc.length;
-         final Vec3[] vnsCopy = new Vec3[vnsLen];
-         for ( int j = 0; j < vnsLen; ++j ) {
-            vnsCopy[j] = new Vec3(vnsSrc[j]);
-         }
-
-         /* Concatenated indices need to be offset by current data lengths. */
-         final int vsTrgLen = current.coords.length;
-         final int vtsTrgLen = current.texCoords.length;
-         final int vnsTrgLen = current.normals.length;
-
-         /* Copy source face indices. */
-         final int[][][] fsSrc = source.faces;
-         final int fsLen = fsSrc.length;
-         final int[][][] fsCopy = new int[fsLen][][];
-         for ( int j = 0; j < fsLen; ++j ) {
-            final int[][] fSrc = fsSrc[j];
-            final int fLen = fSrc.length;
-            final int[][] fSrcCopy = fsCopy[j] = new int[fLen][2];
-            for ( int k = 0; k < fLen; ++k ) {
-               fSrcCopy[k][0] = vsTrgLen + fSrc[k][0];
-               fSrcCopy[k][1] = vtsTrgLen + fSrc[k][1];
-               fSrcCopy[k][2] = vnsTrgLen + fSrc[k][2];
-            }
-         }
-
-         /* Concatenate copies with current data. */
-         current.coords = Vec3.concat(current.coords, vsCopy);
-         current.texCoords = Vec2.concat(current.texCoords, vtsCopy);
-         current.normals = Vec3.concat(current.normals, vnsCopy);
-         current.faces = Mesh.splice(current.faces, current.faces.length, 0,
-            fsCopy);
-      }
-
-      /* Convert dictionary values to an array; clean meshes of excess data. */
-      final Mesh3[] result = dict.values().toArray(new Mesh3[dict.size()]);
-      final int trgLen = result.length;
-      for ( int i = 0; i < trgLen; ++i ) {
-         result[i].clean();
-      }
-      return result;
    }
 
    /**

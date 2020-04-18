@@ -106,3 +106,7 @@ kerning
 emitting
 chirality
 refactored
+picas
+pica
+flipping
+fuchsia

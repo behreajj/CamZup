@@ -2,6 +2,7 @@ package camzup.core;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.TreeSet;
 
 /**
  * Organizes components of a 3D mesh into a list of vertices that form a face.
@@ -708,6 +709,38 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
          prev = curr;
       }
       return sum;
+   }
+
+   /**
+    * Finds the shared coordinates, if any, between two faces. Returns an array
+    * of the coordinates.
+    *
+    * @param a the left comparisand
+    * @param b the right comparisand
+    *
+    * @return the coordinate array
+    */
+   public static Vec3[] sharedCoords (
+      final Face3 a,
+      final Face3 b ) {
+
+      final TreeSet < Vec3 > aList = new TreeSet <>(Mesh.SORT_3);
+      final Vert3[] aVerts = a.vertices;
+      final int aLen = aVerts.length;
+      for ( int i = 0; i < aLen; ++i ) {
+         aList.add(aVerts[i].coord);
+      }
+
+      final TreeSet < Vec3 > bList = new TreeSet <>(Mesh.SORT_3);
+      final Vert3[] bVerts = b.vertices;
+      final int bLen = bVerts.length;
+      for ( int j = 0; j < bLen; ++j ) {
+         bList.add(bVerts[j].coord);
+      }
+
+      aList.retainAll(bList);
+
+      return aList.toArray(new Vec3[aList.size()]);
    }
 
    /**

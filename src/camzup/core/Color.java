@@ -95,6 +95,46 @@ public class Color extends Vec4 {
    }
 
    /**
+    * Attempts to construct a color from Strings using
+    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
+    * the component is set to zero. If a NumberFormatException is thrown, the
+    * component is set to zero for red, green and blue; to one for alpha.
+    *
+    * @param rstr the red string
+    * @param gstr the green string
+    * @param bstr the blue string
+    */
+   public Color (
+      final String rstr,
+      final String gstr,
+      final String bstr ) {
+
+      super();
+      this.set(rstr, gstr, bstr);
+   }
+
+   /**
+    * Attempts to construct a color from Strings using
+    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
+    * the component is set to zero. If a NumberFormatException is thrown, the
+    * component is set to zero for red, green and blue; to one for alpha.
+    *
+    * @param rstr the red string
+    * @param gstr the green string
+    * @param bstr the blue string
+    * @param astr the alpha string
+    */
+   public Color (
+      final String rstr,
+      final String gstr,
+      final String bstr,
+      final String astr ) {
+
+      super();
+      this.set(rstr, gstr, bstr, astr);
+   }
+
+   /**
     * Gets the alpha channel.
     *
     * @return the alpha channel
@@ -484,6 +524,87 @@ public class Color extends Vec4 {
    }
 
    /**
+    * Attempts to set the components of this color from Strings using
+    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
+    * the component is set to zero for red, green and blue; to one for alpha.
+    *
+    * @param rstr the red string
+    * @param gstr the green string
+    * @param bstr the blue string
+    *
+    * @return this color
+    *
+    * @see Float#parseFloat(String)
+    */
+   @Chainable
+   public Color set (
+      final String rstr,
+      final String gstr,
+      final String bstr ) {
+
+      return this.set(rstr, gstr, bstr, "1.0");
+   }
+
+   /**
+    * Attempts to set the components of this color from Strings using
+    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
+    * the component is set to zero for red, green and blue; to one for alpha.
+    *
+    * @param rstr the red string
+    * @param gstr the green string
+    * @param bstr the blue string
+    * @param astr the alpha string
+    *
+    * @return this color
+    *
+    * @see Float#parseFloat(String)
+    */
+   @Override
+   @Chainable
+   public Color set (
+      final String rstr,
+      final String gstr,
+      final String bstr,
+      final String astr ) {
+
+      float x = 1.0f;
+      float y = 1.0f;
+      float z = 1.0f;
+      float w = 1.0f;
+
+      try {
+         x = Float.parseFloat(rstr);
+      } catch ( final NumberFormatException e ) {
+         x = 1.0f;
+      }
+
+      try {
+         y = Float.parseFloat(gstr);
+      } catch ( final NumberFormatException e ) {
+         y = 1.0f;
+      }
+
+      try {
+         z = Float.parseFloat(bstr);
+      } catch ( final NumberFormatException e ) {
+         z = 1.0f;
+      }
+
+      try {
+         w = Float.parseFloat(astr);
+      } catch ( final NumberFormatException e ) {
+         w = 1.0f;
+      }
+
+      this.x = x;
+      this.y = y;
+      this.z = z;
+      this.w = w;
+
+      return this;
+   }
+
+   /**
     * Returns a string representation of this color.
     *
     * @return the string
@@ -556,6 +677,7 @@ public class Color extends Vec4 {
          .append(Utils.toFixed(Utils.pow(this.y, gamma), 6))
          .append(',').append(' ')
          .append(Utils.toFixed(Utils.pow(this.z, gamma), 6));
+      /* @formatter:on */
 
       if ( inclAlpha ) {
          pyCd.append(',').append(' ').append(Utils.toFixed(this.w, 6));
@@ -563,7 +685,6 @@ public class Color extends Vec4 {
 
       pyCd.append(')');
       return pyCd.toString();
-      /* @formatter:on */
    }
 
    /**
@@ -644,8 +765,11 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(a.x + b.x), Utils.clamp01(a.y + b.y),
-         Utils.clamp01(a.z + b.z), Utils.clamp01(a.w));
+      return target.set(
+         Utils.clamp01(a.x + b.x),
+         Utils.clamp01(a.y + b.y),
+         Utils.clamp01(a.z + b.z),
+         Utils.clamp01(a.w));
    }
 
    /**
@@ -863,7 +987,8 @@ public class Color extends Vec4 {
       final Color upperBound,
       final Color target ) {
 
-      return target.set(Utils.clamp(a.x, lowerBound.x, upperBound.x),
+      return target.set(
+         Utils.clamp(a.x, lowerBound.x, upperBound.x),
          Utils.clamp(a.y, lowerBound.y, upperBound.y),
          Utils.clamp(a.z, lowerBound.z, upperBound.z),
          Utils.clamp(a.w, lowerBound.w, upperBound.w));
@@ -883,8 +1008,11 @@ public class Color extends Vec4 {
       final Color a,
       final Color target ) {
 
-      return target.set(Utils.clamp01(a.x), Utils.clamp01(a.y),
-         Utils.clamp01(a.z), Utils.clamp01(a.w));
+      return target.set(
+         Utils.clamp01(a.x),
+         Utils.clamp01(a.y),
+         Utils.clamp01(a.z),
+         Utils.clamp01(a.w));
    }
 
    /**
@@ -939,8 +1067,10 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(Utils.div(a.x, b.x)),
-         Utils.clamp01(Utils.div(a.y, b.y)), Utils.clamp01(Utils.div(a.z, b.z)),
+      return target.set(
+         Utils.clamp01(Utils.div(a.x, b.x)),
+         Utils.clamp01(Utils.div(a.y, b.y)),
+         Utils.clamp01(Utils.div(a.z, b.z)),
          Utils.clamp01(a.w));
    }
 
@@ -964,8 +1094,11 @@ public class Color extends Vec4 {
          return target.set(0.0f, 0.0f, 0.0f, Utils.clamp01(a.w));
       }
       final float bInv = 1.0f / b;
-      return target.set(Utils.clamp01(a.x * bInv), Utils.clamp01(a.y * bInv),
-         Utils.clamp01(a.z * bInv), Utils.clamp01(a.w));
+      return target.set(
+         Utils.clamp01(a.x * bInv),
+         Utils.clamp01(a.y * bInv),
+         Utils.clamp01(a.z * bInv),
+         Utils.clamp01(a.w));
    }
 
    /**
@@ -984,8 +1117,10 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(Utils.div(a, b.x)),
-         Utils.clamp01(Utils.div(a, b.y)), Utils.clamp01(Utils.div(a, b.z)),
+      return target.set(
+         Utils.clamp01(Utils.div(a, b.x)),
+         Utils.clamp01(Utils.div(a, b.y)),
+         Utils.clamp01(Utils.div(a, b.z)),
          Utils.clamp01(a));
    }
 
@@ -1005,7 +1140,11 @@ public class Color extends Vec4 {
       final float mSq = Vec2.magSq(v);
       if ( mSq == 0.0f ) { return target.set(0.5f, 0.5f, 0.5f, 1.0f); }
       final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
-      return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, 0.5f, 1.0f);
+      return target.set(
+         v.x * mInv + 0.5f,
+         v.y * mInv + 0.5f,
+         0.5f,
+         1.0f);
    }
 
    /**
@@ -1024,7 +1163,10 @@ public class Color extends Vec4 {
       final float mSq = Vec3.magSq(v);
       if ( mSq == 0.0f ) { return target.set(0.5f, 0.5f, 0.5f, 1.0f); }
       final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
-      return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, v.z * mInv + 0.5f,
+      return target.set(
+         v.x * mInv + 0.5f,
+         v.y * mInv + 0.5f,
+         v.z * mInv + 0.5f,
          1.0f);
    }
 
@@ -1044,7 +1186,10 @@ public class Color extends Vec4 {
       final float mSq = Vec4.magSq(v);
       if ( mSq == 0.0f ) { return target.set(0.5f, 0.5f, 0.5f, 0.5f); }
       final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
-      return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, v.z * mInv + 0.5f,
+      return target.set(
+         v.x * mInv + 0.5f,
+         v.y * mInv + 0.5f,
+         v.z * mInv + 0.5f,
          v.w * mInv + 0.5f);
    }
 
@@ -1063,9 +1208,13 @@ public class Color extends Vec4 {
       final int c,
       final Color target ) {
 
-      return target.set( ( c >> 0x10 & 0xff ) * IUtils.ONE_255,
-         ( c >> 0x8 & 0xff ) * IUtils.ONE_255, ( c & 0xff ) * IUtils.ONE_255,
+      /* @formatter:off */
+      return target.set(
+         ( c >> 0x10 & 0xff ) * IUtils.ONE_255,
+         ( c >>  0x8 & 0xff ) * IUtils.ONE_255,
+         ( c         & 0xff ) * IUtils.ONE_255,
          ( c >> 0x18 & 0xff ) * IUtils.ONE_255);
+      /* @formatter:on */
    }
 
    /**
@@ -1083,9 +1232,13 @@ public class Color extends Vec4 {
       final long c,
       final Color target ) {
 
-      return target.set( ( c >> 0x10 & 0xff ) * IUtils.ONE_255,
-         ( c >> 0x8 & 0xff ) * IUtils.ONE_255, ( c & 0xff ) * IUtils.ONE_255,
+      /* @formatter:off */
+      return target.set(
+         ( c >> 0x10 & 0xff ) * IUtils.ONE_255,
+         ( c >>  0x8 & 0xff ) * IUtils.ONE_255,
+         ( c         & 0xff ) * IUtils.ONE_255,
          ( c >> 0x18 & 0xff ) * IUtils.ONE_255);
+      /* @formatter:on */
    }
 
    /**
@@ -1178,6 +1331,86 @@ public class Color extends Vec4 {
       }
 
       return target.reset();
+   }
+
+   /**
+    * Returns one of the 16 web safe colors from a string key word. See
+    * <a href="https://en.wikipedia.org/wiki/Web_colors#HTML_color_names">HTML
+    * color names</a>.<br>
+    * <br>
+    * Differences in naming conventions include:
+    * <ul>
+    * <li>(0.0, 1.0, 1.0) is aqua, not cyan;</li>
+    * <li>(1.0, 0.0, 1.0) is fuchsia, not magenta;</li>
+    * <li>(0.0, 1.0, 0.0) is lime, not green;</li>
+    * <li>(0.0, 0.5, 0.0) is green.</li>
+    * </ul>
+    *
+    * @param keyword the key word
+    * @param target  the output color
+    *
+    * @return the color by keyword
+    */
+   public static Color fromKeyword (
+      final String keyword,
+      final Color target ) {
+
+      final String lc = keyword.toLowerCase();
+      switch ( lc ) {
+
+         case "aqua":
+         case "cyan":
+            return Color.cyan(target);
+
+         case "black":
+            return Color.black(target);
+
+         case "blue":
+            return Color.blue(target);
+
+         case "fuchsia":
+         case "magenta":
+            return Color.magenta(target);
+
+         case "gray":
+            return target.set(0.5f, 0.5f, 0.5f, 1.0f);
+
+         case "green":
+            return target.set(0.0f, 0.5f, 0.0f, 1.0f);
+
+         case "lime":
+            return Color.green(target);
+
+         case "maroon":
+            return target.set(0.5f, 0.0f, 0.0f, 1.0f);
+
+         case "navy":
+            return target.set(0.0f, 0.0f, 0.5f, 1.0f);
+
+         case "olive":
+            return target.set(0.5f, 0.5f, 0.0f, 1.0f);
+
+         case "purple":
+            return target.set(0.5f, 0.0f, 0.5f, 1.0f);
+
+         case "red":
+            return Color.red(target);
+
+         case "silver":
+            return target.set(0.75f, 0.75f, 0.75f, 1.0f);
+
+         case "teal":
+            return target.set(0.0f, 0.5f, 0.5f, 1.0f);
+
+         case "white":
+            return Color.white(target);
+
+         case "yellow":
+            return Color.yellow(target);
+
+         default:
+            return target.reset();
+      }
    }
 
    /**
@@ -1286,8 +1519,10 @@ public class Color extends Vec4 {
       final Color c,
       final Color target ) {
 
-      return target.set(Utils.max(0.0f, 1.0f - c.x),
-         Utils.max(0.0f, 1.0f - c.y), Utils.max(0.0f, 1.0f - c.z),
+      return target.set(
+         Utils.max(0.0f, 1.0f - c.x),
+         Utils.max(0.0f, 1.0f - c.y),
+         Utils.max(0.0f, 1.0f - c.z),
          Utils.clamp01(c.w));
    }
 
@@ -1330,8 +1565,8 @@ public class Color extends Vec4 {
 
       /* @formatter:off */
       return ( c >> 0x10 & 0xff ) * 0.0008337255f +
-              ( c >> 0x8 & 0xff ) * 0.0028047059f +
-                     ( c & 0xff ) * 0.00028313725f;
+             ( c >>  0x8 & 0xff ) * 0.0028047059f +
+             ( c         & 0xff ) * 0.00028313725f;
       /* @formatter:on */
    }
 
@@ -1363,8 +1598,10 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(Utils.max(a.x, b.x)),
-         Utils.clamp01(Utils.max(a.y, b.y)), Utils.clamp01(Utils.max(a.z, b.z)),
+      return target.set(
+         Utils.clamp01(Utils.max(a.x, b.x)),
+         Utils.clamp01(Utils.max(a.y, b.y)),
+         Utils.clamp01(Utils.max(a.z, b.z)),
          Utils.clamp01(Utils.max(a.w, b.w)));
    }
 
@@ -1384,8 +1621,10 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(Utils.min(a.x, b.x)),
-         Utils.clamp01(Utils.min(a.y, b.y)), Utils.clamp01(Utils.min(a.z, b.z)),
+      return target.set(
+         Utils.clamp01(Utils.min(a.x, b.x)),
+         Utils.clamp01(Utils.min(a.y, b.y)),
+         Utils.clamp01(Utils.min(a.z, b.z)),
          Utils.clamp01(Utils.min(a.w, b.w)));
    }
 
@@ -1448,8 +1687,11 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(a.x * b.x), Utils.clamp01(a.y * b.y),
-         Utils.clamp01(a.z * b.z), Utils.clamp01(a.w));
+      return target.set(
+         Utils.clamp01(a.x * b.x),
+         Utils.clamp01(a.y * b.y),
+         Utils.clamp01(a.z * b.z),
+         Utils.clamp01(a.w));
    }
 
    /**
@@ -1469,8 +1711,11 @@ public class Color extends Vec4 {
       final float b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(a.x * b), Utils.clamp01(a.y * b),
-         Utils.clamp01(a.z * b), Utils.clamp01(a.w));
+      return target.set(
+         Utils.clamp01(a.x * b),
+         Utils.clamp01(a.y * b),
+         Utils.clamp01(a.z * b),
+         Utils.clamp01(a.w));
    }
 
    /**
@@ -1490,8 +1735,11 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(a * b.x), Utils.clamp01(a * b.y),
-         Utils.clamp01(a * b.z), Utils.clamp01(a));
+      return target.set(
+         Utils.clamp01(a * b.x),
+         Utils.clamp01(a * b.y),
+         Utils.clamp01(a * b.z),
+         Utils.clamp01(a));
    }
 
    /**
@@ -1521,7 +1769,11 @@ public class Color extends Vec4 {
          return target.set(0.0f, 0.0f, 0.0f, 0.0f);
       } else if ( c.w >= 1.0f ) { return target.set(c.x, c.y, c.z, 1.0f); }
 
-      return target.set(c.x * c.w, c.y * c.w, c.z * c.w, c.w);
+      return target.set(
+         c.x * c.w,
+         c.y * c.w,
+         c.z * c.w,
+         c.w);
    }
 
    /**
@@ -1544,7 +1796,8 @@ public class Color extends Vec4 {
 
       if ( levels < 2 || levels > 255 ) { return target.set(c); }
       final float delta = 1.0f / levels;
-      return target.set(delta * Utils.floor(0.5f + c.x * levels),
+      return target.set(
+         delta * Utils.floor(0.5f + c.x * levels),
          delta * Utils.floor(0.5f + c.y * levels),
          delta * Utils.floor(0.5f + c.z * levels),
          delta * Utils.floor(0.5f + c.w * levels));
@@ -1582,7 +1835,11 @@ public class Color extends Vec4 {
       final Color target,
       final Vec4 hsba ) {
 
-      hsba.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), 1.0f);
+      hsba.set(
+         rng.nextFloat(),
+         rng.nextFloat(),
+         rng.nextFloat(),
+         1.0f);
       return Color.hsbaToRgba(hsba, target);
    }
 
@@ -1611,9 +1868,11 @@ public class Color extends Vec4 {
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
 
-      hsba.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
+      hsba.set(
+         ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
          ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y,
-         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z, 1.0f);
+         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z,
+         1.0f);
       return Color.hsbaToRgba(hsba, target);
    }
 
@@ -1634,7 +1893,10 @@ public class Color extends Vec4 {
       final Color target,
       final Vec4 hsba ) {
 
-      hsba.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
+      hsba.set(
+         rng.nextFloat(),
+         rng.nextFloat(),
+         rng.nextFloat(),
          rng.nextFloat());
       return Color.hsbaToRgba(hsba, target);
    }
@@ -1679,7 +1941,10 @@ public class Color extends Vec4 {
       final java.util.Random rng,
       final Color target ) {
 
-      return target.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
+      return target.set(
+         rng.nextFloat(),
+         rng.nextFloat(),
+         rng.nextFloat(),
          1.0f);
    }
 
@@ -1703,9 +1968,11 @@ public class Color extends Vec4 {
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
-      return target.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
+      return target.set(
+         ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
          ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y,
-         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z, 1.0f);
+         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z,
+         1.0f);
    }
 
    /**
@@ -1720,7 +1987,10 @@ public class Color extends Vec4 {
       final java.util.Random rng,
       final Color target ) {
 
-      return target.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
+      return target.set(
+         rng.nextFloat(),
+         rng.nextFloat(),
+         rng.nextFloat(),
          rng.nextFloat());
    }
 
@@ -1744,7 +2014,8 @@ public class Color extends Vec4 {
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
       final float rw = rng.nextFloat();
-      return target.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
+      return target.set(
+         ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
          ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y,
          ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z,
          ( 1.0f - rw ) * lowerBound.w + rw * upperBound.w);
@@ -1874,9 +2145,11 @@ public class Color extends Vec4 {
       final float a,
       final Vec4 target ) {
 
-      return target.set(0.412453f * r + 0.357580f * g + 0.180423f * b,
+      return target.set(
+         0.412453f * r + 0.357580f * g + 0.180423f * b,
          0.212671f * r + 0.715160f * g + 0.072169f * b,
-         0.019334f * r + 0.119193f * g + 0.950227f * b, a);
+         0.019334f * r + 0.119193f * g + 0.950227f * b,
+         a);
    }
 
    /**
@@ -2050,8 +2323,11 @@ public class Color extends Vec4 {
       final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(a.x - b.x), Utils.clamp01(a.y - b.y),
-         Utils.clamp01(a.z - b.z), Utils.clamp01(a.w));
+      return target.set(
+         Utils.clamp01(a.x - b.x),
+         Utils.clamp01(a.y - b.y),
+         Utils.clamp01(a.z - b.z),
+         Utils.clamp01(a.w));
    }
 
    /**
@@ -2067,7 +2343,7 @@ public class Color extends Vec4 {
       /* @formatter:off */
       return ( int ) ( c.w * 0xff + 0.5f ) << 0x18
            | ( int ) ( c.x * 0xff + 0.5f ) << 0x10
-           | ( int ) ( c.y * 0xff + 0.5f ) << 0x8
+           | ( int ) ( c.y * 0xff + 0.5f ) <<  0x8
            | ( int ) ( c.z * 0xff + 0.5f );
       /* @formatter:on */
    }
@@ -2177,9 +2453,11 @@ public class Color extends Vec4 {
       final float a,
       final Color target ) {
 
-      return target.set(3.240479f * x - 1.537150f * y - 0.498535f * z,
+      return target.set(
+         3.240479f * x - 1.537150f * y - 0.498535f * z,
          -0.969256f * x + 1.875991f * y + 0.041556f * z,
-         0.055648f * x - 0.204043f * y + 1.057311f * z, a);
+         0.055648f * x - 0.204043f * y + 1.057311f * z,
+         a);
    }
 
    /**
@@ -2716,7 +2994,8 @@ public class Color extends Vec4 {
          /* This should remain as double precision. */
          final double td = step;
          final double ud = 1.0d - td;
-         return target.set(( float ) ( ud * origin.x + td * dest.x ),
+         return target.set(
+            ( float ) ( ud * origin.x + td * dest.x ),
             ( float ) ( ud * origin.y + td * dest.y ),
             ( float ) ( ud * origin.z + td * dest.z ),
             ( float ) ( ud * origin.w + td * dest.w ));
@@ -2818,11 +3097,11 @@ public class Color extends Vec4 {
          Color.rgbaToHsba(origin, this.aHsb);
          Color.rgbaToHsba(dest, this.bHsb);
 
-         this.hsbaNew.set(this.hueFunc.apply(this.aHsb.x, this.bHsb.x, step),
+         this.hsbaNew.set(
+            this.hueFunc.apply(this.aHsb.x, this.bHsb.x, step),
             this.satFunc.apply(this.aHsb.y, this.bHsb.y, step),
             this.briFunc.apply(this.aHsb.z, this.bHsb.z, step),
             ( 1.0f - step ) * this.aHsb.w + step * this.bHsb.w);
-
          return Color.hsbaToRgba(this.hsbaNew, target);
       }
 

@@ -1,21 +1,21 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-Yup2 graphics;
+YupJ2 graphics;
 PImage img;
 int currentMode;
 int index;
 int[] modes = { CENTER, CORNERS, CORNER };
 
 void settings() {
-  size(720, 405, Yup2.PATH_STR);
+  size(720, 405, YupJ2.PATH_STR);
 }
 
 void setup() {
-  graphics = (Yup2)getGraphics();
+  graphics = (YupJ2)getGraphics();
   img = loadImage("diagnostic.png");
 
-  // For Yup2.
+  // For YupJ2.
   //graphics.textureSampling(TextureSampling.TRILINEAR);
 }
 

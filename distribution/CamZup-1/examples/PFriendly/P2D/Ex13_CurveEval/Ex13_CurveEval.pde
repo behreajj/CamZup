@@ -24,7 +24,6 @@ Ray2 world = new Ray2();
 
 void settings() {
   size(720, 405, YupJ2.PATH_STR);
-  smooth(8);
 }
 
 void setup() {

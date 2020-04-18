@@ -2028,6 +2028,23 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
+    * Unsupported by this renderer, as it is known to raise errors.
+    */
+   @Override
+   public void smooth ( ) { PApplet.showMethodWarning("smooth"); }
+
+   /**
+    * Unsupported by this renderer, as it is known to raise errors.
+    *
+    * @param quality the quality
+    */
+   @Override
+   public void smooth ( final int quality ) {
+
+      PApplet.showMethodWarning("smooth");
+   }
+
+   /**
     * Unsupported by this renderer. Use a MeshEntity and Mesh instead.
     *
     * @param r the radius
@@ -3791,6 +3808,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
     * <li>multiplying the product by the projection;</li>
     * <li>demoting the vector 4 to a point 3 by dividing the x, y and z
     * components by w;</li>
+    * <li>flipping the y axis;</li>
     * <li>shifting the range from [-1.0, 1.0] to [(0.0, 0.0), (width, height)]
     * .</li>
     * </ol>

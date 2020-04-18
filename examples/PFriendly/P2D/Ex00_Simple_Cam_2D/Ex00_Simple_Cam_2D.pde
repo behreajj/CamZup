@@ -5,6 +5,10 @@ YupJ2 graphics2;
 
 void settings() {
   size(720, 405, YupJ2.PATH_STR);
+
+  // Recommended to assist with jittering in AWT:
+  // smooth(8);
+  // pixelDensity(displayDensity());
 }
 
 void setup() {
@@ -13,7 +17,7 @@ void setup() {
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  
+
   background(#fff7d5);
   graphics2.origin();
 

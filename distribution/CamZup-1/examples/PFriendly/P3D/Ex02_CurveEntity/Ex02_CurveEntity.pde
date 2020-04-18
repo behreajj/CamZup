@@ -57,7 +57,5 @@ void draw() {
 }
 
 void mouseReleased() {
-  Curve3.random(rng, 7,
-    -0.5, 0.5,
-    false, curve);
+  Curve3.random(rng, 7, -0.5, 0.5, false, curve);
 }

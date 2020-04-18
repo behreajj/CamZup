@@ -9,7 +9,6 @@ Vec3 mouse1 = new Vec3();
 
 void settings() {
   size(720, 405, Zup3.PATH_STR);
-  smooth(8);
 }
 
 void setup() {

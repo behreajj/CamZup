@@ -87,7 +87,7 @@ Here is a brief list of issues with this library and differences which may be un
 
 - 2D & 3D
   - Flipping the axes changes the default rotational direction of a positive angle from clockwise to counter-clockwise.
-  - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter.
+  - [smooth](https://processing.org/reference/smooth_.html) is disabled for OpenGL renderers.
   - `YupJ2`'s `point` supports `strokeCap(SQUARE)` at the expense of performance.
   - [textureMode](https://processing.org/reference/textureMode_.html) `IMAGE` is not supported by OpenGL renderers; `NORMAL` is the default. This is for three reasons: (1.) the belief that `IMAGE` is _harder_, not easier, to understand; (2.) recognition that `NORMAL` is the standard; (3.) redundant operations in `PGraphicsOpenGL` that interfere with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT` and cannot be overidden by this library.
   -  In making this conversion, support for high density pixel displays may be lost; I cannot test this at the moment, so please report issues with `image`.
@@ -95,6 +95,7 @@ Here is a brief list of issues with this library and differences which may be un
   - The [PShape](https://processing.org/reference/PShape.html) interface has numerous problems stemming from both its implementation and its design. This library uses `Curve` and `Mesh` objects instead. [shapeMode](https://processing.org/reference/shapeMode_.html) is not supported.
   
 - 2D
+  - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter. A discussion the Processing forum about this issue can be found [here](https://discourse.processing.org/t/text-seems-jittery-when-moving-in-a-circular-pattern/19548).
   - The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles.
   -  In OpenGL renderers, an arc will not have rounded corners, no matter which [strokeJoin](https://processing.org/reference/strokeJoin_.html) and [strokeCap](https://processing.org/reference/strokeCap_.html) methods you specify.
   - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), [ellipseMode](https://processing.org/reference/ellipseMode_.html) and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with these renderers. For that reason, `CENTER` is the default alignment.

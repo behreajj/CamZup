@@ -212,7 +212,7 @@ public class CurveEntity3 extends Entity3
    @Experimental
    public String toBlenderCode ( ) {
 
-      return this.toBlenderCode(12, "FULL", 0.0f, 0.0f);
+      return this.toBlenderCode(24, "FULL", 0.0f, 0.0f);
    }
 
    /**

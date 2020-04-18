@@ -585,6 +585,38 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    }
 
    /**
+    * Finds the shared coordinates, if any, between two faces. Returns an array
+    * of the coordinates.
+    *
+    * @param a the left comparisand
+    * @param b the right comparisand
+    *
+    * @return the coordinate array
+    */
+   public static Vec2[] sharedCoords (
+      final Face2 a,
+      final Face2 b ) {
+
+      final TreeSet < Vec2 > aList = new TreeSet <>(Mesh.SORT_2);
+      final Vert2[] aVerts = a.vertices;
+      final int aLen = aVerts.length;
+      for ( int i = 0; i < aLen; ++i ) {
+         aList.add(aVerts[i].coord);
+      }
+
+      final TreeSet < Vec2 > bList = new TreeSet <>(Mesh.SORT_2);
+      final Vert2[] bVerts = b.vertices;
+      final int bLen = bVerts.length;
+      for ( int j = 0; j < bLen; ++j ) {
+         bList.add(bVerts[j].coord);
+      }
+
+      aList.retainAll(bList);
+
+      return aList.toArray(new Vec2[aList.size()]);
+   }
+
+   /**
     * Calculates the winding number of the face by summing the cross products of
     * any two pair of edges.
     *
@@ -611,31 +643,6 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
          curr = next;
       }
       return wn;
-   }
-
-   static Vec2[] sharedCoords (
-      final Face2 a,
-      final Face2 b ) {
-
-      // TEST
-
-      final TreeSet < Vec2 > aList = new TreeSet <>(Mesh.SORT_2);
-      final Vert2[] aVerts = a.vertices;
-      final int aLen = aVerts.length;
-      for ( int i = 0; i < aLen; ++i ) {
-         aList.add(aVerts[i].coord);
-      }
-
-      final TreeSet < Vec2 > bList = new TreeSet <>(Mesh.SORT_2);
-      final Vert2[] bVerts = b.vertices;
-      final int bLen = bVerts.length;
-      for ( int j = 0; j < bLen; ++j ) {
-         bList.add(bVerts[j].coord);
-      }
-
-      aList.retainAll(bList);
-
-      return aList.toArray(new Vec2[aList.size()]);
    }
 
    /**

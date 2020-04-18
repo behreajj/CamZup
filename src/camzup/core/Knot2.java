@@ -1100,10 +1100,12 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float midpt23x = xControl * 0.6666666f;
       final float midpt23y = yControl * 0.6666666f;
 
-      prev.foreHandle.set(midpt23x + IUtils.ONE_THIRD * prevCo.x,
+      prev.foreHandle.set(
+         midpt23x + IUtils.ONE_THIRD * prevCo.x,
          midpt23y + IUtils.ONE_THIRD * prevCo.y);
 
-      next.rearHandle.set(midpt23x + IUtils.ONE_THIRD * xNextAnchor,
+      next.rearHandle.set(
+         midpt23x + IUtils.ONE_THIRD * xNextAnchor,
          midpt23y + IUtils.ONE_THIRD * yNextAnchor);
 
       next.coord.set(xNextAnchor, yNextAnchor);
