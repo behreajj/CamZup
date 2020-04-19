@@ -922,7 +922,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       /* See Curve2's arc function for more detailed comments. */
 
       if ( Utils.approx(stopAngle - startAngle, IUtils.TAU, 0.00139f) ) {
-         return Curve3.circle(startAngle, radius, 4, target);
+         return Curve3.circle(startAngle, radius, 4, 0.0f, 0.0f, 0.0f, target);
       }
 
       final float a1 = Utils.mod1(startAngle * IUtils.ONE_TAU);
@@ -957,9 +957,15 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       target.resize(knotCount);
       final List < Knot3 > knots = target.knots;
       for ( int i = 0; i < knotCount; ++i ) {
+         final Knot3 knot = knots.get(i);
          final float angle1 = Utils.lerpUnclamped(a1, destAngle1, i * toStep);
-         Knot3.fromPolar(Utils.scNorm(angle1), Utils.scNorm(angle1 - 0.25f),
-            radius, handleMag, knots.get(i));
+         Knot3.fromPolar(
+            Utils.scNorm(angle1),
+            Utils.scNorm(
+               angle1 - 0.25f),
+            radius, handleMag,
+            0.0f, 0.0f, 0.0f,
+            knot);
       }
 
       target.closedLoop = arcMode != ArcMode.OPEN;
@@ -999,7 +1005,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public static Curve3 circle ( final Curve3 target ) {
 
-      return Curve3.circle(0.0f, 0.5f, 4, target);
+      return Curve3.circle(0.0f, target);
    }
 
    /**
@@ -1015,7 +1021,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final float offsetAngle,
       final Curve3 target ) {
 
-      return Curve3.circle(offsetAngle, 0.5f, 4, target);
+      return Curve3.circle(offsetAngle, 0.5f, target);
    }
 
    /**
@@ -1032,7 +1038,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final float radius,
       final Curve3 target ) {
 
-      return Curve3.circle(offsetAngle, radius, 4, target);
+      return Curve3.circle(offsetAngle, radius, Curve.KNOTS_PER_CIRCLE, target);
    }
 
    /**
@@ -1051,26 +1057,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final int knotCount,
       final Curve3 target ) {
 
-      final float off1 = offsetAngle * IUtils.ONE_TAU;
-      final int vknct = knotCount < 3 ? 3 : knotCount;
-      target.resize(vknct);
-      final float invKnCt = 1.0f / vknct;
-      final float hndtn = 0.25f * invKnCt;
-      final float handleMag = Utils.tan(
-         hndtn * IUtils.TAU) * radius * IUtils.FOUR_THIRDS;
-
-      int i = 0;
-      final Iterator < Knot3 > itr = target.knots.iterator();
-      while ( itr.hasNext() ) {
-         final float angle1 = off1 + i * invKnCt;
-         Knot3.fromPolar(Utils.scNorm(angle1), Utils.scNorm(angle1 - 0.25f),
-            radius, handleMag, itr.next());
-         i++;
-      }
-
-      target.name = "Circle";
-      target.closedLoop = true;
-      return target;
+      return Curve3.circle(offsetAngle, radius, knotCount, 0.0f, 0.0f,
+         0.0f, target);
    }
 
    /**
@@ -1565,6 +1553,42 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
+    * Creates a curve that forms a horizontal line.
+    *
+    * @param target the output curve
+    *
+    * @return the line
+    */
+   public static Curve3 line ( final Curve3 target ) {
+
+      return Curve3.line(
+         -0.5f, 0.0f, 0.0f,
+         0.5f, 0.0f, 0.0f,
+         target);
+   }
+
+   /**
+    * Creates a curve that forms a line with an origin and destination.
+    *
+    * @param origin the origin
+    * @param dest   the destination
+    * @param target the output curve
+    *
+    * @return the line
+    */
+   public static Curve3 line (
+      final Vec3 origin,
+      final Vec3 dest,
+      final Curve3 target ) {
+
+      return Curve3.line(
+         origin.x, origin.y,
+         origin.z,
+         dest.x, dest.y, dest.z,
+         target);
+   }
+
+   /**
     * Creates a regular convex polygon.
     *
     * @param offsetAngle the offset angle
@@ -1574,7 +1598,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the polygon
     *
-    * @see Curve3#circle(float, float, int, Curve3)
     * @see Curve3#straightenHandles(Curve3)
     */
    public static Curve3 polygon (
@@ -1583,7 +1606,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final int knotCount,
       final Curve3 target ) {
 
-      Curve3.circle(offsetAngle, radius, knotCount, target);
+      // TODO: Make more efficient version of this function.
+      Curve3.circle(offsetAngle, radius, knotCount, 0.0f, 0.0f, 0.0f, target);
       target.name = "Polygon";
       return Curve3.straightenHandles(target);
    }
@@ -1856,6 +1880,57 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
+    * Creates a curve which approximates a circle. This is package level to
+    * provide extra functionality for translating a circle's origin when parsing
+    * an SVG file.
+    *
+    * @param offsetAngle the angular offset
+    * @param radius      the radius
+    * @param knotCount   the knot count
+    * @param xCenter     the x center
+    * @param yCenter     the y center
+    * @param zCenter     the z center
+    * @param target      the output curve
+    *
+    * @return the circle
+    */
+   static Curve3 circle (
+      final float offsetAngle,
+      final float radius,
+      final int knotCount,
+      final float xCenter,
+      final float yCenter,
+      final float zCenter,
+      final Curve3 target ) {
+
+      final float off1 = offsetAngle * IUtils.ONE_TAU;
+      final int vknct = knotCount < 3 ? 3 : knotCount;
+      target.resize(vknct);
+      final float invKnCt = 1.0f / vknct;
+      final float hndtn = 0.25f * invKnCt;
+      final float handleMag = Utils.tan(
+         hndtn * IUtils.TAU) * radius * IUtils.FOUR_THIRDS;
+
+      int i = 0;
+      final Iterator < Knot3 > itr = target.knots.iterator();
+      while ( itr.hasNext() ) {
+         final Knot3 knot = itr.next();
+         final float angle1 = off1 + i * invKnCt;
+         Knot3.fromPolar(
+            Utils.scNorm(angle1),
+            Utils.scNorm(angle1 - 0.25f),
+            radius, handleMag,
+            xCenter, yCenter, zCenter,
+            knot);
+         i++;
+      }
+
+      target.name = "Circle";
+      target.closedLoop = true;
+      return target;
+   }
+
+   /**
     * A utility function for setting the handles of knots on straight curve
     * segments. Finds unclamped linear interpolation from origin to destination
     * by a step of 1.0 / 3.0 .
@@ -1875,6 +1950,48 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          0.6666666f * a.x + IUtils.ONE_THIRD * b.x,
          0.6666666f * a.y + IUtils.ONE_THIRD * b.y,
          0.6666666f * a.z + IUtils.ONE_THIRD * b.z);
+   }
+
+   /**
+    * Creates a curve that forms a line with an origin and destination. This is
+    * package level to provide functionality for SVG parsing.
+    *
+    * @param xOrigin the origin x
+    * @param yOrigin the origin y
+    * @param zOrigin the origin z
+    * @param xDest   the destination x
+    * @param yDest   the destination y
+    * @param zDest   the destination z
+    * @param target  the output curve
+    *
+    * @return the line
+    */
+   static Curve3 line (
+      final float xOrigin,
+      final float yOrigin,
+      final float zOrigin,
+      final float xDest,
+      final float yDest,
+      final float zDest,
+      final Curve3 target ) {
+
+      target.resize(2);
+
+      final Knot3 first = target.knots.get(0);
+      final Knot3 last = target.knots.get(1);
+
+      first.coord.set(xOrigin, yOrigin, zOrigin);
+      last.coord.set(xDest, yDest, zDest);
+
+      Curve3.lerp13(first.coord, last.coord, first.foreHandle);
+      Curve3.lerp13(last.coord, first.coord, last.rearHandle);
+
+      first.mirrorHandlesForward();
+      last.mirrorHandlesBackward();
+
+      target.name = "Line";
+      target.closedLoop = false;
+      return target;
    }
 
    /**

@@ -11,6 +11,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * A draft scalable vector graphics (SVG) parser class. Currently unfinished.
@@ -33,6 +34,11 @@ public abstract class SvgParser {
     * Regular expression to find data elements in an SVG path data attribute.
     */
    public static final String DATA_PATTERN = "[A|a|C|c|H|h|L|l|M|m|Q|q|S|sT|t|V|v|Z|z|,|\u0020]";
+
+   /**
+    * Handle magnitude of curve knots used to approximate an ellipse.
+    */
+   public static final float HANDLE_MAG = 0.552285f;
 
    /**
     * Ratio to convert from inches to units. In Processing, the value was 90.0 .
@@ -63,6 +69,7 @@ public abstract class SvgParser {
    public static CurveEntity2 parse ( final String fileName ) {
 
       final CurveEntity2 result = new CurveEntity2();
+
       try {
          final DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
          final File file = new File(fileName);
@@ -86,12 +93,39 @@ public abstract class SvgParser {
 //         tr.moveTo(loc);
 //         tr.scaleTo(scale);
 
-         final NodeList paths = doc.getElementsByTagName("path");
-         final int nodeLen = paths.getLength();
+         final NodeList nodes = header.getChildNodes();
+         final int nodeLen = nodes.getLength();
          for ( int i = 0; i < nodeLen; ++i ) {
-            final Node path = paths.item(i);
-            final Curve2[] curves = SvgParser.parsePath(path);
-            result.appendAll(curves);
+            final Node node = nodes.item(i);
+            final String name = node.getNodeName().toLowerCase();
+            switch ( name ) {
+
+               case "circle":
+                  result.append(SvgParser.parseCirc(node, new Curve2()));
+                  break;
+
+               case "ellipse":
+                  result.append(SvgParser.parseEllipse(node, new Curve2()));
+                  break;
+
+               case "line":
+                  result.append(SvgParser.parseLine(node, new Curve2()));
+                  break;
+
+               case "path":
+                  result.appendAll(SvgParser.parsePath(node));
+                  break;
+
+               case "polygon":
+               case "polyline":
+                  result.append(SvgParser.parsePoly(node, new Curve2()));
+                  break;
+
+               case "rect":
+                  result.append(SvgParser.parseRect(node, new Curve2()));
+                  break;
+
+            }
          }
 
       } catch ( final Exception e ) {
@@ -100,6 +134,199 @@ public abstract class SvgParser {
       }
 
       return result;
+   }
+
+   /**
+    * Parses a SVG node and returns a Curve2 approximating a circle.
+    *
+    * @param circNode the circle node
+    * @param target   the output curve
+    *
+    * @return the circle curve
+    */
+   public static Curve2 parseCirc (
+      final Node circNode,
+      final Curve2 target ) {
+
+      final NamedNodeMap attributes = circNode.getAttributes();
+
+      /* Search for attribute nodes. May return null. */
+      final Node cxnode = attributes.getNamedItem("cx");
+      final Node cynode = attributes.getNamedItem("cy");
+      final Node rnode = attributes.getNamedItem("r");
+
+      /* Acquire text content from the node if it exists. */
+      final String cxstr = cxnode != null ? cxnode.getTextContent() : "0.0";
+      final String cystr = cynode != null ? cynode.getTextContent() : "0.0";
+      final String rstr = rnode != null ? rnode.getTextContent() : "0.5";
+
+      /* Parse string or default. */
+      final float cx = SvgParser.parseFloat(cxstr, 0.0f);
+      final float cy = -SvgParser.parseFloat(cystr, 0.0f);
+      final float r = SvgParser.parseFloat(rstr, 0.5f);
+
+      Curve2.circle(0.0f, r, Curve.KNOTS_PER_CIRCLE, cx, cy, target);
+//      target.reverse();
+      return target;
+   }
+
+   /**
+    * Attempts to parse a string representing a Cascading Style Sheet (CSS)
+    * representation of an RGBA color. The input string is expected to be in one
+    * of the formats:
+    * <ul>
+    * <li>"rgb(255, 127, 54)"</li>
+    * <li>"rgb(100%, 50%, 25%)"</li>
+    * <li>"rgba(255, 127, 54, 0.125)"</li>
+    * <li>"rgba(100%, 50%, 25%, 0.125)"</li>
+    * </ul>
+    * The default color is (0.0, 0.0, 0.0, 1.0).
+    *
+    * @param str
+    * @param target
+    *
+    * @return the color
+    */
+   public static Color parseCssRgba (
+      final String str,
+      final Color target ) {
+
+      final String vstr = str.toLowerCase().trim();
+      final int lParen = vstr.indexOf('(');
+      final int rParen = vstr.indexOf(')');
+      final String[] tokens = vstr.substring(lParen + 1, rParen).split(",\\s+");
+      final int tokensLen = tokens.length;
+
+      float r = 0.0f;
+      float g = 0.0f;
+      float b = 0.0f;
+      float a = 1.0f;
+      String currToken = "";
+
+      /* Parse alpha. */
+      if ( tokensLen > 3 ) {
+         currToken = tokens[3];
+         if ( currToken.endsWith("%") ) {
+            currToken = currToken.substring(0, currToken.length() - 1);
+            a = Float.parseFloat(currToken) * 0.01f;
+         } else {
+            a = Float.parseFloat(currToken);
+         }
+         a = Utils.clamp01(a);
+      }
+
+      /* Parse blue. */
+      if ( tokensLen > 2 ) {
+         currToken = tokens[2];
+         if ( currToken.endsWith("%") ) {
+            currToken = currToken.substring(0, currToken.length() - 1);
+            b = Float.parseFloat(currToken) * 0.01f;
+         } else {
+            b = Float.parseFloat(currToken) * IUtils.ONE_255;
+         }
+         b = Utils.clamp01(b);
+      }
+
+      /* Parse green. */
+      if ( tokensLen > 1 ) {
+         currToken = tokens[1];
+         if ( currToken.endsWith("%") ) {
+            currToken = currToken.substring(0, currToken.length() - 1);
+            g = Float.parseFloat(currToken) * 0.01f;
+         } else {
+            g = Float.parseFloat(currToken) * IUtils.ONE_255;
+         }
+         g = Utils.clamp01(g);
+      }
+
+      /* Parse red. */
+      if ( tokensLen > 0 ) {
+         currToken = tokens[0];
+         if ( currToken.endsWith("%") ) {
+            currToken = currToken.substring(0, currToken.length() - 1);
+            r = Float.parseFloat(currToken) * 0.01f;
+         } else {
+            r = Float.parseFloat(currToken) * IUtils.ONE_255;
+         }
+         r = Utils.clamp01(r);
+      }
+
+      return target.set(r, g, b, a);
+   }
+
+   /**
+    * Parses a SVG node and returns a Curve2 approximating a circle.
+    *
+    * @param ellipseNode the ellipse node
+    * @param target      the output curve
+    *
+    * @return the ellipse curve
+    */
+   public static Curve2 parseEllipse (
+      final Node ellipseNode,
+      final Curve2 target ) {
+
+      final NamedNodeMap attributes = ellipseNode.getAttributes();
+
+      /* Search for attribute nodes. May return null. */
+      final Node cxnode = attributes.getNamedItem("cx");
+      final Node cynode = attributes.getNamedItem("cy");
+      final Node rxnode = attributes.getNamedItem("rx");
+      final Node rynode = attributes.getNamedItem("ry");
+
+      /* Acquire text content from the node if it exists. */
+      final String cxstr = cxnode != null ? cxnode.getTextContent() : "0.0";
+      final String cystr = cynode != null ? cynode.getTextContent() : "0.0";
+      final String rxstr = rxnode != null ? rxnode.getTextContent() : "0.5";
+      final String rystr = rynode != null ? rynode.getTextContent() : "0.5";
+
+      /* Parse string or default. */
+      final float cx = SvgParser.parseFloat(cxstr, 0.0f);
+      final float cy = -SvgParser.parseFloat(cystr, 0.0f);
+      final float rx = SvgParser.parseFloat(rxstr, 0.5f);
+      final float ry = SvgParser.parseFloat(rystr, 0.5f);
+
+      /* Find cardinal control points. */
+      final float right = cx + rx;
+      final float top = cy + ry;
+      final float left = cx - rx;
+      final float bottom = cy - ry;
+
+      final float horizHandle = rx * SvgParser.HANDLE_MAG;
+      final float vertHandle = ry * SvgParser.HANDLE_MAG;
+
+      final float xHandlePos = cx + horizHandle;
+      final float xHandleNeg = cx - horizHandle;
+
+      final float yHandlePos = cy + vertHandle;
+      final float yHandleNeg = cy - vertHandle;
+
+      /* Resize and acquire four knots. */
+      target.resize(4);
+      final Knot2 kn0 = target.get(0);
+      final Knot2 kn1 = target.get(1);
+      final Knot2 kn2 = target.get(2);
+      final Knot2 kn3 = target.get(3);
+
+      kn0.coord.set(right, cy);
+      kn0.foreHandle.set(right, yHandlePos);
+      kn0.rearHandle.set(right, yHandleNeg);
+
+      kn1.coord.set(cx, top);
+      kn1.foreHandle.set(xHandleNeg, top);
+      kn1.rearHandle.set(xHandlePos, top);
+
+      kn2.coord.set(left, cy);
+      kn2.foreHandle.set(left, yHandleNeg);
+      kn2.rearHandle.set(left, yHandlePos);
+
+      kn3.coord.set(cx, bottom);
+      kn3.foreHandle.set(xHandlePos, bottom);
+      kn3.rearHandle.set(xHandleNeg, bottom);
+
+      target.closedLoop = true;
+//      target.reverse();
+      return target;
    }
 
    /**
@@ -219,101 +446,61 @@ public abstract class SvgParser {
    }
 
    /**
-    * Attempts to parse a string representing a Cascading Style Sheet (CSS)
-    * representation of an RGBA color. The input string is expected to be in one
-    * of the formats:
-    * <ul>
-    * <li>"rgb(255, 127, 54)"</li>
-    * <li>"rgb(100%, 50%, 25%)"</li>
-    * <li>"rgba(255, 127, 54, 0.125)"</li>
-    * <li>"rgba(100%, 50%, 25%, 0.125)"</li>
-    * </ul>
-    * The default color is (0.0, 0.0, 0.0, 1.0).
+    * Parses a SVG node and returns a Curve2 forming a line.
     *
-    * @param str
-    * @param target
+    * @param lineNode the line node
+    * @param target   the output curve
     *
-    * @return the color
+    * @return the line curve
     */
-   static Color parseCssRgba (
-      final String str,
-      final Color target ) {
+   public static Curve2 parseLine (
+      final Node lineNode,
+      final Curve2 target ) {
 
-      final String vstr = str.toLowerCase().trim();
-      final int lParen = vstr.indexOf('(');
-      final int rParen = vstr.indexOf(')');
-      final String[] tokens = vstr.substring(lParen + 1, rParen).split(",\\s+");
-      final int tokensLen = tokens.length;
+      final NamedNodeMap attributes = lineNode.getAttributes();
 
-      float r = 0.0f;
-      float g = 0.0f;
-      float b = 0.0f;
-      float a = 1.0f;
-      String currToken = "";
+      /* Search for attribute nodes. May return null. */
+      final Node x1node = attributes.getNamedItem("x1");
+      final Node y1node = attributes.getNamedItem("y1");
+      final Node x2node = attributes.getNamedItem("x2");
+      final Node y2node = attributes.getNamedItem("y2");
 
-      /* Parse alpha. */
-      if ( tokensLen > 3 ) {
-         currToken = tokens[3];
-         if ( currToken.endsWith("%") ) {
-            currToken = currToken.substring(0, currToken.length() - 1);
-            a = Float.parseFloat(currToken) * 0.01f;
-         } else {
-            a = Float.parseFloat(currToken);
-         }
-         a = Utils.clamp01(a);
-      }
+      /* Acquire text content from the node if it exists. */
+      final String x1str = x1node != null ? x1node.getTextContent() : "-0.5";
+      final String y1str = y1node != null ? y1node.getTextContent() : "0.0";
+      final String x2str = x2node != null ? x2node.getTextContent() : "0.5";
+      final String y2str = y2node != null ? y2node.getTextContent() : "0.0";
 
-      /* Parse blue. */
-      if ( tokensLen > 2 ) {
-         currToken = tokens[2];
-         if ( currToken.endsWith("%") ) {
-            currToken = currToken.substring(0, currToken.length() - 1);
-            b = Float.parseFloat(currToken) * 0.01f;
-         } else {
-            b = Float.parseFloat(currToken) * IUtils.ONE_255;
-         }
-         b = Utils.clamp01(b);
-      }
+      /* Parse string or default. */
+      final float x1 = SvgParser.parseFloat(x1str, -0.5f);
+      final float y1 = -SvgParser.parseFloat(y1str, 0.0f);
+      final float x2 = SvgParser.parseFloat(x2str, 0.5f);
+      final float y2 = -SvgParser.parseFloat(y2str, 0.0f);
 
-      /* Parse green. */
-      if ( tokensLen > 1 ) {
-         currToken = tokens[1];
-         if ( currToken.endsWith("%") ) {
-            currToken = currToken.substring(0, currToken.length() - 1);
-            g = Float.parseFloat(currToken) * 0.01f;
-         } else {
-            g = Float.parseFloat(currToken) * IUtils.ONE_255;
-         }
-         g = Utils.clamp01(g);
-      }
-
-      /* Parse red. */
-      if ( tokensLen > 0 ) {
-         currToken = tokens[0];
-         if ( currToken.endsWith("%") ) {
-            currToken = currToken.substring(0, currToken.length() - 1);
-            r = Float.parseFloat(currToken) * 0.01f;
-         } else {
-            r = Float.parseFloat(currToken) * IUtils.ONE_255;
-         }
-         r = Utils.clamp01(r);
-      }
-
-      return target.set(r, g, b, a);
+      Curve2.line(x1, y1, x2, y2, target);
+//      target.reverse();
+      return target;
    }
 
-   static Curve2[] parsePath ( final Node node ) {
+   public static Curve2[] parsePath ( final Node node ) {
 
       final ArrayList < Curve2 > result = new ArrayList <>();
-
       final NamedNodeMap attributes = node.getAttributes();
       final Node pathData = attributes.getNamedItem("d");
+
       if ( pathData != null ) {
 
+         /*
+          * These regular expressions are imperfect, and may yield empty string
+          * tokens, so there's an extra step to strip them away.
+          */
          final String pdStr = pathData.getTextContent();
-
          String[] cmdTokens = pdStr.split(SvgParser.CMD_PATTERN);
+         String[] dataTokens = pdStr.split(SvgParser.DATA_PATTERN);
          cmdTokens = SvgParser.stripEmptyTokens(cmdTokens);
+         dataTokens = SvgParser.stripEmptyTokens(dataTokens);
+
+         /* Convert command strings to path command constants. */
          final int cmdLen = cmdTokens.length;
          final PathCommand[] commands = new PathCommand[cmdLen];
          for ( int j = 0; j < cmdLen; ++j ) {
@@ -324,19 +511,24 @@ public abstract class SvgParser {
             // System.out.println(cmd);
          }
 
-         String[] dataTokens = pdStr.split(SvgParser.DATA_PATTERN);
-         dataTokens = SvgParser.stripEmptyTokens(dataTokens);
          // final int dataLen = dataTokens.length;
          // for (int k = 0; k < dataLen; ++k) {
          // System.out.println(dataTokens[k]);
          // }
 
+         /* Coordinate token. */
          String coxStr = "0.0";
          String coyStr = "0.0";
+
+         /* Cubic curve rear handle. */
          String rhxStr = "0.0";
          String rhyStr = "0.0";
+
+         /* Cubic curve fore handle. */
          String fhxStr = "0.0";
          String fhyStr = "0.0";
+
+         /* Quadratic curve midpoint. */
          String mhxStr = "0.0";
          String mhyStr = "0.0";
 
@@ -348,6 +540,13 @@ public abstract class SvgParser {
          float xOff = 0.0f;
          float yOff = 0.0f;
          boolean closedLoop = false;
+
+         /*
+          * Usually, one path should have one move to command, but just in case
+          * it doesn't, create a boolean to track an initial move to. If there
+          * is more than one, the target curve will be added to the result list
+          * and replaced by a new one.
+          */
          boolean initialMove = true;
          Curve2 target = new Curve2();
          target.clear();
@@ -355,11 +554,13 @@ public abstract class SvgParser {
 
          for ( int l = 0, cursor = 0; l < cmdLen; ++l ) {
             final PathCommand command = commands[l];
-//            System.out.println(command);
+            // System.out.println(command);
 
             switch ( command ) {
 
                case MoveToAbs:
+
+                  /* Tested April 18, 2020 */
 
                   if ( !initialMove ) {
                      result.add(target);
@@ -389,6 +590,8 @@ public abstract class SvgParser {
 
                case LineToAbs:
 
+                  /* Tested April 18, 2020 */
+
                   coxStr = dataTokens[cursor++]; /* 1 */
                   coyStr = dataTokens[cursor++]; /* 2 */
 
@@ -406,7 +609,35 @@ public abstract class SvgParser {
 
                   break;
 
+               case QuadraticToAbs:
+
+                  /* Tested April 18, 2020 */
+
+                  mhxStr = dataTokens[cursor++]; /* 1 */
+                  mhyStr = dataTokens[cursor++]; /* 2 */
+                  coxStr = dataTokens[cursor++]; /* 3 */
+                  coyStr = dataTokens[cursor++]; /* 4 */
+
+                  prev = curr;
+                  curr = new Knot2();
+                  target.append(curr);
+
+                  mh.set(
+                     SvgParser.parseFloat(mhxStr),
+                     SvgParser.parseFloat(mhyStr));
+                  curr.coord.set(
+                     SvgParser.parseFloat(coxStr),
+                     SvgParser.parseFloat(coyStr));
+                  Curve2.lerp13(mh, prev.coord, prev.foreHandle);
+                  Curve2.lerp13(mh, curr.coord, curr.rearHandle);
+
+                  relative.set(curr.coord);
+
+                  break;
+
                case CubicToAbs:
+
+                  /* Tested April 18, 2020 */
 
                   fhxStr = dataTokens[cursor++]; /* 1 */
                   fhyStr = dataTokens[cursor++]; /* 2 */
@@ -538,35 +769,11 @@ public abstract class SvgParser {
                      SvgParser.parseFloat(coyStr));
                   Vec2.add(relative, curr.coord, curr.coord);
 
-                  xOff = Math.copySign(IUtils.DEFAULT_EPSILON, curr.coord.x);
-                  yOff = Math.copySign(IUtils.DEFAULT_EPSILON, curr.coord.y);
+                  xOff = Utils.copySign(IUtils.DEFAULT_EPSILON, curr.coord.x);
+                  yOff = Utils.copySign(IUtils.DEFAULT_EPSILON, curr.coord.y);
 
                   curr.foreHandle.set(curr.coord.x + xOff, curr.coord.y + yOff);
                   curr.rearHandle.set(curr.coord.x - xOff, curr.coord.y - yOff);
-
-                  relative.set(curr.coord);
-
-                  break;
-
-               case QuadraticToAbs:
-
-                  mhxStr = dataTokens[cursor++]; /* 1 */
-                  mhyStr = dataTokens[cursor++]; /* 2 */
-                  coxStr = dataTokens[cursor++]; /* 3 */
-                  coyStr = dataTokens[cursor++]; /* 4 */
-
-                  prev = curr;
-                  curr = new Knot2();
-                  target.append(curr);
-
-                  mh.set(
-                     SvgParser.parseFloat(mhxStr),
-                     SvgParser.parseFloat(mhyStr));
-                  curr.coord.set(
-                     SvgParser.parseFloat(coxStr),
-                     SvgParser.parseFloat(coyStr));
-                  Curve2.lerp13(mh, prev.coord, prev.foreHandle);
-                  Curve2.lerp13(mh, curr.coord, curr.rearHandle);
 
                   relative.set(curr.coord);
 
@@ -652,24 +859,6 @@ public abstract class SvgParser {
                case ClosePath:
 
                   closedLoop = true;
-
-                  final Knot2 first = target.getFirst();
-                  final Knot2 last = target.getLast();
-
-                  if ( closedLoop ) {
-                     Curve2.lerp13(
-                        first.coord,
-                        last.coord,
-                        first.rearHandle);
-
-                     Curve2.lerp13(
-                        last.coord,
-                        first.coord,
-                        last.foreHandle);
-                  } else {
-                     first.mirrorHandlesForward();
-                     last.mirrorHandlesBackward();
-                  }
                   target.closedLoop = closedLoop;
 
                   break;
@@ -679,34 +868,96 @@ public abstract class SvgParser {
             }
 
          }
+
+         /* Deal with first and last knots in open versus closed loop. */
+         final Iterator < Curve2 > resultItr = result.iterator();
+         while ( resultItr.hasNext() ) {
+            final Curve2 curve = resultItr.next();
+            final Knot2 first = curve.getFirst();
+            final Knot2 last = curve.getLast();
+            if ( target.closedLoop ) {
+               Curve2.lerp13(
+                  first.coord,
+                  last.coord,
+                  first.rearHandle);
+               Curve2.lerp13(
+                  last.coord,
+                  first.coord,
+                  last.foreHandle);
+            } else {
+               first.mirrorHandlesForward();
+               last.mirrorHandlesBackward();
+            }
+         }
       }
 
       return result.toArray(new Curve2[result.size()]);
    }
 
-   static Curve2 parsePolygon ( final Node polygonNode ) {
+   public static Curve2 parsePoly (
+      final Node polygonNode,
+      final Curve2 target ) {
+
+      /* Poly-lines are open, polygons are closed loop. */
+      final String name = polygonNode.getNodeName();
+      if ( name == "polygon" ) {
+         target.name = "Polygon";
+         target.closedLoop = true;
+      } else if ( name == "polyline" ) {
+         target.name = "PolyLine";
+         target.closedLoop = false;
+      } else {
+         target.closedLoop = false;
+      }
 
       final NamedNodeMap attributes = polygonNode.getAttributes();
       final Node ptsnode = attributes.getNamedItem("points");
-      final String ptsstr = ptsnode != null ? ptsnode.getTextContent()
-         : "0,0";
-      final String[] coords = ptsstr.split("\\s*");
-      final int clen = coords.length;
-      final Knot2[] knots = new Knot2[clen];
-      for ( int i = 0; i < clen; ++i ) {
-         final String coord = coords[i];
-         final String[] xystr = coord.split(",");
-         final float x = SvgParser.parseFloat(xystr[0], 0.0f);
-         final float y = SvgParser.parseFloat(xystr[1], 0.0f);
-         final Knot2 knot = new Knot2(x, y);
-         knots[i] = knot;
+      final String ptsstr = ptsnode != null ? ptsnode.getTextContent() : "0,0";
+      final String[] coords = ptsstr.split(" |,");
+
+      int i = 0;
+      final int coordLen = coords.length;
+      final int halfLen = coordLen / 2;
+      target.resize(halfLen);
+      final Iterator < Knot2 > itr = target.iterator();
+      final Knot2 first = itr.next();
+      first.coord.set(
+         SvgParser.parseFloat(coords[i++], 0.0f),
+         -SvgParser.parseFloat(coords[i++], 0.0f));
+
+      Knot2 prev = first;
+      while ( itr.hasNext() ) {
+         final String xstr = coords[i++];
+         final String ystr = coords[i++];
+         final float x = SvgParser.parseFloat(xstr, 0.0f);
+         final float y = -SvgParser.parseFloat(ystr, 0.0f);
+         final Knot2 curr = itr.next();
+         Knot2.fromSegLinear(x, y, prev, curr);
+         prev = curr;
       }
 
-      final Curve2 result = new Curve2(true, knots);
-      return Curve2.straightenHandles(result);
+      if ( target.closedLoop ) {
+         Knot2.fromSegLinear(first.coord, prev, first);
+      } else {
+         first.mirrorHandlesForward();
+         prev.mirrorHandlesBackward();
+      }
+
+//      target.reverse();
+      return target;
    }
 
-   static Curve2 parseRect ( final Node rectNode ) {
+   /**
+    * Parses a SVG node and returns a Curve2 representing a rectangle.
+    *
+    * @param rectNode the rectangle node
+    * @param target   the output curve
+    *
+    * @return the rectangle curve
+    */
+   public static Curve2 parseRect (
+      final Node rectNode,
+      final Curve2 target ) {
 
       final NamedNodeMap attributes = rectNode.getAttributes();
 
@@ -728,7 +979,7 @@ public abstract class SvgParser {
 
       /* Parse string or default. */
       final float x = SvgParser.parseFloat(xstr, 0.0f);
-      final float y = SvgParser.parseFloat(ystr, 0.0f);
+      final float y = -SvgParser.parseFloat(ystr, 0.0f);
       final float w = SvgParser.parseFloat(wstr, 1.0f);
       final float h = SvgParser.parseFloat(hstr, 1.0f);
       final float rx = SvgParser.parseFloat(rxstr, 0.0f);
@@ -738,10 +989,12 @@ public abstract class SvgParser {
        * Corner rounding differs between APIs, so average horizontal and
        * vertical rounding.
        */
-      return Curve2.rect(x, y, x + w, y + h, ( rx + ry ) * 0.5f, new Curve2());
+      Curve2.rect(x, y - h, x + w, y, ( rx + ry ) * 0.5f, target);
+//      target.reverse();
+      return target;
    }
 
-   static Vec4 parseViewBox ( final Node viewbox, final Vec4 target ) {
+   public static Vec4 parseViewBox ( final Node viewbox, final Vec4 target ) {
 
       final String content = viewbox.getTextContent();
       final String[] tokens = content.split(" ");
@@ -766,7 +1019,7 @@ public abstract class SvgParser {
     *
     * @return the stripped tokens
     */
-   static String[] stripEmptyTokens ( final String[] tokens ) {
+   public static String[] stripEmptyTokens ( final String[] tokens ) {
 
       final int len = tokens.length;
       final ArrayList < String > list = new ArrayList <>(len);

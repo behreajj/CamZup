@@ -984,8 +984,9 @@ public interface IYup2 extends IUp {
       final MeshEntity2 me,
       final MaterialSolid mat ) {
 
-      return IYup2.toSvgString(this, new MeshEntity2[] {
-         me }, new MaterialSolid[] { mat });
+      return IYup2.toSvgString(this,
+         new MeshEntity2[] { me },
+         new MaterialSolid[] { mat });
    }
 
    /**
@@ -1290,13 +1291,17 @@ public interface IYup2 extends IUp {
     */
    static String svgBackground ( final IYup2 renderer ) {
 
-      return new StringBuilder(128).append(
-         "<rect id=\"background\" x=\"0\" y=\"0\" width=\"").append(
-            renderer.getWidth()).append("\" height=\"").append(
-               renderer.getHeight()).append(
-                  "\" stroke=\"none\" fill=\"").append(
-                     Color.toHexWeb(renderer.getBackground())).append(
-                        "\"></rect>").toString();
+      /* @formatter:off */
+      return new StringBuilder(128)
+         .append("<rect id=\"background\" x=\"0\" y=\"0\" width=\"")
+         .append(renderer.getWidth())
+         .append("\" height=\"")
+         .append(renderer.getHeight())
+         .append("\" stroke=\"none\" fill=\"")
+         .append(Color.toHexWeb(renderer.getBackground()))
+         .append("\"></rect>")
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -1309,21 +1314,25 @@ public interface IYup2 extends IUp {
     */
    static String svgCamera ( final IYup2 renderer ) {
 
-      return new StringBuilder(128).append("transform=\"translate(").append(
-         Utils.toFixed(renderer.getWidth() * 0.5f, 6)).append(',').append(
-            ' ').append(Utils.toFixed(renderer.getHeight() * 0.5f, 6)).append(
-               ") scale(").append(Utils.toFixed(renderer.getZoomX(), 6)).append(
-                  ',').append(' ').append(
-                     Utils.toFixed(-renderer.getZoomY(), 6)).append(
-                        ") rotate(").append(
-                           Utils.toFixed(
-                              -renderer.getRoll() * IUtils.RAD_TO_DEG,
-                              2)).append(") translate(").append(
-                                 Utils.toFixed(-renderer.getLocX(), 6)).append(
-                                    ',').append(' ').append(
-                                       Utils.toFixed(-renderer.getLocY(),
-                                          6)).append(')').append(
-                                             '\"').toString();
+      /* @formatter:off */
+      return new StringBuilder(128)
+         .append("transform=\"translate(")
+         .append(Utils.toFixed(renderer.getWidth() * 0.5f, 6))
+         .append(',').append(' ')
+         .append(Utils.toFixed(renderer.getHeight() * 0.5f, 6))
+         .append(") scale(")
+         .append(Utils.toFixed(renderer.getZoomX(), 6))
+         .append(',').append(' ')
+         .append(Utils.toFixed(-renderer.getZoomY(), 6))
+         .append(") rotate(")
+         .append(Utils.toFixed(-renderer.getRoll() * IUtils.RAD_TO_DEG, 2))
+         .append(") translate(")
+         .append(Utils.toFixed(-renderer.getLocX(), 6))
+         .append(',').append(' ')
+         .append(Utils.toFixed(-renderer.getLocY(), 6))
+         .append(')').append('\"')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -1339,12 +1348,28 @@ public interface IYup2 extends IUp {
     */
    static String svgHeader ( final IYup2 renderer ) {
 
-      return new StringBuilder(128).append("<svg ").append(
-         "xmlns=\"http://www.w3.org/2000/svg\" ").append(
-            "xmlns:xlink=\"http://www.w3.org/1999/xlink\" ").append(
-               "viewBox=\"0 0 ").append(( int ) renderer.getWidth()).append(
-                  ' ').append(( int ) renderer.getHeight()).append(
-                     "\">").toString();
+      final int w = ( int ) renderer.getWidth();
+      final int h = ( int ) renderer.getHeight();
+      final String wStr = Integer.toString(w);
+      final String hStr = Integer.toString(h);
+
+      /* @formatter:off */
+      return new StringBuilder(128)
+         .append("<svg ")
+         .append("xmlns=\"http://www.w3.org/2000/svg\" ")
+         .append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ")
+         .append("width=\"")
+         .append(wStr)
+         .append("\" height=\"")
+         .append(hStr)
+         .append("\" ")
+         .append("viewBox=\"0 0 ")
+         .append(wStr)
+         .append(' ')
+         .append(hStr)
+         .append("\">")
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -1362,10 +1387,14 @@ public interface IYup2 extends IUp {
       final MaterialSolid[] mats ) {
 
       final StringBuilder svgp = new StringBuilder(1024);
-      svgp.append(IYup2.svgHeader(renderer)).append('\n');
-      svgp.append(IYup2.svgBackground(renderer)).append('\n');
-      svgp.append("<g id=\"camera\" ").append(IYup2.svgCamera(renderer)).append(
-         '>').append('\n');
+      svgp.append(IYup2.svgHeader(renderer));
+      svgp.append('\n');
+      svgp.append(IYup2.svgBackground(renderer));
+      svgp.append('\n');
+      svgp.append("<g id=\"camera\" ");
+      svgp.append(IYup2.svgCamera(renderer));
+      svgp.append('>');
+      svgp.append('\n');
 
       final int len = ces.length;
       final float zoom = Utils.max(renderer.getZoomX(), renderer.getZoomY());
@@ -1391,10 +1420,15 @@ public interface IYup2 extends IUp {
       final MeshEntity2[] mes,
       final MaterialSolid[] mats ) {
 
-      final StringBuilder svgp = new StringBuilder(1024).append(
-         IYup2.svgHeader(renderer)).append('\n').append(
-            IYup2.svgBackground(renderer)).append('\n').append("<g ").append(
-               IYup2.svgCamera(renderer)).append('>').append('\n');
+      final StringBuilder svgp = new StringBuilder(1024);
+      svgp.append(IYup2.svgHeader(renderer));
+      svgp.append('\n');
+      svgp.append(IYup2.svgBackground(renderer));
+      svgp.append('\n');
+      svgp.append("<g ");
+      svgp.append(IYup2.svgCamera(renderer));
+      svgp.append('>');
+      svgp.append('\n');
 
       final int len = mes.length;
       final float zoom = Utils.max(renderer.getZoomX(), renderer.getZoomY());

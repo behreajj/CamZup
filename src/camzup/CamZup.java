@@ -57,6 +57,8 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
+      System.out.println(0.10977230161600665769599757841656f);
+
       final Rng rng = new Rng();
 
 //      Color c = new Color();
@@ -64,10 +66,10 @@ public class CamZup {
 //      SvgParser.parseCssRgba(str, c);
 //      System.out.println(c);
 
-      CurveEntity2 ce2 = SvgParser.parse("data/mesh.svg");
-//      System.out.println(ce2);
-      String str = ce2.toBlenderCode();
-      System.out.println(str);
+      final CurveEntity2 ce2 = SvgParser.parse("data/polygonSvg.svg");
+      System.out.println(ce2);
+//      final String str = ce2.toBlenderCode();
+//      System.out.println(str);
    }
 
    /**

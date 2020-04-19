@@ -94,4 +94,9 @@ public abstract class Curve extends EntityData implements ICurve {
       return this;
    }
 
+   /**
+    * Default number of cubic Bezier knots used to approximate a circle.
+    */
+   public static final int KNOTS_PER_CIRCLE = 4;
+
 }

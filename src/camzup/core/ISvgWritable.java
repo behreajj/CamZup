@@ -81,6 +81,8 @@ public interface ISvgWritable {
 
       final float vw = Utils.max(IUtils.DEFAULT_EPSILON, width);
       final float vh = Utils.max(IUtils.DEFAULT_EPSILON, height);
+      final String widthStr = Utils.toFixed(vw, 6);
+      final String heightStr = Utils.toFixed(vh, 6);
       final float x = Utils.clamp01(xOrigin);
       final float y = Utils.clamp01(yOrigin);
 
@@ -88,18 +90,31 @@ public interface ISvgWritable {
       final String sclStr = Utils.toFixed(scl, 6);
 
       final StringBuilder svgp = new StringBuilder(128);
-      svgp.append("<svg ").append(
-         "xmlns=\"http://www.w3.org/2000/svg\" ").append(
-            "xmlns:xlink=\"http://www.w3.org/1999/xlink\" ").append(
-               "viewBox=\"0 0 ").append(Utils.toFixed(vw, 6)).append(
-                  ' ').append(Utils.toFixed(vh, 6)).append("\">\n").append(
-                     "<g transform=\"translate(").append(
-                        Utils.toFixed(vw * x, 6)).append(',').append(
-                           ' ').append(Utils.toFixed(vh * y, 6)).append(
-                              ") scale(").append(sclStr).append(", -").append(
-                                 sclStr).append(")\">\n").append(
-                                    this.toSvgElm(id, scl)).append(
-                                       "</g>\n").append("</svg>");
+      svgp.append("<svg ");
+      svgp.append("xmlns=\"http://www.w3.org/2000/svg\" ");
+      svgp.append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
+      svgp.append("width=\"");
+      svgp.append(widthStr);
+      svgp.append("\" height=\"");
+      svgp.append(heightStr);
+      svgp.append("\" viewBox=\"0 0 ");
+      svgp.append(widthStr);
+      svgp.append(' ');
+      svgp.append(heightStr);
+      svgp.append("\">\n");
+      svgp.append("<g transform=\"translate(");
+      svgp.append(Utils.toFixed(vw * x, 6));
+      svgp.append(',');
+      svgp.append(' ');
+      svgp.append(Utils.toFixed(vh * y, 6));
+      svgp.append(") scale(");
+      svgp.append(sclStr);
+      svgp.append(", -");
+      svgp.append(sclStr);
+      svgp.append(")\">\n");
+      svgp.append(this.toSvgElm(id, scl));
+      svgp.append("</g>\n");
+      svgp.append("</svg>");
 
       return svgp.toString();
    }

@@ -239,10 +239,12 @@ public class CurveEntity3 extends Entity3
       final float tiltEnd = 0.0f;
 
       final StringBuilder pyCd = new StringBuilder(2048);
-      pyCd.append("from bpy import data as D, context as C\n\n").append(
-         "curve_entity = {\"name\": \"").append(this.name).append(
-            "\", \"transform\": ").append(
-               this.transform.toBlenderCode()).append(", \"curves\": [");
+      pyCd.append("from bpy import data as D, context as C\n\n");
+      pyCd.append("curve_entity = {\"name\": \"");
+      pyCd.append(this.name);
+      pyCd.append("\", \"transform\": ");
+      pyCd.append(this.transform.toBlenderCode());
+      pyCd.append(", \"curves\": [");
 
       int curveIndex = 0;
       final int curveLast = this.curves.size() - 1;
@@ -253,45 +255,50 @@ public class CurveEntity3 extends Entity3
          curveIndex++;
       }
 
-      pyCd.append("]}\n\ncrv_data = D.curves.new(").append(
-         "curve_entity[\"name\"]").append(", \"CURVE\")\n").append(
-            "crv_data.dimensions = \"3D\"\n").append(
-               "crv_data.fill_mode = \"").append(fillMode.toUpperCase()).append(
-                  "\"\n").append("crv_data.extrude = ").append(
-                     Utils.toFixed(extrude, 6)).append('\n').append(
-                        "crv_data.bevel_depth = ").append(
-                           Utils.toFixed(bevelDepth, 6)).append('\n').append(
-                              "crv_splines = crv_data.splines\n").append(
-                                 "crv_index = 0\n").append(
-                                    "splines_raw = curve_entity[\"curves\"]\n").append(
-                                       "for spline_raw in splines_raw:\n").append(
-                                          "    spline = crv_splines.new(\"BEZIER\")\n").append(
-                                             "    spline.use_cyclic_u = spline_raw[\"closed_loop\"]\n").append(
-                                                "    spline.resolution_u = spline_raw[\"resolution_u\"]\n").append(
-                                                   "    knots_raw = spline_raw[\"knots\"]\n").append(
-                                                      "    knt_index = 0\n").append(
-                                                         "    bz_pts = spline.bezier_points\n").append(
-                                                            "    bz_pts.add(len(knots_raw) - 1)\n").append(
-                                                               "    for knot in bz_pts:\n").append(
-                                                                  "        knot_raw = knots_raw[knt_index]\n").append(
-                                                                     "        knot.handle_left_type = \"FREE\"\n").append(
-                                                                        "        knot.handle_right_type = \"FREE\"\n").append(
-                                                                           "        knot.co = knot_raw[\"co\"]\n").append(
-                                                                              "        knot.handle_left = knot_raw[\"handle_left\"]\n").append(
-                                                                                 "        knot.handle_right = knot_raw[\"handle_right\"]\n").append(
-                                                                                    "        knot.weight_softbody = knot_raw[\"weight\"]\n").append(
-                                                                                       "        knot.radius = knot_raw[\"radius\"]\n").append(
-                                                                                          "        knot.tilt = knot_raw[\"tilt\"]\n").append(
-                                                                                             "        knt_index = knt_index + 1\n").append(
-                                                                                                "    crv_index = crv_index + 1\n\n").append(
-                                                                                                   "crv_obj = D.objects.new(crv_data.name, crv_data)\n").append(
-                                                                                                      "tr = curve_entity[\"transform\"]\n").append(
-                                                                                                         "crv_obj.location = tr[\"location\"]\n").append(
-                                                                                                            "crv_obj.rotation_mode = tr[\"rotation_mode\"]\n").append(
-                                                                                                               "crv_obj.rotation_quaternion = ").append(
-                                                                                                                  "tr[\"rotation_quaternion\"]\n").append(
-                                                                                                                     "crv_obj.scale = tr[\"scale\"]\n").append(
-                                                                                                                        "C.scene.collection.objects.link(crv_obj)\n");
+      pyCd.append("]}\n\ncrv_data = D.curves.new(");
+      pyCd.append("curve_entity[\"name\"]");
+      pyCd.append(", \"CURVE\")\n");
+      pyCd.append("crv_data.dimensions = \"3D\"\n");
+      pyCd.append("crv_data.fill_mode = \"");
+      pyCd.append(fillMode.toUpperCase());
+      pyCd.append("\"\n");
+      pyCd.append("crv_data.extrude = ");
+      pyCd.append(Utils.toFixed(extrude, 6));
+      pyCd.append('\n');
+      pyCd.append("crv_data.bevel_depth = ");
+      pyCd.append(Utils.toFixed(bevelDepth, 6));
+      pyCd.append('\n');
+      pyCd.append("crv_splines = crv_data.splines\n");
+      pyCd.append("crv_index = 0\n");
+      pyCd.append("splines_raw = curve_entity[\"curves\"]\n");
+      pyCd.append("for spline_raw in splines_raw:\n");
+      pyCd.append("    spline = crv_splines.new(\"BEZIER\")\n");
+      pyCd.append("    spline.use_cyclic_u = spline_raw[\"closed_loop\"]\n");
+      pyCd.append("    spline.resolution_u = spline_raw[\"resolution_u\"]\n");
+      pyCd.append("    knots_raw = spline_raw[\"knots\"]\n");
+      pyCd.append("    knt_index = 0\n");
+      pyCd.append("    bz_pts = spline.bezier_points\n");
+      pyCd.append("    bz_pts.add(len(knots_raw) - 1)\n");
+      pyCd.append("    for knot in bz_pts:\n");
+      pyCd.append("        knot_raw = knots_raw[knt_index]\n");
+      pyCd.append("        knot.handle_left_type = \"FREE\"\n");
+      pyCd.append("        knot.handle_right_type = \"FREE\"\n");
+      pyCd.append("        knot.co = knot_raw[\"co\"]\n");
+      pyCd.append("        knot.handle_left = knot_raw[\"handle_left\"]\n");
+      pyCd.append("        knot.handle_right = knot_raw[\"handle_right\"]\n");
+      pyCd.append("        knot.weight_softbody = knot_raw[\"weight\"]\n");
+      pyCd.append("        knot.radius = knot_raw[\"radius\"]\n");
+      pyCd.append("        knot.tilt = knot_raw[\"tilt\"]\n");
+      pyCd.append("        knt_index = knt_index + 1\n");
+      pyCd.append("    crv_index = crv_index + 1\n\n");
+      pyCd.append("crv_obj = D.objects.new(crv_data.name, crv_data)\n");
+      pyCd.append("tr = curve_entity[\"transform\"]\n");
+      pyCd.append("crv_obj.location = tr[\"location\"]\n");
+      pyCd.append("crv_obj.rotation_mode = tr[\"rotation_mode\"]\n");
+      pyCd.append("crv_obj.rotation_quaternion = ");
+      pyCd.append("tr[\"rotation_quaternion\"]\n");
+      pyCd.append("crv_obj.scale = tr[\"scale\"]\n");
+      pyCd.append("C.scene.collection.objects.link(crv_obj)\n");
 
       return pyCd.toString();
    }
@@ -324,10 +331,7 @@ public class CurveEntity3 extends Entity3
       final int last = this.curves.size() - 1;
       while ( itr.hasNext() ) {
          sb.append(itr.next().toString(places));
-         if ( i < last ) {
-            sb.append(',').append(' ');
-            // sb.append('\n');
-         }
+         if ( i < last ) { sb.append(',').append(' '); }
          i++;
       }
 

@@ -11,7 +11,11 @@ import camzup.core.Utils.EasingFuncObj;
 
 /**
  * Organizes a 2D Bezier curve into a list of knots. Provides a function to
- * retrieve a point and tangent on a curve from a step in the range [0.0, 1.0] .
+ * retrieve a point and tangent on a curve from a step in the range [0.0, 1.0]
+ * .<br>
+ * <br>
+ * The primitives available from this class are partially informed by the
+ * scalable vector graphics (SVG) specification.
  */
 public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
@@ -877,7 +881,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
        * by the Processing sine cosine look-up table (LUT).
        */
       if ( Utils.approx(stopAngle - startAngle, IUtils.TAU, 0.00139f) ) {
-         return Curve2.circle(startAngle, radius, 4, target);
+         return Curve2.circle(startAngle, radius, 4, 0.0f, 0.0f, target);
       }
 
       /* Divide by TAU then wrap around the range, [0.0, 1.0] . */
@@ -939,10 +943,15 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       target.resize(knotCount);
       final List < Knot2 > knots = target.knots;
       for ( int i = 0; i < knotCount; ++i ) {
+         final Knot2 knot = knots.get(i);
          final float t = i * toStep;
          final float angle1 = ( 1.0f - t ) * a1 + t * destAngle1;
-         Knot2.fromPolar(Utils.scNorm(angle1), Utils.scNorm(angle1 - 0.25f),
-            radius, handleMag, knots.get(i));
+         Knot2.fromPolar(
+            Utils.scNorm(angle1),
+            Utils.scNorm(angle1 - 0.25f),
+            radius, handleMag,
+            0.0f, 0.0f,
+            knot);
       }
 
       /* Depending on arc mode, calculate chord or legs. */
@@ -1026,7 +1035,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public static Curve2 circle ( final Curve2 target ) {
 
-      return Curve2.circle(0.0f, 0.5f, 4, target);
+      return Curve2.circle(0.0f, target);
    }
 
    /**
@@ -1042,7 +1051,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float offsetAngle,
       final Curve2 target ) {
 
-      return Curve2.circle(offsetAngle, 0.5f, 4, target);
+      return Curve2.circle(offsetAngle, 0.5f, target);
    }
 
    /**
@@ -1059,7 +1068,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float radius,
       final Curve2 target ) {
 
-      return Curve2.circle(offsetAngle, radius, 4, target);
+      return Curve2.circle(offsetAngle, radius, Curve.KNOTS_PER_CIRCLE, target);
    }
 
    /**
@@ -1078,28 +1087,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final int knotCount,
       final Curve2 target ) {
 
-      /* Since this is called by arc, it also needs to be optimized. */
-
-      final float off1 = offsetAngle * IUtils.ONE_TAU;
-      final int vknct = knotCount < 3 ? 3 : knotCount;
-      target.resize(vknct);
-      final float invKnCt = 1.0f / vknct;
-      final float hndtn = 0.25f * invKnCt;
-      final float handleMag = Utils.tan(
-         hndtn * IUtils.TAU) * radius * IUtils.FOUR_THIRDS;
-
-      int i = 0;
-      final Iterator < Knot2 > itr = target.knots.iterator();
-      while ( itr.hasNext() ) {
-         final float angle1 = off1 + i * invKnCt;
-         Knot2.fromPolar(Utils.scNorm(angle1), Utils.scNorm(angle1 - 0.25f),
-            radius, handleMag, itr.next());
-         i++;
-      }
-
-      target.name = "Circle";
-      target.closedLoop = true;
-      return target;
+      return Curve2.circle(offsetAngle, radius, knotCount, 0.0f, 0.0f, target);
    }
 
    /**
@@ -1616,6 +1604,41 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
+    * Creates a curve that forms a horizontal line.
+    *
+    * @param target the output curve
+    *
+    * @return the line
+    */
+   public static Curve2 line ( final Curve2 target ) {
+
+      return Curve2.line(
+         -0.5f, 0.0f,
+         0.5f, 0.0f,
+         target);
+   }
+
+   /**
+    * Creates a curve that forms a line with an origin and destination.
+    *
+    * @param origin the origin
+    * @param dest   the destination
+    * @param target the output curve
+    *
+    * @return the line
+    */
+   public static Curve2 line (
+      final Vec2 origin,
+      final Vec2 dest,
+      final Curve2 target ) {
+
+      return Curve2.line(
+         origin.x, origin.y,
+         dest.x, dest.y,
+         target);
+   }
+
+   /**
     * Creates a regular convex polygon.
     *
     * @param offsetAngle the offset angle
@@ -1631,7 +1654,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final int knotCount,
       final Curve2 target ) {
 
-      Curve2.circle(offsetAngle, radius, knotCount, target);
+      // TODO: Make more efficient version of this function.
+      Curve2.circle(offsetAngle, radius, knotCount, 0.0f, 0.0f, target);
       target.name = "Polygon";
       return Curve2.straightenHandles(target);
    }
@@ -1989,8 +2013,10 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float blCorner,
       final Curve2 target ) {
 
-      return Curve2.rect(tl.x, tl.y, br.x, br.y, tlCorner, trCorner, brCorner,
-         blCorner, target);
+      return Curve2.rect(
+         tl.x, tl.y, br.x, br.y,
+         tlCorner, trCorner, brCorner, blCorner,
+         target);
    }
 
    /**
@@ -2194,6 +2220,56 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
+    * Creates a curve which approximates a circle. This is package level to
+    * provide extra functionality for translating a circle's origin.
+    *
+    * @param offsetAngle the angular offset
+    * @param radius      the radius
+    * @param knotCount   the knot count
+    * @param xCenter     the x center
+    * @param yCenter     the y center
+    * @param target      the output curve
+    *
+    * @return the circle
+    */
+   static Curve2 circle (
+      final float offsetAngle,
+      final float radius,
+      final int knotCount,
+      final float xCenter,
+      final float yCenter,
+      final Curve2 target ) {
+
+      /* Since this is called by arc, it also needs to be optimized. */
+
+      final float off1 = offsetAngle * IUtils.ONE_TAU;
+      final int vknct = knotCount < 3 ? 3 : knotCount;
+      target.resize(vknct);
+      final float invKnCt = 1.0f / vknct;
+      final float hndtn = 0.25f * invKnCt;
+      final float handleMag = Utils.tan(
+         hndtn * IUtils.TAU) * radius * IUtils.FOUR_THIRDS;
+
+      int i = 0;
+      final Iterator < Knot2 > itr = target.knots.iterator();
+      while ( itr.hasNext() ) {
+         final Knot2 knot = itr.next();
+         final float angle1 = off1 + i * invKnCt;
+         Knot2.fromPolar(
+            Utils.scNorm(angle1),
+            Utils.scNorm(angle1 - 0.25f),
+            radius, handleMag,
+            xCenter, yCenter,
+            knot);
+         i++;
+      }
+
+      target.name = "Circle";
+      target.closedLoop = true;
+      return target;
+   }
+
+   /**
     * A utility function for setting the handles of knots on straight curve
     * segments. Finds unclamped linear interpolation from origin to destination
     * by a step of 1.0 / 3.0 .
@@ -2211,6 +2287,44 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       return target.set(0.6666666f * a.x + IUtils.ONE_THIRD * b.x,
          0.6666666f * a.y + IUtils.ONE_THIRD * b.y);
+   }
+
+   /**
+    * Creates a curve that forms a line with an origin and destination. This is
+    * package level to provide functionality for SVG parsing.
+    *
+    * @param xOrigin the origin x
+    * @param yOrigin the origin y
+    * @param xDest   the destination x
+    * @param yDest   the destination y
+    * @param target  the output curve
+    *
+    * @return the line
+    */
+   static Curve2 line (
+      final float xOrigin,
+      final float yOrigin,
+      final float xDest,
+      final float yDest,
+      final Curve2 target ) {
+
+      target.resize(2);
+
+      final Knot2 first = target.knots.get(0);
+      final Knot2 last = target.knots.get(1);
+
+      first.coord.set(xOrigin, yOrigin);
+      last.coord.set(xDest, yDest);
+
+      Curve2.lerp13(first.coord, last.coord, first.foreHandle);
+      Curve2.lerp13(last.coord, first.coord, last.rearHandle);
+
+      first.mirrorHandlesForward();
+      last.mirrorHandlesBackward();
+
+      target.name = "Line";
+      target.closedLoop = false;
+      return target;
    }
 
    /**

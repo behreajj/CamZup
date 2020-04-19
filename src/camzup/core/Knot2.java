@@ -917,58 +917,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    }
 
    /**
-    * Creates a knot from polar coordinates, where the knot's fore handle is
-    * tangent to the radius.
-    *
-    * @param cosa      the cosine of the angle
-    * @param sina      the sine of the angle
-    * @param radius    the radius
-    * @param handleMag the length of the handles
-    * @param target    the output knot
-    *
-    * @return the knot
-    */
-   public static Knot2 fromPolar (
-      final float cosa,
-      final float sina,
-      final float radius,
-      final float handleMag,
-      final Knot2 target ) {
-
-      final Vec2 coord = target.coord;
-      coord.set(radius * cosa, radius * sina);
-
-      final float hmsina = sina * handleMag;
-      final float hmcosa = cosa * handleMag;
-
-      target.foreHandle.set(coord.x - hmsina, coord.y + hmcosa);
-      target.rearHandle.set(coord.x + hmsina, coord.y - hmcosa);
-
-      return target;
-   }
-
-   /**
-    * Creates a knot from polar coordinates, where the knot's fore handle is
-    * tangent to the radius.
-    *
-    * @param angle     the angle in radians
-    * @param radius    the radius
-    * @param handleMag the length of the handles
-    * @param target    the output knot
-    *
-    * @return the knot
-    */
-   public static Knot2 fromPolar (
-      final float angle,
-      final float radius,
-      final float handleMag,
-      final Knot2 target ) {
-
-      return Knot2.fromPolar(Utils.cos(angle), Utils.sin(angle), radius,
-         handleMag, target);
-   }
-
-   /**
     * Sets two knots from a segment of the cubic curve. Assumes that that the
     * previous knot's coordinate is set to the first anchor point. The previous
     * knot's fore handle, the next knot's rear handle and the next knot's
@@ -1332,6 +1280,47 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    }
 
    /**
+    * Creates a knot from polar coordinates, where the knot's fore handle is
+    * tangent to the radius.
+    *
+    * @param cosa      the cosine of the angle
+    * @param sina      the sine of the angle
+    * @param radius    the radius
+    * @param handleMag the length of the handles
+    * @param xCenter   the x center
+    * @param yCenter   the y center
+    * @param target    the output knot
+    *
+    * @return the knot
+    */
+   static Knot2 fromPolar (
+      final float cosa,
+      final float sina,
+      final float radius,
+      final float handleMag,
+      final float xCenter,
+      final float yCenter,
+      final Knot2 target ) {
+
+      final Vec2 coord = target.coord;
+      coord.set(
+         xCenter + radius * cosa,
+         yCenter + radius * sina);
+
+      final float hmsina = sina * handleMag;
+      final float hmcosa = cosa * handleMag;
+
+      target.foreHandle.set(
+         coord.x - hmsina,
+         coord.y + hmcosa);
+      target.rearHandle.set(
+         coord.x + hmsina,
+         coord.y - hmcosa);
+
+      return target;
+   }
+
+   /**
     * An abstract class to facilitate the creation of knot easing functions.
     */
    public static abstract class AbstrEasing
@@ -1430,13 +1419,16 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
          final Vec2 deFh = dest.foreHandle;
          final Vec2 deRh = dest.rearHandle;
 
-         target.coord.set(u * orCo.x + step * deCo.x,
+         target.coord.set(
+            u * orCo.x + step * deCo.x,
             u * orCo.y + step * deCo.y);
 
-         target.foreHandle.set(u * orFh.x + step * deFh.x,
+         target.foreHandle.set(
+            u * orFh.x + step * deFh.x,
             u * orFh.y + step * deFh.y);
 
-         target.rearHandle.set(u * orRh.x + step * deRh.x,
+         target.rearHandle.set(
+            u * orRh.x + step * deRh.x,
             u * orRh.y + step * deRh.y);
 
          return target;
