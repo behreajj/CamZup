@@ -381,9 +381,34 @@ public class Edge2 implements Comparable < Edge2 > {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(512).append("{ origin: ").append(
-         this.origin.toString(places)).append(", dest: ").append(
-            this.dest.toString(places)).append(' ').append('}').toString();
+      /* @formatter:off */
+      return new StringBuilder(512)
+         .append("{ origin: ")
+         .append(this.origin.toString(places))
+         .append(", dest: ")
+         .append(this.dest.toString(places))
+         .append(' ')
+         .append('}')
+         .toString();
+      /* @formatter:on */
+   }
+
+   /**
+    * Transforms this edge by a matrix.
+    *
+    * @param m the matrix
+    *
+    * @return this edge
+    *
+    * @see Mat3#mulPoint(Mat3, Vec2, Vec2)
+    */
+   @Chainable
+   public Edge2 transform ( final Mat3 m ) {
+
+      Mat3.mulPoint(m, this.origin.coord, this.origin.coord);
+      Mat3.mulPoint(m, this.dest.coord, this.dest.coord);
+
+      return this;
    }
 
    /**
@@ -447,7 +472,8 @@ public class Edge2 implements Comparable < Edge2 > {
       if ( step >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - step;
-      return target.set(u * coOrigin.x + step * coDest.x,
+      return target.set(
+         u * coOrigin.x + step * coDest.x,
          u * coOrigin.y + step * coDest.y);
    }
 
@@ -532,7 +558,8 @@ public class Edge2 implements Comparable < Edge2 > {
       if ( fac >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - fac;
-      return target.set(u * coOrigin.x + fac * coDest.x,
+      return target.set(
+         u * coOrigin.x + fac * coDest.x,
          u * coOrigin.y + fac * coDest.y);
    }
 

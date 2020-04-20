@@ -382,8 +382,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
 
       final int len = this.vertices.length;
       final int last = len - 1;
-      final StringBuilder sb = new StringBuilder(len * 256).append(
-         "{ vertices: [ ");
+      final StringBuilder sb = new StringBuilder(len * 256);
+      sb.append("{ vertices: [ ");
       for ( int i = 0; i < len; ++i ) {
          sb.append(this.vertices[i].toString(places));
          if ( i < last ) {
@@ -427,6 +427,27 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
       for ( int i = 0; i < len; ++i ) {
          final Vec2 c = this.vertices[i].coord;
          Vec2.add(c, v, c);
+      }
+
+      return this;
+   }
+
+   /**
+    * Transforms all coordinates in the face by a matrix.
+    * 
+    * @param m the matrix
+    * 
+    * @return this face
+    * 
+    * @see Mat3#mulPoint(Mat3, Vec2, Vec2)
+    */
+   @Chainable
+   public Face2 transform ( final Mat3 m ) {
+
+      final int len = this.vertices.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec2 c = this.vertices[i].coord;
+         Mat3.mulPoint(m, c, c);
       }
 
       return this;
@@ -527,7 +548,9 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
 
       final float t = tScaled - i;
       final float u = 1.0f - t;
-      return target.set(u * a.x + t * b.x, u * a.y + t * b.y);
+      return target.set(
+         u * a.x + t * b.x,
+         u * a.y + t * b.y);
    }
 
    /**

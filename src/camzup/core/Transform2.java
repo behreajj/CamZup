@@ -829,10 +829,17 @@ public class Transform2 extends Transform {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(160).append("{ location: ").append(
-         this.location.toString(places)).append(", rotation: ").append(
-            Utils.toFixed(this.rotation, places)).append(", scale: ").append(
-               this.scale.toString(places)).append(" }").toString();
+      /* @formatter:off */
+      return new StringBuilder(160)
+         .append("{ location: ")
+         .append(this.location.toString(places))
+         .append(", rotation: ")
+         .append(Utils.toFixed(this.rotation, places))
+         .append(", scale: ")
+         .append(this.scale.toString(places))
+         .append(" }")
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -876,17 +883,22 @@ public class Transform2 extends Transform {
       final String rotationMode = "\"QUATERNION\"";
       final float halfRad = this.rotation * 0.5f;
 
-      return new StringBuilder(256).append("{\"location\": ").append(
-         this.location.toBlenderCode(0.0f)).append(
-            ", \"rotation_mode\": ").append(rotationMode).append(
-               ", \"rotation_quaternion\": (").append(
-                  Utils.toFixed(Utils.cos(halfRad), 6)).append(
-                     ", 0.0, 0.0, ").append(
-                        Utils.toFixed(Utils.sin(halfRad), 6)).append(
-                           "), \"scale\": ").append(
-                              this.scale.toBlenderCode(
-                                 ( this.scale.x + this.scale.y ) * 0.5f)).append(
-                                    "}").toString();
+      /* @formatter:off */
+      return new StringBuilder(256)
+         .append("{\"location\": ")
+         .append(this.location.toBlenderCode(0.0f))
+         .append(", \"rotation_mode\": ")
+         .append(rotationMode)
+         .append(", \"rotation_quaternion\": (")
+         .append(Utils.toFixed(Utils.cos(halfRad), 6))
+         .append(", 0.0, 0.0, ")
+         .append(Utils.toFixed(Utils.sin(halfRad), 6))
+         .append("), \"scale\": ")
+         .append(this.scale.toBlenderCode(
+            ( this.scale.x + this.scale.y ) * 0.5f))
+         .append("}")
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -898,14 +910,21 @@ public class Transform2 extends Transform {
     */
    String toSvgString ( ) {
 
-      return new StringBuilder(96).append("transform=\"translate(").append(
-         Utils.toFixed(this.location.x, 6)).append(',').append(' ').append(
-            Utils.toFixed(this.location.y, 6)).append(") rotate(").append(
-               Utils.toFixed(this.rotation * IUtils.RAD_TO_DEG, 0)).append(
-                  ") scale(").append(Utils.toFixed(this.scale.x, 6)).append(
-                     ',').append(' ').append(
-                        Utils.toFixed(this.scale.y, 6)).append(
-                           ")\"").toString();
+      /* @formatter:off */
+      return new StringBuilder(96)
+         .append("transform=\"translate(")
+         .append(Utils.toFixed(this.location.x, 6))
+         .append(',').append(' ')
+         .append(Utils.toFixed(this.location.y, 6))
+         .append(") rotate(")
+         .append(Utils.toFixed(this.rotation * IUtils.RAD_TO_DEG, 0))
+         .append(") scale(")
+         .append(Utils.toFixed(this.scale.x, 6))
+         .append(',').append(' ')
+         .append(Utils.toFixed(this.scale.y, 6))
+         .append(")\"")
+         .toString();
+      /* @formatter:on */
    }
 
    /**

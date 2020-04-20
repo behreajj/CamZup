@@ -404,6 +404,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    @Override
    public MaterialSolid getMaterial ( final MaterialSolid target ) {
 
+      target.setName("Renderer");
       target.setFill(this.fill);
       target.setFill(this.fillColor);
       target.setStroke(this.stroke);
@@ -473,14 +474,25 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    public float getZoomY ( ) { return this.cameraZoomY; }
 
    /**
-    * Displays the handles of a curve entity.
+    * Displays the handles of a curve entity. The stroke weight is determined by
+    * {@link IUp#DEFAULT_STROKE_WEIGHT}, {@value IUp#DEFAULT_STROKE_WEIGHT} .
     *
     * @param ce the curve entity
     */
-   public void handles ( final CurveEntity2 ce ) { this.handles(ce, 1.0f); }
+   public void handles ( final CurveEntity2 ce ) {
+
+      this.handles(ce, IUp.DEFAULT_STROKE_WEIGHT);
+   }
 
    /**
     * Displays the handles of a curve entity.
+    * <ul>
+    * <li>The color for lines between handles defaults to
+    * {@link IUp#DEFAULT_HANDLE_COLOR};</li>
+    * <li>the rear handle point, to {@link IUp#DEFAULT_HANDLE_REAR_COLOR};</li>
+    * <li>the fore handle point, to {@link IUp#DEFAULT_HANDLE_FORE_COLOR};</li>
+    * <li>the coordinate point, to {@link IUp#DEFAULT_HANDLE_COORD_COLOR}.</li>
+    * </ul>
     *
     * @param ce           the curve entity
     * @param strokeWeight the stroke weight
@@ -489,8 +501,11 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final CurveEntity2 ce,
       final float strokeWeight ) {
 
-      this.handles(ce, strokeWeight, IUp.DEFAULT_HANDLE_COLOR,
-         IUp.DEFAULT_HANDLE_REAR_COLOR, IUp.DEFAULT_HANDLE_FORE_COLOR,
+      this.handles(
+         ce, strokeWeight,
+         IUp.DEFAULT_HANDLE_COLOR,
+         IUp.DEFAULT_HANDLE_REAR_COLOR,
+         IUp.DEFAULT_HANDLE_FORE_COLOR,
          IUp.DEFAULT_HANDLE_COORD_COLOR);
    }
 
@@ -541,7 +556,6 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
             this.stroke(lineColor);
 
             this.lineImpl(rh.x, rh.y, 0.0f, co.x, co.y, 0.0f);
-
             this.lineImpl(co.x, co.y, 0.0f, fh.x, fh.y, 0.0f);
 
             this.strokeWeight(swRear);
@@ -785,34 +799,30 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    }
 
    /**
-    * Draws the world origin.
+    * Draws the world origin. The length of the axes is determined by
+    * multiplying {@link IUp#DEFAULT_IJK_LINE_FAC},
+    * {@value IUp#DEFAULT_IJK_LINE_FAC}, with the renderer's short edge.
     */
    @Override
    public void origin ( ) {
 
-      this.origin(
-         IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width, this.height),
-         IUp.DEFAULT_IJK_SWEIGHT,
-         IUp.DEFAULT_I_COLOR,
-         IUp.DEFAULT_J_COLOR);
+      this.origin(IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width, this.height));
    }
 
    /**
-    * Draws the world origin.
+    * Draws the world origin. The axes stroke weight defaults to
+    * {@link IUp#DEFAULT_IJK_SWEIGHT}, {@value IUp#DEFAULT_IJK_SWEIGHT}.
     *
     * @param lineLength the line length
     */
    public void origin ( final float lineLength ) {
 
-      this.origin(
-         lineLength,
-         IUp.DEFAULT_IJK_SWEIGHT,
-         IUp.DEFAULT_I_COLOR,
-         IUp.DEFAULT_J_COLOR);
+      this.origin(lineLength, IUp.DEFAULT_IJK_SWEIGHT);
    }
 
    /**
-    * Draws the world origin.
+    * Draws the world origin. Colors the axes according to
+    * {@link IUp#DEFAULT_I_COLOR} and {@link IUp#DEFAULT_J_COLOR}.
     *
     * @param lineLength   the line length
     * @param strokeWeight the stroke weight
@@ -842,7 +852,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final int xColor,
       final int yColor ) {
 
-      final float vl = Utils.max(IUtils.DEFAULT_EPSILON, lineLength);
+      final float vl = lineLength > IUtils.DEFAULT_EPSILON ? lineLength
+         : IUtils.DEFAULT_EPSILON;
 
       this.pushStyle();
 
@@ -969,8 +980,6 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * scales by ( 1.0, cos ( a ) ) .
     *
     * @param radians the angle
-    *
-    * @see PApplet#cos(float)
     */
    @Override
    public void rotateX ( final float radians ) {
@@ -983,8 +992,6 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * scales by ( cos ( a ), 1.0 ) .
     *
     * @param radians the angle
-    *
-    * @see PApplet#cos(float)
     */
    @Override
    public void rotateY ( final float radians ) {
@@ -1375,7 +1382,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     */
    public void text ( final TextEntity2 entity ) {
 
-      // TODO: Is there a way to make this unlit?
+      // TODO: Is there a way to make this un-lit?
       this.shape(entity, entity.material);
    }
 

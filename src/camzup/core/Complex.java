@@ -201,6 +201,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
 
       this.real = real;
       this.imag = imag;
+
       return this;
    }
 
@@ -272,10 +273,16 @@ public class Complex implements Comparable < Complex >, Cloneable,
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(64).append("{ real: ").append(
-         Utils.toFixed(this.real, places)).append(", imag: ").append(
-            Utils.toFixed(this.imag, places)).append(' ').append(
-               '}').toString();
+      /* @formatter:off */
+      return new StringBuilder(64)
+         .append("{ real: ")
+         .append(Utils.toFixed(this.real, places))
+         .append(", imag: ")
+         .append(Utils.toFixed(this.imag, places))
+         .append(' ')
+         .append('}')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -287,12 +294,16 @@ public class Complex implements Comparable < Complex >, Cloneable,
    @Experimental
    String toBlenderCode ( ) {
 
-      return new StringBuilder(64).append('(').append(
-         Utils.toFixed(this.real, 6)).append(
-            Utils.sign(this.imag) < 0
-               ? '-'
-               : '+').append(Utils.toFixed(Utils.abs(this.imag), 6)).append(
-                  'j').append(')').toString();
+      /* @formatter:off */
+      return new StringBuilder(64)
+         .append('(')
+         .append(Utils.toFixed(this.real, 6))
+         .append(this.imag < 0.0f ? '-' : '+')
+         .append(Utils.toFixed(Utils.abs(this.imag), 6))
+         .append('j')
+         .append(')')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -487,7 +498,9 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex z,
       final Complex target ) {
 
-      return target.set(( float ) ( Math.cos(z.real) * Math.cosh(z.imag) ),
+      return target.set(
+         ( float ) ( Math.cos(z.real) * Math.cosh(
+            z.imag) ),
          ( float ) ( -Math.sin(z.real) * Math.sinh(z.imag) ));
    }
 
@@ -513,7 +526,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final float bInvAbsSq = 1.0f / bAbsSq;
       final float cReal = b.real * bInvAbsSq;
       final float cImag = -b.imag * bInvAbsSq;
-      return target.set(a.real * cReal - a.imag * cImag,
+      return target.set(
+         a.real * cReal - a.imag * cImag,
          a.real * cImag + a.imag * cReal);
    }
 
@@ -680,7 +694,9 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex z,
       final Complex target ) {
 
-      return target.set(( float ) Math.log(Complex.abs(z)),
+      return target.set(
+         ( float ) Math.log(Complex.abs(
+            z)),
          ( float ) Math.atan2(z.imag, z.real));
    }
 
@@ -727,7 +743,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final float czdrInv = czdr * mSqInv;
       final float czdiInv = -czdi * mSqInv;
 
-      return target.set(azbr * czdrInv - azbi * czdiInv,
+      return target.set(
+         azbr * czdrInv - azbi * czdiInv,
          azbr * czdiInv + azbi * czdrInv);
    }
 
@@ -745,7 +762,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex b,
       final Complex target ) {
 
-      return target.set(a.real * b.real - a.imag * b.imag,
+      return target.set(
+         a.real * b.real - a.imag * b.imag,
          a.real * b.imag + a.imag * b.real);
    }
 
@@ -963,7 +981,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final float phi,
       final Complex target ) {
 
-      return target.set(( float ) ( r * Math.cos(phi) ),
+      return target.set(
+         ( float ) ( r * Math.cos(phi) ),
          ( float ) ( r * Math.sin(phi) ));
    }
 
@@ -979,7 +998,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex z,
       final Complex target ) {
 
-      return target.set(( float ) ( Math.sin(z.real) * Math.cosh(z.imag) ),
+      return target.set(
+         ( float ) ( Math.sin(z.real) * Math.cosh(z.imag) ),
          ( float ) ( Math.cos(z.real) * Math.sinh(z.imag) ));
    }
 

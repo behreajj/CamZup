@@ -57,19 +57,12 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      System.out.println(0.10977230161600665769599757841656f);
-
       final Rng rng = new Rng();
 
-//      Color c = new Color();
-//      String str = "rgba(100%, 50%, 25%)";
-//      SvgParser.parseCssRgba(str, c);
-//      System.out.println(c);
-
-      final CurveEntity2 ce2 = SvgParser.parse("data/polygonSvg.svg");
-      System.out.println(ce2);
-//      final String str = ce2.toBlenderCode();
-//      System.out.println(str);
+      final CurveEntity2 ce2 = SvgParser.parse("data/diagnostic.svg");
+//      System.out.println(ce2);
+      final String str = ce2.toBlenderCode();
+      System.out.println(str);
    }
 
    /**

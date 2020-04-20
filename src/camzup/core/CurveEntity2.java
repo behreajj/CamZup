@@ -318,10 +318,13 @@ public class CurveEntity2 extends Entity2
    @Override
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(1024).append(
-         "{ name: \"").append(this.name).append('\"').append(
-            ", transform: ").append(this.transform.toString(places)).append(
-               ", curves: [ ");
+      final StringBuilder sb = new StringBuilder(1024);
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append('\"');
+      sb.append(", transform: ");
+      sb.append(this.transform.toString(places));
+      sb.append(", curves: [ ");
 
       int i = 0;
       final Iterator < Curve2 > itr = this.curves.iterator();
@@ -330,7 +333,6 @@ public class CurveEntity2 extends Entity2
          sb.append(itr.next().toString(places));
          if ( i < last ) {
             sb.append(',').append(' ');
-            // sb.append('\n');
          }
          i++;
       }

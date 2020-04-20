@@ -684,9 +684,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
       this.rectMode(PConstants.CENTER);
       this.ellipseMode(PConstants.CENTER);
       this.imageMode(PConstants.CENTER);
-      this.shapeMode(PConstants.CENTER);
-      this.autoNormal = true;
+      this.shapeMode = PConstants.CENTER;
 
+      this.autoNormal = true;
       this.textFont = null;
       this.textSize = IUp.DEFAULT_TEXT_SIZE;
       this.textLeading = IUp.DEFAULT_TEXT_LEADING;
@@ -722,7 +722,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
       this.settingsInited = true;
       this.reapplySettings = false;
 
-      this.hint(PConstants.DISABLE_OPENGL_ERRORS);
+//      this.hint(PConstants.DISABLE_OPENGL_ERRORS);
    }
 
    /**
@@ -1374,7 +1374,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
    /**
     * Sets the renderer projection to a perspective, where objects nearer to the
-    * camera appear larger than objects distant from the camera.
+    * camera appear larger than objects distant from the camera. For the field
+    * of view, uses {@link IUp#DEFAULT_FOV}.
     */
    @Override
    public void perspective ( ) {
@@ -1736,8 +1737,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
    public void rotateZ ( final float radians ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      PMatAux.compoundRotateZ(Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f), this.modelview, this.modelviewInv);
+      PMatAux.compoundRotateZ(
+         Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f),
+         this.modelview, this.modelviewInv);
       PMatAux.mul(this.projection, this.modelview, this.projmodelview);
    }
 
@@ -2392,8 +2395,11 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLModelview ( final Mat4 m ) {
 
-      this.updateGLModelview(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
-         m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
+      this.updateGLModelview(
+         m.m00, m.m01, m.m02, m.m03,
+         m.m10, m.m11, m.m12, m.m13,
+         m.m20, m.m21, m.m22, m.m23,
+         m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2403,8 +2409,11 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLModelview ( final PMatrix3D m ) {
 
-      this.updateGLModelview(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
-         m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
+      this.updateGLModelview(
+         m.m00, m.m01, m.m02, m.m03,
+         m.m10, m.m11, m.m12, m.m13,
+         m.m20, m.m21, m.m22, m.m23,
+         m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2447,8 +2456,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLNormal ( final Mat4 m ) {
 
-      this.updateGLNormal(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12, m.m20,
-         m.m21, m.m22);
+      this.updateGLNormal(
+         m.m00, m.m01, m.m02,
+         m.m10, m.m11, m.m12,
+         m.m20, m.m21, m.m22);
    }
 
    /**
@@ -2458,8 +2469,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLNormal ( final PMatrix3D m ) {
 
-      this.updateGLNormal(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12, m.m20,
-         m.m21, m.m22);
+      this.updateGLNormal(
+         m.m00, m.m01, m.m02,
+         m.m10, m.m11, m.m12,
+         m.m20, m.m21, m.m22);
    }
 
    /**
@@ -2518,8 +2531,11 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLProjection ( final Mat4 m ) {
 
-      this.updateGLProjection(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
-         m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
+      this.updateGLProjection(
+         m.m00, m.m01, m.m02, m.m03,
+         m.m10, m.m11, m.m12, m.m13,
+         m.m20, m.m21, m.m22, m.m23,
+         m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2529,8 +2545,11 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLProjection ( final PMatrix3D m ) {
 
-      this.updateGLProjection(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
-         m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
+      this.updateGLProjection(
+         m.m00, m.m01, m.m02, m.m03,
+         m.m10, m.m11, m.m12, m.m13,
+         m.m20, m.m21, m.m22, m.m23,
+         m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2591,8 +2610,11 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLProjmodelview ( final Mat4 m ) {
 
-      this.updateGLProjmodelview(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11,
-         m.m12, m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
+      this.updateGLProjmodelview(
+         m.m00, m.m01, m.m02, m.m03,
+         m.m10, m.m11, m.m12, m.m13,
+         m.m20, m.m21, m.m22, m.m23,
+         m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2602,8 +2624,11 @@ public abstract class UpOgl extends PGraphicsOpenGL
     */
    public void updateGLProjmodelview ( final PMatrix3D m ) {
 
-      this.updateGLProjmodelview(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11,
-         m.m12, m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
+      this.updateGLProjmodelview(
+         m.m00, m.m01, m.m02, m.m03,
+         m.m10, m.m11, m.m12, m.m13,
+         m.m20, m.m21, m.m22, m.m23,
+         m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2762,11 +2787,17 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float n20, final float n21, final float n22, final float n23,
       final float n30, final float n31, final float n32, final float n33 ) {
 
-      this.modelview.apply(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21,
-         n22, n23, n30, n31, n32, n33);
+      this.modelview.apply(
+         n00, n01, n02, n03,
+         n10, n11, n12, n13,
+         n20, n21, n22, n23,
+         n30, n31, n32, n33);
       PMatAux.inverse(this.modelview, this.modelviewInv);
-      this.projmodelview.apply(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21,
-         n22, n23, n30, n31, n32, n33);
+      this.projmodelview.apply(
+         n00, n01, n02, n03,
+         n10, n11, n12, n13,
+         n20, n21, n22, n23,
+         n30, n31, n32, n33);
    }
 
    /**
@@ -2810,8 +2841,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
          rearHandle = currKnot.rearHandle;
          coord = currKnot.coord;
 
-         this.bezierVertexImpl(foreHandle.x, foreHandle.y, 0.0f, rearHandle.x,
-            rearHandle.y, 0.0f, coord.x, coord.y, 0.0f);
+         this.bezierVertexImpl(
+            foreHandle.x, foreHandle.y, 0.0f,
+            rearHandle.x, rearHandle.y, 0.0f,
+            coord.x, coord.y, 0.0f);
 
          prevKnot = currKnot;
       }
@@ -2822,8 +2855,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
          rearHandle = currKnot.rearHandle;
          coord = currKnot.coord;
 
-         this.bezierVertexImpl(foreHandle.x, foreHandle.y, 0.0f, rearHandle.x,
-            rearHandle.y, 0.0f, coord.x, coord.y, 0.0f);
+         this.bezierVertexImpl(
+            foreHandle.x, foreHandle.y, 0.0f,
+            rearHandle.x, rearHandle.y, 0.0f,
+            coord.x, coord.y, 0.0f);
          this.endShape(PConstants.CLOSE);
       } else {
          this.endShape(PConstants.OPEN);
@@ -2900,9 +2935,11 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float t = ( s - 1.0f ) * 0.5f;
       final float u = 1.0f - s;
       final float v = u * 0.5f;
-      this.curveBasisMatrix.set(t, ( s + 3.0f ) * 0.5f, ( -3.0f - s ) * 0.5f, v,
-         u, ( -5.0f - s ) * 0.5f, s + 2.0f, t, t, 0.0f, v, 0.0f, 0.0f, 1.0f,
-         0.0f, 0.0f);
+      this.curveBasisMatrix.set(
+         t, ( s + 3.0f ) * 0.5f, ( -3.0f - s ) * 0.5f, v,
+         u, ( -5.0f - s ) * 0.5f, s + 2.0f, t,
+         t, 0.0f, v, 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f);
 
       this.splineForward(this.curveDetail, this.curveDrawMatrix);
 
@@ -3534,6 +3571,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
       /* Convert from homogeneous coordinate to point by dividing by w. */
       if ( bw == 1.0f ) { return target.set(bx, by, bz); }
+
       final float wInv = 1.0f / bw;
       return target.set(
          bx * wInv,

@@ -235,7 +235,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the knot
     *
-    * @see LinkedList#getFirst()
+    * @see List#get(int)
     */
    public Knot3 getFirst ( ) { return this.knots.get(0); }
 
@@ -244,7 +244,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the knot
     *
-    * @see LinkedList#getLast()
+    * @see List#get(int)
+    * @see List#size()
     */
    public Knot3 getLast ( ) { return this.knots.get(this.knots.size() - 1); }
 
@@ -460,6 +461,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param i the index
     *
     * @return the knot
+    * 
+    * @see List#remove(int)
+    * @see List#size()
     */
    public Knot3 removeAt ( final int i ) {
 
@@ -472,7 +476,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the knot
     *
-    * @see LinkedList#removeFirst()
+    * @see List#remove(int)
     */
    public Knot3 removeFirst ( ) { return this.knots.remove(0); }
 
@@ -480,6 +484,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * Removes and returns the last knot in the curve.
     *
     * @return the knot
+    * 
+    * @see List#remove(int)
+    * @see List#size()
     */
    public Knot3 removeLast ( ) {
 
@@ -495,10 +502,14 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public Curve3 reset ( ) {
 
       this.resize(2);
-      this.knots.get(0).set(-0.5f, 0.0f, 0.0f, -0.25f, 0.25f, 0.0f, -0.75f,
-         -0.25f, 0.0f);
-      this.knots.get(1).set(0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-         0.0f);
+      this.knots.get(0).set(
+         -0.5f, 0.0f, 0.0f,
+         -0.25f, 0.25f, 0.0f,
+         -0.75f, -0.25f, 0.0f);
+      this.knots.get(1).set(
+         0.5f, 0.0f, 0.0f,
+         1.0f, 0.0f, 0.0f,
+         0.0f, 0.0f, 0.0f);
 
       this.closedLoop = false;
       this.materialIndex = 0;
@@ -512,6 +523,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * swapping the fore- and rear-handle of each knot.
     *
     * @return this curve
+    * 
+    * @see Collections#reverse(List)
+    * @see Knot3#reverse()
     */
    @Chainable
    public Curve3 reverse ( ) {
@@ -780,6 +794,26 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
+    * Transforms all knots in the curve by a matrix.
+    *
+    * @param m the matrix
+    *
+    * @return this knot
+    *
+    * @see Knot3#transform(Mat4)
+    */
+   @Chainable
+   public Curve3 transform ( final Mat4 m ) {
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while ( itr.hasNext() ) {
+         itr.next().transform(m);
+      }
+
+      return this;
+   }
+
+   /**
     * Translates all knots in the curve by a vector.
     *
     * @param v the vector
@@ -850,9 +884,11 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final float tiltEnd ) {
 
       final StringBuilder pyCd = new StringBuilder(64 + 256 * this.knots.size());
-      pyCd.append("{\"closed_loop\": ").append(this.closedLoop ? "True"
-         : "False").append(", \"resolution_u\": ").append(uRes).append(
-            ", \"knots\": [");
+      pyCd.append("{\"closed_loop\": ");
+      pyCd.append(this.closedLoop ? "True" : "False");
+      pyCd.append(", \"resolution_u\": ");
+      pyCd.append(uRes);
+      pyCd.append(", \"knots\": [");
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       int i = 0;

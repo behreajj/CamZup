@@ -799,8 +799,11 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
 
       this.coord.set(xCoord, yCoord, zCoord);
       this.foreHandle.set(xFore, yFore, zFore);
-      this.rearHandle.set(xCoord - ( xFore - xCoord ),
-         yCoord - ( yFore - yCoord ), zCoord - ( zFore - zCoord ));
+      this.rearHandle.set(
+         xCoord - ( xFore - xCoord ),
+         yCoord - ( yFore - yCoord ),
+         zCoord - ( zFore - zCoord ));
+
       return this;
    }
 
@@ -948,8 +951,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final Vec3 coord,
       final Vec3 foreHandle ) {
 
-      return this.set(coord.x, coord.y, coord.z, foreHandle.x, foreHandle.y,
-         foreHandle.z);
+      return this.set(
+         coord.x, coord.y, coord.z,
+         foreHandle.x, foreHandle.y, foreHandle.z);
    }
 
    /**
@@ -1007,11 +1011,37 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(320).append("{ coord: ").append(
-         this.coord.toString(places)).append(", foreHandle: ").append(
-            this.foreHandle.toString(places)).append(", rearHandle: ").append(
-               this.rearHandle.toString(places)).append(' ').append(
-                  '}').toString();
+      /* @formatter:off */
+      return new StringBuilder(320)
+         .append("{ coord: ")
+         .append(this.coord.toString(places))
+         .append(", foreHandle: ")
+         .append(this.foreHandle.toString(places))
+         .append(", rearHandle: ")
+         .append(this.rearHandle.toString(places))
+         .append(' ')
+         .append('}')
+         .toString();
+      /* @formatter:on */
+   }
+
+   /**
+    * Transforms this knot by a matrix.
+    *
+    * @param m the matrix
+    *
+    * @return this knot
+    *
+    * @see Mat4#mulPoint(Mat4, Vec3, Vec3)
+    */
+   @Chainable
+   public Knot3 transform ( final Mat4 m ) {
+
+      Mat4.mulPoint(m, this.coord, this.coord);
+      Mat4.mulPoint(m, this.foreHandle, this.foreHandle);
+      Mat4.mulPoint(m, this.rearHandle, this.rearHandle);
+
+      return this;
    }
 
    /**
@@ -1064,16 +1094,23 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float radius,
       final float tilt ) {
 
-      return new StringBuilder(384).append("{\"co\": ").append(
-         this.coord.toBlenderCode()).append(", \"handle_right\": ").append(
-            this.foreHandle.toBlenderCode()).append(
-               ", \"handle_left\": ").append(
-                  this.rearHandle.toBlenderCode()).append(
-                     ", \"weight\": ").append(Utils.toFixed(weight, 6)).append(
-                        ", \"radius\": ").append(
-                           Utils.toFixed(radius, 6)).append(
-                              ", \"tilt\": ").append(
-                                 Utils.toFixed(tilt, 6)).append('}').toString();
+      /* @formatter:off */
+      return new StringBuilder(384)
+         .append("{\"co\": ")
+         .append(this.coord.toBlenderCode())
+         .append(", \"handle_right\": ")
+         .append(this.foreHandle.toBlenderCode())
+         .append(", \"handle_left\": ")
+         .append(this.rearHandle.toBlenderCode())
+         .append(", \"weight\": ")
+         .append(Utils.toFixed(weight, 6))
+         .append(", \"radius\": ")
+         .append(Utils.toFixed(radius, 6))
+         .append(", \"tilt\": ")
+         .append(Utils.toFixed(tilt, 6))
+         .append('}')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -1101,6 +1138,21 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
+    * Gets the fore handle of a knot as a direction, rather than as a point.
+    *
+    * @param knot   the knot
+    * @param target the output vector
+    *
+    * @return the fore handle vector
+    */
+   public static Vec3 foreDir (
+      final Knot3 knot,
+      final Vec3 target ) {
+
+      return Vec3.subNorm(knot.foreHandle, knot.coord, target);
+   }
+
+   /**
     * Returns the magnitude of the knot's fore handle, i.e., the Euclidean
     * distance between the fore handle and the coordinate.
     *
@@ -1113,6 +1165,21 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    public static float foreHandleMag ( final Knot3 knot ) {
 
       return Vec3.distEuclidean(knot.coord, knot.foreHandle);
+   }
+
+   /**
+    * Gets the fore handle of a knot as a vector, rather than as a point.
+    *
+    * @param knot   the knot
+    * @param target the output vector
+    *
+    * @return the fore handle vector
+    */
+   public static Vec3 foreVec (
+      final Knot3 knot,
+      final Vec3 target ) {
+
+      return Vec3.sub(knot.foreHandle, knot.coord, target);
    }
 
    /**
@@ -1265,11 +1332,13 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float midpt23y = yControl * 0.6666666f;
       final float midpt23z = zControl * 0.6666666f;
 
-      prev.foreHandle.set(midpt23x + IUtils.ONE_THIRD * prevCo.x,
+      prev.foreHandle.set(
+         midpt23x + IUtils.ONE_THIRD * prevCo.x,
          midpt23y + IUtils.ONE_THIRD * prevCo.y,
          midpt23z + IUtils.ONE_THIRD * prevCo.z);
 
-      next.rearHandle.set(midpt23x + IUtils.ONE_THIRD * xNextAnchor,
+      next.rearHandle.set(
+         midpt23x + IUtils.ONE_THIRD * xNextAnchor,
          midpt23y + IUtils.ONE_THIRD * yNextAnchor,
          midpt23z + IUtils.ONE_THIRD * zNextAnchor);
 
@@ -1297,8 +1366,10 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final Knot3 prev,
       final Knot3 next ) {
 
-      return Knot3.fromSegQuadratic(control.x, control.y, control.z,
-         nextAnchor.x, nextAnchor.y, nextAnchor.z, prev, next);
+      return Knot3.fromSegQuadratic(
+         control.x, control.y, control.z,
+         nextAnchor.x, nextAnchor.y, nextAnchor.z,
+         prev, next);
    }
 
    /**
@@ -1324,6 +1395,21 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
+    * Gets the rear handle of a knot as a direction, rather than as a point.
+    *
+    * @param knot   the knot
+    * @param target the output vector
+    *
+    * @return the rear handle vector
+    */
+   public static Vec3 rearDir (
+      final Knot3 knot,
+      final Vec3 target ) {
+
+      return Vec3.subNorm(knot.rearHandle, knot.coord, target);
+   }
+
+   /**
     * Returns the magnitude of the knot's rear handle, i.e., the Euclidean
     * distance between the rear handle and the coordinate.
     *
@@ -1336,6 +1422,21 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    public static float rearHandleMag ( final Knot3 knot ) {
 
       return Vec3.distEuclidean(knot.coord, knot.rearHandle);
+   }
+
+   /**
+    * Gets the rear handle of a knot as a vector, rather than as a point.
+    *
+    * @param knot   the knot
+    * @param target the output vector
+    *
+    * @return the rear handle vector
+    */
+   public static Vec3 rearVec (
+      final Knot3 knot,
+      final Vec3 target ) {
+
+      return Vec3.sub(knot.rearHandle, knot.coord, target);
    }
 
    /**

@@ -185,9 +185,15 @@ public class Ray2 extends Ray {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(132).append("{ origin: ").append(
-         this.origin.toString(places)).append(", dir: ").append(
-            this.dir.toString(places)).append(' ').append('}').toString();
+      /* @formatter:off */
+      return new StringBuilder(196)
+         .append("{ origin: ")
+         .append(this.origin.toString(places))
+         .append(", dir: ")
+         .append(this.dir.toString(places))
+         .append(' ').append('}')
+         .toString();
+      /* @formatter:on */
    }
 
    /**

@@ -237,6 +237,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @return the knot
     *
     * @see List#get(int)
+    * @see List#size()
     */
    public Knot2 getLast ( ) { return this.knots.get(this.knots.size() - 1); }
 
@@ -450,6 +451,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param i the index
     *
     * @return the knot
+    * 
+    * @see List#remove(int)
+    * @see List#size()
     */
    public Knot2 removeAt ( final int i ) {
 
@@ -487,8 +491,14 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public Curve2 reset ( ) {
 
       this.resize(2);
-      this.knots.get(0).set(-0.5f, 0.0f, -0.25f, 0.25f, -0.75f, -0.25f);
-      this.knots.get(1).set(0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f);
+      this.knots.get(0).set(
+         -0.5f, 0.0f,
+         -0.25f, 0.25f,
+         -0.75f, -0.25f);
+      this.knots.get(1).set(
+         0.5f, 0.0f,
+         1.0f, 0.0f,
+         0.0f, 0.0f);
 
       this.closedLoop = false;
       this.materialIndex = 0;
@@ -502,6 +512,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * swapping the fore- and rear-handle of each knot.
     *
     * @return this curve
+    * 
+    * @see Collections#reverse(List)
+    * @see Knot2#reverse()
     */
    @Chainable
    public Curve2 reverse ( ) {
@@ -635,9 +648,12 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(64 + 256 * this.knots.size()).append(
-         "{ name: \"").append(this.name).append("\", closedLoop: ").append(
-            this.closedLoop).append(", knots: [ ");
+      final StringBuilder sb = new StringBuilder(64 + 256 * this.knots.size());
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append("\", closedLoop: ");
+      sb.append(this.closedLoop);
+      sb.append(", knots: [ ");
 
       final Iterator < Knot2 > itr = this.knots.iterator();
       while ( itr.hasNext() ) {
@@ -660,9 +676,10 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    @Override
    public String toSvgElm ( final String id, final float zoom ) {
 
-      final StringBuilder svgp = new StringBuilder(1024).append(
-         MaterialSolid.defaultSvgMaterial(zoom)).append(
-            this.toSvgPath(id)).append("</g>\n");
+      final StringBuilder svgp = new StringBuilder(1024);
+      svgp.append(MaterialSolid.defaultSvgMaterial(zoom));
+      svgp.append(this.toSvgPath(id));
+      svgp.append("</g>\n");
       return svgp.toString();
    }
 
@@ -678,36 +695,65 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final int knotLength = this.knots.size();
       if ( knotLength < 2 ) { return ""; }
       final StringBuilder svgp = new StringBuilder(32 + 64 * ( this.closedLoop
-         ? knotLength + 1
-         : knotLength ));
+         ? knotLength + 1 : knotLength ));
 
       final Iterator < Knot2 > itr = this.knots.iterator();
       Knot2 prevKnot = itr.next();
-      svgp.append("<path id=\"").append(id).append("\" d=\"M ").append(
-         prevKnot.coord.toSvgString());
+      svgp.append("<path id=\"");
+      svgp.append(id);
+      svgp.append("\" d=\"M ");
+      svgp.append(prevKnot.coord.toSvgString());
 
       Knot2 currKnot = null;
       while ( itr.hasNext() ) {
          currKnot = itr.next();
-
-         svgp.append(' ').append('C').append(' ').append(
-            prevKnot.foreHandle.toSvgString()).append(',').append(
-               currKnot.rearHandle.toSvgString()).append(',').append(
-                  currKnot.coord.toSvgString());
-
+         svgp.append(' ');
+         svgp.append('C');
+         svgp.append(' ');
+         svgp.append(prevKnot.foreHandle.toSvgString());
+         svgp.append(',');
+         svgp.append(currKnot.rearHandle.toSvgString());
+         svgp.append(',');
+         svgp.append(currKnot.coord.toSvgString());
          prevKnot = currKnot;
       }
 
       if ( this.closedLoop ) {
          currKnot = this.knots.get(0);
-         svgp.append(' ').append('C').append(' ').append(
-            prevKnot.foreHandle.toSvgString()).append(',').append(
-               currKnot.rearHandle.toSvgString()).append(',').append(
-                  currKnot.coord.toSvgString()).append(' ').append('Z');
+         svgp.append(' ');
+         svgp.append('C');
+         svgp.append(' ');
+         svgp.append(prevKnot.foreHandle.toSvgString());
+         svgp.append(',');
+         svgp.append(currKnot.rearHandle.toSvgString());
+         svgp.append(',');
+         svgp.append(currKnot.coord.toSvgString());
+         svgp.append(' ');
+         svgp.append('Z');
       }
 
       svgp.append("\"></path>\n");
       return svgp.toString();
+   }
+
+   /**
+    * Transforms all knots in the curve by a matrix.
+    *
+    * @param m the matrix
+    *
+    * @return this knot
+    *
+    * @see Knot2#transform(Mat3)
+    */
+   @Chainable
+   public Curve2 transform ( final Mat3 m ) {
+
+      final Iterator < Knot2 > itr = this.knots.iterator();
+      while ( itr.hasNext() ) {
+         itr.next().transform(m);
+      }
+
+      return this;
    }
 
    /**
@@ -776,21 +822,25 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    @Experimental
    String toBlenderCode ( final int uRes ) {
 
-      final StringBuilder sb = new StringBuilder(64 + 256 * this.knots.size());
-      sb.append("{\"closed_loop\": ").append(this.closedLoop ? "True"
-         : "False").append(", \"resolution_u\": ").append(uRes).append(
-            ", \"knots\": [");
+      final StringBuilder pyCd = new StringBuilder(64 + 256 * this.knots.size());
+      pyCd.append("{\"closed_loop\": ");
+      pyCd.append(this.closedLoop ? "True" : "False");
+      pyCd.append(", \"resolution_u\": ");
+      pyCd.append(uRes);
+      pyCd.append(", \"knots\": [");
+
       final Iterator < Knot2 > itr = this.knots.iterator();
       int i = 0;
       final int last = this.knots.size() - 1;
       while ( itr.hasNext() ) {
-         sb.append(itr.next().toBlenderCode());
-         if ( i < last ) { sb.append(',').append(' '); }
+         pyCd.append(itr.next().toBlenderCode());
+         if ( i < last ) { pyCd.append(',').append(' '); }
          i++;
       }
 
-      sb.append(']').append('}');
-      return sb.toString();
+      pyCd.append(']');
+      pyCd.append('}');
+      return pyCd.toString();
    }
 
    /**
@@ -2285,7 +2335,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(0.6666666f * a.x + IUtils.ONE_THIRD * b.x,
+      return target.set(
+         0.6666666f * a.x + IUtils.ONE_THIRD * b.x,
          0.6666666f * a.y + IUtils.ONE_THIRD * b.y);
    }
 
@@ -2309,7 +2360,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Curve2 target ) {
 
       target.resize(2);
-
       final Knot2 first = target.knots.get(0);
       final Knot2 last = target.knots.get(1);
 

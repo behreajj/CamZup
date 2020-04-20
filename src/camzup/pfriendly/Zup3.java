@@ -276,13 +276,18 @@ public class Zup3 extends Up3 {
       this.cameraY = this.defCameraY = Zup3.DEFAULT_LOC_Y;
       this.cameraZ = this.defCameraZ = Zup3.DEFAULT_LOC_Z;
 
-      this.refUp.set(Zup3.DEFAULT_REF_X, Zup3.DEFAULT_REF_Y,
+      this.refUp.set(
+         Zup3.DEFAULT_REF_X,
+         Zup3.DEFAULT_REF_Y,
          Zup3.DEFAULT_REF_Z);
 
-      this.lookTarget.set(Up3.DEFAULT_TARGET_X, Up3.DEFAULT_TARGET_Y,
+      this.lookTarget.set(
+         Up3.DEFAULT_TARGET_X,
+         Up3.DEFAULT_TARGET_Y,
          Up3.DEFAULT_TARGET_Z);
 
-      this.lookDir.set(Zup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
+      this.lookDir.set(
+         Zup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
          Zup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
          Zup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
 
@@ -303,13 +308,18 @@ public class Zup3 extends Up3 {
       this.cameraY = this.defCameraY = Zup3.DEFAULT_LOC_Y;
       this.cameraZ = this.defCameraZ = Zup3.DEFAULT_LOC_Z;
 
-      this.refUp.set(Zup3.DEFAULT_REF_X, Zup3.DEFAULT_REF_Y,
+      this.refUp.set(
+         Zup3.DEFAULT_REF_X,
+         Zup3.DEFAULT_REF_Y,
          Zup3.DEFAULT_REF_Z);
 
-      this.lookTarget.set(Up3.DEFAULT_TARGET_X, Up3.DEFAULT_TARGET_Y,
+      this.lookTarget.set(
+         Up3.DEFAULT_TARGET_X,
+         Up3.DEFAULT_TARGET_Y,
          Up3.DEFAULT_TARGET_Z);
 
-      this.lookDir.set(Zup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
+      this.lookDir.set(
+         Zup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
          Zup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
          Zup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
 
@@ -349,15 +359,19 @@ public class Zup3 extends Up3 {
       this.lightFalloff(1.0f, 0.0f, 0.0f);
       this.lightSpecular(0.0f, 0.0f, 0.0f);
 
-      this.ambientLight(this.colorModeX * IUpOgl.DEFAULT_AMB_R,
+      this.ambientLight(
+         this.colorModeX * IUpOgl.DEFAULT_AMB_R,
          this.colorModeY * IUpOgl.DEFAULT_AMB_G,
          this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
 
-      this.directionalLight(this.colorModeX * IUpOgl.DEFAULT_LIGHT_R,
+      this.directionalLight(
+         this.colorModeX * IUpOgl.DEFAULT_LIGHT_R,
          this.colorModeY * IUpOgl.DEFAULT_LIGHT_G,
          this.colorModeZ * IUpOgl.DEFAULT_LIGHT_B,
 
-         Zup3.DEFAULT_LIGHT_X, Zup3.DEFAULT_LIGHT_Y, Zup3.DEFAULT_LIGHT_Z);
+         Zup3.DEFAULT_LIGHT_X,
+         Zup3.DEFAULT_LIGHT_Y,
+         Zup3.DEFAULT_LIGHT_Z);
 
       this.colorMode = colorModeSaved;
    }

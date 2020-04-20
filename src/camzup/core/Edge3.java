@@ -433,9 +433,34 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(1024).append("{ origin: ").append(
-         this.origin.toString(places)).append(", dest: ").append(
-            this.dest.toString(places)).append(' ').append('}').toString();
+      /* @formatter:off */
+      return new StringBuilder(1024)
+         .append("{ origin: ")
+         .append(this.origin.toString(places))
+         .append(", dest: ")
+         .append(this.dest.toString(places))
+         .append(' ')
+         .append('}')
+         .toString();
+      /* @formatter:on */
+   }
+
+   /**
+    * Transforms this edge by a matrix.
+    *
+    * @param m the matrix
+    *
+    * @return this edge
+    *
+    * @see Mat4#mulPoint(Mat4, Vec3, Vec3)
+    */
+   @Chainable
+   public Edge3 transform ( final Mat4 m ) {
+
+      Mat4.mulPoint(m, this.origin.coord, this.origin.coord);
+      Mat4.mulPoint(m, this.dest.coord, this.dest.coord);
+
+      return this;
    }
 
    /**
@@ -453,6 +478,7 @@ public class Edge3 implements Comparable < Edge3 > {
 
       Vec3.add(this.origin.coord, v, this.origin.coord);
       Vec3.add(this.dest.coord, v, this.dest.coord);
+
       return this;
    }
 
@@ -515,8 +541,10 @@ public class Edge3 implements Comparable < Edge3 > {
       if ( step >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - step;
-      return target.set(u * coOrigin.x + step * coDest.x,
-         u * coOrigin.y + step * coDest.y, u * coOrigin.z + step * coDest.z);
+      return target.set(
+         u * coOrigin.x + step * coDest.x,
+         u * coOrigin.y + step * coDest.y,
+         u * coOrigin.z + step * coDest.z);
    }
 
    /**
@@ -609,8 +637,10 @@ public class Edge3 implements Comparable < Edge3 > {
       if ( fac >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - fac;
-      return target.set(u * coOrigin.x + fac * coDest.x,
-         u * coOrigin.y + fac * coDest.y, u * coOrigin.z + fac * coDest.z);
+      return target.set(
+         u * coOrigin.x + fac * coDest.x,
+         u * coOrigin.y + fac * coDest.y,
+         u * coOrigin.z + fac * coDest.z);
    }
 
    /**

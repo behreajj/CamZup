@@ -72,10 +72,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @param source the source quaternion
     */
-   public Quaternion ( final Quaternion source ) {
-
-      this.set(source);
-   }
+   public Quaternion ( final Quaternion source ) { this.set(source); }
 
    /**
     * Attempts to construct a quaternion from Strings using
@@ -247,10 +244,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * accessed in an enhanced for-loop.
     */
    @Override
-   public QIterator iterator ( ) {
-
-      return new IteratorWFirst(this);
-   }
+   public QIterator iterator ( ) { return new IteratorWFirst(this); }
 
    /**
     * Gets the number of components held by the quaternion.
@@ -412,9 +406,16 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(128).append("{ real: ").append(
-         Utils.toFixed(this.real, places)).append(", imag: ").append(
-            this.imag.toString(places)).append(' ').append('}').toString();
+      /* @formatter:off */
+      return new StringBuilder(128)
+         .append("{ real: ")
+         .append(Utils.toFixed(this.real, places))
+         .append(", imag: ")
+         .append(this.imag.toString(places))
+         .append(' ')
+         .append('}')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -431,6 +432,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return this quaternion
     */
+   @Chainable
    public Quaternion w ( final float w ) {
 
       this.real = w;
@@ -451,6 +453,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return this quaternion
     */
+   @Chainable
    public Quaternion x ( final float x ) {
 
       this.imag.x = x;
@@ -471,6 +474,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return this quaternion
     */
+   @Chainable
    public Quaternion y ( final float y ) {
 
       this.imag.y = y;
@@ -491,6 +495,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return this quaternion
     */
+   @Chainable
    public Quaternion z ( final float z ) {
 
       this.imag.z = z;
@@ -509,12 +514,20 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    @Experimental
    String toBlenderCode ( ) {
 
+      /* @formatter:off */
       final Vec3 i = this.imag;
-      return new StringBuilder(96).append('(').append(
-         Utils.toFixed(this.real, 6)).append(',').append(' ').append(
-            Utils.toFixed(i.x, 6)).append(',').append(' ').append(
-               Utils.toFixed(i.y, 6)).append(',').append(' ').append(
-                  Utils.toFixed(i.z, 6)).append(')').toString();
+      return new StringBuilder(96)
+         .append('(')
+         .append(Utils.toFixed(this.real, 6))
+         .append(',').append(' ')
+         .append(Utils.toFixed(i.x, 6))
+         .append(',').append(' ')
+         .append(Utils.toFixed(i.y, 6))
+         .append(',').append(' ')
+         .append(Utils.toFixed(i.z, 6))
+         .append(')')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -594,7 +607,11 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
       final float mInv = Utils.invSqrtUnchecked(mSq);
       final Vec3 i = target.imag;
-      return target.set(target.real * mInv, i.x * mInv, i.y * mInv, i.z * mInv);
+      return target.set(
+         target.real * mInv, 
+         i.x * mInv, 
+         i.y * mInv, 
+         i.z * mInv);
    }
 
    /**

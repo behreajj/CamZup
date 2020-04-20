@@ -1900,6 +1900,27 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Transforms all coordinates in the mesh by a matrix.
+    *
+    * @param m the matrix
+    *
+    * @return this mesh
+    *
+    * @see Mat4#mulPoint(Mat4, Vec3, Vec3)
+    */
+   @Chainable
+   public Mesh3 transform ( final Mat4 m ) {
+
+      final int len = this.coords.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec3 c = this.coords[i];
+         Mat4.mulPoint(m, c, c);
+      }
+
+      return this;
+   }
+
+   /**
     * Translates all coordinates in the mesh by a vector.
     *
     * @param v the vector

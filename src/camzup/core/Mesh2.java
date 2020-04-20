@@ -1629,6 +1629,27 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
+    * Transforms all coordinates in the mesh by a matrix.
+    *
+    * @param m the matrix
+    *
+    * @return this mesh
+    *
+    * @see Mat3#mulPoint(Mat3, Vec2, Vec2)
+    */
+   @Chainable
+   public Mesh2 transform ( final Mat3 m ) {
+
+      final int len = this.coords.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec2 c = this.coords[i];
+         Mat3.mulPoint(m, c, c);
+      }
+
+      return this;
+   }
+
+   /**
     * Translates all coordinates in the mesh by a vector.
     *
     * @param v the vector

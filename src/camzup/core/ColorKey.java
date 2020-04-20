@@ -137,8 +137,7 @@ public class ColorKey
    @Override
    public int compareTo ( final ColorKey key ) {
 
-      return this.step > key.step ? 1
-         : this.step < key.step ? -1 : 0;
+      return this.step > key.step ? 1 : this.step < key.step ? -1 : 0;
    }
 
    /**
@@ -248,9 +247,16 @@ public class ColorKey
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(96).append("{ step: ").append(
-         Utils.toFixed(this.step, 6)).append(", clr: ").append(
-            this.clr.toString(places)).append(' ').append('}').toString();
+      /* @formatter:off */
+      return new StringBuilder(96)
+         .append("{ step: ")
+         .append(Utils.toFixed(this.step, 6))
+         .append(", clr: ")
+         .append(this.clr.toString(places))
+         .append(' ')
+         .append('}')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -261,10 +267,17 @@ public class ColorKey
     */
    public String toSvgString ( ) {
 
-      return new StringBuilder(96).append("<stop offset=\"").append(
-         Utils.toFixed(this.step, 6)).append("\" stop-color=\"").append(
-            Color.toHexWeb(this.clr)).append("\" stop-opacity=\"").append(
-               Utils.toFixed(this.clr.w, 6)).append("\"/>").toString();
+      /* @formatter:off */
+      return new StringBuilder(96)
+         .append("<stop offset=\"")
+         .append(Utils.toFixed(this.step, 6))
+         .append("\" stop-color=\"")
+         .append(Color.toHexWeb(this.clr))
+         .append("\" stop-opacity=\"")
+         .append(Utils.toFixed(this.clr.w, 6))
+         .append("\"/>")
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -341,10 +354,15 @@ public class ColorKey
    @Experimental
    String toBlenderCode ( final float gamma ) {
 
-      return new StringBuilder().append("{\"position\": ").append(
-         Utils.toFixed(Utils.clamp01(this.step), 3)).append(
-            ", \"color\": ").append(this.clr.toBlenderCode(gamma, true)).append(
-               '}').toString();
+      /* @formatter:off */
+      return new StringBuilder(256)
+         .append("{\"position\": ")
+         .append(Utils.toFixed(Utils.clamp01(this.step), 3))
+         .append(", \"color\": ")
+         .append(this.clr.toBlenderCode(gamma, true))
+         .append('}')
+         .toString();
+      /* @formatter:on */
    }
 
    /**

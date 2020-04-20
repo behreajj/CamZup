@@ -716,20 +716,23 @@ public class Mat3 extends Matrix {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(128).append("{ m00: ").append(
-         Utils.toFixed(this.m00, places)).append(", m01: ").append(
-            Utils.toFixed(this.m01, places)).append(", m02: ").append(
-               Utils.toFixed(this.m02, places))
+      /* @formatter:off */
+      return new StringBuilder(128)
+         .append("{ m00: ").append(Utils.toFixed(this.m00, places))
+         .append(", m01: ").append(Utils.toFixed(this.m01, places))
+         .append(", m02: ").append(Utils.toFixed(this.m02, places))
 
-         .append(", m10: ").append(Utils.toFixed(this.m10, places)).append(
-            ", m11: ").append(Utils.toFixed(this.m11, places)).append(
-               ", m12: ").append(Utils.toFixed(this.m12, places))
+         .append(", m10: ").append(Utils.toFixed(this.m10, places))
+         .append(", m11: ").append(Utils.toFixed(this.m11, places))
+         .append(", m12: ").append(Utils.toFixed(this.m12, places))
 
-         .append(", m20: ").append(Utils.toFixed(this.m20, places)).append(
-            ", m21: ").append(Utils.toFixed(this.m21, places)).append(
-               ", m22: ").append(Utils.toFixed(this.m22, places))
+         .append(", m20: ").append(Utils.toFixed(this.m20, places))
+         .append(", m21: ").append(Utils.toFixed(this.m21, places))
+         .append(", m22: ").append(Utils.toFixed(this.m22, places))
 
-         .append(' ').append('}').toString();
+         .append(' ').append('}')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -750,22 +753,25 @@ public class Mat3 extends Matrix {
     */
    public String toStringCol ( final int places ) {
 
-      return new StringBuilder(128).append('\n').append(
-         Utils.toFixed(this.m00, places)).append(',').append(' ').append(
-            Utils.toFixed(this.m01, places)).append(',').append(' ').append(
-               Utils.toFixed(this.m02, places))
+      /* @formatter:off */
+      return new StringBuilder(128)
+         .append('\n').append(Utils.toFixed(this.m00, places))
+         .append(',').append(' ').append(Utils.toFixed(this.m01, places))
+         .append(',').append(' ').append(Utils.toFixed(this.m02, places))
+         .append(',')
+         
+         .append('\n').append(Utils.toFixed(this.m10, places))
+         .append(',').append(' ').append(Utils.toFixed(this.m11, places))
+         .append(',').append(' ').append(Utils.toFixed(this.m12, places))
+         .append(',')
+         
+         .append('\n').append(Utils.toFixed(this.m20, places))
+         .append(',').append(' ').append(Utils.toFixed(this.m21, places))
+         .append(',').append(' ').append(Utils.toFixed(this.m22, places))
 
-         .append(',').append('\n').append(
-            Utils.toFixed(this.m10, places)).append(',').append(' ').append(
-               Utils.toFixed(this.m11, places)).append(',').append(' ').append(
-                  Utils.toFixed(this.m12, places))
-
-         .append(',').append('\n').append(
-            Utils.toFixed(this.m20, places)).append(',').append(' ').append(
-               Utils.toFixed(this.m21, places)).append(',').append(' ').append(
-                  Utils.toFixed(this.m22, places))
-
-         .append('\n').toString();
+         .append('\n')
+         .toString();
+      /* @formatter:on */
    }
 
    /**

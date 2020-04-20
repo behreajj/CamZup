@@ -992,10 +992,18 @@ public class Transform3 extends Transform {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(354).append("{ location: ").append(
-         this.location.toString(places)).append(", rotation: ").append(
-            this.rotation.toString(places)).append(", scale: ").append(
-               this.scale.toString(places)).append(' ').append('}').toString();
+      /* @formatter:off */
+      return new StringBuilder(354)
+         .append("{ location: ")
+         .append(this.location.toString(places))
+         .append(", rotation: ")
+         .append(this.rotation.toString(places))
+         .append(", scale: ")
+         .append(this.scale.toString(places))
+         .append(' ')
+         .append('}')
+         .toString();
+      /* @formatter:on */
    }
 
    /**

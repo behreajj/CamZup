@@ -148,6 +148,7 @@ public class Color extends Vec4 {
     *
     * @return this color
     */
+   @Chainable
    public Color a ( final byte alpha ) {
 
       this.w = ( alpha & 0xff ) * IUtils.ONE_255;
@@ -161,6 +162,7 @@ public class Color extends Vec4 {
     *
     * @return this color
     */
+   @Chainable
    public Color a ( final float alpha ) {
 
       this.w = alpha;
@@ -181,6 +183,7 @@ public class Color extends Vec4 {
     *
     * @return this color
     */
+   @Chainable
    public Color b ( final byte blue ) {
 
       this.z = ( blue & 0xff ) * IUtils.ONE_255;
@@ -194,6 +197,7 @@ public class Color extends Vec4 {
     *
     * @return this color
     */
+   @Chainable
    public Color b ( final float blue ) {
 
       this.z = blue;
@@ -278,6 +282,7 @@ public class Color extends Vec4 {
     *
     * @return this color
     */
+   @Chainable
    public Color g ( final byte green ) {
 
       this.y = ( green & 0xff ) * IUtils.ONE_255;
@@ -291,6 +296,7 @@ public class Color extends Vec4 {
     *
     * @return this color
     */
+   @Chainable
    public Color g ( final float green ) {
 
       this.y = green;
@@ -395,6 +401,7 @@ public class Color extends Vec4 {
     *
     * @return this color
     */
+   @Chainable
    public Color r ( final byte red ) {
 
       this.x = ( red & 0xff ) * IUtils.ONE_255;
@@ -408,6 +415,7 @@ public class Color extends Vec4 {
     *
     * @return this color
     */
+   @Chainable
    public Color r ( final float red ) {
 
       this.x = red;
@@ -435,6 +443,7 @@ public class Color extends Vec4 {
     *
     * @return this color
     */
+   @Chainable
    public Color set (
       final byte red,
       final byte green,
@@ -454,6 +463,7 @@ public class Color extends Vec4 {
     *
     * @return this color
     */
+   @Chainable
    public Color set (
       final byte red,
       final byte green,
@@ -465,6 +475,7 @@ public class Color extends Vec4 {
          IUtils.ONE_255 * ( green & 0xff ),
          IUtils.ONE_255 * ( blue & 0xff ),
          IUtils.ONE_255 * ( alpha & 0xff ));
+
       return this;
    }
 

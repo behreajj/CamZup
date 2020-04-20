@@ -121,10 +121,18 @@ public class Vert3 implements Comparable < Vert3 > {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(512).append("{ coord: ").append(
-         this.coord.toString(places)).append(", texCoord: ").append(
-            this.texCoord.toString(places)).append(", normal: ").append(
-               this.normal.toString(places)).append(' ').append('}').toString();
+      /* @formatter:off */
+      return new StringBuilder(512)
+         .append("{ coord: ")
+         .append(this.coord.toString(places))
+         .append(", texCoord: ")
+         .append(this.texCoord.toString(places))
+         .append(", normal: ")
+         .append(this.normal.toString(places))
+         .append(' ')
+         .append('}')
+         .toString();
+      /* @formatter:on */
    }
 
    /**

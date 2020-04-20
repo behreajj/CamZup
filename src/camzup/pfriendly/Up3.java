@@ -105,7 +105,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    public void ambientLight ( ) {
 
-      this.aTemp.set(IUpOgl.DEFAULT_AMB_R, IUpOgl.DEFAULT_AMB_G,
+      this.aTemp.set(
+         IUpOgl.DEFAULT_AMB_R,
+         IUpOgl.DEFAULT_AMB_G,
          IUpOgl.DEFAULT_AMB_B, 1.0f);
       this.ambientLight(this.aTemp);
    }
@@ -515,14 +517,25 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Displays the handles of a curve entity.
+    * Displays the handles of a curve entity. The stroke weight is determined by
+    * {@link IUp#DEFAULT_STROKE_WEIGHT}, {@value IUp#DEFAULT_STROKE_WEIGHT} .
     *
     * @param ce the curve entity
     */
-   public void handles ( final CurveEntity3 ce ) { this.handles(ce, 1.0f); }
+   public void handles ( final CurveEntity3 ce ) {
+
+      this.handles(ce, IUp.DEFAULT_STROKE_WEIGHT);
+   }
 
    /**
     * Displays the handles of a curve entity.
+    * <ul>
+    * <li>The color for lines between handles defaults to
+    * {@link IUp#DEFAULT_HANDLE_COLOR};</li>
+    * <li>the rear handle point, to {@link IUp#DEFAULT_HANDLE_REAR_COLOR};</li>
+    * <li>the fore handle point, to {@link IUp#DEFAULT_HANDLE_FORE_COLOR};</li>
+    * <li>the coordinate point, to {@link IUp#DEFAULT_HANDLE_COORD_COLOR}.</li>
+    * </ul>
     *
     * @param ce           the curve entity
     * @param strokeWeight the stroke weight
@@ -531,8 +544,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final CurveEntity3 ce,
       final float strokeWeight ) {
 
-      this.handles(ce, strokeWeight, IUp.DEFAULT_HANDLE_COLOR,
-         IUp.DEFAULT_HANDLE_REAR_COLOR, IUp.DEFAULT_HANDLE_FORE_COLOR,
+      this.handles(
+         ce, strokeWeight,
+         IUp.DEFAULT_HANDLE_COLOR,
+         IUp.DEFAULT_HANDLE_REAR_COLOR,
+         IUp.DEFAULT_HANDLE_FORE_COLOR,
          IUp.DEFAULT_HANDLE_COORD_COLOR);
    }
 
@@ -604,6 +620,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       }
 
       this.popStyle();
+
+      // TODO: This assumes wrongly that all of these features were enabled to
+      // begin with.
       this.hint(PConstants.ENABLE_DEPTH_TEST);
       this.hint(PConstants.ENABLE_DEPTH_MASK);
       this.hint(PConstants.ENABLE_DEPTH_SORT);
@@ -749,29 +768,32 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Draws the world origin.
+    * Draws the world origin. The length of the axes is determined by
+    * multiplying {@link IUp#DEFAULT_IJK_LINE_FAC},
+    * {@value IUp#DEFAULT_IJK_LINE_FAC}, with the renderer's short edge.
     */
    @Override
    public void origin ( ) {
 
-      this.origin(IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width, this.height),
-         IUp.DEFAULT_IJK_SWEIGHT, IUp.DEFAULT_I_COLOR, IUp.DEFAULT_J_COLOR,
-         IUp.DEFAULT_K_COLOR);
+      this.origin(
+         IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width, this.height));
    }
 
    /**
-    * Draws the world origin.
+    * Draws the world origin. The axes stroke weight defaults to
+    * {@link IUp#DEFAULT_IJK_SWEIGHT}, {@value IUp#DEFAULT_IJK_SWEIGHT}.
     *
     * @param lineLength the line length
     */
    public void origin ( final float lineLength ) {
 
-      this.origin(lineLength, IUp.DEFAULT_IJK_SWEIGHT, IUp.DEFAULT_I_COLOR,
-         IUp.DEFAULT_J_COLOR, IUp.DEFAULT_K_COLOR);
+      this.origin(lineLength, IUp.DEFAULT_IJK_SWEIGHT);
    }
 
    /**
-    * Draws the world origin.
+    * Draws the world origin. Colors the axes according to
+    * {@link IUp#DEFAULT_I_COLOR}, {@link IUp#DEFAULT_J_COLOR} and
+    * {@link IUp#DEFAULT_K_COLOR}.
     *
     * @param lineLength   the line length
     * @param strokeWeight the stroke weight
@@ -780,8 +802,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final float lineLength,
       final float strokeWeight ) {
 
-      this.origin(lineLength, strokeWeight, IUp.DEFAULT_I_COLOR,
-         IUp.DEFAULT_J_COLOR, IUp.DEFAULT_K_COLOR);
+      this.origin(
+         lineLength, strokeWeight,
+         IUp.DEFAULT_I_COLOR,
+         IUp.DEFAULT_J_COLOR,
+         IUp.DEFAULT_K_COLOR);
    }
 
    /**
@@ -818,6 +843,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       this.stroke(xColor);
       this.lineImpl(0.0f, 0.0f, 0.0f, vl, 0.0f, 0.0f);
 
+      // TODO: This assumes wrongly that all of these features were enabled to
+      // begin with.
       this.popStyle();
       this.hint(PConstants.ENABLE_DEPTH_TEST);
       this.hint(PConstants.ENABLE_DEPTH_MASK);
@@ -1321,8 +1348,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final float angle,
       final float concentration ) {
 
-      this.spotLight(Color.toHexInt(this.aTemp), loc.x, loc.y, loc.z, dir.x,
-         dir.y, dir.z, angle, concentration);
+      this.spotLight(
+         Color.toHexInt(this.aTemp),
+         loc.x, loc.y, loc.z,
+         dir.x, dir.y, dir.z,
+         angle, concentration);
    }
 
    /**
@@ -1485,7 +1515,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    public void text ( final TextEntity3 entity ) {
 
-      // TODO: Is there a way to make this unlit?
+      // TODO: Is there a way to make this un-lit?
       this.shape(entity, entity.material);
    }
 

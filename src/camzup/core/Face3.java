@@ -442,14 +442,35 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
       final int len = this.vertices.length;
       final int last = len - 1;
-      final StringBuilder sb = new StringBuilder(len * 512).append(
-         "{ vertices: [ ");
+      final StringBuilder sb = new StringBuilder(len * 512);
+      sb.append("{ vertices: [ ");
       for ( int i = 0; i < len; ++i ) {
          sb.append(this.vertices[i].toString(places));
          if ( i < last ) { sb.append(',').append(' '); }
       }
       sb.append(" ] }");
       return sb.toString();
+   }
+
+   /**
+    * Transforms all coordinates in the face by a matrix.
+    *
+    * @param m the matrix
+    *
+    * @return this face
+    *
+    * @see Mat4#mulPoint(Mat4, Vec3, Vec3)
+    */
+   @Chainable
+   public Face3 transform ( final Mat4 m ) {
+
+      final int len = this.vertices.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec3 c = this.vertices[i].coord;
+         Mat4.mulPoint(m, c, c);
+      }
+
+      return this;
    }
 
    /**
@@ -579,7 +600,9 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
       final float t = tScaled - i;
       final float u = 1.0f - t;
-      return target.set(u * a.x + t * b.x, u * a.y + t * b.y,
+      return target.set(
+         u * a.x + t * b.x,
+         u * a.y + t * b.y,
          u * a.z + t * b.z);
    }
 
