@@ -1,12 +1,13 @@
 package camzup.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * An entity which contains a transform that is applied to a list of curves. The
- * curves may references a list of materials by index.
+ * An entity which contains a transform that is applied to a list of
+ * curves. The curves may references a list of materials by index.
  */
 public class CurveEntity3 extends Entity3
    implements Iterable < Curve3 >, IVolume3 {
@@ -73,6 +74,23 @@ public class CurveEntity3 extends Entity3
    public CurveEntity3 append ( final Curve3 curve ) {
 
       if ( curve != null ) { this.curves.add(curve); }
+      return this;
+   }
+
+   /**
+    * Appends a collection of curves to this curve entity.
+    *
+    * @param curves the curves
+    *
+    * @return this curve entity
+    */
+   @Chainable
+   public CurveEntity3 appendAll ( final Collection < Curve3 > curves ) {
+
+      final Iterator < Curve3 > itr = curves.iterator();
+      while ( itr.hasNext() ) {
+         this.append(itr.next());
+      }
       return this;
    }
 
@@ -202,8 +220,8 @@ public class CurveEntity3 extends Entity3
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how curve geometry looks in Blender (the control) versus in the
     * library (the test).
     *
@@ -216,8 +234,8 @@ public class CurveEntity3 extends Entity3
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how curve geometry looks in Blender (the control) versus in the
     * library (the test).
     *

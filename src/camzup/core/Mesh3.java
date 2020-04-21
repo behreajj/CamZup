@@ -10,10 +10,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
- * Organizes data needed to draw a three dimensional shape using vertices and
- * faces. Given that a mesh is primarily a collection of references, it is
- * initialized with null arrays (coordinates, texture coordinates and indices).
- * These are not final, and so can be reassigned.
+ * Organizes data needed to draw a three dimensional shape using vertices
+ * and faces. Given that a mesh is primarily a collection of references, it
+ * is initialized with null arrays (coordinates, texture coordinates and
+ * indices). These are not final, and so can be reassigned.
  */
 public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
@@ -29,8 +29,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public Vec3[] normals;
 
    /**
-    * The texture (UV) coordinates that describe how an image is mapped onto the
-    * geometry of the mesh. Typically in the range [0.0, 1.0].
+    * The texture (UV) coordinates that describe how an image is mapped onto
+    * the geometry of the mesh. Typically in the range [0.0, 1.0].
     */
    public Vec2[] texCoords;
 
@@ -40,8 +40,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public Mesh3 ( ) { super(); }
 
    /**
-    * Creates a mesh from arrays of faces, coordinates, texture coordinates and
-    * normals. The mesh's arrays are set by reference, not by value.
+    * Creates a mesh from arrays of faces, coordinates, texture coordinates
+    * and normals. The mesh's arrays are set by reference, not by value.
     *
     * @param faces     the faces array
     * @param coords    the coordinates array
@@ -110,9 +110,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Recalculates this mesh's normals per vertex. If the normals array is null,
-    * or if its length is not equal to the length of coordinates, the normals
-    * array is reallocated.
+    * Recalculates this mesh's normals per vertex. If the normals array is
+    * null, or if its length is not equal to the length of coordinates, the
+    * normals array is reallocated.
     *
     * @return this mesh
     */
@@ -163,8 +163,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Removes elements from the coordinate, texture coordinate and normal arrays
-    * of the mesh which are not visited by the face indices.
+    * Removes elements from the coordinate, texture coordinate and normal
+    * arrays of the mesh which are not visited by the face indices.
     *
     * @return this mesh
     */
@@ -519,8 +519,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * Extrudes all faces in the mesh by an amount. Creates quadrilateral sides
-    * to connect extruded face to original. Does not check as to whether a face
-    * is an bordered by other faces; best used on disconnected faces.
+    * to connect extruded face to original. Does not check as to whether a
+    * face is an bordered by other faces; best used on disconnected faces.
     *
     * @param amt the amount
     *
@@ -746,9 +746,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Insets a face by calculating its center then easing from the face's
     * vertices toward the center by the amount, expected to be in the range
-    * [0.0, 1.0] . When the amount is less than 0.0, the face remains unchanged;
-    * when the amount is greater than 1.0, then the face is subdivided by
-    * center.
+    * [0.0, 1.0] . When the amount is less than 0.0, the face remains
+    * unchanged; when the amount is greater than 1.0, then the face is
+    * subdivided by center.
     *
     * @param faceIdx the face index
     * @param fac     the inset amount
@@ -865,8 +865,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public Mesh3 insetFaces ( ) { return this.insetFaces(1); }
 
    /**
-    * Insets all faces in the mesh for a given number of iterations by a factor
-    * of 0.5 .
+    * Insets all faces in the mesh for a given number of iterations by a
+    * factor of 0.5 .
     *
     * @param itr the iterations
     *
@@ -879,8 +879,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Insets all faces in the mesh for a given number of iterations by a factor
-    * in the range [0.0, 1.0] .
+    * Insets all faces in the mesh for a given number of iterations by a
+    * factor in the range [0.0, 1.0] .
     *
     * @param itr the iterations
     * @param fac the inset factor
@@ -923,9 +923,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public int length ( ) { return this.faces.length; }
 
    /**
-    * Centers the mesh about the origin, (0.0, 0.0) and rescales it to the range
-    * [-0.5, 0.5] . Emits a transform which records the mesh's center point and
-    * original dimension. The transform's rotation is reset.
+    * Centers the mesh about the origin, (0.0, 0.0) and rescales it to the
+    * range [-0.5, 0.5] . Emits a transform which records the mesh's center
+    * point and original dimension. The transform's rotation is reset.
     *
     * @param tr the output transform
     *
@@ -989,8 +989,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Flips the indices which specify a face. Changes the winding of a face from
-    * counter-clockwise (CCW) to clockwise (CW) or vice versa.
+    * Flips the indices which specify a face. Changes the winding of a face
+    * from counter-clockwise (CCW) to clockwise (CW) or vice versa.
     *
     * @param i face index
     *
@@ -1012,7 +1012,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Rotates all coordinates in the mesh by an angle around an arbitrary axis.
+    * Rotates all coordinates in the mesh by an angle around an arbitrary
+    * axis.
     *
     * @param radians the angle in radians
     * @param axis    the axis of rotation
@@ -1343,9 +1344,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * Subdivides a convex face by calculating its center, subdividing each of
-    * its edges with one cut to create a midpoint, then connecting the midpoints
-    * to the center. This generates a quadrilateral for the number of edges in
-    * the face.
+    * its edges with one cut to create a midpoint, then connecting the
+    * midpoints to the center. This generates a quadrilateral for the number
+    * of edges in the face.
     *
     * @param faceIdx the face index
     *
@@ -1444,8 +1445,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * Subdivides a convex face by calculating its center, then connecting its
-    * vertices to the center. This generates a triangle for the number of edges
-    * in the face.
+    * vertices to the center. This generates a triangle for the number of
+    * edges in the face.
     *
     * @param faceIdx the face index
     *
@@ -1509,9 +1510,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * Subdivides a convex face by cutting each of its edges once to create a
-    * midpoint, then connecting them. This generates peripheral triangles and a
-    * new central face with the same number of edges as the original. This is
-    * best suited to meshes made of triangles.
+    * midpoint, then connecting them. This generates peripheral triangles and
+    * a new central face with the same number of edges as the original. This
+    * is best suited to meshes made of triangles.
     *
     * @param faceIdx the face index
     *
@@ -1941,8 +1942,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes.
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes.
     *
     * @return the string
     */
@@ -1950,8 +1951,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    String toBlenderCode ( ) { return this.toBlenderCode(false, false); }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how mesh geometry looks in Blender (the control) versus in the
     * library (the test).
     *
@@ -2055,8 +2056,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Attempts to recalculate the texture coordinates of this mesh per vertex
     * through spherical projection. The coordinate's unsigned azimuth is
-    * assigned to the texture coordinate u; the complement of its inclination is
-    * assigned to the texture coordinate v.<br>
+    * assigned to the texture coordinate u; the complement of its inclination
+    * is assigned to the texture coordinate v.<br>
     * <br>
     * This is protected because UVs wrapping from 0.0 to 1.0 created artifacts
     * in meshes that do not have seams.
@@ -2111,8 +2112,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Subdivides an edge by the number of cuts given. For example, one cut will
-    * divide an edge in half; two cuts, into thirds.<br>
+    * Subdivides an edge by the number of cuts given. For example, one cut
+    * will divide an edge in half; two cuts, into thirds.<br>
     * <br>
     * Does not distinguish between interior edges, which have a complement
     * elsewhere, and border edges; for that reason this works best with
@@ -2272,8 +2273,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Generates a cube mesh. In the context of Platonic solids, also known as a
-    * hexahedron, as it has 6 faces and 8 vertices.
+    * Generates a cube mesh. In the context of Platonic solids, also known as
+    * a hexahedron, as it has 6 faces and 8 vertices.
     *
     * @param size   the corner scalar
     * @param target the output mesh
@@ -2324,8 +2325,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Generates a cube mesh. In the context of Platonic solids, also known as a
-    * hexahedron, as it has 6 faces and 8 vertices. Uses the default cube size.
+    * Generates a cube mesh. In the context of Platonic solids, also known as
+    * a hexahedron, as it has 6 faces and 8 vertices. Uses the default cube
+    * size.
     *
     * @param target the output mesh
     *
@@ -2387,8 +2389,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Draws a cylinder from an origin point toward a destination point. End caps
-    * with a centered triangle fan may optionally be included.
+    * Draws a cylinder from an origin point toward a destination point. End
+    * caps with a centered triangle fan may optionally be included.
     *
     * @param origin      the origin
     * @param dest        the destination
@@ -2412,8 +2414,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Draws a cylinder from an origin point toward a destination point. End caps
-    * with a centered triangle fan may optionally be included.
+    * Draws a cylinder from an origin point toward a destination point. End
+    * caps with a centered triangle fan may optionally be included.
     *
     * @param origin      the origin
     * @param dest        the destination
@@ -2779,18 +2781,18 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Creates a list of meshes from an array of strings representing a WaveFront
-    * obj file with groups.<br>
+    * Creates a list of meshes from an array of strings representing a
+    * WaveFront obj file with groups.<br>
     * <br>
     * Files supplied to this parser should always include information for
     * coordinates, texture coordinates and normals. Material data from a .mtl
     * file is not parsed by this function, and should be done separately.<br>
     * <br>
-    * Because vertex grouping is not supported by the Mesh3 class, an option to
-    * pool data is provided. If data is pooled between meshes, then all will
-    * references the same coordinate, texture coordinate and normal array. If
-    * not, each mesh will receive a copy of the data parsed from the .obj file;
-    * the mesh will then be cleaned to remove unused data.
+    * Because vertex grouping is not supported by the Mesh3 class, an option
+    * to pool data is provided. If data is pooled between meshes, then all
+    * will references the same coordinate, texture coordinate and normal
+    * array. If not, each mesh will receive a copy of the data parsed from the
+    * .obj file; the mesh will then be cleaned to remove unused data.
     *
     * @param lines    the strings
     * @param poolData whether to share data
@@ -3123,7 +3125,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Creates an icosahedron, a Platonic solid with 20 faces and 12 coordinates.
+    * Creates an icosahedron, a Platonic solid with 20 faces and 12
+    * coordinates.
     *
     * @param target the output mesh
     *
@@ -3984,9 +3987,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Draws a cylinder from an origin point toward a destination point. End caps
-    * with a centered triangle fan may optionally be included. This is private
-    * so that multiple public overloaded methods may access it.
+    * Draws a cylinder from an origin point toward a destination point. End
+    * caps with a centered triangle fan may optionally be included. This is
+    * private so that multiple public overloaded methods may access it.
     *
     * @param xOrigin     origin x
     * @param yOrigin     origin y
@@ -4263,8 +4266,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * A helper function for parsing an OBJ file. Attempts to convert a string to
-    * an integer.
+    * A helper function for parsing an OBJ file. Attempts to convert a string
+    * to an integer.
     *
     * @param i the string
     *
@@ -4282,8 +4285,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * An iterator, which allows a mesh's faces to be accessed in an enhanced for
-    * loop.
+    * An iterator, which allows a mesh's faces to be accessed in an enhanced
+    * for loop.
     */
    public static final class Face3Iterator implements Iterator < Face3 > {
 

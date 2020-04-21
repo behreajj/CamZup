@@ -15,9 +15,4 @@ public abstract class Transform implements ITransform {
     */
    protected abstract void updateAxes ( );
 
-   /**
-    * The unique identification for serialized classes.
-    */
-   private static final long serialVersionUID = -8374280920178305152L;
-
 }

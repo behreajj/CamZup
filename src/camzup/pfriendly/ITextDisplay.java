@@ -6,8 +6,8 @@ import camzup.core.Vec2;
 import processing.core.PApplet;
 
 /**
- * Maintains consistent behavior between renderers which display text to the
- * screen.
+ * Maintains consistent behavior between renderers which display text to
+ * the screen.
  */
 public interface ITextDisplay {
 
@@ -126,8 +126,8 @@ public interface ITextDisplay {
    }
 
    /**
-    * Displays a real number as text at a location. Registers up to four decimal
-    * places.
+    * Displays a real number as text at a location. Registers up to four
+    * decimal places.
     *
     * @param real the real number
     * @param x    the x coordinate
@@ -160,8 +160,8 @@ public interface ITextDisplay {
    }
 
    /**
-    * Displays a real number at a 2D location. Fixes the number display to four
-    * decimal places.
+    * Displays a real number at a 2D location. Fixes the number display to
+    * four decimal places.
     *
     * @param integer the integer
     * @param x       the x coordinate
@@ -229,8 +229,8 @@ public interface ITextDisplay {
    }
 
    /**
-    * Displays a string at a location. This version of text is not supported, so
-    * only x1 and y1 are used.
+    * Displays a string at a location. This version of text is not supported,
+    * so only x1 and y1 are used.
     *
     * @param str the string
     * @param x1  the x coordinate

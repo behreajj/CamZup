@@ -5,9 +5,9 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 /**
- * Organizes components of a 3D mesh into a list of vertices that form a face.
- * This is not used by a mesh internally; it is created upon retrieval from a
- * mesh.
+ * Organizes components of a 3D mesh into a list of vertices that form a
+ * face. This is not used by a mesh internally; it is created upon
+ * retrieval from a mesh.
  */
 public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
@@ -70,8 +70,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Gets an edge from this face. Wraps the index by the number of vertices in
-    * the face.
+    * Gets an edge from this face. Wraps the index by the number of vertices
+    * in the face.
     *
     * @param i      index
     * @param target output edge
@@ -132,7 +132,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    public int length ( ) { return this.vertices.length; }
 
    /**
-    * Rotates all coordinates in the mesh by an angle around an arbitrary axis.
+    * Rotates all coordinates in the mesh by an angle around an arbitrary
+    * axis.
     *
     * @param radians the angle in radians
     * @param axis    the axis of rotation
@@ -489,8 +490,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Translates all coordinates in a face by a vector; uses global coordinates,
-    * i.e., doesn't consider the face's orientation.
+    * Translates all coordinates in a face by a vector; uses global
+    * coordinates, i.e., doesn't consider the face's orientation.
     *
     * @param v the vector
     *
@@ -511,8 +512,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Returns an vertex iterator for this face, which allows its vertices to be
-    * accessed in an enhanced for-loop.
+    * Returns an vertex iterator for this face, which allows its vertices to
+    * be accessed in an enhanced for-loop.
     *
     * @return the iterator
     */
@@ -552,8 +553,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Finds the center of a face by averaging all the coordinates in its list of
-    * vertices.
+    * Finds the center of a face by averaging all the coordinates in its list
+    * of vertices.
     *
     * @param face   the face
     * @param target the output vector
@@ -577,8 +578,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Finds a point on the face's perimeter given a step in the range [0.0, 1.0]
-    * .
+    * Finds a point on the face's perimeter given a step in the range [0.0,
+    * 1.0] .
     *
     * @param face   the face
     * @param step   the step
@@ -638,8 +639,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Returns the orientation of the vertex as a quaternion based on the face's
-    * normal.
+    * Returns the orientation of the vertex as a quaternion based on the
+    * face's normal.
     *
     * @param face       the face
     * @param handedness the handedness
@@ -693,7 +694,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Returns the orientation of the vertex as a ray based on the face's normal.
+    * Returns the orientation of the vertex as a ray based on the face's
+    * normal.
     *
     * @param face   the face
     * @param target the output transform
@@ -735,8 +737,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Finds the shared coordinates, if any, between two faces. Returns an array
-    * of the coordinates.
+    * Finds the shared coordinates, if any, between two faces. Returns an
+    * array of the coordinates.
     *
     * @param a the left comparisand
     * @param b the right comparisand
@@ -767,8 +769,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * An iterator, which allows a face's edges to be accessed in an enhanced for
-    * loop.
+    * An iterator, which allows a face's edges to be accessed in an enhanced
+    * for loop.
     */
    public static final class Edge3Iterator implements Iterator < Edge3 > {
 
@@ -819,8 +821,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * An iterator, which allows a face's vertices to be accessed in an enhanced
-    * for loop.
+    * An iterator, which allows a face's vertices to be accessed in an
+    * enhanced for loop.
     */
    public static final class Vert3Iterator implements Iterator < Vert3 > {
 

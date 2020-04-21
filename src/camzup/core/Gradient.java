@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.TreeSet;
 
 /**
- * A mutable, extensible class that contains a list of keys which hold colors at
- * steps in the range [0.0, 1.0] . Allows smooth color transitions to be
- * evaluated by a factor.
+ * A mutable, extensible class that contains a list of keys which hold
+ * colors at steps in the range [0.0, 1.0] . Allows smooth color
+ * transitions to be evaluated by a factor.
  */
 public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
@@ -39,8 +39,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Creates a gradient from a collection of color integers; the resultant keys
-    * are evenly distributed over the range [0.0, 1.0].
+    * Creates a gradient from a collection of color integers; the resultant
+    * keys are evenly distributed over the range [0.0, 1.0].
     *
     * @param colors the colors
     */
@@ -50,8 +50,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Creates a gradient from a color; an additional color key, white at 0.0, is
-    * created.
+    * Creates a gradient from a color; an additional color key, white at 0.0,
+    * is created.
     *
     * @param color the color
     *
@@ -94,8 +94,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    public Gradient ( final Gradient source ) { this.set(source); }
 
    /**
-    * Creates a gradient from a color integer; an additional color key, white at
-    * 0.0, is created.
+    * Creates a gradient from a color integer; an additional color key, white
+    * at 0.0, is created.
     *
     * @param color the color
     *
@@ -257,8 +257,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Appends a list of color integers to this gradient. Shifts existing keys to
-    * the left.
+    * Appends a list of color integers to this gradient. Shifts existing keys
+    * to the left.
     *
     * @param colors the colors
     *
@@ -304,9 +304,9 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Cycles the steps of a color gradient. The number of places can be positive
-    * or negative, indicating which direction to shift the array: positive
-    * numbers shift to the right; negative, to the left.
+    * Cycles the steps of a color gradient. The number of places can be
+    * positive or negative, indicating which direction to shift the array:
+    * positive numbers shift to the right; negative, to the left.
     *
     * @param places the number of places
     *
@@ -337,8 +337,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Distributes this gradient's color keys evenly through the range [0.0, 1.0]
-    * .
+    * Distributes this gradient's color keys evenly through the range [0.0,
+    * 1.0] .
     *
     * @return this gradient
     *
@@ -378,8 +378,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Returns the least key in this gradient greater than or equal to the given
-    * step. If there is no key, returns the last key instead of null.
+    * Returns the least key in this gradient greater than or equal to the
+    * given step. If there is no key, returns the last key instead of null.
     *
     * @param step the step
     *
@@ -396,8 +396,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Returns the greatest key in this gradient less than or equal to the given
-    * step. If there is no key, returns the first key instead of null.
+    * Returns the greatest key in this gradient less than or equal to the
+    * given step. If there is no key, returns the first key instead of null.
     *
     * @param step the step
     *
@@ -557,8 +557,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Prepends a collection of colors to this gradient. Compresses existing keys
-    * to the right.
+    * Prepends a collection of colors to this gradient. Compresses existing
+    * keys to the right.
     *
     * @param colors the colors
     *
@@ -694,8 +694,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    public ColorKey removeLast ( ) { return this.keys.pollLast(); }
 
    /**
-    * Resets this gradient to an initial state, with two color keys: clear black
-    * at 0.0 and opaque white at 1.0 .
+    * Resets this gradient to an initial state, with two color keys: clear
+    * black at 0.0 and opaque white at 1.0 .
     *
     * @return this gradient
     *
@@ -714,8 +714,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Reverses the gradient. The step of each color key is subtracted from one.
-    * Does so with a temporary List.
+    * Reverses the gradient. The step of each color key is subtracted from
+    * one. Does so with a temporary List.
     *
     * @return the gradient
     *
@@ -764,16 +764,16 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Sorts the gradient according to a property of the colors in each key. Does
-    * so with a temporary List.
+    * Sorts the gradient according to a property of the colors in each key.
+    * Does so with a temporary List.
     *
     * @return the gradient
     */
    public Gradient sort ( ) { return this.sort(null); }
 
    /**
-    * Sorts the gradient according to a property of the colors in each key. Does
-    * so with a temporary List.
+    * Sorts the gradient according to a property of the colors in each key.
+    * Does so with a temporary List.
     *
     * @param sorter the sorting function
     *
@@ -814,8 +814,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes.
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes.
     *
     * @param name the material's name
     *
@@ -827,8 +827,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes.
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes.
     *
     * @param name    the material's name
     * @param samples number of gradient samples
@@ -843,8 +843,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes.
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes.
     *
     * @param name    the material's name
     * @param samples number of gradient samples
@@ -901,8 +901,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Returns a String representation of the gradient compatible with .ggr (GIMP
-    * gradient) file formats.
+    * Returns a String representation of the gradient compatible with .ggr
+    * (GIMP gradient) file formats.
     *
     * @return the string
     */
@@ -912,8 +912,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Returns a String representation of the gradient compatible with .ggr (GIMP
-    * gradient) file formats.
+    * Returns a String representation of the gradient compatible with .ggr
+    * (GIMP gradient) file formats.
     *
     * @param name the name
     *
@@ -925,8 +925,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Returns a String representation of the gradient compatible with .ggr (GIMP
-    * gradient) file formats. <br>
+    * Returns a String representation of the gradient compatible with .ggr
+    * (GIMP gradient) file formats. <br>
     * <br>
     * Blend types include: (0) linear; (1) curved; (2) sine; (3) sphere
     * increasing; (4) sphere decreasing.<br>
@@ -1019,8 +1019,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Returns a String representation of the gradient compatible with .gpl (GIMP
-    * palette) file formats.
+    * Returns a String representation of the gradient compatible with .gpl
+    * (GIMP palette) file formats.
     *
     * @return the string
     */
@@ -1030,8 +1030,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Returns a String representation of the gradient compatible with .gpl (GIMP
-    * palette) file formats.
+    * Returns a String representation of the gradient compatible with .gpl
+    * (GIMP palette) file formats.
     *
     * @param name palette name
     *
@@ -1043,8 +1043,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Returns a String representation of the gradient compatible with .gpl (GIMP
-    * palette) file formats.
+    * Returns a String representation of the gradient compatible with .gpl
+    * (GIMP palette) file formats.
     *
     * @param name           palette name
     * @param displayColumns display columns
@@ -1086,8 +1086,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(16 + 128 * this.keys.size()).append(
-         "{ keys: [ \n");
+      final StringBuilder sb = new StringBuilder(16 + 128 * this.keys.size());
+      sb.append("{ keys: [ \n");
       final Iterator < ColorKey > itr = this.keys.iterator();
       while ( itr.hasNext() ) {
          sb.append(itr.next().toString(places));
@@ -1129,25 +1129,31 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final float x2,
       final float y2 ) {
 
-      final StringBuilder sb = new StringBuilder(1024).append(
-         "<linearGradient id=\"").append(id).append("\" x1=\"").append(
-            Utils.toFixed(x1, 6)).append("\" y1=\"").append(
-               Utils.toFixed(y1, 6)).append("\" x2=\"").append(
-                  Utils.toFixed(x2, 6)).append("\" y2=\"").append(
-                     Utils.toFixed(y2, 6)).append("\">");
+      final StringBuilder svgp = new StringBuilder(1024);
+      svgp.append("<linearGradient id=\"");
+      svgp.append(id);
+      svgp.append("\" x1=\"");
+      svgp.append(Utils.toFixed(x1, 6));
+      svgp.append("\" y1=\"");
+      svgp.append(Utils.toFixed(y1, 6));
+      svgp.append("\" x2=\"");
+      svgp.append(Utils.toFixed(x2, 6));
+      svgp.append("\" y2=\"");
+      svgp.append(Utils.toFixed(y2, 6));
+      svgp.append("\">");
 
       final Iterator < ColorKey > itr = this.keys.iterator();
       while ( itr.hasNext() ) {
-         sb.append(itr.next().toSvgString());
+         svgp.append(itr.next().toSvgString());
       }
 
-      sb.append("</linearGradient>");
-      return sb.toString();
+      svgp.append("</linearGradient>");
+      return svgp.toString();
    }
 
    /**
-    * Helper function that compresses existing keys to the left when a new color
-    * is added to the gradient without a key.
+    * Helper function that compresses existing keys to the left when a new
+    * color is added to the gradient without a key.
     *
     * @param added number of new items
     *
@@ -1210,7 +1216,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
    /**
     * Finds a color given a step in the range [0.0, 1.0] . When the step falls
-    * between color keys, the resultant color is created by an easing function.
+    * between color keys, the resultant color is created by an easing
+    * function.
     *
     * @param grd    the gradient
     * @param step   the step
@@ -1281,8 +1288,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Evaluates an array of colors given a supplied count. The minimum count is
-    * three.
+    * Evaluates an array of colors given a supplied count. The minimum count
+    * is three.
     *
     * @param grd    the gradient
     * @param count  the count
@@ -1311,7 +1318,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * <br>
     * This code is adapted to Java from the public domain Python of Ned
     * Batchelder. See <a href=
-    * "https://nedbatchelder.com/code/modules/ggr.html">nedbatchelder.com/</a> .
+    * "https://nedbatchelder.com/code/modules/ggr.html">nedbatchelder.com/</a>
+    * .
     *
     * @param lines   ggr strings
     * @param samples the samples
@@ -1675,8 +1683,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
    /**
     * Returns a heavily stylized approximation of color temperature, where the
-    * middle key (0.5) is white at 6500 Kelvin. The lower bound (0.0), black, is
-    * at 800 Kelvin; the upper bound (1.0) is a blue tinted white at 12000
+    * middle key (0.5) is white at 6500 Kelvin. The lower bound (0.0), black,
+    * is at 800 Kelvin; the upper bound (1.0) is a blue tinted white at 12000
     * Kelvin.
     *
     * @param target the output gradient
@@ -1734,7 +1742,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Sets the easing function by which colors in the gradient are interpolated.
+    * Sets the easing function by which colors in the gradient are
+    * interpolated.
     *
     * @param easing the easing function
     */
@@ -1783,8 +1792,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Shifts the hue, saturation and brightness in a gradient. The alpha remains
-    * unaffected.
+    * Shifts the hue, saturation and brightness in a gradient. The alpha
+    * remains unaffected.
     *
     * @param source the input gradient
     * @param shift  the shift
@@ -1858,9 +1867,9 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * Shifts the hue of all colors in a gradient. The hue wraps around the range
-    * [0.0, 1.0] . The source gradient may either be the same as or different
-    * from the target.
+    * Shifts the hue of all colors in a gradient. The hue wraps around the
+    * range [0.0, 1.0] . The source gradient may either be the same as or
+    * different from the target.
     *
     * @param source the source gradient
     * @param shift  the hue shift
@@ -1936,8 +1945,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * A helper function for parsing an OBJ file. Attempts to convert a string to
-    * a single precision real number.
+    * A helper function for parsing an OBJ file. Attempts to convert a string
+    * to a single precision real number.
     *
     * @param f the string
     *
@@ -1975,8 +1984,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
    /**
     * Internal helper function to reverse the <em>steps</em> in an array of
-    * color keys. Does <em>not</em> reverse the ordering of the elements, as it
-    * is assumed that the keys will be returned to an ordered set.
+    * color keys. Does <em>not</em> reverse the ordering of the elements, as
+    * it is assumed that the keys will be returned to an ordered set.
     *
     * @param arr   the array
     * @param start the start index

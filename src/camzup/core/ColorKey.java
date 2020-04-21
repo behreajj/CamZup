@@ -1,13 +1,12 @@
 package camzup.core;
 
-import java.io.Serializable;
-
 /**
  * Stores a color at a given step (or percent) in the range [0.0, 1.0] .
- * Equality and hash are based solely on the step, not on the color it holds.
+ * Equality and hash are based solely on the step, not on the color it
+ * holds.
  */
 public class ColorKey
-   implements Comparable < ColorKey >, Cloneable, Serializable {
+   implements Comparable < ColorKey >, Cloneable {
 
    /**
     * The key's color. Abbreviated to 'clr' because 'color' is a data type in
@@ -38,8 +37,9 @@ public class ColorKey
 
    /**
     * Creates a key at a given step. All values of the color (including alpha)
-    * are set to the step. To prevent confusion between step and color channels,
-    * a color key cannot be set with a single step, only constructed.
+    * are set to the step. To prevent confusion between step and color
+    * channels, a color key cannot be set with a single step, only
+    * constructed.
     *
     * @param step the step
     */
@@ -332,20 +332,17 @@ public class ColorKey
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes.
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes.
     *
     * @return the string
     */
    @Experimental
-   String toBlenderCode ( ) {
-
-      return this.toBlenderCode(1.0f);
-   }
+   String toBlenderCode ( ) { return this.toBlenderCode(1.0f); }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes.
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes.
     *
     * @param gamma the gamma adjustment
     *
@@ -381,11 +378,6 @@ public class ColorKey
     * The default tolerance used when comparing color keys.
     */
    public static final float DEFAULT_TOLERANCE = 0.0005f;
-
-   /**
-    * The unique identification for serialized classes.
-    */
-   private static final long serialVersionUID = -8845265266942414598L;
 
    /**
     * Tests to see if two keys have approximately the same step.

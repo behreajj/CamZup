@@ -106,8 +106,8 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
-    * Rotates the coordinates and normals of this edge by an angle and axis. The
-    * texture coordinates are unaffected.
+    * Rotates the coordinates and normals of this edge by an angle and axis.
+    * The texture coordinates are unaffected.
     *
     * @param radians angle
     * @param axis    axis
@@ -290,8 +290,8 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
-    * Scales the coordinates of this edge. Subtracts the edge's mean center from
-    * each vertex, scales, then adds the mean center.
+    * Scales the coordinates of this edge. Subtracts the edge's mean center
+    * from each vertex, scales, then adds the mean center.
     *
     * @param scalar the uniform scalar
     *
@@ -330,8 +330,8 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
-    * Scales the coordinates of this edge. Subtracts the edge's mean center from
-    * each vertex, scales, then adds the mean center.
+    * Scales the coordinates of this edge. Subtracts the edge's mean center
+    * from each vertex, scales, then adds the mean center.
     *
     * @param scalar the nonuniform scalar
     *
@@ -371,8 +371,8 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
-    * Sets the origin and destination coordinate, texture coordinate and normal
-    * data.
+    * Sets the origin and destination coordinate, texture coordinate and
+    * normal data.
     *
     * @param coOrigin origin coordinate
     * @param txOrigin origin texture coordinate
@@ -571,8 +571,8 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
-    * Finds the Euclidean distance from the edge's origin coordinate to that of
-    * its destination.
+    * Finds the Euclidean distance from the edge's origin coordinate to that
+    * of its destination.
     *
     * @param edge the edge
     *
@@ -586,8 +586,8 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
-    * Finds the squared Euclidean distance from the edge's origin coordinate to
-    * that of its destination.
+    * Finds the squared Euclidean distance from the edge's origin coordinate
+    * to that of its destination.
     *
     * @param edge the edge
     *
@@ -602,8 +602,8 @@ public class Edge3 implements Comparable < Edge3 > {
 
    /**
     * Projects a vector, representing a point, onto an edge. The scalar
-    * projection is clamped to the range [0.0, 1.0], meaning the projection will
-    * not exceed the edge's origin and destination.
+    * projection is clamped to the range [0.0, 1.0], meaning the projection
+    * will not exceed the edge's origin and destination.
     *
     * @param edge   the edge
     * @param v      the input vector
@@ -646,7 +646,8 @@ public class Edge3 implements Comparable < Edge3 > {
    /**
     * Tests to see if two edges share a vertex coordinate:
     * <ul>
-    * <li>Returns -1 when <em>a</em>'s origin is <em>b</em>'s destination.</li>
+    * <li>Returns -1 when <em>a</em>'s origin is <em>b</em>'s
+    * destination.</li>
     * <li>Returns -2 when <em>a</em>'s destination is <em>b</em>'s
     * destination</li>
     * <li>Returns 1 when <em>a</em>'s destination is <em>b</em>'s origin.</li>

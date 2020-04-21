@@ -1,12 +1,13 @@
 package camzup.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * An entity which contains a transform that is applied to a list of meshes. The
- * meshes may references a list of materials by index.
+ * An entity which contains a transform that is applied to a list of
+ * meshes. The meshes may references a list of materials by index.
  */
 public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    IVolume2, ISvgWritable {
@@ -98,6 +99,23 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public MeshEntity2 append ( final Mesh2 mesh ) {
 
       if ( mesh != null ) { this.meshes.add(mesh); }
+      return this;
+   }
+
+   /**
+    * Appends a collection of meshes to this mesh entity.
+    *
+    * @param meshes the meshes
+    *
+    * @return this mesh entity
+    */
+   @Chainable
+   public MeshEntity2 appendAll ( final Collection < Mesh2 > meshes ) {
+
+      final Iterator < Mesh2 > itr = meshes.iterator();
+      while ( itr.hasNext() ) {
+         this.append(itr.next());
+      }
       return this;
    }
 
@@ -232,8 +250,8 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how curve geometry looks in Blender (the control) versus in the
     * library (the test).
     *
@@ -247,8 +265,8 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how mesh geometry looks in Blender (the control) versus in the
     * library (the test).
     *
@@ -522,12 +540,12 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    }
 
    /**
-    * Creates a string representing a group node in the SVG format. This SVG is
-    * designed for compatibility with Processing, not for efficiency.<br>
+    * Creates a string representing a group node in the SVG format. This SVG
+    * is designed for compatibility with Processing, not for efficiency.<br>
     * <br>
     * Stroke weight is impacted by scaling in transforms, so zoom is a
-    * parameter. If nonuniform zooming is used, zoom can be an average of width
-    * and height or the maximum dimension.
+    * parameter. If nonuniform zooming is used, zoom can be an average of
+    * width and height or the maximum dimension.
     *
     * @param id        the face id prefix
     * @param zoom      scaling from external transforms
@@ -610,8 +628,9 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    }
 
    /**
-    * Evaluates whether the mesh entity contains a point. Multiplies the global
-    * point by the transform's inverse to produce the point in local space.
+    * Evaluates whether the mesh entity contains a point. Multiplies the
+    * global point by the transform's inverse to produce the point in local
+    * space.
     *
     * @param me          the mesh entity
     * @param pointGlobal the point in global space

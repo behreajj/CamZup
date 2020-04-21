@@ -3,8 +3,8 @@ package camzup.pfriendly;
 import camzup.core.Utils;
 
 /**
- * Maintains consistent behavior between 2D renderers which display text to the
- * screen.
+ * Maintains consistent behavior between 2D renderers which display text to
+ * the screen.
  */
 public interface ITextDisplay2 extends ITextDisplay {
 
@@ -48,8 +48,8 @@ public interface ITextDisplay2 extends ITextDisplay {
    }
 
    /**
-    * Displays a real number as text at a 2D location. Ignores the z coordinate.
-    * Registers up to four decimal places.
+    * Displays a real number as text at a 2D location. Ignores the z
+    * coordinate. Registers up to four decimal places.
     *
     * @param real the real number
     * @param x    the x coordinate

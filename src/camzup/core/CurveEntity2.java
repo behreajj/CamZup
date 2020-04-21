@@ -1,12 +1,13 @@
 package camzup.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * An entity which contains a transform that is applied to a list of curves. The
- * curves may references a list of materials by index.
+ * An entity which contains a transform that is applied to a list of
+ * curves. The curves may references a list of materials by index.
  */
 public class CurveEntity2 extends Entity2
    implements Iterable < Curve2 >, IVolume2, ISvgWritable {
@@ -73,6 +74,23 @@ public class CurveEntity2 extends Entity2
    public CurveEntity2 append ( final Curve2 curve ) {
 
       if ( curve != null ) { this.curves.add(curve); }
+      return this;
+   }
+
+   /**
+    * Appends a collection of curves to this curve entity.
+    *
+    * @param curves the curves
+    *
+    * @return this curve entity
+    */
+   @Chainable
+   public CurveEntity2 appendAll ( final Collection < Curve2 > curves ) {
+
+      final Iterator < Curve2 > itr = curves.iterator();
+      while ( itr.hasNext() ) {
+         this.append(itr.next());
+      }
       return this;
    }
 
@@ -204,8 +222,8 @@ public class CurveEntity2 extends Entity2
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how curve geometry looks in Blender (the control) versus in the
     * library (the test).
     *
@@ -218,8 +236,8 @@ public class CurveEntity2 extends Entity2
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how curve geometry looks in Blender (the control) versus in the
     * library (the test).
     *
@@ -331,9 +349,7 @@ public class CurveEntity2 extends Entity2
       final int last = this.curves.size() - 1;
       while ( itr.hasNext() ) {
          sb.append(itr.next().toString(places));
-         if ( i < last ) {
-            sb.append(',').append(' ');
-         }
+         if ( i < last ) { sb.append(',').append(' '); }
          i++;
       }
 
@@ -345,8 +361,8 @@ public class CurveEntity2 extends Entity2
     * Creates a string representing a group node in the SVG format.<br>
     * <br>
     * Stroke weight is impacted by scaling in transforms, so zoom is a
-    * parameter. If nonuniform zooming is used, zoom can be an average of width
-    * and height or the maximum dimension.
+    * parameter. If nonuniform zooming is used, zoom can be an average of
+    * width and height or the maximum dimension.
     *
     * @param id   the curve id prefix
     * @param zoom scaling from external transforms
@@ -379,12 +395,12 @@ public class CurveEntity2 extends Entity2
    }
 
    /**
-    * Creates a string representing a group node in the SVG format. This SVG is
-    * designed for compatibility with Processing, not for efficiency.<br>
+    * Creates a string representing a group node in the SVG format. This SVG
+    * is designed for compatibility with Processing, not for efficiency.<br>
     * <br>
     * Stroke weight is impacted by scaling in transforms, so zoom is a
-    * parameter. If nonuniform zooming is used, zoom can be an average of width
-    * and height or the maximum dimension.
+    * parameter. If nonuniform zooming is used, zoom can be an average of
+    * width and height or the maximum dimension.
     *
     * @param id        the curve id prefix
     * @param zoom      scaling from external transforms

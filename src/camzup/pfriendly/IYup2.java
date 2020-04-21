@@ -50,8 +50,8 @@ public interface IYup2 extends IUp {
       final Vec2 ap1 );
 
    /**
-    * Draws a cubic Bezier curve segment to the next anchor point; the first and
-    * second control point shape the curve segment.
+    * Draws a cubic Bezier curve segment to the next anchor point; the first
+    * and second control point shape the curve segment.
     *
     * @param cp0 the first control point
     * @param cp1 the second control point
@@ -321,8 +321,8 @@ public interface IYup2 extends IUp {
       final Vec2 dest );
 
    /**
-    * Finds the mouse's location in world coordinates relative to the renderer's
-    * camera.
+    * Finds the mouse's location in world coordinates relative to the
+    * renderer's camera.
     *
     * @param target the output vector
     *
@@ -430,8 +430,8 @@ public interface IYup2 extends IUp {
    }
 
    /**
-    * Moves the camera by the given vector according to the camera's roll, then
-    * updates the camera.
+    * Moves the camera by the given vector according to the camera's roll,
+    * then updates the camera.
     *
     * @param x the vector x
     * @param y the vector y
@@ -452,8 +452,8 @@ public interface IYup2 extends IUp {
    }
 
    /**
-    * Moves the camera by the given vector according to the camera's roll, then
-    * updates the camera.
+    * Moves the camera by the given vector according to the camera's roll,
+    * then updates the camera.
     *
     * @param v the vector
     *
@@ -498,8 +498,8 @@ public interface IYup2 extends IUp {
 
    /**
     * Moves the renderer's camera to a given location and updates the camera.
-    * Uses clamped linear interpolation, so the step should be smoothed prior to
-    * calling this function.
+    * Uses clamped linear interpolation, so the step should be smoothed prior
+    * to calling this function.
     *
     * @param locNew the new location
     * @param step   the step
@@ -569,8 +569,8 @@ public interface IYup2 extends IUp {
       final Vec2 ap1 );
 
    /**
-    * Displays a ray, i.e., an origin point and a direction. The display length
-    * of the direction is dictated by an input.
+    * Displays a ray, i.e., an origin point and a direction. The display
+    * length of the direction is dictated by an input.
     *
     * @param xOrigin the x origin
     * @param yOrigin the y origin
@@ -589,8 +589,8 @@ public interface IYup2 extends IUp {
    }
 
    /**
-    * Displays a ray, i.e., an origin point and a direction. The display length
-    * of the direction is dictated by an input.
+    * Displays a ray, i.e., an origin point and a direction. The display
+    * length of the direction is dictated by an input.
     *
     * @param xOrigin the x origin
     * @param yOrigin the y origin
@@ -632,8 +632,8 @@ public interface IYup2 extends IUp {
    }
 
    /**
-    * Displays a ray, i.e., an origin point and a direction. The display length
-    * of the direction is dictated by an input.
+    * Displays a ray, i.e., an origin point and a direction. The display
+    * length of the direction is dictated by an input.
     *
     * @param ray  the ray
     * @param dLen the display length
@@ -646,8 +646,8 @@ public interface IYup2 extends IUp {
    }
 
    /**
-    * Displays a ray, i.e., an origin point and a direction. The display length
-    * of the direction is dictated by an input.
+    * Displays a ray, i.e., an origin point and a direction. The display
+    * length of the direction is dictated by an input.
     *
     * @param ray     the ray
     * @param dLen    the display length
@@ -678,8 +678,8 @@ public interface IYup2 extends IUp {
       final Vec2 b );
 
    /**
-    * Draws a rounded rectangle; the meaning of the first two parameters depends
-    * on the renderer's rectMode.
+    * Draws a rounded rectangle; the meaning of the first two parameters
+    * depends on the renderer's rectMode.
     *
     * @param a        the first parameter
     * @param b        the second parameter
@@ -773,8 +773,8 @@ public interface IYup2 extends IUp {
       final Vec2 target );
 
    /**
-    * Takes a two-dimensional x, y position and returns the x value for where it
-    * will appear on a two-dimensional screen. This is inefficient, use
+    * Takes a two-dimensional x, y position and returns the x value for where
+    * it will appear on a two-dimensional screen. This is inefficient, use
     * {@link IYup2#screen(Vec2, Vec2)} instead.
     *
     * @param x the x coordinate
@@ -787,8 +787,8 @@ public interface IYup2 extends IUp {
       final float y );
 
    /**
-    * Takes a two-dimensional position and returns the x value for where it will
-    * appear on a two-dimensional screen. This is inefficient, use
+    * Takes a two-dimensional position and returns the x value for where it
+    * will appear on a two-dimensional screen. This is inefficient, use
     * {@link IYup2#screen(Vec2, Vec2)} instead.
     *
     * @param v the position
@@ -800,8 +800,8 @@ public interface IYup2 extends IUp {
    default float screenX ( final Vec2 v ) { return this.screenX(v.x, v.y); }
 
    /**
-    * Takes a two-dimensional x, y position and returns the y value for where it
-    * will appear on a two-dimensional screen. This is inefficient, use
+    * Takes a two-dimensional x, y position and returns the y value for where
+    * it will appear on a two-dimensional screen. This is inefficient, use
     * {@link IYup2#screen(Vec2, Vec2)} instead.
     *
     * @param x the x coordinate
@@ -816,8 +816,8 @@ public interface IYup2 extends IUp {
       final float y );
 
    /**
-    * Takes a two-dimensional position and returns the y value for where it will
-    * appear on a two-dimensional screen. This is inefficient, use
+    * Takes a two-dimensional position and returns the y value for where it
+    * will appear on a two-dimensional screen. This is inefficient, use
     * {@link IYup2#screen(Vec2, Vec2)} instead.
     *
     * @param v the position
@@ -1187,13 +1187,14 @@ public interface IYup2 extends IUp {
    float DEFAULT_ZOOM_Y = 1.0f;
 
    /**
-    * Factor by which a grid's count is scaled when dimensions are not supplied.
+    * Factor by which a grid's count is scaled when dimensions are not
+    * supplied.
     */
    float GRID_FAC = 32.0f;
 
    /**
-    * Finds the mouse's location in world coordinates relative to the renderer's
-    * camera.
+    * Finds the mouse's location in world coordinates relative to the
+    * renderer's camera.
     *
     * @param parent   the PApplet
     * @param renderer the renderer
@@ -1276,9 +1277,9 @@ public interface IYup2 extends IUp {
    }
 
    /**
-    * Generates an SVG rectangle element to replicate the renderer's background.
-    * Assumes that the background is opaque, i.e., has an alpha channel of 1.0 .
-    * Returns a String.
+    * Generates an SVG rectangle element to replicate the renderer's
+    * background. Assumes that the background is opaque, i.e., has an alpha
+    * channel of 1.0 . Returns a String.
     *
     * @param renderer the renderer
     *
@@ -1439,5 +1440,4 @@ public interface IYup2 extends IUp {
       svgp.append("</g>\n</svg>");
       return svgp.toString();
    }
-
 }

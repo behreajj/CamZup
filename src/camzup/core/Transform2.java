@@ -46,8 +46,8 @@ public class Transform2 extends Transform {
    protected final Vec2 scale;
 
    /**
-    * The previous scale. Subtract from the current scale to find the delta, or
-    * change, in scale.
+    * The previous scale. Subtract from the current scale to find the delta,
+    * or change, in scale.
     */
    protected final Vec2 scalePrev;
 
@@ -273,8 +273,8 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Returns a hash code for this transform based on its location, rotation and
-    * scale.
+    * Returns a hash code for this transform based on its location, rotation
+    * and scale.
     *
     * @return the hash code
     *
@@ -294,8 +294,8 @@ public class Transform2 extends Transform {
    /**
     * Orients the transform to look at a target point. If the distance between
     * the target and the transform's location is zero, resets the transform.
-    * Uses unclamped linear interpolation given a step in the range [0.0, 1.0] .
-    * The result is then normalized.
+    * Uses unclamped linear interpolation given a step in the range [0.0, 1.0]
+    * . The result is then normalized.
     *
     * @param point      the target point
     * @param step       the step
@@ -384,8 +384,8 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Moves the transform by a direction multiplied by the transform's rotation.
-    * Uses the formula:<br>
+    * Moves the transform by a direction multiplied by the transform's
+    * rotation. Uses the formula:<br>
     * <br>
     * move ( dir ) := location + ( scale * ( rotatez ( dir , rotation ) ) )
     *
@@ -425,8 +425,8 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Eases the transform to a location by a step. The static easing function is
-    * used.
+    * Eases the transform to a location by a step. The static easing function
+    * is used.
     *
     * @param locNew the new location
     * @param step   the step in [0.0, 1.0]
@@ -665,8 +665,8 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Eases the transform to a scale by a step. The kind of easing is specified
-    * by a Vec2 easing function.
+    * Eases the transform to a scale by a step. The kind of easing is
+    * specified by a Vec2 easing function.
     *
     * @param scaleNew   the new scale
     * @param step       the step in [0.0, 1.0]
@@ -808,9 +808,9 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Returns a string representation of this transform according to its string
-    * format. For display purposes, the angle is converted from radians to
-    * degrees.
+    * Returns a string representation of this transform according to its
+    * string format. For display purposes, the angle is converted from radians
+    * to degrees.
     *
     * @return the string
     *
@@ -820,8 +820,8 @@ public class Transform2 extends Transform {
    public String toString ( ) { return this.toString(4); }
 
    /**
-    * Returns a string representation of this transform according to its string
-    * format.
+    * Returns a string representation of this transform according to its
+    * string format.
     *
     * @param places the number of places
     *
@@ -862,10 +862,10 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
-    * compare how transforms look in Blender (the control) versus in the library
-    * (the test).
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
+    * compare how transforms look in Blender (the control) versus in the
+    * library (the test).
     *
     * @return the string
     *
@@ -971,13 +971,8 @@ public class Transform2 extends Transform {
    private static Easing EASING = new Easing();
 
    /**
-    * The unique identification for serialized classes.
-    */
-   private static final long serialVersionUID = -4460673884822918485l;
-
-   /**
-    * Adds two transforms together by component. The sum of the two rotations is
-    * normalized.
+    * Adds two transforms together by component. The sum of the two rotations
+    * is normalized.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -1005,8 +1000,8 @@ public class Transform2 extends Transform {
 
    /**
     * A helper function to set the transform's from either separate vectors or
-    * from the columns of a matrix. The transform's translation is set to zero;
-    * its scale, to one.
+    * from the columns of a matrix. The transform's translation is set to
+    * zero; its scale, to one.
     *
     * @param xRight   m00 : right x
     * @param yForward m11 : forward y
@@ -1049,8 +1044,8 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Creates a transform from axes. The transform's translation is set to zero;
-    * its scale, to one.
+    * Creates a transform from axes. The transform's translation is set to
+    * zero; its scale, to one.
     *
     * @param right   the right axis
     * @param forward the forward axis
@@ -1068,8 +1063,8 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Creates a transform from a ray. The transform's translation is set to the
-    * ray's origin; its scale, to one.
+    * Creates a transform from a ray. The transform's translation is set to
+    * the ray's origin; its scale, to one.
     *
     * @param ray        the direction
     * @param handedness the handedness
@@ -1317,8 +1312,8 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Eases an array through a series of transforms according to a step in [0.0,
-    * 1.0].
+    * Eases an array through a series of transforms according to a step in
+    * [0.0, 1.0].
     *
     * @param frames the frames
     * @param step   the step
@@ -1358,8 +1353,8 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Multiplies a point by a transform. This rotates the point, multiplies the
-    * point by the scale, then adds the translation.
+    * Multiplies a point by a transform. This rotates the point, multiplies
+    * the point by the scale, then adds the translation.
     *
     * @param t      the transform
     * @param source the input point

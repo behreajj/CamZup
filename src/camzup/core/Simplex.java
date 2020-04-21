@@ -3,32 +3,34 @@ package camzup.core;
 /**
  * A simplex noise class created with reference to "<a href=
  * "http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf">Simplex
- * noise demystified</a>" by Stefan Gustavson. Hashing functions are based on
- * Bob Jenkins lookup3 script, <a href=
+ * noise demystified</a>" by Stefan Gustavson. Hashing functions are based
+ * on Bob Jenkins lookup3 script, <a href=
  * "http://burtleburtle.net/bob/c/lookup3.c">http://burtleburtle.net/bob/c/lookup3.c</a>.
  * Flow implementations written with reference to Simon Geilfus's
- * <a href= "https://github.com/simongeilfus/SimplexNoise">library</a>, which in
- * turn references the work of <a href="https://www.cs.ubc.ca/~rbridson/">Robert
- * Bridson</a>.<br>
+ * <a href= "https://github.com/simongeilfus/SimplexNoise">library</a>,
+ * which in turn references the work of
+ * <a href="https://www.cs.ubc.ca/~rbridson/">Robert Bridson</a>.<br>
  * <br>
  * This class uses the following variations:
  * <ul>
- * <li>stores stretch constants multiplied by their coefficients in constants
- * (e.g., G2_2);</li>
+ * <li>stores stretch constants multiplied by their coefficients in
+ * constants (e.g., G2_2);</li>
  * <li>sets a DEFAULT_SEED to the current time in milliseconds;</li>
- * <li>does not combine scalars with derivatives into a vector one dimension
- * higher than the input (output parameters are used instead);</li>
- * <li>initializes mutable integer offsets i, j, k to zero, then changes them
- * only if appropriate conditions are met;</li>
- * <li>changes where n and t factors are multiplied in evaluate function so that
- * a calculation does not need to be redone for derivatives;</li>
- * <li>attempts to match the offset step in noise functions to the magnitude of
- * the input vector rather than using an arbitrary one (123.456, etc.).</li>
+ * <li>does not combine scalars with derivatives into a vector one
+ * dimension higher than the input (output parameters are used
+ * instead);</li>
+ * <li>initializes mutable integer offsets i, j, k to zero, then changes
+ * them only if appropriate conditions are met;</li>
+ * <li>changes where n and t factors are multiplied in evaluate function so
+ * that a calculation does not need to be redone for derivatives;</li>
+ * <li>attempts to match the offset step in noise functions to the
+ * magnitude of the input vector rather than using an arbitrary one
+ * (123.456, etc.).</li>
  * </ul>
- * Most simplex functions scale the sum of noise contributions by a magic number
- * to bring it into range. There is little explanation for how these numbers are
- * arrived at. Although the range is expected to be within [-1.0, 1.0], it is
- * not guaranteed.
+ * Most simplex functions scale the sum of noise contributions by a magic
+ * number to bring it into range. There is little explanation for how these
+ * numbers are arrived at. Although the range is expected to be within
+ * [-1.0, 1.0], it is not guaranteed.
  *
  * @author Robert Bridson
  * @author Simon Geilfus
@@ -142,12 +144,12 @@ public abstract class Simplex {
    /**
     * Temporary vector used by gradRot2.
     */
-   private static final transient Vec2 ROT_2;
+   private static final Vec2 ROT_2;
 
    /**
     * Temporary vector used by gradRot3.
     */
-   private static final transient Vec3 ROT_3;
+   private static final Vec3 ROT_3;
 
    /**
     * <code>Math.sqrt(2.0) / Math.sqrt(3.0)</code>. Used by rotation look up
@@ -334,9 +336,9 @@ public abstract class Simplex {
       ROT_2 = new Vec2();
       ROT_3 = new Vec3();
 
-      ZERO_2 = Vec2.zero(new Vec2());
-      ZERO_3 = Vec3.zero(new Vec3());
-      ZERO_4 = Vec4.zero(new Vec4());
+      ZERO_2 = new Vec2();
+      ZERO_3 = new Vec3();
+      ZERO_4 = new Vec4();
    }
 
    /**
@@ -361,8 +363,8 @@ public abstract class Simplex {
    }
 
    /**
-    * Evaluates 4D simplex noise for a given seed. Calculates the derivative if
-    * the output variable is not null.
+    * Evaluates 4D simplex noise for a given seed. Calculates the derivative
+    * if the output variable is not null.
     *
     * @param x     the x coordinate
     * @param y     the y coordinate
@@ -579,8 +581,8 @@ public abstract class Simplex {
    }
 
    /**
-    * Evaluates 3D simplex noise for a given seed. Calculates the derivative if
-    * the output variable is not null.
+    * Evaluates 3D simplex noise for a given seed. Calculates the derivative
+    * if the output variable is not null.
     *
     * @param x     the x coordinate
     * @param y     the y coordinate
@@ -771,8 +773,8 @@ public abstract class Simplex {
    }
 
    /**
-    * Evaluates 2D simplex noise for a given seed. Calculates the derivative if
-    * the output variable is not null.
+    * Evaluates 2D simplex noise for a given seed. Calculates the derivative
+    * if the output variable is not null.
     *
     * @param x     the x coordinate
     * @param y     the y coordinate
@@ -898,8 +900,8 @@ public abstract class Simplex {
    }
 
    /**
-    * Evaluates 2D simplex noise for a given seed. Calculates the derivative if
-    * the output variable is not null.
+    * Evaluates 2D simplex noise for a given seed. Calculates the derivative
+    * if the output variable is not null.
     *
     * @param v     the input vector
     * @param seed  the seed
@@ -931,8 +933,8 @@ public abstract class Simplex {
    }
 
    /**
-    * Evaluates 3D simplex noise for a given seed. Calculates the derivative if
-    * the output variable is not null.
+    * Evaluates 3D simplex noise for a given seed. Calculates the derivative
+    * if the output variable is not null.
     *
     * @param v     the input vector
     * @param seed  the seed
@@ -964,8 +966,8 @@ public abstract class Simplex {
    }
 
    /**
-    * Evaluates 4D simplex noise for a given seed. Calculates the derivative if
-    * the output variable is not null.
+    * Evaluates 4D simplex noise for a given seed. Calculates the derivative
+    * if the output variable is not null.
     *
     * @param v     the input vector
     * @param seed  the seed
@@ -989,9 +991,6 @@ public abstract class Simplex {
       final float w,
       final int seed,
       final Vec4 deriv ) {
-
-      // TEST If any problems with 4d noise in a given quadrant persists,
-      // this may have to be rolled back to catch the error.
 
       final float s = ( x + y + z + w ) * Simplex.F4;
       final int i = Utils.floorToInt(x + s);
@@ -1163,9 +1162,9 @@ public abstract class Simplex {
 
    /**
     * Fractal Brownian Motion. For a given number of octaves, sums the output
-    * value of a noise function. Per each iteration, the output is multiplied by
-    * the amplitude; amplitude is multiplied by gain; frequency is multiplied by
-    * lacunarity.
+    * value of a noise function. Per each iteration, the output is multiplied
+    * by the amplitude; amplitude is multiplied by gain; frequency is
+    * multiplied by lacunarity.
     *
     * @param v          the input coordinate
     * @param seed       the seed
@@ -1187,9 +1186,9 @@ public abstract class Simplex {
 
    /**
     * Fractal Brownian Motion. For a given number of octaves, sums the output
-    * value of a noise function. Per each iteration, the output is multiplied by
-    * the amplitude; amplitude is multiplied by gain; frequency is multiplied by
-    * lacunarity.
+    * value of a noise function. Per each iteration, the output is multiplied
+    * by the amplitude; amplitude is multiplied by gain; frequency is
+    * multiplied by lacunarity.
     *
     * @param v          the input coordinate
     * @param seed       the seed
@@ -1234,9 +1233,9 @@ public abstract class Simplex {
 
    /**
     * Fractal Brownian Motion. For a given number of octaves, sums the output
-    * value of a noise function. Per each iteration, the output is multiplied by
-    * the amplitude; amplitude is multiplied by gain; frequency is multiplied by
-    * lacunarity.
+    * value of a noise function. Per each iteration, the output is multiplied
+    * by the amplitude; amplitude is multiplied by gain; frequency is
+    * multiplied by lacunarity.
     *
     * @param v          the input coordinate
     * @param seed       the seed
@@ -1258,9 +1257,9 @@ public abstract class Simplex {
 
    /**
     * Fractal Brownian Motion. For a given number of octaves, sums the output
-    * value of a noise function. Per each iteration, the output is multiplied by
-    * the amplitude; amplitude is multiplied by gain; frequency is multiplied by
-    * lacunarity.
+    * value of a noise function. Per each iteration, the output is multiplied
+    * by the amplitude; amplitude is multiplied by gain; frequency is
+    * multiplied by lacunarity.
     *
     * @param v          the input coordinate
     * @param seed       the seed
@@ -1305,9 +1304,9 @@ public abstract class Simplex {
 
    /**
     * Fractal Brownian Motion. For a given number of octaves, sums the output
-    * value of a noise function. Per each iteration, the output is multiplied by
-    * the amplitude; amplitude is multiplied by gain; frequency is multiplied by
-    * lacunarity.
+    * value of a noise function. Per each iteration, the output is multiplied
+    * by the amplitude; amplitude is multiplied by gain; frequency is
+    * multiplied by lacunarity.
     *
     * @param v          the input coordinate
     * @param seed       the seed
@@ -1329,9 +1328,9 @@ public abstract class Simplex {
 
    /**
     * Fractal Brownian Motion. For a given number of octaves, sums the output
-    * value of a noise function. Per each iteration, the output is multiplied by
-    * the amplitude; amplitude is multiplied by gain; frequency is multiplied by
-    * lacunarity.
+    * value of a noise function. Per each iteration, the output is multiplied
+    * by the amplitude; amplitude is multiplied by gain; frequency is
+    * multiplied by lacunarity.
     *
     * @param v          the input coordinate
     * @param seed       the seed
@@ -1375,8 +1374,8 @@ public abstract class Simplex {
    }
 
    /**
-    * Generates 3D flow noise with three coordinates and the sine and cosine of
-    * an angle.
+    * Generates 3D flow noise with three coordinates and the sine and cosine
+    * of an angle.
     *
     * @param x    the x coordinate
     * @param y    the y coordinate
@@ -1399,8 +1398,8 @@ public abstract class Simplex {
    }
 
    /**
-    * Generates 3D flow noise with three coordinates and the sine and cosine of
-    * an angle. Calculates the derivative if it is not null.
+    * Generates 3D flow noise with three coordinates and the sine and cosine
+    * of an angle. Calculates the derivative if it is not null.
     *
     * @param x     the x coordinate
     * @param y     the y coordinate
@@ -1598,8 +1597,8 @@ public abstract class Simplex {
    }
 
    /**
-    * Generates 2D flow noise with two coordinates and the sine and cosine of an
-    * angle. Calculates the derivative if it is not null.
+    * Generates 2D flow noise with two coordinates and the sine and cosine of
+    * an angle. Calculates the derivative if it is not null.
     *
     * @param x     the x coordinate
     * @param y     the y coordinate
@@ -1710,8 +1709,8 @@ public abstract class Simplex {
    }
 
    /**
-    * Generates 3D flow noise with three coordinates and the sine and cosine of
-    * an angle. Calculates the derivative if it is not null.
+    * Generates 3D flow noise with three coordinates and the sine and cosine
+    * of an angle. Calculates the derivative if it is not null.
     *
     * @param x       the x coordinate
     * @param y       the y coordinate
@@ -1872,7 +1871,8 @@ public abstract class Simplex {
    }
 
    /**
-    * Returns a vector in the range [-1.0, 1.0] given a vector input and a seed.
+    * Returns a vector in the range [-1.0, 1.0] given a vector input and a
+    * seed.
     *
     * @param v      the input vector
     * @param seed   the result
@@ -1922,7 +1922,8 @@ public abstract class Simplex {
    }
 
    /**
-    * Returns a vector in the range [-1.0, 1.0] given a vector input and a seed.
+    * Returns a vector in the range [-1.0, 1.0] given a vector input and a
+    * seed.
     *
     * @param v      the input vector
     * @param seed   the result
@@ -1982,7 +1983,8 @@ public abstract class Simplex {
    }
 
    /**
-    * Returns a vector in the range [-1.0, 1.0] given a vector input and a seed.
+    * Returns a vector in the range [-1.0, 1.0] given a vector input and a
+    * seed.
     *
     * @param v      the input vector
     * @param seed   the result
@@ -2072,8 +2074,8 @@ public abstract class Simplex {
       final Vec2 yDeriv ) {
 
       final float st = Simplex.STEP_2 * Vec2.mag(v);
-
-      return target.set(Simplex.eval(v.x + st, v.y, seed, xDeriv),
+      return target.set(
+         Simplex.eval(v.x + st, v.y, seed, xDeriv),
          Simplex.eval(v.x, v.y + st, seed, yDeriv));
    }
 
@@ -2099,8 +2101,8 @@ public abstract class Simplex {
    /**
     * Returns a value with the same number of dimensions as the input, 3. This
     * is done by calling {@link Simplex#eval(float, float, float, int, Vec3)}
-    * thrice, with offset steps added to each component of the input vector. The
-    * derivatives are calculated for the output vectors.
+    * thrice, with offset steps added to each component of the input vector.
+    * The derivatives are calculated for the output vectors.
     *
     * @param v      the input vector
     * @param seed   the seed
@@ -2123,8 +2125,8 @@ public abstract class Simplex {
       final Vec3 zDeriv ) {
 
       final float st = Vec3.mag(v) * Simplex.STEP_3;
-
-      return target.set(Simplex.eval(v.x + st, v.y, v.z, seed, xDeriv),
+      return target.set(
+         Simplex.eval(v.x + st, v.y, v.z, seed, xDeriv),
          Simplex.eval(v.x, v.y + st, v.z, seed, yDeriv),
          Simplex.eval(v.x, v.y, v.z + st, seed, zDeriv));
    }
@@ -2132,7 +2134,8 @@ public abstract class Simplex {
    /**
     * Returns a value with the same number of dimensions as the input, 4. This
     * is done by calling {@link Simplex#eval(float, float, float, float, int)}
-    * four times, with offset steps added to each component of the input vector.
+    * four times, with offset steps added to each component of the input
+    * vector.
     *
     * @param v      the input vector
     * @param seed   the seed
@@ -2179,8 +2182,8 @@ public abstract class Simplex {
       final Vec4 wDeriv ) {
 
       final float st = Vec4.mag(v) * Simplex.STEP_4;
-
-      return target.set(Simplex.eval(v.x + st, v.y, v.z, v.w, seed, xDeriv),
+      return target.set(
+         Simplex.eval(v.x + st, v.y, v.z, v.w, seed, xDeriv),
          Simplex.eval(v.x, v.y + st, v.z, v.w, seed, yDeriv),
          Simplex.eval(v.x, v.y, v.z + st, v.w, seed, zDeriv),
          Simplex.eval(v.x, v.y, v.z, v.w + st, seed, wDeriv));
@@ -2607,8 +2610,8 @@ public abstract class Simplex {
    }
 
    /**
-    * Hashes the indices i, j, k and l with the seed, then returns a vector from
-    * the look up table.
+    * Hashes the indices i, j, k and l with the seed, then returns a vector
+    * from the look up table.
     *
     * @param i    the first index
     * @param j    the second index
@@ -2665,8 +2668,8 @@ public abstract class Simplex {
 
    /**
     * Hashes the indices i, j and k with the seed. Retrieves two vectors from
-    * rotation look-up tables, then multiplies them against the sine and cosine
-    * of the angle.
+    * rotation look-up tables, then multiplies them against the sine and
+    * cosine of the angle.
     *
     * @param i      the first index
     * @param j      the second index

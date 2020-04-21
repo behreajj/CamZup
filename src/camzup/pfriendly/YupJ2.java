@@ -38,9 +38,9 @@ import processing.core.PShape;
 import processing.awt.PGraphicsJava2D;
 
 /**
- * A 2D renderer based on the Java AWT (Abstract Window Toolkit). Supposes that
- * the the camera is looking down on a 2D plane from the z axis, making (0.0,
- * 1.0) the forward -- or up -- axis.
+ * A 2D renderer based on the Java AWT (Abstract Window Toolkit). Supposes
+ * that the the camera is looking down on a 2D plane from the z axis,
+ * making (0.0, 1.0) the forward -- or up -- axis.
  */
 public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
@@ -75,26 +75,26 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public float miterLimit = 1.0f;
 
    /**
-    * A Java AWT affine transform object. This is cached so a new object is not
-    * created when accessing or mutating the renderer matrix.
+    * A Java AWT affine transform object. This is cached so a new object is
+    * not created when accessing or mutating the renderer matrix.
     */
-   protected AffineTransform affineNative = new AffineTransform(1.0d, 0.0d, 0.0d, 1.0d, 0.0d, 0.0d);
+   protected final AffineTransform affineNative;
 
    /**
     * A Java AWT arc object. This uses double precision, as Arc2D.Float simply
     * casts between float and double anyway.
     */
-   protected final Arc2D.Double arc = new Arc2D.Double();
+   protected final Arc2D.Double arc;
 
    /**
     * A placeholder color used during lerpColor.
     */
-   protected final Color aTemp = new Color();
+   protected final Color aTemp;
 
    /**
     * A placeholder color used during lerpColor.
     */
-   protected final Color bTemp = new Color();
+   protected final Color bTemp;
 
    /**
     * Representation of a stroke cap in the native AWT library.
@@ -106,13 +106,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    /**
     * A placeholder color used during lerpColor.
     */
-   protected final Color cTemp = new Color();
+   protected final Color cTemp;
 
    /**
-    * A Java AWT general path object. This is reset when a new shape needs to be
-    * displayed in draw.
+    * A Java AWT general path object. This is reset when a new shape needs to
+    * be displayed in draw.
     */
-   protected final Path2D.Double gp = new Path2D.Double();
+   protected final Path2D.Double gp;
 
    /**
     * One divided by the maximum for the alpha channel.
@@ -144,17 +144,32 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    /**
     * A placeholder vector used during transform.
     */
-   protected final Vec2 tr2Loc = new Vec2();
+   protected final Vec2 tr2Loc;
 
    /**
     * A placeholder vector used during transform.
     */
-   protected final Vec2 tr2Scale = new Vec2();
+   protected final Vec2 tr2Scale;
 
    /**
     * A placeholder transform used during transform.
     */
-   protected final Transform2 transform = new Transform2();
+   protected final Transform2 transform;
+
+   {
+      this.affineNative = new AffineTransform();
+      this.arc = new Arc2D.Double();
+      this.aTemp = new Color();
+      this.bezierBasisInverse = PMatAux.bezierBasisInverse();
+      this.bTemp = new Color();
+      this.cTemp = new Color();
+      this.curveToBezierMatrix = new PMatrix3D();
+      this.gp = new Path2D.Double();
+      this.tr2Loc = new Vec2();
+      this.tr2Scale = new Vec2();
+      this.transform = new Transform2();
+
+   }
 
    /**
     * The default constructor.
@@ -193,8 +208,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param m11 up axis y
     * @param m12 translation y
     *
-    * @see AffineTransform#setTransform(double, double, double, double, double,
-    *      double)
+    * @see AffineTransform#setTransform(double, double, double, double,
+    *      double, double)
     * @see Graphics2D#transform(AffineTransform)
     */
    @Override
@@ -240,8 +255,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws an arc at a location from a start angle to a stop angle. The meaning
-    * of the first four parameters depends on the renderer's ellipseMode.
+    * Draws an arc at a location from a start angle to a stop angle. The
+    * meaning of the first four parameters depends on the renderer's
+    * ellipseMode.
     *
     * @param x0    the first x
     * @param y0    the first y
@@ -382,10 +398,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
    /**
     * Evaluates a Bezier curve at step t for points ap0, cp0, cp1 and ap1. The
-    * parameter t varies between [0.0, 1.0]; ap0 and ap1 are the curve's anchor
-    * points; cp0 and cp1 the control points. This can be done once with the x
-    * coordinates and a second time with the y coordinates to get the location
-    * of a Bezier curve at t.
+    * parameter t varies between [0.0, 1.0]; ap0 and ap1 are the curve's
+    * anchor points; cp0 and cp1 the control points. This can be done once
+    * with the x coordinates and a second time with the y coordinates to get
+    * the location of a Bezier curve at t.
     *
     * @param ap0 the first anchor point
     * @param cp0 the first control point
@@ -441,8 +457,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws a cubic Bezier curve segment to the next anchor point; the first and
-    * second control point shape the curve segment.
+    * Draws a cubic Bezier curve segment to the next anchor point; the first
+    * and second control point shape the curve segment.
     *
     * @param cp0 the first control point
     * @param cp1 the second control point
@@ -555,8 +571,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Sets the camera to the Processing default, where the origin is in the top
-    * left corner of the sketch and the y axis points downward.
+    * Sets the camera to the Processing default, where the origin is in the
+    * top left corner of the sketch and the y axis points downward.
     */
    public void camFlipped ( ) {
 
@@ -639,8 +655,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void curveVertex ( final Vec2 a ) { this.curveVertex(a.x, a.y); }
 
    /**
-    * Sets default camera and calls the camera function. This is for parity with
-    * OpenGL renderers.
+    * Sets default camera and calls the camera function. This is for parity
+    * with OpenGL renderers.
     */
    @Override
    public void defaultCamera ( ) {
@@ -1139,8 +1155,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Displays the handles of a curve entity. The stroke weight is determined by
-    * {@link IUp#DEFAULT_STROKE_WEIGHT}, {@value IUp#DEFAULT_STROKE_WEIGHT} .
+    * Displays the handles of a curve entity. The stroke weight is determined
+    * by {@link IUp#DEFAULT_STROKE_WEIGHT}, {@value IUp#DEFAULT_STROKE_WEIGHT}
+    * .
     *
     * @param ce the curve entity
     */
@@ -1154,9 +1171,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * <ul>
     * <li>The color for lines between handles defaults to
     * {@link IUp#DEFAULT_HANDLE_COLOR};</li>
-    * <li>the rear handle point, to {@link IUp#DEFAULT_HANDLE_REAR_COLOR};</li>
-    * <li>the fore handle point, to {@link IUp#DEFAULT_HANDLE_FORE_COLOR};</li>
-    * <li>the coordinate point, to {@link IUp#DEFAULT_HANDLE_COORD_COLOR}.</li>
+    * <li>the rear handle point, to
+    * {@link IUp#DEFAULT_HANDLE_REAR_COLOR};</li>
+    * <li>the fore handle point, to
+    * {@link IUp#DEFAULT_HANDLE_FORE_COLOR};</li>
+    * <li>the coordinate point, to
+    * {@link IUp#DEFAULT_HANDLE_COORD_COLOR}.</li>
     * </ul>
     *
     * @param ce           the curve entity
@@ -1274,8 +1294,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Displays a buffer at a location. Uses the buffer's width and height as the
-    * second parameters.
+    * Displays a buffer at a location. Uses the buffer's width and height as
+    * the second parameters.
     *
     * @param buff the renderer
     * @param x    the first x coordinate
@@ -1376,8 +1396,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void image ( final PImage img ) { this.image(img, 0.0f, 0.0f); }
 
    /**
-    * Displays a PImage at a location. Uses the image's width and height as the
-    * second parameters.
+    * Displays a PImage at a location. Uses the image's width and height as
+    * the second parameters.
     *
     * @param img the PImage
     * @param x   the first x coordinate
@@ -1639,8 +1659,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Sets the renderer's stroke, stroke weight and fill to the material's. Also
-    * sets whether or not to use fill and stroke.
+    * Sets the renderer's stroke, stroke weight and fill to the material's.
+    * Also sets whether or not to use fill and stroke.
     *
     * @param material the material
     */
@@ -1740,9 +1760,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws a point at the coordinate x, y. This is done by drawing a line from
-    * (x, y) to ((x, y) + (epsilon, epsilon)). When strokeCap is set to SQUARE,
-    * it is swapped to PROJECT, then back to SQUARE.
+    * Draws a point at the coordinate x, y. This is done by drawing a line
+    * from (x, y) to ((x, y) + (epsilon, epsilon)). When strokeCap is set to
+    * SQUARE, it is swapped to PROJECT, then back to SQUARE.
     *
     * @param x the x coordinate
     * @param y the y coordinate
@@ -1908,8 +1928,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Displays a ray, i.e., an origin point and a direction. The display length
-    * of the direction is dictated by an input.
+    * Displays a ray, i.e., an origin point and a direction. The display
+    * length of the direction is dictated by an input.
     *
     * @param xOrigin the x origin
     * @param yOrigin the y origin
@@ -1968,7 +1988,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws a rectangle. The meaning of the four parameters depends on rectMode.
+    * Draws a rectangle. The meaning of the four parameters depends on
+    * rectMode.
     *
     * @param a the first x parameter
     * @param b the first y parameter
@@ -2115,8 +2136,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws a rounded rectangle; the meaning of the first two parameters depends
-    * on the renderer's rectMode.
+    * Draws a rounded rectangle; the meaning of the first two parameters
+    * depends on the renderer's rectMode.
     *
     * @param a the first parameter
     * @param b the second parameter
@@ -2164,8 +2185,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void rotate ( final float angle ) { this.g2.rotate(angle); }
 
    /**
-    * Rotates the sketch by an angle in radians around the x axis. For 2D, this
-    * scales by ( 1.0, cos ( a ) ) .
+    * Rotates the sketch by an angle in radians around the x axis. For 2D,
+    * this scales by ( 1.0, cos ( a ) ) .
     *
     * @param angle the angle
     *
@@ -2179,8 +2200,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Rotates the sketch by an angle in radians around the y axis. For 2D, this
-    * scales by ( cos ( a ), 1.0 ) .
+    * Rotates the sketch by an angle in radians around the y axis. For 2D,
+    * this scales by ( cos ( a ), 1.0 ) .
     *
     * @param angle the angle
     *
@@ -2238,8 +2259,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Takes a two-dimensional x, y position and returns the x value for where it
-    * will appear on a two-dimensional screen. This is inefficient, use
+    * Takes a two-dimensional x, y position and returns the x value for where
+    * it will appear on a two-dimensional screen. This is inefficient, use
     * {@link YupJ2#screen(Vec2, Vec2)} instead.
     *
     * @param x the x coordinate
@@ -2258,8 +2279,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Takes a two-dimensional x, y position and returns the x value for where it
-    * will appear on a two-dimensional screen. This is inefficient, use
+    * Takes a two-dimensional x, y position and returns the x value for where
+    * it will appear on a two-dimensional screen. This is inefficient, use
     * {@link YupJ2#screen(Vec2, Vec2)} instead.
     *
     * @param x the x coordinate
@@ -2279,8 +2300,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Takes a two-dimensional x, y position and returns the y value for where it
-    * will appear on a two-dimensional screen. This is inefficient, use
+    * Takes a two-dimensional x, y position and returns the y value for where
+    * it will appear on a two-dimensional screen. This is inefficient, use
     * {@link YupJ2#screen(Vec2, Vec2)} instead.
     *
     * @param x the x coordinate
@@ -2301,8 +2322,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Takes a two-dimensional x, y position and returns the y value for where it
-    * will appear on a two-dimensional screen. This is inefficient, use
+    * Takes a two-dimensional x, y position and returns the y value for where
+    * it will appear on a two-dimensional screen. This is inefficient, use
     * {@link YupJ2#screen(Vec2, Vec2)} instead.
     *
     * @param x the x coordinate
@@ -2361,8 +2382,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     *
     * @param source a 3 x 3 matrix
     *
-    * @see AffineTransform#setTransform(double, double, double, double, double,
-    *      double)
+    * @see AffineTransform#setTransform(double, double, double, double,
+    *      double, double)
     * @see Graphics2D#setTransform(AffineTransform)
     */
    public void setMatrix ( final Mat3 source ) {
@@ -2377,8 +2398,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     *
     * @param source a 3 x 3 matrix
     *
-    * @see AffineTransform#setTransform(double, double, double, double, double,
-    *      double)
+    * @see AffineTransform#setTransform(double, double, double, double,
+    *      double, double)
     * @see Graphics2D#setTransform(AffineTransform)
     */
    @Override
@@ -2391,8 +2412,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
    /**
     * Set size is the last function called by size, createGraphics,
-    * makeGraphics, etc. when initializing the graphics renderer. Therefore, any
-    * additional values that need initialization can be attempted here.
+    * makeGraphics, etc. when initializing the graphics renderer. Therefore,
+    * any additional values that need initialization can be attempted here.
     *
     * @param width  the applet width
     * @param height the applet height
@@ -2734,8 +2755,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * shapeMode is not supported by this renderer; it defaults to CENTER. Set
     * the scale of the shape with instance methods instead.<br>
     * <br>
-    * This will not throw a missing method warning, because it may be called by
-    * PShapes.
+    * This will not throw a missing method warning, because it may be called
+    * by PShapes.
     */
    @Override
    @SuppressWarnings ( "unused" )
@@ -2829,8 +2850,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Sets the width of the stroke used for lines, points, and the border around
-    * shapes. The weight should be a positive, non-zero value.
+    * Sets the width of the stroke used for lines, points, and the border
+    * around shapes. The weight should be a positive, non-zero value.
     *
     * @param weight the stroke weight
     *
@@ -3162,8 +3183,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void vertex ( final Vec2 v ) { this.vertex(v.x, v.y); }
 
    /**
-    * The arc implementation. The underlying Java AWT arc asks for a start angle
-    * and an arc length, not a stop angle, in degrees, not radians.
+    * The arc implementation. The underlying Java AWT arc asks for a start
+    * angle and an arc length, not a stop angle, in degrees, not radians.
     *
     * @param x          the arc location x
     * @param y          the arc location y
@@ -3237,8 +3258,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Sets background color channels in both single precision real number [0.0,
-    * 1.0], in byte [0, 255] and in a composite color. Calls
+    * Sets background color channels in both single precision real number
+    * [0.0, 1.0], in byte [0, 255] and in a composite color. Calls
     * {@link PGraphicsJava2D#backgroundImpl()} .
     */
    @Override
@@ -3361,9 +3382,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
    /**
     * Calculates the color channels from four input channels. The manner in
-    * which the first three are interpreted depends on color mode. For HSB color
-    * mode, the first channel, x, is interpreted as a periodic, not a linear,
-    * value.
+    * which the first three are interpreted depends on color mode. For HSB
+    * color mode, the first channel, x, is interpreted as a periodic, not a
+    * linear, value.
     *
     * @param x the first color channel, hue or red
     * @param y the second color channel, saturation or green
@@ -3469,33 +3490,25 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          this.curveInited = true;
       }
 
-      final float s = this.curveTightness;
-      final float t = ( s - 1.0f ) * 0.5f;
-      final float u = 1.0f - s;
-      final float v = u * 0.5f;
-      this.curveBasisMatrix.set(
-         t, ( s + 3.0f ) * 0.5f, ( -3.0f - s ) * 0.5f, v,
-         u, ( -5.0f - s ) * 0.5f, s + 2.0f, t,
-         t, 0.0f, v, 0.0f,
-         0.0f, 1.0f, 0.0f, 0.0f);
+      PMatAux.catmullBasis(
+         this.curveTightness,
+         this.curveBasisMatrix);
 
       this.splineForward(this.curveDetail, this.curveDrawMatrix);
 
-      if ( this.bezierBasisInverse == null ) {
-         this.bezierBasisInverse = new PMatrix3D();
-         PMatAux.inverse(this.bezierBasisMatrix, this.bezierBasisInverse);
-         this.curveToBezierMatrix = new PMatrix3D();
-      }
-
-      PMatAux.mul(this.bezierBasisInverse, this.curveBasisMatrix,
+      PMatAux.mul(
+         this.bezierBasisInverse,
+         this.curveBasisMatrix,
          this.curveToBezierMatrix);
-      PMatAux.mul(this.curveDrawMatrix, this.curveBasisMatrix,
+      PMatAux.mul(
+         this.curveDrawMatrix,
+         this.curveBasisMatrix,
          this.curveDrawMatrix);
    }
 
    /**
-    * Draws an AWT shape object without inquiring as to whether a gradient fill
-    * or stroke is to be used.
+    * Draws an AWT shape object without inquiring as to whether a gradient
+    * fill or stroke is to be used.
     *
     * @param s the shape
     *
@@ -3517,8 +3530,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * The rounded corner rectangle implementation. The meaning of the first four
-    * parameters depends on rectMode.
+    * The rounded corner rectangle implementation. The meaning of the first
+    * four parameters depends on rectMode.
     *
     * @param a   the first x parameter
     * @param b   the first y parameter
@@ -3673,7 +3686,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     *
     * @see PFont#getGlyph(char)
     * @see PFont#getSize()
-    * @see YupJ2#textCharModelImpl(PImage, float, float, float, float, int, int)
     */
    @Override
    protected void textCharImpl (
@@ -3695,8 +3707,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          final float y0 = y + textent * this.textSize;
          final float y1 = y0 - hGlyph * this.textSize;
 
-         this.textCharModelImpl(glyph.image, x0, y0, x1, y1, glyph.width,
-            glyph.height);
+         this.textCharModelImpl(
+            glyph.image,
+            x0, y0, x1, y1,
+            glyph.width, glyph.height);
 
       }
    }

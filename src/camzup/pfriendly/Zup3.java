@@ -55,8 +55,12 @@ public class Zup3 extends Up3 {
          : -this.eyeDist;
       final float y = -z * IUp3.POLARITY_OFFSET;
 
-      this.camera(0.0f, y, z, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
+      this.camera(
+         0.0f, y, z,
+         0.0f, 0.0f, 0.0f,
+         Zup3.DEFAULT_REF_X,
+         Zup3.DEFAULT_REF_Y,
+         Zup3.DEFAULT_REF_Z);
    }
 
    /**
@@ -69,8 +73,12 @@ public class Zup3 extends Up3 {
       final float x = this.eyeDist < 128 ? -Zup3.DEFAULT_LOC_X
          : -this.eyeDist;
 
-      this.camera(x, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
+      this.camera(
+         x, 0.0f, 0.0f,
+         0.0f, 0.0f, 0.0f,
+         Zup3.DEFAULT_REF_X,
+         Zup3.DEFAULT_REF_Y,
+         Zup3.DEFAULT_REF_Z);
    }
 
    /**
@@ -85,13 +93,14 @@ public class Zup3 extends Up3 {
        * not have been initialized.
        */
 
-      this.camera(this.cameraX, this.cameraY, this.cameraZ, this.lookTarget.x,
-         this.lookTarget.y, this.lookTarget.z);
+      this.camera(
+         this.cameraX, this.cameraY, this.cameraZ,
+         this.lookTarget.x, this.lookTarget.y, this.lookTarget.z);
    }
 
    /**
-    * Looks at the center point from the eye point, using the default reference
-    * up axis.
+    * Looks at the center point from the eye point, using the default
+    * reference up axis.
     *
     * @param xEye    camera location x
     * @param yEye    camera location y
@@ -118,13 +127,15 @@ public class Zup3 extends Up3 {
        * not have been initialized.
        */
 
-      this.camera(xEye, yEye, zEye, xCenter, yCenter, zCenter, this.refUp.x,
-         this.refUp.y, this.refUp.z);
+      this.camera(
+         xEye, yEye, zEye,
+         xCenter, yCenter, zCenter,
+         this.refUp.x, this.refUp.y, this.refUp.z);
    }
 
    /**
-    * Looks at the center point from the eye point, using the world up axis as a
-    * reference.
+    * Looks at the center point from the eye point, using the world up axis as
+    * a reference.
     *
     * @param xEye    camera location x
     * @param yEye    camera location y
@@ -150,7 +161,9 @@ public class Zup3 extends Up3 {
 
       this.refUp.set(xUp, yUp, zUp);
 
-      this.lookDir.set(xEye - this.lookTarget.x, yEye - this.lookTarget.y,
+      this.lookDir.set(
+         xEye - this.lookTarget.x,
+         yEye - this.lookTarget.y,
          zEye - this.lookTarget.z);
 
       Vec3.normalize(this.lookDir, this.k);
@@ -172,8 +185,8 @@ public class Zup3 extends Up3 {
    }
 
    /**
-    * Looks at the center point from the eye point, using the default reference
-    * up axis.
+    * Looks at the center point from the eye point, using the default
+    * reference up axis.
     *
     * @param eye    the camera's location
     * @param center the point to look at
@@ -183,12 +196,14 @@ public class Zup3 extends Up3 {
       final Vec3 eye,
       final Vec3 center ) {
 
-      this.camera(eye.x, eye.y, eye.z, center.x, center.y, center.z);
+      this.camera(
+         eye.x, eye.y, eye.z,
+         center.x, center.y, center.z);
    }
 
    /**
-    * Sets the camera to the Processing default, where the origin is in the top
-    * left corner of the sketch and the y axis points downward.
+    * Sets the camera to the Processing default, where the origin is in the
+    * top left corner of the sketch and the y axis points downward.
     */
    @Experimental
    public void camFlipped ( ) {
@@ -211,8 +226,12 @@ public class Zup3 extends Up3 {
       final float y = this.eyeDist < 128 ? Zup3.DEFAULT_LOC_Y
          : -this.eyeDist;
 
-      this.camera(0.0f, y, 0.0f, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
+      this.camera(
+         0.0f, y, 0.0f,
+         0.0f, 0.0f, 0.0f,
+         Zup3.DEFAULT_REF_X,
+         Zup3.DEFAULT_REF_Y,
+         Zup3.DEFAULT_REF_Z);
    }
 
    /**
@@ -225,8 +244,12 @@ public class Zup3 extends Up3 {
       final float y = this.eyeDist < 128 ? -Zup3.DEFAULT_LOC_Y
          : this.eyeDist;
 
-      this.camera(0.0f, y, 0.0f, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
+      this.camera(
+         0.0f, y, 0.0f,
+         0.0f, 0.0f, 0.0f,
+         Zup3.DEFAULT_REF_X,
+         Zup3.DEFAULT_REF_Y,
+         Zup3.DEFAULT_REF_Z);
    }
 
    /**
@@ -244,8 +267,12 @@ public class Zup3 extends Up3 {
          : this.eyeDist;
       final float y = -z * IUp3.POLARITY_OFFSET;
 
-      this.camera(0.0f, y, z, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
+      this.camera(
+         0.0f, y, z,
+         0.0f, 0.0f, 0.0f,
+         Zup3.DEFAULT_REF_X,
+         Zup3.DEFAULT_REF_Y,
+         Zup3.DEFAULT_REF_Z);
    }
 
    /**
@@ -258,8 +285,12 @@ public class Zup3 extends Up3 {
       final float x = this.eyeDist < 128 ? Zup3.DEFAULT_LOC_X
          : this.eyeDist;
 
-      this.camera(x, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
+      this.camera(
+         x, 0.0f, 0.0f,
+         0.0f, 0.0f, 0.0f,
+         Zup3.DEFAULT_REF_X,
+         Zup3.DEFAULT_REF_Y,
+         Zup3.DEFAULT_REF_Z);
    }
 
    /**
@@ -408,8 +439,8 @@ public class Zup3 extends Up3 {
 
    /**
     * Set size is the last function called by size, createGraphics,
-    * makeGraphics, etc. when initializing the graphics renderer. Therefore, any
-    * additional values that need initialization can be attempted here.
+    * makeGraphics, etc. when initializing the graphics renderer. Therefore,
+    * any additional values that need initialization can be attempted here.
     *
     * @param width  the width in pixels
     * @param height the height in pixels

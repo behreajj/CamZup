@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 /**
  * A convenience for working in the Processing IDE: extends
- * {@link java.util.Random} so an additional import does not need to be added.
- * Its name is truncated to avoid collisions.
+ * {@link java.util.Random} so an additional import does not need to be
+ * added. Its name is truncated to avoid collisions.
  */
 public class Rng extends java.util.Random implements IUtils {
 
@@ -54,10 +54,7 @@ public class Rng extends java.util.Random implements IUtils {
     *
     * @return the seed
     */
-   public long getSeed ( ) {
-
-      return this.publicSeed;
-   }
+   public long getSeed ( ) { return this.publicSeed; }
 
    /**
     * Returns a hash code for this random number generator based on its seed.
@@ -71,8 +68,8 @@ public class Rng extends java.util.Random implements IUtils {
     * Returns a pseudo-random, uniformly distributed integer value between 0
     * (inclusive) and the specified value (exclusive), drawn from this random
     * number generator's sequence. Overrides parent random's functionality to
-    * clamp the bound to a positive non-zero lower bound rather than throwing an
-    * exception.
+    * clamp the bound to a positive non-zero lower bound rather than throwing
+    * an exception.
     *
     * @param bound the upper bound
     *
@@ -115,8 +112,8 @@ public class Rng extends java.util.Random implements IUtils {
     * point precision, the sum of the numbers may be approximate.<br>
     * <br>
     * The function first calculates a series of segment end points on a number
-    * line from 0.0 to 1.0 . The result array contains the difference between an
-    * end point and its preceding neighbor multiplied by the sum.
+    * line from 0.0 to 1.0 . The result array contains the difference between
+    * an end point and its preceding neighbor multiplied by the sum.
     *
     * @param count the number of elements
     * @param sum   the sum
@@ -184,7 +181,8 @@ public class Rng extends java.util.Random implements IUtils {
    }
 
    /**
-    * Returns a double precision real number between the lower and upper bound.
+    * Returns a double precision real number between the lower and upper
+    * bound.
     *
     * @param lower the lower bound
     * @param upper the upper bound

@@ -27,9 +27,9 @@ import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 
 /**
- * A 2.5D renderer based on OpenGL. Supposes that the the camera is looking down
- * on a 2D plane from the z axis, making (0.0, 1.0) the forward -- or up --
- * axis.
+ * A 2.5D renderer based on OpenGL. Supposes that the the camera is looking
+ * down on a 2D plane from the z axis, making (0.0, 1.0) the forward -- or
+ * up -- axis.
  */
 public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
 
@@ -116,8 +116,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    }
 
    /**
-    * Draws a cubic Bezier curve segment to the next anchor point; the first and
-    * second control point shape the curve segment.
+    * Draws a cubic Bezier curve segment to the next anchor point; the first
+    * and second control point shape the curve segment.
     *
     * @param cp0 the first control point
     * @param cp1 the second control point
@@ -258,8 +258,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    }
 
    /**
-    * Sets the camera to the Processing default, where the origin is in the top
-    * left corner of the sketch and the y axis points downward.
+    * Sets the camera to the Processing default, where the origin is in the
+    * top left corner of the sketch and the y axis points downward.
     */
    public void camFlipped ( ) {
 
@@ -474,8 +474,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    public float getZoomY ( ) { return this.cameraZoomY; }
 
    /**
-    * Displays the handles of a curve entity. The stroke weight is determined by
-    * {@link IUp#DEFAULT_STROKE_WEIGHT}, {@value IUp#DEFAULT_STROKE_WEIGHT} .
+    * Displays the handles of a curve entity. The stroke weight is determined
+    * by {@link IUp#DEFAULT_STROKE_WEIGHT}, {@value IUp#DEFAULT_STROKE_WEIGHT}
+    * .
     *
     * @param ce the curve entity
     */
@@ -489,9 +490,12 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * <ul>
     * <li>The color for lines between handles defaults to
     * {@link IUp#DEFAULT_HANDLE_COLOR};</li>
-    * <li>the rear handle point, to {@link IUp#DEFAULT_HANDLE_REAR_COLOR};</li>
-    * <li>the fore handle point, to {@link IUp#DEFAULT_HANDLE_FORE_COLOR};</li>
-    * <li>the coordinate point, to {@link IUp#DEFAULT_HANDLE_COORD_COLOR}.</li>
+    * <li>the rear handle point, to
+    * {@link IUp#DEFAULT_HANDLE_REAR_COLOR};</li>
+    * <li>the fore handle point, to
+    * {@link IUp#DEFAULT_HANDLE_FORE_COLOR};</li>
+    * <li>the coordinate point, to
+    * {@link IUp#DEFAULT_HANDLE_COORD_COLOR}.</li>
     * </ul>
     *
     * @param ce           the curve entity
@@ -689,8 +693,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * Finds the model view position of a point.<br>
     * <br>
     * More efficient than calling {@link PApplet#modelX(float, float, float)}
-    * and {@link PApplet#modelY(float, float, float)} separately. However, it is
-    * advisable to work with the renderer matrices directly.
+    * and {@link PApplet#modelY(float, float, float)} separately. However, it
+    * is advisable to work with the renderer matrices directly.
     *
     * @param source the point
     * @param target the output vector

@@ -1,8 +1,8 @@
 package camzup.core;
 
 /**
- * The order in which affine transformations -- translation, rotation, scale --
- * are applied.
+ * The order in which affine transformations -- translation, rotation,
+ * scale -- are applied.
  */
 public enum TransformOrder {
 

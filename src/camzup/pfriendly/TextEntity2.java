@@ -6,14 +6,15 @@ import processing.core.PConstants;
 import processing.core.PFont;
 
 /**
- * A convenience to create billboards which present text strings as a single
- * image texture. Useful for cases where unchanging text needs to be displayed
- * on the screen. Not intended for use with the AWT renderer.
+ * A convenience to create billboards which present text strings as a
+ * single image texture. Useful for cases where unchanging text needs to be
+ * displayed on the screen. Not intended for use with the AWT renderer.
  */
 public class TextEntity2 extends ImageEntity2 {
 
    /**
-    * Creates a mesh entity from a billboard with a texture that displays text.
+    * Creates a mesh entity from a billboard with a texture that displays
+    * text.
     *
     * @param font the Processing font
     * @param text the string of text
@@ -28,7 +29,8 @@ public class TextEntity2 extends ImageEntity2 {
    }
 
    /**
-    * Creates a mesh entity from a billboard with a texture that displays text.
+    * Creates a mesh entity from a billboard with a texture that displays
+    * text.
     *
     * @param font the Processing font
     * @param text the string of text
@@ -43,7 +45,8 @@ public class TextEntity2 extends ImageEntity2 {
    }
 
    /**
-    * Creates a mesh entity from a billboard with a texture that displays text.
+    * Creates a mesh entity from a billboard with a texture that displays
+    * text.
     *
     * @param font    the Processing font
     * @param text    the string of text
@@ -60,7 +63,8 @@ public class TextEntity2 extends ImageEntity2 {
    }
 
    /**
-    * Creates a mesh entity from a billboard with a texture that displays text.
+    * Creates a mesh entity from a billboard with a texture that displays
+    * text.
     *
     * @param font    the Processing font
     * @param text    the string of text
@@ -79,7 +83,8 @@ public class TextEntity2 extends ImageEntity2 {
    }
 
    /**
-    * Creates a mesh entity from a billboard with a texture that displays text.
+    * Creates a mesh entity from a billboard with a texture that displays
+    * text.
     *
     * @param font       the Processing font
     * @param text       the string of text

@@ -3,9 +3,9 @@ package camzup.core;
 import java.util.Comparator;
 
 /**
- * A mutable, extensible class. Supports RGBA and HSBA color spaces. Supports
- * conversion to and from integers where color channels are in the format
- * 0xAARRGGBB.
+ * A mutable, extensible class. Supports RGBA and HSBA color spaces.
+ * Supports conversion to and from integers where color channels are in the
+ * format 0xAARRGGBB.
  */
 public class Color extends Vec4 {
 
@@ -314,8 +314,8 @@ public class Color extends Vec4 {
    public float get ( final int index ) { return this.getAlphaLast(index); }
 
    /**
-    * Simulates bracket access in an array. The alpha channel is treated as the
-    * first channel.
+    * Simulates bracket access in an array. The alpha channel is treated as
+    * the first channel.
     *
     * @param index the index
     *
@@ -346,8 +346,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Simulates bracket access in an array. The alpha channel is treated as the
-    * last channel.
+    * Simulates bracket access in an array. The alpha channel is treated as
+    * the last channel.
     *
     * @param index the index
     *
@@ -650,8 +650,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how curve geometry looks in Blender (the control) versus in the
     * library (the test).
     *
@@ -661,15 +661,15 @@ public class Color extends Vec4 {
    String toBlenderCode ( ) { return this.toBlenderCode(1.0f, true); }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how curve geometry looks in Blender (the control) versus in the
     * library (the test).<br>
     * <br>
-    * This is formatted as a tuple where red, green and blue channels have been
-    * raised to the power of gamma (usually 2.2, Blender's default sRGB color
-    * management setting). If include alpha is true, then the alpha is also
-    * included.
+    * This is formatted as a tuple where red, green and blue channels have
+    * been raised to the power of gamma (usually 2.2, Blender's default sRGB
+    * color management setting). If include alpha is true, then the alpha is
+    * also included.
     *
     * @param gamma     the exponent
     * @param inclAlpha include the alpha channel
@@ -700,8 +700,8 @@ public class Color extends Vec4 {
 
    /**
     * Returns a String representation of the color compatible with .ggr (GIMP
-    * gradient) file formats. Each channel, including alpha, is represented as a
-    * float in [0.0, 1.0] separated by a space.
+    * gradient) file formats. Each channel, including alpha, is represented as
+    * a float in [0.0, 1.0] separated by a space.
     *
     * @return the string
     */
@@ -756,14 +756,9 @@ public class Color extends Vec4 {
    private static AbstrEasing EASING = new SmoothStepRgba();
 
    /**
-    * The unique identification for serialized classes.
-    */
-   private static final long serialVersionUID = 3863260730744999721L;
-
-   /**
-    * Adds the left and right operand, except for the alpha channel, then clamps
-    * the sum to [0.0, 1.0] . The left operand's alpha channel is retained. For
-    * that reason, color addition is <em>not</em> commutative.
+    * Adds the left and right operand, except for the alpha channel, then
+    * clamps the sum to [0.0, 1.0] . The left operand's alpha channel is
+    * retained. For that reason, color addition is <em>not</em> commutative.
     *
     * @param a      left operand
     * @param b      right operand
@@ -796,8 +791,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Tests to see if the alpha channel of the color is greater than zero, i.e.
-    * if it has some opacity.
+    * Tests to see if the alpha channel of the color is greater than zero,
+    * i.e. if it has some opacity.
     *
     * @param c the color
     *
@@ -830,8 +825,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Converts a color to an integer, performs the bitwise NOT operation on it,
-    * then converts the result to a color.
+    * Converts a color to an integer, performs the bitwise NOT operation on
+    * it, then converts the result to a color.
     *
     * @param a      the input color
     * @param target the output color
@@ -871,8 +866,8 @@ public class Color extends Vec4 {
 
    /**
     * Converts a color to an integer, performs a bitwise left shift operation,
-    * then converts the result to a color. The number of places is multiplied by
-    * 0x08.
+    * then converts the result to a color. The number of places is multiplied
+    * by 0x08.
     *
     * @param a      the color
     * @param places the number of places
@@ -892,9 +887,9 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Converts a color to an integer, performs a bitwise right shift operation,
-    * then converts the result to a color. The number of places is multiplied by
-    * 0x08.
+    * Converts a color to an integer, performs a bitwise right shift
+    * operation, then converts the result to a color. The number of places is
+    * multiplied by 0x08.
     *
     * @param a      the color
     * @param places the number of places
@@ -1006,7 +1001,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Ensures that the values of the color are clamped to the range [0.0, 1.0].
+    * Ensures that the values of the color are clamped to the range [0.0,
+    * 1.0].
     *
     * @param a      the color
     * @param target the output color
@@ -1063,9 +1059,9 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Divides the left operand by the right, except for the alpha channel, then
-    * clamps the product to [0.0, 1.0] . The left operand's alpha channel is
-    * retained.
+    * Divides the left operand by the right, except for the alpha channel,
+    * then clamps the product to [0.0, 1.0] . The left operand's alpha channel
+    * is retained.
     *
     * @param a      left operand, numerator
     * @param b      right operand, denominator
@@ -1086,9 +1082,9 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Divides the left operand by the right, except for the alpha channel, then
-    * clamps the product to [0.0, 1.0] . The left operand's alpha channel is
-    * retained.
+    * Divides the left operand by the right, except for the alpha channel,
+    * then clamps the product to [0.0, 1.0] . The left operand's alpha channel
+    * is retained.
     *
     * @param a      left operand, numerator
     * @param b      right operand, denominator
@@ -1113,9 +1109,9 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Divides the left operand by the right, except for the alpha channel, then
-    * clamps the product to [0.0, 1.0] . The left operand is also supplied to
-    * the alpha channel.
+    * Divides the left operand by the right, except for the alpha channel,
+    * then clamps the product to [0.0, 1.0] . The left operand is also
+    * supplied to the alpha channel.
     *
     * @param a      left operand, numerator
     * @param b      right operand, denominator
@@ -1205,8 +1201,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Convert a hexadecimal representation of a color stored as 0xAARRGGBB into
-    * a color.
+    * Convert a hexadecimal representation of a color stored as 0xAARRGGBB
+    * into a color.
     *
     * @param c      the color in hexadecimal
     * @param target the output color
@@ -1229,8 +1225,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Convert a hexadecimal representation of a color stored as 0xAARRGGBB into
-    * a color.
+    * Convert a hexadecimal representation of a color stored as 0xAARRGGBB
+    * into a color.
     *
     * @param c      the color in hexadecimal
     * @param target the output color
@@ -1517,9 +1513,10 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Inverts a color by subtracting the red, green and blue channels from one.
-    * Similar to bitNot, except alpha is not affected. Also similar to adding
-    * 0.5 to the x component of a Vec4 storing hue, saturation and brightness.
+    * Inverts a color by subtracting the red, green and blue channels from
+    * one. Similar to bitNot, except alpha is not affected. Also similar to
+    * adding 0.5 to the x component of a Vec4 storing hue, saturation and
+    * brightness.
     *
     * @param c      the color
     * @param target the output color
@@ -1595,8 +1592,8 @@ public class Color extends Vec4 {
 
    /**
     * Sets the target color to the maximum components of the input colors. The
-    * maximums are then clamped to [0.0, 1.0]. Equivalent to a 'lightest' mixing
-    * function.
+    * maximums are then clamped to [0.0, 1.0]. Equivalent to a 'lightest'
+    * mixing function.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -1618,8 +1615,8 @@ public class Color extends Vec4 {
 
    /**
     * Sets the target color to the minimum components of the input colors. The
-    * minimums are then clamped to [0.0, 1.0]. Equivalent to a 'darkest' mixing
-    * function.
+    * minimums are then clamped to [0.0, 1.0]. Equivalent to a 'darkest'
+    * mixing function.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -1682,9 +1679,9 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Multiplies the left and right operand, except for the alpha channel, then
-    * clamps the product to [0.0, 1.0] . The left operand's alpha channel is
-    * retained. For that reason, color multiplication is <em>not</em>
+    * Multiplies the left and right operand, except for the alpha channel,
+    * then clamps the product to [0.0, 1.0] . The left operand's alpha channel
+    * is retained. For that reason, color multiplication is <em>not</em>
     * commutative.
     *
     * @param a      left operand
@@ -1706,9 +1703,9 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Multiplies the left and right operand, except for the alpha channel, then
-    * clamps the product to [0.0, 1.0] . The left operand's alpha channel is
-    * retained. For that reason, color multiplication is <em>not</em>
+    * Multiplies the left and right operand, except for the alpha channel,
+    * then clamps the product to [0.0, 1.0] . The left operand's alpha channel
+    * is retained. For that reason, color multiplication is <em>not</em>
     * commutative.
     *
     * @param a      left operand
@@ -1730,10 +1727,10 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Multiplies the left and right operand, except for the alpha channel, then
-    * clamps the product to [0.0, 1.0] . The left operand is also supplied to
-    * the alpha channel. For that reason, color multiplication is <em>not</em>
-    * commutative.
+    * Multiplies the left and right operand, except for the alpha channel,
+    * then clamps the product to [0.0, 1.0] . The left operand is also
+    * supplied to the alpha channel. For that reason, color multiplication is
+    * <em>not</em> commutative.
     *
     * @param a      left operand
     * @param b      right operand
@@ -1764,8 +1761,8 @@ public class Color extends Vec4 {
    public static boolean none ( final Color c ) { return c.w <= 0.0f; }
 
    /**
-    * Multiplies the red, green and blue color channels of a color by the alpha
-    * channel.
+    * Multiplies the red, green and blue color channels of a color by the
+    * alpha channel.
     *
     * @param c      the input color
     * @param target the output color
@@ -1788,8 +1785,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Reduces the signal, or granularity, of a color's channels. Any level less
-    * than 2 or greater than 255 returns sets the target to the input.
+    * Reduces the signal, or granularity, of a color's channels. Any level
+    * less than 2 or greater than 255 returns sets the target to the input.
     *
     * @param c      the color
     * @param levels the levels
@@ -1830,8 +1827,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Creates a random HSBA vector, then converts it to an RGBA color. The alpha
-    * channel is not randomized.
+    * Creates a random HSBA vector, then converts it to an RGBA color. The
+    * alpha channel is not randomized.
     *
     * @param rng    the random number generator
     * @param target the output color
@@ -1855,8 +1852,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Creates a random HSBA vector from a lower- and upper-bound, then converts
-    * it to an RGBA color. The alpha channel is not included.
+    * Creates a random HSBA vector from a lower- and upper-bound, then
+    * converts it to an RGBA color. The alpha channel is not included.
     *
     * @param rng        the random number generator
     * @param lowerBound the lower bound
@@ -1888,8 +1885,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Creates a random HSBA vector, then converts it to an RGBA color. The alpha
-    * channel is randomized.
+    * Creates a random HSBA vector, then converts it to an RGBA color. The
+    * alpha channel is randomized.
     *
     * @param rng    the random number generator
     * @param target the output color
@@ -1913,8 +1910,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Creates a random HSBA vector from a lower- and upper-bound, then converts
-    * it to an RGBA color. The alpha channel is randomized.
+    * Creates a random HSBA vector from a lower- and upper-bound, then
+    * converts it to an RGBA color. The alpha channel is randomized.
     *
     * @param rng        the random number generator
     * @param lowerBound the lower bound
@@ -1960,8 +1957,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Creates a random color from a lower- and upper-bound. The alpha channel is
-    * not included.
+    * Creates a random color from a lower- and upper-bound. The alpha channel
+    * is not included.
     *
     * @param rng        the random number generator
     * @param lowerBound the lower bound
@@ -2079,8 +2076,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Converts RGBA channels to a vector which holds hue, saturation, brightness
-    * and alpha.
+    * Converts RGBA channels to a vector which holds hue, saturation,
+    * brightness and alpha.
     *
     * @param red    the red channel
     * @param green  the green channel
@@ -2202,8 +2199,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Shifts a color's brightness by a factor. The brightness is clamped to the
-    * range [0.0, 1.0] .
+    * Shifts a color's brightness by a factor. The brightness is clamped to
+    * the range [0.0, 1.0] .
     *
     * @param c      the input color
     * @param shift  the brightness shift
@@ -2297,8 +2294,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Shifts a color's saturation by a factor. The saturation is clamped to the
-    * range [0.0, 1.0] .
+    * Shifts a color's saturation by a factor. The saturation is clamped to
+    * the range [0.0, 1.0] .
     *
     * @param c      the input color
     * @param shift  the saturation shift
@@ -2342,8 +2339,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Converts a color to an integer where hexadecimal represents the ARGB color
-    * channels: 0xAARRGGB .
+    * Converts a color to an integer where hexadecimal represents the ARGB
+    * color channels: 0xAARRGGB .
     *
     * @param c the input color
     *
@@ -2360,8 +2357,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Converts a color to an integer where hexadecimal represents the ARGB color
-    * channels: 0xAARRGGB .
+    * Converts a color to an integer where hexadecimal represents the ARGB
+    * color channels: 0xAARRGGB .
     *
     * @param c the input color
     *
@@ -2373,8 +2370,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Returns a representation of the color as a hexadecimal code, preceded by a
-    * '0x', in the format AARRGGBB.
+    * Returns a representation of the color as a hexadecimal code, preceded by
+    * a '0x', in the format AARRGGBB.
     *
     * @param c the color
     *
@@ -2386,8 +2383,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Returns a Java-friendly representation of the color as a hexadecimal code,
-    * preceded by a '0x', in the format AARRGGBB.
+    * Returns a Java-friendly representation of the color as a hexadecimal
+    * code, preceded by a '0x', in the format AARRGGBB.
     *
     * @param c the color
     *
@@ -2401,8 +2398,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Returns a web-friendly representation of the color as a hexadecimal code,
-    * preceded by a hash tag, '#', with no alpha.
+    * Returns a web-friendly representation of the color as a hexadecimal
+    * code, preceded by a hash tag, '#', with no alpha.
     *
     * @param c the color
     *
@@ -2414,10 +2411,10 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Returns a web-friendly representation of the color as a hexadecimal code,
-    * preceded by a hash tag, '#', with no alpha. Assumes the number will be
-    * formatted as <code>0xaabbccdd</code> , where alpha is the first channel,
-    * followed by red, green and blue.
+    * Returns a web-friendly representation of the color as a hexadecimal
+    * code, preceded by a hash tag, '#', with no alpha. Assumes the number
+    * will be formatted as <code>0xaabbccdd</code> , where alpha is the first
+    * channel, followed by red, green and blue.
     *
     * @param c the color
     *

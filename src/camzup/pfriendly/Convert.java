@@ -356,8 +356,8 @@ public abstract class Convert {
    }
 
    /**
-    * Converts a 2D mesh entity to a PShape. The entity's transform is converted
-    * to a matrix which is applied to the shape.
+    * Converts a 2D mesh entity to a PShape. The entity's transform is
+    * converted to a matrix which is applied to the shape.
     *
     * @param rndr   the renderer
     * @param source the source entity
@@ -420,8 +420,8 @@ public abstract class Convert {
 
    /**
     * Converts a 2D mesh entity to a PShapeOpenGL. Requires a PGraphicsOpenGL
-    * renderer. The entity's transform is converted to a matrix which is applied
-    * to the shape.
+    * renderer. The entity's transform is converted to a matrix which is
+    * applied to the shape.
     *
     * @param rndr   the renderer
     * @param source the source entity
@@ -487,8 +487,8 @@ public abstract class Convert {
 
    /**
     * Converts a 2D mesh entity to a PShapeOpenGL. Requires a PGraphicsOpenGL
-    * renderer. The entity's transform is converted to a matrix which is applied
-    * to the shape.
+    * renderer. The entity's transform is converted to a matrix which is
+    * applied to the shape.
     *
     * @param rndr   the renderer
     * @param source the source entity

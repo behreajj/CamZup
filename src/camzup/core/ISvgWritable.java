@@ -1,8 +1,8 @@
 package camzup.core;
 
 /**
- * Maintains consistent behavior between classes which support creation of an
- * SVG file.
+ * Maintains consistent behavior between classes which support creation of
+ * an SVG file.
  */
 public interface ISvgWritable {
 
@@ -32,8 +32,8 @@ public interface ISvgWritable {
     * Renders the curve as a string containing an SVG element.<br>
     * <br>
     * Stroke weight is impacted by scaling in transforms, so zoom is a
-    * parameter. If nonuniform zooming is used, zoom can be an average of width
-    * and height or the maximum dimension.
+    * parameter. If nonuniform zooming is used, zoom can be an average of
+    * width and height or the maximum dimension.
     *
     * @param id   the path id
     * @param zoom scaling from external transforms
@@ -59,8 +59,8 @@ public interface ISvgWritable {
    /**
     * Renders this object as an SVG string. A default material renders the
     * mesh's fill and stroke. The background of the SVG is transparent. The
-    * width and height inform the view box dimensions. The origin is expected to
-    * be in unit coordinates, [0.0, 1.0] ; it is multiplied by the view box
+    * width and height inform the view box dimensions. The origin is expected
+    * to be in unit coordinates, [0.0, 1.0] ; it is multiplied by the view box
     * dimensions. The camera scale is set to the shorter edge of the view box,
     * so as to contain the shape.
     *
@@ -120,10 +120,10 @@ public interface ISvgWritable {
    }
 
    /**
-    * Renders this curve as an SVG string. A default material renders the mesh's
-    * fill and stroke. The background of the SVG is transparent. The width and
-    * height supplied form both the view box dimensions, the translation and the
-    * scale of the shape.
+    * Renders this curve as an SVG string. A default material renders the
+    * mesh's fill and stroke. The background of the SVG is transparent. The
+    * width and height supplied form both the view box dimensions, the
+    * translation and the scale of the shape.
     *
     * @param id     the element id
     * @param origin the origin

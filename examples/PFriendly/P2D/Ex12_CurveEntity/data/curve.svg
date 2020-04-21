@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="720" height="405" viewBox="0 0 720 405">
+<rect id="background" x="0" y="0" width="720.0" height="405.0" stroke="none" fill="#fff7d5"></rect>
+<g id="camera" transform="translate(360.000000, 202.500000) scale(1.000000, -1.000000) rotate(0.0) translate(0.0, 0.0)">
+<g id="example" transform="translate(0.0, 0.0) rotate(149.0) scale(200.000000, 200.000000)">
+<g id="6950e31" stroke-width="0.037500" stroke-opacity="0.498039" stroke="#404040" stroke-linejoin="round" stroke-linecap="round" fill="none">
+<path id="curve.0000" d="M -0.304677 0.484532 C -0.562422 0.344618,0.318995 -0.167796,0.064746 -0.313968 C -0.121856 -0.421250,-0.293141 -0.020844,-0.339886 0.189261 C -0.386890 0.400533,-0.161458 0.664867,0.050635 0.708009 C 0.532492 0.806023,0.016075 -0.513361,0.468131 -0.706851 C 0.484579 -0.713891,0.510225 -0.709987,0.520567 -0.695387 C 0.723213 -0.409297,-0.148956 -0.369759,-0.320684 -0.064108 C -0.331794 -0.044333,-0.355496 -0.023020,-0.347784 -0.001688"></path>
+</g>
+</g>
+
+</g>
+</svg>

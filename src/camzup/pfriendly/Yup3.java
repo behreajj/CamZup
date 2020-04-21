@@ -96,8 +96,8 @@ public class Yup3 extends Up3 {
    }
 
    /**
-    * Looks at the center point from the eye point, using the default reference
-    * up axis.
+    * Looks at the center point from the eye point, using the default
+    * reference up axis.
     *
     * @param xEye    camera location x
     * @param yEye    camera location y
@@ -131,8 +131,8 @@ public class Yup3 extends Up3 {
    }
 
    /**
-    * Looks at the center point from the eye point, using the world up axis as a
-    * reference.
+    * Looks at the center point from the eye point, using the world up axis as
+    * a reference.
     *
     * @param xEye    camera location x
     * @param yEye    camera location y
@@ -180,8 +180,8 @@ public class Yup3 extends Up3 {
    }
 
    /**
-    * Looks at the center point from the eye point, using the default reference
-    * up axis.
+    * Looks at the center point from the eye point, using the default
+    * reference up axis.
     *
     * @param eye    the camera's location
     * @param center the point to look at
@@ -201,8 +201,8 @@ public class Yup3 extends Up3 {
    }
 
    /**
-    * Sets the camera to the Processing default, where the origin is in the top
-    * left corner of the sketch and the y axis points downward.
+    * Sets the camera to the Processing default, where the origin is in the
+    * top left corner of the sketch and the y axis points downward.
     */
    @Experimental
    public void camFlipped ( ) {
@@ -407,8 +407,8 @@ public class Yup3 extends Up3 {
 
    /**
     * Set size is the last function called by size, createGraphics,
-    * makeGraphics, etc. when initializing the graphics renderer. Therefore, any
-    * additional values that need initialization can be attempted here.
+    * makeGraphics, etc. when initializing the graphics renderer. Therefore,
+    * any additional values that need initialization can be attempted here.
     */
    @Override
    public void setSize (

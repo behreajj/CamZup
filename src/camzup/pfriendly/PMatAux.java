@@ -10,9 +10,14 @@ import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 
 /**
- * The PMatrix class is marked final and hence cannot be extended and augmented.
- * Due to its use in PGraphicsOpenGL it cannot be ignored. This class stores
- * static functions which alter and/or supplement PMatrix functions.
+ * The PMatrix class is marked final and hence cannot be extended and
+ * augmented. Due to its use in PGraphicsOpenGL it cannot be ignored. This
+ * class stores static functions which alter and/or supplement PMatrix
+ * functions.<br>
+ * <br>
+ * This class is <em>ad hoc</em>, and primarily focused on assisting
+ * functions in OpenGL renderers; therefore, it might not follow all style
+ * guidelines (e.g., it may mutate matrices in place).
  */
 public abstract class PMatAux {
 
@@ -20,11 +25,97 @@ public abstract class PMatAux {
     * A temporary container to hold inverted quaternions for the purpose of
     * inverse rotation.
     */
-   private static final Quaternion ROT_INV = new Quaternion();
+   private static final Quaternion ROT_INV;
+
+   static {
+      ROT_INV = new Quaternion();
+   }
+
+   /**
+    * Returns a matrix set to the Bezier curve basis inverse.
+    *
+    * @return the Bezier basis
+    */
+   public static PMatrix3D bezierBasisInverse ( ) {
+
+      return PMatAux.bezierBasisInverse(( PMatrix3D ) null);
+   }
+
+   /**
+    * Returns a matrix set to the Bezier curve basis inverse:
+    *
+    * <pre>
+    * 0.0,        0.0,        0.0, 1.0,
+    * 0.0,        0.0, 0.33333334, 1.0,
+    * 0.0, 0.33333334, 0.66666666, 1.0,
+    * 1.0,        1.0,        1.0, 1.0
+    * </pre>
+    *
+    * @param target the output matrix
+    *
+    * @return the Bezier basis
+    */
+   public static PMatrix3D bezierBasisInverse ( PMatrix3D target ) {
+
+      if ( target == null ) { target = new PMatrix3D(); }
+
+      target.set(
+         0.0f, 0.0f, 0.0f, 1.0f,
+         0.0f, 0.0f, 0.33333334f, 1.0f,
+         0.0f, 0.33333334f, 0.66666666f, 1.0f,
+         1.0f, 1.0f, 1.0f, 1.0f);
+
+      return target;
+   }
+
+   /**
+    * Returns a matrix set to the Catmull-Rom basis, according to a curve
+    * tightness.
+    *
+    * @param s the curve tightness
+    *
+    * @return the basis
+    */
+   public static PMatrix3D catmullBasis ( final float s ) {
+
+      return PMatAux.catmullBasis(s, ( PMatrix3D ) null);
+   }
+
+   /**
+    * Returns a matrix set to the Catmull-Rom basis, according to a curve
+    * tightness.
+    *
+    * @param s      the curve tightness
+    * @param target the output matrix
+    *
+    * @return the basis
+    */
+   public static PMatrix3D catmullBasis (
+      final float s,
+      PMatrix3D target ) {
+
+      if ( target == null ) { target = new PMatrix3D(); }
+
+      final float u = 1.0f - s;
+      final float th = ( s - 1.0f ) * 0.5f;
+      final float uh = u * 0.5f;
+      final float v = ( s + 3.0f ) * 0.5f;
+
+      /* @formatter:off */
+      target.set(
+           th,                    v,                   -v,   uh,
+            u, ( -5.0f - s ) * 0.5f,             s + 2.0f,   th,
+           th,                 0.0f,                   uh, 0.0f,
+         0.0f,                 1.0f,                 0.0f, 0.0f);
+      /* @formatter:on */
+
+      return target;
+   }
 
    /**
     * Rotates a matrix and its inverse together by an axis and the cosine and
-    * sine of an angle. Does not check whether the axis is normalized or valid.
+    * sine of an angle. Does not check whether the axis is normalized or
+    * valid.
     *
     * @param c     cosine of the angle
     * @param s     sine of the angle
@@ -121,13 +212,16 @@ public abstract class PMatAux {
       final PMatrix3D mInv ) {
 
       final float normRad = -radians * IUtils.ONE_TAU;
-      return PMatAux.compoundRotate(Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f), xAxis, yAxis, zAxis, m, mInv);
+      return PMatAux.compoundRotate(
+         Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f),
+         xAxis, yAxis, zAxis,
+         m, mInv);
    }
 
    /**
-    * Rotates a matrix and its inverse around the z axis by the cosine and sine
-    * of an angle.
+    * Rotates a matrix and its inverse around the z axis by the cosine and
+    * sine of an angle.
     *
     * @param c    the cosine
     * @param s    the sine
@@ -163,8 +257,8 @@ public abstract class PMatAux {
    }
 
    /**
-    * Helper function for inverting a PMatrix3D. Finds the determinant for a 3x3
-    * section of a 4x4 matrix.
+    * Helper function for inverting a PMatrix3D. Finds the determinant for a
+    * 3x3 section of a 4x4 matrix.
     *
     * @param t00 row 0, column 0
     * @param t01 row 0, column 1
@@ -207,7 +301,8 @@ public abstract class PMatAux {
       final float bottom, final float top,
       final float near, final float far ) {
 
-      return PMatAux.frustum(left, right, bottom, top, near, far,
+      return PMatAux.frustum(
+         left, right, bottom, top, near, far,
          ( PMatrix3D ) null);
    }
 
@@ -250,6 +345,7 @@ public abstract class PMatAux {
          0.0f, n2 * h, ( top + bottom ) * h, 0.0f,
          0.0f, 0.0f, ( far + near ) * -d, n2 * far * -d,
          0.0f, 0.0f, -1.0f, 0.0f);
+
       return target;
    }
 
@@ -319,9 +415,9 @@ public abstract class PMatAux {
 
    /**
     * Inverse-rotates a matrix by a quaternion in place. Does so by inverting
-    * the matrix, converting it to a matrix, then multiplying the conversion and
-    * the input matrix. (I.e., unlike rotation, the quaternion is the left hand
-    * operand.)
+    * the matrix, converting it to a matrix, then multiplying the conversion
+    * and the input matrix. (I.e., unlike rotation, the quaternion is the left
+    * hand operand.)
     *
     * @param q      the quaternion
     * @param target the output matrix
@@ -380,6 +476,7 @@ public abstract class PMatAux {
          am20 * target.m02 + am21 * target.m12 + am22 * target.m22,
          am20 * target.m03 + am21 * target.m13 + am22 * target.m23,
          target.m30, target.m31, target.m32, target.m33);
+
       return target;
    }
 
@@ -419,6 +516,7 @@ public abstract class PMatAux {
          c * target.m20 - s * target.m10, c * target.m21 - s * target.m11,
          c * target.m22 - s * target.m12, c * target.m23 - s * target.m13,
          target.m30, target.m31, target.m32, target.m33);
+
       return target;
    }
 
@@ -436,8 +534,10 @@ public abstract class PMatAux {
       final PMatrix3D target ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.invRotateX(Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f), target);
+      return PMatAux.invRotateX(
+         Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f),
+         target);
    }
 
    /**
@@ -476,6 +576,7 @@ public abstract class PMatAux {
          c * target.m20 + s * target.m00, c * target.m21 + s * target.m01,
          c * target.m22 + s * target.m02, c * target.m23 + s * target.m03,
          target.m30, target.m31, target.m32, target.m33);
+
       return target;
    }
 
@@ -493,8 +594,10 @@ public abstract class PMatAux {
       final PMatrix3D target ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.invRotateY(Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f), target);
+      return PMatAux.invRotateY(
+         Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f),
+         target);
    }
 
    /**
@@ -534,6 +637,7 @@ public abstract class PMatAux {
          c * target.m12 - s * target.m02, c * target.m13 - s * target.m03,
          target.m20, target.m21, target.m22, target.m23,
          target.m30, target.m31, target.m32, target.m33);
+
       return target;
    }
 
@@ -551,14 +655,16 @@ public abstract class PMatAux {
       final PMatrix3D target ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.invRotateZ(Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f), target);
+      return PMatAux.invRotateZ(
+         Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f),
+         target);
    }
 
    /**
     * Applies the inverse scale to a matrix in-place. Equivalent to creating a
-    * matrix from 1.0 divided by the scale, then pre-applying the scalar matrix
-    * to the input.
+    * matrix from 1.0 divided by the scale, then pre-applying the scalar
+    * matrix to the input.
     *
     * @param xScale the scale x
     * @param yScale the scale y
@@ -584,13 +690,14 @@ public abstract class PMatAux {
          y * target.m10, y * target.m11, y * target.m12, y * target.m13,
          z * target.m20, z * target.m21, z * target.m22, z * target.m23,
          target.m30, target.m31, target.m32, target.m33);
+
       return target;
    }
 
    /**
     * Applies the inverse scale to a matrix in-place. Equivalent to creating a
-    * matrix from 1.0 divided by the scale, then pre-applying the scalar matrix
-    * to the input.
+    * matrix from 1.0 divided by the scale, then pre-applying the scalar
+    * matrix to the input.
     *
     * @param sx the scale x
     * @param sy the scale y
@@ -608,8 +715,8 @@ public abstract class PMatAux {
 
    /**
     * Applies the inverse scale to a matrix in-place. Equivalent to creating a
-    * matrix from 1.0 divided by the scale, then pre-applying the scalar matrix
-    * to the input.
+    * matrix from 1.0 divided by the scale, then pre-applying the scalar
+    * matrix to the input.
     *
     * @param scalar the scalar
     * @param target the matrix
@@ -651,6 +758,7 @@ public abstract class PMatAux {
          target.m20 - tz * target.m30, target.m21 - tz * target.m31,
          target.m22 - tz * target.m32, target.m23 - tz * target.m33,
          target.m30, target.m31, target.m32, target.m33);
+
       return target;
    }
 
@@ -675,8 +783,8 @@ public abstract class PMatAux {
 
    /**
     * Multiplies two matrices together. Matrix multiplication is not
-    * commutative, so the PMatrix3D class calls in-place multiplication "apply"
-    * and "preApply."
+    * commutative, so the PMatrix3D class calls in-place multiplication
+    * "apply" and "preApply."
     *
     * @param a the left operand
     * @param b the right operand
@@ -695,8 +803,8 @@ public abstract class PMatAux {
 
    /**
     * Multiplies two matrices together. Matrix multiplication is not
-    * commutative, so the PMatrix3D class calls in-place multiplication "apply"
-    * and "preApply."
+    * commutative, so the PMatrix3D class calls in-place multiplication
+    * "apply" and "preApply."
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -734,6 +842,7 @@ public abstract class PMatAux {
          a.m30 * b.m01 + a.m31 * b.m11 + a.m32 * b.m21 + a.m33 * b.m31,
          a.m30 * b.m02 + a.m31 * b.m12 + a.m32 * b.m22 + a.m33 * b.m32,
          a.m30 * b.m03 + a.m31 * b.m13 + a.m32 * b.m23 + a.m33 * b.m33);
+
       return target;
    }
 
@@ -875,7 +984,9 @@ public abstract class PMatAux {
       final float bottom, final float top,
       final float near, final float far ) {
 
-      return PMatAux.orthographic(left, right, bottom, top, near, far,
+      return PMatAux.orthographic(
+         left, right, bottom, top, near,
+         far,
          ( PMatrix3D ) null);
    }
 
@@ -973,8 +1084,8 @@ public abstract class PMatAux {
    }
 
    /**
-    * Rotates a matrix in place around an arbitrary axis by the sine and cosine
-    * of an angle. Does not check that the axis is normalized.
+    * Rotates a matrix in place around an arbitrary axis by the sine and
+    * cosine of an angle. Does not check that the axis is normalized.
     *
     * @param radians the angle in radians
     * @param xAxis   the axis x component
@@ -993,8 +1104,8 @@ public abstract class PMatAux {
    }
 
    /**
-    * Rotates a matrix in place around an arbitrary axis by the sine and cosine
-    * of an angle. Does not check that the axis is normalized.
+    * Rotates a matrix in place around an arbitrary axis by the sine and
+    * cosine of an angle. Does not check that the axis is normalized.
     *
     * @param c      the cosine of the angle
     * @param s      the sine of the angle
@@ -1036,24 +1147,33 @@ public abstract class PMatAux {
       final float bm21 = tay * zAxis + sax;
       final float bm22 = taz * zAxis + c;
 
-      target.set(target.m00 * bm00 + target.m01 * bm10 + target.m02 * bm20,
+      target.set(
+         target.m00 * bm00 + target.m01 * bm10 + target.m02 * bm20,
          target.m00 * bm01 + target.m01 * bm11 + target.m02 * bm21,
-         target.m00 * bm02 + target.m01 * bm12 + target.m02 * bm22, target.m03,
+         target.m00 * bm02 + target.m01 * bm12 + target.m02 * bm22,
+         target.m03,
+
          target.m10 * bm00 + target.m11 * bm10 + target.m12 * bm20,
          target.m10 * bm01 + target.m11 * bm11 + target.m12 * bm21,
-         target.m10 * bm02 + target.m11 * bm12 + target.m12 * bm22, target.m13,
+         target.m10 * bm02 + target.m11 * bm12 + target.m12 * bm22,
+         target.m13,
+
          target.m20 * bm00 + target.m21 * bm10 + target.m22 * bm20,
          target.m20 * bm01 + target.m21 * bm11 + target.m22 * bm21,
-         target.m20 * bm02 + target.m21 * bm12 + target.m22 * bm22, target.m23,
+         target.m20 * bm02 + target.m21 * bm12 + target.m22 * bm22,
+         target.m23,
+
          target.m30 * bm00 + target.m31 * bm10 + target.m32 * bm20,
          target.m30 * bm01 + target.m31 * bm11 + target.m32 * bm21,
-         target.m30 * bm02 + target.m31 * bm12 + target.m32 * bm22, target.m33);
+         target.m30 * bm02 + target.m31 * bm12 + target.m32 * bm22,
+         target.m33);
+
       return target;
    }
 
    /**
-    * Rotates a matrix in place around an arbitrary axis by the sine and cosine
-    * of an angle. Does not check that the axis is normalized.
+    * Rotates a matrix in place around an arbitrary axis by the sine and
+    * cosine of an angle. Does not check that the axis is normalized.
     *
     * @param radians the angle in radians
     * @param xAxis   the axis x component
@@ -1071,8 +1191,11 @@ public abstract class PMatAux {
       final PMatrix3D target ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.rotate(Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f), xAxis, yAxis, zAxis, target);
+      return PMatAux.rotate(
+         Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f),
+         xAxis, yAxis, zAxis,
+         target);
    }
 
    /**
@@ -1134,28 +1257,33 @@ public abstract class PMatAux {
       final float bm21 = yz2 + wx2;
       final float bm22 = 1.0f - xsq2 - ysq2;
 
-      target.set(target.m00 * bm00 + target.m01 * bm10 + target.m02 * bm20,
+      target.set(
+         target.m00 * bm00 + target.m01 * bm10 + target.m02 * bm20,
          target.m00 * bm01 + target.m01 * bm11 + target.m02 * bm21,
-         target.m00 * bm02 + target.m01 * bm12 + target.m02 * bm22, target.m03,
+         target.m00 * bm02 + target.m01 * bm12 + target.m02 * bm22,
+         target.m03,
 
          target.m10 * bm00 + target.m11 * bm10 + target.m12 * bm20,
          target.m10 * bm01 + target.m11 * bm11 + target.m12 * bm21,
-         target.m10 * bm02 + target.m11 * bm12 + target.m12 * bm22, target.m13,
+         target.m10 * bm02 + target.m11 * bm12 + target.m12 * bm22,
+         target.m13,
 
          target.m20 * bm00 + target.m21 * bm10 + target.m22 * bm20,
          target.m20 * bm01 + target.m21 * bm11 + target.m22 * bm21,
-         target.m20 * bm02 + target.m21 * bm12 + target.m22 * bm22, target.m23,
+         target.m20 * bm02 + target.m21 * bm12 + target.m22 * bm22,
+         target.m23,
 
          target.m30 * bm00 + target.m31 * bm10 + target.m32 * bm20,
          target.m30 * bm01 + target.m31 * bm11 + target.m32 * bm21,
-         target.m30 * bm02 + target.m31 * bm12 + target.m32 * bm22, target.m33);
+         target.m30 * bm02 + target.m31 * bm12 + target.m32 * bm22,
+         target.m33);
 
       return target;
    }
 
    /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer to
-    * rotation about an arbitrary axis. This is not necessary for rotate X.
+    * PMatrix3D's instance methods for rotating around orthonormal axes defer
+    * to rotation about an arbitrary axis. This is not necessary for rotate X.
     *
     * @param radians the angle in radians
     *
@@ -1167,8 +1295,8 @@ public abstract class PMatAux {
    }
 
    /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer to
-    * rotation about an arbitrary axis. This is not necessary for rotate X.
+    * PMatrix3D's instance methods for rotating around orthonormal axes defer
+    * to rotation about an arbitrary axis. This is not necessary for rotate X.
     *
     * @param c      the cosine of the angle
     * @param s      the sine of the angle
@@ -1213,8 +1341,8 @@ public abstract class PMatAux {
    }
 
    /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer to
-    * rotation about an arbitrary axis. This is not necessary for rotate Y.
+    * PMatrix3D's instance methods for rotating around orthonormal axes defer
+    * to rotation about an arbitrary axis. This is not necessary for rotate Y.
     *
     * @param radians the angle in radians
     * @param target  the matrix
@@ -1231,8 +1359,8 @@ public abstract class PMatAux {
    }
 
    /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer to
-    * rotation about an arbitrary axis. This is not necessary for rotate Y.
+    * PMatrix3D's instance methods for rotating around orthonormal axes defer
+    * to rotation about an arbitrary axis. This is not necessary for rotate Y.
     *
     * @param radians the angle in radians
     *
@@ -1244,8 +1372,8 @@ public abstract class PMatAux {
    }
 
    /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer to
-    * rotation about an arbitrary axis. This is not necessary for rotate Y.
+    * PMatrix3D's instance methods for rotating around orthonormal axes defer
+    * to rotation about an arbitrary axis. This is not necessary for rotate Y.
     *
     * @param c      the cosine of the angle
     * @param s      the sine of the angle
@@ -1290,8 +1418,8 @@ public abstract class PMatAux {
    }
 
    /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer to
-    * rotation about an arbitrary axis. This is not necessary for rotate Y.
+    * PMatrix3D's instance methods for rotating around orthonormal axes defer
+    * to rotation about an arbitrary axis. This is not necessary for rotate Y.
     *
     * @param radians the angle in radians
     * @param target  the matrix
@@ -1308,8 +1436,8 @@ public abstract class PMatAux {
    }
 
    /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer to
-    * rotation about an arbitrary axis. This is not necessary for rotate Z.
+    * PMatrix3D's instance methods for rotating around orthonormal axes defer
+    * to rotation about an arbitrary axis. This is not necessary for rotate Z.
     *
     * @param radians the angle in radians
     *
@@ -1321,8 +1449,8 @@ public abstract class PMatAux {
    }
 
    /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer to
-    * rotation about an arbitrary axis. This is not necessary for rotate Z.
+    * PMatrix3D's instance methods for rotating around orthonormal axes defer
+    * to rotation about an arbitrary axis. This is not necessary for rotate Z.
     *
     * @param c      the cosine of the angle
     * @param s      the sine of the angle
@@ -1367,8 +1495,8 @@ public abstract class PMatAux {
    }
 
    /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer to
-    * rotation about an arbitrary axis. This is not necessary for rotate Z.
+    * PMatrix3D's instance methods for rotating around orthonormal axes defer
+    * to rotation about an arbitrary axis. This is not necessary for rotate Z.
     *
     * @param radians the angle in radians
     * @param target  the matrix
@@ -1408,15 +1536,22 @@ public abstract class PMatAux {
       final PMatrix2D m,
       final int places ) {
 
-      return new StringBuilder(320).append('\n').append('[').append(' ').append(
-         Utils.toFixed(m.m00, places)).append(',').append(' ').append(
-            Utils.toFixed(m.m01, places)).append(',').append(' ').append(
-               Utils.toFixed(m.m02, places)).append(',').append(' ').append(
-                  '\n').append(Utils.toFixed(m.m10, places)).append(',').append(
-                     ' ').append(Utils.toFixed(m.m11, places)).append(
-                        ',').append(' ').append(
-                           Utils.toFixed(m.m12, places)).append(' ').append(
-                              ']').append('\n').toString();
+      /* @formatter:off */
+      return new StringBuilder(320)
+         .append('\n').append('[').append(' ')
+
+         .append(Utils.toFixed(m.m00, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m01, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m02, places)).append(',').append(' ')
+         .append('\n')
+
+         .append(Utils.toFixed(m.m10, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m11, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m12, places))
+
+         .append(' ').append(']').append('\n')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -1443,32 +1578,36 @@ public abstract class PMatAux {
       final PMatrix3D m,
       final int places ) {
 
-      return new StringBuilder(320).append('\n').append('[').append(' ')
+      /* @formatter:off */
+      return new StringBuilder(320)
+         .append('\n').append('[').append(' ')
 
-         .append(Utils.toFixed(m.m00, places)).append(',').append(' ').append(
-            Utils.toFixed(m.m01, places)).append(',').append(' ').append(
-               Utils.toFixed(m.m02, places)).append(',').append(' ').append(
-                  Utils.toFixed(m.m03, places)).append(',').append(' ').append(
-                     '\n')
+         .append(Utils.toFixed(m.m00, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m01, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m02, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m03, places)).append(',').append(' ')
+         .append('\n')
 
-         .append(Utils.toFixed(m.m10, places)).append(',').append(' ').append(
-            Utils.toFixed(m.m11, places)).append(',').append(' ').append(
-               Utils.toFixed(m.m12, places)).append(',').append(' ').append(
-                  Utils.toFixed(m.m13, places)).append(',').append(' ').append(
-                     '\n')
+         .append(Utils.toFixed(m.m10, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m11, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m12, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m13, places)).append(',').append(' ')
+         .append('\n')
 
-         .append(Utils.toFixed(m.m20, places)).append(',').append(' ').append(
-            Utils.toFixed(m.m21, places)).append(',').append(' ').append(
-               Utils.toFixed(m.m22, places)).append(',').append(' ').append(
-                  Utils.toFixed(m.m23, places)).append(',').append(' ').append(
-                     '\n')
+         .append(Utils.toFixed(m.m20, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m21, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m22, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m23, places)).append(',').append(' ')
+         .append('\n')
 
-         .append(Utils.toFixed(m.m30, places)).append(',').append(' ').append(
-            Utils.toFixed(m.m31, places)).append(',').append(' ').append(
-               Utils.toFixed(m.m32, places)).append(',').append(' ').append(
-                  Utils.toFixed(m.m33, places))
+         .append(Utils.toFixed(m.m30, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m31, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m32, places)).append(',').append(' ')
+         .append(Utils.toFixed(m.m33, places))
 
-         .append(' ').append(']').append('\n').toString();
+         .append(' ').append(']').append('\n')
+         .toString();
+      /* @formatter:on */
    }
 
 }

@@ -1,18 +1,16 @@
 package camzup.core;
 
-import java.io.Serializable;
-
 import java.util.Comparator;
 import java.util.Iterator;
 
 /**
- * A mutable, extensible class influenced by GLSL, OSL and Processing's PVector.
- * This is intended for storing points and directions in three-dimensional
- * graphics programs. Instance methods are limited, while most static methods
- * require an explicit output variable to be provided.
+ * A mutable, extensible class influenced by GLSL, OSL and Processing's
+ * PVector. This is intended for storing points and directions in
+ * three-dimensional graphics programs. Instance methods are limited, while
+ * most static methods require an explicit output variable to be provided.
  */
-public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
-   Serializable {
+public class Vec3 implements Comparable < Vec3 >, Cloneable,
+   Iterable < Float > {
 
    /**
     * Component on the x axis in the Cartesian coordinate system.
@@ -158,8 +156,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Simulates bracket subscript access in an array. When the provided index is
-    * 2 or -1, returns z; 1 or -2, y; 0 or -3, x.
+    * Simulates bracket subscript access in an array. When the provided index
+    * is 2 or -1, returns z; 1 or -2, y; 0 or -3, x.
     *
     * @param index the index
     *
@@ -370,16 +368,22 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Returns a string representation of this vector as a space separated value
-    * for use by OBJ formatting functions.
+    * Returns a string representation of this vector as a space separated
+    * value for use by OBJ formatting functions.
     *
     * @return the string
     */
    public String toObjString ( ) {
 
-      return new StringBuilder(32).append(Utils.toFixed(this.x, 6)).append(
-         ' ').append(Utils.toFixed(this.y, 6)).append(' ').append(
-            Utils.toFixed(this.z, 6)).toString();
+      /* @formatter:off */
+      return new StringBuilder(32)
+         .append(Utils.toFixed(this.x, 6))
+         .append(' ')
+         .append(Utils.toFixed(this.y, 6))
+         .append(' ')
+         .append(Utils.toFixed(this.z, 6))
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -399,16 +403,23 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(80).append("{ x: ").append(
-         Utils.toFixed(this.x, places)).append(", y: ").append(
-            Utils.toFixed(this.y, places)).append(", z: ").append(
-               Utils.toFixed(this.z, places)).append(' ').append(
-                  '}').toString();
+      /* @formatter:off */
+      return new StringBuilder(80)
+         .append("{ x: ")
+         .append(Utils.toFixed(this.x, places))
+         .append(", y: ")
+         .append(Utils.toFixed(this.y, places))
+         .append(", z: ")
+         .append(Utils.toFixed(this.z, places))
+         .append(' ')
+         .append('}')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes. This is
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes. This is
     * formatted as a three-tuple.
     *
     * @return the string
@@ -416,15 +427,25 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    @Experimental
    String toBlenderCode ( ) {
 
-      return new StringBuilder(96).append('(').append(
-         Utils.toFixed(this.x, 6)).append(',').append(' ').append(
-            Utils.toFixed(this.y, 6)).append(',').append(' ').append(
-               Utils.toFixed(this.z, 6)).append(')').toString();
+      /* @formatter:off */
+      return new StringBuilder(96)
+         .append('(')
+         .append(Utils.toFixed(this.x, 6))
+         .append(',')
+         .append(' ')
+         .append(Utils.toFixed(this.y, 6))
+         .append(',')
+         .append(' ')
+         .append(Utils.toFixed(this.z, 6))
+         .append(')')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
     * Tests equivalence between this and another vector. For rough equivalence
-    * of floating point components, use the static approximate function instead.
+    * of floating point components, use the static approximate function
+    * instead.
     *
     * @param v the vector
     *
@@ -443,11 +464,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * The unique identification for serialized classes.
-    */
-   private static final long serialVersionUID = -7814214074840696365L;
-
-   /**
     * Finds the absolute value of each vector component.
     *
     * @param v      the input vector
@@ -461,7 +477,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 v,
       final Vec3 target ) {
 
-      return target.set(Utils.abs(v.x), Utils.abs(v.y), Utils.abs(v.z));
+      return target.set(
+         Utils.abs(v.x),
+         Utils.abs(v.y),
+         Utils.abs(v.z));
    }
 
    /**
@@ -556,7 +575,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 b,
       final Vec3 target ) {
 
-      return target.set(Utils.and(a.x, b.x), Utils.and(a.y, b.y),
+      return target.set(
+         Utils.and(a.x, b.x),
+         Utils.and(a.y, b.y),
          Utils.and(a.z, b.z));
    }
 
@@ -753,8 +774,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Returns to a vector with a negative value on the y axis, (0.0, -1.0, 0.0)
-    * .
+    * Returns to a vector with a negative value on the y axis, (0.0, -1.0,
+    * 0.0) .
     *
     * @param target the output vector
     *
@@ -807,11 +828,11 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Returns a tangent on a Bezier curve described by two anchor points and two
-    * control points according to a step in [0.0, 1.0] . When the step is less
-    * than one, returns the first anchor point subtracted from the first control
-    * point. When the step is greater than one, returns the second anchor point
-    * subtracted from the second control point.
+    * Returns a tangent on a Bezier curve described by two anchor points and
+    * two control points according to a step in [0.0, 1.0] . When the step is
+    * less than one, returns the first anchor point subtracted from the first
+    * control point. When the step is greater than one, returns the second
+    * anchor point subtracted from the second control point.
     *
     * @param ap0    the first anchor point
     * @param cp0    the first control point
@@ -899,7 +920,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 a,
       final Vec3 target ) {
 
-      return target.set(Utils.ceil(a.x), Utils.ceil(a.y), Utils.ceil(a.z));
+      return target.set(
+         Utils.ceil(a.x),
+         Utils.ceil(a.y),
+         Utils.ceil(a.z));
    }
 
    /**
@@ -920,7 +944,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 upperBound,
       final Vec3 target ) {
 
-      return target.set(Utils.clamp(a.x, lowerBound.x, upperBound.x),
+      return target.set(
+         Utils.clamp(a.x, lowerBound.x, upperBound.x),
          Utils.clamp(a.y, lowerBound.y, upperBound.y),
          Utils.clamp(a.z, lowerBound.z, upperBound.z));
    }
@@ -939,7 +964,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 v,
       final Vec3 target ) {
 
-      return target.set(Utils.clamp01(v.x), Utils.clamp01(v.y),
+      return target.set(
+         Utils.clamp01(v.x),
+         Utils.clamp01(v.y),
          Utils.clamp01(v.z));
    }
 
@@ -997,7 +1024,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 sign,
       final Vec3 target ) {
 
-      return target.set(Utils.copySign(magnitude.x, sign.x),
+      return target.set(
+         Utils.copySign(magnitude.x, sign.x),
          Utils.copySign(magnitude.y, sign.y),
          Utils.copySign(magnitude.z, sign.z));
    }
@@ -1013,10 +1041,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
     * <em>a<sub>x</sub> b<sub>y</sub></em> - <em>a<sub>y</sub>
     * b<sub>x</sub></em> )<br>
     * <br>
-    * The cross product is anti-commutative, meaning <em>a</em> x <em>b</em> = -
-    * ( <em>b</em> x <em>a</em> ) . A unit vector does not necessarily result
-    * from the cross of two unit vectors. The 3D equivalent to the 2D vector's
-    * perpendicular.
+    * The cross product is anti-commutative, meaning <em>a</em> x <em>b</em> =
+    * - ( <em>b</em> x <em>a</em> ) . A unit vector does not necessarily
+    * result from the cross of two unit vectors. The 3D equivalent to the 2D
+    * vector's perpendicular.
     *
     * @param a      left operand
     * @param b      right operand
@@ -1031,14 +1059,16 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 b,
       final Vec3 target ) {
 
-      return target.set(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z,
+      return target.set(
+         a.y * b.z - a.z * b.y,
+         a.z * b.x - a.x * b.z,
          a.x * b.y - a.y * b.x);
    }
 
    /**
-    * A specialized form of the cross product which normalizes the result. This
-    * is to facilitate the creation of lookAt matrices. Crossed orthonormal
-    * vectors are as follows:
+    * A specialized form of the cross product which normalizes the result.
+    * This is to facilitate the creation of lookAt matrices. Crossed
+    * orthonormal vectors are as follows:
     * <ul>
     * <li>right x forward = up, <br>
     * ( 1.0, 0.0, 0.0 ) x ( 0.0, 1.0, 0.0 ) = ( 0.0, 0.0, 1.0 )</li>
@@ -1047,8 +1077,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
     * <li>up x right = forward, <br>
     * ( 0.0, 0.0, 1.0 ) x ( 1.0, 0.0, 0.0 ) = ( 0.0, 1.0, 0.0 )</li>
     * </ul>
-    * The cross product is anti-commutative, meaning <em>a</em> x <em>b</em> = -
-    * ( <em>b</em> x <em>a</em> ) .
+    * The cross product is anti-commutative, meaning <em>a</em> x <em>b</em> =
+    * - ( <em>b</em> x <em>a</em> ) .
     *
     * @param a      left operand
     * @param b      right operand
@@ -1111,7 +1141,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 b,
       final Vec3 target ) {
 
-      return target.set(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y),
+      return target.set(
+         Utils.diff(a.x, b.x),
+         Utils.diff(a.y, b.y),
          Utils.diff(a.z, b.z));
    }
 
@@ -1171,8 +1203,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Finds the Manhattan distance between two vectors. Forms a diamond pattern
-    * when plotted.
+    * Finds the Manhattan distance between two vectors. Forms a diamond
+    * pattern when plotted.
     *
     * @param a left operand
     * @param b right operand
@@ -1189,10 +1221,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Finds the Minkowski distance between two vectors. This is a generalization
-    * of other distance formulae. When the exponent value, c, is 1.0, the
-    * Minkowski distance equals the Manhattan distance; when it is 2.0,
-    * Minkowski equals the Euclidean distance.
+    * Finds the Minkowski distance between two vectors. This is a
+    * generalization of other distance formulae. When the exponent value, c,
+    * is 1.0, the Minkowski distance equals the Manhattan distance; when it is
+    * 2.0, Minkowski equals the Euclidean distance.
     *
     * @param a left operand
     * @param b right operand
@@ -1223,8 +1255,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
 
    /**
     * Finds the Euclidean distance squared between two vectors. Equivalent to
-    * subtracting one vector from the other, then finding the dot product of the
-    * difference with itself.
+    * subtracting one vector from the other, then finding the dot product of
+    * the difference with itself.
     *
     * @param a left operand
     * @param b right operand
@@ -1257,7 +1289,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 b,
       final Vec3 target ) {
 
-      return target.set(Utils.div(a, b.x), Utils.div(a, b.y),
+      return target.set(
+         Utils.div(a, b.x),
+         Utils.div(a, b.y),
          Utils.div(a, b.z));
    }
 
@@ -1298,7 +1332,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 b,
       final Vec3 target ) {
 
-      return target.set(Utils.div(a.x, b.x), Utils.div(a.y, b.y),
+      return target.set(
+         Utils.div(a.x,
+            b.x),
+         Utils.div(a.y, b.y),
          Utils.div(a.z, b.z));
    }
 
@@ -1310,7 +1347,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
     * <em>a<sub>y</sub> b<sub>y</sub></em> + <em>a<sub>z</sub>
     * b<sub>z</sub></em><br>
     * <br>
-    * The dot product of a vector with itself is equal to its magnitude squared.
+    * The dot product of a vector with itself is equal to its magnitude
+    * squared.
     *
     * @param a left operand
     * @param b right operand
@@ -1323,8 +1361,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Returns to a vector with a negative value on the z axis, (0.0, 0.0, -1.0)
-    * .
+    * Returns to a vector with a negative value on the z axis, (0.0, 0.0,
+    * -1.0) .
     *
     * @param target the output vector
     *
@@ -1352,8 +1390,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Filters a vector by setting each component to the input component if it is
-    * in bounds and 0.0 if it is out of bounds.
+    * Filters a vector by setting each component to the input component if it
+    * is in bounds and 0.0 if it is out of bounds.
     *
     * @param v      the vector
     * @param lb     the lower bound
@@ -1368,8 +1406,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 ub,
       final Vec3 target ) {
 
-      return target.set(Utils.filter(v.x, lb.x, ub.x),
-         Utils.filter(v.y, lb.y, ub.y), Utils.filter(v.z, lb.z, ub.z));
+      return target.set(
+         Utils.filter(v.x, lb.x, ub.x),
+         Utils.filter(v.y, lb.y, ub.y),
+         Utils.filter(v.z, lb.z, ub.z));
    }
 
    /**
@@ -1398,7 +1438,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Flattens a three dimensional array of vectors to a one dimensional array.
+    * Flattens a three dimensional array of vectors to a one dimensional
+    * array.
     *
     * @param arr the 3D array
     *
@@ -1446,7 +1487,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 v,
       final Vec3 target ) {
 
-      return target.set(Utils.floor(v.x), Utils.floor(v.y), Utils.floor(v.z));
+      return target.set(
+         Utils.floor(v.x),
+         Utils.floor(v.y),
+         Utils.floor(v.z));
    }
 
    /**
@@ -1465,13 +1509,15 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 b,
       final Vec3 target ) {
 
-      return target.set(Utils.fmod(a, b.x), Utils.fmod(a, b.y),
+      return target.set(
+         Utils.fmod(a, b.x),
+         Utils.fmod(a, b.y),
          Utils.fmod(a, b.z));
    }
 
    /**
-    * Applies the % operator (truncation-based modulo) to each component of the
-    * left operand.
+    * Applies the % operator (truncation-based modulo) to each component of
+    * the left operand.
     *
     * @param a      left operand
     * @param b      right operand
@@ -1489,8 +1535,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Applies the % operator (truncation-based modulo) to each component of the
-    * left operand.
+    * Applies the % operator (truncation-based modulo) to each component of
+    * the left operand.
     *
     * @param a      left operand
     * @param b      right operand
@@ -1505,12 +1551,15 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 b,
       final Vec3 target ) {
 
-      return target.set(Utils.fmod(a.x, b.x), Utils.fmod(a.y, b.y),
+      return target.set(
+         Utils.fmod(a.x, b.x),
+         Utils.fmod(a.y, b.y),
          Utils.fmod(a.z, b.z));
    }
 
    /**
-    * Returns to a vector with a positive value on the y axis, (0.0, 1.0, 0.0) .
+    * Returns to a vector with a positive value on the y axis, (0.0, 1.0, 0.0)
+    * .
     *
     * @param target the output vector
     *
@@ -1535,7 +1584,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 v,
       final Vec3 target ) {
 
-      return target.set(Utils.fract(v.x), Utils.fract(v.y), Utils.fract(v.z));
+      return target.set(
+         Utils.fract(v.x),
+         Utils.fract(v.y),
+         Utils.fract(v.z));
    }
 
    /**
@@ -1563,8 +1615,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
        */
 
       final float nrm = azimuth * IUtils.ONE_TAU;
-      return target.set(radius * Utils.scNorm(nrm),
-         radius * Utils.scNorm(nrm - 0.25f), 0.0f);
+      return target.set(
+         radius * Utils.scNorm(nrm),
+         radius * Utils.scNorm(nrm - 0.25f),
+         0.0f);
    }
 
    /**
@@ -1583,7 +1637,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       /* return target.set(Utils.cos(azimuth), Utils.sin(azimuth), 0.0f); */
 
       final float nrm = azimuth * IUtils.ONE_TAU;
-      return target.set(Utils.scNorm(nrm), Utils.scNorm(nrm - 0.25f), 0.0f);
+      return target.set(
+         Utils.scNorm(nrm),
+         Utils.scNorm(nrm - 0.25f),
+         0.0f);
    }
 
    /**
@@ -1595,8 +1652,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
     * \u03c1 sin ( \u03b8 ) cos ( \u03c6 ),<br>
     * - \u03c1 sin ( \u03c6 ) )<br>
     * <br>
-    * The poles will be upright in a z-up coordinate system; sideways in a y-up
-    * coordinate system.
+    * The poles will be upright in a z-up coordinate system; sideways in a
+    * y-up coordinate system.
     *
     * @param azimuth     the angle theta in radians
     * @param inclination the angle phi in radians
@@ -1615,14 +1672,15 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 target ) {
 
       final double rhoCosPhi = radius * Math.cos(inclination);
-      return target.set(( float ) ( rhoCosPhi * Math.cos(azimuth) ),
+      return target.set(
+         ( float ) ( rhoCosPhi * Math.cos(azimuth) ),
          ( float ) ( rhoCosPhi * Math.sin(azimuth) ),
          ( float ) ( radius * -Math.sin(inclination) ));
    }
 
    /**
-    * Creates a vector with a magnitude of 1.0 from an azimuth and inclination,
-    * such that the vector is on the unit sphere.
+    * Creates a vector with a magnitude of 1.0 from an azimuth and
+    * inclination, such that the vector is on the unit sphere.
     *
     * @param azimuth     the azimuth in radians
     * @param inclination the inclination in radians
@@ -1648,13 +1706,17 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
     */
    public static Vec3[][][] grid ( final int res ) {
 
-      return Vec3.grid(res, res, res, -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f);
+      return Vec3.grid(
+         res, res, res,
+         -0.5f, -0.5f,
+         -0.5f,
+         0.5f, 0.5f, 0.5f);
    }
 
    /**
     * Generates a 3D array of vectors. The result is in layer-row-major order,
-    * but the parameters are supplied in reverse: columns first, then rows, then
-    * layers. Defaults to the coordinate range of [-0.5, 0.5] .
+    * but the parameters are supplied in reverse: columns first, then rows,
+    * then layers. Defaults to the coordinate range of [-0.5, 0.5] .
     *
     * @param cols   number of columns
     * @param rows   number of rows
@@ -1667,14 +1729,16 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final int rows,
       final int layers ) {
 
-      return Vec3.grid(cols, rows, layers, -0.5f, -0.5f, -0.5f, 0.5f, 0.5f,
-         0.5f);
+      return Vec3.grid(
+         cols, rows, layers,
+         -0.5f, -0.5f, -0.5f,
+         0.5f, 0.5f, 0.5f);
    }
 
    /**
     * Generates a 3D array of vectors. The result is in layer-row-major order,
-    * but the parameters are supplied in reverse: columns first, then rows, then
-    * layers.
+    * but the parameters are supplied in reverse: columns first, then rows,
+    * then layers.
     *
     * @param cols       number of columns
     * @param rows       number of rows
@@ -1691,14 +1755,17 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final float lowerBound,
       final float upperBound ) {
 
-      return Vec3.grid(cols, rows, layers, lowerBound, lowerBound, lowerBound,
+      return Vec3.grid(
+         cols, rows, layers,
+         lowerBound, lowerBound,
+         lowerBound,
          upperBound, upperBound, upperBound);
    }
 
    /**
     * Generates a 3D array of vectors. The result is in layer-row-major order,
-    * but the parameters are supplied in reverse: columns first, then rows, then
-    * layers.
+    * but the parameters are supplied in reverse: columns first, then rows,
+    * then layers.
     *
     * @param cols       number of columns
     * @param rows       number of rows
@@ -1715,13 +1782,16 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 lowerBound,
       final Vec3 upperBound ) {
 
-      return Vec3.grid(cols, rows, layers, lowerBound.x, lowerBound.y,
-         lowerBound.z, upperBound.x, upperBound.y, upperBound.z);
+      return Vec3.grid(
+         cols, rows, layers,
+         lowerBound.x, lowerBound.y, lowerBound.z,
+         upperBound.x, upperBound.y, upperBound.z);
    }
 
    /**
     * Generates a 3D array of vectors. The array is ordered by layers,
-    * latitudes, then longitudes; the parameters are supplied in reverse order.
+    * latitudes, then longitudes; the parameters are supplied in reverse
+    * order.
     *
     * @param longitudes the longitudes, azimuths
     * @param latitudes  the latitudes, inclinations
@@ -1737,7 +1807,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
 
    /**
     * Generates a 3D array of vectors. The array is ordered by layers,
-    * latitudes, then longitudes; the parameters are supplied in reverse order.
+    * latitudes, then longitudes; the parameters are supplied in reverse
+    * order.
     *
     * @param longitudes   the longitudes, azimuths
     * @param latitudes    the latitudes, inclinations
@@ -1756,7 +1827,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
 
    /**
     * Generates a 3D array of vectors. The array is ordered by layers,
-    * latitudes, then longitudes; the parameters are supplied in reverse order.
+    * latitudes, then longitudes; the parameters are supplied in reverse
+    * order.
     *
     * @param longitudes the longitudes, azimuths
     * @param latitudes  the latitudes, inclinations
@@ -1779,7 +1851,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
 
    /**
     * Generates a 3D array of vectors. The array is ordered by layers,
-    * latitudes, then longitudes; the parameters are supplied in reverse order.
+    * latitudes, then longitudes; the parameters are supplied in reverse
+    * order.
     *
     * @param longitudes   the longitudes, azimuths
     * @param latitudes    the latitudes, inclinations
@@ -1865,7 +1938,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 b,
       final Vec3 target ) {
 
-      return target.set(a.x > b.x, a.y > b.y, a.z > b.z);
+      return target.set(
+         a.x > b.x,
+         a.y > b.y,
+         a.z > b.z);
    }
 
    /**
@@ -1883,7 +1959,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 b,
       final Vec3 target ) {
 
-      return target.set(a.x >= b.x, a.y >= b.y, a.z >= b.z);
+      return target.set(
+         a.x >= b.x,
+         a.y >= b.y,
+         a.z >= b.z);
    }
 
    /**
@@ -1902,9 +1981,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Finds the vector's inclination in the range [-\u03c0 / 2.0, \u03c0 / 2.0]
-    * . It is necessary to calculate the vector's magnitude in order to find its
-    * inclination.
+    * Finds the vector's inclination in the range [-\u03c0 / 2.0, \u03c0 /
+    * 2.0] . It is necessary to calculate the vector's magnitude in order to
+    * find its inclination.
     *
     * @param v the input vector
     *
@@ -1963,8 +2042,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Tests to see if the vector is on the unit sphere, i.e., has a magnitude of
-    * approximately 1.0.
+    * Tests to see if the vector is on the unit sphere, i.e., has a magnitude
+    * of approximately 1.0.
     *
     * @param v the input vector
     *
@@ -2015,7 +2094,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Evaluates whether the left comparisand is less than the right comparisand.
+    * Evaluates whether the left comparisand is less than the right
+    * comparisand.
     *
     * @param a      left comparisand
     * @param b      right comparisand
@@ -2028,12 +2108,15 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 b,
       final Vec3 target ) {
 
-      return target.set(a.x < b.x, a.y < b.y, a.z < b.z);
+      return target.set(
+         a.x < b.x,
+         a.y < b.y,
+         a.z < b.z);
    }
 
    /**
-    * Evaluates whether the left comparisand is less than or equal to the right
-    * comparisand.
+    * Evaluates whether the left comparisand is less than or equal to the
+    * right comparisand.
     *
     * @param a      left comparisand
     * @param b      right comparisand
@@ -2046,14 +2129,17 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 b,
       final Vec3 target ) {
 
-      return target.set(a.x <= b.x, a.y <= b.y, a.z <= b.z);
+      return target.set(
+         a.x <= b.x,
+         a.y <= b.y,
+         a.z <= b.z);
    }
 
    /**
-    * Finds the length, or magnitude, of a vector, |<em>a</em>| . Also referred
-    * to as the radius when using spherical coordinates. Uses the formula \u221a
-    * <em>a</em> \u00b7 <em>a</em> . Where possible, use magSq or dot to avoid
-    * the computational cost of the square-root.
+    * Finds the length, or magnitude, of a vector, |<em>a</em>| . Also
+    * referred to as the radius when using spherical coordinates. Uses the
+    * formula \u221a <em>a</em> \u00b7 <em>a</em> . Where possible, use magSq
+    * or dot to avoid the computational cost of the square-root.
     *
     * @param v the input vector
     *
@@ -2071,8 +2157,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    /**
     * Finds the length-, or magnitude-, squared of a vector,
     * |<em>a</em>|<sup>2</sup>. Returns the same result as <em>a</em> \u00b7
-    * <em>a</em> . Useful when calculating the lengths of many vectors, so as to
-    * avoid the computational cost of the square-root.
+    * <em>a</em> . Useful when calculating the lengths of many vectors, so as
+    * to avoid the computational cost of the square-root.
     *
     * @param v the input vector
     *
@@ -2129,13 +2215,16 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final float upperBound,
       final Vec3 target ) {
 
-      return target.set(Utils.max(a.x, upperBound), Utils.max(a.y, upperBound),
+      return target.set(
+         Utils.max(a.x, upperBound),
+         Utils.max(a.y,
+            upperBound),
          Utils.max(a.z, upperBound));
    }
 
    /**
-    * Sets the output vector to the maximum components of the input vector and a
-    * upper bound.
+    * Sets the output vector to the maximum components of the input vector and
+    * a upper bound.
     *
     * @param a          the input vector
     * @param upperBound the upper bound
@@ -2150,13 +2239,15 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 upperBound,
       final Vec3 target ) {
 
-      return target.set(Utils.max(a.x, upperBound.x),
-         Utils.max(a.y, upperBound.y), Utils.max(a.z, upperBound.z));
+      return target.set(
+         Utils.max(a.x, upperBound.x),
+         Utils.max(a.y, upperBound.y),
+         Utils.max(a.z, upperBound.z));
    }
 
    /**
-    * Sets the output vector to the minimum components of the input vector and a
-    * lower bound.
+    * Sets the output vector to the minimum components of the input vector and
+    * a lower bound.
     *
     * @param a          the input value
     * @param lowerBound the lower bound
@@ -2169,13 +2260,16 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final float lowerBound,
       final Vec3 target ) {
 
-      return target.set(Utils.min(a.x, lowerBound), Utils.min(a.y, lowerBound),
+      return target.set(
+         Utils.min(a.x, lowerBound),
+         Utils.min(a.y,
+            lowerBound),
          Utils.min(a.z, lowerBound));
    }
 
    /**
-    * Sets the output vector to the minimum components of the input vector and a
-    * lower bound.
+    * Sets the output vector to the minimum components of the input vector and
+    * a lower bound.
     *
     * @param a          the input vector
     * @param lowerBound the lower bound
@@ -2190,8 +2284,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 lowerBound,
       final Vec3 target ) {
 
-      return target.set(Utils.min(a.x, lowerBound.x),
-         Utils.min(a.y, lowerBound.y), Utils.min(a.z, lowerBound.z));
+      return target.set(
+         Utils.min(a.x, lowerBound.x),
+         Utils.min(a.y, lowerBound.y),
+         Utils.min(a.z, lowerBound.z));
    }
 
    /**
@@ -2210,14 +2306,14 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final float step,
       final Vec3 target ) {
 
-      // return Vec3.EASING.apply(origin, dest, step, target);
-
       if ( step <= 0.0f ) { return target.set(origin); }
       if ( step >= 1.0f ) { return target.set(dest); }
 
       final float u = 1.0f - step;
-      return target.set(u * origin.x + step * dest.x,
-         u * origin.y + step * dest.y, u * origin.z + step * dest.z);
+      return target.set(
+         u * origin.x + step * dest.x,
+         u * origin.y + step * dest.y,
+         u * origin.z + step * dest.z);
    }
 
    /**
@@ -2258,7 +2354,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 b,
       final Vec3 target ) {
 
-      return target.set(Utils.mod(a, b.x), Utils.mod(a, b.y),
+      return target.set(
+         Utils.mod(a, b.x),
+         Utils.mod(a,
+            b.y),
          Utils.mod(a, b.z));
    }
 
@@ -2280,7 +2379,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
 
       if ( b == 0.0f ) { return target.set(a); }
 
-      return target.set(Utils.modUnchecked(a.x, b), Utils.modUnchecked(a.y, b),
+      return target.set(
+         Utils.modUnchecked(a.x, b),
+         Utils.modUnchecked(a.y,
+            b),
          Utils.modUnchecked(a.z, b));
    }
 
@@ -2300,13 +2402,16 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 b,
       final Vec3 target ) {
 
-      return target.set(Utils.mod(a.x, b.x), Utils.mod(a.y, b.y),
+      return target.set(
+         Utils.mod(a.x, b.x),
+         Utils.mod(a.y,
+            b.y),
          Utils.mod(a.z, b.z));
    }
 
    /**
-    * A specialized form of modulo which subtracts the floor of the vector from
-    * the vector.
+    * A specialized form of modulo which subtracts the floor of the vector
+    * from the vector.
     *
     * @param v      the input vector
     * @param target the output vector
@@ -2319,7 +2424,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 v,
       final Vec3 target ) {
 
-      return target.set(Utils.mod1(v.x), Utils.mod1(v.y), Utils.mod1(v.z));
+      return target.set(
+         Utils.mod1(v.x),
+         Utils.mod1(v.y),
+         Utils.mod1(v.z));
    }
 
    /**
@@ -2417,8 +2525,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
 
    /**
     * Divides a vector by its magnitude, such that the new magnitude is 1.0.
-    * <em>\u00e2</em> = <em>a</em> / |<em>a</em>|. The result is a unit vector,
-    * as it lies on the unit sphere.
+    * <em>\u00e2</em> = <em>a</em> / |<em>a</em>|. The result is a unit
+    * vector, as it lies on the unit sphere.
     *
     * @param v      the input vector
     * @param target the output vector
@@ -2449,8 +2557,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 v,
       final Vec3 target ) {
 
-      return target.set(v.x != 0.0f ? 0.0f : 1.0f, v.y != 0.0f ? 0.0f
-         : 1.0f, v.z != 0.0f ? 0.0f : 1.0f);
+      return target.set(
+         v.x != 0.0f ? 0.0f : 1.0f,
+         v.y != 0.0f ? 0.0f : 1.0f,
+         v.z != 0.0f ? 0.0f : 1.0f);
    }
 
    /**
@@ -2854,7 +2964,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final float bSq = Vec3.magSq(b);
       if ( bSq == 0.0f ) { return target.set(a); }
       final float scprj = Vec3.dot(a, b) / bSq;
-      return target.set(a.x - b.x * scprj, a.y - b.y * scprj,
+      return target.set(
+         a.x - b.x * scprj,
+         a.y - b.y * scprj,
          a.z - b.z * scprj);
    }
 
@@ -2887,8 +2999,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Normalizes a vector, then multiplies it by a scalar, in effect setting its
-    * magnitude to that scalar.
+    * Normalizes a vector, then multiplies it by a scalar, in effect setting
+    * its magnitude to that scalar.
     *
     * @param v      the vector
     * @param scalar the scalar
@@ -2911,8 +3023,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Normalizes a vector, then multiplies it by a scalar, in effect setting its
-    * magnitude to that scalar.
+    * Normalizes a vector, then multiplies it by a scalar, in effect setting
+    * its magnitude to that scalar.
     *
     * @param v          the vector
     * @param scalar     the scalar
@@ -2980,7 +3092,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Returns to a vector with a positive value on the x axis, (1.0, 0.0, 0.0) .
+    * Returns to a vector with a positive value on the x axis, (1.0, 0.0, 0.0)
+    * .
     *
     * @param target the output vector
     *
@@ -3065,8 +3178,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Rotates a vector around the x axis. Accepts calculated sine and cosine of
-    * an angle, so that collections of vectors can be efficiently rotated
+    * Rotates a vector around the x axis. Accepts calculated sine and cosine
+    * of an angle, so that collections of vectors can be efficiently rotated
     * without repeatedly calling cos and sin.
     *
     * @param v      the input vector
@@ -3082,7 +3195,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final float sina,
       final Vec3 target ) {
 
-      return target.set(v.x, cosa * v.y - sina * v.z, cosa * v.z + sina * v.y);
+      return target.set(
+         v.x,
+         cosa * v.y - sina * v.z,
+         cosa * v.z + sina * v.y);
    }
 
    /**
@@ -3115,9 +3231,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Rotates a vector around the y axis. Accepts pre-calculated sine and cosine
-    * of an angle, so that collections of vectors can be efficiently rotated
-    * without repeatedly calling cos and sin.
+    * Rotates a vector around the y axis. Accepts pre-calculated sine and
+    * cosine of an angle, so that collections of vectors can be efficiently
+    * rotated without repeatedly calling cos and sin.
     *
     * @param v      the input vector
     * @param cosa   cosine of the angle
@@ -3132,7 +3248,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final float sina,
       final Vec3 target ) {
 
-      return target.set(cosa * v.x + sina * v.z, v.y, cosa * v.z - sina * v.x);
+      return target.set(
+         cosa * v.x + sina * v.z,
+         v.y,
+         cosa * v.z - sina * v.x);
    }
 
    /**
@@ -3165,9 +3284,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Rotates a vector around the z axis. Accepts pre-calculated sine and cosine
-    * of an angle, so that collections of vectors can be efficiently rotated
-    * without repeatedly calling cos and sin.
+    * Rotates a vector around the z axis. Accepts pre-calculated sine and
+    * cosine of an angle, so that collections of vectors can be efficiently
+    * rotated without repeatedly calling cos and sin.
     *
     * @param v      the input vector
     * @param cosa   cosine of the angle
@@ -3182,7 +3301,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final float sina,
       final Vec3 target ) {
 
-      return target.set(cosa * v.x - sina * v.y, cosa * v.y + sina * v.x, v.z);
+      return target.set(
+         cosa * v.x - sina * v.y,
+         cosa * v.y + sina * v.x,
+         v.z);
    }
 
    /**
@@ -3362,11 +3484,15 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
       final Vec3 v,
       final Vec3 target ) {
 
-      return target.set(( int ) v.x, ( int ) v.y, ( int ) v.z);
+      return target.set(
+         ( int ) v.x,
+         ( int ) v.y,
+         ( int ) v.z);
    }
 
    /**
-    * Returns to a vector with a positive value on the z-axis, (0.0, 0.0, 1.0) .
+    * Returns to a vector with a positive value on the z-axis, (0.0, 0.0, 1.0)
+    * .
     *
     * @param target the output vector
     *
@@ -3379,8 +3505,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
 
    /**
     * Wraps a vector around a periodic range as defined by an upper and lower
-    * bound: lower bounds inclusive; upper bounds exclusive. In cases where the
-    * lower bound is (0.0, 0.0, 0.0) , use {@link Vec3#mod(Vec3, Vec3, Vec3)} .
+    * bound: lower bounds inclusive; upper bounds exclusive. In cases where
+    * the lower bound is (0.0, 0.0, 0.0) , use
+    * {@link Vec3#mod(Vec3, Vec3, Vec3)} .
     *
     * @param v      the vector
     * @param lb     the lower bound
@@ -3441,12 +3568,12 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
 
    /**
     * Generates a 3D array of vectors. The result is in layer-row-major order,
-    * but the parameters are supplied in reverse: columns first, then rows, then
-    * layers.<br>
+    * but the parameters are supplied in reverse: columns first, then rows,
+    * then layers.<br>
     * <br>
     * This is separated to make overriding the public grid functions easier.
-    * This is private because it is too easy for integers to be quietly promoted
-    * to floats if the signature parameters are confused.
+    * This is private because it is too easy for integers to be quietly
+    * promoted to floats if the signature parameters are confused.
     *
     * @param cols   number of columns
     * @param rows   number of rows
@@ -3515,8 +3642,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * An abstract class that may serve as an umbrella for any custom comparators
-    * of Vec3 s.
+    * An abstract class that may serve as an umbrella for any custom
+    * comparators of Vec3 s.
     */
    public static abstract class AbstrComparator
       implements Comparator < Vec3 > {

@@ -22,7 +22,8 @@ public class Entity3 extends Entity implements ISpatial3 {
    }
 
    /**
-    * Constructs a named entity. A new transform is created by the constructor.
+    * Constructs a named entity. A new transform is created by the
+    * constructor.
     *
     * @param name the name
     */

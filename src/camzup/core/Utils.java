@@ -38,24 +38,21 @@ public abstract class Utils implements IUtils {
     */
    public static float abs ( final float value ) {
 
-      /* @formatter:off */
-      return Float.intBitsToFloat(0x7fffffff
-         & Float.floatToRawIntBits(value));
-      /* @formatter:on */
+      return Float.intBitsToFloat(0x7fffffff & Float.floatToRawIntBits(value));
    }
 
    /**
-    * A bounds-checked approximation of the arc-cosine for single precision real
-    * numbers. Returns a value in the range [0.0, \u03c0]: \u03c0, when the
-    * input is -1.0; \u03c0 / 2.0, when the input is 0.0; 0.0, when the input is
-    * 1.0.<br>
+    * A bounds-checked approximation of the arc-cosine for single precision
+    * real numbers. Returns a value in the range [0.0, \u03c0]: \u03c0, when
+    * the input is -1.0; \u03c0 / 2.0, when the input is 0.0; 0.0, when the
+    * input is 1.0.<br>
     * <br>
     * An alternative to {@link Math#acos(double)} . Based on the algorithm at
     * the <a href= "https://developer.download.nvidia.com/cg/acos.html">Nvidia
     * Cg 3.1 Toolkit Documentation</a>. This cites M. Abramowitz and I.A.
-    * Stegun, Eds., <em>Handbook of Mathematical Functions</em>, possibly p. 83,
-    * which cites <em>Approximations for Digital Computers</em> by C. Hastings,
-    * Jr.
+    * Stegun, Eds., <em>Handbook of Mathematical Functions</em>, possibly p.
+    * 83, which cites <em>Approximations for Digital Computers</em> by C.
+    * Hastings, Jr.
     *
     * @param value the input value
     *
@@ -101,8 +98,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * A quick approximation test. Tests to see if the absolute of the difference
-    * between two values is less than an epsilon. Does not handle edge cases.
+    * A quick approximation test. Tests to see if the absolute of the
+    * difference between two values is less than an epsilon. Does not handle
+    * edge cases.
     *
     * @param a the left operand
     * @param b the right operand
@@ -118,8 +116,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * A quick approximation test. Tests to see if the absolute of the difference
-    * between two values is less than a tolerance. Does not handle edge cases.
+    * A quick approximation test. Tests to see if the absolute of the
+    * difference between two values is less than a tolerance. Does not handle
+    * edge cases.
     *
     * @param a         the left operand
     * @param b         the right operand
@@ -141,15 +140,15 @@ public abstract class Utils implements IUtils {
    /**
     * A bounds-checked approximation of the arc-sine for single precision real
     * numbers. Returns a value in the range [-\u03c0 / 2.0, \u03c0 / 2.0]:
-    * -\u03c0 / 2.0, when the input is -1.0; 0.0, when the input is 0.0; \u03c0
-    * / 2.0, when the input is 1.0.<br>
+    * -\u03c0 / 2.0, when the input is -1.0; 0.0, when the input is 0.0;
+    * \u03c0 / 2.0, when the input is 1.0.<br>
     * <br>
     * An alternative to {@link Math#asin(double)} . Based on the algorithm at
     * the <a href= "https://developer.download.nvidia.com/cg/asin.html">Nvidia
     * Cg 3.1 Toolkit Documentation</a> . This cites M. Abramowitz and I.A.
-    * Stegun, Eds., <em>Handbook of Mathematical Functions</em>, possibly p. 83,
-    * which cites <em>Approximations for Digital Computers</em> by C. Hastings,
-    * Jr.
+    * Stegun, Eds., <em>Handbook of Mathematical Functions</em>, possibly p.
+    * 83, which cites <em>Approximations for Digital Computers</em> by C.
+    * Hastings, Jr.
     *
     * @param value the input value
     *
@@ -176,11 +175,11 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds a single precision approximation of a signed angle given a vertical
-    * and horizontal component. Note that the vertical component
+    * Finds a single precision approximation of a signed angle given a
+    * vertical and horizontal component. Note that the vertical component
     * <em>precedes</em> the horizontal. The return value falls in the range
-    * [-\u03c0, \u03c0] . An alternative to {@link Math#atan2(double, double)} .
-    * Based on the algorithm at the
+    * [-\u03c0, \u03c0] . An alternative to {@link Math#atan2(double, double)}
+    * . Based on the algorithm at the
     * <a href= "https://developer.download.nvidia.com/cg/atan2.html">Nvidia Cg
     * 3.1 Toolkit Documentation</a> .
     *
@@ -219,8 +218,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Converts a float to a boolean, then to an integer. In effect, this asks if
-    * the value is true, or is the case.<br>
+    * Converts a float to a boolean, then to an integer. In effect, this asks
+    * if the value is true, or is the case.<br>
     * <br>
     * Used in conjunction with float-based boolean operators: or, and, etc.
     *
@@ -252,14 +251,11 @@ public abstract class Utils implements IUtils {
     * @see Utils#or(float, float)
     * @see Utils#and(float, float)
     */
-   public static int bool ( final int value ) {
-
-      return value != 0 ? 1 : 0;
-   }
+   public static int bool ( final int value ) { return value != 0 ? 1 : 0; }
 
    /**
-    * An alternative to {@link Math#ceil(double)} . ceil ( x ) = - floor ( -x )
-    * .
+    * An alternative to {@link Math#ceil(double)} . ceil ( x ) = - floor ( -x
+    * ) .
     *
     * @param value the input value
     *
@@ -337,7 +333,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Returns the first floating-point argument with the sign of the second
-    * floating-point argument. An alias of {@link Math#copySign(float, float)} .
+    * floating-point argument. An alias of {@link Math#copySign(float, float)}
+    * .
     *
     * @param magnitude the magnitude
     * @param sign      the sign
@@ -356,8 +353,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds the single-precision cosine of an angle in radians. Returns a value
-    * in the range [-1.0, 1.0] .
+    * Finds the single-precision cosine of an angle in radians. Returns a
+    * value in the range [-1.0, 1.0] .
     *
     * @param radians the angle in radians
     *
@@ -415,8 +412,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Divides the left operand by the right, but returns zero when the
-    * denominator is zero, avoiding the java.lang.ArithmeticException . This is
-    * to simulate the convention of shading languages like GLSL and OSL.
+    * denominator is zero, avoiding the java.lang.ArithmeticException . This
+    * is to simulate the convention of shading languages like GLSL and OSL.
     *
     * @param a the numerator
     * @param b the denominator
@@ -430,8 +427,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Divides the left operand by the right, but returns zero when the
-    * denominator is zero, avoiding the java.lang.ArithmeticException . This is
-    * to simulate the convention of shading languages like GLSL and OSL.
+    * denominator is zero, avoiding the java.lang.ArithmeticException . This
+    * is to simulate the convention of shading languages like GLSL and OSL.
     *
     * @param a the numerator
     * @param b the denominator
@@ -445,8 +442,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Divides the left operand by the right, but returns zero when the
-    * denominator is zero, avoiding the java.lang.ArithmeticException . This is
-    * to simulate the convention of shading languages like GLSL and OSL.
+    * denominator is zero, avoiding the java.lang.ArithmeticException . This
+    * is to simulate the convention of shading languages like GLSL and OSL.
     *
     * @param a the numerator
     * @param b the denominator
@@ -477,8 +474,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * An alternative to {@link Math#floor(double)} . Returns 0.0 when the input
-    * value is NaN .
+    * An alternative to {@link Math#floor(double)} . Returns 0.0 when the
+    * input value is NaN .
     *
     * @param value the input value
     *
@@ -491,8 +488,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * An alternative to {@link Math#floor(double)} . Returns 0.0 when the input
-    * value is NaN .
+    * An alternative to {@link Math#floor(double)} . Returns 0.0 when the
+    * input value is NaN .
     *
     * @param value the input value
     *
@@ -519,13 +516,13 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Applies the modulo operator (%) to the operands, which implicitly uses the
-    * formula fmod ( a, b ) := a - b trunc ( a / b ) .<br>
+    * Applies the modulo operator (%) to the operands, which implicitly uses
+    * the formula fmod ( a, b ) := a - b trunc ( a / b ) .<br>
     * <br>
     * When the left operand is negative and the right operand is positive, the
-    * result will be negative. For periodic values, such as an angle, where the
-    * direction of change could be either clockwise or counterclockwise, use
-    * mod.<br>
+    * result will be negative. For periodic values, such as an angle, where
+    * the direction of change could be either clockwise or counterclockwise,
+    * use mod.<br>
     * <br>
     * If the right operand is one, use fract ( a ) or a - trunc ( a )
     * instead.<br>
@@ -548,9 +545,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds the fractional portion of the input value by subtracting the value's
-    * truncation from the value, i.e., fract ( a ) := a - trunc ( a ) . Returns
-    * 1.0 if the input value is NaN.<br>
+    * Finds the fractional portion of the input value by subtracting the
+    * value's truncation from the value, i.e., fract ( a ) := a - trunc ( a )
+    * . Returns 1.0 if the input value is NaN.<br>
     * <br>
     * Use this instead of fmod ( a, 1.0 ) or a % 1.0 .
     *
@@ -566,8 +563,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds the hypotenuse between two values. Useful when finding the magnitude
-    * of a vector.
+    * Finds the hypotenuse between two values. Useful when finding the
+    * magnitude of a vector.
     *
     * @param a the first value
     * @param b the second value
@@ -587,8 +584,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds the hypotenuse given three values. Useful when finding the magnitude
-    * of a vector.
+    * Finds the hypotenuse given three values. Useful when finding the
+    * magnitude of a vector.
     *
     * @param a the first value
     * @param b the second value
@@ -607,8 +604,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds one divided by the hypotenuse of two values. Useful when normalizing
-    * vectors.
+    * Finds one divided by the hypotenuse of two values. Useful when
+    * normalizing vectors.
     *
     * @param a the first value
     * @param b the second value
@@ -646,8 +643,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * A fast inverse square-root. Returns 0.0 when the value is less then or
-    * equal to zero. Use the unchecked version when the input value is known to
-    * be positive.
+    * equal to zero. Use the unchecked version when the input value is known
+    * to be positive.
     *
     * @param value the value
     *
@@ -664,11 +661,11 @@ public abstract class Utils implements IUtils {
     * The inverse square root implementation based on the 'evil bit hack' from
     * Quake 3, as described by Chris Lomont in
     * "<a href= "http://www.lomont.org/papers/2003/InvSqrt.pdf">Fast Inverse
-    * Square Root</a>." For accuracy, the result is refined three times with the
-    * Newton-Raphson method.<br>
+    * Square Root</a>." For accuracy, the result is refined three times with
+    * the Newton-Raphson method.<br>
     * <br>
-    * Useful when normalizing vectors or quaternions. Give this preference over
-    * {@link Utils#sqrt(float)}, which <em>depends</em> on this function.
+    * Useful when normalizing vectors or quaternions. Give this preference
+    * over {@link Utils#sqrt(float)}, which <em>depends</em> on this function.
     *
     * @param value the value
     *
@@ -695,8 +692,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Linear interpolation from the origin to the destination value by a step.
-    * If the step is less than zero, returns the origin. If the step is greater
-    * than one, returns the destination.
+    * If the step is less than zero, returns the origin. If the step is
+    * greater than one, returns the destination.
     *
     * @param origin the origin value
     * @param dest   the destination value
@@ -718,8 +715,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Linear interpolation from the origin to the destination value by a step.
-    * If the step is less than zero, returns the origin. If the step is greater
-    * than one, returns the destination.
+    * If the step is less than zero, returns the origin. If the step is
+    * greater than one, returns the destination.
     *
     * @param origin the origin value
     * @param dest   the destination value
@@ -777,8 +774,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Linear interpolation from the origin to the destination value by a step.
-    * Does not check to see if the step is beyond the range [0.0, 1.0] . Rounds
-    * the result to an integer.
+    * Does not check to see if the step is beyond the range [0.0, 1.0] .
+    * Rounds the result to an integer.
     *
     * @param origin the origin value
     * @param dest   the destination value
@@ -797,9 +794,10 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds the logarithm of a value in an arbitrary base. Equivalent to finding
-    * the natural logarithm of a value, then dividing it by the logarithm of the
-    * base. Returns zero if the base is less than or equal to zero.
+    * Finds the logarithm of a value in an arbitrary base. Equivalent to
+    * finding the natural logarithm of a value, then dividing it by the
+    * logarithm of the base. Returns zero if the base is less than or equal to
+    * zero.
     *
     * @param a the value
     * @param b the base
@@ -815,9 +813,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Maps an input value from an original range to a target range. If the upper
-    * and lower bound of the original range are equal, will return the lower
-    * bound of the destination range.
+    * Maps an input value from an original range to a target range. If the
+    * upper and lower bound of the original range are equal, will return the
+    * lower bound of the destination range.
     *
     * @param value    the input value
     * @param lbOrigin lower bound of original range
@@ -840,7 +838,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * A convenience function for finding the maximum of more than three inputs.
+    * Finds the greatest, or maximum, among a list of values.
     *
     * @param fs the list of values
     *
@@ -857,7 +855,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * An alternative to {@link Math#max(float, float)} .
+    * Finds the greater, or maximum, of two values. An alternative to
+    * {@link Math#max(float, float)} .
     *
     * @param a the left operand
     * @param b the right operand
@@ -870,7 +869,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * A convenience function for finding the maximum of three inputs.
+    * Finds the greatest, or maximum, among three values.
     *
     * @param a the first input
     * @param b the second input
@@ -888,7 +887,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * A convenience function for finding the minimum of more than three inputs.
+    * Finds the least, or minimum, among a list of values.
     *
     * @param fs the list of values
     *
@@ -905,7 +904,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * An alternative to {@link Math#min(float, float)} .
+    * Finds the lesser, or minimum, of two values. An alternative to
+    * {@link Math#min(float, float)} .
     *
     * @param a the left operand
     * @param b the right operand
@@ -918,7 +918,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * A convenience function for finding the minimum of three inputs.
+    * Finds the least, or minimum, among three values.
     *
     * @param a the first input
     * @param b the second input
@@ -936,10 +936,11 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Applies floorMod to the operands, and therefore uses the formula mod ( a,
-    * b ) := a - b * floor ( a / b ) . If the right operand is one, use a -
-    * floor(a) instead. If the right operand is zero, returns the left operand
-    * instead of throwing a java.lang.ArithmeticException for division by zero.
+    * Applies floor modulo to the operands, and therefore uses the formula mod
+    * ( a, b ) := a - b * floor ( a / b ) . If the right operand is one, use a
+    * - floor(a) instead. If the right operand is zero, returns the left
+    * operand instead of throwing a java.lang.ArithmeticException for division
+    * by zero.
     *
     * @param a the left operand
     * @param b the right operand
@@ -959,8 +960,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * An alternative to {@link Math#floorMod(int, int)} . Returns a when b is
-    * zero.
+    * Applies floor modulo to the operands. Returns the left operand when the
+    * right operand is zero. An alternative to {@link Math#floorMod(int, int)}
+    * . Returns a when b is zero.
     *
     * @param a the left operand
     * @param b the right operand
@@ -977,8 +979,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Subtracts the floor of the input value from the value. Returns a positive
-    * value in the range [0.0, 1.0]. Use this instead of
+    * Subtracts the floor of the input value from the value. Returns a
+    * positive value in the range [0.0, 1.0]. Use this instead of
     * {@link Utils#mod(int, int)} when b is 1.0 .
     *
     * @param value the input value
@@ -992,8 +994,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Subtracts the floor of the input value from the value. Returns a positive
-    * value in the range [0.0, 1.0]. Use this instead of
+    * Subtracts the floor of the input value from the value. Returns a
+    * positive value in the range [0.0, 1.0]. Use this instead of
     * {@link Utils#mod(int, int)} when b is 1.0 .
     *
     * @param value the input value
@@ -1007,9 +1009,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * A specialized version of mod which shifts an angle in degrees to the range
-    * [0, 360]. Casts float input to a double, uses a constant for 1.0 / 360,
-    * then casts back to a float upon return.
+    * A specialized version of mod which shifts an angle in degrees to the
+    * range [0, 360]. Casts float input to a double, uses a constant for 1.0 /
+    * 360, then casts back to a float upon return.
     *
     * @param degrees the input angle
     *
@@ -1022,8 +1024,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * A specialized version of mod which shifts an angle in radians to the range
-    * [0, \u03c4] .
+    * A specialized version of mod which shifts an angle in radians to the
+    * range [0, \u03c4] .
     *
     * @param radians the angle in radians
     *
@@ -1041,9 +1043,10 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Applies floorMod to the operands, and therefore uses the formula mod ( a,
-    * b ) := a - b * floor ( a / b ) . If the right operand is one, use mod ( a
-    * ) = a - floor ( a ) instead. Does not check if the right operand is zero.
+    * Applies floorMod to the operands, and therefore uses the formula mod (
+    * a, b ) := a - b * floor ( a / b ) . If the right operand is one, use mod
+    * ( a ) = a - floor ( a ) instead. Does not check if the right operand is
+    * zero.
     *
     * @param a the left operand
     * @param b the right operand
@@ -1058,12 +1061,12 @@ public abstract class Utils implements IUtils {
       final float q = a / b;
       return a - b * ( q > 0.0f ? ( int ) q
          : q < 0.0f ? ( int ) q - 1.0f : 0.0f );
-//      return a - b * Utils.floor(a / b);
+      // return a - b * Utils.floor(a / b);
    }
 
    /**
-    * The negation of a float holding a boolean value. Given a == 1.0, !a == 0 .
-    * Given a == 0.0, !a == 1 .
+    * The negation of a float holding a boolean value. Given a == 1.0, !a == 0
+    * . Given a == 0.0, !a == 1 .
     *
     * @param value the input value
     *
@@ -1213,9 +1216,10 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Rounds a value to a number of places right of the decimal point. Promotes
-    * the float to a double, rounds it, then demotes back to a float. Note that
-    * floating (or single) precision will likely lead to inaccuracies.
+    * Rounds a value to a number of places right of the decimal point.
+    * Promotes the float to a double, rounds it, then demotes back to a float.
+    * Note that floating (or single) precision will likely lead to
+    * inaccuracies.
     *
     * @param value  value
     * @param places the number of places
@@ -1240,14 +1244,14 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * A helper method to facilitate the approximate sine and cosine of an angle
-    * with single precision real numbers. The radians supplied to this function
-    * should be normalized through division by TAU. Subtract 0.25 from the input
-    * value to return the sine instead of the cosine.<br>
+    * A helper method to facilitate the approximate sine and cosine of an
+    * angle with single precision real numbers. The radians supplied to this
+    * function should be normalized through division by TAU. Subtract 0.25
+    * from the input value to return the sine instead of the cosine.<br>
     * <br>
     * Instead of a look-up table, this is based on the algorithm described at
-    * <a href="https://developer.download.nvidia.com/cg/sin.html">Nvidia Cg 3.1
-    * Toolkit Documentation</a> .
+    * <a href="https://developer.download.nvidia.com/cg/sin.html">Nvidia Cg
+    * 3.1 Toolkit Documentation</a> .
     *
     * @param normRad the normalized radians
     *
@@ -1314,8 +1318,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds the single precision sine of an angle in radians. Returns a value in
-    * the range [-1.0, 1.0] .
+    * Finds the single precision sine of an angle in radians. Returns a value
+    * in the range [-1.0, 1.0] .
     *
     * @param radians the angle in radians
     *
@@ -1351,9 +1355,9 @@ public abstract class Utils implements IUtils {
    /**
     * Finds the approximate square root of a value. Returns 0.0 when the value
     * is less than zero. An alternative to {@link Math#sqrt(double)} . Use
-    * {@link Utils#sqrtUnchecked(float)} when the value is known to be positive.
-    * Use {@link Complex#sqrt(float, Complex)} when the input may be negative
-    * and a complex output is desired.
+    * {@link Utils#sqrtUnchecked(float)} when the value is known to be
+    * positive. Use {@link Complex#sqrt(float, Complex)} when the input may be
+    * negative and a complex output is desired.
     *
     * @param value the value
     *
@@ -1429,15 +1433,15 @@ public abstract class Utils implements IUtils {
     * String to a number of places. Truncates the final digit right of the
     * decimal place. Edge cases:
     * <ul>
-    * <li>When the number of places is less than one, returns the String of the
-    * truncated value.</li>
+    * <li>When the number of places is less than one, returns the String of
+    * the truncated value.</li>
     * <li>When the value is not a number ( {@link Float#NaN} ), returns
     * "0.0".</li>
     * <li>When the value is greater than {@link Float#MAX_VALUE}, returns the
-    * max value; when less than {@link Float#MIN_VALUE}, the minimum value. This
-    * truncates positive and negative infinities to these bounds.</li>
-    * <li>When the integral contains so many digits that accurate representation
-    * is unlikely, such as with scientific notation, defers to
+    * max value; when less than {@link Float#MIN_VALUE}, the minimum value.
+    * This truncates positive and negative infinities to these bounds.</li>
+    * <li>When the integral contains so many digits that accurate
+    * representation is unlikely, such as with scientific notation, defers to
     * {@link Float#toString(float)} .</li>
     * </ul>
     * Intended to serve as an alternative to
@@ -1593,8 +1597,8 @@ public abstract class Utils implements IUtils {
       final int len = arr.length;
       final int last = len - 1;
 
-      final StringBuilder sb = new StringBuilder(len * 32).append('[').append(
-         ' ');
+      final StringBuilder sb = new StringBuilder(len * 32);
+      sb.append('[').append(' ');
       for ( int i = 0; i < arr.length; ++i ) {
          sb.append(arr[i].toString());
          if ( i < last ) { sb.append(',').append(' '); }
@@ -1616,8 +1620,8 @@ public abstract class Utils implements IUtils {
       final int len = arr.length;
       final int last = len - 1;
 
-      final StringBuilder sb = new StringBuilder(len * 128).append('[').append(
-         ' ');
+      final StringBuilder sb = new StringBuilder(len * 128);
+      sb.append('[').append(' ');
       for ( int i = 0; i < arr.length; ++i ) {
          sb.append(Utils.toString(arr[i]));
          if ( i < last ) { sb.append(',').append(' '); }
@@ -1639,8 +1643,8 @@ public abstract class Utils implements IUtils {
       final int len = arr.length;
       final int last = len - 1;
 
-      final StringBuilder sb = new StringBuilder(len * 512).append('[').append(
-         ' ');
+      final StringBuilder sb = new StringBuilder(len * 512);
+      sb.append('[').append(' ');
       for ( int i = 0; i < arr.length; ++i ) {
          sb.append(Utils.toString(arr[i]));
          if ( i < last ) { sb.append(',').append(' '); }
@@ -1651,8 +1655,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Truncates the input value. This is an alias for explicitly casting a float
-    * to an integer, then implicitly casting the integral to a float.
+    * Truncates the input value. This is an alias for explicitly casting a
+    * float to an integer, then implicitly casting the integral to a float.
     *
     * @param value the input value
     *
@@ -1664,36 +1668,30 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * An alias for {@link Byte#toUnsignedInt(byte)} . Converts a signed byte in
-    * the range [-127, 128] to an unsigned byte in the range [0, 255], promoted
-    * to an int. Useful when working with colors. Defined for cross-language
-    * comparison with C#, which uses signed and unsigned versions of primitive
-    * data types.
+    * An alias for {@link Byte#toUnsignedInt(byte)} . Converts a signed byte
+    * in the range [-127, 128] to an unsigned byte in the range [0, 255],
+    * promoted to an int. Useful when working with colors. Defined for
+    * cross-language comparison with C#, which uses signed and unsigned
+    * versions of primitive data types.
     *
     * @param a the signed byte
     *
     * @return the unsigned byte, promoted
     */
-   public static int ubyte ( final byte a ) {
-
-      return a & 0xff;
-   }
+   public static int ubyte ( final byte a ) { return a & 0xff; }
 
    /**
     * An alias for {@link Integer#toUnsignedLong(int)}. Converts a signed
-    * integer in the range [-2147483648 , 2147483647] to an unsigned integer in
-    * the range [0, 4294967295], promoted to a long. Useful when working with
-    * colors. Defined for cross-language comparison with C#, which uses signed
-    * and unsigned versions of primitive data types.
+    * integer in the range [-2147483648 , 2147483647] to an unsigned integer
+    * in the range [0, 4294967295], promoted to a long. Useful when working
+    * with colors. Defined for cross-language comparison with C#, which uses
+    * signed and unsigned versions of primitive data types.
     *
     * @param a the signed integer
     *
     * @return the unsigned integer, promoted
     */
-   public static long uint ( final int a ) {
-
-      return a & 0xffffffffL;
-   }
+   public static long uint ( final int a ) { return a & 0xffffffffL; }
 
    /**
     * Wraps a value around a periodic range as defined by an upper and lower
@@ -1772,8 +1770,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * A functional interface for an easing function which interpolates an object
-    * from an origin to a destination by a float, with a final output parameter.
+    * A functional interface for an easing function which interpolates an
+    * object from an origin to a destination by a float, with a final output
+    * parameter.
     *
     * @param <T> the parameter type
     */

@@ -64,10 +64,10 @@ public abstract class Mesh extends EntityData implements IMesh {
    }
 
    /**
-    * Cycles the array of indices in the faces array by a number of places. The
-    * number of places can be positive or negative, indicating which direction
-    * to shift the array: positive numbers shift to the right; negative, to the
-    * left.
+    * Cycles the array of indices in the faces array by a number of places.
+    * The number of places can be positive or negative, indicating which
+    * direction to shift the array: positive numbers shift to the right;
+    * negative, to the left.
     *
     * @param places number of places
     *
@@ -85,10 +85,10 @@ public abstract class Mesh extends EntityData implements IMesh {
    }
 
    /**
-    * Cycles the array of indices in a face which indicate vertex (and therefore
-    * edge) order by a number of places. The number of places can be positive or
-    * negative, indicating which direction to shift the array: positive numbers
-    * shift to the right; negative, to the left.
+    * Cycles the array of indices in a face which indicate vertex (and
+    * therefore edge) order by a number of places. The number of places can be
+    * positive or negative, indicating which direction to shift the array:
+    * positive numbers shift to the right; negative, to the left.
     *
     * @param faceIndex the face index
     * @param places    number of places
@@ -451,8 +451,8 @@ public abstract class Mesh extends EntityData implements IMesh {
    }
 
    /**
-    * Compares two vectors by their quantized z component, y component, then by
-    * their quantized x component.
+    * Compares two vectors by their quantized z component, y component, then
+    * by their quantized x component.
     */
    public static final class SortQuantized3 implements Comparator < Vec3 > {
 

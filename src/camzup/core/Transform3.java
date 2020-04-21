@@ -30,7 +30,8 @@ public class Transform3 extends Transform {
    protected final Vec3 right;
 
    /**
-    * The transform's rotation. Defaults to the identity, (1.0, 0.0, 0.0, 0.0) .
+    * The transform's rotation. Defaults to the identity, (1.0, 0.0, 0.0, 0.0)
+    * .
     */
    protected final Quaternion rotation;
 
@@ -46,8 +47,8 @@ public class Transform3 extends Transform {
    protected final Vec3 scale;
 
    /**
-    * The previous scale. Subtract from the current scale to find the delta, or
-    * change, in scale.
+    * The previous scale. Subtract from the current scale to find the delta,
+    * or change, in scale.
     */
    protected final Vec3 scalePrev;
 
@@ -196,8 +197,8 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Gets the transform's rotation as an axis and angle. The angle is returned
-    * from the function.
+    * Gets the transform's rotation as an axis and angle. The angle is
+    * returned from the function.
     *
     * @param axis the output axis
     *
@@ -330,8 +331,8 @@ public class Transform3 extends Transform {
    public Vec3 getUp ( final Vec3 target ) { return target.set(this.up); }
 
    /**
-    * Returns a hash code for this transform based on its location, rotation and
-    * scale.
+    * Returns a hash code for this transform based on its location, rotation
+    * and scale.
     *
     * @return the hash code
     *
@@ -419,8 +420,8 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Moves the transform by a direction multiplied by the transform's rotation.
-    * Uses the formula:<br>
+    * Moves the transform by a direction multiplied by the transform's
+    * rotation. Uses the formula:<br>
     * <br>
     * move ( dir ) := location + ( scale * ( rotation * direction ) )
     *
@@ -460,8 +461,8 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Eases the transform to a location by a step. The static easing function is
-    * used.
+    * Eases the transform to a location by a step. The static easing function
+    * is used.
     *
     * @param locNew the new location
     * @param step   the step in [0.0, 1.0]
@@ -529,8 +530,8 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Rotates the transform by adding a rotation, then normalizing. Updates the
-    * transform's axes.
+    * Rotates the transform by adding a rotation, then normalizing. Updates
+    * the transform's axes.
     *
     * @param rot the rotation
     *
@@ -586,8 +587,8 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Eases the transform toward a new orientation by a step in [0.0, 1.0] using
-    * the specified easing function. Updates the transform's axes.
+    * Eases the transform toward a new orientation by a step in [0.0, 1.0]
+    * using the specified easing function. Updates the transform's axes.
     *
     * @param rotNew     the new orientation
     * @param step       the step
@@ -612,8 +613,8 @@ public class Transform3 extends Transform {
     * Rotates this transform around the x axis by an angle in radians. Updates
     * the transform's axes.<br>
     * <br>
-    * Beware that using sequences of orthonormal rotations will result in gimbal
-    * lock. Updates the transform's axes.
+    * Beware that using sequences of orthonormal rotations will result in
+    * gimbal lock. Updates the transform's axes.
     *
     * @param radians the angle
     *
@@ -635,8 +636,8 @@ public class Transform3 extends Transform {
     * Rotates this transform around the y axis by an angle in radians. Updates
     * the transform's axes.<br>
     * <br>
-    * Beware that using sequences of orthonormal rotations will result in gimbal
-    * lock.
+    * Beware that using sequences of orthonormal rotations will result in
+    * gimbal lock.
     *
     * @param radians the angle
     *
@@ -658,8 +659,8 @@ public class Transform3 extends Transform {
     * Rotates this transform around the z axis by an angle in radians. Updates
     * the transform's axes.<br>
     * <br>
-    * Beware that using sequences of orthonormal rotations will result in gimbal
-    * lock.
+    * Beware that using sequences of orthonormal rotations will result in
+    * gimbal lock.
     *
     * @param radians the angle
     *
@@ -781,8 +782,8 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Eases the transform to a scale by a step. The kind of easing is specified
-    * by a Vec3 easing function.<br>
+    * Eases the transform to a scale by a step. The kind of easing is
+    * specified by a Vec3 easing function.<br>
     * <br>
     * Non-uniform scaling may lead to improper shading of a mesh when lit.
     *
@@ -809,7 +810,8 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Sets this transform from loose real numbers. Updates the transform's axes.
+    * Sets this transform from loose real numbers. Updates the transform's
+    * axes.
     *
     * @param xLoc   the x location
     * @param yLoc   the y location
@@ -857,7 +859,8 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Promotes a 2D transform to a 3D transform. Updates this transform's axes.
+    * Promotes a 2D transform to a 3D transform. Updates this transform's
+    * axes.
     *
     * @param source the source transform
     *
@@ -929,8 +932,8 @@ public class Transform3 extends Transform {
     *
     * @return the transform
     *
-    * @see Quaternion#fromAxes(float, float, float, float, float, float, float,
-    *      float, float, Quaternion)
+    * @see Quaternion#fromAxes(float, float, float, float, float, float,
+    *      float, float, float, Quaternion)
     * @see Transform3#updateAxes()
     */
    public Transform3 setAxes (
@@ -955,8 +958,8 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Sets a transform's rotation to the provided axes. The transform's location
-    * and scale remain unchanged.
+    * Sets a transform's rotation to the provided axes. The transform's
+    * location and scale remain unchanged.
     *
     * @param right   the right axis
     * @param forward the forward axis
@@ -974,8 +977,8 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Returns a string representation of this transform according to its string
-    * format.
+    * Returns a string representation of this transform according to its
+    * string format.
     *
     * @return the string
     */
@@ -983,8 +986,8 @@ public class Transform3 extends Transform {
    public String toString ( ) { return this.toString(4); }
 
    /**
-    * Returns a string representation of this transform according to its string
-    * format.
+    * Returns a string representation of this transform according to its
+    * string format.
     *
     * @param places the number of places
     *
@@ -1026,10 +1029,10 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
-    * compare how transforms look in Blender (the control) versus in the library
-    * (the test).
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
+    * compare how transforms look in Blender (the control) versus in the
+    * library (the test).
     *
     * @return the string
     */
@@ -1086,13 +1089,8 @@ public class Transform3 extends Transform {
    private static Easing EASING = new Easing();
 
    /**
-    * The unique identification for serialized classes.
-    */
-   private static final long serialVersionUID = 6128601941848021668L;
-
-   /**
-    * Adds two transforms together by component. The sum of the two rotations is
-    * normalized.
+    * Adds two transforms together by component. The sum of the two rotations
+    * is normalized.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -1120,8 +1118,8 @@ public class Transform3 extends Transform {
 
    /**
     * A helper function to set the transform's from either separate vectors or
-    * from the columns of a matrix. The transform's translation is set to zero;
-    * its scale, to one.
+    * from the columns of a matrix. The transform's translation is set to
+    * zero; its scale, to one.
     *
     * @param xRight   m00 : right x
     * @param yForward m11 : forward y
@@ -1136,8 +1134,8 @@ public class Transform3 extends Transform {
     *
     * @return the transform
     *
-    * @see Quaternion#fromAxes(float, float, float, float, float, float, float,
-    *      float, float, Quaternion)
+    * @see Quaternion#fromAxes(float, float, float, float, float, float,
+    *      float, float, float, Quaternion)
     * @see Vec3#one(Vec3)
     */
    public static Transform3 fromAxes (
@@ -1173,8 +1171,8 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Creates a transform from axes. The transform's translation is set to zero;
-    * its scale, to one.
+    * Creates a transform from axes. The transform's translation is set to
+    * zero; its scale, to one.
     *
     * @param right   the right axis
     * @param forward the forward axis
@@ -1183,8 +1181,8 @@ public class Transform3 extends Transform {
     *
     * @return the transform
     *
-    * @see Transform3#fromAxes(float, float, float, float, float, float, float,
-    *      float, float, Transform3)
+    * @see Transform3#fromAxes(float, float, float, float, float, float,
+    *      float, float, float, Transform3)
     */
    public static Transform3 fromAxes (
       final Vec3 right,
@@ -1197,12 +1195,13 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Creates a transform from a ray. The transform's translation is set to the
-    * ray's origin; its scale, to one.<br>
+    * Creates a transform from a ray. The transform's translation is set to
+    * the ray's origin; its scale, to one.<br>
     * <br>
-    * Discontinuities arise when using a look at matrix when a transform's look
-    * direction is parallel with the world up axis. To animate a transform use
-    * the instance method {@link Transform3#lookAt(Vec3, float, Handedness)} .
+    * Discontinuities arise when using a look at matrix when a transform's
+    * look direction is parallel with the world up axis. To animate a
+    * transform use the instance method
+    * {@link Transform3#lookAt(Vec3, float, Handedness)} .
     *
     * @param ray        the direction
     * @param handedness the handedness
@@ -1227,9 +1226,10 @@ public class Transform3 extends Transform {
     * Creates a transform from a direction. The transform's translation is set
     * to zero; its scale, to one.<br>
     * <br>
-    * Discontinuities arise when using a look at matrix when a transform's look
-    * direction is parallel with the world up axis. To animate a transform use
-    * the instance method {@link Transform3#lookAt(Vec3, float, Handedness)} .
+    * Discontinuities arise when using a look at matrix when a transform's
+    * look direction is parallel with the world up axis. To animate a
+    * transform use the instance method
+    * {@link Transform3#lookAt(Vec3, float, Handedness)} .
     *
     * @param dir        the direction
     * @param handedness handedness
@@ -1350,8 +1350,8 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Multiplies a vector by the transform's inverse. This divides the vector by
-    * the scale, then rotates by the inverse quaternion.
+    * Multiplies a vector by the transform's inverse. This divides the vector
+    * by the scale, then rotates by the inverse quaternion.
     *
     * @param t      the transform
     * @param source the input vector
@@ -1441,8 +1441,8 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Eases an array through a series of transforms according to a step in [0.0,
-    * 1.0].
+    * Eases an array through a series of transforms according to a step in
+    * [0.0, 1.0].
     *
     * @param frames the frames
     * @param step   the step
@@ -1482,8 +1482,8 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Multiplies a point by a transform. This rotates the point, multiplies the
-    * point by the scale, then adds the translation.
+    * Multiplies a point by a transform. This rotates the point, multiplies
+    * the point by the scale, then adds the translation.
     *
     * @param t      the transform
     * @param source the input point

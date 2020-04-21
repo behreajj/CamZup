@@ -1,8 +1,8 @@
 package camzup.core;
 
 /**
- * An entity to be drawn by a renderer, typically holding a transform and some
- * other kind of data.
+ * An entity to be drawn by a renderer, typically holding a transform and
+ * some other kind of data.
  */
 public abstract class Entity implements IEntity {
 
@@ -12,8 +12,8 @@ public abstract class Entity implements IEntity {
    public String name = "";
 
    /**
-    * The default constructor. Assigns the entity's name with the hash identity
-    * string.
+    * The default constructor. Assigns the entity's name with the hash
+    * identity string.
     *
     * @see IUtils#hashIdentityString()
     */
@@ -82,7 +82,8 @@ public abstract class Entity implements IEntity {
    }
 
    /**
-    * Represents an entity as a class simple name followed by the entity's name.
+    * Represents an entity as a class simple name followed by the entity's
+    * name.
     *
     * @return the string
     */

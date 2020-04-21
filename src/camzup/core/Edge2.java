@@ -27,8 +27,8 @@ public class Edge2 implements Comparable < Edge2 > {
    }
 
    /**
-    * Constructs an edge from the origin and destination coordinate and texture
-    * coordinate data. Creates two vertex objects.`
+    * Constructs an edge from the origin and destination coordinate and
+    * texture coordinate data. Creates two vertex objects.`
     *
     * @param coOrigin origin coordinate
     * @param txOrigin origin texture coordinate
@@ -119,8 +119,8 @@ public class Edge2 implements Comparable < Edge2 > {
 
    /**
     * Rotates the coordinates of this edge by an angle in radians around the z
-    * axis. Uses global coordinates, i.e. doesn't consider the edge's position.
-    * The texture coordinates are unaffected.
+    * axis. Uses global coordinates, i.e. doesn't consider the edge's
+    * position. The texture coordinates are unaffected.
     *
     * @param radians the angle
     *
@@ -247,8 +247,8 @@ public class Edge2 implements Comparable < Edge2 > {
    }
 
    /**
-    * Scales the coordinates of this edge. Subtracts the edge's mean center from
-    * each vertex, scales, then adds the mean center.
+    * Scales the coordinates of this edge. Subtracts the edge's mean center
+    * from each vertex, scales, then adds the mean center.
     *
     * @param scalar the uniform scalar
     *
@@ -284,8 +284,8 @@ public class Edge2 implements Comparable < Edge2 > {
    }
 
    /**
-    * Scales the coordinates of this edge. Subtracts the edge's center from each
-    * vertex, scales, then adds the center.
+    * Scales the coordinates of this edge. Subtracts the edge's center from
+    * each vertex, scales, then adds the center.
     *
     * @param scalar the nonuniform scalar
     *
@@ -323,8 +323,8 @@ public class Edge2 implements Comparable < Edge2 > {
    }
 
    /**
-    * Sets the origin and destination coordinate, texture coordinate and normal
-    * data.
+    * Sets the origin and destination coordinate, texture coordinate and
+    * normal data.
     *
     * @param coOrigin origin coordinate
     * @param txOrigin origin texture coordinate
@@ -495,8 +495,8 @@ public class Edge2 implements Comparable < Edge2 > {
    }
 
    /**
-    * Finds the Euclidean distance from the edge's origin coordinate to that of
-    * its destination.
+    * Finds the Euclidean distance from the edge's origin coordinate to that
+    * of its destination.
     *
     * @param edge the edge
     *
@@ -510,8 +510,8 @@ public class Edge2 implements Comparable < Edge2 > {
    }
 
    /**
-    * Finds the squared Euclidean distance from the edge's origin coordinate to
-    * that of its destination.
+    * Finds the squared Euclidean distance from the edge's origin coordinate
+    * to that of its destination.
     *
     * @param edge the edge
     *
@@ -526,8 +526,8 @@ public class Edge2 implements Comparable < Edge2 > {
 
    /**
     * Projects a vector, representing a point, onto an edge. The scalar
-    * projection is clamped to the range [0.0, 1.0], meaning the projection will
-    * not exceed the edge's origin and destination.
+    * projection is clamped to the range [0.0, 1.0], meaning the projection
+    * will not exceed the edge's origin and destination.
     *
     * @param edge   the edge
     * @param v      the input vector
@@ -566,7 +566,8 @@ public class Edge2 implements Comparable < Edge2 > {
    /**
     * Tests to see if two edges share a vertex coordinate:
     * <ul>
-    * <li>Returns -1 when <em>a</em>'s origin is <em>b</em>'s destination.</li>
+    * <li>Returns -1 when <em>a</em>'s origin is <em>b</em>'s
+    * destination.</li>
     * <li>Returns -2 when <em>a</em>'s destination is <em>b</em>'s
     * destination</li>
     * <li>Returns 1 when <em>a</em>'s destination is <em>b</em>'s origin.</li>

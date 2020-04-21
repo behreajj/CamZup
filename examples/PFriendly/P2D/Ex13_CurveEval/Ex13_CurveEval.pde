@@ -41,7 +41,7 @@ void draw() {
   float step = frameCount * 0.0075;
   ce2.rotateZ(0.01);
 
-  rndr.background(#202020);
+  rndr.background(#101010);
   if (mousePressed) {
     rndr.shape(ce2, mat);
   }

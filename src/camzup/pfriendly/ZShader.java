@@ -14,8 +14,8 @@ import processing.core.PApplet;
 import processing.opengl.PShader;
 
 /**
- * Extends Processing's PShader to provide support for Cam Z-up core objects:
- * Vec2, Vec3, Vec4, Quaternion, Mat3 and Mat4.
+ * Extends Processing's PShader to provide support for Cam Z-up core
+ * objects: Vec2, Vec3, Vec4, Quaternion, Mat3 and Mat4.
  */
 public class ZShader extends PShader {
 
@@ -48,7 +48,8 @@ public class ZShader extends PShader {
    }
 
    /**
-    * Constructs a shader from source strings for a vertex and fragment shader.
+    * Constructs a shader from source strings for a vertex and fragment
+    * shader.
     *
     * @param parent     the parent applet
     * @param vertSource the vertex shader source code

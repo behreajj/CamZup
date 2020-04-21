@@ -214,11 +214,6 @@ public class Ray3 extends Ray {
    }
 
    /**
-    * The unique identification for serialized classes.
-    */
-   private static final long serialVersionUID = -8386381837024621749L;
-
-   /**
     * Finds the point at a given time on a ray.
     *
     * @param ray    the ray
@@ -272,8 +267,8 @@ public class Ray3 extends Ray {
    }
 
    /**
-    * An abstract class that may serve as an umbrella for any custom comparators
-    * of Ray2 s.
+    * An abstract class that may serve as an umbrella for any custom
+    * comparators of Ray2 s.
     */
    public static abstract class AbstrComparator implements Comparator < Ray3 > {
 

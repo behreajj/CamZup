@@ -1,21 +1,20 @@
 package camzup.core;
 
-import java.io.Serializable;
-
 import java.util.Comparator;
 import java.util.Iterator;
 
 /**
- * A four-dimensional complex number. The <em>x</em>, <em>y</em> and <em>z</em>
- * components are coefficients of the imaginary <em>i</em>, <em>j</em> and
- * <em>k</em>. Discovered by William R. Hamilton with the formula
- * <em>i</em><sup>2</sup> = <em>j</em><sup>2</sup> = <em>k</em><sup>2</sup> =
- * <em>i</em><em>j</em><em>k</em> = -1.0 . Quaternions with a magnitude of 1.0
- * are commonly used to rotate 3D objects from one orientation to another over
- * minimal distance without suffering gimbal lock.
+ * A four-dimensional complex number. The <em>x</em>, <em>y</em> and
+ * <em>z</em> components are coefficients of the imaginary <em>i</em>,
+ * <em>j</em> and <em>k</em>. Discovered by William R. Hamilton with the
+ * formula <em>i</em><sup>2</sup> = <em>j</em><sup>2</sup> =
+ * <em>k</em><sup>2</sup> = <em>i</em><em>j</em><em>k</em> = -1.0 .
+ * Quaternions with a magnitude of 1.0 are commonly used to rotate 3D
+ * objects from one orientation to another over minimal distance without
+ * suffering gimbal lock.
  */
 public class Quaternion implements Comparable < Quaternion >, Cloneable,
-   Iterable < Float >, Serializable {
+   Iterable < Float > {
 
    /**
     * The coefficients of the imaginary components <em>i</em>, <em>j</em> and
@@ -33,7 +32,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * The default constructor. Defaults to the identity, (1.0, 0.0, 0.0, 0.0) .
+    * The default constructor. Defaults to the identity, (1.0, 0.0, 0.0, 0.0)
+    * .
     */
    public Quaternion ( ) {}
 
@@ -95,7 +95,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
    /**
     * Returns a new quaternion with this quaternion's components. Java's
-    * cloneable interface is problematic; use set or a copy constructor instead.
+    * cloneable interface is problematic; use set or a copy constructor
+    * instead.
     *
     * @return a new quaternion
     *
@@ -103,14 +104,11 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Quaternion#Quaternion(Quaternion)
     */
    @Override
-   public Quaternion clone ( ) {
-
-      return new Quaternion(this.real, this.imag);
-   }
+   public Quaternion clone ( ) { return new Quaternion(this.real, this.imag); }
 
    /**
-    * Returns -1 when this quaternion is less than the comparisand; 1 when it is
-    * greater than; 0 when the two are 'equal'. The implementation of this
+    * Returns -1 when this quaternion is less than the comparisand; 1 when it
+    * is greater than; 0 when the two are 'equal'. The implementation of this
     * method allows collections of quaternions to be sorted.
     *
     * @param q the comparisand
@@ -146,8 +144,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Simulates bracket subscript access in an array. Alias for retrieving w, or
-    * the real component, as the first element.
+    * Simulates bracket subscript access in an array. Alias for retrieving w,
+    * or the real component, as the first element.
     *
     * @param index the index
     *
@@ -155,10 +153,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @see Quaternion#getWFirst(int)
     */
-   public float get ( final int index ) {
-
-      return this.getWFirst(index);
-   }
+   public float get ( final int index ) { return this.getWFirst(index); }
 
    /**
     * Gets an element by index, assuming that w is the first.
@@ -240,8 +235,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Returns an iterator for this quaternion, which allows its components to be
-    * accessed in an enhanced for-loop.
+    * Returns an iterator for this quaternion, which allows its components to
+    * be accessed in an enhanced for-loop.
     */
    @Override
    public QIterator iterator ( ) { return new IteratorWFirst(this); }
@@ -356,17 +351,17 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Returns a float array of length 4 containing this quaternion's components.
-    * Defaults to returning w as the first element.
+    * Returns a float array of length 4 containing this quaternion's
+    * components. Defaults to returning w as the first element.
     *
     * @return the array
     */
    public float[] toArray ( ) { return this.toArray(true); }
 
    /**
-    * Returns a float array of length 4 containing this quaternion's components.
-    * When the argument supplied is true, w is returned as the first element,
-    * not the last.
+    * Returns a float array of length 4 containing this quaternion's
+    * components. When the argument supplied is true, w is returned as the
+    * first element, not the last.
     *
     * @param wFirst issue w as the first element
     *
@@ -419,14 +414,16 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Gets the real component. An alias for those accustomed to calling it 'w'.
+    * Gets the real component. An alias for those accustomed to calling it
+    * 'w'.
     *
     * @return the real component
     */
    public float w ( ) { return this.real; }
 
    /**
-    * Sets the real component. An alias for those accustomed to calling it 'w'.
+    * Sets the real component. An alias for those accustomed to calling it
+    * 'w'.
     *
     * @param w the real value
     *
@@ -503,11 +500,11 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
-    * compare how transforms look in Blender (the control) versus in the library
-    * (the test). This is formatted as a four-tuple where w is the first
-    * element.
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
+    * compare how transforms look in Blender (the control) versus in the
+    * library (the test). This is formatted as a four-tuple where w is the
+    * first element.
     *
     * @return the string
     */
@@ -519,11 +516,14 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       return new StringBuilder(96)
          .append('(')
          .append(Utils.toFixed(this.real, 6))
-         .append(',').append(' ')
+         .append(',')
+         .append(' ')
          .append(Utils.toFixed(i.x, 6))
-         .append(',').append(' ')
+         .append(',')
+         .append(' ')
          .append(Utils.toFixed(i.y, 6))
-         .append(',').append(' ')
+         .append(',')
+         .append(' ')
          .append(Utils.toFixed(i.z, 6))
          .append(')')
          .toString();
@@ -555,11 +555,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * The default easing function.
     */
    private static AbstrEasing EASING = new Slerp();
-
-   /**
-    * The unique identification for serialized classes.
-    */
-   private static final long serialVersionUID = -7363582058797081319L;
 
    /**
     * Adds two quaternions.
@@ -608,15 +603,15 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float mInv = Utils.invSqrtUnchecked(mSq);
       final Vec3 i = target.imag;
       return target.set(
-         target.real * mInv, 
-         i.x * mInv, 
-         i.y * mInv, 
+         target.real * mInv,
+         i.x * mInv,
+         i.y * mInv,
          i.z * mInv);
    }
 
    /**
-    * Adds two quaternions and normalizes the result. Emits the sum as an output
-    * vector.
+    * Adds two quaternions and normalizes the result. Emits the sum as an
+    * output vector.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -683,8 +678,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Evaluates whether or not two quaternions approximate each other according
-    * to a tolerance.
+    * Evaluates whether or not two quaternions approximate each other
+    * according to a tolerance.
     *
     * @param a         the left comparisand
     * @param b         the right comparisand
@@ -708,7 +703,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Tests to see if a quaternion has, approximately, the specified magnitude.
+    * Tests to see if a quaternion has, approximately, the specified
+    * magnitude.
     *
     * @param a the quaternion
     * @param b the magnitude
@@ -726,7 +722,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Tests to see if a quaternion has, approximately, the specified magnitude.
+    * Tests to see if a quaternion has, approximately, the specified
+    * magnitude.
     *
     * @param a         the quaternion
     * @param b         the magnitude
@@ -746,8 +743,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Returns the conjugate of the quaternion, where the imaginary component is
-    * negated.<br>
+    * Returns the conjugate of the quaternion, where the imaginary component
+    * is negated.<br>
     * <br>
     * <em>a</em>* = { <em>a<sub>real</sub></em>, -<em>a<sub>imag</sub></em> }
     *
@@ -863,8 +860,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Divides one quaternion by another. Equivalent to multiplying the numerator
-    * and the inverse of the denominator.
+    * Divides one quaternion by another. Equivalent to multiplying the
+    * numerator and the inverse of the denominator.
     *
     * @param a      the numerator
     * @param b      the denominator
@@ -905,15 +902,16 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Vec3 ai = a.imag;
       final float aw = a.real;
 
-      return target.set(aw * bwInv - ai.x * bxInv - ai.y * byInv - ai.z * bzInv,
+      return target.set(
+         aw * bwInv - ai.x * bxInv - ai.y * byInv - ai.z * bzInv,
          ai.x * bwInv + aw * bxInv + ai.y * bzInv - ai.z * byInv,
          ai.y * bwInv + aw * byInv + ai.z * bxInv - ai.x * bzInv,
          ai.z * bwInv + aw * bzInv + ai.x * byInv - ai.y * bxInv);
    }
 
    /**
-    * Divides one quaternion by another. Equivalent to multiplying the numerator
-    * and the inverse of the denominator.
+    * Divides one quaternion by another. Equivalent to multiplying the
+    * numerator and the inverse of the denominator.
     *
     * @param a         the numerator
     * @param b         the denominator
@@ -938,11 +936,12 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Finds the dot product of two quaternions by summing the products of their
-    * corresponding components.<br>
+    * Finds the dot product of two quaternions by summing the products of
+    * their corresponding components.<br>
     * <br>
-    * <em>a</em> \u00b7 <em>b</em> := <em>a<sub>real</sub> b<sub>real</sub></em>
-    * + <em>a<sub>imag</sub></em> \u00b7 <em>b<sub>imag</sub></em><br>
+    * <em>a</em> \u00b7 <em>b</em> := <em>a<sub>real</sub>
+    * b<sub>real</sub></em> + <em>a<sub>imag</sub></em> \u00b7
+    * <em>b<sub>imag</sub></em><br>
     * <br>
     * The dot product of a quaternion with itself is equal to its magnitude
     * squared.
@@ -962,10 +961,10 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Sets a quaternion from an angle. The axis is assumed to be (0.0, 0.0, 1.0)
-    * . Sets the real component of the quaternion to cosine of the angle; the
-    * imaginary z component is set to the sine. Useful when working in 2.5D,
-    * where a two-dimensional angle may need to be transferred to a
+    * Sets a quaternion from an angle. The axis is assumed to be (0.0, 0.0,
+    * 1.0) . Sets the real component of the quaternion to cosine of the angle;
+    * the imaginary z component is set to the sine. Useful when working in
+    * 2.5D, where a two-dimensional angle may need to be transferred to a
     * three-dimensional transform.
     *
     * @param radians the angle
@@ -981,7 +980,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Quaternion target ) {
 
       final float halfRadians = radians * 0.5f;
-      return target.set(Utils.cos(halfRadians), 0.0f, 0.0f,
+      return target.set(
+         Utils.cos(halfRadians),
+         0.0f, 0.0f,
          Utils.sin(halfRadians));
    }
 
@@ -1022,7 +1023,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
        * Utilities square-root checks that input is greater than 0.
        * Double-precision functions do NOT seem to yield more accuracy.
        */
-      return target.set(0.5f * Utils.sqrt(1.0f + xRight + yForward + zUp),
+
+      return target.set(
+         0.5f * Utils.sqrt(1.0f + xRight + yForward + zUp),
          Utils.copySign(0.5f * Utils.sqrt(1.0f + xRight - yForward - zUp),
             zForward - yUp),
          Utils.copySign(0.5f * Utils.sqrt(1.0f - xRight + yForward - zUp),
@@ -1040,8 +1043,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the quaternion
     *
-    * @see Quaternion#fromAxes(float, float, float, float, float, float, float,
-    *      float, float, Quaternion)
+    * @see Quaternion#fromAxes(float, float, float, float, float, float,
+    *      float, float, float, Quaternion)
     */
    public static Quaternion fromAxes (
       final Mat4 m,
@@ -1061,8 +1064,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the quaternion
     *
-    * @see Quaternion#fromAxes(float, float, float, float, float, float, float,
-    *      float, float, Quaternion)
+    * @see Quaternion#fromAxes(float, float, float, float, float, float,
+    *      float, float, float, Quaternion)
     */
    public static Quaternion fromAxes (
       final Vec2 right,
@@ -1084,8 +1087,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the quaternion
     *
-    * @see Quaternion#fromAxes(float, float, float, float, float, float, float,
-    *      float, float, Quaternion)
+    * @see Quaternion#fromAxes(float, float, float, float, float, float,
+    *      float, float, float, Quaternion)
     */
    public static Quaternion fromAxes (
       final Vec3 right,
@@ -1150,8 +1153,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @see Utils#invSqrtUnchecked(float)
     * @see Utils#invHypot(float, float, float)
-    * @see Quaternion#fromAxes(float, float, float, float, float, float, float,
-    *      float, float, Quaternion)
+    * @see Quaternion#fromAxes(float, float, float, float, float, float,
+    *      float, float, float, Quaternion)
     */
    @Experimental
    public static Quaternion fromDir (
@@ -1339,19 +1342,12 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
       Vec3.normalize(right, right);
       Vec3.crossNorm(right, forward, up);
-
-//      if ( isRight ) {
-//         Vec3.crossNorm(right, forward, up);
-//      } else {
-//          Vec3.crossNorm(forward, right, up);
-//      }
-
       return Quaternion.fromAxes(right, forward, up, target);
    }
 
    /**
-    * Creates a quaternion with reference to two vectors. This function creates
-    * normalized copies of the vectors.<br>
+    * Creates a quaternion with reference to two vectors. This function
+    * creates normalized copies of the vectors.<br>
     * <br>
     * fromTo ( <em>a</em>, <em>b</em> ) := { <em>a</em> \u00b7 <em>b</em>,
     * <em>a</em> x <em>b</em> }<br>
@@ -1408,7 +1404,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Gets the string representation of the default Quaternion easing function.
+    * Gets the string representation of the default Quaternion easing
+    * function.
     *
     * @return the string
     */
@@ -1437,13 +1434,15 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float y = imag.y;
       final float z = imag.z;
 
-      return target.set(-z * w + x * y + y * x - w * z,
-         w * w - z * z + y * y - x * x, x * w + w * x + y * z + z * y);
+      return target.set(
+         -z * w + x * y + y * x - w * z,
+         w * w - z * z + y * y - x * x,
+         x * w + w * x + y * z + z * y);
    }
 
    /**
-    * Gets the right axis of the rotation. Equivalent to multiplying (1.0, 0.0,
-    * 0.0) by the quaternion. If all three axes need to be retrieved, use
+    * Gets the right axis of the rotation. Equivalent to multiplying (1.0,
+    * 0.0, 0.0) by the quaternion. If all three axes need to be retrieved, use
     * {@link Quaternion#toAxes(Quaternion, Vec3, Vec3, Vec3)} .
     *
     * @param q      the quaternion
@@ -1462,8 +1461,10 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float y = imag.y;
       final float z = imag.z;
 
-      return target.set(w * w - y * y + x * x - z * z,
-         z * w + w * z + x * y + y * x, -y * w + z * x + x * z - w * y);
+      return target.set(
+         w * w - y * y + x * x - z * z,
+         z * w + w * z + x * y + y * x,
+         -y * w + z * x + x * z - w * y);
    }
 
    /**
@@ -1487,8 +1488,10 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float y = imag.y;
       final float z = imag.z;
 
-      return target.set(y * w + w * y + z * x + x * z,
-         -x * w + y * z + z * y - w * x, w * w - x * x + z * z - y * y);
+      return target.set(
+         y * w + w * y + z * x + x * z,
+         -x * w + y * z + z * y - w * x,
+         w * w - x * x + z * z - y * y);
    }
 
    /**
@@ -1504,12 +1507,13 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Finds the inverse, or reciprocal, of a quaternion, which is the conjugate
-    * divided by the magnitude squared.<br>
+    * Finds the inverse, or reciprocal, of a quaternion, which is the
+    * conjugate divided by the magnitude squared.<br>
     * <br>
     * <em>a</em><sup>-1</sup> := <em>a</em>* / |<em>a</em>|<sup>2</sup><br>
     * <br>
-    * If a quaternion is of unit length, its inverse is equal to its conjugate.
+    * If a quaternion is of unit length, its inverse is equal to its
+    * conjugate.
     *
     * @param q      the input quaternion
     * @param target the output quaternion
@@ -1531,7 +1535,10 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       }
 
       final float mSqInv = 1.0f / mSq;
-      return target.set(q.real * mSqInv, -i.x * mSqInv, -i.y * mSqInv,
+      return target.set(
+         q.real * mSqInv,
+         -i.x * mSqInv,
+         -i.y * mSqInv,
          -i.z * mSqInv);
    }
 
@@ -1541,7 +1548,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * <br>
     * <em>a</em><sup>-1</sup> := <em>a</em>* / |<em>a</em>|<sup>2</sup><br>
     * <br>
-    * If a quaternion is of unit length, its inverse is equal to its conjugate.
+    * If a quaternion is of unit length, its inverse is equal to its
+    * conjugate.
     *
     * @param q         the input quaternion
     * @param target    the output quaternion
@@ -1593,7 +1601,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float iy = w * source.y + qz * source.x - qx * source.z;
       final float iz = w * source.z + qx * source.y - qy * source.x;
 
-      return target.set(ix * w + iz * qy - iw * qx - iy * qz,
+      return target.set(
+         ix * w + iz * qy - iw * qx - iy * qz,
          iy * w + ix * qz - iw * qy - iz * qx,
          iz * w + iy * qx - iw * qz - ix * qy);
    }
@@ -1614,7 +1623,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Tests to see if a quaternion is pure, i.e. if its real component is zero.
+    * Tests to see if a quaternion is pure, i.e. if its real component is
+    * zero.
     *
     * @param q the quaternion
     *
@@ -1660,9 +1670,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Finds the magnitude squared of a quaternion. Equivalent to the dot product
-    * of a quaternion with itself and to the product of a quaternion with its
-    * conjugate.<br>
+    * Finds the magnitude squared of a quaternion. Equivalent to the dot
+    * product of a quaternion with itself and to the product of a quaternion
+    * with its conjugate.<br>
     * <br>
     * |<em>a</em>|<sup>2</sup> := <em>a</em> \u00b7 <em>a</em><br>
     * <br>
@@ -1702,8 +1712,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Mixes two quaternions together by a step in [0.0, 1.0] with the help of an
-    * easing function.
+    * Mixes two quaternions together by a step in [0.0, 1.0] with the help of
+    * an easing function.
     *
     * @param origin     the original quaternion
     * @param dest       the destination quaternion
@@ -1766,8 +1776,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Multiplies two quaternions. Also referred to as the Hamilton product. Uses
-    * the formula<br>
+    * Multiplies two quaternions. Also referred to as the Hamilton product.
+    * Uses the formula<br>
     * <br>
     * <em>a</em> <em>b</em> := { <em>a<sub>real</sub></em>
     * <em>b<sub>real</sub></em> - <em>a<sub>imag</sub></em> \u00b7
@@ -1794,17 +1804,18 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float aw = a.real;
       final float bw = b.real;
 
-      return target.set(aw * bw - ( ai.x * bi.x + ai.y * bi.y + ai.z * bi.z ),
+      return target.set(
+         aw * bw - ( ai.x * bi.x + ai.y * bi.y + ai.z * bi.z ),
          ai.x * bw + aw * bi.x + ai.y * bi.z - ai.z * bi.y,
          ai.y * bw + aw * bi.y + ai.z * bi.x - ai.x * bi.z,
          ai.z * bw + aw * bi.z + ai.x * bi.y - ai.y * bi.x);
    }
 
    /**
-    * Multiplies a vector by a quaternion, in effect rotating the vector by the
-    * quaternion. Equivalent to promoting the vector to a pure quaternion,
-    * multiplying the rotation quaternion and promoted vector, then dividing the
-    * product by the rotation.<br>
+    * Multiplies a vector by a quaternion, in effect rotating the vector by
+    * the quaternion. Equivalent to promoting the vector to a pure quaternion,
+    * multiplying the rotation quaternion and promoted vector, then dividing
+    * the product by the rotation.<br>
     * <br>
     * <em>a</em> <em>b</em> := ( <em>a</em> { 0.0, <em>b</em> } ) / a<br>
     * <br>
@@ -1833,7 +1844,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float iy = w * source.y + qz * source.x - qx * source.z;
       final float iz = w * source.z + qx * source.y - qy * source.x;
 
-      return target.set(ix * w + iz * qy - iw * qx - iy * qz,
+      return target.set(
+         ix * w + iz * qy - iw * qx - iy * qz,
          iy * w + ix * qz - iw * qy - iz * qx,
          iz * w + iy * qx - iw * qz - ix * qy);
    }
@@ -1853,8 +1865,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Divides a quaternion by its magnitude, such that its new magnitude is one
-    * and it lies on a 4D hyper-sphere. Uses the formula: <br>
+    * Divides a quaternion by its magnitude, such that its new magnitude is
+    * one and it lies on a 4D hyper-sphere. Uses the formula: <br>
     * <br>
     * <em>\u00e2</em> = <em>a</em> / |<em>a</em>| Quaternions with zero
     * magnitude will return the identity.
@@ -1902,8 +1914,11 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float r1 = rng.nextFloat();
       final float x0 = Utils.sqrt(1.0f - r1);
       final float x1 = Utils.sqrt(r1);
-      return target.set(x0 * Utils.sin(t0), x0 * Utils.cos(t0),
-         x1 * Utils.sin(t1), x1 * Utils.cos(t1));
+      return target.set(
+         x0 * Utils.sin(t0),
+         x0 * Utils.cos(t0),
+         x1 * Utils.sin(t1),
+         x1 * Utils.cos(t1));
    }
 
    /**
@@ -1945,9 +1960,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Rotates a vector around the x axis. Accepts pre-calculated sine and cosine
-    * of half the angle so that collections of quaternions can be efficiently
-    * rotated without repeatedly calling cos and sin.
+    * Rotates a vector around the x axis. Accepts pre-calculated sine and
+    * cosine of half the angle so that collections of quaternions can be
+    * efficiently rotated without repeatedly calling cos and sin.
     *
     * @param q      the input quaternion
     * @param cosah  cosine of half the angle
@@ -1963,15 +1978,17 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Quaternion target ) {
 
       final Vec3 i = q.imag;
-      return target.set(cosah * q.real - sinah * i.x,
-         cosah * i.x + sinah * q.real, cosah * i.y + sinah * i.z,
+      return target.set(
+         cosah * q.real - sinah * i.x,
+         cosah * i.x + sinah * q.real,
+         cosah * i.y + sinah * i.z,
          cosah * i.z - sinah * i.y);
    }
 
    /**
-    * Rotates a quaternion about the x axis by an angle. Do not use sequences of
-    * orthonormal rotations by Euler angles; this will result in gimbal lock,
-    * defeating the purpose behind a quaternion.
+    * Rotates a quaternion about the x axis by an angle. Do not use sequences
+    * of orthonormal rotations by Euler angles; this will result in gimbal
+    * lock, defeating the purpose behind a quaternion.
     *
     * @param q       the input quaternion
     * @param radians the angle in radians
@@ -1993,9 +2010,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Rotates a vector around the y axis. Accepts pre-calculated sine and cosine
-    * of half the angle so that collections of quaternions can be efficiently
-    * rotated without repeatedly calling cos and sin.
+    * Rotates a vector around the y axis. Accepts pre-calculated sine and
+    * cosine of half the angle so that collections of quaternions can be
+    * efficiently rotated without repeatedly calling cos and sin.
     *
     * @param q      the input quaternion
     * @param cosah  cosine of half the angle
@@ -2011,14 +2028,17 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Quaternion target ) {
 
       final Vec3 i = q.imag;
-      return target.set(cosah * q.real - sinah * i.y, cosah * i.x - sinah * i.z,
-         cosah * i.y + sinah * q.real, cosah * i.z + sinah * i.x);
+      return target.set(
+         cosah * q.real - sinah * i.y,
+         cosah * i.x - sinah * i.z,
+         cosah * i.y + sinah * q.real,
+         cosah * i.z + sinah * i.x);
    }
 
    /**
-    * Rotates a quaternion about the y axis by an angle. Do not use sequences of
-    * orthonormal rotations by Euler angles; this will result in gimbal lock,
-    * defeating the purpose behind a quaternion.
+    * Rotates a quaternion about the y axis by an angle. Do not use sequences
+    * of orthonormal rotations by Euler angles; this will result in gimbal
+    * lock, defeating the purpose behind a quaternion.
     *
     * @param q       the input quaternion
     * @param radians the angle in radians
@@ -2041,8 +2061,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Rotates a vector around the z axis. Accepts calculated sine and cosine of
-    * half the angle so that collections of quaternions can be efficiently
+    * Rotates a vector around the z axis. Accepts calculated sine and cosine
+    * of half the angle so that collections of quaternions can be efficiently
     * rotated without repeatedly calling cos and sin.
     *
     * @param q      the input quaternion
@@ -2059,14 +2079,17 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Quaternion target ) {
 
       final Vec3 i = q.imag;
-      return target.set(cosah * q.real - sinah * i.z, cosah * i.x + sinah * i.y,
-         cosah * i.y - sinah * i.x, cosah * i.z + sinah * q.real);
+      return target.set(
+         cosah * q.real - sinah * i.z,
+         cosah * i.x + sinah * i.y,
+         cosah * i.y - sinah * i.x,
+         cosah * i.z + sinah * q.real);
    }
 
    /**
-    * Rotates a quaternion about the z axis by an angle. Do not use sequences of
-    * orthonormal rotations by Euler angles; this will result in gimbal lock,
-    * defeating the purpose behind a quaternion.
+    * Rotates a quaternion about the z axis by an angle. Do not use sequences
+    * of orthonormal rotations by Euler angles; this will result in gimbal
+    * lock, defeating the purpose behind a quaternion.
     *
     * @param q       the input quaternion
     * @param radians the angle in radians
@@ -2218,15 +2241,13 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float wz2 = w * z2;
 
       right.set(1.0f - ysq2 - zsq2, xy2 + wz2, xz2 - wy2);
-
       forward.set(xy2 - wz2, 1.0f - xsq2 - zsq2, yz2 + wx2);
-
       up.set(xz2 + wy2, yz2 - wx2, 1.0f - xsq2 - ysq2);
    }
 
    /**
-    * Converts a quaternion to an axis and angle. The angle is returned from the
-    * function. The axis is assigned to an output vector.
+    * Converts a quaternion to an axis and angle. The angle is returned from
+    * the function. The axis is assigned to an output vector.
     *
     * @param q    the quaternion
     * @param axis the output axis
@@ -2380,8 +2401,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    /**
     * Raises a quaternion to the power of a real number. Uses the formula<br>
     * <br>
-    * <em>a</em><sup><em>b</em></sup> := |<em>a</em>|<sup><em>b</em></sup> { cos
-    * ( <em>b</em> \u03b8 ), <em>n</em> sin ( <em>b</em> \u03b8 ) }<br>
+    * <em>a</em><sup><em>b</em></sup> := |<em>a</em>|<sup><em>b</em></sup> {
+    * cos ( <em>b</em> \u03b8 ), <em>n</em> sin ( <em>b</em> \u03b8 ) }<br>
     * <br>
     * where \u03b8 and <em>n</em> are the angle and axis representation of the
     * quaternion <em>a</em>.
@@ -2459,14 +2480,16 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
        * Scale the axis by sin(b theta), then by pow(mag(q), b).
        */
       final double sclrSinbt = scalar * Math.sin(btheta);
-      target.imag.set(( float ) ( nx * sclrSinbt ),
-         ( float ) ( ny * sclrSinbt ), ( float ) ( nz * sclrSinbt ));
+      target.imag.set(
+         ( float ) ( nx * sclrSinbt ),
+         ( float ) ( ny * sclrSinbt ),
+         ( float ) ( nz * sclrSinbt ));
       return target;
    }
 
    /**
-    * An abstract class that may serve as an umbrella for any custom comparators
-    * of Quaternions.
+    * An abstract class that may serve as an umbrella for any custom
+    * comparators of Quaternions.
     */
    public static abstract class AbstrComparator
       implements Comparator < Quaternion > {
@@ -2610,8 +2633,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * A functional class to ease between two quaternions by linear interpolation
-    * (lerp).
+    * A functional class to ease between two quaternions by linear
+    * interpolation (lerp).
     */
    public static class Lerp extends AbstrEasing {
 
@@ -2660,13 +2683,19 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          }
 
          if ( Math.abs(1.0d - mSq) < IUtils.DEFAULT_EPSILON ) {
-            return target.set(( float ) cw, ( float ) cx, ( float ) cy,
+            return target.set(
+               ( float ) cw,
+               ( float ) cx,
+               ( float ) cy,
                ( float ) cz);
          }
 
          final double mInv = 1.0d / Math.sqrt(mSq);
-         return target.set(( float ) ( cw * mInv ), ( float ) ( cx * mInv ),
-            ( float ) ( cy * mInv ), ( float ) ( cz * mInv ));
+         return target.set(
+            ( float ) ( cw * mInv ),
+            ( float ) ( cx * mInv ),
+            ( float ) ( cy * mInv ),
+            ( float ) ( cz * mInv ));
       }
 
    }
@@ -2724,7 +2753,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    /**
     * A functional class to ease between two quaternions by spherical linear
     * interpolation (slerp). This chooses the shortest path between two
-    * orientations and maintains constant speed for a step given in [0.0, 1.0] .
+    * orientations and maintains constant speed for a step given in [0.0, 1.0]
+    * .
     */
    public static class Slerp extends AbstrEasing {
 
@@ -2771,8 +2801,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          float bz = bi.z;
 
          /* Clamp the dot product. */
-         float dotp = Utils.clamp(aw * bw + ax * bx + ay * by + az * bz, -1.0f,
-            1.0f);
+         float dotp = Utils.clamp(
+            aw * bw + ax * bx + ay * by + az * bz,
+            -1.0f, 1.0f);
 
          /* Flip values if the orientation is negative. */
          if ( dotp < 0.0f ) {
@@ -2819,13 +2850,19 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          }
 
          if ( Math.abs(1.0d - mSq) < IUtils.DEFAULT_EPSILON ) {
-            return target.set(( float ) cw, ( float ) cx, ( float ) cy,
+            return target.set(
+               ( float ) cw,
+               ( float ) cx,
+               ( float ) cy,
                ( float ) cz);
          }
 
          final double mInv = 1.0d / Math.sqrt(mSq);
-         return target.set(( float ) ( cw * mInv ), ( float ) ( cx * mInv ),
-            ( float ) ( cy * mInv ), ( float ) ( cz * mInv ));
+         return target.set(
+            ( float ) ( cw * mInv ),
+            ( float ) ( cx * mInv ),
+            ( float ) ( cy * mInv ),
+            ( float ) ( cz * mInv ));
       }
 
    }

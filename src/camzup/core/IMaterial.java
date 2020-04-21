@@ -7,8 +7,8 @@ package camzup.core;
 public interface IMaterial extends IUtils {
 
    /**
-    * The default fill color used when none is specified. Equivalent to (0.6039,
-    * 0.8471, 0.8863, 1.0) .
+    * The default fill color used when none is specified. Equivalent to
+    * (0.6039, 0.8471, 0.8863, 1.0) .
     */
    int DEFAULT_FILL = 0xff9ad8e2;
 

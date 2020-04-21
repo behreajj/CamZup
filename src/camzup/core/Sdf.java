@@ -1,8 +1,8 @@
 package camzup.core;
 
 /**
- * Facilitates implicit shapes created with signed distance fields. Adapted from
- * the GLSL of Inigo Quilez: <a href=
+ * Facilitates implicit shapes created with signed distance fields. Adapted
+ * from the GLSL of Inigo Quilez: <a href=
  * "https://www.iquilezles.org/www/articles/distfunctions2d/distfunctions2d.htm">2D
  * Distance Functions</a>, <a href=
  * "https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm">Distance
@@ -13,9 +13,10 @@ package camzup.core;
 public abstract class Sdf {
 
    /**
-    * A wrapper function around the default signed distance for arc. Follows the
-    * Processing convention of specifying the start and stop angle as inputs.
-    * This calls cosine twice and sine twice, and so will slow performance.
+    * A wrapper function around the default signed distance for arc. Follows
+    * the Processing convention of specifying the start and stop angle as
+    * inputs. This calls cosine twice and sine twice, and so will slow
+    * performance.
     *
     * @param point      the point
     * @param startAngle the start angle
@@ -47,7 +48,8 @@ public abstract class Sdf {
    }
 
    /**
-    * Draws a two dimensional box whose dimensions are described by the bounds.
+    * Draws a two dimensional box whose dimensions are described by the
+    * bounds.
     *
     * @param point  the point
     * @param bounds the bounds
@@ -305,8 +307,8 @@ public abstract class Sdf {
    }
 
    /**
-    * Draws a line from the origin to the destination, where the distance field
-    * is characterized by a third point's distance from the line.
+    * Draws a line from the origin to the destination, where the distance
+    * field is characterized by a third point's distance from the line.
     *
     * @param point  the point
     * @param origin the origin
@@ -344,8 +346,8 @@ public abstract class Sdf {
    }
 
    /**
-    * Draws a line from the origin to the destination, where the distance field
-    * is characterized by a third point's distance from the line.
+    * Draws a line from the origin to the destination, where the distance
+    * field is characterized by a third point's distance from the line.
     *
     * @param point    the point
     * @param origin   the origin
@@ -366,8 +368,8 @@ public abstract class Sdf {
    }
 
    /**
-    * Draws a line from the origin to the destination, where the distance field
-    * is characterized by a third point's distance from the line.
+    * Draws a line from the origin to the destination, where the distance
+    * field is characterized by a third point's distance from the line.
     *
     * @param point  the point
     * @param origin the origin
@@ -407,8 +409,8 @@ public abstract class Sdf {
    }
 
    /**
-    * Draws a line from the origin to the destination, where the distance field
-    * is characterized by a third point's distance from the line.
+    * Draws a line from the origin to the destination, where the distance
+    * field is characterized by a third point's distance from the line.
     *
     * @param point    the point
     * @param origin   the origin
@@ -429,8 +431,8 @@ public abstract class Sdf {
    }
 
    /**
-    * Draws a regular polygon given a count of vertices. The number of vertices
-    * should be greater than three.
+    * Draws a regular polygon given a count of vertices. The number of
+    * vertices should be greater than three.
     *
     * @param point    the point
     * @param vertices number of vertices
@@ -662,9 +664,9 @@ public abstract class Sdf {
 
    /**
     * Draws an open arc with rounded stroke caps. The angular offset of the
-    * arc's aperture is to be calculated outside of the function. The same goes
-    * for <em>twice</em> the arc-length of the arc's aperture. Based on the
-    * GLSL: <a href="https://www.shadertoy.com/view/wl23RK">
+    * arc's aperture is to be calculated outside of the function. The same
+    * goes for <em>twice</em> the arc-length of the arc's aperture. Based on
+    * the GLSL: <a href="https://www.shadertoy.com/view/wl23RK">
     * https://www.shadertoy.com/view/wl23RK</a>.
     *
     * @param point    the point

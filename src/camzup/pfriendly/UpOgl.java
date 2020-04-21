@@ -34,13 +34,12 @@ import processing.opengl.PGraphicsOpenGL;
 /**
  * An abstract parent class for Processing renderers based on OpenGL.
  */
-public abstract class UpOgl extends PGraphicsOpenGL
-   implements IUpOgl {
+public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
    /**
     * A curve to hold the arc data.
     */
-   protected final Curve2 arc = new Curve2();
+   protected final Curve2 arc;
 
    /**
     * The arc-mode.
@@ -50,17 +49,17 @@ public abstract class UpOgl extends PGraphicsOpenGL
    /**
     * A placeholder color used during lerpColor.
     */
-   protected Color aTemp = new Color();
+   protected final Color aTemp;
 
    /**
     * A placeholder color used during lerpColor.
     */
-   protected Color bTemp = new Color();
+   protected final Color bTemp;
 
    /**
     * A placeholder color used during lerpColor.
     */
-   protected Color cTemp = new Color();
+   protected final Color cTemp;
 
    /**
     * One divided by the maximum for the alpha channel.
@@ -85,17 +84,29 @@ public abstract class UpOgl extends PGraphicsOpenGL
    /**
     * A placeholder vector used during transform.
     */
-   protected final Vec2 tr2Loc = new Vec2();
+   protected final Vec2 tr2Loc;
 
    /**
     * A placeholder vector used during transform.
     */
-   protected final Vec2 tr2Scale = new Vec2();
+   protected final Vec2 tr2Scale;
 
    /**
     * A placeholder transform used during transform.
     */
-   protected final Transform2 transform = new Transform2();
+   protected final Transform2 transform;
+
+   {
+      this.arc = new Curve2();
+      this.aTemp = new Color();
+      this.bezierBasisInverse = PMatAux.bezierBasisInverse();
+      this.bTemp = new Color();
+      this.cTemp = new Color();
+      this.curveToBezierMatrix = new PMatrix3D();
+      this.tr2Loc = new Vec2();
+      this.tr2Scale = new Vec2();
+      this.transform = new Transform2();
+   }
 
    /**
     * The default constructor.
@@ -167,8 +178,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Draws an arc at a location from a start angle to a stop angle. The meaning
-    * of the first four parameters depends on the renderer's ellipseMode.
+    * Draws an arc at a location from a start angle to a stop angle. The
+    * meaning of the first four parameters depends on the renderer's
+    * ellipseMode.
     *
     * @param x0    the first x
     * @param y0    the first y
@@ -230,20 +242,20 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
       switch ( mode ) {
 
-         case OPEN:
+         case PConstants.OPEN:
 
             this.arcMode = ArcMode.OPEN;
             this.fill = false;
 
             break;
 
-         case CHORD:
+         case PConstants.CHORD:
 
             this.arcMode = ArcMode.CHORD;
 
             break;
 
-         case PIE:
+         case PConstants.PIE:
 
          default:
 
@@ -334,10 +346,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
    /**
     * Evaluates a Bezier curve at step t for points ap0, cp0, cp1 and ap1. The
-    * parameter t varies between [0.0, 1.0]; ap0 and ap1 are the curve's anchor
-    * points; cp0 and cp1 the control points. This can be done once with the x
-    * coordinates and a second time with the y coordinates to get the location
-    * of a Bezier curve at t.
+    * parameter t varies between [0.0, 1.0]; ap0 and ap1 are the curve's
+    * anchor points; cp0 and cp1 the control points. This can be done once
+    * with the x coordinates and a second time with the y coordinates to get
+    * the location of a Bezier curve at t.
     *
     * @param ap0 the first anchor point
     * @param cp0 the first control point
@@ -443,8 +455,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    /**
     * Exposes the color calculation to the public. Includes the option to pre
     * multiply alpha. Refers to the helper function
-    * {@link UpOgl#colorPreCalc(float, float, float, float)} to perform part of
-    * the calculation independent of this consideration.
+    * {@link UpOgl#colorPreCalc(float, float, float, float)} to perform part
+    * of the calculation independent of this consideration.
     *
     * @param x      the first color channel, hue or red
     * @param y      the second color channel, saturation or green
@@ -522,8 +534,12 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float max3,
       final float aMax ) {
 
-      super.colorMode(mode, max1 < 1.0f ? 1.0f : max1, max2 < 1.0f ? 1.0f
-         : max2, max3 < 1.0f ? 1.0f : max3, aMax < 1.0f ? 1.0f : aMax);
+      super.colorMode(
+         mode,
+         max1 < 1.0f ? 1.0f : max1,
+         max2 < 1.0f ? 1.0f : max2,
+         max3 < 1.0f ? 1.0f : max3,
+         aMax < 1.0f ? 1.0f : aMax);
 
       this.invColorModeX = 1.0f / this.colorModeX;
       this.invColorModeY = 1.0f / this.colorModeY;
@@ -532,9 +548,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * A helper function to color calculation, exposed to the public. Calculates
-    * color based on the color mode, HSB or RGB, regardless of whether or not
-    * the color is to be pre-multiplied.
+    * A helper function to color calculation, exposed to the public.
+    * Calculates color based on the color mode, HSB or RGB, regardless of
+    * whether or not the color is to be pre-multiplied.
     *
     * @param x the first color channel, hue or red
     * @param y the second color channel, saturation or green
@@ -576,9 +592,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Draws a curved line on the screen. The first three parameters specify the
-    * start control point; the last three parameters specify the ending control
-    * point. The middle parameters specify the start and stop of the curve.
+    * Draws a curved line on the screen. The first three parameters specify
+    * the start control point; the last three parameters specify the ending
+    * control point. The middle parameters specify the start and stop of the
+    * curve.
     *
     * @param x1 control point 0 x
     * @param y1 control point 0 y
@@ -610,9 +627,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Draws a curved line on the screen. The first three parameters specify the
-    * start control point; the last three parameters specify the ending control
-    * point. The middle parameters specify the start and stop of the curve.
+    * Draws a curved line on the screen. The first three parameters specify
+    * the start control point; the last three parameters specify the ending
+    * control point. The middle parameters specify the start and stop of the
+    * curve.
     *
     * @param x1 control point 0 x
     * @param y1 control point 0 y
@@ -722,7 +740,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
       this.settingsInited = true;
       this.reapplySettings = false;
 
-//      this.hint(PConstants.DISABLE_OPENGL_ERRORS);
+      // this.hint(PConstants.DISABLE_OPENGL_ERRORS);
    }
 
    /**
@@ -738,8 +756,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Sets the renderer projection matrix to the frustum defined by the edges of
-    * the view port.
+    * Sets the renderer projection matrix to the frustum defined by the edges
+    * of the view port.
     *
     * @param left   the left edge of the window
     * @param right  the right edge of the window
@@ -982,8 +1000,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    public void image ( final PImage img ) { this.image(img, 0.0f, 0.0f); }
 
    /**
-    * Displays a PImage at a location. Uses the image's width and height as the
-    * second parameters.
+    * Displays a PImage at a location. Uses the image's width and height as
+    * the second parameters.
     *
     * @param img the PImage
     * @param x   the first x coordinate
@@ -1023,8 +1041,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
    /**
     * Displays a PImage. The meaning of the first four parameters depends on
-    * imageMode. The last four coordinates specify the image texture coordinates
-    * (or UVs).
+    * imageMode. The last four coordinates specify the image texture
+    * coordinates (or UVs).
     *
     * @param img the PImage
     * @param x1  the first x coordinate
@@ -1084,8 +1102,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
    /**
     * Displays a PImage. The meaning of the first four parameters depends on
-    * imageMode. The last four coordinates specify the image texture coordinates
-    * (or UVs).
+    * imageMode. The last four coordinates specify the image texture
+    * coordinates (or UVs).
     *
     * @param img the PImage
     * @param x1  the first x coordinate
@@ -1223,8 +1241,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Sets the renderer's stroke, stroke weight and fill to the material's. Also
-    * sets whether or not to use fill and stroke.
+    * Sets the renderer's stroke, stroke weight and fill to the material's.
+    * Also sets whether or not to use fill and stroke.
     *
     * @param material the material
     */
@@ -1244,8 +1262,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    /**
     * Finds the model view position of a point.<br>
     * <br>
-    * More efficient than calling {@link PApplet#modelX(float, float, float)} ,
-    * {@link PApplet#modelY(float, float, float)} and
+    * More efficient than calling {@link PApplet#modelX(float, float, float)}
+    * , {@link PApplet#modelY(float, float, float)} and
     * {@link PApplet#modelZ(float, float, float)} separately. However, it is
     * advisable to work with {@link Vec4}s and the renderer matrices directly.
     *
@@ -1264,8 +1282,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    /**
     * Finds the model view position of a point.<br>
     * <br>
-    * More efficient than calling {@link PApplet#modelX(float, float, float)} ,
-    * {@link PApplet#modelY(float, float, float)} and
+    * More efficient than calling {@link PApplet#modelX(float, float, float)}
+    * , {@link PApplet#modelY(float, float, float)} and
     * {@link PApplet#modelZ(float, float, float)} separately. However, it is
     * advisable to work with {@link Vec4}s and the renderer matrices directly.
     *
@@ -1288,15 +1306,15 @@ public abstract class UpOgl extends PGraphicsOpenGL
    public abstract void origin ( );
 
    /**
-    * Sets the renderer projection to orthographic, where objects maintain their
-    * size regardless of distance from the camera.
+    * Sets the renderer projection to orthographic, where objects maintain
+    * their size regardless of distance from the camera.
     */
    @Override
    public void ortho ( ) { this.ortho(1.0f); }
 
    /**
-    * Sets the renderer projection to orthographic, where objects maintain their
-    * size regardless of distance from the camera.
+    * Sets the renderer projection to orthographic, where objects maintain
+    * their size regardless of distance from the camera.
     *
     * @param zoom the zoom level
     */
@@ -1319,8 +1337,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Sets the renderer projection to orthographic, where objects maintain their
-    * size regardless of distance from the camera.
+    * Sets the renderer projection to orthographic, where objects maintain
+    * their size regardless of distance from the camera.
     *
     * @param left   the left edge of the window
     * @param right  the right edge of the window
@@ -1342,8 +1360,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Sets the renderer projection to orthographic, where objects maintain their
-    * size regardless of distance from the camera.
+    * Sets the renderer projection to orthographic, where objects maintain
+    * their size regardless of distance from the camera.
     *
     * @param left   the left edge of the window
     * @param right  the right edge of the window
@@ -1361,10 +1379,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
       final float near,
       final float far ) {
 
-//      this.cameraFOV = IUp.DEFAULT_FOV;
-//      this.cameraAspect = Utils.div(
-//         Utils.diff(right, left),
-//         Utils.diff(top, bottom));
+      // this.cameraFOV = IUp.DEFAULT_FOV;
+      // this.cameraAspect = Utils.div(
+      // Utils.diff(right, left),
+      // Utils.diff(top, bottom));
       this.cameraNear = near;
       this.cameraFar = far;
 
@@ -1373,9 +1391,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Sets the renderer projection to a perspective, where objects nearer to the
-    * camera appear larger than objects distant from the camera. For the field
-    * of view, uses {@link IUp#DEFAULT_FOV}.
+    * Sets the renderer projection to a perspective, where objects nearer to
+    * the camera appear larger than objects distant from the camera. For the
+    * field of view, uses {@link IUp#DEFAULT_FOV}.
     */
    @Override
    public void perspective ( ) {
@@ -1385,8 +1403,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Sets the renderer projection to a perspective, where objects nearer to the
-    * camera appear larger than objects distant from the camera.
+    * Sets the renderer projection to a perspective, where objects nearer to
+    * the camera appear larger than objects distant from the camera.
     *
     * @param fov the field of view
     */
@@ -1400,8 +1418,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Sets the renderer projection to a perspective, where objects nearer to the
-    * camera appear larger than objects distant from the camera.
+    * Sets the renderer projection to a perspective, where objects nearer to
+    * the camera appear larger than objects distant from the camera.
     *
     * @param fov    the field of view
     * @param aspect the aspect ratio, width over height
@@ -1421,8 +1439,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Sets the renderer projection to a perspective, where objects nearer to the
-    * camera appear larger than objects distant from the camera.
+    * Sets the renderer projection to a perspective, where objects nearer to
+    * the camera appear larger than objects distant from the camera.
     *
     * @param fov    the field of view
     * @param aspect the aspect ratio, width over height
@@ -1546,7 +1564,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Draws a rectangle. The meaning of the four parameters depends on rectMode.
+    * Draws a rectangle. The meaning of the four parameters depends on
+    * rectMode.
     *
     * @param x1 the first x parameter
     * @param y1 the first y parameter
@@ -1747,8 +1766,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    /**
     * Finds the screen position of a point in the world.<br>
     * <br>
-    * More efficient than calling {@link PApplet#screenX(float, float, float)} ,
-    * {@link PApplet#screenY(float, float, float)} , and
+    * More efficient than calling {@link PApplet#screenX(float, float, float)}
+    * , {@link PApplet#screenY(float, float, float)} , and
     * {@link PApplet#screenZ(float, float, float)} separately. However, it is
     * advisable to work with {@link Vec4}s and the renderer matrices directly.
     *
@@ -1767,8 +1786,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    /**
     * Finds the screen position of a point in the world.<br>
     * <br>
-    * More efficient than calling {@link PApplet#screenX(float, float, float)} ,
-    * {@link PApplet#screenY(float, float, float)} , and
+    * More efficient than calling {@link PApplet#screenX(float, float, float)}
+    * , {@link PApplet#screenY(float, float, float)} , and
     * {@link PApplet#screenZ(float, float, float)} separately. However, it is
     * advisable to work with {@link Vec4}s and the renderer matrices directly.
     *
@@ -1864,8 +1883,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
    /**
     * Set size is the last function called by size, createGraphics,
-    * makeGraphics, etc. when initializing the graphics renderer. Therefore, any
-    * additional values that need initialization can be attempted here.
+    * makeGraphics, etc. when initializing the graphics renderer. Therefore,
+    * any additional values that need initialization can be attempted here.
     *
     * @param width  the applet width
     * @param height the applet height
@@ -1955,8 +1974,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
    /**
     * Displays a PShape. The meaning of the four parameters depends on
-    * shapeMode. Use of this function is discouraged by this renderer. See mesh
-    * and curve entities instead.
+    * shapeMode. Use of this function is discouraged by this renderer. See
+    * mesh and curve entities instead.
     *
     * @param shape the PShape
     * @param x1    the first x coordinate
@@ -1979,8 +1998,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
     * shapeMode is not supported by this renderer; it defaults to CENTER. Set
     * the scale of the shape with instance methods instead.<br>
     * <br>
-    * This will not throw a missing method warning, because it may be called by
-    * PShapes.
+    * This will not throw a missing method warning, because it may be called
+    * by PShapes.
     */
    @Override
    @SuppressWarnings ( "unused" )
@@ -2039,13 +2058,10 @@ public abstract class UpOgl extends PGraphicsOpenGL
    /**
     * Unsupported by this renderer, as it is known to raise errors.
     *
-    * @param quality the quality
+    * @param q the quality
     */
    @Override
-   public void smooth ( final int quality ) {
-
-      PApplet.showMethodWarning("smooth");
-   }
+   public void smooth ( final int q ) { PApplet.showMethodWarning("smooth"); }
 
    /**
     * Unsupported by this renderer. Use a MeshEntity and Mesh instead.
@@ -2053,10 +2069,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
     * @param r the radius
     */
    @Override
-   public void sphere ( final float r ) {
-
-      PApplet.showMethodWarning("sphere");
-   }
+   public void sphere ( final float r ) { PApplet.showMethodWarning("sphere"); }
 
    /**
     * Unsupported by this renderer. Use a MeshEntity and Mesh instead.
@@ -2103,15 +2116,15 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
       switch ( this.textAlignY ) {
 
-         case BOTTOM:
+         case PConstants.BOTTOM:
             yMut += this.textDescent();
             break;
 
-         case TOP:
+         case PConstants.TOP:
             yMut -= this.textAscent();
             break;
 
-         case CENTER:
+         case PConstants.CENTER:
          default:
             yMut -= this.textAscent() * 0.5f;
       }
@@ -2150,19 +2163,19 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
       switch ( this.textAlignY ) {
 
-         case BOTTOM:
+         case PConstants.BOTTOM:
 
             yMut += this.textDescent() + high;
 
             break;
 
-         case TOP:
+         case PConstants.TOP:
 
             yMut -= this.textAscent();
 
             break;
 
-         case CENTER:
+         case PConstants.CENTER:
 
          default:
 
@@ -2887,8 +2900,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Calculates a color from an integer and alpha value. Useful in the IDE for
-    * colors defined with hash-tag literals, such as "#aabbcc" .
+    * Calculates a color from an integer and alpha value. Useful in the IDE
+    * for colors defined with hash-tag literals, such as "#aabbcc" .
     *
     * @param argb  the hexadecimal color
     * @param alpha the alpha channel
@@ -2931,27 +2944,19 @@ public abstract class UpOgl extends PGraphicsOpenGL
          this.curveInited = true;
       }
 
-      final float s = this.curveTightness;
-      final float t = ( s - 1.0f ) * 0.5f;
-      final float u = 1.0f - s;
-      final float v = u * 0.5f;
-      this.curveBasisMatrix.set(
-         t, ( s + 3.0f ) * 0.5f, ( -3.0f - s ) * 0.5f, v,
-         u, ( -5.0f - s ) * 0.5f, s + 2.0f, t,
-         t, 0.0f, v, 0.0f,
-         0.0f, 1.0f, 0.0f, 0.0f);
+      PMatAux.catmullBasis(
+         this.curveTightness,
+         this.curveBasisMatrix);
 
       this.splineForward(this.curveDetail, this.curveDrawMatrix);
 
-      if ( this.bezierBasisInverse == null ) {
-         this.bezierBasisInverse = new PMatrix3D();
-         PMatAux.inverse(this.bezierBasisMatrix, this.bezierBasisInverse);
-         this.curveToBezierMatrix = new PMatrix3D();
-      }
-
-      PMatAux.mul(this.bezierBasisInverse, this.curveBasisMatrix,
+      PMatAux.mul(
+         this.bezierBasisInverse,
+         this.curveBasisMatrix,
          this.curveToBezierMatrix);
-      PMatAux.mul(this.curveDrawMatrix, this.curveBasisMatrix,
+      PMatAux.mul(
+         this.curveDrawMatrix,
+         this.curveBasisMatrix,
          this.curveDrawMatrix);
    }
 
@@ -3094,8 +3099,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Draws a mesh as multiplied by a transform. Supplied temporary vectors hold
-    * the transformed coordinate and normal.
+    * Draws a mesh as multiplied by a transform. Supplied temporary vectors
+    * hold the transformed coordinate and normal.
     *
     * @param mesh the mesh
     * @param tr   the transform
@@ -3137,9 +3142,9 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * The renderer specific implementation of Processing's image function. This
-    * uses integers to specify the UV coordinates for unknown reasons; it defers
-    * to a public, single precision real number function.
+    * The renderer specific implementation of Processing's image function.
+    * This uses integers to specify the UV coordinates for unknown reasons; it
+    * defers to a public, single precision real number function.
     *
     * @param img the PImage
     * @param x1  the first x coordinate
@@ -3203,8 +3208,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * An internal helper function to ambientLight. Sets ambient lighting. Color
-    * channels will be submitted to color calculation.
+    * An internal helper function to ambientLight. Sets ambient lighting.
+    * Color channels will be submitted to color calculation.
     *
     * @param num the index
     * @param x   the first channel
@@ -3246,8 +3251,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * An internal helper function to diffuseLight. Sets diffuse lighting. Color
-    * channels will be submitted to color calculation.
+    * An internal helper function to diffuseLight. Sets diffuse lighting.
+    * Color channels will be submitted to color calculation.
     *
     * @param num the index
     * @param clr the color
@@ -3265,8 +3270,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * An internal helper function to diffuseLight. Sets diffuse lighting. Color
-    * channels will be submitted to color calculation.
+    * An internal helper function to diffuseLight. Sets diffuse lighting.
+    * Color channels will be submitted to color calculation.
     *
     * @param num the index
     * @param x   the first channel
@@ -3289,8 +3294,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * An internal helper function to diffuseLight. Sets diffuse lighting. Color
-    * channels will be submitted to color calculation.
+    * An internal helper function to diffuseLight. Sets diffuse lighting.
+    * Color channels will be submitted to color calculation.
     *
     * @param num the index
     * @param clr the color
@@ -3329,8 +3334,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Internal helper function. Sets the light normals array at the given index.
-    * Multiplies the normal by the model view.
+    * Internal helper function. Sets the light normals array at the given
+    * index. Multiplies the normal by the model view.
     *
     * @param num  the index
     * @param xDir the direction x
@@ -3378,8 +3383,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Internal helper function. Sets the light normals array at the given index.
-    * Multiplies the normal by the model view.
+    * Internal helper function. Sets the light normals array at the given
+    * index. Multiplies the normal by the model view.
     *
     * @param num the index
     * @param dir the direction
@@ -3437,8 +3442,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
    /**
     * Internal helper function. Sets positional lighting. Sets positional
-    * lighting array at the given index. Multiplies each vector component by the
-    * model view.
+    * lighting array at the given index. Multiplies each vector component by
+    * the model view.
     *
     * @param num   the index
     * @param vec   the vector
@@ -3493,17 +3498,18 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Internal helper to public functions for 2.5D and 3D. Finds the position of
-    * a point in the model view. Does so by
+    * Internal helper to public functions for 2.5D and 3D. Finds the position
+    * of a point in the model view. Does so by
     * <ol>
-    * <li>promoting the point to a vector 4, where its w component is 1.0 .</li>
+    * <li>promoting the point to a vector 4, where its w component is 1.0
+    * .</li>
     * <li>multiplying the vector 4 by the model view matrix;</li>
     * <li>multiplying the product by the camera inverse;</li>
     * <li>demoting the vector 4 to a point 3 by dividing the x, y and z
     * components by w.</li>
     * </ol>
-    * More efficient than calling {@link PApplet#modelX(float, float, float)} ,
-    * {@link PApplet#modelY(float, float, float)} and
+    * More efficient than calling {@link PApplet#modelX(float, float, float)}
+    * , {@link PApplet#modelY(float, float, float)} and
     * {@link PApplet#modelZ(float, float, float)} separately. However, it is
     * advisable to work with {@link Vec4}s and the renderer matrices directly.
     *
@@ -3567,7 +3573,7 @@ public abstract class UpOgl extends PGraphicsOpenGL
                        this.cameraInv.m21 * ay +
                        this.cameraInv.m22 * az +
                        this.cameraInv.m23 * aw;
-      /* @formatter:off */
+      /* @formatter:on */
 
       /* Convert from homogeneous coordinate to point by dividing by w. */
       if ( bw == 1.0f ) { return target.set(bx, by, bz); }
@@ -3652,14 +3658,14 @@ public abstract class UpOgl extends PGraphicsOpenGL
     * Draws a rounded rectangle. The meaning of the first four parameters
     * depends on rectMode.
     *
-    * @param a  the first x parameter
-    * @param b  the first y parameter
-    * @param c  the second x parameter
-    * @param d  the second y parameter
-    * @param topLeft the top-left corner rounding
-    * @param topRight the top-right corner rounding
+    * @param a           the first x parameter
+    * @param b           the first y parameter
+    * @param c           the second x parameter
+    * @param d           the second y parameter
+    * @param topLeft     the top-left corner rounding
+    * @param topRight    the top-right corner rounding
     * @param bottomRight the bottom-right corner rounding
-    * @param bottomLeft the bottom-left corner rounding
+    * @param bottomLeft  the bottom-left corner rounding
     *
     * @see Utils#abs(float)
     * @see Utils#min(float, float)
@@ -3777,8 +3783,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Rotates the renderer's model view matrix by an angle in radians around an
-    * axis. Normalizes the axis if it is not of unit length.
+    * Rotates the renderer's model view matrix by an angle in radians around
+    * an axis. Normalizes the axis if it is not of unit length.
     *
     * @param radians the angle in radians
     * @param xAxis   the axis x component
@@ -3841,7 +3847,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
     * Internal helper to public functions for 2.5D and 3D. Finds the screen
     * position of a point in the world. Does so by
     * <ol>
-    * <li>promoting the point to a vector 4, where its w component is 1.0 .</li>
+    * <li>promoting the point to a vector 4, where its w component is 1.0
+    * .</li>
     * <li>multiplying the vector 4 by the model view matrix;</li>
     * <li>multiplying the product by the projection;</li>
     * <li>demoting the vector 4 to a point 3 by dividing the x, y and z
@@ -3850,8 +3857,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
     * <li>shifting the range from [-1.0, 1.0] to [(0.0, 0.0), (width, height)]
     * .</li>
     * </ol>
-    * More efficient than calling {@link PApplet#screenX(float, float, float)} ,
-    * {@link PApplet#screenY(float, float, float)} , and
+    * More efficient than calling {@link PApplet#screenX(float, float, float)}
+    * , {@link PApplet#screenY(float, float, float)} , and
     * {@link PApplet#screenZ(float, float, float)} separately. However, it is
     * advisable to work with {@link Vec4}s and the renderer matrices directly.
     *
@@ -4144,8 +4151,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Transfers the model view from a PMatrix3D to a one-dimensional float array
-    * used by OpenGL.
+    * Transfers the model view from a PMatrix3D to a one-dimensional float
+    * array used by OpenGL.
     */
    @Override
    protected void updateGLModelview ( ) {
@@ -4155,7 +4162,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
 
    /**
     * Transfers the transpose of the model view inverse, which is the normal
-    * matrix, from a PMatrix3D to a one-dimensional float array used by OpenGL.
+    * matrix, from a PMatrix3D to a one-dimensional float array used by
+    * OpenGL.
     */
    @Override
    protected void updateGLNormal ( ) {
@@ -4164,8 +4172,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    }
 
    /**
-    * Transfers the projection from a PMatrix3D to a one-dimensional float array
-    * used by OpenGL.
+    * Transfers the projection from a PMatrix3D to a one-dimensional float
+    * array used by OpenGL.
     */
    @Override
    protected void updateGLProjection ( ) {
@@ -4186,8 +4194,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    /**
     * Updates the texture coordinates of the renderer. If the texture mode is
     * IMAGE, divides the UV coordinates by the image's dimensions. If the
-    * texture wrap is CLAMP, clamps the coordinates to [0.0, 1.0] ; if the wrap
-    * is REPEAT, floor wraps them instead.
+    * texture wrap is CLAMP, clamps the coordinates to [0.0, 1.0] ; if the
+    * wrap is REPEAT, floor wraps them instead.
     *
     * @param u the s or u coordinate
     * @param v the t or v coordinate
@@ -4203,8 +4211,8 @@ public abstract class UpOgl extends PGraphicsOpenGL
    /**
     * Updates the texture coordinates of the renderer. If the texture mode is
     * IMAGE, divides the UV coordinates by the image's dimensions. If the
-    * texture wrap is CLAMP, clamps the coordinates to [0.0, 1.0] ; if the wrap
-    * is REPEAT, wraps them instead.
+    * texture wrap is CLAMP, clamps the coordinates to [0.0, 1.0] ; if the
+    * wrap is REPEAT, wraps them instead.
     *
     * @param u                  the s or u coordinate
     * @param v                  the t or v coordinate

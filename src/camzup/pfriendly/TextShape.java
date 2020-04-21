@@ -34,8 +34,8 @@ public abstract class TextShape {
    /**
     * Converts a list of characters to a an array of curve entities. When the
     * level of detail is 0, uses Bezier curves; when the detail is non-zero,
-    * approximates the glyph with a series of straight line segments. The PFont
-    * should have been created with createFont, not loadFont.
+    * approximates the glyph with a series of straight line segments. The
+    * PFont should have been created with createFont, not loadFont.
     *
     * @param pfont      the PFont
     * @param detail     the level of detail
@@ -55,9 +55,9 @@ public abstract class TextShape {
 
    /**
     * Converts a string to a an array of curve entities. When the level of
-    * detail is 0, uses Bezier curves; when the detail is non-zero, approximates
-    * the glyph with a series of straight line segments. The PFont should have
-    * been created with createFont, not loadFont.
+    * detail is 0, uses Bezier curves; when the detail is non-zero,
+    * approximates the glyph with a series of straight line segments. The
+    * PFont should have been created with createFont, not loadFont.
     *
     * @param pfont    the PFont
     * @param detail   the level of detail
@@ -79,8 +79,8 @@ public abstract class TextShape {
    /**
     * Converts a list of characters to a an array of curve entities. When the
     * level of detail is 0, uses Bezier curves; when the detail is non-zero,
-    * approximates the glyph with a series of straight line segments. The PFont
-    * should have been created with createFont, not loadFont.
+    * approximates the glyph with a series of straight line segments. The
+    * PFont should have been created with createFont, not loadFont.
     *
     * @param rndr       the renderer
     * @param pfont      the PFont
@@ -103,9 +103,9 @@ public abstract class TextShape {
 
    /**
     * Converts a string to a an array of curve entities. When the level of
-    * detail is 0, uses Bezier curves; when the detail is non-zero, approximates
-    * the glyph with a series of straight line segments. The PFont should have
-    * been created with createFont, not loadFont.
+    * detail is 0, uses Bezier curves; when the detail is non-zero,
+    * approximates the glyph with a series of straight line segments. The
+    * PFont should have been created with createFont, not loadFont.
     *
     * @param rndr     the renderer
     * @param pfont    the PFont
@@ -224,9 +224,9 @@ public abstract class TextShape {
    }
 
    /**
-    * To convert a character to a glyph with OpenGL- based renderers, Processing
-    * uses a deprecated method from an AWT function. That method call has been
-    * isolated to this function.
+    * To convert a character to a glyph with OpenGL- based renderers,
+    * Processing uses a deprecated method from an AWT function. That method
+    * call has been isolated to this function.
     *
     * @param pfont      the Processing font
     * @param detail     the curve detail
@@ -280,8 +280,8 @@ public abstract class TextShape {
     * other variants of getGlyph.<br>
     * <br>
     * When multiple characters are provided, the kerning between characters is
-    * better; when one character is supplied, glyphs with multiple curves (i, j,
-    * p, etc.) are easier to organize.
+    * better; when one character is supplied, glyphs with multiple curves (i,
+    * j, p, etc.) are easier to organize.
     *
     * @param font      the AWT font
     * @param frc       the font render context
@@ -292,8 +292,8 @@ public abstract class TextShape {
     *
     * @return the list of curves
     *
-    * @see TextShape#processGlyphCurve(Font, FontRenderContext, AffineTransform,
-    *      float, char[], List)
+    * @see TextShape#processGlyphCurve(Font, FontRenderContext,
+    *      AffineTransform, float, char[], List)
     */
    protected static List < Curve2 > processGlyphCurve (
       final Font font,
@@ -314,8 +314,8 @@ public abstract class TextShape {
     * function for other variants of getGlyph.<br>
     * <br>
     * When multiple characters are provided, the kerning between characters is
-    * better; when one character is supplied, glyphs with multiple curves (i, j,
-    * p, etc.) are easier to organize.
+    * better; when one character is supplied, glyphs with multiple curves (i,
+    * j, p, etc.) are easier to organize.
     *
     * @param font       the AWT font
     * @param frc        the font render context
@@ -500,9 +500,9 @@ public abstract class TextShape {
    }
 
    /**
-    * To convert a character to a glyph with OpenGL- based renderers, Processing
-    * uses a deprecated method from an AWT function. That method call has been
-    * isolated to this function.
+    * To convert a character to a glyph with OpenGL- based renderers,
+    * Processing uses a deprecated method from an AWT function. That method
+    * call has been isolated to this function.
     *
     * @param pfont      the Processing font
     * @param detail     the curve detail
@@ -556,8 +556,8 @@ public abstract class TextShape {
     * variants of getGlyph.<br>
     * <br>
     * When multiple characters are provided, the kerning between characters is
-    * better; when one character is supplied, glyphs with multiple curves (i, j,
-    * p, etc.) are easier to organize.
+    * better; when one character is supplied, glyphs with multiple curves (i,
+    * j, p, etc.) are easier to organize.
     *
     * @param font      the AWT font
     * @param frc       the font render context
@@ -568,8 +568,8 @@ public abstract class TextShape {
     *
     * @return the list of curves
     *
-    * @see TextShape#processGlyphMesh(Font, FontRenderContext, AffineTransform,
-    *      float, char[], List)
+    * @see TextShape#processGlyphMesh(Font, FontRenderContext,
+    *      AffineTransform, float, char[], List)
     */
    @Experimental
    protected static List < Mesh2 > processGlyphMesh (
@@ -591,8 +591,8 @@ public abstract class TextShape {
     * for other variants of getGlyph.<br>
     * <br>
     * When multiple characters are provided, the kerning between characters is
-    * better; when one character is supplied, glyphs with multiple curves (i, j,
-    * p, etc.) are easier to organize.
+    * better; when one character is supplied, glyphs with multiple curves (i,
+    * j, p, etc.) are easier to organize.
     *
     * @param font       the AWT font
     * @param frc        the font render context

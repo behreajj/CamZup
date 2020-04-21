@@ -14,14 +14,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * A draft scalable vector graphics (SVG) parser class. Currently unfinished.
+ * A draft scalable vector graphics (SVG) parser class. Currently
+ * unfinished.
  */
 @Experimental
 public abstract class SvgParser {
 
    /**
-    * Ratio to convert from centimeters to units, {@value SvgParser#CM_TO_UNIT}.
-    * In Processing, the value was 35.43307 .
+    * Ratio to convert from centimeters to units,
+    * {@value SvgParser#CM_TO_UNIT}. In Processing, the value was 35.43307 .
     */
    public static final float CM_TO_UNIT = 37.795f;
 
@@ -36,7 +37,8 @@ public abstract class SvgParser {
    public static final String DATA_PATTERN = "[A|a|C|c|H|h|L|l|M|m|Q|q|S|sT|t|V|v|Z|z|,|\u0020]";
 
    /**
-    * Ratio to convert from gradians to radians, {@value SvgParser#GRAD_TO_RAD}.
+    * Ratio to convert from gradians to radians,
+    * {@value SvgParser#GRAD_TO_RAD}.
     */
    public static final float GRAD_TO_RAD = 0.015708f;
 
@@ -53,8 +55,8 @@ public abstract class SvgParser {
    public static final float IN_TO_UNIT = 96.0f;
 
    /**
-    * Ratio to convert from millimeters to units, {@value SvgParser#MM_TO_UNIT}.
-    * In Processing, the value was 3.543307 .
+    * Ratio to convert from millimeters to units,
+    * {@value SvgParser#MM_TO_UNIT}. In Processing, the value was 3.543307 .
     */
    public static final float MM_TO_UNIT = 3.7795f;
 
@@ -75,6 +77,13 @@ public abstract class SvgParser {
     */
    public static final float PX_TO_UNIT = 1.0f;
 
+   /**
+    * Attempts to parse an SVG file to a curve entity.
+    *
+    * @param fileName the SVG file name
+    *
+    * @return the curve entity
+    */
    public static CurveEntity2 parse ( final String fileName ) {
 
       final CurveEntity2 result = new CurveEntity2();
@@ -86,18 +95,19 @@ public abstract class SvgParser {
          doc.normalizeDocument();
 
          final Node header = doc.getFirstChild();
-//         final NamedNodeMap nnm = header.getAttributes();
-//         final Vec4 vbVec = new Vec4(0.0f, 0.0f, 1.0f, 1.0f);
-//         final Node viewbox = nnm.getNamedItem("viewBox");
-//         final Node width = nnm.getNamedItem("width");
-//         final Node height = nnm.getNamedItem("height");
-//         if ( viewbox != null ) { SvgParser.parseViewBox(viewbox, vbVec); }
+         // final NamedNodeMap nnm = header.getAttributes();
+         // final Vec4 vbVec = new Vec4(0.0f, 0.0f, 1.0f, 1.0f);
+         // final Node viewbox = nnm.getNamedItem("viewBox");
+         // final Node width = nnm.getNamedItem("width");
+         // final Node height = nnm.getNamedItem("height");
+         // if ( viewbox != null ) { SvgParser.parseViewBox(viewbox, vbVec); }
 
          final NodeList nodes = header.getChildNodes();
          final int nodeLen = nodes.getLength();
+         final Mat3 root = new Mat3();
          for ( int i = 0; i < nodeLen; ++i ) {
             final Node node = nodes.item(i);
-            SvgParser.parseNode(node, result);
+            SvgParser.parseNode(node, result, root);
          }
 
       } catch ( final Exception e ) {
@@ -109,8 +119,8 @@ public abstract class SvgParser {
    }
 
    /**
-    * A helper function to parse an angle to radians. The default is assumed to
-    * be degrees.
+    * A helper function to parse an angle to radians. The default is assumed
+    * to be degrees.
     *
     * @param v the input value
     *
@@ -122,8 +132,8 @@ public abstract class SvgParser {
    }
 
    /**
-    * A helper function to parse an angle to radians. The default is assumed to
-    * be degrees.
+    * A helper function to parse an angle to radians. The default is assumed
+    * to be degrees.
     *
     * @param v   the input value
     * @param def the default
@@ -171,43 +181,9 @@ public abstract class SvgParser {
    }
 
    /**
-    * Parses a SVG node and returns a Curve2 approximating a circle.
-    *
-    * @param circNode the circle node
-    * @param target   the output curve
-    *
-    * @return the circle curve
-    */
-   public static Curve2 parseCirc (
-      final Node circNode,
-      final Curve2 target ) {
-
-      final NamedNodeMap attributes = circNode.getAttributes();
-
-      /* Search for attribute nodes. May return null. */
-      final Node cxnode = attributes.getNamedItem("cx");
-      final Node cynode = attributes.getNamedItem("cy");
-      final Node rnode = attributes.getNamedItem("r");
-
-      /* Acquire text content from the node if it exists. */
-      final String cxstr = cxnode != null ? cxnode.getTextContent() : "0.0";
-      final String cystr = cynode != null ? cynode.getTextContent() : "0.0";
-      final String rstr = rnode != null ? rnode.getTextContent() : "0.5";
-
-      /* Parse string or default. */
-      final float cx = SvgParser.parseFloat(cxstr, 0.0f);
-      final float cy = -SvgParser.parseFloat(cystr, 0.0f);
-      final float r = SvgParser.parseFloat(rstr, 0.5f);
-
-      Curve2.circle(0.0f, r, Curve.KNOTS_PER_CIRCLE, cx, cy, target);
-//      target.reverse();
-      return target;
-   }
-
-   /**
     * Attempts to parse a string representing a Cascading Style Sheet (CSS)
-    * representation of an RGBA color. The input string is expected to be in one
-    * of the formats:
+    * representation of an RGBA color. The input string is expected to be in
+    * one of the formats:
     * <ul>
     * <li>"rgb(255, 127, 54)"</li>
     * <li>"rgb(100%, 50%, 25%)"</li>
@@ -301,65 +277,79 @@ public abstract class SvgParser {
       final Curve2 target ) {
 
       final NamedNodeMap attributes = ellipseNode.getAttributes();
+      if ( attributes != null ) {
 
-      /* Search for attribute nodes. May return null. */
-      final Node cxnode = attributes.getNamedItem("cx");
-      final Node cynode = attributes.getNamedItem("cy");
-      final Node rxnode = attributes.getNamedItem("rx");
-      final Node rynode = attributes.getNamedItem("ry");
+         /* Search for attribute nodes. May return null. */
+         final Node cxnode = attributes.getNamedItem("cx");
+         final Node cynode = attributes.getNamedItem("cy");
+         Node rxnode = attributes.getNamedItem("rx");
+         Node rynode = attributes.getNamedItem("ry");
 
-      /* Acquire text content from the node if it exists. */
-      final String cxstr = cxnode != null ? cxnode.getTextContent() : "0.0";
-      final String cystr = cynode != null ? cynode.getTextContent() : "0.0";
-      final String rxstr = rxnode != null ? rxnode.getTextContent() : "0.5";
-      final String rystr = rynode != null ? rynode.getTextContent() : "0.5";
+         /*
+          * One or other of the ellipse's axes could be missing, or this node
+          * could be circle.
+          */
+         if ( rxnode == null && rynode != null ) {
+            rxnode = rynode;
+         } else if ( rxnode != null && rynode == null ) {
+            rynode = rxnode;
+         } else if ( rxnode == null && rynode == null ) {
+            rxnode = rynode = attributes.getNamedItem("r");
+         }
 
-      /* Parse string or default. */
-      final float cx = SvgParser.parseFloat(cxstr, 0.0f);
-      final float cy = -SvgParser.parseFloat(cystr, 0.0f);
-      final float rx = SvgParser.parseFloat(rxstr, 0.5f);
-      final float ry = SvgParser.parseFloat(rystr, 0.5f);
+         /* Acquire text content from the node if it exists. */
+         final String cxstr = cxnode != null ? cxnode.getTextContent() : "0.0";
+         final String cystr = cynode != null ? cynode.getTextContent() : "0.0";
+         final String rxstr = rxnode != null ? rxnode.getTextContent() : "0.5";
+         final String rystr = rynode != null ? rynode.getTextContent() : "0.5";
 
-      /* Find cardinal control points. */
-      final float right = cx + rx;
-      final float top = cy + ry;
-      final float left = cx - rx;
-      final float bottom = cy - ry;
+         /* Parse string or default. */
+         final float cx = SvgParser.parseFloat(cxstr, 0.0f);
+         final float cy = SvgParser.parseFloat(cystr, 0.0f);
+         final float rx = SvgParser.parseFloat(rxstr, 0.5f);
+         final float ry = SvgParser.parseFloat(rystr, 0.5f);
 
-      final float horizHandle = rx * SvgParser.HANDLE_MAG;
-      final float vertHandle = ry * SvgParser.HANDLE_MAG;
+         /* Find cardinal control points. */
+         final float right = cx + rx;
+         final float top = cy + ry;
+         final float left = cx - rx;
+         final float bottom = cy - ry;
 
-      final float xHandlePos = cx + horizHandle;
-      final float xHandleNeg = cx - horizHandle;
+         final float horizHandle = rx * SvgParser.HANDLE_MAG;
+         final float vertHandle = ry * SvgParser.HANDLE_MAG;
 
-      final float yHandlePos = cy + vertHandle;
-      final float yHandleNeg = cy - vertHandle;
+         final float xHandlePos = cx + horizHandle;
+         final float xHandleNeg = cx - horizHandle;
 
-      /* Resize and acquire four knots. */
-      target.resize(4);
-      final Knot2 kn0 = target.get(0);
-      final Knot2 kn1 = target.get(1);
-      final Knot2 kn2 = target.get(2);
-      final Knot2 kn3 = target.get(3);
+         final float yHandlePos = cy + vertHandle;
+         final float yHandleNeg = cy - vertHandle;
 
-      kn0.coord.set(right, cy);
-      kn0.foreHandle.set(right, yHandlePos);
-      kn0.rearHandle.set(right, yHandleNeg);
+         /* Resize and acquire four knots. */
+         target.resize(4);
+         final Knot2 kn0 = target.get(0);
+         final Knot2 kn1 = target.get(1);
+         final Knot2 kn2 = target.get(2);
+         final Knot2 kn3 = target.get(3);
 
-      kn1.coord.set(cx, top);
-      kn1.foreHandle.set(xHandleNeg, top);
-      kn1.rearHandle.set(xHandlePos, top);
+         kn0.coord.set(right, cy);
+         kn0.foreHandle.set(right, yHandlePos);
+         kn0.rearHandle.set(right, yHandleNeg);
 
-      kn2.coord.set(left, cy);
-      kn2.foreHandle.set(left, yHandleNeg);
-      kn2.rearHandle.set(left, yHandlePos);
+         kn1.coord.set(cx, top);
+         kn1.foreHandle.set(xHandleNeg, top);
+         kn1.rearHandle.set(xHandlePos, top);
 
-      kn3.coord.set(cx, bottom);
-      kn3.foreHandle.set(xHandlePos, bottom);
-      kn3.rearHandle.set(xHandleNeg, bottom);
+         kn2.coord.set(left, cy);
+         kn2.foreHandle.set(left, yHandleNeg);
+         kn2.rearHandle.set(left, yHandlePos);
 
-      target.closedLoop = true;
-//      target.reverse();
+         kn3.coord.set(cx, bottom);
+         kn3.foreHandle.set(xHandlePos, bottom);
+         kn3.rearHandle.set(xHandleNeg, bottom);
+
+         target.closedLoop = true;
+      }
+
       return target;
    }
 
@@ -379,24 +369,6 @@ public abstract class SvgParser {
          x = 0;
       }
       return x != 0;
-   }
-
-   /**
-    * Parses a flag to an integer.
-    *
-    * @param v the flag string
-    *
-    * @return the integer
-    */
-   public static int parseFlagToInt ( final String v ) {
-
-      int x = 0;
-      try {
-         x = Integer.parseInt(v);
-      } catch ( final NumberFormatException e ) {
-         x = 0;
-      }
-      return x;
    }
 
    /**
@@ -423,8 +395,8 @@ public abstract class SvgParser {
     * <li>1 point (pt) = {@value SvgParser#PT_TO_UNIT} units</li>
     * <li>1 pixel (px) = {@value SvgParser#PX_TO_UNIT} units</li>
     * </ul>
-    * View box relative units, namely <code>%</code> is limited; all this parser
-    * will do is divide the value by 100.<br>
+    * View box relative units, namely <code>%</code> is limited; all this
+    * parser will do is divide the value by 100.<br>
     * <br>
     * Font-relative units, namely <code>em</code> and <code>ex</code> are not
     * supported.<br>
@@ -528,26 +500,28 @@ public abstract class SvgParser {
       final Curve2 target ) {
 
       final NamedNodeMap attributes = lineNode.getAttributes();
+      if ( attributes != null ) {
 
-      /* Search for attribute nodes. May return null. */
-      final Node x1node = attributes.getNamedItem("x1");
-      final Node y1node = attributes.getNamedItem("y1");
-      final Node x2node = attributes.getNamedItem("x2");
-      final Node y2node = attributes.getNamedItem("y2");
+         /* Search for attribute nodes. May return null. */
+         final Node x1node = attributes.getNamedItem("x1");
+         final Node y1node = attributes.getNamedItem("y1");
+         final Node x2node = attributes.getNamedItem("x2");
+         final Node y2node = attributes.getNamedItem("y2");
 
-      /* Acquire text content from the node if it exists. */
-      final String x1str = x1node != null ? x1node.getTextContent() : "-0.5";
-      final String y1str = y1node != null ? y1node.getTextContent() : "0.0";
-      final String x2str = x2node != null ? x2node.getTextContent() : "0.5";
-      final String y2str = y2node != null ? y2node.getTextContent() : "0.0";
+         /* Acquire text content from the node if it exists. */
+         final String x1str = x1node != null ? x1node.getTextContent() : "-0.5";
+         final String y1str = y1node != null ? y1node.getTextContent() : "0.0";
+         final String x2str = x2node != null ? x2node.getTextContent() : "0.5";
+         final String y2str = y2node != null ? y2node.getTextContent() : "0.0";
 
-      /* Parse string or default. */
-      final float x1 = SvgParser.parseFloat(x1str, -0.5f);
-      final float y1 = -SvgParser.parseFloat(y1str, 0.0f);
-      final float x2 = SvgParser.parseFloat(x2str, 0.5f);
-      final float y2 = -SvgParser.parseFloat(y2str, 0.0f);
+         /* Parse string or default. */
+         final float x1 = SvgParser.parseFloat(x1str, -0.5f);
+         final float y1 = -SvgParser.parseFloat(y1str, 0.0f);
+         final float x2 = SvgParser.parseFloat(x2str, 0.5f);
+         final float y2 = -SvgParser.parseFloat(y2str, 0.0f);
 
-      Curve2.line(x1, y1, x2, y2, target);
+         Curve2.line(x1, y1, x2, y2, target);
+      }
       return target;
    }
 
@@ -556,573 +530,647 @@ public abstract class SvgParser {
     *
     * @param node   the node
     * @param target the output curve entity
+    * @param parent the parent matrix
     *
     * @return the output curve entity
     */
    public static CurveEntity2 parseNode (
       final Node node,
-      final CurveEntity2 target ) {
+      final CurveEntity2 target,
+      final Mat3 parent ) {
+
+      final ArrayList < Curve2 > newCurves = new ArrayList <>();
 
       final String name = node.getNodeName().toLowerCase();
       switch ( name ) {
 
          case "circle":
-            target.append(SvgParser.parseCirc(node, new Curve2()));
-            break;
-
          case "ellipse":
-            target.append(SvgParser.parseEllipse(node, new Curve2()));
+            newCurves.add(SvgParser.parseEllipse(node, new Curve2()));
             break;
 
          case "line":
-            target.append(SvgParser.parseLine(node, new Curve2()));
+            newCurves.add(SvgParser.parseLine(node, new Curve2()));
             break;
 
          case "path":
-            target.appendAll(SvgParser.parsePath(node));
+            Curve2[] cs = SvgParser.parsePath(node);
+            for ( int i = 0; i < cs.length; ++i ) {
+               newCurves.add(cs[i]);
+            }
             break;
 
          case "polygon":
          case "polyline":
-            target.append(SvgParser.parsePoly(node, new Curve2()));
+            newCurves.add(SvgParser.parsePoly(node, new Curve2()));
             break;
 
          case "rect":
-            target.append(SvgParser.parseRect(node, new Curve2()));
+            newCurves.add(SvgParser.parseRect(node, new Curve2()));
             break;
 
       }
 
+      /* Check for transform. */
+      final Mat3 current = new Mat3(parent);
+      // final NamedNodeMap attributes = node.getAttributes();
+      // if ( attributes != null ) {
+      // final Node transform = attributes.getNamedItem("transform");
+      // if ( transform != null ) {
+      // SvgParser.parseTransform(transform, current);
+      // for ( final Curve2 curve : newCurves ) {
+      // curve.transform(current);
+      // }
+      // }
+      // }
+
+      target.appendAll(newCurves);
+
+      /* Iterate over children. */
       final NodeList children = node.getChildNodes();
       final int childLen = children.getLength();
       for ( int i = 0; i < childLen; ++i ) {
          final Node child = children.item(i);
-         SvgParser.parseNode(child, target);
+         SvgParser.parseNode(child, target, current);
       }
 
       return target;
    }
 
+   /**
+    * Parses a path node, returning an array of curves.<br>
+    * <br>
+    * Arc to commands are not currently supported.
+    *
+    * @param node the node
+    *
+    * @return the array of curves
+    */
    public static Curve2[] parsePath ( final Node node ) {
 
-      final ArrayList < Curve2 > result = new ArrayList <>();
+      final ArrayList < Curve2 > result = new ArrayList <>(2);
+
       final NamedNodeMap attributes = node.getAttributes();
-      final Node pathData = attributes.getNamedItem("d");
-
-      if ( pathData != null ) {
-
-         /*
-          * These regular expressions are imperfect, and may yield empty string
-          * tokens, so there's an extra step to strip them away.
-          */
-         final String pdStr = pathData.getTextContent();
-         String[] cmdTokens = pdStr.split(SvgParser.CMD_PATTERN);
-         String[] dataTokens = pdStr.split(SvgParser.DATA_PATTERN);
-         cmdTokens = SvgParser.stripEmptyTokens(cmdTokens);
-         dataTokens = SvgParser.stripEmptyTokens(dataTokens);
-
-         /* Convert command strings to path command constants. */
-         final int cmdLen = cmdTokens.length;
-         final PathCommand[] commands = new PathCommand[cmdLen];
-         for ( int j = 0; j < cmdLen; ++j ) {
-            final String cmdToken = cmdTokens[j];
-            final char cmdCode = cmdToken.charAt(0);
-            final PathCommand cmd = PathCommand.fromChar(cmdCode);
-            commands[j] = cmd;
-            // System.out.println(cmd);
-         }
-
-         // final int dataLen = dataTokens.length;
-         // for (int k = 0; k < dataLen; ++k) {
-         // System.out.println(dataTokens[k]);
-         // }
-
-         /* Current, previous knots. */
-         Knot2 curr = null;
-         Knot2 prev = null;
-
-         /* Coordinate token. */
-         String coxStr = "0.0";
-         String coyStr = "0.0";
-
-         /* Cubic curve rear handle. */
-         String rhxStr = "0.0";
-         String rhyStr = "0.0";
-
-         /* Cubic curve fore handle. */
-         String fhxStr = "0.0";
-         String fhyStr = "0.0";
-
-         /* Quadratic curve midpoint. */
-         String mhxStr = "0.0";
-         String mhyStr = "0.0";
-
-         /* Arc parameters. Flags are either 0 or 1. */
-         String rxStr = "0.0";
-         String ryStr = "0.0";
-         String angStr = "0.0";
-         String largeArcFlag = "0";
-         String sweepFlag = "0";
+      if ( attributes != null ) {
+         final Node pathData = attributes.getNamedItem("d");
+         if ( pathData != null ) {
+
+            /*
+             * These regular expressions are imperfect, and may yield empty
+             * string tokens, so there's an extra step to strip them away.
+             */
+            final String pdStr = pathData.getTextContent();
+            String[] cmdTokens = pdStr.split(SvgParser.CMD_PATTERN);
+            String[] dataTokens = pdStr.split(SvgParser.DATA_PATTERN);
+            cmdTokens = SvgParser.stripEmptyTokens(cmdTokens);
+            dataTokens = SvgParser.stripEmptyTokens(dataTokens);
+
+            /* Convert command strings to path command constants. */
+            final int cmdLen = cmdTokens.length;
+            final PathCommand[] commands = new PathCommand[cmdLen];
+            for ( int j = 0; j < cmdLen; ++j ) {
+               final String cmdToken = cmdTokens[j];
+               final char cmdCode = cmdToken.charAt(0);
+               final PathCommand cmd = PathCommand.fromChar(cmdCode);
+               commands[j] = cmd;
+               // System.out.println(cmd);
+            }
+
+            /* Current, previous knots. */
+            Knot2 curr = null;
+            Knot2 prev = null;
+
+            /* Coordinate token. */
+            String coxStr = "0.0";
+            String coyStr = "0.0";
+
+            /* Cubic curve rear handle. */
+            String rhxStr = "0.0";
+            String rhyStr = "0.0";
+
+            /* Cubic curve fore handle. */
+            String fhxStr = "0.0";
+            String fhyStr = "0.0";
+
+            /* Quadratic curve midpoint. */
+            String mhxStr = "0.0";
+            String mhyStr = "0.0";
+
+            /* Arc parameters. Flags are either 0 or 1. */
+            @SuppressWarnings ( "unused" )
+            String rxStr = "0.0";
+            @SuppressWarnings ( "unused" )
+            String ryStr = "0.0";
+            @SuppressWarnings ( "unused" )
+            String angStr = "0.0";
+            @SuppressWarnings ( "unused" )
+            String largeArcFlag = "0";
+            @SuppressWarnings ( "unused" )
+            String sweepFlag = "0";
+
+            final Vec2 relative = new Vec2();
+            final Vec2 mh = new Vec2();
+            float xOff = 0.0f;
+            float yOff = 0.0f;
+            boolean closedLoop = false;
+
+            /*
+             * Usually, one path should have one move to command, but just in
+             * case it doesn't, create a boolean to track an initial move to. If
+             * there is more than one, the target curve will be added to the
+             * result list and replaced by a new one.
+             */
+            boolean initialMove = true;
+            Curve2 target = new Curve2();
+            target.clear();
+            result.add(target);
+
+            for ( int l = 0, cursor = 0; l < cmdLen; ++l ) {
+               final PathCommand command = commands[l];
+               switch ( command ) {
+
+                  case ClosePath:
+
+                     closedLoop = true;
+                     target.closedLoop = closedLoop;
+
+                     break;
+
+                  case MoveToAbs:
+
+                     if ( !initialMove ) {
+                        result.add(target);
+                        target = new Curve2();
+                        target.clear();
+                     }
+                     initialMove = false;
+
+                     coxStr = dataTokens[cursor++]; /* 1 */
+                     coyStr = dataTokens[cursor++]; /* 2 */
+
+                     curr = new Knot2();
+                     target.append(curr);
+                     curr.coord.set(
+                        SvgParser.parseFloat(coxStr),
+                        SvgParser.parseFloat(coyStr));
 
-         final Vec2 relative = new Vec2();
-         final Vec2 mh = new Vec2();
-         float xOff = 0.0f;
-         float yOff = 0.0f;
-         boolean closedLoop = false;
+                     xOff = Utils.copySign(IUtils.DEFAULT_EPSILON,
+                        curr.coord.x);
+                     yOff = Utils.copySign(IUtils.DEFAULT_EPSILON,
+                        curr.coord.y);
 
-         /*
-          * Usually, one path should have one move to command, but just in case
-          * it doesn't, create a boolean to track an initial move to. If there
-          * is more than one, the target curve will be added to the result list
-          * and replaced by a new one.
-          */
-         boolean initialMove = true;
-         Curve2 target = new Curve2();
-         target.clear();
-         result.add(target);
+                     curr.foreHandle.set(curr.coord.x + xOff,
+                        curr.coord.y + yOff);
+                     curr.rearHandle.set(curr.coord.x - xOff,
+                        curr.coord.y - yOff);
 
-         for ( int l = 0, cursor = 0; l < cmdLen; ++l ) {
-            final PathCommand command = commands[l];
-            switch ( command ) {
+                     relative.set(curr.coord);
 
-               case ClosePath:
+                     break;
 
-                  /* Tested April 18, 2020 */
+                  case MoveToRel:
 
-                  closedLoop = true;
-                  target.closedLoop = closedLoop;
+                     if ( !initialMove ) {
+                        result.add(target);
+                        target = new Curve2();
+                        target.clear();
+                     }
+                     initialMove = false;
 
-                  break;
+                     coxStr = dataTokens[cursor++]; /* 1 */
+                     coyStr = dataTokens[cursor++]; /* 2 */
 
-               case MoveToAbs:
+                     curr = new Knot2();
+                     target.append(curr);
 
-                  /* Tested April 18, 2020 */
+                     curr.coord.set(
+                        SvgParser.parseFloat(coxStr),
+                        SvgParser.parseFloat(coyStr));
+                     Vec2.add(relative, curr.coord, curr.coord);
 
-                  if ( !initialMove ) {
-                     result.add(target);
-                     target = new Curve2();
-                     target.clear();
-                  }
-                  initialMove = false;
+                     xOff = Utils.copySign(IUtils.DEFAULT_EPSILON,
+                        curr.coord.x);
+                     yOff = Utils.copySign(IUtils.DEFAULT_EPSILON,
+                        curr.coord.y);
 
-                  coxStr = dataTokens[cursor++]; /* 1 */
-                  coyStr = dataTokens[cursor++]; /* 2 */
+                     curr.foreHandle.set(curr.coord.x + xOff,
+                        curr.coord.y + yOff);
+                     curr.rearHandle.set(curr.coord.x - xOff,
+                        curr.coord.y - yOff);
 
-                  curr = new Knot2();
-                  target.append(curr);
-                  curr.coord.set(
-                     SvgParser.parseFloat(coxStr),
-                     -SvgParser.parseFloat(coyStr));
+                     relative.set(curr.coord);
 
-                  xOff = Utils.copySign(IUtils.DEFAULT_EPSILON, curr.coord.x);
-                  yOff = Utils.copySign(IUtils.DEFAULT_EPSILON, curr.coord.y);
+                     break;
 
-                  curr.foreHandle.set(curr.coord.x + xOff, curr.coord.y + yOff);
-                  curr.rearHandle.set(curr.coord.x - xOff, curr.coord.y - yOff);
+                  case LineToAbs:
 
-                  relative.set(curr.coord);
+                     coxStr = dataTokens[cursor++]; /* 1 */
+                     coyStr = dataTokens[cursor++]; /* 2 */
 
-                  break;
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-               case MoveToRel:
+                     curr.coord.set(
+                        SvgParser.parseFloat(coxStr),
+                        SvgParser.parseFloat(coyStr));
+                     Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
+                     Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
 
-                  /* Tested April 19, 2020 */
+                     relative.set(curr.coord);
 
-                  if ( !initialMove ) {
-                     result.add(target);
-                     target = new Curve2();
-                     target.clear();
-                  }
-                  initialMove = false;
+                     break;
 
-                  coxStr = dataTokens[cursor++]; /* 1 */
-                  coyStr = dataTokens[cursor++]; /* 2 */
+                  case LineToRel:
 
-                  curr = new Knot2();
-                  target.append(curr);
+                     coxStr = dataTokens[cursor++]; /* 1 */
+                     coyStr = dataTokens[cursor++]; /* 2 */
 
-                  curr.coord.set(
-                     SvgParser.parseFloat(coxStr),
-                     -SvgParser.parseFloat(coyStr));
-                  Vec2.add(relative, curr.coord, curr.coord);
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-                  xOff = Utils.copySign(IUtils.DEFAULT_EPSILON, curr.coord.x);
-                  yOff = Utils.copySign(IUtils.DEFAULT_EPSILON, curr.coord.y);
+                     curr.coord.set(
+                        SvgParser.parseFloat(coxStr),
+                        SvgParser.parseFloat(coyStr));
+                     Vec2.add(relative, curr.coord, curr.coord);
 
-                  curr.foreHandle.set(curr.coord.x + xOff, curr.coord.y + yOff);
-                  curr.rearHandle.set(curr.coord.x - xOff, curr.coord.y - yOff);
+                     Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
+                     Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
 
-                  relative.set(curr.coord);
+                     relative.set(curr.coord);
 
-                  break;
+                     break;
 
-               case LineToAbs:
+                  case HorizAbs:
 
-                  /* Tested April 18, 2020 */
+                     coxStr = dataTokens[cursor++]; /* 1 */
 
-                  coxStr = dataTokens[cursor++]; /* 1 */
-                  coyStr = dataTokens[cursor++]; /* 2 */
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-                  prev = curr;
-                  curr = new Knot2();
-                  target.append(curr);
+                     curr.coord.x = SvgParser.parseFloat(coxStr, 0.0f);
+                     curr.coord.y = prev.coord.y;
+                     Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
+                     Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
 
-                  curr.coord.set(
-                     SvgParser.parseFloat(coxStr),
-                     -SvgParser.parseFloat(coyStr));
-                  Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
-                  Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+                     relative.set(curr.coord);
 
-                  relative.set(curr.coord);
+                     break;
 
-                  break;
+                  case HorizRel:
 
-               case QuadraticToAbs:
+                     coxStr = dataTokens[cursor++]; /* 1 */
 
-                  /* Tested April 18, 2020 */
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-                  mhxStr = dataTokens[cursor++]; /* 1 */
-                  mhyStr = dataTokens[cursor++]; /* 2 */
-                  coxStr = dataTokens[cursor++]; /* 3 */
-                  coyStr = dataTokens[cursor++]; /* 4 */
+                     curr.coord.x = relative.x + SvgParser.parseFloat(coxStr,
+                        0.0f);
+                     curr.coord.y = prev.coord.y;
 
-                  prev = curr;
-                  curr = new Knot2();
-                  target.append(curr);
+                     Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
+                     Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
 
-                  mh.set(
-                     SvgParser.parseFloat(mhxStr),
-                     -SvgParser.parseFloat(mhyStr));
-                  curr.coord.set(
-                     SvgParser.parseFloat(coxStr),
-                     -SvgParser.parseFloat(coyStr));
-                  Curve2.lerp13(mh, prev.coord, prev.foreHandle);
-                  Curve2.lerp13(mh, curr.coord, curr.rearHandle);
+                     relative.set(curr.coord);
 
-                  relative.set(curr.coord);
+                     break;
 
-                  break;
+                  case VertAbs:
 
-               case ReflectQuadraticAbs:
+                     coyStr = dataTokens[cursor++]; /* 1 */
 
-                  /* Tested April 19, 2020 */
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-                  coxStr = dataTokens[cursor++]; /* 1 */
-                  coyStr = dataTokens[cursor++]; /* 2 */
+                     curr.coord.x = prev.coord.x;
+                     curr.coord.y = SvgParser.parseFloat(coyStr, 0.0f);
+                     Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
+                     Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
 
-                  prev = curr;
-                  curr = new Knot2();
-                  target.append(curr);
+                     relative.set(curr.coord);
 
-                  prev.mirrorHandlesBackward();
-                  curr.coord.set(
-                     SvgParser.parseFloat(coxStr),
-                     -SvgParser.parseFloat(coyStr));
+                     break;
 
-                  /*
-                   * Convert mid-handle from point to direction, negate, convert
-                   * back to point.
-                   */
-                  Vec2.sub(mh, prev.coord, mh);
-                  Vec2.negate(mh, mh);
-                  Vec2.add(mh, prev.coord, mh);
-                  Curve2.lerp13(mh, curr.coord, curr.rearHandle);
+                  case VertRel:
 
-                  relative.set(curr.coord);
+                     coyStr = dataTokens[cursor++]; /* 1 */
 
-                  break;
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-               case CubicToAbs:
+                     /* @formatter:off */
+                     curr.coord.x = prev.coord.x;
+                     curr.coord.y = relative.y + SvgParser.parseFloat(
+                        coyStr, 0.0f);
+                     /* @formatter:on */
 
-                  /* Tested April 18, 2020 */
+                     Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
+                     Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
 
-                  fhxStr = dataTokens[cursor++]; /* 1 */
-                  fhyStr = dataTokens[cursor++]; /* 2 */
-                  rhxStr = dataTokens[cursor++]; /* 3 */
-                  rhyStr = dataTokens[cursor++]; /* 4 */
-                  coxStr = dataTokens[cursor++]; /* 5 */
-                  coyStr = dataTokens[cursor++]; /* 6 */
+                     relative.set(curr.coord);
 
-                  prev = curr;
-                  curr = new Knot2();
-                  target.append(curr);
+                     break;
 
-                  prev.foreHandle.set(
-                     SvgParser.parseFloat(fhxStr),
-                     -SvgParser.parseFloat(fhyStr));
-                  curr.rearHandle.set(
-                     SvgParser.parseFloat(rhxStr),
-                     -SvgParser.parseFloat(rhyStr));
-                  curr.coord.set(
-                     SvgParser.parseFloat(coxStr),
-                     -SvgParser.parseFloat(coyStr));
+                  case QuadraticToAbs:
 
-                  relative.set(curr.coord);
+                     mhxStr = dataTokens[cursor++]; /* 1 */
+                     mhyStr = dataTokens[cursor++]; /* 2 */
+                     coxStr = dataTokens[cursor++]; /* 3 */
+                     coyStr = dataTokens[cursor++]; /* 4 */
 
-                  break;
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-               case ReflectCubicAbs:
+                     mh.set(
+                        SvgParser.parseFloat(mhxStr),
+                        SvgParser.parseFloat(mhyStr));
+                     curr.coord.set(
+                        SvgParser.parseFloat(coxStr),
+                        SvgParser.parseFloat(coyStr));
+                     Curve2.lerp13(mh, prev.coord, prev.foreHandle);
+                     Curve2.lerp13(mh, curr.coord, curr.rearHandle);
 
-                  /* Tested April 19, 2020 */
+                     relative.set(curr.coord);
 
-                  rhxStr = dataTokens[cursor++]; /* 1 */
-                  rhyStr = dataTokens[cursor++]; /* 2 */
-                  coxStr = dataTokens[cursor++]; /* 3 */
-                  coyStr = dataTokens[cursor++]; /* 4 */
+                     break;
 
-                  prev = curr;
-                  curr = new Knot2();
-                  target.append(curr);
+                  case QuadraticToRel:
 
-                  prev.mirrorHandlesBackward();
-                  curr.rearHandle.set(
-                     SvgParser.parseFloat(rhxStr),
-                     -SvgParser.parseFloat(rhyStr));
-                  curr.coord.set(
-                     SvgParser.parseFloat(coxStr),
-                     -SvgParser.parseFloat(coyStr));
+                     mhxStr = dataTokens[cursor++]; /* 1 */
+                     mhyStr = dataTokens[cursor++]; /* 2 */
+                     coxStr = dataTokens[cursor++]; /* 3 */
+                     coyStr = dataTokens[cursor++]; /* 4 */
 
-                  relative.set(curr.coord);
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-                  break;
+                     mh.set(
+                        SvgParser.parseFloat(mhxStr),
+                        SvgParser.parseFloat(mhyStr));
+                     curr.coord.set(
+                        SvgParser.parseFloat(coxStr),
+                        SvgParser.parseFloat(coyStr));
 
-               case ArcToAbs:
+                     Vec2.add(relative, mh, mh);
+                     Vec2.add(relative, curr.coord, curr.coord);
 
-                  rxStr = dataTokens[cursor++]; /* 1 */
-                  ryStr = dataTokens[cursor++]; /* 2 */
-                  angStr = dataTokens[cursor++]; /* 3 */
-                  largeArcFlag = dataTokens[cursor++]; /* 4 */
-                  sweepFlag = dataTokens[cursor++]; /* 5 */
-                  coxStr = dataTokens[cursor++]; /* 6 */
-                  coyStr = dataTokens[cursor++]; /* 7 */
+                     Curve2.lerp13(mh, prev.coord, prev.foreHandle);
+                     Curve2.lerp13(mh, curr.coord, curr.rearHandle);
 
-                  prev = curr;
+                     relative.set(curr.coord);
 
-                  final Knot2[] kns = SvgParser.parseArcTo(
-                     prev,
-                     SvgParser.parseFloat(rxStr),
-                     SvgParser.parseFloat(ryStr),
-                     SvgParser.parseFloat(angStr),
-                     SvgParser.parseFlagToBool(largeArcFlag),
-                     SvgParser.parseFlagToBool(sweepFlag),
-                     SvgParser.parseFloat(coxStr),
-                     SvgParser.parseFloat(coyStr));
+                     break;
 
-                  target.appendAll(kns);
-                  curr = kns[kns.length - 1];
-                  relative.set(curr.coord);
+                  case ReflectQuadraticAbs:
 
-                  break;
+                     coxStr = dataTokens[cursor++]; /* 1 */
+                     coyStr = dataTokens[cursor++]; /* 2 */
 
-               case ArcToRel:
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-                  rxStr = dataTokens[cursor++]; /* 1 */
-                  ryStr = dataTokens[cursor++]; /* 2 */
-                  angStr = dataTokens[cursor++]; /* 3 */
-                  largeArcFlag = dataTokens[cursor++]; /* 4 */
-                  sweepFlag = dataTokens[cursor++]; /* 5 */
-                  coxStr = dataTokens[cursor++]; /* 6 */
-                  coyStr = dataTokens[cursor++]; /* 7 */
+                     prev.mirrorHandlesBackward();
+                     curr.coord.set(
+                        SvgParser.parseFloat(coxStr),
+                        SvgParser.parseFloat(coyStr));
 
-                  prev = curr;
-                  curr = new Knot2();
-                  target.append(curr);
+                     /*
+                      * Convert mid-handle from point to direction, negate,
+                      * convert back to point.
+                      */
+                     Vec2.sub(mh, prev.coord, mh);
+                     Vec2.negate(mh, mh);
+                     Vec2.add(mh, prev.coord, mh);
+                     Curve2.lerp13(mh, curr.coord, curr.rearHandle);
 
-                  relative.set(curr.coord);
+                     relative.set(curr.coord);
 
-                  break;
+                     break;
 
-               case CubicToRel:
+                  case ReflectQuadraticRel:
 
-                  fhxStr = dataTokens[cursor++]; /* 1 */
-                  fhyStr = dataTokens[cursor++]; /* 2 */
-                  rhxStr = dataTokens[cursor++]; /* 3 */
-                  rhyStr = dataTokens[cursor++]; /* 4 */
-                  coxStr = dataTokens[cursor++]; /* 5 */
-                  coyStr = dataTokens[cursor++]; /* 6 */
+                     coxStr = dataTokens[cursor++]; /* 1 */
+                     coyStr = dataTokens[cursor++]; /* 2 */
 
-                  prev = curr;
-                  curr = new Knot2();
-                  target.append(curr);
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-                  prev.foreHandle.set(
-                     SvgParser.parseFloat(fhxStr),
-                     -SvgParser.parseFloat(fhyStr));
-                  curr.rearHandle.set(
-                     SvgParser.parseFloat(rhxStr),
-                     -SvgParser.parseFloat(rhyStr));
-                  curr.coord.set(
-                     SvgParser.parseFloat(coxStr),
-                     -SvgParser.parseFloat(coyStr));
+                     prev.mirrorHandlesBackward();
+                     curr.coord.set(
+                        SvgParser.parseFloat(coxStr),
+                        SvgParser.parseFloat(coyStr));
+                     Vec2.add(relative, curr.coord, curr.coord);
 
-                  Vec2.add(relative, prev.foreHandle, prev.foreHandle);
-                  Vec2.add(relative, curr.rearHandle, curr.rearHandle);
-                  Vec2.add(relative, curr.coord, curr.coord);
+                     Vec2.sub(mh, prev.coord, mh);
+                     Vec2.negate(mh, mh);
+                     Vec2.add(mh, prev.coord, mh);
+                     Curve2.lerp13(mh, curr.coord, curr.rearHandle);
 
-                  relative.set(curr.coord);
+                     relative.set(curr.coord);
 
-                  break;
+                     break;
 
-               case HorizAbs:
+                  case CubicToAbs:
 
-                  coxStr = dataTokens[cursor++]; /* 1 */
+                     fhxStr = dataTokens[cursor++]; /* 1 */
+                     fhyStr = dataTokens[cursor++]; /* 2 */
+                     rhxStr = dataTokens[cursor++]; /* 3 */
+                     rhyStr = dataTokens[cursor++]; /* 4 */
+                     coxStr = dataTokens[cursor++]; /* 5 */
+                     coyStr = dataTokens[cursor++]; /* 6 */
 
-                  prev = curr;
-                  curr = new Knot2();
-                  target.append(curr);
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-                  curr.coord.x = SvgParser.parseFloat(coxStr, 0.0f);
-                  curr.coord.y = prev.coord.y;
-                  Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
-                  Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+                     prev.foreHandle.set(
+                        SvgParser.parseFloat(fhxStr),
+                        SvgParser.parseFloat(fhyStr));
+                     curr.rearHandle.set(
+                        SvgParser.parseFloat(rhxStr),
+                        SvgParser.parseFloat(rhyStr));
+                     curr.coord.set(
+                        SvgParser.parseFloat(coxStr),
+                        SvgParser.parseFloat(coyStr));
 
-                  relative.set(curr.coord);
+                     relative.set(curr.coord);
 
-                  break;
+                     break;
 
-               case HorizRel:
+                  case CubicToRel:
 
-                  /* Tested April 19, 2020 */
+                     fhxStr = dataTokens[cursor++]; /* 1 */
+                     fhyStr = dataTokens[cursor++]; /* 2 */
+                     rhxStr = dataTokens[cursor++]; /* 3 */
+                     rhyStr = dataTokens[cursor++]; /* 4 */
+                     coxStr = dataTokens[cursor++]; /* 5 */
+                     coyStr = dataTokens[cursor++]; /* 6 */
 
-                  coxStr = dataTokens[cursor++]; /* 1 */
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-                  prev = curr;
-                  curr = new Knot2();
-                  target.append(curr);
+                     prev.foreHandle.set(
+                        SvgParser.parseFloat(fhxStr),
+                        SvgParser.parseFloat(fhyStr));
+                     curr.rearHandle.set(
+                        SvgParser.parseFloat(rhxStr),
+                        SvgParser.parseFloat(rhyStr));
+                     curr.coord.set(
+                        SvgParser.parseFloat(coxStr),
+                        SvgParser.parseFloat(coyStr));
 
-                  curr.coord.x = relative.x + SvgParser.parseFloat(coxStr,
-                     0.0f);
-                  curr.coord.y = prev.coord.y;
+                     Vec2.add(relative, prev.foreHandle, prev.foreHandle);
+                     Vec2.add(relative, curr.rearHandle, curr.rearHandle);
+                     Vec2.add(relative, curr.coord, curr.coord);
 
-                  Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
-                  Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+                     relative.set(curr.coord);
 
-                  relative.set(curr.coord);
+                     break;
 
-                  break;
+                  case ReflectCubicAbs:
 
-               case VertAbs:
+                     rhxStr = dataTokens[cursor++]; /* 1 */
+                     rhyStr = dataTokens[cursor++]; /* 2 */
+                     coxStr = dataTokens[cursor++]; /* 3 */
+                     coyStr = dataTokens[cursor++]; /* 4 */
 
-                  coyStr = dataTokens[cursor++]; /* 1 */
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-                  prev = curr;
-                  curr = new Knot2();
-                  target.append(curr);
+                     prev.mirrorHandlesBackward();
+                     curr.rearHandle.set(
+                        SvgParser.parseFloat(rhxStr),
+                        SvgParser.parseFloat(rhyStr));
+                     curr.coord.set(
+                        SvgParser.parseFloat(coxStr),
+                        SvgParser.parseFloat(coyStr));
 
-                  curr.coord.x = prev.coord.x;
-                  curr.coord.y = -SvgParser.parseFloat(coyStr, 0.0f);
-                  Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
-                  Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+                     relative.set(curr.coord);
 
-                  relative.set(curr.coord);
+                     break;
 
-                  break;
+                  case ReflectCubicRel:
 
-               case VertRel:
+                     rhxStr = dataTokens[cursor++]; /* 1 */
+                     rhyStr = dataTokens[cursor++]; /* 2 */
+                     coxStr = dataTokens[cursor++]; /* 3 */
+                     coyStr = dataTokens[cursor++]; /* 4 */
 
-                  /* Tested April 19, 2020 */
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-                  coyStr = dataTokens[cursor++]; /* 1 */
+                     prev.mirrorHandlesBackward();
+                     curr.rearHandle.set(
+                        SvgParser.parseFloat(rhxStr),
+                        SvgParser.parseFloat(rhyStr));
+                     curr.coord.set(
+                        SvgParser.parseFloat(coxStr),
+                        SvgParser.parseFloat(coyStr));
 
-                  prev = curr;
-                  curr = new Knot2();
-                  target.append(curr);
+                     Vec2.add(relative, curr.rearHandle, curr.rearHandle);
+                     Vec2.add(relative, curr.coord, curr.coord);
 
-                  curr.coord.x = prev.coord.x;
-                  curr.coord.y = relative.y - SvgParser.parseFloat(coyStr,
-                     0.0f);
+                     relative.set(curr.coord);
 
-                  Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
-                  Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+                     break;
 
-                  relative.set(curr.coord);
+                  case ArcToAbs:
 
-                  break;
+                     /* Unsupported. */
 
-               case LineToRel:
+                     rxStr = dataTokens[cursor++]; /* 1 */
+                     ryStr = dataTokens[cursor++]; /* 2 */
+                     angStr = dataTokens[cursor++]; /* 3 */
+                     largeArcFlag = dataTokens[cursor++]; /* 4 */
+                     sweepFlag = dataTokens[cursor++]; /* 5 */
+                     coxStr = dataTokens[cursor++]; /* 6 */
+                     coyStr = dataTokens[cursor++]; /* 7 */
 
-                  coxStr = dataTokens[cursor++]; /* 1 */
-                  coyStr = dataTokens[cursor++]; /* 2 */
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-                  prev = curr;
-                  curr = new Knot2();
-                  target.append(curr);
+                     curr.coord.set(
+                        SvgParser.parseFloat(coxStr),
+                        SvgParser.parseFloat(coyStr));
+                     Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
+                     Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
 
-                  curr.coord.set(
-                     SvgParser.parseFloat(coxStr),
-                     -SvgParser.parseFloat(coyStr));
-                  Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
-                  Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+                     relative.set(curr.coord);
 
-                  relative.set(curr.coord);
+                     break;
 
-                  break;
+                  case ArcToRel:
 
-               case QuadraticToRel:
+                     /* Unsupported. */
 
-                  mhxStr = dataTokens[cursor++]; /* 1 */
-                  mhyStr = dataTokens[cursor++]; /* 2 */
-                  coxStr = dataTokens[cursor++]; /* 3 */
-                  coyStr = dataTokens[cursor++]; /* 4 */
+                     rxStr = dataTokens[cursor++]; /* 1 */
+                     ryStr = dataTokens[cursor++]; /* 2 */
+                     angStr = dataTokens[cursor++]; /* 3 */
+                     largeArcFlag = dataTokens[cursor++]; /* 4 */
+                     sweepFlag = dataTokens[cursor++]; /* 5 */
+                     coxStr = dataTokens[cursor++]; /* 6 */
+                     coyStr = dataTokens[cursor++]; /* 7 */
 
-                  prev = curr;
-                  curr = new Knot2();
-                  target.append(curr);
+                     prev = curr;
+                     curr = new Knot2();
+                     target.append(curr);
 
-                  mh.set(
-                     SvgParser.parseFloat(mhxStr),
-                     -SvgParser.parseFloat(mhyStr));
-                  curr.coord.set(
-                     SvgParser.parseFloat(coxStr),
-                     -SvgParser.parseFloat(coyStr));
+                     curr.coord.set(
+                        SvgParser.parseFloat(coxStr),
+                        SvgParser.parseFloat(coyStr));
+                     Vec2.add(relative, curr.coord, curr.coord);
 
-                  Vec2.add(relative, mh, mh);
+                     Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
+                     Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
 
-                  Curve2.lerp13(mh, prev.coord, prev.foreHandle);
-                  Curve2.lerp13(mh, curr.coord, curr.rearHandle);
+                     relative.set(curr.coord);
 
-                  relative.set(curr.coord);
+                     break;
 
-                  break;
+                  default:
 
-               case ReflectCubicRel:
-
-                  break;
-
-               case ReflectQuadraticRel:
-
-                  break;
-
-               default:
+               }
 
             }
 
-         }
+            /*
+             * Append final curve recorded by while loop if it hasn't been
+             * added; for multiple "sub-path"s which are not closed.
+             */
+            if ( !result.contains(target) ) { result.add(target); }
 
-         /*
-          * Append final curve recorded by while loop if it hasn't been added;
-          * for multiple "sub-path"s which are not closed.
-          */
-         if ( !result.contains(target) ) { result.add(target); }
-
-         /* Deal with first and last knots in open versus closed loop. */
-         final Iterator < Curve2 > resultItr = result.iterator();
-         while ( resultItr.hasNext() ) {
-            final Curve2 curve = resultItr.next();
-            final Knot2 first = curve.getFirst();
-            final Knot2 last = curve.getLast();
-            if ( target.closedLoop ) {
-               Curve2.lerp13(
-                  first.coord,
-                  last.coord,
-                  first.rearHandle);
-               Curve2.lerp13(
-                  last.coord,
-                  first.coord,
-                  last.foreHandle);
-            } else {
-               first.mirrorHandlesForward();
-               last.mirrorHandlesBackward();
+            /* Deal with first and last knots in open versus closed loop. */
+            final Iterator < Curve2 > resultItr = result.iterator();
+            while ( resultItr.hasNext() ) {
+               final Curve2 curve = resultItr.next();
+               final Knot2 first = curve.getFirst();
+               final Knot2 last = curve.getLast();
+               if ( target.closedLoop ) {
+                  Curve2.lerp13(
+                     first.coord,
+                     last.coord,
+                     first.rearHandle);
+                  Curve2.lerp13(
+                     last.coord,
+                     first.coord,
+                     last.foreHandle);
+               } else {
+                  first.mirrorHandlesForward();
+                  last.mirrorHandlesBackward();
+               }
             }
          }
       }
@@ -1130,56 +1178,66 @@ public abstract class SvgParser {
       return result.toArray(new Curve2[result.size()]);
    }
 
+   /**
+    * Parses a polygon or poly-line node.
+    *
+    * @param polygonNode the polygon
+    * @param target      the output curve
+    *
+    * @return the curve
+    */
    public static Curve2 parsePoly (
       final Node polygonNode,
       final Curve2 target ) {
 
-      /* Poly-lines are open, polygons are closed loop. */
-      final String name = polygonNode.getNodeName();
-      if ( name == "polygon" ) {
-         target.name = "Polygon";
-         target.closedLoop = true;
-      } else if ( name == "polyline" ) {
-         target.name = "PolyLine";
-         target.closedLoop = false;
-      } else {
-         target.closedLoop = false;
-      }
-
       final NamedNodeMap attributes = polygonNode.getAttributes();
-      final Node ptsnode = attributes.getNamedItem("points");
-      final String ptsstr = ptsnode != null ? ptsnode.getTextContent() : "0,0";
-      final String[] coords = ptsstr.split(" |,");
+      if ( attributes != null ) {
 
-      int i = 0;
-      final int coordLen = coords.length;
-      final int halfLen = coordLen / 2;
-      target.resize(halfLen);
-      final Iterator < Knot2 > itr = target.iterator();
-      final Knot2 first = itr.next();
-      first.coord.set(
-         SvgParser.parseFloat(coords[i++], 0.0f),
-         -SvgParser.parseFloat(coords[i++], 0.0f));
+         /* Close loop if the node is a polygon. */
+         final String name = polygonNode.getNodeName();
+         if ( name == "polygon" ) {
+            target.name = "Polygon";
+            target.closedLoop = true;
+         } else if ( name == "polyline" ) {
+            target.name = "PolyLine";
+            target.closedLoop = false;
+         } else {
+            target.closedLoop = false;
+         }
 
-      Knot2 prev = first;
-      while ( itr.hasNext() ) {
-         final String xstr = coords[i++];
-         final String ystr = coords[i++];
-         final float x = SvgParser.parseFloat(xstr, 0.0f);
-         final float y = -SvgParser.parseFloat(ystr, 0.0f);
-         final Knot2 curr = itr.next();
-         Knot2.fromSegLinear(x, y, prev, curr);
-         prev = curr;
+         final Node ptsnode = attributes.getNamedItem("points");
+         final String ptsstr = ptsnode != null ? ptsnode.getTextContent()
+            : "0,0";
+         final String[] coords = ptsstr.split(" |,");
+
+         int i = 0;
+         final int coordLen = coords.length;
+         final int halfLen = coordLen / 2;
+         target.resize(halfLen);
+         final Iterator < Knot2 > itr = target.iterator();
+         final Knot2 first = itr.next();
+         first.coord.set(
+            SvgParser.parseFloat(coords[i++], 0.0f),
+            SvgParser.parseFloat(coords[i++], 0.0f));
+
+         Knot2 prev = first;
+         while ( itr.hasNext() ) {
+            final String xstr = coords[i++];
+            final String ystr = coords[i++];
+            final float x = SvgParser.parseFloat(xstr, 0.0f);
+            final float y = SvgParser.parseFloat(ystr, 0.0f);
+            final Knot2 curr = itr.next();
+            Knot2.fromSegLinear(x, y, prev, curr);
+            prev = curr;
+         }
+
+         if ( target.closedLoop ) {
+            Knot2.fromSegLinear(first.coord, prev, first);
+         } else {
+            first.mirrorHandlesForward();
+            prev.mirrorHandlesBackward();
+         }
       }
-
-      if ( target.closedLoop ) {
-         Knot2.fromSegLinear(first.coord, prev, first);
-      } else {
-         first.mirrorHandlesForward();
-         prev.mirrorHandlesBackward();
-      }
-
-//      target.reverse();
       return target;
    }
 
@@ -1196,40 +1254,116 @@ public abstract class SvgParser {
       final Curve2 target ) {
 
       final NamedNodeMap attributes = rectNode.getAttributes();
+      if ( attributes != null ) {
 
-      /* Search for property nodes. May return null. */
-      final Node xnode = attributes.getNamedItem("x");
-      final Node ynode = attributes.getNamedItem("y");
-      final Node wnode = attributes.getNamedItem("width");
-      final Node hnode = attributes.getNamedItem("height");
-      final Node rxnode = attributes.getNamedItem("rx");
-      final Node rynode = attributes.getNamedItem("ry");
+         /* Search for property nodes. May return null. */
+         final Node xnode = attributes.getNamedItem("x");
+         final Node ynode = attributes.getNamedItem("y");
+         final Node wnode = attributes.getNamedItem("width");
+         final Node hnode = attributes.getNamedItem("height");
+         final Node rxnode = attributes.getNamedItem("rx");
+         final Node rynode = attributes.getNamedItem("ry");
 
-      /* Acquire text content from the node if it exists. */
-      final String xstr = xnode != null ? xnode.getTextContent() : "0.0";
-      final String ystr = ynode != null ? ynode.getTextContent() : "0.0";
-      final String wstr = wnode != null ? wnode.getTextContent() : "1.0";
-      final String hstr = hnode != null ? hnode.getTextContent() : "1.0";
-      final String rxstr = rxnode != null ? rxnode.getTextContent() : "0.0";
-      final String rystr = rynode != null ? rynode.getTextContent() : "0.0";
+         /* Acquire text content from the node if it exists. */
+         final String xstr = xnode != null ? xnode.getTextContent() : "0.0";
+         final String ystr = ynode != null ? ynode.getTextContent() : "0.0";
+         final String wstr = wnode != null ? wnode.getTextContent() : "1.0";
+         final String hstr = hnode != null ? hnode.getTextContent() : "1.0";
+         final String rxstr = rxnode != null ? rxnode.getTextContent() : "0.0";
+         final String rystr = rynode != null ? rynode.getTextContent() : "0.0";
 
-      /* Parse string or default. */
-      final float x = SvgParser.parseFloat(xstr, 0.0f);
-      final float y = -SvgParser.parseFloat(ystr, 0.0f);
-      final float w = SvgParser.parseFloat(wstr, 1.0f);
-      final float h = SvgParser.parseFloat(hstr, 1.0f);
-      final float rx = SvgParser.parseFloat(rxstr, 0.0f);
-      final float ry = SvgParser.parseFloat(rystr, 0.0f);
+         /* Parse string or default. */
+         final float x = SvgParser.parseFloat(xstr, 0.0f);
+         final float y = SvgParser.parseFloat(ystr, 0.0f);
+         final float w = SvgParser.parseFloat(wstr, 1.0f);
+         final float h = SvgParser.parseFloat(hstr, 1.0f);
+         final float rx = SvgParser.parseFloat(rxstr, 0.0f);
+         final float ry = SvgParser.parseFloat(rystr, 0.0f);
 
-      /*
-       * Corner rounding differs between APIs, so average horizontal and
-       * vertical rounding.
-       */
-      Curve2.rect(x, y - h, x + w, y, ( rx + ry ) * 0.5f, target);
-//      target.reverse();
+         /*
+          * Corner rounding differs between APIs, so average horizontal and
+          * vertical rounding.
+          */
+         final float rAvg = ( rx + ry ) * 0.5f;
+         if ( rAvg < IUtils.DEFAULT_EPSILON ) {
+            Curve2.rect(x, y, x + w, y + h, target);
+         } else {
+            Curve2.rect(x, y, x + w, y + h, rAvg, target);
+         }
+      }
       return target;
    }
 
+   public static Mat3 parseTransform (
+      final Node trNode,
+      final Mat3 target ) {
+
+      final String v = trNode.getTextContent().trim().toLowerCase();
+      final String[] transformStrs = v.split("\\)");
+      final int trsLen = transformStrs.length;
+      final Mat3 delta = new Mat3();
+
+      for ( int i = 0; i < trsLen; ++i ) {
+         final String transform = transformStrs[i].trim();
+         final String[] trData = transform.split("\\(|,\\s*");
+         final int dataLen = trData.length;
+         if ( dataLen > 1 ) {
+            final String cmd = trData[0];
+            System.out.println(cmd);
+
+            switch ( cmd ) {
+               case "translate":
+
+                  final String tx = trData[1];
+                  final String ty = trData[2];
+
+                  Mat3.fromTranslation(
+                     SvgParser.parseFloat(tx),
+                     SvgParser.parseFloat(ty),
+                     delta);
+                  Mat3.mul(target, delta, target);
+
+                  break;
+
+               case "rotate":
+
+                  final String ang = trData[1];
+
+                  Mat3.fromRotZ(SvgParser.parseAngle(ang), delta);
+                  Mat3.mul(target, delta, target);
+
+                  break;
+
+               case "scale":
+
+                  final String sx = trData[1];
+                  final String sy = dataLen > 2 ? trData[2] : sx;
+
+                  Mat3.fromScale(
+                     SvgParser.parseFloat(sx),
+                     SvgParser.parseFloat(sy),
+                     delta);
+                  Mat3.mul(target, delta, target);
+
+                  break;
+
+            }
+
+         }
+
+      }
+
+      return target;
+   }
+
+   /**
+    * Parses a view box node to a Vec4.
+    *
+    * @param viewbox the view box node
+    * @param target  the output vector
+    *
+    * @return the vector
+    */
    public static Vec4 parseViewBox ( final Node viewbox, final Vec4 target ) {
 
       float x = 0.0f;
@@ -1267,48 +1401,52 @@ public abstract class SvgParser {
    }
 
    static Knot2[] parseArcTo (
-      final Knot2 prev,
-      final float rx,
-      final float ry,
+      // final Knot2 prev,
+      final float x1,
+      final float y1,
+      final float xr,
+      final float yr,
       final float angle,
       final boolean fa,
       final boolean fs,
       final float x2,
       final float y2 ) {
 
-      // TODO: WIP
+      // Original processing code cites
+      // http://www.spaceroots.org/documents/ellipse/node22.html
 
-      final float x1 = prev.coord.x;
-      final float y1 = prev.coord.y;
+      float vrx = Utils.abs(xr);
+      float vry = Utils.abs(yr);
 
-      float vrx = Utils.min(IUtils.DEFAULT_EPSILON, rx);
-      float vry = Utils.min(IUtils.DEFAULT_EPSILON, ry);
-
-      final float phi = Utils.radians( ( -angle % 360 + 360 ) % 360);
+      final float phi = ( angle % IUtils.TAU + IUtils.TAU ) % IUtils.TAU;
       final float cosPhi = Utils.cos(phi);
       final float sinPhi = Utils.sin(phi);
 
-      final float x1r = ( cosPhi * ( x1 - x2 ) + sinPhi * ( y1 - y2 ) ) * 0.5f;
-      final float y1r = ( -sinPhi * ( x1 - x2 ) + cosPhi * ( y1 - y2 ) ) * 0.5f;
+      final float xDiff = x1 - x2;
+      final float yDiff = y1 - y2;
+
+      final float x1r = ( cosPhi * xDiff + sinPhi * yDiff ) * 0.5f;
+      final float y1r = ( -sinPhi * xDiff + cosPhi * yDiff ) * 0.5f;
+
+      final float x1rsq = x1r * x1r;
+      final float y1rsq = y1r * y1r;
+
+      final float rxsq = vrx * vrx;
+      final float rysq = vry * vry;
 
       float cxr = 0.0f;
       float cyr = 0.0f;
 
-      final float A = x1r * x1r / ( vrx * vrx ) + y1r * y1r / ( vry * vry );
-      if ( A > 1 ) {
+      final float A = x1rsq / rxsq + y1rsq / rysq;
+      if ( A > 1.0f ) {
          final float sqrtA = Utils.sqrt(A);
          vrx *= sqrtA;
          vry *= sqrtA;
-
-         cxr = 0.0f;
-         cyr = 0.0f;
-
       } else {
-
-         final float k = ( fa == fs ? -1.0f
-            : 1.0f ) * Utils.sqrt(
-               vrx * vrx * vry * vry / ( vrx * vrx * y1r * y1r + vry * vry * x1r * x1r ) - 1.0f);
-
+         final boolean sweepLarge = fa == fs;
+         final int flagSign = sweepLarge ? -1 : 1;
+         final float k = flagSign * Utils.sqrt(
+            rxsq * rysq / ( rxsq * y1rsq + rysq * x1rsq ) - 1.0f);
          cxr = k * vrx * y1r / vry;
          cyr = -k * vry * x1r / vrx;
       }
@@ -1324,33 +1462,33 @@ public abstract class SvgParser {
       final float tx = ( -x1r - cxr ) / vrx;
       final float ty = ( -y1r - cyr ) / vry;
       phi1 = Utils.atan2(sy, sx);
-      phiDelta = ( ( Utils.atan2(
-         ty,
+      phiDelta = ( ( Utils.atan2(ty,
          tx) - phi1 ) % IUtils.TAU + IUtils.TAU ) % IUtils.TAU;
       if ( !fs ) { phiDelta -= IUtils.TAU; }
 
       final int segmentCount = Utils.ceilToInt(
-         Utils.abs(phiDelta) / IUtils.TAU * 4);
+         Utils.abs(phiDelta) / IUtils.TAU * 4.0f);
 
       final float inc = phiDelta / segmentCount;
+
+      final float sinInc = Utils.sin(inc);
       final float tanInc = Utils.tan(inc * 0.5f);
       final float tanIncSq = tanInc * tanInc;
-      final float a = Utils.sin(
-         inc) * ( Utils.sqrt(
-            4.0f + 3.0f * tanIncSq) - 1.0f ) / 3.0f;
+      final float a = sinInc * ( Utils.sqrt(
+         4.0f + 3.0f * tanIncSq) - 1.0f ) / 3.0f;
 
-      final float sinPhi1 = Utils.sin(phi1);
       final float cosPhi1 = Utils.cos(phi1);
+      final float sinPhi1 = Utils.sin(phi1);
 
       float p1x = x1;
       float p1y = y1;
       float relq1x = a * ( -vrx * cosPhi * sinPhi1 - vry * sinPhi * cosPhi1 );
       float relq1y = a * ( -vrx * sinPhi * sinPhi1 + vry * cosPhi * cosPhi1 );
 
-      Knot2 pr = prev;
       final Knot2[] result = new Knot2[segmentCount];
+      Knot2 pr = new Knot2(x1, y1);
       for ( int i = 0; i < segmentCount; i++ ) {
-         final float eta = phi1 + ( i + 1 ) * inc;
+         final float eta = phi1 + ( i + 1.0f ) * inc;
          final float cosEta = Utils.cos(eta);
          final float sinEta = Utils.sin(eta);
 
@@ -1364,22 +1502,20 @@ public abstract class SvgParser {
             p2y = y2;
          }
 
-         final Knot2 next = result[i] = new Knot2();
+         final Knot2 curr = new Knot2();
+         result[i] = curr;
          Knot2.fromSegCubic(
-            p1x + relq1x,
-            p1y + relq1y,
-            p2x - relq2x,
-            p2y - relq2y,
+            p1x + relq1x, p1y + relq1y,
+            p2x - relq2x, p2y - relq2y,
             p2x, p2y,
-            pr,
-            next);
+            pr, curr);
 
          p1x = p2x;
          relq1x = relq2x;
          p1y = p2y;
          relq1y = relq2y;
 
-         pr = next;
+         pr = curr;
       }
 
       return result;

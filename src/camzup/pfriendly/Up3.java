@@ -31,8 +31,8 @@ import processing.opengl.PGraphicsOpenGL;
 public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
    /**
-    * A vector to store the x axis (first column) when creating a camera look-at
-    * matrix.
+    * A vector to store the x axis (first column) when creating a camera
+    * look-at matrix.
     */
    protected final Vec3 i;
 
@@ -43,8 +43,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    protected final Vec3 j;
 
    /**
-    * A vector to store the z axis (third column) when creating a camera look-at
-    * matrix.
+    * A vector to store the z axis (third column) when creating a camera
+    * look-at matrix.
     */
    protected final Vec3 k;
 
@@ -69,7 +69,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       this.i = Vec3.right(new Vec3());
       this.j = Vec3.forward(new Vec3());
       this.k = Vec3.up(new Vec3());
-      this.lookDir = Vec3.up(new Vec3());
+      this.lookDir = Vec3.forward(new Vec3());
       this.lookTarget = new Vec3();
       this.refUp = Vec3.up(new Vec3());
    }
@@ -99,9 +99,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Initializes an ambient light with the default ambient color. The camera's
-    * look target is used as the location. Ambient light illuminates an object
-    * evenly from all sides.
+    * Initializes an ambient light with the default ambient color. The
+    * camera's look target is used as the location. Ambient light illuminates
+    * an object evenly from all sides.
     */
    public void ambientLight ( ) {
 
@@ -114,8 +114,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
    /**
     * Initializes an ambient light with a color. The camera's look target is
-    * used as the location. Ambient light illuminates an object evenly from all
-    * sides.
+    * used as the location. Ambient light illuminates an object evenly from
+    * all sides.
     *
     * @param clr the color
     */
@@ -141,8 +141,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
    /**
     * Initializes an ambient light with a color. The camera's look target is
-    * used as the location. Ambient light illuminates an object evenly from all
-    * sides.
+    * used as the location. Ambient light illuminates an object evenly from
+    * all sides.
     *
     * @param clr the color
     */
@@ -224,8 +224,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Draws a bezier vertex with three vectors: the following control point, the
-    * rear control point of the ensuing point, and the ensuing anchor point.
+    * Draws a bezier vertex with three vectors: the following control point,
+    * the rear control point of the ensuing point, and the ensuing anchor
+    * point.
     *
     * @param cp0 the first control point
     * @param cp1 the second control point
@@ -275,14 +276,14 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Places camera on the axis perpendicular to its world up axis such that it
-    * is looking North toward the world origin.
+    * Places camera on the axis perpendicular to its world up axis such that
+    * it is looking North toward the world origin.
     */
    public abstract void camNorth ( );
 
    /**
-    * Places camera on the axis perpendicular to its world up axis such that it
-    * is looking South toward the world origin.
+    * Places camera on the axis perpendicular to its world up axis such that
+    * it is looking South toward the world origin.
     */
    public abstract void camSouth ( );
 
@@ -517,8 +518,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Displays the handles of a curve entity. The stroke weight is determined by
-    * {@link IUp#DEFAULT_STROKE_WEIGHT}, {@value IUp#DEFAULT_STROKE_WEIGHT} .
+    * Displays the handles of a curve entity. The stroke weight is determined
+    * by {@link IUp#DEFAULT_STROKE_WEIGHT}, {@value IUp#DEFAULT_STROKE_WEIGHT}
+    * .
     *
     * @param ce the curve entity
     */
@@ -532,9 +534,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * <ul>
     * <li>The color for lines between handles defaults to
     * {@link IUp#DEFAULT_HANDLE_COLOR};</li>
-    * <li>the rear handle point, to {@link IUp#DEFAULT_HANDLE_REAR_COLOR};</li>
-    * <li>the fore handle point, to {@link IUp#DEFAULT_HANDLE_FORE_COLOR};</li>
-    * <li>the coordinate point, to {@link IUp#DEFAULT_HANDLE_COORD_COLOR}.</li>
+    * <li>the rear handle point, to
+    * {@link IUp#DEFAULT_HANDLE_REAR_COLOR};</li>
+    * <li>the fore handle point, to
+    * {@link IUp#DEFAULT_HANDLE_FORE_COLOR};</li>
+    * <li>the coordinate point, to
+    * {@link IUp#DEFAULT_HANDLE_COORD_COLOR}.</li>
     * </ul>
     *
     * @param ce           the curve entity
@@ -674,9 +679,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Sets the renderer's stroke, stroke weight and fill to a material's. Due to
-    * stroke flickering in perspective, currently a material with a fill may not
-    * also use a stroke.
+    * Sets the renderer's stroke, stroke weight and fill to a material's. Due
+    * to stroke flickering in perspective, currently a material with a fill
+    * may not also use a stroke.
     *
     * @param material the material
     */
@@ -854,7 +859,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Boom or pedestal the camera, moving it on its local y axis, up or down.
     * This is done by multiplying the y magnitude by the camera inverse, then
-    * adding the local coordinates to both the camera location and look target.
+    * adding the local coordinates to both the camera location and look
+    * target.
     *
     * @param y the y magnitude
     */
@@ -1331,9 +1337,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
    /**
     * Initializes a spot light. The location positions the spotlight in space
-    * while the direction determines where the light points. The angle parameter
-    * affects angle of the spotlight cone, while concentration sets the bias of
-    * light focusing toward the center of that cone.
+    * while the direction determines where the light points. The angle
+    * parameter affects angle of the spotlight cone, while concentration sets
+    * the bias of light focusing toward the center of that cone.
     *
     * @param clr           the color
     * @param loc           the location
@@ -1357,9 +1363,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
    /**
     * Initializes a spot light. The location positions the spotlight in space
-    * while the direction determines where the light points. The angle parameter
-    * affects angle of the spotlight cone, while concentration sets the bias of
-    * light focusing toward the center of that cone.
+    * while the direction determines where the light points. The angle
+    * parameter affects angle of the spotlight cone, while concentration sets
+    * the bias of light focusing toward the center of that cone.
     *
     * @param clr           the color
     * @param xLoc          the location x
@@ -1403,9 +1409,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
    /**
     * Initializes a spot light. The location positions the spotlight in space
-    * while the direction determines where the light points. The angle parameter
-    * affects angle of the spotlight cone, while concentration sets the bias of
-    * light focusing toward the center of that cone.
+    * while the direction determines where the light points. The angle
+    * parameter affects angle of the spotlight cone, while concentration sets
+    * the bias of light focusing toward the center of that cone.
     *
     * @param clr           the color
     * @param loc           the location
@@ -1626,8 +1632,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
    /**
     * Trucks the camera, moving it on its local x axis, left or right. This is
-    * done by multiplying the x magnitude by the camera inverse, then adding the
-    * local coordinates to both the camera location and look target.
+    * done by multiplying the x magnitude by the camera inverse, then adding
+    * the local coordinates to both the camera location and look target.
     *
     * @param x the x magnitude
     */
@@ -1745,9 +1751,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * A helper function for the renderer camera. Updates the camera matrix, its
-    * inverse, the model view and its inverse, and updates the project model
-    * view.
+    * A helper function for the renderer camera. Updates the camera matrix,
+    * its inverse, the model view and its inverse, and updates the project
+    * model view.
     */
    protected void updateCameraInv ( ) {
 

@@ -1,11 +1,11 @@
 package camzup.core;
 
 /**
- * Organizes the components of a 2D mesh into a group of coordinate and texture
- * coordinate such that they can be edited together. This is not used by a mesh
- * internally; it is created upon retrieval from a mesh. All of its components
- * should be treated as references to data within the mesh, not as unique
- * values.
+ * Organizes the components of a 2D mesh into a group of coordinate and
+ * texture coordinate such that they can be edited together. This is not
+ * used by a mesh internally; it is created upon retrieval from a mesh. All
+ * of its components should be treated as references to data within the
+ * mesh, not as unique values.
  */
 public class Vert2 implements Comparable < Vert2 > {
 

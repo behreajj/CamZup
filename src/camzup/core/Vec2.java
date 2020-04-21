@@ -1,18 +1,16 @@
 package camzup.core;
 
-import java.io.Serializable;
-
 import java.util.Comparator;
 import java.util.Iterator;
 
 /**
- * A mutable, extensible class influenced by GLSL, OSL and Processing's PVector.
- * This is intended for storing points and directions in two-dimensional
- * graphics programs. Instance methods are limited, while most static methods
- * require an explicit output variable to be provided.
+ * A mutable, extensible class influenced by GLSL, OSL and Processing's
+ * PVector. This is intended for storing points and directions in
+ * two-dimensional graphics programs. Instance methods are limited, while
+ * most static methods require an explicit output variable to be provided.
  */
-public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
-   Serializable {
+public class Vec2 implements Comparable < Vec2 >, Cloneable,
+   Iterable < Float > {
 
    /**
     * Component on the x axis in the Cartesian coordinate system.
@@ -130,8 +128,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Simulates bracket subscript access in an array. When the provided index is
-    * 1 or -1, returns y; 0 or -2, x.
+    * Simulates bracket subscript access in an array. When the provided index
+    * is 1 or -1, returns y; 0 or -2, x.
     *
     * @param index the index
     *
@@ -291,15 +289,20 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    public float[] toArray ( ) { return new float[] { this.x, this.y }; }
 
    /**
-    * Returns a string representation of this vector as a space separated value
-    * for use by OBJ formatting functions.
+    * Returns a string representation of this vector as a space separated
+    * value for use by OBJ formatting functions.
     *
     * @return the string
     */
    public String toObjString ( ) {
 
-      return new StringBuilder(16).append(Utils.toFixed(this.x, 6)).append(
-         ' ').append(Utils.toFixed(this.y, 6)).toString();
+      /* @formatter:off */
+      return new StringBuilder(16)
+         .append(Utils.toFixed(this.x, 6))
+         .append(' ')
+         .append(Utils.toFixed(this.y, 6))
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -319,14 +322,21 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(48).append("{ x: ").append(
-         Utils.toFixed(this.x, places)).append(", y: ").append(
-            Utils.toFixed(this.y, places)).append(' ').append('}').toString();
+      /* @formatter:off */
+      return new StringBuilder(48)
+         .append("{ x: ")
+         .append(Utils.toFixed(this.x, places))
+         .append(", y: ")
+         .append(Utils.toFixed(this.y, places))
+         .append(' ')
+         .append('}')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes.
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes.
     *
     * @return the string
     */
@@ -334,10 +344,10 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    String toBlenderCode ( ) { return this.toBlenderCode(true); }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes. This is
-    * formatted as a two-tuple. If this is a UV coordinate, provides the option
-    * to flip the v coordinate.
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes. This is
+    * formatted as a two-tuple. If this is a UV coordinate, provides the
+    * option to flip the v coordinate.
     *
     * @param flipv whether to subtract y from 1.0
     *
@@ -346,16 +356,21 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    @Experimental
    String toBlenderCode ( final boolean flipv ) {
 
-      return new StringBuilder(32).append('(').append(Utils.toFixed(flipv
-         ? this.x
-         : 1.0f - this.x, 6)).append(',').append(' ').append(Utils.toFixed(flipv
-            ? 1.0f - this.y
-            : this.y, 6)).append(')').toString();
+      /* @formatter:off */
+      return new StringBuilder(32)
+         .append('(')
+         .append(Utils.toFixed(flipv ? this.x : 1.0f - this.x, 6))
+         .append(',')
+         .append(' ')
+         .append(Utils.toFixed(flipv ? 1.0f - this.y : this.y, 6))
+         .append(')')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes. This is
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes. This is
     * formatted as a three-tuple.
     *
     * @return the string
@@ -363,15 +378,24 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    @Experimental
    String toBlenderCode ( final float z ) {
 
-      return new StringBuilder(64).append('(').append(
-         Utils.toFixed(this.x, 6)).append(',').append(' ').append(
-            Utils.toFixed(this.y, 6)).append(',').append(' ').append(
-               Utils.toFixed(z, 6)).append(')').toString();
+      /* @formatter:off */
+      return new StringBuilder(64)
+         .append('(')
+         .append(Utils.toFixed(this.x, 6))
+         .append(',')
+         .append(' ')
+         .append(Utils.toFixed(this.y, 6))
+         .append(',')
+         .append(' ')
+         .append(Utils.toFixed(z, 6))
+         .append(')')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
-    * Returns a string representation of this vector as a comma separated value
-    * for use by SVG formatting functions.<br>
+    * Returns a string representation of this vector as a comma separated
+    * value for use by SVG formatting functions.<br>
     * <br>
     * This uses a print precision of six decimal places to avoid glitches when
     * small shapes are scaled up.
@@ -380,8 +404,13 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     */
    String toSvgString ( ) {
 
-      return new StringBuilder(16).append(Utils.toFixed(this.x, 6)).append(
-         ' ').append(Utils.toFixed(this.y, 6)).toString();
+      /* @formatter:off */
+      return new StringBuilder(16)
+         .append(Utils.toFixed(this.x, 6))
+         .append(' ')
+         .append(Utils.toFixed(this.y, 6))
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -404,11 +433,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * The unique identification for serialized classes.
-    */
-   private static final long serialVersionUID = 8867395334130420105L;
-
-   /**
     * Finds the absolute value of each vector component.
     *
     * @param v      the input vector
@@ -422,7 +446,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(Utils.abs(v.x), Utils.abs(v.y));
+      return target.set(
+         Utils.abs(v.x),
+         Utils.abs(v.y));
    }
 
    /**
@@ -516,7 +542,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(Utils.and(a.x, b.x), Utils.and(a.y, b.y));
+      return target.set(
+         Utils.and(a.x, b.x),
+         Utils.and(a.y, b.y));
    }
 
    /**
@@ -713,11 +741,11 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Returns a tangent on a Bezier curve described by two anchor points and two
-    * control points according to a step in [0.0, 1.0] . When the step is less
-    * than one, returns the first anchor point subtracted from the first control
-    * point. When the step is greater than one, returns the second anchor point
-    * subtracted from the second control point.
+    * Returns a tangent on a Bezier curve described by two anchor points and
+    * two control points according to a step in [0.0, 1.0] . When the step is
+    * less than one, returns the first anchor point subtracted from the first
+    * control point. When the step is greater than one, returns the second
+    * anchor point subtracted from the second control point.
     *
     * @param ap0    the first anchor point
     * @param cp0    the first control point
@@ -801,7 +829,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(Utils.ceil(v.x), Utils.ceil(v.y));
+      return target.set(
+         Utils.ceil(v.x),
+         Utils.ceil(v.y));
    }
 
    /**
@@ -822,7 +852,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 upperBound,
       final Vec2 target ) {
 
-      return target.set(Utils.clamp(v.x, lowerBound.x, upperBound.x),
+      return target.set(
+         Utils.clamp(v.x, lowerBound.x, upperBound.x),
          Utils.clamp(v.x, lowerBound.y, upperBound.y));
    }
 
@@ -841,7 +872,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(Utils.clamp01(v.x), Utils.clamp01(v.y));
+      return target.set(
+         Utils.clamp01(v.x),
+         Utils.clamp01(v.y));
    }
 
    /**
@@ -898,15 +931,16 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 sign,
       final Vec2 target ) {
 
-      return target.set(Utils.copySign(magnitude.x, sign.x),
+      return target.set(
+         Utils.copySign(magnitude.x, sign.x),
          Utils.copySign(magnitude.y, sign.y));
    }
 
    /**
     * Returns the z component of the cross product between two vectors. The x
-    * and y components of the cross between 2D vectors are always zero. For that
-    * reason, the normalized cross product is equal to the sign of the cross
-    * product.
+    * and y components of the cross between 2D vectors are always zero. For
+    * that reason, the normalized cross product is equal to the sign of the
+    * cross product.
     *
     * @param a left operand
     * @param b right operand
@@ -936,7 +970,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y));
+      return target.set(
+         Utils.diff(a.x, b.x),
+         Utils.diff(a.y, b.y));
    }
 
    /**
@@ -994,8 +1030,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Finds the Manhattan distance between two vectors. Forms a diamond pattern
-    * when plotted.
+    * Finds the Manhattan distance between two vectors. Forms a diamond
+    * pattern when plotted.
     *
     * @param a left operand
     * @param b right operand
@@ -1012,10 +1048,10 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Finds the Minkowski distance between two vectors. This is a generalization
-    * of other distance formulae. When the exponent value, c, is 1.0, the
-    * Minkowski distance equals the Manhattan distance; when it is 2.0,
-    * Minkowski equals the Euclidean distance.
+    * Finds the Minkowski distance between two vectors. This is a
+    * generalization of other distance formulae. When the exponent value, c,
+    * is 1.0, the Minkowski distance equals the Manhattan distance; when it is
+    * 2.0, Minkowski equals the Euclidean distance.
     *
     * @param a left operand
     * @param b right operand
@@ -1045,8 +1081,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
 
    /**
     * Finds the Euclidean distance squared between two vectors. Equivalent to
-    * subtracting one vector from the other, then finding the dot product of the
-    * difference with itself.
+    * subtracting one vector from the other, then finding the dot product of
+    * the difference with itself.
     *
     * @param a left operand
     * @param b right operand
@@ -1078,7 +1114,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(Utils.div(a, b.x), Utils.div(a, b.y));
+      return target.set(
+         Utils.div(a, b.x),
+         Utils.div(a, b.y));
    }
 
    /**
@@ -1118,7 +1156,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(Utils.div(a.x, b.x), Utils.div(a.y, b.y));
+      return target.set(
+         Utils.div(a.x, b.x),
+         Utils.div(a.y, b.y));
    }
 
    /**
@@ -1127,7 +1167,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     * <em>a<sub>x</sub> b<sub>x</sub></em> + <em>a<sub>y</sub>
     * b<sub>y</sub></em><br>
     * <br>
-    * The dot product of a vector with itself is equal to its magnitude squared.
+    * The dot product of a vector with itself is equal to its magnitude
+    * squared.
     *
     * @param a left operand
     * @param b right operand
@@ -1155,8 +1196,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Filters a vector by setting each component to the input component if it is
-    * in bounds and 0.0 if it is out of bounds.
+    * Filters a vector by setting each component to the input component if it
+    * is in bounds and 0.0 if it is out of bounds.
     *
     * @param v      the vector
     * @param lb     the lower bound
@@ -1171,7 +1212,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 ub,
       final Vec2 target ) {
 
-      return target.set(Utils.filter(v.x, lb.x, ub.x),
+      return target.set(
+         Utils.filter(v.x, lb.x, ub.x),
          Utils.filter(v.y, lb.y, ub.y));
    }
 
@@ -1215,7 +1257,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(Utils.floor(v.x), Utils.floor(v.y));
+      return target.set(
+         Utils.floor(v.x),
+         Utils.floor(v.y));
    }
 
    /**
@@ -1234,12 +1278,14 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(Utils.fmod(a, b.x), Utils.fmod(a, b.y));
+      return target.set(
+         Utils.fmod(a, b.x),
+         Utils.fmod(a, b.y));
    }
 
    /**
-    * Applies the % operator (truncation-based modulo) to each component of the
-    * left operand.
+    * Applies the % operator (truncation-based modulo) to each component of
+    * the left operand.
     *
     * @param a      left operand
     * @param b      right operand
@@ -1257,8 +1303,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Applies the % operator (truncation-based modulo) to each component of the
-    * left operand.
+    * Applies the % operator (truncation-based modulo) to each component of
+    * the left operand.
     *
     * @param a      left operand
     * @param b      right operand
@@ -1273,7 +1319,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(Utils.fmod(a.x, b.x), Utils.fmod(a.x, b.y));
+      return target.set(
+         Utils.fmod(a.x, b.x),
+         Utils.fmod(a.x, b.y));
    }
 
    /**
@@ -1302,7 +1350,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(Utils.fract(v.x), Utils.fract(v.y));
+      return target.set(
+         Utils.fract(v.x),
+         Utils.fract(v.y));
    }
 
    /**
@@ -1330,7 +1380,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
        */
 
       final float nrm = heading * IUtils.ONE_TAU;
-      return target.set(radius * Utils.scNorm(nrm),
+      return target.set(
+         radius * Utils.scNorm(nrm),
          radius * Utils.scNorm(nrm - 0.25f));
    }
 
@@ -1369,9 +1420,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Generates a 2D array of vectors. The result is in row-major order, but the
-    * parameters are supplied in reverse: columns first, then rows. Defaults to
-    * the coordinate range of [-0.5, 0.5] .
+    * Generates a 2D array of vectors. The result is in row-major order, but
+    * the parameters are supplied in reverse: columns first, then rows.
+    * Defaults to the coordinate range of [-0.5, 0.5] .
     *
     * @param cols number of columns
     * @param rows number of rows
@@ -1386,8 +1437,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Generates a 2D array of vectors. The result is in row-major order, but the
-    * parameters are supplied in reverse: columns first, then rows.
+    * Generates a 2D array of vectors. The result is in row-major order, but
+    * the parameters are supplied in reverse: columns first, then rows.
     *
     * @param cols       number of columns
     * @param rows       number of rows
@@ -1402,13 +1453,15 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float lowerBound,
       final float upperBound ) {
 
-      return Vec2.grid(cols, rows, lowerBound, lowerBound, upperBound,
-         upperBound);
+      return Vec2.grid(
+         cols, rows,
+         lowerBound, lowerBound,
+         upperBound, upperBound);
    }
 
    /**
-    * Generates a 2D array of vectors. The result is in row-major order, but the
-    * parameters are supplied in reverse: columns first, then rows.
+    * Generates a 2D array of vectors. The result is in row-major order, but
+    * the parameters are supplied in reverse: columns first, then rows.
     *
     * @param cols       number of columns
     * @param rows       number of rows
@@ -1423,8 +1476,10 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 lowerBound,
       final Vec2 upperBound ) {
 
-      return Vec2.grid(cols, rows, lowerBound.x, lowerBound.y, upperBound.x,
-         upperBound.y);
+      return Vec2.grid(
+         cols, rows,
+         lowerBound.x, lowerBound.y,
+         upperBound.x, upperBound.y);
    }
 
    /**
@@ -1509,7 +1564,10 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final int sectors,
       final float radius ) {
 
-      return Vec2.gridPolar(sectors, 1, radius, radius, 0.0f, true);
+      return Vec2.gridPolar(
+         sectors, 1,
+         radius, radius,
+         0.0f, true);
    }
 
    /**
@@ -1529,7 +1587,10 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float radiusMin,
       final float radiusMax ) {
 
-      return Vec2.gridPolar(sectors, rings, radiusMin, radiusMax, 0.0f, true);
+      return Vec2.gridPolar(
+         sectors, rings,
+         radiusMin, radiusMax,
+         0.0f, true);
    }
 
    /**
@@ -1551,8 +1612,10 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float radiusMax,
       final float angOffset ) {
 
-      return Vec2.gridPolar(sectors, rings, radiusMin, radiusMax, angOffset,
-         true);
+      return Vec2.gridPolar(
+         sectors, rings,
+         radiusMin, radiusMax,
+         angOffset, true);
    }
 
    /**
@@ -1725,8 +1788,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Tests to see if the vector is on the unit circle, i.e., has a magnitude of
-    * approximately 1.0 .
+    * Tests to see if the vector is on the unit circle, i.e., has a magnitude
+    * of approximately 1.0 .
     *
     * @param v the input vector
     *
@@ -1780,7 +1843,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Evaluates whether the left comparisand is less than the right comparisand.
+    * Evaluates whether the left comparisand is less than the right
+    * comparisand.
     *
     * @param a      left comparisand
     * @param b      right comparisand
@@ -1797,8 +1861,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Evaluates whether the left comparisand is less than or equal to the right
-    * comparisand.
+    * Evaluates whether the left comparisand is less than or equal to the
+    * right comparisand.
     *
     * @param a      left comparisand
     * @param b      right comparisand
@@ -1815,10 +1879,10 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Finds the length, or magnitude, of a vector, |<em>a</em>| . Also referred
-    * to as the radius when using polar coordinates. Uses the formula \u221a
-    * <em>a</em> \u00b7 <em>a</em> . Where possible, use magSq or dot to avoid
-    * the computational cost of the square-root.
+    * Finds the length, or magnitude, of a vector, |<em>a</em>| . Also
+    * referred to as the radius when using polar coordinates. Uses the formula
+    * \u221a <em>a</em> \u00b7 <em>a</em> . Where possible, use magSq or dot
+    * to avoid the computational cost of the square-root.
     *
     * @param v the input vector
     *
@@ -1836,8 +1900,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    /**
     * Finds the length-, or magnitude-, squared of a vector,
     * |<em>a</em>|<sup>2</sup>. Returns the same result as <em>a</em> \u00b7
-    * <em>a</em> . Useful when calculating the lengths of many vectors, so as to
-    * avoid the computational cost of the square-root.
+    * <em>a</em> . Useful when calculating the lengths of many vectors, so as
+    * to avoid the computational cost of the square-root.
     *
     * @param v the input vector
     *
@@ -1893,12 +1957,14 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float upperBound,
       final Vec2 target ) {
 
-      return target.set(Utils.max(a.x, upperBound), Utils.max(a.y, upperBound));
+      return target.set(
+         Utils.max(a.x, upperBound),
+         Utils.max(a.y, upperBound));
    }
 
    /**
-    * Sets the target vector to the maximum components of the input vector and a
-    * upper bound.
+    * Sets the target vector to the maximum components of the input vector and
+    * a upper bound.
     *
     * @param a          the input vector
     * @param upperBound the upper bound
@@ -1913,13 +1979,14 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 upperBound,
       final Vec2 target ) {
 
-      return target.set(Utils.max(a.x, upperBound.x),
+      return target.set(
+         Utils.max(a.x, upperBound.x),
          Utils.max(a.y, upperBound.y));
    }
 
    /**
-    * Sets the target vector to the minimum components of the input vector and a
-    * lower bound.
+    * Sets the target vector to the minimum components of the input vector and
+    * a lower bound.
     *
     * @param a          the input value
     * @param lowerBound the lower bound
@@ -1932,12 +1999,14 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float lowerBound,
       final Vec2 target ) {
 
-      return target.set(Utils.min(a.x, lowerBound), Utils.min(a.y, lowerBound));
+      return target.set(
+         Utils.min(a.x, lowerBound),
+         Utils.min(a.y, lowerBound));
    }
 
    /**
-    * Sets the target vector to the minimum components of the input vector and a
-    * lower bound.
+    * Sets the target vector to the minimum components of the input vector and
+    * a lower bound.
     *
     * @param a          the input vector
     * @param lowerBound the lower bound
@@ -1952,7 +2021,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 lowerBound,
       final Vec2 target ) {
 
-      return target.set(Utils.min(a.x, lowerBound.x),
+      return target.set(
+         Utils.min(a.x, lowerBound.x),
          Utils.min(a.y, lowerBound.y));
    }
 
@@ -1972,13 +2042,12 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float step,
       final Vec2 target ) {
 
-      // return Vec2.EASING.apply(origin, dest, step, target);
-
       if ( step <= 0.0f ) { return target.set(origin); }
       if ( step >= 1.0f ) { return target.set(dest); }
 
       final float u = 1.0f - step;
-      return target.set(u * origin.x + step * dest.x,
+      return target.set(
+         u * origin.x + step * dest.x,
          u * origin.y + step * dest.y);
    }
 
@@ -2020,7 +2089,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(Utils.mod(a, b.x), Utils.mod(a, b.y));
+      return target.set(
+         Utils.mod(a, b.x),
+         Utils.mod(a, b.y));
    }
 
    /**
@@ -2040,7 +2111,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 target ) {
 
       if ( b == 0.0f ) { return target.set(a); }
-      return target.set(Utils.modUnchecked(a.x, b), Utils.modUnchecked(a.y, b));
+      return target.set(
+         Utils.modUnchecked(a.x, b),
+         Utils.modUnchecked(a.y, b));
    }
 
    /**
@@ -2059,13 +2132,15 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(Utils.mod(a.x, b.x), Utils.mod(a.y, b.y));
+      return target.set(
+         Utils.mod(a.x, b.x),
+         Utils.mod(a.y, b.y));
    }
 
    /**
-    * A specialized form of modulo which subtracts the floor of the vector from
-    * the vector. For Vec2s, useful for managing texture coordinates in the
-    * range [0.0, 1.0] .
+    * A specialized form of modulo which subtracts the floor of the vector
+    * from the vector. For Vec2s, useful for managing texture coordinates in
+    * the range [0.0, 1.0] .
     *
     * @param v      the input vector
     * @param target the output vector
@@ -2078,7 +2153,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(Utils.mod1(v.x), Utils.mod1(v.y));
+      return target.set(
+         Utils.mod1(v.x),
+         Utils.mod1(v.y));
    }
 
    /**
@@ -2176,8 +2253,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
 
    /**
     * Divides a vector by its magnitude, such that the new magnitude is 1.0 .
-    * <em>\u00e2</em> = <em>a</em> / |<em>a</em>| . The result is a unit vector,
-    * as it lies on the circumference of a unit circle.
+    * <em>\u00e2</em> = <em>a</em> / |<em>a</em>| . The result is a unit
+    * vector, as it lies on the circumference of a unit circle.
     *
     * @param v      the input vector
     * @param target the output vector
@@ -2207,7 +2284,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(v.x != 0.0f ? 0.0f : 1.0f, v.y != 0.0f ? 0.0f : 1.0f);
+      return target.set(
+         v.x != 0.0f ? 0.0f : 1.0f,
+         v.y != 0.0f ? 0.0f : 1.0f);
    }
 
    /**
@@ -2238,7 +2317,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(Utils.or(a.x, b.x), Utils.or(a.y, b.y));
+      return target.set(
+         Utils.or(a.x, b.x),
+         Utils.or(a.y, b.y));
    }
 
    /**
@@ -2289,7 +2370,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Finds the perpendicular of a vector in the clockwise direction, such that
+    * Finds the perpendicular of a vector in the clockwise direction, such
+    * that
     * <ul>
     * <li>perp ( right ) = back, <br>
     * perp( 1.0, 0.0 ) = ( 0.0, -1.0 )</li>
@@ -2330,7 +2412,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(Utils.pow(a, b.x), Utils.pow(a, b.y));
+      return target.set(
+         Utils.pow(a, b.x),
+         Utils.pow(a, b.y));
    }
 
    /**
@@ -2349,7 +2433,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float b,
       final Vec2 target ) {
 
-      return target.set(Utils.pow(a.x, b), Utils.pow(a.y, b));
+      return target.set(
+         Utils.pow(a.x, b),
+         Utils.pow(a.y, b));
    }
 
    /**
@@ -2368,7 +2454,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(Utils.pow(a.x, b.x), Utils.pow(a.y, b.y));
+      return target.set(
+         Utils.pow(a.x, b.x),
+         Utils.pow(a.y, b.y));
    }
 
    /**
@@ -2453,13 +2541,14 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       if ( levels < 2 ) { return target.set(v); }
 
       final float delta = 1.0f / levels;
-      return target.set(delta * Utils.floor(0.5f + v.x * levels),
+      return target.set(
+         delta * Utils.floor(0.5f + v.x * levels),
          delta * Utils.floor(0.5f + v.y * levels));
    }
 
    /**
-    * Generates a vector with a random heading and a magnitude of 1.0, such that
-    * it lies on the unit circle.
+    * Generates a vector with a random heading and a magnitude of 1.0, such
+    * that it lies on the unit circle.
     *
     * @param rng    the random number generator
     * @param target the output vector
@@ -2494,7 +2583,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
 
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
-      return target.set( ( 1.0f - rx ) * lowerBound + rx * upperBound,
+      return target.set(
+         ( 1.0f - rx ) * lowerBound + rx * upperBound,
          ( 1.0f - ry ) * lowerBound + ry * upperBound);
    }
 
@@ -2517,7 +2607,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
 
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
-      return target.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
+      return target.set(
+         ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
          ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y);
    }
 
@@ -2547,8 +2638,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Creates a vector with a magnitude of 1.0 at a random heading, such that it
-    * lies on the unit circle.
+    * Creates a vector with a magnitude of 1.0 at a random heading, such that
+    * it lies on the unit circle.
     *
     * @param rng    the random number generator
     * @param target the output vector
@@ -2599,7 +2690,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float nx = normal.x * mInv;
       final float ny = normal.y * mInv;
       final float scalar = 2.0f * ( nx * incident.x + ny * incident.y );
-      return target.set(incident.x - scalar * nx, incident.y - scalar * ny);
+      return target.set(
+         incident.x - scalar * nx,
+         incident.y - scalar * ny);
    }
 
    /**
@@ -2627,13 +2720,14 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float k = 1.0f - eta * eta * ( 1.0f - nDotI * nDotI );
       if ( k <= 0.0f ) { return target.reset(); }
       final float scalar = eta * nDotI + Utils.sqrtUnchecked(k);
-      return target.set(eta * incident.x - scalar * normal.x,
+      return target.set(
+         eta * incident.x - scalar * normal.x,
          eta * incident.y - scalar * normal.y);
    }
 
    /**
-    * Normalizes a vector, then multiplies it by a scalar, in effect setting its
-    * magnitude to that scalar.
+    * Normalizes a vector, then multiplies it by a scalar, in effect setting
+    * its magnitude to that scalar.
     *
     * @param v      the vector
     * @param scalar the scalar
@@ -2655,8 +2749,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Normalizes a vector, then multiplies it by a scalar, in effect setting its
-    * magnitude to that scalar.
+    * Normalizes a vector, then multiplies it by a scalar, in effect setting
+    * its magnitude to that scalar.
     *
     * @param v          the vector
     * @param scalar     the scalar
@@ -2736,8 +2830,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Rotates a vector around the x axis by an angle in radians. For 2D vectors,
-    * this scales the y component by cosine of the angle.
+    * Rotates a vector around the x axis by an angle in radians. For 2D
+    * vectors, this scales the y component by cosine of the angle.
     *
     * @param v       the input vector
     * @param radians the angle in radians
@@ -2756,8 +2850,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Rotates a vector around the y axis by an angle in radians. For 2D vectors,
-    * this scales the x component by cosine of the angle.
+    * Rotates a vector around the y axis by an angle in radians. For 2D
+    * vectors, this scales the x component by cosine of the angle.
     *
     * @param v       the input vector
     * @param radians the angle in radians
@@ -2776,9 +2870,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Rotates a vector around the z axis. Accepts pre-calculated sine and cosine
-    * of an angle, so that collections of vectors can be efficiently rotated
-    * without repeatedly calling cos and sin.
+    * Rotates a vector around the z axis. Accepts pre-calculated sine and
+    * cosine of an angle, so that collections of vectors can be efficiently
+    * rotated without repeatedly calling cos and sin.
     *
     * @param v      the input vector
     * @param cosa   cosine of the angle
@@ -2793,7 +2887,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float sina,
       final Vec2 target ) {
 
-      return target.set(cosa * v.x - sina * v.y, cosa * v.y + sina * v.x);
+      return target.set(
+         cosa * v.x - sina * v.y,
+         cosa * v.y + sina * v.x);
    }
 
    /**
@@ -2810,14 +2906,16 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final float radians,
       final Vec2 target ) {
 
-      /*
-       * return Vec2.rotateZ(v, Utils.cos(radians), Utils.sin(radians), target);
-       */
+      // return Vec2.rotateZ(v,
+      // Utils.cos(radians),
+      // Utils.sin(radians), target);
 
       final float nrm = radians * IUtils.ONE_TAU;
       final float cosa = Utils.scNorm(nrm);
       final float sina = Utils.scNorm(nrm - 0.25f);
-      return target.set(cosa * v.x - sina * v.y, cosa * v.y + sina * v.x);
+      return target.set(
+         cosa * v.x - sina * v.y,
+         cosa * v.y + sina * v.x);
    }
 
    /**
@@ -2846,7 +2944,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
          n *= 10;
       }
       final float nInv = 1.0f / n;
-      return target.set(Utils.round(v.x * n) * nInv,
+      return target.set(
+         Utils.round(v.x * n) * nInv,
          Utils.round(v.y * n) * nInv);
    }
 
@@ -2864,7 +2963,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(Utils.round(v.x), Utils.round(v.y));
+      return target.set(
+         Utils.round(v.x),
+         Utils.round(v.y));
    }
 
    /**
@@ -2881,7 +2982,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(Utils.sign(v.x), Utils.sign(v.y));
+      return target.set(
+         Utils.sign(v.x),
+         Utils.sign(v.y));
    }
 
    /**
@@ -2959,12 +3062,14 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 v,
       final Vec2 target ) {
 
-      return target.set(( int ) v.x, ( int ) v.y);
+      return target.set(
+         ( int ) v.x,
+         ( int ) v.y);
    }
 
    /**
-    * Returns a vector representing the center of the texture coordinate system,
-    * (0.5, 0.5) .
+    * Returns a vector representing the center of the texture coordinate
+    * system, (0.5, 0.5) .
     *
     * @param target the output vector
     *
@@ -2977,8 +3082,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
 
    /**
     * Wraps a vector around a periodic range as defined by an upper and lower
-    * bound: lower bounds inclusive; upper bounds exclusive. In cases where the
-    * lower bound is (0.0, 0.0) , use {@link Vec2#mod(Vec2, Vec2, Vec2)} .
+    * bound: lower bounds inclusive; upper bounds exclusive. In cases where
+    * the lower bound is (0.0, 0.0) , use {@link Vec2#mod(Vec2, Vec2, Vec2)} .
     *
     * @param v      the vector
     * @param lb     the lower bound
@@ -2996,7 +3101,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 ub,
       final Vec2 target ) {
 
-      return target.set(Utils.wrap(v.x, lb.x, ub.x),
+      return target.set(
+         Utils.wrap(v.x, lb.x, ub.x),
          Utils.wrap(v.y, lb.y, ub.y));
    }
 
@@ -3017,7 +3123,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(Utils.xor(a.x, b.x), Utils.xor(a.y, b.y));
+      return target.set(
+         Utils.xor(a.x, b.x),
+         Utils.xor(a.y, b.y));
    }
 
    /**
@@ -3038,8 +3146,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
     * first, then rows.<br>
     * <br>
     * This is separated to make overriding the public grid functions easier.
-    * This is private because it is too easy for integers to be quietly promoted
-    * to floats if the signature parameters are confused.
+    * This is private because it is too easy for integers to be quietly
+    * promoted to floats if the signature parameters are confused.
     *
     * @param cols number of columns
     * @param rows number of rows
@@ -3087,8 +3195,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * An abstract class that may serve as an umbrella for any custom comparators
-    * of Vec2 s.
+    * An abstract class that may serve as an umbrella for any custom
+    * comparators of Vec2 s.
     */
    public static abstract class AbstrComparator implements Comparator < Vec2 > {
 

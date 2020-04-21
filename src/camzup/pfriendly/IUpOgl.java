@@ -3,8 +3,8 @@ package camzup.pfriendly;
 import processing.opengl.PGL;
 
 /**
- * Maintains consistent behavior across OpenGL renderers, even when they are of
- * different dimensions.
+ * Maintains consistent behavior across OpenGL renderers, even when they
+ * are of different dimensions.
  */
 public interface IUpOgl extends IUp {
 

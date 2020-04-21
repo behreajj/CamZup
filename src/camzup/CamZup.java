@@ -1,9 +1,7 @@
 package camzup;
 
-import camzup.core.CurveEntity2;
 import camzup.core.Mesh3;
 import camzup.core.Rng;
-import camzup.core.SvgParser;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -11,8 +9,8 @@ import camzup.core.Vec3;
 import processing.core.PApplet;
 
 /**
- * The main class of this library. This is not needed to use the library and is
- * for development and debugging only.
+ * The main class of this library. This is not needed to use the library
+ * and is for development and debugging only.
  */
 @SuppressWarnings ( "unused" )
 public class CamZup {
@@ -23,14 +21,12 @@ public class CamZup {
    public final PApplet parent;
 
    /**
-    * Constructs a new instance of this library with the PApplet as a reference.
+    * Constructs a new instance of this library with the PApplet as a
+    * reference.
     *
     * @param parent the parent applet
     */
-   public CamZup ( final PApplet parent ) {
-
-      this.parent = parent;
-   }
+   public CamZup ( final PApplet parent ) { this.parent = parent; }
 
    /**
     * Returns a string representation of the CamZup class.
@@ -40,9 +36,15 @@ public class CamZup {
    @Override
    public String toString ( ) {
 
-      return new StringBuilder().append("{ version: ").append(
-         CamZup.VERSION).append(", parent: ").append(this.parent).append(
-            " }").toString();
+      /* @formatter:off */
+      return new StringBuilder(64)
+         .append("{ version: ")
+         .append(CamZup.VERSION)
+         .append(", parent: ")
+         .append(this.parent)
+         .append(" }")
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -59,10 +61,14 @@ public class CamZup {
 
       final Rng rng = new Rng();
 
-      final CurveEntity2 ce2 = SvgParser.parse("data/diagnostic.svg");
-//      System.out.println(ce2);
-      final String str = ce2.toBlenderCode();
-      System.out.println(str);
+
+      // final CurveEntity2 ce2 = SvgParser.parse("data/mesh.svg");
+      // System.out.println(ce2);
+      // final String str = ce2.toBlenderCode();
+      // System.out.println(str);
+
+      // Mat3 m = new Mat3();
+      // SvgParser.parseTransformElm("translate(4,3)", m);
    }
 
    /**
@@ -72,6 +78,14 @@ public class CamZup {
     */
    public static String version ( ) { return CamZup.VERSION; }
 
+   /**
+    * Converts a mesh to Processing hard code.
+    *
+    * @param mesh   the mesh3
+    * @param radius the radius
+    *
+    * @return the code
+    */
    private static String toHardCode (
       final Mesh3 mesh,
       final float radius ) {

@@ -1,12 +1,13 @@
 package camzup.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * An entity which contains a transform that is applied to a list of meshes. The
- * meshes may references a list of materials by index.
+ * An entity which contains a transform that is applied to a list of
+ * meshes. The meshes may references a list of materials by index.
  */
 public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    IVolume3 {
@@ -98,6 +99,23 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    public MeshEntity3 append ( final Mesh3 mesh ) {
 
       if ( mesh != null ) { this.meshes.add(mesh); }
+      return this;
+   }
+
+   /**
+    * Appends a collection of meshes to this mesh entity.
+    *
+    * @param meshes the meshes
+    *
+    * @return this mesh entity
+    */
+   @Chainable
+   public MeshEntity3 appendAll ( final Collection < Mesh3 > meshes ) {
+
+      final Iterator < Mesh3 > itr = meshes.iterator();
+      while ( itr.hasNext() ) {
+         this.append(itr.next());
+      }
       return this;
    }
 
@@ -236,8 +254,8 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how curve geometry looks in Blender (the control) versus in the
     * library (the test).
     *
@@ -250,8 +268,8 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how mesh geometry looks in Blender (the control) versus in the
     * library (the test).
     *

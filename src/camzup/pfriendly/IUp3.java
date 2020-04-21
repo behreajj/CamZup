@@ -30,8 +30,8 @@ public interface IUp3 extends IUp {
       final Vec3 ap1 );
 
    /**
-    * Draws a cubic Bezier curve segment to the next anchor point; the first and
-    * second control point shape the curve segment.
+    * Draws a cubic Bezier curve segment to the next anchor point; the first
+    * and second control point shape the curve segment.
     *
     * @param cp0 the first control point
     * @param cp1 the second control point
@@ -43,8 +43,8 @@ public interface IUp3 extends IUp {
       final Vec3 ap1 );
 
    /**
-    * Looks at the center point from the eye point, using a default reference up
-    * axis.
+    * Looks at the center point from the eye point, using a default reference
+    * up axis.
     *
     * @param xEye    camera location x
     * @param yEye    camera location y
@@ -458,8 +458,8 @@ public interface IUp3 extends IUp {
 
    /**
     * Moves the renderer's camera to a given location and updates the camera.
-    * Uses clamped linear interpolation, so the step should be smoothed prior to
-    * calling this function.
+    * Uses clamped linear interpolation, so the step should be smoothed prior
+    * to calling this function.
     *
     * @param locNew the new location
     * @param step   the step
@@ -489,7 +489,8 @@ public interface IUp3 extends IUp {
    /**
     * Boom or pedestal the camera, moving it on its local y axis, up or down.
     * This is done by multiplying the y magnitude by the camera inverse, then
-    * adding the local coordinates to both the camera location and look target.
+    * adding the local coordinates to both the camera location and look
+    * target.
     *
     * @param y the y magnitude
     */
@@ -538,8 +539,8 @@ public interface IUp3 extends IUp {
       final Vec3 ap1 );
 
    /**
-    * Displays a ray, i.e., an origin point and a direction. The display length
-    * of the direction is dictated by an input.
+    * Displays a ray, i.e., an origin point and a direction. The display
+    * length of the direction is dictated by an input.
     *
     * @param xOrigin the x origin
     * @param yOrigin the y origin
@@ -563,8 +564,8 @@ public interface IUp3 extends IUp {
    }
 
    /**
-    * Displays a ray, i.e., an origin point and a direction. The display length
-    * of the direction is dictated by an input.
+    * Displays a ray, i.e., an origin point and a direction. The display
+    * length of the direction is dictated by an input.
     *
     * @param xOrigin the x origin
     * @param yOrigin the y origin
@@ -629,8 +630,8 @@ public interface IUp3 extends IUp {
    }
 
    /**
-    * Displays a ray, i.e., an origin point and a direction. The display length
-    * of the direction is dictated by an input.
+    * Displays a ray, i.e., an origin point and a direction. The display
+    * length of the direction is dictated by an input.
     *
     * @param ray  the ray
     * @param dLen the display length
@@ -645,8 +646,8 @@ public interface IUp3 extends IUp {
    }
 
    /**
-    * Displays a ray, i.e., an origin point and a direction. The display length
-    * of the direction is dictated by an input.
+    * Displays a ray, i.e., an origin point and a direction. The display
+    * length of the direction is dictated by an input.
     *
     * @param ray     the ray
     * @param dLen    the display length
@@ -677,8 +678,8 @@ public interface IUp3 extends IUp {
 
    /**
     * Trucks the camera, moving it on its local x axis, left or right. This is
-    * done by multiplying the x magnitude by the camera inverse, then adding the
-    * local coordinates to both the camera location and look target.
+    * done by multiplying the x magnitude by the camera inverse, then adding
+    * the local coordinates to both the camera location and look target.
     *
     * @param x the x magnitude
     */
@@ -698,14 +699,15 @@ public interface IUp3 extends IUp {
    Handedness DEFAULT_HANDEDNESS = Handedness.RIGHT;
 
    /**
-    * Factor by which a grid's count is scaled when dimensions are not supplied.
+    * Factor by which a grid's count is scaled when dimensions are not
+    * supplied.
     */
    float GRID_FAC = 32.0f;
 
    /**
     * Amount to displace the forward axis of a renderer camera when entering a
-    * top or bottom view, thereby preventing a polarity. This constant should be
-    * multiplied by either the camera eye distance or renderer height.
+    * top or bottom view, thereby preventing a polarity. This constant should
+    * be multiplied by either the camera eye distance or renderer height.
     *
     * @see Up3#camTop()
     * @see Up3#camBottom()
@@ -713,8 +715,8 @@ public interface IUp3 extends IUp {
    float POLARITY_OFFSET = 0.1f;
 
    /**
-    * Tolerance beneath which the camera's forward direction will be considered
-    * the world, or reference, up direction.
+    * Tolerance beneath which the camera's forward direction will be
+    * considered the world, or reference, up direction.
     */
    float POLARITY_TOLERANCE = 0.001f;
 

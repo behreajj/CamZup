@@ -1,22 +1,20 @@
 package camzup.core;
 
-import java.io.Serializable;
-
 import java.util.Comparator;
 import java.util.Iterator;
 
 /**
- * A mutable, extensible class influenced by GLSL. This is intended to serve as
- * a parent class for colors. Instance methods are limited, while most static
- * methods require an explicit output variable to be provided.
+ * A mutable, extensible class influenced by GLSL. This is intended to
+ * serve as a parent class for colors. Instance methods are limited, while
+ * most static methods require an explicit output variable to be provided.
  */
-public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
-   Serializable {
+public class Vec4 implements Comparable < Vec4 >, Cloneable,
+   Iterable < Float > {
 
    /**
-    * Component on the w axis. Commonly used to store 1.0 for points and 0.0 for
-    * vectors when multiplying with a 4 x 4 matrix. Also used to store alpha
-    * (transparency) for colors.
+    * Component on the w axis. Commonly used to store 1.0 for points and 0.0
+    * for vectors when multiplying with a 4 x 4 matrix. Also used to store
+    * alpha (transparency) for colors.
     */
    public float w = 0.0f;
 
@@ -179,8 +177,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Simulates bracket subscript access in an array. When the provided index is
-    * 3 or -1, returns w; 2 or -2, z; 1 or -3, y; 0 or -4, x.
+    * Simulates bracket subscript access in an array. When the provided index
+    * is 3 or -1, returns w; 2 or -2, z; 1 or -3, y; 0 or -4, x.
     *
     * @param index the index
     *
@@ -211,7 +209,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Returns a hash code for this vector based on its x, y, z and w components.
+    * Returns a hash code for this vector based on its x, y, z and w
+    * components.
     *
     * @return the hash code
     *
@@ -449,8 +448,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes. This is
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes. This is
     * formatted as a four-tuple.
     *
     * @return the string
@@ -482,11 +481,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
                this.y) == Float.floatToIntBits(v.y) && Float.floatToIntBits(
                   this.x) == Float.floatToIntBits(v.x);
    }
-
-   /**
-    * The unique identification for serialized classes.
-    */
-   private static final long serialVersionUID = -7601802836396728054L;
 
    /**
     * Finds the absolute value of each vector component.
@@ -647,8 +641,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Returns to a vector with a negative value on the y axis, (0.0, -1.0, 0.0,
-    * 0.0) .
+    * Returns to a vector with a negative value on the y axis, (0.0, -1.0,
+    * 0.0, 0.0) .
     *
     * @param target the output vector
     *
@@ -815,8 +809,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Finds the Manhattan distance between two vectors. Forms a diamond pattern
-    * when plotted.
+    * Finds the Manhattan distance between two vectors. Forms a diamond
+    * pattern when plotted.
     *
     * @param a left operand
     * @param b right operand
@@ -834,10 +828,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Finds the Minkowski distance between two vectors. This is a generalization
-    * of other distance formulae. When the exponent value, c, is 1.0, the
-    * Minkowski distance equals the Manhattan distance; when it is 2.0,
-    * Minkowski equals the Euclidean distance.
+    * Finds the Minkowski distance between two vectors. This is a
+    * generalization of other distance formulae. When the exponent value, c,
+    * is 1.0, the Minkowski distance equals the Manhattan distance; when it is
+    * 2.0, Minkowski equals the Euclidean distance.
     *
     * @param a left operand
     * @param b right operand
@@ -865,8 +859,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
 
    /**
     * Finds the Euclidean distance squared between two vectors. Equivalent to
-    * subtracting one vector from the other, then finding the dot product of the
-    * difference with itself.
+    * subtracting one vector from the other, then finding the dot product of
+    * the difference with itself.
     *
     * @param a left operand
     * @param b right operand
@@ -951,7 +945,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
     * b<sub>y</sub></em> + <em>a<sub>z</sub> b<sub>z</sub></em> +
     * <em>a<sub>w</sub> b<sub>w</sub></em><br>
     * <br>
-    * The dot product of a vector with itself is equal to its magnitude squared.
+    * The dot product of a vector with itself is equal to its magnitude
+    * squared.
     *
     * @param a left operand
     * @param b right operand
@@ -966,8 +961,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Returns to a vector with a negative value on the z axis, (0.0, 0.0, -1.0,
-    * 0.0) .
+    * Returns to a vector with a negative value on the z axis, (0.0, 0.0,
+    * -1.0, 0.0) .
     *
     * @param target the output vector
     *
@@ -997,8 +992,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Filters a vector by setting each component to the input component if it is
-    * in bounds and 0.0 if it is out of bounds.
+    * Filters a vector by setting each component to the input component if it
+    * is in bounds and 0.0 if it is out of bounds.
     *
     * @param v      the vector
     * @param lb     the lower bound
@@ -1060,8 +1055,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Applies the % operator (truncation-based modulo) to each component of the
-    * left operand.
+    * Applies the % operator (truncation-based modulo) to each component of
+    * the left operand.
     *
     * @param a      left operand
     * @param b      right operand
@@ -1080,8 +1075,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Applies the % operator (truncation-based modulo) to each component of the
-    * left operand.
+    * Applies the % operator (truncation-based modulo) to each component of
+    * the left operand.
     *
     * @param a      left operand
     * @param b      right operand
@@ -1224,7 +1219,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Evaluates whether the left comparisand is less than the right comparisand.
+    * Evaluates whether the left comparisand is less than the right
+    * comparisand.
     *
     * @param a      left comparisand
     * @param b      right comparisand
@@ -1241,8 +1237,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Evaluates whether the left comparisand is less than or equal to the right
-    * comparisand.
+    * Evaluates whether the left comparisand is less than or equal to the
+    * right comparisand.
     *
     * @param a      left comparisand
     * @param b      right comparisand
@@ -1260,8 +1256,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
 
    /**
     * Finds the length, or magnitude, of a vector, |<em>a</em>| . Uses the
-    * formula \u221a <em>a</em> \u00b7 <em>a</em> . Where possible, use magSq or
-    * dot to avoid the computational cost of the square-root.
+    * formula \u221a <em>a</em> \u00b7 <em>a</em> . Where possible, use magSq
+    * or dot to avoid the computational cost of the square-root.
     *
     * @param v the input vector
     *
@@ -1279,8 +1275,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    /**
     * Finds the length-, or magnitude-, squared of a vector,
     * |<em>a</em>|<sup>2</sup>. Returns the same result as <em>a</em> \u00b7
-    * <em>a</em> . Useful when calculating the lengths of many vectors, so as to
-    * avoid the computational cost of the square-root.
+    * <em>a</em> . Useful when calculating the lengths of many vectors, so as
+    * to avoid the computational cost of the square-root.
     *
     * @param v the input vector
     *
@@ -1343,8 +1339,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Sets the target vector to the maximum components of the input vector and a
-    * upper bound.
+    * Sets the target vector to the maximum components of the input vector and
+    * a upper bound.
     *
     * @param a          the input vector
     * @param upperBound the upper bound
@@ -1365,8 +1361,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Sets the target vector to the minimum components of the input vector and a
-    * lower bound.
+    * Sets the target vector to the minimum components of the input vector and
+    * a lower bound.
     *
     * @param a          the input value
     * @param lowerBound the lower bound
@@ -1384,8 +1380,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Sets the target vector to the minimum components of the input vector and a
-    * lower bound.
+    * Sets the target vector to the minimum components of the input vector and
+    * a lower bound.
     *
     * @param a          the input vector
     * @param lowerBound the lower bound
@@ -1517,8 +1513,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * A specialized form of modulo which subtracts the floor of the vector from
-    * the vector.
+    * A specialized form of modulo which subtracts the floor of the vector
+    * from the vector.
     *
     * @param v      the input vector
     * @param target the output vector
@@ -1627,8 +1623,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
 
    /**
     * Divides a vector by its magnitude, such that the new magnitude is 1.0.
-    * <em>\u00e2</em> = <em>a</em> / |<em>a</em>|. The result is a unit vector,
-    * as it lies on the unit hyper-sphere.
+    * <em>\u00e2</em> = <em>a</em> / |<em>a</em>|. The result is a unit
+    * vector, as it lies on the unit hyper-sphere.
     *
     * @param v      the input vector
     * @param target the output vector
@@ -1859,8 +1855,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Generates a random vector in a rectilinear coordinate system given a lower
-    * and an upper bound.
+    * Generates a random vector in a rectilinear coordinate system given a
+    * lower and an upper bound.
     *
     * @param rng        the random number generator
     * @param lowerBound the lower bound
@@ -1916,8 +1912,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Normalizes a vector, then multiplies it by a scalar, in effect setting its
-    * magnitude to that scalar.
+    * Normalizes a vector, then multiplies it by a scalar, in effect setting
+    * its magnitude to that scalar.
     *
     * @param v      the vector
     * @param scalar the scalar
@@ -1940,8 +1936,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * Normalizes a vector, then multiplies it by a scalar, in effect setting its
-    * magnitude to that scalar.
+    * Normalizes a vector, then multiplies it by a scalar, in effect setting
+    * its magnitude to that scalar.
     *
     * @param v          the vector
     * @param scalar     the scalar
@@ -2093,8 +2089,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
 
    /**
     * Wraps a vector around a periodic range as defined by an upper and lower
-    * bound: lower bounds inclusive; upper bounds exclusive. In cases where the
-    * lower bound is (0.0, 0.0, 0.0, 0.0) , use
+    * bound: lower bounds inclusive; upper bounds exclusive. In cases where
+    * the lower bound is (0.0, 0.0, 0.0, 0.0) , use
     * {@link Vec4#mod(Vec4, Vec4, Vec4)} .
     *
     * @param v      the vector
@@ -2152,8 +2148,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable < Float >,
    }
 
    /**
-    * An abstract class that may serve as an umbrella for any custom comparators
-    * of Vec4 s.
+    * An abstract class that may serve as an umbrella for any custom
+    * comparators of Vec4 s.
     */
    public static abstract class AbstrComparator
       implements Comparator < Vec4 > {

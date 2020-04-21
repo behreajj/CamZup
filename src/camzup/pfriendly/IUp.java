@@ -269,25 +269,26 @@ public interface IUp {
    int DEFAULT_HANDLE_COLOR = 0xff080708;
 
    /**
-    * Color for the curve knot coordinate. Currently diagnostic only, and so not
-    * adjustable.
+    * Color for the curve knot coordinate. Currently diagnostic only, and so
+    * not adjustable.
     */
    int DEFAULT_HANDLE_COORD_COLOR = 0xffff2828;
 
    /**
-    * Color for the curve knot forehandle. Currently diagnostic only, and so not
-    * adjustable.
+    * Color for the curve knot forehandle. Currently diagnostic only, and so
+    * not adjustable.
     */
    int DEFAULT_HANDLE_FORE_COLOR = 0xff3772ff;
 
    /**
-    * Color for the curve knot rearhandle. Currently diagnostic only, and so not
-    * adjustable.
+    * Color for the curve knot rearhandle. Currently diagnostic only, and so
+    * not adjustable.
     */
    int DEFAULT_HANDLE_REAR_COLOR = 0xfffdca40;
 
    /**
-    * Default color of the x axis when displayed by a camera's origin function.
+    * Default color of the x axis when displayed by a camera's origin
+    * function.
     */
    int DEFAULT_I_COLOR = 0xffff2929;
 
@@ -303,12 +304,14 @@ public interface IUp {
    float DEFAULT_IJK_SWEIGHT = 1.25f;
 
    /**
-    * Default color of the y axis when displayed by a camera's origin function.
+    * Default color of the y axis when displayed by a camera's origin
+    * function.
     */
    int DEFAULT_J_COLOR = 0xff00b333;
 
    /**
-    * Default color of the z axis when displayed by a camera's origin function.
+    * Default color of the z axis when displayed by a camera's origin
+    * function.
     */
    int DEFAULT_K_COLOR = 0xff1475b3;
 

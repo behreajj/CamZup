@@ -11,8 +11,8 @@ import java.util.TreeSet;
 /**
  * Organizes data needed to draw a two dimensional shape using vertices and
  * faces. Given that a mesh is primarily a collection of references, it is
- * initialized with null arrays (coordinates, texture coordinates and indices).
- * These are not final, and so can be reassigned.
+ * initialized with null arrays (coordinates, texture coordinates and
+ * indices). These are not final, and so can be reassigned.
  */
 public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
@@ -22,8 +22,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public Vec2[] coords;
 
    /**
-    * The texture (UV) coordinates that describe how an image is mapped onto the
-    * geometry of the mesh. Typically in the range [0.0, 1.0].
+    * The texture (UV) coordinates that describe how an image is mapped onto
+    * the geometry of the mesh. Typically in the range [0.0, 1.0].
     */
    public Vec2[] texCoords;
 
@@ -33,8 +33,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public Mesh2 ( ) { super(); }
 
    /**
-    * Creates a mesh from arrays of faces, coordinates and texture coordinates.
-    * The mesh's arrays are set by reference, not by value.
+    * Creates a mesh from arrays of faces, coordinates and texture
+    * coordinates. The mesh's arrays are set by reference, not by value.
     *
     * @param faces     the faces array
     * @param coords    the coordinates array
@@ -89,8 +89,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Bevels a corner of a face in the mesh. The factor interpolates from the
     * corner to the midpoint of an edge. For line segments of unequal length
-    * joined at a corner, the cut will be uneven. Uses Chaikin's corner cutting
-    * method.<br>
+    * joined at a corner, the cut will be uneven. Uses Chaikin's corner
+    * cutting method.<br>
     * <br>
     * This leaves the old corner in the mesh's data in case the corner is used
     * by other faces.
@@ -258,10 +258,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Calculates texture coordinates (UVs) for this mesh. Finds the object-space
-    * dimensions of each coordinate, then using the frame as a reference for new
-    * UVs, such that the shape acts as a mask for the texture (or, the texture
-    * fills the shape without repeating).
+    * Calculates texture coordinates (UVs) for this mesh. Finds the
+    * object-space dimensions of each coordinate, then using the frame as a
+    * reference for new UVs, such that the shape acts as a mask for the
+    * texture (or, the texture fills the shape without repeating).
     *
     * @return this mesh
     *
@@ -304,8 +304,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Removes elements from the coordinate, texture coordinate and normal arrays
-    * of the mesh which are not visited by the face indices.
+    * Removes elements from the coordinate, texture coordinate and normal
+    * arrays of the mesh which are not visited by the face indices.
     *
     * @return this mesh
     */
@@ -680,9 +680,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Insets a face by calculating its center then easing from the face's
     * vertices toward the center by the amount, expected to be in the range
-    * [0.0, 1.0] . When the amount is less than 0.0, the face remains unchanged;
-    * when the amount is greater than 1.0, then the face is subdivided by
-    * center.
+    * [0.0, 1.0] . When the amount is less than 0.0, the face remains
+    * unchanged; when the amount is greater than 1.0, then the face is
+    * subdivided by center.
     *
     * @param faceIdx the face index
     * @param fac     the inset amount
@@ -779,8 +779,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public Mesh2 insetFaces ( ) { return this.insetFaces(1); }
 
    /**
-    * Insets all faces in the mesh for a given number of iterations by a factor
-    * of 0.5 .
+    * Insets all faces in the mesh for a given number of iterations by a
+    * factor of 0.5 .
     *
     * @param itr the iterations
     *
@@ -793,8 +793,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Insets all faces in the mesh for a given number of iterations by a factor
-    * in the range [0.0, 1.0] .
+    * Insets all faces in the mesh for a given number of iterations by a
+    * factor in the range [0.0, 1.0] .
     *
     * @param itr the iterations
     * @param fac the inset factor
@@ -834,9 +834,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public int length ( ) { return this.faces.length; }
 
    /**
-    * Centers the mesh about the origin, (0.0, 0.0) and rescales it to the range
-    * [-0.5, 0.5] . Emits a transform which records the mesh's center point and
-    * original dimension. The transform's rotation is reset.
+    * Centers the mesh about the origin, (0.0, 0.0) and rescales it to the
+    * range [-0.5, 0.5] . Emits a transform which records the mesh's center
+    * point and original dimension. The transform's rotation is reset.
     *
     * @param tr the output transform
     *
@@ -897,8 +897,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Flips the indices which specify a face. Changes the winding of a face from
-    * counter-clockwise (CCW) to clockwise (CW) or vice versa.
+    * Flips the indices which specify a face. Changes the winding of a face
+    * from counter-clockwise (CCW) to clockwise (CW) or vice versa.
     *
     * @param i face index
     *
@@ -1164,8 +1164,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * Subdivides a convex face by calculating its center, then connecting its
-    * vertices to the center. This generates a triangle for the number of edges
-    * in the face.
+    * vertices to the center. This generates a triangle for the number of
+    * edges in the face.
     *
     * @param faceIdx the face index
     *
@@ -1220,9 +1220,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * Subdivides a convex face by cutting each of its edges once to create a
-    * midpoint, then connecting them. This generates peripheral triangles and a
-    * new central face with the same number of edges as the original. This is
-    * best suited to meshes made of triangles.
+    * midpoint, then connecting them. This generates peripheral triangles and
+    * a new central face with the same number of edges as the original. This
+    * is best suited to meshes made of triangles.
     *
     * @param faceIdx the face index
     *
@@ -1671,8 +1671,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes.
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes.
     *
     * @return the string
     */
@@ -1680,8 +1680,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    String toBlenderCode ( ) { return this.toBlenderCode(false); }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how mesh geometry looks in Blender (the control) versus in the
     * library (the test).
     *
@@ -1771,8 +1771,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Subdivides an edge by the number of cuts given. For example, one cut will
-    * divide an edge in half; two cuts, into thirds.<br>
+    * Subdivides an edge by the number of cuts given. For example, one cut
+    * will divide an edge in half; two cuts, into thirds.<br>
     * <br>
     * Does not distinguish between interior edges, which have a complement
     * elsewhere, and border edges; for that reason this works best with
@@ -1891,8 +1891,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Creates an arc from a start and stop angle. The granularity of the
     * approximation is dictated by the number of sectors in a complete circle.
-    * The thickness of the arc is described by the annulus. Useful where sectors
-    * may be faster than the Bezier curves of
+    * The thickness of the arc is described by the annulus. Useful where
+    * sectors may be faster than the Bezier curves of
     * {@link Curve2#arc(float, float, float, camzup.core.ArcMode, Curve2)} or
     * where there is an issue rendering strokes.
     *
@@ -2704,8 +2704,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Creates a regular convex polygon with an opening in its center. The oculus
-    * describes the relative size of this opening.
+    * Creates a regular convex polygon with an opening in its center. The
+    * oculus describes the relative size of this opening.
     *
     * @param sectors the number of sides
     * @param oculus  the size of the opening
@@ -2722,10 +2722,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Creates a regular convex polygon with an opening in its center. The oculus
-    * describes the relative size of this opening. When the polygon type is
-    * {@link PolyType#QUAD}, the ring will be composed of quadrilaterals;
-    * otherwise, triangles.
+    * Creates a regular convex polygon with an opening in its center. The
+    * oculus describes the relative size of this opening. When the polygon
+    * type is {@link PolyType#QUAD}, the ring will be composed of
+    * quadrilaterals; otherwise, triangles.
     *
     * @param oculus  the size of the opening
     * @param sectors the number of sides
@@ -2998,8 +2998,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * An iterator, which allows a mesh's faces to be accessed in an enhanced for
-    * loop.
+    * An iterator, which allows a mesh's faces to be accessed in an enhanced
+    * for loop.
     */
    public static final class Face2Iterator implements Iterator < Face2 > {
 

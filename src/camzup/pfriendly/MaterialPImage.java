@@ -104,8 +104,8 @@ public class MaterialPImage extends MaterialUv {
    }
 
    /**
-    * Sets the texture's parent applet. Useful when working with PImages created
-    * with a constructor that will be saved to file.
+    * Sets the texture's parent applet. Useful when working with PImages
+    * created with a constructor that will be saved to file.
     *
     * @param parent the parent applet
     *
@@ -145,12 +145,12 @@ public class MaterialPImage extends MaterialUv {
    }
 
    /**
-    * Creates a material from an array of strings representing a Wavefront .mtl
-    * file. The support for this file format is <em>very</em> minimal, as it is
-    * unlikely that its contents would be reproducible between a variety of
-    * renderers. The material's tint is set to the diffuse color. If an image
-    * file is referenced for the diffuse map, then a message is printed to the
-    * console.
+    * Creates a material from an array of strings representing a Wavefront
+    * .mtl file. The support for this file format is <em>very</em> minimal, as
+    * it is unlikely that its contents would be reproducible between a variety
+    * of renderers. The material's tint is set to the diffuse color. If an
+    * image file is referenced for the diffuse map, then a message is printed
+    * to the console.
     *
     * @param lines the String tokens
     *

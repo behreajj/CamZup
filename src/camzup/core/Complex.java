@@ -1,7 +1,5 @@
 package camzup.core;
 
-import java.io.Serializable;
-
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -10,7 +8,7 @@ import java.util.Iterator;
  * coefficient of <em>i</em>, or the square-root of negative one.
  */
 public class Complex implements Comparable < Complex >, Cloneable,
-   Iterable < Float >, Serializable {
+   Iterable < Float > {
 
    /**
     * The coefficient of the imaginary component <em>i</em>.
@@ -65,8 +63,9 @@ public class Complex implements Comparable < Complex >, Cloneable,
    }
 
    /**
-    * Returns a new complex number with this complex number's components. Java's
-    * cloneable interface is problematic; use set or a copy constructor instead.
+    * Returns a new complex number with this complex number's components.
+    * Java's cloneable interface is problematic; use set or a copy constructor
+    * instead.
     *
     * @return a new complex number
     */
@@ -75,8 +74,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
 
    /**
     * Returns -1 when this complex number is less than the comparisand; 1 when
-    * it is greater than; 0 when the two are 'equal'. The implementation of this
-    * method allows collections of complex number to be sorted.
+    * it is greater than; 0 when the two are 'equal'. The implementation of
+    * this method allows collections of complex number to be sorted.
     *
     * @param z the comparisand
     *
@@ -174,7 +173,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
    public Complex reset ( ) { return this.set(0.0f, 0.0f); }
 
    /**
-    * Copies the components of the input complex number to this complex number.
+    * Copies the components of the input complex number to this complex
+    * number.
     *
     * @param source the input complex number
     *
@@ -286,8 +286,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes.
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes.
     *
     * @return the string
     */
@@ -325,11 +325,6 @@ public class Complex implements Comparable < Complex >, Cloneable,
          z.imag) && Float.floatToIntBits(
             this.real) == Float.floatToIntBits(z.real);
    }
-
-   /**
-    * The unique identification for serialized classes.
-    */
-   private static final long serialVersionUID = 1389157472482304159L;
 
    /**
     * Finds the absolute of a complex number. Similar to a vector's magnitude.
@@ -704,8 +699,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * Performs a Mobius transformation on the variable <em>z</em>. Uses the
     * formula <em>a</em> <em>z</em> + <em>b</em> / <em>c</em> <em>z</em> +
     * <em>d</em> <br>
-    * where constants <em>a</em>, <em>b</em>, <em>c</em>, and <em>d</em> satisfy
-    * <em>a</em> <em>d</em> - <em>b</em> <em>c</em> \u2260 0.0 .
+    * where constants <em>a</em>, <em>b</em>, <em>c</em>, and <em>d</em>
+    * satisfy <em>a</em> <em>d</em> - <em>b</em> <em>c</em> \u2260 0.0 .
     *
     * @param a      the a constant
     * @param b      the b constant
@@ -749,7 +744,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
    }
 
    /**
-    * Multiplies two complex numbers. Complex multiplication is not commutative.
+    * Multiplies two complex numbers. Complex multiplication is not
+    * commutative.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -814,7 +810,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
    }
 
    /**
-    * Finds the signed phase of a complex number. Similar to a vector's heading.
+    * Finds the signed phase of a complex number. Similar to a vector's
+    * heading.
     *
     * @param z the complex number
     *
@@ -856,8 +853,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
    }
 
    /**
-    * Raises a complex number to the power of another. Discloses the product and
-    * log.
+    * Raises a complex number to the power of another. Discloses the product
+    * and log.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -1085,8 +1082,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
    }
 
    /**
-    * An abstract class that may serve as an umbrella for any custom comparators
-    * of complex numbers.
+    * An abstract class that may serve as an umbrella for any custom
+    * comparators of complex numbers.
     */
    public static abstract class AbstrComparator implements
       Comparator < Complex > {
@@ -1122,8 +1119,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
    }
 
    /**
-    * An iterator, which allows a complex number's components to be accessed in
-    * an enhanced for loop.
+    * An iterator, which allows a complex number's components to be accessed
+    * in an enhanced for loop.
     */
    public final class CIterator implements Iterator < Float > {
 

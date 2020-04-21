@@ -1,9 +1,9 @@
 package camzup.core;
 
 /**
- * Organizes the vectors the shape a Bezier curve into a coordinate (or anchor
- * point), fore handle (the following control point) and rear handle (the
- * preceding control point).
+ * Organizes the vectors the shape a Bezier curve into a coordinate (or
+ * anchor point), fore handle (the following control point) and rear handle
+ * (the preceding control point).
  */
 public class Knot3 implements Cloneable, Comparable < Knot3 > {
 
@@ -13,8 +13,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    public final Vec3 coord;
 
    /**
-    * The handle which warps the curve segment heading away from the knot along
-    * the direction of the curve.
+    * The handle which warps the curve segment heading away from the knot
+    * along the direction of the curve.
     */
    public final Vec3 foreHandle;
 
@@ -342,8 +342,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    public Knot3 mirrorHandles ( ) { return this.mirrorHandlesForward(); }
 
    /**
-    * Sets the forward-facing handle to mirror the rear-facing handle: the fore
-    * will have the same magnitude and negated direction of the rear.
+    * Sets the forward-facing handle to mirror the rear-facing handle: the
+    * fore will have the same magnitude and negated direction of the rear.
     *
     * @return this knot
     */
@@ -358,8 +358,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Sets the rear-facing handle to mirror the forward-facing handle: the rear
-    * will have the same magnitude and negated direction of the fore.
+    * Sets the rear-facing handle to mirror the forward-facing handle: the
+    * rear will have the same magnitude and negated direction of the fore.
     *
     * @return this knot
     */
@@ -392,9 +392,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
 
    /**
     * Rotates this knot around an axis by an angle in radians. The axis is
-    * assumed to be of unit length. Accepts pre-calculated sine and cosine of an
-    * angle, so that collections of knots can be efficiently rotated without
-    * repeatedly calling cos and sin.
+    * assumed to be of unit length. Accepts pre-calculated sine and cosine of
+    * an angle, so that collections of knots can be efficiently rotated
+    * without repeatedly calling cos and sin.
     *
     * @param cosa cosine of the angle
     * @param sina sine of the angle
@@ -469,8 +469,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Rotates this knot's handles by a quaternion with its coordinate serving as
-    * a pivot.
+    * Rotates this knot's handles by a quaternion with its coordinate serving
+    * as a pivot.
     *
     * @param q the quaternion
     *
@@ -517,9 +517,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Rotates a knot around the x axis. Accepts calculated sine and cosine of an
-    * angle, so that collections of knots can be efficiently rotated without
-    * repeatedly calling cos and sin.
+    * Rotates a knot around the x axis. Accepts calculated sine and cosine of
+    * an angle, so that collections of knots can be efficiently rotated
+    * without repeatedly calling cos and sin.
     *
     * @param cosa cosine of the angle
     * @param sina sine of the angle
@@ -552,9 +552,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Rotates a knot around the y axis. Accepts calculated sine and cosine of an
-    * angle, so that collections of knots can be efficiently rotated without
-    * repeatedly calling cos and sin.
+    * Rotates a knot around the y axis. Accepts calculated sine and cosine of
+    * an angle, so that collections of knots can be efficiently rotated
+    * without repeatedly calling cos and sin.
     *
     * @param cosa cosine of the angle
     * @param sina sine of the angle
@@ -587,9 +587,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Rotates a knot around the z axis. Accepts calculated sine and cosine of an
-    * angle, so that collections of knots can be efficiently rotated without
-    * repeatedly calling cos and sin.
+    * Rotates a knot around the z axis. Accepts calculated sine and cosine of
+    * an angle, so that collections of knots can be efficiently rotated
+    * without repeatedly calling cos and sin.
     *
     * @param cosa cosine of the angle
     * @param sina sine of the angle
@@ -1064,8 +1064,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how curve geometry looks in Blender (the control) versus in the
     * library (the test).
     *
@@ -1077,8 +1077,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how curve geometry looks in Blender (the control) versus in the
     * library (the test).
     *
@@ -1184,9 +1184,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
 
    /**
     * Sets two knots from a segment of the cubic curve. Assumes that that the
-    * previous knot's coordinate is set to the first anchor point. The previous
-    * knot's fore handle, the next knot's rear handle and the next knot's
-    * coordinate are set by this function.
+    * previous knot's coordinate is set to the first anchor point. The
+    * previous knot's fore handle, the next knot's rear handle and the next
+    * knot's coordinate are set by this function.
     *
     * @param xPrevControl the previous control point x
     * @param yPrevControl the previous control point y
@@ -1226,9 +1226,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
 
    /**
     * Sets two knots from a segment of the cubic curve. Assumes that that the
-    * previous knot's coordinate is set to the first anchor point. The previous
-    * knot's fore handle, the next knot's rear handle and the next knot's
-    * coordinate are set by this function.
+    * previous knot's coordinate is set to the first anchor point. The
+    * previous knot's fore handle, the next knot's rear handle and the next
+    * knot's coordinate are set by this function.
     *
     * @param prevControl the previous control point
     * @param nextControl the next control point
@@ -1253,8 +1253,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    /**
     * Sets a knot from line segment. Assumes that that the previous knot's
     * coordinate is set to the first anchor point. The previous knot's fore
-    * handle, the next knot's rear handle and the next knot's coordinate are set
-    * by this function.
+    * handle, the next knot's rear handle and the next knot's coordinate are
+    * set by this function.
     *
     * @param xNextAnchor the next anchor x
     * @param yNextAnchor the next anchor y
@@ -1281,8 +1281,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    /**
     * Sets a knot from line segment. Assumes that that the previous knot's
     * coordinate is set to the first anchor point. The previous knot's fore
-    * handle, the next knot's rear handle and the next knot's coordinate are set
-    * by this function.
+    * handle, the next knot's rear handle and the next knot's coordinate are
+    * set by this function.
     *
     * @param nextAnchor the next anchor
     * @param prev       the previous knot
@@ -1328,9 +1328,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
 
       final Vec3 prevCo = prev.coord;
 
-      final float midpt23x = xControl * 0.6666666f;
-      final float midpt23y = yControl * 0.6666666f;
-      final float midpt23z = zControl * 0.6666666f;
+      final float midpt23x = xControl * 0.66666666f;
+      final float midpt23y = yControl * 0.66666666f;
+      final float midpt23z = zControl * 0.66666666f;
 
       prev.foreHandle.set(
          midpt23x + IUtils.ONE_THIRD * prevCo.x,
@@ -1440,8 +1440,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Smoothes the handles of a knot with reference to a previous and next knot.
-    * A helper function to {@link Curve3#smoothHandles(Curve3)} .
+    * Smoothes the handles of a knot with reference to a previous and next
+    * knot. A helper function to {@link Curve3#smoothHandles(Curve3)} .
     *
     * @param prev  the previous knot
     * @param curr  the current knot

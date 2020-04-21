@@ -1,11 +1,11 @@
 package camzup.core;
 
 /**
- * Organizes the components of a 3D mesh into a group of coordinate, normal and
- * texture coordinate such that they can be edited together. This is not used by
- * a mesh internally; it is created upon retrieval from a mesh. All of its
- * components should be treated as references to data within the mesh, not as
- * unique values.
+ * Organizes the components of a 3D mesh into a group of coordinate, normal
+ * and texture coordinate such that they can be edited together. This is
+ * not used by a mesh internally; it is created upon retrieval from a mesh.
+ * All of its components should be treated as references to data within the
+ * mesh, not as unique values.
  */
 public class Vert3 implements Comparable < Vert3 > {
 
@@ -205,8 +205,8 @@ public class Vert3 implements Comparable < Vert3 > {
    }
 
    /**
-    * Returns the orientation of the vertex as a transform based on the vertex's
-    * normal.
+    * Returns the orientation of the vertex as a transform based on the
+    * vertex's normal.
     *
     * @param vert       the vertex
     * @param handedness the handedness

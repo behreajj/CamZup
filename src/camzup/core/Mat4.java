@@ -4,10 +4,10 @@ import java.util.Iterator;
 
 /**
  * A mutable, extensible class influenced by GLSL, OSL and Processing's
- * PMatrix3D. ALthough this is a 4 x 4 matrix, it is generally assumed to be a
- * 3D affine transform matrix, where the last row is (0.0, 0.0, 0.0, 1.0) .
- * Instance methods are limited, while most static methods require an explicit
- * output variable to be provided.
+ * PMatrix3D. ALthough this is a 4 x 4 matrix, it is generally assumed to
+ * be a 3D affine transform matrix, where the last row is (0.0, 0.0, 0.0,
+ * 1.0) . Instance methods are limited, while most static methods require
+ * an explicit output variable to be provided.
  */
 public class Mat4 extends Matrix {
 
@@ -231,9 +231,9 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Simulates bracket subscript access in a one-dimensional, row-major matrix
-    * array. Works with positive integers in [0, 15] or negative integers in
-    * [-16, -1] .
+    * Simulates bracket subscript access in a one-dimensional, row-major
+    * matrix array. Works with positive integers in [0, 15] or negative
+    * integers in [-16, -1] .
     *
     * @param index the index
     *
@@ -328,9 +328,9 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Simulates bracket subscript access in a two-dimensional, row-major matrix
-    * array. Works with positive integers in [0, 3][0, 3] or negative integers
-    * in [-4, -1][-4, -1] .
+    * Simulates bracket subscript access in a two-dimensional, row-major
+    * matrix array. Works with positive integers in [0, 3][0, 3] or negative
+    * integers in [-4, -1][-4, -1] .
     *
     * @param i the row index
     * @param j the column index
@@ -552,12 +552,14 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Resets this matrix to an initial state,<br>
-    * <br>
-    * 1.0, 0.0, 0.0, 0.0,<br>
-    * 0.0, 1.0, 0.0, 0.0,<br>
-    * 0.0, 0.0, 1.0, 0.0,<br>
+    * Resets this matrix to an initial state:
+    *
+    * <pre>
+    * 1.0, 0.0, 0.0, 0.0,
+    * 0.0, 1.0, 0.0, 0.0,
+    * 0.0, 0.0, 1.0, 0.0,
     * 0.0, 0.0, 0.0, 1.0
+    * </pre>
     *
     * @return this matrix
     *
@@ -691,9 +693,9 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Sets a column of this matrix with an index and vector. If the column is an
-    * axis vector, the w component is set to 0.0; if it is a translation, the w
-    * component is set to 1.0.
+    * Sets a column of this matrix with an index and vector. If the column is
+    * an axis vector, the w component is set to 0.0; if it is a translation,
+    * the w component is set to 1.0.
     *
     * @param j      the column index
     * @param source the column
@@ -825,8 +827,8 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Sets a row of this matrix with an index and vector. The translation is set
-    * to 0.0 for a given row, while the element (3, 3) is set to 1.0 .
+    * Sets a row of this matrix with an index and vector. The translation is
+    * set to 0.0 for a given row, while the element (3, 3) is set to 1.0 .
     *
     * @param i      the row index
     * @param source the the row
@@ -991,8 +993,8 @@ public class Mat4 extends Matrix {
    public String toStringCol ( ) { return this.toStringCol(4); }
 
    /**
-    * Returns a string representation of this matrix intended for display in the
-    * console.
+    * Returns a string representation of this matrix intended for display in
+    * the console.
     *
     * @param places number of decimal places
     *
@@ -1007,19 +1009,19 @@ public class Mat4 extends Matrix {
          .append(',').append(' ').append(Utils.toFixed(this.m02, places))
          .append(',').append(' ').append(Utils.toFixed(this.m03, places))
          .append(',')
-         
+
          .append('\n').append(Utils.toFixed(this.m10, places))
          .append(',').append(' ').append(Utils.toFixed(this.m11, places))
          .append(',').append(' ').append(Utils.toFixed(this.m12, places))
          .append(',').append(' ').append(Utils.toFixed(this.m13, places))
          .append(',')
-         
+
          .append('\n').append(Utils.toFixed(this.m20, places))
          .append(',').append(' ').append(Utils.toFixed(this.m21, places))
          .append(',').append(' ').append(Utils.toFixed(this.m22, places))
          .append(',').append(' ').append(Utils.toFixed(this.m23, places))
          .append(',')
-         
+
          .append('\n').append(Utils.toFixed(this.m30, places))
          .append(',').append(' ').append(Utils.toFixed(this.m31, places))
          .append(',').append(' ').append(Utils.toFixed(this.m32, places))
@@ -1097,11 +1099,6 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * The unique identification for serialized classes.
-    */
-   private static final long serialVersionUID = 4394235117465746059L;
-
-   /**
     * Adds two matrices together.
     *
     * @param a      the left operand
@@ -1123,9 +1120,55 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Decomposes a matrix into its constituent transforms: translation, rotation
-    * and scale. Rotation is returned from the function, while translation and
-    * scale are loaded into out parameters.
+    * Returns a matrix set to the Bezier curve basis:
+    *
+    * <pre>
+    * -1.0,  3.0, -3.0, 1.0,
+    *  3.0, -6.0,  3.0, 0.0,
+    * -3.0,  3.0,  0.0, 0.0,
+    *  1.0,  0.0,  0.0, 0.0
+    * </pre>
+    *
+    * @param target the output matrix
+    *
+    * @return the Bezier basis
+    */
+   public static Mat4 bezierBasis ( final Mat4 target ) {
+
+      return target.set(
+         -1.0f, 3.0f, -3.0f, 1.0f,
+         3.0f, -6.0f, 3.0f, 0.0f,
+         -3.0f, 3.0f, 0.0f, 0.0f,
+         1.0f, 0.0f, 0.0f, 0.0f);
+   }
+
+   /**
+    * Returns a matrix set to the Bezier curve basis inverse:
+    *
+    * <pre>
+    * 0.0,        0.0,        0.0, 1.0,
+    * 0.0,        0.0, 0.33333334, 1.0,
+    * 0.0, 0.33333334, 0.66666666, 1.0,
+    * 1.0,        1.0,        1.0, 1.0
+    * </pre>
+    *
+    * @param target the output matrix
+    *
+    * @return the Bezier basis
+    */
+   public static Mat4 bezierBasisInverse ( final Mat4 target ) {
+
+      return target.set(
+         0.0f, 0.0f, 0.0f, 1.0f,
+         0.0f, 0.0f, 0.33333334f, 1.0f,
+         0.0f, 0.33333334f, 0.66666666f, 1.0f,
+         1.0f, 1.0f, 1.0f, 1.0f);
+   }
+
+   /**
+    * Decomposes a matrix into its constituent transforms: translation,
+    * rotation and scale. Rotation is returned from the function, while
+    * translation and scale are loaded into out parameters.
     *
     * @param m     the matrix
     * @param trans the output translation
@@ -1135,8 +1178,8 @@ public class Mat4 extends Matrix {
     * @see Utils#hypot(float, float, float)
     * @see Mat4#determinant(Mat4)
     * @see Utils#div(float, float)
-    * @see Quaternion#fromAxes(float, float, float, float, float, float, float,
-    *      float, float, Quaternion)
+    * @see Quaternion#fromAxes(float, float, float, float, float, float,
+    *      float, float, float, Quaternion)
     */
    public static void decompose (
       final Mat4 m,
@@ -1217,8 +1260,8 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Divides one matrix by another. Equivalent to multiplying the numerator and
-    * the inverse of the denominator.
+    * Divides one matrix by another. Equivalent to multiplying the numerator
+    * and the inverse of the denominator.
     *
     * @param a       numerator
     * @param b       denominator
@@ -1240,9 +1283,9 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Creates a matrix from two axes. The third axis, up, is assumed to be (0.0,
-    * 0.0, 1.0, 0.0). The fourth row and column are assumed to be (0.0, 0.0,
-    * 0.0, 1.0).
+    * Creates a matrix from two axes. The third axis, up, is assumed to be
+    * (0.0, 0.0, 1.0, 0.0). The fourth row and column are assumed to be (0.0,
+    * 0.0, 0.0, 1.0).
     *
     * @param right   the right axis
     * @param forward the forward axis
@@ -1288,8 +1331,8 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Creates a matrix from three axes. The fourth row and column are assumed to
-    * be (0.0, 0.0, 0.0, 1.0).
+    * Creates a matrix from three axes. The fourth row and column are assumed
+    * to be (0.0, 0.0, 0.0, 1.0).
     *
     * @param right   the right axis
     * @param forward the forward axis
@@ -1312,8 +1355,8 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Creates a matrix from three axes and a translation. The fourth row, w, is
-    * assumed to be (0.0, 0.0, 0.0, 1.0).
+    * Creates a matrix from three axes and a translation. The fourth row, w,
+    * is assumed to be (0.0, 0.0, 0.0, 1.0).
     *
     * @param right       the right axis
     * @param forward     the forward axis
@@ -1449,7 +1492,9 @@ public class Mat4 extends Matrix {
       // target);
 
       final float norm = radians * IUtils.ONE_TAU;
-      return Mat4.fromRotation(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
+      return Mat4.fromRotation(
+         Utils.scNorm(norm),
+         Utils.scNorm(norm - 0.25f),
          axis, target);
    }
 
@@ -1530,7 +1575,9 @@ public class Mat4 extends Matrix {
       // target);
 
       final float norm = radians * IUtils.ONE_TAU;
-      return Mat4.fromRotX(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
+      return Mat4.fromRotX(
+         Utils.scNorm(norm),
+         Utils.scNorm(norm - 0.25f),
          target);
    }
 
@@ -1576,7 +1623,9 @@ public class Mat4 extends Matrix {
       // target);
 
       final float norm = radians * IUtils.ONE_TAU;
-      return Mat4.fromRotY(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
+      return Mat4.fromRotY(
+         Utils.scNorm(norm),
+         Utils.scNorm(norm - 0.25f),
          target);
    }
 
@@ -1619,13 +1668,15 @@ public class Mat4 extends Matrix {
       // target);
 
       final float norm = radians * IUtils.ONE_TAU;
-      return Mat4.fromRotZ(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
+      return Mat4.fromRotZ(
+         Utils.scNorm(norm),
+         Utils.scNorm(norm - 0.25f),
          target);
    }
 
    /**
-    * Creates a scale matrix from a scalar. The bottom right corner, m33, is set
-    * to 1.0 .
+    * Creates a scale matrix from a scalar. The bottom right corner, m33, is
+    * set to 1.0 .
     *
     * @param scalar the scalar
     * @param target the output matrix
@@ -1770,12 +1821,14 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Returns the identity matrix,<br>
-    * <br>
-    * 1.0, 0.0, 0.0, 0.0,<br>
-    * 0.0, 1.0, 0.0, 0.0,<br>
-    * 0.0, 0.0, 1.0, 0.0,<br>
+    * Returns the identity matrix:
+    *
+    * <pre>
+    * 1.0, 0.0, 0.0, 0.0,
+    * 0.0, 1.0, 0.0, 0.0,
+    * 0.0, 0.0, 1.0, 0.0,
     * 0.0, 0.0, 0.0, 1.0
+    * </pre>
     *
     * @param target the output matrix
     *
@@ -1855,8 +1908,8 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Multiplies each component in a matrix by a scalar. Not to be confused with
-    * scaling affine transform matrix.
+    * Multiplies each component in a matrix by a scalar. Not to be confused
+    * with scaling affine transform matrix.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -1877,8 +1930,8 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Multiplies each component in a matrix by a scalar. Not to be confused with
-    * scaling affine transform matrix.
+    * Multiplies each component in a matrix by a scalar. Not to be confused
+    * with scaling affine transform matrix.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -2072,8 +2125,8 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Multiplies a matrix and a vector. The z and w components of the vector are
-    * assumed to be 0.0 , so the vector is not impacted by the matrix's
+    * Multiplies a matrix and a vector. The z and w components of the vector
+    * are assumed to be 0.0 , so the vector is not impacted by the matrix's
     * translation.
     *
     * @param a      the matrix
@@ -2101,8 +2154,9 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Multiplies a matrix and a vector. The w component of the vector is assumed
-    * to be 0.0 , so the vector is not impacted by the matrix's translation.
+    * Multiplies a matrix and a vector. The w component of the vector is
+    * assumed to be 0.0 , so the vector is not impacted by the matrix's
+    * translation.
     *
     * @param a      the matrix
     * @param b      the vector

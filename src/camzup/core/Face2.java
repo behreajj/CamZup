@@ -5,9 +5,9 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 /**
- * Organizes components of a 2D mesh into a list of vertices that form a face.
- * This is not used by a mesh internally; it is created upon retrieval from a
- * mesh.
+ * Organizes components of a 2D mesh into a list of vertices that form a
+ * face. This is not used by a mesh internally; it is created upon
+ * retrieval from a mesh.
  */
 public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
 
@@ -71,8 +71,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    }
 
    /**
-    * Gets an edge from this face. Wraps the index by the number of vertices in
-    * the face.
+    * Gets an edge from this face. Wraps the index by the number of vertices
+    * in the face.
     *
     * @param i      index
     * @param target output edge
@@ -396,6 +396,27 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    }
 
    /**
+    * Transforms all coordinates in the face by a matrix.
+    *
+    * @param m the matrix
+    *
+    * @return this face
+    *
+    * @see Mat3#mulPoint(Mat3, Vec2, Vec2)
+    */
+   @Chainable
+   public Face2 transform ( final Mat3 m ) {
+
+      final int len = this.vertices.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec2 c = this.vertices[i].coord;
+         Mat3.mulPoint(m, c, c);
+      }
+
+      return this;
+   }
+
+   /**
     * Translates all coordinates in the face by a vector.
     *
     * @param v the vector
@@ -433,37 +454,16 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    }
 
    /**
-    * Transforms all coordinates in the face by a matrix.
-    * 
-    * @param m the matrix
-    * 
-    * @return this face
-    * 
-    * @see Mat3#mulPoint(Mat3, Vec2, Vec2)
-    */
-   @Chainable
-   public Face2 transform ( final Mat3 m ) {
-
-      final int len = this.vertices.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec2 c = this.vertices[i].coord;
-         Mat3.mulPoint(m, c, c);
-      }
-
-      return this;
-   }
-
-   /**
-    * Returns an vertex iterator for this face, which allows its vertices to be
-    * accessed in an enhanced for-loop.
+    * Returns an vertex iterator for this face, which allows its vertices to
+    * be accessed in an enhanced for-loop.
     *
     * @return the iterator
     */
    public Vert2Iterator vertIterator ( ) { return new Vert2Iterator(this); }
 
    /**
-    * Finds the center of a face by averaging all the coordinates in its list of
-    * vertices.
+    * Finds the center of a face by averaging all the coordinates in its list
+    * of vertices.
     *
     * @param face   the face
     * @param target the output vector
@@ -525,8 +525,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    }
 
    /**
-    * Finds a point on the face's perimeter given a step in the range [0.0, 1.0]
-    * .
+    * Finds a point on the face's perimeter given a step in the range [0.0,
+    * 1.0] .
     *
     * @param face   the face
     * @param step   the step
@@ -554,8 +554,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    }
 
    /**
-    * Returns whether a face is wound in the counter-clockwise direction, i.e.,
-    * if its winding number is greater than zero.
+    * Returns whether a face is wound in the counter-clockwise direction,
+    * i.e., if its winding number is greater than zero.
     *
     * @param face the face
     *
@@ -608,8 +608,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    }
 
    /**
-    * Finds the shared coordinates, if any, between two faces. Returns an array
-    * of the coordinates.
+    * Finds the shared coordinates, if any, between two faces. Returns an
+    * array of the coordinates.
     *
     * @param a the left comparisand
     * @param b the right comparisand
@@ -640,8 +640,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    }
 
    /**
-    * Calculates the winding number of the face by summing the cross products of
-    * any two pair of edges.
+    * Calculates the winding number of the face by summing the cross products
+    * of any two pair of edges.
     *
     * @param face the face
     *
@@ -669,8 +669,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    }
 
    /**
-    * An iterator, which allows a face's edges to be accessed in an enhanced for
-    * loop.
+    * An iterator, which allows a face's edges to be accessed in an enhanced
+    * for loop.
     */
    public static final class Edge2Iterator implements Iterator < Edge2 > {
 
@@ -721,8 +721,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    }
 
    /**
-    * An iterator, which allows a face's vertices to be accessed in an enhanced
-    * for loop.
+    * An iterator, which allows a face's vertices to be accessed in an
+    * enhanced for loop.
     */
    public static final class Vert2Iterator implements Iterator < Vert2 > {
 

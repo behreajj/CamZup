@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import camzup.pfriendly.IUp;
 
 /**
- * A material which holds data to display materials with solid colors only (no
- * textures, or patterns). Contains data for a fill and/or stroke.
+ * A material which holds data to display materials with solid colors only
+ * (no textures, or patterns). Contains data for a fill and/or stroke.
  */
 public class MaterialSolid extends Material implements Cloneable {
 
@@ -63,9 +63,10 @@ public class MaterialSolid extends Material implements Cloneable {
    }
 
    /**
-    * Creates a material from a fill, stroke color and stroke weight. Whether or
-    * not to use a fill is inferred from the fill's alpha; whether or not to use
-    * stroke is inferred from the stroke weight and stroke color's alpha.
+    * Creates a material from a fill, stroke color and stroke weight. Whether
+    * or not to use a fill is inferred from the fill's alpha; whether or not
+    * to use stroke is inferred from the stroke weight and stroke color's
+    * alpha.
     *
     * @param fill         the fill color
     * @param stroke       the stroke color
@@ -131,9 +132,9 @@ public class MaterialSolid extends Material implements Cloneable {
 
    /**
     * Creates a named material from a fill, stroke color and stroke weight.
-    * Whether or not to use a fill is inferred from the fill's alpha; whether or
-    * not to use stroke is inferred from the stroke weight and stroke color's
-    * alpha.
+    * Whether or not to use a fill is inferred from the fill's alpha; whether
+    * or not to use stroke is inferred from the stroke weight and stroke
+    * color's alpha.
     *
     * @param name         the name
     * @param fill         the fill color
@@ -456,8 +457,8 @@ public class MaterialSolid extends Material implements Cloneable {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API. This
-    * code is brittle and is used for internal testing purposes, i.e., to
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how curve geometry looks in Blender (the control) versus in the
     * library (the test).
     *
@@ -563,9 +564,9 @@ public class MaterialSolid extends Material implements Cloneable {
    public static final String DEFAULT_SVG_STR_JOIN = "round";
 
    /**
-    * Default material to use when an entity does not have one. Stroke weight is
-    * impacted by transforms, so the stroke weight is divided by the scale. This
-    * opens a group node, which should be closed elsewhere.
+    * Default material to use when an entity does not have one. Stroke weight
+    * is impacted by transforms, so the stroke weight is divided by the scale.
+    * This opens a group node, which should be closed elsewhere.
     *
     * @param scale the transform scale
     *
@@ -594,10 +595,10 @@ public class MaterialSolid extends Material implements Cloneable {
    }
 
    /**
-    * Creates a material from an array of strings representing a Wavefront .mtl
-    * file. The support for this file format is <em>very</em> minimal, as it is
-    * unlikely that its contents would be reproducible between a variety of
-    * renderers. The material's fill is set to the diffuse color.
+    * Creates a material from an array of strings representing a Wavefront
+    * .mtl file. The support for this file format is <em>very</em> minimal, as
+    * it is unlikely that its contents would be reproducible between a variety
+    * of renderers. The material's fill is set to the diffuse color.
     *
     * @param lines the String tokens
     *

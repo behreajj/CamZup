@@ -11,8 +11,8 @@ public abstract class EntityData implements IEntityData {
    public String name;
 
    /**
-    * The default constructor. The data's name is derived from its identity hash
-    * code.
+    * The default constructor. The data's name is derived from its identity
+    * hash code.
     */
    public EntityData ( ) { this.name = this.hashIdentityString(); }
 

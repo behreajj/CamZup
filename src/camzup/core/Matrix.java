@@ -1,8 +1,8 @@
 package camzup.core;
 
 /**
- * An abstract class to serve as a parent for matrices; stores the size of the
- * matrix.
+ * An abstract class to serve as a parent for matrices; stores the size of
+ * the matrix.
  */
 public abstract class Matrix implements IMatrix {
 
@@ -25,10 +25,5 @@ public abstract class Matrix implements IMatrix {
     */
    @Override
    public int length ( ) { return this.length; }
-
-   /**
-    * The unique identification for serialized classes.
-    */
-   private static final long serialVersionUID = -6995930494443674601L;
 
 }

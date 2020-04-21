@@ -19,8 +19,8 @@ import processing.core.PFont.Glyph;
 import processing.core.PImage;
 
 /**
- * An extension of PImage, specializing in color gradients and blitting text to
- * an image.
+ * An extension of PImage, specializing in color gradients and blitting
+ * text to an image.
  */
 public class ZImage extends PImage {
 
@@ -82,8 +82,8 @@ public class ZImage extends PImage {
    protected ZImage ( ) { super(); }
 
    /**
-    * Returns a string representation of an image, including its format, width,
-    * height and pixel density.
+    * Returns a string representation of an image, including its format,
+    * width, height and pixel density.
     *
     * @return the string
     */
@@ -152,17 +152,20 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Default horizontal alignment when creating an image from text.
+    * Default horizontal alignment when creating an image from text:
+    * {@link PConstants#LEFT}, {@value PConstants#LEFT}.
     */
    public static final int DEFAULT_ALIGN = PConstants.LEFT;
 
    /**
-    * Default spacing between characters when creating an image from text.
+    * Default spacing between characters, in pixels, when creating an image
+    * from text: {@value ZImage#DEFAULT_KERNING}.
     */
    public static final int DEFAULT_KERNING = 0;
 
    /**
-    * Default spacing between lines when creating an image from text.
+    * Default spacing between lines, in pixels, when creating an image from
+    * text: {@value ZImage#DEFAULT_LEADING}.
     */
    public static final int DEFAULT_LEADING = 8;
 
@@ -170,7 +173,11 @@ public class ZImage extends PImage {
     * A temporary color used for converting color data to and from hexadecimal
     * values.
     */
-   private static final Color clr = new Color();
+   private static final Color clr;
+
+   static {
+      clr = new Color();
+   }
 
    /**
     * Finds the aspect ratio of an image, it's width divided by its height.
@@ -185,8 +192,8 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Generates a conic gradient, where the factor rotates on the z axis around
-    * an origin point.
+    * Generates a conic gradient, where the factor rotates on the z axis
+    * around an origin point.
     *
     * @param xOrigin the origin x coordinate
     * @param yOrigin the origin y coordinate
@@ -231,8 +238,8 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Generates a conic gradient, where the factor rotates on the z axis around
-    * an origin point.
+    * Generates a conic gradient, where the factor rotates on the z axis
+    * around an origin point.
     *
     * @param origin  the origin
     * @param radians the angular offset
@@ -277,8 +284,8 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Recolors an image in-place with a color gradient. The image's luminance is
-    * used as the factor.
+    * Recolors an image in-place with a color gradient. The image's luminance
+    * is used as the factor.
     *
     * @param grd    the color gradient
     * @param target the target image
@@ -381,8 +388,11 @@ public class ZImage extends PImage {
       final PFont font,
       final String text ) {
 
-      return ZImage.fromText(font, text, 0xffffffff, ZImage.DEFAULT_LEADING,
-         ZImage.DEFAULT_KERNING, ZImage.DEFAULT_ALIGN);
+      return ZImage.fromText(
+         font, text, 0xffffffff,
+         ZImage.DEFAULT_LEADING,
+         ZImage.DEFAULT_KERNING,
+         ZImage.DEFAULT_ALIGN);
    }
 
    /**
@@ -455,8 +465,8 @@ public class ZImage extends PImage {
    /**
     * Blits glyph images from a {@link PFont} onto a single image. The leading
     * and kerning are measured in pixels; negative values are not allowed. The
-    * horizontal text alignment may be either center {@link PConstants#CENTER} (
-    * {@value PConstants#CENTER} ), right {@link PConstants#RIGHT} (
+    * horizontal text alignment may be either center {@link PConstants#CENTER}
+    * ( {@value PConstants#CENTER} ), right {@link PConstants#RIGHT} (
     * {@value PConstants#RIGHT} ) or left {@link PConstants#LEFT} (
     * {@value PConstants#LEFT} ).<br>
     * <br>
@@ -500,8 +510,11 @@ public class ZImage extends PImage {
       final String text,
       final int clr ) {
 
-      return ZImage.fromText(font, text, clr, ZImage.DEFAULT_LEADING,
-         ZImage.DEFAULT_KERNING, ZImage.DEFAULT_ALIGN);
+      return ZImage.fromText(
+         font, text, clr,
+         ZImage.DEFAULT_LEADING,
+         ZImage.DEFAULT_KERNING,
+         ZImage.DEFAULT_ALIGN);
    }
 
    /**
@@ -524,7 +537,9 @@ public class ZImage extends PImage {
       final int clr,
       final int leading ) {
 
-      return ZImage.fromText(font, text, clr, leading, ZImage.DEFAULT_KERNING,
+      return ZImage.fromText(
+         font, text, clr, leading,
+         ZImage.DEFAULT_KERNING,
          ZImage.DEFAULT_ALIGN);
    }
 
@@ -557,8 +572,8 @@ public class ZImage extends PImage {
    /**
     * Blits glyph images from a {@link PFont} onto a single image. The leading
     * and kerning are measured in pixels; negative values are not allowed. The
-    * horizontal text alignment may be either center {@link PConstants#CENTER} (
-    * {@value PConstants#CENTER} ), right {@link PConstants#RIGHT} (
+    * horizontal text alignment may be either center {@link PConstants#CENTER}
+    * ( {@value PConstants#CENTER} ), right {@link PConstants#RIGHT} (
     * {@value PConstants#RIGHT} ) or left {@link PConstants#LEFT} (
     * {@value PConstants#LEFT} ).<br>
     * <br>
@@ -877,8 +892,8 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Generates a radial gradient. This does not account for aspect ratio, so an
-    * image that is not 1:1 will result in an ellipsoid.
+    * Generates a radial gradient. This does not account for aspect ratio, so
+    * an image that is not 1:1 will result in an ellipsoid.
     *
     * @param xOrigin the x coordinate
     * @param yOrigin the y coordinate
@@ -928,8 +943,8 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Generates a radial gradient. This does not account for aspect ratio, so an
-    * image that is not 1:1 will result in an ellipsoid.
+    * Generates a radial gradient. This does not account for aspect ratio, so
+    * an image that is not 1:1 will result in an ellipsoid.
     *
     * @param origin the origin
     * @param radius the radius
@@ -978,8 +993,8 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Returns a string representation of an image, including its format, width,
-    * height and pixel density.
+    * Returns a string representation of an image, including its format,
+    * width, height and pixel density.
     *
     * @param img the PImage
     *
@@ -987,16 +1002,27 @@ public class ZImage extends PImage {
     */
    public static String toString ( final PImage img ) {
 
-      return new StringBuilder(64).append("{ format: ").append(
-         img.format).append(", width: ").append(img.width).append(
-            ", height: ").append(img.height).append(", pixelDensity: ").append(
-               img.pixelDensity).append(' ').append('}').toString();
+      /* @formatter:off */
+      return new StringBuilder(64)
+         .append("{ format: ")
+         .append(img.format)
+         .append(", width: ")
+         .append(Utils.toPadded(img.width, 4))
+         .append(", height: ")
+         .append(Utils.toPadded(img.height, 4))
+         .append(", pixelDensity: ")
+         .append(img.pixelDensity)
+         .append(' ')
+         .append('}')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
-    * Blits a source image's pixels onto a target image's pixels, using integer
-    * floor modulo to wrap the source image. The source image can be offset
-    * horizontally and/or vertically, creating the illusion of parallax.
+    * Blits a source image's pixels onto a target image's pixels, using
+    * integer floor modulo to wrap the source image. The source image can be
+    * offset horizontally and/or vertically, creating the illusion of
+    * parallax.
     *
     * @param source  source pixel array
     * @param wSource source image width
@@ -1023,14 +1049,14 @@ public class ZImage extends PImage {
 
       for ( int i = 0, y = 0; y < hTarget; ++y ) {
 
-         /* final int ny = wSource * Math.floorMod(y - dy, hSource); */
+         // final int ny = wSource * Math.floorMod(y - dy, hSource);
          int ymod = ( y - dy ) % hSource;
          if ( ( ymod ^ hSource ) < 0 && ymod != 0 ) { ymod += hSource; }
          final int ny = wSource * ymod;
 
          for ( int x = 0; x < wTarget; ++x, ++i ) {
 
-            /* target[i] = source[Math.floorMod(x + dx, wSource) + ny]; */
+            // target[i] = source[Math.floorMod(x + dx, wSource) + ny];
             int xmod = ( x + dx ) % wSource;
             if ( ( xmod ^ wSource ) < 0 && xmod != 0 ) { xmod += wSource; }
             target[i] = source[xmod + ny];
@@ -1040,9 +1066,10 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Blits a source image's pixels onto a target image's pixels, using integer
-    * floor modulo to wrap the source image. The source image can be offset
-    * horizontally and/or vertically, creating the illusion of parallax.
+    * Blits a source image's pixels onto a target image's pixels, using
+    * integer floor modulo to wrap the source image. The source image can be
+    * offset horizontally and/or vertically, creating the illusion of
+    * parallax.
     *
     * @param source the source image
     * @param target the target image
@@ -1061,9 +1088,10 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Blits a source image's pixels onto a target image's pixels, using integer
-    * floor modulo to wrap the source image. The source image can be offset
-    * horizontally and/or vertically, creating the illusion of parallax.
+    * Blits a source image's pixels onto a target image's pixels, using
+    * integer floor modulo to wrap the source image. The source image can be
+    * offset horizontally and/or vertically, creating the illusion of
+    * parallax.
     *
     * @param source the source image
     * @param target the target image
@@ -1088,9 +1116,10 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Blits a source image's pixels onto a target image's pixels, using integer
-    * floor modulo to wrap the source image. The source image can be offset
-    * horizontally and/or vertically, creating the illusion of parallax.
+    * Blits a source image's pixels onto a target image's pixels, using
+    * integer floor modulo to wrap the source image. The source image can be
+    * offset horizontally and/or vertically, creating the illusion of
+    * parallax.
     *
     * @param source the source image
     * @param target the target image

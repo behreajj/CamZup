@@ -1,14 +1,12 @@
 package camzup.core;
 
-import java.io.Serializable;
-
 import java.util.Iterator;
 
 /**
  * Maintains consistent behavior between matrices of different dimensions.
  */
 public interface IMatrix
-   extends IUtils, Cloneable, Iterable < Float >, Serializable {
+   extends IUtils, Cloneable, Iterable < Float > {
 
    /**
     * Returns a matrix element by index, as though the matrix were a 1D array.
@@ -20,8 +18,8 @@ public interface IMatrix
    float get ( final int index );
 
    /**
-    * Retrieves a matrix element by two indices, as though the matrix were a 2D
-    * array.
+    * Retrieves a matrix element by two indices, as though the matrix were a
+    * 2D array.
     *
     * @param i the row
     * @param j the column

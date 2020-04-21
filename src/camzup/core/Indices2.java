@@ -1,13 +1,11 @@
 package camzup.core;
 
-import java.io.Serializable;
-
 /**
- * Structures the indices used by a 3D mesh to refer to arrays of data from a
- * vertex. Includes indices for a coordinate, and a texture coordinate.
+ * Structures the indices used by a 3D mesh to refer to arrays of data from
+ * a vertex. Includes indices for a coordinate, and a texture coordinate.
  */
 @Experimental
-class Indices2 implements Cloneable, Comparable < Indices2 >, Serializable {
+class Indices2 implements Cloneable, Comparable < Indices2 > {
 
    /**
     * The coordinate index.
@@ -202,10 +200,5 @@ class Indices2 implements Cloneable, Comparable < Indices2 >, Serializable {
 
       return this.v == idx.v && this.vt == idx.vt;
    }
-
-   /**
-    * The unique identification for serialized classes.
-    */
-   private static final long serialVersionUID = 8718380790276620810L;
 
 }

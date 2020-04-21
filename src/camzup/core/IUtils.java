@@ -36,7 +36,8 @@ public interface IUtils {
 
    /**
     * The smallest positive non-zero value, \u03b5. Useful for testing
-    * approximation between two floats. Set to {@value IUtils#DEFAULT_EPSILON} .
+    * approximation between two floats. Set to {@value IUtils#DEFAULT_EPSILON}
+    * .
     *
     * @see Utils#approx(float, float)
     */
@@ -121,8 +122,8 @@ public interface IUtils {
 
    /**
     * One divided by 360 degrees, 1.0 / 360 ; approximately
-    * {@value IUtils#ONE_360} . Useful for converting an index in a for-loop to
-    * an angle in degrees.
+    * {@value IUtils#ONE_360} . Useful for converting an index in a for-loop
+    * to an angle in degrees.
     */
    float ONE_360 = 0.0027777778f;
 
@@ -180,26 +181,26 @@ public interface IUtils {
    double ONE_SQRT_3_D = 0.5773502691896258d;
 
    /**
-    * One divided by \u03c4 . Useful for converting an index in a for-loop to an
-    * angle. Approximately {@value IUtils#ONE_TAU} .
+    * One divided by \u03c4 . Useful for converting an index in a for-loop to
+    * an angle. Approximately {@value IUtils#ONE_TAU} .
     */
    float ONE_TAU = 0.15915494f;
 
    /**
-    * 1.0 / 4.0 \u03c0 . Useful when normalizing angles supplied to quaternions.
-    * Approximately {@value IUtils#ONE_TAU_2} .
+    * 1.0 / 4.0 \u03c0 . Useful when normalizing angles supplied to
+    * quaternions. Approximately {@value IUtils#ONE_TAU_2} .
     */
    float ONE_TAU_2 = 0.07957747f;
 
    /**
-    * 1.0 / 4.0 \u03c0 . Useful when normalizing angles supplied to quaternions.
-    * Approximately {@value IUtils#ONE_TAU_2_D} .
+    * 1.0 / 4.0 \u03c0 . Useful when normalizing angles supplied to
+    * quaternions. Approximately {@value IUtils#ONE_TAU_2_D} .
     */
    double ONE_TAU_2_D = 0.07957747154594767d;
 
    /**
-    * One divided by \u03c4 . Useful for converting an index in a for-loop to an
-    * angle. Approximately {@value IUtils#ONE_TAU_D} .
+    * One divided by \u03c4 . Useful for converting an index in a for-loop to
+    * an angle. Approximately {@value IUtils#ONE_TAU_D} .
     */
    double ONE_TAU_D = 0.15915494309189535d;
 
@@ -210,8 +211,8 @@ public interface IUtils {
    float ONE_THIRD = 0.33333334f;
 
    /**
-    * One-third, 1.0 / 3.0 . Approximately {@value IUtils#ONE_THIRD_D} . Useful
-    * for setting handles on the knot of a Bezier curve.
+    * One-third, 1.0 / 3.0 . Approximately {@value IUtils#ONE_THIRD_D} .
+    * Useful for setting handles on the knot of a Bezier curve.
     */
    double ONE_THIRD_D = 0.3333333333333333d;
 
@@ -280,13 +281,14 @@ public interface IUtils {
    float TAU = 6.2831855f;
 
    /**
-    * An approximation of \u03c4 , {@value IUtils#TAU_D} . Equal to 2.0 \u03c0 .
+    * An approximation of \u03c4 , {@value IUtils#TAU_D} . Equal to 2.0 \u03c0
+    * .
     */
    double TAU_D = 6.283185307179586d;
 
    /**
-    * \u03c0 divided by three, {@value IUtils#THIRD_PI} . Useful for describing
-    * the field of view in a perspective camera.
+    * \u03c0 divided by three, {@value IUtils#THIRD_PI} . Useful for
+    * describing the field of view in a perspective camera.
     */
    float THIRD_PI = 1.0471976f;
 
