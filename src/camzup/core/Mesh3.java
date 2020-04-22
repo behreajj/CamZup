@@ -225,12 +225,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
              * Find index of vector in new array by using indexed value from old
              * array as a reference.
              */
-            vert[0] = Arrays.binarySearch(newCoords, this.coords[vert[0]],
-               Mesh.SORT_3);
-            vert[1] = Arrays.binarySearch(newTexCoords, this.texCoords[vert[1]],
-               Mesh.SORT_2);
-            vert[2] = Arrays.binarySearch(newNormals, this.normals[vert[2]],
-               Mesh.SORT_3);
+            vert[0] = Arrays.binarySearch(
+               newCoords, this.coords[vert[0]], Mesh.SORT_3);
+            vert[1] = Arrays.binarySearch(
+               newTexCoords, this.texCoords[vert[1]], Mesh.SORT_2);
+            vert[2] = Arrays.binarySearch(
+               newNormals, this.normals[vert[2]], Mesh.SORT_3);
          }
       }
 
@@ -622,7 +622,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       for ( int j = 0; j < len; ++j ) {
          final int[] vert = face[j];
-         vertices[j] = new Vert3(this.coords[vert[0]], this.texCoords[vert[1]], this.normals[vert[2]]);
+
+         /* @formatter:off */
+         vertices[j] = new Vert3(
+            this.coords[vert[0]],
+            this.texCoords[vert[1]],
+            this.normals[vert[2]]);
+         /* @formatter:on */
       }
 
       return target.set(vertices);
@@ -646,8 +652,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          for ( int j = 0; j < len1; ++j ) {
 
-            /* @formatter:off */
             final int[] fs1 = fs0[j];
+            /* @formatter:off */
             verts[j] = new Vert3(
                this.coords[fs1[0]],
                this.texCoords[fs1[1]],
@@ -678,7 +684,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int[][] f0 = this.faces[Utils.mod(i, this.faces.length)];
       final int[] f = f0[Utils.mod(j, f0.length)];
 
-      return target.set(this.coords[f[0]], this.texCoords[f[1]],
+      return target.set(
+         this.coords[f[0]],
+         this.texCoords[f[1]],
          this.normals[f[2]]);
    }
 
@@ -909,11 +917,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the iterator
     */
    @Override
-   public Face3Iterator iterator ( ) {
-
-      // TODO: Make edge and vertex iterators as well?
-      return new Face3Iterator(this);
-   }
+   public Face3Iterator iterator ( ) { return new Face3Iterator(this); }
 
    /**
     * Gets the number of faces held by this mesh.
@@ -1813,8 +1817,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       final StringBuilder sb = new StringBuilder(2048);
 
-      sb.append("{ name: \"").append(this.name).append('\"').append(',').append(
-         ' ').append("coords: [ ");
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append('\"');
+      sb.append(',');
+      sb.append(' ');
+      sb.append("coords: [ ");
 
       if ( this.coords != null ) {
          final int len = this.coords.length <= truncate ? this.coords.length
@@ -1922,6 +1930,27 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Transforms all coordinates in the mesh <em>permanently</em> by a
+    * transform. Not to be confused with the <em>temporary</em>
+    * transformations applied by a mesh entity's transform to the meshes
+    * contained within the entity.
+    * 
+    * @param tr the transform
+    * 
+    * @return this mesh
+    */
+   @Chainable
+   public Mesh3 transform ( final Transform3 tr ) {
+
+      final int len = this.coords.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec3 c = this.coords[i];
+         Transform3.mulPoint(tr, c, c);
+      }
+      return this;
+   }
+
+   /**
     * Translates all coordinates in the mesh by a vector.
     *
     * @param v the vector
@@ -1967,9 +1996,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final boolean includeNormals ) {
 
       final StringBuilder pyCd = new StringBuilder(1024);
-      pyCd.append("{\"name\": \"").append(this.name).append(
-         "\", \"material_index\": ").append(this.materialIndex).append(
-            ", \"vertices\": [");
+      pyCd.append("{\"name\": \"");
+      pyCd.append(this.name);
+      pyCd.append("\", \"material_index\": ");
+      pyCd.append(this.materialIndex);
+      pyCd.append(", \"vertices\": [");
 
       final int vlen = this.coords.length;
       final int vlast = vlen - 1;
@@ -2226,7 +2257,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Default cube size, such that it will match the dimensions of other
     * Platonic solids; <code>0.5d / Math.sqrt(2.0d)</code> , approximately
-    * 0.35355338 .
+    * {@value Mesh3#DEFAULT_CUBE_SIZE} .
     */
    public static final float DEFAULT_CUBE_SIZE = 0.35355338f;
 
@@ -2326,8 +2357,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * Generates a cube mesh. In the context of Platonic solids, also known as
-    * a hexahedron, as it has 6 faces and 8 vertices. Uses the default cube
-    * size.
+    * a hexahedron, as it has 6 faces and 8 vertices. Uses the
+    * {@link Mesh3#DEFAULT_CUBE_SIZE}, {@value Mesh3#DEFAULT_CUBE_SIZE} .
     *
     * @param target the output mesh
     *
@@ -2409,8 +2440,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final float radius,
       final Mesh3 target ) {
 
-      return Mesh3.cylinder(origin.x, origin.y, origin.z, dest.x, dest.y,
-         dest.z, sectors, includeCaps, radius, target);
+      return Mesh3.cylinder(
+         origin.x, origin.y, origin.z,
+         dest.x, dest.y, dest.z,
+         sectors, includeCaps, radius, target);
    }
 
    /**
@@ -2433,9 +2466,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Mesh3 target ) {
 
       final float radius = 0.25f * Vec3.dist(origin, dest);
-
-      return Mesh3.cylinder(origin.x, origin.y, origin.z, dest.x, dest.y,
-         dest.z, sectors, includeCaps, radius, target);
+      return Mesh3.cylinder(
+         origin.x, origin.y, origin.z,
+         dest.x, dest.y, dest.z,
+         sectors, includeCaps, radius, target);
    }
 
    /**
@@ -3042,8 +3076,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the consolidated meshes
     */
    public static final Mesh3[] groupByMaterial ( final Mesh3[] meshes ) {
-
-      // TEST
 
       final HashMap < Integer, Mesh3 > dict = new HashMap <>();
       Mesh3 current;

@@ -380,7 +380,9 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       pyCd.append("    clearcoat = pbr_in[\"Clearcoat\"]\n");
       pyCd.append("    clearcoat.default_value = material[\"clearcoat\"]\n");
       pyCd.append("    cr = pbr_in[\"Clearcoat Roughness\"]\n");
-      pyCd.append("    cr.default_value = material[\"clearcoat_roughness\"]\n");
+      pyCd.append("    cr.default_value = ");
+      pyCd.append("material[\"clearcoat_roughness\"]\n\n");
+
       pyCd.append("meshes = mesh_entity[\"meshes\"]\n");
       pyCd.append("d_meshes = D.meshes\n");
       pyCd.append("for mesh in meshes:\n");
@@ -486,10 +488,13 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       final int places,
       final int truncate ) {
 
-      final StringBuilder sb = new StringBuilder(1024).append(
-         "{ name: \"").append(this.name).append('\"').append(
-            ", transform: ").append(this.transform.toString(places)).append(
-               ", meshes: [ ");
+      final StringBuilder sb = new StringBuilder(1024);
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append('\"');
+      sb.append(", transform: ");
+      sb.append(this.transform.toString(places));
+      sb.append(", meshes: [ ");
 
       int i = 0;
       final Iterator < Mesh3 > itr = this.meshes.iterator();

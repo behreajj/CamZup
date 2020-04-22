@@ -268,7 +268,8 @@ public class CurveEntity2 extends Entity2
       final int curveLast = this.curves.size() - 1;
       final Iterator < Curve2 > curveItr = this.curves.iterator();
       while ( curveItr.hasNext() ) {
-         pyCd.append(curveItr.next().toBlenderCode(uRes));
+         final float zoff = 0.0001f * curveIndex;
+         pyCd.append(curveItr.next().toBlenderCode(uRes, zoff));
          if ( curveIndex < curveLast ) { pyCd.append(',').append(' '); }
          curveIndex++;
       }

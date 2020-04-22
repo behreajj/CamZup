@@ -294,16 +294,14 @@ public class Complex implements Comparable < Complex >, Cloneable,
    @Experimental
    String toBlenderCode ( ) {
 
-      /* @formatter:off */
-      return new StringBuilder(64)
-         .append('(')
-         .append(Utils.toFixed(this.real, 6))
-         .append(this.imag < 0.0f ? '-' : '+')
-         .append(Utils.toFixed(Utils.abs(this.imag), 6))
-         .append('j')
-         .append(')')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder pyCd = new StringBuilder(64);
+      pyCd.append('(');
+      pyCd.append(Utils.toFixed(this.real, 6));
+      pyCd.append(this.imag < -0.0f ? '-' : '+');
+      pyCd.append(Utils.toFixed(Utils.abs(this.imag), 6));
+      pyCd.append('j');
+      pyCd.append(')');
+      return pyCd.toString();
    }
 
    /**
@@ -494,8 +492,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex target ) {
 
       return target.set(
-         ( float ) ( Math.cos(z.real) * Math.cosh(
-            z.imag) ),
+         ( float ) ( Math.cos(z.real) * Math.cosh(z.imag) ),
          ( float ) ( -Math.sin(z.real) * Math.sinh(z.imag) ));
    }
 
@@ -843,8 +840,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final Complex b,
       final Complex target ) {
 
-      final double logReal = Math.log(
-         Math.sqrt(a.real * a.real + a.imag * a.imag));
+      final double logReal = Math.log(Math.sqrt(
+         a.real * a.real + a.imag * a.imag));
       final double logImag = Math.atan2(a.imag, a.real);
       final double phi = b.real * logImag + b.imag * logReal;
       final double r = Math.exp(b.real * logReal - b.imag * logImag);

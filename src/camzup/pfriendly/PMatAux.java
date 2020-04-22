@@ -97,16 +97,17 @@ public abstract class PMatAux {
       if ( target == null ) { target = new PMatrix3D(); }
 
       final float u = 1.0f - s;
-      final float th = ( s - 1.0f ) * 0.5f;
+      final float sh = s * 0.5f;
+      final float th = sh - 0.5f;
       final float uh = u * 0.5f;
-      final float v = ( s + 3.0f ) * 0.5f;
+      final float v = sh + 1.5f;
 
       /* @formatter:off */
       target.set(
-           th,                    v,                   -v,   uh,
-            u, ( -5.0f - s ) * 0.5f,             s + 2.0f,   th,
-           th,                 0.0f,                   uh, 0.0f,
-         0.0f,                 1.0f,                 0.0f, 0.0f);
+           th,          v,       -v,   uh,
+            u, -2.5f - sh, s + 2.0f,   th,
+           th,       0.0f,       uh, 0.0f,
+         0.0f,       1.0f,     0.0f, 0.0f);
       /* @formatter:on */
 
       return target;
@@ -985,8 +986,7 @@ public abstract class PMatAux {
       final float near, final float far ) {
 
       return PMatAux.orthographic(
-         left, right, bottom, top, near,
-         far,
+         left, right, bottom, top, near, far,
          ( PMatrix3D ) null);
    }
 
@@ -1028,6 +1028,7 @@ public abstract class PMatAux {
          0.0f, h + h, 0.0f, h * ( top + bottom ),
          0.0f, 0.0f, - ( d + d ), -d * ( far + near ),
          0.0f, 0.0f, 0.0f, 1.0f);
+
       return target;
    }
 
@@ -1354,8 +1355,10 @@ public abstract class PMatAux {
       final PMatrix3D target ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.rotateX(Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f), target);
+      return PMatAux.rotateX(
+         Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f),
+         target);
    }
 
    /**
@@ -1431,8 +1434,10 @@ public abstract class PMatAux {
       final PMatrix3D target ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.rotateY(Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f), target);
+      return PMatAux.rotateY(
+         Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f),
+         target);
    }
 
    /**
@@ -1508,8 +1513,10 @@ public abstract class PMatAux {
       final PMatrix3D target ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.rotateZ(Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f), target);
+      return PMatAux.rotateZ(
+         Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f),
+         target);
    }
 
    /**

@@ -319,7 +319,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    @Chainable
    public Knot2 mirrorHandlesBackward ( ) {
 
-      this.foreHandle.set(this.coord.x - ( this.rearHandle.x - this.coord.x ),
+      this.foreHandle.set(
+         this.coord.x - ( this.rearHandle.x - this.coord.x ),
          this.coord.y - ( this.rearHandle.y - this.coord.y ));
 
       return this;
@@ -647,7 +648,9 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float xOff = Utils.copySign(IUtils.DEFAULT_EPSILON, xCoord);
       final float yOff = Utils.copySign(IUtils.DEFAULT_EPSILON, yCoord);
 
-      return this.set(xCoord, yCoord, xCoord + xOff, yCoord + yOff,
+      return this.set(
+         xCoord, yCoord,
+         xCoord + xOff, yCoord + yOff,
          xCoord - xOff, yCoord - yOff);
    }
 
@@ -849,7 +852,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    }
 
    /**
-    * Transforms this knot by a matrix.
+    * Multiplies this knot by a matrix.
     *
     * @param m the matrix
     *
@@ -863,6 +866,25 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       Mat3.mulPoint(m, this.coord, this.coord);
       Mat3.mulPoint(m, this.foreHandle, this.foreHandle);
       Mat3.mulPoint(m, this.rearHandle, this.rearHandle);
+
+      return this;
+   }
+
+   /**
+    * Multiplies this knot by a transform.
+    *
+    * @param tr the transform
+    *
+    * @return this knot
+    *
+    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
+    */
+   @Chainable
+   public Knot2 transform ( final Transform2 tr ) {
+
+      Transform2.mulPoint(tr, this.coord, this.coord);
+      Transform2.mulPoint(tr, this.foreHandle, this.foreHandle);
+      Transform2.mulPoint(tr, this.rearHandle, this.rearHandle);
 
       return this;
    }
@@ -892,22 +914,22 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * compare how curve geometry looks in Blender (the control) versus in the
     * library (the test).
     *
+    * @param z the z offset
+    * 
     * @return the string
     */
    @Experimental
-   String toBlenderCode ( ) {
+   String toBlenderCode ( final float z ) {
 
-      /* @formatter:off */
-      return new StringBuilder(256)
-         .append("{\"co\": ")
-         .append(this.coord.toBlenderCode(0.0f))
-         .append(", \"handle_right\": ")
-         .append(this.foreHandle.toBlenderCode(0.0f))
-         .append(", \"handle_left\": ")
-         .append(this.rearHandle.toBlenderCode(0.0f))
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder pyCd = new StringBuilder(256);
+      pyCd.append("{\"co\": ");
+      pyCd.append(this.coord.toBlenderCode(z));
+      pyCd.append(", \"handle_right\": ");
+      pyCd.append(this.foreHandle.toBlenderCode(z));
+      pyCd.append(", \"handle_left\": ");
+      pyCd.append(this.rearHandle.toBlenderCode(z));
+      pyCd.append('}');
+      return pyCd.toString();
    }
 
    /**
@@ -1034,8 +1056,11 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final Knot2 prev,
       final Knot2 next ) {
 
-      return Knot2.fromSegCubic(prevControl.x, prevControl.y, nextControl.x,
-         nextControl.y, nextAnchor.x, nextAnchor.y, prev, next);
+      return Knot2.fromSegCubic(
+         prevControl.x, prevControl.y,
+         nextControl.x, nextControl.y,
+         nextAnchor.x, nextAnchor.y,
+         prev, next);
    }
 
    /**
@@ -1080,7 +1105,9 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final Knot2 prev,
       final Knot2 next ) {
 
-      return Knot2.fromSegLinear(nextAnchor.x, nextAnchor.y, prev, next);
+      return Knot2.fromSegLinear(
+         nextAnchor.x, nextAnchor.y,
+         prev, next);
    }
 
    /**
@@ -1143,8 +1170,10 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final Knot2 prev,
       final Knot2 next ) {
 
-      return Knot2.fromSegQuadratic(control.x, control.y, nextAnchor.x,
-         nextAnchor.y, prev, next);
+      return Knot2.fromSegQuadratic(
+         control.x, control.y,
+         nextAnchor.x, nextAnchor.y,
+         prev, next);
    }
 
    /**

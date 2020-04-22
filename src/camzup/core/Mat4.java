@@ -1004,25 +1004,25 @@ public class Mat4 extends Matrix {
 
       /* @formatter:off */
       return new StringBuilder(256)
-         .append('\n').append(Utils.toFixed(this.m00, places))
+                    .append('\n').append(Utils.toFixed(this.m00, places))
          .append(',').append(' ').append(Utils.toFixed(this.m01, places))
          .append(',').append(' ').append(Utils.toFixed(this.m02, places))
          .append(',').append(' ').append(Utils.toFixed(this.m03, places))
          .append(',')
 
-         .append('\n').append(Utils.toFixed(this.m10, places))
+                    .append('\n').append(Utils.toFixed(this.m10, places))
          .append(',').append(' ').append(Utils.toFixed(this.m11, places))
          .append(',').append(' ').append(Utils.toFixed(this.m12, places))
          .append(',').append(' ').append(Utils.toFixed(this.m13, places))
          .append(',')
 
-         .append('\n').append(Utils.toFixed(this.m20, places))
+                    .append('\n').append(Utils.toFixed(this.m20, places))
          .append(',').append(' ').append(Utils.toFixed(this.m21, places))
          .append(',').append(' ').append(Utils.toFixed(this.m22, places))
          .append(',').append(' ').append(Utils.toFixed(this.m23, places))
          .append(',')
 
-         .append('\n').append(Utils.toFixed(this.m30, places))
+                    .append('\n').append(Utils.toFixed(this.m30, places))
          .append(',').append(' ').append(Utils.toFixed(this.m31, places))
          .append(',').append(' ').append(Utils.toFixed(this.m32, places))
          .append(',').append(' ').append(Utils.toFixed(this.m33, places))

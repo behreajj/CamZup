@@ -781,9 +781,12 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(64 + 256 * this.knots.size()).append(
-         "{ name: \"").append(this.name).append("\", closedLoop: ").append(
-            this.closedLoop).append(", knots: [ ");
+      final StringBuilder sb = new StringBuilder(64 + 256 * this.knots.size());
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append("\", closedLoop: ");
+      sb.append(this.closedLoop);
+      sb.append(", knots: [ ");
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while ( itr.hasNext() ) {
@@ -810,6 +813,27 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Iterator < Knot3 > itr = this.knots.iterator();
       while ( itr.hasNext() ) {
          itr.next().transform(m);
+      }
+
+      return this;
+   }
+
+   /**
+    * Transforms all coordinates in the curve <em>permanently</em> by a
+    * transform. Not to be confused with the <em>temporary</em>
+    * transformations applied by a curve entity's transform to the meshes
+    * contained within the entity.
+    * 
+    * @param tr the transform
+    * 
+    * @return this mesh
+    */
+   @Chainable
+   public Curve3 transform ( final Transform3 tr ) {
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while ( itr.hasNext() ) {
+         itr.next().transform(tr);
       }
 
       return this;
@@ -898,8 +922,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final int last = len - 1;
       final float toPercent = 1.0f / ( this.closedLoop ? len : last );
       while ( itr.hasNext() ) {
-         final float ang = Utils.lerpUnclamped(tiltStart, tiltEnd,
-            i * toPercent);
+         final float t = i * toPercent;
+         final float ang = ( 1.0f - t ) * tiltStart + t * tiltEnd;
          pyCd.append(itr.next().toBlenderCode(1.0f, 1.0f, ang));
          if ( i < last ) { pyCd.append(',').append(' '); }
          i++;
@@ -975,8 +999,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          prev.set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
          next.set(radius * Utils.scNorm(a1), radius * Utils.scNorm(a1 - 0.25f),
             0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-         Vec3.mix(prev.coord, next.coord, IUtils.ONE_THIRD, prev.foreHandle);
-         Vec3.mix(next.coord, prev.coord, IUtils.ONE_THIRD, next.rearHandle);
+         Curve3.lerp13(prev.coord, next.coord, prev.foreHandle);
+         Curve3.lerp13(next.coord, prev.coord, next.rearHandle);
          prev.mirrorHandlesForward();
          next.mirrorHandlesBackward();
 

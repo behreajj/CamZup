@@ -359,10 +359,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
              * Find index of vector in new array by using indexed value from old
              * array as a reference.
              */
-            vert[0] = Arrays.binarySearch(newCoords, this.coords[vert[0]],
-               Mesh.SORT_2);
-            vert[1] = Arrays.binarySearch(newTexCoords, this.texCoords[vert[1]],
-               Mesh.SORT_2);
+            vert[0] = Arrays.binarySearch(
+               newCoords, this.coords[vert[0]], Mesh.SORT_2);
+            vert[1] = Arrays.binarySearch(
+               newTexCoords, this.texCoords[vert[1]], Mesh.SORT_2);
          }
       }
 
@@ -1502,8 +1502,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       final StringBuilder sb = new StringBuilder(2048);
 
-      sb.append("{ name: \"").append(this.name).append('\"').append(',').append(
-         ' ').append("coords: [ ");
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append('\"');
+      sb.append(',');
+      sb.append(' ');
+      sb.append("coords: [ ");
 
       if ( this.coords != null ) {
          final int len = this.coords.length <= truncate ? this.coords.length
@@ -1650,6 +1654,27 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
+    * Transforms all coordinates in the mesh <em>permanently</em> by a
+    * transform. Not to be confused with the <em>temporary</em>
+    * transformations applied by a mesh entity's transform to the meshes
+    * contained within the entity.
+    * 
+    * @param tr the transform
+    * 
+    * @return this mesh
+    */
+   @Chainable
+   public Mesh2 transform ( final Transform2 tr ) {
+
+      final int len = this.coords.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec2 c = this.coords[i];
+         Transform2.mulPoint(tr, c, c);
+      }
+      return this;
+   }
+
+   /**
     * Translates all coordinates in the mesh by a vector.
     *
     * @param v the vector
@@ -1672,25 +1697,19 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes.
-    *
-    * @return the string
-    */
-   @Experimental
-   String toBlenderCode ( ) { return this.toBlenderCode(false); }
-
-   /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
     * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how mesh geometry looks in Blender (the control) versus in the
     * library (the test).
     *
     * @param includeUvs whether or not to include UVs
+    * @param z          z offset
     *
     * @return the string
     */
    @Experimental
-   String toBlenderCode ( final boolean includeUvs ) {
+   String toBlenderCode (
+      final boolean includeUvs,
+      final float z ) {
 
       final StringBuilder pyCd = new StringBuilder(1024);
       pyCd.append("{\"name\": \"");
@@ -1702,7 +1721,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int vlen = this.coords.length;
       final int vlast = vlen - 1;
       for ( int i = 0; i < vlen; ++i ) {
-         pyCd.append(this.coords[i].toBlenderCode(0.0f));
+         pyCd.append(this.coords[i].toBlenderCode(z));
          if ( i < vlast ) { pyCd.append(',').append(' '); }
       }
 

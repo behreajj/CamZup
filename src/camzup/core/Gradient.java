@@ -18,12 +18,17 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    /**
     * The set of keys.
     */
-   public final TreeSet < ColorKey > keys = new TreeSet <>();
+   public final TreeSet < ColorKey > keys;
 
    /**
     * A temporary variable to hold queries in evaluation functions.
     */
-   protected final ColorKey query = new ColorKey();
+   protected final ColorKey query;
+
+   {
+      this.keys = new TreeSet <>();
+      this.query = new ColorKey();
+   }
 
    /**
     * Creates a gradient with two default color keys, clear black at 0.0 and
@@ -1212,7 +1217,11 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    /**
     * The default easing function, lerp RGBA.
     */
-   private static Color.AbstrEasing EASING = new Color.LerpRgba();
+   private static Color.AbstrEasing EASING;
+
+   static {
+      Gradient.EASING = new Color.LerpRgba();
+   }
 
    /**
     * Finds a color given a step in the range [0.0, 1.0] . When the step falls
@@ -1484,15 +1493,19 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
          /* Mix color based on color space. Default to RGB. */
          final int clrSpc = ( int ) seg[12];
          if ( clrSpc == 1 || clrSpc == 2 ) {
+
             /* HSB */
             final Color.HueEasing hueFunc = clrSpc == 2 ? new Color.HueCW()
                : new Color.HueCCW();
             mixer = new Color.MixHsba(hueFunc);
             mixer.apply(ltClr, rtClr, f, clr);
+
          } else {
+
             /* RGB */
             mixer = new Color.LerpRgba();
             mixer.apply(ltClr, rtClr, f, clr);
+
          }
 
          /* Create key and add to the tree set. */
@@ -1539,7 +1552,13 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
                final int ri = Gradient.intFromStr(tokens[0]);
                final int gi = Gradient.intFromStr(tokens[1]);
                final int bi = Gradient.intFromStr(tokens[2]);
-               final Color clr = new Color(ri * IUtils.ONE_255, gi * IUtils.ONE_255, bi * IUtils.ONE_255, 1.0f);
+               /* @formatter:off */
+               final Color clr = new Color(
+                  ri * IUtils.ONE_255,
+                  gi * IUtils.ONE_255,
+                  bi * IUtils.ONE_255,
+                  1.0f);
+               /* @formatter:on */
                clrs.add(clr);
             }
          }

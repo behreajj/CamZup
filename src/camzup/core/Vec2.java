@@ -2052,28 +2052,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable,
    }
 
    /**
-    * Mixes two vectors together by a step in [0.0, 1.0] with the help of an
-    * easing function.
-    *
-    * @param origin     the original vector
-    * @param dest       the destination vector
-    * @param step       the step
-    * @param target     the output vector
-    * @param easingFunc the easing function
-    *
-    * @return the mix
-    */
-   public static Vec2 mix (
-      final Vec2 origin,
-      final Vec2 dest,
-      final float step,
-      final Vec2 target,
-      final AbstrEasing easingFunc ) {
-
-      return easingFunc.apply(origin, dest, step, target);
-   }
-
-   /**
     * Wraps a scalar by each component of a vector.
     *
     * @param a      the scalar

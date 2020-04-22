@@ -61,14 +61,10 @@ public class CamZup {
 
       final Rng rng = new Rng();
 
-
-      // final CurveEntity2 ce2 = SvgParser.parse("data/mesh.svg");
+      // final CurveEntity2 ce2 = SvgParser.parse("data/arcToExample.svg");
       // System.out.println(ce2);
       // final String str = ce2.toBlenderCode();
       // System.out.println(str);
-
-      // Mat3 m = new Mat3();
-      // SvgParser.parseTransformElm("translate(4,3)", m);
    }
 
    /**

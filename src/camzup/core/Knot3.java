@@ -350,7 +350,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    @Chainable
    public Knot3 mirrorHandlesBackward ( ) {
 
-      this.foreHandle.set(this.coord.x - ( this.rearHandle.x - this.coord.x ),
+      this.foreHandle.set(
+         this.coord.x - ( this.rearHandle.x - this.coord.x ),
          this.coord.y - ( this.rearHandle.y - this.coord.y ),
          this.coord.z - ( this.rearHandle.z - this.coord.z ));
 
@@ -366,7 +367,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    @Chainable
    public Knot3 mirrorHandlesForward ( ) {
 
-      this.rearHandle.set(this.coord.x - ( this.foreHandle.x - this.coord.x ),
+      this.rearHandle.set(
+         this.coord.x - ( this.foreHandle.x - this.coord.x ),
          this.coord.y - ( this.foreHandle.y - this.coord.y ),
          this.coord.z - ( this.foreHandle.z - this.coord.z ));
 
@@ -771,8 +773,10 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float yOff = Utils.copySign(IUtils.DEFAULT_EPSILON, yCoord);
       final float zOff = Utils.copySign(IUtils.DEFAULT_EPSILON, zCoord);
 
-      return this.set(xCoord, yCoord, zCoord, xCoord + xOff, yCoord + yOff,
-         zCoord + zOff, xCoord - xOff, yCoord - yOff, zCoord - zOff);
+      return this.set(
+         xCoord, yCoord, zCoord,
+         xCoord + xOff, yCoord + yOff, zCoord + zOff,
+         xCoord - xOff, yCoord - yOff, zCoord - zOff);
    }
 
    /**
@@ -1026,7 +1030,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Transforms this knot by a matrix.
+    * Multiplies this knot by a matrix.
     *
     * @param m the matrix
     *
@@ -1040,6 +1044,25 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       Mat4.mulPoint(m, this.coord, this.coord);
       Mat4.mulPoint(m, this.foreHandle, this.foreHandle);
       Mat4.mulPoint(m, this.rearHandle, this.rearHandle);
+
+      return this;
+   }
+
+   /**
+    * Multiplies this knot by a transform.
+    *
+    * @param tr the transform
+    *
+    * @return this knot
+    *
+    * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
+    */
+   @Chainable
+   public Knot3 transform ( final Transform3 tr ) {
+
+      Transform3.mulPoint(tr, this.coord, this.coord);
+      Transform3.mulPoint(tr, this.foreHandle, this.foreHandle);
+      Transform3.mulPoint(tr, this.rearHandle, this.rearHandle);
 
       return this;
    }
@@ -1094,23 +1117,21 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float radius,
       final float tilt ) {
 
-      /* @formatter:off */
-      return new StringBuilder(384)
-         .append("{\"co\": ")
-         .append(this.coord.toBlenderCode())
-         .append(", \"handle_right\": ")
-         .append(this.foreHandle.toBlenderCode())
-         .append(", \"handle_left\": ")
-         .append(this.rearHandle.toBlenderCode())
-         .append(", \"weight\": ")
-         .append(Utils.toFixed(weight, 6))
-         .append(", \"radius\": ")
-         .append(Utils.toFixed(radius, 6))
-         .append(", \"tilt\": ")
-         .append(Utils.toFixed(tilt, 6))
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder pyCd = new StringBuilder(384);
+      pyCd.append("{\"co\": ");
+      pyCd.append(this.coord.toBlenderCode());
+      pyCd.append(", \"handle_right\": ");
+      pyCd.append(this.foreHandle.toBlenderCode());
+      pyCd.append(", \"handle_left\": ");
+      pyCd.append(this.rearHandle.toBlenderCode());
+      pyCd.append(", \"weight\": ");
+      pyCd.append(Utils.toFixed(weight, 6));
+      pyCd.append(", \"radius\": ");
+      pyCd.append(Utils.toFixed(radius, 6));
+      pyCd.append(", \"tilt\": ");
+      pyCd.append(Utils.toFixed(tilt, 6));
+      pyCd.append('}');
+      return pyCd.toString();
    }
 
    /**
@@ -1216,9 +1237,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final Knot3 next ) {
 
       prev.foreHandle.set(xPrevControl, yPrevControl, zPrevControl);
-
       next.rearHandle.set(xNextControl, yNextControl, zNextControl);
-
       next.coord.set(xNextAnchor, yNextAnchor, zNextAnchor);
 
       return next;
@@ -1245,9 +1264,11 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final Knot3 prev,
       final Knot3 next ) {
 
-      return Knot3.fromSegCubic(prevControl.x, prevControl.y, prevControl.z,
-         nextControl.x, nextControl.y, nextControl.z, nextAnchor.x,
-         nextAnchor.y, nextAnchor.z, prev, next);
+      return Knot3.fromSegCubic(
+         prevControl.x, prevControl.y, prevControl.z,
+         nextControl.x, nextControl.y, nextControl.z,
+         nextAnchor.x, nextAnchor.y, nextAnchor.z,
+         prev, next);
    }
 
    /**
@@ -1295,8 +1316,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final Knot3 prev,
       final Knot3 next ) {
 
-      return Knot3.fromSegLinear(nextAnchor.x, nextAnchor.y, nextAnchor.z, prev,
-         next);
+      return Knot3.fromSegLinear(
+         nextAnchor.x, nextAnchor.y, nextAnchor.z,
+         prev, next);
    }
 
    /**

@@ -1423,31 +1423,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
       if ( step >= 1.0f ) { return target.set(dest); }
 
       final float u = 1.0f - step;
-      return target.set(u * origin.x + step * dest.x,
-         u * origin.y + step * dest.y, u * origin.z + step * dest.z,
+      return target.set(
+         u * origin.x + step * dest.x,
+         u * origin.y + step * dest.y,
+         u * origin.z + step * dest.z,
          u * origin.w + step * dest.w);
-   }
-
-   /**
-    * Mixes two vectors together by a step in [0.0, 1.0] with the help of a
-    * easing function.
-    *
-    * @param origin     the original vector
-    * @param dest       the destination vector
-    * @param step       the step
-    * @param target     the output vector
-    * @param easingFunc the easing function
-    *
-    * @return the mix
-    */
-   public static Vec4 mix (
-      final Vec4 origin,
-      final Vec4 dest,
-      final float step,
-      final Vec4 target,
-      final AbstrEasing easingFunc ) {
-
-      return easingFunc.apply(origin, dest, step, target);
    }
 
    /**

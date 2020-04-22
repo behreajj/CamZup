@@ -759,6 +759,27 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
+    * Transforms all coordinates in the curve <em>permanently</em> by a
+    * transform. Not to be confused with the <em>temporary</em>
+    * transformations applied by a curve entity's transform to the meshes
+    * contained within the entity.
+    * 
+    * @param tr the transform
+    * 
+    * @return this mesh
+    */
+   @Chainable
+   public Curve2 transform ( final Transform2 tr ) {
+
+      final Iterator < Knot2 > itr = this.knots.iterator();
+      while ( itr.hasNext() ) {
+         itr.next().transform(tr);
+      }
+
+      return this;
+   }
+
+   /**
     * Translates all knots in the curve by a vector.
     *
     * @param v the vector
@@ -818,11 +839,12 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * library (the test).
     *
     * @param uRes the resolution u
+    * @param z    the z offset
     *
     * @return the string
     */
    @Experimental
-   String toBlenderCode ( final int uRes ) {
+   String toBlenderCode ( final int uRes, final float z ) {
 
       final StringBuilder pyCd = new StringBuilder(64 + 256 * this.knots.size());
       pyCd.append("{\"closed_loop\": ");
@@ -835,7 +857,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       int i = 0;
       final int last = this.knots.size() - 1;
       while ( itr.hasNext() ) {
-         pyCd.append(itr.next().toBlenderCode());
+         pyCd.append(itr.next().toBlenderCode(z));
          if ( i < last ) { pyCd.append(',').append(' '); }
          i++;
       }
@@ -953,9 +975,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          prev.set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
          next.set(radius * Utils.scNorm(a1), radius * Utils.scNorm(a1 - 0.25f),
             0.0f, 0.0f, 0.0f, 0.0f);
-
-         Vec2.mix(prev.coord, next.coord, IUtils.ONE_THIRD, prev.foreHandle);
-         Vec2.mix(next.coord, prev.coord, IUtils.ONE_THIRD, next.rearHandle);
+         Curve2.lerp13(prev.coord, next.coord, prev.foreHandle);
+         Curve2.lerp13(next.coord, prev.coord, next.rearHandle);
          prev.mirrorHandlesForward();
          next.mirrorHandlesBackward();
 

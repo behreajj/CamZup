@@ -229,8 +229,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public int hashCode ( ) {
 
       return ( IUtils.MUL_BASE ^ Float.floatToIntBits(
-         this.real) ) * IUtils.HASH_MUL ^ ( this.imag == null
-            ? 0
+         this.real) ) * IUtils.HASH_MUL ^ ( this.imag == null ? 0
             : this.imag.hashCode() );
    }
 
@@ -511,23 +510,21 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    @Experimental
    String toBlenderCode ( ) {
 
-      /* @formatter:off */
       final Vec3 i = this.imag;
-      return new StringBuilder(96)
-         .append('(')
-         .append(Utils.toFixed(this.real, 6))
-         .append(',')
-         .append(' ')
-         .append(Utils.toFixed(i.x, 6))
-         .append(',')
-         .append(' ')
-         .append(Utils.toFixed(i.y, 6))
-         .append(',')
-         .append(' ')
-         .append(Utils.toFixed(i.z, 6))
-         .append(')')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder pyCd = new StringBuilder(96);
+      pyCd.append('(');
+      pyCd.append(Utils.toFixed(this.real, 6));
+      pyCd.append(',');
+      pyCd.append(' ');
+      pyCd.append(Utils.toFixed(i.x, 6));
+      pyCd.append(',');
+      pyCd.append(' ');
+      pyCd.append(Utils.toFixed(i.y, 6));
+      pyCd.append(',');
+      pyCd.append(' ');
+      pyCd.append(Utils.toFixed(i.z, 6));
+      pyCd.append(')');
+      return pyCd.toString();
    }
 
    /**
@@ -1712,28 +1709,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Mixes two quaternions together by a step in [0.0, 1.0] with the help of
-    * an easing function.
-    *
-    * @param origin     the original quaternion
-    * @param dest       the destination quaternion
-    * @param step       the step
-    * @param target     the output quaternion
-    * @param easingFunc the easing function
-    *
-    * @return the mix
-    */
-   public static Quaternion mix (
-      final Quaternion origin,
-      final Quaternion dest,
-      final float step,
-      final Quaternion target,
-      final AbstrEasing easingFunc ) {
-
-      return easingFunc.apply(origin, dest, step, target);
-   }
-
-   /**
     * Multiplies a scalar and quaternion.
     *
     * @param a      the scalar
@@ -2168,7 +2143,11 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
       final float mInv = Utils.invSqrtUnchecked(mSq);
       final Vec3 i = target.imag;
-      return target.set(target.real * mInv, i.x * mInv, i.y * mInv, i.z * mInv);
+      return target.set(
+         target.real * mInv,
+         i.x * mInv,
+         i.y * mInv,
+         i.z * mInv);
    }
 
    /**

@@ -191,7 +191,6 @@
 			delimiter=":" />
 	</target>
 
-
 	<target name="generate.distribution" if="is.normal">
 		<mkdir dir="${project.dist}" />
 		<delete dir="${project.dist.version}" />
@@ -200,8 +199,6 @@
 		<move file="${project.tmp}/${project.name}"
 			toDir="${project.dist.version}" />
 	</target>
-
-
 
 	<target name="generate.javadoc" if="is.normal">
 		<javadoc
@@ -252,8 +249,6 @@
 			file="${project.dist.version}/web/index.html" match="##examples##"
 			replace="" flags="g" />
 	</target>
-
-
 
 	<!-- find and replace ##placeholder## keywords in a file -->
 	<target name="parse.file">
@@ -320,8 +315,6 @@
 			replace="${tested.processingVersion}" flags="g" />
 	</target>
 
-
-
 	<target name="generate.install.library" if="is.normal">
 		<copy file="${install.source}" tofile="${install.destination}" />
 
@@ -329,8 +322,6 @@
 			<param name="file" value="${install.destination}" />
 		</antcall>
 	</target>
-
-
 
 	<target name="generate.zip" if="is.normal">
 		<!-- zip the distribution of the Library -->

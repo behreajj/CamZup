@@ -214,10 +214,7 @@ public class Color extends Vec4 {
     * @see Color#Color(Color)
     */
    @Override
-   public Color clone ( ) {
-
-      return new Color(this.x, this.y, this.z, this.w);
-   }
+   public Color clone ( ) { return new Color(this.x, this.y, this.z, this.w); }
 
    /**
     * Returns -1 when this color is less than the comparisand; 1 when it is
@@ -487,10 +484,7 @@ public class Color extends Vec4 {
     * @return this color
     */
    @Chainable
-   public Color set ( final Color c ) {
-
-      return this.set(c.x, c.y, c.z, c.w);
-   }
+   public Color set ( final Color c ) { return this.set(c.x, c.y, c.z, c.w); }
 
    /**
     * Sets the red, green and blue color channels of this color. The alpha
@@ -680,15 +674,15 @@ public class Color extends Vec4 {
       final float gamma,
       final boolean inclAlpha ) {
 
-      /* @formatter:off */
-      final StringBuilder pyCd = new StringBuilder(96)
-         .append('(')
-         .append(Utils.toFixed(Utils.pow(this.x, gamma), 6))
-         .append(',').append(' ')
-         .append(Utils.toFixed(Utils.pow(this.y, gamma), 6))
-         .append(',').append(' ')
-         .append(Utils.toFixed(Utils.pow(this.z, gamma), 6));
-      /* @formatter:on */
+      final StringBuilder pyCd = new StringBuilder(96);
+      pyCd.append('(');
+      pyCd.append(Utils.toFixed(Utils.pow(this.x, gamma), 6));
+      pyCd.append(',');
+      pyCd.append(' ');
+      pyCd.append(Utils.toFixed(Utils.pow(this.y, gamma), 6));
+      pyCd.append(',');
+      pyCd.append(' ');
+      pyCd.append(Utils.toFixed(Utils.pow(this.z, gamma), 6));
 
       if ( inclAlpha ) {
          pyCd.append(',').append(' ').append(Utils.toFixed(this.w, 6));
@@ -709,9 +703,12 @@ public class Color extends Vec4 {
 
       /* @formatter:off */
       return new StringBuilder(96)
-         .append(Utils.toFixed(this.x, 6)).append(' ')
-         .append(Utils.toFixed(this.y, 6)).append(' ')
-         .append(Utils.toFixed(this.z, 6)).append(' ')
+         .append(Utils.toFixed(this.x, 6))
+         .append(' ')
+         .append(Utils.toFixed(this.y, 6))
+         .append(' ')
+         .append(Utils.toFixed(this.z, 6))
+         .append(' ')
          .append(Utils.toFixed(this.w, 6))
          .toString();
       /* @formatter:on */
@@ -728,8 +725,10 @@ public class Color extends Vec4 {
 
       /* @formatter:off */
       return new StringBuilder(32)
-         .append(( int ) ( this.x * 0xff + 0.5f )).append(' ')
-         .append(( int ) ( this.y * 0xff + 0.5f )).append(' ')
+         .append(( int ) ( this.x * 0xff + 0.5f ))
+         .append(' ')
+         .append(( int ) ( this.y * 0xff + 0.5f ))
+         .append(' ')
          .append(( int ) ( this.z * 0xff + 0.5f ))
          .toString();
       /* @formatter:on */
@@ -749,11 +748,6 @@ public class Color extends Vec4 {
 
       return Color.toHexInt(this) == Color.toHexInt(c);
    }
-
-   /**
-    * The default easing function, smooth step RGBA.
-    */
-   private static AbstrEasing EASING = new SmoothStepRgba();
 
    /**
     * Adds the left and right operand, except for the alpha channel, then
@@ -798,10 +792,7 @@ public class Color extends Vec4 {
     *
     * @return the evaluation
     */
-   public static boolean any ( final Color c ) {
-
-      return c.w > 0.0f;
-   }
+   public static boolean any ( final Color c ) { return c.w > 0.0f; }
 
    /**
     * Converts two colors to integers, performs the bitwise AND operation on
@@ -1218,7 +1209,7 @@ public class Color extends Vec4 {
       /* @formatter:off */
       return target.set(
          ( c >> 0x10 & 0xff ) * IUtils.ONE_255,
-         ( c >>  0x8 & 0xff ) * IUtils.ONE_255,
+         ( c >> 0x8  & 0xff ) * IUtils.ONE_255,
          ( c         & 0xff ) * IUtils.ONE_255,
          ( c >> 0x18 & 0xff ) * IUtils.ONE_255);
       /* @formatter:on */
@@ -1242,7 +1233,7 @@ public class Color extends Vec4 {
       /* @formatter:off */
       return target.set(
          ( c >> 0x10 & 0xff ) * IUtils.ONE_255,
-         ( c >>  0x8 & 0xff ) * IUtils.ONE_255,
+         ( c >> 0x8  & 0xff ) * IUtils.ONE_255,
          ( c         & 0xff ) * IUtils.ONE_255,
          ( c >> 0x18 & 0xff ) * IUtils.ONE_255);
       /* @formatter:on */
@@ -1347,8 +1338,8 @@ public class Color extends Vec4 {
     * <br>
     * Differences in naming conventions include:
     * <ul>
-    * <li>(0.0, 1.0, 1.0) is aqua, not cyan;</li>
-    * <li>(1.0, 0.0, 1.0) is fuchsia, not magenta;</li>
+    * <li>(0.0, 1.0, 1.0) may be either aqua or cyan;</li>
+    * <li>(1.0, 0.0, 1.0) may be either fuchsia or magenta;</li>
     * <li>(0.0, 1.0, 0.0) is lime, not green;</li>
     * <li>(0.0, 0.5, 0.0) is green.</li>
     * </ul>
@@ -1362,7 +1353,7 @@ public class Color extends Vec4 {
       final String keyword,
       final Color target ) {
 
-      final String lc = keyword.toLowerCase();
+      final String lc = keyword.toLowerCase().trim();
       switch ( lc ) {
 
          case "aqua":
@@ -1418,16 +1409,6 @@ public class Color extends Vec4 {
          default:
             return target.reset();
       }
-   }
-
-   /**
-    * Gets the name of the easing function used to mix colors.
-    *
-    * @return the easing function name
-    */
-   public static String getEasingString ( ) {
-
-      return Color.EASING.toString();
    }
 
    /**
@@ -1573,7 +1554,7 @@ public class Color extends Vec4 {
 
       /* @formatter:off */
       return ( c >> 0x10 & 0xff ) * 0.0008337255f +
-             ( c >>  0x8 & 0xff ) * 0.0028047059f +
+             ( c >> 0x8  & 0xff ) * 0.0028047059f +
              ( c         & 0xff ) * 0.00028313725f;
       /* @formatter:on */
    }
@@ -1637,8 +1618,8 @@ public class Color extends Vec4 {
    }
 
    /**
-    * Mixes two colors by a step in the range [0.0, 1.0]. Uses the default
-    * mixing function.
+    * Mixes two colors by a step in the range [0.0, 1.0] . Uses smooth step
+    * RGB easing.
     *
     * @param origin the origin color
     * @param dest   the destination color
@@ -1653,29 +1634,16 @@ public class Color extends Vec4 {
       final float step,
       final Color target ) {
 
-      return Color.mix(origin, dest, step, target, Color.EASING);
-   }
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
 
-   /**
-    * Mixes two colors by a step in the range [0.0, 1.0]. Uses the mixing
-    * function provided to the function.
-    *
-    * @param origin     the origin color
-    * @param dest       the destination color
-    * @param step       the step
-    * @param target     the output color
-    * @param easingFunc the easing function
-    *
-    * @return the mixed color
-    */
-   public static Color mix (
-      final Color origin,
-      final Color dest,
-      final float step,
-      final Color target,
-      final AbstrEasing easingFunc ) {
-
-      return easingFunc.apply(origin, dest, step, target);
+      final float t = step * step * ( 3.0f - ( step + step ) );
+      final float u = 1.0f - t;
+      return target.set(
+         u * origin.x + t * dest.x,
+         u * origin.y + t * dest.y,
+         u * origin.z + t * dest.z,
+         u * origin.w + t * dest.w);
    }
 
    /**
@@ -2186,16 +2154,6 @@ public class Color extends Vec4 {
    public static float rgbMin ( final Color c ) {
 
       return Utils.min(c.x, c.y, c.z);
-   }
-
-   /**
-    * Sets the easing function used to mix color.
-    *
-    * @param easing the easing function
-    */
-   public static void setEasing ( final AbstrEasing easing ) {
-
-      if ( easing != null ) { Color.EASING = easing; }
    }
 
    /**

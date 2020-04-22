@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * A draft scalable vector graphics (SVG) parser class. Currently
- * unfinished.
+ * A very basic scalable vector graphics (SVG) parser class.
  */
 @Experimental
 public abstract class SvgParser {
@@ -95,19 +94,42 @@ public abstract class SvgParser {
          doc.normalizeDocument();
 
          final Node header = doc.getFirstChild();
-         // final NamedNodeMap nnm = header.getAttributes();
-         // final Vec4 vbVec = new Vec4(0.0f, 0.0f, 1.0f, 1.0f);
-         // final Node viewbox = nnm.getNamedItem("viewBox");
-         // final Node width = nnm.getNamedItem("width");
-         // final Node height = nnm.getNamedItem("height");
-         // if ( viewbox != null ) { SvgParser.parseViewBox(viewbox, vbVec); }
-
          final NodeList nodes = header.getChildNodes();
          final int nodeLen = nodes.getLength();
          final Mat3 root = new Mat3();
          for ( int i = 0; i < nodeLen; ++i ) {
             final Node node = nodes.item(i);
             SvgParser.parseNode(node, result, root);
+         }
+
+         final NamedNodeMap attr = header.getAttributes();
+
+         final Node width = attr.getNamedItem("width");
+         String widthStr = width != null ? width.getTextContent() : "0.0";
+         float widpx = parseFloat(widthStr);
+
+         final Node height = attr.getNamedItem("height");
+         String heightStr = height != null ? height.getTextContent() : "0.0";
+         float hghpx = parseFloat(heightStr);
+
+         final Node viewbox = attr.getNamedItem("viewBox");
+         final Vec4 vbVec = new Vec4(0.0f, 0.0f, 0.0f, 0.0f);
+         if ( viewbox != null ) { SvgParser.parseViewBox(viewbox, vbVec); }
+         float widvb = Utils.diff(vbVec.z, vbVec.x);
+         float hghvb = Utils.diff(vbVec.w, vbVec.y);
+
+         Vec2 shift = new Vec2();
+         shift.set(
+            Utils.max(widpx, widvb) * -0.5f,
+            Utils.max(hghpx, hghvb) * -0.5f);
+
+         if ( Vec2.any(shift) ) {
+            for ( Curve2 curve : result ) {
+               curve.translate(shift);
+            }
+
+            Vec2.negate(shift, shift);
+            result.moveTo(shift);
          }
 
       } catch ( final Exception e ) {
@@ -534,12 +556,23 @@ public abstract class SvgParser {
     *
     * @return the output curve entity
     */
-   public static CurveEntity2 parseNode (
+   public static ArrayList < Curve2 > parseNode (
       final Node node,
       final CurveEntity2 target,
       final Mat3 parent ) {
 
-      final ArrayList < Curve2 > newCurves = new ArrayList <>();
+      ArrayList < Curve2 > newCurves = new ArrayList <>();
+
+      /* Check for transform. */
+      final Mat3 current = new Mat3(parent);
+
+      final NamedNodeMap attributes = node.getAttributes();
+      if ( attributes != null ) {
+         final Node transform = attributes.getNamedItem("transform");
+         if ( transform != null ) {
+            SvgParser.parseTransform(transform, current);
+         }
+      }
 
       final String name = node.getNodeName().toLowerCase();
       switch ( name ) {
@@ -554,7 +587,7 @@ public abstract class SvgParser {
             break;
 
          case "path":
-            Curve2[] cs = SvgParser.parsePath(node);
+            final Curve2[] cs = SvgParser.parsePath(node);
             for ( int i = 0; i < cs.length; ++i ) {
                newCurves.add(cs[i]);
             }
@@ -571,19 +604,12 @@ public abstract class SvgParser {
 
       }
 
-      /* Check for transform. */
-      final Mat3 current = new Mat3(parent);
-      // final NamedNodeMap attributes = node.getAttributes();
-      // if ( attributes != null ) {
-      // final Node transform = attributes.getNamedItem("transform");
-      // if ( transform != null ) {
-      // SvgParser.parseTransform(transform, current);
-      // for ( final Curve2 curve : newCurves ) {
-      // curve.transform(current);
-      // }
-      // }
-      // }
+      /* Apply transform to curves from this node. */
+      for ( Curve2 curve : newCurves ) {
+         curve.transform(current);
+      }
 
+      /* Append new curves to target. */
       target.appendAll(newCurves);
 
       /* Iterate over children. */
@@ -591,10 +617,12 @@ public abstract class SvgParser {
       final int childLen = children.getLength();
       for ( int i = 0; i < childLen; ++i ) {
          final Node child = children.item(i);
-         SvgParser.parseNode(child, target, current);
+         newCurves = SvgParser.parseNode(child, target, current);
       }
 
-      return target;
+      /* Revert transform to parent. */
+      current.set(parent);
+      return newCurves;
    }
 
    /**
@@ -1294,6 +1322,14 @@ public abstract class SvgParser {
       return target;
    }
 
+   /**
+    * Parses an SVG node containing transform data.
+    * 
+    * @param trNode the transform node
+    * @param target the output matrix
+    * 
+    * @return the matrix
+    */
    public static Mat3 parseTransform (
       final Node trNode,
       final Mat3 target ) {
@@ -1309,23 +1345,38 @@ public abstract class SvgParser {
          final int dataLen = trData.length;
          if ( dataLen > 1 ) {
             final String cmd = trData[0];
-            System.out.println(cmd);
+            // System.out.println(cmd);
 
             switch ( cmd ) {
-               case "translate":
 
-                  final String tx = trData[1];
-                  final String ty = trData[2];
+               case "matrix":
 
-                  Mat3.fromTranslation(
-                     SvgParser.parseFloat(tx),
-                     SvgParser.parseFloat(ty),
-                     delta);
+                  /* Column major. */
+                  final String m00 = trData[1];
+                  final String m10 = trData[2];
+                  final String m01 = trData[3];
+                  final String m11 = trData[4];
+                  final String m02 = trData[5];
+                  final String m12 = trData[6];
+
+                  delta.set(
+                     SvgParser.parseFloat(m00),
+                     SvgParser.parseFloat(m01),
+                     SvgParser.parseFloat(m02),
+                     SvgParser.parseFloat(m10),
+                     SvgParser.parseFloat(m11),
+                     SvgParser.parseFloat(m12),
+                     0.0f, 0.0f, 1.0f);
                   Mat3.mul(target, delta, target);
 
                   break;
 
                case "rotate":
+
+                  /*
+                   * SVG rotate also features rotation about an arbitrary pivot,
+                   * but that is not supported here.
+                   */
 
                   final String ang = trData[1];
 
@@ -1336,12 +1387,44 @@ public abstract class SvgParser {
 
                case "scale":
 
-                  final String sx = trData[1];
-                  final String sy = dataLen > 2 ? trData[2] : sx;
+                  final String scx = trData[1];
+                  final String scy = dataLen > 2 ? trData[2] : scx;
 
                   Mat3.fromScale(
-                     SvgParser.parseFloat(sx),
-                     SvgParser.parseFloat(sy),
+                     SvgParser.parseFloat(scx),
+                     SvgParser.parseFloat(
+                        scy),
+                     delta);
+                  Mat3.mul(target, delta, target);
+
+                  break;
+
+               case "skewx":
+
+                  final String skx = trData[1];
+
+                  Mat3.fromSkewX(SvgParser.parseAngle(skx), delta);
+                  Mat3.mul(target, delta, target);
+
+                  break;
+
+               case "skewy":
+
+                  final String sky = trData[1];
+
+                  Mat3.fromSkewY(SvgParser.parseAngle(sky), delta);
+                  Mat3.mul(target, delta, target);
+
+                  break;
+
+               case "translate":
+
+                  final String tx = trData[1];
+                  final String ty = dataLen > 2 ? trData[2] : "0.0";
+
+                  Mat3.fromTranslation(
+                     SvgParser.parseFloat(tx),
+                     SvgParser.parseFloat(ty),
                      delta);
                   Mat3.mul(target, delta, target);
 
@@ -1368,14 +1451,14 @@ public abstract class SvgParser {
 
       float x = 0.0f;
       float y = 0.0f;
-      float z = 1.0f;
-      float w = 1.0f;
+      float z = 0.0f;
+      float w = 0.0f;
 
       final String content = viewbox.getTextContent();
       final String[] tokens = content.split(" ");
 
-      if ( tokens.length > 3 ) { w = SvgParser.parseFloat(tokens[3], 1.0f); }
-      if ( tokens.length > 2 ) { z = SvgParser.parseFloat(tokens[2], 1.0f); }
+      if ( tokens.length > 3 ) { w = SvgParser.parseFloat(tokens[3], 0.0f); }
+      if ( tokens.length > 2 ) { z = SvgParser.parseFloat(tokens[2], 0.0f); }
       if ( tokens.length > 1 ) { y = SvgParser.parseFloat(tokens[1], 0.0f); }
       if ( tokens.length > 0 ) { x = SvgParser.parseFloat(tokens[0], 0.0f); }
 
@@ -1398,127 +1481,6 @@ public abstract class SvgParser {
          if ( token.length() > 0 ) { list.add(token); }
       }
       return list.toArray(new String[list.size()]);
-   }
-
-   static Knot2[] parseArcTo (
-      // final Knot2 prev,
-      final float x1,
-      final float y1,
-      final float xr,
-      final float yr,
-      final float angle,
-      final boolean fa,
-      final boolean fs,
-      final float x2,
-      final float y2 ) {
-
-      // Original processing code cites
-      // http://www.spaceroots.org/documents/ellipse/node22.html
-
-      float vrx = Utils.abs(xr);
-      float vry = Utils.abs(yr);
-
-      final float phi = ( angle % IUtils.TAU + IUtils.TAU ) % IUtils.TAU;
-      final float cosPhi = Utils.cos(phi);
-      final float sinPhi = Utils.sin(phi);
-
-      final float xDiff = x1 - x2;
-      final float yDiff = y1 - y2;
-
-      final float x1r = ( cosPhi * xDiff + sinPhi * yDiff ) * 0.5f;
-      final float y1r = ( -sinPhi * xDiff + cosPhi * yDiff ) * 0.5f;
-
-      final float x1rsq = x1r * x1r;
-      final float y1rsq = y1r * y1r;
-
-      final float rxsq = vrx * vrx;
-      final float rysq = vry * vry;
-
-      float cxr = 0.0f;
-      float cyr = 0.0f;
-
-      final float A = x1rsq / rxsq + y1rsq / rysq;
-      if ( A > 1.0f ) {
-         final float sqrtA = Utils.sqrt(A);
-         vrx *= sqrtA;
-         vry *= sqrtA;
-      } else {
-         final boolean sweepLarge = fa == fs;
-         final int flagSign = sweepLarge ? -1 : 1;
-         final float k = flagSign * Utils.sqrt(
-            rxsq * rysq / ( rxsq * y1rsq + rysq * x1rsq ) - 1.0f);
-         cxr = k * vrx * y1r / vry;
-         cyr = -k * vry * x1r / vrx;
-      }
-
-      final float cx = cosPhi * cxr - sinPhi * cyr + ( x1 + x2 ) * 0.5f;
-      final float cy = sinPhi * cxr + cosPhi * cyr + ( y1 + y2 ) * 0.5f;
-
-      float phi1 = 0.0f;
-      float phiDelta = 0.0f;
-
-      final float sx = ( x1r - cxr ) / vrx;
-      final float sy = ( y1r - cyr ) / vry;
-      final float tx = ( -x1r - cxr ) / vrx;
-      final float ty = ( -y1r - cyr ) / vry;
-      phi1 = Utils.atan2(sy, sx);
-      phiDelta = ( ( Utils.atan2(ty,
-         tx) - phi1 ) % IUtils.TAU + IUtils.TAU ) % IUtils.TAU;
-      if ( !fs ) { phiDelta -= IUtils.TAU; }
-
-      final int segmentCount = Utils.ceilToInt(
-         Utils.abs(phiDelta) / IUtils.TAU * 4.0f);
-
-      final float inc = phiDelta / segmentCount;
-
-      final float sinInc = Utils.sin(inc);
-      final float tanInc = Utils.tan(inc * 0.5f);
-      final float tanIncSq = tanInc * tanInc;
-      final float a = sinInc * ( Utils.sqrt(
-         4.0f + 3.0f * tanIncSq) - 1.0f ) / 3.0f;
-
-      final float cosPhi1 = Utils.cos(phi1);
-      final float sinPhi1 = Utils.sin(phi1);
-
-      float p1x = x1;
-      float p1y = y1;
-      float relq1x = a * ( -vrx * cosPhi * sinPhi1 - vry * sinPhi * cosPhi1 );
-      float relq1y = a * ( -vrx * sinPhi * sinPhi1 + vry * cosPhi * cosPhi1 );
-
-      final Knot2[] result = new Knot2[segmentCount];
-      Knot2 pr = new Knot2(x1, y1);
-      for ( int i = 0; i < segmentCount; i++ ) {
-         final float eta = phi1 + ( i + 1.0f ) * inc;
-         final float cosEta = Utils.cos(eta);
-         final float sinEta = Utils.sin(eta);
-
-         float p2x = cx + vrx * cosPhi * cosEta - vry * sinPhi * sinEta;
-         float p2y = cy + vrx * sinPhi * cosEta + vry * cosPhi * sinEta;
-         final float relq2x = a * ( -vrx * cosPhi * sinEta - vry * sinPhi * cosEta );
-         final float relq2y = a * ( -vrx * sinPhi * sinEta + vry * cosPhi * cosEta );
-
-         if ( i == segmentCount - 1 ) {
-            p2x = x2;
-            p2y = y2;
-         }
-
-         final Knot2 curr = new Knot2();
-         result[i] = curr;
-         Knot2.fromSegCubic(
-            p1x + relq1x, p1y + relq1y,
-            p2x - relq2x, p2y - relq2y,
-            p2x, p2y,
-            pr, curr);
-
-         p1x = p2x;
-         relq1x = relq2x;
-         p1y = p2y;
-         relq1y = relq2y;
-
-         pr = curr;
-      }
-
-      return result;
    }
 
    /**

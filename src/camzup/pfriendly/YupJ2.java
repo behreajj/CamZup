@@ -168,7 +168,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.tr2Loc = new Vec2();
       this.tr2Scale = new Vec2();
       this.transform = new Transform2();
-
    }
 
    /**
@@ -2972,6 +2971,37 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * Draws a 2D text entity.<br>
+    * <br>
+    * Support for textures in this renderer is limited.
+    *
+    * @param entity the text entity
+    */
+   @Experimental
+   public void text ( final TextEntity2 entity ) {
+
+      final Transform2 tr = entity.transform;
+      final Vec2 loc = tr.getLocation(new Vec2());
+      final MaterialPImage mat = entity.material;
+      final PImage txtr = mat.texture;
+      final int w = txtr.width;
+      final int h = txtr.height;
+      final float wHalf = w * 0.5f;
+      final float hHalf = h * 0.5f;
+
+      this.pushMatrix();
+      this.pushStyle();
+      this.translate(loc.x, loc.y);
+      this.rotate(tr.getRotation());
+      this.tint(Color.toHexInt(mat.tint));
+      this.imageImpl(txtr,
+         -wHalf, hHalf, wHalf, -hHalf,
+         0, 0, w, h);
+      this.popStyle();
+      this.popMatrix();
+   }
+
+   /**
     * Sets the text mode to either MODEL or SHAPE.
     *
     * @param mode the text mode
@@ -2994,6 +3024,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       PApplet.showMethodWarning("textureMode");
    }
+
+   /**
+    * Texture wrap is unused by this renderer.
+    */
+   @SuppressWarnings ( "unused" )
+   @Override
+   public void textureWrap ( final int wrap ) {}
 
    /**
     * Sets the renderer's current stroke to the tint.

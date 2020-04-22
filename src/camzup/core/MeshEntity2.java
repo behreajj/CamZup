@@ -159,10 +159,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * @see List#iterator()
     */
    @Override
-   public Iterator < Mesh2 > iterator ( ) {
-
-      return this.meshes.iterator();
-   }
+   public Iterator < Mesh2 > iterator ( ) { return this.meshes.iterator(); }
 
    /**
     * Gets the number of meshes held by the entity.
@@ -306,16 +303,19 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       if ( includeUvs ) { pyCd.append("import bmesh\n"); }
 
-      pyCd.append("from bpy import data as D, context as C\n\n").append(
-         "mesh_entity = {\"name\": \"").append(this.name).append(
-            "\", \"transform\": ").append(
-               this.transform.toBlenderCode()).append(", \"meshes\": [");
+      pyCd.append("from bpy import data as D, context as C\n\n");
+      pyCd.append("mesh_entity = {\"name\": \"");
+      pyCd.append(this.name);
+      pyCd.append("\", \"transform\": ");
+      pyCd.append(this.transform.toBlenderCode());
+      pyCd.append(", \"meshes\": [");
 
       int meshIndex = 0;
       final int meshLast = meshLen - 1;
       final Iterator < Mesh2 > meshItr = this.meshes.iterator();
       while ( meshItr.hasNext() ) {
-         pyCd.append(meshItr.next().toBlenderCode(includeUvs));
+         // final float zoff = 0.0001f * meshIndex;
+         pyCd.append(meshItr.next().toBlenderCode(includeUvs, 0.0f));
          if ( meshIndex < meshLast ) { pyCd.append(',').append(' '); }
          meshIndex++;
       }
@@ -348,17 +348,20 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       pyCd.append("parent_obj.empty_display_size = 0.25\n");
       pyCd.append("scene_objs = C.scene.collection.objects\n");
       pyCd.append("scene_objs.link(parent_obj)\n\n");
+
       pyCd.append("materials = mesh_entity[\"materials\"]\n");
       pyCd.append("d_mats = D.materials\n");
       pyCd.append("for material in materials:\n");
       pyCd.append("    fill_clr = material[\"fill\"]\n");
       pyCd.append("    metal_val = material[\"metallic\"]\n");
       pyCd.append("    rough_val = material[\"roughness\"]\n\n");
+
       pyCd.append("    mat_data = d_mats.new(material[\"name\"])\n");
       pyCd.append("    mat_data.diffuse_color = fill_clr\n");
       pyCd.append("    mat_data.metallic = metal_val\n");
       pyCd.append("    mat_data.roughness = rough_val\n");
       pyCd.append("    mat_data.use_nodes = True\n\n");
+      
       pyCd.append("    node_tree = mat_data.node_tree\n");
       pyCd.append("    nodes = node_tree.nodes\n");
       pyCd.append("    pbr = nodes[\"Principled BSDF\"]\n");
@@ -373,6 +376,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       pyCd.append("    cr = pbr_in[\"Clearcoat Roughness\"]\n");
       pyCd.append("    cr.default_value = ");
       pyCd.append("material[\"clearcoat_roughness\"]\n\n");
+
       pyCd.append("meshes = mesh_entity[\"meshes\"]\n");
       pyCd.append("d_meshes = D.meshes\n");
       pyCd.append("for mesh in meshes:\n");
@@ -483,12 +487,13 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       final int places,
       final int truncate ) {
 
-      final StringBuilder sb = new StringBuilder(1024).append(
-         "{ name: \"").append(this.name).append('\"').append(
-            ", transform: ").append(
-               this.transform.toString(
-                  places)).append(
-                     ", meshes: [ ");
+      final StringBuilder sb = new StringBuilder(1024);
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append('\"');
+      sb.append(", transform: ");
+      sb.append(this.transform.toString(places));
+      sb.append(", meshes: [ ");
 
       int i = 0;
       final Iterator < Mesh2 > itr = this.meshes.iterator();
@@ -497,7 +502,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
          sb.append(itr.next().toString(places, truncate));
          if ( i < last ) {
             sb.append(',').append(' ');
-            // sb.append('\n');
          }
          i++;
       }

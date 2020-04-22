@@ -2020,7 +2020,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Shears a shape around the x axis the amount specified in radians.
+    * Shears a shape around the x axis by the angle in radians.
     *
     * @param radians the angle in radians
     */
@@ -2035,7 +2035,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Shears a shape around the y axis the amount specified in radians.
+    * Shears a shape around the y axis by the angle in radians.
     *
     * @param radians the angle in radians
     */

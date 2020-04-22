@@ -406,7 +406,7 @@ public class Mat3 extends Matrix {
 
    /**
     * Resets this matrix to an initial state,
-    * 
+    *
     * <pre>
     * 1.0, 0.0, 0.0,
     * 0.0, 1.0, 0.0,
@@ -763,17 +763,17 @@ public class Mat3 extends Matrix {
 
       /* @formatter:off */
       return new StringBuilder(128)
-         .append('\n').append(Utils.toFixed(this.m00, places))
+                    .append('\n').append(Utils.toFixed(this.m00, places))
          .append(',').append(' ').append(Utils.toFixed(this.m01, places))
          .append(',').append(' ').append(Utils.toFixed(this.m02, places))
          .append(',')
 
-         .append('\n').append(Utils.toFixed(this.m10, places))
+                    .append('\n').append(Utils.toFixed(this.m10, places))
          .append(',').append(' ').append(Utils.toFixed(this.m11, places))
          .append(',').append(' ').append(Utils.toFixed(this.m12, places))
          .append(',')
 
-         .append('\n').append(Utils.toFixed(this.m20, places))
+                    .append('\n').append(Utils.toFixed(this.m20, places))
          .append(',').append(' ').append(Utils.toFixed(this.m21, places))
          .append(',').append(' ').append(Utils.toFixed(this.m22, places))
 
@@ -867,8 +867,8 @@ public class Mat3 extends Matrix {
       final float det = Mat3.determinant(m);
       scale.set(xMag, det < 0.0f ? -yMag : yMag);
       trans.set(m.m02, m.m12);
-      // return Utils.modRadians(( float ) Math.atan2(m.m10, m.m00));
-      return Utils.modRadians(Utils.atan2(m.m10, m.m00));
+      return Utils.modRadians(( float ) Math.atan2(m.m10, m.m00));
+      // return Utils.modRadians(Utils.atan2(m.m10, m.m00));
    }
 
    /**
@@ -1095,7 +1095,7 @@ public class Mat3 extends Matrix {
 
    /**
     * Returns the identity matrix,
-    * 
+    *
     * <pre>
     * 1.0, 0.0, 0.0,
     * 0.0, 1.0, 0.0,
@@ -1397,7 +1397,10 @@ public class Mat3 extends Matrix {
    }
 
    /**
-    * Creates a scale matrix from a nonuniform scalar.
+    * Creates a scale matrix from a nonuniform scalar.<br>
+    * <br>
+    * A package level function that uses loose floats to facilitate parsing of
+    * SVG transforms.
     *
     * @param sx     the x scalar
     * @param sy     the y scalar
@@ -1420,7 +1423,52 @@ public class Mat3 extends Matrix {
    }
 
    /**
-    * Creates a translation matrix from a vector.
+    * Creates a horizontal skew matrix from an angle in radians.<br>
+    * <br>
+    * A package level function that uses loose floats to facilitate parsing of
+    * SVG transforms.
+    *
+    * @param radians the angle
+    * @param target  the output matrix
+    *
+    * @return the skew matrix
+    */
+   static Mat3 fromSkewX (
+      final float radians,
+      final Mat3 target ) {
+
+      return target.set(
+         1.0f, Utils.tan(radians), 0.0f,
+         0.0f, 1.0f, 0.0f,
+         0.0f, 0.0f, 1.0f);
+   }
+
+   /**
+    * Creates a vertical skew matrix from an angle in radians.<br>
+    * <br>
+    * A package level function that uses loose floats to facilitate parsing of
+    * SVG transforms.
+    *
+    * @param radians the angle
+    * @param target  the output matrix
+    *
+    * @return the skew matrix
+    */
+   static Mat3 fromSkewY (
+      final float radians,
+      final Mat3 target ) {
+
+      return target.set(
+         1.0f, 0.0f, 0.0f,
+         Utils.tan(radians), 1.0f, 0.0f,
+         0.0f, 0.0f, 1.0f);
+   }
+
+   /**
+    * Creates a translation matrix from a vector.<br>
+    * <br>
+    * A package level function that uses loose floats to facilitate parsing of
+    * SVG transforms.
     *
     * @param tx     the translation x
     * @param ty     the translation y

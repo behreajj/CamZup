@@ -141,7 +141,7 @@ public abstract class Mesh extends EntityData implements IMesh {
       final int facesLen = this.faces.length;
       for ( int i = 0, k = 0; i < facesLen; ++i ) {
          final int faceLen = this.faces[k].length;
-         if ( faceLen > 3 ) {
+         if ( faceLen > 2 ) {
             this.triangulate(k);
             k += faceLen - 2;
          }
