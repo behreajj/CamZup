@@ -255,16 +255,28 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
    /**
     * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes, i.e., to
-    * compare how curve geometry looks in Blender (the control) versus in the
-    * library (the test).
+    * This code is brittle and is used for internal testing purposes.
     *
     * @return the string
     */
    @Experimental
    public String toBlenderCode ( ) {
 
-      return this.toBlenderCode(null, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0001f);
+      return this.toBlenderCode(( MaterialSolid[] ) null);
+   }
+
+   /**
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes.
+    *
+    * @param ms the materials
+    *
+    * @return the string
+    */
+   @Experimental
+   public String toBlenderCode ( final MaterialSolid[] ms ) {
+
+      return this.toBlenderCode(ms, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0001f);
    }
 
    /**

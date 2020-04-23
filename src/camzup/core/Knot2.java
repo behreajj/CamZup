@@ -915,7 +915,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * library (the test).
     *
     * @param z the z offset
-    * 
+    *
     * @return the string
     */
    @Experimental

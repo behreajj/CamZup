@@ -760,12 +760,16 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
    /**
     * Transforms all coordinates in the curve <em>permanently</em> by a
-    * transform. Not to be confused with the <em>temporary</em>
-    * transformations applied by a curve entity's transform to the meshes
-    * contained within the entity.
-    * 
+    * transform.<br>
+    * <br>
+    * Not to be confused with the <em>temporary</em> transformations applied
+    * by a curve entity's transform to the meshes contained within the
+    * entity.<br>
+    * <br>
+    * Useful when consolidating multiple curve entities into one curve entity.
+    *
     * @param tr the transform
-    * 
+    *
     * @return this mesh
     */
    @Chainable

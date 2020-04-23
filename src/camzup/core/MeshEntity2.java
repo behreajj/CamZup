@@ -248,17 +248,29 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
    /**
     * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes, i.e., to
-    * compare how curve geometry looks in Blender (the control) versus in the
-    * library (the test).
+    * This code is brittle and is used for internal testing purposes.
     *
     * @return the string
     */
    @Experimental
    public String toBlenderCode ( ) {
 
-      return this.toBlenderCode(null, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0001f,
-         0.0f, 0.0f);
+      return this.toBlenderCode(( MaterialSolid[] ) null);
+   }
+
+   /**
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes.
+    *
+    * @param ms the materials
+    *
+    * @return the string
+    */
+   @Experimental
+   public String toBlenderCode ( final MaterialSolid[] ms ) {
+
+      return this.toBlenderCode(ms, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.0001f, 0.0f, 0.0f);
    }
 
    /**
@@ -361,7 +373,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       pyCd.append("    mat_data.metallic = metal_val\n");
       pyCd.append("    mat_data.roughness = rough_val\n");
       pyCd.append("    mat_data.use_nodes = True\n\n");
-      
+
       pyCd.append("    node_tree = mat_data.node_tree\n");
       pyCd.append("    nodes = node_tree.nodes\n");
       pyCd.append("    pbr = nodes[\"Principled BSDF\"]\n");
@@ -454,6 +466,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       }
 
       if ( extrude > 0.0f ) {
+
          pyCd.append("    solidify = mesh_obj.modifiers.new(");
          pyCd.append("\"Solidify\", \"SOLIDIFY\")\n");
          pyCd.append("    solidify.thickness = ");
@@ -462,6 +475,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
          pyCd.append("    solidify.offset = ");
          pyCd.append(Utils.toFixed(offset, 6));
          pyCd.append("\n");
+         pyCd.append("    solidify.show_in_editmode = False\n");
       }
 
       return pyCd.toString();
@@ -500,9 +514,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       final int last = this.meshes.size() - 1;
       while ( itr.hasNext() ) {
          sb.append(itr.next().toString(places, truncate));
-         if ( i < last ) {
-            sb.append(',').append(' ');
-         }
+         if ( i < last ) { sb.append(',').append(' '); }
          i++;
       }
 

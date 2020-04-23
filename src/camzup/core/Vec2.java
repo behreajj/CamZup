@@ -356,16 +356,14 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable,
    @Experimental
    String toBlenderCode ( final boolean flipv ) {
 
-      /* @formatter:off */
-      return new StringBuilder(32)
-         .append('(')
-         .append(Utils.toFixed(flipv ? this.x : 1.0f - this.x, 6))
-         .append(',')
-         .append(' ')
-         .append(Utils.toFixed(flipv ? 1.0f - this.y : this.y, 6))
-         .append(')')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder pyCd = new StringBuilder(32);
+      pyCd.append('(');
+      pyCd.append(Utils.toFixed(flipv ? this.x : 1.0f - this.x, 6));
+      pyCd.append(',');
+      pyCd.append(' ');
+      pyCd.append(Utils.toFixed(flipv ? 1.0f - this.y : this.y, 6));
+      pyCd.append(')');
+      return pyCd.toString();
    }
 
    /**
@@ -378,19 +376,17 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable,
    @Experimental
    String toBlenderCode ( final float z ) {
 
-      /* @formatter:off */
-      return new StringBuilder(64)
-         .append('(')
-         .append(Utils.toFixed(this.x, 6))
-         .append(',')
-         .append(' ')
-         .append(Utils.toFixed(this.y, 6))
-         .append(',')
-         .append(' ')
-         .append(Utils.toFixed(z, 6))
-         .append(')')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder pyCd = new StringBuilder(64);
+      pyCd.append('(');
+      pyCd.append(Utils.toFixed(this.x, 6));
+      pyCd.append(',');
+      pyCd.append(' ');
+      pyCd.append(Utils.toFixed(this.y, 6));
+      pyCd.append(',');
+      pyCd.append(' ');
+      pyCd.append(Utils.toFixed(z, 6));
+      pyCd.append(')');
+      return pyCd.toString();
    }
 
    /**
@@ -404,13 +400,11 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable,
     */
    String toSvgString ( ) {
 
-      /* @formatter:off */
-      return new StringBuilder(16)
-         .append(Utils.toFixed(this.x, 6))
-         .append(' ')
-         .append(Utils.toFixed(this.y, 6))
-         .toString();
-      /* @formatter:on */
+      final StringBuilder svgp = new StringBuilder(16);
+      svgp.append(Utils.toFixed(this.x, 6));
+      svgp.append(' ');
+      svgp.append(Utils.toFixed(this.y, 6));
+      return svgp.toString();
    }
 
    /**
@@ -1403,7 +1397,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable,
        */
 
       final float nrm = heading * IUtils.ONE_TAU;
-      return target.set(Utils.scNorm(nrm), Utils.scNorm(nrm - 0.25f));
+      return target.set(
+         Utils.scNorm(nrm),
+         Utils.scNorm(nrm - 0.25f));
    }
 
    /**
@@ -1693,7 +1689,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(a.x > b.x, a.y > b.y);
+      return target.set(
+         a.x > b.x,
+         a.y > b.y);
    }
 
    /**
@@ -1711,7 +1709,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(a.x >= b.x, a.y >= b.y);
+      return target.set(
+         a.x >= b.x,
+         a.y >= b.y);
    }
 
    /**
@@ -1857,7 +1857,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(a.x < b.x, a.y < b.y);
+      return target.set(
+         a.x < b.x,
+         a.y < b.y);
    }
 
    /**
@@ -1875,7 +1877,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable,
       final Vec2 b,
       final Vec2 target ) {
 
-      return target.set(a.x <= b.x, a.y <= b.y);
+      return target.set(
+         a.x <= b.x,
+         a.y <= b.y);
    }
 
    /**

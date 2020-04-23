@@ -1655,12 +1655,16 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * Transforms all coordinates in the mesh <em>permanently</em> by a
-    * transform. Not to be confused with the <em>temporary</em>
-    * transformations applied by a mesh entity's transform to the meshes
-    * contained within the entity.
-    * 
+    * transform.<br>
+    * <br>
+    * Not to be confused with the <em>temporary</em> transformations applied
+    * by a mesh entity's transform to the meshes contained within the
+    * entity.<br>
+    * <br>
+    * Useful when consolidating multiple mesh entities into one mesh entity.
+    *
     * @param tr the transform
-    * 
+    *
     * @return this mesh
     */
    @Chainable
@@ -1896,7 +1900,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the arc
     */
-   public static final Mesh2 arc (
+   public static Mesh2 arc (
       final float startAngle,
       final float stopAngle,
       final float oculus,
@@ -1924,7 +1928,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the arc
     */
-   public static final Mesh2 arc (
+   public static Mesh2 arc (
       final float startAngle,
       final float stopAngle,
       final float oculus,
@@ -1963,10 +1967,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final double sina = Math.sin(theta);
 
          final Vec2 v0 = vs[i];
-         v0.set(( float ) ( 0.5d * cosa ), ( float ) ( 0.5d * sina ));
+         v0.set(
+            ( float ) ( 0.5d * cosa ),
+            ( float ) ( 0.5d * sina ));
 
          final Vec2 v1 = vs[j];
-         v1.set(( float ) ( annRad * cosa ), ( float ) ( annRad * sina ));
+         v1.set(
+            ( float ) ( annRad * cosa ),
+            ( float ) ( annRad * sina ));
 
          final Vec2 vt0 = vts[i];
          vt0.x = v0.x + 0.5f;
@@ -2064,7 +2072,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the arc
     */
-   public static final Mesh2 arc (
+   public static Mesh2 arc (
       final float startAngle,
       final float stopAngle,
       final float oculus,
@@ -2084,7 +2092,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the arc
     */
-   public static final Mesh2 arc (
+   public static Mesh2 arc (
       final float startAngle,
       final float stopAngle,
       final int sectors,
@@ -2103,7 +2111,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the arc
     */
-   public static final Mesh2 arc (
+   public static Mesh2 arc (
       final float startAngle,
       final float stopAngle,
       final Mesh2 target ) {
@@ -2121,7 +2129,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the arc
     */
-   public static final Mesh2 arc (
+   public static Mesh2 arc (
       final float stopAngle,
       final Mesh2 target ) {
 
@@ -2935,6 +2943,83 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                { { 0, 0 }, { 1, 1 }, { 2, 2 } },
                { { 0, 0 }, { 2, 2 }, { 3, 3 } } };
 
+      }
+
+      return target;
+   }
+
+   /**
+    * Traces the perimeter of each face of the source mesh. Returns a target
+    * mesh where all faces have the number of vertices specified by the count;
+    * each face will be inscribed within the source face, where the target
+    * vertices lie on an edge of the source. The perimeter is treated as a
+    * percent in the range [0.0, 1.0] , so, for example, a square face's
+    * corners will occur at 0.0, 0.25, 0.5 and 0.75 .
+    *
+    * @param source the source mesh
+    * @param count  the number of vertices
+    * @param offset the factor offset
+    * @param target the output mesh
+    *
+    * @return the traced mesh
+    */
+   public static Mesh2 tracePerimeter (
+      final Mesh2 source,
+      final int count,
+      final float offset,
+      final Mesh2 target ) {
+
+      target.name = "Trace";
+
+      final int vcount = count < 3 ? 3 : count;
+
+      final Vec2[] vsSrc = source.coords;
+      final Vec2[] vtsSrc = source.texCoords;
+      final int[][][] fsSrc = source.faces;
+      final int fsSrcLen = fsSrc.length;
+      final int trgLen = fsSrcLen * vcount;
+
+      final Vec2[] vsTrg = target.coords = Vec2.resize(
+         target.coords, trgLen);
+      final Vec2[] vtsTrg = target.texCoords = Vec2.resize(
+         target.texCoords, trgLen);
+      final int[][][] fsTrg = target.faces = new int[fsSrcLen][vcount][2];
+
+      final float toStep = 1.0f / vcount;
+
+      for ( int k = 0, i = 0; i < fsSrcLen; ++i ) {
+         final int[][] fSrc = fsSrc[i];
+         final int fSrcLen = fSrc.length;
+         final int[][] fTrg = fsTrg[i];
+
+         for ( int j = 0; j < vcount; ++j, ++k ) {
+            final float step = offset + j * toStep;
+            final float tScaled = fSrcLen * Utils.mod1(step);
+            final int tTrunc = ( int ) tScaled;
+
+            final int[] a = fSrc[tTrunc];
+            final int[] b = fSrc[ ( tTrunc + 1 ) % fSrcLen];
+
+            final float t = tScaled - tTrunc;
+            final float u = 1.0f - t;
+
+            final Vec2 vaSrc = vsSrc[a[0]];
+            final Vec2 vbSrc = vsSrc[b[0]];
+
+            final Vec2 vtaSrc = vtsSrc[a[1]];
+            final Vec2 vtbSrc = vtsSrc[b[1]];
+
+            vsTrg[k].set(
+               u * vaSrc.x + t * vbSrc.x,
+               u * vaSrc.y + t * vbSrc.y);
+
+            vtsTrg[k].set(
+               u * vtaSrc.x + t * vtbSrc.x,
+               u * vtaSrc.y + t * vtbSrc.y);
+
+            fTrg[j][0] = k;
+            fTrg[j][1] = k;
+         }
       }
 
       return target;

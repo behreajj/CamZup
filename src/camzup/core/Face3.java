@@ -608,31 +608,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Finds a range of points on the face's perimeter given a count and offset
-    * in the range [0.0, 1.0] .
-    *
-    * @param face   the face
-    * @param count  the range count
-    * @param offset the offset
-    *
-    * @return the vector
-    */
-   public static Vec3[] evalRange (
-      final Face3 face,
-      final int count,
-      final float offset ) {
-
-      final int vcount = count < 2 ? 2 : count;
-      final Vec3[] result = new Vec3[vcount];
-      final float toPrc = 1.0f / vcount;
-      for ( int i = 0; i < vcount; ++i ) {
-         final float prc = offset + i * toPrc;
-         result[i] = Face3.eval(face, prc, new Vec3());
-      }
-      return result;
-   }
-
-   /**
     * Finds the normal of a face by averaging all the normals in its list of
     * vertices, then normalizing the average.
     *

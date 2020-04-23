@@ -386,9 +386,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
       sb.append("{ vertices: [ ");
       for ( int i = 0; i < len; ++i ) {
          sb.append(this.vertices[i].toString(places));
-         if ( i < last ) {
-            sb.append(',').append(' ');
-         }
+         if ( i < last ) { sb.append(',').append(' '); }
       }
       sb.append(" ] }");
       return sb.toString();
@@ -550,59 +548,6 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
       return target.set(
          u * a.x + t * b.x,
          u * a.y + t * b.y);
-   }
-
-   /**
-    * Finds a range of points on the face's perimeter given a count and offset
-    * in the range [0.0, 1.0] .
-    *
-    * @param face   the face
-    * @param count  the range count
-    * @param offset the offset
-    *
-    * @return the vector
-    */
-   public static Vec2[] evalRange (
-      final Face2 face,
-      final int count,
-      final float offset ) {
-
-      final int vcount = count < 2 ? 2 : count;
-      final Vec2[] result = new Vec2[vcount];
-      final float toPrc = 1.0f / vcount;
-      for ( int i = 0; i < vcount; ++i ) {
-         final float prc = offset + i * toPrc;
-         result[i] = Face2.eval(face, prc, new Vec2());
-      }
-      return result;
-   }
-
-   @Experimental
-   public static Mesh2 evalRange (
-      final Face2 face,
-      final int count,
-      final float offset,
-      final Mesh2 target ) {
-
-      target.name = "Polygon";
-
-      final int vcount = count < 3 ? 3 : count;
-      final Vec2[] vs = target.coords = Vec2.resize(target.coords, vcount);
-      // final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
-      // vcount);
-      final int[][][] fs = target.faces = new int[1][vcount][2];
-      final int[][] f = fs[0];
-      final float toPrc = 1.0f / vcount;
-      for ( int i = 0; i < vcount; ++i ) {
-         final float prc = offset + i * toPrc;
-         Face2.eval(face, prc, vs[i]);
-         f[i][0] = i;
-         f[i][1] = i;
-      }
-
-      // TODO: More efficient to calc vs and vts together?
-      target.calcUvs();
-      return target;
    }
 
    /**

@@ -4041,7 +4041,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          final float x0 = x + lExtent * this.textSize;
          final float x1 = x0 + wGlyph * this.textSize;
-
          final float y0 = y + tExtent * this.textSize;
          final float y1 = y0 - hGlyph * this.textSize;
 

@@ -105,26 +105,27 @@ public abstract class SvgParser {
          final NamedNodeMap attr = header.getAttributes();
 
          final Node width = attr.getNamedItem("width");
-         String widthStr = width != null ? width.getTextContent() : "0.0";
-         float widpx = parseFloat(widthStr);
+         final String widthStr = width != null ? width.getTextContent() : "0.0";
+         final float widpx = SvgParser.parseFloat(widthStr);
 
          final Node height = attr.getNamedItem("height");
-         String heightStr = height != null ? height.getTextContent() : "0.0";
-         float hghpx = parseFloat(heightStr);
+         final String heightStr = height != null ? height.getTextContent()
+            : "0.0";
+         final float hghpx = SvgParser.parseFloat(heightStr);
 
          final Node viewbox = attr.getNamedItem("viewBox");
          final Vec4 vbVec = new Vec4(0.0f, 0.0f, 0.0f, 0.0f);
          if ( viewbox != null ) { SvgParser.parseViewBox(viewbox, vbVec); }
-         float widvb = Utils.diff(vbVec.z, vbVec.x);
-         float hghvb = Utils.diff(vbVec.w, vbVec.y);
+         final float widvb = Utils.diff(vbVec.z, vbVec.x);
+         final float hghvb = Utils.diff(vbVec.w, vbVec.y);
 
-         Vec2 shift = new Vec2();
+         final Vec2 shift = new Vec2();
          shift.set(
             Utils.max(widpx, widvb) * -0.5f,
             Utils.max(hghpx, hghvb) * -0.5f);
 
          if ( Vec2.any(shift) ) {
-            for ( Curve2 curve : result ) {
+            for ( final Curve2 curve : result ) {
                curve.translate(shift);
             }
 
@@ -605,7 +606,7 @@ public abstract class SvgParser {
       }
 
       /* Apply transform to curves from this node. */
-      for ( Curve2 curve : newCurves ) {
+      for ( final Curve2 curve : newCurves ) {
          curve.transform(current);
       }
 
@@ -1324,10 +1325,10 @@ public abstract class SvgParser {
 
    /**
     * Parses an SVG node containing transform data.
-    * 
+    *
     * @param trNode the transform node
     * @param target the output matrix
-    * 
+    *
     * @return the matrix
     */
    public static Mat3 parseTransform (

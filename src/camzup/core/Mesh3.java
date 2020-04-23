@@ -1612,7 +1612,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    @Chainable
    public Mesh3 subdivFaces ( final int itr ) {
 
-      return this.subdivFacesCentroid(itr);
+      return this.subdivFacesCenter(itr);
    }
 
    /**
@@ -1624,7 +1624,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return this mesh
     */
    @Chainable
-   public Mesh3 subdivFacesCentroid ( final int itr ) {
+   public Mesh3 subdivFacesCenter ( final int itr ) {
 
       for ( int i = 0; i < itr; ++i ) {
          final int len = this.faces.length;
@@ -1931,12 +1931,16 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * Transforms all coordinates in the mesh <em>permanently</em> by a
-    * transform. Not to be confused with the <em>temporary</em>
-    * transformations applied by a mesh entity's transform to the meshes
-    * contained within the entity.
-    * 
+    * transform.<br>
+    * <br>
+    * Not to be confused with the <em>temporary</em> transformations applied
+    * by a mesh entity's transform to the meshes contained within the
+    * entity.<br>
+    * <br>
+    * Useful when consolidating multiple mesh entities into one mesh entity.
+    *
     * @param tr the transform
-    * 
+    *
     * @return this mesh
     */
    @Chainable
@@ -2391,7 +2395,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
        * normals are calculated.
        */
       Mesh3.cube(0.5f, target);
-      target.subdivFacesCentroid(itrs);
+      target.subdivFacesCenter(itrs);
       target.clean();
 
       final int vsLen = target.coords.length;
@@ -3728,6 +3732,101 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       return Mesh3.torus(IMesh.DEFAULT_OCULUS, IMesh.DEFAULT_CIRCLE_SECTORS,
          IMesh.DEFAULT_CIRCLE_SECTORS >> 1, target);
+   }
+
+   /**
+    * Traces the perimeter of each face of the source mesh. Returns a target
+    * mesh where all faces have the number of vertices specified by the count;
+    * each face will be inscribed within the source face, where the target
+    * vertices lie on an edge of the source. The perimeter is treated as a
+    * percent in the range [0.0, 1.0] , so, for example, a square face's
+    * corners will occur at 0.0, 0.25, 0.5 and 0.75 .
+    *
+    * @param source the source mesh
+    * @param count  the number of vertices
+    * @param offset the factor offset
+    * @param target the output mesh
+    *
+    * @return the traced mesh
+    */
+   @Experimental
+   public static Mesh3 tracePerimeter (
+      final Mesh3 source,
+      final int count,
+      final float offset,
+      final Mesh3 target ) {
+
+      // Normals do not come out correctly in this approach.
+
+      target.name = "Trace";
+
+      final int vcount = count < 3 ? 3 : count;
+
+      final Vec3[] vsSrc = source.coords;
+      final Vec2[] vtsSrc = source.texCoords;
+      // final Vec3[] vnsSrc = source.normals;
+      final int[][][] fsSrc = source.faces;
+      final int fsSrcLen = fsSrc.length;
+      final int trgLen = fsSrcLen * vcount;
+
+      final Vec3[] vsTrg = target.coords = Vec3.resize(
+         target.coords, trgLen);
+      final Vec2[] vtsTrg = target.texCoords = Vec2.resize(
+         target.texCoords, trgLen);
+      // final Vec3[] vnsTrg = target.normals = Vec3.resize(
+      // target.normals, trgLen);
+      final int[][][] fsTrg = target.faces = new int[fsSrcLen][vcount][3];
+
+      final float toStep = 1.0f / vcount;
+
+      for ( int k = 0, i = 0; i < fsSrcLen; ++i ) {
+         final int[][] fSrc = fsSrc[i];
+         final int fSrcLen = fSrc.length;
+         final int[][] fTrg = fsTrg[i];
+
+         for ( int j = 0; j < vcount; ++j, ++k ) {
+            final float step = offset + j * toStep;
+            final float tScaled = fSrcLen * Utils.mod1(step);
+            final int tTrunc = ( int ) tScaled;
+
+            final int[] a = fSrc[tTrunc];
+            final int[] b = fSrc[ ( tTrunc + 1 ) % fSrcLen];
+
+            final float t = tScaled - tTrunc;
+            final float u = 1.0f - t;
+
+            final Vec3 vaSrc = vsSrc[a[0]];
+            final Vec3 vbSrc = vsSrc[b[0]];
+
+            final Vec2 vtaSrc = vtsSrc[a[1]];
+            final Vec2 vtbSrc = vtsSrc[b[1]];
+
+            // final Vec3 vnaSrc = vnsSrc[a[2]];
+            // final Vec3 vnbSrc = vnsSrc[b[2]];
+
+            vsTrg[k].set(
+               u * vaSrc.x + t * vbSrc.x,
+               u * vaSrc.y + t * vbSrc.y,
+               u * vaSrc.z + t * vbSrc.z);
+
+            vtsTrg[k].set(
+               u * vtaSrc.x + t * vtbSrc.x,
+               u * vtaSrc.y + t * vtbSrc.y);
+
+            // vnsTrg[k].set(
+            // u * vnaSrc.x + t * vnbSrc.x,
+            // u * vnaSrc.y + t * vnbSrc.y,
+            // u * vnaSrc.z + t * vnbSrc.z);
+            // Vec3.normalize(vnsTrg[k], vnsTrg[k]);
+
+            fTrg[j][0] = k;
+            fTrg[j][1] = k;
+            fTrg[j][2] = k;
+         }
+      }
+
+      target.calcNormals();
+      return target;
    }
 
    /**
