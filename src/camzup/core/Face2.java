@@ -40,8 +40,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    @Override
    public int compareTo ( final Face2 face ) {
 
-      return Face2.centerMean(this, new Vec2()).compareTo(
-         Face2.centerMean(face, new Vec2()));
+      return Face2.centerMean(this, new Vec2())
+         .compareTo(Face2.centerMean(face, new Vec2()));
    }
 
    /**
@@ -82,13 +82,10 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * @see Utils#mod(int, int)
     */
    @Experimental
-   public Edge2 getEdge (
-      final int i,
-      final Edge2 target ) {
+   public Edge2 getEdge ( final int i, final Edge2 target ) {
 
       final int len = this.vertices.length;
-      return target.set(
-         this.vertices[Utils.mod(i, len)],
+      return target.set(this.vertices[Utils.mod(i, len)],
          this.vertices[Utils.mod(i + 1, len)]);
    }
 
@@ -470,9 +467,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * @see Vec2#add(Vec2, Vec2, Vec2)
     * @see Vec2#div(Vec2, float, Vec2)
     */
-   public static Vec2 centerMean (
-      final Face2 face,
-      final Vec2 target ) {
+   public static Vec2 centerMean ( final Face2 face, final Vec2 target ) {
 
       target.reset();
       final Vert2[] verts = face.vertices;
@@ -492,9 +487,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @return the evaluation
     */
-   public static boolean contains (
-      final Face2 face,
-      final Vec2 point ) {
+   public static boolean contains ( final Face2 face, final Vec2 point ) {
 
       int wn = 0;
       final Vert2[] verts = face.vertices;
@@ -531,9 +524,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @return the vector
     */
-   public static Vec2 eval (
-      final Face2 face,
-      final float step,
+   public static Vec2 eval ( final Face2 face, final float step,
       final Vec2 target ) {
 
       final Vert2[] verts = face.vertices;
@@ -545,9 +536,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
 
       final float t = tScaled - i;
       final float u = 1.0f - t;
-      return target.set(
-         u * a.x + t * b.x,
-         u * a.y + t * b.y);
+      return target.set(u * a.x + t * b.x, u * a.y + t * b.y);
    }
 
    /**
@@ -613,9 +602,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @return the coordinate array
     */
-   public static Vec2[] sharedCoords (
-      final Face2 a,
-      final Face2 b ) {
+   public static Vec2[] sharedCoords ( final Face2 a, final Face2 b ) {
 
       final TreeSet < Vec2 > aList = new TreeSet <>(Mesh.SORT_2);
       final Vert2[] aVerts = a.vertices;

@@ -16,10 +16,7 @@ public interface ITextDisplay2 extends ITextDisplay {
     * @param y the y coordinate
     * @param z the z coordinate
     */
-   default void text (
-      final char c,
-      final float x,
-      final float y,
+   default void text ( final char c, final float x, final float y,
       final float z ) {
 
       this.text(c, x, y);
@@ -36,13 +33,8 @@ public interface ITextDisplay2 extends ITextDisplay {
     * @param y     the y coordinate
     * @param z     the z coordinate
     */
-   default void text (
-      final char[] chars,
-      final int start,
-      final int stop,
-      final float x,
-      final float y,
-      final float z ) {
+   default void text ( final char[] chars, final int start, final int stop,
+      final float x, final float y, final float z ) {
 
       this.text(chars, start, stop, x, y);
    }
@@ -58,10 +50,7 @@ public interface ITextDisplay2 extends ITextDisplay {
     *
     * @see Utils#toFixed(float, int)
     */
-   default void text (
-      final float real,
-      final float x,
-      final float y,
+   default void text ( final float real, final float x, final float y,
       final float z ) {
 
       this.text(Utils.toFixed(real, 4), x, y);
@@ -76,10 +65,7 @@ public interface ITextDisplay2 extends ITextDisplay {
     * @param y the y coordinate
     * @param z the z coordinate
     */
-   default void text (
-      final int i,
-      final float x,
-      final float y,
+   default void text ( final int i, final float x, final float y,
       final float z ) {
 
       this.text(i, x, y);
@@ -93,10 +79,7 @@ public interface ITextDisplay2 extends ITextDisplay {
     * @param y   the y coordinate
     * @param z   the z coordinate
     */
-   default void text (
-      final String str,
-      final float x,
-      final float y,
+   default void text ( final String str, final float x, final float y,
       final float z ) {
 
       this.text(str, x, y);

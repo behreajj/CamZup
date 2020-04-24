@@ -27,11 +27,7 @@ public interface IYup2 extends IUp {
     * @param stop  the stop angle
     * @param mode  the arc mode
     */
-   void arc (
-      final Vec2 v,
-      final float sz,
-      final float start,
-      final float stop,
+   void arc ( final Vec2 v, final float sz, final float start, final float stop,
       final int mode );
 
    /**
@@ -43,10 +39,7 @@ public interface IYup2 extends IUp {
     * @param cp1 the second control point
     * @param ap1 the second anchor point
     */
-   void bezier (
-      final Vec2 ap0,
-      final Vec2 cp0,
-      final Vec2 cp1,
+   void bezier ( final Vec2 ap0, final Vec2 cp0, final Vec2 cp1,
       final Vec2 ap1 );
 
    /**
@@ -57,10 +50,7 @@ public interface IYup2 extends IUp {
     * @param cp1 the second control point
     * @param ap1 the next anchor point
     */
-   void bezierVertex (
-      final Vec2 cp0,
-      final Vec2 cp1,
-      final Vec2 ap1 );
+   void bezierVertex ( final Vec2 cp0, final Vec2 cp1, final Vec2 ap1 );
 
    /**
     * Sets the camera to a location, rotation and zoom level.
@@ -73,12 +63,8 @@ public interface IYup2 extends IUp {
     *
     * @see Utils#modRadians(float)
     */
-   void camera (
-      final float x,
-      final float y,
-      final float radians,
-      final float zx,
-      final float zy );
+   void camera ( final float x, final float y, final float radians,
+      final float zx, final float zy );
 
    /**
     * Draws a circle at a location
@@ -86,9 +72,7 @@ public interface IYup2 extends IUp {
     * @param coord the coordinate
     * @param size  the size
     */
-   void circle (
-      final Vec2 coord,
-      final float size );
+   void circle ( final Vec2 coord, final float size );
 
    /**
     * Draws a curve between four points.
@@ -98,11 +82,7 @@ public interface IYup2 extends IUp {
     * @param c the third point
     * @param d the fourth point
     */
-   void curve (
-      final Vec2 a,
-      final Vec2 b,
-      final Vec2 c,
-      final Vec2 d );
+   void curve ( final Vec2 a, final Vec2 b, final Vec2 c, final Vec2 d );
 
    /**
     * Draws a curve segment.
@@ -118,9 +98,7 @@ public interface IYup2 extends IUp {
     * @param a the first parameter
     * @param b the second parameter
     */
-   void ellipse (
-      final Vec2 a,
-      final Vec2 b );
+   void ellipse ( final Vec2 a, final Vec2 b );
 
    /**
     * Gets the renderer's camera location.
@@ -201,9 +179,7 @@ public interface IYup2 extends IUp {
     * @param count        number of points
     * @param strokeWeight stroke weight
     */
-   default void grid (
-      final int count,
-      final float strokeWeight ) {
+   default void grid ( final int count, final float strokeWeight ) {
 
       this.grid(count, strokeWeight, count * IYup2.GRID_FAC);
    }
@@ -215,9 +191,7 @@ public interface IYup2 extends IUp {
     * @param strokeWeight stroke weight
     * @param dim          the grid dimensions
     */
-   default void grid (
-      final int count,
-      final float strokeWeight,
+   default void grid ( final int count, final float strokeWeight,
       final float dim ) {
 
       this.pushStyle();
@@ -273,9 +247,7 @@ public interface IYup2 extends IUp {
     * @param img   the image
     * @param coord the coordinate
     */
-   void image (
-      final PImage img,
-      final Vec2 coord );
+   void image ( final PImage img, final Vec2 coord );
 
    /**
     * Draws an image at a given coordinate and dimension.
@@ -284,10 +256,7 @@ public interface IYup2 extends IUp {
     * @param coord the coordinate
     * @param dim   the dimension
     */
-   void image (
-      final PImage img,
-      final Vec2 coord,
-      final Vec2 dim );
+   void image ( final PImage img, final Vec2 coord, final Vec2 dim );
 
    /**
     * Sets the renderer's image mode.
@@ -304,11 +273,7 @@ public interface IYup2 extends IUp {
     * @param bx the destination x coordinate
     * @param by the destination y coordinate
     */
-   void line (
-      final float ax,
-      final float ay,
-      final float bx,
-      final float by );
+   void line ( final float ax, final float ay, final float bx, final float by );
 
    /**
     * Draws a line between two coordinates.
@@ -316,9 +281,7 @@ public interface IYup2 extends IUp {
     * @param origin the origin coordinate
     * @param dest   the destination coordinate
     */
-   void line (
-      final Vec2 origin,
-      final Vec2 dest );
+   void line ( final Vec2 origin, final Vec2 dest );
 
    /**
     * Finds the mouse's location in world coordinates relative to the
@@ -379,9 +342,7 @@ public interface IYup2 extends IUp {
     *
     * @see IYup2#moveTo(float, float)
     */
-   default void moveBy (
-      final float x,
-      final float y ) {
+   default void moveBy ( final float x, final float y ) {
 
       this.moveByLocal(x, y);
    }
@@ -409,9 +370,7 @@ public interface IYup2 extends IUp {
     * @see IYup2#getLocX()
     * @see IYup2#getLocY()
     */
-   default void moveByGlobal (
-      final float x,
-      final float y ) {
+   default void moveByGlobal ( final float x, final float y ) {
 
       this.moveTo(this.getLocX() + x, this.getLocY() + y);
    }
@@ -439,9 +398,7 @@ public interface IYup2 extends IUp {
     * @see IYup2#getRoll()
     * @see IYup2#moveTo(float, float)
     */
-   default void moveByLocal (
-      final float x,
-      final float y ) {
+   default void moveByLocal ( final float x, final float y ) {
 
       final float nrm = this.getRoll() * IUtils.ONE_TAU;
       final float cosa = Utils.scNorm(nrm);
@@ -476,9 +433,7 @@ public interface IYup2 extends IUp {
     * @see IYup2#getZoomY()
     * @see IYup2#camera(float, float, float, float, float)
     */
-   default void moveTo (
-      final float x,
-      final float y ) {
+   default void moveTo ( final float x, final float y ) {
 
       this.camera(x, y, this.getRoll(), this.getZoomX(), this.getZoomY());
    }
@@ -508,9 +463,7 @@ public interface IYup2 extends IUp {
     * @see IYup2#getLocY()
     * @see IYup2#moveTo(float, float)
     */
-   default void moveTo (
-      final Vec2 locNew,
-      final float step ) {
+   default void moveTo ( final Vec2 locNew, final float step ) {
 
       if ( step <= 0.0f ) { return; }
       if ( step >= 1.0f ) {
@@ -529,9 +482,7 @@ public interface IYup2 extends IUp {
     * @param x the x coordinate
     * @param y the y coordinate
     */
-   void point (
-      final float x,
-      final float y );
+   void point ( final float x, final float y );
 
    /**
     * Draws a point at a given coordinate
@@ -551,11 +502,7 @@ public interface IYup2 extends IUp {
     * @param c the third point
     * @param d the fourth point
     */
-   void quad (
-      final Vec2 a,
-      final Vec2 b,
-      final Vec2 c,
-      final Vec2 d );
+   void quad ( final Vec2 a, final Vec2 b, final Vec2 c, final Vec2 d );
 
    /**
     * Draws a quadratic Bezier curve segment to the next anchor point; the
@@ -564,9 +511,7 @@ public interface IYup2 extends IUp {
     * @param cp  the control point
     * @param ap1 the next anchor point
     */
-   void quadraticVertex (
-      final Vec2 cp,
-      final Vec2 ap1 );
+   void quadraticVertex ( final Vec2 cp, final Vec2 ap1 );
 
    /**
     * Displays a ray, i.e., an origin point and a direction. The display
@@ -578,12 +523,8 @@ public interface IYup2 extends IUp {
     * @param yDir    the y direction
     * @param dLen    the display length
     */
-   default void ray (
-      final float xOrigin,
-      final float yOrigin,
-      final float xDir,
-      final float yDir,
-      final float dLen ) {
+   default void ray ( final float xOrigin, final float yOrigin,
+      final float xDir, final float yDir, final float dLen ) {
 
       this.ray(xOrigin, yOrigin, xDir, yDir, dLen, 1.0f, 4.0f, 2.0f);
    }
@@ -601,15 +542,9 @@ public interface IYup2 extends IUp {
     * @param oWeight the origin stroke weight
     * @param dWeight the direction stroke weight
     */
-   default void ray (
-      final float xOrigin,
-      final float yOrigin,
-      final float xDir,
-      final float yDir,
-      final float dLen,
-      final float lnwgt,
-      final float oWeight,
-      final float dWeight ) {
+   default void ray ( final float xOrigin, final float yOrigin,
+      final float xDir, final float yDir, final float dLen, final float lnwgt,
+      final float oWeight, final float dWeight ) {
 
       final float mSq = xDir * xDir + yDir * yDir;
 
@@ -638,9 +573,7 @@ public interface IYup2 extends IUp {
     * @param ray  the ray
     * @param dLen the display length
     */
-   default void ray (
-      final Ray2 ray,
-      final float dLen ) {
+   default void ray ( final Ray2 ray, final float dLen ) {
 
       this.ray(ray.origin.x, ray.origin.y, ray.dir.x, ray.dir.y, dLen);
    }
@@ -655,12 +588,8 @@ public interface IYup2 extends IUp {
     * @param oWeight the origin stroke weight
     * @param dWeight the direction stroke weight
     */
-   default void ray (
-      final Ray2 ray,
-      final float dLen,
-      final float lnwgt,
-      final float oWeight,
-      final float dWeight ) {
+   default void ray ( final Ray2 ray, final float dLen, final float lnwgt,
+      final float oWeight, final float dWeight ) {
 
       this.ray(ray.origin.x, ray.origin.y, ray.dir.x, ray.dir.y, dLen, lnwgt,
          oWeight, dWeight);
@@ -673,9 +602,7 @@ public interface IYup2 extends IUp {
     * @param a the first parameter
     * @param b the second parameter
     */
-   void rect (
-      final Vec2 a,
-      final Vec2 b );
+   void rect ( final Vec2 a, final Vec2 b );
 
    /**
     * Draws a rounded rectangle; the meaning of the first two parameters
@@ -685,10 +612,7 @@ public interface IYup2 extends IUp {
     * @param b        the second parameter
     * @param rounding the corner rounding
     */
-   void rect (
-      final Vec2 a,
-      final Vec2 b,
-      final float rounding );
+   void rect ( final Vec2 a, final Vec2 b, final float rounding );
 
    /**
     * Increases the camera's roll by an angle in radians, then updates the
@@ -730,9 +654,7 @@ public interface IYup2 extends IUp {
     * @see Utils#modRadians(float)
     * @see IYup2#rollTo(float)
     */
-   default void rollTo (
-      final float radians,
-      final float step ) {
+   default void rollTo ( final float radians, final float step ) {
 
       if ( step <= 0.0f ) { return; }
       if ( step >= 1.0f ) {
@@ -768,9 +690,7 @@ public interface IYup2 extends IUp {
     *
     * @return the screen coordinate
     */
-   Vec2 screen (
-      final Vec2 source,
-      final Vec2 target );
+   Vec2 screen ( final Vec2 source, final Vec2 target );
 
    /**
     * Takes a two-dimensional x, y position and returns the x value for where
@@ -782,9 +702,7 @@ public interface IYup2 extends IUp {
     *
     * @return the screen x coordinate
     */
-   float screenX (
-      final float x,
-      final float y );
+   float screenX ( final float x, final float y );
 
    /**
     * Takes a two-dimensional position and returns the x value for where it
@@ -811,9 +729,7 @@ public interface IYup2 extends IUp {
     *
     * @see YupJ2#screen(Vec2, Vec2)
     */
-   float screenY (
-      final float x,
-      final float y );
+   float screenY ( final float x, final float y );
 
    /**
     * Takes a two-dimensional position and returns the y value for where it
@@ -841,9 +757,7 @@ public interface IYup2 extends IUp {
     * @param a the location
     * @param b the size
     */
-   void square (
-      final Vec2 a,
-      final float b );
+   void square ( final Vec2 a, final float b );
 
    /**
     * Draws a rounded square.
@@ -852,10 +766,7 @@ public interface IYup2 extends IUp {
     * @param b        the size
     * @param rounding the corner rounding
     */
-   void square (
-      final Vec2 a,
-      final float b,
-      final float rounding );
+   void square ( final Vec2 a, final float b, final float rounding );
 
    /**
     * Sets the renderer's stroke color.
@@ -894,12 +805,11 @@ public interface IYup2 extends IUp {
     *
     * @return the string
     */
-   default String toSvgString (
-      final CurveEntity2 ce,
+   default String toSvgString ( final CurveEntity2 ce,
       final MaterialSolid mat ) {
 
-      return IYup2.toSvgString(this, new CurveEntity2[] {
-         ce }, new MaterialSolid[] { mat });
+      return IYup2.toSvgString(this, new CurveEntity2[] { ce },
+         new MaterialSolid[] { mat });
    }
 
    /**
@@ -910,8 +820,7 @@ public interface IYup2 extends IUp {
     *
     * @return the string
     */
-   default String toSvgString (
-      final CurveEntity2 ce,
+   default String toSvgString ( final CurveEntity2 ce,
       final MaterialSolid[] mats ) {
 
       return IYup2.toSvgString(this, new CurveEntity2[] { ce }, mats);
@@ -937,8 +846,7 @@ public interface IYup2 extends IUp {
     *
     * @return the string
     */
-   default String toSvgString (
-      final CurveEntity2[] ces,
+   default String toSvgString ( final CurveEntity2[] ces,
       final MaterialSolid mat ) {
 
       return IYup2.toSvgString(this, ces, new MaterialSolid[] { mat });
@@ -952,8 +860,7 @@ public interface IYup2 extends IUp {
     *
     * @return the string
     */
-   default String toSvgString (
-      final CurveEntity2[] ces,
+   default String toSvgString ( final CurveEntity2[] ces,
       final MaterialSolid[] mats ) {
 
       return IYup2.toSvgString(this, ces, mats);
@@ -980,12 +887,10 @@ public interface IYup2 extends IUp {
     *
     * @return the string
     */
-   default String toSvgString (
-      final MeshEntity2 me,
+   default String toSvgString ( final MeshEntity2 me,
       final MaterialSolid mat ) {
 
-      return IYup2.toSvgString(this,
-         new MeshEntity2[] { me },
+      return IYup2.toSvgString(this, new MeshEntity2[] { me },
          new MaterialSolid[] { mat });
    }
 
@@ -997,8 +902,7 @@ public interface IYup2 extends IUp {
     *
     * @return the string
     */
-   default String toSvgString (
-      final MeshEntity2 me,
+   default String toSvgString ( final MeshEntity2 me,
       final MaterialSolid[] mats ) {
 
       return IYup2.toSvgString(this, new MeshEntity2[] { me }, mats);
@@ -1024,8 +928,7 @@ public interface IYup2 extends IUp {
     *
     * @return the string
     */
-   default String toSvgString (
-      final MeshEntity2[] mes,
+   default String toSvgString ( final MeshEntity2[] mes,
       final MaterialSolid mat ) {
 
       return IYup2.toSvgString(this, mes, new MaterialSolid[] { mat });
@@ -1039,8 +942,7 @@ public interface IYup2 extends IUp {
     *
     * @return the string
     */
-   default String toSvgString (
-      final MeshEntity2[] mes,
+   default String toSvgString ( final MeshEntity2[] mes,
       final MaterialSolid[] mats ) {
 
       return IYup2.toSvgString(this, mes, mats);
@@ -1053,10 +955,7 @@ public interface IYup2 extends IUp {
     * @param b the second point
     * @param c the third point
     */
-   void triangle (
-      final Vec2 a,
-      final Vec2 b,
-      final Vec2 c );
+   void triangle ( final Vec2 a, final Vec2 b, final Vec2 c );
 
    /**
     * Adds another vertex to a shape between the beginShape and endShape
@@ -1084,9 +983,7 @@ public interface IYup2 extends IUp {
     *
     * @see IYup2#zoomTo(float, float)
     */
-   default void zoomBy (
-      final float w,
-      final float h ) {
+   default void zoomBy ( final float w, final float h ) {
 
       this.zoomTo(this.getZoomX() + w, this.getZoomY() + h);
    }
@@ -1121,9 +1018,7 @@ public interface IYup2 extends IUp {
     * @see IYup2#getRoll()
     * @see IYup2#camera(float, float, float, float, float)
     */
-   default void zoomTo (
-      final float w,
-      final float h ) {
+   default void zoomTo ( final float w, final float h ) {
 
       if ( w != 0.0f && h != 0.0f ) {
          this.camera(this.getLocX(), this.getLocY(), this.getRoll(), w, h);
@@ -1156,9 +1051,7 @@ public interface IYup2 extends IUp {
     * @see IYup2#getZoomY()
     * @see IYup2#zoomTo(float, float)
     */
-   default void zoomTo (
-      final Vec2 scaleNew,
-      final float step ) {
+   default void zoomTo ( final Vec2 scaleNew, final float step ) {
 
       if ( step <= 0.0f ) { return; }
       if ( step >= 1.0f ) {
@@ -1206,9 +1099,7 @@ public interface IYup2 extends IUp {
     * @see IYup2#getLocX()
     * @see IYup2#getLocY()
     */
-   static Vec2 mouse (
-      final PApplet parent,
-      final IYup2 renderer,
+   static Vec2 mouse ( final PApplet parent, final IYup2 renderer,
       final Vec2 target ) {
 
       /* Normalize to [0.0, 1.0], then shift to [-0.5, 0.5]. */
@@ -1247,9 +1138,7 @@ public interface IYup2 extends IUp {
     *
     * @see Utils#clamp01(float)
     */
-   static Vec2 mouse1s (
-      final PApplet parent,
-      final Vec2 target ) {
+   static Vec2 mouse1s ( final PApplet parent, final Vec2 target ) {
 
       final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
       final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
@@ -1266,9 +1155,7 @@ public interface IYup2 extends IUp {
     *
     * @return the mouse
     */
-   static Vec2 mouse1u (
-      final PApplet parent,
-      final Vec2 target ) {
+   static Vec2 mouse1u ( final PApplet parent, final Vec2 target ) {
 
       final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
       final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
@@ -1382,9 +1269,7 @@ public interface IYup2 extends IUp {
     *
     * @return the string
     */
-   static String toSvgString (
-      final IYup2 renderer,
-      final CurveEntity2[] ces,
+   static String toSvgString ( final IYup2 renderer, final CurveEntity2[] ces,
       final MaterialSolid[] mats ) {
 
       final StringBuilder svgp = new StringBuilder(1024);
@@ -1416,9 +1301,7 @@ public interface IYup2 extends IUp {
     *
     * @return the string
     */
-   static String toSvgString (
-      final IYup2 renderer,
-      final MeshEntity2[] mes,
+   static String toSvgString ( final IYup2 renderer, final MeshEntity2[] mes,
       final MaterialSolid[] mats ) {
 
       final StringBuilder svgp = new StringBuilder(1024);

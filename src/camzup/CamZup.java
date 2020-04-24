@@ -1,6 +1,7 @@
 package camzup;
 
 import camzup.core.Mesh3;
+import camzup.core.MeshEntity3;
 import camzup.core.Rng;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -65,6 +66,13 @@ public class CamZup {
       // System.out.println(ce2);
       // final String str = ce2.toBlenderCode();
       // System.out.println(str);
+
+      final Mesh3 m1 = Mesh3.tetrahedron(new Mesh3());
+      final Mesh3 m2 = Mesh3.cube(new Mesh3());
+      final Mesh3 m3 = Mesh3.octahedron(new Mesh3());
+      final Mesh3 m4 = Mesh3.dodecahedron(new Mesh3());
+      final MeshEntity3 me3 = new MeshEntity3().appendAll(m1, m2, m3, m4);
+      System.out.println(me3);
    }
 
    /**
@@ -82,9 +90,7 @@ public class CamZup {
     *
     * @return the code
     */
-   private static String toHardCode (
-      final Mesh3 mesh,
-      final float radius ) {
+   private static String toHardCode ( final Mesh3 mesh, final float radius ) {
 
       final StringBuilder sb = new StringBuilder();
       final int[][][] fs = mesh.faces;

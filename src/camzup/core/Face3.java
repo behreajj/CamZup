@@ -40,8 +40,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    @Override
    public int compareTo ( final Face3 face ) {
 
-      return Face3.centerMean(this, new Vec3()).compareTo(
-         Face3.centerMean(face, new Vec3()));
+      return Face3.centerMean(this, new Vec3())
+         .compareTo(Face3.centerMean(face, new Vec3()));
    }
 
    /**
@@ -80,13 +80,10 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @see Utils#mod(int, int)
     */
-   public Edge3 getEdge (
-      final int i,
-      final Edge3 target ) {
+   public Edge3 getEdge ( final int i, final Edge3 target ) {
 
       final int len = this.vertices.length;
-      return target.set(
-         this.vertices[Utils.mod(i, len)],
+      return target.set(this.vertices[Utils.mod(i, len)],
          this.vertices[Utils.mod(i + 1, len)]);
    }
 
@@ -145,9 +142,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
     */
    @Chainable
-   public Face3 rotate (
-      final float radians,
-      final Vec3 axis ) {
+   public Face3 rotate ( final float radians, final Vec3 axis ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
@@ -531,14 +526,12 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @return the face
     */
    @Experimental
-   Face3 translateLocal (
-      final Vec3 v,
-      final Handedness handedness ) {
+   Face3 translateLocal ( final Vec3 v, final Handedness handedness ) {
 
       // TEST
 
-      final Transform3 tr = Face3.orientation(this, handedness,
-         new Transform3());
+      final Transform3 tr
+         = Face3.orientation(this, handedness, new Transform3());
       final Vec3 vLocal = Transform3.mulDir(tr, v, new Vec3());
 
       final int len = this.vertices.length;
@@ -564,9 +557,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Vec3#add(Vec3, Vec3, Vec3)
     * @see Vec3#div(Vec3, Vec3, Vec3)
     */
-   public static Vec3 centerMean (
-      final Face3 face,
-      final Vec3 target ) {
+   public static Vec3 centerMean ( final Face3 face, final Vec3 target ) {
 
       target.reset();
       final Vert3[] verts = face.vertices;
@@ -587,9 +578,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @return the vector
     */
-   public static Vec3 eval (
-      final Face3 face,
-      final float step,
+   public static Vec3 eval ( final Face3 face, final float step,
       final Vec3 target ) {
 
       final Vert3[] verts = face.vertices;
@@ -601,9 +590,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
       final float t = tScaled - i;
       final float u = 1.0f - t;
-      return target.set(
-         u * a.x + t * b.x,
-         u * a.y + t * b.y,
+      return target.set(u * a.x + t * b.x, u * a.y + t * b.y,
          u * a.z + t * b.z);
    }
 
@@ -621,9 +608,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Vec3#normalize(Vec3, Vec3)
     */
    @Experimental
-   public static Vec3 normal (
-      final Face3 face,
-      final Vec3 target ) {
+   public static Vec3 normal ( final Face3 face, final Vec3 target ) {
 
       // RESEARCH: Should this depend not on the pre-calculated normals but
       // instead calculate upon request?
@@ -649,10 +634,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @return the transform
     */
    @Experimental
-   public static Quaternion orientation (
-      final Face3 face,
-      final Handedness handedness,
-      final Quaternion target ) {
+   public static Quaternion orientation ( final Face3 face,
+      final Handedness handedness, final Quaternion target ) {
 
       /*
        * Use quaternion imaginary as a temporary holder for the average of the
@@ -674,10 +657,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @return the transform
     */
    @Experimental
-   public static Transform3 orientation (
-      final Face3 face,
-      final Handedness handedness,
-      final Transform3 target ) {
+   public static Transform3 orientation ( final Face3 face,
+      final Handedness handedness, final Transform3 target ) {
 
       final Quaternion rot = target.rotation;
       target.locPrev.set(target.location);
@@ -703,9 +684,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @return the transform
     */
    @Experimental
-   public static Ray3 orientation (
-      final Face3 face,
-      final Ray3 target ) {
+   public static Ray3 orientation ( final Face3 face, final Ray3 target ) {
 
       Face3.centerMean(face, target.origin);
       Face3.normal(face, target.dir);
@@ -745,9 +724,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @return the coordinate array
     */
-   public static Vec3[] sharedCoords (
-      final Face3 a,
-      final Face3 b ) {
+   public static Vec3[] sharedCoords ( final Face3 a, final Face3 b ) {
 
       final TreeSet < Vec3 > aList = new TreeSet <>(Mesh.SORT_3);
       final Vert3[] aVerts = a.vertices;

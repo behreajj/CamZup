@@ -23,10 +23,7 @@ public interface IUp3 extends IUp {
     * @param cp1 the second control point
     * @param ap1 the second anchor point
     */
-   void bezier (
-      final Vec3 ap0,
-      final Vec3 cp0,
-      final Vec3 cp1,
+   void bezier ( final Vec3 ap0, final Vec3 cp0, final Vec3 cp1,
       final Vec3 ap1 );
 
    /**
@@ -37,10 +34,7 @@ public interface IUp3 extends IUp {
     * @param cp1 the second control point
     * @param ap1 the next anchor point
     */
-   void bezierVertex (
-      final Vec3 cp0,
-      final Vec3 cp1,
-      final Vec3 ap1 );
+   void bezierVertex ( final Vec3 cp0, final Vec3 cp1, final Vec3 ap1 );
 
    /**
     * Looks at the center point from the eye point, using a default reference
@@ -53,13 +47,8 @@ public interface IUp3 extends IUp {
     * @param yCenter target location y
     * @param zCenter target location z
     */
-   void camera (
-      final float xEye,
-      final float yEye,
-      final float zEye,
-      final float xCenter,
-      final float yCenter,
-      final float zCenter );
+   void camera ( final float xEye, final float yEye, final float zEye,
+      final float xCenter, final float yCenter, final float zCenter );
 
    /**
     * Sets the camera to a location, looking at a center, with the default up
@@ -68,9 +57,7 @@ public interface IUp3 extends IUp {
     * @param eye    the eye location
     * @param center the center of the gaze
     */
-   default void camera (
-      final Vec3 eye,
-      final Vec3 center ) {
+   default void camera ( final Vec3 eye, final Vec3 center ) {
 
       this.camera(eye.x, eye.y, eye.z, center.x, center.y, center.z);
    }
@@ -153,9 +140,7 @@ public interface IUp3 extends IUp {
     * @param count        number of points
     * @param strokeWeight stroke weight
     */
-   default void grid (
-      final int count,
-      final float strokeWeight ) {
+   default void grid ( final int count, final float strokeWeight ) {
 
       this.grid(count, strokeWeight, IUp.DEFAULT_STROKE_COLOR);
    }
@@ -167,9 +152,7 @@ public interface IUp3 extends IUp {
     * @param strokeWeight stroke weight
     * @param strokeColor  the stroke color
     */
-   default void grid (
-      final int count,
-      final float strokeWeight,
+   default void grid ( final int count, final float strokeWeight,
       final int strokeColor ) {
 
       this.grid(count, strokeWeight, strokeColor, count * IYup2.GRID_FAC);
@@ -183,11 +166,8 @@ public interface IUp3 extends IUp {
     * @param strokeColor  the stroke color
     * @param dim          the grid dimension
     */
-   default void grid (
-      final int count,
-      final float strokeWeight,
-      final int strokeColor,
-      final float dim ) {
+   default void grid ( final int count, final float strokeWeight,
+      final int strokeColor, final float dim ) {
 
       final float xHalfDim = dim * 0.5f;
       final float yHalfDim = xHalfDim;
@@ -303,13 +283,8 @@ public interface IUp3 extends IUp {
     * @param by the destination y coordinate
     * @param bz the destination z coordinate
     */
-   void line (
-      final float ax,
-      final float ay,
-      final float az,
-      final float bx,
-      final float by,
-      final float bz );
+   void line ( final float ax, final float ay, final float az, final float bx,
+      final float by, final float bz );
 
    /**
     * Draws a line between two coordinates.
@@ -317,9 +292,7 @@ public interface IUp3 extends IUp {
     * @param origin the origin coordinate
     * @param dest   the destination coordinate
     */
-   void line (
-      final Vec3 origin,
-      final Vec3 dest );
+   void line ( final Vec3 origin, final Vec3 dest );
 
    /**
     * Gets a mouse within unit coordinates.
@@ -368,10 +341,7 @@ public interface IUp3 extends IUp {
     *
     * @see IUp3#moveTo(float, float, float)
     */
-   default void moveBy (
-      final float x,
-      final float y,
-      final float z ) {
+   default void moveBy ( final float x, final float y, final float z ) {
 
       this.moveByGlobal(x, y, z);
    }
@@ -401,10 +371,7 @@ public interface IUp3 extends IUp {
     * @see IUp3#getLocY()
     * @see IUp3#getLocZ()
     */
-   default void moveByGlobal (
-      final float x,
-      final float y,
-      final float z ) {
+   default void moveByGlobal ( final float x, final float y, final float z ) {
 
       this.moveTo(this.getLocX() + x, this.getLocY() + y, this.getLocZ() + z);
    }
@@ -434,10 +401,7 @@ public interface IUp3 extends IUp {
     * @see IUp3#getLookTargetY()
     * @see IUp3#getLookTargetZ()
     */
-   default void moveTo (
-      final float x,
-      final float y,
-      final float z ) {
+   default void moveTo ( final float x, final float y, final float z ) {
 
       this.camera(x, y, z, this.getLookTargetX(), this.getLookTargetY(),
          this.getLookTargetZ());
@@ -469,9 +433,7 @@ public interface IUp3 extends IUp {
     * @see IUp3#getLocZ()
     * @see IUp3#moveTo(float, float, float)
     */
-   default void moveTo (
-      final Vec3 locNew,
-      final float step ) {
+   default void moveTo ( final Vec3 locNew, final float step ) {
 
       if ( step <= 0.0f ) { return; }
       if ( step >= 1.0f ) {
@@ -480,8 +442,7 @@ public interface IUp3 extends IUp {
       }
 
       final float u = 1.0f - step;
-      this.moveTo(
-         u * this.getLocX() + step * locNew.x,
+      this.moveTo(u * this.getLocX() + step * locNew.x,
          u * this.getLocY() + step * locNew.y,
          u * this.getLocZ() + step * locNew.z);
    }
@@ -503,10 +464,7 @@ public interface IUp3 extends IUp {
     * @param y the y coordinate
     * @param z the z coordinate
     */
-   void point (
-      final float x,
-      final float y,
-      final float z );
+   void point ( final float x, final float y, final float z );
 
    /**
     * Draws a point at a given coordinate
@@ -534,9 +492,7 @@ public interface IUp3 extends IUp {
     * @param cp  the control point
     * @param ap1 the next anchor point
     */
-   void quadraticVertex (
-      final Vec3 cp,
-      final Vec3 ap1 );
+   void quadraticVertex ( final Vec3 cp, final Vec3 ap1 );
 
    /**
     * Displays a ray, i.e., an origin point and a direction. The display
@@ -550,13 +506,8 @@ public interface IUp3 extends IUp {
     * @param zDir    the z direction
     * @param dLen    the display length
     */
-   default void ray (
-      final float xOrigin,
-      final float yOrigin,
-      final float zOrigin,
-      final float xDir,
-      final float yDir,
-      final float zDir,
+   default void ray ( final float xOrigin, final float yOrigin,
+      final float zOrigin, final float xDir, final float yDir, final float zDir,
       final float dLen ) {
 
       this.ray(xOrigin, yOrigin, zOrigin, xDir, yDir, zDir, dLen, 1.0f, 4.0f,
@@ -578,16 +529,9 @@ public interface IUp3 extends IUp {
     * @param oWeight the origin stroke weight
     * @param dWeight the direction stroke weight
     */
-   default void ray (
-      final float xOrigin,
-      final float yOrigin,
-      final float zOrigin,
-      final float xDir,
-      final float yDir,
-      final float zDir,
-      final float dLen,
-      final float lnwgt,
-      final float oWeight,
+   default void ray ( final float xOrigin, final float yOrigin,
+      final float zOrigin, final float xDir, final float yDir, final float zDir,
+      final float dLen, final float lnwgt, final float oWeight,
       final float dWeight ) {
 
       final float mSq = xDir * xDir + yDir * yDir + zDir * zDir;
@@ -636,9 +580,7 @@ public interface IUp3 extends IUp {
     * @param ray  the ray
     * @param dLen the display length
     */
-   default void ray (
-      final Ray3 ray,
-      final float dLen ) {
+   default void ray ( final Ray3 ray, final float dLen ) {
 
       final Vec3 origin = ray.origin;
       final Vec3 dir = ray.dir;
@@ -655,12 +597,8 @@ public interface IUp3 extends IUp {
     * @param oWeight the origin stroke weight
     * @param dWeight the direction stroke weight
     */
-   default void ray (
-      final Ray3 ray,
-      final float dLen,
-      final float lnwgt,
-      final float oWeight,
-      final float dWeight ) {
+   default void ray ( final Ray3 ray, final float dLen, final float lnwgt,
+      final float oWeight, final float dWeight ) {
 
       final Vec3 origin = ray.origin;
       final Vec3 dir = ray.dir;
@@ -730,9 +668,7 @@ public interface IUp3 extends IUp {
     *
     * @return the mouse
     */
-   static Vec3 mouse1s (
-      final PApplet parent,
-      final Vec3 target ) {
+   static Vec3 mouse1s ( final PApplet parent, final Vec3 target ) {
 
       final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
       final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
@@ -748,9 +684,7 @@ public interface IUp3 extends IUp {
     *
     * @return the mouse
     */
-   static Vec3 mouse1u (
-      final PApplet parent,
-      final Vec3 target ) {
+   static Vec3 mouse1u ( final PApplet parent, final Vec3 target ) {
 
       final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
       final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);

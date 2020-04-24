@@ -59,11 +59,8 @@ public abstract class PMatAux {
 
       if ( target == null ) { target = new PMatrix3D(); }
 
-      target.set(
-         0.0f, 0.0f, 0.0f, 1.0f,
-         0.0f, 0.0f, 0.33333334f, 1.0f,
-         0.0f, 0.33333334f, 0.66666666f, 1.0f,
-         1.0f, 1.0f, 1.0f, 1.0f);
+      target.set(0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.33333334f, 1.0f, 0.0f,
+         0.33333334f, 0.66666666f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 
       return target;
    }
@@ -90,9 +87,7 @@ public abstract class PMatAux {
     *
     * @return the basis
     */
-   public static PMatrix3D catmullBasis (
-      final float s,
-      PMatrix3D target ) {
+   public static PMatrix3D catmullBasis ( final float s, PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
 
@@ -128,13 +123,8 @@ public abstract class PMatAux {
     *
     * @return the matrix
     */
-   public static PMatrix3D compoundRotate (
-      final float c,
-      final float s,
-      final float xAxis,
-      final float yAxis,
-      final float zAxis,
-      PMatrix3D m,
+   public static PMatrix3D compoundRotate ( final float c, final float s,
+      final float xAxis, final float yAxis, final float zAxis, PMatrix3D m,
       PMatrix3D mInv ) {
 
       if ( m == null ) { m = new PMatrix3D(); }
@@ -159,8 +149,7 @@ public abstract class PMatAux {
       final float n12 = tay * zAxis - sax;
       final float n21 = taz * yAxis + sax;
 
-      m.set(
-         m.m00 * n00 + m.m01 * n01 + m.m02 * n02,
+      m.set(m.m00 * n00 + m.m01 * n01 + m.m02 * n02,
          m.m00 * n10 + m.m01 * n11 + m.m02 * n12,
          m.m00 * n20 + m.m01 * n21 + m.m02 * n22, m.m03,
          m.m10 * n00 + m.m11 * n01 + m.m12 * n02,
@@ -173,8 +162,7 @@ public abstract class PMatAux {
          m.m30 * n10 + m.m31 * n11 + m.m32 * n12,
          m.m30 * n20 + m.m31 * n21 + m.m32 * n22, m.m33);
 
-      mInv.set(
-         n00 * mInv.m00 + n01 * mInv.m10 + n02 * mInv.m20,
+      mInv.set(n00 * mInv.m00 + n01 * mInv.m10 + n02 * mInv.m20,
          n00 * mInv.m01 + n01 * mInv.m11 + n02 * mInv.m21,
          n00 * mInv.m02 + n01 * mInv.m12 + n02 * mInv.m22,
          n00 * mInv.m03 + n01 * mInv.m13 + n02 * mInv.m23,
@@ -185,8 +173,8 @@ public abstract class PMatAux {
          n20 * mInv.m00 + n21 * mInv.m10 + n22 * mInv.m20,
          n20 * mInv.m01 + n21 * mInv.m11 + n22 * mInv.m21,
          n20 * mInv.m02 + n21 * mInv.m12 + n22 * mInv.m22,
-         n20 * mInv.m03 + n21 * mInv.m13 + n22 * mInv.m23,
-         mInv.m30, mInv.m31, mInv.m32, mInv.m33);
+         n20 * mInv.m03 + n21 * mInv.m13 + n22 * mInv.m23, mInv.m30, mInv.m31,
+         mInv.m32, mInv.m33);
 
       return m;
    }
@@ -204,20 +192,13 @@ public abstract class PMatAux {
     *
     * @return the matrix
     */
-   public static PMatrix3D compoundRotate (
-      final float radians,
-      final float xAxis,
-      final float yAxis,
-      final float zAxis,
-      final PMatrix3D m,
-      final PMatrix3D mInv ) {
+   public static PMatrix3D compoundRotate ( final float radians,
+      final float xAxis, final float yAxis, final float zAxis,
+      final PMatrix3D m, final PMatrix3D mInv ) {
 
       final float normRad = -radians * IUtils.ONE_TAU;
-      return PMatAux.compoundRotate(
-         Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f),
-         xAxis, yAxis, zAxis,
-         m, mInv);
+      return PMatAux.compoundRotate(Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f), xAxis, yAxis, zAxis, m, mInv);
    }
 
    /**
@@ -231,28 +212,22 @@ public abstract class PMatAux {
     *
     * @return the rotated matrix
     */
-   public static PMatrix3D compoundRotateZ (
-      final float c,
-      final float s,
-      PMatrix3D m,
-      PMatrix3D mInv ) {
+   public static PMatrix3D compoundRotateZ ( final float c, final float s,
+      PMatrix3D m, PMatrix3D mInv ) {
 
       if ( m == null ) { m = new PMatrix3D(); }
       if ( mInv == null ) { mInv = new PMatrix3D(); }
 
-      m.set(
-         c * m.m00 + s * m.m01, c * m.m01 - s * m.m00, m.m02, m.m03,
+      m.set(c * m.m00 + s * m.m01, c * m.m01 - s * m.m00, m.m02, m.m03,
          c * m.m10 + s * m.m11, c * m.m11 - s * m.m10, m.m12, m.m13,
          c * m.m20 + s * m.m21, c * m.m21 - s * m.m20, m.m22, m.m23,
          c * m.m30 + s * m.m31, c * m.m31 - s * m.m30, m.m32, m.m33);
 
-      mInv.set(
-         c * mInv.m00 + s * mInv.m10, c * mInv.m01 + s * mInv.m11,
+      mInv.set(c * mInv.m00 + s * mInv.m10, c * mInv.m01 + s * mInv.m11,
          c * mInv.m02 + s * mInv.m12, c * mInv.m03 + s * mInv.m13,
          c * mInv.m10 - s * mInv.m00, c * mInv.m11 - s * mInv.m01,
-         c * mInv.m12 - s * mInv.m02, c * mInv.m13 - s * mInv.m03,
-         mInv.m20, mInv.m21, mInv.m22, mInv.m23,
-         mInv.m30, mInv.m31, mInv.m32, mInv.m33);
+         c * mInv.m12 - s * mInv.m02, c * mInv.m13 - s * mInv.m03, mInv.m20,
+         mInv.m21, mInv.m22, mInv.m23, mInv.m30, mInv.m31, mInv.m32, mInv.m33);
 
       return m;
    }
@@ -273,9 +248,8 @@ public abstract class PMatAux {
     *
     * @return the determinant
     */
-   public static float det3x3 (
-      final float t00, final float t01, final float t02,
-      final float t10, final float t11, final float t12,
+   public static float det3x3 ( final float t00, final float t01,
+      final float t02, final float t10, final float t11, final float t12,
       final float t20, final float t21, final float t22 ) {
 
       /* @formatter:off */
@@ -297,13 +271,10 @@ public abstract class PMatAux {
     *
     * @return the view frustum
     */
-   public static PMatrix3D frustum (
-      final float left, final float right,
-      final float bottom, final float top,
-      final float near, final float far ) {
+   public static PMatrix3D frustum ( final float left, final float right,
+      final float bottom, final float top, final float near, final float far ) {
 
-      return PMatAux.frustum(
-         left, right, bottom, top, near, far,
+      return PMatAux.frustum(left, right, bottom, top, near, far,
          ( PMatrix3D ) null);
    }
 
@@ -320,13 +291,8 @@ public abstract class PMatAux {
     *
     * @return the view frustum
     */
-   public static PMatrix3D frustum (
-      final float left,
-      final float right,
-      final float bottom,
-      final float top,
-      final float near,
-      final float far,
+   public static PMatrix3D frustum ( final float left, final float right,
+      final float bottom, final float top, final float near, final float far,
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
@@ -341,11 +307,9 @@ public abstract class PMatAux {
       h = h != 0.0f ? 1.0f / h : 1.0f;
       d = d != 0.0f ? 1.0f / d : 1.0f;
 
-      target.set(
-         n2 * w, 0.0f, ( right + left ) * w, 0.0f,
-         0.0f, n2 * h, ( top + bottom ) * h, 0.0f,
-         0.0f, 0.0f, ( far + near ) * -d, n2 * far * -d,
-         0.0f, 0.0f, -1.0f, 0.0f);
+      target.set(n2 * w, 0.0f, ( right + left ) * w, 0.0f, 0.0f, n2 * h,
+         ( top + bottom ) * h, 0.0f, 0.0f, 0.0f, ( far + near ) * -d,
+         n2 * far * -d, 0.0f, 0.0f, -1.0f, 0.0f);
 
       return target;
    }
@@ -363,8 +327,7 @@ public abstract class PMatAux {
     *      float, float)
     * @see PMatrix3D#determinant()
     */
-   public static PMatrix3D inverse (
-      final PMatrix3D m,
+   public static PMatrix3D inverse ( final PMatrix3D m,
       final PMatrix3D target ) {
 
       final float det = m.determinant();
@@ -425,9 +388,7 @@ public abstract class PMatAux {
     *
     * @return the matrix
     */
-   public static PMatrix3D invRotate (
-      final Quaternion q,
-      PMatrix3D target ) {
+   public static PMatrix3D invRotate ( final Quaternion q, PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
 
@@ -463,8 +424,7 @@ public abstract class PMatAux {
       final float am21 = yz2 + wx2;
       final float am22 = 1.0f - xsq2 - ysq2;
 
-      target.set(
-         am00 * target.m00 + am01 * target.m10 + am02 * target.m20,
+      target.set(am00 * target.m00 + am01 * target.m10 + am02 * target.m20,
          am00 * target.m01 + am01 * target.m11 + am02 * target.m21,
          am00 * target.m02 + am01 * target.m12 + am02 * target.m22,
          am00 * target.m03 + am01 * target.m13 + am02 * target.m23,
@@ -475,8 +435,8 @@ public abstract class PMatAux {
          am20 * target.m00 + am21 * target.m10 + am22 * target.m20,
          am20 * target.m01 + am21 * target.m11 + am22 * target.m21,
          am20 * target.m02 + am21 * target.m12 + am22 * target.m22,
-         am20 * target.m03 + am21 * target.m13 + am22 * target.m23,
-         target.m30, target.m31, target.m32, target.m33);
+         am20 * target.m03 + am21 * target.m13 + am22 * target.m23, target.m30,
+         target.m31, target.m32, target.m33);
 
       return target;
    }
@@ -504,14 +464,11 @@ public abstract class PMatAux {
     *
     * @return the rotated matrix
     */
-   public static PMatrix3D invRotateX (
-      final float c,
-      final float s,
+   public static PMatrix3D invRotateX ( final float c, final float s,
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
-      target.set(
-         target.m00, target.m01, target.m02, target.m03,
+      target.set(target.m00, target.m01, target.m02, target.m03,
          c * target.m10 + s * target.m20, c * target.m11 + s * target.m21,
          c * target.m12 + s * target.m22, c * target.m13 + s * target.m23,
          c * target.m20 - s * target.m10, c * target.m21 - s * target.m11,
@@ -530,15 +487,12 @@ public abstract class PMatAux {
     *
     * @return the rotated matrix
     */
-   public static PMatrix3D invRotateX (
-      final float radians,
+   public static PMatrix3D invRotateX ( final float radians,
       final PMatrix3D target ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.invRotateX(
-         Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f),
-         target);
+      return PMatAux.invRotateX(Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f), target);
    }
 
    /**
@@ -564,19 +518,17 @@ public abstract class PMatAux {
     *
     * @return the rotated matrix
     */
-   public static PMatrix3D invRotateY (
-      final float c,
-      final float s,
+   public static PMatrix3D invRotateY ( final float c, final float s,
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
-      target.set(
-         c * target.m00 - s * target.m20, c * target.m01 - s * target.m21,
-         c * target.m02 - s * target.m22, c * target.m03 - s * target.m23,
-         target.m10, target.m11, target.m12, target.m13,
-         c * target.m20 + s * target.m00, c * target.m21 + s * target.m01,
-         c * target.m22 + s * target.m02, c * target.m23 + s * target.m03,
-         target.m30, target.m31, target.m32, target.m33);
+      target.set(c * target.m00 - s * target.m20,
+         c * target.m01 - s * target.m21, c * target.m02 - s * target.m22,
+         c * target.m03 - s * target.m23, target.m10, target.m11, target.m12,
+         target.m13, c * target.m20 + s * target.m00,
+         c * target.m21 + s * target.m01, c * target.m22 + s * target.m02,
+         c * target.m23 + s * target.m03, target.m30, target.m31, target.m32,
+         target.m33);
 
       return target;
    }
@@ -590,15 +542,12 @@ public abstract class PMatAux {
     *
     * @return the rotated matrix
     */
-   public static PMatrix3D invRotateY (
-      final float radians,
+   public static PMatrix3D invRotateY ( final float radians,
       final PMatrix3D target ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.invRotateY(
-         Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f),
-         target);
+      return PMatAux.invRotateY(Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f), target);
    }
 
    /**
@@ -624,20 +573,17 @@ public abstract class PMatAux {
     *
     * @return the rotated matrix
     */
-   public static PMatrix3D invRotateZ (
-      final float c,
-      final float s,
+   public static PMatrix3D invRotateZ ( final float c, final float s,
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
 
-      target.set(
-         c * target.m00 + s * target.m10, c * target.m01 + s * target.m11,
-         c * target.m02 + s * target.m12, c * target.m03 + s * target.m13,
-         c * target.m10 - s * target.m00, c * target.m11 - s * target.m01,
-         c * target.m12 - s * target.m02, c * target.m13 - s * target.m03,
-         target.m20, target.m21, target.m22, target.m23,
-         target.m30, target.m31, target.m32, target.m33);
+      target.set(c * target.m00 + s * target.m10,
+         c * target.m01 + s * target.m11, c * target.m02 + s * target.m12,
+         c * target.m03 + s * target.m13, c * target.m10 - s * target.m00,
+         c * target.m11 - s * target.m01, c * target.m12 - s * target.m02,
+         c * target.m13 - s * target.m03, target.m20, target.m21, target.m22,
+         target.m23, target.m30, target.m31, target.m32, target.m33);
 
       return target;
    }
@@ -651,15 +597,12 @@ public abstract class PMatAux {
     *
     * @return the rotated matrix
     */
-   public static PMatrix3D invRotateZ (
-      final float radians,
+   public static PMatrix3D invRotateZ ( final float radians,
       final PMatrix3D target ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.invRotateZ(
-         Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f),
-         target);
+      return PMatAux.invRotateZ(Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f), target);
    }
 
    /**
@@ -674,11 +617,8 @@ public abstract class PMatAux {
     *
     * @return the scaled matrix
     */
-   public static PMatrix3D invScale (
-      final float xScale,
-      final float yScale,
-      final float zScale,
-      PMatrix3D target ) {
+   public static PMatrix3D invScale ( final float xScale, final float yScale,
+      final float zScale, PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
 
@@ -686,8 +626,7 @@ public abstract class PMatAux {
       final float y = yScale != 0.0f ? 1.0f / yScale : 1.0f;
       final float z = zScale != 0.0f ? 1.0f / zScale : 1.0f;
 
-      target.set(
-         x * target.m00, x * target.m01, x * target.m02, x * target.m03,
+      target.set(x * target.m00, x * target.m01, x * target.m02, x * target.m03,
          y * target.m10, y * target.m11, y * target.m12, y * target.m13,
          z * target.m20, z * target.m21, z * target.m22, z * target.m23,
          target.m30, target.m31, target.m32, target.m33);
@@ -706,9 +645,7 @@ public abstract class PMatAux {
     *
     * @return the scaled matrix
     */
-   public static PMatrix3D invScale (
-      final float sx,
-      final float sy,
+   public static PMatrix3D invScale ( final float sx, final float sy,
       final PMatrix3D b ) {
 
       return PMatAux.invScale(sx, sy, 1.0f, b);
@@ -724,8 +661,7 @@ public abstract class PMatAux {
     *
     * @return the scaled matrix
     */
-   public static PMatrix3D invScale (
-      final float scalar,
+   public static PMatrix3D invScale ( final float scalar,
       final PMatrix3D target ) {
 
       return PMatAux.invScale(scalar, scalar, scalar, target);
@@ -743,22 +679,18 @@ public abstract class PMatAux {
     *
     * @return the translated matrix
     */
-   public static PMatrix3D invTranslate (
-      final float tx,
-      final float ty,
-      final float tz,
-      PMatrix3D target ) {
+   public static PMatrix3D invTranslate ( final float tx, final float ty,
+      final float tz, PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
 
-      target.set(
-         target.m00 - tx * target.m30, target.m01 - tx * target.m31,
+      target.set(target.m00 - tx * target.m30, target.m01 - tx * target.m31,
          target.m02 - tx * target.m32, target.m03 - tx * target.m33,
          target.m10 - ty * target.m30, target.m11 - ty * target.m31,
          target.m12 - ty * target.m32, target.m13 - ty * target.m33,
          target.m20 - tz * target.m30, target.m21 - tz * target.m31,
-         target.m22 - tz * target.m32, target.m23 - tz * target.m33,
-         target.m30, target.m31, target.m32, target.m33);
+         target.m22 - tz * target.m32, target.m23 - tz * target.m33, target.m30,
+         target.m31, target.m32, target.m33);
 
       return target;
    }
@@ -774,9 +706,7 @@ public abstract class PMatAux {
     *
     * @return the translated matrix
     */
-   public static PMatrix3D invTranslate (
-      final float tx,
-      final float ty,
+   public static PMatrix3D invTranslate ( final float tx, final float ty,
       final PMatrix3D b ) {
 
       return PMatAux.invTranslate(tx, ty, 0.0f, b);
@@ -795,9 +725,7 @@ public abstract class PMatAux {
     * @see PMatrix3D#apply(PMatrix3D)
     * @see PMatrix3D#preApply(PMatrix3D)
     */
-   public static PMatrix3D mul (
-      final PMatrix3D a,
-      final PMatrix3D b ) {
+   public static PMatrix3D mul ( final PMatrix3D a, final PMatrix3D b ) {
 
       return PMatAux.mul(a, b, ( PMatrix3D ) null);
    }
@@ -816,15 +744,12 @@ public abstract class PMatAux {
     * @see PMatrix3D#apply(PMatrix3D)
     * @see PMatrix3D#preApply(PMatrix3D)
     */
-   public static PMatrix3D mul (
-      final PMatrix3D a,
-      final PMatrix3D b,
+   public static PMatrix3D mul ( final PMatrix3D a, final PMatrix3D b,
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
 
-      target.set(
-         a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03 * b.m30,
+      target.set(a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03 * b.m30,
          a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21 + a.m03 * b.m31,
          a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22 + a.m03 * b.m32,
          a.m00 * b.m03 + a.m01 * b.m13 + a.m02 * b.m23 + a.m03 * b.m33,
@@ -858,13 +783,10 @@ public abstract class PMatAux {
     *
     * @return the product
     */
-   public static Vec4 mul (
-      final PMatrix3D m,
-      final Vec4 v,
+   public static Vec4 mul ( final PMatrix3D m, final Vec4 v,
       final Vec4 target ) {
 
-      return target.set(
-         m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03 * v.w,
+      return target.set(m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03 * v.w,
          m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13 * v.w,
          m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m23 * v.w,
          m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33 * v.w);
@@ -882,12 +804,8 @@ public abstract class PMatAux {
     *
     * @return the product
     */
-   public static Vec3 mulPoint (
-      final PMatrix3D m,
-      final float px,
-      final float py,
-      final float pz,
-      final Vec3 target ) {
+   public static Vec3 mulPoint ( final PMatrix3D m, final float px,
+      final float py, final float pz, final Vec3 target ) {
 
       final float w = m.m30 * px + m.m31 * py + m.m32 * pz + m.m33;
       if ( w != 0.0f ) {
@@ -911,9 +829,7 @@ public abstract class PMatAux {
     *
     * @return the product
     */
-   public static Vec3 mulPoint (
-      final PMatrix3D m,
-      final Vec3 p,
+   public static Vec3 mulPoint ( final PMatrix3D m, final Vec3 p,
       final Vec3 target ) {
 
       return PMatAux.mulPoint(m, p.x, p.y, p.z, target);
@@ -931,18 +847,13 @@ public abstract class PMatAux {
     *
     * @return the product
     */
-   public static Vec3 mulVector (
-      final PMatrix3D m,
-      final float vx,
-      final float vy,
-      final float vz,
-      final Vec3 target ) {
+   public static Vec3 mulVector ( final PMatrix3D m, final float vx,
+      final float vy, final float vz, final Vec3 target ) {
 
       final float w = m.m30 * vx + m.m31 * vy + m.m32 * vz + m.m33;
       if ( w != 0.0f ) {
          final float wInv = 1.0f / w;
-         return target.set(
-            ( m.m00 * vx + m.m01 * vy + m.m02 * vz ) * wInv,
+         return target.set( ( m.m00 * vx + m.m01 * vy + m.m02 * vz ) * wInv,
             ( m.m10 * vx + m.m11 * vy + m.m12 * vz ) * wInv,
             ( m.m20 * vx + m.m21 * vy + m.m22 * vz ) * wInv);
       }
@@ -959,9 +870,7 @@ public abstract class PMatAux {
     *
     * @return the product
     */
-   public static Vec3 mulVector (
-      final PMatrix3D m,
-      final Vec3 v,
+   public static Vec3 mulVector ( final PMatrix3D m, final Vec3 v,
       final Vec3 target ) {
 
       return PMatAux.mulVector(m, v.x, v.y, v.z, target);
@@ -980,13 +889,10 @@ public abstract class PMatAux {
     *
     * @return the orthographic projection
     */
-   public static PMatrix3D orthographic (
-      final float left, final float right,
-      final float bottom, final float top,
-      final float near, final float far ) {
+   public static PMatrix3D orthographic ( final float left, final float right,
+      final float bottom, final float top, final float near, final float far ) {
 
-      return PMatAux.orthographic(
-         left, right, bottom, top, near, far,
+      return PMatAux.orthographic(left, right, bottom, top, near, far,
          ( PMatrix3D ) null);
    }
 
@@ -1004,13 +910,8 @@ public abstract class PMatAux {
     *
     * @return the orthographic projection
     */
-   public static PMatrix3D orthographic (
-      final float left,
-      final float right,
-      final float bottom,
-      final float top,
-      final float near,
-      final float far,
+   public static PMatrix3D orthographic ( final float left, final float right,
+      final float bottom, final float top, final float near, final float far,
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
@@ -1023,10 +924,8 @@ public abstract class PMatAux {
       h = h != 0.0f ? 1.0f / h : 1.0f;
       d = d != 0.0f ? 1.0f / d : 1.0f;
 
-      target.set(
-         w + w, 0.0f, 0.0f, w * ( left + right ),
-         0.0f, h + h, 0.0f, h * ( top + bottom ),
-         0.0f, 0.0f, - ( d + d ), -d * ( far + near ),
+      target.set(w + w, 0.0f, 0.0f, w * ( left + right ), 0.0f, h + h, 0.0f,
+         h * ( top + bottom ), 0.0f, 0.0f, - ( d + d ), -d * ( far + near ),
          0.0f, 0.0f, 0.0f, 1.0f);
 
       return target;
@@ -1043,11 +942,8 @@ public abstract class PMatAux {
     *
     * @return the perspective projection
     */
-   public static PMatrix3D perspective (
-      final float fov,
-      final float aspect,
-      final float near,
-      final float far ) {
+   public static PMatrix3D perspective ( final float fov, final float aspect,
+      final float near, final float far ) {
 
       return PMatAux.perspective(fov, aspect, near, far, ( PMatrix3D ) null);
    }
@@ -1064,22 +960,16 @@ public abstract class PMatAux {
     *
     * @return the perspective projection
     */
-   public static PMatrix3D perspective (
-      final float fov,
-      final float aspect,
-      final float near,
-      final float far,
-      PMatrix3D target ) {
+   public static PMatrix3D perspective ( final float fov, final float aspect,
+      final float near, final float far, PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
 
       final float cotfov = Utils.cot(fov * 0.5f);
       final float d = Utils.div(1.0f, far - near);
-      target.set(
-         Utils.div(cotfov, aspect), 0.0f, 0.0f, 0.0f,
-         0.0f, cotfov, 0.0f, 0.0f,
-         0.0f, 0.0f, ( far + near ) * -d, ( near + near ) * far * -d,
-         0.0f, 0.0f, -1.0f, 0.0f);
+      target.set(Utils.div(cotfov, aspect), 0.0f, 0.0f, 0.0f, 0.0f, cotfov,
+         0.0f, 0.0f, 0.0f, 0.0f, ( far + near ) * -d,
+         ( near + near ) * far * -d, 0.0f, 0.0f, -1.0f, 0.0f);
 
       return target;
    }
@@ -1095,11 +985,8 @@ public abstract class PMatAux {
     *
     * @return the rotated matrix
     */
-   public static PMatrix3D rotate (
-      final float radians,
-      final float xAxis,
-      final float yAxis,
-      final float zAxis ) {
+   public static PMatrix3D rotate ( final float radians, final float xAxis,
+      final float yAxis, final float zAxis ) {
 
       return PMatAux.rotate(radians, xAxis, yAxis, zAxis, ( PMatrix3D ) null);
    }
@@ -1117,12 +1004,8 @@ public abstract class PMatAux {
     *
     * @return the rotated matrix
     */
-   public static PMatrix3D rotate (
-      final float c,
-      final float s,
-      final float xAxis,
-      final float yAxis,
-      final float zAxis,
+   public static PMatrix3D rotate ( final float c, final float s,
+      final float xAxis, final float yAxis, final float zAxis,
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
@@ -1148,26 +1031,21 @@ public abstract class PMatAux {
       final float bm21 = tay * zAxis + sax;
       final float bm22 = taz * zAxis + c;
 
-      target.set(
-         target.m00 * bm00 + target.m01 * bm10 + target.m02 * bm20,
+      target.set(target.m00 * bm00 + target.m01 * bm10 + target.m02 * bm20,
          target.m00 * bm01 + target.m01 * bm11 + target.m02 * bm21,
-         target.m00 * bm02 + target.m01 * bm12 + target.m02 * bm22,
-         target.m03,
+         target.m00 * bm02 + target.m01 * bm12 + target.m02 * bm22, target.m03,
 
          target.m10 * bm00 + target.m11 * bm10 + target.m12 * bm20,
          target.m10 * bm01 + target.m11 * bm11 + target.m12 * bm21,
-         target.m10 * bm02 + target.m11 * bm12 + target.m12 * bm22,
-         target.m13,
+         target.m10 * bm02 + target.m11 * bm12 + target.m12 * bm22, target.m13,
 
          target.m20 * bm00 + target.m21 * bm10 + target.m22 * bm20,
          target.m20 * bm01 + target.m21 * bm11 + target.m22 * bm21,
-         target.m20 * bm02 + target.m21 * bm12 + target.m22 * bm22,
-         target.m23,
+         target.m20 * bm02 + target.m21 * bm12 + target.m22 * bm22, target.m23,
 
          target.m30 * bm00 + target.m31 * bm10 + target.m32 * bm20,
          target.m30 * bm01 + target.m31 * bm11 + target.m32 * bm21,
-         target.m30 * bm02 + target.m31 * bm12 + target.m32 * bm22,
-         target.m33);
+         target.m30 * bm02 + target.m31 * bm12 + target.m32 * bm22, target.m33);
 
       return target;
    }
@@ -1184,19 +1062,12 @@ public abstract class PMatAux {
     *
     * @return the rotated matrix
     */
-   public static PMatrix3D rotate (
-      final float radians,
-      final float xAxis,
-      final float yAxis,
-      final float zAxis,
-      final PMatrix3D target ) {
+   public static PMatrix3D rotate ( final float radians, final float xAxis,
+      final float yAxis, final float zAxis, final PMatrix3D target ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.rotate(
-         Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f),
-         xAxis, yAxis, zAxis,
-         target);
+      return PMatAux.rotate(Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f), xAxis, yAxis, zAxis, target);
    }
 
    /**
@@ -1221,9 +1092,7 @@ public abstract class PMatAux {
     *
     * @return the matrix
     */
-   public static PMatrix3D rotate (
-      final Quaternion q,
-      PMatrix3D target ) {
+   public static PMatrix3D rotate ( final Quaternion q, PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
 
@@ -1258,26 +1127,21 @@ public abstract class PMatAux {
       final float bm21 = yz2 + wx2;
       final float bm22 = 1.0f - xsq2 - ysq2;
 
-      target.set(
-         target.m00 * bm00 + target.m01 * bm10 + target.m02 * bm20,
+      target.set(target.m00 * bm00 + target.m01 * bm10 + target.m02 * bm20,
          target.m00 * bm01 + target.m01 * bm11 + target.m02 * bm21,
-         target.m00 * bm02 + target.m01 * bm12 + target.m02 * bm22,
-         target.m03,
+         target.m00 * bm02 + target.m01 * bm12 + target.m02 * bm22, target.m03,
 
          target.m10 * bm00 + target.m11 * bm10 + target.m12 * bm20,
          target.m10 * bm01 + target.m11 * bm11 + target.m12 * bm21,
-         target.m10 * bm02 + target.m11 * bm12 + target.m12 * bm22,
-         target.m13,
+         target.m10 * bm02 + target.m11 * bm12 + target.m12 * bm22, target.m13,
 
          target.m20 * bm00 + target.m21 * bm10 + target.m22 * bm20,
          target.m20 * bm01 + target.m21 * bm11 + target.m22 * bm21,
-         target.m20 * bm02 + target.m21 * bm12 + target.m22 * bm22,
-         target.m23,
+         target.m20 * bm02 + target.m21 * bm12 + target.m22 * bm22, target.m23,
 
          target.m30 * bm00 + target.m31 * bm10 + target.m32 * bm20,
          target.m30 * bm01 + target.m31 * bm11 + target.m32 * bm21,
-         target.m30 * bm02 + target.m31 * bm12 + target.m32 * bm22,
-         target.m33);
+         target.m30 * bm02 + target.m31 * bm12 + target.m32 * bm22, target.m33);
 
       return target;
    }
@@ -1305,9 +1169,7 @@ public abstract class PMatAux {
     *
     * @return the mutated matrix
     */
-   public static PMatrix3D rotateX (
-      final float c,
-      final float s,
+   public static PMatrix3D rotateX ( final float c, final float s,
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
@@ -1350,15 +1212,12 @@ public abstract class PMatAux {
     *
     * @return the mutated matrix
     */
-   public static PMatrix3D rotateX (
-      final float radians,
+   public static PMatrix3D rotateX ( final float radians,
       final PMatrix3D target ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.rotateX(
-         Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f),
-         target);
+      return PMatAux.rotateX(Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f), target);
    }
 
    /**
@@ -1384,9 +1243,7 @@ public abstract class PMatAux {
     *
     * @return the mutated matrix
     */
-   public static PMatrix3D rotateY (
-      final float c,
-      final float s,
+   public static PMatrix3D rotateY ( final float c, final float s,
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
@@ -1429,15 +1286,12 @@ public abstract class PMatAux {
     *
     * @return the mutated matrix
     */
-   public static PMatrix3D rotateY (
-      final float radians,
+   public static PMatrix3D rotateY ( final float radians,
       final PMatrix3D target ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.rotateY(
-         Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f),
-         target);
+      return PMatAux.rotateY(Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f), target);
    }
 
    /**
@@ -1463,9 +1317,7 @@ public abstract class PMatAux {
     *
     * @return the mutated matrix
     */
-   public static PMatrix3D rotateZ (
-      final float c,
-      final float s,
+   public static PMatrix3D rotateZ ( final float c, final float s,
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
@@ -1508,15 +1360,12 @@ public abstract class PMatAux {
     *
     * @return the mutated matrix
     */
-   public static PMatrix3D rotateZ (
-      final float radians,
+   public static PMatrix3D rotateZ ( final float radians,
       final PMatrix3D target ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.rotateZ(
-         Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f),
-         target);
+      return PMatAux.rotateZ(Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f), target);
    }
 
    /**
@@ -1539,9 +1388,7 @@ public abstract class PMatAux {
     *
     * @return the string
     */
-   public static String toString (
-      final PMatrix2D m,
-      final int places ) {
+   public static String toString ( final PMatrix2D m, final int places ) {
 
       /* @formatter:off */
       return new StringBuilder(320)
@@ -1581,9 +1428,7 @@ public abstract class PMatAux {
     *
     * @return the string
     */
-   public static String toString (
-      final PMatrix3D m,
-      final int places ) {
+   public static String toString ( final PMatrix3D m, final int places ) {
 
       /* @formatter:off */
       return new StringBuilder(320)

@@ -22,10 +22,7 @@ public class Color extends Vec4 {
     * @param green the green channel
     * @param blue  the blue channel
     */
-   public Color (
-      final byte red,
-      final byte green,
-      final byte blue ) {
+   public Color ( final byte red, final byte green, final byte blue ) {
 
       super();
       this.set(red, green, blue);
@@ -40,10 +37,7 @@ public class Color extends Vec4 {
     * @param blue  the blue channel
     * @param alpha the alpha channel
     */
-   public Color (
-      final byte red,
-      final byte green,
-      final byte blue,
+   public Color ( final byte red, final byte green, final byte blue,
       final byte alpha ) {
 
       super();
@@ -69,10 +63,7 @@ public class Color extends Vec4 {
     * @param green the green channel
     * @param blue  the blue channel
     */
-   public Color (
-      final float red,
-      final float green,
-      final float blue ) {
+   public Color ( final float red, final float green, final float blue ) {
 
       super(red, green, blue, 1.0f);
    }
@@ -85,10 +76,7 @@ public class Color extends Vec4 {
     * @param blue  the blue channel
     * @param alpha the alpha channel
     */
-   public Color (
-      final float red,
-      final float green,
-      final float blue,
+   public Color ( final float red, final float green, final float blue,
       final float alpha ) {
 
       super(red, green, blue, alpha);
@@ -104,10 +92,7 @@ public class Color extends Vec4 {
     * @param gstr the green string
     * @param bstr the blue string
     */
-   public Color (
-      final String rstr,
-      final String gstr,
-      final String bstr ) {
+   public Color ( final String rstr, final String gstr, final String bstr ) {
 
       super();
       this.set(rstr, gstr, bstr);
@@ -124,10 +109,7 @@ public class Color extends Vec4 {
     * @param bstr the blue string
     * @param astr the alpha string
     */
-   public Color (
-      final String rstr,
-      final String gstr,
-      final String bstr,
+   public Color ( final String rstr, final String gstr, final String bstr,
       final String astr ) {
 
       super();
@@ -441,10 +423,7 @@ public class Color extends Vec4 {
     * @return this color
     */
    @Chainable
-   public Color set (
-      final byte red,
-      final byte green,
-      final byte blue ) {
+   public Color set ( final byte red, final byte green, final byte blue ) {
 
       return this.set(red, green, blue, -1);
    }
@@ -461,16 +440,11 @@ public class Color extends Vec4 {
     * @return this color
     */
    @Chainable
-   public Color set (
-      final byte red,
-      final byte green,
-      final byte blue,
+   public Color set ( final byte red, final byte green, final byte blue,
       final byte alpha ) {
 
-      super.set(
-         IUtils.ONE_255 * ( red & 0xff ),
-         IUtils.ONE_255 * ( green & 0xff ),
-         IUtils.ONE_255 * ( blue & 0xff ),
+      super.set(IUtils.ONE_255 * ( red & 0xff ),
+         IUtils.ONE_255 * ( green & 0xff ), IUtils.ONE_255 * ( blue & 0xff ),
          IUtils.ONE_255 * ( alpha & 0xff ));
 
       return this;
@@ -497,10 +471,7 @@ public class Color extends Vec4 {
     * @return this color
     */
    @Chainable
-   public Color set (
-      final float red,
-      final float green,
-      final float blue ) {
+   public Color set ( final float red, final float green, final float blue ) {
 
       return this.set(red, green, blue, 1.0f);
    }
@@ -518,10 +489,7 @@ public class Color extends Vec4 {
     */
    @Override
    @Chainable
-   public Color set (
-      final float red,
-      final float green,
-      final float blue,
+   public Color set ( final float red, final float green, final float blue,
       final float alpha ) {
 
       super.set(red, green, blue, alpha);
@@ -542,9 +510,7 @@ public class Color extends Vec4 {
     * @see Float#parseFloat(String)
     */
    @Chainable
-   public Color set (
-      final String rstr,
-      final String gstr,
+   public Color set ( final String rstr, final String gstr,
       final String bstr ) {
 
       return this.set(rstr, gstr, bstr, "1.0");
@@ -566,10 +532,7 @@ public class Color extends Vec4 {
     */
    @Override
    @Chainable
-   public Color set (
-      final String rstr,
-      final String gstr,
-      final String bstr,
+   public Color set ( final String rstr, final String gstr, final String bstr,
       final String astr ) {
 
       float x = 1.0f;
@@ -670,9 +633,7 @@ public class Color extends Vec4 {
     *
     * @return the string
     */
-   String toBlenderCode (
-      final float gamma,
-      final boolean inclAlpha ) {
+   String toBlenderCode ( final float gamma, final boolean inclAlpha ) {
 
       final StringBuilder pyCd = new StringBuilder(96);
       pyCd.append('(');
@@ -760,16 +721,11 @@ public class Color extends Vec4 {
     *
     * @return the sum
     */
-   public static Color add (
-      final Color a,
-      final Color b,
+   public static Color add ( final Color a, final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(a.x + b.x),
-         Utils.clamp01(a.y + b.y),
-         Utils.clamp01(a.z + b.z),
-         Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.x + b.x), Utils.clamp01(a.y + b.y),
+         Utils.clamp01(a.z + b.z), Utils.clamp01(a.w));
    }
 
    /**
@@ -807,9 +763,7 @@ public class Color extends Vec4 {
     * @see Color#fromHex(int, Color)
     * @see Color#toHexInt(Color)
     */
-   public static Color bitAnd (
-      final Color a,
-      final Color b,
+   public static Color bitAnd ( final Color a, final Color b,
       final Color target ) {
 
       return Color.fromHex(Color.toHexInt(a) & Color.toHexInt(b), target);
@@ -827,9 +781,7 @@ public class Color extends Vec4 {
     * @see Color#fromHex(int, Color)
     * @see Color#toHexInt(Color)
     */
-   public static Color bitNot (
-      final Color a,
-      final Color target ) {
+   public static Color bitNot ( final Color a, final Color target ) {
 
       return Color.fromHex(~Color.toHexInt(a), target);
    }
@@ -847,9 +799,7 @@ public class Color extends Vec4 {
     * @see Color#fromHex(int, Color)
     * @see Color#toHexInt(Color)
     */
-   public static Color bitOr (
-      final Color a,
-      final Color b,
+   public static Color bitOr ( final Color a, final Color b,
       final Color target ) {
 
       return Color.fromHex(Color.toHexInt(a) | Color.toHexInt(b), target);
@@ -869,9 +819,7 @@ public class Color extends Vec4 {
     * @see Color#fromHex(int, Color)
     * @see Color#toHexInt(Color)
     */
-   public static Color bitShiftLeft (
-      final Color a,
-      final int places,
+   public static Color bitShiftLeft ( final Color a, final int places,
       final Color target ) {
 
       return Color.fromHex(Color.toHexInt(a) << places * 0x08, target);
@@ -891,9 +839,7 @@ public class Color extends Vec4 {
     * @see Color#fromHex(int, Color)
     * @see Color#toHexInt(Color)
     */
-   public static Color bitShiftRight (
-      final Color a,
-      final int places,
+   public static Color bitShiftRight ( final Color a, final int places,
       final Color target ) {
 
       return Color.fromHex(Color.toHexInt(a) >> places * 0x08, target);
@@ -913,9 +859,7 @@ public class Color extends Vec4 {
     * @see Color#fromHex(int, Color)
     * @see Color#toHexInt(Color)
     */
-   public static Color bitShiftRightUnsigned (
-      final Color a,
-      final int places,
+   public static Color bitShiftRightUnsigned ( final Color a, final int places,
       final Color target ) {
 
       return Color.fromHex(Color.toHexInt(a) >>> places * 0x08, target);
@@ -934,9 +878,7 @@ public class Color extends Vec4 {
     * @see Color#fromHex(int, Color)
     * @see Color#toHexInt(Color)
     */
-   public static Color bitXor (
-      final Color a,
-      final Color b,
+   public static Color bitXor ( final Color a, final Color b,
       final Color target ) {
 
       return Color.fromHex(Color.toHexInt(a) ^ Color.toHexInt(b), target);
@@ -978,14 +920,10 @@ public class Color extends Vec4 {
     *
     * @see Utils#clamp(float, float, float)
     */
-   public static Color clamp (
-      final Color a,
-      final Color lowerBound,
-      final Color upperBound,
-      final Color target ) {
+   public static Color clamp ( final Color a, final Color lowerBound,
+      final Color upperBound, final Color target ) {
 
-      return target.set(
-         Utils.clamp(a.x, lowerBound.x, upperBound.x),
+      return target.set(Utils.clamp(a.x, lowerBound.x, upperBound.x),
          Utils.clamp(a.y, lowerBound.y, upperBound.y),
          Utils.clamp(a.z, lowerBound.z, upperBound.z),
          Utils.clamp(a.w, lowerBound.w, upperBound.w));
@@ -1002,15 +940,10 @@ public class Color extends Vec4 {
     *
     * @see Utils#clamp01(float)
     */
-   public static Color clamp01 (
-      final Color a,
-      final Color target ) {
+   public static Color clamp01 ( final Color a, final Color target ) {
 
-      return target.set(
-         Utils.clamp01(a.x),
-         Utils.clamp01(a.y),
-         Utils.clamp01(a.z),
-         Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.x), Utils.clamp01(a.y),
+         Utils.clamp01(a.z), Utils.clamp01(a.w));
    }
 
    /**
@@ -1060,15 +993,11 @@ public class Color extends Vec4 {
     *
     * @return the quotient
     */
-   public static Color div (
-      final Color a,
-      final Color b,
+   public static Color div ( final Color a, final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(Utils.div(a.x, b.x)),
-         Utils.clamp01(Utils.div(a.y, b.y)),
-         Utils.clamp01(Utils.div(a.z, b.z)),
+      return target.set(Utils.clamp01(Utils.div(a.x, b.x)),
+         Utils.clamp01(Utils.div(a.y, b.y)), Utils.clamp01(Utils.div(a.z, b.z)),
          Utils.clamp01(a.w));
    }
 
@@ -1083,20 +1012,15 @@ public class Color extends Vec4 {
     *
     * @return the quotient
     */
-   public static Color div (
-      final Color a,
-      final float b,
+   public static Color div ( final Color a, final float b,
       final Color target ) {
 
       if ( b == 0.0f ) {
          return target.set(0.0f, 0.0f, 0.0f, Utils.clamp01(a.w));
       }
       final float bInv = 1.0f / b;
-      return target.set(
-         Utils.clamp01(a.x * bInv),
-         Utils.clamp01(a.y * bInv),
-         Utils.clamp01(a.z * bInv),
-         Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.x * bInv), Utils.clamp01(a.y * bInv),
+         Utils.clamp01(a.z * bInv), Utils.clamp01(a.w));
    }
 
    /**
@@ -1110,15 +1034,11 @@ public class Color extends Vec4 {
     *
     * @return the quotient
     */
-   public static Color div (
-      final float a,
-      final Color b,
+   public static Color div ( final float a, final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(Utils.div(a, b.x)),
-         Utils.clamp01(Utils.div(a, b.y)),
-         Utils.clamp01(Utils.div(a, b.z)),
+      return target.set(Utils.clamp01(Utils.div(a, b.x)),
+         Utils.clamp01(Utils.div(a, b.y)), Utils.clamp01(Utils.div(a, b.z)),
          Utils.clamp01(a));
    }
 
@@ -1131,18 +1051,12 @@ public class Color extends Vec4 {
     *
     * @return the color
     */
-   public static Color fromDir (
-      final Vec2 v,
-      final Color target ) {
+   public static Color fromDir ( final Vec2 v, final Color target ) {
 
       final float mSq = Vec2.magSq(v);
       if ( mSq == 0.0f ) { return target.set(0.5f, 0.5f, 0.5f, 1.0f); }
       final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
-      return target.set(
-         v.x * mInv + 0.5f,
-         v.y * mInv + 0.5f,
-         0.5f,
-         1.0f);
+      return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, 0.5f, 1.0f);
    }
 
    /**
@@ -1154,17 +1068,12 @@ public class Color extends Vec4 {
     *
     * @return the color
     */
-   public static Color fromDir (
-      final Vec3 v,
-      final Color target ) {
+   public static Color fromDir ( final Vec3 v, final Color target ) {
 
       final float mSq = Vec3.magSq(v);
       if ( mSq == 0.0f ) { return target.set(0.5f, 0.5f, 0.5f, 1.0f); }
       final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
-      return target.set(
-         v.x * mInv + 0.5f,
-         v.y * mInv + 0.5f,
-         v.z * mInv + 0.5f,
+      return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, v.z * mInv + 0.5f,
          1.0f);
    }
 
@@ -1177,17 +1086,12 @@ public class Color extends Vec4 {
     *
     * @return the color
     */
-   public static Color fromDir (
-      final Vec4 v,
-      final Color target ) {
+   public static Color fromDir ( final Vec4 v, final Color target ) {
 
       final float mSq = Vec4.magSq(v);
       if ( mSq == 0.0f ) { return target.set(0.5f, 0.5f, 0.5f, 0.5f); }
       final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
-      return target.set(
-         v.x * mInv + 0.5f,
-         v.y * mInv + 0.5f,
-         v.z * mInv + 0.5f,
+      return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, v.z * mInv + 0.5f,
          v.w * mInv + 0.5f);
    }
 
@@ -1202,9 +1106,7 @@ public class Color extends Vec4 {
     *
     * @see IUtils#ONE_255
     */
-   public static Color fromHex (
-      final int c,
-      final Color target ) {
+   public static Color fromHex ( final int c, final Color target ) {
 
       /* @formatter:off */
       return target.set(
@@ -1226,9 +1128,7 @@ public class Color extends Vec4 {
     *
     * @see IUtils#ONE_255
     */
-   public static Color fromHex (
-      final long c,
-      final Color target ) {
+   public static Color fromHex ( final long c, final Color target ) {
 
       /* @formatter:off */
       return target.set(
@@ -1263,9 +1163,7 @@ public class Color extends Vec4 {
     * @see String#replaceAll(String, String)
     * @see String#substring(int)
     */
-   public static Color fromHex (
-      final String c,
-      final Color target ) {
+   public static Color fromHex ( final String c, final Color target ) {
 
       final int len = c.length();
 
@@ -1349,8 +1247,7 @@ public class Color extends Vec4 {
     *
     * @return the color by keyword
     */
-   public static Color fromKeyword (
-      final String keyword,
+   public static Color fromKeyword ( final String keyword,
       final Color target ) {
 
       final String lc = keyword.toLowerCase().trim();
@@ -1437,12 +1334,8 @@ public class Color extends Vec4 {
     *
     * @see Utils#mod1(float)
     */
-   public static Color hsbaToRgba (
-      final float hue,
-      final float sat,
-      final float bri,
-      final float alpha,
-      final Color target ) {
+   public static Color hsbaToRgba ( final float hue, final float sat,
+      final float bri, final float alpha, final Color target ) {
 
       if ( sat <= 0.0f ) { return target.set(bri, bri, bri, alpha); }
 
@@ -1486,9 +1379,7 @@ public class Color extends Vec4 {
     *
     * @return the color
     */
-   public static Color hsbaToRgba (
-      final Vec4 hsba,
-      final Color target ) {
+   public static Color hsbaToRgba ( final Vec4 hsba, final Color target ) {
 
       return Color.hsbaToRgba(hsba.x, hsba.y, hsba.z, hsba.w, target);
    }
@@ -1504,14 +1395,10 @@ public class Color extends Vec4 {
     *
     * @return the inverse
     */
-   public static Color inverse (
-      final Color c,
-      final Color target ) {
+   public static Color inverse ( final Color c, final Color target ) {
 
-      return target.set(
-         Utils.max(0.0f, 1.0f - c.x),
-         Utils.max(0.0f, 1.0f - c.y),
-         Utils.max(0.0f, 1.0f - c.z),
+      return target.set(Utils.max(0.0f, 1.0f - c.x),
+         Utils.max(0.0f, 1.0f - c.y), Utils.max(0.0f, 1.0f - c.z),
          Utils.clamp01(c.w));
    }
 
@@ -1582,15 +1469,11 @@ public class Color extends Vec4 {
     *
     * @return the maximum
     */
-   public static Color max (
-      final Color a,
-      final Color b,
+   public static Color max ( final Color a, final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(Utils.max(a.x, b.x)),
-         Utils.clamp01(Utils.max(a.y, b.y)),
-         Utils.clamp01(Utils.max(a.z, b.z)),
+      return target.set(Utils.clamp01(Utils.max(a.x, b.x)),
+         Utils.clamp01(Utils.max(a.y, b.y)), Utils.clamp01(Utils.max(a.z, b.z)),
          Utils.clamp01(Utils.max(a.w, b.w)));
    }
 
@@ -1605,15 +1488,11 @@ public class Color extends Vec4 {
     *
     * @return the maximum
     */
-   public static Color min (
-      final Color a,
-      final Color b,
+   public static Color min ( final Color a, final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(Utils.min(a.x, b.x)),
-         Utils.clamp01(Utils.min(a.y, b.y)),
-         Utils.clamp01(Utils.min(a.z, b.z)),
+      return target.set(Utils.clamp01(Utils.min(a.x, b.x)),
+         Utils.clamp01(Utils.min(a.y, b.y)), Utils.clamp01(Utils.min(a.z, b.z)),
          Utils.clamp01(Utils.min(a.w, b.w)));
    }
 
@@ -1628,22 +1507,16 @@ public class Color extends Vec4 {
     *
     * @return the mixed color
     */
-   public static Color mix (
-      final Color origin,
-      final Color dest,
-      final float step,
-      final Color target ) {
+   public static Color mix ( final Color origin, final Color dest,
+      final float step, final Color target ) {
 
       if ( step <= 0.0f ) { return target.set(origin); }
       if ( step >= 1.0f ) { return target.set(dest); }
 
       final float t = step * step * ( 3.0f - ( step + step ) );
       final float u = 1.0f - t;
-      return target.set(
-         u * origin.x + t * dest.x,
-         u * origin.y + t * dest.y,
-         u * origin.z + t * dest.z,
-         u * origin.w + t * dest.w);
+      return target.set(u * origin.x + t * dest.x, u * origin.y + t * dest.y,
+         u * origin.z + t * dest.z, u * origin.w + t * dest.w);
    }
 
    /**
@@ -1658,16 +1531,11 @@ public class Color extends Vec4 {
     *
     * @return the product
     */
-   public static Color mul (
-      final Color a,
-      final Color b,
+   public static Color mul ( final Color a, final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(a.x * b.x),
-         Utils.clamp01(a.y * b.y),
-         Utils.clamp01(a.z * b.z),
-         Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.x * b.x), Utils.clamp01(a.y * b.y),
+         Utils.clamp01(a.z * b.z), Utils.clamp01(a.w));
    }
 
    /**
@@ -1682,16 +1550,11 @@ public class Color extends Vec4 {
     *
     * @return the product
     */
-   public static Color mul (
-      final Color a,
-      final float b,
+   public static Color mul ( final Color a, final float b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(a.x * b),
-         Utils.clamp01(a.y * b),
-         Utils.clamp01(a.z * b),
-         Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.x * b), Utils.clamp01(a.y * b),
+         Utils.clamp01(a.z * b), Utils.clamp01(a.w));
    }
 
    /**
@@ -1706,16 +1569,11 @@ public class Color extends Vec4 {
     *
     * @return the product
     */
-   public static Color mul (
-      final float a,
-      final Color b,
+   public static Color mul ( final float a, final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(a * b.x),
-         Utils.clamp01(a * b.y),
-         Utils.clamp01(a * b.z),
-         Utils.clamp01(a));
+      return target.set(Utils.clamp01(a * b.x), Utils.clamp01(a * b.y),
+         Utils.clamp01(a * b.z), Utils.clamp01(a));
    }
 
    /**
@@ -1737,19 +1595,13 @@ public class Color extends Vec4 {
     *
     * @return the multiplied color
     */
-   public static Color preMul (
-      final Color c,
-      final Color target ) {
+   public static Color preMul ( final Color c, final Color target ) {
 
       if ( c.w <= 0.0f ) {
          return target.set(0.0f, 0.0f, 0.0f, 0.0f);
       } else if ( c.w >= 1.0f ) { return target.set(c.x, c.y, c.z, 1.0f); }
 
-      return target.set(
-         c.x * c.w,
-         c.y * c.w,
-         c.z * c.w,
-         c.w);
+      return target.set(c.x * c.w, c.y * c.w, c.z * c.w, c.w);
    }
 
    /**
@@ -1765,15 +1617,12 @@ public class Color extends Vec4 {
     * @see Vec4#quantize(Vec4, int, Vec4)
     * @see Utils#floor(float)
     */
-   public static Color quantize (
-      final Color c,
-      final int levels,
+   public static Color quantize ( final Color c, final int levels,
       final Color target ) {
 
       if ( levels < 2 || levels > 255 ) { return target.set(c); }
       final float delta = 1.0f / levels;
-      return target.set(
-         delta * Utils.floor(0.5f + c.x * levels),
+      return target.set(delta * Utils.floor(0.5f + c.x * levels),
          delta * Utils.floor(0.5f + c.y * levels),
          delta * Utils.floor(0.5f + c.z * levels),
          delta * Utils.floor(0.5f + c.w * levels));
@@ -1787,8 +1636,7 @@ public class Color extends Vec4 {
     *
     * @return the color
     */
-   public static Color random (
-      final java.util.Random rng,
+   public static Color random ( final java.util.Random rng,
       final Color target ) {
 
       return Color.randomRgb(rng, target);
@@ -1806,16 +1654,10 @@ public class Color extends Vec4 {
     *
     * @see Color#hsbaToRgba(Vec4, Color)
     */
-   public static Color randomHsb (
-      final java.util.Random rng,
-      final Color target,
-      final Vec4 hsba ) {
+   public static Color randomHsb ( final java.util.Random rng,
+      final Color target, final Vec4 hsba ) {
 
-      hsba.set(
-         rng.nextFloat(),
-         rng.nextFloat(),
-         rng.nextFloat(),
-         1.0f);
+      hsba.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), 1.0f);
       return Color.hsbaToRgba(hsba, target);
    }
 
@@ -1833,22 +1675,17 @@ public class Color extends Vec4 {
     *
     * @see Color#hsbaToRgba(Vec4, Color)
     */
-   public static Color randomHsb (
-      final java.util.Random rng,
-      final Vec4 lowerBound,
-      final Vec4 upperBound,
-      final Color target,
+   public static Color randomHsb ( final java.util.Random rng,
+      final Vec4 lowerBound, final Vec4 upperBound, final Color target,
       final Vec4 hsba ) {
 
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
 
-      hsba.set(
-         ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
+      hsba.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
          ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y,
-         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z,
-         1.0f);
+         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z, 1.0f);
       return Color.hsbaToRgba(hsba, target);
    }
 
@@ -1864,15 +1701,10 @@ public class Color extends Vec4 {
     *
     * @see Color#hsbaToRgba(Vec4, Color)
     */
-   public static Color randomHsba (
-      final java.util.Random rng,
-      final Color target,
-      final Vec4 hsba ) {
+   public static Color randomHsba ( final java.util.Random rng,
+      final Color target, final Vec4 hsba ) {
 
-      hsba.set(
-         rng.nextFloat(),
-         rng.nextFloat(),
-         rng.nextFloat(),
+      hsba.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
          rng.nextFloat());
       return Color.hsbaToRgba(hsba, target);
    }
@@ -1891,11 +1723,8 @@ public class Color extends Vec4 {
     *
     * @see Color#hsbaToRgba(Vec4, Color)
     */
-   public static Color randomHsba (
-      final java.util.Random rng,
-      final Vec4 lowerBound,
-      final Vec4 upperBound,
-      final Color target,
+   public static Color randomHsba ( final java.util.Random rng,
+      final Vec4 lowerBound, final Vec4 upperBound, final Color target,
       final Vec4 hsba ) {
 
       Vec4.randomCartesian(rng, lowerBound, upperBound, hsba);
@@ -1913,14 +1742,10 @@ public class Color extends Vec4 {
     *
     * @see java.util.Random#nextFloat()
     */
-   public static Color randomRgb (
-      final java.util.Random rng,
+   public static Color randomRgb ( final java.util.Random rng,
       final Color target ) {
 
-      return target.set(
-         rng.nextFloat(),
-         rng.nextFloat(),
-         rng.nextFloat(),
+      return target.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
          1.0f);
    }
 
@@ -1935,20 +1760,15 @@ public class Color extends Vec4 {
     *
     * @return the color
     */
-   public static Color randomRgb (
-      final java.util.Random rng,
-      final Color lowerBound,
-      final Color upperBound,
-      final Color target ) {
+   public static Color randomRgb ( final java.util.Random rng,
+      final Color lowerBound, final Color upperBound, final Color target ) {
 
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
-      return target.set(
-         ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
+      return target.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
          ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y,
-         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z,
-         1.0f);
+         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z, 1.0f);
    }
 
    /**
@@ -1959,14 +1779,10 @@ public class Color extends Vec4 {
     *
     * @return the color
     */
-   public static Color randomRgba (
-      final java.util.Random rng,
+   public static Color randomRgba ( final java.util.Random rng,
       final Color target ) {
 
-      return target.set(
-         rng.nextFloat(),
-         rng.nextFloat(),
-         rng.nextFloat(),
+      return target.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
          rng.nextFloat());
    }
 
@@ -1980,18 +1796,14 @@ public class Color extends Vec4 {
     *
     * @return the color
     */
-   public static Color randomRgba (
-      final java.util.Random rng,
-      final Color lowerBound,
-      final Color upperBound,
-      final Color target ) {
+   public static Color randomRgba ( final java.util.Random rng,
+      final Color lowerBound, final Color upperBound, final Color target ) {
 
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
       final float rw = rng.nextFloat();
-      return target.set(
-         ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
+      return target.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
          ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y,
          ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z,
          ( 1.0f - rw ) * lowerBound.w + rw * upperBound.w);
@@ -2019,9 +1831,7 @@ public class Color extends Vec4 {
     *
     * @see Color#luminance(Color)
     */
-   public static Color rgbaToGray (
-      final Color c,
-      final Color target ) {
+   public static Color rgbaToGray ( final Color c, final Color target ) {
 
       final float lum = Color.luminance(c);
       return target.set(lum, lum, lum, c.w);
@@ -2036,9 +1846,7 @@ public class Color extends Vec4 {
     *
     * @return the HSBA vector
     */
-   public static Vec4 rgbaToHsba (
-      final Color c,
-      final Vec4 target ) {
+   public static Vec4 rgbaToHsba ( final Color c, final Vec4 target ) {
 
       return Color.rgbaToHsba(c.x, c.y, c.z, c.w, target);
    }
@@ -2059,12 +1867,8 @@ public class Color extends Vec4 {
     * @see Utils#min
     * @see IUtils#ONE_SIX
     */
-   public static Vec4 rgbaToHsba (
-      final float red,
-      final float green,
-      final float blue,
-      final float alpha,
-      final Vec4 target ) {
+   public static Vec4 rgbaToHsba ( final float red, final float green,
+      final float blue, final float alpha, final Vec4 target ) {
 
       final float bri = Utils.max(red, green, blue);
       final float mn = Utils.min(red, green, blue);
@@ -2114,18 +1918,12 @@ public class Color extends Vec4 {
     *
     * @return the XYZ values.
     */
-   public static Vec4 rgbaToXyzw (
-      final float r,
-      final float g,
-      final float b,
-      final float a,
-      final Vec4 target ) {
+   public static Vec4 rgbaToXyzw ( final float r, final float g, final float b,
+      final float a, final Vec4 target ) {
 
-      return target.set(
-         0.412453f * r + 0.357580f * g + 0.180423f * b,
+      return target.set(0.412453f * r + 0.357580f * g + 0.180423f * b,
          0.212671f * r + 0.715160f * g + 0.072169f * b,
-         0.019334f * r + 0.119193f * g + 0.950227f * b,
-         a);
+         0.019334f * r + 0.119193f * g + 0.950227f * b, a);
    }
 
    /**
@@ -2167,11 +1965,8 @@ public class Color extends Vec4 {
     *
     * @return the shifted color
     */
-   public static Color shiftBri (
-      final Color c,
-      final float shift,
-      final Color target,
-      final Vec4 hsba ) {
+   public static Color shiftBri ( final Color c, final float shift,
+      final Color target, final Vec4 hsba ) {
 
       Color.rgbaToHsba(c, hsba);
       hsba.z = Utils.clamp01(hsba.z + shift);
@@ -2189,11 +1984,8 @@ public class Color extends Vec4 {
     *
     * @return the shifted color
     */
-   public static Color shiftHsb (
-      final Color c,
-      final Vec4 shift,
-      final Color target,
-      final Vec4 hsba ) {
+   public static Color shiftHsb ( final Color c, final Vec4 shift,
+      final Color target, final Vec4 hsba ) {
 
       /* HSBA to RGBA conversion takes care of wrapping the hue. */
       Color.rgbaToHsba(c, hsba);
@@ -2213,11 +2005,8 @@ public class Color extends Vec4 {
     *
     * @return the shifted color
     */
-   public static Color shiftHsba (
-      final Color c,
-      final Vec4 shift,
-      final Color target,
-      final Vec4 hsba ) {
+   public static Color shiftHsba ( final Color c, final Vec4 shift,
+      final Color target, final Vec4 hsba ) {
 
       /* HSBA to RGBA conversion takes care of wrapping the hue. */
       Color.rgbaToHsba(c, hsba);
@@ -2239,11 +2028,8 @@ public class Color extends Vec4 {
     *
     * @return the shifted color
     */
-   public static Color shiftHue (
-      final Color c,
-      final float shift,
-      final Color target,
-      final Vec4 hsba ) {
+   public static Color shiftHue ( final Color c, final float shift,
+      final Color target, final Vec4 hsba ) {
 
       /* HSBA to RGBA conversion takes care of wrapping the hue. */
       Color.rgbaToHsba(c, hsba);
@@ -2262,11 +2048,8 @@ public class Color extends Vec4 {
     *
     * @return the shifted color
     */
-   public static Color shiftSat (
-      final Color c,
-      final float shift,
-      final Color target,
-      final Vec4 hsba ) {
+   public static Color shiftSat ( final Color c, final float shift,
+      final Color target, final Vec4 hsba ) {
 
       Color.rgbaToHsba(c, hsba);
       hsba.y = Utils.clamp01(hsba.y + shift);
@@ -2284,16 +2067,11 @@ public class Color extends Vec4 {
     *
     * @return the difference
     */
-   public static Color sub (
-      final Color a,
-      final Color b,
+   public static Color sub ( final Color a, final Color b,
       final Color target ) {
 
-      return target.set(
-         Utils.clamp01(a.x - b.x),
-         Utils.clamp01(a.y - b.y),
-         Utils.clamp01(a.z - b.z),
-         Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.x - b.x), Utils.clamp01(a.y - b.y),
+         Utils.clamp01(a.z - b.z), Utils.clamp01(a.w));
    }
 
    /**
@@ -2412,18 +2190,12 @@ public class Color extends Vec4 {
     *
     * @return the color
     */
-   public static Color xyzwToRgba (
-      final float x,
-      final float y,
-      final float z,
-      final float a,
-      final Color target ) {
+   public static Color xyzwToRgba ( final float x, final float y, final float z,
+      final float a, final Color target ) {
 
-      return target.set(
-         3.240479f * x - 1.537150f * y - 0.498535f * z,
+      return target.set(3.240479f * x - 1.537150f * y - 0.498535f * z,
          -0.969256f * x + 1.875991f * y + 0.041556f * z,
-         0.055648f * x - 0.204043f * y + 1.057311f * z,
-         a);
+         0.055648f * x - 0.204043f * y + 1.057311f * z, a);
    }
 
    /**
@@ -2434,9 +2206,7 @@ public class Color extends Vec4 {
     *
     * @return the color
     */
-   public static Color xyzwToRgba (
-      final Vec4 v,
-      final Color target ) {
+   public static Color xyzwToRgba ( final Vec4 v, final Color target ) {
 
       return Color.xyzwToRgba(v.x, v.y, v.z, v.w, target);
    }
@@ -2477,11 +2247,8 @@ public class Color extends Vec4 {
        * @return the eased color
        */
       @Override
-      public Color apply (
-         final Color origin,
-         final Color dest,
-         final Float step,
-         final Color target ) {
+      public Color apply ( final Color origin, final Color dest,
+         final Float step, final Color target ) {
 
          if ( step <= 0.0f ) { return target.set(origin); }
          if ( step >= 1.0f ) { return target.set(dest); }
@@ -2498,11 +2265,8 @@ public class Color extends Vec4 {
        *
        * @return the eased color
        */
-      public abstract Color applyUnclamped (
-         final Color origin,
-         final Color dest,
-         final float step,
-         final Color target );
+      public abstract Color applyUnclamped ( final Color origin,
+         final Color dest, final float step, final Color target );
 
       /**
        * Returns the simple name of this class.
@@ -2536,15 +2300,13 @@ public class Color extends Vec4 {
        * @see Float#compare(float, float)
        */
       @Override
-      public int compare (
-         final Color a,
-         final Color b ) {
+      public int compare ( final Color a, final Color b ) {
 
          Color.rgbaToHsba(a, this.aHsb);
          Color.rgbaToHsba(b, this.bHsb);
 
-         return this.aHsb.z < this.bHsb.z ? -1
-            : this.aHsb.z > this.bHsb.z ? 1 : 0;
+         return this.aHsb.z < this.bHsb.z ? -1 : this.aHsb.z > this.bHsb.z ? 1
+            : 0;
       }
 
    }
@@ -2617,8 +2379,8 @@ public class Color extends Vec4 {
          Color.rgbaToHsba(a, this.aHsb);
          Color.rgbaToHsba(b, this.bHsb);
 
-         return this.aHsb.x < this.bHsb.x ? -1
-            : this.aHsb.x > this.bHsb.x ? 1 : 0;
+         return this.aHsb.x < this.bHsb.x ? -1 : this.aHsb.x > this.bHsb.x ? 1
+            : 0;
       }
 
    }
@@ -2650,8 +2412,8 @@ public class Color extends Vec4 {
          Color.rgbaToHsba(a, this.aHsb);
          Color.rgbaToHsba(b, this.bHsb);
 
-         return this.aHsb.y < this.bHsb.y ? -1
-            : this.aHsb.y > this.bHsb.y ? 1 : 0;
+         return this.aHsb.y < this.bHsb.y ? -1 : this.aHsb.y > this.bHsb.y ? 1
+            : 0;
       }
 
    }
@@ -2679,9 +2441,7 @@ public class Color extends Vec4 {
        * @see Utils#mod1(float)
        */
       @Override
-      protected float applyPartial (
-         final float origin,
-         final float dest,
+      protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
          if ( this.aLtb ) {
@@ -2719,9 +2479,7 @@ public class Color extends Vec4 {
        * @see Utils#mod1(float)
        */
       @Override
-      protected float applyPartial (
-         final float origin,
-         final float dest,
+      protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
          if ( this.aGtb ) {
@@ -2788,9 +2546,7 @@ public class Color extends Vec4 {
        * @return the eased hue
        */
       @Override
-      public Float apply (
-         final Float origin,
-         final Float dest,
+      public Float apply ( final Float origin, final Float dest,
          final Float step ) {
 
          this.eval(origin, dest);
@@ -2817,10 +2573,8 @@ public class Color extends Vec4 {
        *
        * @return the eased hue
        */
-      protected abstract float applyPartial (
-         final float origin,
-         final float dest,
-         final float step );
+      protected abstract float applyPartial ( final float origin,
+         final float dest, final float step );
 
       /**
        * A helper function to pass on to sub-classes of this class. Mutates the
@@ -2831,9 +2585,7 @@ public class Color extends Vec4 {
        *
        * @see Utils#mod1(float)
        */
-      protected void eval (
-         final float origin,
-         final float dest ) {
+      protected void eval ( final float origin, final float dest ) {
 
          this.a = Utils.mod1(origin);
          this.b = Utils.mod1(dest);
@@ -2867,9 +2619,7 @@ public class Color extends Vec4 {
        * @see Utils#mod1(float)
        */
       @Override
-      protected float applyPartial (
-         final float origin,
-         final float dest,
+      protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
          if ( this.aLtb && this.diff < 0.5f ) {
@@ -2910,9 +2660,7 @@ public class Color extends Vec4 {
        * @see Utils#mod1(float)
        */
       @Override
-      protected float applyPartial (
-         final float origin,
-         final float dest,
+      protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
          if ( this.aLtb && this.diff > 0.5f ) {
@@ -2951,17 +2699,13 @@ public class Color extends Vec4 {
        * @return the eased color
        */
       @Override
-      public Color applyUnclamped (
-         final Color origin,
-         final Color dest,
-         final float step,
-         final Color target ) {
+      public Color applyUnclamped ( final Color origin, final Color dest,
+         final float step, final Color target ) {
 
          /* This should remain as double precision. */
          final double td = step;
          final double ud = 1.0d - td;
-         return target.set(
-            ( float ) ( ud * origin.x + td * dest.x ),
+         return target.set(( float ) ( ud * origin.x + td * dest.x ),
             ( float ) ( ud * origin.y + td * dest.y ),
             ( float ) ( ud * origin.z + td * dest.z ),
             ( float ) ( ud * origin.w + td * dest.w ));
@@ -3030,8 +2774,7 @@ public class Color extends Vec4 {
        * @param satFunc the saturation easing function
        * @param briFunc the brightness easing function
        */
-      public MixHsba (
-         final HueEasing hueFunc,
+      public MixHsba ( final HueEasing hueFunc,
          final Utils.LerpUnclamped satFunc,
          final Utils.LerpUnclamped briFunc ) {
 
@@ -3054,17 +2797,13 @@ public class Color extends Vec4 {
        * @see Color#rgbaToHsba(Color, Vec4)
        */
       @Override
-      public Color applyUnclamped (
-         final Color origin,
-         final Color dest,
-         final float step,
-         final Color target ) {
+      public Color applyUnclamped ( final Color origin, final Color dest,
+         final float step, final Color target ) {
 
          Color.rgbaToHsba(origin, this.aHsb);
          Color.rgbaToHsba(dest, this.bHsb);
 
-         this.hsbaNew.set(
-            this.hueFunc.apply(this.aHsb.x, this.bHsb.x, step),
+         this.hsbaNew.set(this.hueFunc.apply(this.aHsb.x, this.bHsb.x, step),
             this.satFunc.apply(this.aHsb.y, this.bHsb.y, step),
             this.briFunc.apply(this.aHsb.z, this.bHsb.z, step),
             ( 1.0f - step ) * this.aHsb.w + step * this.bHsb.w);
@@ -3146,11 +2885,8 @@ public class Color extends Vec4 {
        * @return the eased color
        */
       @Override
-      public Color applyUnclamped (
-         final Color origin,
-         final Color dest,
-         final float step,
-         final Color target ) {
+      public Color applyUnclamped ( final Color origin, final Color dest,
+         final float step, final Color target ) {
 
          /* This should remain as double-precision! */
          final double td = step;

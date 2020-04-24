@@ -184,12 +184,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param path      applet path
     * @param isPrimary is the renderer primary
     */
-   public YupJ2 (
-      final int width,
-      final int height,
-      final PApplet parent,
-      final String path,
-      final boolean isPrimary ) {
+   public YupJ2 ( final int width, final int height, final PApplet parent,
+      final String path, final boolean isPrimary ) {
 
       this.setParent(parent);
       this.setPrimary(isPrimary);
@@ -212,13 +208,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @see Graphics2D#transform(AffineTransform)
     */
    @Override
-   public void applyMatrix (
-      final float m00,
-      final float m01,
-      final float m02,
-      final float m10,
-      final float m11,
-      final float m12 ) {
+   public void applyMatrix ( final float m00, final float m01, final float m02,
+      final float m10, final float m11, final float m12 ) {
 
       /*
        * Method signature: m00: scale x, m10: shear y, m01: shear x, m11: scale
@@ -235,9 +226,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public void applyMatrix ( final Mat3 source ) {
 
-      this.applyMatrix(
-         source.m00, source.m01, source.m02,
-         source.m10, source.m11, source.m12);
+      this.applyMatrix(source.m00, source.m01, source.m02, source.m10,
+         source.m11, source.m12);
    }
 
    /**
@@ -248,9 +238,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void applyMatrix ( final PMatrix2D source ) {
 
-      this.applyMatrix(
-         source.m00, source.m01, source.m02,
-         source.m10, source.m11, source.m12);
+      this.applyMatrix(source.m00, source.m01, source.m02, source.m10,
+         source.m11, source.m12);
    }
 
    /**
@@ -269,14 +258,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @see YupJ2#arcImpl(float, float, float, float, float, float, int)
     */
    @Override
-   public void arc (
-      final float x0,
-      final float y0,
-      final float x1,
-      final float y1,
-      final float start,
-      final float stop,
-      final int mode ) {
+   public void arc ( final float x0, final float y0, final float x1,
+      final float y1, final float start, final float stop, final int mode ) {
 
       if ( Utils.approx(stop - start, IUtils.TAU, 0.00139f) ) {
          this.ellipse(x0, y0, x1, y1);
@@ -342,12 +325,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param mode  the arc mode
     */
    @Override
-   public void arc (
-      final Vec2 v,
-      final float sz,
-      final float start,
-      final float stop,
-      final int mode ) {
+   public void arc ( final Vec2 v, final float sz, final float start,
+      final float stop, final int mode ) {
 
       this.arc(v.x, v.y, sz, sz, start, stop, mode);
    }
@@ -386,10 +365,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param ap1 the second anchor point
     */
    @Override
-   public void bezier (
-      final Vec2 ap0,
-      final Vec2 cp0,
-      final Vec2 cp1,
+   public void bezier ( final Vec2 ap0, final Vec2 cp0, final Vec2 cp1,
       final Vec2 ap1 ) {
 
       this.bezier(ap0.x, ap0.y, cp0.x, cp0.y, cp1.x, cp1.y, ap1.x, ap1.y);
@@ -411,12 +387,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @return the evaluation
     */
    @Override
-   public float bezierPoint (
-      final float ap0,
-      final float cp0,
-      final float cp1,
-      final float ap1,
-      final float t ) {
+   public float bezierPoint ( final float ap0, final float cp0, final float cp1,
+      final float ap1, final float t ) {
 
       /* @formatter:off */
       final float u = 1.0f - t;
@@ -437,12 +409,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @return the tangent
     */
    @Override
-   public float bezierTangent (
-      final float ap0,
-      final float cp0,
-      final float cp1,
-      final float ap1,
-      final float t ) {
+   public float bezierTangent ( final float ap0, final float cp0,
+      final float cp1, final float ap1, final float t ) {
 
       final float t3 = t + t + t;
       final float b2 = cp0 + cp0;
@@ -464,10 +432,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param ap1 the next anchor point
     */
    @Override
-   public void bezierVertex (
-      final Vec2 cp0,
-      final Vec2 cp1,
-      final Vec2 ap1 ) {
+   public void bezierVertex ( final Vec2 cp0, final Vec2 cp1, final Vec2 ap1 ) {
 
       this.bezierVertex(cp0.x, cp0.y, cp1.x, cp1.y, ap1.x, ap1.y);
    }
@@ -478,10 +443,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void camera ( ) {
 
-      this.camera(
-         this.cameraX, this.cameraY,
-         this.cameraRot,
-         this.cameraZoomX, this.cameraZoomY);
+      this.camera(this.cameraX, this.cameraY, this.cameraRot, this.cameraZoomX,
+         this.cameraZoomY);
    }
 
    /**
@@ -496,12 +459,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @see Utils#modRadians(float)
     */
    @Override
-   public void camera (
-      final float x,
-      final float y,
-      final float radians,
-      final float zx,
-      final float zy ) {
+   public void camera ( final float x, final float y, final float radians,
+      final float zx, final float zy ) {
 
       this.cameraX = x;
       this.cameraY = y;
@@ -537,16 +496,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param zUp     world up axis z
     */
    @Override
-   public void camera (
-      final float xEye,
-      final float yEye,
-      final float zEye,
-      final float xCenter,
-      final float yCenter,
-      final float zCenter,
-      final float xUp,
-      final float yUp,
-      final float zUp ) {
+   public void camera ( final float xEye, final float yEye, final float zEye,
+      final float xCenter, final float yCenter, final float zCenter,
+      final float xUp, final float yUp, final float zUp ) {
 
       PApplet.showMissingWarning("camera");
 
@@ -561,10 +513,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param radians the angle
     * @param zoom    the zoom level
     */
-   public void camera (
-      final Vec2 loc,
-      final float radians,
-      final Vec2 zoom ) {
+   public void camera ( final Vec2 loc, final float radians, final Vec2 zoom ) {
 
       this.camera(loc.x, loc.y, radians, zoom.x, zoom.y);
    }
@@ -585,9 +534,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param size  the size
     */
    @Override
-   public void circle (
-      final Vec2 coord,
-      final float size ) {
+   public void circle ( final Vec2 coord, final float size ) {
 
       this.ellipse(coord.x, coord.y, size, size);
    }
@@ -603,18 +550,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param aMax the alpha channel maximum
     */
    @Override
-   public void colorMode (
-      final int mode,
-      final float max1,
-      final float max2,
-      final float max3,
-      final float aMax ) {
+   public void colorMode ( final int mode, final float max1, final float max2,
+      final float max3, final float aMax ) {
 
-      super.colorMode(
-         mode,
-         max1 < 1.0f ? 1.0f : max1,
-         max2 < 1.0f ? 1.0f : max2,
-         max3 < 1.0f ? 1.0f : max3,
+      super.colorMode(mode, max1 < 1.0f ? 1.0f : max1,
+         max2 < 1.0f ? 1.0f : max2, max3 < 1.0f ? 1.0f : max3,
          aMax < 1.0f ? 1.0f : aMax);
 
       /*
@@ -636,10 +576,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param d the fourth point
     */
    @Override
-   public void curve (
-      final Vec2 a,
-      final Vec2 b,
-      final Vec2 c,
+   public void curve ( final Vec2 a, final Vec2 b, final Vec2 c,
       final Vec2 d ) {
 
       this.curve(a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y);
@@ -730,10 +667,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @see YupJ2#drawShapeSolid(Shape)
     */
    @Override
-   public void ellipse (
-      final float x,
-      final float y,
-      final float w,
+   public void ellipse ( final float x, final float y, final float w,
       final float h ) {
 
       float extapw = 0.0f;
@@ -827,9 +761,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param b the second parameter
     */
    @Override
-   public void ellipse (
-      final Vec2 a,
-      final Vec2 b ) {
+   public void ellipse ( final Vec2 a, final Vec2 b ) {
 
       this.ellipse(a.x, a.y, b.x, b.y);
    }
@@ -942,14 +874,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public Mat3 getMatrix ( final Mat3 target ) {
 
       final AffineTransform tr = this.g2.getTransform();
-      return target.set(
-         ( float ) tr.getScaleX(),
-         ( float ) tr.getShearX(),
-         ( float ) tr.getTranslateX(),
-         ( float ) tr.getShearY(),
-         ( float ) tr.getScaleY(),
-         ( float ) tr.getTranslateY(),
-         0.0f, 0.0f, 1.0f);
+      return target.set(( float ) tr.getScaleX(), ( float ) tr.getShearX(),
+         ( float ) tr.getTranslateX(), ( float ) tr.getShearY(),
+         ( float ) tr.getScaleY(), ( float ) tr.getTranslateY(), 0.0f, 0.0f,
+         1.0f);
    }
 
    /**
@@ -962,17 +890,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public Mat4 getMatrix ( final Mat4 target ) {
 
       final AffineTransform tr = this.g2.getTransform();
-      return target.set(
-         ( float ) tr.getScaleX(),
-         ( float ) tr.getShearX(),
-         0.0f,
-         ( float ) tr.getTranslateX(),
-         ( float ) tr.getShearY(),
-         ( float ) tr.getScaleY(),
-         0.0f,
-         ( float ) tr.getTranslateY(),
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(( float ) tr.getScaleX(), ( float ) tr.getShearX(),
+         0.0f, ( float ) tr.getTranslateX(), ( float ) tr.getShearY(),
+         ( float ) tr.getScaleY(), 0.0f, ( float ) tr.getTranslateY(), 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -989,13 +910,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       if ( target == null ) { target = new PMatrix2D(); }
       final AffineTransform tr = this.g2.getTransform();
-      target.set(
-         ( float ) tr.getScaleX(),
-         ( float ) tr.getShearX(),
-         ( float ) tr.getTranslateX(),
-         ( float ) tr.getShearY(),
-         ( float ) tr.getScaleY(),
-         ( float ) tr.getTranslateY());
+      target.set(( float ) tr.getScaleX(), ( float ) tr.getShearX(),
+         ( float ) tr.getTranslateX(), ( float ) tr.getShearY(),
+         ( float ) tr.getScaleY(), ( float ) tr.getTranslateY());
       return target;
    }
 
@@ -1013,17 +930,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       if ( target == null ) { target = new PMatrix3D(); }
       final AffineTransform tr = this.g2.getTransform();
-      target.set(
-         ( float ) tr.getScaleX(),
-         ( float ) tr.getShearX(),
-         0.0f,
-         ( float ) tr.getTranslateX(),
-         ( float ) tr.getShearY(),
-         ( float ) tr.getScaleY(),
-         0.0f,
-         ( float ) tr.getTranslateY(),
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      target.set(( float ) tr.getScaleX(), ( float ) tr.getShearX(), 0.0f,
+         ( float ) tr.getTranslateX(), ( float ) tr.getShearY(),
+         ( float ) tr.getScaleY(), 0.0f, ( float ) tr.getTranslateY(), 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
       return target;
    }
 
@@ -1103,9 +1013,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param dim          the grid dimensions
     */
    @Override
-   public void grid (
-      final int count,
-      final float strokeWeight,
+   public void grid ( final int count, final float strokeWeight,
       final float dim ) {
 
       final float right = dim * 0.5f;
@@ -1181,15 +1089,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param ce           the curve entity
     * @param strokeWeight the stroke weight
     */
-   public void handles (
-      final CurveEntity2 ce,
-      final float strokeWeight ) {
+   public void handles ( final CurveEntity2 ce, final float strokeWeight ) {
 
-      this.handles(
-         ce, strokeWeight,
-         IUp.DEFAULT_HANDLE_COLOR,
-         IUp.DEFAULT_HANDLE_REAR_COLOR,
-         IUp.DEFAULT_HANDLE_FORE_COLOR,
+      this.handles(ce, strokeWeight, IUp.DEFAULT_HANDLE_COLOR,
+         IUp.DEFAULT_HANDLE_REAR_COLOR, IUp.DEFAULT_HANDLE_FORE_COLOR,
          IUp.DEFAULT_HANDLE_COORD_COLOR);
    }
 
@@ -1203,12 +1106,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param foreColor    the color of the fore handle
     * @param coordColor   the color of the coordinate
     */
-   public void handles (
-      final CurveEntity2 ce,
-      final float strokeWeight,
-      final int lineColor,
-      final int rearColor,
-      final int foreColor,
+   public void handles ( final CurveEntity2 ce, final float strokeWeight,
+      final int lineColor, final int rearColor, final int foreColor,
       final int coordColor ) {
 
       /* Cache stroke colors. */
@@ -1218,10 +1117,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final java.awt.Color crdClrAwt = new java.awt.Color(coordColor, true);
 
       /* Cache stroke weights. */
-      final BasicStroke sw = new BasicStroke(strokeWeight, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-      final BasicStroke swRear = new BasicStroke(strokeWeight * 4.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-      final BasicStroke swFore = new BasicStroke(strokeWeight * 5.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-      final BasicStroke swCoord = new BasicStroke(strokeWeight * 6.25f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+      final BasicStroke sw = new BasicStroke(strokeWeight,
+         BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+      final BasicStroke swRear = new BasicStroke(strokeWeight * 4.0f,
+         BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+      final BasicStroke swFore = new BasicStroke(strokeWeight * 5.0f,
+         BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+      final BasicStroke swCoord = new BasicStroke(strokeWeight * 6.25f,
+         BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
       final Transform2 tr = ce.transform;
       final List < Curve2 > curves = ce.curves;
@@ -1300,9 +1203,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param x    the first x coordinate
     * @param y    the first y coordinate
     */
-   public void image (
-      final PGraphicsJava2D buff,
-      final float x,
+   public void image ( final PGraphicsJava2D buff, final float x,
       final float y ) {
 
       if ( buff.g2 != null ) { this.image(( PImage ) buff, x, y); }
@@ -1318,12 +1219,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param u    the second x coordinate
     * @param v    the second y coordinate
     */
-   public void image (
-      final PGraphicsJava2D buff,
-      final float x,
-      final float y,
-      final float u,
-      final float v ) {
+   public void image ( final PGraphicsJava2D buff, final float x, final float y,
+      final float u, final float v ) {
 
       if ( buff.g2 != null ) { this.image(( PImage ) buff, x, y, u, v); }
    }
@@ -1342,15 +1239,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param u2   the image bottom-right corner u
     * @param v2   the image bottom-right corner v
     */
-   public void image (
-      final PGraphicsJava2D buff,
-      final float a,
-      final float b,
-      final float c,
-      final float d,
-      final int u1,
-      final int v1,
-      final int u2,
+   public void image ( final PGraphicsJava2D buff, final float a, final float b,
+      final float c, final float d, final int u1, final int v1, final int u2,
       final int v2 ) {
 
       if ( buff.g2 != null ) {
@@ -1364,9 +1254,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param buff  the renderer
     * @param coord the coordinate
     */
-   public void image (
-      final PGraphicsJava2D buff,
-      final Vec2 coord ) {
+   public void image ( final PGraphicsJava2D buff, final Vec2 coord ) {
 
       if ( buff.g2 != null ) { this.image(( PImage ) buff, coord); }
    }
@@ -1378,9 +1266,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param coord the coordinate
     * @param dim   the dimension
     */
-   public void image (
-      final PGraphicsJava2D buff,
-      final Vec2 coord,
+   public void image ( final PGraphicsJava2D buff, final Vec2 coord,
       final Vec2 dim ) {
 
       if ( buff.g2 != null ) { this.image(( PImage ) buff, coord, dim); }
@@ -1403,10 +1289,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param y   the first y coordinate
     */
    @Override
-   public void image (
-      final PImage img,
-      final float x,
-      final float y ) {
+   public void image ( final PImage img, final float x, final float y ) {
 
       this.image(img, x, y, img.width, img.height);
    }
@@ -1422,16 +1305,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param v   the second y coordinate
     */
    @Override
-   public void image (
-      final PImage img,
-      final float x,
-      final float y,
-      final float u,
-      final float v ) {
+   public void image ( final PImage img, final float x, final float y,
+      final float u, final float v ) {
 
       final boolean isImg = this.textureMode == PConstants.IMAGE;
-      this.image(img, x, y, u, v, 0, 0, isImg ? img.width
-         : 1, isImg ? img.height : 1);
+      this.image(img, x, y, u, v, 0, 0, isImg ? img.width : 1,
+         isImg ? img.height : 1);
    }
 
    /**
@@ -1449,15 +1328,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param v2  the image bottom-right corner v
     */
    @Override
-   public void image (
-      final PImage img,
-      final float a,
-      final float b,
-      final float c,
-      final float d,
-      final int u1,
-      final int v1,
-      final int u2,
+   public void image ( final PImage img, final float a, final float b,
+      final float c, final float d, final int u1, final int v1, final int u2,
       final int v2 ) {
 
       if ( img.pixels == null || img.width < 2 || img.height < 2 ) { return; }
@@ -1530,9 +1402,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param coord the coordinate
     */
    @Override
-   public void image (
-      final PImage img,
-      final Vec2 coord ) {
+   public void image ( final PImage img, final Vec2 coord ) {
 
       this.image(img, coord.x, coord.y);
    }
@@ -1545,10 +1415,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param dim   the dimension
     */
    @Override
-   public void image (
-      final PImage img,
-      final Vec2 coord,
-      final Vec2 dim ) {
+   public void image ( final PImage img, final Vec2 coord, final Vec2 dim ) {
 
       this.image(img, coord.x, coord.y, dim.x, dim.y);
    }
@@ -1576,11 +1443,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @return the color
     */
    @Override
-   public Color lerpColor (
-      final Color origin,
-      final Color dest,
-      final float step,
-      final Color target ) {
+   public Color lerpColor ( final Color origin, final Color dest,
+      final float step, final Color target ) {
 
       switch ( this.colorMode ) {
 
@@ -1606,10 +1470,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @return the color
     */
    @Override
-   public int lerpColor (
-      final int origin,
-      final int dest,
-      final float step ) {
+   public int lerpColor ( final int origin, final int dest, final float step ) {
 
       return Color.toHexInt(this.lerpColor(Color.fromHex(origin, this.aTemp),
          Color.fromHex(dest, this.bTemp), step, this.cTemp));
@@ -1624,11 +1485,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param yDest   the destination y
     */
    @Override
-   public void line (
-      final float xOrigin,
-      final float yOrigin,
-      final float xDest,
-      final float yDest ) {
+   public void line ( final float xOrigin, final float yOrigin,
+      final float xDest, final float yDest ) {
 
       /*
        * It doesn't make sense why turning off the stroke would also turn off a
@@ -1650,9 +1508,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param dest   the destination coordinate
     */
    @Override
-   public void line (
-      final Vec2 origin,
-      final Vec2 dest ) {
+   public void line ( final Vec2 origin, final Vec2 dest ) {
 
       this.line(origin.x, origin.y, dest.x, dest.y);
    }
@@ -1671,12 +1527,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       if ( material.useStroke ) {
          this.strokeWeight(material.strokeWeight);
          final camzup.core.Color coreStr = material.stroke;
-         this.strokeColorObject = new java.awt.Color(coreStr.x, coreStr.y, coreStr.z, coreStr.w);
+         this.strokeColorObject
+            = new java.awt.Color(coreStr.x, coreStr.y, coreStr.z, coreStr.w);
       }
 
       if ( material.useFill ) {
          final camzup.core.Color coreFll = material.fill;
-         this.fillColorObject = new java.awt.Color(coreFll.x, coreFll.y, coreFll.z, coreFll.w);
+         this.fillColorObject
+            = new java.awt.Color(coreFll.x, coreFll.y, coreFll.z, coreFll.w);
       }
    }
 
@@ -1688,8 +1546,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void origin ( ) {
 
-      this.origin(
-         IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width, this.height));
+      this
+         .origin(IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width, this.height));
    }
 
    /**
@@ -1710,14 +1568,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param lineLength   the line length
     * @param strokeWeight the stroke weight
     */
-   public void origin (
-      final float lineLength,
-      final float strokeWeight ) {
+   public void origin ( final float lineLength, final float strokeWeight ) {
 
-      this.origin(
-         lineLength,
-         strokeWeight,
-         IUp.DEFAULT_I_COLOR,
+      this.origin(lineLength, strokeWeight, IUp.DEFAULT_I_COLOR,
          IUp.DEFAULT_J_COLOR);
    }
 
@@ -1729,11 +1582,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param xColor       the color of the x axis
     * @param yColor       the color of the y axis
     */
-   public void origin (
-      final float lineLength,
-      final float strokeWeight,
-      final int xColor,
-      final int yColor ) {
+   public void origin ( final float lineLength, final float strokeWeight,
+      final int xColor, final int yColor ) {
 
       final float vl = lineLength > IUtils.DEFAULT_EPSILON ? lineLength
          : IUtils.DEFAULT_EPSILON;
@@ -1767,9 +1617,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param y the y coordinate
     */
    @Override
-   public void point (
-      final float x,
-      final float y ) {
+   public void point ( final float x, final float y ) {
 
       /*
        * It doesn't make sense why turning off the stroke would also turn off a
@@ -1780,7 +1628,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          /* Processing SQUARE is AWT BUTT; PROJECT is AWT SQUARE. */
          if ( this.capNative == BasicStroke.CAP_BUTT ) {
 
-            this.strokeObject = new BasicStroke(this.strokeWeight, BasicStroke.CAP_SQUARE, this.joinNative, this.miterLimit);
+            this.strokeObject = new BasicStroke(this.strokeWeight,
+               BasicStroke.CAP_SQUARE, this.joinNative, this.miterLimit);
             this.g2.setStroke(this.strokeObject);
 
             this.gp.reset();
@@ -1789,7 +1638,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             this.g2.setColor(this.strokeColorObject);
             this.g2.draw(this.gp);
 
-            this.strokeObject = new BasicStroke(this.strokeWeight, this.capNative, this.joinNative, this.miterLimit);
+            this.strokeObject = new BasicStroke(this.strokeWeight,
+               this.capNative, this.joinNative, this.miterLimit);
             this.g2.setStroke(this.strokeObject);
 
          } else {
@@ -1874,14 +1724,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param dy the fourth point y
     */
    @Override
-   public void quad (
-      final float ax,
-      final float ay,
-      final float bx,
-      final float by,
-      final float cx,
-      final float cy,
-      final float dx,
+   public void quad ( final float ax, final float ay, final float bx,
+      final float by, final float cx, final float cy, final float dx,
       final float dy ) {
 
       this.gp.reset();
@@ -1902,11 +1746,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param d the fourth point
     */
    @Override
-   public void quad (
-      final Vec2 a,
-      final Vec2 b,
-      final Vec2 c,
-      final Vec2 d ) {
+   public void quad ( final Vec2 a, final Vec2 b, final Vec2 c, final Vec2 d ) {
 
       this.quad(a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y);
    }
@@ -1919,9 +1759,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param ap1 the next anchor point
     */
    @Override
-   public void quadraticVertex (
-      final Vec2 cp,
-      final Vec2 ap1 ) {
+   public void quadraticVertex ( final Vec2 cp, final Vec2 ap1 ) {
 
       this.quadraticVertex(cp.x, cp.y, ap1.x, ap1.y);
    }
@@ -1940,15 +1778,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param dWeight the direction stroke weight
     */
    @Override
-   public void ray (
-      final float xOrigin,
-      final float yOrigin,
-      final float xDir,
-      final float yDir,
-      final float dLen,
-      final float lnwgt,
-      final float oWeight,
-      final float dWeight ) {
+   public void ray ( final float xOrigin, final float yOrigin, final float xDir,
+      final float yDir, final float dLen, final float lnwgt,
+      final float oWeight, final float dWeight ) {
 
       final float mSq = xDir * xDir + yDir * yDir;
 
@@ -1996,10 +1828,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param d the second y parameter
     */
    @Override
-   public void rect (
-      final float a,
-      final float b,
-      final float c,
+   public void rect ( final float a, final float b, final float c,
       final float d ) {
 
       /*
@@ -2082,12 +1911,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param r  the corner rounding
     */
    @Override
-   public void rect (
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2,
-      final float r ) {
+   public void rect ( final float x1, final float y1, final float x2,
+      final float y2, final float r ) {
 
       this.rectImpl(x1, y1, x2, y2, r, r, r, r);
    }
@@ -2106,14 +1931,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param bl the bottom-left corner rounding
     */
    @Override
-   public void rect (
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2,
-      final float tl,
-      final float tr,
-      final float br,
+   public void rect ( final float x1, final float y1, final float x2,
+      final float y2, final float tl, final float tr, final float br,
       final float bl ) {
 
       this.rectImpl(x1, y1, x2, y2, tl, tr, br, bl);
@@ -2127,9 +1946,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param b the second parameter
     */
    @Override
-   public void rect (
-      final Vec2 a,
-      final Vec2 b ) {
+   public void rect ( final Vec2 a, final Vec2 b ) {
 
       this.rectImpl(a.x, a.y, b.x, b.y);
    }
@@ -2143,10 +1960,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param r the corner rounding
     */
    @Override
-   public void rect (
-      final Vec2 a,
-      final Vec2 b,
-      final float r ) {
+   public void rect ( final Vec2 a, final Vec2 b, final float r ) {
 
       this.rectImpl(a.x, a.y, b.x, b.y, r, r, r, r);
    }
@@ -2247,14 +2061,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    @Override
    @Experimental
-   public Vec2 screen (
-      final Vec2 source,
-      final Vec2 target ) {
+   public Vec2 screen ( final Vec2 source, final Vec2 target ) {
 
       final AffineTransform tr = this.g2.getTransform();
       return target.set(
-         ( float ) ( tr.getScaleX() * source.x + tr.getShearX() * source.y + tr.getTranslateX() ),
-         ( float ) ( tr.getShearY() * source.x + tr.getScaleY() * source.y + tr.getTranslateY() ));
+         ( float ) ( tr.getScaleX() * source.x + tr.getShearX() * source.y
+            + tr.getTranslateX() ),
+         ( float ) ( tr.getShearY() * source.x + tr.getScaleY() * source.y
+            + tr.getTranslateY() ));
    }
 
    /**
@@ -2269,12 +2083,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    @Override
    @Experimental
-   public float screenX (
-      final float x,
-      final float y ) {
+   public float screenX ( final float x, final float y ) {
 
       final AffineTransform tr = this.g2.getTransform();
-      return ( float ) ( tr.getScaleX() * x + tr.getShearX() * y + tr.getTranslateX() );
+      return ( float ) ( tr.getScaleX() * x + tr.getShearX() * y
+         + tr.getTranslateX() );
    }
 
    /**
@@ -2289,10 +2102,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    @SuppressWarnings ( "unused" )
    @Override
-   public float screenX (
-      final float x,
-      final float y,
-      final float z ) {
+   public float screenX ( final float x, final float y, final float z ) {
 
       PGraphics.showDepthWarningXYZ("screenX");
       return this.screenX(x, y);
@@ -2312,12 +2122,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    @Override
    @Experimental
-   public float screenY (
-      final float x,
-      final float y ) {
+   public float screenY ( final float x, final float y ) {
 
       final AffineTransform tr = this.g2.getTransform();
-      return ( float ) ( tr.getShearY() * x + tr.getScaleY() * y + tr.getTranslateY() );
+      return ( float ) ( tr.getShearY() * x + tr.getScaleY() * y
+         + tr.getTranslateY() );
    }
 
    /**
@@ -2334,10 +2143,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    @SuppressWarnings ( "unused" )
    @Override
-   public float screenY (
-      final float x,
-      final float y,
-      final float z ) {
+   public float screenY ( final float x, final float y, final float z ) {
 
       PGraphics.showDepthWarningXYZ("screenY");
       return this.screenY(x, y);
@@ -2364,8 +2170,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param m11 up axis y
     * @param m12 translation y
     */
-   public void setMatrix (
-      final float m00, final float m01, final float m02,
+   public void setMatrix ( final float m00, final float m01, final float m02,
       final float m10, final float m11, final float m12 ) {
 
       /*
@@ -2387,9 +2192,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public void setMatrix ( final Mat3 source ) {
 
-      this.setMatrix(
-         source.m00, source.m01, source.m02,
-         source.m10, source.m11, source.m12);
+      this.setMatrix(source.m00, source.m01, source.m02, source.m10, source.m11,
+         source.m12);
    }
 
    /**
@@ -2404,9 +2208,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void setMatrix ( final PMatrix2D source ) {
 
-      this.setMatrix(
-         source.m00, source.m01, source.m02,
-         source.m10, source.m11, source.m12);
+      this.setMatrix(source.m00, source.m01, source.m02, source.m10, source.m11,
+         source.m12);
    }
 
    /**
@@ -2418,9 +2221,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param height the applet height
     */
    @Override
-   public void setSize (
-      final int width,
-      final int height ) {
+   public void setSize ( final int width, final int height ) {
 
       this.width = width < 2 ? 2 : width;
       this.height = height < 2 ? 2 : height;
@@ -2429,10 +2230,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * Method signature: m00: scale x, m10: shear y, m01: shear x, m11: scale
        * y, m02: translation x, m12: translation y .
        */
-      this.affineNative.setTransform(
-         1.0d, 0.0d,
-         0.0d, 1.0d,
-         this.width * 0.5d,
+      this.affineNative.setTransform(1.0d, 0.0d, 0.0d, 1.0d, this.width * 0.5d,
          this.height * 0.5d);
 
       this.pixelWidth = this.width * this.pixelDensity;
@@ -2512,8 +2310,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param entity   the curve entity
     * @param material the material
     */
-   public void shape (
-      final CurveEntity2 entity,
+   public void shape ( final CurveEntity2 entity,
       final MaterialSolid material ) {
 
       this.pushStyle();
@@ -2528,8 +2325,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param entity    the curve entity
     * @param materials an array of materials
     */
-   public void shape (
-      final CurveEntity2 entity,
+   public void shape ( final CurveEntity2 entity,
       final MaterialSolid[] materials ) {
 
       final Transform2 tr = entity.transform;
@@ -2638,8 +2434,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param entity   the mesh entity
     * @param material the material
     */
-   public void shape (
-      final MeshEntity2 entity,
+   public void shape ( final MeshEntity2 entity,
       final MaterialSolid material ) {
 
       this.pushStyle();
@@ -2654,8 +2449,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param entity    the mesh entity
     * @param materials the materials array
     */
-   public void shape (
-      final MeshEntity2 entity,
+   public void shape ( final MeshEntity2 entity,
       final MaterialSolid[] materials ) {
 
       final Transform2 tr = entity.transform;
@@ -2720,10 +2514,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param y     the y coordinate
     */
    @Override
-   public void shape (
-      final PShape shape,
-      final float x,
-      final float y ) {
+   public void shape ( final PShape shape, final float x, final float y ) {
 
       this.shape(shape);
 
@@ -2740,12 +2531,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param y2    the second y coordinated
     */
    @Override
-   public void shape (
-      final PShape shape,
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2 ) {
+   public void shape ( final PShape shape, final float x1, final float y1,
+      final float x2, final float y2 ) {
 
       this.shape(shape);
    }
@@ -2776,9 +2563,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param size  the size
     */
    @Override
-   public void square (
-      final Vec2 coord,
-      final float size ) {
+   public void square ( final Vec2 coord, final float size ) {
 
       this.rectImpl(coord.x, coord.y, size, size);
    }
@@ -2791,15 +2576,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param rounding the corner rounding
     */
    @Override
-   public void square (
-      final Vec2 coord,
-      final float size,
+   public void square ( final Vec2 coord, final float size,
       final float rounding ) {
 
-      this.rectImpl(
-         coord.x, coord.y,
-         size, size,
-         rounding, rounding, rounding, rounding);
+      this.rectImpl(coord.x, coord.y, size, size, rounding, rounding, rounding,
+         rounding);
    }
 
    /**
@@ -2863,8 +2644,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * The lower bound of the stroke weight has to be < 1.0 because of
        * scaling's impact on stroke weight.
        */
-      this.strokeWeight = weight > IUtils.DEFAULT_EPSILON ? weight
-         : IUtils.DEFAULT_EPSILON;
+      this.strokeWeight
+         = weight > IUtils.DEFAULT_EPSILON ? weight : IUtils.DEFAULT_EPSILON;
       this.strokeImpl();
    }
 
@@ -2876,10 +2657,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param y         the y coordinate
     */
    @Override
-   public void text (
-      final char character,
-      final float x,
-      final float y ) {
+   public void text ( final char character, final float x, final float y ) {
 
       float yMut = y;
 
@@ -2920,12 +2698,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param y     the y coordinate
     */
    @Override
-   public void text (
-      final char[] chars,
-      final int start,
-      final int stop,
-      final float x,
-      final float y ) {
+   public void text ( final char[] chars, final int start, final int stop,
+      final float x, final float y ) {
 
       float high = 0.0f;
       float yMut = y;
@@ -2994,9 +2768,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.translate(loc.x, loc.y);
       this.rotate(tr.getRotation());
       this.tint(Color.toHexInt(mat.tint));
-      this.imageImpl(txtr,
-         -wHalf, hHalf, wHalf, -hHalf,
-         0, 0, w, h);
+      this.imageImpl(txtr, -wHalf, hHalf, wHalf, -hHalf, 0, 0, w, h);
       this.popStyle();
       this.popMatrix();
    }
@@ -3076,9 +2848,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @see Transform2#getRotation()
     * @see Transform2#getScale(Vec2)
     */
-   public void transform (
-      final Transform2 tr2,
-      final TransformOrder order ) {
+   public void transform ( final Transform2 tr2, final TransformOrder order ) {
 
       final Vec2 dim = tr2.getScale(this.tr2Scale);
       final Vec2 loc = tr2.getLocation(this.tr2Loc);
@@ -3164,13 +2934,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @see YupJ2#drawShapeSolid(Shape)
     */
    @Override
-   public void triangle (
-      final float ax,
-      final float ay,
-      final float bx,
-      final float by,
-      final float cx,
-      final float cy ) {
+   public void triangle ( final float ax, final float ay, final float bx,
+      final float by, final float cx, final float cy ) {
 
       this.gp.reset();
       this.gp.moveTo(ax, ay);
@@ -3188,10 +2953,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param c the third coordinate
     */
    @Override
-   public void triangle (
-      final Vec2 a,
-      final Vec2 b,
-      final Vec2 c ) {
+   public void triangle ( final Vec2 a, final Vec2 b, final Vec2 c ) {
 
       this.triangle(a.x, a.y, b.x, b.y, c.x, c.y);
    }
@@ -3237,13 +2999,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @see Graphics2D#draw(Shape)
     */
    @Override
-   protected void arcImpl (
-      final float x,
-      final float y,
-      final float w,
-      final float h,
-      final float startAngle,
-      final float stopAngle,
+   protected void arcImpl ( final float x, final float y, final float w,
+      final float h, final float startAngle, final float stopAngle,
       final int arcMode ) {
 
       /*
@@ -3432,10 +3189,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @see Color#hsbaToRgba(float, float, float, float, Color)
     */
    @Override
-   protected void colorCalc (
-      final float x,
-      final float y,
-      final float z,
+   protected void colorCalc ( final float x, final float y, final float z,
       final float w ) {
 
       this.calcG = Utils.clamp01(y * this.invColorModeY);
@@ -3490,16 +3244,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @see Utils#clamp01(float)
     */
    @Override
-   protected void colorCalcARGB (
-      final int argb,
-      final float alpha ) {
+   protected void colorCalcARGB ( final int argb, final float alpha ) {
 
       if ( alpha == this.colorModeA ) {
          this.calcAi = argb >> 0x18 & 0xff;
          this.calcColor = argb;
       } else {
-         this.calcAi = ( int ) ( ( argb >> 0x18 & 0xff ) * Utils.clamp01(
-            alpha * this.invColorModeA) );
+         this.calcAi = ( int ) ( ( argb >> 0x18 & 0xff )
+            * Utils.clamp01(alpha * this.invColorModeA) );
          this.calcColor = this.calcAi << 0x18 | argb & 0xffffff;
       }
 
@@ -3527,19 +3279,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          this.curveInited = true;
       }
 
-      PMatAux.catmullBasis(
-         this.curveTightness,
-         this.curveBasisMatrix);
+      PMatAux.catmullBasis(this.curveTightness, this.curveBasisMatrix);
 
       this.splineForward(this.curveDetail, this.curveDrawMatrix);
 
-      PMatAux.mul(
-         this.bezierBasisInverse,
-         this.curveBasisMatrix,
+      PMatAux.mul(this.bezierBasisInverse, this.curveBasisMatrix,
          this.curveToBezierMatrix);
-      PMatAux.mul(
-         this.curveDrawMatrix,
-         this.curveBasisMatrix,
+      PMatAux.mul(this.curveDrawMatrix, this.curveBasisMatrix,
          this.curveDrawMatrix);
    }
 
@@ -3580,15 +3326,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param rBl the bottom-left corner rounding
     */
    @Override
-   protected void rectImpl (
-      final float a,
-      final float b,
-      final float c,
-      final float d,
-      float rTl,
-      float rTr,
-      float rBr,
-      float rBl ) {
+   protected void rectImpl ( final float a, final float b, final float c,
+      final float d, float rTl, float rTr, float rBr, float rBl ) {
 
       float x1 = 0.0f;
       float y1 = 0.0f;
@@ -3681,9 +3420,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @see YupJ2#chooseStrokeJoin(int)
     * @see YupJ2#strokeImpl()
     */
-   protected void setStrokeAwt (
-      final int strokeCap,
-      final int strokeJoin,
+   protected void setStrokeAwt ( final int strokeCap, final int strokeJoin,
       final float strokeWeight ) {
 
       /*
@@ -3710,7 +3447,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    protected void strokeImpl ( ) {
 
-      this.strokeObject = new BasicStroke(this.strokeWeight, this.capNative, this.joinNative, this.miterLimit);
+      this.strokeObject = new BasicStroke(this.strokeWeight, this.capNative,
+         this.joinNative, this.miterLimit);
       this.g2.setStroke(this.strokeObject);
    }
 
@@ -3725,10 +3463,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @see PFont#getSize()
     */
    @Override
-   protected void textCharImpl (
-      final char ch,
-      final float x,
-      final float y ) {
+   protected void textCharImpl ( final char ch, final float x, final float y ) {
 
       final PFont.Glyph glyph = this.textFont.getGlyph(ch);
       if ( glyph != null ) {
@@ -3744,10 +3479,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          final float y0 = y + textent * this.textSize;
          final float y1 = y0 - hGlyph * this.textSize;
 
-         this.textCharModelImpl(
-            glyph.image,
-            x0, y0, x1, y1,
-            glyph.width, glyph.height);
+         this.textCharModelImpl(glyph.image, x0, y0, x1, y1, glyph.width,
+            glyph.height);
 
       }
    }
@@ -3764,11 +3497,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param v     the v coordinate
     */
    @Override
-   protected void textCharModelImpl (
-      final PImage glyph,
-      final float x1, final float y1,
-      final float x2, final float y2,
-      final int u, final int v ) {
+   protected void textCharModelImpl ( final PImage glyph, final float x1,
+      final float y1, final float x2, final float y2, final int u,
+      final int v ) {
 
       final boolean savedTint = this.tint;
       final int savedTintColor = this.tintColor;
@@ -3826,12 +3557,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param y      the vertical location
     */
    @Override
-   protected void textLineImpl (
-      final char[] buffer,
-      final int start,
-      final int stop,
-      final float x,
-      final float y ) {
+   protected void textLineImpl ( final char[] buffer, final int start,
+      final int stop, final float x, final float y ) {
 
       float cursor = x;
       for ( int index = start; index < stop; ++index ) {

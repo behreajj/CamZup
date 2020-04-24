@@ -9,8 +9,8 @@ import java.util.List;
  * An entity which contains a transform that is applied to a list of
  * meshes. The meshes may references a list of materials by index.
  */
-public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
-   IVolume3 {
+public class MeshEntity3 extends Entity3
+   implements Iterable < Mesh3 >, IVolume3 {
 
    /**
     * The list of meshes held by the entity.
@@ -50,9 +50,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     * @param name   the name
     * @param meshes the list of meshes
     */
-   public MeshEntity3 (
-      final String name,
-      final Mesh3... meshes ) {
+   public MeshEntity3 ( final String name, final Mesh3... meshes ) {
 
       super(name, new Transform3());
       this.appendAll(meshes);
@@ -65,9 +63,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     * @param transform the transform
     * @param meshes    the list of meshes
     */
-   public MeshEntity3 (
-      final String name,
-      final Transform3 transform,
+   public MeshEntity3 ( final String name, final Transform3 transform,
       final Mesh3... meshes ) {
 
       super(name, transform);
@@ -80,9 +76,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     * @param transform the transform
     * @param meshes    the list of meshes
     */
-   public MeshEntity3 (
-      final Transform3 transform,
-      final Mesh3... meshes ) {
+   public MeshEntity3 ( final Transform3 transform, final Mesh3... meshes ) {
 
       super(transform);
       this.appendAll(meshes);
@@ -245,9 +239,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     */
    @Override
    @Chainable
-   public MeshEntity3 scaleTo (
-      final Vec3 scalar,
-      final float step ) {
+   public MeshEntity3 scaleTo ( final Vec3 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);
       return this;
@@ -297,13 +289,9 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     */
    @Experimental
    @SuppressWarnings ( "null" )
-   public String toBlenderCode (
-      final MaterialSolid[] materials,
-      final float gamma,
-      final float metallic,
-      final float roughness,
-      final float specular,
-      final float clearcoat,
+   public String toBlenderCode ( final MaterialSolid[] materials,
+      final float gamma, final float metallic, final float roughness,
+      final float specular, final float clearcoat,
       final float clearcoatRough ) {
 
       final int meshLen = this.meshes.size();
@@ -411,7 +399,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
          pyCd.append("    bm.from_mesh(mesh_data)\n");
 
          if ( includeUvs ) {
-
             pyCd.append("    uv_dat = mesh[\"uvs\"]\n");
             pyCd.append("    uv_idcs = mesh[\"uv_indices\"]\n");
             pyCd.append("    uv_layer = bm.loops.layers.uv.verify()\n");
@@ -433,6 +420,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
             pyCd.append(" quad_method=\"SHORT_EDGE\",");
             pyCd.append(" ngon_method=\"EAR_CLIP\")\n");
          }
+
          pyCd.append("    bm.to_mesh(mesh_data)\n");
          pyCd.append("    bm.free()\n\n");
       }
@@ -496,9 +484,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     *
     * @return the string
     */
-   public String toString (
-      final int places,
-      final int truncate ) {
+   public String toString ( final int places, final int truncate ) {
 
       final StringBuilder sb = new StringBuilder(1024);
       sb.append("{ name: \"");
@@ -508,13 +494,10 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       sb.append(this.transform.toString(places));
       sb.append(", meshes: [ ");
 
-      int i = 0;
       final Iterator < Mesh3 > itr = this.meshes.iterator();
-      final int last = this.meshes.size() - 1;
       while ( itr.hasNext() ) {
          sb.append(itr.next().toString(places, truncate));
-         if ( i < last ) { sb.append(',').append(' '); }
-         i++;
+         if ( itr.hasNext() ) { sb.append(',').append(' '); }
       }
 
       sb.append(" ] }");

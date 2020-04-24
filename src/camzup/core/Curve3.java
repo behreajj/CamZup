@@ -48,9 +48,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param cl    whether or not the curve is closed
     * @param knots the collection of knots
     */
-   public Curve3 (
-      final boolean cl,
-      final Collection < Knot3 > knots ) {
+   public Curve3 ( final boolean cl, final Collection < Knot3 > knots ) {
 
       super(cl);
       this.appendAll(knots);
@@ -62,9 +60,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param cl    whether or not the curve is closed
     * @param knots the list of knots
     */
-   public Curve3 (
-      final boolean cl,
-      final Knot3... knots ) {
+   public Curve3 ( final boolean cl, final Knot3... knots ) {
 
       super(cl);
       this.appendAll(knots);
@@ -110,9 +106,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param cl    whether or not the curve is closed
     * @param knots the collection of knots
     */
-   public Curve3 (
-      final String name,
-      final boolean cl,
+   public Curve3 ( final String name, final boolean cl,
       final Collection < Knot3 > knots ) {
 
       super(name, cl);
@@ -126,10 +120,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param cl    whether or not the curve is closed
     * @param knots the list of knots
     */
-   public Curve3 (
-      final String name,
-      final boolean cl,
-      final Knot3... knots ) {
+   public Curve3 ( final String name, final boolean cl, final Knot3... knots ) {
 
       super(name, cl);
       this.appendAll(knots);
@@ -258,9 +249,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the segment
     */
-   public Curve3 getSegment (
-      final int i,
-      final Curve3 target ) {
+   public Curve3 getSegment ( final int i, final Curve3 target ) {
 
       final int len = this.knots.size();
 
@@ -293,8 +282,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public int hashCode ( ) {
 
       int hash = IUtils.MUL_BASE ^ ( this.closedLoop ? 1231 : 1237 );
-      hash = hash * IUtils.HASH_MUL ^ ( this.knots == null ? 0
-         : this.knots.hashCode() );
+      hash = hash * IUtils.HASH_MUL
+         ^ ( this.knots == null ? 0 : this.knots.hashCode() );
       return hash;
    }
 
@@ -307,13 +296,11 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the curve
     */
-   public Curve3 insert (
-      final int i,
-      final Knot3 knot ) {
+   public Curve3 insert ( final int i, final Knot3 knot ) {
 
       if ( knot != null ) {
-         final int k = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
-            : i;
+         final int k
+            = this.closedLoop ? Utils.mod(i, this.knots.size() + 1) : i;
          this.knots.add(k, knot);
       }
       return this;
@@ -329,12 +316,10 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this curve
     */
-   public Curve3 insertAll (
-      final int i,
-      final Collection < Knot3 > knots ) {
+   public Curve3 insertAll ( final int i, final Collection < Knot3 > knots ) {
 
-      final int vidx = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
-         : i;
+      final int vidx
+         = this.closedLoop ? Utils.mod(i, this.knots.size() + 1) : i;
       final Iterator < Knot3 > knItr = knots.iterator();
       int k = vidx;
       while ( knItr.hasNext() ) {
@@ -357,13 +342,11 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this curve
     */
-   public Curve3 insertAll (
-      final int i,
-      final Knot3... knots ) {
+   public Curve3 insertAll ( final int i, final Knot3... knots ) {
 
       final int len = knots.length;
-      final int vidx = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
-         : i;
+      final int vidx
+         = this.closedLoop ? Utils.mod(i, this.knots.size() + 1) : i;
       for ( int j = 0, k = vidx; j < len; ++j ) {
          final Knot3 knot = knots[j];
          if ( knot != null ) {
@@ -504,14 +487,10 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public Curve3 reset ( ) {
 
       this.resize(2);
-      this.knots.get(0).set(
-         -0.5f, 0.0f, 0.0f,
-         -0.25f, 0.25f, 0.0f,
-         -0.75f, -0.25f, 0.0f);
-      this.knots.get(1).set(
-         0.5f, 0.0f, 0.0f,
-         1.0f, 0.0f, 0.0f,
-         0.0f, 0.0f, 0.0f);
+      this.knots.get(0).set(-0.5f, 0.0f, 0.0f, -0.25f, 0.25f, 0.0f, -0.75f,
+         -0.25f, 0.0f);
+      this.knots.get(1).set(0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+         0.0f);
 
       this.closedLoop = false;
       this.materialIndex = 0;
@@ -552,9 +531,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see Knot3#rotate(float, Vec3)
     */
    @Chainable
-   public Curve3 rotate (
-      final float radians,
-      final Vec3 axis ) {
+   public Curve3 rotate ( final float radians, final Vec3 axis ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
@@ -908,12 +885,11 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @return the string
     */
    @Experimental
-   String toBlenderCode (
-      final int uRes,
-      final float tiltStart,
+   String toBlenderCode ( final int uRes, final float tiltStart,
       final float tiltEnd ) {
 
-      final StringBuilder pyCd = new StringBuilder(64 + 256 * this.knots.size());
+      final StringBuilder pyCd
+         = new StringBuilder(64 + 256 * this.knots.size());
       pyCd.append("{\"closed_loop\": ");
       pyCd.append(this.closedLoop ? "True" : "False");
       pyCd.append(", \"resolution_u\": ");
@@ -978,12 +954,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the arc
     */
-   public static Curve3 arc (
-      final float startAngle,
-      final float stopAngle,
-      final float radius,
-      final ArcMode arcMode,
-      final Curve3 target ) {
+   public static Curve3 arc ( final float startAngle, final float stopAngle,
+      final float radius, final ArcMode arcMode, final Curve3 target ) {
 
       /* See Curve2's arc function for more detailed comments. */
 
@@ -1017,21 +989,16 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final float toStep = 1.0f / ( knotCount - 1.0f );
 
       final float hndtn = 0.25f * toStep * arcLen1;
-      final float handleMag = Utils.tan(
-         hndtn * IUtils.TAU) * radius * IUtils.FOUR_THIRDS;
+      final float handleMag
+         = Utils.tan(hndtn * IUtils.TAU) * radius * IUtils.FOUR_THIRDS;
 
       target.resize(knotCount);
       final List < Knot3 > knots = target.knots;
       for ( int i = 0; i < knotCount; ++i ) {
          final Knot3 knot = knots.get(i);
          final float angle1 = Utils.lerpUnclamped(a1, destAngle1, i * toStep);
-         Knot3.fromPolar(
-            Utils.scNorm(angle1),
-            Utils.scNorm(
-               angle1 - 0.25f),
-            radius, handleMag,
-            0.0f, 0.0f, 0.0f,
-            knot);
+         Knot3.fromPolar(Utils.scNorm(angle1), Utils.scNorm(angle1 - 0.25f),
+            radius, handleMag, 0.0f, 0.0f, 0.0f, knot);
       }
 
       target.closedLoop = arcMode != ArcMode.OPEN;
@@ -1083,8 +1050,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the circle
     */
-   public static Curve3 circle (
-      final float offsetAngle,
+   public static Curve3 circle ( final float offsetAngle,
       final Curve3 target ) {
 
       return Curve3.circle(offsetAngle, 0.5f, target);
@@ -1099,9 +1065,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the circle
     */
-   public static Curve3 circle (
-      final float offsetAngle,
-      final float radius,
+   public static Curve3 circle ( final float offsetAngle, final float radius,
       final Curve3 target ) {
 
       return Curve3.circle(offsetAngle, radius, Curve.KNOTS_PER_CIRCLE, target);
@@ -1117,14 +1081,11 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the circle
     */
-   public static Curve3 circle (
-      final float offsetAngle,
-      final float radius,
-      final int knotCount,
-      final Curve3 target ) {
+   public static Curve3 circle ( final float offsetAngle, final float radius,
+      final int knotCount, final Curve3 target ) {
 
-      return Curve3.circle(offsetAngle, radius, knotCount, 0.0f, 0.0f,
-         0.0f, target);
+      return Curve3.circle(offsetAngle, radius, knotCount, 0.0f, 0.0f, 0.0f,
+         target);
    }
 
    /**
@@ -1141,11 +1102,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see Curve3#eval(Curve3, float, Vec3, Vec3)
     */
    @Experimental
-   public static Transform3 eval (
-      final Curve3 curve,
-      final float step,
-      final Handedness handedness,
-      final Transform3 target ) {
+   public static Transform3 eval ( final Curve3 curve, final float step,
+      final Handedness handedness, final Transform3 target ) {
 
       target.locPrev.set(target.location);
       target.rotPrev.set(target.rotation);
@@ -1167,9 +1125,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @return the knot
     */
    @Experimental
-   public static Knot3 eval (
-      final Curve3 curve,
-      final float step,
+   public static Knot3 eval ( final Curve3 curve, final float step,
       final Knot3 target ) {
 
       final List < Knot3 > knots = curve.knots;
@@ -1205,13 +1161,13 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       Curve3.bezierKnot(a, b, t, target);
 
       // QUERY Should this logic be moved to bezierKnot?
-      final float aFhMag = Knot3.foreHandleMag(a);
-      final float bFhMag = Knot3.foreHandleMag(b);
+      final float aFhMag = Knot3.foreMag(a);
+      final float bFhMag = Knot3.foreMag(b);
       final float tFhMag = u * aFhMag + t * bFhMag;
       target.scaleForeHandleTo(tFhMag);
 
-      final float aRhMag = Knot3.rearHandleMag(a);
-      final float bRhMag = Knot3.rearHandleMag(b);
+      final float aRhMag = Knot3.rearMag(a);
+      final float bRhMag = Knot3.rearMag(b);
       final float tRhMag = u * aRhMag + t * bRhMag;
       target.scaleRearHandleTo(tRhMag);
 
@@ -1231,9 +1187,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Curve3#eval(Curve3, float, Vec3, Vec3)
     */
-   public static Ray3 eval (
-      final Curve3 curve,
-      final float step,
+   public static Ray3 eval ( final Curve3 curve, final float step,
       final Ray3 ray ) {
 
       Curve3.eval(curve, step, ray.origin, ray.dir);
@@ -1255,11 +1209,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see Vec3#bezierPoint(Vec3, Vec3, Vec3, Vec3, float, Vec3)
     * @see Vec3#bezierTanUnit(Vec3, Vec3, Vec3, Vec3, float, Vec3)
     */
-   public static Vec3 eval (
-      final Curve3 curve,
-      final float step,
-      final Vec3 coord,
-      final Vec3 tangent ) {
+   public static Vec3 eval ( final Curve3 curve, final float step,
+      final Vec3 coord, final Vec3 tangent ) {
 
       final List < Knot3 > knots = curve.knots;
       final int knotLength = knots.size();
@@ -1304,10 +1255,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see Curve3#evalFirst(Curve3, Vec3, Vec3)
     * @see Quaternion#fromDir(Vec3, Handedness, Quaternion, Vec3, Vec3, Vec3)
     */
-   public static Transform3 evalFirst (
-      final Curve3 curve,
-      final Handedness handedness,
-      final Transform3 target ) {
+   public static Transform3 evalFirst ( final Curve3 curve,
+      final Handedness handedness, final Transform3 target ) {
 
       target.locPrev.set(target.location);
       target.rotPrev.set(target.rotation);
@@ -1327,9 +1276,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the knot
     */
-   public static Knot3 evalFirst (
-      final Curve3 curve,
-      final Knot3 target ) {
+   public static Knot3 evalFirst ( final Curve3 curve, final Knot3 target ) {
 
       target.set(curve.knots.get(0));
       return target;
@@ -1345,9 +1292,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Curve2#evalFirst(Curve2, Vec2, Vec2)
     */
-   public static Ray3 evalFirst (
-      final Curve3 curve,
-      final Ray3 ray ) {
+   public static Ray3 evalFirst ( final Curve3 curve, final Ray3 ray ) {
 
       Curve3.evalFirst(curve, ray.origin, ray.dir);
       return ray;
@@ -1365,9 +1310,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Vec3#subNorm(Vec3, Vec3, Vec3)
     */
-   public static Vec3 evalFirst (
-      final Curve3 curve,
-      final Vec3 coord,
+   public static Vec3 evalFirst ( final Curve3 curve, final Vec3 coord,
       final Vec3 tangent ) {
 
       final Knot3 kFirst = curve.knots.get(0);
@@ -1389,10 +1332,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see Curve3#evalLast(Curve3, Vec3, Vec3)
     * @see Quaternion#fromDir(Vec3, Handedness, Quaternion, Vec3, Vec3, Vec3)
     */
-   public static Transform3 evalLast (
-      final Curve3 curve,
-      final Handedness handedness,
-      final Transform3 target ) {
+   public static Transform3 evalLast ( final Curve3 curve,
+      final Handedness handedness, final Transform3 target ) {
 
       target.locPrev.set(target.location);
       target.rotPrev.set(target.rotation);
@@ -1412,9 +1353,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the knot
     */
-   public static Knot3 evalLast (
-      final Curve3 curve,
-      final Knot3 target ) {
+   public static Knot3 evalLast ( final Curve3 curve, final Knot3 target ) {
 
       target.set(curve.knots.get(curve.knots.size() - 1));
       return target;
@@ -1431,9 +1370,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Curve2#evalFirst(Curve2, Vec2, Vec2)
     */
-   public static Ray3 evalLast (
-      final Curve3 curve,
-      final Ray3 ray ) {
+   public static Ray3 evalLast ( final Curve3 curve, final Ray3 ray ) {
 
       Curve3.evalLast(curve, ray.origin, ray.dir);
       return ray;
@@ -1451,9 +1388,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Vec3#subNorm(Vec3, Vec3, Vec3)
     */
-   public static Vec3 evalLast (
-      final Curve3 curve,
-      final Vec3 coord,
+   public static Vec3 evalLast ( final Curve3 curve, final Vec3 coord,
       final Vec3 tangent ) {
 
       final Knot3 kLast = curve.knots.get(curve.knots.size() - 1);
@@ -1474,9 +1409,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see Utils#mod(int, int)
     * @see Curve3#lerp13(Vec3, Vec3, Vec3)
     */
-   public static Curve3 fromMeshFace (
-      final Face3 face,
-      final Curve3 target ) {
+   public static Curve3 fromMeshFace ( final Face3 face, final Curve3 target ) {
 
       target.closedLoop = true;
       target.name = "Face";
@@ -1511,9 +1444,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see Utils#mod(int, int)
     * @see Curve3#lerp13(Vec3, Vec3, Vec3)
     */
-   public static Curve3 fromMeshFace (
-      final int faceIdx,
-      final Mesh3 mesh,
+   public static Curve3 fromMeshFace ( final int faceIdx, final Mesh3 mesh,
       final Curve3 target ) {
 
       final int facesLen = mesh.faces.length;
@@ -1523,8 +1454,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Vec3[] vs = mesh.coords;
 
       target.closedLoop = true;
-      target.name = new StringBuilder(64).append(mesh.name).append('.').append(
-         Utils.toPadded(i, 4)).toString();
+      target.name = new StringBuilder(64).append(mesh.name).append('.')
+         .append(Utils.toPadded(i, 4)).toString();
       target.materialIndex = mesh.materialIndex;
       target.resize(vertsLen);
 
@@ -1556,10 +1487,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the curve
     */
-   public static Curve3 fromPoints (
-      final boolean closedLoop,
-      final Vec3[] points,
-      final Curve3 target ) {
+   public static Curve3 fromPoints ( final boolean closedLoop,
+      final Vec3[] points, final Curve3 target ) {
 
       target.closedLoop = closedLoop;
       final int knotCount = points.length;
@@ -1591,29 +1520,17 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       target.resize(6);
       final Iterator < Knot3 > itr = target.knots.iterator();
 
-      itr.next().set(
-         0.5f, 0.0f, 0.0f,
-         0.5f, 0.1309615f, 0.0f,
-         0.5f, -0.1309615f, 0.0f);
-      itr.next().set(
-         0.235709f, 0.166627f, 0.0f,
-         0.0505335f, 0.114256f, 0.0f,
+      itr.next().set(0.5f, 0.0f, 0.0f, 0.5f, 0.1309615f, 0.0f, 0.5f,
+         -0.1309615f, 0.0f);
+      itr.next().set(0.235709f, 0.166627f, 0.0f, 0.0505335f, 0.114256f, 0.0f,
          0.361728f, 0.2022675f, 0.0f);
-      itr.next().set(
-         -0.235709f, -0.166627f, 0.0f,
-         -0.361728f, -0.2022675f, 0.0f,
-         -0.0505335f, -0.114256f, 0.0f);
-      itr.next().set(
-         -0.5f, 0.0f, 0.0f,
-         -0.5f, 0.1309615f, 0.0f,
-         -0.5f, -0.1309615f, 0.0f);
-      itr.next().set(
-         -0.235709f, 0.166627f, 0.0f,
-         -0.0505335f, 0.114256f, 0.0f,
+      itr.next().set(-0.235709f, -0.166627f, 0.0f, -0.361728f, -0.2022675f,
+         0.0f, -0.0505335f, -0.114256f, 0.0f);
+      itr.next().set(-0.5f, 0.0f, 0.0f, -0.5f, 0.1309615f, 0.0f, -0.5f,
+         -0.1309615f, 0.0f);
+      itr.next().set(-0.235709f, 0.166627f, 0.0f, -0.0505335f, 0.114256f, 0.0f,
          -0.361728f, 0.2022675f, 0.0f);
-      itr.next().set(
-         0.235709f, -0.166627f, 0.0f,
-         0.361728f, -0.2022675f, 0.0f,
+      itr.next().set(0.235709f, -0.166627f, 0.0f, 0.361728f, -0.2022675f, 0.0f,
          0.0505335f, -0.114256f, 0.0f);
 
       return target;
@@ -1628,10 +1545,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public static Curve3 line ( final Curve3 target ) {
 
-      return Curve3.line(
-         -0.5f, 0.0f, 0.0f,
-         0.5f, 0.0f, 0.0f,
-         target);
+      return Curve3.line(-0.5f, 0.0f, 0.0f, 0.5f, 0.0f, 0.0f, target);
    }
 
    /**
@@ -1643,15 +1557,10 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the line
     */
-   public static Curve3 line (
-      final Vec3 origin,
-      final Vec3 dest,
+   public static Curve3 line ( final Vec3 origin, final Vec3 dest,
       final Curve3 target ) {
 
-      return Curve3.line(
-         origin.x, origin.y,
-         origin.z,
-         dest.x, dest.y, dest.z,
+      return Curve3.line(origin.x, origin.y, origin.z, dest.x, dest.y, dest.z,
          target);
    }
 
@@ -1667,16 +1576,33 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Curve3#straightenHandles(Curve3)
     */
-   public static Curve3 polygon (
-      final float offsetAngle,
-      final float radius,
-      final int knotCount,
-      final Curve3 target ) {
+   public static Curve3 polygon ( final float offsetAngle, final float radius,
+      final int knotCount, final Curve3 target ) {
 
-      // TODO: Make more efficient version of this function.
-      Curve3.circle(offsetAngle, radius, knotCount, 0.0f, 0.0f, 0.0f, target);
+      final float off1 = offsetAngle * IUtils.ONE_TAU;
+      final int vknct = knotCount < 3 ? 3 : knotCount;
+      target.resize(vknct);
+      final float invKnCt = 1.0f / vknct;
+
+      final Iterator < Knot3 > itr = target.knots.iterator();
+      final Knot3 first = itr.next();
+      Knot3 prev = first;
+      prev.coord.set(radius * Utils.scNorm(off1),
+         radius * Utils.scNorm(off1 - 0.25f), 0.0f);
+      int i = 1;
+      while ( itr.hasNext() ) {
+         final float theta1 = off1 + i * invKnCt;
+         final Knot3 curr = itr.next();
+         Knot3.fromSegLinear(radius * Utils.scNorm(theta1),
+            radius * Utils.scNorm(theta1 - 0.25f), 0.0f, prev, curr);
+         prev = curr;
+         i++;
+      }
+      Knot3.fromSegLinear(first.coord, prev, first);
+
       target.name = "Polygon";
-      return Curve3.straightenHandles(target);
+      target.closedLoop = true;
+      return target;
    }
 
    /**
@@ -1695,19 +1621,15 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see Vec3#randomCartesian(java.util.Random, Vec3, Vec3, Vec3)
     * @see Curve3#fromPoints(boolean, Vec3[], Curve3)
     */
-   public static Curve3 random (
-      final java.util.Random rng,
-      final int count,
-      final float lowerBound,
-      final float upperBound,
-      final boolean closedLoop,
+   public static Curve3 random ( final java.util.Random rng, final int count,
+      final float lowerBound, final float upperBound, final boolean closedLoop,
       final Curve3 target ) {
 
       final int valCount = count < 3 ? 3 : count;
       final Vec3[] points = new Vec3[valCount];
       for ( int i = 0; i < valCount; ++i ) {
-         points[i] = Vec3.randomCartesian(rng, lowerBound, upperBound,
-            new Vec3());
+         points[i]
+            = Vec3.randomCartesian(rng, lowerBound, upperBound, new Vec3());
       }
       return Curve3.fromPoints(closedLoop, points, target);
    }
@@ -1728,19 +1650,15 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see Vec3#randomCartesian(java.util.Random, Vec3, Vec3, Vec3)
     * @see Curve3#fromPoints(boolean, Vec3[], Curve3)
     */
-   public static Curve3 random (
-      final java.util.Random rng,
-      final int count,
-      final Vec3 lowerBound,
-      final Vec3 upperBound,
-      final boolean closedLoop,
+   public static Curve3 random ( final java.util.Random rng, final int count,
+      final Vec3 lowerBound, final Vec3 upperBound, final boolean closedLoop,
       final Curve3 target ) {
 
       final int valCount = count < 3 ? 3 : count;
       final Vec3[] points = new Vec3[valCount];
       for ( int i = 0; i < valCount; ++i ) {
-         points[i] = Vec3.randomCartesian(rng, lowerBound, upperBound,
-            new Vec3());
+         points[i]
+            = Vec3.randomCartesian(rng, lowerBound, upperBound, new Vec3());
       }
 
       return Curve3.fromPoints(closedLoop, points, target);
@@ -1871,10 +1789,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
    @Experimental
-   static Knot3 bezierKnot (
-      final Knot3 a,
-      final Knot3 b,
-      final float step,
+   static Knot3 bezierKnot ( final Knot3 a, final Knot3 b, final float step,
       final Knot3 target ) {
 
       final Vec3 aco = a.coord;
@@ -1912,10 +1827,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Vec3#bezierPoint(Vec3, Vec3, Vec3, Vec3, float, Vec3)
     */
-   static Vec3 bezierPoint (
-      final Knot3 a,
-      final Knot3 b,
-      final float step,
+   static Vec3 bezierPoint ( final Knot3 a, final Knot3 b, final float step,
       final Vec3 target ) {
 
       return Vec3.bezierPoint(a.coord, a.foreHandle, b.rearHandle, b.coord,
@@ -1936,10 +1848,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Vec3#bezierTanUnit(Vec3, Vec3, Vec3, Vec3, float, Vec3)
     */
-   static Vec3 bezierTanUnit (
-      final Knot3 a,
-      final Knot3 b,
-      final float step,
+   static Vec3 bezierTanUnit ( final Knot3 a, final Knot3 b, final float step,
       final Vec3 target ) {
 
       return Vec3.bezierTanUnit(a.coord, a.foreHandle, b.rearHandle, b.coord,
@@ -1961,34 +1870,25 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the circle
     */
-   static Curve3 circle (
-      final float offsetAngle,
-      final float radius,
-      final int knotCount,
-      final float xCenter,
-      final float yCenter,
-      final float zCenter,
-      final Curve3 target ) {
+   static Curve3 circle ( final float offsetAngle, final float radius,
+      final int knotCount, final float xCenter, final float yCenter,
+      final float zCenter, final Curve3 target ) {
 
       final float off1 = offsetAngle * IUtils.ONE_TAU;
       final int vknct = knotCount < 3 ? 3 : knotCount;
       target.resize(vknct);
       final float invKnCt = 1.0f / vknct;
       final float hndtn = 0.25f * invKnCt;
-      final float handleMag = Utils.tan(
-         hndtn * IUtils.TAU) * radius * IUtils.FOUR_THIRDS;
+      final float handleMag
+         = Utils.tan(hndtn * IUtils.TAU) * radius * IUtils.FOUR_THIRDS;
 
       int i = 0;
       final Iterator < Knot3 > itr = target.knots.iterator();
       while ( itr.hasNext() ) {
          final Knot3 knot = itr.next();
          final float angle1 = off1 + i * invKnCt;
-         Knot3.fromPolar(
-            Utils.scNorm(angle1),
-            Utils.scNorm(angle1 - 0.25f),
-            radius, handleMag,
-            xCenter, yCenter, zCenter,
-            knot);
+         Knot3.fromPolar(Utils.scNorm(angle1), Utils.scNorm(angle1 - 0.25f),
+            radius, handleMag, xCenter, yCenter, zCenter, knot);
          i++;
       }
 
@@ -2008,13 +1908,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the result
     */
-   static Vec3 lerp13 (
-      final Vec3 a,
-      final Vec3 b,
-      final Vec3 target ) {
+   static Vec3 lerp13 ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(
-         0.66666666f * a.x + IUtils.ONE_THIRD * b.x,
+      return target.set(0.66666666f * a.x + IUtils.ONE_THIRD * b.x,
          0.66666666f * a.y + IUtils.ONE_THIRD * b.y,
          0.66666666f * a.z + IUtils.ONE_THIRD * b.z);
    }
@@ -2033,14 +1929,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the line
     */
-   static Curve3 line (
-      final float xOrigin,
-      final float yOrigin,
-      final float zOrigin,
-      final float xDest,
-      final float yDest,
-      final float zDest,
-      final Curve3 target ) {
+   static Curve3 line ( final float xOrigin, final float yOrigin,
+      final float zOrigin, final float xDest, final float yDest,
+      final float zDest, final Curve3 target ) {
 
       target.resize(2);
 
@@ -2064,8 +1955,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    /**
     * An easing function to facilitate animation between multiple curves.
     */
-   public static class Easing implements EasingFuncArr < Curve3 >,
-      EasingFuncObj < Curve3 > {
+   public static class Easing
+      implements EasingFuncArr < Curve3 >, EasingFuncObj < Curve3 > {
 
       /**
        * The knot easing function.
@@ -2098,11 +1989,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
        * @return the eased curve
        */
       @Override
-      public Curve3 apply (
-         final Curve3 origin,
-         final Curve3 dest,
-         final Float step,
-         final Curve3 target ) {
+      public Curve3 apply ( final Curve3 origin, final Curve3 dest,
+         final Float step, final Curve3 target ) {
 
          if ( step <= 0.0f ) { return target.set(origin); }
          if ( step >= 1.0f ) { return target.set(dest); }
@@ -2117,9 +2005,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
        * @param target the output curve
        */
       @Override
-      public Curve3 apply (
-         final Curve3[] arr,
-         final Float step,
+      public Curve3 apply ( final Curve3[] arr, final Float step,
          final Curve3 target ) {
 
          final int len = arr.length;
@@ -2143,16 +2029,14 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
        *
        * @return the easing curve
        */
-      public Curve3 applyUnclamped (
-         final Curve3 origin,
-         final Curve3 dest,
-         final float step,
-         final Curve3 target ) {
+      public Curve3 applyUnclamped ( final Curve3 origin, final Curve3 dest,
+         final float step, final Curve3 target ) {
 
          final List < Knot3 > orKn = origin.knots;
          final List < Knot3 > dsKn = dest.knots;
 
-         if ( orKn.size() == dsKn.size() && origin.closedLoop == dest.closedLoop ) {
+         if ( orKn.size() == dsKn.size()
+            && origin.closedLoop == dest.closedLoop ) {
 
             target.closedLoop = origin.closedLoop;
             target.resize(orKn.size());

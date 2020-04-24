@@ -45,9 +45,7 @@ public class Ray2 extends Ray {
     * @param origin the origin
     * @param dir    the direction.
     */
-   public Ray2 (
-      final Vec2 origin,
-      final Vec2 dir ) {
+   public Ray2 ( final Vec2 origin, final Vec2 dir ) {
 
       super();
       this.set(origin, dir);
@@ -100,8 +98,8 @@ public class Ray2 extends Ray {
        */
 
       int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ ( this.origin == null ? 0
-         : this.origin.hashCode() );
+      hash = hash * IUtils.HASH_MUL
+         ^ ( this.origin == null ? 0 : this.origin.hashCode() );
       // hash = (hash * HASH_MUL)
       // ^ (this.dir == null ? 0 : this.dir.hashCode());
       return hash;
@@ -159,9 +157,7 @@ public class Ray2 extends Ray {
     *
     * @see Vec2#normalize(Vec2, Vec2)
     */
-   public Ray2 set (
-      final Vec2 origin,
-      final Vec2 dir ) {
+   public Ray2 set ( final Vec2 origin, final Vec2 dir ) {
 
       this.origin.set(origin);
       Vec2.normalize(dir, this.dir);
@@ -229,9 +225,7 @@ public class Ray2 extends Ray {
     *
     * @return the point
     */
-   public static Vec2 eval (
-      final Ray2 ray,
-      final float time,
+   public static Vec2 eval ( final Ray2 ray, final float time,
       final Vec2 target ) {
 
       final Vec2 origin = ray.origin;
@@ -259,9 +253,7 @@ public class Ray2 extends Ray {
     *
     * @see Vec2#subNorm(Vec2, Vec2, Vec2)
     */
-   public static Ray2 fromPoints (
-      final Vec2 origin,
-      final Vec2 dest,
+   public static Ray2 fromPoints ( final Vec2 origin, final Vec2 dest,
       final Ray2 target ) {
 
       target.origin.set(origin);
@@ -280,9 +272,7 @@ public class Ray2 extends Ray {
     * @see Ray2#intersectLineSeg(Ray2, Vec2, Vec2)
     */
    @Experimental
-   public static float intersectEdge (
-      final Ray2 ray,
-      final Edge2 edge ) {
+   public static float intersectEdge ( final Ray2 ray, final Edge2 edge ) {
 
       return Ray2.intersectLineSeg(ray, edge.origin.coord, edge.dest.coord);
    }
@@ -297,9 +287,7 @@ public class Ray2 extends Ray {
     * @return the list of points
     */
    @Experimental
-   public static float intersectFace (
-      final Ray2 ray,
-      final Face2 face,
+   public static float intersectFace ( final Ray2 ray, final Face2 face,
       final List < Vec2 > hits ) {
 
       // TEST
@@ -349,9 +337,7 @@ public class Ray2 extends Ray {
     * @return the list of points
     */
    @Experimental
-   public static float intersectLineSeg (
-      final Ray2 ray,
-      final Vec2 origin,
+   public static float intersectLineSeg ( final Ray2 ray, final Vec2 origin,
       final Vec2 dest ) {
 
       // TEST
@@ -379,9 +365,7 @@ public class Ray2 extends Ray {
     * @return the list of points
     */
    @Experimental
-   public static float intersectMesh (
-      final Ray2 ray,
-      final Mesh2 mesh,
+   public static float intersectMesh ( final Ray2 ray, final Mesh2 mesh,
       final List < Vec2 > hits ) {
 
       // TEST

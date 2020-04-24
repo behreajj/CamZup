@@ -62,12 +62,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param path      applet path
     * @param isPrimary is the renderer primary
     */
-   public Yup2 (
-      final int width,
-      final int height,
-      final PApplet parent,
-      final String path,
-      final boolean isPrimary ) {
+   public Yup2 ( final int width, final int height, final PApplet parent,
+      final String path, final boolean isPrimary ) {
 
       super(width, height, parent, path, isPrimary);
    }
@@ -82,12 +78,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param mode  the arc mode
     */
    @Override
-   public void arc (
-      final Vec2 v,
-      final float sz,
-      final float start,
-      final float stop,
-      final int mode ) {
+   public void arc ( final Vec2 v, final float sz, final float start,
+      final float stop, final int mode ) {
 
       this.arc(v.x, v.y, sz, sz, start, stop, mode);
    }
@@ -102,17 +94,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param ap1 the second anchor point
     */
    @Override
-   public void bezier (
-      final Vec2 ap0,
-      final Vec2 cp0,
-      final Vec2 cp1,
+   public void bezier ( final Vec2 ap0, final Vec2 cp0, final Vec2 cp1,
       final Vec2 ap1 ) {
 
-      this.bezier(
-         ap0.x, ap0.y,
-         cp0.x, cp0.y,
-         cp1.x, cp1.y,
-         ap1.x, ap1.y);
+      this.bezier(ap0.x, ap0.y, cp0.x, cp0.y, cp1.x, cp1.y, ap1.x, ap1.y);
    }
 
    /**
@@ -124,15 +109,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param ap1 the next anchor point
     */
    @Override
-   public void bezierVertex (
-      final Vec2 cp0,
-      final Vec2 cp1,
-      final Vec2 ap1 ) {
+   public void bezierVertex ( final Vec2 cp0, final Vec2 cp1, final Vec2 ap1 ) {
 
-      this.bezierVertexImpl(
-         cp0.x, cp0.y, 0.0f,
-         cp1.x, cp1.y, 0.0f,
-         ap1.x, ap1.y, 0.0f);
+      this.bezierVertexImpl(cp0.x, cp0.y, 0.0f, cp1.x, cp1.y, 0.0f, ap1.x,
+         ap1.y, 0.0f);
    }
 
    /**
@@ -141,10 +121,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    @Override
    public void camera ( ) {
 
-      this.camera(
-         this.cameraX, this.cameraY,
-         this.cameraRot,
-         this.cameraZoomX, this.cameraZoomY);
+      this.camera(this.cameraX, this.cameraY, this.cameraRot, this.cameraZoomX,
+         this.cameraZoomY);
    }
 
    /**
@@ -160,12 +138,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @see Utils#modRadians(float)
     */
    @Override
-   public void camera (
-      final float x,
-      final float y,
-      final float radians,
-      final float zx,
-      final float zy ) {
+   public void camera ( final float x, final float y, final float radians,
+      final float zx, final float zy ) {
 
       this.cameraX = x;
       this.cameraY = y;
@@ -189,19 +163,15 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final float m10 = s * this.cameraZoomX;
       final float m11 = c * this.cameraZoomY;
 
-      this.modelview.set(
-         m00, m01, 0.0f, -this.cameraX * m00 - this.cameraY * m01,
-         m10, m11, 0.0f, -this.cameraX * m10 - this.cameraY * m11,
-         0.0f, 0.0f, 1.0f,
-         -zDist,
+      this.modelview.set(m00, m01, 0.0f,
+         -this.cameraX * m00 - this.cameraY * m01, m10, m11, 0.0f,
+         -this.cameraX * m10 - this.cameraY * m11, 0.0f, 0.0f, 1.0f, -zDist,
          0.0f, 0.0f, 0.0f, 1.0f);
 
       /* PMatAux.invert(this.modelview, this.modelviewInv); */
-      this.modelviewInv.set(
-         c / this.cameraZoomX, s / this.cameraZoomX, 0.0f, this.cameraX,
-         -s / this.cameraZoomY, c / this.cameraZoomY, 0.0f, this.cameraY,
-         0.0f, 0.0f, 1.0f, zDist,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      this.modelviewInv.set(c / this.cameraZoomX, s / this.cameraZoomX, 0.0f,
+         this.cameraX, -s / this.cameraZoomY, c / this.cameraZoomY, 0.0f,
+         this.cameraY, 0.0f, 0.0f, 1.0f, zDist, 0.0f, 0.0f, 0.0f, 1.0f);
 
       this.camera.set(this.modelview);
       this.cameraInv.set(this.modelviewInv);
@@ -223,23 +193,14 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param zUp     world up axis z
     */
    @Override
-   public void camera (
-      final float xEye,
-      final float yEye,
-      final float zEye,
-      final float xCenter,
-      final float yCenter,
-      final float zCenter,
-      final float xUp,
-      final float yUp,
-      final float zUp ) {
+   public void camera ( final float xEye, final float yEye, final float zEye,
+      final float xCenter, final float yCenter, final float zCenter,
+      final float xUp, final float yUp, final float zUp ) {
 
       PApplet.showMissingWarning("camera");
 
-      this.camera(
-         xEye, yEye,
-         Utils.atan2(yUp, xUp),
-         this.cameraZoomX, this.cameraZoomY);
+      this.camera(xEye, yEye, Utils.atan2(yUp, xUp), this.cameraZoomX,
+         this.cameraZoomY);
    }
 
    /**
@@ -249,10 +210,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param radians the angle
     * @param zoom    the zoom level
     */
-   public void camera (
-      final Vec2 loc,
-      final float radians,
-      final Vec2 zoom ) {
+   public void camera ( final Vec2 loc, final float radians, final Vec2 zoom ) {
 
       this.camera(loc.x, loc.y, radians, zoom.x, zoom.y);
    }
@@ -273,9 +231,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param size  the size
     */
    @Override
-   public void circle (
-      final Vec2 coord,
-      final float size ) {
+   public void circle ( final Vec2 coord, final float size ) {
 
       this.circle(coord.x, coord.y, size);
    }
@@ -289,10 +245,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param d the fourth point
     */
    @Override
-   public void curve (
-      final Vec2 a,
-      final Vec2 b,
-      final Vec2 c,
+   public void curve ( final Vec2 a, final Vec2 b, final Vec2 c,
       final Vec2 d ) {
 
       this.curve(a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y);
@@ -430,10 +383,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     */
    public Mat3 getMatrix ( final Mat3 target ) {
 
-      return target.set(
-         this.modelview.m00, this.modelview.m01, this.modelview.m03,
-         this.modelview.m10, this.modelview.m11, this.modelview.m13,
-         0.0f, 0.0f, 1.0f);
+      return target.set(this.modelview.m00, this.modelview.m01,
+         this.modelview.m03, this.modelview.m10, this.modelview.m11,
+         this.modelview.m13, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -501,15 +453,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param ce           the curve entity
     * @param strokeWeight the stroke weight
     */
-   public void handles (
-      final CurveEntity2 ce,
-      final float strokeWeight ) {
+   public void handles ( final CurveEntity2 ce, final float strokeWeight ) {
 
-      this.handles(
-         ce, strokeWeight,
-         IUp.DEFAULT_HANDLE_COLOR,
-         IUp.DEFAULT_HANDLE_REAR_COLOR,
-         IUp.DEFAULT_HANDLE_FORE_COLOR,
+      this.handles(ce, strokeWeight, IUp.DEFAULT_HANDLE_COLOR,
+         IUp.DEFAULT_HANDLE_REAR_COLOR, IUp.DEFAULT_HANDLE_FORE_COLOR,
          IUp.DEFAULT_HANDLE_COORD_COLOR);
    }
 
@@ -523,12 +470,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param foreColor    the color of the fore handle
     * @param coordColor   the color of the coordinate
     */
-   public void handles (
-      final CurveEntity2 ce,
-      final float strokeWeight,
-      final int lineColor,
-      final int rearColor,
-      final int foreColor,
+   public void handles ( final CurveEntity2 ce, final float strokeWeight,
+      final int lineColor, final int rearColor, final int foreColor,
       final int coordColor ) {
 
       final float swRear = strokeWeight * 4.0f;
@@ -604,9 +547,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param coord the coordinate
     */
    @Override
-   public void image (
-      final PImage img,
-      final Vec2 coord ) {
+   public void image ( final PImage img, final Vec2 coord ) {
 
       this.image(img, coord.x, coord.y);
    }
@@ -619,10 +560,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param dim   the dimension
     */
    @Override
-   public void image (
-      final PImage img,
-      final Vec2 coord,
-      final Vec2 dim ) {
+   public void image ( final PImage img, final Vec2 coord, final Vec2 dim ) {
 
       this.image(img, coord.x, coord.y, dim.x, dim.y);
    }
@@ -680,13 +618,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param dest   the destination coordinate
     */
    @Override
-   public void line (
-      final Vec2 origin,
-      final Vec2 dest ) {
+   public void line ( final Vec2 origin, final Vec2 dest ) {
 
-      this.lineImpl(
-         origin.x, origin.y, 0.0f,
-         dest.x, dest.y, 0.0f);
+      this.lineImpl(origin.x, origin.y, 0.0f, dest.x, dest.y, 0.0f);
    }
 
    /**
@@ -701,9 +635,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     *
     * @return the model point
     */
-   public Vec2 model (
-      final Vec2 source,
-      final Vec2 target ) {
+   public Vec2 model ( final Vec2 source, final Vec2 target ) {
 
       /*
        * Multiply point by model-view matrix; multiply product by inverse of

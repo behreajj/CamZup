@@ -5,8 +5,7 @@ import java.util.Iterator;
 /**
  * Maintains consistent behavior between matrices of different dimensions.
  */
-public interface IMatrix
-   extends IUtils, Cloneable, Iterable < Float > {
+public interface IMatrix extends IUtils, Cloneable, Iterable < Float > {
 
    /**
     * Returns a matrix element by index, as though the matrix were a 1D array.

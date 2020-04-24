@@ -21,7 +21,6 @@ MaterialSolid mat = new MaterialSolid()
 
 void settings() {
   size(720, 405, Zup3.PATH_STR);
-  smooth(8);
 }
 
 void setup() {

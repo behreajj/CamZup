@@ -72,12 +72,11 @@ public class MaterialSolid extends Material implements Cloneable {
     * @param stroke       the stroke color
     * @param strokeWeight the stroke weight
     */
-   public MaterialSolid (
-      final Color fill,
-      final Color stroke,
+   public MaterialSolid ( final Color fill, final Color stroke,
       final float strokeWeight ) {
 
-      this(fill, stroke, strokeWeight, fill.w > 0.0f, stroke.w > 0.0f && strokeWeight > 0.0f);
+      this(fill, stroke, strokeWeight, fill.w > 0.0f,
+         stroke.w > 0.0f && strokeWeight > 0.0f);
    }
 
    /**
@@ -89,15 +88,12 @@ public class MaterialSolid extends Material implements Cloneable {
     * @param useFill      whether to use fill
     * @param useStroke    whether to use stroke
     */
-   public MaterialSolid (
-      final Color fill,
-      final Color stroke,
-      final float strokeWeight,
-      final boolean useFill,
+   public MaterialSolid ( final Color fill, final Color stroke,
+      final float strokeWeight, final boolean useFill,
       final boolean useStroke ) {
 
-      this(Color.toHexString(
-         fill), fill, stroke, strokeWeight, useFill, useStroke);
+      this(Color.toHexString(fill), fill, stroke, strokeWeight, useFill,
+         useStroke);
    }
 
    /**
@@ -107,7 +103,8 @@ public class MaterialSolid extends Material implements Cloneable {
     */
    public MaterialSolid ( final MaterialSolid source ) {
 
-      this(source.name, source.fill, source.stroke, source.strokeWeight, source.useFill, source.useStroke);
+      this(source.name, source.fill, source.stroke, source.strokeWeight,
+         source.useFill, source.useStroke);
    }
 
    /**
@@ -123,9 +120,7 @@ public class MaterialSolid extends Material implements Cloneable {
     * @param name the material name
     * @param fill the fill color
     */
-   public MaterialSolid (
-      final String name,
-      final Color fill ) {
+   public MaterialSolid ( final String name, final Color fill ) {
 
       this(name, fill, Color.clearBlack(new Color()), 0.0f);
    }
@@ -141,13 +136,11 @@ public class MaterialSolid extends Material implements Cloneable {
     * @param stroke       the stroke color
     * @param strokeWeight the stroke weight
     */
-   public MaterialSolid (
-      final String name,
-      final Color fill,
-      final Color stroke,
-      final float strokeWeight ) {
+   public MaterialSolid ( final String name, final Color fill,
+      final Color stroke, final float strokeWeight ) {
 
-      this(name, fill, stroke, strokeWeight, fill.w > 0.0f, stroke.w > 0.0f && strokeWeight > 0.0f);
+      this(name, fill, stroke, strokeWeight, fill.w > 0.0f,
+         stroke.w > 0.0f && strokeWeight > 0.0f);
    }
 
    /**
@@ -160,12 +153,8 @@ public class MaterialSolid extends Material implements Cloneable {
     * @param useFill      whether to use fill
     * @param useStroke    whether to use stroke
     */
-   public MaterialSolid (
-      final String name,
-      final Color fill,
-      final Color stroke,
-      final float strokeWeight,
-      final boolean useFill,
+   public MaterialSolid ( final String name, final Color fill,
+      final Color stroke, final float strokeWeight, final boolean useFill,
       final boolean useStroke ) {
 
       super(name);
@@ -184,7 +173,8 @@ public class MaterialSolid extends Material implements Cloneable {
    @Override
    public MaterialSolid clone ( ) {
 
-      return new MaterialSolid(this.name, this.fill, this.stroke, this.strokeWeight, this.useFill, this.useStroke);
+      return new MaterialSolid(this.name, this.fill, this.stroke,
+         this.strokeWeight, this.useFill, this.useStroke);
    }
 
    /**
@@ -243,9 +233,7 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-   public MaterialSolid setFill (
-      final float r,
-      final float g,
+   public MaterialSolid setFill ( final float r, final float g,
       final float b ) {
 
       this.fill.set(r, g, b);
@@ -262,10 +250,7 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-   public MaterialSolid setFill (
-      final float r,
-      final float g,
-      final float b,
+   public MaterialSolid setFill ( final float r, final float g, final float b,
       final float a ) {
 
       this.fill.set(r, g, b, a);
@@ -323,9 +308,7 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-   public MaterialSolid setStroke (
-      final float r,
-      final float g,
+   public MaterialSolid setStroke ( final float r, final float g,
       final float b ) {
 
       this.stroke.set(r, g, b);
@@ -342,10 +325,7 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-   public MaterialSolid setStroke (
-      final float r,
-      final float g,
-      final float b,
+   public MaterialSolid setStroke ( final float r, final float g, final float b,
       final float a ) {
 
       this.stroke.set(r, g, b, a);
@@ -446,14 +426,24 @@ public class MaterialSolid extends Material implements Cloneable {
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(256).append("{ name: \"").append(
-         this.name).append("\", fill: ").append(
-            this.fill.toString(places)).append(", stroke: ").append(
-               this.stroke.toString(places)).append(", strokeWeight: ").append(
-                  Utils.toFixed(this.strokeWeight, places)).append(
-                     ", useFill: ").append(this.useFill).append(
-                        ", useStroke: ").append(this.useStroke).append(
-                           ' ').append('}').toString();
+      /* @formatter:off */
+      return new StringBuilder(256)
+         .append("{ name: \"")
+         .append(this.name)
+         .append("\", fill: ")
+         .append(this.fill.toString(places))
+         .append(", stroke: ")
+         .append(this.stroke.toString(places))
+         .append(", strokeWeight: ")
+         .append(Utils.toFixed(this.strokeWeight, places))
+         .append(", useFill: ")
+         .append(this.useFill)
+         .append(", useStroke: ")
+         .append(this.useStroke)
+         .append(' ')
+         .append('}')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -472,27 +462,27 @@ public class MaterialSolid extends Material implements Cloneable {
     * @return the string
     */
    @Experimental
-   String toBlenderCode (
-      final float gamma,
-      final float metallic,
-      final float roughness,
-      final float specular,
-      final float clearcoat,
+   String toBlenderCode ( final float gamma, final float metallic,
+      final float roughness, final float specular, final float clearcoat,
       final float clearcoatRough ) {
 
-      return new StringBuilder(256).append("{\"name\": \"").append(
-         this.name).append("\", \"fill\": ").append(
-            this.fill.toBlenderCode(gamma, true)).append(
-               ", \"metallic\": ").append(Utils.toFixed(metallic, 6)).append(
-                  ", \"roughness\": ").append(
-                     Utils.toFixed(roughness, 6)).append(
-                        ", \"specular\": ").append(
-                           Utils.toFixed(specular, 6)).append(
-                              ", \"clearcoat\": ").append(
-                                 Utils.toFixed(clearcoat, 6)).append(
-                                    ", \"clearcoat_roughness\": ").append(
-                                       Utils.toFixed(clearcoatRough, 6)).append(
-                                          '}').toString();
+      final StringBuilder pyCd = new StringBuilder(256);
+      pyCd.append("{\"name\": \"");
+      pyCd.append(this.name);
+      pyCd.append("\", \"fill\": ");
+      pyCd.append(this.fill.toBlenderCode(gamma, true));
+      pyCd.append(", \"metallic\": ");
+      pyCd.append(Utils.toFixed(metallic, 6));
+      pyCd.append(", \"roughness\": ");
+      pyCd.append(Utils.toFixed(roughness, 6));
+      pyCd.append(", \"specular\": ");
+      pyCd.append(Utils.toFixed(specular, 6));
+      pyCd.append(", \"clearcoat\": ");
+      pyCd.append(Utils.toFixed(clearcoat, 6));
+      pyCd.append(", \"clearcoat_roughness\": ");
+      pyCd.append(Utils.toFixed(clearcoatRough, 6));
+      pyCd.append('}');
+      return pyCd.toString();
    }
 
    /**
@@ -524,29 +514,35 @@ public class MaterialSolid extends Material implements Cloneable {
       final String strokeStr = Utils.toFixed(
          Utils.max(IUtils.DEFAULT_EPSILON, Utils.div(this.strokeWeight, scale)),
          6);
-      final StringBuilder svgp = new StringBuilder(256).append("id=\"").append(
-         this.name).append('\"').append(' ');
+      final StringBuilder svgp = new StringBuilder(256);
+      svgp.append("id=\"");
+      svgp.append(this.name);
+      svgp.append('\"');
+      svgp.append(' ');
 
       /* Stroke style. */
       if ( this.useStroke ) {
-         svgp.append("stroke-width=\"").append(strokeStr).append(
-            "\" stroke-opacity=\"").append(
-               Utils.toFixed(Utils.clamp01(this.stroke.w), 6)).append(
-                  "\" stroke=\"").append(Color.toHexWeb(this.stroke)).append(
-                     "\" stroke-linejoin=\"").append(
-                        MaterialSolid.DEFAULT_SVG_STR_JOIN).append(
-                           "\" stroke-linecap=\"").append(
-                              MaterialSolid.DEFAULT_SVG_STR_CAP).append(
-                                 '\"').append(' ');
+         svgp.append("stroke-width=\"");
+         svgp.append(strokeStr);
+         svgp.append("\" stroke-opacity=\"");
+         svgp.append(Utils.toFixed(Utils.clamp01(this.stroke.w), 6));
+         svgp.append("\" stroke=\"").append(Color.toHexWeb(this.stroke));
+         svgp.append("\" stroke-linejoin=\"");
+         svgp.append(MaterialSolid.DEFAULT_SVG_STR_JOIN);
+         svgp.append("\" stroke-linecap=\"");
+         svgp.append(MaterialSolid.DEFAULT_SVG_STR_CAP).append('\"');
+         svgp.append(' ');
       } else {
          svgp.append("stroke=\"none\" ");
       }
 
       /* Fill style. */
       if ( this.useFill ) {
-         svgp.append("fill-opacity=\"").append(
-            Utils.toFixed(Utils.clamp01(this.fill.w), 6)).append(
-               "\" fill=\"").append(Color.toHexWeb(this.fill)).append('\"');
+         svgp.append("fill-opacity=\"");
+         svgp.append(Utils.toFixed(Utils.clamp01(this.fill.w), 6));
+         svgp.append("\" fill=\"");
+         svgp.append(Color.toHexWeb(this.fill));
+         svgp.append('\"');
       } else {
          svgp.append("fill=\"none\"");
       }
@@ -581,17 +577,19 @@ public class MaterialSolid extends Material implements Cloneable {
       final String strokeStr = Utils.toFixed(Utils.max(IUtils.DEFAULT_EPSILON,
          Utils.div(IUp.DEFAULT_STROKE_WEIGHT, scale)), 6);
 
-      return new StringBuilder(256).append(
-         "<g id=\"material\" stroke-width=\"").append(strokeStr).append(
-            "\" stroke-opacity=\"1.0\" stroke=\"#").append(
-               Integer.toHexString(IUp.DEFAULT_STROKE_COLOR).substring(
-                  2)).append("\" fill-opacity=\"1.0\" fill=\"#").append(
-                     Integer.toHexString(IUp.DEFAULT_FILL_COLOR).substring(
-                        2)).append("\" stroke-linejoin=\"").append(
-                           MaterialSolid.DEFAULT_SVG_STR_JOIN).append(
-                              "\" stroke-linecap=\"").append(
-                                 MaterialSolid.DEFAULT_SVG_STR_CAP).append(
-                                    "\">\n").toString();
+      final StringBuilder svgp = new StringBuilder(256);
+      svgp.append("<g id=\"material\" stroke-width=\"");
+      svgp.append(strokeStr);
+      svgp.append("\" stroke-opacity=\"1.0\" stroke=\"#");
+      svgp.append(Integer.toHexString(IUp.DEFAULT_STROKE_COLOR).substring(2));
+      svgp.append("\" fill-opacity=\"1.0\" fill=\"#");
+      svgp.append(Integer.toHexString(IUp.DEFAULT_FILL_COLOR).substring(2));
+      svgp.append("\" stroke-linejoin=\"");
+      svgp.append(MaterialSolid.DEFAULT_SVG_STR_JOIN);
+      svgp.append("\" stroke-linecap=\"");
+      svgp.append(MaterialSolid.DEFAULT_SVG_STR_CAP);
+      svgp.append("\">\n");
+      return svgp.toString();
    }
 
    /**
@@ -655,14 +653,19 @@ public class MaterialSolid extends Material implements Cloneable {
     */
    static String defaultBlenderMaterial ( final float gamma ) {
 
-      return new StringBuilder(256).append("{\"name\": \"").append(
-         "Material").append("\", \"fill\": ").append(
-            Color.fromHex(IUp.DEFAULT_FILL_COLOR, new Color()).toBlenderCode(
-               gamma, true)).append(", \"metallic\": 0.0").append(
-                  ", \"roughness\": 1.0").append(", \"specular\": 0.0").append(
-                     ", \"clearcoat\": 0.0").append(
-                        ", \"clearcoat_roughness\": 0.001").append(
-                           '}').toString();
+      final Color c = Color.fromHex(IUp.DEFAULT_FILL_COLOR, new Color());
+      final StringBuilder pyCd = new StringBuilder(256);
+      pyCd.append("{\"name\": \"");
+      pyCd.append("Material");
+      pyCd.append("\", \"fill\": ");
+      pyCd.append(c.toBlenderCode(gamma, true));
+      pyCd.append(", \"metallic\": 0.0");
+      pyCd.append(", \"roughness\": 1.0");
+      pyCd.append(", \"specular\": 0.0");
+      pyCd.append(", \"clearcoat\": 0.0");
+      pyCd.append(", \"clearcoat_roughness\": 0.001");
+      pyCd.append('}');
+      return pyCd.toString();
    }
 
 }

@@ -35,10 +35,7 @@ public class Edge2 implements Comparable < Edge2 > {
     * @param coDest   destination coordinate
     * @param txDest   destination texture coordinate
     */
-   public Edge2 (
-      final Vec2 coOrigin,
-      final Vec2 txOrigin,
-      final Vec2 coDest,
+   public Edge2 ( final Vec2 coOrigin, final Vec2 txOrigin, final Vec2 coDest,
       final Vec2 txDest ) {
 
       this.origin = new Vert2(coOrigin, txOrigin);
@@ -51,9 +48,7 @@ public class Edge2 implements Comparable < Edge2 > {
     * @param origin the origin
     * @param dest   the destination
     */
-   public Edge2 (
-      final Vert2 origin,
-      final Vert2 dest ) {
+   public Edge2 ( final Vert2 origin, final Vert2 dest ) {
 
       this.set(origin, dest);
    }
@@ -334,11 +329,8 @@ public class Edge2 implements Comparable < Edge2 > {
     * @return this edge
     */
    @Chainable
-   public Edge2 set (
-      final Vec2 coOrigin,
-      final Vec2 txOrigin,
-      final Vec2 coDest,
-      final Vec2 txDest ) {
+   public Edge2 set ( final Vec2 coOrigin, final Vec2 txOrigin,
+      final Vec2 coDest, final Vec2 txDest ) {
 
       this.origin.set(coOrigin, txOrigin);
       this.dest.set(coDest, txDest);
@@ -354,9 +346,7 @@ public class Edge2 implements Comparable < Edge2 > {
     * @return this edge
     */
    @Chainable
-   public Edge2 set (
-      final Vert2 origin,
-      final Vert2 dest ) {
+   public Edge2 set ( final Vert2 origin, final Vert2 dest ) {
 
       this.origin = origin;
       this.dest = dest;
@@ -460,9 +450,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return the point
     */
-   public static Vec2 eval (
-      final Edge2 edge,
-      final float step,
+   public static Vec2 eval ( final Edge2 edge, final float step,
       final Vec2 target ) {
 
       final Vec2 coOrigin = edge.origin.coord;
@@ -472,8 +460,7 @@ public class Edge2 implements Comparable < Edge2 > {
       if ( step >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - step;
-      return target.set(
-         u * coOrigin.x + step * coDest.x,
+      return target.set(u * coOrigin.x + step * coDest.x,
          u * coOrigin.y + step * coDest.y);
    }
 
@@ -537,9 +524,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @see Utils#clamp01(float)
     */
-   public static Vec2 projectVector (
-      final Edge2 edge,
-      final Vec2 v,
+   public static Vec2 projectVector ( final Edge2 edge, final Vec2 v,
       final Vec2 target ) {
 
       final Vec2 coOrigin = edge.origin.coord;
@@ -558,8 +543,7 @@ public class Edge2 implements Comparable < Edge2 > {
       if ( fac >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - fac;
-      return target.set(
-         u * coOrigin.x + fac * coDest.x,
+      return target.set(u * coOrigin.x + fac * coDest.x,
          u * coOrigin.y + fac * coDest.y);
    }
 
@@ -586,9 +570,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return the evaluation
     */
-   public static int sharedCoord (
-      final Edge2 a,
-      final Edge2 b ) {
+   public static int sharedCoord ( final Edge2 a, final Edge2 b ) {
 
       final Vert2 aOrigin = a.origin;
       final Vert2 aDest = a.dest;

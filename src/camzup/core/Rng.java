@@ -164,8 +164,9 @@ public class Rng extends java.util.Random implements IUtils {
    @Override
    public String toString ( ) {
 
-      return new StringBuilder(64).append("{ seed: ").append(
-         Long.toString(this.publicSeed)).append(' ').append('}').toString();
+      return new StringBuilder(64).append("{ seed: ")
+         .append(Long.toString(this.publicSeed)).append(' ').append('}')
+         .toString();
    }
 
    /**
@@ -189,9 +190,7 @@ public class Rng extends java.util.Random implements IUtils {
     *
     * @return the random number
     */
-   public double uniform (
-      final double lower,
-      final double upper ) {
+   public double uniform ( final double lower, final double upper ) {
 
       final double r = this.nextDouble();
       return ( 1.0d - r ) * lower + r * upper;
@@ -217,9 +216,7 @@ public class Rng extends java.util.Random implements IUtils {
     *
     * @return the random number
     */
-   public float uniform (
-      final float lower,
-      final float upper ) {
+   public float uniform ( final float lower, final float upper ) {
 
       final float r = this.nextFloat();
       return ( 1.0f - r ) * lower + r * upper;
@@ -234,9 +231,7 @@ public class Rng extends java.util.Random implements IUtils {
     *
     * @return the random number
     */
-   public int uniform (
-      final int lower,
-      final int upper ) {
+   public int uniform ( final int lower, final int upper ) {
 
       final float r = this.nextFloat();
       return Utils.floorToInt( ( 1.0f - r ) * lower + r * upper);

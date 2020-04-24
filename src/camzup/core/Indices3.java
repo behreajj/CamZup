@@ -42,10 +42,7 @@ class Indices3 implements Cloneable, Comparable < Indices3 > {
     * @param vtIdx the texture coordinate index
     * @param vnIdx the normal index
     */
-   public Indices3 (
-      final int vIdx,
-      final int vtIdx,
-      final int vnIdx ) {
+   public Indices3 ( final int vIdx, final int vtIdx, final int vnIdx ) {
 
       this.set(vIdx, vtIdx, vnIdx);
    }
@@ -99,7 +96,8 @@ class Indices3 implements Cloneable, Comparable < Indices3 > {
    @Override
    public int hashCode ( ) {
 
-      return ( ( IUtils.MUL_BASE ^ this.v ) * IUtils.HASH_MUL ^ this.vt ) * IUtils.HASH_MUL ^ this.vn;
+      return ( ( IUtils.MUL_BASE ^ this.v ) * IUtils.HASH_MUL ^ this.vt )
+         * IUtils.HASH_MUL ^ this.vn;
    }
 
    /**
@@ -123,10 +121,7 @@ class Indices3 implements Cloneable, Comparable < Indices3 > {
     *
     * @return this indices set
     */
-   public Indices3 set (
-      final int vIdx,
-      final int vtIdx,
-      final int vnIdx ) {
+   public Indices3 set ( final int vIdx, final int vtIdx, final int vnIdx ) {
 
       this.v = vIdx;
       this.vt = vtIdx;
@@ -145,9 +140,7 @@ class Indices3 implements Cloneable, Comparable < Indices3 > {
     *
     * @return the indices set
     */
-   public Indices3 set (
-      final String vStr,
-      final String vtStr,
+   public Indices3 set ( final String vStr, final String vtStr,
       final String vnStr ) {
 
       int vIdx = 0;
@@ -207,11 +200,11 @@ class Indices3 implements Cloneable, Comparable < Indices3 > {
     */
    public String toString ( final int padding ) {
 
-      return new StringBuilder(64).append("{ v: ").append(
-         Utils.toPadded(this.v, padding)).append(", vt: ").append(
-            Utils.toPadded(this.vt, padding)).append(", vn: ").append(
-               Utils.toPadded(this.vn, padding)).append(' ').append(
-                  '}').toString();
+      return new StringBuilder(64).append("{ v: ")
+         .append(Utils.toPadded(this.v, padding)).append(", vt: ")
+         .append(Utils.toPadded(this.vt, padding)).append(", vn: ")
+         .append(Utils.toPadded(this.vn, padding)).append(' ').append('}')
+         .toString();
    }
 
    /**

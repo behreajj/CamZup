@@ -31,9 +31,7 @@ public class Vert2 implements Comparable < Vert2 > {
     * @param coord    the coordinate
     * @param texCoord the texture coordinate
     */
-   public Vert2 (
-      final Vec2 coord,
-      final Vec2 texCoord ) {
+   public Vert2 ( final Vec2 coord, final Vec2 texCoord ) {
 
       this.set(coord, texCoord);
    }
@@ -83,9 +81,7 @@ public class Vert2 implements Comparable < Vert2 > {
     * @return this vertex
     */
    @Chainable
-   public Vert2 set (
-      final Vec2 coord,
-      final Vec2 texCoord ) {
+   public Vert2 set ( final Vec2 coord, final Vec2 texCoord ) {
 
       this.coord = coord;
       this.texCoord = texCoord;
@@ -144,9 +140,7 @@ public class Vert2 implements Comparable < Vert2 > {
     *
     * @return the evaluation
     */
-   public static boolean approxCoord (
-      final Vert2 a,
-      final Vert2 b ) {
+   public static boolean approxCoord ( final Vert2 a, final Vert2 b ) {
 
       return Vert2.approxCoord(a, b, IUtils.DEFAULT_EPSILON);
    }
@@ -161,9 +155,7 @@ public class Vert2 implements Comparable < Vert2 > {
     *
     * @return the evaluation
     */
-   public static boolean approxCoord (
-      final Vert2 a,
-      final Vert2 b,
+   public static boolean approxCoord ( final Vert2 a, final Vert2 b,
       final float tolerance ) {
 
       return a == b || Vec2.approx(a.coord, b.coord, tolerance);

@@ -40,9 +40,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @param coords    the coordinates array
     * @param texCoords the texture coordinates array
     */
-   public Mesh2 (
-      final int[][][] faces,
-      final Vec2[] coords,
+   public Mesh2 ( final int[][][] faces, final Vec2[] coords,
       final Vec2[] texCoords ) {
 
       super();
@@ -76,10 +74,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @param coords    the coordinates array
     * @param texCoords the texture coordinates array
     */
-   public Mesh2 (
-      final String name,
-      final int[][][] faces,
-      final Vec2[] coords,
+   public Mesh2 ( final String name, final int[][][] faces, final Vec2[] coords,
       final Vec2[] texCoords ) {
 
       super(name);
@@ -103,9 +98,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    @Experimental
    @Chainable
-   public Mesh2 bevelCorner (
-      final int faceIdx,
-      final int vertIdx,
+   public Mesh2 bevelCorner ( final int faceIdx, final int vertIdx,
       final float fac ) {
 
       final int facesLen = this.faces.length;
@@ -177,9 +170,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    @Experimental
    @Chainable
-   public Mesh2 bevelCorners (
-      final int faceIdx,
-      final float fac ) {
+   public Mesh2 bevelCorners ( final int faceIdx, final float fac ) {
 
       final int facesLen = this.faces.length;
       final int i = Utils.mod(faceIdx, facesLen);
@@ -246,9 +237,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return this mesh
     */
-   public Mesh2 bevelCorners (
-      final int faceIdx,
-      final float fac,
+   public Mesh2 bevelCorners ( final int faceIdx, final float fac,
       final int itr ) {
 
       for ( int i = 0; i < itr; ++i ) {
@@ -346,8 +335,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       /* Convert from sorted set to arrays. */
       final Vec2[] newCoords = coordsTree.toArray(new Vec2[coordsTree.size()]);
-      final Vec2[] newTexCoords = texCoordsTree.toArray(
-         new Vec2[texCoordsTree.size()]);
+      final Vec2[] newTexCoords
+         = texCoordsTree.toArray(new Vec2[texCoordsTree.size()]);
 
       for ( int i = 0; i < facesLen; ++i ) {
          final int[][] verts = this.faces[i];
@@ -359,10 +348,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
              * Find index of vector in new array by using indexed value from old
              * array as a reference.
              */
-            vert[0] = Arrays.binarySearch(
-               newCoords, this.coords[vert[0]], Mesh.SORT_2);
-            vert[1] = Arrays.binarySearch(
-               newTexCoords, this.texCoords[vert[1]], Mesh.SORT_2);
+            vert[0] = Arrays.binarySearch(newCoords, this.coords[vert[0]],
+               Mesh.SORT_2);
+            vert[1] = Arrays.binarySearch(newTexCoords, this.texCoords[vert[1]],
+               Mesh.SORT_2);
          }
       }
 
@@ -413,9 +402,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @return the new face indices
     */
    @Experimental
-   public Mesh2 extrudeEdge (
-      final int faceIdx,
-      final int edgeIdx,
+   public Mesh2 extrudeEdge ( final int faceIdx, final int edgeIdx,
       final float amt ) {
 
       if ( amt == 0.0f ) { return this; }
@@ -472,16 +459,13 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       Vec2.add(vtOrigin, vtPerp, vtNewOrigin);
       Vec2.add(vtDest, vtPerp, vtNewDest);
 
-      final int[][][] faceNew = { {
-         { idxV0, idxVt0 },
-         { idxV1, idxVt1 },
-         { idxV2, idxVt2 },
-         { idxV3, idxVt3 } } };
+      final int[][][] faceNew = { { { idxV0, idxVt0 }, { idxV1, idxVt1 },
+         { idxV2, idxVt2 }, { idxV3, idxVt3 } } };
 
-      this.coords = Vec2.concat(this.coords, new Vec2[] { vNewOrigin,
-         vNewDest });
-      this.texCoords = Vec2.concat(this.texCoords, new Vec2[] { vtNewOrigin,
-         vtNewDest });
+      this.coords
+         = Vec2.concat(this.coords, new Vec2[] { vNewOrigin, vNewDest });
+      this.texCoords
+         = Vec2.concat(this.texCoords, new Vec2[] { vtNewOrigin, vtNewDest });
       this.faces = Mesh.splice(this.faces, i + 1, 0, faceNew);
 
       return this;
@@ -496,18 +480,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the edge
     */
-   public Edge2 getEdge (
-      final int i,
-      final int j,
-      final Edge2 target ) {
+   public Edge2 getEdge ( final int i, final int j, final Edge2 target ) {
 
       final int[][] f0 = this.faces[Utils.mod(i, this.faces.length)];
       final int f0len = f0.length;
       final int[] f1 = f0[Utils.mod(j, f0len)];
       final int[] f2 = f0[Utils.mod(j + 1, f0len)];
 
-      return target.set(
-         this.coords[f1[0]], this.texCoords[f1[1]],
+      return target.set(this.coords[f1[0]], this.texCoords[f1[1]],
          this.coords[f2[0]], this.texCoords[f2[1]]);
    }
 
@@ -553,9 +533,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the face
     */
-   public Face2 getFace (
-      final int i,
-      final Face2 target ) {
+   public Face2 getFace ( final int i, final Face2 target ) {
 
       final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
       final int len = face.length;
@@ -606,10 +584,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the vertex
     */
-   public Vert2 getVertex (
-      final int i,
-      final int j,
-      final Vert2 target ) {
+   public Vert2 getVertex ( final int i, final int j, final Vert2 target ) {
 
       final int[][] f0 = this.faces[Utils.mod(i, this.faces.length)];
       final int[] f = f0[Utils.mod(j, f0.length)];
@@ -691,9 +666,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    @Chainable
    @Experimental
-   public Mesh2 insetFace (
-      final int faceIdx,
-      final float fac ) {
+   public Mesh2 insetFace ( final int faceIdx, final float fac ) {
 
       if ( fac <= 0.0f ) { return this; }
       if ( fac >= 1.0f ) { return this.subdivFaceFan(faceIdx); }
@@ -752,10 +725,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final int vSubdivIdx = vsOldLen + j;
          final int vtSubdivIdx = vtsOldLen + j;
 
-         fsNew[j] = new int[][] {
-            { vCornerIdx, vtCornerIdx },
-            { vertNext[0], vertNext[1] },
-            { vsOldLen + k, vtsOldLen + k },
+         fsNew[j] = new int[][] { { vCornerIdx, vtCornerIdx },
+            { vertNext[0], vertNext[1] }, { vsOldLen + k, vtsOldLen + k },
             { vSubdivIdx, vtSubdivIdx } };
 
          centerFace[j][0] = vSubdivIdx;
@@ -802,9 +773,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @return this mesh
     */
    @Chainable
-   public Mesh2 insetFaces (
-      final int itr,
-      final float fac ) {
+   public Mesh2 insetFaces ( final int itr, final float fac ) {
 
       for ( int i = 0; i < itr; ++i ) {
          final int len = this.faces.length;
@@ -880,9 +849,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @return this mesh
     */
    @Chainable
-   public Mesh2 reverseEdge (
-      final int i,
-      final int j ) {
+   public Mesh2 reverseEdge ( final int i, final int j ) {
 
       final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
       final int len = face.length;
@@ -1001,9 +968,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @return this mesh
     */
    @Chainable
-   public Mesh2 set (
-      final int[][][] faces,
-      final Vec2[] coords,
+   public Mesh2 set ( final int[][][] faces, final Vec2[] coords,
       final Vec2[] texCoords ) {
 
       this.faces = faces;
@@ -1146,10 +1111,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             ( vtCurr.y + vtNext.y ) * 0.5f);
          /* @formatter:on */
 
-         fsNew[j] = new int[][] {
-            { vCenterIdx, vtCenterIdx },
-            { vsOldLen + j, vtsOldLen + j },
-            { vNextIdx, vtNextIdx },
+         fsNew[j] = new int[][] { { vCenterIdx, vtCenterIdx },
+            { vsOldLen + j, vtsOldLen + j }, { vNextIdx, vtNextIdx },
             { vsOldLen + k, vtsOldLen + k } };
       }
       Vec2.div(vCenter, faceLen, vCenter);
@@ -1202,10 +1165,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          Vec2.add(vCenter, vCurr, vCenter);
          Vec2.add(vtCenter, vtCurr, vtCenter);
 
-         fsNew[j] = new int[][] {
-            { vCenterIdx, vtCenterIdx },
-            { vCurrIdx, vtCurrIdx },
-            { vertNext[0], vertNext[1] } };
+         fsNew[j] = new int[][] { { vCenterIdx, vtCenterIdx },
+            { vCurrIdx, vtCurrIdx }, { vertNext[0], vertNext[1] } };
       }
 
       Vec2.div(vCenter, faceLen, vCenter);
@@ -1268,10 +1229,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          final int vSubdivIdx = vsOldLen + j;
          final int vtSubdivIdx = vtsOldLen + j;
-         fsNew[j] = new int[][] {
-            { vSubdivIdx, vtSubdivIdx },
-            { vNextIdx, vtNextIdx },
-            { vsOldLen + k, vtsOldLen + k } };
+         fsNew[j] = new int[][] { { vSubdivIdx, vtSubdivIdx },
+            { vNextIdx, vtNextIdx }, { vsOldLen + k, vtsOldLen + k } };
 
          centerFace[j][0] = vSubdivIdx;
          centerFace[j][1] = vtSubdivIdx;
@@ -1390,24 +1349,24 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
        * Append comment listing the number of coordinates, texture coordinates
        * and faces.
        */
-      objs.append("# v: ").append(coordsLen).append(", vt: ").append(
-         texCoordsLen).append(", vn: 1, f: ").append(facesLen).append(
-            '\n').append('\n');
+      objs.append("# v: ").append(coordsLen).append(", vt: ")
+         .append(texCoordsLen).append(", vn: 1, f: ").append(facesLen)
+         .append('\n').append('\n');
 
       /* Append name. */
       objs.append('o').append(' ').append(this.name).append('\n').append('\n');
 
       /* Append coordinates. */
       for ( int i = 0; i < coordsLen; ++i ) {
-         objs.append('v').append(' ').append(
-            this.coords[i].toObjString()).append(" 0.0 \n");
+         objs.append('v').append(' ').append(this.coords[i].toObjString())
+            .append(" 0.0 \n");
       }
       objs.append('\n');
 
       /* Append a texture coordinates. */
       for ( int i = 0; i < texCoordsLen; ++i ) {
-         objs.append("vt ").append(this.texCoords[i].toObjString()).append(
-            '\n');
+         objs.append("vt ").append(this.texCoords[i].toObjString())
+            .append('\n');
       }
 
       /* Append a single normal. */
@@ -1424,8 +1383,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
             /* Indices in an .obj file start at 1, not 0. */
             final int[] vert = face[j];
-            objs.append(vert[0] + 1).append('/').append(vert[1] + 1).append(
-               '/').append('1').append(' ');
+            objs.append(vert[0] + 1).append('/').append(vert[1] + 1).append('/')
+               .append('1').append(' ');
          }
 
          objs.append('\n');
@@ -1496,9 +1455,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the string
     */
-   public String toString (
-      final int places,
-      final int truncate ) {
+   public String toString ( final int places, final int truncate ) {
 
       final StringBuilder sb = new StringBuilder(2048);
 
@@ -1510,8 +1467,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       sb.append("coords: [ ");
 
       if ( this.coords != null ) {
-         final int len = this.coords.length <= truncate ? this.coords.length
-            : truncate;
+         final int len
+            = this.coords.length <= truncate ? this.coords.length : truncate;
          final int last = len - 1;
          for ( int i = 0; i < len; ++i ) {
             sb.append(this.coords[i].toString(places));
@@ -1525,8 +1482,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       sb.append("texCoords: [ ");
       if ( this.texCoords != null ) {
          final int len = this.texCoords.length <= truncate
-            ? this.texCoords.length
-            : truncate;
+            ? this.texCoords.length : truncate;
          final int last = len - 1;
          for ( int i = 0; i < len; ++i ) {
             sb.append(this.texCoords[i].toString(places));
@@ -1539,9 +1495,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       sb.append(" ], ");
       sb.append("faces: [ ");
       if ( this.faces != null ) {
-         final int facesLen = this.faces.length <= truncate
-            ? this.faces.length
-            : truncate;
+         final int facesLen
+            = this.faces.length <= truncate ? this.faces.length : truncate;
          final int facesLast = facesLen - 1;
 
          for ( int i = 0; i < facesLen; ++i ) {
@@ -1586,13 +1541,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @return the SVG string
     */
    @Override
-   public String toSvgElm (
-      final String id,
-      final float zoom ) {
+   public String toSvgElm ( final String id, final float zoom ) {
 
-      final StringBuilder svgp = new StringBuilder(1024).append(
-         MaterialSolid.defaultSvgMaterial(zoom)).append(
-            this.toSvgPath(id)).append("</g>\n");
+      final StringBuilder svgp = new StringBuilder(1024)
+         .append(MaterialSolid.defaultSvgMaterial(zoom))
+         .append(this.toSvgPath(id)).append("</g>\n");
       return svgp.toString();
    }
 
@@ -1622,8 +1575,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          svgp.append(' ');
 
          for ( int j = 1; j < fLen; ++j ) {
-            svgp.append('L').append(' ').append(
-               vs[f[j][0]].toSvgString()).append(' ');
+            svgp.append('L').append(' ').append(vs[f[j][0]].toSvgString())
+               .append(' ');
          }
 
          svgp.append("Z\"></path>\n");
@@ -1711,9 +1664,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @return the string
     */
    @Experimental
-   String toBlenderCode (
-      final boolean includeUvs,
-      final float z ) {
+   String toBlenderCode ( final boolean includeUvs, final float z ) {
 
       final StringBuilder pyCd = new StringBuilder(1024);
       pyCd.append("{\"name\": \"");
@@ -1810,9 +1761,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @return this mesh
     */
    @Experimental
-   protected Mesh2 subdivEdge (
-      final int faceIndex,
-      final int edgeIndex,
+   protected Mesh2 subdivEdge ( final int faceIndex, final int edgeIndex,
       final int cuts ) {
 
       if ( cuts < 1 ) { return this; }
@@ -1900,12 +1849,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the arc
     */
-   public static Mesh2 arc (
-      final float startAngle,
-      final float stopAngle,
-      final float oculus,
-      final int sectors,
-      final Mesh2 target ) {
+   public static Mesh2 arc ( final float startAngle, final float stopAngle,
+      final float oculus, final int sectors, final Mesh2 target ) {
 
       return Mesh2.arc(startAngle, stopAngle, oculus, sectors,
          Mesh2.DEFAULT_POLY_TYPE, target);
@@ -1928,12 +1873,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the arc
     */
-   public static Mesh2 arc (
-      final float startAngle,
-      final float stopAngle,
-      final float oculus,
-      final int sectors,
-      final PolyType poly,
+   public static Mesh2 arc ( final float startAngle, final float stopAngle,
+      final float oculus, final int sectors, final PolyType poly,
       final Mesh2 target ) {
 
       target.name = "Arc";
@@ -1945,12 +1886,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          return Mesh2.ring(oculus, sectors, poly, target);
       }
 
-      final int sctCount = Utils.ceilToInt(1 + ( sectors < 3 ? 3
-         : sectors ) * ( float ) arcLen1);
+      final int sctCount = Utils
+         .ceilToInt(1 + ( sectors < 3 ? 3 : sectors ) * ( float ) arcLen1);
       final int sctCount2 = sctCount + sctCount;
       final Vec2[] vs = target.coords = Vec2.resize(target.coords, sctCount2);
-      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
-         sctCount2);
+      final Vec2[] vts
+         = target.texCoords = Vec2.resize(target.texCoords, sctCount2);
 
       final float annul = Utils.clamp(oculus, IUtils.DEFAULT_EPSILON,
          1.0f - IUtils.DEFAULT_EPSILON);
@@ -1967,14 +1908,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final double sina = Math.sin(theta);
 
          final Vec2 v0 = vs[i];
-         v0.set(
-            ( float ) ( 0.5d * cosa ),
-            ( float ) ( 0.5d * sina ));
+         v0.set(( float ) ( 0.5d * cosa ), ( float ) ( 0.5d * sina ));
 
          final Vec2 v1 = vs[j];
-         v1.set(
-            ( float ) ( annRad * cosa ),
-            ( float ) ( annRad * sina ));
+         v1.set(( float ) ( annRad * cosa ), ( float ) ( annRad * sina ));
 
          final Vec2 vt0 = vts[i];
          vt0.x = v0.x + 0.5f;
@@ -2072,11 +2009,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the arc
     */
-   public static Mesh2 arc (
-      final float startAngle,
-      final float stopAngle,
-      final float oculus,
-      final Mesh2 target ) {
+   public static Mesh2 arc ( final float startAngle, final float stopAngle,
+      final float oculus, final Mesh2 target ) {
 
       return Mesh2.arc(startAngle, stopAngle, oculus,
          IMesh.DEFAULT_CIRCLE_SECTORS, Mesh2.DEFAULT_POLY_TYPE, target);
@@ -2092,11 +2026,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the arc
     */
-   public static Mesh2 arc (
-      final float startAngle,
-      final float stopAngle,
-      final int sectors,
-      final Mesh2 target ) {
+   public static Mesh2 arc ( final float startAngle, final float stopAngle,
+      final int sectors, final Mesh2 target ) {
 
       return Mesh2.arc(startAngle, stopAngle, IMesh.DEFAULT_OCULUS, sectors,
          Mesh2.DEFAULT_POLY_TYPE, target);
@@ -2111,9 +2042,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the arc
     */
-   public static Mesh2 arc (
-      final float startAngle,
-      final float stopAngle,
+   public static Mesh2 arc ( final float startAngle, final float stopAngle,
       final Mesh2 target ) {
 
       return Mesh2.arc(startAngle, stopAngle, IMesh.DEFAULT_OCULUS,
@@ -2129,9 +2058,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the arc
     */
-   public static Mesh2 arc (
-      final float stopAngle,
-      final Mesh2 target ) {
+   public static Mesh2 arc ( final float stopAngle, final Mesh2 target ) {
 
       return Mesh2.arc(0.0f, stopAngle, IMesh.DEFAULT_OCULUS,
          IMesh.DEFAULT_CIRCLE_SECTORS, Mesh2.DEFAULT_POLY_TYPE, target);
@@ -2148,11 +2075,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the dimensions
     */
-   public static Vec2 calcDimensions (
-      final Mesh2 mesh,
-      final Vec2 target,
-      final Vec2 lb,
-      final Vec2 ub ) {
+   public static Vec2 calcDimensions ( final Mesh2 mesh, final Vec2 target,
+      final Vec2 lb, final Vec2 ub ) {
 
       lb.set(Float.MAX_VALUE, Float.MAX_VALUE);
       ub.set(Float.MIN_VALUE, Float.MIN_VALUE);
@@ -2185,8 +2109,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @see Mesh2#polygon(int, PolyType, Mesh2)
     */
-   public static Mesh2 circle (
-      final Mesh2 target ) {
+   public static Mesh2 circle ( final Mesh2 target ) {
 
       return Mesh2.polygon(IMesh.DEFAULT_CIRCLE_SECTORS,
          Mesh2.DEFAULT_POLY_TYPE, target);
@@ -2202,8 +2125,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @see Mesh2#polygon(int, PolyType, Mesh2)
     */
-   public static Mesh2 circle (
-      final Mesh2.PolyType poly,
+   public static Mesh2 circle ( final Mesh2.PolyType poly,
       final Mesh2 target ) {
 
       return Mesh2.polygon(IMesh.DEFAULT_CIRCLE_SECTORS, poly, target);
@@ -2218,9 +2140,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the evaluation
     */
-   public static boolean contains (
-      final Mesh2 mesh,
-      final Vec2 point ) {
+   public static boolean contains ( final Mesh2 mesh, final Vec2 point ) {
 
       final Vec2[] vs = mesh.coords;
       final int[][][] fs = mesh.faces;
@@ -2377,8 +2297,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          /* Concatenate copies with current data. */
          current.coords = Vec2.concat(current.coords, vsCopy);
          current.texCoords = Vec2.concat(current.texCoords, vtsCopy);
-         current.faces = Mesh.splice(current.faces, current.faces.length, 0,
-            fsCopy);
+         current.faces
+            = Mesh.splice(current.faces, current.faces.length, 0, fsCopy);
       }
 
       /* Convert dictionary values to an array; clean meshes of excess data. */
@@ -2400,9 +2320,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the plane
     */
-   public static final Mesh2 plane (
-      final int cols,
-      final int rows,
+   public static final Mesh2 plane ( final int cols, final int rows,
       final Mesh2 target ) {
 
       return Mesh2.plane(cols, rows, Mesh2.DEFAULT_POLY_TYPE, target);
@@ -2420,11 +2338,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the plane
     */
-   public static final Mesh2 plane (
-      final int cols,
-      final int rows,
-      final PolyType poly,
-      final Mesh2 target ) {
+   public static final Mesh2 plane ( final int cols, final int rows,
+      final PolyType poly, final Mesh2 target ) {
 
       target.name = "Plane";
 
@@ -2437,10 +2352,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final float iToStep = 1.0f / rval;
       final float jToStep = 1.0f / cval;
 
-      final Vec2[] vs = target.coords = Vec2.resize(target.coords,
-         rval1 * cval1);
-      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
-         vs.length);
+      final Vec2[] vs
+         = target.coords = Vec2.resize(target.coords, rval1 * cval1);
+      final Vec2[] vts
+         = target.texCoords = Vec2.resize(target.texCoords, vs.length);
       final int flen = rval * cval;
 
       /* Calculate x values in separate loop. */
@@ -2551,9 +2466,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the plane
     */
-   public static final Mesh2 plane (
-      final int div,
-      final Mesh2 target ) {
+   public static final Mesh2 plane ( final int div, final Mesh2 target ) {
 
       return Mesh2.plane(div, div, Mesh2.DEFAULT_POLY_TYPE, target);
    }
@@ -2566,9 +2479,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the polygon
     */
-   public static Mesh2 polygon (
-      final int sectors,
-      final Mesh2 target ) {
+   public static Mesh2 polygon ( final int sectors, final Mesh2 target ) {
 
       return Mesh2.polygon(sectors, Mesh2.DEFAULT_POLY_TYPE, target);
    }
@@ -2582,9 +2493,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the polygon
     */
-   public static Mesh2 polygon (
-      final int sectors,
-      final PolyType poly,
+   public static Mesh2 polygon ( final int sectors, final PolyType poly,
       final Mesh2 target ) {
 
       /*
@@ -2600,8 +2509,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final double toTheta = IUtils.TAU_D / seg;
 
       final Vec2[] vs = target.coords = Vec2.resize(target.coords, newLen);
-      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
-         newLen);
+      final Vec2[] vts
+         = target.texCoords = Vec2.resize(target.texCoords, newLen);
 
       switch ( poly ) {
 
@@ -2639,8 +2548,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                final double theta = i * toTheta;
 
                final Vec2 vCorner = vs[j];
-               vCorner.set(( float ) ( 0.5d * Math.cos(
-                  theta) ),
+               vCorner.set(( float ) ( 0.5d * Math.cos(theta) ),
                   ( float ) ( 0.5d * Math.sin(theta) ));
 
                final Vec2 vtCorner = vts[j];
@@ -2740,9 +2648,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the ring
     */
-   public static final Mesh2 ring (
-      final float oculus,
-      final int sectors,
+   public static final Mesh2 ring ( final float oculus, final int sectors,
       final Mesh2 target ) {
 
       return Mesh2.ring(oculus, sectors, Mesh2.DEFAULT_POLY_TYPE, target);
@@ -2761,11 +2667,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the ring
     */
-   public static final Mesh2 ring (
-      final float oculus,
-      final int sectors,
-      final PolyType poly,
-      final Mesh2 target ) {
+   public static final Mesh2 ring ( final float oculus, final int sectors,
+      final PolyType poly, final Mesh2 target ) {
 
       target.name = "Ring";
 
@@ -2848,9 +2751,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the ring
     */
-   public static final Mesh2 ring (
-      final float oculus,
-      final Mesh2 target ) {
+   public static final Mesh2 ring ( final float oculus, final Mesh2 target ) {
 
       return Mesh2.ring(oculus, IMesh.DEFAULT_CIRCLE_SECTORS,
          Mesh2.DEFAULT_POLY_TYPE, target);
@@ -2864,9 +2765,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the ring
     */
-   public static final Mesh2 ring (
-      final int sectors,
-      final Mesh2 target ) {
+   public static final Mesh2 ring ( final int sectors, final Mesh2 target ) {
 
       return Mesh2.ring(IMesh.DEFAULT_OCULUS, sectors, Mesh2.DEFAULT_POLY_TYPE,
          target);
@@ -2906,8 +2805,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the square
     */
-   public static final Mesh2 square (
-      final PolyType poly,
+   public static final Mesh2 square ( final PolyType poly,
       final Mesh2 target ) {
 
       target.name = "Square";
@@ -2930,8 +2828,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          case QUAD:
 
-            target.faces = new int[][][] {
-               { { 0, 0 }, { 1, 1 }, { 2, 2 }, { 3, 3 } } };
+            target.faces
+               = new int[][][] { { { 0, 0 }, { 1, 1 }, { 2, 2 }, { 3, 3 } } };
 
             break;
 
@@ -2939,8 +2837,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          default:
 
-            target.faces = new int[][][] {
-               { { 0, 0 }, { 1, 1 }, { 2, 2 } },
+            target.faces = new int[][][] { { { 0, 0 }, { 1, 1 }, { 2, 2 } },
                { { 0, 0 }, { 2, 2 }, { 3, 3 } } };
 
       }
@@ -2963,11 +2860,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the traced mesh
     */
-   public static Mesh2 tracePerimeter (
-      final Mesh2 source,
-      final int count,
-      final float offset,
-      final Mesh2 target ) {
+   public static Mesh2 tracePerimeter ( final Mesh2 source, final int count,
+      final float offset, final Mesh2 target ) {
 
       target.name = "Trace";
 
@@ -2979,10 +2873,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int fsSrcLen = fsSrc.length;
       final int trgLen = fsSrcLen * vcount;
 
-      final Vec2[] vsTrg = target.coords = Vec2.resize(
-         target.coords, trgLen);
-      final Vec2[] vtsTrg = target.texCoords = Vec2.resize(
-         target.texCoords, trgLen);
+      final Vec2[] vsTrg = target.coords = Vec2.resize(target.coords, trgLen);
+      final Vec2[] vtsTrg
+         = target.texCoords = Vec2.resize(target.texCoords, trgLen);
       final int[][][] fsTrg = target.faces = new int[fsSrcLen][vcount][2];
 
       final float toStep = 1.0f / vcount;
@@ -3009,12 +2902,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             final Vec2 vtaSrc = vtsSrc[a[1]];
             final Vec2 vtbSrc = vtsSrc[b[1]];
 
-            vsTrg[k].set(
-               u * vaSrc.x + t * vbSrc.x,
-               u * vaSrc.y + t * vbSrc.y);
+            vsTrg[k].set(u * vaSrc.x + t * vbSrc.x, u * vaSrc.y + t * vbSrc.y);
 
-            vtsTrg[k].set(
-               u * vtaSrc.x + t * vtbSrc.x,
+            vtsTrg[k].set(u * vtaSrc.x + t * vtbSrc.x,
                u * vtaSrc.y + t * vtbSrc.y);
 
             fTrg[j][0] = k;
@@ -3063,9 +2953,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the mesh
     */
-   public static Mesh2 uniformData (
-      final Mesh2 source,
-      final Mesh2 target ) {
+   public static Mesh2 uniformData ( final Mesh2 source, final Mesh2 target ) {
 
       target.name = source.name;
 

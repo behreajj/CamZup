@@ -5,8 +5,7 @@ package camzup.core;
  * Equality and hash are based solely on the step, not on the color it
  * holds.
  */
-public class ColorKey
-   implements Comparable < ColorKey >, Cloneable {
+public class ColorKey implements Comparable < ColorKey >, Cloneable {
 
    /**
     * The key's color. Abbreviated to 'clr' because 'color' is a data type in
@@ -55,9 +54,7 @@ public class ColorKey
     * @param step  the step
     * @param color the color
     */
-   public ColorKey (
-      final float step,
-      final Color color ) {
+   public ColorKey ( final float step, final Color color ) {
 
       this.set(step, color);
    }
@@ -68,9 +65,7 @@ public class ColorKey
     * @param step  the step
     * @param color the color
     */
-   public ColorKey (
-      final float step,
-      final int color ) {
+   public ColorKey ( final float step, final int color ) {
 
       this.set(step, color);
    }
@@ -85,10 +80,7 @@ public class ColorKey
     * @param green the green channel
     * @param blue  the blue channel
     */
-   ColorKey (
-      final float step,
-      final float red,
-      final float green,
+   ColorKey ( final float step, final float red, final float green,
       final float blue ) {
 
       this.set(step, red, green, blue);
@@ -104,12 +96,8 @@ public class ColorKey
     * @param blue  the blue channel
     * @param alpha the transparency channel
     */
-   ColorKey (
-      final float step,
-      final float red,
-      final float green,
-      final float blue,
-      final float alpha ) {
+   ColorKey ( final float step, final float red, final float green,
+      final float blue, final float alpha ) {
 
       this.set(step, red, green, blue, alpha);
    }
@@ -203,9 +191,7 @@ public class ColorKey
     * @return this key
     */
    @Chainable
-   public ColorKey set (
-      final float step,
-      final Color color ) {
+   public ColorKey set ( final float step, final Color color ) {
 
       this.step = Utils.clamp01(step);
       this.clr.set(color);
@@ -221,9 +207,7 @@ public class ColorKey
     * @return this key
     */
    @Chainable
-   public ColorKey set (
-      final float step,
-      final int color ) {
+   public ColorKey set ( final float step, final int color ) {
 
       this.step = Utils.clamp01(step);
       Color.fromHex(color, this.clr);
@@ -293,10 +277,7 @@ public class ColorKey
     * @return this key
     */
    @Chainable
-   ColorKey set (
-      final float step,
-      final float red,
-      final float green,
+   ColorKey set ( final float step, final float red, final float green,
       final float blue ) {
 
       this.step = step;
@@ -318,12 +299,8 @@ public class ColorKey
     * @return this key
     */
    @Chainable
-   ColorKey set (
-      final float step,
-      final float red,
-      final float green,
-      final float blue,
-      final float alpha ) {
+   ColorKey set ( final float step, final float red, final float green,
+      final float blue, final float alpha ) {
 
       this.step = step;
       this.clr.set(red, green, blue, alpha);
@@ -387,9 +364,7 @@ public class ColorKey
     *
     * @return the evaluation
     */
-   public static boolean approx (
-      final ColorKey a,
-      final ColorKey b ) {
+   public static boolean approx ( final ColorKey a, final ColorKey b ) {
 
       return ColorKey.approx(a, b, ColorKey.DEFAULT_TOLERANCE);
    }
@@ -405,9 +380,7 @@ public class ColorKey
     *
     * @see Utils#approx(float, float, float)
     */
-   public static boolean approx (
-      final ColorKey a,
-      final ColorKey b,
+   public static boolean approx ( final ColorKey a, final ColorKey b,
       final float tolerance ) {
 
       return Utils.approx(a.step, b.step, tolerance);

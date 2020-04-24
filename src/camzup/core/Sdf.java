@@ -31,12 +31,8 @@ public abstract class Sdf {
     * @see Math#sin(double)
     * @see Sdf#arc(Vec2, float, float, float, float, float, float)
     */
-   public static float arc (
-      final Vec2 point,
-      final float startAngle,
-      final float stopAngle,
-      final float bounds,
-      final float weight ) {
+   public static float arc ( final Vec2 point, final float startAngle,
+      final float stopAngle, final float bounds, final float weight ) {
 
       final float a = Utils.mod1(IUtils.ONE_TAU * startAngle);
       final float b = Utils.mod1(IUtils.ONE_TAU * stopAngle);
@@ -60,15 +56,13 @@ public abstract class Sdf {
     * @see Utils#min(float, float)
     * @see Utils#max(float, float)
     */
-   public static float box (
-      final Vec2 point,
-      final Vec2 bounds ) {
+   public static float box ( final Vec2 point, final Vec2 bounds ) {
 
       final float qx = Utils.abs(point.x) - bounds.x;
       final float qy = Utils.abs(point.y) - bounds.y;
 
-      return Utils.hypot(Utils.max(qx, 0.0f),
-         Utils.max(qy, 0.0f)) + Utils.min(Utils.max(qx, qy), 0.0f);
+      return Utils.hypot(Utils.max(qx, 0.0f), Utils.max(qy, 0.0f))
+         + Utils.min(Utils.max(qx, qy), 0.0f);
    }
 
    /**
@@ -83,9 +77,7 @@ public abstract class Sdf {
     *
     * @see Sdf#box(Vec2, Vec2)
     */
-   public static float box (
-      final Vec2 point,
-      final Vec2 bounds,
+   public static float box ( final Vec2 point, final Vec2 bounds,
       final float rounding ) {
 
       return Sdf.box(point, bounds) - rounding;
@@ -104,9 +96,7 @@ public abstract class Sdf {
     * @see Utils#max(float, float)
     * @see Utils#min(float, float)
     */
-   public static float box (
-      final Vec3 point,
-      final Vec3 bounds ) {
+   public static float box ( final Vec3 point, final Vec3 bounds ) {
 
       final float qx = Utils.abs(point.x) - bounds.x;
       final float qy = Utils.abs(point.y) - bounds.y;
@@ -128,9 +118,7 @@ public abstract class Sdf {
     *
     * @see Sdf#box(Vec3, Vec3)
     */
-   public static float box (
-      final Vec3 point,
-      final Vec3 bounds,
+   public static float box ( final Vec3 point, final Vec3 bounds,
       final float rounding ) {
 
       return Sdf.box(point, bounds) - rounding;
@@ -146,9 +134,7 @@ public abstract class Sdf {
     *
     * @see Vec2#mag(Vec2)
     */
-   public static float circle (
-      final Vec2 point,
-      final float bounds ) {
+   public static float circle ( final Vec2 point, final float bounds ) {
 
       return Vec2.mag(point) - bounds;
    }
@@ -165,9 +151,7 @@ public abstract class Sdf {
     * @see Utils#mod1(float)
     * @see Utils#atan2(float, float)
     */
-   public static float conic (
-      final float pointx,
-      final float pointy,
+   public static float conic ( final float pointx, final float pointy,
       final float radians ) {
 
       /*
@@ -175,8 +159,8 @@ public abstract class Sdf {
        * Math#atan2 with double precision is necessary.
        */
 
-      return Utils.mod1(( float ) ( ( Math.atan2(pointy,
-         pointx) - radians ) * IUtils.ONE_TAU_D ));
+      return Utils.mod1(( float ) ( ( Math.atan2(pointy, pointx) - radians )
+         * IUtils.ONE_TAU_D ));
    }
 
    /**
@@ -189,9 +173,7 @@ public abstract class Sdf {
     *
     * @see Sdf#conic(float, float, float)
     */
-   public static float conic (
-      final Vec2 point,
-      final float radians ) {
+   public static float conic ( final Vec2 point, final float radians ) {
 
       return Sdf.conic(point.x, point.y, radians);
    }
@@ -204,9 +186,7 @@ public abstract class Sdf {
     *
     * @return the signed distance
     */
-   public static float ellipsoid (
-      final Vec3 point,
-      final Vec3 bounds ) {
+   public static float ellipsoid ( final Vec3 point, final Vec3 bounds ) {
 
       final float k1 = Utils.hypot(Utils.div(point.x, bounds.x * bounds.x),
          Utils.div(point.y, bounds.y * bounds.y),
@@ -232,14 +212,12 @@ public abstract class Sdf {
     * @see Utils#hypot(float, float)
     * @see Utils#clamp(float, float, float)
     */
-   public static float hexagon (
-      final Vec2 point,
-      final float bounds ) {
+   public static float hexagon ( final Vec2 point, final float bounds ) {
 
       final float px0 = Utils.abs(point.x);
       final float py0 = Utils.abs(point.y);
-      final float dotkp2 = 2.0f * Utils.min(0.0f,
-         -IUtils.SQRT_3_2 * px0 + IUtils.ONE_SQRT_3 * py0);
+      final float dotkp2 = 2.0f
+         * Utils.min(0.0f, -IUtils.SQRT_3_2 * px0 + IUtils.ONE_SQRT_3 * py0);
       final float px1 = px0 + dotkp2 * IUtils.SQRT_3_2;
       final float limit = 0.5f * bounds;
       final float py2 = py0 - dotkp2 * IUtils.ONE_SQRT_3 - bounds;
@@ -258,9 +236,7 @@ public abstract class Sdf {
     *
     * @see Sdf#hexagon(Vec2, float)
     */
-   public static float hexagon (
-      final Vec2 point,
-      final float bounds,
+   public static float hexagon ( final Vec2 point, final float bounds,
       final float rounding ) {
 
       return Sdf.hexagon(point, bounds) - rounding;
@@ -276,9 +252,7 @@ public abstract class Sdf {
     *
     * @see Utils#max(float, float)
     */
-   public static float intersect (
-      final float a,
-      final float b ) {
+   public static float intersect ( final float a, final float b ) {
 
       return Utils.max(a, b);
    }
@@ -297,9 +271,7 @@ public abstract class Sdf {
     * @see Utils#max(float, float)
     * @see Utils#min(float, float)
     */
-   public static float intersectRound (
-      final float a,
-      final float b,
+   public static float intersectRound ( final float a, final float b,
       final float radius ) {
 
       return Utils.hypot(Utils.max(0.0f, a + radius),
@@ -319,9 +291,7 @@ public abstract class Sdf {
     * @see Utils#hypot(float, float)
     * @see Utils#clamp01(float)
     */
-   public static float line (
-      final Vec2 point,
-      final Vec2 origin,
+   public static float line ( final Vec2 point, final Vec2 origin,
       final Vec2 dest ) {
 
       /* Denominator: b - a */
@@ -358,11 +328,8 @@ public abstract class Sdf {
     *
     * @see Sdf#line(Vec2, Vec2, Vec2)
     */
-   public static float line (
-      final Vec2 point,
-      final Vec2 origin,
-      final Vec2 dest,
-      final float rounding ) {
+   public static float line ( final Vec2 point, final Vec2 origin,
+      final Vec2 dest, final float rounding ) {
 
       return Sdf.line(point, origin, dest) - rounding;
    }
@@ -380,9 +347,7 @@ public abstract class Sdf {
     * @see Utils#hypot(float, float, float)
     * @see Utils#clamp01(float)
     */
-   public static float line (
-      final Vec3 point,
-      final Vec3 origin,
+   public static float line ( final Vec3 point, final Vec3 origin,
       final Vec3 dest ) {
 
       /* Denominator: b - a */
@@ -421,11 +386,8 @@ public abstract class Sdf {
     *
     * @see Sdf#line(Vec3, Vec3, Vec3)
     */
-   public static float line (
-      final Vec3 point,
-      final Vec3 origin,
-      final Vec3 dest,
-      final float rounding ) {
+   public static float line ( final Vec3 point, final Vec3 origin,
+      final Vec3 dest, final float rounding ) {
 
       return Sdf.line(point, origin, dest) - rounding;
    }
@@ -442,16 +404,13 @@ public abstract class Sdf {
     * @return the signed distance
     */
    @Experimental
-   public static float polygon (
-      final Vec2 point,
-      final int vertices,
-      final float angle,
-      final float bounds ) {
+   public static float polygon ( final Vec2 point, final int vertices,
+      final float angle, final float bounds ) {
 
       final float a = angle + Utils.atan2(point.y, -point.x);
       final float b = IUtils.TAU / Utils.max(3, vertices);
-      return Utils.cos(b * Utils.floor(0.5f + a / b) - a) * Utils.hypot(point.x,
-         point.y) - bounds * 0.5f;
+      return Utils.cos(b * Utils.floor(0.5f + a / b) - a)
+         * Utils.hypot(point.x, point.y) - bounds * 0.5f;
    }
 
    /**
@@ -470,9 +429,7 @@ public abstract class Sdf {
     * @see Utils#min(float, float)
     * @see Math#sqrt(double)
     */
-   public static float polygon (
-      final Vec2 point,
-      final Vec2[] vertices ) {
+   public static float polygon ( final Vec2 point, final Vec2[] vertices ) {
 
       final int len = vertices.length;
       if ( len < 3 ) { return 0.0f; }
@@ -528,9 +485,7 @@ public abstract class Sdf {
     *
     * @see Sdf#polygon(Vec2, Vec2[])
     */
-   public static float polygon (
-      final Vec2 point,
-      final Vec2[] vertices,
+   public static float polygon ( final Vec2 point, final Vec2[] vertices,
       final float rounding ) {
 
       return Sdf.polygon(point, vertices) - rounding;
@@ -544,9 +499,7 @@ public abstract class Sdf {
     *
     * @return the signed distance
     */
-   public static float sphere (
-      final Vec3 point,
-      final float bounds ) {
+   public static float sphere ( final Vec3 point, final float bounds ) {
 
       return Vec3.mag(point) - bounds;
    }
@@ -561,9 +514,7 @@ public abstract class Sdf {
     *
     * @see Utils#max(float, float)
     */
-   public static float subtract (
-      final float a,
-      final float b ) {
+   public static float subtract ( final float a, final float b ) {
 
       return Utils.max(-a, b);
    }
@@ -579,9 +530,7 @@ public abstract class Sdf {
     *
     * @see Sdf#intersectRound(float, float, float)
     */
-   public static float subtractRound (
-      final float a,
-      final float b,
+   public static float subtractRound ( final float a, final float b,
       final float radius ) {
 
       return Sdf.intersectRound(a, -b, radius);
@@ -596,9 +545,7 @@ public abstract class Sdf {
     *
     * @return the signed distance
     */
-   public static float torus (
-      final Vec2 point,
-      final float radius,
+   public static float torus ( final Vec2 point, final float radius,
       final float thickness ) {
 
       final float n = Vec2.mag(point) - radius;
@@ -614,13 +561,11 @@ public abstract class Sdf {
     *
     * @return the signed distance
     */
-   public static float torus (
-      final Vec3 point,
-      final float radius,
+   public static float torus ( final Vec3 point, final float radius,
       final float thickness ) {
 
-      return Utils.hypot(Utils.hypot(point.x, point.y) - radius,
-         point.z) - thickness;
+      return Utils.hypot(Utils.hypot(point.x, point.y) - radius, point.z)
+         - thickness;
    }
 
    /**
@@ -633,9 +578,7 @@ public abstract class Sdf {
     *
     * @see Utils#min(float, float)
     */
-   public static float union (
-      final float a,
-      final float b ) {
+   public static float union ( final float a, final float b ) {
 
       return Utils.min(a, b);
    }
@@ -653,13 +596,11 @@ public abstract class Sdf {
     * @see Utils#max(float, float)
     * @see Utils#min(float, float)
     */
-   public static float unionRound (
-      final float a,
-      final float b,
+   public static float unionRound ( final float a, final float b,
       final float radius ) {
 
-      return Utils.max(Utils.min(a, b), radius) - Utils.hypot(
-         Utils.min(0.0f, a - radius), Utils.min(0.0f, b - radius));
+      return Utils.max(Utils.min(a, b), radius) - Utils
+         .hypot(Utils.min(0.0f, a - radius), Utils.min(0.0f, b - radius));
    }
 
    /**
@@ -681,13 +622,8 @@ public abstract class Sdf {
     *
     * @see Utils#abs(float)
     */
-   static float arc (
-      final Vec2 point,
-      final float cosOff,
-      final float sinOff,
-      final float cosAptr2,
-      final float sinAptr2,
-      final float bounds,
+   static float arc ( final Vec2 point, final float cosOff, final float sinOff,
+      final float cosAptr2, final float sinAptr2, final float bounds,
       final float weight ) {
 
       /*
@@ -698,10 +634,11 @@ public abstract class Sdf {
       final float py0 = cosOff * point.x + sinOff * point.y;
       final float dotp = px0 * px0 + py0 * py0;
 
-      return Utils.sqrt(
-         dotp + bounds * bounds - ( bounds + bounds ) * ( cosAptr2 * px0 > sinAptr2 * py0
-            ? px0 * sinAptr2 + py0 * cosAptr2
-            : Utils.sqrtUnchecked(dotp) )) - weight;
+      return Utils
+         .sqrt(dotp + bounds * bounds
+            - ( bounds + bounds ) * ( cosAptr2 * px0 > sinAptr2 * py0
+               ? px0 * sinAptr2 + py0 * cosAptr2 : Utils.sqrtUnchecked(dotp) ))
+         - weight;
    }
 
 }

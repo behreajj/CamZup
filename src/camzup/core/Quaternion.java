@@ -13,8 +13,8 @@ import java.util.Iterator;
  * objects from one orientation to another over minimal distance without
  * suffering gimbal lock.
  */
-public class Quaternion implements Comparable < Quaternion >, Cloneable,
-   Iterable < Float > {
+public class Quaternion
+   implements Comparable < Quaternion >, Cloneable, Iterable < Float > {
 
    /**
     * The coefficients of the imaginary components <em>i</em>, <em>j</em> and
@@ -45,10 +45,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @param yImag the y component
     * @param zImag the z component
     */
-   public Quaternion (
-      final float real,
-      final float xImag,
-      final float yImag,
+   public Quaternion ( final float real, final float xImag, final float yImag,
       final float zImag ) {
 
       this.set(real, xImag, yImag, zImag);
@@ -60,9 +57,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @param real the real component
     * @param imag the imaginary component
     */
-   public Quaternion (
-      final float real,
-      final Vec3 imag ) {
+   public Quaternion ( final float real, final Vec3 imag ) {
 
       this.set(real, imag);
    }
@@ -84,11 +79,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @param yImag the y string
     * @param zImag the z string
     */
-   public Quaternion (
-      final String real,
-      final String xImag,
-      final String yImag,
-      final String zImag ) {
+   public Quaternion ( final String real, final String xImag,
+      final String yImag, final String zImag ) {
 
       this.set(real, xImag, yImag, zImag);
    }
@@ -228,9 +220,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    @Override
    public int hashCode ( ) {
 
-      return ( IUtils.MUL_BASE ^ Float.floatToIntBits(
-         this.real) ) * IUtils.HASH_MUL ^ ( this.imag == null ? 0
-            : this.imag.hashCode() );
+      return ( IUtils.MUL_BASE ^ Float.floatToIntBits(this.real) )
+         * IUtils.HASH_MUL ^ ( this.imag == null ? 0 : this.imag.hashCode() );
    }
 
    /**
@@ -271,11 +262,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @return this quaternion
     */
    @Chainable
-   public Quaternion set (
-      final float real,
-      final float xImag,
-      final float yImag,
-      final float zImag ) {
+   public Quaternion set ( final float real, final float xImag,
+      final float yImag, final float zImag ) {
 
       this.real = real;
       this.imag.set(xImag, yImag, zImag);
@@ -291,9 +279,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @return this quaternion
     */
    @Chainable
-   public Quaternion set (
-      final float real,
-      final Vec3 imag ) {
+   public Quaternion set ( final float real, final Vec3 imag ) {
 
       this.real = real;
       this.imag.set(imag);
@@ -330,11 +316,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Float#parseFloat(String)
     */
    @Chainable
-   public Quaternion set (
-      final String wstr,
-      final String xstr,
-      final String ystr,
-      final String zstr ) {
+   public Quaternion set ( final String wstr, final String xstr,
+      final String ystr, final String zstr ) {
 
       float real = 0.0f;
 
@@ -369,18 +352,11 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public float[] toArray ( final boolean wFirst ) {
 
       if ( wFirst ) {
-         return new float[] {
-            this.real,
-            this.imag.x,
-            this.imag.y,
+         return new float[] { this.real, this.imag.x, this.imag.y,
             this.imag.z };
       }
 
-      return new float[] {
-         this.imag.x,
-         this.imag.y,
-         this.imag.z,
-         this.real };
+      return new float[] { this.imag.x, this.imag.y, this.imag.z, this.real };
    }
 
    /**
@@ -564,9 +540,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-   public static Quaternion add (
-      final Quaternion a,
-      final Quaternion b,
+   public static Quaternion add ( final Quaternion a, final Quaternion b,
       final Quaternion target ) {
 
       Vec3.add(a.imag, b.imag, target.imag);
@@ -586,9 +560,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Vec3#add(Vec3, Vec3, Vec3)
     * @see Quaternion#dot(Quaternion, Quaternion)
     */
-   public static Quaternion addNorm (
-      final Quaternion a,
-      final Quaternion b,
+   public static Quaternion addNorm ( final Quaternion a, final Quaternion b,
       final Quaternion target ) {
 
       Vec3.add(a.imag, b.imag, target.imag);
@@ -599,11 +571,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
       final float mInv = Utils.invSqrtUnchecked(mSq);
       final Vec3 i = target.imag;
-      return target.set(
-         target.real * mInv,
-         i.x * mInv,
-         i.y * mInv,
-         i.z * mInv);
+      return target.set(target.real * mInv, i.x * mInv, i.y * mInv, i.z * mInv);
    }
 
    /**
@@ -620,11 +588,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Quaternion#add(Quaternion, Quaternion, Quaternion)
     * @see Quaternion#normalize(Quaternion, Quaternion)
     */
-   public static Quaternion addNorm (
-      final Quaternion a,
-      final Quaternion b,
-      final Quaternion target,
-      final Quaternion sum ) {
+   public static Quaternion addNorm ( final Quaternion a, final Quaternion b,
+      final Quaternion target, final Quaternion sum ) {
 
       Quaternion.add(a, b, sum);
       Quaternion.normalize(sum, target);
@@ -667,9 +632,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the evaluation
     */
-   public static boolean approx (
-      final Quaternion a,
-      final Quaternion b ) {
+   public static boolean approx ( final Quaternion a, final Quaternion b ) {
 
       return Quaternion.approx(a, b, IUtils.DEFAULT_EPSILON);
    }
@@ -687,9 +650,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Utils#approx(float, float)
     * @see Vec3#approx(Vec3, Vec3)
     */
-   public static boolean approx (
-      final Quaternion a,
-      final Quaternion b,
+   public static boolean approx ( final Quaternion a, final Quaternion b,
       final float tolerance ) {
 
       /* @formatter:off */
@@ -711,9 +672,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Utils#approx(float, float)
     * @see Quaternion#magSq(Quaternion)
     */
-   public static boolean approxMag (
-      final Quaternion a,
-      final float b ) {
+   public static boolean approxMag ( final Quaternion a, final float b ) {
 
       return Quaternion.approxMag(a, b, IUtils.DEFAULT_EPSILON);
    }
@@ -731,9 +690,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Utils#approx(float, float, float)
     * @see Quaternion#magSq(Quaternion)
     */
-   public static boolean approxMag (
-      final Quaternion a,
-      final float b,
+   public static boolean approxMag ( final Quaternion a, final float b,
       final float tolerance ) {
 
       return Utils.approx(Quaternion.magSq(a), b * b, tolerance);
@@ -752,8 +709,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @see Vec3#negate(Vec3, Vec3)
     */
-   public static Quaternion conj (
-      final Quaternion q,
+   public static Quaternion conj ( final Quaternion q,
       final Quaternion target ) {
 
       Vec3.negate(q.imag, target.imag);
@@ -773,11 +729,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @see Utils#approx(float, float)
     */
-   public static Quaternion div (
-      final float a,
-      final Quaternion b,
-      final Quaternion target,
-      final Quaternion inverted ) {
+   public static Quaternion div ( final float a, final Quaternion b,
+      final Quaternion target, final Quaternion inverted ) {
 
       final Vec3 bi = b.imag;
       final float bw = b.real;
@@ -819,11 +772,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Quaternion#inverse(Quaternion, Quaternion, Quaternion)
     * @see Quaternion#mul(float, Quaternion, Quaternion)
     */
-   public static Quaternion div (
-      final float a,
-      final Quaternion b,
-      final Quaternion target,
-      final Quaternion inverted,
+   public static Quaternion div ( final float a, final Quaternion b,
+      final Quaternion target, final Quaternion inverted,
       final Quaternion conjugate ) {
 
       Quaternion.inverse(b, inverted, conjugate);
@@ -842,9 +792,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @see Vec3#mul(Vec3, float, Vec3)
     */
-   public static Quaternion div (
-      final Quaternion a,
-      final float b,
+   public static Quaternion div ( final Quaternion a, final float b,
       final Quaternion target ) {
 
       if ( b == 0.0f ) { return target.reset(); }
@@ -868,9 +816,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @see Utils#approx(float, float)
     */
-   public static Quaternion div (
-      final Quaternion a,
-      final Quaternion b,
+   public static Quaternion div ( final Quaternion a, final Quaternion b,
       final Quaternion target ) {
 
       final Vec3 bi = b.imag;
@@ -899,8 +845,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Vec3 ai = a.imag;
       final float aw = a.real;
 
-      return target.set(
-         aw * bwInv - ai.x * bxInv - ai.y * byInv - ai.z * bzInv,
+      return target.set(aw * bwInv - ai.x * bxInv - ai.y * byInv - ai.z * bzInv,
          ai.x * bwInv + aw * bxInv + ai.y * bzInv - ai.z * byInv,
          ai.y * bwInv + aw * byInv + ai.z * bxInv - ai.x * bzInv,
          ai.z * bwInv + aw * bzInv + ai.x * byInv - ai.y * bxInv);
@@ -921,11 +866,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Quaternion#inverse(Quaternion, Quaternion, Quaternion)
     * @see Quaternion#mul(Quaternion, Quaternion, Quaternion)
     */
-   public static Quaternion div (
-      final Quaternion a,
-      final Quaternion b,
-      final Quaternion target,
-      final Quaternion inverted,
+   public static Quaternion div ( final Quaternion a, final Quaternion b,
+      final Quaternion target, final Quaternion inverted,
       final Quaternion conjugate ) {
 
       Quaternion.inverse(b, inverted, conjugate);
@@ -950,9 +892,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @see Vec3#dot(Vec3, Vec3)
     */
-   public static float dot (
-      final Quaternion a,
-      final Quaternion b ) {
+   public static float dot ( final Quaternion a, final Quaternion b ) {
 
       return a.real * b.real + Vec3.dot(a.imag, b.imag);
    }
@@ -972,14 +912,11 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   public static Quaternion fromAngle (
-      final float radians,
+   public static Quaternion fromAngle ( final float radians,
       final Quaternion target ) {
 
       final float halfRadians = radians * 0.5f;
-      return target.set(
-         Utils.cos(halfRadians),
-         0.0f, 0.0f,
+      return target.set(Utils.cos(halfRadians), 0.0f, 0.0f,
          Utils.sin(halfRadians));
    }
 
@@ -1004,16 +941,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Math#copySign(float, float)
     * @see Math#sqrt(double)
     */
-   public static Quaternion fromAxes (
-      final float xRight,
-      final float yForward,
-      final float zUp,
-      final float zForward,
-      final float yUp,
-      final float xUp,
-      final float zRight,
-      final float yRight,
-      final float xForward,
+   public static Quaternion fromAxes ( final float xRight, final float yForward,
+      final float zUp, final float zForward, final float yUp, final float xUp,
+      final float zRight, final float yRight, final float xForward,
       final Quaternion target ) {
 
       /*
@@ -1021,8 +951,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
        * Double-precision functions do NOT seem to yield more accuracy.
        */
 
-      return target.set(
-         0.5f * Utils.sqrt(1.0f + xRight + yForward + zUp),
+      return target.set(0.5f * Utils.sqrt(1.0f + xRight + yForward + zUp),
          Utils.copySign(0.5f * Utils.sqrt(1.0f + xRight - yForward - zUp),
             zForward - yUp),
          Utils.copySign(0.5f * Utils.sqrt(1.0f - xRight + yForward - zUp),
@@ -1043,9 +972,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Quaternion#fromAxes(float, float, float, float, float, float,
     *      float, float, float, Quaternion)
     */
-   public static Quaternion fromAxes (
-      final Mat4 m,
-      final Quaternion target ) {
+   public static Quaternion fromAxes ( final Mat4 m, final Quaternion target ) {
 
       return Quaternion.fromAxes(m.m00, m.m11, m.m22, m.m21, m.m12, m.m02,
          m.m20, m.m10, m.m01, target);
@@ -1064,9 +991,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Quaternion#fromAxes(float, float, float, float, float, float,
     *      float, float, float, Quaternion)
     */
-   public static Quaternion fromAxes (
-      final Vec2 right,
-      final Vec2 forward,
+   public static Quaternion fromAxes ( final Vec2 right, final Vec2 forward,
       final Quaternion target ) {
 
       return Quaternion.fromAxes(right.x, forward.y, 1.0f, 0.0f, 0.0f, 0.0f,
@@ -1087,11 +1012,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Quaternion#fromAxes(float, float, float, float, float, float,
     *      float, float, float, Quaternion)
     */
-   public static Quaternion fromAxes (
-      final Vec3 right,
-      final Vec3 forward,
-      final Vec3 up,
-      final Quaternion target ) {
+   public static Quaternion fromAxes ( final Vec3 right, final Vec3 forward,
+      final Vec3 up, final Quaternion target ) {
 
       return Quaternion.fromAxes(right.x, forward.y, up.z, forward.z, up.y,
          up.x, right.z, right.y, forward.x, target);
@@ -1113,10 +1035,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   public static Quaternion fromAxisAngle (
-      final float radians,
-      final Vec3 axis,
-      final Quaternion target ) {
+   public static Quaternion fromAxisAngle ( final float radians,
+      final Vec3 axis, final Quaternion target ) {
 
       final float amSq = Vec3.magSq(axis);
       if ( amSq == 0.0f ) { return target.reset(); }
@@ -1154,10 +1074,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *      float, float, float, Quaternion)
     */
    @Experimental
-   public static Quaternion fromDir (
-      final Vec3 dir,
-      final Handedness handedness,
-      final Quaternion target ) {
+   public static Quaternion fromDir ( final Vec3 dir,
+      final Handedness handedness, final Quaternion target ) {
 
       final float mSq0 = dir.x * dir.x + dir.y * dir.y + dir.z * dir.z;
       if ( Utils.approx(mSq0, 0.0f) ) { return target.reset(); }
@@ -1177,8 +1095,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float z1 = isRight ? 0.0f : xForward;
 
       /* Polarity: an infinite number of orientations is possible. */
-      final boolean parallel = Utils.approx(x1, 0.0f) && Utils.approx(y1,
-         0.0f) && Utils.approx(z1, 0.0f);
+      final boolean parallel = Utils.approx(x1, 0.0f) && Utils.approx(y1, 0.0f)
+         && Utils.approx(z1, 0.0f);
 
       if ( parallel ) {
 
@@ -1261,13 +1179,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Vec3#crossNorm(Vec3, Vec3, Vec3)
     * @see Quaternion#fromAxes(Vec3, Vec3, Vec3, Quaternion)
     */
-   public static Quaternion fromDir (
-      final Vec3 dir,
-      final Handedness handedness,
-      final Quaternion target,
-      final Vec3 right,
-      final Vec3 forward,
-      final Vec3 up ) {
+   public static Quaternion fromDir ( final Vec3 dir,
+      final Handedness handedness, final Quaternion target, final Vec3 right,
+      final Vec3 forward, final Vec3 up ) {
 
       if ( Vec3.none(dir) ) {
          Vec3.right(right);
@@ -1361,9 +1275,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Utils#approx(float, float)
     * @see Math#sqrt(double)
     */
-   public static Quaternion fromTo (
-      final Vec3 origin,
-      final Vec3 dest,
+   public static Quaternion fromTo ( final Vec3 origin, final Vec3 dest,
       final Quaternion target ) {
 
       float anx = origin.x;
@@ -1421,9 +1333,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the forward axis
     */
-   public static Vec3 getForward (
-      final Quaternion q,
-      final Vec3 target ) {
+   public static Vec3 getForward ( final Quaternion q, final Vec3 target ) {
 
       final Vec3 imag = q.imag;
       final float w = q.real;
@@ -1431,10 +1341,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float y = imag.y;
       final float z = imag.z;
 
-      return target.set(
-         -z * w + x * y + y * x - w * z,
-         w * w - z * z + y * y - x * x,
-         x * w + w * x + y * z + z * y);
+      return target.set(-z * w + x * y + y * x - w * z,
+         w * w - z * z + y * y - x * x, x * w + w * x + y * z + z * y);
    }
 
    /**
@@ -1447,9 +1355,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the right axis
     */
-   public static Vec3 getRight (
-      final Quaternion q,
-      final Vec3 target ) {
+   public static Vec3 getRight ( final Quaternion q, final Vec3 target ) {
 
       final Vec3 imag = q.imag;
 
@@ -1458,10 +1364,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float y = imag.y;
       final float z = imag.z;
 
-      return target.set(
-         w * w - y * y + x * x - z * z,
-         z * w + w * z + x * y + y * x,
-         -y * w + z * x + x * z - w * y);
+      return target.set(w * w - y * y + x * x - z * z,
+         z * w + w * z + x * y + y * x, -y * w + z * x + x * z - w * y);
    }
 
    /**
@@ -1474,9 +1378,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the up axis
     */
-   public static Vec3 getUp (
-      final Quaternion q,
-      final Vec3 target ) {
+   public static Vec3 getUp ( final Quaternion q, final Vec3 target ) {
 
       final Vec3 imag = q.imag;
 
@@ -1485,10 +1387,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float y = imag.y;
       final float z = imag.z;
 
-      return target.set(
-         y * w + w * y + z * x + x * z,
-         -x * w + y * z + z * y - w * x,
-         w * w - x * x + z * z - y * y);
+      return target.set(y * w + w * y + z * x + x * z,
+         -x * w + y * z + z * y - w * x, w * w - x * x + z * z - y * y);
    }
 
    /**
@@ -1519,8 +1419,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @see Quaternion#magSq(Quaternion)
     */
-   public static Quaternion inverse (
-      final Quaternion q,
+   public static Quaternion inverse ( final Quaternion q,
       final Quaternion target ) {
 
       final float mSq = Quaternion.magSq(q);
@@ -1532,10 +1431,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       }
 
       final float mSqInv = 1.0f / mSq;
-      return target.set(
-         q.real * mSqInv,
-         -i.x * mSqInv,
-         -i.y * mSqInv,
+      return target.set(q.real * mSqInv, -i.x * mSqInv, -i.y * mSqInv,
          -i.z * mSqInv);
    }
 
@@ -1558,10 +1454,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Quaternion#dot(Quaternion, Quaternion)
     * @see Quaternion#div(Quaternion, float, Quaternion)
     */
-   public static Quaternion inverse (
-      final Quaternion q,
-      final Quaternion target,
-      final Quaternion conjugate ) {
+   public static Quaternion inverse ( final Quaternion q,
+      final Quaternion target, final Quaternion conjugate ) {
 
       Quaternion.conj(q, conjugate);
       Quaternion.div(conjugate, Quaternion.magSq(q), target);
@@ -1578,9 +1472,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the unrotated vector
     */
-   public static Vec3 invMulVector (
-      final Quaternion q,
-      final Vec3 source,
+   public static Vec3 invMulVector ( final Quaternion q, final Vec3 source,
       final Vec3 target ) {
 
       final float mSq = Quaternion.magSq(q);
@@ -1598,8 +1490,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float iy = w * source.y + qz * source.x - qx * source.z;
       final float iz = w * source.z + qx * source.y - qy * source.x;
 
-      return target.set(
-         ix * w + iz * qy - iw * qx - iy * qz,
+      return target.set(ix * w + iz * qy - iw * qx - iy * qz,
          iy * w + ix * qz - iw * qy - iz * qx,
          iz * w + iy * qx - iw * qz - ix * qy);
    }
@@ -1699,11 +1590,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @see Quaternion#EASING
     */
-   public static Quaternion mix (
-      final Quaternion origin,
-      final Quaternion dest,
-      final float step,
-      final Quaternion target ) {
+   public static Quaternion mix ( final Quaternion origin,
+      final Quaternion dest, final float step, final Quaternion target ) {
 
       return Quaternion.EASING.apply(origin, dest, step, target);
    }
@@ -1717,9 +1605,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the scaled quaternion
     */
-   public static Quaternion mul (
-      final float a,
-      final Quaternion b,
+   public static Quaternion mul ( final float a, final Quaternion b,
       final Quaternion target ) {
 
       if ( a == 0.0f ) { return target.reset(); }
@@ -1738,9 +1624,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the scaled quaternion
     */
-   public static Quaternion mul (
-      final Quaternion a,
-      final float b,
+   public static Quaternion mul ( final Quaternion a, final float b,
       final Quaternion target ) {
 
       if ( b == 0.0f ) { return target.reset(); }
@@ -1769,9 +1653,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the product
     */
-   public static Quaternion mul (
-      final Quaternion a,
-      final Quaternion b,
+   public static Quaternion mul ( final Quaternion a, final Quaternion b,
       final Quaternion target ) {
 
       final Vec3 ai = a.imag;
@@ -1779,8 +1661,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float aw = a.real;
       final float bw = b.real;
 
-      return target.set(
-         aw * bw - ( ai.x * bi.x + ai.y * bi.y + ai.z * bi.z ),
+      return target.set(aw * bw - ( ai.x * bi.x + ai.y * bi.y + ai.z * bi.z ),
          ai.x * bw + aw * bi.x + ai.y * bi.z - ai.z * bi.y,
          ai.y * bw + aw * bi.y + ai.z * bi.x - ai.x * bi.z,
          ai.z * bw + aw * bi.z + ai.x * bi.y - ai.y * bi.x);
@@ -1803,9 +1684,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the rotated vector
     */
-   public static Vec3 mulVector (
-      final Quaternion q,
-      final Vec3 source,
+   public static Vec3 mulVector ( final Quaternion q, final Vec3 source,
       final Vec3 target ) {
 
       final float w = q.real;
@@ -1819,8 +1698,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float iy = w * source.y + qz * source.x - qx * source.z;
       final float iz = w * source.z + qx * source.y - qy * source.x;
 
-      return target.set(
-         ix * w + iz * qy - iw * qx - iy * qz,
+      return target.set(ix * w + iz * qy - iw * qx - iy * qz,
          iy * w + ix * qz - iw * qy - iz * qx,
          iz * w + iy * qx - iw * qz - ix * qy);
    }
@@ -1854,8 +1732,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Quaternion#div(Quaternion, float, Quaternion)
     * @see Quaternion#mag(Quaternion)
     */
-   public static Quaternion normalize (
-      final Quaternion q,
+   public static Quaternion normalize ( final Quaternion q,
       final Quaternion target ) {
 
       final Vec3 i = q.imag;
@@ -1880,8 +1757,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @author Ken Shoemake
     */
-   public static Quaternion random (
-      final java.util.Random rng,
+   public static Quaternion random ( final java.util.Random rng,
       final Quaternion target ) {
 
       final float t0 = IUtils.TAU * rng.nextFloat();
@@ -1889,11 +1765,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float r1 = rng.nextFloat();
       final float x0 = Utils.sqrt(1.0f - r1);
       final float x1 = Utils.sqrt(r1);
-      return target.set(
-         x0 * Utils.sin(t0),
-         x0 * Utils.cos(t0),
-         x1 * Utils.sin(t1),
-         x1 * Utils.cos(t1));
+      return target.set(x0 * Utils.sin(t0), x0 * Utils.cos(t0),
+         x1 * Utils.sin(t1), x1 * Utils.cos(t1));
    }
 
    /**
@@ -1913,11 +1786,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Quaternion#fromAxisAngle(float, Vec3, Quaternion)
     */
    @Experimental
-   public static Quaternion rotate (
-      final Quaternion q,
-      final float radians,
-      final Vec3 axis,
-      final Quaternion target ) {
+   public static Quaternion rotate ( final Quaternion q, final float radians,
+      final Vec3 axis, final Quaternion target ) {
 
       // TODO: Seems to routinely return a quaternion with one of its
       // components set to zero.
@@ -1946,17 +1816,12 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the rotated quaternion
     */
-   public static Quaternion rotateX (
-      final Quaternion q,
-      final float cosah,
-      final float sinah,
-      final Quaternion target ) {
+   public static Quaternion rotateX ( final Quaternion q, final float cosah,
+      final float sinah, final Quaternion target ) {
 
       final Vec3 i = q.imag;
-      return target.set(
-         cosah * q.real - sinah * i.x,
-         cosah * i.x + sinah * q.real,
-         cosah * i.y + sinah * i.z,
+      return target.set(cosah * q.real - sinah * i.x,
+         cosah * i.x + sinah * q.real, cosah * i.y + sinah * i.z,
          cosah * i.z - sinah * i.y);
    }
 
@@ -1974,9 +1839,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   public static Quaternion rotateX (
-      final Quaternion q,
-      final float radians,
+   public static Quaternion rotateX ( final Quaternion q, final float radians,
       final Quaternion target ) {
 
       final float halfAngle = radians * 0.5f;
@@ -1996,18 +1859,12 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the rotated quaternion
     */
-   public static Quaternion rotateY (
-      final Quaternion q,
-      final float cosah,
-      final float sinah,
-      final Quaternion target ) {
+   public static Quaternion rotateY ( final Quaternion q, final float cosah,
+      final float sinah, final Quaternion target ) {
 
       final Vec3 i = q.imag;
-      return target.set(
-         cosah * q.real - sinah * i.y,
-         cosah * i.x - sinah * i.z,
-         cosah * i.y + sinah * q.real,
-         cosah * i.z + sinah * i.x);
+      return target.set(cosah * q.real - sinah * i.y, cosah * i.x - sinah * i.z,
+         cosah * i.y + sinah * q.real, cosah * i.z + sinah * i.x);
    }
 
    /**
@@ -2025,9 +1882,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Math#sin(double)
     */
    @Experimental
-   public static Quaternion rotateY (
-      final Quaternion q,
-      final float radians,
+   public static Quaternion rotateY ( final Quaternion q, final float radians,
       final Quaternion target ) {
 
       final float halfAngle = radians * 0.5f;
@@ -2047,18 +1902,12 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the rotated quaternion
     */
-   public static Quaternion rotateZ (
-      final Quaternion q,
-      final float cosah,
-      final float sinah,
-      final Quaternion target ) {
+   public static Quaternion rotateZ ( final Quaternion q, final float cosah,
+      final float sinah, final Quaternion target ) {
 
       final Vec3 i = q.imag;
-      return target.set(
-         cosah * q.real - sinah * i.z,
-         cosah * i.x + sinah * i.y,
-         cosah * i.y - sinah * i.x,
-         cosah * i.z + sinah * q.real);
+      return target.set(cosah * q.real - sinah * i.z, cosah * i.x + sinah * i.y,
+         cosah * i.y - sinah * i.x, cosah * i.z + sinah * q.real);
    }
 
    /**
@@ -2075,9 +1924,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   public static Quaternion rotateZ (
-      final Quaternion q,
-      final float radians,
+   public static Quaternion rotateZ ( final Quaternion q, final float radians,
       final Quaternion target ) {
 
       final float halfAngle = radians * 0.5f;
@@ -2106,9 +1953,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
-   public static Quaternion sub (
-      final Quaternion a,
-      final Quaternion b,
+   public static Quaternion sub ( final Quaternion a, final Quaternion b,
       final Quaternion target ) {
 
       Vec3.sub(a.imag, b.imag, target.imag);
@@ -2130,9 +1975,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Quaternion#magSq(Quaternion)
     * @see Math#sqrt(double)
     */
-   public static Quaternion subNorm (
-      final Quaternion a,
-      final Quaternion b,
+   public static Quaternion subNorm ( final Quaternion a, final Quaternion b,
       final Quaternion target ) {
 
       Vec3.sub(a.imag, b.imag, target.imag);
@@ -2143,11 +1986,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
       final float mInv = Utils.invSqrtUnchecked(mSq);
       final Vec3 i = target.imag;
-      return target.set(
-         target.real * mInv,
-         i.x * mInv,
-         i.y * mInv,
-         i.z * mInv);
+      return target.set(target.real * mInv, i.x * mInv, i.y * mInv, i.z * mInv);
    }
 
    /**
@@ -2164,11 +2003,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Quaternion#sub(Quaternion, Quaternion, Quaternion)
     * @see Quaternion#normalize(Quaternion, Quaternion)
     */
-   public static Quaternion subNorm (
-      final Quaternion a,
-      final Quaternion b,
-      final Quaternion target,
-      final Quaternion diff ) {
+   public static Quaternion subNorm ( final Quaternion a, final Quaternion b,
+      final Quaternion target, final Quaternion diff ) {
 
       Quaternion.sub(a, b, diff);
       Quaternion.normalize(diff, target);
@@ -2191,11 +2027,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Quaternion#getRight(Quaternion, Vec3)
     * @see Quaternion#getUp(Quaternion, Vec3)
     */
-   public static void toAxes (
-      final Quaternion q,
-      final Vec3 right,
-      final Vec3 forward,
-      final Vec3 up ) {
+   public static void toAxes ( final Quaternion q, final Vec3 right,
+      final Vec3 forward, final Vec3 up ) {
 
       final float w = q.real;
       final Vec3 i = q.imag;
@@ -2239,9 +2072,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Math#sqrt(double)
     * @see Math#acos(double)
     */
-   public static float toAxisAngle (
-      final Quaternion q,
-      final Vec3 axis ) {
+   public static float toAxisAngle ( final Quaternion q, final Vec3 axis ) {
 
       final float mSq = Quaternion.magSq(q);
 
@@ -2306,9 +2137,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   static Quaternion exp (
-      final Quaternion q,
-      final Quaternion target ) {
+   static Quaternion exp ( final Quaternion q, final Quaternion target ) {
 
       final double ea = Math.exp(q.real);
       final float imSq = Vec3.mag(q.imag);
@@ -2346,9 +2175,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Math#acos(double)
     * @see Vec3#mul(Vec3, float, Vec3)
     */
-   static Quaternion log (
-      final Quaternion q,
-      final Quaternion target ) {
+   static Quaternion log ( final Quaternion q, final Quaternion target ) {
 
       final float imSq = Vec3.magSq(q.imag);
       final float qmSq = q.real * q.real + imSq;
@@ -2364,8 +2191,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       }
 
       final double wNorm = q.real / qm;
-      final double wAcos = wNorm <= -1.0d ? Math.PI
-         : wNorm >= 1.0d ? 0.0d : Math.acos(wNorm);
+      final double wAcos
+         = wNorm <= -1.0d ? Math.PI : wNorm >= 1.0d ? 0.0d : Math.acos(wNorm);
 
       if ( Utils.approx(imSq, 1.0f) ) {
          Vec3.mul(q.imag, ( float ) wAcos, target.imag);
@@ -2399,9 +2226,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   static Quaternion pow (
-      final Quaternion a,
-      final float b,
+   static Quaternion pow ( final Quaternion a, final float b,
       final Quaternion target ) {
 
       if ( b == 0.0f ) { return target.reset(); }
@@ -2418,8 +2243,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       }
 
       /* Set new real component. */
-      final double theta = wNorm <= -1.0d ? Math.PI
-         : wNorm >= 1.0d ? 0.0d : Math.acos(wNorm);
+      final double theta
+         = wNorm <= -1.0d ? Math.PI : wNorm >= 1.0d ? 0.0d : Math.acos(wNorm);
       final double btheta = b * theta;
       final double scalar = Math.pow(m, b);
       target.real = ( float ) ( scalar * Math.cos(btheta) );
@@ -2459,10 +2284,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
        * Scale the axis by sin(b theta), then by pow(mag(q), b).
        */
       final double sclrSinbt = scalar * Math.sin(btheta);
-      target.imag.set(
-         ( float ) ( nx * sclrSinbt ),
-         ( float ) ( ny * sclrSinbt ),
-         ( float ) ( nz * sclrSinbt ));
+      target.imag.set(( float ) ( nx * sclrSinbt ),
+         ( float ) ( ny * sclrSinbt ), ( float ) ( nz * sclrSinbt ));
       return target;
    }
 
@@ -2528,11 +2351,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
        * @return the eased quaternion
        */
       @Override
-      public Quaternion apply (
-         final Quaternion origin,
-         final Quaternion dest,
-         final Float step,
-         final Quaternion target ) {
+      public Quaternion apply ( final Quaternion origin, final Quaternion dest,
+         final Float step, final Quaternion target ) {
 
          if ( step <= 0.0f ) { return Quaternion.normalize(origin, target); }
          if ( step >= 1.0f ) { return Quaternion.normalize(dest, target); }
@@ -2549,11 +2369,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
        *
        * @return the eased quaternion
        */
-      public abstract Quaternion applyUnclamped (
-         final Quaternion origin,
-         final Quaternion dest,
-         final float step,
-         final Quaternion target );
+      public abstract Quaternion applyUnclamped ( final Quaternion origin,
+         final Quaternion dest, final float step, final Quaternion target );
 
       /**
        * Returns the simple name of this class.
@@ -2637,11 +2454,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
        * @see Math#sqrt(double)
        */
       @Override
-      public Quaternion applyUnclamped (
-         final Quaternion origin,
-         final Quaternion dest,
-         final float step,
-         final Quaternion target ) {
+      public Quaternion applyUnclamped ( final Quaternion origin,
+         final Quaternion dest, final float step, final Quaternion target ) {
 
          final double u = step;
          final double v = 1.0d - u;
@@ -2662,19 +2476,13 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          }
 
          if ( Math.abs(1.0d - mSq) < IUtils.DEFAULT_EPSILON ) {
-            return target.set(
-               ( float ) cw,
-               ( float ) cx,
-               ( float ) cy,
+            return target.set(( float ) cw, ( float ) cx, ( float ) cy,
                ( float ) cz);
          }
 
          final double mInv = 1.0d / Math.sqrt(mSq);
-         return target.set(
-            ( float ) ( cw * mInv ),
-            ( float ) ( cx * mInv ),
-            ( float ) ( cy * mInv ),
-            ( float ) ( cz * mInv ));
+         return target.set(( float ) ( cw * mInv ), ( float ) ( cx * mInv ),
+            ( float ) ( cy * mInv ), ( float ) ( cz * mInv ));
       }
 
    }
@@ -2759,11 +2567,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
        * @see Math#abs(double)
        */
       @Override
-      public Quaternion applyUnclamped (
-         final Quaternion origin,
-         final Quaternion dest,
-         final float step,
-         final Quaternion target ) {
+      public Quaternion applyUnclamped ( final Quaternion origin,
+         final Quaternion dest, final float step, final Quaternion target ) {
 
          /* Decompose origin quaternion. */
          final Vec3 ai = origin.imag;
@@ -2780,9 +2585,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          float bz = bi.z;
 
          /* Clamp the dot product. */
-         float dotp = Utils.clamp(
-            aw * bw + ax * bx + ay * by + az * bz,
-            -1.0f, 1.0f);
+         float dotp
+            = Utils.clamp(aw * bw + ax * bx + ay * by + az * bz, -1.0f, 1.0f);
 
          /* Flip values if the orientation is negative. */
          if ( dotp < 0.0f ) {
@@ -2829,19 +2633,13 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          }
 
          if ( Math.abs(1.0d - mSq) < IUtils.DEFAULT_EPSILON ) {
-            return target.set(
-               ( float ) cw,
-               ( float ) cx,
-               ( float ) cy,
+            return target.set(( float ) cw, ( float ) cx, ( float ) cy,
                ( float ) cz);
          }
 
          final double mInv = 1.0d / Math.sqrt(mSq);
-         return target.set(
-            ( float ) ( cw * mInv ),
-            ( float ) ( cx * mInv ),
-            ( float ) ( cy * mInv ),
-            ( float ) ( cz * mInv ));
+         return target.set(( float ) ( cw * mInv ), ( float ) ( cx * mInv ),
+            ( float ) ( cy * mInv ), ( float ) ( cz * mInv ));
       }
 
    }

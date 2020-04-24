@@ -40,9 +40,7 @@ public class CurveEntity2 extends Entity2
     * @param transform the transform
     * @param curves    the list of curves
     */
-   public CurveEntity2 (
-      final String name,
-      final Transform2 transform,
+   public CurveEntity2 ( final String name, final Transform2 transform,
       final Curve2... curves ) {
 
       super(name, transform);
@@ -55,9 +53,7 @@ public class CurveEntity2 extends Entity2
     * @param transform the transform
     * @param curves    the list of curves
     */
-   public CurveEntity2 (
-      final Transform2 transform,
-      final Curve2... curves ) {
+   public CurveEntity2 ( final Transform2 transform, final Curve2... curves ) {
 
       super(transform);
       this.appendAll(curves);
@@ -213,9 +209,7 @@ public class CurveEntity2 extends Entity2
     */
    @Override
    @Chainable
-   public CurveEntity2 scaleTo (
-      final Vec2 scalar,
-      final float step ) {
+   public CurveEntity2 scaleTo ( final Vec2 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);
       return this;
@@ -249,11 +243,8 @@ public class CurveEntity2 extends Entity2
     * @return the string
     */
    @Experimental
-   public String toBlenderCode (
-      final int uRes,
-      final String fillMode,
-      final float extrude,
-      final float bevelDepth ) {
+   public String toBlenderCode ( final int uRes, final String fillMode,
+      final float extrude, final float bevelDepth ) {
 
       final StringBuilder pyCd = new StringBuilder(2048);
 
@@ -345,13 +336,10 @@ public class CurveEntity2 extends Entity2
       sb.append(this.transform.toString(places));
       sb.append(", curves: [ ");
 
-      int i = 0;
       final Iterator < Curve2 > itr = this.curves.iterator();
-      final int last = this.curves.size() - 1;
       while ( itr.hasNext() ) {
          sb.append(itr.next().toString(places));
-         if ( i < last ) { sb.append(',').append(' '); }
-         i++;
+         if ( itr.hasNext() ) { sb.append(',').append(' '); }
       }
 
       sb.append(" ] }");
@@ -371,9 +359,7 @@ public class CurveEntity2 extends Entity2
     * @return the string
     */
    @Override
-   public String toSvgElm (
-      final String id,
-      final float zoom ) {
+   public String toSvgElm ( final String id, final float zoom ) {
 
       return this.toSvgElm(id, zoom, new MaterialSolid[] {});
    }
@@ -387,9 +373,7 @@ public class CurveEntity2 extends Entity2
     *
     * @return the string
     */
-   public String toSvgElm (
-      final String id,
-      final float zoom,
+   public String toSvgElm ( final String id, final float zoom,
       final MaterialSolid material ) {
 
       return this.toSvgElm(id, zoom, new MaterialSolid[] { material });
@@ -410,14 +394,12 @@ public class CurveEntity2 extends Entity2
     * @return the string
     */
    @SuppressWarnings ( "null" )
-   public String toSvgElm (
-      final String id,
-      final float zoom,
+   public String toSvgElm ( final String id, final float zoom,
       final MaterialSolid[] materials ) {
 
-      final StringBuilder svgp = new StringBuilder(1024).append(
-         "<g id=\"").append(this.name.toLowerCase()).append('\"').append(
-            ' ').append(this.transform.toSvgString()).append('>').append('\n');
+      final StringBuilder svgp = new StringBuilder(1024).append("<g id=\"")
+         .append(this.name.toLowerCase()).append('\"').append(' ')
+         .append(this.transform.toSvgString()).append('>').append('\n');
 
       final float scale = zoom * Transform2.minDimension(this.transform);
       int matLen = 0;
@@ -448,8 +430,8 @@ public class CurveEntity2 extends Entity2
 
             final int vMatIdx = Utils.mod(curve.materialIndex, matLen);
             final MaterialSolid material = materials[vMatIdx];
-            svgp.append("<g ").append(material.toSvgString(scale)).append(
-               '>').append('\n');
+            svgp.append("<g ").append(material.toSvgString(scale)).append('>')
+               .append('\n');
          }
 
          svgp.append(curve.toSvgPath(iddot + Utils.toPadded(i, 4)));
@@ -483,12 +465,8 @@ public class CurveEntity2 extends Entity2
     * @see Transform2#mulDir(Transform2, Vec2, Vec2)
     */
    @Experimental
-   public static Knot2 eval (
-      final CurveEntity2 ce,
-      final int curveIndex,
-      final float step,
-      final Knot2 knWorld,
-      final Knot2 knLocal ) {
+   public static Knot2 eval ( final CurveEntity2 ce, final int curveIndex,
+      final float step, final Knot2 knWorld, final Knot2 knLocal ) {
 
       final Transform2 tr = ce.transform;
       Curve2.eval(ce.get(curveIndex), step, knLocal);
@@ -515,12 +493,8 @@ public class CurveEntity2 extends Entity2
     *
     * @see CurveEntity2#eval(CurveEntity2, int, float, Vec2, Vec2, Vec2, Vec2)
     */
-   public static Ray2 eval (
-      final CurveEntity2 ce,
-      final int curveIndex,
-      final float step,
-      final Ray2 rayWorld,
-      final Ray2 rayLocal ) {
+   public static Ray2 eval ( final CurveEntity2 ce, final int curveIndex,
+      final float step, final Ray2 rayWorld, final Ray2 rayLocal ) {
 
       CurveEntity2.eval(ce, curveIndex, step, rayWorld.origin, rayWorld.dir,
          rayLocal.origin, rayLocal.dir);
@@ -546,14 +520,9 @@ public class CurveEntity2 extends Entity2
     * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
     * @see Transform2#mulDir(Transform2, Vec2, Vec2)
     */
-   public static Vec2 eval (
-      final CurveEntity2 ce,
-      final int curveIndex,
-      final float step,
-      final Vec2 coWorld,
-      final Vec2 tnWorld,
-      final Vec2 coLocal,
-      final Vec2 tnLocal ) {
+   public static Vec2 eval ( final CurveEntity2 ce, final int curveIndex,
+      final float step, final Vec2 coWorld, final Vec2 tnWorld,
+      final Vec2 coLocal, final Vec2 tnLocal ) {
 
       Curve2.eval(ce.get(curveIndex), step, coLocal, tnLocal);
       Transform2.mulPoint(ce.transform, coLocal, coWorld);
@@ -569,8 +538,7 @@ public class CurveEntity2 extends Entity2
     *
     * @return the curve
     */
-   public static CurveEntity2 fromMeshEntity (
-      final MeshEntity2 me,
+   public static CurveEntity2 fromMeshEntity ( final MeshEntity2 me,
       final CurveEntity2 target ) {
 
       target.name = me.name;

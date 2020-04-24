@@ -44,9 +44,7 @@ public class Ray3 extends Ray {
     * @param origin the origin
     * @param dir    the direction.
     */
-   public Ray3 (
-      final Vec3 origin,
-      final Vec3 dir ) {
+   public Ray3 ( final Vec3 origin, final Vec3 dir ) {
 
       super();
       this.set(origin, dir);
@@ -96,8 +94,8 @@ public class Ray3 extends Ray {
        */
 
       int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ ( this.origin == null ? 0
-         : this.origin.hashCode() );
+      hash = hash * IUtils.HASH_MUL
+         ^ ( this.origin == null ? 0 : this.origin.hashCode() );
       // hash = (hash * HASH_MUL)
       // ^ (this.dir == null ? 0 : this.dir.hashCode());
       return hash;
@@ -152,9 +150,7 @@ public class Ray3 extends Ray {
     *
     * @see Vec3#normalize(Vec3, Vec3)
     */
-   public Ray3 set (
-      final Vec3 origin,
-      final Vec3 dir ) {
+   public Ray3 set ( final Vec3 origin, final Vec3 dir ) {
 
       this.origin.set(origin);
       Vec3.normalize(dir, this.dir);
@@ -224,9 +220,7 @@ public class Ray3 extends Ray {
     *
     * @see Vec3#magSq(Vec3)
     */
-   public static Vec3 eval (
-      final Ray3 ray,
-      final float time,
+   public static Vec3 eval ( final Ray3 ray, final float time,
       final Vec3 target ) {
 
       final Vec3 origin = ray.origin;
@@ -256,9 +250,7 @@ public class Ray3 extends Ray {
     *
     * @see Vec3#subNorm(Vec3, Vec3, Vec3)
     */
-   public static Ray3 fromPoints (
-      final Vec3 origin,
-      final Vec3 dest,
+   public static Ray3 fromPoints ( final Vec3 origin, final Vec3 dest,
       final Ray3 target ) {
 
       target.origin.set(origin);

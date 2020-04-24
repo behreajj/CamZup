@@ -18,10 +18,7 @@ public interface ITextDisplay {
     * @param x    the x coordinate
     * @param y    the y coordinate
     */
-   default void text (
-      final boolean bool,
-      final float x,
-      final float y ) {
+   default void text ( final boolean bool, final float x, final float y ) {
 
       this.text(bool ? "true" : "false", x, y);
    }
@@ -32,9 +29,7 @@ public interface ITextDisplay {
     * @param bool the boolean
     * @param v    the location
     */
-   default void text (
-      final boolean bool,
-      final Vec2 v ) {
+   default void text ( final boolean bool, final Vec2 v ) {
 
       this.text(bool ? "true" : "false", v.x, v.y);
    }
@@ -46,10 +41,7 @@ public interface ITextDisplay {
     * @param x the x coordinate
     * @param y the y coordinate
     */
-   void text (
-      final char c,
-      final float x,
-      final float y );
+   void text ( final char c, final float x, final float y );
 
    /**
     * Displays a character at a location.
@@ -57,9 +49,7 @@ public interface ITextDisplay {
     * @param c the character
     * @param v the location
     */
-   default void text (
-      final char c,
-      final Vec2 v ) {
+   default void text ( final char c, final Vec2 v ) {
 
       this.text(c, v.x, v.y);
    }
@@ -71,10 +61,7 @@ public interface ITextDisplay {
     * @param x     the x coordinate
     * @param y     the y coordinate
     */
-   default void text (
-      final char[] chars,
-      final float x,
-      final float y ) {
+   default void text ( final char[] chars, final float x, final float y ) {
 
       this.text(chars, 0, chars.length, x, y);
    }
@@ -88,12 +75,8 @@ public interface ITextDisplay {
     * @param x     the x coordinate
     * @param y     the y coordinate
     */
-   void text (
-      final char[] chars,
-      final int start,
-      final int stop,
-      final float x,
-      final float y );
+   void text ( final char[] chars, final int start, final int stop,
+      final float x, final float y );
 
    /**
     * Displays an array of characters as text at a location.
@@ -103,10 +86,7 @@ public interface ITextDisplay {
     * @param stop  the stop index, exclusive
     * @param v     the location
     */
-   default void text (
-      final char[] chars,
-      final int start,
-      final int stop,
+   default void text ( final char[] chars, final int start, final int stop,
       final Vec2 v ) {
 
       this.text(chars, 0, chars.length, v.x, v.y);
@@ -118,9 +98,7 @@ public interface ITextDisplay {
     * @param chars the character array
     * @param v     the location
     */
-   default void text (
-      final char[] chars,
-      final Vec2 v ) {
+   default void text ( final char[] chars, final Vec2 v ) {
 
       this.text(chars, v.x, v.y);
    }
@@ -135,10 +113,7 @@ public interface ITextDisplay {
     *
     * @see Utils#toFixed(float, int)
     */
-   default void text (
-      final float real,
-      final float x,
-      final float y ) {
+   default void text ( final float real, final float x, final float y ) {
 
       this.text(Utils.toFixed(real, 4), x, y);
    }
@@ -152,9 +127,7 @@ public interface ITextDisplay {
     *
     * @see Utils#toFixed(float, int)
     */
-   default void text (
-      final float real,
-      final Vec2 v ) {
+   default void text ( final float real, final Vec2 v ) {
 
       this.text(Utils.toFixed(real, 4), v.x, v.y);
    }
@@ -169,10 +142,7 @@ public interface ITextDisplay {
     *
     * @see Utils#toPadded(int, int)
     */
-   default void text (
-      final int integer,
-      final float x,
-      final float y ) {
+   default void text ( final int integer, final float x, final float y ) {
 
       this.text(Utils.toPadded(integer, 1), x, y);
    }
@@ -185,9 +155,7 @@ public interface ITextDisplay {
     *
     * @see Utils#toPadded(int, int)
     */
-   default void text (
-      final int integer,
-      final Vec2 v ) {
+   default void text ( final int integer, final Vec2 v ) {
 
       this.text(Utils.toPadded(integer, 1), v.x, v.y);
    }
@@ -200,10 +168,7 @@ public interface ITextDisplay {
     * @param x   the x coordinate
     * @param y   the y coordinate
     */
-   default void text (
-      final Object obj,
-      final float x,
-      final float y ) {
+   default void text ( final Object obj, final float x, final float y ) {
 
       final String str = obj.toString();
       if ( str.length() > 96 ) {
@@ -220,10 +185,7 @@ public interface ITextDisplay {
     * @param x   the x coordinate
     * @param y   the y coordinate
     */
-   default void text (
-      final String str,
-      final float x,
-      final float y ) {
+   default void text ( final String str, final float x, final float y ) {
 
       this.text(str.toCharArray(), x, y);
    }
@@ -238,12 +200,8 @@ public interface ITextDisplay {
     * @param x2  the second x coordinate
     * @param y2  the second y coordinate
     */
-   default void text (
-      final String str,
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2 ) {
+   default void text ( final String str, final float x1, final float y1,
+      final float x2, final float y2 ) {
 
       PApplet.showMissingWarning("text");
       this.text(str, x1, y1);
@@ -257,9 +215,7 @@ public interface ITextDisplay {
     *
     * @see Utils#toFixed(float, int)
     */
-   default void text (
-      final String str,
-      final Vec2 v ) {
+   default void text ( final String str, final Vec2 v ) {
 
       this.text(str, v.x, v.y);
    }

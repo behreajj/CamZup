@@ -2,6 +2,13 @@
 
 Cam Z-Up is a Java-based library for the creative coding environment [Processing](https://processing.org/). Cam Z-Up flips Processing's default projection so that the positive z axis, (0.0, 0.0, 1.0), is the world up axis; the positive y axis, (0.0, 1.0, 0.0), is forward. This library supports two- and three-dimensional graphics. It also supports "2.5D" graphics, where a 3D renderer is configured to appear 2D.
 
+If you can flip the y-axis by either
+
+  - supplying `-1` to [scale](https://processing.org/reference/scale_.html)'s y parameter or 
+  - supplying (0.0, -1.0, 0.0) to the final parameters of [camera](https://processing.org/reference/camera_.html)
+  
+without adverse impact to your sketch, then you may not need this library. While Cam Z-Up can help with more complex sketches, it is a general purpose library: its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as other, more specialized libraries. For an easy mouse-controlled orbital camera with GUI support, I would recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
+
 Cam Z-Up is split into two packages: `pfriendly` and `core`. The `pfriendly` package contains code (mostly) compatible with Processing's API. Inside it, you'll find
 
 - `Zup3`, which extends `PGraphicsOpenGL`, like `P3D`;
@@ -11,11 +18,7 @@ Cam Z-Up is split into two packages: `pfriendly` and `core`. The `pfriendly` pac
 
 The `FX2D` renderer, based on Java FX, is not supported.
 
-This library's `core` package includes basic utilities that were used to modify the Processing renderer. In this package, you'll find classes such as `Vec2`, `Vec3` and `Quaternion`.
-
-This division is a protective measure, so that the library will retain some usefulness in `core` even as bugs in `pfriendly`, or changes to the underlying `Processing` library, cause trouble.
-
-If you can flip the y-axis by supplying `-1` to either [scale](https://processing.org/reference/scale_.html) or the final parameters of [camera](https://processing.org/reference/camera_.html) without adverse impact on your sketch, then you likely don't need this library. While Cam Z-Up may help with more complex sketches, nevertheless, it is a general purpose library: its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as other, more specialized libraries. For an easy mouse-controlled orbital camera with GUI support, I would recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
+This library's `core` package includes basic utilities that were used to modify the Processing renderer. In this package, you'll find classes such as `Vec2`, `Vec3` and `Quaternion`. The division between `pfriendly` and `core` is a protective measure. The aim is to retain the library's usefulness even as bugs in `pfriendly`, or changes to the underlying `Processing` library, cause trouble.
 
 Cam Z-Up is tested with Processing version [4.0 alpha 1](https://github.com/processing/processing4/releases/tag/processing-1270-4.0a1).
 
@@ -64,7 +67,7 @@ void setup() {
 }
 ```
 
-Both `createGraphics` and `getGraphics` return `PGraphics`, an `interface`; the result needs to be cast to the specific renderer. The benefit of accessing these renderers directly, rather than through `PApplet` functions, is that the renderers offer a few more conveniences. For example, in the following snippet,
+Both `createGraphics` and `getGraphics` return `PGraphics`; the result needs to be cast to the specific renderer. The benefit of accessing Cam Z-Up renderers directly, rather than through `PApplet` functions, is that the renderers offer a few more conveniences. For example, in the following snippet,
 
 ```java
 secondary.beginDraw();
@@ -99,7 +102,7 @@ Here is a brief list of issues with this library and differences which may be un
   - The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles.
   -  In OpenGL renderers, an arc will not have rounded corners, no matter which [strokeJoin](https://processing.org/reference/strokeJoin_.html) and [strokeCap](https://processing.org/reference/strokeCap_.html) methods you specify.
   - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), [ellipseMode](https://processing.org/reference/ellipseMode_.html) and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with these renderers. For that reason, `CENTER` is the default alignment.
-  - `Curve`s and `Mesh`es do not currently distinguish between an outline and contour shape.
+  - `Curve`s and `Mesh`es do not distinguish between an outline and contour shape. This means they do not properly handle glyphs for characters like 'o', 'p', and 'q'.
 
 - 3D
   - A z-up axis changes the relationship between a 2D vector's polar coordinates and a 3D vector's spherical coordinates: a 3D vector's azimuth matches a 2D vector's heading.

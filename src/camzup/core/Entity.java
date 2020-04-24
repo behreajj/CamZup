@@ -62,8 +62,8 @@ public abstract class Entity implements IEntity {
    public int hashCode ( ) {
 
       int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ ( this.name == null ? 0
-         : this.name.hashCode() );
+      hash = hash * IUtils.HASH_MUL
+         ^ ( this.name == null ? 0 : this.name.hashCode() );
       return hash;
    }
 
@@ -90,8 +90,8 @@ public abstract class Entity implements IEntity {
    @Override
    public String toString ( ) {
 
-      return new StringBuilder(64).append("{ name: \"").append(
-         this.name).append('\"').append(' ').append('}').toString();
+      return new StringBuilder(64).append("{ name: \"").append(this.name)
+         .append('\"').append(' ').append('}').toString();
    }
 
 }

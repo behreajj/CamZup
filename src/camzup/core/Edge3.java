@@ -37,13 +37,8 @@ public class Edge3 implements Comparable < Edge3 > {
     * @param txDest   destination texture coordinate
     * @param nmDest   destination normal
     */
-   public Edge3 (
-      final Vec3 coOrigin,
-      final Vec2 txOrigin,
-      final Vec3 nmOrigin,
-      final Vec3 coDest,
-      final Vec2 txDest,
-      final Vec3 nmDest ) {
+   public Edge3 ( final Vec3 coOrigin, final Vec2 txOrigin, final Vec3 nmOrigin,
+      final Vec3 coDest, final Vec2 txDest, final Vec3 nmDest ) {
 
       this.origin = new Vert3(coOrigin, txOrigin, nmOrigin);
       this.dest = new Vert3(coDest, txDest, nmDest);
@@ -55,9 +50,7 @@ public class Edge3 implements Comparable < Edge3 > {
     * @param origin the origin
     * @param dest   the destination
     */
-   public Edge3 (
-      final Vert3 origin,
-      final Vert3 dest ) {
+   public Edge3 ( final Vert3 origin, final Vert3 dest ) {
 
       this.set(origin, dest);
    }
@@ -117,9 +110,7 @@ public class Edge3 implements Comparable < Edge3 > {
     * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
     */
    @Chainable
-   public Edge3 rotate (
-      final float radians,
-      final Vec3 axis ) {
+   public Edge3 rotate ( final float radians, final Vec3 axis ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
@@ -384,12 +375,8 @@ public class Edge3 implements Comparable < Edge3 > {
     * @return this edge
     */
    @Chainable
-   public Edge3 set (
-      final Vec3 coOrigin,
-      final Vec2 txOrigin,
-      final Vec3 nmOrigin,
-      final Vec3 coDest,
-      final Vec2 txDest,
+   public Edge3 set ( final Vec3 coOrigin, final Vec2 txOrigin,
+      final Vec3 nmOrigin, final Vec3 coDest, final Vec2 txDest,
       final Vec3 nmDest ) {
 
       this.origin.set(coOrigin, txOrigin, nmOrigin);
@@ -407,9 +394,7 @@ public class Edge3 implements Comparable < Edge3 > {
     * @return this edge
     */
    @Chainable
-   public Edge3 set (
-      final Vert3 origin,
-      final Vert3 dest ) {
+   public Edge3 set ( final Vert3 origin, final Vert3 dest ) {
 
       this.origin = origin;
       this.dest = dest;
@@ -529,9 +514,7 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return the point
     */
-   public static Vec3 eval (
-      final Edge3 edge,
-      final float step,
+   public static Vec3 eval ( final Edge3 edge, final float step,
       final Vec3 target ) {
 
       final Vec3 coOrigin = edge.origin.coord;
@@ -541,10 +524,8 @@ public class Edge3 implements Comparable < Edge3 > {
       if ( step >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - step;
-      return target.set(
-         u * coOrigin.x + step * coDest.x,
-         u * coOrigin.y + step * coDest.y,
-         u * coOrigin.z + step * coDest.z);
+      return target.set(u * coOrigin.x + step * coDest.x,
+         u * coOrigin.y + step * coDest.y, u * coOrigin.z + step * coDest.z);
    }
 
    /**
@@ -614,9 +595,7 @@ public class Edge3 implements Comparable < Edge3 > {
     * @see Utils#clamp01(float)
     */
    @Experimental
-   public static Vec3 projectVector (
-      final Edge3 edge,
-      final Vec3 v,
+   public static Vec3 projectVector ( final Edge3 edge, final Vec3 v,
       final Vec3 target ) {
 
       final Vec3 coOrigin = edge.origin.coord;
@@ -637,10 +616,8 @@ public class Edge3 implements Comparable < Edge3 > {
       if ( fac >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - fac;
-      return target.set(
-         u * coOrigin.x + fac * coDest.x,
-         u * coOrigin.y + fac * coDest.y,
-         u * coOrigin.z + fac * coDest.z);
+      return target.set(u * coOrigin.x + fac * coDest.x,
+         u * coOrigin.y + fac * coDest.y, u * coOrigin.z + fac * coDest.z);
    }
 
    /**
@@ -661,9 +638,7 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return the evaluation
     */
-   public static int sharedCoord (
-      final Edge3 a,
-      final Edge3 b ) {
+   public static int sharedCoord ( final Edge3 a, final Edge3 b ) {
 
       final Vert3 aOrigin = a.origin;
       final Vert3 aDest = a.dest;

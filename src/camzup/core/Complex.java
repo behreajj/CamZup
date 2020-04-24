@@ -7,8 +7,8 @@ import java.util.Iterator;
  * A two-dimensional complex number. The <code>imag</code> component is a
  * coefficient of <em>i</em>, or the square-root of negative one.
  */
-public class Complex implements Comparable < Complex >, Cloneable,
-   Iterable < Float > {
+public class Complex
+   implements Comparable < Complex >, Cloneable, Iterable < Float > {
 
    /**
     * The coefficient of the imaginary component <em>i</em>.
@@ -38,9 +38,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * @param real the real component
     * @param imag the imaginary component
     */
-   public Complex (
-      final float real,
-      final float imag ) {
+   public Complex ( final float real, final float imag ) {
 
       this.set(real, imag);
    }
@@ -55,9 +53,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @see Float#parseFloat(String)
     */
-   public Complex (
-      final String realstr,
-      final String imagstr ) {
+   public Complex ( final String realstr, final String imagstr ) {
 
       this.set(realstr, imagstr);
    }
@@ -144,8 +140,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
    @Override
    public int hashCode ( ) {
 
-      return ( IUtils.MUL_BASE ^ Float.floatToIntBits(
-         this.real) ) * IUtils.HASH_MUL ^ Float.floatToIntBits(this.imag);
+      return ( IUtils.MUL_BASE ^ Float.floatToIntBits(this.real) )
+         * IUtils.HASH_MUL ^ Float.floatToIntBits(this.imag);
    }
 
    /**
@@ -195,9 +191,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * @return this complex number
     */
    @Chainable
-   public Complex set (
-      final float real,
-      final float imag ) {
+   public Complex set ( final float real, final float imag ) {
 
       this.real = real;
       this.imag = imag;
@@ -218,9 +212,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * @see Float#parseFloat(String)
     */
    @Chainable
-   public Complex set (
-      final String realstr,
-      final String imagstr ) {
+   public Complex set ( final String realstr, final String imagstr ) {
 
       float real = 0.0f;
       float imag = 0.0f;
@@ -319,9 +311,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
     */
    protected boolean equals ( final Complex z ) {
 
-      return Float.floatToIntBits(this.imag) == Float.floatToIntBits(
-         z.imag) && Float.floatToIntBits(
-            this.real) == Float.floatToIntBits(z.real);
+      return Float.floatToIntBits(this.imag) == Float.floatToIntBits(z.imag)
+         && Float.floatToIntBits(this.real) == Float.floatToIntBits(z.real);
    }
 
    /**
@@ -358,9 +349,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the sum
     */
-   public static Complex add (
-      final Complex a,
-      final Complex b,
+   public static Complex add ( final Complex a, final Complex b,
       final Complex target ) {
 
       return target.set(a.real + b.real, a.imag + b.imag);
@@ -375,9 +364,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the sum
     */
-   public static Complex add (
-      final Complex a,
-      final float b,
+   public static Complex add ( final Complex a, final float b,
       final Complex target ) {
 
       return target.set(a.real + b, a.imag);
@@ -392,9 +379,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the sum
     */
-   public static Complex add (
-      final float a,
-      final Complex b,
+   public static Complex add ( final float a, final Complex b,
       final Complex target ) {
 
       return target.set(a + b.real, b.imag);
@@ -432,9 +417,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the evaluation
     */
-   public static boolean approx (
-      final Complex a,
-      final Complex b ) {
+   public static boolean approx ( final Complex a, final Complex b ) {
 
       return Complex.approx(a, b, IUtils.DEFAULT_EPSILON);
    }
@@ -451,9 +434,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @see Utils#approx(float, float, float)
     */
-   public static boolean approx (
-      final Complex a,
-      final Complex b,
+   public static boolean approx ( final Complex a, final Complex b,
       final float tolerance ) {
 
       /* @formatter:off */
@@ -472,9 +453,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the conjugate
     */
-   public static Complex conj (
-      final Complex z,
-      final Complex target ) {
+   public static Complex conj ( final Complex z, final Complex target ) {
 
       return target.set(z.real, -z.imag);
    }
@@ -487,12 +466,9 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the cosine
     */
-   public static Complex cos (
-      final Complex z,
-      final Complex target ) {
+   public static Complex cos ( final Complex z, final Complex target ) {
 
-      return target.set(
-         ( float ) ( Math.cos(z.real) * Math.cosh(z.imag) ),
+      return target.set(( float ) ( Math.cos(z.real) * Math.cosh(z.imag) ),
          ( float ) ( -Math.sin(z.real) * Math.sinh(z.imag) ));
    }
 
@@ -507,9 +483,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @see Complex#absSq(Complex)
     */
-   public static Complex div (
-      final Complex a,
-      final Complex b,
+   public static Complex div ( final Complex a, final Complex b,
       final Complex target ) {
 
       final float bAbsSq = Complex.absSq(b);
@@ -518,8 +492,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final float bInvAbsSq = 1.0f / bAbsSq;
       final float cReal = b.real * bInvAbsSq;
       final float cImag = -b.imag * bInvAbsSq;
-      return target.set(
-         a.real * cReal - a.imag * cImag,
+      return target.set(a.real * cReal - a.imag * cImag,
          a.real * cImag + a.imag * cReal);
    }
 
@@ -538,12 +511,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * @see Complex#inverse(Complex, Complex, Complex)
     * @see Complex#mul(Complex, Complex, Complex)
     */
-   public static Complex div (
-      final Complex a,
-      final Complex b,
-      final Complex target,
-      final Complex inverse,
-      final Complex conj ) {
+   public static Complex div ( final Complex a, final Complex b,
+      final Complex target, final Complex inverse, final Complex conj ) {
 
       Complex.inverse(b, inverse, conj);
       return Complex.mul(a, inverse, target);
@@ -558,9 +527,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the quotient
     */
-   public static Complex div (
-      final Complex a,
-      final float b,
+   public static Complex div ( final Complex a, final float b,
       final Complex target ) {
 
       if ( b == 0.0f ) { return target.reset(); }
@@ -580,9 +547,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @see Complex#absSq(Complex)
     */
-   public static Complex div (
-      final float a,
-      final Complex b,
+   public static Complex div ( final float a, final Complex b,
       final Complex target ) {
 
       final float bAbsSq = Complex.absSq(b);
@@ -604,9 +569,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   public static Complex exp (
-      final Complex z,
-      final Complex target ) {
+   public static Complex exp ( final Complex z, final Complex target ) {
 
       return Complex.rect(( float ) Math.exp(z.real), z.imag, target);
    }
@@ -621,9 +584,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @see Complex#absSq(Complex)
     */
-   public static Complex inverse (
-      final Complex z,
-      final Complex target ) {
+   public static Complex inverse ( final Complex z, final Complex target ) {
 
       final float absSq = Complex.absSq(z);
       if ( absSq == 0.0f ) { return target.reset(); }
@@ -643,9 +604,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * @see Complex#absSq(Complex)
     * @see Complex#conj(Complex, Complex)
     */
-   public static Complex inverse (
-      final Complex z,
-      final Complex target,
+   public static Complex inverse ( final Complex z, final Complex target,
       final Complex conj ) {
 
       final float absSq = Complex.absSq(z);
@@ -682,13 +641,9 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * @see Complex#abs(Complex)
     * @see Math#atan2(double, double)
     */
-   public static Complex log (
-      final Complex z,
-      final Complex target ) {
+   public static Complex log ( final Complex z, final Complex target ) {
 
-      return target.set(
-         ( float ) Math.log(Complex.abs(
-            z)),
+      return target.set(( float ) Math.log(Complex.abs(z)),
          ( float ) Math.atan2(z.imag, z.real));
    }
 
@@ -708,12 +663,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the Mobius transformation
     */
-   public static Complex mobius (
-      final Complex a,
-      final Complex b,
-      final Complex c,
-      final Complex d,
-      final Complex z,
+   public static Complex mobius ( final Complex a, final Complex b,
+      final Complex c, final Complex d, final Complex z,
       final Complex target ) {
 
       /*
@@ -735,8 +686,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
       final float czdrInv = czdr * mSqInv;
       final float czdiInv = -czdi * mSqInv;
 
-      return target.set(
-         azbr * czdrInv - azbi * czdiInv,
+      return target.set(azbr * czdrInv - azbi * czdiInv,
          azbr * czdiInv + azbi * czdrInv);
    }
 
@@ -750,13 +700,10 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the product
     */
-   public static Complex mul (
-      final Complex a,
-      final Complex b,
+   public static Complex mul ( final Complex a, final Complex b,
       final Complex target ) {
 
-      return target.set(
-         a.real * b.real - a.imag * b.imag,
+      return target.set(a.real * b.real - a.imag * b.imag,
          a.real * b.imag + a.imag * b.real);
    }
 
@@ -769,9 +716,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the product
     */
-   public static Complex mul (
-      final Complex a,
-      final float b,
+   public static Complex mul ( final Complex a, final float b,
       final Complex target ) {
 
       return target.set(a.real * b, a.imag * b);
@@ -786,9 +731,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the product
     */
-   public static Complex mul (
-      final float a,
-      final Complex b,
+   public static Complex mul ( final float a, final Complex b,
       final Complex target ) {
 
       return target.set(a * b.real, a * b.imag);
@@ -835,13 +778,11 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   public static Complex pow (
-      final Complex a,
-      final Complex b,
+   public static Complex pow ( final Complex a, final Complex b,
       final Complex target ) {
 
-      final double logReal = Math.log(Math.sqrt(
-         a.real * a.real + a.imag * a.imag));
+      final double logReal
+         = Math.log(Math.sqrt(a.real * a.real + a.imag * a.imag));
       final double logImag = Math.atan2(a.imag, a.real);
       final double phi = b.real * logImag + b.imag * logReal;
       final double r = Math.exp(b.real * logReal - b.imag * logImag);
@@ -865,12 +806,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * @see Complex#mul(Complex, Complex, Complex)
     * @see Complex#log(Complex, Complex)
     */
-   public static Complex pow (
-      final Complex a,
-      final Complex b,
-      final Complex target,
-      final Complex prod,
-      final Complex log ) {
+   public static Complex pow ( final Complex a, final Complex b,
+      final Complex target, final Complex prod, final Complex log ) {
 
       return Complex.exp(Complex.mul(b, Complex.log(a, log), prod), target);
    }
@@ -891,13 +828,11 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   public static Complex pow (
-      final Complex a,
-      final float b,
+   public static Complex pow ( final Complex a, final float b,
       final Complex target ) {
 
-      final double logReal = Math.log(
-         Math.sqrt(a.real * a.real + a.imag * a.imag));
+      final double logReal
+         = Math.log(Math.sqrt(a.real * a.real + a.imag * a.imag));
       final double logImag = Math.atan2(a.imag, a.real);
       final double phi = b * logImag;
       final double r = Math.exp(b * logReal);
@@ -920,9 +855,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   public static Complex pow (
-      final float a,
-      final Complex b,
+   public static Complex pow ( final float a, final Complex b,
       final Complex target ) {
 
       final double logReal = Math.log(Math.sqrt(a * a));
@@ -945,16 +878,12 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @see Complex#rect(float, float, Complex)
     */
-   public static Complex random (
-      final java.util.Random rng,
-      final float rMin,
-      final float rMax,
-      final Complex target ) {
+   public static Complex random ( final java.util.Random rng, final float rMin,
+      final float rMax, final Complex target ) {
 
       final float rt = rng.nextFloat();
       final float rr = rng.nextFloat();
-      return Complex.rect(
-         ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI,
+      return Complex.rect( ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI,
          ( 1.0f - rr ) * rMin + rr * rMax, target);
    }
 
@@ -970,13 +899,10 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   public static Complex rect (
-      final float r,
-      final float phi,
+   public static Complex rect ( final float r, final float phi,
       final Complex target ) {
 
-      return target.set(
-         ( float ) ( r * Math.cos(phi) ),
+      return target.set(( float ) ( r * Math.cos(phi) ),
          ( float ) ( r * Math.sin(phi) ));
    }
 
@@ -988,12 +914,9 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the sine
     */
-   public static Complex sin (
-      final Complex z,
-      final Complex target ) {
+   public static Complex sin ( final Complex z, final Complex target ) {
 
-      return target.set(
-         ( float ) ( Math.sin(z.real) * Math.cosh(z.imag) ),
+      return target.set(( float ) ( Math.sin(z.real) * Math.cosh(z.imag) ),
          ( float ) ( Math.cos(z.real) * Math.sinh(z.imag) ));
    }
 
@@ -1006,13 +929,11 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the square root
     */
-   public static Complex sqrt (
-      final float a,
-      final Complex target ) {
+   public static Complex sqrt ( final float a, final Complex target ) {
 
       return a > 0.0f ? target.set(Utils.sqrtUnchecked(a), 0.0f)
          : a < 0.0f ? target.set(0.0f, Utils.sqrtUnchecked(-a))
-            : target.reset();
+         : target.reset();
    }
 
    /**
@@ -1024,9 +945,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the difference
     */
-   public static Complex sub (
-      final Complex a,
-      final Complex b,
+   public static Complex sub ( final Complex a, final Complex b,
       final Complex target ) {
 
       return target.set(a.real - b.real, a.imag - b.imag);
@@ -1041,9 +960,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the difference
     */
-   public static Complex sub (
-      final Complex a,
-      final float b,
+   public static Complex sub ( final Complex a, final float b,
       final Complex target ) {
 
       return target.set(a.real - b, a.imag);
@@ -1058,9 +975,7 @@ public class Complex implements Comparable < Complex >, Cloneable,
     *
     * @return the difference
     */
-   public static Complex sub (
-      final float a,
-      final Complex b,
+   public static Complex sub ( final float a, final Complex b,
       final Complex target ) {
 
       return target.set(a - b.real, -b.imag);
@@ -1082,8 +997,8 @@ public class Complex implements Comparable < Complex >, Cloneable,
     * An abstract class that may serve as an umbrella for any custom
     * comparators of complex numbers.
     */
-   public static abstract class AbstrComparator implements
-      Comparator < Complex > {
+   public static abstract class AbstrComparator
+      implements Comparator < Complex > {
 
       /**
        * The default constructor.

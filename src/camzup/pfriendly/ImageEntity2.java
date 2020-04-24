@@ -30,7 +30,8 @@ public class ImageEntity2 extends MeshEntity2 {
     */
    public ImageEntity2 ( final PImage texture ) {
 
-      this("ImageEntity2", texture, new Color(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, PConstants.CENTER, PConstants.CENTER);
+      this("ImageEntity2", texture, new Color(1.0f, 1.0f, 1.0f, 1.0f), 1.0f,
+         PConstants.CENTER, PConstants.CENTER);
    }
 
    /**
@@ -41,7 +42,8 @@ public class ImageEntity2 extends MeshEntity2 {
     */
    public ImageEntity2 ( final PImage texture, final Color tint ) {
 
-      this("ImageEntity2", texture, tint, 1.0f, PConstants.CENTER, PConstants.CENTER);
+      this("ImageEntity2", texture, tint, 1.0f, PConstants.CENTER,
+         PConstants.CENTER);
    }
 
    /**
@@ -50,11 +52,10 @@ public class ImageEntity2 extends MeshEntity2 {
     * @param name    the entity name
     * @param texture the image texture
     */
-   public ImageEntity2 (
-      final String name,
-      final PImage texture ) {
+   public ImageEntity2 ( final String name, final PImage texture ) {
 
-      this(name, texture, new Color(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, PConstants.CENTER, PConstants.CENTER);
+      this(name, texture, new Color(1.0f, 1.0f, 1.0f, 1.0f), 1.0f,
+         PConstants.CENTER, PConstants.CENTER);
    }
 
    /**
@@ -68,12 +69,8 @@ public class ImageEntity2 extends MeshEntity2 {
     * @param alignHoriz the horizontal alignment
     * @param alignVert  the vertical alignment
     */
-   public ImageEntity2 (
-      final String name,
-      final PImage texture,
-      final Color tint,
-      final float scale,
-      final int alignHoriz,
+   public ImageEntity2 ( final String name, final PImage texture,
+      final Color tint, final float scale, final int alignHoriz,
       final int alignVert ) {
 
       super(name);
@@ -83,8 +80,8 @@ public class ImageEntity2 extends MeshEntity2 {
       final float shortEdge = Utils.min(w, h);
       final float longEdge = Utils.max(w, h);
       final float aspectRatio = Utils.div(shortEdge, longEdge);
-      final Vec2 meshDim = new Vec2(shortEdge == w ? aspectRatio
-         : 1.0f, shortEdge == h ? aspectRatio : 1.0f);
+      final Vec2 meshDim = new Vec2(shortEdge == w ? aspectRatio : 1.0f,
+         shortEdge == h ? aspectRatio : 1.0f);
       final Vec2 meshOff = new Vec2();
 
       switch ( alignHoriz ) {

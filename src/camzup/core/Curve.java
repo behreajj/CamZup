@@ -52,9 +52,7 @@ public abstract class Curve extends EntityData implements ICurve {
     * @param name the name
     * @param cl   the loop
     */
-   protected Curve (
-      final String name,
-      final boolean cl ) {
+   protected Curve ( final String name, final boolean cl ) {
 
       super(name);
       this.closedLoop = cl;

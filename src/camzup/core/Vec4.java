@@ -8,8 +8,8 @@ import java.util.Iterator;
  * serve as a parent class for colors. Instance methods are limited, while
  * most static methods require an explicit output variable to be provided.
  */
-public class Vec4 implements Comparable < Vec4 >, Cloneable,
-   Iterable < Float > {
+public class Vec4
+   implements Comparable < Vec4 >, Cloneable, Iterable < Float > {
 
    /**
     * Component on the w axis. Commonly used to store 1.0 for points and 0.0
@@ -46,10 +46,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @param z the z component
     * @param w the w component
     */
-   public Vec4 (
-      final boolean x,
-      final boolean y,
-      final boolean z,
+   public Vec4 ( final boolean x, final boolean y, final boolean z,
       final boolean w ) {
 
       this.set(x, y, z, w);
@@ -63,11 +60,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @param z the z component
     * @param w the w component
     */
-   public Vec4 (
-      final float x,
-      final float y,
-      final float z,
-      final float w ) {
+   public Vec4 ( final float x, final float y, final float z, final float w ) {
 
       this.set(x, y, z, w);
    }
@@ -84,10 +77,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Float#parseFloat(String)
     */
-   public Vec4 (
-      final String xstr,
-      final String ystr,
-      final String zstr,
+   public Vec4 ( final String xstr, final String ystr, final String zstr,
       final String wstr ) {
 
       this.set(xstr, ystr, zstr, wstr);
@@ -219,10 +209,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
    @Override
    public int hashCode ( ) {
 
-      return ( ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(
-         this.x) ) * IUtils.HASH_MUL ^ Float.floatToIntBits(
-            this.y) ) * IUtils.HASH_MUL ^ Float.floatToIntBits(
-               this.z) ) * IUtils.HASH_MUL ^ Float.floatToIntBits(this.w);
+      return ( ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(this.x) )
+         * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y) ) * IUtils.HASH_MUL
+         ^ Float.floatToIntBits(this.z) ) * IUtils.HASH_MUL
+         ^ Float.floatToIntBits(this.w);
    }
 
    /**
@@ -263,10 +253,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @see Utils#toFloat(boolean)
     */
    @Chainable
-   public Vec4 set (
-      final boolean x,
-      final boolean y,
-      final boolean z,
+   public Vec4 set ( final boolean x, final boolean y, final boolean z,
       final boolean w ) {
 
       this.x = Utils.toFloat(x);
@@ -287,10 +274,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @return this vector
     */
    @Chainable
-   public Vec4 set (
-      final float x,
-      final float y,
-      final float z,
+   public Vec4 set ( final float x, final float y, final float z,
       final float w ) {
 
       this.x = x;
@@ -315,10 +299,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @see Float#parseFloat(String)
     */
    @Chainable
-   public Vec4 set (
-      final String xstr,
-      final String ystr,
-      final String zstr,
+   public Vec4 set ( final String xstr, final String ystr, final String zstr,
       final String wstr ) {
 
       float x = 0.0f;
@@ -492,11 +473,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     */
    protected boolean equals ( final Vec4 v ) {
 
-      return Float.floatToIntBits(this.w) == Float.floatToIntBits(
-         v.w) && Float.floatToIntBits(
-            this.z) == Float.floatToIntBits(v.z) && Float.floatToIntBits(
-               this.y) == Float.floatToIntBits(v.y) && Float.floatToIntBits(
-                  this.x) == Float.floatToIntBits(v.x);
+      return Float.floatToIntBits(this.w) == Float.floatToIntBits(v.w)
+         && Float.floatToIntBits(this.z) == Float.floatToIntBits(v.z)
+         && Float.floatToIntBits(this.y) == Float.floatToIntBits(v.y)
+         && Float.floatToIntBits(this.x) == Float.floatToIntBits(v.x);
    }
 
    /**
@@ -509,14 +489,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#abs(float)
     */
-   public static Vec4 abs (
-      final Vec4 v,
-      final Vec4 target ) {
+   public static Vec4 abs ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(
-         Utils.abs(v.x),
-         Utils.abs(v.y),
-         Utils.abs(v.z),
+      return target.set(Utils.abs(v.x), Utils.abs(v.y), Utils.abs(v.z),
          Utils.abs(v.w));
    }
 
@@ -529,16 +504,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the sum
     */
-   public static Vec4 add (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 add ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         a.x + b.x,
-         a.y + b.y,
-         a.z + b.z,
-         a.w + b.w);
+      return target.set(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
    }
 
    /**
@@ -565,16 +533,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#and(float, float)
     */
-   public static Vec4 and (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 and ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         Utils.and(a.x, b.x),
-         Utils.and(a.y, b.y),
-         Utils.and(a.z, b.z),
-         Utils.and(a.w, b.w));
+      return target.set(Utils.and(a.x, b.x), Utils.and(a.y, b.y),
+         Utils.and(a.z, b.z), Utils.and(a.w, b.w));
    }
 
    /**
@@ -597,9 +559,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the evaluation
     */
-   public static boolean approx (
-      final Vec4 a,
-      final Vec4 b ) {
+   public static boolean approx ( final Vec4 a, final Vec4 b ) {
 
       return Vec4.approx(a, b, IUtils.DEFAULT_EPSILON);
    }
@@ -615,9 +575,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#approx(float, float, float)
     */
-   public static boolean approx (
-      final Vec4 a,
-      final Vec4 b,
+   public static boolean approx ( final Vec4 a, final Vec4 b,
       final float tolerance ) {
 
       /* @formatter:off */
@@ -640,9 +598,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @see Utils#approx(float, float)
     * @see Vec4#dot(Vec4, Vec4)
     */
-   public static boolean approxMag (
-      final Vec4 a,
-      final float b ) {
+   public static boolean approxMag ( final Vec4 a, final float b ) {
 
       return Vec4.approxMag(a, b, IUtils.DEFAULT_EPSILON);
    }
@@ -659,9 +615,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @see Utils#approx(float, float, float)
     * @see Vec4#dot(Vec4, Vec4)
     */
-   public static boolean approxMag (
-      final Vec4 a,
-      final float b,
+   public static boolean approxMag ( final Vec4 a, final float b,
       final float tolerance ) {
 
       return Utils.approx(Vec4.magSq(a), b * b, tolerance);
@@ -690,14 +644,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#ceil(float)
     */
-   public static Vec4 ceil (
-      final Vec4 v,
-      final Vec4 target ) {
+   public static Vec4 ceil ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(
-         Utils.ceil(v.x),
-         Utils.ceil(v.y),
-         Utils.ceil(v.z),
+      return target.set(Utils.ceil(v.x), Utils.ceil(v.y), Utils.ceil(v.z),
          Utils.ceil(v.w));
    }
 
@@ -713,14 +662,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#clamp(float, float, float)
     */
-   public static Vec4 clamp (
-      final Vec4 v,
-      final Vec4 lowerBound,
-      final Vec4 upperBound,
-      final Vec4 target ) {
+   public static Vec4 clamp ( final Vec4 v, final Vec4 lowerBound,
+      final Vec4 upperBound, final Vec4 target ) {
 
-      return target.set(
-         Utils.clamp(v.x, lowerBound.x, upperBound.x),
+      return target.set(Utils.clamp(v.x, lowerBound.x, upperBound.x),
          Utils.clamp(v.y, lowerBound.y, upperBound.y),
          Utils.clamp(v.z, lowerBound.z, upperBound.z),
          Utils.clamp(v.w, lowerBound.w, upperBound.w));
@@ -736,15 +681,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#clamp01(float)
     */
-   public static Vec4 clamp01 (
-      final Vec4 v,
-      final Vec4 target ) {
+   public static Vec4 clamp01 ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(
-         Utils.clamp01(v.x),
-         Utils.clamp01(v.y),
-         Utils.clamp01(v.z),
-         Utils.clamp01(v.w));
+      return target.set(Utils.clamp01(v.x), Utils.clamp01(v.y),
+         Utils.clamp01(v.z), Utils.clamp01(v.w));
    }
 
    /**
@@ -756,13 +696,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the signed vector
     */
-   public static Vec4 copySign (
-      final Vec4 magnitude,
-      final Vec4 sign,
+   public static Vec4 copySign ( final Vec4 magnitude, final Vec4 sign,
       final Vec4 target ) {
 
-      return target.set(
-         Utils.copySign(magnitude.x, sign.x),
+      return target.set(Utils.copySign(magnitude.x, sign.x),
          Utils.copySign(magnitude.y, sign.y),
          Utils.copySign(magnitude.z, sign.z),
          Utils.copySign(magnitude.w, sign.w));
@@ -779,16 +716,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#diff(float, float)
     */
-   public static Vec4 diff (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 diff ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         Utils.diff(a.x, b.x),
-         Utils.diff(a.y, b.y),
-         Utils.diff(a.z, b.z),
-         Utils.diff(a.w, b.w));
+      return target.set(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y),
+         Utils.diff(a.z, b.z), Utils.diff(a.w, b.w));
    }
 
    /**
@@ -801,9 +732,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Vec4#distEuclidean(Vec4, Vec4)
     */
-   public static float dist (
-      final Vec4 a,
-      final Vec4 b ) {
+   public static float dist ( final Vec4 a, final Vec4 b ) {
 
       return Vec4.distEuclidean(a, b);
    }
@@ -820,15 +749,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @see Utils#max(float, float)
     * @see Utils#diff(float, float)
     */
-   public static float distChebyshev (
-      final Vec4 a,
-      final Vec4 b ) {
+   public static float distChebyshev ( final Vec4 a, final Vec4 b ) {
 
-      return Utils.max(
-         Utils.diff(a.x, b.x),
-         Utils.diff(a.y, b.y),
-         Utils.diff(a.z, b.z),
-         Utils.diff(a.w, b.w));
+      return Utils.max(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y),
+         Utils.diff(a.z, b.z), Utils.diff(a.w, b.w));
    }
 
    /**
@@ -842,9 +766,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Vec4#distSq(Vec4, Vec4)
     */
-   public static float distEuclidean (
-      final Vec4 a,
-      final Vec4 b ) {
+   public static float distEuclidean ( final Vec4 a, final Vec4 b ) {
 
       return Utils.sqrtUnchecked(Vec4.distSq(a, b));
    }
@@ -860,9 +782,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#diff(float, float)
     */
-   public static float distManhattan (
-      final Vec4 a,
-      final Vec4 b ) {
+   public static float distManhattan ( final Vec4 a, final Vec4 b ) {
 
       /* @formatter:off */
       return Utils.diff(a.x, b.x) +
@@ -889,9 +809,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @see Math#pow(double, double)
     * @see Utils#diff(float, float)
     */
-   public static float distMinkowski (
-      final Vec4 a,
-      final Vec4 b,
+   public static float distMinkowski ( final Vec4 a, final Vec4 b,
       final float c ) {
 
       if ( c == 0.0f ) { return 0.0f; }
@@ -916,9 +834,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the distance squared
     */
-   public static float distSq (
-      final Vec4 a,
-      final Vec4 b ) {
+   public static float distSq ( final Vec4 a, final Vec4 b ) {
 
       final float xDist = b.x - a.x;
       final float yDist = b.y - a.y;
@@ -938,15 +854,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#div(float, float)
     */
-   public static Vec4 div (
-      final float a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 div ( final float a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         Utils.div(a, b.x),
-         Utils.div(a, b.y),
-         Utils.div(a, b.z),
+      return target.set(Utils.div(a, b.x), Utils.div(a, b.y), Utils.div(a, b.z),
          Utils.div(a, b.w));
    }
 
@@ -959,19 +869,12 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the quotient
     */
-   public static Vec4 div (
-      final Vec4 a,
-      final float b,
-      final Vec4 target ) {
+   public static Vec4 div ( final Vec4 a, final float b, final Vec4 target ) {
 
       if ( b == 0.0f ) { return target.reset(); }
 
       final float denom = 1.0f / b;
-      return target.set(
-         a.x * denom,
-         a.y * denom,
-         a.z * denom,
-         a.w * denom);
+      return target.set(a.x * denom, a.y * denom, a.z * denom, a.w * denom);
    }
 
    /**
@@ -985,16 +888,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#div(float, float)
     */
-   public static Vec4 div (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 div ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         Utils.div(a.x, b.x),
-         Utils.div(a.y, b.y),
-         Utils.div(a.z, b.z),
-         Utils.div(a.w, b.w));
+      return target.set(Utils.div(a.x, b.x), Utils.div(a.y, b.y),
+         Utils.div(a.z, b.z), Utils.div(a.w, b.w));
    }
 
    /**
@@ -1012,9 +909,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the dot product
     */
-   public static float dot (
-      final Vec4 a,
-      final Vec4 b ) {
+   public static float dot ( final Vec4 a, final Vec4 b ) {
 
       return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
    }
@@ -1043,11 +938,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
    @Experimental
    public static Vec4 epsilon ( final Vec4 target ) {
 
-      return target.set(
-         IUtils.DEFAULT_EPSILON,
-         IUtils.DEFAULT_EPSILON,
-         IUtils.DEFAULT_EPSILON,
-         IUtils.DEFAULT_EPSILON);
+      return target.set(IUtils.DEFAULT_EPSILON, IUtils.DEFAULT_EPSILON,
+         IUtils.DEFAULT_EPSILON, IUtils.DEFAULT_EPSILON);
    }
 
    /**
@@ -1061,16 +953,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the filtered vector
     */
-   public static Vec4 filter (
-      final Vec4 v,
-      final Vec4 lb,
-      final Vec4 ub,
+   public static Vec4 filter ( final Vec4 v, final Vec4 lb, final Vec4 ub,
       final Vec4 target ) {
 
-      return target.set(
-         Utils.filter(v.x, lb.x, ub.x),
-         Utils.filter(v.y, lb.y, ub.y),
-         Utils.filter(v.z, lb.z, ub.z),
+      return target.set(Utils.filter(v.x, lb.x, ub.x),
+         Utils.filter(v.y, lb.y, ub.y), Utils.filter(v.z, lb.z, ub.z),
          Utils.filter(v.w, lb.w, ub.w));
    }
 
@@ -1084,14 +971,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#floor(float)
     */
-   public static Vec4 floor (
-      final Vec4 v,
-      final Vec4 target ) {
+   public static Vec4 floor ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(
-         Utils.floor(v.x),
-         Utils.floor(v.y),
-         Utils.floor(v.z),
+      return target.set(Utils.floor(v.x), Utils.floor(v.y), Utils.floor(v.z),
          Utils.floor(v.w));
    }
 
@@ -1106,16 +988,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#fmod(float, float)
     */
-   public static Vec4 fmod (
-      final float a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 fmod ( final float a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         Utils.fmod(a, b.x),
-         Utils.fmod(a, b.y),
-         Utils.fmod(a, b.z),
-         Utils.fmod(a, b.w));
+      return target.set(Utils.fmod(a, b.x), Utils.fmod(a, b.y),
+         Utils.fmod(a, b.z), Utils.fmod(a, b.w));
    }
 
    /**
@@ -1128,18 +1004,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the result
     */
-   public static Vec4 fmod (
-      final Vec4 a,
-      final float b,
-      final Vec4 target ) {
+   public static Vec4 fmod ( final Vec4 a, final float b, final Vec4 target ) {
 
       if ( b == 0.0f ) { return target.set(a); }
 
-      return target.set(
-         a.x % b,
-         a.y % b,
-         a.z % b,
-         a.w % b);
+      return target.set(a.x % b, a.y % b, a.z % b, a.w % b);
    }
 
    /**
@@ -1154,16 +1023,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#fmod(float, float)
     */
-   public static Vec4 fmod (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 fmod ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         Utils.fmod(a.x, b.x),
-         Utils.fmod(a.y, b.y),
-         Utils.fmod(a.z, b.z),
-         Utils.fmod(a.w, b.w));
+      return target.set(Utils.fmod(a.x, b.x), Utils.fmod(a.y, b.y),
+         Utils.fmod(a.z, b.z), Utils.fmod(a.w, b.w));
    }
 
    /**
@@ -1189,14 +1052,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#fract(float)
     */
-   public static Vec4 fract (
-      final Vec4 v,
-      final Vec4 target ) {
+   public static Vec4 fract ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(
-         Utils.fract(v.x),
-         Utils.fract(v.y),
-         Utils.fract(v.z),
+      return target.set(Utils.fract(v.x), Utils.fract(v.y), Utils.fract(v.z),
          Utils.fract(v.w));
    }
 
@@ -1211,16 +1069,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @return the evaluation
     */
    @Experimental
-   public static Vec4 gt (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 gt ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         a.x > b.x,
-         a.y > b.y,
-         a.z > b.z,
-         a.w > b.w);
+      return target.set(a.x > b.x, a.y > b.y, a.z > b.z, a.w > b.w);
    }
 
    /**
@@ -1234,16 +1085,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @return the evaluation
     */
    @Experimental
-   public static Vec4 gtEq (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 gtEq ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         a.x >= b.x,
-         a.y >= b.y,
-         a.z >= b.z,
-         a.w >= b.w);
+      return target.set(a.x >= b.x, a.y >= b.y, a.z >= b.z, a.w >= b.w);
    }
 
    /**
@@ -1285,18 +1129,13 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the limited vector
     */
-   public static Vec4 limit (
-      final Vec4 v,
-      final float limit,
+   public static Vec4 limit ( final Vec4 v, final float limit,
       final Vec4 target ) {
 
       final float mSq = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
       if ( limit > 0.0f && mSq > limit * limit ) {
          final float scalar = limit * Utils.invSqrtUnchecked(mSq);
-         return target.set(
-            v.x * scalar,
-            v.y * scalar,
-            v.z * scalar,
+         return target.set(v.x * scalar, v.y * scalar, v.z * scalar,
             v.w * scalar);
       }
 
@@ -1313,16 +1152,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the evaluation
     */
-   public static Vec4 lt (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 lt ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         a.x < b.x,
-         a.y < b.y,
-         a.z < b.z,
-         a.w < b.w);
+      return target.set(a.x < b.x, a.y < b.y, a.z < b.z, a.w < b.w);
    }
 
    /**
@@ -1335,16 +1167,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the evaluation
     */
-   public static Vec4 ltEq (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 ltEq ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         a.x <= b.x,
-         a.y <= b.y,
-         a.z <= b.z,
-         a.w <= b.w);
+      return target.set(a.x <= b.x, a.y <= b.y, a.z <= b.z, a.w <= b.w);
    }
 
    /**
@@ -1397,12 +1222,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#map(float, float, float, float, float)
     */
-   public static Vec4 map (
-      final Vec4 v,
-      final Vec4 lbOrigin,
-      final Vec4 ubOrigin,
-      final Vec4 lbDest,
-      final Vec4 ubDest,
+   public static Vec4 map ( final Vec4 v, final Vec4 lbOrigin,
+      final Vec4 ubOrigin, final Vec4 lbDest, final Vec4 ubDest,
       final Vec4 target ) {
 
       return target.set(
@@ -1422,16 +1243,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the maximum values
     */
-   public static Vec4 max (
-      final Vec4 a,
-      final float upperBound,
+   public static Vec4 max ( final Vec4 a, final float upperBound,
       final Vec4 target ) {
 
-      return target.set(
-         Utils.max(a.x, upperBound),
-         Utils.max(a.y, upperBound),
-         Utils.max(a.z, upperBound),
-         Utils.max(a.w, upperBound));
+      return target.set(Utils.max(a.x, upperBound), Utils.max(a.y, upperBound),
+         Utils.max(a.z, upperBound), Utils.max(a.w, upperBound));
    }
 
    /**
@@ -1446,15 +1262,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#max(float, float)
     */
-   public static Vec4 max (
-      final Vec4 a,
-      final Vec4 upperBound,
+   public static Vec4 max ( final Vec4 a, final Vec4 upperBound,
       final Vec4 target ) {
 
-      return target.set(
-         Utils.max(a.x, upperBound.x),
-         Utils.max(a.y, upperBound.y),
-         Utils.max(a.z, upperBound.z),
+      return target.set(Utils.max(a.x, upperBound.x),
+         Utils.max(a.y, upperBound.y), Utils.max(a.z, upperBound.z),
          Utils.max(a.w, upperBound.w));
    }
 
@@ -1468,16 +1280,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the minimum values
     */
-   public static Vec4 min (
-      final Vec4 a,
-      final float lowerBound,
+   public static Vec4 min ( final Vec4 a, final float lowerBound,
       final Vec4 target ) {
 
-      return target.set(
-         Utils.min(a.x, lowerBound),
-         Utils.min(a.y, lowerBound),
-         Utils.min(a.z, lowerBound),
-         Utils.min(a.w, lowerBound));
+      return target.set(Utils.min(a.x, lowerBound), Utils.min(a.y, lowerBound),
+         Utils.min(a.z, lowerBound), Utils.min(a.w, lowerBound));
    }
 
    /**
@@ -1492,15 +1299,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#min(float, float)
     */
-   public static Vec4 min (
-      final Vec4 a,
-      final Vec4 lowerBound,
+   public static Vec4 min ( final Vec4 a, final Vec4 lowerBound,
       final Vec4 target ) {
 
-      return target.set(
-         Utils.min(a.x, lowerBound.x),
-         Utils.min(a.y, lowerBound.y),
-         Utils.min(a.z, lowerBound.z),
+      return target.set(Utils.min(a.x, lowerBound.x),
+         Utils.min(a.y, lowerBound.y), Utils.min(a.z, lowerBound.z),
          Utils.min(a.w, lowerBound.w));
    }
 
@@ -1514,20 +1317,15 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the mix
     */
-   public static Vec4 mix (
-      final Vec4 origin,
-      final Vec4 dest,
-      final float step,
-      final Vec4 target ) {
+   public static Vec4 mix ( final Vec4 origin, final Vec4 dest,
+      final float step, final Vec4 target ) {
 
       if ( step <= 0.0f ) { return target.set(origin); }
       if ( step >= 1.0f ) { return target.set(dest); }
 
       final float u = 1.0f - step;
-      return target.set(
-         u * origin.x + step * dest.x,
-         u * origin.y + step * dest.y,
-         u * origin.z + step * dest.z,
+      return target.set(u * origin.x + step * dest.x,
+         u * origin.y + step * dest.y, u * origin.z + step * dest.z,
          u * origin.w + step * dest.w);
    }
 
@@ -1542,15 +1340,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#mod(float, float)
     */
-   public static Vec4 mod (
-      final float a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 mod ( final float a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         Utils.mod(a, b.x),
-         Utils.mod(a, b.y),
-         Utils.mod(a, b.z),
+      return target.set(Utils.mod(a, b.x), Utils.mod(a, b.y), Utils.mod(a, b.z),
          Utils.mod(a, b.w));
    }
 
@@ -1565,18 +1357,12 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#modUnchecked(float, float)
     */
-   public static Vec4 mod (
-      final Vec4 a,
-      final float b,
-      final Vec4 target ) {
+   public static Vec4 mod ( final Vec4 a, final float b, final Vec4 target ) {
 
       if ( b == 0.0f ) { return target.set(a); }
 
-      return target.set(
-         Utils.modUnchecked(a.x, b),
-         Utils.modUnchecked(a.y, b),
-         Utils.modUnchecked(a.z, b),
-         Utils.modUnchecked(a.w, b));
+      return target.set(Utils.modUnchecked(a.x, b), Utils.modUnchecked(a.y, b),
+         Utils.modUnchecked(a.z, b), Utils.modUnchecked(a.w, b));
    }
 
    /**
@@ -1590,16 +1376,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#mod(float, float)
     */
-   public static Vec4 mod (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 mod ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         Utils.mod(a.x, b.x),
-         Utils.mod(a.y, b.y),
-         Utils.mod(a.z, b.z),
-         Utils.mod(a.w, b.w));
+      return target.set(Utils.mod(a.x, b.x), Utils.mod(a.y, b.y),
+         Utils.mod(a.z, b.z), Utils.mod(a.w, b.w));
    }
 
    /**
@@ -1613,14 +1393,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#mod1(float)
     */
-   public static Vec4 mod1 (
-      final Vec4 v,
-      final Vec4 target ) {
+   public static Vec4 mod1 ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(
-         Utils.mod1(v.x),
-         Utils.mod1(v.y),
-         Utils.mod1(v.z),
+      return target.set(Utils.mod1(v.x), Utils.mod1(v.y), Utils.mod1(v.z),
          Utils.mod1(v.w));
    }
 
@@ -1633,16 +1408,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the product
     */
-   public static Vec4 mul (
-      final float a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 mul ( final float a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         a * b.x,
-         a * b.y,
-         a * b.z,
-         a * b.w);
+      return target.set(a * b.x, a * b.y, a * b.z, a * b.w);
    }
 
    /**
@@ -1654,16 +1422,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the product
     */
-   public static Vec4 mul (
-      final Vec4 a,
-      final float b,
-      final Vec4 target ) {
+   public static Vec4 mul ( final Vec4 a, final float b, final Vec4 target ) {
 
-      return target.set(
-         a.x * b,
-         a.y * b,
-         a.z * b,
-         a.w * b);
+      return target.set(a.x * b, a.y * b, a.z * b, a.w * b);
    }
 
    /**
@@ -1675,16 +1436,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the product
     */
-   public static Vec4 mul (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 mul ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         a.x * b.x,
-         a.y * b.y,
-         a.z * b.z,
-         a.w * b.w);
+      return target.set(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
    }
 
    /**
@@ -1695,9 +1449,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the negation
     */
-   public static Vec4 negate (
-      final Vec4 v,
-      final Vec4 target ) {
+   public static Vec4 negate ( final Vec4 v, final Vec4 target ) {
 
       return target.set(-v.x, -v.y, -v.z, -v.w);
    }
@@ -1739,17 +1491,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @see Vec4#div(Vec4, float, Vec4)
     * @see Vec4#mag(Vec4)
     */
-   public static Vec4 normalize (
-      final Vec4 v,
-      final Vec4 target ) {
+   public static Vec4 normalize ( final Vec4 v, final Vec4 target ) {
 
-      final float mInv = Utils.invSqrtUnchecked(
-         v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);
-      return target.set(
-         v.x * mInv,
-         v.y * mInv,
-         v.z * mInv,
-         v.w * mInv);
+      final float mInv = Utils
+         .invSqrtUnchecked(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);
+      return target.set(v.x * mInv, v.y * mInv, v.z * mInv, v.w * mInv);
    }
 
    /**
@@ -1760,15 +1506,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the truth table opposite
     */
-   public static Vec4 not (
-      final Vec4 v,
-      final Vec4 target ) {
+   public static Vec4 not ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(
-         v.x != 0.0f ? 0.0f : 1.0f,
-         v.y != 0.0f ? 0.0f : 1.0f,
-         v.z != 0.0f ? 0.0f : 1.0f,
-         v.w != 0.0f ? 0.0f : 1.0f);
+      return target.set(v.x != 0.0f ? 0.0f : 1.0f, v.y != 0.0f ? 0.0f : 1.0f,
+         v.z != 0.0f ? 0.0f : 1.0f, v.w != 0.0f ? 0.0f : 1.0f);
    }
 
    /**
@@ -1794,16 +1535,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#or(float, float)
     */
-   public static Vec4 or (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 or ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         Utils.or(a.x, b.x),
-         Utils.or(a.y, b.y),
-         Utils.or(a.z, b.z),
-         Utils.or(a.w, b.w));
+      return target.set(Utils.or(a.x, b.x), Utils.or(a.y, b.y),
+         Utils.or(a.z, b.z), Utils.or(a.w, b.w));
    }
 
    /**
@@ -1817,15 +1552,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#pow(float, float)
     */
-   public static Vec4 pow (
-      final float a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 pow ( final float a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         Utils.pow(a, b.x),
-         Utils.pow(a, b.y),
-         Utils.pow(a, b.z),
+      return target.set(Utils.pow(a, b.x), Utils.pow(a, b.y), Utils.pow(a, b.z),
          Utils.pow(a, b.w));
    }
 
@@ -1840,15 +1569,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#pow(float, float)
     */
-   public static Vec4 pow (
-      final Vec4 a,
-      final float b,
-      final Vec4 target ) {
+   public static Vec4 pow ( final Vec4 a, final float b, final Vec4 target ) {
 
-      return target.set(
-         Utils.pow(a.x, b),
-         Utils.pow(a.y, b),
-         Utils.pow(a.z, b),
+      return target.set(Utils.pow(a.x, b), Utils.pow(a.y, b), Utils.pow(a.z, b),
          Utils.pow(a.w, b));
    }
 
@@ -1863,16 +1586,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#pow(float, float)
     */
-   public static Vec4 pow (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 pow ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         Utils.pow(a.x, b.x),
-         Utils.pow(a.y, b.y),
-         Utils.pow(a.z, b.z),
-         Utils.pow(a.w, b.w));
+      return target.set(Utils.pow(a.x, b.x), Utils.pow(a.y, b.y),
+         Utils.pow(a.z, b.z), Utils.pow(a.w, b.w));
    }
 
    /**
@@ -1886,9 +1603,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Vec4#projectVector(Vec4, Vec4, Vec4)
     */
-   public static Vec4 project (
-      final Vec4 a,
-      final Vec4 b,
+   public static Vec4 project ( final Vec4 a, final Vec4 b,
       final Vec4 target ) {
 
       return Vec4.projectVector(a, b, target);
@@ -1905,9 +1620,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @see Vec4#magSq(Vec4)
     * @see Vec4#dot(Vec4, Vec4)
     */
-   public static float projectScalar (
-      final Vec4 a,
-      final Vec4 b ) {
+   public static float projectScalar ( final Vec4 a, final Vec4 b ) {
 
       final float bSq = Vec4.magSq(b);
       if ( bSq != 0.0f ) { return Vec4.dot(a, b) / bSq; }
@@ -1929,9 +1642,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @see Vec3#projectScalar(Vec3, Vec3)
     * @see Vec3#mul(Vec3, float, Vec3)
     */
-   public static Vec4 projectVector (
-      final Vec4 a,
-      final Vec4 b,
+   public static Vec4 projectVector ( final Vec4 a, final Vec4 b,
       final Vec4 target ) {
 
       return Vec4.mul(b, Vec4.projectScalar(a, b), target);
@@ -1949,16 +1660,13 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#floor(float)
     */
-   public static Vec4 quantize (
-      final Vec4 v,
-      final int levels,
+   public static Vec4 quantize ( final Vec4 v, final int levels,
       final Vec4 target ) {
 
       if ( levels < 2 ) { return target.set(v); }
 
       final float delta = 1.0f / levels;
-      return target.set(
-         delta * Utils.floor(0.5f + v.x * levels),
+      return target.set(delta * Utils.floor(0.5f + v.x * levels),
          delta * Utils.floor(0.5f + v.y * levels),
          delta * Utils.floor(0.5f + v.z * levels),
          delta * Utils.floor(0.5f + v.w * levels));
@@ -1972,9 +1680,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the vector
     */
-   public static Vec4 random (
-      final java.util.Random rng,
-      final Vec4 target ) {
+   public static Vec4 random ( final java.util.Random rng, final Vec4 target ) {
 
       return Vec4.randomSpherical(rng, 1.0f, 1.0f, target);
    }
@@ -1990,18 +1696,14 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the random vector
     */
-   public static Vec4 randomCartesian (
-      final java.util.Random rng,
-      final Vec4 lowerBound,
-      final Vec4 upperBound,
-      final Vec4 target ) {
+   public static Vec4 randomCartesian ( final java.util.Random rng,
+      final Vec4 lowerBound, final Vec4 upperBound, final Vec4 target ) {
 
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
       final float rw = rng.nextFloat();
-      return target.set(
-         ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
+      return target.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
          ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y,
          ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z,
          ( 1.0f - rw ) * lowerBound.w + rw * upperBound.w);
@@ -2020,11 +1722,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Quaternion#random(java.util.Random, Quaternion)
     */
-   public static Vec4 randomSpherical (
-      final java.util.Random rng,
-      final float rhoMin,
-      final float rhoMax,
-      final Vec4 target ) {
+   public static Vec4 randomSpherical ( final java.util.Random rng,
+      final float rhoMin, final float rhoMax, final Vec4 target ) {
 
       final float rr = rng.nextFloat();
       final float rho = ( 1.0f - rr ) * rhoMin + rr * rhoMax;
@@ -2033,11 +1732,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
       final float r1 = rng.nextFloat();
       final float x0 = rho * Utils.sqrt(1.0f - r1);
       final float x1 = rho * Utils.sqrt(r1);
-      return target.set(
-         x0 * Utils.sin(t0),
-         x0 * Utils.cos(t0),
-         x1 * Utils.sin(t1),
-         x1 * Utils.cos(t1));
+      return target.set(x0 * Utils.sin(t0), x0 * Utils.cos(t0),
+         x1 * Utils.sin(t1), x1 * Utils.cos(t1));
    }
 
    /**
@@ -2052,20 +1748,14 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Vec4#rescale(Vec4, float, Vec4, Vec4)
     */
-   public static Vec4 rescale (
-      final Vec4 v,
-      final float scalar,
+   public static Vec4 rescale ( final Vec4 v, final float scalar,
       final Vec4 target ) {
 
       final float mSq = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
       if ( scalar == 0.0f || mSq == 0.0f ) { return target.reset(); }
 
       final float sclMag = scalar * Utils.invSqrtUnchecked(mSq);
-      return target.set(
-         v.x * sclMag,
-         v.y * sclMag,
-         v.z * sclMag,
-         v.w * sclMag);
+      return target.set(v.x * sclMag, v.y * sclMag, v.z * sclMag, v.w * sclMag);
    }
 
    /**
@@ -2082,11 +1772,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @see Vec4#normalize(Vec4, Vec4)
     * @see Vec4#mul(Vec4, float, Vec4)
     */
-   public static Vec4 rescale (
-      final Vec4 v,
-      final float scalar,
-      final Vec4 target,
-      final Vec4 normalized ) {
+   public static Vec4 rescale ( final Vec4 v, final float scalar,
+      final Vec4 target, final Vec4 normalized ) {
 
       if ( scalar == 0.0f ) {
          normalized.reset();
@@ -2121,9 +1808,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Vec4#round(Vec4, Vec4)
     */
-   public static Vec4 round (
-      final Vec4 v,
-      final int places,
+   public static Vec4 round ( final Vec4 v, final int places,
       final Vec4 target ) {
 
       if ( places < 1 ) { return Vec4.round(v, target); }
@@ -2134,10 +1819,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
          n *= 10;
       }
       final float nInv = 1.0f / n;
-      return target.set(
-         Utils.round(v.x * n) * nInv,
-         Utils.round(v.y * n) * nInv,
-         Utils.round(v.z * n) * nInv,
+      return target.set(Utils.round(v.x * n) * nInv,
+         Utils.round(v.y * n) * nInv, Utils.round(v.z * n) * nInv,
          Utils.round(v.w * n) * nInv);
    }
 
@@ -2151,14 +1834,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#round(float)
     */
-   public static Vec4 round (
-      final Vec4 v,
-      final Vec4 target ) {
+   public static Vec4 round ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(
-         Utils.round(v.x),
-         Utils.round(v.y),
-         Utils.round(v.z),
+      return target.set(Utils.round(v.x), Utils.round(v.y), Utils.round(v.z),
          Utils.round(v.w));
    }
 
@@ -2172,14 +1850,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#sign(float)
     */
-   public static Vec4 sign (
-      final Vec4 v,
-      final Vec4 target ) {
+   public static Vec4 sign ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(
-         Utils.sign(v.x),
-         Utils.sign(v.y),
-         Utils.sign(v.z),
+      return target.set(Utils.sign(v.x), Utils.sign(v.y), Utils.sign(v.z),
          Utils.sign(v.w));
    }
 
@@ -2192,16 +1865,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the difference
     */
-   public static Vec4 sub (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 sub ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         a.x - b.x,
-         a.y - b.y,
-         a.z - b.z,
-         a.w - b.w);
+      return target.set(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
    }
 
    /**
@@ -2212,15 +1878,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @return the truncation
     */
-   public static Vec4 trunc (
-      final Vec4 v,
-      final Vec4 target ) {
+   public static Vec4 trunc ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(
-         ( int ) v.x,
-         ( int ) v.y,
-         ( int ) v.z,
-         ( int ) v.w);
+      return target.set(( int ) v.x, ( int ) v.y, ( int ) v.z, ( int ) v.w);
    }
 
    /**
@@ -2252,16 +1912,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * @see Utils#wrap(float, float, float)
     */
    @Experimental
-   public static Vec4 wrap (
-      final Vec4 v,
-      final Vec4 lb,
-      final Vec4 ub,
+   public static Vec4 wrap ( final Vec4 v, final Vec4 lb, final Vec4 ub,
       final Vec4 target ) {
 
-      return target.set(
-         Utils.wrap(v.x, lb.x, ub.x),
-         Utils.wrap(v.y, lb.y, ub.y),
-         Utils.wrap(v.z, lb.z, ub.z),
+      return target.set(Utils.wrap(v.x, lb.x, ub.x),
+         Utils.wrap(v.y, lb.y, ub.y), Utils.wrap(v.z, lb.z, ub.z),
          Utils.wrap(v.w, lb.w, ub.w));
    }
 
@@ -2277,16 +1932,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     *
     * @see Utils#xor(float, float)
     */
-   public static Vec4 xor (
-      final Vec4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 xor ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         Utils.xor(a.x, b.x),
-         Utils.xor(a.y, b.y),
-         Utils.xor(a.z, b.z),
-         Utils.xor(a.w, b.w));
+      return target.set(Utils.xor(a.x, b.x), Utils.xor(a.y, b.y),
+         Utils.xor(a.z, b.z), Utils.xor(a.w, b.w));
    }
 
    /**
@@ -2305,8 +1954,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
     * An abstract class that may serve as an umbrella for any custom
     * comparators of Vec4 s.
     */
-   public static abstract class AbstrComparator
-      implements Comparator < Vec4 > {
+   public static abstract class AbstrComparator implements Comparator < Vec4 > {
 
       /**
        * The default constructor.
@@ -2362,10 +2010,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
        * @return the eased vector
        */
       @Override
-      public Vec4 apply (
-         final Vec4 origin,
-         final Vec4 dest,
-         final Float step,
+      public Vec4 apply ( final Vec4 origin, final Vec4 dest, final Float step,
          final Vec4 target ) {
 
          if ( step <= 0.0f ) { return target.set(origin); }
@@ -2383,11 +2028,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
        *
        * @return the eased vector
        */
-      public abstract Vec4 applyUnclamped (
-         final Vec4 origin,
-         final Vec4 dest,
-         final float step,
-         Vec4 target );
+      public abstract Vec4 applyUnclamped ( final Vec4 origin, final Vec4 dest,
+         final float step, Vec4 target );
 
       /**
        * Returns the simple name of this class.
@@ -2421,16 +2063,12 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable,
        * @return the result
        */
       @Override
-      public Vec4 applyUnclamped (
-         final Vec4 origin,
-         final Vec4 dest,
-         final float step,
-         final Vec4 target ) {
+      public Vec4 applyUnclamped ( final Vec4 origin, final Vec4 dest,
+         final float step, final Vec4 target ) {
 
          final double td = step;
          final double ud = 1.0d - td;
-         return target.set(
-            ( float ) ( ud * origin.x + td * dest.x ),
+         return target.set(( float ) ( ud * origin.x + td * dest.x ),
             ( float ) ( ud * origin.y + td * dest.y ),
             ( float ) ( ud * origin.z + td * dest.z ),
             ( float ) ( ud * origin.w + td * dest.w ));

@@ -69,9 +69,8 @@ public class Mat3 extends Matrix {
     * @param m10 row 1, column 0
     * @param m11 row 1, column 1
     */
-   public Mat3 (
-      final float m00, final float m01,
-      final float m10, final float m11 ) {
+   public Mat3 ( final float m00, final float m01, final float m10,
+      final float m11 ) {
 
       super(9);
       this.set(m00, m01, m10, m11);
@@ -87,8 +86,7 @@ public class Mat3 extends Matrix {
     * @param m11 row 1, column 1
     * @param m12 row 1, column 2
     */
-   public Mat3 (
-      final float m00, final float m01, final float m02,
+   public Mat3 ( final float m00, final float m01, final float m02,
       final float m10, final float m11, final float m12 ) {
 
       super(9);
@@ -108,10 +106,9 @@ public class Mat3 extends Matrix {
     * @param m21 row 2, column 1
     * @param m22 row 2, column 2
     */
-   public Mat3 (
-      final float m00, final float m01, final float m02,
-      final float m10, final float m11, final float m12,
-      final float m20, final float m21, final float m22 ) {
+   public Mat3 ( final float m00, final float m01, final float m02,
+      final float m10, final float m11, final float m12, final float m20,
+      final float m21, final float m22 ) {
 
       super(9);
       this.set(m00, m01, m02, m10, m11, m12, m20, m21, m22);
@@ -241,9 +238,7 @@ public class Mat3 extends Matrix {
     * @return the component at that index
     */
    @Override
-   public float get (
-      final int i,
-      final int j ) {
+   public float get ( final int i, final int j ) {
 
       switch ( i ) {
          case 0:
@@ -420,10 +415,7 @@ public class Mat3 extends Matrix {
    @Chainable
    public Mat3 reset ( ) {
 
-      return this.set(
-         1.0f, 0.0f, 0.0f,
-         0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 1.0f);
+      return this.set(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -438,14 +430,10 @@ public class Mat3 extends Matrix {
     * @return this matrix
     */
    @Chainable
-   public Mat3 set (
-      final float m00, final float m01,
-      final float m10, final float m11 ) {
+   public Mat3 set ( final float m00, final float m01, final float m10,
+      final float m11 ) {
 
-      return this.set(
-         m00, m01, 0.0f,
-         m10, m11, 0.0f,
-         0.0f, 0.0f, 1.0f);
+      return this.set(m00, m01, 0.0f, m10, m11, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -462,14 +450,10 @@ public class Mat3 extends Matrix {
     * @return this matrix
     */
    @Chainable
-   public Mat3 set (
-      final float m00, final float m01, final float m02,
+   public Mat3 set ( final float m00, final float m01, final float m02,
       final float m10, final float m11, final float m12 ) {
 
-      return this.set(
-         m00, m01, m02,
-         m10, m11, m12,
-         0.0f, 0.0f, 1.0f);
+      return this.set(m00, m01, m02, m10, m11, m12, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -488,10 +472,9 @@ public class Mat3 extends Matrix {
     * @return this matrix
     */
    @Chainable
-   public Mat3 set (
-      final float m00, final float m01, final float m02,
-      final float m10, final float m11, final float m12,
-      final float m20, final float m21, final float m22 ) {
+   public Mat3 set ( final float m00, final float m01, final float m02,
+      final float m10, final float m11, final float m12, final float m20,
+      final float m21, final float m22 ) {
 
       /* @formatter:off */
       this.m00 = m00; this.m10 = m10; this.m20 = m20;
@@ -512,10 +495,8 @@ public class Mat3 extends Matrix {
    @Chainable
    public Mat3 set ( final Mat3 source ) {
 
-      return this.set(
-         source.m00, source.m01, source.m02,
-         source.m10, source.m11, source.m12,
-         source.m20, source.m21, source.m22);
+      return this.set(source.m00, source.m01, source.m02, source.m10,
+         source.m11, source.m12, source.m20, source.m21, source.m22);
    }
 
    /**
@@ -528,9 +509,7 @@ public class Mat3 extends Matrix {
     *
     * @return this matrix
     */
-   public Mat3 setCol (
-      final int j,
-      final Vec2 source ) {
+   public Mat3 setCol ( final int j, final Vec2 source ) {
 
       switch ( j ) {
          case 0:
@@ -580,9 +559,7 @@ public class Mat3 extends Matrix {
     *
     * @return this matrix
     */
-   public Mat3 setCol (
-      final int j,
-      final Vec3 source ) {
+   public Mat3 setCol ( final int j, final Vec3 source ) {
 
       switch ( j ) {
          case 0:
@@ -701,10 +678,8 @@ public class Mat3 extends Matrix {
    @Override
    public float[] toArray ( ) {
 
-      return new float[] {
-         this.m00, this.m01, this.m02,
-         this.m10, this.m11, this.m12,
-         this.m20, this.m21, this.m22 };
+      return new float[] { this.m00, this.m01, this.m02, this.m10, this.m11,
+         this.m12, this.m20, this.m21, this.m22 };
    }
 
    /**
@@ -835,15 +810,11 @@ public class Mat3 extends Matrix {
     *
     * @return the sum
     */
-   public static Mat3 add (
-      final Mat3 a,
-      final Mat3 b,
-      final Mat3 target ) {
+   public static Mat3 add ( final Mat3 a, final Mat3 b, final Mat3 target ) {
 
-      return target.set(
-         a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02,
-         a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12,
-         a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22);
+      return target.set(a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02,
+         a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12, a.m20 + b.m20,
+         a.m21 + b.m21, a.m22 + b.m22);
    }
 
    /**
@@ -857,9 +828,7 @@ public class Mat3 extends Matrix {
     *
     * @return the rotation
     */
-   public static float decompose (
-      final Mat3 m,
-      final Vec2 trans,
+   public static float decompose ( final Mat3 m, final Vec2 trans,
       final Vec2 scale ) {
 
       final float xMag = Utils.hypot(m.m00, m.m10);
@@ -901,10 +870,7 @@ public class Mat3 extends Matrix {
     * @see Mat3#mul(Mat3, Mat3, Mat3)
     * @see Mat3#inverse
     */
-   public static Mat3 div (
-      final Mat3 a,
-      final Mat3 b,
-      final Mat3 target,
+   public static Mat3 div ( final Mat3 a, final Mat3 b, final Mat3 target,
       final Mat3 inverse ) {
 
       return Mat3.mul(a, Mat3.inverse(b, inverse), target);
@@ -920,14 +886,10 @@ public class Mat3 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat3 fromAxes (
-      final Vec2 right,
-      final Vec2 forward,
+   public static Mat3 fromAxes ( final Vec2 right, final Vec2 forward,
       final Mat3 target ) {
 
-      return target.set(
-         right.x, forward.x, 0.0f,
-         right.y, forward.y, 0.0f,
+      return target.set(right.x, forward.x, 0.0f, right.y, forward.y, 0.0f,
          0.0f, 0.0f, 1.0f);
    }
 
@@ -942,16 +904,11 @@ public class Mat3 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat3 fromAxes (
-      final Vec2 right,
-      final Vec2 forward,
-      final Vec2 translation,
-      final Mat3 target ) {
+   public static Mat3 fromAxes ( final Vec2 right, final Vec2 forward,
+      final Vec2 translation, final Mat3 target ) {
 
-      return target.set(
-         right.x, forward.x, translation.x,
-         right.y, forward.y, translation.y,
-         0.0f, 0.0f, 1.0f);
+      return target.set(right.x, forward.x, translation.x, right.y, forward.y,
+         translation.y, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -964,14 +921,10 @@ public class Mat3 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat3 fromAxes (
-      final Vec3 right,
-      final Vec3 forward,
+   public static Mat3 fromAxes ( final Vec3 right, final Vec3 forward,
       final Mat3 target ) {
 
-      return target.set(
-         right.x, forward.x, 0.0f,
-         right.y, forward.y, 0.0f,
+      return target.set(right.x, forward.x, 0.0f, right.y, forward.y, 0.0f,
          right.z, forward.z, 1.0f);
    }
 
@@ -985,16 +938,11 @@ public class Mat3 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat3 fromAxes (
-      final Vec3 right,
-      final Vec3 forward,
-      final Vec3 translation,
-      final Mat3 target ) {
+   public static Mat3 fromAxes ( final Vec3 right, final Vec3 forward,
+      final Vec3 translation, final Mat3 target ) {
 
-      return target.set(
-         right.x, forward.x, translation.x,
-         right.y, forward.y, translation.y,
-         right.z, forward.z, translation.z);
+      return target.set(right.x, forward.x, translation.x, right.y, forward.y,
+         translation.y, right.z, forward.z, translation.z);
    }
 
    /**
@@ -1006,15 +954,10 @@ public class Mat3 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat3 fromRotZ (
-      final float cosa,
-      final float sina,
+   public static Mat3 fromRotZ ( final float cosa, final float sina,
       final Mat3 target ) {
 
-      return target.set(
-         cosa, -sina, 0.0f,
-         sina, cosa, 0.0f,
-         0.0f, 0.0f, 1.0f);
+      return target.set(cosa, -sina, 0.0f, sina, cosa, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1025,9 +968,7 @@ public class Mat3 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat3 fromRotZ (
-      final float radians,
-      final Mat3 target ) {
+   public static Mat3 fromRotZ ( final float radians, final Mat3 target ) {
 
       // return Mat3.fromRotZ(
       // Utils.cos(radians),
@@ -1035,9 +976,7 @@ public class Mat3 extends Matrix {
       // target);
 
       final float norm = radians * IUtils.ONE_TAU;
-      return Mat3.fromRotZ(
-         Utils.scNorm(norm),
-         Utils.scNorm(norm - 0.25f),
+      return Mat3.fromRotZ(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
          target);
    }
 
@@ -1050,15 +989,11 @@ public class Mat3 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat3 fromScale (
-      final float scalar,
-      final Mat3 target ) {
+   public static Mat3 fromScale ( final float scalar, final Mat3 target ) {
 
       if ( scalar != 0.0f ) {
-         return target.set(
-            scalar, 0.0f, 0.0f,
-            0.0f, scalar, 0.0f,
-            0.0f, 0.0f, 1.0f);
+         return target.set(scalar, 0.0f, 0.0f, 0.0f, scalar, 0.0f, 0.0f, 0.0f,
+            1.0f);
       }
       return target.reset();
    }
@@ -1071,9 +1006,7 @@ public class Mat3 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat3 fromScale (
-      final Vec2 scalar,
-      final Mat3 target ) {
+   public static Mat3 fromScale ( final Vec2 scalar, final Mat3 target ) {
 
       return Mat3.fromScale(scalar.x, scalar.y, target);
    }
@@ -1086,9 +1019,7 @@ public class Mat3 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat3 fromTranslation (
-      final Vec2 tr,
-      final Mat3 target ) {
+   public static Mat3 fromTranslation ( final Vec2 tr, final Mat3 target ) {
 
       return Mat3.fromTranslation(tr.x, tr.y, target);
    }
@@ -1108,10 +1039,7 @@ public class Mat3 extends Matrix {
     */
    public static Mat3 identity ( final Mat3 target ) {
 
-      return target.set(
-         1.0f, 0.0f, 0.0f,
-         0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 1.0f);
+      return target.set(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1132,14 +1060,11 @@ public class Mat3 extends Matrix {
 
       if ( det != 0.0f ) {
          final float detInv = 1.0f / det;
-         return target.set(
-            b01 * detInv,
+         return target.set(b01 * detInv,
             ( m.m02 * m.m21 - m.m22 * m.m01 ) * detInv,
-            ( m.m12 * m.m01 - m.m02 * m.m11 ) * detInv,
-            b11 * detInv,
+            ( m.m12 * m.m01 - m.m02 * m.m11 ) * detInv, b11 * detInv,
             ( m.m22 * m.m00 - m.m02 * m.m20 ) * detInv,
-            ( m.m02 * m.m10 - m.m12 * m.m00 ) * detInv,
-            b21 * detInv,
+            ( m.m02 * m.m10 - m.m12 * m.m00 ) * detInv, b21 * detInv,
             ( m.m01 * m.m20 - m.m21 * m.m00 ) * detInv,
             ( m.m11 * m.m00 - m.m01 * m.m10 ) * detInv);
       }
@@ -1172,15 +1097,10 @@ public class Mat3 extends Matrix {
     *
     * @return the product
     */
-   public static Mat3 mul (
-      final float a,
-      final Mat3 b,
-      final Mat3 target ) {
+   public static Mat3 mul ( final float a, final Mat3 b, final Mat3 target ) {
 
-      return target.set(
-         a * b.m00, a * b.m01, a * b.m02,
-         a * b.m10, a * b.m11, a * b.m12,
-         a * b.m20, a * b.m21, a * b.m22);
+      return target.set(a * b.m00, a * b.m01, a * b.m02, a * b.m10, a * b.m11,
+         a * b.m12, a * b.m20, a * b.m21, a * b.m22);
    }
 
    /**
@@ -1193,15 +1113,10 @@ public class Mat3 extends Matrix {
     *
     * @return the product
     */
-   public static Mat3 mul (
-      final Mat3 a,
-      final float b,
-      final Mat3 target ) {
+   public static Mat3 mul ( final Mat3 a, final float b, final Mat3 target ) {
 
-      return target.set(
-         a.m00 * b, a.m01 * b, a.m02 * b,
-         a.m10 * b, a.m11 * b, a.m12 * b,
-         a.m20 * b, a.m21 * b, a.m22 * b);
+      return target.set(a.m00 * b, a.m01 * b, a.m02 * b, a.m10 * b, a.m11 * b,
+         a.m12 * b, a.m20 * b, a.m21 * b, a.m22 * b);
    }
 
    /**
@@ -1213,13 +1128,9 @@ public class Mat3 extends Matrix {
     *
     * @return the product
     */
-   public static Mat3 mul (
-      final Mat3 a,
-      final Mat3 b,
-      final Mat3 target ) {
+   public static Mat3 mul ( final Mat3 a, final Mat3 b, final Mat3 target ) {
 
-      return target.set(
-         a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20,
+      return target.set(a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20,
          a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21,
          a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22,
 
@@ -1243,10 +1154,7 @@ public class Mat3 extends Matrix {
     *
     * @return the product
     */
-   public static Mat3 mul (
-      final Mat3 a,
-      final Mat3 b,
-      final Mat3 c,
+   public static Mat3 mul ( final Mat3 a, final Mat3 b, final Mat3 c,
       final Mat3 target ) {
 
       final float n00 = a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20;
@@ -1261,8 +1169,7 @@ public class Mat3 extends Matrix {
       final float n21 = a.m20 * b.m01 + a.m21 * b.m11 + a.m22 * b.m21;
       final float n22 = a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22;
 
-      return target.set(
-         n00 * c.m00 + n01 * c.m10 + n02 * c.m20,
+      return target.set(n00 * c.m00 + n01 * c.m10 + n02 * c.m20,
          n00 * c.m01 + n01 * c.m11 + n02 * c.m21,
          n00 * c.m02 + n01 * c.m12 + n02 * c.m22,
 
@@ -1284,13 +1191,9 @@ public class Mat3 extends Matrix {
     *
     * @return the product
     */
-   public static Vec3 mul (
-      final Mat3 a,
-      final Vec3 b,
-      final Vec3 target ) {
+   public static Vec3 mul ( final Mat3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(
-         a.m00 * b.x + a.m01 * b.y + a.m02 * b.z,
+      return target.set(a.m00 * b.x + a.m01 * b.y + a.m02 * b.z,
          a.m10 * b.x + a.m11 * b.y + a.m12 * b.z,
          a.m20 * b.x + a.m21 * b.y + a.m22 * b.z);
    }
@@ -1306,9 +1209,7 @@ public class Mat3 extends Matrix {
     * @return the product
     */
    @Experimental
-   public static Vec2 mulPoint (
-      final Mat3 a,
-      final Vec2 b,
+   public static Vec2 mulPoint ( final Mat3 a, final Vec2 b,
       final Vec2 target ) {
 
       // TEST
@@ -1321,8 +1222,7 @@ public class Mat3 extends Matrix {
       if ( w == 0.0f ) { return target.reset(); }
       final float wInv = 1.0f / w;
 
-      return target.set(
-         ( a.m00 * b.x + a.m01 * b.y + a.m02 ) * wInv,
+      return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m02 ) * wInv,
          ( a.m10 * b.x + a.m11 * b.y + a.m12 ) * wInv);
    }
 
@@ -1338,9 +1238,7 @@ public class Mat3 extends Matrix {
     * @return the product
     */
    @Experimental
-   public static Vec2 mulVector (
-      final Mat3 a,
-      final Vec2 b,
+   public static Vec2 mulVector ( final Mat3 a, final Vec2 b,
       final Vec2 target ) {
 
       // TEST
@@ -1353,8 +1251,7 @@ public class Mat3 extends Matrix {
       if ( w == 0.0f ) { return target.reset(); }
       final float wInv = 1.0f / w;
 
-      return target.set(
-         ( a.m00 * b.x + a.m01 * b.y ) * wInv,
+      return target.set( ( a.m00 * b.x + a.m01 * b.y ) * wInv,
          ( a.m10 * b.x + a.m11 * b.y ) * wInv);
    }
 
@@ -1367,15 +1264,11 @@ public class Mat3 extends Matrix {
     *
     * @return the result
     */
-   public static Mat3 sub (
-      final Mat3 a,
-      final Mat3 b,
-      final Mat3 target ) {
+   public static Mat3 sub ( final Mat3 a, final Mat3 b, final Mat3 target ) {
 
-      return target.set(
-         a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02,
-         a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12,
-         a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22);
+      return target.set(a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02,
+         a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12, a.m20 - b.m20,
+         a.m21 - b.m21, a.m22 - b.m22);
    }
 
    /**
@@ -1386,14 +1279,10 @@ public class Mat3 extends Matrix {
     *
     * @return the transposed matrix
     */
-   public static Mat3 transpose (
-      final Mat3 m,
-      final Mat3 target ) {
+   public static Mat3 transpose ( final Mat3 m, final Mat3 target ) {
 
-      return target.set(
-         m.m00, m.m10, m.m20,
-         m.m01, m.m11, m.m21,
-         m.m02, m.m12, m.m22);
+      return target.set(m.m00, m.m10, m.m20, m.m01, m.m11, m.m21, m.m02, m.m12,
+         m.m22);
    }
 
    /**
@@ -1408,16 +1297,10 @@ public class Mat3 extends Matrix {
     *
     * @return the matrix
     */
-   static Mat3 fromScale (
-      final float sx,
-      final float sy,
-      final Mat3 target ) {
+   static Mat3 fromScale ( final float sx, final float sy, final Mat3 target ) {
 
       if ( sx != 0.0f && sy != 0.0f ) {
-         return target.set(
-            sx, 0.0f, 0.0f,
-            0.0f, sy, 0.0f,
-            0.0f, 0.0f, 1.0f);
+         return target.set(sx, 0.0f, 0.0f, 0.0f, sy, 0.0f, 0.0f, 0.0f, 1.0f);
       }
       return target.reset();
    }
@@ -1433,14 +1316,10 @@ public class Mat3 extends Matrix {
     *
     * @return the skew matrix
     */
-   static Mat3 fromSkewX (
-      final float radians,
-      final Mat3 target ) {
+   static Mat3 fromSkewX ( final float radians, final Mat3 target ) {
 
-      return target.set(
-         1.0f, Utils.tan(radians), 0.0f,
-         0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 1.0f);
+      return target.set(1.0f, Utils.tan(radians), 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.0f, 1.0f);
    }
 
    /**
@@ -1454,14 +1333,10 @@ public class Mat3 extends Matrix {
     *
     * @return the skew matrix
     */
-   static Mat3 fromSkewY (
-      final float radians,
-      final Mat3 target ) {
+   static Mat3 fromSkewY ( final float radians, final Mat3 target ) {
 
-      return target.set(
-         1.0f, 0.0f, 0.0f,
-         Utils.tan(radians), 1.0f, 0.0f,
-         0.0f, 0.0f, 1.0f);
+      return target.set(1.0f, 0.0f, 0.0f, Utils.tan(radians), 1.0f, 0.0f, 0.0f,
+         0.0f, 1.0f);
    }
 
    /**
@@ -1476,15 +1351,10 @@ public class Mat3 extends Matrix {
     *
     * @return the matrix
     */
-   static Mat3 fromTranslation (
-      final float tx,
-      final float ty,
+   static Mat3 fromTranslation ( final float tx, final float ty,
       final Mat3 target ) {
 
-      return target.set(
-         1.0f, 0.0f, tx,
-         0.0f, 1.0f, ty,
-         0.0f, 0.0f, 1.0f);
+      return target.set(1.0f, 0.0f, tx, 0.0f, 1.0f, ty, 0.0f, 0.0f, 1.0f);
    }
 
    /**

@@ -29,6 +29,7 @@ import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
 
+import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 
 /**
@@ -122,12 +123,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param path      applet path
     * @param isPrimary is the renderer primary
     */
-   public UpOgl (
-      final int width,
-      final int height,
-      final PApplet parent,
-      final String path,
-      final boolean isPrimary ) {
+   public UpOgl ( final int width, final int height, final PApplet parent,
+      final String path, final boolean isPrimary ) {
 
       this.setParent(parent);
       this.setPrimary(isPrimary);
@@ -142,11 +139,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void applyMatrix ( final Mat3 source ) {
 
-      this.applyMatrixImpl(
-         source.m00, source.m01, 0.0f, source.m02,
-         source.m10, source.m11, 0.0f, source.m12,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         source.m20, source.m21, 0.0f, source.m22);
+      this.applyMatrixImpl(source.m00, source.m01, 0.0f, source.m02, source.m10,
+         source.m11, 0.0f, source.m12, 0.0f, 0.0f, 1.0f, 0.0f, source.m20,
+         source.m21, 0.0f, source.m22);
    }
 
    /**
@@ -156,11 +151,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void applyMatrix ( final Mat4 source ) {
 
-      this.applyMatrixImpl(
-         source.m00, source.m01, source.m02, source.m03,
-         source.m10, source.m11, source.m12, source.m13,
-         source.m20, source.m21, source.m22, source.m23,
-         source.m30, source.m31, source.m32, source.m33);
+      this.applyMatrixImpl(source.m00, source.m01, source.m02, source.m03,
+         source.m10, source.m11, source.m12, source.m13, source.m20, source.m21,
+         source.m22, source.m23, source.m30, source.m31, source.m32,
+         source.m33);
    }
 
    /**
@@ -170,11 +164,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void applyProjection ( final Mat4 m ) {
 
-      this.applyProjection(
-         m.m00, m.m01, m.m02, m.m03,
-         m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23,
-         m.m30, m.m31, m.m32, m.m33);
+      this.applyProjection(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
+         m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -191,14 +182,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param mode  the arc mode
     */
    @Override
-   public void arc (
-      final float x0,
-      final float y0,
-      final float x1,
-      final float y1,
-      final float start,
-      final float stop,
-      final int mode ) {
+   public void arc ( final float x0, final float y0, final float x1,
+      final float y1, final float start, final float stop, final int mode ) {
 
       float x = x0;
       float y = y0;
@@ -285,23 +270,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param ap1y the second anchor point y
     */
    @Override
-   public void bezier (
-      final float ap0x,
-      final float ap0y,
-      final float cp0x,
-      final float cp0y,
-      final float cp1x,
-      final float cp1y,
-      final float ap1x,
+   public void bezier ( final float ap0x, final float ap0y, final float cp0x,
+      final float cp0y, final float cp1x, final float cp1y, final float ap1x,
       final float ap1y ) {
 
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
       this.vertexImpl(ap0x, ap0y, 0.0f, this.textureU, this.textureV);
-      this.bezierVertexImpl(
-         cp0x, cp0y, 0.0f,
-         cp1x, cp1y, 0.0f,
-         ap1x, ap1y, 0.0f);
+      this.bezierVertexImpl(cp0x, cp0y, 0.0f, cp1x, cp1y, 0.0f, ap1x, ap1y,
+         0.0f);
       this.endShape(PConstants.OPEN);
    }
 
@@ -322,18 +299,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param ap1z the second anchor point z
     */
    @Override
-   public void bezier (
-      final float ap0x,
-      final float ap0y,
-      final float ap0z,
-      final float cp0x,
-      final float cp0y,
-      final float cp0z,
-      final float cp1x,
-      final float cp1y,
-      final float cp1z,
-      final float ap1x,
-      final float ap1y,
+   public void bezier ( final float ap0x, final float ap0y, final float ap0z,
+      final float cp0x, final float cp0y, final float cp0z, final float cp1x,
+      final float cp1y, final float cp1z, final float ap1x, final float ap1y,
       final float ap1z ) {
 
       this.beginShape(PConstants.POLYGON);
@@ -358,12 +326,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param t   the step
     */
    @Override
-   public float bezierPoint (
-      final float ap0,
-      final float cp0,
-      final float cp1,
-      final float ap1,
-      final float t ) {
+   public float bezierPoint ( final float ap0, final float cp0, final float cp1,
+      final float ap1, final float t ) {
 
       /* @formatter:off */
       final float u = 1.0f - t;
@@ -384,12 +348,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @return the tangent
     */
    @Override
-   public float bezierTangent (
-      final float ap0,
-      final float cp0,
-      final float cp1,
-      final float ap1,
-      final float t ) {
+   public float bezierTangent ( final float ap0, final float cp0,
+      final float cp1, final float ap1, final float t ) {
 
       final float t3 = t + t + t;
       final float b2 = cp0 + cp0;
@@ -418,10 +378,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param d the depth
     */
    @Override
-   public void box (
-      final float w,
-      final float h,
-      final float d ) {
+   public void box ( final float w, final float h, final float d ) {
 
       PApplet.showMethodWarning("box");
    }
@@ -466,12 +423,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *
     * @see UpOgl#colorPreCalc(float, float, float, float)
     */
-   public void colorCalc (
-      final float x,
-      final float y,
-      final float z,
-      final float a,
-      final boolean premul ) {
+   public void colorCalc ( final float x, final float y, final float z,
+      final float a, final boolean premul ) {
 
       if ( premul ) {
          if ( a <= 0.0f ) {
@@ -527,18 +480,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param aMax the alpha channel maximum
     */
    @Override
-   public void colorMode (
-      final int mode,
-      final float max1,
-      final float max2,
-      final float max3,
-      final float aMax ) {
+   public void colorMode ( final int mode, final float max1, final float max2,
+      final float max3, final float aMax ) {
 
-      super.colorMode(
-         mode,
-         max1 < 1.0f ? 1.0f : max1,
-         max2 < 1.0f ? 1.0f : max2,
-         max3 < 1.0f ? 1.0f : max3,
+      super.colorMode(mode, max1 < 1.0f ? 1.0f : max1,
+         max2 < 1.0f ? 1.0f : max2, max3 < 1.0f ? 1.0f : max3,
          aMax < 1.0f ? 1.0f : aMax);
 
       this.invColorModeX = 1.0f / this.colorModeX;
@@ -557,10 +503,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param z the third color channel, brightness or blue
     * @param a the alpha channel
     */
-   public void colorPreCalc (
-      final float x,
-      final float y,
-      final float z,
+   public void colorPreCalc ( final float x, final float y, final float z,
       final float a ) {
 
       this.calcA = Utils.clamp01(a * this.invColorModeA);
@@ -607,14 +550,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param y4 control point 1 y
     */
    @Override
-   public void curve (
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2,
-      final float x3,
-      final float y3,
-      final float x4,
+   public void curve ( final float x1, final float y1, final float x2,
+      final float y2, final float x3, final float y3, final float x4,
       final float y4 ) {
 
       this.beginShape(PConstants.POLYGON);
@@ -646,18 +583,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param z4 control point 1 z
     */
    @Override
-   public void curve (
-      final float x1,
-      final float y1,
-      final float z1,
-      final float x2,
-      final float y2,
-      final float z2,
-      final float x3,
-      final float y3,
-      final float z3,
-      final float x4,
-      final float y4,
+   public void curve ( final float x1, final float y1, final float z1,
+      final float x2, final float y2, final float z2, final float x3,
+      final float y3, final float z3, final float x4, final float y4,
       final float z4 ) {
 
       this.beginShape(PConstants.POLYGON);
@@ -719,12 +647,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.textureMode = PConstants.NORMAL;
       this.textureWrap = PConstants.REPEAT;
 
-      this.ambient(
-         this.colorModeX * IUpOgl.DEFAULT_AMB_R,
+      this.ambient(this.colorModeX * IUpOgl.DEFAULT_AMB_R,
          this.colorModeY * IUpOgl.DEFAULT_AMB_G,
          this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
-      this.specular(
-         this.colorModeX * IUpOgl.DEFAULT_SPEC_R,
+      this.specular(this.colorModeX * IUpOgl.DEFAULT_SPEC_R,
          this.colorModeY * IUpOgl.DEFAULT_SPEC_G,
          this.colorModeZ * IUpOgl.DEFAULT_SPEC_B);
       this.emissive(0.0f, 0.0f, 0.0f);
@@ -741,6 +667,122 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.reapplySettings = false;
 
       // this.hint(PConstants.DISABLE_OPENGL_ERRORS);
+   }
+
+   /**
+    * Attempts to make the hint system more convenient to work with. From the
+    * reference:<br>
+    * <br>
+    * Disables writing into the depth buffer. This means that a shape drawn
+    * with this hint can be hidden by another shape drawn later, irrespective
+    * of their distances to the camera. Note that this is different from
+    * disabling the depth test. The depth test is still applied, as long as
+    * the DISABLE_DEPTH_TEST hint is not called, but the depth values of the
+    * objects are not recorded. This is useful when drawing a semi-transparent
+    * 3D object without depth sorting, in order to avoid visual glitches due
+    * the faces of the object being at different distances from the camera,
+    * but still having the object properly occluded by the rest of the objects
+    * in the scene.
+    */
+   @Experimental
+   public void disableDepthMask ( ) {
+
+      this.hints[PConstants.DISABLE_DEPTH_MASK] = true;
+      this.flush();
+      this.pgl.depthMask(false);
+   }
+
+   /**
+    * Attempts to make the hint system more convenient to work with. From the
+    * reference:<br>
+    * <br>
+    * Disable the z buffer, allowing you to draw on top of everything at will.
+    * When depth testing is disabled, items will be drawn to the screen
+    * sequentially, like a painting. This hint is most often used to draw in
+    * 3D, then draw in 2D on top of it (for instance, to draw GUI controls in
+    * 2D on top of a 3D interface). When called, this will also clear the
+    * depth buffer. Restore the default with hint(ENABLE_DEPTH_TEST), but note
+    * that with the depth buffer cleared, any 3D drawing that happens later in
+    * will ignore existing shapes on the screen.
+    */
+   @Experimental
+   public void disableDepthTest ( ) {
+
+      this.hints[PConstants.DISABLE_DEPTH_TEST] = true;
+      this.flush();
+      this.pgl.disable(PGL.DEPTH_TEST);
+   }
+
+   /**
+    * Attempts to make the hint system more convenient to work with. From the
+    * reference:<br>
+    * <br>
+    * Forces the P3D renderer to draw each shape (including its strokes)
+    * separately, instead of batching them into larger groups for better
+    * performance. One consequence of this is that 2D items drawn with P3D are
+    * correctly stacked on the screen, depending on the order in which they
+    * were drawn. Otherwise, glitches such as the stroke lines being drawn on
+    * top of the interior of all the shapes will occur. However, this hint can
+    * make rendering substantially slower, so it is recommended to use it only
+    * when drawing a small amount of shapes. For drawing two-dimensional
+    * scenes, use the P2D renderer instead, which doesn't need the hint to
+    * properly stack shapes and their strokes.
+    */
+   @Experimental
+   public void disableOptimizedStroke ( ) {
+
+      this.hints[PConstants.DISABLE_OPTIMIZED_STROKE] = true;
+      this.flush();
+      this.flushMode = PGraphicsOpenGL.FLUSH_CONTINUOUSLY;
+   }
+
+   /**
+    * Attempts to make the hint system more convenient to work with.
+    */
+   @Experimental
+   public void enableDepthMask ( ) {
+
+      /*
+       * Paired constants have signed values: PConstants#ENABLE_DEPTH_MASK has a
+       * negative value.
+       */
+
+      this.hints[PConstants.DISABLE_DEPTH_MASK] = false;
+      this.flush();
+      this.pgl.depthMask(true);
+   }
+
+   /**
+    * Attempts to make the hint system more convenient to work with.
+    */
+   @Experimental
+   public void enableDepthTest ( ) {
+
+      /*
+       * Paired constants have signed values: PConstants#ENABLE_DEPTH_TEST has a
+       * negative value.
+       */
+
+      this.hints[PConstants.DISABLE_DEPTH_TEST] = false;
+      this.flush();
+      this.pgl.enable(PGL.DEPTH_TEST);
+   }
+
+   /**
+    * Attempts to make the hint system more convenient to work with. From the
+    * reference.
+    */
+   @Experimental
+   public void enableOptimizedStroke ( ) {
+
+      /*
+       * Paired constants have signed values: PConstants#ENABLE_OPTIMIZED_STROKE
+       * has a negative value.
+       */
+
+      this.hints[PConstants.DISABLE_OPTIMIZED_STROKE] = false;
+      this.flush();
+      this.flushMode = PGraphicsOpenGL.FLUSH_WHEN_FULL;
    }
 
    /**
@@ -767,13 +809,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param far    the far clip plane
     */
    @Override
-   public void frustum (
-      final float left,
-      final float right,
-      final float bottom,
-      final float top,
-      final float near,
-      final float far ) {
+   public void frustum ( final float left, final float right,
+      final float bottom, final float top, final float near, final float far ) {
 
       // this.cameraFOV = fov;
       // this.cameraAspect = aspect;
@@ -930,9 +967,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param x    the first x coordinate
     * @param y    the first y coordinate
     */
-   public void image (
-      final PGraphicsOpenGL buff,
-      final float x,
+   public void image ( final PGraphicsOpenGL buff, final float x,
       final float y ) {
 
       if ( buff.pgl.threadIsCurrent() ) { this.image(( PImage ) buff, x, y); }
@@ -949,12 +984,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param x2   the second x coordinate
     * @param y2   the second y coordinate
     */
-   public void image (
-      final PGraphicsOpenGL buff,
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2 ) {
+   public void image ( final PGraphicsOpenGL buff, final float x1,
+      final float y1, final float x2, final float y2 ) {
 
       if ( buff.pgl.threadIsCurrent() ) {
          this.image(( PImage ) buff, x1, y1, x2, y2);
@@ -976,16 +1007,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param u2   the image bottom-right corner u
     * @param v2   the image bottom-right corner v
     */
-   public void image (
-      final PGraphicsOpenGL buff,
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2,
-      final int u1,
-      final int v1,
-      final int u2,
-      final int v2 ) {
+   public void image ( final PGraphicsOpenGL buff, final float x1,
+      final float y1, final float x2, final float y2, final int u1,
+      final int v1, final int u2, final int v2 ) {
 
       if ( buff.pgl.threadIsCurrent() ) {
          this.image(( PImage ) buff, x1, y1, x2, y2, u1, v1, u2, v2);
@@ -1008,10 +1032,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param y   the first y coordinate
     */
    @Override
-   public void image (
-      final PImage img,
-      final float x,
-      final float y ) {
+   public void image ( final PImage img, final float x, final float y ) {
 
       this.image(img, x, y, img.width, img.height);
    }
@@ -1027,16 +1048,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param y2  the second y coordinate
     */
    @Override
-   public void image (
-      final PImage img,
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2 ) {
+   public void image ( final PImage img, final float x1, final float y1,
+      final float x2, final float y2 ) {
 
       final boolean useImg = this.textureMode == PConstants.IMAGE;
-      this.imageImpl(img, x1, y1, x2, y2, 0.0f, 0.0f, 0.0f, useImg ? img.width
-         : 1.0f, useImg ? img.height : 1.0f);
+      this.imageImpl(img, x1, y1, x2, y2, 0.0f, 0.0f, 0.0f,
+         useImg ? img.width : 1.0f, useImg ? img.height : 1.0f);
    }
 
    /**
@@ -1055,15 +1072,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param v2  the image bottom-right corner v
     */
    @Override
-   public void image (
-      final PImage img,
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2,
-      final int u1,
-      final int v1,
-      final int u2,
+   public void image ( final PImage img, final float x1, final float y1,
+      final float x2, final float y2, final int u1, final int v1, final int u2,
       final int v2 ) {
 
       this.imageImpl(img, x1, y1, x2, y2, 0.0f, u1, v1, u2, v2);
@@ -1084,16 +1094,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param u2   the image bottom-right corner u
     * @param v2   the image bottom-right corner v
     */
-   public void imageImpl (
-      final PGraphicsOpenGL buff,
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2,
-      final float u1,
-      final float v1,
-      final float u2,
-      final float v2 ) {
+   public void imageImpl ( final PGraphicsOpenGL buff, final float x1,
+      final float y1, final float x2, final float y2, final float u1,
+      final float v1, final float u2, final float v2 ) {
 
       if ( buff.pgl.threadIsCurrent() ) {
          this.imageImpl(buff, x1, y1, x2, y2, 0.0f, u1, v1, u2, v2);
@@ -1116,17 +1119,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param u2  the image bottom-right corner u
     * @param v2  the image bottom-right corner v
     */
-   public void imageImpl (
-      final PImage img,
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2,
-      final float z,
-      final float u1,
-      final float v1,
-      final float u2,
-      final float v2 ) {
+   public void imageImpl ( final PImage img, final float x1, final float y1,
+      final float x2, final float y2, final float z, final float u1,
+      final float v1, final float u2, final float v2 ) {
 
       if ( img.width < 2 || img.height < 2 ) { return; }
 
@@ -1191,6 +1186,16 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public abstract boolean is3D ( );
 
    /**
+    * Returns whether or not depth sorting is enabled.
+    *
+    * @return the evaluation
+    */
+   public boolean isDepthSortingEnabled ( ) {
+
+      return this.isDepthSortingEnabled;
+   }
+
+   /**
     * Eases from an origin color to a destination by a step.
     *
     * @param origin the origin color
@@ -1201,11 +1206,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @return the color
     */
    @Override
-   public Color lerpColor (
-      final Color origin,
-      final Color dest,
-      final float step,
-      final Color target ) {
+   public Color lerpColor ( final Color origin, final Color dest,
+      final float step, final Color target ) {
 
       switch ( this.colorMode ) {
 
@@ -1231,10 +1233,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @return the color
     */
    @Override
-   public int lerpColor (
-      final int origin,
-      final int dest,
-      final float step ) {
+   public int lerpColor ( final int origin, final int dest, final float step ) {
 
       return Color.toHexInt(this.lerpColor(Color.fromHex(origin, this.aTemp),
          Color.fromHex(dest, this.bTemp), step, this.cTemp));
@@ -1272,9 +1271,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *
     * @return the screen point
     */
-   public Vec3 model (
-      final Vec2 source,
-      final Vec3 target ) {
+   public Vec3 model ( final Vec2 source, final Vec3 target ) {
 
       return this.model(source.x, source.y, 0.0f, target);
    }
@@ -1292,9 +1289,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *
     * @return the screen point
     */
-   public Vec3 model (
-      final Vec3 source,
-      final Vec3 target ) {
+   public Vec3 model ( final Vec3 source, final Vec3 target ) {
 
       return this.model(source.x, source.y, source.z, target);
    }
@@ -1323,13 +1318,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       /* Never use defCameraXXX values. They are not actual constants. */
 
       final float zoomInv = zoom == 0.0f ? 1.0f : 1.0f / zoom;
-      final float right = this.width < 128
-         ? IUp.DEFAULT_HALF_WIDTH
+      final float right = this.width < 128 ? IUp.DEFAULT_HALF_WIDTH
          : zoomInv * this.width * 0.5f;
       final float left = -right;
 
-      final float top = this.height < 128
-         ? IUp.DEFAULT_HALF_HEIGHT
+      final float top = this.height < 128 ? IUp.DEFAULT_HALF_HEIGHT
          : zoomInv * this.height * 0.5f;
       final float bottom = -top;
 
@@ -1346,10 +1339,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param top    the top edge of the window
     */
    @Override
-   public void ortho (
-      final float left,
-      final float right,
-      final float bottom,
+   public void ortho ( final float left, final float right, final float bottom,
       final float top ) {
 
       float far = IUp.DEFAULT_FAR_CLIP;
@@ -1371,13 +1361,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param far    the far clip plane
     */
    @Override
-   public void ortho (
-      final float left,
-      final float right,
-      final float bottom,
-      final float top,
-      final float near,
-      final float far ) {
+   public void ortho ( final float left, final float right, final float bottom,
+      final float top, final float near, final float far ) {
 
       // this.cameraFOV = IUp.DEFAULT_FOV;
       // this.cameraAspect = Utils.div(
@@ -1411,8 +1396,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void perspective ( final float fov ) {
 
       final float aspect = this.width < 128 && this.height < 128
-         ? IUp.DEFAULT_ASPECT
-         : this.width / ( float ) this.height;
+         ? IUp.DEFAULT_ASPECT : this.width / ( float ) this.height;
 
       this.perspective(fov, aspect);
    }
@@ -1424,9 +1408,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param fov    the field of view
     * @param aspect the aspect ratio, width over height
     */
-   public void perspective (
-      final float fov,
-      final float aspect ) {
+   public void perspective ( final float fov, final float aspect ) {
 
       final float xsq = this.cameraX * this.cameraX;
       final float ysq = this.cameraY * this.cameraY;
@@ -1448,11 +1430,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param far    the far clip plane
     */
    @Override
-   public void perspective (
-      final float fov,
-      final float aspect,
-      final float near,
-      final float far ) {
+   public void perspective ( final float fov, final float aspect,
+      final float near, final float far ) {
 
       this.cameraFOV = fov;
       this.cameraAspect = aspect;
@@ -1544,14 +1523,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param dy the fourth point y
     */
    @Override
-   public void quad (
-      final float ax,
-      final float ay,
-      final float bx,
-      final float by,
-      final float cx,
-      final float cy,
-      final float dx,
+   public void quad ( final float ax, final float ay, final float bx,
+      final float by, final float cx, final float cy, final float dx,
       final float dy ) {
 
       this.beginShape(PConstants.POLYGON);
@@ -1573,10 +1546,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param y2 the second y parameter
     */
    @Override
-   public void rect (
-      final float x1,
-      final float y1,
-      final float x2,
+   public void rect ( final float x1, final float y1, final float x2,
       final float y2 ) {
 
       float a0 = 0.0f;
@@ -1656,12 +1626,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param r  the corner rounding
     */
    @Override
-   public void rect (
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2,
-      final float r ) {
+   public void rect ( final float x1, final float y1, final float x2,
+      final float y2, final float r ) {
 
       this.rectImpl(x1, y1, x2, y2, r, r, r, r);
    }
@@ -1680,14 +1646,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param bl the bottom-left corner rounding
     */
    @Override
-   public void rect (
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2,
-      final float tl,
-      final float tr,
-      final float br,
+   public void rect ( final float x1, final float y1, final float x2,
+      final float y2, final float tl, final float tr, final float br,
       final float bl ) {
 
       this.rectImpl(x1, y1, x2, y2, tl, tr, br, bl);
@@ -1756,10 +1716,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void rotateZ ( final float radians ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      PMatAux.compoundRotateZ(
-         Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f),
-         this.modelview, this.modelviewInv);
+      PMatAux.compoundRotateZ(Utils.scNorm(normRad),
+         Utils.scNorm(normRad - 0.25f), this.modelview, this.modelviewInv);
       PMatAux.mul(this.projection, this.modelview, this.projmodelview);
    }
 
@@ -1776,9 +1734,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *
     * @return the screen point
     */
-   public Vec3 screen (
-      final Vec2 source,
-      final Vec3 target ) {
+   public Vec3 screen ( final Vec2 source, final Vec3 target ) {
 
       return this.screen(source.x, source.y, 0.0f, target);
    }
@@ -1796,9 +1752,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *
     * @return the screen point
     */
-   public Vec3 screen (
-      final Vec3 source,
-      final Vec3 target ) {
+   public Vec3 screen ( final Vec3 source, final Vec3 target ) {
 
       return this.screen(source.x, source.y, source.z, target);
    }
@@ -1812,9 +1766,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *
     * @return the vector
     */
-   public Vec3 screen1s (
-      final Vec3 source,
-      final Vec3 target ) {
+   public Vec3 screen1s ( final Vec3 source, final Vec3 target ) {
 
       return this.screen1s(source.x, source.y, source.z, target);
    }
@@ -1827,11 +1779,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void setMatrix ( final Mat3 source ) {
 
       this.resetMatrix();
-      this.applyMatrixImpl(
-         source.m00, source.m01, 0.0f, source.m02,
-         source.m10, source.m11, 0.0f, source.m12,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         source.m20, source.m21, 0.0f, source.m22);
+      this.applyMatrixImpl(source.m00, source.m01, 0.0f, source.m02, source.m10,
+         source.m11, 0.0f, source.m12, 0.0f, 0.0f, 1.0f, 0.0f, source.m20,
+         source.m21, 0.0f, source.m22);
    }
 
    /**
@@ -1842,11 +1792,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void setMatrix ( final Mat4 source ) {
 
       this.resetMatrix();
-      this.applyMatrixImpl(
-         source.m00, source.m01, source.m02, source.m03,
-         source.m10, source.m11, source.m12, source.m13,
-         source.m20, source.m21, source.m22, source.m23,
-         source.m30, source.m31, source.m32, source.m33);
+      this.applyMatrixImpl(source.m00, source.m01, source.m02, source.m03,
+         source.m10, source.m11, source.m12, source.m13, source.m20, source.m21,
+         source.m22, source.m23, source.m30, source.m31, source.m32,
+         source.m33);
    }
 
    /**
@@ -1858,11 +1807,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void setMatrix ( final PMatrix3D source ) {
 
       this.resetMatrix();
-      this.applyMatrixImpl(
-         source.m00, source.m01, source.m02, source.m03,
-         source.m10, source.m11, source.m12, source.m13,
-         source.m20, source.m21, source.m22, source.m23,
-         source.m30, source.m31, source.m32, source.m33);
+      this.applyMatrixImpl(source.m00, source.m01, source.m02, source.m03,
+         source.m10, source.m11, source.m12, source.m13, source.m20, source.m21,
+         source.m22, source.m23, source.m30, source.m31, source.m32,
+         source.m33);
    }
 
    /**
@@ -1873,11 +1821,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void setProjection ( final Mat4 m ) {
 
       this.flush();
-      this.projection.set(
-         m.m00, m.m01, m.m02, m.m03,
-         m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23,
-         m.m30, m.m31, m.m32, m.m33);
+      this.projection.set(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
+         m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
       PMatAux.mul(this.projection, this.modelview, this.projmodelview);
    }
 
@@ -1890,9 +1835,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param height the applet height
     */
    @Override
-   public void setSize (
-      final int width,
-      final int height ) {
+   public void setSize ( final int width, final int height ) {
 
       this.width = width;
       this.height = height;
@@ -1945,10 +1888,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param y     the y coordinate
     */
    @Override
-   public void shape (
-      final PShape shape,
-      final float x,
-      final float y ) {
+   public void shape ( final PShape shape, final float x, final float y ) {
 
       this.shape(shape);
    }
@@ -1963,10 +1903,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param z     the z coordinate
     */
    @Override
-   public void shape (
-      final PShape shape,
-      final float x,
-      final float y,
+   public void shape ( final PShape shape, final float x, final float y,
       final float z ) {
 
       this.shape(shape);
@@ -1984,12 +1921,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param y2    the second y coordinate
     */
    @Override
-   public void shape (
-      final PShape shape,
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2 ) {
+   public void shape ( final PShape shape, final float x1, final float y1,
+      final float x2, final float y2 ) {
 
       this.shape(shape);
    }
@@ -2012,11 +1945,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void shear ( final Vec2 v ) {
 
-      this.applyMatrixImpl(
-         1.0f, v.x, 0.0f, 0.0f,
-         v.y, 1.0f, 0.0f, 0.0f,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      this.applyMatrixImpl(1.0f, v.x, 0.0f, 0.0f, v.y, 1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -2027,11 +1957,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void shearX ( final float radians ) {
 
-      this.applyMatrixImpl(
-         1.0f, Utils.tan(radians), 0.0f, 0.0f,
-         0.0f, 1.0f, 0.0f, 0.0f,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      this.applyMatrixImpl(1.0f, Utils.tan(radians), 0.0f, 0.0f, 0.0f, 1.0f,
+         0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -2042,11 +1969,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void shearY ( final float radians ) {
 
-      this.applyMatrixImpl(
-         1.0f, 0.0f, 0.0f, 0.0f,
-         Utils.tan(radians), 1.0f, 0.0f, 0.0f,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      this.applyMatrixImpl(1.0f, 0.0f, 0.0f, 0.0f, Utils.tan(radians), 1.0f,
+         0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -2078,9 +2002,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param latitudes  the latitudes
     */
    @Override
-   public void sphereDetail (
-      final int longitudes,
-      final int latitudes ) {
+   public void sphereDetail ( final int longitudes, final int latitudes ) {
 
       PApplet.showMethodWarning("sphereDetail");
    }
@@ -2105,10 +2027,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param y         the y coordinate
     */
    @Override
-   public void text (
-      final char character,
-      final float x,
-      final float y ) {
+   public void text ( final char character, final float x, final float y ) {
 
       float yMut = y;
 
@@ -2143,12 +2062,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param y     the y coordinate
     */
    @Override
-   public void text (
-      final char[] chars,
-      final int start,
-      final int stop,
-      final float x,
-      final float y ) {
+   public void text ( final char[] chars, final int start, final int stop,
+      final float x, final float y ) {
 
       /* With REPEAT, significant artifacts appear at the edge of images. */
       final int oldWrapMode = this.textureWrap;
@@ -2290,9 +2205,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param tr2   the transform
     * @param order the transform order
     */
-   public void transform (
-      final Transform2 tr2,
-      final TransformOrder order ) {
+   public void transform ( final Transform2 tr2, final TransformOrder order ) {
 
       final Vec2 dim = tr2.getScale(this.tr2Scale);
       final Vec2 loc = tr2.getLocation(this.tr2Loc);
@@ -2372,11 +2285,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param m32 row 3, column 2
     * @param m33 row 3, column 3
     */
-   public void updateGLModelview (
-      final float m00, final float m01, final float m02, final float m03,
-      final float m10, final float m11, final float m12, final float m13,
-      final float m20, final float m21, final float m22, final float m23,
-      final float m30, final float m31, final float m32, final float m33 ) {
+   public void updateGLModelview ( final float m00, final float m01,
+      final float m02, final float m03, final float m10, final float m11,
+      final float m12, final float m13, final float m20, final float m21,
+      final float m22, final float m23, final float m30, final float m31,
+      final float m32, final float m33 ) {
 
       if ( this.glModelview == null ) { this.glModelview = new float[16]; }
 
@@ -2408,11 +2321,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void updateGLModelview ( final Mat4 m ) {
 
-      this.updateGLModelview(
-         m.m00, m.m01, m.m02, m.m03,
-         m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23,
-         m.m30, m.m31, m.m32, m.m33);
+      this.updateGLModelview(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
+         m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2422,11 +2332,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void updateGLModelview ( final PMatrix3D m ) {
 
-      this.updateGLModelview(
-         m.m00, m.m01, m.m02, m.m03,
-         m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23,
-         m.m30, m.m31, m.m32, m.m33);
+      this.updateGLModelview(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
+         m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2442,9 +2349,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param m21 row 2, column 1
     * @param m22 row 2, column 2
     */
-   public void updateGLNormal (
-      final float m00, final float m01, final float m02,
-      final float m10, final float m11, final float m12,
+   public void updateGLNormal ( final float m00, final float m01,
+      final float m02, final float m10, final float m11, final float m12,
       final float m20, final float m21, final float m22 ) {
 
       if ( this.glNormal == null ) { this.glNormal = new float[9]; }
@@ -2469,10 +2375,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void updateGLNormal ( final Mat4 m ) {
 
-      this.updateGLNormal(
-         m.m00, m.m01, m.m02,
-         m.m10, m.m11, m.m12,
-         m.m20, m.m21, m.m22);
+      this.updateGLNormal(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12, m.m20,
+         m.m21, m.m22);
    }
 
    /**
@@ -2482,10 +2386,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void updateGLNormal ( final PMatrix3D m ) {
 
-      this.updateGLNormal(
-         m.m00, m.m01, m.m02,
-         m.m10, m.m11, m.m12,
-         m.m20, m.m21, m.m22);
+      this.updateGLNormal(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12, m.m20,
+         m.m21, m.m22);
    }
 
    /**
@@ -2508,11 +2410,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param m32 row 3, column 2
     * @param m33 row 3, column 3
     */
-   public void updateGLProjection (
-      final float m00, final float m01, final float m02, final float m03,
-      final float m10, final float m11, final float m12, final float m13,
-      final float m20, final float m21, final float m22, final float m23,
-      final float m30, final float m31, final float m32, final float m33 ) {
+   public void updateGLProjection ( final float m00, final float m01,
+      final float m02, final float m03, final float m10, final float m11,
+      final float m12, final float m13, final float m20, final float m21,
+      final float m22, final float m23, final float m30, final float m31,
+      final float m32, final float m33 ) {
 
       if ( this.glProjection == null ) { this.glProjection = new float[16]; }
 
@@ -2544,11 +2446,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void updateGLProjection ( final Mat4 m ) {
 
-      this.updateGLProjection(
-         m.m00, m.m01, m.m02, m.m03,
-         m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23,
-         m.m30, m.m31, m.m32, m.m33);
+      this.updateGLProjection(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
+         m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2558,11 +2457,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void updateGLProjection ( final PMatrix3D m ) {
 
-      this.updateGLProjection(
-         m.m00, m.m01, m.m02, m.m03,
-         m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23,
-         m.m30, m.m31, m.m32, m.m33);
+      this.updateGLProjection(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
+         m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2585,11 +2481,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param m32 row 3, column 2
     * @param m33 row 3, column 3
     */
-   public void updateGLProjmodelview (
-      final float m00, final float m01, final float m02, final float m03,
-      final float m10, final float m11, final float m12, final float m13,
-      final float m20, final float m21, final float m22, final float m23,
-      final float m30, final float m31, final float m32, final float m33 ) {
+   public void updateGLProjmodelview ( final float m00, final float m01,
+      final float m02, final float m03, final float m10, final float m11,
+      final float m12, final float m13, final float m20, final float m21,
+      final float m22, final float m23, final float m30, final float m31,
+      final float m32, final float m33 ) {
 
       if ( this.glProjmodelview == null ) {
          this.glProjmodelview = new float[16];
@@ -2623,11 +2519,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void updateGLProjmodelview ( final Mat4 m ) {
 
-      this.updateGLProjmodelview(
-         m.m00, m.m01, m.m02, m.m03,
-         m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23,
-         m.m30, m.m31, m.m32, m.m33);
+      this.updateGLProjmodelview(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11,
+         m.m12, m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2637,11 +2530,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void updateGLProjmodelview ( final PMatrix3D m ) {
 
-      this.updateGLProjmodelview(
-         m.m00, m.m01, m.m02, m.m03,
-         m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23,
-         m.m30, m.m31, m.m32, m.m33);
+      this.updateGLProjmodelview(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11,
+         m.m12, m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
@@ -2700,9 +2590,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param y the y coordinate
     */
    @Override
-   public void vertex (
-      final float x,
-      final float y ) {
+   public void vertex ( final float x, final float y ) {
 
       this.vertexImpl(x, y, 0.0f, this.textureU, this.textureV);
    }
@@ -2715,10 +2603,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param z the z coordinate
     */
    @Override
-   public void vertex (
-      final float x,
-      final float y,
-      final float z ) {
+   public void vertex ( final float x, final float y, final float z ) {
 
       this.vertexImpl(x, y, z, this.textureU, this.textureV);
    }
@@ -2732,10 +2617,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param v the v texture coordinate
     */
    @Override
-   public void vertex (
-      final float x,
-      final float y,
-      final float u,
+   public void vertex ( final float x, final float y, final float u,
       final float v ) {
 
       this.vertexTexture(u, v, this.textureMode, this.textureWrap);
@@ -2752,12 +2634,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param v the v texture coordinate
     */
    @Override
-   public void vertex (
-      final float x,
-      final float y,
-      final float z,
-      final float u,
-      final float v ) {
+   public void vertex ( final float x, final float y, final float z,
+      final float u, final float v ) {
 
       this.vertexTexture(u, v, this.textureMode, this.textureWrap);
       this.vertexImpl(x, y, z, this.textureU, this.textureV);
@@ -2794,23 +2672,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param n33 row 3, column 3
     */
    @Override
-   protected void applyMatrixImpl (
-      final float n00, final float n01, final float n02, final float n03,
-      final float n10, final float n11, final float n12, final float n13,
-      final float n20, final float n21, final float n22, final float n23,
-      final float n30, final float n31, final float n32, final float n33 ) {
+   protected void applyMatrixImpl ( final float n00, final float n01,
+      final float n02, final float n03, final float n10, final float n11,
+      final float n12, final float n13, final float n20, final float n21,
+      final float n22, final float n23, final float n30, final float n31,
+      final float n32, final float n33 ) {
 
-      this.modelview.apply(
-         n00, n01, n02, n03,
-         n10, n11, n12, n13,
-         n20, n21, n22, n23,
-         n30, n31, n32, n33);
+      this.modelview.apply(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21,
+         n22, n23, n30, n31, n32, n33);
       PMatAux.inverse(this.modelview, this.modelviewInv);
-      this.projmodelview.apply(
-         n00, n01, n02, n03,
-         n10, n11, n12, n13,
-         n20, n21, n22, n23,
-         n30, n31, n32, n33);
+      this.projmodelview.apply(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21,
+         n22, n23, n30, n31, n32, n33);
    }
 
    /**
@@ -2821,9 +2693,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param transform the transform
     * @param trOrder   the transform order
     */
-   protected void arcImpl (
-      final Curve2 curve,
-      final Transform2 transform,
+   protected void arcImpl ( final Curve2 curve, final Transform2 transform,
       final TransformOrder trOrder ) {
 
       Knot2 currKnot = null;
@@ -2854,10 +2724,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          rearHandle = currKnot.rearHandle;
          coord = currKnot.coord;
 
-         this.bezierVertexImpl(
-            foreHandle.x, foreHandle.y, 0.0f,
-            rearHandle.x, rearHandle.y, 0.0f,
-            coord.x, coord.y, 0.0f);
+         this.bezierVertexImpl(foreHandle.x, foreHandle.y, 0.0f, rearHandle.x,
+            rearHandle.y, 0.0f, coord.x, coord.y, 0.0f);
 
          prevKnot = currKnot;
       }
@@ -2868,10 +2736,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          rearHandle = currKnot.rearHandle;
          coord = currKnot.coord;
 
-         this.bezierVertexImpl(
-            foreHandle.x, foreHandle.y, 0.0f,
-            rearHandle.x, rearHandle.y, 0.0f,
-            coord.x, coord.y, 0.0f);
+         this.bezierVertexImpl(foreHandle.x, foreHandle.y, 0.0f, rearHandle.x,
+            rearHandle.y, 0.0f, coord.x, coord.y, 0.0f);
          this.endShape(PConstants.CLOSE);
       } else {
          this.endShape(PConstants.OPEN);
@@ -2890,10 +2756,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param a the alpha channel
     */
    @Override
-   protected void colorCalc (
-      final float x,
-      final float y,
-      final float z,
+   protected void colorCalc ( final float x, final float y, final float z,
       final float a ) {
 
       this.colorCalc(x, y, z, a, true);
@@ -2907,16 +2770,14 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param alpha the alpha channel
     */
    @Override
-   protected void colorCalcARGB (
-      final int argb,
-      final float alpha ) {
+   protected void colorCalcARGB ( final int argb, final float alpha ) {
 
       if ( alpha == this.colorModeA ) {
          this.calcAi = argb >> 0x18 & 0xff;
          this.calcColor = argb;
       } else {
-         this.calcAi = ( int ) ( ( argb >> 0x18 & 0xff ) * Utils.clamp01(
-            alpha * this.invColorModeA) );
+         this.calcAi = ( int ) ( ( argb >> 0x18 & 0xff )
+            * Utils.clamp01(alpha * this.invColorModeA) );
          this.calcColor = this.calcAi << 0x18 | argb & 0xffffff;
       }
 
@@ -2944,19 +2805,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          this.curveInited = true;
       }
 
-      PMatAux.catmullBasis(
-         this.curveTightness,
-         this.curveBasisMatrix);
+      PMatAux.catmullBasis(this.curveTightness, this.curveBasisMatrix);
 
       this.splineForward(this.curveDetail, this.curveDrawMatrix);
 
-      PMatAux.mul(
-         this.bezierBasisInverse,
-         this.curveBasisMatrix,
+      PMatAux.mul(this.bezierBasisInverse, this.curveBasisMatrix,
          this.curveToBezierMatrix);
-      PMatAux.mul(
-         this.curveDrawMatrix,
-         this.curveBasisMatrix,
+      PMatAux.mul(this.curveDrawMatrix, this.curveBasisMatrix,
          this.curveDrawMatrix);
    }
 
@@ -2970,12 +2825,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param v    a temporary vector
     * @param vt   a temporary vector
     */
-   protected void drawMesh2 (
-      final Mesh2 mesh,
-      final Transform2 tr,
-      final MaterialPImage mat,
-      final Vec2 v,
-      final Vec2 vt ) {
+   protected void drawMesh2 ( final Mesh2 mesh, final Transform2 tr,
+      final MaterialPImage mat, final Vec2 v, final Vec2 vt ) {
 
       final PImage texture = mat.texture;
       final Transform2 uvtr = mat.transform;
@@ -3018,9 +2869,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param tr   the transform
     * @param v    a temporary vector
     */
-   protected void drawMesh2 (
-      final Mesh2 mesh,
-      final Transform2 tr,
+   protected void drawMesh2 ( final Mesh2 mesh, final Transform2 tr,
       final Vec2 v ) {
 
       final Vec2[] vs = mesh.coords;
@@ -3055,13 +2904,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param vn   a temporary vector
     */
    @Experimental
-   protected void drawMesh3 (
-      final Mesh3 mesh,
-      final Transform3 tr,
-      final MaterialPImage mat,
-      final Vec3 v,
-      final Vec2 vt,
-      final Vec3 vn ) {
+   protected void drawMesh3 ( final Mesh3 mesh, final Transform3 tr,
+      final MaterialPImage mat, final Vec3 v, final Vec2 vt, final Vec3 vn ) {
 
       final PImage texture = mat.texture;
       final Transform2 uvtr = mat.transform;
@@ -3108,11 +2952,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param vn   a temporary vector
     */
    @Experimental
-   protected void drawMesh3 (
-      final Mesh3 mesh,
-      final Transform3 tr,
-      final Vec3 v,
-      final Vec3 vn ) {
+   protected void drawMesh3 ( final Mesh3 mesh, final Transform3 tr,
+      final Vec3 v, final Vec3 vn ) {
 
       final Vec3[] vs = mesh.coords;
       final Vec3[] vns = mesh.normals;
@@ -3157,15 +2998,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param v2  the image bottom-right corner v
     */
    @Override
-   protected void imageImpl (
-      final PImage img,
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2,
-      final int u1,
-      final int v1,
-      final int u2,
+   protected void imageImpl ( final PImage img, final float x1, final float y1,
+      final float x2, final float y2, final int u1, final int v1, final int u2,
       final int v2 ) {
 
       /*
@@ -3195,9 +3029,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param num the index
     * @param clr the color
     */
-   protected void lightAmbient (
-      final int num,
-      final Color clr ) {
+   protected void lightAmbient ( final int num, final Color clr ) {
 
       this.colorCalc(clr);
 
@@ -3217,10 +3049,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param z   the third channel
     */
    @Override
-   protected void lightAmbient (
-      final int num,
-      final float x,
-      final float y,
+   protected void lightAmbient ( final int num, final float x, final float y,
       final float z ) {
 
       this.colorCalc(x, y, z, this.colorModeA, false);
@@ -3238,9 +3067,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param num the index
     * @param clr the color
     */
-   protected void lightAmbient (
-      final int num,
-      final int clr ) {
+   protected void lightAmbient ( final int num, final int clr ) {
 
       this.colorCalc(clr, this.colorModeA);
 
@@ -3257,9 +3084,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param num the index
     * @param clr the color
     */
-   protected void lightDiffuse (
-      final int num,
-      final Color clr ) {
+   protected void lightDiffuse ( final int num, final Color clr ) {
 
       this.colorCalc(clr);
 
@@ -3279,10 +3104,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param z   the third channel
     */
    @Override
-   protected void lightDiffuse (
-      final int num,
-      final float x,
-      final float y,
+   protected void lightDiffuse ( final int num, final float x, final float y,
       final float z ) {
 
       this.colorCalc(x, y, z, this.colorModeA, false);
@@ -3300,9 +3122,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param num the index
     * @param clr the color
     */
-   protected void lightDiffuse (
-      final int num,
-      final int clr ) {
+   protected void lightDiffuse ( final int num, final int clr ) {
 
       this.colorCalc(clr, this.colorModeA);
 
@@ -3321,11 +3141,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param quadratic the third factor
     */
    @Override
-   protected void lightFalloff (
-      final int num,
-      final float constant,
-      final float linear,
-      final float quadratic ) {
+   protected void lightFalloff ( final int num, final float constant,
+      final float linear, final float quadratic ) {
 
       final int num3 = num + num + num;
       this.lightFalloffCoefficients[num3] = constant;
@@ -3343,11 +3160,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param zDir the direction z
     */
    @Override
-   protected void lightNormal (
-      final int num,
-      final float xDir,
-      final float yDir,
-      final float zDir ) {
+   protected void lightNormal ( final int num, final float xDir,
+      final float yDir, final float zDir ) {
 
       /*
        * Applying normal matrix to the light direction vector, which is the
@@ -3389,9 +3203,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param num the index
     * @param dir the direction
     */
-   protected void lightNormal (
-      final int num,
-      final Vec3 dir ) {
+   protected void lightNormal ( final int num, final Vec3 dir ) {
 
       this.lightNormal(num, dir.x, dir.y, dir.z);
    }
@@ -3407,12 +3219,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param isDir treat as a direction or point
     */
    @Override
-   protected void lightPosition (
-      final int num,
-      final float x,
-      final float y,
-      final float z,
-      final boolean isDir ) {
+   protected void lightPosition ( final int num, final float x, final float y,
+      final float z, final boolean isDir ) {
 
       final int num4 = num + num + num + num;
 
@@ -3449,9 +3257,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param vec   the vector
     * @param isDir treat as a direction or point
     */
-   protected void lightPosition (
-      final int num,
-      final Vec3 vec,
+   protected void lightPosition ( final int num, final Vec3 vec,
       final boolean isDir ) {
 
       this.lightPosition(num, vec.x, vec.y, vec.z, isDir);
@@ -3467,11 +3273,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param blue  the blue channel
     */
    @Override
-   protected void lightSpecular (
-      final int num,
-      final float red,
-      final float green,
-      final float blue ) {
+   protected void lightSpecular ( final int num, final float red,
+      final float green, final float blue ) {
 
       final int num3 = num + num + num;
       this.lightSpecular[num3] = red;
@@ -3487,9 +3290,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param exponent the exponent
     */
    @Override
-   protected void lightSpot (
-      final int num,
-      final float radians,
+   protected void lightSpot ( final int num, final float radians,
       final float exponent ) {
 
       final int num2 = num + num;
@@ -3520,11 +3321,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *
     * @return the model space point
     */
-   protected Vec3 model (
-      final float xSource,
-      final float ySource,
-      final float zSource,
-      final Vec3 target ) {
+   protected Vec3 model ( final float xSource, final float ySource,
+      final float zSource, final Vec3 target ) {
 
       /*
        * Multiply point by model-view matrix; multiply product by inverse of
@@ -3579,10 +3377,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       if ( bw == 1.0f ) { return target.set(bx, by, bz); }
 
       final float wInv = 1.0f / bw;
-      return target.set(
-         bx * wInv,
-         by * wInv,
-         bz * wInv);
+      return target.set(bx * wInv, by * wInv, bz * wInv);
    }
 
    /**
@@ -3673,15 +3468,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @see Utils#clamp(float, float, float)
     */
    @Override
-   protected void rectImpl (
-      final float a,
-      final float b,
-      final float c,
-      final float d,
-      final float topLeft,
-      final float topRight,
-      final float bottomRight,
-      final float bottomLeft ) {
+   protected void rectImpl ( final float a, final float b, final float c,
+      final float d, final float topLeft, final float topRight,
+      final float bottomRight, final float bottomLeft ) {
 
       float x1 = 0.0f;
       float y1 = 0.0f;
@@ -3751,33 +3540,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
 
-      this.vertexImpl(
-         x2 - tr, y1, 0.0f,
-         this.textureU, this.textureV);
-      this.quadraticVertexImpl(
-         x2, y1, 0.0f,
-         x2, y1 + tr, 0.0f);
+      this.vertexImpl(x2 - tr, y1, 0.0f, this.textureU, this.textureV);
+      this.quadraticVertexImpl(x2, y1, 0.0f, x2, y1 + tr, 0.0f);
 
-      this.vertexImpl(
-         x2, y2 - br, 0.0f,
-         this.textureU, this.textureV);
-      this.quadraticVertexImpl(
-         x2, y2, 0.0f,
-         x2 - br, y2, 0.0f);
+      this.vertexImpl(x2, y2 - br, 0.0f, this.textureU, this.textureV);
+      this.quadraticVertexImpl(x2, y2, 0.0f, x2 - br, y2, 0.0f);
 
-      this.vertexImpl(
-         x1 + bl, y2, 0.0f,
-         this.textureU, this.textureV);
-      this.quadraticVertexImpl(
-         x1, y2, 0.0f,
-         x1, y2 - bl, 0.0f);
+      this.vertexImpl(x1 + bl, y2, 0.0f, this.textureU, this.textureV);
+      this.quadraticVertexImpl(x1, y2, 0.0f, x1, y2 - bl, 0.0f);
 
-      this.vertexImpl(
-         x1, y1 + tl, 0.0f,
-         this.textureU, this.textureV);
-      this.quadraticVertexImpl(
-         x1, y1, 0.0f,
-         x1 + tl, y1, 0.0f);
+      this.vertexImpl(x1, y1 + tl, 0.0f, this.textureU, this.textureV);
+      this.quadraticVertexImpl(x1, y1, 0.0f, x1 + tl, y1, 0.0f);
 
       this.endShape(PConstants.CLOSE);
    }
@@ -3792,11 +3565,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param zAxis   the axis z component
     */
    @Override
-   protected void rotateImpl (
-      final float radians,
-      final float xAxis,
-      final float yAxis,
-      final float zAxis ) {
+   protected void rotateImpl ( final float radians, final float xAxis,
+      final float yAxis, final float zAxis ) {
 
       /* Axis is verified here because PMatAux compound rotate will not. */
       final float mSq = xAxis * xAxis + yAxis * yAxis + zAxis * zAxis;
@@ -3816,13 +3586,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          zn *= mInv;
       }
 
-      PMatAux.compoundRotate(
-         cosa, sina, xn, yn, zn,
-         this.modelview, this.modelviewInv);
-      PMatAux.mul(
-         this.projection,
-         this.modelview,
-         this.projmodelview);
+      PMatAux.compoundRotate(cosa, sina, xn, yn, zn, this.modelview,
+         this.modelviewInv);
+      PMatAux.mul(this.projection, this.modelview, this.projmodelview);
    }
 
    /**
@@ -3833,10 +3599,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param sz the scale z
     */
    @Override
-   protected void scaleImpl (
-      final float sx,
-      final float sy,
-      final float sz ) {
+   protected void scaleImpl ( final float sx, final float sy, final float sz ) {
 
       this.modelview.scale(sx, sy, sz);
       PMatAux.invScale(sx, sy, sz, this.modelviewInv);
@@ -3869,15 +3632,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *
     * @return the screen point
     */
-   protected Vec3 screen (
-      final float xSource,
-      final float ySource,
-      final float zSource,
-      final Vec3 target ) {
+   protected Vec3 screen ( final float xSource, final float ySource,
+      final float zSource, final Vec3 target ) {
 
       this.screen1s(xSource, ySource, zSource, target);
-      return target.set(
-         this.width * ( 1.0f + target.x ) * 0.5f,
+      return target.set(this.width * ( 1.0f + target.x ) * 0.5f,
          this.height * ( 1.0f - ( 1.0f + target.y ) * 0.5f ),
          ( 1.0f + target.z ) * 0.5f);
    }
@@ -3893,11 +3652,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *
     * @return the screen point
     */
-   protected Vec3 screen1s (
-      final float xSource,
-      final float ySource,
-      final float zSource,
-      final Vec3 target ) {
+   protected Vec3 screen1s ( final float xSource, final float ySource,
+      final float zSource, final Vec3 target ) {
 
       /* Multiply by model-view matrix; multiply product by projection. */
 
@@ -3967,14 +3723,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param e     the z scale
     */
    @Override
-   protected void shape (
-      final PShape shape,
-      final float x,
-      final float y,
-      final float z,
-      final float c,
-      final float d,
-      final float e ) {
+   protected void shape ( final PShape shape, final float x, final float y,
+      final float z, final float c, final float d, final float e ) {
 
       this.shape(shape);
    }
@@ -3987,10 +3737,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param y  the y coordinate
     */
    @Override
-   protected void textCharImpl (
-      final char ch,
-      final float x,
-      final float y ) {
+   protected void textCharImpl ( final char ch, final float x, final float y ) {
 
       switch ( this.textMode ) {
 
@@ -4020,11 +3767,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @see PFont#getGlyph(char)
     * @see PFont#getSize()
     */
-   protected void textCharModelImpl (
-      final char ch,
-      final float x,
-      final float y,
-      final float z ) {
+   protected void textCharModelImpl ( final char ch, final float x,
+      final float y, final float z ) {
 
       /*
        * FontTexture.TextureInfo is a static inner class, and so cannot be
@@ -4095,13 +3839,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param v     the v coordinate
     */
    @Override
-   protected void textCharModelImpl (
-      final PImage glyph,
-      final float x1,
-      final float y1,
-      final float x2,
-      final float y2,
-      final int u,
+   protected void textCharModelImpl ( final PImage glyph, final float x1,
+      final float y1, final float x2, final float y2, final int u,
       final int v ) {
 
       final boolean savedTint = this.tint;
@@ -4139,9 +3878,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param tz the translation z
     */
    @Override
-   protected void translateImpl (
-      final float tx,
-      final float ty,
+   protected void translateImpl ( final float tx, final float ty,
       final float tz ) {
 
       this.modelview.translate(tx, ty, tz);
@@ -4200,9 +3937,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param v the t or v coordinate
     */
    @Override
-   protected void vertexTexture (
-      final float u,
-      final float v ) {
+   protected void vertexTexture ( final float u, final float v ) {
 
       this.vertexTexture(u, v, this.textureMode, this.textureWrap);
    }
@@ -4221,11 +3956,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @see Utils#div(float, float)
     * @see Utils#clamp01(float)
     */
-   protected void vertexTexture (
-      final float u,
-      final float v,
-      final int desiredTextureMode,
-      final int desiredTextureWrap ) {
+   protected void vertexTexture ( final float u, final float v,
+      final int desiredTextureMode, final int desiredTextureWrap ) {
 
       this.textureMode = desiredTextureMode;
       this.textureWrap = desiredTextureWrap;

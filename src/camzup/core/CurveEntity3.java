@@ -40,9 +40,7 @@ public class CurveEntity3 extends Entity3
     * @param transform the transform
     * @param curves    the list of curves
     */
-   public CurveEntity3 (
-      final String name,
-      final Transform3 transform,
+   public CurveEntity3 ( final String name, final Transform3 transform,
       final Curve3... curves ) {
 
       super(name, transform);
@@ -55,9 +53,7 @@ public class CurveEntity3 extends Entity3
     * @param transform the transform
     * @param curves    the list of curves
     */
-   public CurveEntity3 (
-      final Transform3 transform,
-      final Curve3... curves ) {
+   public CurveEntity3 ( final Transform3 transform, final Curve3... curves ) {
 
       super(transform);
       this.appendAll(curves);
@@ -211,9 +207,7 @@ public class CurveEntity3 extends Entity3
     */
    @Override
    @Chainable
-   public CurveEntity3 scaleTo (
-      final Vec3 scalar,
-      final float step ) {
+   public CurveEntity3 scaleTo ( final Vec3 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);
       return this;
@@ -247,11 +241,8 @@ public class CurveEntity3 extends Entity3
     * @return the string
     */
    @Experimental
-   public String toBlenderCode (
-      final int uRes,
-      final String fillMode,
-      final float extrude,
-      final float bevelDepth ) {
+   public String toBlenderCode ( final int uRes, final String fillMode,
+      final float extrude, final float bevelDepth ) {
 
       final float tiltStart = 0.0f;
       final float tiltEnd = 0.0f;
@@ -347,13 +338,10 @@ public class CurveEntity3 extends Entity3
       sb.append(this.transform.toString(places));
       sb.append(", curves: [ ");
 
-      int i = 0;
       final Iterator < Curve3 > itr = this.curves.iterator();
-      final int last = this.curves.size() - 1;
       while ( itr.hasNext() ) {
          sb.append(itr.next().toString(places));
-         if ( i < last ) { sb.append(',').append(' '); }
-         i++;
+         if ( itr.hasNext() ) { sb.append(',').append(' '); }
       }
 
       sb.append(" ] }");
@@ -377,12 +365,8 @@ public class CurveEntity3 extends Entity3
     * @see Transform3#mulDir(Transform3, Vec3, Vec3)
     */
    @Experimental
-   public static Knot3 eval (
-      final CurveEntity3 ce,
-      final int curveIndex,
-      final float step,
-      final Knot3 knWorld,
-      final Knot3 knLocal ) {
+   public static Knot3 eval ( final CurveEntity3 ce, final int curveIndex,
+      final float step, final Knot3 knWorld, final Knot3 knLocal ) {
 
       final Transform3 tr = ce.transform;
       Curve3.eval(ce.get(curveIndex), step, knLocal);
@@ -409,12 +393,8 @@ public class CurveEntity3 extends Entity3
     *
     * @see CurveEntity3#eval(CurveEntity3, int, float, Vec3, Vec3, Vec3, Vec3)
     */
-   public static Ray3 eval (
-      final CurveEntity3 ce,
-      final int curveIndex,
-      final float step,
-      final Ray3 rayWorld,
-      final Ray3 rayLocal ) {
+   public static Ray3 eval ( final CurveEntity3 ce, final int curveIndex,
+      final float step, final Ray3 rayWorld, final Ray3 rayLocal ) {
 
       CurveEntity3.eval(ce, curveIndex, step, rayWorld.origin, rayWorld.dir,
          rayLocal.origin, rayLocal.dir);
@@ -440,14 +420,9 @@ public class CurveEntity3 extends Entity3
     * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
     * @see Transform3#mulDir(Transform3, Vec3, Vec3)
     */
-   public static Vec3 eval (
-      final CurveEntity3 ce,
-      final int curveIndex,
-      final float step,
-      final Vec3 coWorld,
-      final Vec3 tnWorld,
-      final Vec3 coLocal,
-      final Vec3 tnLocal ) {
+   public static Vec3 eval ( final CurveEntity3 ce, final int curveIndex,
+      final float step, final Vec3 coWorld, final Vec3 tnWorld,
+      final Vec3 coLocal, final Vec3 tnLocal ) {
 
       Curve3.eval(ce.get(curveIndex), step, coLocal, tnLocal);
       Transform3.mulPoint(ce.transform, coLocal, coWorld);
@@ -463,8 +438,7 @@ public class CurveEntity3 extends Entity3
     *
     * @return the curve
     */
-   public static CurveEntity3 fromMeshEntity (
-      final MeshEntity3 me,
+   public static CurveEntity3 fromMeshEntity ( final MeshEntity3 me,
       final CurveEntity3 target ) {
 
       target.name = me.name;

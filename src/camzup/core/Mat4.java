@@ -109,16 +109,12 @@ public class Mat4 extends Matrix {
     * @param m21 row 2, column 1
     * @param m22 row 2, column 2
     */
-   public Mat4 (
-      final float m00, final float m01, final float m02,
-      final float m10, final float m11, final float m12,
-      final float m20, final float m21, final float m22 ) {
+   public Mat4 ( final float m00, final float m01, final float m02,
+      final float m10, final float m11, final float m12, final float m20,
+      final float m21, final float m22 ) {
 
       super(16);
-      this.set(
-         m00, m01, m02,
-         m10, m11, m12,
-         m20, m21, m22);
+      this.set(m00, m01, m02, m10, m11, m12, m20, m21, m22);
    }
 
    /**
@@ -137,16 +133,13 @@ public class Mat4 extends Matrix {
     * @param m22 row 2, column 2
     * @param m23 row 2, column 3
     */
-   public Mat4 (
-      final float m00, final float m01, final float m02, final float m03,
-      final float m10, final float m11, final float m12, final float m13,
-      final float m20, final float m21, final float m22, final float m23 ) {
+   public Mat4 ( final float m00, final float m01, final float m02,
+      final float m03, final float m10, final float m11, final float m12,
+      final float m13, final float m20, final float m21, final float m22,
+      final float m23 ) {
 
       super(16);
-      this.set(
-         m00, m01, m02, m03,
-         m10, m11, m12, m13,
-         m20, m21, m22, m23);
+      this.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23);
    }
 
    /**
@@ -169,18 +162,15 @@ public class Mat4 extends Matrix {
     * @param m32 row 3, column 2
     * @param m33 row 3, column 3
     */
-   public Mat4 (
-      final float m00, final float m01, final float m02, final float m03,
-      final float m10, final float m11, final float m12, final float m13,
-      final float m20, final float m21, final float m22, final float m23,
-      final float m30, final float m31, final float m32, final float m33 ) {
+   public Mat4 ( final float m00, final float m01, final float m02,
+      final float m03, final float m10, final float m11, final float m12,
+      final float m13, final float m20, final float m21, final float m22,
+      final float m23, final float m30, final float m31, final float m32,
+      final float m33 ) {
 
       super(16);
-      this.set(
-         m00, m01, m02, m03,
-         m10, m11, m12, m13,
-         m20, m21, m22, m23,
-         m30, m31, m32, m33);
+      this.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30,
+         m31, m32, m33);
    }
 
    /**
@@ -568,11 +558,8 @@ public class Mat4 extends Matrix {
    @Chainable
    public Mat4 reset ( ) {
 
-      return this.set(
-         1.0f, 0.0f, 0.0f, 0.0f,
-         0.0f, 1.0f, 0.0f, 0.0f,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return this.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -592,16 +579,12 @@ public class Mat4 extends Matrix {
     * @return this matrix
     */
    @Chainable
-   public Mat4 set (
-      final float m00, final float m01, final float m02,
-      final float m10, final float m11, final float m12,
-      final float m20, final float m21, final float m22 ) {
+   public Mat4 set ( final float m00, final float m01, final float m02,
+      final float m10, final float m11, final float m12, final float m20,
+      final float m21, final float m22 ) {
 
-      return this.set(
-         m00, m01, m02, 0.0f,
-         m10, m11, m12, 0.0f,
-         m20, m21, m22, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return this.set(m00, m01, m02, 0.0f, m10, m11, m12, 0.0f, m20, m21, m22,
+         0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -624,16 +607,13 @@ public class Mat4 extends Matrix {
     * @return this matrix
     */
    @Chainable
-   public Mat4 set (
-      final float m00, final float m01, final float m02, final float m03,
-      final float m10, final float m11, final float m12, final float m13,
-      final float m20, final float m21, final float m22, final float m23 ) {
+   public Mat4 set ( final float m00, final float m01, final float m02,
+      final float m03, final float m10, final float m11, final float m12,
+      final float m13, final float m20, final float m21, final float m22,
+      final float m23 ) {
 
-      return this.set(
-         m00, m01, m02, m03,
-         m10, m11, m12, m13,
-         m20, m21, m22, m23,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return this.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22,
+         m23, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -659,11 +639,11 @@ public class Mat4 extends Matrix {
     * @return this matrix
     */
    @Chainable
-   public Mat4 set (
-      final float m00, final float m01, final float m02, final float m03,
-      final float m10, final float m11, final float m12, final float m13,
-      final float m20, final float m21, final float m22, final float m23,
-      final float m30, final float m31, final float m32, final float m33 ) {
+   public Mat4 set ( final float m00, final float m01, final float m02,
+      final float m03, final float m10, final float m11, final float m12,
+      final float m13, final float m20, final float m21, final float m22,
+      final float m23, final float m30, final float m31, final float m32,
+      final float m33 ) {
 
       /* @formatter:off */
       this.m00 = m00; this.m10 = m10; this.m20 = m20; this.m30 = m30;
@@ -685,11 +665,10 @@ public class Mat4 extends Matrix {
    @Chainable
    public Mat4 set ( final Mat4 source ) {
 
-      return this.set(
-         source.m00, source.m01, source.m02, source.m03,
-         source.m10, source.m11, source.m12, source.m13,
-         source.m20, source.m21, source.m22, source.m23,
-         source.m30, source.m31, source.m32, source.m33);
+      return this.set(source.m00, source.m01, source.m02, source.m03,
+         source.m10, source.m11, source.m12, source.m13, source.m20, source.m21,
+         source.m22, source.m23, source.m30, source.m31, source.m32,
+         source.m33);
    }
 
    /**
@@ -933,10 +912,8 @@ public class Mat4 extends Matrix {
    @Override
    public float[] toArray ( ) {
 
-      return new float[] {
-         this.m00, this.m01, this.m02, this.m03,
-         this.m10, this.m11, this.m12, this.m13,
-         this.m20, this.m21, this.m22, this.m23,
+      return new float[] { this.m00, this.m01, this.m02, this.m03, this.m10,
+         this.m11, this.m12, this.m13, this.m20, this.m21, this.m22, this.m23,
          this.m30, this.m31, this.m32, this.m33 };
    }
 
@@ -1107,16 +1084,13 @@ public class Mat4 extends Matrix {
     *
     * @return the sum
     */
-   public static Mat4 add (
-      final Mat4 a,
-      final Mat4 b,
-      final Mat4 target ) {
+   public static Mat4 add ( final Mat4 a, final Mat4 b, final Mat4 target ) {
 
-      return target.set(
-         a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02, a.m03 + b.m03,
-         a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12, a.m13 + b.m13,
-         a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22, a.m23 + b.m23,
-         a.m30 + b.m30, a.m31 + b.m31, a.m32 + b.m32, a.m33 + b.m33);
+      return target.set(a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02,
+         a.m03 + b.m03, a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12,
+         a.m13 + b.m13, a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22,
+         a.m23 + b.m23, a.m30 + b.m30, a.m31 + b.m31, a.m32 + b.m32,
+         a.m33 + b.m33);
    }
 
    /**
@@ -1135,11 +1109,8 @@ public class Mat4 extends Matrix {
     */
    public static Mat4 bezierBasis ( final Mat4 target ) {
 
-      return target.set(
-         -1.0f, 3.0f, -3.0f, 1.0f,
-         3.0f, -6.0f, 3.0f, 0.0f,
-         -3.0f, 3.0f, 0.0f, 0.0f,
-         1.0f, 0.0f, 0.0f, 0.0f);
+      return target.set(-1.0f, 3.0f, -3.0f, 1.0f, 3.0f, -6.0f, 3.0f, 0.0f,
+         -3.0f, 3.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f);
    }
 
    /**
@@ -1158,11 +1129,8 @@ public class Mat4 extends Matrix {
     */
    public static Mat4 bezierBasisInverse ( final Mat4 target ) {
 
-      return target.set(
-         0.0f, 0.0f, 0.0f, 1.0f,
-         0.0f, 0.0f, 0.33333334f, 1.0f,
-         0.0f, 0.33333334f, 0.66666666f, 1.0f,
-         1.0f, 1.0f, 1.0f, 1.0f);
+      return target.set(0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.33333334f, 1.0f,
+         0.0f, 0.33333334f, 0.66666666f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
    }
 
    /**
@@ -1181,11 +1149,8 @@ public class Mat4 extends Matrix {
     * @see Quaternion#fromAxes(float, float, float, float, float, float,
     *      float, float, float, Quaternion)
     */
-   public static void decompose (
-      final Mat4 m,
-      final Vec3 trans,
-      final Quaternion rot,
-      final Vec3 scale ) {
+   public static void decompose ( final Mat4 m, final Vec3 trans,
+      final Quaternion rot, final Vec3 scale ) {
 
       final float xMag = Utils.hypot(m.m00, m.m10, m.m20);
       final float yMag = Utils.hypot(m.m01, m.m11, m.m21);
@@ -1273,10 +1238,7 @@ public class Mat4 extends Matrix {
     * @see Mat4#mul(Mat4, Mat4, Mat4)
     * @see Mat4#inverse
     */
-   public static Mat4 div (
-      final Mat4 a,
-      final Mat4 b,
-      final Mat4 target,
+   public static Mat4 div ( final Mat4 a, final Mat4 b, final Mat4 target,
       final Mat4 inverse ) {
 
       return Mat4.mul(a, Mat4.inverse(b, inverse), target);
@@ -1293,16 +1255,11 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromAxes (
-      final Vec2 right,
-      final Vec2 forward,
+   public static Mat4 fromAxes ( final Vec2 right, final Vec2 forward,
       final Mat4 target ) {
 
-      return target.set(
-         right.x, forward.x, 0.0f, 0.0f,
-         right.y, forward.y, 0.0f, 0.0f,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(right.x, forward.x, 0.0f, 0.0f, right.y, forward.y,
+         0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1317,17 +1274,12 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromAxes (
-      final Vec2 right,
-      final Vec2 forward,
-      final Vec2 translation,
-      final Mat4 target ) {
+   public static Mat4 fromAxes ( final Vec2 right, final Vec2 forward,
+      final Vec2 translation, final Mat4 target ) {
 
-      return target.set(
-         right.x, forward.x, 0.0f, translation.x,
-         right.y, forward.y, 0.0f, translation.y,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(right.x, forward.x, 0.0f, translation.x, right.y,
+         forward.y, 0.0f, translation.y, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f);
    }
 
    /**
@@ -1341,17 +1293,11 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromAxes (
-      final Vec3 right,
-      final Vec3 forward,
-      final Vec3 up,
-      final Mat4 target ) {
+   public static Mat4 fromAxes ( final Vec3 right, final Vec3 forward,
+      final Vec3 up, final Mat4 target ) {
 
-      return target.set(
-         right.x, forward.x, up.x, 0.0f,
-         right.y, forward.y, up.y, 0.0f,
-         right.z, forward.z, up.z, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(right.x, forward.x, up.x, 0.0f, right.y, forward.y,
+         up.y, 0.0f, right.z, forward.z, up.z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1366,18 +1312,12 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromAxes (
-      final Vec3 right,
-      final Vec3 forward,
-      final Vec3 up,
-      final Vec3 translation,
-      final Mat4 target ) {
+   public static Mat4 fromAxes ( final Vec3 right, final Vec3 forward,
+      final Vec3 up, final Vec3 translation, final Mat4 target ) {
 
-      return target.set(
-         right.x, forward.x, up.x, translation.x,
-         right.y, forward.y, up.y, translation.y,
-         right.z, forward.z, up.z, translation.z,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(right.x, forward.x, up.x, translation.x, right.y,
+         forward.y, up.y, translation.y, right.z, forward.z, up.z,
+         translation.z, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1391,17 +1331,12 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromAxes (
-      final Vec4 right,
-      final Vec4 forward,
-      final Vec4 up,
-      final Mat4 target ) {
+   public static Mat4 fromAxes ( final Vec4 right, final Vec4 forward,
+      final Vec4 up, final Mat4 target ) {
 
-      return target.set(
-         right.x, forward.x, up.x, 0.0f,
-         right.y, forward.y, up.y, 0.0f,
-         right.z, forward.z, up.z, 0.0f,
-         right.w, forward.w, up.w, 1.0f);
+      return target.set(right.x, forward.x, up.x, 0.0f, right.y, forward.y,
+         up.y, 0.0f, right.z, forward.z, up.z, 0.0f, right.w, forward.w, up.w,
+         1.0f);
    }
 
    /**
@@ -1415,18 +1350,12 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromAxes (
-      final Vec4 right,
-      final Vec4 forward,
-      final Vec4 up,
-      final Vec4 translation,
-      final Mat4 target ) {
+   public static Mat4 fromAxes ( final Vec4 right, final Vec4 forward,
+      final Vec4 up, final Vec4 translation, final Mat4 target ) {
 
-      return target.set(
-         right.x, forward.x, up.x, translation.x,
-         right.y, forward.y, up.y, translation.y,
-         right.z, forward.z, up.z, translation.z,
-         right.w, forward.w, up.w, translation.w);
+      return target.set(right.x, forward.x, up.x, translation.x, right.y,
+         forward.y, up.y, translation.y, right.z, forward.z, up.z,
+         translation.z, right.w, forward.w, up.w, translation.w);
    }
 
    /**
@@ -1440,11 +1369,8 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromRotation (
-      final float cosa,
-      final float sina,
-      final Vec3 axis,
-      final Mat4 target ) {
+   public static Mat4 fromRotation ( final float cosa, final float sina,
+      final Vec3 axis, final Mat4 target ) {
 
       final float mSq = Vec3.magSq(axis);
       if ( mSq == 0.0f ) { return target.reset(); }
@@ -1463,11 +1389,10 @@ public class Mat4 extends Matrix {
       final float axaz = x * az;
       final float ayaz = y * az;
 
-      return target.set(
-         cosa + x * ax, axay - sina * az, axaz + sina * ay, 0.0f,
+      return target.set(cosa + x * ax, axay - sina * az, axaz + sina * ay, 0.0f,
          axay + sina * az, cosa + y * ay, ayaz - sina * ax, 0.0f,
-         axaz - sina * ay, ayaz + sina * ax, cosa + z * az, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+         axaz - sina * ay, ayaz + sina * ax, cosa + z * az, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f);
    }
 
    /**
@@ -1480,9 +1405,7 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromRotation (
-      final float radians,
-      final Vec3 axis,
+   public static Mat4 fromRotation ( final float radians, final Vec3 axis,
       final Mat4 target ) {
 
       // return Mat4.fromRotation(
@@ -1492,9 +1415,7 @@ public class Mat4 extends Matrix {
       // target);
 
       final float norm = radians * IUtils.ONE_TAU;
-      return Mat4.fromRotation(
-         Utils.scNorm(norm),
-         Utils.scNorm(norm - 0.25f),
+      return Mat4.fromRotation(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
          axis, target);
    }
 
@@ -1506,8 +1427,7 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromRotation (
-      final Quaternion source,
+   public static Mat4 fromRotation ( final Quaternion source,
       final Mat4 target ) {
 
       final float w = source.real;
@@ -1529,11 +1449,9 @@ public class Mat4 extends Matrix {
       final float wy2 = w * y2;
       final float wz2 = w * z2;
 
-      return target.set(
-         1.0f - ysq2 - zsq2, xy2 - wz2, xz2 + wy2, 0.0f,
-         xy2 + wz2, 1.0f - xsq2 - zsq2, yz2 - wx2, 0.0f,
-         xz2 - wy2, yz2 + wx2, 1.0f - xsq2 - ysq2, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(1.0f - ysq2 - zsq2, xy2 - wz2, xz2 + wy2, 0.0f,
+         xy2 + wz2, 1.0f - xsq2 - zsq2, yz2 - wx2, 0.0f, xz2 - wy2, yz2 + wx2,
+         1.0f - xsq2 - ysq2, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1545,16 +1463,11 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromRotX (
-      final float cosa,
-      final float sina,
+   public static Mat4 fromRotX ( final float cosa, final float sina,
       final Mat4 target ) {
 
-      return target.set(
-         1.0f, 0.0f, 0.0f, 0.0f,
-         0.0f, cosa, -sina, 0.0f,
-         0.0f, sina, cosa, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, cosa, -sina, 0.0f, 0.0f,
+         sina, cosa, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1565,9 +1478,7 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromRotX (
-      final float radians,
-      final Mat4 target ) {
+   public static Mat4 fromRotX ( final float radians, final Mat4 target ) {
 
       // return Mat4.fromRotX(
       // Utils.cos(radians),
@@ -1575,9 +1486,7 @@ public class Mat4 extends Matrix {
       // target);
 
       final float norm = radians * IUtils.ONE_TAU;
-      return Mat4.fromRotX(
-         Utils.scNorm(norm),
-         Utils.scNorm(norm - 0.25f),
+      return Mat4.fromRotX(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
          target);
    }
 
@@ -1590,19 +1499,14 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromRotY (
-      final float cosa,
-      final float sina,
+   public static Mat4 fromRotY ( final float cosa, final float sina,
       final Mat4 target ) {
 
       // RESEARCH: Is this inconsistent when compared with 4D rotation about
       // the YW axis? Should sin(a) and -sin(a) be transposed?
 
-      return target.set(
-         cosa, 0.0f, sina, 0.0f,
-         0.0f, 1.0f, 0.0f, 0.0f,
-         -sina, 0.0f, cosa, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(cosa, 0.0f, sina, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -sina,
+         0.0f, cosa, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1613,9 +1517,7 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromRotY (
-      final float radians,
-      final Mat4 target ) {
+   public static Mat4 fromRotY ( final float radians, final Mat4 target ) {
 
       // return Mat4.fromRotY(
       // Utils.cos(radians),
@@ -1623,9 +1525,7 @@ public class Mat4 extends Matrix {
       // target);
 
       final float norm = radians * IUtils.ONE_TAU;
-      return Mat4.fromRotY(
-         Utils.scNorm(norm),
-         Utils.scNorm(norm - 0.25f),
+      return Mat4.fromRotY(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
          target);
    }
 
@@ -1638,16 +1538,11 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromRotZ (
-      final float cosa,
-      final float sina,
+   public static Mat4 fromRotZ ( final float cosa, final float sina,
       final Mat4 target ) {
 
-      return target.set(
-         cosa, -sina, 0.0f, 0.0f,
-         sina, cosa, 0.0f, 0.0f,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(cosa, -sina, 0.0f, 0.0f, sina, cosa, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1658,9 +1553,7 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromRotZ (
-      final float radians,
-      final Mat4 target ) {
+   public static Mat4 fromRotZ ( final float radians, final Mat4 target ) {
 
       // return Mat4.fromRotZ(
       // Utils.cos(radians),
@@ -1668,9 +1561,7 @@ public class Mat4 extends Matrix {
       // target);
 
       final float norm = radians * IUtils.ONE_TAU;
-      return Mat4.fromRotZ(
-         Utils.scNorm(norm),
-         Utils.scNorm(norm - 0.25f),
+      return Mat4.fromRotZ(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
          target);
    }
 
@@ -1683,16 +1574,11 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromScale (
-      final float scalar,
-      final Mat4 target ) {
+   public static Mat4 fromScale ( final float scalar, final Mat4 target ) {
 
       if ( scalar != 0.0f ) {
-         return target.set(
-            scalar, 0.0f, 0.0f, 0.0f,
-            0.0f, scalar, 0.0f, 0.0f,
-            0.0f, 0.0f, scalar, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f);
+         return target.set(scalar, 0.0f, 0.0f, 0.0f, 0.0f, scalar, 0.0f, 0.0f,
+            0.0f, 0.0f, scalar, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 
       }
       return target.reset();
@@ -1707,16 +1593,11 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromScale (
-      final Vec2 scalar,
-      final Mat4 target ) {
+   public static Mat4 fromScale ( final Vec2 scalar, final Mat4 target ) {
 
       if ( Vec2.all(scalar) ) {
-         return target.set(
-            scalar.x, 0.0f, 0.0f, 0.0f,
-            0.0f, scalar.y, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f);
+         return target.set(scalar.x, 0.0f, 0.0f, 0.0f, 0.0f, scalar.y, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
       }
       return target.reset();
    }
@@ -1729,16 +1610,11 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromScale (
-      final Vec3 scalar,
-      final Mat4 target ) {
+   public static Mat4 fromScale ( final Vec3 scalar, final Mat4 target ) {
 
       if ( Vec3.all(scalar) ) {
-         return target.set(
-            scalar.x, 0.0f, 0.0f, 0.0f,
-            0.0f, scalar.y, 0.0f, 0.0f,
-            0.0f, 0.0f, scalar.z, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f);
+         return target.set(scalar.x, 0.0f, 0.0f, 0.0f, 0.0f, scalar.y, 0.0f,
+            0.0f, 0.0f, 0.0f, scalar.z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
       }
       return target.reset();
    }
@@ -1751,15 +1627,11 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromTranslation (
-      final Vec2 translation,
+   public static Mat4 fromTranslation ( final Vec2 translation,
       final Mat4 target ) {
 
-      return target.set(
-         1.0f, 0.0f, 0.0f, translation.x,
-         0.0f, 1.0f, 0.0f, translation.y,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(1.0f, 0.0f, 0.0f, translation.x, 0.0f, 1.0f, 0.0f,
+         translation.y, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1770,15 +1642,12 @@ public class Mat4 extends Matrix {
     *
     * @return the matrix
     */
-   public static Mat4 fromTranslation (
-      final Vec3 translation,
+   public static Mat4 fromTranslation ( final Vec3 translation,
       final Mat4 target ) {
 
-      return target.set(
-         1.0f, 0.0f, 0.0f, translation.x,
-         0.0f, 1.0f, 0.0f, translation.y,
-         0.0f, 0.0f, 1.0f, translation.z,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(1.0f, 0.0f, 0.0f, translation.x, 0.0f, 1.0f, 0.0f,
+         translation.y, 0.0f, 0.0f, 1.0f, translation.z, 0.0f, 0.0f, 0.0f,
+         1.0f);
    }
 
    /**
@@ -1794,13 +1663,8 @@ public class Mat4 extends Matrix {
     *
     * @return the view frustum
     */
-   public static Mat4 frustum (
-      final float left,
-      final float right,
-      final float bottom,
-      final float top,
-      final float near,
-      final float far,
+   public static Mat4 frustum ( final float left, final float right,
+      final float bottom, final float top, final float near, final float far,
       final Mat4 target ) {
 
       final float n2 = near + near;
@@ -1813,11 +1677,9 @@ public class Mat4 extends Matrix {
       h = h != 0.0f ? 1.0f / h : 1.0f;
       d = d != 0.0f ? 1.0f / d : 1.0f;
 
-      return target.set(
-         n2 * w, 0.0f, ( right + left ) * w, 0.0f,
-         0.0f, n2 * h, ( top + bottom ) * h, 0.0f,
-         0.0f, 0.0f, ( far + near ) * -d, n2 * far * -d,
-         0.0f, 0.0f, -1.0f, 0.0f);
+      return target.set(n2 * w, 0.0f, ( right + left ) * w, 0.0f, 0.0f, n2 * h,
+         ( top + bottom ) * h, 0.0f, 0.0f, 0.0f, ( far + near ) * -d,
+         n2 * far * -d, 0.0f, 0.0f, -1.0f, 0.0f);
    }
 
    /**
@@ -1836,11 +1698,8 @@ public class Mat4 extends Matrix {
     */
    public static Mat4 identity ( final Mat4 target ) {
 
-      return target.set(
-         1.0f, 0.0f, 0.0f, 0.0f,
-         0.0f, 1.0f, 0.0f, 0.0f,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1866,13 +1725,13 @@ public class Mat4 extends Matrix {
       final float b10 = m.m21 * m.m33 - m.m23 * m.m31;
       final float b11 = m.m22 * m.m33 - m.m23 * m.m32;
 
-      final float det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
+      final float det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08
+         - b04 * b07 + b05 * b06;
 
       if ( det == 0.0f ) { return target.reset(); }
       final float detInv = 1.0f / det;
 
-      return target.set(
-         ( m.m11 * b11 - m.m12 * b10 + m.m13 * b09 ) * detInv,
+      return target.set( ( m.m11 * b11 - m.m12 * b10 + m.m13 * b09 ) * detInv,
          ( m.m02 * b10 - m.m01 * b11 - m.m03 * b09 ) * detInv,
          ( m.m31 * b05 - m.m32 * b04 + m.m33 * b03 ) * detInv,
          ( m.m22 * b04 - m.m21 * b05 - m.m23 * b03 ) * detInv,
@@ -1917,16 +1776,11 @@ public class Mat4 extends Matrix {
     *
     * @return the product
     */
-   public static Mat4 mul (
-      final float a,
-      final Mat4 b,
-      final Mat4 target ) {
+   public static Mat4 mul ( final float a, final Mat4 b, final Mat4 target ) {
 
-      return target.set(
-         a * b.m00, a * b.m01, a * b.m02, a * b.m03,
-         a * b.m10, a * b.m11, a * b.m12, a * b.m13,
-         a * b.m20, a * b.m21, a * b.m22, a * b.m23,
-         a * b.m30, a * b.m31, a * b.m32, a * b.m33);
+      return target.set(a * b.m00, a * b.m01, a * b.m02, a * b.m03, a * b.m10,
+         a * b.m11, a * b.m12, a * b.m13, a * b.m20, a * b.m21, a * b.m22,
+         a * b.m23, a * b.m30, a * b.m31, a * b.m32, a * b.m33);
    }
 
    /**
@@ -1939,16 +1793,11 @@ public class Mat4 extends Matrix {
     *
     * @return the product
     */
-   public static Mat4 mul (
-      final Mat4 a,
-      final float b,
-      final Mat4 target ) {
+   public static Mat4 mul ( final Mat4 a, final float b, final Mat4 target ) {
 
-      return target.set(
-         a.m00 * b, a.m01 * b, a.m02 * b, a.m03 * b,
-         a.m10 * b, a.m11 * b, a.m12 * b, a.m13 * b,
-         a.m20 * b, a.m21 * b, a.m22 * b, a.m23 * b,
-         a.m30 * b, a.m31 * b, a.m32 * b, a.m33 * b);
+      return target.set(a.m00 * b, a.m01 * b, a.m02 * b, a.m03 * b, a.m10 * b,
+         a.m11 * b, a.m12 * b, a.m13 * b, a.m20 * b, a.m21 * b, a.m22 * b,
+         a.m23 * b, a.m30 * b, a.m31 * b, a.m32 * b, a.m33 * b);
    }
 
    /**
@@ -1960,10 +1809,7 @@ public class Mat4 extends Matrix {
     *
     * @return the product
     */
-   public static Mat4 mul (
-      final Mat4 a,
-      final Mat4 b,
-      final Mat4 target ) {
+   public static Mat4 mul ( final Mat4 a, final Mat4 b, final Mat4 target ) {
 
       return target.set(
          a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03 * b.m30,
@@ -1998,34 +1844,46 @@ public class Mat4 extends Matrix {
     *
     * @return the product
     */
-   public static Mat4 mul (
-      final Mat4 a,
-      final Mat4 b,
-      final Mat4 c,
+   public static Mat4 mul ( final Mat4 a, final Mat4 b, final Mat4 c,
       final Mat4 target ) {
 
-      final float n00 = a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03 * b.m30;
-      final float n01 = a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21 + a.m03 * b.m31;
-      final float n02 = a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22 + a.m03 * b.m32;
-      final float n03 = a.m00 * b.m03 + a.m01 * b.m13 + a.m02 * b.m23 + a.m03 * b.m33;
+      final float n00
+         = a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03 * b.m30;
+      final float n01
+         = a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21 + a.m03 * b.m31;
+      final float n02
+         = a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22 + a.m03 * b.m32;
+      final float n03
+         = a.m00 * b.m03 + a.m01 * b.m13 + a.m02 * b.m23 + a.m03 * b.m33;
 
-      final float n10 = a.m10 * b.m00 + a.m11 * b.m10 + a.m12 * b.m20 + a.m13 * b.m30;
-      final float n11 = a.m10 * b.m01 + a.m11 * b.m11 + a.m12 * b.m21 + a.m13 * b.m31;
-      final float n12 = a.m10 * b.m02 + a.m11 * b.m12 + a.m12 * b.m22 + a.m13 * b.m32;
-      final float n13 = a.m10 * b.m03 + a.m11 * b.m13 + a.m12 * b.m23 + a.m13 * b.m33;
+      final float n10
+         = a.m10 * b.m00 + a.m11 * b.m10 + a.m12 * b.m20 + a.m13 * b.m30;
+      final float n11
+         = a.m10 * b.m01 + a.m11 * b.m11 + a.m12 * b.m21 + a.m13 * b.m31;
+      final float n12
+         = a.m10 * b.m02 + a.m11 * b.m12 + a.m12 * b.m22 + a.m13 * b.m32;
+      final float n13
+         = a.m10 * b.m03 + a.m11 * b.m13 + a.m12 * b.m23 + a.m13 * b.m33;
 
-      final float n20 = a.m20 * b.m00 + a.m21 * b.m10 + a.m22 * b.m20 + a.m23 * b.m30;
-      final float n21 = a.m20 * b.m01 + a.m21 * b.m11 + a.m22 * b.m21 + a.m23 * b.m31;
-      final float n22 = a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22 + a.m23 * b.m32;
-      final float n23 = a.m20 * b.m03 + a.m21 * b.m13 + a.m22 * b.m23 + a.m23 * b.m33;
+      final float n20
+         = a.m20 * b.m00 + a.m21 * b.m10 + a.m22 * b.m20 + a.m23 * b.m30;
+      final float n21
+         = a.m20 * b.m01 + a.m21 * b.m11 + a.m22 * b.m21 + a.m23 * b.m31;
+      final float n22
+         = a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22 + a.m23 * b.m32;
+      final float n23
+         = a.m20 * b.m03 + a.m21 * b.m13 + a.m22 * b.m23 + a.m23 * b.m33;
 
-      final float n30 = a.m30 * b.m00 + a.m31 * b.m10 + a.m32 * b.m20 + a.m33 * b.m30;
-      final float n31 = a.m30 * b.m01 + a.m31 * b.m11 + a.m32 * b.m21 + a.m33 * b.m31;
-      final float n32 = a.m30 * b.m02 + a.m31 * b.m12 + a.m32 * b.m22 + a.m33 * b.m32;
-      final float n33 = a.m30 * b.m03 + a.m31 * b.m13 + a.m32 * b.m23 + a.m33 * b.m33;
+      final float n30
+         = a.m30 * b.m00 + a.m31 * b.m10 + a.m32 * b.m20 + a.m33 * b.m30;
+      final float n31
+         = a.m30 * b.m01 + a.m31 * b.m11 + a.m32 * b.m21 + a.m33 * b.m31;
+      final float n32
+         = a.m30 * b.m02 + a.m31 * b.m12 + a.m32 * b.m22 + a.m33 * b.m32;
+      final float n33
+         = a.m30 * b.m03 + a.m31 * b.m13 + a.m32 * b.m23 + a.m33 * b.m33;
 
-      return target.set(
-         n00 * c.m00 + n01 * c.m10 + n02 * c.m20 + n03 * c.m30,
+      return target.set(n00 * c.m00 + n01 * c.m10 + n02 * c.m20 + n03 * c.m30,
          n00 * c.m01 + n01 * c.m11 + n02 * c.m21 + n03 * c.m31,
          n00 * c.m02 + n01 * c.m12 + n02 * c.m22 + n03 * c.m32,
          n00 * c.m03 + n01 * c.m13 + n02 * c.m23 + n03 * c.m33,
@@ -2055,13 +1913,9 @@ public class Mat4 extends Matrix {
     *
     * @return the product
     */
-   public static Vec4 mul (
-      final Mat4 a,
-      final Vec4 b,
-      final Vec4 target ) {
+   public static Vec4 mul ( final Mat4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(
-         a.m00 * b.x + a.m01 * b.y + a.m02 * b.z + a.m03 * b.w,
+      return target.set(a.m00 * b.x + a.m01 * b.y + a.m02 * b.z + a.m03 * b.w,
          a.m10 * b.x + a.m11 * b.y + a.m12 * b.z + a.m13 * b.w,
          a.m20 * b.x + a.m21 * b.y + a.m22 * b.z + a.m23 * b.w,
          a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33 * b.w);
@@ -2079,9 +1933,7 @@ public class Mat4 extends Matrix {
     * @return the product
     */
    @Experimental
-   public static Vec3 mulPoint (
-      final Mat4 a,
-      final Vec2 b,
+   public static Vec3 mulPoint ( final Mat4 a, final Vec2 b,
       final Vec3 target ) {
 
       // TEST
@@ -2090,8 +1942,7 @@ public class Mat4 extends Matrix {
       if ( w == 0.0f ) { return target.reset(); }
       final float wInv = 1.0f / w;
 
-      return target.set(
-         ( a.m00 * b.x + a.m01 * b.y + a.m03 ) * wInv,
+      return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m03 ) * wInv,
          ( a.m10 * b.x + a.m11 * b.y + a.m13 ) * wInv,
          ( a.m20 * b.x + a.m21 * b.y + a.m23 ) * wInv);
    }
@@ -2107,9 +1958,7 @@ public class Mat4 extends Matrix {
     * @return the product
     */
    @Experimental
-   public static Vec3 mulPoint (
-      final Mat4 a,
-      final Vec3 b,
+   public static Vec3 mulPoint ( final Mat4 a, final Vec3 b,
       final Vec3 target ) {
 
       // TEST
@@ -2136,9 +1985,7 @@ public class Mat4 extends Matrix {
     * @return the product
     */
    @Experimental
-   public static Vec3 mulVector (
-      final Mat4 a,
-      final Vec2 b,
+   public static Vec3 mulVector ( final Mat4 a, final Vec2 b,
       final Vec3 target ) {
 
       // TEST
@@ -2147,8 +1994,7 @@ public class Mat4 extends Matrix {
       if ( w == 0.0f ) { return target.reset(); }
       final float wInv = 1.0f / w;
 
-      return target.set(
-         ( a.m00 * b.x + a.m01 * b.y ) * wInv,
+      return target.set( ( a.m00 * b.x + a.m01 * b.y ) * wInv,
          ( a.m10 * b.x + a.m11 * b.y ) * wInv,
          ( a.m20 * b.x + a.m21 * b.y ) * wInv);
    }
@@ -2165,9 +2011,7 @@ public class Mat4 extends Matrix {
     * @return the product
     */
    @Experimental
-   public static Vec3 mulVector (
-      final Mat4 a,
-      final Vec3 b,
+   public static Vec3 mulVector ( final Mat4 a, final Vec3 b,
       final Vec3 target ) {
 
       // TEST
@@ -2176,8 +2020,7 @@ public class Mat4 extends Matrix {
       if ( w == 0.0f ) { return target.reset(); }
       final float wInv = 1.0f / w;
 
-      return target.set(
-         ( a.m00 * b.x + a.m01 * b.y + a.m02 * b.z ) * wInv,
+      return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m02 * b.z ) * wInv,
          ( a.m10 * b.x + a.m11 * b.y + a.m12 * b.z ) * wInv,
          ( a.m20 * b.x + a.m21 * b.y + a.m22 * b.z ) * wInv);
    }
@@ -2196,13 +2039,8 @@ public class Mat4 extends Matrix {
     *
     * @return the orthographic projection
     */
-   public static Mat4 orthographic (
-      final float left,
-      final float right,
-      final float bottom,
-      final float top,
-      final float near,
-      final float far,
+   public static Mat4 orthographic ( final float left, final float right,
+      final float bottom, final float top, final float near, final float far,
       final Mat4 target ) {
 
       float w = right - left;
@@ -2213,11 +2051,9 @@ public class Mat4 extends Matrix {
       h = h != 0.0f ? 1.0f / h : 1.0f;
       d = d != 0.0f ? 1.0f / d : 1.0f;
 
-      return target.set(
-         w + w, 0.0f, 0.0f, w * ( left + right ),
-         0.0f, h + h, 0.0f, h * ( top + bottom ),
-         0.0f, 0.0f, - ( d + d ), -d * ( far + near ),
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(w + w, 0.0f, 0.0f, w * ( left + right ), 0.0f, h + h,
+         0.0f, h * ( top + bottom ), 0.0f, 0.0f, - ( d + d ),
+         -d * ( far + near ), 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -2232,20 +2068,14 @@ public class Mat4 extends Matrix {
     *
     * @return the perspective projection
     */
-   public static Mat4 perspective (
-      final float fov,
-      final float aspect,
-      final float near,
-      final float far,
-      final Mat4 target ) {
+   public static Mat4 perspective ( final float fov, final float aspect,
+      final float near, final float far, final Mat4 target ) {
 
       final float cotfov = Utils.cot(fov * 0.5f);
       final float d = Utils.div(1.0f, far - near);
-      return target.set(
-         Utils.div(cotfov, aspect), 0.0f, 0.0f, 0.0f,
-         0.0f, cotfov, 0.0f, 0.0f,
-         0.0f, 0.0f, ( far + near ) * -d, ( near + near ) * far * -d,
-         0.0f, 0.0f, -1.0f, 0.0f);
+      return target.set(Utils.div(cotfov, aspect), 0.0f, 0.0f, 0.0f, 0.0f,
+         cotfov, 0.0f, 0.0f, 0.0f, 0.0f, ( far + near ) * -d,
+         ( near + near ) * far * -d, 0.0f, 0.0f, -1.0f, 0.0f);
    }
 
    /**
@@ -2257,16 +2087,13 @@ public class Mat4 extends Matrix {
     *
     * @return the result
     */
-   public static Mat4 sub (
-      final Mat4 a,
-      final Mat4 b,
-      final Mat4 target ) {
+   public static Mat4 sub ( final Mat4 a, final Mat4 b, final Mat4 target ) {
 
-      return target.set(
-         a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02, a.m03 - b.m03,
-         a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12, a.m13 - b.m13,
-         a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22, a.m23 - b.m23,
-         a.m30 - b.m30, a.m31 - b.m31, a.m32 - b.m32, a.m33 - b.m33);
+      return target.set(a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02,
+         a.m03 - b.m03, a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12,
+         a.m13 - b.m13, a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22,
+         a.m23 - b.m23, a.m30 - b.m30, a.m31 - b.m31, a.m32 - b.m32,
+         a.m33 - b.m33);
    }
 
    /**
@@ -2277,15 +2104,10 @@ public class Mat4 extends Matrix {
     *
     * @return the transposed matrix
     */
-   public static Mat4 transpose (
-      final Mat4 m,
-      final Mat4 target ) {
+   public static Mat4 transpose ( final Mat4 m, final Mat4 target ) {
 
-      return target.set(
-         m.m00, m.m10, m.m20, m.m30,
-         m.m01, m.m11, m.m21, m.m31,
-         m.m02, m.m12, m.m22, m.m32,
-         m.m03, m.m13, m.m23, m.m33);
+      return target.set(m.m00, m.m10, m.m20, m.m30, m.m01, m.m11, m.m21, m.m31,
+         m.m02, m.m12, m.m22, m.m32, m.m03, m.m13, m.m23, m.m33);
    }
 
    /**

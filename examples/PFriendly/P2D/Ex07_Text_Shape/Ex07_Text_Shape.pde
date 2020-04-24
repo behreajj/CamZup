@@ -45,7 +45,6 @@ void setup() {
   int len1 = glyMsh.length;
   for (int j = 0; j < len1; ++j) {
     MeshEntity2 glyph = glyMsh[j];
-
     glyph.scaleTo(scl);
   }
 

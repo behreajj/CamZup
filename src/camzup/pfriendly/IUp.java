@@ -124,10 +124,7 @@ public interface IUp {
     *
     * @return the color
     */
-   Color lerpColor (
-      final Color origin,
-      final Color dest,
-      final float step,
+   Color lerpColor ( final Color origin, final Color dest, final float step,
       final Color target );
 
    /**
@@ -140,10 +137,7 @@ public interface IUp {
     *
     * @return the color
     */
-   int lerpColor (
-      final int origin,
-      final int dest,
-      final float step );
+   int lerpColor ( final int origin, final int dest, final float step );
 
    /**
     * Draws the world origin.

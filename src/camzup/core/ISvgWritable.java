@@ -72,12 +72,8 @@ public interface ISvgWritable {
     *
     * @return the SVG string
     */
-   default String toSvgString (
-      final String id,
-      final float xOrigin,
-      final float yOrigin,
-      final float width,
-      final float height ) {
+   default String toSvgString ( final String id, final float xOrigin,
+      final float yOrigin, final float width, final float height ) {
 
       final float vw = Utils.max(IUtils.DEFAULT_EPSILON, width);
       final float vh = Utils.max(IUtils.DEFAULT_EPSILON, height);
@@ -131,9 +127,7 @@ public interface ISvgWritable {
     *
     * @return the SVG string
     */
-   default String toSvgString (
-      final String id,
-      final Vec2 origin,
+   default String toSvgString ( final String id, final Vec2 origin,
       final Vec2 dim ) {
 
       return this.toSvgString(id, origin.x, origin.y, dim.x, dim.y);

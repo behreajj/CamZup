@@ -55,9 +55,7 @@ public abstract class Mesh extends EntityData implements IMesh {
     * @param name  the name
     * @param faces the face indices.
     */
-   protected Mesh (
-      final String name,
-      final int[][][] faces ) {
+   protected Mesh ( final String name, final int[][][] faces ) {
 
       super(name);
       this.faces = faces;
@@ -96,9 +94,7 @@ public abstract class Mesh extends EntityData implements IMesh {
     * @return this mesh
     */
    @Chainable
-   public Mesh cycleVerts (
-      final int faceIndex,
-      final int places ) {
+   public Mesh cycleVerts ( final int faceIndex, final int places ) {
 
       final int[][] arr = this.faces[Utils.mod(faceIndex, this.faces.length)];
       final int len = arr.length;
@@ -215,9 +211,7 @@ public abstract class Mesh extends EntityData implements IMesh {
     *
     * @see System#arraycopy(Object, int, Object, int, int)
     */
-   protected static int[][] insert (
-      final int[][] arr,
-      final int index,
+   protected static int[][] insert ( final int[][] arr, final int index,
       final int[][] insert ) {
 
       final int alen = arr.length;
@@ -247,9 +241,7 @@ public abstract class Mesh extends EntityData implements IMesh {
     *
     * @return the array
     */
-   protected static int[][] reverse (
-      final int[][] arr,
-      final int start,
+   protected static int[][] reverse ( final int[][] arr, final int start,
       final int end ) {
 
       int st = start;
@@ -274,9 +266,7 @@ public abstract class Mesh extends EntityData implements IMesh {
     *
     * @return the array
     */
-   protected static int[][][] reverse (
-      final int[][][] arr,
-      final int start,
+   protected static int[][][] reverse ( final int[][][] arr, final int start,
       final int end ) {
 
       int st = start;
@@ -304,11 +294,8 @@ public abstract class Mesh extends EntityData implements IMesh {
     *
     * @return the spliced array
     */
-   protected static int[][] splice (
-      final int[][] arr,
-      final int index,
-      final int deletions,
-      final int[][] insert ) {
+   protected static int[][] splice ( final int[][] arr, final int index,
+      final int deletions, final int[][] insert ) {
 
       final int alen = arr.length;
 
@@ -348,11 +335,8 @@ public abstract class Mesh extends EntityData implements IMesh {
     *
     * @return the spliced array
     */
-   protected static int[][][] splice (
-      final int[][][] arr,
-      final int index,
-      final int deletions,
-      final int[][][] insert ) {
+   protected static int[][][] splice ( final int[][][] arr, final int index,
+      final int deletions, final int[][][] insert ) {
 
       final int alen = arr.length;
 

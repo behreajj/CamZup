@@ -44,11 +44,8 @@ public abstract class TextShape {
     *
     * @return the array
     */
-   public static CurveEntity2[] glyphCurve (
-      final PFont pfont,
-      final float detail,
-      final boolean separate,
-      final char... characters ) {
+   public static CurveEntity2[] glyphCurve ( final PFont pfont,
+      final float detail, final boolean separate, final char... characters ) {
 
       return TextShape.processGlyphCe(pfont, detail, separate, characters);
    }
@@ -66,11 +63,8 @@ public abstract class TextShape {
     *
     * @return the array
     */
-   public static CurveEntity2[] glyphCurve (
-      final PFont pfont,
-      final float detail,
-      final boolean separate,
-      final String str ) {
+   public static CurveEntity2[] glyphCurve ( final PFont pfont,
+      final float detail, final boolean separate, final String str ) {
 
       return TextShape.processGlyphCe(pfont, detail, separate,
          str.toCharArray());
@@ -90,11 +84,8 @@ public abstract class TextShape {
     *
     * @return the array
     */
-   public static CurveEntity2[] glyphCurve (
-      final PGraphicsJava2D rndr,
-      final PFont pfont,
-      final float detail,
-      final boolean separate,
+   public static CurveEntity2[] glyphCurve ( final PGraphicsJava2D rndr,
+      final PFont pfont, final float detail, final boolean separate,
       final char... characters ) {
 
       return TextShape.processGlyphCe(rndr.g2, pfont, detail, separate,
@@ -115,11 +106,8 @@ public abstract class TextShape {
     *
     * @return the array
     */
-   public static CurveEntity2[] glyphCurve (
-      final PGraphicsJava2D rndr,
-      final PFont pfont,
-      final float detail,
-      final boolean separate,
+   public static CurveEntity2[] glyphCurve ( final PGraphicsJava2D rndr,
+      final PFont pfont, final float detail, final boolean separate,
       final String str ) {
 
       return TextShape.processGlyphCe(rndr.g2, pfont, detail, separate,
@@ -137,11 +125,8 @@ public abstract class TextShape {
     *
     * @return the array
     */
-   public static MeshEntity2[] glyphMesh (
-      final PFont pfont,
-      final float detail,
-      final boolean separate,
-      final char... characters ) {
+   public static MeshEntity2[] glyphMesh ( final PFont pfont,
+      final float detail, final boolean separate, final char... characters ) {
 
       return TextShape.processGlyphMe(pfont, detail, separate, characters);
    }
@@ -157,11 +142,8 @@ public abstract class TextShape {
     *
     * @return the array
     */
-   public static MeshEntity2[] glyphMesh (
-      final PFont pfont,
-      final float detail,
-      final boolean separate,
-      final String str ) {
+   public static MeshEntity2[] glyphMesh ( final PFont pfont,
+      final float detail, final boolean separate, final String str ) {
 
       return TextShape.processGlyphMe(pfont, detail, separate,
          str.toCharArray());
@@ -179,11 +161,8 @@ public abstract class TextShape {
     *
     * @return the array of Curve2s
     */
-   protected static CurveEntity2[] processGlyphCe (
-      final Graphics2D graphics,
-      final PFont pfont,
-      final float detail,
-      final boolean separate,
+   protected static CurveEntity2[] processGlyphCe ( final Graphics2D graphics,
+      final PFont pfont, final float detail, final boolean separate,
       final char... characters ) {
 
       final List < CurveEntity2 > entities = new ArrayList <>();
@@ -237,19 +216,16 @@ public abstract class TextShape {
     *
     * @see Toolkit#getDefaultToolkit()
     */
-   protected static CurveEntity2[] processGlyphCe (
-      final PFont pfont,
-      final float detail,
-      final boolean separate,
-      final char... characters ) {
+   protected static CurveEntity2[] processGlyphCe ( final PFont pfont,
+      final float detail, final boolean separate, final char... characters ) {
 
       final List < CurveEntity2 > entities = new ArrayList <>();
       final Font font = ( Font ) pfont.getNative();
       if ( font != null ) {
 
          @SuppressWarnings ( "deprecation" )
-         final FontRenderContext frc = Toolkit.getDefaultToolkit().getFontMetrics(
-            font).getFontRenderContext();
+         final FontRenderContext frc = Toolkit.getDefaultToolkit()
+            .getFontMetrics(font).getFontRenderContext();
 
          if ( separate ) {
 
@@ -295,18 +271,12 @@ public abstract class TextShape {
     * @see TextShape#processGlyphCurve(Font, FontRenderContext,
     *      AffineTransform, float, char[], List)
     */
-   protected static List < Curve2 > processGlyphCurve (
-      final Font font,
-      final FontRenderContext frc,
-      final AffineTransform transform,
-      final float detail,
-      final char character,
-      final List < Curve2 > curves ) {
+   protected static List < Curve2 > processGlyphCurve ( final Font font,
+      final FontRenderContext frc, final AffineTransform transform,
+      final float detail, final char character, final List < Curve2 > curves ) {
 
       return TextShape.processGlyphCurve(font, frc, transform, detail,
-         new char[] {
-            character },
-         curves);
+         new char[] { character }, curves);
    }
 
    /**
@@ -334,12 +304,9 @@ public abstract class TextShape {
     * @see PathIterator#currentSegment(float[])
     */
    @SuppressWarnings ( "null" )
-   protected static List < Curve2 > processGlyphCurve (
-      final Font font,
-      final FontRenderContext frc,
-      final AffineTransform transform,
-      final float detail,
-      final char[] characters,
+   protected static List < Curve2 > processGlyphCurve ( final Font font,
+      final FontRenderContext frc, final AffineTransform transform,
+      final float detail, final char[] characters,
       final List < Curve2 > curves ) {
 
       final GlyphVector gv = font.createGlyphVector(frc, characters);
@@ -352,9 +319,9 @@ public abstract class TextShape {
        * and rear-handles share a mid point; the 'pen' draws a curved line with
        * different fore- and rear-handles; the pen lifts and stops drawing.
        */
-      final PathIterator itr = detail < IUtils.DEFAULT_EPSILON
-         ? shp.getPathIterator(transform)
-         : shp.getPathIterator(transform, detail);
+      final PathIterator itr
+         = detail < IUtils.DEFAULT_EPSILON ? shp.getPathIterator(transform)
+            : shp.getPathIterator(transform, detail);
 
       /*
        * A double precision array is filled with values by the iterator when
@@ -513,19 +480,16 @@ public abstract class TextShape {
     *
     * @see Toolkit#getDefaultToolkit()
     */
-   protected static MeshEntity2[] processGlyphMe (
-      final PFont pfont,
-      final float detail,
-      final boolean separate,
-      final char... characters ) {
+   protected static MeshEntity2[] processGlyphMe ( final PFont pfont,
+      final float detail, final boolean separate, final char... characters ) {
 
       final List < MeshEntity2 > entities = new ArrayList <>();
       final Font font = ( Font ) pfont.getNative();
       if ( font != null ) {
 
          @SuppressWarnings ( "deprecation" )
-         final FontRenderContext frc = Toolkit.getDefaultToolkit().getFontMetrics(
-            font).getFontRenderContext();
+         final FontRenderContext frc = Toolkit.getDefaultToolkit()
+            .getFontMetrics(font).getFontRenderContext();
 
          if ( separate ) {
 
@@ -572,18 +536,12 @@ public abstract class TextShape {
     *      AffineTransform, float, char[], List)
     */
    @Experimental
-   protected static List < Mesh2 > processGlyphMesh (
-      final Font font,
-      final FontRenderContext frc,
-      final AffineTransform transform,
-      final float detail,
-      final char character,
-      final List < Mesh2 > meshes ) {
+   protected static List < Mesh2 > processGlyphMesh ( final Font font,
+      final FontRenderContext frc, final AffineTransform transform,
+      final float detail, final char character, final List < Mesh2 > meshes ) {
 
       return TextShape.processGlyphMesh(font, frc, transform, detail,
-         new char[] {
-            character },
-         meshes);
+         new char[] { character }, meshes);
    }
 
    /**
@@ -612,12 +570,9 @@ public abstract class TextShape {
     */
    @Experimental
    @SuppressWarnings ( "null" )
-   protected static List < Mesh2 > processGlyphMesh (
-      final Font font,
-      final FontRenderContext frc,
-      final AffineTransform transform,
-      final float detail,
-      final char[] characters,
+   protected static List < Mesh2 > processGlyphMesh ( final Font font,
+      final FontRenderContext frc, final AffineTransform transform,
+      final float detail, final char[] characters,
       final List < Mesh2 > meshes ) {
 
       final GlyphVector gv = font.createGlyphVector(frc, characters);
@@ -657,21 +612,24 @@ public abstract class TextShape {
 
             case PathIterator.SEG_CUBICTO:
 
-               currPt = new Vec2(( float ) ( itrpts[4] * invScalar ), ( float ) ( -itrpts[5] * invScalar ));
+               currPt = new Vec2(( float ) ( itrpts[4] * invScalar ),
+                  ( float ) ( -itrpts[5] * invScalar ));
                currMeshPts.add(currPt);
 
                break;
 
             case PathIterator.SEG_QUADTO:
 
-               currPt = new Vec2(( float ) ( itrpts[2] * invScalar ), ( float ) ( -itrpts[3] * invScalar ));
+               currPt = new Vec2(( float ) ( itrpts[2] * invScalar ),
+                  ( float ) ( -itrpts[3] * invScalar ));
                currMeshPts.add(currPt);
 
                break;
 
             case PathIterator.SEG_LINETO:
 
-               currPt = new Vec2(( float ) ( itrpts[0] * invScalar ), ( float ) ( -itrpts[1] * invScalar ));
+               currPt = new Vec2(( float ) ( itrpts[0] * invScalar ),
+                  ( float ) ( -itrpts[1] * invScalar ));
                currMeshPts.add(currPt);
 
                break;
@@ -696,7 +654,8 @@ public abstract class TextShape {
                   f[i][0] = i;
                   f[i][1] = i;
                   final Vec2 v = vs[i];
-                  vts[i] = new Vec2( ( v.x - lbx ) * xInv, 1.0f - ( v.y - lby ) * yInv);
+                  vts[i] = new Vec2( ( v.x - lbx ) * xInv,
+                     1.0f - ( v.y - lby ) * yInv);
                }
                f[len][0] = 0;
                f[len][1] = 0;

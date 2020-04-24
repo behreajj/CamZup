@@ -88,12 +88,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param path      applet path
     * @param isPrimary is the renderer primary
     */
-   public Up3 (
-      final int width,
-      final int height,
-      final PApplet parent,
-      final String path,
-      final boolean isPrimary ) {
+   public Up3 ( final int width, final int height, final PApplet parent,
+      final String path, final boolean isPrimary ) {
 
       super(width, height, parent, path, isPrimary);
    }
@@ -105,9 +101,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    public void ambientLight ( ) {
 
-      this.aTemp.set(
-         IUpOgl.DEFAULT_AMB_R,
-         IUpOgl.DEFAULT_AMB_G,
+      this.aTemp.set(IUpOgl.DEFAULT_AMB_R, IUpOgl.DEFAULT_AMB_G,
          IUpOgl.DEFAULT_AMB_B, 1.0f);
       this.ambientLight(this.aTemp);
    }
@@ -132,9 +126,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param clr the color
     * @param loc the location
     */
-   public void ambientLight (
-      final Color clr,
-      final Vec3 loc ) {
+   public void ambientLight ( final Color clr, final Vec3 loc ) {
 
       this.ambientLight(Color.toHexInt(clr), loc.x, loc.y, loc.z);
    }
@@ -161,10 +153,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param yLoc the location y
     * @param zLoc the location z
     */
-   public void ambientLight (
-      final int clr,
-      final float xLoc,
-      final float yLoc,
+   public void ambientLight ( final int clr, final float xLoc, final float yLoc,
       final float zLoc ) {
 
       // TEST
@@ -194,9 +183,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param clr the color
     * @param loc the location
     */
-   public void ambientLight (
-      final int clr,
-      final Vec3 loc ) {
+   public void ambientLight ( final int clr, final Vec3 loc ) {
 
       this.ambientLight(clr, loc.x, loc.y, loc.z);
    }
@@ -210,16 +197,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param ap1 the second anchor point
     */
    @Override
-   public void bezier (
-      final Vec3 ap0,
-      final Vec3 cp0,
-      final Vec3 cp1,
+   public void bezier ( final Vec3 ap0, final Vec3 cp0, final Vec3 cp1,
       final Vec3 ap1 ) {
 
-      this.bezier(
-         ap0.x, ap0.y, ap0.z,
-         cp0.x, cp0.y, cp0.z,
-         cp1.x, cp1.y, cp1.z,
+      this.bezier(ap0.x, ap0.y, ap0.z, cp0.x, cp0.y, cp0.z, cp1.x, cp1.y, cp1.z,
          ap1.x, ap1.y, ap1.z);
    }
 
@@ -233,15 +214,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param ap1 the next anchor point
     */
    @Override
-   public void bezierVertex (
-      final Vec3 cp0,
-      final Vec3 cp1,
-      final Vec3 ap1 ) {
+   public void bezierVertex ( final Vec3 cp0, final Vec3 cp1, final Vec3 ap1 ) {
 
-      this.bezierVertexImpl(
-         cp0.x, cp0.y, cp0.z,
-         cp1.x, cp1.y, cp1.z,
-         ap1.x, ap1.y, ap1.z);
+      this.bezierVertexImpl(cp0.x, cp0.y, cp0.z, cp1.x, cp1.y, cp1.z, ap1.x,
+         ap1.y, ap1.z);
    }
 
    /**
@@ -264,15 +240,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param center the center of the gaze
     * @param up     the reference up direction
     */
-   public void camera (
-      final Vec3 eye,
-      final Vec3 center,
-      final Vec3 up ) {
+   public void camera ( final Vec3 eye, final Vec3 center, final Vec3 up ) {
 
-      this.camera(
-         eye.x, eye.y, eye.z,
-         center.x, center.y, center.z,
-         up.x, up.y, up.z);
+      this.camera(eye.x, eye.y, eye.z, center.x, center.y, center.z, up.x, up.y,
+         up.z);
    }
 
    /**
@@ -307,17 +278,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param c the third vector
     * @param d the fourth vector
     */
-   public void curve (
-      final Vec3 a,
-      final Vec3 b,
-      final Vec3 c,
+   public void curve ( final Vec3 a, final Vec3 b, final Vec3 c,
       final Vec3 d ) {
 
-      this.curve(
-         a.x, a.y, a.z,
-         b.x, b.y, b.z,
-         c.x, c.y, c.z,
-         d.x, d.y, d.z);
+      this.curve(a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z, d.x, d.y, d.z);
    }
 
    /**
@@ -366,16 +330,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          final float yLocal = this.cameraInv.m12 * z * wInv;
          final float zLocal = this.cameraInv.m22 * z * wInv;
 
-         this.camera(
-            this.cameraX + xLocal,
-            this.cameraY + yLocal,
-            this.cameraZ + zLocal,
-            this.lookTarget.x + xLocal,
-            this.lookTarget.y + yLocal,
-            this.lookTarget.z + zLocal,
-            this.refUp.x,
-            this.refUp.y,
-            this.refUp.z);
+         this.camera(this.cameraX + xLocal, this.cameraY + yLocal,
+            this.cameraZ + zLocal, this.lookTarget.x + xLocal,
+            this.lookTarget.y + yLocal, this.lookTarget.z + zLocal,
+            this.refUp.x, this.refUp.y, this.refUp.z);
       }
    }
 
@@ -545,15 +503,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param ce           the curve entity
     * @param strokeWeight the stroke weight
     */
-   public void handles (
-      final CurveEntity3 ce,
-      final float strokeWeight ) {
+   public void handles ( final CurveEntity3 ce, final float strokeWeight ) {
 
-      this.handles(
-         ce, strokeWeight,
-         IUp.DEFAULT_HANDLE_COLOR,
-         IUp.DEFAULT_HANDLE_REAR_COLOR,
-         IUp.DEFAULT_HANDLE_FORE_COLOR,
+      this.handles(ce, strokeWeight, IUp.DEFAULT_HANDLE_COLOR,
+         IUp.DEFAULT_HANDLE_REAR_COLOR, IUp.DEFAULT_HANDLE_FORE_COLOR,
          IUp.DEFAULT_HANDLE_COORD_COLOR);
    }
 
@@ -567,12 +520,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param foreColor    the color of the fore handle
     * @param coordColor   the color of the coordinate
     */
-   public void handles (
-      final CurveEntity3 ce,
-      final float strokeWeight,
-      final int lineColor,
-      final int rearColor,
-      final int foreColor,
+   public void handles ( final CurveEntity3 ce, final float strokeWeight,
+      final int lineColor, final int rearColor, final int foreColor,
       final int coordColor ) {
 
       final float swRear = strokeWeight * 4.0f;
@@ -587,9 +536,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final Vec3 co = new Vec3();
       final Vec3 fh = new Vec3();
 
-      this.hint(PConstants.DISABLE_DEPTH_TEST);
-      this.hint(PConstants.DISABLE_DEPTH_MASK);
-      this.hint(PConstants.DISABLE_DEPTH_SORT);
+      // this.hint(PConstants.DISABLE_DEPTH_TEST);
+      // this.hint(PConstants.DISABLE_DEPTH_MASK);
+      // this.hint(PConstants.DISABLE_DEPTH_SORT);
+
+      this.disableDepthMask();
+      this.disableDepthTest();
 
       this.pushStyle();
 
@@ -626,11 +578,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
       this.popStyle();
 
-      // TODO: This assumes wrongly that all of these features were enabled to
-      // begin with.
-      this.hint(PConstants.ENABLE_DEPTH_TEST);
-      this.hint(PConstants.ENABLE_DEPTH_MASK);
-      this.hint(PConstants.ENABLE_DEPTH_SORT);
+      // this.hint(PConstants.ENABLE_DEPTH_TEST);
+      // this.hint(PConstants.ENABLE_DEPTH_MASK);
+      // this.hint(PConstants.ENABLE_DEPTH_SORT);
+      this.enableDepthTest();
+      this.enableDepthMask();
    }
 
    /**
@@ -669,13 +621,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param dest   the destination coordinate
     */
    @Override
-   public void line (
-      final Vec3 origin,
-      final Vec3 dest ) {
+   public void line ( final Vec3 origin, final Vec3 dest ) {
 
-      this.lineImpl(
-         origin.x, origin.y, origin.z,
-         dest.x, dest.y, dest.z);
+      this.lineImpl(origin.x, origin.y, origin.z, dest.x, dest.y, dest.z);
    }
 
    /**
@@ -716,10 +664,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @see IUp3#moveTo(float, float, float)
     */
    @Override
-   public void moveBy (
-      final float x,
-      final float y,
-      final float z ) {
+   public void moveBy ( final float x, final float y, final float z ) {
 
       this.moveByLocal(x, y, z);
    }
@@ -743,10 +688,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param z the vector z
     */
    @Experimental
-   public void moveByLocal (
-      final float x,
-      final float y,
-      final float z ) {
+   public void moveByLocal ( final float x, final float y, final float z ) {
 
       final PMatrix3D m = this.cameraInv;
       final float w = m.m30 * x + m.m31 * y + m.m32 * z + m.m33;
@@ -780,8 +722,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    @Override
    public void origin ( ) {
 
-      this.origin(
-         IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width, this.height));
+      this
+         .origin(IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width, this.height));
    }
 
    /**
@@ -803,15 +745,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param lineLength   the line length
     * @param strokeWeight the stroke weight
     */
-   public void origin (
-      final float lineLength,
-      final float strokeWeight ) {
+   public void origin ( final float lineLength, final float strokeWeight ) {
 
-      this.origin(
-         lineLength, strokeWeight,
-         IUp.DEFAULT_I_COLOR,
-         IUp.DEFAULT_J_COLOR,
-         IUp.DEFAULT_K_COLOR);
+      this.origin(lineLength, strokeWeight, IUp.DEFAULT_I_COLOR,
+         IUp.DEFAULT_J_COLOR, IUp.DEFAULT_K_COLOR);
    }
 
    /**
@@ -823,16 +760,13 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param yColor       the color of the y axis
     * @param zColor       the color of the z axis
     */
-   public void origin (
-      final float lineLength,
-      final float strokeWeight,
-      final int xColor,
-      final int yColor,
-      final int zColor ) {
+   public void origin ( final float lineLength, final float strokeWeight,
+      final int xColor, final int yColor, final int zColor ) {
 
-      this.hint(PConstants.DISABLE_DEPTH_TEST);
-      this.hint(PConstants.DISABLE_DEPTH_MASK);
-      this.hint(PConstants.DISABLE_DEPTH_SORT);
+      // this.hint(PConstants.DISABLE_DEPTH_TEST);
+      // this.hint(PConstants.DISABLE_DEPTH_MASK);
+      this.disableDepthMask();
+      this.disableDepthTest();
 
       final float vl = Utils.max(IUtils.DEFAULT_EPSILON, lineLength);
 
@@ -848,12 +782,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       this.stroke(xColor);
       this.lineImpl(0.0f, 0.0f, 0.0f, vl, 0.0f, 0.0f);
 
-      // TODO: This assumes wrongly that all of these features were enabled to
-      // begin with.
       this.popStyle();
-      this.hint(PConstants.ENABLE_DEPTH_TEST);
-      this.hint(PConstants.ENABLE_DEPTH_MASK);
-      this.hint(PConstants.ENABLE_DEPTH_SORT);
+      // this.hint(PConstants.ENABLE_DEPTH_TEST);
+      // this.hint(PConstants.ENABLE_DEPTH_MASK);
+      this.enableDepthTest();
+      this.enableDepthMask();
    }
 
    /**
@@ -875,16 +808,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          final float yLocal = ci.m11 * y * wInv;
          final float zLocal = ci.m21 * y * wInv;
 
-         this.camera(
-            this.cameraX + xLocal,
-            this.cameraY + yLocal,
-            this.cameraZ + zLocal,
-            this.lookTarget.x + xLocal,
-            this.lookTarget.y + yLocal,
-            this.lookTarget.z + zLocal,
-            this.refUp.x,
-            this.refUp.y,
-            this.refUp.z);
+         this.camera(this.cameraX + xLocal, this.cameraY + yLocal,
+            this.cameraZ + zLocal, this.lookTarget.x + xLocal,
+            this.lookTarget.y + yLocal, this.lookTarget.z + zLocal,
+            this.refUp.x, this.refUp.y, this.refUp.z);
       }
    }
 
@@ -902,9 +829,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param clr the color
     * @param loc the location
     */
-   public void pointLight (
-      final Color clr,
-      final Vec3 loc ) {
+   void pointLight ( final Color clr, final Vec3 loc ) {
 
       this.pointLight(Color.toHexInt(clr), loc.x, loc.y, loc.z);
    }
@@ -917,13 +842,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param yLoc the location y
     * @param zLoc the location z
     */
-   public void pointLight (
-      final int clr,
-      final float xLoc,
+   @Experimental
+   void pointLight ( final int clr, final float xLoc,
       final float yLoc,
       final float zLoc ) {
-
-      // TEST
 
       this.enableLighting();
       if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
@@ -949,9 +871,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param clr the color
     * @param loc the location
     */
-   public void pointLight (
-      final int clr,
-      final Vec3 loc ) {
+   public void pointLight ( final int clr, final Vec3 loc ) {
 
       this.pointLight(clr, loc.x, loc.y, loc.z);
    }
@@ -964,9 +884,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param ap1 the next anchor point
     */
    @Override
-   public void quadraticVertex (
-      final Vec3 cp,
-      final Vec3 ap1 ) {
+   public void quadraticVertex ( final Vec3 cp, final Vec3 ap1 ) {
 
       this.quadraticVertex(cp.x, cp.y, cp.z, ap1.x, ap1.y, ap1.z);
    }
@@ -981,10 +899,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param zAxis the axis z coordinate
     */
    @Override
-   public void rotate (
-      final float angle,
-      final float xAxis,
-      final float yAxis,
+   public void rotate ( final float angle, final float xAxis, final float yAxis,
       final float zAxis ) {
 
       this.rotateImpl(angle, xAxis, yAxis, zAxis);
@@ -996,9 +911,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param angle the angle
     * @param axis  the axis
     */
-   public void rotate (
-      final float angle,
-      final Vec3 axis ) {
+   public void rotate ( final float angle, final Vec3 axis ) {
 
       this.rotateImpl(angle, axis.x, axis.y, axis.z);
    }
@@ -1088,10 +1001,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
             Transform3.mulPoint(tr, rearHandle, v1);
             Transform3.mulPoint(tr, coord, v2);
 
-            this.bezierVertexImpl(
-               v0.x, v0.y, v0.z,
-               v1.x, v1.y, v1.z,
-               v2.x, v2.y, v2.z);
+            this.bezierVertexImpl(v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x,
+               v2.y, v2.z);
 
             prevKnot = currKnot;
          }
@@ -1106,10 +1017,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
             Transform3.mulPoint(tr, rearHandle, v1);
             Transform3.mulPoint(tr, coord, v2);
 
-            this.bezierVertexImpl(
-               v0.x, v0.y, v0.z,
-               v1.x, v1.y, v1.z,
-               v2.x, v2.y, v2.z);
+            this.bezierVertexImpl(v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x,
+               v2.y, v2.z);
             this.endShape(PConstants.CLOSE);
          } else {
             this.endShape(PConstants.OPEN);
@@ -1123,8 +1032,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param entity   the curve entity
     * @param material the material
     */
-   public void shape (
-      final CurveEntity3 entity,
+   public void shape ( final CurveEntity3 entity,
       final MaterialSolid material ) {
 
       this.pushStyle();
@@ -1139,8 +1047,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param entity    the curve entity
     * @param materials the array of materials
     */
-   public void shape (
-      final CurveEntity3 entity,
+   public void shape ( final CurveEntity3 entity,
       final MaterialSolid[] materials ) {
 
       final Transform3 tr = entity.transform;
@@ -1182,10 +1089,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
             Transform3.mulPoint(tr, rearHandle, v1);
             Transform3.mulPoint(tr, coord, v2);
 
-            this.bezierVertexImpl(
-               v0.x, v0.y, v0.z,
-               v1.x, v1.y, v1.z,
-               v2.x, v2.y, v2.z);
+            this.bezierVertexImpl(v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x,
+               v2.y, v2.z);
 
             prevKnot = currKnot;
          }
@@ -1200,10 +1105,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
             Transform3.mulPoint(tr, rearHandle, v1);
             Transform3.mulPoint(tr, coord, v2);
 
-            this.bezierVertexImpl(
-               v0.x, v0.y, v0.z,
-               v1.x, v1.y, v1.z,
-               v2.x, v2.y, v2.z);
+            this.bezierVertexImpl(v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x,
+               v2.y, v2.z);
             this.endShape(PConstants.CLOSE);
          } else {
             this.endShape(PConstants.OPEN);
@@ -1245,8 +1148,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param entity   the mesh entity
     * @param material the material
     */
-   public void shape (
-      final MeshEntity3 entity,
+   public void shape ( final MeshEntity3 entity,
       final MaterialPImage material ) {
 
       final Transform3 tr = entity.transform;
@@ -1271,8 +1173,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param entity    the mesh entity
     * @param materials the materials
     */
-   public void shape (
-      final MeshEntity3 entity,
+   public void shape ( final MeshEntity3 entity,
       final MaterialPImage[] materials ) {
 
       final Transform3 tr = entity.transform;
@@ -1299,8 +1200,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param entity   the mesh entity
     * @param material the material
     */
-   public void shape (
-      final MeshEntity3 entity,
+   public void shape ( final MeshEntity3 entity,
       final MaterialSolid material ) {
 
       this.pushStyle();
@@ -1315,8 +1215,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param entity    the mesh entity
     * @param materials the materials
     */
-   public void shape (
-      final MeshEntity3 entity,
+   public void shape ( final MeshEntity3 entity,
       final MaterialSolid[] materials ) {
 
       final Transform3 tr = entity.transform;
@@ -1347,18 +1246,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param angle         the angle
     * @param concentration cone center bias
     */
-   public void spotLight (
-      final Color clr,
-      final Vec3 loc,
-      final Vec3 dir,
-      final float angle,
-      final float concentration ) {
+   public void spotLight ( final Color clr, final Vec3 loc, final Vec3 dir,
+      final float angle, final float concentration ) {
 
-      this.spotLight(
-         Color.toHexInt(this.aTemp),
-         loc.x, loc.y, loc.z,
-         dir.x, dir.y, dir.z,
-         angle, concentration);
+      this.spotLight(Color.toHexInt(this.aTemp), loc.x, loc.y, loc.z, dir.x,
+         dir.y, dir.z, angle, concentration);
    }
 
    /**
@@ -1377,16 +1269,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param angle         spotlight cone angle
     * @param concentration cone center bias
     */
-   public void spotLight (
-      final int clr,
-      final float xLoc,
-      final float yLoc,
-      final float zLoc,
-      final float xDir,
-      final float yDir,
-      final float zDir,
-      final float angle,
-      final float concentration ) {
+   public void spotLight ( final int clr, final float xLoc, final float yLoc,
+      final float zLoc, final float xDir, final float yDir, final float zDir,
+      final float angle, final float concentration ) {
 
       this.enableLighting();
       if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
@@ -1419,12 +1304,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param angle         the angle
     * @param concentration cone center bias
     */
-   public void spotLight (
-      final int clr,
-      final Vec3 loc,
-      final Vec3 dir,
-      final float angle,
-      final float concentration ) {
+   public void spotLight ( final int clr, final Vec3 loc, final Vec3 dir,
+      final float angle, final float concentration ) {
 
       this.spotLight(clr, loc.x, loc.y, loc.z, dir.x, dir.y, dir.z, angle,
          concentration);
@@ -1438,10 +1319,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param y the vector y
     * @param z the vector z
     */
-   public void strafe (
-      final float x,
-      final float y,
-      final float z ) {
+   public void strafe ( final float x, final float y, final float z ) {
 
       final PMatrix3D ci = this.cameraInv;
       final float w = ci.m30 * x + ci.m31 * y + ci.m32 * z + ci.m33;
@@ -1451,16 +1329,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          final float yLocal = ( ci.m10 * x + ci.m11 * y + ci.m12 * z ) * wInv;
          final float zLocal = ( ci.m20 * x + ci.m21 * y + ci.m22 * z ) * wInv;
 
-         this.camera(
-            this.cameraX + xLocal,
-            this.cameraY + yLocal,
-            this.cameraZ + zLocal,
-            this.lookTarget.x + xLocal,
-            this.lookTarget.y + yLocal,
-            this.lookTarget.z + zLocal,
-            this.refUp.x,
-            this.refUp.y,
-            this.refUp.z);
+         this.camera(this.cameraX + xLocal, this.cameraY + yLocal,
+            this.cameraZ + zLocal, this.lookTarget.x + xLocal,
+            this.lookTarget.y + yLocal, this.lookTarget.z + zLocal,
+            this.refUp.x, this.refUp.y, this.refUp.z);
       }
    }
 
@@ -1484,13 +1356,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param z     the z coordinate
     */
    @Override
-   public void text (
-      final char[] chars,
-      final int start,
-      final int stop,
-      final float x,
-      final float y,
-      final float z ) {
+   public void text ( final char[] chars, final int start, final int stop,
+      final float x, final float y, final float z ) {
 
       this.text(chars, start, stop, x, y);
    }
@@ -1505,10 +1372,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param z   the z coordinate
     */
    @Override
-   public void text (
-      final String str,
-      final float x,
-      final float y,
+   public void text ( final String str, final float x, final float y,
       final float z ) {
 
       this.text(str, x, y);
@@ -1521,17 +1385,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    public void text ( final TextEntity3 entity ) {
 
-      // TODO: Is there a way to make this un-lit?
       this.shape(entity, entity.material);
-   }
-
-   /**
-    * Toggles the depth sorting boolean and flushes the geometry.
-    */
-   public void toggleDepthSorting ( ) {
-
-      this.flush();
-      this.isDepthSortingEnabled = !this.isDepthSortingEnabled;
    }
 
    /**
@@ -1558,9 +1412,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param tr3   the transform
     * @param order the transform order
     */
-   public void transform (
-      final Transform3 tr3,
-      final TransformOrder order ) {
+   public void transform ( final Transform3 tr3, final TransformOrder order ) {
 
       final Vec3 tr3Scl = tr3.getScale(new Vec3());
       final Vec3 tr3Loc = tr3.getLocation(new Vec3());
@@ -1647,16 +1499,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          final float yLocal = this.cameraInv.m10 * x * wInv;
          final float zLocal = this.cameraInv.m20 * x * wInv;
 
-         this.camera(
-            this.cameraX + xLocal,
-            this.cameraY + yLocal,
-            this.cameraZ + zLocal,
-            this.lookTarget.x + xLocal,
-            this.lookTarget.y + yLocal,
-            this.lookTarget.z + zLocal,
-            this.refUp.x,
-            this.refUp.y,
-            this.refUp.z);
+         this.camera(this.cameraX + xLocal, this.cameraY + yLocal,
+            this.cameraZ + zLocal, this.lookTarget.x + xLocal,
+            this.lookTarget.y + yLocal, this.lookTarget.z + zLocal,
+            this.refUp.x, this.refUp.y, this.refUp.z);
       }
    }
 
@@ -1679,9 +1525,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param v  the coordinate
     * @param vt the texture coordinate
     */
-   public void vertex (
-      final Vec3 v,
-      final Vec2 vt ) {
+   public void vertex ( final Vec3 v, final Vec2 vt ) {
 
       this.vertexImpl(v.x, v.y, v.z, vt.x, vt.y);
    }
@@ -1693,9 +1537,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param dir the direction
     */
    @Experimental
-   void directionalLight (
-      final Color clr,
-      final Vec3 dir ) {
+   void directionalLight ( final Color clr, final Vec3 dir ) {
 
       this.directionalLight(Color.toHexInt(clr), dir.x, dir.y, dir.z);
    }
@@ -1709,10 +1551,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param zDir the z direction
     */
    @Experimental
-   void directionalLight (
-      final int clr,
-      final float xDir,
-      final float yDir,
+   void directionalLight ( final int clr, final float xDir, final float yDir,
       final float zDir ) {
 
       // TEST
@@ -1743,9 +1582,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param dir the direction
     */
    @Experimental
-   void directionalLight (
-      final int clr,
-      final Vec3 dir ) {
+   void directionalLight ( final int clr, final Vec3 dir ) {
 
       this.directionalLight(clr, dir.x, dir.y, dir.z);
    }
@@ -1770,24 +1607,20 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final float m22 = this.k.z;
 
       /* Set inverse by column. */
-      this.cameraInv.set(
-         m00, m10, m20, this.cameraX,
-         m01, m11, m21, this.cameraY,
-         m02, m12, m22, this.cameraZ,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      this.cameraInv.set(m00, m10, m20, this.cameraX, m01, m11, m21,
+         this.cameraY, m02, m12, m22, this.cameraZ, 0.0f, 0.0f, 0.0f, 1.0f);
 
       /*
        * Set matrix to axes by row. Translate by a negative location after the
        * rotation.
        */
-      this.camera.set(
-         m00, m01, m02,
-         -this.cameraX * m00 - this.cameraY * m01 - this.cameraZ * m02,
-         m10, m11, m12,
-         -this.cameraX * m10 - this.cameraY * m11 - this.cameraZ * m12,
-         m20, m21, m22,
-         -this.cameraX * m20 - this.cameraY * m21 - this.cameraZ * m22,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      this.camera.set(m00, m01, m02,
+         -this.cameraX * m00 - this.cameraY * m01 - this.cameraZ * m02, m10,
+         m11, m12,
+         -this.cameraX * m10 - this.cameraY * m11 - this.cameraZ * m12, m20,
+         m21, m22,
+         -this.cameraX * m20 - this.cameraY * m21 - this.cameraZ * m22, 0.0f,
+         0.0f, 0.0f, 1.0f);
 
       /* Set model view to camera. */
       this.modelview.set(this.camera);

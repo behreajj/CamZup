@@ -9,8 +9,8 @@ import java.util.List;
  * An entity which contains a transform that is applied to a list of
  * meshes. The meshes may references a list of materials by index.
  */
-public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
-   IVolume2, ISvgWritable {
+public class MeshEntity2 extends Entity2
+   implements Iterable < Mesh2 >, IVolume2, ISvgWritable {
 
    /**
     * The list of meshes held by the entity.
@@ -50,9 +50,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * @param name   the name
     * @param meshes the list of meshes
     */
-   public MeshEntity2 (
-      final String name,
-      final Mesh2... meshes ) {
+   public MeshEntity2 ( final String name, final Mesh2... meshes ) {
 
       super(name, new Transform2());
       this.appendAll(meshes);
@@ -65,9 +63,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * @param transform the transform
     * @param meshes    the list of meshes
     */
-   public MeshEntity2 (
-      final String name,
-      final Transform2 transform,
+   public MeshEntity2 ( final String name, final Transform2 transform,
       final Mesh2... meshes ) {
 
       super(name, transform);
@@ -80,9 +76,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * @param transform the transform
     * @param meshes    the list of meshes
     */
-   public MeshEntity2 (
-      final Transform2 transform,
-      final Mesh2... meshes ) {
+   public MeshEntity2 ( final Transform2 transform, final Mesh2... meshes ) {
 
       super(transform);
       this.appendAll(meshes);
@@ -238,9 +232,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     */
    @Override
    @Chainable
-   public MeshEntity2 scaleTo (
-      final Vec2 scalar,
-      final float step ) {
+   public MeshEntity2 scaleTo ( final Vec2 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);
       return this;
@@ -269,8 +261,8 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    @Experimental
    public String toBlenderCode ( final MaterialSolid[] ms ) {
 
-      return this.toBlenderCode(ms, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-         0.0001f, 0.0f, 0.0f);
+      return this.toBlenderCode(ms, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0001f, 0.0f,
+         0.0f);
    }
 
    /**
@@ -293,16 +285,10 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     */
    @Experimental
    @SuppressWarnings ( "null" )
-   public String toBlenderCode (
-      final MaterialSolid[] materials,
-      final float gamma,
-      final float metallic,
-      final float roughness,
-      final float specular,
-      final float clearcoat,
-      final float clearcoatRough,
-      final float extrude,
-      final float offset ) {
+   public String toBlenderCode ( final MaterialSolid[] materials,
+      final float gamma, final float metallic, final float roughness,
+      final float specular, final float clearcoat, final float clearcoatRough,
+      final float extrude, final float offset ) {
 
       final int meshLen = this.meshes.size();
       final boolean autoSmoothNormals = true;
@@ -497,9 +483,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     *
     * @return the string
     */
-   public String toString (
-      final int places,
-      final int truncate ) {
+   public String toString ( final int places, final int truncate ) {
 
       final StringBuilder sb = new StringBuilder(1024);
       sb.append("{ name: \"");
@@ -509,13 +493,10 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       sb.append(this.transform.toString(places));
       sb.append(", meshes: [ ");
 
-      int i = 0;
       final Iterator < Mesh2 > itr = this.meshes.iterator();
-      final int last = this.meshes.size() - 1;
       while ( itr.hasNext() ) {
          sb.append(itr.next().toString(places, truncate));
-         if ( i < last ) { sb.append(',').append(' '); }
-         i++;
+         if ( itr.hasNext() ) { sb.append(',').append(' '); }
       }
 
       sb.append(" ] }");
@@ -531,9 +512,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * @return the string
     */
    @Override
-   public String toSvgElm (
-      final String id,
-      final float zoom ) {
+   public String toSvgElm ( final String id, final float zoom ) {
 
       return this.toSvgElm(id, zoom, new MaterialSolid[] {});
    }
@@ -547,9 +526,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     *
     * @return the string
     */
-   public String toSvgElm (
-      final String id,
-      final float zoom,
+   public String toSvgElm ( final String id, final float zoom,
       final MaterialSolid material ) {
 
       return this.toSvgElm(id, zoom, new MaterialSolid[] { material });
@@ -570,14 +547,12 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * @return the string
     */
    @SuppressWarnings ( "null" )
-   public String toSvgElm (
-      final String id,
-      final float zoom,
+   public String toSvgElm ( final String id, final float zoom,
       final MaterialSolid[] materials ) {
 
-      final StringBuilder svgp = new StringBuilder(1024).append(
-         "<g id=\"").append(this.name.toLowerCase()).append("\" ").append(
-            this.transform.toSvgString()).append(">\n");
+      final StringBuilder svgp = new StringBuilder(1024).append("<g id=\"")
+         .append(this.name.toLowerCase()).append("\" ")
+         .append(this.transform.toSvgString()).append(">\n");
 
       final float scale = zoom * Transform2.minDimension(this.transform);
       int matLen = 0;
@@ -606,8 +581,8 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
             final int vMatIdx = Utils.mod(mesh.materialIndex, matLen);
             final MaterialSolid material = materials[vMatIdx];
-            svgp.append("<g ").append(material.toSvgString(scale)).append(
-               ">\n");
+            svgp.append("<g ").append(material.toSvgString(scale))
+               .append(">\n");
          }
 
          svgp.append(mesh.toSvgPath(id));
@@ -631,8 +606,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     *
     * @return the evaluation
     */
-   public static boolean contains (
-      final MeshEntity2 me,
+   public static boolean contains ( final MeshEntity2 me,
       final Vec2 pointLocal ) {
 
       final Iterator < Mesh2 > meshItr = me.meshes.iterator();
@@ -656,10 +630,8 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     *
     * @see MeshEntity2#contains(MeshEntity2, Vec2)
     */
-   public static boolean contains (
-      final MeshEntity2 me,
-      final Vec2 pointGlobal,
-      final Vec2 pointLocal ) {
+   public static boolean contains ( final MeshEntity2 me,
+      final Vec2 pointGlobal, final Vec2 pointLocal ) {
 
       Transform2.invMulPoint(me.transform, pointGlobal, pointLocal);
       return MeshEntity2.contains(me, pointLocal);

@@ -7,7 +7,8 @@ package camzup.core;
 public abstract class Utils implements IUtils {
 
    /**
-    * An alternative to the {@link Math#abs(double)} function. Relies on
+    * Finds the absolute value of a double precision real number. An
+    * alternative to the {@link Math#abs(double)} function. Relies on
     * bit-masking to remove the sign bit.
     *
     * @param value the input value
@@ -26,7 +27,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * An alternative to the {@link Math#abs(float)} function. Relies on
+    * Finds the absolute value of a single precision real number. An
+    * alternative to the {@link Math#abs(float)} function. Relies on
     * bit-masking to remove the sign bit. Equivalent to max(-a, a) .
     *
     * @param value the input value
@@ -42,10 +44,10 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * A bounds-checked approximation of the arc-cosine for single precision
-    * real numbers. Returns a value in the range [0.0, \u03c0]: \u03c0, when
-    * the input is -1.0; \u03c0 / 2.0, when the input is 0.0; 0.0, when the
-    * input is 1.0.<br>
+    * A bounds-checked approximation of the arc cosine for single precision
+    * real numbers. Returns a value in the range [0.0, \u03c0] : \u03c0 when
+    * the input is less than or equal to -1.0; \u03c0 / 2.0 when the input is
+    * 0.0; 0.0 when the input is greater than or equal to 1.0.<br>
     * <br>
     * An alternative to {@link Math#acos(double)} . Based on the algorithm at
     * the <a href= "https://developer.download.nvidia.com/cg/acos.html">Nvidia
@@ -58,9 +60,11 @@ public abstract class Utils implements IUtils {
     *
     * @return the angle in radians
     *
-    * @see Math#acos(double)
+    * @see Utils#sqrt(float)
     *
+    * @author M. Abramowitz
     * @author C. Hastings, Jr
+    * @author I. A. Stegun
     */
    public static float acos ( final float value ) {
 
@@ -87,9 +91,6 @@ public abstract class Utils implements IUtils {
     * @param b the right operand
     *
     * @return the evaluation
-    *
-    * @see Utils#toBool(float)
-    * @see Utils#toInt(boolean)
     */
    public static int and ( final float a, final float b ) {
 
@@ -102,13 +103,12 @@ public abstract class Utils implements IUtils {
     * difference between two values is less than an epsilon. Does not handle
     * edge cases.
     *
-    * @param a the left operand
-    * @param b the right operand
+    * @param a the left comparisand
+    * @param b the right comparisand
     *
     * @return the evaluation
     *
-    * @see Utils#diff(float, float)
-    * @see IUtils#DEFAULT_EPSILON
+    * @see Utils#approx(float, float, float)
     */
    public static boolean approx ( final float a, final float b ) {
 
@@ -120,28 +120,25 @@ public abstract class Utils implements IUtils {
     * difference between two values is less than a tolerance. Does not handle
     * edge cases.
     *
-    * @param a         the left operand
-    * @param b         the right operand
-    * @param tolerance the tolerance
+    * @param a the left comparisand
+    * @param b the right comparisand
+    * @param t the tolerance
     *
     * @return the evaluation
-    *
-    * @see Utils#diff(float, float)
     */
-   public static boolean approx (
-      final float a,
-      final float b,
-      final float tolerance ) {
+   public static boolean approx ( final float a, final float b,
+      final float t ) {
 
       final float diff = b - a;
-      return diff <= tolerance && diff >= -tolerance;
+      return diff <= t && diff >= -t;
    }
 
    /**
-    * A bounds-checked approximation of the arc-sine for single precision real
+    * A bounds checked approximation of the arc-sine for single precision real
     * numbers. Returns a value in the range [-\u03c0 / 2.0, \u03c0 / 2.0]:
-    * -\u03c0 / 2.0, when the input is -1.0; 0.0, when the input is 0.0;
-    * \u03c0 / 2.0, when the input is 1.0.<br>
+    * -\u03c0 / 2.0 when the input is less than or equal to -1.0; 0.0 when the
+    * input is 0.0; \u03c0 / 2.0 when the input is greater than or equal to
+    * 1.0.<br>
     * <br>
     * An alternative to {@link Math#asin(double)} . Based on the algorithm at
     * the <a href= "https://developer.download.nvidia.com/cg/asin.html">Nvidia
@@ -154,7 +151,11 @@ public abstract class Utils implements IUtils {
     *
     * @return the angle in radians
     *
-    * @author C. Hastings, Jr.
+    * @see Utils#sqrt(float)
+    *
+    * @author M. Abramowitz
+    * @author C. Hastings, Jr
+    * @author I. A. Stegun
     */
    public static float asin ( final float value ) {
 
@@ -186,7 +187,7 @@ public abstract class Utils implements IUtils {
     * @param y the y coordinate (the ordinate)
     * @param x the x coordinate (the abscissa)
     *
-    * @return the angle
+    * @return the angle in radians
     */
    public static float atan2 ( final float y, final float x ) {
 
@@ -226,11 +227,6 @@ public abstract class Utils implements IUtils {
     * @param value the input float
     *
     * @return the float
-    *
-    * @see Utils#toFloat(boolean)
-    * @see Utils#toBool(float)
-    * @see Utils#or(float, float)
-    * @see Utils#and(float, float)
     */
    public static int bool ( final float value ) {
 
@@ -246,10 +242,6 @@ public abstract class Utils implements IUtils {
     * @param value the input float
     *
     * @return the integer
-    *
-    * @see Utils#toFloat(boolean)
-    * @see Utils#or(float, float)
-    * @see Utils#and(float, float)
     */
    public static int bool ( final int value ) { return value != 0 ? 1 : 0; }
 
@@ -263,8 +255,8 @@ public abstract class Utils implements IUtils {
     */
    public static float ceil ( final float value ) {
 
-      return value > 0.0f ? ( int ) value + 1.0f
-         : value < 0.0f ? ( int ) value : 0.0f;
+      return value > 0.0f ? ( int ) value + 1.0f : value < 0.0f ? ( int ) value
+         : 0.0f;
    }
 
    /**
@@ -290,13 +282,11 @@ public abstract class Utils implements IUtils {
     *
     * @return the clamped value
     */
-   public static float clamp (
-      final float value,
-      final float lowerBound,
+   public static float clamp ( final float value, final float lowerBound,
       final float upperBound ) {
 
-      return value < lowerBound ? lowerBound
-         : value > upperBound ? upperBound : value;
+      return value < lowerBound ? lowerBound : value > upperBound ? upperBound
+         : value;
    }
 
    /**
@@ -308,13 +298,11 @@ public abstract class Utils implements IUtils {
     *
     * @return the clamped value
     */
-   public static int clamp (
-      final int value,
-      final int lowerBound,
+   public static int clamp ( final int value, final int lowerBound,
       final int upperBound ) {
 
-      return value < lowerBound ? lowerBound
-         : value > upperBound ? upperBound : value;
+      return value < lowerBound ? lowerBound : value > upperBound ? upperBound
+         : value;
    }
 
    /**
@@ -344,12 +332,10 @@ public abstract class Utils implements IUtils {
     * @see Float#intBitsToFloat(int)
     * @see Float#floatToRawIntBits(float)
     */
-   public static float copySign (
-      final float magnitude,
-      final float sign ) {
+   public static float copySign ( final float magnitude, final float sign ) {
 
-      return Float.intBitsToFloat(Float.floatToRawIntBits(
-         sign) & 0x80000000 | Float.floatToRawIntBits(magnitude) & 2147483647);
+      return Float.intBitsToFloat(Float.floatToRawIntBits(sign) & 0x80000000
+         | Float.floatToRawIntBits(magnitude) & 2147483647);
    }
 
    /**
@@ -465,9 +451,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the filtered value
     */
-   public static float filter (
-      final float value,
-      final float lb,
+   public static float filter ( final float value, final float lb,
       final float ub ) {
 
       return value >= lb && value < ub ? value : 0.0f;
@@ -483,8 +467,8 @@ public abstract class Utils implements IUtils {
     */
    public static double floor ( final double value ) {
 
-      return value > 0.0d ? ( int ) value
-         : value < 0.0d ? ( int ) value - 1.0d : 0.0d;
+      return value > 0.0d ? ( int ) value : value < 0.0d ? ( int ) value - 1.0d
+         : 0.0d;
    }
 
    /**
@@ -497,8 +481,8 @@ public abstract class Utils implements IUtils {
     */
    public static float floor ( final float value ) {
 
-      return value > 0.0f ? ( int ) value
-         : value < 0.0f ? ( int ) value - 1.0f : 0.0f;
+      return value > 0.0f ? ( int ) value : value < 0.0f ? ( int ) value - 1.0f
+         : 0.0f;
    }
 
    /**
@@ -533,10 +517,6 @@ public abstract class Utils implements IUtils {
     * @param b the right operand
     *
     * @return the result
-    *
-    * @see Utils#mod(float, float)
-    * @see Utils#fract(float)
-    * @see Utils#trunc(float)
     */
    public static float fmod ( final float a, final float b ) {
 
@@ -554,8 +534,6 @@ public abstract class Utils implements IUtils {
     * @param value the input value
     *
     * @return the fractional portion
-    *
-    * @see Utils#trunc(float)
     */
    public static float fract ( final float value ) {
 
@@ -563,8 +541,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds the hypotenuse between two values. Useful when finding the
-    * magnitude of a vector.
+    * Finds the hypotenuse between two values, \u221a ( <em>a</em><sup>2</sup>
+    * + <em>b</em><sup>2</sup> ) . Useful when finding the magnitude of a
+    * vector.
     *
     * @param a the first value
     * @param b the second value
@@ -584,8 +563,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds the hypotenuse given three values. Useful when finding the
-    * magnitude of a vector.
+    * Finds the hypotenuse given three values, \u221a ( <em>a</em><sup>2</sup>
+    * + <em>b</em><sup>2</sup> + <em>c</em><sup>2</sup> ) . Useful when
+    * finding the magnitude of a vector.
     *
     * @param a the first value
     * @param b the second value
@@ -595,16 +575,14 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#sqrtUnchecked(float)
     */
-   public static float hypot (
-      final float a,
-      final float b,
-      final float c ) {
+   public static float hypot ( final float a, final float b, final float c ) {
 
       return Utils.sqrtUnchecked(a * a + b * b + c * c);
    }
 
    /**
-    * Finds one divided by the hypotenuse of two values. Useful when
+    * Finds one divided by the hypotenuse of two values, 1.0 / ( \u221a (
+    * <em>a</em><sup>2</sup> + <em>b</em><sup>2</sup> ) ) . Useful when
     * normalizing vectors.
     *
     * @param a the first value
@@ -614,16 +592,15 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#invSqrtUnchecked
     */
-   public static float invHypot (
-      final float a,
-      final float b ) {
+   public static float invHypot ( final float a, final float b ) {
 
       return Utils.invSqrtUnchecked(a * a + b * b);
    }
 
    /**
-    * Finds one divided by the hypotenuse of three values. Useful when
-    * normalizing vectors.
+    * Finds one divided by the hypotenuse of three values, 1.0 / ( \u221a (
+    * <em>a</em><sup>2</sup> + <em>b</em><sup>2</sup> + <em>c</em><sup>2</sup>
+    * ) ) . Useful when normalizing vectors.
     *
     * @param a the first value
     * @param b the second value
@@ -633,9 +610,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#invSqrtUnchecked
     */
-   public static float invHypot (
-      final float a,
-      final float b,
+   public static float invHypot ( final float a, final float b,
       final float c ) {
 
       return Utils.invSqrtUnchecked(a * a + b * b + c * c);
@@ -664,8 +639,8 @@ public abstract class Utils implements IUtils {
     * Square Root</a>." For accuracy, the result is refined three times with
     * the Newton-Raphson method.<br>
     * <br>
-    * Useful when normalizing vectors or quaternions. Give this preference
-    * over {@link Utils#sqrt(float)}, which <em>depends</em> on this function.
+    * Useful when normalizing vectors or quaternions. Prefer this over
+    * {@link Utils#sqrt(float)}, which depends on this function.
     *
     * @param value the value
     *
@@ -680,8 +655,8 @@ public abstract class Utils implements IUtils {
    public static float invSqrtUnchecked ( final float value ) {
 
       final float vhalf = value * 0.5f;
-      float y = Float.intBitsToFloat(
-         0x5f375a86 - ( Float.floatToIntBits(value) >> 1 ));
+      float y = Float
+         .intBitsToFloat(0x5f375a86 - ( Float.floatToIntBits(value) >> 1 ));
 
       y *= 1.5f - vhalf * y * y;
       y *= 1.5f - vhalf * y * y;
@@ -703,14 +678,11 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#lerpUnclamped(float, float, float)
     */
-   public static float lerp (
-      final float origin,
-      final float dest,
+   public static float lerp ( final float origin, final float dest,
       final float step ) {
 
-      return step <= 0.0f ? origin
-         : step >= 1.0f ? dest
-            : ( 1.0f - step ) * origin + step * dest;
+      return step <= 0.0f ? origin : step >= 1.0f ? dest
+         : ( 1.0f - step ) * origin + step * dest;
    }
 
    /**
@@ -726,9 +698,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#lerpUnclamped(float, float, float)
     */
-   public static int lerp (
-      final int origin,
-      final int dest,
+   public static int lerp ( final int origin, final int dest,
       final float step ) {
 
       if ( step <= 0.0f ) { return origin; }
@@ -746,9 +716,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the interpolated value
     */
-   public static double lerpUnclamped (
-      final double origin,
-      final double dest,
+   public static double lerpUnclamped ( final double origin, final double dest,
       final double step ) {
 
       return ( 1.0d - step ) * origin + step * dest;
@@ -764,9 +732,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the interpolated value
     */
-   public static float lerpUnclamped (
-      final float origin,
-      final float dest,
+   public static float lerpUnclamped ( final float origin, final float dest,
       final float step ) {
 
       return ( 1.0f - step ) * origin + step * dest;
@@ -785,9 +751,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#round(float)
     */
-   public static int lerpUnclamped (
-      final int origin,
-      final int dest,
+   public static int lerpUnclamped ( final int origin, final int dest,
       final float step ) {
 
       return Utils.round( ( 1.0f - step ) * origin + step * dest);
@@ -803,6 +767,8 @@ public abstract class Utils implements IUtils {
     * @param b the base
     *
     * @return the evaluation
+    *
+    * @see Math#log(double)
     */
    public static float log ( final float a, final float b ) {
 
@@ -825,12 +791,8 @@ public abstract class Utils implements IUtils {
     *
     * @return the mapped value
     */
-   public static float map (
-      final float value,
-      final float lbOrigin,
-      final float ubOrigin,
-      final float lbDest,
-      final float ubDest ) {
+   public static float map ( final float value, final float lbOrigin,
+      final float ubOrigin, final float lbDest, final float ubDest ) {
 
       final float denom = ubOrigin - lbOrigin;
       if ( denom == 0.0f ) { return lbDest; }
@@ -877,10 +839,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the minimum value
     */
-   public static float max (
-      final float a,
-      final float b,
-      final float c ) {
+   public static float max ( final float a, final float b, final float c ) {
 
       final float d = a >= b ? a : a < b ? b : 0.0f;
       return d >= c ? d : d < c ? c : 0.0f;
@@ -926,10 +885,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the minimum value
     */
-   public static float min (
-      final float a,
-      final float b,
-      final float c ) {
+   public static float min ( final float a, final float b, final float c ) {
 
       final float d = a <= b ? a : a > b ? b : 0.0f;
       return d <= c ? d : d > c ? c : 0.0f;
@@ -1059,8 +1015,8 @@ public abstract class Utils implements IUtils {
    public static float modUnchecked ( final float a, final float b ) {
 
       final float q = a / b;
-      return a - b * ( q > 0.0f ? ( int ) q
-         : q < 0.0f ? ( int ) q - 1.0f : 0.0f );
+      return a
+         - b * ( q > 0.0f ? ( int ) q : q < 0.0f ? ( int ) q - 1.0f : 0.0f );
       // return a - b * Utils.floor(a / b);
    }
 
@@ -1122,9 +1078,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the oscillation
     */
-   public static float pingPong (
-      final float lb,
-      final float ub,
+   public static float pingPong ( final float lb, final float ub,
       final float step ) {
 
       final float t = 0.5f + 0.5f * Utils.scNorm(step);
@@ -1140,10 +1094,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the oscillation
     */
-   public static int pingPong (
-      final int lb,
-      final int ub,
-      final float step ) {
+   public static int pingPong ( final int lb, final int ub, final float step ) {
 
       final float t = 0.5f + 0.5f * Utils.scNorm(step);
       return ( int ) ( ( 1.0f - t ) * lb + t * ub );
@@ -1228,9 +1179,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#round(float)
     */
-   public static float round (
-      final float value,
-      final int places ) {
+   public static float round ( final float value, final int places ) {
 
       if ( places < 1 ) { return Utils.round(value); }
       if ( places > 7 ) { return value; }
@@ -1341,9 +1290,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the eased value
     */
-   public static float smoothStep (
-      final float origin,
-      final float dest,
+   public static float smoothStep ( final float origin, final float dest,
       final float step ) {
 
       if ( step <= 0.0f ) { return origin; }
@@ -1453,9 +1400,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the string
     */
-   public static String toFixed (
-      final float value,
-      final int places ) {
+   public static String toFixed ( final float value, final int places ) {
 
       /* Deal with +/- Infinity, maximum & minimum value, NaN. */
       final int raw = Float.floatToRawIntBits(value);
@@ -1553,9 +1498,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the string
     */
-   public static String toPadded (
-      final int value,
-      final int places ) {
+   public static String toPadded ( final int value, final int places ) {
 
       /*
        * Double precision is needed to preserve accuracy. The max integer value
@@ -1662,10 +1605,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the integral
     */
-   public static float trunc ( final float value ) {
-
-      return ( int ) value;
-   }
+   public static float trunc ( final float value ) { return ( int ) value; }
 
    /**
     * An alias for {@link Byte#toUnsignedInt(byte)} . Converts a signed byte
@@ -1706,9 +1646,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the wrapped value
     */
-   public static float wrap (
-      final float value,
-      final float lb,
+   public static float wrap ( final float value, final float lb,
       final float ub ) {
 
       final float span = ub - lb;
@@ -1791,11 +1729,7 @@ public abstract class Utils implements IUtils {
        * @return the eased object
        */
       @Override
-      T apply (
-         final T origin,
-         final T dest,
-         final Float step,
-         T target );
+      T apply ( final T origin, final T dest, final Float step, T target );
 
    }
 
@@ -1819,10 +1753,7 @@ public abstract class Utils implements IUtils {
        * @return the eased object
        */
       @Override
-      T apply (
-         final T origin,
-         final T dest,
-         final Float step );
+      T apply ( final T origin, final T dest, final Float step );
 
    }
 
@@ -1844,9 +1775,7 @@ public abstract class Utils implements IUtils {
        * @param step   the step
        */
       @Override
-      public Float apply (
-         final Float origin,
-         final Float dest,
+      public Float apply ( final Float origin, final Float dest,
          final Float step ) {
 
          if ( step <= 0.0f ) { return origin; }
@@ -1895,9 +1824,7 @@ public abstract class Utils implements IUtils {
        * @see Utils#modUnchecked(float, float)
        */
       @Override
-      protected float applyPartial (
-         final float origin,
-         final float dest,
+      protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
          if ( this.aGtb ) {
@@ -1942,9 +1869,7 @@ public abstract class Utils implements IUtils {
        * @see Utils#modUnchecked(float, float)
        */
       @Override
-      protected float applyPartial (
-         final float origin,
-         final float dest,
+      protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
          if ( this.aLtb ) {
@@ -1989,9 +1914,7 @@ public abstract class Utils implements IUtils {
        * @see Utils#modUnchecked(float, float)
        */
       @Override
-      protected float applyPartial (
-         final float origin,
-         final float dest,
+      protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
          if ( this.aLtb && this.diff < this.halfRange ) {
@@ -2039,9 +1962,7 @@ public abstract class Utils implements IUtils {
        * @see Utils#modUnchecked(float, float)
        */
       @Override
-      protected float applyPartial (
-         final float origin,
-         final float dest,
+      protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
          if ( this.aLtb && this.diff > this.halfRange ) {
@@ -2081,9 +2002,7 @@ public abstract class Utils implements IUtils {
        * @return the eased value
        */
       @Override
-      public Float apply (
-         final Float origin,
-         final Float dest,
+      public Float apply ( final Float origin, final Float dest,
          final Float step ) {
 
          final double td = step;
@@ -2168,9 +2087,7 @@ public abstract class Utils implements IUtils {
        * @see PeriodicEasing#eval(float, float)
        */
       @Override
-      public Float apply (
-         final Float origin,
-         final Float dest,
+      public Float apply ( final Float origin, final Float dest,
          final Float step ) {
 
          this.eval(origin, dest);
@@ -2222,10 +2139,8 @@ public abstract class Utils implements IUtils {
        *
        * @return the interpolated value
        */
-      protected abstract float applyPartial (
-         final float origin,
-         final float dest,
-         final float step );
+      protected abstract float applyPartial ( final float origin,
+         final float dest, final float step );
 
       /**
        * A helper function which mutates protected fields a, b, diff, aLtb and
@@ -2301,9 +2216,7 @@ public abstract class Utils implements IUtils {
        * @return the eased value
        */
       @Override
-      public Float apply (
-         final Float origin,
-         final Float dest,
+      public Float apply ( final Float origin, final Float dest,
          final Float step ) {
 
          if ( step <= 0.0f ) { return origin; }

@@ -39,9 +39,7 @@ public class ZShader extends PShader {
     * @param vertFileName the vertex shader file name
     * @param fragFileName the fragment shader file name
     */
-   public ZShader (
-      final PApplet parent,
-      final String vertFileName,
+   public ZShader ( final PApplet parent, final String vertFileName,
       final String fragFileName ) {
 
       super(parent, vertFileName, fragFileName);
@@ -55,9 +53,7 @@ public class ZShader extends PShader {
     * @param vertSource the vertex shader source code
     * @param fragSource the fragment shader source code
     */
-   public ZShader (
-      final PApplet parent,
-      final String[] vertSource,
+   public ZShader ( final PApplet parent, final String[] vertSource,
       final String[] fragSource ) {
 
       super(parent, vertSource, fragSource);
@@ -70,9 +66,7 @@ public class ZShader extends PShader {
     * @param vertURL the vertex shader URL
     * @param fragURL the fragment shader URL
     */
-   public ZShader (
-      final PApplet parent,
-      final URL vertURL,
+   public ZShader ( final PApplet parent, final URL vertURL,
       final URL fragURL ) {
 
       super(parent, vertURL, fragURL);
@@ -84,9 +78,7 @@ public class ZShader extends PShader {
     * @param name the uniform name
     * @param m    the matrix
     */
-   public void set (
-      final String name,
-      final Mat3 m ) {
+   public void set ( final String name, final Mat3 m ) {
 
       this.setUniformImpl(name, ZShader.MAT3_IDX, m.toArray());
    }
@@ -97,9 +89,7 @@ public class ZShader extends PShader {
     * @param name the uniform name
     * @param m    the matrix
     */
-   public void set (
-      final String name,
-      final Mat4 m ) {
+   public void set ( final String name, final Mat4 m ) {
 
       this.setUniformImpl(name, ZShader.MAT4_IDX, m.toArray());
    }
@@ -111,9 +101,7 @@ public class ZShader extends PShader {
     * @param name the uniform name
     * @param q    the quaternion
     */
-   public void set (
-      final String name,
-      final Quaternion q ) {
+   public void set ( final String name, final Quaternion q ) {
 
       this.setUniformImpl(name, ZShader.VEC4_IDX, q.toArray(false));
    }
@@ -124,9 +112,7 @@ public class ZShader extends PShader {
     * @param name the uniform name
     * @param v    the value
     */
-   public void set (
-      final String name,
-      final Vec2 v ) {
+   public void set ( final String name, final Vec2 v ) {
 
       this.setUniformImpl(name, ZShader.VEC2_IDX, v.toArray());
    }
@@ -137,9 +123,7 @@ public class ZShader extends PShader {
     * @param name the uniform name
     * @param v    the value
     */
-   public void set (
-      final String name,
-      final Vec3 v ) {
+   public void set ( final String name, final Vec3 v ) {
 
       this.setUniformImpl(name, ZShader.VEC3_IDX, v.toArray());
    }
@@ -150,9 +134,7 @@ public class ZShader extends PShader {
     * @param name the uniform name
     * @param v    the value
     */
-   public void set (
-      final String name,
-      final Vec4 v ) {
+   public void set ( final String name, final Vec4 v ) {
 
       this.setUniformImpl(name, ZShader.VEC4_IDX, v.toArray());
    }

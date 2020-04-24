@@ -35,9 +35,7 @@ class Indices2 implements Cloneable, Comparable < Indices2 > {
     * @param vIdx  the coordinate index
     * @param vtIdx the texture coordinate index
     */
-   public Indices2 (
-      final int vIdx,
-      final int vtIdx ) {
+   public Indices2 ( final int vIdx, final int vtIdx ) {
 
       this.set(vIdx, vtIdx);
    }
@@ -114,9 +112,7 @@ class Indices2 implements Cloneable, Comparable < Indices2 > {
     *
     * @return this indices set
     */
-   public Indices2 set (
-      final int vIdx,
-      final int vtIdx ) {
+   public Indices2 set ( final int vIdx, final int vtIdx ) {
 
       this.v = vIdx;
       this.vt = vtIdx;
@@ -133,9 +129,7 @@ class Indices2 implements Cloneable, Comparable < Indices2 > {
     *
     * @return the indices set
     */
-   public Indices2 set (
-      final String vStr,
-      final String vtStr ) {
+   public Indices2 set ( final String vStr, final String vtStr ) {
 
       int vIdx = 0;
       int vtIdx = 0;
@@ -183,10 +177,10 @@ class Indices2 implements Cloneable, Comparable < Indices2 > {
     */
    public String toString ( final int padding ) {
 
-      return new StringBuilder(64).append("{ v: ").append(
-         Utils.toPadded(this.v, padding)).append(", vt: ").append(
-            Utils.toPadded(this.vt, padding)).append(' ').append(
-               '}').toString();
+      return new StringBuilder(64).append("{ v: ")
+         .append(Utils.toPadded(this.v, padding)).append(", vt: ")
+         .append(Utils.toPadded(this.vt, padding)).append(' ').append('}')
+         .toString();
    }
 
    /**

@@ -19,13 +19,9 @@ public class TextEntity3 extends ImageEntity3 {
     * @param font the Processing font
     * @param text the string of text
     */
-   public TextEntity3 (
-      final PFont font,
-      final String text ) {
+   public TextEntity3 ( final PFont font, final String text ) {
 
-      this(font, text, Color.fromHex(
-         IUp.DEFAULT_STROKE_COLOR,
-         new Color()));
+      this(font, text, Color.fromHex(IUp.DEFAULT_STROKE_COLOR, new Color()));
    }
 
    /**
@@ -36,9 +32,7 @@ public class TextEntity3 extends ImageEntity3 {
     * @param text the string of text
     * @param tint the color
     */
-   public TextEntity3 (
-      final PFont font,
-      final String text,
+   public TextEntity3 ( final PFont font, final String text,
       final Color tint ) {
 
       this(font, text, tint, ZImage.DEFAULT_LEADING);
@@ -53,10 +47,7 @@ public class TextEntity3 extends ImageEntity3 {
     * @param tint    the color
     * @param leading spacing between lines
     */
-   public TextEntity3 (
-      final PFont font,
-      final String text,
-      final Color tint,
+   public TextEntity3 ( final PFont font, final String text, final Color tint,
       final int leading ) {
 
       this(font, text, tint, leading, ZImage.DEFAULT_KERNING);
@@ -72,14 +63,11 @@ public class TextEntity3 extends ImageEntity3 {
     * @param leading spacing between lines
     * @param kerning spacing between characters
     */
-   public TextEntity3 (
-      final PFont font,
-      final String text,
-      final Color tint,
-      final int leading,
-      final int kerning ) {
+   public TextEntity3 ( final PFont font, final String text, final Color tint,
+      final int leading, final int kerning ) {
 
-      this(font, text, tint, leading, kerning, ZImage.DEFAULT_ALIGN, PConstants.CENTER, 1.0f);
+      this(font, text, tint, leading, kerning, ZImage.DEFAULT_ALIGN,
+         PConstants.CENTER, 1.0f);
    }
 
    /**
@@ -97,18 +85,13 @@ public class TextEntity3 extends ImageEntity3 {
     *
     * @see ZImage#fromText(PFont, String, int, int, int, int)
     */
-   public TextEntity3 (
-      final PFont font,
-      final String text,
-      final Color tint,
-      final int leading,
-      final int kerning,
-      final int alignHoriz,
-      final int alignVert,
-      final float scale ) {
+   public TextEntity3 ( final PFont font, final String text, final Color tint,
+      final int leading, final int kerning, final int alignHoriz,
+      final int alignVert, final float scale ) {
 
-      super(text, ZImage.fromText(font, text, 0xffffffff, leading,
-         kerning, alignHoriz), tint, scale, alignHoriz, alignVert);
+      super(text,
+         ZImage.fromText(font, text, 0xffffffff, leading, kerning, alignHoriz),
+         tint, scale, alignHoriz, alignVert);
    }
 
 }

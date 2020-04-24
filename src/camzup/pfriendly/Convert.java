@@ -41,14 +41,10 @@ public abstract class Convert {
     *
     * @return the matrix
     */
-   public static Mat3 toMat3 (
-      final PMatrix2D source,
-      final Mat3 target ) {
+   public static Mat3 toMat3 ( final PMatrix2D source, final Mat3 target ) {
 
-      return target.set(
-         source.m00, source.m01, source.m02,
-         source.m10, source.m11, source.m12,
-         0.0f, 0.0f, 1.0f);
+      return target.set(source.m00, source.m01, source.m02, source.m10,
+         source.m11, source.m12, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -59,15 +55,11 @@ public abstract class Convert {
     *
     * @return the matrix
     */
-   public static Mat4 toMat4 (
-      final PMatrix2D source,
-      final Mat4 target ) {
+   public static Mat4 toMat4 ( final PMatrix2D source, final Mat4 target ) {
 
-      return target.set(
-         source.m00, source.m01, 0.0f, source.m02,
-         source.m10, source.m11, 0.0f, source.m12,
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(source.m00, source.m01, 0.0f, source.m02, source.m10,
+         source.m11, 0.0f, source.m12, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+         1.0f);
    }
 
    /**
@@ -78,15 +70,12 @@ public abstract class Convert {
     *
     * @return the matrix
     */
-   public static Mat4 toMat4 (
-      final PMatrix3D source,
-      final Mat4 target ) {
+   public static Mat4 toMat4 ( final PMatrix3D source, final Mat4 target ) {
 
-      return target.set(
-         source.m00, source.m01, source.m02, source.m03,
-         source.m10, source.m11, source.m12, source.m13,
-         source.m20, source.m21, source.m22, source.m23,
-         source.m30, source.m31, source.m32, source.m33);
+      return target.set(source.m00, source.m01, source.m02, source.m03,
+         source.m10, source.m11, source.m12, source.m13, source.m20, source.m21,
+         source.m22, source.m23, source.m30, source.m31, source.m32,
+         source.m33);
    }
 
    /**
@@ -109,15 +98,12 @@ public abstract class Convert {
     *
     * @return the PMatrix2D
     */
-   public static PMatrix2D toPMatrix2D (
-      final Mat3 source,
-      PMatrix2D target ) {
+   public static PMatrix2D toPMatrix2D ( final Mat3 source, PMatrix2D target ) {
 
       if ( target == null ) { target = new PMatrix2D(); }
 
-      target.set(
-         source.m00, source.m01, source.m02,
-         source.m01, source.m11, source.m12);
+      target.set(source.m00, source.m01, source.m02, source.m01, source.m11,
+         source.m12);
       return target;
    }
 
@@ -129,8 +115,7 @@ public abstract class Convert {
     *
     * @return the matrix
     */
-   public static PMatrix2D toPMatrix2D (
-      final Transform2 tr2,
+   public static PMatrix2D toPMatrix2D ( final Transform2 tr2,
       final TransformOrder order ) {
 
       return Convert.toPMatrix2D(tr2, order, ( PMatrix2D ) null);
@@ -145,10 +130,8 @@ public abstract class Convert {
     *
     * @return the matrix
     */
-   public static PMatrix2D toPMatrix2D (
-      final Transform2 tr2,
-      final TransformOrder order,
-      PMatrix2D target ) {
+   public static PMatrix2D toPMatrix2D ( final Transform2 tr2,
+      final TransformOrder order, PMatrix2D target ) {
 
       if ( target == null ) { target = new PMatrix2D(); }
 
@@ -232,8 +215,7 @@ public abstract class Convert {
     *
     * @return the matrix
     */
-   public static PMatrix3D toPMatrix3D (
-      final Quaternion source,
+   public static PMatrix3D toPMatrix3D ( final Quaternion source,
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
@@ -257,8 +239,7 @@ public abstract class Convert {
       final float wy2 = w * y2;
       final float wz2 = w * z2;
 
-      target.set(
-         1.0f - ysq2 - zsq2, xy2 - wz2, xz2 + wy2, 0.0f, xy2 + wz2,
+      target.set(1.0f - ysq2 - zsq2, xy2 - wz2, xz2 + wy2, 0.0f, xy2 + wz2,
          1.0f - xsq2 - zsq2, yz2 - wx2, 0.0f, xz2 - wy2, yz2 + wx2,
          1.0f - xsq2 - ysq2, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
       return target;
@@ -272,8 +253,7 @@ public abstract class Convert {
     *
     * @return the transform
     */
-   public static PMatrix3D toPMatrix3D (
-      final Transform3 tr3,
+   public static PMatrix3D toPMatrix3D ( final Transform3 tr3,
       final TransformOrder order ) {
 
       return Convert.toPMatrix3D(tr3, order, ( PMatrix3D ) null);
@@ -288,10 +268,8 @@ public abstract class Convert {
     *
     * @return the transform
     */
-   public static PMatrix3D toPMatrix3D (
-      final Transform3 tr3,
-      final TransformOrder order,
-      PMatrix3D target ) {
+   public static PMatrix3D toPMatrix3D ( final Transform3 tr3,
+      final TransformOrder order, PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
 
@@ -365,8 +343,7 @@ public abstract class Convert {
     * @return the PShape
     */
    @Experimental
-   public static PShape toPShape (
-      final PGraphics rndr,
+   public static PShape toPShape ( final PGraphics rndr,
       final MeshEntity2 source ) {
 
       final boolean dim = rndr.is3D();
@@ -406,8 +383,8 @@ public abstract class Convert {
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform2 srctr = source.transform;
-      final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
-         new PMatrix2D());
+      final PMatrix2D m
+         = Convert.toPMatrix2D(srctr, TransformOrder.RST, new PMatrix2D());
       shape.resetMatrix();
       shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
 
@@ -429,8 +406,7 @@ public abstract class Convert {
     * @return the PShape
     */
    @Experimental
-   public static PShapeOpenGL toPShape (
-      final PGraphicsOpenGL rndr,
+   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
       final MeshEntity2 source ) {
 
       final boolean dim = rndr.is3D();
@@ -473,8 +449,8 @@ public abstract class Convert {
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform2 srctr = source.transform;
-      final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
-         new PMatrix2D());
+      final PMatrix2D m
+         = Convert.toPMatrix2D(srctr, TransformOrder.RST, new PMatrix2D());
       shape.resetMatrix();
       shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
 
@@ -496,8 +472,7 @@ public abstract class Convert {
     * @return the PShape
     */
    @Experimental
-   public static PShapeOpenGL toPShape (
-      final PGraphicsOpenGL rndr,
+   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
       final MeshEntity3 source ) {
 
       final boolean dim = rndr.is3D();
@@ -542,8 +517,8 @@ public abstract class Convert {
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform3 srctr = source.transform;
-      final PMatrix3D m = Convert.toPMatrix3D(srctr, TransformOrder.RST,
-         new PMatrix3D());
+      final PMatrix3D m
+         = Convert.toPMatrix3D(srctr, TransformOrder.RST, new PMatrix3D());
       shape.resetMatrix();
       shape.applyMatrix(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12, m.m13,
          m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
@@ -575,9 +550,7 @@ public abstract class Convert {
     *
     * @return the vector
     */
-   public static PVector toPVector (
-      final Vec2 source,
-      PVector target ) {
+   public static PVector toPVector ( final Vec2 source, PVector target ) {
 
       if ( target == null ) { target = new PVector(); }
       return target.set(source.x, source.y, 0.0f);
@@ -603,9 +576,7 @@ public abstract class Convert {
     *
     * @return the vector
     */
-   public static PVector toPVector (
-      final Vec3 source,
-      PVector target ) {
+   public static PVector toPVector ( final Vec3 source, PVector target ) {
 
       if ( target == null ) { target = new PVector(); }
       return target.set(source.x, source.y, source.z);
@@ -619,9 +590,7 @@ public abstract class Convert {
     *
     * @return the vector
     */
-   public static Vec2 toVec2 (
-      final PVector source,
-      final Vec2 target ) {
+   public static Vec2 toVec2 ( final PVector source, final Vec2 target ) {
 
       return target.set(source.x, source.y);
    }
@@ -634,9 +603,7 @@ public abstract class Convert {
     *
     * @return the vector
     */
-   public static Vec3 toVec3 (
-      final PVector source,
-      final Vec3 target ) {
+   public static Vec3 toVec3 ( final PVector source, final Vec3 target ) {
 
       return target.set(source.x, source.y, source.z);
    }
@@ -649,9 +616,7 @@ public abstract class Convert {
     *
     * @return the vector
     */
-   public static Vec4 toVec4 (
-      final PVector source,
-      final Vec4 target ) {
+   public static Vec4 toVec4 ( final PVector source, final Vec4 target ) {
 
       return target.set(source.x, source.y, source.z, 0.0f);
    }

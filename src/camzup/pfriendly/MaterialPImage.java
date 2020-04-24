@@ -49,9 +49,7 @@ public class MaterialPImage extends MaterialUv {
     * @param transform the UV transform
     * @param texture   the texture
     */
-   public MaterialPImage (
-      final String name,
-      final Transform2 transform,
+   public MaterialPImage ( final String name, final Transform2 transform,
       final PImage texture ) {
 
       super(name, transform);
@@ -66,11 +64,8 @@ public class MaterialPImage extends MaterialUv {
     * @param texture   the texture
     * @param tint      the fill or tint
     */
-   public MaterialPImage (
-      final String name,
-      final Transform2 transform,
-      final PImage texture,
-      final Color tint ) {
+   public MaterialPImage ( final String name, final Transform2 transform,
+      final PImage texture, final Color tint ) {
 
       super(name, transform, tint);
       this.setTexture(texture);
@@ -136,12 +131,20 @@ public class MaterialPImage extends MaterialUv {
    @Override
    public String toString ( final int places ) {
 
-      return new StringBuilder(256).append("{ name: \"").append(
-         this.name).append("\", tint: ").append(
-            this.tint.toString(places)).append(", texture: ").append(
-               ZImage.toString(this.texture)).append(", transform: ").append(
-                  this.transform.toString(places)).append(' ').append(
-                     '}').toString();
+      /* @formatter:off */
+      return new StringBuilder(256)
+         .append("{ name: \"")
+         .append(this.name)
+         .append("\", tint: ")
+         .append(this.tint.toString(places))
+         .append(", texture: ")
+         .append(ZImage.toString(this.texture))
+         .append(", transform: ")
+         .append(this.transform.toString(places))
+         .append(' ')
+         .append('}')
+         .toString();
+      /* @formatter:on */
    }
 
    /**
@@ -192,8 +195,9 @@ public class MaterialPImage extends MaterialUv {
             } else if ( initialToken.equals("map_kd") ) {
 
                final StringBuilder sb = new StringBuilder(128);
-               sb.append("The .mtl file refers to the image file ").append(
-                  tokens[1]).append(" .");
+               sb.append("The .mtl file refers to the image file ");
+               sb.append(tokens[1]);
+               sb.append(" .");
                System.out.println(sb.toString());
             }
          }

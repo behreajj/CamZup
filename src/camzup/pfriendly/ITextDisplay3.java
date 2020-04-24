@@ -17,10 +17,7 @@ public interface ITextDisplay3 extends ITextDisplay {
     * @param y the y coordinate
     */
    @Override
-   default void text (
-      final char c,
-      final float x,
-      final float y ) {
+   default void text ( final char c, final float x, final float y ) {
 
       this.text(c, x, y, 0.0f);
    }
@@ -33,11 +30,7 @@ public interface ITextDisplay3 extends ITextDisplay {
     * @param y the y coordinate
     * @param z the z coordinate
     */
-   void text (
-      final char c,
-      final float x,
-      final float y,
-      final float z );
+   void text ( final char c, final float x, final float y, final float z );
 
    /**
     * Displays a character at a location.
@@ -45,9 +38,7 @@ public interface ITextDisplay3 extends ITextDisplay {
     * @param c the character
     * @param v the location
     */
-   default void text (
-      final char c,
-      final Vec3 v ) {
+   default void text ( final char c, final Vec3 v ) {
 
       this.text(c, v.x, v.y, v.z);
    }
@@ -62,12 +53,8 @@ public interface ITextDisplay3 extends ITextDisplay {
     * @param y     the y coordinate
     */
    @Override
-   default void text (
-      final char[] chars,
-      final int start,
-      final int stop,
-      final float x,
-      final float y ) {
+   default void text ( final char[] chars, final int start, final int stop,
+      final float x, final float y ) {
 
       this.text(chars, start, stop, x, y, 0.0f);
    }
@@ -82,13 +69,8 @@ public interface ITextDisplay3 extends ITextDisplay {
     * @param y     the y coordinate
     * @param z     the z coordinate
     */
-   void text (
-      final char[] chars,
-      final int start,
-      final int stop,
-      final float x,
-      final float y,
-      final float z );
+   void text ( final char[] chars, final int start, final int stop,
+      final float x, final float y, final float z );
 
    /**
     * Displays an array of characters as text at a location.
@@ -98,10 +80,7 @@ public interface ITextDisplay3 extends ITextDisplay {
     * @param stop  the stop index, exclusive
     * @param v     the location
     */
-   default void text (
-      final char[] chars,
-      final int start,
-      final int stop,
+   default void text ( final char[] chars, final int start, final int stop,
       final Vec3 v ) {
 
       this.text(chars, 0, chars.length, v.x, v.y, v.z);
@@ -113,9 +92,7 @@ public interface ITextDisplay3 extends ITextDisplay {
     * @param chars the character array
     * @param v     the location
     */
-   default void text (
-      final char[] chars,
-      final Vec3 v ) {
+   default void text ( final char[] chars, final Vec3 v ) {
 
       this.text(chars, 0, chars.length, v.x, v.y, v.z);
    }
@@ -130,10 +107,7 @@ public interface ITextDisplay3 extends ITextDisplay {
     *
     * @see Utils#toFixed(float, int)
     */
-   default void text (
-      final float real,
-      final float x,
-      final float y,
+   default void text ( final float real, final float x, final float y,
       final float z ) {
 
       this.text(Utils.toFixed(real, 4), x, y, z);
@@ -148,9 +122,7 @@ public interface ITextDisplay3 extends ITextDisplay {
     *
     * @see Utils#toFixed(float, int)
     */
-   default void text (
-      final float real,
-      final Vec3 v ) {
+   default void text ( final float real, final Vec3 v ) {
 
       this.text(Utils.toFixed(real, 4), v.x, v.y, v.z);
    }
@@ -164,10 +136,7 @@ public interface ITextDisplay3 extends ITextDisplay {
     * @param y the y coordinate
     * @param z the z coordinate
     */
-   default void text (
-      final int i,
-      final float x,
-      final float y,
+   default void text ( final int i, final float x, final float y,
       final float z ) {
 
       this.text(i, x, y, z);
@@ -181,9 +150,7 @@ public interface ITextDisplay3 extends ITextDisplay {
     *
     * @see Utils#toFixed(float, int)
     */
-   default void text (
-      final int i,
-      final Vec3 v ) {
+   default void text ( final int i, final Vec3 v ) {
 
       this.text(i, v.x, v.y, v.z);
    }
@@ -196,10 +163,7 @@ public interface ITextDisplay3 extends ITextDisplay {
     * @param y   the y coordinate
     * @param z   the z coordinate
     */
-   default void text (
-      final String str,
-      final float x,
-      final float y,
+   default void text ( final String str, final float x, final float y,
       final float z ) {
 
       this.text(str, x, y, z);
@@ -213,9 +177,7 @@ public interface ITextDisplay3 extends ITextDisplay {
     *
     * @see Utils#toFixed(float, int)
     */
-   default void text (
-      final String str,
-      final Vec3 v ) {
+   default void text ( final String str, final Vec3 v ) {
 
       this.text(str, v.x, v.y, v.z);
    }

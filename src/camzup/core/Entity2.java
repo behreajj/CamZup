@@ -40,9 +40,7 @@ public class Entity2 extends Entity implements ISpatial2 {
     * @param name      the name
     * @param transform the transform
     */
-   public Entity2 (
-      final String name,
-      final Transform2 transform ) {
+   public Entity2 ( final String name, final Transform2 transform ) {
 
       super(name);
       this.transform = transform;
@@ -85,8 +83,8 @@ public class Entity2 extends Entity implements ISpatial2 {
    public int hashCode ( ) {
 
       int hash = super.hashCode();
-      hash = hash * IUtils.HASH_MUL ^ ( this.transform == null ? 0
-         : this.transform.hashCode() );
+      hash = hash * IUtils.HASH_MUL
+         ^ ( this.transform == null ? 0 : this.transform.hashCode() );
       return hash;
    }
 
@@ -130,9 +128,7 @@ public class Entity2 extends Entity implements ISpatial2 {
     */
    @Override
    @Chainable
-   public Entity2 moveTo (
-      final Vec2 locNew,
-      final float step ) {
+   public Entity2 moveTo ( final Vec2 locNew, final float step ) {
 
       this.transform.moveTo(locNew, step);
       return this;
@@ -163,9 +159,7 @@ public class Entity2 extends Entity implements ISpatial2 {
     */
    @Override
    @Chainable
-   public Entity2 rotateTo (
-      final float rotNew,
-      final float step ) {
+   public Entity2 rotateTo ( final float rotNew, final float step ) {
 
       this.transform.rotateTo(rotNew, step);
       return this;

@@ -49,9 +49,7 @@ public abstract class MaterialUv extends Material
     * @param name      the name
     * @param transform the UV transform
     */
-   public MaterialUv (
-      final String name,
-      final Transform2 transform ) {
+   public MaterialUv ( final String name, final Transform2 transform ) {
 
       super(name);
       this.transform = transform;
@@ -64,9 +62,7 @@ public abstract class MaterialUv extends Material
     * @param transform the UV transform
     * @param tint      the tint color
     */
-   public MaterialUv (
-      final String name,
-      final Transform2 transform,
+   public MaterialUv ( final String name, final Transform2 transform,
       final Color tint ) {
 
       super(name);
@@ -114,9 +110,7 @@ public abstract class MaterialUv extends Material
     */
    @Override
    @Chainable
-   public MaterialUv moveTo (
-      final Vec2 locNew,
-      final float step ) {
+   public MaterialUv moveTo ( final Vec2 locNew, final float step ) {
 
       this.transform.moveTo(locNew, step);
       return this;
@@ -147,9 +141,7 @@ public abstract class MaterialUv extends Material
     */
    @Override
    @Chainable
-   public MaterialUv rotateTo (
-      final float rotNew,
-      final float step ) {
+   public MaterialUv rotateTo ( final float rotNew, final float step ) {
 
       this.transform.rotateTo(rotNew, step);
       return this;
@@ -240,9 +232,7 @@ public abstract class MaterialUv extends Material
     */
    @Override
    @Chainable
-   public MaterialUv scaleTo (
-      final Vec2 scalar,
-      final float step ) {
+   public MaterialUv scaleTo ( final Vec2 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);
       return this;
@@ -272,10 +262,7 @@ public abstract class MaterialUv extends Material
     * @return this material
     */
    @Chainable
-   public MaterialUv setTint (
-      final float r,
-      final float g,
-      final float b ) {
+   public MaterialUv setTint ( final float r, final float g, final float b ) {
 
       this.tint.set(r, g, b);
       return this;
@@ -292,10 +279,7 @@ public abstract class MaterialUv extends Material
     * @return this material
     */
    @Chainable
-   public MaterialUv setTint (
-      final float r,
-      final float g,
-      final float b,
+   public MaterialUv setTint ( final float r, final float g, final float b,
       final float a ) {
 
       this.tint.set(r, g, b, a);
@@ -333,11 +317,18 @@ public abstract class MaterialUv extends Material
     */
    public String toString ( final int places ) {
 
-      return new StringBuilder(256).append("{ name: \"").append(
-         this.name).append("\", tint: ").append(
-            this.tint.toString(places)).append(", transform: ").append(
-               this.transform.toString(places)).append(' ').append(
-                  '}').toString();
+      /* @formatter:off */
+      return new StringBuilder(256)
+         .append("{ name: \"")
+         .append(this.name)
+         .append("\", tint: ")
+         .append(this.tint.toString(places))
+         .append(", transform: ")
+         .append(this.transform.toString(places))
+         .append(' ')
+         .append('}')
+         .toString();
+      /* @formatter:on */
    }
 
 }

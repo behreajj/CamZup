@@ -38,10 +38,7 @@ public class Vert3 implements Comparable < Vert3 > {
     * @param texCoord the texture coordinate
     * @param normal   the normal
     */
-   public Vert3 (
-      final Vec3 coord,
-      final Vec2 texCoord,
-      final Vec3 normal ) {
+   public Vert3 ( final Vec3 coord, final Vec2 texCoord, final Vec3 normal ) {
 
       this.set(coord, texCoord, normal);
    }
@@ -93,9 +90,7 @@ public class Vert3 implements Comparable < Vert3 > {
     * @return this vertex
     */
    @Chainable
-   public Vert3 set (
-      final Vec3 coord,
-      final Vec2 texCoord,
+   public Vert3 set ( final Vec3 coord, final Vec2 texCoord,
       final Vec3 normal ) {
 
       this.coord = coord;
@@ -158,9 +153,7 @@ public class Vert3 implements Comparable < Vert3 > {
     *
     * @return the evaluation
     */
-   public static boolean approxCoord (
-      final Vert3 a,
-      final Vert3 b ) {
+   public static boolean approxCoord ( final Vert3 a, final Vert3 b ) {
 
       return Vert3.approxCoord(a, b, IUtils.DEFAULT_EPSILON);
    }
@@ -175,9 +168,7 @@ public class Vert3 implements Comparable < Vert3 > {
     *
     * @return the evaluation
     */
-   public static boolean approxCoord (
-      final Vert3 a,
-      final Vert3 b,
+   public static boolean approxCoord ( final Vert3 a, final Vert3 b,
       final float tolerance ) {
 
       return a == b || Vec3.approx(a.coord, b.coord, tolerance);
@@ -196,10 +187,8 @@ public class Vert3 implements Comparable < Vert3 > {
     * @see Quaternion#fromDir(Vec3, Handedness, Quaternion)
     */
    @Experimental
-   public static Quaternion orientation (
-      final Vert3 vert,
-      final Handedness handedness,
-      final Quaternion target ) {
+   public static Quaternion orientation ( final Vert3 vert,
+      final Handedness handedness, final Quaternion target ) {
 
       return Quaternion.fromDir(vert.normal, handedness, target);
    }
@@ -217,10 +206,8 @@ public class Vert3 implements Comparable < Vert3 > {
     * @see Transform3#fromDir(Vec3, Handedness, Transform3)
     */
    @Experimental
-   public static Transform3 orientation (
-      final Vert3 vert,
-      final Handedness handedness,
-      final Transform3 target ) {
+   public static Transform3 orientation ( final Vert3 vert,
+      final Handedness handedness, final Transform3 target ) {
 
       Transform3.fromDir(vert.normal, handedness, target);
       target.moveTo(vert.coord);
@@ -237,9 +224,7 @@ public class Vert3 implements Comparable < Vert3 > {
     * @return the orientation
     */
    @Experimental
-   public static Ray3 orientation (
-      final Vert3 vert,
-      final Ray3 target ) {
+   public static Ray3 orientation ( final Vert3 vert, final Ray3 target ) {
 
       return target.set(vert.coord, vert.normal);
    }
