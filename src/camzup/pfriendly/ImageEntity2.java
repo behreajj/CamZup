@@ -1,6 +1,5 @@
 package camzup.pfriendly;
 
-import camzup.core.Chainable;
 import camzup.core.Color;
 import camzup.core.Mesh2;
 import camzup.core.MeshEntity2;
@@ -125,7 +124,7 @@ public class ImageEntity2 extends MeshEntity2 {
     *
     * @return this entity
     */
-   @Chainable
+
    public ImageEntity2 setTint ( final Color clr ) {
 
       this.material.tint.set(clr);
@@ -139,7 +138,7 @@ public class ImageEntity2 extends MeshEntity2 {
     *
     * @return this entity
     */
-   @Chainable
+
    public ImageEntity2 setTint ( final int clr ) {
 
       Color.fromHex(clr, this.material.tint);

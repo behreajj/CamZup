@@ -8,8 +8,8 @@ import java.util.Iterator;
  * serve as a parent class for colors. Instance methods are limited, while
  * most static methods require an explicit output variable to be provided.
  */
-public class Vec4
-   implements Comparable < Vec4 >, Cloneable, Iterable < Float > {
+public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
+   Float > {
 
    /**
     * Component on the w axis. Commonly used to store 1.0 for points and 0.0
@@ -66,6 +66,20 @@ public class Vec4
    }
 
    /**
+    * Constructs a vector from integer values. A convenience for Kotlin
+    * support.
+    *
+    * @param x the x component
+    * @param y the y component
+    * @param z the z component
+    * @param w the w component
+    */
+   public Vec4 ( final int x, final int y, final int z, final int w ) {
+
+      this.set(x, y, z, w);
+   }
+
+   /**
     * Attempts to construct a vector from Strings using
     * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
     * the component is set to zero.
@@ -98,7 +112,10 @@ public class Vec4
    public Vec4 ( final Vec3 v3 ) { this.set(v3); }
 
    /**
-    * Promotes a Vec3 to a Vec4 with an extra component.
+    * Promotes a Vec3 to a Vec4 with an extra component.<br>
+    * <br>
+    * Useful for multiplying a 4 x 4 matrix with either a 3D vector or a 3D
+    * point. (For points, w is 1.0; for vectors, w is 0.0 .)
     *
     * @param v3 the vector
     * @param w  the w component
@@ -147,6 +164,15 @@ public class Vec4
            : this.x < v.x ? -1 : 0;
       /* @formatter:on */
    }
+
+   /**
+    * Tests to see if the vector contains a value.
+    *
+    * @param v the value
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final float v ) { return this.indexOf(v) > -1; }
 
    /**
     * Tests this vector for equivalence with another object.
@@ -211,8 +237,26 @@ public class Vec4
 
       return ( ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(this.x) )
          * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y) ) * IUtils.HASH_MUL
-         ^ Float.floatToIntBits(this.z) ) * IUtils.HASH_MUL
-         ^ Float.floatToIntBits(this.w);
+         ^ Float.floatToIntBits(this.z) ) * IUtils.HASH_MUL ^ Float
+            .floatToIntBits(this.w);
+   }
+
+   /**
+    * Tests to see if the vector contains a value. If the value is equal to x,
+    * returns 0; if y, 1; if z, 2; if w, 3. Returns -1 if the vector does not
+    * contain a value.
+    *
+    * @param v the value
+    *
+    * @return the index
+    */
+   public int indexOf ( final float v ) {
+
+      if ( Utils.approx(this.w, v) ) { return 3; }
+      if ( Utils.approx(this.z, v) ) { return 2; }
+      if ( Utils.approx(this.y, v) ) { return 1; }
+      if ( Utils.approx(this.x, v) ) { return 0; }
+      return -1;
    }
 
    /**
@@ -222,7 +266,7 @@ public class Vec4
     * @return the iterator
     */
    @Override
-   public V4Iterator iterator ( ) { return new V4Iterator(this); }
+   public Iterator < Float > iterator ( ) { return new V4Iterator(this); }
 
    /**
     * Gets the number of components held by this vector.
@@ -236,7 +280,7 @@ public class Vec4
     *
     * @return this vector
     */
-   @Chainable
+
    public Vec4 reset ( ) { return this.set(0.0f, 0.0f, 0.0f, 0.0f); }
 
    /**
@@ -249,17 +293,15 @@ public class Vec4
     * @param w the w component
     *
     * @return this vector
-    *
-    * @see Utils#toFloat(boolean)
     */
-   @Chainable
+
    public Vec4 set ( final boolean x, final boolean y, final boolean z,
       final boolean w ) {
 
-      this.x = Utils.toFloat(x);
-      this.y = Utils.toFloat(y);
-      this.z = Utils.toFloat(z);
-      this.w = Utils.toFloat(w);
+      this.x = x ? 1.0f : 0.0f;
+      this.y = y ? 1.0f : 0.0f;
+      this.z = z ? 1.0f : 0.0f;
+      this.w = w ? 1.0f : 0.0f;
       return this;
    }
 
@@ -273,9 +315,29 @@ public class Vec4
     *
     * @return this vector
     */
-   @Chainable
+
    public Vec4 set ( final float x, final float y, final float z,
       final float w ) {
+
+      this.x = x;
+      this.y = y;
+      this.z = z;
+      this.w = w;
+      return this;
+   }
+
+   /**
+    * Sets the components of this vector from integers. A convenience for
+    * Kotlin support.
+    *
+    * @param x the x component
+    * @param y the y component
+    * @param z the z component
+    * @param w the w component
+    *
+    * @return this vector
+    */
+   public Vec4 set ( final int x, final int y, final int z, final int w ) {
 
       this.x = x;
       this.y = y;
@@ -298,7 +360,7 @@ public class Vec4
     *
     * @see Float#parseFloat(String)
     */
-   @Chainable
+
    public Vec4 set ( final String xstr, final String ystr, final String zstr,
       final String wstr ) {
 
@@ -346,7 +408,7 @@ public class Vec4
     *
     * @return this vector
     */
-   @Chainable
+
    public Vec4 set ( final Vec2 v2 ) {
 
       return this.set(v2.x, v2.y, 0.0f, 0.0f);
@@ -359,21 +421,24 @@ public class Vec4
     *
     * @return this vector
     */
-   @Chainable
+
    public Vec4 set ( final Vec3 v3 ) {
 
       return this.set(v3.x, v3.y, v3.z, 0.0f);
    }
 
    /**
-    * Promotes a Vec3 to a Vec4 with an extra component.
+    * Promotes a Vec3 to a Vec4 with an extra component.<br>
+    * <br>
+    * Useful for multiplying a 4 x 4 matrix with either a 3D vector or a 3D
+    * point. (For points, w is 1.0; for vectors, w is 0.0 .)
     *
     * @param v3 the vector
     * @param w  the w component
     *
     * @return this vector
     */
-   @Chainable
+
    public Vec4 set ( final Vec3 v3, final float w ) {
 
       return this.set(v3.x, v3.y, v3.z, w);
@@ -386,7 +451,7 @@ public class Vec4
     *
     * @return this vector
     */
-   @Chainable
+
    public Vec4 set ( final Vec4 source ) {
 
       return this.set(source.x, source.y, source.z, source.w);
@@ -473,10 +538,10 @@ public class Vec4
     */
    protected boolean equals ( final Vec4 v ) {
 
-      return Float.floatToIntBits(this.w) == Float.floatToIntBits(v.w)
-         && Float.floatToIntBits(this.z) == Float.floatToIntBits(v.z)
-         && Float.floatToIntBits(this.y) == Float.floatToIntBits(v.y)
-         && Float.floatToIntBits(this.x) == Float.floatToIntBits(v.x);
+      return Float.floatToIntBits(this.w) == Float.floatToIntBits(v.w) && Float
+         .floatToIntBits(this.z) == Float.floatToIntBits(v.z) && Float
+            .floatToIntBits(this.y) == Float.floatToIntBits(v.y) && Float
+               .floatToIntBits(this.x) == Float.floatToIntBits(v.x);
    }
 
    /**
@@ -491,8 +556,8 @@ public class Vec4
     */
    public static Vec4 abs ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(Utils.abs(v.x), Utils.abs(v.y), Utils.abs(v.z),
-         Utils.abs(v.w));
+      return target.set(Utils.abs(v.x), Utils.abs(v.y), Utils.abs(v.z), Utils
+         .abs(v.w));
    }
 
    /**
@@ -535,8 +600,8 @@ public class Vec4
     */
    public static Vec4 and ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(Utils.and(a.x, b.x), Utils.and(a.y, b.y),
-         Utils.and(a.z, b.z), Utils.and(a.w, b.w));
+      return target.set(Utils.and(a.x, b.x), Utils.and(a.y, b.y), Utils.and(a.z,
+         b.z), Utils.and(a.w, b.w));
    }
 
    /**
@@ -646,8 +711,8 @@ public class Vec4
     */
    public static Vec4 ceil ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(Utils.ceil(v.x), Utils.ceil(v.y), Utils.ceil(v.z),
-         Utils.ceil(v.w));
+      return target.set(Utils.ceil(v.x), Utils.ceil(v.y), Utils.ceil(v.z), Utils
+         .ceil(v.w));
    }
 
    /**
@@ -665,10 +730,9 @@ public class Vec4
    public static Vec4 clamp ( final Vec4 v, final Vec4 lowerBound,
       final Vec4 upperBound, final Vec4 target ) {
 
-      return target.set(Utils.clamp(v.x, lowerBound.x, upperBound.x),
-         Utils.clamp(v.y, lowerBound.y, upperBound.y),
-         Utils.clamp(v.z, lowerBound.z, upperBound.z),
-         Utils.clamp(v.w, lowerBound.w, upperBound.w));
+      return target.set(Utils.clamp(v.x, lowerBound.x, upperBound.x), Utils
+         .clamp(v.y, lowerBound.y, upperBound.y), Utils.clamp(v.z, lowerBound.z,
+            upperBound.z), Utils.clamp(v.w, lowerBound.w, upperBound.w));
    }
 
    /**
@@ -683,8 +747,8 @@ public class Vec4
     */
    public static Vec4 clamp01 ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(Utils.clamp01(v.x), Utils.clamp01(v.y),
-         Utils.clamp01(v.z), Utils.clamp01(v.w));
+      return target.set(Utils.clamp01(v.x), Utils.clamp01(v.y), Utils.clamp01(
+         v.z), Utils.clamp01(v.w));
    }
 
    /**
@@ -699,10 +763,9 @@ public class Vec4
    public static Vec4 copySign ( final Vec4 magnitude, final Vec4 sign,
       final Vec4 target ) {
 
-      return target.set(Utils.copySign(magnitude.x, sign.x),
-         Utils.copySign(magnitude.y, sign.y),
-         Utils.copySign(magnitude.z, sign.z),
-         Utils.copySign(magnitude.w, sign.w));
+      return target.set(Utils.copySign(magnitude.x, sign.x), Utils.copySign(
+         magnitude.y, sign.y), Utils.copySign(magnitude.z, sign.z), Utils
+            .copySign(magnitude.w, sign.w));
    }
 
    /**
@@ -718,8 +781,8 @@ public class Vec4
     */
    public static Vec4 diff ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y),
-         Utils.diff(a.z, b.z), Utils.diff(a.w, b.w));
+      return target.set(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y), Utils.diff(
+         a.z, b.z), Utils.diff(a.w, b.w));
    }
 
    /**
@@ -751,8 +814,8 @@ public class Vec4
     */
    public static float distChebyshev ( final Vec4 a, final Vec4 b ) {
 
-      return Utils.max(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y),
-         Utils.diff(a.z, b.z), Utils.diff(a.w, b.w));
+      return Utils.max(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y), Utils.diff(
+         a.z, b.z), Utils.diff(a.w, b.w));
    }
 
    /**
@@ -890,8 +953,8 @@ public class Vec4
     */
    public static Vec4 div ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(Utils.div(a.x, b.x), Utils.div(a.y, b.y),
-         Utils.div(a.z, b.z), Utils.div(a.w, b.w));
+      return target.set(Utils.div(a.x, b.x), Utils.div(a.y, b.y), Utils.div(a.z,
+         b.z), Utils.div(a.w, b.w));
    }
 
    /**
@@ -956,9 +1019,8 @@ public class Vec4
    public static Vec4 filter ( final Vec4 v, final Vec4 lb, final Vec4 ub,
       final Vec4 target ) {
 
-      return target.set(Utils.filter(v.x, lb.x, ub.x),
-         Utils.filter(v.y, lb.y, ub.y), Utils.filter(v.z, lb.z, ub.z),
-         Utils.filter(v.w, lb.w, ub.w));
+      return target.set(Utils.filter(v.x, lb.x, ub.x), Utils.filter(v.y, lb.y,
+         ub.y), Utils.filter(v.z, lb.z, ub.z), Utils.filter(v.w, lb.w, ub.w));
    }
 
    /**
@@ -990,8 +1052,8 @@ public class Vec4
     */
    public static Vec4 fmod ( final float a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(Utils.fmod(a, b.x), Utils.fmod(a, b.y),
-         Utils.fmod(a, b.z), Utils.fmod(a, b.w));
+      return target.set(Utils.fmod(a, b.x), Utils.fmod(a, b.y), Utils.fmod(a,
+         b.z), Utils.fmod(a, b.w));
    }
 
    /**
@@ -1025,8 +1087,8 @@ public class Vec4
     */
    public static Vec4 fmod ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(Utils.fmod(a.x, b.x), Utils.fmod(a.y, b.y),
-         Utils.fmod(a.z, b.z), Utils.fmod(a.w, b.w));
+      return target.set(Utils.fmod(a.x, b.x), Utils.fmod(a.y, b.y), Utils.fmod(
+         a.z, b.z), Utils.fmod(a.w, b.w));
    }
 
    /**
@@ -1135,8 +1197,8 @@ public class Vec4
       final float mSq = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
       if ( limit > 0.0f && mSq > limit * limit ) {
          final float scalar = limit * Utils.invSqrtUnchecked(mSq);
-         return target.set(v.x * scalar, v.y * scalar, v.z * scalar,
-            v.w * scalar);
+         return target.set(v.x * scalar, v.y * scalar, v.z * scalar, v.w
+            * scalar);
       }
 
       return target.set(v);
@@ -1226,11 +1288,10 @@ public class Vec4
       final Vec4 ubOrigin, final Vec4 lbDest, final Vec4 ubDest,
       final Vec4 target ) {
 
-      return target.set(
-         Utils.map(v.x, lbOrigin.x, ubOrigin.x, lbDest.x, ubDest.x),
-         Utils.map(v.y, lbOrigin.y, ubOrigin.y, lbDest.y, ubDest.y),
-         Utils.map(v.z, lbOrigin.z, ubOrigin.z, lbDest.z, ubDest.z),
-         Utils.map(v.w, lbOrigin.w, ubOrigin.w, lbDest.w, ubDest.w));
+      return target.set(Utils.map(v.x, lbOrigin.x, ubOrigin.x, lbDest.x,
+         ubDest.x), Utils.map(v.y, lbOrigin.y, ubOrigin.y, lbDest.y, ubDest.y),
+         Utils.map(v.z, lbOrigin.z, ubOrigin.z, lbDest.z, ubDest.z), Utils.map(
+            v.w, lbOrigin.w, ubOrigin.w, lbDest.w, ubDest.w));
    }
 
    /**
@@ -1265,9 +1326,9 @@ public class Vec4
    public static Vec4 max ( final Vec4 a, final Vec4 upperBound,
       final Vec4 target ) {
 
-      return target.set(Utils.max(a.x, upperBound.x),
-         Utils.max(a.y, upperBound.y), Utils.max(a.z, upperBound.z),
-         Utils.max(a.w, upperBound.w));
+      return target.set(Utils.max(a.x, upperBound.x), Utils.max(a.y,
+         upperBound.y), Utils.max(a.z, upperBound.z), Utils.max(a.w,
+            upperBound.w));
    }
 
    /**
@@ -1302,9 +1363,9 @@ public class Vec4
    public static Vec4 min ( final Vec4 a, final Vec4 lowerBound,
       final Vec4 target ) {
 
-      return target.set(Utils.min(a.x, lowerBound.x),
-         Utils.min(a.y, lowerBound.y), Utils.min(a.z, lowerBound.z),
-         Utils.min(a.w, lowerBound.w));
+      return target.set(Utils.min(a.x, lowerBound.x), Utils.min(a.y,
+         lowerBound.y), Utils.min(a.z, lowerBound.z), Utils.min(a.w,
+            lowerBound.w));
    }
 
    /**
@@ -1324,9 +1385,8 @@ public class Vec4
       if ( step >= 1.0f ) { return target.set(dest); }
 
       final float u = 1.0f - step;
-      return target.set(u * origin.x + step * dest.x,
-         u * origin.y + step * dest.y, u * origin.z + step * dest.z,
-         u * origin.w + step * dest.w);
+      return target.set(u * origin.x + step * dest.x, u * origin.y + step
+         * dest.y, u * origin.z + step * dest.z, u * origin.w + step * dest.w);
    }
 
    /**
@@ -1378,8 +1438,8 @@ public class Vec4
     */
    public static Vec4 mod ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(Utils.mod(a.x, b.x), Utils.mod(a.y, b.y),
-         Utils.mod(a.z, b.z), Utils.mod(a.w, b.w));
+      return target.set(Utils.mod(a.x, b.x), Utils.mod(a.y, b.y), Utils.mod(a.z,
+         b.z), Utils.mod(a.w, b.w));
    }
 
    /**
@@ -1395,8 +1455,8 @@ public class Vec4
     */
    public static Vec4 mod1 ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(Utils.mod1(v.x), Utils.mod1(v.y), Utils.mod1(v.z),
-         Utils.mod1(v.w));
+      return target.set(Utils.mod1(v.x), Utils.mod1(v.y), Utils.mod1(v.z), Utils
+         .mod1(v.w));
    }
 
    /**
@@ -1493,8 +1553,8 @@ public class Vec4
     */
    public static Vec4 normalize ( final Vec4 v, final Vec4 target ) {
 
-      final float mInv = Utils
-         .invSqrtUnchecked(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);
+      final float mInv = Utils.invSqrtUnchecked(v.x * v.x + v.y * v.y + v.z
+         * v.z + v.w * v.w);
       return target.set(v.x * mInv, v.y * mInv, v.z * mInv, v.w * mInv);
    }
 
@@ -1537,8 +1597,8 @@ public class Vec4
     */
    public static Vec4 or ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(Utils.or(a.x, b.x), Utils.or(a.y, b.y),
-         Utils.or(a.z, b.z), Utils.or(a.w, b.w));
+      return target.set(Utils.or(a.x, b.x), Utils.or(a.y, b.y), Utils.or(a.z,
+         b.z), Utils.or(a.w, b.w));
    }
 
    /**
@@ -1588,8 +1648,8 @@ public class Vec4
     */
    public static Vec4 pow ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(Utils.pow(a.x, b.x), Utils.pow(a.y, b.y),
-         Utils.pow(a.z, b.z), Utils.pow(a.w, b.w));
+      return target.set(Utils.pow(a.x, b.x), Utils.pow(a.y, b.y), Utils.pow(a.z,
+         b.z), Utils.pow(a.w, b.w));
    }
 
    /**
@@ -1666,9 +1726,8 @@ public class Vec4
       if ( levels < 2 ) { return target.set(v); }
 
       final float delta = 1.0f / levels;
-      return target.set(delta * Utils.floor(0.5f + v.x * levels),
-         delta * Utils.floor(0.5f + v.y * levels),
-         delta * Utils.floor(0.5f + v.z * levels),
+      return target.set(delta * Utils.floor(0.5f + v.x * levels), delta * Utils
+         .floor(0.5f + v.y * levels), delta * Utils.floor(0.5f + v.z * levels),
          delta * Utils.floor(0.5f + v.w * levels));
    }
 
@@ -1704,9 +1763,9 @@ public class Vec4
       final float rz = rng.nextFloat();
       final float rw = rng.nextFloat();
       return target.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
-         ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y,
-         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z,
-         ( 1.0f - rw ) * lowerBound.w + rw * upperBound.w);
+         ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y, ( 1.0f - rz )
+            * lowerBound.z + rz * upperBound.z, ( 1.0f - rw ) * lowerBound.w
+               + rw * upperBound.w);
    }
 
    /**
@@ -1732,8 +1791,8 @@ public class Vec4
       final float r1 = rng.nextFloat();
       final float x0 = rho * Utils.sqrt(1.0f - r1);
       final float x1 = rho * Utils.sqrt(r1);
-      return target.set(x0 * Utils.sin(t0), x0 * Utils.cos(t0),
-         x1 * Utils.sin(t1), x1 * Utils.cos(t1));
+      return target.set(x0 * Utils.sin(t0), x0 * Utils.cos(t0), x1 * Utils.sin(
+         t1), x1 * Utils.cos(t1));
    }
 
    /**
@@ -1819,9 +1878,8 @@ public class Vec4
          n *= 10;
       }
       final float nInv = 1.0f / n;
-      return target.set(Utils.round(v.x * n) * nInv,
-         Utils.round(v.y * n) * nInv, Utils.round(v.z * n) * nInv,
-         Utils.round(v.w * n) * nInv);
+      return target.set(Utils.round(v.x * n) * nInv, Utils.round(v.y * n)
+         * nInv, Utils.round(v.z * n) * nInv, Utils.round(v.w * n) * nInv);
    }
 
    /**
@@ -1852,8 +1910,8 @@ public class Vec4
     */
    public static Vec4 sign ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(Utils.sign(v.x), Utils.sign(v.y), Utils.sign(v.z),
-         Utils.sign(v.w));
+      return target.set(Utils.sign(v.x), Utils.sign(v.y), Utils.sign(v.z), Utils
+         .sign(v.w));
    }
 
    /**
@@ -1915,9 +1973,8 @@ public class Vec4
    public static Vec4 wrap ( final Vec4 v, final Vec4 lb, final Vec4 ub,
       final Vec4 target ) {
 
-      return target.set(Utils.wrap(v.x, lb.x, ub.x),
-         Utils.wrap(v.y, lb.y, ub.y), Utils.wrap(v.z, lb.z, ub.z),
-         Utils.wrap(v.w, lb.w, ub.w));
+      return target.set(Utils.wrap(v.x, lb.x, ub.x), Utils.wrap(v.y, lb.y,
+         ub.y), Utils.wrap(v.z, lb.z, ub.z), Utils.wrap(v.w, lb.w, ub.w));
    }
 
    /**
@@ -1934,8 +1991,8 @@ public class Vec4
     */
    public static Vec4 xor ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(Utils.xor(a.x, b.x), Utils.xor(a.y, b.y),
-         Utils.xor(a.z, b.z), Utils.xor(a.w, b.w));
+      return target.set(Utils.xor(a.x, b.x), Utils.xor(a.y, b.y), Utils.xor(a.z,
+         b.z), Utils.xor(a.w, b.w));
    }
 
    /**
@@ -1989,8 +2046,8 @@ public class Vec4
    /**
     * An abstract class to facilitate the creation of vector easing functions.
     */
-   public static abstract class AbstrEasing
-      implements Utils.EasingFuncObj < Vec4 > {
+   public static abstract class AbstrEasing implements Utils.EasingFuncObj <
+      Vec4 > {
 
       /**
        * The default constructor.
@@ -2069,9 +2126,8 @@ public class Vec4
          final double td = step;
          final double ud = 1.0d - td;
          return target.set(( float ) ( ud * origin.x + td * dest.x ),
-            ( float ) ( ud * origin.y + td * dest.y ),
-            ( float ) ( ud * origin.z + td * dest.z ),
-            ( float ) ( ud * origin.w + td * dest.w ));
+            ( float ) ( ud * origin.y + td * dest.y ), ( float ) ( ud * origin.z
+               + td * dest.z ), ( float ) ( ud * origin.w + td * dest.w ));
       }
 
    }

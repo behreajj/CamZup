@@ -141,8 +141,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    @Experimental
    public Knot2 adoptForeHandle ( final Knot2 source ) {
 
-      Vec2.sub(source.foreHandle, source.coord, this.foreHandle);
-      Vec2.add(this.coord, this.foreHandle, this.foreHandle);
+      this.foreHandle.set(this.coord.x + source.foreHandle.x - source.coord.x,
+         this.coord.y + source.foreHandle.y - source.coord.y);
 
       return this;
    }
@@ -173,8 +173,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    @Experimental
    public Knot2 adoptRearHandle ( final Knot2 source ) {
 
-      Vec2.sub(source.rearHandle, source.coord, this.rearHandle);
-      Vec2.add(this.coord, this.rearHandle, this.rearHandle);
+      this.rearHandle.set(this.coord.x + source.rearHandle.x - source.coord.x,
+         this.coord.y + source.rearHandle.y - source.coord.y);
 
       return this;
    }
@@ -187,7 +187,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @see Knot2#alignHandlesForward()
     */
-   @Chainable
+
    public Knot2 alignHandles ( ) { return this.alignHandlesForward(); }
 
    /**
@@ -199,7 +199,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * @see Utils#hypot(float, float)
     * @see Utils#invHypot(float, float)
     */
-   @Chainable
+
    public Knot2 alignHandlesBackward ( ) {
 
       final float cox = this.coord.x;
@@ -211,8 +211,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float foreDirx = this.foreHandle.x - cox;
       final float foreDiry = this.foreHandle.y - coy;
 
-      final float flipRescale = -Utils.hypot(foreDirx, foreDiry)
-         * Utils.invHypot(rearDirx, rearDiry);
+      final float flipRescale = -Utils.hypot(foreDirx, foreDiry) * Utils
+         .invHypot(rearDirx, rearDiry);
 
       this.foreHandle.x = rearDirx * flipRescale + cox;
       this.foreHandle.y = rearDiry * flipRescale + coy;
@@ -229,7 +229,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * @see Utils#hypot(float, float)
     * @see Utils#invHypot(float, float)
     */
-   @Chainable
+
    public Knot2 alignHandlesForward ( ) {
 
       final float cox = this.coord.x;
@@ -256,8 +256,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
        * negative sign indicates that the rear handle is 180 degrees opposite
        * the forehandle.
        */
-      final float flipRescale = -Utils.hypot(rearDirx, rearDiry)
-         * Utils.invHypot(foreDirx, foreDiry);
+      final float flipRescale = -Utils.hypot(rearDirx, rearDiry) * Utils
+         .invHypot(foreDirx, foreDiry);
 
       /*
        * Add the coordinate back to the new rear direction to convert it from a
@@ -321,9 +321,9 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       /* @formatter:off */
       return ( ( IUtils.MUL_BASE ^
              ( this.coord == null ? 0 : this.coord.hashCode() ) )
-             * IUtils.HASH_MUL ^
+               * IUtils.HASH_MUL ^
              ( this.foreHandle == null ? 0 : this.foreHandle.hashCode() ) )
-             * IUtils.HASH_MUL ^
+               * IUtils.HASH_MUL ^
              ( this.rearHandle == null ? 0 : this.rearHandle.hashCode() );
       /* @formatter:on */
    }
@@ -336,7 +336,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @see Knot2#mirrorHandlesForward()
     */
-   @Chainable
+
    public Knot2 mirrorHandles ( ) { return this.mirrorHandlesForward(); }
 
    /**
@@ -345,7 +345,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 mirrorHandlesBackward ( ) {
 
       this.foreHandle.set(this.coord.x - ( this.rearHandle.x - this.coord.x ),
@@ -360,7 +360,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 mirrorHandlesForward ( ) {
 
       this.rearHandle.set(this.coord.x - ( this.foreHandle.x - this.coord.x ),
@@ -374,7 +374,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 reverse ( ) {
 
       final float tx = this.foreHandle.x;
@@ -392,7 +392,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 rotateForeHandleZ ( final float radians ) {
 
       return this.rotateForeHandleZ(Utils.cos(radians), Utils.sin(radians));
@@ -406,7 +406,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 rotateForeHandleZ ( final float cosa, final float sina ) {
 
       Vec2.sub(this.coord, this.foreHandle, this.foreHandle);
@@ -423,7 +423,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 rotateHandlesZ ( final float radians ) {
 
       return this.rotateHandlesZ(Utils.cos(radians), Utils.sin(radians));
@@ -438,7 +438,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 rotateHandlesZ ( final float cosa, final float sina ) {
 
       this.rotateForeHandleZ(cosa, sina);
@@ -454,7 +454,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 rotateRearHandleZ ( final float radians ) {
 
       return this.rotateForeHandleZ(Utils.cos(radians), Utils.sin(radians));
@@ -468,7 +468,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 rotateRearHandleZ ( final float cosa, final float sina ) {
 
       Vec2.sub(this.coord, this.rearHandle, this.rearHandle);
@@ -485,7 +485,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 rotateZ ( final float radians ) {
 
       return this.rotateZ(Utils.cos(radians), Utils.sin(radians));
@@ -501,7 +501,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 rotateZ ( final float cosa, final float sina ) {
 
       Vec2.rotateZ(this.coord, cosa, sina, this.coord);
@@ -518,7 +518,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 scale ( final float scale ) {
 
       Vec2.mul(this.coord, scale, this.coord);
@@ -535,7 +535,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 scale ( final Vec2 scale ) {
 
       Vec2.mul(this.coord, scale, this.coord);
@@ -552,13 +552,13 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 scaleForeHandleBy ( final float scalar ) {
 
-      this.foreHandle.x
-         = this.coord.x + scalar * ( this.foreHandle.x - this.coord.x );
-      this.foreHandle.y
-         = this.coord.y + scalar * ( this.foreHandle.y - this.coord.y );
+      this.foreHandle.x = this.coord.x + scalar * ( this.foreHandle.x
+         - this.coord.x );
+      this.foreHandle.y = this.coord.y + scalar * ( this.foreHandle.y
+         - this.coord.y );
 
       return this;
    }
@@ -570,7 +570,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 scaleForeHandleTo ( final float magnitude ) {
 
       Vec2.subNorm(this.foreHandle, this.coord, this.foreHandle);
@@ -587,7 +587,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 scaleHandlesBy ( final float scalar ) {
 
       this.scaleForeHandleBy(scalar);
@@ -606,7 +606,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * @see Knot2#scaleForeHandleTo(float)
     * @see Knot2#scaleRearHandleTo(float)
     */
-   @Chainable
+
    public Knot2 scaleHandlesTo ( final float magnitude ) {
 
       this.scaleForeHandleTo(magnitude);
@@ -622,13 +622,13 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 scaleRearHandleBy ( final float scalar ) {
 
-      this.rearHandle.x
-         = this.coord.x + scalar * ( this.rearHandle.x - this.coord.x );
-      this.rearHandle.y
-         = this.coord.y + scalar * ( this.rearHandle.y - this.coord.y );
+      this.rearHandle.x = this.coord.x + scalar * ( this.rearHandle.x
+         - this.coord.x );
+      this.rearHandle.y = this.coord.y + scalar * ( this.rearHandle.y
+         - this.coord.y );
 
       return this;
    }
@@ -644,7 +644,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * @see Vec2#mul(Vec2, float, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   @Chainable
+
    public Knot2 scaleRearHandleTo ( final float magnitude ) {
 
       Vec2.subNorm(this.rearHandle, this.coord, this.rearHandle);
@@ -664,14 +664,14 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @see Math#copySign(float, float)
     */
-   @Chainable
+
    public Knot2 set ( final float xCoord, final float yCoord ) {
 
       final float xOff = Utils.copySign(IUtils.DEFAULT_EPSILON, xCoord);
       final float yOff = Utils.copySign(IUtils.DEFAULT_EPSILON, yCoord);
 
-      return this.set(xCoord, yCoord, xCoord + xOff, yCoord + yOff,
-         xCoord - xOff, yCoord - yOff);
+      return this.set(xCoord, yCoord, xCoord + xOff, yCoord + yOff, xCoord
+         - xOff, yCoord - yOff);
    }
 
    /**
@@ -685,14 +685,14 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return the knot
     */
-   @Chainable
+
    public Knot2 set ( final float xCoord, final float yCoord, final float xFore,
       final float yFore ) {
 
       this.coord.set(xCoord, yCoord);
       this.foreHandle.set(xFore, yFore);
-      this.rearHandle.set(xCoord - ( xFore - xCoord ),
-         yCoord - ( yFore - yCoord ));
+      this.rearHandle.set(xCoord - ( xFore - xCoord ), yCoord - ( yFore
+         - yCoord ));
 
       return this;
    }
@@ -709,7 +709,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 set ( final float xCoord, final float yCoord, final float xFore,
       final float yFore, final float xRear, final float yRear ) {
 
@@ -727,7 +727,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 set ( final Knot2 source ) {
 
       return this.set(source.coord, source.foreHandle, source.rearHandle);
@@ -747,7 +747,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 set ( final String xCoord, final String yCoord,
       final String xFore, final String yFore, final String xRear,
       final String yRear ) {
@@ -780,7 +780,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 set ( final Vec2 coord, final Vec2 foreHandle ) {
 
       return this.set(coord.x, coord.y, foreHandle.x, foreHandle.y);
@@ -795,7 +795,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Chainable
+
    public Knot2 set ( final Vec2 coord, final Vec2 foreHandle,
       final Vec2 rearHandle ) {
 
@@ -860,7 +860,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @see Mat3#mulPoint(Mat3, Vec2, Vec2)
     */
-   @Chainable
+
    public Knot2 transform ( final Mat3 m ) {
 
       Mat3.mulPoint(m, this.coord, this.coord);
@@ -879,7 +879,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
     */
-   @Chainable
+
    public Knot2 transform ( final Transform2 tr ) {
 
       Transform2.mulPoint(tr, this.coord, this.coord);
@@ -898,7 +898,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   @Chainable
+
    public Knot2 translate ( final Vec2 v ) {
 
       Vec2.add(this.coord, v, this.coord);
@@ -1112,11 +1112,11 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float midpt23x = xControl * 0.66666666f;
       final float midpt23y = yControl * 0.66666666f;
 
-      prev.foreHandle.set(midpt23x + IUtils.ONE_THIRD * prevCo.x,
-         midpt23y + IUtils.ONE_THIRD * prevCo.y);
+      prev.foreHandle.set(midpt23x + IUtils.ONE_THIRD * prevCo.x, midpt23y
+         + IUtils.ONE_THIRD * prevCo.y);
 
-      next.rearHandle.set(midpt23x + IUtils.ONE_THIRD * xNextAnchor,
-         midpt23y + IUtils.ONE_THIRD * yNextAnchor);
+      next.rearHandle.set(midpt23x + IUtils.ONE_THIRD * xNextAnchor, midpt23y
+         + IUtils.ONE_THIRD * yNextAnchor);
 
       next.coord.set(xNextAnchor, yNextAnchor);
 
@@ -1235,8 +1235,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float dirx = carry.x + backx * bmInv - forex * fmInv;
       final float diry = carry.y + backy * bmInv - forey * fmInv;
 
-      final float rescl
-         = IUtils.ONE_THIRD * Utils.invSqrt(dirx * dirx + diry * diry);
+      final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(dirx * dirx + diry
+         * diry);
       carry.x = dirx * rescl;
       carry.y = diry * rescl;
 
@@ -1281,8 +1281,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float dirx = carry.x + backx * bmInv - forex * fmInv;
       final float diry = carry.y + backy * bmInv - forey * fmInv;
 
-      final float rescl
-         = IUtils.ONE_THIRD * Utils.invSqrt(dirx * dirx + diry * diry);
+      final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(dirx * dirx + diry
+         * diry);
       carry.x = dirx * rescl;
       carry.y = diry * rescl;
 
@@ -1329,8 +1329,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float dirx = carry.x + backx * bmInv - forex * fmInv;
       final float diry = carry.y + backy * bmInv - forey * fmInv;
 
-      final float rescl
-         = IUtils.ONE_THIRD * Utils.invSqrt(dirx * dirx + diry * diry);
+      final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(dirx * dirx + diry
+         * diry);
       carry.x = dirx * rescl;
       carry.y = diry * rescl;
 
@@ -1378,8 +1378,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    /**
     * An abstract class to facilitate the creation of knot easing functions.
     */
-   public static abstract class AbstrEasing
-      implements Utils.EasingFuncObj < Knot2 > {
+   public static abstract class AbstrEasing implements Utils.EasingFuncObj <
+      Knot2 > {
 
       /**
        * The default constructor.
@@ -1465,14 +1465,14 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
          final Vec2 deFh = dest.foreHandle;
          final Vec2 deRh = dest.rearHandle;
 
-         target.coord.set(u * orCo.x + step * deCo.x,
-            u * orCo.y + step * deCo.y);
+         target.coord.set(u * orCo.x + step * deCo.x, u * orCo.y + step
+            * deCo.y);
 
-         target.foreHandle.set(u * orFh.x + step * deFh.x,
-            u * orFh.y + step * deFh.y);
+         target.foreHandle.set(u * orFh.x + step * deFh.x, u * orFh.y + step
+            * deFh.y);
 
-         target.rearHandle.set(u * orRh.x + step * deRh.x,
-            u * orRh.y + step * deRh.y);
+         target.rearHandle.set(u * orRh.x + step * deRh.x, u * orRh.y + step
+            * deRh.y);
 
          return target;
       }

@@ -143,6 +143,15 @@ public class Mat3 extends Matrix {
    }
 
    /**
+    * Tests to see if the matrix contains a value.
+    *
+    * @param v the value
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final float v ) { return this.indexOf(v) > -1; }
+
+   /**
     * Tests this matrix for equivalence with another object.
     *
     * @param obj the object
@@ -178,53 +187,24 @@ public class Mat3 extends Matrix {
        * elms.
        */
 
+      /* @formatter:off */
       switch ( index ) {
 
-         /* Row 0 */
+         case 0: case -9: return this.m00;
+         case 1: case -8: return this.m01;
+         case 2: case -7: return this.m02;
 
-         case 0:
-         case -9:
-            return this.m00;
+         case 3: case -6: return this.m10;
+         case 4: case -5: return this.m11;
+         case 5: case -4: return this.m12;
 
-         case 1:
-         case -8:
-            return this.m01;
+         case 6: case -3: return this.m20;
+         case 7: case -2: return this.m21;
+         case 8: case -1: return this.m22;
 
-         case 2:
-         case -7:
-            return this.m02;
-
-         /* Row 1 */
-
-         case 3:
-         case -6:
-            return this.m10;
-
-         case 4:
-         case -5:
-            return this.m11;
-
-         case 5:
-         case -4:
-            return this.m12;
-
-         /* Row 2 */
-
-         case 6:
-         case -3:
-            return this.m20;
-
-         case 7:
-         case -2:
-            return this.m21;
-
-         case 8:
-         case -1:
-            return this.m22;
-
-         default:
-            return 0.0f;
+         default: return 0.0f;
       }
+      /* @formatter:on */
    }
 
    /**
@@ -240,70 +220,40 @@ public class Mat3 extends Matrix {
    @Override
    public float get ( final int i, final int j ) {
 
+      /* @formatter:off */
       switch ( i ) {
-         case 0:
-         case -3:
+
+         case 0: case -3:
 
             switch ( j ) {
-               case 0:
-               case -3:
-                  return this.m00;
-
-               case 1:
-               case -2:
-                  return this.m01;
-
-               case 2:
-               case -1:
-                  return this.m02;
-
-               default:
-                  return 0.0f;
+               case 0: case -3: return this.m00;
+               case 1: case -2: return this.m01;
+               case 2: case -1: return this.m02;
+               default: return 0.0f;
             }
 
-         case 1:
-         case -2:
+         case 1: case -2:
 
             switch ( j ) {
-               case 0:
-               case -3:
-                  return this.m10;
-
-               case 1:
-               case -2:
-                  return this.m11;
-
-               case 2:
-               case -1:
-                  return this.m12;
-
-               default:
-                  return 0.0f;
+               case 0: case -3: return this.m10;
+               case 1: case -2: return this.m11;
+               case 2: case -1: return this.m12;
+               default: return 0.0f;
             }
 
-         case 2:
-         case -1:
+         case 2: case -1:
 
             switch ( j ) {
-               case 0:
-               case -3:
-                  return this.m20;
-
-               case 1:
-               case -2:
-                  return this.m21;
-
-               case 2:
-               case -1:
-                  return this.m22;
-
-               default:
-                  return 0.0f;
+               case 0: case -3: return this.m20;
+               case 1: case -2: return this.m21;
+               case 2: case -1: return this.m22;
+               default: return 0.0f;
             }
 
-         default:
-            return 0.0f;
+         default: return 0.0f;
+
       }
+      /* @formatter:on */
    }
 
    /**
@@ -388,16 +338,38 @@ public class Mat3 extends Matrix {
    }
 
    /**
+    * Tests to see if the matrix contains a value. Returns -1 if the matrix
+    * does not.
+    *
+    * @param v the value
+    *
+    * @return the index
+    */
+   public int indexOf ( final float v ) {
+
+      if ( Utils.approx(this.m00, v) ) { return 0; }
+      if ( Utils.approx(this.m01, v) ) { return 1; }
+      if ( Utils.approx(this.m02, v) ) { return 2; }
+
+      if ( Utils.approx(this.m10, v) ) { return 3; }
+      if ( Utils.approx(this.m11, v) ) { return 4; }
+      if ( Utils.approx(this.m12, v) ) { return 5; }
+
+      if ( Utils.approx(this.m20, v) ) { return 6; }
+      if ( Utils.approx(this.m21, v) ) { return 7; }
+      if ( Utils.approx(this.m22, v) ) { return 8; }
+
+      return -1;
+   }
+
+   /**
     * Returns an iterator for this matrix, which allows its components to be
     * accessed in an enhanced for-loop.
     *
     * @return the iterator
     */
    @Override
-   public M3Iterator iterator ( ) {
-
-      return new M3Iterator(this);
-   }
+   public Iterator < Float > iterator ( ) { return new M3Iterator(this); }
 
    /**
     * Resets this matrix to an initial state,
@@ -412,7 +384,7 @@ public class Mat3 extends Matrix {
     *
     * @see Mat3#identity(Mat3)
     */
-   @Chainable
+
    public Mat3 reset ( ) {
 
       return this.set(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
@@ -429,7 +401,7 @@ public class Mat3 extends Matrix {
     *
     * @return this matrix
     */
-   @Chainable
+
    public Mat3 set ( final float m00, final float m01, final float m10,
       final float m11 ) {
 
@@ -449,7 +421,7 @@ public class Mat3 extends Matrix {
     *
     * @return this matrix
     */
-   @Chainable
+
    public Mat3 set ( final float m00, final float m01, final float m02,
       final float m10, final float m11, final float m12 ) {
 
@@ -471,7 +443,7 @@ public class Mat3 extends Matrix {
     *
     * @return this matrix
     */
-   @Chainable
+
    public Mat3 set ( final float m00, final float m01, final float m02,
       final float m10, final float m11, final float m12, final float m20,
       final float m21, final float m22 ) {
@@ -492,7 +464,7 @@ public class Mat3 extends Matrix {
     *
     * @return this matrix
     */
-   @Chainable
+
    public Mat3 set ( final Mat3 source ) {
 
       return this.set(source.m00, source.m01, source.m02, source.m10,
@@ -812,9 +784,9 @@ public class Mat3 extends Matrix {
     */
    public static Mat3 add ( final Mat3 a, final Mat3 b, final Mat3 target ) {
 
-      return target.set(a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02,
-         a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12, a.m20 + b.m20,
-         a.m21 + b.m21, a.m22 + b.m22);
+      return target.set(a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02, a.m10
+         + b.m10, a.m11 + b.m11, a.m12 + b.m12, a.m20 + b.m20, a.m21 + b.m21,
+         a.m22 + b.m22);
    }
 
    /**
@@ -1060,13 +1032,12 @@ public class Mat3 extends Matrix {
 
       if ( det != 0.0f ) {
          final float detInv = 1.0f / det;
-         return target.set(b01 * detInv,
-            ( m.m02 * m.m21 - m.m22 * m.m01 ) * detInv,
-            ( m.m12 * m.m01 - m.m02 * m.m11 ) * detInv, b11 * detInv,
-            ( m.m22 * m.m00 - m.m02 * m.m20 ) * detInv,
-            ( m.m02 * m.m10 - m.m12 * m.m00 ) * detInv, b21 * detInv,
-            ( m.m01 * m.m20 - m.m21 * m.m00 ) * detInv,
-            ( m.m11 * m.m00 - m.m01 * m.m10 ) * detInv);
+         return target.set(b01 * detInv, ( m.m02 * m.m21 - m.m22 * m.m01 )
+            * detInv, ( m.m12 * m.m01 - m.m02 * m.m11 ) * detInv, b11 * detInv,
+            ( m.m22 * m.m00 - m.m02 * m.m20 ) * detInv, ( m.m02 * m.m10 - m.m12
+               * m.m00 ) * detInv, b21 * detInv, ( m.m01 * m.m20 - m.m21
+                  * m.m00 ) * detInv, ( m.m11 * m.m00 - m.m01 * m.m10 )
+                     * detInv);
       }
       return target.reset();
    }
@@ -1099,8 +1070,8 @@ public class Mat3 extends Matrix {
     */
    public static Mat3 mul ( final float a, final Mat3 b, final Mat3 target ) {
 
-      return target.set(a * b.m00, a * b.m01, a * b.m02, a * b.m10, a * b.m11,
-         a * b.m12, a * b.m20, a * b.m21, a * b.m22);
+      return target.set(a * b.m00, a * b.m01, a * b.m02, a * b.m10, a * b.m11, a
+         * b.m12, a * b.m20, a * b.m21, a * b.m22);
    }
 
    /**
@@ -1130,17 +1101,17 @@ public class Mat3 extends Matrix {
     */
    public static Mat3 mul ( final Mat3 a, final Mat3 b, final Mat3 target ) {
 
-      return target.set(a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20,
-         a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21,
-         a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22,
+      return target.set(a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20, a.m00
+         * b.m01 + a.m01 * b.m11 + a.m02 * b.m21, a.m00 * b.m02 + a.m01 * b.m12
+            + a.m02 * b.m22,
 
-         a.m10 * b.m00 + a.m11 * b.m10 + a.m12 * b.m20,
-         a.m10 * b.m01 + a.m11 * b.m11 + a.m12 * b.m21,
-         a.m10 * b.m02 + a.m11 * b.m12 + a.m12 * b.m22,
+         a.m10 * b.m00 + a.m11 * b.m10 + a.m12 * b.m20, a.m10 * b.m01 + a.m11
+            * b.m11 + a.m12 * b.m21, a.m10 * b.m02 + a.m11 * b.m12 + a.m12
+               * b.m22,
 
-         a.m20 * b.m00 + a.m21 * b.m10 + a.m22 * b.m20,
-         a.m20 * b.m01 + a.m21 * b.m11 + a.m22 * b.m21,
-         a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22);
+         a.m20 * b.m00 + a.m21 * b.m10 + a.m22 * b.m20, a.m20 * b.m01 + a.m21
+            * b.m11 + a.m22 * b.m21, a.m20 * b.m02 + a.m21 * b.m12 + a.m22
+               * b.m22);
    }
 
    /**
@@ -1169,17 +1140,14 @@ public class Mat3 extends Matrix {
       final float n21 = a.m20 * b.m01 + a.m21 * b.m11 + a.m22 * b.m21;
       final float n22 = a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22;
 
-      return target.set(n00 * c.m00 + n01 * c.m10 + n02 * c.m20,
-         n00 * c.m01 + n01 * c.m11 + n02 * c.m21,
-         n00 * c.m02 + n01 * c.m12 + n02 * c.m22,
+      return target.set(n00 * c.m00 + n01 * c.m10 + n02 * c.m20, n00 * c.m01
+         + n01 * c.m11 + n02 * c.m21, n00 * c.m02 + n01 * c.m12 + n02 * c.m22,
 
-         n10 * c.m00 + n11 * c.m10 + n12 * c.m20,
-         n10 * c.m01 + n11 * c.m11 + n12 * c.m21,
-         n10 * c.m02 + n11 * c.m12 + n12 * c.m22,
+         n10 * c.m00 + n11 * c.m10 + n12 * c.m20, n10 * c.m01 + n11 * c.m11
+            + n12 * c.m21, n10 * c.m02 + n11 * c.m12 + n12 * c.m22,
 
-         n20 * c.m00 + n21 * c.m10 + n22 * c.m20,
-         n20 * c.m01 + n21 * c.m11 + n22 * c.m21,
-         n20 * c.m02 + n21 * c.m12 + n22 * c.m22);
+         n20 * c.m00 + n21 * c.m10 + n22 * c.m20, n20 * c.m01 + n21 * c.m11
+            + n22 * c.m21, n20 * c.m02 + n21 * c.m12 + n22 * c.m22);
    }
 
    /**
@@ -1193,9 +1161,8 @@ public class Mat3 extends Matrix {
     */
    public static Vec3 mul ( final Mat3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(a.m00 * b.x + a.m01 * b.y + a.m02 * b.z,
-         a.m10 * b.x + a.m11 * b.y + a.m12 * b.z,
-         a.m20 * b.x + a.m21 * b.y + a.m22 * b.z);
+      return target.set(a.m00 * b.x + a.m01 * b.y + a.m02 * b.z, a.m10 * b.x
+         + a.m11 * b.y + a.m12 * b.z, a.m20 * b.x + a.m21 * b.y + a.m22 * b.z);
    }
 
    /**
@@ -1222,8 +1189,8 @@ public class Mat3 extends Matrix {
       if ( w == 0.0f ) { return target.reset(); }
       final float wInv = 1.0f / w;
 
-      return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m02 ) * wInv,
-         ( a.m10 * b.x + a.m11 * b.y + a.m12 ) * wInv);
+      return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m02 ) * wInv, ( a.m10
+         * b.x + a.m11 * b.y + a.m12 ) * wInv);
    }
 
    /**
@@ -1251,8 +1218,8 @@ public class Mat3 extends Matrix {
       if ( w == 0.0f ) { return target.reset(); }
       final float wInv = 1.0f / w;
 
-      return target.set( ( a.m00 * b.x + a.m01 * b.y ) * wInv,
-         ( a.m10 * b.x + a.m11 * b.y ) * wInv);
+      return target.set( ( a.m00 * b.x + a.m01 * b.y ) * wInv, ( a.m10 * b.x
+         + a.m11 * b.y ) * wInv);
    }
 
    /**
@@ -1266,9 +1233,9 @@ public class Mat3 extends Matrix {
     */
    public static Mat3 sub ( final Mat3 a, final Mat3 b, final Mat3 target ) {
 
-      return target.set(a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02,
-         a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12, a.m20 - b.m20,
-         a.m21 - b.m21, a.m22 - b.m22);
+      return target.set(a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02, a.m10
+         - b.m10, a.m11 - b.m11, a.m12 - b.m12, a.m20 - b.m20, a.m21 - b.m21,
+         a.m22 - b.m22);
    }
 
    /**

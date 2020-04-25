@@ -83,8 +83,8 @@ public class Entity3 extends Entity implements ISpatial3 {
    public int hashCode ( ) {
 
       int hash = super.hashCode();
-      hash = hash * IUtils.HASH_MUL
-         ^ ( this.transform == null ? 0 : this.transform.hashCode() );
+      hash = hash * IUtils.HASH_MUL ^ ( this.transform == null ? 0
+         : this.transform.hashCode() );
       return hash;
    }
 
@@ -99,7 +99,6 @@ public class Entity3 extends Entity implements ISpatial3 {
     *
     * @see Transform3#lookAt(Vec3, float, Handedness)
     */
-   @Chainable
    public Entity3 lookAt ( final Vec3 point, final float step,
       final Handedness handedness ) {
 
@@ -115,7 +114,6 @@ public class Entity3 extends Entity implements ISpatial3 {
     * @return this entity
     */
    @Override
-   @Chainable
    public Entity3 moveBy ( final Vec3 dir ) {
 
       this.transform.moveBy(dir);
@@ -130,7 +128,6 @@ public class Entity3 extends Entity implements ISpatial3 {
     * @return this entity
     */
    @Override
-   @Chainable
    public Entity3 moveTo ( final Vec3 locNew ) {
 
       this.transform.moveTo(locNew);
@@ -146,7 +143,6 @@ public class Entity3 extends Entity implements ISpatial3 {
     * @return this entity
     */
    @Override
-   @Chainable
    public Entity3 moveTo ( final Vec3 locNew, final float step ) {
 
       this.transform.moveTo(locNew, step);
@@ -161,7 +157,6 @@ public class Entity3 extends Entity implements ISpatial3 {
     * @return this entity
     */
    @Override
-   @Chainable
    public Entity3 rotateBy ( final Quaternion rot ) {
 
       this.transform.rotateBy(rot);
@@ -176,7 +171,6 @@ public class Entity3 extends Entity implements ISpatial3 {
     * @return this entity
     */
    @Override
-   @Chainable
    public Entity3 rotateTo ( final Quaternion rotNew ) {
 
       this.transform.rotateTo(rotNew);
@@ -192,7 +186,6 @@ public class Entity3 extends Entity implements ISpatial3 {
     * @return this entity
     */
    @Override
-   @Chainable
    public Entity3 rotateTo ( final Quaternion rotNew, final float step ) {
 
       this.transform.rotateTo(rotNew, step);
@@ -207,7 +200,6 @@ public class Entity3 extends Entity implements ISpatial3 {
     * @return this entity
     */
    @Override
-   @Chainable
    public Entity3 rotateX ( final float radians ) {
 
       this.transform.rotateX(radians);
@@ -222,7 +214,6 @@ public class Entity3 extends Entity implements ISpatial3 {
     * @return this entity
     */
    @Override
-   @Chainable
    public Entity3 rotateY ( final float radians ) {
 
       this.transform.rotateY(radians);
@@ -237,7 +228,6 @@ public class Entity3 extends Entity implements ISpatial3 {
     * @return this entity
     */
    @Override
-   @Chainable
    public Entity3 rotateZ ( final float radians ) {
 
       this.transform.rotateZ(radians);

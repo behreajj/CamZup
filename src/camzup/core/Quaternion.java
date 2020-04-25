@@ -13,8 +13,8 @@ import java.util.Iterator;
  * objects from one orientation to another over minimal distance without
  * suffering gimbal lock.
  */
-public class Quaternion
-   implements Comparable < Quaternion >, Cloneable, Iterable < Float > {
+public class Quaternion implements Comparable < Quaternion >, Cloneable,
+   Iterable < Float > {
 
    /**
     * The coefficients of the imaginary components <em>i</em>, <em>j</em> and
@@ -229,7 +229,7 @@ public class Quaternion
     * be accessed in an enhanced for-loop.
     */
    @Override
-   public QIterator iterator ( ) { return new IteratorWFirst(this); }
+   public Iterator < Float > iterator ( ) { return new IteratorWFirst(this); }
 
    /**
     * Gets the number of components held by the quaternion.
@@ -243,7 +243,7 @@ public class Quaternion
     *
     * @return this quaternion
     */
-   @Chainable
+
    public Quaternion reset ( ) {
 
       this.real = 1.0f;
@@ -261,7 +261,7 @@ public class Quaternion
     *
     * @return this quaternion
     */
-   @Chainable
+
    public Quaternion set ( final float real, final float xImag,
       final float yImag, final float zImag ) {
 
@@ -278,7 +278,7 @@ public class Quaternion
     *
     * @return this quaternion
     */
-   @Chainable
+
    public Quaternion set ( final float real, final Vec3 imag ) {
 
       this.real = real;
@@ -293,7 +293,7 @@ public class Quaternion
     *
     * @return this quaternion
     */
-   @Chainable
+
    public Quaternion set ( final Quaternion source ) {
 
       this.real = source.real;
@@ -315,7 +315,7 @@ public class Quaternion
     *
     * @see Float#parseFloat(String)
     */
-   @Chainable
+
    public Quaternion set ( final String wstr, final String xstr,
       final String ystr, final String zstr ) {
 
@@ -404,7 +404,7 @@ public class Quaternion
     *
     * @return this quaternion
     */
-   @Chainable
+
    public Quaternion w ( final float w ) {
 
       this.real = w;
@@ -425,7 +425,7 @@ public class Quaternion
     *
     * @return this quaternion
     */
-   @Chainable
+
    public Quaternion x ( final float x ) {
 
       this.imag.x = x;
@@ -446,7 +446,7 @@ public class Quaternion
     *
     * @return this quaternion
     */
-   @Chainable
+
    public Quaternion y ( final float y ) {
 
       this.imag.y = y;
@@ -467,7 +467,7 @@ public class Quaternion
     *
     * @return this quaternion
     */
-   @Chainable
+
    public Quaternion z ( final float z ) {
 
       this.imag.z = z;
@@ -846,9 +846,9 @@ public class Quaternion
       final float aw = a.real;
 
       return target.set(aw * bwInv - ai.x * bxInv - ai.y * byInv - ai.z * bzInv,
-         ai.x * bwInv + aw * bxInv + ai.y * bzInv - ai.z * byInv,
-         ai.y * bwInv + aw * byInv + ai.z * bxInv - ai.x * bzInv,
-         ai.z * bwInv + aw * bzInv + ai.x * byInv - ai.y * bxInv);
+         ai.x * bwInv + aw * bxInv + ai.y * bzInv - ai.z * byInv, ai.y * bwInv
+            + aw * byInv + ai.z * bxInv - ai.x * bzInv, ai.z * bwInv + aw
+               * bzInv + ai.x * byInv - ai.y * bxInv);
    }
 
    /**
@@ -916,8 +916,8 @@ public class Quaternion
       final Quaternion target ) {
 
       final float halfRadians = radians * 0.5f;
-      return target.set(Utils.cos(halfRadians), 0.0f, 0.0f,
-         Utils.sin(halfRadians));
+      return target.set(Utils.cos(halfRadians), 0.0f, 0.0f, Utils.sin(
+         halfRadians));
    }
 
    /**
@@ -951,13 +951,11 @@ public class Quaternion
        * Double-precision functions do NOT seem to yield more accuracy.
        */
 
-      return target.set(0.5f * Utils.sqrt(1.0f + xRight + yForward + zUp),
-         Utils.copySign(0.5f * Utils.sqrt(1.0f + xRight - yForward - zUp),
-            zForward - yUp),
-         Utils.copySign(0.5f * Utils.sqrt(1.0f - xRight + yForward - zUp),
-            xUp - zRight),
-         Utils.copySign(0.5f * Utils.sqrt(1.0f - xRight - yForward + zUp),
-            yRight - xForward));
+      return target.set(0.5f * Utils.sqrt(1.0f + xRight + yForward + zUp), Utils
+         .copySign(0.5f * Utils.sqrt(1.0f + xRight - yForward - zUp), zForward
+            - yUp), Utils.copySign(0.5f * Utils.sqrt(1.0f - xRight + yForward
+               - zUp), xUp - zRight), Utils.copySign(0.5f * Utils.sqrt(1.0f
+                  - xRight - yForward + zUp), yRight - xForward));
    }
 
    /**
@@ -1054,8 +1052,8 @@ public class Quaternion
 
       final float halfAngle = 0.5f * radians;
       final float sinHalf = Utils.sin(halfAngle);
-      return target.set(Utils.cos(halfAngle), nx * sinHalf, ny * sinHalf,
-         nz * sinHalf);
+      return target.set(Utils.cos(halfAngle), nx * sinHalf, ny * sinHalf, nz
+         * sinHalf);
    }
 
    /**
@@ -1341,8 +1339,8 @@ public class Quaternion
       final float y = imag.y;
       final float z = imag.z;
 
-      return target.set(-z * w + x * y + y * x - w * z,
-         w * w - z * z + y * y - x * x, x * w + w * x + y * z + z * y);
+      return target.set(-z * w + x * y + y * x - w * z, w * w - z * z + y * y
+         - x * x, x * w + w * x + y * z + z * y);
    }
 
    /**
@@ -1364,8 +1362,8 @@ public class Quaternion
       final float y = imag.y;
       final float z = imag.z;
 
-      return target.set(w * w - y * y + x * x - z * z,
-         z * w + w * z + x * y + y * x, -y * w + z * x + x * z - w * y);
+      return target.set(w * w - y * y + x * x - z * z, z * w + w * z + x * y + y
+         * x, -y * w + z * x + x * z - w * y);
    }
 
    /**
@@ -1387,8 +1385,8 @@ public class Quaternion
       final float y = imag.y;
       final float z = imag.z;
 
-      return target.set(y * w + w * y + z * x + x * z,
-         -x * w + y * z + z * y - w * x, w * w - x * x + z * z - y * y);
+      return target.set(y * w + w * y + z * x + x * z, -x * w + y * z + z * y
+         - w * x, w * w - x * x + z * z - y * y);
    }
 
    /**
@@ -1431,8 +1429,8 @@ public class Quaternion
       }
 
       final float mSqInv = 1.0f / mSq;
-      return target.set(q.real * mSqInv, -i.x * mSqInv, -i.y * mSqInv,
-         -i.z * mSqInv);
+      return target.set(q.real * mSqInv, -i.x * mSqInv, -i.y * mSqInv, -i.z
+         * mSqInv);
    }
 
    /**
@@ -1490,9 +1488,8 @@ public class Quaternion
       final float iy = w * source.y + qz * source.x - qx * source.z;
       final float iz = w * source.z + qx * source.y - qy * source.x;
 
-      return target.set(ix * w + iz * qy - iw * qx - iy * qz,
-         iy * w + ix * qz - iw * qy - iz * qx,
-         iz * w + iy * qx - iw * qz - ix * qy);
+      return target.set(ix * w + iz * qy - iw * qx - iy * qz, iy * w + ix * qz
+         - iw * qy - iz * qx, iz * w + iy * qx - iw * qz - ix * qy);
    }
 
    /**
@@ -1662,9 +1659,9 @@ public class Quaternion
       final float bw = b.real;
 
       return target.set(aw * bw - ( ai.x * bi.x + ai.y * bi.y + ai.z * bi.z ),
-         ai.x * bw + aw * bi.x + ai.y * bi.z - ai.z * bi.y,
-         ai.y * bw + aw * bi.y + ai.z * bi.x - ai.x * bi.z,
-         ai.z * bw + aw * bi.z + ai.x * bi.y - ai.y * bi.x);
+         ai.x * bw + aw * bi.x + ai.y * bi.z - ai.z * bi.y, ai.y * bw + aw
+            * bi.y + ai.z * bi.x - ai.x * bi.z, ai.z * bw + aw * bi.z + ai.x
+               * bi.y - ai.y * bi.x);
    }
 
    /**
@@ -1698,9 +1695,8 @@ public class Quaternion
       final float iy = w * source.y + qz * source.x - qx * source.z;
       final float iz = w * source.z + qx * source.y - qy * source.x;
 
-      return target.set(ix * w + iz * qy - iw * qx - iy * qz,
-         iy * w + ix * qz - iw * qy - iz * qx,
-         iz * w + iy * qx - iw * qz - ix * qy);
+      return target.set(ix * w + iz * qy - iw * qx - iy * qz, iy * w + ix * qz
+         - iw * qy - iz * qx, iz * w + iy * qx - iw * qz - ix * qy);
    }
 
    /**
@@ -1765,8 +1761,8 @@ public class Quaternion
       final float r1 = rng.nextFloat();
       final float x0 = Utils.sqrt(1.0f - r1);
       final float x1 = Utils.sqrt(r1);
-      return target.set(x0 * Utils.sin(t0), x0 * Utils.cos(t0),
-         x1 * Utils.sin(t1), x1 * Utils.cos(t1));
+      return target.set(x0 * Utils.sin(t0), x0 * Utils.cos(t0), x1 * Utils.sin(
+         t1), x1 * Utils.cos(t1));
    }
 
    /**
@@ -1800,8 +1796,8 @@ public class Quaternion
       final float wNorm = q.real * Utils.invSqrtUnchecked(mSq);
       final float halfAngle = Utils.acos(wNorm);
 
-      return Quaternion.fromAxisAngle(
-         ( halfAngle + halfAngle + radians ) % IUtils.TAU, axis, target);
+      return Quaternion.fromAxisAngle( ( halfAngle + halfAngle + radians )
+         % IUtils.TAU, axis, target);
    }
 
    /**
@@ -1820,9 +1816,8 @@ public class Quaternion
       final float sinah, final Quaternion target ) {
 
       final Vec3 i = q.imag;
-      return target.set(cosah * q.real - sinah * i.x,
-         cosah * i.x + sinah * q.real, cosah * i.y + sinah * i.z,
-         cosah * i.z - sinah * i.y);
+      return target.set(cosah * q.real - sinah * i.x, cosah * i.x + sinah
+         * q.real, cosah * i.y + sinah * i.z, cosah * i.z - sinah * i.y);
    }
 
    /**
@@ -2081,8 +2076,8 @@ public class Quaternion
          return 0.0f;
       }
 
-      final float wNorm = Utils.approx(mSq, 1.0f) ? q.real
-         : q.real * Utils.invSqrtUnchecked(mSq);
+      final float wNorm = Utils.approx(mSq, 1.0f) ? q.real : q.real * Utils
+         .invSqrtUnchecked(mSq);
 
       final float angle = 2.0f * Utils.acos(wNorm);
       // final float wAsin = IUtils.TAU - angle;
@@ -2191,8 +2186,8 @@ public class Quaternion
       }
 
       final double wNorm = q.real / qm;
-      final double wAcos
-         = wNorm <= -1.0d ? Math.PI : wNorm >= 1.0d ? 0.0d : Math.acos(wNorm);
+      final double wAcos = wNorm <= -1.0d ? Math.PI : wNorm >= 1.0d ? 0.0d
+         : Math.acos(wNorm);
 
       if ( Utils.approx(imSq, 1.0f) ) {
          Vec3.mul(q.imag, ( float ) wAcos, target.imag);
@@ -2243,8 +2238,8 @@ public class Quaternion
       }
 
       /* Set new real component. */
-      final double theta
-         = wNorm <= -1.0d ? Math.PI : wNorm >= 1.0d ? 0.0d : Math.acos(wNorm);
+      final double theta = wNorm <= -1.0d ? Math.PI : wNorm >= 1.0d ? 0.0d
+         : Math.acos(wNorm);
       final double btheta = b * theta;
       final double scalar = Math.pow(m, b);
       target.real = ( float ) ( scalar * Math.cos(btheta) );
@@ -2284,8 +2279,8 @@ public class Quaternion
        * Scale the axis by sin(b theta), then by pow(mag(q), b).
        */
       final double sclrSinbt = scalar * Math.sin(btheta);
-      target.imag.set(( float ) ( nx * sclrSinbt ),
-         ( float ) ( ny * sclrSinbt ), ( float ) ( nz * sclrSinbt ));
+      target.imag.set(( float ) ( nx * sclrSinbt ), ( float ) ( ny
+         * sclrSinbt ), ( float ) ( nz * sclrSinbt ));
       return target;
    }
 
@@ -2293,8 +2288,8 @@ public class Quaternion
     * An abstract class that may serve as an umbrella for any custom
     * comparators of Quaternions.
     */
-   public static abstract class AbstrComparator
-      implements Comparator < Quaternion > {
+   public static abstract class AbstrComparator implements Comparator <
+      Quaternion > {
 
       /**
        * The default constructor.
@@ -2330,8 +2325,8 @@ public class Quaternion
     * An abstract class to facilitate the creation of quaternion easing
     * functions.
     */
-   public static abstract class AbstrEasing
-      implements Utils.EasingFuncObj < Quaternion > {
+   public static abstract class AbstrEasing implements Utils.EasingFuncObj <
+      Quaternion > {
 
       /**
        * The default constructor.
@@ -2585,8 +2580,8 @@ public class Quaternion
          float bz = bi.z;
 
          /* Clamp the dot product. */
-         float dotp
-            = Utils.clamp(aw * bw + ax * bx + ay * by + az * bz, -1.0f, 1.0f);
+         float dotp = Utils.clamp(aw * bw + ax * bx + ay * by + az * bz, -1.0f,
+            1.0f);
 
          /* Flip values if the orientation is negative. */
          if ( dotp < 0.0f ) {

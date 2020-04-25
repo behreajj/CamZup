@@ -95,100 +95,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Initializes an ambient light with the default ambient color. The
-    * camera's look target is used as the location. Ambient light illuminates
-    * an object evenly from all sides.
-    */
-   public void ambientLight ( ) {
-
-      this.aTemp.set(IUpOgl.DEFAULT_AMB_R, IUpOgl.DEFAULT_AMB_G,
-         IUpOgl.DEFAULT_AMB_B, 1.0f);
-      this.ambientLight(this.aTemp);
-   }
-
-   /**
-    * Initializes an ambient light with a color. The camera's look target is
-    * used as the location. Ambient light illuminates an object evenly from
-    * all sides.
-    *
-    * @param clr the color
-    */
-   public void ambientLight ( final Color clr ) {
-
-      this.ambientLight(Color.toHexInt(clr), this.lookTarget.x,
-         this.lookTarget.y, this.lookTarget.z);
-   }
-
-   /**
-    * Initializes an ambient light with a color and location. Ambient light
-    * illuminates an object evenly from all sides.
-    *
-    * @param clr the color
-    * @param loc the location
-    */
-   public void ambientLight ( final Color clr, final Vec3 loc ) {
-
-      this.ambientLight(Color.toHexInt(clr), loc.x, loc.y, loc.z);
-   }
-
-   /**
-    * Initializes an ambient light with a color. The camera's look target is
-    * used as the location. Ambient light illuminates an object evenly from
-    * all sides.
-    *
-    * @param clr the color
-    */
-   public void ambientLight ( final int clr ) {
-
-      this.ambientLight(clr, this.lookTarget.x, this.lookTarget.y,
-         this.lookTarget.z);
-   }
-
-   /**
-    * Initializes an ambient light with a color and location. Ambient light
-    * illuminates an object evenly from all sides.
-    *
-    * @param clr  the color
-    * @param xLoc the location x
-    * @param yLoc the location y
-    * @param zLoc the location z
-    */
-   public void ambientLight ( final int clr, final float xLoc, final float yLoc,
-      final float zLoc ) {
-
-      // TEST
-
-      this.enableLighting();
-      if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
-
-      this.lightType[this.lightCount] = PConstants.AMBIENT;
-
-      this.lightPosition(this.lightCount, xLoc, yLoc, zLoc, false);
-      this.lightNormal(this.lightCount, 0.0f, 0.0f, 0.0f);
-
-      this.lightAmbient(this.lightCount, clr);
-      this.noLightDiffuse(this.lightCount);
-      this.noLightSpecular(this.lightCount);
-      this.noLightSpot(this.lightCount);
-      this.lightFalloff(this.lightCount, this.currentLightFalloffConstant,
-         this.currentLightFalloffLinear, this.currentLightFalloffQuadratic);
-
-      this.lightCount++;
-   }
-
-   /**
-    * Initializes an ambient light with a color and location. Ambient light
-    * illuminates an object evenly from all sides.
-    *
-    * @param clr the color
-    * @param loc the location
-    */
-   public void ambientLight ( final int clr, final Vec3 loc ) {
-
-      this.ambientLight(clr, loc.x, loc.y, loc.z);
-   }
-
-   /**
     * Draws a single Bezier curve.
     *
     * @param ap0 the first anchor point
@@ -330,10 +236,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          final float yLocal = this.cameraInv.m12 * z * wInv;
          final float zLocal = this.cameraInv.m22 * z * wInv;
 
-         this.camera(this.cameraX + xLocal, this.cameraY + yLocal,
-            this.cameraZ + zLocal, this.lookTarget.x + xLocal,
-            this.lookTarget.y + yLocal, this.lookTarget.z + zLocal,
-            this.refUp.x, this.refUp.y, this.refUp.z);
+         this.camera(this.cameraX + xLocal, this.cameraY + yLocal, this.cameraZ
+            + zLocal, this.lookTarget.x + xLocal, this.lookTarget.y + yLocal,
+            this.lookTarget.z + zLocal, this.refUp.x, this.refUp.y,
+            this.refUp.z);
       }
    }
 
@@ -536,10 +442,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final Vec3 co = new Vec3();
       final Vec3 fh = new Vec3();
 
-      // this.hint(PConstants.DISABLE_DEPTH_TEST);
-      // this.hint(PConstants.DISABLE_DEPTH_MASK);
-      // this.hint(PConstants.DISABLE_DEPTH_SORT);
-
       this.disableDepthMask();
       this.disableDepthTest();
 
@@ -577,10 +479,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       }
 
       this.popStyle();
-
-      // this.hint(PConstants.ENABLE_DEPTH_TEST);
-      // this.hint(PConstants.ENABLE_DEPTH_MASK);
-      // this.hint(PConstants.ENABLE_DEPTH_SORT);
       this.enableDepthTest();
       this.enableDepthMask();
    }
@@ -698,8 +596,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          final float yLocal = ( m.m10 * x + m.m11 * y + m.m12 * z ) * wInv;
          final float zLocal = ( m.m20 * x + m.m21 * y + m.m22 * z ) * wInv;
 
-         this.moveTo(this.cameraX + xLocal, this.cameraY + yLocal,
-            this.cameraZ + zLocal);
+         this.moveTo(this.cameraX + xLocal, this.cameraY + yLocal, this.cameraZ
+            + zLocal);
       }
    }
 
@@ -722,8 +620,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    @Override
    public void origin ( ) {
 
-      this
-         .origin(IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width, this.height));
+      this.origin(IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width,
+         this.height));
    }
 
    /**
@@ -763,13 +661,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    public void origin ( final float lineLength, final float strokeWeight,
       final int xColor, final int yColor, final int zColor ) {
 
-      // this.hint(PConstants.DISABLE_DEPTH_TEST);
-      // this.hint(PConstants.DISABLE_DEPTH_MASK);
-      this.disableDepthMask();
-      this.disableDepthTest();
-
       final float vl = Utils.max(IUtils.DEFAULT_EPSILON, lineLength);
 
+      this.disableDepthMask();
+      this.disableDepthTest();
       this.pushStyle();
       this.strokeWeight(strokeWeight);
 
@@ -783,8 +678,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       this.lineImpl(0.0f, 0.0f, 0.0f, vl, 0.0f, 0.0f);
 
       this.popStyle();
-      // this.hint(PConstants.ENABLE_DEPTH_TEST);
-      // this.hint(PConstants.ENABLE_DEPTH_MASK);
       this.enableDepthTest();
       this.enableDepthMask();
    }
@@ -808,10 +701,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          final float yLocal = ci.m11 * y * wInv;
          final float zLocal = ci.m21 * y * wInv;
 
-         this.camera(this.cameraX + xLocal, this.cameraY + yLocal,
-            this.cameraZ + zLocal, this.lookTarget.x + xLocal,
-            this.lookTarget.y + yLocal, this.lookTarget.z + zLocal,
-            this.refUp.x, this.refUp.y, this.refUp.z);
+         this.camera(this.cameraX + xLocal, this.cameraY + yLocal, this.cameraZ
+            + zLocal, this.lookTarget.x + xLocal, this.lookTarget.y + yLocal,
+            this.lookTarget.z + zLocal, this.refUp.x, this.refUp.y,
+            this.refUp.z);
       }
    }
 
@@ -822,48 +715,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    @Override
    public void point ( final Vec3 v ) { this.pointImpl(v.x, v.y, v.z); }
-
-   /**
-    * Initializes a point light at a location.
-    *
-    * @param clr the color
-    * @param loc the location
-    */
-   void pointLight ( final Color clr, final Vec3 loc ) {
-
-      this.pointLight(Color.toHexInt(clr), loc.x, loc.y, loc.z);
-   }
-
-   /**
-    * Initializes a point light at a location.
-    *
-    * @param clr  the color
-    * @param xLoc the location x
-    * @param yLoc the location y
-    * @param zLoc the location z
-    */
-   @Experimental
-   void pointLight ( final int clr, final float xLoc,
-      final float yLoc,
-      final float zLoc ) {
-
-      this.enableLighting();
-      if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
-
-      this.lightType[this.lightCount] = PConstants.POINT;
-
-      this.lightPosition(this.lightCount, xLoc, yLoc, zLoc, false);
-      this.lightNormal(this.lightCount, 0.0f, 0.0f, 0.0f);
-      this.noLightAmbient(this.lightCount);
-      this.lightDiffuse(this.lightCount, clr);
-      this.lightSpecular(this.lightCount, this.currentLightSpecular[0],
-         this.currentLightSpecular[1], this.currentLightSpecular[2]);
-      this.noLightSpot(this.lightCount);
-      this.lightFalloff(this.lightCount, this.currentLightFalloffConstant,
-         this.currentLightFalloffLinear, this.currentLightFalloffQuadratic);
-
-      this.lightCount++;
-   }
 
    /**
     * Initializes a point light at a location.
@@ -1329,10 +1180,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          final float yLocal = ( ci.m10 * x + ci.m11 * y + ci.m12 * z ) * wInv;
          final float zLocal = ( ci.m20 * x + ci.m21 * y + ci.m22 * z ) * wInv;
 
-         this.camera(this.cameraX + xLocal, this.cameraY + yLocal,
-            this.cameraZ + zLocal, this.lookTarget.x + xLocal,
-            this.lookTarget.y + yLocal, this.lookTarget.z + zLocal,
-            this.refUp.x, this.refUp.y, this.refUp.z);
+         this.camera(this.cameraX + xLocal, this.cameraY + yLocal, this.cameraZ
+            + zLocal, this.lookTarget.x + xLocal, this.lookTarget.y + yLocal,
+            this.lookTarget.z + zLocal, this.refUp.x, this.refUp.y,
+            this.refUp.z);
       }
    }
 
@@ -1499,10 +1350,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          final float yLocal = this.cameraInv.m10 * x * wInv;
          final float zLocal = this.cameraInv.m20 * x * wInv;
 
-         this.camera(this.cameraX + xLocal, this.cameraY + yLocal,
-            this.cameraZ + zLocal, this.lookTarget.x + xLocal,
-            this.lookTarget.y + yLocal, this.lookTarget.z + zLocal,
-            this.refUp.x, this.refUp.y, this.refUp.z);
+         this.camera(this.cameraX + xLocal, this.cameraY + yLocal, this.cameraZ
+            + zLocal, this.lookTarget.x + xLocal, this.lookTarget.y + yLocal,
+            this.lookTarget.z + zLocal, this.refUp.x, this.refUp.y,
+            this.refUp.z);
       }
    }
 
@@ -1528,6 +1379,100 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    public void vertex ( final Vec3 v, final Vec2 vt ) {
 
       this.vertexImpl(v.x, v.y, v.z, vt.x, vt.y);
+   }
+
+   /**
+    * Initializes an ambient light with the default ambient color. The
+    * camera's look target is used as the location. Ambient light illuminates
+    * an object evenly from all sides.
+    */
+   void ambientLight ( ) {
+
+      this.aTemp.set(IUpOgl.DEFAULT_AMB_R, IUpOgl.DEFAULT_AMB_G,
+         IUpOgl.DEFAULT_AMB_B, 1.0f);
+      this.ambientLight(this.aTemp);
+   }
+
+   /**
+    * Initializes an ambient light with a color. The camera's look target is
+    * used as the location. Ambient light illuminates an object evenly from
+    * all sides.
+    *
+    * @param clr the color
+    */
+   void ambientLight ( final Color clr ) {
+
+      this.ambientLight(Color.toHexInt(clr), this.lookTarget.x,
+         this.lookTarget.y, this.lookTarget.z);
+   }
+
+   /**
+    * Initializes an ambient light with a color and location. Ambient light
+    * illuminates an object evenly from all sides.
+    *
+    * @param clr the color
+    * @param loc the location
+    */
+   void ambientLight ( final Color clr, final Vec3 loc ) {
+
+      this.ambientLight(Color.toHexInt(clr), loc.x, loc.y, loc.z);
+   }
+
+   /**
+    * Initializes an ambient light with a color. The camera's look target is
+    * used as the location. Ambient light illuminates an object evenly from
+    * all sides.
+    *
+    * @param clr the color
+    */
+   void ambientLight ( final int clr ) {
+
+      this.ambientLight(clr, this.lookTarget.x, this.lookTarget.y,
+         this.lookTarget.z);
+   }
+
+   /**
+    * Initializes an ambient light with a color and location. Ambient light
+    * illuminates an object evenly from all sides.
+    *
+    * @param clr  the color
+    * @param xLoc the location x
+    * @param yLoc the location y
+    * @param zLoc the location z
+    */
+   void ambientLight ( final int clr, final float xLoc, final float yLoc,
+      final float zLoc ) {
+
+      // TEST
+
+      this.enableLighting();
+      if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
+
+      this.lightType[this.lightCount] = PConstants.AMBIENT;
+
+      this.lightPosition(this.lightCount, xLoc, yLoc, zLoc, false);
+      this.lightNormal(this.lightCount, 0.0f, 0.0f, 0.0f);
+
+      this.lightAmbient(this.lightCount, clr);
+      this.noLightDiffuse(this.lightCount);
+      this.noLightSpecular(this.lightCount);
+      this.noLightSpot(this.lightCount);
+      this.lightFalloff(this.lightCount, this.currentLightFalloffConstant,
+         this.currentLightFalloffLinear, this.currentLightFalloffQuadratic);
+
+      this.lightCount++;
+   }
+
+   /**
+    * Initializes an ambient light with a color and location. Ambient light
+    * illuminates an object evenly from all sides.
+    *
+    * @param clr the color
+    * @param loc the location
+    */
+   void ambientLight ( final int clr, final Vec3 loc ) {
+
+      this.ambientLight(clr, loc.x, loc.y, loc.z);
    }
 
    /**
@@ -1588,6 +1533,47 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
+    * Initializes a point light at a location.
+    *
+    * @param clr the color
+    * @param loc the location
+    */
+   void pointLight ( final Color clr, final Vec3 loc ) {
+
+      this.pointLight(Color.toHexInt(clr), loc.x, loc.y, loc.z);
+   }
+
+   /**
+    * Initializes a point light at a location.
+    *
+    * @param clr  the color
+    * @param xLoc the location x
+    * @param yLoc the location y
+    * @param zLoc the location z
+    */
+   @Experimental
+   void pointLight ( final int clr, final float xLoc, final float yLoc,
+      final float zLoc ) {
+
+      this.enableLighting();
+      if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
+
+      this.lightType[this.lightCount] = PConstants.POINT;
+
+      this.lightPosition(this.lightCount, xLoc, yLoc, zLoc, false);
+      this.lightNormal(this.lightCount, 0.0f, 0.0f, 0.0f);
+      this.noLightAmbient(this.lightCount);
+      this.lightDiffuse(this.lightCount, clr);
+      this.lightSpecular(this.lightCount, this.currentLightSpecular[0],
+         this.currentLightSpecular[1], this.currentLightSpecular[2]);
+      this.noLightSpot(this.lightCount);
+      this.lightFalloff(this.lightCount, this.currentLightFalloffConstant,
+         this.currentLightFalloffLinear, this.currentLightFalloffQuadratic);
+
+      this.lightCount++;
+   }
+
+   /**
     * A helper function for the renderer camera. Updates the camera matrix,
     * its inverse, the model view and its inverse, and updates the project
     * model view.
@@ -1614,13 +1600,11 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
        * Set matrix to axes by row. Translate by a negative location after the
        * rotation.
        */
-      this.camera.set(m00, m01, m02,
-         -this.cameraX * m00 - this.cameraY * m01 - this.cameraZ * m02, m10,
-         m11, m12,
-         -this.cameraX * m10 - this.cameraY * m11 - this.cameraZ * m12, m20,
-         m21, m22,
-         -this.cameraX * m20 - this.cameraY * m21 - this.cameraZ * m22, 0.0f,
-         0.0f, 0.0f, 1.0f);
+      this.camera.set(m00, m01, m02, -this.cameraX * m00 - this.cameraY * m01
+         - this.cameraZ * m02, m10, m11, m12, -this.cameraX * m10 - this.cameraY
+            * m11 - this.cameraZ * m12, m20, m21, m22, -this.cameraX * m20
+               - this.cameraY * m21 - this.cameraZ * m22, 0.0f, 0.0f, 0.0f,
+         1.0f);
 
       /* Set model view to camera. */
       this.modelview.set(this.camera);

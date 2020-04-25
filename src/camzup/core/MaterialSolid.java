@@ -75,8 +75,8 @@ public class MaterialSolid extends Material implements Cloneable {
    public MaterialSolid ( final Color fill, final Color stroke,
       final float strokeWeight ) {
 
-      this(fill, stroke, strokeWeight, fill.w > 0.0f,
-         stroke.w > 0.0f && strokeWeight > 0.0f);
+      this(fill, stroke, strokeWeight, fill.w > 0.0f, stroke.w > 0.0f
+         && strokeWeight > 0.0f);
    }
 
    /**
@@ -139,8 +139,8 @@ public class MaterialSolid extends Material implements Cloneable {
    public MaterialSolid ( final String name, final Color fill,
       final Color stroke, final float strokeWeight ) {
 
-      this(name, fill, stroke, strokeWeight, fill.w > 0.0f,
-         stroke.w > 0.0f && strokeWeight > 0.0f);
+      this(name, fill, stroke, strokeWeight, fill.w > 0.0f, stroke.w > 0.0f
+         && strokeWeight > 0.0f);
    }
 
    /**
@@ -184,7 +184,7 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-   @Chainable
+
    public MaterialSolid set ( final MaterialSolid source ) {
 
       this.name = source.name;
@@ -203,7 +203,7 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-   @Chainable
+
    public MaterialSolid setFill ( final boolean fill ) {
 
       this.useFill = fill;
@@ -217,7 +217,7 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-   @Chainable
+
    public MaterialSolid setFill ( final Color fill ) {
 
       this.fill.set(fill);
@@ -264,7 +264,7 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-   @Chainable
+
    public MaterialSolid setFill ( final int fill ) {
 
       Color.fromHex(fill, this.fill);
@@ -278,7 +278,7 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-   @Chainable
+
    public MaterialSolid setStroke ( final boolean stroke ) {
 
       this.useStroke = stroke;
@@ -292,7 +292,7 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-   @Chainable
+
    public MaterialSolid setStroke ( final Color stroke ) {
 
       this.stroke.set(stroke);
@@ -339,7 +339,7 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-   @Chainable
+
    public MaterialSolid setStroke ( final int stroke ) {
 
       Color.fromHex(stroke, this.stroke);
@@ -353,7 +353,7 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-   @Chainable
+
    public MaterialSolid setStrokeWeight ( final float strokeWeight ) {
 
       this.strokeWeight = Utils.max(IUtils.DEFAULT_EPSILON, strokeWeight);
@@ -366,7 +366,7 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-   @Chainable
+
    public MaterialSolid swapFillStroke ( ) {
 
       final boolean t = this.useFill;
@@ -388,7 +388,7 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-   @Chainable
+
    public MaterialSolid toggleFill ( ) {
 
       this.useFill = !this.useFill;
@@ -400,7 +400,7 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-   @Chainable
+
    public MaterialSolid toggleStroke ( ) {
 
       this.useStroke = !this.useStroke;
@@ -511,9 +511,8 @@ public class MaterialSolid extends Material implements Cloneable {
        * This needs to be printed to a high precision because of small meshes
        * which are blown up by scale.
        */
-      final String strokeStr = Utils.toFixed(
-         Utils.max(IUtils.DEFAULT_EPSILON, Utils.div(this.strokeWeight, scale)),
-         6);
+      final String strokeStr = Utils.toFixed(Utils.max(IUtils.DEFAULT_EPSILON,
+         Utils.div(this.strokeWeight, scale)), 6);
       final StringBuilder svgp = new StringBuilder(256);
       svgp.append("id=\"");
       svgp.append(this.name);

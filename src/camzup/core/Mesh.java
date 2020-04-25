@@ -71,7 +71,7 @@ public abstract class Mesh extends EntityData implements IMesh {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh cycleFaces ( final int places ) {
 
       final int len = this.faces.length;
@@ -93,7 +93,7 @@ public abstract class Mesh extends EntityData implements IMesh {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh cycleVerts ( final int faceIndex, final int places ) {
 
       final int[][] arr = this.faces[Utils.mod(faceIndex, this.faces.length)];
@@ -119,7 +119,7 @@ public abstract class Mesh extends EntityData implements IMesh {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh setMaterialIndex ( final int i ) {
 
       this.materialIndex = i < 0 ? 0 : i;

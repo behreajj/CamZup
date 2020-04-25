@@ -88,12 +88,9 @@ public class Edge2 implements Comparable < Edge2 > {
    @Override
    public int hashCode ( ) {
 
-      /* @formatter:off */
-      return ( IUtils.MUL_BASE ^
-         ( this.origin == null ? 0 : this.origin.hashCode() ) ) *
-         IUtils.HASH_MUL ^
-         ( this.dest == null ? 0 : this.dest.hashCode() );
-      /* @formatter:on */
+      return ( IUtils.MUL_BASE ^ ( this.origin == null ? 0 : this.origin
+         .hashCode() ) ) * IUtils.HASH_MUL ^ ( this.dest == null ? 0 : this.dest
+            .hashCode() );
    }
 
    /**
@@ -106,7 +103,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @see Edge2#rotateZGlobal(float)
     */
-   @Chainable
+
    public Edge2 rotateZ ( final float radians ) {
 
       return this.rotateZGlobal(radians);
@@ -121,7 +118,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return this edge
     */
-   @Chainable
+
    public Edge2 rotateZGlobal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -141,7 +138,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return this edge
     */
-   @Chainable
+
    public Edge2 rotateZLocal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -177,7 +174,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @see Edge2#scaleGlobal(float)
     */
-   @Chainable
+
    public Edge2 scale ( final float scale ) {
 
       return this.scaleGlobal(scale);
@@ -193,7 +190,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @see Edge2#scaleGlobal(Vec2)
     */
-   @Chainable
+
    public Edge2 scale ( final Vec2 scalar ) {
 
       return this.scaleGlobal(scalar);
@@ -210,7 +207,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @see Vec2#mul(Vec2, float, Vec2)
     */
-   @Chainable
+
    public Edge2 scaleGlobal ( final float scalar ) {
 
       if ( scalar == 0.0f ) { return this; }
@@ -231,7 +228,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @see Vec2#mul(Vec2, Vec2, Vec2)
     */
-   @Chainable
+
    public Edge2 scaleGlobal ( final Vec2 scalar ) {
 
       if ( Vec2.none(scalar) ) { return this; }
@@ -253,7 +250,7 @@ public class Edge2 implements Comparable < Edge2 > {
     * @see Vec2#mul(Vec2, float, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   @Chainable
+
    public Edge2 scaleLocal ( final float scalar ) {
 
       if ( scalar == 0.0f ) { return this; }
@@ -291,7 +288,7 @@ public class Edge2 implements Comparable < Edge2 > {
     * @see Vec2#mul(Vec2, Vec2, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   @Chainable
+
    @Experimental
    public Edge2 scaleLocal ( final Vec2 scalar ) {
 
@@ -328,7 +325,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return this edge
     */
-   @Chainable
+
    public Edge2 set ( final Vec2 coOrigin, final Vec2 txOrigin,
       final Vec2 coDest, final Vec2 txDest ) {
 
@@ -345,7 +342,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return this edge
     */
-   @Chainable
+
    public Edge2 set ( final Vert2 origin, final Vert2 dest ) {
 
       this.origin = origin;
@@ -392,7 +389,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @see Mat3#mulPoint(Mat3, Vec2, Vec2)
     */
-   @Chainable
+
    public Edge2 transform ( final Mat3 m ) {
 
       Mat3.mulPoint(m, this.origin.coord, this.origin.coord);
@@ -411,7 +408,6 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   @Chainable
    public Edge2 translate ( final Vec2 v ) {
 
       Vec2.add(this.origin.coord, v, this.origin.coord);
@@ -460,8 +456,8 @@ public class Edge2 implements Comparable < Edge2 > {
       if ( step >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - step;
-      return target.set(u * coOrigin.x + step * coDest.x,
-         u * coOrigin.y + step * coDest.y);
+      return target.set(u * coOrigin.x + step * coDest.x, u * coOrigin.y + step
+         * coDest.y);
    }
 
    /**
@@ -543,8 +539,8 @@ public class Edge2 implements Comparable < Edge2 > {
       if ( fac >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - fac;
-      return target.set(u * coOrigin.x + fac * coDest.x,
-         u * coOrigin.y + fac * coDest.y);
+      return target.set(u * coOrigin.x + fac * coDest.x, u * coOrigin.y + fac
+         * coDest.y);
    }
 
    /**

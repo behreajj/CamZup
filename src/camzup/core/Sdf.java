@@ -61,8 +61,8 @@ public abstract class Sdf {
       final float qx = Utils.abs(point.x) - bounds.x;
       final float qy = Utils.abs(point.y) - bounds.y;
 
-      return Utils.hypot(Utils.max(qx, 0.0f), Utils.max(qy, 0.0f))
-         + Utils.min(Utils.max(qx, qy), 0.0f);
+      return Utils.hypot(Utils.max(qx, 0.0f), Utils.max(qy, 0.0f)) + Utils.min(
+         Utils.max(qx, qy), 0.0f);
    }
 
    /**
@@ -102,8 +102,8 @@ public abstract class Sdf {
       final float qy = Utils.abs(point.y) - bounds.y;
       final float qz = Utils.abs(point.z) - bounds.z;
 
-      return Utils.hypot(Utils.max(qx, 0.0f), Utils.max(qy, 0.0f),
-         Utils.max(qz, 0.0f)) + Utils.min(Utils.max(qx, qy, qz), 0.0f);
+      return Utils.hypot(Utils.max(qx, 0.0f), Utils.max(qy, 0.0f), Utils.max(qz,
+         0.0f)) + Utils.min(Utils.max(qx, qy, qz), 0.0f);
    }
 
    /**
@@ -189,12 +189,12 @@ public abstract class Sdf {
    public static float ellipsoid ( final Vec3 point, final Vec3 bounds ) {
 
       final float k1 = Utils.hypot(Utils.div(point.x, bounds.x * bounds.x),
-         Utils.div(point.y, bounds.y * bounds.y),
-         Utils.div(point.z, bounds.z * bounds.z));
+         Utils.div(point.y, bounds.y * bounds.y), Utils.div(point.z, bounds.z
+            * bounds.z));
       if ( k1 == 0.0f ) { return 0.0f; }
 
-      final float k0 = Utils.hypot(Utils.div(point.x, bounds.x),
-         Utils.div(point.y, bounds.y), Utils.div(point.z, bounds.z));
+      final float k0 = Utils.hypot(Utils.div(point.x, bounds.x), Utils.div(
+         point.y, bounds.y), Utils.div(point.z, bounds.z));
       return k0 * ( k0 - 1.0f ) / k1;
    }
 
@@ -216,13 +216,13 @@ public abstract class Sdf {
 
       final float px0 = Utils.abs(point.x);
       final float py0 = Utils.abs(point.y);
-      final float dotkp2 = 2.0f
-         * Utils.min(0.0f, -IUtils.SQRT_3_2 * px0 + IUtils.ONE_SQRT_3 * py0);
+      final float dotkp2 = 2.0f * Utils.min(0.0f, -IUtils.SQRT_3_2 * px0
+         + IUtils.ONE_SQRT_3 * py0);
       final float px1 = px0 + dotkp2 * IUtils.SQRT_3_2;
       final float limit = 0.5f * bounds;
       final float py2 = py0 - dotkp2 * IUtils.ONE_SQRT_3 - bounds;
-      return Utils.copySign(
-         Utils.hypot(px1 - Utils.clamp(px1, -limit, limit), py2), py2);
+      return Utils.copySign(Utils.hypot(px1 - Utils.clamp(px1, -limit, limit),
+         py2), py2);
    }
 
    /**
@@ -274,8 +274,8 @@ public abstract class Sdf {
    public static float intersectRound ( final float a, final float b,
       final float radius ) {
 
-      return Utils.hypot(Utils.max(0.0f, a + radius),
-         Utils.max(0.0f, b + radius)) + Utils.min(Utils.max(a, b), -radius);
+      return Utils.hypot(Utils.max(0.0f, a + radius), Utils.max(0.0f, b
+         + radius)) + Utils.min(Utils.max(a, b), -radius);
    }
 
    /**
@@ -409,8 +409,8 @@ public abstract class Sdf {
 
       final float a = angle + Utils.atan2(point.y, -point.x);
       final float b = IUtils.TAU / Utils.max(3, vertices);
-      return Utils.cos(b * Utils.floor(0.5f + a / b) - a)
-         * Utils.hypot(point.x, point.y) - bounds * 0.5f;
+      return Utils.cos(b * Utils.floor(0.5f + a / b) - a) * Utils.hypot(point.x,
+         point.y) - bounds * 0.5f;
    }
 
    /**
@@ -454,8 +454,8 @@ public abstract class Sdf {
          final float wy = point.y - curr.y;
 
          final float denom = ex * ex + ey * ey;
-         final float dotp = denom == 0.0f ? 0.0f
-            : Utils.clamp01( ( wx * ex + wy * ey ) / denom);
+         final float dotp = denom == 0.0f ? 0.0f : Utils.clamp01( ( wx * ex + wy
+            * ey ) / denom);
          final float bx = wx - ex * dotp;
          final float by = wy - ey * dotp;
 
@@ -599,8 +599,8 @@ public abstract class Sdf {
    public static float unionRound ( final float a, final float b,
       final float radius ) {
 
-      return Utils.max(Utils.min(a, b), radius) - Utils
-         .hypot(Utils.min(0.0f, a - radius), Utils.min(0.0f, b - radius));
+      return Utils.max(Utils.min(a, b), radius) - Utils.hypot(Utils.min(0.0f, a
+         - radius), Utils.min(0.0f, b - radius));
    }
 
    /**
@@ -634,11 +634,9 @@ public abstract class Sdf {
       final float py0 = cosOff * point.x + sinOff * point.y;
       final float dotp = px0 * px0 + py0 * py0;
 
-      return Utils
-         .sqrt(dotp + bounds * bounds
-            - ( bounds + bounds ) * ( cosAptr2 * px0 > sinAptr2 * py0
-               ? px0 * sinAptr2 + py0 * cosAptr2 : Utils.sqrtUnchecked(dotp) ))
-         - weight;
+      return Utils.sqrt(dotp + bounds * bounds - ( bounds + bounds )
+         * ( cosAptr2 * px0 > sinAptr2 * py0 ? px0 * sinAptr2 + py0 * cosAptr2
+            : Utils.sqrtUnchecked(dotp) )) - weight;
    }
 
 }

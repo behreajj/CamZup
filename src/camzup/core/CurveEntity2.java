@@ -9,8 +9,8 @@ import java.util.List;
  * An entity which contains a transform that is applied to a list of
  * curves. The curves may references a list of materials by index.
  */
-public class CurveEntity2 extends Entity2
-   implements Iterable < Curve2 >, IVolume2, ISvgWritable {
+public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
+   IVolume2, ISvgWritable {
 
    /**
     * The list of curves held by the entity.
@@ -66,7 +66,7 @@ public class CurveEntity2 extends Entity2
     *
     * @return this curve entity
     */
-   @Chainable
+
    public CurveEntity2 append ( final Curve2 curve ) {
 
       if ( curve != null ) { this.curves.add(curve); }
@@ -80,7 +80,7 @@ public class CurveEntity2 extends Entity2
     *
     * @return this curve entity
     */
-   @Chainable
+
    public CurveEntity2 appendAll ( final Collection < Curve2 > curves ) {
 
       final Iterator < Curve2 > itr = curves.iterator();
@@ -97,7 +97,7 @@ public class CurveEntity2 extends Entity2
     *
     * @return this curve entity
     */
-   @Chainable
+
    public CurveEntity2 appendAll ( final Curve2... curves ) {
 
       final int len = curves.length;
@@ -147,7 +147,7 @@ public class CurveEntity2 extends Entity2
     * @return this entity
     */
    @Override
-   @Chainable
+
    public CurveEntity2 scaleBy ( final float scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -162,7 +162,7 @@ public class CurveEntity2 extends Entity2
     * @return the entity
     */
    @Override
-   @Chainable
+
    public CurveEntity2 scaleBy ( final Vec2 scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -177,7 +177,7 @@ public class CurveEntity2 extends Entity2
     * @return this entity
     */
    @Override
-   @Chainable
+
    public CurveEntity2 scaleTo ( final float scalar ) {
 
       this.transform.scaleTo(scalar);
@@ -192,7 +192,7 @@ public class CurveEntity2 extends Entity2
     * @return this entity
     */
    @Override
-   @Chainable
+
    public CurveEntity2 scaleTo ( final Vec2 scalar ) {
 
       this.transform.scaleTo(scalar);
@@ -208,7 +208,7 @@ public class CurveEntity2 extends Entity2
     * @return this entity
     */
    @Override
-   @Chainable
+
    public CurveEntity2 scaleTo ( final Vec2 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);
@@ -398,8 +398,8 @@ public class CurveEntity2 extends Entity2
       final MaterialSolid[] materials ) {
 
       final StringBuilder svgp = new StringBuilder(1024).append("<g id=\"")
-         .append(this.name.toLowerCase()).append('\"').append(' ')
-         .append(this.transform.toSvgString()).append('>').append('\n');
+         .append(this.name.toLowerCase()).append('\"').append(' ').append(
+            this.transform.toSvgString()).append('>').append('\n');
 
       final float scale = zoom * Transform2.minDimension(this.transform);
       int matLen = 0;

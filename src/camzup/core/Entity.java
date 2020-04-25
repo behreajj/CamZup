@@ -62,8 +62,8 @@ public abstract class Entity implements IEntity {
    public int hashCode ( ) {
 
       int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL
-         ^ ( this.name == null ? 0 : this.name.hashCode() );
+      hash = hash * IUtils.HASH_MUL ^ ( this.name == null ? 0 : this.name
+         .hashCode() );
       return hash;
    }
 
@@ -74,7 +74,6 @@ public abstract class Entity implements IEntity {
     *
     * @return this entity
     */
-   @Chainable
    public Entity setName ( final String name ) {
 
       if ( name != null ) { this.name = name; }

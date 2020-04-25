@@ -163,10 +163,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final float m10 = s * this.cameraZoomX;
       final float m11 = c * this.cameraZoomY;
 
-      this.modelview.set(m00, m01, 0.0f,
-         -this.cameraX * m00 - this.cameraY * m01, m10, m11, 0.0f,
-         -this.cameraX * m10 - this.cameraY * m11, 0.0f, 0.0f, 1.0f, -zDist,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      this.modelview.set(m00, m01, 0.0f, -this.cameraX * m00 - this.cameraY
+         * m01, m10, m11, 0.0f, -this.cameraX * m10 - this.cameraY * m11, 0.0f,
+         0.0f, 1.0f, -zDist, 0.0f, 0.0f, 0.0f, 1.0f);
 
       /* PMatAux.invert(this.modelview, this.modelviewInv); */
       this.modelviewInv.set(c / this.cameraZoomX, s / this.cameraZoomX, 0.0f,
@@ -600,13 +599,12 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       this.lightFalloff(1.0f, 0.0f, 0.0f);
       this.lightSpecular(0.0f, 0.0f, 0.0f);
 
-      this.ambientLight(this.colorModeX * IUpOgl.DEFAULT_AMB_R,
-         this.colorModeY * IUpOgl.DEFAULT_AMB_G,
-         this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
+      this.ambientLight(this.colorModeX * IUpOgl.DEFAULT_AMB_R, this.colorModeY
+         * IUpOgl.DEFAULT_AMB_G, this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
 
       this.directionalLight(this.colorModeX * IUpOgl.DEFAULT_LIGHT_R,
-         this.colorModeY * IUpOgl.DEFAULT_LIGHT_G,
-         this.colorModeZ * IUpOgl.DEFAULT_LIGHT_B, 0.0f, 0.0f, -1.0f);
+         this.colorModeY * IUpOgl.DEFAULT_LIGHT_G, this.colorModeZ
+            * IUpOgl.DEFAULT_LIGHT_B, 0.0f, 0.0f, -1.0f);
 
       this.colorMode = colorModeSaved;
    }

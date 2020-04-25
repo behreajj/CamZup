@@ -9,8 +9,8 @@ import java.util.Iterator;
  * three-dimensional graphics programs. Instance methods are limited, while
  * most static methods require an explicit output variable to be provided.
  */
-public class Vec3
-   implements Comparable < Vec3 >, Cloneable, Iterable < Float > {
+public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
+   Float > {
 
    /**
     * Component on the x axis in the Cartesian coordinate system.
@@ -52,6 +52,19 @@ public class Vec3
     * @param z the z component
     */
    public Vec3 ( final float x, final float y, final float z ) {
+
+      this.set(x, y, z);
+   }
+
+   /**
+    * Constructs a vector from integer values. A convenience for Kotlin
+    * support.
+    *
+    * @param x the x component
+    * @param y the y component
+    * @param z the z component
+    */
+   public Vec3 ( final int x, final int y, final int z ) {
 
       this.set(x, y, z);
    }
@@ -129,6 +142,15 @@ public class Vec3
    }
 
    /**
+    * Tests to see if the vector contains a value.
+    *
+    * @param v the value
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final float v ) { return this.indexOf(v) > -1; }
+
+   /**
     * Tests this vector for equivalence with another object.
     *
     * @param obj the object
@@ -190,13 +212,30 @@ public class Vec3
    }
 
    /**
+    * Tests to see if the vector contains a value. If the value is equal to x,
+    * returns 0; if y, 1; if z, 2. Returns -1 if the vector does not contain a
+    * value.
+    *
+    * @param v the value
+    *
+    * @return the index
+    */
+   public int indexOf ( final float v ) {
+
+      if ( Utils.approx(this.z, v) ) { return 2; }
+      if ( Utils.approx(this.y, v) ) { return 1; }
+      if ( Utils.approx(this.x, v) ) { return 0; }
+      return -1;
+   }
+
+   /**
     * Returns an iterator for this vector, which allows its components to be
     * accessed in an enhanced for-loop.
     *
     * @return the iterator
     */
    @Override
-   public V3Iterator iterator ( ) { return new V3Iterator(this); }
+   public Iterator < Float > iterator ( ) { return new V3Iterator(this); }
 
    /**
     * Gets the number of components held by this vector.
@@ -210,7 +249,7 @@ public class Vec3
     *
     * @return this vector
     */
-   @Chainable
+
    public Vec3 reset ( ) { return this.set(0.0f, 0.0f, 0.0f); }
 
    /**
@@ -222,16 +261,13 @@ public class Vec3
     * @param z the z component
     *
     * @return this vector
-    *
-    * @see Utils#toFloat(boolean)
     */
-   @Chainable
+
    public Vec3 set ( final boolean x, final boolean y, final boolean z ) {
 
-      this.x = Utils.toFloat(x);
-      this.y = Utils.toFloat(y);
-      this.z = Utils.toFloat(z);
-
+      this.x = x ? 1.0f : 0.0f;
+      this.y = y ? 1.0f : 0.0f;
+      this.z = z ? 1.0f : 0.0f;
       return this;
    }
 
@@ -244,13 +280,31 @@ public class Vec3
     *
     * @return this vector
     */
-   @Chainable
+
    public Vec3 set ( final float x, final float y, final float z ) {
 
       this.x = x;
       this.y = y;
       this.z = z;
 
+      return this;
+   }
+
+   /**
+    * Sets the components of this vector from integers. A convenience for
+    * Kotlin support.
+    *
+    * @param x the x component
+    * @param y the y component
+    * @param z the z component
+    *
+    * @return this vector
+    */
+   public Vec3 set ( final int x, final int y, final int z ) {
+
+      this.x = x;
+      this.y = y;
+      this.z = z;
       return this;
    }
 
@@ -267,7 +321,7 @@ public class Vec3
     *
     * @see Float#parseFloat(String)
     */
-   @Chainable
+
    public Vec3 set ( final String xstr, final String ystr, final String zstr ) {
 
       float x = 0.0f;
@@ -306,11 +360,8 @@ public class Vec3
     *
     * @return this vector
     */
-   @Chainable
-   public Vec3 set ( final Vec2 v2 ) {
 
-      return this.set(v2.x, v2.y, 0.0f);
-   }
+   public Vec3 set ( final Vec2 v2 ) { return this.set(v2.x, v2.y, 0.0f); }
 
    /**
     * Promotes a Vec2 to a Vec3 with an extra component.
@@ -320,7 +371,7 @@ public class Vec3
     *
     * @return this vector
     */
-   @Chainable
+
    public Vec3 set ( final Vec2 v2, final float z ) {
 
       return this.set(v2.x, v2.y, z);
@@ -333,7 +384,7 @@ public class Vec3
     *
     * @return this vector
     */
-   @Chainable
+
    public Vec3 set ( final Vec3 source ) {
 
       return this.set(source.x, source.y, source.z);
@@ -435,9 +486,9 @@ public class Vec3
     */
    protected boolean equals ( final Vec3 v ) {
 
-      return Float.floatToIntBits(this.z) == Float.floatToIntBits(v.z)
-         && Float.floatToIntBits(this.y) == Float.floatToIntBits(v.y)
-         && Float.floatToIntBits(this.x) == Float.floatToIntBits(v.x);
+      return Float.floatToIntBits(this.z) == Float.floatToIntBits(v.z) && Float
+         .floatToIntBits(this.y) == Float.floatToIntBits(v.y) && Float
+            .floatToIntBits(this.x) == Float.floatToIntBits(v.x);
    }
 
    /**
@@ -536,8 +587,8 @@ public class Vec3
     */
    public static Vec3 and ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(Utils.and(a.x, b.x), Utils.and(a.y, b.y),
-         Utils.and(a.z, b.z));
+      return target.set(Utils.and(a.x, b.x), Utils.and(a.y, b.y), Utils.and(a.z,
+         b.z));
    }
 
    /**
@@ -555,9 +606,9 @@ public class Vec3
     */
    public static float angleBetween ( final Vec3 a, final Vec3 b ) {
 
-      return Vec3.none(a) || Vec3.none(b) ? 0.0f
-         : Utils.acos(Vec3.dot(a, b) * Utils.invSqrtUnchecked(Vec3.magSq(a))
-            * Utils.invSqrtUnchecked(Vec3.magSq(b)));
+      return Vec3.none(a) || Vec3.none(b) ? 0.0f : Utils.acos(Vec3.dot(a, b)
+         * Utils.invSqrtUnchecked(Vec3.magSq(a)) * Utils.invSqrtUnchecked(Vec3
+            .magSq(b)));
    }
 
    /**
@@ -697,8 +748,7 @@ public class Vec3
     *
     * @return the angle in radians
     *
-    * @see Math#atan2(double, double)
-    * @see Vec3#azimuthUnsigned(Vec3)
+    * @see Utils#atan2(float, float)
     */
    public static float azimuthSigned ( final Vec3 v ) {
 
@@ -763,10 +813,9 @@ public class Vec3
       ucb *= u;
       tcb *= step;
 
-      return target.set(
-         ap0.x * ucb + cp0.x * usq3t + cp1.x * tsq3u + ap1.x * tcb,
-         ap0.y * ucb + cp0.y * usq3t + cp1.y * tsq3u + ap1.y * tcb,
-         ap0.z * ucb + cp0.z * usq3t + cp1.z * tsq3u + ap1.z * tcb);
+      return target.set(ap0.x * ucb + cp0.x * usq3t + cp1.x * tsq3u + ap1.x
+         * tcb, ap0.y * ucb + cp0.y * usq3t + cp1.y * tsq3u + ap1.y * tcb, ap0.z
+            * ucb + cp0.z * usq3t + cp1.z * tsq3u + ap1.z * tcb);
    }
 
    /**
@@ -868,9 +917,9 @@ public class Vec3
    public static Vec3 clamp ( final Vec3 a, final Vec3 lowerBound,
       final Vec3 upperBound, final Vec3 target ) {
 
-      return target.set(Utils.clamp(a.x, lowerBound.x, upperBound.x),
-         Utils.clamp(a.y, lowerBound.y, upperBound.y),
-         Utils.clamp(a.z, lowerBound.z, upperBound.z));
+      return target.set(Utils.clamp(a.x, lowerBound.x, upperBound.x), Utils
+         .clamp(a.y, lowerBound.y, upperBound.y), Utils.clamp(a.z, lowerBound.z,
+            upperBound.z));
    }
 
    /**
@@ -885,8 +934,8 @@ public class Vec3
     */
    public static Vec3 clamp01 ( final Vec3 v, final Vec3 target ) {
 
-      return target.set(Utils.clamp01(v.x), Utils.clamp01(v.y),
-         Utils.clamp01(v.z));
+      return target.set(Utils.clamp01(v.x), Utils.clamp01(v.y), Utils.clamp01(
+         v.z));
    }
 
    /**
@@ -939,9 +988,8 @@ public class Vec3
    public static Vec3 copySign ( final Vec3 magnitude, final Vec3 sign,
       final Vec3 target ) {
 
-      return target.set(Utils.copySign(magnitude.x, sign.x),
-         Utils.copySign(magnitude.y, sign.y),
-         Utils.copySign(magnitude.z, sign.z));
+      return target.set(Utils.copySign(magnitude.x, sign.x), Utils.copySign(
+         magnitude.y, sign.y), Utils.copySign(magnitude.z, sign.z));
    }
 
    /**
@@ -970,8 +1018,8 @@ public class Vec3
     */
    public static Vec3 cross ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z,
-         a.x * b.y - a.y * b.x);
+      return target.set(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y
+         - a.y * b.x);
    }
 
    /**
@@ -1042,8 +1090,8 @@ public class Vec3
     */
    public static Vec3 diff ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y),
-         Utils.diff(a.z, b.z));
+      return target.set(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y), Utils.diff(
+         a.z, b.z));
    }
 
    /**
@@ -1075,8 +1123,8 @@ public class Vec3
     */
    public static float distChebyshev ( final Vec3 a, final Vec3 b ) {
 
-      return Utils.max(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y),
-         Utils.diff(a.z, b.z));
+      return Utils.max(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y), Utils.diff(
+         a.z, b.z));
    }
 
    /**
@@ -1177,8 +1225,8 @@ public class Vec3
     */
    public static Vec3 div ( final float a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(Utils.div(a, b.x), Utils.div(a, b.y),
-         Utils.div(a, b.z));
+      return target.set(Utils.div(a, b.x), Utils.div(a, b.y), Utils.div(a,
+         b.z));
    }
 
    /**
@@ -1212,8 +1260,8 @@ public class Vec3
     */
    public static Vec3 div ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(Utils.div(a.x, b.x), Utils.div(a.y, b.y),
-         Utils.div(a.z, b.z));
+      return target.set(Utils.div(a.x, b.x), Utils.div(a.y, b.y), Utils.div(a.z,
+         b.z));
    }
 
    /**
@@ -1278,8 +1326,8 @@ public class Vec3
    public static Vec3 filter ( final Vec3 v, final Vec3 lb, final Vec3 ub,
       final Vec3 target ) {
 
-      return target.set(Utils.filter(v.x, lb.x, ub.x),
-         Utils.filter(v.y, lb.y, ub.y), Utils.filter(v.z, lb.z, ub.z));
+      return target.set(Utils.filter(v.x, lb.x, ub.x), Utils.filter(v.y, lb.y,
+         ub.y), Utils.filter(v.z, lb.z, ub.z));
    }
 
    /**
@@ -1371,8 +1419,8 @@ public class Vec3
     */
    public static Vec3 fmod ( final float a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(Utils.fmod(a, b.x), Utils.fmod(a, b.y),
-         Utils.fmod(a, b.z));
+      return target.set(Utils.fmod(a, b.x), Utils.fmod(a, b.y), Utils.fmod(a,
+         b.z));
    }
 
    /**
@@ -1405,8 +1453,8 @@ public class Vec3
     */
    public static Vec3 fmod ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(Utils.fmod(a.x, b.x), Utils.fmod(a.y, b.y),
-         Utils.fmod(a.z, b.z));
+      return target.set(Utils.fmod(a.x, b.x), Utils.fmod(a.y, b.y), Utils.fmod(
+         a.z, b.z));
    }
 
    /**
@@ -1460,8 +1508,8 @@ public class Vec3
        */
 
       final float nrm = azimuth * IUtils.ONE_TAU;
-      return target.set(radius * Utils.scNorm(nrm),
-         radius * Utils.scNorm(nrm - 0.25f), 0.0f);
+      return target.set(radius * Utils.scNorm(nrm), radius * Utils.scNorm(nrm
+         - 0.25f), 0.0f);
    }
 
    /**
@@ -1508,8 +1556,8 @@ public class Vec3
 
       final double rhoCosPhi = radius * Math.cos(inclination);
       return target.set(( float ) ( rhoCosPhi * Math.cos(azimuth) ),
-         ( float ) ( rhoCosPhi * Math.sin(azimuth) ),
-         ( float ) ( radius * -Math.sin(inclination) ));
+         ( float ) ( rhoCosPhi * Math.sin(azimuth) ), ( float ) ( radius * -Math
+            .sin(inclination) ));
    }
 
    /**
@@ -1677,10 +1725,10 @@ public class Vec3
       final int vlayers = layers < 1 ? 1 : layers;
 
       final boolean oneLayer = vlayers == 1;
-      final float vrMax
-         = Utils.max(IUtils.DEFAULT_EPSILON, radiusMin, radiusMax);
-      final float vrMin = oneLayer ? vrMax
-         : Utils.max(IUtils.DEFAULT_EPSILON, Utils.min(radiusMin, radiusMax));
+      final float vrMax = Utils.max(IUtils.DEFAULT_EPSILON, radiusMin,
+         radiusMax);
+      final float vrMin = oneLayer ? vrMax : Utils.max(IUtils.DEFAULT_EPSILON,
+         Utils.min(radiusMin, radiusMax));
 
       final int latLen = includePoles ? vlats + 2 : vlats;
       final Vec3[][][] result = new Vec3[vlayers][latLen][];
@@ -1962,9 +2010,8 @@ public class Vec3
       final Vec3 ubOrigin, final Vec3 lbDest, final Vec3 ubDest,
       final Vec3 target ) {
 
-      return target.set(
-         Utils.map(v.x, lbOrigin.x, ubOrigin.x, lbDest.x, ubDest.x),
-         Utils.map(v.y, lbOrigin.y, ubOrigin.y, lbDest.y, ubDest.y),
+      return target.set(Utils.map(v.x, lbOrigin.x, ubOrigin.x, lbDest.x,
+         ubDest.x), Utils.map(v.y, lbOrigin.y, ubOrigin.y, lbDest.y, ubDest.y),
          Utils.map(v.z, lbOrigin.z, ubOrigin.z, lbDest.z, ubDest.z));
    }
 
@@ -2000,8 +2047,8 @@ public class Vec3
    public static Vec3 max ( final Vec3 a, final Vec3 upperBound,
       final Vec3 target ) {
 
-      return target.set(Utils.max(a.x, upperBound.x),
-         Utils.max(a.y, upperBound.y), Utils.max(a.z, upperBound.z));
+      return target.set(Utils.max(a.x, upperBound.x), Utils.max(a.y,
+         upperBound.y), Utils.max(a.z, upperBound.z));
    }
 
    /**
@@ -2036,8 +2083,8 @@ public class Vec3
    public static Vec3 min ( final Vec3 a, final Vec3 lowerBound,
       final Vec3 target ) {
 
-      return target.set(Utils.min(a.x, lowerBound.x),
-         Utils.min(a.y, lowerBound.y), Utils.min(a.z, lowerBound.z));
+      return target.set(Utils.min(a.x, lowerBound.x), Utils.min(a.y,
+         lowerBound.y), Utils.min(a.z, lowerBound.z));
    }
 
    /**
@@ -2057,8 +2104,8 @@ public class Vec3
       if ( step >= 1.0f ) { return target.set(dest); }
 
       final float u = 1.0f - step;
-      return target.set(u * origin.x + step * dest.x,
-         u * origin.y + step * dest.y, u * origin.z + step * dest.z);
+      return target.set(u * origin.x + step * dest.x, u * origin.y + step
+         * dest.y, u * origin.z + step * dest.z);
    }
 
    /**
@@ -2074,8 +2121,8 @@ public class Vec3
     */
    public static Vec3 mod ( final float a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(Utils.mod(a, b.x), Utils.mod(a, b.y),
-         Utils.mod(a, b.z));
+      return target.set(Utils.mod(a, b.x), Utils.mod(a, b.y), Utils.mod(a,
+         b.z));
    }
 
    /**
@@ -2110,8 +2157,8 @@ public class Vec3
     */
    public static Vec3 mod ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(Utils.mod(a.x, b.x), Utils.mod(a.y, b.y),
-         Utils.mod(a.z, b.z));
+      return target.set(Utils.mod(a.x, b.x), Utils.mod(a.y, b.y), Utils.mod(a.z,
+         b.z));
    }
 
    /**
@@ -2227,8 +2274,8 @@ public class Vec3
     */
    public static Vec3 normalize ( final Vec3 v, final Vec3 target ) {
 
-      final float mInv
-         = Utils.invSqrtUnchecked(v.x * v.x + v.y * v.y + v.z * v.z);
+      final float mInv = Utils.invSqrtUnchecked(v.x * v.x + v.y * v.y + v.z
+         * v.z);
       return target.set(v.x * mInv, v.y * mInv, v.z * mInv);
    }
 
@@ -2271,8 +2318,8 @@ public class Vec3
     */
    public static Vec3 or ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(Utils.or(a.x, b.x), Utils.or(a.y, b.y),
-         Utils.or(a.z, b.z));
+      return target.set(Utils.or(a.x, b.x), Utils.or(a.y, b.y), Utils.or(a.z,
+         b.z));
    }
 
    /**
@@ -2288,8 +2335,8 @@ public class Vec3
     */
    public static Vec3 pow ( final float a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(Utils.pow(a, b.x), Utils.pow(a, b.y),
-         Utils.pow(a, b.z));
+      return target.set(Utils.pow(a, b.x), Utils.pow(a, b.y), Utils.pow(a,
+         b.z));
    }
 
    /**
@@ -2305,8 +2352,8 @@ public class Vec3
     */
    public static Vec3 pow ( final Vec3 a, final float b, final Vec3 target ) {
 
-      return target.set(Utils.pow(a.x, b), Utils.pow(a.y, b),
-         Utils.pow(a.z, b));
+      return target.set(Utils.pow(a.x, b), Utils.pow(a.y, b), Utils.pow(a.z,
+         b));
    }
 
    /**
@@ -2322,8 +2369,8 @@ public class Vec3
     */
    public static Vec3 pow ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(Utils.pow(a.x, b.x), Utils.pow(a.y, b.y),
-         Utils.pow(a.z, b.z));
+      return target.set(Utils.pow(a.x, b.x), Utils.pow(a.y, b.y), Utils.pow(a.z,
+         b.z));
    }
 
    /**
@@ -2403,9 +2450,8 @@ public class Vec3
       if ( levels < 2 ) { return target.set(v); }
 
       final float delta = 1.0f / levels;
-      return target.set(delta * Utils.floor(0.5f + v.x * levels),
-         delta * Utils.floor(0.5f + v.y * levels),
-         delta * Utils.floor(0.5f + v.z * levels));
+      return target.set(delta * Utils.floor(0.5f + v.x * levels), delta * Utils
+         .floor(0.5f + v.y * levels), delta * Utils.floor(0.5f + v.z * levels));
    }
 
    /**
@@ -2441,9 +2487,9 @@ public class Vec3
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
-      return target.set( ( 1.0f - rx ) * lowerBound + rx * upperBound,
-         ( 1.0f - ry ) * lowerBound + ry * upperBound,
-         ( 1.0f - rz ) * lowerBound + rz * upperBound);
+      return target.set( ( 1.0f - rx ) * lowerBound + rx * upperBound, ( 1.0f
+         - ry ) * lowerBound + ry * upperBound, ( 1.0f - rz ) * lowerBound + rz
+            * upperBound);
    }
 
    /**
@@ -2464,8 +2510,8 @@ public class Vec3
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
       return target.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
-         ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y,
-         ( 1.0f - rz ) * lowerBound.z + rz * upperBound.z);
+         ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y, ( 1.0f - rz )
+            * lowerBound.z + rz * upperBound.z);
    }
 
    /**
@@ -2485,8 +2531,8 @@ public class Vec3
       final float rp = rng.nextFloat();
       final float rr = rng.nextFloat();
       return Vec3.fromSpherical( ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI,
-         ( 1.0f - rp ) * -IUtils.HALF_PI + rp * IUtils.HALF_PI,
-         ( 1.0f - rr ) * rhoMin + rr * rhoMax, target);
+         ( 1.0f - rp ) * -IUtils.HALF_PI + rp * IUtils.HALF_PI, ( 1.0f - rr )
+            * rhoMin + rr * rhoMax, target);
    }
 
    /**
@@ -2529,16 +2575,16 @@ public class Vec3
 
       if ( Utils.approx(nMSq, 1.0f) ) {
          final float scalar = 2.0f * Vec3.dot(normal, incident);
-         return target.set(incident.x - scalar * normal.x,
-            incident.y - scalar * normal.y, incident.z - scalar * normal.z);
+         return target.set(incident.x - scalar * normal.x, incident.y - scalar
+            * normal.y, incident.z - scalar * normal.z);
       }
 
       final float mInv = Utils.invSqrtUnchecked(nMSq);
       final float nx = normal.x * mInv;
       final float ny = normal.y * mInv;
       final float nz = normal.z * mInv;
-      final float scalar
-         = 2.0f * ( nx * incident.x + ny * incident.y + nz * incident.z );
+      final float scalar = 2.0f * ( nx * incident.x + ny * incident.y + nz
+         * incident.z );
       return target.set(incident.x - scalar * nx, incident.y - scalar * ny,
          incident.z - scalar * nz);
    }
@@ -2559,15 +2605,12 @@ public class Vec3
    public static Vec3 refract ( final Vec3 incident, final Vec3 normal,
       final float eta, final Vec3 target ) {
 
-      // TEST
-
       final float nDotI = Vec3.dot(normal, incident);
       final float k = 1.0f - eta * eta * ( 1.0f - nDotI * nDotI );
       if ( k <= 0.0f ) { return target.reset(); }
       final float scalar = eta * nDotI + Utils.sqrtUnchecked(k);
-      return target.set(eta * incident.x - normal.x * scalar,
-         eta * incident.y - normal.y * scalar,
-         eta * incident.z - normal.z * scalar);
+      return target.set(eta * incident.x - normal.x * scalar, eta * incident.y
+         - normal.y * scalar, eta * incident.z - normal.z * scalar);
    }
 
    /**
@@ -2593,8 +2636,8 @@ public class Vec3
       final float bSq = Vec3.magSq(b);
       if ( bSq == 0.0f ) { return target.set(a); }
       final float scprj = Vec3.dot(a, b) / bSq;
-      return target.set(a.x - b.x * scprj, a.y - b.y * scprj,
-         a.z - b.z * scprj);
+      return target.set(a.x - b.x * scprj, a.y - b.y * scprj, a.z - b.z
+         * scprj);
    }
 
    /**
@@ -2946,8 +2989,8 @@ public class Vec3
          n *= 10;
       }
       final float nInv = 1.0f / n;
-      return target.set(Utils.round(v.x * n) * nInv,
-         Utils.round(v.y * n) * nInv, Utils.round(v.z * n) * nInv);
+      return target.set(Utils.round(v.x * n) * nInv, Utils.round(v.y * n)
+         * nInv, Utils.round(v.z * n) * nInv);
    }
 
    /**
@@ -3081,8 +3124,8 @@ public class Vec3
    public static Vec3 wrap ( final Vec3 v, final Vec3 lb, final Vec3 ub,
       final Vec3 target ) {
 
-      return target.set(Utils.wrap(v.x, lb.x, ub.x),
-         Utils.wrap(v.y, lb.y, ub.y), Utils.wrap(v.z, lb.z, ub.z));
+      return target.set(Utils.wrap(v.x, lb.x, ub.x), Utils.wrap(v.y, lb.y,
+         ub.y), Utils.wrap(v.z, lb.z, ub.z));
    }
 
    /**
@@ -3099,8 +3142,8 @@ public class Vec3
     */
    public static Vec3 xor ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(Utils.xor(a.x, b.x), Utils.xor(a.y, b.y),
-         Utils.xor(a.z, b.z));
+      return target.set(Utils.xor(a.x, b.x), Utils.xor(a.y, b.y), Utils.xor(a.z,
+         b.z));
    }
 
    /**
@@ -3121,7 +3164,7 @@ public class Vec3
     * then layers.<br>
     * <br>
     * This is separated to make overriding the public grid functions easier.
-    * This is private because it is too easy for integers to be quietly
+    * This is protected because it is too easy for integers to be quietly
     * promoted to floats if the signature parameters are confused.
     *
     * @param cols   number of columns
@@ -3136,7 +3179,7 @@ public class Vec3
     *
     * @return the array
     */
-   private static Vec3[][][] grid ( final int cols, final int rows,
+   protected static Vec3[][][] grid ( final int cols, final int rows,
       final int layers, final float lbx, final float lby, final float lbz,
       final float ubx, final float uby, final float ubz ) {
 
@@ -3222,8 +3265,8 @@ public class Vec3
    /**
     * An abstract class to facilitate the creation of vector easing functions.
     */
-   public static abstract class AbstrEasing
-      implements Utils.EasingFuncObj < Vec3 > {
+   public static abstract class AbstrEasing implements Utils.EasingFuncObj <
+      Vec3 > {
 
       /**
        * The default constructor.
@@ -3302,8 +3345,8 @@ public class Vec3
          final double td = step;
          final double ud = 1.0d - td;
          return target.set(( float ) ( ud * origin.x + td * dest.x ),
-            ( float ) ( ud * origin.y + td * dest.y ),
-            ( float ) ( ud * origin.z + td * dest.z ));
+            ( float ) ( ud * origin.y + td * dest.y ), ( float ) ( ud * origin.z
+               + td * dest.z ));
       }
 
    }
@@ -3337,8 +3380,8 @@ public class Vec3
          final double ts = td * td * ( 3.0d - ( td + td ) );
          final double us = 1.0d - ts;
          return target.set(( float ) ( us * origin.x + ts * dest.x ),
-            ( float ) ( us * origin.y + ts * dest.y ),
-            ( float ) ( us * origin.z + ts * dest.z ));
+            ( float ) ( us * origin.y + ts * dest.y ), ( float ) ( us * origin.z
+               + ts * dest.z ));
       }
 
    }

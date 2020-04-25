@@ -72,7 +72,7 @@ public abstract class Curve extends EntityData implements ICurve {
     *
     * @return this curve
     */
-   @Chainable
+
    public Curve setMaterialIndex ( final int i ) {
 
       this.materialIndex = i < 0 ? 0 : i;
@@ -85,7 +85,7 @@ public abstract class Curve extends EntityData implements ICurve {
     * @return this curve
     */
    @Override
-   @Chainable
+
    public Curve toggleLoop ( ) {
 
       this.closedLoop = !this.closedLoop;

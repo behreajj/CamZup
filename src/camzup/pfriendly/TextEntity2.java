@@ -89,9 +89,8 @@ public class TextEntity2 extends ImageEntity2 {
       final int leading, final int kerning, final int alignHoriz,
       final int alignVert, final float scale ) {
 
-      super(text,
-         ZImage.fromText(font, text, 0xffffffff, leading, kerning, alignHoriz),
-         tint, scale, alignHoriz, alignVert);
+      super(text, ZImage.fromText(font, text, 0xffffffff, leading, kerning,
+         alignHoriz), tint, scale, alignHoriz, alignVert);
    }
 
 }

@@ -7,8 +7,8 @@ import java.util.Iterator;
  * A two-dimensional complex number. The <code>imag</code> component is a
  * coefficient of <em>i</em>, or the square-root of negative one.
  */
-public class Complex
-   implements Comparable < Complex >, Cloneable, Iterable < Float > {
+public class Complex implements Comparable < Complex >, Cloneable, Iterable <
+   Float > {
 
    /**
     * The coefficient of the imaginary component <em>i</em>.
@@ -151,7 +151,7 @@ public class Complex
     * @return the iterator
     */
    @Override
-   public CIterator iterator ( ) { return new CIterator(this); }
+   public Iterator < Float > iterator ( ) { return new CIterator(this); }
 
    /**
     * Gets the number of components held by the complex number.
@@ -165,7 +165,7 @@ public class Complex
     *
     * @return this complex number
     */
-   @Chainable
+
    public Complex reset ( ) { return this.set(0.0f, 0.0f); }
 
    /**
@@ -176,7 +176,7 @@ public class Complex
     *
     * @return this complex number
     */
-   @Chainable
+
    public Complex set ( final Complex source ) {
 
       return this.set(source.real, source.imag);
@@ -190,7 +190,7 @@ public class Complex
     *
     * @return this complex number
     */
-   @Chainable
+
    public Complex set ( final float real, final float imag ) {
 
       this.real = real;
@@ -211,7 +211,7 @@ public class Complex
     *
     * @see Float#parseFloat(String)
     */
-   @Chainable
+
    public Complex set ( final String realstr, final String imagstr ) {
 
       float real = 0.0f;
@@ -492,8 +492,8 @@ public class Complex
       final float bInvAbsSq = 1.0f / bAbsSq;
       final float cReal = b.real * bInvAbsSq;
       final float cImag = -b.imag * bInvAbsSq;
-      return target.set(a.real * cReal - a.imag * cImag,
-         a.real * cImag + a.imag * cReal);
+      return target.set(a.real * cReal - a.imag * cImag, a.real * cImag + a.imag
+         * cReal);
    }
 
    /**
@@ -643,8 +643,8 @@ public class Complex
     */
    public static Complex log ( final Complex z, final Complex target ) {
 
-      return target.set(( float ) Math.log(Complex.abs(z)),
-         ( float ) Math.atan2(z.imag, z.real));
+      return target.set(( float ) Math.log(Complex.abs(z)), ( float ) Math
+         .atan2(z.imag, z.real));
    }
 
    /**
@@ -686,8 +686,8 @@ public class Complex
       final float czdrInv = czdr * mSqInv;
       final float czdiInv = -czdi * mSqInv;
 
-      return target.set(azbr * czdrInv - azbi * czdiInv,
-         azbr * czdiInv + azbi * czdrInv);
+      return target.set(azbr * czdrInv - azbi * czdiInv, azbr * czdiInv + azbi
+         * czdrInv);
    }
 
    /**
@@ -703,8 +703,8 @@ public class Complex
    public static Complex mul ( final Complex a, final Complex b,
       final Complex target ) {
 
-      return target.set(a.real * b.real - a.imag * b.imag,
-         a.real * b.imag + a.imag * b.real);
+      return target.set(a.real * b.real - a.imag * b.imag, a.real * b.imag
+         + a.imag * b.real);
    }
 
    /**
@@ -781,8 +781,8 @@ public class Complex
    public static Complex pow ( final Complex a, final Complex b,
       final Complex target ) {
 
-      final double logReal
-         = Math.log(Math.sqrt(a.real * a.real + a.imag * a.imag));
+      final double logReal = Math.log(Math.sqrt(a.real * a.real + a.imag
+         * a.imag));
       final double logImag = Math.atan2(a.imag, a.real);
       final double phi = b.real * logImag + b.imag * logReal;
       final double r = Math.exp(b.real * logReal - b.imag * logImag);
@@ -831,8 +831,8 @@ public class Complex
    public static Complex pow ( final Complex a, final float b,
       final Complex target ) {
 
-      final double logReal
-         = Math.log(Math.sqrt(a.real * a.real + a.imag * a.imag));
+      final double logReal = Math.log(Math.sqrt(a.real * a.real + a.imag
+         * a.imag));
       final double logImag = Math.atan2(a.imag, a.real);
       final double phi = b * logImag;
       final double r = Math.exp(b * logReal);
@@ -883,8 +883,8 @@ public class Complex
 
       final float rt = rng.nextFloat();
       final float rr = rng.nextFloat();
-      return Complex.rect( ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI,
-         ( 1.0f - rr ) * rMin + rr * rMax, target);
+      return Complex.rect( ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI, ( 1.0f
+         - rr ) * rMin + rr * rMax, target);
    }
 
    /**
@@ -902,8 +902,8 @@ public class Complex
    public static Complex rect ( final float r, final float phi,
       final Complex target ) {
 
-      return target.set(( float ) ( r * Math.cos(phi) ),
-         ( float ) ( r * Math.sin(phi) ));
+      return target.set(( float ) ( r * Math.cos(phi) ), ( float ) ( r * Math
+         .sin(phi) ));
    }
 
    /**
@@ -931,9 +931,8 @@ public class Complex
     */
    public static Complex sqrt ( final float a, final Complex target ) {
 
-      return a > 0.0f ? target.set(Utils.sqrtUnchecked(a), 0.0f)
-         : a < 0.0f ? target.set(0.0f, Utils.sqrtUnchecked(-a))
-         : target.reset();
+      return a > 0.0f ? target.set(Utils.sqrtUnchecked(a), 0.0f) : a < 0.0f
+         ? target.set(0.0f, Utils.sqrtUnchecked(-a)) : target.reset();
    }
 
    /**
@@ -997,8 +996,8 @@ public class Complex
     * An abstract class that may serve as an umbrella for any custom
     * comparators of complex numbers.
     */
-   public static abstract class AbstrComparator
-      implements Comparator < Complex > {
+   public static abstract class AbstrComparator implements Comparator <
+      Complex > {
 
       /**
        * The default constructor.

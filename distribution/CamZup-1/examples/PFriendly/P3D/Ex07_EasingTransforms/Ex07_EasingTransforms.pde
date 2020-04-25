@@ -5,6 +5,7 @@ Zup3 rndr;
 Mesh3 mesh = new Mesh3();
 MeshEntity3 entity = new MeshEntity3();
 Vec3 mouse1 = new Vec3();
+
 MaterialSolid mat = new MaterialSolid()
   .setFill(#007fff)
   .setStroke(false);
@@ -47,7 +48,6 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
-
   Mesh3.cube(mesh);
   entity.append(mesh);
 }
@@ -79,7 +79,6 @@ void draw() {
 }
 
 void keyReleased() {
-
   if (keyCode == 48 || keyCode == 128) {
     rndr.defaultCamera();
   } else if (keyCode == 49 || keyCode == 129) {

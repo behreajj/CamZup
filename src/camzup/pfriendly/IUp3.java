@@ -189,8 +189,6 @@ public interface IUp3 extends IUp {
 
       this.hint(PConstants.DISABLE_DEPTH_TEST);
       this.hint(PConstants.DISABLE_DEPTH_MASK);
-      this.hint(PConstants.DISABLE_DEPTH_SORT);
-
       this.pushStyle();
 
       /* Draw corner. */
@@ -256,7 +254,6 @@ public interface IUp3 extends IUp {
       this.popStyle();
       this.hint(PConstants.ENABLE_DEPTH_TEST);
       this.hint(PConstants.ENABLE_DEPTH_MASK);
-      this.hint(PConstants.ENABLE_DEPTH_SORT);
    }
 
    /**
@@ -403,8 +400,8 @@ public interface IUp3 extends IUp {
     */
    default void moveTo ( final float x, final float y, final float z ) {
 
-      this.camera(x, y, z, this.getLookTargetX(), this.getLookTargetY(),
-         this.getLookTargetZ());
+      this.camera(x, y, z, this.getLookTargetX(), this.getLookTargetY(), this
+         .getLookTargetZ());
    }
 
    /**
@@ -442,9 +439,8 @@ public interface IUp3 extends IUp {
       }
 
       final float u = 1.0f - step;
-      this.moveTo(u * this.getLocX() + step * locNew.x,
-         u * this.getLocY() + step * locNew.y,
-         u * this.getLocZ() + step * locNew.z);
+      this.moveTo(u * this.getLocX() + step * locNew.x, u * this.getLocY()
+         + step * locNew.y, u * this.getLocZ() + step * locNew.z);
    }
 
    /**

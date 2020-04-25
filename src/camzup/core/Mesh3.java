@@ -110,7 +110,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return this mesh
     */
    @Experimental
-   @Chainable
+
    public Mesh3 calcNormals ( ) {
 
       this.normals = Vec3.resize(this.normals, this.coords.length);
@@ -165,7 +165,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return this mesh
     */
    @Experimental
-   @Chainable
+
    public Mesh3 clean ( ) {
 
       /* Transfer arrays to hash maps where the face index is the key. */
@@ -206,10 +206,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* Convert from sorted set to arrays. */
       final Vec3[] newCoords = coordsTree.toArray(new Vec3[coordsTree.size()]);
-      final Vec2[] newTexCoords
-         = texCoordsTree.toArray(new Vec2[texCoordsTree.size()]);
-      final Vec3[] newNormals
-         = normalsTree.toArray(new Vec3[normalsTree.size()]);
+      final Vec2[] newTexCoords = texCoordsTree.toArray(new Vec2[texCoordsTree
+         .size()]);
+      final Vec3[] newNormals = normalsTree.toArray(new Vec3[normalsTree
+         .size()]);
 
       for ( int i = 0; i < facesLen; ++i ) {
          final int[][] verts = this.faces[i];
@@ -281,7 +281,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the new face indices
     */
    @Experimental
-   @Chainable
+
    public Mesh3 extrudeEdge ( final int faceIdx, final int edgeIdx,
       final float amt ) {
 
@@ -358,14 +358,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       Vec2.add(vtOrigin, vtPerp, vtNewOrigin);
       Vec2.add(vtDest, vtPerp, vtNewDest);
 
-      final int[][][] faceNew
-         = { { { idxV0, idxVt0, idxVn1 }, { idxV1, idxVt1, idxVn1 },
-            { idxV2, idxVt2, idxVn1 }, { idxV3, idxVt3, idxVn1 } } };
+      final int[][][] faceNew = { { { idxV0, idxVt0, idxVn1 }, { idxV1, idxVt1,
+         idxVn1 }, { idxV2, idxVt2, idxVn1 }, { idxV3, idxVt3, idxVn1 } } };
 
-      this.coords
-         = Vec3.concat(this.coords, new Vec3[] { vNewOrigin, vNewDest });
-      this.texCoords
-         = Vec2.concat(this.texCoords, new Vec2[] { vtNewOrigin, vtNewDest });
+      this.coords = Vec3.concat(this.coords, new Vec3[] { vNewOrigin,
+         vNewDest });
+      this.texCoords = Vec2.concat(this.texCoords, new Vec2[] { vtNewOrigin,
+         vtNewDest });
       this.normals = Vec3.concat(this.normals, new Vec3[] { vnDiff });
       this.faces = Mesh.splice(this.faces, i + 1, 0, faceNew);
 
@@ -383,7 +382,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return this new face indices
     */
    @Experimental
-   @Chainable
+
    public Mesh3 extrudeFace ( final int faceIdx, final float amt ) {
 
       // QUERY Extrude by vertex normal, not by calculating center normal?
@@ -516,7 +515,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    @Experimental
    public Mesh3 extrudeFaces ( final float amt ) {
 
@@ -577,7 +576,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                this.coords[fDest[0]], this.texCoords[fDest[1]],
                this.normals[fDest[2]]);
 
-            if ( !result.contains(trial) ) {
+            // if ( !result.contains(trial) ) {
+            if ( result.indexOf(trial) < 0 ) {
                result.add(trial);
                trial = new Edge3();
             }
@@ -688,7 +688,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             trial.set(this.coords[f[0]], this.texCoords[f[1]],
                this.normals[f[2]]);
 
-            if ( !result.contains(trial) ) {
+            // if ( !result.contains(trial) ) {
+            if ( result.indexOf(trial) < 0 ) {
                result.add(trial);
                trial = new Vert3();
             }
@@ -721,7 +722,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return the new face indices
     */
-   @Chainable
+
    public Mesh3 insetFace ( final int faceIdx ) {
 
       return this.insetFace(faceIdx, 0.5f);
@@ -740,7 +741,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the new face indices
     */
    @Experimental
-   @Chainable
+
    public Mesh3 insetFace ( final int faceIdx, final float fac ) {
 
       if ( fac <= 0.0f ) { return this; }
@@ -819,10 +820,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int vtSubdivIdx = vtsOldLen + j;
          final int vnSubdivIdx = vnsOldLen + j;
 
-         fsNew[j] = new int[][] { { vCornerIdx, vtCornerIdx, vnCornerIdx },
-            { vertNext[0], vertNext[1], vertNext[2] },
-            { vsOldLen + k, vtsOldLen + k, vnsOldLen + k },
-            { vSubdivIdx, vtSubdivIdx, vnSubdivIdx } };
+         fsNew[j] = new int[][] { { vCornerIdx, vtCornerIdx, vnCornerIdx }, {
+            vertNext[0], vertNext[1], vertNext[2] }, { vsOldLen + k, vtsOldLen
+               + k, vnsOldLen + k }, { vSubdivIdx, vtSubdivIdx, vnSubdivIdx } };
 
          centerFace[j][0] = vSubdivIdx;
          centerFace[j][1] = vtSubdivIdx;
@@ -842,7 +842,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh3 insetFaces ( ) { return this.insetFaces(1); }
 
    /**
@@ -853,7 +853,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh3 insetFaces ( final int itr ) {
 
       return this.insetFaces(itr, 0.5f);
@@ -868,7 +868,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    @Experimental
    public Mesh3 insetFaces ( final int itr, final float fac ) {
 
@@ -910,7 +910,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @see Mesh3#calcDimensions(Mesh3, Vec3, Vec3, Vec3)
     */
-   @Chainable
+
    public Mesh3 reframe ( final Transform3 tr ) {
 
       tr.locPrev.set(tr.location);
@@ -948,7 +948,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh3 reverseEdge ( final int i, final int j ) {
 
       final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
@@ -971,7 +971,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh3 reverseFace ( final int i ) {
 
       final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
@@ -997,7 +997,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
     */
-   @Chainable
+
    public Mesh3 rotate ( final float radians, final Vec3 axis ) {
 
       final float cosa = Utils.cos(radians);
@@ -1019,7 +1019,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return the mesh
     */
-   @Chainable
+
    public Mesh3 rotate ( final Quaternion q ) {
 
       final int len0 = this.coords.length;
@@ -1040,7 +1040,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @see Vec3#rotateX(Vec3, float, Vec3)
     */
-   @Chainable
+
    public Mesh3 rotateX ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -1064,7 +1064,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @see Vec3#rotateY(Vec3, float, Vec3)
     */
-   @Chainable
+
    public Mesh3 rotateY ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -1088,7 +1088,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @see Vec3#rotateZ(Vec3, float, Vec3)
     */
-   @Chainable
+
    public Mesh3 rotateZ ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -1112,7 +1112,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @see Vec3#mul(Vec3, float, Vec3)
     */
-   @Chainable
+
    public Mesh3 scale ( final float scale ) {
 
       if ( scale == 0.0f ) { return this; }
@@ -1136,7 +1136,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @see Vec3#none(Vec3)
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     */
-   @Chainable
+
    public Mesh3 scale ( final Vec3 scale ) {
 
       if ( Vec3.none(scale) ) { return this; }
@@ -1160,7 +1160,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh3 set ( final int[][][] faces, final Vec3[] coords,
       final Vec2[] texCoords, final Vec3[] normals ) {
 
@@ -1179,7 +1179,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh3 set ( final Mesh2 source ) {
 
       /* Copy coordinates. */
@@ -1241,7 +1241,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh3 set ( final Mesh3 source ) {
 
       /* Copy coordinates. */
@@ -1306,7 +1306,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the new face indices
     */
    @Experimental
-   @Chainable
+
    public Mesh3 subdivFace ( final int faceIdx ) {
 
       return this.subdivFaceCentroid(faceIdx);
@@ -1323,7 +1323,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the new face indices
     */
    @Experimental
-   @Chainable
+
    public Mesh3 subdivFaceCentroid ( final int faceIdx ) {
 
       /* Validate face index, find face. */
@@ -1393,11 +1393,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          Vec3.normalize(vn, vn);
          /* @formatter:on */
 
-         fsNew[j]
-            = new int[][] { { vCentroidIdx, vtCentroidIdx, vnCentroidIdx },
-               { vsOldLen + j, vtsOldLen + j, vnsOldLen + j },
-               { vNextIdx, vtNextIdx, vnNextIdx },
-               { vsOldLen + k, vtsOldLen + k, vnsOldLen + k } };
+         fsNew[j] = new int[][] { { vCentroidIdx, vtCentroidIdx,
+            vnCentroidIdx }, { vsOldLen + j, vtsOldLen + j, vnsOldLen + j }, {
+               vNextIdx, vtNextIdx, vnNextIdx }, { vsOldLen + k, vtsOldLen + k,
+                  vnsOldLen + k } };
       }
 
       Vec3.div(vCentroid, faceLen, vCentroid);
@@ -1423,7 +1422,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the new face indices
     */
    @Experimental
-   @Chainable
+
    public Mesh3 subdivFaceFan ( final int faceIdx ) {
 
       final int facesLen = this.faces.length;
@@ -1459,10 +1458,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          Vec2.add(vtCentroid, vtCurr, vtCentroid);
          Vec3.add(vnCentroid, vnCurr, vnCentroid);
 
-         fsNew[j]
-            = new int[][] { { vCentroidIdx, vtCentroidIdx, vnCentroidIdx },
-               { vCurrIdx, vtCurrIdx, vnCurrIdx },
-               { vertNext[0], vertNext[1], vertNext[2] } };
+         fsNew[j] = new int[][] { { vCentroidIdx, vtCentroidIdx,
+            vnCentroidIdx }, { vCurrIdx, vtCurrIdx, vnCurrIdx }, { vertNext[0],
+               vertNext[1], vertNext[2] } };
       }
 
       Vec3.div(vCentroid, faceLen, vCentroid);
@@ -1489,7 +1487,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the new face indices
     */
    @Experimental
-   @Chainable
+
    public Mesh3 subdivFaceInscribe ( final int faceIdx ) {
 
       final int facesLen = this.faces.length;
@@ -1542,9 +1540,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int vSubdivIdx = vsOldLen + j;
          final int vtSubdivIdx = vtsOldLen + j;
          final int vnSubdivIdx = vnsOldLen + j;
-         fsNew[j] = new int[][] { { vSubdivIdx, vtSubdivIdx, vnSubdivIdx },
-            { vNextIdx, vtNextIdx, vnNextIdx },
-            { vsOldLen + k, vtsOldLen + k, vnsOldLen + k } };
+         fsNew[j] = new int[][] { { vSubdivIdx, vtSubdivIdx, vnSubdivIdx }, {
+            vNextIdx, vtNextIdx, vnNextIdx }, { vsOldLen + k, vtsOldLen + k,
+               vnsOldLen + k } };
 
          centerFace[j][0] = vSubdivIdx;
          centerFace[j][1] = vtSubdivIdx;
@@ -1564,7 +1562,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh3 subdivFaces ( ) { return this.subdivFaces(1); }
 
    /**
@@ -1574,7 +1572,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh3 subdivFaces ( final int itr ) {
 
       return this.subdivFacesCenter(itr);
@@ -1588,7 +1586,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh3 subdivFacesCenter ( final int itr ) {
 
       for ( int i = 0; i < itr; ++i ) {
@@ -1610,7 +1608,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh3 subdivFacesFan ( final int itr ) {
 
       for ( int i = 0; i < itr; ++i ) {
@@ -1632,7 +1630,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh3 subdivFacesInscribe ( final int itr ) {
 
       for ( int i = 0; i < itr; ++i ) {
@@ -1663,9 +1661,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
        * Append a comment listing the number of coordinates, texture
        * coordinates, normals and faces.
        */
-      objs.append("# v: ").append(coordsLen).append(", vt: ")
-         .append(texCoordsLen).append(", vn: ").append(normalsLen)
-         .append(", f: ").append(facesLen).append('\n').append('\n');
+      objs.append("# v: ").append(coordsLen).append(", vt: ").append(
+         texCoordsLen).append(", vn: ").append(normalsLen).append(", f: ")
+         .append(facesLen).append('\n').append('\n');
 
       /* Append name. */
       objs.append('o').append(' ').append(this.name).append('\n').append('\n');
@@ -1679,8 +1677,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* Write texture coordinates. */
       for ( int i = 0; i < texCoordsLen; ++i ) {
-         objs.append("vt ").append(this.texCoords[i].toObjString())
-            .append('\n');
+         objs.append("vt ").append(this.texCoords[i].toObjString()).append(
+            '\n');
       }
       objs.append('\n');
 
@@ -1723,7 +1721,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @see Mesh3#calcDimensions(Mesh3, Vec3, Vec3, Vec3)
     * @see Mesh3#translate(Vec3)
     */
-   @Chainable
+
    public Mesh3 toOrigin ( final Transform3 tr ) {
 
       final Vec3 lb = new Vec3();
@@ -1788,8 +1786,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       sb.append("coords: [ ");
 
       if ( this.coords != null ) {
-         final int len
-            = this.coords.length <= truncate ? this.coords.length : truncate;
+         final int len = this.coords.length <= truncate ? this.coords.length
+            : truncate;
          final int last = len - 1;
          for ( int i = 0; i < len; ++i ) {
             sb.append(this.coords[i].toString(places));
@@ -1816,8 +1814,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       sb.append(" ], ");
       sb.append("normals: [ ");
       if ( this.normals != null ) {
-         final int len
-            = this.normals.length <= truncate ? this.normals.length : truncate;
+         final int len = this.normals.length <= truncate ? this.normals.length
+            : truncate;
          final int last = len - 1;
          for ( int i = 0; i < len; ++i ) {
             sb.append(this.normals[i].toString(places));
@@ -1831,8 +1829,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       sb.append("faces: [ ");
       if ( this.faces != null ) {
          // sb.append('\n');
-         final int facesLen
-            = this.faces.length <= truncate ? this.faces.length : truncate;
+         final int facesLen = this.faces.length <= truncate ? this.faces.length
+            : truncate;
          final int facesLast = facesLen - 1;
 
          for ( int i = 0; i < facesLen; ++i ) {
@@ -1877,7 +1875,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @see Mat4#mulPoint(Mat4, Vec3, Vec3)
     */
-   @Chainable
+
    public Mesh3 transform ( final Mat4 m ) {
 
       final int len = this.coords.length;
@@ -1903,7 +1901,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    public Mesh3 transform ( final Transform3 tr ) {
 
       final int len = this.coords.length;
@@ -1923,7 +1921,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-   @Chainable
+
    public Mesh3 translate ( final Vec3 v ) {
 
       final int len = this.coords.length;
@@ -2058,7 +2056,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-   @Chainable
+
    @Experimental
    protected Mesh3 calcUvs ( ) {
 
@@ -2069,12 +2067,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final Vec2 vt = this.texCoords[i];
 
          final float azim = Utils.atan2(v.y, v.x);
-         final float incl = Utils
-            .asin(v.z * Utils.invSqrt(v.x * v.x + v.y * v.y + v.z * v.z));
+         final float incl = Utils.asin(v.z * Utils.invSqrt(v.x * v.x + v.y * v.y
+            + v.z * v.z));
 
          /* Simplification of the map function. */
-         vt.set(Utils.mod1(azim * IUtils.ONE_TAU),
-            ( IUtils.HALF_PI - incl ) * IUtils.ONE_PI);
+         vt.set(Utils.mod1(azim * IUtils.ONE_TAU), ( IUtils.HALF_PI - incl )
+            * IUtils.ONE_PI);
       }
 
       /* Assign coordinate index to UV index. */
@@ -2124,7 +2122,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @see Vec3#normalize(Vec3, Vec3)
     */
    @Experimental
-   @Chainable
+
    protected Mesh3 subdivEdge ( final int faceIndex, final int edgeIndex,
       final int cuts ) {
 
@@ -2177,14 +2175,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final Vec2 vt = new Vec2();
          final Vec3 vn = new Vec3();
 
-         v.set(u * vOrigin.x + step * vDest.x, u * vOrigin.y + step * vDest.y,
-            u * vOrigin.z + step * vDest.z);
+         v.set(u * vOrigin.x + step * vDest.x, u * vOrigin.y + step * vDest.y, u
+            * vOrigin.z + step * vDest.z);
 
-         vt.set(u * vtOrigin.x + step * vtDest.x,
-            u * vtOrigin.y + step * vtDest.y);
+         vt.set(u * vtOrigin.x + step * vtDest.x, u * vtOrigin.y + step
+            * vtDest.y);
 
-         vn.set(u * vnOrigin.x + step * vnDest.x,
-            u * vnOrigin.y + step * vnDest.y, u * vnOrigin.z + step * vnDest.z);
+         vn.set(u * vnOrigin.x + step * vnDest.x, u * vnOrigin.y + step
+            * vnDest.y, u * vnOrigin.z + step * vnDest.z);
          Vec3.normalize(vn, vn);
 
          vsNew[k] = v;
@@ -2295,13 +2293,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals[4].set(-1.0f, 0.0f, 0.0f);
       target.normals[5].set(0.0f, 1.0f, 0.0f);
 
-      target.faces = new int[][][] {
-         { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 }, { 4, 1, 0 } },
-         { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } },
-         { { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 }, { 0, 0, 2 } },
-         { { 4, 2, 3 }, { 5, 3, 3 }, { 1, 0, 3 }, { 0, 1, 3 } },
-         { { 0, 2, 4 }, { 1, 3, 4 }, { 3, 0, 4 }, { 2, 1, 4 } },
-         { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 }, { 6, 1, 5 } } };
+      target.faces = new int[][][] { { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 }, {
+         4, 1, 0 } }, { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } }, {
+            { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 }, { 0, 0, 2 } }, { { 4, 2, 3 },
+               { 5, 3, 3 }, { 1, 0, 3 }, { 0, 1, 3 } }, { { 0, 2, 4 }, { 1, 3,
+                  4 }, { 3, 0, 4 }, { 2, 1, 4 } }, { { 2, 2, 5 }, { 3, 3, 5 }, {
+                     7, 0, 5 }, { 6, 1, 5 } } };
 
       return target;
    }
@@ -2767,8 +2764,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3[] fromObjGroup ( final String[] lines,
       final boolean poolData ) {
 
-      // TODO: If this proves to be robust, then replace single fromObj with
-      // this.
+      // TODO: Is it possible to nest groups within groups? If so, the approach
+      // may need to be changed....
 
       String[] tokens;
       String[] faceTokens;
@@ -3075,8 +3072,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          current.coords = Vec3.concat(current.coords, vsCopy);
          current.texCoords = Vec2.concat(current.texCoords, vtsCopy);
          current.normals = Vec3.concat(current.normals, vnsCopy);
-         current.faces
-            = Mesh.splice(current.faces, current.faces.length, 0, fsCopy);
+         current.faces = Mesh.splice(current.faces, current.faces.length, 0,
+            fsCopy);
       }
 
       /* Convert dictionary values to an array; clean meshes of excess data. */
@@ -3172,25 +3169,22 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals[19].set(0.5773471f, -0.18759349f, 0.7946564f);
 
       target.faces = new int[][][] { { { 0, 2, 7 }, { 4, 4, 7 }, { 5, 0, 7 } },
-         { { 0, 6, 10 }, { 2, 8, 10 }, { 4, 4, 10 } },
-         { { 0, 10, 8 }, { 1, 12, 8 }, { 2, 8, 8 } },
-         { { 0, 14, 9 }, { 3, 16, 9 }, { 1, 12, 9 } },
-         { { 0, 18, 11 }, { 5, 20, 11 }, { 3, 16, 11 } },
-         { { 10, 1, 12 }, { 5, 0, 12 }, { 4, 4, 12 } },
-         { { 8, 5, 13 }, { 10, 1, 13 }, { 4, 4, 13 } },
-         { { 8, 5, 14 }, { 4, 4, 14 }, { 2, 8, 14 } },
-         { { 6, 9, 15 }, { 8, 5, 15 }, { 2, 8, 15 } },
-         { { 6, 9, 16 }, { 2, 8, 16 }, { 1, 12, 16 } },
-         { { 7, 13, 17 }, { 6, 9, 17 }, { 1, 12, 17 } },
-         { { 7, 13, 1 }, { 1, 12, 1 }, { 3, 16, 1 } },
-         { { 9, 17, 2 }, { 7, 13, 2 }, { 3, 16, 2 } },
-         { { 9, 17, 3 }, { 3, 16, 3 }, { 5, 20, 3 } },
-         { { 10, 21, 4 }, { 9, 17, 4 }, { 5, 20, 4 } },
-         { { 11, 19, 5 }, { 9, 17, 5 }, { 10, 21, 5 } },
-         { { 11, 3, 6 }, { 10, 1, 6 }, { 8, 5, 6 } },
-         { { 11, 7, 18 }, { 8, 5, 18 }, { 6, 9, 18 } },
-         { { 11, 11, 0 }, { 6, 9, 0 }, { 7, 13, 0 } },
-         { { 11, 15, 19 }, { 7, 13, 19 }, { 9, 17, 19 } } };
+         { { 0, 6, 10 }, { 2, 8, 10 }, { 4, 4, 10 } }, { { 0, 10, 8 }, { 1, 12,
+            8 }, { 2, 8, 8 } }, { { 0, 14, 9 }, { 3, 16, 9 }, { 1, 12, 9 } }, {
+               { 0, 18, 11 }, { 5, 20, 11 }, { 3, 16, 11 } }, { { 10, 1, 12 }, {
+                  5, 0, 12 }, { 4, 4, 12 } }, { { 8, 5, 13 }, { 10, 1, 13 }, {
+                     4, 4, 13 } }, { { 8, 5, 14 }, { 4, 4, 14 }, { 2, 8, 14 } },
+         { { 6, 9, 15 }, { 8, 5, 15 }, { 2, 8, 15 } }, { { 6, 9, 16 }, { 2, 8,
+            16 }, { 1, 12, 16 } }, { { 7, 13, 17 }, { 6, 9, 17 }, { 1, 12,
+               17 } }, { { 7, 13, 1 }, { 1, 12, 1 }, { 3, 16, 1 } }, { { 9, 17,
+                  2 }, { 7, 13, 2 }, { 3, 16, 2 } }, { { 9, 17, 3 }, { 3, 16,
+                     3 }, { 5, 20, 3 } }, { { 10, 21, 4 }, { 9, 17, 4 }, { 5,
+                        20, 4 } }, { { 11, 19, 5 }, { 9, 17, 5 }, { 10, 21,
+                           5 } }, { { 11, 3, 6 }, { 10, 1, 6 }, { 8, 5, 6 } }, {
+                              { 11, 7, 18 }, { 8, 5, 18 }, { 6, 9, 18 } }, { {
+                                 11, 11, 0 }, { 6, 9, 0 }, { 7, 13, 0 } }, { {
+                                    11, 15, 19 }, { 7, 13, 19 }, { 9, 17,
+                                       19 } } };
 
       return target;
    }
@@ -3261,13 +3255,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals[7].set(-0.57735026f, -0.57735026f, -0.57735026f);
 
       target.faces = new int[][][] { { { 0, 2, 0 }, { 1, 1, 0 }, { 4, 0, 0 } },
-         { { 1, 2, 3 }, { 3, 1, 3 }, { 4, 0, 3 } },
-         { { 3, 2, 1 }, { 2, 1, 1 }, { 4, 0, 1 } },
-         { { 2, 2, 2 }, { 0, 1, 2 }, { 4, 0, 2 } },
-         { { 2, 2, 4 }, { 3, 1, 4 }, { 5, 0, 4 } },
-         { { 3, 2, 5 }, { 1, 1, 5 }, { 5, 0, 5 } },
-         { { 1, 2, 6 }, { 0, 1, 6 }, { 5, 0, 6 } },
-         { { 0, 2, 7 }, { 2, 1, 7 }, { 5, 0, 7 } } };
+         { { 1, 2, 3 }, { 3, 1, 3 }, { 4, 0, 3 } }, { { 3, 2, 1 }, { 2, 1, 1 },
+            { 4, 0, 1 } }, { { 2, 2, 2 }, { 0, 1, 2 }, { 4, 0, 2 } }, { { 2, 2,
+               4 }, { 3, 1, 4 }, { 5, 0, 4 } }, { { 3, 2, 5 }, { 1, 1, 5 }, { 5,
+                  0, 5 } }, { { 1, 2, 6 }, { 0, 1, 6 }, { 5, 0, 6 } }, { { 0, 2,
+                     7 }, { 2, 1, 7 }, { 5, 0, 7 } } };
 
       return target;
    }
@@ -3297,8 +3289,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int vtsLen = vtsSource.length;
 
       final Vec2[] vsTarget = target.coords = Vec2.resize(target.coords, vsLen);
-      final Vec2[] vtsTarget
-         = target.texCoords = Vec2.resize(target.texCoords, vtsLen);
+      final Vec2[] vtsTarget = target.texCoords = Vec2.resize(target.texCoords,
+         vtsLen);
 
       /* Copy texture coordinates. */
       for ( int i = 0; i < vtsLen; ++i ) {
@@ -3382,8 +3374,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals = Vec3.resize(target.normals, 1);
       Vec3.up(target.normals[0]);
 
-      target.faces = new int[][][] {
-         { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 }, { 3, 3, 0 } } };
+      target.faces = new int[][][] { { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 }, {
+         3, 3, 0 } } };
 
       return target;
    }
@@ -3424,9 +3416,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals[3].set(0.8164966f, 0.47140453f, 0.33333333f);
 
       target.faces = new int[][][] { { { 0, 0, 0 }, { 2, 2, 0 }, { 1, 1, 0 } },
-         { { 0, 2, 1 }, { 1, 1, 1 }, { 3, 0, 1 } },
-         { { 0, 1, 3 }, { 3, 0, 3 }, { 2, 2, 3 } },
-         { { 1, 2, 2 }, { 2, 1, 2 }, { 3, 0, 2 } } };
+         { { 0, 2, 1 }, { 1, 1, 1 }, { 3, 0, 1 } }, { { 0, 1, 3 }, { 3, 0, 3 },
+            { 2, 2, 3 } }, { { 1, 2, 2 }, { 2, 1, 2 }, { 3, 0, 2 } } };
 
       return target;
    }
@@ -3678,8 +3669,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int trgLen = fsSrcLen * vcount;
 
       final Vec3[] vsTrg = target.coords = Vec3.resize(target.coords, trgLen);
-      final Vec2[] vtsTrg
-         = target.texCoords = Vec2.resize(target.texCoords, trgLen);
+      final Vec2[] vtsTrg = target.texCoords = Vec2.resize(target.texCoords,
+         trgLen);
       // final Vec3[] vnsTrg = target.normals = Vec3.resize(
       // target.normals, trgLen);
       final int[][][] fsTrg = target.faces = new int[fsSrcLen][vcount][3];
@@ -3711,11 +3702,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             // final Vec3 vnaSrc = vnsSrc[a[2]];
             // final Vec3 vnbSrc = vnsSrc[b[2]];
 
-            vsTrg[k].set(u * vaSrc.x + t * vbSrc.x, u * vaSrc.y + t * vbSrc.y,
-               u * vaSrc.z + t * vbSrc.z);
+            vsTrg[k].set(u * vaSrc.x + t * vbSrc.x, u * vaSrc.y + t * vbSrc.y, u
+               * vaSrc.z + t * vbSrc.z);
 
-            vtsTrg[k].set(u * vtaSrc.x + t * vtbSrc.x,
-               u * vtaSrc.y + t * vtbSrc.y);
+            vtsTrg[k].set(u * vtaSrc.x + t * vtbSrc.x, u * vtaSrc.y + t
+               * vtbSrc.y);
 
             // vnsTrg[k].set(
             // u * vnaSrc.x + t * vnbSrc.x,
@@ -3862,8 +3853,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          /* Loop over coordinates and normals. */
          for ( int j = 0; j < lons; ++j, ++k0 ) {
-            final Vec3 nrm
-               = vns[k0].set(cosPhi * costs[j], cosPhi * sints[j], sinPhi);
+            final Vec3 nrm = vns[k0].set(cosPhi * costs[j], cosPhi * sints[j],
+               sinPhi);
             Vec3.mul(nrm, 0.5f, vs[k0]);
          }
 
@@ -4058,8 +4049,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* Validate arguments. */
       final int sec = sectors < 3 ? 3 : sectors;
-      final float rad
-         = radius < IUtils.DEFAULT_EPSILON ? IUtils.DEFAULT_EPSILON : radius;
+      final float rad = radius < IUtils.DEFAULT_EPSILON ? IUtils.DEFAULT_EPSILON
+         : radius;
 
       /* Normalize forward. */
       final float mInv0 = Utils.invSqrtUnchecked(m0);
@@ -4078,8 +4069,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       float z1 = refx * ky - refy * kx;
 
       /* Forward and up are parallel if the cross product is zero. */
-      if ( Utils.approx(x1, 0.0f) && Utils.approx(y1, 0.0f)
-         && Utils.approx(z1, 0.0f) ) {
+      if ( Utils.approx(x1, 0.0f) && Utils.approx(y1, 0.0f) && Utils.approx(z1,
+         0.0f) ) {
 
          /*
           * If forward and up are parallel, assume that the world's up direction
@@ -4164,8 +4155,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
           * multiplying by the forward axis. It should not be necessary to
           * normalize the normal.
           */
-         final Vec3 vn = vns[i].set(ix * cosa + jx * sina,
-            iy * cosa + jy * sina, iz * cosa + jz * sina);
+         final Vec3 vn = vns[i].set(ix * cosa + jx * sina, iy * cosa + jy
+            * sina, iz * cosa + jz * sina);
 
          /*
           * Keep separate in case you want to try tapering the cylinder by

@@ -404,8 +404,8 @@ public interface IYup2 extends IUp {
       final float cosa = Utils.scNorm(nrm);
       final float sina = Utils.scNorm(nrm - 0.25f);
 
-      this.moveTo(this.getLocX() + cosa * x - sina * y,
-         this.getLocY() + cosa * y + sina * x);
+      this.moveTo(this.getLocX() + cosa * x - sina * y, this.getLocY() + cosa
+         * y + sina * x);
    }
 
    /**
@@ -472,8 +472,8 @@ public interface IYup2 extends IUp {
       }
 
       final float u = 1.0f - step;
-      this.moveTo(u * this.getLocX() + step * locNew.x,
-         u * this.getLocY() + step * locNew.y);
+      this.moveTo(u * this.getLocX() + step * locNew.x, u * this.getLocY()
+         + step * locNew.y);
    }
 
    /**
@@ -640,8 +640,8 @@ public interface IYup2 extends IUp {
     */
    default void rollTo ( final float radians ) {
 
-      this.camera(this.getLocX(), this.getLocY(), radians, this.getZoomX(),
-         this.getZoomY());
+      this.camera(this.getLocX(), this.getLocY(), radians, this.getZoomX(), this
+         .getZoomY());
    }
 
    /**
@@ -1060,8 +1060,8 @@ public interface IYup2 extends IUp {
       }
 
       final float u = 1.0f - step;
-      this.zoomTo(u * this.getZoomX() + step * scaleNew.x,
-         u * this.getZoomY() + step * scaleNew.y);
+      this.zoomTo(u * this.getZoomX() + step * scaleNew.x, u * this.getZoomY()
+         + step * scaleNew.y);
    }
 
    /**

@@ -50,10 +50,10 @@ public interface ISvgWritable {
     */
    default String toSvgString ( ) {
 
-      return this.toSvgString(
-         Integer.toHexString(System.identityHashCode(this)),
-         ISvgWritable.DEFAULT_SVG_X_ORIGIN, ISvgWritable.DEFAULT_SVG_Y_ORIGIN,
-         ISvgWritable.DEFAULT_SVG_WIDTH, ISvgWritable.DEFAULT_SVG_HEIGHT);
+      return this.toSvgString(Integer.toHexString(System.identityHashCode(
+         this)), ISvgWritable.DEFAULT_SVG_X_ORIGIN,
+         ISvgWritable.DEFAULT_SVG_Y_ORIGIN, ISvgWritable.DEFAULT_SVG_WIDTH,
+         ISvgWritable.DEFAULT_SVG_HEIGHT);
    }
 
    /**

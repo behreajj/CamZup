@@ -9,8 +9,8 @@ import java.util.List;
  * An entity which contains a transform that is applied to a list of
  * meshes. The meshes may references a list of materials by index.
  */
-public class MeshEntity3 extends Entity3
-   implements Iterable < Mesh3 >, IVolume3 {
+public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
+   IVolume3 {
 
    /**
     * The list of meshes held by the entity.
@@ -89,7 +89,7 @@ public class MeshEntity3 extends Entity3
     *
     * @return this mesh entity
     */
-   @Chainable
+
    public MeshEntity3 append ( final Mesh3 mesh ) {
 
       if ( mesh != null ) { this.meshes.add(mesh); }
@@ -103,7 +103,7 @@ public class MeshEntity3 extends Entity3
     *
     * @return this mesh entity
     */
-   @Chainable
+
    public MeshEntity3 appendAll ( final Collection < Mesh3 > meshes ) {
 
       final Iterator < Mesh3 > itr = meshes.iterator();
@@ -120,7 +120,7 @@ public class MeshEntity3 extends Entity3
     *
     * @return this mesh entity
     */
-   @Chainable
+
    public MeshEntity3 appendAll ( final Mesh3... meshes ) {
 
       final int len = meshes.length;
@@ -168,7 +168,7 @@ public class MeshEntity3 extends Entity3
     * @return this entity
     */
    @Override
-   @Chainable
+
    public MeshEntity3 scaleBy ( final float scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -186,7 +186,7 @@ public class MeshEntity3 extends Entity3
     * @return the entity
     */
    @Override
-   @Chainable
+
    public MeshEntity3 scaleBy ( final Vec3 scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -201,7 +201,7 @@ public class MeshEntity3 extends Entity3
     * @return this entity
     */
    @Override
-   @Chainable
+
    public MeshEntity3 scaleTo ( final float scaleNew ) {
 
       this.transform.scaleTo(scaleNew);
@@ -219,7 +219,7 @@ public class MeshEntity3 extends Entity3
     * @return this entity
     */
    @Override
-   @Chainable
+
    public MeshEntity3 scaleTo ( final Vec3 scaleNew ) {
 
       this.transform.scaleTo(scaleNew);
@@ -238,7 +238,7 @@ public class MeshEntity3 extends Entity3
     * @return this entity
     */
    @Override
-   @Chainable
+
    public MeshEntity3 scaleTo ( final Vec3 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);

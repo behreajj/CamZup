@@ -12,7 +12,7 @@ public interface ISpatial2 {
     *
     * @return this object
     */
-   @Chainable
+
    ISpatial2 moveBy ( final Vec2 dir );
 
    /**
@@ -22,7 +22,7 @@ public interface ISpatial2 {
     *
     * @return this object
     */
-   @Chainable
+
    ISpatial2 moveTo ( final Vec2 locNew );
 
    /**
@@ -33,7 +33,7 @@ public interface ISpatial2 {
     *
     * @return this object
     */
-   @Chainable
+
    ISpatial2 moveTo ( final Vec2 locNew, final float step );
 
    /**
@@ -43,7 +43,7 @@ public interface ISpatial2 {
     *
     * @return this object
     */
-   @Chainable
+
    ISpatial2 rotateTo ( final float rotNew );
 
    /**
@@ -54,7 +54,7 @@ public interface ISpatial2 {
     *
     * @return this object
     */
-   @Chainable
+
    ISpatial2 rotateTo ( final float rotNew, final float step );
 
    /**
@@ -64,7 +64,7 @@ public interface ISpatial2 {
     *
     * @return this object
     */
-   @Chainable
+
    ISpatial2 rotateZ ( final float radians );
 
 }

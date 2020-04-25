@@ -94,8 +94,8 @@ public class Ray3 extends Ray {
        */
 
       int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL
-         ^ ( this.origin == null ? 0 : this.origin.hashCode() );
+      hash = hash * IUtils.HASH_MUL ^ ( this.origin == null ? 0 : this.origin
+         .hashCode() );
       // hash = (hash * HASH_MUL)
       // ^ (this.dir == null ? 0 : this.dir.hashCode());
       return hash;

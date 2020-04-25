@@ -12,7 +12,7 @@ public interface ISpatial3 {
     *
     * @return this object
     */
-   @Chainable
+
    ISpatial3 moveBy ( final Vec3 dir );
 
    /**
@@ -22,7 +22,7 @@ public interface ISpatial3 {
     *
     * @return this object
     */
-   @Chainable
+
    ISpatial3 moveTo ( final Vec3 locNew );
 
    /**
@@ -33,7 +33,7 @@ public interface ISpatial3 {
     *
     * @return this object
     */
-   @Chainable
+
    ISpatial3 moveTo ( final Vec3 locNew, final float step );
 
    /**
@@ -43,7 +43,7 @@ public interface ISpatial3 {
     *
     * @return this object
     */
-   @Chainable
+
    ISpatial3 rotateBy ( final Quaternion rot );
 
    /**
@@ -53,7 +53,7 @@ public interface ISpatial3 {
     *
     * @return this object
     */
-   @Chainable
+
    ISpatial3 rotateTo ( final Quaternion rotNew );
 
    /**
@@ -64,7 +64,7 @@ public interface ISpatial3 {
     *
     * @return this object
     */
-   @Chainable
+
    ISpatial3 rotateTo ( final Quaternion rotNew, final float step );
 
    /**
@@ -74,7 +74,7 @@ public interface ISpatial3 {
     *
     * @return this object
     */
-   @Chainable
+
    ISpatial3 rotateX ( final float radians );
 
    /**
@@ -84,7 +84,7 @@ public interface ISpatial3 {
     *
     * @return this object
     */
-   @Chainable
+
    ISpatial3 rotateY ( final float radians );
 
    /**
@@ -94,7 +94,7 @@ public interface ISpatial3 {
     *
     * @return this object
     */
-   @Chainable
+
    ISpatial3 rotateZ ( final float radians );
 
 }

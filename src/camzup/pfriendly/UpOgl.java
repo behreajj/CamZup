@@ -380,7 +380,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void box ( final float w, final float h, final float d ) {
 
-      PApplet.showMethodWarning("box");
+      this.box(w, h, d);
    }
 
    /**
@@ -483,9 +483,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void colorMode ( final int mode, final float max1, final float max2,
       final float max3, final float aMax ) {
 
-      super.colorMode(mode, max1 < 1.0f ? 1.0f : max1,
-         max2 < 1.0f ? 1.0f : max2, max3 < 1.0f ? 1.0f : max3,
-         aMax < 1.0f ? 1.0f : aMax);
+      super.colorMode(mode, max1 < 1.0f ? 1.0f : max1, max2 < 1.0f ? 1.0f
+         : max2, max3 < 1.0f ? 1.0f : max3, aMax < 1.0f ? 1.0f : aMax);
 
       this.invColorModeX = 1.0f / this.colorModeX;
       this.invColorModeY = 1.0f / this.colorModeY;
@@ -647,12 +646,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.textureMode = PConstants.NORMAL;
       this.textureWrap = PConstants.REPEAT;
 
-      this.ambient(this.colorModeX * IUpOgl.DEFAULT_AMB_R,
-         this.colorModeY * IUpOgl.DEFAULT_AMB_G,
-         this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
-      this.specular(this.colorModeX * IUpOgl.DEFAULT_SPEC_R,
-         this.colorModeY * IUpOgl.DEFAULT_SPEC_G,
-         this.colorModeZ * IUpOgl.DEFAULT_SPEC_B);
+      this.ambient(this.colorModeX * IUpOgl.DEFAULT_AMB_R, this.colorModeY
+         * IUpOgl.DEFAULT_AMB_G, this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
+      this.specular(this.colorModeX * IUpOgl.DEFAULT_SPEC_R, this.colorModeY
+         * IUpOgl.DEFAULT_SPEC_G, this.colorModeZ * IUpOgl.DEFAULT_SPEC_B);
       this.emissive(0.0f, 0.0f, 0.0f);
       this.shininess(0.0f);
 
@@ -678,11 +675,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * of their distances to the camera. Note that this is different from
     * disabling the depth test. The depth test is still applied, as long as
     * the DISABLE_DEPTH_TEST hint is not called, but the depth values of the
-    * objects are not recorded. This is useful when drawing a semi-transparent
-    * 3D object without depth sorting, in order to avoid visual glitches due
-    * the faces of the object being at different distances from the camera,
-    * but still having the object properly occluded by the rest of the objects
-    * in the scene.
+    * objects are not recorded.
     */
    @Experimental
    public void disableDepthMask ( ) {
@@ -698,12 +691,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * <br>
     * Disable the z buffer, allowing you to draw on top of everything at will.
     * When depth testing is disabled, items will be drawn to the screen
-    * sequentially, like a painting. This hint is most often used to draw in
-    * 3D, then draw in 2D on top of it (for instance, to draw GUI controls in
-    * 2D on top of a 3D interface). When called, this will also clear the
-    * depth buffer. Restore the default with hint(ENABLE_DEPTH_TEST), but note
-    * that with the depth buffer cleared, any 3D drawing that happens later in
-    * will ignore existing shapes on the screen.
+    * sequentially, like a painting. When called, this will also clear the
+    * depth buffer.
     */
    @Experimental
    public void disableDepthTest ( ) {
@@ -724,9 +713,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * were drawn. Otherwise, glitches such as the stroke lines being drawn on
     * top of the interior of all the shapes will occur. However, this hint can
     * make rendering substantially slower, so it is recommended to use it only
-    * when drawing a small amount of shapes. For drawing two-dimensional
-    * scenes, use the P2D renderer instead, which doesn't need the hint to
-    * properly stack shapes and their strokes.
+    * when drawing a small amount of shapes.
     */
    @Experimental
    public void disableOptimizedStroke ( ) {
@@ -769,8 +756,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Attempts to make the hint system more convenient to work with. From the
-    * reference.
+    * Attempts to make the hint system more convenient to work with.
     */
    @Experimental
    public void enableOptimizedStroke ( ) {
@@ -1052,8 +1038,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float x2, final float y2 ) {
 
       final boolean useImg = this.textureMode == PConstants.IMAGE;
-      this.imageImpl(img, x1, y1, x2, y2, 0.0f, 0.0f, 0.0f,
-         useImg ? img.width : 1.0f, useImg ? img.height : 1.0f);
+      this.imageImpl(img, x1, y1, x2, y2, 0.0f, 0.0f, 0.0f, useImg ? img.width
+         : 1.0f, useImg ? img.height : 1.0f);
    }
 
    /**
@@ -1318,12 +1304,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       /* Never use defCameraXXX values. They are not actual constants. */
 
       final float zoomInv = zoom == 0.0f ? 1.0f : 1.0f / zoom;
-      final float right = this.width < 128 ? IUp.DEFAULT_HALF_WIDTH
-         : zoomInv * this.width * 0.5f;
+      final float right = this.width < 128 ? IUp.DEFAULT_HALF_WIDTH : zoomInv
+         * this.width * 0.5f;
       final float left = -right;
 
-      final float top = this.height < 128 ? IUp.DEFAULT_HALF_HEIGHT
-         : zoomInv * this.height * 0.5f;
+      final float top = this.height < 128 ? IUp.DEFAULT_HALF_HEIGHT : zoomInv
+         * this.height * 0.5f;
       final float bottom = -top;
 
       this.ortho(left, right, bottom, top);
@@ -1716,8 +1702,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void rotateZ ( final float radians ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      PMatAux.compoundRotateZ(Utils.scNorm(normRad),
-         Utils.scNorm(normRad - 0.25f), this.modelview, this.modelviewInv);
+      PMatAux.compoundRotateZ(Utils.scNorm(normRad), Utils.scNorm(normRad
+         - 0.25f), this.modelview, this.modelviewInv);
       PMatAux.mul(this.projection, this.modelview, this.projmodelview);
    }
 
@@ -2776,8 +2762,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          this.calcAi = argb >> 0x18 & 0xff;
          this.calcColor = argb;
       } else {
-         this.calcAi = ( int ) ( ( argb >> 0x18 & 0xff )
-            * Utils.clamp01(alpha * this.invColorModeA) );
+         this.calcAi = ( int ) ( ( argb >> 0x18 & 0xff ) * Utils.clamp01(alpha
+            * this.invColorModeA) );
          this.calcColor = this.calcAi << 0x18 | argb & 0xffffff;
       }
 
@@ -3016,8 +3002,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        * density monitor.
        */
       final int pd = img.pixelDensity;
-      this.imageImpl(img, x1, y1, x2, y2, 0.0f, u1 * pd, v1 * pd, u2 * pd,
-         v2 * pd);
+      this.imageImpl(img, x1, y1, x2, y2, 0.0f, u1 * pd, v1 * pd, u2 * pd, v2
+         * pd);
 
       this.textureMode = savedTextureMode;
    }
@@ -3636,9 +3622,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float zSource, final Vec3 target ) {
 
       this.screen1s(xSource, ySource, zSource, target);
-      return target.set(this.width * ( 1.0f + target.x ) * 0.5f,
-         this.height * ( 1.0f - ( 1.0f + target.y ) * 0.5f ),
-         ( 1.0f + target.z ) * 0.5f);
+      return target.set(this.width * ( 1.0f + target.x ) * 0.5f, this.height
+         * ( 1.0f - ( 1.0f + target.y ) * 0.5f ), ( 1.0f + target.z ) * 0.5f);
    }
 
    /**

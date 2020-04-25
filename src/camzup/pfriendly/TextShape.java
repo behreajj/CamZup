@@ -66,8 +66,8 @@ public abstract class TextShape {
    public static CurveEntity2[] glyphCurve ( final PFont pfont,
       final float detail, final boolean separate, final String str ) {
 
-      return TextShape.processGlyphCe(pfont, detail, separate,
-         str.toCharArray());
+      return TextShape.processGlyphCe(pfont, detail, separate, str
+         .toCharArray());
    }
 
    /**
@@ -110,8 +110,8 @@ public abstract class TextShape {
       final PFont pfont, final float detail, final boolean separate,
       final String str ) {
 
-      return TextShape.processGlyphCe(rndr.g2, pfont, detail, separate,
-         str.toCharArray());
+      return TextShape.processGlyphCe(rndr.g2, pfont, detail, separate, str
+         .toCharArray());
    }
 
    /**
@@ -145,8 +145,8 @@ public abstract class TextShape {
    public static MeshEntity2[] glyphMesh ( final PFont pfont,
       final float detail, final boolean separate, final String str ) {
 
-      return TextShape.processGlyphMe(pfont, detail, separate,
-         str.toCharArray());
+      return TextShape.processGlyphMe(pfont, detail, separate, str
+         .toCharArray());
    }
 
    /**
@@ -306,8 +306,8 @@ public abstract class TextShape {
    @SuppressWarnings ( "null" )
    protected static List < Curve2 > processGlyphCurve ( final Font font,
       final FontRenderContext frc, final AffineTransform transform,
-      final float detail, final char[] characters,
-      final List < Curve2 > curves ) {
+      final float detail, final char[] characters, final List <
+         Curve2 > curves ) {
 
       final GlyphVector gv = font.createGlyphVector(frc, characters);
       final Shape shp = gv.getOutline();
@@ -319,9 +319,8 @@ public abstract class TextShape {
        * and rear-handles share a mid point; the 'pen' draws a curved line with
        * different fore- and rear-handles; the pen lifts and stops drawing.
        */
-      final PathIterator itr
-         = detail < IUtils.DEFAULT_EPSILON ? shp.getPathIterator(transform)
-            : shp.getPathIterator(transform, detail);
+      final PathIterator itr = detail < IUtils.DEFAULT_EPSILON ? shp
+         .getPathIterator(transform) : shp.getPathIterator(transform, detail);
 
       /*
        * A double precision array is filled with values by the iterator when
@@ -572,8 +571,8 @@ public abstract class TextShape {
    @SuppressWarnings ( "null" )
    protected static List < Mesh2 > processGlyphMesh ( final Font font,
       final FontRenderContext frc, final AffineTransform transform,
-      final float detail, final char[] characters,
-      final List < Mesh2 > meshes ) {
+      final float detail, final char[] characters, final List <
+         Mesh2 > meshes ) {
 
       final GlyphVector gv = font.createGlyphVector(frc, characters);
       final Shape shp = gv.getOutline();
@@ -654,8 +653,8 @@ public abstract class TextShape {
                   f[i][0] = i;
                   f[i][1] = i;
                   final Vec2 v = vs[i];
-                  vts[i] = new Vec2( ( v.x - lbx ) * xInv,
-                     1.0f - ( v.y - lby ) * yInv);
+                  vts[i] = new Vec2( ( v.x - lbx ) * xInv, 1.0f - ( v.y - lby )
+                     * yInv);
                }
                f[len][0] = 0;
                f[len][1] = 0;

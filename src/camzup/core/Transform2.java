@@ -141,7 +141,7 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-   @Chainable
+
    public Transform2 flipX ( ) {
 
       this.scalePrev.set(this.scale);
@@ -155,7 +155,7 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-   @Chainable
+
    public Transform2 flipY ( ) {
 
       this.scalePrev.set(this.scale);
@@ -276,10 +276,10 @@ public class Transform2 extends Transform {
    @Override
    public int hashCode ( ) {
 
-      return ( ( IUtils.MUL_BASE
-         ^ ( this.location == null ? 0 : this.location.hashCode() ) )
-         * IUtils.HASH_MUL ^ Float.floatToIntBits(this.rotation) )
-         * IUtils.HASH_MUL ^ ( this.scale == null ? 0 : this.scale.hashCode() );
+      return ( ( IUtils.MUL_BASE ^ ( this.location == null ? 0 : this.location
+         .hashCode() ) ) * IUtils.HASH_MUL ^ Float.floatToIntBits(
+            this.rotation) ) * IUtils.HASH_MUL ^ ( this.scale == null ? 0
+               : this.scale.hashCode() );
    }
 
    /**
@@ -319,8 +319,8 @@ public class Transform2 extends Transform {
       /* Normalized lerp. */
       Vec2.normalize(this.right, this.right);
       final float u = 1.0f - step;
-      this.forward.set(u * this.forward.x + step * this.right.x,
-         u * this.forward.y + step * this.right.y);
+      this.forward.set(u * this.forward.x + step * this.right.x, u
+         * this.forward.y + step * this.right.y);
       Vec2.normalize(this.forward, this.forward);
 
       /*
@@ -348,7 +348,7 @@ public class Transform2 extends Transform {
     *
     * @see Transform2#moveByGlobal(Vec2)
     */
-   @Chainable
+
    public Transform2 moveBy ( final Vec2 dir ) {
 
       return this.moveByGlobal(dir);
@@ -363,7 +363,7 @@ public class Transform2 extends Transform {
     *
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   @Chainable
+
    public Transform2 moveByGlobal ( final Vec2 dir ) {
 
       this.locPrev.set(this.location);
@@ -386,7 +386,7 @@ public class Transform2 extends Transform {
     * @see Vec2#mul(Vec2, Vec2, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   @Chainable
+
    public Transform2 moveByLocal ( final Vec2 dir ) {
 
       this.locPrev.set(this.location);
@@ -404,7 +404,7 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-   @Chainable
+
    public Transform2 moveTo ( final Vec2 locNew ) {
 
       this.locPrev.set(this.location);
@@ -422,7 +422,7 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-   @Chainable
+
    public Transform2 moveTo ( final Vec2 locNew, final float step ) {
 
       return this.moveTo(locNew, step, Transform2.EASING.loc);
@@ -440,7 +440,7 @@ public class Transform2 extends Transform {
     *
     * @see Vec2.AbstrEasing#apply(Vec2, Vec2, Float, Vec2)
     */
-   @Chainable
+
    public Transform2 moveTo ( final Vec2 locNew, final float step,
       final Vec2.AbstrEasing easingFunc ) {
 
@@ -456,7 +456,7 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-   @Chainable
+
    public Transform2 reset ( ) {
 
       this.locPrev.reset();
@@ -482,7 +482,7 @@ public class Transform2 extends Transform {
     *
     * @see Transform2#updateAxes()
     */
-   @Chainable
+
    public Transform2 rotateTo ( final float rotNew ) {
 
       this.rotPrev = this.rotation;
@@ -500,7 +500,7 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-   @Chainable
+
    public Transform2 rotateTo ( final float radians, final float step ) {
 
       return this.rotateTo(radians, step, Transform2.EASING.rot);
@@ -518,7 +518,7 @@ public class Transform2 extends Transform {
     *
     * @see Transform2#updateAxes()
     */
-   @Chainable
+
    public Transform2 rotateTo ( final float radians, final float step,
       final Utils.PeriodicEasing easingFunc ) {
 
@@ -539,7 +539,7 @@ public class Transform2 extends Transform {
     *
     * @see Transform2#updateAxes()
     */
-   @Chainable
+
    public Transform2 rotateZ ( final float radians ) {
 
       this.rotPrev = this.rotation;
@@ -557,7 +557,7 @@ public class Transform2 extends Transform {
     *
     * @see Vec2#mul(Vec2, float, Vec2)
     */
-   @Chainable
+
    public Transform2 scaleBy ( final float scalar ) {
 
       if ( scalar != 0.0f ) {
@@ -577,7 +577,7 @@ public class Transform2 extends Transform {
     * @see Vec2#all(Vec2)
     * @see Vec2#mul(Vec2, Vec2, Vec2)
     */
-   @Chainable
+
    public Transform2 scaleBy ( final Vec2 nonUniformScale ) {
 
       if ( Vec2.all(nonUniformScale) ) {
@@ -594,7 +594,7 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-   @Chainable
+
    public Transform2 scaleTo ( final float scalar ) {
 
       if ( scalar != 0.0f ) {
@@ -613,7 +613,7 @@ public class Transform2 extends Transform {
     *
     * @see Vec2#all(Vec2)
     */
-   @Chainable
+
    public Transform2 scaleTo ( final Vec2 scaleNew ) {
 
       if ( Vec2.all(scaleNew) ) {
@@ -634,7 +634,7 @@ public class Transform2 extends Transform {
     *
     * @see Vec2#all(Vec2)
     */
-   @Chainable
+
    public Transform2 scaleTo ( final Vec2 scaleNew, final float step ) {
 
       if ( Vec2.all(scaleNew) ) {
@@ -656,7 +656,7 @@ public class Transform2 extends Transform {
     * @see Vec2#all(Vec2)
     * @see Vec2.AbstrEasing#apply(Vec2, Vec2, Float, Vec2)
     */
-   @Chainable
+
    public Transform2 scaleTo ( final Vec2 scaleNew, final float step,
       final Vec2.AbstrEasing easingFunc ) {
 
@@ -680,7 +680,7 @@ public class Transform2 extends Transform {
     *
     * @see Transform2#rotateTo(float)
     */
-   @Chainable
+
    public Transform2 set ( final float xLoc, final float yLoc,
       final float radians, final float xScale, final float yScale ) {
 
@@ -703,7 +703,7 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-   @Chainable
+
    public Transform2 set ( final Transform2 source ) {
 
       return this.set(source.location, source.rotation, source.scale);
@@ -718,7 +718,7 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-   @Chainable
+
    public Transform2 set ( final Vec2 locNew, final float rotNew,
       final Vec2 scaleNew ) {
 
@@ -817,7 +817,7 @@ public class Transform2 extends Transform {
     *
     * @return the wrapped transform
     */
-   @Chainable
+
    public Transform2 wrap ( final Vec2 lb, final Vec2 ub ) {
 
       this.locPrev.set(this.location);
@@ -846,23 +846,21 @@ public class Transform2 extends Transform {
        */
       final String rotationMode = "\"QUATERNION\"";
       final float halfRad = this.rotation * 0.5f;
+      final float depth = ( this.scale.x + this.scale.y ) * 0.5f;
 
-      /* @formatter:off */
-      return new StringBuilder(256)
-         .append("{\"location\": ")
-         .append(this.location.toBlenderCode(0.0f))
-         .append(", \"rotation_mode\": ")
-         .append(rotationMode)
-         .append(", \"rotation_quaternion\": (")
-         .append(Utils.toFixed(Utils.cos(halfRad), 6))
-         .append(", 0.0, 0.0, ")
-         .append(Utils.toFixed(Utils.sin(halfRad), 6))
-         .append("), \"scale\": ")
-         .append(this.scale.toBlenderCode(
-            ( this.scale.x + this.scale.y ) * 0.5f))
-         .append("}")
-         .toString();
-      /* @formatter:on */
+      final StringBuilder pyCd = new StringBuilder(256);
+      pyCd.append("{\"location\": ");
+      pyCd.append(this.location.toBlenderCode(0.0f));
+      pyCd.append(", \"rotation_mode\": ");
+      pyCd.append(rotationMode);
+      pyCd.append(", \"rotation_quaternion\": (");
+      pyCd.append(Utils.toFixed(Utils.cos(halfRad), 6));
+      pyCd.append(", 0.0, 0.0, ");
+      pyCd.append(Utils.toFixed(Utils.sin(halfRad), 6));
+      pyCd.append("), \"scale\": ");
+      pyCd.append(this.scale.toBlenderCode(depth));
+      pyCd.append("}");
+      return pyCd.toString();
    }
 
    /**
@@ -874,21 +872,19 @@ public class Transform2 extends Transform {
     */
    String toSvgString ( ) {
 
-      /* @formatter:off */
-      return new StringBuilder(96)
-         .append("transform=\"translate(")
-         .append(Utils.toFixed(this.location.x, 6))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.location.y, 6))
-         .append(") rotate(")
-         .append(Utils.toFixed(this.rotation * IUtils.RAD_TO_DEG, 0))
-         .append(") scale(")
-         .append(Utils.toFixed(this.scale.x, 6))
-         .append(',').append(' ')
-         .append(Utils.toFixed(this.scale.y, 6))
-         .append(")\"")
-         .toString();
-      /* @formatter:on */
+      final StringBuilder svgp = new StringBuilder(96);
+      svgp.append("transform=\"translate(");
+      svgp.append(Utils.toFixed(this.location.x, 6));
+      svgp.append(',').append(' ');
+      svgp.append(Utils.toFixed(this.location.y, 6));
+      svgp.append(") rotate(");
+      svgp.append(Utils.toFixed(this.rotation * IUtils.RAD_TO_DEG, 0));
+      svgp.append(") scale(");
+      svgp.append(Utils.toFixed(this.scale.x, 6));
+      svgp.append(',').append(' ');
+      svgp.append(Utils.toFixed(this.scale.y, 6));
+      svgp.append(")\"");
+      return svgp.toString();
    }
 
    /**
@@ -908,8 +904,8 @@ public class Transform2 extends Transform {
          if ( t.location != null ) { return false; }
       } else if ( !this.location.equals(t.location) ) { return false; }
 
-      if ( Float.floatToIntBits(this.rotation)
-         != Float.floatToIntBits(t.rotation) ) {
+      if ( Float.floatToIntBits(this.rotation) != Float.floatToIntBits(
+         t.rotation) ) {
          return false;
       }
 
@@ -1374,8 +1370,8 @@ public class Transform2 extends Transform {
    /**
     * An easing function to facilitate animating multiple transforms.
     */
-   public static class Easing
-      implements EasingFuncArr < Transform2 >, EasingFuncObj < Transform2 > {
+   public static class Easing implements EasingFuncArr < Transform2 >,
+      EasingFuncObj < Transform2 > {
 
       /**
        * The location easing function.

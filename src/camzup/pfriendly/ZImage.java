@@ -4,7 +4,6 @@ import java.util.function.Function;
 
 import java.awt.Image;
 
-import camzup.core.Chainable;
 import camzup.core.Color;
 import camzup.core.Gradient;
 import camzup.core.IUtils;
@@ -136,7 +135,7 @@ public class ZImage extends PImage {
     *
     * @return this image
     */
-   @Chainable
+
    PImage setParent ( final PApplet parent ) {
 
       this.parent = parent;
@@ -252,8 +251,8 @@ public class ZImage extends PImage {
     *
     * @return the augmented image
     */
-   public static PImage falseColor ( final Gradient grd,
-      final Function < Integer, Float > clrEval, final PImage target ) {
+   public static PImage falseColor ( final Gradient grd, final Function <
+      Integer, Float > clrEval, final PImage target ) {
 
       target.loadPixels();
       final int[] px = target.pixels;
@@ -551,8 +550,8 @@ public class ZImage extends PImage {
       if ( vTxt.isEmpty() ) { return new PImage(32, 32, PConstants.ARGB, 1); }
       final int vLead = leading < 0 ? 1 : leading + 1;
       final int vKern = kerning < 0 ? 0 : kerning;
-      final int vClr
-         = ( clr >> 0x18 & 0xff ) != 0 ? 0x00ffffff & clr : 0x00ffffff;
+      final int vClr = ( clr >> 0x18 & 0xff ) != 0 ? 0x00ffffff & clr
+         : 0x00ffffff;
 
       /*
        * Carriage returns, or line breaks, could come in 3 variations: \r, \n,
@@ -633,8 +632,8 @@ public class ZImage extends PImage {
                   maxHeight = height > maxHeight ? height : maxHeight;
                   sumWidths += glyph.width + vKern + glyph.leftExtent;
 
-                  maxDescent
-                     = glyphDescent > maxDescent ? glyphDescent : maxDescent;
+                  maxDescent = glyphDescent > maxDescent ? glyphDescent
+                     : maxDescent;
                   lastRowPadding = maxDescent;
                }
             }
@@ -738,8 +737,8 @@ public class ZImage extends PImage {
                             * blue channel, to ARGB. Composite target and
                             * source, then composite in tint color.
                             */
-                           trgPx[idxTrg]
-                              = trgPx[idxTrg] | srcPx[idxSrc] << 0x18 | vClr;
+                           trgPx[idxTrg] = trgPx[idxTrg] | srcPx[idxSrc] << 0x18
+                              | vClr;
                         }
                      }
 
@@ -785,8 +784,8 @@ public class ZImage extends PImage {
 
       final float bx = xOrigin - xDest;
       final float by = yOrigin - yDest;
-      final float bbInv
-         = 1.0f / Utils.max(IUtils.DEFAULT_EPSILON, bx * bx + by * by);
+      final float bbInv = 1.0f / Utils.max(IUtils.DEFAULT_EPSILON, bx * bx + by
+         * by);
 
       for ( int i = 0, y = 0; y < h; ++y ) {
 

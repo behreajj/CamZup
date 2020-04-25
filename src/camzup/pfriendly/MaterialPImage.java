@@ -2,7 +2,6 @@ package camzup.pfriendly;
 
 import java.util.ArrayList;
 
-import camzup.core.Chainable;
 import camzup.core.Color;
 import camzup.core.MaterialUv;
 import camzup.core.Transform2;
@@ -86,7 +85,7 @@ public class MaterialPImage extends MaterialUv {
     *
     * @return this material
     */
-   @Chainable
+
    public MaterialPImage setTexture ( final PImage texture ) {
 
       if ( texture != null ) {
@@ -106,7 +105,7 @@ public class MaterialPImage extends MaterialUv {
     *
     * @return this material
     */
-   @Chainable
+
    public MaterialPImage setTextureParent ( final PApplet parent ) {
 
       this.texture.parent = parent;

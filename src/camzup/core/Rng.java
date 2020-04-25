@@ -164,9 +164,8 @@ public class Rng extends java.util.Random implements IUtils {
    @Override
    public String toString ( ) {
 
-      return new StringBuilder(64).append("{ seed: ")
-         .append(Long.toString(this.publicSeed)).append(' ').append('}')
-         .toString();
+      return new StringBuilder(64).append("{ seed: ").append(Long.toString(
+         this.publicSeed)).append(' ').append('}').toString();
    }
 
    /**

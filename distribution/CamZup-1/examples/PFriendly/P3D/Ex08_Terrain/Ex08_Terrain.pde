@@ -3,13 +3,13 @@ import camzup.pfriendly.*;
 
 Zup3 rndr;
 
-Mesh2 plane2 = Mesh2.plane(64, new Mesh2());
-Mesh3 plane3 = new Mesh3(plane2);
+boolean wireframe = true;
+Vec3 mouse1 = new Vec3();
+
+Mesh3 plane3 = new Mesh3(Mesh2.plane(64, new Mesh2()));
 
 MeshEntity3 entity = new MeshEntity3()
   .append(plane3);
-
-boolean wireframe = true;
 
 MaterialSolid fill = new MaterialSolid()
   .setStroke(false)
@@ -34,7 +34,6 @@ void setup() {
   Vec3 noiseIn = new Vec3();
   for (Vec3 co : plane3.coords) {
     Vec3.mul(co, roughness, noiseIn);
-
     float fac1 = Simplex.fbm(
       noiseIn, Simplex.DEFAULT_SEED,
       16, 2.0, 0.375);
@@ -47,14 +46,26 @@ void setup() {
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  entity.rotateZ(0.01);
+
+  if (mousePressed) {
+    rndr.mouse1s(mouse1);
+    if (mouseButton == LEFT) {
+      Vec3.mul(mouse1, 100.0, mouse1);
+      rndr.moveByLocal(mouse1);
+    } else if (mouseButton == CENTER) {
+      Vec3.mul(mouse1, 37.5, mouse1);
+      rndr.strafe(mouse1);
+    }
+  }
+
   rndr.background();
+  rndr.grid(32);
   rndr.ortho();
   rndr.camera();
   rndr.lights();
   rndr.shape(entity, wireframe ? stroke : fill);
 }
 
-void mouseReleased() {
+void keyReleased() {
   wireframe = !wireframe;
 }

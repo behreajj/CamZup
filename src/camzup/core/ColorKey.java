@@ -176,7 +176,6 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     *
     * @return this key
     */
-   @Chainable
    public ColorKey set ( final ColorKey source ) {
 
       return this.set(source.step, source.clr);
@@ -190,7 +189,6 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     *
     * @return this key
     */
-   @Chainable
    public ColorKey set ( final float step, final Color color ) {
 
       this.step = Utils.clamp01(step);
@@ -206,7 +204,6 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     *
     * @return this key
     */
-   @Chainable
    public ColorKey set ( final float step, final int color ) {
 
       this.step = Utils.clamp01(step);
@@ -276,7 +273,7 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     *
     * @return this key
     */
-   @Chainable
+
    ColorKey set ( final float step, final float red, final float green,
       final float blue ) {
 
@@ -298,7 +295,7 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     *
     * @return this key
     */
-   @Chainable
+
    ColorKey set ( final float step, final float red, final float green,
       final float blue, final float alpha ) {
 

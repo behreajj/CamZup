@@ -40,8 +40,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    @Override
    public int compareTo ( final Face2 face ) {
 
-      return Face2.centerMean(this, new Vec2())
-         .compareTo(Face2.centerMean(face, new Vec2()));
+      return Face2.centerMean(this, new Vec2()).compareTo(Face2.centerMean(face,
+         new Vec2()));
    }
 
    /**
@@ -85,8 +85,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    public Edge2 getEdge ( final int i, final Edge2 target ) {
 
       final int len = this.vertices.length;
-      return target.set(this.vertices[Utils.mod(i, len)],
-         this.vertices[Utils.mod(i + 1, len)]);
+      return target.set(this.vertices[Utils.mod(i, len)], this.vertices[Utils
+         .mod(i + 1, len)]);
    }
 
    /**
@@ -122,7 +122,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * @return the iterator
     */
    @Override
-   public Edge2Iterator iterator ( ) { return this.edgeIterator(); }
+   public Iterator < Edge2 > iterator ( ) { return this.edgeIterator(); }
 
    /**
     * Returns the number of vertices in this face.
@@ -140,7 +140,6 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @see Vec2#rotateZ(Vec2, float, Vec2)
     */
-   @Chainable
    public Face2 rotateZ ( final float radians ) {
 
       return this.rotateZGlobal(radians);
@@ -156,7 +155,6 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @see Vec2#rotateZ(Vec2, float, Vec2)
     */
-   @Chainable
    public Face2 rotateZGlobal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -186,7 +184,6 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * @see Vec2#rotateZ(Vec2, float, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   @Chainable
    public Face2 rotateZLocal ( final float radians ) {
 
       final Vec2 center = new Vec2();
@@ -215,8 +212,10 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @see Vec2#mul(Vec2, float, Vec2)
     */
-   @Chainable
-   public Face2 scale ( final float scale ) { return this.scaleGlobal(scale); }
+   public Face2 scale ( final float scale ) {
+
+      return this.scaleGlobal(scale);
+   }
 
    /**
     * Scales all coordinates in the face by a vector.
@@ -242,7 +241,6 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @see Vec2#mul(Vec2, float, Vec2)
     */
-   @Chainable
    public Face2 scaleGlobal ( final float scale ) {
 
       if ( scale == 0.0f ) { return this; }
@@ -267,7 +265,6 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * @see Vec2#none(Vec2)
     * @see Vec2#mul(Vec2, Vec2, Vec2)
     */
-   @Chainable
    public Face2 scaleGlobal ( final Vec2 scale ) {
 
       if ( Vec2.none(scale) ) { return this; }
@@ -294,7 +291,6 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * @see Vec2#mul(Vec2, float, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   @Chainable
    public Face2 scaleLocal ( final float scale ) {
 
       if ( scale == 0.0f ) { return this; }
@@ -327,7 +323,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * @see Vec2#mul(Vec2, Vec2, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   @Chainable
+
    public Face2 scaleLocal ( final Vec2 scale ) {
 
       if ( Vec2.none(scale) ) { return this; }
@@ -353,7 +349,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @return this face
     */
-   @Chainable
+
    public Face2 set ( final Vert2... vertices ) {
 
       this.vertices = vertices;
@@ -398,7 +394,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @see Mat3#mulPoint(Mat3, Vec2, Vec2)
     */
-   @Chainable
+
    public Face2 transform ( final Mat3 m ) {
 
       final int len = this.vertices.length;
@@ -419,7 +415,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   @Chainable
+
    public Face2 translate ( final Vec2 v ) {
 
       return this.translateGlobal(v);
@@ -435,7 +431,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   @Chainable
+
    public Face2 translateGlobal ( final Vec2 v ) {
 
       final int len = this.vertices.length;
@@ -631,7 +627,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @return the winding number
     */
-   @Chainable
+
    public static float winding ( final Face2 face ) {
 
       float wn = 0.0f;

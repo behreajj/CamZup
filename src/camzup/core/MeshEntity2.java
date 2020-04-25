@@ -9,8 +9,8 @@ import java.util.List;
  * An entity which contains a transform that is applied to a list of
  * meshes. The meshes may references a list of materials by index.
  */
-public class MeshEntity2 extends Entity2
-   implements Iterable < Mesh2 >, IVolume2, ISvgWritable {
+public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
+   IVolume2, ISvgWritable {
 
    /**
     * The list of meshes held by the entity.
@@ -89,7 +89,7 @@ public class MeshEntity2 extends Entity2
     *
     * @return this mesh entity
     */
-   @Chainable
+
    public MeshEntity2 append ( final Mesh2 mesh ) {
 
       if ( mesh != null ) { this.meshes.add(mesh); }
@@ -103,7 +103,7 @@ public class MeshEntity2 extends Entity2
     *
     * @return this mesh entity
     */
-   @Chainable
+
    public MeshEntity2 appendAll ( final Collection < Mesh2 > meshes ) {
 
       final Iterator < Mesh2 > itr = meshes.iterator();
@@ -120,7 +120,7 @@ public class MeshEntity2 extends Entity2
     *
     * @return this mesh entity
     */
-   @Chainable
+
    public MeshEntity2 appendAll ( final Mesh2... meshes ) {
 
       final int len = meshes.length;
@@ -170,7 +170,7 @@ public class MeshEntity2 extends Entity2
     * @return this entity
     */
    @Override
-   @Chainable
+
    public MeshEntity2 scaleBy ( final float scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -185,7 +185,7 @@ public class MeshEntity2 extends Entity2
     * @return the entity
     */
    @Override
-   @Chainable
+
    public MeshEntity2 scaleBy ( final Vec2 scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -200,7 +200,7 @@ public class MeshEntity2 extends Entity2
     * @return this entity
     */
    @Override
-   @Chainable
+
    public MeshEntity2 scaleTo ( final float scalar ) {
 
       this.transform.scaleTo(scalar);
@@ -215,7 +215,7 @@ public class MeshEntity2 extends Entity2
     * @return this entity
     */
    @Override
-   @Chainable
+
    public MeshEntity2 scaleTo ( final Vec2 scalar ) {
 
       this.transform.scaleTo(scalar);
@@ -231,7 +231,7 @@ public class MeshEntity2 extends Entity2
     * @return this entity
     */
    @Override
-   @Chainable
+
    public MeshEntity2 scaleTo ( final Vec2 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);
@@ -551,8 +551,8 @@ public class MeshEntity2 extends Entity2
       final MaterialSolid[] materials ) {
 
       final StringBuilder svgp = new StringBuilder(1024).append("<g id=\"")
-         .append(this.name.toLowerCase()).append("\" ")
-         .append(this.transform.toSvgString()).append(">\n");
+         .append(this.name.toLowerCase()).append("\" ").append(this.transform
+            .toSvgString()).append(">\n");
 
       final float scale = zoom * Transform2.minDimension(this.transform);
       int matLen = 0;
@@ -581,8 +581,8 @@ public class MeshEntity2 extends Entity2
 
             final int vMatIdx = Utils.mod(mesh.materialIndex, matLen);
             final MaterialSolid material = materials[vMatIdx];
-            svgp.append("<g ").append(material.toSvgString(scale))
-               .append(">\n");
+            svgp.append("<g ").append(material.toSvgString(scale)).append(
+               ">\n");
          }
 
          svgp.append(mesh.toSvgPath(id));

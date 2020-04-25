@@ -130,7 +130,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see Gradient#compressKeysLeft(int)
     * @see TreeSet#add(Object)
     */
-   @Chainable
+
    public Gradient append ( final Color color ) {
 
       this.compressKeysLeft(1);
@@ -148,7 +148,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see Gradient#compressKeysLeft(int)
     * @see TreeSet#add(Object)
     */
-   @Chainable
+
    public Gradient append ( final float scalar ) {
 
       this.compressKeysLeft(1);
@@ -167,7 +167,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see Gradient#compressKeysLeft(int)
     * @see TreeSet#add(Object)
     */
-   @Chainable
+
    public Gradient append ( final int color ) {
 
       this.compressKeysLeft(1);
@@ -187,7 +187,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
-   @Chainable
+
    public Gradient appendAll ( final Collection < Color > colors ) {
 
       final int len = colors.size();
@@ -217,7 +217,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
-   @Chainable
+
    public Gradient appendAll ( final Color... colors ) {
 
       final int len = colors.length;
@@ -244,7 +244,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
-   @Chainable
+
    public Gradient appendAll ( final float... scalars ) {
 
       final int len = scalars.length;
@@ -273,7 +273,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
-   @Chainable
+
    public Gradient appendAll ( final int... colors ) {
 
       final int len = colors.length;
@@ -454,7 +454,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see TreeSet#add(Object)
     * @see TreeSet#remove(Object)
     */
-   @Chainable
+
    public Gradient insert ( final ColorKey key ) {
 
       if ( this.keys.contains(key) ) { this.keys.remove(key); }
@@ -473,7 +473,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see TreeSet#add(Object)
     * @see TreeSet#remove(Object)
     */
-   @Chainable
+
    public Gradient insertAll ( final ColorKey... keys ) {
 
       final int len = keys.length;
@@ -516,7 +516,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see Gradient#compressKeysRight(int)
     * @see TreeSet#add(Object)
     */
-   @Chainable
+
    public Gradient prepend ( final Color color ) {
 
       this.compressKeysRight(1);
@@ -534,7 +534,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see Gradient#compressKeysRight(int)
     * @see TreeSet#add(Object)
     */
-   @Chainable
+
    public Gradient prepend ( final float scalar ) {
 
       this.compressKeysRight(1);
@@ -553,7 +553,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see Gradient#compressKeysRight(int)
     * @see TreeSet#add(Object)
     */
-   @Chainable
+
    public Gradient prepend ( final int color ) {
 
       this.compressKeysRight(1);
@@ -601,7 +601,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
-   @Chainable
+
    public Gradient prependAll ( final Color... colors ) {
 
       final int len = colors.length;
@@ -627,7 +627,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
-   @Chainable
+
    public Gradient prependAll ( final float... scalars ) {
 
       final int len = scalars.length;
@@ -654,7 +654,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
-   @Chainable
+
    public Gradient prependAll ( final int... colors ) {
 
       final int len = colors.length;
@@ -864,8 +864,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
        * contain a minimum of only 1, they default to 2 keys when created.
        */
 
-      final Color[] clrs
-         = Gradient.evalRange(this, Utils.clamp(samples, 2, 32));
+      final Color[] clrs = Gradient.evalRange(this, Utils.clamp(samples, 2,
+         32));
       final int len = clrs.length;
       final int last = len - 1;
       final float toPercent = 1.0f / last;
@@ -1187,7 +1187,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     *
     * @return this gradient
     */
-   @Chainable
+
    protected Gradient compressKeysLeft ( final int added ) {
 
       int i = 0;
@@ -1208,7 +1208,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     *
     * @return this gradient
     */
-   @Chainable
+
    protected Gradient compressKeysRight ( final int added ) {
 
       /* Simplification of Utils.map(key.step, 0.0f, 1.0f, scalar, 1.0f); */
@@ -1297,8 +1297,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       if ( next == null ) { return target.set(grd.keys.last().clr); }
 
       /* This needs to be Utils.div to avoid returning 0x0 as a color. */
-      return easing.applyUnclamped(next.clr, prev.clr,
-         Utils.div(step - next.step, prev.step - next.step), target);
+      return easing.applyUnclamped(next.clr, prev.clr, Utils.div(step
+         - next.step, prev.step - next.step), target);
    }
 
    /**
@@ -1375,7 +1375,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
          final String line = lines[i].trim().toLowerCase();
          if ( line.equals("GIMP gradient") ) {
             continue;
-         } else if ( line.contains("name:") ) {
+         } else if ( line.indexOf("name:") > -1 ) {
             continue;
          } else if ( line.indexOf('#') == 0 ) {
             continue;
@@ -1509,8 +1509,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
          if ( clrSpc == 1 || clrSpc == 2 ) {
 
             /* HSB */
-            final Color.HueEasing hueFunc
-               = clrSpc == 2 ? new Color.HueCW() : new Color.HueCCW();
+            final Color.HueEasing hueFunc = clrSpc == 2 ? new Color.HueCW()
+               : new Color.HueCCW();
             mixer = new Color.MixHsba(hueFunc);
             mixer.apply(ltClr, rtClr, f, clr);
 

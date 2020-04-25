@@ -9,8 +9,8 @@ import java.util.List;
  * An entity which contains a transform that is applied to a list of
  * curves. The curves may references a list of materials by index.
  */
-public class CurveEntity3 extends Entity3
-   implements Iterable < Curve3 >, IVolume3 {
+public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
+   IVolume3 {
 
    /**
     * The list of curves held by the entity.
@@ -66,7 +66,7 @@ public class CurveEntity3 extends Entity3
     *
     * @return this curve entity
     */
-   @Chainable
+
    public CurveEntity3 append ( final Curve3 curve ) {
 
       if ( curve != null ) { this.curves.add(curve); }
@@ -80,7 +80,7 @@ public class CurveEntity3 extends Entity3
     *
     * @return this curve entity
     */
-   @Chainable
+
    public CurveEntity3 appendAll ( final Collection < Curve3 > curves ) {
 
       final Iterator < Curve3 > itr = curves.iterator();
@@ -97,7 +97,7 @@ public class CurveEntity3 extends Entity3
     *
     * @return this curve entity
     */
-   @Chainable
+
    public CurveEntity3 appendAll ( final Curve3... curves ) {
 
       final int len = curves.length;
@@ -145,7 +145,7 @@ public class CurveEntity3 extends Entity3
     * @return this entity
     */
    @Override
-   @Chainable
+
    public CurveEntity3 scaleBy ( final float scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -160,7 +160,7 @@ public class CurveEntity3 extends Entity3
     * @return the entity
     */
    @Override
-   @Chainable
+
    public CurveEntity3 scaleBy ( final Vec3 scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -175,7 +175,7 @@ public class CurveEntity3 extends Entity3
     * @return this entity
     */
    @Override
-   @Chainable
+
    public CurveEntity3 scaleTo ( final float scalar ) {
 
       this.transform.scaleTo(scalar);
@@ -190,7 +190,7 @@ public class CurveEntity3 extends Entity3
     * @return this entity
     */
    @Override
-   @Chainable
+
    public CurveEntity3 scaleTo ( final Vec3 scalar ) {
 
       this.transform.scaleTo(scalar);
@@ -206,7 +206,7 @@ public class CurveEntity3 extends Entity3
     * @return this entity
     */
    @Override
-   @Chainable
+
    public CurveEntity3 scaleTo ( final Vec3 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);

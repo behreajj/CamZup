@@ -11,7 +11,7 @@ public interface IVolume {
     *
     * @return this object
     */
-   @Chainable
+
    IVolume scaleBy ( final float scalar );
 
    /**
@@ -21,7 +21,7 @@ public interface IVolume {
     *
     * @return this object
     */
-   @Chainable
+
    IVolume scaleTo ( final float scalar );
 
 }

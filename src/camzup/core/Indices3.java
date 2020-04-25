@@ -200,11 +200,10 @@ class Indices3 implements Cloneable, Comparable < Indices3 > {
     */
    public String toString ( final int padding ) {
 
-      return new StringBuilder(64).append("{ v: ")
-         .append(Utils.toPadded(this.v, padding)).append(", vt: ")
-         .append(Utils.toPadded(this.vt, padding)).append(", vn: ")
-         .append(Utils.toPadded(this.vn, padding)).append(' ').append('}')
-         .toString();
+      return new StringBuilder(64).append("{ v: ").append(Utils.toPadded(this.v,
+         padding)).append(", vt: ").append(Utils.toPadded(this.vt, padding))
+         .append(", vn: ").append(Utils.toPadded(this.vn, padding)).append(' ')
+         .append('}').toString();
    }
 
    /**

@@ -215,20 +215,19 @@ public abstract class Simplex {
          new Vec2(-1.0f, 0.0f), new Vec2(1.0f, 1.0f), new Vec2(-1.0f, 1.0f),
          new Vec2(0.0f, -1.0f), new Vec2(0.0f, 1.0f), new Vec2(1.0f, -1.0f) };
 
-      GRAD_3_LUT
-         = new Vec3[] { new Vec3(1.0f, 0.0f, 1.0f), new Vec3(0.0f, 1.0f, 1.0f),
-            new Vec3(-1.0f, 0.0f, 1.0f), new Vec3(0.0f, -1.0f, 1.0f),
-            new Vec3(1.0f, 0.0f, -1.0f), new Vec3(0.0f, 1.0f, -1.0f),
-            new Vec3(-1.0f, 0.0f, -1.0f), new Vec3(0.0f, -1.0f, -1.0f),
-            new Vec3(1.0f, -1.0f, 0.0f), new Vec3(1.0f, 1.0f, 0.0f),
-            new Vec3(-1.0f, 1.0f, 0.0f), new Vec3(-1.0f, -1.0f, 0.0f),
-            new Vec3(1.0f, 0.0f, 1.0f), new Vec3(-1.0f, 0.0f, 1.0f),
-            new Vec3(0.0f, 1.0f, -1.0f), new Vec3(0.0f, -1.0f, -1.0f) };
+      GRAD_3_LUT = new Vec3[] { new Vec3(1.0f, 0.0f, 1.0f), new Vec3(0.0f, 1.0f,
+         1.0f), new Vec3(-1.0f, 0.0f, 1.0f), new Vec3(0.0f, -1.0f, 1.0f),
+         new Vec3(1.0f, 0.0f, -1.0f), new Vec3(0.0f, 1.0f, -1.0f), new Vec3(
+            -1.0f, 0.0f, -1.0f), new Vec3(0.0f, -1.0f, -1.0f), new Vec3(1.0f,
+               -1.0f, 0.0f), new Vec3(1.0f, 1.0f, 0.0f), new Vec3(-1.0f, 1.0f,
+                  0.0f), new Vec3(-1.0f, -1.0f, 0.0f), new Vec3(1.0f, 0.0f,
+                     1.0f), new Vec3(-1.0f, 0.0f, 1.0f), new Vec3(0.0f, 1.0f,
+                        -1.0f), new Vec3(0.0f, -1.0f, -1.0f) };
 
-      GRAD_4_LUT = new Vec4[] { new Vec4(0.0f, 1.0f, 1.0f, 1.0f),
-         new Vec4(0.0f, 1.0f, 1.0f, -1.0f), new Vec4(0.0f, 1.0f, -1.0f, 1.0f),
-         new Vec4(0.0f, 1.0f, -1.0f, -1.0f), new Vec4(0.0f, -1.0f, 1.0f, 1.0f),
-         new Vec4(0.0f, -1.0f, 1.0f, -1.0f), new Vec4(0.0f, -1.0f, -1.0f, 1.0f),
+      GRAD_4_LUT = new Vec4[] { new Vec4(0.0f, 1.0f, 1.0f, 1.0f), new Vec4(0.0f,
+         1.0f, 1.0f, -1.0f), new Vec4(0.0f, 1.0f, -1.0f, 1.0f), new Vec4(0.0f,
+            1.0f, -1.0f, -1.0f), new Vec4(0.0f, -1.0f, 1.0f, 1.0f), new Vec4(
+               0.0f, -1.0f, 1.0f, -1.0f), new Vec4(0.0f, -1.0f, -1.0f, 1.0f),
          new Vec4(0.0f, -1.0f, -1.0f, -1.0f), new Vec4(1.0f, 0.0f, 1.0f, 1.0f),
          new Vec4(1.0f, 0.0f, 1.0f, -1.0f), new Vec4(1.0f, 0.0f, -1.0f, 1.0f),
          new Vec4(1.0f, 0.0f, -1.0f, -1.0f), new Vec4(-1.0f, 0.0f, 1.0f, 1.0f),
@@ -243,51 +242,50 @@ public abstract class Simplex {
          new Vec4(-1.0f, 1.0f, -1.0f, 0.0f), new Vec4(-1.0f, -1.0f, 1.0f, 0.0f),
          new Vec4(-1.0f, -1.0f, -1.0f, 0.0f) };
 
-      GRAD3_U
-         = new Vec3[] { new Vec3(1.0f, 0.0f, 1.0f), new Vec3(0.0f, 1.0f, 1.0f),
-            new Vec3(-1.0f, 0.0f, 1.0f), new Vec3(0.0f, -1.0f, 1.0f),
-            new Vec3(1.0f, 0.0f, -1.0f), new Vec3(0.0f, 1.0f, -1.0f),
-            new Vec3(-1.0f, 0.0f, -1.0f), new Vec3(0.0f, -1.0f, -1.0f),
-            new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
-            new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
-            new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
-            new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
-            new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
-            new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
-            new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
-            new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3) };
-
-      GRAD3_V = new Vec3[] {
-         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
+      GRAD3_U = new Vec3[] { new Vec3(1.0f, 0.0f, 1.0f), new Vec3(0.0f, 1.0f,
+         1.0f), new Vec3(-1.0f, 0.0f, 1.0f), new Vec3(0.0f, -1.0f, 1.0f),
+         new Vec3(1.0f, 0.0f, -1.0f), new Vec3(0.0f, 1.0f, -1.0f), new Vec3(
+            -1.0f, 0.0f, -1.0f), new Vec3(0.0f, -1.0f, -1.0f), new Vec3(
+               Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3), new Vec3(
+                  -Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
          new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
-         new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3),
-         new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3),
-         new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
          new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
-         new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
-         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
-         new Vec3(1.0f, -1.0f, 0.0f), new Vec3(1.0f, 1.0f, 0.0f),
-         new Vec3(-1.0f, 1.0f, 0.0f), new Vec3(-1.0f, -1.0f, 0.0f),
-         new Vec3(1.0f, 0.0f, 1.0f), new Vec3(-1.0f, 0.0f, 1.0f),
-         new Vec3(0.0f, 1.0f, -1.0f), new Vec3(0.0f, -1.0f, -1.0f) };
+         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, Simplex.RT2_RT3), new Vec3(
+            Simplex.RT2_RT3, -Simplex.RT2_RT3, Simplex.RT2_RT3), new Vec3(
+               Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3), new Vec3(
+                  -Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3) };
 
-      PERMUTE = new int[][] { { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 },
-         { 0, 2, 3, 1 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 1, 2, 3, 0 }, { 0, 2, 1, 3 }, { 0, 0, 0, 0 }, { 0, 3, 1, 2 },
-         { 0, 3, 2, 1 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 1, 3, 2, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 0, 0, 0, 0 }, { 1, 2, 0, 3 }, { 0, 0, 0, 0 }, { 1, 3, 0, 2 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 2, 3, 0, 1 },
-         { 2, 3, 1, 0 }, { 1, 0, 2, 3 }, { 1, 0, 3, 2 }, { 0, 0, 0, 0 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 2, 0, 3, 1 }, { 0, 0, 0, 0 },
-         { 2, 1, 3, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 0, 0, 0, 0 }, { 2, 0, 1, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 0, 0, 0, 0 }, { 3, 0, 1, 2 }, { 3, 0, 2, 1 }, { 0, 0, 0, 0 },
-         { 3, 1, 2, 0 }, { 2, 1, 0, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 0, 0, 0, 0 }, { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 },
-         { 3, 2, 1, 0 } };
+      GRAD3_V = new Vec3[] { new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3,
+         Simplex.RT2_RT3), new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3,
+            Simplex.RT2_RT3), new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3,
+               Simplex.RT2_RT3), new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3,
+                  Simplex.RT2_RT3), new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3,
+                     -Simplex.RT2_RT3), new Vec3(Simplex.RT2_RT3,
+                        -Simplex.RT2_RT3, -Simplex.RT2_RT3), new Vec3(
+                           Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(1.0f, -1.0f, 0.0f), new Vec3(1.0f, 1.0f, 0.0f), new Vec3(
+            -1.0f, 1.0f, 0.0f), new Vec3(-1.0f, -1.0f, 0.0f), new Vec3(1.0f,
+               0.0f, 1.0f), new Vec3(-1.0f, 0.0f, 1.0f), new Vec3(0.0f, 1.0f,
+                  -1.0f), new Vec3(0.0f, -1.0f, -1.0f) };
+
+      PERMUTE = new int[][] { { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 }, {
+         0, 2, 3, 1 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 2,
+            3, 0 }, { 0, 2, 1, 3 }, { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2,
+               1 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 3, 2,
+                  0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0,
+                     0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, {
+                        0, 0, 0, 0 }, { 1, 2, 0, 3 }, { 0, 0, 0, 0 }, { 1, 3, 0,
+                           2 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 2, 3, 0, 1 }, { 2, 3, 1, 0 }, { 1, 0, 2, 3 }, { 1, 0, 3, 2 }, { 0, 0,
+            0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 2, 0, 3, 1 }, { 0, 0, 0,
+               0 }, { 2, 1, 3, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0,
+                  0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0,
+                     0, 0 }, { 0, 0, 0, 0 }, { 2, 0, 1, 3 }, { 0, 0, 0, 0 }, {
+                        0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 3, 0, 1, 2 }, { 3, 0, 2,
+                           1 }, { 0, 0, 0, 0 }, { 3, 1, 2, 0 }, { 2, 1, 0, 3 },
+         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 3, 1, 0, 2 }, { 0, 0,
+            0, 0 }, { 3, 2, 0, 1 }, { 3, 2, 1, 0 } };
 
       ROT_2 = new Vec2();
       ROT_3 = new Vec3();
@@ -349,10 +347,9 @@ public abstract class Simplex {
       final float z0 = z - ( k - t );
       final float w0 = w - ( l - t );
 
-      final int[] sc
-         = Simplex.PERMUTE[ ( x0 > y0 ? 0x20 : 0 ) | ( x0 > z0 ? 0x10 : 0 )
-            | ( y0 > z0 ? 0x8 : 0 ) | ( x0 > w0 ? 0x4 : 0 )
-            | ( y0 > w0 ? 0x2 : 0 ) | ( z0 > w0 ? 0x1 : 0 )];
+      final int[] sc = Simplex.PERMUTE[ ( x0 > y0 ? 0x20 : 0 ) | ( x0 > z0
+         ? 0x10 : 0 ) | ( y0 > z0 ? 0x8 : 0 ) | ( x0 > w0 ? 0x4 : 0 ) | ( y0
+            > w0 ? 0x2 : 0 ) | ( z0 > w0 ? 0x1 : 0 )];
       final int sc0 = sc[0];
       final int sc1 = sc[1];
       final int sc2 = sc[2];
@@ -459,36 +456,36 @@ public abstract class Simplex {
 
       if ( deriv != null ) {
 
-         final float tmp0
-            = t20 * t0 * ( g0.x * x0 + g0.y * y0 + g0.z * z0 + g0.w * w0 );
+         final float tmp0 = t20 * t0 * ( g0.x * x0 + g0.y * y0 + g0.z * z0
+            + g0.w * w0 );
          deriv.x = tmp0 * x0;
          deriv.y = tmp0 * y0;
          deriv.z = tmp0 * z0;
          deriv.w = tmp0 * w0;
 
-         final float tmp1
-            = t21 * t1 * ( g1.x * x1 + g1.y * y1 + g1.z * z1 + g1.w * w1 );
+         final float tmp1 = t21 * t1 * ( g1.x * x1 + g1.y * y1 + g1.z * z1
+            + g1.w * w1 );
          deriv.x += tmp1 * x1;
          deriv.y += tmp1 * y1;
          deriv.z += tmp1 * z1;
          deriv.w += tmp1 * w1;
 
-         final float tmp2
-            = t22 * t2 * ( g2.x * x2 + g2.y * y2 + g2.z * z2 + g2.w * w2 );
+         final float tmp2 = t22 * t2 * ( g2.x * x2 + g2.y * y2 + g2.z * z2
+            + g2.w * w2 );
          deriv.x += tmp2 * x2;
          deriv.y += tmp2 * y2;
          deriv.z += tmp2 * z2;
          deriv.w += tmp2 * w2;
 
-         final float tmp3
-            = t23 * t3 * ( g3.x * x3 + g3.y * y3 + g3.z * z3 + g3.w * w3 );
+         final float tmp3 = t23 * t3 * ( g3.x * x3 + g3.y * y3 + g3.z * z3
+            + g3.w * w3 );
          deriv.x += tmp3 * x3;
          deriv.y += tmp3 * y3;
          deriv.z += tmp3 * z3;
          deriv.w += tmp3 * w3;
 
-         final float tmp4
-            = t24 * t4 * ( g4.x * x4 + g4.y * y4 + g4.z * z4 + g4.w * w4 );
+         final float tmp4 = t24 * t4 * ( g4.x * x4 + g4.y * y4 + g4.z * z4
+            + g4.w * w4 );
          deriv.x += tmp4 * x4;
          deriv.y += tmp4 * y4;
          deriv.z += tmp4 * z4;
@@ -499,14 +496,14 @@ public abstract class Simplex {
          deriv.z *= -8.0f;
          deriv.w *= -8.0f;
 
-         deriv.x
-            += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x + t44 * g4.x;
-         deriv.y
-            += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y + t44 * g4.y;
-         deriv.z
-            += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z + t44 * g4.z;
-         deriv.w
-            += t40 * g0.w + t41 * g1.w + t42 * g2.w + t43 * g3.w + t44 * g4.w;
+         deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x + t44
+            * g4.x;
+         deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y + t44
+            * g4.y;
+         deriv.z += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z + t44
+            * g4.z;
+         deriv.w += t40 * g0.w + t41 * g1.w + t42 * g2.w + t43 * g3.w + t44
+            * g4.w;
 
          deriv.x *= Simplex.SCALE_4;
          deriv.y *= Simplex.SCALE_4;
@@ -927,9 +924,9 @@ public abstract class Simplex {
       final float z0 = z - ( k - t );
       final float w0 = w - ( l - t );
 
-      final int[] sc = Simplex.PERMUTE[ ( x0 > y0 ? 32 : 0 )
-         | ( x0 > z0 ? 16 : 0 ) | ( y0 > z0 ? 8 : 0 ) | ( x0 > w0 ? 4 : 0 )
-         | ( y0 > w0 ? 2 : 0 ) | ( z0 > w0 ? 1 : 0 )];
+      final int[] sc = Simplex.PERMUTE[ ( x0 > y0 ? 32 : 0 ) | ( x0 > z0 ? 16
+         : 0 ) | ( y0 > z0 ? 8 : 0 ) | ( x0 > w0 ? 4 : 0 ) | ( y0 > w0 ? 2 : 0 )
+         | ( z0 > w0 ? 1 : 0 )];
       final int sc0 = sc[0];
       final int sc1 = sc[1];
       final int sc2 = sc[2];
@@ -1069,14 +1066,14 @@ public abstract class Simplex {
          deriv.z *= -8.0f;
          deriv.w *= -8.0f;
 
-         deriv.x
-            += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x + t44 * g4.x;
-         deriv.y
-            += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y + t44 * g4.y;
-         deriv.z
-            += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z + t44 * g4.z;
-         deriv.w
-            += t40 * g0.w + t41 * g1.w + t42 * g2.w + t43 * g3.w + t44 * g4.w;
+         deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x + t44
+            * g4.x;
+         deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y + t44
+            * g4.y;
+         deriv.z += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z + t44
+            * g4.z;
+         deriv.w += t40 * g0.w + t41 * g1.w + t42 * g2.w + t43 * g3.w + t44
+            * g4.w;
 
          deriv.x *= Simplex.SCALE_4;
          deriv.y *= Simplex.SCALE_4;
@@ -1084,8 +1081,8 @@ public abstract class Simplex {
          deriv.w *= Simplex.SCALE_4;
       }
 
-      return Simplex.SCALE_4
-         * ( t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3 + t44 * n4 );
+      return Simplex.SCALE_4 * ( t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3 + t44
+         * n4 );
    }
 
    /**
@@ -1723,9 +1720,8 @@ public abstract class Simplex {
     */
    public static float hash ( final Vec2 v, final int seed ) {
 
-      return ( Float.intBitsToFloat(
-         Simplex.hash(v.hashCode(), seed, 0) & 0x007fffff | 0x3f800000) - 1.0f )
-         * 2.0f - 1.0f;
+      return ( Float.intBitsToFloat(Simplex.hash(v.hashCode(), seed, 0)
+         & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f;
    }
 
    /**
@@ -1745,17 +1741,13 @@ public abstract class Simplex {
       final int ahash = ( IUtils.MUL_BASE ^ Float.floatToIntBits(v.x + st) )
          * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y);
 
-      final int bhash
-         = ( IUtils.MUL_BASE ^ Float.floatToIntBits(v.x) ) * IUtils.HASH_MUL
-            ^ Float.floatToIntBits(v.y + st);
+      final int bhash = ( IUtils.MUL_BASE ^ Float.floatToIntBits(v.x) )
+         * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y + st);
 
-      return target.set(
-         ( Float.intBitsToFloat(
-            Simplex.hash(ahash, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f )
-            * 2.0f - 1.0f,
-         ( Float.intBitsToFloat(
-            Simplex.hash(bhash, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f )
-            * 2.0f - 1.0f);
+      return target.set( ( Float.intBitsToFloat(Simplex.hash(ahash, seed, 0)
+         & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f, ( Float
+            .intBitsToFloat(Simplex.hash(bhash, seed, 0) & 0x007fffff
+               | 0x3f800000) - 1.0f ) * 2.0f - 1.0f);
    }
 
    /**
@@ -1773,9 +1765,8 @@ public abstract class Simplex {
     */
    public static float hash ( final Vec3 v, final int seed ) {
 
-      return ( Float.intBitsToFloat(
-         Simplex.hash(v.hashCode(), seed, 0) & 0x007fffff | 0x3f800000) - 1.0f )
-         * 2.0f - 1.0f;
+      return ( Float.intBitsToFloat(Simplex.hash(v.hashCode(), seed, 0)
+         & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f;
    }
 
    /**
@@ -1798,25 +1789,20 @@ public abstract class Simplex {
       final int ahash = ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(v.x + st) )
          * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ vzbit;
 
-      final int bhash
-         = ( mulvx * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y + st) )
-            * IUtils.HASH_MUL ^ vzbit;
+      final int bhash = ( mulvx * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y
+         + st) ) * IUtils.HASH_MUL ^ vzbit;
 
       final int chash = ( mulvx * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL
          ^ Float.floatToIntBits(v.z + st);
 
-      return target.set(
-         ( Float.intBitsToFloat(
-            Simplex.hash(ahash, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f )
-            * 2.0f - 1.0f,
+      return target.set( ( Float.intBitsToFloat(Simplex.hash(ahash, seed, 0)
+         & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
 
-         ( Float.intBitsToFloat(
-            Simplex.hash(bhash, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f )
-            * 2.0f - 1.0f,
+         ( Float.intBitsToFloat(Simplex.hash(bhash, seed, 0) & 0x007fffff
+            | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
 
-         ( Float.intBitsToFloat(
-            Simplex.hash(chash, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f )
-            * 2.0f - 1.0f);
+         ( Float.intBitsToFloat(Simplex.hash(chash, seed, 0) & 0x007fffff
+            | 0x3f800000) - 1.0f ) * 2.0f - 1.0f);
    }
 
    /**
@@ -1834,9 +1820,8 @@ public abstract class Simplex {
     */
    public static float hash ( final Vec4 v, final int seed ) {
 
-      return ( Float.intBitsToFloat(
-         Simplex.hash(v.hashCode(), seed, 0) & 0x007fffff | 0x3f800000) - 1.0f )
-         * 2.0f - 1.0f;
+      return ( Float.intBitsToFloat(Simplex.hash(v.hashCode(), seed, 0)
+         & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f;
    }
 
    /**
@@ -1861,33 +1846,26 @@ public abstract class Simplex {
          * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ vzbit )
          * IUtils.HASH_MUL ^ vwbit;
 
-      final int bhash
-         = ( ( mulvx * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y + st) )
-            * IUtils.HASH_MUL ^ vzbit ) * IUtils.HASH_MUL ^ vwbit;
+      final int bhash = ( ( mulvx * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y
+         + st) ) * IUtils.HASH_MUL ^ vzbit ) * IUtils.HASH_MUL ^ vwbit;
 
       final int chash = ( ( mulvx * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL
          ^ Float.floatToIntBits(v.z + st) ) * IUtils.HASH_MUL ^ vwbit;
 
-      final int dhash
-         = ( ( mulvx * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ vzbit )
-            * IUtils.HASH_MUL ^ Float.floatToIntBits(v.w + st);
+      final int dhash = ( ( mulvx * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL
+         ^ vzbit ) * IUtils.HASH_MUL ^ Float.floatToIntBits(v.w + st);
 
-      return target.set(
-         ( Float.intBitsToFloat(
-            Simplex.hash(ahash, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f )
-            * 2.0f - 1.0f,
+      return target.set( ( Float.intBitsToFloat(Simplex.hash(ahash, seed, 0)
+         & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
 
-         ( Float.intBitsToFloat(
-            Simplex.hash(bhash, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f )
-            * 2.0f - 1.0f,
+         ( Float.intBitsToFloat(Simplex.hash(bhash, seed, 0) & 0x007fffff
+            | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
 
-         ( Float.intBitsToFloat(
-            Simplex.hash(chash, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f )
-            * 2.0f - 1.0f,
+         ( Float.intBitsToFloat(Simplex.hash(chash, seed, 0) & 0x007fffff
+            | 0x3f800000) - 1.0f ) * 2.0f - 1.0f,
 
-         ( Float.intBitsToFloat(
-            Simplex.hash(dhash, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f )
-            * 2.0f - 1.0f);
+         ( Float.intBitsToFloat(Simplex.hash(dhash, seed, 0) & 0x007fffff
+            | 0x3f800000) - 1.0f ) * 2.0f - 1.0f);
    }
 
    /**
@@ -1929,8 +1907,8 @@ public abstract class Simplex {
       final Vec2 xDeriv, final Vec2 yDeriv ) {
 
       final float st = Simplex.STEP_2 * Vec2.mag(v);
-      return target.set(Simplex.eval(v.x + st, v.y, seed, xDeriv),
-         Simplex.eval(v.x, v.y + st, seed, yDeriv));
+      return target.set(Simplex.eval(v.x + st, v.y, seed, xDeriv), Simplex.eval(
+         v.x, v.y + st, seed, yDeriv));
    }
 
    /**
@@ -1972,9 +1950,9 @@ public abstract class Simplex {
       final Vec3 xDeriv, final Vec3 yDeriv, final Vec3 zDeriv ) {
 
       final float st = Vec3.mag(v) * Simplex.STEP_3;
-      return target.set(Simplex.eval(v.x + st, v.y, v.z, seed, xDeriv),
-         Simplex.eval(v.x, v.y + st, v.z, seed, yDeriv),
-         Simplex.eval(v.x, v.y, v.z + st, seed, zDeriv));
+      return target.set(Simplex.eval(v.x + st, v.y, v.z, seed, xDeriv), Simplex
+         .eval(v.x, v.y + st, v.z, seed, yDeriv), Simplex.eval(v.x, v.y, v.z
+            + st, seed, zDeriv));
    }
 
    /**
@@ -2022,9 +2000,9 @@ public abstract class Simplex {
 
       final float st = Vec4.mag(v) * Simplex.STEP_4;
       return target.set(Simplex.eval(v.x + st, v.y, v.z, v.w, seed, xDeriv),
-         Simplex.eval(v.x, v.y + st, v.z, v.w, seed, yDeriv),
-         Simplex.eval(v.x, v.y, v.z + st, v.w, seed, zDeriv),
-         Simplex.eval(v.x, v.y, v.z, v.w + st, seed, wDeriv));
+         Simplex.eval(v.x, v.y + st, v.z, v.w, seed, yDeriv), Simplex.eval(v.x,
+            v.y, v.z + st, v.w, seed, zDeriv), Simplex.eval(v.x, v.y, v.z, v.w
+               + st, seed, wDeriv));
    }
 
    /**
@@ -2056,10 +2034,10 @@ public abstract class Simplex {
       final float scaledx = coord.x * scaleInv;
       final float scaledy = coord.y * scaleInv;
 
-      final float cellx = scaledx > 0.0f ? ( int ) scaledx
-         : scaledx < 0.0f ? ( int ) scaledx - 1.0f : 0.0f;
-      final float celly = scaledy > 0.0f ? ( int ) scaledy
-         : scaledy < 0.0f ? ( int ) scaledy - 1.0f : 0.0f;
+      final float cellx = scaledx > 0.0f ? ( int ) scaledx : scaledx < 0.0f
+         ? ( int ) scaledx - 1.0f : 0.0f;
+      final float celly = scaledy > 0.0f ? ( int ) scaledy : scaledy < 0.0f
+         ? ( int ) scaledy - 1.0f : 0.0f;
 
       final float localx = scaledx - cellx;
       final float localy = scaledy - celly;
@@ -2083,13 +2061,12 @@ public abstract class Simplex {
              * Calculate an offset step for the vector. This has to be done with
              * all three sums within the for loop.
              */
-            final float st
-               = Utils.sqrtUnchecked(sumxsq + sumysq) * Simplex.STEP_2;
+            final float st = Utils.sqrtUnchecked(sumxsq + sumysq)
+               * Simplex.STEP_2;
 
             /* Create a hash for the x component. */
-            final int ahsh
-               = ( IUtils.MUL_BASE ^ Float.floatToIntBits(sumx + st) )
-                  * IUtils.HASH_MUL ^ vybit;
+            final int ahsh = ( IUtils.MUL_BASE ^ Float.floatToIntBits(sumx
+               + st) ) * IUtils.HASH_MUL ^ vybit;
 
             /* Create a hash for the y component. */
             final int bhsh = ( IUtils.MUL_BASE ^ Float.floatToIntBits(sumx) )
@@ -2099,10 +2076,10 @@ public abstract class Simplex {
              * Create a random vector in the range [0.0, 1.0] . Add the cell
              * offset.
              */
-            hshx = i + Float.intBitsToFloat(
-               Simplex.hash(ahsh, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f;
-            hshy = j + Float.intBitsToFloat(
-               Simplex.hash(bhsh, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f;
+            hshx = i + Float.intBitsToFloat(Simplex.hash(ahsh, seed, 0)
+               & 0x007fffff | 0x3f800000) - 1.0f;
+            hshy = j + Float.intBitsToFloat(Simplex.hash(bhsh, seed, 0)
+               & 0x007fffff | 0x3f800000) - 1.0f;
 
             /*
              * Find the Euclidean distance between the local coordinate and the
@@ -2160,12 +2137,12 @@ public abstract class Simplex {
       final float scaledy = coord.y * scaleInv;
       final float scaledz = coord.z * scaleInv;
 
-      final float cellx = scaledx > 0.0f ? ( int ) scaledx
-         : scaledx < 0.0f ? ( int ) scaledx - 1.0f : 0.0f;
-      final float celly = scaledy > 0.0f ? ( int ) scaledy
-         : scaledy < 0.0f ? ( int ) scaledy - 1.0f : 0.0f;
-      final float cellz = scaledz > 0.0f ? ( int ) scaledz
-         : scaledz < 0.0f ? ( int ) scaledz - 1.0f : 0.0f;
+      final float cellx = scaledx > 0.0f ? ( int ) scaledx : scaledx < 0.0f
+         ? ( int ) scaledx - 1.0f : 0.0f;
+      final float celly = scaledy > 0.0f ? ( int ) scaledy : scaledy < 0.0f
+         ? ( int ) scaledy - 1.0f : 0.0f;
+      final float cellz = scaledz > 0.0f ? ( int ) scaledz : scaledz < 0.0f
+         ? ( int ) scaledz - 1.0f : 0.0f;
 
       final float localx = scaledx - cellx;
       final float localy = scaledy - celly;
@@ -2198,39 +2175,31 @@ public abstract class Simplex {
                 * Calculate an offset step for the vector. This has to be done
                 * with all three sums within the for loop.
                 */
-               final float st = Simplex.STEP_3
-                  * Utils.sqrtUnchecked(sumxsq + sumysq + sumzsq);
+               final float st = Simplex.STEP_3 * Utils.sqrtUnchecked(sumxsq
+                  + sumysq + sumzsq);
 
                /* Create a hash for the x component. */
-               final int ahsh
-                  = ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(sumx + st) )
-                     * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ vzbit;
+               final int ahsh = ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(sumx
+                  + st) ) * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ vzbit;
 
                /* Create a hash for the y component. */
-               final int bhsh = ( mulvx * IUtils.HASH_MUL
-                  ^ Float.floatToIntBits(sumy + st) ) * IUtils.HASH_MUL ^ vzbit;
+               final int bhsh = ( mulvx * IUtils.HASH_MUL ^ Float
+                  .floatToIntBits(sumy + st) ) * IUtils.HASH_MUL ^ vzbit;
 
                /* Create a hash for the z component. */
-               final int chsh
-                  = ( mulvx * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL
-                     ^ Float.floatToIntBits(sumz + st);
+               final int chsh = ( mulvx * IUtils.HASH_MUL ^ vybit )
+                  * IUtils.HASH_MUL ^ Float.floatToIntBits(sumz + st);
 
                /*
                 * Create a random vector in the range [0.0, 1.0] . Add the cell
                 * offset.
                 */
-               hshx = i
-                  + Float.intBitsToFloat(
-                     Simplex.hash(ahsh, seed, 0) & 0x007fffff | 0x3f800000)
-                  - 1.0f;
-               hshy = j
-                  + Float.intBitsToFloat(
-                     Simplex.hash(bhsh, seed, 0) & 0x007fffff | 0x3f800000)
-                  - 1.0f;
-               hshz = k
-                  + Float.intBitsToFloat(
-                     Simplex.hash(chsh, seed, 0) & 0x007fffff | 0x3f800000)
-                  - 1.0f;
+               hshx = i + Float.intBitsToFloat(Simplex.hash(ahsh, seed, 0)
+                  & 0x007fffff | 0x3f800000) - 1.0f;
+               hshy = j + Float.intBitsToFloat(Simplex.hash(bhsh, seed, 0)
+                  & 0x007fffff | 0x3f800000) - 1.0f;
+               hshz = k + Float.intBitsToFloat(Simplex.hash(chsh, seed, 0)
+                  & 0x007fffff | 0x3f800000) - 1.0f;
 
                /*
                 * Find the Euclidean distance between the local coordinate and
@@ -2239,8 +2208,8 @@ public abstract class Simplex {
                final float xDist = localx - hshx;
                final float yDist = localy - hshy;
                final float zDist = localz - hshz;
-               final float distSq
-                  = xDist * xDist + yDist * yDist + zDist * zDist;
+               final float distSq = xDist * xDist + yDist * yDist + zDist
+                  * zDist;
 
                /* Reassign minimums. */
                if ( distSq < minDistSq ) {
@@ -2289,14 +2258,14 @@ public abstract class Simplex {
       final float scaledz = coord.z * scaleInv;
       final float scaledw = coord.w * scaleInv;
 
-      final float cellx = scaledx > 0.0f ? ( int ) scaledx
-         : scaledx < 0.0f ? ( int ) scaledx - 1.0f : 0.0f;
-      final float celly = scaledy > 0.0f ? ( int ) scaledy
-         : scaledy < 0.0f ? ( int ) scaledy - 1.0f : 0.0f;
-      final float cellz = scaledz > 0.0f ? ( int ) scaledz
-         : scaledz < 0.0f ? ( int ) scaledz - 1.0f : 0.0f;
-      final float cellw = scaledw > 0.0f ? ( int ) scaledw
-         : scaledw < 0.0f ? ( int ) scaledw - 1.0f : 0.0f;
+      final float cellx = scaledx > 0.0f ? ( int ) scaledx : scaledx < 0.0f
+         ? ( int ) scaledx - 1.0f : 0.0f;
+      final float celly = scaledy > 0.0f ? ( int ) scaledy : scaledy < 0.0f
+         ? ( int ) scaledy - 1.0f : 0.0f;
+      final float cellz = scaledz > 0.0f ? ( int ) scaledz : scaledz < 0.0f
+         ? ( int ) scaledz - 1.0f : 0.0f;
+      final float cellw = scaledw > 0.0f ? ( int ) scaledw : scaledw < 0.0f
+         ? ( int ) scaledw - 1.0f : 0.0f;
 
       final float localx = scaledx - cellx;
       final float localy = scaledy - celly;
@@ -2331,56 +2300,45 @@ public abstract class Simplex {
 
                   final float sumx = cellx + i;
                   final float sumxsq = sumx * sumx;
-                  final int mulvx
-                     = IUtils.MUL_BASE ^ Float.floatToIntBits(sumx);
+                  final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(
+                     sumx);
 
                   /* Calculate an offset step for the vector. */
-                  final float st = Simplex.STEP_4
-                     * Utils.sqrtUnchecked(sumxsq + sumysq + sumzsq + sumwsq);
+                  final float st = Simplex.STEP_4 * Utils.sqrtUnchecked(sumxsq
+                     + sumysq + sumzsq + sumwsq);
 
                   /* Create a hash for the x component. */
-                  final int ahsh
-                     = ( ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(sumx + st) )
-                        * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ vzbit )
-                        * IUtils.HASH_MUL ^ vwbit;
-
-                  /* Create a hash for the y component. */
-                  final int bhsh = ( ( mulvx * IUtils.HASH_MUL
-                     ^ Float.floatToIntBits(sumy + st) ) * IUtils.HASH_MUL
+                  final int ahsh = ( ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(
+                     sumx + st) ) * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL
                      ^ vzbit ) * IUtils.HASH_MUL ^ vwbit;
 
+                  /* Create a hash for the y component. */
+                  final int bhsh = ( ( mulvx * IUtils.HASH_MUL ^ Float
+                     .floatToIntBits(sumy + st) ) * IUtils.HASH_MUL ^ vzbit )
+                     * IUtils.HASH_MUL ^ vwbit;
+
                   /* Create a hash for the z component. */
-                  final int chsh
-                     = ( ( mulvx * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL
-                        ^ Float.floatToIntBits(sumz + st) ) * IUtils.HASH_MUL
-                        ^ vwbit;
+                  final int chsh = ( ( mulvx * IUtils.HASH_MUL ^ vybit )
+                     * IUtils.HASH_MUL ^ Float.floatToIntBits(sumz + st) )
+                     * IUtils.HASH_MUL ^ vwbit;
 
                   /* Create a hash for the w component. */
-                  final int dhsh
-                     = ( ( mulvx * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL
-                        ^ vzbit ) * IUtils.HASH_MUL
-                        ^ Float.floatToIntBits(sumw + st);
+                  final int dhsh = ( ( mulvx * IUtils.HASH_MUL ^ vybit )
+                     * IUtils.HASH_MUL ^ vzbit ) * IUtils.HASH_MUL ^ Float
+                        .floatToIntBits(sumw + st);
 
                   /*
                    * Create a random vector in the range [0.0, 1.0] . Add the
                    * cell offset.
                    */
-                  hshx = i
-                     + Float.intBitsToFloat(
-                        Simplex.hash(ahsh, seed, 0) & 0x007fffff | 0x3f800000)
-                     - 1.0f;
-                  hshy = j
-                     + Float.intBitsToFloat(
-                        Simplex.hash(bhsh, seed, 0) & 0x007fffff | 0x3f800000)
-                     - 1.0f;
-                  hshz = k
-                     + Float.intBitsToFloat(
-                        Simplex.hash(chsh, seed, 0) & 0x007fffff | 0x3f800000)
-                     - 1.0f;
-                  hshw = m
-                     + Float.intBitsToFloat(
-                        Simplex.hash(dhsh, seed, 0) & 0x007fffff | 0x3f800000)
-                     - 1.0f;
+                  hshx = i + Float.intBitsToFloat(Simplex.hash(ahsh, seed, 0)
+                     & 0x007fffff | 0x3f800000) - 1.0f;
+                  hshy = j + Float.intBitsToFloat(Simplex.hash(bhsh, seed, 0)
+                     & 0x007fffff | 0x3f800000) - 1.0f;
+                  hshz = k + Float.intBitsToFloat(Simplex.hash(chsh, seed, 0)
+                     & 0x007fffff | 0x3f800000) - 1.0f;
+                  hshw = m + Float.intBitsToFloat(Simplex.hash(dhsh, seed, 0)
+                     & 0x007fffff | 0x3f800000) - 1.0f;
 
                   /*
                    * Find the Euclidean distance between the local coordinate
@@ -2390,8 +2348,8 @@ public abstract class Simplex {
                   final float yDist = localy - hshy;
                   final float zDist = localz - hshz;
                   final float wDist = localw - hshw;
-                  final float dist = xDist * xDist + yDist * yDist
-                     + zDist * zDist + wDist * wDist;
+                  final float dist = xDist * xDist + yDist * yDist + zDist
+                     * zDist + wDist * wDist;
 
                   /* Reassign minimums. */
                   if ( dist < minDist ) {

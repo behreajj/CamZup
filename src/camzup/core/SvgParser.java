@@ -90,8 +90,8 @@ public abstract class SvgParser {
       final CurveEntity2 result = new CurveEntity2();
 
       try {
-         final DocumentBuilder db
-            = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+         final DocumentBuilder db = DocumentBuilderFactory.newInstance()
+            .newDocumentBuilder();
          final File file = new File(fileName);
          final Document doc = db.parse(file);
          doc.normalizeDocument();
@@ -112,8 +112,8 @@ public abstract class SvgParser {
          final float widpx = SvgParser.parseFloat(widthStr);
 
          final Node height = attr.getNamedItem("height");
-         final String heightStr
-            = height != null ? height.getTextContent() : "0.0";
+         final String heightStr = height != null ? height.getTextContent()
+            : "0.0";
          final float hghpx = SvgParser.parseFloat(heightStr);
 
          final Node viewbox = attr.getNamedItem("viewBox");
@@ -123,8 +123,8 @@ public abstract class SvgParser {
          final float hghvb = Utils.diff(vbVec.w, vbVec.y);
 
          final Vec2 shift = new Vec2();
-         shift.set(Utils.max(widpx, widvb) * -0.5f,
-            Utils.max(hghpx, hghvb) * -0.5f);
+         shift.set(Utils.max(widpx, widvb) * -0.5f, Utils.max(hghpx, hghvb)
+            * -0.5f);
 
          if ( Vec2.any(shift) ) {
             for ( final Curve2 curve : result ) {
@@ -676,18 +676,6 @@ public abstract class SvgParser {
             String mhxStr = "0.0";
             String mhyStr = "0.0";
 
-            /* Arc parameters. Flags are either 0 or 1. */
-            @SuppressWarnings ( "unused" )
-            String rxStr = "0.0";
-            @SuppressWarnings ( "unused" )
-            String ryStr = "0.0";
-            @SuppressWarnings ( "unused" )
-            String angStr = "0.0";
-            @SuppressWarnings ( "unused" )
-            String largeArcFlag = "0";
-            @SuppressWarnings ( "unused" )
-            String sweepFlag = "0";
-
             final Vec2 relative = new Vec2();
             final Vec2 mh = new Vec2();
             float xOff = 0.0f;
@@ -730,18 +718,18 @@ public abstract class SvgParser {
 
                      curr = new Knot2();
                      target.append(curr);
-                     curr.coord.set(SvgParser.parseFloat(coxStr),
-                        SvgParser.parseFloat(coyStr));
+                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
+                        .parseFloat(coyStr));
 
-                     xOff
-                        = Utils.copySign(IUtils.DEFAULT_EPSILON, curr.coord.x);
-                     yOff
-                        = Utils.copySign(IUtils.DEFAULT_EPSILON, curr.coord.y);
+                     xOff = Utils.copySign(IUtils.DEFAULT_EPSILON,
+                        curr.coord.x);
+                     yOff = Utils.copySign(IUtils.DEFAULT_EPSILON,
+                        curr.coord.y);
 
-                     curr.foreHandle.set(curr.coord.x + xOff,
-                        curr.coord.y + yOff);
-                     curr.rearHandle.set(curr.coord.x - xOff,
-                        curr.coord.y - yOff);
+                     curr.foreHandle.set(curr.coord.x + xOff, curr.coord.y
+                        + yOff);
+                     curr.rearHandle.set(curr.coord.x - xOff, curr.coord.y
+                        - yOff);
 
                      relative.set(curr.coord);
 
@@ -762,19 +750,19 @@ public abstract class SvgParser {
                      curr = new Knot2();
                      target.append(curr);
 
-                     curr.coord.set(SvgParser.parseFloat(coxStr),
-                        SvgParser.parseFloat(coyStr));
+                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
+                        .parseFloat(coyStr));
                      Vec2.add(relative, curr.coord, curr.coord);
 
-                     xOff
-                        = Utils.copySign(IUtils.DEFAULT_EPSILON, curr.coord.x);
-                     yOff
-                        = Utils.copySign(IUtils.DEFAULT_EPSILON, curr.coord.y);
+                     xOff = Utils.copySign(IUtils.DEFAULT_EPSILON,
+                        curr.coord.x);
+                     yOff = Utils.copySign(IUtils.DEFAULT_EPSILON,
+                        curr.coord.y);
 
-                     curr.foreHandle.set(curr.coord.x + xOff,
-                        curr.coord.y + yOff);
-                     curr.rearHandle.set(curr.coord.x - xOff,
-                        curr.coord.y - yOff);
+                     curr.foreHandle.set(curr.coord.x + xOff, curr.coord.y
+                        + yOff);
+                     curr.rearHandle.set(curr.coord.x - xOff, curr.coord.y
+                        - yOff);
 
                      relative.set(curr.coord);
 
@@ -789,8 +777,8 @@ public abstract class SvgParser {
                      curr = new Knot2();
                      target.append(curr);
 
-                     curr.coord.set(SvgParser.parseFloat(coxStr),
-                        SvgParser.parseFloat(coyStr));
+                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
+                        .parseFloat(coyStr));
                      Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
                      Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
 
@@ -807,8 +795,8 @@ public abstract class SvgParser {
                      curr = new Knot2();
                      target.append(curr);
 
-                     curr.coord.set(SvgParser.parseFloat(coxStr),
-                        SvgParser.parseFloat(coyStr));
+                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
+                        .parseFloat(coyStr));
                      Vec2.add(relative, curr.coord, curr.coord);
 
                      Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
@@ -843,8 +831,8 @@ public abstract class SvgParser {
                      curr = new Knot2();
                      target.append(curr);
 
-                     curr.coord.x
-                        = relative.x + SvgParser.parseFloat(coxStr, 0.0f);
+                     curr.coord.x = relative.x + SvgParser.parseFloat(coxStr,
+                        0.0f);
                      curr.coord.y = prev.coord.y;
 
                      Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
@@ -903,10 +891,10 @@ public abstract class SvgParser {
                      curr = new Knot2();
                      target.append(curr);
 
-                     mh.set(SvgParser.parseFloat(mhxStr),
-                        SvgParser.parseFloat(mhyStr));
-                     curr.coord.set(SvgParser.parseFloat(coxStr),
-                        SvgParser.parseFloat(coyStr));
+                     mh.set(SvgParser.parseFloat(mhxStr), SvgParser.parseFloat(
+                        mhyStr));
+                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
+                        .parseFloat(coyStr));
                      Curve2.lerp13(mh, prev.coord, prev.foreHandle);
                      Curve2.lerp13(mh, curr.coord, curr.rearHandle);
 
@@ -925,10 +913,10 @@ public abstract class SvgParser {
                      curr = new Knot2();
                      target.append(curr);
 
-                     mh.set(SvgParser.parseFloat(mhxStr),
-                        SvgParser.parseFloat(mhyStr));
-                     curr.coord.set(SvgParser.parseFloat(coxStr),
-                        SvgParser.parseFloat(coyStr));
+                     mh.set(SvgParser.parseFloat(mhxStr), SvgParser.parseFloat(
+                        mhyStr));
+                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
+                        .parseFloat(coyStr));
 
                      Vec2.add(relative, mh, mh);
                      Vec2.add(relative, curr.coord, curr.coord);
@@ -950,8 +938,8 @@ public abstract class SvgParser {
                      target.append(curr);
 
                      prev.mirrorHandlesBackward();
-                     curr.coord.set(SvgParser.parseFloat(coxStr),
-                        SvgParser.parseFloat(coyStr));
+                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
+                        .parseFloat(coyStr));
 
                      /*
                       * Convert mid-handle from point to direction, negate,
@@ -976,8 +964,8 @@ public abstract class SvgParser {
                      target.append(curr);
 
                      prev.mirrorHandlesBackward();
-                     curr.coord.set(SvgParser.parseFloat(coxStr),
-                        SvgParser.parseFloat(coyStr));
+                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
+                        .parseFloat(coyStr));
                      Vec2.add(relative, curr.coord, curr.coord);
 
                      Vec2.sub(mh, prev.coord, mh);
@@ -1002,12 +990,12 @@ public abstract class SvgParser {
                      curr = new Knot2();
                      target.append(curr);
 
-                     prev.foreHandle.set(SvgParser.parseFloat(fhxStr),
-                        SvgParser.parseFloat(fhyStr));
-                     curr.rearHandle.set(SvgParser.parseFloat(rhxStr),
-                        SvgParser.parseFloat(rhyStr));
-                     curr.coord.set(SvgParser.parseFloat(coxStr),
-                        SvgParser.parseFloat(coyStr));
+                     prev.foreHandle.set(SvgParser.parseFloat(fhxStr), SvgParser
+                        .parseFloat(fhyStr));
+                     curr.rearHandle.set(SvgParser.parseFloat(rhxStr), SvgParser
+                        .parseFloat(rhyStr));
+                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
+                        .parseFloat(coyStr));
 
                      relative.set(curr.coord);
 
@@ -1026,12 +1014,12 @@ public abstract class SvgParser {
                      curr = new Knot2();
                      target.append(curr);
 
-                     prev.foreHandle.set(SvgParser.parseFloat(fhxStr),
-                        SvgParser.parseFloat(fhyStr));
-                     curr.rearHandle.set(SvgParser.parseFloat(rhxStr),
-                        SvgParser.parseFloat(rhyStr));
-                     curr.coord.set(SvgParser.parseFloat(coxStr),
-                        SvgParser.parseFloat(coyStr));
+                     prev.foreHandle.set(SvgParser.parseFloat(fhxStr), SvgParser
+                        .parseFloat(fhyStr));
+                     curr.rearHandle.set(SvgParser.parseFloat(rhxStr), SvgParser
+                        .parseFloat(rhyStr));
+                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
+                        .parseFloat(coyStr));
 
                      Vec2.add(relative, prev.foreHandle, prev.foreHandle);
                      Vec2.add(relative, curr.rearHandle, curr.rearHandle);
@@ -1053,10 +1041,10 @@ public abstract class SvgParser {
                      target.append(curr);
 
                      prev.mirrorHandlesBackward();
-                     curr.rearHandle.set(SvgParser.parseFloat(rhxStr),
-                        SvgParser.parseFloat(rhyStr));
-                     curr.coord.set(SvgParser.parseFloat(coxStr),
-                        SvgParser.parseFloat(coyStr));
+                     curr.rearHandle.set(SvgParser.parseFloat(rhxStr), SvgParser
+                        .parseFloat(rhyStr));
+                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
+                        .parseFloat(coyStr));
 
                      relative.set(curr.coord);
 
@@ -1074,10 +1062,10 @@ public abstract class SvgParser {
                      target.append(curr);
 
                      prev.mirrorHandlesBackward();
-                     curr.rearHandle.set(SvgParser.parseFloat(rhxStr),
-                        SvgParser.parseFloat(rhyStr));
-                     curr.coord.set(SvgParser.parseFloat(coxStr),
-                        SvgParser.parseFloat(coyStr));
+                     curr.rearHandle.set(SvgParser.parseFloat(rhxStr), SvgParser
+                        .parseFloat(rhyStr));
+                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
+                        .parseFloat(coyStr));
 
                      Vec2.add(relative, curr.rearHandle, curr.rearHandle);
                      Vec2.add(relative, curr.coord, curr.coord);
@@ -1090,11 +1078,11 @@ public abstract class SvgParser {
 
                      /* Unsupported. */
 
-                     rxStr = dataTokens[cursor++]; /* 1 */
-                     ryStr = dataTokens[cursor++]; /* 2 */
-                     angStr = dataTokens[cursor++]; /* 3 */
-                     largeArcFlag = dataTokens[cursor++]; /* 4 */
-                     sweepFlag = dataTokens[cursor++]; /* 5 */
+                     cursor++; /* 1 */
+                     cursor++; /* 2 */
+                     cursor++; /* 3 */
+                     cursor++; /* 4 */
+                     cursor++; /* 5 */
                      coxStr = dataTokens[cursor++]; /* 6 */
                      coyStr = dataTokens[cursor++]; /* 7 */
 
@@ -1102,8 +1090,8 @@ public abstract class SvgParser {
                      curr = new Knot2();
                      target.append(curr);
 
-                     curr.coord.set(SvgParser.parseFloat(coxStr),
-                        SvgParser.parseFloat(coyStr));
+                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
+                        .parseFloat(coyStr));
                      Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
                      Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
 
@@ -1115,11 +1103,11 @@ public abstract class SvgParser {
 
                      /* Unsupported. */
 
-                     rxStr = dataTokens[cursor++]; /* 1 */
-                     ryStr = dataTokens[cursor++]; /* 2 */
-                     angStr = dataTokens[cursor++]; /* 3 */
-                     largeArcFlag = dataTokens[cursor++]; /* 4 */
-                     sweepFlag = dataTokens[cursor++]; /* 5 */
+                     cursor++; /* 1 */
+                     cursor++; /* 2 */
+                     cursor++; /* 3 */
+                     cursor++; /* 4 */
+                     cursor++; /* 5 */
                      coxStr = dataTokens[cursor++]; /* 6 */
                      coyStr = dataTokens[cursor++]; /* 7 */
 
@@ -1127,8 +1115,8 @@ public abstract class SvgParser {
                      curr = new Knot2();
                      target.append(curr);
 
-                     curr.coord.set(SvgParser.parseFloat(coxStr),
-                        SvgParser.parseFloat(coyStr));
+                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
+                        .parseFloat(coyStr));
                      Vec2.add(relative, curr.coord, curr.coord);
 
                      Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
@@ -1197,8 +1185,8 @@ public abstract class SvgParser {
          }
 
          final Node ptsnode = attributes.getNamedItem("points");
-         final String ptsstr
-            = ptsnode != null ? ptsnode.getTextContent() : "0,0";
+         final String ptsstr = ptsnode != null ? ptsnode.getTextContent()
+            : "0,0";
          final String[] coords = ptsstr.split(" |,");
 
          int i = 0;
@@ -1207,8 +1195,8 @@ public abstract class SvgParser {
          target.resize(halfLen);
          final Iterator < Knot2 > itr = target.iterator();
          final Knot2 first = itr.next();
-         first.coord.set(SvgParser.parseFloat(coords[i++], 0.0f),
-            SvgParser.parseFloat(coords[i++], 0.0f));
+         first.coord.set(SvgParser.parseFloat(coords[i++], 0.0f), SvgParser
+            .parseFloat(coords[i++], 0.0f));
 
          Knot2 prev = first;
          while ( itr.hasNext() ) {
@@ -1317,10 +1305,10 @@ public abstract class SvgParser {
                   final String m02 = trData[5];
                   final String m12 = trData[6];
 
-                  delta.set(SvgParser.parseFloat(m00),
-                     SvgParser.parseFloat(m01), SvgParser.parseFloat(m02),
-                     SvgParser.parseFloat(m10), SvgParser.parseFloat(m11),
-                     SvgParser.parseFloat(m12), 0.0f, 0.0f, 1.0f);
+                  delta.set(SvgParser.parseFloat(m00), SvgParser.parseFloat(
+                     m01), SvgParser.parseFloat(m02), SvgParser.parseFloat(m10),
+                     SvgParser.parseFloat(m11), SvgParser.parseFloat(m12), 0.0f,
+                     0.0f, 1.0f);
                   Mat3.mul(target, delta, target);
 
                   break;
@@ -1344,8 +1332,8 @@ public abstract class SvgParser {
                   final String scx = trData[1];
                   final String scy = dataLen > 2 ? trData[2] : scx;
 
-                  Mat3.fromScale(SvgParser.parseFloat(scx),
-                     SvgParser.parseFloat(scy), delta);
+                  Mat3.fromScale(SvgParser.parseFloat(scx), SvgParser
+                     .parseFloat(scy), delta);
                   Mat3.mul(target, delta, target);
 
                   break;
@@ -1373,8 +1361,8 @@ public abstract class SvgParser {
                   final String tx = trData[1];
                   final String ty = dataLen > 2 ? trData[2] : "0.0";
 
-                  Mat3.fromTranslation(SvgParser.parseFloat(tx),
-                     SvgParser.parseFloat(ty), delta);
+                  Mat3.fromTranslation(SvgParser.parseFloat(tx), SvgParser
+                     .parseFloat(ty), delta);
                   Mat3.mul(target, delta, target);
 
                   break;

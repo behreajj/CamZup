@@ -475,9 +475,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final double m10 = s * this.cameraZoomX;
       final double m11 = c * this.cameraZoomY;
 
-      this.affineNative.setTransform(m00, -m10, m01, -m11,
-         this.width * 0.5d - this.cameraX * m00 - this.cameraY * m01,
-         this.height * 0.5d + this.cameraX * m10 + this.cameraY * m11);
+      this.affineNative.setTransform(m00, -m10, m01, -m11, this.width * 0.5d
+         - this.cameraX * m00 - this.cameraY * m01, this.height * 0.5d
+            + this.cameraX * m10 + this.cameraY * m11);
       this.g2.setTransform(this.affineNative);
    }
 
@@ -553,9 +553,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void colorMode ( final int mode, final float max1, final float max2,
       final float max3, final float aMax ) {
 
-      super.colorMode(mode, max1 < 1.0f ? 1.0f : max1,
-         max2 < 1.0f ? 1.0f : max2, max3 < 1.0f ? 1.0f : max3,
-         aMax < 1.0f ? 1.0f : aMax);
+      super.colorMode(mode, max1 < 1.0f ? 1.0f : max1, max2 < 1.0f ? 1.0f
+         : max2, max3 < 1.0f ? 1.0f : max3, aMax < 1.0f ? 1.0f : aMax);
 
       /*
        * Cache the inverse of the color maximums so that color channels can be
@@ -875,9 +874,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       final AffineTransform tr = this.g2.getTransform();
       return target.set(( float ) tr.getScaleX(), ( float ) tr.getShearX(),
-         ( float ) tr.getTranslateX(), ( float ) tr.getShearY(),
-         ( float ) tr.getScaleY(), ( float ) tr.getTranslateY(), 0.0f, 0.0f,
-         1.0f);
+         ( float ) tr.getTranslateX(), ( float ) tr.getShearY(), ( float ) tr
+            .getScaleY(), ( float ) tr.getTranslateY(), 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -911,8 +909,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       if ( target == null ) { target = new PMatrix2D(); }
       final AffineTransform tr = this.g2.getTransform();
       target.set(( float ) tr.getScaleX(), ( float ) tr.getShearX(),
-         ( float ) tr.getTranslateX(), ( float ) tr.getShearY(),
-         ( float ) tr.getScaleY(), ( float ) tr.getTranslateY());
+         ( float ) tr.getTranslateX(), ( float ) tr.getShearY(), ( float ) tr
+            .getScaleY(), ( float ) tr.getTranslateY());
       return target;
    }
 
@@ -931,9 +929,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       if ( target == null ) { target = new PMatrix3D(); }
       final AffineTransform tr = this.g2.getTransform();
       target.set(( float ) tr.getScaleX(), ( float ) tr.getShearX(), 0.0f,
-         ( float ) tr.getTranslateX(), ( float ) tr.getShearY(),
-         ( float ) tr.getScaleY(), 0.0f, ( float ) tr.getTranslateY(), 0.0f,
-         0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+         ( float ) tr.getTranslateX(), ( float ) tr.getShearY(), ( float ) tr
+            .getScaleY(), 0.0f, ( float ) tr.getTranslateY(), 0.0f, 0.0f, 1.0f,
+         0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
       return target;
    }
 
@@ -1309,8 +1307,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float u, final float v ) {
 
       final boolean isImg = this.textureMode == PConstants.IMAGE;
-      this.image(img, x, y, u, v, 0, 0, isImg ? img.width : 1,
-         isImg ? img.height : 1);
+      this.image(img, x, y, u, v, 0, 0, isImg ? img.width : 1, isImg
+         ? img.height : 1);
    }
 
    /**
@@ -1527,14 +1525,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       if ( material.useStroke ) {
          this.strokeWeight(material.strokeWeight);
          final camzup.core.Color coreStr = material.stroke;
-         this.strokeColorObject
-            = new java.awt.Color(coreStr.x, coreStr.y, coreStr.z, coreStr.w);
+         this.strokeColorObject = new java.awt.Color(coreStr.x, coreStr.y,
+            coreStr.z, coreStr.w);
       }
 
       if ( material.useFill ) {
          final camzup.core.Color coreFll = material.fill;
-         this.fillColorObject
-            = new java.awt.Color(coreFll.x, coreFll.y, coreFll.z, coreFll.w);
+         this.fillColorObject = new java.awt.Color(coreFll.x, coreFll.y,
+            coreFll.z, coreFll.w);
       }
    }
 
@@ -1546,8 +1544,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void origin ( ) {
 
-      this
-         .origin(IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width, this.height));
+      this.origin(IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width,
+         this.height));
    }
 
    /**
@@ -2064,11 +2062,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public Vec2 screen ( final Vec2 source, final Vec2 target ) {
 
       final AffineTransform tr = this.g2.getTransform();
-      return target.set(
-         ( float ) ( tr.getScaleX() * source.x + tr.getShearX() * source.y
-            + tr.getTranslateX() ),
-         ( float ) ( tr.getShearY() * source.x + tr.getScaleY() * source.y
-            + tr.getTranslateY() ));
+      return target.set(( float ) ( tr.getScaleX() * source.x + tr.getShearX()
+         * source.y + tr.getTranslateX() ), ( float ) ( tr.getShearY()
+            * source.x + tr.getScaleY() * source.y + tr.getTranslateY() ));
    }
 
    /**
@@ -2086,8 +2082,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public float screenX ( final float x, final float y ) {
 
       final AffineTransform tr = this.g2.getTransform();
-      return ( float ) ( tr.getScaleX() * x + tr.getShearX() * y
-         + tr.getTranslateX() );
+      return ( float ) ( tr.getScaleX() * x + tr.getShearX() * y + tr
+         .getTranslateX() );
    }
 
    /**
@@ -2125,8 +2121,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public float screenY ( final float x, final float y ) {
 
       final AffineTransform tr = this.g2.getTransform();
-      return ( float ) ( tr.getShearY() * x + tr.getScaleY() * y
-         + tr.getTranslateY() );
+      return ( float ) ( tr.getShearY() * x + tr.getScaleY() * y + tr
+         .getTranslateY() );
    }
 
    /**
@@ -2644,8 +2640,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * The lower bound of the stroke weight has to be < 1.0 because of
        * scaling's impact on stroke weight.
        */
-      this.strokeWeight
-         = weight > IUtils.DEFAULT_EPSILON ? weight : IUtils.DEFAULT_EPSILON;
+      this.strokeWeight = weight > IUtils.DEFAULT_EPSILON ? weight
+         : IUtils.DEFAULT_EPSILON;
       this.strokeImpl();
    }
 
@@ -3250,8 +3246,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          this.calcAi = argb >> 0x18 & 0xff;
          this.calcColor = argb;
       } else {
-         this.calcAi = ( int ) ( ( argb >> 0x18 & 0xff )
-            * Utils.clamp01(alpha * this.invColorModeA) );
+         this.calcAi = ( int ) ( ( argb >> 0x18 & 0xff ) * Utils.clamp01(alpha
+            * this.invColorModeA) );
          this.calcColor = this.calcAi << 0x18 | argb & 0xffffff;
       }
 

@@ -76,6 +76,7 @@ public class Yup3 extends Up3 {
        * Never use defCameraXXX values. They are not actual constants and may
        * not have been initialized.
        */
+
       this.camera(this.cameraX, this.cameraY, this.cameraZ, this.lookTarget.x,
          this.lookTarget.y, this.lookTarget.z);
    }
@@ -129,8 +130,8 @@ public class Yup3 extends Up3 {
 
       this.refUp.set(xUp, yUp, zUp);
 
-      this.lookDir.set(xEye - this.lookTarget.x, yEye - this.lookTarget.y,
-         zEye - this.lookTarget.z);
+      this.lookDir.set(xEye - this.lookTarget.x, yEye - this.lookTarget.y, zEye
+         - this.lookTarget.z);
 
       Vec3.normalize(this.lookDir, this.k);
 
@@ -176,8 +177,8 @@ public class Yup3 extends Up3 {
 
       final float wHalf = this.width * 0.5f;
       final float hHalf = this.height * 0.5f;
-      final float z = this.height < 128 ? Yup3.DEFAULT_LOC_Y
-         : this.height * IUp.DEFAULT_CAM_DIST_FAC;
+      final float z = this.height < 128 ? Yup3.DEFAULT_LOC_Y : this.height
+         * IUp.DEFAULT_CAM_DIST_FAC;
       this.camera(wHalf, hHalf, z, wHalf, hHalf, 0.0f, 0.0f, -1.0f, 0.0f);
    }
 
@@ -258,8 +259,8 @@ public class Yup3 extends Up3 {
          Up3.DEFAULT_TARGET_Z);
 
       this.lookDir.set(Yup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
-         Yup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
-         Yup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
+         Yup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y, Yup3.DEFAULT_LOC_Z
+            - Up3.DEFAULT_TARGET_Z);
 
       this.eyeDist = Vec3.mag(this.lookDir);
 
@@ -285,8 +286,8 @@ public class Yup3 extends Up3 {
          Up3.DEFAULT_TARGET_Z);
 
       this.lookDir.set(Yup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
-         Yup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
-         Yup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
+         Yup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y, Yup3.DEFAULT_LOC_Z
+            - Up3.DEFAULT_TARGET_Z);
 
       this.eyeDist = Vec3.mag(this.lookDir);
 
@@ -324,13 +325,12 @@ public class Yup3 extends Up3 {
       this.lightFalloff(1.0f, 0.0f, 0.0f);
       this.lightSpecular(0.0f, 0.0f, 0.0f);
 
-      this.ambientLight(this.colorModeX * IUpOgl.DEFAULT_AMB_R,
-         this.colorModeY * IUpOgl.DEFAULT_AMB_G,
-         this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
+      this.ambientLight(this.colorModeX * IUpOgl.DEFAULT_AMB_R, this.colorModeY
+         * IUpOgl.DEFAULT_AMB_G, this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
 
       this.directionalLight(this.colorModeX * IUpOgl.DEFAULT_LIGHT_R,
-         this.colorModeY * IUpOgl.DEFAULT_LIGHT_G,
-         this.colorModeZ * IUpOgl.DEFAULT_LIGHT_B,
+         this.colorModeY * IUpOgl.DEFAULT_LIGHT_G, this.colorModeZ
+            * IUpOgl.DEFAULT_LIGHT_B,
 
          Yup3.DEFAULT_LIGHT_X, Yup3.DEFAULT_LIGHT_Y, Yup3.DEFAULT_LIGHT_Z);
 

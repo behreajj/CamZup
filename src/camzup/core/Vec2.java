@@ -9,8 +9,8 @@ import java.util.Iterator;
  * two-dimensional graphics programs. Instance methods are limited, while
  * most static methods require an explicit output variable to be provided.
  */
-public class Vec2
-   implements Comparable < Vec2 >, Cloneable, Iterable < Float > {
+public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
+   Float > {
 
    /**
     * Component on the x axis in the Cartesian coordinate system.
@@ -33,10 +33,7 @@ public class Vec2
     * @param x the x component
     * @param y the y component
     */
-   public Vec2 ( final boolean x, final boolean y ) {
-
-      this.set(x, y);
-   }
+   public Vec2 ( final boolean x, final boolean y ) { this.set(x, y); }
 
    /**
     * Constructs a vector from float values.
@@ -44,10 +41,16 @@ public class Vec2
     * @param x the x component
     * @param y the y component
     */
-   public Vec2 ( final float x, final float y ) {
+   public Vec2 ( final float x, final float y ) { this.set(x, y); }
 
-      this.set(x, y);
-   }
+   /**
+    * Constructs a vector from integer values. A convenience for Kotlin
+    * support.
+    *
+    * @param x the x component
+    * @param y the y component
+    */
+   public Vec2 ( final int x, final int y ) { this.set(x, y); }
 
    /**
     * Attempts to construct a vector from Strings using
@@ -102,6 +105,15 @@ public class Vec2
            : this.x < v.x ? -1 : 0;
       /* @formatter:on */
    }
+
+   /**
+    * Tests to see if the vector contains a value.
+    *
+    * @param v the value
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final float v ) { return this.indexOf(v) > -1; }
 
    /**
     * Tests this vector for equivalence with another object.
@@ -160,13 +172,30 @@ public class Vec2
    }
 
    /**
+    * Tests to see if the vector contains a value. If the value is equal to x,
+    * returns 0; if y, 1. Returns -1 if the vector does not contain a value.
+    *
+    * @param v the value
+    *
+    * @return the index
+    */
+   public int indexOf ( final float v ) {
+
+      // TODO: Problem with reciprocity: v.get(indexOf(valueNotInV)) would
+      // return v.y because -1 is tied to the last index element.
+      if ( Utils.approx(this.y, v) ) { return 1; }
+      if ( Utils.approx(this.x, v) ) { return 0; }
+      return -1;
+   }
+
+   /**
     * Returns an iterator for this vector, which allows its components to be
     * accessed in an enhanced for-loop.
     *
     * @return the iterator
     */
    @Override
-   public V2Iterator iterator ( ) { return new V2Iterator(this); }
+   public Iterator < Float > iterator ( ) { return new V2Iterator(this); }
 
    /**
     * Gets the number of components held by this vector.
@@ -180,7 +209,6 @@ public class Vec2
     *
     * @return this vector
     */
-   @Chainable
    public Vec2 reset ( ) { return this.set(0.0f, 0.0f); }
 
    /**
@@ -191,15 +219,11 @@ public class Vec2
     * @param y the y component
     *
     * @return this vector
-    *
-    * @see Utils#toFloat(boolean)
     */
-   @Chainable
    public Vec2 set ( final boolean x, final boolean y ) {
 
-      this.x = Utils.toFloat(x);
-      this.y = Utils.toFloat(y);
-
+      this.x = x ? 1.0f : 0.0f;
+      this.y = y ? 1.0f : 0.0f;
       return this;
    }
 
@@ -211,12 +235,27 @@ public class Vec2
     *
     * @return this vector
     */
-   @Chainable
    public Vec2 set ( final float x, final float y ) {
 
       this.x = x;
       this.y = y;
 
+      return this;
+   }
+
+   /**
+    * Sets the components of this vector from integers. A convenience for
+    * Kotlin support.
+    *
+    * @param x the x component
+    * @param y the y component
+    *
+    * @return this vector
+    */
+   public Vec2 set ( final int x, final int y ) {
+
+      this.x = x;
+      this.y = y;
       return this;
    }
 
@@ -232,7 +271,6 @@ public class Vec2
     *
     * @see Float#parseFloat(String)
     */
-   @Chainable
    public Vec2 set ( final String xstr, final String ystr ) {
 
       float x = 0.0f;
@@ -263,7 +301,6 @@ public class Vec2
     *
     * @return this vector
     */
-   @Chainable
    public Vec2 set ( final Vec2 source ) {
 
       return this.set(source.x, source.y);
@@ -408,8 +445,8 @@ public class Vec2
     */
    protected boolean equals ( final Vec2 v ) {
 
-      return Float.floatToIntBits(this.y) == Float.floatToIntBits(v.y)
-         && Float.floatToIntBits(this.x) == Float.floatToIntBits(v.x);
+      return Float.floatToIntBits(this.y) == Float.floatToIntBits(v.y) && Float
+         .floatToIntBits(this.x) == Float.floatToIntBits(v.x);
    }
 
    /**
@@ -525,9 +562,9 @@ public class Vec2
     */
    public static float angleBetween ( final Vec2 a, final Vec2 b ) {
 
-      return Vec2.none(a) || Vec2.none(b) ? 0.0f
-         : Utils.acos(Vec2.dot(a, b) * Utils.invSqrtUnchecked(Vec2.magSq(a))
-            * Utils.invSqrtUnchecked(Vec2.magSq(b)));
+      return Vec2.none(a) || Vec2.none(b) ? 0.0f : Utils.acos(Vec2.dot(a, b)
+         * Utils.invSqrtUnchecked(Vec2.magSq(a)) * Utils.invSqrtUnchecked(Vec2
+            .magSq(b)));
    }
 
    /**
@@ -681,9 +718,8 @@ public class Vec2
       ucb *= u;
       tcb *= step;
 
-      return target.set(
-         ap0.x * ucb + cp0.x * usq3t + cp1.x * tsq3u + ap1.x * tcb,
-         ap0.y * ucb + cp0.y * usq3t + cp1.y * tsq3u + ap1.y * tcb);
+      return target.set(ap0.x * ucb + cp0.x * usq3t + cp1.x * tsq3u + ap1.x
+         * tcb, ap0.y * ucb + cp0.y * usq3t + cp1.y * tsq3u + ap1.y * tcb);
    }
 
    /**
@@ -781,8 +817,8 @@ public class Vec2
    public static Vec2 clamp ( final Vec2 v, final Vec2 lowerBound,
       final Vec2 upperBound, final Vec2 target ) {
 
-      return target.set(Utils.clamp(v.x, lowerBound.x, upperBound.x),
-         Utils.clamp(v.x, lowerBound.y, upperBound.y));
+      return target.set(Utils.clamp(v.x, lowerBound.x, upperBound.x), Utils
+         .clamp(v.x, lowerBound.y, upperBound.y));
    }
 
    /**
@@ -851,8 +887,8 @@ public class Vec2
    public static Vec2 copySign ( final Vec2 magnitude, final Vec2 sign,
       final Vec2 target ) {
 
-      return target.set(Utils.copySign(magnitude.x, sign.x),
-         Utils.copySign(magnitude.y, sign.y));
+      return target.set(Utils.copySign(magnitude.x, sign.x), Utils.copySign(
+         magnitude.y, sign.y));
    }
 
    /**
@@ -1094,8 +1130,8 @@ public class Vec2
    public static Vec2 filter ( final Vec2 v, final Vec2 lb, final Vec2 ub,
       final Vec2 target ) {
 
-      return target.set(Utils.filter(v.x, lb.x, ub.x),
-         Utils.filter(v.y, lb.y, ub.y));
+      return target.set(Utils.filter(v.x, lb.x, ub.x), Utils.filter(v.y, lb.y,
+         ub.y));
    }
 
    /**
@@ -1238,8 +1274,8 @@ public class Vec2
        */
 
       final float nrm = heading * IUtils.ONE_TAU;
-      return target.set(radius * Utils.scNorm(nrm),
-         radius * Utils.scNorm(nrm - 0.25f));
+      return target.set(radius * Utils.scNorm(nrm), radius * Utils.scNorm(nrm
+         - 0.25f));
    }
 
    /**
@@ -1464,10 +1500,10 @@ public class Vec2
       final float angNorm = Utils.mod1(angOffset * IUtils.ONE_TAU);
 
       final boolean oneRing = vring == 1;
-      final float vrMax
-         = Utils.max(IUtils.DEFAULT_EPSILON, radiusMin, radiusMax);
-      final float vrMin = oneRing ? vrMax
-         : Utils.max(IUtils.DEFAULT_EPSILON, Utils.min(radiusMin, radiusMax));
+      final float vrMax = Utils.max(IUtils.DEFAULT_EPSILON, radiusMin,
+         radiusMax);
+      final float vrMin = oneRing ? vrMax : Utils.max(IUtils.DEFAULT_EPSILON,
+         Utils.min(radiusMin, radiusMax));
 
       final int ringLen = includeCenter ? rings + 1 : rings;
       final Vec2[][] result = new Vec2[ringLen][vsect];
@@ -1550,8 +1586,7 @@ public class Vec2
     *
     * @return the angle in radians
     *
-    * @see Math#atan2(double, double)
-    * @see Vec2#headingUnsigned(Vec2)
+    * @see Utils#atan2(float, float)
     */
    public static float headingSigned ( final Vec2 v ) {
 
@@ -1737,9 +1772,8 @@ public class Vec2
       final Vec2 ubOrigin, final Vec2 lbDest, final Vec2 ubDest,
       final Vec2 target ) {
 
-      return target.set(
-         Utils.map(v.x, lbOrigin.x, ubOrigin.x, lbDest.x, ubDest.x),
-         Utils.map(v.y, lbOrigin.y, ubOrigin.y, lbDest.y, ubDest.y));
+      return target.set(Utils.map(v.x, lbOrigin.x, ubOrigin.x, lbDest.x,
+         ubDest.x), Utils.map(v.y, lbOrigin.y, ubOrigin.y, lbDest.y, ubDest.y));
    }
 
    /**
@@ -1773,8 +1807,8 @@ public class Vec2
    public static Vec2 max ( final Vec2 a, final Vec2 upperBound,
       final Vec2 target ) {
 
-      return target.set(Utils.max(a.x, upperBound.x),
-         Utils.max(a.y, upperBound.y));
+      return target.set(Utils.max(a.x, upperBound.x), Utils.max(a.y,
+         upperBound.y));
    }
 
    /**
@@ -1808,8 +1842,8 @@ public class Vec2
    public static Vec2 min ( final Vec2 a, final Vec2 lowerBound,
       final Vec2 target ) {
 
-      return target.set(Utils.min(a.x, lowerBound.x),
-         Utils.min(a.y, lowerBound.y));
+      return target.set(Utils.min(a.x, lowerBound.x), Utils.min(a.y,
+         lowerBound.y));
    }
 
    /**
@@ -1829,8 +1863,8 @@ public class Vec2
       if ( step >= 1.0f ) { return target.set(dest); }
 
       final float u = 1.0f - step;
-      return target.set(u * origin.x + step * dest.x,
-         u * origin.y + step * dest.y);
+      return target.set(u * origin.x + step * dest.x, u * origin.y + step
+         * dest.y);
    }
 
    /**
@@ -2231,8 +2265,8 @@ public class Vec2
       if ( levels < 2 ) { return target.set(v); }
 
       final float delta = 1.0f / levels;
-      return target.set(delta * Utils.floor(0.5f + v.x * levels),
-         delta * Utils.floor(0.5f + v.y * levels));
+      return target.set(delta * Utils.floor(0.5f + v.x * levels), delta * Utils
+         .floor(0.5f + v.y * levels));
    }
 
    /**
@@ -2267,8 +2301,8 @@ public class Vec2
 
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
-      return target.set( ( 1.0f - rx ) * lowerBound + rx * upperBound,
-         ( 1.0f - ry ) * lowerBound + ry * upperBound);
+      return target.set( ( 1.0f - rx ) * lowerBound + rx * upperBound, ( 1.0f
+         - ry ) * lowerBound + ry * upperBound);
    }
 
    /**
@@ -2308,8 +2342,8 @@ public class Vec2
 
       final float rt = rng.nextFloat();
       final float rr = rng.nextFloat();
-      return Vec2.fromPolar( ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI,
-         ( 1.0f - rr ) * rhoMin + rr * rhoMax, target);
+      return Vec2.fromPolar( ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI, ( 1.0f
+         - rr ) * rhoMin + rr * rhoMax, target);
    }
 
    /**
@@ -2354,8 +2388,8 @@ public class Vec2
 
       if ( Utils.approx(nMSq, 1.0f) ) {
          final float scalar = 2.0f * Vec2.dot(normal, incident);
-         return target.set(incident.x - scalar * normal.x,
-            incident.y - scalar * normal.y);
+         return target.set(incident.x - scalar * normal.x, incident.y - scalar
+            * normal.y);
       }
 
       final float mInv = Utils.invSqrtUnchecked(nMSq);
@@ -2387,8 +2421,8 @@ public class Vec2
       final float k = 1.0f - eta * eta * ( 1.0f - nDotI * nDotI );
       if ( k <= 0.0f ) { return target.reset(); }
       final float scalar = eta * nDotI + Utils.sqrtUnchecked(k);
-      return target.set(eta * incident.x - scalar * normal.x,
-         eta * incident.y - scalar * normal.y);
+      return target.set(eta * incident.x - scalar * normal.x, eta * incident.y
+         - scalar * normal.y);
    }
 
    /**
@@ -2588,8 +2622,8 @@ public class Vec2
          n *= 10;
       }
       final float nInv = 1.0f / n;
-      return target.set(Utils.round(v.x * n) * nInv,
-         Utils.round(v.y * n) * nInv);
+      return target.set(Utils.round(v.x * n) * nInv, Utils.round(v.y * n)
+         * nInv);
    }
 
    /**
@@ -2721,8 +2755,8 @@ public class Vec2
    public static Vec2 wrap ( final Vec2 v, final Vec2 lb, final Vec2 ub,
       final Vec2 target ) {
 
-      return target.set(Utils.wrap(v.x, lb.x, ub.x),
-         Utils.wrap(v.y, lb.y, ub.y));
+      return target.set(Utils.wrap(v.x, lb.x, ub.x), Utils.wrap(v.y, lb.y,
+         ub.y));
    }
 
    /**
@@ -2760,7 +2794,7 @@ public class Vec2
     * first, then rows.<br>
     * <br>
     * This is separated to make overriding the public grid functions easier.
-    * This is private because it is too easy for integers to be quietly
+    * This is protected because it is too easy for integers to be quietly
     * promoted to floats if the signature parameters are confused.
     *
     * @param cols number of columns
@@ -2772,7 +2806,7 @@ public class Vec2
     *
     * @return the array
     */
-   private static Vec2[][] grid ( final int cols, final int rows,
+   protected static Vec2[][] grid ( final int cols, final int rows,
       final float lbx, final float lby, final float ubx, final float uby ) {
 
       final int rval = rows < 2 ? 2 : rows;
@@ -2842,8 +2876,8 @@ public class Vec2
    /**
     * An abstract class to facilitate the creation of vector easing functions.
     */
-   public static abstract class AbstrEasing
-      implements Utils.EasingFuncObj < Vec2 > {
+   public static abstract class AbstrEasing implements Utils.EasingFuncObj <
+      Vec2 > {
 
       /**
        * The default constructor.
