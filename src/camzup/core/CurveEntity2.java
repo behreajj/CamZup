@@ -76,14 +76,14 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    /**
     * Appends a collection of curves to this curve entity.
     *
-    * @param curves the curves
+    * @param app the curves
     *
     * @return this curve entity
     */
 
-   public CurveEntity2 appendAll ( final Collection < Curve2 > curves ) {
+   public CurveEntity2 appendAll ( final Collection < Curve2 > app ) {
 
-      final Iterator < Curve2 > itr = curves.iterator();
+      final Iterator < Curve2 > itr = app.iterator();
       while ( itr.hasNext() ) {
          this.append(itr.next());
       }
@@ -93,18 +93,30 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    /**
     * Appends a list of curves to this curve entity.
     *
-    * @param curves the curves
+    * @param app the curves
     *
     * @return this curve entity
     */
 
-   public CurveEntity2 appendAll ( final Curve2... curves ) {
+   public CurveEntity2 appendAll ( final Curve2... app ) {
 
-      final int len = curves.length;
+      final int len = app.length;
       for ( int i = 0; i < len; ++i ) {
-         this.append(curves[i]);
+         this.append(app[i]);
       }
       return this;
+   }
+
+   /**
+    * Evaluates whether a curve is contained by this curve entity.
+    *
+    * @param c the curve
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final Curve2 c ) {
+
+      return this.curves.contains(c);
    }
 
    /**
@@ -393,13 +405,17 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
     *
     * @return the string
     */
-   @SuppressWarnings ( "null" )
    public String toSvgElm ( final String id, final float zoom,
       final MaterialSolid[] materials ) {
 
-      final StringBuilder svgp = new StringBuilder(1024).append("<g id=\"")
-         .append(this.name.toLowerCase()).append('\"').append(' ').append(
-            this.transform.toSvgString()).append('>').append('\n');
+      final StringBuilder svgp = new StringBuilder(1024);
+      svgp.append("<g id=\"");
+      svgp.append(this.name.toLowerCase());
+      svgp.append('\"');
+      svgp.append(' ');
+      svgp.append(this.transform.toSvgString());
+      svgp.append('>');
+      svgp.append('\n');
 
       final float scale = zoom * Transform2.minDimension(this.transform);
       int matLen = 0;
@@ -430,8 +446,10 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
 
             final int vMatIdx = Utils.mod(curve.materialIndex, matLen);
             final MaterialSolid material = materials[vMatIdx];
-            svgp.append("<g ").append(material.toSvgString(scale)).append('>')
-               .append('\n');
+            svgp.append("<g ");
+            svgp.append(material.toSvgString(scale));
+            svgp.append('>');
+            svgp.append('\n');
          }
 
          svgp.append(curve.toSvgPath(iddot + Utils.toPadded(i, 4)));

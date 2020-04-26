@@ -831,7 +831,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 set ( final float xCoord, final float yCoord,
       final float zCoord, final float xFore, final float yFore,
       final float zFore, final float xRear, final float yRear,
@@ -851,7 +850,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 set ( final Knot2 source ) {
 
       return this.set(source.coord, source.foreHandle, source.rearHandle);
@@ -864,7 +862,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 set ( final Knot3 source ) {
 
       return this.set(source.coord, source.foreHandle, source.rearHandle);
@@ -887,7 +884,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 set ( final String xCoord, final String yCoord,
       final String zCoord, final String xFore, final String yFore,
       final String zFore, final String xRear, final String yRear,
@@ -909,7 +905,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 set ( final Vec2 coord, final Vec2 foreHandle,
       final Vec2 rearHandle ) {
 
@@ -941,7 +936,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 set ( final Vec3 coord, final Vec3 foreHandle ) {
 
       return this.set(coord.x, coord.y, coord.z, foreHandle.x, foreHandle.y,
@@ -957,7 +951,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 set ( final Vec3 coord, final Vec3 foreHandle,
       final Vec3 rearHandle ) {
 
@@ -998,18 +991,16 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(320)
-         .append("{ coord: ")
-         .append(this.coord.toString(places))
-         .append(", foreHandle: ")
-         .append(this.foreHandle.toString(places))
-         .append(", rearHandle: ")
-         .append(this.rearHandle.toString(places))
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(384);
+      sb.append("{ coord: ");
+      sb.append(this.coord.toString(places));
+      sb.append(", foreHandle: ");
+      sb.append(this.foreHandle.toString(places));
+      sb.append(", rearHandle: ");
+      sb.append(this.rearHandle.toString(places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**
@@ -1582,7 +1573,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float hmcosa = cosa * handleMag;
 
       target.foreHandle.set(coord.x - hmsina, coord.y + hmcosa, zCenter);
-
       target.rearHandle.set(coord.x + hmsina, coord.y - hmcosa, zCenter);
 
       return target;

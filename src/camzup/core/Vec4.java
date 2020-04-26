@@ -66,20 +66,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    }
 
    /**
-    * Constructs a vector from integer values. A convenience for Kotlin
-    * support.
-    *
-    * @param x the x component
-    * @param y the y component
-    * @param z the z component
-    * @param w the w component
-    */
-   public Vec4 ( final int x, final int y, final int z, final int w ) {
-
-      this.set(x, y, z, w);
-   }
-
-   /**
     * Attempts to construct a vector from Strings using
     * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
     * the component is set to zero.
@@ -172,7 +158,94 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return the evaluation
     */
-   public boolean contains ( final float v ) { return this.indexOf(v) > -1; }
+   public boolean contains ( final float v ) {
+
+      if ( Utils.approx(this.w, v) ) { return true; }
+      if ( Utils.approx(this.z, v) ) { return true; }
+      if ( Utils.approx(this.y, v) ) { return true; }
+      if ( Utils.approx(this.x, v) ) { return true; }
+      return false;
+   }
+
+   /**
+    * Returns a new vector decremented by one. For interoperability with
+    * Kotlin: <code>--a</code> (prefix) or <code>a--</code> (postfix). Per the
+    * specification, <em>does not mutate the vector in place</em>.
+    *
+    * @return the decremented vector
+    */
+   public Vec4 dec ( ) {
+
+      return new Vec4(this.x - 1.0f, this.y - 1.0f, this.z - 1.0f, this.w
+         - 1.0f);
+   }
+
+   /**
+    * Returns a new vector with the division of the instance by the right
+    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
+    * not mutate the vector in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the quotient
+    */
+   public Vec4 div ( final float b ) {
+
+      if ( b != 0.0f ) {
+         return new Vec4(this.x / b, this.y / b, this.z / b, this.w / b);
+      }
+      return new Vec4(0.0f, 0.0f, 0.0f, 0.0f);
+   }
+
+   /**
+    * Returns a new vector with the division of the instance by the right
+    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
+    * not mutate the vector in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the quotient
+    */
+   public Vec4 div ( final Vec4 b ) {
+
+      return new Vec4(Utils.div(this.x, b.x), Utils.div(this.y, b.y), Utils.div(
+         this.z, b.z), Utils.div(this.w, b.w));
+   }
+
+   /**
+    * Divides the instance by the right operand (mutates the vector in place).
+    * For interoperability with Kotlin: <code>a /= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void divAssign ( final float b ) {
+
+      if ( b != 0.0f ) {
+         this.x /= b;
+         this.y /= b;
+         this.z /= b;
+         this.w /= b;
+      } else {
+         this.x = 0.0f;
+         this.y = 0.0f;
+         this.z = 0.0f;
+         this.w = 0.0f;
+      }
+   }
+
+   /**
+    * Divides the instance by the right operand (mutates the vector in place).
+    * For interoperability with Kotlin: <code>a /= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void divAssign ( final Vec4 b ) {
+
+      this.x = Utils.div(this.x, b.x);
+      this.y = Utils.div(this.y, b.y);
+      this.z = Utils.div(this.z, b.z);
+      this.w = Utils.div(this.w, b.w);
+   }
 
    /**
     * Tests this vector for equivalence with another object.
@@ -242,21 +315,16 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    }
 
    /**
-    * Tests to see if the vector contains a value. If the value is equal to x,
-    * returns 0; if y, 1; if z, 2; if w, 3. Returns -1 if the vector does not
-    * contain a value.
+    * Returns a new vector incremented by one. For interoperability with
+    * Kotlin: <code>++a</code> (prefix) or <code>a++</code> (postfix). Per the
+    * specification, <em>does not mutate the vector in place</em>.
     *
-    * @param v the value
-    *
-    * @return the index
+    * @return the incremented vector
     */
-   public int indexOf ( final float v ) {
+   public Vec4 inc ( ) {
 
-      if ( Utils.approx(this.w, v) ) { return 3; }
-      if ( Utils.approx(this.z, v) ) { return 2; }
-      if ( Utils.approx(this.y, v) ) { return 1; }
-      if ( Utils.approx(this.x, v) ) { return 0; }
-      return -1;
+      return new Vec4(this.x + 1.0f, this.y + 1.0f, this.z + 1.0f, this.w
+         + 1.0f);
    }
 
    /**
@@ -274,6 +342,195 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     * @return the length
     */
    public int length ( ) { return 4; }
+
+   /**
+    * Returns a new vector with the subtraction of the right operand from the
+    * instance. For interoperability with Kotlin: <code>a - b</code> .
+    * <em>Does not mutate the vector in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the subtraction
+    */
+   public Vec4 minus ( final float b ) {
+
+      return new Vec4(this.x - b, this.y - b, this.z - b, this.w - b);
+   }
+
+   /**
+    * Returns a new vector with the subtraction of the right operand from the
+    * instance. For interoperability with Kotlin: <code>a - b</code> .
+    * <em>Does not mutate the vector in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the subtraction
+    */
+   public Vec4 minus ( final Vec4 b ) {
+
+      return new Vec4(this.x - b.x, this.y - b.y, this.z - b.z, this.w - b.w);
+   }
+
+   /**
+    * Subtracts the right operand from the instance (mutates the vector in
+    * place). For interoperability with Kotlin: <code>a -= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void minusAssign ( final float b ) {
+
+      this.x -= b;
+      this.y -= b;
+      this.z -= b;
+      this.w -= b;
+   }
+
+   /**
+    * Subtracts the right operand from the instance (mutates the vector in
+    * place). For interoperability with Kotlin: <code>a -= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void minusAssign ( final Vec4 b ) {
+
+      this.x -= b.x;
+      this.y -= b.y;
+      this.z -= b.z;
+      this.w -= b.w;
+   }
+
+   /**
+    * Returns a new vector with the boolean opposite of the instance. For
+    * interoperability with Kotlin: <code>!a</code> . <em>Does not mutate the
+    * vector in place</em>.
+    *
+    * @return the opposite vector
+    */
+   public Vec4 not ( ) {
+
+      return new Vec4(this.x == 0.0f, this.y == 0.0f, this.z == 0.0f, this.w
+         == 0.0f);
+   }
+
+   /**
+    * Returns a new vector with the addition of the right operand to the
+    * instance. For interoperability with Kotlin: <code>a - b</code> .
+    * <em>Does not mutate the vector in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the sum
+    */
+   public Vec4 plus ( final float b ) {
+
+      return new Vec4(this.x + b, this.y + b, this.z + b, this.w + b);
+   }
+
+   /**
+    * Returns a new vector with the addition of the right operand to the
+    * instance. For interoperability with Kotlin: <code>a - b</code> .
+    * <em>Does not mutate the vector in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the sum
+    */
+   public Vec4 plus ( final Vec4 b ) {
+
+      return new Vec4(this.x + b.x, this.y + b.y, this.z + b.z, this.w + b.w);
+   }
+
+   /**
+    * Adds the right operand to the instance (mutates the vector in place).
+    * For interoperability with Kotlin: <code>a += b</code> .
+    *
+    * @param b the right operand
+    */
+   public void plusAssign ( final float b ) {
+
+      this.x += b;
+      this.y += b;
+      this.z += b;
+      this.w += b;
+   }
+
+   /**
+    * Adds the right operand to the instance (mutates the vector in place).
+    * For interoperability with Kotlin: <code>a += b</code> .
+    *
+    * @param b the right operand
+    */
+   public void plusAssign ( final Vec4 b ) {
+
+      this.x += b.x;
+      this.y += b.y;
+      this.z += b.z;
+      this.w += b.w;
+   }
+
+   /**
+    * Returns a new vector with the signed remainder (<code>fmod</code>) of
+    * the instance and the right operand. For interoperability with Kotlin:
+    * <code>a % b</code> . <em>Does not mutate the vector in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the signed remainder
+    */
+   public Vec4 rem ( final float b ) {
+
+      if ( b != 0.0f ) {
+         return new Vec4(this.x % b, this.y % b, this.z % b, this.w % b);
+      }
+      return new Vec4(this.x, this.y, this.z, this.w);
+   }
+
+   /**
+    * Returns a new vector with the signed remainder (<code>fmod</code>) of
+    * the instance and the right operand. For interoperability with Kotlin:
+    * <code>a % b</code> . <em>Does not mutate the vector in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the signed remainder
+    */
+   public Vec4 rem ( final Vec4 b ) {
+
+      return new Vec4(Utils.fmod(this.x, b.x), Utils.fmod(this.y, b.y), Utils
+         .fmod(this.z, b.z), Utils.fmod(this.w, b.w));
+   }
+
+   /**
+    * Assigns the signed remainder (<code>fmod</code>) of the instance and the
+    * right operand to the instance (mutates the vector in place). For
+    * interoperability with Kotlin: <code>a %= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void remAssign ( final float b ) {
+
+      if ( b != 0.0f ) {
+         this.x %= b;
+         this.y %= b;
+         this.z %= b;
+         this.w %= b;
+      }
+   }
+
+   /**
+    * Assigns the signed remainder (<code>fmod</code>) of the instance and the
+    * right operand to the instance (mutates the vector in place). For
+    * interoperability with Kotlin: <code>a %= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void remAssign ( final Vec4 b ) {
+
+      this.x = Utils.fmod(this.x, b.x);
+      this.y = Utils.fmod(this.y, b.y);
+      this.z = Utils.fmod(this.z, b.z);
+      this.w = Utils.fmod(this.w, b.w);
+   }
 
    /**
     * Resets this vector to an initial state, ( 0.0, 0.0, 0.0, 0.0 ) .
@@ -327,26 +584,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    }
 
    /**
-    * Sets the components of this vector from integers. A convenience for
-    * Kotlin support.
-    *
-    * @param x the x component
-    * @param y the y component
-    * @param z the z component
-    * @param w the w component
-    *
-    * @return this vector
-    */
-   public Vec4 set ( final int x, final int y, final int z, final int w ) {
-
-      this.x = x;
-      this.y = y;
-      this.z = z;
-      this.w = w;
-      return this;
-   }
-
-   /**
     * Attempts to set the components of this vector from Strings using
     * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
     * the component is set to zero.
@@ -364,39 +601,39 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    public Vec4 set ( final String xstr, final String ystr, final String zstr,
       final String wstr ) {
 
-      float x = 0.0f;
-      float y = 0.0f;
-      float z = 0.0f;
-      float w = 0.0f;
+      float xprs = 0.0f;
+      float yprs = 0.0f;
+      float zprs = 0.0f;
+      float wprs = 0.0f;
 
       try {
-         x = Float.parseFloat(xstr);
+         xprs = Float.parseFloat(xstr);
       } catch ( final NumberFormatException e ) {
-         x = 0.0f;
+         xprs = 0.0f;
       }
 
       try {
-         y = Float.parseFloat(ystr);
+         yprs = Float.parseFloat(ystr);
       } catch ( final NumberFormatException e ) {
-         y = 0.0f;
+         yprs = 0.0f;
       }
 
       try {
-         z = Float.parseFloat(zstr);
+         zprs = Float.parseFloat(zstr);
       } catch ( final NumberFormatException e ) {
-         z = 0.0f;
+         zprs = 0.0f;
       }
 
       try {
-         w = Float.parseFloat(wstr);
+         wprs = Float.parseFloat(wstr);
       } catch ( final NumberFormatException e ) {
-         w = 0.0f;
+         wprs = 0.0f;
       }
 
-      this.x = x;
-      this.y = y;
-      this.z = z;
-      this.w = w;
+      this.x = xprs;
+      this.y = yprs;
+      this.z = zprs;
+      this.w = wprs;
 
       return this;
    }
@@ -458,6 +695,62 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    }
 
    /**
+    * Returns a new vector with the product of the instance and the right
+    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
+    * not mutate the vector in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the product
+    */
+   public Vec4 times ( final float b ) {
+
+      return new Vec4(this.x * b, this.y * b, this.z * b, this.w * b);
+   }
+
+   /**
+    * Returns a new vector with the product of the instance and the right
+    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
+    * not mutate the vector in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the product
+    */
+   public Vec4 times ( final Vec4 b ) {
+
+      return new Vec4(this.x * b.x, this.y * b.y, this.z * b.z, this.w * b.w);
+   }
+
+   /**
+    * Multiplies the right operand with the instance (mutates the vector in
+    * place). For interoperability with Kotlin: <code>a *= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void timesAssign ( final float b ) {
+
+      this.x *= b;
+      this.y *= b;
+      this.z *= b;
+      this.w *= b;
+   }
+
+   /**
+    * Multiplies the right operand with the instance (mutates the vector in
+    * place). For interoperability with Kotlin: <code>a *= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void timesAssign ( final Vec4 b ) {
+
+      this.x *= b.x;
+      this.y *= b.y;
+      this.z *= b.z;
+      this.w *= b.w;
+   }
+
+   /**
     * Returns a float array of length 4 containing this vector's components.
     *
     * @return the array
@@ -499,6 +792,30 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
          .append('}')
          .toString();
       /* @formatter:on */
+   }
+
+   /**
+    * Returns a new vector with the negation of the instance. For
+    * interoperability with Kotlin: <code>-a</code> . <em>Does not mutate the
+    * vector in place</em>.
+    *
+    * @return the negation
+    */
+   public Vec4 unaryMinus ( ) {
+
+      return new Vec4(-this.x, -this.y, -this.z, -this.w);
+   }
+
+   /**
+    * Returns a new vector with the positive copy of the instance. For
+    * interoperability with Kotlin: <code>+a</code> . <em>Does not mutate the
+    * vector in place</em>.
+    *
+    * @return the positive
+    */
+   public Vec4 unaryPlus ( ) {
+
+      return new Vec4(+this.x, +this.y, +this.z, +this.w);
    }
 
    /**
@@ -814,6 +1131,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     */
    public static float distChebyshev ( final Vec4 a, final Vec4 b ) {
 
+      // TODO: This needs to be optimized.
       return Utils.max(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y), Utils.diff(
          a.z, b.z), Utils.diff(a.w, b.w));
    }
@@ -875,16 +1193,18 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    public static float distMinkowski ( final Vec4 a, final Vec4 b,
       final float c ) {
 
-      if ( c == 0.0f ) { return 0.0f; }
+      if ( c != 0.0f ) {
+         /* @formatter:off */
+         final double cd = c;
+         return ( float ) Math.pow(
+            Math.pow(Math.abs(( double ) ( b.x - a.x )), cd) +
+            Math.pow(Math.abs(( double ) ( b.y - a.y )), cd) +
+            Math.pow(Math.abs(( double ) ( b.z - a.z )), cd) +
+            Math.pow(Math.abs(( double ) ( b.w - a.w )), cd), 1.0d / cd);
+         /* @formatter:on */
+      }
 
-      /* @formatter:off */
-      return ( float ) Math.pow(
-         Math.pow(Utils.diff(a.x, b.x), c) +
-         Math.pow(Utils.diff(a.y, b.y), c) +
-         Math.pow(Utils.diff(a.z, b.z), c) +
-         Math.pow(Utils.diff(a.w, b.w), c),
-         1.0d / c);
-      /* @formatter:on */
+      return 0.0f;
    }
 
    /**
@@ -1725,10 +2045,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
 
       if ( levels < 2 ) { return target.set(v); }
 
-      final float delta = 1.0f / levels;
-      return target.set(delta * Utils.floor(0.5f + v.x * levels), delta * Utils
-         .floor(0.5f + v.y * levels), delta * Utils.floor(0.5f + v.z * levels),
-         delta * Utils.floor(0.5f + v.w * levels));
+      final float levf = levels;
+      final float delta = 1.0f / levf;
+      return target.set(delta * Utils.floor(0.5f + v.x * levf), delta * Utils
+         .floor(0.5f + v.y * levf), delta * Utils.floor(0.5f + v.z * levf),
+         delta * Utils.floor(0.5f + v.w * levf));
    }
 
    /**
@@ -1784,6 +2105,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    public static Vec4 randomSpherical ( final java.util.Random rng,
       final float rhoMin, final float rhoMax, final Vec4 target ) {
 
+      // TODO: Optimize.
       final float rr = rng.nextFloat();
       final float rho = ( 1.0f - rr ) * rhoMin + rr * rhoMax;
       final float t0 = IUtils.TAU * rng.nextFloat();

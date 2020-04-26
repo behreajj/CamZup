@@ -299,7 +299,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @return this mesh
     */
    @Experimental
-
    public Mesh2 clean ( ) {
 
       /* Transfer arrays to hash maps where the face index is the key. */
@@ -1111,12 +1110,16 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          vtsNew[j] = new Vec2(
             ( vtCurr.x + vtNext.x ) * 0.5f,
             ( vtCurr.y + vtNext.y ) * 0.5f);
-         /* @formatter:on */
 
-         fsNew[j] = new int[][] { { vCenterIdx, vtCenterIdx }, { vsOldLen + j,
-            vtsOldLen + j }, { vNextIdx, vtNextIdx }, { vsOldLen + k, vtsOldLen
-               + k } };
+
+         fsNew[j] = new int[][] {
+            {   vCenterIdx,   vtCenterIdx },
+            { vsOldLen + j, vtsOldLen + j },
+            {     vNextIdx,     vtNextIdx },
+            { vsOldLen + k, vtsOldLen + k } };
+         /* @formatter:on */
       }
+
       Vec2.div(vCenter, faceLen, vCenter);
       Vec2.div(vtCenter, faceLen, vtCenter);
 
@@ -1227,12 +1230,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          vtsNew[j] = new Vec2(
             ( vtCurr.x + vtNext.x ) * 0.5f,
             ( vtCurr.y + vtNext.y ) * 0.5f);
-         /* @formatter:on */
 
          final int vSubdivIdx = vsOldLen + j;
          final int vtSubdivIdx = vtsOldLen + j;
-         fsNew[j] = new int[][] { { vSubdivIdx, vtSubdivIdx }, { vNextIdx,
-            vtNextIdx }, { vsOldLen + k, vtsOldLen + k } };
+         fsNew[j] = new int[][] {
+            {   vSubdivIdx,   vtSubdivIdx },
+            {     vNextIdx,     vtNextIdx },
+            { vsOldLen + k, vtsOldLen + k } };
+         /* @formatter:on */
 
          centerFace[j][0] = vSubdivIdx;
          centerFace[j][1] = vtSubdivIdx;
@@ -1351,24 +1356,36 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
        * Append comment listing the number of coordinates, texture coordinates
        * and faces.
        */
-      objs.append("# v: ").append(coordsLen).append(", vt: ").append(
-         texCoordsLen).append(", vn: 1, f: ").append(facesLen).append('\n')
-         .append('\n');
+      objs.append("# v: ");
+      objs.append(coordsLen);
+      objs.append(", vt: ");
+      objs.append(texCoordsLen);
+      objs.append(", vn: 1, f: ");
+      objs.append(facesLen);
+      objs.append('\n');
+      objs.append('\n');
 
       /* Append name. */
-      objs.append('o').append(' ').append(this.name).append('\n').append('\n');
+      objs.append('o');
+      objs.append(' ');
+      objs.append(this.name);
+      objs.append('\n');
+      objs.append('\n');
 
       /* Append coordinates. */
       for ( int i = 0; i < coordsLen; ++i ) {
-         objs.append('v').append(' ').append(this.coords[i].toObjString())
-            .append(" 0.0 \n");
+         objs.append('v');
+         objs.append(' ');
+         objs.append(this.coords[i].toObjString());
+         objs.append(" 0.0 \n");
       }
       objs.append('\n');
 
       /* Append a texture coordinates. */
       for ( int i = 0; i < texCoordsLen; ++i ) {
-         objs.append("vt ").append(this.texCoords[i].toObjString()).append(
-            '\n');
+         objs.append("vt ");
+         objs.append(this.texCoords[i].toObjString());
+         objs.append('\n');
       }
 
       /* Append a single normal. */
@@ -1379,14 +1396,19 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          final int[][] face = this.faces[i];
          final int vLen = face.length;
-         objs.append('f').append(' ');
+         objs.append('f');
+         objs.append(' ');
 
          for ( int j = 0; j < vLen; ++j ) {
 
             /* Indices in an .obj file start at 1, not 0. */
             final int[] vert = face[j];
-            objs.append(vert[0] + 1).append('/').append(vert[1] + 1).append('/')
-               .append('1').append(' ');
+            objs.append(vert[0] + 1);
+            objs.append('/');
+            objs.append(vert[1] + 1);
+            objs.append('/');
+            objs.append('1');
+            objs.append(' ');
          }
 
          objs.append('\n');
@@ -1452,15 +1474,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * Returns a string representation of the mesh. Includes an option to
     * truncate the listing in case of large meshes.
     *
-    * @param places   the number of places
-    * @param truncate truncate elements in a list
+    * @param places the number of places
+    * @param trunc  truncate elements in a list
     *
     * @return the string
     */
-   public String toString ( final int places, final int truncate ) {
+   public String toString ( final int places, final int trunc ) {
 
       final StringBuilder sb = new StringBuilder(2048);
-
       sb.append("{ name: \"");
       sb.append(this.name);
       sb.append('\"');
@@ -1469,36 +1490,36 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       sb.append("coords: [ ");
 
       if ( this.coords != null ) {
-         final int len = this.coords.length <= truncate ? this.coords.length
-            : truncate;
+         final int len = this.coords.length <= trunc ? this.coords.length
+            : trunc;
          final int last = len - 1;
          for ( int i = 0; i < len; ++i ) {
             sb.append(this.coords[i].toString(places));
             if ( i < last ) { sb.append(',').append(' '); }
          }
 
-         if ( this.coords.length > truncate ) { sb.append(" /* ... */"); }
+         if ( this.coords.length > trunc ) { sb.append(" /* ... */"); }
       }
 
       sb.append(" ], ");
       sb.append("texCoords: [ ");
       if ( this.texCoords != null ) {
-         final int len = this.texCoords.length <= truncate
-            ? this.texCoords.length : truncate;
+         final int len = this.texCoords.length <= trunc ? this.texCoords.length
+            : trunc;
          final int last = len - 1;
          for ( int i = 0; i < len; ++i ) {
             sb.append(this.texCoords[i].toString(places));
             if ( i < last ) { sb.append(',').append(' '); }
          }
 
-         if ( this.texCoords.length > truncate ) { sb.append(" /* ... */"); }
+         if ( this.texCoords.length > trunc ) { sb.append(" /* ... */"); }
       }
 
       sb.append(" ], ");
       sb.append("faces: [ ");
       if ( this.faces != null ) {
-         final int facesLen = this.faces.length <= truncate ? this.faces.length
-            : truncate;
+         final int facesLen = this.faces.length <= trunc ? this.faces.length
+            : trunc;
          final int facesLast = facesLen - 1;
 
          for ( int i = 0; i < facesLen; ++i ) {
@@ -1527,7 +1548,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             if ( i < facesLast ) { sb.append(',').append(' '); }
          }
 
-         if ( this.faces.length > truncate ) { sb.append(" /* ... */"); }
+         if ( this.faces.length > trunc ) { sb.append(" /* ... */"); }
       }
 
       sb.append(" ] }");
@@ -1545,8 +1566,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    @Override
    public String toSvgElm ( final String id, final float zoom ) {
 
-      final StringBuilder svgp = new StringBuilder(1024).append(MaterialSolid
-         .defaultSvgMaterial(zoom)).append(this.toSvgPath(id)).append("</g>\n");
+      final StringBuilder svgp = new StringBuilder(1024);
+      svgp.append(MaterialSolid.defaultSvgMaterial(zoom));
+      svgp.append(this.toSvgPath(id));
+      svgp.append("</g>\n");
       return svgp.toString();
    }
 
@@ -1576,8 +1599,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          svgp.append(' ');
 
          for ( int j = 1; j < fLen; ++j ) {
-            svgp.append('L').append(' ').append(vs[f[j][0]].toSvgString())
-               .append(' ');
+            svgp.append('L');
+            svgp.append(' ');
+            svgp.append(vs[f[j][0]].toSvgString());
+            svgp.append(' ');
          }
 
          svgp.append("Z\"></path>\n");

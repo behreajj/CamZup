@@ -291,13 +291,13 @@ public class ZImage extends PImage {
     * Fills an image in place with a color.
     *
     * @param target the target image
-    * @param clr    the fill color
+    * @param fll    the fill color
     *
     * @return the image
     */
-   public static PImage fill ( final Color clr, final PImage target ) {
+   public static PImage fill ( final Color fll, final PImage target ) {
 
-      return ZImage.fill(Color.toHexInt(clr), target);
+      return ZImage.fill(Color.toHexInt(fll), target);
    }
 
    /**
@@ -331,18 +331,18 @@ public class ZImage extends PImage {
    /**
     * Fills an image with a color in place.
     *
-    * @param clr    the fill color
+    * @param fll    the fill color
     * @param target the target image
     *
     * @return the image
     */
-   public static PImage fill ( final int clr, final PImage target ) {
+   public static PImage fill ( final int fll, final PImage target ) {
 
       target.loadPixels();
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-         px[i] = clr;
+         px[i] = fll;
       }
       target.updatePixels();
       return target;
@@ -369,16 +369,16 @@ public class ZImage extends PImage {
     * Images created with this method do not have a reference to a parent
     * PApplet.
     *
-    * @param font the Processing font
-    * @param text the string of text
-    * @param clr  the color
+    * @param font    the Processing font
+    * @param text    the string of text
+    * @param fillClr the color
     *
     * @return the new image
     */
    public static PImage fromText ( final PFont font, final String text,
-      final Color clr ) {
+      final Color fillClr ) {
 
-      return ZImage.fromText(font, text, Color.toHexInt(clr));
+      return ZImage.fromText(font, text, Color.toHexInt(fillClr));
    }
 
    /**
@@ -390,15 +390,15 @@ public class ZImage extends PImage {
     *
     * @param font    the Processing font
     * @param text    the string of text
-    * @param clr     the color
+    * @param fillClr the color
     * @param leading spacing between lines
     *
     * @return the new image
     */
    public static PImage fromText ( final PFont font, final String text,
-      final Color clr, final int leading ) {
+      final Color fillClr, final int leading ) {
 
-      return ZImage.fromText(font, text, Color.toHexInt(clr), leading);
+      return ZImage.fromText(font, text, Color.toHexInt(fillClr), leading);
    }
 
    /**
@@ -410,16 +410,17 @@ public class ZImage extends PImage {
     *
     * @param font    the Processing font
     * @param text    the string of text
-    * @param clr     the color
+    * @param fillClr the color
     * @param leading spacing between lines
     * @param kerning spacing between characters
     *
     * @return the new image
     */
    public static PImage fromText ( final PFont font, final String text,
-      final Color clr, final int leading, final int kerning ) {
+      final Color fillClr, final int leading, final int kerning ) {
 
-      return ZImage.fromText(font, text, Color.toHexInt(clr), leading, kerning);
+      return ZImage.fromText(font, text, Color.toHexInt(fillClr), leading,
+         kerning);
    }
 
    /**
@@ -435,7 +436,7 @@ public class ZImage extends PImage {
     *
     * @param font      the Processing font
     * @param text      the string of text
-    * @param clr       the color
+    * @param fillClr   the color
     * @param leading   spacing between lines
     * @param kerning   spacing between characters
     * @param textAlign the horizontal alignment
@@ -443,11 +444,11 @@ public class ZImage extends PImage {
     * @return the new image
     */
    public static PImage fromText ( final PFont font, final String text,
-      final Color clr, final int leading, final int kerning,
+      final Color fillClr, final int leading, final int kerning,
       final int textAlign ) {
 
-      return ZImage.fromText(font, text, Color.toHexInt(clr), leading, kerning,
-         textAlign);
+      return ZImage.fromText(font, text, Color.toHexInt(fillClr), leading,
+         kerning, textAlign);
    }
 
    /**
@@ -455,16 +456,16 @@ public class ZImage extends PImage {
     * Images created with this method do not have a reference to a parent
     * PApplet.
     *
-    * @param font the Processing font
-    * @param text the string of text
-    * @param clr  the color
+    * @param font    the Processing font
+    * @param text    the string of text
+    * @param fillClr the color
     *
     * @return the new image
     */
    public static PImage fromText ( final PFont font, final String text,
-      final int clr ) {
+      final int fillClr ) {
 
-      return ZImage.fromText(font, text, clr, ZImage.DEFAULT_LEADING,
+      return ZImage.fromText(font, text, fillClr, ZImage.DEFAULT_LEADING,
          ZImage.DEFAULT_KERNING, ZImage.DEFAULT_ALIGN);
    }
 
@@ -477,16 +478,16 @@ public class ZImage extends PImage {
     *
     * @param font    the Processing font
     * @param text    the string of text
-    * @param clr     the color
+    * @param fillClr the color
     * @param leading spacing between lines
     *
     * @return the new image
     */
    public static PImage fromText ( final PFont font, final String text,
-      final int clr, final int leading ) {
+      final int fillClr, final int leading ) {
 
-      return ZImage.fromText(font, text, clr, leading, ZImage.DEFAULT_KERNING,
-         ZImage.DEFAULT_ALIGN);
+      return ZImage.fromText(font, text, fillClr, leading,
+         ZImage.DEFAULT_KERNING, ZImage.DEFAULT_ALIGN);
    }
 
    /**
@@ -498,16 +499,16 @@ public class ZImage extends PImage {
     *
     * @param font    the Processing font
     * @param text    the string of text
-    * @param clr     the color
+    * @param fillClr the color
     * @param leading spacing between lines
     * @param kerning spacing between characters
     *
     * @return the new image
     */
    public static PImage fromText ( final PFont font, final String text,
-      final int clr, final int leading, final int kerning ) {
+      final int fillClr, final int leading, final int kerning ) {
 
-      return ZImage.fromText(font, text, clr, leading, kerning,
+      return ZImage.fromText(font, text, fillClr, leading, kerning,
          ZImage.DEFAULT_ALIGN);
    }
 
@@ -524,7 +525,7 @@ public class ZImage extends PImage {
     *
     * @param font      the Processing font
     * @param text      the string of text
-    * @param clr       the color
+    * @param fillClr   the color
     * @param leading   spacing between lines
     * @param kerning   spacing between characters
     * @param textAlign the horizontal alignment
@@ -532,7 +533,7 @@ public class ZImage extends PImage {
     * @return the new image
     */
    public static PImage fromText ( final PFont font, final String text,
-      final int clr, final int leading, final int kerning,
+      final int fillClr, final int leading, final int kerning,
       final int textAlign ) {
 
       /*
@@ -550,7 +551,7 @@ public class ZImage extends PImage {
       if ( vTxt.isEmpty() ) { return new PImage(32, 32, PConstants.ARGB, 1); }
       final int vLead = leading < 0 ? 1 : leading + 1;
       final int vKern = kerning < 0 ? 0 : kerning;
-      final int vClr = ( clr >> 0x18 & 0xff ) != 0 ? 0x00ffffff & clr
+      final int vClr = ( fillClr >> 0x18 & 0xff ) != 0 ? 0x00ffffff & fillClr
          : 0x00ffffff;
 
       /*

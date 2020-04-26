@@ -251,17 +251,15 @@ public class Entity3 extends Entity implements ISpatial3 {
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(512)
-         .append("{ name: \"")
-         .append(this.name)
-         .append('\"')
-         .append(", transform: ")
-         .append(this.transform.toString(places))
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(512);
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append('\"');
+      sb.append(", transform: ");
+      sb.append(this.transform.toString(places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**

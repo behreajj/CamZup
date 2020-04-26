@@ -187,7 +187,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @see Knot2#alignHandlesForward()
     */
-
    public Knot2 alignHandles ( ) { return this.alignHandlesForward(); }
 
    /**
@@ -199,7 +198,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * @see Utils#hypot(float, float)
     * @see Utils#invHypot(float, float)
     */
-
    public Knot2 alignHandlesBackward ( ) {
 
       final float cox = this.coord.x;
@@ -229,7 +227,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * @see Utils#hypot(float, float)
     * @see Utils#invHypot(float, float)
     */
-
    public Knot2 alignHandlesForward ( ) {
 
       final float cox = this.coord.x;
@@ -336,7 +333,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @see Knot2#mirrorHandlesForward()
     */
-
    public Knot2 mirrorHandles ( ) { return this.mirrorHandlesForward(); }
 
    /**
@@ -345,7 +341,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 mirrorHandlesBackward ( ) {
 
       this.foreHandle.set(this.coord.x - ( this.rearHandle.x - this.coord.x ),
@@ -360,7 +355,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 mirrorHandlesForward ( ) {
 
       this.rearHandle.set(this.coord.x - ( this.foreHandle.x - this.coord.x ),
@@ -374,7 +368,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 reverse ( ) {
 
       final float tx = this.foreHandle.x;
@@ -392,7 +385,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 rotateForeHandleZ ( final float radians ) {
 
       return this.rotateForeHandleZ(Utils.cos(radians), Utils.sin(radians));
@@ -406,7 +398,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 rotateForeHandleZ ( final float cosa, final float sina ) {
 
       Vec2.sub(this.coord, this.foreHandle, this.foreHandle);
@@ -423,7 +414,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 rotateHandlesZ ( final float radians ) {
 
       return this.rotateHandlesZ(Utils.cos(radians), Utils.sin(radians));
@@ -438,7 +428,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 rotateHandlesZ ( final float cosa, final float sina ) {
 
       this.rotateForeHandleZ(cosa, sina);
@@ -454,7 +443,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 rotateRearHandleZ ( final float radians ) {
 
       return this.rotateForeHandleZ(Utils.cos(radians), Utils.sin(radians));
@@ -468,7 +456,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 rotateRearHandleZ ( final float cosa, final float sina ) {
 
       Vec2.sub(this.coord, this.rearHandle, this.rearHandle);
@@ -485,7 +472,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 rotateZ ( final float radians ) {
 
       return this.rotateZ(Utils.cos(radians), Utils.sin(radians));
@@ -501,7 +487,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 rotateZ ( final float cosa, final float sina ) {
 
       Vec2.rotateZ(this.coord, cosa, sina, this.coord);
@@ -518,7 +503,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 scale ( final float scale ) {
 
       Vec2.mul(this.coord, scale, this.coord);
@@ -535,7 +519,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 scale ( final Vec2 scale ) {
 
       Vec2.mul(this.coord, scale, this.coord);
@@ -552,7 +535,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 scaleForeHandleBy ( final float scalar ) {
 
       this.foreHandle.x = this.coord.x + scalar * ( this.foreHandle.x
@@ -570,7 +552,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 scaleForeHandleTo ( final float magnitude ) {
 
       Vec2.subNorm(this.foreHandle, this.coord, this.foreHandle);
@@ -587,7 +568,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 scaleHandlesBy ( final float scalar ) {
 
       this.scaleForeHandleBy(scalar);
@@ -606,7 +586,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * @see Knot2#scaleForeHandleTo(float)
     * @see Knot2#scaleRearHandleTo(float)
     */
-
    public Knot2 scaleHandlesTo ( final float magnitude ) {
 
       this.scaleForeHandleTo(magnitude);
@@ -622,7 +601,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 scaleRearHandleBy ( final float scalar ) {
 
       this.rearHandle.x = this.coord.x + scalar * ( this.rearHandle.x
@@ -837,18 +815,16 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(256)
-         .append("{ coord: ")
-         .append(this.coord.toString(places))
-         .append(", foreHandle: ")
-         .append(this.foreHandle.toString(places))
-         .append(", rearHandle: ")
-         .append(this.rearHandle.toString(places))
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(256);
+      sb.append("{ coord: ");
+      sb.append(this.coord.toString(places));
+      sb.append(", foreHandle: ");
+      sb.append(this.foreHandle.toString(places));
+      sb.append(", rearHandle: ");
+      sb.append(this.rearHandle.toString(places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**

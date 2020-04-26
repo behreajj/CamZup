@@ -12,6 +12,19 @@ import java.util.Iterator;
 public class Mat4 extends Matrix {
 
    /**
+    * Multiplies this matrix and a vector. For interoperability with Kotlin:
+    * <code>a * b</code> .
+    * 
+    * @param b the vector
+    * 
+    * @return the product
+    */
+   public Vec4 times ( final Vec4 b ) {
+
+      return Mat4.mul(this, b, new Vec4());
+   }
+
+   /**
     * Component in row 0, column 0. The right axis x component.
     */
    public float m00 = 1.0f;
@@ -209,7 +222,26 @@ public class Mat4 extends Matrix {
     *
     * @return the evaluation
     */
-   public boolean contains ( final float v ) { return this.indexOf(v) > -1; }
+   public boolean contains ( final float v ) {
+
+      if ( Utils.approx(this.m00, v) ) { return true; }
+      if ( Utils.approx(this.m01, v) ) { return true; }
+      if ( Utils.approx(this.m02, v) ) { return true; }
+      if ( Utils.approx(this.m03, v) ) { return true; }
+      if ( Utils.approx(this.m10, v) ) { return true; }
+      if ( Utils.approx(this.m11, v) ) { return true; }
+      if ( Utils.approx(this.m12, v) ) { return true; }
+      if ( Utils.approx(this.m13, v) ) { return true; }
+      if ( Utils.approx(this.m20, v) ) { return true; }
+      if ( Utils.approx(this.m21, v) ) { return true; }
+      if ( Utils.approx(this.m22, v) ) { return true; }
+      if ( Utils.approx(this.m23, v) ) { return true; }
+      if ( Utils.approx(this.m30, v) ) { return true; }
+      if ( Utils.approx(this.m31, v) ) { return true; }
+      if ( Utils.approx(this.m32, v) ) { return true; }
+      if ( Utils.approx(this.m33, v) ) { return true; }
+      return false;
+   }
 
    /**
     * Tests this matrix for equivalence with another object.
@@ -432,39 +464,6 @@ public class Mat4 extends Matrix {
       hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m33);
 
       return hash;
-   }
-
-   /**
-    * Tests to see if the matrix contains a value. Returns -1 if the matrix
-    * does not.
-    *
-    * @param v the value
-    *
-    * @return the index
-    */
-   public int indexOf ( final float v ) {
-
-      if ( Utils.approx(this.m00, v) ) { return 0; }
-      if ( Utils.approx(this.m01, v) ) { return 1; }
-      if ( Utils.approx(this.m02, v) ) { return 2; }
-      if ( Utils.approx(this.m03, v) ) { return 3; }
-
-      if ( Utils.approx(this.m10, v) ) { return 4; }
-      if ( Utils.approx(this.m11, v) ) { return 5; }
-      if ( Utils.approx(this.m12, v) ) { return 6; }
-      if ( Utils.approx(this.m13, v) ) { return 7; }
-
-      if ( Utils.approx(this.m20, v) ) { return 8; }
-      if ( Utils.approx(this.m21, v) ) { return 9; }
-      if ( Utils.approx(this.m22, v) ) { return 10; }
-      if ( Utils.approx(this.m23, v) ) { return 11; }
-
-      if ( Utils.approx(this.m30, v) ) { return 12; }
-      if ( Utils.approx(this.m31, v) ) { return 13; }
-      if ( Utils.approx(this.m32, v) ) { return 14; }
-      if ( Utils.approx(this.m33, v) ) { return 15; }
-
-      return -1;
    }
 
    /**
@@ -902,42 +901,50 @@ public class Mat4 extends Matrix {
     *
     * @return the string
     */
-   public String toStringCol ( ) { return this.toStringCol(4); }
+   public String toStringCol ( ) {
+
+      return this.toStringCol(4, ',', ' ', '\n');
+   }
 
    /**
     * Returns a string representation of this matrix intended for display in
     * the console.
     *
-    * @param places number of decimal places
+    * @param p number of decimal places
+    * @param s the entry separator
+    * @param t the spacer
+    * @param n the row separator
     *
     * @return the string
     */
-   public String toStringCol ( final int places ) {
+   public String toStringCol ( final int p, final char s, final char t,
+      final char n ) {
 
       /* @formatter:off */
       return new StringBuilder(256)
-                    .append('\n').append(Utils.toFixed(this.m00, places))
-         .append(',').append(' ').append(Utils.toFixed(this.m01, places))
-         .append(',').append(' ').append(Utils.toFixed(this.m02, places))
-         .append(',').append(' ').append(Utils.toFixed(this.m03, places))
-         .append(',')
+         .append('\n')
+                             .append(Utils.toFixed(this.m00, p))
+         .append(s).append(t).append(Utils.toFixed(this.m01, p))
+         .append(s).append(t).append(Utils.toFixed(this.m02, p))
+         .append(s).append(t).append(Utils.toFixed(this.m03, p))
+         .append(s)
 
-                    .append('\n').append(Utils.toFixed(this.m10, places))
-         .append(',').append(' ').append(Utils.toFixed(this.m11, places))
-         .append(',').append(' ').append(Utils.toFixed(this.m12, places))
-         .append(',').append(' ').append(Utils.toFixed(this.m13, places))
-         .append(',')
+                   .append(n).append(Utils.toFixed(this.m10, p))
+         .append(s).append(t).append(Utils.toFixed(this.m11, p))
+         .append(s).append(t).append(Utils.toFixed(this.m12, p))
+         .append(s).append(t).append(Utils.toFixed(this.m13, p))
+         .append(s)
 
-                    .append('\n').append(Utils.toFixed(this.m20, places))
-         .append(',').append(' ').append(Utils.toFixed(this.m21, places))
-         .append(',').append(' ').append(Utils.toFixed(this.m22, places))
-         .append(',').append(' ').append(Utils.toFixed(this.m23, places))
-         .append(',')
+                   .append(n).append(Utils.toFixed(this.m20, p))
+         .append(s).append(t).append(Utils.toFixed(this.m21, p))
+         .append(s).append(t).append(Utils.toFixed(this.m22, p))
+         .append(s).append(t).append(Utils.toFixed(this.m23, p))
+         .append(s)
 
-                    .append('\n').append(Utils.toFixed(this.m30, places))
-         .append(',').append(' ').append(Utils.toFixed(this.m31, places))
-         .append(',').append(' ').append(Utils.toFixed(this.m32, places))
-         .append(',').append(' ').append(Utils.toFixed(this.m33, places))
+                   .append(n).append(Utils.toFixed(this.m30, p))
+         .append(s).append(t).append(Utils.toFixed(this.m31, p))
+         .append(s).append(t).append(Utils.toFixed(this.m32, p))
+         .append(s).append(t).append(Utils.toFixed(this.m33, p))
 
          .append('\n')
          .toString();

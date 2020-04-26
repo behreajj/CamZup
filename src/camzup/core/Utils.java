@@ -88,7 +88,7 @@ public abstract class Utils implements IUtils {
     */
    public static int and ( final float a, final float b ) {
 
-      return ( a == 0.0f || a != a ? 0 : 1 ) & ( b == 0.0f || b != b ? 0 : 1 );
+      return ( a != 0.0f && a == a ? 1 : 0 ) & ( b != 0.0f && b == b ? 1 : 0 );
    }
 
    /**
@@ -239,6 +239,22 @@ public abstract class Utils implements IUtils {
       final int xi = ( int ) x;
       if ( x > xi ) { return xi + 1; }
       return xi;
+   }
+
+   /**
+    * Clamps a real number between a lower and an upper bound.
+    *
+    * @param value      the input value
+    * @param lowerBound the upper bound
+    * @param upperBound the lower bound
+    *
+    * @return the clamped value
+    */
+   public static double clamp ( final double value, final double lowerBound,
+      final double upperBound ) {
+
+      return value < lowerBound ? lowerBound : value > upperBound ? upperBound
+         : value;
    }
 
    /**
@@ -1018,7 +1034,7 @@ public abstract class Utils implements IUtils {
     */
    public static int or ( final float a, final float b ) {
 
-      return ( a == 0.0f || a != a ? 0 : 1 ) | ( b == 0.0f || b != b ? 0 : 1 );
+      return ( a != 0.0f && a == a ? 1 : 0 ) | ( b != 0.0f && b == b ? 1 : 0 );
    }
 
    /**
@@ -1349,6 +1365,8 @@ public abstract class Utils implements IUtils {
          case 0x80000000:
          case 0x7fc00000:
             return "0.0";
+
+         default:
       }
 
       if ( places < 0 ) { return Integer.toString(( int ) value); }
@@ -1586,7 +1604,7 @@ public abstract class Utils implements IUtils {
     */
    public static int xor ( final float a, final float b ) {
 
-      return ( a == 0.0f || a != a ? 0 : 1 ) ^ ( b == 0.0f || b != b ? 0 : 1 );
+      return ( a != 0.0F && a == a ? 1 : 0 ) ^ ( b != 0.0F && b == b ? 1 : 0 );
    }
 
    /**

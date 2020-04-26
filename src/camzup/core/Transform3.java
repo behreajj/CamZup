@@ -165,19 +165,18 @@ public class Transform3 extends Transform {
    /**
     * Get the transform's axes.
     *
-    * @param right   the right axis
-    * @param forward the forward axis
-    * @param up      the up axis
+    * @param r the right axis
+    * @param f the forward axis
+    * @param u the up axis
     *
     * @return this transform
     */
 
-   public Transform3 getAxes ( final Vec3 right, final Vec3 forward,
-      final Vec3 up ) {
+   public Transform3 getAxes ( final Vec3 r, final Vec3 f, final Vec3 u ) {
 
-      right.set(this.right);
-      forward.set(this.forward);
-      up.set(this.up);
+      r.set(this.right);
+      f.set(this.forward);
+      u.set(this.up);
       return this;
    }
 
@@ -945,18 +944,16 @@ public class Transform3 extends Transform {
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(354)
-         .append("{ location: ")
-         .append(this.location.toString(places))
-         .append(", rotation: ")
-         .append(this.rotation.toString(places))
-         .append(", scale: ")
-         .append(this.scale.toString(places))
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(354);
+      sb.append("{ location: ");
+      sb.append(this.location.toString(places));
+      sb.append(", rotation: ");
+      sb.append(this.rotation.toString(places));
+      sb.append(", scale: ");
+      sb.append(this.scale.toString(places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**

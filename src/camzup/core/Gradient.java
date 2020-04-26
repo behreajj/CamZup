@@ -466,7 +466,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * Inserts color keys to this gradient. If a color key exists at the
     * insertion's step, the old key is removed.
     *
-    * @param keys the keys
+    * @param insertion the keys
     *
     * @return this gradient
     *
@@ -474,11 +474,11 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     * @see TreeSet#remove(Object)
     */
 
-   public Gradient insertAll ( final ColorKey... keys ) {
+   public Gradient insertAll ( final ColorKey... insertion ) {
 
-      final int len = keys.length;
+      final int len = insertion.length;
       for ( int i = 0; i < len; ++i ) {
-         final ColorKey key = keys[i];
+         final ColorKey key = insertion[i];
          if ( this.keys.contains(key) ) { this.keys.remove(key); }
          this.keys.add(key);
       }
@@ -1501,6 +1501,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
                f = 1.0f - Utils.sqrt(1.0f - f * f);
 
                break;
+
+            default:
 
          }
 

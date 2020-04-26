@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Yup2 rndr;
+YupJ2 rndr;
 
 MaterialSolid material = new MaterialSolid()
   .setStroke(true)
@@ -20,11 +20,11 @@ MeshEntity2 entity = new MeshEntity2("Example", transform)
   .append(mesh);
 
 void settings() {
-  size(720, 405, Yup2.PATH_STR);
+  size(720, 405, YupJ2.PATH_STR);
 }
 
 void setup() {
-  rndr = (Yup2)getGraphics();
+  rndr = (YupJ2)getGraphics();
 }
 
 void draw() {

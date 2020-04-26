@@ -415,16 +415,14 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(1024)
-         .append("{ origin: ")
-         .append(this.origin.toString(places))
-         .append(", dest: ")
-         .append(this.dest.toString(places))
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(768);
+      sb.append("{ origin: ");
+      sb.append(this.origin.toString(places));
+      sb.append(", dest: ");
+      sb.append(this.dest.toString(places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**

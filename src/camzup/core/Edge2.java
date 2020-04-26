@@ -368,16 +368,14 @@ public class Edge2 implements Comparable < Edge2 > {
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(512)
-         .append("{ origin: ")
-         .append(this.origin.toString(places))
-         .append(", dest: ")
-         .append(this.dest.toString(places))
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(512);
+      sb.append("{ origin: ");
+      sb.append(this.origin.toString(places));
+      sb.append(", dest: ");
+      sb.append(this.dest.toString(places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**

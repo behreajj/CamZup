@@ -99,14 +99,14 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    /**
     * Appends a collection of meshes to this mesh entity.
     *
-    * @param meshes the meshes
+    * @param app the meshes
     *
     * @return this mesh entity
     */
 
-   public MeshEntity2 appendAll ( final Collection < Mesh2 > meshes ) {
+   public MeshEntity2 appendAll ( final Collection < Mesh2 > app ) {
 
-      final Iterator < Mesh2 > itr = meshes.iterator();
+      final Iterator < Mesh2 > itr = app.iterator();
       while ( itr.hasNext() ) {
          this.append(itr.next());
       }
@@ -116,16 +116,16 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    /**
     * Appends a list of meshes to this mesh entity.
     *
-    * @param meshes the list of meshes
+    * @param app the list of meshes
     *
     * @return this mesh entity
     */
 
-   public MeshEntity2 appendAll ( final Mesh2... meshes ) {
+   public MeshEntity2 appendAll ( final Mesh2... app ) {
 
-      final int len = meshes.length;
+      final int len = app.length;
       for ( int i = 0; i < len; ++i ) {
-         this.append(meshes[i]);
+         this.append(app[i]);
       }
       return this;
    }
@@ -170,7 +170,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * @return this entity
     */
    @Override
-
    public MeshEntity2 scaleBy ( final float scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -185,7 +184,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * @return the entity
     */
    @Override
-
    public MeshEntity2 scaleBy ( final Vec2 scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -200,7 +198,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * @return this entity
     */
    @Override
-
    public MeshEntity2 scaleTo ( final float scalar ) {
 
       this.transform.scaleTo(scalar);
@@ -215,7 +212,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * @return this entity
     */
    @Override
-
    public MeshEntity2 scaleTo ( final Vec2 scalar ) {
 
       this.transform.scaleTo(scalar);
@@ -231,7 +227,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * @return this entity
     */
    @Override
-
    public MeshEntity2 scaleTo ( final Vec2 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);
@@ -284,7 +279,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * @return the string
     */
    @Experimental
-   @SuppressWarnings ( "null" )
    public String toBlenderCode ( final MaterialSolid[] materials,
       final float gamma, final float metallic, final float roughness,
       final float specular, final float clearcoat, final float clearcoatRough,
@@ -546,13 +540,14 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     *
     * @return the string
     */
-   @SuppressWarnings ( "null" )
    public String toSvgElm ( final String id, final float zoom,
       final MaterialSolid[] materials ) {
 
-      final StringBuilder svgp = new StringBuilder(1024).append("<g id=\"")
-         .append(this.name.toLowerCase()).append("\" ").append(this.transform
-            .toSvgString()).append(">\n");
+      final StringBuilder svgp = new StringBuilder(1024);
+      svgp.append("<g id=\"");
+      svgp.append(this.name.toLowerCase()).append("\" ");
+      svgp.append(this.transform.toSvgString());
+      svgp.append(">\n");
 
       final float scale = zoom * Transform2.minDimension(this.transform);
       int matLen = 0;
@@ -581,8 +576,9 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
             final int vMatIdx = Utils.mod(mesh.materialIndex, matLen);
             final MaterialSolid material = materials[vMatIdx];
-            svgp.append("<g ").append(material.toSvgString(scale)).append(
-               ">\n");
+            svgp.append("<g ");
+            svgp.append(material.toSvgString(scale));
+            svgp.append(">\n");
          }
 
          svgp.append(mesh.toSvgPath(id));

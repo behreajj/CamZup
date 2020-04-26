@@ -594,6 +594,8 @@ public abstract class SvgParser {
             newCurves.add(SvgParser.parseRect(node, new Curve2()));
             break;
 
+         default:
+
       }
 
       /* Apply transform to curves from this node. */
@@ -1366,6 +1368,8 @@ public abstract class SvgParser {
                   Mat3.mul(target, delta, target);
 
                   break;
+
+               default:
 
             }
 

@@ -136,13 +136,13 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Append an collection of knots to the curve's list of knots.
     *
-    * @param knots the collection of knots
+    * @param kn the collection of knots
     *
     * @return this curve.
     */
-   public Curve2 appendAll ( final Collection < Knot2 > knots ) {
+   public Curve2 appendAll ( final Collection < Knot2 > kn ) {
 
-      final Iterator < Knot2 > knItr = knots.iterator();
+      final Iterator < Knot2 > knItr = kn.iterator();
       while ( knItr.hasNext() ) {
          this.append(knItr.next());
       }
@@ -153,16 +153,16 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Append an array of knots to the curve's list of knots.
     *
-    * @param knots the array of knots
+    * @param kn the array of knots
     *
     * @return this curve.
     */
 
-   public Curve2 appendAll ( final Knot2... knots ) {
+   public Curve2 appendAll ( final Knot2... kn ) {
 
-      final int len = knots.length;
+      final int len = kn.length;
       for ( int i = 0; i < len; ++i ) {
-         this.append(knots[i]);
+         this.append(kn[i]);
       }
 
       return this;
@@ -180,6 +180,18 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       c.name = this.name;
       c.materialIndex = this.materialIndex;
       return c;
+   }
+
+   /**
+    * Evaluates whether a knot is contained by this curve.
+    *
+    * @param kn the knot
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final Knot2 kn ) {
+
+      return this.knots.contains(kn);
    }
 
    /**
@@ -299,16 +311,16 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * closed loop, the index wraps around; this means negative indices are
     * accepted.
     *
-    * @param i     the index
-    * @param knots the knots
+    * @param i  the index
+    * @param kn the knots
     *
     * @return this curve
     */
-   public Curve2 insertAll ( final int i, final Collection < Knot2 > knots ) {
+   public Curve2 insertAll ( final int i, final Collection < Knot2 > kn ) {
 
       final int vidx = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
          : i;
-      final Iterator < Knot2 > knItr = knots.iterator();
+      final Iterator < Knot2 > knItr = kn.iterator();
       int k = vidx;
       while ( knItr.hasNext() ) {
          final Knot2 knot = knItr.next();
@@ -325,18 +337,18 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * Inserts a list of knots at a given index. When the curve is a closed
     * loop, the index wraps around; this means negative indices are accepted.
     *
-    * @param i     the index
-    * @param knots the knots
+    * @param i  the index
+    * @param kn the knots
     *
     * @return this curve
     */
-   public Curve2 insertAll ( final int i, final Knot2... knots ) {
+   public Curve2 insertAll ( final int i, final Knot2... kn ) {
 
-      final int len = knots.length;
+      final int len = kn.length;
       final int vidx = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
          : i;
       for ( int j = 0, k = vidx; j < len; ++j ) {
-         final Knot2 knot = knots[j];
+         final Knot2 knot = kn[j];
          if ( knot != null ) {
             this.knots.add(k, knot);
             k++;
@@ -386,15 +398,15 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Prepend an collection of knots to the curve's list of knots.
     *
-    * @param knots the collection of knots
+    * @param kn the collection of knots
     *
     * @return this curve.
     */
 
-   public Curve2 prependAll ( final Collection < Knot2 > knots ) {
+   public Curve2 prependAll ( final Collection < Knot2 > kn ) {
 
       int i = 0;
-      final Iterator < Knot2 > knItr = knots.iterator();
+      final Iterator < Knot2 > knItr = kn.iterator();
       while ( knItr.hasNext() ) {
          final Knot2 knot = knItr.next();
          if ( knot != null ) {
@@ -408,19 +420,19 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Prepend an array of knots to the curve's list of knots.
     *
-    * @param knots the array of knots
+    * @param kn the array of knots
     *
     * @return this curve.
     *
     * @see List#add(int, Object)
     */
 
-   public Curve2 prependAll ( final Knot2... knots ) {
+   public Curve2 prependAll ( final Knot2... kn ) {
 
       // TEST
-      final int len = knots.length;
+      final int len = kn.length;
       for ( int i = 0, j = 0; i < len; ++i ) {
-         final Knot2 knot = knots[i];
+         final Knot2 knot = kn[i];
          if ( knot != null ) {
             this.knots.add(j, knot);
             j++;
@@ -835,12 +847,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       pyCd.append(", \"knots\": [");
 
       final Iterator < Knot2 > itr = this.knots.iterator();
-      int i = 0;
-      final int last = this.knots.size() - 1;
       while ( itr.hasNext() ) {
          pyCd.append(itr.next().toBlenderCode(z));
-         if ( i < last ) { pyCd.append(',').append(' '); }
-         i++;
+         if ( itr.hasNext() ) { pyCd.append(',').append(' '); }
       }
 
       pyCd.append(']');
@@ -1542,15 +1551,12 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Vec2[] points, final Curve2 target ) {
 
       target.closedLoop = closedLoop;
-      final int knotCount = points.length;
-      target.resize(knotCount);
-
-      int i = 0;
+      target.resize(points.length);
+      int incr = 0;
       final Iterator < Knot2 > itr = target.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Vec2 point = points[i];
-         itr.next().set(point, point, point);
-         i++;
+      for ( ; itr.hasNext(); ++incr ) {
+         final Vec2 pt = points[incr];
+         itr.next().set(pt, pt, pt);
       }
 
       return Curve2.smoothHandles(target);
@@ -2183,6 +2189,34 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @return the circle
     */
    static Curve2 circle ( final float offsetAngle, final float radius,
+      final int knotCount, final float xCenter, final float yCenter,
+      final Curve2 target ) {
+
+      /* Since this is called by arc, it also needs to be optimized. */
+
+      final float offNorm = offsetAngle * IUtils.ONE_TAU;
+      final int vKnCt = knotCount < 3 ? 3 : knotCount;
+      target.resize(vKnCt);
+      final float invKnCt = 1.0f / vKnCt;
+      final float hndlTan = 0.25f * invKnCt;
+      final float hndlMag = Utils.tan(hndlTan * IUtils.TAU) * radius
+         * IUtils.FOUR_THIRDS;
+
+      float incr = 0.0f;
+      final Iterator < Knot2 > itr = target.knots.iterator();
+      for ( ; itr.hasNext(); ++incr ) {
+         final float angNorm = offNorm + incr * invKnCt;
+         Knot2.fromPolar(Utils.scNorm(angNorm), Utils.scNorm(angNorm - 0.25f),
+            radius, hndlMag, xCenter, yCenter, itr.next());
+      }
+
+      target.name = "Circle";
+      target.closedLoop = true;
+      return target;
+   }
+
+   @Deprecated
+   static Curve2 circleOld ( final float offsetAngle, final float radius,
       final int knotCount, final float xCenter, final float yCenter,
       final Curve2 target ) {
 

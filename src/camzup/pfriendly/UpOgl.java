@@ -1853,15 +1853,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * Displays a PShape. Use of this function is discouraged by this renderer.
     * See mesh and curve entities instead.
     *
-    * @param shape the PShape
+    * @param psh the PShape
     */
    @Override
-   public void shape ( final PShape shape ) {
+   public void shape ( final PShape psh ) {
 
       PApplet.showVariationWarning("shape");
-      if ( shape.isVisible() ) {
+      if ( psh.isVisible() ) {
          this.flush();
-         shape.draw(this);
+         psh.draw(this);
       }
    }
 
@@ -1869,30 +1869,30 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * Displays a PShape. Use of this function is discouraged by this renderer.
     * See mesh and curve entities instead.
     *
-    * @param shape the PShape
-    * @param x     the x coordinate
-    * @param y     the y coordinate
+    * @param psh the PShape
+    * @param x   the x coordinate
+    * @param y   the y coordinate
     */
    @Override
-   public void shape ( final PShape shape, final float x, final float y ) {
+   public void shape ( final PShape psh, final float x, final float y ) {
 
-      this.shape(shape);
+      this.shape(psh);
    }
 
    /**
     * Displays a PShape. Use of this function is discouraged by this renderer.
     * See mesh and curve entities instead.
     *
-    * @param shape the PShape
-    * @param x     the x coordinate
-    * @param y     the y coordinate
-    * @param z     the z coordinate
+    * @param psh the PShape
+    * @param x   the x coordinate
+    * @param y   the y coordinate
+    * @param z   the z coordinate
     */
    @Override
-   public void shape ( final PShape shape, final float x, final float y,
+   public void shape ( final PShape psh, final float x, final float y,
       final float z ) {
 
-      this.shape(shape);
+      this.shape(psh);
    }
 
    /**
@@ -1900,17 +1900,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * shapeMode. Use of this function is discouraged by this renderer. See
     * mesh and curve entities instead.
     *
-    * @param shape the PShape
-    * @param x1    the first x coordinate
-    * @param y1    the first y coordinate
-    * @param x2    the second x coordinate
-    * @param y2    the second y coordinate
+    * @param psh the PShape
+    * @param x1  the first x coordinate
+    * @param y1  the first y coordinate
+    * @param x2  the second x coordinate
+    * @param y2  the second y coordinate
     */
    @Override
-   public void shape ( final PShape shape, final float x1, final float y1,
+   public void shape ( final PShape psh, final float x1, final float y1,
       final float x2, final float y2 ) {
 
-      this.shape(shape);
+      this.shape(psh);
    }
 
    /**
@@ -1921,7 +1921,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * by PShapes.
     */
    @Override
-   @SuppressWarnings ( "unused" )
    public void shapeMode ( final int mode ) {}
 
    /**
@@ -2240,6 +2239,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             return;
 
          case TRS:
+         case R:
+         case RS:
+         case RT:
+         case S:
+         case SR:
+         case ST:
+         case T:
+         case TR:
+         case TS:
 
          default:
 
@@ -2675,11 +2683,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * Draws the OpenGL implementation of the arc function using a curve and
     * transform.
     *
-    * @param curve     the arc curve
-    * @param transform the transform
-    * @param trOrder   the transform order
+    * @param curve   the arc curve
+    * @param tr2     the transform
+    * @param trOrder the transform order
     */
-   protected void arcImpl ( final Curve2 curve, final Transform2 transform,
+   protected void arcImpl ( final Curve2 curve, final Transform2 tr2,
       final TransformOrder trOrder ) {
 
       Knot2 currKnot = null;
@@ -2693,10 +2701,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       coord = prevKnot.coord;
 
       this.pushMatrix();
-      this.transform(transform, trOrder);
+      this.transform(tr2, trOrder);
 
       final float oldSw = this.strokeWeight;
-      final float swLine = oldSw / Transform2.minDimension(transform);
+      final float swLine = oldSw / Transform2.minDimension(tr2);
       this.strokeWeight = swLine;
 
       this.beginShape(PConstants.POLYGON);
@@ -2814,7 +2822,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    protected void drawMesh2 ( final Mesh2 mesh, final Transform2 tr,
       final MaterialPImage mat, final Vec2 v, final Vec2 vt ) {
 
-      final PImage texture = mat.texture;
+      final PImage pimg = mat.texture;
       final Transform2 uvtr = mat.transform;
       this.tint(mat.tint);
 
@@ -2830,7 +2838,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          this.beginShape(PConstants.POLYGON);
          this.normal(0.0f, 0.0f, 1.0f);
-         this.texture(texture);
+         this.texture(pimg);
 
          for ( int j = 0; j < flen1; ++j ) {
 
@@ -2893,7 +2901,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    protected void drawMesh3 ( final Mesh3 mesh, final Transform3 tr,
       final MaterialPImage mat, final Vec3 v, final Vec2 vt, final Vec3 vn ) {
 
-      final PImage texture = mat.texture;
+      final PImage pimg = mat.texture;
       final Transform2 uvtr = mat.transform;
       this.tint(mat.tint);
 
@@ -2908,7 +2916,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final int[][] f = fs[i];
          final int flen1 = f.length;
          this.beginShape(PConstants.POLYGON);
-         this.texture(texture);
+         this.texture(pimg);
 
          for ( int j = 0; j < flen1; ++j ) {
 
@@ -3699,19 +3707,19 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * Displays a PShape. Use of this function is discouraged by this renderer.
     * See mesh and curve entities instead.
     *
-    * @param shape the PShape
-    * @param x     the x coordinate
-    * @param y     the y coordinate
-    * @param z     the z coordinate
-    * @param c     the x scale
-    * @param d     the y scale
-    * @param e     the z scale
+    * @param psh the PShape
+    * @param x   the x coordinate
+    * @param y   the y coordinate
+    * @param z   the z coordinate
+    * @param c   the x scale
+    * @param d   the y scale
+    * @param e   the z scale
     */
    @Override
-   protected void shape ( final PShape shape, final float x, final float y,
+   protected void shape ( final PShape psh, final float x, final float y,
       final float z, final float c, final float d, final float e ) {
 
-      this.shape(shape);
+      this.shape(psh);
    }
 
    /**

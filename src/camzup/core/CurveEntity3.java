@@ -76,14 +76,14 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    /**
     * Appends a collection of curves to this curve entity.
     *
-    * @param curves the curves
+    * @param app the curves
     *
     * @return this curve entity
     */
 
-   public CurveEntity3 appendAll ( final Collection < Curve3 > curves ) {
+   public CurveEntity3 appendAll ( final Collection < Curve3 > app ) {
 
-      final Iterator < Curve3 > itr = curves.iterator();
+      final Iterator < Curve3 > itr = app.iterator();
       while ( itr.hasNext() ) {
          this.append(itr.next());
       }
@@ -93,18 +93,30 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    /**
     * Appends a list of curves to this curve entity.
     *
-    * @param curves the curves
+    * @param app the curves
     *
     * @return this curve entity
     */
 
-   public CurveEntity3 appendAll ( final Curve3... curves ) {
+   public CurveEntity3 appendAll ( final Curve3... app ) {
 
-      final int len = curves.length;
+      final int len = app.length;
       for ( int i = 0; i < len; ++i ) {
-         this.append(curves[i]);
+         this.append(app[i]);
       }
       return this;
+   }
+
+   /**
+    * Evaluates whether a curve is contained by this curve entity.
+    *
+    * @param c the curve
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final Curve3 c ) {
+
+      return this.curves.contains(c);
    }
 
    /**

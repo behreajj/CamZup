@@ -1120,7 +1120,6 @@ public abstract class Simplex {
     *
     * @return the result
     */
-   @SuppressWarnings ( "null" )
    public static float fbm ( final Vec2 v, final int seed, final int octaves,
       final float lacunarity, final float gain, final Vec2 deriv ) {
 
@@ -1182,7 +1181,6 @@ public abstract class Simplex {
     *
     * @return the result
     */
-   @SuppressWarnings ( "null" )
    public static float fbm ( final Vec3 v, final int seed, final int octaves,
       final float lacunarity, final float gain, final Vec3 deriv ) {
 
@@ -1244,7 +1242,6 @@ public abstract class Simplex {
     *
     * @return the result
     */
-   @SuppressWarnings ( "null" )
    public static float fbm ( final Vec4 v, final int seed, final int octaves,
       final float lacunarity, final float gain, final Vec4 deriv ) {
 

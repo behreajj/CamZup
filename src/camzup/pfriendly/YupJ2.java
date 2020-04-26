@@ -669,6 +669,120 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void ellipse ( final float x, final float y, final float w,
       final float h ) {
 
+      double extapw = 0.0d;
+      double extaph = 0.0d;
+      double extcpw = 0.0d;
+      double extcph = 0.0d;
+      double right = 0.0d;
+      double left = 0.0d;
+      double top = 0.0d;
+      double bottom = 0.0d;
+      double xc = 0.0d;
+      double yc = 0.0d;
+
+      switch ( this.ellipseMode ) {
+
+         case RADIUS:
+
+            xc = x;
+            yc = y;
+
+            extapw = w;
+            extcpw = 0.552125d * w;
+            extaph = h;
+            extcph = 0.552125d * h;
+
+            break;
+
+         case CORNER:
+
+            extapw = 0.5d * w;
+            extcpw = 0.276063d * w;
+            extaph = 0.5d * h;
+            extcph = 0.276063d * h;
+
+            xc = x + extapw;
+            yc = y - extaph;
+
+            break;
+
+         case CORNERS:
+
+            final double wcalc = Utils.abs(w - x);
+            final double hcalc = Utils.abs(h - y);
+
+            xc = ( x + w ) * 0.5d;
+            yc = ( y + h ) * 0.5d;
+
+            extapw = 0.5d * wcalc;
+            extcpw = 0.276063d * wcalc;
+            extaph = 0.5d * hcalc;
+            extcph = 0.276063d * hcalc;
+
+            break;
+
+         case CENTER:
+
+         default:
+
+            xc = x;
+            yc = y;
+
+            extapw = 0.5d * w;
+            extcpw = 0.276063d * w;
+            extaph = 0.5d * h;
+            extcph = 0.276063d * h;
+
+      }
+
+      right = xc + extapw;
+      left = xc - extapw;
+      top = yc + extaph;
+      bottom = yc - extaph;
+
+      this.gp.reset();
+      this.gp.moveTo(right, yc);
+      this.gp.curveTo(right, yc + extcph, xc + extcpw, top, xc, top);
+      this.gp.curveTo(xc - extcpw, top, left, yc + extcph, left, yc);
+      this.gp.curveTo(left, yc - extcph, xc - extcpw, bottom, xc, bottom);
+      this.gp.curveTo(xc + extcpw, bottom, right, yc - extcph, right, yc);
+      this.gp.closePath();
+      this.drawShapeSolid(this.gp);
+   }
+
+   /**
+    * Draws an ellipse; the meaning of the two parameters depends on the
+    * renderer's ellipseMode.
+    *
+    * @param a the first parameter
+    * @param b the second parameter
+    */
+   @Override
+   public void ellipse ( final Vec2 a, final Vec2 b ) {
+
+      this.ellipse(a.x, a.y, b.x, b.y);
+   }
+
+   /**
+    * Draws an ellipse. The parameters meanings are determined by the
+    * ellipseMode.
+    *
+    * @param x the x coordinate
+    * @param y the y coordinate
+    * @param w the third parameter
+    * @param h the fourth parameter
+    *
+    * @see Utils#abs(float)
+    * @see Path2D#reset()
+    * @see Path2D#moveTo(double, double)
+    * @see Path2D#curveTo(double, double, double, double, double, double)
+    * @see Path2D#closePath()
+    * @see YupJ2#drawShapeSolid(Shape)
+    */
+   @Deprecated
+   public void ellipsef ( final float x, final float y, final float w,
+      final float h ) {
+
       float extapw = 0.0f;
       float extaph = 0.0f;
       float extcpw = 0.0f;
@@ -750,19 +864,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.gp.curveTo(xc + extcpw, bottom, right, yc - extcph, right, yc);
       this.gp.closePath();
       this.drawShapeSolid(this.gp);
-   }
-
-   /**
-    * Draws an ellipse; the meaning of the two parameters depends on the
-    * renderer's ellipseMode.
-    *
-    * @param a the first parameter
-    * @param b the second parameter
-    */
-   @Override
-   public void ellipse ( final Vec2 a, final Vec2 b ) {
-
-      this.ellipse(a.x, a.y, b.x, b.y);
    }
 
    /**
@@ -1006,42 +1107,41 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * implementation because of the issue with drawing points with SQUARE
     * strokeCap.
     *
-    * @param count        number of points
-    * @param strokeWeight stroke weight
-    * @param dim          the grid dimensions
+    * @param count number of points
+    * @param sw    stroke weight
+    * @param dim   the grid dimensions
     */
    @Override
-   public void grid ( final int count, final float strokeWeight,
-      final float dim ) {
+   public void grid ( final int count, final float sw, final float dim ) {
 
-      final float right = dim * 0.5f;
-      final float left = -right;
-      final float top = dim * 0.5f;
-      final float bottom = -top;
-      final float toPercent = 1.0f / count;
+      final double right = dim * 0.5d;
+      final double left = -right;
+      final double top = dim * 0.5d;
+      final double bottom = -top;
+      final double toPercent = 1.0d / count;
       final int last = count + 1;
       final int ab = 0xff000080;
 
       /* Calculate inner for-loop values. */
-      final float[] xs = new float[last];
+      final double[] xs = new double[last];
       final int[] reds = new int[last];
       for ( int j = 0; j < last; ++j ) {
-         final float jPercent = j * toPercent;
-         xs[j] = ( 1.0f - jPercent ) * left + jPercent * right;
-         reds[j] = ( int ) ( jPercent * 0xff + 0.5f ) << 0x10;
+         final double jPercent = j * toPercent;
+         xs[j] = ( 1.0d - jPercent ) * left + jPercent * right;
+         reds[j] = ( int ) ( jPercent * 0xff + 0.5d ) << 0x10;
       }
 
       this.pushStyle();
-      this.setStrokeAwt(PConstants.ROUND, PConstants.ROUND, strokeWeight);
+      this.setStrokeAwt(PConstants.ROUND, PConstants.ROUND, sw);
 
       for ( int i = 0; i < last; ++i ) {
-         final float iPercent = i * toPercent;
-         final float y = ( 1.0f - iPercent ) * bottom + iPercent * top;
-         final float yeps = y + PConstants.EPSILON;
-         final int agb = ab | ( int ) ( iPercent * 0xff + 0.5f ) << 0x8;
+         final double iPercent = i * toPercent;
+         final double y = ( 1.0d - iPercent ) * bottom + iPercent * top;
+         final double yeps = y + PConstants.EPSILON;
+         final int agb = ab | ( int ) ( iPercent * 0xff + 0.5d ) << 0x8;
 
          for ( int j = 0; j < last; ++j ) {
-            final float x = xs[j];
+            final double x = xs[j];
 
             /*
              * Draw a point. Epsilon is added to y instead of x to minimize
@@ -1084,12 +1184,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * {@link IUp#DEFAULT_HANDLE_COORD_COLOR}.</li>
     * </ul>
     *
-    * @param ce           the curve entity
-    * @param strokeWeight the stroke weight
+    * @param ce the curve entity
+    * @param sw the stroke weight
     */
-   public void handles ( final CurveEntity2 ce, final float strokeWeight ) {
+   public void handles ( final CurveEntity2 ce, final float sw ) {
 
-      this.handles(ce, strokeWeight, IUp.DEFAULT_HANDLE_COLOR,
+      this.handles(ce, sw, IUp.DEFAULT_HANDLE_COLOR,
          IUp.DEFAULT_HANDLE_REAR_COLOR, IUp.DEFAULT_HANDLE_FORE_COLOR,
          IUp.DEFAULT_HANDLE_COORD_COLOR);
    }
@@ -1097,14 +1197,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    /**
     * Displays the handles of a curve entity.
     *
-    * @param ce           the curve entity
-    * @param strokeWeight the stroke weight
-    * @param lineColor    the color of handle lines
-    * @param rearColor    the color of the rear handle
-    * @param foreColor    the color of the fore handle
-    * @param coordColor   the color of the coordinate
+    * @param ce         the curve entity
+    * @param sw         the stroke weight
+    * @param lineColor  the color of handle lines
+    * @param rearColor  the color of the rear handle
+    * @param foreColor  the color of the fore handle
+    * @param coordColor the color of the coordinate
     */
-   public void handles ( final CurveEntity2 ce, final float strokeWeight,
+   public void handles ( final CurveEntity2 ce, final float sw,
       final int lineColor, final int rearColor, final int foreColor,
       final int coordColor ) {
 
@@ -1115,13 +1215,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final java.awt.Color crdClrAwt = new java.awt.Color(coordColor, true);
 
       /* Cache stroke weights. */
-      final BasicStroke sw = new BasicStroke(strokeWeight,
+      final BasicStroke swLine = new BasicStroke(sw, BasicStroke.CAP_ROUND,
+         BasicStroke.JOIN_ROUND);
+      final BasicStroke swRear = new BasicStroke(sw * 4.0f,
          BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-      final BasicStroke swRear = new BasicStroke(strokeWeight * 4.0f,
+      final BasicStroke swFore = new BasicStroke(sw * 5.0f,
          BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-      final BasicStroke swFore = new BasicStroke(strokeWeight * 5.0f,
-         BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-      final BasicStroke swCoord = new BasicStroke(strokeWeight * 6.25f,
+      final BasicStroke swCoord = new BasicStroke(sw * 6.25f,
          BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
       final Transform2 tr = ce.transform;
@@ -1145,35 +1245,42 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             Transform2.mulPoint(tr, knot.coord, co);
             Transform2.mulPoint(tr, knot.foreHandle, fh);
 
+            final double rhx = rh.x;
+            final double rhy = rh.y;
+            final double cox = co.x;
+            final double coy = co.y;
+            final double fhx = fh.x;
+            final double fhy = fh.y;
+
             /* Draw handle bars. */
             this.gp.reset();
-            this.gp.moveTo(rh.x, rh.y);
-            this.gp.lineTo(co.x, co.y);
-            this.gp.lineTo(fh.x, fh.y);
-            this.g2.setStroke(sw);
+            this.gp.moveTo(rhx, rhy);
+            this.gp.lineTo(cox, coy);
+            this.gp.lineTo(fhx, fhy);
+            this.g2.setStroke(swLine);
             this.g2.setColor(lineClrAwt);
             this.g2.draw(this.gp);
 
             /* Draw rear handle. */
             this.gp.reset();
-            this.gp.moveTo(rh.x + PConstants.EPSILON, rh.y);
-            this.gp.lineTo(rh.x, rh.y);
+            this.gp.moveTo(rhx + PConstants.EPSILON, rhy);
+            this.gp.lineTo(rhx, rhy);
             this.g2.setStroke(swRear);
             this.g2.setColor(rearClrAwt);
             this.g2.draw(this.gp);
 
             /* Draw coordinate. */
             this.gp.reset();
-            this.gp.moveTo(co.x + PConstants.EPSILON, co.y);
-            this.gp.lineTo(co.x, co.y);
+            this.gp.moveTo(cox + PConstants.EPSILON, coy);
+            this.gp.lineTo(cox, co.y);
             this.g2.setStroke(swCoord);
             this.g2.setColor(crdClrAwt);
             this.g2.draw(this.gp);
 
             /* Draw fore handle. */
             this.gp.reset();
-            this.gp.moveTo(fh.x + PConstants.EPSILON, fh.y);
-            this.gp.lineTo(fh.x, fh.y);
+            this.gp.moveTo(fhx + PConstants.EPSILON, fhy);
+            this.gp.lineTo(fhx, fhy);
             this.g2.setStroke(swFore);
             this.g2.setColor(foreClrAwt);
             this.g2.draw(this.gp);
@@ -1563,31 +1670,30 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * Draws the world origin. Colors the axes according to
     * {@link IUp#DEFAULT_I_COLOR} and {@link IUp#DEFAULT_J_COLOR}.
     *
-    * @param lineLength   the line length
-    * @param strokeWeight the stroke weight
+    * @param lineLength the line length
+    * @param sw         the stroke weight
     */
-   public void origin ( final float lineLength, final float strokeWeight ) {
+   public void origin ( final float lineLength, final float sw ) {
 
-      this.origin(lineLength, strokeWeight, IUp.DEFAULT_I_COLOR,
-         IUp.DEFAULT_J_COLOR);
+      this.origin(lineLength, sw, IUp.DEFAULT_I_COLOR, IUp.DEFAULT_J_COLOR);
    }
 
    /**
     * Draws the world origin.
     *
-    * @param lineLength   the line length
-    * @param strokeWeight the stroke weight
-    * @param xColor       the color of the x axis
-    * @param yColor       the color of the y axis
+    * @param lineLength the line length
+    * @param sw         the stroke weight
+    * @param xColor     the color of the x axis
+    * @param yColor     the color of the y axis
     */
-   public void origin ( final float lineLength, final float strokeWeight,
+   public void origin ( final float lineLength, final float sw,
       final int xColor, final int yColor ) {
 
-      final float vl = lineLength > IUtils.DEFAULT_EPSILON ? lineLength
+      final double vl = lineLength > IUtils.DEFAULT_EPSILON ? lineLength
          : IUtils.DEFAULT_EPSILON;
 
       this.pushStyle();
-      this.setStrokeAwt(PConstants.ROUND, PConstants.ROUND, strokeWeight);
+      this.setStrokeAwt(PConstants.ROUND, PConstants.ROUND, sw);
 
       /* Draw x (right) axis. */
       this.gp.reset();
@@ -1623,6 +1729,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        */
       if ( this.stroke ) {
 
+         final double xd = x;
+         final double yd = y;
+
          /* Processing SQUARE is AWT BUTT; PROJECT is AWT SQUARE. */
          if ( this.capNative == BasicStroke.CAP_BUTT ) {
 
@@ -1631,8 +1740,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             this.g2.setStroke(this.strokeObject);
 
             this.gp.reset();
-            this.gp.moveTo(x, y);
-            this.gp.lineTo(x + PConstants.EPSILON, y);
+            this.gp.moveTo(xd, yd);
+            this.gp.lineTo(xd + PConstants.EPSILON, yd);
             this.g2.setColor(this.strokeColorObject);
             this.g2.draw(this.gp);
 
@@ -1643,8 +1752,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          } else {
 
             this.gp.reset();
-            this.gp.moveTo(x, y);
-            this.gp.lineTo(x + PConstants.EPSILON, y);
+            this.gp.moveTo(xd, yd);
+            this.gp.lineTo(xd + PConstants.EPSILON, yd);
             this.g2.setColor(this.strokeColorObject);
             this.g2.draw(this.gp);
 
@@ -1781,27 +1890,30 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float oWeight, final float dWeight ) {
 
       final float mSq = xDir * xDir + yDir * yDir;
+      final double xod = xOrigin;
+      final double yod = yOrigin;
 
       this.pushStyle();
 
       /* Draw point for ray origin. */
       this.strokeWeight(oWeight);
       this.gp.reset();
-      this.gp.moveTo(xOrigin, yOrigin);
-      this.gp.lineTo(xOrigin + PConstants.EPSILON, yOrigin);
+      this.gp.moveTo(xod, yod);
+      this.gp.lineTo(xod + PConstants.EPSILON, yod);
       this.g2.setColor(this.strokeColorObject);
       this.g2.draw(this.gp);
 
       if ( mSq > 0.0f ) {
 
-         final float mInv = dLen * Utils.invSqrtUnchecked(mSq);
-         final float dx = xOrigin + xDir * mInv;
-         final float dy = yOrigin + yDir * mInv;
+         // final float mInv = dLen * Utils.invSqrtUnchecked(mSq);
+         final double mInv = dLen / Math.sqrt(mSq);
+         final double dx = xod + xDir * mInv;
+         final double dy = yod + yDir * mInv;
 
          /* Draw ray line. */
          this.strokeWeight(lnwgt);
          this.gp.reset();
-         this.gp.moveTo(xOrigin, yOrigin);
+         this.gp.moveTo(xod, yod);
          this.gp.lineTo(dx, dy);
          this.g2.draw(this.gp);
 
@@ -1833,13 +1945,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * It is simpler to draw straight lines than to defer to the
        * rounded-corner rectImpl.
        */
-      float x0 = 0.0f;
-      float y0 = 0.0f;
-      float x1 = 0.0f;
-      float y1 = 0.0f;
+      double x0 = 0.0d;
+      double y0 = 0.0d;
+      double x1 = 0.0d;
+      double y1 = 0.0d;
 
-      float w = 0.0f;
-      float h = 0.0f;
+      double w = 0.0d;
+      double h = 0.0d;
 
       switch ( this.rectMode ) {
 
@@ -1880,8 +1992,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          case CENTER:
 
          default:
-            w = Utils.abs(c) * 0.5f;
-            h = Utils.abs(d) * 0.5f;
+            w = Utils.abs(c) * 0.5d;
+            h = Utils.abs(d) * 0.5d;
 
             x0 = a - w;
             x1 = a + w;
@@ -2096,7 +2208,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     *
     * @return the screen x coordinate
     */
-   @SuppressWarnings ( "unused" )
    @Override
    public float screenX ( final float x, final float y, final float z ) {
 
@@ -2137,7 +2248,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     *
     * @see YupJ2#screen(Vec2, Vec2)
     */
-   @SuppressWarnings ( "unused" )
    @Override
    public float screenY ( final float x, final float y, final float z ) {
 
@@ -2489,15 +2599,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * Displays a PShape. Use of this function is discouraged by this renderer.
     * See mesh and curve entities instead.
     *
-    * @param shape the PShape
+    * @param pshp the PShape
     */
    @Override
-   public void shape ( final PShape shape ) {
+   public void shape ( final PShape pshp ) {
 
       PApplet.showVariationWarning("shape");
-      if ( shape.isVisible() ) {
+      if ( pshp.isVisible() ) {
          this.flush();
-         shape.draw(this);
+         pshp.draw(this);
       }
    }
 
@@ -2505,32 +2615,31 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * Displays a PShape. Use of this function is discouraged by this renderer.
     * See mesh and curve entities instead.
     *
-    * @param shape the PShape
-    * @param x     the x coordinate
-    * @param y     the y coordinate
+    * @param pshp the PShape
+    * @param x    the x coordinate
+    * @param y    the y coordinate
     */
    @Override
-   public void shape ( final PShape shape, final float x, final float y ) {
+   public void shape ( final PShape pshp, final float x, final float y ) {
 
-      this.shape(shape);
-
+      this.shape(pshp);
    }
 
    /**
     * Displays a PShape. Use of this function is discouraged by this renderer.
     * See mesh and curve entities instead.
     *
-    * @param shape the PShape
-    * @param x1    the first x coordinate
-    * @param y1    the first y coordinate
-    * @param x2    the second x coordinate
-    * @param y2    the second y coordinated
+    * @param pshp the PShape
+    * @param x1   the first x coordinate
+    * @param y1   the first y coordinate
+    * @param x2   the second x coordinate
+    * @param y2   the second y coordinated
     */
    @Override
-   public void shape ( final PShape shape, final float x1, final float y1,
+   public void shape ( final PShape pshp, final float x1, final float y1,
       final float x2, final float y2 ) {
 
-      this.shape(shape);
+      this.shape(pshp);
    }
 
    /**
@@ -2541,7 +2650,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * by PShapes.
     */
    @Override
-   @SuppressWarnings ( "unused" )
    public void shapeMode ( final int mode ) {}
 
    /**
@@ -2796,7 +2904,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    /**
     * Texture wrap is unused by this renderer.
     */
-   @SuppressWarnings ( "unused" )
    @Override
    public void textureWrap ( final int wrap ) {}
 
@@ -2893,6 +3000,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             return;
 
          case TRS:
+         case R:
+         case RS:
+         case RT:
+         case S:
+         case SR:
+         case ST:
+         case T:
+         case TR:
+         case TS:
 
          default:
 
@@ -3323,7 +3439,104 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    @Override
    protected void rectImpl ( final float a, final float b, final float c,
-      final float d, float rTl, float rTr, float rBr, float rBl ) {
+      final float d, final float rTl, final float rTr, final float rBr,
+      final float rBl ) {
+
+      double x1 = 0.0d;
+      double y1 = 0.0d;
+      double x2 = 0.0d;
+      double y2 = 0.0d;
+      double w = 0.0d;
+      double h = 0.0d;
+
+      switch ( this.rectMode ) {
+
+         case CORNER:
+
+            w = Utils.abs(c);
+            h = Utils.abs(d);
+
+            x1 = a;
+            y2 = b - h;
+            x2 = a + w;
+            y1 = b;
+
+            break;
+
+         case CORNERS:
+
+            w = Utils.abs(c - a);
+            h = Utils.abs(b - d);
+
+            x1 = Utils.min(a, c);
+            x2 = Utils.max(a, c);
+
+            y2 = Utils.min(b, d);
+            y1 = Utils.max(b, d);
+
+            break;
+
+         case RADIUS:
+
+            w = Utils.abs(c);
+            h = Utils.abs(d);
+
+            x1 = a - w;
+            x2 = a + w;
+            y1 = b + h;
+            y2 = b - h;
+
+            break;
+
+         case CENTER:
+
+         default:
+
+            w = Utils.abs(c);
+            h = Utils.abs(d);
+
+            x1 = a - w * 0.5f;
+            x2 = a + w * 0.5f;
+            y1 = b + h * 0.5f;
+            y2 = b - h * 0.5f;
+      }
+
+      final double limit = Math.min(w, h) * 0.5d;
+      final double rTld = Utils.clamp(rTl, IUtils.DEFAULT_EPSILON, limit);
+      final double rTrd = Utils.clamp(rTr, IUtils.DEFAULT_EPSILON, limit);
+      final double rBrd = Utils.clamp(rBr, IUtils.DEFAULT_EPSILON, limit);
+      final double rBld = Utils.clamp(rBl, IUtils.DEFAULT_EPSILON, limit);
+
+      this.gp.reset();
+      this.gp.moveTo(x2 - rTrd, y1);
+      this.gp.quadTo(x2, y1, x2, y1 - rTrd);
+      this.gp.lineTo(x2, y2 + rBrd);
+      this.gp.quadTo(x2, y2, x2 - rBrd, y2);
+      this.gp.lineTo(x1 + rBld, y2);
+      this.gp.quadTo(x1, y2, x1, y2 + rBld);
+      this.gp.lineTo(x1, y1 - rTld);
+      this.gp.quadTo(x1, y1, x1 + rTld, y1);
+      this.gp.closePath();
+      this.drawShapeSolid(this.gp);
+   }
+
+   /**
+    * The rounded corner rectangle implementation. The meaning of the first
+    * four parameters depends on rectMode.
+    *
+    * @param a   the first x parameter
+    * @param b   the first y parameter
+    * @param c   the second x parameter
+    * @param d   the second y parameter
+    * @param rTl the top-left corner rounding
+    * @param rTr the top-right corner rounding
+    * @param rBr the bottom-right corner rounding
+    * @param rBl the bottom-left corner rounding
+    */
+   @Deprecated
+   protected void rectImplf ( final float a, final float b, final float c,
+      final float d, final float rTl, final float rTr, final float rBr,
+      final float rBl ) {
 
       float x1 = 0.0f;
       float y1 = 0.0f;
@@ -3386,20 +3599,21 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       }
 
       final float limit = Utils.min(w, h) * 0.5f;
-      rTl = Utils.clamp(rTl, IUtils.DEFAULT_EPSILON, limit);
-      rTr = Utils.clamp(rTr, IUtils.DEFAULT_EPSILON, limit);
-      rBr = Utils.clamp(rBr, IUtils.DEFAULT_EPSILON, limit);
-      rBl = Utils.clamp(rBl, IUtils.DEFAULT_EPSILON, limit);
+
+      final float rTlc = Utils.clamp(rTl, IUtils.DEFAULT_EPSILON, limit);
+      final float rTrc = Utils.clamp(rTr, IUtils.DEFAULT_EPSILON, limit);
+      final float rBrc = Utils.clamp(rBr, IUtils.DEFAULT_EPSILON, limit);
+      final float rBlc = Utils.clamp(rBl, IUtils.DEFAULT_EPSILON, limit);
 
       this.gp.reset();
-      this.gp.moveTo(x2 - rTr, y1);
-      this.gp.quadTo(x2, y1, x2, y1 - rTr);
-      this.gp.lineTo(x2, y2 + rBr);
-      this.gp.quadTo(x2, y2, x2 - rBr, y2);
-      this.gp.lineTo(x1 + rBl, y2);
-      this.gp.quadTo(x1, y2, x1, y2 + rBl);
-      this.gp.lineTo(x1, y1 - rTl);
-      this.gp.quadTo(x1, y1, x1 + rTl, y1);
+      this.gp.moveTo(x2 - rTrc, y1);
+      this.gp.quadTo(x2, y1, x2, y1 - rTrc);
+      this.gp.lineTo(x2, y2 + rBrc);
+      this.gp.quadTo(x2, y2, x2 - rBrc, y2);
+      this.gp.lineTo(x1 + rBlc, y2);
+      this.gp.quadTo(x1, y2, x1, y2 + rBlc);
+      this.gp.lineTo(x1, y1 - rTlc);
+      this.gp.quadTo(x1, y1, x1 + rTlc, y1);
       this.gp.closePath();
       this.drawShapeSolid(this.gp);
    }

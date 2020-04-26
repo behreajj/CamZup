@@ -449,12 +449,12 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * {@link IUp#DEFAULT_HANDLE_COORD_COLOR}.</li>
     * </ul>
     *
-    * @param ce           the curve entity
-    * @param strokeWeight the stroke weight
+    * @param ce the curve entity
+    * @param sw the stroke weight
     */
-   public void handles ( final CurveEntity2 ce, final float strokeWeight ) {
+   public void handles ( final CurveEntity2 ce, final float sw ) {
 
-      this.handles(ce, strokeWeight, IUp.DEFAULT_HANDLE_COLOR,
+      this.handles(ce, sw, IUp.DEFAULT_HANDLE_COLOR,
          IUp.DEFAULT_HANDLE_REAR_COLOR, IUp.DEFAULT_HANDLE_FORE_COLOR,
          IUp.DEFAULT_HANDLE_COORD_COLOR);
    }
@@ -462,18 +462,18 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Displays the handles of a curve entity.
     *
-    * @param ce           the curve entity
-    * @param strokeWeight the stroke weight
-    * @param lineColor    the color of handle lines
-    * @param rearColor    the color of the rear handle
-    * @param foreColor    the color of the fore handle
-    * @param coordColor   the color of the coordinate
+    * @param ce         the curve entity
+    * @param sw         the stroke weight
+    * @param lineColor  the color of handle lines
+    * @param rearColor  the color of the rear handle
+    * @param foreColor  the color of the fore handle
+    * @param coordColor the color of the coordinate
     */
-   public void handles ( final CurveEntity2 ce, final float strokeWeight,
+   public void handles ( final CurveEntity2 ce, final float sw,
       final int lineColor, final int rearColor, final int foreColor,
       final int coordColor ) {
 
-      final float swRear = strokeWeight * 4.0f;
+      final float swRear = sw * 4.0f;
       final float swFore = swRear * 1.25f;
       final float swCoord = swFore * 1.25f;
 
@@ -498,7 +498,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
             Transform2.mulPoint(tr, knot.coord, co);
             Transform2.mulPoint(tr, knot.foreHandle, fh);
 
-            this.strokeWeight(strokeWeight);
+            this.strokeWeight(sw);
             this.stroke(lineColor);
 
             this.lineImpl(rh.x, rh.y, 0.0f, co.x, co.y, 0.0f);
@@ -759,15 +759,15 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * {@link IUp#DEFAULT_I_COLOR} and {@link IUp#DEFAULT_J_COLOR}.
     *
     * @param lineLength   the line length
-    * @param strokeWeight the stroke weight
+    * @param sw the stroke weight
     */
    public void origin (
       final float lineLength,
-      final float strokeWeight ) {
+      final float sw ) {
 
       this.origin(
          lineLength,
-         strokeWeight,
+         sw,
          IUp.DEFAULT_I_COLOR,
          IUp.DEFAULT_J_COLOR);
    }
@@ -776,13 +776,13 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * Draws the world origin.
     *
     * @param lineLength   the line length
-    * @param strokeWeight the stroke weight
+    * @param sw the stroke weight
     * @param xColor       the color of the x axis
     * @param yColor       the color of the y axis
     */
    public void origin (
       final float lineLength,
-      final float strokeWeight,
+      final float sw,
       final int xColor,
       final int yColor ) {
 
@@ -791,7 +791,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
 
       this.pushStyle();
 
-      this.strokeWeight(strokeWeight);
+      this.strokeWeight(sw);
       this.stroke(xColor);
       this.lineImpl(
          0.0f, 0.0f, 0.0f,
@@ -1276,7 +1276,6 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * PShapes.
     */
    @Override
-   @SuppressWarnings ( "unused" )
    public void shapeMode ( final int mode ) {}
 
    /**
@@ -1447,6 +1446,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * The path string for this renderer.
     */
+   @SuppressWarnings ( "hiding" )
    public static final String PATH_STR = "camzup.pfriendly.Yup2";
 
 }

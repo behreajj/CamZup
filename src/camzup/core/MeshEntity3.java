@@ -99,14 +99,14 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    /**
     * Appends a collection of meshes to this mesh entity.
     *
-    * @param meshes the meshes
+    * @param app the meshes
     *
     * @return this mesh entity
     */
 
-   public MeshEntity3 appendAll ( final Collection < Mesh3 > meshes ) {
+   public MeshEntity3 appendAll ( final Collection < Mesh3 > app ) {
 
-      final Iterator < Mesh3 > itr = meshes.iterator();
+      final Iterator < Mesh3 > itr = app.iterator();
       while ( itr.hasNext() ) {
          this.append(itr.next());
       }
@@ -116,16 +116,16 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    /**
     * Appends a list of meshes to this mesh entity.
     *
-    * @param meshes the list of meshes
+    * @param app the list of meshes
     *
     * @return this mesh entity
     */
 
-   public MeshEntity3 appendAll ( final Mesh3... meshes ) {
+   public MeshEntity3 appendAll ( final Mesh3... app ) {
 
-      final int len = meshes.length;
+      final int len = app.length;
       for ( int i = 0; i < len; ++i ) {
-         this.append(meshes[i]);
+         this.append(app[i]);
       }
       return this;
    }
@@ -288,7 +288,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     * @return the string
     */
    @Experimental
-   @SuppressWarnings ( "null" )
    public String toBlenderCode ( final MaterialSolid[] materials,
       final float gamma, final float metallic, final float roughness,
       final float specular, final float clearcoat,

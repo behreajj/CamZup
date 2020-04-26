@@ -184,6 +184,15 @@ public abstract class Convert {
             return target;
 
          case TRS:
+         case R:
+         case RS:
+         case RT:
+         case S:
+         case SR:
+         case ST:
+         case T:
+         case TR:
+         case TS:
 
          default:
 
@@ -322,6 +331,15 @@ public abstract class Convert {
             return target;
 
          case TRS:
+         case R:
+         case RS:
+         case RT:
+         case S:
+         case SR:
+         case ST:
+         case T:
+         case TR:
+         case TS:
 
          default:
 

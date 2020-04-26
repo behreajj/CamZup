@@ -89,6 +89,91 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    }
 
    /**
+    * Tests to see if the complex number contains a value.
+    *
+    * @param v the value
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final float v ) {
+
+      if ( Utils.approx(this.real, v) ) { return true; }
+      if ( Utils.approx(this.imag, v) ) { return true; }
+      return false;
+   }
+
+   /**
+    * Returns a new complex number decremented by one. For interoperability
+    * with Kotlin: <code>--a</code> (prefix) or <code>a--</code> (postfix).
+    * Per the specification, <em>does not mutate the complex number in
+    * place</em>.
+    *
+    * @return the decremented vector
+    */
+   public Complex dec ( ) {
+
+      return new Complex(this.real - 1.0f, this.imag - 1.0f);
+   }
+
+   /**
+    * Returns a new complex number with the division of the instance by the
+    * right operand. For interoperability with Kotlin: <code>a / b</code> .
+    * <em>Does not mutate the complex number in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the quotient
+    *
+    * @see Complex#div(Complex, Complex, Complex)
+    */
+   public Complex div ( final Complex b ) {
+
+      return Complex.div(this, b, new Complex());
+   }
+
+   /**
+    * Returns a new complex number with the division of the instance by the
+    * right operand. For interoperability with Kotlin: <code>a / b</code> .
+    * <em>Does not mutate the complex number in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the quotient
+    *
+    * @see Complex#div(Complex, float, Complex)
+    */
+   public Complex div ( final float b ) {
+
+      return Complex.div(this, b, new Complex());
+   }
+
+   /**
+    * Divides the instance by the right operand (mutates the complex number in
+    * place). For interoperability with Kotlin: <code>a /= b</code> .
+    *
+    * @param b the right operand
+    *
+    * @see Complex#div(Complex, Complex, Complex)
+    */
+   public void divAssign ( final Complex b ) {
+
+      Complex.div(this, b, this);
+   }
+
+   /**
+    * Divides the instance by the right operand (mutates the complex number in
+    * place). For interoperability with Kotlin: <code>a /= b</code> .
+    *
+    * @param b the right operand
+    *
+    * @see Complex#div(Complex, float, Complex)
+    */
+   public void divAssign ( final float b ) {
+
+      Complex.div(this, b, this);
+   }
+
+   /**
     * Tests this complex number for equivalence with another object.
     *
     * @param obj the object
@@ -145,6 +230,19 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    }
 
    /**
+    * Returns a new complex number incremented by one. For interoperability
+    * with Kotlin: <code>++a</code> (prefix) or <code>a++</code> (postfix).
+    * Per the specification, <em>does not mutate the complex number in
+    * place</em>.
+    *
+    * @return the incremented vector
+    */
+   public Complex inc ( ) {
+
+      return new Complex(this.real + 1.0f, this.imag + 1.0f);
+   }
+
+   /**
     * Returns an iterator for this complex number, which allows its components
     * to be accessed in an enhanced for-loop.
     *
@@ -159,6 +257,110 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
     * @return the size
     */
    public int length ( ) { return 2; }
+
+   /**
+    * Returns a new complex number with the subtraction of the right operand
+    * from the instance. For interoperability with Kotlin: <code>a - b</code>
+    * . <em>Does not mutate the complex number in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the subtraction
+    */
+   public Complex minus ( final Complex b ) {
+
+      return new Complex(this.real - b.real, this.imag - b.imag);
+   }
+
+   /**
+    * Returns a new complex number with the subtraction of the right operand
+    * from the instance. For interoperability with Kotlin: <code>a - b</code>
+    * . <em>Does not mutate the complex number in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the subtraction
+    */
+   public Complex minus ( final float b ) {
+
+      return new Complex(this.real - b, this.imag);
+   }
+
+   /**
+    * Subtracts the right operand from the instance (mutates the complex
+    * number in place). For interoperability with Kotlin: <code>a -= b</code>
+    * .
+    *
+    * @param b the right operand
+    */
+   public void minusAssign ( final Complex b ) {
+
+      this.real -= b.real;
+      this.imag -= b.imag;
+   }
+
+   /**
+    * Subtracts the right operand from the instance (mutates the complex
+    * number in place). For interoperability with Kotlin: <code>a -= b</code>
+    * .
+    *
+    * @param b the right operand
+    */
+   public void minusAssign ( final float b ) {
+
+      this.real -= b;
+   }
+
+   /**
+    * Returns a new complex number with the addition of the right operand to
+    * the instance. For interoperability with Kotlin: <code>a - b</code> .
+    * <em>Does not mutate the complex number in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the sum
+    */
+   public Complex plus ( final Complex b ) {
+
+      return new Complex(this.real + b.real, this.imag + b.imag);
+   }
+
+   /**
+    * Returns a new complex number with the addition of the right operand to
+    * the instance. For interoperability with Kotlin: <code>a - b</code> .
+    * <em>Does not mutate the complex number in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the sum
+    */
+   public Complex plus ( final float b ) {
+
+      return new Complex(this.real + b, this.imag);
+   }
+
+   /**
+    * Adds the right operand to the instance (mutates the complex number in
+    * place). For interoperability with Kotlin: <code>a += b</code> .
+    *
+    * @param b the right operand
+    */
+   public void plusAssign ( final Complex b ) {
+
+      this.real += b.real;
+      this.imag += b.imag;
+   }
+
+   /**
+    * Adds the right operand to the instance (mutates the complex number in
+    * place). For interoperability with Kotlin: <code>a += b</code> .
+    *
+    * @param b the right operand
+    */
+   public void plusAssign ( final float b ) {
+
+      this.real += b;
+   }
 
    /**
     * Resets this complex number to an initial state ( 0.0, 0.0 ) .
@@ -214,25 +416,88 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
 
    public Complex set ( final String realstr, final String imagstr ) {
 
-      float real = 0.0f;
-      float imag = 0.0f;
+      float rlstr = 0.0f;
+      float imstr = 0.0f;
 
       try {
-         real = Float.parseFloat(realstr);
+         rlstr = Float.parseFloat(realstr);
       } catch ( final NumberFormatException e ) {
-         real = 0.0f;
+         rlstr = 0.0f;
       }
 
       try {
-         imag = Float.parseFloat(imagstr);
+         imstr = Float.parseFloat(imagstr);
       } catch ( final NumberFormatException e ) {
-         imag = 0.0f;
+         imstr = 0.0f;
       }
 
-      this.real = real;
-      this.imag = imag;
+      this.real = rlstr;
+      this.imag = imstr;
 
       return this;
+   }
+
+   /**
+    * Returns a new complex number with the product of the instance and the
+    * right operand. For interoperability with Kotlin: <code>a * b</code> .
+    * <em>Does not mutate the complex number in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the product
+    *
+    * @see Complex#mul(Complex, Complex, Complex)
+    */
+   public Complex times ( final Complex b ) {
+
+      return new Complex(this.real * b.real - this.imag * b.imag, this.real
+         * b.imag + this.imag * b.real);
+   }
+
+   /**
+    * Returns a new complex number with the product of the instance and the
+    * right operand. For interoperability with Kotlin: <code>a * b</code> .
+    * <em>Does not mutate the complex number in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the product
+    *
+    * @see Complex#mul(Complex, float, Complex)
+    */
+   public Complex times ( final float b ) {
+
+      return new Complex(this.real * b, this.imag * b);
+   }
+
+   /**
+    * Multiplies the right operand with the instance (mutates the complex
+    * number in place). For interoperability with Kotlin: <code>a *= b</code>
+    * .
+    *
+    * @param b the right operand
+    *
+    * @see Complex#mul(Complex, Complex, Complex)
+    */
+   public void timesAssign ( final Complex b ) {
+
+      this.set(this.real * b.real - this.imag * b.imag, this.real * b.imag
+         + this.imag * b.real);
+   }
+
+   /**
+    * Multiplies the right operand with the instance (mutates the complex
+    * number in place). For interoperability with Kotlin: <code>a *= b</code>
+    * .
+    *
+    * @param b the right operand
+    *
+    * @see Complex#mul(Complex, float, Complex)
+    */
+   public void timesAssign ( final float b ) {
+
+      this.real *= b;
+      this.imag *= b;
    }
 
    /**
@@ -265,16 +530,38 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(64)
-         .append("{ real: ")
-         .append(Utils.toFixed(this.real, places))
-         .append(", imag: ")
-         .append(Utils.toFixed(this.imag, places))
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(64);
+      sb.append("{ real: ");
+      sb.append(Utils.toFixed(this.real, places));
+      sb.append(", imag: ");
+      sb.append(Utils.toFixed(this.imag, places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
+   }
+
+   /**
+    * Returns a new complex number with the negation of the instance. For
+    * interoperability with Kotlin: <code>-a</code> . <em>Does not mutate the
+    * complex in place</em>.
+    *
+    * @return the negation
+    */
+   public Complex unaryMinus ( ) {
+
+      return new Complex(-this.real, -this.imag);
+   }
+
+   /**
+    * Returns a new complex number with the positive copy of the instance. For
+    * interoperability with Kotlin: <code>+a</code> . <em>Does not mutate the
+    * complex number in place</em>.
+    *
+    * @return the positive
+    */
+   public Complex unaryPlus ( ) {
+
+      return new Complex(+this.real, +this.imag);
    }
 
    /**
@@ -468,8 +755,11 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
     */
    public static Complex cos ( final Complex z, final Complex target ) {
 
-      return target.set(( float ) ( Math.cos(z.real) * Math.cosh(z.imag) ),
-         ( float ) ( -Math.sin(z.real) * Math.sinh(z.imag) ));
+      final double zr = z.real;
+      final double zi = z.imag;
+
+      return target.set(( float ) ( Math.cos(zr) * Math.cosh(zi) ),
+         ( float ) ( -Math.sin(zr) * Math.sinh(zi) ));
    }
 
    /**
@@ -643,8 +933,10 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
     */
    public static Complex log ( final Complex z, final Complex target ) {
 
-      return target.set(( float ) Math.log(Complex.abs(z)), ( float ) Math
-         .atan2(z.imag, z.real));
+      final double zr = z.real;
+      final double zi = z.imag;
+      return target.set(( float ) Math.log(Math.sqrt(zr * zr + zi * zi)),
+         ( float ) Math.atan2(zi, zr));
    }
 
    /**
@@ -781,13 +1073,19 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    public static Complex pow ( final Complex a, final Complex b,
       final Complex target ) {
 
-      final double logReal = Math.log(Math.sqrt(a.real * a.real + a.imag
-         * a.imag));
-      final double logImag = Math.atan2(a.imag, a.real);
-      final double phi = b.real * logImag + b.imag * logReal;
-      final double r = Math.exp(b.real * logReal - b.imag * logImag);
+      final double ar = a.real;
+      final double ai = a.imag;
+      final double br = b.real;
+      final double bi = b.imag;
 
-      return Complex.rect(( float ) r, ( float ) phi, target);
+      final double logReal = Math.log(Math.sqrt(ar * ar + ai * ai));
+      final double logImag = Math.atan2(ai, ar);
+
+      final double rd = Math.exp(br * logReal - bi * logImag);
+      final double phid = br * logImag + bi * logReal;
+
+      return target.set(( float ) ( rd * Math.cos(phid) ), ( float ) ( rd * Math
+         .sin(phid) ));
    }
 
    /**
@@ -831,13 +1129,15 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    public static Complex pow ( final Complex a, final float b,
       final Complex target ) {
 
-      final double logReal = Math.log(Math.sqrt(a.real * a.real + a.imag
-         * a.imag));
-      final double logImag = Math.atan2(a.imag, a.real);
-      final double phi = b * logImag;
-      final double r = Math.exp(b * logReal);
+      final double ar = a.real;
+      final double ai = a.imag;
+      final double bd = b;
 
-      return Complex.rect(( float ) r, ( float ) phi, target);
+      final double rd = Math.exp(bd * Math.log(Math.sqrt(ar * ar + ai * ai)));
+      final double phid = bd * Math.atan2(ai, ar);
+
+      return target.set(( float ) ( rd * Math.cos(phid) ), ( float ) ( rd * Math
+         .sin(phid) ));
    }
 
    /**
@@ -858,12 +1158,18 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    public static Complex pow ( final float a, final Complex b,
       final Complex target ) {
 
-      final double logReal = Math.log(Math.sqrt(a * a));
-      final double logImag = a < 0.0d ? Math.PI : 0.0d;
-      final double phi = b.real * logImag + b.imag * logReal;
-      final double r = Math.exp(b.real * logReal - b.imag * logImag);
+      final double ad = a;
+      final double br = b.real;
+      final double bi = b.imag;
 
-      return Complex.rect(( float ) r, ( float ) phi, target);
+      final double logReal = Math.log(Math.sqrt(ad * ad));
+      final double logImag = ad < 0.0d ? Math.PI : 0.0d;
+
+      final double rd = Math.exp(br * logReal - bi * logImag);
+      final double phid = br * logImag + bi * logReal;
+
+      return target.set(( float ) ( rd * Math.cos(phid) ), ( float ) ( rd * Math
+         .sin(phid) ));
    }
 
    /**
@@ -902,8 +1208,10 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    public static Complex rect ( final float r, final float phi,
       final Complex target ) {
 
-      return target.set(( float ) ( r * Math.cos(phi) ), ( float ) ( r * Math
-         .sin(phi) ));
+      final double rd = r;
+      final double phid = phi;
+      return target.set(( float ) ( rd * Math.cos(phid) ), ( float ) ( rd * Math
+         .sin(phid) ));
    }
 
    /**
@@ -916,8 +1224,11 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
     */
    public static Complex sin ( final Complex z, final Complex target ) {
 
-      return target.set(( float ) ( Math.sin(z.real) * Math.cosh(z.imag) ),
-         ( float ) ( Math.cos(z.real) * Math.sinh(z.imag) ));
+      final double zr = z.real;
+      final double zi = z.imag;
+
+      return target.set(( float ) ( Math.sin(zr) * Math.cosh(zi) ),
+         ( float ) ( Math.cos(zr) * Math.sinh(zi) ));
    }
 
    /**

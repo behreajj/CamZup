@@ -406,12 +406,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * {@link IUp#DEFAULT_HANDLE_COORD_COLOR}.</li>
     * </ul>
     *
-    * @param ce           the curve entity
-    * @param strokeWeight the stroke weight
+    * @param ce the curve entity
+    * @param sw the stroke weight
     */
-   public void handles ( final CurveEntity3 ce, final float strokeWeight ) {
+   public void handles ( final CurveEntity3 ce, final float sw ) {
 
-      this.handles(ce, strokeWeight, IUp.DEFAULT_HANDLE_COLOR,
+      this.handles(ce, sw, IUp.DEFAULT_HANDLE_COLOR,
          IUp.DEFAULT_HANDLE_REAR_COLOR, IUp.DEFAULT_HANDLE_FORE_COLOR,
          IUp.DEFAULT_HANDLE_COORD_COLOR);
    }
@@ -419,18 +419,18 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Displays the handles of a curve entity.
     *
-    * @param ce           the curve entity
-    * @param strokeWeight the stroke weight
-    * @param lineColor    the color of handle lines
-    * @param rearColor    the color of the rear handle
-    * @param foreColor    the color of the fore handle
-    * @param coordColor   the color of the coordinate
+    * @param ce         the curve entity
+    * @param sw         the stroke weight
+    * @param lineColor  the color of handle lines
+    * @param rearColor  the color of the rear handle
+    * @param foreColor  the color of the fore handle
+    * @param coordColor the color of the coordinate
     */
-   public void handles ( final CurveEntity3 ce, final float strokeWeight,
+   public void handles ( final CurveEntity3 ce, final float sw,
       final int lineColor, final int rearColor, final int foreColor,
       final int coordColor ) {
 
-      final float swRear = strokeWeight * 4.0f;
+      final float swRear = sw * 4.0f;
       final float swFore = swRear * 1.25f;
       final float swCoord = swFore * 1.25f;
 
@@ -458,7 +458,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
             Transform3.mulPoint(tr, knot.coord, co);
             Transform3.mulPoint(tr, knot.foreHandle, fh);
 
-            this.strokeWeight(strokeWeight);
+            this.strokeWeight(sw);
             this.stroke(lineColor);
 
             this.lineImpl(rh.x, rh.y, rh.z, co.x, co.y, co.z);
@@ -640,25 +640,25 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * {@link IUp#DEFAULT_I_COLOR}, {@link IUp#DEFAULT_J_COLOR} and
     * {@link IUp#DEFAULT_K_COLOR}.
     *
-    * @param lineLength   the line length
-    * @param strokeWeight the stroke weight
+    * @param lineLength the line length
+    * @param sw         the stroke weight
     */
-   public void origin ( final float lineLength, final float strokeWeight ) {
+   public void origin ( final float lineLength, final float sw ) {
 
-      this.origin(lineLength, strokeWeight, IUp.DEFAULT_I_COLOR,
-         IUp.DEFAULT_J_COLOR, IUp.DEFAULT_K_COLOR);
+      this.origin(lineLength, sw, IUp.DEFAULT_I_COLOR, IUp.DEFAULT_J_COLOR,
+         IUp.DEFAULT_K_COLOR);
    }
 
    /**
     * Draws the world origin.
     *
-    * @param lineLength   the line length
-    * @param strokeWeight the stroke weight
-    * @param xColor       the color of the x axis
-    * @param yColor       the color of the y axis
-    * @param zColor       the color of the z axis
+    * @param lineLength the line length
+    * @param sw         the stroke weight
+    * @param xColor     the color of the x axis
+    * @param yColor     the color of the y axis
+    * @param zColor     the color of the z axis
     */
-   public void origin ( final float lineLength, final float strokeWeight,
+   public void origin ( final float lineLength, final float sw,
       final int xColor, final int yColor, final int zColor ) {
 
       final float vl = Utils.max(IUtils.DEFAULT_EPSILON, lineLength);
@@ -666,7 +666,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       this.disableDepthMask();
       this.disableDepthTest();
       this.pushStyle();
-      this.strokeWeight(strokeWeight);
+      this.strokeWeight(sw);
 
       this.stroke(zColor);
       this.lineImpl(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, vl);
@@ -1086,83 +1086,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Initializes a spot light. The location positions the spotlight in space
-    * while the direction determines where the light points. The angle
-    * parameter affects angle of the spotlight cone, while concentration sets
-    * the bias of light focusing toward the center of that cone.
-    *
-    * @param clr           the color
-    * @param loc           the location
-    * @param dir           the direction
-    * @param angle         the angle
-    * @param concentration cone center bias
-    */
-   public void spotLight ( final Color clr, final Vec3 loc, final Vec3 dir,
-      final float angle, final float concentration ) {
-
-      this.spotLight(Color.toHexInt(this.aTemp), loc.x, loc.y, loc.z, dir.x,
-         dir.y, dir.z, angle, concentration);
-   }
-
-   /**
-    * Initializes a spot light. The location positions the spotlight in space
-    * while the direction determines where the light points. The angle
-    * parameter affects angle of the spotlight cone, while concentration sets
-    * the bias of light focusing toward the center of that cone.
-    *
-    * @param clr           the color
-    * @param xLoc          the location x
-    * @param yLoc          the location y
-    * @param zLoc          the location z
-    * @param xDir          the direction x
-    * @param yDir          the direction y
-    * @param zDir          the direction z
-    * @param angle         spotlight cone angle
-    * @param concentration cone center bias
-    */
-   public void spotLight ( final int clr, final float xLoc, final float yLoc,
-      final float zLoc, final float xDir, final float yDir, final float zDir,
-      final float angle, final float concentration ) {
-
-      this.enableLighting();
-      if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
-
-      this.lightType[this.lightCount] = PConstants.SPOT;
-
-      this.lightPosition(this.lightCount, xLoc, yLoc, zLoc, false);
-      this.lightNormal(this.lightCount, xDir, yDir, zDir);
-
-      this.noLightAmbient(this.lightCount);
-      this.lightDiffuse(this.lightCount, clr);
-      this.lightSpecular(this.lightCount, this.currentLightSpecular[0],
-         this.currentLightSpecular[1], this.currentLightSpecular[2]);
-      this.lightSpot(this.lightCount, angle, concentration);
-      this.lightFalloff(this.lightCount, this.currentLightFalloffConstant,
-         this.currentLightFalloffLinear, this.currentLightFalloffQuadratic);
-
-      this.lightCount++;
-   }
-
-   /**
-    * Initializes a spot light. The location positions the spotlight in space
-    * while the direction determines where the light points. The angle
-    * parameter affects angle of the spotlight cone, while concentration sets
-    * the bias of light focusing toward the center of that cone.
-    *
-    * @param clr           the color
-    * @param loc           the location
-    * @param dir           the direction
-    * @param angle         the angle
-    * @param concentration cone center bias
-    */
-   public void spotLight ( final int clr, final Vec3 loc, final Vec3 dir,
-      final float angle, final float concentration ) {
-
-      this.spotLight(clr, loc.x, loc.y, loc.z, dir.x, dir.y, dir.z, angle,
-         concentration);
-   }
-
-   /**
     * Moves the renderer's camera and its look target by a vector relative to
     * its orientation.
     *
@@ -1312,6 +1235,15 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
             return;
 
          case TRS:
+         case R:
+         case RS:
+         case RT:
+         case S:
+         case SR:
+         case ST:
+         case T:
+         case TR:
+         case TS:
 
          default:
 
@@ -1440,6 +1372,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param yLoc the location y
     * @param zLoc the location z
     */
+   @Experimental
    void ambientLight ( final int clr, final float xLoc, final float yLoc,
       final float zLoc ) {
 
@@ -1481,7 +1414,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param clr the color
     * @param dir the direction
     */
-   @Experimental
    void directionalLight ( final Color clr, final Vec3 dir ) {
 
       this.directionalLight(Color.toHexInt(clr), dir.x, dir.y, dir.z);
@@ -1526,7 +1458,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param clr the color
     * @param dir the direction
     */
-   @Experimental
    void directionalLight ( final int clr, final Vec3 dir ) {
 
       this.directionalLight(clr, dir.x, dir.y, dir.z);
@@ -1571,6 +1502,83 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          this.currentLightFalloffLinear, this.currentLightFalloffQuadratic);
 
       this.lightCount++;
+   }
+
+   /**
+    * Initializes a spot light. The location positions the spotlight in space
+    * while the direction determines where the light points. The angle
+    * parameter affects angle of the spotlight cone, while concentration sets
+    * the bias of light focusing toward the center of that cone.
+    *
+    * @param clr           the color
+    * @param loc           the location
+    * @param dir           the direction
+    * @param angle         the angle
+    * @param concentration cone center bias
+    */
+   void spotLight ( final Color clr, final Vec3 loc, final Vec3 dir,
+      final float angle, final float concentration ) {
+
+      this.spotLight(Color.toHexInt(this.aTemp), loc.x, loc.y, loc.z, dir.x,
+         dir.y, dir.z, angle, concentration);
+   }
+
+   /**
+    * Initializes a spot light. The location positions the spotlight in space
+    * while the direction determines where the light points. The angle
+    * parameter affects angle of the spotlight cone, while concentration sets
+    * the bias of light focusing toward the center of that cone.
+    *
+    * @param clr           the color
+    * @param xLoc          the location x
+    * @param yLoc          the location y
+    * @param zLoc          the location z
+    * @param xDir          the direction x
+    * @param yDir          the direction y
+    * @param zDir          the direction z
+    * @param angle         spotlight cone angle
+    * @param concentration cone center bias
+    */
+   void spotLight ( final int clr, final float xLoc, final float yLoc,
+      final float zLoc, final float xDir, final float yDir, final float zDir,
+      final float angle, final float concentration ) {
+
+      this.enableLighting();
+      if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
+
+      this.lightType[this.lightCount] = PConstants.SPOT;
+
+      this.lightPosition(this.lightCount, xLoc, yLoc, zLoc, false);
+      this.lightNormal(this.lightCount, xDir, yDir, zDir);
+
+      this.noLightAmbient(this.lightCount);
+      this.lightDiffuse(this.lightCount, clr);
+      this.lightSpecular(this.lightCount, this.currentLightSpecular[0],
+         this.currentLightSpecular[1], this.currentLightSpecular[2]);
+      this.lightSpot(this.lightCount, angle, concentration);
+      this.lightFalloff(this.lightCount, this.currentLightFalloffConstant,
+         this.currentLightFalloffLinear, this.currentLightFalloffQuadratic);
+
+      this.lightCount++;
+   }
+
+   /**
+    * Initializes a spot light. The location positions the spotlight in space
+    * while the direction determines where the light points. The angle
+    * parameter affects angle of the spotlight cone, while concentration sets
+    * the bias of light focusing toward the center of that cone.
+    *
+    * @param clr           the color
+    * @param loc           the location
+    * @param dir           the direction
+    * @param angle         the angle
+    * @param concentration cone center bias
+    */
+   void spotLight ( final int clr, final Vec3 loc, final Vec3 dir,
+      final float angle, final float concentration ) {
+
+      this.spotLight(clr, loc.x, loc.y, loc.z, dir.x, dir.y, dir.z, angle,
+         concentration);
    }
 
    /**
@@ -1630,6 +1638,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * The path string for this renderer.
     */
+   @SuppressWarnings ( "hiding" )
    public static final String PATH_STR = "camzup.pfriendly.Up3";
 
 }

@@ -228,16 +228,14 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(96)
-         .append("{ step: ")
-         .append(Utils.toFixed(this.step, 6))
-         .append(", clr: ")
-         .append(this.clr.toString(places))
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(96);
+      sb.append("{ step: ");
+      sb.append(Utils.toFixed(this.step, 6));
+      sb.append(", clr: ");
+      sb.append(this.clr.toString(places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**
@@ -248,17 +246,15 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     */
    public String toSvgString ( ) {
 
-      /* @formatter:off */
-      return new StringBuilder(96)
-         .append("<stop offset=\"")
-         .append(Utils.toFixed(this.step, 6))
-         .append("\" stop-color=\"")
-         .append(Color.toHexWeb(this.clr))
-         .append("\" stop-opacity=\"")
-         .append(Utils.toFixed(this.clr.w, 6))
-         .append("\"/>")
-         .toString();
-      /* @formatter:on */
+      final StringBuilder svgp = new StringBuilder(96);
+      svgp.append("<stop offset=\"");
+      svgp.append(Utils.toFixed(this.step, 6));
+      svgp.append("\" stop-color=\"");
+      svgp.append(Color.toHexWeb(this.clr));
+      svgp.append("\" stop-opacity=\"");
+      svgp.append(Utils.toFixed(this.clr.w, 6));
+      svgp.append("\"/>");
+      return svgp.toString();
    }
 
    /**
@@ -309,15 +305,6 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     * Returns a String of Python code targeted toward the Blender 2.8x API.
     * This code is brittle and is used for internal testing purposes.
     *
-    * @return the string
-    */
-   @Experimental
-   String toBlenderCode ( ) { return this.toBlenderCode(1.0f); }
-
-   /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes.
-    *
     * @param gamma the gamma adjustment
     *
     * @return the string
@@ -325,15 +312,13 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
    @Experimental
    String toBlenderCode ( final float gamma ) {
 
-      /* @formatter:off */
-      return new StringBuilder(256)
-         .append("{\"position\": ")
-         .append(Utils.toFixed(Utils.clamp01(this.step), 3))
-         .append(", \"color\": ")
-         .append(this.clr.toBlenderCode(gamma, true))
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder pyCd = new StringBuilder(256);
+      pyCd.append("{\"position\": ");
+      pyCd.append(Utils.toFixed(Utils.clamp01(this.step), 3));
+      pyCd.append(", \"color\": ");
+      pyCd.append(this.clr.toBlenderCode(gamma, true));
+      pyCd.append('}');
+      return pyCd.toString();
    }
 
    /**

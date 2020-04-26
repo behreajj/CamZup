@@ -145,13 +145,13 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    /**
     * Append an collection of knots to the curve's list of knots.
     *
-    * @param knots the collection of knots
+    * @param kn the collection of knots
     *
     * @return this curve.
     */
-   public Curve3 appendAll ( final Collection < Knot3 > knots ) {
+   public Curve3 appendAll ( final Collection < Knot3 > kn ) {
 
-      final Iterator < Knot3 > knItr = knots.iterator();
+      final Iterator < Knot3 > knItr = kn.iterator();
       while ( knItr.hasNext() ) {
          this.append(knItr.next());
       }
@@ -162,16 +162,16 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    /**
     * Append an array of knots to the curve's list of knots.
     *
-    * @param knots the array of knots
+    * @param kn the array of knots
     *
     * @return this curve.
     */
 
-   public Curve3 appendAll ( final Knot3... knots ) {
+   public Curve3 appendAll ( final Knot3... kn ) {
 
-      final int len = knots.length;
+      final int len = kn.length;
       for ( int i = 0; i < len; ++i ) {
-         this.append(knots[i]);
+         this.append(kn[i]);
       }
 
       return this;
@@ -189,6 +189,18 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       c.name = this.name;
       c.materialIndex = this.materialIndex;
       return c;
+   }
+
+   /**
+    * Evaluates whether a knot is contained by this curve.
+    *
+    * @param kn the knot
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final Knot3 kn ) {
+
+      return this.knots.contains(kn);
    }
 
    /**
@@ -311,16 +323,16 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * closed loop, the index wraps around; this means negative indices are
     * accepted.
     *
-    * @param i     the index
-    * @param knots the knots
+    * @param i  the index
+    * @param kn the knots
     *
     * @return this curve
     */
-   public Curve3 insertAll ( final int i, final Collection < Knot3 > knots ) {
+   public Curve3 insertAll ( final int i, final Collection < Knot3 > kn ) {
 
       final int vidx = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
          : i;
-      final Iterator < Knot3 > knItr = knots.iterator();
+      final Iterator < Knot3 > knItr = kn.iterator();
       int k = vidx;
       while ( knItr.hasNext() ) {
          final Knot3 knot = knItr.next();
@@ -337,18 +349,18 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * Inserts a list of knots at a given index. When the curve is a closed
     * loop, the index wraps around; this means negative indices are accepted.
     *
-    * @param i     the index
-    * @param knots the knots
+    * @param i  the index
+    * @param kn the knots
     *
     * @return this curve
     */
-   public Curve3 insertAll ( final int i, final Knot3... knots ) {
+   public Curve3 insertAll ( final int i, final Knot3... kn ) {
 
-      final int len = knots.length;
+      final int len = kn.length;
       final int vidx = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
          : i;
       for ( int j = 0, k = vidx; j < len; ++j ) {
-         final Knot3 knot = knots[j];
+         final Knot3 knot = kn[j];
          if ( knot != null ) {
             this.knots.add(k, knot);
             k++;
@@ -398,14 +410,14 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    /**
     * Prepend an collection of knots to the curve's list of knots.
     *
-    * @param knots the collection of knots
+    * @param kn the collection of knots
     *
     * @return this curve.
     */
-   public Curve3 prependAll ( final Collection < Knot3 > knots ) {
+   public Curve3 prependAll ( final Collection < Knot3 > kn ) {
 
       int i = 0;
-      final Iterator < Knot3 > knItr = knots.iterator();
+      final Iterator < Knot3 > knItr = kn.iterator();
       while ( knItr.hasNext() ) {
          final Knot3 knot = knItr.next();
          if ( knot != null ) {
@@ -419,19 +431,18 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    /**
     * Prepend an array of knots to the curve's list of knots.
     *
-    * @param knots the array of knots
+    * @param kn the array of knots
     *
     * @return this curve.
     *
     * @see List#add(int, Object)
     */
 
-   public Curve3 prependAll ( final Knot3... knots ) {
+   public Curve3 prependAll ( final Knot3... kn ) {
 
-      // TEST
-      final int len = knots.length;
+      final int len = kn.length;
       for ( int i = 0, j = 0; i < len; ++i ) {
-         final Knot3 knot = knots[i];
+         final Knot3 knot = kn[i];
          if ( knot != null ) {
             this.knots.add(j, knot);
             j++;
@@ -899,13 +910,12 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Iterator < Knot3 > itr = this.knots.iterator();
       int i = 0;
       final int len = this.knots.size();
-      final int last = len - 1;
-      final float toPercent = 1.0f / ( this.closedLoop ? len : last );
+      final float toPercent = 1.0f / ( this.closedLoop ? len : len - 1.0f );
       while ( itr.hasNext() ) {
          final float t = i * toPercent;
          final float ang = ( 1.0f - t ) * tiltStart + t * tiltEnd;
          pyCd.append(itr.next().toBlenderCode(1.0f, 1.0f, ang));
-         if ( i < last ) { pyCd.append(',').append(' '); }
+         if ( itr.hasNext() ) { pyCd.append(',').append(' '); }
          i++;
       }
 
@@ -1491,15 +1501,12 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Vec3[] points, final Curve3 target ) {
 
       target.closedLoop = closedLoop;
-      final int knotCount = points.length;
-      target.resize(knotCount);
-
-      int i = 0;
+      target.resize(points.length);
+      int incr = 0;
       final Iterator < Knot3 > itr = target.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Vec3 point = points[i];
-         itr.next().set(point, point, point);
-         i++;
+      for ( ; itr.hasNext(); ++incr ) {
+         final Vec3 pt = points[incr];
+         itr.next().set(pt, pt, pt);
       }
 
       return Curve3.smoothHandles(target);
@@ -1874,22 +1881,20 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final int knotCount, final float xCenter, final float yCenter,
       final float zCenter, final Curve3 target ) {
 
-      final float off1 = offsetAngle * IUtils.ONE_TAU;
-      final int vknct = knotCount < 3 ? 3 : knotCount;
-      target.resize(vknct);
-      final float invKnCt = 1.0f / vknct;
-      final float hndtn = 0.25f * invKnCt;
-      final float handleMag = Utils.tan(hndtn * IUtils.TAU) * radius
+      final float offNorm = offsetAngle * IUtils.ONE_TAU;
+      final int vKnCt = knotCount < 3 ? 3 : knotCount;
+      target.resize(vKnCt);
+      final float invKnCt = 1.0f / vKnCt;
+      final float hndlTan = 0.25f * invKnCt;
+      final float hndlMag = Utils.tan(hndlTan * IUtils.TAU) * radius
          * IUtils.FOUR_THIRDS;
 
-      int i = 0;
+      float incr = 0.0f;
       final Iterator < Knot3 > itr = target.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Knot3 knot = itr.next();
-         final float angle1 = off1 + i * invKnCt;
-         Knot3.fromPolar(Utils.scNorm(angle1), Utils.scNorm(angle1 - 0.25f),
-            radius, handleMag, xCenter, yCenter, zCenter, knot);
-         i++;
+      for ( ; itr.hasNext(); ++incr ) {
+         final float angNorm = offNorm + incr * invKnCt;
+         Knot3.fromPolar(Utils.scNorm(angNorm), Utils.scNorm(angNorm - 0.25f),
+            radius, hndlMag, xCenter, yCenter, zCenter, itr.next());
       }
 
       target.name = "Circle";

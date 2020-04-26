@@ -166,15 +166,15 @@ public class Transform2 extends Transform {
    /**
     * Gets the transform's axes.
     *
-    * @param right   the right axis
-    * @param forward the forward axis
+    * @param r the right axis
+    * @param f the forward axis
     *
     * @return this transform
     */
-   public Transform2 getAxes ( final Vec2 right, final Vec2 forward ) {
+   public Transform2 getAxes ( final Vec2 r, final Vec2 f ) {
 
-      right.set(this.right);
-      forward.set(this.forward);
+      r.set(this.right);
+      f.set(this.forward);
       return this;
    }
 
@@ -348,7 +348,6 @@ public class Transform2 extends Transform {
     *
     * @see Transform2#moveByGlobal(Vec2)
     */
-
    public Transform2 moveBy ( final Vec2 dir ) {
 
       return this.moveByGlobal(dir);
@@ -363,7 +362,6 @@ public class Transform2 extends Transform {
     *
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-
    public Transform2 moveByGlobal ( final Vec2 dir ) {
 
       this.locPrev.set(this.location);
@@ -386,7 +384,6 @@ public class Transform2 extends Transform {
     * @see Vec2#mul(Vec2, Vec2, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-
    public Transform2 moveByLocal ( final Vec2 dir ) {
 
       this.locPrev.set(this.location);
@@ -404,7 +401,6 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-
    public Transform2 moveTo ( final Vec2 locNew ) {
 
       this.locPrev.set(this.location);
@@ -422,7 +418,6 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-
    public Transform2 moveTo ( final Vec2 locNew, final float step ) {
 
       return this.moveTo(locNew, step, Transform2.EASING.loc);
@@ -440,7 +435,6 @@ public class Transform2 extends Transform {
     *
     * @see Vec2.AbstrEasing#apply(Vec2, Vec2, Float, Vec2)
     */
-
    public Transform2 moveTo ( final Vec2 locNew, final float step,
       final Vec2.AbstrEasing easingFunc ) {
 
@@ -456,7 +450,6 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-
    public Transform2 reset ( ) {
 
       this.locPrev.reset();
@@ -482,7 +475,6 @@ public class Transform2 extends Transform {
     *
     * @see Transform2#updateAxes()
     */
-
    public Transform2 rotateTo ( final float rotNew ) {
 
       this.rotPrev = this.rotation;
@@ -500,7 +492,6 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-
    public Transform2 rotateTo ( final float radians, final float step ) {
 
       return this.rotateTo(radians, step, Transform2.EASING.rot);
@@ -518,7 +509,6 @@ public class Transform2 extends Transform {
     *
     * @see Transform2#updateAxes()
     */
-
    public Transform2 rotateTo ( final float radians, final float step,
       final Utils.PeriodicEasing easingFunc ) {
 
@@ -539,7 +529,6 @@ public class Transform2 extends Transform {
     *
     * @see Transform2#updateAxes()
     */
-
    public Transform2 rotateZ ( final float radians ) {
 
       this.rotPrev = this.rotation;
@@ -557,7 +546,6 @@ public class Transform2 extends Transform {
     *
     * @see Vec2#mul(Vec2, float, Vec2)
     */
-
    public Transform2 scaleBy ( final float scalar ) {
 
       if ( scalar != 0.0f ) {
@@ -577,7 +565,6 @@ public class Transform2 extends Transform {
     * @see Vec2#all(Vec2)
     * @see Vec2#mul(Vec2, Vec2, Vec2)
     */
-
    public Transform2 scaleBy ( final Vec2 nonUniformScale ) {
 
       if ( Vec2.all(nonUniformScale) ) {
@@ -594,7 +581,6 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-
    public Transform2 scaleTo ( final float scalar ) {
 
       if ( scalar != 0.0f ) {
@@ -613,7 +599,6 @@ public class Transform2 extends Transform {
     *
     * @see Vec2#all(Vec2)
     */
-
    public Transform2 scaleTo ( final Vec2 scaleNew ) {
 
       if ( Vec2.all(scaleNew) ) {
@@ -634,7 +619,6 @@ public class Transform2 extends Transform {
     *
     * @see Vec2#all(Vec2)
     */
-
    public Transform2 scaleTo ( final Vec2 scaleNew, final float step ) {
 
       if ( Vec2.all(scaleNew) ) {

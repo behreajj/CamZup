@@ -6,7 +6,6 @@ import processing.core.PApplet;
  * The main class of this library. This is not needed to use the library
  * and is for development and debugging only.
  */
-@SuppressWarnings ( "unused" )
 public class CamZup {
 
    /**

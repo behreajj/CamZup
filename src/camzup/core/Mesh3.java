@@ -1306,10 +1306,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the new face indices
     */
    @Experimental
-
    public Mesh3 subdivFace ( final int faceIdx ) {
 
-      return this.subdivFaceCentroid(faceIdx);
+      return this.subdivFaceCenter(faceIdx);
    }
 
    /**
@@ -1323,8 +1322,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the new face indices
     */
    @Experimental
-
-   public Mesh3 subdivFaceCentroid ( final int faceIdx ) {
+   public Mesh3 subdivFaceCenter ( final int faceIdx ) {
 
       /* Validate face index, find face. */
       final int facesLen = this.faces.length;
@@ -1391,12 +1389,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             ( vnCurr.y + vnNext.y ) * 0.5f,
             ( vnCurr.z + vnNext.z ) * 0.5f);
          Vec3.normalize(vn, vn);
-         /* @formatter:on */
 
-         fsNew[j] = new int[][] { { vCentroidIdx, vtCentroidIdx,
-            vnCentroidIdx }, { vsOldLen + j, vtsOldLen + j, vnsOldLen + j }, {
-               vNextIdx, vtNextIdx, vnNextIdx }, { vsOldLen + k, vtsOldLen + k,
-                  vnsOldLen + k } };
+         fsNew[j] = new int[][] {
+            { vCentroidIdx, vtCentroidIdx, vnCentroidIdx },
+            { vsOldLen + j, vtsOldLen + j, vnsOldLen + j },
+            {     vNextIdx,     vtNextIdx,     vnNextIdx },
+            { vsOldLen + k, vtsOldLen + k, vnsOldLen + k } };
+         /* @formatter:on */
       }
 
       Vec3.div(vCentroid, faceLen, vCentroid);
@@ -1422,7 +1421,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the new face indices
     */
    @Experimental
-
    public Mesh3 subdivFaceFan ( final int faceIdx ) {
 
       final int facesLen = this.faces.length;
@@ -1535,14 +1533,15 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             ( vnCurr.y + vnNext.y ) * 0.5f,
             ( vnCurr.z + vnNext.z ) * 0.5f);
          Vec3.normalize(vn, vn);
-         /* @formatter:on */
 
          final int vSubdivIdx = vsOldLen + j;
          final int vtSubdivIdx = vtsOldLen + j;
          final int vnSubdivIdx = vnsOldLen + j;
-         fsNew[j] = new int[][] { { vSubdivIdx, vtSubdivIdx, vnSubdivIdx }, {
-            vNextIdx, vtNextIdx, vnNextIdx }, { vsOldLen + k, vtsOldLen + k,
-               vnsOldLen + k } };
+         fsNew[j] = new int[][] {
+            {   vSubdivIdx,   vtSubdivIdx,   vnSubdivIdx },
+            {     vNextIdx,     vtNextIdx,     vnNextIdx },
+            { vsOldLen + k, vtsOldLen + k, vnsOldLen + k } };
+         /* @formatter:on */
 
          centerFace[j][0] = vSubdivIdx;
          centerFace[j][1] = vtSubdivIdx;
@@ -1593,7 +1592,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
-            this.subdivFaceCentroid(k);
+            this.subdivFaceCenter(k);
             k += vertLen;
          }
       }
@@ -1661,30 +1660,46 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
        * Append a comment listing the number of coordinates, texture
        * coordinates, normals and faces.
        */
-      objs.append("# v: ").append(coordsLen).append(", vt: ").append(
-         texCoordsLen).append(", vn: ").append(normalsLen).append(", f: ")
-         .append(facesLen).append('\n').append('\n');
+      objs.append("# v: ");
+      objs.append(coordsLen);
+      objs.append(", vt: ");
+      objs.append(texCoordsLen);
+      objs.append(", vn: ");
+      objs.append(normalsLen);
+      objs.append(", f: ");
+      objs.append(facesLen);
+      objs.append('\n');
+      objs.append('\n');
 
       /* Append name. */
-      objs.append('o').append(' ').append(this.name).append('\n').append('\n');
+      objs.append('o');
+      objs.append(' ');
+      objs.append(this.name);
+      objs.append('\n');
+      objs.append('\n');
 
       /* Write coordinates. */
       for ( int i = 0; i < coordsLen; ++i ) {
-         objs.append('v').append(' ').append(this.coords[i].toObjString())
-            .append('\n');
+         objs.append('v');
+         objs.append(' ');
+         objs.append(this.coords[i].toObjString());
+         objs.append('\n');
       }
       objs.append('\n');
 
       /* Write texture coordinates. */
       for ( int i = 0; i < texCoordsLen; ++i ) {
-         objs.append("vt ").append(this.texCoords[i].toObjString()).append(
-            '\n');
+         objs.append("vt ");
+         objs.append(this.texCoords[i].toObjString());
+         objs.append('\n');
       }
       objs.append('\n');
 
       /* Write normals. */
       for ( int i = 0; i < normalsLen; ++i ) {
-         objs.append("vn ").append(this.normals[i].toObjString()).append('\n');
+         objs.append("vn ");
+         objs.append(this.normals[i].toObjString());
+         objs.append('\n');
       }
       objs.append('\n');
 
@@ -1692,14 +1707,19 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          final int[][] face = this.faces[i];
          final int vLen = face.length;
-         objs.append('f').append(' ');
+         objs.append('f');
+         objs.append(' ');
 
          for ( int j = 0; j < vLen; ++j ) {
 
             /* Indices start at 1, not 0. */
             final int[] vert = face[j];
-            objs.append(vert[0] + 1).append('/').append(vert[1] + 1).append('/')
-               .append(vert[2] + 1).append(' ');
+            objs.append(vert[0] + 1);
+            objs.append('/');
+            objs.append(vert[1] + 1);
+            objs.append('/');
+            objs.append(vert[2] + 1);
+            objs.append(' ');
          }
 
          objs.append('\n');
@@ -1769,12 +1789,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * Returns a string representation of the mesh. Includes an option to
     * truncate the listing in case of large meshes.
     *
-    * @param places   the number of places
-    * @param truncate truncate elements in a list
+    * @param places the number of places
+    * @param trunc  truncate elements in a list
     *
     * @return the string
     */
-   public String toString ( final int places, final int truncate ) {
+   public String toString ( final int places, final int trunc ) {
 
       final StringBuilder sb = new StringBuilder(2048);
 
@@ -1786,51 +1806,50 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       sb.append("coords: [ ");
 
       if ( this.coords != null ) {
-         final int len = this.coords.length <= truncate ? this.coords.length
-            : truncate;
+         final int len = this.coords.length <= trunc ? this.coords.length
+            : trunc;
          final int last = len - 1;
          for ( int i = 0; i < len; ++i ) {
             sb.append(this.coords[i].toString(places));
             if ( i < last ) { sb.append(',').append(' '); }
          }
 
-         if ( this.coords.length > truncate ) { sb.append(" /* ... */"); }
+         if ( this.coords.length > trunc ) { sb.append(" /* ... */"); }
       }
 
       sb.append(" ], ");
       sb.append("texCoords: [ ");
       if ( this.texCoords != null ) {
-         final int len = this.texCoords.length <= truncate
-            ? this.texCoords.length : truncate;
+         final int len = this.texCoords.length <= trunc ? this.texCoords.length
+            : trunc;
          final int last = len - 1;
          for ( int i = 0; i < len; ++i ) {
             sb.append(this.texCoords[i].toString(places));
             if ( i < last ) { sb.append(',').append(' '); }
          }
 
-         if ( this.texCoords.length > truncate ) { sb.append(" /* ... */"); }
+         if ( this.texCoords.length > trunc ) { sb.append(" /* ... */"); }
       }
 
       sb.append(" ], ");
       sb.append("normals: [ ");
       if ( this.normals != null ) {
-         final int len = this.normals.length <= truncate ? this.normals.length
-            : truncate;
+         final int len = this.normals.length <= trunc ? this.normals.length
+            : trunc;
          final int last = len - 1;
          for ( int i = 0; i < len; ++i ) {
             sb.append(this.normals[i].toString(places));
             if ( i < last ) { sb.append(',').append(' '); }
          }
 
-         if ( this.normals.length > truncate ) { sb.append(" /* ... */"); }
+         if ( this.normals.length > trunc ) { sb.append(" /* ... */"); }
       }
 
       sb.append(" ], ");
       sb.append("faces: [ ");
       if ( this.faces != null ) {
-         // sb.append('\n');
-         final int facesLen = this.faces.length <= truncate ? this.faces.length
-            : truncate;
+         final int facesLen = this.faces.length <= trunc ? this.faces.length
+            : trunc;
          final int facesLast = facesLen - 1;
 
          for ( int i = 0; i < facesLen; ++i ) {
@@ -1859,7 +1878,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             if ( i < facesLast ) { sb.append(',').append(' '); }
          }
 
-         if ( this.faces.length > truncate ) { sb.append(" /* ... */"); }
+         if ( this.faces.length > trunc ) { sb.append(" /* ... */"); }
       }
 
       sb.append(" ] }");
