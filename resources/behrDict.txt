@@ -119,3 +119,7 @@ interoperability
 postfix
 teal
 maroon
+iterable
+mod
+polyline
+rect

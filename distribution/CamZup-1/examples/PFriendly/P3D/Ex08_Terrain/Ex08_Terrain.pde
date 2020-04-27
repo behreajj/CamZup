@@ -36,7 +36,7 @@ void setup() {
     Vec3.mul(co, roughness, noiseIn);
     float fac1 = Simplex.fbm(
       noiseIn, Simplex.DEFAULT_SEED,
-      16, 2.0, 0.375);
+      16, 2.0, 0.3375);
     co.z = elev * fac1;
   }
 

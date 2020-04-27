@@ -360,7 +360,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Vec3#mul(Vec3, float, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-
    public Face3 scaleLocal ( final float scale ) {
 
       if ( scale == 0.0f ) { return this; }
@@ -395,7 +394,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-
    public Face3 scaleLocal ( final Vec3 scale ) {
 
       if ( Vec3.none(scale) ) { return this; }
@@ -421,7 +419,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @return this face
     */
-
    public Face3 set ( final Vert3... vertices ) {
 
       this.vertices = vertices;
@@ -487,7 +484,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-
    public Face3 translate ( final Vec3 v ) {
 
       return this.translateGlobal(v);
@@ -503,7 +499,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-
    public Face3 translateGlobal ( final Vec3 v ) {
 
       final int len = this.vertices.length;

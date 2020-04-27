@@ -576,18 +576,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Returns a new quaternion with the negation of the instance. For
-    * interoperability with Kotlin: <code>-a</code> . <em>Does not mutate the
-    * quaternion in place</em>.
-    *
-    * @return the negation
-    */
-   public Quaternion unaryMinus ( ) {
-
-      return new Quaternion(-this.real, this.imag.unaryMinus());
-   }
-
-   /**
     * Returns a new quaternion with the positive copy of the instance. For
     * interoperability with Kotlin: <code>+a</code> . <em>Does not mutate the
     * quaternion in place</em>.

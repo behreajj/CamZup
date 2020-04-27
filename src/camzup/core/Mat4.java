@@ -12,19 +12,6 @@ import java.util.Iterator;
 public class Mat4 extends Matrix {
 
    /**
-    * Multiplies this matrix and a vector. For interoperability with Kotlin:
-    * <code>a * b</code> .
-    * 
-    * @param b the vector
-    * 
-    * @return the product
-    */
-   public Vec4 times ( final Vec4 b ) {
-
-      return Mat4.mul(this, b, new Vec4());
-   }
-
-   /**
     * Component in row 0, column 0. The right axis x component.
     */
    public float m00 = 1.0f;
@@ -262,6 +249,53 @@ public class Mat4 extends Matrix {
    }
 
    /**
+    * Gets a column vector from this matrix. For interoperability with Kotlin:
+    * <code>b = a[i]</code> .
+    *
+    * @param j the column index
+    *
+    * @return the column vector
+    *
+    * @see Mat4#getCol(int, Vec4)
+    */
+   public Vec4 get ( final int j ) {
+
+      return this.getCol(j, new Vec4());
+   }
+
+   /**
+    * Gets a column of this matrix with an index and vector.
+    *
+    * @param j      the column index
+    * @param target the vector
+    *
+    * @return the column
+    */
+   public Vec4 getCol ( final int j, final Vec4 target ) {
+
+      switch ( j ) {
+         case 0:
+         case -4:
+            return target.set(this.m00, this.m10, this.m20, this.m30);
+
+         case 1:
+         case -3:
+            return target.set(this.m01, this.m11, this.m21, this.m31);
+
+         case 2:
+         case -2:
+            return target.set(this.m02, this.m12, this.m22, this.m32);
+
+         case 3:
+         case -1:
+            return target.set(this.m03, this.m13, this.m23, this.m33);
+
+         default:
+            return target.reset();
+      }
+   }
+
+   /**
     * Simulates bracket subscript access in a one-dimensional, row-major
     * matrix array. Works with positive integers in [0, 15] or negative
     * integers in [-16, -1] .
@@ -271,7 +305,7 @@ public class Mat4 extends Matrix {
     * @return the component at that index
     */
    @Override
-   public float get ( final int index ) {
+   public float getElm ( final int index ) {
 
       /*
        * At the moment, there is a get function to facilitate an iterator, but
@@ -318,7 +352,7 @@ public class Mat4 extends Matrix {
     * @return the component at that index
     */
    @Override
-   public float get ( final int i, final int j ) {
+   public float getElm ( final int i, final int j ) {
 
       /* @formatter:off */
       switch ( i ) {
@@ -370,70 +404,6 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Gets a column of this matrix with an index and vector.
-    *
-    * @param j      the column index
-    * @param target the vector
-    *
-    * @return the column
-    */
-   public Vec4 getCol ( final int j, final Vec4 target ) {
-
-      switch ( j ) {
-         case 0:
-         case -4:
-            return target.set(this.m00, this.m10, this.m20, this.m30);
-
-         case 1:
-         case -3:
-            return target.set(this.m01, this.m11, this.m21, this.m31);
-
-         case 2:
-         case -2:
-            return target.set(this.m02, this.m12, this.m22, this.m32);
-
-         case 3:
-         case -1:
-            return target.set(this.m03, this.m13, this.m23, this.m33);
-
-         default:
-            return target.reset();
-      }
-   }
-
-   /**
-    * Gets a row of this matrix with an index and vector.
-    *
-    * @param i      the row index
-    * @param target the vector
-    *
-    * @return the row
-    */
-   public Vec4 getRow ( final int i, final Vec4 target ) {
-
-      switch ( i ) {
-         case 0:
-         case -4:
-            return target.set(this.m00, this.m01, this.m02, this.m03);
-
-         case 1:
-         case -3:
-            return target.set(this.m10, this.m11, this.m12, this.m13);
-
-         case 2:
-         case -2:
-            return target.set(this.m20, this.m21, this.m22, this.m23);
-
-         case 3:
-         case -1:
-            return target.set(this.m30, this.m31, this.m32, this.m33);
-
-         default:
-            return target.reset();
-      }
-   }
-
-   /**
     * Returns a hash code for this matrix based on its 16 components.
     *
     * @return the hash code
@@ -476,6 +446,50 @@ public class Mat4 extends Matrix {
    public Iterator < Float > iterator ( ) { return new M4Iterator(this); }
 
    /**
+    * Returns a new matrix with the subtraction of the right operand from the
+    * instance. For interoperability with Kotlin: <code>a - b</code> .
+    * <em>Does not mutate the matrix in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the subtraction
+    */
+   public Mat4 minus ( final Mat4 b ) {
+
+      return Mat4.sub(this, b, new Mat4());
+   }
+
+   /**
+    * Subtracts the right operand from the instance (mutates the matrix in
+    * place). For interoperability with Kotlin: <code>a -= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void minusAssign ( final Mat4 b ) { Mat4.sub(this, b, this); }
+
+   /**
+    * Returns a new matrix with the addition of the right operand to the
+    * instance. For interoperability with Kotlin: <code>a - b</code> .
+    * <em>Does not mutate the matrix in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the sum
+    */
+   public Mat4 plus ( final Mat4 b ) {
+
+      return Mat4.add(this, b, new Mat4());
+   }
+
+   /**
+    * Adds the right operand to the instance (mutates the matrix in place).
+    * For interoperability with Kotlin: <code>a += b</code> .
+    *
+    * @param b the right operand
+    */
+   public void plusAssign ( final Mat4 b ) { Mat4.add(this, b, this); }
+
+   /**
     * Resets this matrix to an initial state:
     *
     * <pre>
@@ -489,7 +503,6 @@ public class Mat4 extends Matrix {
     *
     * @see Mat4#identity(Mat4)
     */
-
    public Mat4 reset ( ) {
 
       return this.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
@@ -512,7 +525,6 @@ public class Mat4 extends Matrix {
     *
     * @return this matrix
     */
-
    public Mat4 set ( final float m00, final float m01, final float m02,
       final float m10, final float m11, final float m12, final float m20,
       final float m21, final float m22 ) {
@@ -540,7 +552,6 @@ public class Mat4 extends Matrix {
     *
     * @return this matrix
     */
-
    public Mat4 set ( final float m00, final float m01, final float m02,
       final float m03, final float m10, final float m11, final float m12,
       final float m13, final float m20, final float m21, final float m22,
@@ -572,7 +583,6 @@ public class Mat4 extends Matrix {
     *
     * @return this matrix
     */
-
    public Mat4 set ( final float m00, final float m01, final float m02,
       final float m03, final float m10, final float m11, final float m12,
       final float m13, final float m20, final float m21, final float m22,
@@ -587,6 +597,34 @@ public class Mat4 extends Matrix {
       /* @formatter:on */
 
       return this;
+   }
+
+   /**
+    * Sets a column of this matrix with an index and vector. For
+    * interoperability with Kotlin: <code>a[i] = b</code> .
+    *
+    * @param j      the column index
+    * @param source the source vector
+    *
+    * @see Mat4#setCol(int, Vec3)
+    */
+   public void set ( final int j, final Vec3 source ) {
+
+      this.setCol(j, source);
+   }
+
+   /**
+    * Sets a column of this matrix with an index and vector. For
+    * interoperability with Kotlin: <code>a[i] = b</code> .
+    *
+    * @param j      the column index
+    * @param source the source vector
+    *
+    * @see Mat4#setCol(int, Vec4)
+    */
+   public void set ( final int j, final Vec4 source ) {
+
+      this.setCol(j, source);
    }
 
    /**
@@ -740,103 +778,61 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Sets a row of this matrix with an index and vector. The translation is
-    * set to 0.0 for a given row, while the element (3, 3) is set to 1.0 .
+    * Returns a new matrix with the product of the instance and the right
+    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
+    * not mutate the matrix in place</em>.
     *
-    * @param i      the row index
-    * @param source the the row
+    * @param b the right operand
     *
-    * @return this matrix
+    * @return the product
     */
+   public Mat4 times ( final float b ) {
 
-   public Mat4 setRow ( final int i, final Vec3 source ) {
-
-      switch ( i ) {
-         case 0:
-         case -4:
-            this.m00 = source.x;
-            this.m01 = source.y;
-            this.m02 = source.z;
-            this.m03 = 0.0f;
-            return this;
-
-         case 1:
-         case -3:
-            this.m10 = source.x;
-            this.m11 = source.y;
-            this.m12 = source.z;
-            this.m13 = 0.0f;
-            return this;
-
-         case 2:
-         case -2:
-            this.m20 = source.x;
-            this.m21 = source.y;
-            this.m22 = source.z;
-            this.m23 = 0.0f;
-            return this;
-
-         case 3:
-         case -1:
-            this.m30 = source.x;
-            this.m31 = source.y;
-            this.m32 = source.z;
-            this.m33 = 1.0f;
-            return this;
-
-         default:
-            return this;
-      }
+      return Mat4.mul(this, b, new Mat4());
    }
 
    /**
-    * Sets a row of this matrix with an index and vector.
+    * Returns a new matrix with the product of the instance and the right
+    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
+    * not mutate the matrix in place</em>.
     *
-    * @param i      the row index
-    * @param source the row
+    * @param b the right operand
     *
-    * @return this matrix
+    * @return the product
     */
+   public Mat4 times ( final Mat4 b ) {
 
-   public Mat4 setRow ( final int i, final Vec4 source ) {
-
-      switch ( i ) {
-         case 0:
-         case -4:
-            this.m00 = source.x;
-            this.m01 = source.y;
-            this.m02 = source.z;
-            this.m03 = source.w;
-            return this;
-
-         case 1:
-         case -3:
-            this.m10 = source.x;
-            this.m11 = source.y;
-            this.m12 = source.z;
-            this.m13 = source.w;
-            return this;
-
-         case 2:
-         case -2:
-            this.m20 = source.x;
-            this.m21 = source.y;
-            this.m22 = source.z;
-            this.m23 = source.w;
-            return this;
-
-         case 3:
-         case -1:
-            this.m30 = source.x;
-            this.m31 = source.y;
-            this.m32 = source.z;
-            this.m33 = source.w;
-            return this;
-
-         default:
-            return this;
-      }
+      return Mat4.mul(this, b, new Mat4());
    }
+
+   /**
+    * Multiplies this matrix and a vector. For interoperability with Kotlin:
+    * <code>a * b</code> .
+    *
+    * @param b the vector
+    *
+    * @return the product
+    */
+   public Vec4 times ( final Vec4 b ) {
+
+      return Mat4.mul(this, b, new Vec4());
+   }
+
+   /**
+    * Multiplies the right operand with the instance (mutates the matrix in
+    * place). For interoperability with Kotlin: <code>a *= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void timesAssign ( final float b ) { Mat4.mul(this, b, this); }
+
+   /**
+    * Multiplies the right operand with the instance (mutates the matrix in
+    * place). For interoperability with Kotlin: <code>a *= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void timesAssign ( final Mat4 b ) { Mat4.mul(this, b, this); }
 
    /**
     * Returns a float array of length 16 containing this matrix's components.
@@ -2083,10 +2079,10 @@ public class Mat4 extends Matrix {
        *
        * @return the value
        *
-       * @see Mat4#get(int)
+       * @see Mat4#getElm(int)
        */
       @Override
-      public Float next ( ) { return this.mtx.get(this.index++); }
+      public Float next ( ) { return this.mtx.getElm(this.index++); }
 
       /**
        * Returns the simple name of this class.

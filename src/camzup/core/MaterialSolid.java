@@ -1,6 +1,7 @@
 package camzup.core;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import camzup.pfriendly.IUp;
 
@@ -75,7 +76,7 @@ public class MaterialSolid extends Material implements Cloneable {
    public MaterialSolid ( final Color fill, final Color stroke,
       final float strokeWeight ) {
 
-      this(fill, stroke, strokeWeight, fill.w > 0.0f, stroke.w > 0.0f
+      this(fill, stroke, strokeWeight, fill.a > 0.0f, stroke.a > 0.0f
          && strokeWeight > 0.0f);
    }
 
@@ -139,7 +140,7 @@ public class MaterialSolid extends Material implements Cloneable {
    public MaterialSolid ( final String name, final Color fill,
       final Color stroke, final float strokeWeight ) {
 
-      this(name, fill, stroke, strokeWeight, fill.w > 0.0f, stroke.w > 0.0f
+      this(name, fill, stroke, strokeWeight, fill.a > 0.0f, stroke.a > 0.0f
          && strokeWeight > 0.0f);
    }
 
@@ -373,10 +374,10 @@ public class MaterialSolid extends Material implements Cloneable {
       this.useFill = this.useStroke;
       this.useStroke = t;
 
-      final float fr = this.fill.x;
-      final float fg = this.fill.y;
-      final float fb = this.fill.z;
-      final float fa = this.fill.w;
+      final float fr = this.fill.r;
+      final float fg = this.fill.g;
+      final float fb = this.fill.b;
+      final float fa = this.fill.a;
       this.fill.set(this.stroke);
       this.stroke.set(fr, fg, fb, fa);
 
@@ -524,7 +525,7 @@ public class MaterialSolid extends Material implements Cloneable {
          svgp.append("stroke-width=\"");
          svgp.append(strokeStr);
          svgp.append("\" stroke-opacity=\"");
-         svgp.append(Utils.toFixed(Utils.clamp01(this.stroke.w), 6));
+         svgp.append(Utils.toFixed(Utils.clamp01(this.stroke.a), 6));
          svgp.append("\" stroke=\"").append(Color.toHexWeb(this.stroke));
          svgp.append("\" stroke-linejoin=\"");
          svgp.append(MaterialSolid.DEFAULT_SVG_STR_JOIN);
@@ -538,7 +539,7 @@ public class MaterialSolid extends Material implements Cloneable {
       /* Fill style. */
       if ( this.useFill ) {
          svgp.append("fill-opacity=\"");
-         svgp.append(Utils.toFixed(Utils.clamp01(this.fill.w), 6));
+         svgp.append(Utils.toFixed(Utils.clamp01(this.fill.a), 6));
          svgp.append("\" fill=\"");
          svgp.append(Color.toHexWeb(this.fill));
          svgp.append('\"');
@@ -601,7 +602,6 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return the material
     */
-   @SuppressWarnings ( "null" )
    public static MaterialSolid[] fromMtl ( final String[] lines ) {
 
       final int len = lines.length;
@@ -610,11 +610,12 @@ public class MaterialSolid extends Material implements Cloneable {
       MaterialSolid current = null;
 
       String alpha = "1.0";
+      final Pattern spacePattern = Pattern.compile("\\s+");
 
       for ( int i = 0; i < len; ++i ) {
 
          /* Split line by spaces. */
-         tokens = lines[i].split("\\s+");
+         tokens = spacePattern.split(lines[i], 0);
 
          /* Skip empty lines. */
          if ( tokens.length > 0 ) {

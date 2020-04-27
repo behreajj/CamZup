@@ -209,20 +209,38 @@ public abstract class Simplex {
    private static final Vec4 ZERO_4;
 
    static {
+      /* @formatter:off */
       DEFAULT_SEED = ( int ) System.currentTimeMillis();
 
-      GRAD_2_LUT = new Vec2[] { new Vec2(-1.0f, -1.0f), new Vec2(1.0f, 0.0f),
-         new Vec2(-1.0f, 0.0f), new Vec2(1.0f, 1.0f), new Vec2(-1.0f, 1.0f),
-         new Vec2(0.0f, -1.0f), new Vec2(0.0f, 1.0f), new Vec2(1.0f, -1.0f) };
+      GRAD_2_LUT = new Vec2[] {
+         new Vec2(-1.0f, -1.0f),
+         new Vec2( 1.0f,  0.0f),
+         new Vec2(-1.0f,  0.0f),
+         new Vec2( 1.0f,  1.0f),
+         new Vec2(-1.0f,  1.0f),
+         new Vec2( 0.0f, -1.0f),
+         new Vec2( 0.0f,  1.0f),
+         new Vec2( 1.0f, -1.0f) };
 
-      GRAD_3_LUT = new Vec3[] { new Vec3(1.0f, 0.0f, 1.0f), new Vec3(0.0f, 1.0f,
-         1.0f), new Vec3(-1.0f, 0.0f, 1.0f), new Vec3(0.0f, -1.0f, 1.0f),
-         new Vec3(1.0f, 0.0f, -1.0f), new Vec3(0.0f, 1.0f, -1.0f), new Vec3(
-            -1.0f, 0.0f, -1.0f), new Vec3(0.0f, -1.0f, -1.0f), new Vec3(1.0f,
-               -1.0f, 0.0f), new Vec3(1.0f, 1.0f, 0.0f), new Vec3(-1.0f, 1.0f,
-                  0.0f), new Vec3(-1.0f, -1.0f, 0.0f), new Vec3(1.0f, 0.0f,
-                     1.0f), new Vec3(-1.0f, 0.0f, 1.0f), new Vec3(0.0f, 1.0f,
-                        -1.0f), new Vec3(0.0f, -1.0f, -1.0f) };
+      GRAD_3_LUT = new Vec3[] {
+         new Vec3( 1.0f,  0.0f,  1.0f),
+         new Vec3( 0.0f,  1.0f,  1.0f),
+         new Vec3(-1.0f,  0.0f,  1.0f),
+         new Vec3( 0.0f, -1.0f,  1.0f),
+         new Vec3( 1.0f,  0.0f, -1.0f),
+         new Vec3( 0.0f,  1.0f, -1.0f),
+         new Vec3(-1.0f,  0.0f, -1.0f),
+         new Vec3( 0.0f, -1.0f, -1.0f),
+         new Vec3( 1.0f, -1.0f,  0.0f),
+         new Vec3( 1.0f,  1.0f,  0.0f),
+         new Vec3(-1.0f,  1.0f,  0.0f),
+         new Vec3(-1.0f, -1.0f,  0.0f),
+         new Vec3( 1.0f,  0.0f,  1.0f),
+         new Vec3(-1.0f,  0.0f,  1.0f),
+         new Vec3( 0.0f,  1.0f, -1.0f),
+         new Vec3( 0.0f, -1.0f, -1.0f) };
+
+      // TODO: Finish reformatting.
 
       GRAD_4_LUT = new Vec4[] { new Vec4(0.0f, 1.0f, 1.0f, 1.0f), new Vec4(0.0f,
          1.0f, 1.0f, -1.0f), new Vec4(0.0f, 1.0f, -1.0f, 1.0f), new Vec4(0.0f,
@@ -255,37 +273,41 @@ public abstract class Simplex {
                Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3), new Vec3(
                   -Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3) };
 
-      GRAD3_V = new Vec3[] { new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3,
-         Simplex.RT2_RT3), new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3,
-            Simplex.RT2_RT3), new Vec3(Simplex.RT2_RT3, -Simplex.RT2_RT3,
-               Simplex.RT2_RT3), new Vec3(Simplex.RT2_RT3, Simplex.RT2_RT3,
-                  Simplex.RT2_RT3), new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3,
-                     -Simplex.RT2_RT3), new Vec3(Simplex.RT2_RT3,
-                        -Simplex.RT2_RT3, -Simplex.RT2_RT3), new Vec3(
-                           Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
-         new Vec3(-Simplex.RT2_RT3, Simplex.RT2_RT3, -Simplex.RT2_RT3),
-         new Vec3(1.0f, -1.0f, 0.0f), new Vec3(1.0f, 1.0f, 0.0f), new Vec3(
-            -1.0f, 1.0f, 0.0f), new Vec3(-1.0f, -1.0f, 0.0f), new Vec3(1.0f,
-               0.0f, 1.0f), new Vec3(-1.0f, 0.0f, 1.0f), new Vec3(0.0f, 1.0f,
-                  -1.0f), new Vec3(0.0f, -1.0f, -1.0f) };
+      GRAD3_V = new Vec3[] {
+         new Vec3(-Simplex.RT2_RT3,  Simplex.RT2_RT3,  Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3,  Simplex.RT2_RT3),
+         new Vec3( Simplex.RT2_RT3, -Simplex.RT2_RT3,  Simplex.RT2_RT3),
+         new Vec3( Simplex.RT2_RT3,  Simplex.RT2_RT3,  Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3( Simplex.RT2_RT3, -Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3( Simplex.RT2_RT3,  Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3(-Simplex.RT2_RT3,  Simplex.RT2_RT3, -Simplex.RT2_RT3),
+         new Vec3( 1.0f, -1.0f,  0.0f),
+         new Vec3( 1.0f,  1.0f,  0.0f),
+         new Vec3(-1.0f,  1.0f,  0.0f),
+         new Vec3(-1.0f, -1.0f,  0.0f),
+         new Vec3( 1.0f,  0.0f,  1.0f),
+         new Vec3(-1.0f,  0.0f,  1.0f),
+         new Vec3( 0.0f,  1.0f, -1.0f),
+         new Vec3( 0.0f, -1.0f, -1.0f) };
 
-      PERMUTE = new int[][] { { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 }, {
-         0, 2, 3, 1 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 2,
-            3, 0 }, { 0, 2, 1, 3 }, { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2,
-               1 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 3, 2,
-                  0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0,
-                     0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, {
-                        0, 0, 0, 0 }, { 1, 2, 0, 3 }, { 0, 0, 0, 0 }, { 1, 3, 0,
-                           2 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 2, 3, 0, 1 }, { 2, 3, 1, 0 }, { 1, 0, 2, 3 }, { 1, 0, 3, 2 }, { 0, 0,
-            0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 2, 0, 3, 1 }, { 0, 0, 0,
-               0 }, { 2, 1, 3, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0,
-                  0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0,
-                     0, 0 }, { 0, 0, 0, 0 }, { 2, 0, 1, 3 }, { 0, 0, 0, 0 }, {
-                        0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 3, 0, 1, 2 }, { 3, 0, 2,
-                           1 }, { 0, 0, 0, 0 }, { 3, 1, 2, 0 }, { 2, 1, 0, 3 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 3, 1, 0, 2 }, { 0, 0,
-            0, 0 }, { 3, 2, 0, 1 }, { 3, 2, 1, 0 } };
+      PERMUTE = new int[][] {
+         { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 }, { 0, 2, 3, 1 },
+         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 2, 3, 0 },
+         { 0, 2, 1, 3 }, { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2, 1 },
+         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 3, 2, 0 },
+         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 1, 2, 0, 3 }, { 0, 0, 0, 0 }, { 1, 3, 0, 2 }, { 0, 0, 0, 0 },
+         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 2, 3, 0, 1 }, { 2, 3, 1, 0 },
+         { 1, 0, 2, 3 }, { 1, 0, 3, 2 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 0, 0, 0, 0 }, { 2, 0, 3, 1 }, { 0, 0, 0, 0 }, { 2, 1, 3, 0 },
+         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 2, 0, 1, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 3, 0, 1, 2 }, { 3, 0, 2, 1 }, { 0, 0, 0, 0 }, { 3, 1, 2, 0 },
+         { 2, 1, 0, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+         { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 }, { 3, 2, 1, 0 } };
 
       ROT_2 = new Vec2();
       ROT_3 = new Vec3();
@@ -293,6 +315,7 @@ public abstract class Simplex {
       ZERO_2 = new Vec2();
       ZERO_3 = new Vec3();
       ZERO_4 = new Vec4();
+      /* @formatter:on */
    }
 
    /**

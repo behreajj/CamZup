@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 /**
  * A mutable, extensible class that contains a list of keys which hold
@@ -351,17 +352,34 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     */
    public Gradient distribute ( ) {
 
+      // final ArrayList < ColorKey > keyArr = new ArrayList <>();
+      // keyArr.addAll(this.keys);
+
+      // this.keys.clear();
+      // int i = 0;
+      // final Iterator < ColorKey > itr = keyArr.iterator();
+      // final float denom = 1.0f / ( keyArr.size() - 1.0f );
+      // while ( itr.hasNext() ) {
+      // final ColorKey key = itr.next();
+      // key.step = i++ * denom;
+      // }
+      // this.keys.addAll(keyArr);
+      // return this;
+
+      // TODO: TEST
+
       final ArrayList < ColorKey > keyArr = new ArrayList <>();
       keyArr.addAll(this.keys);
-
       this.keys.clear();
-      int i = 0;
-      final Iterator < ColorKey > itr = keyArr.iterator();
-      final float denom = 1.0f / ( keyArr.size() - 1.0f );
+      float incr = 0.0f;
+      final Iterator itr = keyArr.iterator();
+      final float denom = 1.0F / ( keyArr.size() - 1.0F );
+      ColorKey var5;
       while ( itr.hasNext() ) {
-         final ColorKey key = itr.next();
-         key.step = i++ * denom;
+         var5 = ( ColorKey ) itr.next();
+         var5.step = incr++ * denom;
       }
+
       this.keys.addAll(keyArr);
       return this;
    }
@@ -1371,6 +1389,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final int lineLen = lines.length;
       String[] tokens;
       final ArrayList < float[] > keys = new ArrayList <>(lineLen);
+      final Pattern spacePattern = Pattern.compile("\\s+");
+
       for ( int i = 0; i < lineLen; ++i ) {
          final String line = lines[i].trim().toLowerCase();
          if ( line.equals("GIMP gradient") ) {
@@ -1386,8 +1406,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
              * constants. They are promoted to floats here to avoid having to
              * create a separate integer array.
              */
-
-            tokens = line.split("\\s+");
+            tokens = spacePattern.split(lines[i], 0);
             if ( tokens.length > 12 ) {
                final float[] key = new float[13];
                for ( int j = 0; j < 13; ++j ) {

@@ -1,13 +1,13 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-float exp = 2.0;
 float seedr = 0.8;
 float seedphi = 1.6;
 int itr = 16;
 
 Complex st = new Complex();
 Complex zn = new Complex();
+Complex exp = new Complex(2.0, 0.0);
 Complex seed = Complex.rect(seedr, seedphi, new Complex());
 
 Gradient grd = new Gradient(#322020, #dbcab8, #fff7d5);
@@ -48,7 +48,7 @@ void draw() {
 
 float julia(
   Complex seed, Complex z,
-  float exp, int itr,
+  Complex exp, int itr,
   Complex target) {
 
   int i = 0;

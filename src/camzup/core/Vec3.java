@@ -452,8 +452,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public Vec3 rem ( final Vec3 b ) {
 
-      return new Vec3(Utils.fmod(this.x, b.x), Utils.fmod(this.y, b.y), Utils
-         .fmod(this.z, b.z));
+      return new Vec3(b.x != 0.0f ? this.x % b.x : this.x, b.y != 0.0f ? this.y
+         % b.y : this.y, b.z != 0.0f ? this.z % b.z : this.z);
    }
 
    /**
@@ -481,9 +481,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public void remAssign ( final Vec3 b ) {
 
-      this.x = Utils.fmod(this.x, b.x);
-      this.y = Utils.fmod(this.y, b.y);
-      this.z = Utils.fmod(this.z, b.z);
+      if ( b.x != 0.0f ) { this.x %= b.x; }
+      if ( b.y != 0.0f ) { this.y %= b.y; }
+      if ( b.z != 0.0f ) { this.z %= b.z; }
    }
 
    /**

@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 /**
  * Organizes data needed to draw a three dimensional shape using vertices
@@ -145,11 +146,15 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             next = this.coords[nextIndex];
 
             // TODO: Needs further trial and error.
-            Vec3.sub(prev, curr, edge0);
-            // Vec3.sub(curr, prev, edge0);
+
+            // Vec3.sub(prev, curr, edge0);
+            Vec3.sub(curr, prev, edge0);
+
             // Vec3.sub(next, curr, edge1);
             Vec3.sub(curr, next, edge1);
-            Vec3.crossNorm(edge0, edge1, normal);
+
+            // Vec3.crossNorm(edge0, edge1, normal);
+            Vec3.crossNorm(edge1, edge0, normal);
 
             prev = curr;
          }
@@ -722,7 +727,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return the new face indices
     */
-
    public Mesh3 insetFace ( final int faceIdx ) {
 
       return this.insetFace(faceIdx, 0.5f);
@@ -842,7 +846,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-
    public Mesh3 insetFaces ( ) { return this.insetFaces(1); }
 
    /**
@@ -853,7 +856,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-
    public Mesh3 insetFaces ( final int itr ) {
 
       return this.insetFaces(itr, 0.5f);
@@ -868,7 +870,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-
    @Experimental
    public Mesh3 insetFaces ( final int itr, final float fac ) {
 
@@ -1485,7 +1486,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the new face indices
     */
    @Experimental
-
    public Mesh3 subdivFaceInscribe ( final int faceIdx ) {
 
       final int facesLen = this.faces.length;
@@ -2312,12 +2312,15 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals[4].set(-1.0f, 0.0f, 0.0f);
       target.normals[5].set(0.0f, 1.0f, 0.0f);
 
-      target.faces = new int[][][] { { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 }, {
-         4, 1, 0 } }, { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } }, {
-            { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 }, { 0, 0, 2 } }, { { 4, 2, 3 },
-               { 5, 3, 3 }, { 1, 0, 3 }, { 0, 1, 3 } }, { { 0, 2, 4 }, { 1, 3,
-                  4 }, { 3, 0, 4 }, { 2, 1, 4 } }, { { 2, 2, 5 }, { 3, 3, 5 }, {
-                     7, 0, 5 }, { 6, 1, 5 } } };
+      /* @formatter:off */
+      target.faces = new int[][][] {
+         { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 }, { 4, 1, 0 } },
+         { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } },
+         { { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 }, { 0, 0, 2 } },
+         { { 4, 2, 3 }, { 5, 3, 3 }, { 1, 0, 3 }, { 0, 1, 3 } },
+         { { 0, 2, 4 }, { 1, 3, 4 }, { 3, 0, 4 }, { 2, 1, 4 } },
+         { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 }, { 6, 1, 5 } } };
+      /* @formatter:on */
 
       return target;
    }
@@ -2618,11 +2621,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       boolean usesMaterial = false;
       String mtlFileName = "";
       final ArrayList < String > materialNames = new ArrayList <>(8);
+      final Pattern spacePattern = Pattern.compile("\\s+");
+      final Pattern fslashPattern = Pattern.compile("/");
 
       for ( int i = 0; i < len; ++i ) {
 
          /* Split line by spaces. */
-         tokens = lines[i].split("\\s+");
+         tokens = spacePattern.split(lines[i], 0);
 
          /* Skip empty lines. */
          if ( tokens.length > 0 ) {
@@ -2666,7 +2671,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                final int[][] indices = new int[count - 1][3];
 
                for ( int j = 1; j < count; ++j ) {
-                  faceTokens = tokens[j].split("/");
+                  faceTokens = fslashPattern.split(tokens[j], 0);
                   final int tokenLen = faceTokens.length;
                   final int k = j - 1;
 
@@ -2744,12 +2749,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          sb.append(" , namely, the materials: ");
 
          final Iterator < String > matNamesItr = materialNames.iterator();
-         final int last = materialNames.size() - 1;
-         int i = 0;
          while ( matNamesItr.hasNext() ) {
             sb.append(matNamesItr.next());
-            if ( i < last ) { sb.append(',').append(' '); }
-            i++;
+            if ( matNamesItr.hasNext() ) { sb.append(',').append(' '); }
          }
 
          sb.append(" .");
@@ -2783,9 +2785,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3[] fromObjGroup ( final String[] lines,
       final boolean poolData ) {
 
-      // TODO: Is it possible to nest groups within groups? If so, the approach
-      // may need to be changed....
-
       String[] tokens;
       String[] faceTokens;
       String objName = "Mesh3";
@@ -2807,51 +2806,78 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       boolean usesMaterial = false;
       String mtlFileName = "";
       final ArrayList < String > materialNames = new ArrayList <>(8);
+      final Pattern spacePattern = Pattern.compile("\\s+");
+      final Pattern fslashPattern = Pattern.compile("/");
 
       for ( int i = 0; i < len; ++i ) {
-         tokens = lines[i].split("\\s+");
+         tokens = spacePattern.split(lines[i], 0);
+
          if ( tokens.length > 0 ) {
             final String initialToken = tokens[0].toLowerCase();
-            if ( initialToken.equals("o") ) {
+            final int hsh = initialToken.hashCode();
 
-               /* Re-assign mesh name. */
-               objName = tokens[1];
+            switch ( hsh ) {
 
-            } else if ( initialToken.equals("g") ) {
+               case 111:
+                  /* "o" */
+                  objName = tokens[1];
 
-               /* Create group name. Create (or retrieve) list of indices. */
+                  break;
 
-               final String name = objName + "." + tokens[1];
-               if ( !faceGroups.containsKey(name) ) {
-                  faceGroups.put(name, new ArrayList < int[][] >());
-               }
-               currentIndices = faceGroups.get(name);
-               missingGroups = false;
+               case 103:
+                  /* "g" */
+                  final String name = objName + "." + tokens[1];
+                  if ( !faceGroups.containsKey(name) ) {
+                     faceGroups.put(name, new ArrayList < int[][] >());
+                  }
+                  currentIndices = faceGroups.get(name);
+                  missingGroups = false;
 
-            } else if ( initialToken.equals("mtllib") ) {
-               usesMaterial = true;
-               mtlFileName = tokens[1];
-            } else if ( initialToken.equals("usemtl") ) {
-               usesMaterial = true;
-               materialNames.add(tokens[1]);
-            } else if ( initialToken.equals("v") ) {
-               coordList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
-            } else if ( initialToken.equals("vt") ) {
-               texCoordList.add(new Vec2(tokens[1], tokens[2]));
-            } else if ( initialToken.equals("vn") ) {
-               normalList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
-            } else if ( initialToken.equals("f") ) {
+                  break;
 
-               if ( currentIndices != null ) {
+               case -1063936832:
+                  /* "mtllib" */
+                  usesMaterial = true;
+                  mtlFileName = tokens[1];
 
-                  /* Face. */
-                  final int count = tokens.length;
+                  break;
+
+               case -836034370:
+                  /* "usemtl" */
+                  usesMaterial = true;
+                  materialNames.add(tokens[1]);
+
+                  break;
+
+               case 118:
+                  /* "v" */
+                  coordList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
+
+                  break;
+
+               case 3774:
+                  /* "vt" */
+                  texCoordList.add(new Vec2(tokens[1], tokens[2]));
+
+                  break;
+
+               case 3768:
+                  /* "vn" */
+                  normalList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
+
+                  break;
+
+               case 102:
+                  /* "f" */
+
+                  if ( currentIndices == null ) { break; }
 
                   /* tokens length includes "f", and so is 1 longer. */
+                  final int count = tokens.length;
                   final int[][] indices = new int[count - 1][3];
 
                   for ( int j = 1; j < count; ++j ) {
-                     faceTokens = tokens[j].split("/");
+                     faceTokens = fslashPattern.split(tokens[j], 0);
                      final int tokenLen = faceTokens.length;
                      final int k = j - 1;
 
@@ -2867,6 +2893,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                         missingVs = true;
                      }
 
+                     /* Attempt to read texture coordinate index. */
                      if ( tokenLen > 1 ) {
                         final String vtIdx = faceTokens[1];
                         if ( vtIdx == null || vtIdx.isEmpty() ) {
@@ -2878,6 +2905,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                         missingVts = true;
                      }
 
+                     /* Attempt to read normal index. */
                      if ( tokenLen > 2 ) {
                         final String vnIdx = faceTokens[2];
                         if ( vnIdx == null || vnIdx.isEmpty() ) {
@@ -2891,7 +2919,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                   }
 
                   currentIndices.add(indices);
-               }
+
+                  break;
+
+               default:
             }
          }
       }
@@ -2926,12 +2957,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          sb.append(" , namely, the materials: ");
 
          final Iterator < String > matNamesItr = materialNames.iterator();
-         final int last = materialNames.size() - 1;
-         int matIdx = 0;
          while ( matNamesItr.hasNext() ) {
             sb.append(matNamesItr.next());
-            if ( matIdx < last ) { sb.append(',').append(' '); }
-            matIdx++;
+            if ( matNamesItr.hasNext() ) { sb.append(',').append(' '); }
          }
 
          sb.append(" .");
@@ -3001,12 +3029,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                   mesh.normals[k] = new Vec3(normalArr[k]);
                }
 
-               /* Remove unused. */
+               /* Remove unused data. */
                mesh.clean();
             }
 
             result[meshIdx] = mesh;
-            meshIdx++;
+            ++meshIdx;
          }
       }
 

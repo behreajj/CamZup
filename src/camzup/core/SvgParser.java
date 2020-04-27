@@ -12,6 +12,7 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 /**
  * A very basic scalable vector graphics (SVG) parser class.
@@ -24,18 +25,6 @@ public abstract class SvgParser {
     * {@value SvgParser#CM_TO_UNIT}. In Processing, the value was 35.43307 .
     */
    public static final float CM_TO_UNIT = 37.795f;
-
-   /**
-    * Regular expression to find path commands in an SVG path data attribute.
-    */
-   public static final String CMD_PATTERN
-      = "[^A|a|C|c|H|h|L|l|M|m|Q|q|S|sT|t|V|v|Z|z]++";
-
-   /**
-    * Regular expression to find data elements in an SVG path data attribute.
-    */
-   public static final String DATA_PATTERN
-      = "[A|a|C|c|H|h|L|l|M|m|Q|q|S|sT|t|V|v|Z|z|,|\u0020]";
 
    /**
     * Ratio to convert from gradians to radians,
@@ -74,9 +63,36 @@ public abstract class SvgParser {
    public static final float PT_TO_UNIT = IUtils.FOUR_THIRDS;
 
    /**
+    * Regular expression to find path commands in an SVG path data attribute.
+    */
+   public static final String PTRN_STR_CMD
+      = "[^A|a|C|c|H|h|L|l|M|m|Q|q|S|sT|t|V|v|Z|z]++";
+
+   /**
+    * Regular expression to find data elements in an SVG path data attribute.
+    */
+   public static final String PTRN_STR_DATA
+      = "[A|a|C|c|H|h|L|l|M|m|Q|q|S|sT|t|V|v|Z|z|,|\u0020]";
+
+   /**
     * Ratio to convert from pixels to units, {@value SvgParser#PX_TO_UNIT}.
     */
    public static final float PX_TO_UNIT = 1.0f;
+
+   /**
+    * The compiled pattern for SVG path commands.
+    */
+   protected static final Pattern PATTERN_CMD;
+
+   /**
+    * The compiled pattern for SVG data elements.
+    */
+   protected static final Pattern PATTERN_DATA;
+
+   static {
+      PATTERN_CMD = Pattern.compile(SvgParser.PTRN_STR_CMD);
+      PATTERN_DATA = Pattern.compile(SvgParser.PTRN_STR_DATA);
+   }
 
    /**
     * Attempts to parse an SVG file to a curve entity.
@@ -168,26 +184,27 @@ public abstract class SvgParser {
    public static float parseAngle ( final String v, final float def ) {
 
       float x = def;
-      final int len = v.length() - 3;
+      final int len = v.length();
+      final int lens3 = len - 3;
+      final int lens4 = len - 4;
 
       try {
 
-         if ( v.endsWith("deg") ) {
+         if ( v.startsWith("deg", lens3) ) {
 
-            x = Float.parseFloat(v.substring(0, len)) * IUtils.DEG_TO_RAD;
+            x = Float.parseFloat(v.substring(0, lens3)) * IUtils.DEG_TO_RAD;
 
-         } else if ( v.endsWith("grad") ) {
+         } else if ( v.startsWith("grad", lens4) ) {
 
-            x = Float.parseFloat(v.substring(0, len - 1))
-               * SvgParser.GRAD_TO_RAD;
+            x = Float.parseFloat(v.substring(0, lens4)) * SvgParser.GRAD_TO_RAD;
 
-         } else if ( v.endsWith("rad") ) {
+         } else if ( v.startsWith("rad", lens3) ) {
 
-            x = Float.parseFloat(v.substring(0, len));
+            x = Float.parseFloat(v.substring(0, lens3));
 
-         } else if ( v.endsWith("turn") ) {
+         } else if ( v.startsWith("turn", lens4) ) {
 
-            x = Float.parseFloat(v.substring(0, len - 1)) * IUtils.TAU;
+            x = Float.parseFloat(v.substring(0, lens4)) * IUtils.TAU;
 
          } else {
 
@@ -433,64 +450,67 @@ public abstract class SvgParser {
    public static float parseFloat ( final String v, final float def ) {
 
       float x = def;
-      final int len = v.length() - 2;
+      final int len = v.length();
+      final int lens1 = len - 1;
+      final int lens2 = len - 2;
+      final int lens3 = len - 3;
 
       try {
 
-         if ( v.endsWith("cm") ) {
+         if ( v.startsWith("cm", lens2) ) {
 
             /* Centimeters. */
-            x = Float.parseFloat(v.substring(0, len)) * SvgParser.CM_TO_UNIT;
+            x = Float.parseFloat(v.substring(0, lens2)) * SvgParser.CM_TO_UNIT;
 
-         } else if ( v.endsWith("deg") ) {
+         } else if ( v.startsWith("deg", lens3) ) {
 
             /* Degrees. */
-            x = Float.parseFloat(v.substring(0, len - 1)) * IUtils.DEG_TO_RAD;
+            x = Float.parseFloat(v.substring(0, lens3)) * IUtils.DEG_TO_RAD;
 
-         } else if ( v.endsWith("in") ) {
+         } else if ( v.startsWith("in", lens2) ) {
 
             /* Inches. */
-            x = Float.parseFloat(v.substring(0, len)) * SvgParser.IN_TO_UNIT;
+            x = Float.parseFloat(v.substring(0, lens2)) * SvgParser.IN_TO_UNIT;
 
-         } else if ( v.endsWith("mm") ) {
+         } else if ( v.startsWith("mm", lens2) ) {
 
             /* Millimeters. */
-            x = Float.parseFloat(v.substring(0, len)) * SvgParser.MM_TO_UNIT;
+            x = Float.parseFloat(v.substring(0, lens2)) * SvgParser.MM_TO_UNIT;
 
-         } else if ( v.endsWith("pc") ) {
+         } else if ( v.startsWith("pc", lens2) ) {
 
             /* Pica. */
-            x = Float.parseFloat(v.substring(0, len)) * SvgParser.PC_TO_UNIT;
+            x = Float.parseFloat(v.substring(0, lens2)) * SvgParser.PC_TO_UNIT;
 
-         } else if ( v.endsWith("pt") ) {
+         } else if ( v.startsWith("pt", lens2) ) {
 
             /* Point. */
-            x = Float.parseFloat(v.substring(0, len)) * SvgParser.PT_TO_UNIT;
+            x = Float.parseFloat(v.substring(0, lens2)) * SvgParser.PT_TO_UNIT;
 
-         } else if ( v.endsWith("px") ) {
+         } else if ( v.startsWith("px", lens2) ) {
 
             /* Pixel. */
-            x = Float.parseFloat(v.substring(0, len)) * SvgParser.PX_TO_UNIT;
+            x = Float.parseFloat(v.substring(0, lens2)) * SvgParser.PX_TO_UNIT;
 
-         } else if ( v.endsWith("rad") ) {
+         } else if ( v.startsWith("rad", lens3) ) {
 
             /* Radians. */
-            x = Float.parseFloat(v.substring(0, len - 1));
+            x = Float.parseFloat(v.substring(0, lens3));
 
-         } else if ( v.endsWith("em") ) {
-
-            /* RELATIVE UNIT: To font size. Not supported in original. */
-            x = Float.parseFloat(v.substring(0, len));
-
-         } else if ( v.endsWith("ex") ) {
+         } else if ( v.startsWith("em", lens2) ) {
 
             /* RELATIVE UNIT: To font size. Not supported in original. */
-            x = Float.parseFloat(v.substring(0, len));
+            x = Float.parseFloat(v.substring(0, lens2));
 
-         } else if ( v.endsWith("%") ) {
+         } else if ( v.startsWith("ex", lens2) ) {
+
+            /* RELATIVE UNIT: To font size. Not supported in original. */
+            x = Float.parseFloat(v.substring(0, lens2));
+
+         } else if ( v.startsWith("%", lens1) ) {
 
             /* RELATIVE UNIT: Simplified from original. */
-            x = Float.parseFloat(v.substring(0, len + 1)) * 0.01f;
+            x = Float.parseFloat(v.substring(0, lens1)) * 0.01f;
 
          } else {
 
@@ -532,9 +552,9 @@ public abstract class SvgParser {
 
          /* Parse string or default. */
          final float x1 = SvgParser.parseFloat(x1str, -0.5f);
-         final float y1 = -SvgParser.parseFloat(y1str, 0.0f);
+         final float y1 = SvgParser.parseFloat(y1str, 0.0f);
          final float x2 = SvgParser.parseFloat(x2str, 0.5f);
-         final float y2 = -SvgParser.parseFloat(y2str, 0.0f);
+         final float y2 = SvgParser.parseFloat(y2str, 0.0f);
 
          Curve2.line(x1, y1, x2, y2, target);
       }
@@ -567,30 +587,44 @@ public abstract class SvgParser {
       }
 
       final String name = node.getNodeName().toLowerCase();
-      switch ( name ) {
+      final int hsh = name.hashCode();
+      switch ( hsh ) {
 
-         case "circle":
-         case "ellipse":
+         case -1360216880:
+            /* "circle" */
+         case -1656480802:
+            /* "ellipse" */
+
             newCurves.add(SvgParser.parseEllipse(node, new Curve2()));
             break;
 
-         case "line":
+         case 3321844:
+            /* "line" */
+
             newCurves.add(SvgParser.parseLine(node, new Curve2()));
             break;
 
-         case "path":
+         case 3433509:
+            /* "path" */
+
             final Curve2[] cs = SvgParser.parsePath(node);
             for ( int i = 0; i < cs.length; ++i ) {
                newCurves.add(cs[i]);
             }
             break;
 
-         case "polygon":
-         case "polyline":
+         case -397519558:
+            /* "polygon" */
+
+         case 561938880:
+            /* "polyline" */
+
             newCurves.add(SvgParser.parsePoly(node, new Curve2()));
             break;
 
-         case "rect":
+         case 3496420:
+            /* "rect" */
+
             newCurves.add(SvgParser.parseRect(node, new Curve2()));
             break;
 
@@ -598,13 +632,15 @@ public abstract class SvgParser {
 
       }
 
-      /* Apply transform to curves from this node. */
-      for ( final Curve2 curve : newCurves ) {
+      /* Apply transform to curves from this node. Append to target. */
+      final Iterator < Curve2 > ncItr = newCurves.iterator();
+      while ( ncItr.hasNext() ) {
+         final Curve2 curve = ncItr.next();
          curve.transform(current);
+         target.append(curve);
       }
 
-      /* Append new curves to target. */
-      target.appendAll(newCurves);
+      // target.appendAll(newCurves);
 
       /* Iterate over children. */
       final NodeList children = node.getChildNodes();
@@ -642,8 +678,9 @@ public abstract class SvgParser {
              * string tokens, so there's an extra step to strip them away.
              */
             final String pdStr = pathData.getTextContent();
-            String[] cmdTokens = pdStr.split(SvgParser.CMD_PATTERN);
-            String[] dataTokens = pdStr.split(SvgParser.DATA_PATTERN);
+            String[] cmdTokens = SvgParser.PATTERN_CMD.split(pdStr, 0);
+            String[] dataTokens = SvgParser.PATTERN_DATA.split(pdStr, 0);
+
             cmdTokens = SvgParser.stripEmptyTokens(cmdTokens);
             dataTokens = SvgParser.stripEmptyTokens(dataTokens);
 
@@ -1138,7 +1175,8 @@ public abstract class SvgParser {
              * Append final curve recorded by while loop if it hasn't been
              * added; for multiple "sub-path"s which are not closed.
              */
-            if ( !result.contains(target) ) { result.add(target); }
+            // if ( !result.contains(target) ) { result.add(target); }
+            if ( result.indexOf(target) < 0 ) { result.add(target); }
 
             /* Deal with first and last knots in open versus closed loop. */
             final Iterator < Curve2 > resultItr = result.iterator();
@@ -1283,21 +1321,28 @@ public abstract class SvgParser {
    public static Mat3 parseTransform ( final Node trNode, final Mat3 target ) {
 
       final String v = trNode.getTextContent().trim().toLowerCase();
+
+      // TODO: Create parse object for splitting.
       final String[] transformStrs = v.split("\\)");
       final int trsLen = transformStrs.length;
       final Mat3 delta = new Mat3();
+      final Pattern trPattern = Pattern.compile("\\(|,\\s*");
 
       for ( int i = 0; i < trsLen; ++i ) {
          final String transform = transformStrs[i].trim();
-         final String[] trData = transform.split("\\(|,\\s*");
+
+         // final String[] trData = transform.split("\\(|,\\s*");
+         final String[] trData = trPattern.split(transform, 0);
          final int dataLen = trData.length;
          if ( dataLen > 1 ) {
             final String cmd = trData[0];
+            final int hsh = cmd.hashCode();
             // System.out.println(cmd);
 
-            switch ( cmd ) {
+            switch ( hsh ) {
 
-               case "matrix":
+               case -1081239615:
+                  /* "matrix" */
 
                   /* Column major. */
                   final String m00 = trData[1];
@@ -1315,7 +1360,8 @@ public abstract class SvgParser {
 
                   break;
 
-               case "rotate":
+               case -925180581:
+                  /* "rotate" */
 
                   /*
                    * SVG rotate also features rotation about an arbitrary pivot,
@@ -1329,7 +1375,8 @@ public abstract class SvgParser {
 
                   break;
 
-               case "scale":
+               case 109250890:
+                  /* "scale" */
 
                   final String scx = trData[1];
                   final String scy = dataLen > 2 ? trData[2] : scx;
@@ -1340,7 +1387,8 @@ public abstract class SvgParser {
 
                   break;
 
-               case "skewx":
+               case 109493422:
+                  /* "skewx" */
 
                   final String skx = trData[1];
 
@@ -1349,7 +1397,8 @@ public abstract class SvgParser {
 
                   break;
 
-               case "skewy":
+               case 109493423:
+                  /* "skewy" */
 
                   final String sky = trData[1];
 
@@ -1358,7 +1407,8 @@ public abstract class SvgParser {
 
                   break;
 
-               case "translate":
+               case 1052832078:
+                  /* "translate" */
 
                   final String tx = trData[1];
                   final String ty = dataLen > 2 ? trData[2] : "0.0";

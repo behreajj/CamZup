@@ -398,7 +398,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public Vec2 rem ( final Vec2 b ) {
 
-      return new Vec2(Utils.fmod(this.x, b.x), Utils.fmod(this.y, b.y));
+      return new Vec2(b.x != 0.0f ? this.x % b.x : this.x, b.y != 0.0f ? this.y
+         % b.y : this.y);
    }
 
    /**
@@ -425,8 +426,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public void remAssign ( final Vec2 b ) {
 
-      this.x = Utils.fmod(this.x, b.x);
-      this.y = Utils.fmod(this.y, b.y);
+      if ( b.x != 0.0f ) { this.x %= b.x; }
+      if ( b.y != 0.0f ) { this.y %= b.y; }
    }
 
    /**
@@ -606,16 +607,14 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(48)
-         .append("{ x: ")
-         .append(Utils.toFixed(this.x, places))
-         .append(", y: ")
-         .append(Utils.toFixed(this.y, places))
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(48);
+      sb.append("{ x: ");
+      sb.append(Utils.toFixed(this.x, places));
+      sb.append(", y: ");
+      sb.append(Utils.toFixed(this.y, places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**

@@ -1,5 +1,17 @@
 # Welcome to Cam Z-Up
 
+Table of Contents
+
+  1. [Getting Started](#getting-started)
+     1. [Installation](#installation)
+     2. [Usage](#usage)
+  2. [Differences, Problems](#differences-problems)
+     1. [2D & 3D](#2d--3d)
+     2. [2D](#2d)
+     3. [3D](#3d)
+  3. [Math & Geometry Conventions](#math--geometry-conventions)
+  4. [Kotlin Interoperability](#kotlin-interoperability)
+
 Cam Z-Up is a Java-based library for the creative coding environment [Processing](https://processing.org/). Cam Z-Up flips Processing's default projection so that the positive z axis, (0.0, 0.0, 1.0), is the world up axis; the positive y axis, (0.0, 1.0, 0.0), is forward. This library supports two- and three-dimensional graphics. It also supports "2.5D" graphics, where a 3D renderer is configured to appear 2D.
 
 If you can flip the y-axis by either
@@ -7,7 +19,7 @@ If you can flip the y-axis by either
   - supplying `-1` to [scale](https://processing.org/reference/scale_.html)'s y parameter or 
   - supplying (0.0, -1.0, 0.0) to the final parameters of [camera](https://processing.org/reference/camera_.html)
   
-without adverse impact to your sketch, then you may not need this library. While Cam Z-Up can help with more complex sketches, it is a general purpose library: its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as other, more specialized libraries. For an easy mouse-controlled orbital camera with GUI support, I would recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
+without adverse impact to your sketch, then it's likely you don't need this library. While Cam Z-Up can help with more complex sketches, it is a general purpose library: its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as other, more specialized libraries. For an easy mouse-controlled orbital camera with GUI support, I would recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
 
 Cam Z-Up is split into two packages: `pfriendly` and `core`. The `pfriendly` package contains code (mostly) compatible with Processing's API. Inside it, you'll find
 
@@ -16,13 +28,15 @@ Cam Z-Up is split into two packages: `pfriendly` and `core`. The `pfriendly` pac
 - `YupJ2`, which extends `PGraphicsJava2D`, a.k.a. `JAVA2D`, the default Processing renderer based on the Java AWT library;
 - `Yup2`, which extends `PGraphicsOpenGL`, like `P2D`, a "2.5D" renderer;
 
-The `FX2D` renderer, based on Java FX, is not supported.
+The `FX2D` renderer, based on Java FX, is not fully supported in Processing, and is not supported here.
 
 This library's `core` package includes basic utilities that were used to modify the Processing renderer. In this package, you'll find classes such as `Vec2`, `Vec3` and `Quaternion`. The division between `pfriendly` and `core` is a protective measure. The aim is to retain the library's usefulness even as bugs in `pfriendly`, or changes to the underlying `Processing` library, cause trouble.
 
 Cam Z-Up is tested with Processing version [4.0 alpha 1](https://github.com/processing/processing4/releases/tag/processing-1270-4.0a1).
 
 ## Getting Started
+
+### Installation
 
 To install this library from Github, 
   1. Click on the green `Clone or download` button in the upper right corner of this repository. 
@@ -34,6 +48,8 @@ To install this library from Github,
      2. If you don't know the location of your `Processing/libraries` folder, look up the information in the Processing IDE by going to `File > Preferences`.
 
 Alternatively, you can navigate to the the distribution `.zip` on Github and download just the file you need.
+
+### Usage
 
 With the library installed, you can set up your Processing sketch like so:
 
@@ -54,32 +70,25 @@ More experienced coders may wish to use [createGraphics](https://processing.org/
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-YupJ2 primary;
-YupJ2 secondary;
+YupJ2 rndr;
 
 void settings() {
   size(128, 128, YupJ2.PATH_STR);
 }
 
 void setup() {
-  secondary = (YupJ2)createGraphics(128, 128, YupJ2.PATH_STR);
-  primary = (YupJ2)getGraphics();
+  rndr = (YupJ2)getGraphics();
 }
 ```
 
 Both `createGraphics` and `getGraphics` return `PGraphics`; the result needs to be cast to the specific renderer. The benefit of accessing Cam Z-Up renderers directly, rather than through `PApplet` functions, is that the renderers offer a few more conveniences. For example, in the following snippet,
 
 ```java
-secondary.beginDraw();
-secondary.background();
-secondary.stroke();
-secondary.ellipse(new Vec2(), new Vec2(25.0, 25.0));
-secondary.endDraw();
-
-// Ensure that the secondary renderer is not supplied to 
-// to the primary until after beginDraw and endDraw are called.
-primary.background(#202020);
-primary.image(secondary, new Vec2(), new Vec2(50.0, 50.0));
+rndr.beginDraw();
+rndr.background();
+rndr.stroke();
+rndr.ellipse(new Vec2(), new Vec2(25.0, 25.0));
+rndr.endDraw();
 ```
 
 `background` and `stroke` use default color arguments, while `ellipse` and `image` support `Vec2` arguments.
@@ -88,7 +97,7 @@ primary.image(secondary, new Vec2(), new Vec2(50.0, 50.0));
 
 Here is a brief list of issues with this library and differences which may be unexpected to new users. Some are unresolved bugs, some arise from the design philosophy of the library.
 
-- 2D & 3D
+### 2D & 3D
   - Flipping the axes changes the default rotational direction of a positive angle from clockwise to counter-clockwise.
   - [smooth](https://processing.org/reference/smooth_.html) is disabled for OpenGL renderers.
   - `YupJ2`'s `point` supports `strokeCap(SQUARE)` at the expense of performance.
@@ -97,28 +106,71 @@ Here is a brief list of issues with this library and differences which may be un
   - [textMode](https://processing.org/reference/textMode_.html) `SHAPE` is not supported. However you can retrieve glyph outlines from a [PFont](https://processing.org/reference/PFont.html) with the `TextShape` class from the `pfriendly` package. (Reminder: the `PFont` needs to be loaded with [createFont](https://processing.org/reference/createFont_.html)).
   - The [PShape](https://processing.org/reference/PShape.html) interface has numerous problems stemming from both its implementation and its design. This library uses `Curve` and `Mesh` objects instead. [shapeMode](https://processing.org/reference/shapeMode_.html) is not supported.
   
-- 2D
+### 2D
   - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter. A discussion the Processing forum about this issue can be found [here](https://discourse.processing.org/t/text-seems-jittery-when-moving-in-a-circular-pattern/19548).
   - The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles.
   -  In OpenGL renderers, an arc will not have rounded corners, no matter which [strokeJoin](https://processing.org/reference/strokeJoin_.html) and [strokeCap](https://processing.org/reference/strokeCap_.html) methods you specify.
   - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), [ellipseMode](https://processing.org/reference/ellipseMode_.html) and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with these renderers. For that reason, `CENTER` is the default alignment.
   - `Curve`s and `Mesh`es do not distinguish between an outline and contour shape. This means they do not properly handle glyphs for characters like 'o', 'p', and 'q'.
+  - The `image` function for `PGraphicsJava2D` is ineffective when displaying images at a scale other than native size, both in terms of frame rate and appearance. I recommend that, prior to import, all images be rescaled to display and tinted in an external application that specializes in raster image manipulation (e.g., [GIMP](https://www.gimp.org/)). If that is not possible, rescaling and tinting should be done to the `PImage` in `setup`. 
 
-- 3D
+### 3D
   - A z-up axis changes the relationship between a 2D vector's polar coordinates and a 3D vector's spherical coordinates: a 3D vector's azimuth matches a 2D vector's heading.
-  - Neither 3D primitive, the [sphere](https://processing.org/reference/sphere_.html) nor the [box](https://processing.org/reference/box_.html), are supported; use mesh entities instead.
+  - Neither 3D primitive, the [sphere](https://processing.org/reference/sphere_.html) nor the [box](https://processing.org/reference/box_.html), are supported; use `MeshEntity`s instead.
   - A `Mesh3` material may not have both a fill and a stroke due to flickering in [perspective](https://processing.org/reference/perspective_.html) cameras.
 
-Many core Processing functions are marked `final`, meaning they cannot be extended and modified by classes in this library; many fields are marked `private` meaning they cannot be accessed and mutated. This is the one of the reasons for the differences noted above.
+Many core Processing functions are marked `final`, meaning they cannot be extended and modified by classes in this library; many fields are marked `private` meaning they cannot be accessed and/or mutated. This is the one of the reasons for the differences noted above.
 
-### Math & Geometry Conventions
+## Programming, Mathematical Conventions
 
-With the exception of creating `new` objects mentioned above, the goal of this library is to create, not throw exceptions. For that reason some liberties have been taken with mathematics.
+With the exception of creating nullable objects, the goal of this library is to create, not throw exceptions. For that reason some liberties have been taken with mathematics.
 
-- Component-wise multiplication between two vectors -- again, mathematically incorrect -- is assumed to be a shorthand for the multiplication of a vector with a non-uniform scalar, which would more appropriately be stored in a matrix.
+- Component-wise multiplication between two vectors -- mathematically incorrect -- is assumed to be a shorthand for the multiplication of a vector or point with a non-uniform scalar, which would more appropriately be stored in a matrix.
 - `Utils.acos` and `Utils.asin` clamp the input value to the range `-1.0` to `1.0` so as to avoid exceptions.
 - As with Python, JavaScript and OSL, `x != 0` is `true`; `true` is `1` and `false` is `0`.
-- For [modulo operations](https://en.wikipedia.org/wiki/Modulo_operation), I follow the GLSL convention of distinguishing `mod` from `fmod`. `fmod` is based on `trunc`, where `fmod(a, b) := a - b * trunc(a / b)`; `mod`, on `floor`, where `mod(a, b) := a - b * floor(a / b)`. In Java, the `%`  operator uses `fmod`. The Java `Math` library supports `floorMod` for `int`s.
+- Where possible, `Vec2`, `Vec3` and `Vec4` try to parallel GLSL's `bvec`. Examples include: `Vec2 c = Vec2.lt(new Vec2(false, true), new Vec2(true, true));` and `boolean d = Vec2.any(c);`.
+- For [modulo operations](https://en.wikipedia.org/wiki/Modulo_operation), I follow the GLSL convention of distinguishing `mod` from `fmod`. `fmod` is based on `trunc`, where `fmod(a, b) := a - b * trunc(a / b)`; `mod`, on `floor`, where `mod(a, b) := a - b * floor(a / b)`. In Java, JavaScript and Kotlin, the `%`  operator is `fmod`; in Python, the `%` operator is `mod`.
 - As with shader languages, I try to protect against divide-by-zero errors whenever possible. Though mathematically incorrect, `div(x, 0.0) = 0.0` ; in consequence `fmod(x, 0.0)` and `mod(x, 0.0)` return `x`.
 - The [linear interpolation](https://en.wikipedia.org/wiki/Linear_interpolation) (`lerp`) method in this library uses the formula `(1.0 - t) * a + t * b`, not `a + t * (b - a)`. Processing uses the latter. Furthermore, Processing's `lerp` is unclamped by default. This library Includes a clamped and unclamped version of `lerp`; clamped is assumed to be the default.
 - I break with GLSL convention when it comes to easing functions. The step provided to easing functions is always a scalar (a `float`). There are no `step`, `smoothStep` and `linearStep` functions which generate the step to be supplied to `mix`. `mix` is, however, is defined in relevant classes.
+- A quaternion's real component is assumed to be its first element, `{ w, x, y, z }`. This is in contrast to other APIs, for example, Unity's, where `w` is the last.
+- When providing functionality for affine transforms, `Transform2` and `Transform3` are given priority over `Mat3` and `Mat4` in `core`. This is related to the fact that `pfriendly` classes require `PMatrix2D`, `PMatrix3D` or AWT's `AffineTransform`: any functionality added to `Processing` matrix implementations must be copied to `core` matrices, even though the latter aren't used as much.
+- Quaternions, when used to store rotations, are typically expected to be of unit length. Care should be taken that any operation which alters a quaternion's magnitude is followed by `normalize`.
+- Any given `vector` implementation may represent a direction, a vector, a point, a quaternion's imaginary component, a non-uniform scalar, a color and/or a collection of elements. As a consequence, it is difficult to balance clarity with concision when designing multiplication between (1.) quaternions and vectors, (2.) matrices and vectors, (3.) transforms and vectors. See the documentation when encountering ambiguities.
+- I am not an expert in color science, nor do I pretend to be. `Color` and `Gradient`, and all of their operations, are _very_ basic: all math operations are done in linear RGB unless otherwise stated; the result's alpha is the source alpha. Any underlying issues with Processing's blending functions will not be improved by this library.
+- The convention established by Java's `indexOf` function is to return `-1` when an array or collection does not contain a query. Some collections in this library, particularly `Mesh`s and `Curve`s, match Pythonic idiom insofar as they accept negative indices to `get` functions. For example, `curve.get(-1)` will return the last `Knot` in a curve, provided that it is a `closedLoop`. As a consequence, the reciprocity between Java's `indexOf` and `get` is broken. For example: `curve.get(curve.knots.indexOf(elmNotInCurve)) != elmNotInCurve`. For this reason, `contains` should always be preferred over `indexOf`, and no custom `contains` method should depend on `indexOf` unless `get`s definition is guaranteed.
+
+## Kotlin Interoperability
+
+This library's `core` was originally designed to affiliate with Processing's code design philosophy. With exceptions, classes are defined to be mutable and extensible. Methods are at most `protected` and public fields do not have getters and setters. Static methods are preferred where possible, and use the out parameter antipattern.
+
+As of v 0.0.6, this library has been updated to provide limited interoperability with [Kotlin](https://kotlinlang.org/), specifically operator overloading. Kotlin does not use static methods; instance methods do not always mutate the instance in place; and naming conventions differ to those of this library.
+
+For those reasons, the following functions may be confusing if used in Java.
+
+| Kotlin Operator |            Interop Method | Mutator | Core Support                             |
+| --------------: | ------------------------: | :-----: | :--------------------------------------- |
+|            `+a` |         `T a.unaryPlus()` |         | Vec2,3,4 Color Complex Quaternion        |
+|            `-a` |        `T a.unaryMinus()` |         | Vec2,3,4                                 |
+|            `!a` |               `T a.not()` |         | Vec2,3,4                                 |
+|    `++a`, `a++` |               `T a.inc()` |         | Vec2,3,4 Color Complex                   |
+|    `--a`, `a--` |               `T a.dec()` |         | Vec2,3,4 Color Complex                   |
+|         `a + b` |           `T a.plus(U b)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
+|         `a - b` |          `T a.minus(U b)` |         | Vec2,3,4 Color Complex Quaternion        |
+|         `a * b` |          `T a.times(U b)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
+|         `a / b` |            `T a.div(U b)` |         | Vec2,3,4 Color Complex Quaternion        |
+|         `a % b` |            `T a.rem(U b)` |         | Vec2,3,4 Color                           |
+|        `a += b` |  `void a.plusAssign(U b)` |    X    | Vec2,3,4 Color Complex Quaternion Mat3,4 |
+|        `a -= b` | `void a.minusAssign(U b)` |    X    | Vec2,3,4 Color Complex Quaternion Mat3,4 |
+|        `a *= b` | `void a.timesAssign(U b)` |    X    | Vec2,3,4 Color Complex Quaternion Mat3,4 |
+|        `a /= b` |   `void a.divAssign(U b)` |    X    | Vec2,3,4 Color Complex Quaternion        |
+|        `a %= b` |   `void a.remAssign(U b)` |    X    | Vec2,3,4 Color                           |
+|        `a in b` | `boolean b.contains(U a)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
+|          `a[i]` |          `U a.get(int i)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
+|          `a[i]` |       `void a.set(int i)` |    X    | Mat3,4                                   |
+
+Even when an operator is not supported by `core`, Kotlin may infer a viable possibility, e.g., `+` may coerce both the left and right operand to a collection, then concatenate the two. Operations between all the objects above are subject to ambiguity. Do not, for example, assume commutivity for operators (meaning, do not assume that `a * b` will yield a result equal in value to `b * a`. Always compare this library's documentation against a reliable mathematical reference.
+
+Operators should never be assumed to be more efficient than named methods in languages where objects are allowed to override operators. For example, complex numbers, quaternions and matrices calculate the denominator's inverse, then multiply. Always read the language's documentation and do not prematurely optimize.
+
+There are more differences between Kotlin and Processing-Java than can be discussed here, please see the website above for more information.

@@ -303,7 +303,6 @@ public abstract class TextShape {
     * @see Font#getSize()
     * @see PathIterator#currentSegment(float[])
     */
-   @SuppressWarnings ( "null" )
    protected static List < Curve2 > processGlyphCurve ( final Font font,
       final FontRenderContext frc, final AffineTransform transform,
       final float detail, final char[] characters, final List <
@@ -568,7 +567,6 @@ public abstract class TextShape {
     * @see PathIterator#currentSegment(float[])
     */
    @Experimental
-   @SuppressWarnings ( "null" )
    protected static List < Mesh2 > processGlyphMesh ( final Font font,
       final FontRenderContext frc, final AffineTransform transform,
       final float detail, final char[] characters, final List <

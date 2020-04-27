@@ -24,7 +24,8 @@ void draw() {
   background(#202020);
   graphics.grid(16, 4.0);
   graphics.origin(32.0);
-  graphics.image(img, 64.0, 32.0, 196.0, 196.0);
+  //graphics.image(img, 64.0, 32.0, 196.0, 196.0);
+  graphics.imageBasic(img, 64.0, 32.0, 256.0, 256.0);
 }
 
 void mouseReleased() {

@@ -3,7 +3,12 @@ package camzup.core;
 /**
  * Implements basic math utilities for single-precision numbers.
  */
-public abstract class Utils implements IUtils {
+public final class Utils implements IUtils {
+
+   /**
+    * The default constructor.
+    */
+   private Utils ( ) {}
 
    /**
     * Finds the absolute value of a double precision real number. An alias for
@@ -800,7 +805,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the maximum value
     */
-   public static float max ( final float... fs ) {
+   public final static float max ( final float... fs ) {
 
       float max = Float.MIN_VALUE;
       final int len = fs.length;
@@ -846,7 +851,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the minimum value
     */
-   public static float min ( final float... fs ) {
+   public final static float min ( final float... fs ) {
 
       float min = Float.MAX_VALUE;
       final int len = fs.length;
@@ -1529,7 +1534,10 @@ public abstract class Utils implements IUtils {
     *
     * @return the integral
     */
-   public static float trunc ( final float value ) { return ( int ) value; }
+   public static float trunc ( final float value ) {
+
+      return ( int ) value;
+   }
 
    /**
     * An alias for {@link Byte#toUnsignedInt(byte)} . Converts a signed byte

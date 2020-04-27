@@ -252,7 +252,7 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
       svgp.append("\" stop-color=\"");
       svgp.append(Color.toHexWeb(this.clr));
       svgp.append("\" stop-opacity=\"");
-      svgp.append(Utils.toFixed(this.clr.w, 6));
+      svgp.append(Utils.toFixed(this.clr.a, 6));
       svgp.append("\"/>");
       return svgp.toString();
    }

@@ -390,10 +390,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void colorCalc ( final Color c ) {
 
-      this.calcR = c.x < 0.0f ? 0.0f : c.x > 1.0f ? 1.0f : c.x;
-      this.calcG = c.y < 0.0f ? 0.0f : c.y > 1.0f ? 1.0f : c.y;
-      this.calcB = c.z < 0.0f ? 0.0f : c.z > 1.0f ? 1.0f : c.z;
-      this.calcA = c.w < 0.0f ? 0.0f : c.w > 1.0f ? 1.0f : c.w;
+      this.calcR = c.r < 0.0f ? 0.0f : c.r > 1.0f ? 1.0f : c.r;
+      this.calcG = c.g < 0.0f ? 0.0f : c.g > 1.0f ? 1.0f : c.g;
+      this.calcB = c.b < 0.0f ? 0.0f : c.b > 1.0f ? 1.0f : c.b;
+      this.calcA = c.a < 0.0f ? 0.0f : c.a > 1.0f ? 1.0f : c.a;
 
       this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
       this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
@@ -518,9 +518,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             Color.hsbaToRgba(this.calcR, this.calcG, this.calcB, this.calcA,
                this.aTemp);
 
-            this.calcR = this.aTemp.x;
-            this.calcG = this.aTemp.y;
-            this.calcB = this.aTemp.z;
+            this.calcR = this.aTemp.r;
+            this.calcG = this.aTemp.g;
+            this.calcB = this.aTemp.b;
 
             break;
 
@@ -1369,7 +1369,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void perspective ( ) {
 
-      /* Never use defCameraXXX values. They are not actual constants. */
       this.perspective(IUp.DEFAULT_FOV);
    }
 

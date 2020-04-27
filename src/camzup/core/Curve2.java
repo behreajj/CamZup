@@ -961,7 +961,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          Curve2.lerp13(next.coord, prev.coord, next.rearHandle);
          prev.mirrorHandlesForward();
          next.mirrorHandlesBackward();
-
+         target.name = "Arc";
          return target;
       }
 
@@ -970,9 +970,12 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       /*
        * Find the number of knots needed to accurately represent the arc. It's
        * assumed that 4 curves adequately represent a full circle; at least one
-       * knot is needed, hence the +1.
+       * knot is needed, hence the +1. Ceiling to an integer is inlined.
        */
-      final int knotCount = Utils.ceilToInt(1 + 4 * arcLen1);
+      final float xf = 1.0f + 4.0f * arcLen1;
+      final int xi = ( int ) xf;
+      final int knotCount = xf > xi ? xi + 1 : xi;
+
       final float toStep = 1.0f / ( knotCount - 1.0f );
 
       /*
@@ -1644,7 +1647,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       Knot2 prev = first;
       prev.coord.set(radius * Utils.scNorm(off1), radius * Utils.scNorm(off1
          - 0.25f));
-      int i = 1;
+      float i = 1.0f;
       while ( itr.hasNext() ) {
          final float theta1 = off1 + i * invKnCt;
          final Knot2 curr = itr.next();
@@ -2208,36 +2211,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          final float angNorm = offNorm + incr * invKnCt;
          Knot2.fromPolar(Utils.scNorm(angNorm), Utils.scNorm(angNorm - 0.25f),
             radius, hndlMag, xCenter, yCenter, itr.next());
-      }
-
-      target.name = "Circle";
-      target.closedLoop = true;
-      return target;
-   }
-
-   @Deprecated
-   static Curve2 circleOld ( final float offsetAngle, final float radius,
-      final int knotCount, final float xCenter, final float yCenter,
-      final Curve2 target ) {
-
-      /* Since this is called by arc, it also needs to be optimized. */
-
-      final float off1 = offsetAngle * IUtils.ONE_TAU;
-      final int vknct = knotCount < 3 ? 3 : knotCount;
-      target.resize(vknct);
-      final float invKnCt = 1.0f / vknct;
-      final float hndtn = 0.25f * invKnCt;
-      final float handleMag = Utils.tan(hndtn * IUtils.TAU) * radius
-         * IUtils.FOUR_THIRDS;
-
-      int i = 0;
-      final Iterator < Knot2 > itr = target.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Knot2 knot = itr.next();
-         final float angle1 = off1 + i * invKnCt;
-         Knot2.fromPolar(Utils.scNorm(angle1), Utils.scNorm(angle1 - 0.25f),
-            radius, handleMag, xCenter, yCenter, knot);
-         i++;
       }
 
       target.name = "Circle";

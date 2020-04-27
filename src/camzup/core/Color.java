@@ -1,18 +1,40 @@
 package camzup.core;
 
 import java.util.Comparator;
+import java.util.Iterator;
 
 /**
  * A mutable, extensible class. Supports RGBA and HSBA color spaces.
  * Supports conversion to and from integers where color channels are in the
  * format 0xAARRGGBB.
  */
-public class Color extends Vec4 {
+public class Color implements Comparable < Color >, Cloneable, Iterable <
+   Float > {
+
+   /**
+    * The alpha channel (opacity).
+    */
+   public float a = 1.0f;
+
+   /**
+    * The blue channel.
+    */
+   public float b = 1.0f;
+
+   /**
+    * The green channel.
+    */
+   public float g = 1.0f;
+
+   /**
+    * The red channel.
+    */
+   public float r = 1.0f;
 
    /**
     * The default constructor. Creates a white color.
     */
-   public Color ( ) { super(1.0f, 1.0f, 1.0f, 1.0f); }
+   public Color ( ) {}
 
    /**
     * Creates a color from bytes. In Java, bytes are signed, within the range
@@ -24,7 +46,8 @@ public class Color extends Vec4 {
     */
    public Color ( final byte red, final byte green, final byte blue ) {
 
-      super();
+      // TODO: Research ALPHA OVER, UNDER, SOURCE, etc. Are these constants used
+      // when adding/subtracting, etc.?
       this.set(red, green, blue);
    }
 
@@ -40,7 +63,6 @@ public class Color extends Vec4 {
    public Color ( final byte red, final byte green, final byte blue,
       final byte alpha ) {
 
-      super();
       this.set(red, green, blue, alpha);
    }
 
@@ -51,7 +73,6 @@ public class Color extends Vec4 {
     */
    public Color ( final Color c ) {
 
-      super();
       this.set(c);
    }
 
@@ -65,8 +86,7 @@ public class Color extends Vec4 {
     */
    public Color ( final float red, final float green, final float blue ) {
 
-      // TODO: Consider decoupling from Vec4.
-      super(red, green, blue, 1.0f);
+      this.set(red, green, blue, 1.0f);
    }
 
    /**
@@ -80,7 +100,7 @@ public class Color extends Vec4 {
    public Color ( final float red, final float green, final float blue,
       final float alpha ) {
 
-      super(red, green, blue, alpha);
+      this.set(red, green, blue, alpha);
    }
 
    /**
@@ -95,7 +115,6 @@ public class Color extends Vec4 {
     */
    public Color ( final String rstr, final String gstr, final String bstr ) {
 
-      super();
       this.set(rstr, gstr, bstr);
    }
 
@@ -113,7 +132,6 @@ public class Color extends Vec4 {
    public Color ( final String rstr, final String gstr, final String bstr,
       final String astr ) {
 
-      super();
       this.set(rstr, gstr, bstr, astr);
    }
 
@@ -127,7 +145,7 @@ public class Color extends Vec4 {
     * @see Color#Color(Color)
     */
    @Override
-   public Color clone ( ) { return new Color(this.x, this.y, this.z, this.w); }
+   public Color clone ( ) { return new Color(this.r, this.g, this.b, this.a); }
 
    /**
     * Returns -1 when this color is less than the comparisand; 1 when it is
@@ -138,11 +156,28 @@ public class Color extends Vec4 {
     *
     * @return the numeric code
     */
+   @Override
    public int compareTo ( final Color c ) {
 
-      final int a = Color.toHexInt(this);
-      final int b = Color.toHexInt(c);
-      return a > b ? 1 : a < b ? -1 : 0;
+      final int left = Color.toHexInt(this);
+      final int right = Color.toHexInt(c);
+      return left > right ? 1 : left < right ? -1 : 0;
+   }
+
+   /**
+    * Tests to see if the vector contains a value.
+    *
+    * @param v the value
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final float v ) {
+
+      if ( Utils.approx(this.a, v) ) { return true; }
+      if ( Utils.approx(this.b, v) ) { return true; }
+      if ( Utils.approx(this.g, v) ) { return true; }
+      if ( Utils.approx(this.r, v) ) { return true; }
+      return false;
    }
 
    /**
@@ -155,23 +190,9 @@ public class Color extends Vec4 {
     *
     * @see Color#sub(Color, float, Color)
     */
-   @Override
-   public Color dec ( ) { return Color.sub(this, IUtils.ONE_255, new Color()); }
+   public Color dec ( ) {
 
-   /**
-    * Returns a new color with the division of the instance by the right
-    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
-    * not mutate the color in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the quotient
-    *
-    * @see Color#div(Color, Color, Color)
-    */
-   public Color div ( final Color b ) {
-
-      return Color.div(this, b, new Color());
+      return Color.sub(this, IUtils.ONE_255, new Color());
    }
 
    /**
@@ -179,38 +200,53 @@ public class Color extends Vec4 {
     * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
     * not mutate the color in place</em>.
     *
-    * @param b the right operand
+    * @param c the right operand
+    *
+    * @return the quotient
+    *
+    * @see Color#div(Color, Color, Color)
+    */
+   public Color div ( final Color c ) {
+
+      return Color.div(this, c, new Color());
+   }
+
+   /**
+    * Returns a new color with the division of the instance by the right
+    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
+    * not mutate the color in place</em>.
+    *
+    * @param c the right operand
     *
     * @return the quotient
     *
     * @see Color#div(Color, float, Color)
     */
-   @Override
-   public Color div ( final float b ) {
+   public Color div ( final float c ) {
 
-      return Color.div(this, b, new Color());
+      return Color.div(this, c, new Color());
    }
 
    /**
     * Divides the instance by the right operand (mutates the color in place).
     * For interoperability with Kotlin: <code>a /= b</code> .
     *
-    * @param b the right operand
+    * @param c the right operand
     *
     * @see Color#div(Color, Color, Color)
     */
-   public void divAssign ( final Color b ) { Color.div(this, b, this); }
+   public void divAssign ( final Color c ) { Color.div(this, c, this); }
 
    /**
     * Divides the instance by the right operand (mutates the color in place).
     * For interoperability with Kotlin: <code>a /= b</code> .
     *
-    * @param b the right operand
+    * @param c the right operand
     *
     * @see Color#div(Color, float, Color)
     */
-   @Override
-   public void divAssign ( final float b ) { Color.div(this, b, this); }
+
+   public void divAssign ( final float c ) { Color.div(this, c, this); }
 
    /**
     * Tests this color for equivalence to another based on its hexadecimal
@@ -252,7 +288,7 @@ public class Color extends Vec4 {
     *
     * @return the element
     */
-   @Override
+
    public float get ( final int index ) { return this.getAlphaLast(index); }
 
    /**
@@ -268,19 +304,19 @@ public class Color extends Vec4 {
       switch ( index ) {
          case 0:
          case -4:
-            return this.w;
+            return this.a;
 
          case 1:
          case -3:
-            return this.x;
+            return this.r;
 
          case 2:
          case -2:
-            return this.y;
+            return this.g;
 
          case 3:
          case -1:
-            return this.z;
+            return this.b;
 
          default:
             return 0.0f;
@@ -300,19 +336,19 @@ public class Color extends Vec4 {
       switch ( index ) {
          case 0:
          case -4:
-            return this.x;
+            return this.r;
 
          case 1:
          case -3:
-            return this.y;
+            return this.g;
 
          case 2:
          case -2:
-            return this.z;
+            return this.b;
 
          case 3:
          case -1:
-            return this.w;
+            return this.a;
 
          default:
             return 0.0f;
@@ -339,23 +375,42 @@ public class Color extends Vec4 {
     *
     * @see Color#add(Color, float, Color)
     */
+
+   public Color inc ( ) {
+
+      return Color.add(this, IUtils.ONE_255, new Color());
+   }
+
+   /**
+    * Returns an iterator for this color, which allows its components to be
+    * accessed in an enhanced for-loop.
+    *
+    * @return the iterator
+    */
    @Override
-   public Color inc ( ) { return Color.add(this, IUtils.ONE_255, new Color()); }
+   public Iterator < Float > iterator ( ) { return new ClrIterator(this); }
+
+   /**
+    * Gets the number of components held by this color.
+    *
+    * @return the length
+    */
+   public int length ( ) { return 4; }
 
    /**
     * Returns a new color with the subtraction of the right operand from the
     * instance. For interoperability with Kotlin: <code>a - b</code> .
     * <em>Does not mutate the color in place</em>.
     *
-    * @param b the right operand
+    * @param c the right operand
     *
     * @return the subtraction
     *
     * @see Color#sub(Color, Color, Color)
     */
-   public Color minus ( final Color b ) {
+   public Color minus ( final Color c ) {
 
-      return Color.sub(this, b, new Color());
+      return Color.sub(this, c, new Color());
    }
 
    /**
@@ -363,63 +418,53 @@ public class Color extends Vec4 {
     * instance. For interoperability with Kotlin: <code>a - b</code> .
     * <em>Does not mutate the color in place</em>.
     *
-    * @param b the right operand
+    * @param c the right operand
     *
     * @return the subtraction
     *
     * @see Color#sub(Color, Color, Color)
     */
-   @Override
-   public Color minus ( final float b ) {
 
-      return Color.sub(this, b, new Color());
+   public Color minus ( final float c ) {
+
+      return Color.sub(this, c, new Color());
    }
 
    /**
     * Subtracts the right operand from the instance (mutates the vector in
     * place). For interoperability with Kotlin: <code>a -= b</code> .
     *
-    * @param b the right operand
+    * @param c the right operand
     *
     * @see Color#sub(Color, Color, Color)
     */
-   public void minusAssign ( final Color b ) { Color.sub(this, b, this); }
+   public void minusAssign ( final Color c ) { Color.sub(this, c, this); }
 
    /**
     * Subtracts the right operand from the instance (mutates the vector in
     * place). For interoperability with Kotlin: <code>a -= b</code> .
     *
-    * @param b the right operand
+    * @param c the right operand
     *
     * @see Color#sub(Color, float, Color)
     */
-   @Override
-   public void minusAssign ( final float b ) { Color.sub(this, b, this); }
 
-   /**
-    * Returns a new vector with the bitwise not of the instance. For
-    * interoperability with Kotlin: <code>!a</code> . <em>Does not mutate the
-    * color in place</em>.
-    *
-    * @return the opposite vector
-    */
-   @Override
-   public Color not ( ) { return Color.bitNot(this, new Color()); }
+   public void minusAssign ( final float c ) { Color.sub(this, c, this); }
 
    /**
     * Returns a new color with the addition of the right operand to the
     * instance. For interoperability with Kotlin: <code>a - b</code> .
     * <em>Does not mutate the color in place</em>.
     *
-    * @param b the right operand
+    * @param c the right operand
     *
     * @return the subtraction
     *
     * @see Color#add(Color, Color, Color)
     */
-   public Color plus ( final Color b ) {
+   public Color plus ( final Color c ) {
 
-      return Color.add(this, b, new Color());
+      return Color.add(this, c, new Color());
    }
 
    /**
@@ -427,38 +472,98 @@ public class Color extends Vec4 {
     * instance. For interoperability with Kotlin: <code>a - b</code> .
     * <em>Does not mutate the color in place</em>.
     *
-    * @param b the right operand
+    * @param c the right operand
     *
     * @return the subtraction
     *
     * @see Color#add(Color, float, Color)
     */
-   @Override
-   public Color plus ( final float b ) {
 
-      return Color.add(this, b, new Color());
+   public Color plus ( final float c ) {
+
+      return Color.add(this, c, new Color());
    }
 
    /**
     * Adds the right operand to the instance (mutates the vector in place).
     * For interoperability with Kotlin: <code>a += b</code> .
     *
-    * @param b the right operand
+    * @param c the right operand
     *
     * @see Color#add(Color, Color, Color)
     */
-   public void plusAssign ( final Color b ) { Color.add(this, b, this); }
+   public void plusAssign ( final Color c ) { Color.add(this, c, this); }
 
    /**
     * Adds the right operand to the instance (mutates the vector in place).
     * For interoperability with Kotlin: <code>a += b</code> .
     *
-    * @param b the right operand
+    * @param c the right operand
     *
     * @see Color#add(Color, float, Color)
     */
-   @Override
-   public void plusAssign ( final float b ) { Color.add(this, b, this); }
+
+   public void plusAssign ( final float c ) { Color.add(this, c, this); }
+
+   /**
+    * Returns a new color with the unsigned remainder (<code>mod</code>) of
+    * the instance and the right operand. For interoperability with Kotlin:
+    * <code>a % b</code> . <em>Does not mutate the color in place</em>.
+    *
+    * @param right the right operand
+    *
+    * @return the signed remainder
+    *
+    * @see Color#mod(Color, Color, Color)
+    */
+   public Color rem ( final Color right ) {
+
+      return Color.mod(this, right, new Color());
+   }
+
+   /**
+    * Returns a new color with the unsigned remainder (<code>mod</code>) of
+    * the instance and the right operand. For interoperability with Kotlin:
+    * <code>a % b</code> . <em>Does not mutate the color in place</em>.
+    *
+    * @param right the right operand
+    *
+    * @return the signed remainder
+    *
+    * @see Color#mod(Color, float, Color)
+    */
+   public Color rem ( final float right ) {
+
+      return Color.mod(this, right, new Color());
+   }
+
+   /**
+    * Assigns the unsigned remainder (<code>mod</code>) of the instance and
+    * the right operand to the instance (mutates the vector in place). For
+    * interoperability with Kotlin: <code>a %= b</code> .
+    *
+    * @param right the right operand
+    *
+    * @see Color#mod(Color, Color, Color)
+    */
+   public void remAssign ( final Color right ) {
+
+      Color.mod(this, right, this);
+   }
+
+   /**
+    * Assigns the unsigned remainder (<code>mod</code>) of the instance and
+    * the right operand to the instance (mutates the vector in place). For
+    * interoperability with Kotlin: <code>a %= b</code> .
+    *
+    * @param right the right operand
+    *
+    * @see Color#mod(Color, Color, Color)
+    */
+   public void remAssign ( final float right ) {
+
+      Color.mod(this, right, this);
+   }
 
    /**
     * Resets this color to the color white.
@@ -467,7 +572,6 @@ public class Color extends Vec4 {
     *
     * @see Color#white(Color)
     */
-   @Override
 
    public Color reset ( ) { return this.set(1.0f, 1.0f, 1.0f, 1.0f); }
 
@@ -502,11 +606,9 @@ public class Color extends Vec4 {
    public Color set ( final byte red, final byte green, final byte blue,
       final byte alpha ) {
 
-      super.set(IUtils.ONE_255 * ( red & 0xff ), IUtils.ONE_255 * ( green
+      return this.set(IUtils.ONE_255 * ( red & 0xff ), IUtils.ONE_255 * ( green
          & 0xff ), IUtils.ONE_255 * ( blue & 0xff ), IUtils.ONE_255 * ( alpha
             & 0xff ));
-
-      return this;
    }
 
    /**
@@ -519,7 +621,7 @@ public class Color extends Vec4 {
 
    public Color set ( final Color c ) {
 
-      return this.set(c.x, c.y, c.z, c.w);
+      return this.set(c.r, c.g, c.b, c.a);
    }
 
    /**
@@ -549,12 +651,13 @@ public class Color extends Vec4 {
     *
     * @return this color
     */
-   @Override
-
    public Color set ( final float red, final float green, final float blue,
       final float alpha ) {
 
-      super.set(red, green, blue, alpha);
+      this.r = red;
+      this.g = green;
+      this.b = blue;
+      this.a = alpha;
       return this;
    }
 
@@ -592,8 +695,6 @@ public class Color extends Vec4 {
     *
     * @see Float#parseFloat(String)
     */
-   @Override
-
    public Color set ( final String rstr, final String gstr, final String bstr,
       final String astr ) {
 
@@ -626,10 +727,10 @@ public class Color extends Vec4 {
          wprs = 1.0f;
       }
 
-      this.x = xprs;
-      this.y = yprs;
-      this.z = zprs;
-      this.w = wprs;
+      this.r = xprs;
+      this.g = yprs;
+      this.b = zprs;
+      this.a = wprs;
 
       return this;
    }
@@ -639,15 +740,15 @@ public class Color extends Vec4 {
     * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
     * not mutate the color in place</em>.
     *
-    * @param b the right operand
+    * @param c the right operand
     *
     * @return the product
     *
     * @see Color#mul(Color, Color, Color)
     */
-   public Color times ( final Color b ) {
+   public Color times ( final Color c ) {
 
-      return Color.mul(this, b, new Color());
+      return Color.mul(this, c, new Color());
    }
 
    /**
@@ -655,38 +756,36 @@ public class Color extends Vec4 {
     * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
     * not mutate the color in place</em>.
     *
-    * @param b the right operand
+    * @param c the right operand
     *
     * @return the product
     *
     * @see Color#mul(Color, Color, Color)
     */
-   @Override
-   public Color times ( final float b ) {
+   public Color times ( final float c ) {
 
-      return Color.mul(this, b, new Color());
+      return Color.mul(this, c, new Color());
    }
 
    /**
     * Multiplies the right operand with the instance (mutates the color in
     * place). For interoperability with Kotlin: <code>a *= b</code> .
     *
-    * @param b the right operand
+    * @param c the right operand
     *
     * @see Color#mul(Color, float, Color)
     */
-   public void timesAssign ( final Color b ) { Color.mul(this, b, this); }
+   public void timesAssign ( final Color c ) { Color.mul(this, c, this); }
 
    /**
     * Multiplies the right operand with the instance (mutates the color in
     * place). For interoperability with Kotlin: <code>a *= b</code> .
     *
-    * @param b the right operand
+    * @param c the right operand
     *
     * @see Color#mul(Color, Color, Color)
     */
-   @Override
-   public void timesAssign ( final float b ) { Color.mul(this, b, this); }
+   public void timesAssign ( final float c ) { Color.mul(this, c, this); }
 
    /**
     * Returns a string representation of this color.
@@ -703,34 +802,21 @@ public class Color extends Vec4 {
     *
     * @return the string
     */
-   @Override
    public String toString ( final int places ) {
 
       final StringBuilder sb = new StringBuilder(96);
       sb.append("{ r: ");
-      sb.append(Utils.toFixed(this.x, places));
+      sb.append(Utils.toFixed(this.r, places));
       sb.append(", g: ");
-      sb.append(Utils.toFixed(this.y, places));
+      sb.append(Utils.toFixed(this.g, places));
       sb.append(", b: ");
-      sb.append(Utils.toFixed(this.z, places));
+      sb.append(Utils.toFixed(this.b, places));
       sb.append(", a: ");
-      sb.append(Utils.toFixed(this.w, places));
+      sb.append(Utils.toFixed(this.a, places));
       sb.append(' ');
       sb.append('}');
       return sb.toString();
    }
-
-   /**
-    * Returns a new vector with the inverse of the instance. For
-    * interoperability with Kotlin: <code>-a</code> . <em>Does not mutate the
-    * color in place</em>.
-    *
-    * @return the inverse
-    *
-    * @see Color#inverse(Color, Color)
-    */
-   @Override
-   public Color unaryMinus ( ) { return Color.inverse(this, new Color()); }
 
    /**
     * Returns a new color with the positive copy of the instance. For
@@ -739,10 +825,9 @@ public class Color extends Vec4 {
     *
     * @return the positive
     */
-   @Override
    public Color unaryPlus ( ) {
 
-      return new Color(+this.x, +this.y, +this.z, +this.w);
+      return new Color(+this.r, +this.g, +this.b, +this.a);
    }
 
    /**
@@ -765,16 +850,16 @@ public class Color extends Vec4 {
 
       final StringBuilder pyCd = new StringBuilder(96);
       pyCd.append('(');
-      pyCd.append(Utils.toFixed(Utils.pow(this.x, gamma), 6));
+      pyCd.append(Utils.toFixed(Utils.pow(this.r, gamma), 6));
       pyCd.append(',');
       pyCd.append(' ');
-      pyCd.append(Utils.toFixed(Utils.pow(this.y, gamma), 6));
+      pyCd.append(Utils.toFixed(Utils.pow(this.g, gamma), 6));
       pyCd.append(',');
       pyCd.append(' ');
-      pyCd.append(Utils.toFixed(Utils.pow(this.z, gamma), 6));
+      pyCd.append(Utils.toFixed(Utils.pow(this.b, gamma), 6));
 
       if ( inclAlpha ) {
-         pyCd.append(',').append(' ').append(Utils.toFixed(this.w, 6));
+         pyCd.append(',').append(' ').append(Utils.toFixed(this.a, 6));
       }
 
       pyCd.append(')');
@@ -790,17 +875,15 @@ public class Color extends Vec4 {
     */
    String toGgrString ( ) {
 
-      /* @formatter:off */
-      return new StringBuilder(96)
-         .append(Utils.toFixed(this.x, 6))
-         .append(' ')
-         .append(Utils.toFixed(this.y, 6))
-         .append(' ')
-         .append(Utils.toFixed(this.z, 6))
-         .append(' ')
-         .append(Utils.toFixed(this.w, 6))
-         .toString();
-      /* @formatter:on */
+      final StringBuilder ggr = new StringBuilder(96);
+      ggr.append(Utils.toFixed(this.r, 6));
+      ggr.append(' ');
+      ggr.append(Utils.toFixed(this.g, 6));
+      ggr.append(' ');
+      ggr.append(Utils.toFixed(this.b, 6));
+      ggr.append(' ');
+      ggr.append(Utils.toFixed(this.a, 6));
+      return ggr.toString();
    }
 
    /**
@@ -812,15 +895,13 @@ public class Color extends Vec4 {
     */
    String toGplString ( ) {
 
-      /* @formatter:off */
-      return new StringBuilder(32)
-         .append(( int ) ( this.x * 0xff + 0.5f ))
-         .append(' ')
-         .append(( int ) ( this.y * 0xff + 0.5f ))
-         .append(' ')
-         .append(( int ) ( this.z * 0xff + 0.5f ))
-         .toString();
-      /* @formatter:on */
+      final StringBuilder gpl = new StringBuilder(32);
+      gpl.append(( int ) ( this.r * 0xff + 0.5f ));
+      gpl.append(' ');
+      gpl.append(( int ) ( this.g * 0xff + 0.5f ));
+      gpl.append(' ');
+      gpl.append(( int ) ( this.b * 0xff + 0.5f ));
+      return gpl.toString();
    }
 
    /**
@@ -852,8 +933,8 @@ public class Color extends Vec4 {
    public static Color add ( final Color a, final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(a.x + b.x), Utils.clamp01(a.y + b.y),
-         Utils.clamp01(a.z + b.z), Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.r + b.r), Utils.clamp01(a.g + b.g),
+         Utils.clamp01(a.b + b.b), Utils.clamp01(a.a));
    }
 
    /**
@@ -865,7 +946,7 @@ public class Color extends Vec4 {
     */
    public static boolean all ( final Color c ) {
 
-      return c.w > 0.0f && c.x > 0.0f && c.y > 0.0f && c.z > 0.0f;
+      return c.a > 0.0f && c.r > 0.0f && c.g > 0.0f && c.b > 0.0f;
    }
 
    /**
@@ -876,7 +957,7 @@ public class Color extends Vec4 {
     *
     * @return the evaluation
     */
-   public static boolean any ( final Color c ) { return c.w > 0.0f; }
+   public static boolean any ( final Color c ) { return c.a > 0.0f; }
 
    /**
     * Converts two colors to integers, performs the bitwise AND operation on
@@ -1051,9 +1132,9 @@ public class Color extends Vec4 {
    public static Color clamp ( final Color a, final Color lowerBound,
       final Color upperBound, final Color target ) {
 
-      return target.set(Utils.clamp(a.x, lowerBound.x, upperBound.x), Utils
-         .clamp(a.y, lowerBound.y, upperBound.y), Utils.clamp(a.z, lowerBound.z,
-            upperBound.z), Utils.clamp(a.w, lowerBound.w, upperBound.w));
+      return target.set(Utils.clamp(a.r, lowerBound.r, upperBound.r), Utils
+         .clamp(a.g, lowerBound.g, upperBound.g), Utils.clamp(a.b, lowerBound.b,
+            upperBound.b), Utils.clamp(a.a, lowerBound.a, upperBound.a));
    }
 
    /**
@@ -1069,8 +1150,8 @@ public class Color extends Vec4 {
     */
    public static Color clamp01 ( final Color a, final Color target ) {
 
-      return target.set(Utils.clamp01(a.x), Utils.clamp01(a.y), Utils.clamp01(
-         a.z), Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.r), Utils.clamp01(a.g), Utils.clamp01(
+         a.b), Utils.clamp01(a.a));
    }
 
    /**
@@ -1123,9 +1204,9 @@ public class Color extends Vec4 {
    public static Color div ( final Color a, final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(Utils.div(a.x, b.x)), Utils.clamp01(Utils
-         .div(a.y, b.y)), Utils.clamp01(Utils.div(a.z, b.z)), Utils.clamp01(
-            a.w));
+      return target.set(Utils.clamp01(Utils.div(a.r, b.r)), Utils.clamp01(Utils
+         .div(a.g, b.g)), Utils.clamp01(Utils.div(a.b, b.b)), Utils.clamp01(
+            a.a));
    }
 
    /**
@@ -1144,10 +1225,10 @@ public class Color extends Vec4 {
 
       if ( b != 0.0f ) {
          final float bInv = 1.0f / b;
-         return target.set(Utils.clamp01(a.x * bInv), Utils.clamp01(a.y * bInv),
-            Utils.clamp01(a.z * bInv), Utils.clamp01(a.w));
+         return target.set(Utils.clamp01(a.r * bInv), Utils.clamp01(a.g * bInv),
+            Utils.clamp01(a.b * bInv), Utils.clamp01(a.a));
       }
-      return target.set(0.0f, 0.0f, 0.0f, Utils.clamp01(a.w));
+      return target.set(0.0f, 0.0f, 0.0f, Utils.clamp01(a.a));
    }
 
    /**
@@ -1164,8 +1245,8 @@ public class Color extends Vec4 {
    public static Color div ( final float a, final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(Utils.div(a, b.x)), Utils.clamp01(Utils
-         .div(a, b.y)), Utils.clamp01(Utils.div(a, b.z)), Utils.clamp01(a));
+      return target.set(Utils.clamp01(Utils.div(a, b.r)), Utils.clamp01(Utils
+         .div(a, b.g)), Utils.clamp01(Utils.div(a, b.b)), Utils.clamp01(a));
    }
 
    /**
@@ -1299,12 +1380,10 @@ public class Color extends Vec4 {
 
       final int len = c.length();
 
-      // TODO: Is there a way to do this more efficiently, since replaceAll
-      // creates a Regex pattern and matcher?
-
       try {
          String longform = "";
          int cint = 0xffffffff;
+         // Pattern p = Pattern.compile("^(.)(.)(.)$");
 
          switch ( len ) {
 
@@ -1549,8 +1628,8 @@ public class Color extends Vec4 {
     */
    public static Color inverse ( final Color c, final Color target ) {
 
-      return target.set(Utils.max(0.0f, 1.0f - c.x), Utils.max(0.0f, 1.0f
-         - c.y), Utils.max(0.0f, 1.0f - c.z), Utils.clamp01(c.w));
+      return target.set(Utils.max(0.0f, 1.0f - c.r), Utils.max(0.0f, 1.0f
+         - c.g), Utils.max(0.0f, 1.0f - c.b), Utils.clamp01(c.a));
    }
 
    /**
@@ -1564,7 +1643,7 @@ public class Color extends Vec4 {
     */
    public static float luminance ( final Color c ) {
 
-      return 0.2126f * c.x + 0.7152f * c.y + 0.0722f * c.z;
+      return 0.2126f * c.r + 0.7152f * c.g + 0.0722f * c.b;
    }
 
    /**
@@ -1623,9 +1702,9 @@ public class Color extends Vec4 {
    public static Color max ( final Color a, final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(Utils.max(a.x, b.x)), Utils.clamp01(Utils
-         .max(a.y, b.y)), Utils.clamp01(Utils.max(a.z, b.z)), Utils.clamp01(
-            Utils.max(a.w, b.w)));
+      return target.set(Utils.clamp01(Utils.max(a.r, b.r)), Utils.clamp01(Utils
+         .max(a.g, b.g)), Utils.clamp01(Utils.max(a.b, b.b)), Utils.clamp01(
+            Utils.max(a.a, b.a)));
    }
 
    /**
@@ -1642,9 +1721,9 @@ public class Color extends Vec4 {
    public static Color min ( final Color a, final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(Utils.min(a.x, b.x)), Utils.clamp01(Utils
-         .min(a.y, b.y)), Utils.clamp01(Utils.min(a.z, b.z)), Utils.clamp01(
-            Utils.min(a.w, b.w)));
+      return target.set(Utils.clamp01(Utils.min(a.r, b.r)), Utils.clamp01(Utils
+         .min(a.g, b.g)), Utils.clamp01(Utils.min(a.b, b.b)), Utils.clamp01(
+            Utils.min(a.a, b.a)));
    }
 
    /**
@@ -1666,8 +1745,60 @@ public class Color extends Vec4 {
 
       final float t = step * step * ( 3.0f - ( step + step ) );
       final float u = 1.0f - t;
-      return target.set(u * origin.x + t * dest.x, u * origin.y + t * dest.y, u
-         * origin.z + t * dest.z, u * origin.w + t * dest.w);
+      return target.set(u * origin.r + t * dest.r, u * origin.g + t * dest.g, u
+         * origin.b + t * dest.b, u * origin.a + t * dest.a);
+   }
+
+   /**
+    * Wraps the left operand to the range of the right, then clamps the result
+    * to [0.0, 1.0] . The left operand's alpha channel is retained.
+    *
+    * @param a      left operand
+    * @param b      right operand
+    * @param target output color
+    *
+    * @return the wrapped color
+    */
+   public static Color mod ( final Color a, final Color b,
+      final Color target ) {
+
+      return target.set(Utils.clamp01(Utils.mod(a.r, b.r)), Utils.clamp01(Utils
+         .mod(a.g, b.g)), Utils.clamp01(Utils.mod(a.b, b.b)), Utils.clamp01(
+            a.a));
+   }
+
+   /**
+    * Wraps the left operand to the range of the right, then clamps the result
+    * to [0.0, 1.0] . The left operand's alpha channel is retained.
+    *
+    * @param a      left operand
+    * @param b      right operand
+    * @param target output color
+    *
+    * @return the wrapped color
+    */
+   public static Color mod ( final Color a, final float b,
+      final Color target ) {
+
+      return target.set(Utils.clamp01(Utils.mod(a.r, b)), Utils.clamp01(Utils
+         .mod(a.g, b)), Utils.clamp01(Utils.mod(a.b, b)), Utils.clamp01(a.a));
+   }
+
+   /**
+    * Wraps the left operand to the range of the right, then clamps the result
+    * to [0.0, 1.0] . The left operand's alpha channel is retained.
+    *
+    * @param a      left operand
+    * @param b      right operand
+    * @param target output color
+    *
+    * @return the wrapped color
+    */
+   public static Color mod ( final float a, final Color b,
+      final Color target ) {
+
+      return target.set(Utils.clamp01(Utils.mod(a, b.r)), Utils.clamp01(Utils
+         .mod(a, b.g)), Utils.clamp01(Utils.mod(a, b.b)), Utils.clamp01(a));
    }
 
    /**
@@ -1685,8 +1816,8 @@ public class Color extends Vec4 {
    public static Color mul ( final Color a, final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(a.x * b.x), Utils.clamp01(a.y * b.y),
-         Utils.clamp01(a.z * b.z), Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.r * b.r), Utils.clamp01(a.g * b.g),
+         Utils.clamp01(a.b * b.b), Utils.clamp01(a.a));
    }
 
    /**
@@ -1704,8 +1835,8 @@ public class Color extends Vec4 {
    public static Color mul ( final Color a, final float b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(a.x * b), Utils.clamp01(a.y * b), Utils
-         .clamp01(a.z * b), Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.r * b), Utils.clamp01(a.g * b), Utils
+         .clamp01(a.b * b), Utils.clamp01(a.a));
    }
 
    /**
@@ -1723,8 +1854,8 @@ public class Color extends Vec4 {
    public static Color mul ( final float a, final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(a * b.x), Utils.clamp01(a * b.y), Utils
-         .clamp01(a * b.z), Utils.clamp01(a));
+      return target.set(Utils.clamp01(a * b.r), Utils.clamp01(a * b.g), Utils
+         .clamp01(a * b.b), Utils.clamp01(a));
    }
 
    /**
@@ -1735,7 +1866,7 @@ public class Color extends Vec4 {
     *
     * @return the evaluation
     */
-   public static boolean none ( final Color c ) { return c.w <= 0.0f; }
+   public static boolean none ( final Color c ) { return c.a <= 0.0f; }
 
    /**
     * Multiplies the red, green and blue color channels of a color by the
@@ -1748,11 +1879,11 @@ public class Color extends Vec4 {
     */
    public static Color preMul ( final Color c, final Color target ) {
 
-      if ( c.w <= 0.0f ) {
+      if ( c.a <= 0.0f ) {
          return target.set(0.0f, 0.0f, 0.0f, 0.0f);
-      } else if ( c.w >= 1.0f ) { return target.set(c.x, c.y, c.z, 1.0f); }
+      } else if ( c.a >= 1.0f ) { return target.set(c.r, c.g, c.b, 1.0f); }
 
-      return target.set(c.x * c.w, c.y * c.w, c.z * c.w, c.w);
+      return target.set(c.r * c.a, c.g * c.a, c.b * c.a, c.a);
    }
 
    /**
@@ -1775,9 +1906,9 @@ public class Color extends Vec4 {
 
       final float levf = levels;
       final float delta = 1.0f / levf;
-      return target.set(delta * Utils.floor(0.5f + c.x * levf), delta * Utils
-         .floor(0.5f + c.y * levf), delta * Utils.floor(0.5f + c.z * levf),
-         delta * Utils.floor(0.5f + c.w * levf));
+      return target.set(delta * Utils.floor(0.5f + c.r * levf), delta * Utils
+         .floor(0.5f + c.g * levf), delta * Utils.floor(0.5f + c.b * levf),
+         delta * Utils.floor(0.5f + c.a * levf));
    }
 
    /**
@@ -1918,9 +2049,9 @@ public class Color extends Vec4 {
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
-      return target.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
-         ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y, ( 1.0f - rz )
-            * lowerBound.z + rz * upperBound.z, 1.0f);
+      return target.set( ( 1.0f - rx ) * lowerBound.r + rx * upperBound.r,
+         ( 1.0f - ry ) * lowerBound.g + ry * upperBound.g, ( 1.0f - rz )
+            * lowerBound.b + rz * upperBound.b, 1.0f);
    }
 
    /**
@@ -1955,10 +2086,10 @@ public class Color extends Vec4 {
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
       final float rw = rng.nextFloat();
-      return target.set( ( 1.0f - rx ) * lowerBound.x + rx * upperBound.x,
-         ( 1.0f - ry ) * lowerBound.y + ry * upperBound.y, ( 1.0f - rz )
-            * lowerBound.z + rz * upperBound.z, ( 1.0f - rw ) * lowerBound.w
-               + rw * upperBound.w);
+      return target.set( ( 1.0f - rx ) * lowerBound.r + rx * upperBound.r,
+         ( 1.0f - ry ) * lowerBound.g + ry * upperBound.g, ( 1.0f - rz )
+            * lowerBound.b + rz * upperBound.b, ( 1.0f - rw ) * lowerBound.a
+               + rw * upperBound.a);
    }
 
    /**
@@ -1986,7 +2117,7 @@ public class Color extends Vec4 {
    public static Color rgbaToGray ( final Color c, final Color target ) {
 
       final float lum = Color.luminance(c);
-      return target.set(lum, lum, lum, c.w);
+      return target.set(lum, lum, lum, c.a);
    }
 
    /**
@@ -2000,7 +2131,7 @@ public class Color extends Vec4 {
     */
    public static Vec4 rgbaToHsba ( final Color c, final Vec4 target ) {
 
-      return Color.rgbaToHsba(c.x, c.y, c.z, c.w, target);
+      return Color.rgbaToHsba(c.r, c.g, c.b, c.a, target);
    }
 
    /**
@@ -2054,7 +2185,7 @@ public class Color extends Vec4 {
     */
    public static Vec4 rgbaToXyzw ( final Color c, final Vec4 target ) {
 
-      return Color.rgbaToXyzw(c.x, c.y, c.z, c.w, target);
+      return Color.rgbaToXyzw(c.r, c.g, c.b, c.a, target);
    }
 
    /**
@@ -2089,7 +2220,7 @@ public class Color extends Vec4 {
     */
    public static float rgbMax ( final Color c ) {
 
-      return Utils.max(c.x, c.y, c.z);
+      return Utils.max(c.r, c.g, c.b);
    }
 
    /**
@@ -2103,7 +2234,7 @@ public class Color extends Vec4 {
     */
    public static float rgbMin ( final Color c ) {
 
-      return Utils.min(c.x, c.y, c.z);
+      return Utils.min(c.r, c.g, c.b);
    }
 
    /**
@@ -2222,8 +2353,8 @@ public class Color extends Vec4 {
    public static Color sub ( final Color a, final Color b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(a.x - b.x), Utils.clamp01(a.y - b.y),
-         Utils.clamp01(a.z - b.z), Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.r - b.r), Utils.clamp01(a.g - b.g),
+         Utils.clamp01(a.b - b.b), Utils.clamp01(a.a));
    }
 
    /**
@@ -2237,10 +2368,10 @@ public class Color extends Vec4 {
    public static int toHexInt ( final Color c ) {
 
       /* @formatter:off */
-      return ( int ) ( c.w * 0xff + 0.5f ) << 0x18
-           | ( int ) ( c.x * 0xff + 0.5f ) << 0x10
-           | ( int ) ( c.y * 0xff + 0.5f ) <<  0x8
-           | ( int ) ( c.z * 0xff + 0.5f );
+      return ( int ) ( c.a * 0xff + 0.5f ) << 0x18
+           | ( int ) ( c.r * 0xff + 0.5f ) << 0x10
+           | ( int ) ( c.g * 0xff + 0.5f ) <<  0x8
+           | ( int ) ( c.b * 0xff + 0.5f );
       /* @formatter:on */
    }
 
@@ -2392,8 +2523,8 @@ public class Color extends Vec4 {
    protected static Color add ( final Color a, final float b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(a.x + b), Utils.clamp01(a.y + b), Utils
-         .clamp01(a.z + b), Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.r + b), Utils.clamp01(a.g + b), Utils
+         .clamp01(a.b + b), Utils.clamp01(a.a));
    }
 
    /**
@@ -2412,8 +2543,8 @@ public class Color extends Vec4 {
    protected static Color sub ( final Color a, final float b,
       final Color target ) {
 
-      return target.set(Utils.clamp01(a.x - b), Utils.clamp01(a.y - b), Utils
-         .clamp01(a.z - b), Utils.clamp01(a.w));
+      return target.set(Utils.clamp01(a.r - b), Utils.clamp01(a.g - b), Utils
+         .clamp01(a.b - b), Utils.clamp01(a.a));
    }
 
    /**
@@ -2460,6 +2591,57 @@ public class Color extends Vec4 {
        */
       public abstract Color applyUnclamped ( final Color origin,
          final Color dest, final float step, final Color target );
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
+   }
+
+   /**
+    * An iterator, which allows a color's components to be accessed in an
+    * enhanced for loop.
+    */
+   public static final class ClrIterator implements Iterator < Float > {
+
+      /**
+       * The color being iterated over.
+       */
+      private final Color clr;
+
+      /**
+       * The current index.
+       */
+      private int index = 0;
+
+      /**
+       * The default constructor.
+       *
+       * @param c the color to iterate
+       */
+      public ClrIterator ( final Color c ) { this.clr = c; }
+
+      /**
+       * Tests to see if the iterator has another value.
+       *
+       * @return the evaluation
+       */
+      @Override
+      public boolean hasNext ( ) { return this.index < this.clr.length(); }
+
+      /**
+       * Gets the next value in the iterator.
+       *
+       * @see Vec4#get(int)
+       *
+       * @return the value
+       */
+      @Override
+      public Float next ( ) { return this.clr.get(this.index++); }
 
       /**
        * Returns the simple name of this class.
@@ -2637,12 +2819,12 @@ public class Color extends Vec4 {
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
-         if ( this.aLtb ) {
-            this.a = this.a + 1.0f;
+         if ( this.oLtd ) {
+            this.o = this.o + 1.0f;
             this.modResult = true;
          }
 
-         final float fac = Utils.lerpUnclamped(this.a, this.b, step);
+         final float fac = Utils.lerpUnclamped(this.o, this.d, step);
          if ( this.modResult ) { return Utils.mod1(fac); }
          return fac;
       }
@@ -2675,12 +2857,12 @@ public class Color extends Vec4 {
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
-         if ( this.aGtb ) {
-            this.b = this.b + 1.0f;
+         if ( this.oGtd ) {
+            this.d = this.d + 1.0f;
             this.modResult = true;
          }
 
-         final float fac = Utils.lerpUnclamped(this.a, this.b, step);
+         final float fac = Utils.lerpUnclamped(this.o, this.d, step);
          if ( this.modResult ) { return Utils.mod1(fac); }
          return fac;
       }
@@ -2694,24 +2876,9 @@ public class Color extends Vec4 {
       Float > {
 
       /**
-       * The modulated origin hue.
-       */
-      protected float a = 0.0f;
-
-      /**
-       * Whether or not a is greater than b.
-       */
-      protected boolean aGtb = false;
-
-      /**
-       * Whether or not a is less than b.
-       */
-      protected boolean aLtb = false;
-
-      /**
        * The modulated destination hue.
        */
-      protected float b = 0.0f;
+      protected float d = 0.0f;
 
       /**
        * The difference between the stop and start hue.
@@ -2723,6 +2890,21 @@ public class Color extends Vec4 {
        * to floor modulo.
        */
       protected boolean modResult = false;
+
+      /**
+       * The modulated origin hue.
+       */
+      protected float o = 0.0f;
+
+      /**
+       * Whether or not {@link o} is greater than {@link d}.
+       */
+      protected boolean oGtd = false;
+
+      /**
+       * Whether or not {@link o} is less than {@link d}.
+       */
+      protected boolean oLtd = false;
 
       /**
        * The default constructor.
@@ -2744,8 +2926,8 @@ public class Color extends Vec4 {
 
          this.eval(origin, dest);
 
-         if ( step <= 0.0f || this.diff == 0.0f ) { return this.a; }
-         if ( step >= 1.0f ) { return this.b; }
+         if ( step <= 0.0f || this.diff == 0.0f ) { return this.o; }
+         if ( step >= 1.0f ) { return this.d; }
          return this.applyPartial(origin, dest, step);
       }
 
@@ -2780,11 +2962,11 @@ public class Color extends Vec4 {
        */
       protected void eval ( final float origin, final float dest ) {
 
-         this.a = Utils.mod1(origin);
-         this.b = Utils.mod1(dest);
-         this.diff = this.b - this.a;
-         this.aLtb = this.a < this.b;
-         this.aGtb = this.a > this.b;
+         this.o = Utils.mod1(origin);
+         this.d = Utils.mod1(dest);
+         this.diff = this.d - this.o;
+         this.oLtd = this.o < this.d;
+         this.oGtd = this.o > this.d;
       }
 
    }
@@ -2815,15 +2997,15 @@ public class Color extends Vec4 {
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
-         if ( this.aLtb && this.diff < 0.5f ) {
-            this.a = this.a + 1.0f;
+         if ( this.oLtd && this.diff < 0.5f ) {
+            this.o = this.o + 1.0f;
             this.modResult = true;
-         } else if ( this.aGtb && this.diff > -0.5f ) {
-            this.b = this.b + 1.0f;
+         } else if ( this.oGtd && this.diff > -0.5f ) {
+            this.d = this.d + 1.0f;
             this.modResult = true;
          }
 
-         final float fac = Utils.lerpUnclamped(this.a, this.b, step);
+         final float fac = Utils.lerpUnclamped(this.o, this.d, step);
          if ( this.modResult ) { return Utils.mod1(fac); }
          return fac;
       }
@@ -2856,15 +3038,15 @@ public class Color extends Vec4 {
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
-         if ( this.aLtb && this.diff > 0.5f ) {
-            this.a = this.a + 1.0f;
+         if ( this.oLtd && this.diff > 0.5f ) {
+            this.o = this.o + 1.0f;
             this.modResult = true;
-         } else if ( this.aGtb && this.diff < -0.5f ) {
-            this.b = this.b + 1.0f;
+         } else if ( this.oGtd && this.diff < -0.5f ) {
+            this.d = this.d + 1.0f;
             this.modResult = true;
          }
 
-         final float fac = Utils.lerpUnclamped(this.a, this.b, step);
+         final float fac = Utils.lerpUnclamped(this.o, this.d, step);
          if ( this.modResult ) { return Utils.mod1(fac); }
          return fac;
       }
@@ -2898,9 +3080,9 @@ public class Color extends Vec4 {
          /* This should remain as double precision. */
          final double td = step;
          final double ud = 1.0d - td;
-         return target.set(( float ) ( ud * origin.x + td * dest.x ),
-            ( float ) ( ud * origin.y + td * dest.y ), ( float ) ( ud * origin.z
-               + td * dest.z ), ( float ) ( ud * origin.w + td * dest.w ));
+         return target.set(( float ) ( ud * origin.r + td * dest.r ),
+            ( float ) ( ud * origin.g + td * dest.g ), ( float ) ( ud * origin.b
+               + td * dest.b ), ( float ) ( ud * origin.a + td * dest.a ));
       }
 
    }
@@ -3085,9 +3267,9 @@ public class Color extends Vec4 {
          final double ts = td * td * ( 3.0d - ( td + td ) );
          final double us = 1.0d - ts;
 
-         return target.set(( float ) ( us * origin.x + ts * dest.x ),
-            ( float ) ( us * origin.y + ts * dest.y ), ( float ) ( us * origin.z
-               + ts * dest.z ), ( float ) ( us * origin.w + ts * dest.w ));
+         return target.set(( float ) ( us * origin.r + ts * dest.r ),
+            ( float ) ( us * origin.g + ts * dest.g ), ( float ) ( us * origin.b
+               + ts * dest.b ), ( float ) ( us * origin.a + ts * dest.a ));
       }
 
    }

@@ -1,6 +1,7 @@
 package camzup.pfriendly;
 
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import java.awt.Image;
 
@@ -160,6 +161,10 @@ public class ZImage extends PImage {
     */
    public static final int DEFAULT_LEADING = 8;
 
+   protected static final Pattern PATTERN_LN_BR;
+
+   protected static final Pattern PATTERN_SPACE;
+
    /**
     * A temporary color used for converting color data to and from hexadecimal
     * values.
@@ -168,6 +173,11 @@ public class ZImage extends PImage {
 
    static {
       clr = new Color();
+   }
+
+   static {
+      PATTERN_LN_BR = Pattern.compile("\r\n|\n|\r");
+      PATTERN_SPACE = Pattern.compile("\\s+");
    }
 
    /**
@@ -558,11 +568,12 @@ public class ZImage extends PImage {
        * Carriage returns, or line breaks, could come in 3 variations: \r, \n,
        * or \r\n .
        */
-      final String[] linesSplit = vTxt.split("\r\n|\n|\r");
+      // final String[] linesSplit = vTxt.split("\r\n|\n|\r");
+      final String[] linesSplit = ZImage.PATTERN_LN_BR.split(vTxt, 0);
       final int lineCount = linesSplit.length;
       final char[][][] characters = new char[lineCount][][];
       for ( int i = 0; i < lineCount; ++i ) {
-         final String[] words = linesSplit[i].split("\\s+");
+         final String[] words = ZImage.PATTERN_SPACE.split(linesSplit[i], 0);
          final int charCount = words.length;
          final char[][] charLine = characters[i] = new char[charCount][];
          for ( int j = 0; j < charCount; ++j ) {
@@ -745,13 +756,19 @@ public class ZImage extends PImage {
 
                      // target.updatePixels(xCursor, yCursor, wSrc, hSrc);
                   }
+                  /* End of null check for glyph image. */
                   xCursor += glyph.width + vKern;
                }
+               /* End of null check for glyph. */
             }
+            /* End of letters loop. */
             xCursor += spaceWidth + vKern;
          }
+         /* End of words loop. */
          yCursor += lineHeight;
       }
+      /* End of lines loop. */
+
       target.updatePixels();
 
       return target;
@@ -929,20 +946,18 @@ public class ZImage extends PImage {
     */
    public static String toString ( final PImage img ) {
 
-      /* @formatter:off */
-      return new StringBuilder(64)
-         .append("{ format: ")
-         .append(img.format)
-         .append(", width: ")
-         .append(Utils.toPadded(img.width, 4))
-         .append(", height: ")
-         .append(Utils.toPadded(img.height, 4))
-         .append(", pixelDensity: ")
-         .append(img.pixelDensity)
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(64);
+      sb.append("{ format: ");
+      sb.append(img.format);
+      sb.append(", width: ");
+      sb.append(Utils.toPadded(img.width, 4));
+      sb.append(", height: ");
+      sb.append(Utils.toPadded(img.height, 4));
+      sb.append(", pixelDensity: ");
+      sb.append(img.pixelDensity);
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**

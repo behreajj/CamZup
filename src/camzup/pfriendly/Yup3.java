@@ -376,16 +376,19 @@ public class Yup3 extends Up3 {
    /**
     * Default camera location x component.
     */
+   @SuppressWarnings ( "hiding" )
    public static final float DEFAULT_LOC_X = 623.53827f;
 
    /**
     * Default camera location y component.
     */
+   @SuppressWarnings ( "hiding" )
    public static final float DEFAULT_LOC_Y = 623.53827f;
 
    /**
     * Default camera location z component.
     */
+   @SuppressWarnings ( "hiding" )
    public static final float DEFAULT_LOC_Z = -623.53827f;
 
    /**
@@ -406,6 +409,7 @@ public class Yup3 extends Up3 {
    /**
     * The path string for this renderer.
     */
+   @SuppressWarnings ( "hiding" )
    public static final String PATH_STR = "camzup.pfriendly.Yup3";
 
 }

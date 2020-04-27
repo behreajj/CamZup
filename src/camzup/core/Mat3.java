@@ -182,16 +182,59 @@ public class Mat3 extends Matrix {
    }
 
    /**
+    * Gets a column vector from this matrix. For interoperability with Kotlin:
+    * <code>b = a[i]</code> .
+    *
+    * @param j the column index
+    *
+    * @return the column vector
+    *
+    * @see Mat3#getCol(int, Vec3)
+    */
+   public Vec3 get ( final int j ) {
+
+      return this.getCol(j, new Vec3());
+   }
+
+   /**
+    * Gets a column of this matrix with an index and vector.
+    *
+    * @param j      the index
+    * @param target the vector
+    *
+    * @return the column
+    */
+   public Vec3 getCol ( final int j, final Vec3 target ) {
+
+      switch ( j ) {
+         case 0:
+         case -3:
+            return target.set(this.m00, this.m10, this.m20);
+
+         case 1:
+         case -2:
+            return target.set(this.m01, this.m11, this.m21);
+
+         case 2:
+         case -1:
+            return target.set(this.m02, this.m12, this.m22);
+
+         default:
+            return target.reset();
+      }
+   }
+
+   /**
     * Simulates bracket subscript access in a one-dimensional, row-major
     * matrix array. Works with positive integers in [0, 8] or negative
-    * integers in [-9, -1].
+    * integers in [-9, -1] .
     *
     * @param index the index
     *
     * @return the component at that index
     */
    @Override
-   public float get ( final int index ) {
+   public float getElm ( final int index ) {
 
       /*
        * At the moment, there is a get function to facilitate an iterator, but
@@ -230,7 +273,7 @@ public class Mat3 extends Matrix {
     * @return the component at that index
     */
    @Override
-   public float get ( final int i, final int j ) {
+   public float getElm ( final int i, final int j ) {
 
       /* @formatter:off */
       switch ( i ) {
@@ -269,62 +312,6 @@ public class Mat3 extends Matrix {
    }
 
    /**
-    * Gets a column of this matrix with an index and vector.
-    *
-    * @param j      the index
-    * @param target the vector
-    *
-    * @return the column
-    */
-   public Vec3 getCol ( final int j, final Vec3 target ) {
-
-      switch ( j ) {
-         case 0:
-         case -3:
-            return target.set(this.m00, this.m10, this.m20);
-
-         case 1:
-         case -2:
-            return target.set(this.m01, this.m11, this.m21);
-
-         case 2:
-         case -1:
-            return target.set(this.m02, this.m12, this.m22);
-
-         default:
-            return target.reset();
-      }
-   }
-
-   /**
-    * Gets a row of this matrix with an index and vector.
-    *
-    * @param i      the index
-    * @param target the vector
-    *
-    * @return the row
-    */
-   public Vec3 getRow ( final int i, final Vec3 target ) {
-
-      switch ( i ) {
-         case 0:
-         case -3:
-            return target.set(this.m00, this.m01, this.m02);
-
-         case 1:
-         case -2:
-            return target.set(this.m10, this.m11, this.m12);
-
-         case 2:
-         case -1:
-            return target.set(this.m20, this.m21, this.m22);
-
-         default:
-            return target.reset();
-      }
-   }
-
-   /**
     * Returns a hash code for this matrix based on its 16 components.
     *
     * @return the hash code
@@ -357,6 +344,50 @@ public class Mat3 extends Matrix {
     */
    @Override
    public Iterator < Float > iterator ( ) { return new M3Iterator(this); }
+
+   /**
+    * Returns a new matrix with the subtraction of the right operand from the
+    * instance. For interoperability with Kotlin: <code>a - b</code> .
+    * <em>Does not mutate the matrix in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the subtraction
+    */
+   public Mat3 minus ( final Mat3 b ) {
+
+      return Mat3.sub(this, b, new Mat3());
+   }
+
+   /**
+    * Subtracts the right operand from the instance (mutates the matrix in
+    * place). For interoperability with Kotlin: <code>a -= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void minusAssign ( final Mat3 b ) { Mat3.sub(this, b, this); }
+
+   /**
+    * Returns a new matrix with the addition of the right operand to the
+    * instance. For interoperability with Kotlin: <code>a - b</code> .
+    * <em>Does not mutate the matrix in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the sum
+    */
+   public Mat3 plus ( final Mat3 b ) {
+
+      return Mat3.add(this, b, new Mat3());
+   }
+
+   /**
+    * Adds the right operand to the instance (mutates the matrix in place).
+    * For interoperability with Kotlin: <code>a += b</code> .
+    *
+    * @param b the right operand
+    */
+   public void plusAssign ( final Mat3 b ) { Mat3.add(this, b, this); }
 
    /**
     * Resets this matrix to an initial state,
@@ -442,6 +473,34 @@ public class Mat3 extends Matrix {
       /* @formatter:on */
 
       return this;
+   }
+
+   /**
+    * Sets a column of this matrix with an index and vector. For
+    * interoperability with Kotlin: <code>a[i] = b</code> .
+    *
+    * @param j      the column index
+    * @param source the source vector
+    *
+    * @see Mat3#setCol(int, Vec2)
+    */
+   public void set ( final int j, final Vec2 source ) {
+
+      this.setCol(j, source);
+   }
+
+   /**
+    * Sets a column of this matrix with an index and vector. For
+    * interoperability with Kotlin: <code>a[i] = b</code> .
+    *
+    * @param j      the column index
+    * @param source the source vector
+    *
+    * @see Mat3#setCol(int, Vec3)
+    */
+   public void set ( final int j, final Vec3 source ) {
+
+      this.setCol(j, source);
    }
 
    /**
@@ -555,79 +614,61 @@ public class Mat3 extends Matrix {
    }
 
    /**
-    * Sets a row of this matrix with an index and vector. The translation is
-    * set to 0.0 for a given row, while the element (2, 2) is set to 1.0 .
+    * Returns a new matrix with the product of the instance and the right
+    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
+    * not mutate the matrix in place</em>.
     *
-    * @param i      the row index
-    * @param source the row
+    * @param b the right operand
     *
-    * @return this row
+    * @return the product
     */
-   public Mat3 setRow ( final int i, final Vec2 source ) {
+   public Mat3 times ( final float b ) {
 
-      switch ( i ) {
-         case 0:
-         case -3:
-            this.m00 = source.x;
-            this.m01 = source.y;
-            this.m02 = 0.0f;
-            return this;
-
-         case 1:
-         case -2:
-            this.m10 = source.x;
-            this.m11 = source.y;
-            this.m12 = 0.0f;
-            return this;
-
-         case 2:
-         case -1:
-            this.m20 = source.x;
-            this.m21 = source.y;
-            this.m22 = 1.0f;
-            return this;
-
-         default:
-            return this;
-      }
+      return Mat3.mul(this, b, new Mat3());
    }
 
    /**
-    * Sets a row of this matrix with an index and vector.
+    * Returns a new matrix with the product of the instance and the right
+    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
+    * not mutate the matrix in place</em>.
     *
-    * @param i      the row index
-    * @param source the row
+    * @param b the right operand
     *
-    * @return this row
+    * @return the product
     */
-   public Mat3 setRow ( final int i, final Vec3 source ) {
+   public Mat3 times ( final Mat3 b ) {
 
-      switch ( i ) {
-         case 0:
-         case -3:
-            this.m00 = source.x;
-            this.m01 = source.y;
-            this.m02 = source.z;
-            return this;
-
-         case 1:
-         case -2:
-            this.m10 = source.x;
-            this.m11 = source.y;
-            this.m12 = source.z;
-            return this;
-
-         case 2:
-         case -1:
-            this.m20 = source.x;
-            this.m21 = source.y;
-            this.m22 = source.z;
-            return this;
-
-         default:
-            return this;
-      }
+      return Mat3.mul(this, b, new Mat3());
    }
+
+   /**
+    * Multiplies this matrix and a vector. For interoperability with Kotlin:
+    * <code>a * b</code> .
+    *
+    * @param b the vector
+    *
+    * @return the product
+    */
+   public Vec3 times ( final Vec3 b ) {
+
+      return Mat3.mul(this, b, new Vec3());
+   }
+
+   /**
+    * Multiplies the right operand with the instance (mutates the matrix in
+    * place). For interoperability with Kotlin: <code>a *= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void timesAssign ( final float b ) { Mat3.mul(this, b, this); }
+
+   /**
+    * Multiplies the right operand with the instance (mutates the matrix in
+    * place). For interoperability with Kotlin: <code>a *= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void timesAssign ( final Mat3 b ) { Mat3.mul(this, b, this); }
 
    /**
     * Returns a float array of length 9 containing this matrix's components.
@@ -637,8 +678,12 @@ public class Mat3 extends Matrix {
    @Override
    public float[] toArray ( ) {
 
-      return new float[] { this.m00, this.m01, this.m02, this.m10, this.m11,
-         this.m12, this.m20, this.m21, this.m22 };
+      /* @formatter:off */
+      return new float[] {
+         this.m00, this.m01, this.m02,
+         this.m10, this.m11, this.m12,
+         this.m20, this.m21, this.m22 };
+      /* @formatter:on */
    }
 
    /**
@@ -696,7 +741,7 @@ public class Mat3 extends Matrix {
     * @param s the entry separator
     * @param t the spacer
     * @param n the row separator
-    * 
+    *
     * @return the string
     */
    public String toStringCol ( final int p, final char s, final char t,
@@ -779,9 +824,12 @@ public class Mat3 extends Matrix {
     */
    public static Mat3 add ( final Mat3 a, final Mat3 b, final Mat3 target ) {
 
-      return target.set(a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02, a.m10
-         + b.m10, a.m11 + b.m11, a.m12 + b.m12, a.m20 + b.m20, a.m21 + b.m21,
-         a.m22 + b.m22);
+      /* @formatter:off */
+      return target.set(
+         a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02,
+         a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12,
+         a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22);
+      /* @formatter:on */
    }
 
    /**
@@ -1096,17 +1144,20 @@ public class Mat3 extends Matrix {
     */
    public static Mat3 mul ( final Mat3 a, final Mat3 b, final Mat3 target ) {
 
-      return target.set(a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20, a.m00
-         * b.m01 + a.m01 * b.m11 + a.m02 * b.m21, a.m00 * b.m02 + a.m01 * b.m12
-            + a.m02 * b.m22,
+      /* @formatter:off */
+      return target.set(
+         a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20,
+         a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21,
+         a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22,
 
-         a.m10 * b.m00 + a.m11 * b.m10 + a.m12 * b.m20, a.m10 * b.m01 + a.m11
-            * b.m11 + a.m12 * b.m21, a.m10 * b.m02 + a.m11 * b.m12 + a.m12
-               * b.m22,
+         a.m10 * b.m00 + a.m11 * b.m10 + a.m12 * b.m20,
+         a.m10 * b.m01 + a.m11 * b.m11 + a.m12 * b.m21,
+         a.m10 * b.m02 + a.m11 * b.m12 + a.m12 * b.m22,
 
-         a.m20 * b.m00 + a.m21 * b.m10 + a.m22 * b.m20, a.m20 * b.m01 + a.m21
-            * b.m11 + a.m22 * b.m21, a.m20 * b.m02 + a.m21 * b.m12 + a.m22
-               * b.m22);
+         a.m20 * b.m00 + a.m21 * b.m10 + a.m22 * b.m20,
+         a.m20 * b.m01 + a.m21 * b.m11 + a.m22 * b.m21,
+         a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22);
+      /* @formatter:on */
    }
 
    /**
@@ -1135,14 +1186,20 @@ public class Mat3 extends Matrix {
       final float n21 = a.m20 * b.m01 + a.m21 * b.m11 + a.m22 * b.m21;
       final float n22 = a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22;
 
-      return target.set(n00 * c.m00 + n01 * c.m10 + n02 * c.m20, n00 * c.m01
-         + n01 * c.m11 + n02 * c.m21, n00 * c.m02 + n01 * c.m12 + n02 * c.m22,
+      /* @formatter:off */
+      return target.set(
+         n00 * c.m00 + n01 * c.m10 + n02 * c.m20,
+         n00 * c.m01 + n01 * c.m11 + n02 * c.m21,
+         n00 * c.m02 + n01 * c.m12 + n02 * c.m22,
 
-         n10 * c.m00 + n11 * c.m10 + n12 * c.m20, n10 * c.m01 + n11 * c.m11
-            + n12 * c.m21, n10 * c.m02 + n11 * c.m12 + n12 * c.m22,
+         n10 * c.m00 + n11 * c.m10 + n12 * c.m20,
+         n10 * c.m01 + n11 * c.m11 + n12 * c.m21,
+         n10 * c.m02 + n11 * c.m12 + n12 * c.m22,
 
-         n20 * c.m00 + n21 * c.m10 + n22 * c.m20, n20 * c.m01 + n21 * c.m11
-            + n22 * c.m21, n20 * c.m02 + n21 * c.m12 + n22 * c.m22);
+         n20 * c.m00 + n21 * c.m10 + n22 * c.m20,
+         n20 * c.m01 + n21 * c.m11 + n22 * c.m21,
+         n20 * c.m02 + n21 * c.m12 + n22 * c.m22);
+      /* @formatter:on */
    }
 
    /**
@@ -1158,19 +1215,6 @@ public class Mat3 extends Matrix {
 
       return target.set(a.m00 * b.x + a.m01 * b.y + a.m02 * b.z, a.m10 * b.x
          + a.m11 * b.y + a.m12 * b.z, a.m20 * b.x + a.m21 * b.y + a.m22 * b.z);
-   }
-
-   /**
-    * Multiplies this matrix and a vector. For interoperability with Kotlin:
-    * <code>a * b</code> .
-    * 
-    * @param b the vector
-    * 
-    * @return the product
-    */
-   public Vec3 times ( final Vec3 b ) {
-
-      return Mat3.mul(this, b, new Vec3());
    }
 
    /**
@@ -1368,10 +1412,10 @@ public class Mat3 extends Matrix {
        *
        * @return the value
        *
-       * @see Mat3#get(int)
+       * @see Mat3#getElm(int)
        */
       @Override
-      public Float next ( ) { return this.mtx.get(this.index++); }
+      public Float next ( ) { return this.mtx.getElm(this.index++); }
 
       /**
        * Returns the simple name of this class.

@@ -164,6 +164,35 @@ public class Transform2 extends Transform {
    }
 
    /**
+    * Gets an axis of this transform with an index. For interoperability with
+    * Kotlin: <code>b = a[i]</code> and parity with {@link Mat3#get(int)} .
+    * Index 0 returns the right axis; 1, the forward axis; 2, the translation.
+    *
+    * @param i the axis index
+    *
+    * @return the axis
+    */
+   public Vec3 get ( final int i ) {
+
+      switch ( i ) {
+         case 0:
+         case -3:
+            return new Vec3(this.right, 0.0f);
+
+         case 1:
+         case -2:
+            return new Vec3(this.forward, 0.0f);
+
+         case 2:
+         case -1:
+            return new Vec3(this.location, 1.0f);
+
+         default:
+            return new Vec3(0.0f, 0.0f, 0.0f);
+      }
+   }
+
+   /**
     * Gets the transform's axes.
     *
     * @param r the right axis

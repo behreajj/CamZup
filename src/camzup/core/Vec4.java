@@ -496,8 +496,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     */
    public Vec4 rem ( final Vec4 b ) {
 
-      return new Vec4(Utils.fmod(this.x, b.x), Utils.fmod(this.y, b.y), Utils
-         .fmod(this.z, b.z), Utils.fmod(this.w, b.w));
+      return new Vec4(b.x != 0.0f ? this.x % b.x : this.x, b.y != 0.0f ? this.y
+         % b.y : this.y, b.z != 0.0f ? this.z % b.z : this.z, b.w != 0.0f
+            ? this.w % b.w : this.w);
    }
 
    /**
@@ -526,10 +527,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     */
    public void remAssign ( final Vec4 b ) {
 
-      this.x = Utils.fmod(this.x, b.x);
-      this.y = Utils.fmod(this.y, b.y);
-      this.z = Utils.fmod(this.z, b.z);
-      this.w = Utils.fmod(this.w, b.w);
+      if ( b.x != 0.0f ) { this.x %= b.x; }
+      if ( b.y != 0.0f ) { this.y %= b.y; }
+      if ( b.z != 0.0f ) { this.z %= b.z; }
+      if ( b.w != 0.0f ) { this.z %= b.w; }
    }
 
    /**
@@ -1131,9 +1132,13 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     */
    public static float distChebyshev ( final Vec4 a, final Vec4 b ) {
 
-      // TODO: This needs to be optimized.
-      return Utils.max(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y), Utils.diff(
-         a.z, b.z), Utils.diff(a.w, b.w));
+      final float xd = Utils.diff(a.x, b.x);
+      final float yd = Utils.diff(a.y, b.y);
+      final float zd = Utils.diff(a.z, b.z);
+      final float wd = Utils.diff(a.w, b.w);
+      final float c0 = xd >= yd ? xd : xd < yd ? yd : 0.0f;
+      final float c1 = c0 >= zd ? c0 : c0 < zd ? zd : 0.0f;
+      return c1 >= wd ? c1 : c1 < wd ? wd : 0.0f;
    }
 
    /**
@@ -1450,7 +1455,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return the evaluation
     */
-   @Experimental
    public static Vec4 gt ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
       return target.set(a.x > b.x, a.y > b.y, a.z > b.z, a.w > b.w);
@@ -1466,7 +1470,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return the evaluation
     */
-   @Experimental
    public static Vec4 gtEq ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
       return target.set(a.x >= b.x, a.y >= b.y, a.z >= b.z, a.w >= b.w);
@@ -1841,7 +1844,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return negative one
     */
-   public static Vec4 negOne ( final Vec4 target ) {
+   public final static Vec4 negOne ( final Vec4 target ) {
 
       return target.set(-1.0f, -1.0f, -1.0f, -1.0f);
    }
@@ -1899,7 +1902,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return one
     */
-   public static Vec4 one ( final Vec4 target ) {
+   public final static Vec4 one ( final Vec4 target ) {
 
       return target.set(1.0f, 1.0f, 1.0f, 1.0f);
    }
@@ -2172,7 +2175,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return the right vector
     */
-   public static Vec4 right ( final Vec4 target ) {
+   public final static Vec4 right ( final Vec4 target ) {
 
       return target.set(1.0f, 0.0f, 0.0f, 0.0f);
    }
@@ -2324,7 +2327,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return the zero vector
     */
-   public static Vec4 zero ( final Vec4 target ) {
+   public final static Vec4 zero ( final Vec4 target ) {
 
       return target.set(0.0f, 0.0f, 0.0f, 0.0f);
    }

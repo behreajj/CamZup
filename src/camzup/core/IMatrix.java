@@ -14,7 +14,7 @@ public interface IMatrix extends IUtils, Cloneable, Iterable < Float > {
     *
     * @return the value
     */
-   float get ( final int index );
+   float getElm ( final int index );
 
    /**
     * Retrieves a matrix element by two indices, as though the matrix were a
@@ -25,7 +25,7 @@ public interface IMatrix extends IUtils, Cloneable, Iterable < Float > {
     *
     * @return the value
     */
-   float get ( final int i, final int j );
+   float getElm ( final int i, final int j );
 
    /**
     * Returns an iterator for the matrix, which allows its components to be

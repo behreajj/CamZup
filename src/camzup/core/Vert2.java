@@ -105,16 +105,14 @@ public class Vert2 implements Comparable < Vert2 > {
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(256)
-         .append("{ coord: ")
-         .append(this.coord.toString(places))
-         .append(", texCoord: ")
-         .append(this.texCoord.toString(places))
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(256);
+      sb.append("{ coord: ");
+      sb.append(this.coord.toString(places));
+      sb.append(", texCoord: ");
+      sb.append(this.texCoord.toString(places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**

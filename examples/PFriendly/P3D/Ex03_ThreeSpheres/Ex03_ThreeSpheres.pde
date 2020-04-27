@@ -28,6 +28,8 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
+  rndr.camNorth();
+  rndr.printCameraInv();
   rndr.textureSampling(TextureSampling.LINEAR);
   rndr.textureWrap(REPEAT);
 
@@ -40,23 +42,24 @@ void setup() {
   Mesh3.cubeSphere(3, cubesphere);
   Mesh3.uvSphere(32, 16, uvsphere);
 
-  float uniform = Utils.min(rndr.width, rndr.height) * 1.25;
+  float uniform = Utils.min(rndr.width, rndr.height) * 1.35;
   meIco.scaleTo(uniform);
   meCube.scaleTo(uniform);
   meUv.scaleTo(uniform);
 
-  meUv.moveBy(new Vec3(uniform, 0.0, 0.0));
-  meCube.moveBy(new Vec3(-uniform, 0.0, 0.0));
+  meUv.moveBy(new Vec3(uniform * 1.2, 0.0, 0.0));
+  meCube.moveBy(new Vec3(-uniform * 1.2, 0.0, 0.0));
 }
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  meIco.rotateX(-0.01);
+  meIco.rotateZ(0.01);
   meCube.rotateZ(0.01);
   meUv.rotateZ(0.01);
 
   rndr.background();
   rndr.perspective();
+  rndr.origin();
   rndr.camera();
   rndr.lights();
 

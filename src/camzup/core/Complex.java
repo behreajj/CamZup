@@ -541,18 +541,6 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    }
 
    /**
-    * Returns a new complex number with the negation of the instance. For
-    * interoperability with Kotlin: <code>-a</code> . <em>Does not mutate the
-    * complex in place</em>.
-    *
-    * @return the negation
-    */
-   public Complex unaryMinus ( ) {
-
-      return new Complex(-this.real, -this.imag);
-   }
-
-   /**
     * Returns a new complex number with the positive copy of the instance. For
     * interoperability with Kotlin: <code>+a</code> . <em>Does not mutate the
     * complex number in place</em>.

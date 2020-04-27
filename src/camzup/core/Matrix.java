@@ -16,7 +16,11 @@ public abstract class Matrix implements IMatrix {
     *
     * @param length the length
     */
-   protected Matrix ( final int length ) { this.length = length; }
+   protected Matrix ( final int length ) {
+
+      // TODO: Remove class.
+      this.length = length;
+   }
 
    /**
     * Returns the number of elements in the matrix.

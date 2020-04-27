@@ -994,7 +994,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       }
 
       final float destAngle1 = a1 + arcLen1;
-
       final int knotCount = Utils.ceilToInt(1 + 4 * arcLen1);
       final float toStep = 1.0f / ( knotCount - 1.0f );
 
@@ -1596,7 +1595,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       Knot3 prev = first;
       prev.coord.set(radius * Utils.scNorm(off1), radius * Utils.scNorm(off1
          - 0.25f), 0.0f);
-      int i = 1;
+      float i = 1.0f;
       while ( itr.hasNext() ) {
          final float theta1 = off1 + i * invKnCt;
          final Knot3 curr = itr.next();
