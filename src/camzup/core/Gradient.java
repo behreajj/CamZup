@@ -352,32 +352,16 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     */
    public Gradient distribute ( ) {
 
-      // final ArrayList < ColorKey > keyArr = new ArrayList <>();
-      // keyArr.addAll(this.keys);
-
-      // this.keys.clear();
-      // int i = 0;
-      // final Iterator < ColorKey > itr = keyArr.iterator();
-      // final float denom = 1.0f / ( keyArr.size() - 1.0f );
-      // while ( itr.hasNext() ) {
-      // final ColorKey key = itr.next();
-      // key.step = i++ * denom;
-      // }
-      // this.keys.addAll(keyArr);
-      // return this;
-
-      // TODO: TEST
-
       final ArrayList < ColorKey > keyArr = new ArrayList <>();
       keyArr.addAll(this.keys);
       this.keys.clear();
       float incr = 0.0f;
-      final Iterator itr = keyArr.iterator();
-      final float denom = 1.0F / ( keyArr.size() - 1.0F );
-      ColorKey var5;
+      final Iterator < ColorKey > itr = keyArr.iterator();
+      final float denom = 1.0f / ( keyArr.size() - 1.0f );
+      ColorKey key;
       while ( itr.hasNext() ) {
-         var5 = ( ColorKey ) itr.next();
-         var5.step = incr++ * denom;
+         key = itr.next();
+         key.step = incr++ * denom;
       }
 
       this.keys.addAll(keyArr);

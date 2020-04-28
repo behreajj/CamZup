@@ -172,7 +172,7 @@ public interface IUp3 extends IUp {
       final float xHalfDim = dim * 0.5f;
       final float yHalfDim = xHalfDim;
       final float zHalfDim = xHalfDim;
-      final int sign = this.handedness().getSign();
+      final float sign = this.handedness().getSign();
 
       final float right = xHalfDim;
       final float left = -xHalfDim;
@@ -666,6 +666,7 @@ public interface IUp3 extends IUp {
     */
    static Vec3 mouse1s ( final PApplet parent, final Vec3 target ) {
 
+      // TODO: Consider wrapping rather than clamping.
       final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
       final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
       return target.set(mx + mx - 1.0f, 1.0f - ( my + my ), 0.0f);
@@ -682,6 +683,7 @@ public interface IUp3 extends IUp {
     */
    static Vec3 mouse1u ( final PApplet parent, final Vec3 target ) {
 
+      // TODO: Consider wrapping rather than clamping.
       final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
       final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
       return target.set(mx, 1.0f - my, 0.0f);

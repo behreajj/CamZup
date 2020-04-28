@@ -3,7 +3,7 @@ package camzup.core;
 /**
  * Implements basic math utilities for single-precision numbers.
  */
-public final class Utils implements IUtils {
+public class Utils implements IUtils {
 
    /**
     * The default constructor.
@@ -241,9 +241,8 @@ public final class Utils implements IUtils {
     */
    public static int ceilToInt ( final float x ) {
 
-      final int xi = ( int ) x;
-      if ( x > xi ) { return xi + 1; }
-      return xi;
+      final int y = ( int ) x;
+      return x > y ? y + 1 : y;
    }
 
    /**
@@ -371,7 +370,21 @@ public final class Utils implements IUtils {
     */
    public static float diff ( final float a, final float b ) {
 
-      return Float.intBitsToFloat(0x7fffffff & Float.floatToRawIntBits(a - b));
+      return Float.intBitsToFloat(0x7fffffff & Float.floatToRawIntBits(b - a));
+   }
+
+   /**
+    * Finds the absolute value of the left operand minus the right.
+    *
+    * @param a left operand
+    * @param b right operand
+    *
+    * @return the difference
+    */
+   public static int diff ( final int a, final int b ) {
+
+      final int d = b - a;
+      return d < 0 ? -d : d;
    }
 
    /**
@@ -387,7 +400,7 @@ public final class Utils implements IUtils {
     */
    public static double div ( final double a, final double b ) {
 
-      return b == 0.0d ? 0.0d : a / b;
+      return b != 0.0d ? a / b : 0.0d;
    }
 
    /**
@@ -403,7 +416,7 @@ public final class Utils implements IUtils {
     */
    public static float div ( final float a, final float b ) {
 
-      return b == 0.0f ? 0.0f : a / b;
+      return b != 0.0f ? a / b : 0.0f;
    }
 
    /**
@@ -419,7 +432,7 @@ public final class Utils implements IUtils {
     */
    public static int div ( final int a, final int b ) {
 
-      return b == 0 ? 0 : a / b;
+      return b != 0 ? a / b : 0;
    }
 
    /**
@@ -469,15 +482,14 @@ public final class Utils implements IUtils {
    /**
     * Floors a real number to the next least integer.
     *
-    * @param value the input value
+    * @param x the input value
     *
     * @return the integer
     */
-   public static int floorToInt ( final float value ) {
+   public static int floorToInt ( final float x ) {
 
-      final int xi = ( int ) value;
-      if ( value < xi ) { return xi - 1; }
-      return xi;
+      final int y = ( int ) x;
+      return x < y ? y - 1 : y;
    }
 
    /**
@@ -1165,7 +1177,8 @@ public final class Utils implements IUtils {
          n *= 10;
       }
 
-      return Utils.round(value * n) / ( float ) n;
+      final float nf = n;
+      return Utils.round(value * nf) / nf;
    }
 
    /**
@@ -1583,22 +1596,20 @@ public final class Utils implements IUtils {
       final float ub ) {
 
       final float span = ub - lb;
-
-      float lbc = 0.0f;
-      float ubc = 0.0f;
+      float vlb = 0.0f;
+      float vub = 0.0f;
       if ( span < 0.0f ) {
-         lbc = ub;
-         ubc = lb;
-      } else if ( span > 0.0f ) {
-         lbc = lb;
-         ubc = ub;
+         vlb = ub;
+         vub = lb;
       } else {
-         return 0.0f;
+         if ( span <= 0.0f ) { return 0.0f; }
+
+         vlb = lb;
+         vub = ub;
       }
 
-      if ( value < lbc ) { return ubc - ( lbc - value ) % span; }
-      if ( value >= ubc ) { return lbc + ( value - lbc ) % span; }
-      return value;
+      if ( value < vlb ) { return vub - ( vlb - value ) % span; }
+      return value >= vub ? vlb + ( value - vlb ) % span : value;
    }
 
    /**

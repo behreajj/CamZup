@@ -563,16 +563,14 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(128)
-         .append("{ real: ")
-         .append(Utils.toFixed(this.real, places))
-         .append(", imag: ")
-         .append(this.imag.toString(places))
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(128);
+      sb.append("{ real: ");
+      sb.append(Utils.toFixed(this.real, places));
+      sb.append(", imag: ");
+      sb.append(this.imag.toString(places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**
@@ -1061,7 +1059,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
       /*
        * Utilities square-root checks that input is greater than 0.
-       * Double-precision functions do NOT seem to yield more accuracy.
+       * Double-precision functions do not seem to yield more accuracy.
        */
 
       /* @formatter:off */
@@ -1215,8 +1213,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float z1 = isRight ? 0.0f : xForward;
 
       /* Polarity: an infinite number of orientations is possible. */
-      final boolean parallel = Utils.approx(x1, 0.0f) && Utils.approx(y1, 0.0f)
-         && Utils.approx(z1, 0.0f);
+      final boolean parallel = Utils.approx(x1, 0.0f, IUtils.DEFAULT_EPSILON)
+         && Utils.approx(y1, 0.0f, IUtils.DEFAULT_EPSILON) && Utils.approx(z1,
+            0.0f, IUtils.DEFAULT_EPSILON);
 
       if ( parallel ) {
 
@@ -1543,16 +1542,18 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Quaternion target ) {
 
       final float mSq = Quaternion.magSq(q);
-      if ( mSq == 0.0f ) { return target.reset(); }
+      if ( mSq != 0.0f ) {
+         final Vec3 i = q.imag;
+         if ( Utils.approx(mSq, 1.0f) ) {
+            return target.set(q.real, -i.x, -i.y, -i.z);
+         }
 
-      final Vec3 i = q.imag;
-      if ( Utils.approx(mSq, 1.0f) ) {
-         return target.set(q.real, -i.x, -i.y, -i.z);
+         final float mSqInv = 1.0f / mSq;
+         return target.set(q.real * mSqInv, -i.x * mSqInv, -i.y * mSqInv, -i.z
+            * mSqInv);
       }
 
-      final float mSqInv = 1.0f / mSq;
-      return target.set(q.real * mSqInv, -i.x * mSqInv, -i.y * mSqInv, -i.z
-         * mSqInv);
+      return target.reset();
    }
 
    /**
@@ -1727,11 +1728,12 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public static Quaternion mul ( final float a, final Quaternion b,
       final Quaternion target ) {
 
-      if ( a == 0.0f ) { return target.reset(); }
-
-      Vec3.mul(a, b.imag, target.imag);
-      target.real = a * b.real;
-      return target;
+      if ( a != 0.0f ) {
+         Vec3.mul(a, b.imag, target.imag);
+         target.real = a * b.real;
+         return target;
+      }
+      return target.reset();
    }
 
    /**
@@ -2362,8 +2364,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       /* Set new real component. */
       final double theta = wNorm <= -1.0d ? Math.PI : wNorm >= 1.0d ? 0.0d
          : Math.acos(wNorm);
-      final double btheta = b * theta;
-      final double scalar = Math.pow(m, b);
+      final double bd = b;
+      final double btheta = bd * theta;
+      final double scalar = Math.pow(m, bd);
       target.real = ( float ) ( scalar * Math.cos(btheta) );
 
       /* Calculate imaginary component. */
@@ -2497,6 +2500,11 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       @Override
       public String toString ( ) { return this.getClass().getSimpleName(); }
 
+      /**
+       * A minimal positive non-zero threshold for comparison between doubles.
+       */
+      protected static final double EPS_D = 0.000001d;
+
    }
 
    /**
@@ -2588,11 +2596,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          /* Normalize. */
          final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
 
-         if ( Math.abs(mSq) < IUtils.DEFAULT_EPSILON ) {
-            return target.reset();
-         }
+         if ( Math.abs(mSq) < AbstrEasing.EPS_D ) { return target.reset(); }
 
-         if ( Math.abs(1.0d - mSq) < IUtils.DEFAULT_EPSILON ) {
+         if ( Math.abs(1.0d - mSq) < AbstrEasing.EPS_D ) {
             return target.set(( float ) cw, ( float ) cx, ( float ) cy,
                ( float ) cz);
          }
@@ -2728,7 +2734,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          /* The step. */
          double v = 0.0d;
 
-         if ( sinTheta > IUtils.DEFAULT_EPSILON ) {
+         if ( sinTheta > AbstrEasing.EPS_D ) {
             final double sInv = 1.0d / sinTheta;
             u = Math.sin( ( 1.0d - stepd ) * theta) * sInv;
             v = Math.sin(stepd * theta) * sInv;
@@ -2746,11 +2752,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          /* Normalize. */
          final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
 
-         if ( Math.abs(mSq) < IUtils.DEFAULT_EPSILON ) {
-            return target.reset();
-         }
+         if ( Math.abs(mSq) < AbstrEasing.EPS_D ) { return target.reset(); }
 
-         if ( Math.abs(1.0d - mSq) < IUtils.DEFAULT_EPSILON ) {
+         if ( Math.abs(1.0d - mSq) < AbstrEasing.EPS_D ) {
             return target.set(( float ) cw, ( float ) cx, ( float ) cy,
                ( float ) cz);
          }

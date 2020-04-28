@@ -182,8 +182,8 @@ public abstract class TextShape {
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
                final CurveEntity2 entity = new CurveEntity2();
-               TextShape.processGlyphCurve(font, frc, null, detail, character,
-                  entity.curves);
+               TextShape.processGlyphCurve(font, frc, ( AffineTransform ) null,
+                  detail, character, entity.curves);
                entities.add(entity);
                // final float w = fm.charWidth(character);
                // xoff += w;
@@ -192,8 +192,8 @@ public abstract class TextShape {
          } else {
 
             final CurveEntity2 entity = new CurveEntity2();
-            TextShape.processGlyphCurve(font, frc, null, detail, characters,
-               entity.curves);
+            TextShape.processGlyphCurve(font, frc, ( AffineTransform ) null,
+               detail, characters, entity.curves);
             entities.add(entity);
          }
 
@@ -234,16 +234,16 @@ public abstract class TextShape {
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
                final CurveEntity2 entity = new CurveEntity2();
-               TextShape.processGlyphCurve(font, frc, null, detail, character,
-                  entity.curves);
+               TextShape.processGlyphCurve(font, frc, ( AffineTransform ) null,
+                  detail, character, entity.curves);
                entities.add(entity);
             }
 
          } else {
 
             final CurveEntity2 entity = new CurveEntity2();
-            TextShape.processGlyphCurve(font, frc, null, detail, characters,
-               entity.curves);
+            TextShape.processGlyphCurve(font, frc, ( AffineTransform ) null,
+               detail, characters, entity.curves);
             entities.add(entity);
 
          }

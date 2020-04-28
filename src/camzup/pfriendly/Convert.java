@@ -148,7 +148,6 @@ public abstract class Convert {
             target.rotateZ(angle);
             target.scale(dim.x, dim.y);
             target.translate(loc.x, loc.y);
-
             return target;
 
          case RTS:
@@ -156,7 +155,6 @@ public abstract class Convert {
             target.rotateZ(angle);
             target.translate(loc.x, loc.y);
             target.scale(dim.x, dim.y);
-
             return target;
 
          case SRT:
@@ -164,7 +162,6 @@ public abstract class Convert {
             target.scale(dim.x, dim.y);
             target.rotateZ(angle);
             target.translate(loc.x, loc.y);
-
             return target;
 
          case STR:
@@ -172,7 +169,6 @@ public abstract class Convert {
             target.scale(dim.x, dim.y);
             target.translate(loc.x, loc.y);
             target.rotateZ(angle);
-
             return target;
 
          case TSR:
@@ -180,19 +176,60 @@ public abstract class Convert {
             target.translate(loc.x, loc.y);
             target.scale(dim.x, dim.y);
             target.rotateZ(angle);
+            return target;
 
+         case R:
+
+            target.rotateZ(angle);
+            return target;
+
+         case RS:
+
+            target.rotateZ(angle);
+            target.scale(dim.x, dim.y);
+            return target;
+
+         case RT:
+
+            target.rotateZ(angle);
+            target.translate(loc.x, loc.y);
+            return target;
+
+         case S:
+
+            target.scale(dim.x, dim.y);
+            return target;
+
+         case SR:
+
+            target.scale(dim.x, dim.y);
+            target.rotateZ(angle);
+            return target;
+
+         case ST:
+
+            target.scale(dim.x, dim.y);
+            target.translate(loc.x, loc.y);
+            return target;
+
+         case T:
+
+            target.translate(loc.x, loc.y);
+            return target;
+
+         case TR:
+
+            target.translate(loc.x, loc.y);
+            target.rotateZ(angle);
+            return target;
+
+         case TS:
+
+            target.translate(loc.x, loc.y);
+            target.scale(dim.x, dim.y);
             return target;
 
          case TRS:
-         case R:
-         case RS:
-         case RT:
-         case S:
-         case SR:
-         case ST:
-         case T:
-         case TR:
-         case TS:
 
          default:
 

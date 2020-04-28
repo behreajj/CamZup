@@ -712,18 +712,16 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(96)
-         .append("{ x: ")
-         .append(Utils.toFixed(this.x, places))
-         .append(", y: ")
-         .append(Utils.toFixed(this.y, places))
-         .append(", z: ")
-         .append(Utils.toFixed(this.z, places))
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(96);
+      sb.append("{ x: ");
+      sb.append(Utils.toFixed(this.x, places));
+      sb.append(", y: ");
+      sb.append(Utils.toFixed(this.y, places));
+      sb.append(", z: ");
+      sb.append(Utils.toFixed(this.z, places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**
@@ -3290,9 +3288,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
       for ( int i = 1; i < places; ++i ) {
          n *= 10;
       }
-      final float nInv = 1.0f / n;
-      return target.set(Utils.round(v.x * n) * nInv, Utils.round(v.y * n)
-         * nInv, Utils.round(v.z * n) * nInv);
+      final float nf = n;
+      final float nInv = 1.0f / nf;
+      return target.set(Utils.round(v.x * nf) * nInv, Utils.round(v.y * nf)
+         * nInv, Utils.round(v.z * nf) * nInv);
    }
 
    /**
@@ -3322,7 +3321,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public static Vec3 sign ( final Vec3 v, final Vec3 target ) {
 
-      return target.set(Utils.sign(v.x), Utils.sign(v.y), Utils.sign(v.z));
+      /* float sign returns an integer; this is inlined to avoid cast. */
+      return target.set(v.x < -0.0f ? -1.0f : v.x > 0.0f ? 1.0f : 0.0f, v.y
+         < -0.0f ? -1.0f : v.y > 0.0f ? 1.0f : 0.0f, v.z < -0.0f ? -1.0f : v.z
+            > 0.0f ? 1.0f : 0.0f);
    }
 
    /**

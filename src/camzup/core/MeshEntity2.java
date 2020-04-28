@@ -284,7 +284,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       final float specular, final float clearcoat, final float clearcoatRough,
       final float extrude, final float offset ) {
 
-      final int meshLen = this.meshes.size();
+      this.meshes.size();
       final boolean autoSmoothNormals = true;
       final boolean addVertGroups = true;
       final boolean includeUvs = true;
@@ -302,14 +302,11 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       pyCd.append(this.transform.toBlenderCode());
       pyCd.append(", \"meshes\": [");
 
-      int meshIndex = 0;
-      final int meshLast = meshLen - 1;
       final Iterator < Mesh2 > meshItr = this.meshes.iterator();
       while ( meshItr.hasNext() ) {
          // final float zoff = 0.0001f * meshIndex;
          pyCd.append(meshItr.next().toBlenderCode(includeUvs, 0.0f));
-         if ( meshIndex < meshLast ) { pyCd.append(',').append(' '); }
-         meshIndex++;
+         if ( meshItr.hasNext() ) { pyCd.append(',').append(' '); }
       }
 
       pyCd.append("], \"materials\": [");
@@ -328,6 +325,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       // TODO: Can this be replaced with a string that is replaced by ANT /
       // build properties?
+
       pyCd.append("]}\n\nd_objs = D.objects\n");
       pyCd.append("parent_obj = d_objs.new(");
       pyCd.append("mesh_entity[\"name\"], None)\n");

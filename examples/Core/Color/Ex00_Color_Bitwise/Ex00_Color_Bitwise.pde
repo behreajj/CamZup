@@ -1,6 +1,6 @@
 import camzup.core.*;
 
-Random rng = new Random();
+Rng rng = new Rng();
 Color a = Color.red(new Color());
 Color b = Color.blue(new Color());
 Color c = new Color();

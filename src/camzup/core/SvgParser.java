@@ -15,7 +15,10 @@ import java.util.Iterator;
 import java.util.regex.Pattern;
 
 /**
- * A very basic scalable vector graphics (SVG) parser class.
+ * A very basic scalable vector graphics (SVG) parser class. SVG parsing is
+ * at best <em>very</em> minimal and incomplete. Use only for basic or
+ * simplified SVG files, not ones that contain CSS styling (color and
+ * materials will not be evaluated anyways).
  */
 @Experimental
 public abstract class SvgParser {
@@ -254,8 +257,9 @@ public abstract class SvgParser {
       /* Parse alpha. */
       if ( tokensLen > 3 ) {
          currToken = tokens[3];
-         if ( currToken.endsWith("%") ) {
-            currToken = currToken.substring(0, currToken.length() - 1);
+         final int currLens1 = currToken.length() - 1;
+         if ( currToken.startsWith("%", currLens1) ) {
+            currToken = currToken.substring(0, currLens1);
             a = Float.parseFloat(currToken) * 0.01f;
          } else {
             a = Float.parseFloat(currToken);
@@ -266,8 +270,9 @@ public abstract class SvgParser {
       /* Parse blue. */
       if ( tokensLen > 2 ) {
          currToken = tokens[2];
-         if ( currToken.endsWith("%") ) {
-            currToken = currToken.substring(0, currToken.length() - 1);
+         final int currLens1 = currToken.length() - 1;
+         if ( currToken.startsWith("%", currLens1) ) {
+            currToken = currToken.substring(0, currLens1);
             b = Float.parseFloat(currToken) * 0.01f;
          } else {
             b = Float.parseFloat(currToken) * IUtils.ONE_255;
@@ -278,8 +283,9 @@ public abstract class SvgParser {
       /* Parse green. */
       if ( tokensLen > 1 ) {
          currToken = tokens[1];
-         if ( currToken.endsWith("%") ) {
-            currToken = currToken.substring(0, currToken.length() - 1);
+         final int currLens1 = currToken.length() - 1;
+         if ( currToken.startsWith("%", currLens1) ) {
+            currToken = currToken.substring(0, currLens1);
             g = Float.parseFloat(currToken) * 0.01f;
          } else {
             g = Float.parseFloat(currToken) * IUtils.ONE_255;
@@ -290,8 +296,9 @@ public abstract class SvgParser {
       /* Parse red. */
       if ( tokensLen > 0 ) {
          currToken = tokens[0];
-         if ( currToken.endsWith("%") ) {
-            currToken = currToken.substring(0, currToken.length() - 1);
+         final int currLens1 = currToken.length() - 1;
+         if ( currToken.startsWith("%", currLens1) ) {
+            currToken = currToken.substring(0, currLens1);
             r = Float.parseFloat(currToken) * 0.01f;
          } else {
             r = Float.parseFloat(currToken) * IUtils.ONE_255;
@@ -1322,7 +1329,6 @@ public abstract class SvgParser {
 
       final String v = trNode.getTextContent().trim().toLowerCase();
 
-      // TODO: Create parse object for splitting.
       final String[] transformStrs = v.split("\\)");
       final int trsLen = transformStrs.length;
       final Mat3 delta = new Mat3();
@@ -1330,8 +1336,6 @@ public abstract class SvgParser {
 
       for ( int i = 0; i < trsLen; ++i ) {
          final String transform = transformStrs[i].trim();
-
-         // final String[] trData = transform.split("\\(|,\\s*");
          final String[] trData = trPattern.split(transform, 0);
          final int dataLen = trData.length;
          if ( dataLen > 1 ) {

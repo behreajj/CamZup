@@ -3,8 +3,6 @@ package camzup.pfriendly;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-import java.awt.Image;
-
 import camzup.core.Color;
 import camzup.core.Gradient;
 import camzup.core.IUtils;
@@ -23,13 +21,6 @@ import processing.core.PImage;
  * text to an image.
  */
 public class ZImage extends PImage {
-
-   /**
-    * Constructs an image from the native AWT image.
-    *
-    * @param img the image
-    */
-   public ZImage ( final Image img ) { super(img); }
 
    /**
     * Constructs an image from its dimensions, width and height.
@@ -548,8 +539,9 @@ public class ZImage extends PImage {
 
       /*
        * This does not use an output target because of difficulties finding a
-       * way to resize an existing image efficiently. PImage's resize function
-       * is undefined and the issue is complicated by PImageAWT .
+       * way to resize an existing image efficiently, i.e. by clipping its
+       * pixels away. PImage's resize function is undefined and the issue is
+       * complicated by PImageAWT .
        */
 
       /*
@@ -568,7 +560,6 @@ public class ZImage extends PImage {
        * Carriage returns, or line breaks, could come in 3 variations: \r, \n,
        * or \r\n .
        */
-      // final String[] linesSplit = vTxt.split("\r\n|\n|\r");
       final String[] linesSplit = ZImage.PATTERN_LN_BR.split(vTxt, 0);
       final int lineCount = linesSplit.length;
       final char[][][] characters = new char[lineCount][][];
@@ -934,6 +925,171 @@ public class ZImage extends PImage {
 
       target.updatePixels();
       return target;
+   }
+
+   /**
+    * Tints an image to a color.
+    *
+    * @param source  the source image
+    * @param tintClr the tint color
+    *
+    * @return the image
+    */
+   public static PImage tint ( final PImage source, final Color tintClr ) {
+
+      return ZImage.tint(source, Color.toHexInt(tintClr), 0.5f);
+   }
+
+   /**
+    * Tints an image to a color by a factor in [0.0, 1.0] .
+    *
+    * @param source  the source image
+    * @param tintClr the tint color
+    * @param fac     the factor
+    *
+    * @return the image
+    */
+   public static PImage tint ( final PImage source, final Color tintClr,
+      final float fac ) {
+
+      return ZImage.tint(source, Color.toHexInt(tintClr), fac);
+   }
+
+   /**
+    * Tints an image to a color by a factor in [0.0, 1.0] .
+    *
+    * @param source  the source image
+    * @param tintClr the tint color
+    *
+    * @return the image
+    */
+   public static PImage tint ( final PImage source, final int tintClr ) {
+
+      return ZImage.tint(source, tintClr, 0.5f);
+   }
+
+   /**
+    * Tints an image to a color by a factor in [0.0, 1.0] .
+    *
+    * @param source  the source image
+    * @param tintClr the tint color
+    * @param fac     the factor
+    *
+    * @return the image
+    */
+   public static PImage tint ( final PImage source, final int tintClr,
+      final float fac ) {
+
+      /* Right operand. */
+      final int ya = tintClr >> 0x18 & 0xff;
+      final int yr = tintClr >> 0x10 & 0xff;
+      final int yg = tintClr >> 0x8 & 0xff;
+      final int yb = tintClr & 0xff;
+
+      final float yaf = ya * IUtils.ONE_255;
+      final float yrf = yr * IUtils.ONE_255;
+      final float ygf = yg * IUtils.ONE_255;
+      final float ybf = yb * IUtils.ONE_255;
+
+      final int srcFmt = source.format;
+      final float t = Utils.clamp01(fac);
+      final float u = 1.0f - t;
+
+      source.loadPixels();
+      final int[] pixels = source.pixels;
+      final int len = pixels.length;
+
+      switch ( srcFmt ) {
+
+         case PConstants.ALPHA:
+
+            final int trgb = 0x00ffffff & tintClr;
+            for ( int i = 0; i < len; ++i ) {
+               final float xaf = pixels[i] * IUtils.ONE_255;
+               final float zaf = u * xaf + t * yaf;
+               pixels[i] = ( int ) ( zaf * 0xff + 0.5f ) << 0x18 | trgb;
+            }
+
+            break;
+
+         case PConstants.RGB:
+
+            for ( int i = 0; i < len; ++i ) {
+               final int rgb = pixels[i];
+
+               final int xr = rgb >> 0x10 & 0xff;
+               final int xg = rgb >> 0x8 & 0xff;
+               final int xb = rgb & 0xff;
+
+               final float xrf = xr * IUtils.ONE_255;
+               final float xgf = xg * IUtils.ONE_255;
+               final float xbf = xb * IUtils.ONE_255;
+
+               final float zrf = u * xrf + t * yrf;
+               final float zgf = u * xgf + t * ygf;
+               final float zbf = u * xbf + t * ybf;
+
+               /* @formatter:off */
+               pixels[i] = ya << 0x18 |
+                           ( int ) ( zrf * 0xff + 0.5f ) << 0x10 |
+                           ( int ) ( zgf * 0xff + 0.5f ) << 0x8  |
+                           ( int ) ( zbf * 0xff + 0.5f );
+               /* @formatter:on */
+            }
+
+            break;
+
+         case PConstants.ARGB:
+
+            for ( int i = 0; i < len; ++i ) {
+               final int rgb = pixels[i];
+
+               final int xa = rgb >> 0x18 & 0xff;
+               final int xr = rgb >> 0x10 & 0xff;
+               final int xg = rgb >> 0x8 & 0xff;
+               final int xb = rgb & 0xff;
+
+               final float xaf = xa * IUtils.ONE_255;
+               final float xrf = xr * IUtils.ONE_255;
+               final float xgf = xg * IUtils.ONE_255;
+               final float xbf = xb * IUtils.ONE_255;
+
+               final float zaf = u * xaf + t * yaf;
+               final float zrf = u * xrf + t * yrf;
+               final float zgf = u * xgf + t * ygf;
+               final float zbf = u * xbf + t * ybf;
+
+               // Simple averaging approach.
+               // final int za = xa + ya >> 1 << 0x18;
+               // final int zr = xr + yr >> 1 << 0x10;
+               // final int zg = xg + yg >> 1 << 0x8;
+               // final int zb = xb + yb >> 1;
+               // pixels[i] = za | zr | zg | zb;
+
+               // final int za = ( int ) ( zaf * 0xff + 0.5f ) << 0x18;
+               // final int zr = ( int ) ( zrf * 0xff + 0.5f ) << 0x10;
+               // final int zg = ( int ) ( zgf * 0xff + 0.5f ) << 0x8;
+               // final int zb = ( int ) ( zbf * 0xff + 0.5f );
+               // pixels[i] = za | zr | zg | zb;
+
+               /* @formatter:off */
+               pixels[i] = ( int ) ( zaf * 0xff + 0.5f ) << 0x18 |
+                           ( int ) ( zrf * 0xff + 0.5f ) << 0x10 |
+                           ( int ) ( zgf * 0xff + 0.5f ) << 0x8  |
+                           ( int ) ( zbf * 0xff + 0.5f );
+               /* @formatter:on */
+            }
+
+            break;
+
+         default:
+
+      }
+
+      source.updatePixels();
+      source.format = PConstants.ARGB;
+
+      return source;
    }
 
    /**

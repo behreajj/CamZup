@@ -95,6 +95,8 @@ rndr.endDraw();
 
 ## Differences, Problems
 
+![Polar Coordinates](data/radialDiagram.png)
+
 Here is a brief list of issues with this library and differences which may be unexpected to new users. Some are unresolved bugs, some arise from the design philosophy of the library.
 
 ### 2D & 3D
@@ -107,13 +109,13 @@ Here is a brief list of issues with this library and differences which may be un
   - The [PShape](https://processing.org/reference/PShape.html) interface has numerous problems stemming from both its implementation and its design. This library uses `Curve` and `Mesh` objects instead. [shapeMode](https://processing.org/reference/shapeMode_.html) is not supported.
   
 ### 2D
+  - The `image` function for `PGraphicsJava2D` is very ineffective, both in terms of frame rate and appearance. I recommend that an OpenGL renderer be used instead. It may also spare you time  and fustration if all images are rescaled to display and tinted in an external application that specializes in raster image manipulation (e.g., [GIMP](https://www.gimp.org/)).
+  - As a consequence of how `image` function works above, dynamic `tint`ing is no longer supported in `YupJ2`.
   - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter. A discussion the Processing forum about this issue can be found [here](https://discourse.processing.org/t/text-seems-jittery-when-moving-in-a-circular-pattern/19548).
-  - The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles.
-  -  In OpenGL renderers, an arc will not have rounded corners, no matter which [strokeJoin](https://processing.org/reference/strokeJoin_.html) and [strokeCap](https://processing.org/reference/strokeCap_.html) methods you specify.
+  - The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles. As a consequence, in OpenGL renderers, an arc will not have rounded corners, no matter which [strokeJoin](https://processing.org/reference/strokeJoin_.html) and [strokeCap](https://processing.org/reference/strokeCap_.html) methods you specify.
   - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), [ellipseMode](https://processing.org/reference/ellipseMode_.html) and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with these renderers. For that reason, `CENTER` is the default alignment.
   - `Curve`s and `Mesh`es do not distinguish between an outline and contour shape. This means they do not properly handle glyphs for characters like 'o', 'p', and 'q'.
-  - The `image` function for `PGraphicsJava2D` is ineffective when displaying images at a scale other than native size, both in terms of frame rate and appearance. I recommend that, prior to import, all images be rescaled to display and tinted in an external application that specializes in raster image manipulation (e.g., [GIMP](https://www.gimp.org/)). If that is not possible, rescaling and tinting should be done to the `PImage` in `setup`. 
-
+  
 ### 3D
   - A z-up axis changes the relationship between a 2D vector's polar coordinates and a 3D vector's spherical coordinates: a 3D vector's azimuth matches a 2D vector's heading.
   - Neither 3D primitive, the [sphere](https://processing.org/reference/sphere_.html) nor the [box](https://processing.org/reference/box_.html), are supported; use `MeshEntity`s instead.
@@ -142,11 +144,11 @@ With the exception of creating nullable objects, the goal of this library is to 
 
 ## Kotlin Interoperability
 
-This library's `core` was originally designed to affiliate with Processing's code design philosophy. With exceptions, classes are defined to be mutable and extensible. Methods are at most `protected` and public fields do not have getters and setters. Static methods are preferred where possible, and use the out parameter antipattern.
+This library's `core` was originally designed to affiliate with Processing's code design. With exceptions, classes are defined to be mutable and extensible. Methods are at most `protected` and fields are public (no getters or setters). `static` methods are preferred where possible, and use the out parameter antipattern.
 
-As of v 0.0.6, this library has been updated to provide limited interoperability with [Kotlin](https://kotlinlang.org/), specifically operator overloading. Kotlin does not use static methods; instance methods do not always mutate the instance in place; and naming conventions differ to those of this library.
+As of v 0.0.6, this library has been updated to provide limited interoperability with [Kotlin](https://kotlinlang.org/), specifically [operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html). Kotlin does not use `static` methods; instance methods do not always mutate the instance in place; and naming conventions differ to those of this library.
 
-For those reasons, the following functions may be confusing if used in Java.
+For those reasons, the following functions may be confusing if used in Processing-Java.
 
 | Kotlin Operator |            Interop Method | Mutator | Core Support                             |
 | --------------: | ------------------------: | :-----: | :--------------------------------------- |
@@ -169,8 +171,8 @@ For those reasons, the following functions may be confusing if used in Java.
 |          `a[i]` |          `U a.get(int i)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
 |          `a[i]` |       `void a.set(int i)` |    X    | Mat3,4                                   |
 
-Even when an operator is not supported by `core`, Kotlin may infer a viable possibility, e.g., `+` may coerce both the left and right operand to a collection, then concatenate the two. Operations between all the objects above are subject to ambiguity. Do not, for example, assume commutivity for operators (meaning, do not assume that `a * b` will yield a result equal in value to `b * a`. Always compare this library's documentation against a reliable mathematical reference.
+Even when an operator is not supported by `core`, Kotlin may infer a viable alternative, e.g., `+` may coerce both the left and right operand to a collection, then concatenate the two. Operations between all the objects above are subject to ambiguity. Do not, for example, assume commutativity for operators (meaning, do not assume that `a * b` will yield a result equal in value to `b * a`). Always compare this library's documentation against a reliable mathematical reference.
 
-Operators should never be assumed to be more efficient than named methods in languages where objects are allowed to override operators. For example, complex numbers, quaternions and matrices calculate the denominator's inverse, then multiply. Always read the language's documentation and do not prematurely optimize.
+Operators should never be assumed to be more efficient than named methods in languages where objects are allowed to override operators. For example, to divide complex numbers, quaternions or matrices, the denominator's inverse has to be calculated. Always read the language's documentation and do not prematurely optimize.
 
 There are more differences between Kotlin and Processing-Java than can be discussed here, please see the website above for more information.

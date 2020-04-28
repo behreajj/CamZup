@@ -43,7 +43,7 @@ void draw() {
   Vec3 cmloc = rndr.getLocation(new Vec3());
   entity.lookAt(cmloc, 0.0175, Handedness.RIGHT);
 
-  rndr.background(#202020);
+  rndr.background(#101010);
   rndr.perspective();
   rndr.grid(16, 2.0, #7E7A6A, 1000.0);
   rndr.lights();

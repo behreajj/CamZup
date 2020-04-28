@@ -1005,7 +1005,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final List < Knot3 > knots = target.knots;
       for ( int i = 0; i < knotCount; ++i ) {
          final Knot3 knot = knots.get(i);
-         final float angle1 = Utils.lerpUnclamped(a1, destAngle1, i * toStep);
+         final float step = i * toStep;
+         final float angle1 = ( 1.0f - step ) * a1 + step * destAngle1;
          Knot3.fromPolar(Utils.scNorm(angle1), Utils.scNorm(angle1 - 0.25f),
             radius, handleMag, 0.0f, 0.0f, 0.0f, knot);
       }

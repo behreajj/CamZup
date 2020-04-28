@@ -10,7 +10,9 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.awt.image.WritableRaster;
 
 import camzup.core.Color;
 import camzup.core.Curve2;
@@ -470,16 +472,21 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.cameraZoomX = Utils.abs(zx) < IUtils.DEFAULT_EPSILON ? 1.0f : zx;
       this.cameraZoomY = Utils.abs(zy) < IUtils.DEFAULT_EPSILON ? 1.0f : zy;
 
-      final double c = Math.cos(-radians);
-      final double s = Math.sin(-radians);
-      final double m00 = c * this.cameraZoomX;
-      final double m01 = -s * this.cameraZoomY;
-      final double m10 = s * this.cameraZoomX;
-      final double m11 = c * this.cameraZoomY;
+      final double cxd = x;
+      final double cyd = y;
+      final double czxd = this.cameraZoomX;
+      final double czyd = this.cameraZoomY;
+      final double negr = -radians;
+
+      final double c = Math.cos(negr);
+      final double s = Math.sin(negr);
+      final double m00 = c * czxd;
+      final double m01 = -s * czyd;
+      final double m10 = s * czxd;
+      final double m11 = c * czyd;
 
       this.affineNative.setTransform(m00, -m10, m01, -m11, this.width * 0.5d
-         - this.cameraX * m00 - this.cameraY * m01, this.height * 0.5d
-            + this.cameraX * m10 + this.cameraY * m11);
+         - cxd * m00 - cyd * m01, this.height * 0.5d + cxd * m10 + cyd * m11);
       this.g2.setTransform(this.affineNative);
    }
 
@@ -766,109 +773,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws an ellipse. The parameters meanings are determined by the
-    * ellipseMode.
-    *
-    * @param x the x coordinate
-    * @param y the y coordinate
-    * @param w the third parameter
-    * @param h the fourth parameter
-    *
-    * @see Utils#abs(float)
-    * @see Path2D#reset()
-    * @see Path2D#moveTo(double, double)
-    * @see Path2D#curveTo(double, double, double, double, double, double)
-    * @see Path2D#closePath()
-    * @see YupJ2#drawShapeSolid(Shape)
-    */
-   @Deprecated
-   public void ellipsef ( final float x, final float y, final float w,
-      final float h ) {
-
-      float extapw = 0.0f;
-      float extaph = 0.0f;
-      float extcpw = 0.0f;
-      float extcph = 0.0f;
-
-      float right = 0.0f;
-      float left = 0.0f;
-      float top = 0.0f;
-      float bottom = 0.0f;
-
-      float xc = 0.0f;
-      float yc = 0.0f;
-
-      switch ( this.ellipseMode ) {
-
-         case RADIUS:
-
-            xc = x;
-            yc = y;
-
-            extapw = w;
-            extcpw = 0.552125f * w;
-            extaph = h;
-            extcph = 0.552125f * h;
-
-            break;
-
-         case CORNER:
-
-            extapw = 0.5f * w;
-            extcpw = 0.276063f * w;
-            extaph = 0.5f * h;
-            extcph = 0.276063f * h;
-
-            xc = x + extapw;
-            yc = y - extaph;
-
-            break;
-
-         case CORNERS:
-
-            final float wcalc = Utils.abs(w - x);
-            final float hcalc = Utils.abs(h - y);
-
-            xc = ( x + w ) * 0.5f;
-            yc = ( y + h ) * 0.5f;
-
-            extapw = 0.5f * wcalc;
-            extcpw = 0.276063f * wcalc;
-            extaph = 0.5f * hcalc;
-            extcph = 0.276063f * hcalc;
-
-            break;
-
-         case CENTER:
-
-         default:
-
-            xc = x;
-            yc = y;
-
-            extapw = 0.5f * w;
-            extcpw = 0.276063f * w;
-            extaph = 0.5f * h;
-            extcph = 0.276063f * h;
-
-      }
-
-      right = xc + extapw;
-      left = xc - extapw;
-      top = yc + extaph;
-      bottom = yc - extaph;
-
-      this.gp.reset();
-      this.gp.moveTo(right, yc);
-      this.gp.curveTo(right, yc + extcph, xc + extcpw, top, xc, top);
-      this.gp.curveTo(xc - extcpw, top, left, yc + extcph, left, yc);
-      this.gp.curveTo(left, yc - extcph, xc - extcpw, bottom, xc, bottom);
-      this.gp.curveTo(xc + extcpw, bottom, right, yc - extcph, right, yc);
-      this.gp.closePath();
-      this.drawShapeSolid(this.gp);
-   }
-
-   /**
     * Sets the renderer's current fill to the color.
     *
     * @param c the color
@@ -1116,9 +1020,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void grid ( final int count, final float sw, final float dim ) {
 
-      final double right = dim * 0.5d;
+      final double dimdh = dim * 0.5d;
+      final double right = dimdh;
       final double left = -right;
-      final double top = dim * 0.5d;
+      final double top = dimdh;
       final double bottom = -top;
       final double toPercent = 1.0d / count;
       final int last = count + 1;
@@ -1139,7 +1044,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       for ( int i = 0; i < last; ++i ) {
          final double iPercent = i * toPercent;
          final double y = ( 1.0d - iPercent ) * bottom + iPercent * top;
-         final double yeps = y + PConstants.EPSILON;
+         final double yeps = y + YupJ2.EPS_D;
          final int agb = ab | ( int ) ( iPercent * 0xff + 0.5d ) << 0x8;
 
          for ( int j = 0; j < last; ++j ) {
@@ -1265,7 +1170,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             /* Draw rear handle. */
             this.gp.reset();
-            this.gp.moveTo(rhx + PConstants.EPSILON, rhy);
+            this.gp.moveTo(rhx + YupJ2.EPS_D, rhy);
             this.gp.lineTo(rhx, rhy);
             this.g2.setStroke(swRear);
             this.g2.setColor(rearClrAwt);
@@ -1273,15 +1178,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             /* Draw coordinate. */
             this.gp.reset();
-            this.gp.moveTo(cox + PConstants.EPSILON, coy);
-            this.gp.lineTo(cox, co.y);
+            this.gp.moveTo(cox + YupJ2.EPS_D, coy);
+            this.gp.lineTo(cox, coy);
             this.g2.setStroke(swCoord);
             this.g2.setColor(crdClrAwt);
             this.g2.draw(this.gp);
 
             /* Draw fore handle. */
             this.gp.reset();
-            this.gp.moveTo(fhx + PConstants.EPSILON, fhy);
+            this.gp.moveTo(fhx + YupJ2.EPS_D, fhy);
             this.gp.lineTo(fhx, fhy);
             this.g2.setStroke(swFore);
             this.g2.setColor(foreClrAwt);
@@ -1385,7 +1290,18 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param img the image
     */
    @Override
-   public void image ( final PImage img ) { this.image(img, 0.0f, 0.0f); }
+   public void image ( final PImage img ) {
+
+      /*
+       * Skips straight to imageSource because CENTER is assumed to be the
+       * default.
+       */
+      final int w = img.width;
+      final int h = img.height;
+      final int wh = w / 2;
+      final int hh = h / 2;
+      this.imageSource(img, -wh, -hh, wh, hh, 0, 0, w, h);
+   }
 
    /**
     * Displays a PImage at a location. Uses the image's width and height as
@@ -1398,7 +1314,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void image ( final PImage img, final float x, final float y ) {
 
-      this.image(img, x, y, img.width, img.height);
+      this.image(img, ( int ) x, ( int ) y);
    }
 
    /**
@@ -1415,14 +1331,39 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void image ( final PImage img, final float x, final float y,
       final float u, final float v ) {
 
-      final boolean isImg = this.textureMode == PConstants.IMAGE;
-      this.image(img, x, y, u, v, 0, 0, isImg ? img.width : 1, isImg
-         ? img.height : 1);
+      this.image(img, ( int ) x, ( int ) y, ( int ) u, ( int ) v, 0, 0,
+         img.width, img.height);
+   }
+
+   public void image ( final PImage img, final float x0, final float y0,
+      final float x1, final float y1, final float uTl, final float vTl,
+      final float uBr, final float vBr ) {
+
+      final int w = img.width;
+      final int h = img.height;
+
+      final int x0i = ( int ) x0;
+      final int y0i = ( int ) y0;
+      final int x1i = ( int ) x1;
+      final int y1i = ( int ) y1;
+
+      /* Perform floor mod on integers instead. */
+      // final int u0 = ( int ) ( Utils.mod1(uTl) * w );
+      // final int v0 = ( int ) ( Utils.mod1(vTl) * h );
+      // final int u1 = ( int ) ( Utils.mod1(uBr) * w );
+      // final int v1 = ( int ) ( Utils.mod1(vBr) * h );
+
+      final int u0 = ( int ) ( uTl * w );
+      final int v0 = ( int ) ( vTl * h );
+      final int u1 = ( int ) ( uBr * w );
+      final int v1 = ( int ) ( vBr * h );
+
+      this.image(img, x0i, y0i, x1i, y1i, u0, v0, u1, v1);
+
    }
 
    /**
-    * Displays a PImage. The meaning of the first four parameters depends on
-    * imageMode.
+    * Displays a PImage.
     *
     * @param img the PImage
     * @param a   the first x coordinate
@@ -1439,67 +1380,144 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float c, final float d, final int u1, final int v1, final int u2,
       final int v2 ) {
 
-      if ( img.pixels == null || img.width < 2 || img.height < 2 ) { return; }
+      super.imageImpl(img, a, b, c, d, u1, v2, u2, v1);
 
-      float xTopLeft = 0.0f;
-      float yTopLeft = 0.0f;
-      float xBottomRight = 0.0f;
-      float yBottomRight = 0.0f;
-      float wHalf = 0.0f;
-      float hHalf = 0.0f;
+      // image(img, ( int ) a, ( int ) b, ( int ) c, ( int ) d, u1, v2, u2, v1);
+   }
 
+   /**
+    * Displays a PImage.
+    *
+    * @param img the PImage
+    * @param x0  the first x coordinate
+    * @param y0  the first y coordinate
+    *
+    * @see YupJ2#imageSource(PImage, int, int, int, int, int, int, int, int)
+    */
+   public void image ( final PImage img, final int x0, final int y0 ) {
+
+      /* Skips to imageSource; UV coordinates do not need to be wrapped. */
+
+      final int w = img.width;
+      final int h = img.height;
+
+      /* @formatter:off */
       switch ( this.imageMode ) {
-
          case CORNERS:
+            this.imageSource(img,
+               x0, y0, x0 + w, y0 + h,
+               0, 0, w, h);
+            break;
 
-            xTopLeft = Utils.min(a, c);
-            xBottomRight = Utils.max(a, c);
+         case CORNER:
+            this.imageSource(img,
+               x0, y0 - h, x0 + w,
+               y0, 0, 0, w, h);
+            break;
 
-            yTopLeft = Utils.max(b, d);
-            yBottomRight = Utils.min(b, d);
-
+         case RADIUS:
+            this.imageSource(img,
+               x0 - w, y0 - h, x0 + w, y0 + h,
+               0, 0, w, h);
             break;
 
          case CENTER:
+         default:
+            final int wh = w / 2;
+            final int hh = h / 2;
+            this.imageSource(img,
+               x0 - wh, y0 - hh, x0 + wh, y0 + hh,
+               0, 0, w, h);
+      }
+      /* @formatter:on */
+   }
 
-            wHalf = Utils.abs(c) * 0.5f;
-            hHalf = Utils.abs(d) * 0.5f;
+   /**
+    * Displays a PImage.
+    *
+    * @param img the PImage
+    * @param x0  the first x coordinate
+    * @param y0  the first y coordinate
+    * @param x1  the second x coordinate
+    * @param y1  the second y coordinate
+    *
+    * @see YupJ2#imageSource(PImage, int, int, int, int, int, int, int, int)
+    */
+   public void image ( final PImage img, final int x0, final int y0,
+      final int x1, final int y1 ) {
 
-            xTopLeft = a - wHalf;
-            xBottomRight = a + wHalf;
+      this.image(img, x0, y0, x1, y1, 0, 0, img.width, img.height);
+   }
 
-            yTopLeft = b + hHalf;
-            yBottomRight = b - hHalf;
+   /**
+    * Displays a PImage.
+    *
+    * @param img the PImage
+    * @param x0i the first x coordinate
+    * @param y0i the first y coordinate
+    * @param x1i the second x coordinate
+    * @param y1i the second y coordinate
+    * @param uTl the top left u coordinate
+    * @param vTl the top left v coordinate
+    * @param uBr the bottom right u coordinate
+    * @param vBr the bottom right v coordinate
+    *
+    * @see Math#floorMod(int, int)
+    * @see YupJ2#imageSource(PImage, int, int, int, int, int, int, int, int)
+    */
+   public void image ( final PImage img, final int x0i, final int y0i,
+      final int x1i, final int y1i, final int uTl, final int vTl, final int uBr,
+      final int vBr ) {
 
+      final int w1 = img.width + 1;
+      final int h1 = img.height + 1;
+      int wDisp = 0;
+      int hDisp = 0;
+
+      final int u0 = Math.floorMod(uTl, w1);
+      final int u1 = Math.floorMod(uBr, w1);
+      final int v0 = Math.floorMod(vTl, h1);
+      final int v1 = Math.floorMod(vBr, h1);
+
+      /* @formatter:off */
+      switch ( this.imageMode ) {
+         case CORNERS:
+
+            this.imageSource(img,
+               x0i, y0i, x1i, y1i,
+               u0, v0, u1, v1);
+            break;
+
+         case CORNER:
+            final int xdiff = x0i - x1i;
+            final int ydiff = y0i - y1i;
+            wDisp = xdiff < 0 ? -xdiff : xdiff;
+            hDisp = ydiff < 0 ? -ydiff : ydiff;
+            this.imageSource(img,
+               x0i, y0i - hDisp, x0i + wDisp, y0i,
+               u0, v0, u1, v1);
             break;
 
          case RADIUS:
 
-            wHalf = Utils.abs(c);
-            hHalf = Utils.abs(d);
-
-            xTopLeft = a - wHalf;
-            xBottomRight = a + wHalf;
-
-            yTopLeft = b + hHalf;
-            yBottomRight = b - hHalf;
-
+            wDisp = x1i < 1 ? 1 : x1i;
+            hDisp = y1i < 1 ? 1 : y1i;
+            this.imageSource(img,
+               x0i - wDisp, y0i - hDisp, x0i + wDisp, y0i + hDisp,
+               u0, v0, u1, v1);
             break;
 
-         case CORNER:
-
+         case CENTER:
          default:
 
-            xTopLeft = a;
-            xBottomRight = a + Utils.abs(c);
-
-            yTopLeft = b;
-            yBottomRight = b - Utils.abs(d);
+            wDisp = (x1i < 2 ? 2 : x1i) / 2;
+            hDisp = (y1i < 2 ? 2 : y1i) / 2;
+            this.imageSource(img,
+               x0i - wDisp, y0i - hDisp, x0i + wDisp, y0i + hDisp,
+               u0, v0, u1, v1);
 
       }
-
-      this.imageImpl(img, xTopLeft, yTopLeft, xBottomRight, yBottomRight, u1,
-         v1, u2, v2);
+      /* @formatter:on */
    }
 
    /**
@@ -1511,7 +1529,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void image ( final PImage img, final Vec2 coord ) {
 
-      this.image(img, coord.x, coord.y);
+      this.image(img, ( int ) coord.x, ( int ) coord.y);
    }
 
    /**
@@ -1528,145 +1546,29 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * A hack to work around the performance issues with
-    * {@link PGraphicsJava2D#image(PImage, float, float, float, float, int, int, int, int)}
-    * . Demotes the real numbers representing the image's coordinates to
-    * integers.
+    * Overrides the parent's image mode so as to not throw an exception.
     *
-    * @param img Processing image
-    * @param x1  the x coordinate of the first corner of the destination
-    *               rectangle.
-    * @param y1  the y coordinate of the first corner of the destination
-    *               rectangle.
-    * @param x2  the x coordinate of the second corner of the destination
-    *               rectangle.
-    * @param y2  the y coordinate of the second corner of the destination
-    *               rectangle.
+    * @param mode the image mode constant
     */
-   public void imageBasic ( final PImage img, final float x1, final float y1,
-      final float x2, final float y2 ) {
+   @Override
+   public void imageMode ( final int mode ) {
 
-      this.imageBasic(img, ( int ) x1, ( int ) y1, ( int ) x2, ( int ) y2, 0, 0,
-         img.width, img.height);
-   }
+      /*
+       * This has to be overridden, no matter which image modes are supported,
+       * because PGraphics handles an incorrect mode by throwing a run time
+       * exception.
+       */
 
-   /**
-    * A hack to work around the performance issues with
-    * {@link PGraphicsJava2D#image(PImage, float, float, float, float, int, int, int, int)}
-    * . Demotes the real numbers representing the image's coordinates to
-    * integers.
-    *
-    * @param img Processing image
-    * @param x1  the x coordinate of the first corner of the destination
-    *               rectangle.
-    * @param y1  the y coordinate of the first corner of the destination
-    *               rectangle.
-    * @param x2  the x coordinate of the second corner of the destination
-    *               rectangle.
-    * @param y2  the y coordinate of the second corner of the destination
-    *               rectangle.
-    * @param u1  the x coordinate of the first corner of the source rectangle.
-    * @param v1  the y coordinate of the first corner of the source rectangle.
-    * @param u2  the x coordinate of the second corner of the source
-    *               rectangle.
-    * @param v2  the y coordinate of the second corner of the source
-    *               rectangle.
-    */
-   public void imageBasic ( final PImage img, final float x1, final float y1,
-      final float x2, final float y2, final int u1, final int v1, final int u2,
-      final int v2 ) {
+      switch ( mode ) {
+         case CORNER:
+         case CORNERS:
+         case CENTER:
+         case RADIUS:
+            this.imageMode = mode;
+            break;
 
-      this.imageBasic(img, ( int ) x1, ( int ) y1, ( int ) x2, ( int ) y2, u1,
-         v1, u2, v2);
-   }
-
-   /**
-    * A hack to work around the performance issues with
-    * {@link PGraphicsJava2D#image(PImage, float, float, float, float, int, int, int, int)}
-    * .
-    *
-    * @param img Processing image
-    * @param x1  the x coordinate of the first corner of the destination
-    *               rectangle.
-    * @param y1  the y coordinate of the first corner of the destination
-    *               rectangle.
-    */
-   public void imageBasic ( final PImage img, final int x1, final int y1 ) {
-
-      final int w = img.width;
-      final int h = img.height;
-      this.imageBasic(img, x1, y1, x1 + w, y1 + h, 0, 0, w, h);
-   }
-
-   /**
-    * A hack to work around the performance issues with
-    * {@link PGraphicsJava2D#image(PImage, float, float, float, float, int, int, int, int)}
-    * .
-    *
-    * @param img Processing image
-    * @param x1  the x coordinate of the first corner of the destination
-    *               rectangle.
-    * @param y1  the y coordinate of the first corner of the destination
-    *               rectangle.
-    * @param x2  the x coordinate of the second corner of the destination
-    *               rectangle.
-    * @param y2  the y coordinate of the second corner of the destination
-    *               rectangle.
-    */
-   public void imageBasic ( final PImage img, final int x1, final int y1,
-      final int x2, final int y2 ) {
-
-      this.imageBasic(img, x1, y1, x2, y2, 0, 0, img.width, img.height);
-   }
-
-   /**
-    * A hack to work around the performance issues with
-    * {@link PGraphicsJava2D#image(PImage, float, float, float, float, int, int, int, int)}
-    * . Does the following:
-    * <ul>
-    * <li>Checks if either the width or height of the image is less than 1.
-    * Returns early if true.</li>
-    * <li>Attempts to get the {@link java.awt.Image } backing {@link PImage}
-    * via {@link PImage#getNative}.</li>
-    * <li>If the result is not <code>null</code>, acquires the
-    * {@link PImage#pixelDensity }.</li>
-    * <li>Calls
-    * {@link java.awt.Graphics2D#drawImage(Image, int, int, int, int, int, int, int, int, java.awt.image.ImageObserver) }.</li>
-    * <li>Multiplies the last four arguments by the pixel density.</li>
-    * </ul>
-    * This does not account for Processing's {@link PGraphics#imageMode},
-    * {@link PGraphics#textureMode} or any other Processing convenience not
-    * listed above.
-    *
-    * @param img Processing image
-    * @param x1  the x coordinate of the first corner of the destination
-    *               rectangle.
-    * @param y1  the y coordinate of the first corner of the destination
-    *               rectangle.
-    * @param x2  the x coordinate of the second corner of the destination
-    *               rectangle.
-    * @param y2  the y coordinate of the second corner of the destination
-    *               rectangle.
-    * @param u1  the x coordinate of the first corner of the source rectangle.
-    * @param v1  the y coordinate of the first corner of the source rectangle.
-    * @param u2  the x coordinate of the second corner of the source
-    *               rectangle.
-    * @param v2  the y coordinate of the second corner of the source
-    *               rectangle.
-    */
-   @Experimental
-   public void imageBasic ( final PImage img, final int x1, final int y1,
-      final int x2, final int y2, final int u1, final int v1, final int u2,
-      final int v2 ) {
-
-      if ( img.width < 1 || img.height < 1 ) { return; }
-
-      final Image imgNtv = ( Image ) img.getNative();
-
-      if ( imgNtv != null ) {
-         final int pd = img.pixelDensity;
-         this.g2.drawImage(imgNtv, x1, y1, x2, y2, u1 * pd, v2 * pd, u2 * pd, v1
-            * pd, ( ImageObserver ) null);
+         default:
+            this.imageMode = PConstants.CENTER;
       }
    }
 
@@ -1834,8 +1736,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void origin ( final float lineLength, final float sw,
       final int xColor, final int yColor ) {
 
-      final double vl = lineLength > IUtils.DEFAULT_EPSILON ? lineLength
-         : IUtils.DEFAULT_EPSILON;
+      final double vl = lineLength > YupJ2.EPS_D ? lineLength : YupJ2.EPS_D;
 
       this.pushStyle();
       this.setStrokeAwt(PConstants.ROUND, PConstants.ROUND, sw);
@@ -1886,7 +1787,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             this.gp.reset();
             this.gp.moveTo(xd, yd);
-            this.gp.lineTo(xd + PConstants.EPSILON, yd);
+            this.gp.lineTo(xd + YupJ2.EPS_D, yd);
             this.g2.setColor(this.strokeColorObject);
             this.g2.draw(this.gp);
 
@@ -1898,7 +1799,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             this.gp.reset();
             this.gp.moveTo(xd, yd);
-            this.gp.lineTo(xd + PConstants.EPSILON, yd);
+            this.gp.lineTo(xd + YupJ2.EPS_D, yd);
             this.g2.setColor(this.strokeColorObject);
             this.g2.draw(this.gp);
 
@@ -1937,30 +1838,35 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * <code>[ scaleX, shearX, translateX,<br>
     * shearY, scaleY, translateY ]</code>
     *
-    * @param places number of decimal places
+    * @param p number of decimal places
     */
-   public void printMatrix ( final int places ) {
+   public void printMatrix ( final int p ) {
 
-      /* @formatter:off */
       final AffineTransform tr = this.g2.getTransform();
-      System.out.println(new StringBuilder(320)
-            .append('\n').append('[').append(' ')
-            .append(Utils.toFixed( ( float ) tr.getScaleX(), places))
-            .append(',').append(' ')
-            .append(Utils.toFixed( ( float ) tr.getShearX(), places))
-            .append(',').append(' ')
-            .append(Utils.toFixed( ( float ) tr.getTranslateX(), places))
-            .append(',').append(' ').append('\n')
-
-            .append(Utils.toFixed( ( float ) tr.getShearY(), places))
-            .append(',').append(' ')
-            .append(Utils.toFixed( ( float ) tr.getScaleY(), places))
-            .append(',').append(' ')
-            .append(Utils.toFixed( ( float ) tr.getTranslateY(), places))
-
-            .append(' ').append(']').append('\n')
-            .toString());
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder();
+      sb.append('\n');
+      sb.append('[');
+      sb.append(' ');
+      sb.append(Utils.toFixed(( float ) tr.getScaleX(), p));
+      sb.append(',');
+      sb.append(' ');
+      sb.append(Utils.toFixed(( float ) tr.getShearX(), p));
+      sb.append(',');
+      sb.append(' ');
+      sb.append(Utils.toFixed(( float ) tr.getTranslateX(), p));
+      sb.append(',');
+      sb.append(' ');
+      sb.append('\n');
+      sb.append(Utils.toFixed(( float ) tr.getShearY(), p));
+      sb.append(',');
+      sb.append(' ');
+      sb.append(Utils.toFixed(( float ) tr.getScaleY(), p));
+      sb.append(',');
+      sb.append(' ').append(Utils.toFixed(( float ) tr.getTranslateY(), p));
+      sb.append(' ');
+      sb.append(']');
+      sb.append('\n');
+      System.out.println(sb.toString());
    }
 
    /**
@@ -2044,7 +1950,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.strokeWeight(oWeight);
       this.gp.reset();
       this.gp.moveTo(xod, yod);
-      this.gp.lineTo(xod + PConstants.EPSILON, yod);
+      this.gp.lineTo(xod + YupJ2.EPS_D, yod);
       this.g2.setColor(this.strokeColorObject);
       this.g2.draw(this.gp);
 
@@ -2066,7 +1972,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          this.strokeWeight(dWeight);
          this.gp.reset();
          this.gp.moveTo(dx, dy);
-         this.gp.lineTo(dx + PConstants.EPSILON, dy);
+         this.gp.lineTo(dx + YupJ2.EPS_D, dy);
          this.g2.draw(this.gp);
       }
 
@@ -2102,8 +2008,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          case CORNER:
 
-            w = Utils.abs(c);
-            h = Utils.abs(d);
+            w = Math.abs(c);
+            h = Math.abs(d);
 
             x0 = a;
             y0 = b - h;
@@ -2114,18 +2020,18 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          case CORNERS:
 
-            x0 = Utils.min(a, c);
-            x1 = Utils.max(a, c);
+            x0 = Math.min(a, c);
+            x1 = Math.max(a, c);
 
-            y0 = Utils.min(b, d);
-            y1 = Utils.max(b, d);
+            y0 = Math.min(b, d);
+            y1 = Math.max(b, d);
 
             break;
 
          case RADIUS:
 
-            w = Utils.abs(c);
-            h = Utils.abs(d);
+            w = Math.abs(c);
+            h = Math.abs(d);
 
             x0 = a - w;
             x1 = a + w;
@@ -2137,8 +2043,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          case CENTER:
 
          default:
-            w = Utils.abs(c) * 0.5d;
-            h = Utils.abs(d) * 0.5d;
+            w = Math.abs(c) * 0.5d;
+            h = Math.abs(d) * 0.5d;
 
             x0 = a - w;
             x1 = a + w;
@@ -3066,6 +2972,74 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * Tint is not supported by this renderer.
+    *
+    * @param gray the brightness
+    */
+   @Override
+   public void tint ( final float gray ) { PApplet.showMissingWarning("tint"); }
+
+   /**
+    * Tint is not supported by this renderer.
+    *
+    * @param gray  the brightness
+    * @param alpha the alpha channel
+    */
+   @Override
+   public void tint ( final float gray, final float alpha ) {
+
+      PApplet.showMissingWarning("tint");
+   }
+
+   /**
+    * Tint is not supported by this renderer.
+    *
+    * @param v1 the first value
+    * @param v2 the second value
+    * @param v3 the third value
+    */
+   @Override
+   public void tint ( final float v1, final float v2, final float v3 ) {
+
+      PApplet.showMissingWarning("tint");
+   }
+
+   /**
+    * Tint is not supported by this renderer.
+    *
+    * @param v1    the first value
+    * @param v2    the second value
+    * @param v3    the third value
+    * @param alpha the alpha channel
+    */
+   @Override
+   public void tint ( final float v1, final float v2, final float v3,
+      final float alpha ) {
+
+      PApplet.showMissingWarning("tint");
+   }
+
+   /**
+    * Tint is not supported by this renderer.
+    *
+    * @param rgb the color in hexadecimal
+    */
+   @Override
+   public void tint ( final int rgb ) { PApplet.showMissingWarning("tint"); }
+
+   /**
+    * Tint is not supported by this renderer.
+    *
+    * @param rgb   the color in hexadecimal
+    * @param alpha the alpha channel
+    */
+   @Override
+   public void tint ( final int rgb, final float alpha ) {
+
+      PApplet.showMissingWarning("tint");
+   }
+
+   /**
     * Returns the string representation of this renderer.
     *
     * @return the string
@@ -3109,7 +3083,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             this.g2.rotate(angle);
             this.g2.scale(dim.x, dim.y);
             this.g2.translate(loc.x, loc.y);
-
             return;
 
          case RTS:
@@ -3117,7 +3090,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             this.g2.rotate(angle);
             this.g2.translate(loc.x, loc.y);
             this.g2.scale(dim.x, dim.y);
-
             return;
 
          case SRT:
@@ -3125,7 +3097,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             this.g2.scale(dim.x, dim.y);
             this.g2.rotate(angle);
             this.g2.translate(loc.x, loc.y);
-
             return;
 
          case STR:
@@ -3133,7 +3104,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             this.g2.scale(dim.x, dim.y);
             this.g2.translate(loc.x, loc.y);
             this.g2.rotate(angle);
-
             return;
 
          case TSR:
@@ -3141,26 +3111,66 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             this.g2.translate(loc.x, loc.y);
             this.g2.scale(dim.x, dim.y);
             this.g2.rotate(angle);
+            return;
 
+         case R:
+
+            this.g2.rotate(angle);
+            return;
+
+         case RS:
+
+            this.g2.rotate(angle);
+            this.g2.scale(dim.x, dim.y);
+            return;
+
+         case RT:
+
+            this.g2.rotate(angle);
+            this.g2.translate(loc.x, loc.y);
+            return;
+
+         case S:
+
+            this.g2.scale(dim.x, dim.y);
+            return;
+
+         case SR:
+
+            this.g2.scale(dim.x, dim.y);
+            this.g2.rotate(angle);
+            return;
+
+         case ST:
+
+            this.g2.scale(dim.x, dim.y);
+            this.g2.translate(loc.x, loc.y);
+            return;
+
+         case T:
+
+            this.g2.translate(loc.x, loc.y);
+            return;
+
+         case TR:
+
+            this.g2.translate(loc.x, loc.y);
+            this.g2.rotate(angle);
+            return;
+
+         case TS:
+
+            this.g2.translate(loc.x, loc.y);
+            this.g2.scale(dim.x, dim.y);
             return;
 
          case TRS:
-         case R:
-         case RS:
-         case RT:
-         case S:
-         case SR:
-         case ST:
-         case T:
-         case TR:
-         case TS:
 
          default:
 
             this.g2.translate(loc.x, loc.y);
             this.g2.rotate(angle);
             this.g2.scale(dim.x, dim.y);
-
             return;
       }
    }
@@ -3265,10 +3275,24 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * whether the "Float" version is used or not. So if nothing else, using
        * doubles spares (float) casts.
        */
-      final double a = 1.0d - Utils.mod1(startAngle * IUtils.ONE_TAU_D);
-      final double b = 1.0d - Utils.mod1(stopAngle * IUtils.ONE_TAU_D);
+      // final double a = 1.0d - Utils.mod1(startAngle * IUtils.ONE_TAU_D);
+      // final double b = 1.0d - Utils.mod1(stopAngle * IUtils.ONE_TAU_D);
+      // final double c = 360.0d * b;
+      // final double d = 360.0d * Utils.mod1(a - b);
+
+      final double aNorm = startAngle * IUtils.ONE_TAU_D;
+      final double a = 1.0d - ( aNorm > 0.0d ? aNorm - ( int ) aNorm : aNorm
+         < 0.0d ? aNorm - ( ( int ) aNorm - 1.0d ) : 0.0d );
+
+      final double bNorm = stopAngle * IUtils.ONE_TAU_D;
+      final double b = 1.0d - ( bNorm > 0.0d ? bNorm - ( int ) bNorm : bNorm
+         < 0.0d ? bNorm - ( ( int ) bNorm - 1.0d ) : 0.0d );
+
       final double c = 360.0d * b;
-      final double d = 360.0d * Utils.mod1(a - b);
+
+      final double abSub = a - b;
+      final double d = abSub > 0.0d ? 360.0d * ( abSub - ( int ) abSub ) : abSub
+         < 0.0d ? 360.0d * ( abSub - ( ( int ) abSub - 1.0d ) ) : 0.0d;
 
       int fillMode = Arc2D.PIE;
       int strokeMode = Arc2D.OPEN;
@@ -3295,14 +3319,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             fillMode = Arc2D.OPEN;
       }
 
+      final double xd = x;
+      final double yd = y;
+      final double wd = w;
+      final double hd = h;
+
       if ( this.fill ) {
-         this.arc.setArc(x, y, w, h, c, d, fillMode);
+         this.arc.setArc(xd, yd, wd, hd, c, d, fillMode);
          this.g2.setColor(this.fillColorObject);
          this.g2.fill(this.arc);
       }
 
       if ( this.stroke ) {
-         this.arc.setArc(x, y, w, h, c, d, strokeMode);
+         this.arc.setArc(xd, yd, wd, hd, c, d, strokeMode);
          this.g2.setColor(this.strokeColorObject);
          this.g2.draw(this.arc);
       }
@@ -3570,6 +3599,69 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * A hack to work around the performance issues with
+    * {@link PGraphicsJava2D#image(PImage, float, float, float, float, int, int, int, int)}
+    * . Does the following:
+    * <ul>
+    * <li>Checks if either the width or height of the image is less than 1.
+    * Returns early if true.</li>
+    * <li>Attempts to get the {@link java.awt.Image } backing {@link PImage}
+    * via {@link PImage#getNative}.</li>
+    * <li>If the result is not <code>null</code>, acquires the
+    * {@link PImage#pixelDensity }.</li>
+    * <li>Calls
+    * {@link java.awt.Graphics2D#drawImage(Image, int, int, int, int, int, int, int, int, java.awt.image.ImageObserver) }.</li>
+    * <li>Multiplies the last four arguments by the pixel density.</li>
+    * </ul>
+    * This does not account for Processing's {@link PGraphics#imageMode},
+    * {@link PGraphics#textureMode} or any other Processing convenience not
+    * listed above.
+    *
+    * @param img Processing image
+    * @param x0  the x coordinate of the first corner of the destination
+    *               rectangle.
+    * @param y0  the y coordinate of the first corner of the destination
+    *               rectangle.
+    * @param x1  the x coordinate of the second corner of the destination
+    *               rectangle.
+    * @param y1  the y coordinate of the second corner of the destination
+    *               rectangle.
+    * @param uTl the x coordinate of the first corner of the source rectangle.
+    * @param vTl the y coordinate of the first corner of the source rectangle.
+    * @param uBr the x coordinate of the second corner of the source
+    *               rectangle.
+    * @param vBr the y coordinate of the second corner of the source
+    *               rectangle.
+    */
+   protected void imageSource ( final PImage img, final int x0, final int y0,
+      final int x1, final int y1, final int uTl, final int vTl, final int uBr,
+      final int vBr ) {
+
+      final int pw = img.pixelWidth;
+      final int ph = img.pixelHeight;
+      if ( pw < 2 || ph < 2 ) { return; }
+
+      img.loadPixels();
+      final int type = img.format == PConstants.RGB ? BufferedImage.TYPE_INT_RGB
+         : BufferedImage.TYPE_INT_ARGB;
+
+      /* This is a bottleneck. */
+      final BufferedImage imgNtv = new BufferedImage(pw, ph, type);
+      final WritableRaster wr = imgNtv.getRaster();
+      wr.setDataElements(0, 0, pw, ph, img.pixels);
+
+      /* @formatter:off */
+      final int pd = img.pixelDensity;
+      final int h = img.height;
+      this.g2.drawImage(imgNtv,
+         x0, y0, x1, y1,
+         uTl * pd, ( h - vTl ) * pd,
+         uBr * pd, ( h - vBr ) * pd,
+         ( ImageObserver ) null);
+      /* @formatter:on */
+   }
+
+   /**
     * The rounded corner rectangle implementation. The meaning of the first
     * four parameters depends on rectMode.
     *
@@ -3647,10 +3739,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       }
 
       final double limit = Math.min(w, h) * 0.5d;
-      final double rTld = Utils.clamp(rTl, 0.000001d, limit);
-      final double rTrd = Utils.clamp(rTr, 0.000001d, limit);
-      final double rBrd = Utils.clamp(rBr, 0.000001d, limit);
-      final double rBld = Utils.clamp(rBl, 0.000001d, limit);
+      final double rTld = Utils.clamp(rTl, YupJ2.EPS_D, limit);
+      final double rTrd = Utils.clamp(rTr, YupJ2.EPS_D, limit);
+      final double rBrd = Utils.clamp(rBr, YupJ2.EPS_D, limit);
+      final double rBld = Utils.clamp(rBl, YupJ2.EPS_D, limit);
 
       this.gp.reset();
       this.gp.moveTo(x2 - rTrd, y1);
@@ -3661,104 +3753,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.gp.quadTo(x1, y2, x1, y2 + rBld);
       this.gp.lineTo(x1, y1 - rTld);
       this.gp.quadTo(x1, y1, x1 + rTld, y1);
-      this.gp.closePath();
-      this.drawShapeSolid(this.gp);
-   }
-
-   /**
-    * The rounded corner rectangle implementation. The meaning of the first
-    * four parameters depends on rectMode.
-    *
-    * @param a   the first x parameter
-    * @param b   the first y parameter
-    * @param c   the second x parameter
-    * @param d   the second y parameter
-    * @param rTl the top-left corner rounding
-    * @param rTr the top-right corner rounding
-    * @param rBr the bottom-right corner rounding
-    * @param rBl the bottom-left corner rounding
-    */
-   @Deprecated
-   protected void rectImplf ( final float a, final float b, final float c,
-      final float d, final float rTl, final float rTr, final float rBr,
-      final float rBl ) {
-
-      float x1 = 0.0f;
-      float y1 = 0.0f;
-      float x2 = 0.0f;
-      float y2 = 0.0f;
-
-      float w = 0.0f;
-      float h = 0.0f;
-
-      switch ( this.rectMode ) {
-
-         case CORNER:
-
-            w = Utils.abs(c);
-            h = Utils.abs(d);
-
-            x1 = a;
-            y2 = b - h;
-            x2 = a + w;
-            y1 = b;
-
-            break;
-
-         case CORNERS:
-
-            w = Utils.abs(c - a);
-            h = Utils.abs(b - d);
-
-            x1 = Utils.min(a, c);
-            x2 = Utils.max(a, c);
-
-            y2 = Utils.min(b, d);
-            y1 = Utils.max(b, d);
-
-            break;
-
-         case RADIUS:
-
-            w = Utils.abs(c);
-            h = Utils.abs(d);
-
-            x1 = a - w;
-            x2 = a + w;
-            y1 = b + h;
-            y2 = b - h;
-
-            break;
-
-         case CENTER:
-
-         default:
-
-            w = Utils.abs(c);
-            h = Utils.abs(d);
-
-            x1 = a - w * 0.5f;
-            x2 = a + w * 0.5f;
-            y1 = b + h * 0.5f;
-            y2 = b - h * 0.5f;
-      }
-
-      final float limit = Utils.min(w, h) * 0.5f;
-
-      final float rTlc = Utils.clamp(rTl, IUtils.DEFAULT_EPSILON, limit);
-      final float rTrc = Utils.clamp(rTr, IUtils.DEFAULT_EPSILON, limit);
-      final float rBrc = Utils.clamp(rBr, IUtils.DEFAULT_EPSILON, limit);
-      final float rBlc = Utils.clamp(rBl, IUtils.DEFAULT_EPSILON, limit);
-
-      this.gp.reset();
-      this.gp.moveTo(x2 - rTrc, y1);
-      this.gp.quadTo(x2, y1, x2, y1 - rTrc);
-      this.gp.lineTo(x2, y2 + rBrc);
-      this.gp.quadTo(x2, y2, x2 - rBrc, y2);
-      this.gp.lineTo(x1 + rBlc, y2);
-      this.gp.quadTo(x1, y2, x1, y2 + rBlc);
-      this.gp.lineTo(x1, y1 - rTlc);
-      this.gp.quadTo(x1, y1, x1 + rTlc, y1);
       this.gp.closePath();
       this.drawShapeSolid(this.gp);
    }
@@ -3874,8 +3868,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       final int oldImgMd = this.imageMode;
       this.imageMode = PConstants.CORNERS;
-
-      this.image(glyph, x1, y1, x2, y2, 0, 0, u, v);
+      this.imageImpl(glyph, x1, y1, x2, y2, 0, 0, u, v);
       this.imageMode = oldImgMd;
 
       // final int rgb = this.fillColor & 0x00ffffff;
@@ -3923,6 +3916,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          cursor += this.textWidth(c);
       }
    }
+
+   /**
+    * Tint is not supported by this renderer.
+    */
+   @Override
+   protected void tintFromCalc ( ) { PApplet.showMissingWarning("tint"); }
+
+   /**
+    * The floating point epsilon, cast to a double.
+    */
+   public static final double EPS_D = 0.000001d;
 
    /**
     * The path string for this renderer.

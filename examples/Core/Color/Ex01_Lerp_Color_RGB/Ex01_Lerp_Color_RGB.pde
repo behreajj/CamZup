@@ -1,18 +1,18 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-Yup2 graphics;
+YupJ2 graphics;
 
 color a = #007fff;
 color b = #ff007f;
 
 void settings() {
-  size(1024, 128, Yup2.PATH_STR);
+  size(1024, 128, YupJ2.PATH_STR);
 }
 
 void setup() {
   colorMode(RGB, 1.0);
-  graphics = (Yup2)getGraphics();
+  graphics = (YupJ2)getGraphics();
 }
 
 void mouseReleased() {

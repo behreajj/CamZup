@@ -3727,11 +3727,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       for ( int k = 0, i = 0; i < fsSrcLen; ++i ) {
          final int[][] fSrc = fsSrc[i];
          final int fSrcLen = fSrc.length;
+         final float fSrcLenf = fSrc.length;
          final int[][] fTrg = fsTrg[i];
 
          for ( int j = 0; j < vcount; ++j, ++k ) {
             final float step = offset + j * toStep;
-            final float tScaled = fSrcLen * Utils.mod1(step);
+            final float tScaled = fSrcLenf * Utils.mod1(step);
             final int tTrunc = ( int ) tScaled;
 
             final int[] a = fSrc[tTrunc];

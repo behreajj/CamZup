@@ -1140,6 +1140,7 @@ public interface IYup2 extends IUp {
     */
    static Vec2 mouse1s ( final PApplet parent, final Vec2 target ) {
 
+      // TODO: Consider wrapping rather than clamping.
       final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
       final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
 
@@ -1157,6 +1158,7 @@ public interface IYup2 extends IUp {
     */
    static Vec2 mouse1u ( final PApplet parent, final Vec2 target ) {
 
+      // TODO: Consider wrapping rather than clamping.
       final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
       final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
 
@@ -1179,17 +1181,15 @@ public interface IYup2 extends IUp {
     */
    static String svgBackground ( final IYup2 renderer ) {
 
-      /* @formatter:off */
-      return new StringBuilder(128)
-         .append("<rect id=\"background\" x=\"0\" y=\"0\" width=\"")
-         .append(renderer.getWidth())
-         .append("\" height=\"")
-         .append(renderer.getHeight())
-         .append("\" stroke=\"none\" fill=\"")
-         .append(Color.toHexWeb(renderer.getBackground()))
-         .append("\"></rect>")
-         .toString();
-      /* @formatter:on */
+      StringBuilder svgp = new StringBuilder(128);
+      svgp.append("<rect id=\"background\" x=\"0\" y=\"0\" width=\"");
+      svgp.append(renderer.getWidth());
+      svgp.append("\" height=\"");
+      svgp.append(renderer.getHeight());
+      svgp.append("\" stroke=\"none\" fill=\"");
+      svgp.append(Color.toHexWeb(renderer.getBackground()));
+      svgp.append("\"></rect>");
+      return svgp.toString();
    }
 
    /**
@@ -1202,25 +1202,23 @@ public interface IYup2 extends IUp {
     */
    static String svgCamera ( final IYup2 renderer ) {
 
-      /* @formatter:off */
-      return new StringBuilder(128)
-         .append("transform=\"translate(")
-         .append(Utils.toFixed(renderer.getWidth() * 0.5f, 6))
-         .append(',').append(' ')
-         .append(Utils.toFixed(renderer.getHeight() * 0.5f, 6))
-         .append(") scale(")
-         .append(Utils.toFixed(renderer.getZoomX(), 6))
-         .append(',').append(' ')
-         .append(Utils.toFixed(-renderer.getZoomY(), 6))
-         .append(") rotate(")
-         .append(Utils.toFixed(-renderer.getRoll() * IUtils.RAD_TO_DEG, 2))
-         .append(") translate(")
-         .append(Utils.toFixed(-renderer.getLocX(), 6))
-         .append(',').append(' ')
-         .append(Utils.toFixed(-renderer.getLocY(), 6))
-         .append(')').append('\"')
-         .toString();
-      /* @formatter:on */
+      StringBuilder svgp = new StringBuilder(128);
+      svgp.append("transform=\"translate(");
+      svgp.append(Utils.toFixed(renderer.getWidth() * 0.5f, 6));
+      svgp.append(',').append(' ');
+      svgp.append(Utils.toFixed(renderer.getHeight() * 0.5f, 6));
+      svgp.append(") scale(");
+      svgp.append(Utils.toFixed(renderer.getZoomX(), 6));
+      svgp.append(',').append(' ');
+      svgp.append(Utils.toFixed(-renderer.getZoomY(), 6));
+      svgp.append(") rotate(");
+      svgp.append(Utils.toFixed(-renderer.getRoll() * IUtils.RAD_TO_DEG, 2));
+      svgp.append(") translate(");
+      svgp.append(Utils.toFixed(-renderer.getLocX(), 6));
+      svgp.append(',').append(' ');
+      svgp.append(Utils.toFixed(-renderer.getLocY(), 6));
+      svgp.append(')').append('\"');
+      return svgp.toString();
    }
 
    /**
@@ -1241,23 +1239,21 @@ public interface IYup2 extends IUp {
       final String wStr = Integer.toString(w);
       final String hStr = Integer.toString(h);
 
-      /* @formatter:off */
-      return new StringBuilder(128)
-         .append("<svg ")
-         .append("xmlns=\"http://www.w3.org/2000/svg\" ")
-         .append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ")
-         .append("width=\"")
-         .append(wStr)
-         .append("\" height=\"")
-         .append(hStr)
-         .append("\" ")
-         .append("viewBox=\"0 0 ")
-         .append(wStr)
-         .append(' ')
-         .append(hStr)
-         .append("\">")
-         .toString();
-      /* @formatter:on */
+      StringBuilder svgp = new StringBuilder(128);
+      svgp.append("<svg ");
+      svgp.append("xmlns=\"http://www.w3.org/2000/svg\" ");
+      svgp.append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
+      svgp.append("width=\"");
+      svgp.append(wStr);
+      svgp.append("\" height=\"");
+      svgp.append(hStr);
+      svgp.append("\" ");
+      svgp.append("viewBox=\"0 0 ");
+      svgp.append(wStr);
+      svgp.append(' ');
+      svgp.append(hStr);
+      svgp.append("\">");
+      return svgp.toString();
    }
 
    /**

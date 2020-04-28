@@ -779,19 +779,18 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(96)
-         .append("{ x: ")
-         .append(Utils.toFixed(this.x, places))
-         .append(", y: ")
-         .append(Utils.toFixed(this.y, places))
-         .append(", z: ")
-         .append(Utils.toFixed(this.z, places))
-         .append(", w: ")
-         .append(Utils.toFixed(this.w, places))
-         .append(' ')
-         .append('}')
-         .toString();
+      final StringBuilder sb = new StringBuilder(96);
+      sb.append("{ x: ");
+      sb.append(Utils.toFixed(this.x, places));
+      sb.append(", y: ");
+      sb.append(Utils.toFixed(this.y, places));
+      sb.append(", z: ");
+      sb.append(Utils.toFixed(this.z, places));
+      sb.append(", w: ");
+      sb.append(Utils.toFixed(this.w, places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
       /* @formatter:on */
    }
 
@@ -2202,9 +2201,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
       for ( int i = 1; i < places; ++i ) {
          n *= 10;
       }
-      final float nInv = 1.0f / n;
-      return target.set(Utils.round(v.x * n) * nInv, Utils.round(v.y * n)
-         * nInv, Utils.round(v.z * n) * nInv, Utils.round(v.w * n) * nInv);
+      final float nf = n;
+      final float nInv = 1.0f / nf;
+      return target.set(Utils.round(v.x * nf) * nInv, Utils.round(v.y * nf)
+         * nInv, Utils.round(v.z * nf) * nInv, Utils.round(v.w * nf) * nInv);
    }
 
    /**
@@ -2235,8 +2235,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     */
    public static Vec4 sign ( final Vec4 v, final Vec4 target ) {
 
-      return target.set(Utils.sign(v.x), Utils.sign(v.y), Utils.sign(v.z), Utils
-         .sign(v.w));
+      /* float sign returns an integer; this is inlined to avoid cast. */
+      return target.set(v.x < -0.0f ? -1.0f : v.x > 0.0f ? 1.0f : 0.0f, v.y
+         < -0.0f ? -1.0f : v.y > 0.0f ? 1.0f : 0.0f, v.z < -0.0f ? -1.0f : v.z
+            > 0.0f ? 1.0f : 0.0f, v.w < -0.0f ? -1.0f : v.w > 0.0f ? 1.0f
+               : 0.0f);
    }
 
    /**

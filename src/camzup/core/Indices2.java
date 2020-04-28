@@ -177,9 +177,14 @@ class Indices2 implements Cloneable, Comparable < Indices2 > {
     */
    public String toString ( final int padding ) {
 
-      return new StringBuilder(64).append("{ v: ").append(Utils.toPadded(this.v,
-         padding)).append(", vt: ").append(Utils.toPadded(this.vt, padding))
-         .append(' ').append('}').toString();
+      StringBuilder sb = new StringBuilder(64);
+      sb.append("{ v: ");
+      sb.append(Utils.toPadded(this.v, padding));
+      sb.append(", vt: ");
+      sb.append(Utils.toPadded(this.vt, padding));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**

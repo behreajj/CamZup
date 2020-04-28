@@ -317,18 +317,16 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(256)
-         .append("{ name: \"")
-         .append(this.name)
-         .append("\", tint: ")
-         .append(this.tint.toString(places))
-         .append(", transform: ")
-         .append(this.transform.toString(places))
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(256);
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append("\", tint: ");
+      sb.append(this.tint.toString(places));
+      sb.append(", transform: ");
+      sb.append(this.transform.toString(places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
 }

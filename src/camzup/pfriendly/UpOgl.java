@@ -1141,6 +1141,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
+         case RADIUS:
+
+            this.vertexImpl(x1 - x2, y1 + y2, z, u1, v1);
+            this.vertexImpl(x1 + x2, y1 + y2, z, u2, v1);
+            this.vertexImpl(x1 + x2, y1 - y2, z, u2, v2);
+            this.vertexImpl(x1 - x2, y1 - y2, z, u1, v2);
+
+            break;
+
          case CENTER:
 
          default:
@@ -1157,6 +1166,33 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.endShape(PConstants.CLOSE);
       this.textureWrap(oldWrapMode);
       this.popStyle();
+   }
+
+   /**
+    * Overrides the parent's image mode so as to not throw an exception.
+    *
+    * @param mode the image mode constant
+    */
+   @Override
+   public void imageMode ( final int mode ) {
+
+      /*
+       * This has to be overridden, no matter which image modes are supported,
+       * because PGraphics handles an incorrect mode by throwing a run time
+       * exception.
+       */
+
+      switch ( mode ) {
+         case CORNER:
+         case CORNERS:
+         case CENTER:
+         case RADIUS:
+            this.imageMode = mode;
+            break;
+
+         default:
+            this.imageMode = PConstants.CENTER;
+      }
    }
 
    /**
@@ -1367,10 +1403,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * field of view, uses {@link IUp#DEFAULT_FOV}.
     */
    @Override
-   public void perspective ( ) {
-
-      this.perspective(IUp.DEFAULT_FOV);
-   }
+   public void perspective ( ) { this.perspective(IUp.DEFAULT_FOV); }
 
    /**
     * Sets the renderer projection to a perspective, where objects nearer to
@@ -1822,6 +1855,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void setSize ( final int width, final int height ) {
 
+      final float hf = height;
+
       this.width = width;
       this.height = height;
       this.updatePixelSize();
@@ -1832,10 +1867,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.defCameraFOV = IUp.DEFAULT_FOV;
       this.defCameraX = 0.0f;
       this.defCameraY = 0.0f;
-      this.defCameraZ = this.height * Utils.cot(this.defCameraFOV * 0.5f);
+      this.defCameraZ = hf * Utils.cot(this.defCameraFOV * 0.5f);
       this.defCameraNear = this.defCameraZ * 0.01f;
       this.defCameraFar = this.defCameraZ * 10.0f;
-      this.defCameraAspect = ( float ) this.width / ( float ) this.height;
+      this.defCameraAspect = this.width / hf;
 
       this.cameraFOV = this.defCameraFOV;
       this.cameraX = this.defCameraX;
@@ -2202,7 +2237,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.rotateZ(angle);
             this.scaleImpl(dim.x, dim.y, 1.0f);
             this.translateImpl(loc.x, loc.y, 0.0f);
-
             return;
 
          case RTS:
@@ -2210,7 +2244,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.rotateZ(angle);
             this.translateImpl(loc.x, loc.y, 0.0f);
             this.scaleImpl(dim.x, dim.y, 1.0f);
-
             return;
 
          case SRT:
@@ -2218,7 +2251,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.scaleImpl(dim.x, dim.y, 1.0f);
             this.rotateZ(angle);
             this.translateImpl(loc.x, loc.y, 0.0f);
-
             return;
 
          case STR:
@@ -2226,7 +2258,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.scaleImpl(dim.x, dim.y, 1.0f);
             this.translateImpl(loc.x, loc.y, 0.0f);
             this.rotateZ(angle);
-
             return;
 
          case TSR:
@@ -2234,26 +2265,65 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.translateImpl(loc.x, loc.y, 0.0f);
             this.scaleImpl(dim.x, dim.y, 1.0f);
             this.rotateZ(angle);
+            return;
 
+         case R:
+
+            this.rotateZ(angle);
+            return;
+
+         case RS:
+
+            this.rotateZ(angle);
+            this.scaleImpl(dim.x, dim.y, 1.0f);
+            return;
+
+         case RT:
+
+            this.rotateZ(angle);
+            this.translateImpl(loc.x, loc.y, 0.0f);
+            return;
+
+         case S:
+
+            this.scaleImpl(dim.x, dim.y, 1.0f);
+            return;
+
+         case SR:
+
+            this.scaleImpl(dim.x, dim.y, 1.0f);
+            this.rotateZ(angle);
+            return;
+
+         case ST:
+
+            this.scaleImpl(dim.x, dim.y, 1.0f);
+            this.translateImpl(loc.x, loc.y, 0.0f);
+            return;
+
+         case T:
+
+            this.translateImpl(loc.x, loc.y, 0.0f);
+            return;
+
+         case TR:
+
+            this.translateImpl(loc.x, loc.y, 0.0f);
+            this.rotateZ(angle);
+            return;
+
+         case TS:
+
+            this.translateImpl(loc.x, loc.y, 0.0f);
+            this.scaleImpl(dim.x, dim.y, 1.0f);
             return;
 
          case TRS:
-         case R:
-         case RS:
-         case RT:
-         case S:
-         case SR:
-         case ST:
-         case T:
-         case TR:
-         case TS:
-
          default:
 
             this.translateImpl(loc.x, loc.y, 0.0f);
             this.rotateZ(angle);
             this.scaleImpl(dim.x, dim.y, 1.0f);
-
             return;
       }
    }
@@ -3987,6 +4057,16 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          default:
 
       }
+   }
+
+   /**
+    * Temporarily disabled.
+    */
+   @Override
+   public boolean saveImpl ( String filename ) {
+
+      // TODO: Disabled for the time being.
+      return false;
    }
 
    /**

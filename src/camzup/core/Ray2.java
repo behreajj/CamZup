@@ -181,15 +181,13 @@ public class Ray2 extends Ray {
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(196)
-         .append("{ origin: ")
-         .append(this.origin.toString(places))
-         .append(", dir: ")
-         .append(this.dir.toString(places))
-         .append(' ').append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(196);
+      sb.append("{ origin: ");
+      sb.append(this.origin.toString(places));
+      sb.append(", dir: ");
+      sb.append(this.dir.toString(places));
+      sb.append(' ').append('}');
+      return sb.toString();
    }
 
    /**
@@ -230,16 +228,16 @@ public class Ray2 extends Ray {
 
       final Vec2 origin = ray.origin;
       final Vec2 dir = ray.dir;
-
-      final float dmSq = Vec2.magSq(dir);
-      if ( time <= 0.0f || dmSq == 0.0f ) { return target.set(origin); }
-
-      if ( Utils.approx(dmSq, 1.0f) ) {
-         return target.set(origin.x + dir.x * time, origin.y + dir.y * time);
+      final float dmsq = Vec2.magSq(dir);
+      if ( time > 0.0f && dmsq != 0.0f ) {
+         if ( Utils.approx(dmsq, 1.0f) ) {
+            return target.set(origin.x + dir.x * time, origin.y + dir.y * time);
+         } else {
+            final float tm = time * Utils.invSqrtUnchecked(dmsq);
+            return target.set(origin.x + dir.x * tm, origin.y + dir.y * tm);
+         }
       }
-
-      final float scalar = time * Utils.invSqrtUnchecked(dmSq);
-      return target.set(origin.x + dir.x * scalar, origin.y + dir.y * scalar);
+      return target.set(origin);
    }
 
    /**

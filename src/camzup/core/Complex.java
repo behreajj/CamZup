@@ -849,7 +849,10 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
     */
    public static Complex exp ( final Complex z, final Complex target ) {
 
-      return Complex.rect(( float ) Math.exp(z.real), z.imag, target);
+      final double rd = Math.exp(z.real);
+      final double phid = z.imag;
+      return target.set(( float ) ( rd * Math.cos(phid) ), ( float ) ( rd * Math
+         .sin(phid) ));
    }
 
    /**
@@ -916,7 +919,7 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
     * @return the logarithm
     *
     * @see Math#log(double)
-    * @see Complex#abs(Complex)
+    * @see Math#sqrt(double)
     * @see Math#atan2(double, double)
     */
    public static Complex log ( final Complex z, final Complex target ) {

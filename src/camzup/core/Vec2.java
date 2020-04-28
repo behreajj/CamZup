@@ -2893,8 +2893,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
       for ( int i = 1; i < places; ++i ) {
          n *= 10;
       }
-      final float nInv = 1.0f / n;
-      return target.set(Utils.round(v.x * n) * nInv, Utils.round(v.y * n)
+      final float nf = n;
+      final float nInv = 1.0f / nf;
+      return target.set(Utils.round(v.x * nf) * nInv, Utils.round(v.y * nf)
          * nInv);
    }
 
@@ -2925,7 +2926,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public static Vec2 sign ( final Vec2 v, final Vec2 target ) {
 
-      return target.set(Utils.sign(v.x), Utils.sign(v.y));
+      /* float sign returns an integer; this is inlined to avoid cast. */
+      return target.set(v.x < -0.0f ? -1.0f : v.x > 0.0f ? 1.0f : 0.0f, v.y
+         < -0.0f ? -1.0f : v.y > 0.0f ? 1.0f : 0.0f);
    }
 
    /**

@@ -293,7 +293,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       final float specular, final float clearcoat,
       final float clearcoatRough ) {
 
-      final int meshLen = this.meshes.size();
+      this.meshes.size();
       final boolean addVertGroups = true;
       final boolean includeNormals = true;
       final boolean includeUvs = true;
@@ -312,16 +312,10 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       pyCd.append(this.transform.toBlenderCode());
       pyCd.append(", \"meshes\": [");
 
-      int meshIndex = 0;
-      final int meshLast = meshLen - 1;
       final Iterator < Mesh3 > meshItr = this.meshes.iterator();
       while ( meshItr.hasNext() ) {
          pyCd.append(meshItr.next().toBlenderCode(includeUvs, includeNormals));
-         if ( meshIndex < meshLast ) {
-            pyCd.append(',');
-            pyCd.append(' ');
-         }
-         meshIndex++;
+         if ( meshItr.hasNext() ) { pyCd.append(',').append(' '); }
       }
 
       pyCd.append("], \"materials\": [");

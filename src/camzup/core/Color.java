@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 /**
- * A mutable, extensible class. Supports RGBA and HSBA color spaces.
+ * A mutable, extensible color class. Supports RGBA and HSBA color spaces.
  * Supports conversion to and from integers where color channels are in the
  * format 0xAARRGGBB.
  */
@@ -1383,6 +1383,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
       try {
          String longform = "";
          int cint = 0xffffffff;
+
+         // This doesn't seem like it's worth optimizing...
          // Pattern p = Pattern.compile("^(.)(.)(.)$");
 
          switch ( len ) {
@@ -1465,8 +1467,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
       final Color target ) {
 
       /*
-       * Switch casing with strings is extraordinarily inefficient. Decompiled
-       * code uses the string's hash code instead.
+       * Switch casing with strings is messy. Decompiled code uses the string's
+       * hash code instead. See Stack Overflow for discussions on how stable
+       * Strings are across platforms.
        */
 
       final int hsh = keyword.toLowerCase().trim().hashCode();

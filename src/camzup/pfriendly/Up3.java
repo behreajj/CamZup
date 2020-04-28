@@ -1199,7 +1199,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
             this.rotate(tr3Rot);
             this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
             this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
-
             return;
 
          case RTS:
@@ -1207,7 +1206,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
             this.rotate(tr3Rot);
             this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
             this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
-
             return;
 
          case SRT:
@@ -1215,7 +1213,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
             this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
             this.rotate(tr3Rot);
             this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
-
             return;
 
          case STR:
@@ -1223,7 +1220,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
             this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
             this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
             this.rotate(tr3Rot);
-
             return;
 
          case TSR:
@@ -1231,26 +1227,65 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
             this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
             this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
             this.rotate(tr3Rot);
+            return;
 
+         case R:
+
+            this.rotate(tr3Rot);
+            return;
+
+         case RS:
+
+            this.rotate(tr3Rot);
+            this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
+            return;
+
+         case RT:
+
+            this.rotate(tr3Rot);
+            this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
+            return;
+
+         case S:
+
+            this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
+            return;
+
+         case SR:
+
+            this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
+            this.rotate(tr3Rot);
+            return;
+
+         case ST:
+
+            this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
+            this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
+            return;
+
+         case T:
+
+            this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
+            return;
+
+         case TR:
+
+            this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
+            this.rotate(tr3Rot);
+            return;
+
+         case TS:
+
+            this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
+            this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
             return;
 
          case TRS:
-         case R:
-         case RS:
-         case RT:
-         case S:
-         case SR:
-         case ST:
-         case T:
-         case TR:
-         case TS:
-
          default:
 
             this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
             this.rotate(tr3Rot);
             this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
-
             return;
       }
    }
