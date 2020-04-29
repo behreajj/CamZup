@@ -469,7 +469,7 @@ public class Mat4 extends Matrix {
 
    /**
     * Returns a new matrix with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a - b</code> .
+    * instance. For interoperability with Kotlin: <code>a + b</code> .
     * <em>Does not mutate the matrix in place</em>.
     *
     * @param b the right operand
@@ -842,9 +842,13 @@ public class Mat4 extends Matrix {
    @Override
    public float[] toArray ( ) {
 
-      return new float[] { this.m00, this.m01, this.m02, this.m03, this.m10,
-         this.m11, this.m12, this.m13, this.m20, this.m21, this.m22, this.m23,
+      /* @formatter:off */
+      return new float[] {
+         this.m00, this.m01, this.m02, this.m03,
+         this.m10, this.m11, this.m12, this.m13,
+         this.m20, this.m21, this.m22, this.m23,
          this.m30, this.m31, this.m32, this.m33 };
+      /* @formatter:on */
    }
 
    /**
@@ -1024,10 +1028,13 @@ public class Mat4 extends Matrix {
     */
    public static Mat4 add ( final Mat4 a, final Mat4 b, final Mat4 target ) {
 
-      return target.set(a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02, a.m03
-         + b.m03, a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12, a.m13 + b.m13,
-         a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22, a.m23 + b.m23, a.m30
-            + b.m30, a.m31 + b.m31, a.m32 + b.m32, a.m33 + b.m33);
+      /* @formatter:off */
+      return target.set(
+         a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02, a.m03 + b.m03,
+         a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12, a.m13 + b.m13,
+         a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22, a.m23 + b.m23,
+         a.m30 + b.m30, a.m31 + b.m31, a.m32 + b.m32, a.m33 + b.m33);
+      /* @formatter:on */
    }
 
    /**
@@ -1326,10 +1333,13 @@ public class Mat4 extends Matrix {
       final float axaz = x * az;
       final float ayaz = y * az;
 
-      return target.set(cosa + x * ax, axay - sina * az, axaz + sina * ay, 0.0f,
-         axay + sina * az, cosa + y * ay, ayaz - sina * ax, 0.0f, axaz - sina
-            * ay, ayaz + sina * ax, cosa + z * az, 0.0f, 0.0f, 0.0f, 0.0f,
-         1.0f);
+      /* @formatter:off */
+      return target.set(
+            cosa + x * ax, axay - sina * az, axaz + sina * ay, 0.0f,
+         axay + sina * az,    cosa + y * ay, ayaz - sina * ax, 0.0f,
+         axaz - sina * ay, ayaz + sina * ax,    cosa + z * az, 0.0f,
+         0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1386,9 +1396,13 @@ public class Mat4 extends Matrix {
       final float wy2 = w * y2;
       final float wz2 = w * z2;
 
-      return target.set(1.0f - ysq2 - zsq2, xy2 - wz2, xz2 + wy2, 0.0f, xy2
-         + wz2, 1.0f - xsq2 - zsq2, yz2 - wx2, 0.0f, xz2 - wy2, yz2 + wx2, 1.0f
-            - xsq2 - ysq2, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      return target.set(
+         1.0f - ysq2 - zsq2,          xy2 - wz2,          xz2 + wy2, 0.0f,
+                  xy2 + wz2, 1.0f - xsq2 - zsq2,          yz2 - wx2, 0.0f,
+                  xz2 - wy2,          yz2 + wx2, 1.0f - xsq2 - ysq2, 0.0f,
+                       0.0f,               0.0f,               0.0f, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1614,9 +1628,13 @@ public class Mat4 extends Matrix {
       h = h != 0.0f ? 1.0f / h : 1.0f;
       d = d != 0.0f ? 1.0f / d : 1.0f;
 
-      return target.set(n2 * w, 0.0f, ( right + left ) * w, 0.0f, 0.0f, n2 * h,
-         ( top + bottom ) * h, 0.0f, 0.0f, 0.0f, ( far + near ) * -d, n2 * far
-            * -d, 0.0f, 0.0f, -1.0f, 0.0f);
+      /* @formatter:off */
+      return target.set(
+         n2 * w,   0.0f, ( right + left ) * w,          0.0f,
+           0.0f, n2 * h, ( top + bottom ) * h,          0.0f,
+           0.0f,   0.0f,  ( far + near ) * -d, n2 * far * -d,
+           0.0f,   0.0f,                -1.0f,          0.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1662,28 +1680,32 @@ public class Mat4 extends Matrix {
       final float b10 = m.m21 * m.m33 - m.m23 * m.m31;
       final float b11 = m.m22 * m.m33 - m.m23 * m.m32;
 
-      final float det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04
-         * b07 + b05 * b06;
-
-      if ( det == 0.0f ) { return target.reset(); }
-      final float detInv = 1.0f / det;
-
-      return target.set( ( m.m11 * b11 - m.m12 * b10 + m.m13 * b09 ) * detInv,
-         ( m.m02 * b10 - m.m01 * b11 - m.m03 * b09 ) * detInv, ( m.m31 * b05
-            - m.m32 * b04 + m.m33 * b03 ) * detInv, ( m.m22 * b04 - m.m21 * b05
-               - m.m23 * b03 ) * detInv, ( m.m12 * b08 - m.m10 * b11 - m.m13
-                  * b07 ) * detInv, ( m.m00 * b11 - m.m02 * b08 + m.m03 * b07 )
-                     * detInv, ( m.m32 * b02 - m.m30 * b05 - m.m33 * b01 )
-                        * detInv, ( m.m20 * b05 - m.m22 * b02 + m.m23 * b01 )
-                           * detInv, ( m.m10 * b10 - m.m11 * b08 + m.m13 * b06 )
-                              * detInv, ( m.m01 * b08 - m.m00 * b10 - m.m03
-                                 * b06 ) * detInv, ( m.m30 * b04 - m.m31 * b02
-                                    + m.m33 * b00 ) * detInv, ( m.m21 * b02
-                                       - m.m20 * b04 - m.m23 * b00 ) * detInv,
-         ( m.m11 * b07 - m.m10 * b09 - m.m12 * b06 ) * detInv, ( m.m00 * b09
-            - m.m01 * b07 + m.m02 * b06 ) * detInv, ( m.m31 * b01 - m.m30 * b03
-               - m.m32 * b00 ) * detInv, ( m.m20 * b03 - m.m21 * b01 + m.m22
-                  * b00 ) * detInv);
+      /* @formatter:off */
+      final float det = b00 * b11 - b01 * b10 +
+                        b02 * b09 + b03 * b08 -
+                        b04 * b07 + b05 * b06;
+      if ( det != 0.0f ) {
+         final float detInv = 1.0f / det;
+         return target.set(
+            ( m.m11 * b11 - m.m12 * b10 + m.m13 * b09 ) * detInv,
+            ( m.m02 * b10 - m.m01 * b11 - m.m03 * b09 ) * detInv,
+            ( m.m31 * b05 - m.m32 * b04 + m.m33 * b03 ) * detInv,
+            ( m.m22 * b04 - m.m21 * b05 - m.m23 * b03 ) * detInv,
+            ( m.m12 * b08 - m.m10 * b11 - m.m13 * b07 ) * detInv,
+            ( m.m00 * b11 - m.m02 * b08 + m.m03 * b07 ) * detInv,
+            ( m.m32 * b02 - m.m30 * b05 - m.m33 * b01 ) * detInv,
+            ( m.m20 * b05 - m.m22 * b02 + m.m23 * b01 ) * detInv,
+            ( m.m10 * b10 - m.m11 * b08 + m.m13 * b06 ) * detInv,
+            ( m.m01 * b08 - m.m00 * b10 - m.m03 * b06 ) * detInv,
+            ( m.m30 * b04 - m.m31 * b02 + m.m33 * b00 ) * detInv,
+            ( m.m21 * b02 - m.m20 * b04 - m.m23 * b00 ) * detInv,
+            ( m.m11 * b07 - m.m10 * b09 - m.m12 * b06 ) * detInv,
+            ( m.m00 * b09 - m.m01 * b07 + m.m02 * b06 ) * detInv,
+            ( m.m31 * b01 - m.m30 * b03 - m.m32 * b00 ) * detInv,
+            ( m.m20 * b03 - m.m21 * b01 + m.m22 * b00 ) * detInv);
+      }
+      return target.reset();
+      /* @formatter:on */
    }
 
    /**
@@ -1715,9 +1737,13 @@ public class Mat4 extends Matrix {
     */
    public static Mat4 mul ( final float a, final Mat4 b, final Mat4 target ) {
 
-      return target.set(a * b.m00, a * b.m01, a * b.m02, a * b.m03, a * b.m10, a
-         * b.m11, a * b.m12, a * b.m13, a * b.m20, a * b.m21, a * b.m22, a
-            * b.m23, a * b.m30, a * b.m31, a * b.m32, a * b.m33);
+      /* @formatter:off */
+      return target.set(
+         a * b.m00, a * b.m01, a * b.m02, a * b.m03,
+         a * b.m10, a * b.m11, a * b.m12, a * b.m13,
+         a * b.m20, a * b.m21, a * b.m22, a * b.m23,
+         a * b.m30, a * b.m31, a * b.m32, a * b.m33);
+      /* @formatter:on */
    }
 
    /**
@@ -1732,9 +1758,13 @@ public class Mat4 extends Matrix {
     */
    public static Mat4 mul ( final Mat4 a, final float b, final Mat4 target ) {
 
-      return target.set(a.m00 * b, a.m01 * b, a.m02 * b, a.m03 * b, a.m10 * b,
-         a.m11 * b, a.m12 * b, a.m13 * b, a.m20 * b, a.m21 * b, a.m22 * b, a.m23
-            * b, a.m30 * b, a.m31 * b, a.m32 * b, a.m33 * b);
+      /* @formatter:off */
+      return target.set(
+         a.m00 * b, a.m01 * b, a.m02 * b, a.m03 * b,
+         a.m10 * b, a.m11 * b, a.m12 * b, a.m13 * b,
+         a.m20 * b, a.m21 * b, a.m22 * b, a.m23 * b,
+         a.m30 * b, a.m31 * b, a.m32 * b, a.m33 * b);
+      /* @formatter:on */
    }
 
    /**
@@ -1748,25 +1778,28 @@ public class Mat4 extends Matrix {
     */
    public static Mat4 mul ( final Mat4 a, final Mat4 b, final Mat4 target ) {
 
-      return target.set(a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03
-         * b.m30, a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21 + a.m03 * b.m31,
-         a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22 + a.m03 * b.m32, a.m00
-            * b.m03 + a.m01 * b.m13 + a.m02 * b.m23 + a.m03 * b.m33,
+      /* @formatter:off */
+      return target.set(
+         a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03 * b.m30,
+         a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21 + a.m03 * b.m31,
+         a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22 + a.m03 * b.m32,
+         a.m00 * b.m03 + a.m01 * b.m13 + a.m02 * b.m23 + a.m03 * b.m33,
 
-         a.m10 * b.m00 + a.m11 * b.m10 + a.m12 * b.m20 + a.m13 * b.m30, a.m10
-            * b.m01 + a.m11 * b.m11 + a.m12 * b.m21 + a.m13 * b.m31, a.m10
-               * b.m02 + a.m11 * b.m12 + a.m12 * b.m22 + a.m13 * b.m32, a.m10
-                  * b.m03 + a.m11 * b.m13 + a.m12 * b.m23 + a.m13 * b.m33,
+         a.m10 * b.m00 + a.m11 * b.m10 + a.m12 * b.m20 + a.m13 * b.m30,
+         a.m10 * b.m01 + a.m11 * b.m11 + a.m12 * b.m21 + a.m13 * b.m31,
+         a.m10 * b.m02 + a.m11 * b.m12 + a.m12 * b.m22 + a.m13 * b.m32,
+         a.m10 * b.m03 + a.m11 * b.m13 + a.m12 * b.m23 + a.m13 * b.m33,
 
-         a.m20 * b.m00 + a.m21 * b.m10 + a.m22 * b.m20 + a.m23 * b.m30, a.m20
-            * b.m01 + a.m21 * b.m11 + a.m22 * b.m21 + a.m23 * b.m31, a.m20
-               * b.m02 + a.m21 * b.m12 + a.m22 * b.m22 + a.m23 * b.m32, a.m20
-                  * b.m03 + a.m21 * b.m13 + a.m22 * b.m23 + a.m23 * b.m33,
+         a.m20 * b.m00 + a.m21 * b.m10 + a.m22 * b.m20 + a.m23 * b.m30,
+         a.m20 * b.m01 + a.m21 * b.m11 + a.m22 * b.m21 + a.m23 * b.m31,
+         a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22 + a.m23 * b.m32,
+         a.m20 * b.m03 + a.m21 * b.m13 + a.m22 * b.m23 + a.m23 * b.m33,
 
-         a.m30 * b.m00 + a.m31 * b.m10 + a.m32 * b.m20 + a.m33 * b.m30, a.m30
-            * b.m01 + a.m31 * b.m11 + a.m32 * b.m21 + a.m33 * b.m31, a.m30
-               * b.m02 + a.m31 * b.m12 + a.m32 * b.m22 + a.m33 * b.m32, a.m30
-                  * b.m03 + a.m31 * b.m13 + a.m32 * b.m23 + a.m33 * b.m33);
+         a.m30 * b.m00 + a.m31 * b.m10 + a.m32 * b.m20 + a.m33 * b.m30,
+         a.m30 * b.m01 + a.m31 * b.m11 + a.m32 * b.m21 + a.m33 * b.m31,
+         a.m30 * b.m02 + a.m31 * b.m12 + a.m32 * b.m22 + a.m33 * b.m32,
+         a.m30 * b.m03 + a.m31 * b.m13 + a.m32 * b.m23 + a.m33 * b.m33);
+      /* @formatter:on */
    }
 
    /**
@@ -1783,61 +1816,82 @@ public class Mat4 extends Matrix {
    public static Mat4 mul ( final Mat4 a, final Mat4 b, final Mat4 c,
       final Mat4 target ) {
 
-      final float n00 = a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03
-         * b.m30;
-      final float n01 = a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21 + a.m03
-         * b.m31;
-      final float n02 = a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22 + a.m03
-         * b.m32;
-      final float n03 = a.m00 * b.m03 + a.m01 * b.m13 + a.m02 * b.m23 + a.m03
-         * b.m33;
+      /* @formatter:off */
+      final float n00 = a.m00 * b.m00 + a.m01 * b.m10 +
+                        a.m02 * b.m20 + a.m03 * b.m30;
+      final float n01 = a.m00 * b.m01 + a.m01 * b.m11 +
+                        a.m02 * b.m21 + a.m03 * b.m31;
+      final float n02 = a.m00 * b.m02 + a.m01 * b.m12 +
+                        a.m02 * b.m22 + a.m03 * b.m32;
+      final float n03 = a.m00 * b.m03 + a.m01 * b.m13 +
+                        a.m02 * b.m23 + a.m03 * b.m33;
 
-      final float n10 = a.m10 * b.m00 + a.m11 * b.m10 + a.m12 * b.m20 + a.m13
-         * b.m30;
-      final float n11 = a.m10 * b.m01 + a.m11 * b.m11 + a.m12 * b.m21 + a.m13
-         * b.m31;
-      final float n12 = a.m10 * b.m02 + a.m11 * b.m12 + a.m12 * b.m22 + a.m13
-         * b.m32;
-      final float n13 = a.m10 * b.m03 + a.m11 * b.m13 + a.m12 * b.m23 + a.m13
-         * b.m33;
+      final float n10 = a.m10 * b.m00 + a.m11 * b.m10 +
+                        a.m12 * b.m20 + a.m13 * b.m30;
+      final float n11 = a.m10 * b.m01 + a.m11 * b.m11 +
+                        a.m12 * b.m21 + a.m13 * b.m31;
+      final float n12 = a.m10 * b.m02 + a.m11 * b.m12 +
+                        a.m12 * b.m22 + a.m13 * b.m32;
+      final float n13 = a.m10 * b.m03 + a.m11 * b.m13 +
+                        a.m12 * b.m23 + a.m13 * b.m33;
 
-      final float n20 = a.m20 * b.m00 + a.m21 * b.m10 + a.m22 * b.m20 + a.m23
-         * b.m30;
-      final float n21 = a.m20 * b.m01 + a.m21 * b.m11 + a.m22 * b.m21 + a.m23
-         * b.m31;
-      final float n22 = a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22 + a.m23
-         * b.m32;
-      final float n23 = a.m20 * b.m03 + a.m21 * b.m13 + a.m22 * b.m23 + a.m23
-         * b.m33;
+      final float n20 = a.m20 * b.m00 + a.m21 * b.m10 +
+                        a.m22 * b.m20 + a.m23 * b.m30;
+      final float n21 = a.m20 * b.m01 + a.m21 * b.m11 +
+                        a.m22 * b.m21 + a.m23 * b.m31;
+      final float n22 = a.m20 * b.m02 + a.m21 * b.m12 +
+                        a.m22 * b.m22 + a.m23 * b.m32;
+      final float n23 = a.m20 * b.m03 + a.m21 * b.m13 +
+                        a.m22 * b.m23 + a.m23 * b.m33;
 
-      final float n30 = a.m30 * b.m00 + a.m31 * b.m10 + a.m32 * b.m20 + a.m33
-         * b.m30;
-      final float n31 = a.m30 * b.m01 + a.m31 * b.m11 + a.m32 * b.m21 + a.m33
-         * b.m31;
-      final float n32 = a.m30 * b.m02 + a.m31 * b.m12 + a.m32 * b.m22 + a.m33
-         * b.m32;
-      final float n33 = a.m30 * b.m03 + a.m31 * b.m13 + a.m32 * b.m23 + a.m33
-         * b.m33;
+      final float n30 = a.m30 * b.m00 + a.m31 * b.m10 +
+                        a.m32 * b.m20 + a.m33 * b.m30;
+      final float n31 = a.m30 * b.m01 + a.m31 * b.m11 +
+                        a.m32 * b.m21 + a.m33 * b.m31;
+      final float n32 = a.m30 * b.m02 + a.m31 * b.m12 +
+                        a.m32 * b.m22 + a.m33 * b.m32;
+      final float n33 = a.m30 * b.m03 + a.m31 * b.m13 +
+                        a.m32 * b.m23 + a.m33 * b.m33;
 
-      return target.set(n00 * c.m00 + n01 * c.m10 + n02 * c.m20 + n03 * c.m30,
-         n00 * c.m01 + n01 * c.m11 + n02 * c.m21 + n03 * c.m31, n00 * c.m02
-            + n01 * c.m12 + n02 * c.m22 + n03 * c.m32, n00 * c.m03 + n01 * c.m13
-               + n02 * c.m23 + n03 * c.m33,
+      return target.set(
+         n00 * c.m00 + n01 * c.m10 + n02 * c.m20 + n03 * c.m30,
+         n00 * c.m01 + n01 * c.m11 + n02 * c.m21 + n03 * c.m31,
+         n00 * c.m02 + n01 * c.m12 + n02 * c.m22 + n03 * c.m32,
+         n00 * c.m03 + n01 * c.m13 + n02 * c.m23 + n03 * c.m33,
 
-         n10 * c.m00 + n11 * c.m10 + n12 * c.m20 + n13 * c.m30, n10 * c.m01
-            + n11 * c.m11 + n12 * c.m21 + n13 * c.m31, n10 * c.m02 + n11 * c.m12
-               + n12 * c.m22 + n13 * c.m32, n10 * c.m03 + n11 * c.m13 + n12
-                  * c.m23 + n13 * c.m33,
+         n10 * c.m00 + n11 * c.m10 + n12 * c.m20 + n13 * c.m30,
+         n10 * c.m01 + n11 * c.m11 + n12 * c.m21 + n13 * c.m31,
+         n10 * c.m02 + n11 * c.m12 + n12 * c.m22 + n13 * c.m32,
+         n10 * c.m03 + n11 * c.m13 + n12 * c.m23 + n13 * c.m33,
 
-         n20 * c.m00 + n21 * c.m10 + n22 * c.m20 + n23 * c.m30, n20 * c.m01
-            + n21 * c.m11 + n22 * c.m21 + n23 * c.m31, n20 * c.m02 + n21 * c.m12
-               + n22 * c.m22 + n23 * c.m32, n20 * c.m03 + n21 * c.m13 + n22
-                  * c.m23 + n23 * c.m33,
+         n20 * c.m00 + n21 * c.m10 + n22 * c.m20 + n23 * c.m30,
+         n20 * c.m01 + n21 * c.m11 + n22 * c.m21 + n23 * c.m31,
+         n20 * c.m02 + n21 * c.m12 + n22 * c.m22 + n23 * c.m32,
+         n20 * c.m03 + n21 * c.m13 + n22 * c.m23 + n23 * c.m33,
 
-         n30 * c.m00 + n31 * c.m10 + n32 * c.m20 + n33 * c.m30, n30 * c.m01
-            + n31 * c.m11 + n32 * c.m21 + n33 * c.m31, n30 * c.m02 + n31 * c.m12
-               + n32 * c.m22 + n33 * c.m32, n30 * c.m03 + n31 * c.m13 + n32
-                  * c.m23 + n33 * c.m33);
+         n30 * c.m00 + n31 * c.m10 + n32 * c.m20 + n33 * c.m30,
+         n30 * c.m01 + n31 * c.m11 + n32 * c.m21 + n33 * c.m31,
+         n30 * c.m02 + n31 * c.m12 + n32 * c.m22 + n33 * c.m32,
+         n30 * c.m03 + n31 * c.m13 + n32 * c.m23 + n33 * c.m33);
+      /* @formatter:on */
+   }
+
+   /**
+    * Multiplies a matrix and a quaternion. Stores the quaternion's matrix
+    * representation in an output variable.
+    * 
+    * @param a      matrix
+    * @param b      quaternion
+    * @param target the output matrix
+    * @param bm     the matrix conversion
+    * 
+    * @return the product
+    */
+   public static Mat4 mul ( final Mat4 a, final Quaternion b, final Mat4 target,
+      final Mat4 bm ) {
+
+      Mat4.fromRotation(b, bm);
+      return Mat4.mul(a, bm, target);
    }
 
    /**
@@ -1851,10 +1905,31 @@ public class Mat4 extends Matrix {
     */
    public static Vec4 mul ( final Mat4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(a.m00 * b.x + a.m01 * b.y + a.m02 * b.z + a.m03 * b.w,
-         a.m10 * b.x + a.m11 * b.y + a.m12 * b.z + a.m13 * b.w, a.m20 * b.x
-            + a.m21 * b.y + a.m22 * b.z + a.m23 * b.w, a.m30 * b.x + a.m31 * b.y
-               + a.m32 * b.z + a.m33 * b.w);
+      /* @formatter:off */
+      return target.set(
+         a.m00 * b.x + a.m01 * b.y + a.m02 * b.z + a.m03 * b.w,
+         a.m10 * b.x + a.m11 * b.y + a.m12 * b.z + a.m13 * b.w,
+         a.m20 * b.x + a.m21 * b.y + a.m22 * b.z + a.m23 * b.w,
+         a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33 * b.w);
+      /* @formatter:on */
+   }
+
+   /**
+    * Multiplies a quaternion and a matrix. Stores the quaternion's matrix
+    * representation in an output variable.
+    * 
+    * @param a      quaternion
+    * @param b      matrix
+    * @param target the output matrix
+    * @param am     the matrix conversion
+    * 
+    * @return the product
+    */
+   public static Mat4 mul ( final Quaternion a, final Mat4 b, final Mat4 target,
+      final Mat4 am ) {
+
+      Mat4.fromRotation(a, am);
+      return Mat4.mul(am, b, target);
    }
 
    /**
@@ -1985,9 +2060,13 @@ public class Mat4 extends Matrix {
       h = h != 0.0f ? 1.0f / h : 1.0f;
       d = d != 0.0f ? 1.0f / d : 1.0f;
 
-      return target.set(w + w, 0.0f, 0.0f, w * ( left + right ), 0.0f, h + h,
-         0.0f, h * ( top + bottom ), 0.0f, 0.0f, - ( d + d ), -d * ( far
-            + near ), 0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      return target.set(
+         w + w,  0.0f,        0.0f, w * ( left + right ),
+          0.0f, h + h,        0.0f, h * ( top + bottom ),
+          0.0f,  0.0f, - ( d + d ),  -d * ( far + near ),
+          0.0f,  0.0f,        0.0f,                 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -2023,10 +2102,13 @@ public class Mat4 extends Matrix {
     */
    public static Mat4 sub ( final Mat4 a, final Mat4 b, final Mat4 target ) {
 
-      return target.set(a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02, a.m03
-         - b.m03, a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12, a.m13 - b.m13,
-         a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22, a.m23 - b.m23, a.m30
-            - b.m30, a.m31 - b.m31, a.m32 - b.m32, a.m33 - b.m33);
+      /* @formatter:off */
+      return target.set(
+         a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02, a.m03 - b.m03,
+         a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12, a.m13 - b.m13,
+         a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22, a.m23 - b.m23,
+         a.m30 - b.m30, a.m31 - b.m31, a.m32 - b.m32, a.m33 - b.m33);
+      /* @formatter:on */
    }
 
    /**
@@ -2039,8 +2121,13 @@ public class Mat4 extends Matrix {
     */
    public static Mat4 transpose ( final Mat4 m, final Mat4 target ) {
 
-      return target.set(m.m00, m.m10, m.m20, m.m30, m.m01, m.m11, m.m21, m.m31,
-         m.m02, m.m12, m.m22, m.m32, m.m03, m.m13, m.m23, m.m33);
+      /* @formatter:off */
+      return target.set(
+         m.m00, m.m10, m.m20, m.m30,
+         m.m01, m.m11, m.m21, m.m31,
+         m.m02, m.m12, m.m22, m.m32,
+         m.m03, m.m13, m.m23, m.m33);
+      /* @formatter:on */
    }
 
    /**

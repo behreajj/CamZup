@@ -339,9 +339,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Returns a new vector with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a - b</code> .
-    * <em>Does not mutate the vector in place</em>.
+    * Returns a new quaternion with the addition of the right operand to the
+    * instance. For interoperability with Kotlin: <code>a + b</code> .
+    * <em>Does not mutate the quaternion in place</em>.
     *
     * @param b the right operand
     *
@@ -2204,8 +2204,13 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          .invSqrtUnchecked(mSq);
 
       final float angle = 2.0f * Utils.acos(wNorm);
+
+      // TODO: This shortcut may be problematic.
+      // Go back to Three.js source code...
+      // TEST
       // final float wAsin = IUtils.TAU - angle;
-      final float wAsin = IUtils.PI - angle;
+      // final float wAsin = IUtils.PI - angle;
+      final float wAsin = Utils.asin(wNorm);
       if ( wAsin == 0.0f ) {
          Vec3.forward(axis);
          return angle;

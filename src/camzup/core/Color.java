@@ -453,7 +453,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
 
    /**
     * Returns a new color with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a - b</code> .
+    * instance. For interoperability with Kotlin: <code>a + b</code> .
     * <em>Does not mutate the color in place</em>.
     *
     * @param c the right operand
@@ -469,7 +469,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
 
    /**
     * Returns a new color with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a - b</code> .
+    * instance. For interoperability with Kotlin: <code>a + b</code> .
     * <em>Does not mutate the color in place</em>.
     *
     * @param c the right operand

@@ -369,7 +369,7 @@ public class Mat3 extends Matrix {
 
    /**
     * Returns a new matrix with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a - b</code> .
+    * instance. For interoperability with Kotlin: <code>a + b</code> .
     * <em>Does not mutate the matrix in place</em>.
     *
     * @param b the right operand

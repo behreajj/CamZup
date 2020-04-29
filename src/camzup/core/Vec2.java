@@ -322,7 +322,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
 
    /**
     * Returns a new vector with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a - b</code> .
+    * instance. For interoperability with Kotlin: <code>a + b</code> .
     * <em>Does not mutate the vector in place</em>.
     *
     * @param b the right operand
@@ -336,7 +336,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
 
    /**
     * Returns a new vector with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a - b</code> .
+    * instance. For interoperability with Kotlin: <code>a + b</code> .
     * <em>Does not mutate the vector in place</em>.
     *
     * @param b the right operand

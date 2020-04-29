@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -2650,6 +2651,58 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       }
 
       return target;
+   }
+
+   /**
+    * Returns a collection of mesh vertices organized by their proximity to a
+    * point. The proximity is expressed as a factor in [0.0, 1.0] , where 1.0
+    * is the closest vertex and 0.0 is the farthest. Any function which
+    * mutates a vertex's properties by such a factor can be applied to the
+    * collection.<br>
+    * <br>
+    * However, the Euclidean distance from a point is unsigned, so two points
+    * may have approximately the same distance from the point yet be in
+    * different quadrants of the Cartesian coordinate system, i.e. not
+    * organized by proximity to each other.
+    *
+    * @param m the mesh
+    * @param p the point
+    *
+    * @return the collection
+    *
+    * @see Mesh2#getVertices()
+    * @see Vec2#distSq(Vec2, Vec2)
+    */
+   @Experimental
+   public static TreeMap < Float, Vert2 > proximity (
+      final Mesh2 m,
+      final Vec2 p ) {
+
+      // TEST
+
+      final Vert2[] verts = m.getVertices();
+      final int vertLen = verts.length;
+      final float[] dists = new float[vertLen];
+      float minDist = Float.MAX_VALUE;
+      float maxDist = Float.MIN_VALUE;
+      for ( int i = 0; i < vertLen; ++i ) {
+         final Vert2 vert = verts[i];
+         final float distSq = Vec2.distSq(vert.coord, p);
+         dists[i] = distSq;
+         minDist = distSq < minDist ? distSq : minDist;
+         maxDist = distSq > maxDist ? distSq : maxDist;
+      }
+
+      final float denom = minDist - maxDist;
+      final float dnInv = denom != 0.0f ? 1.0f / denom : 0.0f;
+      final TreeMap < Float, Vert2 > result = new TreeMap <>();
+      for ( int j = 0; j < vertLen; ++j ) {
+         /* A simplification of map(dist, minDist, maxDist, 1.0, 0.0) */
+         final float fac = 1.0f + ( dists[j] - minDist ) * dnInv;
+         result.put(fac, verts[j]);
+      }
+
+      return result;
    }
 
    /**

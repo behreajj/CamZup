@@ -313,7 +313,7 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
 
    /**
     * Returns a new complex number with the addition of the right operand to
-    * the instance. For interoperability with Kotlin: <code>a - b</code> .
+    * the instance. For interoperability with Kotlin: <code>a + b</code> .
     * <em>Does not mutate the complex number in place</em>.
     *
     * @param b the right operand
@@ -327,7 +327,7 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
 
    /**
     * Returns a new complex number with the addition of the right operand to
-    * the instance. For interoperability with Kotlin: <code>a - b</code> .
+    * the instance. For interoperability with Kotlin: <code>a + b</code> .
     * <em>Does not mutate the complex number in place</em>.
     *
     * @param b the right operand

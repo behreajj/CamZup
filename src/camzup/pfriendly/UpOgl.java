@@ -706,6 +706,23 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * Attempts to make the hint system more convenient to work with. From the
     * reference:<br>
     * <br>
+    * Disable generation of texture mipmaps in P2D or P3D. This results in
+    * lower quality - but faster - rendering of texture images when they
+    * appear smaller than their native resolutions (the mipmaps are
+    * scaled-down versions of a texture that make it look better when drawing
+    * it at a small size). However, the difference in performance is fairly
+    * minor on recent desktop video cards.
+    */
+   @Experimental
+   public void disableMipMaps ( ) {
+
+      this.hints[PConstants.DISABLE_TEXTURE_MIPMAPS] = true;
+   }
+
+   /**
+    * Attempts to make the hint system more convenient to work with. From the
+    * reference:<br>
+    * <br>
     * Forces the P3D renderer to draw each shape (including its strokes)
     * separately, instead of batching them into larger groups for better
     * performance. One consequence of this is that 2D items drawn with P3D are
@@ -753,6 +770,19 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.hints[PConstants.DISABLE_DEPTH_TEST] = false;
       this.flush();
       this.pgl.enable(PGL.DEPTH_TEST);
+   }
+
+   /**
+    * Attempts to make the hint system more convenient to work with.
+    */
+   public void enableMipMaps ( ) {
+
+      /*
+       * Paired constants have signed values: PConstants#ENABLE_TEXTURE_MIPMAPS
+       * has a negative value.
+       */
+
+      this.hints[PConstants.DISABLE_TEXTURE_MIPMAPS] = false;
    }
 
    /**
@@ -1038,55 +1068,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float x2, final float y2 ) {
 
       final boolean useImg = this.textureMode == PConstants.IMAGE;
-      this.imageImpl(img, x1, y1, x2, y2, 0.0f, 0.0f, 0.0f, useImg ? img.width
+      this.image(img, x1, y1, x2, y2, 0.0f, 0.0f, 0.0f, useImg ? img.width
          : 1.0f, useImg ? img.height : 1.0f);
-   }
-
-   /**
-    * Displays a PImage. The meaning of the first four parameters depends on
-    * imageMode. The last four coordinates specify the image texture
-    * coordinates (or UVs).
-    *
-    * @param img the PImage
-    * @param x1  the first x coordinate
-    * @param y1  the first y coordinate
-    * @param x2  the second x coordinate
-    * @param y2  the second y coordinate
-    * @param u1  the image top-left corner u
-    * @param v1  the image top-left corner v
-    * @param u2  the image bottom-right corner u
-    * @param v2  the image bottom-right corner v
-    */
-   @Override
-   public void image ( final PImage img, final float x1, final float y1,
-      final float x2, final float y2, final int u1, final int v1, final int u2,
-      final int v2 ) {
-
-      this.imageImpl(img, x1, y1, x2, y2, 0.0f, u1, v1, u2, v2);
-   }
-
-   /**
-    * Displays a PGraphicsOpenGL buffer. Checks if the buffer's PGL thread is
-    * current before proceeding. This is to help ensure that beginDraw and
-    * endDraw have already been called.
-    *
-    * @param buff the renderer
-    * @param x1   the first x coordinate
-    * @param y1   the first y coordinate
-    * @param x2   the second x coordinate
-    * @param y2   the second y coordinate
-    * @param u1   the image top-left corner u
-    * @param v1   the image top-left corner v
-    * @param u2   the image bottom-right corner u
-    * @param v2   the image bottom-right corner v
-    */
-   public void imageImpl ( final PGraphicsOpenGL buff, final float x1,
-      final float y1, final float x2, final float y2, final float u1,
-      final float v1, final float u2, final float v2 ) {
-
-      if ( buff.pgl.threadIsCurrent() ) {
-         this.imageImpl(buff, x1, y1, x2, y2, 0.0f, u1, v1, u2, v2);
-      }
    }
 
    /**
@@ -1105,7 +1088,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param u2  the image bottom-right corner u
     * @param v2  the image bottom-right corner v
     */
-   public void imageImpl ( final PImage img, final float x1, final float y1,
+   public void image ( final PImage img, final float x1, final float y1,
       final float x2, final float y2, final float z, final float u1,
       final float v1, final float u2, final float v2 ) {
 
@@ -1166,6 +1149,53 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.endShape(PConstants.CLOSE);
       this.textureWrap(oldWrapMode);
       this.popStyle();
+   }
+
+   /**
+    * Displays a PImage. The meaning of the first four parameters depends on
+    * imageMode. The last four coordinates specify the image texture
+    * coordinates (or UVs).
+    *
+    * @param img the PImage
+    * @param x1  the first x coordinate
+    * @param y1  the first y coordinate
+    * @param x2  the second x coordinate
+    * @param y2  the second y coordinate
+    * @param u1  the image top-left corner u
+    * @param v1  the image top-left corner v
+    * @param u2  the image bottom-right corner u
+    * @param v2  the image bottom-right corner v
+    */
+   @Override
+   public void image ( final PImage img, final float x1, final float y1,
+      final float x2, final float y2, final int u1, final int v1, final int u2,
+      final int v2 ) {
+
+      this.image(img, x1, y1, x2, y2, 0.0f, u1, v1, u2, v2);
+   }
+
+   /**
+    * Displays a PGraphicsOpenGL buffer. Checks if the buffer's PGL thread is
+    * current before proceeding. This is to help ensure that beginDraw and
+    * endDraw have already been called.
+    *
+    * @param buff the renderer
+    * @param x1   the first x coordinate
+    * @param y1   the first y coordinate
+    * @param x2   the second x coordinate
+    * @param y2   the second y coordinate
+    * @param u1   the image top-left corner u
+    * @param v1   the image top-left corner v
+    * @param u2   the image bottom-right corner u
+    * @param v2   the image bottom-right corner v
+    */
+   public void imageImpl ( final PGraphicsOpenGL buff, final float x1,
+      final float y1, final float x2, final float y2, final float u1,
+      final float v1, final float u2, final float v2 ) {
+
+      if ( buff.pgl.threadIsCurrent() ) {
+         this.image(buff, x1, y1, x2, y2, 0.0f, u1, v1, u2, v2);
+      }
    }
 
    /**
@@ -1737,6 +1767,18 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       PMatAux.compoundRotateZ(Utils.scNorm(normRad), Utils.scNorm(normRad
          - 0.25f), this.modelview, this.modelviewInv);
       PMatAux.mul(this.projection, this.modelview, this.projmodelview);
+   }
+
+   /**
+    * Temporarily disabled.
+    */
+   @Override
+   public boolean saveImpl ( final String filename ) {
+
+      PApplet.showMissingWarning(
+         "In Processing 4 Alpha, save causes a Stack Overflow."
+            + " It has been disabled for the time being.");
+      return false;
    }
 
    /**
@@ -2966,7 +3008,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param vt   a temporary vector
     * @param vn   a temporary vector
     */
-   @Experimental
    protected void drawMesh3 ( final Mesh3 mesh, final Transform3 tr,
       final MaterialPImage mat, final Vec3 v, final Vec2 vt, final Vec3 vn ) {
 
@@ -3014,7 +3055,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param v    a temporary vector
     * @param vn   a temporary vector
     */
-   @Experimental
    protected void drawMesh3 ( final Mesh3 mesh, final Transform3 tr,
       final Vec3 v, final Vec3 vn ) {
 
@@ -3067,9 +3107,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       /*
        * This is backwards due to Processing's insistence on specifying UV
-       * coordinates with integers (maybe as a result from working with AWT?).
-       * All image functions should flow into this, but instead this flows into
-       * a public image implementation.
+       * coordinates with integers (maybe as a result of deriving this
+       * function's signature from the AWT renderer's). All image functions
+       * should flow into this, but instead this flows into a public image
+       * implementation.
        */
       final int savedTextureMode = this.textureMode;
       this.textureMode = PConstants.IMAGE;
@@ -3079,8 +3120,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        * density monitor.
        */
       final int pd = img.pixelDensity;
-      this.imageImpl(img, x1, y1, x2, y2, 0.0f, u1 * pd, v1 * pd, u2 * pd, v2
-         * pd);
+      this.image(img, x1, y1, x2, y2, 0.0f, u1 * pd, v1 * pd, u2 * pd, v2 * pd);
 
       this.textureMode = savedTextureMode;
    }
@@ -3921,7 +3961,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.tintA = this.fillA;
       this.tintAlpha = this.fillAlpha;
 
-      this.imageImpl(glyph, x1, y1, x2, y2, 0.0f, 0.0f, 0.0f, u, v);
+      this.image(glyph, x1, y1, x2, y2, 0.0f, 0.0f, 0.0f, u, v);
 
       this.tint = savedTint;
       this.tintColor = savedTintColor;
@@ -4057,16 +4097,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          default:
 
       }
-   }
-
-   /**
-    * Temporarily disabled.
-    */
-   @Override
-   public boolean saveImpl ( String filename ) {
-
-      // TODO: Disabled for the time being.
-      return false;
    }
 
    /**

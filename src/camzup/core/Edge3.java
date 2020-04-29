@@ -378,7 +378,6 @@ public class Edge3 implements Comparable < Edge3 > {
 
       this.origin.set(coOrigin, txOrigin, nmOrigin);
       this.dest.set(coDest, txDest, nmDest);
-
       return this;
    }
 

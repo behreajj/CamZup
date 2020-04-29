@@ -123,3 +123,4 @@ iterable
 mod
 polyline
 rect
+mipmaps

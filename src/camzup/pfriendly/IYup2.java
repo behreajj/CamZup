@@ -1140,11 +1140,13 @@ public interface IYup2 extends IUp {
     */
    static Vec2 mouse1s ( final PApplet parent, final Vec2 target ) {
 
-      // TODO: Consider wrapping rather than clamping.
       final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
       final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
-
       return target.set(mx + mx - 1.0f, 1.0f - ( my + my ));
+
+      // final float mx = Utils.mod1(parent.mouseX / ( float ) parent.width);
+      // final float my = Utils.mod1(parent.mouseY / ( float ) parent.height);
+      // return target.set(mx + mx - 1.0f, 1.0f - ( my + my ));
    }
 
    /**
@@ -1158,11 +1160,13 @@ public interface IYup2 extends IUp {
     */
    static Vec2 mouse1u ( final PApplet parent, final Vec2 target ) {
 
-      // TODO: Consider wrapping rather than clamping.
       final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
       final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
-
       return target.set(mx, 1.0f - my);
+
+      // final float mx = Utils.mod1(parent.mouseX / ( float ) parent.width);
+      // final float my = Utils.mod1(parent.mouseY / ( float ) parent.height);
+      // return target.set(mx, 1.0f - my);
    }
 
    /**
@@ -1181,7 +1185,7 @@ public interface IYup2 extends IUp {
     */
    static String svgBackground ( final IYup2 renderer ) {
 
-      StringBuilder svgp = new StringBuilder(128);
+      final StringBuilder svgp = new StringBuilder(128);
       svgp.append("<rect id=\"background\" x=\"0\" y=\"0\" width=\"");
       svgp.append(renderer.getWidth());
       svgp.append("\" height=\"");
@@ -1202,7 +1206,7 @@ public interface IYup2 extends IUp {
     */
    static String svgCamera ( final IYup2 renderer ) {
 
-      StringBuilder svgp = new StringBuilder(128);
+      final StringBuilder svgp = new StringBuilder(128);
       svgp.append("transform=\"translate(");
       svgp.append(Utils.toFixed(renderer.getWidth() * 0.5f, 6));
       svgp.append(',').append(' ');
@@ -1239,7 +1243,7 @@ public interface IYup2 extends IUp {
       final String wStr = Integer.toString(w);
       final String hStr = Integer.toString(h);
 
-      StringBuilder svgp = new StringBuilder(128);
+      final StringBuilder svgp = new StringBuilder(128);
       svgp.append("<svg ");
       svgp.append("xmlns=\"http://www.w3.org/2000/svg\" ");
       svgp.append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");

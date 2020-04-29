@@ -1450,7 +1450,22 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Displays a PImage.
+    * Displays a PImage. Depending on the image mode the first four parameters
+    * may specify:
+    * <ul>
+    * <li>the image's center x, y, width and height
+    * ({@link PConstants#CENTER}, {@value PConstants#CENTER}).</li>
+    * <li>the image's center x, y and radial width and height
+    * ({@link PConstants#RADIUS}, {@value PConstants#RADIUS}).</li>
+    * <li>the image's top left corner, width and height
+    * ({@link PConstants#CORNER}, {@value PConstants#CORNER}).</li>
+    * <li>the image's top left corner and bottom right corner
+    * ({@link PConstants#CORNERS}, {@value PConstants#CORNERS}).</li>
+    * </ul>
+    * The last four parameters represent the top-left and bottom-right corner
+    * of the sub-section of the image to display, i.e., are rough equivalents
+    * to UV coordinates. However, they use pixels as units, as though
+    * <code>textureMode(IMAGE);</code> .
     *
     * @param img the PImage
     * @param x0i the first x coordinate
@@ -1570,6 +1585,118 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          default:
             this.imageMode = PConstants.CENTER;
       }
+   }
+
+   /**
+    * A hack to work around the performance issues with
+    * {@link PGraphicsJava2D#image(PImage, float, float, float, float, int, int, int, int)}
+    * . For performance sensitive image display. {@link PImage#getNative} is
+    * expensive, as it creates a new {@link java.awt.image.BufferedImage}. It
+    * is recommended that <code>PImage</code>s be edited and converted to
+    * {@link java.awt.Image} in <code>setup</code>, which are then passed here
+    * in <code>draw</code>. The {@link java.awt.image.ImageObserver} may be
+    * <code>null</code>. Calls
+    * {@link java.awt.Graphics2D#drawImage(Image, int, int, int, int, int, int, int, int, java.awt.image.ImageObserver) }.</li>
+    * Multiplies the last four arguments by the pixel density and flips the v
+    * coordinates to account for the flipped y axis.<br>
+    * <br>
+    * This does not account for Processing's tint, {@link PGraphics#imageMode}
+    * or {@link PGraphics#textureMode}.
+    *
+    * @param imgNtv AWT native image
+    * @param pd     Processing image pixel density
+    * @param imgObs AWT ImageObserver
+    * @param x0     the x coordinate of the first corner of the destination
+    *                  rectangle.
+    * @param y0     the y coordinate of the first corner of the destination
+    *                  rectangle.
+    * @param x1     the x coordinate of the second corner of the destination
+    *                  rectangle.
+    * @param y1     the y coordinate of the second corner of the destination
+    *                  rectangle.
+    * @param uTl    the x coordinate of the first corner of the source
+    *                  rectangle.
+    * @param vTl    the y coordinate of the first corner of the source
+    *                  rectangle.
+    * @param uBr    the x coordinate of the second corner of the source
+    *                  rectangle.
+    * @param vBr    the y coordinate of the second corner of the source
+    *                  rectangle.
+    */
+   public void imageSource ( final Image imgNtv, final int pd,
+      final ImageObserver imgObs, final int x0, final int y0, final int x1,
+      final int y1, final int uTl, final int vTl, final int uBr,
+      final int vBr ) {
+
+      /* @formatter:off */
+      final int vpd = pd < 1 ? 1 : pd;
+      final int h = imgNtv.getHeight(imgObs) / vpd;
+      this.g2.drawImage(
+         imgNtv,
+         x0, y0, x1, y1,
+         uTl * vpd, ( h - vTl ) * vpd,
+         uBr * vpd, ( h - vBr ) * vpd,
+         imgObs);
+      /* @formatter:on */
+   }
+
+   /**
+    * A hack to work around the performance issues with
+    * {@link PGraphicsJava2D#image(PImage, float, float, float, float, int, int, int, int)}
+    * . Does the following:
+    * <ul>
+    * <li>Checks if either the pixel width or height of the image is less than
+    * 2. Returns early if true.</li>
+    * <li>Acquires the {@link java.awt.Image } backing {@link PImage} via
+    * {@link PImage#getNative}, which entails:</li>
+    * <ul>
+    * <li>Loading the image's pixels.</li>
+    * <li>Checks the image's format ({@link PConstants#ARGB},
+    * {@link PConstants#RGBG}, {@link PConstants#ALPHA}).</li>
+    * <li>Creating a new {@link java.awt.image.BufferedImage};</li>
+    * <li>Acquiring the image's {@link java.awt.image.WritableRaster}.</li>
+    * <li>Setting the raster's data with the image's pixels.</li>
+    * </ul>
+    * <li>Calls
+    * {@link YupJ2#imageSource(Image, int, ImageObserver, int, int, int, int, int, int, int, int)}.</li>
+    * </ul>
+    * This does not account for Processing's tint, {@link PGraphics#imageMode}
+    * or {@link PGraphics#textureMode}.
+    *
+    * @param img Processing image
+    * @param x0  the x coordinate of the first corner of the destination
+    *               rectangle.
+    * @param y0  the y coordinate of the first corner of the destination
+    *               rectangle.
+    * @param x1  the x coordinate of the second corner of the destination
+    *               rectangle.
+    * @param y1  the y coordinate of the second corner of the destination
+    *               rectangle.
+    * @param uTl the x coordinate of the first corner of the source rectangle.
+    * @param vTl the y coordinate of the first corner of the source rectangle.
+    * @param uBr the x coordinate of the second corner of the source
+    *               rectangle.
+    * @param vBr the y coordinate of the second corner of the source
+    *               rectangle.
+    */
+   public void imageSource ( final PImage img, final int x0, final int y0,
+      final int x1, final int y1, final int uTl, final int vTl, final int uBr,
+      final int vBr ) {
+
+      final int pw = img.pixelWidth;
+      final int ph = img.pixelHeight;
+      if ( pw < 2 || ph < 2 ) { return; }
+
+      /* This is a bottleneck. */
+      img.loadPixels();
+      final int type = img.format == PConstants.RGB ? BufferedImage.TYPE_INT_RGB
+         : BufferedImage.TYPE_INT_ARGB;
+      final BufferedImage imgNtv = new BufferedImage(pw, ph, type);
+      final WritableRaster wr = imgNtv.getRaster();
+      wr.setDataElements(0, 0, pw, ph, img.pixels);
+
+      this.imageSource(imgNtv, img.pixelDensity, null, x0, y0, x1, y1, uTl, vTl,
+         uBr, vBr);
    }
 
    /**
@@ -3596,69 +3723,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          this.g2.setColor(this.strokeColorObject);
          this.g2.draw(s);
       }
-   }
-
-   /**
-    * A hack to work around the performance issues with
-    * {@link PGraphicsJava2D#image(PImage, float, float, float, float, int, int, int, int)}
-    * . Does the following:
-    * <ul>
-    * <li>Checks if either the width or height of the image is less than 1.
-    * Returns early if true.</li>
-    * <li>Attempts to get the {@link java.awt.Image } backing {@link PImage}
-    * via {@link PImage#getNative}.</li>
-    * <li>If the result is not <code>null</code>, acquires the
-    * {@link PImage#pixelDensity }.</li>
-    * <li>Calls
-    * {@link java.awt.Graphics2D#drawImage(Image, int, int, int, int, int, int, int, int, java.awt.image.ImageObserver) }.</li>
-    * <li>Multiplies the last four arguments by the pixel density.</li>
-    * </ul>
-    * This does not account for Processing's {@link PGraphics#imageMode},
-    * {@link PGraphics#textureMode} or any other Processing convenience not
-    * listed above.
-    *
-    * @param img Processing image
-    * @param x0  the x coordinate of the first corner of the destination
-    *               rectangle.
-    * @param y0  the y coordinate of the first corner of the destination
-    *               rectangle.
-    * @param x1  the x coordinate of the second corner of the destination
-    *               rectangle.
-    * @param y1  the y coordinate of the second corner of the destination
-    *               rectangle.
-    * @param uTl the x coordinate of the first corner of the source rectangle.
-    * @param vTl the y coordinate of the first corner of the source rectangle.
-    * @param uBr the x coordinate of the second corner of the source
-    *               rectangle.
-    * @param vBr the y coordinate of the second corner of the source
-    *               rectangle.
-    */
-   protected void imageSource ( final PImage img, final int x0, final int y0,
-      final int x1, final int y1, final int uTl, final int vTl, final int uBr,
-      final int vBr ) {
-
-      final int pw = img.pixelWidth;
-      final int ph = img.pixelHeight;
-      if ( pw < 2 || ph < 2 ) { return; }
-
-      img.loadPixels();
-      final int type = img.format == PConstants.RGB ? BufferedImage.TYPE_INT_RGB
-         : BufferedImage.TYPE_INT_ARGB;
-
-      /* This is a bottleneck. */
-      final BufferedImage imgNtv = new BufferedImage(pw, ph, type);
-      final WritableRaster wr = imgNtv.getRaster();
-      wr.setDataElements(0, 0, pw, ph, img.pixels);
-
-      /* @formatter:off */
-      final int pd = img.pixelDensity;
-      final int h = img.height;
-      this.g2.drawImage(imgNtv,
-         x0, y0, x1, y1,
-         uTl * pd, ( h - vTl ) * pd,
-         uBr * pd, ( h - vBr ) * pd,
-         ( ImageObserver ) null);
-      /* @formatter:on */
    }
 
    /**

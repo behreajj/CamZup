@@ -25,7 +25,6 @@ void settings() {
 }
 
 void setup() {
-  frameRate(1000);
   rndr = (Zup3)getGraphics();
   rndr.hint(ENABLE_DEPTH_SORT);
   rndr.hint(ENABLE_OPTIMIZED_STROKE);
