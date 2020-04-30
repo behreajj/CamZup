@@ -164,7 +164,7 @@ public abstract class PMatAux {
          m.m20 * n10 + m.m21 * n11 + m.m22 * n12,
          m.m20 * n20 + m.m21 * n21 + m.m22 * n22,
          m.m23,
-         
+
          m.m30 * n00 + m.m31 * n01 + m.m32 * n02,
          m.m30 * n10 + m.m31 * n11 + m.m32 * n12,
          m.m30 * n20 + m.m31 * n21 + m.m32 * n22,
@@ -175,7 +175,7 @@ public abstract class PMatAux {
          n00 * mInv.m01 + n01 * mInv.m11 + n02 * mInv.m21,
          n00 * mInv.m02 + n01 * mInv.m12 + n02 * mInv.m22,
          n00 * mInv.m03 + n01 * mInv.m13 + n02 * mInv.m23,
-         
+
          n10 * mInv.m00 + n11 * mInv.m10 + n12 * mInv.m20,
          n10 * mInv.m01 + n11 * mInv.m11 + n12 * mInv.m21,
          n10 * mInv.m02 + n11 * mInv.m12 + n12 * mInv.m22,
@@ -246,12 +246,12 @@ public abstract class PMatAux {
          m.m32, m.m33);
 
       mInv.set(
-         c * mInv.m00 + s * mInv.m10, 
-         c * mInv.m01 + s * mInv.m11, 
-         c * mInv.m02 + s * mInv.m12, 
-         c * mInv.m03 + s * mInv.m13, 
-         c * mInv.m10 - s * mInv.m00, 
-         c * mInv.m11 - s * mInv.m01, 
+         c * mInv.m00 + s * mInv.m10,
+         c * mInv.m01 + s * mInv.m11,
+         c * mInv.m02 + s * mInv.m12,
+         c * mInv.m03 + s * mInv.m13,
+         c * mInv.m10 - s * mInv.m00,
+         c * mInv.m11 - s * mInv.m01,
          c * mInv.m12 - s * mInv.m02,
          c * mInv.m13 - s * mInv.m03,
          mInv.m20, mInv.m21, mInv.m22, mInv.m23,
@@ -469,14 +469,21 @@ public abstract class PMatAux {
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
-      target.set(target.m00, target.m01, target.m02, target.m03, c * target.m10
-         + s * target.m20, c * target.m11 + s * target.m21, c * target.m12 + s
-            * target.m22, c * target.m13 + s * target.m23, c * target.m20 - s
-               * target.m10, c * target.m21 - s * target.m11, c * target.m22 - s
-                  * target.m12, c * target.m23 - s * target.m13, target.m30,
-         target.m31, target.m32, target.m33);
 
+      /* @formatter:off */
+      target.set(
+         target.m00, target.m01, target.m02, target.m03,
+         c * target.m10 + s * target.m20,
+         c * target.m11 + s * target.m21,
+         c * target.m12 + s * target.m22,
+         c * target.m13 + s * target.m23,
+         c * target.m20 - s * target.m10,
+         c * target.m21 - s * target.m11,
+         c * target.m22 - s * target.m12,
+         c * target.m23 - s * target.m13,
+         target.m30, target.m31, target.m32, target.m33);
       return target;
+      /* @formatter:on */
    }
 
    /**
@@ -523,15 +530,21 @@ public abstract class PMatAux {
       PMatrix3D target ) {
 
       if ( target == null ) { target = new PMatrix3D(); }
-      target.set(c * target.m00 - s * target.m20, c * target.m01 - s
-         * target.m21, c * target.m02 - s * target.m22, c * target.m03 - s
-            * target.m23, target.m10, target.m11, target.m12, target.m13, c
-               * target.m20 + s * target.m00, c * target.m21 + s * target.m01, c
-                  * target.m22 + s * target.m02, c * target.m23 + s
-                     * target.m03, target.m30, target.m31, target.m32,
-         target.m33);
 
+      /* @formatter:off */
+      target.set(
+         c * target.m00 - s * target.m20,
+         c * target.m01 - s * target.m21,
+         c * target.m02 - s * target.m22,
+         c * target.m03 - s * target.m23,
+         target.m10, target.m11, target.m12, target.m13,
+         c * target.m20 + s * target.m00,
+         c * target.m21 + s * target.m01,
+         c * target.m22 + s * target.m02,
+         c * target.m23 + s * target.m03,
+         target.m30, target.m31, target.m32, target.m33);
       return target;
+      /* @formatter:on */
    }
 
    /**
@@ -579,14 +592,20 @@ public abstract class PMatAux {
 
       if ( target == null ) { target = new PMatrix3D(); }
 
-      target.set(c * target.m00 + s * target.m10, c * target.m01 + s
-         * target.m11, c * target.m02 + s * target.m12, c * target.m03 + s
-            * target.m13, c * target.m10 - s * target.m00, c * target.m11 - s
-               * target.m01, c * target.m12 - s * target.m02, c * target.m13 - s
-                  * target.m03, target.m20, target.m21, target.m22, target.m23,
+      /* @formatter:off */
+      target.set(
+         c * target.m00 + s * target.m10,
+         c * target.m01 + s * target.m11,
+         c * target.m02 + s * target.m12,
+         c * target.m03 + s * target.m13,
+         c * target.m10 - s * target.m00,
+         c * target.m11 - s * target.m01,
+         c * target.m12 - s * target.m02,
+         c * target.m13 - s * target.m03,
+         target.m20, target.m21, target.m22, target.m23,
          target.m30, target.m31, target.m32, target.m33);
-
       return target;
+      /* @formatter:on */
    }
 
    /**
@@ -627,12 +646,14 @@ public abstract class PMatAux {
       final float y = yScale != 0.0f ? 1.0f / yScale : 1.0f;
       final float z = zScale != 0.0f ? 1.0f / zScale : 1.0f;
 
-      target.set(x * target.m00, x * target.m01, x * target.m02, x * target.m03,
-         y * target.m10, y * target.m11, y * target.m12, y * target.m13, z
-            * target.m20, z * target.m21, z * target.m22, z * target.m23,
+      /* @formatter:off */
+      target.set(
+         x * target.m00, x * target.m01, x * target.m02, x * target.m03,
+         y * target.m10, y * target.m11, y * target.m12, y * target.m13,
+         z * target.m20, z * target.m21, z * target.m22, z * target.m23,
          target.m30, target.m31, target.m32, target.m33);
-
       return target;
+      /* @formatter:on */
    }
 
    /**
@@ -685,15 +706,24 @@ public abstract class PMatAux {
 
       if ( target == null ) { target = new PMatrix3D(); }
 
-      target.set(target.m00 - tx * target.m30, target.m01 - tx * target.m31,
-         target.m02 - tx * target.m32, target.m03 - tx * target.m33, target.m10
-            - ty * target.m30, target.m11 - ty * target.m31, target.m12 - ty
-               * target.m32, target.m13 - ty * target.m33, target.m20 - tz
-                  * target.m30, target.m21 - tz * target.m31, target.m22 - tz
-                     * target.m32, target.m23 - tz * target.m33, target.m30,
-         target.m31, target.m32, target.m33);
-
+      /* @formatter:off */
+      target.set(
+         target.m00 - tx * target.m30,
+         target.m01 - tx * target.m31,
+         target.m02 - tx * target.m32,
+         target.m03 - tx * target.m33,
+         target.m10 - ty * target.m30,
+         target.m11 - ty * target.m31,
+         target.m12 - ty * target.m32,
+         target.m13 - ty * target.m33,
+         target.m20 - tz * target.m30,
+         target.m21 - tz * target.m31,
+         target.m22 - tz * target.m32,
+         target.m23 - tz * target.m33,
+         target.m30, target.m31,
+         target.m32, target.m33);      
       return target;
+      /* @formatter:on */
    }
 
    /**
@@ -1038,7 +1068,7 @@ public abstract class PMatAux {
       target.set(
          target.m00 * bm00 + target.m01 * bm10 + target.m02 * bm20,
          target.m00 * bm01 + target.m01 * bm11 + target.m02 * bm21,
-         target.m00 * bm02 + target.m01 * bm12 + target.m02 * bm22, 
+         target.m00 * bm02 + target.m01 * bm12 + target.m02 * bm22,
          target.m03,
 
          target.m10 * bm00 + target.m11 * bm10 + target.m12 * bm20,

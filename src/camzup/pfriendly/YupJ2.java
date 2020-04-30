@@ -19,6 +19,7 @@ import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
 import camzup.core.Experimental;
 import camzup.core.IUtils;
+import camzup.core.Img;
 import camzup.core.Knot2;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
@@ -879,10 +880,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public Mat3 getMatrix ( final Mat3 target ) {
 
+      /* @formatter:off */
       final AffineTransform tr = this.g2.getTransform();
-      return target.set(( float ) tr.getScaleX(), ( float ) tr.getShearX(),
-         ( float ) tr.getTranslateX(), ( float ) tr.getShearY(), ( float ) tr
-            .getScaleY(), ( float ) tr.getTranslateY(), 0.0f, 0.0f, 1.0f);
+      return target.set(
+         ( float ) tr.getScaleX(),
+         ( float ) tr.getShearX(),
+         ( float ) tr.getTranslateX(),
+
+         ( float ) tr.getShearY(),
+         ( float ) tr.getScaleY(),
+         ( float ) tr.getTranslateY(),
+         
+         0.0f, 0.0f, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -894,11 +904,22 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public Mat4 getMatrix ( final Mat4 target ) {
 
+      /* @formatter:off */
       final AffineTransform tr = this.g2.getTransform();
-      return target.set(( float ) tr.getScaleX(), ( float ) tr.getShearX(),
-         0.0f, ( float ) tr.getTranslateX(), ( float ) tr.getShearY(),
-         ( float ) tr.getScaleY(), 0.0f, ( float ) tr.getTranslateY(), 0.0f,
-         0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      return target.set(
+         ( float ) tr.getScaleX(),
+         ( float ) tr.getShearX(),
+         0.0f,
+         ( float ) tr.getTranslateX(),
+
+         ( float ) tr.getShearY(),
+         ( float ) tr.getScaleY(),
+         0.0f,
+         ( float ) tr.getTranslateY(),
+         
+         0.0f, 0.0f, 1.0f, 0.0f,
+         0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -913,12 +934,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public PMatrix2D getMatrix ( PMatrix2D target ) {
 
+      /* @formatter:off */
       if ( target == null ) { target = new PMatrix2D(); }
       final AffineTransform tr = this.g2.getTransform();
-      target.set(( float ) tr.getScaleX(), ( float ) tr.getShearX(),
-         ( float ) tr.getTranslateX(), ( float ) tr.getShearY(), ( float ) tr
-            .getScaleY(), ( float ) tr.getTranslateY());
+      target.set(
+         ( float ) tr.getScaleX(),
+         ( float ) tr.getShearX(),
+         ( float ) tr.getTranslateX(),
+         
+         ( float ) tr.getShearY(),
+         ( float ) tr.getScaleY(),
+         ( float ) tr.getTranslateY());
       return target;
+      /* @formatter:on */
    }
 
    /**
@@ -933,13 +961,24 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public PMatrix3D getMatrix ( PMatrix3D target ) {
 
+      /* @formatter:off */
       if ( target == null ) { target = new PMatrix3D(); }
       final AffineTransform tr = this.g2.getTransform();
-      target.set(( float ) tr.getScaleX(), ( float ) tr.getShearX(), 0.0f,
-         ( float ) tr.getTranslateX(), ( float ) tr.getShearY(), ( float ) tr
-            .getScaleY(), 0.0f, ( float ) tr.getTranslateY(), 0.0f, 0.0f, 1.0f,
-         0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      target.set(
+         ( float ) tr.getScaleX(),
+         ( float ) tr.getShearX(),
+         0.0f,
+         ( float ) tr.getTranslateX(), 
+         
+         ( float ) tr.getShearY(),
+         ( float ) tr.getScaleY(),
+         0.0f,
+         ( float ) tr.getTranslateY(),
+         
+         0.0f, 0.0f, 1.0f, 0.0f,
+         0.0f, 0.0f, 0.0f, 1.0f);
       return target;
+      /* @formatter:on */
    }
 
    /**
@@ -1359,7 +1398,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final int v1 = ( int ) ( vBr * h );
 
       this.image(img, x0i, y0i, x1i, y1i, u0, v0, u1, v1);
-
    }
 
    /**
@@ -1575,10 +1613,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        */
 
       switch ( mode ) {
-         case CORNER:
-         case CORNERS:
-         case CENTER:
-         case RADIUS:
+         case PConstants.CORNER:
+         case PConstants.CORNERS:
+         case PConstants.CENTER:
+         case PConstants.RADIUS:
             this.imageMode = mode;
             break;
 
@@ -1606,22 +1644,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param imgNtv AWT native image
     * @param pd     Processing image pixel density
     * @param imgObs AWT ImageObserver
-    * @param x0     the x coordinate of the first corner of the destination
-    *                  rectangle.
-    * @param y0     the y coordinate of the first corner of the destination
-    *                  rectangle.
-    * @param x1     the x coordinate of the second corner of the destination
-    *                  rectangle.
-    * @param y1     the y coordinate of the second corner of the destination
-    *                  rectangle.
-    * @param uTl    the x coordinate of the first corner of the source
-    *                  rectangle.
-    * @param vTl    the y coordinate of the first corner of the source
-    *                  rectangle.
-    * @param uBr    the x coordinate of the second corner of the source
-    *                  rectangle.
-    * @param vBr    the y coordinate of the second corner of the source
-    *                  rectangle.
+    * @param x0     first corner x of the destination rectangle
+    * @param y0     first corner y of the destination rectangle
+    * @param x1     second corner x of the destination rectangle
+    * @param y1     second corner y of the destination rectangle
+    * @param uTl    first corner x of the source rectangle
+    * @param vTl    first corner y of the source rectangle
+    * @param uBr    second corner x of the source rectangle
+    * @param vBr    second corner y of the source rectangle
     */
    public void imageSource ( final Image imgNtv, final int pd,
       final ImageObserver imgObs, final int x0, final int y0, final int x1,
@@ -1652,7 +1682,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * <ul>
     * <li>Loading the image's pixels.</li>
     * <li>Checks the image's format ({@link PConstants#ARGB},
-    * {@link PConstants#RGBG}, {@link PConstants#ALPHA}).</li>
+    * {@link PConstants#RGB}, {@link PConstants#ALPHA}).</li>
     * <li>Creating a new {@link java.awt.image.BufferedImage};</li>
     * <li>Acquiring the image's {@link java.awt.image.WritableRaster}.</li>
     * <li>Setting the raster's data with the image's pixels.</li>
@@ -1664,20 +1694,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * or {@link PGraphics#textureMode}.
     *
     * @param img Processing image
-    * @param x0  the x coordinate of the first corner of the destination
-    *               rectangle.
-    * @param y0  the y coordinate of the first corner of the destination
-    *               rectangle.
-    * @param x1  the x coordinate of the second corner of the destination
-    *               rectangle.
-    * @param y1  the y coordinate of the second corner of the destination
-    *               rectangle.
-    * @param uTl the x coordinate of the first corner of the source rectangle.
-    * @param vTl the y coordinate of the first corner of the source rectangle.
-    * @param uBr the x coordinate of the second corner of the source
-    *               rectangle.
-    * @param vBr the y coordinate of the second corner of the source
-    *               rectangle.
+    * @param x0  first corner x of the destination rectangle
+    * @param y0  first corner y of the destination rectangle
+    * @param x1  second corner x of the destination rectangle
+    * @param y1  second corner y of the destination rectangle
+    * @param uTl first corner x of the source rectangle
+    * @param vTl first corner y of the source rectangle
+    * @param uBr second corner x of the source rectangle
+    * @param vBr second corner y of the source rectangle
     */
    public void imageSource ( final PImage img, final int x0, final int y0,
       final int x1, final int y1, final int uTl, final int vTl, final int uBr,
@@ -1697,6 +1721,23 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       this.imageSource(imgNtv, img.pixelDensity, null, x0, y0, x1, y1, uTl, vTl,
          uBr, vBr);
+   }
+
+   @Experimental
+   public void imageSource ( Img img, final int x0, final int y0, final int x1,
+      final int y1, final int uTl, final int vTl, final int uBr,
+      final int vBr ) {
+
+      int w = img.getWidth();
+      int h = img.getHeight();
+      int[] px = img.getPixels();
+      final BufferedImage imgNtv = new BufferedImage(w, h,
+         BufferedImage.TYPE_INT_ARGB);
+      final WritableRaster wr = imgNtv.getRaster();
+      wr.setDataElements(0, 0, w, h, px);
+
+      this.g2.drawImage(imgNtv, x0, y0, x1, y1, uTl, ( h - vTl ), uBr, ( h
+         - vBr ), ( ImageObserver ) null);
    }
 
    /**
@@ -2351,10 +2392,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Experimental
    public Vec2 screen ( final Vec2 source, final Vec2 target ) {
 
+      /* @formatter:off */
       final AffineTransform tr = this.g2.getTransform();
-      return target.set(( float ) ( tr.getScaleX() * source.x + tr.getShearX()
-         * source.y + tr.getTranslateX() ), ( float ) ( tr.getShearY()
-            * source.x + tr.getScaleY() * source.y + tr.getTranslateY() ));
+      return target.set(
+         ( float ) ( tr.getScaleX() * source.x +
+                     tr.getShearX() * source.y +
+                     tr.getTranslateX() ),
+         
+         ( float ) ( tr.getShearY() * source.x +
+                     tr.getScaleY() * source.y +
+                     tr.getTranslateY() ));
+      /* @formatter:on */
    }
 
    /**

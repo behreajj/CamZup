@@ -3,10 +3,9 @@ import camzup.pfriendly.*;
 
 Vec2 st = new Vec2();
 Gradient gr = Gradient.paletteViridis(new Gradient());
-Color clr = new Color();
 
 void settings() {
-  size(256, 256, Yup2.PATH_STR);
+  size(256, 256, YupJ2.PATH_STR);
 }
 
 void draw() {
@@ -30,8 +29,7 @@ void draw() {
       float fac1 = Sdf.arc(st, ang0, ang1, 0.25, 0.35);
       float fac2 = Sdf.polygon(st, sides, -ang0, 1.25);
       float fac = Sdf.subtract(fac1, fac2);
-      Gradient.eval(gr, fac, clr);
-      pixels[idx] = Color.toHexInt(clr);
+      pixels[idx] = Gradient.eval(gr, fac);
     }
   }
   updatePixels();

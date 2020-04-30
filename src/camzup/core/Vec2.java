@@ -2493,7 +2493,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
    public static float projectScalar ( final Vec2 a, final Vec2 b ) {
 
       final float bSq = Vec2.magSq(b);
-      if ( bSq != 0.0f ) { return Vec2.dot(a, b) / bSq; }
+      if ( bSq > 0.0f ) { return Vec2.dot(a, b) / bSq; }
       return 0.0f;
    }
 
@@ -2706,16 +2706,16 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     * @param target the output vector
     *
     * @return the rescaled vector
-    *
-    * @see Vec2#rescale(Vec2, float, Vec2, Vec2)
     */
    public static Vec2 rescale ( final Vec2 v, final float scalar,
       final Vec2 target ) {
 
-      final float mSq = v.x * v.x + v.y * v.y;
-      if ( scalar == 0.0f || mSq == 0.0f ) { return target.reset(); }
-      final float sclMag = scalar * Utils.invSqrtUnchecked(mSq);
-      return target.set(v.x * sclMag, v.y * sclMag);
+      final float msq = v.x * v.x + v.y * v.y;
+      if ( scalar != 0.0f && msq != 0.0f ) {
+         final float sclMg = scalar * Utils.invSqrtUnchecked(msq);
+         return target.set(v.x * sclMg, v.y * sclMg);
+      }
+      return target.reset();
    }
 
    /**

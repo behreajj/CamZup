@@ -2005,7 +2005,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    public static float projectScalar ( final Vec4 a, final Vec4 b ) {
 
       final float bSq = Vec4.magSq(b);
-      if ( bSq != 0.0f ) { return Vec4.dot(a, b) / bSq; }
+      if ( bSq > 0.0f ) { return Vec4.dot(a, b) / bSq; }
       return 0.0f;
    }
 
@@ -2131,14 +2131,15 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @see Vec4#rescale(Vec4, float, Vec4, Vec4)
     */
-   public static Vec4 rescale ( final Vec4 v, final float scalar,
-      final Vec4 target ) {
+   public static Vec4 rescale ( Vec4 v, float scalar, Vec4 target ) {
 
-      final float mSq = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
-      if ( scalar == 0.0f || mSq == 0.0f ) { return target.reset(); }
-
-      final float sclMag = scalar * Utils.invSqrtUnchecked(mSq);
-      return target.set(v.x * sclMag, v.y * sclMag, v.z * sclMag, v.w * sclMag);
+      float msq = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
+      if ( scalar != 0.0f && msq != 0.0f ) {
+         float sclMg = scalar * Utils.invSqrtUnchecked(msq);
+         return target.set(v.x * sclMg, v.y * sclMg, v.z * sclMg, v.w * sclMg);
+      } else {
+         return target.reset();
+      }
    }
 
    /**

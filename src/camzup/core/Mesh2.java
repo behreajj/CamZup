@@ -2655,8 +2655,25 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * Returns a collection of mesh vertices organized by their proximity to a
-    * point. The proximity is expressed as a factor in [0.0, 1.0] , where 1.0
-    * is the closest vertex and 0.0 is the farthest. Any function which
+    * point. The proximity is expressed as a factor where the nearest vertex
+    * is on the nearBound; the farthest is on the farBound.
+    *
+    * @param m the mesh
+    * @param p the point
+    *
+    * @return the collection
+    */
+   @Experimental
+   public static TreeMap < Float, Vert2 > proximity ( final Mesh2 m,
+      final Vec2 p ) {
+
+      return Mesh2.proximity(m, p, 1.0f, 0.0f);
+   }
+
+   /**
+    * Returns a collection of mesh vertices organized by their proximity to a
+    * point. The proximity is expressed as a factor where the nearest vertex
+    * is on the nearBound; the farthest is on the farBound. Any function which
     * mutates a vertex's properties by such a factor can be applied to the
     * collection.<br>
     * <br>
@@ -2665,20 +2682,18 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * different quadrants of the Cartesian coordinate system, i.e. not
     * organized by proximity to each other.
     *
-    * @param m the mesh
-    * @param p the point
+    * @param m         the mesh
+    * @param p         the point
+    * @param nearBound the factor near bound
+    * @param farBound  the factor far bound
     *
     * @return the collection
     *
     * @see Mesh2#getVertices()
     * @see Vec2#distSq(Vec2, Vec2)
     */
-   @Experimental
-   public static TreeMap < Float, Vert2 > proximity (
-      final Mesh2 m,
-      final Vec2 p ) {
-
-      // TEST
+   public static TreeMap < Float, Vert2 > proximity ( final Mesh2 m,
+      final Vec2 p, final float nearBound, final float farBound ) {
 
       final Vert2[] verts = m.getVertices();
       final int vertLen = verts.length;
@@ -2693,12 +2708,18 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          maxDist = distSq > maxDist ? distSq : maxDist;
       }
 
-      final float denom = minDist - maxDist;
-      final float dnInv = denom != 0.0f ? 1.0f / denom : 0.0f;
+      /*
+       * The span of the origin range and destination range are already known,
+       * so calculate portions of the map function outside of the for loop.
+       */
+      final float spanOrigin = maxDist - minDist;
+      final float scalar = spanOrigin != 0.0f ? ( farBound - nearBound )
+         / spanOrigin : 0.0f;
       final TreeMap < Float, Vert2 > result = new TreeMap <>();
       for ( int j = 0; j < vertLen; ++j ) {
-         /* A simplification of map(dist, minDist, maxDist, 1.0, 0.0) */
-         final float fac = 1.0f + ( dists[j] - minDist ) * dnInv;
+         // final float fac = Utils.map(dists[j], minDist, maxDist, nearBound,
+         // farBound);
+         final float fac = nearBound + scalar * ( dists[j] - minDist );
          result.put(fac, verts[j]);
       }
 

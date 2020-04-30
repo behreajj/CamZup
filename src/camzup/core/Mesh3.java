@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -3233,7 +3234,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          { {  9, 17,  3 }, {  3, 16,  3 }, {  5, 20,  3 } },
          { { 10, 21,  4 }, {  9, 17,  4 }, {  5, 20,  4 } },
          { { 11, 19,  5 }, {  9, 17,  5 }, { 10, 21,  5 } },
-         { { 11,  3,  6 }, { 10,  1,  6 }, {  8,  5,  6 } }, 
+         { { 11,  3,  6 }, { 10,  1,  6 }, {  8,  5,  6 } },
          { { 11,  7, 18 }, {  8,  5, 18 }, {  6,  9, 18 } },
          { { 11, 11,  0 }, {  6,  9,  0 }, {  7, 13,  0 } },
          { { 11, 15, 19 }, {  7, 13, 19 }, {  9, 17, 19 } } };
@@ -3387,6 +3388,63 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       Arrays.sort(fsTarget, new Mesh3.SortIndices3(vsSource));
 
       return target;
+   }
+
+   /**
+    * Returns a collection of mesh vertices organized by their proximity to a
+    * point. The proximity is expressed as a factor where the nearest vertex
+    * is on the nearBound; the farthest is on the farBound. Any function which
+    * mutates a vertex's properties by such a factor can be applied to the
+    * collection.<br>
+    * <br>
+    * However, the Euclidean distance from a point is unsigned, so two points
+    * may have approximately the same distance from the point yet be in
+    * different quadrants of the Cartesian coordinate system, i.e. not
+    * organized by proximity to each other.
+    *
+    * @param m         the mesh
+    * @param p         the point
+    * @param nearBound the factor near bound
+    * @param farBound  the factor far bound
+    *
+    * @return the collection
+    *
+    * @see Mesh2#getVertices()
+    * @see Vec2#distSq(Vec2, Vec2)
+    */
+   public static TreeMap < Float, Vert3 > proximity ( final Mesh3 m,
+      final Vec3 p, final float nearBound, final float farBound ) {
+
+
+      final Vert3[] verts = m.getVertices();
+      final int vertLen = verts.length;
+      final float[] dists = new float[vertLen];
+      float minDist = Float.MAX_VALUE;
+      float maxDist = Float.MIN_VALUE;
+      for ( int i = 0; i < vertLen; ++i ) {
+         final Vert3 vert = verts[i];
+         final float distSq = Vec3.distSq(vert.coord, p);
+         dists[i] = distSq;
+         minDist = distSq < minDist ? distSq : minDist;
+         maxDist = distSq > maxDist ? distSq : maxDist;
+      }
+
+      /*
+       * The span of the origin range and destination range are already known,
+       * so calculate portions of the map function outside of the for loop.
+       */
+      final float spanOrigin = maxDist - minDist;
+      final float scalar = spanOrigin != 0.0f ? ( farBound - nearBound )
+         / spanOrigin : 0.0f;
+      final TreeMap < Float, Vert3 > result = new TreeMap <>();
+      for ( int j = 0; j < vertLen; ++j ) {
+         // final float fac = Utils.map(dists[j], minDist, maxDist, nearBound,
+         // farBound);
+         final float fac = nearBound + scalar * ( dists[j] - minDist );
+         result.put(fac, verts[j]);
+      }
+
+      return result;
    }
 
    /**
@@ -3915,6 +3973,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          /* Loop over coordinates and normals. */
          for ( int j = 0; j < lons; ++j, ++k0 ) {
+
+            // TODO: Double check, are these right?
             final Vec3 nrm = vns[k0].set(cosPhi * costs[j], cosPhi * sints[j],
                sinPhi);
             Vec3.mul(nrm, 0.5f, vs[k0]);

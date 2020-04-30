@@ -1879,12 +1879,12 @@ public class Mat4 extends Matrix {
    /**
     * Multiplies a matrix and a quaternion. Stores the quaternion's matrix
     * representation in an output variable.
-    * 
+    *
     * @param a      matrix
     * @param b      quaternion
     * @param target the output matrix
     * @param bm     the matrix conversion
-    * 
+    *
     * @return the product
     */
    public static Mat4 mul ( final Mat4 a, final Quaternion b, final Mat4 target,
@@ -1917,12 +1917,12 @@ public class Mat4 extends Matrix {
    /**
     * Multiplies a quaternion and a matrix. Stores the quaternion's matrix
     * representation in an output variable.
-    * 
+    *
     * @param a      quaternion
     * @param b      matrix
     * @param target the output matrix
     * @param am     the matrix conversion
-    * 
+    *
     * @return the product
     */
    public static Mat4 mul ( final Quaternion a, final Mat4 b, final Mat4 target,

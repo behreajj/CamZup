@@ -913,11 +913,9 @@ public abstract class SvgParser {
                      curr = new Knot2();
                      target.append(curr);
 
-                     /* @formatter:off */
                      curr.coord.x = prev.coord.x;
                      curr.coord.y = relative.y + SvgParser.parseFloat(
                         coyStr, 0.0f);
-                     /* @formatter:on */
 
                      Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
                      Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);

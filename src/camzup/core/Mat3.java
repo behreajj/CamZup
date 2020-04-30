@@ -1073,16 +1073,22 @@ public class Mat3 extends Matrix {
 
       final float det = m.m00 * b01 + m.m01 * b11 + m.m02 * b21;
 
+      /* @formatter:off */
       if ( det != 0.0f ) {
          final float detInv = 1.0f / det;
-         return target.set(b01 * detInv, ( m.m02 * m.m21 - m.m22 * m.m01 )
-            * detInv, ( m.m12 * m.m01 - m.m02 * m.m11 ) * detInv, b11 * detInv,
-            ( m.m22 * m.m00 - m.m02 * m.m20 ) * detInv, ( m.m02 * m.m10 - m.m12
-               * m.m00 ) * detInv, b21 * detInv, ( m.m01 * m.m20 - m.m21
-                  * m.m00 ) * detInv, ( m.m11 * m.m00 - m.m01 * m.m10 )
-                     * detInv);
+         return target.set(
+            b01 * detInv,
+            ( m.m02 * m.m21 - m.m22 * m.m01 ) * detInv,
+            ( m.m12 * m.m01 - m.m02 * m.m11 ) * detInv,
+            b11 * detInv,
+            ( m.m22 * m.m00 - m.m02 * m.m20 ) * detInv,
+            ( m.m02 * m.m10 - m.m12 * m.m00 ) * detInv,
+            b21 * detInv,
+            ( m.m01 * m.m20 - m.m21 * m.m00 ) * detInv,
+            ( m.m11 * m.m00 - m.m01 * m.m10 ) * detInv);
       }
       return target.reset();
+      /* @formatter:on */
    }
 
    /**
@@ -1213,7 +1219,8 @@ public class Mat3 extends Matrix {
     */
    public static Vec3 mul ( final Mat3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(a.m00 * b.x + a.m01 * b.y + a.m02 * b.z, a.m10 * b.x
+      return target.set(a.m00 * b.x + a.m01 * b.y + a.m02 * b.z, a.m10
+         * b.x
          + a.m11 * b.y + a.m12 * b.z, a.m20 * b.x + a.m21 * b.y + a.m22 * b.z);
    }
 
@@ -1285,9 +1292,12 @@ public class Mat3 extends Matrix {
     */
    public static Mat3 sub ( final Mat3 a, final Mat3 b, final Mat3 target ) {
 
-      return target.set(a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02, a.m10
-         - b.m10, a.m11 - b.m11, a.m12 - b.m12, a.m20 - b.m20, a.m21 - b.m21,
-         a.m22 - b.m22);
+      /* @formatter:off */
+      return target.set(
+         a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02,
+         a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12,
+         a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22);
+      /* @formatter:on */
    }
 
    /**

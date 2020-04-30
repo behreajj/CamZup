@@ -6,7 +6,7 @@ import java.util.Iterator;
 /**
  * A mutable, extensible color class. Supports RGBA and HSBA color spaces.
  * Supports conversion to and from integers where color channels are in the
- * format 0xAARRGGBB.
+ * format 0xAARRGGBB (Java).
  */
 public class Color implements Comparable < Color >, Cloneable, Iterable <
    Float > {

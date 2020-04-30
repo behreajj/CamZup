@@ -1318,7 +1318,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       }
 
       /* Polarity: an infinite number of orientations is possible. */
-      if ( Vec3.approxMag(right, 0.0f) ) {
+      if ( Vec3.approxMag(right, 0.0f, IUtils.DEFAULT_EPSILON) ) {
 
          if ( isRight ) {
 
@@ -1409,14 +1409,14 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float bmsq = bnx * bnx + bny * bny + bnz * bnz;
       if ( bmsq == 0.0f ) { return target.reset(); }
 
-      if ( !Utils.approx(amsq, 1.0f) ) {
+      if ( !Utils.approx(amsq, 1.0f, IUtils.DEFAULT_EPSILON) ) {
          final float aminv = Utils.invSqrtUnchecked(amsq);
          anx *= aminv;
          any *= aminv;
          anz *= aminv;
       }
 
-      if ( !Utils.approx(bmsq, 1.0f) ) {
+      if ( !Utils.approx(bmsq, 1.0f, IUtils.DEFAULT_EPSILON) ) {
          final float bminv = Utils.invSqrtUnchecked(bmsq);
          bnx *= bminv;
          bny *= bminv;
@@ -1597,22 +1597,24 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Vec3 target ) {
 
       final float mSq = Quaternion.magSq(q);
-      if ( mSq == 0.0f ) { return target.reset(); }
-      final float mSqInv = 1.0f / mSq;
+      if ( mSq != 0.0f ) {
+         final float mSqInv = 1.0f / mSq;
 
-      final float w = q.real * mSqInv;
-      final Vec3 i = q.imag;
-      final float qx = -i.x * mSqInv;
-      final float qy = -i.y * mSqInv;
-      final float qz = -i.z * mSqInv;
+         final float w = q.real * mSqInv;
+         final Vec3 i = q.imag;
+         final float qx = -i.x * mSqInv;
+         final float qy = -i.y * mSqInv;
+         final float qz = -i.z * mSqInv;
 
-      final float iw = -qx * source.x - qy * source.y - qz * source.z;
-      final float ix = w * source.x + qy * source.z - qz * source.y;
-      final float iy = w * source.y + qz * source.x - qx * source.z;
-      final float iz = w * source.z + qx * source.y - qy * source.x;
+         final float iw = -qx * source.x - qy * source.y - qz * source.z;
+         final float ix = w * source.x + qy * source.z - qz * source.y;
+         final float iy = w * source.y + qz * source.x - qx * source.z;
+         final float iz = w * source.z + qx * source.y - qy * source.x;
 
-      return target.set(ix * w + iz * qy - iw * qx - iy * qz, iy * w + ix * qz
-         - iw * qy - iz * qx, iz * w + iy * qx - iw * qz - ix * qy);
+         return target.set(ix * w + iz * qy - iw * qx - iy * qz, iy * w + ix
+            * qz - iw * qy - iz * qx, iz * w + iy * qx - iw * qz - ix * qy);
+      }
+      return target.reset();
    }
 
    /**
@@ -1748,11 +1750,12 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public static Quaternion mul ( final Quaternion a, final float b,
       final Quaternion target ) {
 
-      if ( b == 0.0f ) { return target.reset(); }
-
-      Vec3.mul(a.imag, b, target.imag);
-      target.real = a.real * b;
-      return target;
+      if ( b != 0.0f ) {
+         Vec3.mul(a.imag, b, target.imag);
+         target.real = a.real * b;
+         return target;
+      }
+      return target.reset();
    }
 
    /**
@@ -1857,11 +1860,11 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
       final Vec3 i = q.imag;
       final float mSq = q.real * q.real + i.x * i.x + i.y * i.y + i.z * i.z;
-
-      if ( mSq == 0.0f ) { return Quaternion.identity(target); }
-
-      final float mInv = Utils.invSqrtUnchecked(mSq);
-      return target.set(q.real * mInv, i.x * mInv, i.y * mInv, i.z * mInv);
+      if ( mSq > 0.0f ) {
+         final float mInv = Utils.invSqrtUnchecked(mSq);
+         return target.set(q.real * mInv, i.x * mInv, i.y * mInv, i.z * mInv);
+      }
+      return Quaternion.identity(target);
    }
 
    /**
@@ -1913,15 +1916,14 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       // components set to zero.
 
       final float mSq = Quaternion.magSq(q);
-      if ( mSq == 0.0f ) {
-         return Quaternion.fromAxisAngle(radians, axis, target);
+      if ( mSq > 0.0f ) {
+         final float wNorm = q.real * Utils.invSqrtUnchecked(mSq);
+         final float halfAngle = Utils.acos(wNorm);
+
+         return Quaternion.fromAxisAngle( ( halfAngle + halfAngle + radians )
+            % IUtils.TAU, axis, target);
       }
-
-      final float wNorm = q.real * Utils.invSqrtUnchecked(mSq);
-      final float halfAngle = Utils.acos(wNorm);
-
-      return Quaternion.fromAxisAngle( ( halfAngle + halfAngle + radians )
-         % IUtils.TAU, axis, target);
+      return Quaternion.fromAxisAngle(radians, axis, target);
    }
 
    /**

@@ -2703,7 +2703,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    public static float projectScalar ( final Vec3 a, final Vec3 b ) {
 
       final float bSq = Vec3.magSq(b);
-      if ( bSq != 0.0f ) { return Vec3.dot(a, b) / bSq; }
+      if ( bSq > 0.0f ) { return Vec3.dot(a, b) / bSq; }
       return 0.0f;
    }
 
@@ -2977,14 +2977,15 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     *
     * @see Vec3#rescale(Vec3, float, Vec3, Vec3)
     */
-   public static Vec3 rescale ( final Vec3 v, final float scalar,
-      final Vec3 target ) {
+   public static Vec3 rescale ( Vec3 v, float scalar, Vec3 target ) {
 
-      final float mSq = v.x * v.x + v.y * v.y + v.z * v.z;
-      if ( scalar == 0.0f || mSq == 0.0f ) { return target.reset(); }
-
-      final float sclMag = scalar * Utils.invSqrtUnchecked(mSq);
-      return target.set(v.x * sclMag, v.y * sclMag, v.z * sclMag);
+      float msq = v.x * v.x + v.y * v.y + v.z * v.z;
+      if ( scalar != 0.0f && msq != 0.0f ) {
+         float sclMg = scalar * Utils.invSqrtUnchecked(msq);
+         return target.set(v.x * sclMg, v.y * sclMg, v.z * sclMg);
+      } else {
+         return target.reset();
+      }
    }
 
    /**

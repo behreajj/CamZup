@@ -229,7 +229,7 @@ public class Ray2 extends Ray {
       final Vec2 origin = ray.origin;
       final Vec2 dir = ray.dir;
       final float dmsq = Vec2.magSq(dir);
-      if ( time > 0.0f && dmsq != 0.0f ) {
+      if ( time > 0.0f && dmsq > 0.0f ) {
          if ( Utils.approx(dmsq, 1.0f) ) {
             return target.set(origin.x + dir.x * time, origin.y + dir.y * time);
          } else {
@@ -310,12 +310,13 @@ public class Ray2 extends Ray {
          Vec2.perpendicularCCW(ray.dir, v3);
 
          final float dot = Vec2.dot(v2, v3);
-         if ( !Utils.approx(dot, 0.0f) ) {
+         if ( !Utils.approx(dot, 0.0f, IUtils.DEFAULT_EPSILON) ) {
             final float t1 = Vec2.cross(v2, v1) / dot;
             final float t2 = Vec2.dot(v1, v3) / dot;
             if ( t1 >= 0.0f && t2 >= 0.0f && t2 <= 1.0f ) {
                if ( t1 < minDist ) { minDist = t1; }
-               final Vec2 hit = Ray2.eval(ray, t1, new Vec2());
+               final Vec2 hit = new Vec2();
+               Ray2.eval(ray, t1, hit);
                hits.add(hit);
             }
          }

@@ -53,9 +53,8 @@ void draw() {
     float dotsiz = Utils.pingPong(dotmin, dotmax, prc);
 
     CurveEntity2.eval(ce2, 0, step + off, world, local);
-    Gradient.eval(grd, prc, clr);
     rndr.strokeWeight(dotsiz);
-    rndr.stroke(Color.toHexInt(clr));
+    rndr.stroke(Gradient.eval(grd, prc));
     rndr.point(world.origin);
   }
 }

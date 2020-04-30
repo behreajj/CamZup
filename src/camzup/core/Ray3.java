@@ -224,7 +224,7 @@ public class Ray3 extends Ray {
       final Vec3 origin = ray.origin;
       final Vec3 dir = ray.dir;
       final float dmsq = Vec3.magSq(dir);
-      if ( time > 0.0f && dmsq != 0.0f ) {
+      if ( time > 0.0f && dmsq > 0.0f ) {
          if ( Utils.approx(dmsq, 1.0f) ) {
             return target.set(origin.x + dir.x * time, origin.y + dir.y * time,
                origin.z + dir.z * time);
