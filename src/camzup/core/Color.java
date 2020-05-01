@@ -588,7 +588,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
 
    public Color set ( final byte red, final byte green, final byte blue ) {
 
-      return this.set(red, green, blue, ( byte ) -1);
+      return this.set(IUtils.ONE_255 * ( red & 0xff ), IUtils.ONE_255 * ( green
+         & 0xff ), IUtils.ONE_255 * ( blue & 0xff ), 1.0f);
    }
 
    /**

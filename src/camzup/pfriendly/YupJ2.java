@@ -890,7 +890,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          ( float ) tr.getShearY(),
          ( float ) tr.getScaleY(),
          ( float ) tr.getTranslateY(),
-         
+
          0.0f, 0.0f, 1.0f);
       /* @formatter:on */
    }
@@ -916,7 +916,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          ( float ) tr.getScaleY(),
          0.0f,
          ( float ) tr.getTranslateY(),
-         
+
          0.0f, 0.0f, 1.0f, 0.0f,
          0.0f, 0.0f, 0.0f, 1.0f);
       /* @formatter:on */
@@ -941,7 +941,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          ( float ) tr.getScaleX(),
          ( float ) tr.getShearX(),
          ( float ) tr.getTranslateX(),
-         
+
          ( float ) tr.getShearY(),
          ( float ) tr.getScaleY(),
          ( float ) tr.getTranslateY());
@@ -968,13 +968,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          ( float ) tr.getScaleX(),
          ( float ) tr.getShearX(),
          0.0f,
-         ( float ) tr.getTranslateX(), 
-         
+         ( float ) tr.getTranslateX(),
+
          ( float ) tr.getShearY(),
          ( float ) tr.getScaleY(),
          0.0f,
          ( float ) tr.getTranslateY(),
-         
+
          0.0f, 0.0f, 1.0f, 0.0f,
          0.0f, 0.0f, 0.0f, 1.0f);
       return target;
@@ -1361,19 +1361,31 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * imageMode.
     *
     * @param img the PImage
-    * @param x   the first x coordinate
-    * @param y   the first y coordinate
-    * @param u   the second x coordinate
-    * @param v   the second y coordinate
+    * @param x0  the first x coordinate
+    * @param y0  the first y coordinate
+    * @param x1  the second x coordinate
+    * @param y1  the second y coordinate
     */
    @Override
-   public void image ( final PImage img, final float x, final float y,
-      final float u, final float v ) {
+   public void image ( final PImage img, final float x0, final float y0,
+      final float x1, final float y1 ) {
 
-      this.image(img, ( int ) x, ( int ) y, ( int ) u, ( int ) v, 0, 0,
+      this.image(img, ( int ) x0, ( int ) y0, ( int ) x1, ( int ) y1, 0,
+         0,
          img.width, img.height);
    }
 
+   /**
+    * @param img
+    * @param x0  the first x coordinate
+    * @param y0  the first y coordinate
+    * @param x1  the second x coordinate
+    * @param y1  the second y coordinate
+    * @param uTl the image top-left corner u
+    * @param vTl the image top-left corner v
+    * @param uBr the image bottom-right corner u
+    * @param vBr the image bottom-right corner v
+    */
    public void image ( final PImage img, final float x0, final float y0,
       final float x1, final float y1, final float uTl, final float vTl,
       final float uBr, final float vBr ) {
@@ -1404,21 +1416,21 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * Displays a PImage.
     *
     * @param img the PImage
-    * @param a   the first x coordinate
-    * @param b   the first y coordinate
-    * @param c   the second x coordinate
-    * @param d   the second y coordinate
-    * @param u1  the image top-left corner u
-    * @param v1  the image top-left corner v
-    * @param u2  the image bottom-right corner u
-    * @param v2  the image bottom-right corner v
+    * @param x0   the first x coordinate
+    * @param y0   the first y coordinate
+    * @param x1   the second x coordinate
+    * @param y1   the second y coordinate
+    * @param uTl  the image top-left corner u
+    * @param vTl  the image top-left corner v
+    * @param uBr  the image bottom-right corner u
+    * @param vBr  the image bottom-right corner v
     */
    @Override
-   public void image ( final PImage img, final float a, final float b,
-      final float c, final float d, final int u1, final int v1, final int u2,
-      final int v2 ) {
+   public void image ( final PImage img, final float x0, final float y0,
+      final float x1, final float y1, final int uTl, final int vTl, final int uBr,
+      final int vBr ) {
 
-      super.imageImpl(img, a, b, c, d, u1, v2, u2, v1);
+      super.imageImpl(img, x0, y0, x1, y1, uTl, vBr, uBr, vTl);
 
       // image(img, ( int ) a, ( int ) b, ( int ) c, ( int ) d, u1, v2, u2, v1);
    }
@@ -1671,6 +1683,37 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * Converts a core image to a Java AWT image, then draws the converted
+    * image to the renderer. Flips the vertical uvs to conform with y up axis.
+    * 
+    * @param img the image
+    * @param x0  first corner x of the destination rectangle
+    * @param y0  first corner y of the destination rectangle
+    * @param x1  second corner x of the destination rectangle
+    * @param y1  second corner y of the destination rectangle
+    * @param uTl first corner x of the source rectangle
+    * @param vTl first corner y of the source rectangle
+    * @param uBr second corner x of the source rectangle
+    * @param vBr second corner y of the source rectangle
+    */
+   @Experimental
+   public void imageSource ( final Img img, final int x0, final int y0,
+      final int x1, final int y1, final int uTl, final int vTl, final int uBr,
+      final int vBr ) {
+
+      final int w = img.getWidth();
+      final int h = img.getHeight();
+      final int[] px = img.getPixels();
+      final BufferedImage imgNtv = new BufferedImage(w, h,
+         BufferedImage.TYPE_INT_ARGB);
+      final WritableRaster wr = imgNtv.getRaster();
+      wr.setDataElements(0, 0, w, h, px);
+
+      this.g2.drawImage(imgNtv, x0, y0, x1, y1, uTl, h - vTl, uBr, h - vBr,
+         ( ImageObserver ) null);
+   }
+
+   /**
     * A hack to work around the performance issues with
     * {@link PGraphicsJava2D#image(PImage, float, float, float, float, int, int, int, int)}
     * . Does the following:
@@ -1721,23 +1764,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       this.imageSource(imgNtv, img.pixelDensity, null, x0, y0, x1, y1, uTl, vTl,
          uBr, vBr);
-   }
-
-   @Experimental
-   public void imageSource ( Img img, final int x0, final int y0, final int x1,
-      final int y1, final int uTl, final int vTl, final int uBr,
-      final int vBr ) {
-
-      int w = img.getWidth();
-      int h = img.getHeight();
-      int[] px = img.getPixels();
-      final BufferedImage imgNtv = new BufferedImage(w, h,
-         BufferedImage.TYPE_INT_ARGB);
-      final WritableRaster wr = imgNtv.getRaster();
-      wr.setDataElements(0, 0, w, h, px);
-
-      this.g2.drawImage(imgNtv, x0, y0, x1, y1, uTl, ( h - vTl ), uBr, ( h
-         - vBr ), ( ImageObserver ) null);
    }
 
    /**
@@ -2398,7 +2424,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          ( float ) ( tr.getScaleX() * source.x +
                      tr.getShearX() * source.y +
                      tr.getTranslateX() ),
-         
+
          ( float ) ( tr.getShearY() * source.x +
                      tr.getScaleY() * source.y +
                      tr.getTranslateY() ));

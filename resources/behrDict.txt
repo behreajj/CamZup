@@ -125,3 +125,4 @@ polyline
 rect
 mipmaps
 regex
+inkscape

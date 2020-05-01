@@ -2048,73 +2048,73 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
    }
 
    /**
-    * Sets the target vector to the maximum of the input vector and an upper
+    * Sets the target vector to the maximum of the input vector and a lower
     * bound.
     *
     * @param a          the input value
-    * @param upperBound the upper bound
+    * @param lowerBound the lower bound
     * @param target     the output vector
     *
     * @return the maximum values
     */
-   public static Vec2 max ( final Vec2 a, final float upperBound,
+   public static Vec2 max ( final Vec2 a, final float lowerBound,
       final Vec2 target ) {
 
-      return target.set(Utils.max(a.x, upperBound), Utils.max(a.y, upperBound));
+      return target.set(Utils.max(a.x, lowerBound), Utils.max(a.y, lowerBound));
    }
 
    /**
     * Sets the target vector to the maximum components of the input vector and
-    * a upper bound.
+    * a lower bound.
     *
     * @param a          the input vector
-    * @param upperBound the upper bound
+    * @param lowerBound the lower bound
     * @param target     the output vector
     *
     * @return the maximum values
     *
     * @see Utils#max(float, float)
     */
-   public static Vec2 max ( final Vec2 a, final Vec2 upperBound,
+   public static Vec2 max ( final Vec2 a, final Vec2 lowerBound,
       final Vec2 target ) {
 
-      return target.set(Utils.max(a.x, upperBound.x), Utils.max(a.y,
-         upperBound.y));
+      return target.set(Utils.max(a.x, lowerBound.x), Utils.max(a.y,
+         lowerBound.y));
    }
 
    /**
     * Sets the target vector to the minimum components of the input vector and
-    * a lower bound.
+    * an upper bound.
     *
     * @param a          the input value
-    * @param lowerBound the lower bound
+    * @param upperBound the upper bound
     * @param target     the output vector
     *
     * @return the minimum values
     */
-   public static Vec2 min ( final Vec2 a, final float lowerBound,
+   public static Vec2 min ( final Vec2 a, final float upperBound,
       final Vec2 target ) {
 
-      return target.set(Utils.min(a.x, lowerBound), Utils.min(a.y, lowerBound));
+      return target.set(Utils.min(a.x, upperBound), Utils.min(a.y, upperBound));
    }
 
    /**
     * Sets the target vector to the minimum components of the input vector and
-    * a lower bound.
+    * an upper bound.
     *
     * @param a          the input vector
-    * @param lowerBound the lower bound
+    * @param upperBound the upper bound
     * @param target     the output vector
     *
     * @return the minimal values
     *
     * @see Utils#min(float, float)
     */
-   public static Vec2 min ( final Vec2 a, final Vec2 lowerBound,
+   public static Vec2 min ( final Vec2 a, final Vec2 upperBound,
       final Vec2 target ) {
 
-      return target.set(Utils.min(a.x, lowerBound.x), Utils.min(a.y,
-         lowerBound.y));
+      return target.set(Utils.min(a.x, upperBound.x), Utils.min(a.y,
+         upperBound.y));
    }
 
    /**
@@ -3026,7 +3026,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     *
     * @see Utils#wrap(float, float, float)
     */
-   @Experimental
    public static Vec2 wrap ( final Vec2 v, final Vec2 lb, final Vec2 ub,
       final Vec2 target ) {
 

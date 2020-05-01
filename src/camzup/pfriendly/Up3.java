@@ -1188,6 +1188,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    public void transform ( final Transform3 tr3, final TransformOrder order ) {
 
+      /*
+       * This is not as redundant to Convert's Transform to PMatrix3D as it
+       * looks, because this also adjusts the inverses and updates the model
+       * view.
+       */
+
       final Vec3 tr3Scl = tr3.getScale(new Vec3());
       final Vec3 tr3Loc = tr3.getLocation(new Vec3());
       final Quaternion tr3Rot = tr3.getRotation(new Quaternion());

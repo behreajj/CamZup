@@ -2315,75 +2315,75 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
-    * Sets the output vector to the maximum of the input vector and an upper
+    * Sets the output vector to the maximum of the input vector and a lower
     * bound.
     *
     * @param a          the input value
-    * @param upperBound the upper bound
+    * @param lowerBound the lower bound
     * @param target     the output vector
     *
     * @return the maximum values
     */
-   public static Vec3 max ( final Vec3 a, final float upperBound,
+   public static Vec3 max ( final Vec3 a, final float lowerBound,
       final Vec3 target ) {
 
-      return target.set(Utils.max(a.x, upperBound), Utils.max(a.y, upperBound),
-         Utils.max(a.z, upperBound));
+      return target.set(Utils.max(a.x, lowerBound), Utils.max(a.y, lowerBound),
+         Utils.max(a.z, lowerBound));
    }
 
    /**
     * Sets the output vector to the maximum components of the input vector and
-    * a upper bound.
+    * a lower bound.
     *
     * @param a          the input vector
-    * @param upperBound the upper bound
+    * @param lowerBound the lower bound
     * @param target     the output vector
     *
     * @return the maximum values
     *
     * @see Utils#max(float, float)
     */
-   public static Vec3 max ( final Vec3 a, final Vec3 upperBound,
+   public static Vec3 max ( final Vec3 a, final Vec3 lowerBound,
       final Vec3 target ) {
 
-      return target.set(Utils.max(a.x, upperBound.x), Utils.max(a.y,
-         upperBound.y), Utils.max(a.z, upperBound.z));
+      return target.set(Utils.max(a.x, lowerBound.x), Utils.max(a.y,
+         lowerBound.y), Utils.max(a.z, lowerBound.z));
    }
 
    /**
     * Sets the output vector to the minimum components of the input vector and
-    * a lower bound.
+    * a upper bound.
     *
     * @param a          the input value
-    * @param lowerBound the lower bound
+    * @param upperBound the upper bound
     * @param target     the output vector
     *
     * @return the minimum values
     */
-   public static Vec3 min ( final Vec3 a, final float lowerBound,
+   public static Vec3 min ( final Vec3 a, final float upperBound,
       final Vec3 target ) {
 
-      return target.set(Utils.min(a.x, lowerBound), Utils.min(a.y, lowerBound),
-         Utils.min(a.z, lowerBound));
+      return target.set(Utils.min(a.x, upperBound), Utils.min(a.y, upperBound),
+         Utils.min(a.z, upperBound));
    }
 
    /**
     * Sets the output vector to the minimum components of the input vector and
-    * a lower bound.
+    * a upper bound.
     *
     * @param a          the input vector
-    * @param lowerBound the lower bound
+    * @param upperBound the upper bound
     * @param target     the output vector
     *
     * @return the minimal values
     *
     * @see Utils#min(float, float)
     */
-   public static Vec3 min ( final Vec3 a, final Vec3 lowerBound,
+   public static Vec3 min ( final Vec3 a, final Vec3 upperBound,
       final Vec3 target ) {
 
-      return target.set(Utils.min(a.x, lowerBound.x), Utils.min(a.y,
-         lowerBound.y), Utils.min(a.z, lowerBound.z));
+      return target.set(Utils.min(a.x, upperBound.x), Utils.min(a.y,
+         upperBound.y), Utils.min(a.z, upperBound.z));
    }
 
    /**
@@ -2977,11 +2977,12 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     *
     * @see Vec3#rescale(Vec3, float, Vec3, Vec3)
     */
-   public static Vec3 rescale ( Vec3 v, float scalar, Vec3 target ) {
+   public static Vec3 rescale ( final Vec3 v, final float scalar,
+      final Vec3 target ) {
 
-      float msq = v.x * v.x + v.y * v.y + v.z * v.z;
+      final float msq = v.x * v.x + v.y * v.y + v.z * v.z;
       if ( scalar != 0.0f && msq != 0.0f ) {
-         float sclMg = scalar * Utils.invSqrtUnchecked(msq);
+         final float sclMg = scalar * Utils.invSqrtUnchecked(msq);
          return target.set(v.x * sclMg, v.y * sclMg, v.z * sclMg);
       } else {
          return target.reset();
@@ -3322,7 +3323,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public static Vec3 sign ( final Vec3 v, final Vec3 target ) {
 
-      /* float sign returns an integer; this is inlined to avoid cast. */
       return target.set(v.x < -0.0f ? -1.0f : v.x > 0.0f ? 1.0f : 0.0f, v.y
          < -0.0f ? -1.0f : v.y > 0.0f ? 1.0f : 0.0f, v.z < -0.0f ? -1.0f : v.z
             > 0.0f ? 1.0f : 0.0f);
@@ -3425,7 +3425,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     *
     * @see Utils#wrap(float, float, float)
     */
-   @Experimental
    public static Vec3 wrap ( final Vec3 v, final Vec3 lb, final Vec3 ub,
       final Vec3 target ) {
 

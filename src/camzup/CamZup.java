@@ -1,5 +1,7 @@
 package camzup;
 
+import camzup.core.Utils;
+
 import processing.core.PApplet;
 
 /**
@@ -71,6 +73,16 @@ public class CamZup {
       // System.out.println(realDist);
       // System.out.println("");
       // }
+
+      // final Img img = new Img();
+      // PngParser.parsePng("data/diagnostic.png", img);
+
+      byte x = 0b01010011;
+      byte[] y = Utils.bits(x);
+      for ( int i = 0; i < y.length; ++i ) {
+         System.out.print(y[i]);
+         // System.out.print();
+      }
    }
 
    /**

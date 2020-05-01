@@ -1219,8 +1219,7 @@ public class Mat3 extends Matrix {
     */
    public static Vec3 mul ( final Mat3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(a.m00 * b.x + a.m01 * b.y + a.m02 * b.z, a.m10
-         * b.x
+      return target.set(a.m00 * b.x + a.m01 * b.y + a.m02 * b.z, a.m10 * b.x
          + a.m11 * b.y + a.m12 * b.z, a.m20 * b.x + a.m21 * b.y + a.m22 * b.z);
    }
 

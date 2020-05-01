@@ -218,6 +218,44 @@ public class Utils implements IUtils {
    }
 
    /**
+    * Gets a bit from a byte at an index. There are 8 bits in a byte, so i
+    * should be in the range [0, 7] . The bit is promoted to a byte.
+    *
+    * @param a the byte
+    * @param i the bit position
+    *
+    * @return the bit
+    */
+   @Experimental
+   public static byte bit ( final byte a, final int i ) {
+
+      return ( byte ) ( a >> i & 1 );
+   }
+
+   /**
+    * Gets an array of bits from a byte. Note that the positional ordering
+    * would be the reverse of a literal: <code>0b01010011</code> would yield
+    * the array <code>{ 1, 1, 0, 0, 1, 0, 1, 0 }</code> .
+    *
+    * @param a the byte
+    *
+    * @return the bit array
+    */
+   @Experimental
+   public static byte[] bits ( final byte a ) {
+
+      final byte[] result = new byte[8];
+      for ( int i = 0; i < 8; ++i ) {
+         result[i] = ( byte ) ( a >> i & 1 );
+      }
+
+      // for ( int i = 7, j = 0; i > -1; --i, ++j ) {
+      // result[j] = ( byte ) ( a >> i & 1 );
+      // }
+      return result;
+   }
+
+   /**
     * Raises a real number to the next greatest integer. An alternative to
     * {@link Math#ceil(double)} . ceil ( <em>x</em> ) = - floor ( -<em>x</em>
     * ) .

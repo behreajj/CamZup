@@ -3,6 +3,7 @@ package camzup.pfriendly;
 import java.util.Iterator;
 
 import camzup.core.Experimental;
+import camzup.core.Img;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
 import camzup.core.Mesh2;
@@ -18,8 +19,10 @@ import camzup.core.Vec2;
 import camzup.core.Vec3;
 import camzup.core.Vec4;
 
+import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
+import processing.core.PImage;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
@@ -32,6 +35,58 @@ import processing.opengl.PShapeOpenGL;
  * Facilitates conversions between core objects and Processing objects.
  */
 public abstract class Convert {
+
+   /**
+    * Converts a PImage to an image.
+    *
+    * @param pimg   the Processing image
+    * @param target the output image
+    *
+    * @return the image
+    */
+   @Experimental
+   public static Img toImg ( final PImage pimg, final Img target ) {
+
+      pimg.loadPixels();
+      final int fmt = pimg.format;
+      final int[] pxSrc = pimg.pixels;
+      final int pxLen = pxSrc.length;
+      int w = pimg.width;
+      int h = pimg.height;
+      final int wh = w * h;
+      if ( wh != pxLen ) {
+         w *= pimg.pixelDensity;
+         h *= pimg.pixelDensity;
+      }
+
+      target.reallocate(w, h);
+      final int[] pxTrg = target.getPixels();
+
+      switch ( fmt ) {
+
+         case PConstants.RGB:
+
+            /* Seems like color is in AARRGGBB format anyway? */
+
+         case PConstants.ARGB:
+
+            for ( int i = 0; i < pxLen; ++i ) {
+               pxTrg[i] = pxSrc[i];
+            }
+
+            break;
+
+         case PConstants.ALPHA:
+         default:
+
+            for ( int i = 0; i < pxLen; ++i ) {
+               final int a = pxSrc[i];
+               pxTrg[i] = a << 0x18 | a << 0x10 | a << 0x08 | a;
+            }
+      }
+
+      return target;
+   }
 
    /**
     * Converts a PMatrix2D to a 3 x 3 matrix.
@@ -76,6 +131,49 @@ public abstract class Convert {
          source.m10, source.m11, source.m12, source.m13, source.m20, source.m21,
          source.m22, source.m23, source.m30, source.m31, source.m32,
          source.m33);
+   }
+
+   /**
+    * Creates a PImage from an input image.
+    *
+    * @param img the image
+    *
+    * @return the image
+    */
+   public static PImage toPImage ( final Img img ) {
+
+      return Convert.toPImage(img, ( PApplet ) null);
+   }
+
+   /**
+    * Creates a PImage from an input image. The PImage defaults to
+    * {@link PConstants#ARGB} with a pixel density of 1. If
+    * <code>parent</code> is not null, the image's parent is set to the
+    * applet.
+    *
+    * @param img    the image
+    * @param parent the parent
+    *
+    * @return the image
+    */
+   public static PImage toPImage ( final Img img, final PApplet parent ) {
+
+      // TEST
+
+      final PImage pimg = new PImage(img.getWidth(), img.getHeight(),
+         PConstants.ARGB, 1);
+      if ( parent != null ) { pimg.parent = parent; }
+
+      final int[] pxSrc = img.getPixels();
+      final int pxLen = pxSrc.length;
+      final int[] pxTrg = pimg.pixels;
+      pimg.loadPixels();
+      for ( int i = 0; i < pxLen; ++i ) {
+         pxTrg[i] = pxSrc[i];
+      }
+      pimg.updatePixels();
+
+      return pimg;
    }
 
    /**
@@ -285,9 +383,13 @@ public abstract class Convert {
       final float wy2 = w * y2;
       final float wz2 = w * z2;
 
-      target.set(1.0f - ysq2 - zsq2, xy2 - wz2, xz2 + wy2, 0.0f, xy2 + wz2, 1.0f
-         - xsq2 - zsq2, yz2 - wx2, 0.0f, xz2 - wy2, yz2 + wx2, 1.0f - xsq2
-            - ysq2, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      target.set(
+         1.0f - ysq2 - zsq2, xy2 - wz2, xz2 + wy2, 0.0f,
+         xy2 + wz2, 1.0f - xsq2 - zsq2, yz2 - wx2, 0.0f,
+         xz2 - wy2, yz2 + wx2, 1.0f - xsq2 - ysq2, 0.0f,
+         0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:on */
       return target;
    }
 
@@ -332,7 +434,6 @@ public abstract class Convert {
             PMatAux.rotate(q, target);
             target.scale(dim.x, dim.y, dim.z);
             target.translate(loc.x, loc.y, loc.z);
-
             return target;
 
          case RTS:
@@ -340,7 +441,6 @@ public abstract class Convert {
             PMatAux.rotate(q, target);
             target.translate(loc.x, loc.y, loc.z);
             target.scale(dim.x, dim.y, dim.z);
-
             return target;
 
          case SRT:
@@ -348,7 +448,6 @@ public abstract class Convert {
             target.scale(dim.x, dim.y, dim.z);
             PMatAux.rotate(q, target);
             target.translate(loc.x, loc.y, loc.z);
-
             return target;
 
          case STR:
@@ -356,7 +455,6 @@ public abstract class Convert {
             target.scale(dim.x, dim.y, dim.z);
             target.translate(loc.x, loc.y, loc.z);
             PMatAux.rotate(q, target);
-
             return target;
 
          case TSR:
@@ -364,26 +462,65 @@ public abstract class Convert {
             target.translate(loc.x, loc.y, loc.z);
             target.scale(dim.x, dim.y, dim.z);
             PMatAux.rotate(q, target);
+            return target;
 
+         case R:
+
+            PMatAux.rotate(q, target);
+            return target;
+
+         case RS:
+
+            PMatAux.rotate(q, target);
+            target.scale(dim.x, dim.y, dim.z);
+            return target;
+
+         case RT:
+
+            PMatAux.rotate(q, target);
+            target.translate(loc.x, loc.y, loc.z);
+            return target;
+
+         case S:
+
+            target.scale(dim.x, dim.y, dim.z);
+            return target;
+
+         case SR:
+
+            target.scale(dim.x, dim.y, dim.z);
+            PMatAux.rotate(q, target);
+            return target;
+
+         case ST:
+
+            target.scale(dim.x, dim.y, dim.z);
+            target.translate(loc.x, loc.y, loc.z);
+            return target;
+
+         case T:
+
+            target.translate(loc.x, loc.y, loc.z);
+            return target;
+
+         case TR:
+
+            target.translate(loc.x, loc.y, loc.z);
+            PMatAux.rotate(q, target);
+            return target;
+
+         case TS:
+
+            target.translate(loc.x, loc.y, loc.z);
+            target.scale(dim.x, dim.y, dim.z);
             return target;
 
          case TRS:
-         case R:
-         case RS:
-         case RT:
-         case S:
-         case SR:
-         case ST:
-         case T:
-         case TR:
-         case TS:
-
          default:
 
             target.translate(loc.x, loc.y, loc.z);
             PMatAux.rotate(q, target);
             target.scale(dim.x, dim.y, dim.z);
-
             return target;
       }
    }

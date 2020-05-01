@@ -135,7 +135,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see List#add(Object)
     */
-
    public Curve3 append ( final Knot3 knot ) {
 
       if ( knot != null ) { this.knots.add(knot); }
@@ -166,7 +165,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this curve.
     */
-
    public Curve3 appendAll ( final Knot3... kn ) {
 
       final int len = kn.length;
@@ -400,7 +398,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see List#add(int, Object)
     */
-
    public Curve3 prepend ( final Knot3 knot ) {
 
       if ( knot != null ) { this.knots.add(0, knot); }
@@ -437,7 +434,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see List#add(int, Object)
     */
-
    public Curve3 prependAll ( final Knot3... kn ) {
 
       final int len = kn.length;
@@ -494,7 +490,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this curve
     */
-
    public Curve3 reset ( ) {
 
       this.resize(2);
@@ -519,7 +514,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see Collections#reverse(List)
     * @see Knot3#reverse()
     */
-
    public Curve3 reverse ( ) {
 
       Collections.reverse(this.knots);
@@ -541,7 +535,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Knot3#rotate(float, Vec3)
     */
-
    public Curve3 rotate ( final float radians, final Vec3 axis ) {
 
       final float cosa = Utils.cos(radians);
@@ -561,7 +554,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this curve
     */
-
    public Curve3 rotate ( final Quaternion q ) {
 
       final Iterator < Knot3 > itr = this.knots.iterator();
@@ -581,7 +573,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Knot3#rotateX(float)
     */
-
    public Curve3 rotateX ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -604,7 +595,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Knot3#rotateY(float)
     */
-
    public Curve3 rotateY ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -627,7 +617,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Knot3#rotateZ(float)
     */
-
    public Curve3 rotateZ ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -650,7 +639,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Knot3#scale(float)
     */
-
    public Curve3 scale ( final float scale ) {
 
       if ( scale == 0.0f ) { return this; }
@@ -673,7 +661,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see Vec3#none(Vec3)
     * @see Knot3#scale(Vec3)
     */
-
    public Curve3 scale ( final Vec3 scale ) {
 
       if ( Vec3.none(scale) ) { return this; }
@@ -693,7 +680,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this curve
     */
-
    public Curve3 set ( final Curve2 source ) {
 
       // TEST
@@ -718,7 +704,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this curve
     */
-
    public Curve3 set ( final Curve3 source ) {
 
       // TEST
@@ -795,7 +780,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Knot3#transform(Mat4)
     */
-
    public Curve3 transform ( final Mat4 m ) {
 
       final Iterator < Knot3 > itr = this.knots.iterator();
@@ -820,7 +804,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this mesh
     */
-
    public Curve3 transform ( final Transform3 tr ) {
 
       final Iterator < Knot3 > itr = this.knots.iterator();
@@ -840,7 +823,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Knot3#translate(Vec3)
     */
-
    public Curve3 translate ( final Vec3 v ) {
 
       final Iterator < Knot3 > itr = this.knots.iterator();
@@ -866,7 +848,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see List#add(Object)
     * @see List#remove(int)
     */
-
    Curve3 resize ( final int len ) {
 
       final int vlen = len < 2 ? 2 : len;

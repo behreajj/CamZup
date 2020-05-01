@@ -3415,7 +3415,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static TreeMap < Float, Vert3 > proximity ( final Mesh3 m,
       final Vec3 p, final float nearBound, final float farBound ) {
 
-
       final Vert3[] verts = m.getVertices();
       final int vertLen = verts.length;
       final float[] dists = new float[vertLen];

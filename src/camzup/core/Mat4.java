@@ -1053,8 +1053,13 @@ public class Mat4 extends Matrix {
     */
    public static Mat4 bezierBasis ( final Mat4 target ) {
 
-      return target.set(-1.0f, 3.0f, -3.0f, 1.0f, 3.0f, -6.0f, 3.0f, 0.0f,
-         -3.0f, 3.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f);
+      /* @formatter:off */
+      return target.set(
+         -1.0f,  3.0f, -3.0f, 1.0f,
+          3.0f, -6.0f,  3.0f, 0.0f,
+         -3.0f,  3.0f,  0.0f, 0.0f,
+          1.0f,  0.0f,  0.0f, 0.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1073,8 +1078,13 @@ public class Mat4 extends Matrix {
     */
    public static Mat4 bezierBasisInverse ( final Mat4 target ) {
 
-      return target.set(0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.33333334f, 1.0f,
-         0.0f, 0.33333334f, 0.66666666f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+      /* @formatter:off */
+      return target.set(
+         0.0f,        0.0f,        0.0f, 1.0f,
+         0.0f,        0.0f, 0.33333334f, 1.0f,
+         0.0f, 0.33333334f, 0.66666666f, 1.0f,
+         1.0f,        1.0f,        1.0f, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1278,9 +1288,13 @@ public class Mat4 extends Matrix {
    public static Mat4 fromAxes ( final Vec4 right, final Vec4 forward,
       final Vec4 up, final Mat4 target ) {
 
-      return target.set(right.x, forward.x, up.x, 0.0f, right.y, forward.y,
-         up.y, 0.0f, right.z, forward.z, up.z, 0.0f, right.w, forward.w, up.w,
-         1.0f);
+      /* @formatter:off */
+      return target.set(
+         right.x, forward.x, up.x, 0.0f,
+         right.y, forward.y, up.y, 0.0f,
+         right.z, forward.z, up.z, 0.0f,
+         right.w, forward.w, up.w, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1297,9 +1311,13 @@ public class Mat4 extends Matrix {
    public static Mat4 fromAxes ( final Vec4 right, final Vec4 forward,
       final Vec4 up, final Vec4 translation, final Mat4 target ) {
 
-      return target.set(right.x, forward.x, up.x, translation.x, right.y,
-         forward.y, up.y, translation.y, right.z, forward.z, up.z,
-         translation.z, right.w, forward.w, up.w, translation.w);
+      /* @formatter:off */
+      return target.set(
+         right.x, forward.x, up.x, translation.x,
+         right.y, forward.y, up.y, translation.y,
+         right.z, forward.z, up.z, translation.z,
+         right.w, forward.w, up.w, translation.w);
+      /* @formatter:on */
    }
 
    /**
@@ -1417,8 +1435,13 @@ public class Mat4 extends Matrix {
    public static Mat4 fromRotX ( final float cosa, final float sina,
       final Mat4 target ) {
 
-      return target.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, cosa, -sina, 0.0f, 0.0f,
-         sina, cosa, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      return target.set(
+         1.0f, 0.0f,  0.0f, 0.0f,
+         0.0f, cosa, -sina, 0.0f,
+         0.0f, sina,  cosa, 0.0f,
+         0.0f, 0.0f,  0.0f, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1456,8 +1479,13 @@ public class Mat4 extends Matrix {
       // RESEARCH: Is this inconsistent when compared with 4D rotation about
       // the YW axis? Should sin(a) and -sin(a) be transposed?
 
-      return target.set(cosa, 0.0f, sina, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -sina,
-         0.0f, cosa, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      return target.set(
+          cosa, 0.0f, sina, 0.0f,
+          0.0f, 1.0f, 0.0f, 0.0f,
+         -sina, 0.0f, cosa, 0.0f,
+          0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1492,8 +1520,13 @@ public class Mat4 extends Matrix {
    public static Mat4 fromRotZ ( final float cosa, final float sina,
       final Mat4 target ) {
 
-      return target.set(cosa, -sina, 0.0f, 0.0f, sina, cosa, 0.0f, 0.0f, 0.0f,
-         0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      return target.set(
+         cosa, -sina, 0.0f, 0.0f,
+         sina,  cosa, 0.0f, 0.0f,
+         0.0f,  0.0f, 1.0f, 0.0f,
+         0.0f,  0.0f, 0.0f, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1596,9 +1629,13 @@ public class Mat4 extends Matrix {
    public static Mat4 fromTranslation ( final Vec3 translation,
       final Mat4 target ) {
 
-      return target.set(1.0f, 0.0f, 0.0f, translation.x, 0.0f, 1.0f, 0.0f,
-         translation.y, 0.0f, 0.0f, 1.0f, translation.z, 0.0f, 0.0f, 0.0f,
-         1.0f);
+      /* @formatter:off */
+      return target.set(
+         1.0f, 0.0f, 0.0f, translation.x,
+         0.0f, 1.0f, 0.0f, translation.y,
+         0.0f, 0.0f, 1.0f, translation.z,
+         0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1630,10 +1667,10 @@ public class Mat4 extends Matrix {
 
       /* @formatter:off */
       return target.set(
-         n2 * w,   0.0f, ( right + left ) * w,          0.0f,
-           0.0f, n2 * h, ( top + bottom ) * h,          0.0f,
-           0.0f,   0.0f,  ( far + near ) * -d, n2 * far * -d,
-           0.0f,   0.0f,                -1.0f,          0.0f);
+         n2 * w,   0.0f, ( right + left ) *  w,          0.0f,
+           0.0f, n2 * h, ( top + bottom ) *  h,          0.0f,
+           0.0f,   0.0f,   ( far + near ) * -d, n2 * far * -d,
+           0.0f,   0.0f,                 -1.0f,          0.0f);
       /* @formatter:on */
    }
 

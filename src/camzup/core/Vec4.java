@@ -1617,77 +1617,77 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    }
 
    /**
-    * Sets the target vector to the maximum of the input vector and an upper
+    * Sets the target vector to the maximum of the input vector and an lower
     * bound.
     *
     * @param a          the input value
-    * @param upperBound the upper bound
+    * @param lowerBound the lower bound
     * @param target     the output vector
     *
     * @return the maximum values
     */
-   public static Vec4 max ( final Vec4 a, final float upperBound,
+   public static Vec4 max ( final Vec4 a, final float lowerBound,
       final Vec4 target ) {
 
-      return target.set(Utils.max(a.x, upperBound), Utils.max(a.y, upperBound),
-         Utils.max(a.z, upperBound), Utils.max(a.w, upperBound));
+      return target.set(Utils.max(a.x, lowerBound), Utils.max(a.y, lowerBound),
+         Utils.max(a.z, lowerBound), Utils.max(a.w, lowerBound));
    }
 
    /**
     * Sets the target vector to the maximum components of the input vector and
-    * a upper bound.
+    * a lower bound.
     *
     * @param a          the input vector
-    * @param upperBound the upper bound
+    * @param lowerBound the lower bound
     * @param target     the output vector
     *
     * @return the maximum values
     *
     * @see Utils#max(float, float)
     */
-   public static Vec4 max ( final Vec4 a, final Vec4 upperBound,
+   public static Vec4 max ( final Vec4 a, final Vec4 lowerBound,
       final Vec4 target ) {
 
-      return target.set(Utils.max(a.x, upperBound.x), Utils.max(a.y,
-         upperBound.y), Utils.max(a.z, upperBound.z), Utils.max(a.w,
-            upperBound.w));
+      return target.set(Utils.max(a.x, lowerBound.x), Utils.max(a.y,
+         lowerBound.y), Utils.max(a.z, lowerBound.z), Utils.max(a.w,
+            lowerBound.w));
    }
 
    /**
     * Sets the target vector to the minimum components of the input vector and
-    * a lower bound.
+    * an upper bound.
     *
     * @param a          the input value
-    * @param lowerBound the lower bound
+    * @param upperBound the upper bound
     * @param target     the output vector
     *
     * @return the minimum values
     */
-   public static Vec4 min ( final Vec4 a, final float lowerBound,
+   public static Vec4 min ( final Vec4 a, final float upperBound,
       final Vec4 target ) {
 
-      return target.set(Utils.min(a.x, lowerBound), Utils.min(a.y, lowerBound),
-         Utils.min(a.z, lowerBound), Utils.min(a.w, lowerBound));
+      return target.set(Utils.min(a.x, upperBound), Utils.min(a.y, upperBound),
+         Utils.min(a.z, upperBound), Utils.min(a.w, upperBound));
    }
 
    /**
     * Sets the target vector to the minimum components of the input vector and
-    * a lower bound.
+    * an upper bound.
     *
     * @param a          the input vector
-    * @param lowerBound the lower bound
+    * @param upperBound the upper bound
     * @param target     the output vector
     *
     * @return the minimal values
     *
     * @see Utils#min(float, float)
     */
-   public static Vec4 min ( final Vec4 a, final Vec4 lowerBound,
+   public static Vec4 min ( final Vec4 a, final Vec4 upperBound,
       final Vec4 target ) {
 
-      return target.set(Utils.min(a.x, lowerBound.x), Utils.min(a.y,
-         lowerBound.y), Utils.min(a.z, lowerBound.z), Utils.min(a.w,
-            lowerBound.w));
+      return target.set(Utils.min(a.x, upperBound.x), Utils.min(a.y,
+         upperBound.y), Utils.min(a.z, upperBound.z), Utils.min(a.w,
+            upperBound.w));
    }
 
    /**
@@ -2131,11 +2131,12 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @see Vec4#rescale(Vec4, float, Vec4, Vec4)
     */
-   public static Vec4 rescale ( Vec4 v, float scalar, Vec4 target ) {
+   public static Vec4 rescale ( final Vec4 v, final float scalar,
+      final Vec4 target ) {
 
-      float msq = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
+      final float msq = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
       if ( scalar != 0.0f && msq != 0.0f ) {
-         float sclMg = scalar * Utils.invSqrtUnchecked(msq);
+         final float sclMg = scalar * Utils.invSqrtUnchecked(msq);
          return target.set(v.x * sclMg, v.y * sclMg, v.z * sclMg, v.w * sclMg);
       } else {
          return target.reset();
@@ -2236,11 +2237,13 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     */
    public static Vec4 sign ( final Vec4 v, final Vec4 target ) {
 
-      /* float sign returns an integer; this is inlined to avoid cast. */
-      return target.set(v.x < -0.0f ? -1.0f : v.x > 0.0f ? 1.0f : 0.0f, v.y
-         < -0.0f ? -1.0f : v.y > 0.0f ? 1.0f : 0.0f, v.z < -0.0f ? -1.0f : v.z
-            > 0.0f ? 1.0f : 0.0f, v.w < -0.0f ? -1.0f : v.w > 0.0f ? 1.0f
-               : 0.0f);
+      /* @formatter:off */
+      return target.set(
+         v.x < -0.0f ? -1.0f : v.x > 0.0f ? 1.0f : 0.0f,
+         v.y < -0.0f ? -1.0f : v.y > 0.0f ? 1.0f : 0.0f,
+         v.z < -0.0f ? -1.0f : v.z > 0.0f ? 1.0f : 0.0f,
+         v.w < -0.0f ? -1.0f : v.w > 0.0f ? 1.0f : 0.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -2298,7 +2301,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @see Utils#wrap(float, float, float)
     */
-   @Experimental
    public static Vec4 wrap ( final Vec4 v, final Vec4 lb, final Vec4 ub,
       final Vec4 target ) {
 

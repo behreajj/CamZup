@@ -721,7 +721,7 @@ public abstract class PMatAux {
          target.m22 - tz * target.m32,
          target.m23 - tz * target.m33,
          target.m30, target.m31,
-         target.m32, target.m33);      
+         target.m32, target.m33);
       return target;
       /* @formatter:on */
    }

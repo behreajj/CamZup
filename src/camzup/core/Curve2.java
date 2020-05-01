@@ -126,7 +126,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @see List#add(Object)
     */
-
    public Curve2 append ( final Knot2 knot ) {
 
       if ( knot != null ) { this.knots.add(knot); }
@@ -157,7 +156,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return this curve.
     */
-
    public Curve2 appendAll ( final Knot2... kn ) {
 
       final int len = kn.length;
@@ -388,7 +386,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @see List#add(int, Object)
     */
-
    public Curve2 prepend ( final Knot2 knot ) {
 
       if ( knot != null ) { this.knots.add(0, knot); }
@@ -402,7 +399,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return this curve.
     */
-
    public Curve2 prependAll ( final Collection < Knot2 > kn ) {
 
       int i = 0;
@@ -426,7 +422,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @see List#add(int, Object)
     */
-
    public Curve2 prependAll ( final Knot2... kn ) {
 
       // TEST
@@ -506,7 +501,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @see Collections#reverse(List)
     * @see Knot2#reverse()
     */
-
    public Curve2 reverse ( ) {
 
       Collections.reverse(this.knots);
@@ -528,7 +522,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @see Knot2#rotateZ(float)
     */
-
    public Curve2 rotateZ ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -550,7 +543,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @see Knot2#scale(float)
     */
-
    public Curve2 scale ( final float scale ) {
 
       if ( scale == 0.0f ) { return this; }
@@ -571,7 +563,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @see Knot2#scale(Vec2)
     */
-
    public Curve2 scale ( final Vec2 scale ) {
 
       if ( Vec2.none(scale) ) { return this; }
@@ -590,7 +581,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return this curve
     */
-
    public Curve2 set ( final Curve2 source ) {
 
       this.resize(source.length());
