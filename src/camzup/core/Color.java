@@ -789,6 +789,49 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    public void timesAssign ( final float c ) { Color.mul(this, c, this); }
 
    /**
+    * Returns this color represented as an array. Defaults to an array of
+    * floats where the alpha channel is the last element.
+    *
+    * @return the array
+    */
+   public float[] toArray ( ) { return this.toArrayFloat(false); }
+
+   /**
+    * Returns an array of <code>byte</code>s. The boolean flag determines
+    * whether the alpha channel is the first or last element.
+    *
+    * @param alphaFirst the alpha flag
+    *
+    * @return the array
+    */
+   public byte[] toArrayByte ( final boolean alphaFirst ) {
+
+      final byte rb = ( byte ) ( this.r * 0xff + 0.5f );
+      final byte gb = ( byte ) ( this.g * 0xff + 0.5f );
+      final byte bb = ( byte ) ( this.b * 0xff + 0.5f );
+      final byte ab = ( byte ) ( this.a * 0xff + 0.5f );
+
+      if ( alphaFirst ) { return new byte[] { ab, rb, gb, bb }; }
+      return new byte[] { rb, gb, bb, ab };
+   }
+
+   /**
+    * Returns an array of <code>float</code>s. The boolean flag determines
+    * whether the alpha channel is the first or last element.
+    *
+    * @param alphaFirst the alpha flag
+    *
+    * @return the array
+    */
+   public float[] toArrayFloat ( final boolean alphaFirst ) {
+
+      if ( alphaFirst ) {
+         return new float[] { this.a, this.r, this.g, this.b };
+      }
+      return new float[] { this.r, this.g, this.b, this.a };
+   }
+
+   /**
     * Returns a string representation of this color.
     *
     * @return the string
@@ -2086,14 +2129,17 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    public static Color randomRgba ( final java.util.Random rng,
       final Color lowerBound, final Color upperBound, final Color target ) {
 
+      /* @formatter:off */
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
       final float rw = rng.nextFloat();
-      return target.set( ( 1.0f - rx ) * lowerBound.r + rx * upperBound.r,
-         ( 1.0f - ry ) * lowerBound.g + ry * upperBound.g, ( 1.0f - rz )
-            * lowerBound.b + rz * upperBound.b, ( 1.0f - rw ) * lowerBound.a
-               + rw * upperBound.a);
+      return target.set( 
+         ( 1.0f - rx ) * lowerBound.r + rx * upperBound.r,
+         ( 1.0f - ry ) * lowerBound.g + ry * upperBound.g,
+         ( 1.0f - rz ) * lowerBound.b + rz * upperBound.b,
+         ( 1.0f - rw ) * lowerBound.a + rw * upperBound.a);
+      /* @formatter:on */
    }
 
    /**

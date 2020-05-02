@@ -1,5 +1,7 @@
 package camzup;
 
+import camzup.core.Img;
+import camzup.core.PngParser;
 import camzup.core.Utils;
 
 import processing.core.PApplet;
@@ -54,35 +56,21 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // final Rng rng = new Rng();
-      // final Vec2 p = Vec2.randomPolar(rng, 0.5f, 0.5f, new Vec2());
-      // System.out.println(p);
-      // System.out.println(" ");
-      // final Mesh2 m = Mesh2.polygon(5, Mesh2.PolyType.NGON, new Mesh2());
-      // final TreeMap < Float, Vert2 > tm = Mesh2.proximity(m, p, 5.0f, -1.0f);
-      //
-      // int i = 0;
-      // for ( final Map.Entry < Float, Vert2 > entry : tm.entrySet() ) {
-      // final Vert2 v = entry.getValue();
-      //
-      // System.out.println(i++);
-      // System.out.println(v);
-      //
-      // final float realDist = Vec2.dist(v.coord, p);
-      // System.out.println(entry.getKey());
-      // System.out.println(realDist);
-      // System.out.println("");
+      // new Rng();
+
+      // for ( int i = 0; i < 10; ++i ) {
+      // float var12 = rng.nextFloat();
+      // float var45 = var12 - 1.0F + 0.5527864F;
+      // float var46 = var12 + x;
+      // System.out.println(var45);
+      // System.out.println(var46);
       // }
 
-      // final Img img = new Img();
-      // PngParser.parsePng("data/diagnostic.png", img);
+      final Img img = new Img();
+      PngParser.parsePng("data/diagnostic2.png", img);
 
-      byte x = 0b01010011;
-      byte[] y = Utils.bits(x);
-      for ( int i = 0; i < y.length; ++i ) {
-         System.out.print(y[i]);
-         // System.out.print();
-      }
+      System.out.println(Utils.toString(PngParser.sigIdatBytes()));
+
    }
 
    /**

@@ -1377,7 +1377,7 @@ public class Transform3 extends Transform {
 
    /**
     * Eases an array through a series of transforms according to a step in
-    * [0.0, 1.0].
+    * [0.0, 1.0] .
     *
     * @param frames the frames
     * @param step   the step

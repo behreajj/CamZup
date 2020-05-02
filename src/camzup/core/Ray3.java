@@ -192,13 +192,9 @@ public class Ray3 extends Ray {
     */
    protected boolean equals ( final Ray3 ray ) {
 
-      // if (this.dir == null) {
-      // if (ray.dir != null) {
-      // return false;
-      // }
-      // } else if (!this.dir.equals(ray.dir)) {
-      // return false;
-      // }
+      // if ( this.dir == null ) {
+      // if ( ray.dir != null ) { return false; }
+      // } else if ( !this.dir.equals(ray.dir) ) { return false; }
 
       if ( this.origin == null ) {
          if ( ray.origin != null ) { return false; }

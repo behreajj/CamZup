@@ -3,10 +3,10 @@ package camzup.core;
 /**
  * Implements basic math utilities for single-precision numbers.
  */
-public class Utils implements IUtils {
+public abstract class Utils implements IUtils {
 
    /**
-    * The default constructor.
+    * Discourage overriding with a private constructor.
     */
    private Utils ( ) {}
 
@@ -218,40 +218,71 @@ public class Utils implements IUtils {
    }
 
    /**
-    * Gets a bit from a byte at an index. There are 8 bits in a byte, so i
-    * should be in the range [0, 7] . The bit is promoted to a byte.
+    * Gets a bit from a byte at an index, ordered from least to most
+    * significant digit. There are 8 bits in a byte, so the index should be in
+    * the range [0, 7] . The bit is promoted to a byte.
     *
     * @param a the byte
     * @param i the bit position
     *
     * @return the bit
     */
-   @Experimental
-   public static byte bit ( final byte a, final int i ) {
+   public static byte bitlm ( final byte a, final int i ) {
 
       return ( byte ) ( a >> i & 1 );
    }
 
    /**
-    * Gets an array of bits from a byte. Note that the positional ordering
-    * would be the reverse of a literal: <code>0b01010011</code> would yield
-    * the array <code>{ 1, 1, 0, 0, 1, 0, 1, 0 }</code> .
+    * Gets a bit from a byte at an index, ordered from most to least
+    * significant digit. There are 8 bits in a byte, so the index should be in
+    * the range [0, 7] . The bit is promoted to a byte.
+    *
+    * @param a the byte
+    * @param i the bit position
+    *
+    * @return the bit
+    */
+   public static byte bitml ( final byte a, final int i ) {
+
+      return ( byte ) ( a >> 7 - i & 1 );
+   }
+
+   /**
+    * Gets an array of bits from a byte, ordered from least to most
+    * significant digit, the reverse of a literal. For example,
+    * <code>0b01010011</code> would yield
+    * <code>{ 1, 1, 0, 0, 1, 0, 1, 0 }</code> .
     *
     * @param a the byte
     *
     * @return the bit array
     */
-   @Experimental
-   public static byte[] bits ( final byte a ) {
+   public static byte[] bitslm ( final byte a ) {
 
       final byte[] result = new byte[8];
       for ( int i = 0; i < 8; ++i ) {
          result[i] = ( byte ) ( a >> i & 1 );
       }
 
-      // for ( int i = 7, j = 0; i > -1; --i, ++j ) {
-      // result[j] = ( byte ) ( a >> i & 1 );
-      // }
+      return result;
+   }
+
+   /**
+    * Gets an array of bits from a byte, ordered from most to least
+    * significant digit, as a literal would be written. For example,
+    * <code>0b01010011</code> would yield the array
+    * <code>{ 0, 1, 0, 1, 0, 0, 1, 1 }</code> .
+    *
+    * @param a the byte
+    *
+    * @return the bit array
+    */
+   public static byte[] bitsml ( final byte a ) {
+
+      final byte[] result = new byte[8];
+      for ( int i = 7, j = 0; i > -1; --i, ++j ) {
+         result[j] = ( byte ) ( a >> i & 1 );
+      }
       return result;
    }
 
@@ -1505,6 +1536,29 @@ public class Utils implements IUtils {
          sb.append(digits[n]);
       }
 
+      return sb.toString();
+   }
+
+   /**
+    * Returns a String representation of a one dimensional array of bytes.
+    *
+    * @param arr the array
+    *
+    * @return the String
+    */
+   public static String toString ( final byte[] arr ) {
+
+      final int len = arr.length;
+      final int last = len - 1;
+
+      final StringBuilder sb = new StringBuilder(len * 32);
+      sb.append('[').append(' ');
+      for ( int i = 0; i < arr.length; ++i ) {
+         sb.append(arr[i]);
+         if ( i < last ) { sb.append(',').append(' '); }
+      }
+
+      sb.append(' ').append(']');
       return sb.toString();
    }
 

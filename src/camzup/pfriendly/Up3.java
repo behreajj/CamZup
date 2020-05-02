@@ -1629,6 +1629,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    protected void updateCameraInv ( ) {
 
+      /* @formatter:off */
       final float m00 = this.i.x;
       final float m01 = this.i.y;
       final float m02 = this.i.z;
@@ -1642,23 +1643,30 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final float m22 = this.k.z;
 
       /* Set inverse by column. */
-      this.cameraInv.set(m00, m10, m20, this.cameraX, m01, m11, m21,
-         this.cameraY, m02, m12, m22, this.cameraZ, 0.0f, 0.0f, 0.0f, 1.0f);
+      this.cameraInv.set(
+         m00, m10, m20, this.cameraX,
+         m01, m11, m21, this.cameraY,
+         m02, m12, m22, this.cameraZ,
+         0.0f, 0.0f, 0.0f, 1.0f);
 
       /*
        * Set matrix to axes by row. Translate by a negative location after the
        * rotation.
        */
-      this.camera.set(m00, m01, m02, -this.cameraX * m00 - this.cameraY * m01
-         - this.cameraZ * m02, m10, m11, m12, -this.cameraX * m10 - this.cameraY
-            * m11 - this.cameraZ * m12, m20, m21, m22, -this.cameraX * m20
-               - this.cameraY * m21 - this.cameraZ * m22, 0.0f, 0.0f, 0.0f,
-         1.0f);
+      this.camera.set(
+         m00, m01, m02,
+         -this.cameraX * m00 - this.cameraY * m01 - this.cameraZ * m02,
+         m10, m11, m12,
+         -this.cameraX * m10 - this.cameraY * m11 - this.cameraZ * m12,
+         m20, m21, m22,
+         -this.cameraX * m20 - this.cameraY * m21 - this.cameraZ * m22,
+         0.0f, 0.0f, 0.0f, 1.0f);
 
       /* Set model view to camera. */
       this.modelview.set(this.camera);
       this.modelviewInv.set(this.cameraInv);
       PMatAux.mul(this.projection, this.modelview, this.projmodelview);
+      /* @formatter:on */
    }
 
    /**

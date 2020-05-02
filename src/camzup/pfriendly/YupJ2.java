@@ -1370,8 +1370,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void image ( final PImage img, final float x0, final float y0,
       final float x1, final float y1 ) {
 
-      this.image(img, ( int ) x0, ( int ) y0, ( int ) x1, ( int ) y1, 0,
-         0,
+      this.image(img, ( int ) x0, ( int ) y0, ( int ) x1, ( int ) y1, 0, 0,
          img.width, img.height);
    }
 
@@ -1416,19 +1415,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * Displays a PImage.
     *
     * @param img the PImage
-    * @param x0   the first x coordinate
-    * @param y0   the first y coordinate
-    * @param x1   the second x coordinate
-    * @param y1   the second y coordinate
-    * @param uTl  the image top-left corner u
-    * @param vTl  the image top-left corner v
-    * @param uBr  the image bottom-right corner u
-    * @param vBr  the image bottom-right corner v
+    * @param x0  the first x coordinate
+    * @param y0  the first y coordinate
+    * @param x1  the second x coordinate
+    * @param y1  the second y coordinate
+    * @param uTl the image top-left corner u
+    * @param vTl the image top-left corner v
+    * @param uBr the image bottom-right corner u
+    * @param vBr the image bottom-right corner v
     */
    @Override
    public void image ( final PImage img, final float x0, final float y0,
-      final float x1, final float y1, final int uTl, final int vTl, final int uBr,
-      final int vBr ) {
+      final float x1, final float y1, final int uTl, final int vTl,
+      final int uBr, final int vBr ) {
 
       super.imageImpl(img, x0, y0, x1, y1, uTl, vBr, uBr, vTl);
 
@@ -1685,7 +1684,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    /**
     * Converts a core image to a Java AWT image, then draws the converted
     * image to the renderer. Flips the vertical uvs to conform with y up axis.
-    * 
+    *
     * @param img the image
     * @param x0  first corner x of the destination rectangle
     * @param y0  first corner y of the destination rectangle

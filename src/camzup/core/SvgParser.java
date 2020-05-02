@@ -25,6 +25,11 @@ import java.util.regex.Pattern;
 public abstract class SvgParser {
 
    /**
+    * Discourage overriding with a private constructor.
+    */
+   private SvgParser ( ) {}
+
+   /**
     * Ratio to convert from centimeters to units,
     * {@value SvgParser#CM_TO_UNIT}. In Processing, the value was 35.43307 .
     */
@@ -128,7 +133,7 @@ public abstract class SvgParser {
          final NamedNodeMap attr = header.getAttributes();
 
          final Node width = attr.getNamedItem("width");
-         final String widthStr = width != null ? width.getTextContent() : "0.0";
+         final String widthStr = width != null ? width.getTextContent() : "0";
          final float widpx = SvgParser.parseFloat(widthStr);
 
          final Node height = attr.getNamedItem("height");
@@ -257,8 +262,8 @@ public abstract class SvgParser {
          }
 
          /* Acquire text content from the node if it exists. */
-         final String cxstr = cxnode != null ? cxnode.getTextContent() : "0.0";
-         final String cystr = cynode != null ? cynode.getTextContent() : "0.0";
+         final String cxstr = cxnode != null ? cxnode.getTextContent() : "0";
+         final String cystr = cynode != null ? cynode.getTextContent() : "0";
          final String rxstr = rxnode != null ? rxnode.getTextContent() : "0.5";
          final String rystr = rynode != null ? rynode.getTextContent() : "0.5";
 
@@ -468,9 +473,9 @@ public abstract class SvgParser {
 
          /* Acquire text content from the node if it exists. */
          final String x1str = x1node != null ? x1node.getTextContent() : "-0.5";
-         final String y1str = y1node != null ? y1node.getTextContent() : "0.0";
+         final String y1str = y1node != null ? y1node.getTextContent() : "0";
          final String x2str = x2node != null ? x2node.getTextContent() : "0.5";
-         final String y2str = y2node != null ? y2node.getTextContent() : "0.0";
+         final String y2str = y2node != null ? y2node.getTextContent() : "0";
 
          /* Parse string or default. */
          final float x1 = SvgParser.parseFloat(x1str, -0.5f);
@@ -620,20 +625,20 @@ public abstract class SvgParser {
             Knot2 prev = null;
 
             /* Coordinate token. */
-            String coxStr = "0.0";
-            String coyStr = "0.0";
+            String coxStr = "0";
+            String coyStr = "0";
 
             /* Cubic curve rear handle. */
-            String rhxStr = "0.0";
-            String rhyStr = "0.0";
+            String rhxStr = "0";
+            String rhyStr = "0";
 
             /* Cubic curve fore handle. */
-            String fhxStr = "0.0";
-            String fhyStr = "0.0";
+            String fhxStr = "0";
+            String fhyStr = "0";
 
             /* Quadratic curve midpoint. */
-            String mhxStr = "0.0";
-            String mhyStr = "0.0";
+            String mhxStr = "0";
+            String mhyStr = "0";
 
             final Vec2 relative = new Vec2();
             final Vec2 mh = new Vec2();
@@ -1195,16 +1200,19 @@ public abstract class SvgParser {
          final Node ynode = attributes.getNamedItem("y");
          final Node wnode = attributes.getNamedItem("width");
          final Node hnode = attributes.getNamedItem("height");
+
+         // TODO: Treat these as you would rx and ry in an ellipse, where only
+         // one r means both are equal to r?
          final Node rxnode = attributes.getNamedItem("rx");
          final Node rynode = attributes.getNamedItem("ry");
 
          /* Acquire text content from the node if it exists. */
-         final String xstr = xnode != null ? xnode.getTextContent() : "0.0";
-         final String ystr = ynode != null ? ynode.getTextContent() : "0.0";
-         final String wstr = wnode != null ? wnode.getTextContent() : "1.0";
-         final String hstr = hnode != null ? hnode.getTextContent() : "1.0";
-         final String rxstr = rxnode != null ? rxnode.getTextContent() : "0.0";
-         final String rystr = rynode != null ? rynode.getTextContent() : "0.0";
+         final String xstr = xnode != null ? xnode.getTextContent() : "0";
+         final String ystr = ynode != null ? ynode.getTextContent() : "0";
+         final String wstr = wnode != null ? wnode.getTextContent() : "1";
+         final String hstr = hnode != null ? hnode.getTextContent() : "1";
+         final String rxstr = rxnode != null ? rxnode.getTextContent() : "0";
+         final String rystr = rynode != null ? rynode.getTextContent() : "0";
 
          /* Parse string or default. */
          final float x = SvgParser.parseFloat(xstr, 0.0f);
@@ -1326,7 +1334,7 @@ public abstract class SvgParser {
                   /* "translate" */
 
                   final String tx = trData[1];
-                  final String ty = dataLen > 2 ? trData[2] : "0.0";
+                  final String ty = dataLen > 2 ? trData[2] : "0";
 
                   Mat3.fromTranslation(SvgParser.parseFloat(tx), SvgParser
                      .parseFloat(ty), delta);

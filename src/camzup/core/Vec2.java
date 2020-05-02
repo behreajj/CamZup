@@ -2926,7 +2926,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public static Vec2 sign ( final Vec2 v, final Vec2 target ) {
 
-      /* float sign returns an integer; this is inlined to avoid cast. */
+      /* sign returns an integer; this is inlined to avoid cast. */
       return target.set(v.x < -0.0f ? -1.0f : v.x > 0.0f ? 1.0f : 0.0f, v.y
          < -0.0f ? -1.0f : v.y > 0.0f ? 1.0f : 0.0f);
    }

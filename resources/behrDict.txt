@@ -126,3 +126,4 @@ rect
 mipmaps
 regex
 inkscape
+compositing

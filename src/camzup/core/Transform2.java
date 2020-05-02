@@ -514,7 +514,7 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Rotates the transform to a new orientation by a step in [0.0, 1.0].
+    * Rotates the transform to a new orientation by a step in [0.0, 1.0] .
     *
     * @param radians the angle
     * @param step    the step
@@ -808,17 +808,15 @@ public class Transform2 extends Transform {
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(160)
-         .append("{ location: ")
-         .append(this.location.toString(places))
-         .append(", rotation: ")
-         .append(Utils.toFixed(this.rotation, places))
-         .append(", scale: ")
-         .append(this.scale.toString(places))
-         .append(" }")
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(160);
+      sb.append("{ location: ");
+      sb.append(this.location.toString(places));
+      sb.append(", rotation: ");
+      sb.append(Utils.toFixed(this.rotation, places));
+      sb.append(", scale: ");
+      sb.append(this.scale.toString(places));
+      sb.append(" }");
+      return sb.toString();
    }
 
    /**

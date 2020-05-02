@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Files;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * An incomplete draft of a portable network graphics parser. Even if this
@@ -17,28 +18,17 @@ import java.util.ArrayList;
 public abstract class PngParser {
 
    /**
-    * The signature, in 8 bytes, for the .png (portable network graphics) file
-    * format. In decimal format:
-    *
-    * <pre>
-    * <code>{ 137, 80, 78, 71, 13, 10, 26, 10 }</code>
-    * </pre>
-    *
-    * In hexadecimal format:
-    *
-    * <pre>
-    * <code>{ 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a }</code>
-    * </pre>
-    *
-    * Because Java bytes are signed, and <code>137</code> exceeds
-    * {@link Byte#MAX_VALUE} ({@value Byte#MAX_VALUE}), it wraps around to
-    * <code>-119</code>.
+    * Discourage overriding with a private constructor.
+    */
+   private PngParser ( ) {}
+
+   /**
+    * A cached array for the .png signature.
     */
    private static final byte[] SIG_PNG;
 
    static {
-      SIG_PNG = new byte[] { ( byte ) 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a,
-         0x0a };
+      SIG_PNG = PngParser.sigPng();
    }
 
    public static Img parsePng ( final String filePath, final Img target ) {
@@ -46,8 +36,8 @@ public abstract class PngParser {
       final Chunk[] chunks = PngParser.parsePngToChunks(filePath);
       final int chunksLen = chunks.length;
 
-      int width = 2;
-      int height = 2;
+      int width = Img.WIDTH_MIN;
+      int height = Img.HEIGHT_MIN;
       int bitDepth = 8;
       ColorFormat clrFmt = ColorFormat.ARGB;
       int compression = 0;
@@ -55,23 +45,37 @@ public abstract class PngParser {
       int interlace = 0;
       boolean ended = false;
 
-      // BitSet zlibData = new BitSet();
-      // ArrayList < Byte > zLibData = new ArrayList <>();
+      /*
+       * IDAT chunks are meant to be read as one big section of bits (not bytes)
+       * read according to the zlib specification irrespective of boundaries
+       * between bytes. So the sum of all IDAT chunks is accumulated, then a
+       * byte array will be created.
+       */
+      final ArrayList < IDATChunk > zlibChunks = new ArrayList <>();
+      int zlibLen = 0;
 
       for ( int i = 0; i < chunksLen; ++i ) {
          final Chunk chunk = chunks[i];
          final String chunkType = chunk.typeToString();
-         System.out.println(chunkType);
-
          final int chunkTypeHash = chunkType.hashCode();
-         // System.out.println(chunkTypeHash);
+
+         // System.out.println(chunkType);
+         System.out.println(chunk);
 
          switch ( chunkTypeHash ) {
+
             case 2246125:
                /* "IHDR" */
                final IHDRChunk header = new IHDRChunk(chunk);
                width = header.width();
                height = header.height();
+
+               /* Check for improper width or height. */
+               if ( width < 2 || height < 2 ) {
+                  System.err.println("PNG has dimensions less than 2 x 2.");
+                  return target;
+               }
+
                bitDepth = header.bitDepth();
                clrFmt = header.colorFormat();
                compression = header.compression();
@@ -90,36 +94,62 @@ public abstract class PngParser {
 
             case 2242190:
                /* "IDAT" */
-               // byte[] dt = chunk.data;
-               // int dtLen = dt.length;
-               // for ( int j = 0; j < dtLen; ++j ) {
-               // zLibData.add(dt[j]);
-               // }
-               // new IDATChunk(chunk);
-
-               /*
-                * Meant to be read as one big chunk where only the first IDAT
-                * has a zlib header.
-                */
-
+               final IDATChunk dtchnk = new IDATChunk(chunk);
+               zlibChunks.add(dtchnk);
+               zlibLen += dtchnk.data.length;
                break;
 
             case 2243538:
                /* "IEND" */
-
                ended = true;
+               break;
+
+            case 2458989:
+               /* "PLTE" */
+               break;
+
+            case 3408658:
+               /* "pHYs" */
+               final PHYSChunk physical = new PHYSChunk(chunk);
+               System.out.println("unit specifier: " + physical.unitCode());
+               System.out.println("pixels per unit x: " + physical.ppux());
+               System.out.println("pixels per unit y: " + physical.ppuy());
+
+               break;
+
+            case 3528365:
+               /* "tIME" */
                break;
 
             default:
          }
       }
 
-      if ( ended ) { target.reallocate(width, height); }
+      if ( ended ) {
 
-      // byte zlibCmf = zLibData.remove(0);
-      // byte zlibExtraFlags = zLibData.remove(0);
-      // byte zLibCheck1 = zLibData.remove(zLibData.size() - 1);
-      // byte zLibCheck0 = zLibData.remove(zLibData.size() - 1);
+         /*
+          * If the file contains an appropriate end, then the image can be
+          * reallocated.
+          */
+         target.reallocate(width, height);
+
+         /* Consolidate separate blocks into one byte array. */
+         int cursor = 0;
+         final byte[] zlibdat = new byte[zlibLen];
+         final Iterator < IDATChunk > itr = zlibChunks.iterator();
+         while ( itr.hasNext() ) {
+            final byte[] dt = itr.next().data;
+            final int dtLen = dt.length;
+            for ( int i = 0; i < dtLen; ++i ) {
+               zlibdat[cursor++] = dt[i];
+            }
+         }
+
+         return PngParser.parseZlib(zlibdat, target);
+
+      } else {
+         System.err.println("PNG file did not terminate properly.");
+      }
 
       return target;
    }
@@ -135,22 +165,22 @@ public abstract class PngParser {
    public static Chunk[] parsePngToChunks ( final String filepath ) {
 
       final File file = new File(filepath);
-      final ArrayList < Chunk > chunkBuff = new ArrayList <>();
+      final ArrayList < Chunk > chunkList = new ArrayList <>();
 
       try {
-         final byte[] content = Files.readAllBytes(file.toPath());
          int cursor = 0;
+         final byte[] content = Files.readAllBytes(file.toPath());
          final int len = content.length;
+
          if ( len < 8 ) {
-            throw new Exception("Insufficient content in file to read header.");
+            throw new Exception("Insufficient file content to read header.");
          }
 
          /* Check header. */
          for ( ; cursor < 8; ++cursor ) {
             if ( content[cursor] != PngParser.SIG_PNG[cursor] ) {
                throw new Exception(
-                  "File header in bytes does not match .png standard: "
-                     + "{ 137, 80, 78, 71, 13, 10, 26, 10 }.");
+                  "File header in bytes does not match PNG standard.");
             }
          }
 
@@ -198,7 +228,7 @@ public abstract class PngParser {
                chunkdat,
                chunkcrc);
 
-            chunkBuff.add(chunk);
+            chunkList.add(chunk);
             /* @formatter:on */
          }
 
@@ -206,16 +236,12 @@ public abstract class PngParser {
          e.printStackTrace();
       }
 
-      /* Convert array list to array. */
-      final int chunksLen = chunkBuff.size();
-      final Chunk[] chunks = new Chunk[chunksLen];
-      chunkBuff.toArray(chunks);
-      return chunks;
-
+      return chunkList.toArray(new Chunk[chunkList.size()]);
    }
 
    /**
-    * A chunk signature describing the data of a .png file. In decimal format:
+    * A critical chunk signature describing the data of a .png file. In
+    * decimal format:
     *
     * <pre>
     * <code>{ 73, 68, 65, 84 }</code>
@@ -226,8 +252,8 @@ public abstract class PngParser {
     * <pre>
     * <code>
     * { 0x31, 0x2c, 0x29, 0x36 }
-    * </pre></code> When the bytes are converted to characters, they spell out
-    * the signature, i.e., 'I', 'D', 'A', 'T'.
+    * </pre></code> When the bytes are cast to characters, they spell out the
+    * signature, i.e., 'I', 'D', 'A', 'T'.
     *
     * @return the byte array
     */
@@ -237,8 +263,8 @@ public abstract class PngParser {
    }
 
    /**
-    * A chunk signature describing the end of the .png file. In decimal
-    * format:
+    * A critical chunk signature describing the end of the .png file. In
+    * decimal format:
     *
     * <pre>
     * <code>{ 73, 69, 78, 68 }</code>
@@ -249,8 +275,8 @@ public abstract class PngParser {
     * <pre>
     * <code>
     * { 0x49, 0x45, 0x4e, 0x44 }
-    * </pre></code> When the bytes are converted to characters, they spell out
-    * the signature, i.e., 'I', 'E', 'N', 'D'.
+    * </pre></code> When the bytes are cast to characters, they spell out the
+    * signature, i.e., 'I', 'E', 'N', 'D'.
     *
     * @return the byte array
     */
@@ -260,9 +286,9 @@ public abstract class PngParser {
    }
 
    /**
-    * A chunk signature describing the file's width, height, bit depth, color
-    * type, compression method, filter method and interlace method. In decimal
-    * format:
+    * A critical chunk signature describing the file's width, height, bit
+    * depth, color type, compression method, filter method and interlace
+    * method. In decimal format:
     *
     * <pre>
     * <code>{ 73, 72, 68, 82 }</code>
@@ -274,14 +300,127 @@ public abstract class PngParser {
     * <code>{ 0x49, 0x48, 0x44, 0x52 }</code>
     * </pre>
     *
-    * When the bytes are converted to characters, they spell out the
-    * signature, i.e., 'I', 'H', 'D', 'R'.
+    * When the bytes are cast to characters, they spell out the signature,
+    * i.e., 'I', 'H', 'D', 'R'.
     *
     * @return the byte array
     */
    public static byte[] sigIhdrBytes ( ) {
 
       return new byte[] { 0x49, 0x48, 0x44, 0x52 };
+   }
+
+   /**
+    * An ancillary chunk signature describing intended pixel size or aspect
+    * ratio for display of a .png file. In decimal format:
+    *
+    * <pre>
+    * <code>{ 112, 72, 89, 115 }</code>
+    * </pre>
+    *
+    * In hexadecimal format:
+    *
+    * <pre>
+    * <code>
+    * { 0x70, 0x48, 0x59, 0x73 }
+    * </pre></code> When the bytes are cast to characters, they spell out the
+    * signature, i.e., 'p', 'H', 'Y', 's'.
+    *
+    * @return the byte array
+    */
+   public static byte[] sigPhysBytes ( ) {
+
+      return new byte[] { 0x70, 0x48, 0x59, 0x73 };
+   }
+
+   /**
+    * A critical chunk signature describing the data of an indexed .png file.
+    * In decimal format:
+    *
+    * <pre>
+    * <code>{ 80, 76, 84, 69 }</code>
+    * </pre>
+    *
+    * In hexadecimal format:
+    *
+    * <pre>
+   * <code>{ 0x50, 0x4c, 0x54, 0x45 }</code>
+    * </pre>
+    *
+    * When the bytes are cast to characters, they spell out the signature,
+    * i.e., 'P', 'L', 'T', 'E'.
+    *
+    * @return the byte array
+    */
+   public static byte[] sigPlteBytes ( ) {
+
+      return new byte[] { 0x50, 0x4c, 0x54, 0x45 };
+   }
+
+   /**
+    * The signature, in 8 bytes, for the .png (portable network graphics) file
+    * format. In decimal format:
+    *
+    * <pre>
+    * <code>{ 137, 80, 78, 71, 13, 10, 26, 10 }</code>
+    * </pre>
+    *
+    * In hexadecimal format:
+    *
+    * <pre>
+    * <code>{ 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a }</code>
+    * </pre>
+    *
+    * Because Java bytes are signed, and <code>137</code> exceeds
+    * {@link Byte#MAX_VALUE} ({@value Byte#MAX_VALUE}), it wraps around to
+    * <code>-119</code>.
+    *
+    * @return the byte array
+    */
+   public static byte[] sigPng ( ) {
+
+      return new byte[] { ( byte ) 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a,
+         0x0a };
+   }
+
+   /**
+    * An ancillary chunk signature describing the last time the file was
+    * modified. In decimal format:
+    *
+    * <pre>
+    * <code>{ 116, 73, 77, 69 }</code>
+    * </pre>
+    *
+    * In hexadecimal format:
+    *
+    * <pre>
+    * <code>{ 0x74, 0x49, 0x4d, 0x45 }</code>
+    * </pre>
+    *
+    * When the bytes are cast to characters, they spell out the signature,
+    * i.e., 't', 'I', 'M', 'E'.
+    *
+    * @return the byte array
+    */
+   public static byte[] sigTimeBytes ( ) {
+
+      return new byte[] { 0x74, 0x49, 0x4d, 0x45 };
+   }
+
+   /**
+    * Parses the zlib section of the .png data.
+    * 
+    * @param zlibdat the data
+    * @param target  the output image
+    * 
+    * @return the image
+    */
+   protected static Img parseZlib ( final byte[] zlibdat, final Img target ) {
+
+      // TODO: Implement.
+
+      System.out.println(Utils.toString(Utils.bitslm(zlibdat[0])));
+      return target;
    }
 
    /**
@@ -314,7 +453,7 @@ public abstract class PngParser {
       }
 
       /**
-       * Returns a the chunk's data arranged as an array of bytes promoted to
+       * Returns a string of the chunk's data as an array of bytes promoted to
        * integers. The array is enclosed by the tokens '[' and ']', and each
        * element is separated with ','.
        *
@@ -335,10 +474,9 @@ public abstract class PngParser {
       }
 
       /**
-       * Returns the chunk's data promoted from bytes to characters and
-       * concatenated into a String. This data is not expected to be human
-       * readable. Instead, it is useful to compare the parser's output with
-       * that of a hex editing tool.
+       * Returns a string of the chunk's data promoted from bytes to characters.
+       * This data is not expected to be human readable. Instead, it is useful
+       * to compare the parser's output with that of a hex editing tool.
        *
        * @return the string
        */
@@ -366,6 +504,22 @@ public abstract class PngParser {
             result |= this.length[i] & 0xff;
          }
          return result;
+      }
+
+      /**
+       * Returns a string representation of this chunk.
+       */
+      @Override
+      public String toString ( ) {
+
+         final StringBuilder sb = new StringBuilder();
+         sb.append("{ type: ");
+         sb.append(this.typeToString());
+         sb.append(", length: ");
+         sb.append(this.length());
+         sb.append(' ');
+         sb.append('}');
+         return sb.toString();
       }
 
       /**
@@ -418,39 +572,39 @@ public abstract class PngParser {
       /**
        * Black and white (grey scale) with alpha.
        */
-      ABW ( 0 ),
+      ABW ( ( byte ) 0 ),
 
       /**
        * Red, blue, green with alpha.
        */
-      ARGB ( 6 ),
+      ARGB ( ( byte ) 6 ),
 
       /**
        * Black and white (grey scale).
        */
-      BW ( 4 ),
+      BW ( ( byte ) 4 ),
 
       /**
        * Indexed color.
        */
-      INDEXED ( 3 ),
+      INDEXED ( ( byte ) 3 ),
 
       /**
        * Red, blue green.
        */
-      RGB ( 2 );
+      RGB ( ( byte ) 2 );
 
       /**
        * The data flag.
        */
-      private final int flag;
+      private final byte flag;
 
       /**
        * The default constructor.
        *
        * @param f the flag
        */
-      private ColorFormat ( final int f ) { this.flag = f; }
+      private ColorFormat ( final byte f ) { this.flag = f; }
 
       /**
        * Get the enumerations flag code.
@@ -466,9 +620,12 @@ public abstract class PngParser {
        *
        * @return the constant
        */
-      public static ColorFormat fromFlag ( final int f ) {
+      public static ColorFormat fromFlag ( final byte f ) {
 
          switch ( f ) {
+            case 0:
+               return ABW;
+
             case 2:
                return RGB;
 
@@ -481,7 +638,6 @@ public abstract class PngParser {
             case 6:
                return ARGB;
 
-            case 0:
             default:
                return ABW;
          }
@@ -517,7 +673,6 @@ public abstract class PngParser {
        */
       public IDATChunk ( final Chunk chunk ) {
 
-         // TODO: Provide functionality to convert to bit array.
          this(chunk.length, chunk.type, chunk.data, chunk.crc);
       }
 
@@ -581,7 +736,7 @@ public abstract class PngParser {
        */
       public ColorFormat colorFormat ( ) {
 
-         return ColorFormat.fromFlag(this.data[9] & 0xff);
+         return ColorFormat.fromFlag(this.data[9]);
       }
 
       /**
@@ -655,20 +810,75 @@ public abstract class PngParser {
 
    }
 
-   public static class ZLibBlock {
-      final int check;
-      final byte cmf;
-      final byte[] data;
-      final byte extraFlags;
+   /**
+    * Defines a physical dimensions chunk for portable network graphics (.png)
+    * information.
+    */
+   public static class PHYSChunk extends Chunk {
 
-      public ZLibBlock ( final byte cm, final byte efs, final byte[] data,
-         final int check ) {
+      /**
+       * Constructs a data chunk from four byte arrays.
+       *
+       * @param length the length array
+       * @param type   the type array
+       * @param data   the data array
+       * @param crc    the CRC array
+       */
+      public PHYSChunk ( final byte[] length, final byte[] type,
+         final byte[] data, final byte[] crc ) {
 
-         this.cmf = cm;
-         this.extraFlags = efs;
-         this.data = data;
-         this.check = check;
+         super(length, type, data, crc);
       }
+
+      /**
+       * Promotes a chunk to an PHYSChunk. Should only be done if the chunk's
+       * type is known to be "pHYs".
+       *
+       * @param chunk the chunk
+       */
+      public PHYSChunk ( final Chunk chunk ) {
+
+         this(chunk.length, chunk.type, chunk.data, chunk.crc);
+      }
+
+      /**
+       * Returns the pixels per unit on the horizontal or x axis. Composites
+       * bytes 0 to 3 of the data array.
+       *
+       * @return the pixels per unit
+       */
+      public int ppux ( ) {
+
+         int result = 0;
+         for ( int i = 0; i < 4; ++i ) {
+            result <<= 0x08;
+            result |= this.data[i] & 0xff;
+         }
+         return result;
+      }
+
+      /**
+       * Returns the pixels per unit on the vertical or y axis. Composites bytes
+       * 4 to 7 of the data array.
+       *
+       * @return the pixels per unit
+       */
+      public int ppuy ( ) {
+
+         int result = 0;
+         for ( int i = 4; i < 8; ++i ) {
+            result <<= 0x08;
+            result |= this.data[i] & 0xff;
+         }
+         return result;
+      }
+
+      /**
+       * Returns the unit specifier: 1 for meters, 0 for unknown.
+       *
+       * @return the unit specifier
+       */
+      public int unitCode ( ) { return this.data[8]; }
 
    }
 

@@ -13,6 +13,11 @@ package camzup.core;
 public abstract class Sdf {
 
    /**
+    * Discourage overriding with a private constructor.
+    */
+   private Sdf ( ) {}
+
+   /**
     * A wrapper function around the default signed distance for arc. Follows
     * the Processing convention of specifying the start and stop angle as
     * inputs. This calls cosine twice and sine twice, and so will slow
@@ -403,7 +408,6 @@ public abstract class Sdf {
     *
     * @return the signed distance
     */
-   @Experimental
    public static float polygon ( final Vec2 point, final int vertices,
       final float angle, final float bounds ) {
 

@@ -574,6 +574,19 @@ public class Img implements Cloneable, Iterable < Color > {
       return target;
    }
 
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The value is clamped to a range [0.0, 1.0] .
+    *
+    * @param xOrigin the origin x coordinate
+    * @param yOrigin the origin y coordinate
+    * @param xDest   the destination x coordinate
+    * @param yDest   the destination y coordinate
+    * @param grd     the gradient
+    * @param target  the output image
+    *
+    * @return the image
+    */
    public static Img linear ( final float xOrigin, final float yOrigin,
       final float xDest, final float yDest, final Gradient grd,
       final Img target ) {
@@ -608,10 +621,115 @@ public class Img implements Cloneable, Iterable < Color > {
       return target;
    }
 
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The value is clamped to a range [0.0, 1.0] .
+    *
+    * @param origin the origin
+    * @param dest   the destination
+    * @param grd    the gradient
+    * @param target the output image
+    *
+    * @return the image
+    */
    public static Img linear ( final Vec2 origin, final Vec2 dest,
       final Gradient grd, final Img target ) {
 
       return Img.linear(origin.x, origin.y, dest.x, dest.y, grd, target);
+   }
+
+   /**
+    * Remove transparency from the image by compositing all colors with opaque
+    * black. If the target is not the same as the source, then the target is
+    * resized and set to the composite.
+    *
+    * @param source the source image
+    * @param target the target image
+    *
+    * @return this image
+    */
+   public static Img opaque ( final Img source, final Img target ) {
+
+      if ( source != target ) {
+
+         target.reallocate(source.width, source.height);
+         final int[] pxSrc = source.pixels;
+         final int[] pxTrg = target.pixels;
+         final int trgLen = pxTrg.length;
+         for ( int i = 0; i < trgLen; ++i ) {
+            pxTrg[i] = 0xff000000 | pxSrc[i];
+         }
+         return target;
+
+      } else {
+
+         final int[] px = target.pixels;
+         final int len = px.length;
+         for ( int i = 0; i < len; ++i ) {
+            px[i] = 0xff000000 | px[i];
+         }
+         return target;
+
+      }
+   }
+
+   /**
+    * Generates a radial gradient. This does not account for aspect ratio, so
+    * an image that is not 1:1 will result in an ellipsoid.
+    *
+    * @param xOrigin the x coordinate
+    * @param yOrigin the y coordinate
+    * @param radius  the radius
+    * @param grd     the gradient
+    * @param target  the output image
+    *
+    * @return the image
+    */
+   public static Img radial ( final float xOrigin, final float yOrigin,
+      final float radius, final Gradient grd, final Img target ) {
+
+      final int h = target.height;
+      final int w = target.width;
+      final int[] px = target.pixels;
+
+      final float hInv = 1.0f / ( h - 1.0f );
+      final float wInv = 1.0f / ( w - 1.0f );
+
+      final float r2 = radius + radius;
+      final float invrsq = 1.0f / Utils.max(IUtils.DEFAULT_EPSILON, r2 * r2);
+
+      for ( int i = 0, y = 0; y < h; ++y ) {
+
+         final float yn = y * hInv;
+         final float ay = yOrigin - ( 1.0f - ( yn + yn ) );
+         final float aysq = ay * ay;
+
+         for ( int x = 0; x < w; ++x, ++i ) {
+
+            final float xn = x * wInv;
+            final float ax = xOrigin - ( xn + xn - 1.0f );
+            px[i] = Gradient.eval(grd, 1.0f - ( ax * ax + aysq ) * invrsq);
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Generates a radial gradient. This does not account for aspect ratio, so
+    * an image that is not 1:1 will result in an ellipsoid.
+    *
+    * @param origin the origin
+    * @param radius the radius
+    * @param grd    the gradient
+    * @param target the output image
+    *
+    * @return the image
+    */
+   public static Img radial ( final Vec2 origin, final float radius,
+      final Gradient grd, final Img target ) {
+
+      return Img.radial(origin.x, origin.y, radius, grd, target);
    }
 
    /**
