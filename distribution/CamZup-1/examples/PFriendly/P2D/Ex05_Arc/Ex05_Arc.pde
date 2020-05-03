@@ -17,14 +17,14 @@ void draw() {
 
   graphics.mouse(mouse);
   float start = Vec2.heading(mouse);
-  float stop = frameCount * 0.025;
-
+  float stop = 0;
+  ellipseMode(RADIUS);
   background(#fff7d5);
   graphics.origin();
   strokeWeight(5.0);
   stroke(#373737);
   arc(0.0, 0.0,
-    175.0, 175.0,
+    150.0, 150.0,
     start, stop,
     PIE);
 

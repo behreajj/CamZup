@@ -1080,33 +1080,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Evaluates a step in the range [0.0, 1.0], returning a transform. The
-    * transform's scale is unaffected by the evaluation.
-    *
-    * @param curve      the curve
-    * @param step       the step
-    * @param handedness the handedness
-    * @param target     the target
-    *
-    * @return the transform
-    *
-    * @see Curve3#eval(Curve3, float, Vec3, Vec3)
-    */
-   @Experimental
-   public static Transform3 eval ( final Curve3 curve, final float step,
-      final Handedness handedness, final Transform3 target ) {
-
-      target.locPrev.set(target.location);
-      target.rotPrev.set(target.rotation);
-      Curve3.eval(curve, step, target.location, target.forward);
-
-      Quaternion.fromDir(target.forward, handedness, target.rotation,
-         target.right, target.forward, target.up);
-
-      return target;
-   }
-
-   /**
     * Evaluates a step in the range [0.0, 1.0], returning a knot on the curve.
     *
     * @param curve  the curve
@@ -1896,9 +1869,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    static Vec3 lerp13 ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(0.66666666f * a.x + IUtils.ONE_THIRD * b.x, 0.66666666f
-         * a.y + IUtils.ONE_THIRD * b.y, 0.66666666f * a.z + IUtils.ONE_THIRD
-            * b.z);
+      return target.set(IUtils.TWO_THIRDS * a.x + IUtils.ONE_THIRD * b.x,
+         IUtils.TWO_THIRDS * a.y + IUtils.ONE_THIRD * b.y, IUtils.TWO_THIRDS
+            * a.z + IUtils.ONE_THIRD * b.z);
    }
 
    /**

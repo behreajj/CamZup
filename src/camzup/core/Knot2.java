@@ -1085,8 +1085,13 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
 
       final Vec2 prevCo = prev.coord;
 
-      final float midpt23x = xControl * 0.66666666f;
-      final float midpt23y = yControl * 0.66666666f;
+      /*
+       * This doesn't use lerp13 because a calculation can be saved by
+       * calculating the midpoint.
+       */
+
+      final float midpt23x = xControl * IUtils.TWO_THIRDS;
+      final float midpt23y = yControl * IUtils.TWO_THIRDS;
 
       prev.foreHandle.set(midpt23x + IUtils.ONE_THIRD * prevCo.x, midpt23y
          + IUtils.ONE_THIRD * prevCo.y);

@@ -252,8 +252,11 @@ public abstract class PngParser {
     * <pre>
     * <code>
     * { 0x31, 0x2c, 0x29, 0x36 }
-    * </pre></code> When the bytes are cast to characters, they spell out the
-    * signature, i.e., 'I', 'D', 'A', 'T'.
+    * </code>
+    * </pre>
+    *
+    * When the bytes are cast to characters, they spell out the signature,
+    * i.e., 'I', 'D', 'A', 'T'.
     *
     * @return the byte array
     */
@@ -275,8 +278,11 @@ public abstract class PngParser {
     * <pre>
     * <code>
     * { 0x49, 0x45, 0x4e, 0x44 }
-    * </pre></code> When the bytes are cast to characters, they spell out the
-    * signature, i.e., 'I', 'E', 'N', 'D'.
+    * </code>
+    * </pre>
+    *
+    * When the bytes are cast to characters, they spell out the signature,
+    * i.e., 'I', 'E', 'N', 'D'.
     *
     * @return the byte array
     */
@@ -323,8 +329,11 @@ public abstract class PngParser {
     * <pre>
     * <code>
     * { 0x70, 0x48, 0x59, 0x73 }
-    * </pre></code> When the bytes are cast to characters, they spell out the
-    * signature, i.e., 'p', 'H', 'Y', 's'.
+    * </code>
+    * </pre>
+    *
+    * When the bytes are cast to characters, they spell out the signature,
+    * i.e., 'p', 'H', 'Y', 's'.
     *
     * @return the byte array
     */
@@ -409,10 +418,10 @@ public abstract class PngParser {
 
    /**
     * Parses the zlib section of the .png data.
-    * 
+    *
     * @param zlibdat the data
     * @param target  the output image
-    * 
+    *
     * @return the image
     */
    protected static Img parseZlib ( final byte[] zlibdat, final Img target ) {

@@ -127,3 +127,4 @@ mipmaps
 regex
 inkscape
 compositing
+endianness

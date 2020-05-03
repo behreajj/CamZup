@@ -1,8 +1,8 @@
 package camzup;
 
-import camzup.core.Img;
-import camzup.core.PngParser;
-import camzup.core.Utils;
+import camzup.core.Curve2;
+import camzup.core.CurveEntity2;
+import camzup.core.SvgParser;
 
 import processing.core.PApplet;
 
@@ -66,10 +66,19 @@ public class CamZup {
       // System.out.println(var46);
       // }
 
-      final Img img = new Img();
-      PngParser.parsePng("data/diagnostic2.png", img);
+      // final Img img = new Img();
+      // PngParser.parsePng("data/diagnostic2.png", img);
 
-      System.out.println(Utils.toString(PngParser.sigIdatBytes()));
+      // System.out.println(Integer.toHexString(Utils.swapEndian(0xffff7f00)));
+
+      final Curve2 c2 = new Curve2();
+      CurveEntity2 ce2 = new CurveEntity2();
+      ce2.append(c2);
+
+      ce2 = SvgParser.parse("data/diagnostic.svg");
+
+      final String pyCd = ce2.toBlenderCode();
+      System.out.println(pyCd);
 
    }
 

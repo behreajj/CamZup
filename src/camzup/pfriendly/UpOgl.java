@@ -175,6 +175,42 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *
     * @param x0    the first x
     * @param y0    the first y
+    * @param r     the radius
+    * @param start the start angle
+    * @param stop  the stop angle
+    */
+   public void arc ( final float x0, final float y0, final float r,
+      final float start, final float stop ) {
+
+      this.arc(x0, y0, r, r, start, stop, PConstants.OPEN);
+   }
+
+   /**
+    * Draws an arc at a location from a start angle to a stop angle. The
+    * meaning of the first four parameters depends on the renderer's
+    * ellipseMode.
+    *
+    * @param x0    the first x
+    * @param y0    the first y
+    * @param x1    the second x
+    * @param y1    the second y
+    * @param start the start angle
+    * @param stop  the stop angle
+    */
+   @Override
+   public void arc ( final float x0, final float y0, final float x1,
+      final float y1, final float start, final float stop ) {
+
+      this.arc(x0, y0, x1, y1, start, stop, PConstants.OPEN);
+   }
+
+   /**
+    * Draws an arc at a location from a start angle to a stop angle. The
+    * meaning of the first four parameters depends on the renderer's
+    * ellipseMode.
+    *
+    * @param x0    the first x
+    * @param y0    the first y
     * @param x1    the second x
     * @param y1    the second y
     * @param start the start angle
@@ -185,8 +221,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void arc ( final float x0, final float y0, final float x1,
       final float y1, final float start, final float stop, final int mode ) {
 
-      float x = x0;
-      float y = y0;
+      final float x = x0;
+      final float y = y0;
       float w = x1;
       float h = y1;
 
@@ -194,33 +230,34 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          case CORNERS:
 
-            w = Utils.diff(x0, x1);
-            h = Utils.diff(y0, y1);
-            x += w * 0.5f;
-            y += h * 0.5f;
-
-            break;
+            // w = Utils.diff(x0, x1);
+            // h = Utils.diff(y0, y1);
+            // x += w * 0.5f;
+            // y += h * 0.5f;
+            // break;
 
          case RADIUS:
 
-            w = Utils.abs(x1 + x1);
-            h = Utils.abs(y1 + y1);
-
-            break;
+            // w = Utils.abs(x1 + x1);
+            // h = Utils.abs(y1 + y1);
+            // break;
 
          case CORNER:
 
-            x += Utils.abs(x1) * 0.5f;
-            y -= Utils.abs(y1) * 0.5f;
-
-            break;
+            // x += Utils.abs(x1) * 0.5f;
+            // y -= Utils.abs(y1) * 0.5f;
+            // break;
 
          case CENTER:
 
-         default:
+            // w = Utils.abs(x1);
+            // h = Utils.abs(y1);
+            // break;
 
-            w = Utils.abs(x1);
-            h = Utils.abs(y1);
+         default:
+            w = 2.0f * Utils.min(Utils.abs(x1), Utils.abs(y1));
+            h = w;
+
       }
 
       final boolean oldFill = this.fill;
@@ -247,6 +284,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.arcMode = ArcMode.PIE;
       }
 
+      /* This nonuniform scaling distorts the angle. */
       this.transform.moveTo(this.tr2Loc.set(x, y));
       this.transform.rotateTo(0.0f);
       this.transform.scaleTo(this.tr2Scale.set(w, h));
@@ -255,6 +293,24 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.arcImpl(this.arc, this.transform, IUp.DEFAULT_ORDER);
 
       this.fill = oldFill;
+   }
+
+   /**
+    * Draws an arc at a location from a start angle to a stop angle. The
+    * meaning of the first four parameters depends on the renderer's
+    * ellipseMode.
+    *
+    * @param x0    the first x
+    * @param y0    the first y
+    * @param r     the radius
+    * @param start the start angle
+    * @param stop  the stop angle
+    * @param mode  the arc mode
+    */
+   public void arc ( final float x0, final float y0, final float r,
+      final float start, final float stop, final int mode ) {
+
+      this.arc(x0, y0, r, r, start, stop, mode);
    }
 
    /**
@@ -2811,12 +2867,14 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       prevKnot = itr.next();
       coord = prevKnot.coord;
 
-      this.pushMatrix();
-      this.transform(tr2, trOrder);
-
       final float oldSw = this.strokeWeight;
       final float swLine = oldSw / Transform2.minDimension(tr2);
-      this.strokeWeight = swLine;
+
+      this.pushStyle();
+      this.strokeWeight(swLine);
+
+      this.pushMatrix();
+      this.transform(tr2, trOrder);
 
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);
@@ -2848,8 +2906,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          this.endShape(PConstants.OPEN);
       }
 
-      this.strokeWeight = oldSw;
       this.popMatrix();
+      this.popStyle();
    }
 
    /**

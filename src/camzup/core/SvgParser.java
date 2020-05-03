@@ -36,16 +36,15 @@ public abstract class SvgParser {
    public static final float CM_TO_UNIT = 37.795f;
 
    /**
+    * The floating point epsilon, cast to a double.
+    */
+   public static final double EPS_D = 0.000001d;
+
+   /**
     * Ratio to convert from gradians to radians,
     * {@value SvgParser#GRAD_TO_RAD}.
     */
    public static final float GRAD_TO_RAD = 0.015708f;
-
-   /**
-    * Handle magnitude of curve knots used to approximate an ellipse,
-    * {@value SvgParser#HANDLE_MAG}.
-    */
-   public static final float HANDLE_MAG = 0.552285f;
 
    /**
     * Ratio to convert from inches to units, {@value SvgParser#IN_TO_UNIT}. In
@@ -87,6 +86,12 @@ public abstract class SvgParser {
     * Ratio to convert from pixels to units, {@value SvgParser#PX_TO_UNIT}.
     */
    public static final float PX_TO_UNIT = 1.0f;
+
+   /**
+    * For use in parsing arcs to between points, <code>2.0 / Math.PI</code>,
+    * approximately {@value SvgParser#TWO_DIV_PI_D} .
+    */
+   public static final double TWO_DIV_PI_D = 0.6366197723675814d;
 
    /**
     * The compiled pattern for SVG path commands.
@@ -253,11 +258,9 @@ public abstract class SvgParser {
           * One or other of the ellipse's axes could be missing, or this node
           * could be circle.
           */
-         if ( rxnode == null && rynode != null ) {
-            rxnode = rynode;
-         } else if ( rxnode != null && rynode == null ) {
-            rynode = rxnode;
-         } else if ( rxnode == null && rynode == null ) {
+         if ( rynode != null && rxnode == null ) { rxnode = rynode; }
+         if ( rxnode != null && rynode == null ) { rynode = rxnode; }
+         if ( rxnode == null && rynode == null ) {
             rxnode = rynode = attributes.getNamedItem("r");
          }
 
@@ -279,8 +282,8 @@ public abstract class SvgParser {
          final float left = cx - rx;
          final float bottom = cy - ry;
 
-         final float horizHandle = rx * SvgParser.HANDLE_MAG;
-         final float vertHandle = ry * SvgParser.HANDLE_MAG;
+         final float horizHandle = rx * Curve.HNDL_MAG_ORTHO;
+         final float vertHandle = ry * Curve.HNDL_MAG_ORTHO;
 
          final float xHandlePos = cx + horizHandle;
          final float xHandleNeg = cx - horizHandle;
@@ -1040,24 +1043,13 @@ public abstract class SvgParser {
 
                      /* Unsupported. */
 
-                     cursor++; /* 1 */
-                     cursor++; /* 2 */
-                     cursor++; /* 3 */
-                     cursor++; /* 4 */
-                     cursor++; /* 5 */
-                     coxStr = dataTokens[cursor++]; /* 6 */
-                     coyStr = dataTokens[cursor++]; /* 7 */
-
-                     prev = curr;
-                     curr = new Knot2();
-                     target.append(curr);
-
-                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
-                        .parseFloat(coyStr));
-                     Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
-                     Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
-
-                     relative.set(curr.coord);
+                     // final String w = dataTokens[cursor++]; /* 1 */
+                     // final String h = dataTokens[cursor++]; /* 2 */
+                     // final String angle = dataTokens[cursor++]; /* 3 */
+                     // final String fa = dataTokens[cursor++]; /* 4 */
+                     // final String fs = dataTokens[cursor++]; /* 5 */
+                     // coxStr = dataTokens[cursor++]; /* 6 */
+                     // coyStr = dataTokens[cursor++]; /* 7 */
 
                      break;
 
@@ -1201,10 +1193,11 @@ public abstract class SvgParser {
          final Node wnode = attributes.getNamedItem("width");
          final Node hnode = attributes.getNamedItem("height");
 
-         // TODO: Treat these as you would rx and ry in an ellipse, where only
-         // one r means both are equal to r?
-         final Node rxnode = attributes.getNamedItem("rx");
-         final Node rynode = attributes.getNamedItem("ry");
+         /* One or other of the rounding tags may be missing. */
+         Node rxnode = attributes.getNamedItem("rx");
+         Node rynode = attributes.getNamedItem("ry");
+         if ( rynode != null && rxnode == null ) { rxnode = rynode; }
+         if ( rxnode != null && rynode == null ) { rynode = rxnode; }
 
          /* Acquire text content from the node if it exists. */
          final String xstr = xnode != null ? xnode.getTextContent() : "0";

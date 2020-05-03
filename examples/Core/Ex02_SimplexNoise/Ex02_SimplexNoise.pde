@@ -45,10 +45,18 @@ void draw() {
       float xNorm = x * wNorm;
       noise.x = (xNorm + xNorm - 1.0) * scale;
 
-      Simplex.fbm(noise, Simplex.DEFAULT_SEED, octaves, 
-        lacunarity, persist, deriv); 
-      Color.fromDir(deriv, clr);
-      pixels[idx] = Color.toHexInt(clr);
+      if (mousePressed) {
+        float fac = Simplex.fbm(noise, Simplex.DEFAULT_SEED,
+          octaves, lacunarity, persist);
+        fac = fac * 0.5 + 0.5;
+        clr.set(fac, fac, fac, 1.0);
+        pixels[idx] = Color.toHexInt(clr);
+      } else {
+        Simplex.fbm(noise, Simplex.DEFAULT_SEED,
+          octaves, lacunarity, persist, deriv);
+        Color.fromDir(deriv, clr);
+        pixels[idx] = Color.toHexInt(clr);
+      }
     }
   }
   updatePixels();

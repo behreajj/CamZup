@@ -424,7 +424,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public Curve2 prependAll ( final Knot2... kn ) {
 
-      // TEST
       final int len = kn.length;
       for ( int i = 0, j = 0; i < len; ++i ) {
          final Knot2 knot = kn[i];
@@ -1011,11 +1010,13 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          if ( arcMode == ArcMode.CHORD ) {
 
             /* Flatten the first to last handles. */
-            last.foreHandle.set(0.66666666f * coLast.x + 0.33333334f
-               * coFirst.x, 0.66666666f * coLast.y + 0.33333334f * coFirst.y);
+            last.foreHandle.set(IUtils.TWO_THIRDS * coLast.x + IUtils.ONE_THIRD
+               * coFirst.x, IUtils.TWO_THIRDS * coLast.y + IUtils.ONE_THIRD
+                  * coFirst.y);
 
-            first.rearHandle.set(0.66666666f * coFirst.x + 0.33333334f
-               * coLast.x, 0.66666666f * coFirst.y + 0.33333334f * coLast.y);
+            first.rearHandle.set(IUtils.TWO_THIRDS * coFirst.x
+               + IUtils.ONE_THIRD * coLast.x, IUtils.TWO_THIRDS * coFirst.y
+                  + IUtils.ONE_THIRD * coLast.y);
 
          } else if ( arcMode == ArcMode.PIE ) {
 
@@ -1024,24 +1025,24 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
             final Vec2 coCenter = center.coord;
             knots.add(center);
 
-            final float cox23 = 0.66666666f * coCenter.x;
-            final float coy23 = 0.66666666f * coCenter.y;
-            final float cox13 = 0.33333334f * coCenter.x;
-            final float coy13 = 0.33333334f * coCenter.y;
+            final float cox23 = IUtils.TWO_THIRDS * coCenter.x;
+            final float coy23 = IUtils.TWO_THIRDS * coCenter.y;
+            final float cox13 = IUtils.ONE_THIRD * coCenter.x;
+            final float coy13 = IUtils.ONE_THIRD * coCenter.y;
 
             /* Flatten center handles. */
-            center.rearHandle.set(cox23 + 0.33333334f * coLast.x, coy23
-               + 0.33333334f * coLast.y);
-            center.foreHandle.set(cox23 + 0.33333334f * coFirst.x, coy23
-               + 0.33333334f * coFirst.y);
+            center.rearHandle.set(cox23 + IUtils.ONE_THIRD * coLast.x, coy23
+               + IUtils.ONE_THIRD * coLast.y);
+            center.foreHandle.set(cox23 + IUtils.ONE_THIRD * coFirst.x, coy23
+               + IUtils.ONE_THIRD * coFirst.y);
 
             /* Flatten handle from first to center. */
-            first.rearHandle.set(0.66666666f * coFirst.x + cox13, 0.66666666f
-               * coFirst.y + coy13);
+            first.rearHandle.set(IUtils.TWO_THIRDS * coFirst.x + cox13,
+               IUtils.TWO_THIRDS * coFirst.y + coy13);
 
             /* Flatten handle from last to center. */
-            last.foreHandle.set(0.66666666f * coLast.x + cox13, 0.66666666f
-               * coLast.y + coy13);
+            last.foreHandle.set(IUtils.TWO_THIRDS * coLast.x + cox13,
+               IUtils.TWO_THIRDS * coLast.y + coy13);
          }
       }
 
@@ -1125,39 +1126,18 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Evaluates a step in the range [0.0, 1.0] , returning a transform. The
-    * transform's scale is unaffected by the evaluation.
+    * Creates a curve which approximates an ellipse; currently there is
+    * support only for 4 knot ellipses. The aspect ratio is that between the
+    * ellipse's major and minor axes.
     *
-    * @param curve      the curve
-    * @param step       the step
-    * @param handedness the handedness
-    * @param target     the target
+    * @param aspect the aspect
+    * @param target the output curve
     *
-    * @return the transform
-    *
-    * @see Curve2#eval(Curve2, float, Vec2, Vec2)
+    * @return the ellipse
     */
-   @Experimental
-   public static Transform2 eval ( final Curve2 curve, final float step,
-      final Handedness handedness, final Transform2 target ) {
+   public static Curve2 ellipse ( final float aspect, final Curve2 target ) {
 
-      // TEST
-
-      target.locPrev.set(target.location);
-      target.rotPrev = target.rotation;
-
-      Curve2.eval(curve, step, target.location, target.forward);
-
-      Vec2.normalize(target.forward, target.forward);
-      if ( handedness == Handedness.LEFT ) {
-         Vec2.perpendicularCCW(target.forward, target.right);
-      } else {
-         Vec2.perpendicularCW(target.forward, target.right);
-      }
-
-      target.rotation = Vec2.headingSigned(target.right);
-
-      return target;
+      return Curve2.ellipse(0.5f, aspect, 0.0f, 0.0f, target);
    }
 
    /**
@@ -2209,6 +2189,68 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
+    * Creates a curve which approximates an ellipse. Currently, only 4 knot
+    * ellipses are supported. The aspect is the ratio between the width and
+    * height of the ellipse. This is package level to provide extra
+    * functionality for translating a ellipse's origin.
+    *
+    * @param radius  the radius
+    * @param aspect  the aspect ratio
+    * @param xCenter the x center
+    * @param yCenter the y center
+    * @param target  the output curve
+    *
+    * @return the ellipse
+    */
+   static Curve2 ellipse ( final float radius, final float aspect,
+      final float xCenter, final float yCenter, final Curve2 target ) {
+
+      // TODO: RESEARCH multiple knots rather than just 4.
+      final float vrad = Utils.max(radius, IUtils.DEFAULT_EPSILON);
+      final float ry = vrad * aspect;
+
+      final float right = xCenter + vrad;
+      final float top = yCenter + ry;
+      final float left = xCenter - vrad;
+      final float bottom = yCenter - ry;
+
+      final float horizHandle = vrad * Curve.HNDL_MAG_ORTHO;
+      final float vertHandle = ry * Curve.HNDL_MAG_ORTHO;
+
+      final float xHandlePos = xCenter + horizHandle;
+      final float xHandleNeg = xCenter - horizHandle;
+
+      final float yHandlePos = yCenter + vertHandle;
+      final float yHandleNeg = yCenter - vertHandle;
+
+      target.resize(4);
+      final Knot2 kn0 = target.get(0);
+      final Knot2 kn1 = target.get(1);
+      final Knot2 kn2 = target.get(2);
+      final Knot2 kn3 = target.get(3);
+
+      kn0.coord.set(right, yCenter);
+      kn0.foreHandle.set(right, yHandlePos);
+      kn0.rearHandle.set(right, yHandleNeg);
+
+      kn1.coord.set(xCenter, top);
+      kn1.foreHandle.set(xHandleNeg, top);
+      kn1.rearHandle.set(xHandlePos, top);
+
+      kn2.coord.set(left, yCenter);
+      kn2.foreHandle.set(left, yHandleNeg);
+      kn2.rearHandle.set(left, yHandlePos);
+
+      kn3.coord.set(xCenter, bottom);
+      kn3.foreHandle.set(xHandlePos, bottom);
+      kn3.rearHandle.set(xHandleNeg, bottom);
+
+      target.name = "Ellipse";
+      target.closedLoop = true;
+      return target;
+   }
+
+   /**
     * A utility function for setting the handles of knots on straight curve
     * segments. Finds unclamped linear interpolation from origin to
     * destination by a step of 1.0 / 3.0 .
@@ -2221,8 +2263,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    static Vec2 lerp13 ( final Vec2 a, final Vec2 b, final Vec2 target ) {
 
-      return target.set(0.66666666f * a.x + IUtils.ONE_THIRD * b.x, 0.66666666f
-         * a.y + IUtils.ONE_THIRD * b.y);
+      return target.set(IUtils.TWO_THIRDS * a.x + IUtils.ONE_THIRD * b.x,
+         IUtils.TWO_THIRDS * a.y + IUtils.ONE_THIRD * b.y);
    }
 
    /**

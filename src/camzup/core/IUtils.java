@@ -298,4 +298,16 @@ public interface IUtils {
     */
    double THIRD_PI_D = 1.0471975511965976d;
 
+   /**
+    * Two-thirds, 2.0 / 3.0 . Approximately {@value IUtils#TWO_THIRDS} .
+    * Useful for setting handles on the knot of a Bezier curve.
+    */
+   float TWO_THIRDS = 0.6666667f;
+
+   /**
+    * Two-thirds, 2.0 / 3.0 . Approximately {@value IUtils#TWO_THIRDS_D} .
+    * Useful for setting handles on the knot of a Bezier curve.
+    */
+   double TWO_THIRDS_D = 0.6666666666666667d;
+
 }

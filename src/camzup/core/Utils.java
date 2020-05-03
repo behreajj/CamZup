@@ -1392,6 +1392,24 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * Swaps the endianness of an integer. For example, a color in the AARRGGBB
+    * format, <code>0xffaabbcc</code>, will yield the BBGGRRAA color,
+    * <code>0xccbbaaff</code>. Because Java integers are signed, the integer
+    * is promoted to a <code>long</code> to simulate an <code>uint</code> (an
+    * unsigned integer), then demoted after the shift.
+    *
+    * @param a the input value
+    *
+    * @return the swap.
+    */
+   public static int swapEndian ( final int a ) {
+
+      final long b = a & 0xffffffffL;
+      return ( int ) ( b << 0x18 | ( b & 0xff00 ) << 0x8 | b >> 0x8 & 0xff00 | b
+         >> 0x18 );
+   }
+
+   /**
     * Equivalent to dividing the sine of the angle by the cosine. Finds the
     * approximate tangent of an angle in radians. An alternative to the double
     * precision {@link Math#tan(double)} , this function uses single-precision

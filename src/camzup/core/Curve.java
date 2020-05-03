@@ -93,6 +93,33 @@ public abstract class Curve extends EntityData implements ICurve {
    }
 
    /**
+    * Handle magnitude for orthogonal handles when four curve knots are used
+    * to approximate an ellipse or circle (90 degrees per knot),
+    * {@value Curve#HNDL_MAG_ORTHO} .
+    */
+   public static final float HNDL_MAG_ORTHO = 0.552285f;
+
+   /**
+    * Half the orthogonal handle magnitude for curve knots,
+    * {@value Curve#HNDL_MAG_ORTHO_2} .
+    */
+   public static final float HNDL_MAG_ORTHO_2 = Curve.HNDL_MAG_ORTHO * 0.5f;
+
+   /**
+    * Half the orthogonal handle magnitude for curve knots,
+    * {@value Curve#HNDL_MAG_ORTHO_2_D} .
+    */
+   public static final double HNDL_MAG_ORTHO_2_D = Curve.HNDL_MAG_ORTHO_D
+      * 0.5d;
+
+   /**
+    * Handle magnitude for orthogonal handles when four curve knots are used
+    * to approximate an ellipse or circle (90 degrees per knot),
+    * {@value Curve#HNDL_MAG_ORTHO_D} .
+    */
+   public static final double HNDL_MAG_ORTHO_D = 0.552285d;
+
+   /**
     * Default number of cubic Bezier knots used to approximate a circle.
     */
    public static final int KNOTS_PER_CIRCLE = 4;

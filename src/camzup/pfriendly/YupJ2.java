@@ -15,6 +15,7 @@ import java.awt.image.ImageObserver;
 import java.awt.image.WritableRaster;
 
 import camzup.core.Color;
+import camzup.core.Curve;
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
 import camzup.core.Experimental;
@@ -254,6 +255,42 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     *
     * @param x0    the first x
     * @param y0    the first y
+    * @param r     the radius
+    * @param start the start angle
+    * @param stop  the stop angle
+    */
+   public void arc ( final float x0, final float y0, final float r,
+      final float start, final float stop ) {
+
+      this.arc(x0, y0, r, r, start, stop, PConstants.OPEN);
+   }
+
+   /**
+    * Draws an arc at a location from a start angle to a stop angle. The
+    * meaning of the first four parameters depends on the renderer's
+    * ellipseMode.
+    *
+    * @param x0    the first x
+    * @param y0    the first y
+    * @param x1    the second x
+    * @param y1    the second y
+    * @param start the start angle
+    * @param stop  the stop angle
+    */
+   @Override
+   public void arc ( final float x0, final float y0, final float x1,
+      final float y1, final float start, final float stop ) {
+
+      this.arc(x0, y0, x1, y1, start, stop, PConstants.OPEN);
+   }
+
+   /**
+    * Draws an arc at a location from a start angle to a stop angle. The
+    * meaning of the first four parameters depends on the renderer's
+    * ellipseMode.
+    *
+    * @param x0    the first x
+    * @param y0    the first y
     * @param x1    the second x
     * @param y1    the second y
     * @param start the start angle
@@ -265,6 +302,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void arc ( final float x0, final float y0, final float x1,
       final float y1, final float start, final float stop, final int mode ) {
+
+      /*
+       * This cannot be overridden to get rid of nonuniform scaling for an
+       * ellipse, and therefore make it clearer, because a parent arc function
+       * overloads the arc to omit the arc mode.
+       */
 
       if ( Utils.approx(stop - start, IUtils.TAU, 0.00139f) ) {
          this.ellipse(x0, y0, x1, y1);
@@ -280,44 +323,68 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          case CORNERS:
 
-            w = Utils.diff(x1, x0);
-            h = Utils.diff(y1, y0);
-            x = x0;
-            y = y0;
-
-            break;
+            // w = Utils.diff(x1, x0);
+            // h = Utils.diff(y1, y0);
+            // x = x0;
+            // y = y0;
+            // break;
 
          case RADIUS:
 
-            w = Utils.abs(x1);
-            h = Utils.abs(y1);
-            w += w;
-            h += h;
-            x = x0 - w * 0.5f;
-            y = y0 - h * 0.5f;
-
-            break;
+            // w = Utils.abs(x1);
+            // h = Utils.abs(y1);
+            // x = x0 - w;
+            // y = y0 - h;
+            // w += w;
+            // h += h;
+            // break;
 
          case CENTER:
 
-            w = Utils.abs(x1);
-            h = Utils.abs(y1);
-            x = x0 - w * 0.5f;
-            y = y0 - h * 0.5f;
-
-            break;
+            // w = Utils.abs(x1);
+            // h = Utils.abs(y1);
+            // x = x0 - w * 0.5f;
+            // y = y0 - h * 0.5f;
+            // break;
 
          case CORNER:
 
+            // w = Utils.abs(x1);
+            // h = Utils.abs(y1);
+            // x = x0;
+            // y = y0 - h;
+            // break;
+
          default:
 
-            w = Utils.abs(x1);
-            h = Utils.abs(y1);
-            x = x0;
+            w = Utils.min(Utils.abs(x1), Utils.abs(y1));
+            h = w;
+            x = x0 - w;
             y = y0 - h;
+            w += w;
+            h += h;
+
       }
 
       this.arcImpl(x, y, w, h, start, stop, mode);
+   }
+
+   /**
+    * Draws an arc at a location from a start angle to a stop angle. The
+    * meaning of the first four parameters depends on the renderer's
+    * ellipseMode.
+    *
+    * @param x0    the first x
+    * @param y0    the first y
+    * @param r     the radius
+    * @param start the start angle
+    * @param stop  the stop angle
+    * @param mode  the arc mode
+    */
+   public void arc ( final float x0, final float y0, final float r,
+      final float start, final float stop, final int mode ) {
+
+      this.arc(x0, y0, r, r, start, stop, mode);
    }
 
    /**
@@ -698,18 +765,18 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             yc = y;
 
             extapw = w;
-            extcpw = 0.552125d * w;
+            extcpw = Curve.HNDL_MAG_ORTHO_D * w;
             extaph = h;
-            extcph = 0.552125d * h;
+            extcph = Curve.HNDL_MAG_ORTHO_D * h;
 
             break;
 
          case CORNER:
 
             extapw = 0.5d * w;
-            extcpw = 0.276063d * w;
+            extcpw = Curve.HNDL_MAG_ORTHO_2_D * w;
             extaph = 0.5d * h;
-            extcph = 0.276063d * h;
+            extcph = Curve.HNDL_MAG_ORTHO_2_D * h;
 
             xc = x + extapw;
             yc = y - extaph;
@@ -718,16 +785,16 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          case CORNERS:
 
-            final double wcalc = Utils.abs(w - x);
-            final double hcalc = Utils.abs(h - y);
+            final double wcalc = Math.abs(w - x);
+            final double hcalc = Math.abs(h - y);
 
             xc = ( x + w ) * 0.5d;
             yc = ( y + h ) * 0.5d;
 
             extapw = 0.5d * wcalc;
-            extcpw = 0.276063d * wcalc;
+            extcpw = Curve.HNDL_MAG_ORTHO_2_D * wcalc;
             extaph = 0.5d * hcalc;
-            extcph = 0.276063d * hcalc;
+            extcph = Curve.HNDL_MAG_ORTHO_2_D * hcalc;
 
             break;
 
@@ -739,9 +806,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             yc = y;
 
             extapw = 0.5d * w;
-            extcpw = 0.276063d * w;
+            extcpw = Curve.HNDL_MAG_ORTHO_2_D * w;
             extaph = 0.5d * h;
-            extcph = 0.276063d * h;
+            extcph = Curve.HNDL_MAG_ORTHO_2_D * h;
 
       }
 
@@ -1375,7 +1442,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * @param img
+    * Displays a PImage. The meaning of the first four parameters depends on
+    * imageMode.
+    *
+    * @param img the image
     * @param x0  the first x coordinate
     * @param y0  the first y coordinate
     * @param x1  the second x coordinate
@@ -1645,7 +1715,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * {@link java.awt.Image} in <code>setup</code>, which are then passed here
     * in <code>draw</code>. The {@link java.awt.image.ImageObserver} may be
     * <code>null</code>. Calls
-    * {@link java.awt.Graphics2D#drawImage(Image, int, int, int, int, int, int, int, int, java.awt.image.ImageObserver) }.</li>
+    * {@link java.awt.Graphics2D#drawImage(Image, int, int, int, int, int, int, int, int, java.awt.image.ImageObserver) }.
     * Multiplies the last four arguments by the pixel density and flips the v
     * coordinates to account for the flipped y axis.<br>
     * <br>
@@ -1719,16 +1789,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * <ul>
     * <li>Checks if either the pixel width or height of the image is less than
     * 2. Returns early if true.</li>
-    * <li>Acquires the {@link java.awt.Image } backing {@link PImage} via
-    * {@link PImage#getNative}, which entails:</li>
-    * <ul>
-    * <li>Loading the image's pixels.</li>
-    * <li>Checks the image's format ({@link PConstants#ARGB},
-    * {@link PConstants#RGB}, {@link PConstants#ALPHA}).</li>
-    * <li>Creating a new {@link java.awt.image.BufferedImage};</li>
-    * <li>Acquiring the image's {@link java.awt.image.WritableRaster}.</li>
-    * <li>Setting the raster's data with the image's pixels.</li>
-    * </ul>
+    * <li>Acquires the {@link java.awt.Image } backing {@link PImage} and sets
+    * its data to the image's pixels. This is a huge performance bottleneck.
     * <li>Calls
     * {@link YupJ2#imageSource(Image, int, ImageObserver, int, int, int, int, int, int, int, int)}.</li>
     * </ul>
@@ -2149,7 +2211,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       if ( mSq > 0.0f ) {
 
-         // final float mInv = dLen * Utils.invSqrtUnchecked(mSq);
          final double mInv = dLen / Math.sqrt(mSq);
          final double dx = xod + xDir * mInv;
          final double dy = yod + yDir * mInv;
@@ -3475,10 +3536,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * whether the "Float" version is used or not. So if nothing else, using
        * doubles spares (float) casts.
        */
-      // final double a = 1.0d - Utils.mod1(startAngle * IUtils.ONE_TAU_D);
-      // final double b = 1.0d - Utils.mod1(stopAngle * IUtils.ONE_TAU_D);
-      // final double c = 360.0d * b;
-      // final double d = 360.0d * Utils.mod1(a - b);
 
       final double aNorm = startAngle * IUtils.ONE_TAU_D;
       final double a = 1.0d - ( aNorm > 0.0d ? aNorm - ( int ) aNorm : aNorm
@@ -3539,7 +3596,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
    /**
     * Sets background color channels in both single precision real number
-    * [0.0, 1.0], in byte [0, 255] and in a composite color. Calls
+    * [0.0, 1.0] , in byte [0, 255] and in a composite color. Calls
     * {@link PGraphicsJava2D#backgroundImpl()} .
     */
    @Override
@@ -3827,8 +3884,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          case CORNER:
 
-            w = Utils.abs(c);
-            h = Utils.abs(d);
+            w = Math.abs(c);
+            h = Math.abs(d);
 
             x1 = a;
             y2 = b - h;
@@ -3839,21 +3896,21 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          case CORNERS:
 
-            w = Utils.abs(c - a);
-            h = Utils.abs(b - d);
+            w = Math.abs(c - a);
+            h = Math.abs(b - d);
 
-            x1 = Utils.min(a, c);
-            x2 = Utils.max(a, c);
+            x1 = Math.min(a, c);
+            x2 = Math.max(a, c);
 
-            y2 = Utils.min(b, d);
-            y1 = Utils.max(b, d);
+            y2 = Math.min(b, d);
+            y1 = Math.max(b, d);
 
             break;
 
          case RADIUS:
 
-            w = Utils.abs(c);
-            h = Utils.abs(d);
+            w = Math.abs(c);
+            h = Math.abs(d);
 
             x1 = a - w;
             x2 = a + w;
@@ -3866,8 +3923,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          default:
 
-            w = Utils.abs(c);
-            h = Utils.abs(d);
+            w = Math.abs(c);
+            h = Math.abs(d);
 
             x1 = a - w * 0.5f;
             x2 = a + w * 0.5f;

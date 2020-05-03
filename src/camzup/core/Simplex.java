@@ -11,28 +11,30 @@ package camzup.core;
  * which in turn references the work of
  * <a href="https://www.cs.ubc.ca/~rbridson/">Robert Bridson</a>.<br>
  * <br>
- * This class uses the following variations:
+ * This implementation introduces the following variations:
  * <ul>
- * <li>stores stretch constants multiplied by their coefficients in
- * constants (e.g., {@link Simplex#G2_2});</li>
- * <li>sets a {@link Simplex#DEFAULT_SEED} to the current time in
- * milliseconds;</li>
- * <li>does not combine scalars with derivatives into a vector one
- * dimension higher than the input (output parameters are used
- * instead);</li>
- * <li>initializes mutable integer offsets i, j, k to zero, then changes
- * them only if appropriate conditions are met;</li>
- * <li>changes where n and t factors are multiplied in evaluate function so
- * that a calculation does not need to be redone for derivatives;</li>
- * <li>attempts to match the offset step in noise functions to the
- * magnitude of the input vector rather than using an arbitrary one
- * (arbitrary meaning <code>123.456</code>, etc.).</li>
- * <li>voronoi and hashing functions for Vec2, 3 and 4 are included.</li>
+ * <li><code>n</code> and <code>t</code> factors are multiplied later in
+ * the noise evaluation function so that a calculation does not need to be
+ * redone for derivatives.</li>
+ * <li>Stretch constants are multiplied by their coefficients and stored in
+ * constants (e.g., {@link Simplex#G3_2});</li>
+ * <li>The {@link Simplex#DEFAULT_SEED} is set to the current time in
+ * milliseconds.</li>
+ * <li>When noise derivatives are calculated, the result is stored in an
+ * output parameter; the derivative is <em>not</em> concatenated with the
+ * scalar result into a vector one dimension higher than the input
+ * vector.</li>
+ * <li>Mutable integer offsets i, j, k are initialized to zero, then
+ * changed only if appropriate conditions are met.</li>
+ * <li>The offset step in noise functions is matched to the magnitude of
+ * the input vector rather than using an arbitrary one (arbitrary meaning
+ * <code>123.456</code>, etc.).</li>
+ * <li>Voronoi and hashing functions for Vec2, 3 and 4 are included.</li>
  * </ul>
  * Most simplex functions scale the sum of noise contributions by a magic
- * number to bring it into range. There is little explanation for how these
- * numbers are arrived at. Although the range is expected to be within
- * [-1.0, 1.0] , it is not guaranteed.
+ * number, such as {@link Simplex#SCALE_2}, to bring the output into range
+ * [-1.0, 1.0] . There is little explanation for how these numbers are
+ * arrived at. The range is not guaranteed.
  *
  * @author Robert Bridson
  * @author Simon Geilfus
@@ -76,11 +78,6 @@ public abstract class Simplex {
    public static final float G2 = 0.21132487f;
 
    /**
-    * 2x stretch constant 2D. Approximately {@value Simplex#G2_2} .
-    */
-   public static final float G2_2 = 0.42264974f;
-
-   /**
     * Stretch constant 3D. {@value Simplex#G3} .
     */
    public static final float G3 = IUtils.ONE_SIX;
@@ -89,11 +86,6 @@ public abstract class Simplex {
     * 2x stretch constant 3D. {@value Simplex#G3_2} .
     */
    public static final float G3_2 = IUtils.ONE_THIRD;
-
-   /**
-    * 3x stretch constant 3D. {@value Simplex#G3_3} .
-    */
-   public static final float G3_3 = 0.5f;
 
    /**
     * Stretch constant 4D (<code>1.0 / Math.sqrt(5.0) - 1.0) /
@@ -112,27 +104,22 @@ public abstract class Simplex {
    public static final float G4_3 = 0.4145898f;
 
    /**
-    * 4x stretch constant 4D. Approximately {@value Simplex#G4_4} .
-    */
-   public static final float G4_4 = 0.5527864f;
-
-   /**
     * 2x stretch constant 2D minus one. Approximately {@value Simplex#N2_2_1}
     * .
     */
-   public static final float N2_2_1 = -0.57735026f;
+   public static final float N2_2_1 = 0.57735026f;
 
    /**
     * 3x stretch constant 3D minus one. Approximately {@value Simplex#N3_3_1}
     * .
     */
-   public static final float N3_3_1 = -0.5f;
+   public static final float N3_3_1 = 0.5f;
 
    /**
     * 4x stretch constant 4D minus one. Approximately {@value Simplex#N4_4_1}
     * .
     */
-   public static final float N4_4_1 = -0.4472136f;
+   public static final float N4_4_1 = 0.4472136f;
 
    /**
     * <code>Math.sqrt(2.0) / Math.sqrt(3.0)</code>. Used by rotation look up
@@ -240,6 +227,7 @@ public abstract class Simplex {
       /* @formatter:off */
       DEFAULT_SEED = ( int ) System.currentTimeMillis();
 
+      // TODO: At some point, these should be demoted to one-dimensional float arrays.
       GRAD_2_LUT = new Vec2[] {
          new Vec2(-1.0f, -1.0f),
          new Vec2( 1.0f,  0.0f),
@@ -406,10 +394,22 @@ public abstract class Simplex {
       final float w, final int seed, final Vec4 deriv ) {
 
       final float s = ( x + y + z + w ) * Simplex.F4;
-      final int i = Utils.floorToInt(x + s);
-      final int j = Utils.floorToInt(y + s);
-      final int k = Utils.floorToInt(z + s);
-      final int l = Utils.floorToInt(w + s);
+
+      final float xs = x + s;
+      final int xstrunc = ( int ) xs;
+      final int i = xs < xstrunc ? xstrunc - 1 : xstrunc;
+
+      final float ys = y + s;
+      final int ystrunc = ( int ) ys;
+      final int j = ys < ystrunc ? ystrunc - 1 : ystrunc;
+
+      final float zs = z + s;
+      final int zstrunc = ( int ) zs;
+      final int k = zs < zstrunc ? zstrunc - 1 : zstrunc;
+
+      final float ws = w + s;
+      final int wstrunc = ( int ) ws;
+      final int l = ws < wstrunc ? wstrunc - 1 : wstrunc;
 
       final float t = ( i + j + k + l ) * Simplex.G4;
       final float x0 = x - ( i - t );
@@ -456,10 +456,10 @@ public abstract class Simplex {
       final float z3 = z0 - k3 + Simplex.G4_3;
       final float w3 = w0 - l3 + Simplex.G4_3;
 
-      final float x4 = x0 + Simplex.N4_4_1;
-      final float y4 = y0 + Simplex.N4_4_1;
-      final float z4 = z0 + Simplex.N4_4_1;
-      final float w4 = w0 + Simplex.N4_4_1;
+      final float x4 = x0 - Simplex.N4_4_1;
+      final float y4 = y0 - Simplex.N4_4_1;
+      final float z4 = z0 - Simplex.N4_4_1;
+      final float w4 = w0 - Simplex.N4_4_1;
 
       float n0 = 0.0f;
       float n1 = 0.0f;
@@ -490,7 +490,7 @@ public abstract class Simplex {
          t20 = t0 * t0;
          t40 = t20 * t20;
          g0 = Simplex.gradient4(i, j, k, l, seed);
-         n0 = t40 * ( g0.x * x0 + g0.y * y0 + g0.z * z0 + g0.w * w0 );
+         n0 = g0.x * x0 + g0.y * y0 + g0.z * z0 + g0.w * w0;
       }
 
       final float t1 = 0.5f - ( x1 * x1 + y1 * y1 + z1 * z1 + w1 * w1 );
@@ -498,7 +498,7 @@ public abstract class Simplex {
          t21 = t1 * t1;
          t41 = t21 * t21;
          g1 = Simplex.gradient4(i + i1, j + j1, k + k1, l + l1, seed);
-         n1 = t41 * ( g1.x * x1 + g1.y * y1 + g1.z * z1 + g1.w * w1 );
+         n1 = g1.x * x1 + g1.y * y1 + g1.z * z1 + g1.w * w1;
       }
 
       final float t2 = 0.5f - ( x2 * x2 + y2 * y2 + z2 * z2 + w2 * w2 );
@@ -506,7 +506,7 @@ public abstract class Simplex {
          t22 = t2 * t2;
          t42 = t22 * t22;
          g2 = Simplex.gradient4(i + i2, j + j2, k + k2, l + l2, seed);
-         n2 = t42 * ( g2.x * x2 + g2.y * y2 + g2.z * z2 + g2.w * w2 );
+         n2 = g2.x * x2 + g2.y * y2 + g2.z * z2 + g2.w * w2;
       }
 
       final float t3 = 0.5f - ( x3 * x3 + y3 * y3 + z3 * z3 + w3 * w3 );
@@ -514,7 +514,7 @@ public abstract class Simplex {
          t23 = t3 * t3;
          t43 = t23 * t23;
          g3 = Simplex.gradient4(i + i3, j + j3, k + k3, l + l3, seed);
-         n3 = t43 * ( g3.x * x3 + g3.y * y3 + g3.z * z3 + g3.w * w3 );
+         n3 = g3.x * x3 + g3.y * y3 + g3.z * z3 + g3.w * w3;
       }
 
       final float t4 = 0.5f - ( x4 * x4 + y4 * y4 + z4 * z4 + w4 * w4 );
@@ -522,50 +522,25 @@ public abstract class Simplex {
          t24 = t4 * t4;
          t44 = t24 * t24;
          g4 = Simplex.gradient4(i + 1, j + 1, k + 1, l + 1, seed);
-         n4 = t44 * ( g4.x * x4 + g4.y * y4 + g4.z * z4 + g4.w * w4 );
+         n4 = g4.x * x4 + g4.y * y4 + g4.z * z4 + g4.w * w4;
       }
 
       if ( deriv != null ) {
 
-         final float tmp0 = t20 * t0 * ( g0.x * x0 + g0.y * y0 + g0.z * z0
-            + g0.w * w0 );
-         deriv.x = tmp0 * x0;
-         deriv.y = tmp0 * y0;
-         deriv.z = tmp0 * z0;
-         deriv.w = tmp0 * w0;
+         final float tmp0 = t20 * t0 * n0;
+         final float tmp1 = t21 * t1 * n1;
+         final float tmp2 = t22 * t2 * n2;
+         final float tmp3 = t23 * t3 * n3;
+         final float tmp4 = t24 * t4 * n4;
 
-         final float tmp1 = t21 * t1 * ( g1.x * x1 + g1.y * y1 + g1.z * z1
-            + g1.w * w1 );
-         deriv.x += tmp1 * x1;
-         deriv.y += tmp1 * y1;
-         deriv.z += tmp1 * z1;
-         deriv.w += tmp1 * w1;
-
-         final float tmp2 = t22 * t2 * ( g2.x * x2 + g2.y * y2 + g2.z * z2
-            + g2.w * w2 );
-         deriv.x += tmp2 * x2;
-         deriv.y += tmp2 * y2;
-         deriv.z += tmp2 * z2;
-         deriv.w += tmp2 * w2;
-
-         final float tmp3 = t23 * t3 * ( g3.x * x3 + g3.y * y3 + g3.z * z3
-            + g3.w * w3 );
-         deriv.x += tmp3 * x3;
-         deriv.y += tmp3 * y3;
-         deriv.z += tmp3 * z3;
-         deriv.w += tmp3 * w3;
-
-         final float tmp4 = t24 * t4 * ( g4.x * x4 + g4.y * y4 + g4.z * z4
-            + g4.w * w4 );
-         deriv.x += tmp4 * x4;
-         deriv.y += tmp4 * y4;
-         deriv.z += tmp4 * z4;
-         deriv.w += tmp4 * w4;
-
-         deriv.x *= -8.0f;
-         deriv.y *= -8.0f;
-         deriv.z *= -8.0f;
-         deriv.w *= -8.0f;
+         deriv.x = -8.0f * ( tmp0 * x0 + tmp1 * x1 + tmp2 * x2 + tmp3 * x3
+            + tmp4 * x4 );
+         deriv.y = -8.0f * ( tmp0 * y0 + tmp1 * y1 + tmp2 * y2 + tmp3 * y3
+            + tmp4 * y4 );
+         deriv.z = -8.0f * ( tmp0 * z0 + tmp1 * z1 + tmp2 * z2 + tmp3 * z3
+            + tmp4 * z4 );
+         deriv.w = -8.0f * ( tmp0 * w0 + tmp1 * w1 + tmp2 * w2 + tmp3 * w3
+            + tmp4 * w4 );
 
          deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x + t44
             * g4.x;
@@ -582,7 +557,8 @@ public abstract class Simplex {
          deriv.w *= Simplex.SCALE_4;
       }
 
-      return Simplex.SCALE_4 * ( n0 + n1 + n2 + n3 + n4 );
+      return Simplex.SCALE_4 * ( t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3 + t44
+         * n4 );
    }
 
    /**
@@ -623,9 +599,18 @@ public abstract class Simplex {
       final int seed, final Vec3 deriv ) {
 
       final float s = ( x + y + z ) * Simplex.F3;
-      final int i = Utils.floorToInt(x + s);
-      final int j = Utils.floorToInt(y + s);
-      final int k = Utils.floorToInt(z + s);
+
+      final float xs = x + s;
+      final int xstrunc = ( int ) xs;
+      final int i = xs < xstrunc ? xstrunc - 1 : xstrunc;
+
+      final float ys = y + s;
+      final int ystrunc = ( int ) ys;
+      final int j = ys < ystrunc ? ystrunc - 1 : ystrunc;
+
+      final float zs = z + s;
+      final int zstrunc = ( int ) zs;
+      final int k = zs < zstrunc ? zstrunc - 1 : zstrunc;
 
       final float t = ( i + j + k ) * Simplex.G3;
       final float x0 = x - ( i - t );
@@ -678,30 +663,14 @@ public abstract class Simplex {
       final float y2 = y0 - j2 + Simplex.G3_2;
       final float z2 = z0 - k2 + Simplex.G3_2;
 
-      final float x3 = x0 + Simplex.N3_3_1;
-      final float y3 = y0 + Simplex.N3_3_1;
-      final float z3 = z0 + Simplex.N3_3_1;
-
-      float t20 = 0.0f;
-      float t21 = 0.0f;
-      float t22 = 0.0f;
-      float t23 = 0.0f;
-
-      float t40 = 0.0f;
-      float t41 = 0.0f;
-      float t42 = 0.0f;
-      float t43 = 0.0f;
+      final float x3 = x0 - Simplex.N3_3_1;
+      final float y3 = y0 - Simplex.N3_3_1;
+      final float z3 = z0 - Simplex.N3_3_1;
 
       float n0 = 0.0f;
-      float n1 = 0.0f;
-      float n2 = 0.0f;
-      float n3 = 0.0f;
-
+      float t20 = 0.0f;
+      float t40 = 0.0f;
       Vec3 g0 = Simplex.ZERO_3;
-      Vec3 g1 = Simplex.ZERO_3;
-      Vec3 g2 = Simplex.ZERO_3;
-      Vec3 g3 = Simplex.ZERO_3;
-
       final float t0 = 0.5f - ( x0 * x0 + y0 * y0 + z0 * z0 );
       if ( t0 >= 0.0f ) {
          g0 = Simplex.gradient3(i, j, k, seed);
@@ -710,6 +679,10 @@ public abstract class Simplex {
          n0 = g0.x * x0 + g0.y * y0 + g0.z * z0;
       }
 
+      float n1 = 0.0f;
+      float t21 = 0.0f;
+      float t41 = 0.0f;
+      Vec3 g1 = Simplex.ZERO_3;
       final float t1 = 0.5f - ( x1 * x1 + y1 * y1 + z1 * z1 );
       if ( t1 >= 0.0f ) {
          g1 = Simplex.gradient3(i + i1, j + j1, k + k1, seed);
@@ -718,6 +691,10 @@ public abstract class Simplex {
          n1 = g1.x * x1 + g1.y * y1 + g1.z * z1;
       }
 
+      float n2 = 0.0f;
+      float t22 = 0.0f;
+      float t42 = 0.0f;
+      Vec3 g2 = Simplex.ZERO_3;
       final float t2 = 0.5f - ( x2 * x2 + y2 * y2 + z2 * z2 );
       if ( t2 >= 0.0f ) {
          g2 = Simplex.gradient3(i + i2, j + j2, k + k2, seed);
@@ -726,6 +703,10 @@ public abstract class Simplex {
          n2 = g2.x * x2 + g2.y * y2 + g2.z * z2;
       }
 
+      float n3 = 0.0f;
+      float t23 = 0.0f;
+      float t43 = 0.0f;
+      Vec3 g3 = Simplex.ZERO_3;
       final float t3 = 0.5f - ( x3 * x3 + y3 * y3 + z3 * z3 );
       if ( t3 >= 0.0f ) {
          g3 = Simplex.gradient3(i + 1, j + 1, k + 1, seed);
@@ -735,30 +716,14 @@ public abstract class Simplex {
       }
 
       if ( deriv != null ) {
-
          final float tmp0 = t20 * t0 * n0;
-         deriv.x = tmp0 * x0;
-         deriv.y = tmp0 * y0;
-         deriv.z = tmp0 * z0;
-
          final float tmp1 = t21 * t1 * n1;
-         deriv.x += tmp1 * x1;
-         deriv.y += tmp1 * y1;
-         deriv.z += tmp1 * z1;
-
          final float tmp2 = t22 * t2 * n2;
-         deriv.x += tmp2 * x2;
-         deriv.y += tmp2 * y2;
-         deriv.z += tmp2 * z2;
-
          final float tmp3 = t23 * t3 * n3;
-         deriv.x += tmp3 * x3;
-         deriv.y += tmp3 * y3;
-         deriv.z += tmp3 * z3;
 
-         deriv.x *= -8.0f;
-         deriv.y *= -8.0f;
-         deriv.z *= -8.0f;
+         deriv.x = -8.0f * ( tmp0 * x0 + tmp1 * x1 + tmp2 * x2 + tmp3 * x3 );
+         deriv.y = -8.0f * ( tmp0 * y0 + tmp1 * y1 + tmp2 * y2 + tmp3 * y3 );
+         deriv.z = -8.0f * ( tmp0 * z0 + tmp1 * z1 + tmp2 * z2 + tmp3 * z3 );
 
          deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x;
          deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y;
@@ -807,8 +772,14 @@ public abstract class Simplex {
       final Vec2 deriv ) {
 
       final float s = ( x + y ) * Simplex.F2;
-      final int i = Utils.floorToInt(x + s);
-      final int j = Utils.floorToInt(y + s);
+
+      final float xs = x + s;
+      final int xstrunc = ( int ) xs;
+      final int i = xs < xstrunc ? xstrunc - 1 : xstrunc;
+
+      final float ys = y + s;
+      final int ystrunc = ( int ) ys;
+      final int j = ys < ystrunc ? ystrunc - 1 : ystrunc;
 
       final float t = ( i + j ) * Simplex.G2;
       final float x0 = x - ( i - t );
@@ -822,28 +793,10 @@ public abstract class Simplex {
          j1 = 1;
       }
 
-      final float x1 = x0 - i1 + Simplex.G2;
-      final float y1 = y0 - j1 + Simplex.G2;
-
-      final float x2 = x0 + Simplex.N2_2_1;
-      final float y2 = y0 + Simplex.N2_2_1;
-
-      float t20 = 0.0f;
-      float t21 = 0.0f;
-      float t22 = 0.0f;
-
-      float t40 = 0.0f;
-      float t41 = 0.0f;
-      float t42 = 0.0f;
-
       float n0 = 0.0f;
-      float n1 = 0.0f;
-      float n2 = 0.0f;
-
+      float t20 = 0.0f;
+      float t40 = 0.0f;
       Vec2 g0 = Simplex.ZERO_2;
-      Vec2 g1 = Simplex.ZERO_2;
-      Vec2 g2 = Simplex.ZERO_2;
-
       final float t0 = 0.5f - ( x0 * x0 + y0 * y0 );
       if ( t0 >= 0.0f ) {
          g0 = Simplex.gradient2(i, j, seed);
@@ -852,6 +805,12 @@ public abstract class Simplex {
          n0 = g0.x * x0 + g0.y * y0;
       }
 
+      float n1 = 0.0f;
+      float t21 = 0.0f;
+      float t41 = 0.0f;
+      Vec2 g1 = Simplex.ZERO_2;
+      final float x1 = x0 - i1 + Simplex.G2;
+      final float y1 = y0 - j1 + Simplex.G2;
       final float t1 = 0.5f - ( x1 * x1 + y1 * y1 );
       if ( t1 >= 0.0f ) {
          g1 = Simplex.gradient2(i + i1, j + j1, seed);
@@ -860,6 +819,12 @@ public abstract class Simplex {
          n1 = g1.x * x1 + g1.y * y1;
       }
 
+      float n2 = 0.0f;
+      float t22 = 0.0f;
+      float t42 = 0.0f;
+      Vec2 g2 = Simplex.ZERO_2;
+      final float x2 = x0 - Simplex.N2_2_1;
+      final float y2 = y0 - Simplex.N2_2_1;
       final float t2 = 0.5f - ( x2 * x2 + y2 * y2 );
       if ( t2 >= 0.0f ) {
          g2 = Simplex.gradient2(i + 1, j + 1, seed);
@@ -871,19 +836,11 @@ public abstract class Simplex {
       if ( deriv != null ) {
 
          final float tmp0 = t20 * t0 * n0;
-         deriv.x = tmp0 * x0;
-         deriv.y = tmp0 * y0;
-
          final float tmp1 = t21 * t1 * n1;
-         deriv.x += tmp1 * x1;
-         deriv.y += tmp1 * y1;
-
          final float tmp2 = t22 * t2 * n2;
-         deriv.x += tmp2 * x2;
-         deriv.y += tmp2 * y2;
 
-         deriv.x *= -8.0f;
-         deriv.y *= -8.0f;
+         deriv.x = -8.0f * ( tmp0 * x0 + tmp1 * x1 + tmp2 * x2 );
+         deriv.y = -8.0f * ( tmp0 * y0 + tmp1 * y1 + tmp2 * y2 );
 
          deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x;
          deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y;
@@ -1201,9 +1158,18 @@ public abstract class Simplex {
       final float cosa, final float sina, final int seed, final Vec3 deriv ) {
 
       final float s = ( x + y + z ) * Simplex.F3;
-      final int i = Utils.floorToInt(x + s);
-      final int j = Utils.floorToInt(y + s);
-      final int k = Utils.floorToInt(z + s);
+
+      final float xs = x + s;
+      final int xstrunc = ( int ) xs;
+      final int i = xs < xstrunc ? xstrunc - 1 : xstrunc;
+
+      final float ys = y + s;
+      final int ystrunc = ( int ) ys;
+      final int j = ys < ystrunc ? ystrunc - 1 : ystrunc;
+
+      final float zs = z + s;
+      final int zstrunc = ( int ) zs;
+      final int k = zs < zstrunc ? zstrunc - 1 : zstrunc;
 
       final float t = ( i + j + k ) * Simplex.G3;
       final float x0 = x - ( i - t );
@@ -1248,42 +1214,10 @@ public abstract class Simplex {
          }
       }
 
-      final float x1 = x0 - i1 + Simplex.G3;
-      final float y1 = y0 - j1 + Simplex.G3;
-      final float z1 = z0 - k1 + Simplex.G3;
-
-      final float x2 = x0 - i2 + Simplex.G3_2;
-      final float y2 = y0 - j2 + Simplex.G3_2;
-      final float z2 = z0 - k2 + Simplex.G3_2;
-
-      // final float x3 = x0 - 1.0f + Simplex.G3_3;
-      // final float y3 = y0 - 1.0f + Simplex.G3_3;
-      // final float z3 = z0 - 1.0f + Simplex.G3_3;
-
-      final float x3 = x0 + Simplex.N3_3_1;
-      final float y3 = y0 + Simplex.N3_3_1;
-      final float z3 = z0 + Simplex.N3_3_1;
-
-      float t20 = 0.0f;
-      float t21 = 0.0f;
-      float t22 = 0.0f;
-      float t23 = 0.0f;
-
-      float t40 = 0.0f;
-      float t41 = 0.0f;
-      float t42 = 0.0f;
-      float t43 = 0.0f;
-
       float n0 = 0.0f;
-      float n1 = 0.0f;
-      float n2 = 0.0f;
-      float n3 = 0.0f;
-
+      float t20 = 0.0f;
+      float t40 = 0.0f;
       Vec3 g0 = Simplex.ZERO_3;
-      Vec3 g1 = Simplex.ZERO_3;
-      Vec3 g2 = Simplex.ZERO_3;
-      Vec3 g3 = Simplex.ZERO_3;
-
       final float t0 = 0.5f - ( x0 * x0 + y0 * y0 + z0 * z0 );
       if ( t0 >= 0.0f ) {
          g0 = Simplex.gradRot3(i, j, k, seed, cosa, sina, Simplex.ROT_3);
@@ -1292,6 +1226,13 @@ public abstract class Simplex {
          n0 = g0.x * x0 + g0.y * y0 + g0.z * z0;
       }
 
+      float n1 = 0.0f;
+      float t21 = 0.0f;
+      float t41 = 0.0f;
+      final float x1 = x0 - i1 + Simplex.G3;
+      final float y1 = y0 - j1 + Simplex.G3;
+      final float z1 = z0 - k1 + Simplex.G3;
+      Vec3 g1 = Simplex.ZERO_3;
       final float t1 = 0.5f - ( x1 * x1 + y1 * y1 + z1 * z1 );
       if ( t1 >= 0.0f ) {
          g1 = Simplex.gradRot3(i + i1, j + j1, k + k1, seed, cosa, sina,
@@ -1301,6 +1242,13 @@ public abstract class Simplex {
          n1 = g1.x * x1 + g1.y * y1 + g1.z * z1;
       }
 
+      float n2 = 0.0f;
+      float t22 = 0.0f;
+      float t42 = 0.0f;
+      Vec3 g2 = Simplex.ZERO_3;
+      final float x2 = x0 - i2 + Simplex.G3_2;
+      final float y2 = y0 - j2 + Simplex.G3_2;
+      final float z2 = z0 - k2 + Simplex.G3_2;
       final float t2 = 0.5f - ( x2 * x2 + y2 * y2 + z2 * z2 );
       if ( t2 >= 0.0f ) {
          g2 = Simplex.gradRot3(i + i2, j + j2, k + k2, seed, cosa, sina,
@@ -1310,6 +1258,13 @@ public abstract class Simplex {
          n2 = g2.x * x2 + g2.y * y2 + g2.z * z2;
       }
 
+      float n3 = 0.0f;
+      float t23 = 0.0f;
+      float t43 = 0.0f;
+      Vec3 g3 = Simplex.ZERO_3;
+      final float x3 = x0 - Simplex.N3_3_1;
+      final float y3 = y0 - Simplex.N3_3_1;
+      final float z3 = z0 - Simplex.N3_3_1;
       final float t3 = 0.5f - ( x3 * x3 + y3 * y3 + z3 * z3 );
       if ( t3 >= 0.0f ) {
          g3 = Simplex.gradRot3(i + 1, j + 1, k + 1, seed, cosa, sina,
@@ -1320,30 +1275,14 @@ public abstract class Simplex {
       }
 
       if ( deriv != null ) {
-
          final float tmp0 = t20 * t0 * n0;
-         deriv.x = tmp0 * x0;
-         deriv.y = tmp0 * y0;
-         deriv.z = tmp0 * z0;
-
          final float tmp1 = t21 * t1 * n1;
-         deriv.x += tmp1 * x1;
-         deriv.y += tmp1 * y1;
-         deriv.z += tmp1 * z1;
-
          final float tmp2 = t22 * t2 * n2;
-         deriv.x += tmp2 * x2;
-         deriv.y += tmp2 * y2;
-         deriv.z += tmp2 * z2;
-
          final float tmp3 = t23 * t3 * n3;
-         deriv.x += tmp3 * x3;
-         deriv.y += tmp3 * y3;
-         deriv.z += tmp3 * z3;
 
-         deriv.x *= -8.0f;
-         deriv.y *= -8.0f;
-         deriv.z *= -8.0f;
+         deriv.x = -8.0f * ( tmp0 * x0 + tmp1 * x1 + tmp2 * x2 + tmp3 * x3 );
+         deriv.y = -8.0f * ( tmp0 * y0 + tmp1 * y1 + tmp2 * y2 + tmp3 * y3 );
+         deriv.z = -8.0f * ( tmp0 * z0 + tmp1 * z1 + tmp2 * z2 + tmp3 * z3 );
 
          deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x;
          deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y;
@@ -1393,8 +1332,14 @@ public abstract class Simplex {
       final float sina, final int seed, final Vec2 deriv ) {
 
       final float s = ( x + y ) * Simplex.F2;
-      final int i = Utils.floorToInt(x + s);
-      final int j = Utils.floorToInt(y + s);
+
+      final float xs = x + s;
+      final int xstrunc = ( int ) xs;
+      final int i = xs < xstrunc ? xstrunc - 1 : xstrunc;
+
+      final float ys = y + s;
+      final int ystrunc = ( int ) ys;
+      final int j = ys < ystrunc ? ystrunc - 1 : ystrunc;
 
       final float t = ( i + j ) * Simplex.G2;
       final float x0 = x - ( i - t );
@@ -1408,28 +1353,10 @@ public abstract class Simplex {
          j1 = 1;
       }
 
-      final float x1 = x0 - i1 + Simplex.G2;
-      final float y1 = y0 - j1 + Simplex.G2;
-
-      final float x2 = x0 + Simplex.N2_2_1;
-      final float y2 = y0 + Simplex.N2_2_1;
-
-      float t20 = 0.0f;
-      float t21 = 0.0f;
-      float t22 = 0.0f;
-
-      float t40 = 0.0f;
-      float t41 = 0.0f;
-      float t42 = 0.0f;
-
       float n0 = 0.0f;
-      float n1 = 0.0f;
-      float n2 = 0.0f;
-
+      float t20 = 0.0f;
+      float t40 = 0.0f;
       Vec2 g0 = Simplex.ZERO_2;
-      Vec2 g1 = Simplex.ZERO_2;
-      Vec2 g2 = Simplex.ZERO_2;
-
       final float t0 = 0.5f - ( x0 * x0 + y0 * y0 );
       if ( t0 >= 0.0f ) {
          g0 = Simplex.gradRot2(i, j, seed, cosa, sina, Simplex.ROT_2);
@@ -1438,6 +1365,12 @@ public abstract class Simplex {
          n0 = g0.x * x0 + g0.y * y0;
       }
 
+      float n1 = 0.0f;
+      float t21 = 0.0f;
+      float t41 = 0.0f;
+      Vec2 g1 = Simplex.ZERO_2;
+      final float x1 = x0 - i1 + Simplex.G2;
+      final float y1 = y0 - j1 + Simplex.G2;
       final float t1 = 0.5f - ( x1 * x1 + y1 * y1 );
       if ( t1 >= 0.0f ) {
          g1 = Simplex.gradRot2(i + i1, j + j1, seed, cosa, sina, Simplex.ROT_2);
@@ -1446,6 +1379,12 @@ public abstract class Simplex {
          n1 = g1.x * x1 + g1.y * y1;
       }
 
+      float n2 = 0.0f;
+      float t22 = 0.0f;
+      float t42 = 0.0f;
+      Vec2 g2 = Simplex.ZERO_2;
+      final float x2 = x0 - Simplex.N2_2_1;
+      final float y2 = y0 - Simplex.N2_2_1;
       final float t2 = 0.5f - ( x2 * x2 + y2 * y2 );
       if ( t2 >= 0.0f ) {
          g2 = Simplex.gradRot2(i + 1, j + 1, seed, cosa, sina, Simplex.ROT_2);
@@ -1457,19 +1396,11 @@ public abstract class Simplex {
       if ( deriv != null ) {
 
          final float tmp0 = t20 * t0 * n0;
-         deriv.x = tmp0 * x0;
-         deriv.y = tmp0 * y0;
-
          final float tmp1 = t21 * t1 * n1;
-         deriv.x += tmp1 * x1;
-         deriv.y += tmp1 * y1;
-
          final float tmp2 = t22 * t2 * n2;
-         deriv.x += tmp2 * x2;
-         deriv.y += tmp2 * y2;
 
-         deriv.x *= -8.0f;
-         deriv.y *= -8.0f;
+         deriv.x = -8.0f * ( tmp0 * x0 + tmp1 * x1 + tmp2 * x2 );
+         deriv.y = -8.0f * ( tmp0 * y0 + tmp1 * y1 + tmp2 * y2 );
 
          deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x;
          deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y;
@@ -1497,9 +1428,8 @@ public abstract class Simplex {
    public static float flow ( final float x, final float y, final float z,
       final float radians, final int seed, final Vec3 deriv ) {
 
-      final float norm = radians * IUtils.ONE_TAU;
-      return Simplex.flow(x, y, z, Utils.scNorm(norm), Utils.scNorm(norm
-         - 0.25f), seed, deriv);
+      return Simplex.flow(x, y, z, Utils.cos(radians), Utils.sin(radians), seed,
+         deriv);
    }
 
    /**
@@ -1533,9 +1463,8 @@ public abstract class Simplex {
    public static float flow ( final float x, final float y, final float radians,
       final int seed, final Vec2 deriv ) {
 
-      final float norm = radians * IUtils.ONE_TAU;
-      return Simplex.flow(x, y, Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
-         seed, deriv);
+      return Simplex.flow(x, y, Utils.cos(radians), Utils.sin(radians), seed,
+         deriv);
    }
 
    /**

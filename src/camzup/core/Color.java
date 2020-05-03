@@ -2134,7 +2134,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
       final float ry = rng.nextFloat();
       final float rz = rng.nextFloat();
       final float rw = rng.nextFloat();
-      return target.set( 
+      return target.set(
          ( 1.0f - rx ) * lowerBound.r + rx * upperBound.r,
          ( 1.0f - ry ) * lowerBound.g + ry * upperBound.g,
          ( 1.0f - rz ) * lowerBound.b + rz * upperBound.b,
