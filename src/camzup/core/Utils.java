@@ -259,8 +259,8 @@ public abstract class Utils implements IUtils {
     */
    public static byte[] bitslm ( final byte a ) {
 
-      final byte[] result = new byte[8];
-      for ( int i = 0; i < 8; ++i ) {
+      final byte[] result = new byte[Byte.SIZE];
+      for ( int i = 0; i < Byte.SIZE; ++i ) {
          result[i] = ( byte ) ( a >> i & 1 );
       }
 
@@ -1453,22 +1453,19 @@ public abstract class Utils implements IUtils {
     */
    public static String toFixed ( final float value, final int places ) {
 
-      /* Deal with +/- Infinity, maximum & minimum value, NaN. */
       final int raw = Float.floatToRawIntBits(value);
-
       switch ( raw ) {
-
-         case 0x7f800000:
-         case 0x7f7fffff:
+         case 0x7f800000: /* Positive infinity. */
+         case 0x7f7fffff: /* Max value. */
             return "3.4028235E38";
 
-         case 0xff800000:
-         case 0x1:
+         case 0xff800000: /* Negative infinity. */
+         case 0x1: /* Minimum value. */
             return "1.4E-45";
 
-         case 0x0:
-         case 0x80000000:
-         case 0x7fc00000:
+         case 0x0: /* Positive zero. */
+         case 0x80000000: /* Negative zero. */
+         case 0x7fc00000: /* Not a number (NaN). */
             return "0.0";
 
          default:
@@ -1484,7 +1481,7 @@ public abstract class Utils implements IUtils {
 
       /* Append integral to StringBuilder. */
       int len = 0;
-      if ( sign < 0.0f ) {
+      if ( sign < -0.0f ) {
          sb.append('-').append(trunc);
          len = sb.length() - 1;
       } else {
@@ -1558,7 +1555,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Returns a String representation of a one dimensional array of bytes.
+    * Returns a String representation of a one dimensional array of
+    * <code>byte</code>s.
     *
     * @param arr the array
     *
@@ -1573,6 +1571,31 @@ public abstract class Utils implements IUtils {
       sb.append('[').append(' ');
       for ( int i = 0; i < arr.length; ++i ) {
          sb.append(arr[i]);
+         if ( i < last ) { sb.append(',').append(' '); }
+      }
+
+      sb.append(' ').append(']');
+      return sb.toString();
+   }
+
+   /**
+    * Returns a String representation of a one dimensional array of
+    * <code>float</code>s.
+    *
+    * @param arr    the array
+    * @param places the print precision
+    *
+    * @return the String
+    */
+   public static String toString ( final float[] arr, final int places ) {
+
+      final int len = arr.length;
+      final int last = len - 1;
+
+      final StringBuilder sb = new StringBuilder(len * 32);
+      sb.append('[').append(' ');
+      for ( int i = 0; i < arr.length; ++i ) {
+         sb.append(Utils.toFixed(arr[i], places));
          if ( i < last ) { sb.append(',').append(' '); }
       }
 

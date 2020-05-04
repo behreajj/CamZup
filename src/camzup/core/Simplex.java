@@ -617,13 +617,13 @@ public abstract class Simplex {
       final float y0 = y - ( j - t );
       final float z0 = z - ( k - t );
 
-      int i1 = 0;
-      int j1 = 0;
-      int k1 = 0;
+      byte i1 = 0;
+      byte j1 = 0;
+      byte k1 = 0;
 
-      int i2 = 0;
-      int j2 = 0;
-      int k2 = 0;
+      byte i2 = 0;
+      byte j2 = 0;
+      byte k2 = 0;
 
       if ( x0 >= y0 ) {
          if ( y0 >= z0 ) {
@@ -785,8 +785,8 @@ public abstract class Simplex {
       final float x0 = x - ( i - t );
       final float y0 = y - ( j - t );
 
-      int i1 = 0;
-      int j1 = 0;
+      byte i1 = 0;
+      byte j1 = 0;
       if ( x0 > y0 ) {
          i1 = 1;
       } else {
@@ -1176,13 +1176,13 @@ public abstract class Simplex {
       final float y0 = y - ( j - t );
       final float z0 = z - ( k - t );
 
-      int i1 = 0;
-      int j1 = 0;
-      int k1 = 0;
+      byte i1 = 0;
+      byte j1 = 0;
+      byte k1 = 0;
 
-      int i2 = 0;
-      int j2 = 0;
-      int k2 = 0;
+      byte i2 = 0;
+      byte j2 = 0;
+      byte k2 = 0;
 
       if ( x0 >= y0 ) {
          if ( y0 >= z0 ) {
@@ -1345,8 +1345,8 @@ public abstract class Simplex {
       final float x0 = x - ( i - t );
       final float y0 = y - ( j - t );
 
-      int i1 = 0;
-      int j1 = 0;
+      byte i1 = 0;
+      byte j1 = 0;
       if ( x0 > y0 ) {
          i1 = 1;
       } else {
@@ -1562,7 +1562,8 @@ public abstract class Simplex {
     */
    public static Vec2 hash ( final Vec2 v, final int seed, final Vec2 target ) {
 
-      final float st = Simplex.STEP_2 * Vec2.mag(v);
+      final float st = Simplex.STEP_2 * Utils.sqrtUnchecked(v.x * v.x + v.y
+         * v.y);
 
       final int ahash = ( IUtils.MUL_BASE ^ Float.floatToIntBits(v.x + st) )
          * IUtils.HASH_MUL ^ Float.floatToIntBits(v.y);
@@ -1610,7 +1611,8 @@ public abstract class Simplex {
     */
    public static Vec3 hash ( final Vec3 v, final int seed, final Vec3 target ) {
 
-      final float st = Simplex.STEP_3 * Vec3.mag(v);
+      final float st = Simplex.STEP_3 * Utils.sqrtUnchecked(v.x * v.x + v.y
+         * v.y + v.z * v.z);
       final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(v.x);
       final int vybit = Float.floatToIntBits(v.y);
       final int vzbit = Float.floatToIntBits(v.z);
@@ -1668,7 +1670,8 @@ public abstract class Simplex {
     */
    public static Vec4 hash ( final Vec4 v, final int seed, final Vec4 target ) {
 
-      final float st = Simplex.STEP_4 * Vec4.mag(v);
+      final float st = Simplex.STEP_4 * Utils.sqrtUnchecked(v.x * v.x + v.y
+         * v.y + v.z * v.z + v.w * v.w);
       final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(v.x);
       final int vybit = Float.floatToIntBits(v.y);
       final int vzbit = Float.floatToIntBits(v.z);
@@ -1742,7 +1745,8 @@ public abstract class Simplex {
       final Vec2 xDeriv, final Vec2 yDeriv ) {
 
       /* @formatter:off */
-      final float st = Simplex.STEP_2 * Vec2.mag(v);
+      final float st = Simplex.STEP_2 * Utils.sqrtUnchecked(
+         v.x * v.x + v.y * v.y);
       return target.set(
          Simplex.eval(v.x + st, v.y, seed, xDeriv),
          Simplex.eval(v.x, v.y + st, seed, yDeriv));
@@ -1788,7 +1792,8 @@ public abstract class Simplex {
       final Vec3 xDeriv, final Vec3 yDeriv, final Vec3 zDeriv ) {
 
       /* @formatter:off */
-      final float st = Vec3.mag(v) * Simplex.STEP_3;
+      final float st = Simplex.STEP_3 * Utils.sqrtUnchecked(
+         v.x * v.x + v.y * v.y + v.z * v.z);
       return target.set(
          Simplex.eval(v.x + st, v.y, v.z, seed, xDeriv),
          Simplex.eval(v.x, v.y + st, v.z, seed, yDeriv),
@@ -1840,7 +1845,8 @@ public abstract class Simplex {
       final Vec4 wDeriv ) {
 
       /* @formatter:off */
-      final float st = Vec4.mag(v) * Simplex.STEP_4;
+      final float st = Simplex.STEP_4 * Utils.sqrtUnchecked(
+         v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);
       return target.set(
          Simplex.eval(v.x + st, v.y, v.z, v.w, seed, xDeriv),
          Simplex.eval(v.x, v.y + st, v.z, v.w, seed, yDeriv),

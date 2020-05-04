@@ -1,8 +1,6 @@
 package camzup;
 
-import camzup.core.Curve2;
-import camzup.core.CurveEntity2;
-import camzup.core.SvgParser;
+import camzup.core.Mesh3;
 
 import processing.core.PApplet;
 
@@ -33,15 +31,13 @@ public class CamZup {
    @Override
    public String toString ( ) {
 
-      /* @formatter:off */
-      return new StringBuilder(64)
-         .append("{ version: ")
-         .append(CamZup.VERSION)
-         .append(", parent: ")
-         .append(this.parent)
-         .append(" }")
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(64);
+      sb.append("{ version: ");
+      sb.append(CamZup.VERSION);
+      sb.append(", parent: ");
+      sb.append(this.parent);
+      sb.append(" }");
+      return sb.toString();
    }
 
    /**
@@ -67,19 +63,12 @@ public class CamZup {
       // }
 
       // final Img img = new Img();
-      // PngParser.parsePng("data/diagnostic2.png", img);
+      // PngParser.parsePng("data/diagnostic.png", img);
 
-      // System.out.println(Integer.toHexString(Utils.swapEndian(0xffff7f00)));
-
-      final Curve2 c2 = new Curve2();
-      CurveEntity2 ce2 = new CurveEntity2();
-      ce2.append(c2);
-
-      ce2 = SvgParser.parse("data/diagnostic.svg");
-
-      final String pyCd = ce2.toBlenderCode();
-      System.out.println(pyCd);
-
+      Mesh3 m = new Mesh3();
+      Mesh3.tetrahedron(m);
+      float[] b = Mesh3.floatArrCoords(m);
+      System.out.println(Integer.toHexString(Float.floatToIntBits(-0.0f)));
    }
 
    /**

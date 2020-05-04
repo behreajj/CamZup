@@ -143,12 +143,19 @@ public abstract class SvgParser {
 
          final Node height = attr.getNamedItem("height");
          final String heightStr = height != null ? height.getTextContent()
-            : "0.0";
+            : "0";
          final float hghpx = SvgParser.parseFloat(heightStr);
 
          final Node viewbox = attr.getNamedItem("viewBox");
-         final Vec4 vbVec = new Vec4(0.0f, 0.0f, 0.0f, 0.0f);
-         if ( viewbox != null ) { SvgParser.parseViewBox(viewbox, vbVec); }
+         final Vec4 vbVec = new Vec4(0.0f, 0.0f, widpx, hghpx);
+         if ( viewbox != null ) {
+            SvgParser.parseViewBox(viewbox, vbVec, widpx, hghpx);
+         }
+
+         /*
+          * Shift curve entity's transform and curves based on view box and
+          * width, height.
+          */
          final float widvb = Utils.diff(vbVec.z, vbVec.x);
          final float hghvb = Utils.diff(vbVec.w, vbVec.y);
 
@@ -157,8 +164,9 @@ public abstract class SvgParser {
             * -0.5f);
 
          if ( Vec2.any(shift) ) {
-            for ( final Curve2 curve : result ) {
-               curve.translate(shift);
+            final Iterator < Curve2 > itr = result.curves.iterator();
+            while ( itr.hasNext() ) {
+               itr.next().translate(shift);
             }
 
             Vec2.negate(shift, shift);
@@ -166,7 +174,6 @@ public abstract class SvgParser {
          }
 
       } catch ( final Exception e ) {
-         System.err.print(e);
          e.printStackTrace();
       }
 
@@ -190,14 +197,15 @@ public abstract class SvgParser {
     * A helper function to parse an angle to radians. The default is assumed
     * to be degrees.
     *
-    * @param v   the input value
+    * @param u   the input value
     * @param def the default
     *
     * @return the angle in radians
     */
-   public static float parseAngle ( final String v, final float def ) {
+   public static float parseAngle ( final String u, final float def ) {
 
       float x = def;
+      String v = u.trim();
       final int len = v.length();
       final int lens3 = len - 3;
       final int lens4 = len - 4;
@@ -232,6 +240,170 @@ public abstract class SvgParser {
       }
 
       return x;
+   }
+
+   /**
+    * Parse a path arc-to command, based off the Processing implementation,
+    * which references
+    * <a href=" http://www.spaceroots.org/documents/ellipse/node22.html">these
+    * equations</a>.<br>
+    * <br>
+    * According to the SVG specification, the large arc flag "is 0 if an arc
+    * spanning less than or equal to 180 degrees is chosen, or 1 if an arc
+    * spanning greater than 180 degrees is chosen".<br>
+    * <br>
+    * The sweep flag "is 0 if the line joining center to arc sweeps through
+    * decreasing angles, or 1 if it sweeps through increasing angles".
+    *
+    * @param prior    the prior knot
+    * @param major    the major axis
+    * @param minor    the minor axis
+    * @param ang    the angle
+    * @param largeArc large arc flag
+    * @param sweep    sweep flag
+    * @param x2       destination x
+    * @param y2       destination y
+    *
+    * @return an array of knots
+    */
+   public static Knot2[] parseArcTo ( final Knot2 prior, final float major,
+      final float minor, final float ang, final boolean largeArc,
+      final boolean sweep, final float x2, final float y2 ) {
+
+      if ( Utils.approx(prior.coord.x, x2) && Utils.approx(prior.coord.y, y2)
+         || major < IUtils.DEFAULT_EPSILON || minor < IUtils.DEFAULT_EPSILON ) {
+         return new Knot2[] { new Knot2(x2, y2) };
+      }
+
+      /* Validate major and minor axes. */
+      double rx = Math.abs(major);
+      double ry = Math.abs(minor);
+
+      /* Wrap the angle into range, find sine and cosine. */
+      final double phi = ( ang % IUtils.TAU_D + IUtils.TAU_D ) % IUtils.TAU_D;
+      final double cosPhi = Math.cos(phi);
+      final double sinPhi = Math.sin(phi);
+
+      /* Promote to doubles. */
+      final double x1 = prior.coord.x;
+      final double y1 = prior.coord.y;
+
+      /* Find difference between start and stop positions. */
+      final double xdiff = x1 - x2;
+      final double ydiff = y1 - y2;
+
+      /* Apply phi rotation to difference. */
+      final double x1r = 0.5d * ( cosPhi * xdiff + sinPhi * ydiff );
+      final double y1r = 0.5d * ( -sinPhi * xdiff + cosPhi * ydiff );
+
+      /* Square the rotation. */
+      final double x1rsq = x1r * x1r;
+      final double y1rsq = y1r * y1r;
+
+      /* Square the major and minor axes. */
+      final double rxsq = rx * rx;
+      final double rysq = ry * ry;
+
+      double cxr = 0.0d;
+      double cyr = 0.0d;
+      final double a = x1rsq / rxsq + y1rsq / rysq;
+      if ( a > 1.0d ) {
+         final double sqrta = Math.sqrt(a);
+         rx *= sqrta;
+         ry *= sqrta;
+      } else {
+         final double num = rxsq * rysq;
+         final double denom = rxsq * y1rsq + rysq * x1rsq;
+         double k = Math.sqrt(num / denom - 1.0d);
+         k = largeArc == sweep ? -k : k;
+         cxr = k * rx * y1r / ry;
+         cyr = -k * ry * x1r / rx;
+      }
+
+      final double cx = cosPhi * cxr - sinPhi * cyr + 0.5d * ( x1 + x2 );
+      final double cy = sinPhi * cxr + cosPhi * cyr + 0.5d * ( y1 + y2 );
+
+      final double rxInv = 1.0d / rx;
+      final double ryInv = 1.0d / ry;
+      final double sx = ( x1r - cxr ) * rxInv;
+      final double sy = ( y1r - cyr ) * ryInv;
+      final double tx = ( -x1r - cxr ) * rxInv;
+      final double ty = ( -y1r - cyr ) * ryInv;
+
+      final double phi1 = Math.atan2(sy, sx);
+      double phiDelta = ( ( Math.atan2(ty, tx) - phi1 ) % IUtils.TAU_D
+         + IUtils.TAU_D ) % IUtils.TAU_D;
+      if ( !sweep ) { phiDelta -= IUtils.TAU_D; }
+
+      final double cosPhi1 = Math.cos(phi1);
+      final double sinPhi1 = Math.sin(phi1);
+
+      final int segCount = ( int ) Math.ceil(Math.abs(phiDelta)
+         * SvgParser.TWO_DIV_PI_D);
+      final double incr = phiDelta / segCount;
+      final double tanHalfInc = Math.tan(incr * 0.5d);
+      final double thisq = tanHalfInc * tanHalfInc;
+      final double handle = Math.sqrt(4.0d + 3.0d * thisq) - 1.0d;
+      final double b = Math.sin(incr) * handle * IUtils.ONE_THIRD_D;
+
+      /* To determine when to wrap to initial point. */
+      final int segLast = segCount - 1;
+
+      /* Changed within for loop. */
+      double rxSinEta = -rx * sinPhi1;
+      double ryCosEta = ry * cosPhi1;
+      double relq1x = b * ( rxSinEta * cosPhi - ryCosEta * sinPhi );
+      double relq1y = b * ( rxSinEta * sinPhi + ryCosEta * cosPhi );
+      double p1x = x1;
+      double p1y = y1;
+      double j = 1.0d;
+
+      final Knot2[] kns = new Knot2[segCount];
+      Knot2 prev = prior;
+
+      for ( int i = 0; i < segCount; ++i ) {
+         final Knot2 curr = new Knot2();
+         kns[i] = curr;
+
+         final double eta = phi1 + j * incr;
+         final double cosEta = Math.cos(eta);
+         final double sinEta = Math.sin(eta);
+
+         rxSinEta = -rx * sinEta;
+         ryCosEta = ry * cosEta;
+
+         final double relq2x = b * ( rxSinEta * cosPhi - ryCosEta * sinPhi );
+         final double relq2y = b * ( rxSinEta * sinPhi + ryCosEta * cosPhi );
+
+         final double p2x;
+         final double p2y;
+         if ( i != segLast ) {
+            final double rxCosEta = rx * cosEta;
+            final double rySinEta = ry * sinEta;
+            p2x = cx + cosPhi * rxCosEta - sinPhi * rySinEta;
+            p2y = cy + sinPhi * rxCosEta + cosPhi * rySinEta;
+         } else {
+            p2x = x2;
+            p2y = y2;
+         }
+
+         /* Demote to float, set knots. */
+         prev.foreHandle.set(( float ) ( p1x + relq1x ), ( float ) ( p1y
+            + relq1y ));
+         curr.rearHandle.set(( float ) ( p2x - relq2x ), ( float ) ( p2y
+            - relq2y ));
+         curr.coord.set(( float ) p2x, ( float ) p2y);
+
+         /* Update references. */
+         prev = curr;
+         p1x = p2x;
+         relq1x = relq2x;
+         p1y = p2y;
+         relq1y = relq2y;
+         ++j;
+      }
+
+      return kns;
    }
 
    /**
@@ -372,14 +544,20 @@ public abstract class SvgParser {
     * (deg) are converted to radians through multiplication by
     * {@value IUtils#DEG_TO_RAD}.
     *
-    * @param v   the String value
+    * @param u   the String value
     * @param def the default value
     *
     * @return the parsed float
     */
-   public static float parseFloat ( final String v, final float def ) {
+   public static float parseFloat ( final String u, final float def ) {
+
+      /*
+       * The string needs to be trimmed even here because of unconventional
+       * formatting which could be contained within a path string.
+       */
 
       float x = def;
+      final String v = u.trim();
       final int len = v.length();
       final int lens1 = len - 1;
       final int lens2 = len - 2;
@@ -642,6 +820,13 @@ public abstract class SvgParser {
             /* Quadratic curve midpoint. */
             String mhxStr = "0";
             String mhyStr = "0";
+
+            /* Arc. */
+            String rx = "0";
+            String ry = "0";
+            String angle = "0";
+            String fa = "0";
+            String fs = "0";
 
             final Vec2 relative = new Vec2();
             final Vec2 mh = new Vec2();
@@ -1041,41 +1226,47 @@ public abstract class SvgParser {
 
                   case ArcToAbs:
 
-                     /* Unsupported. */
+                     rx = dataTokens[cursor++]; /* 1 */
+                     ry = dataTokens[cursor++]; /* 2 */
+                     angle = dataTokens[cursor++]; /* 3 */
+                     fa = dataTokens[cursor++]; /* 4 */
+                     fs = dataTokens[cursor++]; /* 5 */
+                     coxStr = dataTokens[cursor++]; /* 6 */
+                     coyStr = dataTokens[cursor++]; /* 7 */
 
-                     // final String w = dataTokens[cursor++]; /* 1 */
-                     // final String h = dataTokens[cursor++]; /* 2 */
-                     // final String angle = dataTokens[cursor++]; /* 3 */
-                     // final String fa = dataTokens[cursor++]; /* 4 */
-                     // final String fs = dataTokens[cursor++]; /* 5 */
-                     // coxStr = dataTokens[cursor++]; /* 6 */
-                     // coyStr = dataTokens[cursor++]; /* 7 */
+                     prev = curr;
+
+                     target.appendAll(SvgParser.parseArcTo(prev, SvgParser
+                        .parseFloat(rx), SvgParser.parseFloat(ry), SvgParser
+                           .parseAngle(angle), SvgParser.parseFlagToBool(fa),
+                        SvgParser.parseFlagToBool(fs), SvgParser.parseFloat(
+                           coxStr), SvgParser.parseFloat(coyStr)));
+
+                     curr = target.get(target.length() - 1);
+                     relative.set(curr.coord);
 
                      break;
 
                   case ArcToRel:
 
-                     /* Unsupported. */
-
-                     cursor++; /* 1 */
-                     cursor++; /* 2 */
-                     cursor++; /* 3 */
-                     cursor++; /* 4 */
-                     cursor++; /* 5 */
+                     rx = dataTokens[cursor++]; /* 1 */
+                     ry = dataTokens[cursor++]; /* 2 */
+                     angle = dataTokens[cursor++]; /* 3 */
+                     fa = dataTokens[cursor++]; /* 4 */
+                     fs = dataTokens[cursor++]; /* 5 */
                      coxStr = dataTokens[cursor++]; /* 6 */
                      coyStr = dataTokens[cursor++]; /* 7 */
 
                      prev = curr;
-                     curr = new Knot2();
-                     target.append(curr);
 
-                     curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
-                        .parseFloat(coyStr));
-                     Vec2.add(relative, curr.coord, curr.coord);
+                     target.appendAll(SvgParser.parseArcTo(prev, SvgParser
+                        .parseFloat(rx), SvgParser.parseFloat(ry), SvgParser
+                           .parseAngle(angle), SvgParser.parseFlagToBool(fa),
+                        SvgParser.parseFlagToBool(fs), relative.x + SvgParser
+                           .parseFloat(coxStr), relative.y + SvgParser
+                              .parseFloat(coyStr)));
 
-                     Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
-                     Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
-
+                     curr = target.get(target.length() - 1);
                      relative.set(curr.coord);
 
                      break;
@@ -1114,6 +1305,44 @@ public abstract class SvgParser {
    }
 
    /**
+    * Parse a path to a list of commands. For diagnostic purposes.
+    *
+    * @param node the node
+    *
+    * @return the command array
+    */
+   public static PathCommand[] parsePathToCmd ( final Node node ) {
+
+      final ArrayList < PathCommand > cmdList = new ArrayList <>();
+
+      final NamedNodeMap attributes = node.getAttributes();
+      if ( attributes != null ) {
+         final Node pathData = attributes.getNamedItem("d");
+         if ( pathData != null ) {
+
+            /*
+             * These regular expressions are imperfect, and may yield empty
+             * string tokens, so there's an extra step to strip them away.
+             */
+            final String pdStr = pathData.getTextContent();
+            String[] cmdTokens = SvgParser.PATTERN_CMD.split(pdStr, 0);
+            cmdTokens = SvgParser.stripEmptyTokens(cmdTokens);
+
+            /* Convert command strings to path command constants. */
+            final int cmdLen = cmdTokens.length;
+            for ( int j = 0; j < cmdLen; ++j ) {
+               final String cmdToken = cmdTokens[j];
+               final char cmdCode = cmdToken.charAt(0);
+               final PathCommand cmd = PathCommand.fromChar(cmdCode);
+               cmdList.add(cmd);
+            }
+         }
+      }
+
+      return cmdList.toArray(new PathCommand[cmdList.size()]);
+   }
+
+   /**
     * Parses a polygon or poly-line node.
     *
     * @param polygonNode the polygon
@@ -1123,6 +1352,8 @@ public abstract class SvgParser {
     */
    public static Curve2 parsePoly ( final Node polygonNode,
       final Curve2 target ) {
+
+      // TODO: Broken.
 
       final NamedNodeMap attributes = polygonNode.getAttributes();
       if ( attributes != null ) {
@@ -1142,7 +1373,7 @@ public abstract class SvgParser {
          final Node ptsnode = attributes.getNamedItem("points");
          final String ptsstr = ptsnode != null ? ptsnode.getTextContent()
             : "0,0";
-         final String[] coords = ptsstr.split(" |,");
+         final String[] coords = ptsstr.split("\\s+|,");
 
          int i = 0;
          final int coordLen = coords.length;
@@ -1347,27 +1578,31 @@ public abstract class SvgParser {
    }
 
    /**
-    * Parses a view box node to a Vec4.
+    * Parses a view box node to a Vec4. The width and height parameters
+    * provide a default if the view box is malformed.
     *
     * @param viewbox the view box node
     * @param target  the output vector
+    * @param width   the SVG width
+    * @param height  the SVG height
     *
     * @return the vector
     */
-   public static Vec4 parseViewBox ( final Node viewbox, final Vec4 target ) {
+   public static Vec4 parseViewBox ( final Node viewbox, final Vec4 target,
+      final float width, final float height ) {
 
-      float x = 0.0f;
-      float y = 0.0f;
-      float z = 0.0f;
-      float w = 0.0f;
+      float x = 0.0f; /* top left x */
+      float y = 0.0f; /* top left y */
+      float z = width < 2.0f ? 2.0f : width; /* bottom right x */
+      float w = height < 2.0f ? 2.0f : height; /* bottom right y */
 
       final String content = viewbox.getTextContent();
       final String[] tokens = content.split(" ");
 
-      if ( tokens.length > 3 ) { w = SvgParser.parseFloat(tokens[3], 0.0f); }
-      if ( tokens.length > 2 ) { z = SvgParser.parseFloat(tokens[2], 0.0f); }
-      if ( tokens.length > 1 ) { y = SvgParser.parseFloat(tokens[1], 0.0f); }
-      if ( tokens.length > 0 ) { x = SvgParser.parseFloat(tokens[0], 0.0f); }
+      if ( tokens.length > 3 ) { w = SvgParser.parseFloat(tokens[3], w); }
+      if ( tokens.length > 2 ) { z = SvgParser.parseFloat(tokens[2], z); }
+      if ( tokens.length > 1 ) { y = SvgParser.parseFloat(tokens[1], y); }
+      if ( tokens.length > 0 ) { x = SvgParser.parseFloat(tokens[0], x); }
 
       return target.set(x, y, z, w);
    }

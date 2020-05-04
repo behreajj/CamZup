@@ -1,10 +1,15 @@
 package camzup.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
+
+import javax.imageio.ImageIO;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import java.awt.image.BufferedImage;
 
 /**
  * An incomplete draft of a portable network graphics parser. Even if this
@@ -135,10 +140,18 @@ public abstract class PngParser {
 
          /* Consolidate separate blocks into one byte array. */
          int cursor = 0;
+
+         // Does this need to skip bytes which are used to id data about the
+         // block? If so than the length of those flags needs to be removed from
+         // the byte array (i.e., cmf takes one byte, so 1 * chunkCount)?
+
+         int chunkCount = zlibChunks.size();
          final byte[] zlibdat = new byte[zlibLen];
          final Iterator < IDATChunk > itr = zlibChunks.iterator();
          while ( itr.hasNext() ) {
+
             final byte[] dt = itr.next().data;
+            System.out.println(Utils.bitml(dt[0], 0));
             final int dtLen = dt.length;
             for ( int i = 0; i < dtLen; ++i ) {
                zlibdat[cursor++] = dt[i];
@@ -194,7 +207,7 @@ public abstract class PngParser {
                content[cursor++],
                content[cursor++] };
 
-            /* Convert length from bytes to an integer. */
+            /* Convert length from 8-bit bytes to a 32-bit integer (32/8=4). */
             int parsedLen = 0;
             for ( int i = 0; i < 4; ++i ) {
                parsedLen <<= 0x08;
@@ -388,7 +401,7 @@ public abstract class PngParser {
     */
    public static byte[] sigPng ( ) {
 
-      return new byte[] { ( byte ) 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a,
+      return new byte[] { -119, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a,
          0x0a };
    }
 
@@ -416,6 +429,61 @@ public abstract class PngParser {
       return new byte[] { 0x74, 0x49, 0x4d, 0x45 };
    }
 
+   static Img loadToBufferedImage ( final String fileName, final Img target ) {
+
+      /*
+       * For test/control comparisons. If nothing else, this will at least let
+       * you load images.
+       */
+
+      try {
+         final BufferedImage bi = ImageIO.read(new File(fileName));
+         target.reallocate(bi.getWidth(), bi.getHeight());
+         bi.getRGB(0, 0, bi.getWidth(), bi.getHeight(), target.pixels, 0, target
+            .getWidth());
+      } catch ( final IOException e ) {
+         e.printStackTrace();
+      }
+
+      return target;
+   }
+
+   /**
+    * Scans a bit from an array of bytes as though the array were a
+    * one-dimensional array of bites. Reads from least to most significant
+    * digit.
+    *
+    * @param in the input array
+    * @param i  the index
+    *
+    * @return the bit
+    */
+   static byte scanBitLm ( final byte[] in, final int i ) {
+
+      // final int j = i >> 3;
+      // final int k = i % 8;
+      // return Utils.bitlm(in[j], k);
+      return Utils.bitlm(in[i >> 3], i % Byte.SIZE);
+   }
+
+   /**
+    * Scans a bit from an array of bytes as though the array were a
+    * one-dimensional array of bites. Reads from most to least significant
+    * digit.
+    *
+    * @param in the input array
+    * @param i  the index
+    *
+    * @return the bit
+    */
+   static byte scanBitMl ( final byte[] in, final int i ) {
+
+      // 2^3 = 8, so i / 8 is i >> 3
+      // final int j = i >> 3;
+      // final int k = i % 8;
+      return Utils.bitml(in[i >> 3], i % Byte.SIZE);
+   }
+
    /**
     * Parses the zlib section of the .png data.
     *
@@ -428,7 +496,10 @@ public abstract class PngParser {
 
       // TODO: Implement.
 
-      System.out.println(Utils.toString(Utils.bitslm(zlibdat[0])));
+      // for ( int i = zlibdat.length - 128; i < zlibdat.length; ++i ) {
+      // System.out.print(Integer.toHexString(zlibdat[i / 8] & 0xff) + ":");
+      // System.out.println(PngParser.scanBitLm(zlibdat, i));
+      // }
       return target;
    }
 
@@ -504,7 +575,7 @@ public abstract class PngParser {
        *
        * @return the length
        */
-      public int length ( ) {
+      public int byteCount ( ) {
 
          int result = 0;
          final int lenlen = this.length.length;
@@ -525,7 +596,7 @@ public abstract class PngParser {
          sb.append("{ type: ");
          sb.append(this.typeToString());
          sb.append(", length: ");
-         sb.append(this.length());
+         sb.append(Utils.toPadded(this.byteCount(), 5));
          sb.append(' ');
          sb.append('}');
          return sb.toString();
