@@ -60,15 +60,16 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    }
 
    /**
-    * Appends a curve to this curve entity.
+    * Appends a curve to this curve entity. The curve must not be
+    * <code>null</code> and must have a length greater than zero.
     *
     * @param curve the curve
     *
     * @return this curve entity
     */
-
    public CurveEntity3 append ( final Curve3 curve ) {
 
+      // if ( curve != null && curve.length() > 0 ) { this.curves.add(curve); }
       if ( curve != null ) { this.curves.add(curve); }
       return this;
    }
@@ -80,7 +81,6 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
     *
     * @return this curve entity
     */
-
    public CurveEntity3 appendAll ( final Collection < Curve3 > app ) {
 
       final Iterator < Curve3 > itr = app.iterator();
@@ -97,7 +97,6 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
     *
     * @return this curve entity
     */
-
    public CurveEntity3 appendAll ( final Curve3... app ) {
 
       final int len = app.length;
@@ -157,7 +156,6 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
     * @return this entity
     */
    @Override
-
    public CurveEntity3 scaleBy ( final float scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -172,7 +170,6 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
     * @return the entity
     */
    @Override
-
    public CurveEntity3 scaleBy ( final Vec3 scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -187,7 +184,6 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
     * @return this entity
     */
    @Override
-
    public CurveEntity3 scaleTo ( final float scalar ) {
 
       this.transform.scaleTo(scalar);
@@ -202,7 +198,6 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
     * @return this entity
     */
    @Override
-
    public CurveEntity3 scaleTo ( final Vec3 scalar ) {
 
       this.transform.scaleTo(scalar);
@@ -218,7 +213,6 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
     * @return this entity
     */
    @Override
-
    public CurveEntity3 scaleTo ( final Vec3 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);

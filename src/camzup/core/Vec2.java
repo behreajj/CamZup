@@ -1685,6 +1685,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
 
          /* Shift alternating cells by positive or negative offset. */
          final float xoff = i % 2 == 0 ? w : -w;
+
+         // TODO: Why not just take ((i / 2) + 1)?
          final int joff = Utils.ceilToInt(ifl * 0.5f);
          for ( int j = 0; j < vcnt; ++j ) {
 

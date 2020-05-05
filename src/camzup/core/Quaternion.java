@@ -1157,23 +1157,26 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Vec3 axis, final Quaternion target ) {
 
       final float amSq = Vec3.magSq(axis);
-      if ( amSq == 0.0f ) { return target.reset(); }
+      if ( amSq != 0.0f ) {
 
-      float nx = axis.x;
-      float ny = axis.y;
-      float nz = axis.z;
+         float nx = axis.x;
+         float ny = axis.y;
+         float nz = axis.z;
 
-      if ( !Utils.approx(amSq, 1.0f) ) {
-         final float amInv = Utils.invSqrtUnchecked(amSq);
-         nx *= amInv;
-         ny *= amInv;
-         nz *= amInv;
+         if ( !Utils.approx(amSq, 1.0f) ) {
+            final float amInv = Utils.invSqrtUnchecked(amSq);
+            nx *= amInv;
+            ny *= amInv;
+            nz *= amInv;
+         }
+
+         final float halfAngle = 0.5f * radians;
+         final float sinHalf = Utils.sin(halfAngle);
+         return target.set(Utils.cos(halfAngle), nx * sinHalf, ny * sinHalf, nz
+            * sinHalf);
       }
 
-      final float halfAngle = 0.5f * radians;
-      final float sinHalf = Utils.sin(halfAngle);
-      return target.set(Utils.cos(halfAngle), nx * sinHalf, ny * sinHalf, nz
-         * sinHalf);
+      return target.reset();
    }
 
    /**

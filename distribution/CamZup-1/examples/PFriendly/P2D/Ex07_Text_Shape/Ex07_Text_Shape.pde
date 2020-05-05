@@ -1,7 +1,7 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-Yup2 graphics2;
+YupJ2 graphics2;
 CurveEntity2[] glyCrv;
 MeshEntity2[] glyMsh;
 
@@ -20,11 +20,11 @@ MaterialPImage matMsh;
 PFont font;
 
 void settings() {
-  size(720, 405, Yup2.PATH_STR);
+  size(720, 405, YupJ2.PATH_STR);
 }
 
 void setup() {
-  graphics2 = (Yup2)getGraphics();
+  graphics2 = (YupJ2)getGraphics();
 
   PImage txtr = createImage(512, 512, ARGB);
   ZImage.rgb(txtr);
@@ -61,7 +61,8 @@ void draw() {
 
   if (toggle) {
     for (MeshEntity2 glyph : glyMsh) {
-      graphics2.shape(glyph, matMsh);
+      //graphics2.shape(glyph, matMsh);
+      graphics2.shape(glyph);
     }
   } else {
     for (CurveEntity2 glyph : glyCrv) {
@@ -74,9 +75,7 @@ void draw() {
 }
 
 void mouseReleased() {
-  if (mouseButton == LEFT) {
     toggle = !toggle;
-  }
 }
 
 void mouseWheel(MouseEvent e) {

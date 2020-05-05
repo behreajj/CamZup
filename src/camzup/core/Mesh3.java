@@ -877,7 +877,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the iterator
     */
    @Override
-   public Face3Iterator iterator ( ) { return new Face3Iterator(this); }
+   public Iterator < Face3 > iterator ( ) { return new Face3Iterator(this); }
 
    /**
     * Gets the number of faces held by this mesh.

@@ -959,18 +959,18 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final float arcLen1 = Utils.mod1(b1 - a1);
 
       if ( arcLen1 <= 0.00139f ) {
-         target.resize(2);
-         target.closedLoop = false;
-         final Knot3 prev = target.getFirst();
-         final Knot3 next = target.getLast();
-         prev.set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-         next.set(radius * Utils.scNorm(a1), radius * Utils.scNorm(a1 - 0.25f),
-            0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-         Curve3.lerp13(prev.coord, next.coord, prev.foreHandle);
-         Curve3.lerp13(next.coord, prev.coord, next.rearHandle);
-         prev.mirrorHandlesForward();
-         next.mirrorHandlesBackward();
-
+         // target.resize(2);
+         // target.closedLoop = false;
+         // final Knot3 prev = target.getFirst();
+         // final Knot3 next = target.getLast();
+         // prev.set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+         // next.set(radius * Utils.scNorm(a1), radius * Utils.scNorm(a1 -
+         // 0.25f),
+         // 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+         // Curve3.lerp13(prev.coord, next.coord, prev.foreHandle);
+         // Curve3.lerp13(next.coord, prev.coord, next.rearHandle);
+         // prev.mirrorHandlesForward();
+         // next.mirrorHandlesBackward();
          return target;
       }
 

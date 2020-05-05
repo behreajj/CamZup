@@ -5,7 +5,6 @@ import java.util.Iterator;
 import camzup.core.ArcMode;
 import camzup.core.Color;
 import camzup.core.Curve2;
-import camzup.core.Experimental;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
 import camzup.core.Mat3;
@@ -169,9 +168,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Draws an arc at a location from a start angle to a stop angle. The
-    * meaning of the first four parameters depends on the renderer's
-    * ellipseMode.
+    * Draws an arc at a location from a start angle to a stop angle.
     *
     * @param x0    the first x
     * @param y0    the first y
@@ -186,9 +183,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Draws an arc at a location from a start angle to a stop angle. The
-    * meaning of the first four parameters depends on the renderer's
-    * ellipseMode.
+    * Draws an arc at a location from a start angle to a stop angle.
     *
     * @param x0    the first x
     * @param y0    the first y
@@ -205,9 +200,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Draws an arc at a location from a start angle to a stop angle. The
-    * meaning of the first four parameters depends on the renderer's
-    * ellipseMode.
+    * Draws an arc at a location from a start angle to a stop angle.<br>
+    * <br>
+    * No longer supports different ellipse modes; defaults to radius. No
+    * longer supports nonuniform scaling for major and minor axes; takes the
+    * minimum of x1 and y1.
     *
     * @param x0    the first x
     * @param y0    the first y
@@ -296,9 +293,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Draws an arc at a location from a start angle to a stop angle. The
-    * meaning of the first four parameters depends on the renderer's
-    * ellipseMode.
+    * Draws an arc at a location from a start angle to a stop angle.
     *
     * @param x0    the first x
     * @param y0    the first y
@@ -733,7 +728,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * the DISABLE_DEPTH_TEST hint is not called, but the depth values of the
     * objects are not recorded.
     */
-   @Experimental
    public void disableDepthMask ( ) {
 
       this.hints[PConstants.DISABLE_DEPTH_MASK] = true;
@@ -750,7 +744,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * sequentially, like a painting. When called, this will also clear the
     * depth buffer.
     */
-   @Experimental
    public void disableDepthTest ( ) {
 
       this.hints[PConstants.DISABLE_DEPTH_TEST] = true;
@@ -769,7 +762,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * it at a small size). However, the difference in performance is fairly
     * minor on recent desktop video cards.
     */
-   @Experimental
    public void disableMipMaps ( ) {
 
       this.hints[PConstants.DISABLE_TEXTURE_MIPMAPS] = true;
@@ -788,7 +780,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * make rendering substantially slower, so it is recommended to use it only
     * when drawing a small amount of shapes.
     */
-   @Experimental
    public void disableOptimizedStroke ( ) {
 
       this.hints[PConstants.DISABLE_OPTIMIZED_STROKE] = true;
@@ -799,7 +790,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Attempts to make the hint system more convenient to work with.
     */
-   @Experimental
    public void enableDepthMask ( ) {
 
       /*
@@ -815,7 +805,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Attempts to make the hint system more convenient to work with.
     */
-   @Experimental
    public void enableDepthTest ( ) {
 
       /*
@@ -844,7 +833,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Attempts to make the hint system more convenient to work with.
     */
-   @Experimental
    public void enableOptimizedStroke ( ) {
 
       /*
@@ -3731,25 +3719,26 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       /* Axis is verified here because PMatAux compound rotate will not. */
       final float mSq = xAxis * xAxis + yAxis * yAxis + zAxis * zAxis;
-      if ( mSq == 0.0f ) { return; }
+      if ( mSq > 0.0f ) {
 
-      final float normRad = radians * IUtils.ONE_TAU;
-      final float cosa = Utils.scNorm(normRad);
-      final float sina = Utils.scNorm(normRad - 0.25f);
+         final float normRad = radians * IUtils.ONE_TAU;
+         final float cosa = Utils.scNorm(normRad);
+         final float sina = Utils.scNorm(normRad - 0.25f);
 
-      float xn = xAxis;
-      float yn = yAxis;
-      float zn = zAxis;
-      if ( mSq != 1.0f ) {
-         final float mInv = Utils.invSqrtUnchecked(mSq);
-         xn *= mInv;
-         yn *= mInv;
-         zn *= mInv;
+         float xn = xAxis;
+         float yn = yAxis;
+         float zn = zAxis;
+         if ( mSq != 1.0f ) {
+            final float mInv = Utils.invSqrtUnchecked(mSq);
+            xn *= mInv;
+            yn *= mInv;
+            zn *= mInv;
+         }
+
+         PMatAux.compoundRotate(cosa, sina, xn, yn, zn, this.modelview,
+            this.modelviewInv);
+         PMatAux.mul(this.projection, this.modelview, this.projmodelview);
       }
-
-      PMatAux.compoundRotate(cosa, sina, xn, yn, zn, this.modelview,
-         this.modelviewInv);
-      PMatAux.mul(this.projection, this.modelview, this.projmodelview);
    }
 
    /**

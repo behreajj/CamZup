@@ -622,7 +622,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * @see Vec2#mul(Vec2, float, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-
    public Knot2 scaleRearHandleTo ( final float magnitude ) {
 
       Vec2.subNorm(this.rearHandle, this.coord, this.rearHandle);
@@ -642,7 +641,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @see Math#copySign(float, float)
     */
-
    public Knot2 set ( final float xCoord, final float yCoord ) {
 
       final float xOff = Utils.copySign(IUtils.DEFAULT_EPSILON, xCoord);
@@ -663,7 +661,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return the knot
     */
-
    public Knot2 set ( final float xCoord, final float yCoord, final float xFore,
       final float yFore ) {
 
@@ -687,7 +684,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 set ( final float xCoord, final float yCoord, final float xFore,
       final float yFore, final float xRear, final float yRear ) {
 
@@ -705,7 +701,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 set ( final Knot2 source ) {
 
       return this.set(source.coord, source.foreHandle, source.rearHandle);
@@ -725,7 +720,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 set ( final String xCoord, final String yCoord,
       final String xFore, final String yFore, final String xRear,
       final String yRear ) {
@@ -758,7 +752,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 set ( final Vec2 coord, final Vec2 foreHandle ) {
 
       return this.set(coord.x, coord.y, foreHandle.x, foreHandle.y);
@@ -773,7 +766,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-
    public Knot2 set ( final Vec2 coord, final Vec2 foreHandle,
       final Vec2 rearHandle ) {
 
@@ -836,7 +828,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @see Mat3#mulPoint(Mat3, Vec2, Vec2)
     */
-
    public Knot2 transform ( final Mat3 m ) {
 
       Mat3.mulPoint(m, this.coord, this.coord);
@@ -855,7 +846,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
     */
-
    public Knot2 transform ( final Transform2 tr ) {
 
       Transform2.mulPoint(tr, this.coord, this.coord);
@@ -874,7 +864,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-
    public Knot2 translate ( final Vec2 v ) {
 
       Vec2.add(this.coord, v, this.coord);

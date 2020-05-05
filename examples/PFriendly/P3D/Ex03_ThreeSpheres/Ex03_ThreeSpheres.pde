@@ -7,9 +7,9 @@ Mesh3 icosphere = new Mesh3();
 Mesh3 cubesphere = new Mesh3();
 Mesh3 uvsphere = new Mesh3();
 
-MeshEntity3 meIco = new MeshEntity3().append(icosphere);
-MeshEntity3 meCube = new MeshEntity3().append(cubesphere);
-MeshEntity3 meUv = new MeshEntity3().append(uvsphere);
+MeshEntity3 meIco = new MeshEntity3();
+MeshEntity3 meCube = new MeshEntity3();
+MeshEntity3 meUv = new MeshEntity3();
 
 MaterialSolid solid = new MaterialSolid()
   .setStroke(true)
@@ -29,7 +29,6 @@ void settings() {
 void setup() {
   rndr = (Zup3)getGraphics();
   rndr.camNorth();
-  rndr.printCameraInv();
   rndr.textureSampling(TextureSampling.LINEAR);
   rndr.textureWrap(REPEAT);
 
@@ -41,6 +40,10 @@ void setup() {
   Mesh3.icosphere(3, icosphere);
   Mesh3.cubeSphere(3, cubesphere);
   Mesh3.uvSphere(32, 16, uvsphere);
+  
+  meIco.append(icosphere);
+  meCube.append(cubesphere);
+  meUv.append(uvsphere);
 
   float uniform = Utils.min(rndr.width, rndr.height) * 1.35;
   meIco.scaleTo(uniform);

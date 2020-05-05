@@ -9,7 +9,6 @@ void settings() {
 
 void setup() {
   graphics = (Yup2)getGraphics();
-  frameRate(1000);
   noStroke();
 }
 
@@ -18,8 +17,6 @@ void draw() {
   background(#202020);
   graphics.grid(16, 4.0);
   
-  rotateZ(frameCount * 0.01);
-
   rectMode(RADIUS);
   fill(#e01c34);
   rect(32.0, 32.0, 128.0, 128.0, 16.0);

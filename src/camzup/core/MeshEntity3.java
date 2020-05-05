@@ -83,7 +83,8 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    }
 
    /**
-    * Appends a mesh to this mesh entity.
+    * Appends a mesh to this mesh entity. The mesh must not be
+    * <code>null</code> and must have a length greater than zero.
     *
     * @param mesh the mesh
     *
@@ -92,6 +93,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
    public MeshEntity3 append ( final Mesh3 mesh ) {
 
+      // if ( mesh != null && mesh.length() > 0 ) { this.meshes.add(mesh); }
       if ( mesh != null ) { this.meshes.add(mesh); }
       return this;
    }

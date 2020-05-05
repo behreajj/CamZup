@@ -70,16 +70,10 @@ public abstract class Utils implements IUtils {
       if ( value <= -1.0f ) { return IUtils.PI; }
       if ( value >= 1.0f ) { return 0.0f; }
 
-      final boolean ltZero = value < 0.0f;
+      final boolean ltZero = value < -0.0f;
       final float x = ltZero ? -value : value;
-      float ret = -0.0187293f;
-      ret *= x;
-      ret += 0.074261f;
-      ret *= x;
-      ret -= 0.2121144f;
-      ret *= x;
-      ret += IUtils.HALF_PI;
-      ret *= Utils.sqrt(1.0f - x);
+      float ret = ( 0.074261f - 0.0187293f * x ) * x - 0.2121144f;
+      ret = ( ret * x + IUtils.HALF_PI ) * Utils.sqrtUnchecked(1.0f - x);
       return ltZero ? IUtils.PI - ret : ret;
    }
 
@@ -161,16 +155,11 @@ public abstract class Utils implements IUtils {
       if ( value <= -1.0f ) { return -IUtils.HALF_PI; }
       if ( value >= 1.0f ) { return IUtils.HALF_PI; }
 
-      final boolean ltZero = value < 0.0f;
+      final boolean ltZero = value < -0.0f;
       final float x = ltZero ? -value : value;
-      float ret = -0.0187293f;
-      ret *= x;
-      ret += 0.074261f;
-      ret *= x;
-      ret -= 0.2121144f;
-      ret *= x;
-      ret += IUtils.HALF_PI;
-      ret = IUtils.HALF_PI - ret * Utils.sqrt(1.0f - x);
+      float ret = ( 0.074261f - 0.0187293f * x ) * x - 0.2121144f;
+      ret = ret * x + IUtils.HALF_PI;
+      ret = IUtils.HALF_PI - ret * Utils.sqrtUnchecked(1.0f - x);
       return ltZero ? -ret : ret;
    }
 
@@ -190,31 +179,33 @@ public abstract class Utils implements IUtils {
     */
    public static float atan2 ( final float y, final float x ) {
 
-      final boolean yLtZero = y < 0.0f;
-      final boolean xLtZero = x < 0.0f;
+      /*
+       * When stored independently as floats, magic numbers are truncated to
+       * different values. 0.121239071f -> 0.12123907f, 0.195635925f ->
+       * 0.19563593f, 0.332994597f -> 0.3329946f, 0.99999563f -> 0.99999565f .
+       */
+
+      final boolean yLtZero = y < -0.0f;
+      final boolean xLtZero = x < -0.0f;
       final float yAbs = yLtZero ? -y : y;
       final float xAbs = xLtZero ? -x : x;
 
       final boolean yGtX = yAbs > xAbs;
       float t0 = yGtX ? yAbs : xAbs;
-      if ( t0 == 0.0f ) { return 0.0f; }
-      float t2 = ( yGtX ? xAbs : yAbs ) / t0;
-
-      /*
-       * When stored independently as floats, some of these magic numbers are
-       * truncated to slightly different values.
-       */
-      final float t3 = t2 * t2;
-      t0 = -0.01348047f;
-      t0 = t0 * t3 + 0.057477314f;
-      t0 = t0 * t3 - 0.121239071f; /* 0.12123907f */
-      t0 = t0 * t3 + 0.195635925f; /* 0.19563593f */
-      t0 = t0 * t3 - 0.332994597f; /* 0.3329946f */
-      t0 = t0 * t3 + 0.99999563f; /* 0.99999565f */
-      t2 = t0 * t2;
-      t2 = yGtX ? IUtils.HALF_PI - t2 : t2;
-      t2 = xLtZero ? IUtils.PI - t2 : t2;
-      return yLtZero ? -t2 : t2;
+      if ( t0 != 0.0f ) {
+         final float t2 = ( yGtX ? xAbs : yAbs ) / t0;
+         final float t3 = t2 * t2;
+         t0 = 0.057477314f - 0.01348047f * t3;
+         t0 = t0 * t3 - 0.12123907f;
+         t0 = t0 * t3 + 0.19563593f;
+         t0 = t0 * t3 - 0.3329946f;
+         t0 = t0 * t3 + 0.99999565f;
+         t0 = t0 * t2;
+         t0 = yGtX ? IUtils.HALF_PI - t0 : t0;
+         t0 = xLtZero ? IUtils.PI - t0 : t0;
+         return yLtZero ? -t0 : t0;
+      }
+      return 0.0f;
    }
 
    /**
@@ -279,7 +270,7 @@ public abstract class Utils implements IUtils {
     */
    public static byte[] bitsml ( final byte a ) {
 
-      final byte[] result = new byte[8];
+      final byte[] result = new byte[Byte.SIZE];
       for ( int i = 7, j = 0; i > -1; --i, ++j ) {
          result[j] = ( byte ) ( a >> i & 1 );
       }
@@ -1455,18 +1446,18 @@ public abstract class Utils implements IUtils {
 
       final int raw = Float.floatToRawIntBits(value);
       switch ( raw ) {
-         case 0x7f800000: /* Positive infinity. */
-         case 0x7f7fffff: /* Max value. */
-            return "3.4028235E38";
+         case 0x0: /* Positive zero. */
+         case 0x80000000: /* Negative zero. */
+         case 0x7fc00000: /* Not a number (NaN). */
+            return "0.0";
 
          case 0xff800000: /* Negative infinity. */
          case 0x1: /* Minimum value. */
             return "1.4E-45";
 
-         case 0x0: /* Positive zero. */
-         case 0x80000000: /* Negative zero. */
-         case 0x7fc00000: /* Not a number (NaN). */
-            return "0.0";
+         case 0x7f800000: /* Positive infinity. */
+         case 0x7f7fffff: /* Max value. */
+            return "3.4028235E38";
 
          default:
       }

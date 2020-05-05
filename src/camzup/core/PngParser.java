@@ -145,13 +145,12 @@ public abstract class PngParser {
          // block? If so than the length of those flags needs to be removed from
          // the byte array (i.e., cmf takes one byte, so 1 * chunkCount)?
 
-         int chunkCount = zlibChunks.size();
+         zlibChunks.size();
          final byte[] zlibdat = new byte[zlibLen];
          final Iterator < IDATChunk > itr = zlibChunks.iterator();
          while ( itr.hasNext() ) {
 
             final byte[] dt = itr.next().data;
-            System.out.println(Utils.bitml(dt[0], 0));
             final int dtLen = dt.length;
             for ( int i = 0; i < dtLen; ++i ) {
                zlibdat[cursor++] = dt[i];
@@ -401,8 +400,7 @@ public abstract class PngParser {
     */
    public static byte[] sigPng ( ) {
 
-      return new byte[] { -119, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a,
-         0x0a };
+      return new byte[] { -119, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a };
    }
 
    /**
@@ -496,10 +494,12 @@ public abstract class PngParser {
 
       // TODO: Implement.
 
-      // for ( int i = zlibdat.length - 128; i < zlibdat.length; ++i ) {
-      // System.out.print(Integer.toHexString(zlibdat[i / 8] & 0xff) + ":");
-      // System.out.println(PngParser.scanBitLm(zlibdat, i));
-      // }
+      for ( int i = zlibdat.length - 1; i > zlibdat.length - 128; --i ) {
+         byte reading = zlibdat[i];
+         byte[] bits = Utils.bitsml(reading);
+         String str = Utils.toString(bits);
+         System.out.println(str);
+      }
       return target;
    }
 
@@ -530,6 +530,22 @@ public abstract class PngParser {
          this.type = type;
          this.data = data;
          this.crc = crc;
+      }
+
+      /**
+       * Returns the length of the data portion of the chunk as an integer.
+       *
+       * @return the length
+       */
+      public int byteCount ( ) {
+
+         int result = 0;
+         final int lenlen = this.length.length;
+         for ( int i = 0; i < lenlen; ++i ) {
+            result <<= 0x08;
+            result |= this.length[i] & 0xff;
+         }
+         return result;
       }
 
       /**
@@ -568,22 +584,6 @@ public abstract class PngParser {
             sb.append(( char ) this.data[i]);
          }
          return sb.toString();
-      }
-
-      /**
-       * Returns the length of the data portion of the chunk as an integer.
-       *
-       * @return the length
-       */
-      public int byteCount ( ) {
-
-         int result = 0;
-         final int lenlen = this.length.length;
-         for ( int i = 0; i < lenlen; ++i ) {
-            result <<= 0x08;
-            result |= this.length[i] & 0xff;
-         }
-         return result;
       }
 
       /**

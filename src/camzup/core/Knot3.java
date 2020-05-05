@@ -360,7 +360,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @see Knot3#mirrorHandlesForward()
     */
-
    public Knot3 mirrorHandles ( ) { return this.mirrorHandlesForward(); }
 
    /**
@@ -369,7 +368,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 mirrorHandlesBackward ( ) {
 
       this.foreHandle.set(this.coord.x - ( this.rearHandle.x - this.coord.x ),
@@ -385,7 +383,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 mirrorHandlesForward ( ) {
 
       this.rearHandle.set(this.coord.x - ( this.foreHandle.x - this.coord.x ),
@@ -400,7 +397,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 reverse ( ) {
 
       final float tx = this.foreHandle.x;
@@ -426,7 +422,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
     */
-
    public Knot3 rotate ( final float cosa, final float sina, final Vec3 axis ) {
 
       Vec3.rotate(this.coord, cosa, sina, axis, this.coord);
@@ -444,7 +439,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 rotate ( final float radians, final Vec3 axis ) {
 
       return this.rotate(Utils.cos(radians), Utils.sin(radians), axis);
@@ -457,7 +451,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 rotate ( final Quaternion q ) {
 
       Quaternion.mulVector(q, this.coord, this.coord);
@@ -475,7 +468,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 rotateForeHandle ( final Quaternion q ) {
 
       Vec3.sub(this.coord, this.foreHandle, this.foreHandle);
@@ -493,7 +485,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 rotateHandles ( final Quaternion q ) {
 
       this.rotateForeHandle(q);
@@ -510,7 +501,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 rotateRearHandle ( final Quaternion q ) {
 
       Vec3.sub(this.coord, this.rearHandle, this.rearHandle);
@@ -527,7 +517,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 rotateX ( final float radians ) {
 
       return this.rotateX(Utils.cos(radians), Utils.sin(radians));
@@ -543,7 +532,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 rotateX ( final float cosa, final float sina ) {
 
       Vec3.rotateX(this.coord, cosa, sina, this.coord);
@@ -560,7 +548,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 rotateY ( final float radians ) {
 
       return this.rotateY(Utils.cos(radians), Utils.sin(radians));
@@ -576,7 +563,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 rotateY ( final float cosa, final float sina ) {
 
       Vec3.rotateY(this.coord, cosa, sina, this.coord);
@@ -593,7 +579,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 rotateZ ( final float radians ) {
 
       return this.rotateZ(Utils.cos(radians), Utils.sin(radians));
@@ -609,7 +594,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 rotateZ ( final float cosa, final float sina ) {
 
       Vec3.rotateZ(this.coord, cosa, sina, this.coord);
@@ -626,7 +610,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 scale ( final float scale ) {
 
       Vec3.mul(this.coord, scale, this.coord);
@@ -643,7 +626,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 scale ( final Vec3 scale ) {
 
       Vec3.mul(this.coord, scale, this.coord);
@@ -660,7 +642,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 scaleForeHandleBy ( final float scalar ) {
 
       /* forehandle = coordinate + scalar * (forehandle - coordinate) */
@@ -681,7 +662,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 scaleForeHandleTo ( final float magnitude ) {
 
       Vec3.subNorm(this.foreHandle, this.coord, this.foreHandle);
@@ -698,7 +678,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 scaleHandlesBy ( final float scalar ) {
 
       this.scaleForeHandleBy(scalar);
@@ -717,7 +696,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @see Knot3#scaleForeHandleTo(float)
     * @see Knot3#scaleRearHandleTo(float)
     */
-
    public Knot3 scaleHandlesTo ( final float magnitude ) {
 
       this.scaleForeHandleTo(magnitude);
@@ -733,7 +711,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 scaleRearHandleBy ( final float scalar ) {
 
       this.rearHandle.x = this.coord.x + scalar * ( this.rearHandle.x
@@ -757,7 +734,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @see Vec3#mul(Vec3, float, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-
    public Knot3 scaleRearHandleTo ( final float magnitude ) {
 
       Vec3.subNorm(this.rearHandle, this.coord, this.rearHandle);
@@ -778,7 +754,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @see Math#copySign(float, float)
     */
-
    public Knot3 set ( final float xCoord, final float yCoord,
       final float zCoord ) {
 
@@ -803,7 +778,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-
    public Knot3 set ( final float xCoord, final float yCoord,
       final float zCoord, final float xFore, final float yFore,
       final float zFore ) {

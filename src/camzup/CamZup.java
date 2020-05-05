@@ -1,7 +1,5 @@
 package camzup;
 
-import camzup.core.Mesh3;
-
 import processing.core.PApplet;
 
 /**
@@ -52,8 +50,6 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // new Rng();
-
       // for ( int i = 0; i < 10; ++i ) {
       // float var12 = rng.nextFloat();
       // float var45 = var12 - 1.0F + 0.5527864F;
@@ -65,10 +61,12 @@ public class CamZup {
       // final Img img = new Img();
       // PngParser.parsePng("data/diagnostic.png", img);
 
-      Mesh3 m = new Mesh3();
-      Mesh3.tetrahedron(m);
-      float[] b = Mesh3.floatArrCoords(m);
-      System.out.println(Integer.toHexString(Float.floatToIntBits(-0.0f)));
+      // final String[] test = { "5.647-3.146 -8-16-75.1" };
+      // final String[] split = CamZup.breakNeg(test);
+      // for ( int i = 0; i < split.length; ++i ) {
+      // System.out.println(split[i]);
+      // }
+
    }
 
    /**

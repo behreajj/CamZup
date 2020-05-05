@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Yup2 graphics;
+YupJ2 graphics;
 Rng rng = new Rng();
 
 Transform2 transform = new Transform2()
@@ -12,8 +12,7 @@ Curve2 curve = Curve2.rect(
   new Curve2());
 
 CurveEntity2 entity = new CurveEntity2(
-  "Example", transform)
-  .append(curve);
+  "Example", transform);
 
 MaterialSolid mat = new MaterialSolid()
   .setFill(false)
@@ -22,11 +21,12 @@ MaterialSolid mat = new MaterialSolid()
   .setStrokeWeight(7.5);
 
 void settings() {
-  size(720, 405, Yup2.PATH_STR);
+  size(720, 405, YupJ2.PATH_STR);
 }
 
 void setup() {
-  graphics = (Yup2)getGraphics();
+  graphics = (YupJ2)getGraphics();
+  entity.append(curve);
 }
 
 void draw() {
@@ -41,11 +41,22 @@ void draw() {
   graphics.handles(entity, 1.25);
 }
 
-void mouseReleased() {
-  if (mouseButton == LEFT) {
+//void mouseReleased() {
+//if (mouseButton == LEFT) {
+//  Curve2.random(rng, 8,
+//    -0.75, 0.75, false, curve);
+//} else if (mouseButton == RIGHT) {
+//  String result = graphics.toSvgString(entity, mat);
+//  saveStrings("data/curve.svg", new String[] { result });
+//  println("Saved to svg.");
+//}
+//}
+
+void keyReleased() {
+  if (key == ' ') {
     Curve2.random(rng, 8,
       -0.75, 0.75, false, curve);
-  } else if (mouseButton == RIGHT) {
+  } else if (key == 's') {
     String result = graphics.toSvgString(entity, mat);
     saveStrings("data/curve.svg", new String[] { result });
     println("Saved to svg.");

@@ -9,9 +9,8 @@ Transform3 transform = new Transform3()
   .moveTo(new Vec3())
   .scaleTo(256.0);
 
-Curve3 curve = Curve3.infinity(new Curve3());
-CurveEntity3 entity = new CurveEntity3("Example", transform)
-  .append(curve);
+Curve3 curve = new Curve3();
+CurveEntity3 entity = new CurveEntity3("Example", transform);
 
 MaterialSolid mat = new MaterialSolid()
   .setFill(false)
@@ -25,6 +24,8 @@ void settings() {
 
 void setup() {
   graphics3 = (Zup3)getGraphics();
+  Curve3.infinity(curve);
+  entity.append(curve);
 }
 
 void draw() {

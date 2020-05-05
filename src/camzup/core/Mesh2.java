@@ -789,7 +789,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @return the iterator
     */
    @Override
-   public Face2Iterator iterator ( ) { return new Face2Iterator(this); }
+   public Iterator < Face2 > iterator ( ) { return new Face2Iterator(this); }
 
    /**
     * Gets the number of faces held by this mesh.
@@ -1519,7 +1519,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                sb.append('[').append(' ');
 
                for ( int k = 0; k < infoLen; ++k ) {
-
                   sb.append(vert[k]);
                   if ( k < infoLast ) { sb.append(',').append(' '); }
                }
@@ -2721,8 +2720,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          / spanOrigin : 0.0f;
       final TreeMap < Float, Vert2 > result = new TreeMap <>();
       for ( int j = 0; j < vertLen; ++j ) {
-         // final float fac = Utils.map(dists[j], minDist, maxDist, nearBound,
-         // farBound);
          final float fac = nearBound + scalar * ( dists[j] - minDist );
          result.put(fac, verts[j]);
       }
@@ -2921,7 +2918,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             target.faces = new int[][][] {
                { { 0, 0 }, { 1, 1 }, { 2, 2 }, { 3, 3 } } };
             break;
-
          case TRI:
          default:
             target.faces = new int[][][] {

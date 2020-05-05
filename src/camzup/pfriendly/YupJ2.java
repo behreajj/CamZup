@@ -249,9 +249,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws an arc at a location from a start angle to a stop angle. The
-    * meaning of the first four parameters depends on the renderer's
-    * ellipseMode.
+    * Draws an arc at a location from a start angle to a stop angle.
     *
     * @param x0    the first x
     * @param y0    the first y
@@ -266,9 +264,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws an arc at a location from a start angle to a stop angle. The
-    * meaning of the first four parameters depends on the renderer's
-    * ellipseMode.
+    * Draws an arc at a location from a start angle to a stop angle.
     *
     * @param x0    the first x
     * @param y0    the first y
@@ -285,9 +281,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws an arc at a location from a start angle to a stop angle. The
-    * meaning of the first four parameters depends on the renderer's
-    * ellipseMode.
+    * Draws an arc at a location from a start angle to a stop angle.<br>
+    * <br>
+    * No longer supports different ellipse modes; defaults to radius. No
+    * longer supports nonuniform scaling for major and minor axes; takes the
+    * minimum of x1 and y1.
     *
     * @param x0    the first x
     * @param y0    the first y
@@ -370,9 +368,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws an arc at a location from a start angle to a stop angle. The
-    * meaning of the first four parameters depends on the renderer's
-    * ellipseMode.
+    * Draws an arc at a location from a start angle to a stop angle.
     *
     * @param x0    the first x
     * @param y0    the first y
@@ -1459,8 +1455,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float x1, final float y1, final float uTl, final float vTl,
       final float uBr, final float vBr ) {
 
-      final int w = img.width;
-      final int h = img.height;
+      final float w = img.width;
+      final float h = img.height;
 
       final int x0i = ( int ) x0;
       final int y0i = ( int ) y0;
@@ -3511,7 +3507,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
    /**
     * The arc implementation. The underlying Java AWT arc asks for a start
-    * angle and an arc length, not a stop angle, in degrees, not radians.
+    * angle and an arc length, not a start and stop angle. Furthermore, it
+    * uses degrees, not radians, as an angular measure. The AWT arc seems to
+    * support nonuniform arcs (i.e., elliptical arcs), but distorts the
+    * angular distance.
     *
     * @param x          the arc location x
     * @param y          the arc location y
