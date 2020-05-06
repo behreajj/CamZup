@@ -1765,13 +1765,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public String toString ( final int places, final int trunc ) {
 
       final StringBuilder sb = new StringBuilder(2048);
-
       sb.append("{ name: \"");
       sb.append(this.name);
-      sb.append('\"');
-      sb.append(',');
-      sb.append(' ');
-      sb.append("coords: [ ");
+      sb.append("\", materialIndex: ");
+      sb.append(this.materialIndex);
+      sb.append(", coords: [ ");
 
       if ( this.coords != null ) {
          final int len = this.coords.length <= trunc ? this.coords.length
@@ -2317,6 +2315,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @see Mesh3#triangulate()
     * @see Mesh3#calcNormals()
     */
+   @Experimental
    public static Mesh3 cubeSphere ( final int itrs, final Mesh3 target ) {
 
       /*
@@ -2328,9 +2327,18 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.clean();
 
       final int vsLen = target.coords.length;
+      final Vec3[] vs = target.coords;
+      // Vec3[] vns = target.normals = Vec3.resize(target.normals, vsLen);
       for ( int i = 0; i < vsLen; ++i ) {
-         final Vec3 v = target.coords[i];
+         final Vec3 v = vs[i];
          Vec3.rescale(v, 0.5f, v);
+
+         // final Vec3 vn = vns[i];
+         // Vec3.normalize(v, vn);
+         // Vec3.mul(vn, 0.5f, v);
+         // if ( Vec3.dot(vn, new Vec3(0.0f, 1.0f, 0.0f)) > 0.0f ) {
+         // Vec3.negate(vn, vn);
+         // }
       }
 
       target.triangulate();
@@ -2550,30 +2558,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       /* @formatter:on */
 
       return target;
-   }
-
-   /**
-    * Returns a one dimensional float array containing the components of the
-    * mesh's coordinates. The array's length will be that of the mesh's
-    * coordinate array multiplied by 3, the number of dimensions in the
-    * vector. For constructing a float buffer from the mesh.
-    *
-    * @param m the mesh
-    *
-    * @return the array.
-    */
-   public static float[] floatArrCoords ( final Mesh3 m ) {
-
-      final Vec3[] vs = m.coords;
-      final int vsLen = vs.length;
-      final float[] result = new float[vsLen * 3];
-      for ( int i = 0, j = 0; i < vsLen; ++i, j += 3 ) {
-         final Vec3 v = vs[i];
-         result[j] = v.x;
-         result[j + 1] = v.y;
-         result[j + 2] = v.z;
-      }
-      return result;
    }
 
    /**
@@ -4000,13 +3984,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int[] a = tri[0];
          final int[] b = tri[1];
 
-         a[0] = j;
-         a[1] = 1 + k;
-         a[2] = j;
-
-         b[0] = i;
-         b[1] = i;
-         b[2] = i;
+         /* @formatter:off */
+         a[0] = j; a[1] = 1 + k; a[2] = j;
+         b[0] = i;     b[1] = i; b[2] = i;
 
          /* c should default to zero. */
          // final int[] c = tri[2]; c[0] = 0; c[1] = 0; c[2] = 0;
@@ -4051,29 +4031,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final int[] b1 = tri1[1];
             final int[] c1 = tri1[2];
 
-            a0[0] = v00;
-            a0[1] = vt00;
-            a0[2] = v00;
+            a0[0] = v00; a0[1] = vt00; a0[2] = v00;
+            b0[0] = v10; b0[1] = vt10; b0[2] = v10;
+            c0[0] = v11; c0[1] = vt11; c0[2] = v11;
 
-            b0[0] = v10;
-            b0[1] = vt10;
-            b0[2] = v10;
-
-            c0[0] = v11;
-            c0[1] = vt11;
-            c0[2] = v11;
-
-            a1[0] = v00;
-            a1[1] = vt00;
-            a1[2] = v00;
-
-            b1[0] = v11;
-            b1[1] = vt11;
-            b1[2] = v11;
-
-            c1[0] = v01;
-            c1[1] = vt01;
-            c1[2] = v01;
+            a1[0] = v00; a1[1] = vt00; a1[2] = v00;
+            b1[0] = v11; b1[1] = vt11; b1[2] = v11;
+            c1[0] = v01; c1[1] = vt01; c1[2] = v01;
          }
       }
 
@@ -4088,17 +4052,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int[] b = tri[1];
          final int[] c = tri[2];
 
-         a[0] = vIdxOff + h;
-         a[1] = vtIdxOff + h;
-         a[2] = vIdxOff + h;
-
-         b[0] = vIdxOff + j;
-         b[1] = vtIdxOff + k;
-         b[2] = vIdxOff + j;
-
-         c[0] = last0;
-         c[1] = last1;
-         c[2] = last0;
+         a[0] = vIdxOff + h; a[1] = vtIdxOff + h; a[2] = vIdxOff + h;
+         b[0] = vIdxOff + j; b[1] = vtIdxOff + k; b[2] = vIdxOff + j;
+         c[0] = last0; c[1] = last1; c[2] = last0;
+         /* @formatter:on */
       }
 
       return target;

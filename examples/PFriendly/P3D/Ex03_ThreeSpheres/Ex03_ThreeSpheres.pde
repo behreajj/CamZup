@@ -19,7 +19,7 @@ MaterialSolid solid = new MaterialSolid()
 
 PImage txtr;
 MaterialPImage textured;
-boolean wireframe = true;
+boolean wireframe = false;
 boolean useIcosaMap = false;
 
 void settings() {
@@ -28,7 +28,6 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
-  rndr.camNorth();
   rndr.textureSampling(TextureSampling.LINEAR);
   rndr.textureWrap(REPEAT);
 
@@ -40,7 +39,7 @@ void setup() {
   Mesh3.icosphere(3, icosphere);
   Mesh3.cubeSphere(3, cubesphere);
   Mesh3.uvSphere(32, 16, uvsphere);
-  
+
   meIco.append(icosphere);
   meCube.append(cubesphere);
   meUv.append(uvsphere);
@@ -56,15 +55,17 @@ void setup() {
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
+
+  rndr.background();
+  rndr.camera();
+  rndr.perspective();
+  rndr.origin();
+
+  rndr.lights();
+
   meIco.rotateZ(0.01);
   meCube.rotateZ(0.01);
   meUv.rotateZ(0.01);
-
-  rndr.background();
-  rndr.perspective();
-  rndr.origin();
-  rndr.camera();
-  rndr.lights();
 
   if (wireframe) {
     rndr.shape(meIco, solid);

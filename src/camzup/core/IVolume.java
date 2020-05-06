@@ -11,7 +11,6 @@ public interface IVolume {
     *
     * @return this object
     */
-
    IVolume scaleBy ( final float scalar );
 
    /**
@@ -21,7 +20,6 @@ public interface IVolume {
     *
     * @return this object
     */
-
    IVolume scaleTo ( final float scalar );
 
 }

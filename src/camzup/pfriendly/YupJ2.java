@@ -15,10 +15,10 @@ import java.awt.image.ImageObserver;
 import java.awt.image.WritableRaster;
 
 import camzup.core.Color;
-import camzup.core.Curve;
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
 import camzup.core.Experimental;
+import camzup.core.ICurve;
 import camzup.core.IUtils;
 import camzup.core.Img;
 import camzup.core.Knot2;
@@ -761,18 +761,18 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             yc = y;
 
             extapw = w;
-            extcpw = Curve.HNDL_MAG_ORTHO_D * w;
+            extcpw = ICurve.HNDL_MAG_ORTHO_D * w;
             extaph = h;
-            extcph = Curve.HNDL_MAG_ORTHO_D * h;
+            extcph = ICurve.HNDL_MAG_ORTHO_D * h;
 
             break;
 
          case CORNER:
 
             extapw = 0.5d * w;
-            extcpw = Curve.HNDL_MAG_ORTHO_2_D * w;
+            extcpw = ICurve.HNDL_MAG_ORTHO_2_D * w;
             extaph = 0.5d * h;
-            extcph = Curve.HNDL_MAG_ORTHO_2_D * h;
+            extcph = ICurve.HNDL_MAG_ORTHO_2_D * h;
 
             xc = x + extapw;
             yc = y - extaph;
@@ -788,9 +788,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             yc = ( y + h ) * 0.5d;
 
             extapw = 0.5d * wcalc;
-            extcpw = Curve.HNDL_MAG_ORTHO_2_D * wcalc;
+            extcpw = ICurve.HNDL_MAG_ORTHO_2_D * wcalc;
             extaph = 0.5d * hcalc;
-            extcph = Curve.HNDL_MAG_ORTHO_2_D * hcalc;
+            extcph = ICurve.HNDL_MAG_ORTHO_2_D * hcalc;
 
             break;
 
@@ -802,9 +802,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             yc = y;
 
             extapw = 0.5d * w;
-            extcpw = Curve.HNDL_MAG_ORTHO_2_D * w;
+            extcpw = ICurve.HNDL_MAG_ORTHO_2_D * w;
             extaph = 0.5d * h;
-            extcph = Curve.HNDL_MAG_ORTHO_2_D * h;
+            extcph = ICurve.HNDL_MAG_ORTHO_2_D * h;
 
       }
 

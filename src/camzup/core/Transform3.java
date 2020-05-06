@@ -383,7 +383,6 @@ public class Transform3 extends Transform {
     * @see Quaternion#fromDir(Vec3, Handedness, Quaternion, Vec3, Vec3, Vec3)
     * @see Quaternion#mix(Quaternion, Quaternion, float, Quaternion)
     */
-
    public Transform3 lookAt ( final Vec3 point, final float step,
       final Handedness handedness ) {
 
@@ -409,7 +408,6 @@ public class Transform3 extends Transform {
     *
     * @see Transform3#moveByGlobal(Vec3)
     */
-
    public Transform3 moveBy ( final Vec3 dir ) {
 
       return this.moveByGlobal(dir);
@@ -424,7 +422,6 @@ public class Transform3 extends Transform {
     *
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-
    public Transform3 moveByGlobal ( final Vec3 dir ) {
 
       this.locPrev.set(this.location);
@@ -447,7 +444,6 @@ public class Transform3 extends Transform {
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-
    public Transform3 moveByLocal ( final Vec3 dir ) {
 
       this.locPrev.set(this.location);
@@ -465,7 +461,6 @@ public class Transform3 extends Transform {
     *
     * @return this transform
     */
-
    public Transform3 moveTo ( final Vec3 locNew ) {
 
       this.locPrev.set(this.location);
@@ -483,7 +478,6 @@ public class Transform3 extends Transform {
     *
     * @return this transform
     */
-
    public Transform3 moveTo ( final Vec3 locNew, final float step ) {
 
       return this.moveTo(locNew, step, Transform3.EASING.loc);
@@ -501,7 +495,6 @@ public class Transform3 extends Transform {
     *
     * @see Vec3.AbstrEasing#apply(Vec3, Vec3, Float, Vec3)
     */
-
    public Transform3 moveTo ( final Vec3 locNew, final float step,
       final Vec3.AbstrEasing easingFunc ) {
 
@@ -521,7 +514,6 @@ public class Transform3 extends Transform {
     * @see Vec3#forward(Vec3)
     * @see Vec3#up(Vec3)
     */
-
    public Transform3 reset ( ) {
 
       this.locPrev.reset();
@@ -550,7 +542,6 @@ public class Transform3 extends Transform {
     * @see Quaternion#addNorm(Quaternion, Quaternion, Quaternion)
     * @see Transform3#updateAxes()
     */
-
    public Transform3 rotateBy ( final Quaternion rot ) {
 
       this.rotPrev.set(this.rotation);
@@ -569,7 +560,6 @@ public class Transform3 extends Transform {
     *
     * @see Transform3#updateAxes()
     */
-
    public Transform3 rotateTo ( final Quaternion rotNew ) {
 
       if ( Quaternion.none(rotNew) ) { return this; }
@@ -588,7 +578,6 @@ public class Transform3 extends Transform {
     *
     * @return this transform
     */
-
    public Transform3 rotateTo ( final Quaternion rotNew, final float step ) {
 
       return this.rotateTo(rotNew, step, Transform3.EASING.rot);
@@ -604,7 +593,6 @@ public class Transform3 extends Transform {
     *
     * @return this transform
     */
-
    public Transform3 rotateTo ( final Quaternion rotNew, final float step,
       final Quaternion.AbstrEasing easingFunc ) {
 
@@ -629,7 +617,6 @@ public class Transform3 extends Transform {
     * @see Quaternion#rotateX(Quaternion, float, Quaternion)
     * @see Transform3#updateAxes()
     */
-
    public Transform3 rotateX ( final float radians ) {
 
       this.rotPrev.set(this.rotation);
@@ -652,7 +639,6 @@ public class Transform3 extends Transform {
     * @see Quaternion#rotateY(Quaternion, float, Quaternion)
     * @see Transform3#updateAxes()
     */
-
    public Transform3 rotateY ( final float radians ) {
 
       this.rotPrev.set(this.rotation);
@@ -675,7 +661,6 @@ public class Transform3 extends Transform {
     * @see Quaternion#rotateZ(Quaternion, float, Quaternion)
     * @see Transform3#updateAxes()
     */
-
    public Transform3 rotateZ ( final float radians ) {
 
       this.rotPrev.set(this.rotation);
@@ -693,7 +678,6 @@ public class Transform3 extends Transform {
     *
     * @see Vec3#mul(Vec3, float, Vec3)
     */
-
    public Transform3 scaleBy ( final float scalar ) {
 
       if ( scalar != 0.0f ) {
@@ -715,7 +699,6 @@ public class Transform3 extends Transform {
     * @see Vec3#all(Vec3)
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     */
-
    public Transform3 scaleBy ( final Vec3 nonUniformScale ) {
 
       if ( Vec3.all(nonUniformScale) ) {
@@ -732,7 +715,6 @@ public class Transform3 extends Transform {
     *
     * @return this transform
     */
-
    public Transform3 scaleTo ( final float scalar ) {
 
       if ( scalar != 0.0f ) {
@@ -753,7 +735,6 @@ public class Transform3 extends Transform {
     *
     * @see Vec3#all(Vec3)
     */
-
    public Transform3 scaleTo ( final Vec3 scaleNew ) {
 
       if ( Vec3.all(scaleNew) ) {
@@ -776,7 +757,6 @@ public class Transform3 extends Transform {
     *
     * @see Vec3#all(Vec3)
     */
-
    public Transform3 scaleTo ( final Vec3 scaleNew, final float step ) {
 
       if ( Vec3.all(scaleNew) ) {
@@ -800,7 +780,6 @@ public class Transform3 extends Transform {
     * @see Vec3#all(Vec3)
     * @see Vec3.AbstrEasing#apply(Vec3, Vec3, Float, Vec3)
     */
-
    public Transform3 scaleTo ( final Vec3 scaleNew, final float step,
       final Vec3.AbstrEasing easingFunc ) {
 
@@ -830,7 +809,6 @@ public class Transform3 extends Transform {
     *
     * @see Transform3#updateAxes()
     */
-
    public Transform3 set ( final float xLoc, final float yLoc, final float zLoc,
       final float real, final float xImag, final float yImag, final float zImag,
       final float xScale, final float yScale, final float zScale ) {
@@ -863,7 +841,6 @@ public class Transform3 extends Transform {
     * @see Quaternion#fromAngle(float, Quaternion)
     * @see Transform3#updateAxes()
     */
-
    public Transform3 set ( final Transform2 source ) {
 
       this.location.set(source.location, 0.0f);
@@ -881,7 +858,6 @@ public class Transform3 extends Transform {
     *
     * @return this transform
     */
-
    public Transform3 set ( final Transform3 source ) {
 
       return this.set(source.location, source.rotation, source.scale);
@@ -896,7 +872,6 @@ public class Transform3 extends Transform {
     *
     * @return this transform
     */
-
    public Transform3 set ( final Vec3 locNew, final Quaternion rotNew,
       final Vec3 scaleNew ) {
 

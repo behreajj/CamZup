@@ -222,7 +222,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @see Knot3#alignHandlesForward()
     */
-
    public Knot3 alignHandles ( ) { return this.alignHandlesForward(); }
 
    /**
@@ -234,7 +233,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @see Utils#hypot(float, float, float)
     * @see Utils#invHypot(float, float, float)
     */
-
    public Knot3 alignHandlesBackward ( ) {
 
       final float cox = this.coord.x;
@@ -268,7 +266,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @see Utils#hypot(float, float, float)
     * @see Utils#invHypot(float, float, float)
     */
-
    public Knot3 alignHandlesForward ( ) {
 
       final float cox = this.coord.x;
@@ -986,7 +983,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @see Mat4#mulPoint(Mat4, Vec3, Vec3)
     */
-
    public Knot3 transform ( final Mat4 m ) {
 
       Mat4.mulPoint(m, this.coord, this.coord);
@@ -1005,7 +1001,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
     */
-
    public Knot3 transform ( final Transform3 tr ) {
 
       Transform3.mulPoint(tr, this.coord, this.coord);
@@ -1024,7 +1019,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-
    public Knot3 translate ( final Vec3 v ) {
 
       Vec3.add(this.coord, v, this.coord);

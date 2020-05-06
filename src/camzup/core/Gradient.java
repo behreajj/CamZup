@@ -27,7 +27,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    protected final ColorKey query;
 
    {
-      this.keys = new TreeSet <>();
+      this.keys = new TreeSet <>(new ColorKey.SortQuantized());
       this.query = new ColorKey();
    }
 

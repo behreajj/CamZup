@@ -90,7 +90,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     *
     * @return this mesh entity
     */
-
    public MeshEntity3 append ( final Mesh3 mesh ) {
 
       // if ( mesh != null && mesh.length() > 0 ) { this.meshes.add(mesh); }
@@ -105,7 +104,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     *
     * @return this mesh entity
     */
-
    public MeshEntity3 appendAll ( final Collection < Mesh3 > app ) {
 
       final Iterator < Mesh3 > itr = app.iterator();
@@ -122,7 +120,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     *
     * @return this mesh entity
     */
-
    public MeshEntity3 appendAll ( final Mesh3... app ) {
 
       final int len = app.length;
@@ -170,7 +167,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     * @return this entity
     */
    @Override
-
    public MeshEntity3 scaleBy ( final float scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -188,7 +184,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     * @return the entity
     */
    @Override
-
    public MeshEntity3 scaleBy ( final Vec3 scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -203,7 +198,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     * @return this entity
     */
    @Override
-
    public MeshEntity3 scaleTo ( final float scaleNew ) {
 
       this.transform.scaleTo(scaleNew);
@@ -221,7 +215,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     * @return this entity
     */
    @Override
-
    public MeshEntity3 scaleTo ( final Vec3 scaleNew ) {
 
       this.transform.scaleTo(scaleNew);
@@ -240,7 +233,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     * @return this entity
     */
    @Override
-
    public MeshEntity3 scaleTo ( final Vec3 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);

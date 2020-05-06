@@ -491,7 +491,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     *
     * @return this vector
     */
-
    public Vec3 reset ( ) { return this.set(0.0f, 0.0f, 0.0f); }
 
    /**
@@ -504,7 +503,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     *
     * @return this vector
     */
-
    public Vec3 set ( final boolean x, final boolean y, final boolean z ) {
 
       this.x = x ? 1.0f : 0.0f;
@@ -522,7 +520,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     *
     * @return this vector
     */
-
    public Vec3 set ( final float x, final float y, final float z ) {
 
       this.x = x;
@@ -545,7 +542,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     *
     * @see Float#parseFloat(String)
     */
-
    public Vec3 set ( final String xstr, final String ystr, final String zstr ) {
 
       float xprs = 0.0f;
@@ -584,7 +580,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     *
     * @return this vector
     */
-
    public Vec3 set ( final Vec2 v2 ) { return this.set(v2.x, v2.y, 0.0f); }
 
    /**
@@ -595,7 +590,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     *
     * @return this vector
     */
-
    public Vec3 set ( final Vec2 v2, final float z ) {
 
       return this.set(v2.x, v2.y, z);
@@ -608,7 +602,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     *
     * @return this vector
     */
-
    public Vec3 set ( final Vec3 source ) {
 
       return this.set(source.x, source.y, source.z);

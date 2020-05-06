@@ -78,7 +78,6 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     * @return this material
     */
    @Override
-
    public MaterialUv moveBy ( final Vec2 dir ) {
 
       this.transform.moveBy(dir);
@@ -93,7 +92,6 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     * @return this material
     */
    @Override
-
    public MaterialUv moveTo ( final Vec2 locNew ) {
 
       this.transform.moveTo(locNew);
@@ -109,7 +107,6 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     * @return this material
     */
    @Override
-
    public MaterialUv moveTo ( final Vec2 locNew, final float step ) {
 
       this.transform.moveTo(locNew, step);
@@ -124,7 +121,6 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     * @return this material
     */
    @Override
-
    public MaterialUv rotateTo ( final float rotNew ) {
 
       this.transform.rotateTo(rotNew);
@@ -140,7 +136,6 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     * @return this material
     */
    @Override
-
    public MaterialUv rotateTo ( final float rotNew, final float step ) {
 
       this.transform.rotateTo(rotNew, step);
@@ -155,7 +150,6 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     * @return this material
     */
    @Override
-
    public MaterialUv rotateZ ( final float radians ) {
 
       this.transform.rotateZ(radians);
@@ -170,7 +164,6 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     * @return this material
     */
    @Override
-
    public MaterialUv scaleBy ( final float scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -185,7 +178,6 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     * @return the material
     */
    @Override
-
    public MaterialUv scaleBy ( final Vec2 scalar ) {
 
       this.transform.scaleBy(scalar);
@@ -200,7 +192,6 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     * @return this material
     */
    @Override
-
    public MaterialUv scaleTo ( final float scalar ) {
 
       this.transform.scaleTo(scalar);
@@ -215,7 +206,6 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     * @return this material
     */
    @Override
-
    public MaterialUv scaleTo ( final Vec2 scalar ) {
 
       this.transform.scaleTo(scalar);
@@ -231,7 +221,6 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     * @return this material
     */
    @Override
-
    public MaterialUv scaleTo ( final Vec2 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);
@@ -245,7 +234,6 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     *
     * @return this material
     */
-
    public MaterialUv setTint ( final Color tint ) {
 
       this.tint.set(tint);
@@ -261,7 +249,6 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     *
     * @return this material
     */
-
    public MaterialUv setTint ( final float r, final float g, final float b ) {
 
       this.tint.set(r, g, b);
@@ -278,7 +265,6 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     *
     * @return this material
     */
-
    public MaterialUv setTint ( final float r, final float g, final float b,
       final float a ) {
 
@@ -293,7 +279,6 @@ public abstract class MaterialUv extends Material implements ISpatial2,
     *
     * @return this material
     */
-
    public MaterialUv setTint ( final int tint ) {
 
       Color.fromHex(tint, this.tint);

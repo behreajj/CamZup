@@ -427,24 +427,22 @@ public class MaterialSolid extends Material implements Cloneable {
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(256)
-         .append("{ name: \"")
-         .append(this.name)
-         .append("\", fill: ")
-         .append(this.fill.toString(places))
-         .append(", stroke: ")
-         .append(this.stroke.toString(places))
-         .append(", strokeWeight: ")
-         .append(Utils.toFixed(this.strokeWeight, places))
-         .append(", useFill: ")
-         .append(this.useFill)
-         .append(", useStroke: ")
-         .append(this.useStroke)
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(256);
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append("\", fill: ");
+      sb.append(this.fill.toString(places));
+      sb.append(", stroke: ");
+      sb.append(this.stroke.toString(places));
+      sb.append(", strokeWeight: ");
+      sb.append(Utils.toFixed(this.strokeWeight, places));
+      sb.append(", useFill: ");
+      sb.append(this.useFill);
+      sb.append(", useStroke: ");
+      sb.append(this.useStroke);
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**

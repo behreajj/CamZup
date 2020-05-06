@@ -5,7 +5,7 @@ import java.util.Comparator;
 /**
  * A direction that extends from an originating point.
  */
-public class Ray3 extends Ray {
+public class Ray3 implements Cloneable {
 
    /**
     * The ray's direction.
@@ -25,18 +25,14 @@ public class Ray3 extends Ray {
    /**
     * The default constructor.
     */
-   public Ray3 ( ) { super(); }
+   public Ray3 ( ) {}
 
    /**
     * Creates a new ray from a source.
     *
     * @param source the source
     */
-   public Ray3 ( final Ray3 source ) {
-
-      super();
-      this.set(source);
-   }
+   public Ray3 ( final Ray3 source ) { this.set(source); }
 
    /**
     * Creates a new ray from an origin and direction.
@@ -46,7 +42,6 @@ public class Ray3 extends Ray {
     */
    public Ray3 ( final Vec3 origin, final Vec3 dir ) {
 
-      super();
       this.set(origin, dir);
    }
 

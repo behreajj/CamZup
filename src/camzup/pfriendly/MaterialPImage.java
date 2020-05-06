@@ -85,7 +85,6 @@ public class MaterialPImage extends MaterialUv {
     *
     * @return this material
     */
-
    public MaterialPImage setTexture ( final PImage texture ) {
 
       if ( texture != null ) {
@@ -105,7 +104,6 @@ public class MaterialPImage extends MaterialUv {
     *
     * @return this material
     */
-
    public MaterialPImage setTextureParent ( final PApplet parent ) {
 
       this.texture.parent = parent;
@@ -130,20 +128,18 @@ public class MaterialPImage extends MaterialUv {
    @Override
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(256)
-         .append("{ name: \"")
-         .append(this.name)
-         .append("\", tint: ")
-         .append(this.tint.toString(places))
-         .append(", texture: ")
-         .append(ZImage.toString(this.texture))
-         .append(", transform: ")
-         .append(this.transform.toString(places))
-         .append(' ')
-         .append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(256);
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append("\", tint: ");
+      sb.append(this.tint.toString(places));
+      sb.append(", texture: ");
+      sb.append(ZImage.toString(this.texture));
+      sb.append(", transform: ");
+      sb.append(this.transform.toString(places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**
@@ -158,7 +154,6 @@ public class MaterialPImage extends MaterialUv {
     *
     * @return the material
     */
-   @SuppressWarnings ( "null" )
    public static MaterialPImage[] fromMtl ( final String[] lines ) {
 
       final int len = lines.length;

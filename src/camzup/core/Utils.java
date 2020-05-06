@@ -49,32 +49,46 @@ public abstract class Utils implements IUtils {
     * the input is less than or equal to -1.0; \u03c0 / 2.0 when the input is
     * 0.0; 0.0 when the input is greater than or equal to 1.0.<br>
     * <br>
+    * {@link Math#acos(double) } defers to {@link StrictMath#acos(double) },
+    * which is implemented natively. It should <em>not</em> be assumed that
+    * this method is faster than that.<br>
+    * <br>
     * Based on the algorithm at the
-    * <a href= "https://developer.download.nvidia.com/cg/acos.html">Nvidia Cg
+    * <a href="https://developer.download.nvidia.com/cg/acos.html">Nvidia Cg
     * 3.1 Toolkit Documentation</a>. This cites M. Abramowitz and I.A. Stegun,
     * Eds., <em>Handbook of Mathematical Functions</em>, possibly p. 83, which
     * cites <em>Approximations for Digital Computers</em> by C. Hastings, Jr.
     *
-    * @param value the input value
+    * @param y the input value
     *
     * @return the angle in radians
     *
-    * @see Utils#sqrt(float)
+    * @see Utils#sqrtUnchecked(float)
     *
     * @author M. Abramowitz
     * @author C. Hastings, Jr
     * @author I. A. Stegun
     */
-   public static float acos ( final float value ) {
+   public static float acos ( final float y ) {
 
-      if ( value <= -1.0f ) { return IUtils.PI; }
-      if ( value >= 1.0f ) { return 0.0f; }
+      if ( y <= -1.0f ) { return IUtils.PI; }
+      if ( y >= 1.0f ) { return 0.0f; }
 
-      final boolean ltZero = value < -0.0f;
-      final float x = ltZero ? -value : value;
+      // return ( float ) Math.acos(y);
+
+      final boolean ltZero = y < -0.0f;
+      final float x = ltZero ? -y : y;
       float ret = ( 0.074261f - 0.0187293f * x ) * x - 0.2121144f;
       ret = ( ret * x + IUtils.HALF_PI ) * Utils.sqrtUnchecked(1.0f - x);
       return ltZero ? IUtils.PI - ret : ret;
+
+      // if ( y < -0.0f ) {
+      // return IUtils.PI - Utils.sqrtUnchecked(1.0f + y) * ( IUtils.HALF_PI
+      // + ( 0.2121144f + y * ( 0.074261f + 0.0187293f * y ) ) * y );
+      // } else {
+      // return Utils.sqrtUnchecked(1.0f - y) * ( ( ( 0.074261f - 0.0187293f
+      // * y ) * y - 0.2121144f ) * y + IUtils.HALF_PI );
+      // }
    }
 
    /**
@@ -133,30 +147,36 @@ public abstract class Utils implements IUtils {
     * input is 0.0; \u03c0 / 2.0 when the input is greater than or equal to
     * 1.0.<br>
     * <br>
+    * {@link Math#asin(double) } defers to {@link StrictMath#asin(double) },
+    * which is implemented natively. It should <em>not</em> be assumed that
+    * this method is faster than that.<br>
+    * <br>
     * Based on the algorithm at the
-    * <a href= "https://developer.download.nvidia.com/cg/asin.html">Nvidia Cg
+    * <a href="https://developer.download.nvidia.com/cg/asin.html">Nvidia Cg
     * 3.1 Toolkit Documentation</a> . This cites M. Abramowitz and I.A.
     * Stegun, Eds., <em>Handbook of Mathematical Functions</em>, possibly p.
     * 83, which cites <em>Approximations for Digital Computers</em> by C.
     * Hastings, Jr.
     *
-    * @param value the input value
+    * @param y the input value
     *
     * @return the angle in radians
     *
-    * @see Utils#sqrt(float)
+    * @see Utils#sqrtUnchecked(float)
     *
     * @author M. Abramowitz
     * @author C. Hastings, Jr
     * @author I. A. Stegun
     */
-   public static float asin ( final float value ) {
+   public static float asin ( final float y ) {
 
-      if ( value <= -1.0f ) { return -IUtils.HALF_PI; }
-      if ( value >= 1.0f ) { return IUtils.HALF_PI; }
+      if ( y <= -1.0f ) { return -IUtils.HALF_PI; }
+      if ( y >= 1.0f ) { return IUtils.HALF_PI; }
 
-      final boolean ltZero = value < -0.0f;
-      final float x = ltZero ? -value : value;
+      // return ( float ) Math.asin(y);
+
+      final boolean ltZero = y < -0.0f;
+      final float x = ltZero ? -y : y;
       float ret = ( 0.074261f - 0.0187293f * x ) * x - 0.2121144f;
       ret = ret * x + IUtils.HALF_PI;
       ret = IUtils.HALF_PI - ret * Utils.sqrtUnchecked(1.0f - x);
@@ -254,7 +274,6 @@ public abstract class Utils implements IUtils {
       for ( int i = 0; i < Byte.SIZE; ++i ) {
          result[i] = ( byte ) ( a >> i & 1 );
       }
-
       return result;
    }
 
@@ -709,9 +728,12 @@ public abstract class Utils implements IUtils {
     * the Newton-Raphson method.<br>
     * <br>
     * Useful when normalizing vectors or quaternions. Prefer this over
-    * {@link Utils#sqrt(float)}, which depends on this function.
+    * {@link Utils#sqrt(float)}, which depends on this function.<br>
+    * <br>
+    * It should not be assumed that this is faster than
+    * {@link Math#sqrt(double)}.
     *
-    * @param value the value
+    * @param x the value
     *
     * @return the inverse square root
     *
@@ -721,12 +743,12 @@ public abstract class Utils implements IUtils {
     * @see Float#floatToIntBits(float)
     * @see Float#intBitsToFloat(int)
     */
-   public static float invSqrtUnchecked ( final float value ) {
+   public static float invSqrtUnchecked ( final float x ) {
 
-      final float vhalf = value * 0.5f;
-      float y = Float.intBitsToFloat(0x5f375a86 - ( Float.floatToIntBits(value)
+      float y = Float.intBitsToFloat(0x5f375a86 - ( Float.floatToIntBits(x)
          >> 1 ));
 
+      final float vhalf = x * 0.5f;
       y *= 1.5f - vhalf * y * y;
       y *= 1.5f - vhalf * y * y;
       y *= 1.5f - vhalf * y * y;
@@ -1610,52 +1632,6 @@ public abstract class Utils implements IUtils {
       sb.append('[').append(' ');
       for ( int i = 0; i < arr.length; ++i ) {
          sb.append(arr[i].toString());
-         if ( i < last ) { sb.append(',').append(' '); }
-      }
-
-      sb.append(' ').append(']');
-      return sb.toString();
-   }
-
-   /**
-    * Returns a String representation of a two dimensional array of objects.
-    *
-    * @param arr the array
-    *
-    * @return the String
-    */
-   public static String toString ( final Object[][] arr ) {
-
-      final int len = arr.length;
-      final int last = len - 1;
-
-      final StringBuilder sb = new StringBuilder(len * 128);
-      sb.append('[').append(' ');
-      for ( int i = 0; i < arr.length; ++i ) {
-         sb.append(Utils.toString(arr[i]));
-         if ( i < last ) { sb.append(',').append(' '); }
-      }
-
-      sb.append(' ').append(']');
-      return sb.toString();
-   }
-
-   /**
-    * Returns a String representation of a three dimensional array of objects.
-    *
-    * @param arr the array
-    *
-    * @return the String
-    */
-   public static String toString ( final Object[][][] arr ) {
-
-      final int len = arr.length;
-      final int last = len - 1;
-
-      final StringBuilder sb = new StringBuilder(len * 512);
-      sb.append('[').append(' ');
-      for ( int i = 0; i < arr.length; ++i ) {
-         sb.append(Utils.toString(arr[i]));
          if ( i < last ) { sb.append(',').append(' '); }
       }
 

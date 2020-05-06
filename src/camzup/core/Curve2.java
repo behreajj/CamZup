@@ -632,6 +632,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       sb.append(this.name);
       sb.append("\", closedLoop: ");
       sb.append(this.closedLoop);
+      sb.append(", materialIndex: ");
+      sb.append(this.materialIndex);
       sb.append(", knots: [ ");
 
       final Iterator < Knot2 > itr = this.knots.iterator();
@@ -724,7 +726,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @see Knot2#transform(Mat3)
     */
-
    public Curve2 transform ( final Mat3 m ) {
 
       final Iterator < Knot2 > itr = this.knots.iterator();
@@ -749,7 +750,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return this mesh
     */
-
    public Curve2 transform ( final Transform2 tr ) {
 
       final Iterator < Knot2 > itr = this.knots.iterator();
@@ -769,7 +769,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @see Knot2#translate(Vec2)
     */
-
    public Curve2 translate ( final Vec2 v ) {
 
       final Iterator < Knot2 > itr = this.knots.iterator();
@@ -794,7 +793,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @see List#add(Object)
     * @see List#remove(int)
     */
-
    Curve2 resize ( final int len ) {
 
       final int vlen = len < 2 ? 2 : len;
@@ -1108,7 +1106,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public static Curve2 circle ( final float offsetAngle, final float radius,
       final Curve2 target ) {
 
-      return Curve2.circle(offsetAngle, radius, Curve.KNOTS_PER_CIRCLE, target);
+      return Curve2.circle(offsetAngle, radius, ICurve.KNOTS_PER_CIRCLE,
+         target);
    }
 
    /**
@@ -2207,7 +2206,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    static Curve2 ellipse ( final float radius, final float aspect,
       final float xCenter, final float yCenter, final Curve2 target ) {
 
-      // TODO: RESEARCH multiple knots rather than just 4.
       final float vrad = Utils.max(radius, IUtils.DEFAULT_EPSILON);
       final float ry = vrad * aspect;
 
@@ -2216,12 +2214,11 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float left = xCenter - vrad;
       final float bottom = yCenter - ry;
 
-      final float horizHandle = vrad * Curve.HNDL_MAG_ORTHO;
-      final float vertHandle = ry * Curve.HNDL_MAG_ORTHO;
+      final float horizHandle = vrad * ICurve.HNDL_MAG_ORTHO;
+      final float vertHandle = ry * ICurve.HNDL_MAG_ORTHO;
 
       final float xHandlePos = xCenter + horizHandle;
       final float xHandleNeg = xCenter - horizHandle;
-
       final float yHandlePos = yCenter + vertHandle;
       final float yHandleNeg = yCenter - vertHandle;
 

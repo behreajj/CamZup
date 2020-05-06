@@ -1466,10 +1466,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final StringBuilder sb = new StringBuilder(2048);
       sb.append("{ name: \"");
       sb.append(this.name);
-      sb.append('\"');
-      sb.append(',');
-      sb.append(' ');
-      sb.append("coords: [ ");
+      sb.append("\", materialIndex: ");
+      sb.append(this.materialIndex);
+      sb.append(", coords: [ ");
 
       if ( this.coords != null ) {
          final int len = this.coords.length <= trunc ? this.coords.length
@@ -2236,29 +2235,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       }
 
       return meshes;
-   }
-
-   /**
-    * Returns a one dimensional float array containing the components of the
-    * mesh's coordinates. The array's length will be that of the mesh's
-    * coordinate array multiplied by 3, the number of dimensions in the
-    * vector. For constructing a float buffer from the mesh.
-    *
-    * @param m the mesh
-    *
-    * @return the array.
-    */
-   public static float[] floatArrCoords ( final Mesh2 m ) {
-
-      final Vec2[] vs = m.coords;
-      final int vsLen = vs.length;
-      final float[] result = new float[vsLen * 2];
-      for ( int i = 0, j = 0; i < vsLen; ++i, j += 2 ) {
-         final Vec2 v = vs[i];
-         result[j] = v.x;
-         result[j + 1] = v.y;
-      }
-      return result;
    }
 
    /**

@@ -530,7 +530,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
       if ( b.x != 0.0f ) { this.x %= b.x; }
       if ( b.y != 0.0f ) { this.y %= b.y; }
       if ( b.z != 0.0f ) { this.z %= b.z; }
-      if ( b.w != 0.0f ) { this.z %= b.w; }
+      if ( b.w != 0.0f ) { this.w %= b.w; }
    }
 
    /**
@@ -538,7 +538,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return this vector
     */
-
    public Vec4 reset ( ) { return this.set(0.0f, 0.0f, 0.0f, 0.0f); }
 
    /**
@@ -552,7 +551,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return this vector
     */
-
    public Vec4 set ( final boolean x, final boolean y, final boolean z,
       final boolean w ) {
 
@@ -573,7 +571,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return this vector
     */
-
    public Vec4 set ( final float x, final float y, final float z,
       final float w ) {
 
@@ -598,7 +595,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @see Float#parseFloat(String)
     */
-
    public Vec4 set ( final String xstr, final String ystr, final String zstr,
       final String wstr ) {
 
@@ -646,7 +642,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return this vector
     */
-
    public Vec4 set ( final Vec2 v2 ) {
 
       return this.set(v2.x, v2.y, 0.0f, 0.0f);
@@ -659,7 +654,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return this vector
     */
-
    public Vec4 set ( final Vec3 v3 ) {
 
       return this.set(v3.x, v3.y, v3.z, 0.0f);
@@ -676,7 +670,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return this vector
     */
-
    public Vec4 set ( final Vec3 v3, final float w ) {
 
       return this.set(v3.x, v3.y, v3.z, w);
@@ -689,7 +682,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return this vector
     */
-
    public Vec4 set ( final Vec4 source ) {
 
       return this.set(source.x, source.y, source.z, source.w);

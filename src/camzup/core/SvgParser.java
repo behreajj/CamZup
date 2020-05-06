@@ -273,7 +273,7 @@ public abstract class SvgParser {
    /**
     * Parse a path arc-to command, based off the Processing implementation,
     * which references
-    * <a href=" http://www.spaceroots.org/documents/ellipse/node22.html">these
+    * <a href="http://www.spaceroots.org/documents/ellipse/node22.html">these
     * equations</a>.<br>
     * <br>
     * According to the SVG specification, the large arc flag "is 0 if an arc
@@ -482,8 +482,8 @@ public abstract class SvgParser {
          final float left = cx - rx;
          final float bottom = cy - ry;
 
-         final float horizHandle = rx * Curve.HNDL_MAG_ORTHO;
-         final float vertHandle = ry * Curve.HNDL_MAG_ORTHO;
+         final float horizHandle = rx * ICurve.HNDL_MAG_ORTHO;
+         final float vertHandle = ry * ICurve.HNDL_MAG_ORTHO;
 
          final float xHandlePos = cx + horizHandle;
          final float xHandleNeg = cx - horizHandle;
@@ -1308,13 +1308,13 @@ public abstract class SvgParser {
                         prev = curr;
 
                         target.appendAll(
-                           SvgParser.parseArcTo(prev, 
-                              SvgParser.parseFloat(rx), 
-                              SvgParser.parseFloat(ry), 
+                           SvgParser.parseArcTo(prev,
+                              SvgParser.parseFloat(rx),
+                              SvgParser.parseFloat(ry),
                               SvgParser.parseAngle(angle),
                               SvgParser.parseFlagToBool(fa),
-                              SvgParser.parseFlagToBool(fs), 
-                              SvgParser.parseFloat(coxStr), 
+                              SvgParser.parseFlagToBool(fs),
+                              SvgParser.parseFloat(coxStr),
                               SvgParser.parseFloat(coyStr)));
 
                         curr = target.get(target.length() - 1);
@@ -1337,7 +1337,7 @@ public abstract class SvgParser {
                         prev = curr;
 
                         target.appendAll(
-                           SvgParser.parseArcTo(prev, 
+                           SvgParser.parseArcTo(prev,
                               SvgParser.parseFloat(rx),
                               SvgParser.parseFloat(ry),
                               SvgParser.parseAngle(angle),
@@ -1369,8 +1369,8 @@ public abstract class SvgParser {
 
             /* Deal with first and last knots in open versus closed loop. */
             final Iterator < Curve2 > resultItr = result.iterator();
-//            final ArrayList < Curve2 > emptyCurves = new ArrayList <>(2);
-//            int emptyCurvesFound = 0;
+            // final ArrayList < Curve2 > emptyCurves = new ArrayList <>(2);
+            // int emptyCurvesFound = 0;
             while ( resultItr.hasNext() ) {
                final Curve2 curve = resultItr.next();
                final int len = curve.length();
@@ -1385,8 +1385,8 @@ public abstract class SvgParser {
                      last.mirrorHandlesBackward();
                   }
                } else {
-//                  emptyCurvesFound++;
-//                  emptyCurves.add(curve);
+                  // emptyCurvesFound++;
+                  // emptyCurves.add(curve);
                }
             }
 

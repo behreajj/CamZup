@@ -141,7 +141,6 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-
    public Transform2 flipX ( ) {
 
       this.scalePrev.set(this.scale);
@@ -155,7 +154,6 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-
    public Transform2 flipY ( ) {
 
       this.scalePrev.set(this.scale);
@@ -669,7 +667,6 @@ public class Transform2 extends Transform {
     * @see Vec2#all(Vec2)
     * @see Vec2.AbstrEasing#apply(Vec2, Vec2, Float, Vec2)
     */
-
    public Transform2 scaleTo ( final Vec2 scaleNew, final float step,
       final Vec2.AbstrEasing easingFunc ) {
 
@@ -693,7 +690,6 @@ public class Transform2 extends Transform {
     *
     * @see Transform2#rotateTo(float)
     */
-
    public Transform2 set ( final float xLoc, final float yLoc,
       final float radians, final float xScale, final float yScale ) {
 
@@ -716,7 +712,6 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-
    public Transform2 set ( final Transform2 source ) {
 
       return this.set(source.location, source.rotation, source.scale);
@@ -731,7 +726,6 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
-
    public Transform2 set ( final Vec2 locNew, final float rotNew,
       final Vec2 scaleNew ) {
 
@@ -828,7 +822,6 @@ public class Transform2 extends Transform {
     *
     * @return the wrapped transform
     */
-
    public Transform2 wrap ( final Vec2 lb, final Vec2 ub ) {
 
       this.locPrev.set(this.location);

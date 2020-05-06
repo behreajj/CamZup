@@ -90,7 +90,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     *
     * @return this mesh entity
     */
-
    public MeshEntity2 append ( final Mesh2 mesh ) {
 
       // if ( mesh != null && mesh.length() > 0 ) { this.meshes.add(mesh); }
@@ -105,7 +104,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     *
     * @return this mesh entity
     */
-
    public MeshEntity2 appendAll ( final Collection < Mesh2 > app ) {
 
       final Iterator < Mesh2 > itr = app.iterator();
@@ -122,7 +120,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     *
     * @return this mesh entity
     */
-
    public MeshEntity2 appendAll ( final Mesh2... app ) {
 
       final int len = app.length;
@@ -446,7 +443,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       }
 
       if ( extrude > 0.0f ) {
-
          pyCd.append("    solidify = mesh_obj.modifiers.new(");
          pyCd.append("\"Solidify\", \"SOLIDIFY\")\n");
          pyCd.append("    solidify.thickness = ");
@@ -573,7 +569,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
           * an SVG with loadShape.
           */
          if ( includesMats ) {
-
             final int vMatIdx = Utils.mod(mesh.materialIndex, matLen);
             final MaterialSolid material = materials[vMatIdx];
             svgp.append("<g ");

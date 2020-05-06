@@ -634,7 +634,6 @@ public class Mat4 extends Matrix {
     *
     * @return this matrix
     */
-
    public Mat4 set ( final Mat4 source ) {
 
       return this.set(source.m00, source.m01, source.m02, source.m03,
@@ -653,7 +652,6 @@ public class Mat4 extends Matrix {
     *
     * @return this matrix
     */
-
    public Mat4 setCol ( final int j, final Vec3 source ) {
 
       switch ( j ) {
@@ -719,7 +717,6 @@ public class Mat4 extends Matrix {
     *
     * @return this matrix
     */
-
    public Mat4 setCol ( final int j, final Vec4 source ) {
 
       switch ( j ) {
@@ -1373,11 +1370,8 @@ public class Mat4 extends Matrix {
    public static Mat4 fromRotation ( final float radians, final Vec3 axis,
       final Mat4 target ) {
 
-      // return Mat4.fromRotation(
-      // Utils.cos(radians),
-      // Utils.sin(radians),
-      // axis,
-      // target);
+      // return Mat4.fromRotation(Utils.cos(radians), Utils.sin(radians),
+      // axis, target);
 
       final float norm = radians * IUtils.ONE_TAU;
       return Mat4.fromRotation(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),

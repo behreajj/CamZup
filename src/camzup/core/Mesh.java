@@ -71,7 +71,6 @@ public abstract class Mesh extends EntityData implements IMesh {
     *
     * @return this mesh
     */
-
    public Mesh cycleFaces ( final int places ) {
 
       final int len = this.faces.length;
@@ -93,7 +92,6 @@ public abstract class Mesh extends EntityData implements IMesh {
     *
     * @return this mesh
     */
-
    public Mesh cycleVerts ( final int faceIndex, final int places ) {
 
       final int[][] arr = this.faces[Utils.mod(faceIndex, this.faces.length)];
@@ -119,11 +117,29 @@ public abstract class Mesh extends EntityData implements IMesh {
     *
     * @return this mesh
     */
-
    public Mesh setMaterialIndex ( final int i ) {
 
       this.materialIndex = i < 0 ? 0 : i;
       return this;
+   }
+
+   /**
+    * Returns a string representation of the mesh.
+    *
+    * @return the string
+    */
+   @Override
+   public String toString ( ) {
+
+      // TODO: Is it necessary to print faces here?
+      final StringBuilder sb = new StringBuilder(64);
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append("\", materialIndex: ");
+      sb.append(this.materialIndex);
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**
@@ -250,8 +266,8 @@ public abstract class Mesh extends EntityData implements IMesh {
          final int[] temp = arr[st];
          arr[st] = arr[ed];
          arr[ed] = temp;
-         st++;
-         ed--;
+         ++st;
+         --ed;
       }
 
       return arr;
@@ -275,8 +291,8 @@ public abstract class Mesh extends EntityData implements IMesh {
          final int[][] temp = arr[st];
          arr[st] = arr[ed];
          arr[ed] = temp;
-         st++;
-         ed--;
+         ++st;
+         --ed;
       }
 
       return arr;

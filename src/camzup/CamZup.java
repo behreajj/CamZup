@@ -50,12 +50,15 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // for ( int i = 0; i < 10; ++i ) {
-      // float var12 = rng.nextFloat();
-      // float var45 = var12 - 1.0F + 0.5527864F;
-      // float var46 = var12 + x;
-      // System.out.println(var45);
-      // System.out.println(var46);
+      // final Rng rng = new Rng();
+      // for ( int i = 0; i < 20; ++i ) {
+      // final float var12 = rng.nextFloat();
+      // final float var45 = var12 * 2.0f - 1.0f;
+      // final float x = Utils.asin(var45);
+      // final float y = ( float ) Math.asin(var45);
+      // System.out.println(x);
+      // System.out.println(y);
+      // System.out.println(Utils.approx(x, y, 0.0001f));
       // }
 
       // final Img img = new Img();
@@ -67,6 +70,9 @@ public class CamZup {
       // System.out.println(split[i]);
       // }
 
+      // final Mesh2 m = new Mesh2();
+      // Mesh2.circle(m);
+      // System.out.println(m);
    }
 
    /**

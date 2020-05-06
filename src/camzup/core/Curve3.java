@@ -759,6 +759,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       sb.append(this.name);
       sb.append("\", closedLoop: ");
       sb.append(this.closedLoop);
+      sb.append(", materialIndex: ");
+      sb.append(this.materialIndex);
       sb.append(", knots: [ ");
 
       final Iterator < Knot3 > itr = this.knots.iterator();
@@ -1059,7 +1061,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public static Curve3 circle ( final float offsetAngle, final float radius,
       final Curve3 target ) {
 
-      return Curve3.circle(offsetAngle, radius, Curve.KNOTS_PER_CIRCLE, target);
+      return Curve3.circle(offsetAngle, radius, ICurve.KNOTS_PER_CIRCLE,
+         target);
    }
 
    /**

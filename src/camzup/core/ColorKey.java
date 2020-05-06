@@ -1,5 +1,7 @@
 package camzup.core;
 
+import java.util.Comparator;
+
 /**
  * Stores a color at a given step (or percent) in the range [0.0, 1.0] .
  * Equality and hash are based solely on the step, not on the color it
@@ -334,38 +336,57 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
    }
 
    /**
-    * The default tolerance used when comparing color keys.
+    * The default comparator used to compare color keys.
     */
-   public static final float DEFAULT_TOLERANCE = 0.0005f;
+   public static class SortQuantized implements Comparator < ColorKey > {
 
-   /**
-    * Tests to see if two keys have approximately the same step.
-    *
-    * @param a the left comparisand
-    * @param b the right comparisand
-    *
-    * @return the evaluation
-    */
-   public static boolean approx ( final ColorKey a, final ColorKey b ) {
+      /**
+       * Quantization level.
+       */
+      final public int level;
 
-      return ColorKey.approx(a, b, ColorKey.DEFAULT_TOLERANCE);
-   }
+      /**
+       * The default constructor.
+       */
+      SortQuantized ( ) { this(SortQuantized.DEFAULT_LEVEL); }
 
-   /**
-    * Tests to see if two keys have approximately the same step.
-    *
-    * @param a         the left comparisand
-    * @param b         the right comparisand
-    * @param tolerance the tolerance
-    *
-    * @return the evaluation
-    *
-    * @see Utils#approx(float, float, float)
-    */
-   public static boolean approx ( final ColorKey a, final ColorKey b,
-      final float tolerance ) {
+      /**
+       * Creates a quantized sorter with the specified number of levels.
+       *
+       * @param level quantization levels
+       */
+      SortQuantized ( final int level ) { this.level = level; }
 
-      return Utils.approx(a.step, b.step, tolerance);
+      /**
+       * Compares the quantized steps of the comparisand keys.
+       *
+       * @param a the left comparisand
+       * @param b the right comparisand
+       *
+       * @return the evaluation
+       */
+      @Override
+      public int compare ( final ColorKey a, final ColorKey b ) {
+
+         final float aq = Utils.quantize(a.step, this.level);
+         final float bq = Utils.quantize(b.step, this.level);
+         return aq > bq ? 1 : aq < bq ? -1 : 0;
+      }
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
+      /**
+       * Default quantization factor for color key steps,
+       * {@value SortQuantized#DEFAULT_LEVEL}.
+       */
+      public static final int DEFAULT_LEVEL = 16;
+
    }
 
 }

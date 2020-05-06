@@ -12,7 +12,6 @@ public interface IVolume2 extends IVolume {
     *
     * @return the object
     */
-
    IVolume2 scaleBy ( final Vec2 scalar );
 
    /**
@@ -22,7 +21,6 @@ public interface IVolume2 extends IVolume {
     *
     * @return the object
     */
-
    IVolume2 scaleTo ( final Vec2 scalar );
 
    /**
@@ -33,7 +31,6 @@ public interface IVolume2 extends IVolume {
     *
     * @return this object
     */
-
    IVolume2 scaleTo ( final Vec2 scalar, final float step );
 
 }

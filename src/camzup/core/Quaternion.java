@@ -372,7 +372,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return this quaternion
     */
-
    public Quaternion reset ( ) {
 
       this.real = 1.0f;
@@ -390,7 +389,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return this quaternion
     */
-
    public Quaternion set ( final float real, final float xImag,
       final float yImag, final float zImag ) {
 
@@ -407,7 +405,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return this quaternion
     */
-
    public Quaternion set ( final float real, final Vec3 imag ) {
 
       this.real = real;
@@ -422,7 +419,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return this quaternion
     */
-
    public Quaternion set ( final Quaternion source ) {
 
       this.real = source.real;
@@ -444,7 +440,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @see Float#parseFloat(String)
     */
-
    public Quaternion set ( final String wstr, final String xstr,
       final String ystr, final String zstr ) {
 
@@ -638,7 +633,11 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    /**
     * The default easing function.
     */
-   private static AbstrEasing EASING = new Slerp();
+   private static AbstrEasing EASING;
+
+   static {
+      Quaternion.EASING = new Slerp();
+   }
 
    /**
     * Adds two quaternions.
@@ -906,13 +905,13 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public static Quaternion div ( final Quaternion a, final float b,
       final Quaternion target ) {
 
-      if ( b == 0.0f ) { return target.reset(); }
-
-      final float bInv = 1.0f / b;
-      Vec3.mul(a.imag, bInv, target.imag);
-      target.real = a.real * bInv;
-
-      return target;
+      if ( b != 0.0f ) {
+         final float bInv = 1.0f / b;
+         Vec3.mul(a.imag, bInv, target.imag);
+         target.real = a.real * bInv;
+         return target;
+      }
+      return target.reset();
    }
 
    /**
@@ -1163,7 +1162,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          float ny = axis.y;
          float nz = axis.z;
 
-         if ( !Utils.approx(amSq, 1.0f) ) {
+         if ( !Utils.approx(amSq, 1.0f, IUtils.DEFAULT_EPSILON) ) {
             final float amInv = Utils.invSqrtUnchecked(amSq);
             nx *= amInv;
             ny *= amInv;
@@ -1207,7 +1206,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float zForward = dir.z * mInv0;
 
       /*
-       * Left handed: Cross (0.0, -1.0, 0.0) and forward. Right handed: Cross
+       * Left handed: cross (0.0, -1.0, 0.0) and forward. Right handed: cross
        * (0.0, 0.0, -1.0) and forward.
        */
       final boolean isRight = handedness == Handedness.RIGHT;
@@ -1221,7 +1220,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
             0.0f, IUtils.DEFAULT_EPSILON);
 
       if ( parallel ) {
-
          if ( isRight ) {
 
             /*
@@ -1229,16 +1227,12 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
              * (0.0, 0.0, 1.0) or (0.0, 0.0, -1.0) .
              */
             if ( zForward >= 0.0f ) {
-
                return target.set(IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f,
                   0.0f);
-
             } else if ( zForward < 0.0f ) {
-
                return target.set(-IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f,
                   0.0f);
             }
-
          } else {
 
             /*
@@ -1246,16 +1240,11 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
              * (0.0, 1.0, 0.0) or (0.0, -1.0, 0.0) .
              */
             if ( yForward >= 0.0f ) {
-
                return target.set(0.0f, 0.0f, 1.0f, 0.0f);
-
             } else if ( yForward < 0.0f ) {
-
                return target.set(0.0f, 0.0f, 0.0f, 1.0f);
-
             }
          }
-
       }
 
       /* Normalize right. */
@@ -1788,10 +1777,13 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float aw = a.real;
       final float bw = b.real;
 
-      return target.set(aw * bw - ( ai.x * bi.x + ai.y * bi.y + ai.z * bi.z ),
-         ai.x * bw + aw * bi.x + ai.y * bi.z - ai.z * bi.y, ai.y * bw + aw
-            * bi.y + ai.z * bi.x - ai.x * bi.z, ai.z * bw + aw * bi.z + ai.x
-               * bi.y - ai.y * bi.x);
+      /* @formatter:off */
+      return target.set(
+         aw * bw - ( ai.x * bi.x + ai.y * bi.y + ai.z * bi.z ),
+         ai.x * bw + aw * bi.x + ai.y * bi.z - ai.z * bi.y,
+         ai.y * bw + aw * bi.y + ai.z * bi.x - ai.x * bi.z,
+         ai.z * bw + aw * bi.z + ai.x * bi.y - ai.y * bi.x);
+      /* @formatter:on */
    }
 
    /**
@@ -1959,9 +1951,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @param target  the output quaternion
     *
     * @return the rotated quaternion
-    *
-    * @see Math#cos(double)
-    * @see Math#sin(double)
     */
    public static Quaternion rotateX ( final Quaternion q, final float radians,
       final Quaternion target ) {
@@ -2001,9 +1990,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @param target  the output quaternion
     *
     * @return the rotated quaternion
-    *
-    * @see Math#cos(double)
-    * @see Math#sin(double)
     */
    @Experimental
    public static Quaternion rotateY ( final Quaternion q, final float radians,
@@ -2044,9 +2030,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * @param target  the output quaternion
     *
     * @return the rotated quaternion
-    *
-    * @see Math#cos(double)
-    * @see Math#sin(double)
     */
    public static Quaternion rotateZ ( final Quaternion q, final float radians,
       final Quaternion target ) {
@@ -2209,13 +2192,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          .invSqrtUnchecked(mSq);
 
       final float angle = 2.0f * Utils.acos(wNorm);
-
-      // TODO: This shortcut may be problematic.
-      // Go back to Three.js source code...
-      // TEST
-      // final float wAsin = IUtils.TAU - angle;
+      final float wAsin = IUtils.TAU - angle;
       // final float wAsin = IUtils.PI - angle;
-      final float wAsin = Utils.asin(wNorm);
+      // final float wAsin = Utils.asin(wNorm);
       if ( wAsin == 0.0f ) {
          Vec3.forward(axis);
          return angle;
@@ -2234,7 +2213,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          return angle;
       }
 
-      if ( Utils.approx(amSq, 1.0f) ) {
+      if ( Utils.approx(amSq, 1.0f, IUtils.DEFAULT_EPSILON) ) {
          axis.set(ax, ay, az);
          return angle;
       }
@@ -2270,16 +2249,15 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
       final double ea = Math.exp(q.real);
       final float imSq = Vec3.mag(q.imag);
-      if ( imSq == 0.0f ) {
-         Vec3.zero(target.imag);
-         target.real = ( float ) ea;
+      if ( imSq != 0.0f ) {
+         final double im = Math.sqrt(imSq);
+         target.real = ( float ) ( ea * Math.cos(im) );
+         Vec3.mul(q.imag, ( float ) ( ea * Math.sin(im) / im ), target.imag);
          return target;
       }
 
-      final double im = Math.sqrt(imSq);
-      target.real = ( float ) ( ea * Math.cos(im) );
-      Vec3.mul(q.imag, ( float ) ( ea * Math.sin(im) / im ), target.imag);
-
+      Vec3.zero(target.imag);
+      target.real = ( float ) ea;
       return target;
    }
 

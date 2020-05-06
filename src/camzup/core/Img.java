@@ -459,10 +459,7 @@ public class Img implements Cloneable, Iterable < Color > {
       target.reallocate(wTrg, hTrg);
       final int[] pxTrg = target.pixels;
 
-      /*
-       * Iterate over width and height of target while finding equivalent index
-       * in source.
-       */
+      /* Loop over width and height of target while finding index in source. */
       for ( int kTrg = 0, yTrg = 0, ySrc = vx0; yTrg < hTrg; ++yTrg, ++ySrc ) {
          final int kSrcOff = ySrc * wSrc;
          for ( int xTrg = 0, xSrc = vy0; xTrg < wTrg; ++xTrg, ++kTrg, ++xSrc ) {

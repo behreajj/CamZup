@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * A direction that extends from an originating point.
  */
-public class Ray2 extends Ray {
+public class Ray2 implements Cloneable {
 
    /**
     * The ray's direction.
@@ -26,18 +26,14 @@ public class Ray2 extends Ray {
    /**
     * The default constructor.
     */
-   public Ray2 ( ) { super(); }
+   public Ray2 ( ) {}
 
    /**
     * Creates a new ray from a source.
     *
     * @param source the source
     */
-   public Ray2 ( final Ray2 source ) {
-
-      super();
-      this.set(source);
-   }
+   public Ray2 ( final Ray2 source ) { this.set(source); }
 
    /**
     * Creates a new ray from an origin and direction.
@@ -47,7 +43,6 @@ public class Ray2 extends Ray {
     */
    public Ray2 ( final Vec2 origin, final Vec2 dir ) {
 
-      super();
       this.set(origin, dir);
    }
 

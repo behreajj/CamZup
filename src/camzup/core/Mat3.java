@@ -402,7 +402,6 @@ public class Mat3 extends Matrix {
     *
     * @see Mat3#identity(Mat3)
     */
-
    public Mat3 reset ( ) {
 
       return this.set(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
@@ -419,7 +418,6 @@ public class Mat3 extends Matrix {
     *
     * @return this matrix
     */
-
    public Mat3 set ( final float m00, final float m01, final float m10,
       final float m11 ) {
 
@@ -439,7 +437,6 @@ public class Mat3 extends Matrix {
     *
     * @return this matrix
     */
-
    public Mat3 set ( final float m00, final float m01, final float m02,
       final float m10, final float m11, final float m12 ) {
 
@@ -461,7 +458,6 @@ public class Mat3 extends Matrix {
     *
     * @return this matrix
     */
-
    public Mat3 set ( final float m00, final float m01, final float m02,
       final float m10, final float m11, final float m12, final float m20,
       final float m21, final float m22 ) {
@@ -510,7 +506,6 @@ public class Mat3 extends Matrix {
     *
     * @return this matrix
     */
-
    public Mat3 set ( final Mat3 source ) {
 
       return this.set(source.m00, source.m01, source.m02, source.m10,

@@ -11,7 +11,6 @@ Complex exp = new Complex(2.0, 0.0);
 Complex seed = Complex.rect(seedr, seedphi, new Complex());
 
 Gradient grd = new Gradient(#322020, #dbcab8, #fff7d5);
-Color clr = new Color();
 
 void settings() {
   size(512, 256, "camzup.pfriendly.Yup2");
@@ -39,8 +38,7 @@ void draw() {
       st.real += st.real;
 
       float fac = julia(seed, st, exp, itr, zn);
-      Gradient.eval(grd, fac, clr);
-      pixels[idx] = Color.toHexInt(clr);
+      pixels[idx] = Gradient.eval(grd, fac);
     }
   }
   updatePixels();

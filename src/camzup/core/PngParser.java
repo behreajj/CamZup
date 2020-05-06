@@ -495,9 +495,9 @@ public abstract class PngParser {
       // TODO: Implement.
 
       for ( int i = zlibdat.length - 1; i > zlibdat.length - 128; --i ) {
-         byte reading = zlibdat[i];
-         byte[] bits = Utils.bitsml(reading);
-         String str = Utils.toString(bits);
+         final byte reading = zlibdat[i];
+         final byte[] bits = Utils.bitsml(reading);
+         final String str = Utils.toString(bits);
          System.out.println(str);
       }
       return target;
