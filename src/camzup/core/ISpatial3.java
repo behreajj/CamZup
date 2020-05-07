@@ -1,7 +1,8 @@
 package camzup.core;
 
 /**
- * Maintains consistent behavior for 3D animated objects with transforms.
+ * Maintains consistent behavior for 3D animated objects that move in
+ * space.
  */
 public interface ISpatial3 {
 
@@ -32,60 +33,5 @@ public interface ISpatial3 {
     * @return this object
     */
    ISpatial3 moveTo ( final Vec3 locNew, final float step );
-
-   /**
-    * Rotates this object by a quaternion.
-    *
-    * @param rot the quaternion
-    *
-    * @return this object
-    */
-   ISpatial3 rotateBy ( final Quaternion rot );
-
-   /**
-    * Rotates this object to a quaternion.
-    *
-    * @param rotNew the new rotation
-    *
-    * @return this object
-    */
-   ISpatial3 rotateTo ( final Quaternion rotNew );
-
-   /**
-    * Rotates this object to a quaternion over a step in time.
-    *
-    * @param rotNew the new rotation
-    * @param step   the step
-    *
-    * @return this object
-    */
-   ISpatial3 rotateTo ( final Quaternion rotNew, final float step );
-
-   /**
-    * Rotates this object by an angle around the x axis.
-    *
-    * @param radians the angle
-    *
-    * @return this object
-    */
-   ISpatial3 rotateX ( final float radians );
-
-   /**
-    * Rotates this object by an angle around the y axis.
-    *
-    * @param radians the angle
-    *
-    * @return this object
-    */
-   ISpatial3 rotateY ( final float radians );
-
-   /**
-    * Rotates this object by an angle around the z axis.
-    *
-    * @param radians the angle
-    *
-    * @return this object
-    */
-   ISpatial3 rotateZ ( final float radians );
 
 }

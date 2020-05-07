@@ -398,10 +398,10 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Moves the transform by a direction multiplied by the transform's
+    * Moves the transform by a direction rotated according to the transform's
     * rotation. Uses the formula:<br>
     * <br>
-    * move ( dir ) := location + ( scale * ( rotatez ( dir , rotation ) ) )
+    * move ( dir ) := location + rotation * direction
     *
     * @param dir the direction
     *
@@ -415,7 +415,7 @@ public class Transform2 extends Transform {
 
       this.locPrev.set(this.location);
       Vec2.rotateZ(dir, this.right.x, this.right.y, this.location);
-      Vec2.mul(this.location, this.scale, this.location);
+      // Vec2.mul(this.location, this.scale, this.location);
       Vec2.add(this.locPrev, this.location, this.location);
 
       return this;
@@ -882,7 +882,8 @@ public class Transform2 extends Transform {
       svgp.append(',').append(' ');
       svgp.append(Utils.toFixed(this.location.y, 6));
       svgp.append(") rotate(");
-      svgp.append(Utils.toFixed(this.rotation * IUtils.RAD_TO_DEG, 0));
+      svgp.append(Utils.toFixed(Utils.modRadians(this.rotation)
+         * IUtils.RAD_TO_DEG, 0));
       svgp.append(") scale(");
       svgp.append(Utils.toFixed(this.scale.x, 6));
       svgp.append(',').append(' ');

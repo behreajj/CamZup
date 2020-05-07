@@ -470,18 +470,6 @@ public interface IUp3 extends IUp {
    default void point ( final Vec3 v ) { this.point(v.x, v.y, v.z); }
 
    /**
-    * Pop the last style off the end of the stack.
-    */
-   @Override
-   void popStyle ( );
-
-   /**
-    * Push a style onto the end of the stack.
-    */
-   @Override
-   void pushStyle ( );
-
-   /**
     * Draws a quadratic Bezier curve segment to the next anchor point; the
     * control point shapes the curve segment.
     *
@@ -601,14 +589,6 @@ public interface IUp3 extends IUp {
       this.ray(origin.x, origin.y, origin.z, dir.x, dir.y, dir.z, dLen, lnwgt,
          oWeight, dWeight);
    }
-
-   /**
-    * Sets the renderer's stroke weight.
-    *
-    * @param sw the stroke weight
-    */
-   @Override
-   void strokeWeight ( final float sw );
 
    /**
     * Trucks the camera, moving it on its local x axis, left or right. This is

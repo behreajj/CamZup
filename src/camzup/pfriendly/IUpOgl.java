@@ -28,12 +28,6 @@ public interface IUpOgl extends IUp {
    boolean is3D ( );
 
    /**
-    * Draws the world origin.
-    */
-   @Override
-   void origin ( );
-
-   /**
     * Gets the renderer's texture sampling.
     *
     * @return the texture sampling

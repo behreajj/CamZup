@@ -769,22 +769,6 @@ public interface IYup2 extends IUp {
    void square ( final Vec2 a, final float b, final float rounding );
 
    /**
-    * Sets the renderer's stroke color.
-    *
-    * @param c the hexadecimal color
-    */
-   @Override
-   void stroke ( final int c );
-
-   /**
-    * Sets the renderer's stroke weight.
-    *
-    * @param sw the stroke weight
-    */
-   @Override
-   void strokeWeight ( final float sw );
-
-   /**
     * Generates an SVG string from a 2D curve entity.
     *
     * @param ce the curve entity

@@ -210,10 +210,10 @@ public class Edge2 implements Comparable < Edge2 > {
 
    public Edge2 scaleGlobal ( final float scalar ) {
 
-      if ( scalar == 0.0f ) { return this; }
-
-      Vec2.mul(this.origin.coord, scalar, this.origin.coord);
-      Vec2.mul(this.dest.coord, scalar, this.dest.coord);
+      if ( scalar != 0.0f ) {
+         Vec2.mul(this.origin.coord, scalar, this.origin.coord);
+         Vec2.mul(this.dest.coord, scalar, this.dest.coord);
+      }
       return this;
    }
 
@@ -575,7 +575,6 @@ public class Edge2 implements Comparable < Edge2 > {
       if ( Vert2.approxCoord(aOrigin, bOrigin) ) { return 2; }
       if ( Vert2.approxCoord(aOrigin, bDest) ) { return -1; }
       if ( Vert2.approxCoord(aDest, bDest) ) { return -2; }
-
       return 0;
    }
 

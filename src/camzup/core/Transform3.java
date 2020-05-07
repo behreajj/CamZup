@@ -388,14 +388,10 @@ public class Transform3 extends Transform {
 
       this.rotPrev.set(this.rotation);
       Vec3.sub(point, this.location, this.forward);
-
       Quaternion.fromDir(this.forward, handedness, this.rotation, this.right,
          this.forward, this.up);
-
       Quaternion.mix(this.rotPrev, this.rotation, step, this.rotation);
-
       this.updateAxes();
-
       return this;
    }
 
@@ -434,7 +430,7 @@ public class Transform3 extends Transform {
     * Moves the transform by a direction multiplied by the transform's
     * rotation. Uses the formula:<br>
     * <br>
-    * move ( dir ) := location + ( scale * ( rotation * direction ) )
+    * move ( dir ) := location + rotation * direction
     *
     * @param dir the direction
     *
@@ -448,7 +444,7 @@ public class Transform3 extends Transform {
 
       this.locPrev.set(this.location);
       Quaternion.mulVector(this.rotation, dir, this.location);
-      Vec3.mul(this.location, this.scale, this.location);
+      // Vec3.mul(this.location, this.scale, this.location);
       Vec3.add(this.locPrev, this.location, this.location);
 
       return this;

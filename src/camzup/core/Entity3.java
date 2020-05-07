@@ -5,7 +5,7 @@ package camzup.core;
  * transform, but contains no other data. Useful when a 'target' entity is
  * needed.
  */
-public class Entity3 extends Entity implements ISpatial3 {
+public class Entity3 extends Entity implements IOriented3, ISpatial3 {
 
    /**
     * The entity's transform.

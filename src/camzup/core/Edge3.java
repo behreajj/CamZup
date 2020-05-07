@@ -249,10 +249,10 @@ public class Edge3 implements Comparable < Edge3 > {
 
    public Edge3 scaleGlobal ( final float scalar ) {
 
-      if ( scalar == 0.0f ) { return this; }
-
-      Vec3.mul(this.origin.coord, scalar, this.origin.coord);
-      Vec3.mul(this.dest.coord, scalar, this.dest.coord);
+      if ( scalar != 0.0f ) {
+         Vec3.mul(this.origin.coord, scalar, this.origin.coord);
+         Vec3.mul(this.dest.coord, scalar, this.dest.coord);
+      }
       return this;
    }
 
@@ -643,7 +643,6 @@ public class Edge3 implements Comparable < Edge3 > {
       if ( Vert3.approxCoord(aOrigin, bOrigin) ) { return 2; }
       if ( Vert3.approxCoord(aOrigin, bDest) ) { return -1; }
       if ( Vert3.approxCoord(aDest, bDest) ) { return -2; }
-
       return 0;
    }
 

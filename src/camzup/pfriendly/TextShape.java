@@ -177,13 +177,14 @@ public abstract class TextShape {
          if ( separate ) {
 
             final int len = characters.length;
+            final AffineTransform at = null;
 
             // float xoff = 0.0f;
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
                final CurveEntity2 entity = new CurveEntity2();
-               TextShape.processGlyphCurve(font, frc, ( AffineTransform ) null,
-                  detail, character, entity.curves);
+               TextShape.processGlyphCurve(font, frc, at, detail, character,
+                  entity.curves);
                entities.add(entity);
                // final float w = fm.charWidth(character);
                // xoff += w;
@@ -230,12 +231,13 @@ public abstract class TextShape {
          if ( separate ) {
 
             final int len = characters.length;
+            final AffineTransform at = null;
 
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
                final CurveEntity2 entity = new CurveEntity2();
-               TextShape.processGlyphCurve(font, frc, ( AffineTransform ) null,
-                  detail, character, entity.curves);
+               TextShape.processGlyphCurve(font, frc, at, detail, character,
+                  entity.curves);
                entities.add(entity);
             }
 
@@ -492,11 +494,12 @@ public abstract class TextShape {
          if ( separate ) {
 
             final int len = characters.length;
+            final AffineTransform at = null;
 
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
                final MeshEntity2 entity = new MeshEntity2();
-               TextShape.processGlyphMesh(font, frc, null, detail, character,
+               TextShape.processGlyphMesh(font, frc, at, detail, character,
                   entity.meshes);
                entities.add(entity);
             }

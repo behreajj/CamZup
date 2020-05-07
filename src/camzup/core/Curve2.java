@@ -732,7 +732,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       while ( itr.hasNext() ) {
          itr.next().transform(m);
       }
-
       return this;
    }
 
@@ -756,7 +755,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       while ( itr.hasNext() ) {
          itr.next().transform(tr);
       }
-
       return this;
    }
 

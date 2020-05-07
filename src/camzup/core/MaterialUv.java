@@ -4,8 +4,8 @@ package camzup.core;
  * A material which holds data to display textured materials. Holds a
  * transform that may be applied to UV coordinates.
  */
-public abstract class MaterialUv extends Material implements ISpatial2,
-   IVolume2 {
+public abstract class MaterialUv extends Material implements IOriented2,
+   ISpatial2, IVolume2 {
 
    /**
     * The texture tint.

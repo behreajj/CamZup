@@ -51,6 +51,22 @@ public interface ITextDisplay3 extends ITextDisplay {
     * @param stop  the stop index, exclusive
     * @param x     the x coordinate
     * @param y     the y coordinate
+    * @param z     the z coordinate
+    */
+   default void text ( final char[] chars, final float x, final float y,
+      final float z ) {
+
+      this.text(chars, 0, chars.length, x, y, z);
+   }
+
+   /**
+    * Displays an array of characters as text at a location.
+    *
+    * @param chars the character array
+    * @param start the start index, inclusive
+    * @param stop  the stop index, exclusive
+    * @param x     the x coordinate
+    * @param y     the y coordinate
     */
    @Override
    default void text ( final char[] chars, final int start, final int stop,
@@ -139,7 +155,7 @@ public interface ITextDisplay3 extends ITextDisplay {
    default void text ( final int i, final float x, final float y,
       final float z ) {
 
-      this.text(i, x, y, z);
+      this.text(Utils.toPadded(i, 1), x, y, z);
    }
 
    /**
@@ -166,7 +182,7 @@ public interface ITextDisplay3 extends ITextDisplay {
    default void text ( final String str, final float x, final float y,
       final float z ) {
 
-      this.text(str, x, y, z);
+      this.text(str.toCharArray(), x, y, z);
    }
 
    /**
