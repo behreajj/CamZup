@@ -1059,9 +1059,45 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
+    * Converts a color to an integer, rotates to the left by the number of
+    * places, then converts the result to a color. The rotate a whole color
+    * channel, use increments of 8 (8, 16, 24).
+    *
+    * @param a      the color
+    * @param places the number of places
+    * @param target the output color
+    *
+    * @return the rotated color
+    */
+   public static Color bitRotateLeft ( final Color a, final int places,
+      final Color target ) {
+
+      final int i = Color.toHexInt(a);
+      return Color.fromHex(i << places | i >>> -places, target);
+   }
+
+   /**
+    * Converts a color to an integer, rotates to the right by the number of
+    * places, then converts the result to a color. The rotate a whole color
+    * channel, use increments of 8 (8, 16, 24).
+    *
+    * @param a      the color
+    * @param places the number of places
+    * @param target the output color
+    *
+    * @return the rotated color
+    */
+   public static Color bitRotateRight ( final Color a, final int places,
+      final Color target ) {
+
+      final int i = Color.toHexInt(a);
+      return Color.fromHex(i >>> places | i << -places, target);
+   }
+
+   /**
     * Converts a color to an integer, performs a bitwise left shift operation,
-    * then converts the result to a color. The number of places is multiplied
-    * by 0x08.
+    * then converts the result to a color. To shift a whole color channel, use
+    * increments of 8 (8, 16, 24).
     *
     * @param a      the color
     * @param places the number of places
@@ -1075,13 +1111,13 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    public static Color bitShiftLeft ( final Color a, final int places,
       final Color target ) {
 
-      return Color.fromHex(Color.toHexInt(a) << places * 0x08, target);
+      return Color.fromHex(Color.toHexInt(a) << places, target);
    }
 
    /**
     * Converts a color to an integer, performs a bitwise right shift
-    * operation, then converts the result to a color. The number of places is
-    * multiplied by 0x08.
+    * operation, then converts the result to a color. To shift a whole color
+    * channel, use increments of 8 (8, 16, 24).
     *
     * @param a      the color
     * @param places the number of places
@@ -1095,13 +1131,13 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    public static Color bitShiftRight ( final Color a, final int places,
       final Color target ) {
 
-      return Color.fromHex(Color.toHexInt(a) >> places * 0x08, target);
+      return Color.fromHex(Color.toHexInt(a) >> places, target);
    }
 
    /**
     * Converts a color to an integer, performs an unsigned bitwise right shift
-    * operation, then converts the result to a color. The number of places is
-    * multiplied by 0x08.
+    * operation, then converts the result to a color. To shift a whole color
+    * channel, use increments of 8 (8, 16, 24).
     *
     * @param a      the color
     * @param places the number of places
@@ -1115,7 +1151,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    public static Color bitShiftRightUnsigned ( final Color a, final int places,
       final Color target ) {
 
-      return Color.fromHex(Color.toHexInt(a) >>> places * 0x08, target);
+      return Color.fromHex(Color.toHexInt(a) >>> places, target);
    }
 
    /**

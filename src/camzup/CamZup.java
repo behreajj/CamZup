@@ -1,5 +1,13 @@
 package camzup;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+import camzup.core.KdTree;
+import camzup.core.Utils;
+import camzup.core.Vec3;
+
 import processing.core.PApplet;
 
 /**
@@ -73,6 +81,17 @@ public class CamZup {
       // final Mesh2 m = new Mesh2();
       // Mesh2.circle(m);
       // System.out.println(m);
+
+      Vec3[] grid = Vec3.flat(Vec3.grid(8));
+      System.out.println(Utils.toString(grid));
+      List < Comparator < Vec3 > > cmps = new ArrayList < Comparator <
+         Vec3 > >();
+      cmps.add(new KdTree.SortZAxis3());
+      cmps.add(new KdTree.SortYAxis3());
+      cmps.add(new KdTree.SortXAxis3());
+      // var tree = new KdTree < Vec3 >(grid, cmps);
+      // System.out.println(tree);
+      // System.out.println(tree.nearest(new Vec3(), 3, null));
    }
 
    /**
