@@ -163,7 +163,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void applyProjection ( final Mat4 m ) {
 
-      this.applyProjection(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
+      super.applyProjection(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11,
+         m.m12,
          m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
@@ -431,7 +432,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void box ( final float w, final float h, final float d ) {
 
-      this.box(w, h, d);
+      PApplet.showMethodWarning("box");
    }
 
    /**
@@ -2240,7 +2241,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void texture ( final PGraphicsOpenGL buff ) {
 
-      if ( buff.pgl.threadIsCurrent() ) { this.texture(( PImage ) buff); }
+      if ( buff.pgl.threadIsCurrent() ) { super.texture(buff); }
    }
 
    /**

@@ -232,7 +232,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    @Override
    public void circle ( final Vec2 coord, final float size ) {
 
-      this.circle(coord.x, coord.y, size);
+      super.circle(coord.x, coord.y, size);
    }
 
    /**
@@ -329,7 +329,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    @Override
    public void ellipse ( final Vec2 a, final Vec2 b ) {
 
-      this.ellipse(a.x, a.y, b.x, b.y);
+      super.ellipse(a.x, a.y, b.x, b.y);
    }
 
    /**
@@ -695,7 +695,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final float x,
       final float y ) {
 
-      return this.modelX(x, y, 0.0f);
+      return super.modelX(x, y, 0.0f);
    }
 
    /**
@@ -712,7 +712,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final float x,
       final float y ) {
 
-      return this.modelY(x, y, 0.0f);
+      return super.modelY(x, y, 0.0f);
    }
 
    /**
@@ -729,7 +729,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final float x,
       final float y ) {
 
-      return this.modelZ(x, y, 0.0f);
+      return super.modelZ(x, y, 0.0f);
    }
 
    /**
@@ -1349,7 +1349,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final Vec2 b,
       final Vec2 c ) {
 
-      this.triangle(
+      super.triangle(
          a.x, a.y,
          b.x, b.y,
          c.x, c.y);

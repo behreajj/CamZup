@@ -682,8 +682,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public Curve3 set ( final Curve2 source ) {
 
-      // TEST
-
       this.resize(source.length());
       final Iterator < Knot2 > srcItr = source.iterator();
       final Iterator < Knot3 > trgItr = this.knots.iterator();
@@ -705,8 +703,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @return this curve
     */
    public Curve3 set ( final Curve3 source ) {
-
-      // TEST
 
       final List < Knot3 > sourceKnots = source.knots;
       this.resize(sourceKnots.size());

@@ -3,15 +3,11 @@ package camzup.core;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.BiFunction;
 
 @Experimental
-public class KdTree < T extends Comparable < T > > {
+public abstract class KdTree < T extends Comparable < T > > {
 
    /**
     * The comparators for each axis of three used to sort elements in that
@@ -114,57 +110,59 @@ public class KdTree < T extends Comparable < T > > {
     *
     * @return the list
     */
-   public ArrayList < T > nearest ( final T query,
-      final int count,
-      final BiFunction < T, T, Float > metric ) {
+   public abstract ArrayList < T > nearest ( final T query, final int count,
+      final BiFunction < T, T, Float > metric );
 
-      final ArrayList < T > neighbors = new ArrayList <>(count);
-      if ( query == null || this.root == null ) { return neighbors; }
-
-      /* Wrap the distance metric in a node comparator. */
-      final Comparator < Node < T > > cmp = metric == null ? null
-         : new Comparator < Node < T > >() {
-
-            @Override
-            public int compare ( final Node < T > a, final Node < T > b ) {
-
-               final float aDist = metric.apply(query, a.data);
-               final float bDist = metric.apply(query, b.data);
-               return aDist < bDist ? -1 : aDist > bDist ? 1 : 0;
-            }
-
-         };
-
-      /* Use the comparator as a basis for a tree set. */
-      final TreeSet < Node < T > > tree = new TreeSet <>(cmp);
-
-      Node < T > prev = null;
-      Node < T > node = this.root;
-      while ( node != null ) {
-         final int depth = node.depth;
-         final Comparator < T > axis = this.getAxis(depth);
-         final int comparison = axis.compare(query, node.data);
-         prev = node;
-         node = comparison > 0 ? node.right : node.left;
-      }
-
-      final Node < T > leaf = prev;
-      if ( leaf != null ) {
-         final Set < Node < T > > examined = new HashSet <>();
-         node = leaf;
-         while ( node != null ) {
-            this.search(query, node, count, tree, examined);
-            node = node.parent;
-         }
-      }
-
-      /* Flatten tree set to a list. */
-      final Iterator < Node < T > > treeItr = tree.iterator();
-      while ( treeItr.hasNext() ) {
-         neighbors.add(treeItr.next().data);
-      }
-      return neighbors;
-   }
+   // public ArrayList < T > nearest ( final T query, final int count,
+   // final BiFunction < T, T, Float > metric ) {
+   //
+   // final ArrayList < T > neighbors = new ArrayList <>(count);
+   // if ( query == null || this.root == null ) { return neighbors; }
+   //
+   // /* Wrap the distance metric in a node comparator. */
+   // final Comparator < Node < T > > cmp = metric == null ? null
+   // : new Comparator < >() {
+   //
+   // @Override
+   // public int compare ( final Node < T > a, final Node < T > b ) {
+   //
+   // final float aDist = metric.apply(query, a.data);
+   // final float bDist = metric.apply(query, b.data);
+   // return aDist < bDist ? -1 : aDist > bDist ? 1 : 0;
+   // }
+   //
+   // };
+   //
+   // /* Use the comparator as a basis for a tree set. */
+   // final TreeSet < Node < T > > tree = new TreeSet <>(cmp);
+   //
+   // Node < T > prev = null;
+   // Node < T > node = this.root;
+   // while ( node != null ) {
+   // final int depth = node.depth;
+   // final Comparator < T > axis = this.getAxis(depth);
+   // final int comparison = axis.compare(query, node.data);
+   // prev = node;
+   // node = comparison > 0 ? node.right : node.left;
+   // }
+   //
+   // final Node < T > leaf = prev;
+   // if ( leaf != null ) {
+   // final Set < Node < T > > examined = new HashSet <>();
+   // node = leaf;
+   // while ( node != null ) {
+   // // this.search(query, node, count, tree, examined, metric);
+   // node = node.parent;
+   // }
+   // }
+   //
+   // /* Flatten tree set to a list. */
+   // final Iterator < Node < T > > treeItr = tree.iterator();
+   // while ( treeItr.hasNext() ) {
+   // neighbors.add(treeItr.next().data);
+   // }
+   // return neighbors;
+   // }
 
    /**
     * Returns a string representation of this tree.
@@ -175,13 +173,11 @@ public class KdTree < T extends Comparable < T > > {
    public String toString ( ) {
 
       final StringBuilder sb = new StringBuilder(1024);
-      // final int axesLen = this.axes.length;
       final int axesLen = this.axes.size();
       final int axesLast = axesLen - 1;
 
       sb.append("{ axes: [ ");
       for ( int i = 0; i < axesLen; ++i ) {
-         // sb.append(this.axes[i]);
          sb.append(this.axes.get(i));
          if ( i < axesLast ) { sb.append(',').append(' '); }
       }
@@ -238,13 +234,6 @@ public class KdTree < T extends Comparable < T > > {
       }
 
       return node;
-   }
-
-   protected void search ( final T query, final Node < T > node, int k,
-      final TreeSet <
-      Node < T > > tree, final Set < Node < T > > examined ) {
-
-      // TODO: Implement.
    }
 
    /**
@@ -358,8 +347,14 @@ public class KdTree < T extends Comparable < T > > {
 
    }
 
+   /**
+    * Sorts a 3D vector according to the x axis.
+    */
    public static class SortXAxis3 implements Comparator < Vec3 > {
 
+      /**
+       * The default constructor.
+       */
       public SortXAxis3 ( ) {}
 
       @Override
@@ -368,13 +363,22 @@ public class KdTree < T extends Comparable < T > > {
          return a.x < b.x ? -1 : a.x > b.x ? 1 : 0;
       }
 
+      /**
+       * Returns the string representation of the class.
+       */
       @Override
       public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 
+   /**
+    * Sorts a 3D vector according to the y axis.
+    */
    public static class SortYAxis3 implements Comparator < Vec3 > {
 
+      /**
+       * The default constructor.
+       */
       public SortYAxis3 ( ) {}
 
       @Override
@@ -383,12 +387,22 @@ public class KdTree < T extends Comparable < T > > {
          return a.y < b.y ? -1 : a.y > b.y ? 1 : 0;
       }
 
+      /**
+       * Returns the string representation of the class.
+       */
       @Override
       public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 
+   /**
+    * Sorts a 3D vector according to the z axis.
+    */
    public static class SortZAxis3 implements Comparator < Vec3 > {
+
+      /**
+       * The default constructor.
+       */
       public SortZAxis3 ( ) {}
 
       @Override
@@ -397,6 +411,9 @@ public class KdTree < T extends Comparable < T > > {
          return a.z < b.z ? -1 : a.z > b.z ? 1 : 0;
       }
 
+      /**
+       * Returns the string representation of the class.
+       */
       @Override
       public String toString ( ) { return this.getClass().getSimpleName(); }
 

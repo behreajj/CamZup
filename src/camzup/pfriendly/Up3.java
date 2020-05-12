@@ -197,7 +197,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    public void curveVertex ( final Vec3 a ) {
 
-      this.curveVertex(a.x, a.y, a.z);
+      super.curveVertex(a.x, a.y, a.z);
    }
 
    /**
@@ -737,7 +737,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    @Override
    public void quadraticVertex ( final Vec3 cp, final Vec3 ap1 ) {
 
-      this.quadraticVertex(cp.x, cp.y, cp.z, ap1.x, ap1.y, ap1.z);
+      super.quadraticVertex(cp.x, cp.y, cp.z, ap1.x, ap1.y, ap1.z);
    }
 
    /**

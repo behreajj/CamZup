@@ -20,7 +20,7 @@ import java.awt.image.BufferedImage;
  * <a href="https://youtu.be/lkEWbIUEuN0">Handmade Hero</a> tutorials.
  */
 @Experimental
-public abstract class PngParser {
+abstract class PngParser {
 
    /**
     * Discourage overriding with a private constructor.

@@ -1436,22 +1436,32 @@ public abstract class PMatAux {
     */
    public static String toString ( final PMatrix2D m, final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(320)
-         .append('\n').append('[').append(' ')
+      final StringBuilder sb = new StringBuilder(320);;
+      sb.append('\n');
+      sb.append('[');
+      sb.append(' ');
+      sb.append(Utils.toFixed(m.m00, places));
+      sb.append(',');
+      sb.append(' ');
+      sb.append(Utils.toFixed(m.m01, places));
+      sb.append(',');
+      sb.append(' ');
+      sb.append(Utils.toFixed(m.m02, places));
+      sb.append(',');
+      sb.append(' ');
+      sb.append('\n');
+      sb.append(Utils.toFixed(m.m10, places));
+      sb.append(',');
+      sb.append(' ');
+      sb.append(Utils.toFixed(m.m11, places));
+      sb.append(',');
+      sb.append(' ');
+      sb.append(Utils.toFixed(m.m12, places));
+      sb.append(' ');
+      sb.append(']');
+      sb.append('\n');
+      return sb.toString();
 
-         .append(Utils.toFixed(m.m00, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m01, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m02, places)).append(',').append(' ')
-         .append('\n')
-
-         .append(Utils.toFixed(m.m10, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m11, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m12, places))
-
-         .append(' ').append(']').append('\n')
-         .toString();
-      /* @formatter:on */
    }
 
    /**
@@ -1476,36 +1486,33 @@ public abstract class PMatAux {
     */
    public static String toString ( final PMatrix3D m, final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(320)
-         .append('\n').append('[').append(' ')
-
-         .append(Utils.toFixed(m.m00, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m01, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m02, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m03, places)).append(',').append(' ')
-         .append('\n')
-
-         .append(Utils.toFixed(m.m10, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m11, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m12, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m13, places)).append(',').append(' ')
-         .append('\n')
-
-         .append(Utils.toFixed(m.m20, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m21, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m22, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m23, places)).append(',').append(' ')
-         .append('\n')
-
-         .append(Utils.toFixed(m.m30, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m31, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m32, places)).append(',').append(' ')
-         .append(Utils.toFixed(m.m33, places))
-
-         .append(' ').append(']').append('\n')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(320);
+      sb.append('\n');
+      sb.append('[');
+      sb.append(' ');
+      sb.append(Utils.toFixed(m.m00, places)).append(',').append(' ');
+      sb.append(Utils.toFixed(m.m01, places)).append(',').append(' ');
+      sb.append(Utils.toFixed(m.m02, places)).append(',').append(' ');
+      sb.append(Utils.toFixed(m.m03, places)).append(',').append(' ');
+      sb.append('\n');
+      sb.append(Utils.toFixed(m.m10, places)).append(',').append(' ');
+      sb.append(Utils.toFixed(m.m11, places)).append(',').append(' ');
+      sb.append(Utils.toFixed(m.m12, places)).append(',').append(' ');
+      sb.append(Utils.toFixed(m.m13, places)).append(',').append(' ');
+      sb.append('\n');
+      sb.append(Utils.toFixed(m.m20, places)).append(',').append(' ');
+      sb.append(Utils.toFixed(m.m21, places)).append(',').append(' ');
+      sb.append(Utils.toFixed(m.m22, places)).append(',').append(' ');
+      sb.append(Utils.toFixed(m.m23, places)).append(',').append(' ');
+      sb.append('\n');
+      sb.append(Utils.toFixed(m.m30, places)).append(',').append(' ');
+      sb.append(Utils.toFixed(m.m31, places)).append(',').append(' ');
+      sb.append(Utils.toFixed(m.m32, places)).append(',').append(' ');
+      sb.append(Utils.toFixed(m.m33, places));
+      sb.append(' ');
+      sb.append(']');
+      sb.append('\n');
+      return sb.toString();
    }
 
 }

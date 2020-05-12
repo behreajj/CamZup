@@ -502,7 +502,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void bezierVertex ( final Vec2 cp0, final Vec2 cp1, final Vec2 ap1 ) {
 
-      this.bezierVertex(cp0.x, cp0.y, cp1.x, cp1.y, ap1.x, ap1.y);
+      super.bezierVertex(cp0.x, cp0.y, cp1.x, cp1.y, ap1.x, ap1.y);
    }
 
    /**
@@ -651,7 +651,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void curve ( final Vec2 a, final Vec2 b, final Vec2 c,
       final Vec2 d ) {
 
-      this.curve(a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y);
+      super.curve(a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y);
    }
 
    /**
@@ -660,7 +660,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param a the coordinate
     */
    @Override
-   public void curveVertex ( final Vec2 a ) { this.curveVertex(a.x, a.y); }
+   public void curveVertex ( final Vec2 a ) { super.curveVertex(a.x, a.y); }
 
    /**
     * Sets default camera and calls the camera function. This is for parity
@@ -2170,7 +2170,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void quadraticVertex ( final Vec2 cp, final Vec2 ap1 ) {
 
-      this.quadraticVertex(cp.x, cp.y, ap1.x, ap1.y);
+      super.quadraticVertex(cp.x, cp.y, ap1.x, ap1.y);
    }
 
    /**
@@ -3503,7 +3503,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param v the coordinate
     */
    @Override
-   public void vertex ( final Vec2 v ) { this.vertex(v.x, v.y); }
+   public void vertex ( final Vec2 v ) { super.vertex(v.x, v.y); }
 
    /**
     * The arc implementation. The underlying Java AWT arc asks for a start
