@@ -1436,7 +1436,7 @@ public abstract class PMatAux {
     */
    public static String toString ( final PMatrix2D m, final int places ) {
 
-      final StringBuilder sb = new StringBuilder(320);;
+      final StringBuilder sb = new StringBuilder(320);
       sb.append('\n');
       sb.append('[');
       sb.append(' ');

@@ -865,31 +865,42 @@ public class Mat4 extends Matrix {
     */
    public String toString ( final int places ) {
 
-      /* @formatter:off */
-      return new StringBuilder(512)
-         .append("{ m00: ").append(Utils.toFixed(this.m00, places))
-         .append(", m01: ").append(Utils.toFixed(this.m01, places))
-         .append(", m02: ").append(Utils.toFixed(this.m02, places))
-         .append(", m03: ").append(Utils.toFixed(this.m03, places))
-
-         .append(", m10: ").append(Utils.toFixed(this.m10, places))
-         .append(", m11: ").append(Utils.toFixed(this.m11, places))
-         .append(", m12: ").append(Utils.toFixed(this.m12, places))
-         .append(", m13: ").append(Utils.toFixed(this.m13, places))
-
-         .append(", m20: ").append(Utils.toFixed(this.m20, places))
-         .append(", m21: ").append(Utils.toFixed(this.m21, places))
-         .append(", m22: ").append(Utils.toFixed(this.m22, places))
-         .append(", m23: ").append(Utils.toFixed(this.m23, places))
-
-         .append(", m30: ").append(Utils.toFixed(this.m30, places))
-         .append(", m31: ").append(Utils.toFixed(this.m31, places))
-         .append(", m32: ").append(Utils.toFixed(this.m32, places))
-         .append(", m33: ").append(Utils.toFixed(this.m33, places))
-
-         .append(' ').append('}')
-         .toString();
-      /* @formatter:on */
+      final StringBuilder sb = new StringBuilder(512);
+      sb.append("{ m00: ");
+      sb.append(Utils.toFixed(this.m00, places));
+      sb.append(", m01: ");
+      sb.append(Utils.toFixed(this.m01, places));
+      sb.append(", m02: ");
+      sb.append(Utils.toFixed(this.m02, places));
+      sb.append(", m03: ");
+      sb.append(Utils.toFixed(this.m03, places));
+      sb.append(", m10: ");
+      sb.append(Utils.toFixed(this.m10, places));
+      sb.append(", m11: ");
+      sb.append(Utils.toFixed(this.m11, places));
+      sb.append(", m12: ");
+      sb.append(Utils.toFixed(this.m12, places));
+      sb.append(", m13: ");
+      sb.append(Utils.toFixed(this.m13, places));
+      sb.append(", m20: ");
+      sb.append(Utils.toFixed(this.m20, places));
+      sb.append(", m21: ");
+      sb.append(Utils.toFixed(this.m21, places));
+      sb.append(", m22: ");
+      sb.append(Utils.toFixed(this.m22, places));
+      sb.append(", m23: ");
+      sb.append(Utils.toFixed(this.m23, places));
+      sb.append(", m30: ");
+      sb.append(Utils.toFixed(this.m30, places));
+      sb.append(", m31: ");
+      sb.append(Utils.toFixed(this.m31, places));
+      sb.append(", m32: ");
+      sb.append(Utils.toFixed(this.m32, places));
+      sb.append(", m33: ");
+      sb.append(Utils.toFixed(this.m33, places));
+      sb.append(' ');
+      sb.append('}');
+      return sb.toString();
    }
 
    /**
@@ -1075,13 +1086,9 @@ public class Mat4 extends Matrix {
     */
    public static Mat4 bezierBasisInverse ( final Mat4 target ) {
 
-      /* @formatter:off */
-      return target.set(
-         0.0f,        0.0f,        0.0f, 1.0f,
-         0.0f,        0.0f, 0.33333334f, 1.0f,
-         0.0f, 0.33333334f, 0.66666666f, 1.0f,
-         1.0f,        1.0f,        1.0f, 1.0f);
-      /* @formatter:on */
+      return target.set(0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, IUtils.ONE_THIRD,
+         1.0f, 0.0f, IUtils.ONE_THIRD, IUtils.TWO_THIRDS, 1.0f, 1.0f, 1.0f,
+         1.0f, 1.0f);
    }
 
    /**
@@ -2093,9 +2100,9 @@ public class Mat4 extends Matrix {
 
       /* @formatter:off */
       return target.set(
-         w + w,  0.0f,        0.0f, w * ( left + right ),
-          0.0f, h + h,        0.0f, h * ( top + bottom ),
-          0.0f,  0.0f, - ( d + d ),  -d * ( far + near ),
+         w + w,  0.0f,        0.0f,  w * ( left + right ),
+          0.0f, h + h,        0.0f,  h * ( top + bottom ),
+          0.0f,  0.0f, - ( d + d ), -d * ( far + near ),
           0.0f,  0.0f,        0.0f,                 1.0f);
       /* @formatter:on */
    }

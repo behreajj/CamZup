@@ -227,7 +227,8 @@ public abstract class Simplex {
       /* @formatter:off */
       DEFAULT_SEED = ( int ) System.currentTimeMillis();
 
-      // TODO: At some point, these should be demoted to one-dimensional float arrays.
+      // TODO: At some point, these should be demoted
+      // to one-dimensional float arrays.
       GRAD_2_LUT = new Vec2[] {
          new Vec2(-1.0f, -1.0f),
          new Vec2( 1.0f,  0.0f),

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 @Experimental
-public abstract class KdTree < T extends Comparable < T > > {
+abstract class KdTree < T extends Comparable < T > > {
 
    /**
     * The comparators for each axis of three used to sort elements in that

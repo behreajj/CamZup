@@ -245,7 +245,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @see Color#div(Color, float, Color)
     */
-
    public void divAssign ( final float c ) { Color.div(this, c, this); }
 
    /**
@@ -288,7 +287,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @return the element
     */
-
    public float get ( final int index ) { return this.getAlphaLast(index); }
 
    /**
@@ -375,7 +373,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @see Color#add(Color, float, Color)
     */
-
    public Color inc ( ) {
 
       return Color.add(this, IUtils.ONE_255, new Color());
@@ -424,7 +421,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @see Color#sub(Color, Color, Color)
     */
-
    public Color minus ( final float c ) {
 
       return Color.sub(this, c, new Color());
@@ -448,7 +444,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @see Color#sub(Color, float, Color)
     */
-
    public void minusAssign ( final float c ) { Color.sub(this, c, this); }
 
    /**
@@ -478,7 +473,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @see Color#add(Color, float, Color)
     */
-
    public Color plus ( final float c ) {
 
       return Color.add(this, c, new Color());
@@ -502,7 +496,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @see Color#add(Color, float, Color)
     */
-
    public void plusAssign ( final float c ) { Color.add(this, c, this); }
 
    /**
@@ -572,7 +565,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @see Color#white(Color)
     */
-
    public Color reset ( ) { return this.set(1.0f, 1.0f, 1.0f, 1.0f); }
 
    /**
@@ -585,7 +577,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @return this color
     */
-
    public Color set ( final byte red, final byte green, final byte blue ) {
 
       return this.set(IUtils.ONE_255 * ( red & 0xff ), IUtils.ONE_255 * ( green
@@ -603,7 +594,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @return this color
     */
-
    public Color set ( final byte red, final byte green, final byte blue,
       final byte alpha ) {
 
@@ -619,7 +609,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @return this color
     */
-
    public Color set ( final Color c ) {
 
       return this.set(c.r, c.g, c.b, c.a);
@@ -635,7 +624,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @return this color
     */
-
    public Color set ( final float red, final float green, final float blue ) {
 
       return this.set(red, green, blue, 1.0f);
@@ -675,7 +663,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @see Float#parseFloat(String)
     */
-
    public Color set ( final String rstr, final String gstr,
       final String bstr ) {
 
@@ -903,7 +890,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
       pyCd.append(Utils.toFixed(Utils.pow(this.b, gamma), 6));
 
       if ( inclAlpha ) {
-         pyCd.append(',').append(' ').append(Utils.toFixed(this.a, 6));
+         pyCd.append(',');
+         pyCd.append(' ');
+         pyCd.append(Utils.toFixed(this.a, 6));
       }
 
       pyCd.append(')');
@@ -1747,9 +1736,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    public static float luminance ( final int c ) {
 
       /*
-       * Divide 0.2126 / 255.0, 0.7152 / 255.0, 0.0722 / 255.0 . In double
-       * precision: (a) 0.0008337254901960785d ; (b) 0.002804705882352941d ; (c)
-       * 0.0002831372549019608d .
+       * Coefficients: 0.2126 / 255.0 ; 0.7152 / 255.0 ; 0.0722 / 255.0 . In
+       * double precision: (a) 0.0008337254901960785d ; (b)
+       * 0.002804705882352941d ; (c) 0.0002831372549019608d .
        */
 
       /* @formatter:off */
