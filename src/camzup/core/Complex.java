@@ -932,8 +932,8 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
 
    /**
     * Performs a Mobius transformation on the variable <em>z</em>. Uses the
-    * formula <em>a</em> <em>z</em> + <em>b</em> / <em>c</em> <em>z</em> +
-    * <em>d</em> <br>
+    * formula ( <em>a</em> <em>z</em> + <em>b</em> ) / ( <em>c</em> <em>z</em>
+    * + <em>d</em> ) <br>
     * where constants <em>a</em>, <em>b</em>, <em>c</em>, and <em>d</em>
     * satisfy <em>a</em> <em>d</em> - <em>b</em> <em>c</em> \u2260 0.0 .
     *
@@ -951,9 +951,8 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
       final Complex target ) {
 
       /*
-       * cz + d -- the denominator -- first. Minimize the number of calculations
-       * needed before the function can determine whether or not to return
-       * early.
+       * Find denominator first. Minimize the number of calculations needed
+       * before the function can determine whether or not to return early.
        */
       final float czdr = c.real * z.real - c.imag * z.imag + d.real;
       final float czdi = c.real * z.imag + c.imag * z.real + d.imag;
@@ -961,7 +960,7 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
 
       if ( mSq < IUtils.DEFAULT_EPSILON ) { return target.reset(); }
 
-      /* az + b -- the numerator -- second. */
+      /* Find numerator. */
       final float azbr = a.real * z.real - a.imag * z.imag + b.real;
       final float azbi = a.real * z.imag + a.imag * z.real + b.imag;
 

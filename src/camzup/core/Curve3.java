@@ -28,8 +28,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
        * interface. Problem is that it's hard to decide one whether to use an
        * array or linked list.
        */
-
-      // knots = new LinkedList <>();
       this.knots = new ArrayList <>();
    }
 
@@ -956,21 +954,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final float b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU);
       final float arcLen1 = Utils.mod1(b1 - a1);
 
-      if ( arcLen1 <= 0.00139f ) {
-         // target.resize(2);
-         // target.closedLoop = false;
-         // final Knot3 prev = target.getFirst();
-         // final Knot3 next = target.getLast();
-         // prev.set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-         // next.set(radius * Utils.scNorm(a1), radius * Utils.scNorm(a1 -
-         // 0.25f),
-         // 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-         // Curve3.lerp13(prev.coord, next.coord, prev.foreHandle);
-         // Curve3.lerp13(next.coord, prev.coord, next.rearHandle);
-         // prev.mirrorHandlesForward();
-         // next.mirrorHandlesBackward();
-         return target;
-      }
+      if ( arcLen1 <= 0.00139f ) { return target; }
 
       final float destAngle1 = a1 + arcLen1;
       final int knotCount = Utils.ceilToInt(1 + 4 * arcLen1);

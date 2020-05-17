@@ -47,8 +47,6 @@ public interface ITextDisplay3 extends ITextDisplay {
     * Displays an array of characters as text at a location.
     *
     * @param chars the character array
-    * @param start the start index, inclusive
-    * @param stop  the stop index, exclusive
     * @param x     the x coordinate
     * @param y     the y coordinate
     * @param z     the z coordinate

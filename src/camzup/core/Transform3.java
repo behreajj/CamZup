@@ -500,29 +500,32 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Resets this transform to the identity. This also resets the fields which
-    * store the previous location, rotation and scale.
+    * Reverts this transform to its previous state,i.e., swaps current
+    * location, rotation and scale with the previous.
     *
     * @return this transform
-    *
-    * @see Vec3#one(Vec3)
-    * @see Vec3#right(Vec3)
-    * @see Vec3#forward(Vec3)
-    * @see Vec3#up(Vec3)
     */
-   public Transform3 reset ( ) {
+   public Transform3 revert ( ) {
 
-      this.locPrev.reset();
-      this.rotPrev.reset();
-      Vec3.one(this.scalePrev);
+      final float tlx = this.location.x;
+      final float tly = this.location.y;
+      final float tlz = this.location.z;
+      this.location.set(this.locPrev);
+      this.locPrev.set(tlx, tly, tlz);
 
-      this.location.reset();
-      this.rotation.reset();
-      Vec3.one(this.scale);
+      final Vec3 i = this.rotation.imag;
+      final float trw = this.rotation.real;
+      final float tix = i.x;
+      final float tiy = i.y;
+      final float tiz = i.z;
+      this.rotation.set(this.rotPrev);
+      this.rotPrev.set(trw, tix, tiy, tiz);
 
-      Vec3.right(this.right);
-      Vec3.forward(this.forward);
-      Vec3.up(this.up);
+      final float tsx = this.scale.x;
+      final float tsy = this.scale.y;
+      final float tsz = this.scale.z;
+      this.scale.set(this.scalePrev);
+      this.scalePrev.set(tsx, tsy, tsz);
 
       return this;
    }

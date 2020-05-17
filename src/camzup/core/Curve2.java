@@ -30,8 +30,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
        * interface. Problem is that it's hard to decide one whether to use an
        * array or linked list.
        */
-
-      // knots = new LinkedList <>();
       this.knots = new ArrayList <>();
    }
 

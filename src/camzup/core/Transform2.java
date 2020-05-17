@@ -472,23 +472,26 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Resets this transform to the identity. This also resets the fields which
-    * store the previous location, rotation and scale.
+    * Reverts this transform to its previous state,i.e., swaps current
+    * location, rotation and scale with the previous.
     *
     * @return this transform
     */
-   public Transform2 reset ( ) {
+   public Transform2 revert ( ) {
 
-      this.locPrev.reset();
-      this.rotPrev = 0.0f;
-      Vec2.one(this.scalePrev);
+      final float tlx = this.location.x;
+      final float tly = this.location.y;
+      this.location.set(this.locPrev);
+      this.locPrev.set(tlx, tly);
 
-      this.location.reset();
-      this.rotation = 0.0f;
-      Vec2.one(this.scale);
+      final float trx = this.rotation;
+      this.rotation = this.rotPrev;
+      this.rotPrev = trx;
 
-      Vec2.right(this.right);
-      Vec2.forward(this.forward);
+      final float tsx = this.scale.x;
+      final float tsy = this.scale.y;
+      this.scale.set(this.scalePrev);
+      this.scalePrev.set(tsx, tsy);
 
       return this;
    }

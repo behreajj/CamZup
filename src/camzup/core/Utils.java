@@ -1012,7 +1012,7 @@ public abstract class Utils implements IUtils {
    /**
     * Applies floor modulo to the operands. Returns the left operand when the
     * right operand is zero. An alternative to {@link Math#floorMod(int, int)}
-    * . Returns a when b is zero.
+    * .
     *
     * @param a the left operand
     * @param b the right operand
@@ -1407,9 +1407,11 @@ public abstract class Utils implements IUtils {
    /**
     * Swaps the endianness of an integer. For example, a color in the AARRGGBB
     * format, <code>0xffaabbcc</code>, will yield the BBGGRRAA color,
-    * <code>0xccbbaaff</code>. Because Java integers are signed, the integer
-    * is promoted to a <code>long</code> to simulate an <code>uint</code> (an
-    * unsigned integer), then demoted after the shift.
+    * <code>0xccbbaaff</code>.<br>
+    * <br>
+    * Because Java integers are signed, the integer is promoted to a
+    * <code>long</code> to simulate an <code>uint</code> (an unsigned
+    * integer), then demoted after the shift.
     *
     * @param a the input value
     *
@@ -1440,7 +1442,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * A quick, dirty representation of a single-precision real number as a
+    * A quick, dirty representation of a single precision real number as a
     * String to a number of places. Truncates the final digit right of the
     * decimal place. Edge cases:
     * <ul>
