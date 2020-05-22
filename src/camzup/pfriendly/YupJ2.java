@@ -3122,19 +3122,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.textAlignY ) {
 
-         case BOTTOM:
+         case PConstants.BOTTOM:
 
             yMut += this.textDescent() + high;
 
             break;
 
-         case TOP:
+         case PConstants.TOP:
 
             yMut -= this.textAscent();
 
             break;
 
-         case CENTER:
+         case PConstants.CENTER:
 
          default:
 
@@ -3148,7 +3148,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             stMut = index + 1;
             yMut -= this.textLeading;
          }
-         index++;
+         ++index;
       }
 
       if ( stMut < stop ) {

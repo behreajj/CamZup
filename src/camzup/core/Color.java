@@ -693,25 +693,25 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
 
       try {
          xprs = Float.parseFloat(rstr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          xprs = 1.0f;
       }
 
       try {
          yprs = Float.parseFloat(gstr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          yprs = 1.0f;
       }
 
       try {
          zprs = Float.parseFloat(bstr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          zprs = 1.0f;
       }
 
       try {
          wprs = Float.parseFloat(astr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          wprs = 1.0f;
       }
 
@@ -1507,7 +1507,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
                return target.reset();
          }
 
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          // System.out.println(e);
       }
 

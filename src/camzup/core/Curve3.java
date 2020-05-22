@@ -1481,18 +1481,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Creates a curve that forms a horizontal line.
-    *
-    * @param target the output curve
-    *
-    * @return the line
-    */
-   public static Curve3 line ( final Curve3 target ) {
-
-      return Curve3.line(-0.5f, 0.0f, 0.0f, 0.5f, 0.0f, 0.0f, target);
-   }
-
-   /**
     * Creates a curve that forms a line with an origin and destination.
     *
     * @param origin the origin

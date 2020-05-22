@@ -1127,10 +1127,6 @@ public interface IYup2 extends IUp {
       final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
       final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
       return target.set(mx + mx - 1.0f, 1.0f - ( my + my ));
-
-      // final float mx = Utils.mod1(parent.mouseX / ( float ) parent.width);
-      // final float my = Utils.mod1(parent.mouseY / ( float ) parent.height);
-      // return target.set(mx + mx - 1.0f, 1.0f - ( my + my ));
    }
 
    /**
@@ -1147,10 +1143,6 @@ public interface IYup2 extends IUp {
       final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
       final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
       return target.set(mx, 1.0f - my);
-
-      // final float mx = Utils.mod1(parent.mouseX / ( float ) parent.width);
-      // final float my = Utils.mod1(parent.mouseY / ( float ) parent.height);
-      // return target.set(mx, 1.0f - my);
    }
 
    /**

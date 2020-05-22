@@ -2210,7 +2210,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             stMut = index + 1;
             yMut -= this.textLeading;
          }
-         index++;
+         ++index;
       }
 
       if ( stMut < stop ) {

@@ -447,7 +447,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
       try {
          rlprs = Float.parseFloat(wstr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          rlprs = 0.0f;
       }
 

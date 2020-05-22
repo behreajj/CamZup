@@ -550,19 +550,19 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
 
       try {
          xprs = Float.parseFloat(xstr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          xprs = 0.0f;
       }
 
       try {
          yprs = Float.parseFloat(ystr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          yprs = 0.0f;
       }
 
       try {
          zprs = Float.parseFloat(zstr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          zprs = 0.0f;
       }
 

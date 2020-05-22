@@ -4358,7 +4358,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       int target = 0;
       try {
          target = Integer.parseInt(i);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          target = 0;
       }
       return target;

@@ -2002,7 +2002,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       float target = 0.0f;
       try {
          target = Float.parseFloat(f);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          target = 0.0f;
       }
       return target;
@@ -2021,7 +2021,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       int target = 0;
       try {
          target = Integer.parseInt(i);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          target = 0;
       }
       return target;

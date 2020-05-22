@@ -51,7 +51,7 @@ public enum Handedness {
     */
    public static Handedness fromSign ( final float v ) {
 
-      return v < 0.0f ? LEFT : RIGHT;
+      return v < -0.0f ? Handedness.LEFT : Handedness.RIGHT;
    }
 
    /**
@@ -63,19 +63,19 @@ public enum Handedness {
     */
    public static Handedness fromSign ( final int v ) {
 
-      return v < 0 ? LEFT : RIGHT;
+      return v < 0 ? Handedness.LEFT : Handedness.RIGHT;
    }
 
    /**
-    * Returns the opposite of the input hand.
+    * Returns the opposite of the input handedness.
     *
-    * @param hand the input hand
+    * @param h the input handedness
     *
     * @return the reverse
     */
-   public static Handedness reverse ( final Handedness hand ) {
+   public static Handedness reverse ( final Handedness h ) {
 
-      return hand == Handedness.RIGHT ? Handedness.LEFT : Handedness.RIGHT;
+      return h == Handedness.RIGHT ? Handedness.LEFT : Handedness.RIGHT;
    }
 
 }

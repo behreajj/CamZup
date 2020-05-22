@@ -136,13 +136,13 @@ class Indices2 implements Cloneable, Comparable < Indices2 > {
 
       try {
          vIdx = Integer.parseInt(vStr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          vIdx = 0;
       }
 
       try {
          vtIdx = Integer.parseInt(vtStr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          vtIdx = 0;
       }
 

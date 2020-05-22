@@ -488,13 +488,13 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
 
       try {
          xprs = Float.parseFloat(xstr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          xprs = 0.0f;
       }
 
       try {
          yprs = Float.parseFloat(ystr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          yprs = 0.0f;
       }
 

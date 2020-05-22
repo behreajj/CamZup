@@ -263,7 +263,7 @@ abstract class SvgParser {
 
          }
 
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          x = def;
       }
 
@@ -532,7 +532,7 @@ abstract class SvgParser {
       int x = 0;
       try {
          x = Integer.parseInt(v);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          x = 0;
       }
       return x != 0;
@@ -654,7 +654,7 @@ abstract class SvgParser {
 
          }
 
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          x = def;
       }
 

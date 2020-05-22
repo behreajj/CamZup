@@ -400,6 +400,9 @@ public interface IUp3 extends IUp {
     */
    default void moveTo ( final float x, final float y, final float z ) {
 
+      // TODO: Create equivalent for lookAt with both immediate set and smoothed
+      // lerp...?
+
       this.camera(x, y, z, this.getLookTargetX(), this.getLookTargetY(), this
          .getLookTargetZ());
    }
@@ -649,10 +652,6 @@ public interface IUp3 extends IUp {
       final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
       final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
       return target.set(mx + mx - 1.0f, 1.0f - ( my + my ), 0.0f);
-
-      // final float mx = Utils.mod1(parent.mouseX / ( float ) parent.width);
-      // final float my = Utils.mod1(parent.mouseY / ( float ) parent.height);
-      // return target.set(mx + mx - 1.0f, 1.0f - ( my + my ), 0.0f);
    }
 
    /**
@@ -669,10 +668,6 @@ public interface IUp3 extends IUp {
       final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
       final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
       return target.set(mx, 1.0f - my, 0.0f);
-
-      // final float mx = Utils.mod1(parent.mouseX / ( float ) parent.width);
-      // final float my = Utils.mod1(parent.mouseY / ( float ) parent.height);
-      // return target.set(mx, 1.0f - my, 0.0f);
    }
 
 }

@@ -931,24 +931,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float arcLen1 = Utils.mod1(b1 - a1);
 
       /* Edge case: angles are equal. */
-      if ( arcLen1 <= 0.00139f ) {
-
-         /* Never mind with the straight line, sometimes arcs are open. */
-         // target.resize(2);
-         // target.closedLoop = false;
-         // final Knot2 prev = target.getFirst();
-         // final Knot2 next = target.getLast();
-         // prev.set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-         // next.set(radius * Utils.scNorm(a1), radius * Utils.scNorm(a1 -
-         // 0.25f),
-         // 0.0f, 0.0f, 0.0f, 0.0f);
-         // Curve2.lerp13(prev.coord, next.coord, prev.foreHandle);
-         // Curve2.lerp13(next.coord, prev.coord, next.rearHandle);
-         // prev.mirrorHandlesForward();
-         // next.mirrorHandlesBackward();
-         // target.name = "Arc";
-         return target;
-      }
+      if ( arcLen1 <= 0.00139f ) { return target; }
 
       final float destAngle1 = a1 + arcLen1;
 
@@ -1562,18 +1545,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          -0.114256f);
 
       return target;
-   }
-
-   /**
-    * Creates a curve that forms a horizontal line.
-    *
-    * @param target the output curve
-    *
-    * @return the line
-    */
-   public static Curve2 line ( final Curve2 target ) {
-
-      return Curve2.line(-0.5f, 0.0f, 0.5f, 0.0f, target);
    }
 
    /**

@@ -149,19 +149,19 @@ class Indices3 implements Cloneable, Comparable < Indices3 > {
 
       try {
          vIdx = Integer.parseInt(vStr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          vIdx = 0;
       }
 
       try {
          vtIdx = Integer.parseInt(vtStr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          vtIdx = 0;
       }
 
       try {
          vnIdx = Integer.parseInt(vnStr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          vnIdx = 0;
       }
 

@@ -421,13 +421,13 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
 
       try {
          rlstr = Float.parseFloat(realstr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          rlstr = 0.0f;
       }
 
       try {
          imstr = Float.parseFloat(imagstr);
-      } catch ( final NumberFormatException e ) {
+      } catch ( final Exception e ) {
          imstr = 0.0f;
       }
 
