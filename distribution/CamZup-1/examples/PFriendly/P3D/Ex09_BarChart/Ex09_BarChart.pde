@@ -92,12 +92,12 @@ void draw() {
       rndr.strafe(mouse1);
     }
   }
-
+  
+  rndr.lights();
   rndr.perspective(Utils.PI * 0.125);
   rndr.camera();
   rndr.background(#fff7d5);
   rndr.grid(32);
-  rndr.lights();
 
   for (int i = 0; i < count; ++i) {
     rndr.shape(bars[i], materials[i]);

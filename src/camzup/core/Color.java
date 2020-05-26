@@ -46,8 +46,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     */
    public Color ( final byte red, final byte green, final byte blue ) {
 
-      // TODO: Research ALPHA OVER, UNDER, SOURCE, etc. Are these constants used
-      // when adding/subtracting, etc.?
       this.set(red, green, blue);
    }
 
@@ -784,8 +782,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    public float[] toArray ( ) { return this.toArrayFloat(false); }
 
    /**
-    * Returns an array of <code>byte</code>s. The boolean flag determines
-    * whether the alpha channel is the first or last element.
+    * Returns an array of <code>byte</code>s. The flag determines whether the
+    * alpha channel is the first or last element.
     *
     * @param alphaFirst the alpha flag
     *
@@ -803,8 +801,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Returns an array of <code>float</code>s. The boolean flag determines
-    * whether the alpha channel is the first or last element.
+    * Returns an array of <code>float</code>s. The flag determines whether the
+    * alpha channel is the first or last element.
     *
     * @param alphaFirst the alpha flag
     *
@@ -993,8 +991,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    public static boolean any ( final Color c ) { return c.a > 0.0f; }
 
    /**
-    * Converts two colors to integers, performs the bitwise AND operation on
-    * them, then converts the result to a color.
+    * Converts two colors to integers, performs the bitwise and operation on
+    * them (<code>&</code>), then converts the result to a color.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -1008,12 +1006,24 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    public static Color bitAnd ( final Color a, final Color b,
       final Color target ) {
 
-      return Color.fromHex(Color.toHexInt(a) & Color.toHexInt(b), target);
+      // return Color.fromHex(Color.toHexInt(a) & Color.toHexInt(b), target);
+
+      final int cr = ( int ) ( a.r * 0xff + 0.5f ) & ( int ) ( b.r * 0xff
+         + 0.5f );
+      final int cg = ( int ) ( a.g * 0xff + 0.5f ) & ( int ) ( b.g * 0xff
+         + 0.5f );
+      final int cb = ( int ) ( a.b * 0xff + 0.5f ) & ( int ) ( b.b * 0xff
+         + 0.5f );
+      final int ca = ( int ) ( a.a * 0xff + 0.5f ) & ( int ) ( b.a * 0xff
+         + 0.5f );
+
+      return target.set(cr * IUtils.ONE_255, cg * IUtils.ONE_255, cb
+         * IUtils.ONE_255, ca * IUtils.ONE_255);
    }
 
    /**
-    * Converts a color to an integer, performs the bitwise NOT operation on
-    * it, then converts the result to a color.
+    * Converts a color to an integer, performs the bitwise not operation on it
+    * (<code>~</code>), then converts the result to a color.
     *
     * @param a      the input color
     * @param target the output color
@@ -1025,12 +1035,20 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     */
    public static Color bitNot ( final Color a, final Color target ) {
 
-      return Color.fromHex(~Color.toHexInt(a), target);
+      // return Color.fromHex(~Color.toHexInt(a), target);
+
+      final int cr = ~( int ) ( a.r * 0xff + 0.5f ) & 0xff;
+      final int cg = ~( int ) ( a.g * 0xff + 0.5f ) & 0xff;
+      final int cb = ~( int ) ( a.b * 0xff + 0.5f ) & 0xff;
+      final int ca = ~( int ) ( a.a * 0xff + 0.5f ) & 0xff;
+
+      return target.set(cr * IUtils.ONE_255, cg * IUtils.ONE_255, cb
+         * IUtils.ONE_255, ca * IUtils.ONE_255);
    }
 
    /**
-    * Converts two colors to integers, performs the bitwise OR operation
-    * (inclusive or) on them, then converts the result to a color.
+    * Converts two colors to integers, performs the bitwise inclusive or
+    * operation on them (<code>|</code>), then converts the result to a color.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -1044,7 +1062,19 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    public static Color bitOr ( final Color a, final Color b,
       final Color target ) {
 
-      return Color.fromHex(Color.toHexInt(a) | Color.toHexInt(b), target);
+      // return Color.fromHex(Color.toHexInt(a) | Color.toHexInt(b), target);
+
+      final int cr = ( int ) ( a.r * 0xff + 0.5f ) | ( int ) ( b.r * 0xff
+         + 0.5f );
+      final int cg = ( int ) ( a.g * 0xff + 0.5f ) | ( int ) ( b.g * 0xff
+         + 0.5f );
+      final int cb = ( int ) ( a.b * 0xff + 0.5f ) | ( int ) ( b.b * 0xff
+         + 0.5f );
+      final int ca = ( int ) ( a.a * 0xff + 0.5f ) | ( int ) ( b.a * 0xff
+         + 0.5f );
+
+      return target.set(cr * IUtils.ONE_255, cg * IUtils.ONE_255, cb
+         * IUtils.ONE_255, ca * IUtils.ONE_255);
    }
 
    /**
@@ -1084,9 +1114,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Converts a color to an integer, performs a bitwise left shift operation,
-    * then converts the result to a color. To shift a whole color channel, use
-    * increments of 8 (8, 16, 24).
+    * Converts a color to an integer, performs a bitwise left shift operation
+    * (<code><<</code>), then converts the result to a color. To shift a whole
+    * color channel, use increments of 8 (8, 16, 24).
     *
     * @param a      the color
     * @param places the number of places
@@ -1104,9 +1134,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Converts a color to an integer, performs a bitwise right shift
-    * operation, then converts the result to a color. To shift a whole color
-    * channel, use increments of 8 (8, 16, 24).
+    * Converts a color to an integer, performs a bitwise right shift operation
+    * (<code>>></code>), then converts the result to a color. To shift a whole
+    * color channel, use increments of 8 (8, 16, 24).
     *
     * @param a      the color
     * @param places the number of places
@@ -1125,8 +1155,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
 
    /**
     * Converts a color to an integer, performs an unsigned bitwise right shift
-    * operation, then converts the result to a color. To shift a whole color
-    * channel, use increments of 8 (8, 16, 24).
+    * operation (<code>>>></code>), then converts the result to a color. To
+    * shift a whole color channel, use increments of 8 (8, 16, 24).
     *
     * @param a      the color
     * @param places the number of places
@@ -1144,8 +1174,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Converts two colors to integers, performs the bitwise XOR operation
-    * (exclusive or) on them, then converts the result to a color.
+    * Converts two colors to integers, performs the bitwise exclusive or
+    * operation on them (<code>^</code>), then converts the result to a color.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -1159,7 +1189,19 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    public static Color bitXor ( final Color a, final Color b,
       final Color target ) {
 
-      return Color.fromHex(Color.toHexInt(a) ^ Color.toHexInt(b), target);
+      // return Color.fromHex(Color.toHexInt(a) ^ Color.toHexInt(b), target);
+
+      final int cr = ( int ) ( a.r * 0xff + 0.5f ) ^ ( int ) ( b.r * 0xff
+         + 0.5f );
+      final int cg = ( int ) ( a.g * 0xff + 0.5f ) ^ ( int ) ( b.g * 0xff
+         + 0.5f );
+      final int cb = ( int ) ( a.b * 0xff + 0.5f ) ^ ( int ) ( b.b * 0xff
+         + 0.5f );
+      final int ca = ( int ) ( a.a * 0xff + 0.5f ) ^ ( int ) ( b.a * 0xff
+         + 0.5f );
+
+      return target.set(cr * IUtils.ONE_255, cg * IUtils.ONE_255, cb
+         * IUtils.ONE_255, ca * IUtils.ONE_255);
    }
 
    /**
@@ -2518,6 +2560,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     */
    public static String toHexWeb ( final int c ) {
 
+      // TODO: Will still omit final zeroes...
       final String hexStr = Integer.toHexString(c);
       if ( hexStr.length() < 3 ) { return "#000000"; }
       return "#" + hexStr.substring(2);

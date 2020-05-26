@@ -37,6 +37,11 @@ import processing.opengl.PShapeOpenGL;
 public abstract class Convert {
 
    /**
+    * Discourage overriding with a private constructor.
+    */
+   private Convert ( ) {}
+
+   /**
     * Converts a PImage to an image.
     *
     * @param pimg   the Processing image

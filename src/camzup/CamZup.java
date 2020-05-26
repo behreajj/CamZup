@@ -1,7 +1,6 @@
 package camzup;
 
-import camzup.core.Utils;
-import camzup.core.Vec3;
+import camzup.core.Color;
 
 import processing.core.PApplet;
 
@@ -53,6 +52,15 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
+      Color a = new Color(0.8f, 0.6f, 0.4f, 0.2f);
+      Color b = new Color(0.9f, 0.1f, 0.3f, 0.5f);
+      Color target = new Color();
+
+      Color.fromHex(~Color.toHexInt(a), target);
+
+      System.out.println(target);
+      System.out.println(Color.bitNot(a, target));
+
       // final Rng rng = new Rng();
       // for ( int i = 0; i < 20; ++i ) {
       // final float var12 = rng.nextFloat();
@@ -77,8 +85,8 @@ public class CamZup {
       // Mesh2.circle(m);
       // System.out.println(m);
 
-      final Vec3[] grid = Vec3.flat(Vec3.grid(8));
-      System.out.println(Utils.toString(grid));
+      // final Vec3[] grid = Vec3.flat(Vec3.grid(8));
+      // System.out.println(Utils.toString(grid));
       // var tree = new KdTree < Vec3 >(grid, cmps);
       // System.out.println(tree);
       // System.out.println(tree.nearest(new Vec3(), 3, null));

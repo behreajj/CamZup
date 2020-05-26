@@ -2476,13 +2476,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       /* @formatter:off */
       final AffineTransform tr = this.g2.getTransform();
+      final double srcxd = source.x;
+      final double srcyd = source.y;
       return target.set(
-         ( float ) ( tr.getScaleX() * source.x +
-                     tr.getShearX() * source.y +
+         ( float ) ( tr.getScaleX() * srcxd +
+                     tr.getShearX() * srcyd +
                      tr.getTranslateX() ),
 
-         ( float ) ( tr.getShearY() * source.x +
-                     tr.getScaleY() * source.y +
+         ( float ) ( tr.getShearY() * srcxd +
+                     tr.getScaleY() * srcyd +
                      tr.getTranslateY() ));
       /* @formatter:on */
    }
@@ -2830,10 +2832,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             this.gp.moveTo(v.x, v.y);
 
             for ( int j = 1; j < flen1; ++j ) {
-
                Transform2.mulPoint(tr, vs[f[j][0]], v);
                this.gp.lineTo(v.x, v.y);
-
             }
 
             this.gp.closePath();
@@ -2889,10 +2889,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             this.gp.moveTo(v.x, v.y);
 
             for ( int j = 1; j < flen1; ++j ) {
-
                Transform2.mulPoint(tr, vs[f[j][0]], v);
                this.gp.lineTo(v.x, v.y);
-
             }
 
             this.gp.closePath();

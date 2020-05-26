@@ -31,5 +31,6 @@ Color.bitXor(a, b, c);
 println(a);
 println(b);
 println(c);
+println(Color.toHexString(c));
 println(hex(Color.toHexInt(a) ^ Color.toHexInt(b)));
 println("");

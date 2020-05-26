@@ -2,6 +2,7 @@ package camzup.pfriendly;
 
 import java.net.URL;
 
+import camzup.core.Color;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
 import camzup.core.Quaternion;
@@ -70,6 +71,18 @@ public class ZShader extends PShader {
       final URL fragURL ) {
 
       super(parent, vertURL, fragURL);
+   }
+
+   /**
+    * Sets a GLSL vec4 uniform to a color. The alpha channel is treated as the
+    * last component.
+    *
+    * @param name the uniform name
+    * @param c    the color
+    */
+   public void set ( final String name, final Color c ) {
+
+      this.setUniformImpl(name, ZShader.VEC4_IDX, c.toArrayFloat(false));
    }
 
    /**
