@@ -103,7 +103,6 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @see Edge2#rotateZGlobal(float)
     */
-
    public Edge2 rotateZ ( final float radians ) {
 
       return this.rotateZGlobal(radians);
@@ -118,7 +117,6 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return this edge
     */
-
    public Edge2 rotateZGlobal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -138,7 +136,6 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return this edge
     */
-
    public Edge2 rotateZLocal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -174,7 +171,6 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @see Edge2#scaleGlobal(float)
     */
-
    public Edge2 scale ( final float scale ) {
 
       return this.scaleGlobal(scale);
@@ -190,7 +186,6 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @see Edge2#scaleGlobal(Vec2)
     */
-
    public Edge2 scale ( final Vec2 scalar ) {
 
       return this.scaleGlobal(scalar);
@@ -207,7 +202,6 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @see Vec2#mul(Vec2, float, Vec2)
     */
-
    public Edge2 scaleGlobal ( final float scalar ) {
 
       if ( scalar != 0.0f ) {
@@ -228,7 +222,6 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @see Vec2#mul(Vec2, Vec2, Vec2)
     */
-
    public Edge2 scaleGlobal ( final Vec2 scalar ) {
 
       if ( Vec2.none(scalar) ) { return this; }
@@ -250,7 +243,6 @@ public class Edge2 implements Comparable < Edge2 > {
     * @see Vec2#mul(Vec2, float, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-
    public Edge2 scaleLocal ( final float scalar ) {
 
       if ( scalar == 0.0f ) { return this; }
@@ -288,7 +280,6 @@ public class Edge2 implements Comparable < Edge2 > {
     * @see Vec2#mul(Vec2, Vec2, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-
    @Experimental
    public Edge2 scaleLocal ( final Vec2 scalar ) {
 
@@ -325,7 +316,6 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return this edge
     */
-
    public Edge2 set ( final Vec2 coOrigin, final Vec2 txOrigin,
       final Vec2 coDest, final Vec2 txDest ) {
 
@@ -342,7 +332,6 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return this edge
     */
-
    public Edge2 set ( final Vert2 origin, final Vert2 dest ) {
 
       this.origin = origin;
@@ -387,7 +376,6 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @see Mat3#mulPoint(Mat3, Vec2, Vec2)
     */
-
    public Edge2 transform ( final Mat3 m ) {
 
       Mat3.mulPoint(m, this.origin.coord, this.origin.coord);

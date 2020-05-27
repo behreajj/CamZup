@@ -1263,7 +1263,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return this mesh
     */
-
    public Mesh2 subdivFacesCenter ( final int itr ) {
 
       for ( int i = 0; i < itr; ++i ) {
@@ -1412,7 +1411,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @see Mesh2#calcDimensions(Mesh2, Vec2, Vec2, Vec2)
     * @see Mesh2#translate(Vec2)
     */
-
    public Mesh2 toOrigin ( final Transform2 tr ) {
 
       final Vec2 lb = new Vec2();
@@ -1600,7 +1598,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @see Mat3#mulPoint(Mat3, Vec2, Vec2)
     */
-
    public Mesh2 transform ( final Mat3 m ) {
 
       final int len = this.coords.length;
@@ -1626,7 +1623,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return this mesh
     */
-
    public Mesh2 transform ( final Transform2 tr ) {
 
       final int len = this.coords.length;
@@ -1646,7 +1642,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-
    public Mesh2 translate ( final Vec2 v ) {
 
       final int len = this.coords.length;

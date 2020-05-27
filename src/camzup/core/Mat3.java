@@ -523,33 +523,27 @@ public class Mat3 extends Matrix {
          case -3:
 
             /* Right axis. */
-
             this.m00 = source.x;
             this.m10 = source.y;
             this.m20 = 0.0f;
-
             return this;
 
          case 1:
          case -2:
 
             /* Forward axis. */
-
             this.m01 = source.x;
             this.m11 = source.y;
             this.m21 = 0.0f;
-
             return this;
 
          case 2:
          case -1:
 
             /* Translation. */
-
             this.m02 = source.x;
             this.m12 = source.y;
             this.m22 = 1.0f;
-
             return this;
 
          default:

@@ -144,7 +144,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Utils#sin(float)
     * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
     */
-
    public Face3 rotate ( final float radians, final Vec3 axis ) {
 
       final float cosa = Utils.cos(radians);
@@ -169,7 +168,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     */
-
    public Face3 rotate ( final Quaternion q ) {
 
       final int len = this.vertices.length;
@@ -193,7 +191,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Utils#sin(float)
     * @see Vec3#rotateX(Vec3, float, Vec3)
     */
-
    public Face3 rotateX ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -220,7 +217,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Utils#sin(float)
     * @see Vec3#rotateY(Vec3, float, Vec3)
     */
-
    public Face3 rotateY ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -247,7 +243,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Utils#sin(float)
     * @see Vec3#rotateZ(Vec3, float, Vec3)
     */
-
    public Face3 rotateZ ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -272,7 +267,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @see Vec3#mul(Vec3, float, Vec3)
     */
-
    public Face3 scale ( final float scale ) {
 
       return this.scaleGlobal(scale);
@@ -290,7 +284,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @see Vec3#mul(Vec3, float, Vec3)
     */
-
    public Face3 scale ( final Vec3 scale ) {
 
       return this.scaleGlobal(scale);
@@ -306,7 +299,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @see Vec3#mul(Vec3, float, Vec3)
     */
-
    public Face3 scaleGlobal ( final float scale ) {
 
       if ( scale == 0.0f ) { return this; }
@@ -333,7 +325,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     */
-
    public Face3 scaleGlobal ( final Vec3 scale ) {
 
       if ( Vec3.none(scale) ) { return this; }
@@ -463,7 +454,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @see Mat4#mulPoint(Mat4, Vec3, Vec3)
     */
-
    public Face3 transform ( final Mat4 m ) {
 
       final int len = this.vertices.length;

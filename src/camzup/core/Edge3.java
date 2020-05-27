@@ -106,7 +106,6 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
     */
-
    public Edge3 rotate ( final float radians, final Vec3 axis ) {
 
       final float cosa = Utils.cos(radians);
@@ -128,7 +127,6 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     */
-
    public Edge3 rotate ( final Quaternion q ) {
 
       Quaternion.mulVector(q, this.origin.coord, this.origin.coord);
@@ -147,7 +145,6 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @see Vec3#rotateX(Vec3, float, float, Vec3)
     */
-
    public Edge3 rotateX ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -169,7 +166,6 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @see Vec3#rotateY(Vec3, float, float, Vec3)
     */
-
    public Edge3 rotateY ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -191,7 +187,6 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @see Vec3#rotateZ(Vec3, float, float, Vec3)
     */
-
    public Edge3 rotateZ ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
@@ -213,7 +208,6 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @see Edge3#scaleGlobal(float)
     */
-
    public Edge3 scale ( final float scalar ) {
 
       return this.scaleGlobal(scalar);
@@ -229,7 +223,6 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @see Edge3#scaleGlobal(Vec3)
     */
-
    public Edge3 scale ( final Vec3 scalar ) {
 
       return this.scaleGlobal(scalar);
@@ -246,7 +239,6 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @see Vec3#mul(Vec3, float, Vec3)
     */
-
    public Edge3 scaleGlobal ( final float scalar ) {
 
       if ( scalar != 0.0f ) {
@@ -267,7 +259,6 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     */
-
    public Edge3 scaleGlobal ( final Vec3 scalar ) {
 
       if ( Vec3.none(scalar) ) { return this; }
@@ -289,7 +280,6 @@ public class Edge3 implements Comparable < Edge3 > {
     * @see Vec3#mul(Vec3, float, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-
    public Edge3 scaleLocal ( final float scalar ) {
 
       // TEST
@@ -330,7 +320,6 @@ public class Edge3 implements Comparable < Edge3 > {
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-
    public Edge3 scaleLocal ( final Vec3 scalar ) {
 
       // TEST
@@ -371,7 +360,6 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return this edge
     */
-
    public Edge3 set ( final Vec3 coOrigin, final Vec2 txOrigin,
       final Vec3 nmOrigin, final Vec3 coDest, final Vec2 txDest,
       final Vec3 nmDest ) {
@@ -389,7 +377,6 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return this edge
     */
-
    public Edge3 set ( final Vert3 origin, final Vert3 dest ) {
 
       this.origin = origin;
@@ -433,7 +420,6 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @see Mat4#mulPoint(Mat4, Vec3, Vec3)
     */
-
    public Edge3 transform ( final Mat4 m ) {
 
       Mat4.mulPoint(m, this.origin.coord, this.origin.coord);
@@ -452,7 +438,6 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-
    public Edge3 translate ( final Vec3 v ) {
 
       Vec3.add(this.origin.coord, v, this.origin.coord);

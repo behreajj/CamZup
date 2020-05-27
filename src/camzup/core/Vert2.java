@@ -80,7 +80,6 @@ public class Vert2 implements Comparable < Vert2 > {
     *
     * @return this vertex
     */
-
    public Vert2 set ( final Vec2 coord, final Vec2 texCoord ) {
 
       this.coord = coord;

@@ -185,7 +185,6 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-
    public MaterialSolid set ( final MaterialSolid source ) {
 
       this.name = source.name;
@@ -204,7 +203,6 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-
    public MaterialSolid setFill ( final boolean fill ) {
 
       this.useFill = fill;
@@ -218,7 +216,6 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-
    public MaterialSolid setFill ( final Color fill ) {
 
       this.fill.set(fill);
@@ -265,7 +262,6 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-
    public MaterialSolid setFill ( final int fill ) {
 
       Color.fromHex(fill, this.fill);
@@ -279,7 +275,6 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-
    public MaterialSolid setStroke ( final boolean stroke ) {
 
       this.useStroke = stroke;
@@ -293,7 +288,6 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-
    public MaterialSolid setStroke ( final Color stroke ) {
 
       this.stroke.set(stroke);
@@ -340,7 +334,6 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-
    public MaterialSolid setStroke ( final int stroke ) {
 
       Color.fromHex(stroke, this.stroke);
@@ -354,7 +347,6 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-
    public MaterialSolid setStrokeWeight ( final float strokeWeight ) {
 
       this.strokeWeight = Utils.max(IUtils.DEFAULT_EPSILON, strokeWeight);
@@ -367,7 +359,6 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-
    public MaterialSolid swapFillStroke ( ) {
 
       final boolean t = this.useFill;
@@ -389,7 +380,6 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-
    public MaterialSolid toggleFill ( ) {
 
       this.useFill = !this.useFill;
@@ -401,7 +391,6 @@ public class MaterialSolid extends Material implements Cloneable {
     *
     * @return this material
     */
-
    public MaterialSolid toggleStroke ( ) {
 
       this.useStroke = !this.useStroke;

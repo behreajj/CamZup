@@ -89,7 +89,6 @@ public class Vert3 implements Comparable < Vert3 > {
     *
     * @return this vertex
     */
-
    public Vert3 set ( final Vec3 coord, final Vec2 texCoord,
       final Vec3 normal ) {
 

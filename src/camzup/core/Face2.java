@@ -323,7 +323,6 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * @see Vec2#mul(Vec2, Vec2, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-
    public Face2 scaleLocal ( final Vec2 scale ) {
 
       if ( Vec2.none(scale) ) { return this; }
@@ -349,7 +348,6 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @return this face
     */
-
    public Face2 set ( final Vert2... vertices ) {
 
       this.vertices = vertices;
@@ -394,7 +392,6 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @see Mat3#mulPoint(Mat3, Vec2, Vec2)
     */
-
    public Face2 transform ( final Mat3 m ) {
 
       final int len = this.vertices.length;
@@ -415,7 +412,6 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-
    public Face2 translate ( final Vec2 v ) {
 
       return this.translateGlobal(v);
@@ -431,7 +427,6 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-
    public Face2 translateGlobal ( final Vec2 v ) {
 
       final int len = this.vertices.length;
@@ -627,7 +622,6 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @return the winding number
     */
-
    public static float winding ( final Face2 face ) {
 
       float wn = 0.0f;

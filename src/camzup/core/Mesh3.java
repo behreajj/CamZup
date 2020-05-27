@@ -1114,7 +1114,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @see Vec3#none(Vec3)
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     */
-
    public Mesh3 scale ( final Vec3 scale ) {
 
       if ( Vec3.none(scale) ) { return this; }
@@ -2038,7 +2037,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     */
-
    @Experimental
    protected Mesh3 calcUvs ( ) {
 
@@ -2104,7 +2102,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @see Vec3#normalize(Vec3, Vec3)
     */
    @Experimental
-
    protected Mesh3 subdivEdge ( final int faceIndex, final int edgeIndex,
       final int cuts ) {
 

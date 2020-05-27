@@ -179,7 +179,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Returns a new vector decremented by {@link IUtils#ONE_255},
+    * Returns a new color decremented by {@link IUtils#ONE_255},
     * {@value IUtils#ONE_255}. For interoperability with Kotlin:
     * <code>--a</code> (prefix) or <code>a--</code> (postfix). Per the
     * specification, <em>does not mutate the color in place</em>.
@@ -992,7 +992,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
 
    /**
     * Converts two colors to integers, performs the bitwise and operation on
-    * them (<code>&</code>), then converts the result to a color.
+    * them, then converts the result to a color.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -1022,8 +1022,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Converts a color to an integer, performs the bitwise not operation on it
-    * (<code>~</code>), then converts the result to a color.
+    * Converts a color to an integer, performs the bitwise not operation on
+    * it, then converts the result to a color.
     *
     * @param a      the input color
     * @param target the output color
@@ -1048,7 +1048,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
 
    /**
     * Converts two colors to integers, performs the bitwise inclusive or
-    * operation on them (<code>|</code>), then converts the result to a color.
+    * operation on them, then converts the result to a color.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -1114,9 +1114,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Converts a color to an integer, performs a bitwise left shift operation
-    * (<code><<</code>), then converts the result to a color. To shift a whole
-    * color channel, use increments of 8 (8, 16, 24).
+    * Converts a color to an integer, performs a bitwise left shift operation,
+    * then converts the result to a color. To shift a whole color channel, use
+    * increments of 8 (8, 16, 24).
     *
     * @param a      the color
     * @param places the number of places
@@ -1134,9 +1134,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Converts a color to an integer, performs a bitwise right shift operation
-    * (<code>>></code>), then converts the result to a color. To shift a whole
-    * color channel, use increments of 8 (8, 16, 24).
+    * Converts a color to an integer, performs a bitwise right shift
+    * operation, then converts the result to a color. To shift a whole color
+    * channel, use increments of 8 (8, 16, 24).
     *
     * @param a      the color
     * @param places the number of places
@@ -1155,8 +1155,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
 
    /**
     * Converts a color to an integer, performs an unsigned bitwise right shift
-    * operation (<code>>>></code>), then converts the result to a color. To
-    * shift a whole color channel, use increments of 8 (8, 16, 24).
+    * operation, then converts the result to a color. To shift a whole color
+    * channel, use increments of 8 (8, 16, 24).
     *
     * @param a      the color
     * @param places the number of places
@@ -1175,7 +1175,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
 
    /**
     * Converts two colors to integers, performs the bitwise exclusive or
-    * operation on them (<code>^</code>), then converts the result to a color.
+    * operation on them, then converts the result to a color.
     *
     * @param a      the left operand
     * @param b      the right operand
