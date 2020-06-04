@@ -1229,7 +1229,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Clamps a color to a lower- and upper-bound.
+    * Clamps a color to a lower and upper bound.
     *
     * @param a          the input color
     * @param lowerBound the lower bound
@@ -1765,11 +1765,12 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * <a href="https://en.wikipedia.org/wiki/Relative_luminance">
     * https://en.wikipedia.org/wiki/Relative_luminance</a> .<br>
     * <br>
-    * Colors stored as integers are less precise than those stored as floats
-    * (1.0 / 255.0 being the smallest difference between a channel of two
-    * integer colors). Combined with single precision when multiplying small
-    * numbers (all weighting factors must be divided by 255.0 ), this will not
-    * yield the same result as {@link Color#luminance(Color)} .
+    * Colors stored as integers are less precise than those stored as
+    * <code>float</code>s (1.0 / 255.0 being the smallest difference between a
+    * channel of two integer colors). Combined with single precision when
+    * multiplying small numbers (all weighting factors must be divided by
+    * 255.0 ), this will not yield the same result as
+    * {@link Color#luminance(Color)} .
     *
     * @param c the input color
     *
@@ -2285,10 +2286,10 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
          }
 
          hue *= IUtils.ONE_SIX;
-         if ( hue < 0.0f ) { hue += 1.0f; }
+         if ( hue < 0.0f ) { ++hue; }
       }
 
-      final float sat = bri == 0.0f ? 0.0f : delta / bri;
+      final float sat = bri != 0.0f ? delta / bri : 0.0f;
       return target.set(hue, sat, bri, alpha);
    }
 
@@ -2543,27 +2544,40 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     */
    public static String toHexWeb ( final Color c ) {
 
-      return Color.toHexWeb(Color.toHexInt(c));
+      final byte rb = ( byte ) ( c.r * 0xff + 0.5f );
+      final byte gb = ( byte ) ( c.g * 0xff + 0.5f );
+      final byte bb = ( byte ) ( c.b * 0xff + 0.5f );
+
+      final StringBuilder sb = new StringBuilder(7);
+      sb.append('#');
+      sb.append(Color.toHexString(rb));
+      sb.append(Color.toHexString(gb));
+      sb.append(Color.toHexString(bb));
+      return sb.toString();
    }
 
    /**
     * Returns a web-friendly representation of the color as a hexadecimal
     * code, preceded by a hash tag, '#', with no alpha. Assumes the number
-    * will be formatted as <code>0xaabbccdd</code> , where alpha is the first
+    * will be formatted as <code>0xAARRGGBB</code> , where alpha is the first
     * channel, followed by red, green and blue.
     *
     * @param c the color
     *
     * @return the string
-    *
-    * @see Integer#toHexString(int)
     */
    public static String toHexWeb ( final int c ) {
 
-      // TODO: Will still omit final zeroes...
-      final String hexStr = Integer.toHexString(c);
-      if ( hexStr.length() < 3 ) { return "#000000"; }
-      return "#" + hexStr.substring(2);
+      final byte rb = ( byte ) ( c >> 0x10 & 0xff );
+      final byte gb = ( byte ) ( c >> 0x8 & 0xff );
+      final byte bb = ( byte ) ( c & 0xff );
+
+      final StringBuilder sb = new StringBuilder(7);
+      sb.append('#');
+      sb.append(Color.toHexString(rb));
+      sb.append(Color.toHexString(gb));
+      sb.append(Color.toHexString(bb));
+      return sb.toString();
    }
 
    /**
@@ -2663,6 +2677,46 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
 
       return target.set(Utils.clamp01(a.r - b), Utils.clamp01(a.g - b), Utils
          .clamp01(a.b - b), Utils.clamp01(a.a));
+   }
+
+   /**
+    * A helper function to translate a byte to a hexadecimal string. Does
+    * <em>not</em> prefix the String with a hexadecimal indicator, '0x'; this
+    * is so that Strings can be concatenated together.
+    *
+    * @param b the byte
+    *
+    * @return the string
+    */
+   protected static String toHexString ( final byte b ) {
+
+      final int digit0 = b >> 0x4 & 0x0f;
+      final int digit1 = b & 0x0f;
+      final StringBuilder sb = new StringBuilder(2);
+
+      /* @formatter:off */
+      switch ( digit0 ) {
+         case 0xa: sb.append('a'); break;
+         case 0xb: sb.append('b'); break;
+         case 0xc: sb.append('c'); break;
+         case 0xd: sb.append('d'); break;
+         case 0xe: sb.append('e'); break;
+         case 0xf: sb.append('f'); break;
+         default: sb.append(( char ) ( '0' + digit0 ));
+      }
+
+      switch ( digit1 ) {
+         case 0xa: sb.append('a'); break;
+         case 0xb: sb.append('b'); break;
+         case 0xc: sb.append('c'); break;
+         case 0xd: sb.append('d'); break;
+         case 0xe: sb.append('e'); break;
+         case 0xf: sb.append('f'); break;
+         default: sb.append(( char ) ( '0' + digit1 ));
+      }
+      /* @formatter:on */
+
+      return sb.toString();
    }
 
    /**
@@ -2938,7 +2992,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
          final float step ) {
 
          if ( this.oLtd ) {
-            this.o = this.o + 1.0f;
+            ++this.o;
             this.modResult = true;
          }
 
@@ -2976,7 +3030,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
          final float step ) {
 
          if ( this.oGtd ) {
-            this.d = this.d + 1.0f;
+            ++this.d;
             this.modResult = true;
          }
 
@@ -3116,10 +3170,10 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
          final float step ) {
 
          if ( this.oLtd && this.diff < 0.5f ) {
-            this.o = this.o + 1.0f;
+            ++this.o;
             this.modResult = true;
          } else if ( this.oGtd && this.diff > -0.5f ) {
-            this.d = this.d + 1.0f;
+            ++this.d;
             this.modResult = true;
          }
 
@@ -3157,10 +3211,10 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
          final float step ) {
 
          if ( this.oLtd && this.diff > 0.5f ) {
-            this.o = this.o + 1.0f;
+            ++this.o;
             this.modResult = true;
          } else if ( this.oGtd && this.diff < -0.5f ) {
-            this.d = this.d + 1.0f;
+            ++this.d;
             this.modResult = true;
          }
 

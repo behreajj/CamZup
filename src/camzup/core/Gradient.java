@@ -27,7 +27,14 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    protected final ColorKey query;
 
    {
-      this.keys = new TreeSet <>(new ColorKey.SortQuantized());
+      /*
+       * Sort quantized cannot be used as a comparator supplied to this
+       * TreeSet's constructor, as it leads to bugs when an unknown number of
+       * keys are supplied to the gradient.
+       */
+
+      // TODO: Could this be replaced with a TreeMap?
+      this.keys = new TreeSet <>();
       this.query = new ColorKey();
    }
 
@@ -196,7 +203,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final Iterator < Color > clrItr = colors.iterator();
       while ( clrItr.hasNext() ) {
          this.keys.add(new ColorKey( ( oldLen + i ) * denom, clrItr.next()));
-         i++;
+         ++i;
       }
 
       return this;
@@ -319,7 +326,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       int i = 0;
       while ( itr.hasNext() ) {
          arr[i] = itr.next();
-         i++;
+         ++i;
       }
 
       final int k = Utils.mod(-places, len);
@@ -354,7 +361,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       ColorKey key;
       while ( itr.hasNext() ) {
          key = itr.next();
-         key.step = incr++ * denom;
+         key.step = incr * denom;
+         ++incr;
       }
 
       this.keys.addAll(keyArr);
@@ -573,7 +581,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final Iterator < Color > clrItr = colors.iterator();
       while ( clrItr.hasNext() ) {
          this.keys.add(new ColorKey(i * denom, clrItr.next()));
-         i++;
+         ++i;
       }
 
       return this;
@@ -725,7 +733,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       int i = 0;
       while ( itr.hasNext() ) {
          arr[i] = itr.next();
-         i++;
+         ++i;
       }
 
       Gradient.reverse(arr, 0, len - 1);
@@ -785,8 +793,9 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final Iterator < ColorKey > keyItr = this.keys.iterator();
       while ( keyItr.hasNext() ) {
          final ColorKey key = keyItr.next();
-         steps[j++] = key.step;
+         steps[j] = key.step;
          clrList.add(key.clr);
+         ++j;
       }
 
       /* Clear out the gradient's key set now that separation is complete. */
@@ -799,7 +808,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       int i = 0;
       final Iterator < Color > clrItr = clrList.iterator();
       while ( clrItr.hasNext() ) {
-         this.keys.add(new ColorKey(steps[i++], clrItr.next()));
+         this.keys.add(new ColorKey(steps[i], clrItr.next()));
+         ++i;
       }
 
       return this;
@@ -955,8 +965,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final boolean nonOneLast = lastStep < 1.0f;
 
       int len = this.keys.size() - 1;
-      if ( nonZeroFirst ) { len++; }
-      if ( nonOneLast ) { len++; }
+      if ( nonZeroFirst ) { ++len; }
+      if ( nonOneLast ) { ++len; }
 
       final StringBuilder sb = new StringBuilder();
       sb.append("GIMP Gradient\n");
@@ -1181,7 +1191,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final float scalar = 1.0f / ( this.keys.size() + added - 1.0f );
       while ( itr.hasNext() ) {
          final ColorKey key = itr.next();
-         key.step = key.step * i++ * scalar;
+         key.step = key.step * i * scalar;
+         ++i;
       }
       return this;
    }
@@ -1594,6 +1605,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
                final int ri = Gradient.intFromStr(tokens[0]);
                final int gi = Gradient.intFromStr(tokens[1]);
                final int bi = Gradient.intFromStr(tokens[2]);
+
                /* @formatter:off */
                final Color clr = new Color(
                   ri * IUtils.ONE_255,
@@ -1601,6 +1613,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
                   bi * IUtils.ONE_255,
                   1.0f);
                /* @formatter:on */
+
                clrs.add(clr);
             }
          }
@@ -2047,8 +2060,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
          final float temp = arr[st].step;
          arr[st].step = arr[ed].step;
          arr[ed].step = temp;
-         st++;
-         ed--;
+         ++st;
+         --ed;
       }
 
       return arr;

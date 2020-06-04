@@ -1,6 +1,7 @@
 package camzup;
 
 import camzup.core.Color;
+import camzup.core.Rng;
 
 import processing.core.PApplet;
 
@@ -52,16 +53,16 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      Color a = new Color(0.8f, 0.6f, 0.4f, 0.2f);
-      Color b = new Color(0.9f, 0.1f, 0.3f, 0.5f);
-      Color target = new Color();
+      final Color a = new Color(0.8f, 0.6f, 0.4f, 0.2f);
+      new Color(0.9f, 0.1f, 0.3f, 0.5f);
+      final Color target = new Color();
 
       Color.fromHex(~Color.toHexInt(a), target);
 
       System.out.println(target);
       System.out.println(Color.bitNot(a, target));
 
-      // final Rng rng = new Rng();
+       final Rng rng = new Rng();
       // for ( int i = 0; i < 20; ++i ) {
       // final float var12 = rng.nextFloat();
       // final float var45 = var12 * 2.0f - 1.0f;
@@ -90,6 +91,14 @@ public class CamZup {
       // var tree = new KdTree < Vec3 >(grid, cmps);
       // System.out.println(tree);
       // System.out.println(tree.nearest(new Vec3(), 3, null));
+
+       // byte b = ( byte ) rng.nextInt(255);
+       // System.out.println(toHexString(( byte ) 0x00));
+       // System.out.println(b & 0xff);
+
+       // Color x = Color.fromHex(0xff123785, new Color());
+       int x = 0xff3f7f00;
+       System.out.println(Color.toHexWeb(x));
    }
 
    /**

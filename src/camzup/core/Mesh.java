@@ -131,7 +131,6 @@ public abstract class Mesh extends EntityData implements IMesh {
    @Override
    public String toString ( ) {
 
-      // TODO: Is it necessary to print faces here?
       final StringBuilder sb = new StringBuilder(64);
       sb.append("{ name: \"");
       sb.append(this.name);
@@ -392,14 +391,24 @@ public abstract class Mesh extends EntityData implements IMesh {
       final public int levels;
 
       /**
+       * Quantization level cast to a float.
+       */
+      final protected float levf;
+
+      /**
+       * Inverse of the quantization level.
+       */
+      final protected float levInv;
+
+      /**
        * Internal vector to hold quantized left operand.
        */
-      final private Vec2 qa;
+      final protected Vec2 qa;
 
       /**
        * Internal vector to hold quantized right operand.
        */
-      final private Vec2 qb;
+      final protected Vec2 qb;
 
       {
          this.qa = new Vec2();
@@ -421,7 +430,9 @@ public abstract class Mesh extends EntityData implements IMesh {
        */
       public SortQuantized2 ( final int levels ) {
 
-         this.levels = levels;
+         this.levels = levels < 2 ? 2 : levels;
+         this.levf = this.levels;
+         this.levInv = 1.0f / this.levf;
       }
 
       /**
@@ -435,10 +446,24 @@ public abstract class Mesh extends EntityData implements IMesh {
       @Override
       public int compare ( final Vec2 a, final Vec2 b ) {
 
-         Vec2.quantize(a, this.levels, this.qa);
-         Vec2.quantize(b, this.levels, this.qb);
+         // Vec2.quantize(a, this.levels, this.qa);
+         // Vec2.quantize(b, this.levels, this.qb);
+
+         this.qa.set(this.levInv * Utils.floor(0.5f + a.x * this.levf),
+            this.levInv * Utils.floor(0.5f + a.y * this.levf));
+
+         this.qb.set(this.levInv * Utils.floor(0.5f + b.x * this.levf),
+            this.levInv * Utils.floor(0.5f + b.y * this.levf));
+
          return this.qa.compareTo(this.qb);
       }
+
+      /**
+       * Get the quantization level.
+       *
+       * @return the level
+       */
+      public int getLevel ( ) { return this.levels; }
 
       /**
        * Returns the simple name of this class.
@@ -462,14 +487,24 @@ public abstract class Mesh extends EntityData implements IMesh {
       final public int levels;
 
       /**
+       * Quantization level cast to a float.
+       */
+      final protected float levf;
+
+      /**
+       * Inverse of the quantization level.
+       */
+      final protected float levInv;
+
+      /**
        * Internal vector to hold quantized left operand.
        */
-      final private Vec3 qa;
+      final protected Vec3 qa;
 
       /**
        * Internal vector to hold quantized right operand.
        */
-      final private Vec3 qb;
+      final protected Vec3 qb;
 
       {
          this.qa = new Vec3();
@@ -491,7 +526,9 @@ public abstract class Mesh extends EntityData implements IMesh {
        */
       public SortQuantized3 ( final int levels ) {
 
-         this.levels = levels;
+         this.levels = levels < 2 ? 2 : levels;
+         this.levf = this.levels;
+         this.levInv = 1.0f / this.levf;
       }
 
       /**
@@ -506,10 +543,26 @@ public abstract class Mesh extends EntityData implements IMesh {
       @Override
       public int compare ( final Vec3 a, final Vec3 b ) {
 
-         Vec3.quantize(a, this.levels, this.qa);
-         Vec3.quantize(b, this.levels, this.qb);
+         // Vec3.quantize(a, this.levels, this.qa);
+         // Vec3.quantize(b, this.levels, this.qb);
+
+         this.qa.set(this.levInv * Utils.floor(0.5f + a.x * this.levf),
+            this.levInv * Utils.floor(0.5f + a.y * this.levf), this.levInv
+               * Utils.floor(0.5f + a.z * this.levf));
+
+         this.qb.set(this.levInv * Utils.floor(0.5f + b.x * this.levf),
+            this.levInv * Utils.floor(0.5f + b.y * this.levf), this.levInv
+               * Utils.floor(0.5f + b.z * this.levf));
+
          return this.qa.compareTo(this.qb);
       }
+
+      /**
+       * Get the quantization level.
+       *
+       * @return the level
+       */
+      public int getLevel ( ) { return this.levels; }
 
       /**
        * Returns the simple name of this class.

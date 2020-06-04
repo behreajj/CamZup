@@ -271,7 +271,6 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     *
     * @return this key
     */
-
    ColorKey set ( final float step, final float red, final float green,
       final float blue ) {
 
@@ -293,7 +292,6 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     *
     * @return this key
     */
-
    ColorKey set ( final float step, final float red, final float green,
       final float blue, final float alpha ) {
 
@@ -355,7 +353,10 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
        *
        * @param level quantization levels
        */
-      SortQuantized ( final int level ) { this.level = level; }
+      SortQuantized ( final int level ) {
+
+         this.level = level < 2 ? 2 : level;
+      }
 
       /**
        * Compares the quantized steps of the comparisand keys.

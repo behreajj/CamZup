@@ -1204,7 +1204,7 @@ public abstract class Utils implements IUtils {
     * crenelated effect. Any level less than 2 returns the value unaltered.
     *
     * @param value  the value
-    * @param levels the level
+    * @param levels the levels
     *
     * @return the quantized value
     *
@@ -1219,28 +1219,27 @@ public abstract class Utils implements IUtils {
        */
 
       if ( levels < 2 ) { return value; }
-      return Utils.floor(0.5f + value * levels) / levels;
+      final float levf = levels;
+      return Utils.floor(0.5f + value * levf) / levf;
    }
 
    /**
     * Rounds a value to an integer based on whether its fractional portion is
     * greater than or equal to plus or minus 0.5 .
     *
-    * @param value the value
+    * @param value the input value
     *
     * @return the rounded value
     */
    public static int round ( final float value ) {
 
-      return value < 0.0f ? ( int ) ( value - 0.5f ) : value > 0.0f
+      return value < -0.0f ? ( int ) ( value - 0.5f ) : value > 0.0f
          ? ( int ) ( value + 0.5f ) : 0;
    }
 
    /**
     * Rounds a value to a number of places right of the decimal point.
     * Promotes the float to a double, rounds it, then demotes back to a float.
-    * Note that floating (or single) precision will likely lead to
-    * inaccuracies.
     *
     * @param value  value
     * @param places the number of places
@@ -1270,7 +1269,7 @@ public abstract class Utils implements IUtils {
     * {@link IUtils#ONE_TAU}, approximately {@value IUtils#ONE_TAU}. Subtract
     * 0.25 from the input value to return the sine instead of the cosine.<br>
     * <br>
-    * Instead of a look-up table, this is based on the algorithm described at
+    * This is based on the algorithm described at
     * <a href="https://developer.download.nvidia.com/cg/sin.html">Nvidia Cg
     * 3.1 Toolkit Documentation</a> .
     *
@@ -1649,10 +1648,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the integral
     */
-   public static float trunc ( final float value ) {
-
-      return ( int ) value;
-   }
+   public static float trunc ( final float value ) { return ( int ) value; }
 
    /**
     * An alias for {@link Byte#toUnsignedInt(byte)} . Converts a signed byte
@@ -1725,7 +1721,7 @@ public abstract class Utils implements IUtils {
     */
    public static int xor ( final float a, final float b ) {
 
-      return ( a != 0.0F && a == a ? 1 : 0 ) ^ ( b != 0.0F && b == b ? 1 : 0 );
+      return ( a != 0.0f && a == a ? 1 : 0 ) ^ ( b != 0.0f && b == b ? 1 : 0 );
    }
 
    /**
@@ -2064,37 +2060,37 @@ public abstract class Utils implements IUtils {
       /**
        * The start angle, modulated by the range.
        */
-      protected transient float a = 0.0f;
+      protected float a = 0.0f;
 
       /**
        * Whether or not the start angle is greater than the stop angle.
        */
-      protected transient boolean aGtb = false;
+      protected boolean aGtb = false;
 
       /**
        * Whether or not the start angle is less than the stop angle.
        */
-      protected transient boolean aLtb = false;
+      protected boolean aLtb = false;
 
       /**
        * The stop angle, modulated by the range.
        */
-      protected transient float b = 0.0f;
+      protected float b = 0.0f;
 
       /**
        * The difference between the stop and start angle.
        */
-      protected transient float diff = 0.0f;
+      protected float diff = 0.0f;
 
       /**
        * One-half of the range of the period.
        */
-      protected transient float halfRange = 0.5f;
+      protected float halfRange = 0.5f;
 
       /**
        * Whether or not to floor wrap the result of the easing function.
        */
-      protected transient boolean modResult = false;
+      protected boolean modResult = false;
 
       /**
        * The range of the period.
@@ -2114,10 +2110,7 @@ public abstract class Utils implements IUtils {
        *
        * @param range the range of the period
        */
-      public PeriodicEasing ( final float range ) {
-
-         this.setRange(range);
-      }
+      public PeriodicEasing ( final float range ) { this.setRange(range); }
 
       /**
        * Applies the easing function. The abstract class's implementation check
@@ -2144,10 +2137,7 @@ public abstract class Utils implements IUtils {
        *
        * @return the range
        */
-      public float getRange ( ) {
-
-         return this.range;
-      }
+      public float getRange ( ) { return this.range; }
 
       /**
        * Sets the range of the easing function. The range should be a positive

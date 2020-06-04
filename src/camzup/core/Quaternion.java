@@ -110,11 +110,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    @Override
    public int compareTo ( final Quaternion q ) {
 
-      /* @formatter:off */
-      return this.real > q.real ? 1
-           : this.real < q.real ? -1
-           : this.imag.compareTo(q.imag);
-      /* @formatter:on */
+      return this.real > q.real ? 1 : this.real < q.real ? -1 : this.imag
+         .compareTo(q.imag);
    }
 
    /**
@@ -1878,13 +1875,23 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public static Quaternion random ( final java.util.Random rng,
       final Quaternion target ) {
 
-      final float t0 = IUtils.TAU * rng.nextFloat();
-      final float t1 = IUtils.TAU * rng.nextFloat();
-      final float r1 = rng.nextFloat();
-      final float x0 = Utils.sqrt(1.0f - r1);
-      final float x1 = Utils.sqrt(r1);
-      return target.set(x0 * Utils.sin(t0), x0 * Utils.cos(t0), x1 * Utils.sin(
-         t1), x1 * Utils.cos(t1));
+      // final float t0 = IUtils.TAU * rng.nextFloat();
+      // final float t1 = IUtils.TAU * rng.nextFloat();
+      // final float r1 = rng.nextFloat();
+      // final float x0 = Utils.sqrt(1.0f - r1);
+      // final float x1 = Utils.sqrt(r1);
+      // return target.set(x0 * Utils.sin(t0), x0 * Utils.cos(t0), x1 *
+      // Utils.sin(
+      // t1), x1 * Utils.cos(t1));
+
+      final double t0 = IUtils.TAU_D * rng.nextDouble();
+      final double t1 = IUtils.TAU_D * rng.nextDouble();
+      final double r1 = rng.nextDouble();
+      final double x0 = Math.sqrt(1.0d - r1);
+      final double x1 = Math.sqrt(r1);
+      return target.set(( float ) ( x0 * Math.sin(t0) ), ( float ) ( x0 * Math
+         .cos(t0) ), ( float ) ( x1 * Math.sin(t1) ), ( float ) ( x1 * Math.cos(
+            t1) ));
    }
 
    /**
@@ -1991,7 +1998,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the rotated quaternion
     */
-   @Experimental
    public static Quaternion rotateY ( final Quaternion q, final float radians,
       final Quaternion target ) {
 

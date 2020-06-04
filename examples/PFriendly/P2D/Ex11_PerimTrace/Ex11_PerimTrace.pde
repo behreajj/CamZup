@@ -88,10 +88,9 @@ void setup() {
       Mesh2.polygon(sides, poly, srcMesh);
       srcMesh.rotateZ(Utils.HALF_PI);
 
+      // Subdivide the polygon as desired.
       srcMesh.subdivFacesFan(1);
-      //srcMesh.subdivFacesCenter(1);
       srcMesh.subdivFacesInscribe(1);
-      //srcMesh.triangulate();
 
       meSrc.append(srcMesh);
 
