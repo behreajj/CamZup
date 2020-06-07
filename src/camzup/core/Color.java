@@ -1984,6 +1984,24 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    public static boolean none ( final Color c ) { return c.a <= 0.0f; }
 
    /**
+    * Raises a color to the power of a scalar.
+    *
+    * @param a      left operand
+    * @param b      right operand
+    * @param target the output color
+    *
+    * @return the result
+    */
+   public static Color pow ( final Color a, final float b,
+      final Color target ) {
+
+      final double bd = b;
+      return target.set(Utils.clamp01(( float ) Math.pow(a.r, bd)), Utils
+         .clamp01(( float ) Math.pow(a.g, bd)), Utils.clamp01(( float ) Math
+            .pow(a.b, bd)), Utils.clamp01(a.a));
+   }
+
+   /**
     * Multiplies the red, green and blue color channels of a color by the
     * alpha channel.
     *

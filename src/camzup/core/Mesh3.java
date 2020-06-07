@@ -1866,7 +1866,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final Vec3 c = this.coords[i];
          Mat4.mulPoint(m, c, c);
       }
-
       return this;
    }
 
@@ -3401,15 +3400,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /*
        * The span of the origin range and destination range are already known,
-       * so calculate portions of the map function outside of the for loop.
+       * so calculate portions of the map(distance, minDist, maxDist, nearBound,
+       * farBound) function outside of the for loop.
        */
       final float spanOrigin = maxDist - minDist;
       final float scalar = spanOrigin != 0.0f ? ( farBound - nearBound )
          / spanOrigin : 0.0f;
       final TreeMap < Float, Vert3 > result = new TreeMap <>();
       for ( int j = 0; j < vertLen; ++j ) {
-         // final float fac = Utils.map(dists[j], minDist, maxDist, nearBound,
-         // farBound);
          final float fac = nearBound + scalar * ( dists[j] - minDist );
          result.put(fac, verts[j]);
       }
@@ -3744,7 +3742,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3 tracePerimeter ( final Mesh3 source, final int count,
       final float offset, final Mesh3 target ) {
 
-      // Normals do not come out correctly in this approach.
+      // TODO: Normals do not come out correctly in this approach.
 
       target.name = "Trace";
 
@@ -3830,6 +3828,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       target.name = source.name;
 
+      /* Predict how many vertices will be in result. */
       final int len0 = source.faces.length;
       final int capacity = len0 * 4;
 
@@ -3977,13 +3976,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int i = 1 + h;
          final int j = 1 + k % lons;
 
+         // TODO: Start at -1, then pre-increment, for this and ensuing uses?
          final int[][] tri = fs[idx++];
          final int[] a = tri[0];
          final int[] b = tri[1];
 
          /* @formatter:off */
          a[0] = j; a[1] = 1 + k; a[2] = j;
-         b[0] = i;     b[1] = i; b[2] = i;
+         b[0] = i; b[1] =     i; b[2] = i;
 
          /* c should default to zero. */
          // final int[] c = tri[2]; c[0] = 0; c[1] = 0; c[2] = 0;

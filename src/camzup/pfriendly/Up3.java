@@ -1417,8 +1417,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    void ambientLight ( final int clr, final float xLoc, final float yLoc,
       final float zLoc ) {
 
-      // TEST
-
       this.enableLighting();
       if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
 
@@ -1434,7 +1432,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       this.lightFalloff(this.lightCount, this.currentLightFalloffConstant,
          this.currentLightFalloffLinear, this.currentLightFalloffQuadratic);
 
-      this.lightCount++;
+      ++this.lightCount;
    }
 
    /**
@@ -1472,8 +1470,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    void directionalLight ( final int clr, final float xDir, final float yDir,
       final float zDir ) {
 
-      // TEST
-      // This causes a major glitch on graphics renderer....
+      // TODO These are all package level because overridden lights functions
+      // cause major glitching on graphics renderer....
 
       this.enableLighting();
       if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }
@@ -1490,7 +1488,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       this.noLightSpot(this.lightCount);
       this.noLightFalloff(this.lightCount);
 
-      this.lightCount++;
+      ++this.lightCount;
    }
 
    /**
@@ -1542,7 +1540,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       this.lightFalloff(this.lightCount, this.currentLightFalloffConstant,
          this.currentLightFalloffLinear, this.currentLightFalloffQuadratic);
 
-      this.lightCount++;
+      ++this.lightCount;
    }
 
    /**
@@ -1600,7 +1598,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       this.lightFalloff(this.lightCount, this.currentLightFalloffConstant,
          this.currentLightFalloffLinear, this.currentLightFalloffQuadratic);
 
-      this.lightCount++;
+      ++this.lightCount;
    }
 
    /**

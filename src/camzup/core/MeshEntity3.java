@@ -381,7 +381,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       pyCd.append("    mesh_data.validate()\n\n");
 
       if ( useBMesh ) {
-
          pyCd.append("    bm = bmesh.new()\n");
          pyCd.append("    bm.from_mesh(mesh_data)\n");
 

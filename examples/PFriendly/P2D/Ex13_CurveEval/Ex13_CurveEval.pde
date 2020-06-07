@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-YupJ2 rndr;
+Yup2 rndr;
 Curve2 curve2 = new Curve2();
 CurveEntity2 ce2 = new CurveEntity2();
 MaterialSolid mat = new MaterialSolid()
@@ -23,11 +23,11 @@ Ray2 local = new Ray2();
 Ray2 world = new Ray2();
 
 void settings() {
-  size(720, 405, YupJ2.PATH_STR);
+  size(720, 405, Yup2.PATH_STR);
 }
 
 void setup() {
-  rndr = (YupJ2)getGraphics();
+  rndr = (Yup2)getGraphics();
 
   Curve2.infinity(curve2);
   ce2.append(curve2);

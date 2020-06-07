@@ -31,9 +31,8 @@ public abstract class Sdf {
     *
     * @return the signed distance
     *
-    * @see Utils#modRadians(float)
-    * @see Math#cos(double)
-    * @see Math#sin(double)
+    * @see Utils#mod1(float)
+    * @see Utils#scNorm(float)
     * @see Sdf#arc(Vec2, float, float, float, float, float, float)
     */
    public static float arc ( final Vec2 point, final float startAngle,

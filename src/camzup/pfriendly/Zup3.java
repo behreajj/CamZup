@@ -49,7 +49,6 @@ public class Zup3 extends Up3 {
 
       final float z = this.eyeDist < 128 ? -Zup3.DEFAULT_LOC_Z : -this.eyeDist;
       final float y = -z * IUp3.POLARITY_OFFSET;
-
       this.camera(0.0f, y, z, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
          Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
    }
@@ -62,7 +61,6 @@ public class Zup3 extends Up3 {
    public void camEast ( ) {
 
       final float x = this.eyeDist < 128 ? -Zup3.DEFAULT_LOC_X : -this.eyeDist;
-
       this.camera(x, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
          Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
    }
@@ -188,7 +186,6 @@ public class Zup3 extends Up3 {
    public void camNorth ( ) {
 
       final float y = this.eyeDist < 128 ? Zup3.DEFAULT_LOC_Y : -this.eyeDist;
-
       this.camera(0.0f, y, 0.0f, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
          Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
    }
@@ -201,7 +198,6 @@ public class Zup3 extends Up3 {
    public void camSouth ( ) {
 
       final float y = this.eyeDist < 128 ? -Zup3.DEFAULT_LOC_Y : this.eyeDist;
-
       this.camera(0.0f, y, 0.0f, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
          Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
    }
@@ -219,7 +215,6 @@ public class Zup3 extends Up3 {
 
       final float z = this.eyeDist < 128 ? Zup3.DEFAULT_LOC_Z : this.eyeDist;
       final float y = -z * IUp3.POLARITY_OFFSET;
-
       this.camera(0.0f, y, z, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
          Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
    }
@@ -232,7 +227,6 @@ public class Zup3 extends Up3 {
    public void camWest ( ) {
 
       final float x = this.eyeDist < 128 ? Zup3.DEFAULT_LOC_X : this.eyeDist;
-
       this.camera(x, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
          Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
    }

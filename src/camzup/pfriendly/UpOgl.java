@@ -662,7 +662,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public abstract void defaultPerspective ( );
 
    /**
-    * Sets the renderer's default styling.
+    * Sets the renderer's default styling. This includes color mode, fill,
+    * stroke, shape modes, fonts, textures and camera.
     */
    @Override
    public void defaultSettings ( ) {
@@ -1460,10 +1461,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void ortho ( final float left, final float right, final float bottom,
       final float top, final float near, final float far ) {
 
-      // this.cameraFOV = IUp.DEFAULT_FOV;
-      // this.cameraAspect = Utils.div(
-      // Utils.diff(right, left),
-      // Utils.diff(top, bottom));
       this.cameraNear = near;
       this.cameraFar = far;
 
@@ -1811,18 +1808,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       PMatAux.compoundRotateZ(Utils.scNorm(normRad), Utils.scNorm(normRad
          - 0.25f), this.modelview, this.modelviewInv);
       PMatAux.mul(this.projection, this.modelview, this.projmodelview);
-   }
-
-   /**
-    * Temporarily disabled.
-    */
-   @Override
-   public boolean saveImpl ( final String filename ) {
-
-      PApplet.showMissingWarning(
-         "In Processing 4 Alpha, save causes a Stack Overflow."
-            + " It has been disabled for the time being.");
-      return false;
    }
 
    /**

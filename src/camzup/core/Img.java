@@ -3,10 +3,10 @@ package camzup.core;
 import java.util.Iterator;
 
 /**
- * An experimental class to store image data. A deliberate simplification
- * of the <code>PImage</code> class: The image is assumed to always be in
- * the format 0xAARRGGBB. The pixel density is always assumed to be 1. The
- * width and the height of the image can be accessed, but cannot be
+ * An experimental class to store image data. Simplifies
+ * <code>PImage</code> class: The image color format is assumed to always
+ * be in the format 0xAARRGGBB. The pixel density is always assumed to be
+ * 1. The width and the height of the image can be accessed, but cannot be
  * directly mutated.
  */
 @Experimental

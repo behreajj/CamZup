@@ -303,8 +303,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       /*
        * This cannot be overridden to get rid of nonuniform scaling for an
-       * ellipse, and therefore make it clearer, because a parent arc function
-       * overloads the arc to omit the arc mode.
+       * ellipse, and therefore make it clearer, because an overloaded parent
+       * method omits the mode parameter and uses a default instead.
        */
 
       if ( Utils.approx(stop - start, IUtils.TAU, 0.00139f) ) {
@@ -1811,7 +1811,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final int ph = img.pixelHeight;
       if ( pw < 2 || ph < 2 ) { return; }
 
-      /* This is a bottleneck. */
+      /* This is one of the bigger bottlenecks. */
       img.loadPixels();
       final int type = img.format == PConstants.RGB ? BufferedImage.TYPE_INT_RGB
          : BufferedImage.TYPE_INT_ARGB;
@@ -3329,7 +3329,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       final Vec2 dim = tr2.getScale(this.tr2Scale);
       final Vec2 loc = tr2.getLocation(this.tr2Loc);
-      final float angle = tr2.getRotation();
+      final double angle = tr2.getRotation();
 
       switch ( order ) {
 
@@ -4061,21 +4061,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.imageMode = PConstants.CORNERS;
       this.imageImpl(glyph, x1, y1, x2, y2, 0, 0, u, v);
       this.imageMode = oldImgMd;
-
-      // final int rgb = this.fillColor & 0x00ffffff;
-      // glim.loadPixels();
-      // final int[] px = glim.pixels;
-      // final int len = px.length;
-      // for (int i = 0; i < len; ++i) {
-      // px[i] = ((px[i] << 0x18) &
-      // this.fillAi) | rgb;
-      // }
-      // glim.updatePixels();
-      // glim.format = ARGB;
-      // this.g2.drawImage(
-      // (Image) glim.getNative(),
-      // (int) x1, (int) y1, (int) x2, (int) y2,
-      // 0, 0, glim.width, glim.height, null);
 
       this.tint = savedTint;
       this.tintColor = savedTintColor;

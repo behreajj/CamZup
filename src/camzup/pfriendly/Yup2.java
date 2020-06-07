@@ -292,22 +292,27 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       this.ortho();
    }
 
+   /**
+    * Sets the renderer's default styling. This mostly concerns camera
+    * defaults and settings which convert OpenGL to a "2.5D" renderer.
+    */
    @Override
    public void defaultSettings ( ) {
 
+      /*
+       * Camera aspect, FOV, near and far clip planes are set by parent
+       * defaultSettings method.
+       */
       super.defaultSettings();
       this.noLights();
 
-      this.cameraX = IUp.DEFAULT_LOC_X;
-      this.cameraY = IUp.DEFAULT_LOC_Y;
+      this.cameraX = this.defCameraX = IUp.DEFAULT_LOC_X;
+      this.cameraY = this.defCameraY = IUp.DEFAULT_LOC_Y;
+      this.cameraZ = this.defCameraZ = IUp.DEFAULT_LOC_Z;
+
       this.cameraZoomX = IYup2.DEFAULT_ZOOM_X;
       this.cameraZoomY = IYup2.DEFAULT_ZOOM_Y;
       this.cameraRot = IYup2.DEFAULT_ROT;
-
-      this.cameraAspect = this.defCameraAspect = IUp.DEFAULT_ASPECT;
-      this.cameraFOV = this.defCameraFOV = IUp.DEFAULT_FOV;
-      this.cameraNear = this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
-      this.cameraFar = this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
 
       /*
        * Ensure depth-related features are turned off. These summarize the hint
@@ -691,9 +696,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     *
     * @return the model x coordinate
     */
-   public float modelX (
-      final float x,
-      final float y ) {
+   public float modelX ( final float x, final float y ) {
 
       return super.modelX(x, y, 0.0f);
    }
@@ -708,9 +711,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     *
     * @return the model y coordinate
     */
-   public float modelY (
-      final float x,
-      final float y ) {
+   public float modelY ( final float x, final float y ) {
 
       return super.modelY(x, y, 0.0f);
    }
@@ -725,9 +726,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     *
     * @return the model z coordinate
     */
-   public float modelZ (
-      final float x,
-      final float y ) {
+   public float modelZ ( final float x, final float y ) {
 
       return super.modelZ(x, y, 0.0f);
    }
@@ -765,11 +764,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final float lineLength,
       final float sw ) {
 
-      this.origin(
-         lineLength,
-         sw,
-         IUp.DEFAULT_I_COLOR,
-         IUp.DEFAULT_J_COLOR);
+      this.origin(lineLength, sw, IUp.DEFAULT_I_COLOR, IUp.DEFAULT_J_COLOR);
    }
 
    /**
@@ -790,8 +785,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
          : IUtils.DEFAULT_EPSILON;
 
       this.pushStyle();
-
       this.strokeWeight(sw);
+
       this.stroke(xColor);
       this.lineImpl(
          0.0f, 0.0f, 0.0f,
@@ -808,13 +803,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Draws a point at a given coordinate
     *
-    * @param coord the coordinate
+    * @param v the coordinate
     */
    @Override
-   public void point ( final Vec2 coord ) {
-
-      this.pointImpl(coord.x, coord.y, 0.0f);
-   }
+   public void point ( final Vec2 v ) { this.pointImpl(v.x, v.y, 0.0f); }
 
    /**
     * Draws a quadrilateral between four points.
@@ -1188,7 +1180,6 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
 
       final Transform2 tr = entity.transform;
       final List < Mesh2 > meshes = entity.meshes;
-
       final Iterator < Mesh2 > meshItr = meshes.iterator();
       final Vec2 v = new Vec2();
       final Vec2 vt = new Vec2();
@@ -1332,7 +1323,6 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param v the vector
     */
    public void translate ( final Vec2 v ) {
-
       this.translateImpl(v.x, v.y, 0.0f);
    }
 
@@ -1433,7 +1423,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
                  this.projection.m13 * aw;
       /* @formatter:on */
 
-      /* Convert homogeneous coordinate. */
+      /* Convert homogeneous coordinate to point. */
       if ( bw != 1.0f ) {
          final float wInv = 1.0f / bw;
          return target.set(bx * wInv, by * wInv);

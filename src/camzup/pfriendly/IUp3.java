@@ -305,7 +305,7 @@ public interface IUp3 extends IUp {
 
    /**
     * Gets a mouse within a unit square, where either component may be in the
-    * range [-1.0, 1.0]. (This is not a normalized vector.)
+    * range [-1.0, 1.0] .
     *
     * @param target the output vector
     *
@@ -317,7 +317,7 @@ public interface IUp3 extends IUp {
    }
 
    /**
-    * Gets a mouse within the range [0.0, 1.0]. The mouse's y coordinate is
+    * Gets a mouse within the range [0.0, 1.0] . The mouse's y coordinate is
     * flipped.
     *
     * @param target the output vector

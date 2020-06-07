@@ -310,7 +310,7 @@ public interface IYup2 extends IUp {
 
    /**
     * Gets a mouse within a unit square, where either component may be in the
-    * range [-1.0, 1.0]. (This is not a normalized vector.)
+    * range [-1.0, 1.0] .
     *
     * @param target the output vector
     *
@@ -322,7 +322,7 @@ public interface IYup2 extends IUp {
    }
 
    /**
-    * Gets a mouse within the range [0.0, 1.0]. The mouse's y coordinate is
+    * Gets a mouse within the range [0.0, 1.0] . The mouse's y coordinate is
     * flipped.
     *
     * @param target the output vector
@@ -354,10 +354,7 @@ public interface IYup2 extends IUp {
     *
     * @see IYup2#moveByGlobal(float, float)
     */
-   default void moveBy ( final Vec2 v ) {
-
-      this.moveByLocal(v.x, v.y);
-   }
+   default void moveBy ( final Vec2 v ) { this.moveByLocal(v.x, v.y); }
 
    /**
     * Moves the camera by the given vector in global space, then updates the
@@ -416,10 +413,7 @@ public interface IYup2 extends IUp {
     *
     * @see IYup2#moveByLocal(float, float)
     */
-   default void moveByLocal ( final Vec2 v ) {
-
-      this.moveByLocal(v.x, v.y);
-   }
+   default void moveByLocal ( final Vec2 v ) { this.moveByLocal(v.x, v.y); }
 
    /**
     * Moves the renderer's camera to the given location, then updates the
@@ -442,14 +436,11 @@ public interface IYup2 extends IUp {
     * Moves the renderer's camera to the given location, then updates the
     * camera.
     *
-    * @param locNew the new location
+    * @param v the new location
     *
     * @see IYup2#moveTo(float, float)
     */
-   default void moveTo ( final Vec2 locNew ) {
-
-      this.moveTo(locNew.x, locNew.y);
-   }
+   default void moveTo ( final Vec2 v ) { this.moveTo(v.x, v.y); }
 
    /**
     * Moves the renderer's camera to a given location and updates the camera.
@@ -489,10 +480,7 @@ public interface IYup2 extends IUp {
     *
     * @param v the coordinate
     */
-   default void point ( final Vec2 v ) {
-
-      this.point(v.x, v.y);
-   }
+   default void point ( final Vec2 v ) { this.point(v.x, v.y); }
 
    /**
     * Draws a quadrilateral between four points.
@@ -1261,7 +1249,8 @@ public interface IYup2 extends IUp {
       final int len = ces.length;
       final float zoom = Utils.max(renderer.getZoomX(), renderer.getZoomY());
       for ( int i = 0; i < len; ++i ) {
-         svgp.append(ces[i].toSvgElm("curve", zoom, mats)).append('\n');
+         svgp.append(ces[i].toSvgElm("curve", zoom, mats));
+         svgp.append('\n');
       }
 
       svgp.append("</g>\n</svg>");
@@ -1293,7 +1282,8 @@ public interface IYup2 extends IUp {
       final int len = mes.length;
       final float zoom = Utils.max(renderer.getZoomX(), renderer.getZoomY());
       for ( int i = 0; i < len; ++i ) {
-         svgp.append(mes[i].toSvgElm("face", zoom, mats)).append('\n');
+         svgp.append(mes[i].toSvgElm("face", zoom, mats));
+         svgp.append('\n');
       }
 
       svgp.append("</g>\n</svg>");

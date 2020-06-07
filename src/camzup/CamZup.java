@@ -62,16 +62,7 @@ public class CamZup {
       System.out.println(target);
       System.out.println(Color.bitNot(a, target));
 
-       final Rng rng = new Rng();
-      // for ( int i = 0; i < 20; ++i ) {
-      // final float var12 = rng.nextFloat();
-      // final float var45 = var12 * 2.0f - 1.0f;
-      // final float x = Utils.asin(var45);
-      // final float y = ( float ) Math.asin(var45);
-      // System.out.println(x);
-      // System.out.println(y);
-      // System.out.println(Utils.approx(x, y, 0.0001f));
-      // }
+      new Rng();
 
       // final Img img = new Img();
       // PngParser.parsePng("data/diagnostic.png", img);
@@ -92,13 +83,13 @@ public class CamZup {
       // System.out.println(tree);
       // System.out.println(tree.nearest(new Vec3(), 3, null));
 
-       // byte b = ( byte ) rng.nextInt(255);
-       // System.out.println(toHexString(( byte ) 0x00));
-       // System.out.println(b & 0xff);
+      // byte b = ( byte ) rng.nextInt(255);
+      // System.out.println(toHexString(( byte ) 0x00));
+      // System.out.println(b & 0xff);
 
-       // Color x = Color.fromHex(0xff123785, new Color());
-       int x = 0xff3f7f00;
-       System.out.println(Color.toHexWeb(x));
+      // Color x = Color.fromHex(0xff123785, new Color());
+      final int x = 0xff3f7f00;
+      System.out.println(Color.toHexWeb(x));
    }
 
    /**

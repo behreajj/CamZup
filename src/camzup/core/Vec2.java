@@ -1272,7 +1272,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     * @see Vec2#distEuclidean(Vec2, Vec2)
     * @see Vec2#distManhattan(Vec2, Vec2)
     * @see Math#pow(double, double)
-    * @see Utils#diff(float, float)
+    * @see Math#abs(double)
     */
    public static float distMinkowski ( final Vec2 a, final Vec2 b,
       final float c ) {
@@ -2426,12 +2426,12 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     * @param target the output vector
     *
     * @return the result
-    *
-    * @see Utils#pow(float, float)
     */
    public static Vec2 pow ( final float a, final Vec2 b, final Vec2 target ) {
 
-      return target.set(Utils.pow(a, b.x), Utils.pow(a, b.y));
+      final double ad = a;
+      return target.set(( float ) Math.pow(ad, b.x), ( float ) Math.pow(ad,
+         b.y));
    }
 
    /**
@@ -2442,12 +2442,12 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     * @param target the output vector
     *
     * @return the result
-    *
-    * @see Utils#pow(float, float)
     */
    public static Vec2 pow ( final Vec2 a, final float b, final Vec2 target ) {
 
-      return target.set(Utils.pow(a.x, b), Utils.pow(a.y, b));
+      final double bd = b;
+      return target.set(( float ) Math.pow(a.x, bd), ( float ) Math.pow(a.y,
+         bd));
    }
 
    /**

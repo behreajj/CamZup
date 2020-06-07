@@ -612,7 +612,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    }
 
    /**
-    * Scales the rear handle to a magnitude
+    * Scales the rear handle to a magnitude.
     *
     * @param magnitude the magnitude
     *

@@ -541,7 +541,8 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       final StringBuilder svgp = new StringBuilder(1024);
       svgp.append("<g id=\"");
-      svgp.append(this.name.toLowerCase()).append("\" ");
+      svgp.append(this.name.toLowerCase());
+      svgp.append("\" ");
       svgp.append(this.transform.toSvgString());
       svgp.append(">\n");
 

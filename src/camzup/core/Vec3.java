@@ -1464,7 +1464,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     * @see Vec3#distEuclidean(Vec3, Vec3)
     * @see Vec3#distManhattan(Vec3, Vec3)
     * @see Math#pow(double, double)
-    * @see Utils#diff(float, float)
+    * @see Math#abs(double)
     */
    public static float distMinkowski ( final Vec3 a, final Vec3 b,
       final float c ) {
@@ -2345,7 +2345,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
 
    /**
     * Sets the output vector to the minimum components of the input vector and
-    * a upper bound.
+    * an upper bound.
     *
     * @param a          the input value
     * @param upperBound the upper bound
@@ -2362,7 +2362,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
 
    /**
     * Sets the output vector to the minimum components of the input vector and
-    * a upper bound.
+    * an upper bound.
     *
     * @param a          the input vector
     * @param upperBound the upper bound
@@ -2622,13 +2622,12 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     * @param target the output vector
     *
     * @return the result
-    *
-    * @see Utils#pow(float, float)
     */
    public static Vec3 pow ( final float a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(Utils.pow(a, b.x), Utils.pow(a, b.y), Utils.pow(a,
-         b.z));
+      final double ad = a;
+      return target.set(( float ) Math.pow(ad, b.x), ( float ) Math.pow(ad,
+         b.y), ( float ) Math.pow(ad, b.z));
    }
 
    /**
@@ -2639,13 +2638,12 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     * @param target the output vector
     *
     * @return the result
-    *
-    * @see Utils#pow(float, float)
     */
    public static Vec3 pow ( final Vec3 a, final float b, final Vec3 target ) {
 
-      return target.set(Utils.pow(a.x, b), Utils.pow(a.y, b), Utils.pow(a.z,
-         b));
+      final double bd = b;
+      return target.set(( float ) Math.pow(a.x, bd), ( float ) Math.pow(a.y,
+         bd), ( float ) Math.pow(a.z, bd));
    }
 
    /**

@@ -1561,11 +1561,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public String toSvgPath ( final String id ) {
 
       final StringBuilder svgp = new StringBuilder(1024);
-
       final int[][][] fs = this.faces;
       final Vec2[] vs = this.coords;
       final int fsLen = fs.length;
       final String iddot = id + ".";
+
       for ( int i = 0; i < fsLen; ++i ) {
          final int[][] f = fs[i];
          final int fLen = f.length;
@@ -1605,7 +1605,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final Vec2 c = this.coords[i];
          Mat3.mulPoint(m, c, c);
       }
-
       return this;
    }
 
@@ -1810,7 +1809,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final Vec2 vt = new Vec2();
 
          v.set(u * vOrigin.x + step * vDest.x, u * vOrigin.y + step * vDest.y);
-
          vt.set(u * vtOrigin.x + step * vtDest.x, u * vtOrigin.y + step
             * vtDest.y);
 
@@ -2684,7 +2682,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       /*
        * The span of the origin range and destination range are already known,
-       * so calculate portions of the map function outside of the for loop.
+       * so calculate portions of the map(distance, minDist, maxDist, nearBound,
+       * farBound) function outside of the for loop.
        */
       final float spanOrigin = maxDist - minDist;
       final float scalar = spanOrigin != 0.0f ? ( farBound - nearBound )
@@ -3012,6 +3011,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       target.name = source.name;
 
+      /* Predict how many vertices will be in result. */
       final int len0 = source.faces.length;
       final int capacity = len0 * 4;
 

@@ -47,7 +47,6 @@ public class Yup3 extends Up3 {
 
       final float y = this.eyeDist < 128 ? -Yup3.DEFAULT_LOC_Y : this.eyeDist;
       final float z = -y * IUp3.POLARITY_OFFSET;
-
       this.camera(0.0f, y, z, 0.0f, 0.0f, 0.0f, Yup3.DEFAULT_REF_X,
          Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
    }
@@ -60,7 +59,6 @@ public class Yup3 extends Up3 {
    public void camEast ( ) {
 
       final float x = this.eyeDist < 128 ? -Yup3.DEFAULT_LOC_X : -this.eyeDist;
-
       this.camera(x, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, Yup3.DEFAULT_REF_X,
          Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
    }
@@ -190,7 +188,6 @@ public class Yup3 extends Up3 {
    public void camNorth ( ) {
 
       final float z = this.eyeDist < 128 ? Yup3.DEFAULT_LOC_Z : -this.eyeDist;
-
       this.camera(0.0f, 0.0f, z, 0.0f, 0.0f, 0.0f, Yup3.DEFAULT_REF_X,
          Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
    }
@@ -203,7 +200,6 @@ public class Yup3 extends Up3 {
    public void camSouth ( ) {
 
       final float z = this.eyeDist < 128 ? -Yup3.DEFAULT_LOC_Z : this.eyeDist;
-
       this.camera(0.0f, 0.0f, z, 0.0f, 0.0f, 0.0f, Yup3.DEFAULT_REF_X,
          Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
    }
@@ -233,7 +229,6 @@ public class Yup3 extends Up3 {
    public void camWest ( ) {
 
       final float x = this.eyeDist < 128 ? Yup3.DEFAULT_LOC_X : this.eyeDist;
-
       this.camera(x, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, Yup3.DEFAULT_REF_X,
          Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
    }

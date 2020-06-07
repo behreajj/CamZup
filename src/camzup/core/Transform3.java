@@ -205,7 +205,6 @@ public class Transform3 extends Transform {
     *
     * @return this transform
     */
-
    public Transform3 getAxes ( final Vec3 r, final Vec3 f, final Vec3 u ) {
 
       r.set(this.right);
