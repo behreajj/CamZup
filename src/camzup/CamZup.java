@@ -1,8 +1,5 @@
 package camzup;
 
-import camzup.core.Color;
-import camzup.core.Rng;
-
 import processing.core.PApplet;
 
 /**
@@ -52,44 +49,21 @@ public class CamZup {
     * @param args the string of arguments
     */
    public static void main ( final String[] args ) {
+      // final Color a = new Color(0.8f, 0.6f, 0.4f, 0.2f);
+      // new Color(0.9f, 0.1f, 0.3f, 0.5f);
+      // final Color target = new Color();
+      //
+      // Color.fromHex(~Color.toHexInt(a), target);
+      //
+      // System.out.println(target);
+      // System.out.println(Color.bitNot(a, target));
 
-      final Color a = new Color(0.8f, 0.6f, 0.4f, 0.2f);
-      new Color(0.9f, 0.1f, 0.3f, 0.5f);
-      final Color target = new Color();
+      // final Rng rng = new Rng();
+      // final Vec3 dir = Vec3.random(rng, new Vec3());
+      // System.out.println(dir);
+      // new Transform3();
 
-      Color.fromHex(~Color.toHexInt(a), target);
-
-      System.out.println(target);
-      System.out.println(Color.bitNot(a, target));
-
-      new Rng();
-
-      // final Img img = new Img();
-      // PngParser.parsePng("data/diagnostic.png", img);
-
-      // final String[] test = { "5.647-3.146 -8-16-75.1" };
-      // final String[] split = CamZup.breakNeg(test);
-      // for ( int i = 0; i < split.length; ++i ) {
-      // System.out.println(split[i]);
-      // }
-
-      // final Mesh2 m = new Mesh2();
-      // Mesh2.circle(m);
-      // System.out.println(m);
-
-      // final Vec3[] grid = Vec3.flat(Vec3.grid(8));
-      // System.out.println(Utils.toString(grid));
-      // var tree = new KdTree < Vec3 >(grid, cmps);
-      // System.out.println(tree);
-      // System.out.println(tree.nearest(new Vec3(), 3, null));
-
-      // byte b = ( byte ) rng.nextInt(255);
-      // System.out.println(toHexString(( byte ) 0x00));
-      // System.out.println(b & 0xff);
-
-      // Color x = Color.fromHex(0xff123785, new Color());
-      final int x = 0xff3f7f00;
-      System.out.println(Color.toHexWeb(x));
+      System.out.println(0xf);
    }
 
    /**

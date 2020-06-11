@@ -413,7 +413,7 @@ public class Img implements Cloneable, Iterable < Color > {
     */
    public static float aspect ( final Img img ) {
 
-      return Utils.div(img.width, img.height);
+      return Utils.div(( float ) img.width, ( float ) img.height);
    }
 
    /**
@@ -486,8 +486,8 @@ public class Img implements Cloneable, Iterable < Color > {
    public static Img crop ( final Vec2 tl, final Vec2 br, final Img source,
       final Img target ) {
 
-      final int sw = source.width;
-      final int sh = source.height;
+      final float sw = source.width;
+      final float sh = source.height;
       return Img.crop(( int ) ( tl.x * sw ), ( int ) ( tl.y * sh ),
          ( int ) ( br.x * sw ), ( int ) ( br.y * sh ), source, target);
    }

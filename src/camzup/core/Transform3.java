@@ -385,8 +385,9 @@ public class Transform3 extends Transform {
    public Transform3 lookAt ( final Vec3 point, final float step,
       final Handedness handedness ) {
 
-      this.rotPrev.set(this.rotation);
       Vec3.sub(point, this.location, this.forward);
+
+      this.rotPrev.set(this.rotation);
       Quaternion.fromDir(this.forward, handedness, this.rotation, this.right,
          this.forward, this.up);
       Quaternion.mix(this.rotPrev, this.rotation, step, this.rotation);

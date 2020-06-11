@@ -335,6 +335,7 @@ public class Transform2 extends Transform {
 
       /* The right axis is used as a temporary container. */
       Vec2.sub(point, this.location, this.right);
+
       if ( Vec2.none(this.right) ) {
          Vec2.forward(this.forward);
          Vec2.right(this.right);

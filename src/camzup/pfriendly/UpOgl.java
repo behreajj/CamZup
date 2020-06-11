@@ -1414,16 +1414,16 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       /* Never use defCameraXXX values. They are not actual constants. */
 
-      final float zoomInv = zoom == 0.0f ? 1.0f : 1.0f / zoom;
+      /*
+       * Since width and height are divided by half, zoomInv includes that
+       * factor.
+       */
+      final float zoomInv = zoom == 0.0f ? 1.0f : 0.5f / zoom;
       final float right = this.width < 128 ? IUp.DEFAULT_HALF_WIDTH : zoomInv
-         * this.width * 0.5f;
-      final float left = -right;
-
+         * this.width;
       final float top = this.height < 128 ? IUp.DEFAULT_HALF_HEIGHT : zoomInv
-         * this.height * 0.5f;
-      final float bottom = -top;
-
-      this.ortho(left, right, bottom, top);
+         * this.height;
+      this.ortho(-right, right, -top, top);
    }
 
    /**
@@ -1766,6 +1766,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float c = Utils.scNorm(normRad);
       final float s = Utils.scNorm(normRad - 0.25f);
 
+      // TODO: Compound rotate x?
       PMatAux.rotateX(c, s, this.modelview);
       PMatAux.invRotateX(c, s, this.modelviewInv);
       PMatAux.mul(this.projection, this.modelview, this.projmodelview);
@@ -1787,6 +1788,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float c = Utils.scNorm(normRad);
       final float s = Utils.scNorm(normRad - 0.25f);
 
+      // TODO: Compound rotate y?
       PMatAux.rotateY(c, s, this.modelview);
       PMatAux.invRotateY(c, s, this.modelviewInv);
       PMatAux.mul(this.projection, this.modelview, this.projmodelview);

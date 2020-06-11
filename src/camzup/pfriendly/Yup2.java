@@ -678,7 +678,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
                        this.cameraInv.m11 * ay +
                        this.cameraInv.m12 * az +
                        this.cameraInv.m13 * aw;
-      /* @formatter:off */
+      /* @formatter:on */
 
       /* Convert from homogeneous coordinate to point by dividing by w. */
       if ( bw == 1.0f ) { return target.set(bx, by); }
@@ -687,8 +687,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    }
 
    /**
-    * Takes a two-dimensional x, y position and returns the x value for where it
-    * will appear on a model view. This is inefficient, use
+    * Takes a two-dimensional x, y position and returns the x value for where
+    * it will appear on a model view. This is inefficient, use
     * {@link Yup2#model(Vec2, Vec2)} instead.
     *
     * @param x the x coordinate
@@ -702,8 +702,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    }
 
    /**
-    * Takes a two-dimensional x, y position and returns the y value for where it
-    * will appear on a model view. This is inefficient, use
+    * Takes a two-dimensional x, y position and returns the y value for where
+    * it will appear on a model view. This is inefficient, use
     * {@link Yup2#model(Vec2, Vec2)} instead.
     *
     * @param x the x coordinate
@@ -717,8 +717,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    }
 
    /**
-    * Takes a two-dimensional x, y position and returns the z value for where it
-    * will appear on a model view. This is inefficient, use
+    * Takes a two-dimensional x, y position and returns the z value for where
+    * it will appear on a model view. This is inefficient, use
     * {@link Yup2#model(Vec2, Vec2)} instead.
     *
     * @param x the x coordinate
@@ -739,7 +739,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    @Override
    public void origin ( ) {
 
-      this.origin(IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width, this.height));
+      this.origin(IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width,
+         this.height));
    }
 
    /**
@@ -757,12 +758,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * Draws the world origin. Colors the axes according to
     * {@link IUp#DEFAULT_I_COLOR} and {@link IUp#DEFAULT_J_COLOR}.
     *
-    * @param lineLength   the line length
-    * @param sw the stroke weight
+    * @param lineLength the line length
+    * @param sw         the stroke weight
     */
-   public void origin (
-      final float lineLength,
-      final float sw ) {
+   public void origin ( final float lineLength, final float sw ) {
 
       this.origin(lineLength, sw, IUp.DEFAULT_I_COLOR, IUp.DEFAULT_J_COLOR);
    }
@@ -770,16 +769,13 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Draws the world origin.
     *
-    * @param lineLength   the line length
-    * @param sw the stroke weight
-    * @param xColor       the color of the x axis
-    * @param yColor       the color of the y axis
+    * @param lineLength the line length
+    * @param sw         the stroke weight
+    * @param xColor     the color of the x axis
+    * @param yColor     the color of the y axis
     */
-   public void origin (
-      final float lineLength,
-      final float sw,
-      final int xColor,
-      final int yColor ) {
+   public void origin ( final float lineLength, final float sw,
+      final int xColor, final int yColor ) {
 
       final float vl = lineLength > IUtils.DEFAULT_EPSILON ? lineLength
          : IUtils.DEFAULT_EPSILON;
@@ -788,14 +784,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       this.strokeWeight(sw);
 
       this.stroke(xColor);
-      this.lineImpl(
-         0.0f, 0.0f, 0.0f,
-         vl, 0.0f, 0.0f);
+      this.lineImpl(0.0f, 0.0f, 0.0f, vl, 0.0f, 0.0f);
 
       this.stroke(yColor);
-      this.lineImpl(
-         0.0f, 0.0f, 0.0f,
-         0.0f, vl, 0.0f);
+      this.lineImpl(0.0f, 0.0f, 0.0f, 0.0f, vl, 0.0f);
 
       this.popStyle();
    }
@@ -817,17 +809,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param d the fourth point
     */
    @Override
-   public void quad (
-      final Vec2 a,
-      final Vec2 b,
-      final Vec2 c,
-      final Vec2 d ) {
+   public void quad ( final Vec2 a, final Vec2 b, final Vec2 c, final Vec2 d ) {
 
-      this.quad(
-         a.x, a.y,
-         b.x, b.y,
-         c.x, c.y,
-         d.x, d.y);
+      this.quad(a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y);
    }
 
    /**
@@ -838,13 +822,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param ap1 the next anchor point
     */
    @Override
-   public void quadraticVertex (
-      final Vec2 cp,
-      final Vec2 ap1 ) {
+   public void quadraticVertex ( final Vec2 cp, final Vec2 ap1 ) {
 
-      this.quadraticVertexImpl(
-         cp.x, cp.y, 0.0f,
-         ap1.x, ap1.y, 0.0f);
+      this.quadraticVertexImpl(cp.x, cp.y, 0.0f, ap1.x, ap1.y, 0.0f);
    }
 
    /**
@@ -855,31 +835,23 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param b the second parameter
     */
    @Override
-   public void rect (
-      final Vec2 a,
-      final Vec2 b ) {
+   public void rect ( final Vec2 a, final Vec2 b ) {
 
       this.rectImpl(a.x, a.y, b.x, b.y);
    }
 
    /**
-    * Draws a rounded rectangle; the meaning of the first two parameters depends
-    * on the renderer's rectMode.
+    * Draws a rounded rectangle; the meaning of the first two parameters
+    * depends on the renderer's rectMode.
     *
     * @param a the first parameter
     * @param b the second parameter
     * @param r the corner rounding
     */
    @Override
-   public void rect (
-      final Vec2 a,
-      final Vec2 b,
-      final float r ) {
+   public void rect ( final Vec2 a, final Vec2 b, final float r ) {
 
-      this.rectImpl(
-         a.x, a.y,
-         b.x, b.y,
-         r, r, r, r);
+      this.rectImpl(a.x, a.y, b.x, b.y, r, r, r, r);
    }
 
    /**
@@ -892,18 +864,15 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param vz    the axis z coordinate
     */
    @Override
-   public void rotate (
-      final float angle,
-      final float vx,
-      final float vy,
+   public void rotate ( final float angle, final float vx, final float vy,
       final float vz ) {
 
       PGraphics.showVariationWarning("rotate");
    }
 
    /**
-    * Rotates the sketch by an angle in radians around the y axis. For 2D, this
-    * scales by ( 1.0, cos ( a ) ) .
+    * Rotates the sketch by an angle in radians around the y axis. For 2D,
+    * this scales by ( 1.0, cos ( a ) ) .
     *
     * @param radians the angle
     */
@@ -914,8 +883,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    }
 
    /**
-    * Rotates the sketch by an angle in radians around the y axis. For 2D, this
-    * scales by ( cos ( a ), 1.0 ) .
+    * Rotates the sketch by an angle in radians around the y axis. For 2D,
+    * this scales by ( cos ( a ), 1.0 ) .
     *
     * @param radians the angle
     */
@@ -935,8 +904,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Finds the screen position of a point in the world.<br>
     * <br>
-    * More efficient than calling {@link PApplet#screenX(float, float, float)} ,
-    * {@link PApplet#screenY(float, float, float)} , and
+    * More efficient than calling {@link PApplet#screenX(float, float, float)}
+    * , {@link PApplet#screenY(float, float, float)} , and
     * {@link PApplet#screenZ(float, float, float)} separately. However, it is
     * advisable to work with {@link Vec4}s and the renderer matrices directly.
     *
@@ -947,25 +916,20 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     */
    @Override
    @Experimental
-   public Vec2 screen (
-      final Vec2 source,
-      final Vec2 target ) {
+   public Vec2 screen ( final Vec2 source, final Vec2 target ) {
 
       this.screen1s(source.x, source.y, target);
-      return target.set(
-         this.width * ( 1.0f + target.x ) * 0.5f,
-         this.height * ( 1.0f - ( 1.0f + target.y ) * 0.5f ));
+      return target.set(this.width * ( 1.0f + target.x ) * 0.5f, this.height
+         * ( 1.0f - ( 1.0f + target.y ) * 0.5f ));
    }
 
    /**
     * Set size is the last function called by size, createGraphics,
-    * makeGraphics, etc. when initializing the graphics renderer. Therefore, any
-    * additional values that need initialization can be attempted here.
+    * makeGraphics, etc. when initializing the graphics renderer. Therefore,
+    * any additional values that need initialization can be attempted here.
     */
    @Override
-   public void setSize (
-      final int width,
-      final int height ) {
+   public void setSize ( final int width, final int height ) {
 
       super.setSize(width, height);
       this.ortho();
@@ -1002,10 +966,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
          Transform2.mulPoint(tr, coord, v2);
 
          this.beginShape();
-         this.vertexImpl(
-            v2.x, v2.y, 0.0f,
-            this.textureU,
-            this.textureV);
+         this.vertexImpl(v2.x, v2.y, 0.0f, this.textureU, this.textureV);
 
          while ( knItr.hasNext() ) {
             currKnot = knItr.next();
@@ -1017,10 +978,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
             Transform2.mulPoint(tr, rearHandle, v1);
             Transform2.mulPoint(tr, coord, v2);
 
-            this.bezierVertexImpl(
-               v0.x, v0.y, 0.0f,
-               v1.x, v1.y, 0.0f,
-               v2.x, v2.y, 0.0f);
+            this.bezierVertexImpl(v0.x, v0.y, 0.0f, v1.x, v1.y, 0.0f, v2.x,
+               v2.y, 0.0f);
 
             prevKnot = currKnot;
          }
@@ -1035,10 +994,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
             Transform2.mulPoint(tr, rearHandle, v1);
             Transform2.mulPoint(tr, coord, v2);
 
-            this.bezierVertexImpl(
-               v0.x, v0.y, 0.0f,
-               v1.x, v1.y, 0.0f,
-               v2.x, v2.y, 0.0f);
+            this.bezierVertexImpl(v0.x, v0.y, 0.0f, v1.x, v1.y, 0.0f, v2.x,
+               v2.y, 0.0f);
             this.endShape(PConstants.CLOSE);
          } else {
             this.endShape(PConstants.OPEN);
@@ -1052,8 +1009,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param entity   the curve entity
     * @param material the material
     */
-   public void shape (
-      final CurveEntity2 entity,
+   public void shape ( final CurveEntity2 entity,
       final MaterialSolid material ) {
 
       this.pushStyle();
@@ -1068,8 +1024,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param entity    the curve entity
     * @param materials the materials array
     */
-   public void shape (
-      final CurveEntity2 entity,
+   public void shape ( final CurveEntity2 entity,
       final MaterialSolid[] materials ) {
 
       /*
@@ -1105,10 +1060,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
          Transform2.mulPoint(tr, coord, v2);
 
          this.beginShape();
-         this.vertexImpl(
-            v2.x, v2.y, 0.0f,
-            this.textureU,
-            this.textureV);
+         this.vertexImpl(v2.x, v2.y, 0.0f, this.textureU, this.textureV);
 
          while ( knItr.hasNext() ) {
             currKnot = knItr.next();
@@ -1120,10 +1072,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
             Transform2.mulPoint(tr, rearHandle, v1);
             Transform2.mulPoint(tr, coord, v2);
 
-            this.bezierVertexImpl(
-               v0.x, v0.y, 0.0f,
-               v1.x, v1.y, 0.0f,
-               v2.x, v2.y, 0.0f);
+            this.bezierVertexImpl(v0.x, v0.y, 0.0f, v1.x, v1.y, 0.0f, v2.x,
+               v2.y, 0.0f);
 
             prevKnot = currKnot;
          }
@@ -1138,10 +1088,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
             Transform2.mulPoint(tr, rearHandle, v1);
             Transform2.mulPoint(tr, coord, v2);
 
-            this.bezierVertexImpl(
-               v0.x, v0.y, 0.0f,
-               v1.x, v1.y, 0.0f,
-               v2.x, v2.y, 0.0f);
+            this.bezierVertexImpl(v0.x, v0.y, 0.0f, v1.x, v1.y, 0.0f, v2.x,
+               v2.y, 0.0f);
             this.endShape(PConstants.CLOSE);
          } else {
             this.endShape(PConstants.OPEN);
@@ -1174,8 +1122,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param entity   the mesh entity
     * @param material the material
     */
-   public void shape (
-      final MeshEntity2 entity,
+   public void shape ( final MeshEntity2 entity,
       final MaterialPImage material ) {
 
       final Transform2 tr = entity.transform;
@@ -1187,8 +1134,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       this.pushStyle();
       this.noStroke();
       while ( meshItr.hasNext() ) {
-         final Mesh2 mesh = meshItr.next();
-         this.drawMesh2(mesh, tr, material, v, vt);
+         this.drawMesh2(meshItr.next(), tr, material, v, vt);
       }
       this.popStyle();
    }
@@ -1199,8 +1145,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param entity    the mesh entity
     * @param materials the materials
     */
-   public void shape (
-      final MeshEntity2 entity,
+   public void shape ( final MeshEntity2 entity,
       final MaterialPImage[] materials ) {
 
       final Transform2 tr = entity.transform;
@@ -1225,8 +1170,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param entity   the mesh entity
     * @param material the material
     */
-   public void shape (
-      final MeshEntity2 entity,
+   public void shape ( final MeshEntity2 entity,
       final MaterialSolid material ) {
 
       this.pushStyle();
@@ -1241,8 +1185,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param entity    the mesh entity
     * @param materials the materials
     */
-   public void shape (
-      final MeshEntity2 entity,
+   public void shape ( final MeshEntity2 entity,
       final MaterialSolid[] materials ) {
 
       final Transform2 tr = entity.transform;
@@ -1263,8 +1206,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * shapeMode is not supported by this renderer; it defaults to CENTER. Set
     * the scale of the shape with instance methods instead.<br>
     * <br>
-    * This will not throw a missing method warning, because it may be called by
-    * PShapes.
+    * This will not throw a missing method warning, because it may be called
+    * by PShapes.
     */
    @Override
    public void shapeMode ( final int mode ) {}
@@ -1276,9 +1219,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param size the size
     */
    @Override
-   public void square (
-      final Vec2 loc,
-      final float size ) {
+   public void square ( final Vec2 loc, final float size ) {
 
       this.rectImpl(loc.x, loc.y, size, size);
    }
@@ -1291,10 +1232,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param r    the corner rounding
     */
    @Override
-   public void square (
-      final Vec2 loc,
-      final float size,
-      final float r ) {
+   public void square ( final Vec2 loc, final float size, final float r ) {
 
       this.rectImpl(loc.x, loc.y, size, size, r, r, r, r);
    }
@@ -1323,6 +1261,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param v the vector
     */
    public void translate ( final Vec2 v ) {
+
       this.translateImpl(v.x, v.y, 0.0f);
    }
 
@@ -1334,15 +1273,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param c the third point
     */
    @Override
-   public void triangle (
-      final Vec2 a,
-      final Vec2 b,
-      final Vec2 c ) {
+   public void triangle ( final Vec2 a, final Vec2 b, final Vec2 c ) {
 
-      super.triangle(
-         a.x, a.y,
-         b.x, b.y,
-         c.x, c.y);
+      super.triangle(a.x, a.y, b.x, b.y, c.x, c.y);
    }
 
    /**
@@ -1364,9 +1297,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param v  the coordinate
     * @param vt the texture coordinate
     */
-   public void vertex (
-      final Vec2 v,
-      final Vec2 vt ) {
+   public void vertex ( final Vec2 v, final Vec2 vt ) {
 
       this.vertexImpl(v.x, v.y, 0.0f, vt.x, vt.y);
    }
@@ -1381,9 +1312,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     *
     * @return the screen point
     */
-   protected Vec2 screen1s (
-      final float xSource,
-      final float ySource,
+   protected Vec2 screen1s ( final float xSource, final float ySource,
       final Vec2 target ) {
 
       /* Multiply by model-view matrix; multiply product by projection. */

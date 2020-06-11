@@ -2708,8 +2708,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     */
    protected static String toHexString ( final byte b ) {
 
-      final int digit0 = b >> 0x4 & 0x0f;
-      final int digit1 = b & 0x0f;
+      final int digit0 = b >> 0x4 & 0xf;
+      final int digit1 = b & 0xf;
       final StringBuilder sb = new StringBuilder(2);
 
       /* @formatter:off */

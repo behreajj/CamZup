@@ -22,6 +22,11 @@ import processing.core.PMatrix3D;
 public abstract class PMatAux {
 
    /**
+    * Discourage overriding with a private constructor.
+    */
+   private PMatAux ( ) {}
+
+   /**
     * A temporary container to hold inverted quaternions for the purpose of
     * inverse rotation.
     */

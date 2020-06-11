@@ -176,7 +176,7 @@ public class ZImage extends PImage {
     */
    public static float aspect ( final PImage img ) {
 
-      return Utils.div(img.width, img.height);
+      return Utils.div(( float ) img.width, ( float ) img.height);
    }
 
    /**
@@ -1006,13 +1006,13 @@ public class ZImage extends PImage {
             for ( int i = 0; i < len; ++i ) {
                final int rgb = pixels[i];
 
-               final int xr = rgb >> 0x10 & 0xff;
-               final int xg = rgb >> 0x8 & 0xff;
-               final int xb = rgb & 0xff;
+               // final int xr = rgb >> 0x10 & 0xff;
+               // final int xg = rgb >> 0x8 & 0xff;
+               // final int xb = rgb & 0xff;
 
-               final float xrf = xr * IUtils.ONE_255;
-               final float xgf = xg * IUtils.ONE_255;
-               final float xbf = xb * IUtils.ONE_255;
+               final float xrf = ( rgb >> 0x10 & 0xff ) * IUtils.ONE_255;
+               final float xgf = ( rgb >> 0x8 & 0xff ) * IUtils.ONE_255;
+               final float xbf = ( rgb & 0xff ) * IUtils.ONE_255;
 
                final float zrf = u * xrf + t * yrf;
                final float zgf = u * xgf + t * ygf;
@@ -1033,15 +1033,15 @@ public class ZImage extends PImage {
             for ( int i = 0; i < len; ++i ) {
                final int rgb = pixels[i];
 
-               final int xa = rgb >> 0x18 & 0xff;
-               final int xr = rgb >> 0x10 & 0xff;
-               final int xg = rgb >> 0x8 & 0xff;
-               final int xb = rgb & 0xff;
+               // final int xa = rgb >> 0x18 & 0xff;
+               // final int xr = rgb >> 0x10 & 0xff;
+               // final int xg = rgb >> 0x8 & 0xff;
+               // final int xb = rgb & 0xff;
 
-               final float xaf = xa * IUtils.ONE_255;
-               final float xrf = xr * IUtils.ONE_255;
-               final float xgf = xg * IUtils.ONE_255;
-               final float xbf = xb * IUtils.ONE_255;
+               final float xaf = ( rgb >> 0x18 & 0xff ) * IUtils.ONE_255;
+               final float xrf = ( rgb >> 0x10 & 0xff ) * IUtils.ONE_255;
+               final float xgf = ( rgb >> 0x8 & 0xff ) * IUtils.ONE_255;
+               final float xbf = ( rgb & 0xff ) * IUtils.ONE_255;
 
                final float zaf = u * xaf + t * yaf;
                final float zrf = u * xrf + t * yrf;

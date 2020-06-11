@@ -746,10 +746,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       double extaph = 0.0d;
       double extcpw = 0.0d;
       double extcph = 0.0d;
-      double right = 0.0d;
-      double left = 0.0d;
-      double top = 0.0d;
-      double bottom = 0.0d;
       double xc = 0.0d;
       double yc = 0.0d;
 
@@ -808,10 +804,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       }
 
-      right = xc + extapw;
-      left = xc - extapw;
-      top = yc + extaph;
-      bottom = yc - extaph;
+      final double right = xc + extapw;
+      final double left = xc - extapw;
+      final double top = yc + extaph;
+      final double bottom = yc - extaph;
 
       this.gp.reset();
       this.gp.moveTo(right, yc);
@@ -2108,12 +2104,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       sb.append(',');
       sb.append(' ');
       sb.append('\n');
+
       sb.append(Utils.toFixed(( float ) tr.getShearY(), p));
       sb.append(',');
       sb.append(' ');
       sb.append(Utils.toFixed(( float ) tr.getScaleY(), p));
       sb.append(',');
-      sb.append(' ').append(Utils.toFixed(( float ) tr.getTranslateY(), p));
+      sb.append(' ');
+      sb.append(Utils.toFixed(( float ) tr.getTranslateY(), p));
       sb.append(' ');
       sb.append(']');
       sb.append('\n');
@@ -2392,9 +2390,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void resetMatrix ( ) {
 
+      final double pdd = this.pixelDensity;
       this.affineNative.setToIdentity();
       this.g2.setTransform(this.affineNative);
-      this.g2.scale(this.pixelDensity, this.pixelDensity);
+      this.g2.scale(pdd, pdd);
    }
 
    /**
