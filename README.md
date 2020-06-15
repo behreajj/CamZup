@@ -158,14 +158,14 @@ For those reasons, the following functions may be confusing if used in Processin
 |    `++a`, `a++` |               `T a.inc()` |         | Vec2,3,4 Color Complex                   |
 |    `--a`, `a--` |               `T a.dec()` |         | Vec2,3,4 Color Complex                   |
 |         `a + b` |           `T a.plus(U b)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|         `a - b` |          `T a.minus(U b)` |         | Vec2,3,4 Color Complex Quaternion        |
+|         `a - b` |          `T a.minus(U b)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
 |         `a * b` |          `T a.times(U b)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|         `a / b` |            `T a.div(U b)` |         | Vec2,3,4 Color Complex Quaternion        |
+|         `a / b` |            `T a.div(U b)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
 |         `a % b` |            `T a.rem(U b)` |         | Vec2,3,4 Color                           |
 |        `a += b` |  `void a.plusAssign(U b)` |    X    | Vec2,3,4 Color Complex Quaternion Mat3,4 |
 |        `a -= b` | `void a.minusAssign(U b)` |    X    | Vec2,3,4 Color Complex Quaternion Mat3,4 |
 |        `a *= b` | `void a.timesAssign(U b)` |    X    | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|        `a /= b` |   `void a.divAssign(U b)` |    X    | Vec2,3,4 Color Complex Quaternion        |
+|        `a /= b` |   `void a.divAssign(U b)` |    X    | Vec2,3,4 Color Complex Quaternion Mat3,4 |
 |        `a %= b` |   `void a.remAssign(U b)` |    X    | Vec2,3,4 Color                           |
 |        `a in b` | `boolean b.contains(U a)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
 |          `a[i]` |          `U a.get(int i)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |

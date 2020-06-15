@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 /**
  * A mutable, extensible class influenced by GLSL, OSL and Processing's
- * PMatrix3D. ALthough this is a 3 x 3 matrix, it is generally assumed to
+ * PMatrix3D. Although this is a 3 x 3 matrix, it is generally assumed to
  * be a 2D affine transform matrix, where the last row is (0.0, 0.0, 1.0) .
  * Instance methods are limited, while most static methods require an
  * explicit output variable to be provided.
@@ -161,6 +161,72 @@ public class Mat3 extends Matrix {
       if ( Utils.approx(this.m21, v) ) { return true; }
       if ( Utils.approx(this.m22, v) ) { return true; }
       return false;
+   }
+
+   /**
+    * Returns a new matrix with the division of the instance by the right
+    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
+    * not mutate the matrix in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the quotient
+    *
+    * @see Mat3#mul(Mat3, Mat3, Mat3)
+    * @see Mat3#inverse(Mat3, Mat3)
+    */
+   public Mat3 div ( final Mat3 b ) {
+
+      return Mat3.mul(this, Mat3.inverse(b, new Mat3()), new Mat3());
+   }
+
+   /**
+    * Divides the instance by the right operand (mutates the matrix in place).
+    * For interoperability with Kotlin: <code>a /= b</code> .
+    *
+    * @param b the right operand
+    * 
+    * @see Mat3#mul(Mat3, Mat3, Mat3)
+    * @see Mat3#inverse(Mat3, Mat3)
+    */
+   public void divAssign ( final Mat3 b ) {
+
+      Mat3.mul(this, Mat3.inverse(b, new Mat3()), this);
+   }
+
+   /**
+    * Divides the instance by the right operand (mutates the matrix in place).
+    * For interoperability with Kotlin: <code>a /= b</code> .
+    *
+    * @param b the right operand
+    * 
+    * @see Mat3#mul(Mat3, float, Mat3)
+    */
+   public void divAssign ( final float b ) {
+
+      if ( b != 0.0f ) {
+         Mat3.mul(this, 1.0f / b, this);
+      } else {
+         Mat3.identity(this);
+      }
+   }
+
+   /**
+    * Returns a new matrix with the division of the instance by the right
+    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
+    * not mutate the matrix in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the quotient
+    *
+    * @see Mat3#mul(Mat3, float, Mat3)
+    * @see Mat3#inverse(Mat3, Mat3)
+    */
+   public Mat3 div ( final float b ) {
+
+      if ( b != 0.0f ) { return Mat3.mul(this, 1.0f / b, new Mat3()); }
+      return new Mat3();
    }
 
    /**
@@ -840,7 +906,6 @@ public class Mat3 extends Matrix {
       scale.set(xMag, det < 0.0f ? -yMag : yMag);
       trans.set(m.m02, m.m12);
       return Utils.modRadians(( float ) Math.atan2(m.m10, m.m00));
-      // return Utils.modRadians(Utils.atan2(m.m10, m.m00));
    }
 
    /**
@@ -860,28 +925,8 @@ public class Mat3 extends Matrix {
    }
 
    /**
-    * Divides one matrix by another. Equivalent to multiplying the numerator
-    * and the inverse of the denominator.
-    *
-    * @param a       numerator
-    * @param b       denominator
-    * @param target  the output matrix
-    * @param inverse the inverse matrix
-    *
-    * @return the quotient
-    *
-    * @see Mat3#mul(Mat3, Mat3, Mat3)
-    * @see Mat3#inverse
-    */
-   public static Mat3 div ( final Mat3 a, final Mat3 b, final Mat3 target,
-      final Mat3 inverse ) {
-
-      return Mat3.mul(a, Mat3.inverse(b, inverse), target);
-   }
-
-   /**
     * Creates a matrix from two axes. The third row and column are assumed to
-    * be (0.0, 0.0, 1.0).
+    * be (0.0, 0.0, 1.0) .
     *
     * @param right   the right axis
     * @param forward the forward axis
@@ -898,7 +943,7 @@ public class Mat3 extends Matrix {
 
    /**
     * Creates a matrix from two axes and a translation. The third row, z or w,
-    * is assumed to be (0.0, 0.0, 1.0).
+    * is assumed to be (0.0, 0.0, 1.0) .
     *
     * @param right       the right axis
     * @param forward     the forward axis
@@ -972,11 +1017,6 @@ public class Mat3 extends Matrix {
     * @return the matrix
     */
    public static Mat3 fromRotZ ( final float radians, final Mat3 target ) {
-
-      // return Mat3.fromRotZ(
-      // Utils.cos(radians),
-      // Utils.sin(radians),
-      // target);
 
       final float norm = radians * IUtils.ONE_TAU;
       return Mat3.fromRotZ(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
@@ -1128,7 +1168,7 @@ public class Mat3 extends Matrix {
    }
 
    /**
-    * Multiplies two matrices by component.
+    * Multiplies two matrices.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -1155,8 +1195,8 @@ public class Mat3 extends Matrix {
    }
 
    /**
-    * Multiplies three matrices by component. Useful for composing an affine
-    * transform from translation, rotation and scale matrices.
+    * Multiplies three matrices. Useful for composing an affine transform from
+    * translation, rotation and scale matrices.
     *
     * @param a      the first matrix
     * @param b      the second matrix
@@ -1288,7 +1328,7 @@ public class Mat3 extends Matrix {
    }
 
    /**
-    * Transposes a matrix, switching its row and column indices.
+    * Transposes a matrix, switching its row and column elements.
     *
     * @param m      the matrix
     * @param target the output matrix

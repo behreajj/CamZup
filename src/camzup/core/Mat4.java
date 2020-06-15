@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 /**
  * A mutable, extensible class influenced by GLSL, OSL and Processing's
- * PMatrix3D. ALthough this is a 4 x 4 matrix, it is generally assumed to
+ * PMatrix3D. Although this is a 4 x 4 matrix, it is generally assumed to
  * be a 3D affine transform matrix, where the last row is (0.0, 0.0, 0.0,
  * 1.0) . Instance methods are limited, while most static methods require
  * an explicit output variable to be provided.
@@ -228,6 +228,72 @@ public class Mat4 extends Matrix {
       if ( Utils.approx(this.m32, v) ) { return true; }
       if ( Utils.approx(this.m33, v) ) { return true; }
       return false;
+   }
+
+   /**
+    * Returns a new matrix with the division of the instance by the right
+    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
+    * not mutate the matrix in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the quotient
+    *
+    * @see Mat4#mul(Mat4, Mat4, Mat4)
+    * @see Mat4#inverse(Mat4, Mat4)
+    */
+   public Mat4 div ( final Mat4 b ) {
+
+      return Mat4.mul(this, Mat4.inverse(b, new Mat4()), new Mat4());
+   }
+
+   /**
+    * Returns a new matrix with the division of the instance by the right
+    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
+    * not mutate the matrix in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the quotient
+    *
+    * @see Mat4#mul(Mat4, float, Mat4)
+    * @see Mat4#inverse(Mat4, Mat4)
+    */
+   public Mat4 div ( final float b ) {
+
+      if ( b != 0.0f ) { return Mat4.mul(this, 1.0f / b, new Mat4()); }
+      return new Mat4();
+   }
+
+   /**
+    * Divides the instance by the right operand (mutates the matrix in place).
+    * For interoperability with Kotlin: <code>a /= b</code> .
+    *
+    * @param b the right operand
+    * 
+    * @see Mat4#mul(Mat4, Mat4, Mat4)
+    * @see Mat4#inverse(Mat4, Mat4)
+    */
+   public void divAssign ( final Mat4 b ) {
+
+      Mat4.mul(this, Mat4.inverse(b, new Mat4()), this);
+   }
+
+   /**
+    * Divides the instance by the right operand (mutates the matrix in place).
+    * For interoperability with Kotlin: <code>a /= b</code> .
+    *
+    * @param b the right operand
+    * 
+    * @see Mat4#mul(Mat4, float, Mat4)
+    */
+   public void divAssign ( final float b ) {
+
+      if ( b != 0.0f ) {
+         Mat4.mul(this, 1.0f / b, this);
+      } else {
+         Mat4.identity(this);
+      }
    }
 
    /**
@@ -1183,26 +1249,6 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Divides one matrix by another. Equivalent to multiplying the numerator
-    * and the inverse of the denominator.
-    *
-    * @param a       numerator
-    * @param b       denominator
-    * @param target  the output matrix
-    * @param inverse the inverse matrix
-    *
-    * @return the quotient
-    *
-    * @see Mat4#mul(Mat4, Mat4, Mat4)
-    * @see Mat4#inverse
-    */
-   public static Mat4 div ( final Mat4 a, final Mat4 b, final Mat4 target,
-      final Mat4 inverse ) {
-
-      return Mat4.mul(a, Mat4.inverse(b, inverse), target);
-   }
-
-   /**
     * Creates a matrix from two axes. The third axis, up, is assumed to be
     * (0.0, 0.0, 1.0, 0.0). The fourth row and column are assumed to be (0.0,
     * 0.0, 0.0, 1.0).
@@ -1455,11 +1501,6 @@ public class Mat4 extends Matrix {
     */
    public static Mat4 fromRotX ( final float radians, final Mat4 target ) {
 
-      // return Mat4.fromRotX(
-      // Utils.cos(radians),
-      // Utils.sin(radians),
-      // target);
-
       final float norm = radians * IUtils.ONE_TAU;
       return Mat4.fromRotX(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
          target);
@@ -1499,11 +1540,6 @@ public class Mat4 extends Matrix {
     */
    public static Mat4 fromRotY ( final float radians, final Mat4 target ) {
 
-      // return Mat4.fromRotY(
-      // Utils.cos(radians),
-      // Utils.sin(radians),
-      // target);
-
       final float norm = radians * IUtils.ONE_TAU;
       return Mat4.fromRotY(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
          target);
@@ -1539,11 +1575,6 @@ public class Mat4 extends Matrix {
     * @return the matrix
     */
    public static Mat4 fromRotZ ( final float radians, final Mat4 target ) {
-
-      // return Mat4.fromRotZ(
-      // Utils.cos(radians),
-      // Utils.sin(radians),
-      // target);
 
       final float norm = radians * IUtils.ONE_TAU;
       return Mat4.fromRotZ(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
@@ -1806,7 +1837,7 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Multiplies two matrices by component.
+    * Multiplies two matrices.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -1841,8 +1872,8 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Multiplies three matrices by component. Useful for composing an affine
-    * transform from translation, rotation and scale matrices.
+    * Multiplies three matrices. Useful for composing an affine transform from
+    * translation, rotation and scale matrices.
     *
     * @param a      the first matrix
     * @param b      the second matrix

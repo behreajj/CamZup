@@ -652,10 +652,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * Insets a face by calculating its center then easing from the face's
-    * vertices toward the center by the amount, expected to be in the range
-    * [0.0, 1.0] . When the amount is less than 0.0, the face remains
-    * unchanged; when the amount is greater than 1.0, then the face is
-    * subdivided by center.
+    * vertices toward the center by the factor. The factor is expected to be
+    * in the range [0.0, 1.0] . When it is less than 0.0, the face remains
+    * unchanged; when it is greater than 1.0, the face is subdivided by
+    * center.
     *
     * @param faceIdx the face index
     * @param fac     the inset amount
@@ -687,9 +687,13 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final int[] vertCurr = face[j];
          final Vec2 vCurr = this.coords[vertCurr[0]];
          final Vec2 vtCurr = this.texCoords[vertCurr[1]];
+
+         /* Sum centers. */
          Vec2.add(vCenter, vCurr, vCenter);
          Vec2.add(vtCenter, vtCurr, vtCenter);
       }
+
+      /* Average. */
       Vec2.div(vCenter, faceLen, vCenter);
       Vec2.div(vtCenter, faceLen, vtCenter);
 

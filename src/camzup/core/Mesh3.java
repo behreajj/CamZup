@@ -719,10 +719,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * Insets a face by calculating its center then easing from the face's
-    * vertices toward the center by the amount, expected to be in the range
-    * [0.0, 1.0] . When the amount is less than 0.0, the face remains
-    * unchanged; when the amount is greater than 1.0, then the face is
-    * subdivided by center.
+    * vertices toward the center by the factor. The factor is expected to be
+    * in the range [0.0, 1.0] . When it is less than 0.0, the face remains
+    * unchanged; when it is greater than 1.0, the face is subdivided by
+    * center.
     *
     * @param faceIdx the face index
     * @param fac     the inset amount
@@ -759,10 +759,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final Vec2 vtCurr = this.texCoords[vertCurr[1]];
          final Vec3 vnCurr = this.normals[vertCurr[2]];
 
+         /* Sum centers. */
          Vec3.add(vCenter, vCurr, vCenter);
          Vec2.add(vtCenter, vtCurr, vtCenter);
          Vec3.add(vnCenter, vnCurr, vnCenter);
       }
+
+      /* Average. */
       Vec3.div(vCenter, faceLen, vCenter);
       Vec2.div(vtCenter, faceLen, vtCenter);
       Vec3.div(vnCenter, faceLen, vnCenter);
