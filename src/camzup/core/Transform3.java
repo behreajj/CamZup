@@ -1188,7 +1188,7 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Sets the transform to the identity.
+    * Sets a transform to the identity.
     *
     * @param target the output transform
     *

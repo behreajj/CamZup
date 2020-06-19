@@ -30,7 +30,7 @@ public class Transform2 extends Transform {
    protected final Vec2 right;
 
    /**
-    * The transform's rotation.
+    * The transform's rotation in radians.
     */
    protected float rotation = 0.0f;
 
@@ -1078,7 +1078,7 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Sets the transform to the identity.
+    * Sets a transform to the identity.
     *
     * @param target the output transform
     *
@@ -1160,7 +1160,7 @@ public class Transform2 extends Transform {
     * @param source the input point
     * @param target the output point
     *
-    * @return the point
+    * @return the vector
     *
     * @see Vec2#div(Vec2, Vec2, Vec2)
     * @see Vec2#rotateZ(Vec2, float, Vec2)

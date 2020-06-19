@@ -9,7 +9,7 @@ import java.util.Iterator;
  * 1.0) . Instance methods are limited, while most static methods require
  * an explicit output variable to be provided.
  */
-public class Mat4 extends Matrix {
+public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
 
    /**
     * Component in row 0, column 0. The right axis x component.
@@ -94,7 +94,7 @@ public class Mat4 extends Matrix {
    /**
     * The default constructor. Creates an identity matrix.
     */
-   public Mat4 ( ) { super(16); }
+   public Mat4 ( ) {}
 
    /**
     * Constructs a matrix from float values.
@@ -113,7 +113,6 @@ public class Mat4 extends Matrix {
       final float m10, final float m11, final float m12, final float m20,
       final float m21, final float m22 ) {
 
-      super(16);
       this.set(m00, m01, m02, m10, m11, m12, m20, m21, m22);
    }
 
@@ -138,7 +137,6 @@ public class Mat4 extends Matrix {
       final float m13, final float m20, final float m21, final float m22,
       final float m23 ) {
 
-      super(16);
       this.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23);
    }
 
@@ -168,7 +166,6 @@ public class Mat4 extends Matrix {
       final float m23, final float m30, final float m31, final float m32,
       final float m33 ) {
 
-      super(16);
       this.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30,
          m31, m32, m33);
    }
@@ -178,11 +175,7 @@ public class Mat4 extends Matrix {
     *
     * @param source the source matrix
     */
-   public Mat4 ( final Mat4 source ) {
-
-      super(16);
-      this.set(source);
-   }
+   public Mat4 ( final Mat4 source ) { this.set(source); }
 
    /**
     * Returns a new matrix with this matrix's components. Java's cloneable
@@ -239,12 +232,13 @@ public class Mat4 extends Matrix {
     *
     * @return the quotient
     *
-    * @see Mat4#mul(Mat4, Mat4, Mat4)
+    * @see Mat4#mul(Mat4, float, Mat4)
     * @see Mat4#inverse(Mat4, Mat4)
     */
-   public Mat4 div ( final Mat4 b ) {
+   public Mat4 div ( final float b ) {
 
-      return Mat4.mul(this, Mat4.inverse(b, new Mat4()), new Mat4());
+      if ( b != 0.0f ) { return Mat4.mul(this, 1.0f / b, new Mat4()); }
+      return new Mat4();
    }
 
    /**
@@ -256,27 +250,12 @@ public class Mat4 extends Matrix {
     *
     * @return the quotient
     *
-    * @see Mat4#mul(Mat4, float, Mat4)
-    * @see Mat4#inverse(Mat4, Mat4)
-    */
-   public Mat4 div ( final float b ) {
-
-      if ( b != 0.0f ) { return Mat4.mul(this, 1.0f / b, new Mat4()); }
-      return new Mat4();
-   }
-
-   /**
-    * Divides the instance by the right operand (mutates the matrix in place).
-    * For interoperability with Kotlin: <code>a /= b</code> .
-    *
-    * @param b the right operand
-    * 
     * @see Mat4#mul(Mat4, Mat4, Mat4)
     * @see Mat4#inverse(Mat4, Mat4)
     */
-   public void divAssign ( final Mat4 b ) {
+   public Mat4 div ( final Mat4 b ) {
 
-      Mat4.mul(this, Mat4.inverse(b, new Mat4()), this);
+      return Mat4.mul(this, Mat4.inverse(b, new Mat4()), new Mat4());
    }
 
    /**
@@ -284,7 +263,7 @@ public class Mat4 extends Matrix {
     * For interoperability with Kotlin: <code>a /= b</code> .
     *
     * @param b the right operand
-    * 
+    *
     * @see Mat4#mul(Mat4, float, Mat4)
     */
    public void divAssign ( final float b ) {
@@ -294,6 +273,20 @@ public class Mat4 extends Matrix {
       } else {
          Mat4.identity(this);
       }
+   }
+
+   /**
+    * Divides the instance by the right operand (mutates the matrix in place).
+    * For interoperability with Kotlin: <code>a /= b</code> .
+    *
+    * @param b the right operand
+    *
+    * @see Mat4#mul(Mat4, Mat4, Mat4)
+    * @see Mat4#inverse(Mat4, Mat4)
+    */
+   public void divAssign ( final Mat4 b ) {
+
+      Mat4.mul(this, Mat4.inverse(b, new Mat4()), this);
    }
 
    /**
@@ -370,7 +363,6 @@ public class Mat4 extends Matrix {
     *
     * @return the component at that index
     */
-   @Override
    public float getElm ( final int index ) {
 
       /*
@@ -417,7 +409,6 @@ public class Mat4 extends Matrix {
     *
     * @return the component at that index
     */
-   @Override
    public float getElm ( final int i, final int j ) {
 
       /* @formatter:off */
@@ -510,6 +501,13 @@ public class Mat4 extends Matrix {
     */
    @Override
    public Iterator < Float > iterator ( ) { return new M4Iterator(this); }
+
+   /**
+    * Returns the number of elements in the matrix.
+    *
+    * @return the length
+    */
+   public int length ( ) { return 16; }
 
    /**
     * Returns a new matrix with the subtraction of the right operand from the
@@ -660,9 +658,8 @@ public class Mat4 extends Matrix {
       this.m01 = m01; this.m11 = m11; this.m21 = m21; this.m31 = m31;
       this.m02 = m02; this.m12 = m12; this.m22 = m22; this.m32 = m32;
       this.m03 = m03; this.m13 = m13; this.m23 = m23; this.m33 = m33;
-      /* @formatter:on */
-
       return this;
+      /* @formatter:on */
    }
 
    /**
@@ -725,7 +722,6 @@ public class Mat4 extends Matrix {
          case -4:
 
             /* Right axis. */
-
             this.m00 = source.x;
             this.m10 = source.y;
             this.m20 = source.z;
@@ -737,7 +733,6 @@ public class Mat4 extends Matrix {
          case -3:
 
             /* Forward axis. */
-
             this.m01 = source.x;
             this.m11 = source.y;
             this.m21 = source.z;
@@ -749,7 +744,6 @@ public class Mat4 extends Matrix {
          case -2:
 
             /* Up axis. */
-
             this.m02 = source.x;
             this.m12 = source.y;
             this.m22 = source.z;
@@ -761,7 +755,6 @@ public class Mat4 extends Matrix {
          case -1:
 
             /* Translation. */
-
             this.m03 = source.x;
             this.m13 = source.y;
             this.m23 = source.z;
@@ -790,7 +783,6 @@ public class Mat4 extends Matrix {
          case -4:
 
             /* Right axis. */
-
             this.m00 = source.x;
             this.m10 = source.y;
             this.m20 = source.z;
@@ -802,7 +794,6 @@ public class Mat4 extends Matrix {
          case -3:
 
             /* Forward axis. */
-
             this.m01 = source.x;
             this.m11 = source.y;
             this.m21 = source.z;
@@ -814,7 +805,6 @@ public class Mat4 extends Matrix {
          case -2:
 
             /* Up axis. */
-
             this.m02 = source.x;
             this.m12 = source.y;
             this.m22 = source.z;
@@ -826,7 +816,6 @@ public class Mat4 extends Matrix {
          case -1:
 
             /* Translation. */
-
             this.m03 = source.x;
             this.m13 = source.y;
             this.m23 = source.z;
@@ -902,7 +891,6 @@ public class Mat4 extends Matrix {
     *
     * @return the array
     */
-   @Override
    public float[] toArray ( ) {
 
       /* @formatter:off */
@@ -1176,11 +1164,13 @@ public class Mat4 extends Matrix {
    public static void decompose ( final Mat4 m, final Vec3 trans,
       final Quaternion rot, final Vec3 scale ) {
 
+      // RESEARCH: Shoemake on polar decomposition, which is also used in matrix
+      // lerp.
+
       final float xMag = Utils.hypot(m.m00, m.m10, m.m20);
       final float yMag = Utils.hypot(m.m01, m.m11, m.m21);
       final float zMag = Utils.hypot(m.m02, m.m12, m.m22);
       final float det = Mat4.determinant(m);
-      scale.set(xMag, det < 0.0f ? -yMag : yMag, zMag);
 
       /*
        * Extract rotation matrix from affine transform matrix by dividing each
@@ -1190,21 +1180,10 @@ public class Mat4 extends Matrix {
       final float syInv = Utils.div(1.0f, yMag);
       final float szInv = Utils.div(1.0f, zMag);
 
-      final float rightx = m.m00 * sxInv;
-      final float righty = m.m10 * sxInv;
-      final float rightz = m.m20 * sxInv;
-
-      final float forwardx = m.m01 * syInv;
-      final float forwardy = m.m11 * syInv;
-      final float forwardz = m.m21 * syInv;
-
-      final float upx = m.m02 * szInv;
-      final float upy = m.m12 * szInv;
-      final float upz = m.m22 * szInv;
-
-      Quaternion.fromAxes(rightx, forwardy, upz, forwardz, upy, upx, rightz,
-         righty, forwardx, rot);
-
+      Quaternion.fromAxes(m.m00 * sxInv, m.m11 * syInv, m.m22 * szInv, m.m21
+         * syInv, m.m12 * szInv, m.m02 * szInv, m.m20 * sxInv, m.m10 * sxInv,
+         m.m01 * syInv, rot);
+      scale.set(xMag, det < 0.0f ? -yMag : yMag, zMag);
       trans.set(m.m03, m.m13, m.m23);
    }
 
@@ -1250,8 +1229,8 @@ public class Mat4 extends Matrix {
 
    /**
     * Creates a matrix from two axes. The third axis, up, is assumed to be
-    * (0.0, 0.0, 1.0, 0.0). The fourth row and column are assumed to be (0.0,
-    * 0.0, 0.0, 1.0).
+    * (0.0, 0.0, 1.0, 0.0) . The fourth row and column are assumed to be (0.0,
+    * 0.0, 0.0, 1.0) .
     *
     * @param right   the right axis
     * @param forward the forward axis
@@ -1268,8 +1247,8 @@ public class Mat4 extends Matrix {
 
    /**
     * Creates a matrix from two axes and a translation. The third axis, up, is
-    * assumed to be (0.0, 0.0, 1.0, 0.0). The fourth row, w, is assumed to be
-    * (0.0, 0.0, 0.0, 1.0).
+    * assumed to be (0.0, 0.0, 1.0, 0.0) . The fourth row, w, is assumed to be
+    * (0.0, 0.0, 0.0, 1.0) .
     *
     * @param right       the right axis
     * @param forward     the forward axis
@@ -1288,7 +1267,7 @@ public class Mat4 extends Matrix {
 
    /**
     * Creates a matrix from three axes. The fourth row and column are assumed
-    * to be (0.0, 0.0, 0.0, 1.0).
+    * to be (0.0, 0.0, 0.0, 1.0) .
     *
     * @param right   the right axis
     * @param forward the forward axis
@@ -1306,7 +1285,7 @@ public class Mat4 extends Matrix {
 
    /**
     * Creates a matrix from three axes and a translation. The fourth row, w,
-    * is assumed to be (0.0, 0.0, 0.0, 1.0).
+    * is assumed to be (0.0, 0.0, 0.0, 1.0) .
     *
     * @param right       the right axis
     * @param forward     the forward axis
@@ -1326,7 +1305,7 @@ public class Mat4 extends Matrix {
 
    /**
     * Creates a matrix from three axes. The fourth column, translation, is
-    * assumed to be (0.0, 0.0, 0.0, 1.0).
+    * assumed to be (0.0, 0.0, 0.0, 1.0) .
     *
     * @param right   the right axis
     * @param forward the forward axis
@@ -1338,13 +1317,9 @@ public class Mat4 extends Matrix {
    public static Mat4 fromAxes ( final Vec4 right, final Vec4 forward,
       final Vec4 up, final Mat4 target ) {
 
-      /* @formatter:off */
-      return target.set(
-         right.x, forward.x, up.x, 0.0f,
-         right.y, forward.y, up.y, 0.0f,
-         right.z, forward.z, up.z, 0.0f,
-         right.w, forward.w, up.w, 1.0f);
-      /* @formatter:on */
+      return target.set(right.x, forward.x, up.x, 0.0f, right.y, forward.y,
+         up.y, 0.0f, right.z, forward.z, up.z, 0.0f, right.w, forward.w, up.w,
+         1.0f);
    }
 
    /**
@@ -1361,13 +1336,9 @@ public class Mat4 extends Matrix {
    public static Mat4 fromAxes ( final Vec4 right, final Vec4 forward,
       final Vec4 up, final Vec4 translation, final Mat4 target ) {
 
-      /* @formatter:off */
-      return target.set(
-         right.x, forward.x, up.x, translation.x,
-         right.y, forward.y, up.y, translation.y,
-         right.z, forward.z, up.z, translation.z,
-         right.w, forward.w, up.w, translation.w);
-      /* @formatter:on */
+      return target.set(right.x, forward.x, up.x, translation.x, right.y,
+         forward.y, up.y, translation.y, right.z, forward.z, up.z,
+         translation.z, right.w, forward.w, up.w, translation.w);
    }
 
    /**
@@ -1385,29 +1356,30 @@ public class Mat4 extends Matrix {
       final Vec3 axis, final Mat4 target ) {
 
       final float mSq = Vec3.magSq(axis);
-      if ( mSq == 0.0f ) { return target.reset(); }
+      if ( mSq != 0.0f ) {
+         final float mInv = Utils.invSqrtUnchecked(mSq);
+         final float ax = axis.x * mInv;
+         final float ay = axis.y * mInv;
+         final float az = axis.z * mInv;
 
-      final float mInv = Utils.invSqrtUnchecked(mSq);
-      final float ax = axis.x * mInv;
-      final float ay = axis.y * mInv;
-      final float az = axis.z * mInv;
+         final float d = 1.0f - cosa;
+         final float x = ax * d;
+         final float y = ay * d;
+         final float z = az * d;
 
-      final float d = 1.0f - cosa;
-      final float x = ax * d;
-      final float y = ay * d;
-      final float z = az * d;
+         final float axay = x * ay;
+         final float axaz = x * az;
+         final float ayaz = y * az;
 
-      final float axay = x * ay;
-      final float axaz = x * az;
-      final float ayaz = y * az;
-
-      /* @formatter:off */
-      return target.set(
+         /* @formatter:off */
+         return target.set(
             cosa + x * ax, axay - sina * az, axaz + sina * ay, 0.0f,
-         axay + sina * az,    cosa + y * ay, ayaz - sina * ax, 0.0f,
-         axaz - sina * ay, ayaz + sina * ax,    cosa + z * az, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
-      /* @formatter:on */
+            axay + sina * az, cosa + y * ay, ayaz - sina * ax, 0.0f,
+            axaz - sina * ay, ayaz + sina * ax, cosa + z * az, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
+         /* @formatter:on */
+      }
+      return target.reset();
    }
 
    /**
@@ -1601,7 +1573,7 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Creates a scale matrix from a nonuniform scalar, stored in a vector. The
+    * Creates a scale matrix from a nonuniform scalar stored in a vector. The
     * scale on the z axis is assumed to be 1.0 .
     *
     * @param scalar the nonuniform scalar
@@ -1619,7 +1591,7 @@ public class Mat4 extends Matrix {
    }
 
    /**
-    * Creates a scale matrix from a nonuniform scalar, stored in a vector.
+    * Creates a scale matrix from a nonuniform scalar stored in a vector.
     *
     * @param scalar the nonuniform scalar
     * @param target the output matrix
@@ -2019,12 +1991,13 @@ public class Mat4 extends Matrix {
       // TEST
 
       final float w = a.m30 * b.x + a.m31 * b.y + a.m33;
-      if ( w == 0.0f ) { return target.reset(); }
-      final float wInv = 1.0f / w;
-
-      return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m03 ) * wInv, ( a.m10
-         * b.x + a.m11 * b.y + a.m13 ) * wInv, ( a.m20 * b.x + a.m21 * b.y
-            + a.m23 ) * wInv);
+      if ( w != 0.0f ) {
+         final float wInv = 1.0f / w;
+         return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m03 ) * wInv,
+            ( a.m10 * b.x + a.m11 * b.y + a.m13 ) * wInv, ( a.m20 * b.x + a.m21
+               * b.y + a.m23 ) * wInv);
+      }
+      return target.reset();
    }
 
    /**
@@ -2044,12 +2017,13 @@ public class Mat4 extends Matrix {
       // TEST
 
       final float w = a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33;
-      if ( w == 0.0f ) { return target.reset(); }
-      final float wInv = 1.0f / w;
-
-      return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m02 * b.z + a.m03 )
-         * wInv, ( a.m10 * b.x + a.m11 * b.y + a.m12 * b.z + a.m13 ) * wInv,
-         ( a.m20 * b.x + a.m21 * b.y + a.m22 * b.z + a.m23 ) * wInv);
+      if ( w != 0.0f ) {
+         final float wInv = 1.0f / w;
+         return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m02 * b.z + a.m03 )
+            * wInv, ( a.m10 * b.x + a.m11 * b.y + a.m12 * b.z + a.m13 ) * wInv,
+            ( a.m20 * b.x + a.m21 * b.y + a.m22 * b.z + a.m23 ) * wInv);
+      }
+      return target.reset();
    }
 
    /**
@@ -2070,11 +2044,12 @@ public class Mat4 extends Matrix {
       // TEST
 
       final float w = a.m30 * b.x + a.m31 * b.y + a.m33;
-      if ( w == 0.0f ) { return target.reset(); }
-      final float wInv = 1.0f / w;
-
-      return target.set( ( a.m00 * b.x + a.m01 * b.y ) * wInv, ( a.m10 * b.x
-         + a.m11 * b.y ) * wInv, ( a.m20 * b.x + a.m21 * b.y ) * wInv);
+      if ( w != 0.0f ) {
+         final float wInv = 1.0f / w;
+         return target.set( ( a.m00 * b.x + a.m01 * b.y ) * wInv, ( a.m10 * b.x
+            + a.m11 * b.y ) * wInv, ( a.m20 * b.x + a.m21 * b.y ) * wInv);
+      }
+      return target.reset();
    }
 
    /**
@@ -2095,12 +2070,13 @@ public class Mat4 extends Matrix {
       // TEST
 
       final float w = a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33;
-      if ( w == 0.0f ) { return target.reset(); }
-      final float wInv = 1.0f / w;
-
-      return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m02 * b.z ) * wInv,
-         ( a.m10 * b.x + a.m11 * b.y + a.m12 * b.z ) * wInv, ( a.m20 * b.x
-            + a.m21 * b.y + a.m22 * b.z ) * wInv);
+      if ( w != 0.0f ) {
+         final float wInv = 1.0f / w;
+         return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m02 * b.z ) * wInv,
+            ( a.m10 * b.x + a.m11 * b.y + a.m12 * b.z ) * wInv, ( a.m20 * b.x
+               + a.m21 * b.y + a.m22 * b.z ) * wInv);
+      }
+      return target.reset();
    }
 
    /**

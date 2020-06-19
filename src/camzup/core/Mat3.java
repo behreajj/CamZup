@@ -4,12 +4,12 @@ import java.util.Iterator;
 
 /**
  * A mutable, extensible class influenced by GLSL, OSL and Processing's
- * PMatrix3D. Although this is a 3 x 3 matrix, it is generally assumed to
+ * PMatrix2D. Although this is a 3 x 3 matrix, it is generally assumed to
  * be a 2D affine transform matrix, where the last row is (0.0, 0.0, 1.0) .
  * Instance methods are limited, while most static methods require an
  * explicit output variable to be provided.
  */
-public class Mat3 extends Matrix {
+public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
 
    /**
     * Component in row 0, column 0. The right axis x component.
@@ -59,7 +59,7 @@ public class Mat3 extends Matrix {
    /**
     * The default constructor. Creates an identity matrix.
     */
-   public Mat3 ( ) { super(9); }
+   public Mat3 ( ) {}
 
    /**
     * Constructs a matrix from float values.
@@ -72,7 +72,6 @@ public class Mat3 extends Matrix {
    public Mat3 ( final float m00, final float m01, final float m10,
       final float m11 ) {
 
-      super(9);
       this.set(m00, m01, m10, m11);
    }
 
@@ -89,7 +88,6 @@ public class Mat3 extends Matrix {
    public Mat3 ( final float m00, final float m01, final float m02,
       final float m10, final float m11, final float m12 ) {
 
-      super(9);
       this.set(m00, m01, m02, m10, m11, m12);
    }
 
@@ -110,7 +108,6 @@ public class Mat3 extends Matrix {
       final float m10, final float m11, final float m12, final float m20,
       final float m21, final float m22 ) {
 
-      super(9);
       this.set(m00, m01, m02, m10, m11, m12, m20, m21, m22);
    }
 
@@ -119,11 +116,7 @@ public class Mat3 extends Matrix {
     *
     * @param source the source matrix
     */
-   public Mat3 ( final Mat3 source ) {
-
-      super(9);
-      this.set(source);
-   }
+   public Mat3 ( final Mat3 source ) { this.set(source); }
 
    /**
     * Returns a new matrix with this matrix's components. Java's cloneable
@@ -172,6 +165,24 @@ public class Mat3 extends Matrix {
     *
     * @return the quotient
     *
+    * @see Mat3#mul(Mat3, float, Mat3)
+    * @see Mat3#inverse(Mat3, Mat3)
+    */
+   public Mat3 div ( final float b ) {
+
+      if ( b != 0.0f ) { return Mat3.mul(this, 1.0f / b, new Mat3()); }
+      return new Mat3();
+   }
+
+   /**
+    * Returns a new matrix with the division of the instance by the right
+    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
+    * not mutate the matrix in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the quotient
+    *
     * @see Mat3#mul(Mat3, Mat3, Mat3)
     * @see Mat3#inverse(Mat3, Mat3)
     */
@@ -185,21 +196,7 @@ public class Mat3 extends Matrix {
     * For interoperability with Kotlin: <code>a /= b</code> .
     *
     * @param b the right operand
-    * 
-    * @see Mat3#mul(Mat3, Mat3, Mat3)
-    * @see Mat3#inverse(Mat3, Mat3)
-    */
-   public void divAssign ( final Mat3 b ) {
-
-      Mat3.mul(this, Mat3.inverse(b, new Mat3()), this);
-   }
-
-   /**
-    * Divides the instance by the right operand (mutates the matrix in place).
-    * For interoperability with Kotlin: <code>a /= b</code> .
     *
-    * @param b the right operand
-    * 
     * @see Mat3#mul(Mat3, float, Mat3)
     */
    public void divAssign ( final float b ) {
@@ -212,21 +209,17 @@ public class Mat3 extends Matrix {
    }
 
    /**
-    * Returns a new matrix with the division of the instance by the right
-    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
-    * not mutate the matrix in place</em>.
+    * Divides the instance by the right operand (mutates the matrix in place).
+    * For interoperability with Kotlin: <code>a /= b</code> .
     *
     * @param b the right operand
     *
-    * @return the quotient
-    *
-    * @see Mat3#mul(Mat3, float, Mat3)
+    * @see Mat3#mul(Mat3, Mat3, Mat3)
     * @see Mat3#inverse(Mat3, Mat3)
     */
-   public Mat3 div ( final float b ) {
+   public void divAssign ( final Mat3 b ) {
 
-      if ( b != 0.0f ) { return Mat3.mul(this, 1.0f / b, new Mat3()); }
-      return new Mat3();
+      Mat3.mul(this, Mat3.inverse(b, new Mat3()), this);
    }
 
    /**
@@ -299,7 +292,6 @@ public class Mat3 extends Matrix {
     *
     * @return the component at that index
     */
-   @Override
    public float getElm ( final int index ) {
 
       /* @formatter:off */
@@ -332,7 +324,6 @@ public class Mat3 extends Matrix {
     *
     * @return the component at that index
     */
-   @Override
    public float getElm ( final int i, final int j ) {
 
       /* @formatter:off */
@@ -406,6 +397,13 @@ public class Mat3 extends Matrix {
    public Iterator < Float > iterator ( ) { return new M3Iterator(this); }
 
    /**
+    * Returns the number of elements in the matrix.
+    *
+    * @return the length
+    */
+   public int length ( ) { return 9; }
+
+   /**
     * Returns a new matrix with the subtraction of the right operand from the
     * instance. For interoperability with Kotlin: <code>a - b</code> .
     * <em>Does not mutate the matrix in place</em>.
@@ -469,7 +467,7 @@ public class Mat3 extends Matrix {
 
    /**
     * Sets the two axis columns of this matrix. The last row and column are
-    * set to (0.0, 0.0, 1.0).
+    * set to (0.0, 0.0, 1.0) .
     *
     * @param m00 row 0, column 0
     * @param m01 row 0, column 1
@@ -486,7 +484,7 @@ public class Mat3 extends Matrix {
 
    /**
     * Sets the upper two rows of this matrix. The last row is set to (0.0,
-    * 0.0, 1.0).
+    * 0.0, 1.0) .
     *
     * @param m00 row 0, column 0
     * @param m01 row 0, column 1
@@ -724,7 +722,6 @@ public class Mat3 extends Matrix {
     *
     * @return the array
     */
-   @Override
    public float[] toArray ( ) {
 
       /* @formatter:off */
@@ -961,7 +958,7 @@ public class Mat3 extends Matrix {
 
    /**
     * Creates a matrix from two axes. The third column, translation, is
-    * assumed to be (0.0, 0.0, 1.0).
+    * assumed to be (0.0, 0.0, 1.0) .
     *
     * @param right   the right axis
     * @param forward the forward axis
@@ -1042,7 +1039,7 @@ public class Mat3 extends Matrix {
    }
 
    /**
-    * Creates a scale matrix from a nonuniform scalar, stored in a vector.
+    * Creates a scale matrix from a nonuniform scalar stored in a vector.
     *
     * @param scalar the nonuniform scalar
     * @param target the output matrix
@@ -1272,11 +1269,12 @@ public class Mat3 extends Matrix {
       // a.m10 * b.x + a.m11 * b.y + a.m12);
 
       final float w = a.m20 * b.x + a.m21 * b.y + a.m22;
-      if ( w == 0.0f ) { return target.reset(); }
-      final float wInv = 1.0f / w;
-
-      return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m02 ) * wInv, ( a.m10
-         * b.x + a.m11 * b.y + a.m12 ) * wInv);
+      if ( w != 0.0f ) {
+         final float wInv = 1.0f / w;
+         return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m02 ) * wInv,
+            ( a.m10 * b.x + a.m11 * b.y + a.m12 ) * wInv);
+      }
+      return target.reset();
    }
 
    /**
@@ -1301,11 +1299,12 @@ public class Mat3 extends Matrix {
       // a.m10 * b.x + a.m11 * b.y);
 
       final float w = a.m20 * b.x + a.m21 * b.y + a.m22;
-      if ( w == 0.0f ) { return target.reset(); }
-      final float wInv = 1.0f / w;
-
-      return target.set( ( a.m00 * b.x + a.m01 * b.y ) * wInv, ( a.m10 * b.x
-         + a.m11 * b.y ) * wInv);
+      if ( w != 0.0f ) {
+         final float wInv = 1.0f / w;
+         return target.set( ( a.m00 * b.x + a.m01 * b.y ) * wInv, ( a.m10 * b.x
+            + a.m11 * b.y ) * wInv);
+      }
+      return target.reset();
    }
 
    /**

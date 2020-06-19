@@ -1449,8 +1449,13 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float y = imag.y;
       final float z = imag.z;
 
-      return target.set(-z * w + x * y + y * x - w * z, w * w - z * z + y * y
-         - x * x, x * w + w * x + y * z + z * y);
+      final float xy = x * y;
+      final float xw = x * w;
+      final float yz = y * z;
+      final float zw = z * w;
+
+      return target.set(xy + xy - ( zw + zw ), w * w + y * y - x * x - z * z, xw
+         + xw + yz + yz);
    }
 
    /**
@@ -1466,14 +1471,18 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public static Vec3 getRight ( final Quaternion q, final Vec3 target ) {
 
       final Vec3 imag = q.imag;
-
       final float w = q.real;
       final float x = imag.x;
       final float y = imag.y;
       final float z = imag.z;
 
-      return target.set(w * w - y * y + x * x - z * z, z * w + w * z + x * y + y
-         * x, -y * w + z * x + x * z - w * y);
+      final float xy = x * y;
+      final float xz = x * z;
+      final float yw = y * w;
+      final float zw = z * w;
+
+      return target.set(w * w + x * x - y * y - z * z, zw + zw + xy + xy, xz
+         + xz - ( yw + yw ));
    }
 
    /**
@@ -1489,14 +1498,18 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public static Vec3 getUp ( final Quaternion q, final Vec3 target ) {
 
       final Vec3 imag = q.imag;
-
       final float w = q.real;
       final float x = imag.x;
       final float y = imag.y;
       final float z = imag.z;
 
-      return target.set(y * w + w * y + z * x + x * z, -x * w + y * z + z * y
-         - w * x, w * w - x * x + z * z - y * y);
+      final float xz = x * z;
+      final float xw = x * w;
+      final float yz = y * z;
+      final float yw = y * w;
+
+      return target.set(yw + yw + xz + xz, yz + yz - ( xw + xw ), w * w + z * z
+         - x * x - y * y);
    }
 
    /**
@@ -2677,7 +2690,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
        *
        * @return the eased quaternion
        *
-       * @see Utils#clamp(float, float, float)
+       * @see Utils#clamp(double, double, double)
        * @see Math#acos(double)
        * @see Math#sqrt(double)
        * @see Math#sin(double)
@@ -2689,17 +2702,17 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
          /* Decompose origin quaternion. */
          final Vec3 ai = origin.imag;
-         final float aw = origin.real;
-         final float ax = ai.x;
-         final float ay = ai.y;
-         final float az = ai.z;
+         final double aw = origin.real;
+         final double ax = ai.x;
+         final double ay = ai.y;
+         final double az = ai.z;
 
          /* Decompose destination quaternion. */
          final Vec3 bi = dest.imag;
-         float bw = dest.real;
-         float bx = bi.x;
-         float by = bi.y;
-         float bz = bi.z;
+         double bw = dest.real;
+         double bx = bi.x;
+         double by = bi.y;
+         double bz = bi.z;
 
          /* Clamp the dot product. */
          double dotp = Utils.clamp(aw * bw + ax * bx + ay * by + az * bz, -1.0d,
@@ -2730,8 +2743,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
          if ( sinTheta > AbstrEasing.EPS_D ) {
             final double sInv = 1.0d / sinTheta;
-            u = Math.sin( ( 1.0d - stepd ) * theta) * sInv;
-            v = Math.sin(stepd * theta) * sInv;
+            final double thetaStep = theta * stepd;
+            u = sInv * Math.sin(theta - thetaStep);
+            v = sInv * Math.sin(thetaStep);
          } else {
             u = 1.0d - stepd;
             v = stepd;
@@ -2743,16 +2757,19 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          final double cy = u * ay + v * by;
          final double cz = u * az + v * bz;
 
-         /* Normalize. */
+         /* Find magnitude squared. */
          final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
 
+         /* Magnitude is approximately zero. */
          if ( Math.abs(mSq) < AbstrEasing.EPS_D ) { return target.reset(); }
 
+         /* Magnitude is approximately one. */
          if ( Math.abs(1.0d - mSq) < AbstrEasing.EPS_D ) {
             return target.set(( float ) cw, ( float ) cx, ( float ) cy,
                ( float ) cz);
          }
 
+         /* Normalize. */
          final double mInv = 1.0d / Math.sqrt(mSq);
          return target.set(( float ) ( cw * mInv ), ( float ) ( cx * mInv ),
             ( float ) ( cy * mInv ), ( float ) ( cz * mInv ));
