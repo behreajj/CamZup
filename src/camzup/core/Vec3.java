@@ -166,7 +166,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public Vec3 div ( final float b ) {
 
-      if ( b != 0.0f ) { return new Vec3(this.x / b, this.y / b, this.z / b); }
+      if ( b != 0.0f ) {
+         final float bInv = 1.0f / b;
+         return new Vec3(this.x * bInv, this.y * bInv, this.z * bInv);
+      }
       return new Vec3(0.0f, 0.0f, 0.0f);
    }
 
@@ -194,9 +197,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    public void divAssign ( final float b ) {
 
       if ( b != 0.0f ) {
-         this.x /= b;
-         this.y /= b;
-         this.z /= b;
+         final float bInv = 1.0f / b;
+         this.x *= bInv;
+         this.y *= bInv;
+         this.z *= bInv;
       } else {
          this.x = 0.0f;
          this.y = 0.0f;

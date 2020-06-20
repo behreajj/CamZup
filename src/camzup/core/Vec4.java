@@ -192,7 +192,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    public Vec4 div ( final float b ) {
 
       if ( b != 0.0f ) {
-         return new Vec4(this.x / b, this.y / b, this.z / b, this.w / b);
+         final float bInv = 1.0f / b;
+         return new Vec4(this.x * bInv, this.y * bInv, this.z * bInv, this.w
+            * bInv);
       }
       return new Vec4(0.0f, 0.0f, 0.0f, 0.0f);
    }
@@ -221,10 +223,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    public void divAssign ( final float b ) {
 
       if ( b != 0.0f ) {
-         this.x /= b;
-         this.y /= b;
-         this.z /= b;
-         this.w /= b;
+         final float bInv = 1.0f / b;
+         this.x *= bInv;
+         this.y *= bInv;
+         this.z *= bInv;
+         this.w *= bInv;
       } else {
          this.x = 0.0f;
          this.y = 0.0f;

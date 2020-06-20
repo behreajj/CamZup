@@ -1160,7 +1160,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 set ( final Mesh2 source ) {
 
-      /* Copy coordinates. */
+      /* Copy coordinates. Promote Vec2s to Vec3s. */
       final Vec2[] sourcevs = source.coords;
       final int vslen = sourcevs.length;
       this.coords = Vec3.resize(this.coords, vslen);

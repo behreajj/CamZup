@@ -153,7 +153,8 @@ abstract class PngParser {
             final byte[] dt = itr.next().data;
             final int dtLen = dt.length;
             for ( int i = 0; i < dtLen; ++i ) {
-               zlibdat[cursor++] = dt[i];
+               zlibdat[cursor] = dt[i];
+               ++cursor;
             }
          }
 

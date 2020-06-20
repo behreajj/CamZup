@@ -11,7 +11,7 @@ MaterialSolid mat = new MaterialSolid()
   .setStroke(false);
 
 Transform3.Easing mixer = new Transform3.Easing(
-  new Vec3.SmoothStep(),
+  new Vec3.Lerp(),
   new Quaternion.Slerp(),
   new Vec3.SmoothStep());
 

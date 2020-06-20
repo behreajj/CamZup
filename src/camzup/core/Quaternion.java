@@ -2364,7 +2364,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       double m = mSq;
       double wNorm = a.real;
       if ( !Utils.approx(mSq, 1.0f) ) {
-         m = Math.sqrt(mSq);
+         m = Math.sqrt(m);
          wNorm /= m;
       }
 

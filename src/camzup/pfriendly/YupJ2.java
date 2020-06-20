@@ -757,9 +757,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             yc = y;
 
             extapw = w;
-            extcpw = ICurve.HNDL_MAG_ORTHO_D * w;
+            extcpw = ICurve.HNDL_MAG_ORTHO_D * extapw;
             extaph = h;
-            extcph = ICurve.HNDL_MAG_ORTHO_D * h;
+            extcph = ICurve.HNDL_MAG_ORTHO_D * extaph;
 
             break;
 
@@ -3176,7 +3176,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.pushStyle();
       this.translate(loc.x, loc.y);
       this.rotate(tr.getRotation());
-      this.tint(Color.toHexInt(mat.tint));
+
+      // TODO: Test...
+      // this.tint(Color.toHexInt(mat.tint));
+      this.colorCalc(mat.tint);
+      super.tintFromCalc();
+      this.tintColorObject = new java.awt.Color(this.tintColor, true);
+
       this.imageImpl(txtr, -wHalf, hHalf, wHalf, -hHalf, 0, 0, w, h);
       this.popStyle();
       this.popMatrix();
@@ -3220,9 +3226,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void tint ( final camzup.core.Color c ) {
 
-      this.colorCalc(c);
-      this.tintFromCalc();
-      this.tintColorObject = new java.awt.Color(this.tintColor, true);
+      PApplet.showMissingWarning("tint");
+      // this.colorCalc(c);
+      // this.tintFromCalc();
+      // this.tintColorObject = new java.awt.Color(this.tintColor, true);
    }
 
    /**

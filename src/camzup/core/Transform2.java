@@ -1488,7 +1488,8 @@ public class Transform2 extends Transform {
          target.updateAxes();
 
          target.scalePrev.set(target.scale);
-         this.loc.applyUnclamped(origin.scale, dest.scale, step, target.scale);
+         this.scale.applyUnclamped(origin.scale, dest.scale, step,
+            target.scale);
 
          return target;
       }
