@@ -128,3 +128,4 @@ regex
 inkscape
 compositing
 endianness
+strata

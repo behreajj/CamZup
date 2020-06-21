@@ -589,19 +589,18 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    @Experimental
    String toBlenderCode ( ) {
 
-      final Vec3 i = this.imag;
       final StringBuilder pyCd = new StringBuilder(96);
       pyCd.append('(');
       pyCd.append(Utils.toFixed(this.real, 6));
       pyCd.append(',');
       pyCd.append(' ');
-      pyCd.append(Utils.toFixed(i.x, 6));
+      pyCd.append(Utils.toFixed(this.imag.x, 6));
       pyCd.append(',');
       pyCd.append(' ');
-      pyCd.append(Utils.toFixed(i.y, 6));
+      pyCd.append(Utils.toFixed(this.imag.y, 6));
       pyCd.append(',');
       pyCd.append(' ');
-      pyCd.append(Utils.toFixed(i.z, 6));
+      pyCd.append(Utils.toFixed(this.imag.z, 6));
       pyCd.append(')');
       return pyCd.toString();
    }
@@ -1888,23 +1887,18 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public static Quaternion random ( final java.util.Random rng,
       final Quaternion target ) {
 
-      // final float t0 = IUtils.TAU * rng.nextFloat();
-      // final float t1 = IUtils.TAU * rng.nextFloat();
-      // final float r1 = rng.nextFloat();
-      // final float x0 = Utils.sqrt(1.0f - r1);
-      // final float x1 = Utils.sqrt(r1);
-      // return target.set(x0 * Utils.sin(t0), x0 * Utils.cos(t0), x1 *
-      // Utils.sin(
-      // t1), x1 * Utils.cos(t1));
-
+      /* @formatter:off */
       final double t0 = IUtils.TAU_D * rng.nextDouble();
       final double t1 = IUtils.TAU_D * rng.nextDouble();
       final double r1 = rng.nextDouble();
       final double x0 = Math.sqrt(1.0d - r1);
       final double x1 = Math.sqrt(r1);
-      return target.set(( float ) ( x0 * Math.sin(t0) ), ( float ) ( x0 * Math
-         .cos(t0) ), ( float ) ( x1 * Math.sin(t1) ), ( float ) ( x1 * Math.cos(
-            t1) ));
+      return target.set(
+         ( float ) ( x0 * Math.sin(t0) ),
+         ( float ) ( x0 * Math.cos(t0) ),
+         ( float ) ( x1 * Math.sin(t1) ),
+         ( float ) ( x1 * Math.cos(t1) ));
+      /* @formatter:on */
    }
 
    /**

@@ -1333,9 +1333,11 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public static Vec2 div ( final Vec2 a, final float b, final Vec2 target ) {
 
-      if ( b == 0.0f ) { return target.reset(); }
-      final float denom = 1.0f / b;
-      return target.set(a.x * denom, a.y * denom);
+      if ( b != 0.0f ) {
+         final float denom = 1.0f / b;
+         return target.set(a.x * denom, a.y * denom);
+      }
+      return target.reset();
    }
 
    /**
@@ -1415,8 +1417,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public static Vec2[] flat ( final Vec2[][] arr ) {
 
-      final int sourceLen = arr.length;
       int totalLen = 0;
+      final int sourceLen = arr.length;
       for ( int i = 0; i < sourceLen; ++i ) {
          totalLen += arr[i].length;
       }
@@ -1475,8 +1477,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public static Vec2 fmod ( final Vec2 a, final float b, final Vec2 target ) {
 
-      if ( b == 0.0f ) { return target.set(a); }
-      return target.set(a.x % b, a.y % b);
+      if ( b != 0.0f ) { return target.set(a.x % b, a.y % b); }
+      return target.set(a);
    }
 
    /**
@@ -1579,7 +1581,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public static Vec2[][] grid ( final int res ) {
 
-      return Vec2.grid(res, res, -0.5f, -0.5f, 0.5f, 0.5f);
+      return Vec2.grid(res, res);
    }
 
    /**
@@ -2171,8 +2173,11 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public static Vec2 mod ( final Vec2 a, final float b, final Vec2 target ) {
 
-      if ( b == 0.0f ) { return target.set(a); }
-      return target.set(Utils.modUnchecked(a.x, b), Utils.modUnchecked(a.y, b));
+      if ( b != 0.0f ) {
+         return target.set(Utils.modUnchecked(a.x, b), Utils.modUnchecked(a.y,
+            b));
+      }
+      return target.set(a);
    }
 
    /**

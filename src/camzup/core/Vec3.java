@@ -1532,9 +1532,11 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public static Vec3 div ( final Vec3 a, final float b, final Vec3 target ) {
 
-      if ( b == 0.0f ) { return target.reset(); }
-      final float denom = 1.0f / b;
-      return target.set(a.x * denom, a.y * denom, a.z * denom);
+      if ( b != 0.0f ) {
+         final float denom = 1.0f / b;
+         return target.set(a.x * denom, a.y * denom, a.z * denom);
+      }
+      return target.reset();
    }
 
    /**
@@ -1657,8 +1659,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public static Vec3[] flat ( final Vec3[][][] arr ) {
 
-      final int sourceLen0 = arr.length;
       int totalLen = 0;
+      final int sourceLen0 = arr.length;
       for ( int i = 0; i < sourceLen0; ++i ) {
          final Vec3[][] arrInner = arr[i];
          final int sourceLen1 = arrInner.length;
@@ -1727,8 +1729,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public static Vec3 fmod ( final Vec3 a, final float b, final Vec3 target ) {
 
-      if ( b == 0.0f ) { return target.set(a); }
-      return target.set(a.x % b, a.y % b, a.z % b);
+      if ( b != 0.0f ) { return target.set(a.x % b, a.y % b, a.z % b); }
+      return target.set(a);
    }
 
    /**
@@ -1882,13 +1884,13 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public static Vec3[][][] grid ( final int res ) {
 
-      return Vec3.grid(res, res, res, -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f);
+      return Vec3.grid(res, res, res);
    }
 
    /**
-    * Generates a 3D array of vectors. The result is in layer-row-major order,
-    * but the parameters are supplied in reverse: columns first, then rows,
-    * then layers. Defaults to the coordinate range of [-0.5, 0.5] .
+    * Generates a 3D array of vectors. The result is in layer-major order, but
+    * the parameters are supplied in reverse: columns first, then rows, then
+    * layers. Defaults to the coordinate range of [-0.5, 0.5] .
     *
     * @param cols   number of columns
     * @param rows   number of rows
@@ -1904,9 +1906,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
-    * Generates a 3D array of vectors. The result is in layer-row-major order,
-    * but the parameters are supplied in reverse: columns first, then rows,
-    * then layers.
+    * Generates a 3D array of vectors. The result is in layer-major order, but
+    * the parameters are supplied in reverse: columns first, then rows, then
+    * layers.
     *
     * @param cols       number of columns
     * @param rows       number of rows
@@ -1924,9 +1926,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
-    * Generates a 3D array of vectors. The result is in layer-row-major order,
-    * but the parameters are supplied in reverse: columns first, then rows,
-    * then layers.
+    * Generates a 3D array of vectors. The result is in layer-major order, but
+    * the parameters are supplied in reverse: columns first, then rows, then
+    * layers.
     *
     * @param cols       number of columns
     * @param rows       number of rows
@@ -2046,6 +2048,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
 
          for ( int i = 0, k = 1; i < vlats; ++i, ++k ) {
 
+            /*
+             * -HALF_PI to HALF_PI range multiply by PI, then subtract HALF_PI.
+             * Since range is normalized, multiply by 0.5, subtract 0.25.
+             */
             final float phi = k * toPhi - 0.25f;
             final float rhoCosPhi = radius * Utils.scNorm(phi);
             final float rhoSinPhi = radius * Utils.scNorm(phi - 0.25f);
@@ -2434,10 +2440,11 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public static Vec3 mod ( final Vec3 a, final float b, final Vec3 target ) {
 
-      if ( b == 0.0f ) { return target.set(a); }
-
-      return target.set(Utils.modUnchecked(a.x, b), Utils.modUnchecked(a.y, b),
-         Utils.modUnchecked(a.z, b));
+      if ( b != 0.0f ) {
+         return target.set(Utils.modUnchecked(a.x, b), Utils.modUnchecked(a.y,
+            b), Utils.modUnchecked(a.z, b));
+      }
+      return target.set(a);
    }
 
    /**
@@ -3458,9 +3465,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
-    * Generates a 3D array of vectors. The result is in layer-row-major order,
-    * but the parameters are supplied in reverse: columns first, then rows,
-    * then layers.<br>
+    * Generates a 3D array of vectors. The result is in layer-major order, but
+    * the parameters are supplied in reverse: columns first, then rows, then
+    * layers.<br>
     * <br>
     * This is separated to make overriding the public grid functions easier.
     * This is protected because it is too easy for integers to be quietly

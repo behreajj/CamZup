@@ -63,7 +63,6 @@ public class CamZup {
       // System.out.println(dir);
       // new Transform3();
 
-      System.out.println(0xf);
    }
 
    /**

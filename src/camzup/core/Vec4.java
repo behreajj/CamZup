@@ -786,7 +786,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
       sb.append(' ');
       sb.append('}');
       return sb.toString();
-      /* @formatter:on */
    }
 
    /**
@@ -1253,10 +1252,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     */
    public static Vec4 div ( final Vec4 a, final float b, final Vec4 target ) {
 
-      if ( b == 0.0f ) { return target.reset(); }
-
-      final float denom = 1.0f / b;
-      return target.set(a.x * denom, a.y * denom, a.z * denom, a.w * denom);
+      if ( b != 0.0f ) {
+         final float denom = 1.0f / b;
+         return target.set(a.x * denom, a.y * denom, a.z * denom, a.w * denom);
+      }
+      return target.reset();
    }
 
    /**
@@ -1343,6 +1343,110 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    }
 
    /**
+    * Flattens a two dimensional array of vectors to a one dimensional array.
+    *
+    * @param arr the 2D array
+    *
+    * @return the 1D array
+    */
+   public static Vec4[] flat ( final Vec4[][] arr ) {
+
+      final int sourceLen = arr.length;
+      int totalLen = 0;
+      for ( int i = 0; i < sourceLen; ++i ) {
+         totalLen += arr[i].length;
+      }
+
+      final Vec4[] result = new Vec4[totalLen];
+      for ( int j = 0, i = 0; i < sourceLen; ++i ) {
+         final Vec4[] arrInner = arr[i];
+         final int len = arrInner.length;
+         System.arraycopy(arrInner, 0, result, j, len);
+         j += len;
+      }
+      return result;
+   }
+
+   /**
+    * Flattens a three dimensional array of vectors to a one dimensional
+    * array.
+    *
+    * @param arr the 3D array
+    *
+    * @return the 1D array
+    */
+   public static Vec4[] flat ( final Vec4[][][] arr ) {
+
+      int totalLen = 0;
+      final int sourceLen0 = arr.length;
+      for ( int i = 0; i < sourceLen0; ++i ) {
+         final Vec4[][] arrInner = arr[i];
+         final int sourceLen1 = arrInner.length;
+         for ( int j = 0; j < sourceLen1; ++j ) {
+            totalLen += arrInner[j].length;
+         }
+      }
+
+      final Vec4[] result = new Vec4[totalLen];
+
+      for ( int k = 0, i = 0; i < sourceLen0; ++i ) {
+         final Vec4[][] arrInner1 = arr[i];
+         final int sourceLen1 = arrInner1.length;
+         for ( int j = 0; j < sourceLen1; ++j ) {
+            final Vec4[] arrInner2 = arrInner1[j];
+            final int sourceLen2 = arrInner2.length;
+            System.arraycopy(arrInner2, 0, result, k, sourceLen2);
+            k += sourceLen2;
+         }
+      }
+
+      return result;
+   }
+
+   /**
+    * Flattens a four dimensional array of vectors to a one dimensional array.
+    *
+    * @param arr the 4D array
+    *
+    * @return the 1D array
+    */
+   public static Vec4[] flat ( final Vec4[][][][] arr ) {
+
+      int totalLen = 0;
+      final int sourceLen0 = arr.length;
+      for ( int i = 0; i < sourceLen0; ++i ) {
+         final Vec4[][][] arrInner1 = arr[i];
+         final int sourceLen1 = arrInner1.length;
+         for ( int j = 0; j < sourceLen1; ++j ) {
+            final Vec4[][] arrInner2 = arrInner1[j];
+            final int sourceLen2 = arrInner2.length;
+            for ( int k = 0; k < sourceLen2; ++k ) {
+               totalLen += arrInner2[k].length;
+            }
+         }
+      }
+
+      final Vec4[] result = new Vec4[totalLen];
+
+      for ( int m = 0, i = 0; i < sourceLen0; ++i ) {
+         final Vec4[][][] arrInner1 = arr[i];
+         final int sourceLen1 = arrInner1.length;
+         for ( int j = 0; j < sourceLen1; ++j ) {
+            final Vec4[][] arrInner2 = arrInner1[j];
+            final int sourceLen2 = arrInner2.length;
+            for ( int k = 0; k < sourceLen2; ++k ) {
+               final Vec4[] arrInner3 = arrInner2[k];
+               final int sourceLen3 = arrInner3.length;
+               System.arraycopy(arrInner3, 0, result, m, sourceLen3);
+               m += sourceLen3;
+            }
+         }
+      }
+
+      return result;
+   }
+
+   /**
     * Floors each component of the vector.
     *
     * @param v      the input vector
@@ -1387,9 +1491,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     */
    public static Vec4 fmod ( final Vec4 a, final float b, final Vec4 target ) {
 
-      if ( b == 0.0f ) { return target.set(a); }
-
-      return target.set(a.x % b, a.y % b, a.z % b, a.w % b);
+      if ( b != 0.0f ) {
+         return target.set(a.x % b, a.y % b, a.z % b, a.w % b);
+      }
+      return target.set(a);
    }
 
    /**
@@ -1437,6 +1542,79 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
 
       return target.set(Utils.fract(v.x), Utils.fract(v.y), Utils.fract(v.z),
          Utils.fract(v.w));
+   }
+
+   /**
+    * Generates a 4D array of vectors. Defaults to the coordinate range of
+    * [-0.5, 0.5] .
+    *
+    * @param res the resolution
+    *
+    * @return the array
+    */
+   public static Vec4[][][][] grid ( final int res ) {
+
+      return Vec4.grid(res, res, res, res);
+   }
+
+   /**
+    * Generates a 4D array of vectors. Defaults to the coordinate range of
+    * [-0.5, 0.5] .
+    *
+    * @param cols   number of columns
+    * @param rows   number of rows
+    * @param layers number of layers
+    * @param strata number of strata
+    *
+    * @return the array
+    */
+   public static Vec4[][][][] grid ( final int cols, final int rows,
+      final int layers, final int strata ) {
+
+      return Vec4.grid(cols, rows, layers, strata, -0.5f, -0.5f, -0.5f, -0.5f,
+         0.5f, 0.5f, 0.5f, 0.5f);
+   }
+
+   /**
+    * Generates a 4D array of vectors.
+    *
+    * @param cols       number of columns
+    * @param rows       number of rows
+    * @param layers     number of layers
+    * @param strata     number of strata
+    * @param lowerBound the lower bound
+    * @param upperBound the upper bound
+    *
+    * @return the array
+    */
+   public static Vec4[][][][] grid ( final int cols, final int rows,
+      final int layers, final int strata, final float lowerBound,
+      final float upperBound ) {
+
+      return Vec4.grid(cols, rows, layers, strata, lowerBound, lowerBound,
+         lowerBound, lowerBound, upperBound, upperBound, upperBound,
+         upperBound);
+   }
+
+   /**
+    * Generates a 4D array of vectors.
+    *
+    * @param cols       number of columns
+    * @param rows       number of rows
+    * @param layers     number of layers
+    * @param strata     number of strata
+    * @param lowerBound the lower bound
+    * @param upperBound the upper bound
+    *
+    * @return the array
+    */
+   public static Vec4[][][][] grid ( final int cols, final int rows,
+      final int layers, final int strata, final Vec4 lowerBound,
+      final Vec4 upperBound ) {
+
+      return Vec4.grid(cols, rows, layers, strata, lowerBound.x, lowerBound.y,
+         lowerBound.z, lowerBound.w, upperBound.x, upperBound.y, upperBound.z,
+         upperBound.w);
    }
 
    /**
@@ -1736,10 +1914,11 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     */
    public static Vec4 mod ( final Vec4 a, final float b, final Vec4 target ) {
 
-      if ( b == 0.0f ) { return target.set(a); }
-
-      return target.set(Utils.modUnchecked(a.x, b), Utils.modUnchecked(a.y, b),
-         Utils.modUnchecked(a.z, b), Utils.modUnchecked(a.w, b));
+      if ( b != 0.0f ) {
+         return target.set(Utils.modUnchecked(a.x, b), Utils.modUnchecked(a.y,
+            b), Utils.modUnchecked(a.z, b), Utils.modUnchecked(a.w, b));
+      }
+      return target.set(a);
    }
 
    /**
@@ -2329,6 +2508,93 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    public final static Vec4 zero ( final Vec4 target ) {
 
       return target.set(0.0f, 0.0f, 0.0f, 0.0f);
+   }
+
+   /**
+    * Generates a 4D array of vectors. The order of the arrays is the reverse
+    * of the order in which parameters are supplied: strata, layers, columns
+    * then rows.<br>
+    * <br>
+    * This is separated to make overriding the public grid functions easier.
+    * This is protected because it is too easy for integers to be quietly
+    * promoted to floats if the signature parameters are confused.
+    *
+    * @param cols   number of columns
+    * @param rows   number of rows
+    * @param layers number of layers
+    * @param strata number of stratum
+    * @param lbx    lower bound x
+    * @param lby    lower bound y
+    * @param lbz    lower bound z
+    * @param lbw    lower bound w
+    * @param ubx    upper bound x
+    * @param uby    upper bound y
+    * @param ubz    upper bound z
+    * @param ubw    upper bound w
+    *
+    * @return the array
+    */
+   protected static Vec4[][][][] grid ( final int cols, final int rows,
+      final int layers, final int strata, final float lbx, final float lby,
+      final float lbz, final float lbw, final float ubx, final float uby,
+      final float ubz, final float ubw ) {
+
+      final int sval = strata < 2 ? 2 : strata;
+      final int lval = layers < 2 ? 2 : layers;
+      final int rval = rows < 2 ? 2 : rows;
+      final int cval = cols < 2 ? 2 : cols;
+
+      final float gToStep = 1.0f / ( sval - 1.0f );
+      final float hToStep = 1.0f / ( lval - 1.0f );
+      final float iToStep = 1.0f / ( rval - 1.0f );
+      final float jToStep = 1.0f / ( cval - 1.0f );
+
+      /* Calculate x values in separate loop. */
+      final float[] xs = new float[cval];
+      for ( int j = 0; j < cval; ++j ) {
+         final float step = j * jToStep;
+         xs[j] = ( 1.0f - step ) * lbx + step * ubx;
+      }
+
+      /* Calculate y values in separate loop. */
+      final float[] ys = new float[rval];
+      for ( int i = 0; i < rval; ++i ) {
+         final float step = i * iToStep;
+         ys[i] = ( 1.0f - step ) * lby + step * uby;
+      }
+
+      /* Calculate z values in separate loop. */
+      final float[] zs = new float[lval];
+      for ( int h = 0; h < lval; ++h ) {
+         final float step = h * hToStep;
+         zs[h] = ( 1.0f - step ) * lbz + step * ubz;
+      }
+
+      final Vec4[][][][] result = new Vec4[sval][lval][rval][cval];
+      for ( int g = 0; g < sval; ++g ) {
+
+         final Vec4[][][] stratum = result[g];
+         final float step = g * gToStep;
+         final float w = ( 1.0f - step ) * lbw + step * ubw;
+
+         for ( int h = 0; h < lval; ++h ) {
+
+            final Vec4[][] layer = stratum[h];
+            final float z = zs[h];
+
+            for ( int i = 0; i < rval; ++i ) {
+
+               final Vec4[] row = layer[i];
+               final float y = ys[i];
+
+               for ( int j = 0; j < cval; ++j ) {
+                  row[j] = new Vec4(xs[j], y, z, w);
+               }
+            }
+         }
+      }
+
+      return result;
    }
 
    /**
