@@ -728,6 +728,7 @@ abstract class SvgParser {
 
          case -1360216880:
             /* "circle" */
+
          case -1656480802:
             /* "ellipse" */
 

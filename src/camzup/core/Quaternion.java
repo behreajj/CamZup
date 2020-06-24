@@ -1969,9 +1969,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public static Quaternion rotateX ( final Quaternion q, final float radians,
       final Quaternion target ) {
 
-      final float halfAngle = radians * 0.5f;
-      return Quaternion.rotateX(q, Utils.cos(halfAngle), Utils.sin(halfAngle),
-         target);
+      final double halfAngle = radians * 0.5d;
+      return Quaternion.rotateX(q, ( float ) Math.cos(halfAngle), ( float ) Math
+         .sin(halfAngle), target);
    }
 
    /**
@@ -2008,9 +2008,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public static Quaternion rotateY ( final Quaternion q, final float radians,
       final Quaternion target ) {
 
-      final float halfAngle = radians * 0.5f;
-      return Quaternion.rotateY(q, Utils.cos(halfAngle), Utils.sin(halfAngle),
-         target);
+      final double halfAngle = radians * 0.5d;
+      return Quaternion.rotateY(q, ( float ) Math.cos(halfAngle), ( float ) Math
+         .sin(halfAngle), target);
    }
 
    /**
@@ -2047,9 +2047,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public static Quaternion rotateZ ( final Quaternion q, final float radians,
       final Quaternion target ) {
 
-      final float halfAngle = radians * 0.5f;
-      return Quaternion.rotateZ(q, Utils.cos(halfAngle), Utils.sin(halfAngle),
-         target);
+      final double halfAngle = radians * 0.5d;
+      return Quaternion.rotateZ(q, ( float ) Math.cos(halfAngle), ( float ) Math
+         .sin(halfAngle), target);
    }
 
    /**

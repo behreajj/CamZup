@@ -500,7 +500,7 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Reverts this transform to its previous state,i.e., swaps current
+    * Reverts this transform to its previous state, i.e., swaps current
     * location, rotation and scale with the previous.
     *
     * @return this transform

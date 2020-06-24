@@ -174,7 +174,8 @@ public class Ray3 implements Cloneable {
       sb.append(this.origin.toString(places));
       sb.append(", dir: ");
       sb.append(this.dir.toString(places));
-      sb.append(' ').append('}');
+      sb.append(' ');
+      sb.append('}');
       return sb.toString();
    }
 

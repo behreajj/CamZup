@@ -473,7 +473,7 @@ public class Transform2 extends Transform {
    }
 
    /**
-    * Reverts this transform to its previous state,i.e., swaps current
+    * Reverts this transform to its previous state, i.e., swaps current
     * location, rotation and scale with the previous.
     *
     * @return this transform
@@ -1483,7 +1483,6 @@ public class Transform2 extends Transform {
             target.location);
 
          target.rotPrev = target.rotation;
-
          target.rotation = this.rot.apply(origin.rotation, dest.rotation, step);
          target.updateAxes();
 

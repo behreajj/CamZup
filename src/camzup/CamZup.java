@@ -1,5 +1,7 @@
 package camzup;
 
+import camzup.core.Utils;
+
 import processing.core.PApplet;
 
 /**
@@ -63,6 +65,8 @@ public class CamZup {
       // System.out.println(dir);
       // new Transform3();
 
+      System.out.println(Utils.floor(0.0f));
+      System.out.println(Utils.floor(-0.0f));
    }
 
    /**

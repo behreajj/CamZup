@@ -1555,7 +1555,8 @@ public abstract class Utils implements IUtils {
       while ( nAbsVal < 0 ) {
          final double y = nAbsVal * 0.1d;
          nAbsVal = ( int ) y;
-         digits[filled++] = -( int ) ( ( y - nAbsVal ) * 10.0d - 0.5d );
+         digits[filled] = -( int ) ( ( y - nAbsVal ) * 10.0d - 0.5d );
+         ++filled;
       }
 
       final StringBuilder sb = new StringBuilder(16);

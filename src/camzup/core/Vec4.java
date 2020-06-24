@@ -2279,16 +2279,16 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    public static Vec4 randomSpherical ( final java.util.Random rng,
       final float rhoMin, final float rhoMax, final Vec4 target ) {
 
-      // TODO: Optimize.
-      final float rr = rng.nextFloat();
-      final float rho = ( 1.0f - rr ) * rhoMin + rr * rhoMax;
-      final float t0 = IUtils.TAU * rng.nextFloat();
-      final float t1 = IUtils.TAU * rng.nextFloat();
-      final float r1 = rng.nextFloat();
-      final float x0 = rho * Utils.sqrt(1.0f - r1);
-      final float x1 = rho * Utils.sqrt(r1);
-      return target.set(x0 * Utils.sin(t0), x0 * Utils.cos(t0), x1 * Utils.sin(
-         t1), x1 * Utils.cos(t1));
+      final double rr = rng.nextDouble();
+      final double rho = ( 1.0d - rr ) * rhoMin + rr * rhoMax;
+      final double t0 = IUtils.TAU_D * rng.nextDouble();
+      final double t1 = IUtils.TAU_D * rng.nextDouble();
+      final double r1 = rng.nextDouble();
+      final double x0 = rho * Math.sqrt(1.0d - r1);
+      final double x1 = rho * Math.sqrt(r1);
+      return target.set(( float ) ( x0 * Math.sin(t0) ), ( float ) ( x0 * Math
+         .cos(t0) ), ( float ) ( x1 * Math.sin(t1) ), ( float ) ( x1 * Math.cos(
+            t1) ));
    }
 
    /**
